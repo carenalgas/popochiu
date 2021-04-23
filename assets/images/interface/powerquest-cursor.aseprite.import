@@ -1,0 +1,26 @@
+[remap]
+
+importer="aseprite.wizard.plugin"
+type="SpriteFrames"
+path="res://.import/powerquest-cursor.aseprite-142ec63df9b2c43ee8d468986e57a2be.res"
+
+[deps]
+
+source_file="res://assets/images/interface/powerquest-cursor.aseprite"
+dest_files=[ "res://.import/powerquest-cursor.aseprite-142ec63df9b2c43ee8d468986e57a2be.res" ]
+
+[params]
+
+split_layers=false
+exclude_layers_pattern=""
+only_visible_layers=false
+trim_images=false
+sprite_filename_pattern="{basename}.{layer}.{extension}"
+texture_strip/import_texture_strip=false
+texture_strip/filename_pattern="{basename}.{layer}.Strip.{extension}"
+texture_atlas/import_texture_atlas=false
+texture_atlas/filename_pattern="{basename}.{layer}.Atlas.{extension}"
+texture_atlas/frame_filename_pattern="{basename}.{layer}.{animation}.{frame}.Atlas.{extension}"
+animated_texture/import_animated_texture=true
+animated_texture/filename_pattern="{basename}.{layer}.{animation}.Texture.{extension}"
+animated_texture/frame_filename_pattern="{basename}.{layer}.{animation}.{frame}.Texture.{extension}"

@@ -1,0 +1,98 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/aseprite_importer/interface/import_menu/SelectNodeDialog.gd" type="Script" id=1]
+
+[node name="SelectNodeDialog" type="WindowDialog"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -150.0
+margin_top = -100.0
+margin_right = 150.0
+margin_bottom = 100.0
+rect_min_size = Vector2( 300, 200 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+window_title = "Select a Node"
+resizable = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 8
+custom_constants/margin_top = 8
+custom_constants/margin_left = 8
+custom_constants/margin_bottom = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Body" type="VBoxContainer" parent="MarginContainer"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 292.0
+margin_bottom = 192.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="EditedSceneView" type="VBoxContainer" parent="MarginContainer/Body"]
+margin_right = 284.0
+margin_bottom = 160.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="MarginContainer/Body/EditedSceneView"]
+margin_right = 284.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "Current Edited Scene:"
+
+[node name="SceneTree" type="Tree" parent="MarginContainer/Body/EditedSceneView"]
+margin_top = 18.0
+margin_right = 284.0
+margin_bottom = 160.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Footer" type="HBoxContainer" parent="MarginContainer/Body"]
+margin_top = 164.0
+margin_right = 284.0
+margin_bottom = 184.0
+size_flags_horizontal = 3
+
+[node name="ConfirmButton" type="Button" parent="MarginContainer/Body/Footer"]
+margin_left = 25.0
+margin_right = 114.0
+margin_bottom = 20.0
+size_flags_horizontal = 6
+text = "Select Node"
+
+[node name="CancelButton" type="Button" parent="MarginContainer/Body/Footer"]
+margin_left = 187.0
+margin_right = 241.0
+margin_bottom = 20.0
+size_flags_horizontal = 6
+text = "Cancel"
+
+[node name="AlertDialog" type="AcceptDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -41.5
+margin_top = -29.0
+margin_right = 41.5
+margin_bottom = 29.0
+popup_exclusive = true

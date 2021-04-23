@@ -1,0 +1,44 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://assets/resources/dynamic_fonts/monkey_island-outline-16.tres" type="DynamicFont" id=1]
+[ext_resource path="res://src/Interface/Dialog/AnimatedRichText.gd" type="Script" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.215686, 0.756863, 0.831373, 1 )
+
+[node name="AnimatedRichText" type="RichTextLabel"]
+margin_right = 200.0
+margin_bottom = 18.0
+grow_horizontal = 2
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 3
+custom_styles/normal = SubResource( 1 )
+custom_fonts/normal_font = ExtResource( 1 )
+bbcode_enabled = true
+meta_underlined = false
+scroll_active = false
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+secs_per_character = 0.01
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="Label" type="Label" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+margin_right = 200.0
+margin_bottom = 18.0
+custom_styles/normal = SubResource( 2 )
+custom_fonts/font = ExtResource( 1 )
+custom_colors/font_color = Color( 0.513726, 0.929412, 0.227451, 1 )
+text = "Este es un texto de pruebaa"
+align = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}

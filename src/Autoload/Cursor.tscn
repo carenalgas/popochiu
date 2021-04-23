@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/images/interface/powerquest-cursor.res" type="SpriteFrames" id=1]
+[ext_resource path="res://src/Autoload/Cursor.gd" type="Script" id=2]
+
+[node name="Cursor" type="CanvasLayer"]
+layer = 100
+script = ExtResource( 2 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+frames = ExtResource( 1 )
+animation = "idle"
+
+[node name="Sprite" type="Sprite" parent="."]

@@ -1,0 +1,41 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/aseprite_importer/interface/import_menu/TagsMenu.gd" type="Script" id=1]
+
+
+
+[node name="TagSelectMenu" type="VBoxContainer"]
+rect_min_size = Vector2( 0, 120 )
+size_flags_vertical = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Header" type="HBoxContainer" parent="."]
+margin_right = 28.0
+margin_bottom = 14.0
+
+[node name="Label" type="Label" parent="Header"]
+margin_right = 28.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "Tags"
+valign = 1
+
+[node name="SelectAllButton" type="CheckBox" parent="Header"]
+visible = false
+margin_left = 32.0
+margin_right = 120.0
+margin_bottom = 24.0
+size_flags_horizontal = 8
+text = "Select All"
+
+[node name="Tree" type="Tree" parent="."]
+margin_top = 18.0
+margin_right = 28.0
+margin_bottom = 120.0
+size_flags_vertical = 3
+columns = 5
+hide_folding = true
+hide_root = true

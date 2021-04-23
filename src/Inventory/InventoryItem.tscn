@@ -1,0 +1,12 @@
+[gd_scene format=2]
+
+[node name="InventoryItem" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Icon" type="TextureRect" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0

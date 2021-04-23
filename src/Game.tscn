@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://src/Rooms/Room.tscn" type="PackedScene" id=1]
+[ext_resource path="res://src/Interface/InterfaceLayer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://src/Game.gd" type="Script" id=4]
+
+[node name="Game" type="Node2D"]
+script = ExtResource( 4 )
+
+[node name="InterfaceLayer" parent="." instance=ExtResource( 2 )]
+
+[node name="MainCamera" type="Camera2D" parent="."]
+position = Vector2( -163, 54 )
+current = true
+limit_left = -204
+limit_top = -90
+limit_right = 204
+limit_bottom = 90
+limit_smoothed = true
+smoothing_enabled = true
+smoothing_speed = 10.0
+drag_margin_left = 0.25
+drag_margin_top = 0.1
+drag_margin_right = 0.25
+drag_margin_bottom = 0.1
+editor_draw_limits = true
+editor_draw_drag_margin = true
+
+[node name="Room" parent="." instance=ExtResource( 1 )]
