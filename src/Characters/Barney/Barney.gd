@@ -1,8 +1,22 @@
-extends 'res://src/Nodes/Character/Character.gd'
+extends Character
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:
-	G.emit_signal('show_inline_dialog', ['Hola', 'Carita', 'de bola'])
+	var opt: String = yield(
+		G.show_inline_dialog(['Hola', 'Venga', '¡Vemos!']),
+		'completed'
+	)
+	yield(C.player_say(opt), 'completed')
+	
+	if opt == 'Hola':
+		yield(say('Hola... maricón'), 'completed')
+		yield(C.player_say('No tiene que tratarme tan feo... malparido'), 'completed')
+	elif opt == 'Venga':
+		yield(say('Venga usted que se puede mover'), 'completed')
+		yield(say('Yo estaré aquí clavado mientras me hacen controlable'), 'completed')
+		yield(G.display('En un futuro se podrá hacer controlable cualquier personaje'), 'completed')
+
+	G.done()
 
 
 func on_look() -> void:

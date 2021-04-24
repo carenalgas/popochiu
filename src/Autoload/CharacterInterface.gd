@@ -14,15 +14,11 @@ var characters := []
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func character_say(chr_name: String, dialog: String) -> void:
 	var talking_character: Character = _get_character(chr_name)
-	talking_character.say(dialog)
-	yield(G, 'continue_clicked')
-	talking_character.idle()
+	yield(talking_character.say(dialog), 'completed')
 
 
 func player_say(dialog: String) -> void:
-	player.say(dialog)
-	yield(G, 'continue_clicked')
-	player.idle()
+	yield(player.say(dialog), 'completed')
 
 
 func character_walk_to(chr_name: String, position: Vector2) -> void:

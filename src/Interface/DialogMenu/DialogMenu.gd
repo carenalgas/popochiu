@@ -17,7 +17,7 @@ func _ready() -> void:
 	connect('gui_input', self, '_clicked')
 	
 	# Conectarse a eventos de los evnetruchos
-	G.connect('show_inline_dialog', self, '_create_options', [true])
+	G.connect('inline_dialog_requested', self, '_create_options', [true])
 
 	hide()
 
@@ -43,7 +43,7 @@ func _create_options(options := [], autoshow := false) -> void:
 		var btn: Button = _option.instance() as Button
 
 		btn.text = opt
-#		btn.connect('pressed', self, '_on_option_clicked', [opt])
+		btn.connect('pressed', self, '_on_option_clicked', [opt])
 
 		_options.add_child(btn)
 
@@ -102,7 +102,8 @@ func show_options() -> void:
 	emit_signal('shown')
 #
 #
-#func _on_option_clicked(opt: Dictionary) -> void:
-#	SectionEvent.dialog = false
-#	hide()
+func _on_option_clicked(opt: String) -> void:
+	hide()
+	G.emit_signal('option_selected', opt)
+	
 #	DialogEvent.emit_signal('dialog_option_clicked', opt)

@@ -2,7 +2,7 @@ tool
 extends "res://src/Nodes/Hotspot/Hotspot.gd"
 
 func on_interact() -> void:
-	G.emit_signal('show_inline_dialog', ['A esto le falta mucho', '...vamos a terminarlo'])
+	G.emit_signal('inline_dialog_requested', ['A esto le falta mucho', '...vamos a terminarlo'])
 
 
 func on_look() -> void:

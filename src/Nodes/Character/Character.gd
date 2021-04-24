@@ -63,6 +63,8 @@ func face_right() -> void:
 func say(dialog: String) -> void:
 	C.emit_signal('character_spoke', self, dialog)
 	$AnimationPlayer.play('talk_%s' % _looking_dir)
+	yield(G, 'continue_clicked')
+	idle()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
