@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "RichTextLabel",
 "class": "AnimatedRichText",
 "language": "GDScript",
-"path": "res://src/Interface/Dialog/AnimatedRichText.gd"
+"path": "res://src/GraphicInterface/Dialog/AnimatedRichText.gd"
 }, {
 "base": "Node",
 "class": "AsepriteImportData",
@@ -42,7 +42,7 @@ _global_script_classes=[ {
 "base": "Container",
 "class": "DialogMenu",
 "language": "GDScript",
-"path": "res://src/Interface/DialogMenu/DialogMenu.gd"
+"path": "res://src/GraphicInterface/DialogMenu/DialogMenu.gd"
 }, {
 "base": "Node",
 "class": "EditorTheme",
@@ -97,9 +97,9 @@ config/icon="res://icon.png"
 Data="*res://src/Autoload/Data.gd"
 Utils="*res://src/Autoload/Utils.gd"
 Cursor="*res://src/Autoload/Cursor.tscn"
-G="*res://src/Autoload/InterfaceEvents.gd"
 C="*res://src/Autoload/CharacterInterface.gd"
 I="*res://src/Inventory/Inventory.tscn"
+G="*res://src/Autoload/GraphicInterfaceEvents.gd"
 
 [debug]
 

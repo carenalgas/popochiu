@@ -1,7 +1,7 @@
 extends Control
 class_name Item
 # Estos son los objetos que podrán ir al inventario:
-# InterfaceLayer > InventoryContainer > ... > InventoryGrid
+# GraphicInterfaceLayer > InventoryContainer > ... > InventoryGrid
 
 signal description_toggled(description)
 signal selected(item)
