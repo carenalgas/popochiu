@@ -31,7 +31,26 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
   # Añade el ítem Bucket al inventario y lo hace, automáticamente, el ítem activo
   I.add_item_as_active('Bucket')
   ```
-* ???
+## GAQ script (w.i.p.)
+Se puede hacer hablar a los personajes de la siguiente manera. Si el personaje no existe, la instrucción se ignora. En este caso *Coco* no es un personaje válido
+```gdscript
+yield(Utils.run([
+  'Barney: Hola... maricón',
+  'Coco: No existo',
+  'Dave: No tiene que tratarme tan feo... malparido'
+]), 'completed')
+```
+
+También se pueden concatenar instrucciones de la forma en la que se venía haciendo:
+```gdscript
+yield(Utils.run([
+  say('Venga usted que se puede mover'),
+  'Barney: Yo estaré aquí clavado mientras me hacen controlable',
+  G.display('En un futuro se podrá hacer controlable cualquier personaje')
+]), 'completed')
+```
+
+> `Utils.run(instructions: Array)` Se encarga de activar la interfaz gráfica una vez se han completado todas las instrucciones recibidas.
 
 # Configuración ⚙
 - [ ] Que sea fácil indicarle al framework que el juego tiene controles de movimiento 2D (como casi todos los point n' click) o 1D (como [Short-term Battery](https://gamejolt.com/games/short-term-battery/340825) o [Loco Motive](https://robustgames.itch.io/loco-motive) o [iD](https://gamejolt.com/games/iD/256559)).
@@ -96,3 +115,20 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 ## Diálogos (Dialog.gd)
 - [x] Que al seleccionar una opción del menú de diálogo este se cierre y se pase la opción seleccionada como parámetro de la señal que permite al juego continuar con el flujo de instrucciones.
 - [x] Que se puede disparar un inline-dialog pasando las opciones como un arreglo de `String`.
+
+---
+# Estructura 📁
+* `assets`
+  * ...
+* `src`
+  * `Autoload` Contiene los scripts que se cargarán en el Autoload (singleton) del proyecto.
+  * `Characters` Contiene los personajes del juego separados cada uno por carpeta.
+  * `DialogTree` Contiene los árboles de diálogo del juego separados por carpeta.
+  * `GraphicInterface` Contiene los nodos que se encargan de presentar y controlar la Interfaz Gráfica del Jugador (IGJ).
+  * `Inventory` Contiene los ítems que se podrán añadir al inventario separados por carpeta.
+  * `Nodes` Contiene nodos que podrán agregarse a las escenas para crear personajes, hotspots, props, entre otros.
+  * `Resources` Contiene recursos (*.tres) creados para el proyecto.
+  * `Rooms` Contiene las habitaciones que podrán navegarse en el juego separadas por carpetas.
+  * **Game.tscn** Es la escena principal del juego, donde se cargan las habitaciones, la interfaz gráfica, el cursor y la cámara principal.
+  * **Game.gd** El script que controla la escena principal del juego.
+  * **GAQTheme.res** El tema (*theme*) de Godot para los elementos de interfaz gráfica del juego.

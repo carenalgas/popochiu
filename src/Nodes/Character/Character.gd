@@ -60,7 +60,9 @@ func face_right() -> void:
 	$Sprite.flip_h = false
 
 
-func say(dialog: String) -> void:
+func say(dialog: String, no_yield := false) -> void:
+	if not no_yield:
+		yield()
 	C.emit_signal('character_spoke', self, dialog)
 	$AnimationPlayer.play('talk_%s' % _looking_dir)
 	yield(G, 'continue_clicked')

@@ -15,7 +15,9 @@ signal option_selected(opt)
 # Muestra un texto en el centro de la pantalla. Puede servir para dar
 # instrucciones o indicaciones de un narrador. Algo que definitivamente
 # no hace parte del mundo del juego (o sea, que no ha sido dicho por un personaje).
-func display(msg: String) -> void:
+func display(msg: String, no_yield := false) -> void:
+	if not no_yield:
+		yield()
 	emit_signal('show_box_requested', msg)
 	yield(self, 'continue_clicked')
 

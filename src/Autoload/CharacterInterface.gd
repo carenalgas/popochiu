@@ -14,11 +14,11 @@ var characters := []
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func character_say(chr_name: String, dialog: String) -> void:
 	var talking_character: Character = _get_character(chr_name)
-	yield(talking_character.say(dialog), 'completed')
+	yield(talking_character.say(dialog, true), 'completed')
 
 
 func player_say(dialog: String) -> void:
-	yield(player.say(dialog), 'completed')
+	yield(player.say(dialog, true), 'completed')
 
 
 func character_walk_to(chr_name: String, position: Vector2) -> void:
@@ -33,7 +33,13 @@ func player_walk_to(position: Vector2) -> void:
 
 func walk_to_clicked() -> void:
 	yield(character_walk_to(Data.player, Data.clicked.walk_to_point), 'completed')
-# -------------------------------------- TODO: ¿Mover esto a otro Autoload? ----
+
+
+func is_valid_character(chr_name: String) -> bool:
+	for c in characters:
+		if (c as Character).script_name.to_lower() == chr_name.to_lower():
+			return true
+	return false
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

@@ -6,19 +6,28 @@ func on_interact() -> void:
 		G.show_inline_dialog(['Hola', 'Venga', '¡Vemos!']),
 		'completed'
 	)
-	yield(C.player_say(opt), 'completed')
+#	yield(Utils.run([C.player_say(opt)]), 'completed')
 	
 	if opt == 'Hola':
-		yield(say('Hola... maricón'), 'completed')
-		yield(C.player_say('No tiene que tratarme tan feo... malparido'), 'completed')
+		yield(Utils.run([
+			'Barney: Hola... maricón',
+			'Coco: No existo',
+			'Dave: No tiene que tratarme tan feo... malparido'
+		]), 'completed')
 	elif opt == 'Venga':
-		yield(say('Venga usted que se puede mover'), 'completed')
-		yield(say('Yo estaré aquí clavado mientras me hacen controlable'), 'completed')
-		yield(G.display('En un futuro se podrá hacer controlable cualquier personaje'), 'completed')
+		yield(Utils.run([
+			say('Venga usted que se puede mover'),
+			'Barney: Yo estaré aquí clavado mientras me hacen controlable',
+#			say('Yo estaré aquí clavado mientras me hacen controlable'),
+			G.display('En un futuro se podrá hacer controlable cualquier personaje')
+		]), 'completed')
+#		yield(say('Venga usted que se puede mover'), 'completed')
+#		yield(say('Yo estaré aquí clavado mientras me hacen controlable'), 'completed')
+#		yield(G.display('En un futuro se podrá hacer controlable cualquier personaje'), 'completed')
+#		G.done()
 	else:
 		yield(say('¡Vemos carechimba!'), 'completed')
-
-	G.done()
+		G.done()
 
 
 func on_look() -> void:
