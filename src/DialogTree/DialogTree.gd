@@ -2,7 +2,7 @@ tool
 class_name DialogTree
 extends Resource
 
-export var options := [] setget _set_options
+export(Array, Resource) var options := [] setget _set_options
 export var script_name := ''
 
 
@@ -12,7 +12,7 @@ func start() -> void:
 	yield(D, 'dialog_finished')
 
 
-func option_selected(opt: Dictionary) -> void:
+func option_selected(opt: DialogOption) -> void:
 	pass
 
 
@@ -24,16 +24,12 @@ func _show_options() -> void:
 
 
 func _set_options(value: Array) -> void:
-	var last_size := options.size()
 	options = value
-	
-	# TODO: Que estas opciones sean un DialogOption.gd (no de los que se muestran
-	# en la interfaz gráfica, sino uno como el de Power Quest:
-	# http://www.powerhoof.com/public/powerquestdocs/interface_power_tools_1_1_quest_1_1_i_dialog_option.html
-	if last_size > options.size():
-		options[options.size() - 1] = {
-			id = '%d' % options.size(),
-			text = 'Option %d' % options.size(),
-			visible = true
-		}
-		property_list_changed_notify()
+	for v in value.size():
+		if not value[v]:
+			var new_opt: DialogOption = DialogOption.new()
+			var id := 'Opt%d' % options.size()
+			new_opt.id = id
+			new_opt.text = 'Opción %d' % options.size()
+			options[v] = new_opt
+			property_list_changed_notify()

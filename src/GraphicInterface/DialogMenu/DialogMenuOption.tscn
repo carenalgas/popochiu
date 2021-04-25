@@ -15,7 +15,6 @@ margin_bottom = 14.0
 theme = ExtResource( 2 )
 custom_styles/focus = SubResource( 1 )
 custom_fonts/font = SubResource( 2 )
-custom_colors/font_color_hover = Color( 0.443137, 0.32549, 0.768627, 1 )
 text = "asdasd"
 flat = true
 align = 0

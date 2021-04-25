@@ -109,6 +109,10 @@ _Cualquier objeto que pueda hablar, caminar, moverse entre habitaciones, tener i
 ### Regiones (por implementar)
 *Áreas que pueden disparar eventos cuando un personaje entra en contacto con estas.*
 
+- [ ] Crear *script_template* para facilitar la creación de las regiones.
+- [ ] Que región se pueda desactivar una vez haya sido activada.
+- [ ] Que se puedan crear regiones que reaccionen cuando un personaje entre en ellas.
+
 ### Puntos (Position2D)
 *Posiciones que tienen un nombre y que pueden usarse para ubicar a los personajes.*
 
@@ -157,6 +161,13 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 
 Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita dos archivos: un `.tres` que permite definir las opciones que tendrá el diálogo y su ID (script_name); y un `.gd` que permite controlar la lógica de lo que pasará cuando inicie, cuando se seleccione una opción y, eventualmente, cuando termine. Cuando se cree un nuevo recurso de tipo **DialogTree.gd**, hay que asignarle un script que use como plantilla el **DialogTreeTemplate.gd**.
 
+- [ ] Que se puedan ocultar opciones de diálogo una vez hayan sido usadas.
+- [ ] Que una opción de diálogo se pueda ocultar para siempre.
+- [ ] Que se puedan apagar opciones de diálogo estando dentro de cualquier opción del mismo diálogo.
+- [x] Que opciones de diálogo se muestren de otro color cuando han sido usadas.
+- [x] Actualizar script que escucha el cambio en el arreglo de opciones de un `DialogTree` para que se llenen algunas propiedades con valores por defecto: `id`, `text`, `script_name` y `resource_name`.
+- [x] Actualizar la creación de opciones de diálogo en caliente para que sean un `DialogOption` y no un `Dictionary`.
+- [x] Crear `DialogOption.gd` como Resource para manejar las opciones de diálogo.
 - [x] Que las conversaciones (árboles de diálogo) queden separados por carpeta en **src/DialogTree**.
 - [x] Que las conversaciones tengan un `.tres` para crear las opciones y un `.gd` que controle su lógica.
   > 💡✅ Las conversaciones podrían ser un `.tres` donde hay una función que muestra las opciones y otras funciones que se llaman cuando se seleccionan dichas opciones.

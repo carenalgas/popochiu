@@ -9,6 +9,7 @@ export(Array, Resource) var trees := []
 var active := false
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func show_dialog(script_name: String) -> void:
 	for t in trees:
 		var tree: DialogTree = t

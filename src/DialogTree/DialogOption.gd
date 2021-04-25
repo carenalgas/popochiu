@@ -1,17 +1,18 @@
-extends Node
+tool
+class_name DialogOption
+extends Resource
 
-var id := ''
-var script_name := ''
-var text := ''
+export var id := '' setget _set_id
+export var text := ''
+export var visible := true
+
 var description := '' # Aquí irá el código de localización
-var visible := true
 var disabled := false
 var used := false
+var script_name := ''
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
-func _ready() -> void:
-	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -38,3 +39,11 @@ func _on_interacted() -> void:
 
 func _on_interaction_canceled() -> void:
 	pass
+
+
+func _set_id(value: String) -> void:
+	id = value
+	script_name = id
+	resource_name = id
+	
+	property_list_changed_notify()

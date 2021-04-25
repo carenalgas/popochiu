@@ -12,7 +12,7 @@ func start() -> void:
 	.start()
 
 
-func option_selected(opt: Dictionary) -> void:
+func option_selected(opt: DialogOption) -> void:
 	match opt.id:
 		'1':
 			yield(E.run([

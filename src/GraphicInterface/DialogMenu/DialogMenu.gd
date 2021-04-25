@@ -5,6 +5,9 @@ signal shown
 signal hidden
 
 export var option_scene: PackedScene
+export var default: Color = Color('5B6EE1')
+export var used: Color = Color('3F3F74')
+export var hover: Color = Color.white
 
 var current_options := []
 
@@ -39,12 +42,13 @@ func _clicked(event: InputEvent) -> void:
 func _create_dialog_options(opts: Array) -> void:
 	var tmp_opts := []
 	for idx in opts.size():
-		prints('idx', idx)
-		tmp_opts.append({
-			id = '%d' % (idx + 1),
-			text = opts[idx],
-			visible = true
-		})
+		var new_opt: DialogOption = DialogOption.new()
+		var id := 'Opt%d' % idx as int
+		new_opt.id = id
+		new_opt.text = opts[idx]
+		
+		tmp_opts.append(new_opt)
+
 	_create_options(tmp_opts, true)
 
 
@@ -57,19 +61,25 @@ func _create_options(options := [], autoshow := false) -> void:
 		return
 
 	current_options = options.duplicate(true)
+
 	for opt in options:
 		var btn: Button = option_scene.instance() as Button
+		var dialog_option: DialogOption = opt
 
 		btn.text = opt.text
+		btn.add_color_override('font_color', default)
+		btn.add_color_override('font_color_hover', hover)
+		
+		if opt.used:
+			btn.add_color_override('font_color', used)
+
 		btn.connect('pressed', self, '_on_option_clicked', [opt])
 
 		_options.add_child(btn)
 
 		if not opt.visible:
-#			opt.show = false
 			btn.hide()
 		else:
-#			opt.show = true
 			btn.show()
 
 	if autoshow: show_options()
@@ -119,6 +129,7 @@ func show_options() -> void:
 	emit_signal('shown')
 
 
-func _on_option_clicked(opt: Dictionary) -> void:
+func _on_option_clicked(opt: DialogOption) -> void:
 	hide()
+	opt.used = true
 	D.emit_signal('option_selected', opt)
