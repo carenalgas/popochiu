@@ -10,18 +10,26 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 
 * C (para acceder a CharacterInterface.gd)
   ```gdscript
-  C.player.say('Hola') # El personaje controlado por el jugador dice Hola
-  C.character_say('Barney', '¡Cállese maricón!') # Un personaje llamado Barney se pone grosero
-  C.player_say('Qué malparido tan grosero') # El personaje controlado por el jugador se pone grosero también
+  # El personaje controlado por el jugador dice Hola
+  C.player.say('Hola')
+  # Un personaje llamado Barney se pone grosero
+  C.character_say('Barney', '¡Cállese maricón!')
+  # El personaje controlado por el jugador se pone grosero también
+  C.player_say('Qué malparido tan grosero')
   ```
 * G (para acceder a GraphicInterfadeEvents.gd)
   ```gdscript
-  G.display('Usa clic izquierdo para interactuar y clic derecho para examinar') # Muestra un mensaje centrado, como una notificación.
-  G.show_info('Llave') # En la parte inferior de la pantalla se puede ver el nombre del objeto sobre el que está el cursor
+  # Muestra un mensaje centrado, como una notificación.
+  G.display('Usa clic izquierdo para interactuar y clic derecho para examinar')
+  # En la parte inferior de la pantalla se puede ver el nombre del objeto sobre el que está el cursor
+  G.show_info('Llave')
   ```
 * I (para acceder a Inventory.gd)
-  ```
+  ```gdscript
+  # Añade el ítem Bucket al inventario
   I.add_item('Bucket')
+  # Añade el ítem Bucket al inventario y lo hace, automáticamente, el ítem activo
+  I.add_item_as_active('Bucket')
   ```
 * ???
 
@@ -32,6 +40,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 * Clic para interactuar con los objetos y personajes, para hacer mover al personaje jugable y para hace cualquier acción de inventario o menú. Si hay un ítem del inventario activo, esta acción hace que se use sobre el objeto o el personaje que esté bajo el cursor.
 * Clic derecho para examinar los objetos y personajes. Si hay un ítem del inventario activo, esta acción lo desactiva. Se pueden examinar objetos del inventario.
 
+---
 
 # Objetos 📦
 > _Sí... esto debería ir en la documentación, pero... soy sólo un hombre... y... "What is a man!?"_ 🧛‍♂️
@@ -60,9 +69,10 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 ### Texto de diálogo (DialogText.tscn + DialogText.gd)
 - [ ] Calcular la altura del texto para que no se supoerponga al personaje que habla.
 - [ ] Que al renderizarse en el borde el texto no se alinee al centro. Si se sale por la izquierda, alinearlo a la izquierda, si se sale por la derecha alinearlo a la derecha.
+- [x] Renombrar AnimatedRichText por DialogText.
 - [x] Que nodo no se salga de la pantalla en los bordes. Si se sale por la izquierda, debería renderizarse a 4px del borde; igual para el borde derecho.
 - [x] Que nodo tenga un ancho máximo y uno mínimo para controlar el Autowrap.
-- [x] Actualize Label por el AnimatedRichText creado para [Kaloche](https://quietgecko.itch.io/kaloche).
+- [x] Actualizar Label por el AnimatedRichText creado para [Kaloche](https://quietgecko.itch.io/kaloche).
 - [x] Que texto aparezca sobre el personaje que habla.
 - [x] Que se pueda mostrar un texto dicho por un personaje.
 
