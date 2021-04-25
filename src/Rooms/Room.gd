@@ -49,6 +49,8 @@ func _process(delta):
 
 func _unhandled_input(event):
 	if not event.is_action_pressed('interact'):
+		if event.is_action_released('look'):
+			if I.active: I.set_active_item()
 		return
 
 	_update_navigation_path(C.player.position, get_local_mouse_position())

@@ -15,6 +15,8 @@ func on_interact() -> void:
 		yield(say('Venga usted que se puede mover'), 'completed')
 		yield(say('Yo estaré aquí clavado mientras me hacen controlable'), 'completed')
 		yield(G.display('En un futuro se podrá hacer controlable cualquier personaje'), 'completed')
+	else:
+		yield(say('¡Vemos carechimba!'), 'completed')
 
 	G.done()
 

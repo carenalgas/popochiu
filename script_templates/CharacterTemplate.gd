@@ -1,10 +1,10 @@
 tool
-extends "res://src/Nodes/Character/Character.gd"
+extends Character
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:
-	._on_interact()
+	.on_interact()
 
 
 func on_look() -> void:
-	._on_look()
+	.on_look()

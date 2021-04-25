@@ -67,6 +67,11 @@ func say(dialog: String) -> void:
 	idle()
 
 
+# Quita un ítem del inventario del personaje (¿o del jugador?)
+func remove_inventory() -> void:
+	pass
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _check_walk(n: String, t: Vector2) -> void:
 	if n.to_lower() == script_name.to_lower():

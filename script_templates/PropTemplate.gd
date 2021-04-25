@@ -1,5 +1,5 @@
 tool
-extends 'res://src/Nodes/Prop/Prop.gd'
+extends Prop
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

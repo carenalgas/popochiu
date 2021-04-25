@@ -40,6 +40,6 @@ func set_item_cursor(texture: Texture) -> void:
 
 
 func remove_item_cursor() -> void:
-	$AnimatedSprite.show()
 	$Sprite.texture = null
 	$Sprite.hide()
+	$AnimatedSprite.show()

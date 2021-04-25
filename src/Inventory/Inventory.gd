@@ -1,7 +1,9 @@
 extends Node
 
 signal item_added(item)
-signal item_add_done
+signal item_add_done(item)
+signal item_removed(item)
+signal item_remove_done(item)
 
 var _item_instances := []
 
@@ -21,44 +23,41 @@ func _ready():
 			})
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func add_item(item_name: String) -> void:
+	var i: Item = _get_item_instance(item_name)
+	if is_instance_valid(i):
+		emit_signal('item_added', i)
+		return yield(self, 'item_add_done')
+
+
+func add_item_as_active(item_name: String) -> void:
+	var item: Item = yield(add_item(item_name), 'completed')
+	set_active_item(item)
+
+
+func set_active_item(item: Item = null) -> void:
+	if item:
+		active = item
+		Cursor.set_item_cursor((item.get_node('Icon') as TextureRect).texture)
+	else:
+		active = null
+		Cursor.remove_item_cursor()
+
+
+func remove_item(item_name: String) -> void:
+	var i: Item = _get_item_instance(item_name)
+	if is_instance_valid(i):
+		Cursor.remove_item_cursor()
+		emit_signal('item_removed', i)
+		yield(self, 'item_remove_done')
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+func _get_item_instance(item_name: String) -> Item:
 	for ii in _item_instances:
 		var ii_name: String = ii.script_name
 		if ii_name.to_lower() == item_name.to_lower():
-			emit_signal('item_added', ii.node)
-			yield(self, 'item_add_done')
-			break
+			return ii.node as Item
+	return null
 
-
-func add_item_as_active() -> void:
-	pass
-
-
-func set_active(item: Item) -> void:
-	active = item
-	Cursor.set_item_cursor((item.get_node('Icon') as TextureRect).texture)
-
-
-#func set_item(item_index, item):
-#	var previousItem = items[item_index]
-#	items[item_index] = item
-#	emit_signal("items_changed", [item_index])
-#	return previousItem
-
-
-func remove_item(item_index):
-	var previousItem = items[item_index]
-	items[item_index] = null
-	emit_signal("items_changed", [item_index])
-	return previousItem
-
-
-#func make_items_unique():
-#	var unique_items = []
-#	for item in items:
-#		if item is Item:
-#			unique_items.append(item.duplicate())
-#		else:
-#			unique_items.append(null)
-#	items = unique_items

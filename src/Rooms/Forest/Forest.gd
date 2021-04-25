@@ -1,12 +1,12 @@
 tool
-extends "res://src/Nodes/Hotspot/Hotspot.gd"
+extends Hotspot
 
 func on_interact() -> void:
-	G.emit_signal('inline_dialog_requested', ['A esto le falta mucho', '...vamos a terminarlo'])
+	.on_interact()
 
 
 func on_look() -> void:
-	._on_look()
+	.on_look()
 
 
 func on_item_used(item: Item) -> void:

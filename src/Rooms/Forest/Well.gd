@@ -1,5 +1,5 @@
 tool
-extends 'res://src/Nodes/Prop/Prop.gd'
+extends Prop
 
 
 func on_interact() -> void:
@@ -10,7 +10,8 @@ func on_interact() -> void:
 
 
 func on_look() -> void:
-	._on_look('Qué pozo más rico...')
+	yield(C.player_say('Qué pozo más rico...'), 'completed')
+	G.done()
 
 
 func on_item_used(item: Item) -> void:
@@ -18,7 +19,7 @@ func on_item_used(item: Item) -> void:
 		yield(C.walk_to_clicked(), 'completed')
 		C.player.face_up()
 		yield(C.player_say('Adiós baldecito...'), 'completed')
-		# TODO: quitar el Bucket del inventario
-		yield(get_tree().create_timer(2.0), 'timeout')
+		yield(I.remove_item(item.script_name), 'completed')
+		yield(get_tree().create_timer(0.8), 'timeout')
 		yield(C.player_say('Te echaré de menos'), 'completed')
 		G.done()

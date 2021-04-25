@@ -1,9 +1,11 @@
+class_name InventoryContainer
 extends Control
 
 signal item_added(item)
 
+var is_disabled := false
+
 var _can_hide_inventory := true
-var _is_disabled := false
 
 onready var _hide_y := rect_position.y - (rect_size.y - 3.5)
 onready var _foreground: TextureRect = find_node('InventoryForeground')
@@ -24,11 +26,12 @@ func _ready():
 	
 	# Conectarse a las señales del papá de los inventarios
 	I.connect('item_added', self, '_add_item')
+	I.connect('item_removed', self, '_remove_item')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func disable() -> void:
-	_is_disabled = true
+	is_disabled = true
 	$Tween.interpolate_property(
 		self, 'rect_position:y',
 		_hide_y, _hide_y - 3.5,
@@ -38,7 +41,7 @@ func disable() -> void:
 
 
 func enable() -> void:
-	_is_disabled = false
+	is_disabled = false
 	$Tween.interpolate_property(
 		self, 'rect_position:y',
 		_hide_y - 3.5, _hide_y,
@@ -48,24 +51,11 @@ func enable() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-func _add_item(item: Item) -> void:
-	_grid.add_child(item)
-	
-	item.connect('description_toggled', self, '_show_item_info')
-	item.connect('selected', self, '_change_cursor')
-	
-	_open()
-	yield(get_tree().create_timer(2.0), 'timeout')
-	_close()
-
-	I.emit_signal('item_add_done')
-
-
 func _open() -> void:
-	if not _is_disabled and rect_position.y != _hide_y: return
+	if not is_disabled and rect_position.y != _hide_y: return
 	$Tween.interpolate_property(
 		self, 'rect_position:y',
-		_hide_y if not _is_disabled else rect_position.y, 0.0,
+		_hide_y if not is_disabled else rect_position.y, 0.0,
 		0.5, Tween.TRANS_EXPO, Tween.EASE_OUT
 	)
 	$Tween.start()
@@ -76,7 +66,7 @@ func _close() -> void:
 	if not _can_hide_inventory: return
 	$Tween.interpolate_property(
 		self, 'rect_position:y',
-		0.0, _hide_y if not _is_disabled else _hide_y - 3.5,
+		0.0, _hide_y if not is_disabled else _hide_y - 3.5,
 		0.2, Tween.TRANS_SINE, Tween.EASE_IN
 	)
 	$Tween.start()
@@ -87,4 +77,27 @@ func _show_item_info(description := '') -> void:
 
 
 func _change_cursor(item: Item) -> void:
-	I.set_active(item)
+	I.set_active_item(item)
+
+
+func _add_item(item: Item) -> void:
+	_grid.add_child(item)
+	
+	item.connect('description_toggled', self, '_show_item_info')
+	item.connect('selected', self, '_change_cursor')
+	
+	_open()
+	yield(get_tree().create_timer(2.0), 'timeout')
+	_close()
+
+	I.emit_signal('item_add_done', item)
+
+
+func _remove_item(item: Item) -> void:
+	item.disconnect('description_toggled', self, '_show_item_info')
+	item.disconnect('selected', self, '_change_cursor')
+	_grid.remove_child(item)
+	
+	yield(get_tree(), 'idle_frame')
+	
+	I.emit_signal('item_remove_done', item)

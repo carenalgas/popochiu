@@ -1,5 +1,5 @@
 tool
-extends "res://src/Nodes/Hotspot/Hotspot.gd"
+extends Hotspot
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

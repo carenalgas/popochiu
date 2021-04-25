@@ -1,4 +1,4 @@
-extends 'res://src/Inventory/Item.gd'
+extends Item
 
 # Cuando se le hace clic en el inventario
 func on_interact() -> void:

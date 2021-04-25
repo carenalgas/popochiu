@@ -39,16 +39,19 @@ func _unhandled_input(event):
 			else:
 				on_interact()
 		elif event.is_action_pressed('look'):
-			on_look()
+			if not I.active:
+				on_look()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:
-	pass
+	yield(G.display('No hay na\' pa\' hacer con esta mondá'), 'completed')
+	G.done()
 
 
 func on_look() -> void:
-	pass
+	yield(G.display('No es nada...'), 'completed')
+	G.done()
 
 
 func on_item_used(item: Item) -> void:
@@ -60,4 +63,10 @@ func on_item_used(item: Item) -> void:
 func _toggle_description(display: bool) -> void:
 	set_process_unhandled_input(display)
 	Cursor.set_cursor(cursor if display else null)
-	G.emit_signal('show_info_requested', description if display else '')
+	if display:
+		if not I.active:
+			G.show_info(description)
+		else:
+			G.show_info('Usar %s en %s' % [I.active.description, description])
+	else:
+		G.show_info()

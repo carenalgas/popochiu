@@ -9,11 +9,6 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "RichTextLabel",
-"class": "AnimatedRichText",
-"language": "GDScript",
-"path": "res://src/GraphicInterface/Dialog/AnimatedRichText.gd"
-}, {
 "base": "Node",
 "class": "AsepriteImportData",
 "language": "GDScript",
@@ -44,6 +39,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/GraphicInterface/DialogMenu/DialogMenu.gd"
 }, {
+"base": "RichTextLabel",
+"class": "DialogText",
+"language": "GDScript",
+"path": "res://src/GraphicInterface/Dialog/DialogText.gd"
+}, {
+"base": "Label",
+"class": "DisplayBox",
+"language": "GDScript",
+"path": "res://src/GraphicInterface/DisplayBox/DisplayBox.gd"
+}, {
 "base": "Node",
 "class": "EditorTheme",
 "language": "GDScript",
@@ -53,6 +58,11 @@ _global_script_classes=[ {
 "class": "Hotspot",
 "language": "GDScript",
 "path": "res://src/Nodes/Hotspot/Hotspot.gd"
+}, {
+"base": "Control",
+"class": "InventoryContainer",
+"language": "GDScript",
+"path": "res://src/GraphicInterface/Inventory/InventoryContainer.gd"
 }, {
 "base": "Control",
 "class": "Item",
@@ -70,15 +80,17 @@ _global_script_classes=[ {
 "path": "res://src/Rooms/Room.gd"
 } ]
 _global_script_class_icons={
-"AnimatedRichText": "",
 "AsepriteImportData": "",
 "AsepriteImporter": "",
 "Character": "",
 "Clickable": "",
 "DataResource": "",
 "DialogMenu": "",
+"DialogText": "",
+"DisplayBox": "",
 "EditorTheme": "",
 "Hotspot": "",
+"InventoryContainer": "",
 "Item": "",
 "Prop": "",
 "Room": ""
