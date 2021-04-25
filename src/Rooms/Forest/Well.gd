@@ -4,8 +4,10 @@ extends Prop
 
 func on_interact() -> void:
 	yield(C.walk_to_clicked(), 'completed')
-	# TODO: Hacer que la línea del berrinche la diga otro personaje
+	C.player.face_up()
+	yield(get_tree().create_timer(0.5), 'timeout')
 	yield(C.player_say('Esa mierda huele a berrinche como un hijueputa'), 'completed')
+	C.player.face_down()
 	G.done()
 
 

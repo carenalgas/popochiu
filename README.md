@@ -2,6 +2,7 @@
 Framework para crear juegos de aventura con Godot al estilo de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
 ![cover](./assets/images/_repo/cover.png "Godot Adventure Quest")
+![cover](./assets/images/_repo/gaq_01.gif "Godot Adventure Quest en acción")
 
 
 # 📃 Resumen y ejemplos de uso
