@@ -2,13 +2,8 @@ extends Node
 
 signal show_info_requested(info)
 signal show_box_requested(message)
-signal inline_dialog_requested(options)
 signal continue_clicked
 signal freed
-
-# TODO: Estas señales tendrán que ir en el Autoload destinado al sistema de
-# diálogo.
-signal option_selected(opt)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -35,10 +30,3 @@ func done() -> void:
 # nombre del objeto, mostrar Usar ____ en ____).
 func show_info(msg := '') -> void:
 	emit_signal('show_info_requested', msg)
-
-
-# Retorna la opción seleccionada en el diálogo creado en tiempo de ejecución.
-# NOTA: El flujo del juego se pausa hasta que el jugador seleccione una opción.
-func show_inline_dialog(opts: Array) -> String:
-	emit_signal('inline_dialog_requested', opts)
-	return yield(self, 'option_selected')

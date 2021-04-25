@@ -2,7 +2,8 @@ tool
 extends Hotspot
 
 func on_interact() -> void:
-	.on_interact()
+	yield(G.display('Este es un Hotspot', true), 'completed')
+	G.done()
 
 
 func on_look() -> void:

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://src/GraphicInterface/DialogMenu/DialogMenu.gd" type="Script" id=1]
-[ext_resource path="res://src/GraphicInterface/DialogMenu/DialogOption.tscn" type="PackedScene" id=2]
+[ext_resource path="res://src/GraphicInterface/DialogMenu/DialogMenuOption.tscn" type="PackedScene" id=2]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 

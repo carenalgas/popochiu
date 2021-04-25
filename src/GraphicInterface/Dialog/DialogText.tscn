@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://assets/resources/dynamic_fonts/monkey_island-outline-16.tres" type="DynamicFont" id=1]
+[ext_resource path="res://src/Resources/DynamicFonts/MonkeyIsland-outline-16.tres" type="DynamicFont" id=1]
 [ext_resource path="res://src/GraphicInterface/Dialog/DialogText.gd" type="Script" id=2]
 
 [sub_resource type="StyleBoxFlat" id=1]

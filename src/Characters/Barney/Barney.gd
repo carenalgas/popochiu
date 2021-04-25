@@ -2,32 +2,7 @@ extends Character
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:
-	var opt: String = yield(
-		G.show_inline_dialog(['Hola', 'Venga', '¡Vemos!']),
-		'completed'
-	)
-#	yield(Utils.run([C.player_say(opt)]), 'completed')
-	
-	if opt == 'Hola':
-		yield(Utils.run([
-			'Barney: Hola... maricón',
-			'Coco: No existo',
-			'Dave: No tiene que tratarme tan feo... malparido'
-		]), 'completed')
-	elif opt == 'Venga':
-		yield(Utils.run([
-			say('Venga usted que se puede mover'),
-			'Barney: Yo estaré aquí clavado mientras me hacen controlable',
-#			say('Yo estaré aquí clavado mientras me hacen controlable'),
-			G.display('En un futuro se podrá hacer controlable cualquier personaje')
-		]), 'completed')
-#		yield(say('Venga usted que se puede mover'), 'completed')
-#		yield(say('Yo estaré aquí clavado mientras me hacen controlable'), 'completed')
-#		yield(G.display('En un futuro se podrá hacer controlable cualquier personaje'), 'completed')
-#		G.done()
-	else:
-		yield(say('¡Vemos carechimba!'), 'completed')
-		G.done()
+	yield(D.show_dialog('ChatWithBarney'), 'completed')
 
 
 func on_look() -> void:

@@ -45,8 +45,6 @@ func play_text(props: Dictionary) -> void:
 	clear()
 	push_color(props.color)
 	append_bbcode(_wrapper % props.text)
-#	percent_visible = 0
-#	rect_size = Vector2.DOWN * _dflt_height
 	rect_size = Vector2(wrap_width, _dflt_height)
 
 	# Se usa un Label para saber el ancho y alto que tendrá el RichTextLabel

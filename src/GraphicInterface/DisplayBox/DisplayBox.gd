@@ -4,6 +4,11 @@ extends Label
 signal shown
 signal hidden
 
+export var wrap_width := 192.0
+
+var _min_width := rect_size.x
+var _dflt_height := rect_size.y
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
@@ -16,6 +21,8 @@ func _ready() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _show_box(msg := '') -> void:
+	rect_size = Vector2(_min_width, _dflt_height)
+	autowrap = false
 	text = msg
 
 	if msg:
@@ -24,3 +31,13 @@ func _show_box(msg := '') -> void:
 	else:
 		hide()
 		emit_signal('hidden')
+
+	# Ajustar el tamaño del Label si excede el tamaño máximo definido para que el
+	# texto se auto-ajuste.
+	if rect_size.x > wrap_width:
+		autowrap = true
+		rect_size.x = wrap_width
+	rect_size.y = (get_line_count() - 1) * _dflt_height
+	
+	# Centrar el Label en la ventana
+	rect_position = Vector2(Data.half_width - rect_size.x / 2.0, Data.half_height - rect_size.y / 2.0)

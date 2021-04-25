@@ -29,11 +29,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/Nodes/Clickable/Clickable.gd"
 }, {
-"base": "Resource",
-"class": "DataResource",
-"language": "GDScript",
-"path": "res://src/Resources/DataResource.gd"
-}, {
 "base": "Container",
 "class": "DialogMenu",
 "language": "GDScript",
@@ -43,6 +38,11 @@ _global_script_classes=[ {
 "class": "DialogText",
 "language": "GDScript",
 "path": "res://src/GraphicInterface/Dialog/DialogText.gd"
+}, {
+"base": "Resource",
+"class": "DialogTree",
+"language": "GDScript",
+"path": "res://src/DialogTree/DialogTree.gd"
 }, {
 "base": "Label",
 "class": "DisplayBox",
@@ -84,9 +84,9 @@ _global_script_class_icons={
 "AsepriteImporter": "",
 "Character": "",
 "Clickable": "",
-"DataResource": "",
 "DialogMenu": "",
 "DialogText": "",
+"DialogTree": "",
 "DisplayBox": "",
 "EditorTheme": "",
 "Hotspot": "",
@@ -109,8 +109,10 @@ config/icon="res://icon.png"
 Data="*res://src/Autoload/Data.gd"
 Utils="*res://src/Autoload/Utils.gd"
 Cursor="*res://src/Autoload/Cursor.tscn"
+E="*res://src/Autoload/GodotAdventureQuest.gd"
 C="*res://src/Autoload/CharacterInterface.gd"
 I="*res://src/Inventory/Inventory.tscn"
+D="*res://src/Autoload/DialogTreeInterface.tscn"
 G="*res://src/Autoload/GraphicInterfaceEvents.gd"
 
 [debug]

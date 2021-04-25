@@ -1,0 +1,20 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://src/DialogTree/ChatWithBarney/ChatWithBarney.gd" type="Script" id=1]
+
+[resource]
+script = ExtResource( 1 )
+options = [ {
+"id": "1",
+"text": "Option 1",
+"visible": true
+}, {
+"id": "Necesidad",
+"text": "Necesidad",
+"visible": true
+}, {
+"id": "Despedida",
+"text": "Chao",
+"visible": true
+} ]
+script_name = "ChatWithBarney"

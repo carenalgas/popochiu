@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=2]
 
-[ext_resource path="res://src/GAQTheme.tres" type="Theme" id=1]
+[ext_resource path="res://src/Resources/GAQTheme.tres" type="Theme" id=1]
 [ext_resource path="res://src/GraphicInterface/InfoBar/InfoBar.gd" type="Script" id=2]
 
 [node name="InfoBar" type="Label"]
