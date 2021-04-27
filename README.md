@@ -27,7 +27,6 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
 - [⚙ Godot Adventure Quest (núcleo)](#-godot-adventure-quest-núcleo)
 - [🛠 Configuración](#-configuración)
 - [📁 Estructura](#-estructura)
-  - [* **Game.gd** El script que controla la escena principal del juego.](#-gamegd-el-script-que-controla-la-escena-principal-del-juego)
 - [Nodos de un nivel más alto](#nodos-de-un-nivel-más-alto)
   - [Clickable](#clickable)
 
@@ -298,28 +297,26 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 # 📁 Estructura
 La estructura del proyecto toma como referencia los [lineamientos propuestos por GDQuest](https://www.gdquest.com/docs/guidelines/best-practices/godot-gdscript/#naming-conventions) para la nomenclatura de archivos y carpetas.
 
-* `assets`
-  * audio
-  * fonts
-  * images
-  * localization
-* `script_templates` Contiene archivos de script que servirán como plantilla para crear otros scripts que heredan de otros scripts. La idea con estos es reducir el tener que copiar y pegar código para crear objetos como personajes, hotspots, props, ítems, etcétera.
-* `src`
-  * `Autoload` Contiene los scripts que se cargarán en el Autoload (singleton) del proyecto.
-  * `Characters` Contiene los personajes del juego separados cada uno por carpeta.
-  * `DialogTree` Contiene los árboles de diálogo del juego separados por carpeta.
-    * `ChatWithBarney`
-      * **ChatWithBarney.tres** Define las opciones para el diálogo y tiene la referencia al script que se usará para controlar la lógica (ChatWithBarney.gd)
-      * **ChatWithBarney.gd** Controla la lógica del diálogo (como lo que pasa al iniciar o cuando se selecciona una opción).
-    * 📂++
-  * `GraphicInterface` Contiene los nodos que se encargan de presentar y controlar la Interfaz Gráfica del Jugador (IGJ).
-  * `Inventory` Contiene los ítems que se podrán añadir al inventario separados por carpeta.
-  * `Nodes` Contiene nodos que podrán agregarse a las escenas para crear personajes, hotspots, props, entre otros.
-  * `Resources` Contiene recursos (*.tres) creados para el proyecto.
-    * **GAQTheme.tres** El tema (*theme*) de Godot para los elementos de interfaz gráfica del juego.
-  * `Rooms` Contiene las habitaciones que podrán navegarse en el juego separadas por carpetas.
-  * **Game.tscn** Es la escena principal del juego, donde se cargan las habitaciones, la interfaz gráfica, el cursor y la cámara principal.
-  * **Game.gd** El script que controla la escena principal del juego.
+- `assets`
+  - audio
+  - fonts
+  - images
+  - localization
+- `script_templates` Contiene archivos de script que servirán como plantilla para crear otros scripts que heredan de otros scripts. La idea con estos es reducir el tener que copiar y pegar código para crear objetos como personajes, hotspots, props, ítems, etcétera.
+- `src`
+  - `Autoload` Contiene los scripts que se cargarán en el Autoload (singleton) del proyecto.
+  - `Characters` Contiene los personajes del juego separados cada uno por carpeta.
+  - `DialogTree` Contiene los árboles de diálogo del juego separados por carpeta.
+    - `ChatWithBarney`
+      - **ChatWithBarney.tres** Define las opciones para el diálogo y tiene la referencia al script que se usará para controlar la lógica (ChatWithBarney.gd)
+      - **ChatWithBarney.gd** Controla la lógica del diálogo (como lo que pasa al iniciar o cuando se selecciona una opción).
+    - 📂++
+  - `GraphicInterface` Contiene los nodos que se encargan de presentar y controlar la Interfaz Gráfica del Jugador (IGJ).
+  - `Inventory` Contiene los ítems que se podrán añadir al inventario separados por carpeta.
+  - `Nodes` Contiene nodos que podrán agregarse a las escenas para crear personajes, hotspots, props, entre otros.
+  - `Resources` Contiene recursos (*.tres) creados para el proyecto.
+    - **GAQTheme.tres** El tema (*theme*) de Godot para los elementos de interfaz gráfica del juego.
+  - `Rooms` Contiene las habitaciones que podrán navegarse en el juego separadas por carpetas.<!-- omit in toc -->
 ---
 ---
 ---
