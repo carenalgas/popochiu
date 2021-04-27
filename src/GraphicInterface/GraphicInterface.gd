@@ -19,6 +19,7 @@ func _ready():
 	
 	# Conectarse a eventos del universo digimon
 	C.connect('character_spoke', self, '_show_dialog_text')
+	G.connect('blocked', self, '_hide_panels')
 	G.connect('freed', self, '_show_panels')
 
 

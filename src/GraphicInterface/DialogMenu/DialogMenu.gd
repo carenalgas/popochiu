@@ -43,7 +43,7 @@ func _create_dialog_options(opts: Array) -> void:
 	var tmp_opts := []
 	for idx in opts.size():
 		var new_opt: DialogOption = DialogOption.new()
-		var id := 'Opt%d' % idx as int
+		var id := 'Opt%d' % (idx as int + 1)
 		new_opt.id = id
 		new_opt.text = opts[idx]
 		
@@ -66,18 +66,18 @@ func _create_options(options := [], autoshow := false) -> void:
 		var btn: Button = option_scene.instance() as Button
 		var dialog_option: DialogOption = opt
 
-		btn.text = opt.text
+		btn.text = dialog_option.text
 		btn.add_color_override('font_color', default)
 		btn.add_color_override('font_color_hover', hover)
 		
-		if opt.used:
+		if dialog_option.used:
 			btn.add_color_override('font_color', used)
 
-		btn.connect('pressed', self, '_on_option_clicked', [opt])
+		btn.connect('pressed', self, '_on_option_clicked', [dialog_option])
 
 		_options.add_child(btn)
 
-		if not opt.visible:
+		if not dialog_option.visible:
 			btn.hide()
 		else:
 			btn.show()

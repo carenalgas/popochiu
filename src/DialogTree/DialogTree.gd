@@ -10,6 +10,7 @@ export var script_name := ''
 func start() -> void:
 	_show_options()
 	yield(D, 'dialog_finished')
+	D.disconnect('option_selected', self, 'option_selected')
 
 
 func option_selected(opt: DialogOption) -> void:

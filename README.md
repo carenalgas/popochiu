@@ -44,7 +44,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 ## GodotAdventureQuest script (w.i.p.)
 Se puede hacer hablar a los personajes de la siguiente manera. Si el personaje no existe, la instrucción se ignora. En este caso *Coco* no es un personaje válido
 ```gdscript
-yield(Utils.run([
+yield(E.run([
   'Barney: Hola... maricón',
   'Coco: No existo',
   'Dave: No tiene que tratarme tan feo... malparido'
@@ -53,14 +53,14 @@ yield(Utils.run([
 
 También se pueden concatenar instrucciones de la forma en la que se venía haciendo:
 ```gdscript
-yield(Utils.run([
+yield(E.run([
   say('Venga usted que se puede mover'),
   'Barney: Yo estaré aquí clavado mientras me hacen controlable',
   G.display('En un futuro se podrá hacer controlable cualquier personaje')
 ]), 'completed')
 ```
 
-> `Utils.run(instructions: Array)` Se encarga de activar la interfaz gráfica una vez se han completado todas las instrucciones recibidas.
+> `E.run(instructions: Array)` Se encarga de activar la interfaz gráfica una vez se han completado todas las instrucciones recibidas.
 
 ### 🐞 Problemas
 - No se puede pasar a la lista de instrucciones el llamado a `C.character_say(...)` o `C.player_say(...)` porque esas funciones pasan a `Character.say(...)` el segundo parámetro en `true`, lo que hace que éste no use el `yield()` que pausa el flujo del juego para que lo controle `E.run(...)`. Podría hacer que las funciones de `C` mencionadas reciban un parámetro adicional, pero creo que eso enredaría un poco la cosa... aunque tal vez termine siendo lo más mejor para la humanidad.
@@ -74,7 +74,7 @@ yield(Utils.run([
 ---
 
 # 📦 Objetos y tareas
-> _Sí... esto debería ir en la documentación, pero... soy sólo un hombre... y... "What is a man!?"_ 🧛‍♂️
+> _Sí... esto debería ir en la documentación, pero... soy sólo un hombre... y... 🧛‍♂️ "What is a man!?"_
 
 ## 👨‍👩‍👦‍👦 Personajes (Character.tscn + Character.gd + CharacterTemplate.gd)
 _Cualquier objeto que pueda hablar, caminar, moverse entre habitaciones, tener inventario, entre otras muchas cosas._
@@ -139,7 +139,7 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [x] Que se pueda mostrar un texto dicho por un personaje.
 
 ### Texto de aviso (DisplayBox.tscn + DisplayBox.gd)
-- [ ] Que la apariencia no esté definida por el estilo del `Label` sino por un NinePatchRect (o un TextureRect) que haga más fácil personalizar su apariencia.
+- [ ] Que la apariencia no esté definida por el estilo del `Label` sino por un NinePatchRect (o un TextureRect) que haga más fácil su personalización.
 - [x] Que tenga un ancho máximo definido para que empiece a hacer Autowrap.
 - [x] Que vuelva a su tamaño original antes de mostrar el texto recibido.
 - [x] Que se pueda mostrar un texto de aviso.
@@ -148,6 +148,9 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [x] Mover el DialogMenu a una escena independiente.
 - [x] Que al seleccionar una opción se cierre el menú de opciones de diálogo y se envíe la opción seleccionada como parámetro de una señal.
 - [x] Que haya un VBoxContainer para mostrar las opciones del diálogo.
+
+### Menú del juego (*Toolbar*) (por implementar)
+*Permite silenciar el juego, cambiar el idioma, activar los subtítulos, cerrar el juego...*
 
 ## Inventory (Inventory.gd)
 - [x] Que se puedan eliminar ítems del inventario.
@@ -177,6 +180,7 @@ Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita 
 ## ⚙ Godot Adventure Quest (núcleo)
 - [ ] Que haya una máquina de estados.
 - [ ] Que se puedan guardar variables globales para saber el estado de los objetos en las habitaciones.
+- [ ] Que haya varios tipos de transición entre escenas.
 
 ## 🛠 Configuración
 - [ ] Que sea fácil indicarle al framework que el juego tiene controles de movimiento 2D (como casi todos los point n' click) o 1D (como [Short-term Battery](https://gamejolt.com/games/short-term-battery/340825) o [Loco Motive](https://robustgames.itch.io/loco-motive) o [iD](https://gamejolt.com/games/iD/256559)).

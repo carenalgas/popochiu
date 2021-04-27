@@ -1,4 +1,5 @@
 # TODO: Crear un icono para este tipo de nodos
+tool
 class_name Room
 extends Node2D
 # Nodo base para la creación de habitaciones dentro del juego.
@@ -73,23 +74,11 @@ func character_moved(chr: Character) -> void:
 
 
 func on_room_entered() -> void:
-	# Algo así tendrían que quedar los guiones cuando se están programando
-	# interacciones.
-	C.player.global_position = $Points/EntryPoint.global_position
-	yield(G.display('Haz clic para interactuar y clic derecho para examinar', true), 'completed')
-#	yield(G.display('DLG_A'), 'completed')
-#	yield(C.player_say('Bueno. Hay que empezar con algo'), 'completed')
-#	yield(C.character_say('Barney', 'Cállese maricón!'), 'completed')
-#	yield(get_tree().create_timer(1.0), 'timeout')
-#	C.player.face_up()
-#	yield(get_tree().create_timer(1.0), 'timeout')
-#	C.player.face_left()
-#	yield(get_tree().create_timer(1.0), 'timeout')
-#	C.player.face_right()
-#	yield(get_tree().create_timer(1.0), 'timeout')
-#	C.player.face_down()
-#	yield(C.player_say('Lo importante es empezar'), 'completed')
-	G.done()
+	pass
+
+
+func on_room_transition_finished() -> void:
+	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -116,7 +105,7 @@ func _move_along_path(distance):
 		_path.remove(0)
 
 	C.player.position = last_point
-	C.player.idle()
+	C.player.idle(false)
 	C.emit_signal('character_move_ended', C.player)
 
 	set_process(false)

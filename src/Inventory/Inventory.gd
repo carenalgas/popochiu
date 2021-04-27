@@ -45,10 +45,12 @@ func set_active_item(item: Item = null) -> void:
 		Cursor.remove_item_cursor()
 
 
-func remove_item(item_name: String) -> void:
+func remove_item(item_name: String, yield_on_start := true) -> void:
+	if yield_on_start: yield()
+	
 	var i: Item = _get_item_instance(item_name)
 	if is_instance_valid(i):
-		Cursor.remove_item_cursor()
+		set_active_item(null)
 		emit_signal('item_removed', i)
 		yield(self, 'item_remove_done')
 

@@ -21,7 +21,7 @@ func _ready():
 	# Conectarse a señales del cielo
 	C.connect('character_walk_to', self, '_check_walk')
 	
-	idle()
+	idle(false)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -34,39 +34,45 @@ func walk(target_pos: Vector2) -> void:
 	$Sprite.flip_h = target_pos.x < position.x
 
 
-func idle() -> void:
+func idle(yield_on_start := true) -> void:
+	if yield_on_start: yield()
 	$AnimationPlayer.play('idle_%s' % _looking_dir)
+	yield(get_tree(), 'idle_frame')
 
 
-func face_up() -> void:
+func face_up(yield_on_start := true) -> void:
+	if yield_on_start: yield()
 	_looking_dir = 'u'
-	$AnimationPlayer.play('idle_u')
+	yield(idle(false), 'completed')
 
 
-func face_down() -> void:
+func face_down(yield_on_start := true) -> void:
+	if yield_on_start: yield()
 	_looking_dir = 'd'
-	$AnimationPlayer.play('idle_d')
+	yield(idle(false), 'completed')
 
 
-func face_left() -> void:
-	_looking_dir = 'l'
-	$AnimationPlayer.play('idle_r')
-	$Sprite.flip_h = true
-
-
-func face_right() -> void:
+func face_left(yield_on_start := true) -> void:
+	if yield_on_start: yield()
 	_looking_dir = 'r'
-	$AnimationPlayer.play('idle_r')
+	$Sprite.flip_h = true
+	yield(idle(false), 'completed')
+
+
+func face_right(yield_on_start := true) -> void:
+	if yield_on_start: yield()
+	_looking_dir = 'r'
 	$Sprite.flip_h = false
+	yield(idle(false), 'completed')
 
 
-func say(dialog: String, no_yield := false) -> void:
-	if not no_yield:
-		yield()
+func say(dialog: String, yield_on_start := true) -> void:
+	if yield_on_start: yield()
+
 	C.emit_signal('character_spoke', self, dialog)
 	$AnimationPlayer.play('talk_%s' % _looking_dir)
 	yield(G, 'continue_clicked')
-	idle()
+	idle(false)
 
 
 # Quita un ítem del inventario del personaje (¿o del jugador?)

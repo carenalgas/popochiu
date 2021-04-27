@@ -1,16 +1,34 @@
-tool
-extends Hotspot
+extends Room
+# Nodo base para la creación de habitaciones dentro del juego.
 
-func on_interact() -> void:
-	yield(G.display('Este es un Hotspot', true), 'completed')
-	G.done()
-
-
-func on_look() -> void:
-	.on_look()
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# TODO: Sobrescribir los métodos de Godot que hagan falta
 
 
-func on_item_used(item: Item) -> void:
-	if item.script_name == 'Bucket':
-		yield(C.player_say('No quiero tirar mi balde al bosque'), 'completed')
-		G.done()
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+func on_room_entered() -> void:
+	# Algo así tendrían que quedar los guiones cuando se están programando
+	# interacciones.
+	C.player.global_position = $Points/EntryPoint.global_position
+
+
+func on_room_transition_finished() -> void:
+	E.run([
+		G.display('Haz clic para interactuar y clic derecho para examinar'),
+		G.display('DLG_A'),
+		C.player_say('Bueno. Hay que empezar con algo'),
+		C.character_say('Barney', 'Cállese maricón!'),
+		E.wait(1, true),
+		C.player.face_up(),
+		E.wait(1, true),
+		C.player.face_left(),
+		E.wait(1, true),
+		C.player.face_right(),
+		E.wait(1, true),
+		C.player.face_down(),
+		C.player_say('Lo importante es empezar')
+	])
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# TODO: Poner aquí los métodos privados

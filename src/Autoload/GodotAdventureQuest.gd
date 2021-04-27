@@ -7,21 +7,34 @@ var in_run := false
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+func wait(time := 1.0, yield_on_start := false) -> void:
+	if yield_on_start: yield()
+	yield(get_tree().create_timer(time), 'timeout')
+
+
 # Detiene una cadena de ejecución
 func break_run() -> void:
 	pass
 
 
 func run(instructions: Array) -> void:
+	G.block()
+	
 	for instruction in instructions:
 		if instruction is String:
 			var i: String = instruction
-			var char_talk: int = i.find(':')
-			if char_talk:
-				var char_name: String = i.substr(0, char_talk)
-				if not C.is_valid_character(char_name): continue
-				var char_line: String = i.substr(char_talk + 1)
-				yield(C.character_say(char_name, char_line), 'completed')
+			
+			# TODO: Mover esto a una función que se encargue de evaluar cadenas
+			# de texto
+			if i == '...':
+				yield(wait(1.0), 'completed')
+			else:
+				var char_talk: int = i.find(':')
+				if char_talk:
+					var char_name: String = i.substr(0, char_talk)
+					if not C.is_valid_character(char_name): continue
+					var char_line: String = i.substr(char_talk + 1)
+					yield(C.character_say(char_name, char_line, false), 'completed')
 		elif instruction is GDScriptFunctionState and instruction.is_valid():
 			instruction.resume()
 			yield(instruction, 'completed')

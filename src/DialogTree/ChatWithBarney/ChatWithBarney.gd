@@ -17,7 +17,7 @@ func option_selected(opt: DialogOption) -> void:
 		'1':
 			yield(E.run([
 				C.player.say('Esto está como bueno'),
-				C._get_character('Barney').say('No me lo parece')
+				C.get_character('Barney').say('No me lo parece')
 			]), 'completed')
 		'Necesidad':
 			yield(C.player_say('Estoy que me cago'), 'completed')
