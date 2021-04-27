@@ -107,7 +107,7 @@ _global_script_class_icons={
 config/name="Godot Adventure Quest"
 config/description="Framework para crear juegos de aventura al estilo de Adventure Game Studio y Power Quest.
 A futuro podría convertirse en un plugin."
-run/main_scene="res://src/Game.tscn"
+run/main_scene="res://src/Rooms/Main/Main.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -115,7 +115,7 @@ config/icon="res://icon.png"
 Data="*res://src/Autoload/Data.gd"
 Utils="*res://src/Autoload/Utils.gd"
 Cursor="*res://src/Autoload/Cursor.tscn"
-E="*res://src/Autoload/GodotAdventureQuest.gd"
+E="*res://src/Autoload/GodotAdventureQuest.tscn"
 C="*res://src/Autoload/CharacterInterface.gd"
 I="*res://src/Inventory/Inventory.tscn"
 D="*res://src/Autoload/DialogTreeInterface.tscn"

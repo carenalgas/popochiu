@@ -22,19 +22,14 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
-func play_transition(props := {name = 'fade_in', direction = 'down', time = 1.0}) -> void:
-	$AnimationPlayer.playback_speed = 1.0 / props.time
+func play_transition(name := 'fade_in', direction := 'down', time := 1.0) -> void:
+	$AnimationPlayer.playback_speed = 1.0 / time
 	
-	match props.name:
+	match name:
 		'fade_in':
 			$AnimationPlayer.play('fade_in')
 		'fade_out':
 			$AnimationPlayer.play('fade_out')
-
-
-func goto_room(path := '') -> void:
-	# TODO: Algún día esto hará el cambio de habitación
-	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

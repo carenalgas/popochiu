@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://src/Autoload/GodotAdventureQuest.gd" type="Script" id=1]
+[ext_resource path="res://src/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://src/GraphicInterface/GraphicInterface.tscn" type="PackedScene" id=3]
+[ext_resource path="res://src/DialogTree/ChatWithBarney/ChatWithBarney.tres" type="Resource" id=4]
+
+[node name="GodotAdventureQuest" type="Node"]
+script = ExtResource( 1 )
+rooms = [ "res://src/Rooms/Main/Main.tscn", "res://src/Rooms/Forest/Forest.tscn" ]
+characters = [ "res://src/Characters/Dave/Dave.tscn", "res://src/Characters/Barney/Barney.tscn" ]
+inventory_items = [ "res://src/Inventory/Items/Bucket.tscn" ]
+dialog_trees = [ ExtResource( 4 ) ]
+
+[node name="GraphicInterface" parent="." instance=ExtResource( 3 )]
+
+[node name="TransitionLayer" parent="." instance=ExtResource( 2 )]
+
+[node name="MainCamera" type="Camera2D" parent="."]
+current = true
+limit_left = -204
+limit_top = -90
+limit_right = 204
+limit_bottom = 90
+limit_smoothed = true
+smoothing_enabled = true
+smoothing_speed = 10.0
+drag_margin_left = 0.25
+drag_margin_top = 0.1
+drag_margin_right = 0.25
+drag_margin_bottom = 0.1
+editor_draw_limits = true
+editor_draw_drag_margin = true
+__meta__ = {
+"_editor_description_": ""
+}

@@ -5,7 +5,7 @@ extends Prop
 func on_interact() -> void:
 	yield(C.walk_to_clicked(false), 'completed')
 	C.player.face_up(false)
-	yield(E.wait(), 'completed')
+	yield(E.wait(1.0, false), 'completed')
 	C.player.face_down(false)
 	yield(C.player_say('Esa mierda huele a berrinche como un hijueputa', false), 'completed')
 	G.done()
@@ -25,6 +25,7 @@ func on_item_used(item: Item) -> void:
 			I.remove_item(item.script_name),
 			'...',
 			C.player_say('Te echaré de menos'),
-			E.wait(5, true),
-			C.player.face_right()
+			E.wait(3),
+			C.player.face_left(),
+			C.player_say('...te echaré de menos...'),
 		])

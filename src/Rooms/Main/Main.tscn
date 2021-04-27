@@ -1,0 +1,24 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://src/Rooms/Main/Main.gd" type="Script" id=1]
+[ext_resource path="res://src/Rooms/Room.tscn" type="PackedScene" id=2]
+[ext_resource path="res://src/Rooms/Main/Bg.gd" type="Script" id=3]
+[ext_resource path="res://src/Nodes/Prop/Prop.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/images/_repo/cover.png" type="Texture" id=5]
+
+[node name="Main" instance=ExtResource( 2 )]
+script = ExtResource( 1 )
+script_name = "Main"
+
+[node name="Bg" parent="Props" index="0" instance=ExtResource( 4 )]
+script = ExtResource( 3 )
+cursor = 1
+texture = ExtResource( 5 )
+
+[node name="CollisionPolygon2D" parent="Props/Bg" index="0"]
+polygon = PoolVector2Array( -160, -90, 160, -90, 160, 90, -160, 90 )
+
+[node name="Sprite" parent="Props/Bg" index="3"]
+texture = ExtResource( 5 )
+
+[editable path="Props/Bg"]

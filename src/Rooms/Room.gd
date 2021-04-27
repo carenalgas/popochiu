@@ -11,6 +11,8 @@ signal prop_looked(prop, msg)
 signal hotspot_interacted(hotspot)
 signal hotspot_looked(hotspot)
 
+export var script_name := ''
+
 var _path := []
 
 onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
@@ -41,9 +43,12 @@ func _ready():
 #			'interacted', self, 'emit_signal', ['hotspot_interacted', hotspot]
 #		)
 		hotspot.connect('looked', self, '_hotspot_looked', [hotspot])
+	
+	E.room_readied(self)
 
 
 func _process(delta):
+	if not is_instance_valid(C.player): return
 	var walk_distance = C.player.walk_speed * delta
 	_move_along_path(walk_distance)
 

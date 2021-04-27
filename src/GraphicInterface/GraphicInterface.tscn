@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://src/GraphicInterface/GraphicInterface.gd" type="Script" id=1]
 [ext_resource path="res://src/Resources/GAQTheme.tres" type="Theme" id=2]
@@ -6,7 +6,6 @@
 [ext_resource path="res://src/GraphicInterface/Inventory/InventoryContainer.tscn" type="PackedScene" id=4]
 [ext_resource path="res://src/GraphicInterface/DialogMenu/DialogMenu.tscn" type="PackedScene" id=5]
 [ext_resource path="res://src/GraphicInterface/InfoBar/InfoBar.tscn" type="PackedScene" id=9]
-[ext_resource path="res://src/GraphicInterface/DisplayBox/DisplayBox.gd" type="Script" id=10]
 [ext_resource path="res://src/GraphicInterface/DisplayBox/DisplayBox.tscn" type="PackedScene" id=11]
 
 [sub_resource type="StyleBoxEmpty" id=1]
@@ -43,7 +42,6 @@ wrap_width = 200
 min_wrap_width = 120
 
 [node name="DisplayBox" parent="MainContainer" instance=ExtResource( 11 )]
-script = ExtResource( 10 )
 
 [node name="ToolbarContainer" type="PanelContainer" parent="MainContainer"]
 visible = false

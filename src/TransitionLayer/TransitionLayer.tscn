@@ -3,14 +3,14 @@
 [ext_resource path="res://src/TransitionLayer/TransitionLayer.gd" type="Script" id=1]
 [ext_resource path="res://assets/images/transition_layer/fade.png" type="Texture" id=2]
 
-[sub_resource type="Animation" id=2]
+[sub_resource type="Animation" id=1]
 resource_name = "fade_in"
 tracks/0/type = "bezier"
 tracks/0/path = NodePath("Transitions/Fade:modulate:r")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/imported = false
-tracks/0/enabled = true
+tracks/0/enabled = false
 tracks/0/keys = {
 "points": PoolRealArray( 1, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0 ),
 "times": PoolRealArray( 0, 1 )
@@ -20,7 +20,7 @@ tracks/1/path = NodePath("Transitions/Fade:modulate:g")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/imported = false
-tracks/1/enabled = true
+tracks/1/enabled = false
 tracks/1/keys = {
 "points": PoolRealArray( 1, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0 ),
 "times": PoolRealArray( 0, 1 )
@@ -30,7 +30,7 @@ tracks/2/path = NodePath("Transitions/Fade:modulate:b")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/imported = false
-tracks/2/enabled = true
+tracks/2/enabled = false
 tracks/2/keys = {
 "points": PoolRealArray( 1, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0 ),
 "times": PoolRealArray( 0, 1 )
@@ -46,8 +46,7 @@ tracks/3/keys = {
 "times": PoolRealArray( 0, 1 )
 }
 
-[sub_resource type="Animation" id=1]
-resource_name = "fade_out"
+[sub_resource type="Animation" id=2]
 tracks/0/type = "bezier"
 tracks/0/path = NodePath("Transitions/Fade:modulate:r")
 tracks/0/interp = 1
@@ -94,8 +93,8 @@ layer = 15
 script = ExtResource( 1 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-anims/fade_in = SubResource( 2 )
-anims/fade_out = SubResource( 1 )
+anims/fade_in = SubResource( 1 )
+anims/fade_out = SubResource( 2 )
 
 [node name="Transitions" type="Node2D" parent="."]
 

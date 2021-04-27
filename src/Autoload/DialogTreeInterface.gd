@@ -1,4 +1,5 @@
 extends Node
+# (D) Para hacer cosas con los árboles de diálogo
 
 signal option_selected(opt)
 signal dialog_requested

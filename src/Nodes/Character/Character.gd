@@ -34,40 +34,40 @@ func walk(target_pos: Vector2) -> void:
 	$Sprite.flip_h = target_pos.x < position.x
 
 
-func idle(yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func idle(is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	$AnimationPlayer.play('idle_%s' % _looking_dir)
 	yield(get_tree(), 'idle_frame')
 
 
-func face_up(yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func face_up(is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	_looking_dir = 'u'
 	yield(idle(false), 'completed')
 
 
-func face_down(yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func face_down(is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	_looking_dir = 'd'
 	yield(idle(false), 'completed')
 
 
-func face_left(yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func face_left(is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	_looking_dir = 'r'
 	$Sprite.flip_h = true
 	yield(idle(false), 'completed')
 
 
-func face_right(yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func face_right(is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	_looking_dir = 'r'
 	$Sprite.flip_h = false
 	yield(idle(false), 'completed')
 
 
-func say(dialog: String, yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func say(dialog: String, is_in_queue := true) -> void:
+	if is_in_queue: yield()
 
 	C.emit_signal('character_spoke', self, dialog)
 	$AnimationPlayer.play('talk_%s' % _looking_dir)

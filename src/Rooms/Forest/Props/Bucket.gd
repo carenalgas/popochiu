@@ -8,7 +8,7 @@ func on_interact() -> void:
 	yield(C.walk_to_clicked(false), 'completed')
 	C.player.face_down(false)
 	yield(C.player_say('Uy, un balde re-áspero', false), 'completed')
-	yield(E.wait(0.2), 'completed')
+	yield(E.wait(0.2, false), 'completed')
 	get_parent().remove_child(self)
 	yield(I.add_item_as_active('Bucket'), 'completed')
 	yield(C.player_say('¡Ora sí! Ya verán de lo que soy capaz.', false), 'completed')

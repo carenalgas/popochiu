@@ -1,4 +1,5 @@
 extends Node
+# (C) Para hacer cosas con los personajes
 
 # El nodo Character que se movió en la escena
 signal character_moved(character)
@@ -12,10 +13,10 @@ var characters := []
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
-func character_say(chr_name: String, dialog: String, yield_on_start := true) -> void:
+func character_say(chr_name: String, dialog: String, is_in_queue := true) -> void:
 	var talking_character: Character = get_character(chr_name)
 
-	if yield_on_start: yield()
+	if is_in_queue: yield()
 
 	if talking_character:
 		yield(talking_character.say(dialog, false), 'completed')
@@ -23,27 +24,27 @@ func character_say(chr_name: String, dialog: String, yield_on_start := true) -> 
 		printerr('CharacterInterface:', 'character %s not found')
 
 
-func player_say(dialog: String, yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func player_say(dialog: String, is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	
 	yield(player.say(dialog, false), 'completed')
 
 
-func character_walk_to(chr_name: String, position: Vector2, yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func character_walk_to(chr_name: String, position: Vector2, is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	
 	emit_signal('character_walk_to', chr_name, position)
 	yield(self, 'character_move_ended')
 
 
-func player_walk_to(position: Vector2, yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func player_walk_to(position: Vector2, is_in_queue := true) -> void:
+	if is_in_queue: yield()
 
 	yield(character_walk_to(Data.player, position, false), 'completed')
 
 
-func walk_to_clicked(yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func walk_to_clicked(is_in_queue := true) -> void:
+	if is_in_queue: yield()
 
 	yield(character_walk_to(Data.player, Data.clicked.walk_to_point, false), 'completed')
 

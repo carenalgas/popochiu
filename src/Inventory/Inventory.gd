@@ -1,4 +1,5 @@
 extends Node
+# (I) Para hacer cosas con el inventario
 
 signal item_added(item)
 signal item_add_done(item)
@@ -45,8 +46,8 @@ func set_active_item(item: Item = null) -> void:
 		Cursor.remove_item_cursor()
 
 
-func remove_item(item_name: String, yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func remove_item(item_name: String, is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	
 	var i: Item = _get_item_instance(item_name)
 	if is_instance_valid(i):

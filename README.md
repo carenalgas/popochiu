@@ -1,9 +1,35 @@
-# Godot Adventure Quest
+<!-- no toc -->
+# Godot Adventure Quest<!-- omit in toc -->
 Framework para crear juegos de aventura con Godot al estilo de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
 ![cover](./assets/images/_repo/cover.png "Godot Adventure Quest")
 ![cover](./assets/images/_repo/gaq_01.gif "Godot Adventure Quest en acción")
 
+# Tabla de contenidos<!-- omit in toc -->
+- [📃 Resumen y ejemplos de uso](#-resumen-y-ejemplos-de-uso)
+- [🐞 Problemas](#-problemas)
+- [🎮 Controles (en el juego)](#-controles-en-el-juego)
+- [👨‍👩‍👦‍👦 Personajes](#-personajes)
+- [🚪 Habitaciones](#-habitaciones)
+  - [🪑 Props](#-props)
+  - [👆 Hotspots](#-hotspots)
+  - [Regiones](#regiones)
+  - [Puntos (Position2D)](#puntos-position2d)
+  - [🚶‍♀️ Áreas transitables (walkable areas)](#️-áreas-transitables-walkable-areas)
+- [Interfaz gráfica](#interfaz-gráfica)
+  - [Texto de descripción](#texto-de-descripción)
+  - [Texto de diálogo](#texto-de-diálogo)
+  - [Texto de aviso](#texto-de-aviso)
+  - [Menú de opciones de diálogo](#menú-de-opciones-de-diálogo)
+  - [Menú del juego (*Toolbar*)](#menú-del-juego-toolbar)
+- [📦 Inventory](#-inventory)
+- [💬 Árboles de diálogo](#-árboles-de-diálogo)
+- [⚙ Godot Adventure Quest (núcleo)](#-godot-adventure-quest-núcleo)
+- [🛠 Configuración](#-configuración)
+- [📁 Estructura](#-estructura)
+  - [* **Game.gd** El script que controla la escena principal del juego.](#-gamegd-el-script-que-controla-la-escena-principal-del-juego)
+- [Nodos de un nivel más alto](#nodos-de-un-nivel-más-alto)
+  - [Clickable](#clickable)
 
 # 📃 Resumen y ejemplos de uso
 
@@ -35,34 +61,17 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 * E (para acceder a GodotAdventureQuest.gd - la matrona)
   ```gdscript
   E.run([
-    C._get_character('Barney').say('Venga usted que se puede mover'),
-    'Barney: Yo estaré aquí clavado mientras me hacen controlable',
+    'Barney: Hola... maricón',
+    'Coco: No existo, entonces no puedo decir ni mierda',
+    C.player_say('No tiene que tratarme tan feo...'),
+    E.wait(2),
+    C.player_say('malparido'),
     G.display('En un futuro se podrá hacer controlable cualquier personaje')
   ], 'completed')
   ```
+  > `E.run(instructions: Array)` Se encarga de activar la interfaz gráfica una vez se han completado todas las instrucciones recibidas.
 
-## GodotAdventureQuest script (w.i.p.)
-Se puede hacer hablar a los personajes de la siguiente manera. Si el personaje no existe, la instrucción se ignora. En este caso *Coco* no es un personaje válido
-```gdscript
-yield(E.run([
-  'Barney: Hola... maricón',
-  'Coco: No existo',
-  'Dave: No tiene que tratarme tan feo... malparido'
-]), 'completed')
-```
-
-También se pueden concatenar instrucciones de la forma en la que se venía haciendo:
-```gdscript
-yield(E.run([
-  say('Venga usted que se puede mover'),
-  'Barney: Yo estaré aquí clavado mientras me hacen controlable',
-  G.display('En un futuro se podrá hacer controlable cualquier personaje')
-]), 'completed')
-```
-
-> `E.run(instructions: Array)` Se encarga de activar la interfaz gráfica una vez se han completado todas las instrucciones recibidas.
-
-### 🐞 Problemas
+# 🐞 Problemas
 - No se puede pasar a la lista de instrucciones el llamado a `C.character_say(...)` o `C.player_say(...)` porque esas funciones pasan a `Character.say(...)` el segundo parámetro en `true`, lo que hace que éste no use el `yield()` que pausa el flujo del juego para que lo controle `E.run(...)`. Podría hacer que las funciones de `C` mencionadas reciban un parámetro adicional, pero creo que eso enredaría un poco la cosa... aunque tal vez termine siendo lo más mejor para la humanidad.
 
 
@@ -73,64 +82,116 @@ yield(E.run([
 ---
 ---
 
-# 📦 Objetos y tareas
-> _Sí... esto debería ir en la documentación, pero... soy sólo un hombre... y... 🧛‍♂️ "What is a man!?"_
+# 👨‍👩‍👦‍👦 Personajes
+`Character.tscn, Character.gd, CharacterTemplate.gd`
 
-## 👨‍👩‍👦‍👦 Personajes (Character.tscn + Character.gd + CharacterTemplate.gd)
-_Cualquier objeto que pueda hablar, caminar, moverse entre habitaciones, tener inventario, entre otras muchas cosas._
+*Cualquier objeto que pueda hablar, caminar, moverse entre habitaciones, tener inventario, entre otras muchas cosas.*
 
-- [ ] Que la función caminar tenga una corrutina y no el CharacterInterface.gd.
-- [ ] Que personaje pueda mirar en la dirección del objeto al que se hizo clic.
+**Por hacer**
 - [ ] Que personaje pueda mirar en la dirección de un objeto específico (puede ser un personaje, un hotspot, un prop, etcétera).
 - [ ] Crear máquina de estados.
+
+**Hecho**
+- [x] Que funciones de mirar en diferentes direcciones se puedan enviar a la cola de instrucciones.
+- [x] Que la función caminar tenga una corrutina y no el CharacterInterface.gd.
+- [x] Que personaje pueda mirar en la dirección del objeto al que se hizo clic.
 - [x] Que la animación de hablar se haga en la última dirección en la que miró el personaje.
 - [x] Que se dispare la animación de hablar y pase a idle cuando termine.
 - [x] Que puedan caminar por el escenario.
 - [x] Que puedan decir cosas al interactuar con objetos.
 
-## 🚪 Habitaciones (Room.tscn + Room.gd)
-*Las escenas del juego (por donde se moverá el personaje)*
-- [ ] Crear plantilla para facilitar la asignación de un script a cada habitación.
+# 🚪 Habitaciones
+`Room.tscn, Room.gd, RoomTemplate.gd`
 
-### 🪑 Props (Prop.tscn + Prop.gd + PropTemplate.gd)
+*Las escenas del juego (por donde se moverá el personaje)*
+
+**Por hacer**
+- [ ] Que haya un Autoload para controlar eventos comunes a las habitaciones, sus props, sus hotspot, entre otros.
+
+**Hecho**
+- [x] Que se pueda hacer transición de una habitación a otra.
+- [x] Que cuando una habitación haya entrado al árbol de nodos, se llame a `Room.on_room_entered`.
+- [x] Que cuando el efecto de transición (*fade out* por ahora) para el cambio de habitación haya terminado, se llame al método `Room.on_room_transition_finished`.
+- [x] Crear plantilla para facilitar la asignación de un script a cada habitación.
+
+## 🪑 Props
+`Prop.tscn, Prop.gd, PropTemplate.gd`
+
 *Elementos visuales para las habitaciones. Pueden tener interacción.*
 *Ej: las imágenes de fondo y primer plano, un objeto que se puede agarrar...*
+
+**Por hacer**
+- [ ] Crear un plugin para facilitar su creación.
+
+**Hecho**
 - [x] Que Prop herede de Clickable.
 - [x] Crear plantilla para facilitar la asignación de un script a cada Prop creado en una habitación.
 - [x] Crear nodo que permita definir un Sprite y un Area2D para crear un Prop.
 
-### 👆 Hotspots (Hotspot.tscn + Hotspot.gd + HotspotTemplate.gd)
+## 👆 Hotspots
+`Hotspot.tscn, Hotspot.gd, HotspotTemplate.gd`
+
 *Áreas con las que se puede interactuar (clic izquierdo o clic derecho*
 *Ej: El cielo, algo que haga parte de la imagen de fondo.*
+
+**Por hacer**
+- [ ] Crear un plugin para facilitar su creación.
+
+**Hecho**
 - [x] Que Hotspot herede de Clickable.
 - [x] Crear plantilla para facilitar la asignación de un script a cada Hotspot creado en una habitación.
 - [x] Crear nodo que permita definir un Area2D para controlar la interacción del mouse con ella.
 
-### Regiones (por implementar)
+## Regiones
 *Áreas que pueden disparar eventos cuando un personaje entra en contacto con estas.*
 
+**Por hacer**
 - [ ] Crear *script_template* para facilitar la creación de las regiones.
 - [ ] Que región se pueda desactivar una vez haya sido activada.
 - [ ] Que se puedan crear regiones que reaccionen cuando un personaje entre en ellas.
 
-### Puntos (Position2D)
+**Hecho**
+😖
+
+## Puntos (Position2D)
 *Posiciones que tienen un nombre y que pueden usarse para ubicar a los personajes.*
 
-### 🚶‍♀️ Áreas transitables
+## 🚶‍♀️ Áreas transitables (walkable areas)
 *Son `Navigation2D` que definen por dónde pueden moverse los personajes.*
 
-## Interfaz gráfica (GraphicInterface.tscn + GraphicInterface.gd)
+# Interfaz gráfica
+`GraphicInterface.tscn, GraphicInterface.gd, GraphicInterfaceEvents.gd`
+
 _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos de diálogo (DialogText), textos de aviso, o narrador, (DisplayBox), el inventario (InventoryContainer), el menú de opciones (Toolbar), el menú de diálogo (DialogMenu) y los textos de descripción (InfoBar), entre otros._
 
+**Por hacer**
 - [ ] Que haya algo que haga entender que se puede hacer clic para avanzar en el diálogo o saltar pasos de una escena cinemática (cutscene).
 
-### Texto de descripción (InfoBar.tscn + InfoBar.gd)
+**Hecho**
+- [x] Que se puedan ocultar sus elementos sin que ocurra la animación.
+- [x] Refactorizar los nombres de algunas variables y métodos para que se entienda mejor lo que hacen.
+
+## Texto de descripción
+`InfoBar.tscn, InfoBar.gd`
+
+*Muestra un texto en la parte inferior de la pantalla. Puede usarse para mostrar las descripciones de los objetos o la acción que se ejecutará sobre cada uno al usar cada clic.*
+
+**Por hacer**
 - [ ] Mover el elemento a una escena con su script propio.
+
+**Hecho**
 - [x] Que se pueda mostrar un texto de descripción cuando el cursor pasa sobre un objeto.
 
-### Texto de diálogo (DialogText.tscn + DialogText.gd)
+## Texto de diálogo
+`DialogText.tscn, DialogText.gd`
+
+*Es el que se encarga de mostrar lo que dicen los personajes. Se ubica encima del personaje que está hablando. En versiones posteriores del framework va a ser una de las opciones para mostrar el diálogo, porque también se podrá usar una caja de texto con el retrato del personaje que está hablando.*
+
+**Por hacer**
 - [ ] Calcular la altura del texto para que no se supoerponga al personaje que habla.
 - [ ] Que al renderizarse en el borde el texto no se alinee al centro. Si se sale por la izquierda, alinearlo a la izquierda, si se sale por la derecha alinearlo a la derecha.
+
+**Hecho**
 - [x] Renombrar AnimatedRichText por DialogText.
 - [x] Que nodo no se salga de la pantalla en los bordes. Si se sale por la izquierda, debería renderizarse a 4px del borde; igual para el borde derecho.
 - [x] Que nodo tenga un ancho máximo y uno mínimo para controlar el Autowrap.
@@ -138,35 +199,71 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [x] Que texto aparezca sobre el personaje que habla.
 - [x] Que se pueda mostrar un texto dicho por un personaje.
 
-### Texto de aviso (DisplayBox.tscn + DisplayBox.gd)
+## Texto de aviso
+`DisplayBox.tscn, DisplayBox.gd`
+
+*Sirve para mostrar mensajes del juego o un narrador. Se renderiza en el centro de la ventana.*
+
+**Por hacer**
 - [ ] Que la apariencia no esté definida por el estilo del `Label` sino por un NinePatchRect (o un TextureRect) que haga más fácil su personalización.
+
+**Hecho**
 - [x] Que tenga un ancho máximo definido para que empiece a hacer Autowrap.
 - [x] Que vuelva a su tamaño original antes de mostrar el texto recibido.
 - [x] Que se pueda mostrar un texto de aviso.
 
-### Menú de opciones de diálogo (DialogMenu.tscn + DialogMenu.gd + DialogOption.tscn)
+## Menú de opciones de diálogo
+`DialogMenu.tscn, DialogMenu.gd, DialogOption.tscn`
+*Muestra un menú de opciones vinculadas a un diálogo (ya sea uno almacenado en disco (.tres) o uno creado en tiempo de ejecución). La opción seleccionada se notifica a través de una señal para que sea controlada por el diálogo que esté activo en ese momento.*
+
+**Por hacer**
+- [ ] Que se puedan ocultar opciones.
+- [ ] Que una opción pueda ser inmune a mostrarse como usada.
+- [ ] Que se pueda mostrar el panel con una animación.
+- [ ] Que sea fácil personalizar el menú para usar botones con iconos u otros elementos.
+
+**Hecho**
 - [x] Mover el DialogMenu a una escena independiente.
 - [x] Que al seleccionar una opción se cierre el menú de opciones de diálogo y se envíe la opción seleccionada como parámetro de una señal.
 - [x] Que haya un VBoxContainer para mostrar las opciones del diálogo.
 
-### Menú del juego (*Toolbar*) (por implementar)
+## Menú del juego (*Toolbar*)
 *Permite silenciar el juego, cambiar el idioma, activar los subtítulos, cerrar el juego...*
 
-## Inventory (Inventory.gd)
+**Por hacer**
+- [ ] Crear escena con botones para silenciar/activar sonido, cambiar idioma, activar/desactivar subtítulos, cerrar el juego.
+- [ ] Hacer la funcionalidad para cada uno de esos botones.
+
+**Hecho**
+😖
+
+# 📦 Inventory
+`Inventory.tscn, Inventory.gd, Item.gd, InventoryItem.gd, ItemTemplate.gd`
+*Controla qué objetos hay en el inventario (a futuro será por personaje) y qué objetos se pueden meter al inventario.*
+
+**Por hacer**
+- [ ] Que cada personaje pueda tener un inventario único.
+- [ ] Que se pueda indicar la cantidad a guardar de un objeto en el inventario.
+- [ ] Que se puedan mezclar objetos del inventario.
+
+**Hecho**
 - [x] Que se puedan eliminar ítems del inventario.
 - [x] Que se puedan usar ítems del inventario.
 - [x] Que se pueda agregar un ítem al inventario y que de una vez se convierta en el ítem activo.
 - [x] Que se pueda "soltar" el ítem activo cuando se hace clic derecho al tener un objeto de inventario activo.
 - [x] Que se pueda agregar un ítem (Item.gd) al inventario.
 
-## 💬 Árboles de diálogo
-< DialogTree.gd, DialogOption.gd, DialogTreeTemplate.gd, DialogTreeInterface.tscn >
+# 💬 Árboles de diálogo
+`DialogTree.gd, DialogOption.gd, DialogTreeTemplate.gd, DialogTreeInterface.tscn`
 
-Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita dos archivos: un `.tres` que permite definir las opciones que tendrá el diálogo y su ID (script_name); y un `.gd` que permite controlar la lógica de lo que pasará cuando inicie, cuando se seleccione una opción y, eventualmente, cuando termine. Cuando se cree un nuevo recurso de tipo **DialogTree.gd**, hay que asignarle un script que use como plantilla el **DialogTreeTemplate.gd**.
+*Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita dos archivos: un `.tres` que permite definir las opciones que tendrá el diálogo y su ID (script_name); y un `.gd` que permite controlar la lógica de lo que pasará cuando inicie, cuando se seleccione una opción y, eventualmente, cuando termine. Cuando se cree un nuevo recurso de tipo **DialogTree.gd**, hay que asignarle un script que use como plantilla el **DialogTreeTemplate.gd**.*
 
+**Por hacer**
 - [ ] Que se puedan ocultar opciones de diálogo una vez hayan sido usadas.
 - [ ] Que una opción de diálogo se pueda ocultar para siempre.
 - [ ] Que se puedan apagar opciones de diálogo estando dentro de cualquier opción del mismo diálogo.
+
+**Hecho**
 - [x] Que opciones de diálogo se muestren de otro color cuando han sido usadas.
 - [x] Actualizar script que escucha el cambio en el arreglo de opciones de un `DialogTree` para que se llenen algunas propiedades con valores por defecto: `id`, `text`, `script_name` y `resource_name`.
 - [x] Actualizar la creación de opciones de diálogo en caliente para que sean un `DialogOption` y no un `Dictionary`.
@@ -177,14 +274,24 @@ Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita 
 - [x] Que al seleccionar una opción del menú de diálogo este se cierre y se pase la opción seleccionada como parámetro de la señal que permite al juego continuar con el flujo de instrucciones.
 - [x] Que se puede disparar un inline-dialog pasando las opciones como un arreglo de `String`.
 
-## ⚙ Godot Adventure Quest (núcleo)
+# ⚙ Godot Adventure Quest (núcleo)
+`GodotAdventureQuest.tscn, GodotAdventureQuest.gd`
+
+**Por hacer**
 - [ ] Que haya una máquina de estados.
 - [ ] Que se puedan guardar variables globales para saber el estado de los objetos en las habitaciones.
 - [ ] Que haya varios tipos de transición entre escenas.
+- [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
-## 🛠 Configuración
+**Hecho**
+- [x] Que se cargue como una escena de Autoload que tenga adentro las escenas de interfaz gráfica y efectos de transición.
+- [x] Que permita cambiar de habitación y llame a los métodos respectivos dependiendo del estado de la transición.
+- [x] Que en este se registren todas las habitaciones, personajes, ítems de inventario y árboles de conversación del juego.
+
+# 🛠 Configuración
 - [ ] Que sea fácil indicarle al framework que el juego tiene controles de movimiento 2D (como casi todos los point n' click) o 1D (como [Short-term Battery](https://gamejolt.com/games/short-term-battery/340825) o [Loco Motive](https://robustgames.itch.io/loco-motive) o [iD](https://gamejolt.com/games/iD/256559)).
 
+---
 ---
 ---
 
@@ -213,7 +320,8 @@ La estructura del proyecto toma como referencia los [lineamientos propuestos por
   * `Rooms` Contiene las habitaciones que podrán navegarse en el juego separadas por carpetas.
   * **Game.tscn** Es la escena principal del juego, donde se cargan las habitaciones, la interfaz gráfica, el cursor y la cámara principal.
   * **Game.gd** El script que controla la escena principal del juego.
-
+---
+---
 ---
 # Nodos de un nivel más alto
 Son nodos (o scripts) de los que heredan varios de los objetos que permiten construir las habitaciones.

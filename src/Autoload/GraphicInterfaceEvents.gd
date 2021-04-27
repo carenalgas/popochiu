@@ -1,18 +1,22 @@
 extends Node
+# (G) Para hacer cosas con la interfaz gráfica
+# TODO: Que todo esto vaya al script que se carga en la escena de la interfaz
+# gráfica, que en últimas irá también al Autoload.
 
 signal show_info_requested(info)
 signal show_box_requested(message)
 signal continue_clicked
 signal freed
 signal blocked
+signal interface_hidden
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 # Muestra un texto en el centro de la pantalla. Puede servir para dar
 # instrucciones o indicaciones de un narrador. Algo que definitivamente
 # no hace parte del mundo del juego (o sea, que no ha sido dicho por un personaje).
-func display(msg: String, yield_on_start := true) -> void:
-	if yield_on_start: yield()
+func display(msg: String, is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	emit_signal('show_box_requested', msg)
 	yield(self, 'continue_clicked')
 
@@ -34,3 +38,7 @@ func show_info(msg := '') -> void:
 
 func block() -> void:
 	emit_signal('blocked')
+
+
+func hide_interface() -> void:
+	emit_signal('interface_hidden')
