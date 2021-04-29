@@ -12,6 +12,8 @@ signal hotspot_interacted(hotspot)
 signal hotspot_looked(hotspot)
 
 export var script_name := ''
+export(Array, Dictionary) var characters := [] setget _set_characters
+export var has_player := true
 
 var _path := []
 
@@ -20,16 +22,6 @@ onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready():
-	for c in $Characters.get_children():
-		# TODO: Esto debería ocurrir sólo una vez en el Game cuando encuentre
-		# el modo de acceder a todos los nodos dentro de la carpeta Characters.
-		C.characters.append(c)
-
-		if (c as Character).is_player:
-			Data.player = c.script_name
-			C.player = c
-			c.connect('started_walk_to', self, '_update_navigation_path')
-	
 	for p in $Props.get_children():
 		# TODO: Esta validación de baseline no será necesaria cuando sean Props
 		if p.get('baseline'):
@@ -44,22 +36,29 @@ func _ready():
 #		)
 		hotspot.connect('looked', self, '_hotspot_looked', [hotspot])
 	
-	E.room_readied(self)
+	if not Engine.editor_hint:
+		C.player.connect('started_walk_to', self, '_update_navigation_path')
+		for c in $Characters.get_children():
+			(c as Node2D).queue_free()
+		E.room_readied(self)
 
 
 func _process(delta):
-	if not is_instance_valid(C.player): return
+	if Engine.editor_hint or not is_instance_valid(C.player) or _path.empty():
+		return
+
 	var walk_distance = C.player.walk_speed * delta
 	_move_along_path(walk_distance)
 
 
 func _unhandled_input(event):
+	if not has_player: return
 	if not event.is_action_pressed('interact'):
 		if event.is_action_released('look'):
 			if I.active: I.set_active_item()
 		return
 
-	_update_navigation_path(C.player.position, get_local_mouse_position())
+	C.player.walk(get_local_mouse_position(), false)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -78,6 +77,8 @@ func character_moved(chr: Character) -> void:
 				p.z_index = 0
 
 
+# Aquí es donde se deben cargar los personajes de la habitación para que sean
+# renderizados en el juego.
 func on_room_entered() -> void:
 	pass
 
@@ -86,13 +87,13 @@ func on_room_transition_finished() -> void:
 	pass
 
 
+func add_character(chr: Character) -> void:
+	$Characters.add_child(chr)
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _move_along_path(distance):
 	var last_point = C.player.position
-	
-	if _path.size():
-		C.player.walk(_path.back())
-		C.emit_signal('character_moved', C.player)
 	
 	while _path.size():
 		var distance_between_points = last_point.distance_to(_path[0])
@@ -140,3 +141,14 @@ func _hotspot_looked(hotspot: Hotspot) -> void:
 		'show_box_requested',
 		'Estás viendo: %s' % hotspot.description
 	)
+
+
+func _set_characters(value: Array) -> void:
+	characters = value
+	for v in value.size():
+		if not value[v]:
+			characters[v] = {
+				script_name = '',
+				position = Vector2.ZERO
+			}
+			property_list_changed_notify()

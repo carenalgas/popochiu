@@ -4,11 +4,14 @@ extends Node
 signal inline_dialog_requested(options)
 
 export(Array, String, FILE, "*.tscn") var  rooms = []
-export(Array, String, FILE, "*.tscn") var  characters = []
+export(Array, PackedScene) var  characters = []
 export(Array, String, FILE, "*.tscn") var inventory_items = []
 export(Array, Resource) var dialog_trees = []
 
 var in_run := false
+# Se usa para que no se pueda cambiar de escena si está se ha cargado por completo,
+# esto es que ya ha ejecutado la lógica de Room.on_room_transition_finished
+var in_room := false setget _set_in_room
 
 onready var _main_camera: Camera2D = find_node('MainCamera')
 
@@ -17,11 +20,15 @@ onready var _main_camera: Camera2D = find_node('MainCamera')
 func _ready() -> void:
 	# TODO: Asignar habitaciones, personajes, ítems y árboles de conversación a
 	# las respectivas interfaces
-	pass
+	for character_scene in characters:
+		var character: Character = character_scene.instance()
+		if character.is_player:
+			C.player = character
+		C.characters.append(character)
 
 
 func _process(delta: float) -> void:
-	if C.player:
+	if not Engine.editor_hint and is_instance_valid(C.player):
 		_main_camera.position = C.player.position
 
 
@@ -70,6 +77,9 @@ func show_inline_dialog(opts: Array) -> String:
 
 func goto_room(path := ''):
 # warning-ignore:return_value_discarded
+	if not in_room: return
+	self.in_room = false
+
 	G.block()
 
 	$TransitionLayer.play_transition('fade_in')
@@ -86,6 +96,15 @@ func goto_room(path := ''):
 
 
 func room_readied(room: Room) -> void:
+	# Agregar a la habitación los personajes que tiene configurados
+	for c in room.characters:
+		var chr: Character = C.get_character(c.script_name)
+		if chr:
+			chr.position = c.position
+			room.add_character(chr)
+	if room.has_player:
+		room.add_character(C.player)
+	
 	G.done()
 	room.on_room_entered()
 
@@ -94,3 +113,10 @@ func room_readied(room: Room) -> void:
 	yield(wait(0.3, false), 'completed')
 
 	room.on_room_transition_finished()
+	self.in_room = true
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+func _set_in_room(value: bool) -> void:
+	in_room = value
+	Cursor.toggle_visibility(in_room)

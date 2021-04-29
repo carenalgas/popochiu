@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://src/Rooms/Forest/Forest.gd" type="Script" id=1]
 [ext_resource path="res://assets/images/rooms/forest/Back_0.png" type="Texture" id=2]
@@ -9,8 +9,6 @@
 [ext_resource path="res://assets/images/rooms/forest/Bucket_0.png" type="Texture" id=7]
 [ext_resource path="res://assets/images/rooms/forest/Well_0.png" type="Texture" id=8]
 [ext_resource path="res://src/Rooms/Forest/Props/Bucket.gd" type="Script" id=9]
-[ext_resource path="res://src/Characters/Barney/Barney.tscn" type="PackedScene" id=10]
-[ext_resource path="res://src/Characters/Dave/Dave.tscn" type="PackedScene" id=11]
 [ext_resource path="res://src/Rooms/Forest/Hotspots/Sky.gd" type="Script" id=12]
 
 [sub_resource type="NavigationPolygon" id=1]
@@ -21,6 +19,10 @@ outlines = [ PoolVector2Array( -168.5, 36.3275, -46.7403, 26.8888, -29.2786, 20.
 [node name="Forest" type="Node2D"]
 script = ExtResource( 1 )
 script_name = "Forest"
+characters = [ {
+"position": Vector2( 63, 21 ),
+"script_name": "Barney"
+} ]
 
 [node name="Props" type="Node2D" parent="."]
 
@@ -109,13 +111,6 @@ position = Vector2( -110, 49 )
 navpoly = SubResource( 1 )
 
 [node name="Characters" type="Node2D" parent="."]
-
-[node name="Barney" parent="Characters" instance=ExtResource( 10 )]
-position = Vector2( 63, 21 )
-cursor = 8
-
-[node name="Dave" parent="Characters" instance=ExtResource( 11 )]
-position = Vector2( -161, 49 )
 
 [editable path="Props/Well"]
 [editable path="Props/Bucket"]

@@ -6,22 +6,20 @@ signal character_moved(character)
 signal character_spoke(character, message)
 signal character_move_ended(character)
 signal character_say(chr_name, dialog)
-signal character_walk_to(chr_name, position)
 
-var player: Character
+var player: Character = null
 var characters := []
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func character_say(chr_name: String, dialog: String, is_in_queue := true) -> void:
-	var talking_character: Character = get_character(chr_name)
-
 	if is_in_queue: yield()
 
+	var talking_character: Character = get_character(chr_name)
 	if talking_character:
 		yield(talking_character.say(dialog, false), 'completed')
 	else:
-		printerr('CharacterInterface:', 'character %s not found')
+		printerr('CharacterInterface.character_say:', 'character %s not found')
 
 
 func player_say(dialog: String, is_in_queue := true) -> void:
@@ -33,20 +31,21 @@ func player_say(dialog: String, is_in_queue := true) -> void:
 func character_walk_to(chr_name: String, position: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	emit_signal('character_walk_to', chr_name, position)
-	yield(self, 'character_move_ended')
+	var walking_character: Character = get_character(chr_name)
+	if walking_character:
+		yield(walking_character.walk(position, false), 'completed')
+	else:
+		printerr('CharacterInterface.character_walk_to:', 'character %s not found')
 
 
 func player_walk_to(position: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
-
-	yield(character_walk_to(Data.player, position, false), 'completed')
+	yield(C.player.walk(position, false), 'completed')
 
 
 func walk_to_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
-
-	yield(character_walk_to(Data.player, Data.clicked.walk_to_point, false), 'completed')
+	yield(player_walk_to(Data.clicked.walk_to_point, false), 'completed')
 
 
 func is_valid_character(chr_name: String) -> bool:

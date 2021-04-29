@@ -8,7 +8,7 @@ func on_room_entered() -> void:
 
 
 func on_room_transition_finished() -> void:
-	prints('Estoy lista para brillar')
+	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

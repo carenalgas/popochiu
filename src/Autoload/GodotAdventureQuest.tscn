@@ -1,14 +1,16 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://src/Autoload/GodotAdventureQuest.gd" type="Script" id=1]
 [ext_resource path="res://src/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=2]
 [ext_resource path="res://src/GraphicInterface/GraphicInterface.tscn" type="PackedScene" id=3]
 [ext_resource path="res://src/DialogTree/ChatWithBarney/ChatWithBarney.tres" type="Resource" id=4]
+[ext_resource path="res://src/Characters/Dave/Dave.tscn" type="PackedScene" id=5]
+[ext_resource path="res://src/Characters/Barney/Barney.tscn" type="PackedScene" id=6]
 
 [node name="GodotAdventureQuest" type="Node"]
 script = ExtResource( 1 )
 rooms = [ "res://src/Rooms/Main/Main.tscn", "res://src/Rooms/Forest/Forest.tscn" ]
-characters = [ "res://src/Characters/Dave/Dave.tscn", "res://src/Characters/Barney/Barney.tscn" ]
+characters = [ ExtResource( 5 ), ExtResource( 6 ) ]
 inventory_items = [ "res://src/Inventory/Items/Bucket.tscn" ]
 dialog_trees = [ ExtResource( 4 ) ]
 

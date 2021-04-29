@@ -262,6 +262,7 @@ description = "Bernardo"
 cursor = 1
 script_name = "Barney"
 text_color = Color( 0.560784, 0.592157, 0.290196, 1 )
+room = "Forest"
 
 [node name="CollisionPolygon2D" parent="." index="0"]
 polygon = PoolVector2Array( -7, -28, -5, 0, 5, 0, 6, -26, 2, -40, -3, -39 )
@@ -281,4 +282,4 @@ anims/walk_r = SubResource( 9 )
 position = Vector2( 0, -30 )
 texture = ExtResource( 3 )
 region_enabled = true
-region_rect = Rect2( 1040, 0, 80, 80 )
+region_rect = Rect2( 0, 0, 80, 80 )

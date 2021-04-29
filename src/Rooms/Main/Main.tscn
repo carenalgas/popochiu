@@ -9,6 +9,7 @@
 [node name="Main" instance=ExtResource( 2 )]
 script = ExtResource( 1 )
 script_name = "Main"
+has_player = false
 
 [node name="Bg" parent="Props" index="0" instance=ExtResource( 4 )]
 script = ExtResource( 3 )

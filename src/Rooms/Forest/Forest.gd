@@ -1,5 +1,7 @@
+tool
 extends Room
 # Nodo base para la creación de habitaciones dentro del juego.
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func on_room_entered() -> void:
@@ -9,6 +11,7 @@ func on_room_entered() -> void:
 
 
 func on_room_transition_finished() -> void:
+	return
 	E.run([
 		G.display('Haz clic para interactuar y clic derecho para examinar'),
 		G.display('DLG_A'),

@@ -1,3 +1,4 @@
+tool
 class_name Character
 extends Clickable
 # Cualquier objeto que pueda hablar, caminar, moverse entre habitaciones, tener
@@ -12,6 +13,7 @@ var _looking_dir := 'd'
 export var text_color := Color.white
 export var walk_speed := 200.0
 export var is_player := false
+export var room := ''
 
 onready var sprite: Sprite = $Sprite
 
@@ -19,19 +21,16 @@ onready var sprite: Sprite = $Sprite
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready():
 	# Conectarse a señales del cielo
-	C.connect('character_walk_to', self, '_check_walk')
-	
 	idle(false)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
-static func walk_to_clicked() -> void:
-	prints('Me lleva la verdura')
-
-
-func walk(target_pos: Vector2) -> void:
+func walk(target_pos: Vector2, is_in_queue := true) -> void:
+	if is_in_queue: yield()
 	$AnimationPlayer.play('walk_r')
 	$Sprite.flip_h = target_pos.x < position.x
+	emit_signal('started_walk_to', position, target_pos)
+	yield(C, 'character_move_ended')
 
 
 func idle(is_in_queue := true) -> void:
@@ -81,6 +80,4 @@ func remove_inventory() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-func _check_walk(n: String, t: Vector2) -> void:
-	if n.to_lower() == script_name.to_lower():
-		emit_signal('started_walk_to', position, t)
+# TODO: Poner aquí los métodos privados

@@ -43,3 +43,8 @@ func remove_item_cursor() -> void:
 	$Sprite.texture = null
 	$Sprite.hide()
 	$AnimatedSprite.show()
+
+
+func toggle_visibility(is_visible: bool) -> void:
+	$AnimatedSprite.visible = is_visible
+	$Sprite.visible = is_visible
