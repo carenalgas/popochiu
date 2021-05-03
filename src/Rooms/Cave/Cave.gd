@@ -2,13 +2,21 @@ tool
 extends Room
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# TODO: Sobrescribir los métodos de Godot que hagan falta
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_room_entered() -> void:
-	G.hide_interface()
+	C.player.global_position = Vector2(98, 78)
 
 
 func on_room_transition_finished() -> void:
-	E.goto_room('forest')
+	E.run([
+		C.player_walk_to($Points/EntryPoint.global_position),
+		C.player.face_left(),
+		C.player_say('Pues no está tan paila aquí dentro')
+	])
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

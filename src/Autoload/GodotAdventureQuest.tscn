@@ -9,7 +9,7 @@
 
 [node name="GodotAdventureQuest" type="Node"]
 script = ExtResource( 1 )
-rooms = [ "res://src/Rooms/Main/Main.tscn", "res://src/Rooms/Forest/Forest.tscn" ]
+rooms = [ "res://src/Rooms/Main/Main.tscn", "res://src/Rooms/Forest/Forest.tscn", "res://src/Rooms/Cave/Cave.tscn" ]
 characters = [ ExtResource( 5 ), ExtResource( 6 ) ]
 inventory_items = [ "res://src/Inventory/Items/Bucket.tscn" ]
 dialog_trees = [ ExtResource( 4 ) ]

@@ -15,6 +15,10 @@ export var script_name := ''
 export(Array, Dictionary) var characters := [] setget _set_characters
 export var has_player := true
 
+var current := false
+var visited := false
+var visited_first_time := false
+
 var _path := []
 
 onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
@@ -30,6 +34,7 @@ func _ready():
 			prop.connect('looked', self, '_on_prop_looked', [p])
 	
 	for h in $Hotspots.get_children():
+		if not h is Hotspot: continue
 		var hotspot: Hotspot = h
 #		hotspot.connect(
 #			'interacted', self, 'emit_signal', ['hotspot_interacted', hotspot]
@@ -67,14 +72,13 @@ func get_walkable_area() -> Navigation2D:
 
 
 func character_moved(chr: Character) -> void:
+	var y_pos := chr.global_position.y
+	
 	for p in $Props.get_children():
-		if p is Prop:
-			var prop: Node2D = p
-			var baseline: float = prop.to_global(Vector2.DOWN * prop.baseline).y
-			if baseline > chr.global_position.y:
-				p.z_index = 1
-			else:
-				p.z_index = 0
+		_check_baseline(p, y_pos)
+	
+	for c in $Characters.get_children():
+		_check_baseline(c, y_pos)
 
 
 # Aquí es donde se deben cargar los personajes de la habitación para que sean
@@ -87,8 +91,21 @@ func on_room_transition_finished() -> void:
 	pass
 
 
+# Este método es llamado por GodotAdventureQuest cuando se va a cambiar de
+# habitación. Por defecto sólo remueve los nodos de los personajes para que no
+# desaparezcan sus instancias globales.
+func on_room_exited() -> void:
+	set_process(false)
+	for c in $Characters.get_children():
+		$Characters.remove_child(c)
+
+
 func add_character(chr: Character) -> void:
 	$Characters.add_child(chr)
+
+
+func remove_character(chr: Character) -> void:
+	$Characters.remove_child(chr)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -152,3 +169,9 @@ func _set_characters(value: Array) -> void:
 				position = Vector2.ZERO
 			}
 			property_list_changed_notify()
+
+
+func _check_baseline(nde: Node, chr_y_pos: float) -> void:
+	if not nde is Clickable: return
+	var baseline: float = nde.to_global(Vector2.DOWN * nde.baseline).y
+	nde.z_index = 1 if baseline > chr_y_pos else 0

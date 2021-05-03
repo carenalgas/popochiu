@@ -13,7 +13,7 @@ var _looking_dir := 'd'
 export var text_color := Color.white
 export var walk_speed := 200.0
 export var is_player := false
-export var room := ''
+export var texture: Texture setget _set_texture
 
 onready var sprite: Sprite = $Sprite
 
@@ -80,4 +80,6 @@ func remove_inventory() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-# TODO: Poner aquí los métodos privados
+func _set_texture(value: Texture) -> void:
+	texture = value
+	$Sprite.texture = value

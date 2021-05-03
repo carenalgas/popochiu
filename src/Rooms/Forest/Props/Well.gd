@@ -12,7 +12,7 @@ func on_interact() -> void:
 
 
 func on_look() -> void:
-	yield(C.player_say('Qué pozo más rico...'), 'completed')
+	yield(C.player_say('Qué pozo más rico...', false), 'completed')
 	G.done()
 
 

@@ -1,16 +1,18 @@
 tool
-extends Hotspot
+extends Prop
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:
-	yield(E.run([
-		C.walk_to_clicked(),
-		C.player_say('Tengo las güevitas pa entrar')
-	]), 'completed')
-	E.goto_room('Cave')
+	E.run([
+		'Dave: ¡Uy! ¿Qué es eso?',
+		G.display('El personaje jugable puede moverse entre habitaciones.')
+	])
 
 
 func on_look() -> void:
-	yield(C.player_say('Es la entrada a una cueva'), 'completed')
-	G.done()
+	pass
+
+
+func on_item_used(item: Item) -> void:
+	pass

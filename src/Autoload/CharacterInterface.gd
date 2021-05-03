@@ -45,7 +45,7 @@ func player_walk_to(position: Vector2, is_in_queue := true) -> void:
 
 func walk_to_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
-	yield(player_walk_to(Data.clicked.walk_to_point, false), 'completed')
+	yield(player_walk_to(Data.clicked.walk_to_point + Data.clicked.position, false), 'completed')
 
 
 func is_valid_character(chr_name: String) -> bool:

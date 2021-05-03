@@ -10,9 +10,9 @@ signal interacted
 signal looked
 
 export var description := ''
-export var baseline := 0
 export var clickable := true
-export var walk_to_point: Vector2
+export var baseline := 0 setget _set_baseline
+export var walk_to_point: Vector2 setget _set_walk_to_point
 export var look_at_point: Vector2
 export(Cursor.Type) var cursor
 export var script_name := ''
@@ -23,6 +23,10 @@ func _ready():
 	if clickable:
 		connect('mouse_entered', self, '_toggle_description', [true])
 		connect('mouse_exited', self, '_toggle_description', [false])
+	
+	if not Engine.editor_hint:
+		remove_child($BaselineHelper)
+		remove_child($WalkToHelper)
 	
 	set_process_unhandled_input(false)
 
@@ -43,14 +47,26 @@ func _unhandled_input(event):
 				on_look()
 
 
+func _process(delta):
+	if Engine.editor_hint:
+		if walk_to_point != get_node('WalkToHelper').position:
+			# Esto debería ocurrir sólo si se cambiar en el editor la posición
+			# del WalkToHelper
+			walk_to_point = get_node('WalkToHelper').position
+			property_list_changed_notify()
+		elif baseline != get_node('BaselineHelper').position.y:
+			baseline = get_node('BaselineHelper').position.y
+			property_list_changed_notify()
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:
-	yield(G.display('No hay na\' pa\' hacer con esta mondá'), 'completed')
+	yield(G.display('No hay na\' pa\' hacer con esta mondá', false), 'completed')
 	G.done()
 
 
 func on_look() -> void:
-	yield(G.display('No es nada...'), 'completed')
+	yield(G.display('No es nada...', false), 'completed')
 	G.done()
 
 
@@ -70,3 +86,17 @@ func _toggle_description(display: bool) -> void:
 			G.show_info('Usar %s en %s' % [I.active.description, description])
 	else:
 		G.show_info()
+
+
+func _set_baseline(value: int) -> void:
+	baseline = value
+	
+	if Engine.editor_hint and get_node_or_null('BaselineHelper'):
+		get_node('BaselineHelper').position = Vector2.DOWN * value
+
+
+func _set_walk_to_point(value: Vector2) -> void:
+	walk_to_point = value
+	
+	if Engine.editor_hint and get_node_or_null('WalkToHelper'):
+		get_node('WalkToHelper').position = value

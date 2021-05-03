@@ -6,11 +6,15 @@ extends Hotspot
 func on_interact() -> void:
 	yield(E.run([
 		C.walk_to_clicked(),
-		C.player_say('Tengo las güevitas pa entrar')
+		C.player.face_down(),
+		C.player_say('Nito respirar')
 	]), 'completed')
-	E.goto_room('Cave')
+	E.goto_room('Forest')
 
 
 func on_look() -> void:
-	yield(C.player_say('Es la entrada a una cueva'), 'completed')
-	G.done()
+	pass
+
+
+func on_item_used(item: Item) -> void:
+	pass

@@ -12,6 +12,7 @@ var in_run := false
 # Se usa para que no se pueda cambiar de escena si está se ha cargado por completo,
 # esto es que ya ha ejecutado la lógica de Room.on_room_transition_finished
 var in_room := false setget _set_in_room
+var current_room: Room = null
 
 onready var _main_camera: Camera2D = find_node('MainCamera')
 
@@ -84,23 +85,31 @@ func goto_room(path := ''):
 
 	$TransitionLayer.play_transition('fade_in')
 	yield($TransitionLayer, 'transition_finished')
+	
+	# Sacar los personajes de la habitación para que no sean eliminados
+	current_room.on_room_exited()
 
 	match path.to_lower():
 		'', 'main':
 			get_tree().change_scene('res://src/Rooms/Main/Main.tscn')
 		'forest':
 			get_tree().change_scene('res://src/Rooms/Forest/Forest.tscn')
+		'cave':
+			get_tree().change_scene('res://src/Rooms/Cave/Cave.tscn')
 		_:
 # warning-ignore:return_value_discarded
 			get_tree().change_scene(path)
 
 
 func room_readied(room: Room) -> void:
+	current_room = room
+	
 	# Agregar a la habitación los personajes que tiene configurados
 	for c in room.characters:
 		var chr: Character = C.get_character(c.script_name)
 		if chr:
 			chr.position = c.position
+#			chr.walk_to_point += chr.position
 			room.add_character(chr)
 	if room.has_player:
 		room.add_character(C.player)
@@ -112,8 +121,9 @@ func room_readied(room: Room) -> void:
 	yield($TransitionLayer, 'transition_finished')
 	yield(wait(0.3, false), 'completed')
 
-	room.on_room_transition_finished()
 	self.in_room = true
+
+	room.on_room_transition_finished()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

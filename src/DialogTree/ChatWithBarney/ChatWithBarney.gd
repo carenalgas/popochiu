@@ -5,6 +5,7 @@ extends DialogTree
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func start() -> void:
 	yield(E.run([
+		C.walk_to_clicked(),
 		C.player.say('Hola'),
 		'Barney: ¿Qué quiere mano?'
 	]), 'completed')

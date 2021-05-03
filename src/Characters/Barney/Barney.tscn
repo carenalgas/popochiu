@@ -259,15 +259,19 @@ tracks/1/keys = {
 [node name="Barney" instance=ExtResource( 2 )]
 script = ExtResource( 1 )
 description = "Bernardo"
+walk_to_point = Vector2( -18, 10 )
 cursor = 1
 script_name = "Barney"
 text_color = Color( 0.560784, 0.592157, 0.290196, 1 )
-room = "Forest"
+texture = ExtResource( 3 )
 
 [node name="CollisionPolygon2D" parent="." index="0"]
 polygon = PoolVector2Array( -7, -28, -5, 0, 5, 0, 6, -26, 2, -40, -3, -39 )
 
-[node name="AnimationPlayer" parent="." index="1"]
+[node name="WalkToHelper" parent="." index="2"]
+position = Vector2( -18, 10 )
+
+[node name="AnimationPlayer" parent="." index="3"]
 anims/idle_d = SubResource( 1 )
 anims/idle_r = SubResource( 2 )
 anims/idle_u = SubResource( 3 )
@@ -278,7 +282,7 @@ anims/talk_u = SubResource( 7 )
 anims/talk_ur = SubResource( 8 )
 anims/walk_r = SubResource( 9 )
 
-[node name="Sprite" parent="." index="2"]
+[node name="Sprite" parent="." index="4"]
 position = Vector2( 0, -30 )
 texture = ExtResource( 3 )
 region_enabled = true

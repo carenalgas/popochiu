@@ -264,8 +264,9 @@ script_name = "Dave"
 text_color = Color( 0.85098, 0.341176, 0.388235, 1 )
 walk_speed = 120.0
 is_player = true
+texture = ExtResource( 3 )
 
-[node name="AnimationPlayer" parent="." index="1"]
+[node name="AnimationPlayer" parent="." index="3"]
 anims/idle_d = SubResource( 1 )
 anims/idle_r = SubResource( 2 )
 anims/idle_u = SubResource( 3 )
@@ -276,7 +277,7 @@ anims/talk_u = SubResource( 7 )
 anims/talk_ur = SubResource( 8 )
 anims/walk_r = SubResource( 9 )
 
-[node name="Sprite" parent="." index="2"]
+[node name="Sprite" parent="." index="4"]
 position = Vector2( 0, -30 )
 texture = ExtResource( 3 )
 offset = Vector2( 0, 8 )

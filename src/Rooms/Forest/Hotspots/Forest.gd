@@ -1,9 +1,15 @@
 tool
 extends Hotspot
 
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:
-	yield(G.display('Este es un Hotspot', true), 'completed')
-	G.done()
+	E.run([
+		C.walk_to_clicked(),
+		C.player.face_up(),
+		E.wait(),
+		C.player_say('No puedo entrarlo')
+	])
 
 
 func on_look() -> void:

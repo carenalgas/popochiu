@@ -82,7 +82,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Room",
 "language": "GDScript",
-"path": "res://src/Rooms/Room.gd"
+"path": "res://src/Nodes/Room/Room.gd"
 } ]
 _global_script_class_icons={
 "AsepriteImportData": "",
