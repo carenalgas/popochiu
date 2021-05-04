@@ -15,6 +15,11 @@ var in_room := false setget _set_in_room
 var current_room: Room = null
 var clicked: Node
 
+var _cutscene: GDScriptFunctionState = null
+var _run_broke := false
+# Para saber en qué instrucción se paro la ejecución de una escena (cutscene)
+var _break_idx := -1
+
 onready var game_width := get_viewport().get_visible_rect().end.x
 onready var game_height := get_viewport().get_visible_rect().end.y
 onready var half_width := game_width / 2.0
@@ -31,11 +36,19 @@ func _ready() -> void:
 		if character.is_player:
 			C.player = character
 		C.characters.append(character)
+	
+	set_process_input(false)
 
 
 func _process(delta: float) -> void:
 	if not Engine.editor_hint and is_instance_valid(C.player):
 		_main_camera.position = C.player.position
+
+
+func _input(event: InputEvent) -> void:
+	if event.is_action('skip'):
+		_run_broke = true
+		G.emit_signal('continue_clicked')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -52,9 +65,14 @@ func break_run() -> void:
 func run(instructions: Array) -> void:
 	G.block()
 	
-	for instruction in instructions:
+	for idx in instructions.size():
+		var instruction = instructions[idx]
+		_break_idx = idx
+		
+		if _run_broke: break
+
 		if instruction is String:
-			var i: String = instruction
+			var i := instruction as String
 			
 			# TODO: Mover esto a una función que se encargue de evaluar cadenas
 			# de texto
@@ -72,6 +90,19 @@ func run(instructions: Array) -> void:
 			yield(instruction, 'completed')
 	
 	if not D.active: G.done()
+
+
+# Es como run, pero salta la secuencia de acciones si se presiona la acción 'skip'.
+func run_cutscene(instructions: Array) -> void:
+	G.block()
+
+	set_process_input(true)
+	yield(run(instructions), 'completed')
+	set_process_input(false)
+	
+	# TODO: Hacer algo para que las instrucciones en el arreglo se ejecuten
+	
+	G.done()
 
 
 # Retorna la opción seleccionada en el diálogo creado en tiempo de ejecución.

@@ -52,6 +52,8 @@ func _disable_panels(props := { blocking = true }) -> void:
 func _enable_panels() -> void:
 	# TODO: Usar Tween para que se oculte y aparezca con jugo
 	_click_handler.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	_display_box.hide()
 
 #	_info_bar.text = ''
 	_info_bar.show()
@@ -61,9 +63,12 @@ func _enable_panels() -> void:
 
 
 func _continue() -> void:
-	_display_box.hide()
-	_dialog_text.stop()
-	G.emit_signal('continue_clicked')
+	if _dialog_text.percent_visible == 1.0:
+		_dialog_text.stop()
+		_display_box.hide()
+		G.emit_signal('continue_clicked')
+	else:
+		_dialog_text.stop()
 
 
 func _hide_panels() -> void:

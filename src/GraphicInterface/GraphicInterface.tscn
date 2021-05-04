@@ -38,8 +38,7 @@ __meta__ = {
 margin_right = 0.0
 margin_bottom = 0.0
 theme = ExtResource( 2 )
-wrap_width = 200
-min_wrap_width = 120
+secs_per_character = 0.0
 
 [node name="DisplayBox" parent="MainContainer" instance=ExtResource( 11 )]
 

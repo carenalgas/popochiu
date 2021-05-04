@@ -26,8 +26,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 secs_per_character = 0.01
-wrap_width = null
-min_wrap_width = null
 
 [node name="Tween" type="Tween" parent="."]
 

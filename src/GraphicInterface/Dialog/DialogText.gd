@@ -29,14 +29,6 @@ func _ready() -> void:
 	
 	# Conectarse a señales de los hijos
 	_tween.connect('tween_all_completed', self, '_wait_input')
-	
-	# Conectarse a señales del universo pokémon
-#	HudEvent.connect('hud_accept_pressed', self, 'stop')
-
-
-#func _process(delta: float) -> void:
-#	rect_position.x = 160 - (rect_size.x / 2)
-#	$Label.rect_position.x = 6
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -85,47 +77,20 @@ func play_text(props: Dictionary) -> void:
 	# Ajustar la posición en Y del texto que dice el personaje	
 	rect_position.y -= _target_size.y
 	rect_position.y += props.offset_y
-
-#	yield(get_tree(), 'idle_frame')
-#	_target_size = Vector2(
-#		min(_max_width, $Label.rect_size.x + 12.0),
-#		_dflt_height + (($Label.get_line_count() - 1) * 14.0)
-#	)
 #
 #	# Si se quiere hacer de otro modo en el Inspector
-#	# (animation_speed * 0.01) * get_total_character_count()
-	var duration: float = secs_per_character * $Label.get_total_character_count()
-##	var size_duration := min(duration * 0.5, 1.0)
-#	var size_duration := 0.82
 
-
-	# Que el texto aparezca por caracteres
-	_tween.interpolate_property(
-		self, 'percent_visible',
-		0, 1,
-		duration, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-	)
-	
-	
-	
-##	_tween.interpolate_property(
-##		self, 'rect_size:x',
-##		rect_size.x, _target_size.x,
-##		0.62, Tween.TRANS_BACK, Tween.EASE_OUT
-##	)
-#	if $Label.get_line_count() > 1:
-#		pass
-##		_tween.interpolate_property(
-##			self, 'rect_size:y',
-##			rect_size.y, _target_size.y,
-##			0.47, Tween.TRANS_SINE, Tween.EASE_IN,
-##			0.67
-##		)
-#	else:
-#		rect_size.y = _target_size.y
+	if secs_per_character > 0.0:
+		# Que el texto aparezca animado
+		_tween.interpolate_property(
+			self, 'percent_visible',
+			0, 1,
+			secs_per_character * $Label.get_total_character_count(),
+			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
+		)
+		_tween.start()
 
 	modulate.a = 1.0
-	_tween.start()
 
 
 func stop(forced = false) ->void:
