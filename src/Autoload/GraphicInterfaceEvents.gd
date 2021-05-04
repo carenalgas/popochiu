@@ -17,6 +17,10 @@ signal interface_hidden
 # no hace parte del mundo del juego (o sea, que no ha sido dicho por un personaje).
 func display(msg: String, is_in_queue := true) -> void:
 	if is_in_queue: yield()
+	if E.cutscene_skipped:
+		yield(get_tree(), 'idle_frame')
+		return
+	
 	emit_signal('show_box_requested', msg)
 	yield(self, 'continue_clicked')
 

@@ -7,6 +7,7 @@ export(Array, Resource) var rooms = []
 export(Array, PackedScene) var characters = []
 export(Array, String, FILE, "*.tscn") var inventory_items = []
 export(Array, Resource) var dialog_trees = []
+export var skip_cutscene_time := 0.2
 
 var in_run := false
 # Se usa para que no se pueda cambiar de escena si está se ha cargado por completo,
@@ -14,11 +15,7 @@ var in_run := false
 var in_room := false setget _set_in_room
 var current_room: Room = null
 var clicked: Node
-
-var _cutscene: GDScriptFunctionState = null
-var _run_broke := false
-# Para saber en qué instrucción se paro la ejecución de una escena (cutscene)
-var _break_idx := -1
+var cutscene_skipped := false
 
 onready var game_width := get_viewport().get_visible_rect().end.x
 onready var game_height := get_viewport().get_visible_rect().end.y
@@ -46,14 +43,19 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action('skip'):
-		_run_broke = true
+	if event.is_action_released('skip'):
+		cutscene_skipped = true
+		$TransitionLayer.play_transition('pass_down_in', skip_cutscene_time)
+		yield($TransitionLayer, 'transition_finished')
 		G.emit_signal('continue_clicked')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func wait(time := 1.0, is_in_queue := true) -> void:
 	if is_in_queue: yield()
+	if cutscene_skipped:
+		yield(get_tree(), 'idle_frame')
+		return
 	yield(get_tree().create_timer(time), 'timeout')
 
 
@@ -67,9 +69,6 @@ func run(instructions: Array) -> void:
 	
 	for idx in instructions.size():
 		var instruction = instructions[idx]
-		_break_idx = idx
-		
-		if _run_broke: break
 
 		if instruction is String:
 			var i := instruction as String
@@ -94,15 +93,14 @@ func run(instructions: Array) -> void:
 
 # Es como run, pero salta la secuencia de acciones si se presiona la acción 'skip'.
 func run_cutscene(instructions: Array) -> void:
-	G.block()
-
 	set_process_input(true)
 	yield(run(instructions), 'completed')
 	set_process_input(false)
 	
-	# TODO: Hacer algo para que las instrucciones en el arreglo se ejecuten
-	
-	G.done()
+	$TransitionLayer.play_transition('pass_down_out', skip_cutscene_time)
+	yield($TransitionLayer, 'transition_finished')
+
+	cutscene_skipped = false
 
 
 # Retorna la opción seleccionada en el diálogo creado en tiempo de ejecución.
@@ -158,6 +156,8 @@ func room_readied(room: Room) -> void:
 
 	self.in_room = true
 
+	# Esto también hace que la habitación empiece a escuchar eventos de Input
+	room.is_current = true
 	room.on_room_transition_finished()
 
 

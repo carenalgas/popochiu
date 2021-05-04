@@ -21,7 +21,7 @@ func on_room_entered() -> void:
 
 func on_room_transition_finished() -> void:
 # warning-ignore: unreachable_code
-	return
+#	return
 	E.run_cutscene([
 		G.display('Haz clic para interactuar y clic derecho para examinar'),
 		G.display('DLG_A'),
@@ -34,7 +34,6 @@ func on_room_transition_finished() -> void:
 		E.wait(),
 		C.player.face_right(),
 		E.wait(),
-		C.player.face_down(),
 		C.player_say('Lo importante es empezar')
 	])
 

@@ -15,7 +15,7 @@ export var script_name := ''
 export(Array, Dictionary) var characters := [] setget _set_characters
 export var has_player := true
 
-var current := false
+var is_current := false setget _set_is_current
 var visited := false
 var visited_first_time := false
 
@@ -26,6 +26,8 @@ onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready():
+	set_process_unhandled_input(false)
+	
 	for p in $Props.get_children():
 		# TODO: Esta validación de baseline no será necesaria cuando sean Props
 		if p.get('baseline'):
@@ -43,8 +45,10 @@ func _ready():
 	
 	if not Engine.editor_hint:
 		C.player.connect('started_walk_to', self, '_update_navigation_path')
+
 		for c in $Characters.get_children():
 			(c as Node2D).queue_free()
+
 		E.room_readied(self)
 
 
@@ -175,3 +179,8 @@ func _check_baseline(nde: Node, chr_y_pos: float) -> void:
 	if not nde is Clickable: return
 	var baseline: float = nde.to_global(Vector2.DOWN * nde.baseline).y
 	nde.z_index = 1 if baseline > chr_y_pos else 0
+
+
+func _set_is_current(value: bool) -> void:
+	is_current = value
+	set_process_unhandled_input(is_current)

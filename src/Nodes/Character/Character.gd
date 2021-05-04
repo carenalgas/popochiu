@@ -29,8 +29,15 @@ func _ready():
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func walk(target_pos: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
-	$AnimationPlayer.play('walk_r')
+	
 	$Sprite.flip_h = target_pos.x < position.x
+
+	if E.cutscene_skipped:
+		position = target_pos
+		yield(get_tree(), 'idle_frame')
+		return
+	
+	$AnimationPlayer.play('walk_r')
 	emit_signal('started_walk_to', position, target_pos)
 	yield(C, 'character_move_ended')
 
@@ -69,6 +76,10 @@ func face_right(is_in_queue := true) -> void:
 
 func say(dialog: String, is_in_queue := true) -> void:
 	if is_in_queue: yield()
+
+	if E.cutscene_skipped:
+		yield(get_tree(), 'idle_frame')
+		return
 
 	C.emit_signal('character_spoke', self, dialog)
 	$AnimationPlayer.play('talk_%s' % _looking_dir)

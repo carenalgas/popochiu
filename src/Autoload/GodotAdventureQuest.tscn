@@ -29,6 +29,7 @@ rooms = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ]
 characters = [ ExtResource( 5 ), ExtResource( 6 ) ]
 inventory_items = [ "res://src/Inventory/Items/Bucket.tscn" ]
 dialog_trees = [ ExtResource( 4 ) ]
+skip_cutscene_time = 0.25
 
 [node name="GraphicInterface" parent="." instance=ExtResource( 3 )]
 
