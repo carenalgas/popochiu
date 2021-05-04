@@ -21,10 +21,10 @@ func option_selected(opt: DialogOption) -> void:
 				C.get_character('Barney').say('No me lo parece')
 			]), 'completed')
 		'Necesidad':
-			yield(C.player_say('Estoy que me cago'), 'completed')
-			yield(C.character_say('Barney', 'Puede hacer aquí adentro'), 'completed')
+			yield(C.player_say('Estoy que me cago', false), 'completed')
+			yield(C.character_say('Barney', 'Puede hacer aquí adentro', false), 'completed')
 		'Despedida':
-			yield(C.player_say('Chau chau'), 'completed')
+			yield(C.player_say('Chau chau', false), 'completed')
 			D.emit_signal('dialog_finished')
 			return
 	_show_options()

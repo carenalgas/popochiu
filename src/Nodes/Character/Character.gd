@@ -8,6 +8,8 @@ extends Clickable
 
 signal started_walk_to(start, end)
 
+var last_room := ''
+
 var _looking_dir := 'd'
 
 export var text_color := Color.white

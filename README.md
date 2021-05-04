@@ -2,8 +2,7 @@
 # Godot Adventure Quest<!-- omit in toc -->
 Framework para crear juegos de aventura con Godot al estilo de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
-![cover](./assets/images/_repo/cover.png "Godot Adventure Quest")
-![cover](./assets/images/_repo/gaq_01.gif "Godot Adventure Quest en acción")
+![Godot Adventure Quest](./assets/images/_repo/gaq_02.gif "Godot Adventure Quest en acción")
 
 # Tabla de contenidos<!-- omit in toc -->
 - [📃 Resumen y ejemplos de uso](#-resumen-y-ejemplos-de-uso)
@@ -16,7 +15,7 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
   - [Regiones](#regiones)
   - [Puntos (Position2D)](#puntos-position2d)
   - [🚶‍♀️ Áreas transitables (walkable areas)](#️-áreas-transitables-walkable-areas)
-- [Interfaz gráfica](#interfaz-gráfica)
+- [💻🖱 Interfaz gráfica](#-interfaz-gráfica)
   - [Texto de descripción](#texto-de-descripción)
   - [Texto de diálogo](#texto-de-diálogo)
   - [Texto de aviso](#texto-de-aviso)
@@ -30,6 +29,8 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
 - [📁 Estructura](#-estructura)
 - [Nodos de un nivel más alto](#nodos-de-un-nivel-más-alto)
   - [Clickable](#clickable)
+
+![cover](./assets/images/_repo/cover.png "Godot Adventure Quest")
 
 # 📃 Resumen y ejemplos de uso
 
@@ -107,6 +108,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 
 **Por hacer**
 - [ ] Que haya un Autoload para controlar eventos comunes a las habitaciones, sus props, sus hotspot, entre otros.
+- [ ] Definir métodos que permitan saber qué ha pasado en la habitación actual para reaccionar a eso.
 
 **Hecho**
 - [x] Que se pueda hacer transición de una habitación a otra.
@@ -159,7 +161,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 ## 🚶‍♀️ Áreas transitables (walkable areas)
 *Son `Navigation2D` que definen por dónde pueden moverse los personajes.*
 
-# Interfaz gráfica
+# 💻🖱 Interfaz gráfica
 `GraphicInterface.tscn, GraphicInterface.gd, GraphicInterfaceEvents.gd`
 
 _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos de diálogo (DialogText), textos de aviso, o narrador, (DisplayBox), el inventario (InventoryContainer), el menú de opciones (Toolbar), el menú de diálogo (DialogMenu) y los textos de descripción (InfoBar), entre otros._
@@ -278,11 +280,11 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 *Un script que permite definir lógica para todo el juego. Aquí, por ejemplo, se puede tener un `enum` con los posibles estados del juego y un arreglo (o un entero) que permita al desarrollador tener control sobre las cosas que los jugadores ya han hecho. También puede haber funciones que se llamen para eventos específicos de las habitaciones cosa que a nivel global se puedan hacer cambios después de determinadas acciones.*
 
 **Por hacer**
-- [ ] Definir métodos que permitan saber qué ha pasado en la habitación actual para reaccionar a eso.
-- [ ] Definir un método que faciliten saber qué ha pasado ya en el juego.
-- [ ] Deginir un método que permita agregar algo que ya pasó a la variable que contendrá el estado actual de la partida.
+???
 
 **Hecho**
+- [x] Definir un método que faciliten saber qué ha pasado ya en el juego.
+- [x] Deginir un método que permita agregar algo que ya pasó a la variable que contendrá el estado actual de la partida.
 - [x] Que haya una máquina de estados.
 - [x] Que se puedan guardar variables globales para saber el estado de los objetos en las habitaciones.
 

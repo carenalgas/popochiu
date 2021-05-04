@@ -91,6 +91,8 @@ func goto_room(path := '') -> void:
 	$TransitionLayer.play_transition('fade_in')
 	yield($TransitionLayer, 'transition_finished')
 	
+	C.player.last_room = current_room.script_name
+	
 	# Sacar los personajes de la habitación para que no sean eliminados
 	current_room.on_room_exited()
 	

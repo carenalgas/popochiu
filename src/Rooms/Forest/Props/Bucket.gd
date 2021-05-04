@@ -9,7 +9,7 @@ func on_interact() -> void:
 	C.player.face_down(false)
 	yield(C.player_say('Uy, un balde re-áspero', false), 'completed')
 	yield(E.wait(0.2, false), 'completed')
-	Globals.game_progress.append(Globals.GameState.GOT_BUCKET)
+	Globals.did(Globals.GameState.GOT_BUCKET)
 	get_parent().remove_child(self)
 	yield(I.add_item_as_active('Bucket'), 'completed')
 	yield(C.player_say('¡Ora sí! Ya verán de lo que soy capaz.', false), 'completed')

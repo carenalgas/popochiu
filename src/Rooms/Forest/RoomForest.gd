@@ -7,12 +7,15 @@ extends Room
 func on_room_entered() -> void:
 	# Algo así tendrían que quedar los guiones cuando se están programando
 	# interacciones.
-	C.player.global_position = $Points/EntryPoint.global_position
+	if C.player.last_room == 'Cave':
+		C.player.global_position = $Points/CavePoint.global_position
+	else:
+		C.player.global_position = $Points/EntryPoint.global_position
 	
 	# TODO: No sé si esté bien que esta lógica la tenga la habitación. Tal vez
 	# cada Prop/Hotspot/Character debería validar su propio estado.
-	if Globals.game_progress.has(Globals.GameState.GOT_BUCKET) \
-		or Globals.game_progress.has(Globals.GameState.LOST_BUCKET):
+	if Globals.has_done(Globals.GameState.GOT_BUCKET) \
+		or Globals.has_done(Globals.GameState.LOST_BUCKET):
 		$Props/Bucket.queue_free()
 
 

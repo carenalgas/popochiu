@@ -9,6 +9,7 @@ extends Room
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_room_entered() -> void:
 	C.player.global_position = Vector2(98, 78)
+	Globals.did(Globals.GameState.CAVE_VISITED)
 
 
 func on_room_transition_finished() -> void:

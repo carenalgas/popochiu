@@ -6,7 +6,7 @@ extends Hotspot
 func on_interact() -> void:
 	yield(E.run([
 		C.walk_to_clicked(),
-		C.player_say('Tengo las güevitas pa entrar')
+		C.player_say('Tengo las güevitas pa entrar') if not Globals.has_done(Globals.GameState.CAVE_VISITED) else null
 	]), 'completed')
 	E.goto_room('Cave')
 

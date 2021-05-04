@@ -111,6 +111,9 @@ position = Vector2( -6, 14 )
 [node name="EntryPoint" type="Position2D" parent="Points"]
 position = Vector2( -110, 49 )
 
+[node name="CavePoint" type="Position2D" parent="Points"]
+position = Vector2( 97, 26 )
+
 [node name="WalkableAreas" type="Node2D" parent="."]
 
 [node name="Navigation2D" type="Navigation2D" parent="WalkableAreas"]
@@ -119,9 +122,6 @@ position = Vector2( -110, 49 )
 navpoly = SubResource( 1 )
 
 [node name="Characters" type="Node2D" parent="."]
-
-[node name="Barney" type="Position2D" parent="Characters"]
-position = Vector2( 23, 49 )
 
 [editable path="Props/Well"]
 [editable path="Props/Bucket"]
