@@ -40,4 +40,4 @@ func _show_box(msg := '') -> void:
 	rect_size.y = (get_line_count() - 1) * _dflt_height
 	
 	# Centrar el Label en la ventana
-	rect_position = Vector2(Data.half_width - rect_size.x / 2.0, Data.half_height - rect_size.y / 2.0)
+	rect_position = Vector2(E.half_width - rect_size.x / 2.0, E.half_height - rect_size.y / 2.0)

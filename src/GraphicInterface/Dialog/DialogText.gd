@@ -73,13 +73,13 @@ func play_text(props: Dictionary) -> void:
 
 		rect_position.x = 0.0
 		rect_position.y -= 12.0
-	elif rect_position.x + rect_size.x > Data.game_width + 16.0:
+	elif rect_position.x + rect_size.x > E.game_width + 16.0:
 		_target_size.x = min_wrap_width
 		_target_size.y = _dflt_height + (($Label.get_line_count() - 1) * 14.0)
 		rect_size = _target_size
 		$Label.rect_size = _target_size
 
-		rect_position.x = Data.game_width - rect_size.x
+		rect_position.x = E.game_width - rect_size.x
 		rect_position.y -= 12.0
 	
 	# Ajustar la posición en Y del texto que dice el personaje	

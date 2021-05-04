@@ -37,7 +37,7 @@ func _unhandled_input(event):
 		if event.is_action_pressed('interact'):
 			# TODO: Verificar si hay un elemento de inventario seleccionado
 			get_tree().set_input_as_handled()
-			Data.clicked = self
+			E.clicked = self
 			if I.active:
 				on_item_used(I.active)
 			else:

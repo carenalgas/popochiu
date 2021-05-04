@@ -3,8 +3,8 @@ extends Node
 
 signal inline_dialog_requested(options)
 
-export(Array, String, FILE, "*.tscn") var  rooms = []
-export(Array, PackedScene) var  characters = []
+export(Array, Resource) var rooms = []
+export(Array, PackedScene) var characters = []
 export(Array, String, FILE, "*.tscn") var inventory_items = []
 export(Array, Resource) var dialog_trees = []
 
@@ -13,7 +13,12 @@ var in_run := false
 # esto es que ya ha ejecutado la lógica de Room.on_room_transition_finished
 var in_room := false setget _set_in_room
 var current_room: Room = null
+var clicked: Node
 
+onready var game_width := get_viewport().get_visible_rect().end.x
+onready var game_height := get_viewport().get_visible_rect().end.y
+onready var half_width := game_width / 2.0
+onready var half_height := game_height / 2.0
 onready var _main_camera: Camera2D = find_node('MainCamera')
 
 
@@ -76,7 +81,7 @@ func show_inline_dialog(opts: Array) -> String:
 	return yield(D, 'option_selected')
 
 
-func goto_room(path := ''):
+func goto_room(path := '') -> void:
 # warning-ignore:return_value_discarded
 	if not in_room: return
 	self.in_room = false
@@ -88,17 +93,14 @@ func goto_room(path := ''):
 	
 	# Sacar los personajes de la habitación para que no sean eliminados
 	current_room.on_room_exited()
-
-	match path.to_lower():
-		'', 'main':
-			get_tree().change_scene('res://src/Rooms/Main/Main.tscn')
-		'forest':
-			get_tree().change_scene('res://src/Rooms/Forest/Forest.tscn')
-		'cave':
-			get_tree().change_scene('res://src/Rooms/Cave/Cave.tscn')
-		_:
-# warning-ignore:return_value_discarded
-			get_tree().change_scene(path)
+	
+	for r in rooms:
+		var room = r as GAQRoom
+		if room.id.to_lower() == path.to_lower():
+			get_tree().change_scene(room.path)
+			return
+	
+	printerr('No se encontró la Room %s' % path)
 
 
 func room_readied(room: Room) -> void:

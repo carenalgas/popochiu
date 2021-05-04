@@ -24,6 +24,7 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
   - [Menú del juego (*Toolbar*)](#menú-del-juego-toolbar)
 - [📦 Inventory](#-inventory)
 - [💬 Árboles de diálogo](#-árboles-de-diálogo)
+- [🌎 Globals](#-globals)
 - [⚙ Godot Adventure Quest (núcleo)](#-godot-adventure-quest-núcleo)
 - [🛠 Configuración](#-configuración)
 - [📁 Estructura](#-estructura)
@@ -273,16 +274,27 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [x] Que al seleccionar una opción del menú de diálogo este se cierre y se pase la opción seleccionada como parámetro de la señal que permite al juego continuar con el flujo de instrucciones.
 - [x] Que se puede disparar un inline-dialog pasando las opciones como un arreglo de `String`.
 
+# 🌎 Globals
+*Un script que permite definir lógica para todo el juego. Aquí, por ejemplo, se puede tener un `enum` con los posibles estados del juego y un arreglo (o un entero) que permita al desarrollador tener control sobre las cosas que los jugadores ya han hecho. También puede haber funciones que se llamen para eventos específicos de las habitaciones cosa que a nivel global se puedan hacer cambios después de determinadas acciones.*
+
+**Por hacer**
+- [ ] Definir métodos que permitan saber qué ha pasado en la habitación actual para reaccionar a eso.
+- [ ] Definir un método que faciliten saber qué ha pasado ya en el juego.
+- [ ] Deginir un método que permita agregar algo que ya pasó a la variable que contendrá el estado actual de la partida.
+
+**Hecho**
+- [x] Que haya una máquina de estados.
+- [x] Que se puedan guardar variables globales para saber el estado de los objetos en las habitaciones.
+
 # ⚙ Godot Adventure Quest (núcleo)
 `GodotAdventureQuest.tscn, GodotAdventureQuest.gd`
 
 **Por hacer**
-- [ ] Que haya una máquina de estados.
-- [ ] Que se puedan guardar variables globales para saber el estado de los objetos en las habitaciones.
 - [ ] Que haya varios tipos de transición entre escenas.
 - [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
 **Hecho**
+- [x] Que la definición de las posibles habitaciones del juego se haga con un `Resource` que permita definir: el ID con el que se solicitará la habitación y la ruta del archivo **.tscn** que deberá instanciarse para hacer la transición.
 - [x] Que se cargue como una escena de Autoload que tenga adentro las escenas de interfaz gráfica y efectos de transición.
 - [x] Que permita cambiar de habitación y llame a los métodos respectivos dependiendo del estado de la transición.
 - [x] Que en este se registren todas las habitaciones, personajes, ítems de inventario y árboles de conversación del juego.

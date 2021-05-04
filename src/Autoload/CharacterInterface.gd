@@ -12,7 +12,9 @@ var characters := []
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
-func character_say(chr_name: String, dialog: String, is_in_queue := true) -> void:
+func character_say(
+	chr_name: String, dialog: String, is_in_queue := true
+	) -> void:
 	if is_in_queue: yield()
 
 	var talking_character: Character = get_character(chr_name)
@@ -28,7 +30,9 @@ func player_say(dialog: String, is_in_queue := true) -> void:
 	yield(player.say(dialog, false), 'completed')
 
 
-func character_walk_to(chr_name: String, position: Vector2, is_in_queue := true) -> void:
+func character_walk_to(
+	chr_name: String, position: Vector2, is_in_queue := true
+	) -> void:
 	if is_in_queue: yield()
 	
 	var walking_character: Character = get_character(chr_name)
@@ -45,7 +49,10 @@ func player_walk_to(position: Vector2, is_in_queue := true) -> void:
 
 func walk_to_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
-	yield(player_walk_to(Data.clicked.walk_to_point + Data.clicked.position, false), 'completed')
+	yield(
+		player_walk_to(E.clicked.walk_to_point + E.clicked.position, false),
+		'completed'
+	)
 
 
 func is_valid_character(chr_name: String) -> bool:
@@ -62,3 +69,4 @@ func get_character(script_name: String) -> Character:
 	return null
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ???

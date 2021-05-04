@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://src/Autoload/GodotAdventureQuest.gd" type="Script" id=1]
 [ext_resource path="res://src/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=2]
@@ -6,10 +6,26 @@
 [ext_resource path="res://src/DialogTree/ChatWithBarney/ChatWithBarney.tres" type="Resource" id=4]
 [ext_resource path="res://src/Characters/Dave/Dave.tscn" type="PackedScene" id=5]
 [ext_resource path="res://src/Characters/Barney/Barney.tscn" type="PackedScene" id=6]
+[ext_resource path="res://src/Helpers/GAQRoom.gd" type="Script" id=7]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 7 )
+id = "Main"
+path = "res://src/Rooms/Main/RoomMain.tscn"
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 7 )
+id = "Forest"
+path = "res://src/Rooms/Forest/RoomForest.tscn"
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 7 )
+id = "Cave"
+path = "res://src/Rooms/Cave/RoomCave.tscn"
 
 [node name="GodotAdventureQuest" type="Node"]
 script = ExtResource( 1 )
-rooms = [ "res://src/Rooms/Main/Main.tscn", "res://src/Rooms/Forest/Forest.tscn", "res://src/Rooms/Cave/Cave.tscn" ]
+rooms = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ]
 characters = [ ExtResource( 5 ), ExtResource( 6 ) ]
 inventory_items = [ "res://src/Inventory/Items/Bucket.tscn" ]
 dialog_trees = [ ExtResource( 4 ) ]

@@ -18,6 +18,7 @@ func on_look() -> void:
 
 func on_item_used(item: Item) -> void:
 	if item.script_name == 'Bucket':
+		Globals.game_progress.append(Globals.GameState.LOST_BUCKET)
 		E.run([
 			C.walk_to_clicked(),
 			C.player.face_up(),

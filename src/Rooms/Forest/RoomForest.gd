@@ -8,9 +8,16 @@ func on_room_entered() -> void:
 	# Algo así tendrían que quedar los guiones cuando se están programando
 	# interacciones.
 	C.player.global_position = $Points/EntryPoint.global_position
+	
+	# TODO: No sé si esté bien que esta lógica la tenga la habitación. Tal vez
+	# cada Prop/Hotspot/Character debería validar su propio estado.
+	if Globals.game_progress.has(Globals.GameState.GOT_BUCKET) \
+		or Globals.game_progress.has(Globals.GameState.LOST_BUCKET):
+		$Props/Bucket.queue_free()
 
 
 func on_room_transition_finished() -> void:
+# warning-ignore: unreachable_code
 	return
 	E.run([
 		G.display('Haz clic para interactuar y clic derecho para examinar'),
