@@ -73,7 +73,8 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
   > `E.run(instructions: Array)` Se encarga de activar la interfaz gráfica una vez se han completado todas las instrucciones recibidas.
 
 # 🐞 Problemas
-- No se puede pasar a la lista de instrucciones el llamado a `C.character_say(...)` o `C.player_say(...)` porque esas funciones pasan a `Character.say(...)` el segundo parámetro en `true`, lo que hace que éste no use el `yield()` que pausa el flujo del juego para que lo controle `E.run(...)`. Podría hacer que las funciones de `C` mencionadas reciban un parámetro adicional, pero creo que eso enredaría un poco la cosa... aunque tal vez termine siendo lo más mejor para la humanidad.
+- Es tedioso construir varias cosas, sobre todo aquellas en las que hay que asignar un `Resource`.
+- No se pueden usar los nodos `ParallaxBackground` y `ParallaxLayer` para controlar el efecto parallax de los Prop. Tal vez toque hacerlo manualmente.
 
 
 # 🎮 Controles (en el juego)

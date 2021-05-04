@@ -93,7 +93,7 @@ func play_text(props: Dictionary) -> void:
 	modulate.a = 1.0
 
 
-func stop(forced = false) ->void:
+func stop() ->void:
 	if modulate.a == 0.0:
 		return
 
@@ -106,6 +106,10 @@ func stop(forced = false) ->void:
 		percent_visible = 1.0
 		rect_size = _target_size
 		_wait_input()
+
+
+func hide() -> void:
+	modulate.a = 0.0
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

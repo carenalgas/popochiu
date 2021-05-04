@@ -14,7 +14,7 @@ vertices = PoolVector2Array( 115, 44, 146, 54, 135, 86, -63, 88, 72, 33, 113, 39
 polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 4, 5, 0, 3, 6 ), PoolIntArray( 7, 3, 8, 9, 10 ), PoolIntArray( 6, 11, 4 ), PoolIntArray( 12, 6, 3 ), PoolIntArray( 13, 12, 3, 7 ) ]
 outlines = [ PoolVector2Array( 135, 86, 146, 54, 115, 44, 113, 39, 72, 33, 19, 41, 17, 49, -2, 52, -21, 50, -31, 50, -38, 46, -61, 58, -72, 82, -63, 88 ) ]
 
-[node name="Cave" instance=ExtResource( 3 )]
+[node name="RoomCave" instance=ExtResource( 3 )]
 script = ExtResource( 4 )
 script_name = "Cave"
 

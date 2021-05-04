@@ -54,6 +54,7 @@ func _enable_panels() -> void:
 	_click_handler.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	_display_box.hide()
+	_dialog_text.hide()
 
 #	_info_bar.text = ''
 	_info_bar.show()
