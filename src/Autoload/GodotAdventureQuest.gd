@@ -2,6 +2,7 @@ extends Node
 # (E) El núcleo de Godot Adventure Quest
 
 signal inline_dialog_requested(options)
+signal text_speed_changed(idx)
 
 export(Array, Resource) var rooms = []
 export(Array, PackedScene) var characters = []
@@ -17,7 +18,7 @@ var in_room := false setget _set_in_room
 var current_room: Room = null
 var clicked: Node
 var cutscene_skipped := false
-var text_speed_idx := 0
+var text_speed_idx := 0 setget _set_text_speed_idx
 
 onready var game_width := get_viewport().get_visible_rect().end.x
 onready var game_height := get_viewport().get_visible_rect().end.y
@@ -168,3 +169,8 @@ func room_readied(room: Room) -> void:
 func _set_in_room(value: bool) -> void:
 	in_room = value
 	Cursor.toggle_visibility(in_room)
+
+
+func _set_text_speed_idx(value: int) -> void:
+	text_speed_idx = value
+	emit_signal('text_speed_changed', text_speed_idx)

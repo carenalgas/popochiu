@@ -30,11 +30,15 @@ func _ready() -> void:
 	
 	# Conectarse a señales de los hijos
 	_tween.connect('tween_all_completed', self, '_wait_input')
+	
+	# Conectarse a eventos del universo Chimpoko
+	E.connect('text_speed_changed', self, 'change_speed')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func play_text(props: Dictionary) -> void:
 	# Establecer el estado por defecto
+	_is_waiting_input = false
 	clear()
 	push_color(props.color)
 	append_bbcode(_wrapper % props.text)
@@ -99,18 +103,19 @@ func stop() ->void:
 		return
 
 	if _is_waiting_input:
-		_is_waiting_input = false
 		_notify_completion()
 	else:
 		# Saltarse las animaciones
 		_tween.stop_all()
 		percent_visible = 1.0
 		rect_size = _target_size
-#		_wait_input()
+		_wait_input()
 
 
 func hide() -> void:
 	modulate.a = 0.0
+	_tween.stop_all()
+	_is_waiting_input = false
 
 
 func change_speed(idx: int) -> void:
@@ -123,5 +128,5 @@ func _wait_input() -> void:
 
 
 func _notify_completion() -> void:
-	modulate.a = 0.0
+	self.hide()
 	emit_signal('animation_finished')

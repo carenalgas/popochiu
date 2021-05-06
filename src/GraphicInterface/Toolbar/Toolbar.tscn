@@ -7,7 +7,7 @@
 [ext_resource path="res://src/GraphicInterface/Toolbar/Toolbar.gd" type="Script" id=5]
 [ext_resource path="res://assets/images/graphic_interface/toolbar/btn_dialog_speed_02.png" type="Texture" id=6]
 [ext_resource path="res://assets/images/graphic_interface/toolbar/btn_dialog_speed_03.png" type="Texture" id=7]
-[ext_resource path="res://src/GraphicInterface/Toolbar/ToolbarButton.gd" type="Script" id=8]
+[ext_resource path="res://src/GraphicInterface/Toolbar/BtnQuit.gd" type="Script" id=8]
 [ext_resource path="res://src/GraphicInterface/Toolbar/BtnDialogSpeed.gd" type="Script" id=9]
 
 [node name="Toolbar" type="NinePatchRect"]
@@ -27,7 +27,6 @@ script = ExtResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-dialog_states = [ ExtResource( 4 ), ExtResource( 6 ), ExtResource( 7 ) ]
 
 [node name="Tween" type="Tween" parent="."]
 
@@ -63,8 +62,9 @@ texture_normal = ExtResource( 4 )
 script = ExtResource( 9 )
 description = "Velocidad del texto"
 cursor = 10
+btn_states = [ ExtResource( 4 ), ExtResource( 6 ), ExtResource( 7 ) ]
 
-[node name="BtnPower" type="TextureButton" parent="Panel/Grid"]
+[node name="BtnQuit" type="TextureButton" parent="Panel/Grid"]
 margin_left = 17.0
 margin_right = 33.0
 margin_bottom = 16.0

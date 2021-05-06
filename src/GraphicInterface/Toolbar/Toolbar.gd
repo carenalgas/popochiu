@@ -1,19 +1,15 @@
 class_name Toolbar
 extends NinePatchRect
 
-signal dialog_speed_changed(state)
-
-export(Array, Texture) var dialog_states := []
 export(Cursor.Type) var cursor
 export var script_name := ''
 
 var is_disabled := false
 
-var _dialog_speed_state := 0
 var _can_hide := true
 
-onready var _btn_dialog: TextureButton = find_node('BtnDialog')
-onready var _btn_power: TextureButton = find_node('BtnPower')
+onready var _btn_dialog: ToolbarButton = find_node('BtnDialog')
+onready var _btn_power: ToolbarButton = find_node('BtnPower')
 onready var _grid: GridContainer = find_node('Grid')
 onready var _hide_y := rect_position.y - (rect_size.y - 4)
 
@@ -27,12 +23,9 @@ func _ready() -> void:
 	connect('mouse_exited', self, '_close')
 	
 	# Conectarse a señales de los hijos de la mamá
-	_btn_dialog.connect('pressed', self, '_change_dialog_speed')
-	_btn_power.connect('pressed', self, '_quit_game')
-	
 	for b in _grid.get_children():
-		(b as TextureButton).connect('mouse_entered', self, '_show_cursor', [b])
-		(b as TextureButton).connect('mouse_exited', self, '_restore_cursor')
+		(b as TextureButton).connect('mouse_entered', self, '_disable_hide')
+		(b as TextureButton).connect('mouse_exited', self, '_enable_hide')
 
 	# TODO: conectarse a señales del universo Chimpoko
 
@@ -80,24 +73,9 @@ func _close() -> void:
 	$Tween.start()
 
 
-func _change_dialog_speed() -> void:
-	_dialog_speed_state = wrapi(_dialog_speed_state + 1, 0, dialog_states.size())
-	_btn_dialog.texture_normal = dialog_states[_dialog_speed_state]
-	emit_signal('dialog_speed_changed', _dialog_speed_state)
-	G.show_info(_btn_dialog.description)
-
-
-func _quit_game() -> void:
-	pass
-
-
-func _show_cursor(btn: ToolbarButton) -> void:
+func _disable_hide() -> void:
 	_can_hide = false
-	Cursor.set_cursor(btn.cursor)
-	G.show_info(btn.description)
 
 
-func _restore_cursor() -> void:
+func _enable_hide() -> void:
 	_can_hide = true
-	Cursor.set_cursor()
-	G.show_info()

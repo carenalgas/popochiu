@@ -18,7 +18,6 @@ func _ready():
 	_dialog_menu.connect('shown', self, '_disable_panels', [{ blocking = false }])
 	_display_box.connect('shown', self, '_disable_panels')
 	_display_box.connect('hidden', self, '_enable_panels')
-	_toolbar.connect('dialog_speed_changed', self, '_change_dialog_speed')
 	
 	# Conectarse a eventos del universo digimon
 	C.connect('character_spoke', self, '_show_dialog_text')
@@ -87,8 +86,3 @@ func _show_panels() -> void:
 	_inventory_container.show()
 	_info_bar.show()
 	_toolbar.show()
-
-
-func _change_dialog_speed(target_speed := 0) -> void:
-	E.text_speed_idx = target_speed
-	_dialog_text.change_speed(target_speed)
