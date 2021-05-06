@@ -6,6 +6,7 @@ onready var _display_box: DisplayBox = find_node('DisplayBox')
 onready var _inventory_container: InventoryContainer = find_node('InventoryContainer')
 onready var _click_handler: Button = $MainContainer/ClickHandler
 onready var _dialog_menu: DialogMenu = find_node('DialogMenu')
+onready var _toolbar: Toolbar = find_node('Toolbar')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -17,6 +18,7 @@ func _ready():
 	_dialog_menu.connect('shown', self, '_disable_panels', [{ blocking = false }])
 	_display_box.connect('shown', self, '_disable_panels')
 	_display_box.connect('hidden', self, '_enable_panels')
+	_toolbar.connect('dialog_speed_changed', self, '_change_dialog_speed')
 	
 	# Conectarse a eventos del universo digimon
 	C.connect('character_spoke', self, '_show_dialog_text')
@@ -47,6 +49,7 @@ func _disable_panels(props := { blocking = true }) -> void:
 	if _inventory_container.is_disabled: return
 
 	_inventory_container.disable()
+	_toolbar.disable()
 
 
 func _enable_panels() -> void:
@@ -59,13 +62,15 @@ func _enable_panels() -> void:
 #	_info_bar.text = ''
 	_info_bar.show()
 	_inventory_container.show()
+	_toolbar.show()
 
 	_inventory_container.enable()
+	_toolbar.enable()
 
 
 func _continue() -> void:
 	if _dialog_text.percent_visible == 1.0:
-		_dialog_text.stop()
+		_dialog_text.hide()
 		_display_box.hide()
 		G.emit_signal('continue_clicked')
 	else:
@@ -75,8 +80,15 @@ func _continue() -> void:
 func _hide_panels() -> void:
 	_inventory_container.hide()
 	_info_bar.hide()
+	_toolbar.hide()
 
 
 func _show_panels() -> void:
 	_inventory_container.show()
 	_info_bar.show()
+	_toolbar.show()
+
+
+func _change_dialog_speed(target_speed := 0) -> void:
+	E.text_speed_idx = target_speed
+	_dialog_text.change_speed(target_speed)

@@ -20,7 +20,7 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
   - [Texto de diálogo](#texto-de-diálogo)
   - [Texto de aviso](#texto-de-aviso)
   - [Menú de opciones de diálogo](#menú-de-opciones-de-diálogo)
-  - [Menú del juego (*Toolbar*)](#menú-del-juego-toolbar)
+  - [🧰 Menú del juego (*Toolbar*)](#-menú-del-juego-toolbar)
 - [📦 Inventory](#-inventory)
 - [💬 Árboles de diálogo](#-árboles-de-diálogo)
 - [🌎 Globals](#-globals)
@@ -110,6 +110,8 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 **Por hacer**
 - [ ] Que haya un Autoload para controlar eventos comunes a las habitaciones, sus props, sus hotspot, entre otros.
 - [ ] Definir métodos que permitan saber qué ha pasado en la habitación actual para reaccionar a eso.
+- [ ] Que se pueda guardar un estado de la habitación en Globals.gd o GodotAdventureQuest.gd para que se cargue cuando se vuelve a entrar en la habitación (o eventualmente, cuando se cargue una partida guardada).
+- [ ] Que se exporte una variable que indique el tipo de transición a usar cuando se vaya a entrar a la habitación.
 
 **Hecho**
 - [x] Que se pueda hacer transición de una habitación a otra.
@@ -230,15 +232,19 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [x] Que al seleccionar una opción se cierre el menú de opciones de diálogo y se envíe la opción seleccionada como parámetro de una señal.
 - [x] Que haya un VBoxContainer para mostrar las opciones del diálogo.
 
-## Menú del juego (*Toolbar*)
+## 🧰 Menú del juego (*Toolbar*)
 *Permite silenciar el juego, cambiar el idioma, activar los subtítulos, cerrar el juego...*
 
 **Por hacer**
-- [ ] Crear escena con botones para silenciar/activar sonido, cambiar idioma, activar/desactivar subtítulos, cerrar el juego.
-- [ ] Hacer la funcionalidad para cada uno de esos botones.
+- [ ] Hacer funcionalidad para silenciar/activar sonido.
+- [ ] Hacer funcionalidad para cambiar idioma.
+- [ ] Hacer funcionalidad para cambiar modo de progreso de diálogos (auto, manual).
+- [ ] Hacer funcionalidad para guardar/cargar partida.
 
 **Hecho**
-😖
+- [x] Crear escena para poner botones del menú de juego
+- [x] Hacer funcionalidad para cambiar velocidad de animación del texto.
+- [x] Hacer funcionalidad para cerrar el juego.
 
 # 📦 Inventory
 `Inventory.tscn, Inventory.gd, Item.gd, InventoryItem.gd, ItemTemplate.gd`
@@ -297,6 +303,8 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
 **Hecho**
+- [x] Que al saltar una escena se ejecuten los cambios indicados en su lista de acciones. Por ejemplo: que un personaje se desplace de un punto a otro, o mire en una dirección específica.
+- [x] Que se puedan crear escenas (*cutscenes*) que permitan saltar la lista de eventos en las mismas.
 - [x] Que la definición de las posibles habitaciones del juego se haga con un `Resource` que permita definir: el ID con el que se solicitará la habitación y la ruta del archivo **.tscn** que deberá instanciarse para hacer la transición.
 - [x] Que se cargue como una escena de Autoload que tenga adentro las escenas de interfaz gráfica y efectos de transición.
 - [x] Que permita cambiar de habitación y llame a los métodos respectivos dependiendo del estado de la transición.
@@ -304,6 +312,7 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 
 # 🛠 Configuración
 - [ ] Que sea fácil indicarle al framework que el juego tiene controles de movimiento 2D (como casi todos los point n' click) o 1D (como [Short-term Battery](https://gamejolt.com/games/short-term-battery/340825) o [Loco Motive](https://robustgames.itch.io/loco-motive) o [iD](https://gamejolt.com/games/iD/256559)).
+- [ ] Que se pueda establecer el modo de movimiento como una teletransportación. Al estilo de [An eternity, reflecting](https://gamejolt.com/games/AER/421186).
 
 ---
 ---

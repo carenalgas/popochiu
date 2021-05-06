@@ -88,6 +88,16 @@ _global_script_classes=[ {
 "class": "Room",
 "language": "GDScript",
 "path": "res://src/Nodes/Room/Room.gd"
+}, {
+"base": "NinePatchRect",
+"class": "Toolbar",
+"language": "GDScript",
+"path": "res://src/GraphicInterface/Toolbar/Toolbar.gd"
+}, {
+"base": "TextureButton",
+"class": "ToolbarButton",
+"language": "GDScript",
+"path": "res://src/GraphicInterface/Toolbar/ToolbarButton.gd"
 } ]
 _global_script_class_icons={
 "AsepriteImportData": "",
@@ -105,7 +115,9 @@ _global_script_class_icons={
 "InventoryContainer": "",
 "Item": "",
 "Prop": "",
-"Room": ""
+"Room": "",
+"Toolbar": "",
+"ToolbarButton": ""
 }
 
 [application]

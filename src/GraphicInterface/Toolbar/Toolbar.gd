@@ -1,32 +1,40 @@
-class_name InventoryContainer
-extends Control
+class_name Toolbar
+extends NinePatchRect
 
-signal item_added(item)
+signal dialog_speed_changed(state)
+
+export(Array, Texture) var dialog_states := []
+export(Cursor.Type) var cursor
+export var script_name := ''
 
 var is_disabled := false
 
-var _can_hide_inventory := true
+var _dialog_speed_state := 0
+var _can_hide := true
 
-onready var _hide_y := rect_position.y - (rect_size.y - 3.5)
-onready var _foreground: TextureRect = find_node('InventoryForeground')
-onready var _grid: GridContainer = find_node('InventoryGrid')
+onready var _btn_dialog: TextureButton = find_node('BtnDialog')
+onready var _btn_power: TextureButton = find_node('BtnPower')
+onready var _grid: GridContainer = find_node('Grid')
+onready var _hide_y := rect_position.y - (rect_size.y - 4)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
-func _ready():
+func _ready() -> void:
 	rect_position.y = _hide_y
-	rect_size.x = _foreground.rect_size.x
 	
-	# TODO: Hacer algo así para los casos en los que se quiera que el inventario
-	# inicie ya con unos objetos dentro.
-
 	# Conectarse a señales del yo
 	connect('mouse_entered', self, '_open')
 	connect('mouse_exited', self, '_close')
 	
-	# Conectarse a las señales del papá de los inventarios
-	I.connect('item_added', self, '_add_item')
-	I.connect('item_removed', self, '_remove_item')
+	# Conectarse a señales de los hijos de la mamá
+	_btn_dialog.connect('pressed', self, '_change_dialog_speed')
+	_btn_power.connect('pressed', self, '_quit_game')
+	
+	for b in _grid.get_children():
+		(b as TextureButton).connect('mouse_entered', self, '_show_cursor', [b])
+		(b as TextureButton).connect('mouse_exited', self, '_restore_cursor')
+
+	# TODO: conectarse a señales del universo Chimpoko
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -63,7 +71,7 @@ func _open() -> void:
 
 func _close() -> void:
 	yield(get_tree(), 'idle_frame')
-	if not _can_hide_inventory: return
+	if not _can_hide: return
 	$Tween.interpolate_property(
 		self, 'rect_position:y',
 		0.0, _hide_y if not is_disabled else _hide_y - 3.5,
@@ -72,32 +80,24 @@ func _close() -> void:
 	$Tween.start()
 
 
-func _show_item_info(description := '') -> void:
-	_can_hide_inventory = false if description else true
+func _change_dialog_speed() -> void:
+	_dialog_speed_state = wrapi(_dialog_speed_state + 1, 0, dialog_states.size())
+	_btn_dialog.texture_normal = dialog_states[_dialog_speed_state]
+	emit_signal('dialog_speed_changed', _dialog_speed_state)
+	G.show_info(_btn_dialog.description)
 
 
-func _change_cursor(item: Item) -> void:
-	I.set_active_item(item)
+func _quit_game() -> void:
+	pass
 
 
-func _add_item(item: Item) -> void:
-	_grid.add_child(item)
-	
-	item.connect('description_toggled', self, '_show_item_info')
-	item.connect('selected', self, '_change_cursor')
-	
-	_open()
-	yield(get_tree().create_timer(2.0), 'timeout')
-	_close()
-
-	I.emit_signal('item_add_done', item)
+func _show_cursor(btn: ToolbarButton) -> void:
+	_can_hide = false
+	Cursor.set_cursor(btn.cursor)
+	G.show_info(btn.description)
 
 
-func _remove_item(item: Item) -> void:
-	item.disconnect('description_toggled', self, '_show_item_info')
-	item.disconnect('selected', self, '_change_cursor')
-	_grid.remove_child(item)
-	
-	yield(get_tree(), 'idle_frame')
-	
-	I.emit_signal('item_remove_done', item)
+func _restore_cursor() -> void:
+	_can_hide = true
+	Cursor.set_cursor()
+	G.show_info()

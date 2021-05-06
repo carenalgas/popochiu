@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/powerquest-cursor.png-21f2b63e5883817be084b990921c071a.stex"
+path="res://.import/bg.png-ad3f1846a1ce869ab5c1a0e19670632e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/graphic_interface/powerquest-cursor.png"
-dest_files=[ "res://.import/powerquest-cursor.png-21f2b63e5883817be084b990921c071a.stex" ]
+source_file="res://assets/images/graphic_interface/inventory/bg.png"
+dest_files=[ "res://.import/bg.png-ad3f1846a1ce869ab5c1a0e19670632e.stex" ]
 
 [params]
 

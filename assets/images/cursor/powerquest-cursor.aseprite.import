@@ -2,12 +2,12 @@
 
 importer="aseprite.wizard.plugin"
 type="SpriteFrames"
-path="res://.import/powerquest-cursor.aseprite-87cb271970fb66850fe5cd1f633566ea.res"
+path="res://.import/powerquest-cursor.aseprite-8d3eb8cf3a98725ba6457588e63fb679.res"
 
 [deps]
 
-source_file="res://assets/images/graphic_interface/powerquest-cursor.aseprite"
-dest_files=[ "res://.import/powerquest-cursor.aseprite-87cb271970fb66850fe5cd1f633566ea.res" ]
+source_file="res://assets/images/cursor/powerquest-cursor.aseprite"
+dest_files=[ "res://.import/powerquest-cursor.aseprite-8d3eb8cf3a98725ba6457588e63fb679.res" ]
 
 [params]
 

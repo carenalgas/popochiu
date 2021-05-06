@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/ToolbarBack_0.png-5ddb0f697aaa234f5e16bc50af7f395b.stex"
+path="res://.import/btn_dialog_speed_03.png-6377d9bfe1528122d5c05fc541dfdd34.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/graphic_interface/ToolbarBack_0.png"
-dest_files=[ "res://.import/ToolbarBack_0.png-5ddb0f697aaa234f5e16bc50af7f395b.stex" ]
+source_file="res://assets/images/graphic_interface/toolbar/btn_dialog_speed_03.png"
+dest_files=[ "res://.import/btn_dialog_speed_03.png-6377d9bfe1528122d5c05fc541dfdd34.stex" ]
 
 [params]
 

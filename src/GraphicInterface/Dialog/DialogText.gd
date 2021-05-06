@@ -5,10 +5,10 @@ extends RichTextLabel
 
 signal animation_finished
 
-export var secs_per_character := 1.0
 export var wrap_width := 200
 export var min_wrap_width := 120
 
+var _secs_per_character := 1.0
 var _wrapper := '[center]%s[/center]'
 var _is_waiting_input := false
 #  Estos valores se toman de la configuración hecha en el Editor --------------
@@ -26,6 +26,7 @@ func _ready() -> void:
 	# Establecer la configuración inicial
 	clear()
 	modulate.a = 0.0
+	_secs_per_character = E.text_speeds[0]
 	
 	# Conectarse a señales de los hijos
 	_tween.connect('tween_all_completed', self, '_wait_input')
@@ -80,12 +81,12 @@ func play_text(props: Dictionary) -> void:
 #
 #	# Si se quiere hacer de otro modo en el Inspector
 
-	if secs_per_character > 0.0:
+	if _secs_per_character > 0.0:
 		# Que el texto aparezca animado
 		_tween.interpolate_property(
 			self, 'percent_visible',
 			0, 1,
-			secs_per_character * $Label.get_total_character_count(),
+			_secs_per_character * $Label.get_total_character_count(),
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
 		_tween.start()
@@ -105,11 +106,15 @@ func stop() ->void:
 		_tween.stop_all()
 		percent_visible = 1.0
 		rect_size = _target_size
-		_wait_input()
+#		_wait_input()
 
 
 func hide() -> void:
 	modulate.a = 0.0
+
+
+func change_speed(idx: int) -> void:
+	_secs_per_character = E.text_speeds[idx]
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

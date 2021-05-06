@@ -8,6 +8,7 @@ export(Array, PackedScene) var characters = []
 export(Array, String, FILE, "*.tscn") var inventory_items = []
 export(Array, Resource) var dialog_trees = []
 export var skip_cutscene_time := 0.2
+export var text_speeds := [0.1, 0.01, 0.0]
 
 var in_run := false
 # Se usa para que no se pueda cambiar de escena si está se ha cargado por completo,
@@ -16,6 +17,7 @@ var in_room := false setget _set_in_room
 var current_room: Room = null
 var clicked: Node
 var cutscene_skipped := false
+var text_speed_idx := 0
 
 onready var game_width := get_viewport().get_visible_rect().end.x
 onready var game_height := get_viewport().get_visible_rect().end.y
@@ -97,8 +99,9 @@ func run_cutscene(instructions: Array) -> void:
 	yield(run(instructions), 'completed')
 	set_process_input(false)
 	
-	$TransitionLayer.play_transition('pass_down_out', skip_cutscene_time)
-	yield($TransitionLayer, 'transition_finished')
+	if cutscene_skipped:
+		$TransitionLayer.play_transition('pass_down_out', skip_cutscene_time)
+		yield($TransitionLayer, 'transition_finished')
 
 	cutscene_skipped = false
 

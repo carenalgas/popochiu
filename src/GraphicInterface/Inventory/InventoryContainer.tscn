@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://src/GraphicInterface/Inventory/InventoryContainer.gd" type="Script" id=1]
-[ext_resource path="res://assets/images/graphic_interface/InventoryBack_0.png" type="Texture" id=2]
-[ext_resource path="res://assets/images/graphic_interface/InventoryFront_0.png" type="Texture" id=3]
+[ext_resource path="res://assets/images/graphic_interface/inventory/bg.png" type="Texture" id=2]
+[ext_resource path="res://assets/images/graphic_interface/inventory/fg.png" type="Texture" id=3]
 
 [node name="InventoryContainer" type="NinePatchRect"]
 margin_left = 4.0
