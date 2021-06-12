@@ -133,10 +133,10 @@ config/icon="res://icon.png"
 Utils="*res://src/Autoload/Utils.gd"
 Cursor="*res://src/Autoload/Cursor.tscn"
 E="*res://src/Autoload/GodotAdventureQuest.tscn"
-C="*res://src/Autoload/CharacterInterface.gd"
+C="*res://src/Autoload/ICharacter.gd"
 I="*res://src/Inventory/Inventory.tscn"
-D="*res://src/Autoload/DialogTreeInterface.tscn"
-G="*res://src/Autoload/GraphicInterfaceEvents.gd"
+D="*res://src/Autoload/IDialogTree.tscn"
+G="*res://src/Autoload/IGraphicInterface.gd"
 Globals="*res://src/Autoload/Globals.gd"
 
 [debug]
@@ -152,7 +152,7 @@ window/size/height=180
 window/size/test_width=640
 window/size/test_height=360
 window/stretch/mode="2d"
-window/stretch/aspect="expand"
+window/stretch/aspect="keep"
 
 [editor_plugins]
 

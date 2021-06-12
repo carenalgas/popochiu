@@ -25,6 +25,10 @@ characters = [ {
 "position": Vector2( 23, 49 ),
 "script_name": "Barney"
 } ]
+limit_left = 0.0
+limit_right = 0.0
+limit_top = 0.0
+limit_bottom = 0.0
 
 [node name="Bg" parent="Props" index="0" instance=ExtResource( 4 )]
 clickable = false
@@ -109,7 +113,7 @@ polygon = PoolVector2Array( -192, -75, -201, 25, -132, 7, -62, 5, -16, -9, 47, -
 position = Vector2( -6, 14 )
 
 [node name="EntryPoint" type="Position2D" parent="Points" index="0"]
-position = Vector2( -110, 49 )
+position = Vector2( -125, 51 )
 
 [node name="CavePoint" type="Position2D" parent="Points" index="1"]
 position = Vector2( 97, 26 )

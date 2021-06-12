@@ -283,3 +283,6 @@ texture = ExtResource( 3 )
 offset = Vector2( 0, 8 )
 region_enabled = true
 region_rect = Rect2( 0, 0, 48, 64 )
+
+[node name="DialogPos" parent="." index="5"]
+position = Vector2( 0, -42 )
