@@ -4,7 +4,7 @@
 [ext_resource path="res://src/GraphicInterface/Dialog/DialogText.gd" type="Script" id=2]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 1, 0, 0, 0.286275 )
+bg_color = Color( 1, 0, 0, 0 )
 
 [node name="DialogText" type="RichTextLabel"]
 margin_right = 200.0

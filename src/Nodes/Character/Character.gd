@@ -45,7 +45,8 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
 	$Sprite.flip_h = target_pos.x < position.x
-	_looking_dir = 'l' if $Sprite.flip_h else 'r'
+#	_looking_dir = 'l' if $Sprite.flip_h else 'r'
+#	_looking_dir = 'l' if $Sprite.flip_h else 'r'
 
 	if E.cutscene_skipped:
 		E.main_camera.smoothing_enabled = false
@@ -92,7 +93,7 @@ func face_down(is_in_queue := true) -> void:
 
 func face_left(is_in_queue := true) -> void:
 	if is_in_queue: yield()
-	_looking_dir = 'l'
+	_looking_dir = 'r'
 	$Sprite.flip_h = true
 	yield(idle(false), 'completed')
 
