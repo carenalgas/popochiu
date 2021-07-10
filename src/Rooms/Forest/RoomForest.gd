@@ -23,15 +23,15 @@ func on_room_transition_finished() -> void:
 # warning-ignore: unreachable_code
 #	return
 	E.run_cutscene([
-		G.display('Haz clic para interactuar y clic derecho para examinar'),
-		G.display('DLG_A'),
+#		G.display('Haz clic para interactuar y clic derecho para examinar'),
+#		G.display('DLG_A'),
 		C.player_say('Bueno. Hay que empezar con algo'),
 		C.character_say('Barney', 'Cállese maricón!'),
-		E.wait(),
-		C.player.face_up(),
-		E.wait(),
-		C.player.face_left(),
-		E.wait(),
+#		E.wait(),
+#		C.player.face_up(),
+#		E.wait(),
+#		C.player.face_left(),
+#		E.wait(),
 		C.player.face_right(),
 		E.wait(),
 		C.player_say('Lo importante es empezar')

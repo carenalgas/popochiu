@@ -2,6 +2,7 @@ class_name DialogText
 extends RichTextLabel
 # Permite mostrar textos caracter por caracter en un RichTextLabel para aprove-
 # char sus capacidades de animación y edición de fragmentos de texto.
+# Se usa un Label invisible para saber qué ancho debe tener este nodo
 
 signal animation_finished
 
@@ -12,10 +13,10 @@ var _secs_per_character := 1.0
 var _is_waiting_input := false
 var _max_width := rect_size.x
 var _dflt_height := rect_size.y
+var _label_dflt_size := Vector2.ZERO
 
 onready var _tween: Tween = $Tween
-onready var _label_dflt_size: Vector2 = $Label.rect_size
-onready var _wrap_width_limit := (wrap_width / 2) * 0.2
+onready var _wrap_width_limit := (wrap_width / 2) * 0.3
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -25,6 +26,10 @@ func _ready() -> void:
 	$Label.text = ''
 	modulate.a = 0.0
 	_secs_per_character = E.text_speeds[E.text_speed_idx]
+	
+	yield(get_tree(), 'idle_frame')
+	_label_dflt_size = $Label.rect_size
+	rect_size = Vector2(0.0, _dflt_height)
 	
 	# Conectarse a señales de los hijos
 	_tween.connect('tween_all_completed', self, '_wait_input')
@@ -39,57 +44,65 @@ func play_text(props: Dictionary) -> void:
 	_is_waiting_input = false
 	var msg: String = E.get_text(props.text)
 
-	clear()
-	push_color(props.color)
+	# Hacer los cálculos con el Label
 	$Label.text = ''
+	clear()
+
+	yield(get_tree(), 'idle_frame')
+
 	$Label.autowrap = false
-	$Label.rect_size.x = 0.0
-	yield(get_tree(), 'idle_frame') # Para que se pueda calcular bien el ancho
+	$Label.rect_size = _label_dflt_size
+	rect_size = Vector2.ZERO
+
+	$Label.text = msg
+
+	yield(get_tree(), 'idle_frame')
 	
-	append_bbcode(msg)
-	rect_size = Vector2(wrap_width, _dflt_height)
-	rect_position = props.position
-	rect_position.x -= rect_size.x / 2
-
-	# Se usa un Label para saber el ancho y alto que tendrá el RichTextLabel
-	$Label.text = text
-	yield(get_tree(), 'idle_frame') # Para que se pueda calcular bien el ancho
-
+	rect_size = Vector2($Label.rect_size.x, _dflt_height)
+	
+	# 1. Calcular el ancho que tendrá el nodo y su posición.
 	if $Label.rect_size.x > wrap_width:
 		$Label.rect_size.x = wrap_width
 		$Label.autowrap = true
-
-	if rect_position.x < -_wrap_width_limit:
-		rect_size.x = min_wrap_width
-		rect_position.x = props.position.x - (rect_size.x / 2)
-		yield(get_tree(), 'idle_frame') # Para que se pueda calcular bien el ancho
-		
-		if rect_position.x < 0:
-			rect_position.x = 4.0
-	elif rect_position.x + rect_size.x > E.game_width + _wrap_width_limit:
-		rect_size.x = min_wrap_width
-		rect_position.x = props.position.x - (rect_size.x / 2)
-		yield(get_tree(), 'idle_frame') # Para que se pueda calcular bien el ancho
-
-		if rect_position.x + rect_size.x > E.game_width:
-			rect_position.x = E.game_width - rect_size.x - 4.0
+		rect_size.x = wrap_width
 	
-	# Determinar cómo se debe alinear el texto
-	var center := rect_position.x + (rect_size.x / 2)
+	rect_position = props.position
+	rect_position.x -= $Label.rect_size.x / 2
+
+	if (rect_position.x < -_wrap_width_limit or
+	rect_position.x + $Label.rect_size.x > E.game_width + _wrap_width_limit):
+		# Si el texto se sale de la pantalla, se ajusta el tamaño del nodo a su
+		# valor mínimo.
+		$Label.rect_size.x = min_wrap_width
+		rect_size.x = min_wrap_width
+
+	rect_position.x = props.position.x - (rect_size.x / 2)
+	if rect_position.x < 0:
+		rect_position.x = 4.0
+	elif rect_position.x + rect_size.x > E.game_width:
+		rect_position.x = E.game_width - rect_size.x - 4.0
+
+	# 2. Asignar los textos al nodo y su alineación.
+	push_color(props.color)
+	
+	var center := floor(rect_position.x + (rect_size.x / 2))
 	if center == props.position.x:
-		clear()
-		push_color(props.color)
+#		clear()
+#		push_color(props.color)
 		append_bbcode('[center]%s[/center]' % msg)
-		yield(get_tree(), 'idle_frame') 
+#		yield(get_tree(), 'idle_frame')
 	elif center < props.position.x:
-		clear()
-		push_color(props.color)
+#		clear()
+#		push_color(props.color)
 		append_bbcode('[right]%s[/right]' % msg)
-		yield(get_tree(), 'idle_frame') 
+#		yield(get_tree(), 'idle_frame')
+	else:
+		append_bbcode(msg)
 
-	# Ajustar la posición en Y del texto que dice el personaje	
+	# 3. Ajustar la posición en Y con base a la altura del nodo.
+	yield(get_tree(), 'idle_frame')
 	rect_position.y -= rect_size.y
-	
+
 	if _secs_per_character > 0.0:
 		# Que el texto aparezca animado
 		_tween.interpolate_property(
@@ -124,7 +137,7 @@ func hide() -> void:
 	_is_waiting_input = false
 	clear()
 	yield(get_tree(), 'idle_frame')
-	rect_size = Vector2(wrap_width, _dflt_height)
+	rect_size = Vector2.ZERO
 
 
 func change_speed(idx: int) -> void:
