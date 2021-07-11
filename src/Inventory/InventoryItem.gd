@@ -1,8 +1,8 @@
-extends 'res://src/Inventory/Item.gd'
+extends Item
 
 # Cuando se le hace clic en el inventario
 func on_interact() -> void:
-	prints('aaaaaaaaaaaaaa')
+	pass
 
 
 # Lo que pasará cuando se haga clic derecho en el icono del inventario
@@ -11,5 +11,5 @@ func on_look() -> void:
 
 
 # Lo que pasará cuando se use otro Item del inventario sobre este
-func on_use_item() -> void:
+func on_item_used(_item: Item) -> void:
 	pass

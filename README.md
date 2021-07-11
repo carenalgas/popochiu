@@ -151,12 +151,14 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 *Áreas que pueden disparar eventos cuando un personaje entra en contacto con estas.*
 
 **Por hacer**
-- [ ] Crear *script_template* para facilitar la creación de las regiones.
-- [ ] Que región se pueda desactivar una vez haya sido activada.
-- [ ] Que se puedan crear regiones que reaccionen cuando un personaje entre en ellas.
+- [ ] Que regiones se puedan hacer `walkable` (caminables): esto quiere decir que se pueden volver zonas por donde no podrán pasar los personajes si no son `walkable`.
+- [ ] Que regiones puedan cambiar el tamaño del personaje que entra en ellas dependiendo de si este está arriba (_top_) o abajo (_bottom_).
+- [ ] ⭐ Crear plugin para facilitar la creación de regiones.
 
 **Hecho**
-😖
+- [x] Crear *script_template* para facilitar la creación de las regiones.
+- [x] Que región se pueda desactivar una vez haya sido activada.
+- [x] Que se puedan crear regiones que reaccionen cuando un personaje entre en ellas.
 
 ## Puntos (Position2D)
 *Posiciones que tienen un nombre y que pueden usarse para ubicar a los personajes.*
@@ -253,9 +255,9 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 **Por hacer**
 - [ ] Que cada personaje pueda tener un inventario único.
 - [ ] Que se pueda indicar la cantidad a guardar de un objeto en el inventario.
-- [ ] Que se puedan mezclar objetos del inventario.
 
 **Hecho**
+- [x] Que se puedan mezclar objetos del inventario.
 - [x] Que se puedan eliminar ítems del inventario.
 - [x] Que se puedan usar ítems del inventario.
 - [x] Que se pueda agregar un ítem al inventario y que de una vez se convierta en el ítem activo.
@@ -303,6 +305,7 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
 **Hecho**
+- [x] Que personaje jugable hable si se usa `Player: Hola` en `E.run([...])`.
 - [x] Que al saltar una escena se ejecuten los cambios indicados en su lista de acciones. Por ejemplo: que un personaje se desplace de un punto a otro, o mire en una dirección específica.
 - [x] Que se puedan crear escenas (*cutscenes*) que permitan saltar la lista de eventos en las mismas.
 - [x] Que la definición de las posibles habitaciones del juego se haga con un `Resource` que permita definir: el ID con el que se solicitará la habitación y la ruta del archivo **.tscn** que deberá instanciarse para hacer la transición.

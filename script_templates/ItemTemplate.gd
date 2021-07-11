@@ -11,5 +11,5 @@ func on_look() -> void:
 
 
 # Lo que pasará cuando se use otro Item del inventario sobre este
-func on_use_item() -> void:
+func on_item_used(_item: Item) -> void:
 	pass

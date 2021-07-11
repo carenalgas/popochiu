@@ -84,6 +84,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/Nodes/Prop/Prop.gd"
 }, {
+"base": "Area2D",
+"class": "Region",
+"language": "GDScript",
+"path": "res://src/Nodes/Region/Region.gd"
+}, {
 "base": "Node2D",
 "class": "Room",
 "language": "GDScript",
@@ -115,6 +120,7 @@ _global_script_class_icons={
 "InventoryContainer": "",
 "Item": "",
 "Prop": "",
+"Region": "",
 "Room": "",
 "Toolbar": "",
 "ToolbarButton": ""
@@ -134,7 +140,7 @@ Utils="*res://src/Autoload/Utils.gd"
 Cursor="*res://src/Autoload/Cursor.tscn"
 E="*res://src/Autoload/GodotAdventureQuest.tscn"
 C="*res://src/Autoload/ICharacter.gd"
-I="*res://src/Inventory/Inventory.tscn"
+I="*res://src/Inventory/IInventory.tscn"
 D="*res://src/Autoload/IDialogTree.tscn"
 G="*res://src/Autoload/IGraphicInterface.gd"
 Globals="*res://src/Autoload/Globals.gd"

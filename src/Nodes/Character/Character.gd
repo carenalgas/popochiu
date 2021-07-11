@@ -7,6 +7,9 @@ extends Clickable
 # TODO: Crear la máquina de estados
 
 signal started_walk_to(character, start, end)
+signal stoped_walk
+
+export var dflt_walk_animation := 'walk_r'
 
 var last_room := ''
 var anim_suffix := ''
@@ -57,9 +60,20 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 		E.main_camera.smoothing_enabled = true
 		return
 	
-	$AnimationPlayer.play('walk_%s' % _looking_dir + anim_suffix)
+	var animation_name := 'walk_%s' % _looking_dir + anim_suffix
+	if $AnimationPlayer.has_animation(animation_name):
+		$AnimationPlayer.play(animation_name)
+	else:
+		$AnimationPlayer.play(dflt_walk_animation)
+
 	emit_signal('started_walk_to', self, position, target_pos)
 	yield(C, 'character_move_ended')
+
+
+func stop_walking(is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	emit_signal('stoped_walk')
+	yield(get_tree(), 'idle_frame')
 
 
 func idle(is_in_queue := true) -> void:

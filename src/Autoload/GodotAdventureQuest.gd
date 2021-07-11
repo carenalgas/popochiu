@@ -262,6 +262,9 @@ func _eval_string(text: String) -> void:
 			var char_talk: int = text.find(':')
 			if char_talk:
 				var char_name: String = text.substr(0, char_talk)
+				if char_name.to_lower() == 'player':
+					var char_line: String = text.substr(char_talk + 1).trim_prefix(' ')
+					yield(C.player_say(char_line, false), 'completed')
 				if C.is_valid_character(char_name):
 					var char_line: String = text.substr(char_talk + 1).trim_prefix(' ')
 					yield(C.character_say(char_name, char_line, false), 'completed')

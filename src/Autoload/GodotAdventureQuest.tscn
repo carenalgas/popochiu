@@ -4,8 +4,8 @@
 [ext_resource path="res://src/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=2]
 [ext_resource path="res://src/GraphicInterface/GraphicInterface.tscn" type="PackedScene" id=3]
 [ext_resource path="res://src/DialogTree/ChatWithBarney/ChatWithBarney.tres" type="Resource" id=4]
-[ext_resource path="res://src/Characters/Dave/Dave.tscn" type="PackedScene" id=5]
-[ext_resource path="res://src/Characters/Barney/Barney.tscn" type="PackedScene" id=6]
+[ext_resource path="res://src/Characters/Dave/CharacterDave.tscn" type="PackedScene" id=5]
+[ext_resource path="res://src/Characters/Barney/CharacterBarney.tscn" type="PackedScene" id=6]
 [ext_resource path="res://src/Helpers/GAQRoom.gd" type="Script" id=7]
 
 [sub_resource type="Resource" id=1]

@@ -124,6 +124,7 @@ func add_character(chr: Character) -> void:
 	$Characters.add_child(chr)
 	#warning-ignore:return_value_discarded
 	chr.connect('started_walk_to', self, '_update_navigation_path')
+	chr.connect('stoped_walk', self, '_clear_navigation_path')
 
 
 func remove_character(chr: Character) -> void:
@@ -168,9 +169,7 @@ func _move_along_path(distance):
 		_path.remove(0)
 
 	_moving_character.position = last_point
-	_moving_character.idle(false)
-	C.emit_signal('character_move_ended', _moving_character)
-	_moving_character = null
+	_clear_navigation_path()
 
 
 func _update_navigation_path(
@@ -247,3 +246,10 @@ func _check_z_indexes(chr: Character) -> void:
 				_check_baseline(c, y_pos)
 			else:
 				c.z_index = 3
+
+
+func _clear_navigation_path() -> void:
+	_path.clear()
+	_moving_character.idle(false)
+	C.emit_signal('character_move_ended', _moving_character)
+	_moving_character = null
