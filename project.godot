@@ -162,7 +162,7 @@ window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/AsepriteWizard/plugin.cfg", "res://addons/aseprite_importer/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/AsepriteWizard/plugin.cfg", "res://addons/GodotAdventureQuest/plugin.cfg", "res://addons/aseprite_importer/plugin.cfg" )
 
 [importer_defaults]
 
