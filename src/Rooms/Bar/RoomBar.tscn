@@ -1,10 +1,10 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://src/Rooms/Garden/RoomGarden.gd" type="Script" id=1]
+[ext_resource path="res://src/Rooms/Bar/RoomBar.gd" type="Script" id=1]
 
-[node name="RoomGarden" type="Node2D"]
+[node name="RoomBar" type="Node2D"]
 script = ExtResource( 1 )
-script_name = "Garden"
+script_name = "Bar"
 limit_left = 0.0
 limit_right = 0.0
 limit_top = 0.0

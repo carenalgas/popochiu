@@ -60,6 +60,11 @@ _global_script_classes=[ {
 "path": "res://addons/aseprite_importer/classes/EditorTheme.gd"
 }, {
 "base": "Resource",
+"class": "GAQCharacter",
+"language": "GDScript",
+"path": "res://src/Helpers/GAQCharacter.gd"
+}, {
+"base": "Resource",
 "class": "GAQRoom",
 "language": "GDScript",
 "path": "res://src/Helpers/GAQRoom.gd"
@@ -115,6 +120,7 @@ _global_script_class_icons={
 "DialogTree": "",
 "DisplayBox": "",
 "EditorTheme": "",
+"GAQCharacter": "",
 "GAQRoom": "",
 "Hotspot": "",
 "InventoryContainer": "",

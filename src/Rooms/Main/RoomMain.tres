@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://src/Helpers/GAQRoom.gd" type="Script" id=1]
+
+[resource]
+resource_name = "Main"
+script = ExtResource( 1 )
+id = "Main"
+path = "res://src/Rooms/Main/RoomMain.tscn"

@@ -1,6 +1,25 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://addons/GodotAdventureQuest/GAQMainDock/GAQMainDock.gd" type="Script" id=1]
+[ext_resource path="res://addons/GodotAdventureQuest/GAQMainDock/icons/group_arrow-open.png" type="Texture" id=2]
+[ext_resource path="res://addons/GodotAdventureQuest/GAQMainDock/GAQGroupButton.gd" type="Script" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.941176, 0.737255, 0.909804, 1 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
 [node name="GAQMainDock" type="Panel"]
 anchor_right = 1.0
@@ -10,23 +29,65 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
+custom_constants/margin_right = 4
+custom_constants/margin_top = 4
+custom_constants/margin_left = 4
+custom_constants/margin_bottom = 4
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Title" type="Label" parent="VBoxContainer"]
-margin_right = 320.0
-margin_bottom = 14.0
-text = "Godot Adventure Quest"
-align = 1
+[node name="MainContainer" type="VBoxContainer" parent="MarginContainer"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 316.0
+margin_bottom = 176.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
-[node name="BtnCreateRoom" type="Button" parent="VBoxContainer"]
-margin_top = 18.0
-margin_right = 320.0
-margin_bottom = 38.0
+[node name="Title" type="Label" parent="MarginContainer/MainContainer"]
+margin_right = 312.0
+margin_bottom = 22.0
+custom_styles/normal = SubResource( 1 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "- P o p o c h i u -"
+align = 1
+uppercase = true
+
+[node name="RoomsButton" type="Button" parent="MarginContainer/MainContainer"]
+margin_top = 26.0
+margin_right = 312.0
+margin_bottom = 42.0
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 3 )
+custom_styles/focus = SubResource( 4 )
+custom_styles/normal = SubResource( 5 )
+custom_colors/font_color = Color( 0.121569, 0.121569, 0.121569, 1 )
+custom_colors/font_color_hover = Color( 0.121569, 0.121569, 0.121569, 1 )
+custom_colors/font_color_pressed = Color( 0.121569, 0.121569, 0.121569, 1 )
+toggle_mode = true
+pressed = true
+text = "Rooms"
+icon = ExtResource( 2 )
+flat = true
+align = 0
+script = ExtResource( 3 )
+target_group = NodePath("../Rooms")
+
+[node name="Rooms" type="VBoxContainer" parent="MarginContainer/MainContainer"]
+margin_top = 46.0
+margin_right = 312.0
+margin_bottom = 66.0
+
+[node name="BtnCreateRoom" type="Button" parent="MarginContainer/MainContainer/Rooms"]
+margin_left = 197.0
+margin_right = 312.0
+margin_bottom = 20.0
+size_flags_horizontal = 8
 text = "Crear habitación"
 
 [node name="PopupCreateRoom" type="ConfirmationDialog" parent="."]
@@ -100,7 +161,7 @@ margin_bottom = 67.0
 text = "Debe ser en inglés por lo de los caracteres.
 (p. ej. Garden o Bathroom)"
 
-[node name="InfoContainer" type="HBoxContainer" parent="PopupCreateRoom/VBoxContainer"]
+[node name="InfoContainer" type="VBoxContainer" parent="PopupCreateRoom/VBoxContainer"]
 margin_top = 71.0
 margin_right = 624.0
 margin_bottom = 85.0
@@ -108,9 +169,16 @@ margin_bottom = 85.0
 [node name="Label" type="Label" parent="PopupCreateRoom/VBoxContainer/InfoContainer"]
 margin_right = 137.0
 margin_bottom = 14.0
-text = "Crea la habitación en:"
+text = "Se creará la habitación en:"
 
-[node name="Path" type="Label" parent="PopupCreateRoom/VBoxContainer/InfoContainer"]
+[node name="ScenePath" type="Label" parent="PopupCreateRoom/VBoxContainer/InfoContainer"]
+margin_left = 141.0
+margin_right = 624.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+
+[node name="ScriptPath" type="Label" parent="PopupCreateRoom/VBoxContainer/InfoContainer"]
 margin_left = 141.0
 margin_right = 624.0
 margin_bottom = 14.0

@@ -12,8 +12,8 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
 - [🚪 Habitaciones](#-habitaciones)
   - [🪑 Props](#-props)
   - [👆 Hotspots](#-hotspots)
-  - [Regiones](#regiones)
-  - [Puntos (Position2D)](#puntos-position2d)
+  - [🟪 Regiones](#-regiones)
+  - [📍 Puntos (Position2D)](#-puntos-position2d)
   - [🚶‍♀️ Áreas transitables (walkable areas)](#️-áreas-transitables-walkable-areas)
 - [💻🖱 Interfaz gráfica](#-interfaz-gráfica)
   - [Texto de descripción](#texto-de-descripción)
@@ -64,9 +64,9 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
   E.run([
     'Barney: Hola... maricón',
     'Coco: No existo, entonces no puedo decir ni mierda',
-    C.player_say('No tiene que tratarme tan feo...'),
+    'Player: No tiene que tratarme tan feo...',
     E.wait(2),
-    C.player_say('malparido'),
+    'Player: Malparido...',
     G.display('En un futuro se podrá hacer controlable cualquier personaje')
   ], 'completed')
   ```
@@ -108,12 +108,13 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 *Las escenas del juego (por donde se moverá el personaje)*
 
 **Por hacer**
-- [ ] Que haya un Autoload para controlar eventos comunes a las habitaciones, sus props, sus hotspot, entre otros.
-- [ ] Definir métodos que permitan saber qué ha pasado en la habitación actual para reaccionar a eso.
-- [ ] Que se pueda guardar un estado de la habitación en Globals.gd o GodotAdventureQuest.gd para que se cargue cuando se vuelve a entrar en la habitación (o eventualmente, cuando se cargue una partida guardada).
 - [ ] Que se exporte una variable que indique el tipo de transición a usar cuando se vaya a entrar a la habitación.
+- [ ] Definir si el estado de la habitación va a quedar guardado en un **NombreHabitación.tres**.
+- [ ] Definir señales que permitan saber qué ha pasado en la habitación actual para reaccionar a eso.
+- [ ] Que haya un Autoload para controlar eventos comunes a las habitaciones, sus props, sus hotspot, entre otros.
 
 **Hecho**
+- [x] Que se pueda guardar un estado de la habitación en Globals.gd o GodotAdventureQuest.gd para que se cargue cuando se vuelve a entrar en la habitación (o eventualmente, cuando se cargue una partida guardada).
 - [x] Que se pueda hacer transición de una habitación a otra.
 - [x] Que cuando una habitación haya entrado al árbol de nodos, se llame a `Room.on_room_entered`.
 - [x] Que cuando el efecto de transición (*fade out* por ahora) para el cambio de habitación haya terminado, se llame al método `Room.on_room_transition_finished`.
@@ -126,7 +127,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 *Ej: las imágenes de fondo y primer plano, un objeto que se puede agarrar...*
 
 **Por hacer**
-- [ ] Crear un plugin para facilitar su creación.
+- [ ] ???.
 
 **Hecho**
 - [x] Que Prop herede de Clickable.
@@ -140,27 +141,26 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 *Ej: El cielo, algo que haga parte de la imagen de fondo.*
 
 **Por hacer**
-- [ ] Crear un plugin para facilitar su creación.
+- [ ] ???.
 
 **Hecho**
 - [x] Que Hotspot herede de Clickable.
 - [x] Crear plantilla para facilitar la asignación de un script a cada Hotspot creado en una habitación.
 - [x] Crear nodo que permita definir un Area2D para controlar la interacción del mouse con ella.
 
-## Regiones
+## 🟪 Regiones
 *Áreas que pueden disparar eventos cuando un personaje entra en contacto con estas.*
 
 **Por hacer**
 - [ ] Que regiones se puedan hacer `walkable` (caminables): esto quiere decir que se pueden volver zonas por donde no podrán pasar los personajes si no son `walkable`.
 - [ ] Que regiones puedan cambiar el tamaño del personaje que entra en ellas dependiendo de si este está arriba (_top_) o abajo (_bottom_).
-- [ ] ⭐ Crear plugin para facilitar la creación de regiones.
 
 **Hecho**
 - [x] Crear *script_template* para facilitar la creación de las regiones.
 - [x] Que región se pueda desactivar una vez haya sido activada.
 - [x] Que se puedan crear regiones que reaccionen cuando un personaje entre en ellas.
 
-## Puntos (Position2D)
+## 📍 Puntos (Position2D)
 *Posiciones que tienen un nombre y que pueden usarse para ubicar a los personajes.*
 
 ## 🚶‍♀️ Áreas transitables (walkable areas)
@@ -298,13 +298,20 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [x] Que se puedan guardar variables globales para saber el estado de los objetos en las habitaciones.
 
 # ⚙ Godot Adventure Quest (núcleo)
-`GodotAdventureQuest.tscn, GodotAdventureQuest.gd`
+> *GodotAdventureQuest.tscn, GodotAdventureQuest.gd*
 
 **Por hacer**
 - [ ] Que haya varios tipos de transición entre escenas.
+- [ ] Crear plugin para facilitar la creación de personajes (Character).
+- [ ] Crear plugin para facilitar la creación de Prop.
+- [ ] Crear plugin para facilitar la creación de Hotspot.
+- [ ] Crear plugin para facilitar la creación de regiones (Region).
+- [ ] Crear plugin para facilitar la creación de objetos de inventario (InventoryItem).
+- [ ] Crear plugin para facilitar la creación de árboles de diálogo (DialogTree).
 - [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
 **Hecho**
+- [x] Crear plugin para facilitar la creación de habitaciones. `2021-07-17`
 - [x] Que personaje jugable hable si se usa `Player: Hola` en `E.run([...])`.
 - [x] Que al saltar una escena se ejecuten los cambios indicados en su lista de acciones. Por ejemplo: que un personaje se desplace de un punto a otro, o mire en una dirección específica.
 - [x] Que se puedan crear escenas (*cutscenes*) que permitan saltar la lista de eventos en las mismas.

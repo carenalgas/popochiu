@@ -11,6 +11,7 @@ signal stoped_walk
 
 export var dflt_walk_animation := 'walk_r'
 
+var room := ''
 var last_room := ''
 var anim_suffix := ''
 

@@ -111,6 +111,10 @@ func on_room_transition_finished() -> void:
 	pass
 
 
+func on_entered_from_editor() -> void:
+	pass
+
+
 # Este método es llamado por GodotAdventureQuest cuando se va a cambiar de
 # habitación. Por defecto sólo remueve los nodos de los personajes para que no
 # desaparezcan sus instancias globales.

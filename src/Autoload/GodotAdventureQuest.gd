@@ -6,8 +6,8 @@ signal text_speed_changed(idx)
 signal language_changed
 
 export(Array, Resource) var rooms = []
-export(Array, PackedScene) var characters = []
-export(Array, String, FILE, "*.tscn") var inventory_items = []
+export(Array, Resource) var characters = []
+export(Array, Resource) var inventory_items = []
 export(Array, Resource) var dialog_trees = []
 export var skip_cutscene_time := 0.2
 export var text_speeds := [0.1, 0.01, 0.0]
@@ -55,11 +55,13 @@ onready var _defaults := {
 func _ready() -> void:
 	# TODO: Asignar habitaciones, personajes, ítems y árboles de conversación a
 	# las respectivas interfaces
-	for character_scene in characters:
-		var character: Character = character_scene.instance()
-		if character.is_player:
-			C.player = character
-		C.characters.append(character)
+	
+	# Por defecto se asume que el personaje jugable es el primero en la lista
+	# de personajes
+	if not characters.empty():
+		var pc: Character = load((characters[0] as GAQCharacter).scene).instance()
+		C.player = pc
+		C.characters.append(pc)
 	
 	set_process_input(false)
 
@@ -247,6 +249,14 @@ func shake_camera(props := {}) -> void:
 
 func get_text(msg: String) -> String:
 	return tr(msg) if use_translations else msg
+
+
+func get_character_instance(id: String) -> Character:
+	for c in characters:
+		var gaq_character: GAQCharacter = c
+		if gaq_character.id == id:
+			return load(gaq_character.scene).instance()
+	return null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

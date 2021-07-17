@@ -66,6 +66,14 @@ func get_character(script_name: String) -> Character:
 	for c in characters:
 		if (c as Character).script_name.to_lower() == script_name.to_lower():
 			return c
+
+	# Si el personaje no está en la lista de personajes, entonces hay que intentar
+	# instanciarlo en base a la lista de personajes de GodotAdventureQuest
+	var new_character: Character = E.get_character_instance(script_name)
+	if new_character:
+		characters.append(new_character)
+		return new_character
+
 	return null
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

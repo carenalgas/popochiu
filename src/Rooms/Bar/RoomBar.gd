@@ -12,7 +12,7 @@ func on_room_entered() -> void:
 
 
 func on_room_transition_finished() -> void:
-	yield(C.player.say('Este jardín está como solaris', false), 'completed')
+	yield(C.player.say('Simona la cacalisa', false), 'completed')
 	G.done()
 
 
