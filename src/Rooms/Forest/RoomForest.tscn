@@ -27,6 +27,9 @@ script_name = "Forest"
 characters = [ {
 "position": Vector2( 23, 49 ),
 "script_name": "Barney"
+}, {
+"position": Vector2( 0, 0 ),
+"script_name": "Panchita"
 } ]
 
 [node name="Bg" parent="Props" index="0" instance=ExtResource( 4 )]

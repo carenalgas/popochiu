@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/group_arrow-closed.png-bbcf2494632c9e82ca3943633dc660ec.stex"
+path="res://.import/group_arrow-closed.png-6553a3407010ff963cab92f256525f67.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/GodotAdventureQuest/GAQMainDock/icons/group_arrow-closed.png"
-dest_files=[ "res://.import/group_arrow-closed.png-bbcf2494632c9e82ca3943633dc660ec.stex" ]
+source_file="res://addons/GodotAdventureQuest/MainDock/GroupButton/group_arrow-closed.png"
+dest_files=[ "res://.import/group_arrow-closed.png-6553a3407010ff963cab92f256525f67.stex" ]
 
 [params]
 

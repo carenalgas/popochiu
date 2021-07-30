@@ -29,6 +29,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/Nodes/Clickable/Clickable.gd"
 }, {
+"base": "ConfirmationDialog",
+"class": "CreationPopup",
+"language": "GDScript",
+"path": "res://addons/GodotAdventureQuest/Popups/CreationPopup.gd"
+}, {
 "base": "Container",
 "class": "DialogMenu",
 "language": "GDScript",
@@ -114,6 +119,7 @@ _global_script_class_icons={
 "AsepriteImporter": "",
 "Character": "",
 "Clickable": "",
+"CreationPopup": "",
 "DialogMenu": "",
 "DialogOption": "",
 "DialogText": "",

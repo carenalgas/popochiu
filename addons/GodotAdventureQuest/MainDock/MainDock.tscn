@@ -1,0 +1,96 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/GAQGroupButton.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/MainDock.gd" type="Script" id=2]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/group_arrow-open.png" type="Texture" id=3]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/group_arrow-closed.png" type="Texture" id=4]
+[ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateRoom/CreateRoom.tscn" type="PackedScene" id=5]
+[ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=6]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.556863, 0.235294, 0.592157, 1 )
+
+[node name="MainDock" type="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 4
+custom_constants/margin_top = 4
+custom_constants/margin_left = 4
+custom_constants/margin_bottom = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="MainContainer" type="VBoxContainer" parent="MarginContainer"]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 316.0
+margin_bottom = 176.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" type="Label" parent="MarginContainer/MainContainer"]
+margin_right = 312.0
+margin_bottom = 22.0
+custom_styles/normal = SubResource( 1 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "--- P o p o c h i u ---"
+align = 1
+uppercase = true
+
+[node name="RoomsGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
+margin_top = 26.0
+margin_bottom = 42.0
+open_icon = ExtResource( 3 )
+closed_icon = ExtResource( 4 )
+target_group = NodePath("../RoomsList")
+color = Color( 0.458824, 0.807843, 0.784314, 1 )
+title = "Habitaciones"
+
+[node name="RoomsList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
+margin_top = 46.0
+margin_right = 312.0
+margin_bottom = 66.0
+
+[node name="BtnCreateRoom" type="Button" parent="MarginContainer/MainContainer/RoomsList"]
+margin_left = 185.0
+margin_right = 312.0
+margin_bottom = 20.0
+size_flags_horizontal = 8
+text = "+ Crear habitación"
+
+[node name="CharactersGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
+margin_top = 70.0
+margin_bottom = 86.0
+open_icon = ExtResource( 3 )
+closed_icon = ExtResource( 4 )
+target_group = NodePath("../CharactersList")
+color = Color( 0.768627, 0.423529, 0.443137, 1 )
+title = "Personajes"
+
+[node name="CharactersList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
+margin_top = 90.0
+margin_right = 312.0
+margin_bottom = 110.0
+
+[node name="BtnCreateCharacter" type="Button" parent="MarginContainer/MainContainer/CharactersList"]
+margin_left = 188.0
+margin_right = 312.0
+margin_bottom = 20.0
+size_flags_horizontal = 8
+text = "+ Crear personaje"
+
+[node name="PopupCreateRoom" parent="." instance=ExtResource( 5 )]
+
+[node name="PopupCreateCharacter" parent="." instance=ExtResource( 6 )]

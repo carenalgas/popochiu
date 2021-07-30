@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/group_arrow-open.png-98412797d9a9fc46ae98ea784c111ff9.stex"
+path="res://.import/old-icon.png-5012f175b8888dd341f5b50bc4cf37f1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/GodotAdventureQuest/GAQMainDock/icons/group_arrow-open.png"
-dest_files=[ "res://.import/group_arrow-open.png-98412797d9a9fc46ae98ea784c111ff9.stex" ]
+source_file="res://old-icon.png"
+dest_files=[ "res://.import/old-icon.png-5012f175b8888dd341f5b50bc4cf37f1.stex" ]
 
 [params]
 
