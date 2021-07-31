@@ -27,8 +27,6 @@ func on_room_transition_finished() -> void:
 #		G.display('DLG_A'),
 		C.player_say('Bueno. Hay que empezar con algo'),
 		C.character_say('Barney', 'Cállese maricón!'),
-		'Panchita: Holaaaaaaaaaaaaaa',
-		'Paco: Uuuuuuuuuuuuuuuuuuuuuuu',
 #		E.wait(),
 #		C.player.face_up(),
 #		E.wait(),

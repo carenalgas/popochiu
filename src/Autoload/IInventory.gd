@@ -31,11 +31,15 @@ func add_item(item_name: String) -> void:
 	if is_instance_valid(i):
 		emit_signal('item_added', i)
 		return yield(self, 'item_add_done')
+	
+	prints('No existe el ítem:', item_name)
+	return yield(get_tree(), 'idle_frame')
 
 
 func add_item_as_active(item_name: String) -> void:
 	var item: InventoryItem = yield(add_item(item_name), 'completed')
-	set_active_item(item)
+	if is_instance_valid(item):
+		set_active_item(item)
 
 
 func set_active_item(item: InventoryItem = null) -> void:

@@ -89,6 +89,7 @@ func create() -> void:
 	_main_dock.add_item_to_list(_new_item_name)
 
 	# Abrir la escena creada en el editor --------------------------------------
+	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.select_file(_new_item_path + '.tscn')
 	_main_dock.ei.open_scene_from_path(_new_item_path + '.tscn')
 	
