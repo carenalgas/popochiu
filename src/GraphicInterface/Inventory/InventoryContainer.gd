@@ -76,11 +76,11 @@ func _show_item_info(description := '') -> void:
 	_can_hide_inventory = false if description else true
 
 
-func _change_cursor(item: Item) -> void:
+func _change_cursor(item: InventoryItem) -> void:
 	I.set_active_item(item)
 
 
-func _add_item(item: Item) -> void:
+func _add_item(item: InventoryItem) -> void:
 	_grid.add_child(item)
 	
 	item.connect('description_toggled', self, '_show_item_info')
@@ -93,7 +93,7 @@ func _add_item(item: Item) -> void:
 	I.emit_signal('item_add_done', item)
 
 
-func _remove_item(item: Item) -> void:
+func _remove_item(item: InventoryItem) -> void:
 	item.disconnect('description_toggled', self, '_show_item_info')
 	item.disconnect('selected', self, '_change_cursor')
 	_grid.remove_child(item)

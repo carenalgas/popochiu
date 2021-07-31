@@ -74,7 +74,7 @@ func on_look() -> void:
 	G.done()
 
 
-func on_item_used(item: Item) -> void:
+func on_item_used(item: InventoryItem) -> void:
 	pass
 
 

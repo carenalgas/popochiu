@@ -22,7 +22,7 @@ __meta__ = {
 [node name="Tween" type="Tween" parent="."]
 
 [node name="InventoryPanel" type="MarginContainer" parent="."]
-margin_right = 20.0
+margin_right = 41.0
 margin_bottom = 20.0
 mouse_filter = 2
 custom_constants/margin_right = 4
@@ -36,10 +36,12 @@ __meta__ = {
 [node name="InventoryGrid" type="GridContainer" parent="InventoryPanel"]
 margin_left = 4.0
 margin_top = 2.0
-margin_right = 16.0
+margin_right = 37.0
 margin_bottom = 16.0
 mouse_filter = 2
-columns = 10
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 4
 
 [node name="InventoryForeground" type="TextureRect" parent="."]
 margin_right = 75.0

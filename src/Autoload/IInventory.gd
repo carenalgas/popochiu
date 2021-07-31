@@ -8,16 +8,17 @@ signal item_remove_done(item)
 
 var _item_instances := []
 
-var active: Item
+var active: InventoryItem
 
 export(Array, PackedScene) var inventory_items
 export var items := []
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready():
 	if not inventory_items.empty():
 		for ii in inventory_items:
-			var item_instance: Item = ii.instance()
+			var item_instance: InventoryItem = ii.instance()
 			_item_instances.append({
 				script_name = item_instance.script_name,
 				node = item_instance
@@ -26,18 +27,18 @@ func _ready():
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func add_item(item_name: String) -> void:
-	var i: Item = _get_item_instance(item_name)
+	var i: InventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i):
 		emit_signal('item_added', i)
 		return yield(self, 'item_add_done')
 
 
 func add_item_as_active(item_name: String) -> void:
-	var item: Item = yield(add_item(item_name), 'completed')
+	var item: InventoryItem = yield(add_item(item_name), 'completed')
 	set_active_item(item)
 
 
-func set_active_item(item: Item = null) -> void:
+func set_active_item(item: InventoryItem = null) -> void:
 	if item:
 		active = item
 		Cursor.set_item_cursor((item.get_node('Icon') as TextureRect).texture)
@@ -49,7 +50,7 @@ func set_active_item(item: Item = null) -> void:
 func remove_item(item_name: String, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	var i: Item = _get_item_instance(item_name)
+	var i: InventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i):
 		set_active_item(null)
 		emit_signal('item_removed', i)
@@ -57,10 +58,19 @@ func remove_item(item_name: String, is_in_queue := true) -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-func _get_item_instance(item_name: String) -> Item:
+func _get_item_instance(item_name: String) -> InventoryItem:
 	for ii in _item_instances:
 		var ii_name: String = ii.script_name
 		if ii_name.to_lower() == item_name.to_lower():
-			return ii.node as Item
+			return ii as InventoryItem
+	
+	# Si el ítem no está en la lista de ítems, entonces hay que intentar
+	# instanciarlo en base a la lista de ítems de GodotAdventureQuest
+	var new_intentory_item: InventoryItem = E.get_inventory_item_instance(
+		item_name
+	)
+	if new_intentory_item:
+		_item_instances.append(new_intentory_item)
+		return new_intentory_item
+	
 	return null
-

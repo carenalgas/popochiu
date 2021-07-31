@@ -19,8 +19,24 @@ func _enter_tree() -> void:
 	add_control_to_dock(DOCK_SLOT_RIGHT_UR, gaq_dock)
 	
 	# Agregar los tipos de Resource del plugin
-	add_custom_type('> GAQRoom', 'Resource', preload('res://src/Helpers/GAQRoom.gd'), null)
-	add_custom_type('> GAQCharacter', 'Resource', preload('res://src/Helpers/GAQCharacter.gd'), null)
+	add_custom_type(
+		'> GAQRoom',
+		'Resource',
+		preload('res://src/Helpers/GAQRoom.gd'),
+		null
+	)
+	add_custom_type(
+		'> GAQCharacter',
+		'Resource',
+		preload('res://src/Helpers/GAQCharacter.gd'),
+		null
+	)
+	add_custom_type(
+		'> GAQInventoryItem',
+		'Resource',
+		preload('res://src/Helpers/GAQInventoryItem.gd'),
+		null
+	)
 	
 #	_file_system.connect("filesystem_changed", self, "_on_filesystem_changed")
 	

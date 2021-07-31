@@ -11,7 +11,7 @@ func on_look() -> void:
 	G.done()
 
 
-func on_item_used(item: Item) -> void:
+func on_item_used(item: InventoryItem) -> void:
 	if item.script_name == 'Bucket':
 		E.run([
 			C.character_say(script_name, '¿Yo pa\' qué quiero esa mierda?'),

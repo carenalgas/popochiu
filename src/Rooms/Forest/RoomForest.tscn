@@ -30,6 +30,9 @@ characters = [ {
 }, {
 "position": Vector2( 0, 0 ),
 "script_name": "Panchita"
+}, {
+"position": Vector2( 128, 0 ),
+"script_name": "Paco"
 } ]
 
 [node name="Bg" parent="Props" index="0" instance=ExtResource( 4 )]
@@ -86,11 +89,8 @@ parallax_depth = 100.0
 [node name="Cave" parent="Hotspots" index="0" instance=ExtResource( 10 )]
 collision_mask = 0
 script = ExtResource( 3 )
-description = "Cueva"
 baseline = -16
 walk_to_point = Vector2( 94, 21 )
-cursor = 9
-script_name = "Cave"
 
 [node name="CollisionPolygon2D" parent="Hotspots/Cave" index="0"]
 polygon = PoolVector2Array( 80, -14, 78, 2, 73, 18, 89, 13, 106, 14, 116, 20, 117, -7, 107, -17 )
@@ -103,10 +103,7 @@ position = Vector2( 94, 21 )
 
 [node name="Forest" parent="Hotspots" index="1" instance=ExtResource( 10 )]
 script = ExtResource( 6 )
-description = "Bosque"
 walk_to_point = Vector2( -6, 14 )
-cursor = 7
-script_name = "HotspotForest"
 
 [node name="CollisionPolygon2D" parent="Hotspots/Forest" index="0"]
 polygon = PoolVector2Array( -192, -75, -201, 25, -132, 7, -62, 5, -16, -9, 47, -4, 98, -57, 60, -75, 11, -62, -23, -70, -33, -52, -54, -63, -69, -57, -98, -77, -116, -68 )

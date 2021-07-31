@@ -61,9 +61,9 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 		E.main_camera.smoothing_enabled = true
 		return
 	
-	var animation_name := 'walk_%s' % _looking_dir + anim_suffix
-	if $AnimationPlayer.has_animation(animation_name):
-		$AnimationPlayer.play(animation_name)
+	var anim_name := 'walk_%s' % _looking_dir + anim_suffix
+	if $AnimationPlayer.has_animation(anim_name):
+		$AnimationPlayer.play(anim_name)
 	else:
 		$AnimationPlayer.play(dflt_walk_animation)
 
@@ -79,7 +79,11 @@ func stop_walking(is_in_queue := true) -> void:
 
 func idle(is_in_queue := true) -> void:
 	if is_in_queue: yield()
-	$AnimationPlayer.play('idle_%s' % _looking_dir + anim_suffix)
+	
+	var anim_name := 'idle_%s' % _looking_dir + anim_suffix
+
+	if $AnimationPlayer.has_animation(anim_name):
+		$AnimationPlayer.play(anim_name)
 	
 	if E.cutscene_skipped:
 		yield(get_tree(), 'idle_frame')
@@ -131,7 +135,11 @@ func say(dialog: String, is_in_queue := true) -> void:
 
 #	if vo_name:
 #		A.play(vo_name, global_position, false)
-	$AnimationPlayer.play('talk_%s' % _looking_dir + anim_suffix)
+	
+	var anim_name := 'talk_%s' % _looking_dir + anim_suffix
+	
+	if $AnimationPlayer.has_animation(anim_name):
+		$AnimationPlayer.play(anim_name)
 
 	yield(G, 'continue_clicked')
 	idle(false)
@@ -171,4 +179,4 @@ func _set_texture(value: Texture) -> void:
 
 func _translate() -> void:
 	if Engine.editor_hint or not is_inside_tree(): return
-	description = E.get_text('Character-%s' % _description_code)
+	description = E.get_text(_description_code)

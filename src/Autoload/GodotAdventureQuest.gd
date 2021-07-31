@@ -259,6 +259,14 @@ func get_character_instance(id: String) -> Character:
 	return null
 
 
+func get_inventory_item_instance(id: String) -> InventoryItem:
+	for ii in inventory_items:
+		var gaq_inventory_item: GAQInventoryItem = ii
+		if gaq_inventory_item.id == id:
+			return load(gaq_inventory_item.scene).instance()
+	return null
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _eval_string(text: String) -> void:
 	match text:

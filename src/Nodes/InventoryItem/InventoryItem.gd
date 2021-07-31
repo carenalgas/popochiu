@@ -1,5 +1,5 @@
 extends Control
-class_name Item
+class_name InventoryItem
 # Estos son los objetos que podrán ir al inventario:
 # GraphicInterfaceLayer > InventoryContainer > ... > InventoryGrid
 
@@ -33,8 +33,8 @@ func on_look() -> void:
 	pass
 
 
-# Lo que pasará cuando se use otro Item del inventario sobre este
-func on_item_used(_item: Item) -> void:
+# Lo que pasará cuando se use otro InventoryItem del inventario sobre este
+func on_item_used(_item: InventoryItem) -> void:
 	pass
 
 
