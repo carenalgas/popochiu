@@ -100,7 +100,7 @@ margin_top = 36.0
 margin_right = 624.0
 margin_bottom = 75.0
 custom_styles/normal = SubResource( 1 )
-text = "No debe tener tildes ni eñes (p. ej. Garden o Bathroom)."
+text = "Use PascalCase. Y no debe tener tildes ni eñes, y entonces que mejor sea en inglés: p. ej. Garage o CasinoInterior."
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
 margin_top = 79.0

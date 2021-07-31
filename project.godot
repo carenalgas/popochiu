@@ -42,7 +42,7 @@ _global_script_classes=[ {
 "base": "Resource",
 "class": "DialogOption",
 "language": "GDScript",
-"path": "res://src/DialogTree/DialogOption.gd"
+"path": "res://src/Nodes/DialogTree/DialogOption.gd"
 }, {
 "base": "RichTextLabel",
 "class": "DialogText",
@@ -52,7 +52,7 @@ _global_script_classes=[ {
 "base": "Resource",
 "class": "DialogTree",
 "language": "GDScript",
-"path": "res://src/DialogTree/DialogTree.gd"
+"path": "res://src/Nodes/DialogTree/DialogTree.gd"
 }, {
 "base": "Label",
 "class": "DisplayBox",
@@ -159,7 +159,7 @@ Cursor="*res://src/Autoload/Cursor.tscn"
 E="*res://src/Autoload/GodotAdventureQuest.tscn"
 C="*res://src/Autoload/ICharacter.gd"
 I="*res://src/Autoload/IInventory.gd"
-D="*res://src/Autoload/IDialogTree.tscn"
+D="*res://src/Autoload/IDialogTree.gd"
 G="*res://src/Autoload/IGraphicInterface.gd"
 Globals="*res://src/Autoload/Globals.gd"
 

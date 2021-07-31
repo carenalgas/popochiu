@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/GAQGroupButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/GodotAdventureQuest/MainDock/MainDock.gd" type="Script" id=2]
 [ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateInventoryItem/CreateInventoryItem.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateDialogTree/CreateDialogTree.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateRoom/CreateRoom.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=6]
 
@@ -34,7 +35,7 @@ __meta__ = {
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 316.0
-margin_bottom = 176.0
+margin_bottom = 202.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -52,7 +53,7 @@ uppercase = true
 margin_top = 26.0
 margin_bottom = 42.0
 target_group = NodePath("../RoomsList")
-color = Color( 0.458824, 0.807843, 0.784314, 1 )
+color = Color( 0.439216, 0.427451, 0.921569, 1 )
 title = "Habitaciones"
 
 [node name="RoomsList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
@@ -105,9 +106,29 @@ margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "+ Crear ítem"
 
+[node name="DialogTreesGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
+margin_top = 158.0
+margin_bottom = 174.0
+target_group = NodePath("../DialogTreesList")
+color = Color( 0.458824, 0.807843, 0.784314, 1 )
+title = "Diálogos"
+
+[node name="DialogTreesList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
+margin_top = 178.0
+margin_right = 312.0
+margin_bottom = 198.0
+
+[node name="BtnCreateDialog" type="Button" parent="MarginContainer/MainContainer/DialogTreesList"]
+margin_left = 205.0
+margin_right = 312.0
+margin_bottom = 20.0
+size_flags_horizontal = 8
+text = "+ Crear diálogo"
+
 [node name="PopupCreateRoom" parent="." instance=ExtResource( 5 )]
 
 [node name="PopupCreateCharacter" parent="." instance=ExtResource( 6 )]
 
 [node name="PopupCreateInventoryItem" parent="." instance=ExtResource( 3 )]
-visible = false
+
+[node name="PopupCreateDialogTree" parent="." instance=ExtResource( 4 )]

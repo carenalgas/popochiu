@@ -1,7 +1,7 @@
 tool
 extends CreationPopup
-# Permite crear una nueva habitación con los archivos necesarios para que funcione
-# en el Popochiu: RoomName.tscn, RoomName.gd, RoomName.tres.
+# Permite crear un nuevo ítem de inventario con los archivos necesarios para que
+# funcione en el Popochiu: InventoryIII.tscn, InventoryIII.gd, InventoryIII.tres.
 
 const INVENTORY_ITEM_SCRIPT_TEMPLATE := \
 'res://script_templates/InventoryItemTemplate.gd'
@@ -21,7 +21,7 @@ func _ready() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func set_main_dock(node: Panel) -> void:
 	.set_main_dock(node)
-	# Por defecto: res://src/Characters
+	# Por defecto: res://src/InventoryItems/
 	_item_path_template = _main_dock.inventory_items_path + '%s/Inventory%s'
 
 

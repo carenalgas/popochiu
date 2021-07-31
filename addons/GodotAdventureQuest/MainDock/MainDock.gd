@@ -15,6 +15,7 @@ const GAQ_PATH := 'res://src/Autoload/GodotAdventureQuest.tscn'
 export var rooms_path := 'res://src/Rooms/'
 export var characters_path := 'res://src/Characters/'
 export var inventory_items_path := 'res://src/InventoryItems/'
+export var dialog_trees_path := 'res://src/DialogTrees/'
 
 var ei: EditorInterface
 var fs: EditorFileSystem
@@ -31,6 +32,10 @@ onready var _inventory_list: Container = find_node('InventoryItemsList')
 onready var _btn_create_item: Button = find_node('BtnCreateItem')
 onready var _create_item_popup: ConfirmationDialog = find_node(\
 'PopupCreateInventoryItem')
+onready var _dialogs_list: Container = find_node('DialogTreesList')
+onready var _btn_create_dialog: Button = find_node('BtnCreateDialog')
+onready var _create_dialog_popup: ConfirmationDialog = find_node(\
+'PopupCreateDialogTree')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -38,6 +43,7 @@ func _ready() -> void:
 	_create_room_popup.set_main_dock(self)
 	_create_character_popup.set_main_dock(self)
 	_create_item_popup.set_main_dock(self)
+	_create_dialog_popup.set_main_dock(self)
 
 	# Creación de habitaciones
 	_btn_create_room.connect(
@@ -49,6 +55,9 @@ func _ready() -> void:
 	_btn_create_item.connect(
 		'pressed', self, '_open_popup', [_create_item_popup]
 	)
+	_btn_create_dialog.connect(
+		'pressed', self, '_open_popup', [_create_dialog_popup]
+	)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -59,6 +68,8 @@ func fill_data() -> void:
 	_fill_characters()
 	# Llenar la lista de ítems del inventario
 	_fill_inventory_items()
+	# Llenar la lista de árboles de diálogo
+	_fill_dialog_trees()
 
 
 func add_room_to_list(room_name: String) -> void:
@@ -84,6 +95,13 @@ func add_item_to_list(item_name: String) -> void:
 	_inventory_list.move_child(
 		_btn_create_item, _inventory_list.get_child_count()
 	)
+
+
+func add_dialog_to_list(dialog_name: String) -> void:
+	var new_dialog_lbl: Label = Label.new()
+	new_dialog_lbl.text = dialog_name
+	_dialogs_list.add_child(new_dialog_lbl)
+	_dialogs_list.move_child(_btn_create_dialog, _dialogs_list.get_child_count())
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -155,4 +173,28 @@ func _fill_inventory_items() -> void:
 
 	_inventory_list.move_child(
 		_btn_create_item, _inventory_list.get_child_count()
+	)
+
+
+func _fill_dialog_trees() -> void:
+	var dialog_trees_dir: EditorFileSystemDirectory = fs.get_filesystem_path(
+		dialog_trees_path
+	)
+	for d in dialog_trees_dir.get_subdir_count():
+		var dir: EditorFileSystemDirectory = dialog_trees_dir.get_subdir(d)
+		for f in dir.get_file_count():
+			var path = dir.get_file_path(f)
+
+			if not fs.get_file_type(path) == "Resource":
+				continue
+			
+			var dialog_tree: DialogTree = ResourceLoader.load(path)
+
+			var dialog_tree_lbl: Label = Label.new()
+			dialog_tree_lbl.text = dialog_tree.script_name
+
+			_dialogs_list.add_child(dialog_tree_lbl)
+
+	_dialogs_list.move_child(
+		_btn_create_dialog, _dialogs_list.get_child_count()
 	)

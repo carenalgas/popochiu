@@ -31,7 +31,6 @@ size = 14
 font_data = ExtResource( 2 )
 
 [node name="CreateInventoryItem" type="ConfirmationDialog"]
-visible = true
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -101,7 +100,7 @@ margin_top = 36.0
 margin_right = 624.0
 margin_bottom = 58.0
 custom_styles/normal = SubResource( 1 )
-text = "No debe tener tildes ni eñes (p. ej. Llave o Lupa)."
+text = "Use PascalCase. Y no debe tener tildes ni eñes, y entonces que mejor sea en inglés: p. ej. Scythe o WorkOrder o DeckOfCards."
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
 margin_top = 62.0
@@ -116,5 +115,3 @@ custom_fonts/normal_font = SubResource( 5 )
 bbcode_enabled = true
 bbcode_text = "En [b]res://src/InventoryItems/NombreÍtem se crearán los archivos:
 [code]NombreÍtem.tscn, NombreÍtem.gd, NombreÍtem.tres[/code]"
-text = "En res://src/InventoryItems/NombreÍtem se crearán los archivos:
-NombreÍtem.tscn, NombreÍtem.gd, NombreÍtem.tres"

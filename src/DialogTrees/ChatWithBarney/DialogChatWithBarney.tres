@@ -1,7 +1,7 @@
 [gd_resource type="Resource" load_steps=6 format=2]
 
-[ext_resource path="res://src/DialogTree/ChatWithBarney/ChatWithBarney.gd" type="Script" id=1]
-[ext_resource path="res://src/DialogTree/DialogOption.gd" type="Script" id=2]
+[ext_resource path="res://src/DialogTrees/ChatWithBarney/DialogChatWithBarney.gd" type="Script" id=1]
+[ext_resource path="res://src/Nodes/DialogTree/DialogOption.gd" type="Script" id=2]
 
 [sub_resource type="Resource" id=1]
 resource_name = "1"
@@ -25,6 +25,7 @@ text = "Chau chau adiós"
 visible = true
 
 [resource]
+resource_name = "ChatWithBarney"
 script = ExtResource( 1 )
 options = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ]
 script_name = "ChatWithBarney"

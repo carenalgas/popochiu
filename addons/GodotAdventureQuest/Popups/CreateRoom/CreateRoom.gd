@@ -1,7 +1,7 @@
 tool
 extends CreationPopup
 # Permite crear una nueva habitación con los archivos necesarios para que funcione
-# en el Popochiu: RoomName.tscn, RoomName.gd, RoomName.tres.
+# en el Popochiu: RoomRRR.tscn, RoomRRR.gd, RoomRRR.tres.
 
 const BASE_ROOM_PATH := 'res://src/Nodes/Room/Room.tscn'
 

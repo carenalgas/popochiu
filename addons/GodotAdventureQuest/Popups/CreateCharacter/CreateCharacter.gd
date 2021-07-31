@@ -1,7 +1,7 @@
 tool
 extends CreationPopup
-# Permite crear una nueva habitación con los archivos necesarios para que funcione
-# en el Popochiu: RoomName.tscn, RoomName.gd, RoomName.tres.
+# Permite crear un nuevo personaje con los archivos necesarios para que funcione
+# en el Popochiu: CharacterCCC.tscn, CharacterCCC.gd, CharacterCCC.tres.
 
 const CHARACTER_SCRIPT_TEMPLATE := 'res://script_templates/CharacterTemplate.gd'
 const BASE_CHARACTER_PATH := 'res://src/Nodes/Character/Character.tscn'

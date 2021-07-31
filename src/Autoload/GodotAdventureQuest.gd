@@ -267,6 +267,16 @@ func get_inventory_item_instance(id: String) -> InventoryItem:
 	return null
 
 
+func get_dialog_tree(script_name: String) -> DialogTree:
+	for dt in dialog_trees:
+		var tree: DialogTree = dt
+		if tree.script_name.to_lower() == script_name.to_lower():
+			return tree
+
+	# Por si no se encuentra el diálogo
+	return null
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _eval_string(text: String) -> void:
 	match text:

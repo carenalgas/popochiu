@@ -302,13 +302,13 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 
 **Por hacer**
 - [ ] Que haya varios tipos de transición entre escenas.
-- [ ] Crear plugin para facilitar la creación de árboles de diálogo (DialogTree).
 - [ ] Crear plugin para facilitar la creación de Prop.
 - [ ] Crear plugin para facilitar la creación de Hotspot.
 - [ ] Crear plugin para facilitar la creación de regiones (Region).
 - [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
 **Hecho**
+- [x] Crear plugin para facilitar la creación de árboles de diálogo (DialogTree). `2021-07-31`
 - [x] Crear plugin para facilitar la creación de objetos de inventario (InventoryItem). `2021-07-31`
 - [x] Crear plugin para facilitar la creación de personajes (Character). `2021-07-30`
 - [x] Crear plugin para facilitar la creación de habitaciones. `2021-07-17`
