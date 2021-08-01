@@ -1,14 +1,15 @@
 [gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/GAQGroupButton.gd" type="Script" id=1]
-[ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/group_arrow-open.png" type="Texture" id=2]
-[ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/group_arrow-closed.png" type="Texture" id=3]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/group_arrow_open.png" type="Texture" id=2]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/group_arrow_closed.png" type="Texture" id=3]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="GAQGroupButton" type="PanelContainer"]
 margin_right = 312.0
 margin_bottom = 20.0
+rect_min_size = Vector2( 0, 32 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
 __meta__ = {
@@ -19,28 +20,44 @@ closed_icon = ExtResource( 3 )
 
 [node name="Bg" type="ColorRect" parent="."]
 margin_right = 312.0
-margin_bottom = 20.0
+margin_bottom = 32.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 margin_right = 312.0
-margin_bottom = 20.0
+margin_bottom = 32.0
 
-[node name="Icon" type="TextureRect" parent="HBoxContainer"]
-margin_top = 2.0
-margin_right = 16.0
-margin_bottom = 18.0
+[node name="Arrow" type="TextureRect" parent="HBoxContainer"]
+margin_top = 4.0
+margin_right = 24.0
+margin_bottom = 28.0
+rect_min_size = Vector2( 24, 24 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource( 2 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer"]
+margin_left = 28.0
+margin_right = 60.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 32, 32 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+expand = true
+stretch_mode = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label" type="Label" parent="HBoxContainer"]
-margin_left = 20.0
-margin_top = 3.0
+margin_left = 64.0
+margin_top = 9.0
 margin_right = 312.0
-margin_bottom = 17.0
+margin_bottom = 23.0
 size_flags_horizontal = 3
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Group"

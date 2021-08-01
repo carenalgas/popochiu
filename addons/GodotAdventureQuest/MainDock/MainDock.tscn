@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://addons/GodotAdventureQuest/MainDock/GroupButton/GAQGroupButton.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/GodotAdventureQuest/MainDock/MainDock.gd" type="Script" id=2]
@@ -6,9 +6,13 @@
 [ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateDialogTree/CreateDialogTree.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateRoom/CreateRoom.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/GodotAdventureQuest/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=6]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/inventory_items.png" type="Texture" id=7]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/dialogs.png" type="Texture" id=8]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/characters.png" type="Texture" id=9]
+[ext_resource path="res://addons/GodotAdventureQuest/MainDock/rooms.png" type="Texture" id=10]
 
 [sub_resource type="StyleBoxFlat" id=1]
-content_margin_top = 4.0
+content_margin_top = 2.0
 content_margin_bottom = 4.0
 bg_color = Color( 0.556863, 0.235294, 0.592157, 1 )
 
@@ -35,31 +39,35 @@ __meta__ = {
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 316.0
-margin_bottom = 202.0
+margin_bottom = 244.0
+custom_constants/separation = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Title" type="Label" parent="MarginContainer/MainContainer"]
 margin_right = 312.0
-margin_bottom = 22.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 0, 32 )
 custom_styles/normal = SubResource( 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "--- P o p o c h i u ---"
 align = 1
+valign = 1
 uppercase = true
 
 [node name="RoomsGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
-margin_top = 26.0
-margin_bottom = 42.0
+margin_top = 32.0
+margin_bottom = 64.0
+icon = ExtResource( 10 )
 target_group = NodePath("../RoomsList")
 color = Color( 0.439216, 0.427451, 0.921569, 1 )
 title = "Habitaciones"
 
 [node name="RoomsList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
-margin_top = 46.0
+margin_top = 64.0
 margin_right = 312.0
-margin_bottom = 66.0
+margin_bottom = 84.0
 
 [node name="BtnCreateRoom" type="Button" parent="MarginContainer/MainContainer/RoomsList"]
 margin_left = 185.0
@@ -69,16 +77,17 @@ size_flags_horizontal = 8
 text = "+ Crear habitación"
 
 [node name="CharactersGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
-margin_top = 70.0
-margin_bottom = 86.0
+margin_top = 84.0
+margin_bottom = 116.0
+icon = ExtResource( 9 )
 target_group = NodePath("../CharactersList")
-color = Color( 0.768627, 0.423529, 0.443137, 1 )
+color = Color( 0.929412, 0.945098, 0.443137, 1 )
 title = "Personajes"
 
 [node name="CharactersList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
-margin_top = 90.0
+margin_top = 116.0
 margin_right = 312.0
-margin_bottom = 110.0
+margin_bottom = 136.0
 
 [node name="BtnCreateCharacter" type="Button" parent="MarginContainer/MainContainer/CharactersList"]
 margin_left = 188.0
@@ -88,16 +97,17 @@ size_flags_horizontal = 8
 text = "+ Crear personaje"
 
 [node name="InventoryItemsGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
-margin_top = 114.0
-margin_bottom = 130.0
+margin_top = 136.0
+margin_bottom = 168.0
+icon = ExtResource( 7 )
 target_group = NodePath("../InventoryItemsList")
-color = Color( 0.929412, 0.945098, 0.443137, 1 )
+color = Color( 0.337255, 0.67451, 0.301961, 1 )
 title = "Inventario"
 
 [node name="InventoryItemsList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
-margin_top = 134.0
+margin_top = 168.0
 margin_right = 312.0
-margin_bottom = 154.0
+margin_bottom = 188.0
 
 [node name="BtnCreateItem" type="Button" parent="MarginContainer/MainContainer/InventoryItemsList"]
 margin_left = 221.0
@@ -107,16 +117,17 @@ size_flags_horizontal = 8
 text = "+ Crear ítem"
 
 [node name="DialogTreesGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
-margin_top = 158.0
-margin_bottom = 174.0
+margin_top = 188.0
+margin_bottom = 220.0
+icon = ExtResource( 8 )
 target_group = NodePath("../DialogTreesList")
 color = Color( 0.458824, 0.807843, 0.784314, 1 )
 title = "Diálogos"
 
 [node name="DialogTreesList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
-margin_top = 178.0
+margin_top = 220.0
 margin_right = 312.0
-margin_bottom = 198.0
+margin_bottom = 240.0
 
 [node name="BtnCreateDialog" type="Button" parent="MarginContainer/MainContainer/DialogTreesList"]
 margin_left = 205.0

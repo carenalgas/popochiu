@@ -15,14 +15,14 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
   - [🟪 Regiones](#-regiones)
   - [📍 Puntos (Position2D)](#-puntos-position2d)
   - [🚶‍♀️ Áreas transitables (walkable areas)](#️-áreas-transitables-walkable-areas)
+- [� Inventory](#-inventory)
+- [💬 Árboles de diálogo](#-árboles-de-diálogo)
 - [💻🖱 Interfaz gráfica](#-interfaz-gráfica)
   - [Texto de descripción](#texto-de-descripción)
   - [Texto de diálogo](#texto-de-diálogo)
   - [Texto de aviso](#texto-de-aviso)
   - [Menú de opciones de diálogo](#menú-de-opciones-de-diálogo)
   - [🧰 Menú del juego (*Toolbar*)](#-menú-del-juego-toolbar)
-- [📦 Inventory](#-inventory)
-- [💬 Árboles de diálogo](#-árboles-de-diálogo)
 - [🌎 Globals](#-globals)
 - [⚙ Godot Adventure Quest (núcleo)](#-godot-adventure-quest-núcleo)
 - [🛠 Configuración](#-configuración)
@@ -102,6 +102,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Que puedan caminar por el escenario.
 - [x] Que puedan decir cosas al interactuar con objetos.
 
+
 # 🚪 Habitaciones
 `Room.tscn, Room.gd, RoomTemplate.gd`
 
@@ -165,6 +166,46 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 
 ## 🚶‍♀️ Áreas transitables (walkable areas)
 *Son `Navigation2D` que definen por dónde pueden moverse los personajes.*
+
+
+# 📦 Inventory
+`Inventory.tscn, Inventory.gd, Item.gd, InventoryItem.gd, ItemTemplate.gd`
+*Controla qué objetos hay en el inventario (a futuro será por personaje) y qué objetos se pueden meter al inventario.*
+
+**Por hacer**
+- [ ] Que cada personaje pueda tener un inventario único.
+- [ ] Que se pueda indicar la cantidad a guardar de un objeto en el inventario.
+
+**Hecho**
+- [x] Que se puedan mezclar objetos del inventario.
+- [x] Que se puedan eliminar ítems del inventario.
+- [x] Que se puedan usar ítems del inventario.
+- [x] Que se pueda agregar un ítem al inventario y que de una vez se convierta en el ítem activo.
+- [x] Que se pueda "soltar" el ítem activo cuando se hace clic derecho al tener un objeto de inventario activo.
+- [x] Que se pueda agregar un ítem (Item.gd) al inventario.
+
+
+# 💬 Árboles de diálogo
+`DialogTree.gd, DialogOption.gd, DialogTreeTemplate.gd, DialogTreeInterface.tscn`
+
+*Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita dos archivos: un `.tres` que permite definir las opciones que tendrá el diálogo y su ID (script_name); y un `.gd` que permite controlar la lógica de lo que pasará cuando inicie, cuando se seleccione una opción y, eventualmente, cuando termine. Cuando se cree un nuevo recurso de tipo **DialogTree.gd**, hay que asignarle un script que use como plantilla el **DialogTreeTemplate.gd**.*
+
+**Por hacer**
+- [ ] Que se puedan ocultar opciones de diálogo una vez hayan sido usadas.
+- [ ] Que una opción de diálogo se pueda ocultar para siempre.
+- [ ] Que se puedan apagar opciones de diálogo estando dentro de cualquier opción del mismo diálogo.
+
+**Hecho**
+- [x] Que opciones de diálogo se muestren de otro color cuando han sido usadas.
+- [x] Actualizar script que escucha el cambio en el arreglo de opciones de un `DialogTree` para que se llenen algunas propiedades con valores por defecto: `id`, `text`, `script_name` y `resource_name`.
+- [x] Actualizar la creación de opciones de diálogo en caliente para que sean un `DialogOption` y no un `Dictionary`.
+- [x] Crear `DialogOption.gd` como Resource para manejar las opciones de diálogo.
+- [x] Que las conversaciones (árboles de diálogo) queden separados por carpeta en **src/DialogTree**.
+- [x] Que las conversaciones tengan un `.tres` para crear las opciones y un `.gd` que controle su lógica.
+  > 💡✅ Las conversaciones podrían ser un `.tres` donde hay una función que muestra las opciones y otras funciones que se llaman cuando se seleccionan dichas opciones.
+- [x] Que al seleccionar una opción del menú de diálogo este se cierre y se pase la opción seleccionada como parámetro de la señal que permite al juego continuar con el flujo de instrucciones.
+- [x] Que se puede disparar un inline-dialog pasando las opciones como un arreglo de `String`.
+
 
 # 💻🖱 Interfaz gráfica
 `GraphicInterface.tscn, GraphicInterface.gd, GraphicInterfaceEvents.gd`
@@ -248,42 +289,6 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [x] Hacer funcionalidad para cambiar velocidad de animación del texto.
 - [x] Hacer funcionalidad para cerrar el juego.
 
-# 📦 Inventory
-`Inventory.tscn, Inventory.gd, Item.gd, InventoryItem.gd, ItemTemplate.gd`
-*Controla qué objetos hay en el inventario (a futuro será por personaje) y qué objetos se pueden meter al inventario.*
-
-**Por hacer**
-- [ ] Que cada personaje pueda tener un inventario único.
-- [ ] Que se pueda indicar la cantidad a guardar de un objeto en el inventario.
-
-**Hecho**
-- [x] Que se puedan mezclar objetos del inventario.
-- [x] Que se puedan eliminar ítems del inventario.
-- [x] Que se puedan usar ítems del inventario.
-- [x] Que se pueda agregar un ítem al inventario y que de una vez se convierta en el ítem activo.
-- [x] Que se pueda "soltar" el ítem activo cuando se hace clic derecho al tener un objeto de inventario activo.
-- [x] Que se pueda agregar un ítem (Item.gd) al inventario.
-
-# 💬 Árboles de diálogo
-`DialogTree.gd, DialogOption.gd, DialogTreeTemplate.gd, DialogTreeInterface.tscn`
-
-*Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita dos archivos: un `.tres` que permite definir las opciones que tendrá el diálogo y su ID (script_name); y un `.gd` que permite controlar la lógica de lo que pasará cuando inicie, cuando se seleccione una opción y, eventualmente, cuando termine. Cuando se cree un nuevo recurso de tipo **DialogTree.gd**, hay que asignarle un script que use como plantilla el **DialogTreeTemplate.gd**.*
-
-**Por hacer**
-- [ ] Que se puedan ocultar opciones de diálogo una vez hayan sido usadas.
-- [ ] Que una opción de diálogo se pueda ocultar para siempre.
-- [ ] Que se puedan apagar opciones de diálogo estando dentro de cualquier opción del mismo diálogo.
-
-**Hecho**
-- [x] Que opciones de diálogo se muestren de otro color cuando han sido usadas.
-- [x] Actualizar script que escucha el cambio en el arreglo de opciones de un `DialogTree` para que se llenen algunas propiedades con valores por defecto: `id`, `text`, `script_name` y `resource_name`.
-- [x] Actualizar la creación de opciones de diálogo en caliente para que sean un `DialogOption` y no un `Dictionary`.
-- [x] Crear `DialogOption.gd` como Resource para manejar las opciones de diálogo.
-- [x] Que las conversaciones (árboles de diálogo) queden separados por carpeta en **src/DialogTree**.
-- [x] Que las conversaciones tengan un `.tres` para crear las opciones y un `.gd` que controle su lógica.
-  > 💡✅ Las conversaciones podrían ser un `.tres` donde hay una función que muestra las opciones y otras funciones que se llaman cuando se seleccionan dichas opciones.
-- [x] Que al seleccionar una opción del menú de diálogo este se cierre y se pase la opción seleccionada como parámetro de la señal que permite al juego continuar con el flujo de instrucciones.
-- [x] Que se puede disparar un inline-dialog pasando las opciones como un arreglo de `String`.
 
 # 🌎 Globals
 *Un script que permite definir lógica para todo el juego. Aquí, por ejemplo, se puede tener un `enum` con los posibles estados del juego y un arreglo (o un entero) que permita al desarrollador tener control sobre las cosas que los jugadores ya han hecho. También puede haber funciones que se llamen para eventos específicos de las habitaciones cosa que a nivel global se puedan hacer cambios después de determinadas acciones.*
@@ -292,10 +297,11 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 ???
 
 **Hecho**
-- [x] Definir un método que faciliten saber qué ha pasado ya en el juego.
+- [x] Definir un método que facilite saber qué ha pasado ya en el juego.
 - [x] Deginir un método que permita agregar algo que ya pasó a la variable que contendrá el estado actual de la partida.
 - [x] Que haya una máquina de estados.
 - [x] Que se puedan guardar variables globales para saber el estado de los objetos en las habitaciones.
+
 
 # ⚙ Godot Adventure Quest (núcleo)
 > *GodotAdventureQuest.tscn, GodotAdventureQuest.gd*
@@ -308,6 +314,7 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
 **Hecho**
+- [x] Crear iconos para grupos en plugin: habitaciones, personajes, ítems de inventario y diálogos. `2021-08-01`
 - [x] Crear plugin para facilitar la creación de árboles de diálogo (DialogTree). `2021-07-31`
 - [x] Crear plugin para facilitar la creación de objetos de inventario (InventoryItem). `2021-07-31`
 - [x] Crear plugin para facilitar la creación de personajes (Character). `2021-07-30`

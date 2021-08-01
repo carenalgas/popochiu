@@ -3,6 +3,7 @@ extends PanelContainer
 
 export var open_icon: Texture
 export var closed_icon: Texture
+export var icon: Texture setget _set_icon
 export var target_group: NodePath
 export var is_open := true setget _set_is_open
 export var color: Color = Color.white setget _set_color
@@ -24,7 +25,7 @@ func _on_input(event: InputEvent) -> void:
 
 
 func _toggled(button_pressed: bool) -> void:
-	$HBoxContainer/Icon.texture = open_icon if button_pressed else closed_icon
+	$HBoxContainer/Arrow.texture = open_icon if button_pressed else closed_icon
 	
 	if get_node_or_null(target_group):
 		if button_pressed: get_node(target_group).show()
@@ -49,3 +50,8 @@ func _set_title(value: String) -> void:
 func _set_is_open(value: bool) -> void:
 	is_open = value
 	_toggled(value)
+
+
+func _set_icon(value: Texture) -> void:
+	icon = value
+	$HBoxContainer/Icon.texture = value
