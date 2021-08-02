@@ -94,6 +94,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/Nodes/InventoryItem/InventoryItem.gd"
 }, {
+"base": "Panel",
+"class": "PopochiuDock",
+"language": "GDScript",
+"path": "res://addons/GodotAdventureQuest/MainDock/MainDock.gd"
+}, {
 "base": "Clickable",
 "class": "Prop",
 "language": "GDScript",
@@ -137,6 +142,7 @@ _global_script_class_icons={
 "Hotspot": "",
 "InventoryContainer": "",
 "InventoryItem": "",
+"PopochiuDock": "",
 "Prop": "",
 "Region": "",
 "Room": "",

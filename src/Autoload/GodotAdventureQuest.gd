@@ -148,7 +148,7 @@ func show_inline_dialog(opts: Array) -> String:
 	return yield(D, 'option_selected')
 
 
-func goto_room(path := '', use_transition := true) -> void:
+func goto_room(script_name := '', use_transition := true) -> void:
 # warning-ignore:return_value_discarded
 	if not in_room: return
 	self.in_room = false
@@ -179,11 +179,11 @@ func goto_room(path := '', use_transition := true) -> void:
 	
 	for r in rooms:
 		var room = r as GAQRoom
-		if room.id.to_lower() == path.to_lower():
-			get_tree().change_scene(room.path)
+		if room.script_name.to_lower() == script_name.to_lower():
+			get_tree().change_scene(room.scene)
 			return
 	
-	printerr('No se encontró la Room %s' % path)
+	printerr('No se encontró la Room %s' % script_name)
 
 
 func room_readied(room: Room) -> void:
@@ -251,18 +251,18 @@ func get_text(msg: String) -> String:
 	return tr(msg) if use_translations else msg
 
 
-func get_character_instance(id: String) -> Character:
+func get_character_instance(script_name: String) -> Character:
 	for c in characters:
 		var gaq_character: GAQCharacter = c
-		if gaq_character.id == id:
+		if gaq_character.script_name == script_name:
 			return load(gaq_character.scene).instance()
 	return null
 
 
-func get_inventory_item_instance(id: String) -> InventoryItem:
+func get_inventory_item_instance(script_name: String) -> InventoryItem:
 	for ii in inventory_items:
 		var gaq_inventory_item: GAQInventoryItem = ii
-		if gaq_inventory_item.id == id:
+		if gaq_inventory_item.script_name == script_name:
 			return load(gaq_inventory_item.scene).instance()
 	return null
 

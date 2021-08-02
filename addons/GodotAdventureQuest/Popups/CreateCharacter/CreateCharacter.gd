@@ -17,7 +17,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
-func set_main_dock(node: Panel) -> void:
+func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 	# Por defecto: res://src/Characters
 	_character_path_template = _main_dock.characters_path + '%s/Character%s'
@@ -60,7 +60,7 @@ func create() -> void:
 	
 	# Crear el Resource del personaje ------------------------------------------
 	var character_resource: GAQCharacter = GAQCharacter.new()
-	character_resource.id = _new_character_name
+	character_resource.script_name = _new_character_name
 	character_resource.scene = _new_character_path + '.tscn'
 	character_resource.resource_name = _new_character_name
 	if ResourceSaver.save(_new_character_path + '.tres',\
@@ -83,7 +83,7 @@ func create() -> void:
 	_main_dock.ei.reload_scene_from_path(_main_dock.GAQ_PATH)
 	
 	# Actualizar la lista de habitaciones en el Dock ---------------------------
-	_main_dock.add_character_to_list(_new_character_name)
+	_main_dock.add_to_list('character', _new_character_name)
 
 	# Abrir la escena creada en el editor --------------------------------------
 	yield(get_tree().create_timer(0.1), 'timeout')

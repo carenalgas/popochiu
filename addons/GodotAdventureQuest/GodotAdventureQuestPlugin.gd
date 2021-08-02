@@ -16,7 +16,7 @@ func _enter_tree() -> void:
 	gaq_dock.ei = _editor_interface
 	gaq_dock.fs = _file_system
 
-	add_control_to_dock(DOCK_SLOT_RIGHT_UR, gaq_dock)
+	add_control_to_dock(DOCK_SLOT_RIGHT_BR, gaq_dock)
 	
 	# Agregar los tipos de Resource del plugin
 	add_custom_type(

@@ -3,6 +3,10 @@ extends CreationPopup
 # Permite crear una nueva habitación con los archivos necesarios para que funcione
 # en el Popochiu: RoomRRR.tscn, RoomRRR.gd, RoomRRR.tres.
 
+# TODO: Definir más propiedades en el popup de creación de la habitación: p. ej.
+#		si va a tener al player, o los límites de la cámara. Aunque eso ya se
+#		puede hacer una vez se abra el .tscn.
+
 const BASE_ROOM_PATH := 'res://src/Nodes/Room/Room.tscn'
 
 var _new_room_name := ''
@@ -16,7 +20,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
-func set_main_dock(node: Panel) -> void:
+func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 	# Por defecto: res://src/Rooms
 	_room_path_template = _main_dock.rooms_path + '%s/Room%s'
@@ -59,7 +63,7 @@ func create() -> void:
 	
 	# Crear el Resource de la habitación ---------------------------------------
 	var room_resource: GAQRoom = GAQRoom.new()
-	room_resource.id = _new_room_name
+	room_resource.script_name = _new_room_name
 	room_resource.path = _new_room_path + '.tscn'
 	room_resource.resource_name = _new_room_name
 	if ResourceSaver.save(_new_room_path + '.tres', room_resource) != OK:
@@ -81,7 +85,7 @@ func create() -> void:
 	_main_dock.ei.reload_scene_from_path(_main_dock.GAQ_PATH)
 	
 	# Actualizar la lista de habitaciones en el Dock ---------------------------
-	_main_dock.add_room_to_list(_new_room_name)
+	_main_dock.add_to_list('room', _new_room_name)
 	
 	# Abrir la escena creada en el editor --------------------------------------
 	yield(get_tree().create_timer(0.1), 'timeout')

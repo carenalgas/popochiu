@@ -5,5 +5,5 @@
 [resource]
 resource_name = "Barney"
 script = ExtResource( 1 )
-id = "Barney"
+script_name = "Barney"
 scene = "res://src/Characters/Barney/CharacterBarney.tscn"

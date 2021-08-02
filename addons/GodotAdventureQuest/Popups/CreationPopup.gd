@@ -2,7 +2,7 @@ class_name CreationPopup
 extends ConfirmationDialog
 
 var _name := ''
-var _main_dock: Panel setget set_main_dock
+var _main_dock: PopochiuDock setget set_main_dock
 
 onready var _input: LineEdit = find_node('Input')
 onready var _error_feedback: Label = find_node('ErrorFeedback')
@@ -19,7 +19,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
-func set_main_dock(node: Panel) -> void:
+func set_main_dock(node: PopochiuDock) -> void:
 	_main_dock = node
 
 
@@ -37,7 +37,7 @@ func _update_name(new_text: String) -> void:
 		if idx == 0:
 			casted_name.append(new_text[idx].to_upper())
 		else:
-			casted_name.append(new_text[idx].to_lower())
+			casted_name.append(new_text[idx])
 
 	_name = casted_name.join('').strip_edges()
 

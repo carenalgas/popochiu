@@ -5,5 +5,5 @@
 [resource]
 resource_name = "Bucket"
 script = ExtResource( 1 )
-id = "Bucket"
+script_name = "Bucket"
 scene = "res://src/InventoryItems/Bucket/InventoryBucket.tscn"

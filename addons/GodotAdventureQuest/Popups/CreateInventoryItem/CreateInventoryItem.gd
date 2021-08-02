@@ -19,7 +19,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
-func set_main_dock(node: Panel) -> void:
+func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 	# Por defecto: res://src/InventoryItems/
 	_item_path_template = _main_dock.inventory_items_path + '%s/Inventory%s'
@@ -63,7 +63,7 @@ func create() -> void:
 	
 	# Crear el Resource del ítem ------------------------------------------
 	var item_resource: GAQInventoryItem = GAQInventoryItem.new()
-	item_resource.id = _new_item_name
+	item_resource.script_name = _new_item_name
 	item_resource.scene = _new_item_path + '.tscn'
 	item_resource.resource_name = _new_item_name
 	if ResourceSaver.save(_new_item_path + '.tres',\
@@ -86,7 +86,7 @@ func create() -> void:
 	_main_dock.ei.reload_scene_from_path(_main_dock.GAQ_PATH)
 	
 	# Actualizar la lista de habitaciones en el Dock ---------------------------
-	_main_dock.add_item_to_list(_new_item_name)
+	_main_dock.add_to_list('inventory_item', _new_item_name)
 
 	# Abrir la escena creada en el editor --------------------------------------
 	yield(get_tree().create_timer(0.1), 'timeout')

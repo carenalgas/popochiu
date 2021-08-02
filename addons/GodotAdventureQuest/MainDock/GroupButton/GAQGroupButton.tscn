@@ -9,7 +9,6 @@
 [node name="GAQGroupButton" type="PanelContainer"]
 margin_right = 312.0
 margin_bottom = 20.0
-rect_min_size = Vector2( 0, 32 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
 __meta__ = {
@@ -27,10 +26,9 @@ margin_right = 312.0
 margin_bottom = 32.0
 
 [node name="Arrow" type="TextureRect" parent="HBoxContainer"]
-margin_top = 4.0
-margin_right = 24.0
-margin_bottom = 28.0
-rect_min_size = Vector2( 24, 24 )
+margin_top = 8.0
+margin_right = 16.0
+margin_bottom = 24.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource( 2 )
@@ -40,21 +38,21 @@ __meta__ = {
 }
 
 [node name="Icon" type="TextureRect" parent="HBoxContainer"]
-margin_left = 28.0
-margin_right = 60.0
+margin_left = 20.0
+margin_right = 52.0
 margin_bottom = 32.0
 rect_min_size = Vector2( 32, 32 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource( 2 )
 expand = true
-stretch_mode = 1
+stretch_mode = 6
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Label" type="Label" parent="HBoxContainer"]
-margin_left = 64.0
+margin_left = 56.0
 margin_top = 9.0
 margin_right = 312.0
 margin_bottom = 23.0

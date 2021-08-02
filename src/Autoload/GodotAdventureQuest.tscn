@@ -13,7 +13,7 @@
 
 [node name="GodotAdventureQuest" type="Node"]
 script = ExtResource( 1 )
-rooms = [ ExtResource( 8 ), ExtResource( 7 ), ExtResource( 9 ) ]
+rooms = [ ExtResource( 8 ), ExtResource( 7 ), ExtResource( 9 ), null ]
 characters = [ ExtResource( 6 ), ExtResource( 5 ) ]
 inventory_items = [ ExtResource( 10 ) ]
 dialog_trees = [ ExtResource( 4 ) ]

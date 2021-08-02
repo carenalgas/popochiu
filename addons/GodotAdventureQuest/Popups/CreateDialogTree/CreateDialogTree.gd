@@ -17,7 +17,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
-func set_main_dock(node: Panel) -> void:
+func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 	# Por defecto: res://src/DialogTrees
 	_dialog_path_template = _main_dock.dialog_trees_path + '%s/Dialog%s'
@@ -64,7 +64,7 @@ func create() -> void:
 	_main_dock.ei.reload_scene_from_path(_main_dock.GAQ_PATH)
 	
 	# Actualizar la lista de habitaciones en el Dock ---------------------------
-	_main_dock.add_dialog_to_list(_new_dialog_name)
+	_main_dock.add_to_list('dialog_tree', _new_dialog_name)
 
 	# Abrir el diálogo en el Inspector -----------------------------------------
 	yield(get_tree().create_timer(0.1), 'timeout')

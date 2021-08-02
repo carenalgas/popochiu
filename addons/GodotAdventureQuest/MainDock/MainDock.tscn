@@ -19,6 +19,7 @@ bg_color = Color( 0.556863, 0.235294, 0.592157, 1 )
 [node name="Popochiu" type="Panel"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+rect_clip_content = true
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -39,8 +40,9 @@ __meta__ = {
 margin_left = 4.0
 margin_top = 4.0
 margin_right = 316.0
-margin_bottom = 244.0
-custom_constants/separation = 0
+margin_bottom = 176.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -56,82 +58,99 @@ align = 1
 valign = 1
 uppercase = true
 
-[node name="RoomsGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
-margin_top = 32.0
-margin_bottom = 64.0
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/MainContainer"]
+margin_top = 36.0
+margin_right = 312.0
+margin_bottom = 172.0
+size_flags_vertical = 3
+follow_focus = true
+scroll_horizontal_enabled = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/MainContainer/ScrollContainer"]
+margin_right = 300.0
+margin_bottom = 236.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RoomsGroupButton" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer" instance=ExtResource( 1 )]
+margin_right = 300.0
+margin_bottom = 32.0
 icon = ExtResource( 10 )
 target_group = NodePath("../RoomsList")
-color = Color( 0.439216, 0.427451, 0.921569, 1 )
+color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 title = "Habitaciones"
 
-[node name="RoomsList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
-margin_top = 64.0
-margin_right = 312.0
-margin_bottom = 84.0
+[node name="RoomsList" type="VBoxContainer" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer"]
+margin_top = 36.0
+margin_right = 300.0
+margin_bottom = 56.0
 
-[node name="BtnCreateRoom" type="Button" parent="MarginContainer/MainContainer/RoomsList"]
-margin_left = 185.0
-margin_right = 312.0
+[node name="BtnCreateRoom" type="Button" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer/RoomsList"]
+margin_left = 173.0
+margin_right = 300.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "+ Crear habitación"
 
-[node name="CharactersGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
-margin_top = 84.0
-margin_bottom = 116.0
+[node name="CharactersGroupButton" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer" instance=ExtResource( 1 )]
+margin_top = 60.0
+margin_right = 300.0
+margin_bottom = 92.0
 icon = ExtResource( 9 )
 target_group = NodePath("../CharactersList")
-color = Color( 0.929412, 0.945098, 0.443137, 1 )
+color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 title = "Personajes"
 
-[node name="CharactersList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
-margin_top = 116.0
-margin_right = 312.0
-margin_bottom = 136.0
+[node name="CharactersList" type="VBoxContainer" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer"]
+margin_top = 96.0
+margin_right = 300.0
+margin_bottom = 116.0
 
-[node name="BtnCreateCharacter" type="Button" parent="MarginContainer/MainContainer/CharactersList"]
-margin_left = 188.0
-margin_right = 312.0
+[node name="BtnCreateCharacter" type="Button" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer/CharactersList"]
+margin_left = 176.0
+margin_right = 300.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "+ Crear personaje"
 
-[node name="InventoryItemsGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
-margin_top = 136.0
-margin_bottom = 168.0
+[node name="InventoryItemsGroupButton" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer" instance=ExtResource( 1 )]
+margin_top = 120.0
+margin_right = 300.0
+margin_bottom = 152.0
 icon = ExtResource( 7 )
 target_group = NodePath("../InventoryItemsList")
-color = Color( 0.337255, 0.67451, 0.301961, 1 )
+color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 title = "Inventario"
 
-[node name="InventoryItemsList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
-margin_top = 168.0
-margin_right = 312.0
-margin_bottom = 188.0
+[node name="InventoryItemsList" type="VBoxContainer" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer"]
+margin_top = 156.0
+margin_right = 300.0
+margin_bottom = 176.0
 
-[node name="BtnCreateItem" type="Button" parent="MarginContainer/MainContainer/InventoryItemsList"]
-margin_left = 221.0
-margin_right = 312.0
+[node name="BtnCreateItem" type="Button" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer/InventoryItemsList"]
+margin_left = 209.0
+margin_right = 300.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "+ Crear ítem"
 
-[node name="DialogTreesGroupButton" parent="MarginContainer/MainContainer" instance=ExtResource( 1 )]
-margin_top = 188.0
-margin_bottom = 220.0
+[node name="DialogTreesGroupButton" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer" instance=ExtResource( 1 )]
+margin_top = 180.0
+margin_right = 300.0
+margin_bottom = 212.0
 icon = ExtResource( 8 )
 target_group = NodePath("../DialogTreesList")
-color = Color( 0.458824, 0.807843, 0.784314, 1 )
+color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 title = "Diálogos"
 
-[node name="DialogTreesList" type="VBoxContainer" parent="MarginContainer/MainContainer"]
-margin_top = 220.0
-margin_right = 312.0
-margin_bottom = 240.0
+[node name="DialogTreesList" type="VBoxContainer" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer"]
+margin_top = 216.0
+margin_right = 300.0
+margin_bottom = 236.0
 
-[node name="BtnCreateDialog" type="Button" parent="MarginContainer/MainContainer/DialogTreesList"]
-margin_left = 205.0
-margin_right = 312.0
+[node name="BtnCreateDialog" type="Button" parent="MarginContainer/MainContainer/ScrollContainer/VBoxContainer/DialogTreesList"]
+margin_left = 193.0
+margin_right = 300.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "+ Crear diálogo"

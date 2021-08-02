@@ -5,5 +5,5 @@
 [resource]
 resource_name = "Main"
 script = ExtResource( 1 )
-id = "Main"
-path = "res://src/Rooms/Main/RoomMain.tscn"
+script_name = "Main"
+scene = "res://src/Rooms/Main/RoomMain.tscn"
