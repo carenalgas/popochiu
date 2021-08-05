@@ -2,12 +2,12 @@
 # Popochiu<!-- omit in toc -->
 Framework para crear juegos de aventura con Godot al estilo de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
+![cover](./assets/images/_repo/cover.png "Popochiu")
+
 ![Popochiu](./assets/images/_repo/gaq_02.gif "Popochiu en acción")
 
 # Tabla de contenidos<!-- omit in toc -->
 - [📃 Resumen y ejemplos de uso](#-resumen-y-ejemplos-de-uso)
-- [🐞 Problemas](#-problemas)
-- [🎮 Controles (en el juego)](#-controles-en-el-juego)
 - [⚙ Popochiu (núcleo)](#-popochiu-núcleo)
 - [! Personajes](#-personajes)
 - [! Habitaciones](#-habitaciones)
@@ -29,8 +29,6 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
 - [📁 Estructura](#-estructura)
 - [Nodos de un nivel más alto](#nodos-de-un-nivel-más-alto)
   - [Clickable](#clickable)
-
-![cover](./assets/images/_repo/cover.png "Popochiu")
 
 # 📃 Resumen y ejemplos de uso
 
@@ -71,15 +69,6 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
   ], 'completed')
   ```
   > `E.run(instructions: Array)` Se encarga de activar la interfaz gráfica una vez se han completado todas las instrucciones recibidas.
-
-# 🐞 Problemas
-- Es tedioso construir varias cosas, sobre todo aquellas en las que hay que asignar un `Resource`.
-- No se pueden usar los nodos `ParallaxBackground` y `ParallaxLayer` para controlar el efecto parallax de los Prop. Tal vez toque hacerlo manualmente.
-
-
-# 🎮 Controles (en el juego)
-* Clic para interactuar con los objetos y personajes, para hacer mover al personaje jugable y para hace cualquier acción de inventario o menú. Si hay un ítem del inventario activo, esta acción hace que se use sobre el objeto o el personaje que esté bajo el cursor.
-* Clic derecho para examinar los objetos y personajes. Si hay un ítem del inventario activo, esta acción lo desactiva. Se pueden examinar objetos del inventario.
 
 ---
 ---
