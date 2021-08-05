@@ -10,7 +10,6 @@
 margin_right = 320.0
 margin_bottom = 20.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 1 )
 __meta__ = {
