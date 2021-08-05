@@ -1,5 +1,5 @@
 tool
-class_name Prop
+class_name Prop, 'res://addons/GodotAdventureQuest/MainDock/props.png'
 extends Clickable
 # Elementos visuales para las habitaciones. Pueden tener interacción.
 # Ej: las imágenes de fondo y primer plano, un objeto que se puede agarrar...

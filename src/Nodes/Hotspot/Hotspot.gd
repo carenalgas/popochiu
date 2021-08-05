@@ -1,5 +1,5 @@
 tool
-class_name Hotspot
+class_name Hotspot, 'res://addons/GodotAdventureQuest/MainDock/hotspots.png'
 extends Clickable
 # Permite crear áreas con las que se puede interactuar.
 # Ej: El cielo, algo que haga parte de la imagen de fondo.

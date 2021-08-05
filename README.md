@@ -1,22 +1,23 @@
 <!-- no toc -->
-# Godot Adventure Quest<!-- omit in toc -->
+# Popochiu<!-- omit in toc -->
 Framework para crear juegos de aventura con Godot al estilo de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
-![Godot Adventure Quest](./assets/images/_repo/gaq_02.gif "Godot Adventure Quest en acción")
+![Popochiu](./assets/images/_repo/gaq_02.gif "Popochiu en acción")
 
 # Tabla de contenidos<!-- omit in toc -->
 - [📃 Resumen y ejemplos de uso](#-resumen-y-ejemplos-de-uso)
 - [🐞 Problemas](#-problemas)
 - [🎮 Controles (en el juego)](#-controles-en-el-juego)
-- [👨‍👩‍👦‍👦 Personajes](#-personajes)
-- [🚪 Habitaciones](#-habitaciones)
-  - [🪑 Props](#-props)
-  - [👆 Hotspots](#-hotspots)
+- [⚙ Popochiu (núcleo)](#-popochiu-núcleo)
+- [! Personajes](#-personajes)
+- [! Habitaciones](#-habitaciones)
+  - [! Props](#-props)
+  - [! Hotspots](#-hotspots)
   - [🟪 Regiones](#-regiones)
   - [📍 Puntos (Position2D)](#-puntos-position2d)
   - [🚶‍♀️ Áreas transitables (walkable areas)](#️-áreas-transitables-walkable-areas)
-- [📦 Inventory](#-inventory)
-- [💬 Árboles de diálogo](#-árboles-de-diálogo)
+- [! Inventory](#-inventory)
+- [! Árboles de diálogo](#-árboles-de-diálogo)
 - [💻🖱 Interfaz gráfica](#-interfaz-gráfica)
   - [Texto de descripción](#texto-de-descripción)
   - [Texto de diálogo](#texto-de-diálogo)
@@ -24,13 +25,12 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
   - [Menú de opciones de diálogo](#menú-de-opciones-de-diálogo)
   - [🧰 Menú del juego (*Toolbar*)](#-menú-del-juego-toolbar)
 - [🌎 Globals](#-globals)
-- [⚙ Godot Adventure Quest (núcleo)](#-godot-adventure-quest-núcleo)
 - [🛠 Configuración](#-configuración)
 - [📁 Estructura](#-estructura)
 - [Nodos de un nivel más alto](#nodos-de-un-nivel-más-alto)
   - [Clickable](#clickable)
 
-![cover](./assets/images/_repo/cover.png "Godot Adventure Quest")
+![cover](./assets/images/_repo/cover.png "Popochiu")
 
 # 📃 Resumen y ejemplos de uso
 
@@ -84,7 +84,32 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 ---
 ---
 
-# 👨‍👩‍👦‍👦 Personajes
+# ⚙ Popochiu (núcleo)
+> *GodotAdventureQuest.tscn, GodotAdventureQuest.gd*
+
+**Por hacer**
+- [ ] Que haya varios tipos de transición entre escenas.
+- [ ] Crear plugin para facilitar la creación de Hotspot.
+- [ ] Crear plugin para facilitar la creación de regiones (Region).
+- [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
+
+**Hecho**
+- [x] Crear plugin para facilitar la creación de Props. `2021-08-05`
+- [x] Crear iconos para grupos en plugin: habitaciones, personajes, ítems de inventario y diálogos. `2021-08-01`
+- [x] Crear plugin para facilitar la creación de árboles de diálogo (DialogTree). `2021-07-31`
+- [x] Crear plugin para facilitar la creación de objetos de inventario (InventoryItem). `2021-07-31`
+- [x] Crear plugin para facilitar la creación de personajes (Character). `2021-07-30`
+- [x] Crear plugin para facilitar la creación de habitaciones. `2021-07-17`
+- [x] Que personaje jugable hable si se usa `Player: Hola` en `E.run([...])`.
+- [x] Que al saltar una escena se ejecuten los cambios indicados en su lista de acciones. Por ejemplo: que un personaje se desplace de un punto a otro, o mire en una dirección específica.
+- [x] Que se puedan crear escenas (*cutscenes*) que permitan saltar la lista de eventos en las mismas.
+- [x] Que la definición de las posibles habitaciones del juego se haga con un `Resource` que permita definir: el ID con el que se solicitará la habitación y la ruta del archivo **.tscn** que deberá instanciarse para hacer la transición.
+- [x] Que se cargue como una escena de Autoload que tenga adentro las escenas de interfaz gráfica y efectos de transición.
+- [x] Que permita cambiar de habitación y llame a los métodos respectivos dependiendo del estado de la transición.
+- [x] Que en este se registren todas las habitaciones, personajes, ítems de inventario y árboles de conversación del juego.
+
+
+# ![](./addons/GodotAdventureQuest/MainDock/characters.png) Personajes
 `Character.tscn, Character.gd, CharacterTemplate.gd`
 
 *Cualquier objeto que pueda hablar, caminar, moverse entre habitaciones, tener inventario, entre otras muchas cosas.*
@@ -103,7 +128,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Que puedan decir cosas al interactuar con objetos.
 
 
-# 🚪 Habitaciones
+# ![](./addons/GodotAdventureQuest/MainDock/rooms.png) Habitaciones
 `Room.tscn, Room.gd, RoomTemplate.gd`
 
 *Las escenas del juego (por donde se moverá el personaje)*
@@ -121,7 +146,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Que cuando el efecto de transición (*fade out* por ahora) para el cambio de habitación haya terminado, se llame al método `Room.on_room_transition_finished`.
 - [x] Crear plantilla para facilitar la asignación de un script a cada habitación.
 
-## 🪑 Props
+## ![](./addons/GodotAdventureQuest/MainDock/props.png) Props
 `Prop.tscn, Prop.gd, PropTemplate.gd`
 
 *Elementos visuales para las habitaciones. Pueden tener interacción.*
@@ -135,7 +160,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Crear plantilla para facilitar la asignación de un script a cada Prop creado en una habitación.
 - [x] Crear nodo que permita definir un Sprite y un Area2D para crear un Prop.
 
-## 👆 Hotspots
+## ![](./addons/GodotAdventureQuest/MainDock/hotspots.png) Hotspots
 `Hotspot.tscn, Hotspot.gd, HotspotTemplate.gd`
 
 *Áreas con las que se puede interactuar (clic izquierdo o clic derecho*
@@ -168,7 +193,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 *Son `Navigation2D` que definen por dónde pueden moverse los personajes.*
 
 
-# 📦 Inventory
+# ![](./addons/GodotAdventureQuest/MainDock/inventory_items.png) Inventory
 `Inventory.tscn, Inventory.gd, Item.gd, InventoryItem.gd, ItemTemplate.gd`
 *Controla qué objetos hay en el inventario (a futuro será por personaje) y qué objetos se pueden meter al inventario.*
 
@@ -185,7 +210,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Que se pueda agregar un ítem (Item.gd) al inventario.
 
 
-# 💬 Árboles de diálogo
+# ![](./addons/GodotAdventureQuest/MainDock/dialogs.png) Árboles de diálogo
 `DialogTree.gd, DialogOption.gd, DialogTreeTemplate.gd, DialogTreeInterface.tscn`
 
 *Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita dos archivos: un `.tres` que permite definir las opciones que tendrá el diálogo y su ID (script_name); y un `.gd` que permite controlar la lógica de lo que pasará cuando inicie, cuando se seleccione una opción y, eventualmente, cuando termine. Cuando se cree un nuevo recurso de tipo **DialogTree.gd**, hay que asignarle un script que use como plantilla el **DialogTreeTemplate.gd**.*
@@ -302,30 +327,6 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 - [x] Que haya una máquina de estados.
 - [x] Que se puedan guardar variables globales para saber el estado de los objetos en las habitaciones.
 
-
-# ⚙ Godot Adventure Quest (núcleo)
-> *GodotAdventureQuest.tscn, GodotAdventureQuest.gd*
-
-**Por hacer**
-- [ ] Que haya varios tipos de transición entre escenas.
-- [ ] Crear plugin para facilitar la creación de Hotspot.
-- [ ] Crear plugin para facilitar la creación de regiones (Region).
-- [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
-
-**Hecho**
-- [x] Crear plugin para facilitar la creación de Props. `2021-08-05`
-- [x] Crear iconos para grupos en plugin: habitaciones, personajes, ítems de inventario y diálogos. `2021-08-01`
-- [x] Crear plugin para facilitar la creación de árboles de diálogo (DialogTree). `2021-07-31`
-- [x] Crear plugin para facilitar la creación de objetos de inventario (InventoryItem). `2021-07-31`
-- [x] Crear plugin para facilitar la creación de personajes (Character). `2021-07-30`
-- [x] Crear plugin para facilitar la creación de habitaciones. `2021-07-17`
-- [x] Que personaje jugable hable si se usa `Player: Hola` en `E.run([...])`.
-- [x] Que al saltar una escena se ejecuten los cambios indicados en su lista de acciones. Por ejemplo: que un personaje se desplace de un punto a otro, o mire en una dirección específica.
-- [x] Que se puedan crear escenas (*cutscenes*) que permitan saltar la lista de eventos en las mismas.
-- [x] Que la definición de las posibles habitaciones del juego se haga con un `Resource` que permita definir: el ID con el que se solicitará la habitación y la ruta del archivo **.tscn** que deberá instanciarse para hacer la transición.
-- [x] Que se cargue como una escena de Autoload que tenga adentro las escenas de interfaz gráfica y efectos de transición.
-- [x] Que permita cambiar de habitación y llame a los métodos respectivos dependiendo del estado de la transición.
-- [x] Que en este se registren todas las habitaciones, personajes, ítems de inventario y árboles de conversación del juego.
 
 # 🛠 Configuración
 - [ ] Que sea fácil indicarle al framework que el juego tiene controles de movimiento 2D (como casi todos los point n' click) o 1D (como [Short-term Battery](https://gamejolt.com/games/short-term-battery/340825) o [Loco Motive](https://robustgames.itch.io/loco-motive) o [iD](https://gamejolt.com/games/iD/256559)).
