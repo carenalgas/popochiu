@@ -99,6 +99,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/GodotAdventureQuest/MainDock/MainDock.gd"
 }, {
+"base": "PanelContainer",
+"class": "PopochiuGroupButton",
+"language": "GDScript",
+"path": "res://addons/GodotAdventureQuest/MainDock/GroupButton/GAQGroupButton.gd"
+}, {
 "base": "Clickable",
 "class": "Prop",
 "language": "GDScript",
@@ -127,13 +132,13 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "AsepriteImportData": "",
 "AsepriteImporter": "",
-"Character": "",
+"Character": "res://addons/GodotAdventureQuest/MainDock/characters.png",
 "Clickable": "",
 "CreationPopup": "",
 "DialogMenu": "",
 "DialogOption": "",
 "DialogText": "",
-"DialogTree": "",
+"DialogTree": "res://addons/GodotAdventureQuest/MainDock/dialogs.png",
 "DisplayBox": "",
 "EditorTheme": "",
 "GAQCharacter": "",
@@ -141,18 +146,19 @@ _global_script_class_icons={
 "GAQRoom": "",
 "Hotspot": "",
 "InventoryContainer": "",
-"InventoryItem": "",
+"InventoryItem": "res://addons/GodotAdventureQuest/MainDock/inventory_items.png",
 "PopochiuDock": "",
+"PopochiuGroupButton": "",
 "Prop": "",
 "Region": "",
-"Room": "",
+"Room": "res://addons/GodotAdventureQuest/MainDock/rooms.png",
 "Toolbar": "",
 "ToolbarButton": ""
 }
 
 [application]
 
-config/name="Godot Adventure Quest"
+config/name="Popochiu"
 config/description="Framework para crear juegos de aventura al estilo de Adventure Game Studio y Power Quest.
 A futuro podría convertirse en un plugin."
 run/main_scene="res://src/Rooms/Main/RoomMain.tscn"

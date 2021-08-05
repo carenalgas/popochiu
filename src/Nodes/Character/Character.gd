@@ -1,5 +1,5 @@
 tool
-class_name Character
+class_name Character, 'res://addons/GodotAdventureQuest/MainDock/characters.png'
 extends Clickable
 # Cualquier objeto que pueda hablar, caminar, moverse entre habitaciones, tener
 # inventario, entre otras muchas cosas.

@@ -1,4 +1,5 @@
 tool
+class_name PopochiuGroupButton
 extends PanelContainer
 
 export var open_icon: Texture
@@ -15,7 +16,20 @@ func _ready() -> void:
 	connect('gui_input', self, '_on_input')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+func clear_list() -> void:
+	var list: VBoxContainer = get_node_or_null(target_group)
+	
+	if list:
+		for idx in list.get_children().size():
+			if idx == list.get_children().size() - 1:
+				continue
+
+	#		list[idx].queue_free()
+			get_tree().queue_delete(list.get_child(idx))
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _on_input(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
 	if mouse_event and mouse_event.button_index == BUTTON_LEFT \

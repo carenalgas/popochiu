@@ -15,7 +15,7 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
   - [🟪 Regiones](#-regiones)
   - [📍 Puntos (Position2D)](#-puntos-position2d)
   - [🚶‍♀️ Áreas transitables (walkable areas)](#️-áreas-transitables-walkable-areas)
-- [� Inventory](#-inventory)
+- [📦 Inventory](#-inventory)
 - [💬 Árboles de diálogo](#-árboles-de-diálogo)
 - [💻🖱 Interfaz gráfica](#-interfaz-gráfica)
   - [Texto de descripción](#texto-de-descripción)
@@ -308,12 +308,12 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 
 **Por hacer**
 - [ ] Que haya varios tipos de transición entre escenas.
-- [ ] Crear plugin para facilitar la creación de Prop.
 - [ ] Crear plugin para facilitar la creación de Hotspot.
 - [ ] Crear plugin para facilitar la creación de regiones (Region).
 - [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
 **Hecho**
+- [x] Crear plugin para facilitar la creación de Props. `2021-08-05`
 - [x] Crear iconos para grupos en plugin: habitaciones, personajes, ítems de inventario y diálogos. `2021-08-01`
 - [x] Crear plugin para facilitar la creación de árboles de diálogo (DialogTree). `2021-07-31`
 - [x] Crear plugin para facilitar la creación de objetos de inventario (InventoryItem). `2021-07-31`

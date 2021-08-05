@@ -1,7 +1,7 @@
 tool
 extends EditorPlugin
 
-var gaq_dock: Control
+var gaq_dock: PopochiuDock
 
 var _editor_interface: EditorInterface
 var _file_system: EditorFileSystem
@@ -39,6 +39,7 @@ func _enter_tree() -> void:
 	)
 	
 #	_file_system.connect("filesystem_changed", self, "_on_filesystem_changed")
+	connect('scene_changed', gaq_dock, 'scene_changed')
 	
 	# Llenar las listas de habitaciones, personajes, objetos de inventario y
 	# árboles de diálogo.

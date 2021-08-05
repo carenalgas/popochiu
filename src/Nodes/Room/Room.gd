@@ -1,6 +1,6 @@
-# TODO: Crear un icono para este tipo de nodos
+# TODO: ¿Que se llame PopochiuRoom?
 tool
-class_name Room
+class_name Room, 'res://addons/GodotAdventureQuest/MainDock/rooms.png'
 extends Node2D
 # Nodo base para la creación de habitaciones dentro del juego.
 
@@ -96,11 +96,7 @@ func _get_property_list():
 	return properties
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
-func get_walkable_area() -> Navigation2D:
-	return $WalkableAreas.get_child(0) as Navigation2D
-
-
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 # Aquí es donde se deben cargar los personajes de la habitación para que sean
 # renderizados en el juego.
 func on_room_entered() -> void:
@@ -113,6 +109,11 @@ func on_room_transition_finished() -> void:
 
 func on_entered_from_editor() -> void:
 	pass
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+func get_walkable_area() -> Navigation2D:
+	return $WalkableAreas.get_child(0) as Navigation2D
 
 
 # Este método es llamado por GodotAdventureQuest cuando se va a cambiar de
@@ -156,6 +157,14 @@ func hide_props() -> void:
 		p.hide()
 
 
+func get_props() -> Array:
+	return $Props.get_children()
+
+
+func get_hotspots() -> Array:
+	return $Hotspots.get_children()
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _move_along_path(distance):
 	var last_point = _moving_character.position
@@ -177,8 +186,8 @@ func _move_along_path(distance):
 
 
 func _update_navigation_path(
-		character: Character, start_position: Vector2, end_position: Vector2
-	):
+	character: Character, start_position: Vector2, end_position: Vector2
+):
 	# TODO: Esto debería ir en un diccionario para que se puedan tener varios
 	# personajes moviéndose al tiempo. O que cada personaje controle su
 	# movimiento. (;￢＿￢)

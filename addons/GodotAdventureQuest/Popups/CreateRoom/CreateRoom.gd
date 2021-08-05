@@ -64,7 +64,7 @@ func create() -> void:
 	# Crear el Resource de la habitación ---------------------------------------
 	var room_resource: GAQRoom = GAQRoom.new()
 	room_resource.script_name = _new_room_name
-	room_resource.path = _new_room_path + '.tscn'
+	room_resource.scene = _new_room_path + '.tscn'
 	room_resource.resource_name = _new_room_name
 	if ResourceSaver.save(_new_room_path + '.tres', room_resource) != OK:
 		push_error('No se pudo crear el GAQRoom de la habitación: %s' %\
