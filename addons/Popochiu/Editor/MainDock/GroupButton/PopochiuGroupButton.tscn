@@ -1,0 +1,60 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/GroupButton/PopochiuGroupButton.gd" type="Script" id=1]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/GroupButton/group_arrow_open.png" type="Texture" id=2]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/GroupButton/group_arrow_closed.png" type="Texture" id=3]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[node name="PopochiuGroupButton" type="PanelContainer"]
+margin_right = 320.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+custom_styles/panel = SubResource( 1 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+open_icon = ExtResource( 2 )
+closed_icon = ExtResource( 3 )
+
+[node name="Bg" type="ColorRect" parent="."]
+margin_right = 320.0
+margin_bottom = 20.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 320.0
+margin_bottom = 20.0
+
+[node name="Arrow" type="TextureRect" parent="HBoxContainer"]
+margin_top = 2.0
+margin_right = 16.0
+margin_bottom = 18.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+stretch_mode = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Icon" type="TextureRect" parent="HBoxContainer"]
+margin_left = 20.0
+margin_top = 2.0
+margin_right = 36.0
+margin_bottom = 18.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+margin_left = 40.0
+margin_top = 3.0
+margin_right = 320.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Group"

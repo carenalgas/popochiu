@@ -25,8 +25,10 @@ func on_room_transition_finished() -> void:
 	E.run_cutscene([
 #		G.display('Haz clic para interactuar y clic derecho para examinar'),
 #		G.display('DLG_A'),
-		C.player_say('Bueno. Hay que empezar con algo'),
-		C.character_say('Barney', 'Cállese maricón!'),
+		'Player: Bueno. Hay que empezar con algo',
+		'Barney: Cállese maricón!',
+		'Panchita: Holaaaaa',
+		'Player: ¡¡¡Un fantasma!!!',
 #		E.wait(),
 #		C.player.face_up(),
 #		E.wait(),

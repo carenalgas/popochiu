@@ -1,6 +1,6 @@
 # TODO: ¿Que se llame PopochiuRoom?
 tool
-class_name Room, 'res://addons/GodotAdventureQuest/MainDock/rooms.png'
+class_name Room, 'res://addons/Popochiu/icons/rooms.png'
 extends Node2D
 # Nodo base para la creación de habitaciones dentro del juego.
 
@@ -116,7 +116,7 @@ func get_walkable_area() -> Navigation2D:
 	return $WalkableAreas.get_child(0) as Navigation2D
 
 
-# Este método es llamado por GodotAdventureQuest cuando se va a cambiar de
+# Este método es llamado por Popochiu cuando se va a cambiar de
 # habitación. Por defecto sólo remueve los nodos de los personajes para que no
 # desaparezcan sus instancias globales.
 func on_room_exited() -> void:

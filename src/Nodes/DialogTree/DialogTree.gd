@@ -1,5 +1,5 @@
 tool
-class_name DialogTree, 'res://addons/GodotAdventureQuest/MainDock/dialogs.png'
+class_name DialogTree, 'res://addons/Popochiu/icons/dialogs.png'
 extends Resource
 
 export(Array, Resource) var options := [] setget _set_options

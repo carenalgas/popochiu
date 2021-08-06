@@ -69,7 +69,7 @@ func _get_item_instance(item_name: String) -> InventoryItem:
 			return ii as InventoryItem
 	
 	# Si el ítem no está en la lista de ítems, entonces hay que intentar
-	# instanciarlo en base a la lista de ítems de GodotAdventureQuest
+	# instanciarlo en base a la lista de ítems de Popochiu
 	var new_intentory_item: InventoryItem = E.get_inventory_item_instance(
 		item_name
 	)

@@ -1,5 +1,5 @@
 extends Control
-class_name InventoryItem, 'res://addons/GodotAdventureQuest/MainDock/inventory_items.png'
+class_name InventoryItem, 'res://addons/Popochiu/icons/inventory_items.png'
 # Estos son los objetos que podrán ir al inventario:
 # GraphicInterfaceLayer > InventoryContainer > ... > InventoryGrid
 
