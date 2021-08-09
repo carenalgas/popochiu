@@ -67,6 +67,7 @@ onready var _hotspots_group: PopochiuGroupButton = find_node('HotspotsGroupButto
 onready var _hotspots_list: Container = _types['hotspot'].list
 onready var _hotspots_btn: Button = _types['hotspot'].button
 onready var _hotspots_popup: ConfirmationDialog = _types['hotspot'].popup
+onready var _no_room_info: Label = find_node('NoRoomInfo')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -75,7 +76,12 @@ func _ready() -> void:
 	# una habitación.
 	_props_btn.disabled = true
 	_hotspots_btn.disabled = true
-	_tab_container.set_tab_disabled(1, true)
+	_tab_container.current_tab = 0
+	
+	_tab_container.set_tab_disabled(0, false)
+	_tab_container.set_tab_disabled(1, false)
+
+	_no_room_info.hide()
 	
 	# Creación de habitaciones
 	for t in _types:
@@ -126,14 +132,20 @@ func add_to_list(type: String, name_to_add: String) -> void:
 
 
 func scene_changed(scene_root: Node) -> void:
+	# Poner todo en su estado por defecto
+	opened_room = null
+
+	_props_btn.disabled = true
+	_hotspots_btn.disabled = true
+
+	_props_group.clear_list()
+	_hotspots_group.clear_list()
+	_no_room_info.show()
+	
 	if scene_root is Room:
 		# Actualizar la información de la habitación que se abrió
 		opened_room = scene_root
 
-		_tab_container.current_tab = 1
-		_props_btn.disabled = false
-		_hotspots_btn.disabled = false
-		
 		_props_popup.room_opened()
 		_hotspots_popup.room_opened()
 
@@ -155,18 +167,11 @@ func scene_changed(scene_root: Node) -> void:
 			_hotspots_btn, _hotspots_list.get_child_count()
 		)
 		
-		_tab_container.set_tab_disabled(1, false)
-	else:
-		# Poner todo en su estado por defecto
-		opened_room = null
+		_no_room_info.hide()
+		_props_btn.disabled = false
+		_hotspots_btn.disabled = false
 
-		_props_btn.disabled = true
-		_hotspots_btn.disabled = true
-
-		_props_group.clear_list()
-		_hotspots_group.clear_list()
-		
-		_tab_container.set_tab_disabled(1, true)
+		_tab_container.current_tab = 1
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

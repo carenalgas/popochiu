@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialogTree/CreateDialogTree.tscn" type="PackedScene" id=2]
@@ -19,6 +19,22 @@
 content_margin_top = 2.0
 content_margin_bottom = 4.0
 bg_color = Color( 0.556863, 0.235294, 0.592157, 1 )
+
+[sub_resource type="StyleBoxFlat" id=2]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.768627, 0.423529, 0.443137, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [node name="Popochiu" type="Panel"]
 anchor_right = 1.0
@@ -67,7 +83,6 @@ margin_right = 312.0
 margin_bottom = 172.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-tab_align = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -82,7 +97,8 @@ margin_bottom = -4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
-"_edit_use_anchors_": false
+"_edit_use_anchors_": false,
+"_tab_disabled": false
 }
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main"]
@@ -191,12 +207,12 @@ margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 __meta__ = {
-"_tab_disabled": true
+"_tab_disabled": false
 }
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room"]
 margin_right = 304.0
-margin_bottom = 100.0
+margin_bottom = 136.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -205,47 +221,54 @@ margin_right = 304.0
 margin_bottom = 52.0
 size_flags_horizontal = 3
 
-[node name="PropsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 24.0
+[node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
+visible = false
 margin_right = 304.0
-margin_bottom = 40.0
+margin_bottom = 39.0
+custom_styles/normal = SubResource( 2 )
+custom_colors/font_color = Color( 0.768627, 0.423529, 0.443137, 1 )
+text = "Seleccione una habitación para ver sus Props, Hotspots y Regions. O crear nuevos."
+autowrap = true
+
+[node name="PropsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_right = 304.0
+margin_bottom = 16.0
 icon = ExtResource( 12 )
 target_group = NodePath("../PropsList")
 color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 title = "Props"
 
 [node name="PropsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
-margin_top = 44.0
+margin_top = 20.0
 margin_right = 304.0
-margin_bottom = 44.0
+margin_bottom = 40.0
 
 [node name="BtnCreateProp" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer/PropsList"]
-margin_left = 185.0
-margin_top = 132.0
-margin_right = 292.0
-margin_bottom = 152.0
+margin_left = 214.0
+margin_right = 304.0
+margin_bottom = 20.0
 size_flags_horizontal = 8
 disabled = true
 text = "+ Crear prop"
 
 [node name="HotspotsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 44.0
 margin_right = 304.0
-margin_bottom = 16.0
+margin_bottom = 60.0
 icon = ExtResource( 13 )
 target_group = NodePath("../HotspotsList")
 color = Color( 0.768627, 0.423529, 0.443137, 0.498039 )
 title = "Hotspots"
 
 [node name="HotspotsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
-margin_top = 20.0
+margin_top = 64.0
 margin_right = 304.0
-margin_bottom = 20.0
+margin_bottom = 84.0
 
 [node name="BtnCreateHotspot" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer/HotspotsList"]
-margin_left = 185.0
-margin_top = 156.0
-margin_right = 292.0
-margin_bottom = 176.0
+margin_left = 194.0
+margin_right = 304.0
+margin_bottom = 20.0
 size_flags_horizontal = 8
 disabled = true
 text = "+ Crear hotspot"

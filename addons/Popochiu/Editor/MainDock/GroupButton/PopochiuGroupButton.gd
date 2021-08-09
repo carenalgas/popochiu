@@ -22,12 +22,11 @@ func clear_list() -> void:
 	var list: VBoxContainer = get_node_or_null(target_group)
 	
 	if list:
-		for idx in list.get_children().size():
-			if idx == list.get_children().size() - 1:
+		for c in list.get_children():
+			if c is Button:
 				continue
 
-	#		list[idx].queue_free()
-			get_tree().queue_delete(list.get_child(idx))
+			c.queue_free()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
