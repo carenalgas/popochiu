@@ -1,23 +1,22 @@
-<!-- no toc -->
-# Popochiu<!-- omit in toc -->
-Framework para crear juegos de aventura con Godot al estilo de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
-
 ![cover](./assets/images/_repo/cover.png "Popochiu")
+
+<!-- no toc -->
+Framework para crear juegos de aventura con Godot al estilo de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
 ![Popochiu](./assets/images/_repo/gaq_02.gif "Popochiu en acción")
 
 # Tabla de contenidos<!-- omit in toc -->
 - [📃 Resumen y ejemplos de uso](#-resumen-y-ejemplos-de-uso)
 - [⚙ Popochiu (núcleo)](#-popochiu-núcleo)
-- [! Personajes](#-personajes)
-- [! Habitaciones](#-habitaciones)
-  - [! Props](#-props)
-  - [! Hotspots](#-hotspots)
-  - [🟪 Regiones](#-regiones)
+- [👭 Personajes](#-personajes)
+- [🚪 Habitaciones](#-habitaciones)
+  - [☕ Props](#-props)
+  - [👆 Hotspots](#-hotspots)
+  - [🦶 Regiones](#-regiones)
   - [📍 Puntos (Position2D)](#-puntos-position2d)
   - [🚶‍♀️ Áreas transitables (walkable areas)](#️-áreas-transitables-walkable-areas)
-- [! Inventory](#-inventory)
-- [! Árboles de diálogo](#-árboles-de-diálogo)
+- [🎒 Inventory](#-inventory)
+- [💬 Árboles de diálogo](#-árboles-de-diálogo)
 - [💻🖱 Interfaz gráfica](#-interfaz-gráfica)
   - [Texto de descripción](#texto-de-descripción)
   - [Texto de diálogo](#texto-de-diálogo)
@@ -26,9 +25,6 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
   - [🧰 Menú del juego (*Toolbar*)](#-menú-del-juego-toolbar)
 - [🌎 Globals](#-globals)
 - [🛠 Configuración](#-configuración)
-- [📁 Estructura](#-estructura)
-- [Nodos de un nivel más alto](#nodos-de-un-nivel-más-alto)
-  - [Clickable](#clickable)
 
 # 📃 Resumen y ejemplos de uso
 
@@ -98,7 +94,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Que en este se registren todas las habitaciones, personajes, ítems de inventario y árboles de conversación del juego.
 
 
-# ![](./addons/GodotAdventureQuest/MainDock/characters.png) Personajes
+# 👭 Personajes
 `Character.tscn, Character.gd, CharacterTemplate.gd`
 
 *Cualquier objeto que pueda hablar, caminar, moverse entre habitaciones, tener inventario, entre otras muchas cosas.*
@@ -117,7 +113,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Que puedan decir cosas al interactuar con objetos.
 
 
-# ![](./addons/GodotAdventureQuest/MainDock/rooms.png) Habitaciones
+# 🚪 Habitaciones
 `Room.tscn, Room.gd, RoomTemplate.gd`
 
 *Las escenas del juego (por donde se moverá el personaje)*
@@ -135,7 +131,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Que cuando el efecto de transición (*fade out* por ahora) para el cambio de habitación haya terminado, se llame al método `Room.on_room_transition_finished`.
 - [x] Crear plantilla para facilitar la asignación de un script a cada habitación.
 
-## ![](./addons/GodotAdventureQuest/MainDock/props.png) Props
+## ☕ Props
 `Prop.tscn, Prop.gd, PropTemplate.gd`
 
 *Elementos visuales para las habitaciones. Pueden tener interacción.*
@@ -149,7 +145,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Crear plantilla para facilitar la asignación de un script a cada Prop creado en una habitación.
 - [x] Crear nodo que permita definir un Sprite y un Area2D para crear un Prop.
 
-## ![](./addons/GodotAdventureQuest/MainDock/hotspots.png) Hotspots
+## 👆 Hotspots
 `Hotspot.tscn, Hotspot.gd, HotspotTemplate.gd`
 
 *Áreas con las que se puede interactuar (clic izquierdo o clic derecho*
@@ -163,7 +159,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Crear plantilla para facilitar la asignación de un script a cada Hotspot creado en una habitación.
 - [x] Crear nodo que permita definir un Area2D para controlar la interacción del mouse con ella.
 
-## 🟪 Regiones
+## 🦶 Regiones
 *Áreas que pueden disparar eventos cuando un personaje entra en contacto con estas.*
 
 **Por hacer**
@@ -182,7 +178,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 *Son `Navigation2D` que definen por dónde pueden moverse los personajes.*
 
 
-# ![](./addons/GodotAdventureQuest/MainDock/inventory_items.png) Inventory
+# 🎒 Inventory
 `Inventory.tscn, Inventory.gd, Item.gd, InventoryItem.gd, ItemTemplate.gd`
 *Controla qué objetos hay en el inventario (a futuro será por personaje) y qué objetos se pueden meter al inventario.*
 
@@ -199,7 +195,7 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 - [x] Que se pueda agregar un ítem (Item.gd) al inventario.
 
 
-# ![](./addons/GodotAdventureQuest/MainDock/dialogs.png) Árboles de diálogo
+# 💬 Árboles de diálogo
 `DialogTree.gd, DialogOption.gd, DialogTreeTemplate.gd, DialogTreeInterface.tscn`
 
 *Los diálogos son árboles con ramificaciones. Cada árbol de diálogo necesita dos archivos: un `.tres` que permite definir las opciones que tendrá el diálogo y su ID (script_name); y un `.gd` que permite controlar la lógica de lo que pasará cuando inicie, cuando se seleccione una opción y, eventualmente, cuando termine. Cuando se cree un nuevo recurso de tipo **DialogTree.gd**, hay que asignarle un script que use como plantilla el **DialogTreeTemplate.gd**.*
@@ -318,42 +314,6 @@ _Controla lo elementos de la Interfaz Gráfica del Jugador (IGJ): mostrar textos
 
 
 # 🛠 Configuración
+**Por hacer**
 - [ ] Que sea fácil indicarle al framework que el juego tiene controles de movimiento 2D (como casi todos los point n' click) o 1D (como [Short-term Battery](https://gamejolt.com/games/short-term-battery/340825) o [Loco Motive](https://robustgames.itch.io/loco-motive) o [iD](https://gamejolt.com/games/iD/256559)).
 - [ ] Que se pueda establecer el modo de movimiento como una teletransportación. Al estilo de [An eternity, reflecting](https://gamejolt.com/games/AER/421186).
-
----
----
----
-
-# 📁 Estructura
-La estructura del proyecto toma como referencia los [lineamientos propuestos por GDQuest](https://www.gdquest.com/docs/guidelines/best-practices/godot-gdscript/#naming-conventions) para la nomenclatura de archivos y carpetas.
-
-- `assets`
-  - audio
-  - fonts
-  - images
-  - localization
-- `script_templates` Contiene archivos de script que servirán como plantilla para crear otros scripts que heredan de otros scripts. La idea con estos es reducir el tener que copiar y pegar código para crear objetos como personajes, hotspots, props, ítems, etcétera.
-- `src`
-  - `Autoload` Contiene los scripts que se cargarán en el Autoload (singleton) del proyecto.
-  - `Characters` Contiene los personajes del juego separados cada uno por carpeta.
-  - `DialogTree` Contiene los árboles de diálogo del juego separados por carpeta.
-    - `ChatWithBarney`
-      - **ChatWithBarney.tres** Define las opciones para el diálogo y tiene la referencia al script que se usará para controlar la lógica (ChatWithBarney.gd)
-      - **ChatWithBarney.gd** Controla la lógica del diálogo (como lo que pasa al iniciar o cuando se selecciona una opción).
-    - 📂++
-  - `GraphicInterface` Contiene los nodos que se encargan de presentar y controlar la Interfaz Gráfica del Jugador (IGJ).
-  - `Inventory` Contiene los ítems que se podrán añadir al inventario separados por carpeta.
-  - `Nodes` Contiene nodos que podrán agregarse a las escenas para crear personajes, hotspots, props, entre otros.
-  - `Resources` Contiene recursos (*.tres) creados para el proyecto.
-    - **GAQTheme.tres** El tema (*theme*) de Godot para los elementos de interfaz gráfica del juego.
-  - `Rooms` Contiene las habitaciones que podrán navegarse en el juego separadas por carpetas.<!-- omit in toc -->
----
----
----
-# Nodos de un nivel más alto
-Son nodos (o scripts) de los que heredan varios de los objetos que permiten construir las habitaciones.
-
-## Clickable
-_Nodo del que heredan todos aquellos objetos que vayan a tener interacción con clic izquierdo o derecho._
-- [x] Crear Clickable.gd para que Character, Hotspot y Prop hereden de este.
