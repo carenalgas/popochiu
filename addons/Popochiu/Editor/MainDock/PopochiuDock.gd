@@ -23,51 +23,65 @@ onready var _types := {
 	room = {
 		path = rooms_path,
 		type_hint = 'PopochiuRoom',
-		list = find_node('RoomsList') as Container,
-		button = find_node('BtnCreateRoom') as Button,
-		popup = find_node('CreateRoom') as ConfirmationDialog
+		list = find_node('RoomsList'),
+		button = find_node('BtnCreateRoom'),
+		popup = find_node('CreateRoom')
 	},
 	character = {
 		path = characters_path,
 		type_hint = 'PopochiuCharacter',
-		list = find_node('CharactersList') as Container,
-		button = find_node('BtnCreateCharacter') as Button,
-		popup = find_node('CreateCharacter') as ConfirmationDialog
+		list = find_node('CharactersList'),
+		button = find_node('BtnCreateCharacter'),
+		popup = find_node('CreateCharacter')
 	},
 	inventory_item = {
 		path = inventory_items_path,
 		type_hint = 'PopochiuInventoryItem',
-		list = find_node('InventoryItemsList') as Container,
-		button = find_node('BtnCreateItem') as Button,
-		popup = find_node('CreateInventoryItem') as ConfirmationDialog
+		list = find_node('InventoryItemsList'),
+		button = find_node('BtnCreateItem'),
+		popup = find_node('CreateInventoryItem')
 	},
 	dialog_tree = {
 		path = dialog_trees_path,
 		type_hint = 'DialogTree',
-		list = find_node('DialogTreesList') as Container,
-		button = find_node('BtnCreateDialog') as Button,
-		popup = find_node('CreateDialogTree') as ConfirmationDialog
+		list = find_node('DialogTreesList'),
+		button = find_node('BtnCreateDialog'),
+		popup = find_node('CreateDialogTree')
 	},
 	prop = {
-		list = find_node('PropsList') as Container,
-		button = find_node('BtnCreateProp') as Button,
-		popup = find_node('CreateProp') as ConfirmationDialog
+		group = find_node('PropsGroupButton'),
+		list = find_node('PropsList'),
+		button = find_node('BtnCreateProp'),
+		popup = find_node('CreateProp')
 	},
 	hotspot = {
-		list = find_node('HotspotsList') as Container,
-		button = find_node('BtnCreateHotspot') as Button,
-		popup = find_node('CreateHotspot') as ConfirmationDialog
+		group = find_node('HotspotsGroupButton'),
+		list = find_node('HotspotsList'),
+		button = find_node('BtnCreateHotspot'),
+		popup = find_node('CreateHotspot')
+	},
+	region = {
+		group = find_node('RegionsGroupButton'),
+		list = find_node('RegionsList'),
+		button = find_node('BtnCreateRegion'),
+		popup = find_node('CreateRegion')
 	},
 }
-onready var _props_group: PopochiuGroupButton = find_node('PropsGroupButton')
+onready var _no_room_info: Label = find_node('NoRoomInfo')
+onready var _props_group: PopochiuGroupButton = _types['prop'].group
 onready var _props_list: Container = _types['prop'].list
 onready var _props_btn: Button = _types['prop'].button
 onready var _props_popup: ConfirmationDialog = _types['prop'].popup
-onready var _hotspots_group: PopochiuGroupButton = find_node('HotspotsGroupButton')
+onready var _hotspots_group: PopochiuGroupButton = _types['hotspot'].group
 onready var _hotspots_list: Container = _types['hotspot'].list
 onready var _hotspots_btn: Button = _types['hotspot'].button
 onready var _hotspots_popup: ConfirmationDialog = _types['hotspot'].popup
-onready var _no_room_info: Label = find_node('NoRoomInfo')
+onready var _regions_group: PopochiuGroupButton = _types['region'].group
+onready var _regions_list: Container = _types['region'].list
+onready var _regions_btn: Button = _types['region'].button
+onready var _regions_popup: ConfirmationDialog = _types['region'].popup
+onready var _points_group: PopochiuGroupButton = find_node('PointsGroupButton')
+onready var _points_list: Container = find_node('PointsList')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -76,6 +90,7 @@ func _ready() -> void:
 	# una habitación.
 	_props_btn.disabled = true
 	_hotspots_btn.disabled = true
+	_regions_btn.disabled = true
 	_tab_container.current_tab = 0
 	
 	_tab_container.set_tab_disabled(0, false)
@@ -137,10 +152,13 @@ func scene_changed(scene_root: Node) -> void:
 
 	_props_btn.disabled = true
 	_hotspots_btn.disabled = true
+	_regions_btn.disabled = true
 
+	_no_room_info.show()
 	_props_group.clear_list()
 	_hotspots_group.clear_list()
-	_no_room_info.show()
+	_regions_group.clear_list()
+	_points_group.clear_list()
 	
 	if scene_root is Room:
 		# Actualizar la información de la habitación que se abrió
@@ -148,6 +166,7 @@ func scene_changed(scene_root: Node) -> void:
 
 		_props_popup.room_opened()
 		_hotspots_popup.room_opened()
+		_regions_popup.room_opened()
 
 		# Llenar la lista de props
 		for p in opened_room.get_props():
@@ -167,9 +186,25 @@ func scene_changed(scene_root: Node) -> void:
 			_hotspots_btn, _hotspots_list.get_child_count()
 		)
 		
+		# Llenar la lista de regiones
+		for r in opened_room.get_regions():
+			if r is Region:
+				var lbl: Label = Label.new()
+				lbl.text = (r as Region).name
+				_regions_list.add_child(lbl)
+		_regions_list.move_child(_regions_btn, _regions_list.get_child_count())
+		
+		# Llenar la lista de puntos
+		for p in opened_room.get_points():
+			if p is Position2D:
+				var lbl: Label = Label.new()
+				lbl.text = (p as Position2D).name
+				_points_list.add_child(lbl)
+		
 		_no_room_info.hide()
 		_props_btn.disabled = false
 		_hotspots_btn.disabled = false
+		_regions_btn.disabled = false
 
 		_tab_container.current_tab = 1
 

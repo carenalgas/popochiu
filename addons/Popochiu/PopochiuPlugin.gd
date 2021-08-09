@@ -19,24 +19,24 @@ func _enter_tree() -> void:
 	add_control_to_dock(DOCK_SLOT_RIGHT_BR, gaq_dock)
 	
 	# Agregar los tipos de Resource del plugin
-	add_custom_type(
-		'> PopochiuRoom',
-		'Resource',
-		preload('res://src/Nodes/Room/PopochiuRoom.gd'),
-		preload('res://addons/Popochiu/icons/rooms.png')
-	)
-	add_custom_type(
-		'> PopochiuCharacter',
-		'Resource',
-		preload('res://src/Nodes/Character/PopochiuCharacter.gd'),
-		preload('res://addons/Popochiu/icons/characters.png')
-	)
-	add_custom_type(
-		'> PopochiuInventoryItem',
-		'Resource',
-		preload('res://src/Nodes/InventoryItem/PopochiuInventoryItem.gd'),
-		preload('res://addons/Popochiu/icons/inventory_items.png')
-	)
+#	add_custom_type(
+#		'> PopochiuRoom',
+#		'Resource',
+#		preload('res://src/Nodes/Room/PopochiuRoom.gd'),
+#		preload('res://addons/Popochiu/icons/rooms.png')
+#	)
+#	add_custom_type(
+#		'> PopochiuCharacter',
+#		'Resource',
+#		preload('res://src/Nodes/Character/PopochiuCharacter.gd'),
+#		preload('res://addons/Popochiu/icons/characters.png')
+#	)
+#	add_custom_type(
+#		'> PopochiuInventoryItem',
+#		'Resource',
+#		preload('res://src/Nodes/InventoryItem/PopochiuInventoryItem.gd'),
+#		preload('res://addons/Popochiu/icons/inventory_items.png')
+#	)
 	
 #	_file_system.connect("filesystem_changed", self, "_on_filesystem_changed")
 	connect('scene_changed', gaq_dock, 'scene_changed')

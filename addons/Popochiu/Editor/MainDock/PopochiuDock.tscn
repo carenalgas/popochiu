@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialogTree/CreateDialogTree.tscn" type="PackedScene" id=2]
@@ -14,6 +14,9 @@
 [ext_resource path="res://addons/Popochiu/icons/props.png" type="Texture" id=12]
 [ext_resource path="res://addons/Popochiu/icons/hotspots.png" type="Texture" id=13]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateHotspot/CreateHotspot.tscn" type="PackedScene" id=14]
+[ext_resource path="res://addons/Popochiu/Editor/Popups/CreateRegion/CreateRegion.tscn" type="PackedScene" id=15]
+[ext_resource path="res://addons/Popochiu/icons/region.png" type="Texture" id=16]
+[ext_resource path="res://addons/Popochiu/icons/point.png" type="Texture" id=17]
 
 [sub_resource type="StyleBoxFlat" id=1]
 content_margin_top = 2.0
@@ -218,7 +221,7 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer"]
 margin_right = 304.0
-margin_bottom = 52.0
+margin_bottom = 80.0
 size_flags_horizontal = 3
 
 [node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
@@ -273,6 +276,42 @@ size_flags_horizontal = 8
 disabled = true
 text = "+ Crear hotspot"
 
+[node name="RegionsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 88.0
+margin_right = 304.0
+margin_bottom = 104.0
+icon = ExtResource( 16 )
+target_group = NodePath("../RegionsList")
+color = Color( 0.662745, 1, 0.623529, 0.498039 )
+title = "Regiones"
+
+[node name="RegionsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
+margin_top = 108.0
+margin_right = 304.0
+margin_bottom = 128.0
+
+[node name="BtnCreateRegion" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer/RegionsList"]
+margin_left = 203.0
+margin_right = 304.0
+margin_bottom = 20.0
+size_flags_horizontal = 8
+disabled = true
+text = "+ Crear región"
+
+[node name="PointsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 88.0
+margin_right = 304.0
+margin_bottom = 104.0
+icon = ExtResource( 17 )
+target_group = NodePath("../PointsList")
+color = Color( 0.556863, 0.313726, 0.160784, 0.498039 )
+title = "Puntos"
+
+[node name="PointsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
+margin_top = 108.0
+margin_right = 304.0
+margin_bottom = 128.0
+
 [node name="Popups" type="Control" parent="."]
 __meta__ = {
 "_edit_use_anchors_": false
@@ -297,3 +336,5 @@ margin_bottom = 270.0
 [node name="CreateProp" parent="Popups" instance=ExtResource( 5 )]
 
 [node name="CreateHotspot" parent="Popups" instance=ExtResource( 14 )]
+
+[node name="CreateRegion" parent="Popups" instance=ExtResource( 15 )]

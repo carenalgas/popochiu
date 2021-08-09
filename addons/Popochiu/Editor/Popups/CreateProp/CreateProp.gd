@@ -72,12 +72,12 @@ func create() -> void:
 	prop.owner = _main_dock.opened_room
 	_main_dock.ei.save_scene()
 	
-	# Actualizar la lista de habitaciones en el Dock ---------------------------
+	# Actualizar la lista de props de la habitación ----------------------------
 	_main_dock.add_to_list('prop', _new_prop_name)
 
-	# Abrir el diálogo en el Inspector -----------------------------------------
+	# Abrir las propiedades de la prop creada en el Inspector ------------------
 	yield(get_tree().create_timer(0.1), 'timeout')
-	_main_dock.ei.edit_node(_main_dock.ei.get_edited_scene_root().get_node('Props/' + _new_prop_name))
+	_main_dock.ei.edit_node(prop)
 
 	# Fin
 	hide()

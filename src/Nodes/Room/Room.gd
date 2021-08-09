@@ -165,6 +165,14 @@ func get_hotspots() -> Array:
 	return $Hotspots.get_children()
 
 
+func get_regions() -> Array:
+	return $Regions.get_children()
+
+
+func get_points() -> Array:
+	return $Points.get_children()
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _move_along_path(distance):
 	var last_point = _moving_character.position

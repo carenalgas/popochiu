@@ -150,7 +150,7 @@ _global_script_class_icons={
 "PopochiuInventoryItem": "",
 "PopochiuRoom": "",
 "Prop": "res://addons/Popochiu/icons/props.png",
-"Region": "",
+"Region": "res://addons/Popochiu/icons/region.png",
 "Room": "res://addons/Popochiu/icons/rooms.png",
 "Toolbar": "",
 "ToolbarButton": ""

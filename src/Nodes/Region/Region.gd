@@ -1,7 +1,9 @@
 tool
-class_name Region
+class_name Region, 'res://addons/Popochiu/icons/region.png'
 extends Area2D
 
+export var script_name := ''
+export var description := ''
 export var enabled := true setget _set_enabled
 # TODO: Si walkable se vuelve falso, los personajes no deberían poder caminar
 #		por ahí.

@@ -78,11 +78,11 @@ El framework tiene unos script cargados en el Autoload para facilitar el acceso 
 
 **Por hacer**
 - [ ] Que haya varios tipos de transición entre escenas.
-- [ ] Crear plugin para facilitar la creación de Hotspot.
-- [ ] Crear plugin para facilitar la creación de regiones (Region).
-- [ ] Ver si los datos cargados (habitaciones, personajes, ítems de inventario y árboles de conversación) se pueden pasar a sus autoload respectivos o si no tiene sentido hacer algo así.
 
 **Hecho**
+- [x] Que se pueda ver lista de ubicaciones (Position2D) de la habitación. `2021-08-08`
+- [x] Crear plugin para facilitar la creación de regiones (Region). `2021-08-08`
+- [x] Crear plugin para facilitar la creación de Hotspot. `2021-08-06`
 - [x] Crear plugin para facilitar la creación de Props. `2021-08-05`
 - [x] Crear iconos para grupos en plugin: habitaciones, personajes, ítems de inventario y diálogos. `2021-08-01`
 - [x] Crear plugin para facilitar la creación de árboles de diálogo (DialogTree). `2021-07-31`

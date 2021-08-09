@@ -43,14 +43,14 @@ func create() -> void:
 			push_error('No se pudo crear el directorio de Hotspots de ' +\
 			_room_path.get_file())
 
-	# Crear el script de el hotspot (si tiene interacción) ------------------------
+	# Crear el script de el hotspot (si tiene interacción) ---------------------
 	var hotspot_template := load(SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_hotspot_path + '.gd', hotspot_template) != OK:
 		push_error('No se pudo crear el script: %s.gd' % _new_hotspot_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 
-	# Crear el hotspot a agregar a la habitación ----------------------------------
+	# Crear el hotspot a agregar a la habitación -------------------------------
 	var hotspot: Hotspot = ResourceLoader.load(HOTSPOT_SCENE).instance()
 	hotspot.set_script(ResourceLoader.load(_new_hotspot_path + '.gd'))
 	hotspot.name = _new_hotspot_name
@@ -58,15 +58,15 @@ func create() -> void:
 	hotspot.description = _new_hotspot_name
 	hotspot.cursor = Cursor.Type.ACTIVE
 
-	# Agregar el hotspot a su habitación ------------------------------------------
+	# Agregar el hotspot a su habitación ---------------------------------------
 	_main_dock.opened_room.get_node('Hotspots').add_child(hotspot)
 	hotspot.owner = _main_dock.opened_room
 	_main_dock.ei.save_scene()
 	
-	# Actualizar la lista de habitaciones en el Dock ---------------------------
+	# Actualizar la lista de hotspots de la habitación -------------------------
 	_main_dock.add_to_list('hotspot', _new_hotspot_name)
 
-	# Abrir el diálogo en el Inspector -----------------------------------------
+	# Abrir las propiedades del hotspot creado en el Inspector -----------------
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.edit_node(hotspot)
 
