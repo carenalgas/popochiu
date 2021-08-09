@@ -1,0 +1,34 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.gd" type="Script" id=1]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/ObjectRow/delete.png" type="Texture" id=2]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/ObjectRow/open.png" type="Texture" id=3]
+
+[node name="PopochiuObjectRow" type="HBoxContainer"]
+margin_right = 320.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_top = 13.0
+margin_right = 256.0
+margin_bottom = 27.0
+size_flags_horizontal = 3
+text = "PopochiuObjectRow"
+
+[node name="Open" type="Button" parent="."]
+margin_left = 260.0
+margin_right = 288.0
+margin_bottom = 40.0
+icon = ExtResource( 3 )
+flat = true
+
+[node name="Delete" type="Button" parent="."]
+margin_left = 292.0
+margin_right = 320.0
+margin_bottom = 40.0
+icon = ExtResource( 2 )
+flat = true

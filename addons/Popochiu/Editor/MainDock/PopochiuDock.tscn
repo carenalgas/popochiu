@@ -221,7 +221,7 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer"]
 margin_right = 304.0
-margin_bottom = 80.0
+margin_bottom = 88.0
 size_flags_horizontal = 3
 
 [node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
@@ -238,7 +238,7 @@ margin_right = 304.0
 margin_bottom = 16.0
 icon = ExtResource( 12 )
 target_group = NodePath("../PropsList")
-color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
+color = Color( 0.439216, 0.427451, 0.921569, 0 )
 title = "Props"
 
 [node name="PropsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
@@ -260,7 +260,7 @@ margin_right = 304.0
 margin_bottom = 60.0
 icon = ExtResource( 13 )
 target_group = NodePath("../HotspotsList")
-color = Color( 0.768627, 0.423529, 0.443137, 0.498039 )
+color = Color( 0.768627, 0.423529, 0.443137, 0 )
 title = "Hotspots"
 
 [node name="HotspotsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
@@ -282,7 +282,7 @@ margin_right = 304.0
 margin_bottom = 104.0
 icon = ExtResource( 16 )
 target_group = NodePath("../RegionsList")
-color = Color( 0.662745, 1, 0.623529, 0.498039 )
+color = Color( 0.662745, 1, 0.623529, 0 )
 title = "Regiones"
 
 [node name="RegionsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
@@ -304,7 +304,7 @@ margin_right = 304.0
 margin_bottom = 104.0
 icon = ExtResource( 17 )
 target_group = NodePath("../PointsList")
-color = Color( 0.556863, 0.313726, 0.160784, 0.498039 )
+color = Color( 0.556863, 0.313726, 0.160784, 0 )
 title = "Puntos"
 
 [node name="PointsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]

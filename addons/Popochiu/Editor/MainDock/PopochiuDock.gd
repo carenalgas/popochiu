@@ -25,28 +25,32 @@ onready var _types := {
 		type_hint = 'PopochiuRoom',
 		list = find_node('RoomsList'),
 		button = find_node('BtnCreateRoom'),
-		popup = find_node('CreateRoom')
+		popup = find_node('CreateRoom'),
+		scene = rooms_path + ('%s/Room%s.tscn')
 	},
 	character = {
 		path = characters_path,
 		type_hint = 'PopochiuCharacter',
 		list = find_node('CharactersList'),
 		button = find_node('BtnCreateCharacter'),
-		popup = find_node('CreateCharacter')
+		popup = find_node('CreateCharacter'),
+		scene = characters_path + ('%s/Character%s.tscn')
 	},
 	inventory_item = {
 		path = inventory_items_path,
 		type_hint = 'PopochiuInventoryItem',
 		list = find_node('InventoryItemsList'),
 		button = find_node('BtnCreateItem'),
-		popup = find_node('CreateInventoryItem')
+		popup = find_node('CreateInventoryItem'),
+		scene = inventory_items_path + ('%s/Inventory%s.tscn')
 	},
 	dialog_tree = {
 		path = dialog_trees_path,
 		type_hint = 'DialogTree',
 		list = find_node('DialogTreesList'),
 		button = find_node('BtnCreateDialog'),
-		popup = find_node('CreateDialogTree')
+		popup = find_node('CreateDialogTree'),
+		scene = dialog_trees_path + ('%s/Dialog%s.tres')
 	},
 	prop = {
 		group = find_node('PropsGroupButton'),
@@ -82,6 +86,8 @@ onready var _regions_btn: Button = _types['region'].button
 onready var _regions_popup: ConfirmationDialog = _types['region'].popup
 onready var _points_group: PopochiuGroupButton = find_node('PointsGroupButton')
 onready var _points_list: Container = find_node('PointsList')
+onready var _object_row: PackedScene = preload(\
+'res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.tscn')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -127,20 +133,20 @@ func fill_data() -> void:
 					path, _types[t].type_hint
 				)
 
-				var lbl: Label = Label.new()
-				lbl.text = resource.script_name
-
-				_types[t].list.add_child(lbl)
-
-		_types[t].list.move_child(
-			_types[t].button, _types[t].list.get_child_count()
-		)
+				add_to_list(t, resource.script_name)
 
 
 func add_to_list(type: String, name_to_add: String) -> void:
-	var new_lbl: Label = Label.new()
-	new_lbl.text = name_to_add
-	_types[type].list.add_child(new_lbl)
+	var new_obj: PopochiuObjectRow = _object_row.instance()
+
+	new_obj.name = name_to_add
+	new_obj.type = type
+	new_obj.path = _types[type].scene % [name_to_add, name_to_add]
+	
+	new_obj.connect('delete_pressed', self, '_delete_object')
+	new_obj.connect('open_pressed', self, '_open_object')
+
+	_types[type].list.add_child(new_obj)
 	_types[type].list.move_child(
 		_types[type].button, _types[type].list.get_child_count()
 	)
@@ -212,3 +218,11 @@ func scene_changed(scene_root: Node) -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _open_popup(popup: Popup) -> void:
 	popup.popup_centered()
+
+
+func _open_object(path: String) -> void:
+	ei.select_file(path)
+	if path.find('.tres') < 0:
+		ei.open_scene_from_path(path)
+	else:
+		ei.edit_resource(load(path))
