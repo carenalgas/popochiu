@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=28 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialogTree/CreateDialogTree.tscn" type="PackedScene" id=2]
@@ -24,6 +24,22 @@ content_margin_bottom = 4.0
 bg_color = Color( 0.556863, 0.235294, 0.592157, 1 )
 
 [sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
+border_color = Color( 0.439216, 0.427451, 0.921569, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
+border_color = Color( 0.929412, 0.945098, 0.443137, 1 )
+
+[sub_resource type="StyleBoxFlat" id=4]
+bg_color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
+border_color = Color( 0.337255, 0.67451, 0.301961, 1 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
+border_color = Color( 0.458824, 0.807843, 0.784314, 1 )
+
+[sub_resource type="StyleBoxFlat" id=6]
 content_margin_left = 8.0
 content_margin_right = 8.0
 content_margin_top = 4.0
@@ -38,6 +54,18 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id=7]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
+[sub_resource type="StyleBoxFlat" id=9]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
 [node name="Popochiu" type="Panel"]
 anchor_right = 1.0
@@ -74,8 +102,8 @@ margin_bottom = 32.0
 rect_min_size = Vector2( 0, 32 )
 size_flags_horizontal = 3
 size_flags_vertical = 0
-custom_styles/normal = SubResource( 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_styles/normal = SubResource( 1 )
 text = "--- P o p o c h i u ---"
 align = 1
 valign = 1
@@ -114,22 +142,23 @@ scroll_horizontal_enabled = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer"]
 margin_right = 292.0
-margin_bottom = 172.0
+margin_bottom = 204.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RoomsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
-margin_bottom = 16.0
+margin_bottom = 24.0
+custom_styles/panel = SubResource( 2 )
 icon = ExtResource( 10 )
 target_group = NodePath("../RoomsList")
 color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 title = "Habitaciones"
 
 [node name="RoomsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer"]
-margin_top = 20.0
+margin_top = 28.0
 margin_right = 292.0
-margin_bottom = 40.0
+margin_bottom = 48.0
 
 [node name="BtnCreateRoom" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer/RoomsList"]
 margin_left = 165.0
@@ -139,18 +168,19 @@ size_flags_horizontal = 8
 text = "+ Crear habitación"
 
 [node name="CharactersGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 44.0
+margin_top = 52.0
 margin_right = 292.0
-margin_bottom = 60.0
+margin_bottom = 76.0
+custom_styles/panel = SubResource( 3 )
 icon = ExtResource( 8 )
 target_group = NodePath("../CharactersList")
 color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 title = "Personajes"
 
 [node name="CharactersList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer"]
-margin_top = 64.0
+margin_top = 80.0
 margin_right = 292.0
-margin_bottom = 84.0
+margin_bottom = 100.0
 
 [node name="BtnCreateCharacter" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer/CharactersList"]
 margin_left = 168.0
@@ -160,18 +190,19 @@ size_flags_horizontal = 8
 text = "+ Crear personaje"
 
 [node name="InventoryItemsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 88.0
+margin_top = 104.0
 margin_right = 292.0
-margin_bottom = 104.0
+margin_bottom = 128.0
+custom_styles/panel = SubResource( 4 )
 icon = ExtResource( 11 )
 target_group = NodePath("../InventoryItemsList")
 color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 title = "Inventario"
 
 [node name="InventoryItemsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer"]
-margin_top = 108.0
+margin_top = 132.0
 margin_right = 292.0
-margin_bottom = 128.0
+margin_bottom = 152.0
 
 [node name="BtnCreateItem" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer/InventoryItemsList"]
 margin_left = 201.0
@@ -181,18 +212,19 @@ size_flags_horizontal = 8
 text = "+ Crear ítem"
 
 [node name="DialogTreesGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 132.0
+margin_top = 156.0
 margin_right = 292.0
-margin_bottom = 148.0
+margin_bottom = 180.0
+custom_styles/panel = SubResource( 5 )
 icon = ExtResource( 9 )
 target_group = NodePath("../DialogTreesList")
 color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 title = "Diálogos"
 
 [node name="DialogTreesList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer"]
-margin_top = 152.0
+margin_top = 184.0
 margin_right = 292.0
-margin_bottom = 172.0
+margin_bottom = 204.0
 
 [node name="BtnCreateDialog" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer/DialogTreesList"]
 margin_left = 185.0
@@ -221,24 +253,24 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer"]
 margin_right = 304.0
-margin_bottom = 88.0
+margin_bottom = 184.0
 size_flags_horizontal = 3
 
 [node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
 visible = false
 margin_right = 304.0
 margin_bottom = 39.0
-custom_styles/normal = SubResource( 2 )
 custom_colors/font_color = Color( 0.768627, 0.423529, 0.443137, 1 )
+custom_styles/normal = SubResource( 6 )
 text = "Seleccione una habitación para ver sus Props, Hotspots y Regions. O crear nuevos."
 autowrap = true
 
 [node name="PropsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 304.0
 margin_bottom = 16.0
+custom_styles/panel = SubResource( 7 )
 icon = ExtResource( 12 )
 target_group = NodePath("../PropsList")
-color = Color( 0.439216, 0.427451, 0.921569, 0 )
 title = "Props"
 
 [node name="PropsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
@@ -258,9 +290,9 @@ text = "+ Crear prop"
 margin_top = 44.0
 margin_right = 304.0
 margin_bottom = 60.0
+custom_styles/panel = SubResource( 8 )
 icon = ExtResource( 13 )
 target_group = NodePath("../HotspotsList")
-color = Color( 0.768627, 0.423529, 0.443137, 0 )
 title = "Hotspots"
 
 [node name="HotspotsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
@@ -280,9 +312,9 @@ text = "+ Crear hotspot"
 margin_top = 88.0
 margin_right = 304.0
 margin_bottom = 104.0
+custom_styles/panel = SubResource( 9 )
 icon = ExtResource( 16 )
 target_group = NodePath("../RegionsList")
-color = Color( 0.662745, 1, 0.623529, 0 )
 title = "Regiones"
 
 [node name="RegionsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
@@ -302,9 +334,9 @@ text = "+ Crear región"
 margin_top = 88.0
 margin_right = 304.0
 margin_bottom = 104.0
+custom_styles/panel = SubResource( 10 )
 icon = ExtResource( 17 )
 target_group = NodePath("../PointsList")
-color = Color( 0.556863, 0.313726, 0.160784, 0 )
 title = "Puntos"
 
 [node name="PointsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]

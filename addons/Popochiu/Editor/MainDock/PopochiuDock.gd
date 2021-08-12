@@ -17,6 +17,7 @@ var ei: EditorInterface
 var fs: EditorFileSystem
 var dir := Directory.new()
 var opened_room: Room = null
+var popochiu: Popochiu = null
 
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _types := {
@@ -92,6 +93,8 @@ onready var _object_row: PackedScene = preload(\
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
+	popochiu = load(POPOCHIU_SCENE).instance()
+	
 	# Por defecto deshabilitar los botones hasta que no se haya seleccionado
 	# una habitación.
 	_props_btn.disabled = true
@@ -101,10 +104,8 @@ func _ready() -> void:
 	
 	_tab_container.set_tab_disabled(0, false)
 	_tab_container.set_tab_disabled(1, false)
-
 	_no_room_info.hide()
 	
-	# Creación de habitaciones
 	for t in _types:
 		_types[t].popup.set_main_dock(self)
 		(_types[t].button as Button).connect(
@@ -129,24 +130,36 @@ func fill_data() -> void:
 				if not fs.get_file_type(path) == "Resource":
 					continue
 				
-				var resource: Resource = ResourceLoader.load(
-					path, _types[t].type_hint
-				)
+				var resource: Resource = load(path)
+#				var resource: Resource = ResourceLoader.load(
+#					path, _types[t].type_hint
+#				)
 
-				add_to_list(t, resource.script_name)
+				var row: PopochiuObjectRow = _create_object_row(
+					t, resource.script_name
+				)
+				_types[t].list.add_child(row)
+				
+				# Verificar si el objeto en la lista esta en su arreglo respectivo
+				# dentro de Popochiu (Popochiu.tscn).
+				var is_in_core := true
+				
+				match t:
+					'character':
+						is_in_core = popochiu.characters.has(resource)
+				
+				if not is_in_core:
+					row.show_add_to_core()
+		
+		# Mover el botón de la lista al final
+		_types[t].list.move_child(
+			_types[t].button, _types[t].list.get_child_count()
+		)
 
 
 func add_to_list(type: String, name_to_add: String) -> void:
-	var new_obj: PopochiuObjectRow = _object_row.instance()
+	_types[type].list.add_child(_create_object_row(type, name_to_add))
 
-	new_obj.name = name_to_add
-	new_obj.type = type
-	new_obj.path = _types[type].scene % [name_to_add, name_to_add]
-	
-	new_obj.connect('delete_pressed', self, '_delete_object')
-	new_obj.connect('open_pressed', self, '_open_object')
-
-	_types[type].list.add_child(new_obj)
 	_types[type].list.move_child(
 		_types[type].button, _types[type].list.get_child_count()
 	)
@@ -215,14 +228,42 @@ func scene_changed(scene_root: Node) -> void:
 		_tab_container.current_tab = 1
 
 
+func get_popochiu() -> Popochiu:
+	popochiu.free()
+	popochiu = load(POPOCHIU_SCENE).instance()
+	return popochiu
+
+
+func save_popochiu() -> int:
+	var result := OK
+	var new_popochiu: PackedScene = PackedScene.new()
+	new_popochiu.pack(popochiu)
+	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
+	if result != OK:
+		push_error('---- ◇ Error al actualizar Popochiu: %d ◇ ----' % result)
+		return result
+		
+	# TODO: Hacer esto sólo si la escena de Popochiu está entre las pestañas
+	#		abiertas en el editor.
+	ei.reload_scene_from_path(POPOCHIU_SCENE)
+	
+	if ei.get_edited_scene_root().name == 'Popochiu':
+		ei.save_scene()
+	
+	return result
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _open_popup(popup: Popup) -> void:
 	popup.popup_centered()
 
 
-func _open_object(path: String) -> void:
-	ei.select_file(path)
-	if path.find('.tres') < 0:
-		ei.open_scene_from_path(path)
-	else:
-		ei.edit_resource(load(path))
+func _create_object_row(type: String, name_to_add: String) -> PopochiuObjectRow:
+	var new_obj: PopochiuObjectRow = _object_row.instance()
+
+	new_obj.name = name_to_add
+	new_obj.type = type
+	new_obj.path = _types[type].scene % [name_to_add, name_to_add]
+	new_obj.main_dock = self
+	
+	return new_obj

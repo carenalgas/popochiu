@@ -56,6 +56,10 @@ func create() -> void:
 	region.name = _new_region_name
 	region.script_name = _new_region_name
 	region.description = _new_region_name
+	
+	var collision_shape: CollisionPolygon2D = CollisionPolygon2D.new()
+	region.add_child(collision_shape)
+	collision_shape.owner = region
 
 	# Agregar la región a su habitación ----------------------------------------
 	_main_dock.opened_room.get_node('Regions').add_child(region)

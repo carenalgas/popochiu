@@ -13,7 +13,15 @@ export var title := 'Group' setget _set_title
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+func _init() -> void:
+	# Hay que crear una copia única del StyleBox del panel para que no se
+	# sobreescriba cuando se cambien las propiedades de las instancias.
+	add_stylebox_override('panel', get_stylebox('panel').duplicate())
+
+
 func _ready() -> void:
+	$HBoxContainer/Arrow.texture = open_icon
+
 	connect('gui_input', self, '_on_input')
 
 
@@ -48,10 +56,7 @@ func _toggled(button_pressed: bool) -> void:
 
 func _set_color(value: Color) -> void:
 	color = value
-	if get_node_or_null('HBoxContainer/Label'):
-		$Bg.color = value
-	#	(get_stylebox('panel') as StyleBoxFlat).bg_color = value
-		property_list_changed_notify()
+	(get_stylebox('panel') as StyleBoxFlat).bg_color = value
 
 
 func _set_title(value: String) -> void:

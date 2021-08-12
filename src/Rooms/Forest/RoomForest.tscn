@@ -22,6 +22,7 @@ polygons = [ PoolIntArray( 0, 1, 2 ), PoolIntArray( 3, 4, 5, 6, 7 ), PoolIntArra
 outlines = [ PoolVector2Array( -168.5, 36.3275, -46.7403, 26.8888, -29.2786, 20.7536, -30.2225, 16.5061, -37.3015, 14.1465, -25.5031, 12.2587, 24.5222, 11.3148, 18.3871, 18.8658, 18.3871, 21.6975, 76.9073, 20.7536, 100.504, 16.5061, 116.078, 24.0571, 139.203, 24.5291, 147.698, 47.1821, 176.014, 70.307, 124.573, 78.8019, -86.8549, 79.7457, -188.321, 65.5876, -195.4, 48.5979 ), PoolVector2Array( 11, 45, -26, 44, -32, 53, -22, 60, 5, 60, 16, 54 ) ]
 
 [node name="RoomForest" instance=ExtResource( 11 )]
+position = Vector2( 1, 0 )
 script = ExtResource( 1 )
 script_name = "Forest"
 characters = [ {
@@ -29,7 +30,7 @@ characters = [ {
 "script_name": "Barney"
 }, {
 "position": Vector2( 0, 0 ),
-"script_name": "Panchita"
+"script_name": "Paco"
 } ]
 
 [node name="Bg" parent="Props" index="0" instance=ExtResource( 4 )]
@@ -115,8 +116,7 @@ tint = Color( 0.113725, 0.145098, 0.862745, 1 )
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Regions/Corner" index="0"]
 polygon = PoolVector2Array( 141, 47, 168, 68, 158, 83, 111, 83 )
 
-[node name="Nothing" type="Area2D" parent="Regions" index="1" instance=ExtResource( 13 )]
-monitorable = false
+[node name="Nothing" parent="Regions" index="1" instance=ExtResource( 13 )]
 script = ExtResource( 15 )
 script_name = "Nothing"
 description = "Nothing"

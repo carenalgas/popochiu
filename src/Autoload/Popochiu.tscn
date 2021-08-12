@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://src/Autoload/Popochiu.gd" type="Script" id=1]
 [ext_resource path="res://src/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=2]
@@ -10,12 +10,11 @@
 [ext_resource path="res://src/Rooms/Main/RoomMain.tres" type="Resource" id=8]
 [ext_resource path="res://src/Rooms/Cave/RoomCave.tres" type="Resource" id=9]
 [ext_resource path="res://src/InventoryItems/Bucket/InventoryBucket.tres" type="Resource" id=10]
-[ext_resource path="res://src/Characters/Panchita/CharacterPanchita.tres" type="Resource" id=13]
 
 [node name="Popochiu" type="Node"]
 script = ExtResource( 1 )
 rooms = [ ExtResource( 8 ), ExtResource( 7 ), ExtResource( 9 ) ]
-characters = [ ExtResource( 6 ), ExtResource( 5 ), ExtResource( 13 ) ]
+characters = [ ExtResource( 6 ), ExtResource( 5 ) ]
 inventory_items = [ ExtResource( 10 ) ]
 dialog_trees = [ ExtResource( 4 ) ]
 skip_cutscene_time = 0.25

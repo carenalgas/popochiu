@@ -14,21 +14,48 @@ __meta__ = {
 
 [node name="Label" type="Label" parent="."]
 margin_top = 13.0
-margin_right = 256.0
+margin_right = 166.0
 margin_bottom = 27.0
 size_flags_horizontal = 3
 text = "PopochiuObjectRow"
 
-[node name="Open" type="Button" parent="."]
-margin_left = 260.0
-margin_right = 288.0
+[node name="Panel" type="Panel" parent="."]
+margin_left = 170.0
+margin_right = 320.0
 margin_bottom = 40.0
+rect_min_size = Vector2( 0, 24 )
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.9
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AddToCore" type="Button" parent="Panel/HBoxContainer"]
+visible = false
+margin_right = 134.0
+margin_bottom = 40.0
+size_flags_horizontal = 4
+size_flags_vertical = 3
+text = "Agregar a Popochiu"
+flat = true
+
+[node name="Open" type="Button" parent="Panel/HBoxContainer"]
+margin_left = 90.0
+margin_right = 118.0
+margin_bottom = 40.0
+size_flags_horizontal = 4
+size_flags_vertical = 3
 icon = ExtResource( 3 )
 flat = true
 
-[node name="Delete" type="Button" parent="."]
-margin_left = 292.0
-margin_right = 320.0
+[node name="Delete" type="Button" parent="Panel/HBoxContainer"]
+margin_left = 122.0
+margin_right = 150.0
 margin_bottom = 40.0
 icon = ExtResource( 2 )
 flat = true

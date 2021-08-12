@@ -1,3 +1,4 @@
+class_name Popochiu
 extends Node
 # (E) El núcleo de Popochiu
 

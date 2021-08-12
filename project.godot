@@ -79,6 +79,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://src/Nodes/InventoryItem/InventoryItem.gd"
 }, {
+"base": "Node",
+"class": "Popochiu",
+"language": "GDScript",
+"path": "res://src/Autoload/Popochiu.gd"
+}, {
 "base": "Resource",
 "class": "PopochiuCharacter",
 "language": "GDScript",
@@ -149,6 +154,7 @@ _global_script_class_icons={
 "Hotspot": "res://addons/Popochiu/icons/hotspots.png",
 "InventoryContainer": "",
 "InventoryItem": "res://addons/Popochiu/icons/inventory_items.png",
+"Popochiu": "",
 "PopochiuCharacter": "res://addons/Popochiu/icons/characters.png",
 "PopochiuDock": "",
 "PopochiuGroupButton": "res://addons/Popochiu/Editor/MainDock/GroupButton/popochiu_group_button.svg",
