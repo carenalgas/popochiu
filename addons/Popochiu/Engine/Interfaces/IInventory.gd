@@ -32,7 +32,6 @@ func add_item(item_name: String) -> void:
 		emit_signal('item_added', i)
 		return yield(self, 'item_add_done')
 	
-	prints('No existe el ítem:', item_name)
 	return yield(get_tree(), 'idle_frame')
 
 

@@ -9,7 +9,14 @@ var _editor_file_system: EditorFileSystem
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _init() -> void:
-#	add_autoload_singleton('E', 'res://addons/Popochiu/Engine/Popochiu.tscn')
+	add_autoload_singleton('Utils', 'res://addons/Popochiu/Engine/Others/Utils.gd')
+	add_autoload_singleton('Cursor', 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn')
+	add_autoload_singleton('E', 'res://addons/Popochiu/Engine/Popochiu.tscn')
+	add_autoload_singleton('C', 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd')
+	add_autoload_singleton('I', 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd')
+	add_autoload_singleton('D', 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd')
+	add_autoload_singleton('G', 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd')
+	add_autoload_singleton('Globals', 'res://src/Autoload/Globals.gd')
 	pass
 
 
@@ -53,6 +60,14 @@ func _enter_tree() -> void:
 
 
 func _exit_tree() -> void:
+	remove_autoload_singleton('Utils')
+	remove_autoload_singleton('Cursor')
+	remove_autoload_singleton('E')
+	remove_autoload_singleton('C')
+	remove_autoload_singleton('I')
+	remove_autoload_singleton('D')
+	remove_autoload_singleton('G')
+	remove_autoload_singleton('Globals')
 	remove_control_from_docks(gaq_dock)
 
 

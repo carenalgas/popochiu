@@ -30,16 +30,33 @@ func show_add_to_core() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _add_object_to_core() -> void:
-	var popochiu: Popochiu = main_dock.get_popochiu()
+#	var popochiu: Popochiu = main_dock.get_popochiu()
+	var popochiu: Popochiu = load(main_dock.POPOCHIU_SCENE).instance()
 	
 	match type:
 		'character':
-			popochiu.characters.append(load(path.replace('.tscn', '.tres')))
-	
-	if main_dock.save_popochiu() != OK:
+			if popochiu.characters.empty():
+				popochiu.characters = [load(path.replace('.tscn', '.tres'))]
+			else:
+				popochiu.characters.append(load(path.replace('.tscn', '.tres')))
+		'dialog':
+			if popochiu.dialogs.empty():
+				popochiu.dialogs = [load(path)]
+			else:
+				popochiu.dialogs.append(load(path))
+
+	var new_popochiu: PackedScene = PackedScene.new()
+	new_popochiu.pack(popochiu)
+	if ResourceSaver.save(main_dock.POPOCHIU_SCENE, new_popochiu) != OK:
 		push_error('No se pudo agregar el objeto a Popochiu: %s' %\
 		name)
 		return
+	main_dock.ei.reload_scene_from_path(main_dock.POPOCHIU_SCENE)
+	
+#	if main_dock.save_popochiu() != OK:
+#		push_error('No se pudo agregar el objeto a Popochiu: %s' %\
+#		name)
+#		return
 	
 	_add_to_core.hide()
 

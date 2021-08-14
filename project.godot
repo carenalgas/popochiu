@@ -72,7 +72,7 @@ _global_script_classes=[ {
 "base": "Node",
 "class": "Popochiu",
 "language": "GDScript",
-"path": "res://src/Autoload/Popochiu.gd"
+"path": "res://addons/Popochiu/Engine/Popochiu.gd"
 }, {
 "base": "Clickable",
 "class": "PopochiuCharacter",
@@ -178,13 +178,13 @@ config/icon="res://icon.png"
 
 [autoload]
 
-Utils="*res://src/Autoload/Utils.gd"
-Cursor="*res://src/Autoload/Cursor.tscn"
-E="*res://src/Autoload/Popochiu.tscn"
-C="*res://src/Autoload/ICharacter.gd"
-I="*res://src/Autoload/IInventory.gd"
-D="*res://src/Autoload/IDialogTree.gd"
-G="*res://src/Autoload/IGraphicInterface.gd"
+Utils="*res://addons/Popochiu/Engine/Others/Utils.gd"
+Cursor="*res://addons/Popochiu/Engine/Cursor/Cursor.tscn"
+E="*res://addons/Popochiu/Engine/Popochiu.tscn"
+C="*res://addons/Popochiu/Engine/Interfaces/ICharacter.gd"
+I="*res://addons/Popochiu/Engine/Interfaces/IInventory.gd"
+D="*res://addons/Popochiu/Engine/Interfaces/IDialog.gd"
+G="*res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd"
 Globals="*res://src/Autoload/Globals.gd"
 
 [debug]

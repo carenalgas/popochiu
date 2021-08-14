@@ -257,6 +257,8 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 		var popochiu_character: PopochiuCharacterData = c
 		if popochiu_character.script_name == script_name:
 			return load(popochiu_character.scene).instance()
+	
+	prints('No existe el personaje: %s' % script_name)
 	return null
 
 
@@ -265,6 +267,8 @@ func get_inventory_item_instance(script_name: String) -> InventoryItem:
 		var popochiu_inventory_item: PopochiuInventoryItemData = ii
 		if popochiu_inventory_item.script_name == script_name:
 			return load(popochiu_inventory_item.scene).instance()
+	
+	prints('No existe el ítem: %s' % script_name)
 	return null
 
 
@@ -274,7 +278,7 @@ func get_dialog(script_name: String) -> PopochiuDialog:
 		if tree.script_name.to_lower() == script_name.to_lower():
 			return tree
 
-	# Por si no se encuentra el diálogo
+	prints('No existe el diálogo: %s' % script_name)
 	return null
 
 

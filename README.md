@@ -62,12 +62,6 @@ Framework para crear juegos de aventura con Godot al estilo de [Adventure Game S
     ```
   **E (para acceder a Popochiu.gd (singleton))**
     ```gdscript
-    E.run([
-      'Barney: Hola... maricón',
-      'Coco: No existo, entonces no puedo decir ni mierda',
-      'Player: No tiene que tratarme tan feo...',
-      E.wait(2),
-      'Player: Malparido...',
-      G.display('En un futuro se podrá hacer controlable cualquier personaje')
-    ], 'completed')
+    E.goto_room('Cave')
+    yield(E.wait(3), 'completed')
     ```

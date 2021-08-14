@@ -51,12 +51,12 @@ func create() -> void:
 		return
 
 	# Agregar el diálogo al Popochiu -------------------------------------------
-	var gaq: Node = ResourceLoader.load(_main_dock.POPOCHIU_SCENE).instance()
-	gaq.dialogs.append(ResourceLoader.load(_new_dialog_path + '.tres'))
-	var new_gaq: PackedScene = PackedScene.new()
-	new_gaq.pack(gaq)
-	if ResourceSaver.save(_main_dock.POPOCHIU_SCENE, new_gaq) != OK:
-		push_error('No se pudo agregar el diálogo a GAQ: %s' %\
+	var popochiu: Popochiu = ResourceLoader.load(_main_dock.POPOCHIU_SCENE).instance()
+	popochiu.dialogs.append(ResourceLoader.load(_new_dialog_path + '.tres'))
+	var new_popochiu: PackedScene = PackedScene.new()
+	new_popochiu.pack(popochiu)
+	if ResourceSaver.save(_main_dock.POPOCHIU_SCENE, new_popochiu) != OK:
+		push_error('No se pudo agregar el diálogo a Popochiu: %s' %\
 		_new_dialog_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return

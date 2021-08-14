@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.gd" type="Script" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/ObjectRow/delete.png" type="Texture" id=2]
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/ObjectRow/open.png" type="Texture" id=3]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/ObjectRow/add_to_core.png" type="Texture" id=4]
 
 [node name="PopochiuObjectRow" type="HBoxContainer"]
 margin_right = 320.0
@@ -37,11 +38,12 @@ __meta__ = {
 
 [node name="AddToCore" type="Button" parent="Panel/HBoxContainer"]
 visible = false
-margin_right = 134.0
+margin_left = 58.0
+margin_right = 86.0
 margin_bottom = 40.0
 size_flags_horizontal = 4
 size_flags_vertical = 3
-text = "Agregar a Popochiu"
+icon = ExtResource( 4 )
 flat = true
 
 [node name="Open" type="Button" parent="Panel/HBoxContainer"]

@@ -6,7 +6,7 @@ extends Panel
 #	Rooms (Props, Hotspots, Regions), Characters, Inventory items, Dialog trees,
 #	Interfaz gráfica.
 
-const POPOCHIU_SCENE := 'res://src/Autoload/Popochiu.tscn'
+const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
 
 export var rooms_path := 'res://src/Rooms/'
 export var characters_path := 'res://src/Characters/'
@@ -157,6 +157,8 @@ func fill_data() -> void:
 				match t:
 					'character':
 						is_in_core = popochiu.characters.has(resource)
+					'dialog':
+						is_in_core = popochiu.dialogs.has(resource)
 				
 				if not is_in_core:
 					row.show_add_to_core()
@@ -255,10 +257,10 @@ func save_popochiu() -> int:
 		
 	# TODO: Hacer esto sólo si la escena de Popochiu está entre las pestañas
 	#		abiertas en el editor.
-	ei.reload_scene_from_path(POPOCHIU_SCENE)
-	
 	if ei.get_edited_scene_root().name == 'Popochiu':
 		ei.save_scene()
+	else:
+		ei.reload_scene_from_path(POPOCHIU_SCENE)
 	
 	return result
 

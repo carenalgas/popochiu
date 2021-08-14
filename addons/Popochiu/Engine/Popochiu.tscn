@@ -1,0 +1,48 @@
+[gd_scene load_steps=12 format=2]
+
+[ext_resource path="res://src/Characters/Barney/CharacterBarney.tres" type="Resource" id=1]
+[ext_resource path="res://src/Characters/Dave/CharacterDave.tres" type="Resource" id=2]
+[ext_resource path="res://src/Rooms/Forest/RoomForest.tres" type="Resource" id=3]
+[ext_resource path="res://src/Rooms/Main/RoomMain.tres" type="Resource" id=4]
+[ext_resource path="res://src/InventoryItems/Bucket/InventoryBucket.tres" type="Resource" id=5]
+[ext_resource path="res://src/Rooms/Cave/RoomCave.tres" type="Resource" id=6]
+[ext_resource path="res://addons/Popochiu/Engine/Popochiu.gd" type="Script" id=7]
+[ext_resource path="res://src/GraphicInterface/GraphicInterface.tscn" type="PackedScene" id=8]
+[ext_resource path="res://src/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=9]
+[ext_resource path="res://src/Characters/Glottis/CharacterGlottis.tres" type="Resource" id=12]
+[ext_resource path="res://src/Dialogs/ChatWithBarney/DialogChatWithBarney.tres" type="Resource" id=13]
+
+[node name="Popochiu" type="Node"]
+script = ExtResource( 7 )
+rooms = [ ExtResource( 4 ), ExtResource( 3 ), ExtResource( 6 ) ]
+characters = [ ExtResource( 2 ), ExtResource( 1 ), ExtResource( 12 ) ]
+inventory_items = [ ExtResource( 5 ) ]
+dialogs = [ ExtResource( 13 ) ]
+skip_cutscene_time = 0.25
+text_speeds = [ 0.05, 0.01, 0.0 ]
+text_speed_idx = 2
+
+[node name="GraphicInterface" parent="." instance=ExtResource( 8 )]
+
+[node name="TransitionLayer" parent="." instance=ExtResource( 9 )]
+
+[node name="MainCamera" type="Camera2D" parent="."]
+current = true
+limit_left = -204
+limit_top = -90
+limit_right = 204
+limit_bottom = 90
+limit_smoothed = true
+smoothing_enabled = true
+smoothing_speed = 10.0
+drag_margin_left = 0.25
+drag_margin_top = 0.1
+drag_margin_right = 0.25
+drag_margin_bottom = 0.1
+editor_draw_limits = true
+editor_draw_drag_margin = true
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Tween" type="Tween" parent="."]
