@@ -3,7 +3,7 @@ extends CreationPopup
 # Permite crear una nueva Region para una habitación.
 
 const SCRIPT_TEMPLATE := 'res://script_templates/RegionTemplate.gd'
-const REGION_SCENE := 'res://src/Nodes/Region/Region.tscn'
+const REGION_SCENE := 'res://addons/Popochiu/Engine/Objects/Region/Region.tscn'
 
 var _new_region_name := ''
 var _new_region_path := ''

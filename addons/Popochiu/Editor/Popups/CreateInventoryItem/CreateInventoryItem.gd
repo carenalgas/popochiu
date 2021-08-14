@@ -6,7 +6,7 @@ extends CreationPopup
 const INVENTORY_ITEM_SCRIPT_TEMPLATE := \
 'res://script_templates/InventoryItemTemplate.gd'
 const BASE_INVENTORY_ITEM_PATH := \
-'res://src/Nodes/InventoryItem/InventoryItem.tscn'
+'res://addons/Popochiu/Engine/Objects/InventoryItem/InventoryItem.tscn'
 
 var _new_item_name := ''
 var _new_item_path := ''
@@ -62,13 +62,13 @@ func create() -> void:
 		return
 	
 	# Crear el Resource del ítem -----------------------------------------------
-	var item_resource: PopochiuInventoryItem = PopochiuInventoryItem.new()
+	var item_resource: PopochiuInventoryItemData = PopochiuInventoryItemData.new()
 	item_resource.script_name = _new_item_name
 	item_resource.scene = _new_item_path + '.tscn'
 	item_resource.resource_name = _new_item_name
 	if ResourceSaver.save(_new_item_path + '.tres',\
 	item_resource) != OK:
-		push_error('No se pudo crear el PopochiuInventoryItem del ítem: %s' %\
+		push_error('No se pudo crear el PopochiuInventoryItemData del ítem: %s' %\
 		_new_item_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return

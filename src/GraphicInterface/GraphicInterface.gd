@@ -27,7 +27,7 @@ func _ready():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-func _show_dialog_text(chr: Character, msg := '') -> void:
+func _show_dialog_text(chr: PopochiuCharacter, msg := '') -> void:
 	_disable_panels()
 	_dialog_text.play_text({
 		text = msg,

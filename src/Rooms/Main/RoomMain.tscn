@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://src/Rooms/Main/RoomMain.gd" type="Script" id=1]
-[ext_resource path="res://src/Nodes/Room/Room.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Room/Room.tscn" type="PackedScene" id=2]
 [ext_resource path="res://src/Rooms/Main/Bg.gd" type="Script" id=3]
-[ext_resource path="res://src/Nodes/Prop/Prop.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Prop/Prop.tscn" type="PackedScene" id=4]
 [ext_resource path="res://src/Rooms/Main/Props/bg.png" type="Texture" id=5]
 
 [node name="RoomMain" instance=ExtResource( 2 )]

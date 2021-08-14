@@ -38,7 +38,7 @@ func _clicked(event: InputEvent) -> void:
 
 # Crea nodos de tipo DialogOption para los casos en los que se muestran opciones
 # de diálogo creadas en tiempo de ejecución, o sea, que no están en uno de los
-# diálogos almacenados en src/DialogTree
+# diálogos almacenados en src/PopochiuDialog
 func _create_dialog_options(opts: Array) -> void:
 	var tmp_opts := []
 	for idx in opts.size():

@@ -3,7 +3,7 @@ extends Region
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
-func on_character_entered(chr: Character) -> void:
+func on_character_entered(chr: PopochiuCharacter) -> void:
 	.on_character_entered(chr)
 	yield(E.run([
 		C.player.stop_walking(),
@@ -15,5 +15,5 @@ func on_character_entered(chr: Character) -> void:
 	]), 'completed')
 
 
-func on_character_exited(chr: Character) -> void:
+func on_character_exited(chr: PopochiuCharacter) -> void:
 	.on_character_exited(chr)

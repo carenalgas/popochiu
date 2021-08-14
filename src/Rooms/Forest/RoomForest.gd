@@ -1,5 +1,5 @@
 tool
-extends Room
+extends PopochiuRoom
 # Nodo base para la creación de habitaciones dentro del juego.
 
 
@@ -13,7 +13,7 @@ func on_room_entered() -> void:
 		C.player.global_position = $Points/EntryPoint.global_position
 	
 	# TODO: No sé si esté bien que esta lógica la tenga la habitación. Tal vez
-	# cada Prop/Hotspot/Character debería validar su propio estado.
+	# cada Prop, Hotspot, Character, etc. debería validar su propio estado.
 	if Globals.has_done(Globals.GameState.GOT_BUCKET) \
 		or Globals.has_done(Globals.GameState.LOST_BUCKET):
 		$Props/Bucket.queue_free()

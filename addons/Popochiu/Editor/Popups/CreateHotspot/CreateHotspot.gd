@@ -3,7 +3,7 @@ extends CreationPopup
 # Permite crear un nuevo Hotspot para una habitación.
 
 const SCRIPT_TEMPLATE := 'res://script_templates/HotspotTemplate.gd'
-const HOTSPOT_SCENE := 'res://src/Nodes/Hotspot/Hotspot.tscn'
+const HOTSPOT_SCENE := 'res://addons/Popochiu/Engine/Objects/Hotspot/Hotspot.tscn'
 
 var _new_hotspot_name := ''
 var _new_hotspot_path := ''

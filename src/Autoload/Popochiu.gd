@@ -9,7 +9,7 @@ signal language_changed
 export(Array, Resource) var rooms = []
 export(Array, Resource) var characters = []
 export(Array, Resource) var inventory_items = []
-export(Array, Resource) var dialog_trees = []
+export(Array, Resource) var dialogs = []
 export var skip_cutscene_time := 0.2
 export var text_speeds := [0.1, 0.01, 0.0]
 export var text_speed_idx := 0 setget _set_text_speed_idx
@@ -19,9 +19,9 @@ export var use_translations := false
 
 var in_run := false
 # Se usa para que no se pueda cambiar de escena si está se ha cargado por completo,
-# esto es que ya ha ejecutado la lógica de Room.on_room_transition_finished
+# esto es que ya ha ejecutado la lógica de PopochiuRoom.on_room_transition_finished
 var in_room := false setget _set_in_room
-var current_room: Room = null
+var current_room: PopochiuRoom = null
 var clicked: Node
 var cutscene_skipped := false
 var rooms_states := {}
@@ -60,7 +60,7 @@ func _ready() -> void:
 	# Por defecto se asume que el personaje jugable es el primero en la lista
 	# de personajes
 	if not characters.empty():
-		var pc: Character = load((characters[0] as PopochiuCharacter).scene).instance()
+		var pc: PopochiuCharacter = load((characters[0] as PopochiuCharacterData).scene).instance()
 		C.player = pc
 		C.characters.append(pc)
 	
@@ -179,15 +179,15 @@ func goto_room(script_name := '', use_transition := true) -> void:
 	main_camera.limit_bottom = _defaults.camera_limits.bottom
 	
 	for r in rooms:
-		var room = r as PopochiuRoom
+		var room = r as PopochiuRoomData
 		if room.script_name.to_lower() == script_name.to_lower():
 			get_tree().change_scene(room.scene)
 			return
 	
-	printerr('No se encontró la Room %s' % script_name)
+	printerr('No se encontró la PopochiuRoom %s' % script_name)
 
 
-func room_readied(room: Room) -> void:
+func room_readied(room: PopochiuRoom) -> void:
 	current_room = room
 	
 	# Cargar el estado de la habitación
@@ -201,7 +201,7 @@ func room_readied(room: Room) -> void:
 	
 	# Agregar a la habitación los personajes que tiene configurados
 	for c in room.characters:
-		var chr: Character = C.get_character(c.script_name)
+		var chr: PopochiuCharacter = C.get_character(c.script_name)
 		if chr:
 			chr.position = c.position
 #			chr.walk_to_point += chr.position
@@ -252,25 +252,25 @@ func get_text(msg: String) -> String:
 	return tr(msg) if use_translations else msg
 
 
-func get_character_instance(script_name: String) -> Character:
+func get_character_instance(script_name: String) -> PopochiuCharacter:
 	for c in characters:
-		var gaq_character: PopochiuCharacter = c
-		if gaq_character.script_name == script_name:
-			return load(gaq_character.scene).instance()
+		var popochiu_character: PopochiuCharacterData = c
+		if popochiu_character.script_name == script_name:
+			return load(popochiu_character.scene).instance()
 	return null
 
 
 func get_inventory_item_instance(script_name: String) -> InventoryItem:
 	for ii in inventory_items:
-		var gaq_inventory_item: PopochiuInventoryItem = ii
-		if gaq_inventory_item.script_name == script_name:
-			return load(gaq_inventory_item.scene).instance()
+		var popochiu_inventory_item: PopochiuInventoryItemData = ii
+		if popochiu_inventory_item.script_name == script_name:
+			return load(popochiu_inventory_item.scene).instance()
 	return null
 
 
-func get_dialog_tree(script_name: String) -> DialogTree:
-	for dt in dialog_trees:
-		var tree: DialogTree = dt
+func get_dialog(script_name: String) -> PopochiuDialog:
+	for dt in dialogs:
+		var tree: PopochiuDialog = dt
 		if tree.script_name.to_lower() == script_name.to_lower():
 			return tree
 

@@ -101,6 +101,7 @@ margin_right = 783.0
 margin_bottom = 86.0
 custom_styles/normal = SubResource( 1 )
 text = "Use PascalCase. Y no debe tener tildes ni eñes, y entonces que mejor sea en inglés: p. ej. Sand o SickyFloor."
+autowrap = true
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
 margin_top = 90.0

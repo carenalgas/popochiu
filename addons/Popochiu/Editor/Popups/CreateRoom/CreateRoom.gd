@@ -7,7 +7,7 @@ extends CreationPopup
 #		si va a tener al player, o los límites de la cámara. Aunque eso ya se
 #		puede hacer una vez se abra el .tscn.
 
-const BASE_ROOM_PATH := 'res://src/Nodes/Room/Room.tscn'
+const BASE_ROOM_PATH := 'res://addons/Popochiu/Engine/Objects/Room/Room.tscn'
 
 var _new_room_name := ''
 var _new_room_path := ''
@@ -46,7 +46,7 @@ func create() -> void:
 		return
 
 	# Crear la instancia de la nueva habitación y asignarle el script creado ---
-	var new_room: Room = preload(BASE_ROOM_PATH).instance()
+	var new_room: PopochiuRoom = preload(BASE_ROOM_PATH).instance()
 	#	Primero se asigna el script para que no se vayan a sobrescribir otras
 	#	propiedades por culpa de esa asignación.
 	new_room.set_script(load(_new_room_path + '.gd'))
@@ -62,12 +62,12 @@ func create() -> void:
 		return
 	
 	# Crear el Resource de la habitación ---------------------------------------
-	var room_resource: PopochiuRoom = PopochiuRoom.new()
+	var room_resource: PopochiuRoomData = PopochiuRoomData.new()
 	room_resource.script_name = _new_room_name
 	room_resource.scene = _new_room_path + '.tscn'
 	room_resource.resource_name = _new_room_name
 	if ResourceSaver.save(_new_room_path + '.tres', room_resource) != OK:
-		push_error('No se pudo crear el PopochiuRoom de la habitación: %s' %\
+		push_error('No se pudo crear el PopochiuRoomData de la habitación: %s' %\
 		_new_room_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return

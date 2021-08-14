@@ -5,7 +5,7 @@ extends CreationPopup
 # la habitación a la que pertenece.
 
 const PROP_SCRIPT_TEMPLATE := 'res://script_templates/PropTemplate.gd'
-const BASE_PROP_PATH := 'res://src/Nodes/Prop/Prop.tscn'
+const BASE_PROP_PATH := 'res://addons/Popochiu/Engine/Objects/Prop/Prop.tscn'
 
 var _new_prop_name := ''
 var _new_prop_path := ''

@@ -11,19 +11,21 @@ const POPOCHIU_SCENE := 'res://src/Autoload/Popochiu.tscn'
 export var rooms_path := 'res://src/Rooms/'
 export var characters_path := 'res://src/Characters/'
 export var inventory_items_path := 'res://src/InventoryItems/'
-export var dialog_trees_path := 'res://src/DialogTrees/'
+export var dialogs_path := 'res://src/Dialogs/'
 
 var ei: EditorInterface
 var fs: EditorFileSystem
 var dir := Directory.new()
-var opened_room: Room = null
+var opened_room: PopochiuRoom = null
 var popochiu: Popochiu = null
+
+var _has_data := false
 
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _types := {
 	room = {
 		path = rooms_path,
-		type_hint = 'PopochiuRoom',
+		type_hint = 'PopochiuRoomData',
 		list = find_node('RoomsList'),
 		button = find_node('BtnCreateRoom'),
 		popup = find_node('CreateRoom'),
@@ -31,7 +33,7 @@ onready var _types := {
 	},
 	character = {
 		path = characters_path,
-		type_hint = 'PopochiuCharacter',
+		type_hint = 'PopochiuCharacterData',
 		list = find_node('CharactersList'),
 		button = find_node('BtnCreateCharacter'),
 		popup = find_node('CreateCharacter'),
@@ -39,19 +41,19 @@ onready var _types := {
 	},
 	inventory_item = {
 		path = inventory_items_path,
-		type_hint = 'PopochiuInventoryItem',
+		type_hint = 'PopochiuInventoryItemData',
 		list = find_node('InventoryItemsList'),
 		button = find_node('BtnCreateItem'),
 		popup = find_node('CreateInventoryItem'),
 		scene = inventory_items_path + ('%s/Inventory%s.tscn')
 	},
-	dialog_tree = {
-		path = dialog_trees_path,
-		type_hint = 'DialogTree',
-		list = find_node('DialogTreesList'),
+	dialog = {
+		path = dialogs_path,
+		type_hint = 'PopochiuDialog',
+		list = find_node('DialogsList'),
 		button = find_node('BtnCreateDialog'),
-		popup = find_node('CreateDialogTree'),
-		scene = dialog_trees_path + ('%s/Dialog%s.tres')
+		popup = find_node('CreateDialog'),
+		scene = dialogs_path + ('%s/Dialog%s.tres')
 	},
 	prop = {
 		group = find_node('PropsGroupButton'),
@@ -111,6 +113,8 @@ func _ready() -> void:
 		(_types[t].button as Button).connect(
 			'pressed', self, '_open_popup', [_types[t].popup]
 		)
+	
+	_tab_container.connect('tab_changed', self, '_on_tab_changed')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -122,6 +126,7 @@ func fill_data() -> void:
 		var type_dir: EditorFileSystemDirectory = fs.get_filesystem_path(
 			_types[t].path
 		)
+
 		for d in type_dir.get_subdir_count():
 			var dir: EditorFileSystemDirectory = type_dir.get_subdir(d)
 			for f in dir.get_file_count():
@@ -131,9 +136,14 @@ func fill_data() -> void:
 					continue
 				
 				var resource: Resource = load(path)
-#				var resource: Resource = ResourceLoader.load(
-#					path, _types[t].type_hint
-#				)
+				
+				if not (resource is PopochiuRoomData
+				or resource is PopochiuCharacterData
+				or resource is PopochiuInventoryItemData
+				or resource is PopochiuDialog):
+					continue
+				
+				_has_data = true
 
 				var row: PopochiuObjectRow = _create_object_row(
 					t, resource.script_name
@@ -179,7 +189,7 @@ func scene_changed(scene_root: Node) -> void:
 	_regions_group.clear_list()
 	_points_group.clear_list()
 	
-	if scene_root is Room:
+	if scene_root is PopochiuRoom:
 		# Actualizar la información de la habitación que se abrió
 		opened_room = scene_root
 
@@ -255,7 +265,7 @@ func save_popochiu() -> int:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _open_popup(popup: Popup) -> void:
-	popup.popup_centered()
+	popup.popup_centered_clamped(Vector2(640, 360))
 
 
 func _create_object_row(type: String, name_to_add: String) -> PopochiuObjectRow:
@@ -267,3 +277,10 @@ func _create_object_row(type: String, name_to_add: String) -> PopochiuObjectRow:
 	new_obj.main_dock = self
 	
 	return new_obj
+
+
+func _on_tab_changed(tab: int) -> void:
+	if not _has_data and tab == 0:
+		# Intentar cargar los datos de la pestaña Main si por alguna razón no
+		# se pudieron leer los directorios al abrir el motor.
+		fill_data()

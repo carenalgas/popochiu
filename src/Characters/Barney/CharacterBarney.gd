@@ -1,5 +1,5 @@
 tool
-extends Character
+extends PopochiuCharacter
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:

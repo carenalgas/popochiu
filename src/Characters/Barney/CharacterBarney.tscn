@@ -1,7 +1,7 @@
 [gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://src/Characters/Barney/CharacterBarney.gd" type="Script" id=1]
-[ext_resource path="res://src/Nodes/Character/Character.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Character/Character.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/images/characters/barney/powerquest-barney.png" type="Texture" id=3]
 
 [sub_resource type="Animation" id=1]

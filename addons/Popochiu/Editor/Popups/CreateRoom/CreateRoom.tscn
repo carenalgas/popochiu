@@ -101,6 +101,7 @@ margin_right = 624.0
 margin_bottom = 75.0
 custom_styles/normal = SubResource( 1 )
 text = "Use PascalCase. Y no debe tener tildes ni eñes, y entonces que mejor sea en inglés: p. ej. Garage o CasinoInterior."
+autowrap = true
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
 margin_top = 79.0

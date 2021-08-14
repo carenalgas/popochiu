@@ -12,11 +12,11 @@ var _trees := []
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func show_dialog(script_name: String) -> void:
-	var dialog_tree: DialogTree = E.get_dialog_tree(script_name)
+	var dialog: PopochiuDialog = E.get_dialog(script_name)
 	
-	if dialog_tree:
+	if dialog:
 		active = true
-		dialog_tree.start()
+		dialog.start()
 		yield(D, 'dialog_finished')
 		active = false
 		G.done()

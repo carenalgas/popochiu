@@ -1,5 +1,5 @@
 tool
-extends Room
+extends PopochiuRoom
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

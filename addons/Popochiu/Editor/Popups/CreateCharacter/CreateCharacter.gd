@@ -4,7 +4,7 @@ extends CreationPopup
 # en el Popochiu: CharacterCCC.tscn, CharacterCCC.gd, CharacterCCC.tres.
 
 const CHARACTER_SCRIPT_TEMPLATE := 'res://script_templates/CharacterTemplate.gd'
-const CHARACTER_SCENE := 'res://src/Nodes/Character/Character.tscn'
+const CHARACTER_SCENE := 'res://addons/Popochiu/Engine/Objects/Character/Character.tscn'
 
 var _new_character_name := ''
 var _new_character_path := ''
@@ -42,7 +42,7 @@ func create() -> void:
 		return
 
 	# Crear la instancia del nuevo personaje y asignarle el script creado ------
-	var new_character: Character = preload(CHARACTER_SCENE).instance()
+	var new_character: PopochiuCharacter = preload(CHARACTER_SCENE).instance()
 	#	Primero se asigna el script para que no se vayan a sobrescribir otras
 	#	propiedades por culpa de esa asignación.
 	new_character.set_script(load(_new_character_path + '.gd'))
@@ -59,13 +59,13 @@ func create() -> void:
 		return
 	
 	# Crear el Resource del personaje ------------------------------------------
-	var character_resource: PopochiuCharacter = PopochiuCharacter.new()
+	var character_resource: PopochiuCharacterData = PopochiuCharacterData.new()
 	character_resource.script_name = _new_character_name
 	character_resource.scene = _new_character_path + '.tscn'
 	character_resource.resource_name = _new_character_name
 	if ResourceSaver.save(_new_character_path + '.tres',\
 	character_resource) != OK:
-		push_error('No se pudo crear el PopochiuCharacter del personaje: %s' %\
+		push_error('No se pudo crear el PopochiuCharacterData del personaje: %s' %\
 		_new_character_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return

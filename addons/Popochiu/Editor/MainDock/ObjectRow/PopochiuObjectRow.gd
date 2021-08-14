@@ -63,7 +63,7 @@ func _ask_basic_delete() -> void:
 	confirmation_dialog.dialog_autowrap = true
 
 	add_child(confirmation_dialog)
-	confirmation_dialog.popup_centered_clamped(Vector2(320, 180))
+	confirmation_dialog.popup_centered_clamped(Vector2(640, 180))
 	confirmation_dialog.get_cancel().connect('pressed', self, '_remove_popup')
 	confirmation_dialog.connect('confirmed', self, '_delete_from_core')
 
@@ -77,7 +77,7 @@ func _delete_from_core() -> void:
 	match type:
 		'character':
 			for c in popochiu.characters:
-				if (c as PopochiuCharacter).script_name == name:
+				if (c as PopochiuCharacterData).script_name == name:
 					popochiu.characters.erase(c)
 					break
 	
@@ -92,7 +92,7 @@ func _delete_from_core() -> void:
 	'Esta acción no se puede revertir. ¿Quiere continuar?'
 	
 	confirmation_dialog.connect('confirmed', self, '_delete_from_file_system')
-	confirmation_dialog.popup_centered_clamped(Vector2(320, 180))
+	confirmation_dialog.popup_centered_clamped(Vector2(640, 180))
 	
 
 
@@ -105,8 +105,6 @@ func _delete_from_file_system() -> void:
 	match type:
 		'character':
 			# Eliminar todos los archivos dentro de la carpeta
-			prints('?????????????????????')
-			
 			var object_dir: EditorFileSystemDirectory = \
 				main_dock.fs.get_filesystem_path(path.get_base_dir())
 			
@@ -128,11 +126,11 @@ func _delete_from_file_system() -> void:
 				push_error('No se pudo eliminar la carpeta: %s' %\
 				main_dock.characters_path + name)
 				return
-		_:
-			prints('Naaaani?')
+
+	# Forzar que se actualice la estructura de archivos en el EditorFileSystem
+	main_dock.fs.scan()
 
 	# Eliminar el objeto de su lista -------------------------------------------
-	main_dock.fs.scan()
 	_remove_popup()
 	queue_free()
 

@@ -1,0 +1,33 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Prop/Prop.gd" type="Script" id=1]
+
+[node name="Prop" type="Area2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( -10, -10, 10, -10, 10, 10, -10, 10 )
+
+[node name="BaselineHelper" type="Line2D" parent="."]
+points = PoolVector2Array( -10000, 0, 10000, 0 )
+width = 1.0
+
+[node name="WalkToHelper" type="Position2D" parent="."]
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
+margin_left = -2.5
+margin_top = -2.5
+margin_right = 2.5
+margin_bottom = 2.5
+color = Color( 0, 1, 0, 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Sprite" type="Sprite" parent="."]
