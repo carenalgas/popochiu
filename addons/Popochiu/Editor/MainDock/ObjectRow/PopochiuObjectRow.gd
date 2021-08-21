@@ -119,6 +119,8 @@ func _delete_from_core() -> void:
 	
 	if _delete_all_checkbox.pressed:
 		_delete_from_file_system()
+	else:
+		show_add_to_core()
 
 
 # Elimina el directorio del objeto del sistema.
@@ -144,6 +146,10 @@ func _delete_from_file_system() -> void:
 	# Forzar que se actualice la estructura de archivos en el EditorFileSystem
 	main_dock.fs.scan()
 	main_dock.fs.scan_sources()
+	
+	if main_dock.save_popochiu() != OK:
+		push_error('No se pudo eliminar la carpeta del sistema: %s' %\
+		name)
 
 	# Eliminar el objeto de su lista -------------------------------------------
 	_remove_popup()
@@ -204,7 +210,7 @@ func _remove_popup() -> void:
 	
 	if _confirmation_dialog.is_connected('confirmed', self, '_delete_from_file_system'):
 		# Se canceló la eliminación de los archivos en disco
-		_add_to_core.show()
+		show_add_to_core()
 		_confirmation_dialog.disconnect('confirmed', self, '_delete_from_file_system')
 
 

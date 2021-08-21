@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://src/Characters/Glottis/CharacterGlottis.gd" type="Script" id=1]
-[ext_resource path="res://src/Characters/Glottis/sprites/bg.png" type="Texture" id=2]
 
 [node name="CharacterGlottis" type="Area2D"]
 script = ExtResource( 1 )
@@ -37,6 +36,5 @@ __meta__ = {
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="Sprite" type="Sprite" parent="."]
-texture = ExtResource( 2 )
 
 [node name="DialogPos" type="Position2D" parent="."]
