@@ -21,6 +21,9 @@ var popochiu: Popochiu = null
 
 var _has_data := false
 
+onready var delete_confirmation: ConfirmationDialog = find_node(
+	'DeleteConfirmation'
+)
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _types := {
 	room = {
@@ -238,6 +241,8 @@ func scene_changed(scene_root: Node) -> void:
 		_regions_btn.disabled = false
 
 		_tab_container.current_tab = 1
+	else:
+		_tab_container.current_tab = 0
 
 
 func get_popochiu() -> Popochiu:
@@ -254,15 +259,23 @@ func save_popochiu() -> int:
 	if result != OK:
 		push_error('---- ◇ Error al actualizar Popochiu: %d ◇ ----' % result)
 		return result
-		
+
+	ei.reload_scene_from_path(POPOCHIU_SCENE)
+
 	# TODO: Hacer esto sólo si la escena de Popochiu está entre las pestañas
 	#		abiertas en el editor.
 	if ei.get_edited_scene_root().name == 'Popochiu':
 		ei.save_scene()
-	else:
-		ei.reload_scene_from_path(POPOCHIU_SCENE)
-	
+
 	return result
+
+
+func show_confirmation(title: String, message: String, ask: String) -> void:
+	delete_confirmation.window_title = title
+	delete_confirmation.find_node('Message').bbcode_text = message
+	delete_confirmation.find_node('Ask').bbcode_text = ask
+	
+	delete_confirmation.popup_centered()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/popochiu_dock-main.png-b3e36cd13667fabd82116911d8bb9291.stex"
+path="res://.import/bg.png-e85f6cc4affe49790c235fec85935c80.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/_repo/popochiu_dock-main.png"
-dest_files=[ "res://.import/popochiu_dock-main.png-b3e36cd13667fabd82116911d8bb9291.stex" ]
+source_file="res://src/Characters/Glottis/sprites/bg.png"
+dest_files=[ "res://.import/bg.png-e85f6cc4affe49790c235fec85935c80.stex" ]
 
 [params]
 

@@ -78,6 +78,7 @@ position = Vector2( 102, 51 )
 texture = ExtResource( 7 )
 
 [node name="FgLeft" parent="Props" index="3" instance=ExtResource( 4 )]
+visible = false
 clickable = false
 baseline = 90
 texture = ExtResource( 12 )

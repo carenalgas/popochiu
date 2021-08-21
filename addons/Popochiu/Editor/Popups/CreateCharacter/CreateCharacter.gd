@@ -48,6 +48,8 @@ func create() -> void:
 	new_character.set_script(load(_new_character_path + '.gd'))
 	new_character.script_name = _new_character_name
 	new_character.name = 'Character' + _new_character_name
+	new_character.description = _new_character_name
+	new_character.cursor = Cursor.Type.TALK
 	
 	# Crear el archivo de la escena --------------------------------------------
 	var new_character_packed_scene: PackedScene = PackedScene.new()
