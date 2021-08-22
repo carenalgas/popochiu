@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/btn_power.png-05bab7ba53e97e30d69a51b77c2d50fd.stex"
+path="res://.import/btn_dialog_auto_02.png-adf5523807547da8699468c63e8cfdb1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/graphic_interface/toolbar/btn_power.png"
-dest_files=[ "res://.import/btn_power.png-05bab7ba53e97e30d69a51b77c2d50fd.stex" ]
+source_file="res://src/GraphicInterface/Toolbar/sprites/btn_dialog_auto_02.png"
+dest_files=[ "res://.import/btn_dialog_auto_02.png-adf5523807547da8699468c63e8cfdb1.stex" ]
 
 [params]
 
@@ -28,6 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=false

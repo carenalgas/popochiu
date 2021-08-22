@@ -8,7 +8,7 @@ var is_disabled := false
 
 var _can_hide := true
 
-onready var _btn_dialog: ToolbarButton = find_node('BtnDialog')
+onready var _btn_dialog_speed: ToolbarButton = find_node('BtnDialogSpeed')
 onready var _btn_power: ToolbarButton = find_node('BtnPower')
 onready var _grid: GridContainer = find_node('Grid')
 onready var _hide_y := rect_position.y - (rect_size.y - 4)

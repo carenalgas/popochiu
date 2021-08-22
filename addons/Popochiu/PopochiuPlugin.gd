@@ -9,6 +9,7 @@ var _editor_file_system: EditorFileSystem
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _init() -> void:
+	# Cargar los singleton para acceder directamente a objetos de Popochiu
 	add_autoload_singleton('Utils', 'res://addons/Popochiu/Engine/Others/Utils.gd')
 	add_autoload_singleton('Cursor', 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn')
 	add_autoload_singleton('E', 'res://addons/Popochiu/Engine/Popochiu.tscn')
@@ -17,7 +18,6 @@ func _init() -> void:
 	add_autoload_singleton('D', 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd')
 	add_autoload_singleton('G', 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd')
 	add_autoload_singleton('Globals', 'res://src/Autoload/Globals.gd')
-	pass
 
 
 func _enter_tree() -> void:

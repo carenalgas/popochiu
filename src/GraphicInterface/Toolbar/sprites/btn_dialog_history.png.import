@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/btn_dialog_speed_01.png-4c81ddb9719ea75d5927a8e36f2bc17b.stex"
+path="res://.import/btn_dialog_history.png-f79e6882baea882a8b9617cf902691c5.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/graphic_interface/toolbar/btn_dialog_speed_01.png"
-dest_files=[ "res://.import/btn_dialog_speed_01.png-4c81ddb9719ea75d5927a8e36f2bc17b.stex" ]
+source_file="res://src/GraphicInterface/Toolbar/sprites/btn_dialog_history.png"
+dest_files=[ "res://.import/btn_dialog_history.png-f79e6882baea882a8b9617cf902691c5.stex" ]
 
 [params]
 
@@ -28,6 +28,7 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
+process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=false

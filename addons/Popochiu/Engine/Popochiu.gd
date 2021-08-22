@@ -16,6 +16,7 @@ export var text_speed_idx := 0 setget _set_text_speed_idx
 export var languages := ['es_CO', 'es', 'en']
 export(int, 'co', 'es', 'en') var language_idx := 0 setget _set_language_idx
 export var use_translations := false
+export var text_continue_auto := false
 
 var in_run := false
 # Se usa para que no se pueda cambiar de escena si está se ha cargado por completo,
@@ -25,6 +26,7 @@ var current_room: PopochiuRoom = null
 var clicked: Node
 var cutscene_skipped := false
 var rooms_states := {}
+var dialog_history := []
 
 # TODO: Estas podrían no estar aquí sino en un nodo de VFX que tenga la escena
 var _is_camera_shaking := false

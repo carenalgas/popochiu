@@ -17,6 +17,8 @@ var _label_dflt_size := Vector2.ZERO
 
 onready var _tween: Tween = $Tween
 onready var _wrap_width_limit := (wrap_width / 2) * 0.3
+onready var _continue_icon: TextureRect = find_node('ContinueIcon')
+onready var _continue_icon_tween: Tween = _continue_icon.get_node('Tween')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -26,6 +28,7 @@ func _ready() -> void:
 	$Label.text = ''
 	modulate.a = 0.0
 	_secs_per_character = E.text_speeds[E.text_speed_idx]
+	_continue_icon.hide()
 	
 	yield(get_tree(), 'idle_frame')
 	_label_dflt_size = $Label.rect_size
@@ -33,6 +36,7 @@ func _ready() -> void:
 	
 	# Conectarse a señales de los hijos
 	_tween.connect('tween_all_completed', self, '_wait_input')
+	_continue_icon_tween.connect('tween_all_completed', self, '_continue')
 	
 	# Conectarse a eventos del universo Chimpoko
 	E.connect('text_speed_changed', self, 'change_speed')
@@ -102,6 +106,9 @@ func play_text(props: Dictionary) -> void:
 	# 3. Ajustar la posición en Y con base a la altura del nodo.
 	yield(get_tree(), 'idle_frame')
 	rect_position.y -= rect_size.y
+	
+	# 4. Poner el icono de continuación
+	_continue_icon.rect_position = rect_size
 
 	if _secs_per_character > 0.0:
 		# Que el texto aparezca animado
@@ -112,6 +119,8 @@ func play_text(props: Dictionary) -> void:
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
 		_tween.start()
+	else:
+		_show_icon()
 
 	modulate.a = 1.0
 
@@ -124,7 +133,7 @@ func stop() ->void:
 		_notify_completion()
 	else:
 		# Saltarse las animaciones
-		_tween.stop_all()
+		_tween.remove_all()
 		percent_visible = 1.0
 		_wait_input()
 
@@ -133,10 +142,14 @@ func hide() -> void:
 	if modulate.a == 0.0: return
 
 	modulate.a = 0.0
-	_tween.stop_all()
+	_tween.remove_all()
 	_is_waiting_input = false
 	clear()
+	_continue_icon.hide()
+	_continue_icon_tween.remove_all()
+	
 	yield(get_tree(), 'idle_frame')
+
 	rect_size = Vector2.ZERO
 
 
@@ -147,8 +160,39 @@ func change_speed(idx: int) -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _wait_input() -> void:
 	_is_waiting_input = true
+	
+	_show_icon()
 
 
 func _notify_completion() -> void:
 	self.hide()
 	emit_signal('animation_finished')
+
+
+func _show_icon() -> void:
+	if not E.text_continue_auto:
+		# Hacer que el icono empiece a saltar.
+		_continue_icon_tween.interpolate_property(
+			_continue_icon, 'rect_position:y',
+			0.0, 3.0, 0.8,
+			Tween.TRANS_BOUNCE, Tween.EASE_OUT
+		)
+		_continue_icon_tween.repeat = true
+	else:
+		# TODO: Que se vaya llenando el icono el tiempo que quede para que se
+		# 		pase automáticamente a la siguiente línea.
+		_continue_icon_tween.interpolate_property(
+			_continue_icon, 'modulate:a',
+			1.0, 0.0, 3.0,
+			Tween.TRANS_SINE, Tween.EASE_OUT
+		)
+		_continue_icon_tween.repeat = false
+	
+	yield(get_tree().create_timer(0.2), 'timeout')
+	_continue_icon_tween.start()
+	_continue_icon.show()
+
+
+func _continue() -> void:
+	if E.text_continue_auto:
+		G.emit_signal('continue_clicked')

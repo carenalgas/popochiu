@@ -29,6 +29,12 @@ func _ready():
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _show_dialog_text(chr: PopochiuCharacter, msg := '') -> void:
 	_disable_panels()
+	
+	E.dialog_history.append({
+		character = chr.description,
+		text = msg
+	})
+	
 	_dialog_text.play_text({
 		text = msg,
 		color = chr.text_color,

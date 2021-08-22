@@ -42,7 +42,7 @@ _global_script_classes=[ {
 "base": "RichTextLabel",
 "class": "DialogText",
 "language": "GDScript",
-"path": "res://src/GraphicInterface/Dialog/DialogText.gd"
+"path": "res://src/GraphicInterface/DialogText/DialogText.gd"
 }, {
 "base": "Label",
 "class": "DisplayBox",

@@ -8,6 +8,7 @@ extends Panel
 
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
 
+# res://popochiu/Rooms/
 export var rooms_path := 'res://src/Rooms/'
 export var characters_path := 'res://src/Characters/'
 export var inventory_items_path := 'res://src/InventoryItems/'
