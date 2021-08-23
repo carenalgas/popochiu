@@ -24,6 +24,7 @@ func _ready():
 	G.connect('blocked', self, '_disable_panels')
 	G.connect('freed', self, '_enable_panels')
 	G.connect('interface_hidden', self, '_hide_panels')
+	G.connect('history_opened', self, '_show_history')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -92,3 +93,19 @@ func _show_panels() -> void:
 	_inventory_container.show()
 	_info_bar.show()
 	_toolbar.show()
+
+
+func _show_history() -> void:
+	$History.popup(Rect2(8, 16, 304, 160))
+	
+	for h in E.dialog_history:
+		var lbl: Label
+		
+		if h.has('character'):
+			lbl = preload('res://src/GraphicInterface/History/DialogLine.tscn').instance()
+			lbl.text = '%s: %s' % [h.character, h.text]
+		else:
+			lbl = preload('res://src/GraphicInterface/History/InteractionLine.tscn').instance()
+			lbl.text = '(%s)' % h.action
+		
+		$History/ScrollContainer/VBoxContainer.add_child(lbl)

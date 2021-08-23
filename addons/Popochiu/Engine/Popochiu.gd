@@ -13,10 +13,10 @@ export(Array, Resource) var dialogs = []
 export var skip_cutscene_time := 0.2
 export var text_speeds := [0.1, 0.01, 0.0]
 export var text_speed_idx := 0 setget _set_text_speed_idx
+export var text_continue_auto := false
 export var languages := ['es_CO', 'es', 'en']
 export(int, 'co', 'es', 'en') var language_idx := 0 setget _set_language_idx
 export var use_translations := false
-export var text_continue_auto := false
 
 var in_run := false
 # Se usa para que no se pueda cambiar de escena si está se ha cargado por completo,

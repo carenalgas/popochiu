@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://src/GraphicInterface/GraphicInterface.gd" type="Script" id=1]
 [ext_resource path="res://src/Resources/GAQTheme.tres" type="Theme" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://src/GraphicInterface/Inventory/InventoryContainer.tscn" type="PackedScene" id=4]
 [ext_resource path="res://src/GraphicInterface/DialogMenu/DialogMenu.tscn" type="PackedScene" id=5]
 [ext_resource path="res://src/GraphicInterface/Toolbar/Toolbar.tscn" type="PackedScene" id=6]
+[ext_resource path="res://src/GraphicInterface/History/History.tscn" type="PackedScene" id=7]
 [ext_resource path="res://src/GraphicInterface/InfoBar/InfoBar.tscn" type="PackedScene" id=9]
 [ext_resource path="res://src/GraphicInterface/DisplayBox/DisplayBox.tscn" type="PackedScene" id=11]
 
@@ -61,3 +62,5 @@ flat = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="History" parent="." instance=ExtResource( 7 )]

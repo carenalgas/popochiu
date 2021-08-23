@@ -12,6 +12,7 @@ signal blocked
 signal interface_hidden
 signal inventory_show_requested(time)
 signal inventory_shown
+signal history_opened
 
 var blocked := false
 var waiting_click := false
@@ -66,3 +67,7 @@ func show_inventory(time := 1.0, is_in_queue := true) -> void:
 	
 	emit_signal('inventory_show_requested', time)
 	yield(self, 'inventory_shown')
+
+
+func show_history() -> void:
+	emit_signal('history_opened')
