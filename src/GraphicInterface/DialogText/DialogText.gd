@@ -146,6 +146,7 @@ func hide() -> void:
 	_is_waiting_input = false
 	clear()
 	_continue_icon.hide()
+	_continue_icon.modulate.a = 1.0
 	_continue_icon_tween.remove_all()
 	
 	yield(get_tree(), 'idle_frame')

@@ -45,13 +45,13 @@ func _unhandled_input(event):
 			if I.active:
 				on_item_used(I.active)
 			else:
-				E.dialog_history.append({
+				E.add_history({
 					action = 'Interacted with: %s' % description
 				})
 				on_interact()
 		elif event.is_action_pressed('look'):
 			if not I.active:
-				E.dialog_history.append({
+				E.add_history({
 					action = 'Looked at: %s' % description
 				})
 				on_look()

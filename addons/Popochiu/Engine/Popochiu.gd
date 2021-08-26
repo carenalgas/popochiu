@@ -26,7 +26,7 @@ var current_room: PopochiuRoom = null
 var clicked: Node
 var cutscene_skipped := false
 var rooms_states := {}
-var dialog_history := []
+var history := []
 
 # TODO: Estas podrían no estar aquí sino en un nodo de VFX que tenga la escena
 var _is_camera_shaking := false
@@ -282,6 +282,10 @@ func get_dialog(script_name: String) -> PopochiuDialog:
 
 	prints('No existe el diálogo: %s' % script_name)
 	return null
+
+
+func add_history(data: Dictionary) -> void:
+	history.push_front(data)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

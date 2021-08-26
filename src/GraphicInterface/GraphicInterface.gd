@@ -18,6 +18,7 @@ func _ready():
 	_dialog_menu.connect('shown', self, '_disable_panels', [{ blocking = false }])
 	_display_box.connect('shown', self, '_disable_panels')
 	_display_box.connect('hidden', self, '_enable_panels')
+	$History.connect('popup_hide', self, '_destroy_history')
 	
 	# Conectarse a eventos del universo digimon
 	C.connect('character_spoke', self, '_show_dialog_text')
@@ -31,7 +32,7 @@ func _ready():
 func _show_dialog_text(chr: PopochiuCharacter, msg := '') -> void:
 	_disable_panels()
 	
-	E.dialog_history.append({
+	E.add_history({
 		character = chr.description,
 		text = msg
 	})
@@ -96,16 +97,21 @@ func _show_panels() -> void:
 
 
 func _show_history() -> void:
-	$History.popup(Rect2(8, 16, 304, 160))
-	
-	for h in E.dialog_history:
+	for data in E.history:
 		var lbl: Label
 		
-		if h.has('character'):
+		if data.has('character'):
 			lbl = preload('res://src/GraphicInterface/History/DialogLine.tscn').instance()
-			lbl.text = '%s: %s' % [h.character, h.text]
+			lbl.text = '%s: %s' % [data.character, data.text]
 		else:
 			lbl = preload('res://src/GraphicInterface/History/InteractionLine.tscn').instance()
-			lbl.text = '(%s)' % h.action
-		
+			lbl.text = '(%s)' % data.action
+	
 		$History/ScrollContainer/VBoxContainer.add_child(lbl)
+	
+	$History.popup(Rect2(8, 16, 304, 160))
+
+
+func _destroy_history() -> void:
+	for c in $History/ScrollContainer/VBoxContainer.get_children():
+		(c as Label).queue_free()
