@@ -37,8 +37,10 @@ __meta__ = {
 [node name="InfoBar" parent="MainContainer" instance=ExtResource( 9 )]
 
 [node name="DialogText" parent="MainContainer" instance=ExtResource( 3 )]
-margin_right = 0.0
-margin_bottom = 0.0
+margin_left = 104.0
+margin_top = 107.0
+margin_right = 224.0
+margin_bottom = 120.0
 theme = ExtResource( 2 )
 
 [node name="DisplayBox" parent="MainContainer" instance=ExtResource( 11 )]

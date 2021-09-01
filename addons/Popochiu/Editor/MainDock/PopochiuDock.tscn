@@ -369,8 +369,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
-margin_right = -268.0
-margin_bottom = -100.0
+margin_right = -4.0
+margin_bottom = -4.0
 
 [node name="Audio" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false
@@ -378,8 +378,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
-margin_right = -268.0
-margin_bottom = -100.0
+margin_right = -4.0
+margin_bottom = -4.0
 
 [node name="Popups" type="Control" parent="."]
 __meta__ = {

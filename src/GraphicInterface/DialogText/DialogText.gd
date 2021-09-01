@@ -17,7 +17,7 @@ var _label_dflt_size := Vector2.ZERO
 
 onready var _tween: Tween = $Tween
 onready var _wrap_width_limit := (wrap_width / 2) * 0.3
-onready var _continue_icon: TextureRect = find_node('ContinueIcon')
+onready var _continue_icon: TextureProgress = find_node('ContinueIcon')
 onready var _continue_icon_tween: Tween = _continue_icon.get_node('Tween')
 
 
@@ -173,6 +173,7 @@ func _notify_completion() -> void:
 func _show_icon() -> void:
 	if not E.text_continue_auto:
 		# Hacer que el icono empiece a saltar.
+		_continue_icon.value = 100.0
 		_continue_icon_tween.interpolate_property(
 			_continue_icon, 'rect_position:y',
 			0.0, 3.0, 0.8,
@@ -180,12 +181,13 @@ func _show_icon() -> void:
 		)
 		_continue_icon_tween.repeat = true
 	else:
-		# TODO: Que se vaya llenando el icono el tiempo que quede para que se
-		# 		pase automáticamente a la siguiente línea.
+		# Por defecto, se vaya llenando el icono el tiempo que quede para que se
+		# pase automáticamente a la siguiente línea.
+		_continue_icon.value = 0.0
 		_continue_icon_tween.interpolate_property(
-			_continue_icon, 'modulate:a',
-			1.0, 0.0, 3.0,
-			Tween.TRANS_SINE, Tween.EASE_OUT
+			_continue_icon, 'value',
+			0.0, 100.0, 3.0,
+			Tween.TRANS_LINEAR, Tween.EASE_OUT
 		)
 		_continue_icon_tween.repeat = false
 	

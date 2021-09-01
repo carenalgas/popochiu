@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://src/Resources/DynamicFonts/MonkeyIsland-16.tres" type="DynamicFont" id=1]
 [ext_resource path="res://src/GraphicInterface/History/sprites/close.png" type="Texture" id=2]
+[ext_resource path="res://src/GraphicInterface/History/History.gd" type="Script" id=3]
 
 [sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0.356863, 0.431373, 0.882353, 1 )
@@ -31,8 +32,11 @@ VScrollBar/styles/scroll = SubResource( 8 )
 VScrollBar/styles/scroll_focus = SubResource( 8 )
 
 [node name="History" type="WindowDialog"]
-margin_right = 48.0
-margin_bottom = 40.0
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 313.0
+margin_bottom = 173.0
+input_pass_on_modal_close_click = false
 custom_colors/title_color = Color( 1, 1, 1, 1 )
 custom_constants/close_h_ofs = 8
 custom_constants/close_v_ofs = 12
@@ -41,6 +45,7 @@ custom_icons/close_highlight = ExtResource( 2 )
 custom_icons/close = ExtResource( 2 )
 custom_styles/panel = SubResource( 6 )
 window_title = "Historial"
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -54,9 +59,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
-margin_right = 81.0
-margin_bottom = 40.0
+[node name="LinesList" type="VBoxContainer" parent="ScrollContainer"]
+margin_right = 306.0
+margin_bottom = 166.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 4

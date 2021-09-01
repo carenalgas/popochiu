@@ -54,6 +54,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/aseprite_importer/classes/EditorTheme.gd"
 }, {
+"base": "WindowDialog",
+"class": "History",
+"language": "GDScript",
+"path": "res://src/GraphicInterface/History/History.gd"
+}, {
 "base": "Clickable",
 "class": "Hotspot",
 "language": "GDScript",
@@ -149,6 +154,7 @@ _global_script_class_icons={
 "DialogText": "",
 "DisplayBox": "",
 "EditorTheme": "",
+"History": "",
 "Hotspot": "res://addons/Popochiu/icons/hotspot.png",
 "InventoryContainer": "",
 "InventoryItem": "res://addons/Popochiu/icons/inventory_item.png",

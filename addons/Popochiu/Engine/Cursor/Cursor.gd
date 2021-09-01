@@ -15,6 +15,8 @@ enum Type {
 	WAIT,
 }
 
+var is_blocked := false
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready():
@@ -28,6 +30,8 @@ func _process(delta):
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func set_cursor(type := Type.IDLE) -> void:
+	if is_blocked: return
+	
 	var anim_name: String = Type.keys()[Type.IDLE]
 	if Type.values().has(type):
 		anim_name = Type.keys()[type]
@@ -49,3 +53,11 @@ func remove_item_cursor() -> void:
 func toggle_visibility(is_visible: bool) -> void:
 	$AnimatedSprite.visible = is_visible
 	$Sprite.visible = is_visible
+
+
+func block() -> void:
+	is_blocked = true
+
+
+func unlock() -> void:
+	is_blocked = false

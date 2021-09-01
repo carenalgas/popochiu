@@ -7,6 +7,7 @@ onready var _inventory_container: InventoryContainer = find_node('InventoryConta
 onready var _click_handler: Button = $MainContainer/ClickHandler
 onready var _dialog_menu: DialogMenu = find_node('DialogMenu')
 onready var _toolbar: Toolbar = find_node('Toolbar')
+onready var _history: History = find_node('History')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -18,14 +19,12 @@ func _ready():
 	_dialog_menu.connect('shown', self, '_disable_panels', [{ blocking = false }])
 	_display_box.connect('shown', self, '_disable_panels')
 	_display_box.connect('hidden', self, '_enable_panels')
-	$History.connect('popup_hide', self, '_destroy_history')
 	
 	# Conectarse a eventos del universo digimon
 	C.connect('character_spoke', self, '_show_dialog_text')
 	G.connect('blocked', self, '_disable_panels')
 	G.connect('freed', self, '_enable_panels')
 	G.connect('interface_hidden', self, '_hide_panels')
-	G.connect('history_opened', self, '_show_history')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -94,24 +93,3 @@ func _show_panels() -> void:
 	_inventory_container.show()
 	_info_bar.show()
 	_toolbar.show()
-
-
-func _show_history() -> void:
-	for data in E.history:
-		var lbl: Label
-		
-		if data.has('character'):
-			lbl = preload('res://src/GraphicInterface/History/DialogLine.tscn').instance()
-			lbl.text = '%s: %s' % [data.character, data.text]
-		else:
-			lbl = preload('res://src/GraphicInterface/History/InteractionLine.tscn').instance()
-			lbl.text = '(%s)' % data.action
-	
-		$History/ScrollContainer/VBoxContainer.add_child(lbl)
-	
-	$History.popup(Rect2(8, 16, 304, 160))
-
-
-func _destroy_history() -> void:
-	for c in $History/ScrollContainer/VBoxContainer.get_children():
-		(c as Label).queue_free()
