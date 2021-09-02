@@ -1,8 +1,11 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://src/Resources/DynamicFonts/MonkeyIsland-16.tres" type="DynamicFont" id=1]
 [ext_resource path="res://src/GraphicInterface/History/sprites/close.png" type="Texture" id=2]
 [ext_resource path="res://src/GraphicInterface/History/History.gd" type="Script" id=3]
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0, 0, 0, 0.498039 )
 
 [sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0.356863, 0.431373, 0.882353, 1 )
@@ -31,7 +34,18 @@ VScrollBar/styles/grabber_pressed = SubResource( 7 )
 VScrollBar/styles/scroll = SubResource( 8 )
 VScrollBar/styles/scroll_focus = SubResource( 8 )
 
-[node name="History" type="WindowDialog"]
+[node name="History" type="PanelContainer"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+custom_styles/panel = SubResource( 10 )
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="WindowDialog" type="WindowDialog" parent="."]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 313.0
@@ -45,12 +59,11 @@ custom_icons/close_highlight = ExtResource( 2 )
 custom_icons/close = ExtResource( 2 )
 custom_styles/panel = SubResource( 6 )
 window_title = "Historial"
-script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="ScrollContainer" type="ScrollContainer" parent="WindowDialog"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = SubResource( 9 )
@@ -59,7 +72,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LinesList" type="VBoxContainer" parent="ScrollContainer"]
+[node name="LinesList" type="VBoxContainer" parent="WindowDialog/ScrollContainer"]
 margin_right = 306.0
 margin_bottom = 166.0
 size_flags_horizontal = 3

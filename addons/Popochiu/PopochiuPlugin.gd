@@ -9,6 +9,12 @@ var _editor_file_system: EditorFileSystem
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _init() -> void:
+	# Gracias Dialogic
+	if Engine.editor_hint:
+		# Verificar si existe la carpeta donde irán los elementos del juego.
+		# Si no, crear carpetas, mover archivos y actualizar Popochiu.tscn.
+		pass
+	
 	# Cargar los singleton para acceder directamente a objetos de Popochiu
 	add_autoload_singleton('Utils', 'res://addons/Popochiu/Engine/Others/Utils.gd')
 	add_autoload_singleton('Cursor', 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn')
