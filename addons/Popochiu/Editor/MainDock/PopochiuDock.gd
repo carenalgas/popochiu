@@ -7,12 +7,10 @@ extends Panel
 #	Interfaz gráfica.
 
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
-
-# res://popochiu/Rooms/
-export var rooms_path := 'res://src/Rooms/'
-export var characters_path := 'res://src/Characters/'
-export var inventory_items_path := 'res://src/InventoryItems/'
-export var dialogs_path := 'res://src/Dialogs/'
+const ROOMS_PATH := 'res://popochiu/Rooms/'
+const CHARACTERS_PATH := 'res://popochiu/Characters/'
+const INVENTORY_ITEMS_PATH := 'res://popochiu/InventoryItems/'
+const DIALOGS_PATH := 'res://popochiu/Dialogs/'
 
 var ei: EditorInterface
 var fs: EditorFileSystem
@@ -28,36 +26,36 @@ onready var delete_confirmation: ConfirmationDialog = find_node(
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _types := {
 	room = {
-		path = rooms_path,
+		path = ROOMS_PATH,
 		type_hint = 'PopochiuRoomData',
 		list = find_node('RoomsList'),
 		button = find_node('BtnCreateRoom'),
 		popup = find_node('CreateRoom'),
-		scene = rooms_path + ('%s/Room%s.tscn')
+		scene = ROOMS_PATH + ('%s/Room%s.tscn')
 	},
 	character = {
-		path = characters_path,
+		path = CHARACTERS_PATH,
 		type_hint = 'PopochiuCharacterData',
 		list = find_node('CharactersList'),
 		button = find_node('BtnCreateCharacter'),
 		popup = find_node('CreateCharacter'),
-		scene = characters_path + ('%s/Character%s.tscn')
+		scene = CHARACTERS_PATH + ('%s/Character%s.tscn')
 	},
 	inventory_item = {
-		path = inventory_items_path,
+		path = INVENTORY_ITEMS_PATH,
 		type_hint = 'PopochiuInventoryItemData',
 		list = find_node('InventoryItemsList'),
 		button = find_node('BtnCreateItem'),
 		popup = find_node('CreateInventoryItem'),
-		scene = inventory_items_path + ('%s/Inventory%s.tscn')
+		scene = INVENTORY_ITEMS_PATH + ('%s/Inventory%s.tscn')
 	},
 	dialog = {
-		path = dialogs_path,
+		path = DIALOGS_PATH,
 		type_hint = 'PopochiuDialog',
 		list = find_node('DialogsList'),
 		button = find_node('BtnCreateDialog'),
 		popup = find_node('CreateDialog'),
-		scene = dialogs_path + ('%s/Dialog%s.tres')
+		scene = DIALOGS_PATH + ('%s/Dialog%s.tres')
 	},
 	prop = {
 		group = find_node('PropsGroupButton'),
@@ -159,8 +157,12 @@ func fill_data() -> void:
 				var is_in_core := true
 				
 				match t:
+					'room':
+						is_in_core = popochiu.rooms.has(resource)
 					'character':
 						is_in_core = popochiu.characters.has(resource)
+					'inventory_item':
+						is_in_core = popochiu.inventory_items.has(resource)
 					'dialog':
 						is_in_core = popochiu.dialogs.has(resource)
 				

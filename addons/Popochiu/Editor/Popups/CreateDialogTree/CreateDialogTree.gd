@@ -19,7 +19,7 @@ func _ready() -> void:
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 	# Por defecto: res://src/Dialogs
-	_dialog_path_template = _main_dock.dialogs_path + '%s/Dialog%s'
+	_dialog_path_template = _main_dock.DIALOGS_PATH + '%s/Dialog%s'
 
 
 func create() -> void:
@@ -31,7 +31,7 @@ func create() -> void:
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
 	# Crear el directorio donde se guardará el nuevo diálogo -------------------
-	_main_dock.dir.make_dir(_main_dock.dialogs_path + _new_dialog_name)
+	_main_dock.dir.make_dir(_main_dock.DIALOGS_PATH + _new_dialog_name)
 
 	# Crear el script del nuevo diálogo ----------------------------------------
 	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE)
@@ -85,7 +85,7 @@ func _update_name(new_text: String) -> void:
 		_info.bbcode_text = (
 			'En [b]%s[/b] se crearán los archivos:\n[code]%s y %s[/code]' \
 			% [
-				_main_dock.dialogs_path + _new_dialog_name,
+				_main_dock.DIALOGS_PATH + _new_dialog_name,
 				'Dialog' + _new_dialog_name + '.gd',
 				'Dialog' + _new_dialog_name + '.tres'
 			])

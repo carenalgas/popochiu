@@ -22,7 +22,7 @@ func _ready() -> void:
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 	# Por defecto: res://src/InventoryItems/
-	_item_path_template = _main_dock.inventory_items_path + '%s/Inventory%s'
+	_item_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/Inventory%s'
 
 
 func create() -> void:
@@ -34,7 +34,7 @@ func create() -> void:
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
 	# Crear el directorio donde se guardará el nuevo ítem ----------------------
-	_main_dock.dir.make_dir(_main_dock.inventory_items_path + _new_item_name)
+	_main_dock.dir.make_dir(_main_dock.INVENTORY_ITEMS_PATH + _new_item_name)
 
 	# Crear el script del nuevo ítem -------------------------------------------
 	var item_template := load(INVENTORY_ITEM_SCRIPT_TEMPLATE)
@@ -108,7 +108,7 @@ func _update_name(new_text: String) -> void:
 		_info.bbcode_text = (
 			'En [b]%s[/b] se crearán los archivos:\n[code]%s, %s y %s[/code]' \
 			% [
-				_main_dock.inventory_items_path + _new_item_name,
+				_main_dock.INVENTORY_ITEMS_PATH + _new_item_name,
 				'Inventory' + _new_item_name + '.tscn',
 				'Inventory' + _new_item_name + '.gd',
 				'Inventory' + _new_item_name + '.tres'

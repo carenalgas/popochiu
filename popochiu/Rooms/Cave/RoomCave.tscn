@@ -1,0 +1,76 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://popochiu/Rooms/Cave/bg.png" type="Texture" id=1]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Prop/Prop.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Room/Room.tscn" type="PackedScene" id=3]
+[ext_resource path="res://popochiu/Rooms/Cave/RoomCave.gd" type="Script" id=4]
+[ext_resource path="res://popochiu/Rooms/Cave/Medal.gd" type="Script" id=5]
+[ext_resource path="res://popochiu/Rooms/Cave/medal.png" type="Texture" id=6]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Hotspot/Hotspot.tscn" type="PackedScene" id=7]
+[ext_resource path="res://popochiu/Rooms/Cave/Forest.gd" type="Script" id=8]
+
+[sub_resource type="NavigationPolygon" id=1]
+vertices = PoolVector2Array( 115, 44, 146, 54, 135, 86, -63, 88, 72, 33, 113, 39, 17, 49, -31, 50, -72, 82, -61, 58, -38, 46, 19, 41, -2, 52, -21, 50 )
+polygons = [ PoolIntArray( 0, 1, 2, 3 ), PoolIntArray( 4, 5, 0, 3, 6 ), PoolIntArray( 7, 3, 8, 9, 10 ), PoolIntArray( 6, 11, 4 ), PoolIntArray( 12, 6, 3 ), PoolIntArray( 13, 12, 3, 7 ) ]
+outlines = [ PoolVector2Array( 135, 86, 146, 54, 115, 44, 113, 39, 72, 33, 19, 41, 17, 49, -2, 52, -21, 50, -31, 50, -38, 46, -61, 58, -72, 82, -63, 88 ) ]
+
+[node name="RoomCave" instance=ExtResource( 3 )]
+script = ExtResource( 4 )
+script_name = "Cave"
+
+[node name="Bg" parent="Props" index="0" instance=ExtResource( 2 )]
+baseline = -89
+texture = ExtResource( 1 )
+
+[node name="CollisionPolygon2D" parent="Props/Bg" index="0"]
+visible = false
+disabled = true
+
+[node name="BaselineHelper" parent="Props/Bg" index="1"]
+position = Vector2( 0, -89 )
+
+[node name="WalkToHelper" parent="Props/Bg" index="2"]
+visible = false
+
+[node name="Sprite" parent="Props/Bg" index="3"]
+texture = ExtResource( 1 )
+
+[node name="Prop" parent="Props" index="1" instance=ExtResource( 2 )]
+position = Vector2( -6, 14 )
+script = ExtResource( 5 )
+description = "Collar"
+baseline = -104
+walk_to_point = Vector2( 0, 41 )
+cursor = 1
+texture = ExtResource( 6 )
+
+[node name="CollisionPolygon2D" parent="Props/Prop" index="0"]
+visible = false
+polygon = PoolVector2Array( -10, -9, -2, -3, 11, -3, 10, -1, 2, 1, 4, 8, 0, 11, -3, 8, -1, 0, -6, -2, -10, -6 )
+
+[node name="BaselineHelper" parent="Props/Prop" index="1"]
+position = Vector2( 0, -104 )
+
+[node name="WalkToHelper" parent="Props/Prop" index="2"]
+position = Vector2( 0, 41 )
+
+[node name="Sprite" parent="Props/Prop" index="3"]
+texture = ExtResource( 6 )
+
+[node name="Forest" parent="Hotspots" index="0" instance=ExtResource( 7 )]
+position = Vector2( 96, 69 )
+script = ExtResource( 8 )
+cursor = 2
+
+[node name="CollisionPolygon2D" parent="Hotspots/Forest" index="0"]
+polygon = PoolVector2Array( -18, -12, -23, 17, 20, 17, 20, -10, 13, -19, -12, -17 )
+
+[node name="EntryPoint" type="Position2D" parent="Points" index="0"]
+position = Vector2( 61, 62 )
+
+[node name="NavigationPolygonInstance" type="NavigationPolygonInstance" parent="WalkableAreas/Navigation2D" index="0"]
+navpoly = SubResource( 1 )
+
+[editable path="Props/Bg"]
+[editable path="Props/Prop"]
+[editable path="Hotspots/Forest"]

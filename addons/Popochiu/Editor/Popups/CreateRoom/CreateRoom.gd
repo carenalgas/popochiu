@@ -23,7 +23,7 @@ func _ready() -> void:
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 	# Por defecto: res://src/Rooms
-	_room_path_template = _main_dock.rooms_path + '%s/Room%s'
+	_room_path_template = _main_dock.ROOMS_PATH + '%s/Room%s'
 
 
 func create() -> void:
@@ -35,7 +35,7 @@ func create() -> void:
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
 	# Crear el directorio donde se guardará la nueva habitación ----------------
-	_main_dock.dir.make_dir(_main_dock.rooms_path + _new_room_name)
+	_main_dock.dir.make_dir(_main_dock.ROOMS_PATH + _new_room_name)
 
 	# Crear el script de la nueva habitación -----------------------------------
 	var room_template := load('res://script_templates/RoomTemplate.gd')
@@ -106,7 +106,7 @@ func _update_name(new_text: String) -> void:
 		_info.bbcode_text = (
 			'En [b]%s[/b] se crearán los archivos:\n[code]%s, %s y %s[/code]' \
 			% [
-				_main_dock.rooms_path + _new_room_name,
+				_main_dock.ROOMS_PATH + _new_room_name,
 				'Room' + _new_room_name + '.tscn',
 				'Room' + _new_room_name + '.gd',
 				'Room' + _new_room_name + '.tres'

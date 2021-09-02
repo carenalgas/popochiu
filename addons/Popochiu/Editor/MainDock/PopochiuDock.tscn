@@ -363,7 +363,7 @@ margin_top = 108.0
 margin_right = 304.0
 margin_bottom = 128.0
 
-[node name="PlayerInterface" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
+[node name="Audio" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -372,7 +372,7 @@ margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
 
-[node name="Audio" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
+[node name="PlayerInterface" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0

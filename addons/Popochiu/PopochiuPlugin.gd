@@ -1,7 +1,11 @@
 tool
 extends EditorPlugin
 
-var gaq_dock: PopochiuDock
+# TODO: Que este directorio se pueda seleccionar cuando se instala el plugin por
+#		primera vez
+const BASE_DIR := 'res://popochiu'
+
+var gaq_dock: Panel
 
 var _editor_interface: EditorInterface
 var _editor_file_system: EditorFileSystem
@@ -13,7 +17,7 @@ func _init() -> void:
 	if Engine.editor_hint:
 		# Verificar si existe la carpeta donde irán los elementos del juego.
 		# Si no, crear carpetas, mover archivos y actualizar Popochiu.tscn.
-		pass
+		init_file_structure()
 	
 	# Cargar los singleton para acceder directamente a objetos de Popochiu
 	add_autoload_singleton('Utils', 'res://addons/Popochiu/Engine/Others/Utils.gd')
@@ -23,7 +27,7 @@ func _init() -> void:
 	add_autoload_singleton('I', 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd')
 	add_autoload_singleton('D', 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd')
 	add_autoload_singleton('G', 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd')
-	add_autoload_singleton('Globals', 'res://src/Autoload/Globals.gd')
+	add_autoload_singleton('Globals', 'res://popochiu/Globals.gd')
 
 
 func _enter_tree() -> void:
@@ -80,3 +84,18 @@ func _exit_tree() -> void:
 func _on_filesystem_changed() -> void:
 	prints('Cambiao')
 #	gaq_dock.fill_data()
+
+
+func init_file_structure() -> void:
+	var d := Directory.new()
+	
+	if not d.dir_exists(BASE_DIR):
+		prints('-------------------------------------', 'Creando lo inicial!!!')
+
+		d.make_dir_recursive(BASE_DIR)
+		d.make_dir_recursive(BASE_DIR + '/Rooms')
+		d.make_dir_recursive(BASE_DIR + '/Characters')
+		d.make_dir_recursive(BASE_DIR + '/InventoryItems')
+		d.make_dir_recursive(BASE_DIR + '/Dialogs')
+
+		d.copy('res://addons/Popochiu/Engine/Others/Globals.gd', BASE_DIR)

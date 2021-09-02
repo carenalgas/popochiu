@@ -1,22 +1,11 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://src/Characters/Barney/CharacterBarney.tres" type="Resource" id=1]
-[ext_resource path="res://src/Characters/Dave/CharacterDave.tres" type="Resource" id=2]
-[ext_resource path="res://src/Rooms/Forest/RoomForest.tres" type="Resource" id=3]
-[ext_resource path="res://src/Rooms/Main/RoomMain.tres" type="Resource" id=4]
-[ext_resource path="res://src/InventoryItems/Bucket/InventoryBucket.tres" type="Resource" id=5]
-[ext_resource path="res://src/Rooms/Cave/RoomCave.tres" type="Resource" id=6]
 [ext_resource path="res://addons/Popochiu/Engine/Popochiu.gd" type="Script" id=7]
-[ext_resource path="res://src/GraphicInterface/GraphicInterface.tscn" type="PackedScene" id=8]
-[ext_resource path="res://src/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=9]
-[ext_resource path="res://src/Dialogs/ChatWithBarney/DialogChatWithBarney.tres" type="Resource" id=13]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/GraphicInterface.tscn" type="PackedScene" id=8]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=9]
 
 [node name="Popochiu" type="Node"]
 script = ExtResource( 7 )
-rooms = [ ExtResource( 4 ), ExtResource( 3 ), ExtResource( 6 ) ]
-characters = [ ExtResource( 2 ), ExtResource( 1 ) ]
-inventory_items = [ ExtResource( 5 ) ]
-dialogs = [ ExtResource( 13 ) ]
 skip_cutscene_time = 0.25
 text_speeds = [ 0.05, 0.01, 0.0 ]
 text_speed_idx = 2

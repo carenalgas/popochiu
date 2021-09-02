@@ -140,7 +140,7 @@ func _delete_from_file_system() -> void:
 	# Eliminar la carpeta del objeto
 	if main_dock.dir.remove(path.get_base_dir()) != OK:
 		push_error('No se pudo eliminar la carpeta: %s' %\
-		main_dock.characters_path + name)
+		main_dock.CHARACTERS_PATH + name)
 		return
 
 	# Forzar que se actualice la estructura de archivos en el EditorFileSystem

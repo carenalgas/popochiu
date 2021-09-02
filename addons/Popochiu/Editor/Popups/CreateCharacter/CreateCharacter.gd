@@ -20,7 +20,7 @@ func _ready() -> void:
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 	# Por defecto: res://src/Characters
-	_character_path_template = _main_dock.characters_path + '%s/Character%s'
+	_character_path_template = _main_dock.CHARACTERS_PATH + '%s/Character%s'
 
 
 func create() -> void:
@@ -32,7 +32,7 @@ func create() -> void:
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
 	# Crear el directorio donde se guardará el nuevo personaje -----------------
-	_main_dock.dir.make_dir(_main_dock.characters_path + _new_character_name)
+	_main_dock.dir.make_dir(_main_dock.CHARACTERS_PATH + _new_character_name)
 
 	# Crear el script del nuevo personaje --------------------------------------
 	var character_template := load(CHARACTER_SCRIPT_TEMPLATE)
@@ -107,7 +107,7 @@ func _update_name(new_text: String) -> void:
 		_info.bbcode_text = (
 			'En [b]%s[/b] se crearán los archivos:\n[code]%s, %s y %s[/code]' \
 			% [
-				_main_dock.characters_path + _new_character_name,
+				_main_dock.CHARACTERS_PATH + _new_character_name,
 				'Character' + _new_character_name + '.tscn',
 				'Character' + _new_character_name + '.gd',
 				'Character' + _new_character_name + '.tres'
