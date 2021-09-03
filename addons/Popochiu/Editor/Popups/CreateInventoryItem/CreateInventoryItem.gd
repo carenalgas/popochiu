@@ -4,7 +4,7 @@ extends CreationPopup
 # funcione en el Popochiu: InventoryIII.tscn, InventoryIII.gd, InventoryIII.tres.
 
 const INVENTORY_ITEM_SCRIPT_TEMPLATE := \
-'res://script_templates/InventoryItemTemplate.gd'
+'res://addons/Popochiu/Engine/Templates/InventoryItemTemplate.gd'
 const BASE_INVENTORY_ITEM_PATH := \
 'res://addons/Popochiu/Engine/Objects/InventoryItem/InventoryItem.tscn'
 

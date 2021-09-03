@@ -11,9 +11,7 @@ text_speeds = [ 0.05, 0.01, 0.0 ]
 text_speed_idx = 2
 text_continue_auto = true
 
-[node name="GraphicInterface" parent="." instance=ExtResource( 8 )]
-
-[node name="TransitionLayer" parent="." instance=ExtResource( 9 )]
+[node name="Tween" type="Tween" parent="."]
 
 [node name="MainCamera" type="Camera2D" parent="."]
 current = true
@@ -34,4 +32,6 @@ __meta__ = {
 "_editor_description_": ""
 }
 
-[node name="Tween" type="Tween" parent="."]
+[node name="GraphicInterface" parent="." instance=ExtResource( 8 )]
+
+[node name="TransitionLayer" parent="." instance=ExtResource( 9 )]

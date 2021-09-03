@@ -4,7 +4,7 @@ extends CreationPopup
 # asignará un script que quedará guardado en la carpeta Props de la carpeta de
 # la habitación a la que pertenece.
 
-const PROP_SCRIPT_TEMPLATE := 'res://script_templates/PropTemplate.gd'
+const PROP_SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/PropTemplate.gd'
 const BASE_PROP_PATH := 'res://addons/Popochiu/Engine/Objects/Prop/Prop.tscn'
 
 var _new_prop_name := ''

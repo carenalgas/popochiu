@@ -3,7 +3,7 @@ extends CreationPopup
 # Permite crear un nuevo personaje con los archivos necesarios para que funcione
 # en el Popochiu: CharacterCCC.tscn, CharacterCCC.gd, CharacterCCC.tres.
 
-const CHARACTER_SCRIPT_TEMPLATE := 'res://script_templates/CharacterTemplate.gd'
+const CHARACTER_SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/CharacterTemplate.gd'
 const CHARACTER_SCENE := 'res://addons/Popochiu/Engine/Objects/Character/Character.tscn'
 
 var _new_character_name := ''

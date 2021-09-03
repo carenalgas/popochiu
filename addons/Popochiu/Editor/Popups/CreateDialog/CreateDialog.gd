@@ -3,7 +3,7 @@ extends CreationPopup
 # Permite crear un nuevo diálogo con los archivos necesarios para que funcione
 # en el Popochiu: DialogDDD.gd, DialogDDD.tres.
 
-const DIALOG_SCRIPT_TEMPLATE := 'res://script_templates/DialogTemplate.gd'
+const DIALOG_SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/DialogTemplate.gd'
 
 var _new_dialog_name := ''
 var _new_dialog_path := ''

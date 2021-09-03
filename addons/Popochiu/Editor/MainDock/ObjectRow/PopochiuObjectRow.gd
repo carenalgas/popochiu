@@ -37,18 +37,28 @@ func show_add_to_core() -> void:
 # mostrar a un personaje en una habitación, etc.).
 func _add_object_to_core() -> void:
 	var popochiu: Popochiu = main_dock.get_popochiu()
+	var target_array: Array
+	var resource: Resource
 	
 	match type:
-		'character', 'room', 'inventory_item':
-			if popochiu.characters.empty():
-				popochiu.characters = [load(path.replace('.tscn', '.tres'))]
-			else:
-				popochiu.characters.append(load(path.replace('.tscn', '.tres')))
+		'room':
+			target_array = popochiu.rooms
+		'character':
+			target_array = popochiu.characters
+		'inventory_item':
+			target_array = popochiu.inventory_items
 		'dialog':
-			if popochiu.dialogs.empty():
-				popochiu.dialogs = [load(path)]
-			else:
-				popochiu.dialogs.append(load(path))
+			target_array = popochiu.dialogs
+	
+	if path.find('.tscn') > -1:
+		resource = load(path.replace('.tscn', '.tres'))
+	else:
+		resource = load(path)
+	
+	if target_array.empty():
+		target_array = [resource]
+	else:
+		target_array.append(resource)
 	
 	if main_dock.save_popochiu() != OK:
 		push_error('No se pudo agregar el objeto a Popochiu: %s' %\

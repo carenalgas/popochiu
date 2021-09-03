@@ -29,7 +29,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/Popochiu/Editor/Popups/CreationPopup.gd"
 }, {
-"base": "Container",
+"base": "Reference",
 "class": "DialogMenu",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogMenu/DialogMenu.gd"
@@ -39,12 +39,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/Dialog/DialogOption.gd"
 }, {
-"base": "RichTextLabel",
+"base": "Reference",
 "class": "DialogText",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/DialogText.gd"
 }, {
-"base": "Label",
+"base": "Reference",
 "class": "DisplayBox",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/DisplayBox/DisplayBox.gd"
@@ -54,7 +54,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/aseprite_importer/classes/EditorTheme.gd"
 }, {
-"base": "Control",
+"base": "Reference",
 "class": "History",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/History/History.gd"
@@ -64,7 +64,7 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/Hotspot/Hotspot.gd"
 }, {
-"base": "Control",
+"base": "Reference",
 "class": "InventoryContainer",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/InventoryContainer.gd"
@@ -134,12 +134,12 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/Region/Region.gd"
 }, {
-"base": "NinePatchRect",
+"base": "Reference",
 "class": "Toolbar",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/Toolbar.gd"
 }, {
-"base": "TextureButton",
+"base": "Reference",
 "class": "ToolbarButton",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/ToolbarButton.gd"
@@ -179,19 +179,8 @@ _global_script_class_icons={
 config/name="Popochiu"
 config/description="Framework para crear juegos de aventura al estilo de Adventure Game Studio y Power Quest.
 A futuro podría convertirse en un plugin."
-run/main_scene="res://popochiu/Rooms/Main/RoomMain.tscn"
+run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
-
-[autoload]
-
-Utils="*res://addons/Popochiu/Engine/Others/Utils.gd"
-Cursor="*res://addons/Popochiu/Engine/Cursor/Cursor.tscn"
-E="*res://addons/Popochiu/Engine/Popochiu.tscn"
-C="*res://addons/Popochiu/Engine/Interfaces/ICharacter.gd"
-I="*res://addons/Popochiu/Engine/Interfaces/IInventory.gd"
-D="*res://addons/Popochiu/Engine/Interfaces/IDialog.gd"
-G="*res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd"
-Globals="*res://popochiu/Globals.gd"
 
 [debug]
 
@@ -210,7 +199,7 @@ window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/AsepriteWizard/plugin.cfg", "res://addons/Popochiu/plugin.cfg", "res://addons/aseprite_importer/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/AsepriteWizard/plugin.cfg", "res://addons/aseprite_importer/plugin.cfg" )
 
 [importer_defaults]
 

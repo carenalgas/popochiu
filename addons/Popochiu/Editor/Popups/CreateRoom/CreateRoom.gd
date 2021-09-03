@@ -38,7 +38,7 @@ func create() -> void:
 	_main_dock.dir.make_dir(_main_dock.ROOMS_PATH + _new_room_name)
 
 	# Crear el script de la nueva habitación -----------------------------------
-	var room_template := load('res://script_templates/RoomTemplate.gd')
+	var room_template := load('res://addons/Popochiu/Engine/Templates/RoomTemplate.gd')
 	if ResourceSaver.save(_new_room_path + '.gd', room_template) != OK:
 		push_error('No se pudo crear el script de la habitación: %s' %\
 		_new_room_name)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=34 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
-[ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialogTree/CreateDialogTree.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateRoom/CreateRoom.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/GroupButton/PopochiuGroupButton.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateProp/CreateProp.tscn" type="PackedScene" id=5]
@@ -151,7 +151,13 @@ __meta__ = {
 "_tab_disabled": false
 }
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main"]
+[node name="BtnCreateBaseStructure" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main"]
+visible = false
+margin_right = 304.0
+margin_bottom = 20.0
+text = "Crear estructura base"
+
+[node name="MainScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main"]
 margin_right = 304.0
 margin_bottom = 136.0
 size_flags_horizontal = 3
@@ -159,13 +165,13 @@ size_flags_vertical = 3
 follow_focus = true
 scroll_horizontal_enabled = false
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer"]
 margin_right = 292.0
 margin_bottom = 204.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="RoomsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="RoomsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
 margin_bottom = 24.0
 custom_styles/panel = SubResource( 2 )
@@ -174,19 +180,19 @@ target_group = NodePath("../RoomsList")
 color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 title = "Habitaciones"
 
-[node name="RoomsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer"]
+[node name="RoomsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer"]
 margin_top = 28.0
 margin_right = 292.0
 margin_bottom = 48.0
 
-[node name="BtnCreateRoom" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer/RoomsList"]
+[node name="BtnCreateRoom" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer/RoomsList"]
 margin_left = 165.0
 margin_right = 292.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "+ Crear habitación"
 
-[node name="CharactersGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="CharactersGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 52.0
 margin_right = 292.0
 margin_bottom = 76.0
@@ -196,19 +202,19 @@ target_group = NodePath("../CharactersList")
 color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 title = "Personajes"
 
-[node name="CharactersList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer"]
+[node name="CharactersList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer"]
 margin_top = 80.0
 margin_right = 292.0
 margin_bottom = 100.0
 
-[node name="BtnCreateCharacter" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer/CharactersList"]
+[node name="BtnCreateCharacter" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer/CharactersList"]
 margin_left = 168.0
 margin_right = 292.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "+ Crear personaje"
 
-[node name="InventoryItemsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="InventoryItemsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 104.0
 margin_right = 292.0
 margin_bottom = 128.0
@@ -218,19 +224,19 @@ target_group = NodePath("../InventoryItemsList")
 color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 title = "Inventario"
 
-[node name="InventoryItemsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer"]
+[node name="InventoryItemsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer"]
 margin_top = 132.0
 margin_right = 292.0
 margin_bottom = 152.0
 
-[node name="BtnCreateItem" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer/InventoryItemsList"]
+[node name="BtnCreateItem" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer/InventoryItemsList"]
 margin_left = 201.0
 margin_right = 292.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "+ Crear ítem"
 
-[node name="DialogsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="DialogsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 156.0
 margin_right = 292.0
 margin_bottom = 180.0
@@ -240,12 +246,12 @@ target_group = NodePath("../DialogsList")
 color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 title = "Diálogos"
 
-[node name="DialogsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer"]
+[node name="DialogsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer"]
 margin_top = 184.0
 margin_right = 292.0
 margin_bottom = 204.0
 
-[node name="BtnCreateDialog" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/ScrollContainer/VBoxContainer/DialogsList"]
+[node name="BtnCreateDialog" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer/DialogsList"]
 margin_left = 185.0
 margin_right = 292.0
 margin_bottom = 20.0
@@ -264,18 +270,18 @@ __meta__ = {
 "_tab_disabled": false
 }
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room"]
+[node name="RoomScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room"]
 margin_right = 304.0
 margin_bottom = 136.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer"]
 margin_right = 304.0
 margin_bottom = 184.0
 size_flags_horizontal = 3
 
-[node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
+[node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
 visible = false
 margin_right = 304.0
 margin_bottom = 39.0
@@ -284,7 +290,7 @@ custom_styles/normal = SubResource( 6 )
 text = "Seleccione una habitación para ver sus Props, Hotspots y Regions. O crear nuevos."
 autowrap = true
 
-[node name="PropsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="PropsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 304.0
 margin_bottom = 16.0
 custom_styles/panel = SubResource( 7 )
@@ -292,12 +298,12 @@ icon = ExtResource( 12 )
 target_group = NodePath("../PropsList")
 title = "Props"
 
-[node name="PropsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
+[node name="PropsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
 margin_top = 20.0
 margin_right = 304.0
 margin_bottom = 40.0
 
-[node name="BtnCreateProp" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer/PropsList"]
+[node name="BtnCreateProp" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/PropsList"]
 margin_left = 214.0
 margin_right = 304.0
 margin_bottom = 20.0
@@ -305,7 +311,7 @@ size_flags_horizontal = 8
 disabled = true
 text = "+ Crear prop"
 
-[node name="HotspotsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="HotspotsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 44.0
 margin_right = 304.0
 margin_bottom = 60.0
@@ -314,12 +320,12 @@ icon = ExtResource( 13 )
 target_group = NodePath("../HotspotsList")
 title = "Hotspots"
 
-[node name="HotspotsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
+[node name="HotspotsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
 margin_top = 64.0
 margin_right = 304.0
 margin_bottom = 84.0
 
-[node name="BtnCreateHotspot" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer/HotspotsList"]
+[node name="BtnCreateHotspot" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/HotspotsList"]
 margin_left = 194.0
 margin_right = 304.0
 margin_bottom = 20.0
@@ -327,7 +333,7 @@ size_flags_horizontal = 8
 disabled = true
 text = "+ Crear hotspot"
 
-[node name="RegionsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="RegionsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 88.0
 margin_right = 304.0
 margin_bottom = 104.0
@@ -336,12 +342,12 @@ icon = ExtResource( 16 )
 target_group = NodePath("../RegionsList")
 title = "Regiones"
 
-[node name="RegionsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
+[node name="RegionsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
 margin_top = 108.0
 margin_right = 304.0
 margin_bottom = 128.0
 
-[node name="BtnCreateRegion" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer/RegionsList"]
+[node name="BtnCreateRegion" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/RegionsList"]
 margin_left = 203.0
 margin_right = 304.0
 margin_bottom = 20.0
@@ -349,7 +355,7 @@ size_flags_horizontal = 8
 disabled = true
 text = "+ Crear región"
 
-[node name="PointsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+[node name="PointsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 88.0
 margin_right = 304.0
 margin_bottom = 104.0
@@ -358,7 +364,7 @@ icon = ExtResource( 17 )
 target_group = NodePath("../PointsList")
 title = "Puntos"
 
-[node name="PointsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/ScrollContainer/VBoxContainer"]
+[node name="PointsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
 margin_top = 108.0
 margin_right = 304.0
 margin_bottom = 128.0
@@ -371,6 +377,9 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+__meta__ = {
+"_tab_disabled": false
+}
 
 [node name="PlayerInterface" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false
@@ -380,6 +389,9 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+__meta__ = {
+"_tab_disabled": false
+}
 
 [node name="Popups" type="Control" parent="."]
 __meta__ = {
