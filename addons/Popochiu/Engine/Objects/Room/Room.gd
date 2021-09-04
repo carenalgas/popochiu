@@ -61,8 +61,8 @@ func _process(delta):
 
 func _unhandled_input(event):
 	if not has_player: return
-	if not event.is_action_pressed('interact'):
-		if event.is_action_released('look'):
+	if not event.is_action_pressed('popochiu-interact'):
+		if event.is_action_released('popochiu-look'):
 			if I.active: I.set_active_item()
 		return
 

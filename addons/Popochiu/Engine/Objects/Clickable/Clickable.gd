@@ -39,7 +39,7 @@ func _unhandled_input(event):
 	var mouse_event: = event as InputEventMouseButton 
 	if mouse_event and mouse_event.pressed:
 		E.clicked = self
-		if event.is_action_pressed('interact'):
+		if event.is_action_pressed('popochiu-interact'):
 			# TODO: Verificar si hay un elemento de inventario seleccionado
 			get_tree().set_input_as_handled()
 			if I.active:
@@ -49,7 +49,7 @@ func _unhandled_input(event):
 					action = 'Interacted with: %s' % description
 				})
 				on_interact()
-		elif event.is_action_pressed('look'):
+		elif event.is_action_pressed('popochiu-look'):
 			if not I.active:
 				E.add_history({
 					action = 'Looked at: %s' % description

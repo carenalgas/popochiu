@@ -43,21 +43,24 @@ func create() -> void:
 	# TODO: Verificar si no hay ya una prop en el mismo PATH.
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
-	# Crear el directorio donde se guardará la nueva prop ----------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el directorio donde se guardará la nueva prop
 	if not _main_dock.dir.dir_exists(_room_dir + '/Props'):
 		if _main_dock.dir.make_dir(_room_dir + '/Props') != OK:
 			push_error('No se pudo crear el directorio de Props de ' +\
 			_room_path.get_file())
-
-	# Crear el script de la prop (si tiene interacción) ------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el script de la prop (si tiene interacción)
 	if _interaction_checkbox.pressed:
 		var prop_template := load(PROP_SCRIPT_TEMPLATE)
 		if ResourceSaver.save(_new_prop_path + '.gd', prop_template) != OK:
 			push_error('No se pudo crear el script: %s.gd' % _new_prop_name)
 			# TODO: Mostrar retroalimentación en el mismo popup
 			return
-
-	# Crear la prop a agregar a la habitación ----------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear la prop a agregar a la habitación
 	var prop: Prop = ResourceLoader.load(BASE_PROP_PATH).instance()
 	if _interaction_checkbox.pressed:
 		prop.set_script(ResourceLoader.load(_new_prop_path + '.gd'))
@@ -66,19 +69,23 @@ func create() -> void:
 	prop.description = _new_prop_name
 	prop.clickable = _interaction_checkbox.pressed
 	prop.cursor = Cursor.Type.USE
-
-	# Agregar la prop a su habitación ------------------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Agregar la prop a su habitación
 	_main_dock.opened_room.get_node('Props').add_child(prop)
 	prop.owner = _main_dock.opened_room
 	_main_dock.ei.save_scene()
 	
-	# Actualizar la lista de props de la habitación ----------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Actualizar la lista de props de la habitación
 	_main_dock.add_to_list('prop', _new_prop_name)
-
-	# Abrir las propiedades de la prop creada en el Inspector ------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Abrir las propiedades de la prop creada en el Inspector
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.edit_node(prop)
-
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
 	hide()
 

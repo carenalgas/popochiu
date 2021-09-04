@@ -75,7 +75,7 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_released('skip'):
+	if event.is_action_released('popochiu-skip'):
 		cutscene_skipped = true
 		$TransitionLayer.play_transition('pass_down_in', skip_cutscene_time)
 		yield($TransitionLayer, 'transition_finished')
@@ -131,7 +131,7 @@ func run(instructions: Array, show_gi := true) -> void:
 	_running = false
 
 
-# Es como run, pero salta la secuencia de acciones si se presiona la acción 'skip'.
+# Es como run, pero salta la secuencia de acciones si se presiona la acción 'popochiu-skip'.
 func run_cutscene(instructions: Array) -> void:
 	set_process_input(true)
 	yield(run(instructions), 'completed')

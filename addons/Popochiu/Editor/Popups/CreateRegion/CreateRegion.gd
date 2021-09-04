@@ -37,20 +37,23 @@ func create() -> void:
 	# TODO: Verificar si no hay ya una Region en el mismo PATH.
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
-	# Crear el directorio donde se guardará la región --------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el directorio donde se guardará la región
 	if not _main_dock.dir.dir_exists(_room_dir + '/Regions'):
 		if _main_dock.dir.make_dir(_room_dir + '/Regions') != OK:
 			push_error('No se pudo crear el directorio de Regions de ' +\
 			_room_path.get_file())
-
-	# Crear el script de la región ---------------------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el script de la región
 	var region_template := load(SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_region_path + '.gd', region_template) != OK:
 		push_error('No se pudo crear el script: %s.gd' % _new_region_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-
-	# Crear la región a agregar a la habitación --------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear la región a agregar a la habitación
 	var region: Region = ResourceLoader.load(REGION_SCENE).instance()
 	region.set_script(ResourceLoader.load(_new_region_path + '.gd'))
 	region.name = _new_region_name
@@ -60,19 +63,23 @@ func create() -> void:
 	var collision_shape: CollisionPolygon2D = CollisionPolygon2D.new()
 	region.add_child(collision_shape)
 	collision_shape.owner = region
-
-	# Agregar la región a su habitación ----------------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Agregar la región a su habitación
 	_main_dock.opened_room.get_node('Regions').add_child(region)
 	region.owner = _main_dock.opened_room
 	_main_dock.ei.save_scene()
 	
-	# Actualizar la lista de regiones de la habitación -------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Actualizar la lista de regiones de la habitación
 	_main_dock.add_to_list('region', _new_region_name)
-
-	# Abrir las propiedades de la región creada en el Inspector ----------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Abrir las propiedades de la región creada en el Inspector
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.edit_node(region)
-
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
 	hide()
 

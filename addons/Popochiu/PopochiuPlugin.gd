@@ -24,6 +24,7 @@ var _editor_interface := get_editor_interface()
 var _editor_file_system := _editor_interface.get_resource_filesystem()
 var _directory := Directory.new()
 var _is_first_install := false
+var _input_actions := preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -34,7 +35,6 @@ func _init() -> void:
 		# Si no, crear carpetas, mover archivos y actualizar Popochiu.tscn.
 		_init_file_structure()
 	
-#	if not _is_first_install:
 	# Cargar los singleton para acceder directamente a objetos de Popochiu
 	add_autoload_singleton('Utils', UTILS_SNGL)
 	add_autoload_singleton('Cursor', CURSOR_SNGL)
@@ -46,30 +46,21 @@ func _init() -> void:
 	add_autoload_singleton('Globals', GLOBALS_SNGL)
 
 
-func enable_plugin() -> void:
-	prints('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
-	var wd := AcceptDialog.new()
-	wd.window_title = 'El reiniciador'
-	wd.dialog_text = 'Toca que reinicie el motor pa que funcione el Popochiu'
-	_editor_interface.get_base_control().add_child(wd)
-	wd.popup_centered()
-
-
 func _enter_tree() -> void:
 	if not _is_first_install:
 		prints('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
+
 		main_dock = preload(MAIN_DOCK_PATH).instance()
 		main_dock.ei = _editor_interface
 		main_dock.fs = _editor_file_system
 
-		add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
+		add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 		connect('scene_changed', main_dock, 'scene_changed')
 		
 		# Llenar las listas de habitaciones, personajes, objetos de inventario
 		# y árboles de diálogo.
 		yield(get_tree().create_timer(1.0), 'timeout')
 		main_dock.fill_data()
-
 		main_dock.grab_focus()
 
 
@@ -85,6 +76,23 @@ func _exit_tree() -> void:
 		remove_autoload_singleton('Globals')
 
 		remove_control_from_docks(main_dock)
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+func enable_plugin() -> void:
+	_create_input_actions()
+	
+	# Mostrar la ventana de diálogo para pedirle a la desarrolladora que reinicie
+	# el motor.
+	var ad := AcceptDialog.new()
+	ad.window_title = 'El reiniciador'
+	ad.dialog_text = 'Toca que reinicie el motor pa que funcione el Popochiu.'
+	_editor_interface.get_base_control().add_child(ad)
+	ad.popup_centered()
+
+
+func disable_plugin() -> void:
+	_remove_input_actions()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -115,3 +123,42 @@ func _get_directories() -> Dictionary:
 		INVENTORY_ITEMS = BASE_DIR + '/InventoryItems',
 		DIALOGS = BASE_DIR + '/Dialogs',
 	}
+
+
+func _create_input_actions() -> void:
+	# Registrar los Input de interact, look y skip
+	# Gracias QuentinCaffeino :) ()
+	for d in _input_actions.ACTIONS:
+		var setting_name = 'input/' + d.name
+		
+		if not ProjectSettings.has_setting(setting_name):
+			var event: InputEvent
+			
+			if d.has('button'):
+				event = InputEventMouseButton.new()
+				event.button_index = d.button
+			elif d.has('key'):
+				event = InputEventKey.new()
+				event.scancode = d.key
+			
+			ProjectSettings.set_setting(
+				setting_name,
+				{
+					deadzone = float(d.deadzone if d.has('deadzone') else 0.5),
+					events = [event]
+				}
+			)
+
+	var result = ProjectSettings.save()
+	assert(result == OK, 'Failed to save project settings')
+
+
+func _remove_input_actions() -> void:
+	for d in _input_actions.ACTIONS:
+		var setting_name = 'input/' + d.name
+		
+		if ProjectSettings.has_setting(setting_name):
+			ProjectSettings.clear(setting_name)
+	
+	var result = ProjectSettings.save()
+	assert(result == OK, 'Failed to save project settings')
