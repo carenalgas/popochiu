@@ -33,17 +33,20 @@ func create() -> void:
 	# TODO: Verificar si no hay ya un ítem en el mismo PATH.
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
-	# Crear el directorio donde se guardará el nuevo ítem ----------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el directorio donde se guardará el nuevo ítem
 	_main_dock.dir.make_dir(_main_dock.INVENTORY_ITEMS_PATH + _new_item_name)
-
-	# Crear el script del nuevo ítem -------------------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el script del nuevo ítem
 	var item_template := load(INVENTORY_ITEM_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_item_path + '.gd', item_template) != OK:
 		push_error('No se pudo crear el script: %s.gd' % _new_item_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-
-	# Crear la instancia del nuevo ítem y asignarle el script creado -----------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear la instancia del nuevo ítem y asignarle el script creado
 	var new_item: InventoryItem = preload(BASE_INVENTORY_ITEM_PATH).instance()
 	#	Primero se asigna el script para que no se vayan a sobrescribir otras
 	#	propiedades por culpa de esa asignación.
@@ -53,7 +56,8 @@ func create() -> void:
 	new_item.size_flags_horizontal = new_item.SIZE_EXPAND
 	new_item.size_flags_vertical = new_item.SIZE_EXPAND
 	
-	# Crear el archivo de la escena --------------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el archivo de la escena
 	var new_item_packed_scene: PackedScene = PackedScene.new()
 	new_item_packed_scene.pack(new_item)
 	if ResourceSaver.save(_new_item_path + '.tscn', new_item_packed_scene) != OK:
@@ -61,7 +65,8 @@ func create() -> void:
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
-	# Crear el Resource del ítem -----------------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el Resource del ítem
 	var item_resource: PopochiuInventoryItemData = PopochiuInventoryItemData.new()
 	item_resource.script_name = _new_item_name
 	item_resource.scene = _new_item_path + '.tscn'
@@ -72,27 +77,28 @@ func create() -> void:
 		_new_item_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-
-	# Agregar el ítem al Popochiu ----------------------------------------------
-	var popochiu: Node = ResourceLoader.load(_main_dock.POPOCHIU_SCENE).instance()
-	popochiu.inventory_items.append(ResourceLoader.load(_new_item_path + '.tres'))
-	var new_popochiu: PackedScene = PackedScene.new()
-	new_popochiu.pack(popochiu)
-	if ResourceSaver.save(_main_dock.POPOCHIU_SCENE, new_popochiu) != OK:
-		push_error('No se pudo agregar el ítem a GAQ: %s' %\
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Agregar el ítem al Popochiu
+	if _main_dock.add_resource_to_popochiu(
+		'inventory_items', ResourceLoader.load(_new_item_path + '.tres')
+	) != OK:
+		push_error('No se pudo agregar el objeto de inventario a Popochiu: %s' %\
 		_new_item_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-	_main_dock.ei.reload_scene_from_path(_main_dock.POPOCHIU_SCENE)
 	
-	# Actualizar la lista de habitaciones en el Dock ---------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Actualizar la lista de habitaciones en el Dock
 	_main_dock.add_to_list('inventory_item', _new_item_name)
-
-	# Abrir la escena creada en el editor --------------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Abrir la escena creada en el editor
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.select_file(_new_item_path + '.tscn')
 	_main_dock.ei.open_scene_from_path(_new_item_path + '.tscn')
 	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
 	hide()
 

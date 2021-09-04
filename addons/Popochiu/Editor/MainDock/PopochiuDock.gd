@@ -15,11 +15,10 @@ const DIALOGS_PATH := 'res://popochiu/Dialogs/'
 var ei: EditorInterface
 var fs: EditorFileSystem
 var dir := Directory.new()
-#var opened_room: PopochiuRoom = null
-var opened_room: Area2D = null
-#var popochiu: Popochiu = null
-var popochiu: Node = null
-var is_empty := false
+var opened_room: PopochiuRoom = null
+#var opened_room: Area2D = null
+var popochiu: Popochiu = null
+#var popochiu: Node = null
 
 var _has_data := false
 
@@ -116,20 +115,14 @@ func _ready() -> void:
 	_tab_container.set_tab_disabled(2, false)
 	_tab_container.set_tab_disabled(3, false)
 	_no_room_info.hide()
-	_btn_create_structure.hide()
-	_main_scroll_container.hide()
 	
-	if is_empty:
-		_btn_create_structure.show()
-	else:
-		_main_scroll_container.show()
-		for t in _types:
-			_types[t].popup.set_main_dock(self)
-			(_types[t].button as Button).connect(
-				'pressed', self, '_open_popup', [_types[t].popup]
-			)
-		
-		_tab_container.connect('tab_changed', self, '_on_tab_changed')
+	for t in _types:
+		_types[t].popup.set_main_dock(self)
+		(_types[t].button as Button).connect(
+			'pressed', self, '_open_popup', [_types[t].popup]
+		)
+	
+	_tab_container.connect('tab_changed', self, '_on_tab_changed')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -152,16 +145,16 @@ func fill_data() -> void:
 				
 				var resource: Resource = load(path)
 				
-#				if not (resource is PopochiuRoomData
-#				or resource is PopochiuCharacterData
-#				or resource is PopochiuInventoryItemData
-#				or resource is PopochiuDialog):
-#					continue
+				if not (resource is PopochiuRoomData
+				or resource is PopochiuCharacterData
+				or resource is PopochiuInventoryItemData
+				or resource is PopochiuDialog):
+					continue
 				
 				_has_data = true
 
-#				var row: PopochiuObjectRow = _create_object_row(
-				var row: HBoxContainer = _create_object_row(
+#				var row: HBoxContainer = _create_object_row(
+				var row: PopochiuObjectRow = _create_object_row(
 					t, resource.script_name
 				)
 				_types[t].list.add_child(row)
@@ -195,6 +188,8 @@ func add_to_list(type: String, name_to_add: String) -> void:
 	_types[type].list.move_child(
 		_types[type].button, _types[type].list.get_child_count()
 	)
+	
+	_has_data = true
 
 
 func scene_changed(scene_root: Node) -> void:
@@ -211,8 +206,8 @@ func scene_changed(scene_root: Node) -> void:
 	_regions_group.clear_list()
 	_points_group.clear_list()
 	
-#	if scene_root is PopochiuRoom:
-	if scene_root is Area2D:
+#	if scene_root is Area2D:
+	if scene_root is PopochiuRoom:
 		# Actualizar la información de la habitación que se abrió
 		opened_room = scene_root
 
@@ -222,21 +217,21 @@ func scene_changed(scene_root: Node) -> void:
 
 		# Llenar la lista de props
 		for p in opened_room.get_props():
-#			if p is Prop:
-			if p is Area2D:
+#			if p is Area2D:
+			if p is Prop:
 				var lbl: Label = Label.new()
-#				lbl.text = (p as Prop).name
-				lbl.text = (p as Area2D).name
+				lbl.text = (p as Prop).name
+#				lbl.text = (p as Area2D).name
 				_props_list.add_child(lbl)
 		_props_list.move_child(_props_btn, _props_list.get_child_count())
 		
 		# Llenar la lista de hotspots
 		for h in opened_room.get_hotspots():
-#			if h is Hotspot:
-			if h is Area2D:
+			if h is Hotspot:
+#			if h is Area2D:
 				var lbl: Label = Label.new()
-#				lbl.text = (h as Hotspot).name
-				lbl.text = (h as Area2D).name
+				lbl.text = (h as Hotspot).name
+#				lbl.text = (h as Area2D).name
 				_hotspots_list.add_child(lbl)
 		_hotspots_list.move_child(
 			_hotspots_btn, _hotspots_list.get_child_count()
@@ -244,11 +239,11 @@ func scene_changed(scene_root: Node) -> void:
 		
 		# Llenar la lista de regiones
 		for r in opened_room.get_regions():
-#			if r is Region:
-			if r is Area2D:
+			if r is Region:
+#			if r is Area2D:
 				var lbl: Label = Label.new()
-#				lbl.text = (r as Region).name
-				lbl.text = (r as Area2D).name
+				lbl.text = (r as Region).name
+#				lbl.text = (r as Area2D).name
 				_regions_list.add_child(lbl)
 		_regions_list.move_child(_regions_btn, _regions_list.get_child_count())
 		
@@ -273,6 +268,17 @@ func get_popochiu() -> Node:
 	popochiu.free()
 	popochiu = load(POPOCHIU_SCENE).instance()
 	return popochiu
+
+
+func add_resource_to_popochiu(target: String, resource: Resource) -> int:
+	get_popochiu()
+	
+	if popochiu[target].empty():
+		popochiu[target] = [resource]
+	else:
+		popochiu[target].append(resource)
+	
+	return save_popochiu()
 
 
 func save_popochiu() -> int:
@@ -307,10 +313,10 @@ func _open_popup(popup: Popup) -> void:
 	popup.popup_centered_clamped(Vector2(640, 360))
 
 
-#func _create_object_row(type: String, name_to_add: String) -> PopochiuObjectRow:
-func _create_object_row(type: String, name_to_add: String) -> HBoxContainer:
-#	var new_obj: PopochiuObjectRow = _object_row.instance()
-	var new_obj: HBoxContainer = _object_row.instance()
+func _create_object_row(type: String, name_to_add: String) -> PopochiuObjectRow:
+#func _create_object_row(type: String, name_to_add: String) -> HBoxContainer:
+	var new_obj: PopochiuObjectRow = _object_row.instance()
+#	var new_obj: HBoxContainer = _object_row.instance()
 
 	new_obj.name = name_to_add
 	new_obj.type = type

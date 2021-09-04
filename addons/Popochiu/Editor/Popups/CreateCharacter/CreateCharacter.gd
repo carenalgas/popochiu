@@ -31,17 +31,20 @@ func create() -> void:
 	# TODO: Verificar si no hay ya un personaje en el mismo PATH.
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
-	# Crear el directorio donde se guardará el nuevo personaje -----------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el directorio donde se guardará el nuevo personaje
 	_main_dock.dir.make_dir(_main_dock.CHARACTERS_PATH + _new_character_name)
 
-	# Crear el script del nuevo personaje --------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el script del nuevo personaje
 	var character_template := load(CHARACTER_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_character_path + '.gd', character_template) != OK:
 		push_error('No se pudo crear el script: %s.gd' % _new_character_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 
-	# Crear la instancia del nuevo personaje y asignarle el script creado ------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear la instancia del nuevo personaje y asignarle el script creado
 	var new_character: PopochiuCharacter = preload(CHARACTER_SCENE).instance()
 	#	Primero se asigna el script para que no se vayan a sobrescribir otras
 	#	propiedades por culpa de esa asignación.
@@ -51,7 +54,8 @@ func create() -> void:
 	new_character.description = _new_character_name
 	new_character.cursor = Cursor.Type.TALK
 	
-	# Crear el archivo de la escena --------------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el archivo de la escena
 	var new_character_packed_scene: PackedScene = PackedScene.new()
 	new_character_packed_scene.pack(new_character)
 	if ResourceSaver.save(_new_character_path + '.tscn',\
@@ -60,7 +64,8 @@ func create() -> void:
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
-	# Crear el Resource del personaje ------------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el Resource del personaje
 	var character_resource: PopochiuCharacterData = PopochiuCharacterData.new()
 	character_resource.script_name = _new_character_name
 	character_resource.scene = _new_character_path + '.tscn'
@@ -71,27 +76,28 @@ func create() -> void:
 		_new_character_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-
-	# Agregar el personaje al Popochiu -----------------------------------------
-	var popochiu: Node = ResourceLoader.load(_main_dock.POPOCHIU_SCENE).instance()
-	popochiu.characters.append(ResourceLoader.load(_new_character_path + '.tres'))
-	var new_popochiu: PackedScene = PackedScene.new()
-	new_popochiu.pack(popochiu)
-	if ResourceSaver.save(_main_dock.POPOCHIU_SCENE, new_popochiu) != OK:
-		push_error('No se pudo agregar el personaje a GAQ: %s' %\
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Agregar el personaje al Popochiu
+	if _main_dock.add_resource_to_popochiu(
+		'characters', ResourceLoader.load(_new_character_path + '.tres')
+	) != OK:
+		push_error('No se pudo agregar el personaje a Popochiu: %s' %\
 		_new_character_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-	_main_dock.ei.reload_scene_from_path(_main_dock.POPOCHIU_SCENE)
 	
-	# Actualizar la lista de habitaciones en el Dock ---------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Actualizar la lista de habitaciones en el Dock
 	_main_dock.add_to_list('character', _new_character_name)
-
-	# Abrir la escena creada en el editor --------------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Abrir la escena creada en el editor
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.select_file(_new_character_path + '.tscn')
 	_main_dock.ei.open_scene_from_path(_new_character_path + '.tscn')
 	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
 	hide()
 

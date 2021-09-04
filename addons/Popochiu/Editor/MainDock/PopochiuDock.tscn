@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=2]
+[gd_scene load_steps=32 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
@@ -19,11 +19,6 @@
 [ext_resource path="res://addons/Popochiu/icons/point.png" type="Texture" id=17]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIRegular.tres" type="DynamicFont" id=18]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIBold.tres" type="DynamicFont" id=19]
-
-[sub_resource type="StyleBoxFlat" id=1]
-content_margin_top = 2.0
-content_margin_bottom = 4.0
-bg_color = Color( 0.556863, 0.235294, 0.592157, 1 )
 
 [sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
@@ -71,17 +66,6 @@ bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
 [sub_resource type="StyleBoxEmpty" id=11]
 
-[sub_resource type="StyleBoxFlat" id=12]
-content_margin_left = 4.0
-content_margin_right = 4.0
-content_margin_top = 4.0
-content_margin_bottom = 4.0
-bg_color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
-
 [sub_resource type="StyleBoxEmpty" id=13]
 
 [sub_resource type="StyleBoxEmpty" id=14]
@@ -113,20 +97,6 @@ margin_right = 316.0
 margin_bottom = 176.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-
-[node name="Title" type="Label" parent="MarginContainer/VBoxContainer"]
-visible = false
-margin_right = 312.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 0, 32 )
-size_flags_horizontal = 3
-size_flags_vertical = 0
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-custom_styles/normal = SubResource( 1 )
-text = "--- P o p o c h i u ---"
-align = 1
-valign = 1
-uppercase = true
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
 margin_right = 312.0
@@ -438,7 +408,7 @@ __meta__ = {
 
 [node name="Message" type="RichTextLabel" parent="Popups/DeleteConfirmation/VBoxContainer"]
 margin_right = 624.0
-margin_bottom = 21.0
+margin_bottom = 19.0
 size_flags_horizontal = 3
 custom_fonts/bold_font = ExtResource( 19 )
 custom_fonts/normal_font = ExtResource( 18 )
@@ -450,21 +420,22 @@ fit_content_height = true
 scroll_active = false
 
 [node name="PanelContainer" type="PanelContainer" parent="Popups/DeleteConfirmation/VBoxContainer"]
-margin_top = 25.0
+margin_top = 23.0
 margin_right = 624.0
-margin_bottom = 57.0
-custom_styles/panel = SubResource( 12 )
+margin_bottom = 55.0
+custom_styles/panel = SubResource( 6 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Popups/DeleteConfirmation/VBoxContainer/PanelContainer"]
-margin_left = 4.0
+margin_left = 8.0
 margin_top = 4.0
-margin_right = 620.0
+margin_right = 616.0
 margin_bottom = 28.0
 
 [node name="Ask" type="RichTextLabel" parent="Popups/DeleteConfirmation/VBoxContainer/PanelContainer/HBoxContainer"]
-margin_right = 588.0
+margin_right = 580.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
+custom_colors/default_color = Color( 0.768627, 0.423529, 0.443137, 1 )
 custom_fonts/bold_font = ExtResource( 19 )
 custom_fonts/normal_font = ExtResource( 18 )
 custom_styles/normal = SubResource( 13 )
@@ -475,7 +446,7 @@ fit_content_height = true
 scroll_active = false
 
 [node name="CheckBox" type="CheckBox" parent="Popups/DeleteConfirmation/VBoxContainer/PanelContainer/HBoxContainer"]
-margin_left = 592.0
-margin_right = 616.0
+margin_left = 584.0
+margin_right = 608.0
 margin_bottom = 24.0
 custom_styles/focus = SubResource( 14 )

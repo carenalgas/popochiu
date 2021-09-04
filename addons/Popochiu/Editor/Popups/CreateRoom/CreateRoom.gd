@@ -34,10 +34,12 @@ func create() -> void:
 	# TODO: Verificar si no hay ya una habitación en el mismo PATH.
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
-	# Crear el directorio donde se guardará la nueva habitación ----------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el directorio donde se guardará la nueva habitación
 	_main_dock.dir.make_dir(_main_dock.ROOMS_PATH + _new_room_name)
 
-	# Crear el script de la nueva habitación -----------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el script de la nueva habitación
 	var room_template := load('res://addons/Popochiu/Engine/Templates/RoomTemplate.gd')
 	if ResourceSaver.save(_new_room_path + '.gd', room_template) != OK:
 		push_error('No se pudo crear el script de la habitación: %s' %\
@@ -45,7 +47,8 @@ func create() -> void:
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 
-	# Crear la instancia de la nueva habitación y asignarle el script creado ---
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear la instancia de la nueva habitación y asignarle el script creado
 	var new_room: PopochiuRoom = preload(BASE_ROOM_PATH).instance()
 	#	Primero se asigna el script para que no se vayan a sobrescribir otras
 	#	propiedades por culpa de esa asignación.
@@ -53,7 +56,8 @@ func create() -> void:
 	new_room.script_name = _new_room_name
 	new_room.name = 'Room' + _new_room_name
 	
-	# Crear el archivo de la escena --------------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el archivo de la escena
 	var new_room_packed_scene: PackedScene = PackedScene.new()
 	new_room_packed_scene.pack(new_room)
 	if ResourceSaver.save(_new_room_path + '.tscn', new_room_packed_scene) != OK:
@@ -61,7 +65,8 @@ func create() -> void:
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
-	# Crear el Resource de la habitación ---------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el Resource de la habitación
 	var room_resource: PopochiuRoomData = PopochiuRoomData.new()
 	room_resource.script_name = _new_room_name
 	room_resource.scene = _new_room_path + '.tscn'
@@ -72,26 +77,27 @@ func create() -> void:
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 
-	# Agregar la habitación al Popochiu ----------------------------------------
-	var popochiu: Node = ResourceLoader.load(_main_dock.POPOCHIU_SCENE).instance()
-	popochiu.rooms.append(ResourceLoader.load(_new_room_path + '.tres'))
-	var new_popochiu: PackedScene = PackedScene.new()
-	new_popochiu.pack(popochiu)
-	if ResourceSaver.save(_main_dock.POPOCHIU_SCENE, new_popochiu) != OK:
-		push_error('No se pudo agregar la habitación a GAQ: %s' %\
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Agregar la habitación al Popochiu
+	if _main_dock.add_resource_to_popochiu(
+		'rooms', ResourceLoader.load(_new_room_path + '.tres')
+	) != OK:
+		push_error('No se pudo agregar la habitación a Popochiu: %s' %\
 		_new_room_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-	_main_dock.ei.reload_scene_from_path(_main_dock.POPOCHIU_SCENE)
 	
-	# Actualizar la lista de habitaciones en el Dock ---------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Actualizar la lista de habitaciones en el Dock
 	_main_dock.add_to_list('room', _new_room_name)
 	
-	# Abrir la escena creada en el editor --------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Abrir la escena creada en el editor
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.select_file(_new_room_path + '.tscn')
 	_main_dock.ei.open_scene_from_path(_new_room_path + '.tscn')
 	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
 	hide()
 

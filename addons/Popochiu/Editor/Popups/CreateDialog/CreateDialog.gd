@@ -30,17 +30,20 @@ func create() -> void:
 	# TODO: Verificar si no hay ya un diálogo en el mismo PATH.
 	# TODO: Eliminar archivos creados si la creación no se completa.
 	
-	# Crear el directorio donde se guardará el nuevo diálogo -------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el directorio donde se guardará el nuevo diálogo
 	_main_dock.dir.make_dir(_main_dock.DIALOGS_PATH + _new_dialog_name)
-
-	# Crear el script del nuevo diálogo ----------------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el script del nuevo diálogo
 	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_dialog_path + '.gd', dialog_template) != OK:
 		push_error('No se pudo crear el script: %s.gd' % _new_dialog_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
-	# Crear el Resource del diálogo --------------------------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Crear el Resource del diálogo
 	var dialog_resource := PopochiuDialog.new()
 	dialog_resource.set_script(load(_new_dialog_path + '.gd'))
 	dialog_resource.script_name = _new_dialog_name
@@ -49,27 +52,28 @@ func create() -> void:
 		push_error('No se pudo crear el Resource: %s' %_new_dialog_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-
-	# Agregar el diálogo al Popochiu -------------------------------------------
-	var popochiu: Popochiu = ResourceLoader.load(_main_dock.POPOCHIU_SCENE).instance()
-	popochiu.dialogs.append(ResourceLoader.load(_new_dialog_path + '.tres'))
-	var new_popochiu: PackedScene = PackedScene.new()
-	new_popochiu.pack(popochiu)
-	if ResourceSaver.save(_main_dock.POPOCHIU_SCENE, new_popochiu) != OK:
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Agregar el diálogo al Popochiu
+	if _main_dock.add_resource_to_popochiu(
+		'dialogs', ResourceLoader.load(_new_dialog_path + '.tres')
+	) != OK:
 		push_error('No se pudo agregar el diálogo a Popochiu: %s' %\
 		_new_dialog_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
-	_main_dock.ei.reload_scene_from_path(_main_dock.POPOCHIU_SCENE)
 	
-	# Actualizar la lista de habitaciones en el Dock ---------------------------
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Actualizar la lista de habitaciones en el Dock
 	_main_dock.add_to_list('dialog', _new_dialog_name)
-
-	# Abrir el diálogo en el Inspector -----------------------------------------
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Abrir el diálogo en el Inspector
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.select_file(_new_dialog_path + '.tres')
 	_main_dock.ei.edit_resource(load(_new_dialog_path + '.tres'))
-
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
 	hide()
 

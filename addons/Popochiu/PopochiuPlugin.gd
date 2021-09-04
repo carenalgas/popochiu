@@ -23,7 +23,6 @@ var main_dock: Panel
 var _editor_interface := get_editor_interface()
 var _editor_file_system := _editor_interface.get_resource_filesystem()
 var _directory := Directory.new()
-var _has_base_dir := true
 var _is_first_install := false
 
 
@@ -34,72 +33,48 @@ func _init() -> void:
 		# Verificar si existe la carpeta donde irán los elementos del juego.
 		# Si no, crear carpetas, mover archivos y actualizar Popochiu.tscn.
 		_init_file_structure()
-		_has_base_dir = _directory.dir_exists(BASE_DIR) \
-		and _directory.file_exists(BASE_DIR + '/Globals.gd')
 	
-	if _has_base_dir:
-		# Cargar los singleton para acceder directamente a objetos de Popochiu
-		add_autoload_singleton('Utils', UTILS_SNGL)
-		add_autoload_singleton('Cursor', CURSOR_SNGL)
-		add_autoload_singleton('E', POPOCHIU_SNGL)
-		add_autoload_singleton('C', ICHARACTER_SNGL)
-		add_autoload_singleton('I', IINVENTORY_SNGL)
-		add_autoload_singleton('D', IDIALOG_SNGL)
-		add_autoload_singleton('G', IGRAPHIC_INTERFACE_SNGL)
-		add_autoload_singleton('Globals', GLOBALS_SNGL)
+#	if not _is_first_install:
+	# Cargar los singleton para acceder directamente a objetos de Popochiu
+	add_autoload_singleton('Utils', UTILS_SNGL)
+	add_autoload_singleton('Cursor', CURSOR_SNGL)
+	add_autoload_singleton('E', POPOCHIU_SNGL)
+	add_autoload_singleton('C', ICHARACTER_SNGL)
+	add_autoload_singleton('I', IINVENTORY_SNGL)
+	add_autoload_singleton('D', IDIALOG_SNGL)
+	add_autoload_singleton('G', IGRAPHIC_INTERFACE_SNGL)
+	add_autoload_singleton('Globals', GLOBALS_SNGL)
+
+
+func enable_plugin() -> void:
+	prints('- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -')
+	var wd := AcceptDialog.new()
+	wd.window_title = 'El reiniciador'
+	wd.dialog_text = 'Toca que reinicie el motor pa que funcione el Popochiu'
+	_editor_interface.get_base_control().add_child(wd)
+	wd.popup_centered()
 
 
 func _enter_tree() -> void:
-	if _has_base_dir:
+	if not _is_first_install:
 		prints('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
 		main_dock = preload(MAIN_DOCK_PATH).instance()
 		main_dock.ei = _editor_interface
 		main_dock.fs = _editor_file_system
-		main_dock.is_empty = !_has_base_dir
 
 		add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
-		
-		# Agregar los tipos de Resource del plugin
-	#	add_custom_type(
-	#		'> PopochiuRoomData',
-	#		'Script',
-	#		preload('res://addons/Popochiu/Engine/Objects/Room/PopochiuRoomData.gd'),
-	#		preload('res://addons/Popochiu/icons/room.png')
-	#	)
-	#	add_custom_type(
-	#		'> PopochiuCharacterData',
-	#		'Script',
-	#		preload('res://addons/Popochiu/Engine/Objects/Character/PopochiuCharacterData.gd'),
-	#		preload('res://addons/Popochiu/icons/character.png')
-	#	)
-	#	add_custom_type(
-	#		'> PopochiuInventoryItemData',
-	#		'Script',
-	#		preload('res://addons/Popochiu/Engine/Objects/InventoryItem/PopochiuInventoryItemData.gd'),
-	#		preload('res://addons/Popochiu/icons/inventory_item.png')
-	#	)
-		
-	#	_editor_file_system.connect("filesystem_changed", self, "_on_filesystem_changed")
 		connect('scene_changed', main_dock, 'scene_changed')
 		
-		if not _is_first_install:
-			# Llenar las listas de habitaciones, personajes, objetos de inventario y
-			# árboles de diálogo.
-			yield(get_tree().create_timer(1.0), 'timeout')
-			main_dock.fill_data()
+		# Llenar las listas de habitaciones, personajes, objetos de inventario
+		# y árboles de diálogo.
+		yield(get_tree().create_timer(1.0), 'timeout')
+		main_dock.fill_data()
 
 		main_dock.grab_focus()
-	else:
-		main_dock = preload(EMPTY_DOCK_PATH).instance()
-		main_dock.ei = _editor_interface
-		main_dock.fs = _editor_file_system
-		main_dock.grab_focus()
-
-		add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
 
 
 func _exit_tree() -> void:
-	if _has_base_dir:
+	if not _is_first_install:
 		remove_autoload_singleton('Utils')
 		remove_autoload_singleton('Cursor')
 		remove_autoload_singleton('E')
@@ -109,15 +84,10 @@ func _exit_tree() -> void:
 		remove_autoload_singleton('G')
 		remove_autoload_singleton('Globals')
 
-	remove_control_from_docks(main_dock)
+		remove_control_from_docks(main_dock)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-#func _on_filesystem_changed() -> void:
-#	prints('Cambiao')
-#	main_dock.fill_data()
-
-
 func _init_file_structure() -> void:
 	var directory := Directory.new()
 	
