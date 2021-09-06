@@ -14,9 +14,12 @@ const IINVENTORY_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
 const IDIALOG_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
 const IGRAPHIC_INTERFACE_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
 const GLOBALS_SNGL = 'res://popochiu/Globals.gd'
-const GLOBALS_SRC = 'res://addons/Popochiu/Engine/Others/Globals.gd'
-const GRAPHIC_INTERFACE_SRC = 'res://addons/Popochiu/Engine/Objects/GraphicInterface/'
-const TRANSITION_LAYER_SRC = 'res://addons/Popochiu/Engine/Objects/TransitionLayer/'
+const GLOBALS_SRC = 'res://addons/Popochiu/Engine/Others/_Globals.gd'
+const GRAPHIC_INTERFACE_SRC = 'res://addons/Popochiu/Engine/Objects/_GraphicInterface/'
+const GRAPHIC_INTERFACE_SCENE := BASE_DIR + '/GraphicInterface/GraphicInterface.tscn'
+const TRANSITION_LAYER_SRC = 'res://addons/Popochiu/Engine/Objects/_TransitionLayer/'
+const TRANSITION_LAYER_SCENE := BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
+const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
 
 var main_dock: Panel
 
@@ -49,11 +52,11 @@ func _init() -> void:
 func _enter_tree() -> void:
 	if not _is_first_install:
 		prints('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
-
+		
 		main_dock = preload(MAIN_DOCK_PATH).instance()
 		main_dock.ei = _editor_interface
 		main_dock.fs = _editor_file_system
-
+		
 		add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 		connect('scene_changed', main_dock, 'scene_changed')
 		
@@ -62,6 +65,8 @@ func _enter_tree() -> void:
 		yield(get_tree().create_timer(1.0), 'timeout')
 		main_dock.fill_data()
 		main_dock.grab_focus()
+		
+		_check_popochiu_dependencies()
 
 
 func _exit_tree() -> void:
@@ -74,7 +79,7 @@ func _exit_tree() -> void:
 		remove_autoload_singleton('D')
 		remove_autoload_singleton('G')
 		remove_autoload_singleton('Globals')
-
+		
 		remove_control_from_docks(main_dock)
 
 
@@ -100,16 +105,21 @@ func _init_file_structure() -> void:
 	var directory := Directory.new()
 	
 	if not directory.dir_exists(BASE_DIR):
-		prints('-------------------------------------', 'Creando lo inicial!!!')
-
+		# Crear la estructura de carpetas
 		for d in _get_directories().values():
 			if not directory.dir_exists(d):
 				directory.make_dir_recursive(d)
-
-		directory.copy(GLOBALS_SRC, GLOBALS_SNGL)
-#		directory.rename(GRAPHIC_INTERFACE_SRC, BASE_DIR + '/GraphicInterface')
-#		directory.rename(TRANSITION_LAYER_SRC, BASE_DIR + '/TransitionLayer')
 		
+		# Copiar archivos y carpetas que las desarrolladoras podrán modificar
+		directory.rename(GLOBALS_SRC, GLOBALS_SNGL)
+		directory.rename(
+			GRAPHIC_INTERFACE_SRC, GRAPHIC_INTERFACE_SCENE.get_base_dir()
+		)
+		directory.rename(
+			TRANSITION_LAYER_SRC, TRANSITION_LAYER_SCENE.get_base_dir()
+		)
+		
+		# Refrescar el FileSystem
 		_editor_file_system.scan()
 		
 		_is_first_install = true
@@ -162,3 +172,94 @@ func _remove_input_actions() -> void:
 	
 	var result = ProjectSettings.save()
 	assert(result == OK, 'Failed to save project settings')
+
+
+func _check_popochiu_dependencies() -> void:
+	# Agregar la interfaz gráfica y la escena de transiciones a Popochiu
+	var popochiu: Node = load(POPOCHIU_SCENE).instance()
+	if popochiu.get_node_or_null('TransitionLayer'): return
+	
+	var result := OK
+
+	prints('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GRAPHIC INTERFACE')
+	# Actualizar dependencias de la GraphicInterface
+	_fix_dependencies(
+		_editor_file_system.get_filesystem_path(
+			GRAPHIC_INTERFACE_SCENE.get_base_dir()
+		)
+	)
+	yield(get_tree().create_timer(0.3), 'timeout')
+	
+	prints('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRANSITION LAYER')
+	# Actualizar dependencias de la TransitionLayer
+	_fix_dependencies(
+		_editor_file_system.get_filesystem_path(
+			TRANSITION_LAYER_SCENE.get_base_dir()
+		)
+	)
+	yield(get_tree().create_timer(0.3), 'timeout')
+	
+	prints('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AGREGAR LAS COSITAS')
+	var gi: CanvasLayer = load(GRAPHIC_INTERFACE_SCENE).instance()
+	var tl: CanvasLayer = load(TRANSITION_LAYER_SCENE).instance()
+	
+	popochiu.add_child(gi)
+	popochiu.add_child(tl)
+	gi.owner = popochiu
+	tl.owner = popochiu
+	
+	var new_popochiu: PackedScene = PackedScene.new()
+	new_popochiu.pack(popochiu)
+	_editor_file_system.scan()
+	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
+	assert(
+		result == OK,
+		'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
+	)
+
+
+# Gracias PigDev:
+# https://github.com/pigdevstudio/godot_tools/blob/master/source/tools/DependencyFixer.gd
+func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
+	var res := _editor_file_system.get_filesystem()
+	
+	for f in dir.get_file_count():
+		var path = dir.get_file_path(f)
+		var dependencies = ResourceLoader.get_dependencies(path)
+		var file = File.new()
+
+		for d in dependencies:
+			if file.file_exists(d):
+				continue
+			_fix_dependency(d, res, path)
+
+	for subdir in dir.get_subdir_count():
+		subdir = dir.get_subdir(subdir)
+		for f in subdir.get_file_count():
+			var path = subdir.get_file_path(f)
+			var dependencies = ResourceLoader.get_dependencies(path)
+			if dependencies.size() < 1:
+				continue
+			var file = File.new()
+			for d in dependencies:
+				if file.file_exists(d):
+					continue
+				_fix_dependency(d, res, path)
+	_editor_file_system.scan()
+
+
+func _fix_dependency(dependency, directory, resource_path):
+	for subdir in directory.get_subdir_count():
+		_fix_dependency(dependency, directory.get_subdir(subdir), resource_path)
+
+	for f in directory.get_file_count():
+		if not directory.get_file(f) == dependency.get_file():
+			continue
+		var file = File.new()
+		file.open(resource_path, file.READ)
+		var text = file.get_as_text()
+		file.close()
+		text = text.replace(dependency, directory.get_file_path(f))
+		file.open(resource_path, file.WRITE)
+		file.store_string(text)
+		file.close()

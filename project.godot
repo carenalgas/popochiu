@@ -22,7 +22,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "DialogMenu",
 "language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogMenu/DialogMenu.gd"
+"path": "res://addons/Popochiu/Engine/Objects/_GraphicInterface/DialogMenu/DialogMenu.gd"
 }, {
 "base": "Resource",
 "class": "DialogOption",
@@ -32,17 +32,17 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "DialogText",
 "language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/DialogText.gd"
+"path": "res://addons/Popochiu/Engine/Objects/_GraphicInterface/DialogText/DialogText.gd"
 }, {
 "base": "Reference",
 "class": "DisplayBox",
 "language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/DisplayBox/DisplayBox.gd"
+"path": "res://addons/Popochiu/Engine/Objects/_GraphicInterface/DisplayBox/DisplayBox.gd"
 }, {
 "base": "Reference",
 "class": "History",
 "language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/History/History.gd"
+"path": "res://addons/Popochiu/Engine/Objects/_GraphicInterface/History/History.gd"
 }, {
 "base": "Clickable",
 "class": "Hotspot",
@@ -52,7 +52,7 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "InventoryContainer",
 "language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/InventoryContainer.gd"
+"path": "res://addons/Popochiu/Engine/Objects/_GraphicInterface/Inventory/InventoryContainer.gd"
 }, {
 "base": "Control",
 "class": "InventoryItem",
@@ -122,12 +122,12 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "Toolbar",
 "language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/Toolbar.gd"
+"path": "res://addons/Popochiu/Engine/Objects/_GraphicInterface/Toolbar/Toolbar.gd"
 }, {
 "base": "Reference",
 "class": "ToolbarButton",
 "language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/ToolbarButton.gd"
+"path": "res://addons/Popochiu/Engine/Objects/_GraphicInterface/Toolbar/ToolbarButton.gd"
 } ]
 _global_script_class_icons={
 "Clickable": "",

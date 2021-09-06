@@ -1,8 +1,6 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=2 format=2]
 
 [ext_resource path="res://addons/Popochiu/Engine/Popochiu.gd" type="Script" id=7]
-[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/GraphicInterface.tscn" type="PackedScene" id=8]
-[ext_resource path="res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.tscn" type="PackedScene" id=9]
 
 [node name="Popochiu" type="Node"]
 script = ExtResource( 7 )
@@ -31,7 +29,3 @@ editor_draw_drag_margin = true
 __meta__ = {
 "_editor_description_": ""
 }
-
-[node name="GraphicInterface" parent="." instance=ExtResource( 8 )]
-
-[node name="TransitionLayer" parent="." instance=ExtResource( 9 )]
