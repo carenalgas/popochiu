@@ -54,7 +54,7 @@ onready var _defaults := {
 }
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
 	# TODO: Asignar habitaciones, personajes, ítems y árboles de conversación a
 	# las respectivas interfaces
