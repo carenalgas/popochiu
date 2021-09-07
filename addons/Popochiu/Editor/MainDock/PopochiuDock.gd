@@ -16,9 +16,7 @@ var ei: EditorInterface
 var fs: EditorFileSystem
 var dir := Directory.new()
 var opened_room: PopochiuRoom = null
-#var opened_room: Area2D = null
 var popochiu: Popochiu = null
-#var popochiu: Node = null
 
 var _has_data := false
 
@@ -153,7 +151,6 @@ func fill_data() -> void:
 				
 				_has_data = true
 
-#				var row: HBoxContainer = _create_object_row(
 				var row: PopochiuObjectRow = _create_object_row(
 					t, resource.script_name
 				)
@@ -217,21 +214,17 @@ func scene_changed(scene_root: Node) -> void:
 
 		# Llenar la lista de props
 		for p in opened_room.get_props():
-#			if p is Area2D:
 			if p is Prop:
 				var lbl: Label = Label.new()
 				lbl.text = (p as Prop).name
-#				lbl.text = (p as Area2D).name
 				_props_list.add_child(lbl)
 		_props_list.move_child(_props_btn, _props_list.get_child_count())
 		
 		# Llenar la lista de hotspots
 		for h in opened_room.get_hotspots():
 			if h is Hotspot:
-#			if h is Area2D:
 				var lbl: Label = Label.new()
 				lbl.text = (h as Hotspot).name
-#				lbl.text = (h as Area2D).name
 				_hotspots_list.add_child(lbl)
 		_hotspots_list.move_child(
 			_hotspots_btn, _hotspots_list.get_child_count()
@@ -240,10 +233,8 @@ func scene_changed(scene_root: Node) -> void:
 		# Llenar la lista de regiones
 		for r in opened_room.get_regions():
 			if r is Region:
-#			if r is Area2D:
 				var lbl: Label = Label.new()
 				lbl.text = (r as Region).name
-#				lbl.text = (r as Area2D).name
 				_regions_list.add_child(lbl)
 		_regions_list.move_child(_regions_btn, _regions_list.get_child_count())
 		
@@ -314,9 +305,7 @@ func _open_popup(popup: Popup) -> void:
 
 
 func _create_object_row(type: String, name_to_add: String) -> PopochiuObjectRow:
-#func _create_object_row(type: String, name_to_add: String) -> HBoxContainer:
 	var new_obj: PopochiuObjectRow = _object_row.instance()
-#	var new_obj: HBoxContainer = _object_row.instance()
 
 	new_obj.name = name_to_add
 	new_obj.type = type

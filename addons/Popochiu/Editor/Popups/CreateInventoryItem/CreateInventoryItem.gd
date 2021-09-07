@@ -21,7 +21,7 @@ func _ready() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
-	# Por defecto: res://src/InventoryItems/
+	# Por defecto: res://popochiu/InventoryItems/
 	_item_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/Inventory%s'
 
 

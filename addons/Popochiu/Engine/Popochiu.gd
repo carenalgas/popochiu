@@ -56,16 +56,20 @@ onready var _defaults := {
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
-	# TODO: Asignar habitaciones, personajes, ítems y árboles de conversación a
-	# las respectivas interfaces
-	
 	# Por defecto se asume que el personaje jugable es el primero en la lista
-	# de personajes
+	# de personajes.
 	if not characters.empty():
-		var pc: PopochiuCharacter = load((characters[0] as PopochiuCharacterData).scene).instance()
+		var pc: PopochiuCharacter = load(
+			(characters[0] as PopochiuCharacterData).scene
+		).instance()
 		C.player = pc
 		C.characters.append(pc)
 	
+	# Por defecto se asume que la primera habitación a cargar es la primera en
+	# la lista.
+	if not rooms.empty():
+		get_tree().change_scene((rooms[0] as PopochiuRoomData).scene)
+		
 	set_process_input(false)
 
 

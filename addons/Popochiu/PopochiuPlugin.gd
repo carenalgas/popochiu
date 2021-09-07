@@ -51,7 +51,9 @@ func _init() -> void:
 
 func _enter_tree() -> void:
 	if not _is_first_install:
-		prints('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::')
+		print('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
+		print('[en] You\'re using Popochiu, a plugin for making point n\' click games')
+		print('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\(o 3o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
 		
 		main_dock = preload(MAIN_DOCK_PATH).instance()
 		main_dock.ei = _editor_interface

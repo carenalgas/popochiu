@@ -19,7 +19,7 @@ func _ready() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
-	# Por defecto: res://src/Characters
+	# Por defecto: res://popochiu/Characters
 	_character_path_template = _main_dock.CHARACTERS_PATH + '%s/Character%s'
 
 

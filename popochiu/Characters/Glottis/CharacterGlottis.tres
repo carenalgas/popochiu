@@ -1,0 +1,9 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Character/CharacterData.gd" type="Script" id=1]
+
+[resource]
+resource_name = "Glottis"
+script = ExtResource( 1 )
+script_name = "Glottis"
+scene = "res://popochiu/Characters/Glottis/CharacterGlottis.tscn"

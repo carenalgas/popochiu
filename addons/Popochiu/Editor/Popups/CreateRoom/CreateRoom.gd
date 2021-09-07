@@ -22,7 +22,7 @@ func _ready() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
-	# Por defecto: res://src/Rooms
+	# Por defecto: res://popochiu/Rooms
 	_room_path_template = _main_dock.ROOMS_PATH + '%s/Room%s'
 
 

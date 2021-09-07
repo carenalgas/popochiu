@@ -18,7 +18,7 @@ func _ready() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
-	# Por defecto: res://src/Dialogs
+	# Por defecto: res://popochiu/Dialogs
 	_dialog_path_template = _main_dock.DIALOGS_PATH + '%s/Dialog%s'
 
 
