@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Resource",
+"class": "AudioCue",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/AudioManager/AudioCue.gd"
+}, {
 "base": "Area2D",
 "class": "Clickable",
 "language": "GDScript",
@@ -130,6 +135,7 @@ _global_script_classes=[ {
 "path": "res://popochiu/GraphicInterface/Toolbar/ToolbarButton.gd"
 } ]
 _global_script_class_icons={
+"AudioCue": "",
 "Clickable": "",
 "CreationPopup": "",
 "DialogMenu": "",
@@ -173,6 +179,7 @@ C="*res://addons/Popochiu/Engine/Interfaces/ICharacter.gd"
 I="*res://addons/Popochiu/Engine/Interfaces/IInventory.gd"
 D="*res://addons/Popochiu/Engine/Interfaces/IDialog.gd"
 G="*res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd"
+A="*res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn"
 Globals="*res://popochiu/Globals.gd"
 
 [debug]

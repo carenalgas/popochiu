@@ -13,6 +13,7 @@ const ICHARACTER_SNGL = 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
 const IINVENTORY_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
 const IDIALOG_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
 const IGRAPHIC_INTERFACE_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
+const IAUDIO_MANAGER_SNGL = 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
 const GLOBALS_SNGL = 'res://popochiu/Globals.gd'
 const GLOBALS_SRC = 'res://addons/Popochiu/Engine/Others/_Globals.gd'
 const GRAPHIC_INTERFACE_SRC = 'res://addons/Popochiu/Engine/Objects/_GraphicInterface/'
@@ -46,6 +47,7 @@ func _init() -> void:
 	add_autoload_singleton('I', IINVENTORY_SNGL)
 	add_autoload_singleton('D', IDIALOG_SNGL)
 	add_autoload_singleton('G', IGRAPHIC_INTERFACE_SNGL)
+	add_autoload_singleton('A', IAUDIO_MANAGER_SNGL)
 	add_autoload_singleton('Globals', GLOBALS_SNGL)
 
 
@@ -53,7 +55,7 @@ func _enter_tree() -> void:
 	if not _is_first_install:
 		print('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
 		print('[en] You\'re using Popochiu, a plugin for making point n\' click games')
-		print('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\(o 3o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
+		print('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
 		
 		main_dock = preload(MAIN_DOCK_PATH).instance()
 		main_dock.ei = _editor_interface
@@ -80,6 +82,7 @@ func _exit_tree() -> void:
 		remove_autoload_singleton('I')
 		remove_autoload_singleton('D')
 		remove_autoload_singleton('G')
+		remove_autoload_singleton('A')
 		remove_autoload_singleton('Globals')
 		
 		remove_control_from_docks(main_dock)

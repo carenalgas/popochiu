@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/Popochiu/Engine/AudioManager/AudioManager.gd" type="Script" id=1]
+
+[node name="AudioManager" type="Node"]
+script = ExtResource( 1 )
+
+[node name="Positional" type="Node" parent="."]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="Positional"]
+
+[node name="AudioStreamPlayer2D2" type="AudioStreamPlayer2D" parent="Positional"]
+
+[node name="AudioStreamPlayer2D3" type="AudioStreamPlayer2D" parent="Positional"]
+
+[node name="AudioStreamPlayer2D4" type="AudioStreamPlayer2D" parent="Positional"]
+
+[node name="AudioStreamPlayer2D5" type="AudioStreamPlayer2D" parent="Positional"]
+
+[node name="AudioStreamPlayer2D6" type="AudioStreamPlayer2D" parent="Positional"]
+
+[node name="Generic" type="Node" parent="."]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="Generic"]
+
+[node name="AudioStreamPlayer2" type="AudioStreamPlayer" parent="Generic"]
+
+[node name="AudioStreamPlayer3" type="AudioStreamPlayer" parent="Generic"]
+
+[node name="AudioStreamPlayer4" type="AudioStreamPlayer" parent="Generic"]
+
+[node name="AudioStreamPlayer5" type="AudioStreamPlayer" parent="Generic"]
+
+[node name="Active" type="Node" parent="."]
+
+[node name="Tween" type="Tween" parent="."]
