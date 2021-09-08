@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=2]
+[gd_scene load_steps=41 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
@@ -19,24 +19,28 @@
 [ext_resource path="res://addons/Popochiu/icons/point.png" type="Texture" id=17]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIRegular.tres" type="DynamicFont" id=18]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIBold.tres" type="DynamicFont" id=19]
+[ext_resource path="res://addons/Popochiu/icons/sfx.png" type="Texture" id=20]
+[ext_resource path="res://addons/Popochiu/icons/voice.png" type="Texture" id=21]
+[ext_resource path="res://addons/Popochiu/icons/ui.png" type="Texture" id=22]
+[ext_resource path="res://addons/Popochiu/icons/music.png" type="Texture" id=23]
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 border_color = Color( 0.439216, 0.427451, 0.921569, 1 )
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 border_color = Color( 0.929412, 0.945098, 0.443137, 1 )
 
-[sub_resource type="StyleBoxFlat" id=4]
+[sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 border_color = Color( 0.337255, 0.67451, 0.301961, 1 )
 
-[sub_resource type="StyleBoxFlat" id=5]
+[sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 border_color = Color( 0.458824, 0.807843, 0.784314, 1 )
 
-[sub_resource type="StyleBoxFlat" id=6]
+[sub_resource type="StyleBoxFlat" id=5]
 content_margin_left = 8.0
 content_margin_right = 8.0
 content_margin_top = 4.0
@@ -52,6 +56,9 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id=6]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
 [sub_resource type="StyleBoxFlat" id=7]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
@@ -64,11 +71,23 @@ bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 [sub_resource type="StyleBoxFlat" id=10]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxEmpty" id=11]
+[sub_resource type="StyleBoxFlat" id=11]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxEmpty" id=13]
+[sub_resource type="StyleBoxFlat" id=12]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxEmpty" id=14]
+[sub_resource type="StyleBoxFlat" id=13]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
+[sub_resource type="StyleBoxFlat" id=14]
+bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
+
+[sub_resource type="StyleBoxEmpty" id=15]
+
+[sub_resource type="StyleBoxEmpty" id=16]
+
+[sub_resource type="StyleBoxEmpty" id=17]
 
 [node name="Popochiu" type="Panel"]
 anchor_right = 1.0
@@ -144,7 +163,7 @@ size_flags_vertical = 3
 [node name="RoomsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
 margin_bottom = 24.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 10 )
 target_group = NodePath("../RoomsList")
 color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
@@ -166,7 +185,7 @@ text = "+ Crear habitación"
 margin_top = 52.0
 margin_right = 292.0
 margin_bottom = 76.0
-custom_styles/panel = SubResource( 3 )
+custom_styles/panel = SubResource( 2 )
 icon = ExtResource( 8 )
 target_group = NodePath("../CharactersList")
 color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
@@ -188,7 +207,7 @@ text = "+ Crear personaje"
 margin_top = 104.0
 margin_right = 292.0
 margin_bottom = 128.0
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 3 )
 icon = ExtResource( 11 )
 target_group = NodePath("../InventoryItemsList")
 color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
@@ -210,7 +229,7 @@ text = "+ Crear ítem"
 margin_top = 156.0
 margin_right = 292.0
 margin_bottom = 180.0
-custom_styles/panel = SubResource( 5 )
+custom_styles/panel = SubResource( 4 )
 icon = ExtResource( 9 )
 target_group = NodePath("../DialogsList")
 color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
@@ -248,7 +267,7 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer"]
 margin_right = 304.0
-margin_bottom = 184.0
+margin_bottom = 180.0
 size_flags_horizontal = 3
 
 [node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
@@ -256,88 +275,90 @@ visible = false
 margin_right = 304.0
 margin_bottom = 39.0
 custom_colors/font_color = Color( 0.768627, 0.423529, 0.443137, 1 )
-custom_styles/normal = SubResource( 6 )
+custom_styles/normal = SubResource( 5 )
 text = "Seleccione una habitación para ver sus Props, Hotspots y Regions. O crear nuevos."
 autowrap = true
 
 [node name="PropsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_right = 304.0
-margin_bottom = 16.0
-custom_styles/panel = SubResource( 7 )
+margin_right = 292.0
+margin_bottom = 24.0
+custom_styles/panel = SubResource( 6 )
 icon = ExtResource( 12 )
 target_group = NodePath("../PropsList")
 title = "Props"
 
 [node name="PropsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
-margin_top = 20.0
-margin_right = 304.0
-margin_bottom = 40.0
+margin_top = 28.0
+margin_right = 292.0
+margin_bottom = 48.0
 
 [node name="BtnCreateProp" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/PropsList"]
-margin_left = 214.0
-margin_right = 304.0
+margin_left = 202.0
+margin_right = 292.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 disabled = true
 text = "+ Crear prop"
 
 [node name="HotspotsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 44.0
-margin_right = 304.0
-margin_bottom = 60.0
-custom_styles/panel = SubResource( 8 )
+margin_top = 52.0
+margin_right = 292.0
+margin_bottom = 76.0
+custom_styles/panel = SubResource( 7 )
 icon = ExtResource( 13 )
 target_group = NodePath("../HotspotsList")
 title = "Hotspots"
 
 [node name="HotspotsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
-margin_top = 64.0
-margin_right = 304.0
-margin_bottom = 84.0
+margin_top = 80.0
+margin_right = 292.0
+margin_bottom = 100.0
 
 [node name="BtnCreateHotspot" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/HotspotsList"]
-margin_left = 194.0
-margin_right = 304.0
+margin_left = 182.0
+margin_right = 292.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 disabled = true
 text = "+ Crear hotspot"
 
 [node name="RegionsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 88.0
-margin_right = 304.0
-margin_bottom = 104.0
-custom_styles/panel = SubResource( 9 )
+margin_top = 104.0
+margin_right = 292.0
+margin_bottom = 128.0
+custom_styles/panel = SubResource( 8 )
 icon = ExtResource( 16 )
 target_group = NodePath("../RegionsList")
 title = "Regiones"
 
 [node name="RegionsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
-margin_top = 108.0
-margin_right = 304.0
-margin_bottom = 128.0
+margin_top = 132.0
+margin_right = 292.0
+margin_bottom = 152.0
 
 [node name="BtnCreateRegion" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/RegionsList"]
-margin_left = 203.0
-margin_right = 304.0
+margin_left = 191.0
+margin_right = 292.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 disabled = true
 text = "+ Crear región"
 
 [node name="PointsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 88.0
-margin_right = 304.0
-margin_bottom = 104.0
-custom_styles/panel = SubResource( 10 )
+margin_top = 156.0
+margin_right = 292.0
+margin_bottom = 180.0
+custom_styles/panel = SubResource( 9 )
 icon = ExtResource( 17 )
 target_group = NodePath("../PointsList")
+is_open = false
 title = "Puntos"
 
 [node name="PointsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
-margin_top = 108.0
-margin_right = 304.0
-margin_bottom = 128.0
+visible = false
+margin_top = 184.0
+margin_right = 292.0
+margin_bottom = 184.0
 
 [node name="Audio" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false
@@ -350,6 +371,105 @@ margin_bottom = -4.0
 __meta__ = {
 "_tab_disabled": false
 }
+
+[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
+margin_right = 304.0
+margin_bottom = 20.0
+size_flags_horizontal = 8
+text = "Buscar archivos de audio"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
+margin_top = 24.0
+margin_right = 304.0
+margin_bottom = 136.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer"]
+margin_right = 304.0
+margin_bottom = 140.0
+size_flags_horizontal = 3
+
+[node name="UnassignedGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_right = 292.0
+margin_bottom = 24.0
+custom_styles/panel = SubResource( 10 )
+target_group = NodePath("../UnassignedList")
+is_open = false
+title = "Sin asignar"
+
+[node name="UnassignedList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
+visible = false
+margin_top = 28.0
+margin_right = 292.0
+margin_bottom = 28.0
+
+[node name="MusicGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 32.0
+margin_right = 292.0
+margin_bottom = 56.0
+custom_styles/panel = SubResource( 11 )
+icon = ExtResource( 23 )
+target_group = NodePath("../MusicList")
+is_open = false
+title = "Música"
+
+[node name="MusicList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
+visible = false
+margin_top = 60.0
+margin_right = 292.0
+margin_bottom = 60.0
+
+[node name="SFXGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 64.0
+margin_right = 292.0
+margin_bottom = 88.0
+custom_styles/panel = SubResource( 12 )
+icon = ExtResource( 20 )
+target_group = NodePath("../SFXList")
+is_open = false
+title = "Efectos de sonido"
+
+[node name="SFXList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
+visible = false
+margin_top = 92.0
+margin_right = 292.0
+margin_bottom = 92.0
+
+[node name="VoiceGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 96.0
+margin_right = 292.0
+margin_bottom = 120.0
+custom_styles/panel = SubResource( 13 )
+icon = ExtResource( 21 )
+target_group = NodePath("../VoiceList")
+is_open = false
+title = "Voces"
+
+[node name="VoiceList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
+visible = false
+margin_top = 124.0
+margin_right = 292.0
+margin_bottom = 124.0
+
+[node name="UIGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
+margin_top = 128.0
+margin_right = 292.0
+margin_bottom = 152.0
+custom_styles/panel = SubResource( 14 )
+icon = ExtResource( 22 )
+target_group = NodePath("../VoiceList")
+is_open = false
+title = "Interfaz gráfica"
+
+[node name="UIList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
+margin_top = 156.0
+margin_right = 292.0
+margin_bottom = 156.0
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
 
 [node name="PlayerInterface" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false
@@ -412,7 +532,7 @@ margin_bottom = 19.0
 size_flags_horizontal = 3
 custom_fonts/bold_font = ExtResource( 19 )
 custom_fonts/normal_font = ExtResource( 18 )
-custom_styles/normal = SubResource( 11 )
+custom_styles/normal = SubResource( 15 )
 bbcode_enabled = true
 bbcode_text = "Se va a eliminar [b]algo[/b]."
 text = "Se va a eliminar algo."
@@ -423,7 +543,7 @@ scroll_active = false
 margin_top = 23.0
 margin_right = 624.0
 margin_bottom = 55.0
-custom_styles/panel = SubResource( 6 )
+custom_styles/panel = SubResource( 5 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Popups/DeleteConfirmation/VBoxContainer/PanelContainer"]
 margin_left = 8.0
@@ -438,7 +558,7 @@ size_flags_horizontal = 3
 custom_colors/default_color = Color( 0.768627, 0.423529, 0.443137, 1 )
 custom_fonts/bold_font = ExtResource( 19 )
 custom_fonts/normal_font = ExtResource( 18 )
-custom_styles/normal = SubResource( 13 )
+custom_styles/normal = SubResource( 16 )
 bbcode_enabled = true
 bbcode_text = "Eliminar también [b]carpeta[/b]."
 text = "Eliminar también carpeta."
@@ -449,4 +569,4 @@ scroll_active = false
 margin_left = 584.0
 margin_right = 608.0
 margin_bottom = 24.0
-custom_styles/focus = SubResource( 14 )
+custom_styles/focus = SubResource( 17 )

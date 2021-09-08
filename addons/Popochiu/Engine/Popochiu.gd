@@ -67,8 +67,8 @@ func _ready() -> void:
 	
 	# Por defecto se asume que la primera habitación a cargar es la primera en
 	# la lista.
-	if not rooms.empty():
-		get_tree().change_scene((rooms[0] as PopochiuRoomData).scene)
+#	if not rooms.empty():
+#		get_tree().change_scene((rooms[0] as PopochiuRoomData).scene)
 		
 	set_process_input(false)
 

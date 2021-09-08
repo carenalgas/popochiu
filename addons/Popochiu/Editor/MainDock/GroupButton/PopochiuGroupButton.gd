@@ -23,6 +23,9 @@ func _ready() -> void:
 	$HBoxContainer/Arrow.texture = open_icon
 
 	connect('gui_input', self, '_on_input')
+	
+	if get_node(target_group).get_child_count() == 0:
+		self.is_open = false
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░

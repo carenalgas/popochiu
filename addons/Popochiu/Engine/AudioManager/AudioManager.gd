@@ -2,6 +2,7 @@ tool
 extends Node
 
 export(Array, Resource) var cues = [] setget _set_cues
+export var mx_cues := []
 
 var twelfth_root_of_two := pow(2, (1.0 / 12))
 
@@ -294,3 +295,9 @@ func _fadeout_finished(obj, key) -> void:
 		obj.stop()
 		if _fading_sounds.empty():
 			$Tween.disconnect('tween_completed', self, '_fadeout_finished')
+
+
+func _sort_cues(a: AudioCue, b: AudioCue) -> bool:
+	if a.resource_name < b.resource_name:
+		return true
+	return false

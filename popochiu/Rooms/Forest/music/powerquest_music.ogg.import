@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/powerquest_music.ogg-f675dedc46b68ce611ca94f91d97f064.oggstr"
+
+[deps]
+
+source_file="res://popochiu/Rooms/Forest/music/powerquest_music.ogg"
+dest_files=[ "res://.import/powerquest_music.ogg-f675dedc46b68ce611ca94f91d97f064.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

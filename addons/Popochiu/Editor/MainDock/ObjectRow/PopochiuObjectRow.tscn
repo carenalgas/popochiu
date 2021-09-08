@@ -15,18 +15,17 @@ __meta__ = {
 
 [node name="Label" type="Label" parent="."]
 margin_top = 13.0
-margin_right = 166.0
+margin_right = 158.0
 margin_bottom = 27.0
 size_flags_horizontal = 3
 text = "PopochiuObjectRow"
 
 [node name="Panel" type="Panel" parent="."]
-margin_left = 170.0
+margin_left = 162.0
 margin_right = 320.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 0, 24 )
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.9
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
 anchor_right = 1.0
@@ -48,8 +47,8 @@ icon = ExtResource( 4 )
 flat = true
 
 [node name="Open" type="Button" parent="Panel/HBoxContainer"]
-margin_left = 90.0
-margin_right = 118.0
+margin_left = 98.0
+margin_right = 126.0
 margin_bottom = 40.0
 hint_tooltip = "Abrir en Editor"
 size_flags_horizontal = 4
@@ -58,8 +57,8 @@ icon = ExtResource( 3 )
 flat = true
 
 [node name="Delete" type="Button" parent="Panel/HBoxContainer"]
-margin_left = 122.0
-margin_right = 150.0
+margin_left = 130.0
+margin_right = 158.0
 margin_bottom = 40.0
 hint_tooltip = "Eliminar"
 icon = ExtResource( 2 )

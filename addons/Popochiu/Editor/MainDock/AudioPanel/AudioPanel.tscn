@@ -1,0 +1,58 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/GroupButton/PopochiuGroupButton.tscn" type="PackedScene" id=1]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/AudioPanel/AudioPanel.gd" type="Script" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.698039, 0.698039, 0.698039, 1 )
+
+[node name="AudioPanel" type="MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_right = 320.0
+margin_bottom = 180.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Title" parent="VBoxContainer" instance=ExtResource( 1 )]
+margin_bottom = 24.0
+custom_styles/panel = SubResource( 1 )
+target_group = NodePath("../Properties")
+color = Color( 0.698039, 0.698039, 0.698039, 1 )
+
+[node name="Properties" type="VBoxContainer" parent="VBoxContainer"]
+margin_top = 28.0
+margin_right = 320.0
+margin_bottom = 42.0
+
+[node name="Pitch" type="HBoxContainer" parent="VBoxContainer/Properties"]
+margin_right = 320.0
+margin_bottom = 14.0
+
+[node name="Label" type="Label" parent="VBoxContainer/Properties/Pitch"]
+margin_right = 158.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+text = "Pitch"
+
+[node name="Panel" type="Panel" parent="VBoxContainer/Properties/Pitch"]
+margin_left = 162.0
+margin_right = 320.0
+margin_bottom = 14.0
+size_flags_horizontal = 3
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/Properties/Pitch/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -1,0 +1,99 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.gd" type="Script" id=1]
+[ext_resource path="res://addons/Popochiu/icons/music.png" type="Texture" id=5]
+[ext_resource path="res://addons/Popochiu/icons/sfx.png" type="Texture" id=6]
+[ext_resource path="res://addons/Popochiu/icons/ui.png" type="Texture" id=7]
+[ext_resource path="res://addons/Popochiu/icons/voice.png" type="Texture" id=8]
+
+[sub_resource type="Image" id=3]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=2]
+flags = 4
+flags = 4
+image = SubResource( 3 )
+size = Vector2( 16, 16 )
+
+[node name="PopochiuAudioRow" type="HBoxContainer"]
+margin_right = 320.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_top = 13.0
+margin_right = 158.0
+margin_bottom = 27.0
+size_flags_horizontal = 3
+text = "PopochiuAudioRow"
+
+[node name="Panel" type="Panel" parent="."]
+margin_left = 162.0
+margin_right = 320.0
+margin_bottom = 40.0
+rect_min_size = Vector2( 0, 24 )
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 0
+alignment = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AddToMusic" type="Button" parent="Panel/HBoxContainer"]
+margin_right = 28.0
+margin_bottom = 40.0
+icon = ExtResource( 5 )
+flat = true
+
+[node name="AddToSFX" type="Button" parent="Panel/HBoxContainer"]
+margin_left = 28.0
+margin_right = 56.0
+margin_bottom = 40.0
+icon = ExtResource( 6 )
+flat = true
+
+[node name="AddToVoice" type="Button" parent="Panel/HBoxContainer"]
+margin_left = 56.0
+margin_right = 84.0
+margin_bottom = 40.0
+icon = ExtResource( 8 )
+flat = true
+
+[node name="AddToUI" type="Button" parent="Panel/HBoxContainer"]
+margin_left = 84.0
+margin_right = 112.0
+margin_bottom = 40.0
+icon = ExtResource( 7 )
+flat = true
+
+[node name="PlayerSeparator" type="VSeparator" parent="Panel/HBoxContainer"]
+margin_left = 112.0
+margin_right = 116.0
+margin_bottom = 40.0
+
+[node name="Play" type="Button" parent="Panel/HBoxContainer"]
+margin_left = 116.0
+margin_right = 144.0
+margin_bottom = 40.0
+icon = SubResource( 2 )
+flat = true
+
+[node name="Stop" type="Button" parent="Panel/HBoxContainer"]
+margin_left = 144.0
+margin_right = 172.0
+margin_bottom = 40.0
+icon = SubResource( 2 )
+flat = true
