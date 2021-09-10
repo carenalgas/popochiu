@@ -24,9 +24,19 @@ var audio_manager: Node = null
 
 var _has_data := false
 var _audio_row := preload('res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.tscn')
+# Arreglo con los path a los archivos de audio que ya están asignados a alguno
+# de los arreglos de AudioCue en el AudioManager.
+var _audio_files_in_group := []
+var _audio_files_to_assign := []
 
 onready var delete_confirmation: ConfirmationDialog = find_node(
 	'DeleteConfirmation'
+)
+onready var delete_confirmation_checkbox: CheckBox = delete_confirmation.find_node(
+	'CheckBox'
+)
+onready var delete_confirmation_extra: Container = delete_confirmation.find_node(
+	'Extra'
 )
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _types := {
@@ -100,10 +110,33 @@ onready var _object_row: PackedScene = preload(\
 'res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.tscn')
 onready var _btn_create_structure: Button = find_node('BtnCreateBaseStructure')
 onready var _main_scroll_container: ScrollContainer = find_node('MainScrollContainer')
+
 onready var _am_unassigned_group: PopochiuGroupButton = find_node('UnassignedGroupButton')
 onready var _am_unassigned_list: VBoxContainer = find_node('UnassignedList')
-onready var _am_music_group: PopochiuGroupButton = find_node('MusicGroupButton')
-onready var _am_music_list: VBoxContainer = find_node('MusicList')
+
+onready var _am_groups := {
+	mx = {
+		array = 'mx_cues',
+		group = find_node('MusicGroupButton'),
+		list = find_node('MusicList'),
+	},
+	sfx = {
+		array = 'sfx_cues',
+		group = find_node('SFXGroupButton'),
+		list = find_node('SFXList'),
+	},
+	vo = {
+		array = 'vo_cues',
+		group = find_node('VoiceGroupButton'),
+		list = find_node('VoiceList'),
+	},
+	ui = {
+		array = 'ui_cues',
+		group = find_node('UIGroupButton'),
+		list = find_node('UIList'),
+	}
+}
+
 onready var _asp: AudioStreamPlayer = find_node('AudioStreamPlayer')
 onready var _asp2d: AudioStreamPlayer2D = find_node('AudioStreamPlayer2D')
 
@@ -194,7 +227,7 @@ func fill_data() -> void:
 	_fill_audio_tab()
 	
 	# Buscar archivos de audio sin AudioCue
-	_read_path(fs.get_filesystem_path(SEARCH_PATH))
+	_search_audio_files()
 
 
 func add_to_list(type: String, name_to_add: String) -> void:
@@ -279,6 +312,12 @@ func get_popochiu() -> Node:
 	return popochiu
 
 
+func get_audio_manager() -> Node:
+	audio_manager.free()
+	audio_manager = load(AUDIO_MANAGER_SCENE).instance()
+	return audio_manager
+
+
 func add_resource_to_popochiu(target: String, resource: Resource) -> int:
 	get_popochiu()
 	
@@ -309,10 +348,35 @@ func save_popochiu() -> int:
 	return result
 
 
-func show_confirmation(title: String, message: String, ask: String) -> void:
+func save_audio_manager() -> int:
+	var result := OK
+	
+	var new_audio_manager: PackedScene = PackedScene.new()
+	new_audio_manager.pack(audio_manager)
+	
+	result = ResourceSaver.save(AUDIO_MANAGER_SCENE, new_audio_manager)
+	
+	assert(result == OK, 'No se pudo guardar el AudioManager')
+	
+		# Guardar los cambios en la escena del AudioManager
+	ei.reload_scene_from_path(AUDIO_MANAGER_SCENE)
+
+#	if ei.get_edited_scene_root().name == 'AudioManager':
+#		ei.save_scene()
+	
+	return result
+
+
+func show_confirmation(title: String, message: String, ask := '') -> void:
+	delete_confirmation_checkbox.pressed = false
+	
 	delete_confirmation.window_title = title
 	delete_confirmation.find_node('Message').bbcode_text = message
-	delete_confirmation.find_node('Ask').bbcode_text = ask
+	
+	delete_confirmation_extra.hide()
+	if ask:
+		delete_confirmation.find_node('Ask').bbcode_text = ask
+		delete_confirmation_extra.show()
 	
 	delete_confirmation.popup_centered()
 
@@ -342,16 +406,39 @@ func _on_tab_changed(tab: int) -> void:
 
 func _fill_audio_tab() -> void:
 	# Poner los AudioCue ya cargados en el AudioManager en su respectivo grupo
-	if not audio_manager.mx_cues.empty():
-		for m in audio_manager.mx_cues:
-			var ar: HBoxContainer = _audio_row.instance()
-			ar.audio_cue = m as AudioCue
-			ar.main_dock = self
-			ar.stream_player = _asp
-			ar.stream_player_2d = _asp2d
-			
-			_am_music_list.add_child(ar)
-		_am_music_group.is_open = true
+	for d in _am_groups:
+		var group: Dictionary = _am_groups[d]
+		
+		if not audio_manager[group.array].empty():
+			for m in audio_manager[group.array]:
+				if (m as AudioCue).audio.resource_path in _audio_files_in_group:
+					continue
+				
+				var ar := _create_audio_cue_row(m)
+				ar.cue_group = group.array
+				group.list.add_child(ar)
+				
+				_audio_files_in_group.append(
+					(m as AudioCue).audio.resource_path
+				)
+			group.group.is_open = true
+
+
+func _search_audio_files() -> void:
+	_read_path(fs.get_filesystem_path(SEARCH_PATH))
+
+
+func _create_audio_cue_row(audio_cue: AudioCue) -> HBoxContainer:
+	var ar: HBoxContainer = _audio_row.instance()
+	
+	ar.audio_cue = audio_cue
+	ar.main_dock = self
+	ar.stream_player = _asp
+	ar.stream_player_2d = _asp2d
+	
+	ar.connect('deleted', self, '_audio_cue_deleted')
+	
+	return ar
 
 
 func _read_path(dir: EditorFileSystemDirectory) -> void:
@@ -367,77 +454,43 @@ func _read_path(dir: EditorFileSystemDirectory) -> void:
 
 
 func _read_dir(dir: EditorFileSystemDirectory) -> void:
-	var created_cues := []
-	
-	# 1. Crear los AudioCue.
-	for f in dir.get_file_count():
-		var file_name = dir.get_file(f)
+	for idx in dir.get_file_count():
+		var file_name = dir.get_file(idx)
+		
 		if file_name.get_extension() == "ogg" or \
 		file_name.get_extension() == "mp3" or \
 		file_name.get_extension() == "wav" or \
 		file_name.get_extension() == "opus":
-#			var cue_file_name := Utils.snake2pascal(file_name.get_basename())
-#			cue_file_name += '.tres'
+			if dir.get_file_path(idx) in _audio_files_in_group\
+			or dir.get_file_path(idx) in _audio_files_to_assign:
+				# No poner en la lista un archivo de audio que ya está asignado
+				# a un AudioCue en el AudioManager.
+				continue
 			
-			var ar: HBoxContainer = _audio_row.instance()
-			ar.name = file_name.get_file()
-			ar.connect(
-				'target_clicked',
-				self,
-				'_create_audio_cue',
-				[dir.get_file_path(f), ar]
-			)
-			_am_unassigned_list.add_child(ar)
-			
-			# Verificar si ya hay un AudioCue en la carpeta de AudioCues.
-#			if _cues_dir.find_file_index(cue_file_name) > -1:
-#				continue
-
-			# Crear el AudioCue que se guardará en disco y guardarlo en disco.
-#			var ac: AudioCue = AudioCue.new()
-#			var stream: AudioStream = load(dir.get_file_path(f))
-#			ac.audio = stream
-#			ac.resource_name = file_name.get_basename()
-#
-#			prints(cue_file_name, ac)
-#
-#			var error: int = ResourceSaver.save(
-##				'%s/%s' % [CUES_PATH, cue_file_name],
-#				'%s/%s' % [dir.get_path(), cue_file_name],
-#				ac
-#			)
-#
-#			if error != OK:
-#				push_error('No se pudo guardar el AudioCue: %s' % cue_file_name)
-#
-#			created_cues.append(ResourceLoader.load(
-#				'%s/%s' % [dir.get_path(), cue_file_name]
-#			))
-	
-	if _am_unassigned_list.get_child_count() > 0:
-		_am_unassigned_group.is_open = true
-	
-	# 2. Agregar los AudioCue creados al AudioManager.
-#	if not created_cues.empty():
-#		var am: Node = load(AUDIO_MANAGER_SCENE).instance()
-#
-#		for ac in created_cues:
-#			am.cues.append(ac)
-#
-#		(am.cues as Array).sort_custom(A, '_sort_cues')
-#
-#		var new_audio_manager: PackedScene = PackedScene.new()
-#		new_audio_manager.pack(am)
-#
-#		var error: int = ResourceSaver.save(AUDIO_MANAGER_SCENE, new_audio_manager)
-#
-#		if error != OK:
-#			push_error('No se pudo guardar el AudioManager')
+			_create_audio_file_row(dir.get_file_path(idx))
 
 
-func _create_audio_cue(type: String, path: String, audio_row: Container) -> void:
-	prints('Se agregará %s al arreglo de %s' % [path.get_basename(), type])
+func _create_audio_file_row(file_path: String) -> void:
+	var ar: HBoxContainer = _audio_row.instance()
 	
+	ar.name = file_path.get_file().get_basename()
+	ar.file_name = file_path.get_file()
+	ar.file_path = file_path
+	ar.main_dock = self
+	ar.stream_player = _asp
+	ar.stream_player_2d = _asp2d
+	
+	ar.connect('target_clicked', self, '_create_audio_cue', [file_path, ar])
+	
+	_am_unassigned_list.add_child(ar)
+	_am_unassigned_group.is_open = true
+	
+	_audio_files_to_assign.append(file_path)
+
+
+func _create_audio_cue(
+		type: String, path: String, audio_row: Container
+	) -> void:
 	var cue_name := path.get_file().get_basename()
 	var cue_file_name := Utils.snake2pascal(cue_name)
 	cue_file_name += '.tres'
@@ -462,31 +515,39 @@ func _create_audio_cue(type: String, path: String, audio_row: Container) -> void
 	
 	var resource: AudioCue = load('%s/%s' % [path.get_base_dir(), cue_file_name])
 	var target := ''
+	
 	match type:
 		'music':
 			target = 'mx_cues'
+		'sfx':
+			target = 'sfx_cues'
+		'voice':
+			target = 'vo_cues'
+		'ui':
+			target = 'ui_cues'
+	
 	if audio_manager[target].empty():
 		audio_manager[target] = [resource]
 	else:
 		audio_manager[target].append(resource)
+	
 	audio_manager[target].sort_custom(A, '_sort_cues')
 	
-	var new_audio_manager: PackedScene = PackedScene.new()
-	new_audio_manager.pack(audio_manager)
-	
-	error = ResourceSaver.save(AUDIO_MANAGER_SCENE, new_audio_manager)
-	
-	assert(error == OK, 'No se pudo guardar el AudioManager')
+	save_audio_manager()
 	
 	# Eliminar la fila del archivo
+	_audio_files_to_assign.erase(path)
 	audio_row.queue_free()
 	
-	# Guardar los cambios en la escena del AudioManager
-	ei.reload_scene_from_path(AUDIO_MANAGER_SCENE)
-
-#	if ei.get_edited_scene_root().name == 'AudioManager':
-#		ei.save_scene()
-	
 	# Agregar la fila al grupo correspondiente
-#	yield(get_tree().create_timer(0.1), 'timeout')
-#	_fill_audio_tab()
+	yield(get_tree().create_timer(0.1), 'timeout')
+	_fill_audio_tab()
+
+
+func _audio_cue_deleted(file_path: String) -> void:
+	prints(_audio_files_in_group)
+	prints(_audio_files_to_assign)
+	prints('>>>>, file_path')
+	_audio_files_in_group.erase(file_path)
+	_create_audio_file_row(file_path)
+#	_search_audio_files()

@@ -3,12 +3,16 @@ extends Node
 
 export(Array, Resource) var cues = [] setget _set_cues
 export var mx_cues := []
+export var sfx_cues := []
+export var vo_cues := []
+export var ui_cues := []
 
 var twelfth_root_of_two := pow(2, (1.0 / 12))
 
-var _vo_cues := {}
-var _sfx_cues := {}
 var _mx_cues := {}
+var _sfx_cues := {}
+var _vo_cues := {}
+var _ui_cues := {}
 var _active := {}
 
 var _fading_sounds := {}
@@ -27,6 +31,8 @@ func _ready() -> void:
 			_vo_cues[cue_name] = cue
 		elif cue_name.find('mx_') > -1:
 			_mx_cues[cue_name] = cue
+		elif cue_name.find('ui_') > -1:
+			_ui_cues[cue_name] = cue
 		else:
 			_sfx_cues[cue_name] = cue
 

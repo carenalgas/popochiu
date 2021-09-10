@@ -10,6 +10,7 @@ export var target_group: NodePath
 export var is_open := true setget _set_is_open
 export var color: Color = Color.white setget _set_color
 export var title := 'Group' setget _set_title
+export var can_create := true
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -23,6 +24,7 @@ func _ready() -> void:
 	$HBoxContainer/Arrow.texture = open_icon
 
 	connect('gui_input', self, '_on_input')
+	(get_node(target_group) as Control).connect('resized', self, '_update_child_count')
 	
 	if get_node(target_group).get_child_count() == 0:
 		self.is_open = false
@@ -77,3 +79,14 @@ func _set_is_open(value: bool) -> void:
 func _set_icon(value: Texture) -> void:
 	icon = value
 	$HBoxContainer/Icon.texture = value
+
+
+func _update_child_count() -> void:
+	if get_node_or_null('HBoxContainer/Label'):
+		var childs := (
+			get_node(target_group).get_child_count() - (1 if can_create else 0)
+		)
+		if childs > 1:
+			$HBoxContainer/Label.text = title + (' (%d)' % childs)
+		else:
+			$HBoxContainer/Label.text = title

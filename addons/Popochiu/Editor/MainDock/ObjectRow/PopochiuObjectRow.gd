@@ -81,7 +81,7 @@ func _open() -> void:
 		main_dock.ei.edit_resource(load(path))
 
 
-# Crea un popup de confirmación para saber si la desarrolladora quiere eliminar
+# Abre un popup de confirmación para saber si la desarrolladora quiere eliminar
 # el objeto del núcleo del plugin y del sistema.
 func _ask_basic_delete() -> void:
 	main_dock.show_confirmation(
@@ -93,7 +93,7 @@ func _ask_basic_delete() -> void:
 		' (no se puede revertir)'
 	)
 	
-	_confirmation_dialog.get_cancel().connect('pressed', self, '_remove_popup')
+	_confirmation_dialog.get_cancel().connect('pressed', self, '_disconnect_popup')
 	_confirmation_dialog.connect('confirmed', self, '_delete_from_core')
 
 
@@ -165,7 +165,7 @@ func _delete_from_file_system() -> void:
 		name)
 
 	# Eliminar el objeto de su lista -------------------------------------------
-	_remove_popup()
+	_disconnect_popup()
 	queue_free()
 
 
@@ -215,9 +215,8 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	return OK
 
 
-# Elimina el popup de confirmación creado para verificar que la desarrolladora
-# está segura de eliminar lo que quiere eliminar.
-func _remove_popup() -> void:
+# Se desconecta de las señales del popup utilizado para configurar la eliminación.
+func _disconnect_popup() -> void:
 	if _confirmation_dialog.is_connected('confirmed', self, '_delete_from_core'):
 		_confirmation_dialog.disconnect('confirmed', self, '_delete_from_core')
 	

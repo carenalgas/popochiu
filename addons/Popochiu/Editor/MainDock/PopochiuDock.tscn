@@ -24,19 +24,19 @@
 [ext_resource path="res://addons/Popochiu/icons/ui.png" type="Texture" id=22]
 [ext_resource path="res://addons/Popochiu/icons/music.png" type="Texture" id=23]
 
-[sub_resource type="StyleBoxFlat" id=1]
+[sub_resource type="StyleBoxFlat" id=18]
 bg_color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 border_color = Color( 0.439216, 0.427451, 0.921569, 1 )
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=19]
 bg_color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 border_color = Color( 0.929412, 0.945098, 0.443137, 1 )
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=20]
 bg_color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 border_color = Color( 0.337255, 0.67451, 0.301961, 1 )
 
-[sub_resource type="StyleBoxFlat" id=4]
+[sub_resource type="StyleBoxFlat" id=21]
 bg_color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 border_color = Color( 0.458824, 0.807843, 0.784314, 1 )
 
@@ -56,31 +56,31 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id=6]
+[sub_resource type="StyleBoxFlat" id=22]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=7]
+[sub_resource type="StyleBoxFlat" id=23]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=8]
+[sub_resource type="StyleBoxFlat" id=24]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=9]
+[sub_resource type="StyleBoxFlat" id=25]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=10]
+[sub_resource type="StyleBoxFlat" id=26]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=11]
+[sub_resource type="StyleBoxFlat" id=27]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=12]
+[sub_resource type="StyleBoxFlat" id=28]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=13]
+[sub_resource type="StyleBoxFlat" id=29]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=14]
+[sub_resource type="StyleBoxFlat" id=30]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
 [sub_resource type="StyleBoxEmpty" id=15]
@@ -163,7 +163,7 @@ size_flags_vertical = 3
 [node name="RoomsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
 margin_bottom = 24.0
-custom_styles/panel = SubResource( 1 )
+custom_styles/panel = SubResource( 18 )
 icon = ExtResource( 10 )
 target_group = NodePath("../RoomsList")
 color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
@@ -185,7 +185,7 @@ text = "+ Crear habitación"
 margin_top = 52.0
 margin_right = 292.0
 margin_bottom = 76.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 19 )
 icon = ExtResource( 8 )
 target_group = NodePath("../CharactersList")
 color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
@@ -207,7 +207,7 @@ text = "+ Crear personaje"
 margin_top = 104.0
 margin_right = 292.0
 margin_bottom = 128.0
-custom_styles/panel = SubResource( 3 )
+custom_styles/panel = SubResource( 20 )
 icon = ExtResource( 11 )
 target_group = NodePath("../InventoryItemsList")
 color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
@@ -229,7 +229,7 @@ text = "+ Crear ítem"
 margin_top = 156.0
 margin_right = 292.0
 margin_bottom = 180.0
-custom_styles/panel = SubResource( 4 )
+custom_styles/panel = SubResource( 21 )
 icon = ExtResource( 9 )
 target_group = NodePath("../DialogsList")
 color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
@@ -282,7 +282,7 @@ autowrap = true
 [node name="PropsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
 margin_bottom = 24.0
-custom_styles/panel = SubResource( 6 )
+custom_styles/panel = SubResource( 22 )
 icon = ExtResource( 12 )
 target_group = NodePath("../PropsList")
 title = "Props"
@@ -304,7 +304,7 @@ text = "+ Crear prop"
 margin_top = 52.0
 margin_right = 292.0
 margin_bottom = 76.0
-custom_styles/panel = SubResource( 7 )
+custom_styles/panel = SubResource( 23 )
 icon = ExtResource( 13 )
 target_group = NodePath("../HotspotsList")
 title = "Hotspots"
@@ -326,7 +326,7 @@ text = "+ Crear hotspot"
 margin_top = 104.0
 margin_right = 292.0
 margin_bottom = 128.0
-custom_styles/panel = SubResource( 8 )
+custom_styles/panel = SubResource( 24 )
 icon = ExtResource( 16 )
 target_group = NodePath("../RegionsList")
 title = "Regiones"
@@ -348,7 +348,7 @@ text = "+ Crear región"
 margin_top = 156.0
 margin_right = 292.0
 margin_bottom = 180.0
-custom_styles/panel = SubResource( 9 )
+custom_styles/panel = SubResource( 25 )
 icon = ExtResource( 17 )
 target_group = NodePath("../PointsList")
 is_open = false
@@ -393,10 +393,11 @@ size_flags_horizontal = 3
 [node name="UnassignedGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
 margin_bottom = 24.0
-custom_styles/panel = SubResource( 10 )
+custom_styles/panel = SubResource( 26 )
 target_group = NodePath("../UnassignedList")
 is_open = false
 title = "Sin asignar"
+can_create = false
 
 [node name="UnassignedList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
 visible = false
@@ -408,11 +409,12 @@ margin_bottom = 28.0
 margin_top = 32.0
 margin_right = 292.0
 margin_bottom = 56.0
-custom_styles/panel = SubResource( 11 )
+custom_styles/panel = SubResource( 27 )
 icon = ExtResource( 23 )
 target_group = NodePath("../MusicList")
 is_open = false
 title = "Música"
+can_create = false
 
 [node name="MusicList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
 visible = false
@@ -424,11 +426,12 @@ margin_bottom = 60.0
 margin_top = 64.0
 margin_right = 292.0
 margin_bottom = 88.0
-custom_styles/panel = SubResource( 12 )
+custom_styles/panel = SubResource( 28 )
 icon = ExtResource( 20 )
 target_group = NodePath("../SFXList")
 is_open = false
 title = "Efectos de sonido"
+can_create = false
 
 [node name="SFXList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
 visible = false
@@ -440,11 +443,12 @@ margin_bottom = 92.0
 margin_top = 96.0
 margin_right = 292.0
 margin_bottom = 120.0
-custom_styles/panel = SubResource( 13 )
+custom_styles/panel = SubResource( 29 )
 icon = ExtResource( 21 )
 target_group = NodePath("../VoiceList")
 is_open = false
 title = "Voces"
+can_create = false
 
 [node name="VoiceList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
 visible = false
@@ -456,11 +460,12 @@ margin_bottom = 124.0
 margin_top = 128.0
 margin_right = 292.0
 margin_bottom = 152.0
-custom_styles/panel = SubResource( 14 )
+custom_styles/panel = SubResource( 30 )
 icon = ExtResource( 22 )
 target_group = NodePath("../VoiceList")
 is_open = false
 title = "Interfaz gráfica"
+can_create = false
 
 [node name="UIList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer"]
 margin_top = 156.0
@@ -539,19 +544,19 @@ text = "Se va a eliminar algo."
 fit_content_height = true
 scroll_active = false
 
-[node name="PanelContainer" type="PanelContainer" parent="Popups/DeleteConfirmation/VBoxContainer"]
+[node name="Extra" type="PanelContainer" parent="Popups/DeleteConfirmation/VBoxContainer"]
 margin_top = 23.0
 margin_right = 624.0
 margin_bottom = 55.0
 custom_styles/panel = SubResource( 5 )
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Popups/DeleteConfirmation/VBoxContainer/PanelContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Popups/DeleteConfirmation/VBoxContainer/Extra"]
 margin_left = 8.0
 margin_top = 4.0
 margin_right = 616.0
 margin_bottom = 28.0
 
-[node name="Ask" type="RichTextLabel" parent="Popups/DeleteConfirmation/VBoxContainer/PanelContainer/HBoxContainer"]
+[node name="Ask" type="RichTextLabel" parent="Popups/DeleteConfirmation/VBoxContainer/Extra/HBoxContainer"]
 margin_right = 580.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
@@ -565,7 +570,7 @@ text = "Eliminar también carpeta."
 fit_content_height = true
 scroll_active = false
 
-[node name="CheckBox" type="CheckBox" parent="Popups/DeleteConfirmation/VBoxContainer/PanelContainer/HBoxContainer"]
+[node name="CheckBox" type="CheckBox" parent="Popups/DeleteConfirmation/VBoxContainer/Extra/HBoxContainer"]
 margin_left = 584.0
 margin_right = 608.0
 margin_bottom = 24.0

@@ -62,6 +62,7 @@ func _enter_tree() -> void:
 		main_dock.fs = _editor_file_system
 		
 		add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
+		
 		connect('scene_changed', main_dock, 'scene_changed')
 		
 		# Llenar las listas de habitaciones, personajes, objetos de inventario
@@ -71,6 +72,7 @@ func _enter_tree() -> void:
 		main_dock.grab_focus()
 		
 		_check_popochiu_dependencies()
+		_editor_file_system.connect('sources_changed', self, '_on_sources_changed')
 
 
 func _exit_tree() -> void:
@@ -268,3 +270,8 @@ func _fix_dependency(dependency, directory, resource_path):
 		file.open(resource_path, file.WRITE)
 		file.store_string(text)
 		file.close()
+
+
+func _on_sources_changed(exist: bool) -> void:
+	if Engine.editor_hint and is_instance_valid(main_dock):
+		main_dock._search_audio_files()
