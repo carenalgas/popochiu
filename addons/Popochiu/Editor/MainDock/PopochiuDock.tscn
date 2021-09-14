@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=2]
+[gd_scene load_steps=43 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
@@ -24,19 +24,19 @@
 [ext_resource path="res://addons/Popochiu/icons/ui.png" type="Texture" id=22]
 [ext_resource path="res://addons/Popochiu/icons/music.png" type="Texture" id=23]
 
-[sub_resource type="StyleBoxFlat" id=18]
+[sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 border_color = Color( 0.439216, 0.427451, 0.921569, 1 )
 
-[sub_resource type="StyleBoxFlat" id=19]
+[sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 border_color = Color( 0.929412, 0.945098, 0.443137, 1 )
 
-[sub_resource type="StyleBoxFlat" id=20]
+[sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 border_color = Color( 0.337255, 0.67451, 0.301961, 1 )
 
-[sub_resource type="StyleBoxFlat" id=21]
+[sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 border_color = Color( 0.458824, 0.807843, 0.784314, 1 )
 
@@ -56,38 +56,53 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxFlat" id=22]
+[sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=23]
+[sub_resource type="StyleBoxFlat" id=7]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=24]
+[sub_resource type="StyleBoxFlat" id=8]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=25]
+[sub_resource type="StyleBoxFlat" id=9]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=26]
+[sub_resource type="Image" id=22]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=21]
+flags = 4
+flags = 4
+image = SubResource( 22 )
+size = Vector2( 16, 16 )
+
+[sub_resource type="StyleBoxFlat" id=12]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=27]
+[sub_resource type="StyleBoxFlat" id=13]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=28]
+[sub_resource type="StyleBoxFlat" id=14]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=29]
+[sub_resource type="StyleBoxFlat" id=15]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
-[sub_resource type="StyleBoxFlat" id=30]
+[sub_resource type="StyleBoxFlat" id=16]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
-
-[sub_resource type="StyleBoxEmpty" id=15]
-
-[sub_resource type="StyleBoxEmpty" id=16]
 
 [sub_resource type="StyleBoxEmpty" id=17]
+
+[sub_resource type="StyleBoxEmpty" id=18]
+
+[sub_resource type="StyleBoxEmpty" id=19]
 
 [node name="Popochiu" type="Panel"]
 anchor_right = 1.0
@@ -163,7 +178,7 @@ size_flags_vertical = 3
 [node name="RoomsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
 margin_bottom = 24.0
-custom_styles/panel = SubResource( 18 )
+custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 10 )
 target_group = NodePath("../RoomsList")
 color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
@@ -185,7 +200,7 @@ text = "+ Crear habitación"
 margin_top = 52.0
 margin_right = 292.0
 margin_bottom = 76.0
-custom_styles/panel = SubResource( 19 )
+custom_styles/panel = SubResource( 2 )
 icon = ExtResource( 8 )
 target_group = NodePath("../CharactersList")
 color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
@@ -207,7 +222,7 @@ text = "+ Crear personaje"
 margin_top = 104.0
 margin_right = 292.0
 margin_bottom = 128.0
-custom_styles/panel = SubResource( 20 )
+custom_styles/panel = SubResource( 3 )
 icon = ExtResource( 11 )
 target_group = NodePath("../InventoryItemsList")
 color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
@@ -229,7 +244,7 @@ text = "+ Crear ítem"
 margin_top = 156.0
 margin_right = 292.0
 margin_bottom = 180.0
-custom_styles/panel = SubResource( 21 )
+custom_styles/panel = SubResource( 4 )
 icon = ExtResource( 9 )
 target_group = NodePath("../DialogsList")
 color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
@@ -282,7 +297,7 @@ autowrap = true
 [node name="PropsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
 margin_bottom = 24.0
-custom_styles/panel = SubResource( 22 )
+custom_styles/panel = SubResource( 6 )
 icon = ExtResource( 12 )
 target_group = NodePath("../PropsList")
 title = "Props"
@@ -304,7 +319,7 @@ text = "+ Crear prop"
 margin_top = 52.0
 margin_right = 292.0
 margin_bottom = 76.0
-custom_styles/panel = SubResource( 23 )
+custom_styles/panel = SubResource( 7 )
 icon = ExtResource( 13 )
 target_group = NodePath("../HotspotsList")
 title = "Hotspots"
@@ -326,7 +341,7 @@ text = "+ Crear hotspot"
 margin_top = 104.0
 margin_right = 292.0
 margin_bottom = 128.0
-custom_styles/panel = SubResource( 24 )
+custom_styles/panel = SubResource( 8 )
 icon = ExtResource( 16 )
 target_group = NodePath("../RegionsList")
 title = "Regiones"
@@ -348,7 +363,7 @@ text = "+ Crear región"
 margin_top = 156.0
 margin_right = 292.0
 margin_bottom = 180.0
-custom_styles/panel = SubResource( 25 )
+custom_styles/panel = SubResource( 9 )
 icon = ExtResource( 17 )
 target_group = NodePath("../PointsList")
 is_open = false
@@ -372,11 +387,12 @@ __meta__ = {
 "_tab_disabled": false
 }
 
-[node name="Button" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
+[node name="BtnSearchAudioFiles" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
 margin_right = 304.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "Buscar archivos de audio"
+icon = SubResource( 21 )
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
 margin_top = 24.0
@@ -393,7 +409,7 @@ size_flags_horizontal = 3
 [node name="UnassignedGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_right = 292.0
 margin_bottom = 24.0
-custom_styles/panel = SubResource( 26 )
+custom_styles/panel = SubResource( 12 )
 target_group = NodePath("../UnassignedList")
 is_open = false
 title = "Sin asignar"
@@ -409,7 +425,7 @@ margin_bottom = 28.0
 margin_top = 32.0
 margin_right = 292.0
 margin_bottom = 56.0
-custom_styles/panel = SubResource( 27 )
+custom_styles/panel = SubResource( 13 )
 icon = ExtResource( 23 )
 target_group = NodePath("../MusicList")
 is_open = false
@@ -426,7 +442,7 @@ margin_bottom = 60.0
 margin_top = 64.0
 margin_right = 292.0
 margin_bottom = 88.0
-custom_styles/panel = SubResource( 28 )
+custom_styles/panel = SubResource( 14 )
 icon = ExtResource( 20 )
 target_group = NodePath("../SFXList")
 is_open = false
@@ -443,7 +459,7 @@ margin_bottom = 92.0
 margin_top = 96.0
 margin_right = 292.0
 margin_bottom = 120.0
-custom_styles/panel = SubResource( 29 )
+custom_styles/panel = SubResource( 15 )
 icon = ExtResource( 21 )
 target_group = NodePath("../VoiceList")
 is_open = false
@@ -460,7 +476,7 @@ margin_bottom = 124.0
 margin_top = 128.0
 margin_right = 292.0
 margin_bottom = 152.0
-custom_styles/panel = SubResource( 30 )
+custom_styles/panel = SubResource( 16 )
 icon = ExtResource( 22 )
 target_group = NodePath("../VoiceList")
 is_open = false
@@ -537,7 +553,7 @@ margin_bottom = 19.0
 size_flags_horizontal = 3
 custom_fonts/bold_font = ExtResource( 19 )
 custom_fonts/normal_font = ExtResource( 18 )
-custom_styles/normal = SubResource( 15 )
+custom_styles/normal = SubResource( 17 )
 bbcode_enabled = true
 bbcode_text = "Se va a eliminar [b]algo[/b]."
 text = "Se va a eliminar algo."
@@ -563,7 +579,7 @@ size_flags_horizontal = 3
 custom_colors/default_color = Color( 0.768627, 0.423529, 0.443137, 1 )
 custom_fonts/bold_font = ExtResource( 19 )
 custom_fonts/normal_font = ExtResource( 18 )
-custom_styles/normal = SubResource( 16 )
+custom_styles/normal = SubResource( 18 )
 bbcode_enabled = true
 bbcode_text = "Eliminar también [b]carpeta[/b]."
 text = "Eliminar también carpeta."
@@ -574,4 +590,4 @@ scroll_active = false
 margin_left = 584.0
 margin_right = 608.0
 margin_bottom = 24.0
-custom_styles/focus = SubResource( 17 )
+custom_styles/focus = SubResource( 19 )

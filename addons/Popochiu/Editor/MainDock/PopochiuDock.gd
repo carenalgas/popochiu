@@ -28,6 +28,9 @@ var _audio_row := preload('res://addons/Popochiu/Editor/MainDock/AudioRow/Popoch
 # de los arreglos de AudioCue en el AudioManager.
 var _audio_files_in_group := []
 var _audio_files_to_assign := []
+# Para contar los AudioCue que se crearon durante la búsqueda de archivos de
+# audio. Esto ocurre cuando hay unos prefijos definidos: mx_, sfx_, vo_, ui_.
+var _created_audio_cues := 0
 
 onready var delete_confirmation: ConfirmationDialog = find_node(
 	'DeleteConfirmation'
@@ -110,10 +113,9 @@ onready var _object_row: PackedScene = preload(\
 'res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.tscn')
 onready var _btn_create_structure: Button = find_node('BtnCreateBaseStructure')
 onready var _main_scroll_container: ScrollContainer = find_node('MainScrollContainer')
-
+# Audio
 onready var _am_unassigned_group: PopochiuGroupButton = find_node('UnassignedGroupButton')
 onready var _am_unassigned_list: VBoxContainer = find_node('UnassignedList')
-
 onready var _am_groups := {
 	mx = {
 		array = 'mx_cues',
@@ -136,9 +138,9 @@ onready var _am_groups := {
 		list = find_node('UIList'),
 	}
 }
-
 onready var _asp: AudioStreamPlayer = find_node('AudioStreamPlayer')
 onready var _asp2d: AudioStreamPlayer2D = find_node('AudioStreamPlayer2D')
+onready var _am_search_files: Button = find_node('BtnSearchAudioFiles')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -146,18 +148,23 @@ func _ready() -> void:
 	popochiu = load(POPOCHIU_SCENE).instance()
 	audio_manager = load(AUDIO_MANAGER_SCENE).instance()
 	
+	# Que la pestaña seleccionada por defecto sea la principal (Main
+	_tab_container.current_tab = 0
+	
 	# Por defecto deshabilitar los botones hasta que no se haya seleccionado
 	# una habitación.
+	_no_room_info.hide()
 	_props_btn.disabled = true
 	_hotspots_btn.disabled = true
 	_regions_btn.disabled = true
-	_tab_container.current_tab = 0
 	
+	_am_search_files.icon = get_icon('Search', 'EditorIcons')
+	
+	# Habilitar todas las pestañas a mano porque Godot está loco
 	_tab_container.set_tab_disabled(0, false)
 	_tab_container.set_tab_disabled(1, false)
 	_tab_container.set_tab_disabled(2, false)
 	_tab_container.set_tab_disabled(3, false)
-	_no_room_info.hide()
 	
 	for t in _types:
 		_types[t].popup.set_main_dock(self)
@@ -166,6 +173,8 @@ func _ready() -> void:
 		)
 	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
+	
+	_am_search_files.connect('pressed', self, '_search_audio_files')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -424,10 +433,6 @@ func _fill_audio_tab() -> void:
 			group.group.is_open = true
 
 
-func _search_audio_files() -> void:
-	_read_path(fs.get_filesystem_path(SEARCH_PATH))
-
-
 func _create_audio_cue_row(audio_cue: AudioCue) -> HBoxContainer:
 	var ar: HBoxContainer = _audio_row.instance()
 	
@@ -441,19 +446,28 @@ func _create_audio_cue_row(audio_cue: AudioCue) -> HBoxContainer:
 	return ar
 
 
-func _read_path(dir: EditorFileSystemDirectory) -> void:
+func _search_audio_files() -> void:
+	_created_audio_cues = 0
+	
+	_read_directory(fs.get_filesystem_path(SEARCH_PATH))
+	
+	if _created_audio_cues > 0:
+		_fill_audio_tab()
+
+
+func _read_directory(dir: EditorFileSystemDirectory) -> void:
 	if dir.get_subdir_count():
 		for d in dir.get_subdir_count():
 			# Revisar las subcarpetas
-			_read_path(dir.get_subdir(d))
+			_read_directory(dir.get_subdir(d))
 
 			# Buscar en los archivos de la carpeta
-			_read_dir(dir)
+			_read_files(dir)
 	else:
-		_read_dir(dir)
+		_read_files(dir)
 
 
-func _read_dir(dir: EditorFileSystemDirectory) -> void:
+func _read_files(dir: EditorFileSystemDirectory) -> void:
 	for idx in dir.get_file_count():
 		var file_name = dir.get_file(idx)
 		
@@ -467,7 +481,23 @@ func _read_dir(dir: EditorFileSystemDirectory) -> void:
 				# a un AudioCue en el AudioManager.
 				continue
 			
-			_create_audio_file_row(dir.get_file_path(idx))
+			# Ver si el prefijo del archivo coincide con los definidos para
+			# asignación automática: mx_, sfx_, vo_, ui_.
+			
+			if file_name.find('mx_') > -1:
+				_create_audio_cue('music', dir.get_file_path(idx))
+				_created_audio_cues += 1
+			elif file_name.find('sfx_') > -1:
+				_create_audio_cue('sfx', dir.get_file_path(idx))
+				_created_audio_cues += 1
+			elif file_name.find('vo_') > -1:
+				_create_audio_cue('voice', dir.get_file_path(idx))
+				_created_audio_cues += 1
+			elif file_name.find('ui_') > -1:
+				_create_audio_cue('ui', dir.get_file_path(idx))
+				_created_audio_cues += 1
+			else:
+				_create_audio_file_row(dir.get_file_path(idx))
 
 
 func _create_audio_file_row(file_path: String) -> void:
@@ -489,7 +519,7 @@ func _create_audio_file_row(file_path: String) -> void:
 
 
 func _create_audio_cue(
-		type: String, path: String, audio_row: Container
+		type: String, path: String, audio_row: Container = null
 	) -> void:
 	var cue_name := path.get_file().get_basename()
 	var cue_file_name := Utils.snake2pascal(cue_name)
@@ -535,19 +565,16 @@ func _create_audio_cue(
 	
 	save_audio_manager()
 	
-	# Eliminar la fila del archivo
-	_audio_files_to_assign.erase(path)
-	audio_row.queue_free()
+	if is_instance_valid(audio_row):
+		# Eliminar la fila del archivo
+		_audio_files_to_assign.erase(path)
+		audio_row.queue_free()
 	
-	# Agregar la fila al grupo correspondiente
-	yield(get_tree().create_timer(0.1), 'timeout')
-	_fill_audio_tab()
+		# Agregar la fila al grupo correspondiente
+		yield(get_tree().create_timer(0.1), 'timeout')
+		_fill_audio_tab()
 
 
 func _audio_cue_deleted(file_path: String) -> void:
-	prints(_audio_files_in_group)
-	prints(_audio_files_to_assign)
-	prints('>>>>, file_path')
 	_audio_files_in_group.erase(file_path)
 	_create_audio_file_row(file_path)
-#	_search_audio_files()
