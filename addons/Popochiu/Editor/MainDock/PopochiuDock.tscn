@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=2]
+[gd_scene load_steps=44 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
@@ -28,6 +28,21 @@
 bg_color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 border_color = Color( 0.439216, 0.427451, 0.921569, 1 )
 
+[sub_resource type="Image" id=25]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=24]
+flags = 4
+flags = 4
+image = SubResource( 25 )
+size = Vector2( 16, 16 )
+
 [sub_resource type="StyleBoxFlat" id=2]
 bg_color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 border_color = Color( 0.929412, 0.945098, 0.443137, 1 )
@@ -39,6 +54,15 @@ border_color = Color( 0.337255, 0.67451, 0.301961, 1 )
 [sub_resource type="StyleBoxFlat" id=4]
 bg_color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 border_color = Color( 0.458824, 0.807843, 0.784314, 1 )
+
+[sub_resource type="StyleBoxFlat" id=22]
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.439216, 0.427451, 0.921569, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxFlat" id=5]
 content_margin_left = 8.0
@@ -67,21 +91,6 @@ bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
 
 [sub_resource type="StyleBoxFlat" id=9]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
-
-[sub_resource type="Image" id=22]
-data = {
-"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
-"format": "LumAlpha8",
-"height": 16,
-"mipmaps": false,
-"width": 16
-}
-
-[sub_resource type="ImageTexture" id=21]
-flags = 4
-flags = 4
-image = SubResource( 22 )
-size = Vector2( 16, 16 )
 
 [sub_resource type="StyleBoxFlat" id=12]
 bg_color = Color( 0.866667, 0.866667, 0.866667, 1 )
@@ -171,7 +180,7 @@ scroll_horizontal_enabled = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer"]
 margin_right = 292.0
-margin_bottom = 204.0
+margin_bottom = 212.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -187,19 +196,20 @@ title = "Habitaciones"
 [node name="RoomsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer"]
 margin_top = 28.0
 margin_right = 292.0
-margin_bottom = 48.0
+margin_bottom = 50.0
 
 [node name="BtnCreateRoom" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer/RoomsList"]
-margin_left = 165.0
+margin_left = 159.0
 margin_right = 292.0
-margin_bottom = 20.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
-text = "+ Crear habitación"
+text = "Crear habitación"
+icon = SubResource( 24 )
 
 [node name="CharactersGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 52.0
+margin_top = 54.0
 margin_right = 292.0
-margin_bottom = 76.0
+margin_bottom = 78.0
 custom_styles/panel = SubResource( 2 )
 icon = ExtResource( 8 )
 target_group = NodePath("../CharactersList")
@@ -207,21 +217,22 @@ color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 title = "Personajes"
 
 [node name="CharactersList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer"]
-margin_top = 80.0
+margin_top = 82.0
 margin_right = 292.0
-margin_bottom = 100.0
+margin_bottom = 104.0
 
 [node name="BtnCreateCharacter" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer/CharactersList"]
-margin_left = 168.0
+margin_left = 162.0
 margin_right = 292.0
-margin_bottom = 20.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
-text = "+ Crear personaje"
+text = "Crear personaje"
+icon = SubResource( 24 )
 
 [node name="InventoryItemsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 104.0
+margin_top = 108.0
 margin_right = 292.0
-margin_bottom = 128.0
+margin_bottom = 132.0
 custom_styles/panel = SubResource( 3 )
 icon = ExtResource( 11 )
 target_group = NodePath("../InventoryItemsList")
@@ -229,21 +240,22 @@ color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 title = "Inventario"
 
 [node name="InventoryItemsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer"]
-margin_top = 132.0
+margin_top = 136.0
 margin_right = 292.0
-margin_bottom = 152.0
+margin_bottom = 158.0
 
 [node name="BtnCreateItem" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer/InventoryItemsList"]
-margin_left = 201.0
+margin_left = 195.0
 margin_right = 292.0
-margin_bottom = 20.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
-text = "+ Crear ítem"
+text = "Crear ítem"
+icon = SubResource( 24 )
 
 [node name="DialogsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 156.0
+margin_top = 162.0
 margin_right = 292.0
-margin_bottom = 180.0
+margin_bottom = 186.0
 custom_styles/panel = SubResource( 4 )
 icon = ExtResource( 9 )
 target_group = NodePath("../DialogsList")
@@ -251,16 +263,17 @@ color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 title = "Diálogos"
 
 [node name="DialogsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer"]
-margin_top = 184.0
+margin_top = 190.0
 margin_right = 292.0
-margin_bottom = 204.0
+margin_bottom = 212.0
 
 [node name="BtnCreateDialog" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer/DialogsList"]
-margin_left = 185.0
+margin_left = 179.0
 margin_right = 292.0
-margin_bottom = 20.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
-text = "+ Crear diálogo"
+text = "Crear diálogo"
+icon = SubResource( 24 )
 
 [node name="Room" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
 visible = false
@@ -274,7 +287,17 @@ __meta__ = {
 "_tab_disabled": false
 }
 
+[node name="RoomName" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room"]
+visible = false
+margin_right = 304.0
+margin_bottom = 22.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_styles/normal = SubResource( 22 )
+text = "Room name"
+align = 1
+
 [node name="RoomScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room"]
+margin_top = 26.0
 margin_right = 304.0
 margin_bottom = 136.0
 size_flags_horizontal = 3
@@ -282,7 +305,7 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer"]
 margin_right = 304.0
-margin_bottom = 180.0
+margin_bottom = 186.0
 size_flags_horizontal = 3
 
 [node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
@@ -305,64 +328,67 @@ title = "Props"
 [node name="PropsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
 margin_top = 28.0
 margin_right = 292.0
-margin_bottom = 48.0
+margin_bottom = 50.0
 
 [node name="BtnCreateProp" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/PropsList"]
-margin_left = 202.0
+margin_left = 196.0
 margin_right = 292.0
-margin_bottom = 20.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
 disabled = true
-text = "+ Crear prop"
+text = "Crear prop"
+icon = SubResource( 24 )
 
 [node name="HotspotsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 52.0
+margin_top = 54.0
 margin_right = 292.0
-margin_bottom = 76.0
+margin_bottom = 78.0
 custom_styles/panel = SubResource( 7 )
 icon = ExtResource( 13 )
 target_group = NodePath("../HotspotsList")
 title = "Hotspots"
 
 [node name="HotspotsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
-margin_top = 80.0
+margin_top = 82.0
 margin_right = 292.0
-margin_bottom = 100.0
+margin_bottom = 104.0
 
 [node name="BtnCreateHotspot" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/HotspotsList"]
-margin_left = 182.0
+margin_left = 176.0
 margin_right = 292.0
-margin_bottom = 20.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
 disabled = true
-text = "+ Crear hotspot"
+text = "Crear hotspot"
+icon = SubResource( 24 )
 
 [node name="RegionsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 104.0
+margin_top = 108.0
 margin_right = 292.0
-margin_bottom = 128.0
+margin_bottom = 132.0
 custom_styles/panel = SubResource( 8 )
 icon = ExtResource( 16 )
 target_group = NodePath("../RegionsList")
 title = "Regiones"
 
 [node name="RegionsList" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
-margin_top = 132.0
+margin_top = 136.0
 margin_right = 292.0
-margin_bottom = 152.0
+margin_bottom = 158.0
 
 [node name="BtnCreateRegion" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer/RegionsList"]
-margin_left = 191.0
+margin_left = 185.0
 margin_right = 292.0
-margin_bottom = 20.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
 disabled = true
-text = "+ Crear región"
+text = "Crear región"
+icon = SubResource( 24 )
 
 [node name="PointsGroupButton" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 156.0
+margin_top = 162.0
 margin_right = 292.0
-margin_bottom = 180.0
+margin_bottom = 186.0
 custom_styles/panel = SubResource( 9 )
 icon = ExtResource( 17 )
 target_group = NodePath("../PointsList")
@@ -392,7 +418,7 @@ margin_right = 304.0
 margin_bottom = 20.0
 size_flags_horizontal = 8
 text = "Buscar archivos de audio"
-icon = SubResource( 21 )
+icon = SubResource( 24 )
 
 [node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
 margin_top = 24.0
@@ -491,18 +517,6 @@ margin_bottom = 156.0
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
 
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
-
-[node name="PlayerInterface" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
-__meta__ = {
-"_tab_disabled": false
-}
 
 [node name="Popups" type="Control" parent="."]
 __meta__ = {

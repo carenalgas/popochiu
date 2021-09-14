@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/popochiu_dock-room.png-3d9b6318315158b67c3a2f61280c9875.stex"
+path="res://.import/popochiu_dock-audio.png-db0d5f545c9d042fb7ec9fc7999dc3f9.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/images/_repo/popochiu_dock-room.png"
-dest_files=[ "res://.import/popochiu_dock-room.png-3d9b6318315158b67c3a2f61280c9875.stex" ]
+source_file="res://assets/images/_repo/popochiu_dock-audio.png"
+dest_files=[ "res://.import/popochiu_dock-audio.png-db0d5f545c9d042fb7ec9fc7999dc3f9.stex" ]
 
 [params]
 

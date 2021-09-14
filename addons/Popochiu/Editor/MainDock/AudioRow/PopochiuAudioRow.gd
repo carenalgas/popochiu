@@ -30,8 +30,9 @@ onready var _delete: Button = find_node('Delete')
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
 	_label.text = file_name if file_name else name
-	_play.icon = _play.get_icon('MainPlay', 'EditorIcons')
-	_stop.icon = _stop.get_icon('Stop', 'EditorIcons')
+	_play.icon = get_icon('MainPlay', 'EditorIcons')
+	_stop.icon = get_icon('Stop', 'EditorIcons')
+	_delete.icon = get_icon('Remove', 'EditorIcons')
 	
 	connect('gui_input', self, '_open_in_inspector')
 	_play.connect('pressed', self, '_play')
@@ -72,6 +73,10 @@ func _open_in_inspector(event: InputEvent) -> void:
 
 
 func _play() -> void:
+	if is_instance_valid(main_dock.last_played)\
+	and main_dock.last_played.get_instance_id() != get_instance_id():
+		main_dock.last_played._stop()
+	
 	if not is_instance_valid(audio_cue):
 		var stream: AudioStream = load(file_path)
 		stream.loop = false
@@ -91,6 +96,7 @@ func _play() -> void:
 		stream_player.connect('finished', self, '_stop')
 		stream_player.play(_current)
 		_play.icon = _play.get_icon('Pause', 'EditorIcons')
+		main_dock.last_played = self
 
 
 func _stop() -> void:
@@ -102,6 +108,8 @@ func _stop() -> void:
 	
 	if stream_player.is_connected('finished', self, '_stop'):
 		stream_player.disconnect('finished', self, '_stop')
+	
+	main_dock.last_played = null
 
 
 # Abre un popup de confirmación para saber si la desarrolladora quiere eliminar

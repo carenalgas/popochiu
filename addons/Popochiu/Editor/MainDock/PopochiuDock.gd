@@ -21,9 +21,13 @@ var dir := Directory.new()
 var opened_room: PopochiuRoom = null
 var popochiu: Popochiu = null
 var audio_manager: Node = null
+var last_played: Control = null
 
 var _has_data := false
-var _audio_row := preload('res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.tscn')
+var _object_row: PackedScene = preload(\
+'res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.tscn')
+var _audio_row := preload(\
+'res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.tscn')
 # Arreglo con los path a los archivos de audio que ya están asignados a alguno
 # de los arreglos de AudioCue en el AudioManager.
 var _audio_files_in_group := []
@@ -94,6 +98,9 @@ onready var _types := {
 		popup = find_node('CreateRegion')
 	},
 }
+
+# ▓▓▓▓ Room ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+onready var _room_name: Label = find_node('RoomName')
 onready var _no_room_info: Label = find_node('NoRoomInfo')
 onready var _props_group: PopochiuGroupButton = _types['prop'].group
 onready var _props_list: Container = _types['prop'].list
@@ -109,11 +116,9 @@ onready var _regions_btn: Button = _types['region'].button
 onready var _regions_popup: ConfirmationDialog = _types['region'].popup
 onready var _points_group: PopochiuGroupButton = find_node('PointsGroupButton')
 onready var _points_list: Container = find_node('PointsList')
-onready var _object_row: PackedScene = preload(\
-'res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.tscn')
-onready var _btn_create_structure: Button = find_node('BtnCreateBaseStructure')
-onready var _main_scroll_container: ScrollContainer = find_node('MainScrollContainer')
-# Audio
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ Room ▓▓▓▓
+
+# ▓▓▓▓ Audio ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 onready var _am_unassigned_group: PopochiuGroupButton = find_node('UnassignedGroupButton')
 onready var _am_unassigned_list: VBoxContainer = find_node('UnassignedList')
 onready var _am_groups := {
@@ -141,6 +146,7 @@ onready var _am_groups := {
 onready var _asp: AudioStreamPlayer = find_node('AudioStreamPlayer')
 onready var _asp2d: AudioStreamPlayer2D = find_node('AudioStreamPlayer2D')
 onready var _am_search_files: Button = find_node('BtnSearchAudioFiles')
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ Audio ▓▓▓▓
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -153,6 +159,7 @@ func _ready() -> void:
 	
 	# Por defecto deshabilitar los botones hasta que no se haya seleccionado
 	# una habitación.
+	_room_name.hide()
 	_no_room_info.hide()
 	_props_btn.disabled = true
 	_hotspots_btn.disabled = true
@@ -164,10 +171,11 @@ func _ready() -> void:
 	_tab_container.set_tab_disabled(0, false)
 	_tab_container.set_tab_disabled(1, false)
 	_tab_container.set_tab_disabled(2, false)
-	_tab_container.set_tab_disabled(3, false)
+#	_tab_container.set_tab_disabled(3, false)
 	
 	for t in _types:
 		_types[t].popup.set_main_dock(self)
+		(_types[t].button as Button).icon = get_icon('Add', 'EditorIcons')
 		(_types[t].button as Button).connect(
 			'pressed', self, '_open_popup', [_types[t].popup]
 		)
@@ -257,6 +265,7 @@ func scene_changed(scene_root: Node) -> void:
 	_hotspots_btn.disabled = true
 	_regions_btn.disabled = true
 
+	_room_name.hide()
 	_no_room_info.show()
 	_props_group.clear_list()
 	_hotspots_group.clear_list()
@@ -267,11 +276,13 @@ func scene_changed(scene_root: Node) -> void:
 	if scene_root is PopochiuRoom:
 		# Actualizar la información de la habitación que se abrió
 		opened_room = scene_root
-
+		_room_name.text = opened_room.script_name
+		
+		_room_name.show()
 		_props_popup.room_opened()
 		_hotspots_popup.room_opened()
 		_regions_popup.room_opened()
-
+		
 		# Llenar la lista de props
 		for p in opened_room.get_props():
 			if p is Prop:
