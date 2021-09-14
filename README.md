@@ -49,7 +49,8 @@ En la pestaña de audio se pueden ver los archivos de audio y asignarlos a una c
       'Player: Ah bueno.',
     ])
   ```
-- Acceso rápido a las funciones de control del núcleo (E), personajes (C), inventario (I), diálogos (D), interfaz gráfica (G)
+- Acceso rápido a las funciones del plugin:
+  
   **E (para acceder a Popochiu.gd (singleton))**
     ```gdscript
     E.goto_room('Cave')
@@ -89,7 +90,7 @@ En la pestaña de audio se pueden ver los archivos de audio y asignarlos a una c
 # English
 
 ## 🔌 The dock
-Tha *Main* tab shows (and allows the creation of) rooms, characters, inventory items y dialogs.
+Tha *Main* tab shows (and allows the creation of) rooms, characters, inventory items and dialogs.
 
 ![Popochiu Dock (main)](./assets/images/_repo/popochiu_dock-main.png "Pestaña Main del Dock")
 
@@ -111,14 +112,15 @@ The *audio* tab shows the audio files and allows to assign each one to a categor
       'Player: Hi',
       'Paco: Hi',
       'Player: Where are we?',
-      'Paco: In a point n' click game.',
+      'Paco: In a point n\' click game.',
       C.player.face_right(),
       C.player.face_left(),
       '...',
       'Player: Cool!',
     ])
   ```
-- The added singletons give developers quick access to plugin functions: core (E), characters (C), inventory items (I), dialogs (D) and graphic interface (G).
+- The added singletons give developers quick access to plugin functions:
+  
   **E (to access the core (Popochiu.gd))**
     ```gdscript
     E.goto_room('Cave')
