@@ -193,5 +193,5 @@ func _disconnect_popup() -> void:
 
 func _set_main_dock(value: Panel) -> void:
 	main_dock = value
-	_confirmation_dialog = value.delete_confirmation
+	_confirmation_dialog = value.delete_dialog
 	_delete_all_checkbox = _confirmation_dialog.find_node('CheckBox')

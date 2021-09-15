@@ -1,6 +1,8 @@
 tool
 class_name PopochiuObjectRow
 extends HBoxContainer
+# NOTA: El icono para el menú contextual podría ser el icon_GUI_tab_menu_hl.svg
+#		de los iconos de Godot.
 
 var type := ''
 var path := ''
@@ -231,5 +233,5 @@ func _disconnect_popup() -> void:
 
 func _set_main_dock(value: Panel) -> void:
 	main_dock = value
-	_confirmation_dialog = value.delete_confirmation
+	_confirmation_dialog = value.delete_dialog
 	_delete_all_checkbox = _confirmation_dialog.find_node('CheckBox')

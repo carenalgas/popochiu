@@ -1,13 +1,14 @@
 tool
 class_name PopochiuDock
 extends Panel
-# Define un conjunto de botones y otros elementos para centralizar la configuración
-# de los diferentes nodos que conforman el juego:
+# Define un conjunto de botones y otros elementos para centralizar la
+# configuración de los diferentes nodos que conforman el juego:
 #	Rooms (Props, Hotspots, Regions), Characters, Inventory items, Dialog trees,
 #	Interfaz gráfica.
 
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
-const AUDIO_MANAGER_SCENE := 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
+const AUDIO_MANAGER_SCENE :=\
+'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
 const ROOMS_PATH := 'res://popochiu/Rooms/'
 const CHARACTERS_PATH := 'res://popochiu/Characters/'
 const INVENTORY_ITEMS_PATH := 'res://popochiu/InventoryItems/'
@@ -18,14 +19,17 @@ const SEARCH_PATH := 'res://popochiu/'
 var ei: EditorInterface
 var fs: EditorFileSystem
 var dir := Directory.new()
-var opened_room: PopochiuRoom = null
 var popochiu: Popochiu = null
+# ▓▓▓▓ Room ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+var opened_room: PopochiuRoom = null
+# ▓▓▓▓ Audio ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 var audio_manager: Node = null
 var last_played: Control = null
 
 var _has_data := false
 var _object_row: PackedScene = preload(\
 'res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.tscn')
+# ▓▓▓▓ Audio ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 var _audio_row := preload(\
 'res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.tscn')
 # Arreglo con los path a los archivos de audio que ya están asignados a alguno
@@ -35,66 +39,47 @@ var _audio_files_to_assign := []
 # Para contar los AudioCue que se crearon durante la búsqueda de archivos de
 # audio. Esto ocurre cuando hay unos prefijos definidos: mx_, sfx_, vo_, ui_.
 var _created_audio_cues := 0
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ Audio ▓▓▓▓
 
-onready var delete_confirmation: ConfirmationDialog = find_node(
-	'DeleteConfirmation'
-)
-onready var delete_confirmation_checkbox: CheckBox = delete_confirmation.find_node(
-	'CheckBox'
-)
-onready var delete_confirmation_extra: Container = delete_confirmation.find_node(
-	'Extra'
-)
+onready var delete_dialog: ConfirmationDialog = find_node('DeleteConfirmation')
+onready var delete_checkbox: CheckBox = delete_dialog.find_node('CheckBox')
+onready var delete_extra: Container = delete_dialog.find_node('Extra')
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _types := {
 	room = {
 		path = ROOMS_PATH,
-		type_hint = 'PopochiuRoomData',
-		list = find_node('RoomsList'),
-		button = find_node('BtnCreateRoom'),
+		group = find_node('RoomsGroup'),
 		popup = find_node('CreateRoom'),
 		scene = ROOMS_PATH + ('%s/Room%s.tscn')
 	},
 	character = {
 		path = CHARACTERS_PATH,
-		type_hint = 'PopochiuCharacterData',
-		list = find_node('CharactersList'),
-		button = find_node('BtnCreateCharacter'),
+		group = find_node('CharactersGroup'),
 		popup = find_node('CreateCharacter'),
 		scene = CHARACTERS_PATH + ('%s/Character%s.tscn')
 	},
 	inventory_item = {
 		path = INVENTORY_ITEMS_PATH,
-		type_hint = 'PopochiuInventoryItemData',
-		list = find_node('InventoryItemsList'),
-		button = find_node('BtnCreateItem'),
+		group = find_node('ItemsGroup'),
 		popup = find_node('CreateInventoryItem'),
 		scene = INVENTORY_ITEMS_PATH + ('%s/Inventory%s.tscn')
 	},
 	dialog = {
 		path = DIALOGS_PATH,
-		type_hint = 'PopochiuDialog',
-		list = find_node('DialogsList'),
-		button = find_node('BtnCreateDialog'),
+		group = find_node('DialogsGroup'),
 		popup = find_node('CreateDialog'),
 		scene = DIALOGS_PATH + ('%s/Dialog%s.tres')
 	},
 	prop = {
-		group = find_node('PropsGroupButton'),
-		list = find_node('PropsList'),
-		button = find_node('BtnCreateProp'),
+		group = find_node('PropsGroup'),
 		popup = find_node('CreateProp')
 	},
 	hotspot = {
-		group = find_node('HotspotsGroupButton'),
-		list = find_node('HotspotsList'),
-		button = find_node('BtnCreateHotspot'),
+		group = find_node('HotspotsGroup'),
 		popup = find_node('CreateHotspot')
 	},
 	region = {
-		group = find_node('RegionsGroupButton'),
-		list = find_node('RegionsList'),
-		button = find_node('BtnCreateRegion'),
+		group = find_node('RegionsGroup'),
 		popup = find_node('CreateRegion')
 	},
 }
@@ -102,49 +87,36 @@ onready var _types := {
 # ▓▓▓▓ Room ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 onready var _room_name: Label = find_node('RoomName')
 onready var _no_room_info: Label = find_node('NoRoomInfo')
-onready var _props_group: PopochiuGroupButton = _types['prop'].group
-onready var _props_list: Container = _types['prop'].list
-onready var _props_btn: Button = _types['prop'].button
+onready var _props_group: PopochiuGroup = _types['prop'].group
 onready var _props_popup: ConfirmationDialog = _types['prop'].popup
-onready var _hotspots_group: PopochiuGroupButton = _types['hotspot'].group
-onready var _hotspots_list: Container = _types['hotspot'].list
-onready var _hotspots_btn: Button = _types['hotspot'].button
+onready var _hotspots_group: PopochiuGroup = _types['hotspot'].group
 onready var _hotspots_popup: ConfirmationDialog = _types['hotspot'].popup
-onready var _regions_group: PopochiuGroupButton = _types['region'].group
-onready var _regions_list: Container = _types['region'].list
-onready var _regions_btn: Button = _types['region'].button
+onready var _regions_group: PopochiuGroup = _types['region'].group
 onready var _regions_popup: ConfirmationDialog = _types['region'].popup
-onready var _points_group: PopochiuGroupButton = find_node('PointsGroupButton')
-onready var _points_list: Container = find_node('PointsList')
+onready var _points_group: PopochiuGroup = find_node('PointsGroup')
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ Room ▓▓▓▓
 
 # ▓▓▓▓ Audio ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-onready var _am_unassigned_group: PopochiuGroupButton = find_node('UnassignedGroupButton')
-onready var _am_unassigned_list: VBoxContainer = find_node('UnassignedList')
+onready var _am_unassigned_group: PopochiuGroup = find_node('UnassignedGroup')
 onready var _am_groups := {
 	mx = {
 		array = 'mx_cues',
-		group = find_node('MusicGroupButton'),
-		list = find_node('MusicList'),
+		group = find_node('MusicGroup')
 	},
 	sfx = {
 		array = 'sfx_cues',
-		group = find_node('SFXGroupButton'),
-		list = find_node('SFXList'),
+		group = find_node('SFXGroup')
 	},
 	vo = {
 		array = 'vo_cues',
-		group = find_node('VoiceGroupButton'),
-		list = find_node('VoiceList'),
+		group = find_node('VoiceGroup')
 	},
 	ui = {
 		array = 'ui_cues',
-		group = find_node('UIGroupButton'),
-		list = find_node('UIList'),
+		group = find_node('UIGroup')
 	}
 }
 onready var _asp: AudioStreamPlayer = find_node('AudioStreamPlayer')
-onready var _asp2d: AudioStreamPlayer2D = find_node('AudioStreamPlayer2D')
 onready var _am_search_files: Button = find_node('BtnSearchAudioFiles')
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ Audio ▓▓▓▓
 
@@ -161,9 +133,6 @@ func _ready() -> void:
 	# una habitación.
 	_room_name.hide()
 	_no_room_info.hide()
-	_props_btn.disabled = true
-	_hotspots_btn.disabled = true
-	_regions_btn.disabled = true
 	
 	_am_search_files.icon = get_icon('Search', 'EditorIcons')
 	
@@ -175,13 +144,11 @@ func _ready() -> void:
 	
 	for t in _types:
 		_types[t].popup.set_main_dock(self)
-		(_types[t].button as Button).icon = get_icon('Add', 'EditorIcons')
-		(_types[t].button as Button).connect(
-			'pressed', self, '_open_popup', [_types[t].popup]
+		_types[t].group.connect(
+			'create_clicked', self, '_open_popup', [_types[t].popup]
 		)
 	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
-	
 	_am_search_files.connect('pressed', self, '_search_audio_files')
 
 
@@ -189,8 +156,7 @@ func _ready() -> void:
 func fill_data() -> void:
 	# Buscar habitaciones, personajes, objetos de inventario y diálogos.
 	for t in _types:
-		if not _types[t].has('path'):
-			continue
+		if not _types[t].has('path'): continue
 		
 		var type_dir: EditorFileSystemDirectory = fs.get_filesystem_path(
 			_types[t].path
@@ -198,11 +164,11 @@ func fill_data() -> void:
 
 		for d in type_dir.get_subdir_count():
 			var dir: EditorFileSystemDirectory = type_dir.get_subdir(d)
+			
 			for f in dir.get_file_count():
 				var path = dir.get_file_path(f)
 
-				if not fs.get_file_type(path) == "Resource":
-					continue
+				if not fs.get_file_type(path) == "Resource": continue
 				
 				var resource: Resource = load(path)
 				
@@ -217,7 +183,7 @@ func fill_data() -> void:
 				var row: PopochiuObjectRow = _create_object_row(
 					t, resource.script_name
 				)
-				_types[t].list.add_child(row)
+				_types[t].group.add(row)
 				
 				# Verificar si el objeto en la lista esta en su arreglo respectivo
 				# dentro de Popochiu (Popochiu.tscn).
@@ -235,11 +201,6 @@ func fill_data() -> void:
 				
 				if not is_in_core:
 					row.show_add_to_core()
-		
-		# Mover el botón de la lista al final
-		_types[t].list.move_child(
-			_types[t].button, _types[t].list.get_child_count()
-		)
 	
 	_fill_audio_tab()
 	
@@ -248,11 +209,13 @@ func fill_data() -> void:
 
 
 func add_to_list(type: String, name_to_add: String) -> void:
-	_types[type].list.add_child(_create_object_row(type, name_to_add))
-
-	_types[type].list.move_child(
-		_types[type].button, _types[type].list.get_child_count()
-	)
+	_types[type].group.add(_create_object_row(type, name_to_add))
+	
+#	_types[type].list.add_child(_create_object_row(type, name_to_add))
+#
+#	_types[type].list.move_child(
+#		_types[type].button, _types[type].list.get_child_count()
+#	)
 	
 	_has_data = true
 
@@ -260,10 +223,6 @@ func add_to_list(type: String, name_to_add: String) -> void:
 func scene_changed(scene_root: Node) -> void:
 	# Poner todo en su estado por defecto
 	opened_room = null
-
-	_props_btn.disabled = true
-	_hotspots_btn.disabled = true
-	_regions_btn.disabled = true
 
 	_room_name.hide()
 	_no_room_info.show()
@@ -288,38 +247,30 @@ func scene_changed(scene_root: Node) -> void:
 			if p is Prop:
 				var lbl: Label = Label.new()
 				lbl.text = (p as Prop).name
-				_props_list.add_child(lbl)
-		_props_list.move_child(_props_btn, _props_list.get_child_count())
+				_props_group.add(lbl)
 		
 		# Llenar la lista de hotspots
 		for h in opened_room.get_hotspots():
 			if h is Hotspot:
 				var lbl: Label = Label.new()
 				lbl.text = (h as Hotspot).name
-				_hotspots_list.add_child(lbl)
-		_hotspots_list.move_child(
-			_hotspots_btn, _hotspots_list.get_child_count()
-		)
+				_hotspots_group.add(lbl)
 		
 		# Llenar la lista de regiones
 		for r in opened_room.get_regions():
 			if r is Region:
 				var lbl: Label = Label.new()
 				lbl.text = (r as Region).name
-				_regions_list.add_child(lbl)
-		_regions_list.move_child(_regions_btn, _regions_list.get_child_count())
+				_regions_group.add(lbl)
 		
 		# Llenar la lista de puntos
 		for p in opened_room.get_points():
 			if p is Position2D:
 				var lbl: Label = Label.new()
 				lbl.text = (p as Position2D).name
-				_points_list.add_child(lbl)
+				_points_group.add(lbl)
 		
 		_no_room_info.hide()
-		_props_btn.disabled = false
-		_hotspots_btn.disabled = false
-		_regions_btn.disabled = false
 
 		_tab_container.current_tab = 1
 	else:
@@ -381,24 +332,24 @@ func save_audio_manager() -> int:
 		# Guardar los cambios en la escena del AudioManager
 	ei.reload_scene_from_path(AUDIO_MANAGER_SCENE)
 
-#	if ei.get_edited_scene_root().name == 'AudioManager':
-#		ei.save_scene()
+	if ei.get_edited_scene_root().name == 'AudioManager':
+		ei.save_scene()
 	
 	return result
 
 
 func show_confirmation(title: String, message: String, ask := '') -> void:
-	delete_confirmation_checkbox.pressed = false
+	delete_checkbox.pressed = false
 	
-	delete_confirmation.window_title = title
-	delete_confirmation.find_node('Message').bbcode_text = message
+	delete_dialog.window_title = title
+	delete_dialog.find_node('Message').bbcode_text = message
 	
-	delete_confirmation_extra.hide()
+	delete_extra.hide()
 	if ask:
-		delete_confirmation.find_node('Ask').bbcode_text = ask
-		delete_confirmation_extra.show()
+		delete_dialog.find_node('Ask').bbcode_text = ask
+		delete_extra.show()
 	
-	delete_confirmation.popup_centered()
+	delete_dialog.popup_centered()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -436,12 +387,11 @@ func _fill_audio_tab() -> void:
 				
 				var ar := _create_audio_cue_row(m)
 				ar.cue_group = group.array
-				group.list.add_child(ar)
+				group.group.add(ar)
 				
 				_audio_files_in_group.append(
 					(m as AudioCue).audio.resource_path
 				)
-			group.group.is_open = true
 
 
 func _create_audio_cue_row(audio_cue: AudioCue) -> HBoxContainer:
@@ -450,7 +400,6 @@ func _create_audio_cue_row(audio_cue: AudioCue) -> HBoxContainer:
 	ar.audio_cue = audio_cue
 	ar.main_dock = self
 	ar.stream_player = _asp
-	ar.stream_player_2d = _asp2d
 	
 	ar.connect('deleted', self, '_audio_cue_deleted')
 	
@@ -519,12 +468,10 @@ func _create_audio_file_row(file_path: String) -> void:
 	ar.file_path = file_path
 	ar.main_dock = self
 	ar.stream_player = _asp
-	ar.stream_player_2d = _asp2d
 	
 	ar.connect('target_clicked', self, '_create_audio_cue', [file_path, ar])
 	
-	_am_unassigned_list.add_child(ar)
-	_am_unassigned_group.is_open = true
+	_am_unassigned_group.add(ar)
 	
 	_audio_files_to_assign.append(file_path)
 
