@@ -5,6 +5,8 @@ extends CreationPopup
 const SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/RegionTemplate.gd'
 const REGION_SCENE := 'res://addons/Popochiu/Engine/Objects/Region/Region.tscn'
 
+
+var _room: Node2D = null
 var _new_region_name := ''
 var _new_region_path := ''
 var _region_path_template: String
@@ -22,11 +24,11 @@ func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 
 
-func room_opened() -> void:
-	if is_instance_valid(_main_dock.opened_room):
-		_room_path = _main_dock.opened_room.filename
-		_room_dir = _room_path.get_base_dir()
-		_region_path_template = _room_dir + '/Regions/Region%s'
+func room_opened(r: Node2D) -> void:
+	_room = r
+	_room_path = _room.filename
+	_room_dir = _room_path.get_base_dir()
+	_region_path_template = _room_dir + '/Regions/Region%s'
 
 
 func create() -> void:
@@ -66,8 +68,8 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Agregar la región a su habitación
-	_main_dock.opened_room.get_node('Regions').add_child(region)
-	region.owner = _main_dock.opened_room
+	_room.get_node('Regions').add_child(region)
+	region.owner = _room
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

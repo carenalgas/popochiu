@@ -7,6 +7,7 @@ extends CreationPopup
 const PROP_SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/PropTemplate.gd'
 const BASE_PROP_PATH := 'res://addons/Popochiu/Engine/Objects/Prop/Prop.tscn'
 
+var _room: Node2D = null
 var _new_prop_name := ''
 var _new_prop_path := ''
 var _prop_path_template: String
@@ -28,11 +29,11 @@ func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 
 
-func room_opened() -> void:
-	if is_instance_valid(_main_dock.opened_room):
-		_room_path = _main_dock.opened_room.filename
-		_room_dir = _room_path.get_base_dir()
-		_prop_path_template = _room_dir + '/Props/Prop%s'
+func room_opened(r: Node2D) -> void:
+	_room = r
+	_room_path = _room.filename
+	_room_dir = _room_path.get_base_dir()
+	_prop_path_template = _room_dir + '/Props/Prop%s'
 
 
 func create() -> void:
@@ -72,8 +73,8 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Agregar la prop a su habitación
-	_main_dock.opened_room.get_node('Props').add_child(prop)
-	prop.owner = _main_dock.opened_room
+	_room.get_node('Props').add_child(prop)
+	prop.owner = _room
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

@@ -1,19 +1,10 @@
 tool
 class_name PopochiuGroup,\
-'res://addons/Popochiu/Editor/MainDock/GroupButton/popochiu_group.svg'
+'res://addons/Popochiu/Editor/MainDock/PopochiuGroup/popochiu_group.svg'
 extends PanelContainer
 
 signal create_clicked
 
-## ¿GuiTreeArrowDown? ¿Collapse?
-#const OPEN_ICON_PATH :=\
-#	'res://addons/Popochiu/Editor/MainDock/GroupButton/group_arrow_open.png'
-## ¿GuiTreeArrowRight?
-#const CLOSE_ICON_PATH :=\
-#	'res://addons/Popochiu/Editor/MainDock/GroupButton/group_arrow_closed.png'
-#
-#export var open_icon: Texture = get_icon('GuiTreeArrowDown', 'EditorIcons')
-#export var closed_icon: Texture = get_icon('GuiTreeArrowRight', 'EditorIcons')
 export var icon: Texture setget _set_icon
 export var is_open := true setget _set_is_open
 export var color: Color = Color('999999') setget _set_color
@@ -33,14 +24,6 @@ onready var _btn_create: Button = find_node('BtnCreate')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
-func _init() -> void:
-	# Hay que crear una copia única del StyleBox del panel para que no se
-	# sobreescriba cuando se cambien las propiedades de las instancias.
-#	_own_style_box = get_stylebox('panel').duplicate()
-#	add_stylebox_override('panel', _own_style_box)
-	pass
-
-
 func _ready() -> void:
 	# Establecer estado inicial
 	_header.add_stylebox_override('panel', _header.get_stylebox('panel').duplicate())

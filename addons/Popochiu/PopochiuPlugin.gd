@@ -61,7 +61,7 @@ func _enter_tree() -> void:
 		main_dock.ei = _editor_interface
 		main_dock.fs = _editor_file_system
 		
-		add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
+		add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
 		
 		connect('scene_changed', main_dock, 'scene_changed')
 		

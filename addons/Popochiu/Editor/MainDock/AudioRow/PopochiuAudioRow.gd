@@ -10,7 +10,7 @@ var audio_cue: AudioCue
 var cue_group: String
 var main_dock: Panel setget _set_main_dock
 var stream_player: AudioStreamPlayer
-var stream_player_2d: AudioStreamPlayer2D
+var audio_tab: VBoxContainer = null
 
 var _current := 0.0
 var _confirmation_dialog: ConfirmationDialog
@@ -73,9 +73,9 @@ func _open_in_inspector(event: InputEvent) -> void:
 
 
 func _play() -> void:
-	if is_instance_valid(main_dock.last_played)\
-	and main_dock.last_played.get_instance_id() != get_instance_id():
-		main_dock.last_played._stop()
+	if is_instance_valid(audio_tab.last_played)\
+	and audio_tab.last_played.get_instance_id() != get_instance_id():
+		audio_tab.last_played._stop()
 	
 	if not is_instance_valid(audio_cue):
 		var stream: AudioStream = load(file_path)
@@ -96,7 +96,7 @@ func _play() -> void:
 		stream_player.connect('finished', self, '_stop')
 		stream_player.play(_current)
 		_play.icon = _play.get_icon('Pause', 'EditorIcons')
-		main_dock.last_played = self
+		audio_tab.last_played = self
 
 
 func _stop() -> void:
@@ -109,7 +109,7 @@ func _stop() -> void:
 	if stream_player.is_connected('finished', self, '_stop'):
 		stream_player.disconnect('finished', self, '_stop')
 	
-	main_dock.last_played = null
+	audio_tab.last_played = null
 
 
 # Abre un popup de confirmación para saber si la desarrolladora quiere eliminar
@@ -148,10 +148,10 @@ func _remove_in_audio_manager() -> void:
 	_confirmation_dialog.disconnect('confirmed', self, '_remove_in_audio_manager')
 	
 	# Eliminar el AudioCue del AudioManager ------------------------------------
-	var am: Node = main_dock.get_audio_manager()
+	var am: Node = audio_tab.get_audio_manager()
 	am[cue_group].erase(audio_cue)
 	
-	if main_dock.save_audio_manager() != OK:
+	if audio_tab.save_audio_manager() != OK:
 		push_error('[Popochiu] No se pudo eliminar el AudioCue del'\
 		+ ' AudioManager: %s' % audio_cue.resource_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
@@ -193,5 +193,5 @@ func _disconnect_popup() -> void:
 
 func _set_main_dock(value: Panel) -> void:
 	main_dock = value
-	_confirmation_dialog = value.delete_dialog
+	_confirmation_dialog = main_dock.delete_dialog
 	_delete_all_checkbox = _confirmation_dialog.find_node('CheckBox')

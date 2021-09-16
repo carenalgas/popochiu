@@ -92,7 +92,7 @@ _global_script_classes=[ {
 "base": "PanelContainer",
 "class": "PopochiuGroup",
 "language": "GDScript",
-"path": "res://addons/Popochiu/Editor/MainDock/GroupButton/PopochiuGroup.gd"
+"path": "res://addons/Popochiu/Editor/MainDock/PopochiuGroup/PopochiuGroup.gd"
 }, {
 "base": "Resource",
 "class": "PopochiuInventoryItemData",
@@ -151,7 +151,7 @@ _global_script_class_icons={
 "PopochiuCharacterData": "res://addons/Popochiu/icons/character.png",
 "PopochiuDialog": "res://addons/Popochiu/icons/dialog.png",
 "PopochiuDock": "",
-"PopochiuGroup": "res://addons/Popochiu/Editor/MainDock/GroupButton/popochiu_group.svg",
+"PopochiuGroup": "res://addons/Popochiu/Editor/MainDock/PopochiuGroup/popochiu_group.svg",
 "PopochiuInventoryItemData": "res://addons/Popochiu/icons/inventory_item.png",
 "PopochiuObjectRow": "",
 "PopochiuRoom": "res://addons/Popochiu/icons/room.png",

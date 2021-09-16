@@ -1,9 +1,9 @@
-[gd_scene load_steps=31 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateRoom/CreateRoom.tscn" type="PackedScene" id=3]
-[ext_resource path="res://addons/Popochiu/Editor/MainDock/GroupButton/PopochiuGroup.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/PopochiuGroup/PopochiuGroup.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateProp/CreateProp.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateInventoryItem/CreateInventoryItem.tscn" type="PackedScene" id=6]
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/PopochiuDock.gd" type="Script" id=7]
@@ -11,27 +11,14 @@
 [ext_resource path="res://addons/Popochiu/icons/dialog.png" type="Texture" id=9]
 [ext_resource path="res://addons/Popochiu/icons/room.png" type="Texture" id=10]
 [ext_resource path="res://addons/Popochiu/icons/inventory_item.png" type="Texture" id=11]
-[ext_resource path="res://addons/Popochiu/icons/prop.png" type="Texture" id=12]
-[ext_resource path="res://addons/Popochiu/icons/hotspot.png" type="Texture" id=13]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/TabRoom.tscn" type="PackedScene" id=12]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/TabAudio.tscn" type="PackedScene" id=13]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateHotspot/CreateHotspot.tscn" type="PackedScene" id=14]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateRegion/CreateRegion.tscn" type="PackedScene" id=15]
-[ext_resource path="res://addons/Popochiu/icons/region.png" type="Texture" id=16]
-[ext_resource path="res://addons/Popochiu/icons/point.png" type="Texture" id=17]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIRegular.tres" type="DynamicFont" id=18]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIBold.tres" type="DynamicFont" id=19]
-[ext_resource path="res://addons/Popochiu/icons/sfx.png" type="Texture" id=20]
-[ext_resource path="res://addons/Popochiu/icons/voice.png" type="Texture" id=21]
-[ext_resource path="res://addons/Popochiu/icons/ui.png" type="Texture" id=22]
-[ext_resource path="res://addons/Popochiu/icons/music.png" type="Texture" id=23]
 
-[sub_resource type="StyleBoxFlat" id=22]
-content_margin_top = 4.0
-content_margin_bottom = 4.0
-bg_color = Color( 0.439216, 0.427451, 0.921569, 1 )
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="StyleBoxEmpty" id=17]
 
 [sub_resource type="StyleBoxFlat" id=5]
 content_margin_left = 8.0
@@ -48,23 +35,6 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
-
-[sub_resource type="Image" id=23]
-data = {
-"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
-"format": "LumAlpha8",
-"height": 16,
-"mipmaps": false,
-"width": 16
-}
-
-[sub_resource type="ImageTexture" id=4]
-flags = 4
-flags = 4
-image = SubResource( 23 )
-size = Vector2( 16, 16 )
-
-[sub_resource type="StyleBoxEmpty" id=17]
 
 [sub_resource type="StyleBoxEmpty" id=18]
 
@@ -169,147 +139,9 @@ color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 title = "Diálogos"
 create_text = "Crear diálogo"
 
-[node name="Room" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
-__meta__ = {
-"_tab_disabled": false
-}
+[node name="Room" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource( 12 )]
 
-[node name="RoomName" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room"]
-visible = false
-margin_right = 304.0
-margin_bottom = 22.0
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-custom_styles/normal = SubResource( 22 )
-text = "Room name"
-align = 1
-
-[node name="RoomScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room"]
-margin_top = 26.0
-margin_right = 304.0
-margin_bottom = 136.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer"]
-margin_right = 304.0
-margin_bottom = 12.0
-size_flags_horizontal = 3
-
-[node name="NoRoomInfo" type="Label" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer"]
-visible = false
-margin_right = 304.0
-margin_bottom = 39.0
-custom_colors/font_color = Color( 0.768627, 0.423529, 0.443137, 1 )
-custom_styles/normal = SubResource( 5 )
-text = "Seleccione una habitación para ver sus Props, Hotspots y Regions. O crear nuevos."
-autowrap = true
-
-[node name="PropsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_right = 292.0
-icon = ExtResource( 12 )
-title = "Props"
-create_text = "Crear prop"
-
-[node name="HotspotsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 54.0
-margin_right = 292.0
-margin_bottom = 78.0
-icon = ExtResource( 13 )
-title = "Hotspots"
-create_text = "Crear hotspot"
-
-[node name="RegionsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 108.0
-margin_right = 292.0
-margin_bottom = 132.0
-icon = ExtResource( 16 )
-title = "Regiones"
-create_text = "Crear región"
-
-[node name="PointsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Room/RoomScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 162.0
-margin_right = 292.0
-margin_bottom = 186.0
-icon = ExtResource( 17 )
-title = "Puntos"
-create_text = "Crear punto"
-
-[node name="Audio" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
-__meta__ = {
-"_tab_disabled": false
-}
-
-[node name="BtnSearchAudioFiles" type="Button" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
-margin_right = 304.0
-margin_bottom = 20.0
-size_flags_horizontal = 8
-text = "Buscar archivos de audio"
-icon = SubResource( 4 )
-
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
-margin_top = 24.0
-margin_right = 304.0
-margin_bottom = 136.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer"]
-margin_right = 304.0
-margin_bottom = 16.0
-size_flags_horizontal = 3
-
-[node name="UnassignedGroup" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_right = 292.0
-title = "Sin asignar"
-can_create = false
-
-[node name="MusicGroup" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 32.0
-margin_right = 292.0
-margin_bottom = 56.0
-icon = ExtResource( 23 )
-title = "Música"
-can_create = false
-
-[node name="SFXGroup" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 64.0
-margin_right = 292.0
-margin_bottom = 88.0
-icon = ExtResource( 20 )
-title = "Efectos de sonido"
-can_create = false
-
-[node name="VoiceGroup" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 96.0
-margin_right = 292.0
-margin_bottom = 120.0
-icon = ExtResource( 21 )
-title = "Voces"
-can_create = false
-
-[node name="UIGroup" parent="MarginContainer/VBoxContainer/TabContainer/Audio/ScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_top = 128.0
-margin_right = 292.0
-margin_bottom = 152.0
-icon = ExtResource( 22 )
-title = "Interfaz gráfica"
-can_create = false
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="MarginContainer/VBoxContainer/TabContainer/Audio"]
+[node name="Audio" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource( 13 )]
 
 [node name="Popups" type="Control" parent="."]
 __meta__ = {

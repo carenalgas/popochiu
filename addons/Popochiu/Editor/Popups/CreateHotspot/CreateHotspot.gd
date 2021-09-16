@@ -5,6 +5,8 @@ extends CreationPopup
 const SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/HotspotTemplate.gd'
 const HOTSPOT_SCENE := 'res://addons/Popochiu/Engine/Objects/Hotspot/Hotspot.tscn'
 
+
+var _room: Node2D = null
 var _new_hotspot_name := ''
 var _new_hotspot_path := ''
 var _hotspot_path_template: String
@@ -22,11 +24,11 @@ func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
 
 
-func room_opened() -> void:
-	if is_instance_valid(_main_dock.opened_room):
-		_room_path = _main_dock.opened_room.filename
-		_room_dir = _room_path.get_base_dir()
-		_hotspot_path_template = _room_dir + '/Hotspots/Hotspot%s'
+func room_opened(r: Node2D) -> void:
+	_room = r
+	_room_path = _room.filename
+	_room_dir = _room_path.get_base_dir()
+	_hotspot_path_template = _room_dir + '/Hotspots/Hotspot%s'
 
 
 func create() -> void:
@@ -63,8 +65,8 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Agregar el hotspot a su habitación
-	_main_dock.opened_room.get_node('Hotspots').add_child(hotspot)
-	hotspot.owner = _main_dock.opened_room
+	_room.get_node('Hotspots').add_child(hotspot)
+	hotspot.owner = _room
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
