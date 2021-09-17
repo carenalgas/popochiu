@@ -1,5 +1,8 @@
 tool
 extends EditorPlugin
+# Configura el plugin
+# Aquí hay varios iconos que pueden resultar útiles:
+#	godot\editor\editor_themes.cpp
 
 # TODO: Que este directorio se pueda seleccionar cuando se instala el plugin por
 #		primera vez
@@ -274,4 +277,4 @@ func _fix_dependency(dependency, directory, resource_path):
 
 func _on_sources_changed(exist: bool) -> void:
 	if Engine.editor_hint and is_instance_valid(main_dock):
-		main_dock._search_audio_files()
+		main_dock.tab_audio.search_audio_files()

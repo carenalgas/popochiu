@@ -1,13 +1,16 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://addons/Popochiu/Engine/AudioManager/AudioManager.gd" type="Script" id=1]
 [ext_resource path="res://popochiu/Rooms/Forest/music/MusicExample.tres" type="Resource" id=2]
 [ext_resource path="res://popochiu/Rooms/Forest/Props/Bucket01.tres" type="Resource" id=3]
+[ext_resource path="res://popochiu/Rooms/Cave/audio/Error001.tres" type="Resource" id=4]
+[ext_resource path="res://popochiu/Rooms/Cave/audio/Tie.tres" type="Resource" id=5]
 
 [node name="AudioManager" type="Node"]
 script = ExtResource( 1 )
 mx_cues = [ ExtResource( 2 ) ]
-sfx_cues = [ ExtResource( 3 ) ]
+sfx_cues = [ ExtResource( 3 ), ExtResource( 4 ) ]
+vo_cues = [ ExtResource( 5 ) ]
 
 [node name="Positional" type="Node" parent="."]
 

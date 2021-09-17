@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/error_001.ogg-9cfab8226fdf86d4e295f3eba3137bf4.oggstr"
+
+[deps]
+
+source_file="res://popochiu/Rooms/Cave/audio/error_001.ogg"
+dest_files=[ "res://.import/error_001.ogg-9cfab8226fdf86d4e295f3eba3137bf4.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

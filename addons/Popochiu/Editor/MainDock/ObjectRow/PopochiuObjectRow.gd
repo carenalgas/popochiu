@@ -12,27 +12,43 @@ var _confirmation_dialog: ConfirmationDialog
 var _delete_all_checkbox: CheckBox
 
 onready var _label: Label = find_node('Label')
-onready var _btn_add: Button = find_node('AddToCore')
+onready var _dflt_font_color: Color = _label.get_color('font_color')
+onready var _menu_btn: MenuButton = find_node('MenuButton')
+onready var _menu_popup: PopupMenu = _menu_btn.get_popup()
+#onready var _btn_add: Button = find_node('AddToCore')
 onready var _btn_open: Button = find_node('Open')
-onready var _btn_delete: Button = find_node('Delete')
+#onready var _btn_delete: Button = find_node('Delete')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
 	_label.text = name
-	_btn_add.hide()
+	_menu_popup.set_item_disabled(0, true)
+#	_btn_add.hide()
 	
 	_btn_open.icon = get_icon('InstanceOptions', 'EditorIcons')
-	_btn_delete.icon = get_icon('Remove', 'EditorIcons')
+	_menu_btn.icon = get_icon('GuiTabMenu', 'EditorIcons')
+	_menu_popup.set_item_icon(2, get_icon('Remove', 'EditorIcons'))
+#	_btn_delete.icon = get_icon('Remove', 'EditorIcons')
+	find_node('MenuButton').icon = get_icon('GuiTabMenu', 'EditorIcons')
 	
-	_btn_add.connect('pressed', self, '_add_object_to_core')
+	_menu_popup.connect('id_pressed', self, '_menu_item_pressed')
+#	_btn_add.connect('pressed', self, '_add_object_to_core')
 	_btn_open.connect('pressed', self, '_open')
-	_btn_delete.connect('pressed', self, '_ask_basic_delete')
+#	_btn_delete.connect('pressed', self, '_ask_basic_delete')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func show_add_to_core() -> void:
-	_btn_add.show()
+	_menu_popup.set_item_disabled(0, false)
+#	_btn_add.show()
+
+func _menu_item_pressed(id: int) -> void:
+	match id:
+		0:
+			_add_object_to_core()
+		2:
+			_ask_basic_delete()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -73,7 +89,8 @@ func _add_object_to_core() -> void:
 		name)
 		return
 	
-	_btn_add.hide()
+	_menu_popup.set_item_disabled(0, true)
+#	_btn_add.hide()
 
 
 # Selecciona el archivo principal del objeto en el FileSystem y lo abre para que

@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/tie.ogg-3204c77310320aac5a4c445e28fcbef7.oggstr"
+
+[deps]
+
+source_file="res://popochiu/Rooms/Cave/audio/tie.ogg"
+dest_files=[ "res://.import/tie.ogg-3204c77310320aac5a4c445e28fcbef7.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

@@ -56,7 +56,16 @@ func fill_data() -> void:
 	_read_audio_manager_cues()
 	
 	# Buscar archivos de audio sin AudioCue
-	_search_audio_files()
+	search_audio_files()
+
+
+func search_audio_files() -> void:
+	_created_audio_cues = 0
+	
+	_read_directory(main_dock.fs.get_filesystem_path(SEARCH_PATH))
+	
+	if _created_audio_cues > 0:
+		_read_audio_manager_cues()
 
 
 func get_audio_manager() -> Node:
@@ -115,15 +124,6 @@ func _create_audio_cue_row(audio_cue: AudioCue) -> HBoxContainer:
 	ar.connect('deleted', self, '_audio_cue_deleted')
 	
 	return ar
-
-
-func _search_audio_files() -> void:
-	_created_audio_cues = 0
-	
-	_read_directory(main_dock.fs.get_filesystem_path(SEARCH_PATH))
-	
-	if _created_audio_cues > 0:
-		_read_audio_manager_cues()
 
 
 func _read_directory(dir: EditorFileSystemDirectory) -> void:

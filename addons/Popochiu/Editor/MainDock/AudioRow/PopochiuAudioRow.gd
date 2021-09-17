@@ -18,48 +18,31 @@ var _delete_all_checkbox: CheckBox
 
 onready var _label: Label = find_node('Label')
 onready var _dflt_font_color: Color = _label.get_color('font_color')
-onready var _add_to_music: Button = find_node('AddToMusic')
-onready var _add_to_sfx: Button = find_node('AddToSFX')
-onready var _add_to_voice: Button = find_node('AddToVoice')
-onready var _add_to_ui: Button = find_node('AddToUI')
+onready var _menu_btn: MenuButton = find_node('MenuButton')
+onready var _menu_popup: PopupMenu = _menu_btn.get_popup()
 onready var _play: Button = find_node('Play')
 onready var _stop: Button = find_node('Stop')
-onready var _delete: Button = find_node('Delete')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
 	_label.text = file_name if file_name else name
+	_menu_btn.icon = get_icon('GuiTabMenu', 'EditorIcons')
+	_menu_popup.set_item_icon(5, get_icon('Remove', 'EditorIcons'))
 	_play.icon = get_icon('MainPlay', 'EditorIcons')
 	_stop.icon = get_icon('Stop', 'EditorIcons')
-	_delete.icon = get_icon('Remove', 'EditorIcons')
 	
 	connect('gui_input', self, '_open_in_inspector')
+	_menu_popup.connect('id_pressed', self, '_menu_item_pressed')
 	_play.connect('pressed', self, '_play')
 	_stop.connect('pressed', self, '_stop')
-	_delete.connect('pressed', self, '_ask_basic_delete')
 	
 	if is_instance_valid(audio_cue):
 		_label.text = audio_cue.resource_name
 		
-		_add_to_music.hide()
-		_add_to_sfx.hide()
-		_add_to_voice.hide()
-		_add_to_ui.hide()
-		find_node('PlayerSeparator').hide()
-	else:
-		_add_to_music.connect(
-			'pressed', self, 'emit_signal', ['target_clicked', 'music']
-		)
-		_add_to_sfx.connect(
-			'pressed', self, 'emit_signal', ['target_clicked', 'sfx']
-		)
-		_add_to_voice.connect(
-			'pressed', self, 'emit_signal', ['target_clicked', 'voice']
-		)
-		_add_to_ui.connect(
-			'pressed', self, 'emit_signal', ['target_clicked', 'ui']
-		)
+		for idx in range(4):
+			_menu_popup.set_item_disabled(idx, true)
+#			_menu_popup.remove_item(0)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -70,6 +53,20 @@ func _open_in_inspector(event: InputEvent) -> void:
 		main_dock.ei.select_file(audio_cue.resource_path)
 		main_dock.ei.edit_resource(audio_cue)
 		_label.add_color_override('font_color', Color('706deb'))
+
+
+func _menu_item_pressed(id: int) -> void:
+	match id:
+		0:
+			emit_signal('target_clicked', 'music')
+		1:
+			emit_signal('target_clicked', 'sfx')
+		2:
+			emit_signal('target_clicked', 'voice')
+		3:
+			emit_signal('target_clicked', 'ui')
+		5:
+			_ask_basic_delete()
 
 
 func _play() -> void:

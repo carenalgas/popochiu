@@ -25,6 +25,8 @@ onready var delete_dialog: ConfirmationDialog = find_node('DeleteConfirmation')
 onready var delete_checkbox: CheckBox = delete_dialog.find_node('CheckBox')
 onready var delete_extra: Container = delete_dialog.find_node('Extra')
 onready var _tab_container: TabContainer = find_node('TabContainer')
+onready var tab_room: VBoxContainer = _tab_container.get_node('Room')
+onready var tab_audio: VBoxContainer = _tab_container.get_node('Audio')
 onready var _types := {
 	room = {
 		path = ROOMS_PATH,
@@ -73,8 +75,8 @@ func _ready() -> void:
 			'create_clicked', self, '_open_popup', [_types[t].popup]
 		)
 	
-	_tab_container.get_node('Room').main_dock = self
-	_tab_container.get_node('Audio').main_dock = self
+	tab_room.main_dock = self
+	tab_audio.main_dock = self
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
 
 
@@ -128,7 +130,7 @@ func fill_data() -> void:
 				if not is_in_core:
 					row.show_add_to_core()
 	
-	_tab_container.get_node('Audio').fill_data()
+	tab_audio.fill_data()
 
 
 func add_to_list(type: String, name_to_add: String) -> void:
@@ -138,7 +140,7 @@ func add_to_list(type: String, name_to_add: String) -> void:
 
 
 func scene_changed(scene_root: Node) -> void:
-	_tab_container.get_node('Room').scene_changed(scene_root)
+	tab_room.scene_changed(scene_root)
 
 
 func get_popochiu() -> Node:
