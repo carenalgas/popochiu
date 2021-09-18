@@ -27,7 +27,7 @@ onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _enter_tree() -> void:
-	if not Engine.editor_hint and is_instance_valid(C.player):
+	if not Engine.editor_hint:
 		for c in $Characters.get_children():
 			if c is PopochiuCharacter:
 				var pc: PopochiuCharacter = c

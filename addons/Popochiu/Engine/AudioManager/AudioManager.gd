@@ -47,11 +47,11 @@ func play(props = {
 	}) -> void:
 	if props.get('is_in_queue', true): yield()
 	
-	var dic: Dictionary = {}
+	var dic: Dictionary = _all_in_one
 	var stream_player: Node = null
 	
-	if props.cue_name.find('vo_') > -1: dic = _vo_cues
-	else: dic = _sfx_cues
+#	if props.cue_name.find('vo_') > -1: dic = _vo_cues
+#	else: dic = _sfx_cues
 	
 	if dic.has(props.cue_name.to_lower()):
 		var cue: AudioCue = dic[props.cue_name.to_lower()]

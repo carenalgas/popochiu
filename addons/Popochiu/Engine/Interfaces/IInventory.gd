@@ -6,9 +6,12 @@ signal item_add_done(item)
 signal item_removed(item)
 signal item_remove_done(item)
 
+export var always_visible := false
+
 var _item_instances := []
 
 var active: InventoryItem
+var show_anims := true
 
 export(Array, PackedScene) var inventory_items
 export var items := []
@@ -26,17 +29,25 @@ func _ready():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
-func add_item(item_name: String) -> void:
+func add_item(item_name: String, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
 	var i: InventoryItem = _get_item_instance(item_name)
-	if is_instance_valid(i):
+	if is_instance_valid(i) and not i.in_inventory:
+		i.in_inventory = true
+		
 		emit_signal('item_added', i)
+		
 		return yield(self, 'item_add_done')
 	
-	return yield(get_tree(), 'idle_frame')
+	yield(get_tree(), 'idle_frame')
 
 
-func add_item_as_active(item_name: String) -> void:
-	var item: InventoryItem = yield(add_item(item_name), 'completed')
+func add_item_as_active(item_name: String, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	var item: InventoryItem = yield(add_item(item_name, false), 'completed')
+	
 	if is_instance_valid(item):
 		set_active_item(item)
 
@@ -55,8 +66,11 @@ func remove_item(item_name: String, is_in_queue := true) -> void:
 	
 	var i: InventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i):
+		i.in_inventory = false
+		
 		set_active_item(null)
 		emit_signal('item_removed', i)
+		
 		yield(self, 'item_remove_done')
 
 

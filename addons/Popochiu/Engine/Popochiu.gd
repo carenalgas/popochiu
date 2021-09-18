@@ -208,6 +208,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	# Agregar a la habitación los personajes que tiene configurados
 	for c in room.characters_cfg:
 		var chr: PopochiuCharacter = C.get_character(c.script_name)
+		
 		if chr:
 			chr.position = c.position
 			room.add_character(chr)

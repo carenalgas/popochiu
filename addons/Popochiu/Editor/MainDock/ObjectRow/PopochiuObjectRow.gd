@@ -32,7 +32,8 @@ onready var _menu_cfg := [
 	{
 		id = MenuOptions.SET_AS_MAIN,
 		icon = get_icon('Heart', 'EditorIcons'),
-		label = 'Establecer como principal'
+		label = 'Establecer como principal',
+		type = 'room'
 	},
 	null,
 	{
@@ -85,6 +86,23 @@ func show_add_to_core() -> void:
 	_menu_popup.set_item_disabled(0, false)
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+func _create_menu() -> void:
+	_menu_popup.clear()
+	
+	for option in _menu_cfg:
+		if option:
+			if option.has('type') and option.type != type: continue
+			
+			_menu_popup.add_icon_item(
+				option.icon,
+				option.label,
+				option.id
+			)
+		else:
+			_menu_popup.add_separator()
+
+
 func _menu_item_pressed(id: int) -> void:
 	match id:
 		MenuOptions.ADD_TO_CORE:
@@ -94,21 +112,6 @@ func _menu_item_pressed(id: int) -> void:
 			self.is_main = true
 		MenuOptions.DELETE:
 			_ask_basic_delete()
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-func _create_menu() -> void:
-	_menu_popup.clear()
-	
-	for option in _menu_cfg:
-		if option:
-			_menu_popup.add_icon_item(
-				option.icon,
-				option.label,
-				option.id
-			)
-		else:
-			_menu_popup.add_separator()
 
 
 # Agrega este objeto (representado por una fila en una de las categorías de la

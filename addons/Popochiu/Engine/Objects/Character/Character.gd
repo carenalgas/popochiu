@@ -33,8 +33,7 @@ func _ready():
 	if not Engine.editor_hint:
 		idle(false)
 		set_process(follow_player)
-	
-	if Engine.editor_hint:
+	else:
 		set_process(true)
 
 
