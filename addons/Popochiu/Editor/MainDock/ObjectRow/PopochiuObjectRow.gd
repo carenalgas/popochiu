@@ -6,6 +6,8 @@ extends HBoxContainer
 
 enum MenuOptions { ADD_TO_CORE, SET_AS_MAIN, DELETE }
 
+const SELECTED_FONT_COLOR := Color('706deb')
+
 var type := ''
 var path := ''
 var main_dock setget _set_main_dock
@@ -15,8 +17,8 @@ var _confirmation_dialog: ConfirmationDialog
 var _delete_all_checkbox: CheckBox
 
 onready var _label: Label = find_node('Label')
-onready var _fav_icon: TextureRect = find_node('FavIcon')
 onready var _dflt_font_color: Color = _label.get_color('font_color')
+onready var _fav_icon: TextureRect = find_node('FavIcon')
 onready var _menu_btn: MenuButton = find_node('MenuButton')
 onready var _menu_popup: PopupMenu = _menu_btn.get_popup()
 onready var _btn_open: Button = find_node('Open')
@@ -57,11 +59,28 @@ func _ready() -> void:
 	# Ocultar cosas que se verán dependiendo de otras cosas
 	_fav_icon.hide()
 	
+	connect('gui_input', self, 'select')
 	_menu_popup.connect('id_pressed', self, '_menu_item_pressed')
 	_btn_open.connect('pressed', self, '_open')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+func select(event: InputEvent) -> void:
+	var mouse_event: = event as InputEventMouseButton
+	if mouse_event\
+	and mouse_event.button_index == BUTTON_LEFT and mouse_event.pressed:
+		if main_dock.last_selected:
+			main_dock.last_selected.unselect()
+		
+		main_dock.ei.select_file(path)
+		_label.add_color_override('font_color', SELECTED_FONT_COLOR)
+		main_dock.last_selected = self
+
+
+func unselect() -> void:
+	_label.add_color_override('font_color', _dflt_font_color)
+
+
 func show_add_to_core() -> void:
 	_menu_popup.set_item_disabled(0, false)
 

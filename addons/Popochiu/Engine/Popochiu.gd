@@ -206,14 +206,13 @@ func room_readied(room: PopochiuRoom) -> void:
 	room.visited_times += 1
 	
 	# Agregar a la habitación los personajes que tiene configurados
-	for c in room.characters:
+	for c in room.characters_cfg:
 		var chr: PopochiuCharacter = C.get_character(c.script_name)
 		if chr:
 			chr.position = c.position
-#			chr.walk_to_point += chr.position
 			room.add_character(chr)
+	
 	if room.has_player:
-		room.add_character(C.player)
 		yield(C.player.idle(false), 'completed')
 
 	room.on_room_entered()

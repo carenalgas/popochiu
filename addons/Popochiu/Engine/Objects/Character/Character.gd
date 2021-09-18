@@ -10,19 +10,19 @@ signal started_walk_to(character, start, end)
 signal stoped_walk
 
 export var dflt_walk_animation := 'walk_r'
-
-var room := ''
-var last_room := ''
-var anim_suffix := ''
-
-var _looking_dir := 'd'
-
 export var text_color := Color.white
 export var walk_speed := 200.0
 export var is_player := false
 export var texture: Texture setget _set_texture
 export var vo_name := ''
 export var follow_player := false
+
+var room := ''
+var last_room := ''
+var anim_suffix := ''
+var is_moving := false
+
+var _looking_dir := 'd'
 
 onready var sprite: Sprite = $Sprite
 onready var dialog_pos: Position2D = $DialogPos
@@ -48,11 +48,14 @@ func _process(_delta: float) -> void:
 func walk(target_pos: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
+	is_moving = true
+	
 	$Sprite.flip_h = target_pos.x < position.x
 #	_looking_dir = 'l' if $Sprite.flip_h else 'r'
 #	_looking_dir = 'l' if $Sprite.flip_h else 'r'
 
 	if E.cutscene_skipped:
+		is_moving = false
 		E.main_camera.smoothing_enabled = false
 		yield(get_tree(), 'idle_frame')
 		position = target_pos
@@ -69,10 +72,12 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 
 	emit_signal('started_walk_to', self, position, target_pos)
 	yield(C, 'character_move_ended')
+	is_moving = false
 
 
 func stop_walking(is_in_queue := true) -> void:
 	if is_in_queue: yield()
+	is_moving = false
 	emit_signal('stoped_walk')
 	yield(get_tree(), 'idle_frame')
 

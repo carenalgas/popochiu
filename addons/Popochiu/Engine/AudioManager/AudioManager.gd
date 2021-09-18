@@ -1,7 +1,7 @@
 tool
 extends Node
 
-export(Array, Resource) var cues = [] setget _set_cues
+#export(Array, Resource) var cues = [] setget _set_cues
 export var mx_cues := []
 export var sfx_cues := []
 export var vo_cues := []
@@ -14,6 +14,7 @@ var _sfx_cues := {}
 var _vo_cues := {}
 var _ui_cues := {}
 var _active := {}
+var _all_in_one := {}
 
 var _fading_sounds := {}
 
@@ -23,18 +24,10 @@ onready var _tween = $Tween
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 # warning-ignore-all:return_value_discarded
 func _ready() -> void:
-	for c in cues:
-		var cue: AudioCue = c
-		var cue_name := cue.resource_name.to_lower()
-		
-		if cue_name.find('vo_') > -1:
-			_vo_cues[cue_name] = cue
-		elif cue_name.find('mx_') > -1:
-			_mx_cues[cue_name] = cue
-		elif cue_name.find('ui_') > -1:
-			_ui_cues[cue_name] = cue
-		else:
-			_sfx_cues[cue_name] = cue
+	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
+		for ac in self[arr]:
+			self['_%s' % arr][ac.resource_name] = ac
+			_all_in_one[ac.resource_name] = ac
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -73,7 +66,7 @@ func play(props = {
 				props.get('to', cue.volume)
 			)
 	else:
-		printerr('AudioManager.play: No se encontró el sonido', props.cue_name)
+		printerr('[Popochiu(A.play)] No se encontró el sonido', props.cue_name)
 	
 	if stream_player and props.get('wait_audio_complete', false):
 		yield(stream_player, 'finished')
@@ -95,18 +88,11 @@ func play_music(
 		
 		var cue: AudioCue = _mx_cues[cue_name.to_lower()]
 		if fade:
-			var volume
-			match cue_name:
-				'mx_bar_01':
-					volume = -6
-				_: 
-					volume = -8
-			_fade_in(cue, Vector2.ZERO, duration, -80, volume, music_position)
+			_fade_in(cue, Vector2.ZERO, duration, -80, 0, music_position)
 		else:
 			_play(cue, Vector2.ZERO, music_position)
-		C.get_character('Lagarto').current_track = cue_name
 	else:
-		printerr('AudioManager.play_music: No se encontró la música', cue_name)
+		printerr('[Popochiu(A.play_music)] No se encontró la música', cue_name)
 	
 	yield(get_tree(), 'idle_frame')
 
@@ -141,11 +127,12 @@ func stop(
 
 func get_cue_position(cue_name: String, is_in_queue := true) -> void:
 	var stream_player: Node = (_active[cue_name].players as Array).front()
-	C.get_character('Lagarto').music_position = stream_player.get_playback_position()
 	yield(get_tree(), 'idle_frame')
 
 
-func change_cue_pitch(cue_name: String, new_pitch = 0, is_in_queue := true) -> void:
+func change_cue_pitch(
+		cue_name: String, new_pitch = 0, is_in_queue := true
+	) -> void:
 	if is_in_queue: yield()
 	var stream_player: Node = (_active[cue_name].players as Array).front()
 	stream_player.set_pitch_scale(semitone_to_pitch(new_pitch)) 
@@ -171,15 +158,6 @@ func _fade_in(
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-func _set_cues(value: Array) -> void:
-	cues = value
-	for idx in value.size():
-		if not value[idx]:
-			var new_opt: AudioCue = AudioCue.new()
-			cues[idx] = new_opt
-			property_list_changed_notify()
-
-
 # Reproduce el sonido y se encarga de la lógica que lo asigna a un AudioStreamPlayer
 # o crea uno nuevo si no hay disponibles
 func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
@@ -190,7 +168,7 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
 		
 		if not is_instance_valid(player):
 			print_debug(
-				'[Popochiu:AudioManager(_play)] Nos quedamos sin AudioStreamPlayer2D'
+				'[Popochiu(A._play)] Nos quedamos sin AudioStreamPlayer2D'
 			)
 			return null
 
@@ -204,7 +182,7 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
 		
 		if not is_instance_valid(player):
 			print_debug(
-				'[Popochiu:AudioManager(_play)] Nos quedamos sin AudioStreamPlayer'
+				'[Popochiu(A._play)] Nos quedamos sin AudioStreamPlayer'
 			)
 			return null
 	
@@ -213,15 +191,9 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
 		(player as AudioStreamPlayer).volume_db = cue.volume
 	
 	var cue_name := cue.resource_name
-#	var debug_idx: int = DebugOverlay.add_monitor(
-#		'\n' + cue_name, player, ':playing'
-#	)
 	
 	player.bus = cue.bus
 	player.play(position)
-#	player.connect(
-#		'finished', self, '_make_available', [player, cue_name, debug_idx]
-#	)
 	player.connect('finished', self, '_make_available', [player, cue_name, 0])
 	
 	if _active.has(cue_name):
@@ -237,7 +209,7 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
 
 func _get_free_stream(group: Node):
 	var active_stream: Node = _reparent(group, $Active, 0)
-	# TODO: Que cree un AudioStreamPlayer cuando no hay hijos
+	# TODO: Que cree un AudioStreamPlayer cuando haga falta uno
 	
 	return active_stream
 
@@ -245,12 +217,6 @@ func _get_free_stream(group: Node):
 # Reasigna el AudioStreamPlayer a su grupo original cuando ha terminado de sonar
 # pa' que vuelva a estar disponible para ser usado
 func _make_available(stream_player: Node, cue_name: String, _debug_idx: int) -> void:
-	if 'mx' in cue_name:
-		if not cue_name == 'mx_bar_gen':
-			if C.get_character('Lagarto').paused == false:
-				if cue_name == C.get_character('Lagarto').current_track:
-					C.get_character('Lagarto').music_playing = false
-				C.get_character('Lagarto').check_music()
 	if stream_player is AudioStreamPlayer:
 		_reparent($Active, $Generic, stream_player.get_index())
 	else:
@@ -266,8 +232,6 @@ func _make_available(stream_player: Node, cue_name: String, _debug_idx: int) -> 
 		_active.erase(cue_name)
 	
 	stream_player.disconnect('finished', self, '_make_available')
-	
-#	DebugOverlay.remove_monitor(debug_idx)
 
 
 func _reparent(source: Node, target: Node, child_idx: int) -> Node:
@@ -289,8 +253,10 @@ func _fade_sound(cue_name: String, duration = 1, from = 0, to = 0) -> void:
 		duration, Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
 	$Tween.start()
+	
 	if from > to :
 		_fading_sounds[stream_player.stream.get_instance_id()] = stream_player
+		
 		if not $Tween.is_connected('tween_completed', self, '_fadeout_finished'):
 			$Tween.connect('tween_completed', self, '_fadeout_finished')
 
@@ -299,6 +265,7 @@ func _fadeout_finished(obj, key) -> void:
 	if obj.stream.get_instance_id() in _fading_sounds :
 		_fading_sounds.erase(obj.stream.get_instance_id())
 		obj.stop()
+		
 		if _fading_sounds.empty():
 			$Tween.disconnect('tween_completed', self, '_fadeout_finished')
 

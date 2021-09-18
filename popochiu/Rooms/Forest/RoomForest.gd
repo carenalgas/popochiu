@@ -5,6 +5,8 @@ extends PopochiuRoom
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func on_room_entered() -> void:
+	A.play_music('music_example', false)
+	
 	# Algo así tendrían que quedar los guiones cuando se están programando
 	# interacciones.
 	if C.player.last_room == 'Cave':

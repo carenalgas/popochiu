@@ -16,6 +16,7 @@ var ei: EditorInterface
 var fs: EditorFileSystem
 var dir := Directory.new()
 var popochiu: Popochiu = null
+var last_selected: PopochiuObjectRow = null
 
 var _has_data := false
 var _object_row: PackedScene = preload(\

@@ -5,7 +5,6 @@ extends Node2D
 # Nodo base para la creación de habitaciones dentro del juego.
 
 export var script_name := ''
-export(Array, Dictionary) var characters := [] setget _set_characters
 export var has_player := true
 export var hide_gi := false
 
@@ -18,6 +17,7 @@ var limit_right := 0.0
 var limit_top := 0.0
 var limit_bottom := 0.0
 var state := {} setget _set_state, _get_state
+var characters_cfg := [] # Array of Dictionary
 
 var _path := []
 var _moving_character: PopochiuCharacter = null
@@ -26,6 +26,20 @@ onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+func _enter_tree() -> void:
+	if not Engine.editor_hint and is_instance_valid(C.player):
+		for c in $Characters.get_children():
+			if c is PopochiuCharacter:
+				var pc: PopochiuCharacter = c
+				characters_cfg.append({
+					script_name = pc.script_name,
+					position = pc.position
+				})
+				
+				$Characters.remove_child(pc)
+				pc.queue_free()
+
+
 func _ready():
 	set_process_unhandled_input(false)
 	
@@ -38,11 +52,7 @@ func _ready():
 	if limit_bottom != 0.0:
 		E.main_camera.limit_bottom = limit_bottom
 	
-	if not Engine.editor_hint and is_instance_valid(C.player):
-		for c in $Characters.get_children():
-			(c as Node2D).queue_free()
-
-		E.room_readied(self)
+	E.room_readied(self)
 
 
 func _process(delta):
@@ -209,23 +219,6 @@ func _update_navigation_path(
 	set_process(true)
 
 
-func _set_characters(value: Array) -> void:
-	characters = value
-	for v in value.size():
-		if not value[v]:
-			characters[v] = {
-				script_name = '',
-				position = Vector2.ZERO
-			}
-			property_list_changed_notify()
-
-
-func _check_baseline(nde: Node, chr_y_pos: float, z := 1) -> void:
-	if not nde is Clickable: return
-	var baseline: float = nde.to_global(Vector2.DOWN * nde.baseline).y
-	nde.z_index = z if baseline > chr_y_pos else 0
-
-
 func _set_is_current(value: bool) -> void:
 	is_current = value
 	set_process_unhandled_input(is_current)
@@ -253,12 +246,13 @@ func _check_z_indexes(chr: PopochiuCharacter) -> void:
 	var y_pos := chr.global_position.y
 	
 	# Comparar la posición en Y del personaje con el baseline de cada Prop
-	for p in $Props.get_children():
-		if not p.visible: continue
-		if not p.always_on_top:
-			_check_baseline(p, y_pos, 2)
-		else:
-			p.z_index = 4
+	if chr.is_moving:
+		for p in $Props.get_children():
+			if not p.visible: continue
+			if not p.always_on_top:
+				_check_baseline(p, y_pos, 2)
+			else:
+				p.z_index = 4
 	
 	# Comparar la posición en Y del personaje con el baseline de cada Personaje
 	for c in $Characters.get_children():
@@ -267,6 +261,12 @@ func _check_z_indexes(chr: PopochiuCharacter) -> void:
 				_check_baseline(c, y_pos)
 			else:
 				c.z_index = 3
+
+
+func _check_baseline(nde: Node, chr_y_pos: float, z := 1) -> void:
+	if not nde is Clickable: return
+	var baseline: float = nde.to_global(Vector2.DOWN * nde.baseline).y
+	nde.z_index = z if baseline > chr_y_pos else 0
 
 
 func _clear_navigation_path() -> void:
