@@ -120,6 +120,12 @@ func fill_data() -> void:
 				match t:
 					'room':
 						is_in_core = popochiu.rooms.has(resource)
+						
+						# Ver si la habitación es la principal
+						var main_scene: String = ProjectSettings.get_setting(\
+						'application/run/main_scene')
+						if main_scene == resource.scene:
+							row.is_main = true
 					'character':
 						is_in_core = popochiu.characters.has(resource)
 					'inventory_item':
@@ -195,6 +201,15 @@ func show_confirmation(title: String, message: String, ask := '') -> void:
 
 func get_popup(name: String) -> ConfirmationDialog:
 	return find_node(name) as ConfirmationDialog
+
+
+func set_main_scene(path: String) -> void:
+	ProjectSettings.set_setting('application/run/main_scene', path)
+	
+	var result = ProjectSettings.save()
+	assert(result == OK, 'Failed to save project settings')
+	
+	_types['room'].group.clear_favs()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

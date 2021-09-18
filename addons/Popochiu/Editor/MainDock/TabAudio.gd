@@ -10,6 +10,7 @@ const SEARCH_PATH := 'res://popochiu/'
 var main_dock: Panel setget _set_main_dock
 var audio_manager: Node = null
 var last_played: Control = null
+var last_selected: Control = null
 
 var _audio_row := preload(\
 'res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.tscn')

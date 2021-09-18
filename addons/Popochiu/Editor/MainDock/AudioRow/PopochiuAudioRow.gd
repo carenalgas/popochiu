@@ -4,6 +4,10 @@ extends HBoxContainer
 signal target_clicked(type)
 signal deleted(file_path)
 
+enum MenuOptions { ADD_TO_MUSIC, ADD_TO_SFX, ADD_TO_VOICE, ADD_TO_UI, DELETE }
+
+const SELECTED_FONT_COLOR := Color('706deb')
+
 var file_name: String
 var file_path: String
 var audio_cue: AudioCue
@@ -22,15 +26,45 @@ onready var _menu_btn: MenuButton = find_node('MenuButton')
 onready var _menu_popup: PopupMenu = _menu_btn.get_popup()
 onready var _play: Button = find_node('Play')
 onready var _stop: Button = find_node('Stop')
+onready var _menu_cfg := [
+	{
+		id = MenuOptions.ADD_TO_MUSIC,
+		icon = preload('res://addons/Popochiu/icons/music.png'),
+		label = 'Meter a Música'
+	},
+	{
+		id = MenuOptions.ADD_TO_SFX,
+		icon = preload('res://addons/Popochiu/icons/sfx.png'),
+		label = 'Meter a Efectos de sonido'
+	},
+	{
+		id = MenuOptions.ADD_TO_VOICE,
+		icon = preload('res://addons/Popochiu/icons/voice.png'),
+		label = 'Meter a Voces'
+	},
+	{
+		id = MenuOptions.ADD_TO_UI,
+		icon = preload('res://addons/Popochiu/icons/ui.png'),
+		label = 'Meter a Interfaz gráfica'
+	},
+	null,
+	{
+		id = MenuOptions.DELETE,
+		icon = get_icon('Remove', 'EditorIcons'),
+		label = 'Eliminar'
+	}
+]
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
 	_label.text = file_name if file_name else name
 	_menu_btn.icon = get_icon('GuiTabMenu', 'EditorIcons')
-	_menu_popup.set_item_icon(5, get_icon('Remove', 'EditorIcons'))
 	_play.icon = get_icon('MainPlay', 'EditorIcons')
 	_stop.icon = get_icon('Stop', 'EditorIcons')
+	
+	# Crear menú contextual
+	_create_menu()
 	
 	connect('gui_input', self, '_open_in_inspector')
 	_menu_popup.connect('id_pressed', self, '_menu_item_pressed')
@@ -42,30 +76,56 @@ func _ready() -> void:
 		
 		for idx in range(4):
 			_menu_popup.set_item_disabled(idx, true)
-#			_menu_popup.remove_item(0)
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+func select() -> void:
+	if is_instance_valid(audio_tab.last_selected):
+		audio_tab.last_selected.unselect()
+	
+	main_dock.ei.select_file(audio_cue.resource_path)
+	main_dock.ei.edit_resource(audio_cue)
+	_label.add_color_override('font_color', SELECTED_FONT_COLOR)
+	audio_tab.last_selected = self
+
+
+func unselect() -> void:
+	_label.add_color_override('font_color', _dflt_font_color)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+func _create_menu() -> void:
+	_menu_popup.clear()
+	
+	for option in _menu_cfg:
+		if option:
+			_menu_popup.add_icon_item(
+				option.icon,
+				option.label,
+				option.id
+			)
+		else:
+			_menu_popup.add_separator()
+
+
 func _open_in_inspector(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
 	if is_instance_valid(audio_cue) and mouse_event\
 	and mouse_event.button_index == BUTTON_LEFT and mouse_event.pressed:
-		main_dock.ei.select_file(audio_cue.resource_path)
-		main_dock.ei.edit_resource(audio_cue)
-		_label.add_color_override('font_color', Color('706deb'))
+		select()
 
 
 func _menu_item_pressed(id: int) -> void:
 	match id:
-		0:
+		MenuOptions.ADD_TO_MUSIC:
 			emit_signal('target_clicked', 'music')
-		1:
+		MenuOptions.ADD_TO_SFX:
 			emit_signal('target_clicked', 'sfx')
-		2:
+		MenuOptions.ADD_TO_VOICE:
 			emit_signal('target_clicked', 'voice')
-		3:
+		MenuOptions.ADD_TO_UI:
 			emit_signal('target_clicked', 'ui')
-		5:
+		MenuOptions.DELETE:
 			_ask_basic_delete()
 
 

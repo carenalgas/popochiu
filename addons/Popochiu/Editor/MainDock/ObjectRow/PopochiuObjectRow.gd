@@ -4,54 +4,94 @@ extends HBoxContainer
 # NOTA: El icono para el menú contextual podría ser el icon_GUI_tab_menu_hl.svg
 #		de los iconos de Godot.
 
+enum MenuOptions { ADD_TO_CORE, SET_AS_MAIN, DELETE }
+
 var type := ''
 var path := ''
 var main_dock setget _set_main_dock
+var is_main := false setget _set_is_main
 
 var _confirmation_dialog: ConfirmationDialog
 var _delete_all_checkbox: CheckBox
 
 onready var _label: Label = find_node('Label')
+onready var _fav_icon: TextureRect = find_node('FavIcon')
 onready var _dflt_font_color: Color = _label.get_color('font_color')
 onready var _menu_btn: MenuButton = find_node('MenuButton')
 onready var _menu_popup: PopupMenu = _menu_btn.get_popup()
-#onready var _btn_add: Button = find_node('AddToCore')
 onready var _btn_open: Button = find_node('Open')
-#onready var _btn_delete: Button = find_node('Delete')
+onready var _menu_cfg := [
+	{
+		id = MenuOptions.ADD_TO_CORE,
+		icon = preload(\
+		'res://addons/Popochiu/Editor/MainDock/ObjectRow/add_to_core.png'),
+		label = 'Meter a Popochiu'
+	},
+	{
+		id = MenuOptions.SET_AS_MAIN,
+		icon = get_icon('Heart', 'EditorIcons'),
+		label = 'Establecer como principal'
+	},
+	null,
+	{
+		id = MenuOptions.DELETE,
+		icon = get_icon('Remove', 'EditorIcons'),
+		label = 'Eliminar'
+	}
+]
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
 	_label.text = name
-	_menu_popup.set_item_disabled(0, true)
-#	_btn_add.hide()
 	
+	# Definir iconos
+	_fav_icon.texture = get_icon('Heart', 'EditorIcons')
 	_btn_open.icon = get_icon('InstanceOptions', 'EditorIcons')
 	_menu_btn.icon = get_icon('GuiTabMenu', 'EditorIcons')
-	_menu_popup.set_item_icon(2, get_icon('Remove', 'EditorIcons'))
-#	_btn_delete.icon = get_icon('Remove', 'EditorIcons')
-	find_node('MenuButton').icon = get_icon('GuiTabMenu', 'EditorIcons')
+	
+	# Crear menú contextual
+	_create_menu()
+	_menu_popup.set_item_disabled(MenuOptions.ADD_TO_CORE, true)
+	
+	# Ocultar cosas que se verán dependiendo de otras cosas
+	_fav_icon.hide()
 	
 	_menu_popup.connect('id_pressed', self, '_menu_item_pressed')
-#	_btn_add.connect('pressed', self, '_add_object_to_core')
 	_btn_open.connect('pressed', self, '_open')
-#	_btn_delete.connect('pressed', self, '_ask_basic_delete')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func show_add_to_core() -> void:
 	_menu_popup.set_item_disabled(0, false)
-#	_btn_add.show()
+
 
 func _menu_item_pressed(id: int) -> void:
 	match id:
-		0:
+		MenuOptions.ADD_TO_CORE:
 			_add_object_to_core()
-		2:
+		MenuOptions.SET_AS_MAIN:
+			main_dock.set_main_scene(path)
+			self.is_main = true
+		MenuOptions.DELETE:
 			_ask_basic_delete()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+func _create_menu() -> void:
+	_menu_popup.clear()
+	
+	for option in _menu_cfg:
+		if option:
+			_menu_popup.add_icon_item(
+				option.icon,
+				option.label,
+				option.id
+			)
+		else:
+			_menu_popup.add_separator()
+
+
 # Agrega este objeto (representado por una fila en una de las categorías de la
 # sección Main en el dock de Popochiu) al núcleo del plugin (Popochiu.tscn) para
 # que pueda ser usado (p. ej. Que se pueda navegar a la habitación, que se pueda
@@ -242,13 +282,22 @@ func _disconnect_popup() -> void:
 	if _confirmation_dialog.is_connected('confirmed', self, '_delete_from_core'):
 		_confirmation_dialog.disconnect('confirmed', self, '_delete_from_core')
 	
-	if _confirmation_dialog.is_connected('confirmed', self, '_delete_from_file_system'):
+	if _confirmation_dialog.is_connected(
+	'confirmed', self, '_delete_from_file_system'):
 		# Se canceló la eliminación de los archivos en disco
 		show_add_to_core()
-		_confirmation_dialog.disconnect('confirmed', self, '_delete_from_file_system')
+		_confirmation_dialog.disconnect(
+			'confirmed', self, '_delete_from_file_system'
+		)
 
 
 func _set_main_dock(value: Panel) -> void:
 	main_dock = value
 	_confirmation_dialog = value.delete_dialog
 	_delete_all_checkbox = _confirmation_dialog.find_node('CheckBox')
+
+
+func _set_is_main(value: bool) -> void:
+	is_main = value
+	_fav_icon.visible = value
+	_menu_popup.set_item_disabled(MenuOptions.SET_AS_MAIN, value)

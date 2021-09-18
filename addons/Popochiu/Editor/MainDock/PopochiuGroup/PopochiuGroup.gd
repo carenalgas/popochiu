@@ -62,6 +62,11 @@ func add(node: Node) -> void:
 		self.is_open = true
 
 
+func clear_favs() -> void:
+	for por in _list.get_children():
+		(por as PopochiuObjectRow).is_main = false
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _on_input(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
