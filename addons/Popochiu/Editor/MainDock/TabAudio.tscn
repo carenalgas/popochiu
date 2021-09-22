@@ -7,7 +7,7 @@
 [ext_resource path="res://addons/Popochiu/icons/ui.png" type="Texture" id=5]
 [ext_resource path="res://addons/Popochiu/icons/voice.png" type="Texture" id=6]
 
-[sub_resource type="Image" id=2]
+[sub_resource type="Image" id=4]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -19,80 +19,72 @@ data = {
 [sub_resource type="ImageTexture" id=3]
 flags = 4
 flags = 4
-image = SubResource( 2 )
+image = SubResource( 4 )
 size = Vector2( 16, 16 )
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="TabAudio" type="VBoxContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
 script = ExtResource( 1 )
 __meta__ = {
+"_edit_use_anchors_": false,
 "_tab_disabled": false
 }
 
 [node name="BtnSearchAudioFiles" type="Button" parent="."]
-margin_right = 304.0
-margin_bottom = 20.0
+margin_left = 131.0
+margin_right = 320.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
 text = "Buscar archivos de audio"
 icon = SubResource( 3 )
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
-margin_top = 24.0
-margin_right = 304.0
-margin_bottom = 136.0
+margin_top = 26.0
+margin_right = 320.0
+margin_bottom = 180.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
-margin_right = 304.0
-margin_bottom = 16.0
+margin_right = 320.0
+margin_bottom = 136.0
 size_flags_horizontal = 3
 
 [node name="UnassignedGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
-margin_right = 292.0
 custom_styles/panel = SubResource( 1 )
 title = "Sin asignar"
 can_create = false
 
 [node name="MusicGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
-margin_top = 32.0
-margin_right = 292.0
-margin_bottom = 56.0
+margin_top = 28.0
+margin_bottom = 52.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 4 )
 title = "Música"
 can_create = false
 
 [node name="SFXGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
-margin_top = 64.0
-margin_right = 292.0
-margin_bottom = 88.0
+margin_top = 56.0
+margin_bottom = 80.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 3 )
 title = "Efectos de sonido"
 can_create = false
 
 [node name="VoiceGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
-margin_top = 96.0
-margin_right = 292.0
-margin_bottom = 120.0
+margin_top = 84.0
+margin_bottom = 108.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 6 )
 title = "Voces"
 can_create = false
 
 [node name="UIGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
-margin_top = 128.0
-margin_right = 292.0
-margin_bottom = 152.0
+margin_top = 112.0
+margin_bottom = 136.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 5 )
 title = "Interfaz gráfica"

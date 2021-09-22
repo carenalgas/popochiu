@@ -183,6 +183,21 @@ func get_points() -> Array:
 	return $Points.get_children()
 
 
+func get_characters_count() -> int:
+	return $Characters.get_child_count()
+
+
+func has_character(character_name: String) -> bool:
+	var result := false
+	
+	for c in $Characters.get_children():
+		if (c as PopochiuCharacter).script_name == character_name:
+			result = true
+			break
+	
+	return result
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _move_along_path(distance):
 	var last_point = _moving_character.position

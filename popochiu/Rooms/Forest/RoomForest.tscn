@@ -25,7 +25,7 @@ outlines = [ PoolVector2Array( -168.5, 36.3275, -46.7403, 26.8888, -29.2786, 20.
 [node name="RoomForest" instance=ExtResource( 11 )]
 position = Vector2( 1, 0 )
 script = ExtResource( 1 )
-script_name = "forest"
+script_name = "Forest"
 
 [node name="Bg" parent="Props" index="0" instance=ExtResource( 4 )]
 clickable = false
@@ -86,6 +86,7 @@ script = ExtResource( 3 )
 description = "Cueva"
 baseline = -16
 walk_to_point = Vector2( 94, 21 )
+cursor = 1
 script_name = "Cave"
 
 [node name="CollisionPolygon2D" parent="Hotspots/Cave" index="0"]
@@ -101,6 +102,7 @@ position = Vector2( 94, 21 )
 script = ExtResource( 6 )
 description = "Bosque"
 walk_to_point = Vector2( -6, 14 )
+cursor = 1
 script_name = "Forest"
 
 [node name="CollisionPolygon2D" parent="Hotspots/Forest" index="0"]
@@ -129,7 +131,7 @@ navpoly = SubResource( 1 )
 position = Vector2( -108, 54 )
 
 [node name="Barney" parent="Characters" index="1" instance=ExtResource( 16 )]
-position = Vector2( 24, 41 )
+position = Vector2( 63, 31 )
 
 [editable path="Props/Well"]
 [editable path="Props/Bucket"]

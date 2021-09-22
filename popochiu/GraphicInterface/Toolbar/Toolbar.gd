@@ -3,6 +3,7 @@ extends NinePatchRect
 
 export(Cursor.Type) var cursor
 export var script_name := ''
+export var used_in_game := true
 
 var is_disabled := false
 
@@ -27,7 +28,8 @@ func _ready() -> void:
 		(b as TextureButton).connect('mouse_entered', self, '_disable_hide')
 		(b as TextureButton).connect('mouse_exited', self, '_enable_hide')
 
-	# TODO: conectarse a señales del universo Chimpoko
+	if not used_in_game:
+		hide()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░

@@ -11,8 +11,9 @@ export var color: Color = Color('999999') setget _set_color
 export var title := 'Group' setget _set_title
 export var can_create := true
 export var create_text := ''
+export var target_list: NodePath = ''
 
-var _own_style_box: StyleBox
+var _external_list: VBoxContainer = null
 
 onready var _header: PanelContainer = find_node('Header')
 onready var _arrow: TextureRect = find_node('Arrow')
@@ -41,6 +42,10 @@ func _ready() -> void:
 	_header.connect('gui_input', self, '_on_input')
 	_list.connect('resized', self, '_update_child_count')
 	_btn_create.connect('pressed', self, 'emit_signal', ['create_clicked'])
+	
+	if target_list:
+		_external_list = get_node(target_list) as VBoxContainer
+		self.is_open = _external_list.get_child_count() > 0
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -79,11 +84,15 @@ func _on_input(event: InputEvent) -> void:
 func _toggled(button_pressed: bool) -> void:
 	if is_instance_valid(_arrow):
 #		_arrow.texture = open_icon if button_pressed else closed_icon
-		_arrow.texture = get_icon('GuiTreeArrowDown', 'EditorIcons') if button_pressed else get_icon('GuiTreeArrowRight', 'EditorIcons')
+		_arrow.texture = get_icon('GuiTreeArrowDown', 'EditorIcons')\
+			if button_pressed else get_icon('GuiTreeArrowRight', 'EditorIcons')
 	
 	if is_instance_valid(_body):
 		if button_pressed: _body.show()
 		else: _body.hide()
+	
+	if is_instance_valid(_external_list):
+		_external_list.visible = button_pressed
 
 
 func _set_color(value: Color) -> void:

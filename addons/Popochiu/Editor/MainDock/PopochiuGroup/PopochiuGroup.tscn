@@ -6,7 +6,7 @@
 
 [sub_resource type="StyleBoxFlat" id=2]
 content_margin_left = 6.0
-bg_color = Color( 0.74902, 0.74902, 0.74902, 0.498039 )
+bg_color = Color( 0.6, 0.6, 0.6, 0.211765 )
 
 [sub_resource type="Image" id=3]
 data = {
@@ -32,7 +32,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 is_open = false
-color = Color( 0.74902, 0.74902, 0.74902, 0.498039 )
+color = Color( 0.6, 0.6, 0.6, 0.211765 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 margin_right = 320.0
@@ -82,7 +82,6 @@ margin_top = 5.0
 margin_right = 314.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
-custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Group"
 
 [node name="Body" type="VBoxContainer" parent="VBoxContainer"]

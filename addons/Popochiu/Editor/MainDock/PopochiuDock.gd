@@ -28,6 +28,7 @@ onready var delete_extra: Container = delete_dialog.find_node('Extra')
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var tab_room: VBoxContainer = _tab_container.get_node('Room')
 onready var tab_audio: VBoxContainer = _tab_container.get_node('Audio')
+onready var tab_settings: VBoxContainer = _tab_container.get_node('Settings')
 onready var _types := {
 	room = {
 		path = ROOMS_PATH,
@@ -64,9 +65,9 @@ func _ready() -> void:
 	_tab_container.current_tab = 0
 	
 	# Habilitar todas las pestañas a mano porque Godot está loco
-	_tab_container.set_tab_disabled(0, false)
-	_tab_container.set_tab_disabled(1, false)
-	_tab_container.set_tab_disabled(2, false)
+#	_tab_container.set_tab_disabled(0, false)
+#	_tab_container.set_tab_disabled(1, false)
+#	_tab_container.set_tab_disabled(2, false)
 #	_tab_container.set_tab_disabled(3, false)
 	
 	# Conectar señales de los hijos
@@ -78,6 +79,8 @@ func _ready() -> void:
 	
 	tab_room.main_dock = self
 	tab_audio.main_dock = self
+	tab_settings.main_dock = self
+	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
 
 
@@ -138,6 +141,7 @@ func fill_data() -> void:
 					row.show_add_to_core()
 	
 	tab_audio.fill_data()
+	tab_settings.fill_data()
 
 
 func add_to_list(type: String, name_to_add: String) -> void:

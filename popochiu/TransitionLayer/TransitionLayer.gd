@@ -2,6 +2,8 @@ extends CanvasLayer
 
 signal transition_finished
 
+export var fade_color := Color.black
+
 enum Directions {
 	LEFT,
 	RIGHT,
@@ -15,15 +17,15 @@ onready var n := {
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
+	for c in $Transitions.get_children():
+		(c as Sprite).modulate = fade_color
+	
 	$AnimationPlayer.connect('animation_finished', self, '_transition_finished')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func play_transition(name := 'fade_in', time := 1.0) -> void:
 	$AnimationPlayer.playback_speed = 1.0 / time
-	
-	for s in $Transitions.get_children():
-		s.hide()
 	
 	match name:
 		'fade_in':

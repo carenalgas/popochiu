@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
@@ -15,6 +15,7 @@
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/TabAudio.tscn" type="PackedScene" id=13]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateHotspot/CreateHotspot.tscn" type="PackedScene" id=14]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateRegion/CreateRegion.tscn" type="PackedScene" id=15]
+[ext_resource path="res://addons/Popochiu/Editor/MainDock/TabSettings.tscn" type="PackedScene" id=16]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIRegular.tres" type="DynamicFont" id=18]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIBold.tres" type="DynamicFont" id=19]
 
@@ -140,8 +141,25 @@ title = "Diálogos"
 create_text = "Crear diálogo"
 
 [node name="Room" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource( 12 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
 
 [node name="Audio" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource( 13 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Settings" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource( 16 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
 
 [node name="Popups" type="Control" parent="."]
 __meta__ = {
