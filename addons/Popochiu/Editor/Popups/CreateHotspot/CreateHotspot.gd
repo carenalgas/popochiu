@@ -5,6 +5,7 @@ extends CreationPopup
 const SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/HotspotTemplate.gd'
 const HOTSPOT_SCENE := 'res://addons/Popochiu/Engine/Objects/Hotspot/Hotspot.tscn'
 
+var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_hotspot_name := ''
@@ -71,7 +72,7 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Actualizar la lista de hotspots de la habitación
-	_main_dock.add_to_list('hotspot', _new_hotspot_name)
+	room_tab.add_to_list(room_tab.Types.HOTSPOT, _new_hotspot_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades del hotspot creado en el Inspector

@@ -21,9 +21,10 @@ target_list = NodePath("../VBoxContainer")
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 margin_top = 32.0
 margin_right = 320.0
-margin_bottom = 70.0
+margin_bottom = 46.0
 
 [node name="DefaultSpeed" type="HBoxContainer" parent="VBoxContainer"]
+visible = false
 margin_right = 320.0
 margin_bottom = 20.0
 
@@ -44,9 +45,8 @@ items = [ "0", null, false, 0, null, "0.01", null, false, 1, null, "0.05", null,
 selected = 0
 
 [node name="FadeColor" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 24.0
 margin_right = 320.0
-margin_bottom = 38.0
+margin_bottom = 14.0
 
 [node name="Label" type="Label" parent="VBoxContainer/FadeColor"]
 margin_right = 158.0

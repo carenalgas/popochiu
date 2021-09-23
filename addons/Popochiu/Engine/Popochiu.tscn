@@ -52,4 +52,4 @@ script = ExtResource( 4 )
 [node name="TransitionLayer" type="CanvasLayer" parent="." instance=ExtResource( 1 )]
 layer = 15
 script = ExtResource( 3 )
-fade_color = Color( 0.128906, 0.12085, 0.121307, 1 )
+fade_color = Color( 0.781319, 0.0412903, 0.960938, 1 )

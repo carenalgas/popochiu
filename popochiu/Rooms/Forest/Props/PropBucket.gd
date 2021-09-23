@@ -23,7 +23,7 @@ func on_interact() -> void:
 
 
 func on_look() -> void:
-	yield(E.run([
-		'Dave: Es un balde ahí de lo más normal y puerco.'
-	]), 'completed')
-	G.done()
+	yield(E.run([]), 'completed')
+#	yield(E.run([
+#		'Dave: Es un balde ahí de lo más normal y puerco.'
+#	]), 'completed')

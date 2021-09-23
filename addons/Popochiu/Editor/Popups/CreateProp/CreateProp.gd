@@ -7,6 +7,8 @@ extends CreationPopup
 const PROP_SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/PropTemplate.gd'
 const BASE_PROP_PATH := 'res://addons/Popochiu/Engine/Objects/Prop/Prop.tscn'
 
+var room_tab: VBoxContainer = null
+
 var _room: Node2D = null
 var _new_prop_name := ''
 var _new_prop_path := ''
@@ -33,7 +35,7 @@ func room_opened(r: Node2D) -> void:
 	_room = r
 	_room_path = _room.filename
 	_room_dir = _room_path.get_base_dir()
-	_prop_path_template = _room_dir + '/Props/Prop%s'
+	_prop_path_template = _room_dir + '/Props/%s/Prop%s'
 
 
 func create() -> void:
@@ -46,10 +48,10 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el directorio donde se guardará la nueva prop
-	if not _main_dock.dir.dir_exists(_room_dir + '/Props'):
-		if _main_dock.dir.make_dir(_room_dir + '/Props') != OK:
-			push_error('No se pudo crear el directorio de Props de ' +\
-			_room_path.get_file())
+	assert(
+		_main_dock.dir.make_dir_recursive(_new_prop_path.get_base_dir()) == OK,
+		'No se pudo crear el directorio de Props de ' + _room_path.get_file()
+	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de la prop (si tiene interacción)
@@ -79,7 +81,7 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Actualizar la lista de props de la habitación
-	_main_dock.add_to_list('prop', _new_prop_name)
+	room_tab.add_to_list(room_tab.Types.PROP, _new_prop_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades de la prop creada en el Inspector
@@ -96,7 +98,7 @@ func _update_name(new_text: String) -> void:
 
 	if _name:
 		_new_prop_name = _name
-		_new_prop_path = _prop_path_template % _new_prop_name
+		_new_prop_path = _prop_path_template % [_new_prop_name, _new_prop_name]
 
 		if _interaction_checkbox.pressed:
 			_update_info()
@@ -123,7 +125,7 @@ func _update_info() -> void:
 	_info.bbcode_text = (
 		'En [b]%s[/b] se creará el archivo: [code]%s[/code]' \
 		% [
-			_room_dir + '/Props',
+			_new_prop_path.get_base_dir(),
 			'Prop' + _new_prop_name + '.gd'
 		]
 	)

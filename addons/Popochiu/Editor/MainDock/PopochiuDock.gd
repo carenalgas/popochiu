@@ -6,6 +6,8 @@ extends Panel
 #	Rooms (Props, Hotspots, Regions), Characters, Inventory items, Dialog trees,
 #	Interfaz gráfica.
 
+enum Types { ROOM, CHARACTER, INVENTORY_ITEM, DIALOG }
+
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
 const ROOMS_PATH := 'res://popochiu/Rooms/'
 const CHARACTERS_PATH := 'res://popochiu/Characters/'
@@ -21,34 +23,35 @@ var last_selected: PopochiuObjectRow = null
 var _has_data := false
 var _object_row: PackedScene = preload(\
 'res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.tscn')
+var _rows_paths := []
 
 onready var delete_dialog: ConfirmationDialog = find_node('DeleteConfirmation')
 onready var delete_checkbox: CheckBox = delete_dialog.find_node('CheckBox')
 onready var delete_extra: Container = delete_dialog.find_node('Extra')
 onready var _tab_container: TabContainer = find_node('TabContainer')
-onready var tab_room: VBoxContainer = _tab_container.get_node('Room')
-onready var tab_audio: VBoxContainer = _tab_container.get_node('Audio')
-onready var tab_settings: VBoxContainer = _tab_container.get_node('Settings')
+onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
+onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
+onready var _tab_settings: VBoxContainer = _tab_container.get_node('Settings')
 onready var _types := {
-	room = {
+	Types.ROOM: {
 		path = ROOMS_PATH,
 		group = find_node('RoomsGroup'),
 		popup = find_node('CreateRoom'),
 		scene = ROOMS_PATH + ('%s/Room%s.tscn')
 	},
-	character = {
+	Types.CHARACTER: {
 		path = CHARACTERS_PATH,
 		group = find_node('CharactersGroup'),
 		popup = find_node('CreateCharacter'),
 		scene = CHARACTERS_PATH + ('%s/Character%s.tscn')
 	},
-	inventory_item = {
+	Types.INVENTORY_ITEM: {
 		path = INVENTORY_ITEMS_PATH,
 		group = find_node('ItemsGroup'),
 		popup = find_node('CreateInventoryItem'),
 		scene = INVENTORY_ITEMS_PATH + ('%s/Inventory%s.tscn')
 	},
-	dialog = {
+	Types.DIALOG: {
 		path = DIALOGS_PATH,
 		group = find_node('DialogsGroup'),
 		popup = find_node('CreateDialog'),
@@ -77,9 +80,10 @@ func _ready() -> void:
 			'create_clicked', self, '_open_popup', [_types[t].popup]
 		)
 	
-	tab_room.main_dock = self
-	tab_audio.main_dock = self
-	tab_settings.main_dock = self
+	_tab_room.main_dock = self
+	_tab_room.object_row = _object_row
+	_tab_audio.main_dock = self
+	_tab_settings.main_dock = self
 	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
 
@@ -110,7 +114,10 @@ func fill_data() -> void:
 				or resource is PopochiuDialog):
 					continue
 				
-				_has_data = true
+				var row_path: String = _types[t].scene %\
+				[resource.script_name, resource.script_name]
+				
+				if row_path in _rows_paths: continue
 
 				var row: PopochiuObjectRow = _create_object_row(
 					t, resource.script_name
@@ -122,7 +129,7 @@ func fill_data() -> void:
 				var is_in_core := true
 				
 				match t:
-					'room':
+					Types.ROOM:
 						is_in_core = popochiu.rooms.has(resource)
 						
 						# Ver si la habitación es la principal
@@ -130,28 +137,26 @@ func fill_data() -> void:
 						'application/run/main_scene')
 						if main_scene == resource.scene:
 							row.is_main = true
-					'character':
+					Types.CHARACTER:
 						is_in_core = popochiu.characters.has(resource)
-					'inventory_item':
+					Types.INVENTORY_ITEM:
 						is_in_core = popochiu.inventory_items.has(resource)
-					'dialog':
+					Types.DIALOG:
 						is_in_core = popochiu.dialogs.has(resource)
 				
 				if not is_in_core:
 					row.show_add_to_core()
 	
-	tab_audio.fill_data()
-	tab_settings.fill_data()
+	_tab_audio.fill_data()
+	_tab_settings.fill_data()
 
 
-func add_to_list(type: String, name_to_add: String) -> void:
+func add_to_list(type: int, name_to_add: String) -> void:
 	_types[type].group.add(_create_object_row(type, name_to_add))
-	
-	_has_data = true
 
 
 func scene_changed(scene_root: Node) -> void:
-	tab_room.scene_changed(scene_root)
+	_tab_room.scene_changed(scene_root)
 
 
 func get_popochiu() -> Node:
@@ -214,7 +219,11 @@ func set_main_scene(path: String) -> void:
 	var result = ProjectSettings.save()
 	assert(result == OK, 'Failed to save project settings')
 	
-	_types['room'].group.clear_favs()
+	_types[Types.ROOM].group.clear_favs()
+
+
+func search_audio_files() -> void:
+	_tab_audio.search_audio_files()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -222,13 +231,18 @@ func _open_popup(popup: Popup) -> void:
 	popup.popup_centered_clamped(Vector2(640, 360))
 
 
-func _create_object_row(type: String, name_to_add: String) -> PopochiuObjectRow:
+func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
 	var new_obj: PopochiuObjectRow = _object_row.instance()
 
 	new_obj.name = name_to_add
 	new_obj.type = type
 	new_obj.path = _types[type].scene % [name_to_add, name_to_add]
 	new_obj.main_dock = self
+	new_obj.connect('clicked', self, '_select_object')
+	
+	_rows_paths.append(new_obj.path)
+	
+	_has_data = true
 	
 	return new_obj
 
@@ -238,3 +252,11 @@ func _on_tab_changed(tab: int) -> void:
 		# Intentar cargar los datos de la pestaña Main si por alguna razón no
 		# se pudieron leer los directorios al abrir el motor.
 		fill_data()
+
+
+func _select_object(por: PopochiuObjectRow) -> void:
+	if last_selected:
+		last_selected.unselect()
+	
+	ei.select_file(por.path)
+	last_selected = por

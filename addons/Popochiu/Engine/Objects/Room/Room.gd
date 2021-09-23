@@ -52,7 +52,8 @@ func _ready():
 	if limit_bottom != 0.0:
 		E.main_camera.limit_bottom = limit_bottom
 	
-	E.room_readied(self)
+	if not Engine.editor_hint:
+		E.room_readied(self)
 
 
 func _process(delta):

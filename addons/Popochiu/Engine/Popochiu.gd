@@ -132,6 +132,9 @@ func run(instructions: Array, show_gi := true) -> void:
 	if not D.active and show_gi:
 		G.done()
 	
+	if instructions.empty():
+		yield(get_tree(), 'idle_frame')
+	
 	_running = false
 
 

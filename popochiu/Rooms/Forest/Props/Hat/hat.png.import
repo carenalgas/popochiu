@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/hat.png-dc7a23252dd6170039bfd58bb0218f52.stex"
+path="res://.import/hat.png-597db47308cdf87e6c61a2065926c382.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://popochiu/InventoryItems/Bucket/hat.png"
-dest_files=[ "res://.import/hat.png-dc7a23252dd6170039bfd58bb0218f52.stex" ]
+source_file="res://popochiu/Rooms/Forest/Props/Hat/hat.png"
+dest_files=[ "res://.import/hat.png-597db47308cdf87e6c61a2065926c382.stex" ]
 
 [params]
 

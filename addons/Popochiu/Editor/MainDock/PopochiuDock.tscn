@@ -85,6 +85,7 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+focus_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
@@ -146,6 +147,7 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+focus_mode = 2
 
 [node name="Audio" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource( 13 )]
 visible = false
@@ -153,6 +155,7 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+focus_mode = 2
 
 [node name="Settings" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource( 16 )]
 visible = false
@@ -160,6 +163,7 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+focus_mode = 2
 
 [node name="Popups" type="Control" parent="."]
 __meta__ = {

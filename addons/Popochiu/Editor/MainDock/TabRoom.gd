@@ -2,24 +2,37 @@ tool
 extends VBoxContainer
 # Controla la lógica de la pestaña Room en el dock Popochiu
 
+enum Types { PROP = 4, HOTSPOT, REGION, POINT }
+
 var opened_room: PopochiuRoom = null
 var main_dock: Panel setget _set_main_dock
+var object_row: PackedScene = null
+
+var _rows_paths := []
 
 onready var _types := {
-	prop = {
+	Types.PROP: {
 		group = find_node('PropsGroup'),
-		popup = 'CreateProp'
+		popup = 'CreateProp',
+		method = 'get_props',
+		type_class = Prop
 	},
-	hotspot = {
+	Types.HOTSPOT: {
 		group = find_node('HotspotsGroup'),
-		popup = 'CreateHotspot'
+		popup = 'CreateHotspot',
+		method = 'get_hotspots',
+		type_class = Hotspot
 	},
-	region = {
+	Types.REGION: {
 		group = find_node('RegionsGroup'),
-		popup = 'CreateRegion'
+		popup = 'CreateRegion',
+		method = 'get_regions',
+		type_class = Region
 	},
-	point = {
-		group = find_node('PointsGroup')
+	Types.POINT: {
+		group = find_node('PointsGroup'),
+		method = 'get_points',
+		type_class = Position2D
 	}
 }
 onready var _room_name: Label = find_node('RoomName')
@@ -54,43 +67,44 @@ func scene_changed(scene_root: Node) -> void:
 		_room_name.show()
 		
 		for t in _types:
+			for c in opened_room.call(_types[t].method):
+				var row_path: String = '%s/%d/%s' %\
+				[opened_room.script_name, t, c.name]
+				
+				if row_path in _rows_paths: continue
+				
+				if c is _types[t].type_class:
+					var row: PopochiuObjectRow = _create_object_row(t, c.name)
+					_types[t].group.add(row)
+			
 			if _types[t].has('popup'):
 				_types[t].popup.room_opened(opened_room)
-		
-		# Llenar la lista de props
-		for p in opened_room.get_props():
-			if p is Prop:
-				var lbl: Label = Label.new()
-				lbl.text = (p as Prop).name
-				_types.prop.group.add(lbl)
-		
-		# Llenar la lista de hotspots
-		for h in opened_room.get_hotspots():
-			if h is Hotspot:
-				var lbl: Label = Label.new()
-				lbl.text = (h as Hotspot).name
-				_types.hotspot.group.add(lbl)
-		
-		# Llenar la lista de regiones
-		for r in opened_room.get_regions():
-			if r is Region:
-				var lbl: Label = Label.new()
-				lbl.text = (r as Region).name
-				_types.region.group.add(lbl)
-		
-		# Llenar la lista de puntos
-		for p in opened_room.get_points():
-			if p is Position2D:
-				var lbl: Label = Label.new()
-				lbl.text = (p as Position2D).name
-				_types.point.group.add(lbl)
 		
 		_no_room_info.hide()
 
 		get_parent().current_tab = 1
 
 
+func add_to_list(type: int, node_name: String) -> void:
+	_types[type].group.add(_create_object_row(type, node_name))
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+func _create_object_row(type: int, node_name: String) -> PopochiuObjectRow:
+	var new_obj: PopochiuObjectRow = object_row.instance()
+
+	new_obj.name = node_name
+	new_obj.type = type
+	new_obj.main_dock = main_dock
+	
+#	main_dock.ei.select_file(por.path)
+	
+	_rows_paths.append('%s/%d/%s' % [opened_room.script_name, type, node_name])
+	
+	return new_obj
+
+
+
 func _set_main_dock(value: Panel) -> void:
 	main_dock = value
 	
@@ -98,4 +112,5 @@ func _set_main_dock(value: Panel) -> void:
 		if not t.has('popup'): continue
 		t.popup = main_dock.get_popup(t.popup)
 		t.popup.set_main_dock(main_dock)
+		t.popup.room_tab = self
 		t.group.connect('create_clicked', main_dock, '_open_popup', [t.popup])

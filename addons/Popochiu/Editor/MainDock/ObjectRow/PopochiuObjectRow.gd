@@ -4,13 +4,15 @@ extends HBoxContainer
 # NOTA: El icono para el menú contextual podría ser el icon_GUI_tab_menu_hl.svg
 #		de los iconos de Godot.
 
+signal clicked(node)
+
 enum MenuOptions { ADD_TO_CORE, SET_AS_MAIN, DELETE }
 
 const SELECTED_FONT_COLOR := Color('706deb')
 
-var type := ''
+var type := -1
 var path := ''
-var main_dock setget _set_main_dock
+var main_dock: Panel = null setget _set_main_dock
 var is_main := false setget _set_is_main
 
 var _confirmation_dialog: ConfirmationDialog
@@ -27,13 +29,19 @@ onready var _menu_cfg := [
 		id = MenuOptions.ADD_TO_CORE,
 		icon = preload(\
 		'res://addons/Popochiu/Editor/MainDock/ObjectRow/add_to_core.png'),
-		label = 'Meter a Popochiu'
+		label = 'Meter a Popochiu',
+		types = [
+			main_dock.Types.ROOM,
+			main_dock.Types.CHARACTER,
+			main_dock.Types.INVENTORY_ITEM,
+			main_dock.Types.DIALOG
+		]
 	},
 	{
 		id = MenuOptions.SET_AS_MAIN,
 		icon = get_icon('Heart', 'EditorIcons'),
 		label = 'Establecer como principal',
-		type = 'room'
+		types = [main_dock.Types.ROOM]
 	},
 	null,
 	{
@@ -60,6 +68,10 @@ func _ready() -> void:
 	# Ocultar cosas que se verán dependiendo de otras cosas
 	_fav_icon.hide()
 	
+	if type >= 4:
+		# Que no se muestre para objetos de habitación
+		_btn_open.hide()
+	
 	connect('gui_input', self, 'select')
 	_menu_popup.connect('id_pressed', self, '_menu_item_pressed')
 	_btn_open.connect('pressed', self, '_open')
@@ -70,12 +82,8 @@ func select(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
 	if mouse_event\
 	and mouse_event.button_index == BUTTON_LEFT and mouse_event.pressed:
-		if main_dock.last_selected:
-			main_dock.last_selected.unselect()
-		
-		main_dock.ei.select_file(path)
+		emit_signal('clicked', self)
 		_label.add_color_override('font_color', SELECTED_FONT_COLOR)
-		main_dock.last_selected = self
 
 
 func unselect() -> void:
@@ -92,7 +100,7 @@ func _create_menu() -> void:
 	
 	for option in _menu_cfg:
 		if option:
-			if option.has('type') and option.type != type: continue
+			if option.has('types') and not type in option.types: continue
 			
 			_menu_popup.add_icon_item(
 				option.icon,
@@ -129,13 +137,13 @@ func _add_object_to_core() -> void:
 		resource = load(path)
 	
 	match type:
-		'room':
+		main_dock.Types.ROOM:
 			target_array = 'rooms'
-		'character':
+		main_dock.Types.CHARACTER:
 			target_array = 'characters'
-		'inventory_item':
+		main_dock.Types.INVENTORY_ITEM:
 			target_array = 'inventory_items'
-		'dialog':
+		main_dock.Types.DIALOG:
 			target_array = 'dialogs'
 		_:
 			# TODO: Mostrar un mensaje de error o algo.
@@ -188,22 +196,22 @@ func _delete_from_core() -> void:
 	var popochiu: Popochiu = main_dock.get_popochiu()
 	
 	match type:
-		'room':
+		main_dock.Types.ROOM:
 			for r in popochiu.rooms:
 				if (r as PopochiuRoomData).script_name == name:
 					popochiu.rooms.erase(r)
 					break
-		'character':
+		main_dock.Types.CHARACTER:
 			for c in popochiu.characters:
 				if (c as PopochiuCharacterData).script_name == name:
 					popochiu.characters.erase(c)
 					break
-		'inventory_item':
+		main_dock.Types.INVENTORY_ITEM:
 			for ii in popochiu.inventory_items:
 				if (ii as PopochiuInventoryItemData).script_name == name:
 					popochiu.inventory_items.erase(ii)
 					break
-		'dialog':
+		main_dock.Types.DIALOG:
 			for d in popochiu.dialogs:
 				if (d as PopochiuDialog).script_name == name:
 					popochiu.dialogs.erase(d)

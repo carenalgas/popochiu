@@ -5,6 +5,7 @@ extends CreationPopup
 const SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/RegionTemplate.gd'
 const REGION_SCENE := 'res://addons/Popochiu/Engine/Objects/Region/Region.tscn'
 
+var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_region_name := ''
@@ -74,7 +75,7 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Actualizar la lista de regiones de la habitación
-	_main_dock.add_to_list('region', _new_region_name)
+	room_tab.add_to_list(room_tab.Types.REGION, _new_region_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades de la región creada en el Inspector
