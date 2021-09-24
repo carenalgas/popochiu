@@ -49,17 +49,17 @@ func _ready() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func scene_changed(scene_root: Node) -> void:
-	# Poner todo en su estado por defecto
-	opened_room = null
-	get_parent().current_tab = 0
-
-	_room_name.hide()
-	_no_room_info.show()
-	
-	for t in _types.values():
-		t.group.clear_list()
-	
 	if scene_root is PopochiuRoom:
+		if is_instance_valid(opened_room) and\
+		scene_root.name != opened_room.name:
+			_rows_paths.clear()
+			
+			for t in _types.values():
+				t.group.clear_list()
+				t.group.disable_create()
+			
+			yield(get_tree(), 'idle_frame')
+		
 		# Actualizar la información de la habitación que se abrió
 		opened_room = scene_root
 		_room_name.text = opened_room.script_name
@@ -79,10 +79,19 @@ func scene_changed(scene_root: Node) -> void:
 			
 			if _types[t].has('popup'):
 				_types[t].popup.room_opened(opened_room)
+			
+			_types[t].group.enable_create()
 		
 		_no_room_info.hide()
 
 		get_parent().current_tab = 1
+	else:
+		# Poner todo en su estado por defecto
+		opened_room = null
+		get_parent().current_tab = 0
+
+		_room_name.hide()
+		_no_room_info.show()
 
 
 func add_to_list(type: int, node_name: String) -> void:

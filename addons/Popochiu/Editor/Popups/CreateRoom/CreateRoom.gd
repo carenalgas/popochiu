@@ -9,14 +9,22 @@ extends CreationPopup
 
 const BASE_ROOM_PATH := 'res://addons/Popochiu/Engine/Objects/Room/Room.tscn'
 
+var show_set_as_main := false setget _set_show_set_as_main
+
 var _new_room_name := ''
 var _new_room_path := ''
 var _room_path_template := ''
 
+onready var _set_as_main: PanelContainer = find_node('SetAsMainContainer')
+onready var _set_as_main_check: CheckBox = _set_as_main.find_node('CheckBox')
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
+	connect('about_to_show', self, '_check_if_first_room')
+	
 	_clear_fields()
+	_set_as_main.hide()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
@@ -36,7 +44,7 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el directorio donde se guardará la nueva habitación
-	_main_dock.dir.make_dir(_main_dock.ROOMS_PATH + _new_room_name)
+	_main_dock.dir.make_dir_recursive(_main_dock.ROOMS_PATH + _new_room_name)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de la nueva habitación
@@ -101,6 +109,7 @@ func create() -> void:
 	# Fin
 	hide()
 
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _update_name(new_text: String) -> void:
 	._update_name(new_text)
@@ -126,3 +135,15 @@ func _clear_fields() -> void:
 	
 	_new_room_name = ''
 	_new_room_path = ''
+	_set_as_main_check.pressed = false
+
+
+func _check_if_first_room() -> void:
+	# Mostrar una casilla de verificación para establecer la habitación a crear
+	# como la escene principal del proyecto si se trata de la primera.
+	self.show_set_as_main = _main_dock.popochiu.rooms.empty()
+
+
+func _set_show_set_as_main(value: bool) -> void:
+	show_set_as_main = value
+	_set_as_main.visible = value

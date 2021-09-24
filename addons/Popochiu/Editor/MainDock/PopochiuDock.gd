@@ -67,12 +67,6 @@ func _ready() -> void:
 	# Que la pestaña seleccionada por defecto sea la principal (Main
 	_tab_container.current_tab = 0
 	
-	# Habilitar todas las pestañas a mano porque Godot está loco
-#	_tab_container.set_tab_disabled(0, false)
-#	_tab_container.set_tab_disabled(1, false)
-#	_tab_container.set_tab_disabled(2, false)
-#	_tab_container.set_tab_disabled(3, false)
-	
 	# Conectar señales de los hijos
 	for t in _types:
 		_types[t].popup.set_main_dock(self)
@@ -147,6 +141,7 @@ func fill_data() -> void:
 				if not is_in_core:
 					row.show_add_to_core()
 	
+	# Cargar información de otras pestañas
 	_tab_audio.fill_data()
 	_tab_settings.fill_data()
 

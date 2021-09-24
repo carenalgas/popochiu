@@ -163,7 +163,6 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
-focus_mode = 2
 
 [node name="Popups" type="Control" parent="."]
 __meta__ = {

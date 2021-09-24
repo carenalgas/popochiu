@@ -188,7 +188,10 @@ func _remove_input_actions() -> void:
 func _check_popochiu_dependencies() -> void:
 	# Agregar la interfaz gráfica y la escena de transiciones a Popochiu
 	var popochiu: Node = load(POPOCHIU_SCENE).instance()
-	if popochiu.get_node_or_null('TransitionLayer'): return
+	if popochiu.get_node_or_null('GraphicInterface')\
+	and popochiu.get_node_or_null('TransitionLayer'):
+		prints('Todo bien en el Popochiu')
+		return
 	
 	var result := OK
 

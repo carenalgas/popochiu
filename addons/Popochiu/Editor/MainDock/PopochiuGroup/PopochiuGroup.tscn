@@ -99,5 +99,4 @@ margin_top = 4.0
 margin_right = 320.0
 margin_bottom = 24.0
 size_flags_horizontal = 8
-disabled = true
 icon = SubResource( 4 )

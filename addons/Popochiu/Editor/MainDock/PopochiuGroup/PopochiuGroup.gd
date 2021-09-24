@@ -31,7 +31,6 @@ func _ready() -> void:
 	(_header.get_stylebox('panel') as StyleBoxFlat).bg_color = color
 	_icon.texture = icon
 	_lbl_title.text = title
-	_btn_create.disabled = true
 	_btn_create.icon = get_icon('Add', 'EditorIcons')
 	_btn_create.text = create_text
 	self.is_open = _list.get_child_count() > 0
@@ -70,6 +69,14 @@ func add(node: Node) -> void:
 func clear_favs() -> void:
 	for por in _list.get_children():
 		(por as PopochiuObjectRow).is_main = false
+
+
+func disable_create() -> void:
+	_btn_create.disabled = true
+
+
+func enable_create() -> void:
+	_btn_create.disabled = false
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
