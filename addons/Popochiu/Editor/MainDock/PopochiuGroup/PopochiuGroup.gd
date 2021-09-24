@@ -48,10 +48,6 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
-func fill_list() -> void:
-	pass
-
-
 func clear_list() -> void:
 	for c in _list.get_children():
 		c.queue_free()

@@ -190,7 +190,6 @@ func _check_popochiu_dependencies() -> void:
 	var popochiu: Node = load(POPOCHIU_SCENE).instance()
 	if popochiu.get_node_or_null('GraphicInterface')\
 	and popochiu.get_node_or_null('TransitionLayer'):
-		prints('Todo bien en el Popochiu')
 		return
 	
 	var result := OK

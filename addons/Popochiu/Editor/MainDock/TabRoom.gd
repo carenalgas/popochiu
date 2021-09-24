@@ -9,30 +9,35 @@ var main_dock: Panel setget _set_main_dock
 var object_row: PackedScene = null
 
 var _rows_paths := []
+var _last_selected: PopochiuObjectRow = null
 
 onready var _types := {
 	Types.PROP: {
 		group = find_node('PropsGroup'),
 		popup = 'CreateProp',
 		method = 'get_props',
-		type_class = Prop
+		type_class = Prop,
+		parent = 'Props'
 	},
 	Types.HOTSPOT: {
 		group = find_node('HotspotsGroup'),
 		popup = 'CreateHotspot',
 		method = 'get_hotspots',
-		type_class = Hotspot
+		type_class = Hotspot,
+		parent = 'Hotspots'
 	},
 	Types.REGION: {
 		group = find_node('RegionsGroup'),
 		popup = 'CreateRegion',
 		method = 'get_regions',
-		type_class = Region
+		type_class = Region,
+		parent = 'Regions'
 	},
 	Types.POINT: {
 		group = find_node('PointsGroup'),
 		method = 'get_points',
-		type_class = Position2D
+		type_class = Position2D,
+		parent = 'Points'
 	}
 }
 onready var _room_name: Label = find_node('RoomName')
@@ -105,13 +110,26 @@ func _create_object_row(type: int, node_name: String) -> PopochiuObjectRow:
 	new_obj.name = node_name
 	new_obj.type = type
 	new_obj.main_dock = main_dock
-	
-#	main_dock.ei.select_file(por.path)
+	new_obj.connect('clicked', self, '_select_and_open_script')
 	
 	_rows_paths.append('%s/%d/%s' % [opened_room.script_name, type, node_name])
 	
 	return new_obj
 
+
+func _select_and_open_script(por: PopochiuObjectRow) -> void:
+	if _last_selected:
+		_last_selected.unselect()
+	
+	if is_instance_valid(opened_room):
+		var node := opened_room.get_node('%s/%s'\
+		% [_types[por.type].parent, por.name])
+		main_dock.ei.edit_node(node)
+		
+		if node.script.resource_path.count('addons/Popochiu') == 0:
+			main_dock.ei.edit_resource(load(node.script.resource_path))
+	
+	_last_selected = por
 
 
 func _set_main_dock(value: Panel) -> void:
