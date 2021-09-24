@@ -2,6 +2,8 @@ tool
 extends VBoxContainer
 # Controla la lógica de la pestaña Room en el dock Popochiu
 
+signal row_clicked
+
 enum Types { PROP = 4, HOTSPOT, REGION, POINT }
 
 var opened_room: PopochiuRoom = null
@@ -128,6 +130,8 @@ func _select_and_open_script(por: PopochiuObjectRow) -> void:
 		
 		if node.script.resource_path.count('addons/Popochiu') == 0:
 			main_dock.ei.edit_resource(load(node.script.resource_path))
+		
+		emit_signal('row_clicked')
 	
 	_last_selected = por
 

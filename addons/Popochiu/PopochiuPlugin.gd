@@ -64,6 +64,8 @@ func _enter_tree() -> void:
 		main_dock.ei = _editor_interface
 		main_dock.fs = _editor_file_system
 		
+		main_dock.connect('room_row_clicked', self, 'update_overlays')
+		
 		add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
 		
 		# Llenar las listas de habitaciones, personajes, objetos de inventario

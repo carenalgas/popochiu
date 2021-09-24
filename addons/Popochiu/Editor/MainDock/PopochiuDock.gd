@@ -6,6 +6,8 @@ extends Panel
 #	Rooms (Props, Hotspots, Regions), Characters, Inventory items, Dialog trees,
 #	Interfaz gráfica.
 
+signal room_row_clicked
+
 enum Types { ROOM, CHARACTER, INVENTORY_ITEM, DIALOG }
 
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
@@ -80,6 +82,7 @@ func _ready() -> void:
 	_tab_settings.main_dock = self
 	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
+	_tab_room.connect('row_clicked', self, 'emit_signal', ['room_row_clicked'])
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
