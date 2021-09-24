@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=15 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Fonts/NotoSansUI_Regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Fonts/Hack_Regular.ttf" type="DynamicFontData" id=2]
@@ -24,6 +24,7 @@ content_margin_right = 4.0
 content_margin_top = 4.0
 content_margin_bottom = 4.0
 bg_color = Color( 0.6, 0.6, 0.6, 0 )
+draw_center = false
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
@@ -33,6 +34,10 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxEmpty" id=7]
+
+[sub_resource type="StyleBoxEmpty" id=8]
 
 [sub_resource type="DynamicFont" id=3]
 size = 14
@@ -49,6 +54,7 @@ font_data = ExtResource( 1 )
 [sub_resource type="StyleBoxEmpty" id=2]
 
 [node name="CreateRoom" type="ConfirmationDialog"]
+visible = true
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -122,7 +128,6 @@ text = "Use PascalCase. Y no debe tener tildes ni eñes, y entonces que mejor se
 autowrap = true
 
 [node name="SetAsMainContainer" type="PanelContainer" parent="VBoxContainer"]
-visible = false
 margin_top = 79.0
 margin_right = 624.0
 margin_bottom = 125.0
@@ -140,6 +145,8 @@ margin_bottom = 38.0
 size_flags_horizontal = 3
 custom_fonts/bold_font = ExtResource( 6 )
 custom_fonts/normal_font = ExtResource( 5 )
+custom_styles/focus = SubResource( 7 )
+custom_styles/normal = SubResource( 8 )
 bbcode_enabled = true
 bbcode_text = "Esta será la primera habitación de Popochiu. ¿Quiere que se convierta en la escena principal del proyecto? Esto modificará la configuración en: application/run/main_scene."
 text = "Esta será la primera habitación de Popochiu. ¿Quiere que se convierta en la escena principal del proyecto? Esto modificará la configuración en: application/run/main_scene."

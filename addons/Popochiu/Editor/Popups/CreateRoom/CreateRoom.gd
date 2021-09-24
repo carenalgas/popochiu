@@ -99,6 +99,10 @@ func create() -> void:
 	# Actualizar la lista de habitaciones en el Dock
 	_main_dock.add_to_list(_main_dock.Types.ROOM, _new_room_name)
 	
+	# Establecer como la escena principal
+	if _set_as_main_check.pressed:
+		_main_dock.set_main_scene(room_resource.scene)
+	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir la escena creada en el editor
 	yield(get_tree().create_timer(0.1), 'timeout')
