@@ -2,7 +2,7 @@
 
 [ext_resource path="res://popochiu/Rooms/Cave/sprites/bg.png" type="Texture" id=1]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Prop/Prop.tscn" type="PackedScene" id=2]
-[ext_resource path="res://addons/Popochiu/Engine/Objects/Room/Room.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Room/PopochiuRoom.tscn" type="PackedScene" id=3]
 [ext_resource path="res://popochiu/Rooms/Cave/RoomCave.gd" type="Script" id=4]
 [ext_resource path="res://popochiu/Rooms/Cave/Medal.gd" type="Script" id=5]
 [ext_resource path="res://popochiu/Rooms/Cave/sprites/medal.png" type="Texture" id=6]

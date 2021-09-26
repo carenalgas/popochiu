@@ -17,8 +17,8 @@ const IINVENTORY_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
 const IDIALOG_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
 const IGRAPHIC_INTERFACE_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
 const IAUDIO_MANAGER_SNGL = 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
+const GLOBALS_SRC = 'res://addons/Popochiu/Engine/Objects/_Globals.gd'
 const GLOBALS_SNGL = 'res://popochiu/Globals.gd'
-const GLOBALS_SRC = 'res://addons/Popochiu/Engine/Others/_Globals.gd'
 const GRAPHIC_INTERFACE_SRC = 'res://addons/Popochiu/Engine/Objects/_GraphicInterface/'
 const GRAPHIC_INTERFACE_SCENE := BASE_DIR + '/GraphicInterface/GraphicInterface.tscn'
 const TRANSITION_LAYER_SRC = 'res://addons/Popochiu/Engine/Objects/_TransitionLayer/'
@@ -43,6 +43,8 @@ func _init() -> void:
 		_init_file_structure()
 	
 	# Cargar los singleton para acceder directamente a objetos de Popochiu
+	if _is_first_install: return
+	
 	add_autoload_singleton('Utils', UTILS_SNGL)
 	add_autoload_singleton('Cursor', CURSOR_SNGL)
 	add_autoload_singleton('E', POPOCHIU_SNGL)
@@ -76,24 +78,9 @@ func _enter_tree() -> void:
 		
 		connect('scene_changed', main_dock, 'scene_changed')
 		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
-		
-		_check_popochiu_dependencies()
 		_editor_file_system.connect('sources_changed', self, '_on_sources_changed')
-
-
-#func _exit_tree() -> void:
-#	if not _is_first_install:
-#		remove_autoload_singleton('Utils')
-#		remove_autoload_singleton('Cursor')
-#		remove_autoload_singleton('E')
-#		remove_autoload_singleton('C')
-#		remove_autoload_singleton('I')
-#		remove_autoload_singleton('D')
-#		remove_autoload_singleton('G')
-#		remove_autoload_singleton('A')
-#		remove_autoload_singleton('Globals')
-#
-#		remove_control_from_docks(main_dock)
+	else:
+		_check_popochiu_dependencies()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
@@ -110,7 +97,19 @@ func enable_plugin() -> void:
 
 
 func disable_plugin() -> void:
+	remove_autoload_singleton('Utils')
+	remove_autoload_singleton('Cursor')
+	remove_autoload_singleton('E')
+	remove_autoload_singleton('C')
+	remove_autoload_singleton('I')
+	remove_autoload_singleton('D')
+	remove_autoload_singleton('G')
+	remove_autoload_singleton('A')
+	remove_autoload_singleton('Globals')
+	
 	_remove_input_actions()
+	
+	remove_control_from_docks(main_dock)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -136,8 +135,6 @@ func _init_file_structure() -> void:
 		
 		# Refrescar el FileSystem
 		_editor_file_system.scan()
-		
-		_is_first_install = true
 
 
 func _get_directories() -> Dictionary:
@@ -198,7 +195,6 @@ func _check_popochiu_dependencies() -> void:
 	
 	var result := OK
 
-	prints('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GRAPHIC INTERFACE')
 	# Actualizar dependencias de la GraphicInterface
 	_fix_dependencies(
 		_editor_file_system.get_filesystem_path(
@@ -207,7 +203,6 @@ func _check_popochiu_dependencies() -> void:
 	)
 	yield(get_tree().create_timer(0.3), 'timeout')
 	
-	prints('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TRANSITION LAYER')
 	# Actualizar dependencias de la TransitionLayer
 	_fix_dependencies(
 		_editor_file_system.get_filesystem_path(
@@ -216,7 +211,6 @@ func _check_popochiu_dependencies() -> void:
 	)
 	yield(get_tree().create_timer(0.3), 'timeout')
 	
-	prints('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> AGREGAR LAS COSITAS')
 	var gi: CanvasLayer = load(GRAPHIC_INTERFACE_SCENE).instance()
 	var tl: CanvasLayer = load(TRANSITION_LAYER_SCENE).instance()
 	
@@ -233,6 +227,8 @@ func _check_popochiu_dependencies() -> void:
 		result == OK,
 		'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
 	)
+	
+	prints('██████████████████████████████████████████ Lista la estructura ███')
 
 
 # Gracias PigDev:

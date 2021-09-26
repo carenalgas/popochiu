@@ -6,7 +6,7 @@ extends CreationPopup
 const INVENTORY_ITEM_SCRIPT_TEMPLATE := \
 'res://addons/Popochiu/Engine/Templates/InventoryItemTemplate.gd'
 const BASE_INVENTORY_ITEM_PATH := \
-'res://addons/Popochiu/Engine/Objects/InventoryItem/InventoryItem.tscn'
+'res://addons/Popochiu/Engine/Objects/InventoryItem/PopochiuInventoryItem.tscn'
 
 var _new_item_name := ''
 var _new_item_path := ''

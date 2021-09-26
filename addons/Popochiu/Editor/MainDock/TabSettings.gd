@@ -14,9 +14,11 @@ func _ready() -> void:
 
 
 func fill_data() -> void:
-	_fade_color.color = main_dock.popochiu.get_node('TransitionLayer').fade_color
+	if main_dock.popochiu.get_node_or_null('TransitionLayer'):
+		_fade_color.color = main_dock.popochiu.get_node('TransitionLayer').fade_color
 
 
 func _update_fade_color() -> void:
-	main_dock.popochiu.get_node('TransitionLayer').fade_color = _fade_color.color
-	main_dock.save_popochiu()
+	if main_dock.popochiu.get_node_or_null('TransitionLayer'):
+		main_dock.popochiu.get_node('TransitionLayer').fade_color = _fade_color.color
+		main_dock.save_popochiu()

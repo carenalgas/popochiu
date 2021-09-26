@@ -285,6 +285,10 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 # EditorFileSystem.update_file(path: String) para que, en caso de que sea un
 # archivo importado, se elimine su .import.
 func _delete_files(dir: EditorFileSystemDirectory) -> int:
+	# TODO: Verificar si el archivo es un AudioCue. Si lo es, hay que sacarlo
+	#		del AudioManager, luego eliminar el .tres, y por último eliminar
+	#		el archivo de sonido.
+	
 	var files_paths := []
 	
 	for file_idx in dir.get_file_count():

@@ -71,13 +71,15 @@ func _process(delta):
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
 func on_interact() -> void:
-	yield(G.display('No hay na\' pa\' hacer con esta mondá', false), 'completed')
-	G.done()
+	yield(E.run([
+		G.display('No hay na\' pa\' hacer con esta mondá')
+	]), 'completed')
 
 
 func on_look() -> void:
-	yield(G.display('No es nada...', false), 'completed')
-	G.done()
+	yield(E.run([
+		G.display('No hay nada para ver ahí')
+	]), 'completed')
 
 
 func on_item_used(item: InventoryItem) -> void:

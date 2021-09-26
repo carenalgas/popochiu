@@ -7,7 +7,10 @@ extends CreationPopup
 #		si va a tener al player, o los límites de la cámara. Aunque eso ya se
 #		puede hacer una vez se abra el .tscn.
 
-const BASE_ROOM_PATH := 'res://addons/Popochiu/Engine/Objects/Room/Room.tscn'
+const ROOM_SCRIPT_TEMPLATE :=\
+'res://addons/Popochiu/Engine/Templates/RoomTemplate.gd'
+const BASE_ROOM_PATH :=\
+'res://addons/Popochiu/Engine/Objects/Room/PopochiuRoom.tscn'
 
 var show_set_as_main := false setget _set_show_set_as_main
 
@@ -48,7 +51,7 @@ func create() -> void:
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de la nueva habitación
-	var room_template := load('res://addons/Popochiu/Engine/Templates/RoomTemplate.gd')
+	var room_template := load(ROOM_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_room_path + '.gd', room_template) != OK:
 		push_error('No se pudo crear el script de la habitación: %s' %\
 		_new_room_name)
