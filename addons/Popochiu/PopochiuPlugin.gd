@@ -81,19 +81,19 @@ func _enter_tree() -> void:
 		_editor_file_system.connect('sources_changed', self, '_on_sources_changed')
 
 
-func _exit_tree() -> void:
-	if not _is_first_install:
-		remove_autoload_singleton('Utils')
-		remove_autoload_singleton('Cursor')
-		remove_autoload_singleton('E')
-		remove_autoload_singleton('C')
-		remove_autoload_singleton('I')
-		remove_autoload_singleton('D')
-		remove_autoload_singleton('G')
-		remove_autoload_singleton('A')
-		remove_autoload_singleton('Globals')
-		
-		remove_control_from_docks(main_dock)
+#func _exit_tree() -> void:
+#	if not _is_first_install:
+#		remove_autoload_singleton('Utils')
+#		remove_autoload_singleton('Cursor')
+#		remove_autoload_singleton('E')
+#		remove_autoload_singleton('C')
+#		remove_autoload_singleton('I')
+#		remove_autoload_singleton('D')
+#		remove_autoload_singleton('G')
+#		remove_autoload_singleton('A')
+#		remove_autoload_singleton('Globals')
+#
+#		remove_control_from_docks(main_dock)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
@@ -117,12 +117,14 @@ func disable_plugin() -> void:
 func _init_file_structure() -> void:
 	var directory := Directory.new()
 	
-	if not directory.dir_exists(BASE_DIR):
-		# Crear la estructura de carpetas
-		for d in _get_directories().values():
-			if not directory.dir_exists(d):
-				directory.make_dir_recursive(d)
-		
+	_is_first_install = directory.dir_exists(GRAPHIC_INTERFACE_SRC)
+	
+	# Crear las carpetas que no existan
+	for d in _get_directories().values():
+		if not directory.dir_exists(d):
+			directory.make_dir_recursive(d)
+	
+	if _is_first_install:
 		# Copiar archivos y carpetas que las desarrolladoras podrán modificar
 		directory.rename(GLOBALS_SRC, GLOBALS_SNGL)
 		directory.rename(

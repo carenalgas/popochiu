@@ -51,7 +51,10 @@ func _ready() -> void:
 	# Por defecto deshabilitar los botones hasta que no se haya seleccionado
 	# una habitación.
 	_room_name.hide()
-	_no_room_info.hide()
+	_no_room_info.show()
+	
+	for t in _types.values():
+		t.group.disable_create()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
