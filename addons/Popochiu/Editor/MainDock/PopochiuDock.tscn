@@ -165,6 +165,7 @@ margin_right = -4.0
 margin_bottom = -4.0
 
 [node name="Popups" type="Control" parent="."]
+visible = false
 __meta__ = {
 "_edit_use_anchors_": false
 }

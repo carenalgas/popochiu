@@ -149,8 +149,10 @@ func fill_data() -> void:
 	_tab_settings.fill_data()
 
 
-func add_to_list(type: int, name_to_add: String) -> void:
-	_types[type].group.add(_create_object_row(type, name_to_add))
+func add_to_list(type: int, name_to_add: String) -> PopochiuObjectRow:
+	var row := _create_object_row(type, name_to_add)
+	_types[type].group.add(row)
+	return row
 
 
 func scene_changed(scene_root: Node) -> void:
