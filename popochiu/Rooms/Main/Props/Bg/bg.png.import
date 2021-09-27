@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bg.png-c170729ad41b0690b18c6449841d2cbc.stex"
+path="res://.import/bg.png-a206d42760c81348fb2eadf3414a74fc.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://popochiu/Rooms/Main/Props/bg.png"
-dest_files=[ "res://.import/bg.png-c170729ad41b0690b18c6449841d2cbc.stex" ]
+source_file="res://popochiu/Rooms/Main/Props/Bg/bg.png"
+dest_files=[ "res://.import/bg.png-a206d42760c81348fb2eadf3414a74fc.stex" ]
 
 [params]
 
@@ -28,7 +28,6 @@ process/fix_alpha_border=true
 process/premult_alpha=false
 process/HDR_as_SRGB=false
 process/invert_color=false
-process/normal_map_invert_y=false
 stream=false
 size_limit=0
 detect_3d=false

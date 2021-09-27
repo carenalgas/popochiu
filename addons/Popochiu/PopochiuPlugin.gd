@@ -9,20 +9,26 @@ extends EditorPlugin
 const BASE_DIR := 'res://popochiu'
 const MAIN_DOCK_PATH := 'res://addons/Popochiu/Editor/MainDock/PopochiuDock.tscn'
 const EMPTY_DOCK_PATH := 'res://addons/Popochiu/Editor/MainDock/EmptyDock.tscn'
-const UTILS_SNGL = 'res://addons/Popochiu/Engine/Others/Utils.gd'
-const CURSOR_SNGL = 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn'
-const POPOCHIU_SNGL = 'res://addons/Popochiu/Engine/Popochiu.tscn'
-const ICHARACTER_SNGL = 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
-const IINVENTORY_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
-const IDIALOG_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
-const IGRAPHIC_INTERFACE_SNGL = 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
-const IAUDIO_MANAGER_SNGL = 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
-const GLOBALS_SRC = 'res://addons/Popochiu/Engine/Objects/_Globals.gd'
-const GLOBALS_SNGL = 'res://popochiu/Globals.gd'
-const GRAPHIC_INTERFACE_SRC = 'res://addons/Popochiu/Engine/Objects/_GraphicInterface/'
-const GRAPHIC_INTERFACE_SCENE := BASE_DIR + '/GraphicInterface/GraphicInterface.tscn'
-const TRANSITION_LAYER_SRC = 'res://addons/Popochiu/Engine/Objects/_TransitionLayer/'
-const TRANSITION_LAYER_SCENE := BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
+const UTILS_SNGL := 'res://addons/Popochiu/Engine/Others/Utils.gd'
+const CURSOR_SNGL := 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn'
+const POPOCHIU_SNGL := 'res://addons/Popochiu/Engine/Popochiu.tscn'
+const ICHARACTER_SNGL := 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
+const IINVENTORY_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
+const IDIALOG_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
+const IGRAPHIC_INTERFACE_SNGL :=\
+'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
+const IAUDIO_MANAGER_SNGL :=\
+'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
+const GLOBALS_SRC := 'res://addons/Popochiu/Engine/Objects/_Globals.gd'
+const GLOBALS_SNGL := 'res://popochiu/Globals.gd'
+const GRAPHIC_INTERFACE_SRC :=\
+'res://addons/Popochiu/Engine/Objects/_GraphicInterface/'
+const GRAPHIC_INTERFACE_SCENE :=\
+BASE_DIR + '/GraphicInterface/GraphicInterface.tscn'
+const TRANSITION_LAYER_SRC :=\
+'res://addons/Popochiu/Engine/Objects/_TransitionLayer/'
+const TRANSITION_LAYER_SCENE :=\
+BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
 
 var main_dock: Panel
@@ -31,7 +37,8 @@ var _editor_interface := get_editor_interface()
 var _editor_file_system := _editor_interface.get_resource_filesystem()
 var _directory := Directory.new()
 var _is_first_install := false
-var _input_actions := preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
+var _input_actions :=\
+preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -58,6 +65,8 @@ func _init() -> void:
 
 func _enter_tree() -> void:
 	if not _is_first_install:
+		_check_popochiu_dependencies()
+		
 		print('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
 		print('[en] You\'re using Popochiu, a plugin for making point n\' click games')
 		print('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
@@ -76,11 +85,11 @@ func _enter_tree() -> void:
 		main_dock.fill_data()
 		main_dock.grab_focus()
 		
-		connect('scene_changed', main_dock, 'scene_changed')
-		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
 		_editor_file_system.connect('sources_changed', self, '_on_sources_changed')
-	else:
-		_check_popochiu_dependencies()
+		connect('scene_changed', main_dock, 'scene_changed')
+		connect('scene_closed', main_dock, 'scene_closed')
+		
+		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

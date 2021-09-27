@@ -265,12 +265,16 @@ func _delete_from_file_system() -> void:
 # este tiene que estar vacío, por eso este método elimina primero los archivos
 # del directorio y cada uno de sus subdirectorios.
 func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
-	if dir.get_subdir_count():
+	if dir.get_subdir_count() > 0:
 		for folder_idx in dir.get_subdir_count():
 			var subfolder := dir.get_subdir(folder_idx)
-
+			
+			# Ver si hay más carpetas dentro de la carpeta, o borrar los archivos
+			# dentro de esta para luego sí eliminar la carpeta
 			_recursive_delete(subfolder)
-
+			yield(get_tree(), 'idle_frame')
+			
+			# Eliminar la carpeta
 			var err: int = main_dock.dir.remove(subfolder.get_path())
 			if err != OK:
 				push_error('[%d] No se pudo eliminar el subdirectorio %s' %\

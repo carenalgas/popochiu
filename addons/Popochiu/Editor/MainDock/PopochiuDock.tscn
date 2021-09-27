@@ -19,9 +19,9 @@
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIRegular.tres" type="DynamicFont" id=18]
 [ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIBold.tres" type="DynamicFont" id=19]
 
-[sub_resource type="StyleBoxEmpty" id=17]
+[sub_resource type="StyleBoxEmpty" id=1]
 
-[sub_resource type="StyleBoxFlat" id=5]
+[sub_resource type="StyleBoxFlat" id=2]
 content_margin_left = 8.0
 content_margin_right = 8.0
 content_margin_top = 4.0
@@ -37,9 +37,9 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxEmpty" id=18]
+[sub_resource type="StyleBoxEmpty" id=3]
 
-[sub_resource type="StyleBoxEmpty" id=19]
+[sub_resource type="StyleBoxEmpty" id=4]
 
 [node name="Popochiu" type="Panel"]
 anchor_right = 1.0
@@ -212,9 +212,9 @@ __meta__ = {
 margin_right = 624.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
+custom_styles/normal = SubResource( 1 )
 custom_fonts/bold_font = ExtResource( 19 )
 custom_fonts/normal_font = ExtResource( 18 )
-custom_styles/normal = SubResource( 17 )
 bbcode_enabled = true
 bbcode_text = "Se va a eliminar [b]algo[/b]."
 text = "Se va a eliminar algo."
@@ -225,7 +225,7 @@ scroll_active = false
 margin_top = 23.0
 margin_right = 624.0
 margin_bottom = 55.0
-custom_styles/panel = SubResource( 5 )
+custom_styles/panel = SubResource( 2 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Popups/DeleteConfirmation/VBoxContainer/Extra"]
 margin_left = 8.0
@@ -237,10 +237,10 @@ margin_bottom = 28.0
 margin_right = 580.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
-custom_colors/default_color = Color( 0.768627, 0.423529, 0.443137, 1 )
+custom_styles/normal = SubResource( 3 )
 custom_fonts/bold_font = ExtResource( 19 )
 custom_fonts/normal_font = ExtResource( 18 )
-custom_styles/normal = SubResource( 18 )
+custom_colors/default_color = Color( 0.768627, 0.423529, 0.443137, 1 )
 bbcode_enabled = true
 bbcode_text = "Eliminar también [b]carpeta[/b]."
 text = "Eliminar también carpeta."
@@ -251,4 +251,4 @@ scroll_active = false
 margin_left = 584.0
 margin_right = 608.0
 margin_bottom = 24.0
-custom_styles/focus = SubResource( 19 )
+custom_styles/focus = SubResource( 4 )

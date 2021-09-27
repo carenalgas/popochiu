@@ -159,6 +159,10 @@ func scene_changed(scene_root: Node) -> void:
 	_tab_room.scene_changed(scene_root)
 
 
+func scene_closed(filepath: String) -> void:
+	_tab_room.scene_closed(filepath)
+
+
 func get_popochiu() -> Node:
 	popochiu.free()
 	popochiu = load(POPOCHIU_SCENE).instance()

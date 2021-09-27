@@ -61,22 +61,7 @@ func _ready() -> void:
 func scene_changed(scene_root: Node) -> void:
 	# Poner todo en su estado por defecto
 	if is_instance_valid(opened_room):
-		opened_room = null
-		
-		_rows_paths.clear()
-		_room_name.hide()
-		_no_room_info.show()
-		_last_selected.unselect()
-		
-		_last_selected = null
-		
-		for t in _types.values():
-			t.group.clear_list()
-			t.group.disable_create()
-		
-		yield(get_tree(), 'idle_frame')
-		
-#		get_parent().current_tab = 0
+		yield(_clear_content(), 'completed')
 	
 	if scene_root is PopochiuRoom:
 		# Actualizar la información de la habitación que se abrió
@@ -106,11 +91,34 @@ func scene_changed(scene_root: Node) -> void:
 		get_parent().current_tab = 1
 
 
+func scene_closed(filepath: String) -> void:
+	if is_instance_valid(opened_room) and opened_room.filename == filepath:
+		_clear_content()
+
+
 func add_to_list(type: int, node_name: String) -> void:
 	_types[type].group.add(_create_object_row(type, node_name))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+func _clear_content() -> void:
+	opened_room = null
+		
+	_rows_paths.clear()
+	_room_name.hide()
+	_no_room_info.show()
+	
+	if is_instance_valid(_last_selected):
+		_last_selected.unselect()
+		_last_selected = null
+	
+	for t in _types.values():
+		t.group.clear_list()
+		t.group.disable_create()
+	
+	yield(get_tree(), 'idle_frame')
+
+
 func _create_object_row(type: int, node_name: String) -> PopochiuObjectRow:
 	var new_obj: PopochiuObjectRow = object_row.instance()
 
