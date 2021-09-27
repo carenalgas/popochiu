@@ -94,6 +94,28 @@ func save_audio_manager() -> int:
 	return result
 
 
+func delete_rows(filepaths: Array) -> void:
+	for filepath in filepaths:
+		if filepath in _audio_files_to_assign:
+			for row in _am_unassigned_group.get_elements():
+				if row.file_path == filepath:
+					row.queue_free()
+					break
+			_audio_files_to_assign.erase(filepath)
+		elif filepath in _audio_files_in_group:
+			var deleted := false
+			
+			for group_dic in _am_groups.values():
+				for row in group_dic.group.get_elements():
+					if row.audio_cue.audio.resource_path == filepath:
+						row.queue_free()
+						deleted = true
+						break
+				if deleted:
+					_audio_files_in_group.erase(filepath)
+					break
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _read_audio_manager_cues() -> void:
 	# Poner los AudioCue ya cargados en el AudioManager en su respectivo grupo

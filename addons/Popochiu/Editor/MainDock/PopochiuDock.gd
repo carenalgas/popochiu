@@ -230,6 +230,10 @@ func search_audio_files() -> void:
 	_tab_audio.search_audio_files()
 
 
+func get_audio_tab() -> Node:
+	return _tab_audio
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _open_popup(popup: Popup) -> void:
 	popup.popup_centered_clamped(Vector2(640, 360))

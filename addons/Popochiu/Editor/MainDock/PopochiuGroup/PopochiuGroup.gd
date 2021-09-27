@@ -75,6 +75,10 @@ func enable_create() -> void:
 	_btn_create.disabled = false
 
 
+func get_elements() -> Array:
+	return _list.get_children()
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
 func _on_input(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton

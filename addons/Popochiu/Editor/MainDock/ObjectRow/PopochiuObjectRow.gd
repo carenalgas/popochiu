@@ -237,15 +237,15 @@ func _delete_from_file_system() -> void:
 	var object_dir: EditorFileSystemDirectory = \
 		main_dock.fs.get_filesystem_path(path.get_base_dir())
 	
-	if _recursive_delete(object_dir) != OK:
+	var result: int = yield(_recursive_delete(object_dir), 'completed')
+	if result != OK:
 		push_error('Hubo un error en la eliminación recursiva de %s' \
 		% path.get_base_dir())
 		return
 
 	# Eliminar la carpeta del objeto
 	if main_dock.dir.remove(path.get_base_dir()) != OK:
-		push_error('No se pudo eliminar la carpeta: %s' %\
-		main_dock.CHARACTERS_PATH + name)
+		push_error('No se pudo eliminar la carpeta: %s' % path.get_base_dir())
 		return
 
 	# Forzar que se actualice la estructura de archivos en el EditorFileSystem
@@ -254,7 +254,7 @@ func _delete_from_file_system() -> void:
 	
 	if main_dock.save_popochiu() != OK:
 		push_error('No se pudo eliminar la carpeta del sistema: %s' %\
-		name)
+		path.get_base_dir())
 
 	# Eliminar el objeto de su lista -------------------------------------------
 	_disconnect_popup()
@@ -271,8 +271,7 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 			
 			# Ver si hay más carpetas dentro de la carpeta, o borrar los archivos
 			# dentro de esta para luego sí eliminar la carpeta
-			_recursive_delete(subfolder)
-			yield(get_tree(), 'idle_frame')
+			yield(_recursive_delete(subfolder), 'completed')
 			
 			# Eliminar la carpeta
 			var err: int = main_dock.dir.remove(subfolder.get_path())
@@ -280,8 +279,10 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 				push_error('[%d] No se pudo eliminar el subdirectorio %s' %\
 				[err, subfolder.get_path()])
 				return err
+			
+			main_dock.fs.scan()
 	
-	return _delete_files(dir)
+	return yield(_delete_files(dir), 'completed')
 
 
 # Elimina los archivos dentro de un directorio. Primero se obtienen las rutas
@@ -289,29 +290,58 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 # EditorFileSystem.update_file(path: String) para que, en caso de que sea un
 # archivo importado, se elimine su .import.
 func _delete_files(dir: EditorFileSystemDirectory) -> int:
-	# TODO: Verificar si el archivo es un AudioCue. Si lo es, hay que sacarlo
-	#		del AudioManager, luego eliminar el .tres, y por último eliminar
-	#		el archivo de sonido.
-	
 	var files_paths := []
+	var deleted_audios := []
 	
 	for file_idx in dir.get_file_count():
+		match dir.get_file_type(file_idx):
+			'AudioStreamOGGVorbis':
+				deleted_audios.append(dir.get_file_path(file_idx))
+			'Resource':
+				var resource: Resource = load(dir.get_file_path(file_idx))
+				if resource is AudioCue:
+					deleted_audios.append(resource.audio.resource_path)
+					
+					# Si el archivo es un AudioCue, hay que primero sacarlo del
+					# AudioManager
+					var am: Node = main_dock.get_audio_tab().get_audio_manager()
+					
+					if am.mx_cues.has(resource):
+						am.mx_cues.erase(resource)
+					elif am.sfx_cues.has(resource):
+						am.sfx_cues.erase(resource)
+					elif am.vo_cues.has(resource):
+						am.vo_cues.erase(resource)
+					elif am.ui_cues.has(resource):
+						am.ui_cues.erase(resource)
+					
+					assert(
+						main_dock.get_audio_tab().save_audio_manager() == OK,
+						'[Popochiu] No se pudo guardar el AudioManager al' +\
+						' intentar eliminar los AudioCue durante la' +\
+						' eliminación de la carpeta %s.' % dir.get_path()
+					)
+		
 		files_paths.append(dir.get_file_path(file_idx))
-
+	
 	for fp in files_paths:
 		# Así es como se hace en el código fuente del motor para que se eliminen
 		# también los .import asociados a los archivos importados. ------------
 		var err: int = main_dock.dir.remove(fp)
 		main_dock.fs.update_file(fp)
 		# ---------------------------------------------------------------------
+		yield(get_tree().create_timer(0.1), 'timeout')
 		if err != OK:
 			push_error('[%d] No se pudo eliminar el archivo %s' %\
 			[err, fp])
 			return err
-
+	
 	main_dock.fs.scan()
-	main_dock.fs.scan_sources()
-
+#	main_dock.fs.scan_sources()
+	
+	if not deleted_audios.empty():
+		main_dock.get_audio_tab().delete_rows(deleted_audios)
+	
 	return OK
 
 
