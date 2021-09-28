@@ -281,6 +281,7 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 				return err
 			
 			main_dock.fs.scan()
+			yield(get_tree(), 'idle_frame')
 	
 	return yield(_delete_files(dir), 'completed')
 
@@ -330,7 +331,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 		var err: int = main_dock.dir.remove(fp)
 		main_dock.fs.update_file(fp)
 		# ---------------------------------------------------------------------
-		yield(get_tree().create_timer(0.1), 'timeout')
+		yield(get_tree(), 'idle_frame')
 		if err != OK:
 			push_error('[%d] No se pudo eliminar el archivo %s' %\
 			[err, fp])
