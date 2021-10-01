@@ -15,7 +15,7 @@ var path := ''
 var main_dock: Panel = null setget _set_main_dock
 var is_main := false setget _set_is_main
 
-var _confirmation_dialog: ConfirmationDialog
+var _delete_dialog: ConfirmationDialog
 var _delete_all_checkbox: CheckBox
 
 onready var _label: Label = find_node('Label')
@@ -176,22 +176,55 @@ func _open() -> void:
 # Abre un popup de confirmación para saber si la desarrolladora quiere eliminar
 # el objeto del núcleo del plugin y del sistema.
 func _ask_basic_delete() -> void:
+	# Escanear la carpeta en busca de archivos de audio y AudioCues para informar
+	# a la desarrolladora que también se eliminarán archivos de audio.
+	var audio_files := _search_audio_files(
+		main_dock.fs.get_filesystem_path(path.get_base_dir())
+	)
+	
 	main_dock.show_confirmation(
 		'Se eliminará a %s de Popochiu' % name,
 		'Esto eliminará la referencia de [b]%s[/b] en Popochiu.' % name +\
-		' Los usos de este objeto dentro de los scripts dejarán de funcionar.' +\
-		' Esta acción no se puede revertir. ¿Quiere continuar?',
-		'Eliminar también la carpeta [b]%s[/b]' % path.get_base_dir() +\
+		' Los usos de este objeto dentro de los scripts dejarán de.' +\
+		' funcionar. Esta acción no se puede revertir. ¿Quiere continuar?',
+		'¿Eliminar también la carpeta [b]%s[/b]?' % path.get_base_dir() +\
+		(' Se eliminarán [b]%d[/b] archivos de audio' % audio_files.size()\
+		if audio_files.size() > 0\
+		else '') +\
 		' (no se puede revertir)'
 	)
 	
-	_confirmation_dialog.get_cancel().connect('pressed', self, '_disconnect_popup')
-	_confirmation_dialog.connect('confirmed', self, '_delete_from_core')
+	_delete_dialog.connect('confirmed', self, '_delete_from_core')
+	_delete_dialog.get_cancel().connect('pressed', self, '_disconnect_popup')
+	_delete_dialog.get_close_button().connect(
+		'pressed', self, '_disconnect_popup'
+	)
+
+
+func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
+	var files := []
+#	var paths_to_erase := []
+	
+	for idx in dir.get_subdir_count():
+		files.append_array(_search_audio_files(dir.get_subdir(idx)))
+	
+	for idx in dir.get_file_count():
+		match dir.get_file_type(idx):
+			'AudioStreamOGGVorbis', 'AudioStreamMP3', 'AudioStreamSample':
+				files.append(dir.get_file_path(idx))
+#			'Resource':
+#				var resource: Resource = load(dir.get_file_path(idx))
+#				if resource is AudioCue:
+#					files.append(dir.get_file_path(idx))
+#					paths_to_erase.append(resource.audio.resource_path)
+	
+#	if path in paths_to_erase:
+#		files.erase(path)
+	
+	return files
 
 
 func _delete_from_core() -> void:
-	_confirmation_dialog.disconnect('confirmed', self, '_delete_from_core')
-	
 	# Eliminar el objeto de Popochiu -------------------------------------------
 	var popochiu: Popochiu = main_dock.get_popochiu()
 	
@@ -226,38 +259,39 @@ func _delete_from_core() -> void:
 		_delete_from_file_system()
 	else:
 		show_add_to_core()
+	
+	_disconnect_popup()
 
 
 # Elimina el directorio del objeto del sistema.
 func _delete_from_file_system() -> void:
-#	_confirmation_dialog.disconnect('confirmed', self, '_delete_from_file_system')
-	
 	# Eliminar la carpeta del disco y todas sus subcarpetas y archivos si la
 	# desarrolladora así lo quiso
 	var object_dir: EditorFileSystemDirectory = \
 		main_dock.fs.get_filesystem_path(path.get_base_dir())
 	
-	var result: int = yield(_recursive_delete(object_dir), 'completed')
-	if result != OK:
-		push_error('Hubo un error en la eliminación recursiva de %s' \
-		% path.get_base_dir())
-		return
-
+	# Eliminar primero los archivos y subcarpetas (con sus respectivos archivos)
+	assert(
+		_recursive_delete(object_dir) == OK,
+		'Hubo un error en la eliminación recursiva de %s' % path.get_base_dir()
+	)
+	
 	# Eliminar la carpeta del objeto
-	if main_dock.dir.remove(path.get_base_dir()) != OK:
-		push_error('No se pudo eliminar la carpeta: %s' % path.get_base_dir())
-		return
+	assert(
+		main_dock.dir.remove(path.get_base_dir()) == OK,
+		'No se pudo eliminar la carpeta: %s' % path.get_base_dir()
+	)
 
 	# Forzar que se actualice la estructura de archivos en el EditorFileSystem
 	main_dock.fs.scan()
 	main_dock.fs.scan_sources()
 	
-	if main_dock.save_popochiu() != OK:
-		push_error('No se pudo eliminar la carpeta del sistema: %s' %\
-		path.get_base_dir())
+	assert(
+		main_dock.save_popochiu() == OK,
+		'No se pudo eliminar la carpeta del sistema: %s' % path.get_base_dir()
+	)
 
 	# Eliminar el objeto de su lista -------------------------------------------
-	_disconnect_popup()
 	queue_free()
 
 
@@ -271,7 +305,7 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 			
 			# Ver si hay más carpetas dentro de la carpeta, o borrar los archivos
 			# dentro de esta para luego sí eliminar la carpeta
-			yield(_recursive_delete(subfolder), 'completed')
+			_recursive_delete(subfolder)
 			
 			# Eliminar la carpeta
 			var err: int = main_dock.dir.remove(subfolder.get_path())
@@ -279,11 +313,8 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 				push_error('[%d] No se pudo eliminar el subdirectorio %s' %\
 				[err, subfolder.get_path()])
 				return err
-			
-			main_dock.fs.scan()
-			yield(get_tree(), 'idle_frame')
 	
-	return yield(_delete_files(dir), 'completed')
+	return _delete_files(dir)
 
 
 # Elimina los archivos dentro de un directorio. Primero se obtienen las rutas
@@ -291,12 +322,13 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 # EditorFileSystem.update_file(path: String) para que, en caso de que sea un
 # archivo importado, se elimine su .import.
 func _delete_files(dir: EditorFileSystemDirectory) -> int:
+	# Este arreglo guardará las rutas de los archivos a eliminar.
 	var files_paths := []
 	var deleted_audios := []
 	
 	for file_idx in dir.get_file_count():
 		match dir.get_file_type(file_idx):
-			'AudioStreamOGGVorbis':
+			'AudioStreamOGGVorbis', 'AudioStreamMP3', 'AudioStreamSample':
 				deleted_audios.append(dir.get_file_path(file_idx))
 			'Resource':
 				var resource: Resource = load(dir.get_file_path(file_idx))
@@ -331,15 +363,13 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 		var err: int = main_dock.dir.remove(fp)
 		main_dock.fs.update_file(fp)
 		# ---------------------------------------------------------------------
-		yield(get_tree(), 'idle_frame')
 		if err != OK:
 			push_error('[%d] No se pudo eliminar el archivo %s' %\
 			[err, fp])
 			return err
 	
-	main_dock.fs.scan()
-#	main_dock.fs.scan_sources()
-	
+	# Eliminar las filas en la pestaña de Audio de los archivos de audio y los
+	# AudioCue eliminados.
 	if not deleted_audios.empty():
 		main_dock.get_audio_tab().delete_rows(deleted_audios)
 	
@@ -348,22 +378,17 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 
 # Se desconecta de las señales del popup utilizado para configurar la eliminación.
 func _disconnect_popup() -> void:
-	if _confirmation_dialog.is_connected('confirmed', self, '_delete_from_core'):
-		_confirmation_dialog.disconnect('confirmed', self, '_delete_from_core')
-	
-	if _confirmation_dialog.is_connected(
-	'confirmed', self, '_delete_from_file_system'):
-		# Se canceló la eliminación de los archivos en disco
-		show_add_to_core()
-		_confirmation_dialog.disconnect(
-			'confirmed', self, '_delete_from_file_system'
-		)
+	_delete_dialog.disconnect('confirmed', self, '_delete_from_core')
+	_delete_dialog.get_cancel().disconnect('pressed', self, '_disconnect_popup')
+	_delete_dialog.get_close_button().disconnect(
+		'pressed', self, '_disconnect_popup'
+	)
 
 
 func _set_main_dock(value: Panel) -> void:
 	main_dock = value
-	_confirmation_dialog = value.delete_dialog
-	_delete_all_checkbox = _confirmation_dialog.find_node('CheckBox')
+	_delete_dialog = main_dock.delete_dialog
+	_delete_all_checkbox = _delete_dialog.find_node('CheckBox')
 
 
 func _set_is_main(value: bool) -> void:

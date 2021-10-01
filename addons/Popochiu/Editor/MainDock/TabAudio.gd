@@ -125,6 +125,8 @@ func _read_audio_manager_cues() -> void:
 		if not audio_manager[group.array].empty():
 			for m in audio_manager[group.array]:
 				if (m as AudioCue).audio.resource_path in _audio_files_in_group:
+					# TODO: Verificar si alguna de las rutas a los recursos
+					# 		cambió.
 					continue
 				
 				var ar := _create_audio_cue_row(m)
