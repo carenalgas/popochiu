@@ -1,0 +1,88 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIRegular.tres" type="DynamicFont" id=1]
+[ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIBold.tres" type="DynamicFont" id=2]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="StyleBoxFlat" id=2]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color( 0.768627, 0.423529, 0.443137, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxEmpty" id=3]
+
+[sub_resource type="StyleBoxEmpty" id=4]
+
+[node name="DeleteConfirmation" type="ConfirmationDialog"]
+margin_right = 640.0
+margin_bottom = 280.0
+rect_min_size = Vector2( 640, 280 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 632.0
+margin_bottom = 244.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Message" type="RichTextLabel" parent="VBoxContainer"]
+margin_right = 624.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+custom_fonts/bold_font = ExtResource( 2 )
+custom_fonts/normal_font = ExtResource( 1 )
+custom_styles/normal = SubResource( 1 )
+bbcode_enabled = true
+bbcode_text = "Se va a eliminar [b]algo[/b]."
+text = "Se va a eliminar algo."
+fit_content_height = true
+scroll_active = false
+
+[node name="Extra" type="PanelContainer" parent="VBoxContainer"]
+margin_top = 23.0
+margin_right = 624.0
+margin_bottom = 55.0
+custom_styles/panel = SubResource( 2 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Extra"]
+margin_left = 8.0
+margin_top = 4.0
+margin_right = 616.0
+margin_bottom = 28.0
+
+[node name="Ask" type="RichTextLabel" parent="VBoxContainer/Extra/HBoxContainer"]
+margin_right = 580.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+custom_colors/default_color = Color( 0.768627, 0.423529, 0.443137, 1 )
+custom_fonts/bold_font = ExtResource( 2 )
+custom_fonts/normal_font = ExtResource( 1 )
+custom_styles/normal = SubResource( 3 )
+bbcode_enabled = true
+bbcode_text = "Eliminar también [b]carpeta[/b]."
+text = "Eliminar también carpeta."
+fit_content_height = true
+scroll_active = false
+
+[node name="CheckBox" type="CheckBox" parent="VBoxContainer/Extra/HBoxContainer"]
+margin_left = 584.0
+margin_right = 608.0
+margin_bottom = 24.0
+custom_styles/focus = SubResource( 4 )
