@@ -19,10 +19,12 @@ export(int, 'co', 'es', 'en') var language_idx := 0 setget _set_language_idx
 export var use_translations := false
 
 var in_run := false
-# Se usa para que no se pueda cambiar de escena si está se ha cargado por completo,
+# Se usa para que no se pueda cambiar de escena si esta se ha cargado por completo,
 # esto es que ya ha ejecutado la lógica de PopochiuRoom.on_room_transition_finished
 var in_room := false setget _set_in_room
 var current_room: PopochiuRoom = null
+# Guarda la referencia del Clickable al que se hizo clic para facilitar el acceso
+# al mismo desde cualquier nodo.
 var clicked: Node
 var cutscene_skipped := false
 var rooms_states := {}
@@ -307,11 +309,14 @@ func _eval_string(text: String) -> void:
 			if char_talk:
 				var char_name: String = text.substr(0, char_talk)
 				if char_name.to_lower() == 'player':
-					var char_line: String = text.substr(char_talk + 1).trim_prefix(' ')
+					var char_line := text.substr(char_talk + 1).trim_prefix(' ')
 					yield(C.player_say(char_line, false), 'completed')
 				if C.is_valid_character(char_name):
-					var char_line: String = text.substr(char_talk + 1).trim_prefix(' ')
-					yield(C.character_say(char_name, char_line, false), 'completed')
+					var char_line := text.substr(char_talk + 1).trim_prefix(' ')
+					yield(
+						C.character_say(char_name, char_line, false),
+						'completed'
+					)
 				else:
 					yield(get_tree(), 'idle_frame')
 			else:
