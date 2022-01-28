@@ -90,9 +90,6 @@ margin_top = 28.0
 margin_right = 320.0
 margin_bottom = 52.0
 
-[node name="List" type="VBoxContainer" parent="VBoxContainer/Body"]
-margin_right = 320.0
-
 [node name="BtnCreate" type="Button" parent="VBoxContainer/Body"]
 margin_left = 204.0
 margin_top = 4.0
@@ -100,3 +97,6 @@ margin_right = 320.0
 margin_bottom = 24.0
 size_flags_horizontal = 8
 icon = SubResource( 4 )
+
+[node name="List" type="VBoxContainer" parent="VBoxContainer/Body"]
+margin_right = 320.0

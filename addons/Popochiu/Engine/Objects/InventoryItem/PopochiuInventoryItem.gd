@@ -12,7 +12,7 @@ export var script_name := ''
 export(Cursor.Type) var cursor
 
 var amount := 1
-var in_inventory := false
+var in_inventory := false setget _set_in_inventory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -35,6 +35,11 @@ func on_look() -> void:
 
 # Lo que pasará cuando se use otro InventoryItem del inventario sobre este
 func on_item_used(_item: InventoryItem) -> void:
+	pass
+
+
+# Lo que pasará después de que se haya agregado el objeto al inventario.
+func added_to_inventory() -> void:
 	pass
 
 
@@ -63,3 +68,9 @@ func _get_description() -> String:
 			description = name
 		return description
 	return E.get_text(description)
+
+
+func _set_in_inventory(value: bool) -> void:
+	in_inventory = value
+	
+	if in_inventory: added_to_inventory()

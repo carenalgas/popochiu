@@ -163,6 +163,15 @@ func get_prop(prop_name: String) -> Prop:
 	return null
 
 
+func get_hotspot(hotspot_name: String) -> Hotspot:
+	for h in $Hotspots.get_children():
+		if h.script_name == hotspot_name or h.name == hotspot_name:
+			return h
+	printerr('PopochiuRoom[%s].get_hotspot: No se encontró el Hotspot %s' %\
+	[script_name, hotspot_name])
+	return null
+
+
 func hide_props() -> void:
 	for p in $Props.get_children():
 		p.hide()

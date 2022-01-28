@@ -35,6 +35,7 @@ func _ready():
 		set_process(follow_player)
 	else:
 		set_process(true)
+		hide_helpers()
 
 
 func _process(_delta: float) -> void:
@@ -173,6 +174,17 @@ func get_dialog_pos() -> float:
 # Quita un ítem del inventario del personaje (¿o del jugador?)
 func remove_inventory() -> void:
 	pass
+
+
+func hide_helpers() -> void:
+	.hide_helpers()
+	
+	if is_instance_valid(dialog_pos): dialog_pos.hide()
+
+
+func show_helpers() -> void:
+	.show_helpers()
+	if is_instance_valid(dialog_pos): dialog_pos.show()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

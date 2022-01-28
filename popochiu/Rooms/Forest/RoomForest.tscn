@@ -47,9 +47,11 @@ texture = ExtResource( 8 )
 polygon = PoolVector2Array( -23, 8, -17, 1, 6, 1, 12, 8, 10, 53, -9, 59, -27, 52 )
 
 [node name="BaselineHelper" parent="Props/Well" index="1"]
+visible = false
 position = Vector2( 0, 57 )
 
 [node name="WalkToHelper" parent="Props/Well" index="2"]
+visible = false
 position = Vector2( -9, 63 )
 
 [node name="Sprite" parent="Props/Well" index="3"]
@@ -68,9 +70,11 @@ texture = ExtResource( 7 )
 polygon = PoolVector2Array( 95, 47, 102, 45, 109, 47, 109, 59, 97, 60 )
 
 [node name="BaselineHelper" parent="Props/Bucket" index="1"]
+visible = false
 position = Vector2( 0, 59 )
 
 [node name="WalkToHelper" parent="Props/Bucket" index="2"]
+visible = false
 position = Vector2( 102, 51 )
 
 [node name="Sprite" parent="Props/Bucket" index="3"]
@@ -105,9 +109,11 @@ script_name = "Cave"
 polygon = PoolVector2Array( 80, -14, 78, 2, 73, 18, 89, 13, 106, 14, 116, 20, 117, -7, 107, -17 )
 
 [node name="BaselineHelper" parent="Hotspots/Cave" index="1"]
+visible = false
 position = Vector2( 0, -16 )
 
 [node name="WalkToHelper" parent="Hotspots/Cave" index="2"]
+visible = false
 position = Vector2( 94, 21 )
 
 [node name="Forest" parent="Hotspots" index="1" instance=ExtResource( 10 )]
@@ -120,7 +126,11 @@ script_name = "Forest"
 [node name="CollisionPolygon2D" parent="Hotspots/Forest" index="0"]
 polygon = PoolVector2Array( -192, -75, -201, 25, -132, 7, -62, 5, -16, -9, 47, -4, 98, -57, 60, -75, 11, -62, -23, -70, -33, -52, -54, -63, -69, -57, -98, -77, -116, -68 )
 
+[node name="BaselineHelper" parent="Hotspots/Forest" index="1"]
+visible = false
+
 [node name="WalkToHelper" parent="Hotspots/Forest" index="2"]
+visible = false
 position = Vector2( -6, 14 )
 
 [node name="Corner" parent="Regions" index="0" instance=ExtResource( 13 )]

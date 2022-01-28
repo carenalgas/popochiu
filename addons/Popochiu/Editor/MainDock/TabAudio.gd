@@ -54,8 +54,6 @@ func _ready() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
 func fill_data() -> void:
-	_read_audio_manager_cues()
-	
 	# Buscar archivos de audio sin AudioCue
 	search_audio_files()
 
@@ -63,6 +61,7 @@ func fill_data() -> void:
 func search_audio_files() -> void:
 	_created_audio_cues = 0
 	
+	_read_audio_manager_cues()
 	_read_directory(main_dock.fs.get_filesystem_path(SEARCH_PATH))
 	
 	if _created_audio_cues > 0:
