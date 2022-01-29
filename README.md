@@ -1,4 +1,4 @@
-![cover](./assets/images/_repo/cover.png "Popochiu")
+![cover](./imgs/cover.png "Popochiu")
 
 <!-- no toc -->
 **[esp]** Plugin de Godot para crear juegos de aventura de manera similar a herramientas como [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
@@ -6,7 +6,7 @@
 **[eng]** Godot plugin to make point n' click games in a similar way to tools like [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [Power Quest](https://powerhoof.itch.io/powerquest).
 
 
-![Popochiu](./assets/images/_repo/popochiu_01.gif "Popochiu en acción")
+![Popochiu](./imgs/popochiu_01.gif "Popochiu en acción")
 
 
 - [Español](#español)
@@ -23,15 +23,15 @@
 ## 🔌 El plugin
 En la pestaña principal se pueden ver (y crear) las habitaciones, personajes, objetos de inventario y diálogos.
 
-![Popochiu Dock (main)](./assets/images/_repo/popochiu_dock-main.png "Pestaña Main del Dock")
+![Popochiu Dock (main)](./imgs/popochiu_dock-main.png "Pestaña Main del Dock")
 
 En la pestaña de habitación se pueden ver (y crear) objetos con interacción (props), zonas con interacción (hotspots), regiones y puntos de la habitación abierta en el editor.
 
-![Popochiu Dock (room)](./assets/images/_repo/popochiu_dock-room.png "Pestaña Room del Dock")
+![Popochiu Dock (room)](./imgs/popochiu_dock-room.png "Pestaña Room del Dock")
 
 En la pestaña de audio se pueden ver los archivos de audio y asignarlos a una categoría: música, efectos de sonido, voces e interfaz gráfica.
 
-![Popochiu Dock (audio)](./assets/images/_repo/popochiu_dock-audio.png "Pestaña Audio del Dock")
+![Popochiu Dock (audio)](./imgs/popochiu_dock-audio.png "Pestaña Audio del Dock")
 
 ## 📃 Características
 
@@ -92,15 +92,15 @@ En la pestaña de audio se pueden ver los archivos de audio y asignarlos a una c
 ## 🔌 The dock
 Tha *Main* tab shows (and allows the creation of) rooms, characters, inventory items and dialogs.
 
-![Popochiu Dock (main)](./assets/images/_repo/popochiu_dock-main.png "Pestaña Main del Dock")
+![Popochiu Dock (main)](./imgs/popochiu_dock-main.png "Pestaña Main del Dock")
 
 The *Room* tab shows (and allows the creation of) props, hotspots, regions and points.
 
-![Popochiu Dock (room)](./assets/images/_repo/popochiu_dock-room.png "Pestaña Room del Dock")
+![Popochiu Dock (room)](./imgs/popochiu_dock-room.png "Pestaña Room del Dock")
 
 The *audio* tab shows the audio files and allows to assign each one to a category: music, sfx, voice and graphic interface.
 
-![Popochiu Dock (audio)](./assets/images/_repo/popochiu_dock-audio.png "Pestaña Audio del Dock")
+![Popochiu Dock (audio)](./imgs/popochiu_dock-audio.png "Pestaña Audio del Dock")
 
 
 ## 📃 Features
