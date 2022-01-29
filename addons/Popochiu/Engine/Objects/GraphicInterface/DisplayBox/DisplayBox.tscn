@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Resources/PopochiuTheme.tres" type="Theme" id=1]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DisplayBox/DisplayBox.gd" type="Script" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 8.0
+content_margin_right = 8.0
+content_margin_top = 4.0
+content_margin_bottom = 6.0
+bg_color = Color( 0.247059, 0.247059, 0.454902, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+anti_aliasing = false
+
+[node name="DisplayBox" type="Label"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -42.0
+margin_top = -12.0
+margin_right = 42.0
+margin_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource( 1 )
+custom_styles/normal = SubResource( 1 )
+text = "El narrador"
+align = 1
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

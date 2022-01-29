@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Resources/PopochiuTheme.tres" type="Theme" id=1]
+[ext_resource path="res://addons/Popochiu/fonts/monkeyisland-1991.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="StyleBoxEmpty" id=1]
+
+[sub_resource type="DynamicFont" id=2]
+size = 10
+font_data = ExtResource( 2 )
+
+[node name="DialogOption" type="Button"]
+margin_right = 320.0
+margin_bottom = 14.0
+theme = ExtResource( 1 )
+custom_styles/focus = SubResource( 1 )
+custom_fonts/font = SubResource( 2 )
+text = "asdasd"
+flat = true
+align = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -62,15 +62,11 @@ func _init() -> void:
 	add_autoload_singleton('G', IGRAPHIC_INTERFACE_SNGL)
 	add_autoload_singleton('A', IAUDIO_MANAGER_SNGL)
 	add_autoload_singleton('Globals', GLOBALS_SNGL)
-	
-	_editor_interface.get_selection().connect(
-		'selection_changed', self, '_check_nodes'
-	)
 
 
 func _enter_tree() -> void:
 	if not _is_first_install:
-		_check_popochiu_dependencies()
+#		_check_popochiu_dependencies()
 		
 		print('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
 		print('[en] You\'re using Popochiu, a plugin for making point n\' click games')
@@ -95,6 +91,12 @@ func _enter_tree() -> void:
 		connect('scene_closed', main_dock, 'scene_closed')
 		
 		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
+
+
+func _ready() -> void:
+	_editor_interface.get_selection().connect(
+		'selection_changed', self, '_check_nodes'
+	)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

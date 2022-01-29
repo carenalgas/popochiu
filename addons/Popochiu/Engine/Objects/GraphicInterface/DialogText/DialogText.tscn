@@ -1,0 +1,55 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Resources/DynamicFonts/MonkeyIsland-outline-16.tres" type="DynamicFont" id=1]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/DialogText.gd" type="Script" id=2]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/dialog_continue.png" type="Texture" id=3]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 1, 0, 0, 0 )
+
+[node name="DialogText" type="RichTextLabel"]
+margin_right = 200.0
+margin_bottom = 13.0
+grow_horizontal = 2
+rect_min_size = Vector2( 120, 13 )
+rect_clip_content = false
+mouse_filter = 2
+size_flags_horizontal = 3
+custom_fonts/normal_font = ExtResource( 1 )
+custom_styles/normal = SubResource( 1 )
+bbcode_enabled = true
+bbcode_text = "[wave]Los diálogos[/wave]"
+meta_underlined = false
+text = "Los diálogos"
+fit_content_height = true
+scroll_active = false
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="."]
+
+[node name="Label" type="Label" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+margin_bottom = 12.0
+custom_colors/font_color = Color( 0.513726, 0.929412, 0.227451, 1 )
+custom_fonts/font = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ContinueIcon" type="TextureProgress" parent="."]
+margin_left = 80.0
+margin_right = 96.0
+margin_bottom = 16.0
+value = 100.0
+texture_progress = ExtResource( 3 )
+fill_mode = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Tween" type="Tween" parent="ContinueIcon"]
+repeat = true
+playback/repeat = true
