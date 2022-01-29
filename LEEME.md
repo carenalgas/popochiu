@@ -1,13 +1,20 @@
-![cover](./imgs/cover.png "Popochiu")
+![cover](./imgs/popochiu_hero.png "Popochiu")
 
 <!-- no toc -->
 Plugin de Godot para crear juegos de aventura de manera similar a herramientas como [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
 
-![Popochiu](./imgs/popochiu_01.gif "Popochiu en acción")
+
+### 🌎💬 [Read this in English](./README.md) 💬🌎
 
 
-## 💬 [Read this in English](./README.md) 💬
+
+## Instalación
+
+1. [Descarga el ZIP](https://github.com/mapedorr/popochiu/archive/refs/heads/main.zip).
+2. Extra su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
+3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Project > Project Settings... > Plugins (the tab on the top)`.
+4. Reinicia Godot.
 
 
 ## El plugin 🔌
@@ -24,6 +31,8 @@ En la pestaña de audio se pueden ver los archivos de audio y asignarlos a una c
 ![Popochiu Dock (audio)](./imgs/popochiu_dock-audio.png "Pestaña Audio del Dock")
 
 ## Características 📃
+
+![Popochiu](./imgs/popochiu_01.gif "Popochiu en acción")
 
 - Se pueden encadenar instrucciones fácilmente usando la función E.run([...]):
   ```gdscript

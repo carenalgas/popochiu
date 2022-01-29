@@ -1,13 +1,20 @@
-![cover](./imgs/cover.png "Popochiu")
+![cover](./imgs/popochiu_hero.png "Popochiu")
 
 <!-- no toc -->
 Godot plugin to make point n' click games in a similar way to tools like [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [Power Quest](https://powerhoof.itch.io/powerquest).
 
 
-![Popochiu](./imgs/popochiu_01.gif "Popochiu en acción")
+
+### 🌎💬 [Lee la versión en Español](./LEEME.md) 💬🌎
 
 
-## 💬 [Lee la versión en Español](./LEEME.md) 💬
+
+## Installation
+
+1. [Download the ZIP](https://github.com/mapedorr/popochiu/archive/refs/heads/main.zip).
+2. Extract it and copy the `addons` folder into your project folder.
+3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins (the tab on the top)`.
+4. Restart Godot.
 
 
 ## The dock 🔌
@@ -26,6 +33,8 @@ The *audio* tab shows the audio files and allows to assign each one to a categor
 
 
 ## Features 📃
+
+![Popochiu](./imgs/popochiu_01.gif "Popochiu running")
 
 - Use `E.run([...])` to queue instructions.
   ```gdscript
