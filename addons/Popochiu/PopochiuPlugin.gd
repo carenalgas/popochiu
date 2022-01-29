@@ -9,7 +9,7 @@ extends EditorPlugin
 const BASE_DIR := 'res://popochiu'
 const MAIN_DOCK_PATH := 'res://addons/Popochiu/Editor/MainDock/PopochiuDock.tscn'
 const EMPTY_DOCK_PATH := 'res://addons/Popochiu/Editor/MainDock/EmptyDock.tscn'
-const UTILS_SNGL := 'res://addons/Popochiu/Engine/Others/Utils.gd'
+const UTILS_SNGL := 'res://addons/Popochiu/Engine/Others/PopochiuUtils.gd'
 const CURSOR_SNGL := 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn'
 const POPOCHIU_SNGL := 'res://addons/Popochiu/Engine/Popochiu.tscn'
 const ICHARACTER_SNGL := 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
@@ -19,8 +19,8 @@ const IGRAPHIC_INTERFACE_SNGL :=\
 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
 const IAUDIO_MANAGER_SNGL :=\
 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
-const GLOBALS_SRC := 'res://addons/Popochiu/Engine/Objects/_Globals.gd'
-const GLOBALS_SNGL := 'res://popochiu/Globals.gd'
+# const GLOBALS_SRC := 'res://addons/Popochiu/Engine/Objects/_Globals.gd'
+# const GLOBALS_SNGL := 'res://popochiu/Globals.gd'
 const GRAPHIC_INTERFACE_SRC :=\
 'res://addons/Popochiu/Engine/Objects/_GraphicInterface/'
 const GRAPHIC_INTERFACE_SCENE :=\
@@ -53,7 +53,7 @@ func _init() -> void:
 	# Cargar los singleton para acceder directamente a objetos de Popochiu
 	if _is_first_install: return
 	
-	add_autoload_singleton('Utils', UTILS_SNGL)
+	add_autoload_singleton('U', UTILS_SNGL)
 	add_autoload_singleton('Cursor', CURSOR_SNGL)
 	add_autoload_singleton('E', POPOCHIU_SNGL)
 	add_autoload_singleton('C', ICHARACTER_SNGL)
@@ -61,7 +61,7 @@ func _init() -> void:
 	add_autoload_singleton('D', IDIALOG_SNGL)
 	add_autoload_singleton('G', IGRAPHIC_INTERFACE_SNGL)
 	add_autoload_singleton('A', IAUDIO_MANAGER_SNGL)
-	add_autoload_singleton('Globals', GLOBALS_SNGL)
+	# add_autoload_singleton('Globals', GLOBALS_SNGL)
 
 
 func _enter_tree() -> void:
@@ -113,7 +113,7 @@ func enable_plugin() -> void:
 
 
 func disable_plugin() -> void:
-	remove_autoload_singleton('Utils')
+	remove_autoload_singleton('U')
 	remove_autoload_singleton('Cursor')
 	remove_autoload_singleton('E')
 	remove_autoload_singleton('C')
@@ -121,7 +121,7 @@ func disable_plugin() -> void:
 	remove_autoload_singleton('D')
 	remove_autoload_singleton('G')
 	remove_autoload_singleton('A')
-	remove_autoload_singleton('Globals')
+	# remove_autoload_singleton('Globals')
 	
 	_remove_input_actions()
 	
@@ -141,7 +141,7 @@ func _init_file_structure() -> void:
 	
 	if _is_first_install:
 		# Copiar archivos y carpetas que las desarrolladoras podrán modificar
-		directory.rename(GLOBALS_SRC, GLOBALS_SNGL)
+		# directory.rename(GLOBALS_SRC, GLOBALS_SNGL)
 		directory.rename(
 			GRAPHIC_INTERFACE_SRC, GRAPHIC_INTERFACE_SCENE.get_base_dir()
 		)

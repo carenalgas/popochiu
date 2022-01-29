@@ -216,7 +216,7 @@ func _create_audio_cue(
 		type: String, path: String, audio_row: Container = null
 	) -> void:
 	var cue_name := path.get_file().get_basename()
-	var cue_file_name := Utils.snake2pascal(cue_name)
+	var cue_file_name := U.snake2pascal(cue_name)
 	cue_file_name += '.tres'
 	
 	# Crear el AudioCue que se guardará en disco y guardarlo en disco.
