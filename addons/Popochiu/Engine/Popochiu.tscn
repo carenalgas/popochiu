@@ -8,16 +8,16 @@
 script = ExtResource( 3 )
 skip_cutscene_time = 0.25
 text_speeds = [ 0.05, 0.01, 0.0 ]
-text_speed_idx = 2
-text_continue_auto = true
+text_speed_idx = 0
+text_continue_auto = false
 
 [node name="Tween" type="Tween" parent="."]
 
 [node name="MainCamera" type="Camera2D" parent="."]
 current = true
-limit_left = -204
+limit_left = -160
 limit_top = -90
-limit_right = 204
+limit_right = 160
 limit_bottom = 90
 limit_smoothed = true
 smoothing_enabled = true

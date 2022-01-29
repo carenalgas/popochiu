@@ -19,14 +19,14 @@ const IGRAPHIC_INTERFACE_SNGL :=\
 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
 const IAUDIO_MANAGER_SNGL :=\
 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
-# const GLOBALS_SRC := 'res://addons/Popochiu/Engine/Objects/_Globals.gd'
+# const GLOBALS_SRC := 'res://addons/Popochiu/Engine/Objects/Globals.gd'
 # const GLOBALS_SNGL := 'res://popochiu/Globals.gd'
 const GRAPHIC_INTERFACE_SRC :=\
-'res://addons/Popochiu/Engine/Objects/_GraphicInterface/'
+'res://addons/Popochiu/Engine/Objects/GraphicInterface/'
 const GRAPHIC_INTERFACE_SCENE :=\
 BASE_DIR + '/GraphicInterface/GraphicInterface.tscn'
 const TRANSITION_LAYER_SRC :=\
-'res://addons/Popochiu/Engine/Objects/_TransitionLayer/'
+'res://addons/Popochiu/Engine/Objects/TransitionLayer/'
 const TRANSITION_LAYER_SCENE :=\
 BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
@@ -66,11 +66,9 @@ func _init() -> void:
 
 func _enter_tree() -> void:
 	if not _is_first_install:
-#		_check_popochiu_dependencies()
-		
-		print('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
-		print('[en] You\'re using Popochiu, a plugin for making point n\' click games')
-		print('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
+		prints('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
+		prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
+		prints('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
 		
 		main_dock = preload(MAIN_DOCK_PATH).instance()
 		main_dock.ei = _editor_interface
@@ -94,6 +92,8 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
+	_check_popochiu_dependencies()
+
 	_editor_interface.get_selection().connect(
 		'selection_changed', self, '_check_nodes'
 	)
@@ -140,8 +140,27 @@ func _init_file_structure() -> void:
 			directory.make_dir_recursive(d)
 	
 	if _is_first_install:
+		# Eliminar las referencias de la interfaz gráfica y las animaciones de transición.
+		var result := OK
+		var popochiu: Node = load(POPOCHIU_SCENE).instance()
+		var gi: CanvasLayer = popochiu.get_node_or_null('GraphicInterface')
+		var tl: CanvasLayer = popochiu.get_node_or_null('TransitionLayer')
+
+		popochiu.remove_child(gi)
+		popochiu.remove_child(tl)
+		# gi.queue_free()
+		# tl.queue_free()
+		
+		var new_popochiu: PackedScene = PackedScene.new()
+		new_popochiu.pack(popochiu)
+		_editor_file_system.scan()
+		result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
+		assert(
+			result == OK,
+			'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
+		)
+
 		# Copiar archivos y carpetas que las desarrolladoras podrán modificar
-		# directory.rename(GLOBALS_SRC, GLOBALS_SNGL)
 		directory.rename(
 			GRAPHIC_INTERFACE_SRC, GRAPHIC_INTERFACE_SCENE.get_base_dir()
 		)
@@ -205,6 +224,11 @@ func _remove_input_actions() -> void:
 func _check_popochiu_dependencies() -> void:
 	# Agregar la interfaz gráfica y la escena de transiciones a Popochiu
 	var popochiu: Node = load(POPOCHIU_SCENE).instance()
+
+	if not popochiu:
+		printerr('============== Algo no está bien en Popochiu.tscn ==============')
+		return
+
 	if popochiu.get_node_or_null('GraphicInterface')\
 	and popochiu.get_node_or_null('TransitionLayer'):
 		return
@@ -309,6 +333,6 @@ func _check_nodes() -> void:
 	_shown_helpers.clear()
 	
 	for n in _editor_interface.get_selection().get_selected_nodes():
-		if n is Clickable:
+		if n.has_method('show_helpers'):
 			n.show_helpers()
 			_shown_helpers.append(n)

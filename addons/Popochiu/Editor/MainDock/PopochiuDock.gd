@@ -193,7 +193,8 @@ func save_popochiu() -> int:
 
 	# TODO: Hacer esto sólo si la escena de Popochiu está entre las pestañas
 	#		abiertas en el editor.
-	if ei.get_edited_scene_root().name == 'Popochiu':
+	if ei.get_edited_scene_root() \
+	and ei.get_edited_scene_root().name == 'Popochiu':
 		ei.save_scene()
 
 	return result
