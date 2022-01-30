@@ -7,6 +7,7 @@ extends Panel
 #	Interfaz gráfica.
 
 signal room_row_clicked
+signal move_folders_pressed
 
 enum Types { ROOM, CHARACTER, INVENTORY_ITEM, DIALOG }
 
@@ -60,6 +61,7 @@ onready var _types := {
 		scene = DIALOGS_PATH + ('%s/Dialog%s.tres')
 	}
 }
+onready var _btn_move_folders: Button = find_node('BtnMoveFolders')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
@@ -83,6 +85,8 @@ func _ready() -> void:
 	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
 	_tab_room.connect('row_clicked', self, 'emit_signal', ['room_row_clicked'])
+	
+	_btn_move_folders.hide()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
@@ -233,6 +237,18 @@ func search_audio_files() -> void:
 
 func get_audio_tab() -> Node:
 	return _tab_audio
+
+
+func show_move_folders_button() -> void:
+	_btn_move_folders.connect(
+		'pressed', self, 'emit_signal', ['move_folders_pressed']
+	)
+	_btn_move_folders.show()
+
+
+func hide_move_folders_button() -> void:
+	_btn_move_folders.disconnect('pressed', self, 'emit_signal')
+	_btn_move_folders.hide()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

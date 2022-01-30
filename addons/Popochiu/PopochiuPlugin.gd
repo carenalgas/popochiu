@@ -51,8 +51,6 @@ func _init() -> void:
 		_init_file_structure()
 	
 	# Cargar los singleton para acceder directamente a objetos de Popochiu
-	if _is_first_install: return
-	
 	add_autoload_singleton('U', UTILS_SNGL)
 	add_autoload_singleton('Cursor', CURSOR_SNGL)
 	add_autoload_singleton('E', POPOCHIU_SNGL)
@@ -65,36 +63,36 @@ func _init() -> void:
 
 
 func _enter_tree() -> void:
-	if not _is_first_install:
-		prints('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
-		prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
-		prints('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
+	prints('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
+	prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
+	prints('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
 
-		yield(get_tree().create_timer(0.5), 'timeout')
-		yield(_check_popochiu_dependencies(), 'completed')
+	main_dock = preload(MAIN_DOCK_PATH).instance()
+	main_dock.ei = _editor_interface
+	main_dock.fs = _editor_file_system
 
-		main_dock = preload(MAIN_DOCK_PATH).instance()
-		main_dock.ei = _editor_interface
-		main_dock.fs = _editor_file_system
+	main_dock.connect('room_row_clicked', self, 'update_overlays')
+	add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
+	
+	# Llenar las listas de habitaciones, personajes, objetos de inventario
+	# y árboles de diálogo.
+	yield(get_tree().create_timer(0.5), 'timeout')
 
-		main_dock.connect('room_row_clicked', self, 'update_overlays')
-		add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
-		
-		# Llenar las listas de habitaciones, personajes, objetos de inventario
-		# y árboles de diálogo.
-		yield(get_tree().create_timer(0.5), 'timeout')
+	main_dock.fill_data()
+	main_dock.grab_focus()
+	
+	_editor_interface.get_selection().connect(
+		'selection_changed', self, '_check_nodes'
+	)
+	_editor_file_system.connect('sources_changed', self, '_on_sources_changed')
+	connect('scene_changed', main_dock, 'scene_changed')
+	connect('scene_closed', main_dock, 'scene_closed')
+	
+	main_dock.scene_changed(_editor_interface.get_edited_scene_root())
 
-		main_dock.fill_data()
-		main_dock.grab_focus()
-		
-		_editor_interface.get_selection().connect(
-			'selection_changed', self, '_check_nodes'
-		)
-		_editor_file_system.connect('sources_changed', self, '_on_sources_changed')
-		connect('scene_changed', main_dock, 'scene_changed')
-		connect('scene_closed', main_dock, 'scene_closed')
-		
-		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
+	if _is_first_install:
+		main_dock.connect('move_folders_pressed', self, '_move_addon_folders')
+		main_dock.show_move_folders_button()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
@@ -130,43 +128,13 @@ func disable_plugin() -> void:
 func _init_file_structure() -> void:
 	var directory := Directory.new()
 	
-	_is_first_install = directory.dir_exists(GRAPHIC_INTERFACE_SRC)\
-	or directory.dir_exists(TRANSITION_LAYER_SRC)
-	
 	# Crear las carpetas que no existan
 	for d in _get_directories().values():
 		if not directory.dir_exists(d):
 			directory.make_dir_recursive(d)
-	
-	if _is_first_install:
-		# Eliminar las referencias de la interfaz gráfica y las animaciones de transición.
-		var result := OK
-		var popochiu: Node = load(POPOCHIU_SCENE).instance()
-		var gi: CanvasLayer = popochiu.get_node_or_null('GraphicInterface')
-		var tl: CanvasLayer = popochiu.get_node_or_null('TransitionLayer')
 
-		popochiu.remove_child(gi)
-		popochiu.remove_child(tl)
-		
-		var new_popochiu: PackedScene = PackedScene.new()
-		new_popochiu.pack(popochiu)
-		_editor_file_system.scan()
-		result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
-		assert(
-			result == OK,
-			'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
-		)
-
-		# Copiar archivos y carpetas que las desarrolladoras podrán modificar
-		directory.rename(
-			GRAPHIC_INTERFACE_SRC, GRAPHIC_INTERFACE_SCENE.get_base_dir()
-		)
-		directory.rename(
-			TRANSITION_LAYER_SRC, TRANSITION_LAYER_SCENE.get_base_dir()
-		)
-		
-		# Refrescar el FileSystem
-		_editor_file_system.scan()
+	_is_first_install = directory.dir_exists(GRAPHIC_INTERFACE_SRC)\
+	or directory.dir_exists(TRANSITION_LAYER_SRC)
 
 
 func _get_directories() -> Dictionary:
@@ -216,6 +184,43 @@ func _remove_input_actions() -> void:
 	
 	var result = ProjectSettings.save()
 	assert(result == OK, 'Failed to save project settings')
+
+
+func _move_addon_folders() -> void:
+	# Eliminar las referencias de la interfaz gráfica y las animaciones de transición.
+	var result := OK
+	var popochiu: Node = load(POPOCHIU_SCENE).instance()
+	var gi: CanvasLayer = popochiu.get_node_or_null('GraphicInterface')
+	var tl: CanvasLayer = popochiu.get_node_or_null('TransitionLayer')
+
+	popochiu.remove_child(gi)
+	popochiu.remove_child(tl)
+	
+	var new_popochiu: PackedScene = PackedScene.new()
+	new_popochiu.pack(popochiu)
+	_editor_file_system.scan()
+	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
+	assert(
+		result == OK,
+		'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
+	)
+
+	# Copiar archivos y carpetas que las desarrolladoras podrán modificar
+	_directory.rename(
+		GRAPHIC_INTERFACE_SRC, GRAPHIC_INTERFACE_SCENE.get_base_dir()
+	)
+	_directory.rename(
+		TRANSITION_LAYER_SRC, TRANSITION_LAYER_SCENE.get_base_dir()
+	)
+	
+	# Refrescar el FileSystem
+	_editor_file_system.scan()
+
+	# Corregir problemas de dependencias
+	yield(_editor_file_system, 'filesystem_changed')
+	yield(_check_popochiu_dependencies(), 'completed')
+	main_dock.hide_move_folders_button()
+
 
 
 func _check_popochiu_dependencies() -> void:
