@@ -102,8 +102,10 @@ func enable_plugin() -> void:
 	# Mostrar la ventana de diálogo para pedirle a la desarrolladora que reinicie
 	# el motor.
 	var ad := AcceptDialog.new()
-	ad.window_title = 'El reiniciador'
-	ad.dialog_text = 'Toca que reinicie el motor pa que funcione el Popochiu.'
+	# TODO: Localize
+	ad.window_title = 'Popochiu'
+	ad.dialog_text = '[es] Reinicia el motor para completar la instalación.\n' + \
+	'[en] Restart Godot to complete the instalation.'
 	_editor_interface.get_base_control().add_child(ad)
 	ad.popup_centered()
 
