@@ -31,6 +31,7 @@ var _rows_paths := []
 onready var delete_dialog: ConfirmationDialog = find_node('DeleteConfirmation')
 onready var delete_checkbox: CheckBox = delete_dialog.find_node('CheckBox')
 onready var delete_extra: Container = delete_dialog.find_node('Extra')
+onready var _btn_move_folders: Button = find_node('BtnMoveFolders')
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
 onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
@@ -61,12 +62,13 @@ onready var _types := {
 		scene = DIALOGS_PATH + ('%s/Dialog%s.tres')
 	}
 }
-onready var _btn_move_folders: Button = find_node('BtnMoveFolders')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:
 	popochiu = load(POPOCHIU_SCENE).instance()
+	
+	_btn_move_folders.icon = get_icon('MoveUp', 'EditorIcons')
 	
 	# Que la pestaña seleccionada por defecto sea la principal (Main
 	_tab_container.current_tab = 0

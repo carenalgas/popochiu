@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
@@ -17,6 +17,52 @@
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateRegion/CreateRegion.tscn" type="PackedScene" id=15]
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/TabSettings.tscn" type="PackedScene" id=16]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/DeleteConfirmation/DeleteConfirmation.tscn" type="PackedScene" id=17]
+
+[sub_resource type="StyleBoxFlat" id=6]
+content_margin_left = 12.0
+content_margin_right = 12.0
+bg_color = Color( 0.180392, 0.172549, 0.607843, 1 )
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.180392, 0.172549, 0.607843, 1 )
+
+[sub_resource type="StyleBoxFlat" id=7]
+content_margin_left = 12.0
+content_margin_right = 12.0
+bg_color = Color( 0.180392, 0.172549, 0.607843, 1 )
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.180392, 0.172549, 0.607843, 1 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+content_margin_left = 12.0
+content_margin_right = 12.0
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 0.458824, 0.807843, 0.784314, 1 )
+
+[sub_resource type="Image" id=8]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=9]
+flags = 4
+flags = 4
+image = SubResource( 8 )
+size = Vector2( 16, 16 )
 
 [node name="Popochiu" type="Panel"]
 anchor_right = 1.0
@@ -41,20 +87,30 @@ __meta__ = {
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 margin_left = 4.0
 margin_top = 4.0
-margin_right = 1020.0
-margin_bottom = 596.0
+margin_right = 316.0
+margin_bottom = 176.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+custom_constants/separation = 16
 
 [node name="BtnMoveFolders" type="Button" parent="MarginContainer/VBoxContainer"]
-margin_right = 1016.0
-margin_bottom = 20.0
+visible = false
+margin_left = 93.0
+margin_right = 218.0
+margin_bottom = 32.0
+rect_min_size = Vector2( 0, 32 )
+size_flags_horizontal = 4
+custom_colors/font_color_pressed = Color( 0.929412, 0.945098, 0.443137, 1 )
+custom_styles/hover = SubResource( 6 )
+custom_styles/pressed = SubResource( 7 )
+custom_styles/focus = SubResource( 6 )
+custom_styles/normal = SubResource( 5 )
 text = "Move folders"
+icon = SubResource( 9 )
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
-margin_top = 24.0
-margin_right = 1016.0
-margin_bottom = 592.0
+margin_right = 312.0
+margin_bottom = 172.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 __meta__ = {
@@ -77,50 +133,50 @@ __meta__ = {
 }
 
 [node name="MainScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main"]
-margin_right = 1008.0
-margin_bottom = 532.0
+margin_right = 304.0
+margin_bottom = 136.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 follow_focus = true
 scroll_horizontal_enabled = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer"]
-margin_right = 1008.0
-margin_bottom = 532.0
+margin_right = 304.0
+margin_bottom = 136.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="RoomsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
-margin_right = 1008.0
-color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
+margin_right = 304.0
 icon = ExtResource( 10 )
+color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
 title = "Habitaciones"
 create_text = "Crear habitación"
 
 [node name="CharactersGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 28.0
-margin_right = 1008.0
+margin_right = 304.0
 margin_bottom = 52.0
-color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 icon = ExtResource( 8 )
+color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
 title = "Personajes"
 create_text = "Crear personaje"
 
 [node name="ItemsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 56.0
-margin_right = 1008.0
+margin_right = 304.0
 margin_bottom = 80.0
-color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 icon = ExtResource( 11 )
+color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
 title = "Inventario"
 create_text = "Crear ítem"
 
 [node name="DialogsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 84.0
-margin_right = 1008.0
+margin_right = 304.0
 margin_bottom = 108.0
-color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 icon = ExtResource( 9 )
+color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
 title = "Diálogos"
 create_text = "Crear diálogo"
 

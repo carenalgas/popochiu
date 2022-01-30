@@ -151,6 +151,8 @@ func _create_audio_cue_row(audio_cue: AudioCue) -> HBoxContainer:
 
 
 func _read_directory(dir: EditorFileSystemDirectory) -> void:
+	if not dir: return
+	
 	if dir.get_subdir_count():
 		for d in dir.get_subdir_count():
 			# Revisar las subcarpetas
