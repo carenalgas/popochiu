@@ -69,34 +69,32 @@ func _enter_tree() -> void:
 		prints('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
 		prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
 		prints('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
-		
+
+		yield(get_tree().create_timer(0.5), 'timeout')
+		yield(_check_popochiu_dependencies(), 'completed')
+
 		main_dock = preload(MAIN_DOCK_PATH).instance()
 		main_dock.ei = _editor_interface
 		main_dock.fs = _editor_file_system
-		
+
 		main_dock.connect('room_row_clicked', self, 'update_overlays')
-		
 		add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
 		
 		# Llenar las listas de habitaciones, personajes, objetos de inventario
 		# y árboles de diálogo.
-		yield(get_tree().create_timer(1.0), 'timeout')
+		yield(get_tree().create_timer(0.5), 'timeout')
+
 		main_dock.fill_data()
 		main_dock.grab_focus()
 		
+		_editor_interface.get_selection().connect(
+			'selection_changed', self, '_check_nodes'
+		)
 		_editor_file_system.connect('sources_changed', self, '_on_sources_changed')
 		connect('scene_changed', main_dock, 'scene_changed')
 		connect('scene_closed', main_dock, 'scene_closed')
 		
 		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
-
-
-func _ready() -> void:
-	_check_popochiu_dependencies()
-
-	_editor_interface.get_selection().connect(
-		'selection_changed', self, '_check_nodes'
-	)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
@@ -132,7 +130,8 @@ func disable_plugin() -> void:
 func _init_file_structure() -> void:
 	var directory := Directory.new()
 	
-	_is_first_install = directory.dir_exists(GRAPHIC_INTERFACE_SRC)
+	_is_first_install = directory.dir_exists(GRAPHIC_INTERFACE_SRC)\
+	or directory.dir_exists(TRANSITION_LAYER_SRC)
 	
 	# Crear las carpetas que no existan
 	for d in _get_directories().values():
@@ -148,8 +147,6 @@ func _init_file_structure() -> void:
 
 		popochiu.remove_child(gi)
 		popochiu.remove_child(tl)
-		# gi.queue_free()
-		# tl.queue_free()
 		
 		var new_popochiu: PackedScene = PackedScene.new()
 		new_popochiu.pack(popochiu)
@@ -228,47 +225,53 @@ func _check_popochiu_dependencies() -> void:
 	if not popochiu:
 		printerr('============== Algo no está bien en Popochiu.tscn ==============')
 		return
+	
+	var save_popochiu := false
 
-	if popochiu.get_node_or_null('GraphicInterface')\
-	and popochiu.get_node_or_null('TransitionLayer'):
-		return
-	
-	var result := OK
+	if not popochiu.get_node_or_null('GraphicInterface'):
+		# Actualizar dependencias de la GraphicInterface
+		_fix_dependencies(
+			_editor_file_system.get_filesystem_path(
+				GRAPHIC_INTERFACE_SCENE.get_base_dir()
+			)
+		)
+		yield(get_tree().create_timer(0.3), 'timeout')
+		var gi: CanvasLayer = load(GRAPHIC_INTERFACE_SCENE).instance()
+		popochiu.add_child(gi)
+		gi.owner = popochiu
 
-	# Actualizar dependencias de la GraphicInterface
-	_fix_dependencies(
-		_editor_file_system.get_filesystem_path(
-			GRAPHIC_INTERFACE_SCENE.get_base_dir()
+		save_popochiu = true
+	
+	if not popochiu.get_node_or_null('TransitionLayer'):
+		# Actualizar dependencias de la TransitionLayer
+		_fix_dependencies(
+			_editor_file_system.get_filesystem_path(
+				TRANSITION_LAYER_SCENE.get_base_dir()
+			)
 		)
-	)
-	yield(get_tree().create_timer(0.3), 'timeout')
+		yield(get_tree().create_timer(0.3), 'timeout')
+		var tl: CanvasLayer = load(TRANSITION_LAYER_SCENE).instance()
+		popochiu.add_child(tl)
+		tl.owner = popochiu
+
+		save_popochiu = true
 	
-	# Actualizar dependencias de la TransitionLayer
-	_fix_dependencies(
-		_editor_file_system.get_filesystem_path(
-			TRANSITION_LAYER_SCENE.get_base_dir()
+	if save_popochiu:
+		var result := OK
+		var new_popochiu: PackedScene = PackedScene.new()
+		new_popochiu.pack(popochiu)
+		# _editor_file_system.scan()
+		result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
+		assert(
+			result == OK,
+			'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
 		)
-	)
-	yield(get_tree().create_timer(0.3), 'timeout')
+
+		yield(_editor_file_system, 'filesystem_changed')
 	
-	var gi: CanvasLayer = load(GRAPHIC_INTERFACE_SCENE).instance()
-	var tl: CanvasLayer = load(TRANSITION_LAYER_SCENE).instance()
+		prints('██████████████████████████████████████████ Lista la estructura ███')
 	
-	popochiu.add_child(gi)
-	popochiu.add_child(tl)
-	gi.owner = popochiu
-	tl.owner = popochiu
-	
-	var new_popochiu: PackedScene = PackedScene.new()
-	new_popochiu.pack(popochiu)
-	_editor_file_system.scan()
-	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
-	assert(
-		result == OK,
-		'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
-	)
-	
-	prints('██████████████████████████████████████████ Lista la estructura ███')
+	yield(get_tree(), 'idle_frame')
 
 
 # Gracias PigDev:
@@ -332,6 +335,8 @@ func _check_nodes() -> void:
 	
 	_shown_helpers.clear()
 	
+	if not is_instance_valid(_editor_interface.get_selection()): return
+
 	for n in _editor_interface.get_selection().get_selected_nodes():
 		if n.has_method('show_helpers'):
 			n.show_helpers()
