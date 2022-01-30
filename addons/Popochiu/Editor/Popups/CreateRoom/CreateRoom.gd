@@ -53,7 +53,7 @@ func create() -> void:
 	# Crear el script de la nueva habitación
 	var room_template := load(ROOM_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_room_path + '.gd', room_template) != OK:
-		push_error('No se pudo crear el script de la habitación: %s' %\
+		push_error('[Popochiu] Could not create script: %s' %\
 		_new_room_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
@@ -72,7 +72,7 @@ func create() -> void:
 	var new_room_packed_scene: PackedScene = PackedScene.new()
 	new_room_packed_scene.pack(new_room)
 	if ResourceSaver.save(_new_room_path + '.tscn', new_room_packed_scene) != OK:
-		push_error('No se pudo crear la habitación: %s' % _new_room_name)
+		push_error('[Popochiu] Could not create room: %s' % _new_room_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
@@ -83,7 +83,7 @@ func create() -> void:
 	room_resource.scene = _new_room_path + '.tscn'
 	room_resource.resource_name = _new_room_name
 	if ResourceSaver.save(_new_room_path + '.tres', room_resource) != OK:
-		push_error('No se pudo crear el PopochiuRoomData de la habitación: %s' %\
+		push_error('[Popochiu] Could not create PopochiuRoomData for room: %s' %\
 		_new_room_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
@@ -93,7 +93,7 @@ func create() -> void:
 	if _main_dock.add_resource_to_popochiu(
 		'rooms', ResourceLoader.load(_new_room_path + '.tres')
 	) != OK:
-		push_error('No se pudo agregar la habitación a Popochiu: %s' %\
+		push_error('[Popochiu] Could not add the created room to Popochiu: %s' %\
 		_new_room_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
@@ -127,7 +127,7 @@ func _update_name(new_text: String) -> void:
 		_new_room_path = _room_path_template % [_new_room_name, _new_room_name]
 
 		_info.bbcode_text = (
-			'En [b]%s[/b] se crearán los archivos:\n[code]%s, %s y %s[/code]' \
+			'In [b]%s[/b] the following files will be created:\n[code]%s, %s and %s[/code]' \
 			% [
 				_main_dock.ROOMS_PATH + _new_room_name,
 				'Room' + _new_room_name + '.tscn',

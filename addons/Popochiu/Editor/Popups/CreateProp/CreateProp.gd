@@ -50,7 +50,7 @@ func create() -> void:
 	# Crear el directorio donde se guardará la nueva prop
 	assert(
 		_main_dock.dir.make_dir_recursive(_new_prop_path.get_base_dir()) == OK,
-		'No se pudo crear el directorio de Props de ' + _room_path.get_file()
+		'[Popochiu] Could not create Props folder for ' + _room_path.get_file()
 	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -58,7 +58,7 @@ func create() -> void:
 	if _interaction_checkbox.pressed:
 		var prop_template := load(PROP_SCRIPT_TEMPLATE)
 		if ResourceSaver.save(_new_prop_path + '.gd', prop_template) != OK:
-			push_error('No se pudo crear el script: %s.gd' % _new_prop_name)
+			push_error('[Popochiu] Could not create script: %s.gd' % _new_prop_name)
 			# TODO: Mostrar retroalimentación en el mismo popup
 			return
 	
@@ -123,7 +123,7 @@ func _interaction_toggled(is_pressed: bool) -> void:
 
 func _update_info() -> void:
 	_info.bbcode_text = (
-		'En [b]%s[/b] se creará el archivo: [code]%s[/code]' \
+		'In [b]%s[/b] the following file will be created: [code]%s[/code]' \
 		% [
 			_new_prop_path.get_base_dir(),
 			'Prop' + _new_prop_name + '.gd'

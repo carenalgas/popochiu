@@ -30,28 +30,28 @@ onready var _menu_cfg := [
 	{
 		id = MenuOptions.ADD_TO_MUSIC,
 		icon = preload('res://addons/Popochiu/icons/music.png'),
-		label = 'Meter a Música'
+		label = 'Add to Music'
 	},
 	{
 		id = MenuOptions.ADD_TO_SFX,
 		icon = preload('res://addons/Popochiu/icons/sfx.png'),
-		label = 'Meter a Efectos de sonido'
+		label = 'Add to Sound effects'
 	},
 	{
 		id = MenuOptions.ADD_TO_VOICE,
 		icon = preload('res://addons/Popochiu/icons/voice.png'),
-		label = 'Meter a Voces'
+		label = 'Add to Voices'
 	},
 	{
 		id = MenuOptions.ADD_TO_UI,
 		icon = preload('res://addons/Popochiu/icons/ui.png'),
-		label = 'Meter a Interfaz gráfica'
+		label = 'Add to Graphic interface'
 	},
 	null,
 	{
 		id = MenuOptions.DELETE,
 		icon = get_icon('Remove', 'EditorIcons'),
-		label = 'Eliminar'
+		label = 'Remove'
 	}
 ]
 
@@ -176,21 +176,21 @@ func _ask_basic_delete() -> void:
 	
 	if is_instance_valid(audio_cue):
 		main_dock.show_confirmation(
-			'Se eliminará a %s del Audio manager' % audio_cue.resource_name,
-			'Esto eliminará la referencia de [b]%s[/b] en el Audio manager.'\
+			'Remove %s from AudioManager' % audio_cue.resource_name,
+			'This will remove the [b]%s[/b] resource in AudioManager.'\
 			% audio_cue.resource_name +\
-			' Los usos de este objeto dentro de los scripts dejarán de' +\
-			'  funcionar. Esta acción no se puede revertir. ¿Quiere continuar?',
-			'Eliminar también el archivo [b]%s[/b]' % audio_cue.resource_path +\
-			' (no se puede revertir)'
+			' Calls to this audio in scripts will not work anymore.' +\
+			' This action cannot be reversed. Continue?',
+			'Delete [b]%s[/b] file too?' % audio_cue.resource_path +\
+			' (cannot be reversed)'
 		)
 		
 		_confirmation_dialog.connect('confirmed', self, '_remove_in_audio_manager')
 	else:
 		main_dock.show_confirmation(
-			'Se eliminará [b]%s[/b] del sistema' % file_name,
-			'Esto eliminará el archivo en %s.' % file_path +\
-			' Esta acción no se puede revertir. ¿Quiere continuar?'
+			'[b]%s[/b] file deletion' % file_name,
+			'%s will be deleted in filesystem.' % file_path +\
+			' This action cannot be reversed. Continue?'
 		)
 		
 		_confirmation_dialog.connect(
@@ -209,8 +209,8 @@ func _remove_in_audio_manager() -> void:
 	am[cue_group].erase(audio_cue)
 	
 	if audio_tab.save_audio_manager() != OK:
-		push_error('[Popochiu] No se pudo eliminar el AudioCue del'\
-		+ ' AudioManager: %s' % audio_cue.resource_name)
+		push_error('[Popochiu] Could not remove %s AudioCue in AudioManager.' \
+		% audio_cue.resource_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 	
 	# Crear una fila en el grupo de archivos sin asignar.
@@ -229,7 +229,7 @@ func _delete_from_file_system(path: String) -> void:
 	main_dock.fs.update_file(path)
 	
 	if err != OK:
-		push_error('[Popochiu:%d] No se pudo eliminar el archivo %s' %\
+		push_error('[Popochiu(err_code:%d)] Could not delete file %s' %\
 		[err, path])
 		return
 	

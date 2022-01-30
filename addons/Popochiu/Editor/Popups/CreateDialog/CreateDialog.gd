@@ -39,7 +39,7 @@ func create() -> void:
 	# Crear el script del nuevo diálogo
 	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_dialog_path + '.gd', dialog_template) != OK:
-		push_error('No se pudo crear el script: %s.gd' % _new_dialog_name)
+		push_error('[Popochiu] Could not create script: %s.gd' % _new_dialog_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
@@ -50,7 +50,7 @@ func create() -> void:
 	dialog_resource.script_name = _new_dialog_name
 	dialog_resource.resource_name = _new_dialog_name
 	if ResourceSaver.save(_new_dialog_path + '.tres', dialog_resource) != OK:
-		push_error('No se pudo crear el Resource: %s' %_new_dialog_name)
+		push_error('[Popochiu] Could not create dialog: %s' %_new_dialog_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
@@ -59,7 +59,7 @@ func create() -> void:
 	if _main_dock.add_resource_to_popochiu(
 		'dialogs', ResourceLoader.load(_new_dialog_path + '.tres')
 	) != OK:
-		push_error('No se pudo agregar el diálogo a Popochiu: %s' %\
+		push_error('[Popochiu] Could not add the created dialog to Popochiu: %s' %\
 		_new_dialog_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
@@ -88,7 +88,7 @@ func _update_name(new_text: String) -> void:
 		[_new_dialog_name, _new_dialog_name]
 
 		_info.bbcode_text = (
-			'En [b]%s[/b] se crearán los archivos:\n[code]%s y %s[/code]' \
+			'In [b]%s[/b] the following files will be created:\n[code]%s and %s[/code]' \
 			% [
 				_main_dock.DIALOGS_PATH + _new_dialog_name,
 				'Dialog' + _new_dialog_name + '.gd',

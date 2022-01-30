@@ -75,4 +75,4 @@ margin_left = 56.0
 margin_right = 84.0
 margin_bottom = 40.0
 icon = SubResource( 2 )
-items = [ "Meter a Música", ExtResource( 4 ), 0, false, false, 0, 0, null, "", false, "Meter a Efectos de sonido", ExtResource( 5 ), 0, false, false, 1, 0, null, "", false, "Meter a Voces", ExtResource( 3 ), 0, false, false, 2, 0, null, "", false, "Meter a Interfaz gráfica", ExtResource( 2 ), 0, false, false, 3, 0, null, "", false, "", null, 0, false, false, -1, 0, null, "", true, "Eliminar", SubResource( 2 ), 0, false, false, 4, 0, null, "", false ]
+items = [ "Add to Music", ExtResource( 4 ), 0, false, false, 0, 0, null, "", false, "Add to Sound effects", ExtResource( 5 ), 0, false, false, 1, 0, null, "", false, "Add to Voices", ExtResource( 3 ), 0, false, false, 2, 0, null, "", false, "Add to Graphic interface", ExtResource( 2 ), 0, false, false, 3, 0, null, "", false, "", null, 0, false, false, -1, 0, null, "", true, "Remove", SubResource( 2 ), 0, false, false, 4, 0, null, "", false ]

@@ -33,7 +33,7 @@ margin_top = 3.0
 margin_right = 158.0
 margin_bottom = 17.0
 size_flags_horizontal = 3
-text = "Velocidad texto"
+text = "Text speed"
 
 [node name="Input" type="OptionButton" parent="VBoxContainer/DefaultSpeed"]
 margin_left = 162.0
@@ -52,7 +52,7 @@ margin_bottom = 14.0
 margin_right = 158.0
 margin_bottom = 14.0
 size_flags_horizontal = 3
-text = "Color transición"
+text = "Transition color"
 
 [node name="Panel" type="Panel" parent="VBoxContainer/FadeColor"]
 margin_left = 162.0

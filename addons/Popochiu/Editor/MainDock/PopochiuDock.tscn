@@ -150,8 +150,8 @@ size_flags_vertical = 3
 margin_right = 304.0
 icon = ExtResource( 10 )
 color = Color( 0.439216, 0.427451, 0.921569, 0.498039 )
-title = "Habitaciones"
-create_text = "Crear habitación"
+title = "Rooms"
+create_text = "Create room"
 
 [node name="CharactersGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 28.0
@@ -159,8 +159,8 @@ margin_right = 304.0
 margin_bottom = 52.0
 icon = ExtResource( 8 )
 color = Color( 0.929412, 0.945098, 0.443137, 0.498039 )
-title = "Personajes"
-create_text = "Crear personaje"
+title = "Characters"
+create_text = "Create character"
 
 [node name="ItemsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 56.0
@@ -168,8 +168,8 @@ margin_right = 304.0
 margin_bottom = 80.0
 icon = ExtResource( 11 )
 color = Color( 0.337255, 0.67451, 0.301961, 0.498039 )
-title = "Inventario"
-create_text = "Crear ítem"
+title = "Inventory items"
+create_text = "Create item"
 
 [node name="DialogsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource( 4 )]
 margin_top = 84.0
@@ -177,8 +177,8 @@ margin_right = 304.0
 margin_bottom = 108.0
 icon = ExtResource( 9 )
 color = Color( 0.458824, 0.807843, 0.784314, 0.498039 )
-title = "Diálogos"
-create_text = "Crear diálogo"
+title = "Dialogs"
+create_text = "Create dialog"
 
 [node name="Room" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource( 12 )]
 visible = false

@@ -38,7 +38,7 @@ margin_left = 131.0
 margin_right = 320.0
 margin_bottom = 22.0
 size_flags_horizontal = 8
-text = "Buscar archivos de audio"
+text = "Search audio files"
 icon = SubResource( 3 )
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
@@ -55,7 +55,7 @@ size_flags_horizontal = 3
 
 [node name="UnassignedGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 custom_styles/panel = SubResource( 1 )
-title = "Sin asignar"
+title = "Not assigned"
 can_create = false
 
 [node name="MusicGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
@@ -63,7 +63,7 @@ margin_top = 28.0
 margin_bottom = 52.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 4 )
-title = "Música"
+title = "Music"
 can_create = false
 
 [node name="SFXGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
@@ -71,7 +71,7 @@ margin_top = 56.0
 margin_bottom = 80.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 3 )
-title = "Efectos de sonido"
+title = "Sound effects"
 can_create = false
 
 [node name="VoiceGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
@@ -79,7 +79,7 @@ margin_top = 84.0
 margin_bottom = 108.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 6 )
-title = "Voces"
+title = "Voices"
 can_create = false
 
 [node name="UIGroup" parent="ScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
@@ -87,7 +87,7 @@ margin_top = 112.0
 margin_bottom = 136.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 5 )
-title = "Interfaz gráfica"
+title = "Graphic Interface"
 can_create = false
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
