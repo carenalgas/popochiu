@@ -9,6 +9,16 @@ Godot plugin to make point n' click games in a similar way to tools like [Advent
 
 
 
+## About
+
+This tool consists of two parts: the core (Popochiu) and the dock that helps with the creation of the Objects that make use of that core. It is inspired in how graphic adventure games are developed in Adventure Game Studio and Power Hoof's Unity plugin: PowerQuest. This is, using Rooms as the scenes where Characters can move and interact with Props and Hotspots, and providing an Inventory system and Dialog management.
+
+Popochiu (the core (**E**)) is a singleton that provides a couple of methods to run queued instructions that make it easier to handle behaviors between the PC and the game world. It also has other singletons to make characters move and say things (**C**), to handle the inventory (**I**), to trigger conversations (**D**), use the graphic interface (**G**) and trigger audio events (**A**).
+
+The dock helps with the creation of the scenes, resources and scripts required to create such objects (Rooms, Characters, Inventory items, Dialogs, etc.). But it also helps to classify audio files (Music, SFX, Voice, UI) and give each one volume and pitch properties (both with randomization).
+
+
+
 ## Installation
 
 1. [Download the ZIP](https://github.com/mapedorr/popochiu/archive/refs/heads/main.zip).
@@ -16,6 +26,7 @@ Godot plugin to make point n' click games in a similar way to tools like [Advent
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins (the tab on the top)`.
 4. Restart Godot.
 5. You'll see the Popochiu dock at the right. Click on the **Move folders** button. That's all!
+
 
 
 

@@ -1,4 +1,4 @@
-![cover](./imgs/popochiu_hero.png "Popochiu")
+![cover](./imgs/popochiu_hero-es.png "Popochiu")
 
 <!-- no toc -->
 Plugin de Godot para crear juegos de aventura de manera similar a herramientas como [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
@@ -6,6 +6,16 @@ Plugin de Godot para crear juegos de aventura de manera similar a herramientas c
 
 
 ### 🌎💬 [Read this in English](./README.md) 💬🌎
+
+
+
+## ¿Qué es?
+
+Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facilita la creación de los Objetos que hacen uso de dicho núcleo. Está inspirado en como se desarrollan las aventuras gráficas en Adventure Game Studio y en el plugin de Unity de Power Hoof: PowerQuest. Esto es, utilizando Habitaciones (Room) como escenarios donde los Personajes (Character) pueden moverse e interactuar con Props y Hotspots, y proporcionando un sistema de inventario y de gestión de diálogos.
+
+Popochiu (el núcleo (**E**)) es un singleton que proporciona un par de métodos para ejecutar instrucciones puestas en cola que facilitan el manejo de eventos entre el Personaje Jugable y el mundo del juego. También tiene otros singletons para hacer que los personajes se muevan y digan cosas (**C**), para manejar el inventario (**I**), para disparar conversaciones (**D**), usar la interfaz gráfica (**G**) y reproducir audio (**A**).
+
+El dock facilita la creación de las escenas, los recursos (.tres) y los scripts necesarios para usar dichos objetos (Habitaciones, Personajes, Elementos de inventario, Diálogos, etc.). Pero también ayuda a clasificar los archivos de audio (Música, SFX, Voz, UI) y dar a cada uno de ellos propiedades de volumen y tono (ambas con aleatorización).
 
 
 
