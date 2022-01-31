@@ -18,7 +18,6 @@ Popochiu (el núcleo (**E**)) es un singleton que proporciona un par de métodos
 El dock facilita la creación de las escenas, los recursos (.tres) y los scripts necesarios para usar dichos objetos (Habitaciones, Personajes, Elementos de inventario, Diálogos, etc.). Pero también ayuda a clasificar los archivos de audio (Música, SFX, Voz, UI) y dar a cada uno de ellos propiedades de volumen y tono (ambas con aleatorización).
 
 
-
 ## Instalación
 
 1. [Descarga el ZIP](https://github.com/mapedorr/popochiu/archive/refs/heads/main.zip).
@@ -27,6 +26,10 @@ El dock facilita la creación de las escenas, los recursos (.tres) y los scripts
 4. Reinicia Godot.
 5. Verás el dock de Popochiu a la derecha del editor. Haz clic en el botón **Move folders** y listo.
 
+
+## Video de introducción 🎥
+
+[En este video de YouTube (¡en Español!)](https://www.youtube.com/watch?v=kS9mrP0tgUw) puedes ver una introducción rápida de cómo usar Popochiu para crear una habitación con un personaje que se mueva en ella.
 
 
 ## El plugin 🔌
@@ -38,8 +41,12 @@ El dock facilita la creación de las escenas, los recursos (.tres) y los scripts
 - En la pestaña de audio se pueden ver los archivos de audio y asignarlos a una categoría: música, efectos de sonido, voces e interfaz gráfica.
 
 
+## Proyecto de ejemplo 👩‍🏫
 
-## Características 📃
+Mientras trabajo en la documentación y algunos videos tutoriales, [aquí](https://github.com/mapedorr/popochiu_powerquest) podrás ver lo que se puede hacer (y cómo hacerlo) con Popochiu.
+
+
+<!-- ## Características 📃
 
 ![Popochiu](./imgs/popochiu_01.gif "Popochiu en acción")
 
@@ -93,4 +100,4 @@ El dock facilita la creación de las escenas, los recursos (.tres) y los scripts
     G.display('Usa clic izquierdo para interactuar y clic derecho para examinar')
     # En la parte inferior de la pantalla se puede ver el nombre del objeto sobre el que está el cursor
     G.show_info('Llave')
-    ```
+    ``` -->

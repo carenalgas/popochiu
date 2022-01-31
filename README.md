@@ -28,6 +28,9 @@ The dock helps with the creation of the scenes, resources and scripts required t
 5. You'll see the Popochiu dock at the right. Click on the **Move folders** button. That's all!
 
 
+## Intro video 🎥
+
+[In this YouTube video (with English subs)](https://www.youtube.com/watch?v=kS9mrP0tgUw) you can see how to quickly make a room with a character moving through it with Popochiu.
 
 
 ## The dock 🔌
@@ -39,8 +42,12 @@ The dock helps with the creation of the scenes, resources and scripts required t
 - The *Audio* tab shows the audio files and allows to assign each one to a category: music, sfx, voice and graphic interface.
 
 
+## Example project 👩‍🏫
 
-## Features 📃
+While I work on the documentation and some tutorial videos, [here](https://github.com/mapedorr/popochiu_powerquest) you can check what Popochiu is capable of.
+
+
+<!-- ## Features 📃
 
 ![Popochiu](./imgs/popochiu_01.gif "Popochiu running")
 
@@ -90,4 +97,4 @@ The dock helps with the creation of the scenes, resources and scripts required t
     G.display('Use left click to interact and right click to look at')
     # Shows a message in the bottom-center of the screen
     G.show_info('An empty bucket')
-    ```
+    ``` -->
