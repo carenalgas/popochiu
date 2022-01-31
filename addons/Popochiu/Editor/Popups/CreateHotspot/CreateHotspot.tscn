@@ -42,7 +42,7 @@ margin_bottom = 90.0
 rect_min_size = Vector2( 640, 360 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
-window_title = "Crear hotspot"
+window_title = "Create hotspot"
 dialog_hide_on_ok = false
 dialog_autowrap = true
 script = ExtResource( 4 )
@@ -69,7 +69,7 @@ margin_bottom = 24.0
 margin_top = 5.0
 margin_right = 104.0
 margin_bottom = 19.0
-text = "Dele un nombre"
+text = "Hotspot name"
 
 [node name="Input" type="LineEdit" parent="VBoxContainer/InputContainer"]
 margin_left = 108.0
@@ -87,7 +87,7 @@ margin_top = 28.0
 margin_right = 304.0
 margin_bottom = 42.0
 custom_colors/font_color = Color( 0.8, 0.258824, 0.258824, 1 )
-text = "Escribir el nombre es obligatorio..."
+text = "Hotspot name is mandatory!"
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
 margin_top = 56.0
@@ -100,7 +100,7 @@ margin_top = 64.0
 margin_right = 783.0
 margin_bottom = 86.0
 custom_styles/normal = SubResource( 1 )
-text = "Use PascalCase. Y no debe tener tildes ni eñes, y entonces que mejor sea en inglés: p. ej. Sky o CaveEntrance."
+text = "Use PascalCase. No spaces. i.e Sky or CaveEntrance."
 autowrap = true
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]

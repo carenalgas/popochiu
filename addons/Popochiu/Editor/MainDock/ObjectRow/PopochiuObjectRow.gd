@@ -29,7 +29,7 @@ onready var _menu_cfg := [
 		id = MenuOptions.ADD_TO_CORE,
 		icon = preload(\
 		'res://addons/Popochiu/Editor/MainDock/ObjectRow/add_to_core.png'),
-		label = 'Meter a Popochiu',
+		label = 'Add to Popochiu',
 		types = [
 			main_dock.Types.ROOM,
 			main_dock.Types.CHARACTER,
@@ -40,14 +40,14 @@ onready var _menu_cfg := [
 	{
 		id = MenuOptions.SET_AS_MAIN,
 		icon = get_icon('Heart', 'EditorIcons'),
-		label = 'Establecer como principal',
+		label = 'Set as Main scene',
 		types = [main_dock.Types.ROOM]
 	},
 	null,
 	{
 		id = MenuOptions.DELETE,
 		icon = get_icon('Remove', 'EditorIcons'),
-		label = 'Eliminar'
+		label = 'Remove'
 	}
 ]
 
@@ -155,7 +155,7 @@ func _add_object_to_core() -> void:
 		popochiu[target_array].append(resource)
 	
 	if main_dock.save_popochiu() != OK:
-		push_error('No se pudo agregar el objeto a Popochiu: %s' %\
+		push_error('[Popochiu] Could not add Object to Popochiu: %s' %\
 		name)
 		return
 	
@@ -183,15 +183,15 @@ func _ask_basic_delete() -> void:
 	)
 	
 	main_dock.show_confirmation(
-		'Se eliminará a %s de Popochiu' % name,
-		'Esto eliminará la referencia de [b]%s[/b] en Popochiu.' % name +\
-		' Los usos de este objeto dentro de los scripts dejarán de.' +\
-		' funcionar. Esta acción no se puede revertir. ¿Quiere continuar?',
-		'¿Eliminar también la carpeta [b]%s[/b]?' % path.get_base_dir() +\
-		(' Se eliminarán [b]%d[/b] archivos de audio' % audio_files.size()\
+		'Remove %s from Popochiu' % name,
+		'This will remove the [b]%s[/b] resource in Popochiu.' % name +\
+		' Uses of this object in scripts will not work anymore.' +\
+		' This action cannot be reversed. Continue?',
+		'Delete [b]%s[/b] folder too?' % path.get_base_dir() +\
+		(' ([b]%d[/b] audio files will be deleted' % audio_files.size()\
 		if audio_files.size() > 0\
 		else '') +\
-		' (no se puede revertir)'
+		' (cannot be reversed))'
 	)
 	
 	_delete_dialog.connect('confirmed', self, '_delete_from_core')
@@ -251,7 +251,7 @@ func _delete_from_core() -> void:
 					break
 	
 	if main_dock.save_popochiu() != OK:
-		push_error('No se pudo eliminar el objeto de Popochiu: %s' %\
+		push_error('[Popochiu] Could not remove Object from Popochiu: %s' %\
 		name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 	
@@ -273,13 +273,13 @@ func _delete_from_file_system() -> void:
 	# Eliminar primero los archivos y subcarpetas (con sus respectivos archivos)
 	assert(
 		_recursive_delete(object_dir) == OK,
-		'Hubo un error en la eliminación recursiva de %s' % path.get_base_dir()
+		'[Popochiu] Error in recursive elimination of %s' % path.get_base_dir()
 	)
 	
 	# Eliminar la carpeta del objeto
 	assert(
 		main_dock.dir.remove(path.get_base_dir()) == OK,
-		'No se pudo eliminar la carpeta: %s' % path.get_base_dir()
+		'[Popochiu] Could not delete folder: %s' % path.get_base_dir()
 	)
 
 	# Forzar que se actualice la estructura de archivos en el EditorFileSystem
@@ -288,7 +288,7 @@ func _delete_from_file_system() -> void:
 	
 	assert(
 		main_dock.save_popochiu() == OK,
-		'No se pudo eliminar la carpeta del sistema: %s' % path.get_base_dir()
+		'[Popochiu] Could not delete directory in filesystem: %s' % path.get_base_dir()
 	)
 
 	# Eliminar el objeto de su lista -------------------------------------------
@@ -310,7 +310,7 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 			# Eliminar la carpeta
 			var err: int = main_dock.dir.remove(subfolder.get_path())
 			if err != OK:
-				push_error('[%d] No se pudo eliminar el subdirectorio %s' %\
+				push_error('[Popochiu(err_code:%d)] Could not delete subdirectory %s' %\
 				[err, subfolder.get_path()])
 				return err
 	
@@ -350,9 +350,9 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 					
 					assert(
 						main_dock.get_audio_tab().save_audio_manager() == OK,
-						'[Popochiu] No se pudo guardar el AudioManager al' +\
-						' intentar eliminar los AudioCue durante la' +\
-						' eliminación de la carpeta %s.' % dir.get_path()
+						'[Popochiu] Could not save AudioManager after' +\
+						' attempting to delete AudioCue during deletion of' +\
+						' directory %s.' % dir.get_path()
 					)
 		
 		files_paths.append(dir.get_file_path(file_idx))
@@ -364,7 +364,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 		main_dock.fs.update_file(fp)
 		# ---------------------------------------------------------------------
 		if err != OK:
-			push_error('[%d] No se pudo eliminar el archivo %s' %\
+			push_error('[Popochiu(err_code:%d)] Could not delete file %s' %\
 			[err, fp])
 			return err
 	

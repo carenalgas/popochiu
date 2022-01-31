@@ -15,6 +15,7 @@ Godot plugin to make point n' click games in a similar way to tools like [Advent
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins (the tab on the top)`.
 4. Restart Godot.
+5. You'll see the Popochiu dock at the right. Click on the **Move folders** button. That's all!
 
 
 

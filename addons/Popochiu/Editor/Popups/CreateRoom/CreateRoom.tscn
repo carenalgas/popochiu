@@ -66,7 +66,7 @@ margin_bottom = 90.0
 rect_min_size = Vector2( 640, 360 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
-window_title = "Crear habitación"
+window_title = "Create room"
 dialog_hide_on_ok = false
 dialog_autowrap = true
 script = ExtResource( 4 )
@@ -93,7 +93,7 @@ margin_bottom = 24.0
 margin_top = 5.0
 margin_right = 104.0
 margin_bottom = 19.0
-text = "Dele un nombre"
+text = "Room name"
 
 [node name="Input" type="LineEdit" parent="VBoxContainer/InputContainer"]
 margin_left = 108.0
@@ -111,7 +111,7 @@ margin_top = 28.0
 margin_right = 304.0
 margin_bottom = 42.0
 custom_colors/font_color = Color( 0.8, 0.258824, 0.258824, 1 )
-text = "Escribir el nombre es obligatorio..."
+text = "A room name is mandatory!"
 
 [node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
 margin_top = 28.0
@@ -124,7 +124,7 @@ margin_top = 36.0
 margin_right = 624.0
 margin_bottom = 75.0
 custom_styles/normal = SubResource( 1 )
-text = "Use PascalCase. Y no debe tener tildes ni eñes, y entonces que mejor sea en inglés: p. ej. Garage o CasinoInterior."
+text = "Use PascalCase. No spaces. i.e. Garage or CasinoInterior."
 autowrap = true
 
 [node name="SetAsMainContainer" type="PanelContainer" parent="VBoxContainer"]
@@ -148,8 +148,8 @@ custom_fonts/normal_font = ExtResource( 5 )
 custom_styles/focus = SubResource( 7 )
 custom_styles/normal = SubResource( 8 )
 bbcode_enabled = true
-bbcode_text = "Esta será la primera habitación de Popochiu. ¿Quiere que se convierta en la escena principal del proyecto? Esto modificará la configuración en: application/run/main_scene."
-text = "Esta será la primera habitación de Popochiu. ¿Quiere que se convierta en la escena principal del proyecto? Esto modificará la configuración en: application/run/main_scene."
+bbcode_text = "This will be Popochiu's first room. Do you want it to become the main scene of the project? This will modify Settings: [b]application/run/main_scene[/b]."
+text = "This will be Popochiu's first room. Do you want it to become the main scene of the project? This will modify Settings: application/run/main_scene."
 fit_content_height = true
 scroll_active = false
 

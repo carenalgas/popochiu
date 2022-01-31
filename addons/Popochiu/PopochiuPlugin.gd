@@ -102,8 +102,10 @@ func enable_plugin() -> void:
 	# Mostrar la ventana de diálogo para pedirle a la desarrolladora que reinicie
 	# el motor.
 	var ad := AcceptDialog.new()
-	ad.window_title = 'El reiniciador'
-	ad.dialog_text = 'Toca que reinicie el motor pa que funcione el Popochiu.'
+	# TODO: Localize
+	ad.window_title = 'Popochiu'
+	ad.dialog_text = '[es] Reinicia el motor para completar la instalación.\n' + \
+	'[en] Restart Godot to complete the instalation.'
 	_editor_interface.get_base_control().add_child(ad)
 	ad.popup_centered()
 
@@ -172,7 +174,7 @@ func _create_input_actions() -> void:
 			)
 
 	var result = ProjectSettings.save()
-	assert(result == OK, 'Failed to save project settings')
+	assert(result == OK, '[Popochiu] Failed to save project settings.')
 
 
 func _remove_input_actions() -> void:
@@ -183,7 +185,7 @@ func _remove_input_actions() -> void:
 			ProjectSettings.clear(setting_name)
 	
 	var result = ProjectSettings.save()
-	assert(result == OK, 'Failed to save project settings')
+	assert(result == OK, '[Popochiu] Failed to save project settings.')
 
 
 func _move_addon_folders() -> void:
@@ -202,7 +204,7 @@ func _move_addon_folders() -> void:
 	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
 	assert(
 		result == OK,
-		'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
+		'[Popochiu] Could not save after removing GI and TL from Popochiu.'
 	)
 
 	# Copiar archivos y carpetas que las desarrolladoras podrán modificar
@@ -228,7 +230,7 @@ func _check_popochiu_dependencies() -> void:
 	var popochiu: Node = load(POPOCHIU_SCENE).instance()
 
 	if not popochiu:
-		printerr('============== Algo no está bien en Popochiu.tscn ==============')
+		printerr('[Popochiu] Popochius.tscn is broken.')
 		return
 	
 	var save_popochiu := false
@@ -269,12 +271,12 @@ func _check_popochiu_dependencies() -> void:
 		result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
 		assert(
 			result == OK,
-			'[Popochiu] No se pudieron asignar la interfaz gráfica ni las transiciones.'
+			'[Popochiu] Could not save Popochiu after fixing GI or TL dependencies.'
 		)
 
 		yield(_editor_file_system, 'filesystem_changed')
 	
-		prints('██████████████████████████████████████████ Lista la estructura ███')
+		prints('█████████████████████████████████████ Project structure ready ████')
 	
 	yield(get_tree(), 'idle_frame')
 

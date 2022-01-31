@@ -44,14 +44,14 @@ func create() -> void:
 	# Crear el directorio donde se guardará el hotspot
 	if not _main_dock.dir.dir_exists(_room_dir + '/Hotspots'):
 		if _main_dock.dir.make_dir(_room_dir + '/Hotspots') != OK:
-			push_error('No se pudo crear el directorio de Hotspots de ' +\
+			push_error('[Popochiu] Could not create Hotspots folder for ' +\
 			_room_path.get_file())
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de el hotspot (si tiene interacción)
 	var hotspot_template := load(SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_hotspot_path + '.gd', hotspot_template) != OK:
-		push_error('No se pudo crear el script: %s.gd' % _new_hotspot_name)
+		push_error('[Popochiu] Could not create: %s.gd' % _new_hotspot_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
@@ -92,7 +92,7 @@ func _update_name(new_text: String) -> void:
 		_new_hotspot_path = _hotspot_path_template % _new_hotspot_name
 
 		_info.bbcode_text = (
-			'En [b]%s[/b] se creará el archivo: [code]%s[/code]' \
+			'In [b]%s[/b] the following files will be created: [code]%s[/code]' \
 			% [
 				_room_dir + '/Hotspots',
 				'Hotspot' + _new_hotspot_name + '.gd'

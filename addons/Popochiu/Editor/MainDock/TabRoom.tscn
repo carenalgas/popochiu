@@ -69,14 +69,14 @@ margin_right = 304.0
 margin_bottom = 39.0
 custom_colors/font_color = Color( 0.768627, 0.423529, 0.443137, 1 )
 custom_styles/normal = SubResource( 5 )
-text = "Seleccione una habitación para ver sus Props, Hotspots y Regions. O crear nuevos."
+text = "Open a room in Main tab to see or create Props, Hotspots, Regions and Points."
 autowrap = true
 
 [node name="PropsGroup" parent="RoomScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 6 )
 title = "Props"
-create_text = "Crear prop"
+create_text = "Create prop"
 
 [node name="HotspotsGroup" parent="RoomScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 margin_top = 28.0
@@ -84,21 +84,21 @@ margin_bottom = 52.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 5 )
 title = "Hotspots"
-create_text = "Crear hotspot"
+create_text = "Create hotspot"
 
 [node name="RegionsGroup" parent="RoomScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 margin_top = 56.0
 margin_bottom = 80.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 3 )
-title = "Regiones"
-create_text = "Crear región"
+title = "Regions"
+create_text = "Create region"
 
 [node name="PointsGroup" parent="RoomScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
 margin_top = 84.0
 margin_bottom = 108.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 4 )
-title = "Puntos"
+title = "Points"
 can_create = false
-create_text = "Crear punto"
+create_text = "Create point"

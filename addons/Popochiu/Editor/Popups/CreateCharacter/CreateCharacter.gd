@@ -41,7 +41,7 @@ func create() -> void:
 	# Crear el script del nuevo personaje
 	var character_template := load(CHARACTER_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_character_path + '.gd', character_template) != OK:
-		push_error('No se pudo crear el script: %s.gd' % _new_character_name)
+		push_error('[Popochiu] Could not create script: %s.gd' % _new_character_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 
@@ -62,7 +62,7 @@ func create() -> void:
 	new_character_packed_scene.pack(new_character)
 	if ResourceSaver.save(_new_character_path + '.tscn',\
 	new_character_packed_scene) != OK:
-		push_error('No se pudo crear la escena: %s.tscn' % _new_character_name)
+		push_error('[Popochiu] Could not create character: %s.tscn' % _new_character_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
@@ -74,7 +74,7 @@ func create() -> void:
 	character_resource.resource_name = _new_character_name
 	if ResourceSaver.save(_new_character_path + '.tres',\
 	character_resource) != OK:
-		push_error('No se pudo crear el PopochiuCharacterData del personaje: %s' %\
+		push_error('[Popochiu] Could not create PopochiuCharacterData for character: %s' %\
 		_new_character_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
@@ -84,7 +84,7 @@ func create() -> void:
 	if _main_dock.add_resource_to_popochiu(
 		'characters', ResourceLoader.load(_new_character_path + '.tres')
 	) != OK:
-		push_error('No se pudo agregar el personaje a Popochiu: %s' %\
+		push_error('[Popochiu] Could not add the created character to Popochiu: %s' %\
 		_new_character_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
@@ -113,7 +113,7 @@ func _update_name(new_text: String) -> void:
 		[_new_character_name, _new_character_name]
 
 		_info.bbcode_text = (
-			'En [b]%s[/b] se crearán los archivos:\n[code]%s, %s y %s[/code]' \
+			'In [b]%s[/b] the following files will be created:\n[code]%s, %s and %s[/code]' \
 			% [
 				_main_dock.CHARACTERS_PATH + _new_character_name,
 				'Character' + _new_character_name + '.tscn',

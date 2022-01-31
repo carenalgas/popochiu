@@ -44,14 +44,14 @@ func create() -> void:
 	# Crear el directorio donde se guardará la región
 	if not _main_dock.dir.dir_exists(_room_dir + '/Regions'):
 		if _main_dock.dir.make_dir(_room_dir + '/Regions') != OK:
-			push_error('No se pudo crear el directorio de Regions de ' +\
+			push_error('[Popochiu] Could not create Regions folder for ' +\
 			_room_path.get_file())
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de la región
 	var region_template := load(SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_region_path + '.gd', region_template) != OK:
-		push_error('No se pudo crear el script: %s.gd' % _new_region_name)
+		push_error('[Popochiu] Could not create script: %s.gd' % _new_region_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
@@ -95,7 +95,7 @@ func _update_name(new_text: String) -> void:
 		_new_region_path = _region_path_template % _new_region_name
 
 		_info.bbcode_text = (
-			'En [b]%s[/b] se creará el archivo: [code]%s[/code]' \
+			'In [b]%s[/b] the following files will be created: [code]%s[/code]' \
 			% [
 				_room_dir + '/Regions',
 				'Region' + _new_region_name + '.gd'
