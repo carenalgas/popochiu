@@ -17,19 +17,15 @@ Godot plugin to make point n' click games in a similar way to tools like [Advent
 4. Restart Godot.
 
 
+
 ## The dock 🔌
 
-Tha *Main* tab shows (and allows the creation of) rooms, characters, inventory items and dialogs.
+![Popochiu Dock tabs](./imgs/popochiu_dock-tabs.png "Popochiu dock tabs")
 
-![Popochiu Dock (main)](./imgs/popochiu_dock-main.png "Pestaña Main del Dock")
+- Tha *Main* tab shows (and allows the creation of) rooms, characters, inventory items and dialogs.
+- The *Room* tab shows (and allows the creation of) props, hotspots, regions and points.
+- The *Audio* tab shows the audio files and allows to assign each one to a category: music, sfx, voice and graphic interface.
 
-The *Room* tab shows (and allows the creation of) props, hotspots, regions and points.
-
-![Popochiu Dock (room)](./imgs/popochiu_dock-room.png "Pestaña Room del Dock")
-
-The *audio* tab shows the audio files and allows to assign each one to a category: music, sfx, voice and graphic interface.
-
-![Popochiu Dock (audio)](./imgs/popochiu_dock-audio.png "Pestaña Audio del Dock")
 
 
 ## Features 📃

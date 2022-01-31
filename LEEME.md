@@ -17,18 +17,16 @@ Plugin de Godot para crear juegos de aventura de manera similar a herramientas c
 4. Reinicia Godot.
 
 
+
 ## El plugin 🔌
-En la pestaña principal se pueden ver (y crear) las habitaciones, personajes, objetos de inventario y diálogos.
 
-![Popochiu Dock (main)](./imgs/popochiu_dock-main.png "Pestaña Main del Dock")
+![Pestañas del dock de Popochiu](./imgs/popochiu_dock-tabs.png "Pestañas del dock")
 
-En la pestaña de habitación se pueden ver (y crear) objetos con interacción (props), zonas con interacción (hotspots), regiones y puntos de la habitación abierta en el editor.
+- En la pestaña principal se pueden ver (y crear) las habitaciones, personajes, objetos de inventario y diálogos.
+- En la pestaña de habitación se pueden ver (y crear) objetos con interacción (props), zonas con interacción (hotspots), regiones y puntos de la habitación abierta en el editor.
+- En la pestaña de audio se pueden ver los archivos de audio y asignarlos a una categoría: música, efectos de sonido, voces e interfaz gráfica.
 
-![Popochiu Dock (room)](./imgs/popochiu_dock-room.png "Pestaña Room del Dock")
 
-En la pestaña de audio se pueden ver los archivos de audio y asignarlos a una categoría: música, efectos de sonido, voces e interfaz gráfica.
-
-![Popochiu Dock (audio)](./imgs/popochiu_dock-audio.png "Pestaña Audio del Dock")
 
 ## Características 📃
 
