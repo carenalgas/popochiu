@@ -148,8 +148,8 @@ custom_fonts/normal_font = ExtResource( 5 )
 custom_styles/focus = SubResource( 7 )
 custom_styles/normal = SubResource( 8 )
 bbcode_enabled = true
-bbcode_text = "This will be Popochiu's first room, do you want it to become the main scene of the project? This will modify the settings in: application/run/main_scene."
-text = "This will be Popochiu's first room, do you want it to become the main scene of the project? This will modify the settings in: application/run/main_scene."
+bbcode_text = "This will be Popochiu's first room. Do you want it to become the main scene of the project? This will modify Settings: [b]application/run/main_scene[/b]."
+text = "This will be Popochiu's first room. Do you want it to become the main scene of the project? This will modify Settings: application/run/main_scene."
 fit_content_height = true
 scroll_active = false
 

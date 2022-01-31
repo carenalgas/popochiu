@@ -15,6 +15,7 @@ Plugin de Godot para crear juegos de aventura de manera similar a herramientas c
 2. Extra su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Project > Project Settings... > Plugins (the tab on the top)`.
 4. Reinicia Godot.
+5. Verás el dock de Popochiu a la derecha del editor. Haz clic en el botón **Move folders** y listo.
 
 
 ## El plugin 🔌
