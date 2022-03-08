@@ -267,7 +267,7 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 		if popochiu_character.script_name == script_name:
 			return load(popochiu_character.scene).instance()
 	
-	prints('No existe el personaje: %s' % script_name)
+	prints("[Popochiu] Character %s doesn't exists" % script_name)
 	return null
 
 
@@ -277,7 +277,7 @@ func get_inventory_item_instance(script_name: String) -> InventoryItem:
 		if popochiu_inventory_item.script_name == script_name:
 			return load(popochiu_inventory_item.scene).instance()
 	
-	prints('No existe el ítem: %s' % script_name)
+	prints("[Popochiu] Item %s doesn't exists" % script_name)
 	return null
 
 
@@ -287,12 +287,39 @@ func get_dialog(script_name: String) -> PopochiuDialog:
 		if tree.script_name.to_lower() == script_name.to_lower():
 			return tree
 
-	prints('No existe el diálogo: %s' % script_name)
+	prints("[Popochiu] Dialog '%s doesn't exists" % script_name)
 	return null
 
 
 func add_history(data: Dictionary) -> void:
 	history.push_front(data)
+
+
+# Permite que una función cualquiera se ejecute dentro de E.run o E.run_cutscene
+func runnable(
+	node: Node, method: String, params := [], yield_signal := ''
+) -> void:
+	yield()
+	
+	if cutscene_skipped:
+		# TODO: Si esto sucede, hay que hacer algo para asegurar que los eventos
+		#		dentro de la función omitida se disparen. P. ej. ¿Qué pasa si
+		#		se trata de una animación y durante su ejecución se llaman
+		#		métodos que cambian cosas en una escena? o ¿qué pasa si una función
+		#		hace cambios en el estado del juego?
+		yield(get_tree(), 'idle_frame')
+		return
+	
+	var f := funcref(node, method)
+	var c = f.call_funcv(params)
+	
+	if yield_signal:
+		if yield_signal == 'func_comp':
+			yield(c, 'completed')
+		else:
+			yield(node, yield_signal)
+	else:
+		yield(get_tree(), 'idle_frame')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
