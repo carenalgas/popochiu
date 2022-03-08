@@ -21,6 +21,8 @@ The dock helps with the creation of the scenes, resources and scripts required t
 
 ## Installation
 
+**Popochiu works on Godot 3.3.x and 3.4.x.**
+
 1. [Download the ZIP](https://github.com/mapedorr/popochiu/archive/refs/heads/main.zip).
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins (the tab on the top)`.

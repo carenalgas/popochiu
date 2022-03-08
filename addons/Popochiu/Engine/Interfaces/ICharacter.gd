@@ -55,6 +55,15 @@ func walk_to_clicked(is_in_queue := true) -> void:
 	)
 
 
+func face_clicked(is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	if E.clicked.global_position < C.player.global_position:
+		yield(C.player.face_left(false), 'completed')
+	else:
+		yield(C.player.face_right(false), 'completed')
+
+
 func is_valid_character(chr_name: String) -> bool:
 	for c in characters:
 		if (c as PopochiuCharacter).script_name.to_lower() == chr_name.to_lower():

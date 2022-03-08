@@ -307,7 +307,16 @@ func _eval_string(text: String) -> void:
 		_:
 			var char_talk: int = text.find(':')
 			if char_talk:
-				var char_name: String = text.substr(0, char_talk)
+				var char_and_emotion: String = text.substr(0, char_talk)
+				var emotion_idx: int = char_and_emotion.find('(')
+				var char_name: String = char_and_emotion.substr(\
+				0, emotion_idx).to_lower()
+				var emotion := ''
+				if emotion_idx > 0:
+					emotion = char_and_emotion.substr(emotion_idx + 1).rstrip(')')
+				
+				# TODO: Pasar la emoción al character_say...
+
 				if char_name.to_lower() == 'player':
 					var char_line := text.substr(char_talk + 1).trim_prefix(' ')
 					yield(C.player_say(char_line, false), 'completed')
