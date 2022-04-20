@@ -1,10 +1,11 @@
 tool
-extends CreationPopup
+extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Permite crear un nuevo diálogo con los archivos necesarios para que funcione
 # en el Popochiu: DialogDDD.gd, DialogDDD.tres.
 
 const DIALOG_SCRIPT_TEMPLATE :=\
 'res://addons/Popochiu/Engine/Templates/DialogTemplate.gd'
+const Constants := preload('res://addons/Popochiu/Constants.gd')
 
 var _new_dialog_name := ''
 var _new_dialog_path := ''
@@ -66,7 +67,7 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Actualizar la lista de habitaciones en el Dock
-	_main_dock.add_to_list(_main_dock.Types.DIALOG, _new_dialog_name)
+	_main_dock.add_to_list(Constants.Types.DIALOG, _new_dialog_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir el diálogo en el Inspector

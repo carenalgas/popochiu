@@ -1,7 +1,9 @@
-class_name Toolbar
 extends NinePatchRect
 
-export(Cursor.Type) var cursor
+const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
+const ToolbarButton := preload('ToolbarButton.gd')
+
+export(CURSOR_TYPE) var cursor
 export var script_name := ''
 export var used_in_game := true
 

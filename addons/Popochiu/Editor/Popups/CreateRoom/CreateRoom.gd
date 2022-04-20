@@ -1,5 +1,5 @@
 tool
-extends CreationPopup
+extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Permite crear una nueva habitación con los archivos necesarios para que funcione
 # en el Popochiu: RoomRRR.tscn, RoomRRR.gd, RoomRRR.tres.
 
@@ -11,6 +11,7 @@ const ROOM_SCRIPT_TEMPLATE :=\
 'res://addons/Popochiu/Engine/Templates/RoomTemplate.gd'
 const BASE_ROOM_PATH :=\
 'res://addons/Popochiu/Engine/Objects/Room/PopochiuRoom.tscn'
+const Constants := preload('res://addons/Popochiu/Constants.gd')
 
 var show_set_as_main := false setget _set_show_set_as_main
 
@@ -100,7 +101,7 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Actualizar la lista de habitaciones en el Dock
-	var row := _main_dock.add_to_list(_main_dock.Types.ROOM, _new_room_name)
+	var row := _main_dock.add_to_list(Constants.Types.ROOM, _new_room_name)
 	
 	# Establecer como la escena principal
 	if _set_as_main_check.pressed:

@@ -1,5 +1,5 @@
 tool
-extends Prop
+extends PopochiuProp
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

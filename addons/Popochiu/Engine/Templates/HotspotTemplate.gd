@@ -1,5 +1,5 @@
 tool
-extends Hotspot
+extends PopochiuHotspot
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

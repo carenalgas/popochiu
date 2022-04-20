@@ -16,8 +16,6 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[sub_resource type="StyleBoxEmpty" id=2]
-
 [sub_resource type="DynamicFont" id=3]
 size = 14
 font_data = ExtResource( 2 )
@@ -29,6 +27,8 @@ font_data = ExtResource( 3 )
 [sub_resource type="DynamicFont" id=5]
 size = 14
 font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxEmpty" id=2]
 
 [node name="CreateRegion" type="ConfirmationDialog"]
 anchor_left = 0.5
@@ -100,7 +100,7 @@ margin_top = 64.0
 margin_right = 783.0
 margin_bottom = 86.0
 custom_styles/normal = SubResource( 1 )
-text = "Use PascalCase. No spaces. i.e Sand or SickyFloor."
+text = "Use PascalCase. No spaces. i.e Sand or StickyFloor."
 autowrap = true
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
@@ -109,8 +109,8 @@ margin_right = 783.0
 margin_bottom = 316.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_styles/normal = SubResource( 2 )
 custom_fonts/mono_font = SubResource( 3 )
 custom_fonts/bold_font = SubResource( 4 )
 custom_fonts/normal_font = SubResource( 5 )
+custom_styles/normal = SubResource( 2 )
 bbcode_enabled = true

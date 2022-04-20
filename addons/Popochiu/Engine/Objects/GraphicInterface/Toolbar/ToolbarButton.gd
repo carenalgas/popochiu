@@ -1,9 +1,10 @@
-class_name ToolbarButton
 extends TextureButton
+
+const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 
 export var description := '' setget ,get_description
 export var script_name := ''
-export(Cursor.Type) var cursor
+export(CURSOR_TYPE) var cursor
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
 func _ready() -> void:

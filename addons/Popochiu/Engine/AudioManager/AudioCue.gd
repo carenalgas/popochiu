@@ -1,5 +1,4 @@
 tool
-class_name AudioCue
 extends Resource
 
 export var audio: AudioStream

@@ -1,5 +1,12 @@
 extends CanvasLayer
 
+const DialogText := preload('DialogText/DialogText.gd')
+const DisplayBox := preload('DisplayBox/DisplayBox.gd')
+const InventoryContainer := preload('Inventory/InventoryContainer.gd')
+const DialogMenu := preload('DialogMenu/DialogMenu.gd')
+const Toolbar := preload('Toolbar/Toolbar.gd')
+const History := preload('History/History.gd')
+
 onready var _info_bar: Label = find_node('InfoBar')
 onready var _dialog_text: DialogText = find_node('DialogText')
 onready var _display_box: DisplayBox = find_node('DisplayBox')

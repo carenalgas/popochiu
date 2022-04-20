@@ -4,32 +4,8 @@ extends EditorPlugin
 # Aquí hay varios iconos que pueden resultar útiles:
 #	godot\editor\editor_themes.cpp
 
-# TODO: Que este directorio se pueda seleccionar cuando se instala el plugin por
-#		primera vez
-const BASE_DIR := 'res://popochiu'
-const MAIN_DOCK_PATH := 'res://addons/Popochiu/Editor/MainDock/PopochiuDock.tscn'
-const EMPTY_DOCK_PATH := 'res://addons/Popochiu/Editor/MainDock/EmptyDock.tscn'
-const UTILS_SNGL := 'res://addons/Popochiu/Engine/Others/PopochiuUtils.gd'
-const CURSOR_SNGL := 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn'
-const POPOCHIU_SNGL := 'res://addons/Popochiu/Engine/Popochiu.tscn'
-const ICHARACTER_SNGL := 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
-const IINVENTORY_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
-const IDIALOG_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
-const IGRAPHIC_INTERFACE_SNGL :=\
-'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
-const IAUDIO_MANAGER_SNGL :=\
-'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
-# const GLOBALS_SRC := 'res://addons/Popochiu/Engine/Objects/Globals.gd'
-# const GLOBALS_SNGL := 'res://popochiu/Globals.gd'
-const GRAPHIC_INTERFACE_SRC :=\
-'res://addons/Popochiu/Engine/Objects/GraphicInterface/'
-const GRAPHIC_INTERFACE_SCENE :=\
-BASE_DIR + '/GraphicInterface/GraphicInterface.tscn'
-const TRANSITION_LAYER_SRC :=\
-'res://addons/Popochiu/Engine/Objects/TransitionLayer/'
-const TRANSITION_LAYER_SCENE :=\
-BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
-const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
+const Constants := preload('res://addons/Popochiu/Constants.gd')
+#const PopochiuDock := preload('res://addons/Popochiu/Editor/MainDock/PopochiuDock.gd')
 
 var main_dock: Panel
 
@@ -51,15 +27,14 @@ func _init() -> void:
 		_init_file_structure()
 	
 	# Cargar los singleton para acceder directamente a objetos de Popochiu
-	add_autoload_singleton('U', UTILS_SNGL)
-	add_autoload_singleton('Cursor', CURSOR_SNGL)
-	add_autoload_singleton('E', POPOCHIU_SNGL)
-	add_autoload_singleton('C', ICHARACTER_SNGL)
-	add_autoload_singleton('I', IINVENTORY_SNGL)
-	add_autoload_singleton('D', IDIALOG_SNGL)
-	add_autoload_singleton('G', IGRAPHIC_INTERFACE_SNGL)
-	add_autoload_singleton('A', IAUDIO_MANAGER_SNGL)
-	# add_autoload_singleton('Globals', GLOBALS_SNGL)
+	add_autoload_singleton('U', Constants.UTILS_SNGL)
+	add_autoload_singleton('Cursor', Constants.CURSOR_SNGL)
+	add_autoload_singleton('E', Constants.POPOCHIU_SNGL)
+	add_autoload_singleton('C', Constants.ICHARACTER_SNGL)
+	add_autoload_singleton('I', Constants.IINVENTORY_SNGL)
+	add_autoload_singleton('D', Constants.IDIALOG_SNGL)
+	add_autoload_singleton('G', Constants.IGRAPHIC_INTERFACE_SNGL)
+	add_autoload_singleton('A', Constants.IAUDIO_MANAGER_SNGL)
 
 
 func _enter_tree() -> void:
@@ -67,9 +42,10 @@ func _enter_tree() -> void:
 	prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
 	prints('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
 
-	main_dock = preload(MAIN_DOCK_PATH).instance()
+	main_dock = load(Constants.MAIN_DOCK_PATH).instance()
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system
+	main_dock.focus_mode = Control.FOCUS_ALL
 
 	main_dock.connect('room_row_clicked', self, 'update_overlays')
 	add_control_to_dock(DOCK_SLOT_RIGHT_BR, main_dock)
@@ -99,15 +75,16 @@ func _enter_tree() -> void:
 func enable_plugin() -> void:
 	_create_input_actions()
 	
-	# Mostrar la ventana de diálogo para pedirle a la desarrolladora que reinicie
-	# el motor.
-	var ad := AcceptDialog.new()
-	# TODO: Localize
-	ad.window_title = 'Popochiu'
-	ad.dialog_text = '[es] Reinicia el motor para completar la instalación.\n' + \
-	'[en] Restart Godot to complete the instalation.'
-	_editor_interface.get_base_control().add_child(ad)
-	ad.popup_centered()
+	if _is_first_install:
+		# Mostrar la ventana de diálogo para pedirle a la desarrolladora que reinicie
+		# el motor.
+		var ad := AcceptDialog.new()
+		# TODO: Localize
+		ad.window_title = 'Popochiu'
+		ad.dialog_text = '[es] Reinicia el motor para completar la instalación.\n' + \
+		'[en] Restart Godot to complete the instalation.'
+		_editor_interface.get_base_control().add_child(ad)
+		ad.popup_centered()
 
 
 func disable_plugin() -> void:
@@ -119,7 +96,6 @@ func disable_plugin() -> void:
 	remove_autoload_singleton('D')
 	remove_autoload_singleton('G')
 	remove_autoload_singleton('A')
-	# remove_autoload_singleton('Globals')
 	
 	_remove_input_actions()
 	
@@ -130,22 +106,24 @@ func disable_plugin() -> void:
 func _init_file_structure() -> void:
 	var directory := Directory.new()
 	
+	_is_first_install = !directory.dir_exists(Constants.BASE_DIR)
+	
 	# Crear las carpetas que no existan
 	for d in _get_directories().values():
 		if not directory.dir_exists(d):
 			directory.make_dir_recursive(d)
 
-	_is_first_install = directory.dir_exists(GRAPHIC_INTERFACE_SRC)\
-	or directory.dir_exists(TRANSITION_LAYER_SRC)
+#	_is_first_install = directory.dir_exists(Constants.GRAPHIC_INTERFACE_SRC)\
+#	or directory.dir_exists(Constants.TRANSITION_LAYER_SRC)
 
 
 func _get_directories() -> Dictionary:
 	return {
-		BASE = BASE_DIR,
-		ROOMS = BASE_DIR + '/Rooms',
-		CHARACTERS = BASE_DIR + '/Characters',
-		INVENTORY_ITEMS = BASE_DIR + '/InventoryItems',
-		DIALOGS = BASE_DIR + '/Dialogs',
+		BASE = Constants.BASE_DIR,
+		ROOMS = Constants.BASE_DIR + '/Rooms',
+		CHARACTERS = Constants.BASE_DIR + '/Characters',
+		INVENTORY_ITEMS = Constants.BASE_DIR + '/InventoryItems',
+		DIALOGS = Constants.BASE_DIR + '/Dialogs',
 	}
 
 
@@ -191,7 +169,7 @@ func _remove_input_actions() -> void:
 func _move_addon_folders() -> void:
 	# Eliminar las referencias de la interfaz gráfica y las animaciones de transición.
 	var result := OK
-	var popochiu: Node = load(POPOCHIU_SCENE).instance()
+	var popochiu: Node = load(Constants.POPOCHIU_SCENE).instance()
 	var gi: CanvasLayer = popochiu.get_node_or_null('GraphicInterface')
 	var tl: CanvasLayer = popochiu.get_node_or_null('TransitionLayer')
 
@@ -201,7 +179,7 @@ func _move_addon_folders() -> void:
 	var new_popochiu: PackedScene = PackedScene.new()
 	new_popochiu.pack(popochiu)
 	_editor_file_system.scan()
-	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
+	result = ResourceSaver.save(Constants.POPOCHIU_SCENE, new_popochiu)
 	assert(
 		result == OK,
 		'[Popochiu] Could not save after removing GI and TL from Popochiu.'
@@ -209,10 +187,12 @@ func _move_addon_folders() -> void:
 
 	# Copiar archivos y carpetas que las desarrolladoras podrán modificar
 	_directory.rename(
-		GRAPHIC_INTERFACE_SRC, GRAPHIC_INTERFACE_SCENE.get_base_dir()
+		Constants.GRAPHIC_INTERFACE_SRC,
+		Constants.GRAPHIC_INTERFACE_SCENE.get_base_dir()
 	)
 	_directory.rename(
-		TRANSITION_LAYER_SRC, TRANSITION_LAYER_SCENE.get_base_dir()
+		Constants.TRANSITION_LAYER_SRC,
+		Constants.TRANSITION_LAYER_SCENE.get_base_dir()
 	)
 	
 	# Refrescar el FileSystem
@@ -227,7 +207,7 @@ func _move_addon_folders() -> void:
 
 func _check_popochiu_dependencies() -> void:
 	# Agregar la interfaz gráfica y la escena de transiciones a Popochiu
-	var popochiu: Node = load(POPOCHIU_SCENE).instance()
+	var popochiu: Node = load(Constants.POPOCHIU_SCENE).instance()
 
 	if not popochiu:
 		printerr('[Popochiu] Popochius.tscn is broken.')
@@ -239,11 +219,11 @@ func _check_popochiu_dependencies() -> void:
 		# Actualizar dependencias de la GraphicInterface
 		_fix_dependencies(
 			_editor_file_system.get_filesystem_path(
-				GRAPHIC_INTERFACE_SCENE.get_base_dir()
+				Constants.GRAPHIC_INTERFACE_SCENE.get_base_dir()
 			)
 		)
 		yield(get_tree().create_timer(0.3), 'timeout')
-		var gi: CanvasLayer = load(GRAPHIC_INTERFACE_SCENE).instance()
+		var gi: CanvasLayer = load(Constants.GRAPHIC_INTERFACE_SCENE).instance()
 		popochiu.add_child(gi)
 		gi.owner = popochiu
 
@@ -253,11 +233,11 @@ func _check_popochiu_dependencies() -> void:
 		# Actualizar dependencias de la TransitionLayer
 		_fix_dependencies(
 			_editor_file_system.get_filesystem_path(
-				TRANSITION_LAYER_SCENE.get_base_dir()
+				Constants.TRANSITION_LAYER_SCENE.get_base_dir()
 			)
 		)
 		yield(get_tree().create_timer(0.3), 'timeout')
-		var tl: CanvasLayer = load(TRANSITION_LAYER_SCENE).instance()
+		var tl: CanvasLayer = load(Constants.TRANSITION_LAYER_SCENE).instance()
 		popochiu.add_child(tl)
 		tl.owner = popochiu
 
@@ -268,7 +248,7 @@ func _check_popochiu_dependencies() -> void:
 		var new_popochiu: PackedScene = PackedScene.new()
 		new_popochiu.pack(popochiu)
 		# _editor_file_system.scan()
-		result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
+		result = ResourceSaver.save(Constants.POPOCHIU_SCENE, new_popochiu)
 		assert(
 			result == OK,
 			'[Popochiu] Could not save Popochiu after fixing GI or TL dependencies.'
@@ -338,7 +318,8 @@ func _on_sources_changed(exist: bool) -> void:
 # scene tree.
 func _check_nodes() -> void:
 	for n in _shown_helpers:
-		n.hide_helpers()
+		if is_instance_valid(n):
+			n.hide_helpers()
 	
 	_shown_helpers.clear()
 	

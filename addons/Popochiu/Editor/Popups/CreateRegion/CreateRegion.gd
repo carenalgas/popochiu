@@ -1,9 +1,10 @@
 tool
-extends CreationPopup
+extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Permite crear una nueva Region para una habitación.
 
 const SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/RegionTemplate.gd'
-const REGION_SCENE := 'res://addons/Popochiu/Engine/Objects/Region/Region.tscn'
+const REGION_SCENE := 'res://addons/Popochiu/Engine/Objects/Region/PopochiuRegion.tscn'
+const Constants := preload('res://addons/Popochiu/Constants.gd')
 
 var room_tab: VBoxContainer = null
 
@@ -29,7 +30,7 @@ func room_opened(r: Node2D) -> void:
 	_room = r
 	_room_path = _room.filename
 	_room_dir = _room_path.get_base_dir()
-	_region_path_template = _room_dir + '/Regions/Region%s'
+	_region_path_template = _room_dir + '/Regions/%s/Region%s'
 
 
 func create() -> void:
@@ -37,28 +38,29 @@ func create() -> void:
 		_error_feedback.show()
 		return
 	
-	# TODO: Verificar si no hay ya una Region en el mismo PATH.
-	# TODO: Eliminar archivos creados si la creación no se completa.
+	# TODO: Check if another Region was created in the same PATH.
+	# TODO: Remove created files if the creation process failed.
+	var script_path := _new_region_path + '.gd'
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear el directorio donde se guardará la región
-	if not _main_dock.dir.dir_exists(_room_dir + '/Regions'):
-		if _main_dock.dir.make_dir(_room_dir + '/Regions') != OK:
-			push_error('[Popochiu] Could not create Regions folder for ' +\
-			_room_path.get_file())
+	# Create the folder for the Region
+	assert(
+		_main_dock.dir.make_dir_recursive(_new_region_path.get_base_dir()) == OK,
+		'[Popochiu] Could not create Region folder for ' + _new_region_name
+	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de la región
 	var region_template := load(SCRIPT_TEMPLATE)
-	if ResourceSaver.save(_new_region_path + '.gd', region_template) != OK:
+	if ResourceSaver.save(script_path, region_template) != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_region_name)
 		# TODO: Mostrar retroalimentación en el mismo popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear la región a agregar a la habitación
-	var region: Region = ResourceLoader.load(REGION_SCENE).instance()
-	region.set_script(ResourceLoader.load(_new_region_path + '.gd'))
+	var region: PopochiuRegion = ResourceLoader.load(REGION_SCENE).instance()
+	region.set_script(ResourceLoader.load(script_path))
 	region.name = _new_region_name
 	region.script_name = _new_region_name
 	region.description = _new_region_name
@@ -74,8 +76,12 @@ func create() -> void:
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Actualizar la lista de regiones de la habitación
-	room_tab.add_to_list(room_tab.Types.REGION, _new_region_name)
+	# Update the list of Regions in the Room tab
+	room_tab.add_to_list(
+		Constants.Types.REGION,
+		_new_region_name,
+		script_path
+	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades de la región creada en el Inspector
@@ -92,7 +98,8 @@ func _update_name(new_text: String) -> void:
 
 	if _name:
 		_new_region_name = _name
-		_new_region_path = _region_path_template % _new_region_name
+		_new_region_path = _region_path_template %\
+		[_new_region_name, _new_region_name]
 
 		_info.bbcode_text = (
 			'In [b]%s[/b] the following files will be created: [code]%s[/code]' \

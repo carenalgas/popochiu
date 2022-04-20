@@ -1,5 +1,4 @@
 tool
-class_name PopochiuDock
 extends Panel
 # Define un conjunto de botones y otros elementos para centralizar la
 # configuración de los diferentes nodos que conforman el juego:
@@ -9,18 +8,18 @@ extends Panel
 signal room_row_clicked
 signal move_folders_pressed
 
-enum Types { ROOM, CHARACTER, INVENTORY_ITEM, DIALOG }
-
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
 const ROOMS_PATH := 'res://popochiu/Rooms/'
 const CHARACTERS_PATH := 'res://popochiu/Characters/'
 const INVENTORY_ITEMS_PATH := 'res://popochiu/InventoryItems/'
 const DIALOGS_PATH := 'res://popochiu/Dialogs/'
+const Constants := preload('res://addons/Popochiu/Constants.gd')
+const PopochiuObjectRow := preload('ObjectRow/PopochiuObjectRow.gd')
 
 var ei: EditorInterface
 var fs: EditorFileSystem
 var dir := Directory.new()
-var popochiu: Popochiu = null
+var popochiu: Node = null
 var last_selected: PopochiuObjectRow = null
 
 var _has_data := false
@@ -37,25 +36,25 @@ onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
 onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
 onready var _tab_settings: VBoxContainer = _tab_container.get_node('Settings')
 onready var _types := {
-	Types.ROOM: {
+	Constants.Types.ROOM: {
 		path = ROOMS_PATH,
 		group = find_node('RoomsGroup'),
 		popup = find_node('CreateRoom'),
 		scene = ROOMS_PATH + ('%s/Room%s.tscn')
 	},
-	Types.CHARACTER: {
+	Constants.Types.CHARACTER: {
 		path = CHARACTERS_PATH,
 		group = find_node('CharactersGroup'),
 		popup = find_node('CreateCharacter'),
 		scene = CHARACTERS_PATH + ('%s/Character%s.tscn')
 	},
-	Types.INVENTORY_ITEM: {
+	Constants.Types.INVENTORY_ITEM: {
 		path = INVENTORY_ITEMS_PATH,
 		group = find_node('ItemsGroup'),
 		popup = find_node('CreateInventoryItem'),
 		scene = INVENTORY_ITEMS_PATH + ('%s/Inventory%s.tscn')
 	},
-	Types.DIALOG: {
+	Constants.Types.DIALOG: {
 		path = DIALOGS_PATH,
 		group = find_node('DialogsGroup'),
 		popup = find_node('CreateDialog'),
@@ -100,6 +99,9 @@ func fill_data() -> void:
 		var type_dir: EditorFileSystemDirectory = fs.get_filesystem_path(
 			_types[t].path
 		)
+		
+		if not is_instance_valid(type_dir):
+			continue
 
 		for d in type_dir.get_subdir_count():
 			var dir: EditorFileSystemDirectory = type_dir.get_subdir(d)
@@ -132,7 +134,7 @@ func fill_data() -> void:
 				var is_in_core := true
 				
 				match t:
-					Types.ROOM:
+					Constants.Types.ROOM:
 						is_in_core = popochiu.rooms.has(resource)
 						
 						# Ver si la habitación es la principal
@@ -140,11 +142,14 @@ func fill_data() -> void:
 						'application/run/main_scene')
 						if main_scene == resource.scene:
 							row.is_main = true
-					Types.CHARACTER:
+					Constants.Types.CHARACTER:
 						is_in_core = popochiu.characters.has(resource)
-					Types.INVENTORY_ITEM:
+					Constants.Types.INVENTORY_ITEM:
 						is_in_core = popochiu.inventory_items.has(resource)
-					Types.DIALOG:
+						
+						if resource.script_name in popochiu.items_on_start:
+							row.is_on_start = true
+					Constants.Types.DIALOG:
 						is_in_core = popochiu.dialogs.has(resource)
 				
 				if not is_in_core:
@@ -189,7 +194,9 @@ func add_resource_to_popochiu(target: String, resource: Resource) -> int:
 func save_popochiu() -> int:
 	var result := OK
 	var new_popochiu: PackedScene = PackedScene.new()
+	
 	new_popochiu.pack(popochiu)
+	
 	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
 	if result != OK:
 		push_error('---- ◇ Error al actualizar Popochiu: %d ◇ ----' % result)
@@ -230,10 +237,12 @@ func set_main_scene(path: String) -> void:
 	var result = ProjectSettings.save()
 	assert(result == OK, 'Failed to save project settings')
 	
-	_types[Types.ROOM].group.clear_favs()
+	_types[Constants.Types.ROOM].group.clear_favs()
 
 
 func search_audio_files() -> void:
+	if not is_instance_valid(_tab_audio): return
+	
 	_tab_audio.search_audio_files()
 
 
@@ -251,6 +260,10 @@ func show_move_folders_button() -> void:
 func hide_move_folders_button() -> void:
 	_btn_move_folders.disconnect('pressed', self, 'emit_signal')
 	_btn_move_folders.hide()
+
+
+func get_opened_room() -> PopochiuRoom:
+	return _tab_room.opened_room
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

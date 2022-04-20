@@ -1,4 +1,3 @@
-class_name DisplayBox
 extends Label
 
 signal shown

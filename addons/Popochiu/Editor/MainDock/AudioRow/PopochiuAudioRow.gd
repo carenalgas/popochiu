@@ -7,6 +7,7 @@ signal deleted(file_path)
 enum MenuOptions { ADD_TO_MUSIC, ADD_TO_SFX, ADD_TO_VOICE, ADD_TO_UI, DELETE }
 
 const SELECTED_FONT_COLOR := Color('706deb')
+const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd')
 
 var file_name: String
 var file_path: String

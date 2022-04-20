@@ -1,6 +1,5 @@
-class_name Popochiu
 extends Node
-# (E) El núcleo de Popochiu
+# (E) Popochiu's core
 
 signal inline_dialog_requested(options)
 signal text_speed_changed(idx)
@@ -17,6 +16,7 @@ export var text_continue_auto := false
 export var languages := ['es_CO', 'es', 'en']
 export(int, 'co', 'es', 'en') var language_idx := 0 setget _set_language_idx
 export var use_translations := false
+export var items_on_start := []
 
 var in_run := false
 # Se usa para que no se pueda cambiar de escena si esta se ha cargado por completo,
@@ -66,6 +66,10 @@ func _ready() -> void:
 		).instance()
 		C.player = pc
 		C.characters.append(pc)
+	
+	# Add inventory items on start
+	for key in items_on_start:
+		I.add_item(key, false)
 	
 	set_process_input(false)
 
@@ -218,6 +222,9 @@ func room_readied(room: PopochiuRoom) -> void:
 			room.add_character(C.player)
 		
 		yield(C.player.idle(false), 'completed')
+	
+	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
+		c.room = room
 
 	room.on_room_entered()
 
@@ -320,6 +327,10 @@ func runnable(
 			yield(node, yield_signal)
 	else:
 		yield(get_tree(), 'idle_frame')
+
+
+#func add_item_to_start(script_name: String) -> void:
+#	_items_on_start.append(script_name)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░

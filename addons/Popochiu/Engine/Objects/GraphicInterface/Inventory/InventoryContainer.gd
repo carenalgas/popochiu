@@ -1,4 +1,3 @@
-class_name InventoryContainer
 extends Control
 
 signal item_added(item)

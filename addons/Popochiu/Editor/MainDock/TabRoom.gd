@@ -4,7 +4,8 @@ extends VBoxContainer
 
 signal row_clicked
 
-enum Types { PROP = 4, HOTSPOT, REGION, POINT }
+const PopochiuObjectRow := preload('ObjectRow/PopochiuObjectRow.gd')
+const Constants := preload('res://addons/Popochiu/Constants.gd')
 
 var opened_room: PopochiuRoom = null
 var main_dock: Panel setget _set_main_dock
@@ -14,28 +15,28 @@ var _rows_paths := []
 var _last_selected: PopochiuObjectRow = null
 
 onready var _types := {
-	Types.PROP: {
+	Constants.Types.PROP: {
 		group = find_node('PropsGroup'),
 		popup = 'CreateProp',
 		method = 'get_props',
-		type_class = Prop,
+		type_class = PopochiuProp,
 		parent = 'Props'
 	},
-	Types.HOTSPOT: {
+	Constants.Types.HOTSPOT: {
 		group = find_node('HotspotsGroup'),
 		popup = 'CreateHotspot',
 		method = 'get_hotspots',
-		type_class = Hotspot,
+		type_class = PopochiuHotspot,
 		parent = 'Hotspots'
 	},
-	Types.REGION: {
+	Constants.Types.REGION: {
 		group = find_node('RegionsGroup'),
 		popup = 'CreateRegion',
 		method = 'get_regions',
-		type_class = Region,
+		type_class = PopochiuRegion,
 		parent = 'Regions'
 	},
-	Types.POINT: {
+	Constants.Types.POINT: {
 		group = find_node('PointsGroup'),
 		method = 'get_points',
 		type_class = Position2D,
@@ -72,13 +73,23 @@ func scene_changed(scene_root: Node) -> void:
 		
 		for t in _types:
 			for c in opened_room.call(_types[t].method):
-				var row_path: String = '%s/%d/%s' %\
-				[opened_room.script_name, t, c.name]
+				var row_path := ''
+				
+				if c.script.resource_path.find('addons') == -1:
+					row_path = c.script.resource_path
+				else:
+					row_path = '%s/%s' % [
+						opened_room.filename.get_base_dir(),
+						_types[t].parent
+					]
 				
 				if row_path in _rows_paths: continue
 				
+				prints(row_path)
 				if c is _types[t].type_class:
-					var row: PopochiuObjectRow = _create_object_row(t, c.name)
+					var row: PopochiuObjectRow = _create_object_row(
+						t, c.name, row_path
+					)
 					_types[t].group.add(row)
 			
 			if _types[t].has('popup'):
@@ -96,8 +107,8 @@ func scene_closed(filepath: String) -> void:
 		_clear_content()
 
 
-func add_to_list(type: int, node_name: String) -> void:
-	_types[type].group.add(_create_object_row(type, node_name))
+func add_to_list(type: int, node_name: String, path := '') -> void:
+	_types[type].group.add(_create_object_row(type, node_name, path))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
@@ -119,11 +130,14 @@ func _clear_content() -> void:
 	yield(get_tree(), 'idle_frame')
 
 
-func _create_object_row(type: int, node_name: String) -> PopochiuObjectRow:
+func _create_object_row(
+	type: int, node_name: String, path := ''
+) -> PopochiuObjectRow:
 	var new_obj: PopochiuObjectRow = object_row.instance()
 
 	new_obj.name = node_name
 	new_obj.type = type
+	new_obj.path = path # This will be useful for deleting objects with interaction
 	new_obj.main_dock = main_dock
 	new_obj.connect('clicked', self, '_select_and_open_script')
 	

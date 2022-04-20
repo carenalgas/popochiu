@@ -1,5 +1,5 @@
 tool
-extends Region
+extends PopochiuRegion
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

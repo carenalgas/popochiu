@@ -2,10 +2,10 @@ tool
 extends VBoxContainer
 # Controla la lógica de la pestaña Audio en el dock Popochiu
 
-const AUDIO_MANAGER_SCENE :=\
-'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
+const AUDIO_MANAGER_SCENE := 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
 #const CUES_PATH := 'res://popochiu/AudioManager/Cues'
 const SEARCH_PATH := 'res://popochiu/'
+const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd')
 
 var main_dock: Panel setget _set_main_dock
 var audio_manager: Node = null
@@ -49,7 +49,7 @@ onready var _am_search_files: Button = find_node('BtnSearchAudioFiles')
 func _ready() -> void:
 	audio_manager = load(AUDIO_MANAGER_SCENE).instance()
 	_am_search_files.icon = get_icon('Search', 'EditorIcons')
-	_am_search_files.connect('pressed', self, '_search_audio_files')
+	_am_search_files.connect('pressed', self, 'search_audio_files')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░

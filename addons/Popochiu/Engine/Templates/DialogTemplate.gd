@@ -13,5 +13,5 @@ func start() -> void:
 	.start()
 
 
-func option_selected(opt: DialogOption) -> void:
+func option_selected(opt: PopochiuDialogOption) -> void:
 	pass

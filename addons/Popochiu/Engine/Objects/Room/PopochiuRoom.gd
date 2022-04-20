@@ -1,8 +1,11 @@
-# TODO: ¿Que se llame PopochiuRoomData?
 tool
 class_name PopochiuRoom, 'res://addons/Popochiu/icons/room.png'
 extends Node2D
-# Nodo base para la creación de habitaciones dentro del juego.
+# The scenes used by Popochiu. Can have: Props, Hotspots, Regions, Points and
+# Walkable areas. Characters can move through this and interact with its Props
+# and Hotspots. Regions can be used to trigger methods when a character enters,
+# or leaves.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 export var script_name := ''
 export var has_player := true
@@ -77,7 +80,8 @@ func _unhandled_input(event):
 			if I.active: I.set_active_item()
 		return
 
-	C.player.walk(get_local_mouse_position(), false)
+	if is_instance_valid(C.player):
+		C.player.walk(get_local_mouse_position(), false)
 
 
 func _get_property_list():
@@ -155,20 +159,29 @@ func get_point(point_name: String) -> Vector2:
 	return Vector2.ZERO
 
 
-func get_prop(prop_name: String) -> Prop:
+func get_prop(prop_name: String) -> PopochiuProp:
 	for p in $Props.get_children():
 		if p.script_name == prop_name or p.name == prop_name:
-			return p as Prop
-	printerr('PopochiuRoom[%s].get_prop: No se encontró la Prop %s' % [script_name, prop_name])
+			return p as PopochiuProp
+	printerr('PopochiuRoom[%s].get_prop: Prop %s not found' % [script_name, prop_name])
 	return null
 
 
-func get_hotspot(hotspot_name: String) -> Hotspot:
+func get_hotspot(hotspot_name: String) -> PopochiuHotspot:
 	for h in $Hotspots.get_children():
 		if h.script_name == hotspot_name or h.name == hotspot_name:
 			return h
-	printerr('PopochiuRoom[%s].get_hotspot: No se encontró el Hotspot %s' %\
+	printerr('PopochiuRoom[%s].get_hotspot: Hotspot %s not found' %\
 	[script_name, hotspot_name])
+	return null
+
+
+func get_region(region_name: String) -> PopochiuRegion:
+	for r in $Regions.get_children():
+		if r.script_name == region_name or r.name == region_name:
+			return r
+	printerr('PopochiuRoom[%s].get_region: Region %s not found' %\
+	[script_name, region_name])
 	return null
 
 
@@ -271,27 +284,27 @@ func _check_z_indexes(chr: PopochiuCharacter) -> void:
 	var y_pos := chr.global_position.y
 	
 	# Comparar la posición en Y del personaje con el baseline de cada Prop
+	var z_index_update := 0
 	if chr.is_moving:
-		for p in $Props.get_children():
-			if not p.visible: continue
-			if not p.always_on_top:
-				_check_baseline(p, y_pos, 2)
-			else:
-				p.z_index = 4
+		for prop in $Props.get_children():
+			if not prop.visible or not prop.is_in_group('PopochiuClickable'):
+				continue
+			if prop.always_on_top:
+				prop.z_index = 4
+			elif _is_in_front_of(prop, y_pos):
+				z_index_update += 1
+			prop.z_index = z_index_update
 	
 	# Comparar la posición en Y del personaje con el baseline de cada Personaje
-	for c in $Characters.get_children():
-		if c.get_instance_id() != chr.get_instance_id():
-			if not c.always_on_top:
-				_check_baseline(c, y_pos)
-			else:
-				c.z_index = 3
+#	for character in $Characters.get_children():
+#		if character.get_instance_id() != chr.get_instance_id():
+#			if character.always_on_top: character.z_index = 3
+#			else: _is_in_front_of(character, y_pos)
 
 
-func _check_baseline(nde: Node, chr_y_pos: float, z := 1) -> void:
-	if not nde is Clickable: return
-	var baseline: float = nde.to_global(Vector2.DOWN * nde.baseline).y
-	nde.z_index = z if baseline > chr_y_pos else 0
+func _is_in_front_of(nde: Node, chr_y_pos: float) -> bool:
+	var nde_baseline: float = nde.to_global(Vector2.DOWN * nde.baseline).y
+	return nde_baseline > chr_y_pos
 
 
 func _clear_navigation_path() -> void:

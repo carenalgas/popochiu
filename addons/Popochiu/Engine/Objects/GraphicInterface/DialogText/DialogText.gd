@@ -1,4 +1,3 @@
-class_name DialogText
 extends RichTextLabel
 # Permite mostrar textos caracter por caracter en un RichTextLabel para aprove-
 # char sus capacidades de animación y edición de fragmentos de texto.

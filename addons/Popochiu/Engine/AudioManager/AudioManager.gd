@@ -1,6 +1,8 @@
 tool
 extends Node
 
+const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd')
+
 #export(Array, Resource) var cues = [] setget _set_cues
 export var mx_cues := []
 export var sfx_cues := []

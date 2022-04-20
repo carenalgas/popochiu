@@ -1,11 +1,13 @@
 extends Node
-# (C) Para hacer cosas con los personajes
+# (C) To make characters do things.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-# El nodo PopochiuCharacter que se movió en la escena
+# character is a PopochiuCharacter node
 signal character_moved(character)
-signal character_spoke(character, message)
 signal character_move_ended(character)
+signal character_spoke(character, message)
 signal character_say(chr_name, dialog)
+signal character_grab_done(character)
 
 var player: PopochiuCharacter = null
 var characters := []
@@ -18,16 +20,26 @@ func character_say(
 	if is_in_queue: yield()
 
 	var talking_character: PopochiuCharacter = get_character(chr_name)
+	
 	if talking_character:
 		yield(talking_character.say(dialog, false), 'completed')
+		
+		if not is_in_queue:
+			G.done()
 	else:
-		printerr('CharacterInterface.character_say:', 'character %s not found')
+		printerr(
+			'[Popochiu] ICharacter.character_say:',
+			'character %s not found' % chr_name
+		)
 
 
 func player_say(dialog: String, is_in_queue := true) -> void:
-	if is_in_queue: yield()
-	
-	yield(player.say(dialog, false), 'completed')
+	if is_in_queue:
+		yield()
+		yield(player.say(dialog, false), 'completed')
+	else:
+		yield(player.say(dialog, false), 'completed')
+		G.done()
 
 
 func character_walk_to(
@@ -39,7 +51,10 @@ func character_walk_to(
 	if walking_character:
 		yield(walking_character.walk(position, false), 'completed')
 	else:
-		printerr('CharacterInterface.character_walk_to:', 'character %s not found')
+		printerr(
+			'[Popochiu] ICharacter.character_walk_to:',
+			'character %s not found' % chr_name
+		)
 
 
 func player_walk_to(position: Vector2, is_in_queue := true) -> void:

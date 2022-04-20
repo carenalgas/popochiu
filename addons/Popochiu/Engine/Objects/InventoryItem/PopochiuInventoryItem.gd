@@ -3,26 +3,28 @@ class_name InventoryItem, 'res://addons/Popochiu/icons/inventory_item.png'
 # Estos son los objetos que podrán ir al inventario:
 # GraphicInterfaceLayer > InventoryContainer > ... > InventoryGrid
 
+const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
+
 signal description_toggled(description)
 signal selected(item)
 
 export var description := ''
 export var stack := false
 export var script_name := ''
-export(Cursor.Type) var cursor
+export(CURSOR_TYPE) var cursor
 
 var amount := 1
 var in_inventory := false setget _set_in_inventory
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ Godot methods ░░░░
 func _ready():
 	connect('mouse_entered', self, '_toggle_description', [true])
 	connect('mouse_exited', self, '_toggle_description', [false])
 	connect('gui_input', self, '_on_action_pressed')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ public methods ░░░░
 # Cuando se le hace clic en el inventario
 func on_interact() -> void:
 	emit_signal('selected', self)
@@ -43,7 +45,7 @@ func added_to_inventory() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ private methods ░░░░
 func _toggle_description(display: bool) -> void:
 	Cursor.set_cursor(cursor if display else null)
 	G.show_info(description if display else '')
@@ -70,6 +72,7 @@ func _get_description() -> String:
 	return E.get_text(description)
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ setters & getters ░░░░
 func _set_in_inventory(value: bool) -> void:
 	in_inventory = value
 	

@@ -5,6 +5,8 @@ extends PanelContainer
 
 signal create_clicked
 
+const PopochiuObjectRow := preload('res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.gd')
+
 export var icon: Texture setget _set_icon
 export var is_open := true setget _set_is_open
 export var color: Color = Color('999999') setget _set_color

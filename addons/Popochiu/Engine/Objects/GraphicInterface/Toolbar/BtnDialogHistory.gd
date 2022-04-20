@@ -1,4 +1,4 @@
-extends ToolbarButton
+extends 'ToolbarButton.gd'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

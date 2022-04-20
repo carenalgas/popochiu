@@ -1,4 +1,3 @@
-class_name History
 extends Control
 
 onready var _lines_list: VBoxContainer = find_node('LinesList')

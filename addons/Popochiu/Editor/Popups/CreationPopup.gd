@@ -1,5 +1,6 @@
-class_name CreationPopup
 extends ConfirmationDialog
+
+const PopochiuDock := preload('res://addons/Popochiu/Editor/MainDock/PopochiuDock.gd')
 
 var _name := ''
 var _main_dock: PopochiuDock setget set_main_dock

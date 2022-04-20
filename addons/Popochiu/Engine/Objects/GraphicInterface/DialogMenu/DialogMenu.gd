@@ -1,8 +1,10 @@
-class_name DialogMenu
 extends Container
 
 signal shown
 signal hidden
+
+const PopochiuDialogOption :=\
+preload('res://addons/Popochiu/Engine/Objects/Dialog/PopochiuDialogOption.gd')
 
 export var option_scene: PackedScene
 export var default: Color = Color('5B6EE1')
@@ -36,13 +38,13 @@ func _clicked(event: InputEvent) -> void:
 			pass
 
 
-# Crea nodos de tipo DialogOption para los casos en los que se muestran opciones
+# Crea nodos de tipo PopochiuDialogOption para los casos en los que se muestran opciones
 # de diálogo creadas en tiempo de ejecución, o sea, que no están en uno de los
 # diálogos almacenados en la carpeta Dialogs.
 func _create_dialog_options(opts: Array) -> void:
 	var tmp_opts := []
 	for idx in opts.size():
-		var new_opt: DialogOption = DialogOption.new()
+		var new_opt: PopochiuDialogOption = PopochiuDialogOption.new()
 		var id := 'Opt%d' % (idx as int + 1)
 		new_opt.id = id
 		new_opt.text = opts[idx]
@@ -64,7 +66,7 @@ func _create_options(options := [], autoshow := false) -> void:
 
 	for opt in options:
 		var btn: Button = option_scene.instance() as Button
-		var dialog_option: DialogOption = opt
+		var dialog_option: PopochiuDialogOption = opt
 
 		btn.text = dialog_option.text
 		btn.add_color_override('font_color', default)
@@ -102,34 +104,14 @@ func remove_options() -> void:
 
 	_panel.rect_size.y = 0
 	_options.rect_size.y = 0
-#
-#
-#func update_options(updates_cfg := {}) -> void:
-#	if not updates_cfg.empty():
-#		var idx := 0
-#		for btn in get_children():
-#			btn = (btn as Button)
-#			var id := String(btn.get_index())
-#			if updates_cfg.has(id):
-#				if not updates_cfg[id]:
-#					current_options[idx].show = false
-#					btn.hide()
-#				else:
-#					current_options[idx].show = true
-#					btn.show()
-#			if btn.is_in_group('FocusGroup'):
-#				btn.remove_from_group('FocusGroup')
-#				btn.remove_from_group('DialogMenu')
-#				guiBrain.gui_collect_focusgroup()
-#			idx+= 1
-#
-#
+
+
 func show_options() -> void:
 	show()
 	emit_signal('shown')
 
 
-func _on_option_clicked(opt: DialogOption) -> void:
+func _on_option_clicked(opt: PopochiuDialogOption) -> void:
 	hide()
 	opt.used = true
 	D.emit_signal('option_selected', opt)

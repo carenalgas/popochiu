@@ -1,4 +1,4 @@
-extends ToolbarButton
+extends 'ToolbarButton.gd'
 
 export(Array, Texture) var btn_states := []
 export var states_descriptions := ['normal', 'rápido', 'inmediato']
