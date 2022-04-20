@@ -1,4 +1,4 @@
-extends 'ToolbarButton.gd'
+extends 'res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/ToolbarButton.gd'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░

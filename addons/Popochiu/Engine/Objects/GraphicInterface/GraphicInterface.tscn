@@ -52,6 +52,8 @@ margin_right = 50.0
 [node name="DialogMenu" parent="MainContainer" instance=ExtResource( 5 )]
 
 [node name="Toolbar" parent="MainContainer" instance=ExtResource( 6 )]
+margin_left = -86.0
+margin_right = -4.0
 
 [node name="ClickHandler" type="Button" parent="MainContainer"]
 anchor_right = 1.0

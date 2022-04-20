@@ -1,9 +1,7 @@
-extends NinePatchRect
+extends PanelContainer
 
-const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 const ToolbarButton := preload('ToolbarButton.gd')
 
-export(CURSOR_TYPE) var cursor
 export var script_name := ''
 export var used_in_game := true
 
@@ -13,7 +11,6 @@ var _can_hide := true
 
 onready var _btn_dialog_speed: ToolbarButton = find_node('BtnDialogSpeed')
 onready var _btn_power: ToolbarButton = find_node('BtnPower')
-onready var _grid: GridContainer = find_node('Grid')
 onready var _hide_y := rect_position.y - (rect_size.y - 4)
 
 
@@ -26,7 +23,7 @@ func _ready() -> void:
 	connect('mouse_exited', self, '_close')
 	
 	# Conectarse a señales de los hijos de la mamá
-	for b in _grid.get_children():
+	for b in $Box.get_children():
 		(b as TextureButton).connect('mouse_entered', self, '_disable_hide')
 		(b as TextureButton).connect('mouse_exited', self, '_enable_hide')
 

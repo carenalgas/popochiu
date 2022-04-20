@@ -1,10 +1,11 @@
 extends TextureButton
 
-const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
+#const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
+#const Constants := preload('res://addons/Popochiu/Constants.gd')
 
+#export(Constants.CursorType) var cursor := Constants.CursorType.USE
 export var description := '' setget ,get_description
 export var script_name := ''
-export(CURSOR_TYPE) var cursor
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -14,13 +15,13 @@ func _ready() -> void:
 	connect('mouse_exited', self, 'on_mouse_exited')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func on_pressed() -> void:
 	pass
 
 
 func on_mouse_entered() -> void:
-	Cursor.set_cursor(cursor)
+	Cursor.set_cursor(10)
 	G.show_info(self.description)
 
 
@@ -29,5 +30,6 @@ func on_mouse_exited() -> void:
 	G.show_info()
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_description() -> String:
 	return description
