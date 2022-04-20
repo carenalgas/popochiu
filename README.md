@@ -1,12 +1,12 @@
+### 🌎💬 [Lee la versión en Español](./LEEME.md) 💬🌎
+
 ![cover](./imgs/popochiu_hero.png "Popochiu")
 
 <!-- no toc -->
 Godot plugin to make point n' click games in a similar way to tools like [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [Power Quest](https://powerhoof.itch.io/powerquest).
 
 
-
-### 🌎💬 [Lee la versión en Español](./LEEME.md) 💬🌎
-
+### 🧠 To keep up to date with the latest updates, check the [development branch](https://github.com/mapedorr/popochiu/tree/dev) 🧠
 
 
 ## About

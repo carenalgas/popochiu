@@ -1,12 +1,12 @@
+### 🌎💬 [Read this in English](./README.md) 💬🌎
+
 ![cover](./imgs/popochiu_hero-es.png "Popochiu")
 
 <!-- no toc -->
 Plugin de Godot para crear juegos de aventura de manera similar a herramientas como [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
 
-
-### 🌎💬 [Read this in English](./README.md) 💬🌎
-
+### 🧠 Si quieres saber de las últimas actualizaciones, revisa la [rama de desarrollo](https://github.com/mapedorr/popochiu/tree/dev) 🧠
 
 
 ## ¿Qué es?
