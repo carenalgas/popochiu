@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://popochiu/InventoryItems/Key/InventoryKey.gd" type="Script" id=1]
+[ext_resource path="res://popochiu/InventoryItems/Key/key.png" type="Texture" id=2]
+
+[node name="InventoryKey" type="TextureRect"]
+mouse_filter = 0
+size_flags_vertical = 4
+texture = ExtResource( 2 )
+script = ExtResource( 1 )
+description = "Key"
+script_name = "Key"
+cursor = 10

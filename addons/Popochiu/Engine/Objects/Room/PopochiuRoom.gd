@@ -28,7 +28,7 @@ var _moving_character: PopochiuCharacter = null
 onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _enter_tree() -> void:
 	if not Engine.editor_hint:
 		for c in $Characters.get_children():

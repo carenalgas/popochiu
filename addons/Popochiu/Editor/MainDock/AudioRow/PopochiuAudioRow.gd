@@ -57,7 +57,7 @@ onready var _menu_cfg := [
 ]
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	_label.text = file_name if file_name else name
 	_menu_btn.icon = get_icon('GuiTabMenu', 'EditorIcons')

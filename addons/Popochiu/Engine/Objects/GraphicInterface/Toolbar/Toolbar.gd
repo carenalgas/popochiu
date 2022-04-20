@@ -17,7 +17,7 @@ onready var _grid: GridContainer = find_node('Grid')
 onready var _hide_y := rect_position.y - (rect_size.y - 4)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	rect_position.y = _hide_y
 	

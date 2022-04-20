@@ -20,7 +20,7 @@ onready var _continue_icon: TextureProgress = find_node('ContinueIcon')
 onready var _continue_icon_tween: Tween = _continue_icon.get_node('Tween')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	# Establecer la configuración inicial
 	clear()

@@ -1,7 +1,8 @@
 tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
-# Permite crear un nuevo ítem de inventario con los archivos necesarios para que
-# funcione en el Popochiu: InventoryIII.tscn, InventoryIII.gd, InventoryIII.tres.
+# Allows to create an Inventory Item with all the files needed for it to work:
+# Inventory___.tscn, Inventory___.gd, Inventory___.tres
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const INVENTORY_ITEM_SCRIPT_TEMPLATE := \
 'res://addons/Popochiu/Engine/Templates/InventoryItemTemplate.gd'
@@ -14,15 +15,15 @@ var _new_item_path := ''
 var _item_path_template: String
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	_clear_fields()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
-	# Por defecto: res://popochiu/InventoryItems/
+	# By default: res://popochiu/InventoryItems/
 	_item_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/Inventory%s'
 
 
@@ -53,9 +54,10 @@ func create() -> void:
 	#	propiedades por culpa de esa asignación.
 	new_item.set_script(load(_new_item_path + '.gd'))
 	new_item.script_name = _new_item_name
+	new_item.description = _new_item_name.capitalize()
+	new_item.cursor = Constants.CURSOR_TYPE.USE
 	new_item.name = 'Inventory' + _new_item_name
-	new_item.size_flags_horizontal = new_item.SIZE_EXPAND
-	new_item.size_flags_vertical = new_item.SIZE_EXPAND
+	new_item.size_flags_vertical = new_item.SIZE_SHRINK_CENTER
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el archivo de la escena
@@ -103,7 +105,7 @@ func create() -> void:
 	# Fin
 	hide()
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
 	._update_name(new_text)
 

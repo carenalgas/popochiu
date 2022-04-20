@@ -56,7 +56,7 @@ onready var _defaults := {
 }
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	# Por defecto se asume que el personaje jugable es el primero en la lista
 	# de personajes.
@@ -67,9 +67,9 @@ func _ready() -> void:
 		C.player = pc
 		C.characters.append(pc)
 	
-	# Add inventory items on start
+	# Add inventory items on start (ignore animations (3rd parameter))
 	for key in items_on_start:
-		I.add_item(key, false)
+		I.add_item(key, false, false)
 	
 	set_process_input(false)
 

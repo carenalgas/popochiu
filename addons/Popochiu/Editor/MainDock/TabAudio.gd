@@ -45,7 +45,7 @@ onready var _asp: AudioStreamPlayer = find_node('AudioStreamPlayer')
 onready var _am_search_files: Button = find_node('BtnSearchAudioFiles')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	audio_manager = load(AUDIO_MANAGER_SCENE).instance()
 	_am_search_files.icon = get_icon('Search', 'EditorIcons')

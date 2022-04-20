@@ -3,7 +3,7 @@
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/GraphicInterface.gd" type="Script" id=1]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Resources/PopochiuTheme.tres" type="Theme" id=2]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/DialogText.tscn" type="PackedScene" id=3]
-[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/InventoryContainer.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/Inventory.tscn" type="PackedScene" id=4]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogMenu/DialogMenu.tscn" type="PackedScene" id=5]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/Toolbar.tscn" type="PackedScene" id=6]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/History/History.tscn" type="PackedScene" id=7]
@@ -45,7 +45,9 @@ theme = ExtResource( 2 )
 
 [node name="DisplayBox" parent="MainContainer" instance=ExtResource( 11 )]
 
-[node name="InventoryContainer" parent="MainContainer" instance=ExtResource( 4 )]
+[node name="Inventory" parent="MainContainer" instance=ExtResource( 4 )]
+margin_left = 4.0
+margin_right = 50.0
 
 [node name="DialogMenu" parent="MainContainer" instance=ExtResource( 5 )]
 

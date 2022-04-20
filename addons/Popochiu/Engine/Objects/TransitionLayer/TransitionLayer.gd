@@ -15,7 +15,7 @@ onready var n := {
 	fade = find_node('Fade')
 }
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	for c in $Transitions.get_children():
 		(c as Sprite).modulate = fade_color

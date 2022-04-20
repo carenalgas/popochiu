@@ -15,7 +15,7 @@ export var tint := Color.white
 #export var scale_bottom := 1.0
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	connect('area_entered', self, '_check_area', [true])
 	connect('area_exited', self, '_check_area', [false])

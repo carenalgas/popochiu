@@ -18,7 +18,7 @@ preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
 var _shown_helpers := []
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _init() -> void:
 	# Gracias Dialogic
 	if Engine.editor_hint:

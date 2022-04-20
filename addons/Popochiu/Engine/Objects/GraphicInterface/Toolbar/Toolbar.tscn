@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=14 format=2]
 
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnQuit.gd" type="Script" id=1]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/Toolbar.gd" type="Script" id=2]
@@ -7,7 +7,6 @@
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_dialog_speed_02.png" type="Texture" id=5]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/bg.png" type="Texture" id=6]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_power.png" type="Texture" id=7]
-[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/fg.png" type="Texture" id=8]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnDialogSpeed.gd" type="Script" id=9]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnDialogHistory.gd" type="Script" id=10]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnDialogAuto.gd" type="Script" id=11]
@@ -29,9 +28,6 @@ patch_margin_top = 14
 patch_margin_right = 6
 patch_margin_bottom = 7
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Tween" type="Tween" parent="."]
 
@@ -45,9 +41,6 @@ grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
 size_flags_vertical = 0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Grid" type="GridContainer" parent="Panel"]
 margin_right = 67.0
@@ -65,8 +58,6 @@ margin_right = 16.0
 margin_bottom = 16.0
 texture_normal = ExtResource( 3 )
 script = ExtResource( 9 )
-description = "Velocidad del texto"
-cursor = 10
 btn_states = [ ExtResource( 3 ), ExtResource( 5 ), ExtResource( 4 ) ]
 
 [node name="BtnDialogAuto" type="TextureButton" parent="Panel/Grid"]
@@ -75,8 +66,6 @@ margin_right = 33.0
 margin_bottom = 16.0
 texture_normal = ExtResource( 12 )
 script = ExtResource( 11 )
-description = "Modo avance"
-cursor = 10
 btn_states = [ ExtResource( 12 ), ExtResource( 13 ) ]
 
 [node name="BtnDialogHistory" type="TextureButton" parent="Panel/Grid"]
@@ -85,8 +74,6 @@ margin_right = 50.0
 margin_bottom = 16.0
 texture_normal = ExtResource( 14 )
 script = ExtResource( 10 )
-description = "Historial"
-cursor = 10
 
 [node name="BtnQuit" type="TextureButton" parent="Panel/Grid"]
 margin_left = 51.0
@@ -94,14 +81,3 @@ margin_right = 67.0
 margin_bottom = 16.0
 texture_normal = ExtResource( 7 )
 script = ExtResource( 1 )
-description = "Salir"
-cursor = 10
-
-[node name="Foreground" type="TextureRect" parent="."]
-margin_right = 74.0
-margin_bottom = 21.0
-mouse_filter = 2
-texture = ExtResource( 8 )
-__meta__ = {
-"_edit_use_anchors_": false
-}

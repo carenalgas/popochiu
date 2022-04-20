@@ -4,7 +4,6 @@ extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 
 const SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/HotspotTemplate.gd'
 const HOTSPOT_SCENE := 'res://addons/Popochiu/Engine/Objects/Hotspot/PopochiuHotspot.tscn'
-const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 const Constants := preload('res://addons/Popochiu/Constants.gd')
 
 var room_tab: VBoxContainer = null
@@ -17,7 +16,7 @@ var _room_path: String
 var _room_dir: String
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	_clear_fields()
 
@@ -65,7 +64,7 @@ func create() -> void:
 	hotspot.name = _new_hotspot_name
 	hotspot.script_name = _new_hotspot_name
 	hotspot.description = _new_hotspot_name
-	hotspot.cursor = CURSOR_TYPE.ACTIVE
+	hotspot.cursor = Constants.CURSOR_TYPE.ACTIVE
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Agregar el hotspot a su habitación

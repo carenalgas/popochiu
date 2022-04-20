@@ -26,7 +26,7 @@ onready var _list: VBoxContainer = find_node('List')
 onready var _btn_create: Button = find_node('BtnCreate')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	# Establecer estado inicial
 	_header.add_stylebox_override('panel', _header.get_stylebox('panel').duplicate())

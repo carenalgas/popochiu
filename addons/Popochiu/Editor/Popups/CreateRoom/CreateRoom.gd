@@ -23,7 +23,7 @@ onready var _set_as_main: PanelContainer = find_node('SetAsMainContainer')
 onready var _set_as_main_check: CheckBox = _set_as_main.find_node('CheckBox')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	connect('about_to_show', self, '_check_if_first_room')
 	
