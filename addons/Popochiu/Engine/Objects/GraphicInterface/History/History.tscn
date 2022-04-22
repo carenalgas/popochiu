@@ -58,7 +58,7 @@ custom_fonts/title_font = ExtResource( 1 )
 custom_icons/close_highlight = ExtResource( 3 )
 custom_icons/close = ExtResource( 3 )
 custom_styles/panel = SubResource( 6 )
-window_title = "Historial"
+window_title = "History"
 __meta__ = {
 "_edit_use_anchors_": false
 }

@@ -1,14 +1,16 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=13 format=2]
 
 [ext_resource path="res://popochiu/Rooms/Technician/RoomTechnician.gd" type="Script" id=1]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Region/PopochiuRegion.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Prop/PopochiuProp.tscn" type="PackedScene" id=3]
 [ext_resource path="res://popochiu/Rooms/Technician/Props/sprites/bg.png" type="Texture" id=4]
 [ext_resource path="res://popochiu/Rooms/Technician/Regions/Floor/RegionFloor.gd" type="Script" id=5]
+[ext_resource path="res://popochiu/Rooms/Technician/Props/FileCabinet/PropFileCabinet.gd" type="Script" id=6]
 [ext_resource path="res://popochiu/Rooms/Technician/Props/sprites/table.png" type="Texture" id=7]
 [ext_resource path="res://popochiu/Rooms/Technician/Props/sprites/whisky.png" type="Texture" id=8]
 [ext_resource path="res://popochiu/Rooms/Technician/Props/sprites/notes.png" type="Texture" id=9]
 [ext_resource path="res://popochiu/Characters/Bug/CharacterBug.tscn" type="PackedScene" id=10]
+[ext_resource path="res://popochiu/Rooms/Technician/Props/FileCabinet/file_cabinet.png" type="Texture" id=11]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 4, 44, 27, 38, 88, 35, 26, 79, -89, 70, -28, 29, -73, 4, 27, -9, -5, 19, 27, 31 )
@@ -57,6 +59,20 @@ clickable = false
 cursor = 1
 script_name = "Notes"
 texture = ExtResource( 9 )
+
+[node name="FileCabinet" type="Area2D" parent="Props" instance=ExtResource( 3 )]
+position = Vector2( 58, 0 )
+script = ExtResource( 6 )
+__meta__ = {
+"_editor_description_": ""
+}
+description = "FileCabinet"
+cursor = 1
+script_name = "FileCabinet"
+texture = ExtResource( 11 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Props/FileCabinet"]
+polygon = PoolVector2Array( -13, -23, -2, -27, 14, -20, 13, 21, 1, 26, -12, 16 )
 
 [node name="Hotspots" type="Node2D" parent="."]
 
