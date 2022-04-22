@@ -1,7 +1,7 @@
 extends Node
 # (I) Para hacer cosas con el inventario
 
-signal item_added(item)
+signal item_added(item, animate)
 signal item_add_done(item)
 signal item_removed(item)
 signal item_remove_done(item)
@@ -17,7 +17,7 @@ export(Array, PackedScene) var inventory_items
 export var items := []
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	if not inventory_items.empty():
 		for ii in inventory_items:
@@ -29,14 +29,14 @@ func _ready():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
-func add_item(item_name: String, is_in_queue := true) -> void:
+func add_item(item_name: String, is_in_queue := true, animate := true) -> void:
 	if is_in_queue: yield()
 	
 	var i: InventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i) and not i.in_inventory:
 		i.in_inventory = true
 		
-		emit_signal('item_added', i)
+		emit_signal('item_added', i, animate)
 		
 		return yield(self, 'item_add_done')
 	

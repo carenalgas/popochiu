@@ -5,7 +5,7 @@ onready var _dialog_line_path := filename.get_base_dir() + '/DialogLine.tscn'
 onready var _interaction_line_path := filename.get_base_dir() + '/InteractionLine.tscn'
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	# Conectarse a eventos de los hijos
 	$WindowDialog.connect('popup_hide', self, '_destroy_history')

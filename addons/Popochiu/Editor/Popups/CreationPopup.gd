@@ -10,7 +10,7 @@ onready var _error_feedback: Label = find_node('ErrorFeedback')
 onready var _info: RichTextLabel = find_node('Info')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	register_text_enter(_input)
 	

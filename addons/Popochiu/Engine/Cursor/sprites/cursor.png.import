@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/btn_power.png-3f46837052eb2d0751151858990a7428.stex"
+path="res://.import/cursor.png-768e1c7c46dd147b77e800951552443c.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_power.png"
-dest_files=[ "res://.import/btn_power.png-3f46837052eb2d0751151858990a7428.stex" ]
+source_file="res://addons/Popochiu/Engine/Cursor/sprites/cursor.png"
+dest_files=[ "res://.import/cursor.png-768e1c7c46dd147b77e800951552443c.stex" ]
 
 [params]
 

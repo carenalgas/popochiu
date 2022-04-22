@@ -4,7 +4,7 @@ export(Array, Texture) var btn_states := []
 export var states_descriptions := ['normal', 'rápido', 'inmediato']
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	texture_normal = btn_states[E.text_speed_idx]
 

@@ -4,7 +4,7 @@ export(Array, Texture) var btn_states := []
 export var states_descriptions := ['manual', 'automático']
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	texture_normal = btn_states[1 if E.text_continue_auto else 0]
 

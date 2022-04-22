@@ -47,7 +47,7 @@ onready var _room_name: Label = find_node('RoomName')
 onready var _no_room_info: Label = find_node('NoRoomInfo')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	# Por defecto deshabilitar los botones hasta que no se haya seleccionado
 	# una habitación.

@@ -11,6 +11,20 @@ enum Types {
 	REGION,
 	POINT
 }
+enum CursorType {
+	NONE,
+	ACTIVE,
+	DOWN,
+	IDLE,
+	LEFT,
+	LOOK,
+	RIGHT,
+	SEARCH,
+	TALK,
+	UP,
+	USE,
+	WAIT,
+}
 
 const BASE_DIR := 'res://popochiu'
 const MAIN_DOCK_PATH := 'res://addons/Popochiu/Editor/MainDock/PopochiuDock.tscn'

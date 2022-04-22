@@ -2,7 +2,7 @@ extends CanvasLayer
 
 const DialogText := preload('DialogText/DialogText.gd')
 const DisplayBox := preload('DisplayBox/DisplayBox.gd')
-const InventoryContainer := preload('Inventory/InventoryContainer.gd')
+const Inventory := preload('Inventory/Inventory.gd')
 const DialogMenu := preload('DialogMenu/DialogMenu.gd')
 const Toolbar := preload('Toolbar/Toolbar.gd')
 const History := preload('History/History.gd')
@@ -10,14 +10,14 @@ const History := preload('History/History.gd')
 onready var _info_bar: Label = find_node('InfoBar')
 onready var _dialog_text: DialogText = find_node('DialogText')
 onready var _display_box: DisplayBox = find_node('DisplayBox')
-onready var _inventory_container: InventoryContainer = find_node('InventoryContainer')
+onready var _inventory: Inventory = find_node('Inventory')
 onready var _click_handler: Button = $MainContainer/ClickHandler
 onready var _dialog_menu: DialogMenu = find_node('DialogMenu')
 onready var _toolbar: Toolbar = find_node('Toolbar')
 onready var _history: History = find_node('History')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	# --------------------------------------------------------------------------
 	# Conectarse a eventos de los hijos
@@ -59,9 +59,9 @@ func _disable_panels(props := { blocking = true }) -> void:
 		_click_handler.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_info_bar.hide()
 	
-	if _inventory_container.is_disabled: return
+	if _inventory.is_disabled: return
 
-	_inventory_container.disable()
+	_inventory.disable()
 	_toolbar.disable()
 
 
@@ -74,10 +74,10 @@ func _enable_panels() -> void:
 
 #	_info_bar.text = ''
 	_info_bar.show()
-	_inventory_container.show()
+	_inventory.show()
 	_toolbar.show()
 
-	_inventory_container.enable()
+	_inventory.enable()
 	_toolbar.enable()
 
 
@@ -91,12 +91,12 @@ func _continue() -> void:
 
 
 func _hide_panels() -> void:
-	_inventory_container.hide()
+	_inventory.hide()
 	_info_bar.hide()
 	_toolbar.hide()
 
 
 func _show_panels() -> void:
-	_inventory_container.show()
+	_inventory.show()
 	_info_bar.show()
 	_toolbar.show()

@@ -6,7 +6,6 @@ extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 
 const PROP_SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/PropTemplate.gd'
 const BASE_PROP_PATH := 'res://addons/Popochiu/Engine/Objects/Prop/PopochiuProp.tscn'
-const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 const Constants := preload('res://addons/Popochiu/Constants.gd')
 
 var room_tab: VBoxContainer = null
@@ -21,7 +20,7 @@ var _room_dir: String
 onready var _interaction_checkbox: CheckBox = find_node('InteractionCheckbox')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	_clear_fields()
 	
@@ -82,7 +81,7 @@ func create() -> void:
 	prop.script_name = _new_prop_name
 	prop.description = _new_prop_name
 	prop.clickable = _interaction_checkbox.pressed
-	prop.cursor = CURSOR_TYPE.ACTIVE
+	prop.cursor = Constants.CURSOR_TYPE.ACTIVE
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Agregar la prop a su habitación

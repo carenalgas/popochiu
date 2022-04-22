@@ -8,7 +8,7 @@ onready var _fade_color: ColorPickerButton =\
 find_node('FadeColor').find_node('Input')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	_fade_color.connect('popup_closed', self, '_update_fade_color')
 

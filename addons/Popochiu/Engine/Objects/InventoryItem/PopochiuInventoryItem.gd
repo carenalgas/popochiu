@@ -1,30 +1,30 @@
-extends Control
+extends TextureRect
 class_name InventoryItem, 'res://addons/Popochiu/icons/inventory_item.png'
-# Estos son los objetos que podrán ir al inventario:
-# GraphicInterfaceLayer > InventoryContainer > ... > InventoryGrid
+# An inventory item
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 
 signal description_toggled(description)
 signal selected(item)
 
-export var description := ''
+export var description := '' setget ,get_description
 export var stack := false
 export var script_name := ''
 export(CURSOR_TYPE) var cursor
 
 var amount := 1
-var in_inventory := false setget _set_in_inventory
+var in_inventory := false setget set_in_inventory
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ Godot methods ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	connect('mouse_entered', self, '_toggle_description', [true])
 	connect('mouse_exited', self, '_toggle_description', [false])
 	connect('gui_input', self, '_on_action_pressed')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ public methods ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Cuando se le hace clic en el inventario
 func on_interact() -> void:
 	emit_signal('selected', self)
@@ -45,11 +45,31 @@ func added_to_inventory() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ private methods ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func set_in_inventory(value: bool) -> void:
+	in_inventory = value
+	
+	if in_inventory: added_to_inventory()
+
+
+func get_description() -> String:
+	if Engine.editor_hint:
+		if not description:
+			description = name
+		return description
+	return E.get_text(description)
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _toggle_description(display: bool) -> void:
 	Cursor.set_cursor(cursor if display else null)
 	G.show_info(description if display else '')
-	emit_signal('description_toggled', description if display else '')
+	if display:
+		emit_signal(
+			'description_toggled', description if description else script_name
+		)
+	else:
+		emit_signal('description_toggled', '')
 
 
 func _on_action_pressed(event: InputEvent) -> void: 
@@ -62,18 +82,3 @@ func _on_action_pressed(event: InputEvent) -> void:
 				on_interact()
 		elif mouse_event.is_action_pressed('popochiu-look'):
 			on_look()
-
-
-func _get_description() -> String:
-	if Engine.editor_hint:
-		if not description:
-			description = name
-		return description
-	return E.get_text(description)
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ setters & getters ░░░░
-func _set_in_inventory(value: bool) -> void:
-	in_inventory = value
-	
-	if in_inventory: added_to_inventory()

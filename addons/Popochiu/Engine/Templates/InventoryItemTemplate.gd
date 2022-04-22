@@ -1,25 +1,25 @@
 extends InventoryItem
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
-# TODO: Sobrescribir los métodos de Godot que hagan falta
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+# TODO: Overwrite Godot's methods as needed
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
-# Cuando se le hace clic en el inventario
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+# When the item is clicked in the inventory
 func on_interact() -> void:
 	pass
 
 
-# Lo que pasará cuando se haga clic derecho en el icono del inventario
+# When the item is right clicked in the inventory
 func on_look() -> void:
 	pass
 
 
-# Lo que pasará cuando se use otro InventoryItem del inventario sobre este
+# When a selected InventoryItem clicks this one in the inventory
 func on_item_used(_item: InventoryItem) -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
-# TODO: Poner aquí los métodos privados
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+# TODO: Private methods can go here

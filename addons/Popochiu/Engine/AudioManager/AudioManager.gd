@@ -23,7 +23,7 @@ var _fading_sounds := {}
 onready var _tween = $Tween
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos de Godot ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 # warning-ignore-all:return_value_discarded
 func _ready() -> void:
 	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
