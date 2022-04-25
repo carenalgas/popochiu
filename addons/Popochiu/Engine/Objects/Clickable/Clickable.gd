@@ -71,7 +71,7 @@ func _process(delta):
 			property_list_changed_notify()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_interact() -> void:
 	yield(E.run([
 		G.display('No hay na\' pa\' hacer con esta mondá')
@@ -110,7 +110,7 @@ func get_description() -> String:
 	return E.get_text(description)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func hide_helpers() -> void:
 	$BaselineHelper.hide()
 	$WalkToHelper.hide()
@@ -121,7 +121,7 @@ func show_helpers() -> void:
 	$WalkToHelper.show()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _toggle_description(display: bool) -> void:
 	set_process_unhandled_input(display)
 	Cursor.set_cursor(cursor if display else null)

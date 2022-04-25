@@ -23,7 +23,7 @@ func _ready() -> void:
 	$AnimationPlayer.connect('animation_finished', self, '_transition_finished')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func play_transition(name := 'fade_in', time := 1.0) -> void:
 	$AnimationPlayer.playback_speed = 1.0 / time
 	
@@ -42,6 +42,6 @@ func play_transition(name := 'fade_in', time := 1.0) -> void:
 			$AnimationPlayer.play('pass_down_out')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _transition_finished(anim_name := '') -> void:
 	emit_signal('transition_finished')

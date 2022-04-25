@@ -1,5 +1,6 @@
 extends Node
-# (D) Para hacer cosas con los árboles de diálogo
+# (D) To start branching dialogs and listen options selection.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 signal option_selected(opt)
 signal dialog_requested
@@ -10,14 +11,16 @@ var active := false
 var _trees := []
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func show_dialog(script_name: String) -> void:
 	var dialog: PopochiuDialog = E.get_dialog(script_name)
 	
 	if dialog:
 		active = true
 		dialog.start()
+		
 		yield(D, 'dialog_finished')
+		
 		active = false
 		G.done()
 	else:

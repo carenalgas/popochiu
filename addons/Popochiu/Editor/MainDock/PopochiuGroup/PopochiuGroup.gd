@@ -49,7 +49,7 @@ func _ready() -> void:
 		self.is_open = _external_list.get_child_count() > 0
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func clear_list() -> void:
 	for c in _list.get_children():
 		c.queue_free()
@@ -81,7 +81,7 @@ func get_elements() -> Array:
 	return _list.get_children()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _on_input(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
 	if mouse_event and mouse_event.button_index == BUTTON_LEFT \

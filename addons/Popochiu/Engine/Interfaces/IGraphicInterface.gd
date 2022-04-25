@@ -18,7 +18,7 @@ var blocked := false
 var waiting_click := false
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Muestra un texto en el centro de la pantalla. Puede servir para dar
 # instrucciones o indicaciones de un narrador. Algo que definitivamente
 # no hace parte del mundo del juego (o sea, que no ha sido dicho por un personaje).

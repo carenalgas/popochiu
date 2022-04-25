@@ -13,7 +13,7 @@ var player: PopochiuCharacter = null
 var characters := []
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func character_say(
 	chr_name: String, dialog: String, is_in_queue := true
 	) -> void:
@@ -49,7 +49,10 @@ func character_walk_to(
 	
 	var walking_character: PopochiuCharacter = get_character(chr_name)
 	if walking_character:
-		yield(walking_character.walk(position, false), 'completed')
+		yield(
+			walking_character.walk(E.current_room.to_global(position), false),
+			'completed'
+		)
 	else:
 		printerr(
 			'[Popochiu] ICharacter.character_walk_to:',
@@ -100,5 +103,5 @@ func get_character(script_name: String) -> PopochiuCharacter:
 
 	return null
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 # ???

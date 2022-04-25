@@ -1,16 +1,17 @@
 tool
 class_name PopochiuRegion, 'res://addons/Popochiu/icons/region.png'
 extends Area2D
+# Can trigger events when the player walks on them. Can tint the PC.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 export var script_name := ''
 export var description := ''
 export var enabled := true setget _set_enabled
-# TODO: Si walkable se vuelve falso, los personajes no deberían poder caminar
-#		por ahí.
+# TODO: If walkable is false, characters should not be able to walk through this.
 #export var walkable := true
 export var tint := Color.white
-# TODO: Implementar esto de la escala para que al entrar al área se agrande el
-#		personaje mientras esté en la parte de arriba o en la parte de abajo.
+# TODO: Make the scale of the character change depending on where it is placed in
+# the area.
 #export var scale_top := 1.0
 #export var scale_bottom := 1.0
 
@@ -21,16 +22,16 @@ func _ready() -> void:
 	connect('area_exited', self, '_check_area', [false])
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_character_entered(chr: PopochiuCharacter) -> void:
-	chr.modulate = tint
+	pass
 
 
 func on_character_exited(chr: PopochiuCharacter) -> void:
-	chr.modulate = Color.white
+	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _check_area(area: PopochiuCharacter, entered: bool) -> void:
 	if area is PopochiuCharacter:
 		if entered: on_character_entered(area)

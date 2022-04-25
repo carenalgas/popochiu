@@ -6,7 +6,7 @@ extends PopochiuRoom
 # TODO: Sobrescribir los métodos de Godot que hagan falta
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_room_entered() -> void:
 	pass
 
@@ -17,5 +17,5 @@ func on_room_transition_finished() -> void:
 #	E.run(['Bug: Amiguiiiiiiiiiiiiiiiiis!!!!'])
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 # TODO: Poner aquí los métodos privados

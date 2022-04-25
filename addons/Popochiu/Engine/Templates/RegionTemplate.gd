@@ -2,10 +2,13 @@ tool
 extends PopochiuRegion
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_character_entered(chr: PopochiuCharacter) -> void:
-	.on_character_entered(chr)
+	# This is optional. You can put here anything you want to happen when a
+	# character enters the area.
+	chr.modulate = tint
 
 
 func on_character_exited(chr: PopochiuCharacter) -> void:
-	.on_character_exited(chr)
+	# This is optional, too.
+	chr.modulate = Color.white

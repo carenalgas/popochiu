@@ -9,7 +9,7 @@ func _ready() -> void:
 	texture_normal = btn_states[1 if E.text_continue_auto else 0]
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_pressed() -> void:
 	E.text_continue_auto = !E.text_continue_auto
 	texture_normal = btn_states[1 if E.text_continue_auto else 0]

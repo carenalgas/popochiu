@@ -97,7 +97,7 @@ func _ready() -> void:
 	_btn_open.connect('pressed', self, '_open')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func select(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
 	if mouse_event\
@@ -114,7 +114,7 @@ func show_add_to_core() -> void:
 	_menu_popup.set_item_disabled(0, false)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _create_menu() -> void:
 	_menu_popup.clear()
 	

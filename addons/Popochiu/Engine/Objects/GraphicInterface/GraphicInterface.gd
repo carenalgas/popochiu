@@ -34,7 +34,7 @@ func _ready():
 	G.connect('interface_hidden', self, '_hide_panels')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _show_dialog_text(chr: PopochiuCharacter, msg := '') -> void:
 	_disable_panels()
 	

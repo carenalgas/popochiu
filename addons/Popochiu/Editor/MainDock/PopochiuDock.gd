@@ -90,7 +90,7 @@ func _ready() -> void:
 	_btn_move_folders.hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func fill_data() -> void:
 	# Buscar habitaciones, personajes, objetos de inventario y diálogos.
 	for t in _types:
@@ -266,7 +266,7 @@ func get_opened_room() -> PopochiuRoom:
 	return _tab_room.opened_room
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _open_popup(popup: Popup) -> void:
 	popup.popup_centered_clamped(Vector2(640, 360))
 

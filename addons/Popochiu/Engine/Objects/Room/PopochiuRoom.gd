@@ -3,7 +3,7 @@ class_name PopochiuRoom, 'res://addons/Popochiu/icons/room.png'
 extends Node2D
 # The scenes used by Popochiu. Can have: Props, Hotspots, Regions, Points and
 # Walkable areas. Characters can move through this and interact with its Props
-# and Hotspots. Regions can be used to trigger methods when a character enters,
+# and Hotspots. Regions can be used to trigger methods when a character enters
 # or leaves.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
@@ -24,6 +24,7 @@ var characters_cfg := [] # Array of Dictionary
 
 var _path := []
 var _moving_character: PopochiuCharacter = null
+var _baselines_order := []
 
 onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
 
@@ -45,6 +46,11 @@ func _enter_tree() -> void:
 
 func _ready():
 	set_process_unhandled_input(false)
+	
+	# Store the Props based on their baseline (from lowest to highest)
+	for p in $Props.get_children():
+		_baselines_order.append([p, p.baseline + p.position.y])
+	_baselines_order.sort_custom(self, '_sort_by_baseline')
 	
 	if limit_left != 0.0:
 		E.main_camera.limit_left = limit_left
@@ -111,29 +117,32 @@ func _get_property_list():
 	return properties
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
-# Aquí es donde se deben cargar los personajes de la habitación para que sean
-# renderizados en el juego.
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+# What happens when Popochiu loads the room. At this point the room is in the
+# tree but it is not visible
 func on_room_entered() -> void:
 	pass
 
 
+# What happens when the room changing transition finishes. At this point the room
+# is visible.
 func on_room_transition_finished() -> void:
 	pass
 
 
+# TODO: Make this to work and then add it to RoomTemplate.gd
 func on_entered_from_editor() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func get_walkable_area() -> Navigation2D:
 	return $WalkableAreas.get_child(0) as Navigation2D
 
 
-# Este método es llamado por Popochiu cuando se va a cambiar de
-# habitación. Por defecto sólo remueve los nodos de los personajes para que no
-# desaparezcan sus instancias globales.
+# This function is called by Popochiu before moving the PC to another room. By
+# default, characters are removed only to keep their instances in the array
+# of characters in ICharacter.gd.
 func on_room_exited() -> void:
 	set_process(false)
 	for c in $Characters.get_children():
@@ -221,7 +230,7 @@ func has_character(character_name: String) -> bool:
 	return result
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _move_along_path(distance):
 	var last_point = _moving_character.position
 	
@@ -244,9 +253,8 @@ func _move_along_path(distance):
 func _update_navigation_path(
 	character: PopochiuCharacter, start_position: Vector2, end_position: Vector2
 ):
-	# TODO: Esto debería ir en un diccionario para que se puedan tener varios
-	# personajes moviéndose al tiempo. O que cada personaje controle su
-	# movimiento. (;￢＿￢)
+	# TODO: Use a Dictionary so more than one character can move around at the
+	# same time. Or maybe each character should handle its own movement? (;￢＿￢)
 	_path = _nav_path.get_simple_path(start_position, end_position, true)
 	
 	if _path.empty(): return
@@ -270,8 +278,7 @@ func _set_state(stored_state: Dictionary) -> void:
 	self.visited_times = stored_state.visited_times
 
 
-# Retorna el estado de la habitación para que sea tenido en cuenta la próxima vez
-# que se entre a la habitación
+# Returns the state of the room
 func _get_state() -> Dictionary:
 	state.visited = self.visited
 	state.visited_first_time = self.visited_first_time
@@ -283,23 +290,26 @@ func _get_state() -> Dictionary:
 func _check_z_indexes(chr: PopochiuCharacter) -> void:
 	var y_pos := chr.global_position.y
 	
-	# Comparar la posición en Y del personaje con el baseline de cada Prop
+	# Compare the character Y position with each Prop's baseline
 	var z_index_update := 0
 	if chr.is_moving:
-		for prop in $Props.get_children():
+#		for prop in $Props.get_children():
+		for pair in _baselines_order:
+			var prop: PopochiuProp = pair[0]
 			if not prop.visible or not prop.is_in_group('PopochiuClickable'):
 				continue
 			if prop.always_on_top:
 				prop.z_index = 4
+				continue
 			elif _is_in_front_of(prop, y_pos):
 				z_index_update += 1
 			prop.z_index = z_index_update
 	
-	# Comparar la posición en Y del personaje con el baseline de cada Personaje
-#	for character in $Characters.get_children():
-#		if character.get_instance_id() != chr.get_instance_id():
-#			if character.always_on_top: character.z_index = 3
-#			else: _is_in_front_of(character, y_pos)
+	# Compare the character Y position with each other character's baseline
+	for character in $Characters.get_children():
+		if character.get_instance_id() != chr.get_instance_id():
+			if character.always_on_top: character.z_index = 3
+			else: _is_in_front_of(character, y_pos)
 
 
 func _is_in_front_of(nde: Node, chr_y_pos: float) -> bool:
@@ -312,3 +322,9 @@ func _clear_navigation_path() -> void:
 	_moving_character.idle(false)
 	C.emit_signal('character_move_ended', _moving_character)
 	_moving_character = null
+
+
+func _sort_by_baseline(a: Array, b: Array) -> bool:
+	if a[1] < b[1]:
+		return true
+	return false

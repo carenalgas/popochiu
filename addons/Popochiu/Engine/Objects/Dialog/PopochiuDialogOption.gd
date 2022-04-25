@@ -1,37 +1,41 @@
 tool
 extends Resource
+# Each option in a dialog.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 export var id := '' setget _set_id
 export var text := ''
 export var visible := true
 
-var description := '' # Aquí irá el código de localización
+# TODO: Store the localization code
+var description := ''
 var disabled := false
 var used := false
 var script_name := ''
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func turn_on() -> void:
+	# TODO: Implement functionality
 	pass
 
 
 func turn_off() -> void:
+	# TODO: Implement functionality
 	pass
 
 
 func turn_off_forever() -> void:
+	# TODO: Implement functionality
 	pass
 
 
 func hide_forever() -> void:
+	# TODO: Implement functionality
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _on_interacted() -> void:
 	pass
 
@@ -40,6 +44,7 @@ func _on_interaction_canceled() -> void:
 	pass
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _set_id(value: String) -> void:
 	id = value
 	script_name = id

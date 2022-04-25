@@ -1,11 +1,11 @@
 tool
 extends EditorPlugin
-# Configura el plugin
-# Aquí hay varios iconos que pueden resultar útiles:
+# Plugin setup.
+# Some icons that might be useful:
 #	godot\editor\editor_themes.cpp
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const Constants := preload('res://addons/Popochiu/Constants.gd')
-#const PopochiuDock := preload('res://addons/Popochiu/Editor/MainDock/PopochiuDock.gd')
 
 var main_dock: Panel
 
@@ -20,10 +20,8 @@ var _shown_helpers := []
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _init() -> void:
-	# Gracias Dialogic
+	# Thanks Dialogic ;)
 	if Engine.editor_hint:
-		# Verificar si existe la carpeta donde irán los elementos del juego.
-		# Si no, crear carpetas, mover archivos y actualizar Popochiu.tscn.
 		_init_file_structure()
 	
 	# Cargar los singleton para acceder directamente a objetos de Popochiu
@@ -71,7 +69,7 @@ func _enter_tree() -> void:
 		main_dock.show_move_folders_button()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func enable_plugin() -> void:
 	_create_input_actions()
 	
@@ -102,19 +100,17 @@ func disable_plugin() -> void:
 	remove_control_from_docks(main_dock)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+# Verify if the folders (where Popochiu's objects will be) exists
 func _init_file_structure() -> void:
 	var directory := Directory.new()
 	
 	_is_first_install = !directory.dir_exists(Constants.BASE_DIR)
 	
-	# Crear las carpetas que no existan
+	# Create the folders that does not exist
 	for d in _get_directories().values():
 		if not directory.dir_exists(d):
 			directory.make_dir_recursive(d)
-
-#	_is_first_install = directory.dir_exists(Constants.GRAPHIC_INTERFACE_SRC)\
-#	or directory.dir_exists(Constants.TRANSITION_LAYER_SRC)
 
 
 func _get_directories() -> Dictionary:
@@ -128,8 +124,8 @@ func _get_directories() -> Dictionary:
 
 
 func _create_input_actions() -> void:
-	# Registrar los Input de interact, look y skip
-	# Gracias QuentinCaffeino :) ()
+	# Register in the Project settings the Inputs for popochiu-interact,
+	# popochiu-look and popochiu-skip. Thanks QuentinCaffeino ;)
 	for d in _input_actions.ACTIONS:
 		var setting_name = 'input/' + d.name
 		
@@ -167,7 +163,7 @@ func _remove_input_actions() -> void:
 
 
 func _move_addon_folders() -> void:
-	# Eliminar las referencias de la interfaz gráfica y las animaciones de transición.
+	# Remove refs to the graphic interface and the transition animations
 	var result := OK
 	var popochiu: Node = load(Constants.POPOCHIU_SCENE).instance()
 	var gi: CanvasLayer = popochiu.get_node_or_null('GraphicInterface')
@@ -185,7 +181,7 @@ func _move_addon_folders() -> void:
 		'[Popochiu] Could not save after removing GI and TL from Popochiu.'
 	)
 
-	# Copiar archivos y carpetas que las desarrolladoras podrán modificar
+	# Move files and folders so developer can overwrite them
 	_directory.rename(
 		Constants.GRAPHIC_INTERFACE_SRC,
 		Constants.GRAPHIC_INTERFACE_SCENE.get_base_dir()
@@ -195,18 +191,17 @@ func _move_addon_folders() -> void:
 		Constants.TRANSITION_LAYER_SCENE.get_base_dir()
 	)
 	
-	# Refrescar el FileSystem
+	# Refresh FileSystem
 	_editor_file_system.scan()
 
-	# Corregir problemas de dependencias
+	# Fix dependencies
 	yield(_editor_file_system, 'filesystem_changed')
 	yield(_check_popochiu_dependencies(), 'completed')
 	main_dock.hide_move_folders_button()
 
 
-
 func _check_popochiu_dependencies() -> void:
-	# Agregar la interfaz gráfica y la escena de transiciones a Popochiu
+	# Add the graphic interface and the transitions scenes to Popochiu
 	var popochiu: Node = load(Constants.POPOCHIU_SCENE).instance()
 
 	if not popochiu:
@@ -216,7 +211,6 @@ func _check_popochiu_dependencies() -> void:
 	var save_popochiu := false
 
 	if not popochiu.get_node_or_null('GraphicInterface'):
-		# Actualizar dependencias de la GraphicInterface
 		_fix_dependencies(
 			_editor_file_system.get_filesystem_path(
 				Constants.GRAPHIC_INTERFACE_SCENE.get_base_dir()
@@ -230,7 +224,6 @@ func _check_popochiu_dependencies() -> void:
 		save_popochiu = true
 	
 	if not popochiu.get_node_or_null('TransitionLayer'):
-		# Actualizar dependencias de la TransitionLayer
 		_fix_dependencies(
 			_editor_file_system.get_filesystem_path(
 				Constants.TRANSITION_LAYER_SCENE.get_base_dir()
@@ -247,7 +240,6 @@ func _check_popochiu_dependencies() -> void:
 		var result := OK
 		var new_popochiu: PackedScene = PackedScene.new()
 		new_popochiu.pack(popochiu)
-		# _editor_file_system.scan()
 		result = ResourceSaver.save(Constants.POPOCHIU_SCENE, new_popochiu)
 		assert(
 			result == OK,
@@ -261,7 +253,7 @@ func _check_popochiu_dependencies() -> void:
 	yield(get_tree(), 'idle_frame')
 
 
-# Gracias PigDev:
+# Thnaks PigDev ;)
 # https://github.com/pigdevstudio/godot_tools/blob/master/source/tools/DependencyFixer.gd
 func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
 	var res := _editor_file_system.get_filesystem()

@@ -2,16 +2,17 @@ tool
 extends PopochiuDialog
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func start() -> void:
-	# Aquí van las instrucciones que se ejecutarán antes de que se muestren las
-	# opciones del diálogo
-	# P.e. Hacer que el personaje jugable mire al personaje con el que va a hablar,
-	# camine hasta éste y lo salude (o sea saludado).
+	# One can put here something to excecute before showing the dialog options.
+	# E.g. Make the PC to look at the character which it will talk to, walk to
+	# it, and say something (or make the character say something)
 	
-	# La llamada al método start del padre hace que se muestren las opciones
+	# This makes the options to appear
 	.start()
 
 
 func option_selected(opt: PopochiuDialogOption) -> void:
+	# Use match to check which option was selected and excecute something for
+	# each one
 	pass

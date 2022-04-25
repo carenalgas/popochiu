@@ -32,7 +32,7 @@ func _ready() -> void:
 			_all_in_one[ac.resource_name] = ac
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func semitone_to_pitch(pitch: float) -> float:
 	return pow(twelfth_root_of_two, pitch)
 
@@ -159,7 +159,7 @@ func _fade_in(
 	return stream_player
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 # Reproduce el sonido y se encarga de la lógica que lo asigna a un AudioStreamPlayer
 # o crea uno nuevo si no hay disponibles
 func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:

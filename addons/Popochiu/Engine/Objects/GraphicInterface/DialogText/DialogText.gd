@@ -41,7 +41,7 @@ func _ready() -> void:
 	E.connect('text_speed_changed', self, 'change_speed')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func play_text(props: Dictionary) -> void:
 	# Establecer el estado por defecto
 	_is_waiting_input = false
@@ -157,7 +157,7 @@ func change_speed(idx: int) -> void:
 	_secs_per_character = E.text_speeds[idx]
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _wait_input() -> void:
 	_is_waiting_input = true
 	

@@ -1,11 +1,17 @@
 tool
 class_name PopochiuHotspot, 'res://addons/Popochiu/icons/hotspot.png'
 extends 'res://addons/Popochiu/Engine/Objects/Clickable/PopochiuClickable.gd'
-# Permite crear áreas con las que se puede interactuar.
-# Ej: El cielo, algo que haga parte de la imagen de fondo.
+# Areas players can interact with.
+# E.g. Something that is part of the Room's background (the sky, an entrance).
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+func _ready() -> void:
+	add_to_group('hotspots')
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func on_interact() -> void:
 	.on_interact()
 

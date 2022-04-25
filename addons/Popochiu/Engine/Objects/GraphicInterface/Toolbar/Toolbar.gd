@@ -31,7 +31,7 @@ func _ready() -> void:
 		hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func disable() -> void:
 	is_disabled = true
 	$Tween.interpolate_property(
@@ -52,7 +52,7 @@ func enable() -> void:
 	$Tween.start()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _open() -> void:
 	if not is_disabled and rect_position.y != _hide_y: return
 	$Tween.interpolate_property(

@@ -28,7 +28,7 @@ func _ready():
 			})
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func add_item(item_name: String, is_in_queue := true, animate := true) -> void:
 	if is_in_queue: yield()
 	
@@ -74,7 +74,7 @@ func remove_item(item_name: String, is_in_queue := true) -> void:
 		yield(self, 'item_remove_done')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _get_item_instance(item_name: String) -> InventoryItem:
 	for ii in _item_instances:
 		var ii_name: String = ii.script_name

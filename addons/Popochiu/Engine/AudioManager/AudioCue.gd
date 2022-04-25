@@ -13,14 +13,14 @@ export(float, EASE) var attenuation = 1.0
 export(String, 'Master', 'Music') var bus = 0
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func get_pitch() -> float:
 	if rnd_pitch != Vector2.ZERO:
 		return _get_rnd_pitch()
 	return A.semitone_to_pitch(pitch)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _get_rnd_pitch() -> float:
 	randomize()
 	return A.semitone_to_pitch(pitch + rand_range(rnd_pitch.x, rnd_pitch.y))

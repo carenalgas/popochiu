@@ -14,16 +14,6 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/Clickable/Clickable.gd"
 }, {
-"base": "Resource",
-"class": "DialogOption",
-"language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/Dialog/DialogOption.gd"
-}, {
-"base": "Clickable",
-"class": "Hotspot",
-"language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/Hotspot/Hotspot.gd"
-}, {
 "base": "TextureRect",
 "class": "InventoryItem",
 "language": "GDScript",
@@ -78,21 +68,9 @@ _global_script_classes=[ {
 "class": "PopochiuRoomData",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/Room/PopochiuRoomData.gd"
-}, {
-"base": "Clickable",
-"class": "Prop",
-"language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/Prop/Prop.gd"
-}, {
-"base": "Area2D",
-"class": "Region",
-"language": "GDScript",
-"path": "res://addons/Popochiu/Engine/Objects/Region/Region.gd"
 } ]
 _global_script_class_icons={
 "Clickable": "",
-"DialogOption": "",
-"Hotspot": "res://addons/Popochiu/icons/hotspot.png",
 "InventoryItem": "res://addons/Popochiu/icons/inventory_item.png",
 "PopochiuCharacter": "res://addons/Popochiu/icons/character.png",
 "PopochiuCharacterData": "res://addons/Popochiu/icons/character.png",
@@ -103,9 +81,7 @@ _global_script_class_icons={
 "PopochiuProp": "res://addons/Popochiu/icons/prop.png",
 "PopochiuRegion": "res://addons/Popochiu/icons/region.png",
 "PopochiuRoom": "res://addons/Popochiu/icons/room.png",
-"PopochiuRoomData": "res://addons/Popochiu/icons/room.png",
-"Prop": "res://addons/Popochiu/icons/prop.png",
-"Region": "res://addons/Popochiu/icons/region.png"
+"PopochiuRoomData": "res://addons/Popochiu/icons/room.png"
 }
 
 [application]

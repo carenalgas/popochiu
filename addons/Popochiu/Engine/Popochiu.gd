@@ -93,7 +93,7 @@ func _unhandled_key_input(event: InputEventKey) -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func wait(time := 1.0, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	if cutscene_skipped:
@@ -333,7 +333,7 @@ func runnable(
 #	_items_on_start.append(script_name)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _eval_string(text: String) -> void:
 	match text:
 		'..':

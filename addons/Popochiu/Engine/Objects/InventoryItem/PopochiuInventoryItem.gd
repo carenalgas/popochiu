@@ -1,6 +1,6 @@
 extends TextureRect
 class_name InventoryItem, 'res://addons/Popochiu/icons/inventory_item.png'
-# An inventory item
+# An inventory item.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
@@ -24,23 +24,23 @@ func _ready():
 	connect('gui_input', self, '_on_action_pressed')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-# Cuando se le hace clic en el inventario
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+# When the item is clicked in the Inventory
 func on_interact() -> void:
-	emit_signal('selected', self)
+	pass
 
 
-# Lo que pasará cuando se haga clic derecho en el icono del inventario
+# When the item is right clicked in the Inventory
 func on_look() -> void:
 	pass
 
 
-# Lo que pasará cuando se use otro InventoryItem del inventario sobre este
+# When the item is clicked and there is another inventory item selected
 func on_item_used(_item: InventoryItem) -> void:
 	pass
 
 
-# Lo que pasará después de que se haya agregado el objeto al inventario.
+# Actions to excecute after the item is added to the Inventory
 func added_to_inventory() -> void:
 	pass
 

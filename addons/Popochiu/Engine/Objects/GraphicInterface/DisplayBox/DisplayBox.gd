@@ -18,7 +18,7 @@ func _ready() -> void:
 	hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _show_box(msg := '') -> void:
 	rect_size = Vector2(_min_width, _dflt_height)
 	autowrap = false

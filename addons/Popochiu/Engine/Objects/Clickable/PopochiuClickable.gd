@@ -48,7 +48,6 @@ func _unhandled_input(event):
 	if mouse_event and mouse_event.pressed:
 		E.clicked = self
 		if event.is_action_pressed('popochiu-interact'):
-			# TODO: Verificar si hay un elemento de inventario seleccionado
 			get_tree().set_input_as_handled()
 			if I.active:
 				on_item_used(I.active)
@@ -68,8 +67,6 @@ func _unhandled_input(event):
 func _process(delta):
 	if Engine.editor_hint:
 		if walk_to_point != get_node('WalkToHelper').position:
-			# Esto debería ocurrir sólo si se cambiar en el editor la posición
-			# del WalkToHelper
 			walk_to_point = get_node('WalkToHelper').position
 			property_list_changed_notify()
 		elif baseline != get_node('BaselineHelper').position.y:
@@ -77,7 +74,7 @@ func _process(delta):
 			property_list_changed_notify()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_interact() -> void:
 	yield(E.run([
 		G.display('No hay na\' pa\' hacer con esta mondá')
@@ -94,14 +91,14 @@ func on_item_used(item: InventoryItem) -> void:
 	pass
 
 
-# Oculta el nodo y hace que no reciba interacciones
+# Hides the Node and disables its interaction
 func disable(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	self.visible = false
 	yield(get_tree(), 'idle_frame')
 
 
-# Muestra el nodo y hace que reciba interacciones
+# Makes the Node visible and enables its interaction
 func enable(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	self.visible = true
@@ -116,7 +113,7 @@ func get_description() -> String:
 	return E.get_text(description)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func hide_helpers() -> void:
 	$BaselineHelper.hide()
 	$WalkToHelper.hide()
@@ -127,7 +124,7 @@ func show_helpers() -> void:
 	$WalkToHelper.show()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _toggle_description(display: bool) -> void:
 	set_process_unhandled_input(display)
 	Cursor.set_cursor(cursor if display else null)

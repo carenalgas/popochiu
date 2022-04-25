@@ -52,7 +52,7 @@ func _ready() -> void:
 	_am_search_files.connect('pressed', self, 'search_audio_files')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func fill_data() -> void:
 	# Buscar archivos de audio sin AudioCue
 	search_audio_files()
@@ -115,7 +115,7 @@ func delete_rows(filepaths: Array) -> void:
 					break
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _read_audio_manager_cues() -> void:
 	# Poner los AudioCue ya cargados en el AudioManager en su respectivo grupo
 	for d in _am_groups:

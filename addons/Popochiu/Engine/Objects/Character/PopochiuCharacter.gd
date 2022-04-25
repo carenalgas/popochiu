@@ -1,7 +1,7 @@
 tool
 class_name PopochiuCharacter, 'res://addons/Popochiu/icons/character.png'
 extends 'res://addons/Popochiu/Engine/Objects/Clickable/PopochiuClickable.gd'
-# Any Object that can move, walk, navigate rooms, has an inventory, etc.
+# Any Object that can move, walk, navigate rooms, have an inventory, etc.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 # TODO: Use a state machine
 
@@ -79,7 +79,7 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 	
 	play_walk()
 	
-	# Notify this so the room starts moving the character in the room
+	# Trigger the signal for the room  to start moving the character
 	emit_signal('started_walk_to', self, position, target_pos)
 	
 	yield(C, 'character_move_ended')

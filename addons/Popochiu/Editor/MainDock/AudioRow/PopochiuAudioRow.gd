@@ -79,7 +79,7 @@ func _ready() -> void:
 			_menu_popup.set_item_disabled(idx, true)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func select() -> void:
 	if is_instance_valid(audio_tab.last_selected):
 		audio_tab.last_selected.unselect()
@@ -94,7 +94,7 @@ func unselect() -> void:
 	_label.add_color_override('font_color', _dflt_font_color)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _create_menu() -> void:
 	_menu_popup.clear()
 	

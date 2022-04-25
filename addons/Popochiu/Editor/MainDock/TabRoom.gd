@@ -58,7 +58,7 @@ func _ready() -> void:
 		t.group.disable_create()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func scene_changed(scene_root: Node) -> void:
 	# Poner todo en su estado por defecto
 	if is_instance_valid(opened_room):
@@ -111,7 +111,7 @@ func add_to_list(type: int, node_name: String, path := '') -> void:
 	_types[type].group.add(_create_object_row(type, node_name, path))
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _clear_content() -> void:
 	opened_room = null
 		

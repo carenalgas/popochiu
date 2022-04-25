@@ -29,7 +29,7 @@ func _process(delta):
 	$Sprite.position = $AnimatedSprite.get_global_mouse_position()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos públicos ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func set_cursor(type := Type.IDLE) -> void:
 	if is_blocked: return
 	

@@ -30,7 +30,7 @@ func _ready() -> void:
 	hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos privados ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _clicked(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
 	if mouse_event and mouse_event.button_index == BUTTON_LEFT \

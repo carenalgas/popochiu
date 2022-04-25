@@ -2,7 +2,7 @@ tool
 extends PopochiuRegion
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ métodos virtuales ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_character_entered(chr: PopochiuCharacter) -> void:
 	.on_character_entered(chr)
 
