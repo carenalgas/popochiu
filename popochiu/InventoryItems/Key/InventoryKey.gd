@@ -1,4 +1,4 @@
-extends InventoryItem
+extends PopochiuInventoryItem
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -8,17 +8,17 @@ extends InventoryItem
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the item is clicked in the inventory
 func on_interact() -> void:
-	pass
+	.on_interact()
 
 
 # When the item is right clicked in the inventory
 func on_look() -> void:
-	pass
+	.on_look()
 
 
-# When a selected InventoryItem clicks this one in the inventory
-func on_item_used(_item: InventoryItem) -> void:
-	pass
+# When a selected PopochiuInventoryItem clicks this one in the inventory
+func on_item_used(item: PopochiuInventoryItem) -> void:
+	.on_item_used(item)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

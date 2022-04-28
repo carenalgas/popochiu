@@ -108,6 +108,10 @@ func break_run() -> void:
 
 
 func run(instructions: Array, show_gi := true) -> void:
+	if instructions.empty():
+		yield(get_tree(), 'idle_frame')
+		return
+	
 	if _running:
 		yield(get_tree(), 'idle_frame')
 		return run(instructions, show_gi)
@@ -278,7 +282,7 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 	return null
 
 
-func get_inventory_item_instance(script_name: String) -> InventoryItem:
+func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 	for ii in inventory_items:
 		var popochiu_inventory_item: PopochiuInventoryItemData = ii
 		if popochiu_inventory_item.script_name == script_name:

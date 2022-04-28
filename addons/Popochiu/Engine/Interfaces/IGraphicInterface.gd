@@ -1,9 +1,8 @@
 extends Node
-# (G) Para hacer cosas con la interfaz gráfica
-# TODO: Que todo esto vaya al script que se carga en la escena de la interfaz
-# gráfica, que en últimas irá también al Autoload.
-
+# (G) Data and functions to work with the graphic interface.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 # warning-ignore-all:unused_signal
+
 signal show_info_requested(info)
 signal show_box_requested(message)
 signal continue_clicked
@@ -19,9 +18,9 @@ var waiting_click := false
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-# Muestra un texto en el centro de la pantalla. Puede servir para dar
-# instrucciones o indicaciones de un narrador. Algo que definitivamente
-# no hace parte del mundo del juego (o sea, que no ha sido dicho por un personaje).
+# Shows a text in the center of the screen. Can be used as the narrator or to
+# give instructions to players. The visual style of the node that shows this text
+# can be modified in DisplayBox.tscn.
 func display(msg: String, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 
@@ -33,31 +32,32 @@ func display(msg: String, is_in_queue := true) -> void:
 	yield(self, 'continue_clicked')
 
 
-# Notifica que ya se pueden desbloquear lo elementos de la Interfaz Gráfica del
-# Jugador porque una secuencia de eventos (o cinemática (cutscene)) ha terminado.
-func done() -> void:
-	Cursor.set_cursor()
-	emit_signal('freed')
-
-
-# Muestra un texto en la parte inferior de la pantalla. Se usa para mostrar al
-# jugador el nombre del objeto sobre el cuál está el cursor y, eventualmente,
-# podría mostrarse lo que ocurrirá cuando haga clic izquierdo o dereche (p.e. si
-# hay un objeto del inventario seleccionado, podría en lugar de mostrarse el
-# nombre del objeto, mostrar Usar ____ en ____).
+# Shows a text at the bottom of the screen. It is used to show players the
+# name of nodes where the cursor is positioned (e.g. a Prop, a character). Could
+# be used to show what will happen when players use left and right click.
 func show_info(msg := '') -> void:
 	emit_signal('show_info_requested', msg)
 
 
+# Notifies that graphic interface elements are blocked.
 func block() -> void:
 	Cursor.set_cursor(Cursor.Type.WAIT)
 	emit_signal('blocked')
 
 
+# Notifies that graphic interface elements can be unlocked (e.g. when a cutscene
+# has ended).
+func done() -> void:
+	Cursor.set_cursor()
+	emit_signal('freed')
+
+
+# Notifies that the graphic interface should hide.
 func hide_interface() -> void:
 	emit_signal('interface_hidden')
 
 
+# Notifies that the inventory should appear.
 func show_inventory(time := 1.0, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
@@ -69,5 +69,6 @@ func show_inventory(time := 1.0, is_in_queue := true) -> void:
 	yield(self, 'inventory_shown')
 
 
+# Notifies that the history of events should appear.
 func show_history() -> void:
 	emit_signal('history_opened')

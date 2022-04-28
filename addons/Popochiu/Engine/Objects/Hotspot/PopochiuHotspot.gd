@@ -20,5 +20,5 @@ func on_look() -> void:
 	.on_look()
 
 
-func on_item_used(item: InventoryItem) -> void:
+func on_item_used(item: PopochiuInventoryItem) -> void:
 	.on_item_used(item)

@@ -1,5 +1,5 @@
 extends Node
-# (D) To start branching dialogs and listen options selection.
+# (D) Data and functions to start branching dialogs and listen options selection.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 signal option_selected(opt)
@@ -12,6 +12,7 @@ var _trees := []
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+# Starts a branching dialog identified by its script_name.
 func show_dialog(script_name: String) -> void:
 	var dialog: PopochiuDialog = E.get_dialog(script_name)
 	

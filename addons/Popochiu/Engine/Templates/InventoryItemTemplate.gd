@@ -1,4 +1,4 @@
-extends InventoryItem
+extends PopochiuInventoryItem
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -8,27 +8,27 @@ extends InventoryItem
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the item is clicked in the inventory
 func on_interact() -> void:
-	# Emit the "selected" signal to make the cursor get the appearance of this
-	# item (emit_signal('selected', self))
-	pass
+	# Replace the call to .on_interact() to implement your code. This only makes
+	# the default behavior to happen.
+	.on_interact()
 
 
 # When the item is right clicked in the inventory
 func on_look() -> void:
-	pass
+	# Replace the call to .on_look() to implement your code. This only makes
+	# the default behavior to happen.
+	.on_look()
 
 
 # When the item is clicked and there is another inventory item selected
-func on_item_used(_item: InventoryItem) -> void:
-	# Remove the _ from the _item parameter once you are ready to write this
-	# functionality
-	pass
+func on_item_used(item: PopochiuInventoryItem) -> void:
+	# Replace the call to .on_item_used(item) to implement your code. This only
+	# makes the default behavior to happen.
+	.on_item_used(item)
 
 
 # Actions to excecute after the item is added to the Inventory
 func added_to_inventory() -> void:
-	pass
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-# TODO: Private methods can go here
+	# Replace the call to .added_to_inventory() to implement your code. This only
+	# makes the default behavior to happen.
+	.added_to_inventory()

@@ -1,5 +1,5 @@
 extends TextureRect
-class_name InventoryItem, 'res://addons/Popochiu/icons/inventory_item.png'
+class_name PopochiuInventoryItem, 'res://addons/Popochiu/icons/inventory_item.png'
 # An inventory item.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
@@ -27,17 +27,21 @@ func _ready():
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the item is clicked in the Inventory
 func on_interact() -> void:
-	pass
+	emit_signal('selected', self)
 
 
 # When the item is right clicked in the Inventory
 func on_look() -> void:
-	pass
+	yield(E.run([
+		G.display('Nothing to see in this item')
+	]), 'completed')
 
 
 # When the item is clicked and there is another inventory item selected
-func on_item_used(_item: InventoryItem) -> void:
-	pass
+func on_item_used(item: PopochiuInventoryItem) -> void:
+	yield(E.run([
+		G.display('Nothing happens when using %s in this item' % item.description)
+	]), 'completed')
 
 
 # Actions to excecute after the item is added to the Inventory

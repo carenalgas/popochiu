@@ -1,5 +1,6 @@
 extends Node
-# (I) Para hacer cosas con el inventario
+# (I) Data and functions to work with inventory items.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 signal item_added(item, animate)
 signal item_add_done(item)
@@ -10,7 +11,7 @@ export var always_visible := false
 
 var _item_instances := []
 
-var active: InventoryItem
+var active: PopochiuInventoryItem
 var show_anims := true
 
 export(Array, PackedScene) var inventory_items
@@ -21,7 +22,7 @@ export var items := []
 func _ready():
 	if not inventory_items.empty():
 		for ii in inventory_items:
-			var item_instance: InventoryItem = ii.instance()
+			var item_instance: PopochiuInventoryItem = ii.instance()
 			_item_instances.append({
 				script_name = item_instance.script_name,
 				node = item_instance
@@ -29,10 +30,12 @@ func _ready():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+# Adds an item to the inventory. The item is added based on its script_name
+# property.
 func add_item(item_name: String, is_in_queue := true, animate := true) -> void:
 	if is_in_queue: yield()
 	
-	var i: InventoryItem = _get_item_instance(item_name)
+	var i: PopochiuInventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i) and not i.in_inventory:
 		i.in_inventory = true
 		
@@ -43,28 +46,33 @@ func add_item(item_name: String, is_in_queue := true, animate := true) -> void:
 	yield(get_tree(), 'idle_frame')
 
 
+# Adds an item to the inventory and make it the current selected item. That is,
+# the cursor will thake the item's texture as its texture.
 func add_item_as_active(item_name: String, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	var item: InventoryItem = yield(add_item(item_name, false), 'completed')
+	var item: PopochiuInventoryItem = yield(add_item(item_name, false), 'completed')
 	
 	if is_instance_valid(item):
 		set_active_item(item)
 
 
-func set_active_item(item: InventoryItem = null) -> void:
+# Makes the cursor use the texture of an item in the inventory.
+func set_active_item(item: PopochiuInventoryItem = null) -> void:
 	if item:
 		active = item
-		Cursor.set_item_cursor((item.get_node('Icon') as TextureRect).texture)
+		Cursor.set_item_cursor((item as TextureRect).texture)
 	else:
 		active = null
 		Cursor.remove_item_cursor()
 
 
+# Removes an item from the inventory. Its instance will be kept in the
+# _item_instances array.
 func remove_item(item_name: String, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	var i: InventoryItem = _get_item_instance(item_name)
+	var i: PopochiuInventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i):
 		i.in_inventory = false
 		
@@ -75,15 +83,15 @@ func remove_item(item_name: String, is_in_queue := true) -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _get_item_instance(item_name: String) -> InventoryItem:
+func _get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	for ii in _item_instances:
 		var ii_name: String = ii.script_name
 		if ii_name.to_lower() == item_name.to_lower():
-			return ii as InventoryItem
+			return ii as PopochiuInventoryItem
 	
-	# Si el ítem no está en la lista de ítems, entonces hay que intentar
-	# instanciarlo en base a la lista de ítems de Popochiu
-	var new_intentory_item: InventoryItem = E.get_inventory_item_instance(
+	# If the item is not in the list of items, then instantiate it based on the
+	# list of items (Resource) in Popochiu
+	var new_intentory_item: PopochiuInventoryItem = E.get_inventory_item_instance(
 		item_name
 	)
 	if new_intentory_item:

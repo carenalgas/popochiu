@@ -1,8 +1,8 @@
 extends Node
-# (C) To make characters do things.
+# (C) Data and functions to make characters do actions.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-# character is a PopochiuCharacter node
+# character parameter is a PopochiuCharacter node
 signal character_moved(character)
 signal character_move_ended(character)
 signal character_spoke(character, message)
@@ -14,6 +14,7 @@ var characters := []
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+# Makes a character (script_name) say something.
 func character_say(
 	chr_name: String, dialog: String, is_in_queue := true
 	) -> void:
@@ -33,6 +34,7 @@ func character_say(
 		)
 
 
+# Makes the PC (player character) say something.
 func player_say(dialog: String, is_in_queue := true) -> void:
 	if is_in_queue:
 		yield()
@@ -42,6 +44,7 @@ func player_say(dialog: String, is_in_queue := true) -> void:
 		G.done()
 
 
+# Makes a character (script_name) walk to a position in the current room.
 func character_walk_to(
 	chr_name: String, position: Vector2, is_in_queue := true
 	) -> void:
@@ -60,11 +63,14 @@ func character_walk_to(
 		)
 
 
+# Makes the PC (player character) walk to a position in the current room.
 func player_walk_to(position: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	yield(player.walk(position, false), 'completed')
 
 
+# Makes the PC (player character) walk to the walk_to_point position of the last
+# clicked Clickable (e.g. a Prop, a Hotspot, another character, etc.) in the room.
 func walk_to_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	yield(
@@ -73,6 +79,8 @@ func walk_to_clicked(is_in_queue := true) -> void:
 	)
 
 
+# Makes the PC (player character) look at the las clicked Clickable (e.g. a Prop,
+# another character, etc.).
 func face_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
@@ -82,6 +90,7 @@ func face_clicked(is_in_queue := true) -> void:
 		yield(C.player.face_right(false), 'completed')
 
 
+# Checks if the character exists in the array of PopochiuCharacter instances.
 func is_valid_character(chr_name: String) -> bool:
 	for c in characters:
 		if (c as PopochiuCharacter).script_name.to_lower() == chr_name.to_lower():
@@ -89,19 +98,17 @@ func is_valid_character(chr_name: String) -> bool:
 	return false
 
 
+# Gets a character identified by the received script_name.
 func get_character(script_name: String) -> PopochiuCharacter:
 	for c in characters:
 		if (c as PopochiuCharacter).script_name.to_lower() == script_name.to_lower():
 			return c
-
-	# Si el personaje no está en la lista de personajes, entonces hay que intentar
-	# instanciarlo en base a la lista de personajes de Popochiu
+	
+	# If the character doesn't existis, try to instantiate from the list of
+	# characters (Resource) in Popochiu
 	var new_character: PopochiuCharacter = E.get_character_instance(script_name)
 	if new_character:
 		characters.append(new_character)
 		return new_character
 
 	return null
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-# ???

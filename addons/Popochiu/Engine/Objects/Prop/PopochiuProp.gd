@@ -17,19 +17,6 @@ func _ready() -> void:
 	add_to_group('props')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func on_interact() -> void:
-	pass
-
-
-func on_look() -> void:
-	pass
-
-
-func on_item_used(item: InventoryItem) -> void:
-	pass
-
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _set_texture(value: Texture) -> void:
 	texture = value

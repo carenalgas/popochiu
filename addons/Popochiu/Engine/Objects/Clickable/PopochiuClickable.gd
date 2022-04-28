@@ -75,20 +75,25 @@ func _process(delta):
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+# When the node is clicked
 func on_interact() -> void:
 	yield(E.run([
-		G.display('No hay na\' pa\' hacer con esta mondá')
+		G.display('Nothing to do with it')
 	]), 'completed')
 
 
+# When the node is right clicked
 func on_look() -> void:
 	yield(E.run([
-		G.display('No hay nada para ver ahí')
+		G.display('Nothing to see here')
 	]), 'completed')
 
 
-func on_item_used(item: InventoryItem) -> void:
-	pass
+# When the node is clicked and there is an inventory item selected
+func on_item_used(item: PopochiuInventoryItem) -> void:
+	yield(E.run([
+		G.display('Nothing happens when using %s here' % item.description)
+	]), 'completed')
 
 
 # Hides the Node and disables its interaction
@@ -132,7 +137,7 @@ func _toggle_description(display: bool) -> void:
 		if not I.active:
 			G.show_info(description)
 		else:
-			G.show_info('Usar %s en %s' % [I.active.description, description])
+			G.show_info('Use %s with %s' % [I.active.description, description])
 	else:
 		G.show_info()
 

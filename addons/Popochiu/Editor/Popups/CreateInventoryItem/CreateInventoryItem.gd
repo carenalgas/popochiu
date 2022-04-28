@@ -49,7 +49,7 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear la instancia del nuevo ítem y asignarle el script creado
-	var new_item: InventoryItem = preload(BASE_INVENTORY_ITEM_PATH).instance()
+	var new_item: PopochiuInventoryItem = preload(BASE_INVENTORY_ITEM_PATH).instance()
 	#	Primero se asigna el script para que no se vayan a sobrescribir otras
 	#	propiedades por culpa de esa asignación.
 	new_item.set_script(load(_new_item_path + '.gd'))

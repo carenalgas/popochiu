@@ -15,7 +15,7 @@ func _ready():
 	
 	# Check if there are already items in the inventory (set manually in the scene)
 	for ii in $Box.get_children():
-		if ii is InventoryItem:
+		if ii is PopochiuInventoryItem:
 			ii.in_inventory = true
 			ii.connect('description_toggled', self, '_show_item_info')
 			ii.connect('selected', self, '_change_cursor')
@@ -81,11 +81,11 @@ func _show_item_info(description := '') -> void:
 	_can_hide_inventory = false if description else true
 
 
-func _change_cursor(item: InventoryItem) -> void:
+func _change_cursor(item: PopochiuInventoryItem) -> void:
 	I.set_active_item(item)
 
 
-func _add_item(item: InventoryItem, animate := true) -> void:
+func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 	$Box.add_child(item)
 	
 	item.connect('description_toggled', self, '_show_item_info')
@@ -99,7 +99,7 @@ func _add_item(item: InventoryItem, animate := true) -> void:
 	I.emit_signal('item_add_done', item)
 
 
-func _remove_item(item: InventoryItem) -> void:
+func _remove_item(item: PopochiuInventoryItem) -> void:
 	item.disconnect('description_toggled', self, '_show_item_info')
 	item.disconnect('selected', self, '_change_cursor')
 	
