@@ -8,6 +8,8 @@ Plugin de Godot para crear juegos de aventura de manera similar a herramientas c
 
 ### 🧠 Si quieres saber de las últimas actualizaciones, revisa la [rama de desarrollo](https://github.com/mapedorr/popochiu/tree/dev) 🧠
 
+### 💬 Únete a mi servidor de Discord para ver actualizaciones diarias y otras publicaciones https://discord.gg/Frv8C9Ters
+
 
 ## ¿Qué es?
 
