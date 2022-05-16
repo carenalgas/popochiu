@@ -4,11 +4,13 @@ signal transition_finished
 
 export var fade_color := Color.black
 
-enum Directions {
-	LEFT,
-	RIGHT,
-	UP,
-	DOWN
+enum {
+	FADE_IN_OUT,
+	FADE_IN,
+	FADE_OUT,
+	PASS_DOWN_IN_OUT,
+	PASS_DOWN_IN,
+	PASS_DOWN_OUT,
 }
 
 onready var n := {
@@ -24,21 +26,25 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func play_transition(name := 'fade_in', time := 1.0) -> void:
-	$AnimationPlayer.playback_speed = 1.0 / time
+func play_transition(type := FADE_IN, duration := 1.0) -> void:
+	$AnimationPlayer.playback_speed = 1.0 / duration
 	
-	match name:
-		'fade_in':
+	match type:
+		FADE_IN_OUT:
 			$AnimationPlayer.play('fade_in')
-		'fade_out':
+			yield($AnimationPlayer, 'animation_finished')
 			$AnimationPlayer.play('fade_out')
-		'pass_down':
+		FADE_IN:
+			$AnimationPlayer.play('fade_in')
+		FADE_OUT:
+			$AnimationPlayer.play('fade_out')
+		PASS_DOWN_IN_OUT:
 			$AnimationPlayer.play('pass_down_in')
 			yield($AnimationPlayer, 'animation_finished')
 			$AnimationPlayer.play('pass_down_out')
-		'pass_down_in':
+		PASS_DOWN_IN:
 			$AnimationPlayer.play('pass_down_in')
-		'pass_down_out':
+		PASS_DOWN_OUT:
 			$AnimationPlayer.play('pass_down_out')
 
 

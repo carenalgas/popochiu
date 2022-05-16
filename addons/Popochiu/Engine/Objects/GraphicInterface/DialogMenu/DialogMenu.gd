@@ -24,7 +24,7 @@ func _ready() -> void:
 	
 	# Conectarse a eventos de los evnetruchos
 	D.connect('dialog_requested', self, '_create_options', [true])
-	E.connect('inline_dialog_requested', self, '_create_dialog_options')
+	D.connect('inline_dialog_requested', self, '_create_dialog_options')
 	D.connect('dialog_finished', self, 'remove_options')
 
 	hide()

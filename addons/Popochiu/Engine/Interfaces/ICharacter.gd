@@ -9,8 +9,9 @@ signal character_spoke(character, message)
 signal character_say(chr_name, dialog)
 signal character_grab_done(character)
 
-var player: PopochiuCharacter = null
+var player: PopochiuCharacter = null setget set_player
 var characters := []
+var camera_owner: PopochiuCharacter = null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -112,3 +113,21 @@ func get_character(script_name: String) -> PopochiuCharacter:
 		return new_character
 
 	return null
+
+
+func change_camera_owner(c: PopochiuCharacter, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	if E.cutscene_skipped:
+		camera_owner = c
+		yield(get_tree(), 'idle_frame')
+		return
+	
+	camera_owner = c
+	yield(get_tree(), 'idle_frame')
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func set_player(value: PopochiuCharacter) -> void:
+	player = value
+	camera_owner = value

@@ -1,7 +1,6 @@
 extends Node
 # (E) Popochiu's core
 
-signal inline_dialog_requested(options)
 signal text_speed_changed(idx)
 signal language_changed
 
@@ -29,6 +28,10 @@ var clicked: Node
 var cutscene_skipped := false
 var rooms_states := {}
 var history := []
+var width := 0.0 setget ,get_width
+var height := 0.0 setget ,get_height
+var half_width := 0.0 setget ,get_half_width
+var half_height := 0.0 setget ,get_half_height
 
 # TODO: Estas podrían no estar aquí sino en un nodo de VFX que tenga la escena
 var _is_camera_shaking := false
@@ -41,10 +44,6 @@ var _shake_timer := 0.0
 var _running := false
 var _use_transition_on_room_change := true
 
-onready var game_width := get_viewport().get_visible_rect().end.x
-onready var game_height := get_viewport().get_visible_rect().end.y
-onready var half_width := game_width / 2.0
-onready var half_height := game_height / 2.0
 onready var main_camera: Camera2D = find_node('MainCamera')
 onready var _defaults := {
 	camera_limits = {
@@ -75,8 +74,18 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if not Engine.editor_hint and is_instance_valid(C.player):
-		main_camera.position = C.player.position
+	if _is_camera_shaking:
+		_shake_timer -= delta
+		main_camera.offset = Vector2.ZERO + Vector2(
+			rand_range(-1.0, 1.0) * _camera_shake_amount,
+			rand_range(-1.0, 1.0) * _camera_shake_amount
+		)
+		
+		if _shake_timer <= 0.0:
+			_is_camera_shaking = false
+			main_camera.offset = Vector2.ZERO
+	elif not Engine.editor_hint and is_instance_valid(C.camera_owner):
+		main_camera.position = C.camera_owner.position
 
 
 func _input(event: InputEvent) -> void:
@@ -150,17 +159,12 @@ func run_cutscene(instructions: Array) -> void:
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		$TransitionLayer.play_transition('pass_down_out', skip_cutscene_time)
+		$TransitionLayer.play_transition(
+			$TransitionLayer.PASS_DOWN_OUT, skip_cutscene_time
+		)
 		yield($TransitionLayer, 'transition_finished')
 
 	cutscene_skipped = false
-
-
-# Retorna la opción seleccionada en el diálogo creado en tiempo de ejecución.
-# NOTA: El flujo del juego se pausa hasta que el jugador seleccione una opción.
-func show_inline_dialog(opts: Array) -> String:
-	emit_signal('inline_dialog_requested', opts)
-	return yield(D, 'option_selected')
 
 
 func goto_room(script_name := '', use_transition := true) -> void:
@@ -173,7 +177,7 @@ func goto_room(script_name := '', use_transition := true) -> void:
 
 	_use_transition_on_room_change = use_transition
 	if use_transition:
-		$TransitionLayer.play_transition('fade_in')
+		$TransitionLayer.play_transition($TransitionLayer.FADE_IN)
 		yield($TransitionLayer, 'transition_finished')
 	
 	C.player.last_room = current_room.script_name
@@ -233,7 +237,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	room.on_room_entered()
 
 	if _use_transition_on_room_change:
-		$TransitionLayer.play_transition('fade_out')
+		$TransitionLayer.play_transition($TransitionLayer.FADE_OUT)
 		yield($TransitionLayer, 'transition_finished')
 		yield(wait(0.3, false), 'completed')
 	else:
@@ -249,23 +253,37 @@ func room_readied(room: PopochiuRoom) -> void:
 	room.on_room_transition_finished()
 
 
-func tween_zoom(target: Vector2, duration := 1.0, is_in_queue := true) -> void:
+func camera_offset(offset := Vector2.ZERO, is_in_queue := true) -> void:
 	if is_in_queue: yield()
+	
+	main_camera.offset = offset
+	
+	yield(get_tree(), 'idle_frame')
+
+
+func camera_shake(\
+strength := 1.0, duration := 1.0, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	_camera_shake_amount = strength
+	_shake_timer = duration
+	_is_camera_shaking = true
+	
+	yield(get_tree().create_timer(duration), 'timeout')
+
+
+func camera_zoom(\
+target := Vector2.ONE, duration := 1.0, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
 	$Tween.interpolate_property(
 		main_camera, 'zoom',
 		main_camera.zoom, target,
 		duration, Tween.TRANS_SINE, Tween.EASE_OUT
 	)
 	$Tween.start()
+	
 	yield($Tween, 'tween_all_completed')
-
-
-func shake_camera(props := {}) -> void:
-	if props.has('strength'):
-		_camera_shake_amount = props.strength
-	if props.has('duration'):
-		_shake_timer = props.duration
-	_is_camera_shaking = true
 
 
 func get_text(msg: String) -> String:
@@ -333,8 +351,37 @@ func runnable(
 		yield(get_tree(), 'idle_frame')
 
 
-#func add_item_to_start(script_name: String) -> void:
-#	_items_on_start.append(script_name)
+func room_exists(script_name: String) -> bool:
+	for r in rooms:
+		var room = r as PopochiuRoomData
+		if room.script_name.to_lower() == script_name.to_lower():
+			return true
+	return false
+
+
+func play_transition(type: int, duration: float, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	$TransitionLayer.play_transition(type, duration)
+	
+	yield($TransitionLayer, 'transition_finished')
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_width() -> float:
+	return get_viewport().get_visible_rect().end.x
+
+
+func get_height() -> float:
+	return get_viewport().get_visible_rect().end.y
+
+
+func get_half_width() -> float:
+	return get_viewport().get_visible_rect().end.x / 2.0
+
+
+func get_half_height() -> float:
+	return get_viewport().get_visible_rect().end.y / 2.0
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
