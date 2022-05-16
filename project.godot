@@ -63,6 +63,11 @@ _global_script_classes=[ {
 "class": "PopochiuRoomData",
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/Room/PopochiuRoomData.gd"
+}, {
+"base": "CanvasLayer",
+"class": "TransitionLayer",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.gd"
 } ]
 _global_script_class_icons={
 "PopochiuCharacter": "res://addons/Popochiu/icons/character.png",
@@ -75,7 +80,8 @@ _global_script_class_icons={
 "PopochiuProp": "res://addons/Popochiu/icons/prop.png",
 "PopochiuRegion": "res://addons/Popochiu/icons/region.png",
 "PopochiuRoom": "res://addons/Popochiu/icons/room.png",
-"PopochiuRoomData": "res://addons/Popochiu/icons/room.png"
+"PopochiuRoomData": "res://addons/Popochiu/icons/room.png",
+"TransitionLayer": ""
 }
 
 [application]

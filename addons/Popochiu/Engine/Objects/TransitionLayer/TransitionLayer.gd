@@ -1,4 +1,5 @@
 extends CanvasLayer
+class_name TransitionLayer
 
 signal transition_finished
 

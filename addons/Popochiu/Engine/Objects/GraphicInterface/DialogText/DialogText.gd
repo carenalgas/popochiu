@@ -73,7 +73,7 @@ func play_text(props: Dictionary) -> void:
 	rect_position.x -= $Label.rect_size.x / 2
 
 	if (rect_position.x < -_wrap_width_limit or
-	rect_position.x + $Label.rect_size.x > E.game_width + _wrap_width_limit):
+	rect_position.x + $Label.rect_size.x > E.width + _wrap_width_limit):
 		# Si el texto se sale de la pantalla, se ajusta el tamaño del nodo a su
 		# valor mínimo.
 		$Label.rect_size.x = min_wrap_width
@@ -82,8 +82,8 @@ func play_text(props: Dictionary) -> void:
 	rect_position.x = props.position.x - (rect_size.x / 2)
 	if rect_position.x < 0:
 		rect_position.x = 4.0
-	elif rect_position.x + rect_size.x > E.game_width:
-		rect_position.x = E.game_width - rect_size.x - 4.0
+	elif rect_position.x + rect_size.x > E.width:
+		rect_position.x = E.width - rect_size.x - 4.0
 
 	# 2. Asignar los textos al nodo y su alineación.
 	push_color(props.color)

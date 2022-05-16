@@ -1,8 +1,8 @@
 tool
 extends PopochiuProp
 
-var TransitionLayer :=\
-preload('res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.gd')
+#var TransitionLayer :=\
+#preload('res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.gd')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
@@ -24,7 +24,7 @@ func on_interact() -> void:
 				E.play_transition(TransitionLayer.PASS_DOWN_IN, 0.5),
 				'...',
 				E.play_transition(TransitionLayer.PASS_DOWN_OUT, 0.5),
-				'Player: Oh my...'
+				'Player: [shake]Oh myyyyyyyyyyyyyyyy[/shake]'
 			])
 		'Opt2':
 			E.run([
