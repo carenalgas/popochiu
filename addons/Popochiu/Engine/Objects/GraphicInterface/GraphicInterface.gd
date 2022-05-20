@@ -32,6 +32,7 @@ func _ready():
 	G.connect('blocked', self, '_disable_panels')
 	G.connect('freed', self, '_enable_panels')
 	G.connect('interface_hidden', self, '_hide_panels')
+	G.connect('interface_shown', self, '_show_panels')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

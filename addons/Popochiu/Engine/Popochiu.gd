@@ -16,6 +16,7 @@ export var languages := ['es_CO', 'es', 'en']
 export(int, 'co', 'es', 'en') var language_idx := 0 setget _set_language_idx
 export var use_translations := false
 export var items_on_start := []
+export var inventory_limit := 0
 
 var in_run := false
 # Se usa para que no se pueda cambiar de escena si esta se ha cargado por completo,
@@ -173,7 +174,6 @@ func goto_room(script_name := '', use_transition := true) -> void:
 	self.in_room = false
 
 	G.block()
-	G.blocked = true
 
 	_use_transition_on_room_change = use_transition
 	if use_transition:
@@ -246,7 +246,6 @@ func room_readied(room: PopochiuRoom) -> void:
 	if not room.hide_gi:
 		G.done()
 
-	G.blocked = false
 	self.in_room = true
 
 	# Esto también hace que la habitación empiece a escuchar eventos de Input

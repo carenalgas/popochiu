@@ -14,6 +14,7 @@ characters = [ ExtResource( 9 ) ]
 inventory_items = [ ExtResource( 7 ) ]
 skip_cutscene_time = 0.25
 text_speeds = [ 0.05, 0.01, 0.0 ]
+inventory_limit = 3
 
 [node name="Tween" type="Tween" parent="."]
 

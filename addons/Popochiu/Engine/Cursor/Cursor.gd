@@ -31,7 +31,7 @@ func _process(delta):
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func set_cursor(type := Type.IDLE) -> void:
-	if is_blocked: return
+	if is_blocked or G.is_blocked: return
 	
 	var anim_name: String = Type.keys()[Type.IDLE]
 	if Type.values().has(type):
@@ -39,13 +39,15 @@ func set_cursor(type := Type.IDLE) -> void:
 	$AnimatedSprite.play(anim_name.to_lower())
 
 
-func set_item_cursor(texture: Texture) -> void:
+func set_cursor_texture(texture: Texture) -> void:
+	if is_blocked or G.is_blocked: return
+	
 	$AnimatedSprite.hide()
 	$Sprite.texture = texture
 	$Sprite.show()
 
 
-func remove_item_cursor() -> void:
+func remove_cursor_texture() -> void:
 	$Sprite.texture = null
 	$Sprite.hide()
 	$AnimatedSprite.show()

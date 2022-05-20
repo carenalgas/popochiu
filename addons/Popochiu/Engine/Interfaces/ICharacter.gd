@@ -3,10 +3,8 @@ extends Node
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 # character parameter is a PopochiuCharacter node
-signal character_moved(character)
 signal character_move_ended(character)
 signal character_spoke(character, message)
-signal character_say(chr_name, dialog)
 signal character_grab_done(character)
 
 var player: PopochiuCharacter = null setget set_player
@@ -16,23 +14,23 @@ var camera_owner: PopochiuCharacter = null
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Makes a character (script_name) say something.
-func character_say(
-	chr_name: String, dialog: String, is_in_queue := true
-	) -> void:
+func character_say(\
+chr_name: String, dialog: String, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 
 	var talking_character: PopochiuCharacter = get_character(chr_name)
 	
 	if talking_character:
 		yield(talking_character.say(dialog, false), 'completed')
-		
-		if not is_in_queue:
-			G.done()
 	else:
 		printerr(
 			'[Popochiu] ICharacter.character_say:',
 			'character %s not found' % chr_name
 		)
+		yield(get_tree(), 'idle_frame')
+	
+	if not is_in_queue:
+		G.done()
 
 
 # Makes the PC (player character) say something.
@@ -46,9 +44,8 @@ func player_say(dialog: String, is_in_queue := true) -> void:
 
 
 # Makes a character (script_name) walk to a position in the current room.
-func character_walk_to(
-	chr_name: String, position: Vector2, is_in_queue := true
-	) -> void:
+func character_walk_to(\
+chr_name: String, position: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
 	var walking_character: PopochiuCharacter = get_character(chr_name)
@@ -62,6 +59,7 @@ func character_walk_to(
 			'[Popochiu] ICharacter.character_walk_to:',
 			'character %s not found' % chr_name
 		)
+		yield(get_tree(), 'idle_frame')
 
 
 # Makes the PC (player character) walk to a position in the current room.
@@ -71,7 +69,8 @@ func player_walk_to(position: Vector2, is_in_queue := true) -> void:
 
 
 # Makes the PC (player character) walk to the walk_to_point position of the last
-# clicked Clickable (e.g. a Prop, a Hotspot, another character, etc.) in the room.
+# clicked PopochiuClickable (e.g. a PopochiuProp, a PopochiuHotspot, another
+# PopochiuCharacter, etc.) in the room.
 func walk_to_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	yield(
@@ -80,8 +79,8 @@ func walk_to_clicked(is_in_queue := true) -> void:
 	)
 
 
-# Makes the PC (player character) look at the las clicked Clickable (e.g. a Prop,
-# another character, etc.).
+# Makes the PC (player character) look at the last clicked PopochiuClickable.
+# E.g. a PopochiuProp, another PopochiuCharacter, etc.
 func face_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
@@ -92,9 +91,9 @@ func face_clicked(is_in_queue := true) -> void:
 
 
 # Checks if the character exists in the array of PopochiuCharacter instances.
-func is_valid_character(chr_name: String) -> bool:
+func is_valid_character(script_name: String) -> bool:
 	for c in characters:
-		if (c as PopochiuCharacter).script_name.to_lower() == chr_name.to_lower():
+		if (c as PopochiuCharacter).script_name.to_lower() == script_name.to_lower():
 			return true
 	return false
 

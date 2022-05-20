@@ -23,7 +23,7 @@ func _ready() -> void:
 	connect('gui_input', self, '_clicked')
 	
 	# Conectarse a eventos de los evnetruchos
-	D.connect('dialog_requested', self, '_create_options', [true])
+	D.connect('dialog_options_requested', self, '_create_options', [true])
 	D.connect('inline_dialog_requested', self, '_create_dialog_options')
 	D.connect('dialog_finished', self, 'remove_options')
 

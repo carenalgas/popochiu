@@ -7,13 +7,16 @@ extends PopochiuProp
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_interact() -> void:
+	I.show_inventory(3.0, false)
+	return
+	
 	yield(E.run([
 		C.walk_to_clicked(),
 	]), 'completed')
 	
 	var o: Resource = yield(D.show_inline_dialog([
-		'Yes',
-		'Nope',
+		'Shake',
+		'Zoom',
 	]), 'completed')
 	
 	match o.id:

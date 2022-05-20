@@ -3,7 +3,7 @@ extends Node
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 signal option_selected(opt)
-signal dialog_requested
+signal dialog_options_requested(options)
 signal dialog_finished
 signal inline_dialog_requested(options)
 

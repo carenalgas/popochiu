@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://popochiu/Rooms/Technician/RoomTechnician.gd" type="Script" id=1]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Region/PopochiuRegion.tscn" type="PackedScene" id=2]
@@ -11,6 +11,9 @@
 [ext_resource path="res://popochiu/Rooms/Technician/Props/sprites/notes.png" type="Texture" id=9]
 [ext_resource path="res://popochiu/Characters/Bug/CharacterBug.tscn" type="PackedScene" id=10]
 [ext_resource path="res://popochiu/Rooms/Technician/Props/FileCabinet/file_cabinet.png" type="Texture" id=11]
+[ext_resource path="res://popochiu/Rooms/Technician/Hotspots/Window/HotspotWindow.gd" type="Script" id=12]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Hotspot/PopochiuHotspot.tscn" type="PackedScene" id=13]
+[ext_resource path="res://popochiu/Rooms/Technician/Hotspots/Blueprint/HotspotBlueprint.gd" type="Script" id=14]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( 4, 44, 27, 38, 88, 35, 26, 79, -89, 70, -28, 29, -73, 4, 27, -9, -5, 19, 27, 31 )
@@ -49,8 +52,20 @@ position = Vector2( -4, 12 )
 description = "Whisky"
 clickable = false
 baseline = 18
+walk_to_point = Vector2( -7, 35 )
 cursor = 1
 script_name = "Whisky"
+texture = ExtResource( 8 )
+
+[node name="BaselineHelper" parent="Props/Whisky" index="0"]
+visible = false
+position = Vector2( 0, 18 )
+
+[node name="WalkToHelper" parent="Props/Whisky" index="1"]
+visible = false
+position = Vector2( -7, 35 )
+
+[node name="Sprite" parent="Props/Whisky" index="2"]
 texture = ExtResource( 8 )
 
 [node name="Notes" parent="Props" instance=ExtResource( 3 )]
@@ -58,8 +73,20 @@ position = Vector2( 14, 7 )
 description = "Notes"
 clickable = false
 baseline = 23
+walk_to_point = Vector2( 25, 29 )
 cursor = 1
 script_name = "Notes"
+texture = ExtResource( 9 )
+
+[node name="BaselineHelper" parent="Props/Notes" index="0"]
+visible = false
+position = Vector2( 0, 23 )
+
+[node name="WalkToHelper" parent="Props/Notes" index="1"]
+visible = false
+position = Vector2( 25, 29 )
+
+[node name="Sprite" parent="Props/Notes" index="2"]
 texture = ExtResource( 9 )
 
 [node name="FileCabinet" parent="Props" instance=ExtResource( 3 )]
@@ -76,6 +103,28 @@ texture = ExtResource( 11 )
 polygon = PoolVector2Array( -13, -23, -2, -27, 14, -20, 13, 21, 1, 26, -12, 16 )
 
 [node name="Hotspots" type="Node2D" parent="."]
+
+[node name="Window" parent="Hotspots" instance=ExtResource( 13 )]
+position = Vector2( 28, 0 )
+script = ExtResource( 12 )
+description = "Window"
+baseline = -90
+cursor = 1
+script_name = "Window"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hotspots/Window"]
+polygon = PoolVector2Array( 7, -26, 9, -53, 35, -47, 34, -11 )
+
+[node name="Blueprint" parent="Hotspots" instance=ExtResource( 13 )]
+position = Vector2( -41, 5 )
+script = ExtResource( 14 )
+description = "Blueprint"
+baseline = -90
+cursor = 1
+script_name = "Blueprint"
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Hotspots/Blueprint"]
+polygon = PoolVector2Array( -21, -65, -20, -41, 11, -44, 9, -66 )
 
 [node name="Regions" type="Node2D" parent="."]
 
@@ -97,3 +146,6 @@ navpoly = SubResource( 1 )
 
 [node name="CharacterBug" parent="Characters" instance=ExtResource( 10 )]
 position = Vector2( -28, 67 )
+
+[editable path="Props/Whisky"]
+[editable path="Props/Notes"]
