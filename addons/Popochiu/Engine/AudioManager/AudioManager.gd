@@ -1,9 +1,11 @@
 tool
 extends Node
+# (A) To work with audio (music and sound effects).
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# warning-ignore-all:return_value_discarded
 
 const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd')
 
-#export(Array, Resource) var cues = [] setget _set_cues
 export var mx_cues := []
 export var sfx_cues := []
 export var vo_cues := []
@@ -20,106 +22,122 @@ var _all_in_one := {}
 
 var _fading_sounds := {}
 
-onready var _tween = $Tween
-
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
-# warning-ignore-all:return_value_discarded
 func _ready() -> void:
-	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
+	for arr in ['sfx_cues', 'vo_cues', 'ui_cues']:
 		for ac in self[arr]:
 			self['_%s' % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func semitone_to_pitch(pitch: float) -> float:
-	return pow(twelfth_root_of_two, pitch)
-
-
-func play(props = {
-		cue_name = '', 
-		pos = Vector2.ZERO, 
-		is_in_queue = true, 
-		wait_audio_complete = false, 
-		fade = false,
-		duration = 1, 
-		from = -80, 
-		to = 0
-	}) -> void:
-	if props.get('is_in_queue', true): yield()
+func play(\
+cue_name := '',
+wait_audio_complete := false,
+is_in_queue := true,
+pos := Vector2.ZERO
+) -> void:
+	if is_in_queue: yield()
 	
-	var dic: Dictionary = _all_in_one
 	var stream_player: Node = null
 	
-#	if props.cue_name.find('vo_') > -1: dic = _vo_cues
-#	else: dic = _sfx_cues
-	
-	if dic.has(props.cue_name.to_lower()):
-		var cue: AudioCue = dic[props.cue_name.to_lower()]
-		if not props.get('fade', false):
-			stream_player = _play(cue, props.get('pos', Vector2.ZERO))
-		else:
-			stream_player = _fade_in(
-				cue,
-				props.get('pos', Vector2.ZERO),
-				props.get('duration', 1),
-				props.get('from', -80),
-				props.get('to', cue.volume)
-			)
+	if _all_in_one.has(cue_name.to_lower()):
+		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
+		stream_player = _play(cue, pos)
 	else:
-		printerr('[Popochiu(A.play)] No se encontró el sonido', props.cue_name)
+		printerr('[Popochiu] Sound not found:', cue_name)
+		
+		yield(get_tree(), 'idle_frame')
+		return
 	
-	if stream_player and props.get('wait_audio_complete', false):
+	if stream_player and wait_audio_complete:
 		yield(stream_player, 'finished')
 	else:
 		yield(get_tree(), 'idle_frame')
+	
+	return stream_player
 
 
-func play_music(
-		cue_name: String,
-		is_in_queue := true,
-		music_position = 0.0,
-		fade = false,
-		duration = 1
-	) -> void:
+func play_fade(\
+cue_name := '',
+wait_audio_complete := false,
+duration := 1,
+from := -80,
+to := 0,
+is_in_queue := true,
+pos := Vector2.ZERO
+) -> Node:
+	if is_in_queue: yield()
+	
+	# TODO: Replace this by an AudioHandle
+	# http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
+	var stream_player: Node = null
+	
+	if _all_in_one.has(cue_name.to_lower()):
+		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
+		stream_player = _fade_in(
+			cue,
+			pos,
+			duration,
+			from,
+			to
+		)
+	else:
+		printerr('[Popochiu] Sound for fade not found:', cue_name)
+		
+		yield(get_tree(), 'idle_frame')
+		return
+	
+	if stream_player and wait_audio_complete:
+		yield(stream_player, 'finished')
+	else:
+		yield(get_tree(), 'idle_frame')
+	
+	return stream_player
+
+
+func play_music(\
+cue_name: String,
+fade_duration := 0.0,
+is_in_queue := true,
+music_position = 0.0
+) -> void:
 	# TODO: Puede que sí necesite recibir la posición por si se quiere que la música
 	# salga de un lugar específico (p.e. una radio en el escenario).
 	if _mx_cues.has(cue_name.to_lower()):
 		if is_in_queue: yield()
 		
 		var cue: AudioCue = _mx_cues[cue_name.to_lower()]
-		if fade:
-			_fade_in(cue, Vector2.ZERO, duration, -80, 0, music_position)
+		if fade_duration > 0.0:
+			_fade_in(cue, Vector2.ZERO, fade_duration, -80, 0, music_position)
 		else:
 			_play(cue, Vector2.ZERO, music_position)
 	else:
-		printerr('[Popochiu(A.play_music)] No se encontró la música', cue_name)
+		printerr('[Popochiu] Music not found:', cue_name)
 	
 	yield(get_tree(), 'idle_frame')
 
 
-func stop(
-		cue_name: String,
-		_instance_i := 0,
-		is_in_queue := true,
-		fade = false,
-		duration = 1
-	) -> void:
+func stop(\
+cue_name: String,
+fade_duration := 0.0,
+is_in_queue := true
+) -> void:
 	if is_in_queue: yield()
 	
 	if _active.has(cue_name):
 		var stream_player: Node = (_active[cue_name].players as Array).front()
 		
 		if is_instance_valid(stream_player):
-			if fade:
-				_fade_sound(cue_name, duration, stream_player.volume_db, -80)
+			if fade_duration > 0.0:
+				_fade_sound(cue_name, fade_duration, stream_player.volume_db, -80)
 			else:
 				stream_player.stop()
 			
 			if stream_player is AudioStreamPlayer2D and _active[cue_name].loop:
-				# Cuando se detiene (.stop()) un audio en loop, por alguna razón
-				# no se llama la señal de 'finished'.
+				# When stopped (.stop()) an audio in loop, for some reason
+				# 'finished' is not emitted.
 				stream_player.emit_signal('finished')
 		else:
 			_active.erase(cue_name)
@@ -132,34 +150,29 @@ func get_cue_position(cue_name: String, is_in_queue := true) -> void:
 	yield(get_tree(), 'idle_frame')
 
 
-func change_cue_pitch(
-		cue_name: String, new_pitch = 0, is_in_queue := true
-	) -> void:
+func change_cue_pitch(\
+cue_name: String, new_pitch = 0, is_in_queue := true
+) -> void:
 	if is_in_queue: yield()
+	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
-	stream_player.set_pitch_scale(semitone_to_pitch(new_pitch)) 
+	stream_player.set_pitch_scale(_semitone_to_pitch(new_pitch))
+	
 	yield(get_tree(), 'idle_frame')
 
 
-func _fade_in(
-		cue: AudioCue, pos, duration = 1, from = -80, to = 0, position = 0.0
-	) -> Node:
-	if cue.audio.get_instance_id() in _fading_sounds:
-		from = _fading_sounds[cue.audio.get_instance_id()].volume_db
-		$Tween.stop(_fading_sounds[cue.audio.get_instance_id()])
-		_fading_sounds[cue.audio.get_instance_id()].emit_signal('finished')
-		_fading_sounds.erase(cue.audio.get_instance_id())
-	cue.volume = from
+func change_cue_volume(cue_name: String, volume := 0.0) -> void:
+	if not _active.has(cue_name): return
 	
-	var stream_player: Node = _play(cue, pos, position)
-	if stream_player:
-		_fade_sound(cue.resource_name, duration, from, to)
-	
-	cue.volume = to
-	return stream_player
+	var stream_player: Node = (_active[cue_name].players as Array).front()
+	stream_player.volume_db = volume
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func _semitone_to_pitch(pitch: float) -> float:
+	return pow(twelfth_root_of_two, pitch)
+
+
 # Reproduce el sonido y se encarga de la lógica que lo asigna a un AudioStreamPlayer
 # o crea uno nuevo si no hay disponibles
 func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
@@ -261,6 +274,24 @@ func _fade_sound(cue_name: String, duration = 1, from = 0, to = 0) -> void:
 		
 		if not $Tween.is_connected('tween_completed', self, '_fadeout_finished'):
 			$Tween.connect('tween_completed', self, '_fadeout_finished')
+
+
+func _fade_in(
+		cue: AudioCue, pos, duration = 1, from = -80, to = 0, position = 0.0
+	) -> Node:
+	if cue.audio.get_instance_id() in _fading_sounds:
+		from = _fading_sounds[cue.audio.get_instance_id()].volume_db
+		$Tween.stop(_fading_sounds[cue.audio.get_instance_id()])
+		_fading_sounds[cue.audio.get_instance_id()].emit_signal('finished')
+		_fading_sounds.erase(cue.audio.get_instance_id())
+	cue.volume = from
+	
+	var stream_player: Node = _play(cue, pos, position)
+	if stream_player:
+		_fade_sound(cue.resource_name, duration, from, to)
+	
+	cue.volume = to
+	return stream_player
 
 
 func _fadeout_finished(obj, key) -> void:
