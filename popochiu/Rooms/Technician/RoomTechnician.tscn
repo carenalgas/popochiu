@@ -135,6 +135,9 @@ description = "Floor"
 
 [node name="Points" type="Node2D" parent="."]
 
+[node name="Entrance" type="Position2D" parent="Points"]
+position = Vector2( 58, 47 )
+
 [node name="WalkableAreas" type="Node2D" parent="."]
 
 [node name="Navigation2D" type="Navigation2D" parent="WalkableAreas"]

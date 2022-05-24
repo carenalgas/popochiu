@@ -75,6 +75,12 @@ func scene_changed(scene_root: Node) -> void:
 			for c in opened_room.call(_types[t].method):
 				var row_path := ''
 				
+				if c is Position2D:
+					var row: PopochiuObjectRow = _create_object_row(t, c.name)
+					_types[t].group.add(row)
+					
+					continue
+				
 				if c.script.resource_path.find('addons') == -1:
 					row_path = c.script.resource_path
 				else:
@@ -85,7 +91,6 @@ func scene_changed(scene_root: Node) -> void:
 				
 				if row_path in _rows_paths: continue
 				
-				prints(row_path)
 				if c is _types[t].type_class:
 					var row: PopochiuObjectRow = _create_object_row(
 						t, c.name, row_path
@@ -155,7 +160,8 @@ func _select_and_open_script(por: PopochiuObjectRow) -> void:
 		% [_types[por.type].parent, por.name])
 		main_dock.ei.edit_node(node)
 		
-		if node.script.resource_path.count('addons/Popochiu') == 0:
+		if not node is Position2D\
+		and node.script.resource_path.count('addons/Popochiu') == 0:
 			main_dock.ei.edit_resource(load(node.script.resource_path))
 		
 		emit_signal('row_clicked')

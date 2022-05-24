@@ -10,7 +10,7 @@ extends PopochiuHotspot
 func on_interact() -> void:
 	# Replace the call to .on_interact() to implement your code. This only makes
 	# the default behavior to happen.
-	C.walk_to_clicked(false)
+	yield(C.walk_to_clicked(false), 'completed')
 
 
 # When the node is right clicked

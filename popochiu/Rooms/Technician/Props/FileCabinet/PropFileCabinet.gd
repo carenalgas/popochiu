@@ -9,8 +9,15 @@ extends PopochiuProp
 func on_interact() -> void:
 	yield(E.run([
 		C.walk_to_clicked(),
-		A.play_fade('sfx_locker_open', true)
+		A.play_fade('sfx_locker_open'),
+		'Player: I should not being doing this.'
 	]), 'completed')
+	
+#	var s: AudioStreamPlayer = yield(
+#		A.play('sfx_locker_open', false, false),
+#		'completed'
+#	)
+#	s.pitch_scale = A.semitone_to_pitch(-5.0)
 	
 	var o: Resource = yield(D.show_inline_dialog([
 		'Shake',

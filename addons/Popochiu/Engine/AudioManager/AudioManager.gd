@@ -36,9 +36,9 @@ func _ready() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func play(\
 cue_name := '',
-wait_audio_complete := false,
+wait_to_end := false,
 is_in_queue := true,
-pos := Vector2.ZERO
+position_2d := Vector2.ZERO
 ) -> Node:
 	if is_in_queue: yield()
 	
@@ -46,14 +46,14 @@ pos := Vector2.ZERO
 	
 	if _all_in_one.has(cue_name.to_lower()):
 		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
-		stream_player = _play(cue, pos)
+		stream_player = _play(cue, position_2d)
 	else:
 		printerr('[Popochiu] Sound not found:', cue_name)
 		
 		yield(get_tree(), 'idle_frame')
 		return null
 	
-	if stream_player and wait_audio_complete:
+	if stream_player and wait_to_end:
 		yield(stream_player, 'finished')
 	else:
 		yield(get_tree(), 'idle_frame')
@@ -63,12 +63,12 @@ pos := Vector2.ZERO
 
 func play_fade(\
 cue_name := '',
-wait_audio_complete := false,
+wait_to_end := false,
 duration := 1.0,
 from := -80.0,
 to := 0.0,
 is_in_queue := true,
-pos := Vector2.ZERO
+position_2d := Vector2.ZERO
 ) -> Node:
 	if is_in_queue: yield()
 	
@@ -78,7 +78,7 @@ pos := Vector2.ZERO
 		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
 		stream_player = _fade_in(
 			cue,
-			pos,
+			position_2d,
 			duration,
 			from,
 			to
@@ -89,7 +89,7 @@ pos := Vector2.ZERO
 		yield(get_tree(), 'idle_frame')
 		return null
 	
-	if stream_player and wait_audio_complete:
+	if stream_player and wait_to_end:
 		yield(stream_player, 'finished')
 	else:
 		yield(get_tree(), 'idle_frame')
@@ -102,21 +102,30 @@ cue_name: String,
 fade_duration := 0.0,
 music_position := 0.0,
 is_in_queue := true
-) -> void:
+) -> Node:
 	# TODO: Add a position: Vector2 parameter in case one want to play music coming
 	# out from a specific source (e.g. a radio in the room).
+	
+	var stream_player: Node = null
+	
 	if _mx_cues.has(cue_name.to_lower()):
 		if is_in_queue: yield()
 		
 		var cue: AudioCue = _mx_cues[cue_name.to_lower()]
 		if fade_duration > 0.0:
-			_fade_in(cue, Vector2.ZERO, fade_duration, -80.0, 0.0, music_position)
+			stream_player = _fade_in(
+				cue, Vector2.ZERO, fade_duration, -80.0, 0.0, music_position
+			)
 		else:
-			_play(cue, Vector2.ZERO, music_position)
+			stream_player = _play(cue, Vector2.ZERO, music_position)
 	else:
 		printerr('[Popochiu] Music not found:', cue_name)
+		
+		return null
 	
 	yield(get_tree(), 'idle_frame')
+	
+	return stream_player
 
 
 func stop(\
@@ -145,24 +154,22 @@ is_in_queue := true
 	yield(get_tree(), 'idle_frame')
 
 
-func get_cue_position(cue_name: String) -> float:
+func get_cue_playback_position(cue_name: String) -> float:
+	if not _active.has(cue_name): return -1.0
+	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
 	
 	if is_instance_valid(stream_player):
 		return stream_player.get_playback_position()
 	
-	return 0.0
+	return -1.0
 
 
-func change_cue_pitch(\
-cue_name: String, new_pitch := 0.0, is_in_queue := true
-) -> void:
-	if is_in_queue: yield()
+func change_cue_pitch(cue_name: String, pitch := 0.0) -> void:
+	if not _active.has(cue_name): return
 	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
-	stream_player.set_pitch_scale(semitone_to_pitch(new_pitch))
-	
-	yield(get_tree(), 'idle_frame')
+	stream_player.set_pitch_scale(semitone_to_pitch(pitch))
 
 
 func change_cue_volume(cue_name: String, volume := 0.0) -> void:
@@ -179,7 +186,7 @@ func semitone_to_pitch(pitch: float) -> float:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 # Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if
 # there are no more
-func _play(cue: AudioCue, pos := Vector2.ZERO, from_position := 0.0) -> Node:
+func _play(cue: AudioCue, position := Vector2.ZERO, from_position := 0.0) -> Node:
 	var player: Node = null
 	
 	if cue.is_2d:
@@ -195,7 +202,7 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, from_position := 0.0) -> Node:
 		(player as AudioStreamPlayer2D).pitch_scale = cue.get_pitch()
 		(player as AudioStreamPlayer2D).volume_db = cue.volume
 		(player as AudioStreamPlayer2D).max_distance = cue.max_distance
-		(player as AudioStreamPlayer2D).position = pos
+		(player as AudioStreamPlayer2D).position = position
 	else:
 		player = _get_free_stream($Generic)
 		
@@ -279,7 +286,7 @@ func _fade_sound(cue_name: String, duration = 1, from = 0, to = 0) -> void:
 
 func _fade_in(\
 cue: AudioCue,
-pos: Vector2,
+position: Vector2,
 duration := 1.0,
 from := -80.0,
 to := 0.0,
@@ -294,7 +301,7 @@ from_position := 0.0
 	
 	cue.volume = from
 	
-	var stream_player: Node = _play(cue, pos, from_position)
+	var stream_player: Node = _play(cue, position, from_position)
 	
 	if stream_player:
 		_fade_sound(cue.resource_name, duration, from, to)
