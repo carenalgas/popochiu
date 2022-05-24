@@ -146,6 +146,16 @@ navpoly = SubResource( 1 )
 
 [node name="CharacterBug" parent="Characters" instance=ExtResource( 10 )]
 position = Vector2( -28, 67 )
+clickable = true
+baseline = 0
+walk_to_point = Vector2( 0, 0 )
+look_at_point = Vector2( 0, 0 )
+always_on_top = false
+text_color = Color( 1, 1, 1, 1 )
+walk_speed = 200.0
+flips_when = 0
+vo_name = ""
+follow_player = false
 
 [editable path="Props/Whisky"]
 [editable path="Props/Notes"]

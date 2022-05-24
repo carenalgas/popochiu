@@ -7,11 +7,9 @@ extends PopochiuProp
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_interact() -> void:
-	I.show_inventory(3.0, false)
-	return
-	
 	yield(E.run([
 		C.walk_to_clicked(),
+		A.play_fade('sfx_locker_open', true)
 	]), 'completed')
 	
 	var o: Resource = yield(D.show_inline_dialog([

@@ -1,6 +1,8 @@
 tool
 extends Node
 # (A) To work with audio (music and sound effects).
+# TODO: Create AudioHandle so each AudioCue has its own AudioStreamPlayer...
+# http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 # warning-ignore-all:return_value_discarded
 
@@ -25,7 +27,7 @@ var _fading_sounds := {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	for arr in ['sfx_cues', 'vo_cues', 'ui_cues']:
+	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
 		for ac in self[arr]:
 			self['_%s' % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
@@ -37,7 +39,7 @@ cue_name := '',
 wait_audio_complete := false,
 is_in_queue := true,
 pos := Vector2.ZERO
-) -> void:
+) -> Node:
 	if is_in_queue: yield()
 	
 	var stream_player: Node = null
@@ -49,7 +51,7 @@ pos := Vector2.ZERO
 		printerr('[Popochiu] Sound not found:', cue_name)
 		
 		yield(get_tree(), 'idle_frame')
-		return
+		return null
 	
 	if stream_player and wait_audio_complete:
 		yield(stream_player, 'finished')
@@ -62,16 +64,14 @@ pos := Vector2.ZERO
 func play_fade(\
 cue_name := '',
 wait_audio_complete := false,
-duration := 1,
-from := -80,
-to := 0,
+duration := 1.0,
+from := -80.0,
+to := 0.0,
 is_in_queue := true,
 pos := Vector2.ZERO
 ) -> Node:
 	if is_in_queue: yield()
 	
-	# TODO: Replace this by an AudioHandle
-	# http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
 	var stream_player: Node = null
 	
 	if _all_in_one.has(cue_name.to_lower()):
@@ -87,7 +87,7 @@ pos := Vector2.ZERO
 		printerr('[Popochiu] Sound for fade not found:', cue_name)
 		
 		yield(get_tree(), 'idle_frame')
-		return
+		return null
 	
 	if stream_player and wait_audio_complete:
 		yield(stream_player, 'finished')
@@ -100,17 +100,17 @@ pos := Vector2.ZERO
 func play_music(\
 cue_name: String,
 fade_duration := 0.0,
-is_in_queue := true,
-music_position = 0.0
+music_position := 0.0,
+is_in_queue := true
 ) -> void:
-	# TODO: Puede que sí necesite recibir la posición por si se quiere que la música
-	# salga de un lugar específico (p.e. una radio en el escenario).
+	# TODO: Add a position: Vector2 parameter in case one want to play music coming
+	# out from a specific source (e.g. a radio in the room).
 	if _mx_cues.has(cue_name.to_lower()):
 		if is_in_queue: yield()
 		
 		var cue: AudioCue = _mx_cues[cue_name.to_lower()]
 		if fade_duration > 0.0:
-			_fade_in(cue, Vector2.ZERO, fade_duration, -80, 0, music_position)
+			_fade_in(cue, Vector2.ZERO, fade_duration, -80.0, 0.0, music_position)
 		else:
 			_play(cue, Vector2.ZERO, music_position)
 	else:
@@ -145,18 +145,22 @@ is_in_queue := true
 	yield(get_tree(), 'idle_frame')
 
 
-func get_cue_position(cue_name: String, is_in_queue := true) -> void:
+func get_cue_position(cue_name: String) -> float:
 	var stream_player: Node = (_active[cue_name].players as Array).front()
-	yield(get_tree(), 'idle_frame')
+	
+	if is_instance_valid(stream_player):
+		return stream_player.get_playback_position()
+	
+	return 0.0
 
 
 func change_cue_pitch(\
-cue_name: String, new_pitch = 0, is_in_queue := true
+cue_name: String, new_pitch := 0.0, is_in_queue := true
 ) -> void:
 	if is_in_queue: yield()
 	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
-	stream_player.set_pitch_scale(_semitone_to_pitch(new_pitch))
+	stream_player.set_pitch_scale(semitone_to_pitch(new_pitch))
 	
 	yield(get_tree(), 'idle_frame')
 
@@ -168,14 +172,14 @@ func change_cue_volume(cue_name: String, volume := 0.0) -> void:
 	stream_player.volume_db = volume
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _semitone_to_pitch(pitch: float) -> float:
+func semitone_to_pitch(pitch: float) -> float:
 	return pow(twelfth_root_of_two, pitch)
 
 
-# Reproduce el sonido y se encarga de la lógica que lo asigna a un AudioStreamPlayer
-# o crea uno nuevo si no hay disponibles
-func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+# Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if
+# there are no more
+func _play(cue: AudioCue, pos := Vector2.ZERO, from_position := 0.0) -> Node:
 	var player: Node = null
 	
 	if cue.is_2d:
@@ -183,7 +187,7 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
 		
 		if not is_instance_valid(player):
 			print_debug(
-				'[Popochiu(A._play)] Nos quedamos sin AudioStreamPlayer2D'
+				'[Popochiu] Run out of AudioStreamPlayer2D'
 			)
 			return null
 
@@ -197,7 +201,7 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
 		
 		if not is_instance_valid(player):
 			print_debug(
-				'[Popochiu(A._play)] Nos quedamos sin AudioStreamPlayer'
+				'[Popochiu] Run out of AudioStreamPlayer'
 			)
 			return null
 	
@@ -208,7 +212,7 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
 	var cue_name := cue.resource_name
 	
 	player.bus = cue.bus
-	player.play(position)
+	player.play(from_position)
 	player.connect('finished', self, '_make_available', [player, cue_name, 0])
 	
 	if _active.has(cue_name):
@@ -223,14 +227,11 @@ func _play(cue: AudioCue, pos := Vector2.ZERO, position = 0.0) -> Node:
 
 
 func _get_free_stream(group: Node):
-	var active_stream: Node = _reparent(group, $Active, 0)
-	# TODO: Que cree un AudioStreamPlayer cuando haga falta uno
-	
-	return active_stream
+	return _reparent(group, $Active, 0)
 
 
-# Reasigna el AudioStreamPlayer a su grupo original cuando ha terminado de sonar
-# pa' que vuelva a estar disponible para ser usado
+# Reassigns the AudioStreamPlayer to its original group when it finishes so it
+# can be available for being used
 func _make_available(stream_player: Node, cue_name: String, _debug_idx: int) -> void:
 	if stream_player is AudioStreamPlayer:
 		_reparent($Active, $Generic, stream_player.get_index())
@@ -276,25 +277,34 @@ func _fade_sound(cue_name: String, duration = 1, from = 0, to = 0) -> void:
 			$Tween.connect('tween_completed', self, '_fadeout_finished')
 
 
-func _fade_in(
-		cue: AudioCue, pos, duration = 1, from = -80, to = 0, position = 0.0
-	) -> Node:
+func _fade_in(\
+cue: AudioCue,
+pos: Vector2,
+duration := 1.0,
+from := -80.0,
+to := 0.0,
+from_position := 0.0
+) -> Node:
 	if cue.audio.get_instance_id() in _fading_sounds:
 		from = _fading_sounds[cue.audio.get_instance_id()].volume_db
+		
 		$Tween.stop(_fading_sounds[cue.audio.get_instance_id()])
 		_fading_sounds[cue.audio.get_instance_id()].emit_signal('finished')
 		_fading_sounds.erase(cue.audio.get_instance_id())
+	
 	cue.volume = from
 	
-	var stream_player: Node = _play(cue, pos, position)
+	var stream_player: Node = _play(cue, pos, from_position)
+	
 	if stream_player:
 		_fade_sound(cue.resource_name, duration, from, to)
 	
 	cue.volume = to
+	
 	return stream_player
 
 
-func _fadeout_finished(obj, key) -> void:
+func _fadeout_finished(obj: Node, _key: NodePath) -> void:
 	if obj.stream.get_instance_id() in _fading_sounds :
 		_fading_sounds.erase(obj.stream.get_instance_id())
 		obj.stop()
