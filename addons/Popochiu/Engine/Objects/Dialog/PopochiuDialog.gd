@@ -23,7 +23,7 @@ func option_selected(opt: PopochiuDialogOption) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _show_options() -> void:
-	D.emit_signal('dialog_requested', options)
+	D.emit_signal('dialog_options_requested', options)
 	if not D.is_connected('option_selected', self, 'option_selected'):
 		D.connect('option_selected', self, 'option_selected')
 

@@ -1,4 +1,6 @@
 extends CanvasLayer
+# Handles the Graphic Interface (a.k.a. UI)
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const DialogText := preload('DialogText/DialogText.gd')
 const DisplayBox := preload('DisplayBox/DisplayBox.gd')
@@ -19,19 +21,19 @@ onready var _history: History = find_node('History')
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
-	# --------------------------------------------------------------------------
-	# Conectarse a eventos de los hijos
-	# TODO: Algunos de estos realmente irán en el script de cada hijo
+	# Connect to children signals
+	# TODO: Some of this could be in their own script
 	_click_handler.connect('pressed', self, '_continue')
 	_dialog_menu.connect('shown', self, '_disable_panels', [{ blocking = false }])
 	_display_box.connect('shown', self, '_disable_panels')
 	_display_box.connect('hidden', self, '_enable_panels')
 	
-	# Conectarse a eventos del universo digimon
+	# Connect to singleton signals
 	C.connect('character_spoke', self, '_show_dialog_text')
 	G.connect('blocked', self, '_disable_panels')
 	G.connect('freed', self, '_enable_panels')
 	G.connect('interface_hidden', self, '_hide_panels')
+	G.connect('interface_shown', self, '_show_panels')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -54,7 +56,6 @@ func _show_dialog_text(chr: PopochiuCharacter, msg := '') -> void:
 func _disable_panels(props := { blocking = true }) -> void:
 	if props.blocking:
 		_click_handler.mouse_filter = Control.MOUSE_FILTER_STOP
-#		_info_bar.text = '- clic para avanzar -'
 	else:
 		_click_handler.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_info_bar.hide()
@@ -66,13 +67,12 @@ func _disable_panels(props := { blocking = true }) -> void:
 
 
 func _enable_panels() -> void:
-	# TODO: Usar Tween para que se oculte y aparezca con jugo
+	# TODO: Add juice with a Tween \ ( ;) )/
 	_click_handler.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	_display_box.hide()
 	_dialog_text.hide()
 
-#	_info_bar.text = ''
 	_info_bar.show()
 	_inventory.show()
 	_toolbar.show()

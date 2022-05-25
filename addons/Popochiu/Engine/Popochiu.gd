@@ -1,7 +1,8 @@
 extends Node
 # (E) Popochiu's core
+# It is the system main class, and is in charge of a making the game to work
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-signal inline_dialog_requested(options)
 signal text_speed_changed(idx)
 signal language_changed
 
@@ -17,34 +18,34 @@ export var languages := ['es_CO', 'es', 'en']
 export(int, 'co', 'es', 'en') var language_idx := 0 setget _set_language_idx
 export var use_translations := false
 export var items_on_start := []
+export var inventory_limit := 0
 
 var in_run := false
-# Se usa para que no se pueda cambiar de escena si esta se ha cargado por completo,
-# esto es que ya ha ejecutado la lógica de PopochiuRoom.on_room_transition_finished
+# Used to prevent going to another room when there is one being loaded
 var in_room := false setget _set_in_room
 var current_room: PopochiuRoom = null
-# Guarda la referencia del Clickable al que se hizo clic para facilitar el acceso
-# al mismo desde cualquier nodo.
+# Stores the las PopochiuClickable node clicked to ease access to it from
+# any other class
 var clicked: Node
 var cutscene_skipped := false
 var rooms_states := {}
 var history := []
+var width := 0.0 setget ,get_width
+var height := 0.0 setget ,get_height
+var half_width := 0.0 setget ,get_half_width
+var half_height := 0.0 setget ,get_half_height
 
-# TODO: Estas podrían no estar aquí sino en un nodo de VFX que tenga la escena
+# TODO: This could be in the camera's own script
 var _is_camera_shaking := false
 var _camera_shake_amount := 15.0
 var _shake_timer := 0.0
-# TODO: Esta podría no ser sólo un boolean, sino que podría haber un arreglo que
-# ponga los llamados a run en una cola y los vaya ejecutando en orden. O tal vez
-# podría ser algo que permita más dinamismo, como poner a ejecutar un run durante
-# la ejecución de otro.
+# TODO: This might not just be a boolean, but there could be an array that puts
+# the calls to run in a queue and executes them in order. Or perhaps it could be
+# something that allows for more dynamism, such as putting one run to execute
+# during the execution of another
 var _running := false
 var _use_transition_on_room_change := true
 
-onready var game_width := get_viewport().get_visible_rect().end.x
-onready var game_height := get_viewport().get_visible_rect().end.y
-onready var half_width := game_width / 2.0
-onready var half_height := game_height / 2.0
 onready var main_camera: Camera2D = find_node('MainCamera')
 onready var _defaults := {
 	camera_limits = {
@@ -58,8 +59,7 @@ onready var _defaults := {
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	# Por defecto se asume que el personaje jugable es el primero en la lista
-	# de personajes.
+	# Set the first character on the list to be the default PC (playable character)
 	if not characters.empty():
 		var pc: PopochiuCharacter = load(
 			(characters[0] as PopochiuCharacterData).scene
@@ -75,8 +75,18 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if not Engine.editor_hint and is_instance_valid(C.player):
-		main_camera.position = C.player.position
+	if _is_camera_shaking:
+		_shake_timer -= delta
+		main_camera.offset = Vector2.ZERO + Vector2(
+			rand_range(-1.0, 1.0) * _camera_shake_amount,
+			rand_range(-1.0, 1.0) * _camera_shake_amount
+		)
+		
+		if _shake_timer <= 0.0:
+			_is_camera_shaking = false
+			main_camera.offset = Vector2.ZERO
+	elif not Engine.editor_hint and is_instance_valid(C.camera_owner):
+		main_camera.position = C.camera_owner.position
 
 
 func _input(event: InputEvent) -> void:
@@ -88,8 +98,8 @@ func _input(event: InputEvent) -> void:
 
 
 func _unhandled_key_input(event: InputEventKey) -> void:
-	# Aquí se pueden capturar teclas para hacer debug o disparar eventos del
-	# juego que faciliten hacer pruebas.
+	# TODO: Capture keys for debugging or for triggering game signals that can
+	# ease tests
 	pass
 
 
@@ -102,11 +112,13 @@ func wait(time := 1.0, is_in_queue := true) -> void:
 	yield(get_tree().create_timer(time), 'timeout')
 
 
-# Detiene una cadena de ejecución
-func break_run() -> void:
-	pass
+# TODO: Stop or break a run in excecution
+#func break_run() -> void:
+#	pass
 
 
+# Executes a series of instructions one by one. show_gi determines if the
+# Graphic Interface will appear once all instructions have ran.
 func run(instructions: Array, show_gi := true) -> void:
 	if instructions.empty():
 		yield(get_tree(), 'idle_frame')
@@ -115,14 +127,14 @@ func run(instructions: Array, show_gi := true) -> void:
 	if _running:
 		yield(get_tree(), 'idle_frame')
 		return run(instructions, show_gi)
-
+	
 	_running = true
-
+	
 	G.block()
 	
 	for idx in instructions.size():
 		var instruction = instructions[idx]
-
+	
 		if instruction is String:
 			yield(_eval_string(instruction as String), 'completed')
 		elif instruction is Dictionary:
@@ -143,50 +155,44 @@ func run(instructions: Array, show_gi := true) -> void:
 	_running = false
 
 
-# Es como run, pero salta la secuencia de acciones si se presiona la acción 'popochiu-skip'.
+# Like run, but can be skipped with the input action: popochiu-skip.
 func run_cutscene(instructions: Array) -> void:
 	set_process_input(true)
 	yield(run(instructions), 'completed')
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		$TransitionLayer.play_transition('pass_down_out', skip_cutscene_time)
+		$TransitionLayer.play_transition(
+			$TransitionLayer.PASS_DOWN_OUT, skip_cutscene_time
+		)
 		yield($TransitionLayer, 'transition_finished')
-
+	
 	cutscene_skipped = false
 
 
-# Retorna la opción seleccionada en el diálogo creado en tiempo de ejecución.
-# NOTA: El flujo del juego se pausa hasta que el jugador seleccione una opción.
-func show_inline_dialog(opts: Array) -> String:
-	emit_signal('inline_dialog_requested', opts)
-	return yield(D, 'option_selected')
-
-
+# Loads the room with script_name. use_transition can be used to trigger a fade
+# out animation before loading the room, and a fade in animation once it is ready
 func goto_room(script_name := '', use_transition := true) -> void:
-# warning-ignore:return_value_discarded
 	if not in_room: return
 	self.in_room = false
-
+	
 	G.block()
-	G.blocked = true
-
+	
 	_use_transition_on_room_change = use_transition
 	if use_transition:
-		$TransitionLayer.play_transition('fade_in')
+		$TransitionLayer.play_transition($TransitionLayer.FADE_IN)
 		yield($TransitionLayer, 'transition_finished')
 	
 	C.player.last_room = current_room.script_name
 	
-	# Guardar el estado de la habitación
+	# Store the room state
 	rooms_states[current_room.script_name] = current_room.state
 	
-	# Sacar los personajes de la habitación para que no sean eliminados
+	# Remove PopochiuCharacter nodes from the room so they are not deleted
 	current_room.on_room_exited()
 	
-	# Tal vez esto podría estar en un script propio de la cámara... lo mismo
-	# el shake
-	# Reiniciar la configuración de la cámara
+	# Reset camera config
+	# TODO: This could be in the Camera's own script... along with shaking
 	main_camera.limit_left = _defaults.camera_limits.left
 	main_camera.limit_right = _defaults.camera_limits.right
 	main_camera.limit_top = _defaults.camera_limits.top
@@ -198,13 +204,14 @@ func goto_room(script_name := '', use_transition := true) -> void:
 			get_tree().change_scene(room.scene)
 			return
 	
-	printerr('No se encontró la PopochiuRoom %s' % script_name)
+	prints('[Popochiu] No PopochiuRoom with name: %s' % script_name)
 
 
+# Called once the loaded room is _ready
 func room_readied(room: PopochiuRoom) -> void:
 	current_room = room
 	
-	# Cargar el estado de la habitación
+	# Load the room state
 	if rooms_states.has(room.script_name):
 		room.state = rooms_states[room.script_name]
 	
@@ -213,7 +220,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	room.visited_first_time = true if room.visited_times == 0 else false
 	room.visited_times += 1
 	
-	# Agregar a la habitación los personajes que tiene configurados
+	# Add the PopochiuCharacter instances to the room
 	for c in room.characters_cfg:
 		var chr: PopochiuCharacter = C.get_character(c.script_name)
 		
@@ -229,49 +236,69 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
 		c.room = room
-
+	
 	room.on_room_entered()
-
+	
 	if _use_transition_on_room_change:
-		$TransitionLayer.play_transition('fade_out')
+		$TransitionLayer.play_transition($TransitionLayer.FADE_OUT)
 		yield($TransitionLayer, 'transition_finished')
 		yield(wait(0.3, false), 'completed')
 	else:
 		yield(get_tree(), 'idle_frame')
-
+	
 	if not room.hide_gi:
 		G.done()
-
-	G.blocked = false
+	
 	self.in_room = true
-
-	# Esto también hace que la habitación empiece a escuchar eventos de Input
+	
+	# This enables the room to listen input events
 	room.on_room_transition_finished()
 
 
-func tween_zoom(target: Vector2, duration := 1.0, is_in_queue := true) -> void:
+# Changes the main camera's offset (useful when zooming the camera)
+func camera_offset(offset := Vector2.ZERO, is_in_queue := true) -> void:
 	if is_in_queue: yield()
+	
+	main_camera.offset = offset
+	
+	yield(get_tree(), 'idle_frame')
+
+
+# Makes the camera shake with strength for duration seconds
+func camera_shake(\
+strength := 1.0, duration := 1.0, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	_camera_shake_amount = strength
+	_shake_timer = duration
+	_is_camera_shaking = true
+	
+	yield(get_tree().create_timer(duration), 'timeout')
+
+
+# Changes the camera zoom. If target is larger than Vector2(1, 1) the camera
+# will zoom out, smaller values make it zoom in. The effect will last duration
+# seconds
+func camera_zoom(\
+target := Vector2.ONE, duration := 1.0, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
 	$Tween.interpolate_property(
 		main_camera, 'zoom',
 		main_camera.zoom, target,
 		duration, Tween.TRANS_SINE, Tween.EASE_OUT
 	)
 	$Tween.start()
+	
 	yield($Tween, 'tween_all_completed')
 
 
-func shake_camera(props := {}) -> void:
-	if props.has('strength'):
-		_camera_shake_amount = props.strength
-	if props.has('duration'):
-		_shake_timer = props.duration
-	_is_camera_shaking = true
-
-
+# Returns a String of a text that could be a translation key
 func get_text(msg: String) -> String:
 	return tr(msg) if use_translations else msg
 
 
+# Gets the PopochiuCharacter with script_name
 func get_character_instance(script_name: String) -> PopochiuCharacter:
 	for c in characters:
 		var popochiu_character: PopochiuCharacterData = c
@@ -282,6 +309,7 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 	return null
 
 
+# Gets the PopochiuInventoryItem with script_name
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 	for ii in inventory_items:
 		var popochiu_inventory_item: PopochiuInventoryItemData = ii
@@ -292,6 +320,7 @@ func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 	return null
 
 
+# Gets the PopochiuDialog with script_name
 func get_dialog(script_name: String) -> PopochiuDialog:
 	for dt in dialogs:
 		var tree: PopochiuDialog = dt
@@ -302,22 +331,25 @@ func get_dialog(script_name: String) -> PopochiuDialog:
 	return null
 
 
+# Adds an action to the history of actions.
+# Look PopochiuClickable._unhandled_input or GraphicInterface._show_dialog_text
+# for examples
 func add_history(data: Dictionary) -> void:
 	history.push_front(data)
 
 
-# Permite que una función cualquiera se ejecute dentro de E.run o E.run_cutscene
+# Makes a method in node to be able to be used in a run call. Method parameters
+# can be passed with params, and yield_signal is the signal that will notify the
+# function has been completed (so run can continue with the next command in the queue)
 func runnable(
 	node: Node, method: String, params := [], yield_signal := ''
 ) -> void:
 	yield()
 	
 	if cutscene_skipped:
-		# TODO: Si esto sucede, hay que hacer algo para asegurar que los eventos
-		#		dentro de la función omitida se disparen. P. ej. ¿Qué pasa si
-		#		se trata de una animación y durante su ejecución se llaman
-		#		métodos que cambian cosas en una escena? o ¿qué pasa si una función
-		#		hace cambios en el estado del juego?
+		# TODO: What should happen if the skipped function was an animation that
+		# triggers calls during execution? What should happen if the skipped
+		# function has to change the state of the game?
 		yield(get_tree(), 'idle_frame')
 		return
 	
@@ -333,8 +365,40 @@ func runnable(
 		yield(get_tree(), 'idle_frame')
 
 
-#func add_item_to_start(script_name: String) -> void:
-#	_items_on_start.append(script_name)
+# Checks if the room with script_name exists in the array of rooms of Popochiu
+func room_exists(script_name: String) -> bool:
+	for r in rooms:
+		var room = r as PopochiuRoomData
+		if room.script_name.to_lower() == script_name.to_lower():
+			return true
+	return false
+
+
+# Plays the transition type animation in TransitionLayer.tscn that last duration
+# in seconds. Possible type values can be found in TransitionLayer
+func play_transition(type: int, duration: float, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	$TransitionLayer.play_transition(type, duration)
+	
+	yield($TransitionLayer, 'transition_finished')
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_width() -> float:
+	return get_viewport().get_visible_rect().end.x
+
+
+func get_height() -> float:
+	return get_viewport().get_visible_rect().end.y
+
+
+func get_half_width() -> float:
+	return get_viewport().get_visible_rect().end.x / 2.0
+
+
+func get_half_height() -> float:
+	return get_viewport().get_visible_rect().end.y / 2.0
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -357,8 +421,7 @@ func _eval_string(text: String) -> void:
 				if emotion_idx > 0:
 					emotion = char_and_emotion.substr(emotion_idx + 1).rstrip(')')
 				
-				# TODO: Pasar la emoción al character_say...
-
+				# TODO: Pass emotion to character_say
 				if char_name.to_lower() == 'player':
 					var char_line := text.substr(char_talk + 1).trim_prefix(' ')
 					yield(C.player_say(char_line, false), 'completed')
