@@ -1,9 +1,8 @@
 tool
 extends Panel
-# Define un conjunto de botones y otros elementos para centralizar la
-# configuración de los diferentes nodos que conforman el juego:
-#	Rooms (Props, Hotspots, Regions), Characters, Inventory items, Dialog trees,
-#	Interfaz gráfica.
+# Acts like a HUD for working with Popochiu's objects:
+# Rooms, Characters, Inventory items, Dialog trees.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 signal room_row_clicked
 signal move_folders_pressed
@@ -71,10 +70,10 @@ func _ready() -> void:
 	_btn_move_folders.icon = get_icon('MoveUp', 'EditorIcons')
 	_btn_docs.icon = get_icon('HelpSearch', 'EditorIcons')
 	
-	# Que la pestaña seleccionada por defecto sea la principal (Main
+	# Set the Main tab selected by default
 	_tab_container.current_tab = 0
 	
-	# Conectar señales de los hijos
+	# Connect to children signals
 	for t in _types:
 		_types[t].popup.set_main_dock(self)
 		_types[t].group.connect(
@@ -106,13 +105,13 @@ func fill_data() -> void:
 		
 		if not is_instance_valid(type_dir):
 			continue
-
+		
 		for d in type_dir.get_subdir_count():
 			var dir: EditorFileSystemDirectory = type_dir.get_subdir(d)
 			
 			for f in dir.get_file_count():
 				var path = dir.get_file_path(f)
-
+				
 				if not fs.get_file_type(path) == "Resource": continue
 				
 				var resource: Resource = load(path)
@@ -127,21 +126,21 @@ func fill_data() -> void:
 				[resource.script_name, resource.script_name]
 				
 				if row_path in _rows_paths: continue
-
+				
 				var row: PopochiuObjectRow = _create_object_row(
 					t, resource.script_name
 				)
 				_types[t].group.add(row)
 				
-				# Verificar si el objeto en la lista esta en su arreglo respectivo
-				# dentro de Popochiu (Popochiu.tscn).
+				# Check if the object in the list is in its corresponding array
+				# in Popochiu (Popochiu.tscn)
 				var is_in_core := true
 				
 				match t:
 					Constants.Types.ROOM:
 						is_in_core = popochiu.rooms.has(resource)
 						
-						# Ver si la habitación es la principal
+						# Check if the room is the main scene
 						var main_scene: String = ProjectSettings.get_setting(\
 						'application/run/main_scene')
 						if main_scene == resource.scene:
@@ -159,7 +158,7 @@ func fill_data() -> void:
 				if not is_in_core:
 					row.show_add_to_core()
 	
-	# Cargar información de otras pestañas
+	# Load other tabs data
 	_tab_audio.fill_data()
 	_tab_settings.fill_data()
 
@@ -203,13 +202,12 @@ func save_popochiu() -> int:
 	
 	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
 	if result != OK:
-		push_error('---- ◇ Error al actualizar Popochiu: %d ◇ ----' % result)
+		push_error('[Popochiu] ---- ◇ Update error: %d ◇ ----' % result)
 		return result
-
+	
 	ei.reload_scene_from_path(POPOCHIU_SCENE)
-
-	# TODO: Hacer esto sólo si la escena de Popochiu está entre las pestañas
-	#		abiertas en el editor.
+	
+	# TODO: Do this when Popochiu.tscn is part of the opened tabs in the editor
 	if ei.get_edited_scene_root() \
 	and ei.get_edited_scene_root().name == 'Popochiu':
 		ei.save_scene()
@@ -239,7 +237,7 @@ func set_main_scene(path: String) -> void:
 	ProjectSettings.set_setting('application/run/main_scene', path)
 	
 	var result = ProjectSettings.save()
-	assert(result == OK, 'Failed to save project settings')
+	assert(result == OK, '[Popochiu] Failed to save project settings')
 	
 	_types[Constants.Types.ROOM].group.clear_favs()
 
@@ -293,8 +291,8 @@ func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
 
 func _on_tab_changed(tab: int) -> void:
 	if not _has_data and tab == 0:
-		# Intentar cargar los datos de la pestaña Main si por alguna razón no
-		# se pudieron leer los directorios al abrir el motor.
+		# Try to load the Main tab data in case they couldn't be loaded while
+		# opening the engine
 		fill_data()
 
 

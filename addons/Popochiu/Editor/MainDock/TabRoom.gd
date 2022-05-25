@@ -1,6 +1,7 @@
 tool
 extends VBoxContainer
-# Controla la lógica de la pestaña Room en el dock Popochiu
+# Handles the Room tab in Popochiu's dock
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 signal row_clicked
 
@@ -49,8 +50,7 @@ onready var _no_room_info: Label = find_node('NoRoomInfo')
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	# Por defecto deshabilitar los botones hasta que no se haya seleccionado
-	# una habitación.
+	# Disable all buttons by default until a PopochiuRoom is opened in the editor
 	_room_name.hide()
 	_no_room_info.show()
 	
@@ -60,12 +60,12 @@ func _ready() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func scene_changed(scene_root: Node) -> void:
-	# Poner todo en su estado por defecto
+	# Set the default tab state
 	if is_instance_valid(opened_room):
 		yield(_clear_content(), 'completed')
 	
 	if scene_root is PopochiuRoom:
-		# Actualizar la información de la habitación que se abrió
+		# Updated the opened room's info
 		opened_room = scene_root
 		_room_name.text = opened_room.script_name
 		

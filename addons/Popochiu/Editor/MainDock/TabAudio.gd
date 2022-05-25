@@ -1,6 +1,7 @@
 tool
 extends VBoxContainer
-# Controla la lógica de la pestaña Audio en el dock Popochiu
+# Handles the Audio tab in Popochiu's dock
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const AUDIO_MANAGER_SCENE := 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
 #const CUES_PATH := 'res://popochiu/AudioManager/Cues'
@@ -14,12 +15,12 @@ var last_selected: Control = null
 
 var _audio_row := preload(\
 'res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.tscn')
-# Arreglo con los path a los archivos de audio que ya están asignados a alguno
-# de los arreglos de AudioCue en el AudioManager.
+# Array with all the paths to files that are already assigned to a category
+# in AudioManager
 var _audio_files_in_group := []
 var _audio_files_to_assign := []
-# Para contar los AudioCue que se crearon durante la búsqueda de archivos de
-# audio. Esto ocurre cuando hay unos prefijos definidos: mx_, sfx_, vo_, ui_.
+# To count the AudioCue created during audio files search. Used when there
+# are files with the defined prefixes:  mx_, sfx_, vo_, ui_
 var _created_audio_cues := 0
 
 onready var _am_unassigned_group: PopochiuGroup = find_node('UnassignedGroup')
@@ -54,7 +55,7 @@ func _ready() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func fill_data() -> void:
-	# Buscar archivos de audio sin AudioCue
+	# Look for audio files without AudioCue
 	search_audio_files()
 
 
@@ -82,11 +83,11 @@ func save_audio_manager() -> int:
 	
 	result = ResourceSaver.save(AUDIO_MANAGER_SCENE, new_audio_manager)
 	
-	assert(result == OK, 'No se pudo guardar el AudioManager')
+	assert(result == OK, "[Popochiu] Couldn't save the AudioManager")
 	
-		# Guardar los cambios en la escena del AudioManager
+	# Save changes in AudioManager.tscn
 	main_dock.ei.reload_scene_from_path(AUDIO_MANAGER_SCENE)
-
+	
 	if main_dock.ei.get_edited_scene_root().name == 'AudioManager':
 		main_dock.ei.save_scene()
 	
@@ -117,15 +118,15 @@ func delete_rows(filepaths: Array) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _read_audio_manager_cues() -> void:
-	# Poner los AudioCue ya cargados en el AudioManager en su respectivo grupo
+	# Put already loaded (in AudioManager) AudioCues into their corresponding
+	# group
 	for d in _am_groups:
 		var group: Dictionary = _am_groups[d]
 		
 		if not audio_manager[group.array].empty():
 			for m in audio_manager[group.array]:
 				if (m as AudioCue).audio.resource_path in _audio_files_in_group:
-					# TODO: Verificar si alguna de las rutas a los recursos
-					# 		cambió.
+					# TODO: Check if the resource_path has changed
 					continue
 				
 				var ar := _create_audio_cue_row(m)
@@ -155,11 +156,11 @@ func _read_directory(dir: EditorFileSystemDirectory) -> void:
 	
 	if dir.get_subdir_count():
 		for d in dir.get_subdir_count():
-			# Revisar las subcarpetas
+			# Look out sub directories
 			_read_directory(dir.get_subdir(d))
 
-			# Buscar en los archivos de la carpeta
-			_read_files(dir)
+		# Look out the directory files
+		_read_files(dir)
 	else:
 		_read_files(dir)
 
@@ -174,13 +175,14 @@ func _read_files(dir: EditorFileSystemDirectory) -> void:
 		file_name.get_extension() == "opus":
 			if dir.get_file_path(idx) in _audio_files_in_group\
 			or dir.get_file_path(idx) in _audio_files_to_assign:
-				# No poner en la lista un archivo de audio que ya está asignado
-				# a un AudioCue en el AudioManager.
+				# Don't put in the list an audio file already assigned to an
+				# AudioCue in AudioManager
 				continue
 			
-			# Ver si el prefijo del archivo coincide con los definidos para
-			# asignación automática: mx_, sfx_, vo_, ui_.
-			
+			# Check if the file prefix matches one of the defined for automatic
+			# group assignation: mx_, sfx_, vo_, ui_
+			# TODO: This could be read from a settings file so developers can
+			# define their own prefixes.
 			if file_name.find('mx_') > -1:
 				_create_audio_cue('music', dir.get_file_path(idx))
 				_created_audio_cues += 1
@@ -221,7 +223,7 @@ func _create_audio_cue(
 	var cue_file_name := U.snake2pascal(cue_name)
 	cue_file_name += '.tres'
 	
-	# Crear el AudioCue que se guardará en disco y guardarlo en disco.
+	# Create the AudioCue and save it in the file system
 	var ac: AudioCue = AudioCue.new()
 	var stream: AudioStream = load(path)
 	ac.audio = stream
@@ -233,9 +235,9 @@ func _create_audio_cue(
 		ac
 	)
 	
-	assert(error == OK, 'No se pudo guardar el AudioCue: %s' % cue_file_name)
+	assert(error == OK, '[Popochiu] Can not save AudioCue: %s' % cue_file_name)
 	
-	# Agregar el AudioCue creado a su diccionario en el AudioManager
+	# Put the created AudioCue into the corresponding Dictionary in the AudioManager
 	audio_manager.free()
 	audio_manager = load(AUDIO_MANAGER_SCENE).instance()
 	
@@ -262,11 +264,11 @@ func _create_audio_cue(
 	save_audio_manager()
 	
 	if is_instance_valid(audio_row):
-		# Eliminar la fila del archivo
+		# Delete the file row
 		_audio_files_to_assign.erase(path)
 		audio_row.queue_free()
 	
-		# Agregar la fila al grupo correspondiente
+		# Put the row in its corresponding group
 		yield(get_tree().create_timer(0.1), 'timeout')
 		_read_audio_manager_cues()
 

@@ -141,11 +141,7 @@ func say(dialog: String, is_in_queue := true) -> void:
 	
 	play_talk()
 	if vo_name:
-		A.play({
-			cue_name = vo_name,
-			pos = global_position,
-			is_in_queue = false
-		})
+		A.play(vo_name, false, false, global_position)
 	
 	C.emit_signal('character_spoke', self, dialog)
 	
