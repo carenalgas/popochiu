@@ -35,6 +35,7 @@ onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
 onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
 onready var _tab_settings: VBoxContainer = _tab_container.get_node('Settings')
+onready var _btn_docs: Button = find_node('BtnDocs')
 onready var _types := {
 	Constants.Types.ROOM: {
 		path = ROOMS_PATH,
@@ -68,6 +69,7 @@ func _ready() -> void:
 	popochiu = load(POPOCHIU_SCENE).instance()
 	
 	_btn_move_folders.icon = get_icon('MoveUp', 'EditorIcons')
+	_btn_docs.icon = get_icon('HelpSearch', 'EditorIcons')
 	
 	# Que la pestaña seleccionada por defecto sea la principal (Main
 	_tab_container.current_tab = 0
@@ -86,6 +88,8 @@ func _ready() -> void:
 	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
 	_tab_room.connect('row_clicked', self, 'emit_signal', ['room_row_clicked'])
+	
+	_btn_docs.connect('pressed', OS, 'shell_open', [Constants.WIKI])
 	
 	_btn_move_folders.hide()
 
