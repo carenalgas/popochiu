@@ -44,5 +44,5 @@ const GRAPHIC_INTERFACE_SCENE := BASE_DIR + '/GraphicInterface/GraphicInterface.
 const TRANSITION_LAYER_SRC := 'res://addons/Popochiu/Engine/Objects/TransitionLayer/'
 const TRANSITION_LAYER_SCENE := BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
-
 const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
+const WIKI := 'https://github.com/mapedorr/popochiu/wiki/'

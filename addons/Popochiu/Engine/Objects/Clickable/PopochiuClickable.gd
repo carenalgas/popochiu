@@ -27,10 +27,11 @@ func _ready():
 	connect('visibility_changed', self, '_toggle_input')
 
 	if clickable:
-		# Conectarse a eventos propios.
+		# Connect to own signals
 		connect('mouse_entered', self, '_toggle_description', [true])
 		connect('mouse_exited', self, '_toggle_description', [false])
-		# Conectarse a eventos globales.
+		
+		# Connect to singleton signals
 		E.connect('language_changed', self, '_translate')
 	
 	if not Engine.editor_hint:

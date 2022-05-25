@@ -9,12 +9,10 @@ signal continue_clicked
 signal freed
 signal blocked
 signal interface_hidden
-signal inventory_show_requested(time)
-signal inventory_shown
+signal interface_shown
 signal history_opened
 
-var blocked := false
-var waiting_click := false
+var is_blocked := false
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -39,10 +37,11 @@ func show_info(msg := '') -> void:
 	emit_signal('show_info_requested', msg)
 
 
-# Notifies that graphic interface elements are blocked.
+# Makes the Graphic Interface to block.
 func block() -> void:
 	Cursor.set_cursor(Cursor.Type.WAIT)
 	emit_signal('blocked')
+	is_blocked = true
 
 
 # Notifies that graphic interface elements can be unlocked (e.g. when a cutscene
@@ -50,6 +49,7 @@ func block() -> void:
 func done() -> void:
 	Cursor.set_cursor()
 	emit_signal('freed')
+	is_blocked = false
 
 
 # Notifies that the graphic interface should hide.
@@ -57,16 +57,9 @@ func hide_interface() -> void:
 	emit_signal('interface_hidden')
 
 
-# Notifies that the inventory should appear.
-func show_inventory(time := 1.0, is_in_queue := true) -> void:
-	if is_in_queue: yield()
-	
-	if E.cutscene_skipped:
-		yield(get_tree(), 'idle_frame')
-		return
-	
-	emit_signal('inventory_show_requested', time)
-	yield(self, 'inventory_shown')
+# Notifies that the graphic interface should show.
+func show_interface() -> void:
+	emit_signal('interface_shown')
 
 
 # Notifies that the history of events should appear.

@@ -1,7 +1,5 @@
 extends Control
 
-signal item_added(item)
-
 var is_disabled := false
 
 var _can_hide_inventory := true
@@ -27,6 +25,7 @@ func _ready():
 	# Conectarse a las señales del papá de los inventarios
 	I.connect('item_added', self, '_add_item')
 	I.connect('item_removed', self, '_remove_item')
+	I.connect('inventory_show_requested', self, '_show_and_hide')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -95,6 +94,8 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 		_open()
 		yield(get_tree().create_timer(2.0), 'timeout')
 		_close()
+	else:
+		yield(get_tree(), 'idle_frame')
 
 	I.emit_signal('item_add_done', item)
 
@@ -108,3 +109,16 @@ func _remove_item(item: PopochiuInventoryItem) -> void:
 	yield(get_tree(), 'idle_frame')
 	
 	I.emit_signal('item_remove_done', item)
+
+
+func _show_and_hide(time := 1.0) -> void:
+	_open()
+	
+	yield($Tween, 'tween_all_completed')
+	yield(E.wait(time, false), 'completed')
+	
+	_close()
+	
+	yield($Tween, 'tween_all_completed')
+	
+	I.emit_signal('inventory_shown')
