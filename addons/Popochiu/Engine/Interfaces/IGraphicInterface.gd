@@ -42,6 +42,7 @@ func block() -> void:
 	Cursor.set_cursor(Cursor.Type.WAIT)
 	emit_signal('blocked')
 	is_blocked = true
+	Cursor.is_blocked = true
 
 
 # Notifies that graphic interface elements can be unlocked (e.g. when a cutscene
@@ -50,6 +51,7 @@ func done() -> void:
 	Cursor.set_cursor()
 	emit_signal('freed')
 	is_blocked = false
+	Cursor.is_blocked = false
 
 
 # Notifies that the graphic interface should hide.
