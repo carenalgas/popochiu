@@ -425,12 +425,14 @@ func _eval_string(text: String) -> void:
 				if char_name.to_lower() == 'player':
 					var char_line := text.substr(char_talk + 1).trim_prefix(' ')
 					yield(C.player_say(char_line, false), 'completed')
+					G.block()
 				if C.is_valid_character(char_name):
 					var char_line := text.substr(char_talk + 1).trim_prefix(' ')
 					yield(
 						C.character_say(char_name, char_line, false),
 						'completed'
 					)
+					G.block()
 				else:
 					yield(get_tree(), 'idle_frame')
 			else:

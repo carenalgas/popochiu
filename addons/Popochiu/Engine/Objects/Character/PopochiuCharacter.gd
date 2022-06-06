@@ -60,6 +60,7 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
 	is_moving = true
+	_looking_dir = 'l' if target_pos.x < position.x else 'r'
 	
 	match flips_when:
 		FlipsWhen.MOVING_LEFT:
@@ -77,7 +78,7 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 		E.main_camera.smoothing_enabled = true
 		return
 	
-	play_walk()
+	play_walk(target_pos)
 	
 	# Trigger the signal for the room  to start moving the character
 	emit_signal('started_walk_to', self, position, target_pos)
@@ -191,7 +192,7 @@ func play_idle() -> void:
 	pass
 
 
-func play_walk() -> void:
+func play_walk(target_pos: Vector2) -> void:
 	pass
 
 

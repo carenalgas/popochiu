@@ -16,13 +16,11 @@ var script_name := ''
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func turn_on() -> void:
-	# TODO: Implement functionality
-	pass
+	visible = true
 
 
 func turn_off() -> void:
-	# TODO: Implement functionality
-	pass
+	visible = false
 
 
 func turn_off_forever() -> void:

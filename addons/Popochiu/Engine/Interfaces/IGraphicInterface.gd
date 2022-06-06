@@ -48,10 +48,10 @@ func block() -> void:
 # Notifies that graphic interface elements can be unlocked (e.g. when a cutscene
 # has ended).
 func done() -> void:
-	Cursor.set_cursor()
-	emit_signal('freed')
 	is_blocked = false
 	Cursor.is_blocked = false
+	Cursor.set_cursor()
+	emit_signal('freed')
 
 
 # Notifies that the graphic interface should hide.

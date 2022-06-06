@@ -306,10 +306,13 @@ func _check_z_indexes(chr: PopochiuCharacter) -> void:
 			prop.z_index = z_index_update
 	
 	# Compare the character Y position with each other character's baseline
+	z_index_update = 0
 	for character in $Characters.get_children():
 		if character.get_instance_id() != chr.get_instance_id():
-			if character.always_on_top: character.z_index = 3
-			else: _is_in_front_of(character, y_pos)
+			if character.always_on_top: character.z_index = 4
+			elif _is_in_front_of(character, y_pos):
+				z_index_update += 1
+			character.z_index = z_index_update
 
 
 func _is_in_front_of(nde: Node, chr_y_pos: float) -> bool:
