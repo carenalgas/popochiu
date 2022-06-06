@@ -42,14 +42,14 @@ func block() -> void:
 	Cursor.set_cursor(Cursor.Type.WAIT)
 	emit_signal('blocked')
 	is_blocked = true
-	Cursor.is_blocked = true
+	Cursor.block()
 
 
 # Notifies that graphic interface elements can be unlocked (e.g. when a cutscene
 # has ended).
 func done() -> void:
 	is_blocked = false
-	Cursor.is_blocked = false
+	Cursor.unlock()
 	Cursor.set_cursor()
 	emit_signal('freed')
 

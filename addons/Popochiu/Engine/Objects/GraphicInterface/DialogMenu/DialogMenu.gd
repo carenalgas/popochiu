@@ -38,9 +38,8 @@ func _clicked(event: InputEvent) -> void:
 			pass
 
 
-# Crea nodos de tipo PopochiuDialogOption para los casos en los que se muestran opciones
-# de diálogo creadas en tiempo de ejecución, o sea, que no están en uno de los
-# diálogos almacenados en la carpeta Dialogs.
+# Creates an Array of PopochiuDialogOption to show dialog tree options created
+# during execution, (those that are created after calling D.show_inline_dialog)
 func _create_dialog_options(opts: Array) -> void:
 	var tmp_opts := []
 	for idx in opts.size():
