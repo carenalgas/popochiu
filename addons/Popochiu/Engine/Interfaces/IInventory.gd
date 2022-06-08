@@ -9,6 +9,7 @@ signal item_remove_done(item)
 #signal item_discarded(item)
 signal inventory_show_requested(time)
 signal inventory_shown
+signal inventory_hide_requested(use_anim)
 
 
 var active: PopochiuInventoryItem
@@ -121,6 +122,14 @@ func show_inventory(time := 1.0, is_in_queue := true) -> void:
 	
 	emit_signal('inventory_show_requested', time)
 	yield(self, 'inventory_shown')
+
+
+func hide_inventory(use_anim := true, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	emit_signal('inventory_hide_requested', use_anim)
+	
+	yield(get_tree(), 'idle_frame')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

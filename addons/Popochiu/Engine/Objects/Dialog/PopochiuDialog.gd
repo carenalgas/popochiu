@@ -21,6 +21,15 @@ func option_selected(opt: PopochiuDialogOption) -> void:
 	pass
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+# Gets the option PopochiuDialogOption.id that matches opt_id
+func get_option(opt_id: String) -> PopochiuDialogOption:
+	for o in options:
+		if (o as PopochiuDialogOption).id == opt_id:
+			return o
+	return null
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _show_options() -> void:
 	D.emit_signal('dialog_options_requested', options)

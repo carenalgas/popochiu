@@ -100,6 +100,9 @@ func is_valid_character(script_name: String) -> bool:
 
 # Gets a character identified by the received script_name.
 func get_character(script_name: String) -> PopochiuCharacter:
+	if script_name.to_lower() == 'player':
+		return player
+	
 	for c in characters:
 		if (c as PopochiuCharacter).script_name.to_lower() == script_name.to_lower():
 			return c
@@ -123,6 +126,16 @@ func change_camera_owner(c: PopochiuCharacter, is_in_queue := true) -> void:
 		return
 	
 	camera_owner = c
+	yield(get_tree(), 'idle_frame')
+
+
+func set_character_emotion(\
+chr_name: String, emotion: String, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	if get_character(chr_name):
+		get_character(chr_name).emotion = emotion
+	
 	yield(get_tree(), 'idle_frame')
 
 

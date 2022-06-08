@@ -26,18 +26,23 @@ func _ready():
 	I.connect('item_added', self, '_add_item')
 	I.connect('item_removed', self, '_remove_item')
 	I.connect('inventory_show_requested', self, '_show_and_hide')
+	I.connect('inventory_hide_requested', self, 'disable')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func disable() -> void:
+func disable(use_tween := true) -> void:
 	is_disabled = true
 	
-	$Tween.interpolate_property(
-		self, 'rect_position:y',
-		_hide_y, _hide_y - 3.5,
-		0.3, Tween.TRANS_LINEAR, Tween.EASE_OUT
-	)
-	$Tween.start()
+	if use_tween:
+		$Tween.interpolate_property(
+			self, 'rect_position:y',
+			_hide_y, _hide_y - 4.5,
+			0.3, Tween.TRANS_LINEAR, Tween.EASE_OUT
+		)
+		$Tween.start()
+	else:
+		$Tween.remove_all()
+		rect_position.y = _hide_y - 4.5
 
 
 func enable() -> void:

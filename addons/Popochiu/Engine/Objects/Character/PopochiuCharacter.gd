@@ -14,12 +14,13 @@ export var text_color := Color.white
 export var is_player := false
 export var walk_speed := 200.0
 export(FlipsWhen) var flips_when := 0
-export var vo_name := ''
+export(Array, Dictionary) var voices := [] setget set_voices
 export var follow_player := false
 
 var last_room := ''
 var anim_suffix := ''
 var is_moving := false
+var emotion := ''
 
 var _looking_dir := 'd'
 
@@ -141,6 +142,8 @@ func say(dialog: String, is_in_queue := true) -> void:
 		return
 	
 	play_talk()
+	
+	var vo_name := _get_vo_cue(emotion)
 	if vo_name:
 		A.play(vo_name, false, false, global_position)
 	
@@ -148,6 +151,7 @@ func say(dialog: String, is_in_queue := true) -> void:
 	
 	yield(G, 'continue_clicked')
 	
+	emotion = ''
 	idle(false)
 
 
@@ -181,10 +185,42 @@ func get_dialog_pos() -> float:
 	return $DialogPos.position.y
 
 
+func set_voices(value: Array) -> void:
+	voices = value
+	
+	for idx in value.size():
+		if not value[idx]:
+			voices[idx] = {
+				emotion = '',
+				cue = '',
+				variations = 0
+			}
+			property_list_changed_notify()
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _translate() -> void:
 	if Engine.editor_hint or not is_inside_tree(): return
 	description = E.get_text(_description_code)
+
+
+func _get_vo_cue(emotion := '') -> String:
+	for v in voices:
+		if v.emotion.to_lower() == emotion.to_lower():
+			var cue_name: String = v.cue
+			
+			if v.variations:
+				if not v.has('not_played') or v.not_played.empty():
+					v['not_played'] = range(v.variations)
+				
+				var idx: int = (v['not_played'] as Array).pop_at(
+					U.get_random_array_idx(v['not_played'])
+				)
+				
+				cue_name += '_' + str(idx + 1).pad_zeros(2)
+			
+			return cue_name
+	return ''
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
