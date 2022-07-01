@@ -10,7 +10,7 @@ Godot plugin to make point n' click games in a similar way to tools like [Advent
 
 ❤️ Join [Carenalga's Discord](https://discord.gg/Frv8C9Ters) to know about daily updates and releases.
 
-🧠 Check the [development branch](https://github.com/mapedorr/popochiu/tree/dev) to keep up with the latest changes.
+🧠 Check the [development repository](https://github.com/mapedorr/popochiu-dev) to keep up with the latest changes.
 
 # About
 

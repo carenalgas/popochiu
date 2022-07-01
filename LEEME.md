@@ -10,7 +10,7 @@ Plugin de Godot para crear juegos de aventura de manera similar a herramientas c
 
 ❤️ Únete al [Discord de Carenalga](https://discord.gg/Frv8C9Ters) para ver actualizaciones diarias y otras publicaciones
 
-🧠 Revisa la [rama de desarrollo](https://github.com/mapedorr/popochiu/tree/dev) para saber de los últimos cambios.
+🧠 Revisa el [repositorio de desarrollo](https://github.com/mapedorr/popochiu-dev) para saber acerca de los últimos cambios.
 
 # ¿Qué es?
 
