@@ -81,6 +81,14 @@ func get_elements() -> Array:
 	return _list.get_children()
 
 
+func remove_by_name(node_name: String) -> void:
+	if _list.has_node(node_name):
+		var node: HBoxContainer = _list.get_node(node_name)
+		
+		_list.remove_child(node)
+		node.queue_free()
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _on_input(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton

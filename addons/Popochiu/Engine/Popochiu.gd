@@ -3,22 +3,8 @@ extends Node
 # It is the system main class, and is in charge of a making the game to work
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-signal text_speed_changed(idx)
+signal text_speed_changed
 signal language_changed
-
-export(Array, Resource) var rooms = []
-export(Array, Resource) var characters = []
-export(Array, Resource) var inventory_items = []
-export(Array, Resource) var dialogs = []
-export var skip_cutscene_time := 0.2
-export var text_speeds := [0.1, 0.01, 0.0]
-export var text_speed_idx := 0 setget _set_text_speed_idx
-export var text_continue_auto := false
-export var languages := ['es_CO', 'es', 'en']
-export(int, 'co', 'es', 'en') var language_idx := 0 setget _set_language_idx
-export var use_translations := false
-export var items_on_start := []
-export var inventory_limit := 0
 
 var in_run := false
 # Used to prevent going to another room when there is one being loaded
@@ -26,7 +12,7 @@ var in_room := false setget _set_in_room
 var current_room: PopochiuRoom = null
 # Stores the las PopochiuClickable node clicked to ease access to it from
 # any other class
-var clicked: Node
+var clicked: Node = null
 var cutscene_skipped := false
 var rooms_states := {}
 var history := []
@@ -34,6 +20,10 @@ var width := 0.0 setget ,get_width
 var height := 0.0 setget ,get_height
 var half_width := 0.0 setget ,get_half_width
 var half_height := 0.0 setget ,get_half_height
+var settings := PopochiuResources.get_settings()
+var current_text_speed_idx := settings.text_speed_idx
+var current_text_speed: float = settings.text_speeds[current_text_speed_idx]
+var current_language := 0
 
 # TODO: This could be in the camera's own script
 var _is_camera_shaking := false
@@ -45,6 +35,7 @@ var _shake_timer := 0.0
 # during the execution of another
 var _running := false
 var _use_transition_on_room_change := true
+var _config: ConfigFile = null
 
 onready var main_camera: Camera2D = find_node('MainCamera')
 onready var _defaults := {
@@ -59,16 +50,19 @@ onready var _defaults := {
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	_config = PopochiuResources.get_data_cfg()
+	
 	# Set the first character on the list to be the default PC (playable character)
+	var characters := PopochiuResources.get_section('characters')
 	if not characters.empty():
 		var pc: PopochiuCharacter = load(
-			(characters[0] as PopochiuCharacterData).scene
+			(load(characters[0]) as PopochiuCharacterData).scene
 		).instance()
 		C.player = pc
 		C.characters.append(pc)
 	
 	# Add inventory items on start (ignore animations (3rd parameter))
-	for key in items_on_start:
+	for key in settings.items_on_start:
 		I.add_item(key, false, false)
 	
 	set_process_input(false)
@@ -92,8 +86,13 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_released('popochiu-skip'):
 		cutscene_skipped = true
-		$TransitionLayer.play_transition('pass_down_in', skip_cutscene_time)
+		$TransitionLayer.play_transition(
+			TransitionLayer.PASS_DOWN_IN,
+			E.settings.skip_cutscene_time
+		)
+		
 		yield($TransitionLayer, 'transition_finished')
+		
 		G.emit_signal('continue_clicked')
 
 
@@ -163,7 +162,8 @@ func run_cutscene(instructions: Array) -> void:
 	
 	if cutscene_skipped:
 		$TransitionLayer.play_transition(
-			$TransitionLayer.PASS_DOWN_OUT, skip_cutscene_time
+			$TransitionLayer.PASS_DOWN_OUT,
+			E.settings.skip_cutscene_time
 		)
 		yield($TransitionLayer, 'transition_finished')
 	
@@ -183,7 +183,8 @@ func goto_room(script_name := '', use_transition := true) -> void:
 		$TransitionLayer.play_transition($TransitionLayer.FADE_IN)
 		yield($TransitionLayer, 'transition_finished')
 	
-	C.player.last_room = current_room.script_name
+	if is_instance_valid(C.player):
+		C.player.last_room = current_room.script_name
 	
 	# Store the room state
 	rooms_states[current_room.script_name] = current_room.state
@@ -198,8 +199,8 @@ func goto_room(script_name := '', use_transition := true) -> void:
 	main_camera.limit_top = _defaults.camera_limits.top
 	main_camera.limit_bottom = _defaults.camera_limits.bottom
 	
-	for r in rooms:
-		var room = r as PopochiuRoomData
+	for rp in PopochiuResources.get_section('rooms'):
+		var room: PopochiuRoomData = load(rp)
 		if room.script_name.to_lower() == script_name.to_lower():
 			get_tree().change_scene(room.scene)
 			return
@@ -233,6 +234,10 @@ func room_readied(room: PopochiuRoom) -> void:
 			room.add_character(C.player)
 		
 		yield(C.player.idle(false), 'completed')
+	
+	# Sort the characters in the room based on their baseline to avoid issues
+	# with z_index
+	room.sort_characters()
 	
 	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
 		c.room = room
@@ -295,13 +300,13 @@ target := Vector2.ONE, duration := 1.0, is_in_queue := true) -> void:
 
 # Returns a String of a text that could be a translation key
 func get_text(msg: String) -> String:
-	return tr(msg) if use_translations else msg
+	return tr(msg) if E.settings.use_translations else msg
 
 
 # Gets the PopochiuCharacter with script_name
 func get_character_instance(script_name: String) -> PopochiuCharacter:
-	for c in characters:
-		var popochiu_character: PopochiuCharacterData = c
+	for rp in PopochiuResources.get_section('characters'):
+		var popochiu_character: PopochiuCharacterData = load(rp)
 		if popochiu_character.script_name == script_name:
 			return load(popochiu_character.scene).instance()
 	
@@ -311,8 +316,8 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 
 # Gets the PopochiuInventoryItem with script_name
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	for ii in inventory_items:
-		var popochiu_inventory_item: PopochiuInventoryItemData = ii
+	for rp in PopochiuResources.get_section('inventory_items'):
+		var popochiu_inventory_item: PopochiuInventoryItemData = load(rp)
 		if popochiu_inventory_item.script_name == script_name:
 			return load(popochiu_inventory_item.scene).instance()
 	
@@ -322,8 +327,8 @@ func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 
 # Gets the PopochiuDialog with script_name
 func get_dialog(script_name: String) -> PopochiuDialog:
-	for dt in dialogs:
-		var tree: PopochiuDialog = dt
+	for rp in PopochiuResources.get_section('dialogs'):
+		var tree: PopochiuDialog = load(rp)
 		if tree.script_name.to_lower() == script_name.to_lower():
 			return tree
 
@@ -367,8 +372,9 @@ func runnable(
 
 # Checks if the room with script_name exists in the array of rooms of Popochiu
 func room_exists(script_name: String) -> bool:
-	for r in rooms:
-		var room = r as PopochiuRoomData
+#	for r in rooms:
+	for rp in PopochiuResources.get_section('rooms'):
+		var room: PopochiuRoomData = load(rp)
 		if room.script_name.to_lower() == script_name.to_lower():
 			return true
 	return false
@@ -399,6 +405,17 @@ func get_half_width() -> float:
 
 func get_half_height() -> float:
 	return get_viewport().get_visible_rect().end.y / 2.0
+
+
+func change_text_speed() -> void:
+	current_text_speed_idx = wrapi(
+		current_text_speed_idx + 1,
+		0,
+		settings.text_speeds.size()
+	)
+	current_text_speed = settings.text_speeds[current_text_speed_idx]
+	
+	emit_signal('text_speed_changed')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -450,12 +467,12 @@ func _set_in_room(value: bool) -> void:
 	Cursor.toggle_visibility(in_room)
 
 
-func _set_text_speed_idx(value: int) -> void:
-	text_speed_idx = value
-	emit_signal('text_speed_changed', text_speed_idx)
-
-
-func _set_language_idx(value: int) -> void:
-	language_idx = value
-	TranslationServer.set_locale(languages[value])
-	emit_signal('language_changed')
+#func _set_text_speed_idx(value: int) -> void:
+#	text_speed_idx = value
+#	emit_signal('text_speed_changed', text_speed_idx)
+#
+#
+#func _set_language_idx(value: int) -> void:
+#	language_idx = value
+#	TranslationServer.set_locale(languages[value])
+#	emit_signal('language_changed')

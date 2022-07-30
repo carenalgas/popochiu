@@ -8,7 +8,7 @@ const INVENTORY_ITEM_SCRIPT_TEMPLATE := \
 'res://addons/Popochiu/Engine/Templates/InventoryItemTemplate.gd'
 const BASE_INVENTORY_ITEM_PATH := \
 'res://addons/Popochiu/Engine/Objects/InventoryItem/PopochiuInventoryItem.tscn'
-const Constants := preload('res://addons/Popochiu/Constants.gd')
+const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
 var _new_item_name := ''
 var _new_item_path := ''

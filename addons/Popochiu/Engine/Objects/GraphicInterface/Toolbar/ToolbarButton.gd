@@ -1,7 +1,7 @@
 extends TextureButton
 
 #const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
-#const Constants := preload('res://addons/Popochiu/Constants.gd')
+#const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
 #export(Constants.CursorType) var cursor := Constants.CursorType.USE
 export var description := '' setget ,get_description

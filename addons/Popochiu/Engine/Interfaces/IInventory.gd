@@ -24,7 +24,8 @@ var _items_count := 0
 func add_item(item_name: String, is_in_queue := true, animate := true) -> void:
 	if is_in_queue: yield()
 	
-	if E.inventory_limit > 0 and _items_count == E.inventory_limit:
+	if E.settings.inventory_limit > 0\
+	and _items_count == E.settings.inventory_limit:
 		prints(
 			'[Popochiu] Could not add %s to the inventory because it is full' %\
 			item_name
@@ -93,7 +94,8 @@ func is_item_in_inventory(item_name: String) -> bool:
 
 
 func is_full() -> bool:
-	return E.inventory_limit > 0 and E.inventory_limit == _items_count
+	return E.settings.inventory_limit > 0\
+	and E.settings.inventory_limit == _items_count
 
 
 #func discard_item(item_name: String, is_in_queue := true) -> void:

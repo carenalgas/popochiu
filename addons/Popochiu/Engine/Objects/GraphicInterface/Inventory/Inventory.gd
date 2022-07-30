@@ -9,7 +9,12 @@ onready var _hide_y := rect_position.y - (rect_size.y - 4)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
-	rect_position.y = _hide_y
+	if not E.settings.inventory_always_visible:
+		rect_position.y = _hide_y
+		
+		# Connect to self signals
+		connect('mouse_entered', self, '_open')
+		connect('mouse_exited', self, '_close')
 	
 	# Check if there are already items in the inventory (set manually in the scene)
 	for ii in $Box.get_children():
@@ -17,10 +22,6 @@ func _ready():
 			ii.in_inventory = true
 			ii.connect('description_toggled', self, '_show_item_info')
 			ii.connect('selected', self, '_change_cursor')
-	
-	# Conectarse a señales del yo
-	connect('mouse_entered', self, '_open')
-	connect('mouse_exited', self, '_close')
 	
 	# Conectarse a las señales del papá de los inventarios
 	I.connect('item_added', self, '_add_item')
@@ -32,6 +33,10 @@ func _ready():
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func disable(use_tween := true) -> void:
 	is_disabled = true
+	
+	if E.settings.inventory_always_visible:
+		hide()
+		return
 	
 	if use_tween:
 		$Tween.interpolate_property(
@@ -48,6 +53,10 @@ func disable(use_tween := true) -> void:
 func enable() -> void:
 	is_disabled = false
 	
+	if E.settings.inventory_always_visible:
+		show()
+		return
+	
 	$Tween.interpolate_property(
 		self, 'rect_position:y',
 		_hide_y - 3.5, _hide_y,
@@ -58,6 +67,7 @@ func enable() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _open() -> void:
+	if E.settings.inventory_always_visible: return
 	if not is_disabled and rect_position.y != _hide_y: return
 	
 	$Tween.interpolate_property(
@@ -69,6 +79,8 @@ func _open() -> void:
 
 
 func _close() -> void:
+	if E.settings.inventory_always_visible: return
+	
 	yield(get_tree(), 'idle_frame')
 	
 	if not _can_hide_inventory: return
@@ -95,7 +107,7 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 	item.connect('description_toggled', self, '_show_item_info')
 	item.connect('selected', self, '_change_cursor')
 	
-	if animate:
+	if not E.settings.inventory_always_visible and animate:
 		_open()
 		yield(get_tree().create_timer(2.0), 'timeout')
 		_close()

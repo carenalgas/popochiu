@@ -4,7 +4,7 @@ extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 
 const SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/RegionTemplate.gd'
 const REGION_SCENE := 'res://addons/Popochiu/Engine/Objects/Region/PopochiuRegion.tscn'
-const Constants := preload('res://addons/Popochiu/Constants.gd')
+const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
 var room_tab: VBoxContainer = null
 

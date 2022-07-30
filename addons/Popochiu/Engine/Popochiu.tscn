@@ -6,9 +6,6 @@
 
 [node name="Popochiu" type="Node"]
 script = ExtResource( 3 )
-skip_cutscene_time = 0.25
-text_speeds = [ 0.05, 0.01, 0.0 ]
-inventory_limit = 3
 
 [node name="Tween" type="Tween" parent="."]
 
@@ -34,4 +31,3 @@ __meta__ = {
 [node name="GraphicInterface" parent="." instance=ExtResource( 2 )]
 
 [node name="TransitionLayer" parent="." instance=ExtResource( 1 )]
-fade_color = Color( 0.0808421, 0.075943, 0.0820313, 1 )

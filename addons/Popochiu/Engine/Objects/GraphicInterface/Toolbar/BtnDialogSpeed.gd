@@ -6,16 +6,16 @@ export var states_descriptions := ['normal', 'rápido', 'inmediato']
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	texture_normal = btn_states[E.text_speed_idx]
+	texture_normal = btn_states[E.current_text_speed_idx]
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func on_pressed() -> void:
-	E.text_speed_idx = wrapi(E.text_speed_idx + 1, 0, btn_states.size())
-	texture_normal = btn_states[E.text_speed_idx]
+	E.change_text_speed()
+	texture_normal = btn_states[E.current_text_speed_idx]
 
 	G.show_info(self.description)
 
 
 func get_description() -> String:
-	return '%s: %s' % [description, states_descriptions[E.text_speed_idx]]
+	return '%s: %s' % [description, states_descriptions[E.current_text_speed_idx]]
