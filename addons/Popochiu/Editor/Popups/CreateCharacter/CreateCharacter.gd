@@ -5,7 +5,7 @@ extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 
 const CHARACTER_SCRIPT_TEMPLATE := 'res://addons/Popochiu/Engine/Templates/CharacterTemplate.gd'
 const CHARACTER_SCENE := 'res://addons/Popochiu/Engine/Objects/Character/PopochiuCharacter.tscn'
-const Constants := preload('res://addons/Popochiu/Constants.gd')
+const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
 var _new_character_name := ''
 var _new_character_path := ''

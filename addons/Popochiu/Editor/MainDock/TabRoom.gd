@@ -6,7 +6,7 @@ extends VBoxContainer
 signal row_clicked
 
 const PopochiuObjectRow := preload('ObjectRow/PopochiuObjectRow.gd')
-const Constants := preload('res://addons/Popochiu/Constants.gd')
+const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
 var opened_room: PopochiuRoom = null
 var main_dock: Panel setget _set_main_dock

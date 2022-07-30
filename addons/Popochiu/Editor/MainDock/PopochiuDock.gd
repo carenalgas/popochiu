@@ -12,7 +12,7 @@ const ROOMS_PATH := 'res://popochiu/Rooms/'
 const CHARACTERS_PATH := 'res://popochiu/Characters/'
 const INVENTORY_ITEMS_PATH := 'res://popochiu/InventoryItems/'
 const DIALOGS_PATH := 'res://popochiu/Dialogs/'
-const Constants := preload('res://addons/Popochiu/Constants.gd')
+const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 const PopochiuObjectRow := preload('ObjectRow/PopochiuObjectRow.gd')
 
 var ei: EditorInterface
@@ -29,12 +29,13 @@ var _rows_paths := []
 onready var delete_dialog: ConfirmationDialog = find_node('DeleteConfirmation')
 onready var delete_checkbox: CheckBox = delete_dialog.find_node('CheckBox')
 onready var delete_extra: Container = delete_dialog.find_node('Extra')
+onready var loading_dialog: Popup = find_node('Loading')
 onready var _btn_move_folders: Button = find_node('BtnMoveFolders')
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
 onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
-onready var _tab_settings: VBoxContainer = _tab_container.get_node('Settings')
 onready var _btn_docs: Button = find_node('BtnDocs')
+onready var _btn_settings: Button = find_node('BtnSettings')
 onready var _types := {
 	Constants.Types.ROOM: {
 		path = ROOMS_PATH,
@@ -69,6 +70,7 @@ func _ready() -> void:
 	
 	_btn_move_folders.icon = get_icon('MoveUp', 'EditorIcons')
 	_btn_docs.icon = get_icon('HelpSearch', 'EditorIcons')
+	_btn_settings.icon = get_icon('Tools', 'EditorIcons')
 	
 	# Set the Main tab selected by default
 	_tab_container.current_tab = 0
@@ -83,19 +85,21 @@ func _ready() -> void:
 	_tab_room.main_dock = self
 	_tab_room.object_row = _object_row
 	_tab_audio.main_dock = self
-	_tab_settings.main_dock = self
 	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
 	_tab_room.connect('row_clicked', self, 'emit_signal', ['room_row_clicked'])
 	
 	_btn_docs.connect('pressed', OS, 'shell_open', [Constants.WIKI])
+	_btn_settings.connect('pressed', self, '_open_settings')
 	
 	_btn_move_folders.hide()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func fill_data() -> void:
-	# Buscar habitaciones, personajes, objetos de inventario y diálogos.
+	var settings := PopochiuResources.get_settings()
+	
+	# Search the FileSystem for Rooms, Characters, InventoryItems and Dialogs
 	for t in _types:
 		if not _types[t].has('path'): continue
 		
@@ -138,7 +142,9 @@ func fill_data() -> void:
 				
 				match t:
 					Constants.Types.ROOM:
-						is_in_core = popochiu.rooms.has(resource)
+						is_in_core = PopochiuResources.has_data_value(
+							'rooms', resource.script_name
+						)
 						
 						# Check if the room is the main scene
 						var main_scene: String = ProjectSettings.get_setting(\
@@ -146,21 +152,26 @@ func fill_data() -> void:
 						if main_scene == resource.scene:
 							row.is_main = true
 					Constants.Types.CHARACTER:
-						is_in_core = popochiu.characters.has(resource)
+						is_in_core = PopochiuResources.has_data_value(
+							'characters', resource.script_name
+						)
 					Constants.Types.INVENTORY_ITEM:
-						is_in_core = popochiu.inventory_items.has(resource)
+						is_in_core = PopochiuResources.has_data_value(
+							'inventory_items', resource.script_name
+						)
 						
-						if resource.script_name in popochiu.items_on_start:
+						if resource.script_name in settings.items_on_start:
 							row.is_on_start = true
 					Constants.Types.DIALOG:
-						is_in_core = popochiu.dialogs.has(resource)
+						is_in_core = PopochiuResources.has_data_value(
+							'dialogs', resource.script_name
+						)
 				
 				if not is_in_core:
 					row.show_add_to_core()
 	
 	# Load other tabs data
 	_tab_audio.fill_data()
-	_tab_settings.fill_data()
 
 
 func add_to_list(type: int, name_to_add: String) -> PopochiuObjectRow:
@@ -177,42 +188,10 @@ func scene_closed(filepath: String) -> void:
 	_tab_room.scene_closed(filepath)
 
 
-func get_popochiu() -> Node:
-	popochiu.free()
-	popochiu = load(POPOCHIU_SCENE).instance()
-	return popochiu
-
-
 func add_resource_to_popochiu(target: String, resource: Resource) -> int:
-	get_popochiu()
-	
-	if popochiu[target].empty():
-		popochiu[target] = [resource]
-	else:
-		popochiu[target].append(resource)
-	
-	return save_popochiu()
-
-
-func save_popochiu() -> int:
-	var result := OK
-	var new_popochiu: PackedScene = PackedScene.new()
-	
-	new_popochiu.pack(popochiu)
-	
-	result = ResourceSaver.save(POPOCHIU_SCENE, new_popochiu)
-	if result != OK:
-		push_error('[Popochiu] ---- ◇ Update error: %d ◇ ----' % result)
-		return result
-	
-	ei.reload_scene_from_path(POPOCHIU_SCENE)
-	
-	# TODO: Do this when Popochiu.tscn is part of the opened tabs in the editor
-	if ei.get_edited_scene_root() \
-	and ei.get_edited_scene_root().name == 'Popochiu':
-		ei.save_scene()
-
-	return result
+	return PopochiuResources.set_data_value(
+		target, resource.script_name, resource.resource_path
+	)
 
 
 func show_confirmation(title: String, message: String, ask := '') -> void:
@@ -302,3 +281,7 @@ func _select_object(por: PopochiuObjectRow) -> void:
 	
 	ei.select_file(por.path)
 	last_selected = por
+
+
+func _open_settings() -> void:
+	ei.edit_resource(PopochiuResources.get_settings())

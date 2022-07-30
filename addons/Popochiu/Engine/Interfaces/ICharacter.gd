@@ -74,7 +74,10 @@ func player_walk_to(position: Vector2, is_in_queue := true) -> void:
 func walk_to_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	yield(
-		player_walk_to(E.clicked.walk_to_point + E.clicked.position, false),
+		player_walk_to(
+			(E.clicked.walk_to_point * E.clicked.scale) + E.clicked.position,
+			false
+		),
 		'completed'
 	)
 
@@ -100,7 +103,8 @@ func is_valid_character(script_name: String) -> bool:
 
 # Gets a character identified by the received script_name.
 func get_character(script_name: String) -> PopochiuCharacter:
-	if script_name.to_lower() == 'player':
+	if script_name.to_lower() == 'player'\
+	or player.script_name.to_lower() == script_name:
 		return player
 	
 	for c in characters:

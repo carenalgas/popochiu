@@ -27,15 +27,6 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 4. Restart Godot `Project > Reload Current Project`.
 5. You'll see the Popochiu dock at the right. That's all!
 
-
-## Intro video 🎥
-
-[In this YouTube video (with English subs)](https://www.youtube.com/watch?v=kS9mrP0tgUw) you can see how to quickly make a room with a character moving through it with Popochiu.
-
-## Long video 🎥
-
-[In this YouTube video (Spanish only)](https://youtu.be/ORBjfD5kdE4?t=1209) you can see how to create a room, two characters, a prop that allows you to add an item to the inventory, and a dialog tree between both characters.
-
 ---
 
 # Credits

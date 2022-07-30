@@ -26,7 +26,7 @@ func _ready() -> void:
 	clear()
 	$Label.text = ''
 	modulate.a = 0.0
-	_secs_per_character = E.text_speeds[E.text_speed_idx]
+	_secs_per_character = E.current_text_speed
 	_continue_icon.hide()
 	
 	yield(get_tree(), 'idle_frame')
@@ -153,8 +153,8 @@ func hide() -> void:
 	rect_size = Vector2.ZERO
 
 
-func change_speed(idx: int) -> void:
-	_secs_per_character = E.text_speeds[idx]
+func change_speed() -> void:
+	_secs_per_character = E.current_text_speed
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -170,7 +170,7 @@ func _notify_completion() -> void:
 
 
 func _show_icon() -> void:
-	if not E.text_continue_auto:
+	if not E.settings.text_continue_auto:
 		# Hacer que el icono empiece a saltar.
 		_continue_icon.value = 100.0
 		_continue_icon_tween.interpolate_property(
@@ -196,5 +196,5 @@ func _show_icon() -> void:
 
 
 func _continue() -> void:
-	if E.text_continue_auto:
+	if E.settings.text_continue_auto:
 		G.emit_signal('continue_clicked')

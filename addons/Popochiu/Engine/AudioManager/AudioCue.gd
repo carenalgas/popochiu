@@ -33,5 +33,11 @@ func _get_rnd_volume() -> float:
 
 func _set_loop(value: bool) -> void:
 	loop = value
-	audio.loop = value
+	match audio.get_class():
+		'AudioStreamOGGVorbis', 'AudioStreamMP3':
+			audio.loop = value
+		'AudioStreamSample':
+			(audio as AudioStreamSample).loop_mode =\
+			AudioStreamSample.LOOP_FORWARD if value\
+			else AudioStreamSample.LOOP_DISABLED
 	property_list_changed_notify()

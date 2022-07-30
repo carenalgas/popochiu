@@ -3,8 +3,6 @@ class_name TransitionLayer
 
 signal transition_finished
 
-export var fade_color := Color.black
-
 enum {
 	FADE_IN_OUT,
 	FADE_IN,
@@ -20,14 +18,14 @@ onready var n := {
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	for c in $Transitions.get_children():
-		(c as Sprite).modulate = fade_color
-	
 	$AnimationPlayer.connect('animation_finished', self, '_transition_finished')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func play_transition(type := FADE_IN, duration := 1.0) -> void:
+	for c in $Transitions.get_children():
+		(c as Sprite).modulate = E.settings.fade_color
+	
 	$AnimationPlayer.playback_speed = 1.0 / duration
 	
 	match type:

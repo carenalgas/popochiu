@@ -5,7 +5,7 @@ extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 
 const DIALOG_SCRIPT_TEMPLATE :=\
 'res://addons/Popochiu/Engine/Templates/DialogTemplate.gd'
-const Constants := preload('res://addons/Popochiu/Constants.gd')
+const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
 var _new_dialog_name := ''
 var _new_dialog_path := ''

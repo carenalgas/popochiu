@@ -26,15 +26,6 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 4. Reinicia Godot `Proyecto > Volver a Cargar el Proyecto Actual`.
 5. Verás el dock de Popochiu a la derecha del editor. ¡Eso es todo!
 
-
-## Video de introducción 🎥
-
-[En este video de YouTube (¡en Español!)](https://www.youtube.com/watch?v=kS9mrP0tgUw) puedes ver una introducción rápida de cómo usar Popochiu para crear una habitación con un personaje que se mueva en ella.
-
-## Video extenso 🎥
-
-Y en [este otro video de YouTube (¡también en Español!)](https://youtu.be/ORBjfD5kdE4?t=1209) puedes ver cómo crear una habitación, dos personajes, una prop que permite agregar un objeto al inventario, y un diálogo entre los dos personajes.
-
 ---
 
 # Créditos

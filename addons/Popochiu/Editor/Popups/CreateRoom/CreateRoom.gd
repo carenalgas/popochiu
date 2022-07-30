@@ -11,7 +11,7 @@ const ROOM_SCRIPT_TEMPLATE :=\
 'res://addons/Popochiu/Engine/Templates/RoomTemplate.gd'
 const BASE_ROOM_PATH :=\
 'res://addons/Popochiu/Engine/Objects/Room/PopochiuRoom.tscn'
-const Constants := preload('res://addons/Popochiu/Constants.gd')
+const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
 var show_set_as_main := false setget _set_show_set_as_main
 
@@ -150,7 +150,8 @@ func _clear_fields() -> void:
 func _check_if_first_room() -> void:
 	# Mostrar una casilla de verificación para establecer la habitación a crear
 	# como la escene principal del proyecto si se trata de la primera.
-	self.show_set_as_main = _main_dock.popochiu.rooms.empty()
+#	self.show_set_as_main = _main_dock.popochiu.rooms.empty()
+	self.show_set_as_main = PopochiuResources.get_section('rooms').empty()
 
 
 func _set_show_set_as_main(value: bool) -> void:

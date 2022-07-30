@@ -8,11 +8,6 @@ extends Node
 
 const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd')
 
-export var mx_cues := []
-export var sfx_cues := []
-export var vo_cues := []
-export var ui_cues := []
-
 var twelfth_root_of_two := pow(2, (1.0 / 12))
 
 var _mx_cues := {}
@@ -27,8 +22,11 @@ var _fading_sounds := {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	if Engine.editor_hint: return
+	
 	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
-		for ac in self[arr]:
+		for rp in PopochiuResources.get_data_value('audio', arr, []):
+			var ac: AudioCue = load(rp)
 			self['_%s' % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
 
@@ -318,5 +316,11 @@ func _fadeout_finished(obj: Node, _key: NodePath) -> void:
 
 func _sort_cues(a: AudioCue, b: AudioCue) -> bool:
 	if a.resource_name < b.resource_name:
+		return true
+	return false
+
+
+func _sort_resource_paths(a: String, b: String) -> bool:
+	if a.get_file() < b.get_file():
 		return true
 	return false
