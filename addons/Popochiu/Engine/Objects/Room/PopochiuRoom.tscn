@@ -2,14 +2,10 @@
 
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Room/PopochiuRoom.gd" type="Script" id=1]
 
-[node name="Room" type="Node2D"]
+[node name="Room" type="YSort"]
 script = ExtResource( 1 )
-limit_left = 0.0
-limit_right = 0.0
-limit_top = 0.0
-limit_bottom = 0.0
 
-[node name="Props" type="Node2D" parent="."]
+[node name="Props" type="YSort" parent="."]
 
 [node name="Hotspots" type="Node2D" parent="."]
 
@@ -21,4 +17,4 @@ limit_bottom = 0.0
 
 [node name="Navigation2D" type="Navigation2D" parent="WalkableAreas"]
 
-[node name="Characters" type="Node2D" parent="."]
+[node name="Characters" type="YSort" parent="."]

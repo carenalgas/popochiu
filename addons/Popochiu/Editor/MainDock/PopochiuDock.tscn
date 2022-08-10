@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateCharacter/CreateCharacter.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateDialog/CreateDialog.tscn" type="PackedScene" id=2]
@@ -17,52 +17,7 @@
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateRegion/CreateRegion.tscn" type="PackedScene" id=15]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/Loading/Loading.tscn" type="PackedScene" id=16]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/DeleteConfirmation/DeleteConfirmation.tscn" type="PackedScene" id=17]
-
-[sub_resource type="StyleBoxFlat" id=6]
-content_margin_left = 12.0
-content_margin_right = 12.0
-bg_color = Color( 0.180392, 0.172549, 0.607843, 1 )
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color( 0.180392, 0.172549, 0.607843, 1 )
-
-[sub_resource type="StyleBoxFlat" id=7]
-content_margin_left = 12.0
-content_margin_right = 12.0
-bg_color = Color( 0.180392, 0.172549, 0.607843, 1 )
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color( 0.180392, 0.172549, 0.607843, 1 )
-
-[sub_resource type="StyleBoxFlat" id=5]
-content_margin_left = 12.0
-content_margin_right = 12.0
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color( 0.458824, 0.807843, 0.784314, 1 )
-
-[sub_resource type="Image" id=11]
-data = {
-"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
-"format": "LumAlpha8",
-"height": 16,
-"mipmaps": false,
-"width": 16
-}
-
-[sub_resource type="ImageTexture" id=12]
-flags = 4
-flags = 4
-image = SubResource( 11 )
-size = Vector2( 16, 16 )
+[ext_resource path="res://addons/Popochiu/Editor/Popups/Setup/Setup.tscn" type="PackedScene" id=18]
 
 [sub_resource type="StyleBoxFlat" id=10]
 content_margin_left = 4.0
@@ -80,6 +35,21 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="Image" id=11]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=12]
+flags = 4
+flags = 4
+image = SubResource( 11 )
+size = Vector2( 16, 16 )
 
 [node name="Popochiu" type="Panel"]
 anchor_right = 1.0
@@ -103,21 +73,6 @@ margin_bottom = 176.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/separation = 2
-
-[node name="BtnMoveFolders" type="Button" parent="MarginContainer/VBoxContainer"]
-visible = false
-margin_left = 93.0
-margin_right = 218.0
-margin_bottom = 32.0
-rect_min_size = Vector2( 0, 32 )
-size_flags_horizontal = 4
-custom_colors/font_color_pressed = Color( 0.929412, 0.945098, 0.443137, 1 )
-custom_styles/hover = SubResource( 6 )
-custom_styles/pressed = SubResource( 7 )
-custom_styles/focus = SubResource( 6 )
-custom_styles/normal = SubResource( 5 )
-text = "Move folders"
-icon = SubResource( 12 )
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
 margin_right = 312.0
@@ -221,20 +176,28 @@ margin_bottom = 26.0
 size_flags_vertical = 3
 alignment = 2
 
+[node name="BtnSetup" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
+margin_left = 20.0
+margin_right = 86.0
+margin_bottom = 22.0
+hint_tooltip = "Opens wiki in web browser"
+text = "Setup"
+icon = SubResource( 12 )
+
 [node name="BtnSettings" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
-margin_left = 53.0
-margin_right = 134.0
+margin_left = 90.0
+margin_right = 171.0
 margin_bottom = 22.0
 hint_tooltip = "Opens wiki in web browser"
 text = "Settings"
 icon = SubResource( 12 )
 
 [node name="BtnDocs" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
-margin_left = 138.0
+margin_left = 175.0
 margin_right = 304.0
 margin_bottom = 22.0
 hint_tooltip = "Opens wiki in web browser"
-text = "Open documentation"
+text = "Documentation"
 icon = SubResource( 12 )
 
 [node name="Popups" type="Control" parent="."]
@@ -264,3 +227,5 @@ margin_bottom = 270.0
 [node name="DeleteConfirmation" parent="Popups" instance=ExtResource( 17 )]
 
 [node name="Loading" parent="Popups" instance=ExtResource( 16 )]
+
+[node name="Setup" parent="Popups" instance=ExtResource( 18 )]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/Inventory.gd" type="Script" id=1]
-[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/bg.png" type="Texture" id=2]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/inventory_bg.png" type="Texture" id=2]
 
 [sub_resource type="StyleBoxTexture" id=1]
 content_margin_left = 3.0

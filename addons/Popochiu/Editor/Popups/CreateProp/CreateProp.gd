@@ -87,6 +87,10 @@ func create() -> void:
 	# Agregar la prop a su habitación
 	_room.get_node('Props').add_child(prop)
 	prop.owner = _room
+	prop.position = Vector2(
+		ProjectSettings.get_setting('display/window/size/width'),
+		ProjectSettings.get_setting('display/window/size/height')
+	) / 2.0
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

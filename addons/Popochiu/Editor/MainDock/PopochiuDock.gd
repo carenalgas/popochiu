@@ -30,12 +30,13 @@ onready var delete_dialog: ConfirmationDialog = find_node('DeleteConfirmation')
 onready var delete_checkbox: CheckBox = delete_dialog.find_node('CheckBox')
 onready var delete_extra: Container = delete_dialog.find_node('Extra')
 onready var loading_dialog: Popup = find_node('Loading')
-onready var _btn_move_folders: Button = find_node('BtnMoveFolders')
+onready var setup_dialog: Popup = find_node('Setup')
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
 onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
 onready var _btn_docs: Button = find_node('BtnDocs')
 onready var _btn_settings: Button = find_node('BtnSettings')
+onready var _btn_setup: Button = find_node('BtnSetup')
 onready var _types := {
 	Constants.Types.ROOM: {
 		path = ROOMS_PATH,
@@ -68,9 +69,9 @@ onready var _types := {
 func _ready() -> void:
 	popochiu = load(POPOCHIU_SCENE).instance()
 	
-	_btn_move_folders.icon = get_icon('MoveUp', 'EditorIcons')
-	_btn_docs.icon = get_icon('HelpSearch', 'EditorIcons')
+	_btn_setup.icon = get_icon("Edit", "EditorIcons")
 	_btn_settings.icon = get_icon('Tools', 'EditorIcons')
+	_btn_docs.icon = get_icon('HelpSearch', 'EditorIcons')
 	
 	# Set the Main tab selected by default
 	_tab_container.current_tab = 0
@@ -91,8 +92,7 @@ func _ready() -> void:
 	
 	_btn_docs.connect('pressed', OS, 'shell_open', [Constants.WIKI])
 	_btn_settings.connect('pressed', self, '_open_settings')
-	
-	_btn_move_folders.hide()
+	_btn_setup.connect('pressed', self, 'open_setup')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -231,20 +231,12 @@ func get_audio_tab() -> Node:
 	return _tab_audio
 
 
-func show_move_folders_button() -> void:
-	_btn_move_folders.connect(
-		'pressed', self, 'emit_signal', ['move_folders_pressed']
-	)
-	_btn_move_folders.show()
-
-
-func hide_move_folders_button() -> void:
-	_btn_move_folders.disconnect('pressed', self, 'emit_signal')
-	_btn_move_folders.hide()
-
-
 func get_opened_room() -> PopochiuRoom:
 	return _tab_room.opened_room
+
+
+func open_setup() -> void:
+	setup_dialog.appear()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

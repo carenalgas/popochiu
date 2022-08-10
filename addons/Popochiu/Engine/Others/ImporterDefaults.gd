@@ -1,0 +1,21 @@
+const PIXEL_TEXTURES := {
+	"compress/bptc_ldr": 0,
+	"compress/hdr_mode": 0,
+	"compress/lossy_quality": 0.7,
+	"compress/mode": 0,
+	"compress/normal_map": 0,
+	"detect_3d": false,
+	"flags/anisotropic": false,
+	"flags/filter": false,
+	"flags/mipmaps": false,
+	"flags/repeat": 0,
+	"flags/srgb": 2,
+	"process/HDR_as_SRGB": false,
+	"process/fix_alpha_border": true,
+	"process/invert_color": false,
+	"process/normal_map_invert_y": false,
+	"process/premult_alpha": false,
+	"size_limit": 0,
+	"stream": false,
+	"svg/scale": 1.0
+}

@@ -70,6 +70,10 @@ func create() -> void:
 	# Agregar el hotspot a su habitación
 	_room.get_node('Hotspots').add_child(hotspot)
 	hotspot.owner = _room
+	hotspot.position = Vector2(
+		ProjectSettings.get_setting('display/window/size/width'),
+		ProjectSettings.get_setting('display/window/size/height')
+	) / 2.0
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

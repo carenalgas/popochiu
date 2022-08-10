@@ -1,6 +1,6 @@
 tool
 class_name PopochiuRoom, 'res://addons/Popochiu/icons/room.png'
-extends Node2D
+extends YSort
 # The scenes used by Popochiu. Can have: Props, Hotspots, Regions, Points and
 # Walkable areas. Characters can move through this and interact with its Props
 # and Hotspots. Regions can be used to trigger methods when a character enters
@@ -10,15 +10,15 @@ extends Node2D
 export var script_name := ''
 export var has_player := true
 export var hide_gi := false
+export var limit_left := INF
+export var limit_right := INF
+export var limit_top := INF
+export var limit_bottom := INF
 
 var is_current := false setget _set_is_current
 var visited := false
 var visited_first_time := false
 var visited_times := 0
-var limit_left := 0.0
-var limit_right := 0.0
-var limit_top := 0.0
-var limit_bottom := 0.0
 var state := {} setget _set_state, _get_state
 var characters_cfg := [] # Array of Dictionary
 
@@ -32,20 +32,23 @@ onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _enter_tree() -> void:
-	if not Engine.editor_hint:
-		for c in $Characters.get_children():
-			if c is PopochiuCharacter:
-				var pc: PopochiuCharacter = c
-				characters_cfg.append({
-					script_name = pc.script_name,
-					position = pc.position
-				})
-				
-				$Characters.remove_child(pc)
-				pc.queue_free()
+	if Engine.editor_hint: return
+	
+	for c in $Characters.get_children():
+		if c is PopochiuCharacter:
+			var pc: PopochiuCharacter = c
+			characters_cfg.append({
+				script_name = pc.script_name,
+				position = pc.position
+			})
+			
+			$Characters.remove_child(pc)
+			pc.queue_free()
 
 
 func _ready():
+	if Engine.editor_hint: return
+	
 	set_process_unhandled_input(false)
 	
 	# Store the Props based on their baseline (from lowest to highest)
@@ -53,29 +56,28 @@ func _ready():
 		_props_baselines.append([p, p.baseline + p.position.y])
 	_props_baselines.sort_custom(self, '_sort_by_baseline')
 	
-	if limit_left != 0.0:
+	if limit_left != INF:
 		E.main_camera.limit_left = limit_left
-	if limit_right != 0.0:
+	if limit_right != INF:
 		E.main_camera.limit_right = limit_right
-	if limit_top != 0.0:
+	if limit_top != INF:
 		E.main_camera.limit_top = limit_top
-	if limit_bottom != 0.0:
+	if limit_bottom != INF:
 		E.main_camera.limit_bottom = limit_bottom
 	
-	if not Engine.editor_hint:
-		E.room_readied(self)
+	E.room_readied(self)
 
 
 func _process(delta):
 	if Engine.editor_hint or not is_instance_valid(C.player) or not has_player:
 		return
 	
-	sort_characters()
-	_check_characters_zindex(C.player)
-	
-	for c in $Characters.get_children():
-		if c.visible:
-			_check_z_indexes(c as PopochiuCharacter)
+#	sort_characters()
+#	_check_characters_zindex(C.player)
+#
+#	for c in $Characters.get_children():
+#		if c.visible:
+#			_check_z_indexes(c as PopochiuCharacter)
 
 	if _path.empty(): return
 
@@ -94,31 +96,31 @@ func _unhandled_input(event):
 		C.player.walk(get_local_mouse_position(), false)
 
 
-func _get_property_list():
-	var properties = []
-	properties.append({
-		name = "Camera limits",
-		type = TYPE_NIL,
-		hint_string = "limit_",
-		usage = PROPERTY_USAGE_GROUP | PROPERTY_USAGE_SCRIPT_VARIABLE
-	})
-	properties.append({
-		name = "limit_left",
-		type = TYPE_REAL
-	})
-	properties.append({
-		name = "limit_right",
-		type = TYPE_REAL
-	})
-	properties.append({
-		name = "limit_top",
-		type = TYPE_REAL
-	})
-	properties.append({
-		name = "limit_bottom",
-		type = TYPE_REAL
-	})
-	return properties
+#func _get_property_list():
+#	var properties = []
+#	properties.append({
+#		name = "Camera limits",
+#		type = TYPE_NIL,
+#		hint_string = "limit_",
+#		usage = PROPERTY_USAGE_GROUP | PROPERTY_USAGE_SCRIPT_VARIABLE
+#	})
+#	properties.append({
+#		name = "limit_left",
+#		type = TYPE_REAL
+#	})
+#	properties.append({
+#		name = "limit_right",
+#		type = TYPE_REAL
+#	})
+#	properties.append({
+#		name = "limit_top",
+#		type = TYPE_REAL
+#	})
+#	properties.append({
+#		name = "limit_bottom",
+#		type = TYPE_REAL
+#	})
+#	return properties
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
@@ -204,7 +206,7 @@ func hide_props() -> void:
 
 
 func get_props() -> Array:
-	return $Props.get_children()
+	return get_tree().get_nodes_in_group('props')
 
 
 func get_hotspots() -> Array:

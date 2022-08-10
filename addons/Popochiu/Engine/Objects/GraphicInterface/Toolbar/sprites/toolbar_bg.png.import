@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/bg.png-95667b49e4ebb5bd7c294284195d890c.stex"
+path="res://.import/toolbar_bg.png-5d59393a9dc78e239b2df6d30c68b136.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/Popochiu/Engine/Objects/GraphicInterface/Inventory/bg.png"
-dest_files=[ "res://.import/bg.png-95667b49e4ebb5bd7c294284195d890c.stex" ]
+source_file="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/toolbar_bg.png"
+dest_files=[ "res://.import/toolbar_bg.png-5d59393a9dc78e239b2df6d30c68b136.stex" ]
 
 [params]
 
