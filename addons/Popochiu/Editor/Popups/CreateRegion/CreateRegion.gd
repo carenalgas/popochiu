@@ -73,6 +73,10 @@ func create() -> void:
 	# Agregar la región a su habitación
 	_room.get_node('Regions').add_child(region)
 	region.owner = _room
+	region.position = Vector2(
+		ProjectSettings.get_setting('display/window/size/width'),
+		ProjectSettings.get_setting('display/window/size/height')
+	) / 2.0
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

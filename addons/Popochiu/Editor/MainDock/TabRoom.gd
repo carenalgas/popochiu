@@ -89,11 +89,15 @@ func scene_changed(scene_root: Node) -> void:
 						_types[t].parent
 					]
 				
+				var node_path: String = String(c.get_path()).split(
+					'%s/' % _types[t].parent
+				)[1]
+				
 				if row_path in _rows_paths: continue
 				
 				if c is _types[t].type_class:
 					var row: PopochiuObjectRow = _create_object_row(
-						t, c.name, row_path
+						t, c.name, row_path, node_path
 					)
 					_types[t].group.add(row)
 			
@@ -136,14 +140,15 @@ func _clear_content() -> void:
 
 
 func _create_object_row(
-	type: int, node_name: String, path := ''
+	type: int, node_name: String, path := '', node_path := ''
 ) -> PopochiuObjectRow:
 	var new_obj: PopochiuObjectRow = object_row.instance()
-
+	
 	new_obj.name = node_name
 	new_obj.type = type
 	new_obj.path = path # This will be useful for deleting objects with interaction
 	new_obj.main_dock = main_dock
+	new_obj.node_path = node_path
 	new_obj.connect('clicked', self, '_select_and_open_script')
 	
 	_rows_paths.append('%s/%d/%s' % [opened_room.script_name, type, node_name])
@@ -157,7 +162,7 @@ func _select_and_open_script(por: PopochiuObjectRow) -> void:
 	
 	if is_instance_valid(opened_room):
 		var node := opened_room.get_node('%s/%s'\
-		% [_types[por.type].parent, por.name])
+		% [_types[por.type].parent, por.node_path])
 		main_dock.ei.edit_node(node)
 		
 		if not node is Position2D\

@@ -1,0 +1,207 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/Popochiu/Editor/Popups/Setup/Setup.gd" type="Script" id=1]
+
+[node name="Setup" type="AcceptDialog"]
+margin_right = 320.0
+margin_bottom = 244.0
+window_title = "Popochiu setup"
+dialog_autowrap = true
+script = ExtResource( 1 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 312.0
+margin_bottom = 208.0
+rect_min_size = Vector2( 300, 200 )
+size_flags_horizontal = 4
+size_flags_vertical = 5
+
+[node name="Welcome" type="Label" parent="VBoxContainer"]
+margin_right = 304.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 0, 72 )
+text = "Welcome to Popochiu. This popup will appear automatically just this time, but you can open it later with the Setup button at the bottom of Popochiu's dock."
+autowrap = true
+
+[node name="SizeContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 76.0
+margin_right = 304.0
+margin_bottom = 114.0
+
+[node name="GameSize" type="Label" parent="VBoxContainer/SizeContainer"]
+margin_right = 148.0
+margin_bottom = 14.0
+hint_tooltip = "The width and height of the game's window. Changing this will update display/window/size/width and display/window/size/height."
+mouse_filter = 0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Game size"
+
+[node name="VBoxContainer" type="HBoxContainer" parent="VBoxContainer/SizeContainer"]
+margin_left = 152.0
+margin_right = 304.0
+margin_bottom = 38.0
+rect_min_size = Vector2( 152, 0 )
+
+[node name="WidthContainer" type="VBoxContainer" parent="VBoxContainer/SizeContainer/VBoxContainer"]
+margin_right = 74.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+custom_constants/separation = 0
+
+[node name="GameWidth" type="SpinBox" parent="VBoxContainer/SizeContainer/VBoxContainer/WidthContainer"]
+margin_right = 74.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+min_value = 64.0
+max_value = 1440.0
+value = 320.0
+rounded = true
+allow_greater = true
+align = 1
+
+[node name="Width" type="Label" parent="VBoxContainer/SizeContainer/VBoxContainer/WidthContainer"]
+margin_top = 24.0
+margin_right = 74.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+text = "width"
+align = 1
+
+[node name="HeightContainer" type="VBoxContainer" parent="VBoxContainer/SizeContainer/VBoxContainer"]
+margin_left = 78.0
+margin_right = 152.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+custom_constants/separation = 0
+
+[node name="GameHeight" type="SpinBox" parent="VBoxContainer/SizeContainer/VBoxContainer/HeightContainer"]
+margin_right = 74.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+min_value = 64.0
+max_value = 1440.0
+value = 180.0
+rounded = true
+allow_greater = true
+align = 1
+
+[node name="Height" type="Label" parent="VBoxContainer/SizeContainer/VBoxContainer/HeightContainer"]
+margin_top = 24.0
+margin_right = 74.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+text = "height"
+align = 1
+
+[node name="TestContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 118.0
+margin_right = 304.0
+margin_bottom = 156.0
+
+[node name="TestSize" type="Label" parent="VBoxContainer/TestContainer"]
+margin_right = 148.0
+margin_bottom = 14.0
+hint_tooltip = "The width and height of the game's test window. Changing this will update display/window/size/test_width and display/window/size/test_height."
+mouse_filter = 0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Test size"
+
+[node name="VBoxContainer" type="HBoxContainer" parent="VBoxContainer/TestContainer"]
+margin_left = 152.0
+margin_right = 304.0
+margin_bottom = 38.0
+rect_min_size = Vector2( 152, 0 )
+
+[node name="WidthContainer" type="VBoxContainer" parent="VBoxContainer/TestContainer/VBoxContainer"]
+margin_right = 74.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+custom_constants/separation = 0
+
+[node name="TestWidth" type="SpinBox" parent="VBoxContainer/TestContainer/VBoxContainer/WidthContainer"]
+margin_right = 74.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+max_value = 1440.0
+value = 640.0
+rounded = true
+allow_greater = true
+align = 1
+
+[node name="Width" type="Label" parent="VBoxContainer/TestContainer/VBoxContainer/WidthContainer"]
+margin_top = 24.0
+margin_right = 74.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+text = "width"
+align = 1
+
+[node name="HeightContainer" type="VBoxContainer" parent="VBoxContainer/TestContainer/VBoxContainer"]
+margin_left = 78.0
+margin_right = 152.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+custom_constants/separation = 0
+
+[node name="TestHeight" type="SpinBox" parent="VBoxContainer/TestContainer/VBoxContainer/HeightContainer"]
+margin_right = 74.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+max_value = 1440.0
+value = 360.0
+rounded = true
+allow_greater = true
+align = 1
+
+[node name="Height" type="Label" parent="VBoxContainer/TestContainer/VBoxContainer/HeightContainer"]
+margin_top = 24.0
+margin_right = 74.0
+margin_bottom = 38.0
+size_flags_horizontal = 3
+text = "height"
+align = 1
+
+[node name="TypeContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 160.0
+margin_right = 304.0
+margin_bottom = 180.0
+
+[node name="Type" type="Label" parent="VBoxContainer/TypeContainer"]
+margin_top = 3.0
+margin_right = 148.0
+margin_bottom = 17.0
+hint_tooltip = "The type of game modifies the stretch mode and the default preset for importing 2D images.
+
+Default: No stretch. Texture import preset set to: 2D.
+2D: Stretch mode set to 2D and stretch aspect set to keep. Texture import preset set to: 2D.
+Pixel: Stretch mode set to 2D and stretch aspect set to keep. Texture import preset set to: 2D Pixel."
+mouse_filter = 0
+size_flags_horizontal = 3
+text = "Game type"
+
+[node name="GameType" type="OptionButton" parent="VBoxContainer/TypeContainer"]
+margin_left = 152.0
+margin_right = 304.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 152, 0 )
+text = "Pixel"
+items = [ "Default", null, false, 0, null, "2D", null, false, 1, null, "Pixel", null, false, 2, null ]
+selected = 2
+
+[node name="BtnUpdateFiles" type="Button" parent="VBoxContainer"]
+visible = false
+margin_top = 192.0
+margin_right = 304.0
+margin_bottom = 224.0
+rect_min_size = Vector2( 0, 32 )
+hint_tooltip = "Browse the file system for .import files of images, and update them to match the current Game type selection.
+
+Default: Texture import preset set to 2D.
+2D: Texture import preset set to 2D.
+Pixel: Texture import preset set to 2D Pixel."
+size_flags_horizontal = 3
+text = "Update .import files"

@@ -38,12 +38,10 @@ const IINVENTORY_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
 const IDIALOG_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
 const IGRAPHIC_INTERFACE_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
 const IAUDIO_MANAGER_SNGL := 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
-# const GLOBALS_SRC := 'res://addons/Popochiu/Engine/Objects/Globals.gd'
-# const GLOBALS_SNGL := 'res://popochiu/Globals.gd'
-const GRAPHIC_INTERFACE_SRC := 'res://addons/Popochiu/Engine/Objects/GraphicInterface/'
-const GRAPHIC_INTERFACE_SCENE := BASE_DIR + '/GraphicInterface/GraphicInterface.tscn'
-const TRANSITION_LAYER_SRC := 'res://addons/Popochiu/Engine/Objects/TransitionLayer/'
-const TRANSITION_LAYER_SCENE := BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
+const GRAPHIC_INTERFACE_ADDON := 'res://addons/Popochiu/Engine/Objects/GraphicInterface/GraphicInterface.tscn'
+const GRAPHIC_INTERFACE_POPOCHIU := BASE_DIR + '/GraphicInterface/GraphicInterface.tscn'
+const TRANSITION_LAYER_ADDON := 'res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.tscn'
+const TRANSITION_LAYER_POPOCHIU := BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
 const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 const WIKI := 'https://github.com/mapedorr/popochiu/wiki/'
@@ -63,7 +61,7 @@ static func init_file_structure() -> bool:
 		if not directory.dir_exists(d):
 			directory.make_dir_recursive(d)
 	
-	# Create config file
+	# Create config files
 	if not directory.file_exists(DATA):
 		_create_empty_file(DATA)
 	

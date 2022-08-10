@@ -21,7 +21,7 @@ var height := 0.0 setget ,get_height
 var half_width := 0.0 setget ,get_half_width
 var half_height := 0.0 setget ,get_half_height
 var settings := PopochiuResources.get_settings()
-var current_text_speed_idx := settings.text_speed_idx
+var current_text_speed_idx := settings.default_text_speed
 var current_text_speed: float = settings.text_speeds[current_text_speed_idx]
 var current_language := 0
 
@@ -65,6 +65,24 @@ func _ready() -> void:
 	for key in settings.items_on_start:
 		I.add_item(key, false, false)
 	
+	var gi: CanvasLayer = null
+	var tl: CanvasLayer = null
+	
+	if settings.graphic_interface:
+		gi = settings.graphic_interface.instance()
+		gi.name = 'GraphicInterface'
+	else:
+		gi = load(PopochiuResources.GRAPHIC_INTERFACE_ADDON).instance()
+	
+	if settings.transition_layer:
+		tl = settings.transition_layer.instance()
+		tl.name = 'TransitionLayer'
+	else:
+		tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instance()
+	
+	add_child(gi)
+	add_child(tl)
+	
 	set_process_input(false)
 
 
@@ -79,7 +97,9 @@ func _process(delta: float) -> void:
 		if _shake_timer <= 0.0:
 			_is_camera_shaking = false
 			main_camera.offset = Vector2.ZERO
-	elif not Engine.editor_hint and is_instance_valid(C.camera_owner):
+	elif not Engine.editor_hint\
+	and is_instance_valid(C.camera_owner)\
+	and C.camera_owner.is_inside_tree():
 		main_camera.position = C.camera_owner.position
 
 
@@ -467,12 +487,7 @@ func _set_in_room(value: bool) -> void:
 	Cursor.toggle_visibility(in_room)
 
 
-#func _set_text_speed_idx(value: int) -> void:
-#	text_speed_idx = value
-#	emit_signal('text_speed_changed', text_speed_idx)
-#
-#
 #func _set_language_idx(value: int) -> void:
-#	language_idx = value
+#	default_language = value
 #	TranslationServer.set_locale(languages[value])
 #	emit_signal('language_changed')

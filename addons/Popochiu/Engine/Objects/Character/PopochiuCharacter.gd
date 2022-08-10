@@ -16,7 +16,7 @@ export var walk_speed := 200.0
 export(FlipsWhen) var flips_when := 0
 export(Array, Dictionary) var voices := [] setget set_voices
 export var follow_player := false
-export var can_move := false
+export var can_move := true
 
 var last_room := ''
 var anim_suffix := ''

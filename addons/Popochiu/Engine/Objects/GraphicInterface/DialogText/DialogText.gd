@@ -170,7 +170,7 @@ func _notify_completion() -> void:
 
 
 func _show_icon() -> void:
-	if not E.settings.text_continue_auto:
+	if not E.settings.auto_continue_text:
 		# Hacer que el icono empiece a saltar.
 		_continue_icon.value = 100.0
 		_continue_icon_tween.interpolate_property(
@@ -196,5 +196,5 @@ func _show_icon() -> void:
 
 
 func _continue() -> void:
-	if E.settings.text_continue_auto:
+	if E.settings.auto_continue_text:
 		G.emit_signal('continue_clicked')

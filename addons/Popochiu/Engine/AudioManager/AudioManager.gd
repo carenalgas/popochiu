@@ -118,8 +118,6 @@ is_in_queue := true
 			stream_player = _play(cue, Vector2.ZERO, music_position)
 	else:
 		prints('[Popochiu] Music not found:', cue_name)
-		
-		return null
 	
 	yield(get_tree(), 'idle_frame')
 	
