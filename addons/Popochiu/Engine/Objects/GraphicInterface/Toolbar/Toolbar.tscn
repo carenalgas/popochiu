@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnQuit.gd" type="Script" id=1]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/Toolbar.gd" type="Script" id=2]
@@ -7,12 +7,16 @@
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_dialog_speed_02.png" type="Texture" id=5]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/toolbar_bg.png" type="Texture" id=6]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_quit.png" type="Texture" id=7]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_save.png" type="Texture" id=8]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnDialogSpeed.gd" type="Script" id=9]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnDialogHistory.gd" type="Script" id=10]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnDialogAuto.gd" type="Script" id=11]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_dialog_auto_01.png" type="Texture" id=12]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_dialog_auto_02.png" type="Texture" id=13]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_dialog_history.png" type="Texture" id=14]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/sprites/btn_load.png" type="Texture" id=15]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnSave.gd" type="Script" id=16]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Toolbar/BtnLoad.gd" type="Script" id=17]
 
 [sub_resource type="StyleBoxTexture" id=1]
 content_margin_left = 3.0
@@ -39,14 +43,33 @@ script = ExtResource( 2 )
 [node name="Box" type="HBoxContainer" parent="."]
 margin_left = 3.0
 margin_top = 1.0
-margin_right = 79.0
+margin_right = 99.0
 margin_bottom = 19.0
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 2
 
-[node name="BtnDialogSpeed" type="TextureButton" parent="Box"]
+[node name="BtnSave" type="TextureButton" parent="Box"]
 margin_right = 16.0
+margin_bottom = 18.0
+texture_normal = ExtResource( 8 )
+script = ExtResource( 16 )
+description = "Save game"
+script_name = "SaveGame"
+
+[node name="BtnLoad" type="TextureButton" parent="Box"]
+visible = false
+margin_left = 20.0
+margin_right = 36.0
+margin_bottom = 18.0
+texture_normal = ExtResource( 15 )
+script = ExtResource( 17 )
+description = "Load game"
+script_name = "LoadGame"
+
+[node name="BtnDialogSpeed" type="TextureButton" parent="Box"]
+margin_left = 20.0
+margin_right = 36.0
 margin_bottom = 18.0
 texture_normal = ExtResource( 3 )
 script = ExtResource( 9 )
@@ -56,8 +79,8 @@ btn_states = [ ExtResource( 3 ), ExtResource( 5 ), ExtResource( 4 ) ]
 states_descriptions = [ "normal", "fast", "immediate" ]
 
 [node name="BtnDialogAuto" type="TextureButton" parent="Box"]
-margin_left = 20.0
-margin_right = 36.0
+margin_left = 40.0
+margin_right = 56.0
 margin_bottom = 18.0
 texture_normal = ExtResource( 12 )
 script = ExtResource( 11 )
@@ -67,8 +90,8 @@ btn_states = [ ExtResource( 12 ), ExtResource( 13 ) ]
 states_descriptions = [ "manual", "auto" ]
 
 [node name="BtnDialogHistory" type="TextureButton" parent="Box"]
-margin_left = 40.0
-margin_right = 56.0
+margin_left = 60.0
+margin_right = 76.0
 margin_bottom = 18.0
 texture_normal = ExtResource( 14 )
 script = ExtResource( 10 )
@@ -76,8 +99,8 @@ description = "History"
 script_name = "History"
 
 [node name="BtnQuit" type="TextureButton" parent="Box"]
-margin_left = 60.0
-margin_right = 76.0
+margin_left = 80.0
+margin_right = 96.0
 margin_bottom = 18.0
 texture_normal = ExtResource( 7 )
 script = ExtResource( 1 )

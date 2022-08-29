@@ -1,5 +1,7 @@
 extends PopochiuInventoryItem
 
+var state: PopochiuInventoryItemData = null
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 # TODO: Overwrite Godot's methods as needed
@@ -32,3 +34,10 @@ func added_to_inventory() -> void:
 	# Replace the call to .added_to_inventory() to implement your code. This only
 	# makes the default behavior to happen.
 	.added_to_inventory()
+
+
+# Actions to excecute when the item is discarded from the Inventory
+func on_discard() -> void:
+	# Replace the call to .on_discard() to implement your code. This only
+	# makes the default behavior to happen.
+	.on_discard()

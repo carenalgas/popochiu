@@ -1,7 +1,8 @@
 extends RichTextLabel
-# Permite mostrar textos caracter por caracter en un RichTextLabel para aprove-
-# char sus capacidades de animación y edición de fragmentos de texto.
-# Se usa un Label invisible para saber qué ancho debe tener este nodo
+# Show dialogue texts char by char using a RichTextLabel.
+# An invisibla Label is used to calculate the width of the RichTextLabel node.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# warning-ignore-all:return_value_discarded
 
 signal animation_finished
 
@@ -13,6 +14,7 @@ var _is_waiting_input := false
 var _max_width := rect_size.x
 var _dflt_height := rect_size.y
 var _label_dflt_size := Vector2.ZERO
+var _auto_continue := false
 
 onready var _tween: Tween = $Tween
 onready var _wrap_width_limit := (wrap_width / 2) * 0.3
@@ -22,14 +24,17 @@ onready var _continue_icon_tween: Tween = _continue_icon.get_node('Tween')
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	# Establecer la configuración inicial
+	# Set the default values
 	clear()
+	
 	$Label.text = ''
 	modulate.a = 0.0
 	_secs_per_character = E.current_text_speed
+	
 	_continue_icon.hide()
 	
 	yield(get_tree(), 'idle_frame')
+	
 	_label_dflt_size = $Label.rect_size
 	rect_size = Vector2(0.0, _dflt_height)
 	
@@ -39,6 +44,7 @@ func _ready() -> void:
 	
 	# Conectarse a eventos del universo Chimpoko
 	E.connect('text_speed_changed', self, 'change_speed')
+	C.connect('character_spoke', self, '_show_dialogue')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -119,7 +125,7 @@ func play_text(props: Dictionary) -> void:
 		)
 		_tween.start()
 	else:
-		_show_icon()
+		_wait_input()
 
 	modulate.a = 1.0
 
@@ -134,16 +140,21 @@ func stop() ->void:
 		# Saltarse las animaciones
 		_tween.remove_all()
 		percent_visible = 1.0
+		
 		_wait_input()
 
 
 func hide() -> void:
 	if modulate.a == 0.0: return
-
+	
+	_auto_continue = false
 	modulate.a = 0.0
-	_tween.remove_all()
 	_is_waiting_input = false
+	
+	_tween.remove_all()
 	clear()
+	$Label.text = ''
+	
 	_continue_icon.hide()
 	_continue_icon.modulate.a = 1.0
 	_continue_icon_tween.remove_all()
@@ -158,10 +169,25 @@ func change_speed() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func _show_dialogue(chr: PopochiuCharacter, msg := '') -> void:
+	play_text({
+		text = msg,
+		color = chr.text_color,
+		position = U.get_screen_coords_for(chr.dialog_pos).floor(),
+	})
+
+
 func _wait_input() -> void:
 	_is_waiting_input = true
 	
-	_show_icon()
+	if E.auto_continue_after >= 0.0:
+		_auto_continue = true
+		yield(get_tree().create_timer(E.auto_continue_after + 0.2), 'timeout')
+		
+		if _auto_continue:
+			_continue(true)
+	else:
+		_show_icon()
 
 
 func _notify_completion() -> void:
@@ -191,10 +217,11 @@ func _show_icon() -> void:
 		_continue_icon_tween.repeat = false
 	
 	yield(get_tree().create_timer(0.2), 'timeout')
+	
 	_continue_icon_tween.start()
 	_continue_icon.show()
 
 
-func _continue() -> void:
-	if E.settings.auto_continue_text:
+func _continue(forced_continue := false) -> void:
+	if E.settings.auto_continue_text or forced_continue:
 		G.emit_signal('continue_clicked')

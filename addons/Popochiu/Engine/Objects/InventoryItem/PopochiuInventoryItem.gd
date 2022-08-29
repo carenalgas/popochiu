@@ -49,6 +49,11 @@ func added_to_inventory() -> void:
 	pass
 
 
+# Actions to excecute when the item is discarded from the Inventory
+func on_discard() -> void:
+	pass
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_in_inventory(value: bool) -> void:
 	in_inventory = value

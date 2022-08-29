@@ -1,7 +1,8 @@
 extends CanvasLayer
 class_name TransitionLayer
+# warning-ignore-all:return_value_discarded
 
-signal transition_finished
+signal transition_finished(transition_name)
 
 enum {
 	FADE_IN_OUT,
@@ -49,4 +50,4 @@ func play_transition(type := FADE_IN, duration := 1.0) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _transition_finished(anim_name := '') -> void:
-	emit_signal('transition_finished')
+	emit_signal('transition_finished', anim_name)

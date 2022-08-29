@@ -1,0 +1,68 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Resources/PopochiuTheme.tres" type="Theme" id=1]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/SaveLoad/SaveLoad.gd" type="Script" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0, 0, 0, 0.498039 )
+
+[node name="SaveLoad" type="PanelContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+custom_styles/panel = SubResource( 1 )
+script = ExtResource( 2 )
+
+[node name="SaveLoadDialog" type="ConfirmationDialog" parent="."]
+visible = true
+margin_right = 320.0
+margin_bottom = 180.0
+window_title = "...."
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SaveLoadDialog"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -36.0
+
+[node name="Title" type="Label" parent="SaveLoadDialog/VBoxContainer"]
+margin_right = 304.0
+margin_bottom = 12.0
+text = "Choose a slot to save..."
+
+[node name="Slots" type="VBoxContainer" parent="SaveLoadDialog/VBoxContainer"]
+margin_top = 16.0
+margin_right = 304.0
+margin_bottom = 136.0
+size_flags_vertical = 3
+alignment = 1
+
+[node name="BtnSlot1" type="Button" parent="SaveLoadDialog/VBoxContainer/Slots"]
+margin_top = 14.0
+margin_right = 304.0
+margin_bottom = 34.0
+toggle_mode = true
+text = "slot 1"
+
+[node name="BtnSlot2" type="Button" parent="SaveLoadDialog/VBoxContainer/Slots"]
+margin_top = 38.0
+margin_right = 304.0
+margin_bottom = 58.0
+toggle_mode = true
+text = "slot 2"
+
+[node name="BtnSlot3" type="Button" parent="SaveLoadDialog/VBoxContainer/Slots"]
+margin_top = 62.0
+margin_right = 304.0
+margin_bottom = 82.0
+toggle_mode = true
+text = "slot 3"
+
+[node name="BtnSlot4" type="Button" parent="SaveLoadDialog/VBoxContainer/Slots"]
+margin_top = 86.0
+margin_right = 304.0
+margin_bottom = 106.0
+toggle_mode = true
+text = "slot 4"

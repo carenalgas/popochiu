@@ -5,6 +5,10 @@ extends Node
 
 signal text_speed_changed
 signal language_changed
+signal game_saved
+signal game_loaded(data)
+
+const SaveLoad := preload('res://addons/Popochiu/Engine/Others/PopochiuSaveLoad.gd')
 
 var in_run := false
 # Used to prevent going to another room when there is one being loaded
@@ -15,6 +19,7 @@ var current_room: PopochiuRoom = null
 var clicked: Node = null
 var cutscene_skipped := false
 var rooms_states := {}
+var dialog_states := {}
 var history := []
 var width := 0.0 setget ,get_width
 var height := 0.0 setget ,get_height
@@ -24,6 +29,7 @@ var settings := PopochiuResources.get_settings()
 var current_text_speed_idx := settings.default_text_speed
 var current_text_speed: float = settings.text_speeds[current_text_speed_idx]
 var current_language := 0
+var auto_continue_after := -1.0
 
 # TODO: This could be in the camera's own script
 var _is_camera_shaking := false
@@ -36,6 +42,7 @@ var _shake_timer := 0.0
 var _running := false
 var _use_transition_on_room_change := true
 var _config: ConfigFile = null
+var _loaded_game := {}
 
 onready var main_camera: Camera2D = find_node('MainCamera')
 onready var _defaults := {
@@ -46,24 +53,12 @@ onready var _defaults := {
 		bottom = main_camera.limit_bottom
 	}
 }
+onready var _saveload := SaveLoad.new()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	_config = PopochiuResources.get_data_cfg()
-	
-	# Set the first character on the list to be the default PC (playable character)
-	var characters := PopochiuResources.get_section('characters')
-	if not characters.empty():
-		var pc: PopochiuCharacter = load(
-			(load(characters[0]) as PopochiuCharacterData).scene
-		).instance()
-		C.player = pc
-		C.characters.append(pc)
-	
-	# Add inventory items on start (ignore animations (3rd parameter))
-	for key in settings.items_on_start:
-		I.add_item(key, false, false)
 	
 	var gi: CanvasLayer = null
 	var tl: CanvasLayer = null
@@ -82,6 +77,19 @@ func _ready() -> void:
 	
 	add_child(gi)
 	add_child(tl)
+	
+	# Set the first character on the list to be the default PC (playable character)
+	var characters := PopochiuResources.get_section('characters')
+	if not characters.empty():
+		var pc: PopochiuCharacter = load(
+			(load(characters[0]) as PopochiuCharacterData).scene
+		).instance()
+		C.player = pc
+		C.characters.append(pc)
+	
+	# Add inventory items on start (ignore animations (3rd parameter))
+	for key in settings.items_on_start:
+		I.add_item(key, false, false)
 	
 	set_process_input(false)
 
@@ -192,8 +200,11 @@ func run_cutscene(instructions: Array) -> void:
 
 # Loads the room with script_name. use_transition can be used to trigger a fade
 # out animation before loading the room, and a fade in animation once it is ready
-func goto_room(script_name := '', use_transition := true) -> void:
+func goto_room(\
+script_name := '', use_transition := true, store_state := true
+) -> void:
 	if not in_room: return
+	
 	self.in_room = false
 	
 	G.block()
@@ -207,7 +218,8 @@ func goto_room(script_name := '', use_transition := true) -> void:
 		C.player.last_room = current_room.script_name
 	
 	# Store the room state
-	rooms_states[current_room.script_name] = current_room.state
+	if store_state:
+		rooms_states[current_room.script_name] = current_room.state
 	
 	# Remove PopochiuCharacter nodes from the room so they are not deleted
 	current_room.on_room_exited()
@@ -219,50 +231,53 @@ func goto_room(script_name := '', use_transition := true) -> void:
 	main_camera.limit_top = _defaults.camera_limits.top
 	main_camera.limit_bottom = _defaults.camera_limits.bottom
 	
-	for rp in PopochiuResources.get_section('rooms'):
-		var room: PopochiuRoomData = load(rp)
-		if room.script_name.to_lower() == script_name.to_lower():
-			get_tree().change_scene(room.scene)
-			return
+	var rp: String = PopochiuResources.get_data_value('rooms', script_name, null)
+	if not rp:
+		prints('[Popochiu] No PopochiuRoom with name: %s' % script_name)
+		return
 	
-	prints('[Popochiu] No PopochiuRoom with name: %s' % script_name)
+	get_tree().change_scene(load(rp).scene)
 
 
 # Called once the loaded room is _ready
 func room_readied(room: PopochiuRoom) -> void:
 	current_room = room
 	
-	# Load the room state
-	if rooms_states.has(room.script_name):
-		room.state = rooms_states[room.script_name]
+	# Update the core state
+	if not _loaded_game:
+		current_room.state.visited = true
+		current_room.state.visited_times += 1
+		current_room.state.visited_first_time = current_room.state.visited_times == 1
 	
-	room.is_current = true
-	room.visited = true
-	room.visited_first_time = true if room.visited_times == 0 else false
-	room.visited_times += 1
+	current_room.is_current = true
+	
+	if _loaded_game:
+		C.set_player(C.get_character(_loaded_game.player.id))
 	
 	# Add the PopochiuCharacter instances to the room
-	for c in room.characters_cfg:
+	for c in current_room.characters_cfg:
 		var chr: PopochiuCharacter = C.get_character(c.script_name)
 		
 		if chr:
 			chr.position = c.position
-			room.add_character(chr)
+			current_room.add_character(chr)
 	
-	if room.has_player and is_instance_valid(C.player):
-		if not room.has_character(C.player.script_name):
-			room.add_character(C.player)
+	if current_room.has_player and is_instance_valid(C.player):
+		if not current_room.has_character(C.player.script_name):
+			current_room.add_character(C.player)
 		
 		yield(C.player.idle(false), 'completed')
 	
-	# Sort the characters in the room based on their baseline to avoid issues
-	# with z_index
-	room.sort_characters()
-	
 	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
-		c.room = room
+		c.room = current_room
 	
-	room.on_room_entered()
+	current_room.on_room_entered()
+	
+	if _loaded_game:
+		C.player.global_position = Vector2(
+			_loaded_game.player.position.x,
+			_loaded_game.player.position.y
+		)
 	
 	if _use_transition_on_room_change:
 		$TransitionLayer.play_transition($TransitionLayer.FADE_OUT)
@@ -271,13 +286,19 @@ func room_readied(room: PopochiuRoom) -> void:
 	else:
 		yield(get_tree(), 'idle_frame')
 	
-	if not room.hide_gi:
+	if not current_room.hide_gi:
 		G.done()
 	
 	self.in_room = true
 	
 	# This enables the room to listen input events
-	room.on_room_transition_finished()
+	current_room.on_room_transition_finished()
+	
+	if _loaded_game:
+		emit_signal('game_loaded', _loaded_game)
+		E.run([G.display('Game loaded')])
+		
+		_loaded_game = {}
 
 
 # Changes the main camera's offset (useful when zooming the camera)
@@ -367,7 +388,7 @@ func add_history(data: Dictionary) -> void:
 # can be passed with params, and yield_signal is the signal that will notify the
 # function has been completed (so run can continue with the next command in the queue)
 func runnable(
-	node: Node, method: String, params := [], yield_signal := ''
+	node: Object, method: String, params := [], yield_signal := ''
 ) -> void:
 	yield()
 	
@@ -438,6 +459,37 @@ func change_text_speed() -> void:
 	emit_signal('text_speed_changed')
 
 
+func has_save() -> bool:
+	return _saveload.count_saves() > 0
+
+
+func saves_count() -> int:
+	return _saveload.count_saves()
+
+
+func get_saves_descriptions() -> Dictionary:
+	return _saveload.get_saves_descriptions()
+
+
+func save_game(slot := 1, description := '') -> void:
+	if _saveload.save_game(slot, description):
+		emit_signal('game_saved')
+		
+		E.run([G.display('Game saved')])
+
+
+func load_game(slot := 1) -> void:
+	_loaded_game = _saveload.load_game(slot)
+	
+	if not _loaded_game: return
+	
+	goto_room(
+		_loaded_game.player.room,
+		true,
+		false # Do not store the state of the current room
+	)
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _eval_string(text: String) -> void:
 	match text:
@@ -448,30 +500,42 @@ func _eval_string(text: String) -> void:
 		'....':
 			yield(wait(2.0, false), 'completed')
 		_:
-			var char_talk: int = text.find(':')
-			if char_talk:
-				var char_and_emotion: String = text.substr(0, char_talk)
-				var emotion_idx: int = char_and_emotion.find('(')
-				var char_name: String = char_and_emotion.substr(\
-				0, emotion_idx).to_lower()
+			var colon_idx: int = text.find(':')
+			if colon_idx:
+				var colon_prefix: String = text.substr(0, colon_idx)
+				
+				var emotion_idx := colon_prefix.find('(')
+				var auto_idx := colon_prefix.find('[')
+				var name_idx := emotion_idx\
+				if (emotion_idx > 0 and emotion_idx < auto_idx)\
+				else auto_idx
+				
+				var character_name: String = colon_prefix.substr(
+					0, name_idx
+				).to_lower()
+				
 				var emotion := ''
-
 				if emotion_idx > 0:
-					emotion = char_and_emotion.substr(emotion_idx + 1).rstrip(')')
+					emotion = colon_prefix.substr(emotion_idx + 1).rstrip(')')
 				
-				C.get_character(char_name).emotion = emotion
+				var auto := -1.0
+				if auto_idx > 0:
+					auto_continue_after = float(
+						colon_prefix.substr(auto_idx + 1).rstrip(')')
+					)
 				
-				if char_name.to_lower() == 'player':
-					var char_line := text.substr(char_talk + 1).trim_prefix(' ')
-
-					yield(C.player_say(char_line, false), 'completed')
+				C.get_character(character_name).emotion = emotion
+				
+				var dialogue := text.substr(colon_idx + 1).trim_prefix(' ')
+				
+				if character_name == 'player'\
+				or C.player.script_name.to_lower() == character_name:
+					yield(C.player_say(dialogue, false), 'completed')
 
 					G.block()
-				if C.is_valid_character(char_name):
-					var char_line := text.substr(char_talk + 1).trim_prefix(' ')
-
+				elif C.is_valid_character(character_name):
 					yield(
-						C.character_say(char_name, char_line, false),
+						C.character_say(character_name, dialogue, false),
 						'completed'
 					)
 
@@ -480,6 +544,8 @@ func _eval_string(text: String) -> void:
 					yield(get_tree(), 'idle_frame')
 			else:
 				yield(get_tree(), 'idle_frame')
+	
+	auto_continue_after = -1.0
 
 
 func _set_in_room(value: bool) -> void:

@@ -69,7 +69,7 @@ func create() -> void:
 		var prop_template := load(PROP_SCRIPT_TEMPLATE)
 		if ResourceSaver.save(script_path, prop_template) != OK:
 			push_error('[Popochiu] Could not create script: %s.gd' % _new_prop_name)
-			# TODO: Mostrar retroalimentación en el mismo popup
+			# TODO: Show feedback in the popup
 			return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -88,8 +88,8 @@ func create() -> void:
 	_room.get_node('Props').add_child(prop)
 	prop.owner = _room
 	prop.position = Vector2(
-		ProjectSettings.get_setting('display/window/size/width'),
-		ProjectSettings.get_setting('display/window/size/height')
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
 	_main_dock.ei.save_scene()
 	

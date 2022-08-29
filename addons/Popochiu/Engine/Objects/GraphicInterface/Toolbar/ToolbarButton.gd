@@ -1,4 +1,5 @@
 extends TextureButton
+# warning-ignore-all:return_value_discarded
 
 #const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 #const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')

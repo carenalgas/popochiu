@@ -1,0 +1,20 @@
+GIMP Palette
+#Palette Name: Colodore
+#Description: Newly recalculated palette for the VIC II (Commodore 64) by <a href="http://www.pepto.de/projects/colorvic/" target="_blank">Pepto</a>. #c64
+#Colors: 16
+0	0	0	000000
+74	74	74	4a4a4a
+123	123	123	7b7b7b
+178	178	178	b2b2b2
+255	255	255	ffffff
+129	51	56	813338
+196	108	113	c46c71
+85	56	0	553800
+142	80	41	8e5029
+237	241	113	edf171
+169	255	159	a9ff9f
+86	172	77	56ac4d
+117	206	200	75cec8
+112	109	235	706deb
+46	44	155	2e2c9b
+142	60	151	8e3c97

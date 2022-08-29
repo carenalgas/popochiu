@@ -11,6 +11,8 @@ signal blocked
 signal interface_hidden
 signal interface_shown
 signal history_opened
+signal save_requested(date) # The date in YYYY/MM/DD HH:MM:SS format
+signal load_requested
 
 var is_blocked := false
 
@@ -67,3 +69,11 @@ func show_interface() -> void:
 # Notifies that the history of events should appear.
 func show_history() -> void:
 	emit_signal('history_opened')
+
+
+func show_save(date: String) -> void:
+	emit_signal('save_requested', date)
+
+
+func show_load() -> void:
+	emit_signal('load_requested')

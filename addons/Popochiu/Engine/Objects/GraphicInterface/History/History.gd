@@ -1,4 +1,5 @@
 extends Control
+# warning-ignore-all:return_value_discarded
 
 onready var _lines_list: VBoxContainer = find_node('LinesList')
 onready var _dialog_line_path := filename.get_base_dir() + '/DialogLine.tscn'

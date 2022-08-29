@@ -1,12 +1,12 @@
 tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
-# Permite crear una nueva habitación con los archivos necesarios para que funcione
-# en el Popochiu: RoomRRR.tscn, RoomRRR.gd, RoomRRR.tres.
+# Allows to create a new PopochiuRoom with the files required for its operation
+# within Popochiu and to store its state:
+#   Room???.tsn, Room???.gd, Room???.tres and Room???State.gd
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-# TODO: Definir más propiedades en el popup de creación de la habitación: p. ej.
-#		si va a tener al player, o los límites de la cámara. Aunque eso ya se
-#		puede hacer una vez se abra el .tscn.
-
+const ROOM_STATE_TEMPLATE :=\
+'res://addons/Popochiu/Engine/Templates/RoomStateTemplate.gd'
 const ROOM_SCRIPT_TEMPLATE :=\
 'res://addons/Popochiu/Engine/Templates/RoomTemplate.gd'
 const BASE_ROOM_PATH :=\
@@ -34,7 +34,8 @@ func _ready() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func set_main_dock(node: PopochiuDock) -> void:
 	.set_main_dock(node)
-	# Por defecto: res://popochiu/Rooms
+	
+	# res://popochiu/Rooms
 	_room_path_template = _main_dock.ROOMS_PATH + '%s/Room%s'
 
 
@@ -43,64 +44,81 @@ func create() -> void:
 		_error_feedback.show()
 		return
 	
-	# TODO: Verificar si no hay ya una habitación en el mismo PATH.
-	# TODO: Eliminar archivos creados si la creación no se completa.
+	# TODO: Check that there is not a room in the same PATH.
+	# TODO: Delete created files if creation is not complete.
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear el directorio donde se guardará la nueva habitación
+	# Create the folder for the room
 	_main_dock.dir.make_dir_recursive(_main_dock.ROOMS_PATH + _new_room_name)
-
+	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear el script de la nueva habitación
-	var room_template := load(ROOM_SCRIPT_TEMPLATE)
+	# Create the state Resource for the room and a script so devs can add extra
+	# properties to that state
+	var state_template: Script = load(ROOM_STATE_TEMPLATE)
+	if ResourceSaver.save(_new_room_path + 'State.gd', state_template) != OK:
+		push_error('[Popochiu] Could not create room state script: %s' %\
+		_new_room_name)
+		# TODO: Show feedback in the popup
+		return
+	
+	var room_resource: PopochiuRoomData = load(_new_room_path + 'State.gd').new()
+	room_resource.script_name = _new_room_name
+	room_resource.scene = _new_room_path + '.tscn'
+	room_resource.resource_name = _new_room_name
+	
+	if ResourceSaver.save(_new_room_path + '.tres', room_resource) != OK:
+		push_error('[Popochiu] Could not create PopochiuRoomData for room: %s' %\
+		_new_room_name)
+		# TODO: Show feedback in the popup
+		return
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Create the script for the room
+	var room_template: Script = load(ROOM_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_room_path + '.gd', room_template) != OK:
 		push_error('[Popochiu] Could not create script: %s' %\
 		_new_room_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
+		# TODO: Show feedback in the popup
 		return
-
+	
+	# Assign the state to the room
+	var room_script: Script = load(_new_room_path + '.gd')
+	room_script.source_code = room_script.source_code.replace(
+		'PopochiuRoomData = null',
+		"PopochiuRoomData = preload('Room%s.tres')" % _new_room_name
+	)
+	ResourceSaver.save(_new_room_path + '.gd', room_script)
+	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear la instancia de la nueva habitación y asignarle el script creado
+	# Create the room instance
 	var new_room: PopochiuRoom = preload(BASE_ROOM_PATH).instance()
-	#	Primero se asigna el script para que no se vayan a sobrescribir otras
-	#	propiedades por culpa de esa asignación.
+	# 	The script is assigned first so that other properties will not be
+	# 	overwritten by that assignment.
 	new_room.set_script(load(_new_room_path + '.gd'))
 	new_room.script_name = _new_room_name
 	new_room.name = 'Room' + _new_room_name
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear el archivo de la escena
+	# Save the room scene (.tscn)
 	var new_room_packed_scene: PackedScene = PackedScene.new()
 	new_room_packed_scene.pack(new_room)
 	if ResourceSaver.save(_new_room_path + '.tscn', new_room_packed_scene) != OK:
 		push_error('[Popochiu] Could not create room: %s' % _new_room_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
+		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear el Resource de la habitación
-	var room_resource: PopochiuRoomData = PopochiuRoomData.new()
-	room_resource.script_name = _new_room_name
-	room_resource.scene = _new_room_path + '.tscn'
-	room_resource.resource_name = _new_room_name
-	if ResourceSaver.save(_new_room_path + '.tres', room_resource) != OK:
-		push_error('[Popochiu] Could not create PopochiuRoomData for room: %s' %\
-		_new_room_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
-		return
-
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Agregar la habitación al Popochiu
+	# Add the created room to Popochiu's rooms list
 	if _main_dock.add_resource_to_popochiu(
 		'rooms', ResourceLoader.load(_new_room_path + '.tres')
 	) != OK:
 		push_error('[Popochiu] Could not add the created room to Popochiu: %s' %\
 		_new_room_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
+		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Actualizar la lista de habitaciones en el Dock
+	# Update the list of rooms in the dock
 	var row := _main_dock.add_to_list(Constants.Types.ROOM, _new_room_name)
 	
 	# Establecer como la escena principal
@@ -109,13 +127,13 @@ func create() -> void:
 		row.is_main = true # Para que se vea el corazón
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Abrir la escena creada en el editor
+	# Open the scene in the editor
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.select_file(_new_room_path + '.tscn')
 	_main_dock.ei.open_scene_from_path(_new_room_path + '.tscn')
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Fin
+	# That's all!
 	hide()
 
 
@@ -134,7 +152,8 @@ func _update_name(new_text: String) -> void:
 				'Room' + _new_room_name + '.tscn',
 				'Room' + _new_room_name + '.gd',
 				'Room' + _new_room_name + '.tres'
-			])
+			]
+		)
 	else:
 		_info.clear()
 

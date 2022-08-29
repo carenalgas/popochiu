@@ -11,8 +11,7 @@ const PopochiuDialogOption :=\
 preload('res://addons/Popochiu/Engine/Objects/Dialog/PopochiuDialogOption.gd')
 
 var active := false
-
-var _trees := []
+var trees := {}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -24,7 +23,9 @@ func show_dialog(script_name: String) -> void:
 		active = true
 		dialog.start()
 		
-		yield(D, 'dialog_finished')
+		yield(self, 'dialog_finished')
+		
+		trees[dialog.script_name] = dialog
 		
 		active = false
 		G.done()
@@ -36,7 +37,7 @@ func show_dialog(script_name: String) -> void:
 # PopochiuDialogOption of the selected option
 func show_inline_dialog(opts: Array) -> PopochiuDialogOption:
 	emit_signal('inline_dialog_requested', opts)
-	return yield(D, 'option_selected')
+	return yield(self, 'option_selected')
 
 
 # Finishes the dialog currently in execution.

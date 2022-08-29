@@ -1,6 +1,7 @@
 extends CanvasLayer
 # Handles the Graphic Interface (a.k.a. UI)
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+# warning-ignore-all:return_value_discarded
 
 const DialogText := preload('DialogText/DialogText.gd')
 const DisplayBox := preload('DisplayBox/DisplayBox.gd')
@@ -44,13 +45,6 @@ func _show_dialog_text(chr: PopochiuCharacter, msg := '') -> void:
 		character = chr.description,
 		text = msg
 	})
-	
-	_dialog_text.play_text({
-		text = msg,
-		color = chr.text_color,
-		position = U.get_screen_coords_for(chr.dialog_pos).floor(),
-		offset_y = chr.sprite.position.y
-	})
 
 
 func _disable_panels(props := { blocking = true }) -> void:
@@ -85,6 +79,7 @@ func _continue() -> void:
 	if _dialog_text.percent_visible == 1.0:
 		_dialog_text.hide()
 		_display_box.hide()
+		
 		G.emit_signal('continue_clicked')
 	else:
 		_dialog_text.stop()

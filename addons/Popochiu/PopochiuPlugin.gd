@@ -26,6 +26,7 @@ func _init() -> void:
 		_is_first_install = PopochiuResources.init_file_structure()
 	
 	# Load Popochiu singletons
+	add_autoload_singleton('Globals', Constants.GLOBALS_SNGL)
 	add_autoload_singleton('U', Constants.UTILS_SNGL)
 	add_autoload_singleton('Cursor', Constants.CURSOR_SNGL)
 	add_autoload_singleton('E', Constants.POPOCHIU_SNGL)
@@ -79,7 +80,7 @@ func _enter_tree() -> void:
 	main_dock.scene_changed(_editor_interface.get_edited_scene_root())
 	
 	if PopochiuResources.get_section('setup').empty():
-		main_dock.open_setup()
+		main_dock.setup_dialog.appear(true)
 		(main_dock.setup_dialog as AcceptDialog).connect(
 			'popup_hide', self, '_move_addon_folders'
 		)
@@ -108,6 +109,7 @@ func enable_plugin() -> void:
 
 
 func disable_plugin() -> void:
+	remove_autoload_singleton('Globals')
 	remove_autoload_singleton('U')
 	remove_autoload_singleton('Cursor')
 	remove_autoload_singleton('E')
@@ -277,6 +279,9 @@ func _check_nodes() -> void:
 		if n.has_method('show_helpers'):
 			n.show_helpers()
 			_shown_helpers.append(n)
+		elif n.get_parent().has_method('show_helpers'):
+			n.get_parent().show_helpers()
+			_shown_helpers.append(n.get_parent())
 
 
 func _on_files_moved(old_file: String, new_file: String) -> void:
