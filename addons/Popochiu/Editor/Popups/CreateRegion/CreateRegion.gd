@@ -54,7 +54,7 @@ func create() -> void:
 	var region_template := load(SCRIPT_TEMPLATE)
 	if ResourceSaver.save(script_path, region_template) != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_region_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
+		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -74,8 +74,8 @@ func create() -> void:
 	_room.get_node('Regions').add_child(region)
 	region.owner = _room
 	region.position = Vector2(
-		ProjectSettings.get_setting('display/window/size/width'),
-		ProjectSettings.get_setting('display/window/size/height')
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
 	_main_dock.ei.save_scene()
 	

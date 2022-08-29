@@ -6,16 +6,17 @@ extends 'res://addons/Popochiu/Engine/Objects/Clickable/PopochiuClickable.gd'
 # TODO: Use a state machine
 
 enum FlipsWhen { NONE, MOVING_RIGHT, MOVING_LEFT }
+enum LOOKING {UP, UP_RIGHT, RIGHT, RIGHT_DOWN, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
 
 signal started_walk_to(character, start, end)
 signal stoped_walk
 
 export var text_color := Color.white
 export var is_player := false
-export var walk_speed := 200.0
 export(FlipsWhen) var flips_when := 0
 export(Array, Dictionary) var voices := [] setget set_voices
 export var follow_player := false
+export var walk_speed := 200.0
 export var can_move := true
 
 var last_room := ''
@@ -23,9 +24,8 @@ var anim_suffix := ''
 var is_moving := false
 var emotion := ''
 
-var _looking_dir := 'd'
+var _looking_dir: int = LOOKING.DOWN
 
-onready var sprite: Sprite = $Sprite
 onready var dialog_pos: Position2D = $DialogPos
 
 
@@ -37,12 +37,6 @@ func _ready():
 	else:
 		hide_helpers()
 		set_process(true)
-
-
-#func _process(_delta: float) -> void:
-#	if Engine.editor_hint: return
-#	elif is_instance_valid(C.player):
-#		global_position = C.player.global_position
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -62,22 +56,28 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
 	is_moving = true
-	_looking_dir = 'l' if target_pos.x < position.x else 'r'
+	_looking_dir = LOOKING.LEFT if target_pos.x < position.x else LOOKING.RIGHT
 	
-	match flips_when:
-		FlipsWhen.MOVING_LEFT:
-			$Sprite.flip_h = target_pos.x < position.x
-		FlipsWhen.MOVING_RIGHT:
-			$Sprite.flip_h = target_pos.x > position.x
+	if has_node('Sprite'):
+		match flips_when:
+			FlipsWhen.MOVING_LEFT:
+				$Sprite.flip_h = target_pos.x < position.x
+			FlipsWhen.MOVING_RIGHT:
+				$Sprite.flip_h = target_pos.x > position.x
 	
 	if E.cutscene_skipped:
 		is_moving = false
 		E.main_camera.smoothing_enabled = false
+		
 		yield(get_tree(), 'idle_frame')
+		
 		position = target_pos
 		E.main_camera.position = target_pos
+		
 		yield(get_tree(), 'idle_frame')
+		
 		E.main_camera.smoothing_enabled = true
+		
 		return
 	
 	play_walk(target_pos)
@@ -103,35 +103,35 @@ func stop_walking(is_in_queue := true) -> void:
 func face_up(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	_looking_dir = 'u'
+	_looking_dir = LOOKING.UP
 	yield(idle(false), 'completed')
 
 
 func face_up_right(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	_looking_dir = 'ur'
+	_looking_dir = LOOKING.UP_RIGHT
 	yield(idle(false), 'completed')
 
 
 func face_down(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	_looking_dir = 'd'
+	_looking_dir = LOOKING.DOWN
 	yield(idle(false), 'completed')
 
 
 func face_left(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	_looking_dir = 'l'
+	_looking_dir = LOOKING.LEFT
 	yield(idle(false), 'completed')
 
 
 func face_right(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	_looking_dir = 'r'
+	_looking_dir = LOOKING.RIGHT
 	yield(idle(false), 'completed')
 
 

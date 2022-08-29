@@ -1,4 +1,6 @@
 extends Container
+# warning-ignore-all:return_value_discarded
+# warning-ignore-all:unused_signal
 
 signal shown
 signal hidden
@@ -24,7 +26,7 @@ func _ready() -> void:
 	
 	# Conectarse a eventos de los evnetruchos
 	D.connect('dialog_options_requested', self, '_create_options', [true])
-	D.connect('inline_dialog_requested', self, '_create_dialog_options')
+	D.connect('inline_dialog_requested', self, '_create_inline_options')
 	D.connect('dialog_finished', self, 'remove_options')
 
 	hide()
@@ -40,11 +42,12 @@ func _clicked(event: InputEvent) -> void:
 
 # Creates an Array of PopochiuDialogOption to show dialog tree options created
 # during execution, (those that are created after calling D.show_inline_dialog)
-func _create_dialog_options(opts: Array) -> void:
+func _create_inline_options(opts: Array) -> void:
 	var tmp_opts := []
 	for idx in opts.size():
 		var new_opt: PopochiuDialogOption = PopochiuDialogOption.new()
 		var id := 'Opt%d' % (idx as int + 1)
+		
 		new_opt.id = id
 		new_opt.text = opts[idx]
 		
@@ -71,14 +74,14 @@ func _create_options(options := [], autoshow := false) -> void:
 		btn.add_color_override('font_color', default)
 		btn.add_color_override('font_color_hover', hover)
 		
-		if dialog_option.used:
+		if dialog_option.used and not dialog_option.always_on:
 			btn.add_color_override('font_color', used)
 
 		btn.connect('pressed', self, '_on_option_clicked', [dialog_option])
 
 		_options.add_child(btn)
 
-		if not dialog_option.visible:
+		if dialog_option.disabled or not dialog_option.visible:
 			btn.hide()
 		else:
 			btn.show()
@@ -112,5 +115,4 @@ func show_options() -> void:
 
 func _on_option_clicked(opt: PopochiuDialogOption) -> void:
 	hide()
-	opt.used = true
 	D.emit_signal('option_selected', opt)

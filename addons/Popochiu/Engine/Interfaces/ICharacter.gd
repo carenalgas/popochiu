@@ -15,7 +15,8 @@ var camera_owner: PopochiuCharacter = null
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Makes a character (script_name) say something.
 func character_say(\
-chr_name: String, dialog: String, is_in_queue := true) -> void:
+chr_name: String, dialog: String, is_in_queue := true
+) -> void:
 	if is_in_queue: yield()
 
 	var talking_character: PopochiuCharacter = get_character(chr_name)

@@ -111,10 +111,10 @@ func fill_data() -> void:
 			continue
 		
 		for d in type_dir.get_subdir_count():
-			var dir: EditorFileSystemDirectory = type_dir.get_subdir(d)
+			var efsd: EditorFileSystemDirectory = type_dir.get_subdir(d)
 			
-			for f in dir.get_file_count():
-				var path = dir.get_file_path(f)
+			for f in efsd.get_file_count():
+				var path = efsd.get_file_path(f)
 				
 				if not fs.get_file_type(path) == "Resource": continue
 				
@@ -139,6 +139,9 @@ func fill_data() -> void:
 				# Check if the object in the list is in its corresponding array
 				# in Popochiu (Popochiu.tscn)
 				var is_in_core := true
+				var has_state_script: bool = dir.file_exists(
+					row.path.replace('.tscn', 'State.gd')
+				)
 				
 				match t:
 					Constants.Types.ROOM:
@@ -147,8 +150,9 @@ func fill_data() -> void:
 						)
 						
 						# Check if the room is the main scene
-						var main_scene: String = ProjectSettings.get_setting(\
-						'application/run/main_scene')
+						var main_scene: String = ProjectSettings.get_setting(
+							PopochiuResources.MAIN_SCENE
+						)
 						if main_scene == resource.scene:
 							row.is_main = true
 					Constants.Types.CHARACTER:
@@ -169,6 +173,9 @@ func fill_data() -> void:
 				
 				if not is_in_core:
 					row.show_add_to_core()
+				
+				if not has_state_script:
+					row.show_create_state_script()
 	
 	# Load other tabs data
 	_tab_audio.fill_data()
@@ -268,10 +275,9 @@ func _on_tab_changed(tab: int) -> void:
 
 
 func _select_object(por: PopochiuObjectRow) -> void:
-	if last_selected:
+	if last_selected and last_selected != por:
 		last_selected.unselect()
 	
-	ei.select_file(por.path)
 	last_selected = por
 
 

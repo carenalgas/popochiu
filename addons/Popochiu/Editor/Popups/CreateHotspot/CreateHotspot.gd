@@ -54,7 +54,7 @@ func create() -> void:
 	var hotspot_template := load(SCRIPT_TEMPLATE)
 	if ResourceSaver.save(script_path, hotspot_template) != OK:
 		push_error('[Popochiu] Could not create: %s.gd' % _new_hotspot_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
+		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -71,8 +71,8 @@ func create() -> void:
 	_room.get_node('Hotspots').add_child(hotspot)
 	hotspot.owner = _room
 	hotspot.position = Vector2(
-		ProjectSettings.get_setting('display/window/size/width'),
-		ProjectSettings.get_setting('display/window/size/height')
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
 	_main_dock.ei.save_scene()
 	

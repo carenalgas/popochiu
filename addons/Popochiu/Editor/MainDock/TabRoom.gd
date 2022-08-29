@@ -11,6 +11,7 @@ const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 var opened_room: PopochiuRoom = null
 var main_dock: Panel setget _set_main_dock
 var object_row: PackedScene = null
+var opened_room_state_path: String = ''
 
 var _rows_paths := []
 var _last_selected: PopochiuObjectRow = null
@@ -44,8 +45,12 @@ onready var _types := {
 		parent = 'Points'
 	}
 }
-onready var _room_name: Label = find_node('RoomName')
+onready var _room_name: Button = find_node('RoomName')
 onready var _no_room_info: Label = find_node('NoRoomInfo')
+onready var _tool_buttons: HBoxContainer = find_node('ToolButtons')
+onready var _btn_script: Button = _tool_buttons.get_node('BtnScript')
+onready var _btn_resource: Button = _tool_buttons.get_node('BtnResource')
+onready var _btn_resource_script: Button = _tool_buttons.get_node('BtnResourceScript')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -53,6 +58,16 @@ func _ready() -> void:
 	# Disable all buttons by default until a PopochiuRoom is opened in the editor
 	_room_name.hide()
 	_no_room_info.show()
+	_tool_buttons.hide()
+	
+	_btn_script.icon = get_icon('Script', 'EditorIcons')
+	_btn_resource.icon = get_icon('Object', 'EditorIcons')
+	_btn_resource_script.icon = get_icon('GDScript', 'EditorIcons')
+	
+	_room_name.connect('pressed', self, '_select_file')
+	_btn_script.connect('pressed', self, '_open_script')
+	_btn_resource.connect('pressed', self, '_edit_resource')
+	_btn_resource_script.connect('pressed', self, '_open_resource_script')
 	
 	for t in _types.values():
 		t.group.disable_create()
@@ -67,9 +82,14 @@ func scene_changed(scene_root: Node) -> void:
 	if scene_root is PopochiuRoom:
 		# Updated the opened room's info
 		opened_room = scene_root
+		opened_room_state_path = PopochiuResources.get_data_value(
+			'rooms', opened_room.script_name, null
+		)
+		
 		_room_name.text = opened_room.script_name
 		
 		_room_name.show()
+		_tool_buttons.show()
 		
 		for t in _types:
 			for c in opened_room.call(_types[t].method):
@@ -120,12 +140,26 @@ func add_to_list(type: int, node_name: String, path := '') -> void:
 	_types[type].group.add(_create_object_row(type, node_name, path))
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func _set_main_dock(value: Panel) -> void:
+	main_dock = value
+	
+	for t in _types.values():
+		if not t.has('popup'): continue
+		t.popup = main_dock.get_popup(t.popup)
+		t.popup.set_main_dock(main_dock)
+		t.popup.room_tab = self
+		t.group.connect('create_clicked', main_dock, '_open_popup', [t.popup])
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _clear_content() -> void:
 	opened_room = null
-		
+	opened_room_state_path = ''
+	
 	_rows_paths.clear()
 	_room_name.hide()
+	_tool_buttons.hide()
 	_no_room_info.show()
 	
 	if is_instance_valid(_last_selected):
@@ -174,12 +208,23 @@ func _select_and_open_script(por: PopochiuObjectRow) -> void:
 	_last_selected = por
 
 
-func _set_main_dock(value: Panel) -> void:
-	main_dock = value
-	
-	for t in _types.values():
-		if not t.has('popup'): continue
-		t.popup = main_dock.get_popup(t.popup)
-		t.popup.set_main_dock(main_dock)
-		t.popup.room_tab = self
-		t.group.connect('create_clicked', main_dock, '_open_popup', [t.popup])
+func _select_file() -> void:
+	main_dock.ei.select_file(opened_room.filename)
+
+
+func _open_script() -> void:
+	main_dock.ei.select_file(opened_room.get_script().resource_path)
+	main_dock.ei.set_main_screen_editor('Script')
+	main_dock.ei.edit_script(opened_room.get_script())
+
+
+func _edit_resource() -> void:
+	main_dock.ei.select_file(opened_room_state_path)
+	main_dock.ei.edit_resource(load(opened_room_state_path))
+
+
+func _open_resource_script() -> void:
+	var prd: PopochiuRoomData = load(opened_room_state_path)
+	main_dock.ei.select_file(prd.get_script().resource_path)
+	main_dock.ei.set_main_screen_editor('Script')
+	main_dock.ei.edit_resource(prd.get_script())

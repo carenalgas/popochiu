@@ -4,7 +4,7 @@
 
 [node name="Setup" type="AcceptDialog"]
 margin_right = 320.0
-margin_bottom = 244.0
+margin_bottom = 178.0
 window_title = "Popochiu setup"
 dialog_autowrap = true
 script = ExtResource( 1 )
@@ -13,22 +13,24 @@ script = ExtResource( 1 )
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 312.0
-margin_bottom = 208.0
-rect_min_size = Vector2( 300, 200 )
+margin_bottom = 142.0
 size_flags_horizontal = 4
 size_flags_vertical = 5
 
 [node name="Welcome" type="Label" parent="VBoxContainer"]
+visible = false
 margin_right = 304.0
-margin_bottom = 72.0
-rect_min_size = Vector2( 0, 72 )
-text = "Welcome to Popochiu. This popup will appear automatically just this time, but you can open it later with the Setup button at the bottom of Popochiu's dock."
+margin_bottom = 160.0
+rect_min_size = Vector2( 0, 160 )
+text = "Welcome to Popochiu \\( o )3(o)/
+
+This popup will appear automatically just this time. You can open it later with the Setup button at the bottom of Popochiu's dock."
+align = 1
 autowrap = true
 
 [node name="SizeContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 76.0
 margin_right = 304.0
-margin_bottom = 114.0
+margin_bottom = 38.0
 
 [node name="GameSize" type="Label" parent="VBoxContainer/SizeContainer"]
 margin_right = 148.0
@@ -97,9 +99,9 @@ text = "height"
 align = 1
 
 [node name="TestContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 118.0
+margin_top = 42.0
 margin_right = 304.0
-margin_bottom = 156.0
+margin_bottom = 80.0
 
 [node name="TestSize" type="Label" parent="VBoxContainer/TestContainer"]
 margin_right = 148.0
@@ -166,9 +168,9 @@ text = "height"
 align = 1
 
 [node name="TypeContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 160.0
+margin_top = 84.0
 margin_right = 304.0
-margin_bottom = 180.0
+margin_bottom = 104.0
 
 [node name="Type" type="Label" parent="VBoxContainer/TypeContainer"]
 margin_top = 3.0

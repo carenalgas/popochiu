@@ -41,7 +41,7 @@ func create() -> void:
 	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(_new_dialog_path + '.gd', dialog_template) != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_dialog_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
+		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -52,7 +52,7 @@ func create() -> void:
 	dialog_resource.resource_name = _new_dialog_name
 	if ResourceSaver.save(_new_dialog_path + '.tres', dialog_resource) != OK:
 		push_error('[Popochiu] Could not create dialog: %s' %_new_dialog_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
+		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -62,7 +62,7 @@ func create() -> void:
 	) != OK:
 		push_error('[Popochiu] Could not add the created dialog to Popochiu: %s' %\
 		_new_dialog_name)
-		# TODO: Mostrar retroalimentación en el mismo popup
+		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

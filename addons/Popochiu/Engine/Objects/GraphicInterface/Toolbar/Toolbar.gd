@@ -1,4 +1,5 @@
 extends PanelContainer
+# warning-ignore-all:return_value_discarded
 
 const ToolbarButton := preload('ToolbarButton.gd')
 

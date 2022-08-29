@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/TabRoom.gd" type="Script" id=1]
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/PopochiuGroup/PopochiuGroup.tscn" type="PackedScene" id=2]
@@ -15,6 +15,21 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="Image" id=25]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=24]
+flags = 4
+flags = 4
+image = SubResource( 25 )
+size = Vector2( 16, 16 )
 
 [sub_resource type="StyleBoxFlat" id=5]
 content_margin_left = 8.0
@@ -39,18 +54,49 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource( 1 )
 __meta__ = {
-"_edit_use_anchors_": false,
 "_tab_disabled": false
 }
 
-[node name="RoomName" type="Label" parent="."]
+[node name="RoomName" type="Button" parent="."]
 visible = false
-margin_right = 304.0
+margin_right = 118.0
 margin_bottom = 22.0
+custom_colors/font_color_focus = Color( 1, 1, 1, 1 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
+custom_colors/font_color_hover = Color( 1, 1, 1, 1 )
+custom_colors/font_color_pressed = Color( 1, 1, 1, 1 )
+custom_styles/hover = SubResource( 22 )
+custom_styles/pressed = SubResource( 22 )
+custom_styles/focus = SubResource( 22 )
 custom_styles/normal = SubResource( 22 )
 text = "Room name"
-align = 1
+
+[node name="ToolButtons" type="HBoxContainer" parent="."]
+visible = false
+margin_right = 320.0
+margin_bottom = 22.0
+alignment = 1
+
+[node name="BtnScript" type="Button" parent="ToolButtons"]
+margin_left = 122.0
+margin_right = 188.0
+margin_bottom = 22.0
+text = "Script"
+icon = SubResource( 24 )
+
+[node name="BtnResource" type="Button" parent="ToolButtons"]
+margin_left = 192.0
+margin_right = 254.0
+margin_bottom = 22.0
+text = "State"
+icon = SubResource( 24 )
+
+[node name="BtnResourceScript" type="Button" parent="ToolButtons"]
+margin_left = 258.0
+margin_right = 320.0
+margin_bottom = 22.0
+text = "State"
+icon = SubResource( 24 )
 
 [node name="RoomScrollContainer" type="ScrollContainer" parent="."]
 margin_right = 320.0
@@ -60,12 +106,11 @@ size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="RoomScrollContainer"]
 margin_right = 320.0
-margin_bottom = 108.0
+margin_bottom = 151.0
 size_flags_horizontal = 3
 
 [node name="NoRoomInfo" type="Label" parent="RoomScrollContainer/VBoxContainer"]
-visible = false
-margin_right = 304.0
+margin_right = 320.0
 margin_bottom = 39.0
 custom_colors/font_color = Color( 0.768627, 0.423529, 0.443137, 1 )
 custom_styles/normal = SubResource( 5 )
@@ -73,30 +118,32 @@ text = "Open a room in Main tab to see or create Props, Hotspots, Regions and Po
 autowrap = true
 
 [node name="PropsGroup" parent="RoomScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
+margin_top = 43.0
+margin_bottom = 67.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 6 )
 title = "Props"
 create_text = "Create prop"
 
 [node name="HotspotsGroup" parent="RoomScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
-margin_top = 28.0
-margin_bottom = 52.0
+margin_top = 71.0
+margin_bottom = 95.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 5 )
 title = "Hotspots"
 create_text = "Create hotspot"
 
 [node name="RegionsGroup" parent="RoomScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
-margin_top = 56.0
-margin_bottom = 80.0
+margin_top = 99.0
+margin_bottom = 123.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 3 )
 title = "Regions"
 create_text = "Create region"
 
 [node name="PointsGroup" parent="RoomScrollContainer/VBoxContainer" instance=ExtResource( 2 )]
-margin_top = 84.0
-margin_bottom = 108.0
+margin_top = 127.0
+margin_bottom = 151.0
 custom_styles/panel = SubResource( 1 )
 icon = ExtResource( 4 )
 title = "Points"

@@ -1,20 +1,31 @@
 tool
 extends HBoxContainer
-# NOTA: El icono para el menú contextual podría ser el icon_GUI_tab_menu_hl.svg
-#		de los iconos de Godot.
+# The row that is created for Rooms, Characters, Inventory items, Dialogs,
+# Props, Hotspots, Regions and Points in the dock.
+# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 signal clicked(node)
 
 enum MenuOptions {
 	ADD_TO_CORE,
+	CREATE_STATE_SCRIPT,
 	SET_AS_MAIN,
 	START_WITH_IT,
+	CREATE_SCRIPT,
 	DELETE
 }
 
 const SELECTED_FONT_COLOR := Color('706deb')
 const INVENTORY_START_ICON := preload(\
 'res://addons/Popochiu/icons/inventory_item_start.png')
+const ROOM_STATE_TEMPLATE :=\
+'res://addons/Popochiu/Engine/Templates/RoomStateTemplate.gd'
+const CHARACTER_STATE_TEMPLATE :=\
+'res://addons/Popochiu/Engine/Templates/CharacterStateTemplate.gd'
+const INVENTORY_ITEM_STATE_TEMPLATE :=\
+'res://addons/Popochiu/Engine/Templates/InventoryItemStateTemplate.gd'
+const PROP_SCRIPT_TEMPLATE :=\
+'res://addons/Popochiu/Engine/Templates/PropTemplate.gd'
 const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd')
 
@@ -34,18 +45,22 @@ onready var _fav_icon: TextureRect = find_node('FavIcon')
 onready var _menu_btn: MenuButton = find_node('MenuButton')
 onready var _menu_popup: PopupMenu = _menu_btn.get_popup()
 onready var _btn_open: Button = find_node('Open')
+onready var _btn_script: Button = find_node('Script')
+onready var _btn_state: Button = find_node('State')
+onready var _btn_state_script: Button = find_node('StateScript')
 onready var _menu_cfg := [
 	{
 		id = MenuOptions.ADD_TO_CORE,
 		icon = preload(\
 		'res://addons/Popochiu/Editor/MainDock/ObjectRow/add_to_core.png'),
 		label = 'Add to Popochiu',
-		types = [
-			Constants.Types.ROOM,
-			Constants.Types.CHARACTER,
-			Constants.Types.INVENTORY_ITEM,
-			Constants.Types.DIALOG
-		]
+		types = Constants.MAIN_TYPES
+	},
+	{
+		id = MenuOptions.CREATE_STATE_SCRIPT,
+		icon = get_icon('ScriptCreate', 'EditorIcons'),
+		label = 'Create state script',
+		types = Constants.MAIN_TYPES
 	},
 	{
 		id = MenuOptions.SET_AS_MAIN,
@@ -58,6 +73,12 @@ onready var _menu_cfg := [
 		icon = INVENTORY_START_ICON,
 		label = 'Start with it',
 		types = [Constants.Types.INVENTORY_ITEM]
+	},
+	{
+		id = MenuOptions.CREATE_SCRIPT,
+		icon = get_icon('ScriptCreate', 'EditorIcons'),
+		label = 'Create script',
+		types = [Constants.Types.PROP]
 	},
 	null,
 	{
@@ -73,38 +94,61 @@ func _ready() -> void:
 	_label.text = name
 	hint_tooltip = path
 	
-	# Definir iconos
+	# Assign icons
 	_fav_icon.texture = get_icon('Heart', 'EditorIcons')
 	
 	if type == Constants.Types.INVENTORY_ITEM:
 		_fav_icon.texture = INVENTORY_START_ICON
 	
 	_btn_open.icon = get_icon('InstanceOptions', 'EditorIcons')
-	_menu_btn.icon = get_icon('GuiTabMenu', 'EditorIcons')
+	_btn_script.icon = get_icon('Script', 'EditorIcons')
+	_btn_state.icon = get_icon('Object', 'EditorIcons')
+	_btn_state_script.icon = get_icon('GDScript', 'EditorIcons')
+	_menu_btn.icon = get_icon('GuiTabMenuHl', 'EditorIcons')
 	
-	# Crear menú contextual
+	_btn_script.show()
+	_btn_state.show()
+	_btn_state_script.show()
+	
+	# Create the context menu based on the type of Object this row represents
 	_create_menu()
-	_menu_popup.set_item_disabled(MenuOptions.ADD_TO_CORE, true)
 	
-	# Ocultar cosas que se verán dependiendo de otras cosas
+	if type in Constants.MAIN_TYPES:
+		# By default disable the Add to Popochiu button. This will be enabled
+		# by PopochiuDock.gd if this object is not in PopochiuData.cfg
+		_menu_popup.set_item_disabled(0, true)
+		_menu_popup.set_item_disabled(1, true)
+	elif path.find('.gd') > -1:
+		# If the Room object has a script, disable the Create script button
+		_menu_popup.set_item_disabled(0, true)
+	
+	# Hide buttons based on the type of the Object this row represents
 	_fav_icon.hide()
 	
-	if type >= 4:
-		# Que no se muestre para objetos de habitación
+	if not type in Constants.MAIN_TYPES:
+		if path.find('.gd') == -1:
+			_btn_script.hide()
+		
+		_btn_state.hide()
+		_btn_state_script.hide()
+	
+	if type in Constants.ROOM_TYPES:
+		# Do not show the button to open this Object' scene if it is a Room
+		# Object (Prop, Hotspot, Region, Point)
 		_btn_open.hide()
 	
-	connect('gui_input', self, 'select')
+	connect('gui_input', self, '_check_click')
 	_menu_popup.connect('id_pressed', self, '_menu_item_pressed')
 	_btn_open.connect('pressed', self, '_open')
+	_btn_script.connect('pressed', self, '_open_script')
+	_btn_state.connect('pressed', self, '_edit_state')
+	_btn_state_script.connect('pressed', self, '_open_state_script')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func select(event: InputEvent) -> void:
-	var mouse_event: = event as InputEventMouseButton
-	if mouse_event\
-	and mouse_event.button_index == BUTTON_LEFT and mouse_event.pressed:
-		emit_signal('clicked', self)
-		_label.add_color_override('font_color', SELECTED_FONT_COLOR)
+func select() -> void:
+	_label.add_color_override('font_color', SELECTED_FONT_COLOR)
+	emit_signal('clicked', self)
 
 
 func unselect() -> void:
@@ -114,6 +158,11 @@ func unselect() -> void:
 func show_add_to_core() -> void:
 	_label.modulate.a = 0.5
 	_menu_popup.set_item_disabled(0, false)
+
+
+func show_create_state_script() -> void:
+	_btn_state_script.disabled = true
+	_menu_popup.set_item_disabled(1, false)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -133,6 +182,14 @@ func _create_menu() -> void:
 			_menu_popup.add_separator()
 
 
+func _check_click(event: InputEvent) -> void:
+	var mouse_event: = event as InputEventMouseButton
+	if mouse_event\
+	and mouse_event.button_index == BUTTON_LEFT and mouse_event.pressed:
+		main_dock.ei.select_file(path)
+		select()
+
+
 func _menu_item_pressed(id: int) -> void:
 	match id:
 		MenuOptions.ADD_TO_CORE:
@@ -140,6 +197,8 @@ func _menu_item_pressed(id: int) -> void:
 		MenuOptions.SET_AS_MAIN:
 			main_dock.set_main_scene(path)
 			self.is_main = true
+		MenuOptions.CREATE_STATE_SCRIPT:
+			_create_state_script()
 		MenuOptions.START_WITH_IT:
 			var settings := PopochiuResources.get_settings()
 			
@@ -152,14 +211,54 @@ func _menu_item_pressed(id: int) -> void:
 			(main_dock.ei as EditorInterface).get_inspector().refresh()
 			
 			self.is_on_start = name in settings.items_on_start
+		MenuOptions.CREATE_SCRIPT:
+			var prop_template := load(PROP_SCRIPT_TEMPLATE)
+			var script_path := path + '/%s/Prop%s.gd' % [name, name]
+			
+			var prop: PopochiuProp =\
+			main_dock.ei.get_edited_scene_root().get_node('Props/' + node_path)
+			
+			# Create the folder for the script
+			if main_dock.dir.make_dir_recursive(script_path.get_base_dir()) != OK:
+				push_error('[Popochiu] Could not create Prop folder for ' + name)
+				return
+			
+			# Create the script
+			if ResourceSaver.save(script_path, prop_template) != OK:
+				push_error('[Popochiu] Could not create script: %s.gd' % name)
+				return
+			
+			# Assign the created Script to the Prop, save the scene, and select
+			# the node in the tree and the created file in the FileSystem dock
+			var script := load(script_path)
+			
+			script.script_name = prop.script_name
+			script.description = prop.description
+			script.clickable = prop.clickable
+			script.baseline = prop.baseline
+			script.walk_to_point = prop.walk_to_point
+			script.look_at_point = prop.look_at_point
+			script.cursor = prop.cursor
+			script.always_on_top = prop.always_on_top
+			script.texture = prop.texture
+			
+			prop.set_script(script)
+			
+			main_dock.ei.save_scene()
+			main_dock.ei.edit_node(prop)
+			main_dock.ei.select_file(script_path)
+			
+			# Update this row properties and state
+			path = script_path
+			
+			_btn_script.show()
+			_menu_popup.set_item_disabled(0, true)
 		MenuOptions.DELETE:
 			_remove_object()
 
 
-# Agrega este objeto (representado por una fila en una de las categorías de la
-# sección Main en el dock de Popochiu) al núcleo del plugin (Popochiu.tscn) para
-# que pueda ser usado (p. ej. Que se pueda navegar a la habitación, que se pueda
-# mostrar a un personaje en una habitación, etc.).
+# Add this Object (Room, Character, InventoryItem, Dialog) to PopochiuData.cfg
+# so it can be used by Popochiu.
 func _add_object_to_core() -> void:
 	var target_array := ''
 	var resource: Resource
@@ -179,7 +278,7 @@ func _add_object_to_core() -> void:
 		Constants.Types.DIALOG:
 			target_array = 'dialogs'
 		_:
-			# TODO: Mostrar un mensaje de error o algo.
+			# TODO: Show an error message
 			return
 	
 	if main_dock.add_resource_to_popochiu(target_array, resource) != OK:
@@ -194,10 +293,49 @@ func _add_object_to_core() -> void:
 # pueda ser editado.
 func _open() -> void:
 	main_dock.ei.select_file(path)
+	
 	if path.find('.tres') < 0:
+		main_dock.ei.set_main_screen_editor('2D')
 		main_dock.ei.open_scene_from_path(path)
 	else:
 		main_dock.ei.edit_resource(load(path))
+	
+	select()
+
+
+func _open_script() -> void:
+	var script_path := path
+	
+	if type in Constants.MAIN_TYPES:
+		if path.find('.tres') < 0:
+			script_path = path.replace('.tscn', '.gd')
+		else:
+			script_path = path.replace('.tres', '.gd')
+	elif path.find('.gd') == -1:
+		return
+	
+	main_dock.ei.select_file(script_path)
+	main_dock.ei.set_main_screen_editor('Script')
+	main_dock.ei.edit_script(load(script_path))
+	
+	select()
+
+
+func _edit_state() -> void:
+	main_dock.ei.select_file(path.replace('.tscn', '.tres'))
+	main_dock.ei.edit_resource(load(path.replace('.tscn', '.tres')))
+	
+	select()
+
+
+func _open_state_script() -> void:
+	var state := load(path.replace('.tscn', '.tres'))
+	
+	main_dock.ei.select_file(state.get_script().resource_path)
+	main_dock.ei.set_main_screen_editor('Script')
+	main_dock.ei.edit_resource(state.get_script())
+	
+	select()
 
 
 # Shows a confirmation popup to ask the developer if the Popochiu object should
@@ -423,3 +561,45 @@ func _set_is_main(value: bool) -> void:
 func set_is_on_start(value: bool) -> void:
 	is_on_start = value
 	_fav_icon.visible = value
+
+
+func _create_state_script() -> void:
+	var template: Script = null
+	
+	match type:
+		Constants.Types.ROOM:
+			template = load(ROOM_STATE_TEMPLATE)
+		Constants.Types.CHARACTER:
+			template = load(CHARACTER_STATE_TEMPLATE)
+		Constants.Types.INVENTORY_ITEM:
+			template = load(INVENTORY_ITEM_STATE_TEMPLATE)
+	
+	var script_path := path.replace('.tscn', 'State.gd')
+	
+	# Create the folder for the script
+	if main_dock.dir.make_dir_recursive(script_path.get_base_dir()) != OK:
+		push_error('[Popochiu] Could not create state script for ' + name)
+		return
+	
+	# Create the script
+	if ResourceSaver.save(script_path, template) != OK:
+		push_error('[Popochiu] Could not create script: %s.gd' % name)
+		return
+	
+	# Assign the created Script to the object's state resource
+	var state_resource := load(path.replace('tscn', 'tres'))
+	state_resource.set_script(load(script_path))
+	state_resource.script_name = name
+	state_resource.scene = path
+	
+	if ResourceSaver.save(state_resource.resource_path, state_resource) != OK:
+		push_error('[Popochiu] Could not create script: %s.gd' % name)
+		return
+	
+	# Disable the context menu option and enable the button to open the state
+	# script
+	_menu_popup.set_item_disabled(1, true)
+	_btn_state_script.disabled = false
+	
+	# Select and open the created script
+	_open_state_script()

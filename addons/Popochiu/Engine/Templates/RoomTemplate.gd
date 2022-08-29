@@ -1,6 +1,8 @@
 tool
 extends PopochiuRoom
 
+var state: PopochiuRoomData = null
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 # TODO: Overwrite Godot's methods

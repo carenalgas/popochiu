@@ -15,17 +15,11 @@ export var limit_right := INF
 export var limit_top := INF
 export var limit_bottom := INF
 
-var is_current := false setget _set_is_current
-var visited := false
-var visited_first_time := false
-var visited_times := 0
-var state := {} setget _set_state, _get_state
+var is_current := false setget set_is_current
 var characters_cfg := [] # Array of Dictionary
 
 var _path := []
 var _moving_character: PopochiuCharacter = null
-var _props_baselines := []
-var _characters_baselines := []
 
 onready var _nav_path: Navigation2D = $WalkableAreas.get_child(0)
 
@@ -51,11 +45,6 @@ func _ready():
 	
 	set_process_unhandled_input(false)
 	
-	# Store the Props based on their baseline (from lowest to highest)
-	for p in $Props.get_children():
-		_props_baselines.append([p, p.baseline + p.position.y])
-	_props_baselines.sort_custom(self, '_sort_by_baseline')
-	
 	if limit_left != INF:
 		E.main_camera.limit_left = limit_left
 	if limit_right != INF:
@@ -72,15 +61,8 @@ func _process(delta):
 	if Engine.editor_hint or not is_instance_valid(C.player) or not has_player:
 		return
 	
-#	sort_characters()
-#	_check_characters_zindex(C.player)
-#
-#	for c in $Characters.get_children():
-#		if c.visible:
-#			_check_z_indexes(c as PopochiuCharacter)
-
 	if _path.empty(): return
-
+	
 	var walk_distance = _moving_character.walk_speed * delta
 	_move_along_path(walk_distance)
 
@@ -94,33 +76,6 @@ func _unhandled_input(event):
 
 	if is_instance_valid(C.player) and C.player.can_move:
 		C.player.walk(get_local_mouse_position(), false)
-
-
-#func _get_property_list():
-#	var properties = []
-#	properties.append({
-#		name = "Camera limits",
-#		type = TYPE_NIL,
-#		hint_string = "limit_",
-#		usage = PROPERTY_USAGE_GROUP | PROPERTY_USAGE_SCRIPT_VARIABLE
-#	})
-#	properties.append({
-#		name = "limit_left",
-#		type = TYPE_REAL
-#	})
-#	properties.append({
-#		name = "limit_right",
-#		type = TYPE_REAL
-#	})
-#	properties.append({
-#		name = "limit_top",
-#		type = TYPE_REAL
-#	})
-#	properties.append({
-#		name = "limit_bottom",
-#		type = TYPE_REAL
-#	})
-#	return properties
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
@@ -142,10 +97,6 @@ func on_entered_from_editor() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func get_walkable_area() -> Navigation2D:
-	return $WalkableAreas.get_child(0) as Navigation2D
-
-
 # This function is called by Popochiu before moving the PC to another room. By
 # default, characters are removed only to keep their instances in the array
 # of characters in ICharacter.gd.
@@ -164,6 +115,27 @@ func add_character(chr: PopochiuCharacter) -> void:
 
 func remove_character(chr: PopochiuCharacter) -> void:
 	$Characters.remove_child(chr)
+
+
+func hide_props() -> void:
+	for p in $Props.get_children():
+		p.hide()
+
+
+func has_character(character_name: String) -> bool:
+	var result := false
+	
+	for c in $Characters.get_children():
+		if (c as PopochiuCharacter).script_name == character_name:
+			result = true
+			break
+	
+	return result
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_walkable_area() -> Navigation2D:
+	return $WalkableAreas.get_child(0) as Navigation2D
 
 
 func get_point(point_name: String) -> Vector2:
@@ -200,11 +172,6 @@ func get_region(region_name: String) -> PopochiuRegion:
 	return null
 
 
-func hide_props() -> void:
-	for p in $Props.get_children():
-		p.hide()
-
-
 func get_props() -> Array:
 	return get_tree().get_nodes_in_group('props')
 
@@ -225,23 +192,9 @@ func get_characters_count() -> int:
 	return $Characters.get_child_count()
 
 
-func has_character(character_name: String) -> bool:
-	var result := false
-	
-	for c in $Characters.get_children():
-		if (c as PopochiuCharacter).script_name == character_name:
-			result = true
-			break
-	
-	return result
-
-
-func sort_characters() -> void:
-	_characters_baselines.clear()
-	for c in $Characters.get_children():
-		if c.get_instance_id() != C.player.get_instance_id():
-			_characters_baselines.append([c, c.baseline + c.position.y])
-	_characters_baselines.sort_custom(self, '_sort_by_baseline')
+func set_is_current(value: bool) -> void:
+	is_current = value
+	set_process_unhandled_input(is_current)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -271,82 +224,22 @@ func _update_navigation_path(
 	# same time. Or maybe each character should handle its own movement? (;￢＿￢)
 	_path = _nav_path.get_simple_path(start_position, end_position, true)
 	
-	if _path.empty(): return
+	if _path.empty():
+		prints('_update_navigation_path')
+		return
 	
 	_path.remove(0)
 	_moving_character = character
-
+	
 	set_process(true)
 
 
-func _set_is_current(value: bool) -> void:
-	is_current = value
-	set_process_unhandled_input(is_current)
-
-
-func _set_state(stored_state: Dictionary) -> void:
-	state = stored_state
-
-	self.visited = stored_state.visited
-	self.visited_first_time = stored_state.visited_first_time
-	self.visited_times = stored_state.visited_times
-
-
-# Returns the state of the room
-func _get_state() -> Dictionary:
-	state.visited = self.visited
-	state.visited_first_time = self.visited_first_time
-	state.visited_times = self.visited_times
-
-	return state
-
-
-func _check_z_indexes(chr: PopochiuCharacter) -> void:
-	var y_pos := chr.global_position.y
-	
-	# Compare the character Y position with each Prop's baseline
-	var z_index_update := 0
-	
-	for pair in _props_baselines:
-		var prop: PopochiuProp = pair[0]
-		
-		if not prop.visible or not prop.is_in_group('PopochiuClickable'):
-			continue
-		if prop.always_on_top:
-			prop.z_index = 4
-			continue
-		elif _is_in_front_of(prop, y_pos):
-			z_index_update += chr.z_index + 1
-		
-		prop.z_index = z_index_update
-
-
-func _check_characters_zindex(chr: PopochiuCharacter) -> void:
-	var y_pos := chr.global_position.y
-
-	# Compare the character Y position with each other character's baseline
-	var z_index_update = 0
-	for pair in _characters_baselines:
-		var character: PopochiuCharacter = pair[0]
-		
-		if character.always_on_top:
-			character.z_index = 4
-			continue
-		elif _is_in_front_of(character, y_pos):
-			z_index_update += chr.z_index + 1
-		elif chr.z_index == character.z_index:
-			chr.z_index += 1
-		
-		character.z_index = z_index_update
-
-
-func _is_in_front_of(nde: Node, chr_y_pos: float) -> bool:
-	var nde_baseline: float = nde.to_global(Vector2.DOWN * nde.baseline).y
-	return nde_baseline > chr_y_pos
-
-
 func _clear_navigation_path() -> void:
-	_path.clear()
+	# FIX: 'function signature missmatch in Web export' error thrown when clearing
+	# an empty Array.
+	if not _path.empty():
+		_path.clear()
+	
 	_moving_character.idle(false)
 	C.emit_signal('character_move_ended', _moving_character)
 	_moving_character = null

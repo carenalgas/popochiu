@@ -19,8 +19,16 @@ func _ready() -> void:
 	if Engine.editor_hint: return
 	
 	for c in get_children():
-		c.position.y -= baseline * c.scale.y
+		if c.get('position') is Vector2:
+			c.position.y -= baseline * c.scale.y
+		elif c.get('rect_position') is Vector2:
+			c.rect_position.y -= baseline * c.rect_scale.y
+	
+	walk_to_point.y -= baseline * scale.y
 	position.y += baseline * scale.y
+	
+	if always_on_top:
+		z_index += 1
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
