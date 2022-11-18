@@ -3,9 +3,13 @@
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Room/PopochiuRoom.gd" type="Script" id=1]
 
 [node name="Room" type="YSort"]
+sort_enabled = false
 script = ExtResource( 1 )
 
+[node name="WalkableAreas" type="Node2D" parent="."]
+
 [node name="Props" type="YSort" parent="."]
+sort_enabled = false
 
 [node name="Hotspots" type="Node2D" parent="."]
 
@@ -13,8 +17,5 @@ script = ExtResource( 1 )
 
 [node name="Points" type="Node2D" parent="."]
 
-[node name="WalkableAreas" type="Node2D" parent="."]
-
-[node name="Navigation2D" type="Navigation2D" parent="WalkableAreas"]
-
 [node name="Characters" type="YSort" parent="."]
+sort_enabled = false

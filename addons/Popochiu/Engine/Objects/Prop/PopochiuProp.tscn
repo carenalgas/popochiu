@@ -24,9 +24,6 @@ margin_left = -2.5
 margin_top = -2.5
 margin_right = 2.5
 margin_bottom = 2.5
-color = Color( 0, 1, 0, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+color = Color( 0, 1, 1, 1 )
 
 [node name="Sprite" type="Sprite" parent="."]

@@ -8,30 +8,23 @@ content_margin_left = 8.0
 content_margin_right = 8.0
 content_margin_top = 4.0
 content_margin_bottom = 6.0
-bg_color = Color( 0.247059, 0.247059, 0.454902, 1 )
+bg_color = Color( 0.180392, 0.172549, 0.607843, 1 )
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color( 1, 1, 1, 1 )
+corner_detail = 4
 anti_aliasing = false
 
-[node name="DisplayBox" type="Label"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -42.0
-margin_top = -12.0
-margin_right = 42.0
-margin_bottom = 12.0
+[node name="DisplayBox" type="RichTextLabel"]
+margin_right = 24.0
+margin_bottom = 24.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource( 1 )
 custom_styles/normal = SubResource( 1 )
-text = "El narrador"
-align = 1
+bbcode_enabled = true
+fit_content_height = true
+scroll_active = false
 script = ExtResource( 2 )
-__meta__ = {
-"_edit_use_anchors_": false
-}

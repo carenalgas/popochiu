@@ -74,6 +74,13 @@ func create() -> void:
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
+	
+	var collision := CollisionPolygon2D.new()
+	collision.name = 'InteractionPolygon'
+	hotspot.add_child(collision)
+	collision.owner = _room
+	collision.modulate = Color.blue
+	
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

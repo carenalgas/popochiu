@@ -7,6 +7,7 @@ signal text_speed_changed
 signal language_changed
 signal game_saved
 signal game_loaded(data)
+signal redied
 
 const SaveLoad := preload('res://addons/Popochiu/Engine/Others/PopochiuSaveLoad.gd')
 
@@ -17,6 +18,7 @@ var current_room: PopochiuRoom = null
 # Stores the las PopochiuClickable node clicked to ease access to it from
 # any other class
 var clicked: Node = null
+var hovered: PopochiuClickable = null setget set_hovered, get_hovered
 var cutscene_skipped := false
 var rooms_states := {}
 var dialog_states := {}
@@ -30,6 +32,7 @@ var current_text_speed_idx := settings.default_text_speed
 var current_text_speed: float = settings.text_speeds[current_text_speed_idx]
 var current_language := 0
 var auto_continue_after := -1.0
+var scale := Vector2.ONE
 
 # TODO: This could be in the camera's own script
 var _is_camera_shaking := false
@@ -43,14 +46,15 @@ var _running := false
 var _use_transition_on_room_change := true
 var _config: ConfigFile = null
 var _loaded_game := {}
+var _hovered_queue := []
 
 onready var main_camera: Camera2D = find_node('MainCamera')
 onready var _defaults := {
 	camera_limits = {
 		left = main_camera.limit_left,
-		right = main_camera.limit_right,
+		right = E.width,
 		top = main_camera.limit_top,
-		bottom = main_camera.limit_bottom
+		bottom = E.height
 	}
 }
 onready var _saveload := SaveLoad.new()
@@ -75,6 +79,9 @@ func _ready() -> void:
 	else:
 		tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instance()
 	
+	# Scale GI and TL
+	scale = Vector2(E.width, E.height) / Vector2(320.0, 180.0)
+	
 	add_child(gi)
 	add_child(tl)
 	
@@ -92,6 +99,11 @@ func _ready() -> void:
 		I.add_item(key, false, false)
 	
 	set_process_input(false)
+	
+	if settings.scale_gui:
+		Cursor.scale_cursor(scale)
+	
+	emit_signal('redied')
 
 
 func _process(delta: float) -> void:
@@ -103,8 +115,7 @@ func _process(delta: float) -> void:
 		)
 		
 		if _shake_timer <= 0.0:
-			_is_camera_shaking = false
-			main_camera.offset = Vector2.ZERO
+			stop_camera_shake()
 	elif not Engine.editor_hint\
 	and is_instance_valid(C.camera_owner)\
 	and C.camera_owner.is_inside_tree():
@@ -176,6 +187,9 @@ func run(instructions: Array, show_gi := true) -> void:
 	if not D.active and show_gi:
 		G.done()
 	
+	if _is_camera_shaking:
+		stop_camera_shake()
+	
 	if instructions.empty():
 		yield(get_tree(), 'idle_frame')
 	
@@ -200,12 +214,16 @@ func run_cutscene(instructions: Array) -> void:
 
 # Loads the room with script_name. use_transition can be used to trigger a fade
 # out animation before loading the room, and a fade in animation once it is ready
-func goto_room(\
-script_name := '', use_transition := true, store_state := true
+func goto_room(
+	script_name := '',
+	use_transition := true,
+	store_state := true,
+	ignore_change := false
 ) -> void:
 	if not in_room: return
 	
 	self.in_room = false
+	clear_hovered()
 	
 	G.block()
 	
@@ -214,7 +232,7 @@ script_name := '', use_transition := true, store_state := true
 		$TransitionLayer.play_transition($TransitionLayer.FADE_IN)
 		yield($TransitionLayer, 'transition_finished')
 	
-	if is_instance_valid(C.player):
+	if is_instance_valid(C.player) and Engine.get_idle_frames() > 0:
 		C.player.last_room = current_room.script_name
 	
 	# Store the room state
@@ -222,7 +240,8 @@ script_name := '', use_transition := true, store_state := true
 		rooms_states[current_room.script_name] = current_room.state
 	
 	# Remove PopochiuCharacter nodes from the room so they are not deleted
-	current_room.on_room_exited()
+	if Engine.get_idle_frames() > 0:
+		current_room.exit_room()
 	
 	# Reset camera config
 	# TODO: This could be in the Camera's own script... along with shaking
@@ -231,10 +250,15 @@ script_name := '', use_transition := true, store_state := true
 	main_camera.limit_top = _defaults.camera_limits.top
 	main_camera.limit_bottom = _defaults.camera_limits.bottom
 	
+	if ignore_change: return
+	
 	var rp: String = PopochiuResources.get_data_value('rooms', script_name, null)
 	if not rp:
 		prints('[Popochiu] No PopochiuRoom with name: %s' % script_name)
 		return
+	
+	if Engine.get_idle_frames() == 0:
+		yield(get_tree(), 'idle_frame')
 	
 	get_tree().change_scene(load(rp).scene)
 
@@ -243,13 +267,25 @@ script_name := '', use_transition := true, store_state := true
 func room_readied(room: PopochiuRoom) -> void:
 	current_room = room
 	
+	# When running from the Editor the first time, use goto_room
+	if Engine.get_idle_frames() == 0:
+		yield(get_tree(), 'idle_frame')
+
+		self.in_room = true
+		
+		# Calling this will make the camera be set to its default values and will
+		# store the state of the main room (the last parameter will prevent
+		# Popochiu from changing the scene to the same that is already loaded
+		goto_room(room.script_name, false, true, true)
+	
+	# Make the camera be ready for the room
+	current_room.setup_camera()
+	
 	# Update the core state
 	if not _loaded_game:
 		current_room.state.visited = true
 		current_room.state.visited_times += 1
 		current_room.state.visited_first_time = current_room.state.visited_times == 1
-	
-	current_room.is_current = true
 	
 	if _loaded_game:
 		C.set_player(C.get_character(_loaded_game.player.id))
@@ -259,6 +295,13 @@ func room_readied(room: PopochiuRoom) -> void:
 		var chr: PopochiuCharacter = C.get_character(c.script_name)
 		
 		if chr:
+			# ░▒░▒ FIX ░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░
+			# Temporary fix to make the character with is_player == true to
+			# be the PC
+			if chr.is_player:
+				C.set_player(chr)
+			# ░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░░▒░▒ FIX ░▒░▒
+			
 			chr.position = c.position
 			current_room.add_character(chr)
 	
@@ -291,14 +334,16 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	self.in_room = true
 	
-	# This enables the room to listen input events
-	current_room.on_room_transition_finished()
-	
 	if _loaded_game:
 		emit_signal('game_loaded', _loaded_game)
 		E.run([G.display('Game loaded')])
 		
 		_loaded_game = {}
+	
+	# This enables the room to listen input events
+	current_room.is_current = true
+	
+	current_room.on_room_transition_finished()
 
 
 # Changes the main camera's offset (useful when zooming the camera)
@@ -320,6 +365,19 @@ strength := 1.0, duration := 1.0, is_in_queue := true) -> void:
 	_is_camera_shaking = true
 	
 	yield(get_tree().create_timer(duration), 'timeout')
+
+
+# Makes the camera shake with strength for duration seconds without blocking
+# excecution
+func camera_shake_no_block(\
+strength := 1.0, duration := 1.0, is_in_queue := true) -> void:
+	if is_in_queue: yield()
+	
+	_camera_shake_amount = strength
+	_shake_timer = duration
+	_is_camera_shaking = true
+	
+	yield(get_tree(), 'idle_frame')
 
 
 # Changes the camera zoom. If target is larger than Vector2(1, 1) the camera
@@ -431,23 +489,6 @@ func play_transition(type: int, duration: float, is_in_queue := true) -> void:
 	yield($TransitionLayer, 'transition_finished')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
-func get_width() -> float:
-	return get_viewport().get_visible_rect().end.x
-
-
-func get_height() -> float:
-	return get_viewport().get_visible_rect().end.y
-
-
-func get_half_width() -> float:
-	return get_viewport().get_visible_rect().end.x / 2.0
-
-
-func get_half_height() -> float:
-	return get_viewport().get_visible_rect().end.y / 2.0
-
-
 func change_text_speed() -> void:
 	current_text_speed_idx = wrapi(
 		current_text_speed_idx + 1,
@@ -490,9 +531,69 @@ func load_game(slot := 1) -> void:
 	)
 
 
+func stop_camera_shake() -> void:
+	_is_camera_shaking = false
+	_shake_timer = 0.0
+	main_camera.offset = Vector2.ZERO
+
+
+func add_hovered(node: PopochiuClickable, prepend := false) -> void:
+	if prepend:
+		_hovered_queue.push_front(node)
+	else:
+		_hovered_queue.append(node)
+
+
+func remove_hovered(node: PopochiuClickable) -> bool:
+	_hovered_queue.erase(node)
+	
+	if not _hovered_queue.empty():
+		var pc: PopochiuClickable = _hovered_queue[-1]
+		G.show_info(pc.description)
+		Cursor.set_cursor(pc.cursor)
+		return false
+	
+	return true
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_width() -> float:
+	return get_viewport().get_visible_rect().end.x
+
+
+func get_height() -> float:
+	return get_viewport().get_visible_rect().end.y
+
+
+func get_half_width() -> float:
+	return get_viewport().get_visible_rect().end.x / 2.0
+
+
+func get_half_height() -> float:
+	return get_viewport().get_visible_rect().end.y / 2.0
+
+
+func set_hovered(value: PopochiuClickable) -> void:
+	hovered = value
+	
+	if not hovered:
+		G.show_info()
+
+
+func get_hovered() -> PopochiuClickable:
+	return null if _hovered_queue.empty() else _hovered_queue[-1]
+
+
+func clear_hovered() -> void:
+	_hovered_queue.clear()
+	self.hovered = null
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _eval_string(text: String) -> void:
 	match text:
+		'.':
+			yield(wait(0.25, false), 'completed')
 		'..':
 			yield(wait(0.5, false), 'completed')
 		'...':
@@ -530,16 +631,12 @@ func _eval_string(text: String) -> void:
 				
 				if character_name == 'player'\
 				or C.player.script_name.to_lower() == character_name:
-					yield(C.player_say(dialogue, false), 'completed')
-
-					G.block()
+					yield(C.player_say_no_block(dialogue, false), 'completed')
 				elif C.is_valid_character(character_name):
 					yield(
-						C.character_say(character_name, dialogue, false),
+						C.character_say_no_block(character_name, dialogue, false),
 						'completed'
 					)
-
-					G.block()
 				else:
 					yield(get_tree(), 'idle_frame')
 			else:

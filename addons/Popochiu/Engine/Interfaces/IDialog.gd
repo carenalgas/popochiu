@@ -12,22 +12,27 @@ preload('res://addons/Popochiu/Engine/Objects/Dialog/PopochiuDialogOption.gd')
 
 var active := false
 var trees := {}
+var current_dialog: PopochiuDialog = null
+var selected_option: PopochiuDialogOption = null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Starts a branching dialog identified by its script_name
 func show_dialog(script_name: String) -> void:
-	var dialog: PopochiuDialog = E.get_dialog(script_name)
+	current_dialog = E.get_dialog(script_name)
 	
-	if dialog:
+	if current_dialog:
 		active = true
-		dialog.start()
+		current_dialog.start()
 		
 		yield(self, 'dialog_finished')
 		
-		trees[dialog.script_name] = dialog
+		trees[current_dialog.script_name] = current_dialog
 		
 		active = false
+		current_dialog = null
+		selected_option = null
+		
 		G.done()
 	else:
 		yield(get_tree(), 'idle_frame')
@@ -43,3 +48,7 @@ func show_inline_dialog(opts: Array) -> PopochiuDialogOption:
 # Finishes the dialog currently in execution.
 func finish_dialog() -> void:
 	emit_signal('dialog_finished')
+
+
+func say_selected() -> void:
+	yield(E.run(['Player: ' + selected_option.text]), 'completed')

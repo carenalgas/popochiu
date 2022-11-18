@@ -1,0 +1,116 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://addons/Popochiu/Editor/Fonts/Hack_Regular.ttf" type="DynamicFontData" id=1]
+[ext_resource path="res://addons/Popochiu/Editor/Fonts/NotoSansUI_Regular.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://addons/Popochiu/Editor/Fonts/NotoSansUI_Bold.ttf" type="DynamicFontData" id=3]
+[ext_resource path="res://addons/Popochiu/Editor/Popups/CreateWalkableArea/CreateWalkableArea.gd" type="Script" id=4]
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 4.0
+content_margin_right = 4.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+bg_color = Color( 0.458824, 0.807843, 0.784314, 0.25098 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="DynamicFont" id=3]
+size = 14
+font_data = ExtResource( 1 )
+
+[sub_resource type="DynamicFont" id=4]
+size = 14
+font_data = ExtResource( 3 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 14
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxEmpty" id=2]
+
+[node name="CreateWalkableArea" type="ConfirmationDialog"]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -160.0
+margin_top = -90.0
+margin_right = 160.0
+margin_bottom = 90.0
+rect_min_size = Vector2( 640, 360 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+window_title = "Create walkable area"
+dialog_hide_on_ok = false
+dialog_autowrap = true
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -36.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="InputContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_right = 783.0
+margin_bottom = 24.0
+
+[node name="Label" type="Label" parent="VBoxContainer/InputContainer"]
+margin_top = 5.0
+margin_right = 104.0
+margin_bottom = 19.0
+text = "Walkable Area name"
+
+[node name="Input" type="LineEdit" parent="VBoxContainer/InputContainer"]
+margin_left = 108.0
+margin_right = 783.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+context_menu_enabled = false
+virtual_keyboard_enabled = false
+shortcut_keys_enabled = false
+
+[node name="ErrorFeedback" type="Label" parent="VBoxContainer"]
+visible = false
+margin_top = 28.0
+margin_right = 304.0
+margin_bottom = 42.0
+custom_colors/font_color = Color( 0.8, 0.258824, 0.258824, 1 )
+text = "Walkable Area name is mandatory!"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 56.0
+margin_right = 783.0
+margin_bottom = 60.0
+
+[node name="Guide" type="Label" parent="VBoxContainer"]
+modulate = Color( 1, 1, 1, 0.698039 )
+margin_top = 64.0
+margin_right = 783.0
+margin_bottom = 86.0
+custom_styles/normal = SubResource( 1 )
+text = "Use PascalCase. No spaces. i.e Floor or SuspendedBridge.."
+autowrap = true
+
+[node name="Info" type="RichTextLabel" parent="VBoxContainer"]
+margin_top = 90.0
+margin_right = 783.0
+margin_bottom = 316.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/mono_font = SubResource( 3 )
+custom_fonts/bold_font = SubResource( 4 )
+custom_fonts/normal_font = SubResource( 5 )
+custom_styles/normal = SubResource( 2 )
+bbcode_enabled = true

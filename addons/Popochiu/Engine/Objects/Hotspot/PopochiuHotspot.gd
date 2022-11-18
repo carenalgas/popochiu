@@ -9,16 +9,3 @@ extends 'res://addons/Popochiu/Engine/Objects/Clickable/PopochiuClickable.gd'
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	add_to_group('hotspots')
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func on_interact() -> void:
-	.on_interact()
-
-
-func on_look() -> void:
-	.on_look()
-
-
-func on_item_used(item: PopochiuInventoryItem) -> void:
-	.on_item_used(item)

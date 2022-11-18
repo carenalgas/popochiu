@@ -51,16 +51,16 @@ func create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	if _interaction_checkbox.pressed:
 		# Create the folder for the Prop
-		assert(
-			_main_dock.dir.make_dir_recursive(_new_prop_path.get_base_dir()) == OK,
-			'[Popochiu] Could not create Prop folder for ' + _new_prop_name
+		assert(\
+		_main_dock.dir.make_dir_recursive(_new_prop_path.get_base_dir()) == OK,
+		'[Popochiu] Could not create Prop folder for ' + _new_prop_name
 		)
 	elif not _main_dock.dir.dir_exists(_room_dir + '/Props/'):
 		# If the Prop doesn't have interaction, just try to create the Props
 		# folder to store there the assets that will be used by the Prop
-		assert(
-			_main_dock.dir.make_dir_recursive(_room_dir + '/Props/') == OK,
-			'[Popochiu] Could not create Props folder for ' + _room_path.get_file()
+		assert(\
+		_main_dock.dir.make_dir_recursive(_room_dir + '/Props/_NoInteraction') == OK,
+		'[Popochiu] Could not create Props folder for ' + _room_path.get_file()
 		)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -75,13 +75,20 @@ func create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear la prop a agregar a la habitación
 	var prop: PopochiuProp = ResourceLoader.load(BASE_PROP_PATH).instance()
+	
 	if _interaction_checkbox.pressed:
 		prop.set_script(ResourceLoader.load(script_path))
+	
 	prop.name = _new_prop_name
 	prop.script_name = _new_prop_name
 	prop.description = _new_prop_name
 	prop.clickable = _interaction_checkbox.pressed
 	prop.cursor = Constants.CURSOR_TYPE.ACTIVE
+	
+	if _new_prop_name in ['Bg', 'Background']:
+		prop.baseline =\
+		-ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT) / 2.0
+		prop.z_index = -1
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Agregar la prop a su habitación
@@ -91,28 +98,35 @@ func create() -> void:
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
+	
+	if _interaction_checkbox.pressed:
+		var collision := CollisionPolygon2D.new()
+		collision.name = 'InteractionPolygon'
+		prop.add_child(collision)
+		collision.owner = _room
+	
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of Props in the Room tab
-	if _interaction_checkbox.pressed:
-		room_tab.add_to_list(
-			Constants.Types.PROP,
-			_new_prop_name,
-			script_path
-		)
-	else:
-		room_tab.add_to_list(Constants.Types.PROP, _new_prop_name)
+	room_tab.add_to_list(
+		Constants.Types.PROP,
+		_new_prop_name,
+		script_path if _interaction_checkbox.pressed else _room_dir + '/Props'
+	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades de la prop creada en el Inspector
+	_main_dock.fs.scan()
 	yield(get_tree().create_timer(0.1), 'timeout')
 	_main_dock.ei.edit_node(prop)
 	
 	if _interaction_checkbox.pressed:
 		_main_dock.ei.select_file(script_path)
 	else:
-		_main_dock.ei.select_file(_room_path)
+		_main_dock.ei.get_file_system_dock().navigate_to_path(
+			_room_dir + '/Props/_NoInteraction'
+		)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin

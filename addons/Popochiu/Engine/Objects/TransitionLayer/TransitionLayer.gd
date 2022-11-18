@@ -20,6 +20,9 @@ onready var n := {
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	$AnimationPlayer.connect('animation_finished', self, '_transition_finished')
+	
+	if E.settings.scale_gui:
+		$Transitions.scale = E.scale
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

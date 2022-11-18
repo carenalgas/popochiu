@@ -30,10 +30,10 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 
 
 # Actions to excecute after the item is added to the Inventory
-func added_to_inventory() -> void:
-	# Replace the call to .added_to_inventory() to implement your code. This only
+func on_added_to_inventory() -> void:
+	# Replace the call to .on_added_to_inventory() to implement your code. This only
 	# makes the default behavior to happen.
-	.added_to_inventory()
+	.on_added_to_inventory()
 
 
 # Actions to excecute when the item is discarded from the Inventory

@@ -237,7 +237,6 @@ func _menu_item_pressed(id: int) -> void:
 			script.clickable = prop.clickable
 			script.baseline = prop.baseline
 			script.walk_to_point = prop.walk_to_point
-			script.look_at_point = prop.look_at_point
 			script.cursor = prop.cursor
 			script.always_on_top = prop.always_on_top
 			script.texture = prop.texture
@@ -344,9 +343,7 @@ func _remove_object() -> void:
 	var location := 'Popochiu'
 	
 	# Verify if the object to delete is a Prop, a Hotspot or a Region.
-	if type == Constants.Types.PROP\
-	or type == Constants.Types.HOTSPOT\
-	or type == Constants.Types.REGION:
+	if type in Constants.ROOM_TYPES:
 		# res://popochiu/Rooms/???/Props/??/ > [res:, popochiu, Rooms, ???, Props, ??]
 		location = "%s's room" % path.split('/', false)[3]
 	
@@ -365,10 +362,14 @@ func _remove_object() -> void:
 		' This action cannot be reversed. Continue?',
 		# Additional confirmation
 		'Delete [b]%s[/b] folder/file too?' % path.get_base_dir() +\
-		(' ([b]%d[/b] audio files will be deleted' % audio_files.size()\
-		if audio_files.size() > 0\
-		else '') +\
-		' (cannot be reversed))'
+		(
+			' ([b]%d[/b] audio files will be deleted' % audio_files.size()\
+			if audio_files.size() > 0\
+			else ''
+		) +\
+		' (cannot be reversed))'\
+		if path.get_extension()
+		else ''
 	)
 	
 	_delete_dialog.connect('confirmed', self, '_remove_from_core')
@@ -403,7 +404,7 @@ func _remove_from_core() -> void:
 			PopochiuResources.erase_data_value('inventory_items', name)
 		Constants.Types.DIALOG:
 			PopochiuResources.erase_data_value('dialogs', name)
-		Constants.Types.PROP, Constants.Types.HOTSPOT, Constants.Types.REGION:
+		Constants.Types.PROP, Constants.Types.HOTSPOT, Constants.Types.REGION, Constants.Types.WALKABLE_AREA:
 			var opened_room: PopochiuRoom = main_dock.get_opened_room()
 			if opened_room:
 				match type:
@@ -413,6 +414,8 @@ func _remove_from_core() -> void:
 						opened_room.get_hotspot(name).queue_free()
 					Constants.Types.REGION:
 						opened_room.get_region(name).queue_free()
+					Constants.Types.WALKABLE_AREA:
+						opened_room.get_walkable_area(name).queue_free()
 				
 				main_dock.ei.save_scene()
 			else:
@@ -421,14 +424,17 @@ func _remove_from_core() -> void:
 			
 			# TODO: If it is a non-interactable Object, just delete the node from the
 			# scene, and maybe its sprite?
+			# TODO: Remove explicit exclusion, it's ugly
 			if not path:
 				_disconnect_popup()
 				return
 	
 	if _delete_all_checkbox.pressed:
 		_delete_from_file_system()
-	else:
+	elif type in Constants.MAIN_TYPES:
 		show_add_to_core()
+	elif not path.get_extension():
+		queue_free()
 	
 	_disconnect_popup()
 	main_dock.ei.save_scene()

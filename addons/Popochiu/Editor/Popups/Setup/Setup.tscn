@@ -1,8 +1,32 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Popups/Setup/Setup.gd" type="Script" id=1]
 
+[sub_resource type="StyleBoxEmpty" id=2]
+content_margin_left = 4.0
+content_margin_right = 4.0
+content_margin_top = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id=1]
+content_margin_left = 6.0
+content_margin_right = 6.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color( 0.698039, 0.698039, 0.698039, 1 )
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
 [node name="Setup" type="AcceptDialog"]
+visible = true
 margin_right = 320.0
 margin_bottom = 178.0
 window_title = "Popochiu setup"
@@ -13,24 +37,36 @@ script = ExtResource( 1 )
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 312.0
-margin_bottom = 142.0
+margin_bottom = 247.0
 size_flags_horizontal = 4
 size_flags_vertical = 5
 
-[node name="Welcome" type="Label" parent="VBoxContainer"]
-visible = false
+[node name="Welcome" type="RichTextLabel" parent="VBoxContainer"]
 margin_right = 304.0
-margin_bottom = 160.0
-rect_min_size = Vector2( 0, 160 )
+margin_bottom = 84.0
+rect_min_size = Vector2( 0, 84 )
+custom_styles/normal = SubResource( 2 )
+bbcode_enabled = true
+bbcode_text = "[center][wave][b]Welcome to Popochiu \\( o )3(o)/[/b][/wave][/center]
+
+This popup will appear automatically just this time. You can open it later with the Setup button at the bottom of Popochiu's dock."
+meta_underlined = false
 text = "Welcome to Popochiu \\( o )3(o)/
 
 This popup will appear automatically just this time. You can open it later with the Setup button at the bottom of Popochiu's dock."
-align = 1
-autowrap = true
+fit_content_height = true
+scroll_active = false
+
+[node name="WelcomeSeparator" type="HSeparator" parent="VBoxContainer"]
+margin_top = 88.0
+margin_right = 304.0
+margin_bottom = 100.0
+custom_constants/separation = 12
 
 [node name="SizeContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 104.0
 margin_right = 304.0
-margin_bottom = 38.0
+margin_bottom = 142.0
 
 [node name="GameSize" type="Label" parent="VBoxContainer/SizeContainer"]
 margin_right = 148.0
@@ -98,10 +134,19 @@ size_flags_horizontal = 3
 text = "height"
 align = 1
 
-[node name="TestContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 42.0
+[node name="ScaleMessage" type="RichTextLabel" parent="VBoxContainer"]
+margin_top = 146.0
 margin_right = 304.0
-margin_bottom = 80.0
+margin_bottom = 173.0
+custom_colors/default_color = Color( 1, 1, 1, 1 )
+custom_styles/normal = SubResource( 1 )
+bbcode_enabled = true
+fit_content_height = true
+
+[node name="TestContainer" type="HBoxContainer" parent="VBoxContainer"]
+margin_top = 177.0
+margin_right = 304.0
+margin_bottom = 215.0
 
 [node name="TestSize" type="Label" parent="VBoxContainer/TestContainer"]
 margin_right = 148.0
@@ -168,9 +213,9 @@ text = "height"
 align = 1
 
 [node name="TypeContainer" type="HBoxContainer" parent="VBoxContainer"]
-margin_top = 84.0
+margin_top = 219.0
 margin_right = 304.0
-margin_bottom = 104.0
+margin_bottom = 239.0
 
 [node name="Type" type="Label" parent="VBoxContainer/TypeContainer"]
 margin_top = 3.0
