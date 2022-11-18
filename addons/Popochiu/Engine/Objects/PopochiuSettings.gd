@@ -18,3 +18,4 @@ export var inventory_limit := 0
 export var inventory_always_visible := false
 export var toolbar_always_visible := false
 export var fade_color: Color = Color.black
+export var scale_gui := true

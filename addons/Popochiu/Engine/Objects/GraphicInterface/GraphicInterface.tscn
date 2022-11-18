@@ -35,22 +35,25 @@ mouse_filter = 2
 [node name="InfoBar" parent="MainContainer" instance=ExtResource( 9 )]
 
 [node name="DialogText" parent="MainContainer" instance=ExtResource( 3 )]
-margin_left = 104.0
-margin_top = 107.0
-margin_right = 224.0
-margin_bottom = 120.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -8.0
+margin_top = -8.0
+margin_right = 8.0
+margin_bottom = 8.0
 theme = ExtResource( 2 )
-text = "[wave]Los diálogos[/wave]"
 
 [node name="DisplayBox" parent="MainContainer" instance=ExtResource( 11 )]
-anchor_left = 0.0
-anchor_top = 0.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 118.0
-margin_top = 78.0
-margin_right = -118.0
-margin_bottom = -78.0
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -120.0
+margin_top = -12.0
+margin_right = 120.0
+margin_bottom = 12.0
 
 [node name="Inventory" parent="MainContainer" instance=ExtResource( 4 )]
 margin_left = 4.0

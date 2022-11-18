@@ -30,6 +30,10 @@ func _show_history() -> void:
 	
 		_lines_list.add_child(lbl)
 	
+	if E.settings.scale_gui:
+		rect_scale = Vector2.ONE * E.scale
+		$WindowDialog.rect_scale = Vector2.ONE * E.scale
+	
 #	popup(Rect2(8, 16, 304, 160))
 	$WindowDialog.popup_centered(Vector2(240.0, 120.0))
 	

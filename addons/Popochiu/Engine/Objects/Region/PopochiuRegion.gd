@@ -18,6 +18,7 @@ export var tint := Color.white
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	add_to_group('regions')
 	connect('area_entered', self, '_check_area', [true])
 	connect('area_exited', self, '_check_area', [false])
 
@@ -41,4 +42,5 @@ func _check_area(area: PopochiuCharacter, entered: bool) -> void:
 func _set_enabled(value: bool) -> void:
 	enabled = value
 	monitoring = value
+	
 	property_list_changed_notify()

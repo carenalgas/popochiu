@@ -4,7 +4,6 @@ extends Panel
 # Rooms, Characters, Inventory items, Dialog trees.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-signal room_row_clicked
 signal move_folders_pressed
 
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
@@ -34,9 +33,11 @@ onready var setup_dialog: Popup = find_node('Setup')
 onready var _tab_container: TabContainer = find_node('TabContainer')
 onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
 onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
+# ▨▨▨▨ FOOTER ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
 onready var _btn_docs: Button = find_node('BtnDocs')
 onready var _btn_settings: Button = find_node('BtnSettings')
 onready var _btn_setup: Button = find_node('BtnSetup')
+onready var _version: Label = find_node('Version')
 onready var _types := {
 	Constants.Types.ROOM: {
 		path = ROOMS_PATH,
@@ -72,6 +73,7 @@ func _ready() -> void:
 	_btn_setup.icon = get_icon("Edit", "EditorIcons")
 	_btn_settings.icon = get_icon('Tools', 'EditorIcons')
 	_btn_docs.icon = get_icon('HelpSearch', 'EditorIcons')
+	_version.text = 'v' + PopochiuResources.get_version()
 	
 	# Set the Main tab selected by default
 	_tab_container.current_tab = 0
@@ -88,11 +90,12 @@ func _ready() -> void:
 	_tab_audio.main_dock = self
 	
 	_tab_container.connect('tab_changed', self, '_on_tab_changed')
-	_tab_room.connect('row_clicked', self, 'emit_signal', ['room_row_clicked'])
 	
 	_btn_docs.connect('pressed', OS, 'shell_open', [Constants.WIKI])
 	_btn_settings.connect('pressed', self, '_open_settings')
 	_btn_setup.connect('pressed', self, 'open_setup')
+	
+	get_tree().connect('node_added', self, '_check_node')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -208,6 +211,7 @@ func show_confirmation(title: String, message: String, ask := '') -> void:
 	delete_dialog.find_node('Message').bbcode_text = message
 	
 	delete_extra.hide()
+	
 	if ask:
 		delete_dialog.find_node('Ask').bbcode_text = ask
 		delete_extra.show()
@@ -248,7 +252,7 @@ func open_setup() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _open_popup(popup: Popup) -> void:
-	popup.popup_centered_clamped(Vector2(640, 360))
+	popup.popup_centered_minsize(Vector2(640, 360))
 
 
 func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
@@ -283,3 +287,11 @@ func _select_object(por: PopochiuObjectRow) -> void:
 
 func _open_settings() -> void:
 	ei.edit_resource(PopochiuResources.get_settings())
+
+
+func _check_node(node: Node) -> void:
+	if node is PopochiuCharacter and node.get_parent() is YSort:
+		# The node is a PopochiuCharacter in a room
+		node.name = 'Character%s *' % node.script_name
+		# TODO: Show something in the Inspector to alert devs about editing this
+		# node.

@@ -45,7 +45,7 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 
 
 # Actions to excecute after the item is added to the Inventory
-func added_to_inventory() -> void:
+func on_added_to_inventory() -> void:
 	pass
 
 
@@ -58,7 +58,7 @@ func on_discard() -> void:
 func set_in_inventory(value: bool) -> void:
 	in_inventory = value
 	
-	if in_inventory: added_to_inventory()
+	if in_inventory: on_added_to_inventory()
 
 
 func get_description() -> String:

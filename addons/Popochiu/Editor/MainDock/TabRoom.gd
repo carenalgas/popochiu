@@ -3,8 +3,6 @@ extends VBoxContainer
 # Handles the Room tab in Popochiu's dock
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-signal row_clicked
-
 const PopochiuObjectRow := preload('ObjectRow/PopochiuObjectRow.gd')
 const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
@@ -43,6 +41,13 @@ onready var _types := {
 		method = 'get_points',
 		type_class = Position2D,
 		parent = 'Points'
+	},
+	Constants.Types.WALKABLE_AREA: {
+		group = find_node('WalkableAreasGroup'),
+		popup = 'CreateWalkableArea',
+		method = 'get_walkable_areas',
+		type_class = PopochiuWalkableArea,
+		parent = 'WalkableAreas'
 	}
 }
 onready var _room_name: Button = find_node('RoomName')
@@ -98,9 +103,8 @@ func scene_changed(scene_root: Node) -> void:
 				if c is Position2D:
 					var row: PopochiuObjectRow = _create_object_row(t, c.name)
 					_types[t].group.add(row)
-					
 					continue
-				
+
 				if c.script.resource_path.find('addons') == -1:
 					row_path = c.script.resource_path
 				else:
@@ -129,6 +133,8 @@ func scene_changed(scene_root: Node) -> void:
 		_no_room_info.hide()
 
 		get_parent().current_tab = 1
+	else:
+		get_parent().current_tab = 0
 
 
 func scene_closed(filepath: String) -> void:
@@ -183,27 +189,21 @@ func _create_object_row(
 	new_obj.path = path # This will be useful for deleting objects with interaction
 	new_obj.main_dock = main_dock
 	new_obj.node_path = node_path
-	new_obj.connect('clicked', self, '_select_and_open_script')
+	new_obj.connect('clicked', self, '_select_in_tree')
 	
 	_rows_paths.append('%s/%d/%s' % [opened_room.script_name, type, node_name])
 	
 	return new_obj
 
 
-func _select_and_open_script(por: PopochiuObjectRow) -> void:
-	if _last_selected:
+func _select_in_tree(por: PopochiuObjectRow) -> void:
+	if _last_selected and _last_selected != por:
 		_last_selected.unselect()
 	
 	if is_instance_valid(opened_room):
 		var node := opened_room.get_node('%s/%s'\
 		% [_types[por.type].parent, por.node_path])
 		main_dock.ei.edit_node(node)
-		
-		if not node is Position2D\
-		and node.script.resource_path.count('addons/Popochiu') == 0:
-			main_dock.ei.edit_resource(load(node.script.resource_path))
-		
-		emit_signal('row_clicked')
 	
 	_last_selected = por
 

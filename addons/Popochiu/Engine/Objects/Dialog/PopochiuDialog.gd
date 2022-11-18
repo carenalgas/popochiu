@@ -89,5 +89,6 @@ func _show_options() -> void:
 func _on_option_selected(opt: PopochiuDialogOption) -> void:
 	opt.used = true
 	opt.used_times += 1
+	D.selected_option = opt
 	
 	option_selected(opt)

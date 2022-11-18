@@ -77,6 +77,10 @@ func _show() -> void:
 		_current_slot = null
 		_prev_text = ''
 	
+	if E.settings.scale_gui:
+		rect_scale = Vector2.ONE * E.scale
+		_dialog.rect_scale = Vector2.ONE * E.scale
+	
 	_dialog.popup_centered(Vector2(240.0, 120.0))
 	_cancel.grab_focus()
 	

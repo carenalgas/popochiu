@@ -8,7 +8,7 @@ __meta__ = {
 "_edit_group_": true
 }
 
-[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 polygon = PoolVector2Array( -10, -10, 10, -10, 10, 10, -10, 10 )
 
 [node name="BaselineHelper" type="Line2D" parent="."]
@@ -27,10 +27,7 @@ margin_left = -2.5
 margin_top = -2.5
 margin_right = 2.5
 margin_bottom = 2.5
-color = Color( 0, 1, 0, 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+color = Color( 0, 1, 1, 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 

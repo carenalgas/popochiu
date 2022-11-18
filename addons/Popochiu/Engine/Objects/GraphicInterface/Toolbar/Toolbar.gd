@@ -10,6 +10,7 @@ var is_disabled := false
 
 var _can_hide := true
 
+onready var _box: BoxContainer = find_node('Box')
 onready var _btn_dialog_speed: ToolbarButton = find_node('BtnDialogSpeed')
 onready var _btn_power: ToolbarButton = find_node('BtnPower')
 onready var _hide_y := rect_position.y - (rect_size.y - 4)
@@ -25,7 +26,7 @@ func _ready() -> void:
 		connect('mouse_exited', self, '_close')
 	
 	# Conectarse a señales de los hijos de la mamá
-	for b in $Box.get_children():
+	for b in _box.get_children():
 		(b as TextureButton).connect('mouse_entered', self, '_disable_hide')
 		(b as TextureButton).connect('mouse_exited', self, '_enable_hide')
 

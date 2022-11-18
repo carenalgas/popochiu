@@ -65,10 +65,6 @@ func create() -> void:
 	region.script_name = _new_region_name
 	region.description = _new_region_name
 	
-	var collision_shape: CollisionPolygon2D = CollisionPolygon2D.new()
-	region.add_child(collision_shape)
-	collision_shape.owner = region
-	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Agregar la región a su habitación
 	_room.get_node('Regions').add_child(region)
@@ -77,6 +73,13 @@ func create() -> void:
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
+	
+	var collision := CollisionPolygon2D.new()
+	collision.name = 'InteractionPolygon'
+	region.add_child(collision)
+	collision.owner = _room
+	collision.modulate = Color.cyan
+	
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

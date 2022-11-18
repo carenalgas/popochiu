@@ -12,6 +12,9 @@ func on_start() -> void:
 
 
 func option_selected(opt: PopochiuDialogOption) -> void:
+	# You can make the player character say the selected option with:
+#	yield(D.say_selected(), 'completed')
+	
 	# Use match to check which option was selected and excecute something for
 	# each one
 	match opt.id:

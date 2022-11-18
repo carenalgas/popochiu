@@ -6,6 +6,7 @@ var is_disabled := false
 var _can_hide_inventory := true
 
 onready var _hide_y := rect_position.y - (rect_size.y - 4)
+onready var _box: BoxContainer = find_node('Box')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -18,7 +19,7 @@ func _ready():
 		connect('mouse_exited', self, '_close')
 	
 	# Check if there are already items in the inventory (set manually in the scene)
-	for ii in $Box.get_children():
+	for ii in _box.get_children():
 		if ii is PopochiuInventoryItem:
 			ii.in_inventory = true
 			ii.connect('description_toggled', self, '_show_item_info')
@@ -103,7 +104,7 @@ func _change_cursor(item: PopochiuInventoryItem) -> void:
 
 
 func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
-	$Box.add_child(item)
+	_box.add_child(item)
 	
 	item.connect('description_toggled', self, '_show_item_info')
 	item.connect('selected', self, '_change_cursor')
@@ -112,24 +113,28 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 		_open()
 		yield(get_tree().create_timer(2.0), 'timeout')
 		_close()
+		yield(get_tree().create_timer(0.5), 'timeout')
 	else:
 		yield(get_tree(), 'idle_frame')
 
 	I.emit_signal('item_add_done', item)
 
 
-func _remove_item(item: PopochiuInventoryItem) -> void:
+func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 	item.disconnect('description_toggled', self, '_show_item_info')
 	item.disconnect('selected', self, '_change_cursor')
 	
-	$Box.remove_child(item)
+	_box.remove_child(item)
 	
 	if not E.settings.inventory_always_visible:
 		_can_hide_inventory = true
 		
 		Cursor.set_cursor()
 		G.show_info()
-		_close()
+		
+		if animate:
+			_close()
+			yield(get_tree().create_timer(1.0), 'timeout')
 	
 	yield(get_tree(), 'idle_frame')
 	
