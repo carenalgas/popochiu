@@ -122,7 +122,8 @@ func load_game(slot := 1) -> Dictionary:
 	
 	# Load main object states
 	for type in ['rooms', 'characters', 'inventory_items', 'dialogs']:
-		_load_state(type, loaded_data)
+		if loaded_data.has(type):
+			_load_state(type, loaded_data)
 	
 	# Load globals
 	if loaded_data.has('globals'):

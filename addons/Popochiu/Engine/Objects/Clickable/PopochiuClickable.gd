@@ -16,6 +16,8 @@ export(CURSOR_TYPE) var cursor
 export var always_on_top := false
 
 var room: Node2D = null setget set_room # It is a PopochiuRoom
+var times_clicked := 0
+var times_right_clicked := 0
 
 onready var _description_code := description
 
@@ -53,6 +55,7 @@ func _unhandled_input(event):
 		E.clicked = self
 		if event.is_action_pressed('popochiu-interact'):
 			get_tree().set_input_as_handled()
+			
 			if I.active:
 				on_item_used(I.active)
 			else:
@@ -60,12 +63,16 @@ func _unhandled_input(event):
 					action = 'Interacted with: %s' % description
 				})
 				on_interact()
+				
+				times_clicked += 1
 		elif event.is_action_pressed('popochiu-look'):
 			if not I.active:
 				E.add_history({
 					action = 'Looked at: %s' % description
 				})
 				on_look()
+				
+				times_right_clicked += 1
 
 
 func _process(delta):
@@ -137,6 +144,16 @@ func get_description() -> String:
 			description = name
 		return description
 	return E.get_text(description)
+
+
+func disable_input() -> void:
+	input_pickable = false
+	set_process_unhandled_input(false)
+
+
+func enable_input() -> void:
+	input_pickable = true
+	set_process_unhandled_input(false)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

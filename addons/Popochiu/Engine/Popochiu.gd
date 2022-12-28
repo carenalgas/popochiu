@@ -175,16 +175,11 @@ func run(instructions: Array, show_gi := true) -> void:
 	
 		if instruction is String:
 			yield(_eval_string(instruction as String), 'completed')
-		elif instruction is Dictionary:
-			if instruction.has('dialog'):
-				_eval_string(instruction.dialog)
-				yield(self.wait(instruction.time, false), 'completed')
-				G.emit_signal('continue_clicked')
 		elif instruction is GDScriptFunctionState and instruction.is_valid():
 			instruction.resume()
 			yield(instruction, 'completed')
 	
-	if not D.active and show_gi:
+	if show_gi:
 		G.done()
 	
 	if _is_camera_shaking:
@@ -607,13 +602,24 @@ func _eval_string(text: String) -> void:
 				
 				var emotion_idx := colon_prefix.find('(')
 				var auto_idx := colon_prefix.find('[')
-				var name_idx := emotion_idx\
-				if (emotion_idx > 0 and emotion_idx < auto_idx)\
-				else auto_idx
+				var name_idx := -1
+				
+				if emotion_idx > 0:
+					name_idx = emotion_idx
+					
+					if auto_idx > 0 and auto_idx < emotion_idx:
+						name_idx = auto_idx
+				elif auto_idx > 0:
+					name_idx = auto_idx
 				
 				var character_name: String = colon_prefix.substr(
 					0, name_idx
 				).to_lower()
+				
+				if not C.is_valid_character(character_name):
+					prints('[Popochiu] No PopochiuCharacter with name: %s'\
+					% character_name)
+					return yield(get_tree(), 'idle_frame')
 				
 				var emotion := ''
 				if emotion_idx > 0:

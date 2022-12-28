@@ -87,9 +87,12 @@ func face_clicked(is_in_queue := true) -> void:
 
 # Checks if the character exists in the array of PopochiuCharacter instances.
 func is_valid_character(script_name: String) -> bool:
+	if script_name.to_lower() == 'player': return true
+	
 	for c in characters:
 		if (c as PopochiuCharacter).script_name.to_lower() == script_name.to_lower():
 			return true
+	
 	return false
 
 

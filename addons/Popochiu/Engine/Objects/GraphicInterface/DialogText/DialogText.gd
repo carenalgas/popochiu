@@ -68,6 +68,9 @@ func play_text(props: Dictionary) -> void:
 		size.y = rt.get_content_height()
 	elif size.x < get_meta(DFLT_SIZE).x:
 		size.x = get_meta(DFLT_SIZE).x
+	
+	var character_count := lbl.get_total_character_count()
+	
 	lbl.free()
 	rt.free()
 	# ===================================== Calculate the width of the node ====
@@ -102,7 +105,7 @@ func play_text(props: Dictionary) -> void:
 		_tween.interpolate_property(
 			self, 'percent_visible',
 			0, 1,
-			_secs_per_character * get_total_character_count(),
+			_secs_per_character * character_count,
 			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
 		)
 		_tween.start()
@@ -130,7 +133,7 @@ func hide() -> void:
 	if modulate.a == 0.0: return
 	
 	_auto_continue = false
-	modulate.a = 0.5
+	modulate.a = 0.0
 	_is_waiting_input = false
 	
 	_tween.remove_all()
