@@ -8,5 +8,6 @@ const AudioCueMusic := preload("res://addons/Popochiu/Engine/AudioManager/AudioC
 
 # cues ----
 var sfx_toy_car: AudioCueSound = preload("res://popochiu/InventoryItems/ToyCar/SfxToyCar.tres")
+var mx_two_popochius: AudioCueMusic = preload("res://popochiu/Rooms/101/audio/MxTwoPopochius.tres")
 # ---- cues
 

@@ -158,7 +158,7 @@ func change_cue_pitch(cue_name: String, pitch := 0.0) -> void:
 	if not _active.has(cue_name): return
 	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
-	stream_player.set_pitch_scale(semitone_to_pitch(pitch))
+	stream_player.set_pitch_scale(A.semitone_to_pitch(pitch))
 
 
 func change_cue_volume(cue_name: String, volume := 0.0) -> void:
@@ -166,10 +166,6 @@ func change_cue_volume(cue_name: String, volume := 0.0) -> void:
 	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
 	stream_player.volume_db = volume
-
-
-func semitone_to_pitch(pitch: float) -> float:
-	return pow(twelfth_root_of_two, pitch)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

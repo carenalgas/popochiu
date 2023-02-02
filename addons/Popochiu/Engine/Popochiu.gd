@@ -63,8 +63,6 @@ onready var _saveload := SaveLoad.new()
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	if Engine.editor_hint: return
-	
 	_config = PopochiuResources.get_data_cfg()
 	
 	am = load(PopochiuResources.AUDIO_MANAGER).instance()

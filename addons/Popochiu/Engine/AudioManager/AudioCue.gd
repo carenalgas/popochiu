@@ -43,7 +43,7 @@ func play_fade(
 		yield(E.get_tree(), 'idle_frame')
 
 
-func play_fade_no_run(
+func play_fade_now(
 	duration := 1.0,
 	wait_to_end := false,
 	from := -80.0,
@@ -69,7 +69,7 @@ func stop(fade_duration := 0.0) -> void:
 	yield(A.stop(resource_name, fade_duration), 'completed')
 
 
-func stop_no_run(fade_duration := 0.0) -> void:
+func stop_now(fade_duration := 0.0) -> void:
 	A.stop(resource_name, fade_duration)
 
 
