@@ -1,0 +1,18 @@
+[gd_resource type="Resource" load_steps=3 format=2]
+
+[ext_resource path="res://popochiu/InventoryItems/ToyCar/sfx_toy_car.ogg" type="AudioStream" id=1]
+[ext_resource path="res://addons/Popochiu/Engine/AudioManager/AudioCueSound.gd" type="Script" id=2]
+
+[resource]
+resource_name = "sfx_toy_car"
+script = ExtResource( 2 )
+audio = ExtResource( 1 )
+loop = false
+is_2d = false
+pitch = 0.0
+volume = 0.0
+rnd_pitch = Vector2( 0, 0 )
+rnd_volume = Vector2( 0, 0 )
+max_distance = 2000
+attenuation = 1.0
+bus = "Master"

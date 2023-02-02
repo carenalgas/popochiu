@@ -313,7 +313,8 @@ func _make_available(stream_player: Node, cue_name: String, _debug_idx: int) -> 
 
 
 func _reparent(source: Node, target: Node, child_idx: int) -> Node:
-	if source.get_children().empty(): return null
+	if not is_instance_valid(source) or source.get_children().empty():
+		return null
 	
 	var node_to_reparent: Node = source.get_child(child_idx)
 	
@@ -323,13 +324,13 @@ func _reparent(source: Node, target: Node, child_idx: int) -> Node:
 	return node_to_reparent
 
 
-func _fade_in(\
-cue: AudioCue,
-position: Vector2,
-duration := 1.0,
-from := -80.0,
-to := 0.0,
-from_position := 0.0
+func _fade_in(
+	cue: AudioCue,
+	position: Vector2,
+	duration := 1.0,
+	from := -80.0,
+	to := 0.0,
+	from_position := 0.0
 ) -> Node:
 	if cue.audio.get_instance_id() in _fading_sounds:
 		from = _fading_sounds[cue.audio.get_instance_id()].volume_db

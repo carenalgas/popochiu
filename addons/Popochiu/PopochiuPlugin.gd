@@ -36,12 +36,13 @@ func _init() -> void:
 	add_autoload_singleton('U', PopochiuResources.UTILS_SNGL)
 	add_autoload_singleton('Cursor', PopochiuResources.CURSOR_SNGL)
 	add_autoload_singleton('E', PopochiuResources.POPOCHIU_SNGL)
+	add_autoload_singleton('AudioManager', PopochiuResources.IAUDIO_MANAGER)
 	add_autoload_singleton('R', PopochiuResources.R_SNGL)
 	add_autoload_singleton('C', PopochiuResources.C_SNGL)
 	add_autoload_singleton('I', PopochiuResources.I_SNGL)
 	add_autoload_singleton('D', PopochiuResources.D_SNGL)
 	add_autoload_singleton('G', PopochiuResources.IGRAPHIC_INTERFACE_SNGL)
-	add_autoload_singleton('A', PopochiuResources.IAUDIO_MANAGER_SNGL)
+	add_autoload_singleton('A', PopochiuResources.A_SNGL)
 
 
 func _enter_tree() -> void:

@@ -133,8 +133,9 @@ C="*res://popochiu/Autoloads/C.gd"
 I="*res://popochiu/Autoloads/I.gd"
 D="*res://popochiu/Autoloads/D.gd"
 G="*res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd"
-A="*res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn"
+A="*res://popochiu/Autoloads/A.gd"
 R="*res://popochiu/Autoloads/R.gd"
+AudioManager="*res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn"
 
 [display]
 
