@@ -46,8 +46,6 @@ func show_inline_dialog(opts: Array) -> PopochiuDialogOption:
 	active = true
 	
 	if current_dialog:
-		prev_dialog = current_dialog
-		
 		D.disconnect('option_selected', current_dialog, '_on_option_selected')
 	
 	emit_signal('inline_dialog_requested', opts)

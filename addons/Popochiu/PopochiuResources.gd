@@ -280,7 +280,6 @@ static func update_autoloads(save := false) -> void:
 	
 	# Add the AudioCueSound and AudioCueMusic constants
 	if code.find('const AudioCueSound') < 0:
-		prints('>>>> adding AudioCueSound')
 		modified = true
 		
 		code = code.insert(
@@ -289,13 +288,14 @@ static func update_autoloads(save := false) -> void:
 		)
 	
 	if code.find('const AudioCueMusic') < 0:
-		prints('>>>> adding AudioCueMusic')
 		modified = true
 		
 		code = code.insert(
 			code.find('# ---- classes'),
 			'const AudioCueMusic := preload("%s")\n' % AUDIO_CUE_MUSIC
 		)
+	
+	var old_audio_cues := []
 	
 	# Add all the AudioCues as variables
 	for group in audio_groups:
@@ -305,8 +305,17 @@ static func update_autoloads(save := false) -> void:
 			var script_path: String = audio_cue.get_script().resource_path
 			
 			if not script_path in [AUDIO_CUE_MUSIC, AUDIO_CUE_SOUND]:
-				prints('Nope for', audio_cue.resource_name)
-				continue
+				# Backup the properties of the AudioCue
+				var values = audio_cue.get_values()
+				
+				if group == 'mx_cues':
+					audio_cue.set_script(load(AUDIO_CUE_MUSIC))
+				else:
+					audio_cue.set_script(load(AUDIO_CUE_SOUND))
+				
+				# Restore the properties of the AudioCue
+				audio_cue.set_values(values)
+				old_audio_cues.append(audio_cue)
 			
 			var var_name := audio_cue.resource_name
 			
@@ -330,6 +339,10 @@ static func update_autoloads(save := false) -> void:
 		s.source_code = code
 		
 		if save: ResourceSaver.save(A_SNGL, s)
+	
+	# Save the script changes in the AudioCues
+	for cue in old_audio_cues:
+		ResourceSaver.call_deferred('save', cue.resource_path, cue)
 
 
 static func remove_autoload_obj(id: String, script_name: String) -> void:
@@ -474,19 +487,6 @@ static func get_plugin_cfg() -> ConfigFile:
 
 static func get_version() -> String:
 	return get_plugin_cfg().get_value('plugin', 'version')
-
-
-# ▨▨▨▨ UTILS ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
-static func pascal2snake(string:String)->String:
-	# TheName > the_name
-	var result = PoolStringArray()
-	for ch in string:
-		if ch == ch.to_lower():
-			result.append(ch)
-		else:
-			result.append('_'+ch.to_lower())
-	result[0] = result[0][1]
-	return result.join('')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

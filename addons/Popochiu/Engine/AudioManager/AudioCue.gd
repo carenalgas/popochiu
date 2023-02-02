@@ -73,6 +73,38 @@ func stop_no_run(fade_duration := 0.0) -> void:
 	A.stop(resource_name, fade_duration)
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_values() -> Dictionary:
+	return {
+		resource_name = resource_name,
+		audio = audio,
+		loop = loop,
+		is_2d = is_2d,
+		pitch = pitch,
+		volume = volume,
+		rnd_pitch = rnd_pitch,
+		rnd_volume = rnd_volume,
+		max_distance = max_distance,
+		attenuation = attenuation,
+		bus = bus
+	}
+
+
+func set_values(values: Dictionary) -> void:
+	resource_name = values.resource_name
+	audio = values.audio
+	loop = values.loop
+	is_2d = values.is_2d
+	pitch = values.pitch
+	volume = values.volume
+	rnd_pitch = values.rnd_pitch
+	rnd_volume = values.rnd_volume
+	max_distance = values.max_distance
+	attenuation = values.attenuation
+	bus = values.bus
+
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _get_rnd_pitch() -> float:
 	randomize()
