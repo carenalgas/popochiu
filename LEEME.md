@@ -1,6 +1,6 @@
 ### 🌎 [Read this in English](./README.md) 🌎
 
-![cover](./imgs/popochiu_hero-es.png "Popochiu")
+![cover](./repo_imgs/popochiu_hero-es.png "Popochiu")
 
 Plugin de Godot para crear juegos de aventura gráfica de manera similar a herramientas como [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
@@ -18,9 +18,9 @@ Plugin de Godot para crear juegos de aventura gráfica de manera similar a herra
 
 Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facilita la creación de los Objetos que hacen uso de dicho núcleo. Está inspirado en como se desarrollan las aventuras gráficas en Adventure Game Studio y en el plugin de Unity de Power Hoof: PowerQuest. Esto es, utilizando Habitaciones (Room) como escenarios donde los Personajes (Character) pueden moverse e interactuar con Props y Hotspots, y proporcionando un sistema de inventario y de gestión de diálogos.
 
-![features](./imgs/popochiu_list_of_features-es.png "Features")
+![features](./repo_imgs/popochiu_list_of_features-es.png "Features")
 
-<!-- ![interaction](./imgs/popochiu_interaction.png "Interaction") ![inventory](./imgs/popochiu_inventory_management.png "Inventory management") ![items_use](./imgs/popochiu_items_use.png "Items use") ![dialog_trees](./imgs/popochiu_dialog_trees.png "Dialog trees") -->
+<!-- ![interaction](./repo_imgs/popochiu_interaction.png "Interaction") ![inventory](./repo_imgs/popochiu_inventory_management.png "Inventory management") ![items_use](./repo_imgs/popochiu_items_use.png "Items use") ![dialog_trees](./repo_imgs/popochiu_dialog_trees.png "Dialog trees") -->
 
 # Instalación
 
@@ -35,7 +35,7 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 # Tutoriales
 
-[![tutoriales](./imgs/popochiu_tutorials_button.png "Ir a los tutoriales")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
+[![tutoriales](./repo_imgs/popochiu_tutorials_button.png "Ir a los tutoriales")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
 
 Ahora puedes seguir los tutoriales (¡Completamente en español! (la versión en Inglés la publicaremos pronto)) [en este enlace](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8). Allí aprenderás:
 

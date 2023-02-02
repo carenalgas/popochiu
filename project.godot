@@ -116,8 +116,9 @@ _global_script_class_icons={
 
 [application]
 
-config/name="popochiu-dev"
-config/description="Development project for Popochiu."
+config/name="popochiu"
+config/description="Development project for Popochiu.
+Godot plugin to make point n' click games in a similar way to tools like Adventure Game Studio and Power Quest."
 run/main_scene="res://popochiu/Rooms/101/Room101.tscn"
 config/icon="res://icon.png"
 config/windows_native_icon="res://popochiu.ico"

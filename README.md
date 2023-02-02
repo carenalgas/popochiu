@@ -1,6 +1,6 @@
 ### 🌎 [Lee la versión en Español](./LEEME.md) 🌎
 
-![cover](./imgs/popochiu_hero.png "Popochiu")
+![cover](./repo_imgs/popochiu_hero.png "Popochiu")
 
 Godot plugin to make point n' click games in a similar way to tools like [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [Power Quest](https://powerhoof.itch.io/powerquest).
 
@@ -19,9 +19,9 @@ Godot plugin to make point n' click games in a similar way to tools like [Advent
 
 This tool consists of two parts: the core (Popochiu) and the dock that helps with the creation of the Nodes that make use of that core. It is inspired in how graphic adventure games are created in Adventure Game Studio and Power Hoof's Unity plugin: Power Quest. This is, using Rooms as the scenes where Characters can move and interact with Props and Hotspots, and providing an Inventory system and Dialog trees.
 
-![features](./imgs/popochiu_list_of_features.png "Features")
+![features](./repo_imgs/popochiu_list_of_features.png "Features")
 
-<!-- ![interaction](./imgs/popochiu_interaction.png "Interaction") ![inventory](./imgs/popochiu_inventory_management.png "Inventory management") ![items_use](./imgs/popochiu_items_use.png "Items use") ![dialog_trees](./imgs/popochiu_dialog_trees.png "Dialog trees") -->
+<!-- ![interaction](./repo_imgs/popochiu_interaction.png "Interaction") ![inventory](./repo_imgs/popochiu_inventory_management.png "Inventory management") ![items_use](./repo_imgs/popochiu_items_use.png "Items use") ![dialog_trees](./repo_imgs/popochiu_dialog_trees.png "Dialog trees") -->
 
 
 # Installation
@@ -37,7 +37,7 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 # Tutorials
 
-[![tutorials](./imgs/popochiu_tutorials_button.png "Go to the tutorials")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
+[![tutorials](./repo_imgs/popochiu_tutorials_button.png "Go to the tutorials")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
 
 You can follow the tutorials (English subs. (English version will be uploaded soon!)) [in this list](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) to learn:
 
