@@ -35,7 +35,12 @@ func on_room_transition_finished() -> void:
 #			'Popsy: THIS IS MY TOY CAR!!!',
 #			I.Key.add_as_active(),
 		]), 'completed')
-	pass
+		
+		var opt: PopochiuDialogOption = yield(
+			D.show_inline_dialog(['A', 'B', 'C']), 'completed'
+		)
+		
+		prints(opt.text)
 
 # What happens before Popochiu unloads the room.
 # At this point, the screen is black, processing is disabled and all characters

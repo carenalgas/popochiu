@@ -8,19 +8,19 @@ func play(wait_to_end := false, position_2d := Vector2.ZERO) -> void:
 	
 	if wait_to_end:
 		yield(
-			AudioManager.play_no_block(resource_name, wait_to_end, position_2d),
+			A.play_no_block(resource_name, wait_to_end, position_2d),
 			'completed'
 		)
 	else:
-		AudioManager.play_no_block(resource_name, wait_to_end, position_2d)
+		A.play_no_block(resource_name, wait_to_end, position_2d)
 		yield(E.get_tree(), 'idle_frame')
 
 
 func play_no_run(wait_to_end := false, position_2d := Vector2.ZERO) -> void:
 	if wait_to_end:
 		yield(
-			AudioManager.play_no_block(resource_name, wait_to_end, position_2d),
+			A.play_no_block(resource_name, wait_to_end, position_2d),
 			'completed'
 		)
 	else:
-		AudioManager.play_no_block(resource_name, wait_to_end, position_2d)
+		A.play_no_block(resource_name, wait_to_end, position_2d)

@@ -1,4 +1,5 @@
-extends "res://addons/Popochiu/Engine/AudioManager/AudioManager.gd"
+tool
+extends "res://addons/Popochiu/Engine/Interfaces/IAudio.gd"
 
 # classes ----
 const AudioCueSound := preload("res://addons/Popochiu/Engine/AudioManager/AudioCueSound.gd")

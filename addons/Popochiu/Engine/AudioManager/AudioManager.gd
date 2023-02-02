@@ -1,5 +1,6 @@
 tool
 extends Node
+class_name PopochiuAudioManager
 # (A) To work with audio (music and sound effects).
 # TODO: Create AudioHandle so each AudioCue has its own AudioStreamPlayer...
 # http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
@@ -32,131 +33,12 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func play(
-	cue_name := '', wait_to_end := false, position_2d := Vector2.ZERO
-) -> Node:
-	yield()
-	
-	return yield(_play_sound_cue(cue_name, position_2d, wait_to_end), 'completed')
-
-
-func play_no_block(
-	cue_name := '', wait_to_end := false, position_2d := Vector2.ZERO
-) -> Node:
-	if wait_to_end:
-		return yield(_play_sound_cue(cue_name, position_2d, true), 'completed')
-	else:
-		return _play_sound_cue(cue_name, position_2d)
-
-
-func play_music(\
-cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
-	# TODO: Add a position: Vector2 parameter in case one want to play music coming
-	# out from a specific source (e.g. a radio in the room).
-	yield()
-	
-	var stream_player: Node = _play_music_cue(
-		cue_name, fade_duration, music_position
-	)
-	
-	yield(get_tree(), 'idle_frame')
-	
-	return stream_player
-
-
-func play_music_no_block(\
-cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
-	# TODO: Add a position: Vector2 parameter in case one want to play music coming
-	# out from a specific source (e.g. a radio in the room).
-	
-	return _play_music_cue(cue_name, fade_duration, music_position)
-
-
-func play_fade(
-	cue_name := '',
-	duration := 1.0,
-	wait_to_end := false,
-	from := -80.0,
-	to := INF,
-	position_2d := Vector2.ZERO
-) -> Node:
-	yield()
-	
-	return yield(
-		_play_fade_cue(cue_name, duration, from, to, position_2d, wait_to_end),
-		'completed'
-	)
-
-
-func play_fade_no_block(
-	cue_name := '',
-	duration := 1.0,
-	wait_to_end := false,
-	from := -80.0,
-	to := INF,
-	position_2d := Vector2.ZERO
-) -> Node:
-	if wait_to_end:
-		return yield(_play_fade_cue(
-			cue_name, 
-			duration,
-			from,
-			to,
-			position_2d,
-			true
-		), 'completed')
-	else:
-		return _play_fade_cue(cue_name, duration, from, to, position_2d)
-
-
-func stop(cue_name: String, fade_duration := 0.0) -> void:
-	yield()
-	
-	_stop(cue_name, fade_duration)
-	
-	yield(get_tree(), 'idle_frame')
-
-
-func stop_no_block(cue_name: String, fade_duration := 0.0) -> void:
-	_stop(cue_name, fade_duration)
-
-
-func get_cue_playback_position(cue_name: String) -> float:
-	if not _active.has(cue_name): return -1.0
-	
-	var stream_player: Node = (_active[cue_name].players as Array).front()
-	
-	if is_instance_valid(stream_player):
-		return stream_player.get_playback_position()
-	
-	return -1.0
-
-
-func change_cue_pitch(cue_name: String, pitch := 0.0) -> void:
-	if not _active.has(cue_name): return
-	
-	var stream_player: Node = (_active[cue_name].players as Array).front()
-	stream_player.set_pitch_scale(semitone_to_pitch(pitch))
-
-
-func change_cue_volume(cue_name: String, volume := 0.0) -> void:
-	if not _active.has(cue_name): return
-	
-	var stream_player: Node = (_active[cue_name].players as Array).front()
-	stream_player.volume_db = volume
-
-
-func semitone_to_pitch(pitch: float) -> float:
-	return pow(twelfth_root_of_two, pitch)
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 # Looks for an AudioCue and plays it if found. It also can wait until it
 # finishes playing.
 # If wait_to_end is not null, that means the call is comming from a play
 # inside a E.run([])
 # In this method the calls to play and play_no_block converge.
-func _play_sound_cue(\
+func play_sound_cue(\
 cue_name := '', position_2d := Vector2.ZERO, wait_to_end = null) -> Node:
 	var stream_player: Node = null
 	
@@ -181,7 +63,7 @@ cue_name := '', position_2d := Vector2.ZERO, wait_to_end = null) -> Node:
 
 # Looks for an AudioCue in the list of music cues and plays it.
 # In this method the calls to play_music and play_music_no_block converge.
-func _play_music_cue(\
+func play_music_cue(\
 cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
 	var stream_player: Node = null
 	
@@ -208,7 +90,7 @@ cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
 # If wait_to_end is not null, that means the call is comming from a play
 # inside a E.run([])
 # In this method the calls to play and play_no_block converge.
-func _play_fade_cue(
+func play_fade_cue(
 	cue_name := '',
 	duration := 1.0,
 	from := -80.0,
@@ -243,6 +125,54 @@ func _play_fade_cue(
 	return stream_player
 
 
+func stop(cue_name: String, fade_duration := 0.0) -> void:
+	if _active.has(cue_name):
+		var stream_player: Node = (_active[cue_name].players as Array).front()
+		
+		if is_instance_valid(stream_player):
+			if fade_duration > 0.0:
+				_fade_sound(cue_name, fade_duration, stream_player.volume_db, -80.0)
+			else:
+				stream_player.stop()
+			
+			if stream_player is AudioStreamPlayer2D and _active[cue_name].loop:
+				# When stopped (.stop()) an audio in loop, for some reason
+				# 'finished' is not emitted.
+				stream_player.emit_signal('finished')
+		else:
+			_active.erase(cue_name)
+
+
+func get_cue_playback_position(cue_name: String) -> float:
+	if not _active.has(cue_name): return -1.0
+	
+	var stream_player: Node = (_active[cue_name].players as Array).front()
+	
+	if is_instance_valid(stream_player):
+		return stream_player.get_playback_position()
+	
+	return -1.0
+
+
+func change_cue_pitch(cue_name: String, pitch := 0.0) -> void:
+	if not _active.has(cue_name): return
+	
+	var stream_player: Node = (_active[cue_name].players as Array).front()
+	stream_player.set_pitch_scale(semitone_to_pitch(pitch))
+
+
+func change_cue_volume(cue_name: String, volume := 0.0) -> void:
+	if not _active.has(cue_name): return
+	
+	var stream_player: Node = (_active[cue_name].players as Array).front()
+	stream_player.volume_db = volume
+
+
+func semitone_to_pitch(pitch: float) -> float:
+	return pow(twelfth_root_of_two, pitch)
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 # Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if
 # there are no more
 func _play(cue: AudioCue, position := Vector2.ZERO, from_position := 0.0) -> Node:
@@ -375,25 +305,6 @@ func _fadeout_finished(obj: Node, _key: NodePath) -> void:
 		
 		if _fading_sounds.empty():
 			$Tween.disconnect('tween_completed', self, '_fadeout_finished')
-
-
-func _stop(cue_name: String, fade_duration := 0.0) -> void:
-	if _active.has(cue_name):
-		var stream_player: Node = (_active[cue_name].players as Array).front()
-		
-		if is_instance_valid(stream_player):
-			if fade_duration > 0.0:
-				_fade_sound(cue_name, fade_duration, stream_player.volume_db, -80.0)
-			else:
-				stream_player.stop()
-			
-			if stream_player is AudioStreamPlayer2D and _active[cue_name].loop:
-				# When stopped (.stop()) an audio in loop, for some reason
-				# 'finished' is not emitted.
-				stream_player.emit_signal('finished')
-		else:
-			_active.erase(cue_name)
-
 
 
 func _sort_cues(a: AudioCue, b: AudioCue) -> bool:

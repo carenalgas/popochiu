@@ -48,8 +48,7 @@ const IINVENTORY := 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
 const IDIALOG := 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
 const IGRAPHIC_INTERFACE_SNGL :=\
 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
-const IAUDIO_MANAGER :=\
-'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
+const IAUDIO := 'res://addons/Popochiu/Engine/Interfaces/IAudio.gd'
 const R_SNGL := 'res://popochiu/Autoloads/R.gd'
 const C_SNGL := 'res://popochiu/Autoloads/C.gd'
 const I_SNGL := 'res://popochiu/Autoloads/I.gd'
@@ -66,6 +65,8 @@ const TRANSITION_LAYER_POPOCHIU :=\
 BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
 # ════ ENGINE ══════════════════════════════════════════════════════════════════
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
+const AUDIO_MANAGER :=\
+'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
 const CURSOR_TYPE :=\
 preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 const DATA := 'res://popochiu//PopochiuData.cfg'
@@ -148,17 +149,14 @@ const SNGL_SETUP := {
 		'func' : "func get_%s(): return E.get_dialog('%s')\n",
 	}
 }
-const A_TEMPLATE := 'extends "%s"\n\n' +\
+const A_TEMPLATE := 'tool\n' +\
+'extends "%s"\n\n' +\
 '# classes ----\n' +\
-'const AudioCueSound := preload("%s")\n' +\
-'const AudioCueMusic := preload("%s")\n' +\
 '# ---- classes\n' +\
 '\n' +\
 '# cues ----\n' +\
 '# ---- cues\n' +\
 '\n'
-const AUDIO_MANAGER :=\
-'res://addons/Popochiu/Engine/AudioManager/AudioManager.gd'
 const AUDIO_CUE_SOUND :=\
 'res://addons/Popochiu/Engine/AudioManager/AudioCueSound.gd'
 const AUDIO_CUE_MUSIC :=\
@@ -216,9 +214,7 @@ static func init_file_structure() -> bool:
 	
 	if not directory.file_exists(A_SNGL):
 		file.open(A_SNGL, File.WRITE)
-		file.store_string(A_TEMPLATE % [
-			AUDIO_MANAGER, AUDIO_CUE_SOUND, AUDIO_CUE_MUSIC
-		])
+		file.store_string(A_TEMPLATE % IAUDIO)
 		file.close()
 
 	return is_first_install
@@ -282,6 +278,26 @@ static func update_autoloads(save := false) -> void:
 	var code := s.source_code
 	var modified := false
 	
+	# Add the AudioCueSound and AudioCueMusic constants
+	if code.find('const AudioCueSound') < 0:
+		prints('>>>> adding AudioCueSound')
+		modified = true
+		
+		code = code.insert(
+			code.find('# ---- classes'),
+			'const AudioCueSound := preload("%s")\n' % AUDIO_CUE_SOUND
+		)
+	
+	if code.find('const AudioCueMusic') < 0:
+		prints('>>>> adding AudioCueMusic')
+		modified = true
+		
+		code = code.insert(
+			code.find('# ---- classes'),
+			'const AudioCueMusic := preload("%s")\n' % AUDIO_CUE_MUSIC
+		)
+	
+	# Add all the AudioCues as variables
 	for group in audio_groups:
 		for path in get_data_value('audio', group, []):
 			# Check if the AudioCue is of a valid type
