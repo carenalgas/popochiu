@@ -41,7 +41,7 @@ func _init() -> void:
 	add_autoload_singleton('I', PopochiuResources.I_SNGL)
 	add_autoload_singleton('D', PopochiuResources.D_SNGL)
 	add_autoload_singleton('G', PopochiuResources.IGRAPHIC_INTERFACE_SNGL)
-	add_autoload_singleton('A', PopochiuResources.IAUDIO_MANAGER_SNGL)
+	add_autoload_singleton('A', PopochiuResources.A_SNGL)
 
 
 func _enter_tree() -> void:
@@ -51,8 +51,6 @@ func _enter_tree() -> void:
 	prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
 	prints('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
 	
-	PopochiuResources.update_autoloads()
-	_editor_file_system.update_script_classes()
 	_editor_file_system.scan_sources()
 	
 	_types_helper =\
@@ -106,6 +104,10 @@ func _enter_tree() -> void:
 		(main_dock.setup_dialog as AcceptDialog).connect(
 			'popup_hide', self, '_move_addon_folders'
 		)
+	
+	PopochiuResources.update_autoloads(true)
+	_editor_file_system.update_script_classes()
+	_editor_file_system.scan_sources()
 
 
 func _exit_tree() -> void:

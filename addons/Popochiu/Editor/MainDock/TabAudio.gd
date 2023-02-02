@@ -5,6 +5,10 @@ extends VBoxContainer
 
 const SEARCH_PATH := 'res://popochiu/'
 const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd')
+const AudioCueSound :=\
+preload('res://addons/Popochiu/Engine/AudioManager/AudioCueSound.gd')
+const AudioCueMusic :=\
+preload('res://addons/Popochiu/Engine/AudioManager/AudioCueMusic.gd')
 
 var main_dock: Panel setget _set_main_dock
 var last_played: Control = null
@@ -239,7 +243,14 @@ type: String, path: String, audio_row: Container = null
 	cue_file_name += '.tres'
 	
 	# Create the AudioCue and save it in the file system
-	var ac: AudioCue = AudioCue.new()
+	var ac: AudioCue
+	
+	match type:
+		'music':
+			ac = AudioCueMusic.new()
+		_:
+			ac = AudioCueSound.new()
+	
 	var stream: AudioStream = load(path)
 	ac.audio = stream
 	ac.resource_name = cue_name.to_lower()
@@ -276,9 +287,12 @@ type: String, path: String, audio_row: Container = null
 		yield(get_tree(), 'idle_frame')
 		return
 	
-	# ...
-#	main_dock.fs.scan()
 	yield(main_dock.fs, 'filesystem_changed')
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Add the AudioCue to the A singleton
+	PopochiuResources.update_autoloads(true)
+	main_dock.fs.update_script_classes()
 	
 	# Check if the AudioCue was created when assigning the audio file from the
 	# "Not assigned" group

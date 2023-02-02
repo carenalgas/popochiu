@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node",
+"class": "PopochiuAudioManager",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/AudioManager/AudioManager.gd"
+}, {
 "base": "Area2D",
 "class": "PopochiuCharacter",
 "language": "GDScript",
@@ -95,6 +100,7 @@ _global_script_classes=[ {
 "path": "res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.gd"
 } ]
 _global_script_class_icons={
+"PopochiuAudioManager": "",
 "PopochiuCharacter": "res://addons/Popochiu/icons/character.png",
 "PopochiuCharacterData": "res://addons/Popochiu/icons/character.png",
 "PopochiuClickable": "",
@@ -133,7 +139,7 @@ C="*res://popochiu/Autoloads/C.gd"
 I="*res://popochiu/Autoloads/I.gd"
 D="*res://popochiu/Autoloads/D.gd"
 G="*res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd"
-A="*res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn"
+A="*res://popochiu/Autoloads/A.gd"
 R="*res://popochiu/Autoloads/R.gd"
 
 [display]

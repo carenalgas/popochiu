@@ -33,6 +33,7 @@ var current_text_speed: float = settings.text_speeds[current_text_speed_idx]
 var current_language := 0
 var auto_continue_after := -1.0
 var scale := Vector2.ONE
+var am: PopochiuAudioManager = null
 
 # TODO: This could be in the camera's own script
 var _is_camera_shaking := false
@@ -64,6 +65,8 @@ onready var _saveload := SaveLoad.new()
 func _ready() -> void:
 	_config = PopochiuResources.get_data_cfg()
 	
+	am = load(PopochiuResources.AUDIO_MANAGER).instance()
+	
 	var gi: CanvasLayer = null
 	var tl: CanvasLayer = null
 	
@@ -84,6 +87,7 @@ func _ready() -> void:
 	
 	add_child(gi)
 	add_child(tl)
+	add_child(am)
 	
 	if settings.player_character:
 		var pc_data_path: String = PopochiuResources.get_data_value(

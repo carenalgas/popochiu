@@ -35,7 +35,7 @@ func on_room_transition_finished() -> void:
 #			'Popsy: THIS IS MY TOY CAR!!!',
 #			I.Key.add_as_active(),
 		]), 'completed')
-	pass
+
 
 # What happens before Popochiu unloads the room.
 # At this point, the screen is black, processing is disabled and all characters
