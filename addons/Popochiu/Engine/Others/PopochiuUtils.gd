@@ -26,6 +26,7 @@ func get_random_array_idx(arr: Array) -> int:
 
 # https://gist.github.com/me2beats/443b40ba79d5b589a96a16c565952419 ❱❱❱❱❱❱❱❱❱❱❱❱❱❱❱❱
 func snake2camel(string:String)->String:
+	# the_name > theName
 	var result = PoolStringArray()
 	var prev_is_underscore = false
 	for ch in string:
@@ -43,12 +44,14 @@ func snake2camel(string:String)->String:
 
 
 func snake2pascal(string:String)->String:
+	# the_name > TheName
 	var result = snake2camel(string)
 	result[0] = result[0].to_upper()
 	return result
 
 
 func camel2snake(string:String)->String:
+	# theName > the_name
 	var result = PoolStringArray()
 	for ch in string:
 		if ch == ch.to_lower():
@@ -60,6 +63,7 @@ func camel2snake(string:String)->String:
 
 
 func pascal2snake(string:String)->String:
+	# TheName > the_name
 	var result = PoolStringArray()
 	for ch in string:
 		if ch == ch.to_lower():

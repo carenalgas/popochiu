@@ -10,12 +10,15 @@ enum MenuOptions {
 	ADD_TO_CORE,
 	CREATE_STATE_SCRIPT,
 	SET_AS_MAIN,
+	SET_AS_PC,
 	START_WITH_IT,
-	CREATE_SCRIPT,
+	CREATE_PROP_SCRIPT,
 	DELETE
 }
 
 const SELECTED_FONT_COLOR := Color('706deb')
+const PLAYER_CHARACTER_ICON := preload(\
+'res://addons/Popochiu/icons/player_character.png')
 const INVENTORY_START_ICON := preload(\
 'res://addons/Popochiu/icons/inventory_item_start.png')
 const ROOM_STATE_TEMPLATE :=\
@@ -32,8 +35,9 @@ const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd
 var type := -1
 var path := ''
 var node_path := ''
-var main_dock: Panel = null setget _set_main_dock
-var is_main := false setget _set_is_main
+var main_dock: Panel = null setget set_main_dock
+var is_main := false setget set_is_main
+var is_pc := false setget set_is_pc
 var is_on_start := false setget set_is_on_start
 
 var _delete_dialog: ConfirmationDialog
@@ -69,13 +73,19 @@ onready var _menu_cfg := [
 		types = [Constants.Types.ROOM]
 	},
 	{
+		id = MenuOptions.SET_AS_PC,
+		icon = PLAYER_CHARACTER_ICON,
+		label = 'Set as Player Character',
+		types = [Constants.Types.CHARACTER]
+	},
+	{
 		id = MenuOptions.START_WITH_IT,
 		icon = INVENTORY_START_ICON,
 		label = 'Start with it',
 		types = [Constants.Types.INVENTORY_ITEM]
 	},
 	{
-		id = MenuOptions.CREATE_SCRIPT,
+		id = MenuOptions.CREATE_PROP_SCRIPT,
 		icon = get_icon('ScriptCreate', 'EditorIcons'),
 		label = 'Create script',
 		types = [Constants.Types.PROP]
@@ -97,8 +107,11 @@ func _ready() -> void:
 	# Assign icons
 	_fav_icon.texture = get_icon('Heart', 'EditorIcons')
 	
-	if type == Constants.Types.INVENTORY_ITEM:
-		_fav_icon.texture = INVENTORY_START_ICON
+	match type:
+		Constants.Types.CHARACTER:
+			_fav_icon.texture = PLAYER_CHARACTER_ICON
+		Constants.Types.INVENTORY_ITEM:
+			_fav_icon.texture = INVENTORY_START_ICON
 	
 	_btn_open.icon = get_icon('InstanceOptions', 'EditorIcons')
 	_btn_script.icon = get_icon('Script', 'EditorIcons')
@@ -114,13 +127,20 @@ func _ready() -> void:
 	_create_menu()
 	
 	if type in Constants.MAIN_TYPES:
-		# By default disable the Add to Popochiu button. This will be enabled
-		# by PopochiuDock.gd if this object is not in PopochiuData.cfg
-		_menu_popup.set_item_disabled(0, true)
-		_menu_popup.set_item_disabled(1, true)
-	elif path.find('.gd') > -1:
-		# If the Room object has a script, disable the Create script button
-		_menu_popup.set_item_disabled(0, true)
+		# By default disable the Add to Popochiu and Create state script buttons
+		# This will be enabled by PopochiuDock.gd if the object is not in
+		# PopochiuData.cfg
+		_menu_popup.set_item_disabled(
+			_menu_popup.get_item_index(MenuOptions.ADD_TO_CORE), true
+		)
+		_menu_popup.set_item_disabled(
+			_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), true
+		)
+	elif type == Constants.Types.PROP and path.find('.gd') > -1:
+		# If the Room object has a script, disable the Create prop script button
+		_menu_popup.set_item_disabled(
+			_menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT), true
+		)
 	
 	# Hide buttons based on the type of the Object this row represents
 	_fav_icon.hide()
@@ -157,12 +177,46 @@ func unselect() -> void:
 
 func show_add_to_core() -> void:
 	_label.modulate.a = 0.5
-	_menu_popup.set_item_disabled(0, false)
+	_menu_popup.set_item_disabled(
+		_menu_popup.get_item_index(MenuOptions.ADD_TO_CORE), false
+	)
 
 
 func show_create_state_script() -> void:
 	_btn_state_script.disabled = true
-	_menu_popup.set_item_disabled(1, false)
+	_menu_popup.set_item_disabled(
+		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), false
+	)
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func set_main_dock(value: Panel) -> void:
+	main_dock = value
+	_delete_dialog = main_dock.delete_dialog
+	_delete_all_checkbox = _delete_dialog.find_node('CheckBox')
+
+
+func set_is_main(value: bool) -> void:
+	is_main = value
+	_fav_icon.visible = value
+	
+	_menu_popup.set_item_disabled(
+		_menu_popup.get_item_index(MenuOptions.SET_AS_MAIN), value
+	)
+
+
+func set_is_pc(value: bool) -> void:
+	is_pc = value
+	_fav_icon.visible = value
+	
+	_menu_popup.set_item_disabled(
+		_menu_popup.get_item_index(MenuOptions.SET_AS_PC), value
+	)
+
+
+func set_is_on_start(value: bool) -> void:
+	is_on_start = value
+	_fav_icon.visible = value
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -194,11 +248,14 @@ func _menu_item_pressed(id: int) -> void:
 	match id:
 		MenuOptions.ADD_TO_CORE:
 			_add_object_to_core()
+		MenuOptions.CREATE_STATE_SCRIPT:
+			_create_state_script()
 		MenuOptions.SET_AS_MAIN:
 			main_dock.set_main_scene(path)
 			self.is_main = true
-		MenuOptions.CREATE_STATE_SCRIPT:
-			_create_state_script()
+		MenuOptions.SET_AS_PC:
+			main_dock.set_pc(name)
+			self.is_pc = true
 		MenuOptions.START_WITH_IT:
 			var settings := PopochiuResources.get_settings()
 			
@@ -211,7 +268,7 @@ func _menu_item_pressed(id: int) -> void:
 			(main_dock.ei as EditorInterface).get_inspector().refresh()
 			
 			self.is_on_start = name in settings.items_on_start
-		MenuOptions.CREATE_SCRIPT:
+		MenuOptions.CREATE_PROP_SCRIPT:
 			var prop_template := load(PROP_SCRIPT_TEMPLATE)
 			var script_path := path + '/%s/Prop%s.gd' % [name, name]
 			
@@ -251,7 +308,9 @@ func _menu_item_pressed(id: int) -> void:
 			path = script_path
 			
 			_btn_script.show()
-			_menu_popup.set_item_disabled(0, true)
+			_menu_popup.set_item_disabled(
+				_menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT), true
+			)
 		MenuOptions.DELETE:
 			_remove_object()
 
@@ -284,8 +343,15 @@ func _add_object_to_core() -> void:
 		push_error("[Popochiu] Couldn't add Object to Popochiu: %s" % name)
 		return
 	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Add the object to its corresponding singleton
+	PopochiuResources.update_autoloads(true)
+	main_dock.fs.update_script_classes()
+	
 	_label.modulate.a = 1.0
-	_menu_popup.set_item_disabled(0, true)
+	_menu_popup.set_item_disabled(
+		_menu_popup.get_item_index(MenuOptions.ADD_TO_CORE), true
+	)
 
 
 # Selecciona el archivo principal del objeto en el FileSystem y lo abre para que
@@ -394,17 +460,32 @@ func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
 
 
 func _remove_from_core() -> void:
-	# Eliminar el objeto de Popochiu -------------------------------------------
+	# Delete the object from Popochiu ------------------------------------------
 	match type:
 		Constants.Types.ROOM:
+			PopochiuResources.remove_autoload_obj(PopochiuResources.R_SNGL, name)
+			main_dock.fs.update_script_classes()
+			
 			PopochiuResources.erase_data_value('rooms', name)
 		Constants.Types.CHARACTER:
+			PopochiuResources.remove_autoload_obj(PopochiuResources.C_SNGL, name)
+			main_dock.fs.update_script_classes()
+			
 			PopochiuResources.erase_data_value('characters', name)
 		Constants.Types.INVENTORY_ITEM:
+			PopochiuResources.remove_autoload_obj(PopochiuResources.I_SNGL, name)
+			main_dock.fs.update_script_classes()
+			
 			PopochiuResources.erase_data_value('inventory_items', name)
 		Constants.Types.DIALOG:
+			PopochiuResources.remove_autoload_obj(PopochiuResources.D_SNGL, name)
+			main_dock.fs.update_script_classes()
+			
 			PopochiuResources.erase_data_value('dialogs', name)
-		Constants.Types.PROP, Constants.Types.HOTSPOT, Constants.Types.REGION, Constants.Types.WALKABLE_AREA:
+		Constants.Types.PROP,\
+		Constants.Types.HOTSPOT,\
+		Constants.Types.REGION,\
+		Constants.Types.WALKABLE_AREA:
 			var opened_room: PopochiuRoom = main_dock.get_opened_room()
 			if opened_room:
 				match type:
@@ -437,6 +518,10 @@ func _remove_from_core() -> void:
 		queue_free()
 	
 	_disconnect_popup()
+	
+	if main_dock.ei.get_edited_scene_root().script_name == name:
+		return
+	
 	main_dock.ei.save_scene()
 
 
@@ -552,23 +637,6 @@ func _disconnect_popup() -> void:
 	)
 
 
-func _set_main_dock(value: Panel) -> void:
-	main_dock = value
-	_delete_dialog = main_dock.delete_dialog
-	_delete_all_checkbox = _delete_dialog.find_node('CheckBox')
-
-
-func _set_is_main(value: bool) -> void:
-	is_main = value
-	_fav_icon.visible = value
-	_menu_popup.set_item_disabled(MenuOptions.SET_AS_MAIN, value)
-
-
-func set_is_on_start(value: bool) -> void:
-	is_on_start = value
-	_fav_icon.visible = value
-
-
 func _create_state_script() -> void:
 	var template: Script = null
 	
@@ -604,7 +672,9 @@ func _create_state_script() -> void:
 	
 	# Disable the context menu option and enable the button to open the state
 	# script
-	_menu_popup.set_item_disabled(1, true)
+	_menu_popup.set_item_disabled(
+		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), true
+	)
 	_btn_state_script.disabled = false
 	
 	# Select and open the created script

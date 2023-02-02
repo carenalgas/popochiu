@@ -1,0 +1,37 @@
+[gd_resource type="Resource" load_steps=6 format=2]
+
+[ext_resource path="res://popochiu/Dialogs/TestA/DialogTestA.gd" type="Script" id=1]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Dialog/PopochiuDialogOption.gd" type="Script" id=2]
+
+[sub_resource type="Resource" id=1]
+resource_name = "Hi"
+script = ExtResource( 2 )
+id = "Hi"
+text = "Hi"
+visible = true
+disabled = false
+always_on = false
+
+[sub_resource type="Resource" id=2]
+resource_name = "How"
+script = ExtResource( 2 )
+id = "How"
+text = "How are you?"
+visible = false
+disabled = false
+always_on = false
+
+[sub_resource type="Resource" id=3]
+resource_name = "Exit"
+script = ExtResource( 2 )
+id = "Exit"
+text = "Bye!"
+visible = true
+disabled = false
+always_on = true
+
+[resource]
+resource_name = "TestA"
+script = ExtResource( 1 )
+options = [ SubResource( 1 ), SubResource( 2 ), SubResource( 3 ) ]
+script_name = "TestA"

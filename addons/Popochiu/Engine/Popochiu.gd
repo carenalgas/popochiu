@@ -14,7 +14,7 @@ const SaveLoad := preload('res://addons/Popochiu/Engine/Others/PopochiuSaveLoad.
 var in_run := false
 # Used to prevent going to another room when there is one being loaded
 var in_room := false setget _set_in_room
-var current_room: PopochiuRoom = null
+var current_room: PopochiuRoom = null setget set_current_room
 # Stores the las PopochiuClickable node clicked to ease access to it from
 # any other class
 var clicked: Node = null
@@ -85,14 +85,31 @@ func _ready() -> void:
 	add_child(gi)
 	add_child(tl)
 	
-	# Set the first character on the list to be the default PC (playable character)
-	var characters := PopochiuResources.get_section('characters')
-	if not characters.empty():
-		var pc: PopochiuCharacter = load(
-			(load(characters[0]) as PopochiuCharacterData).scene
-		).instance()
-		C.player = pc
-		C.characters.append(pc)
+	if settings.player_character:
+		var pc_data_path: String = PopochiuResources.get_data_value(
+			'characters', settings.player_character, ''
+		)
+		
+		if pc_data_path:
+			var pc_data: PopochiuCharacterData = load(pc_data_path)
+			var pc: PopochiuCharacter = load(pc_data.scene).instance()
+			
+			C.player = pc
+			C.characters.append(pc)
+			C.set(pc.script_name, pc)
+	
+	if not C.player:
+		# Set the first character on the list to be the default player character
+		var characters := PopochiuResources.get_section('characters')
+
+		if not characters.empty():
+			var pc: PopochiuCharacter = load(
+				(load(characters[0]) as PopochiuCharacterData).scene
+			).instance()
+
+			C.player = pc
+			C.characters.append(pc)
+			C.set(pc.script_name, pc)
 	
 	# Add inventory items on start (ignore animations (3rd parameter))
 	for key in settings.items_on_start:
@@ -102,6 +119,12 @@ func _ready() -> void:
 	
 	if settings.scale_gui:
 		Cursor.scale_cursor(scale)
+	
+	# Save the default state for the objects in the game
+	for room_tres in PopochiuResources.get_section('rooms'):
+		var res: PopochiuRoomData = load(room_tres)
+		E.rooms_states[res.script_name] = res
+		res.save_childs_states()
 	
 	emit_signal('redied')
 
@@ -217,12 +240,12 @@ func goto_room(
 ) -> void:
 	if not in_room: return
 	
-	self.in_room = false
-	clear_hovered()
-	
 	G.block()
 	
+	self.in_room = false
+	
 	_use_transition_on_room_change = use_transition
+	
 	if use_transition:
 		$TransitionLayer.play_transition($TransitionLayer.FADE_IN)
 		yield($TransitionLayer, 'transition_finished')
@@ -233,6 +256,7 @@ func goto_room(
 	# Store the room state
 	if store_state:
 		rooms_states[current_room.script_name] = current_room.state
+		current_room.state.save_childs_states()
 	
 	# Remove PopochiuCharacter nodes from the room so they are not deleted
 	if Engine.get_idle_frames() > 0:
@@ -255,6 +279,8 @@ func goto_room(
 	if Engine.get_idle_frames() == 0:
 		yield(get_tree(), 'idle_frame')
 	
+	R.clear_instances()
+	clear_hovered()
 	get_tree().change_scene(load(rp).scene)
 
 
@@ -277,34 +303,42 @@ func room_readied(room: PopochiuRoom) -> void:
 	current_room.setup_camera()
 	
 	# Update the core state
-	if not _loaded_game:
+	if _loaded_game:
+		C.player = C.get_character(_loaded_game.player.id)
+	else:
 		current_room.state.visited = true
 		current_room.state.visited_times += 1
 		current_room.state.visited_first_time = current_room.state.visited_times == 1
-	
-	if _loaded_game:
-		C.set_player(C.get_character(_loaded_game.player.id))
 	
 	# Add the PopochiuCharacter instances to the room
 	for c in current_room.characters_cfg:
 		var chr: PopochiuCharacter = C.get_character(c.script_name)
 		
-		if chr:
-			# ░▒░▒ FIX ░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░
-			# Temporary fix to make the character with is_player == true to
-			# be the PC
-			if chr.is_player:
-				C.set_player(chr)
-			# ░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░░▒░▒ FIX ░▒░▒
-			
-			chr.position = c.position
-			current_room.add_character(chr)
+		if not chr: continue
+		
+		chr.position = c.position
+		current_room.add_character(chr)
 	
+	# If the room must have the player character but it is not part of its
+	# $Characters node, add it to the room
 	if current_room.has_player and is_instance_valid(C.player):
 		if not current_room.has_character(C.player.script_name):
 			current_room.add_character(C.player)
 		
 		yield(C.player.idle(false), 'completed')
+	
+	# Load the state of Props, Hotspots, Regions and WalkableAreas
+	for type in PopochiuResources.ROOM_CHILDS:
+		for prop_name in rooms_states[room.script_name][type]:
+			var prop: Node2D = current_room.callv(
+				'get_' + type.trim_suffix('s'),
+				[prop_name]
+			)
+			var prop_dic: Dictionary =\
+			rooms_states[room.script_name][type][prop_name]
+			
+			for property in prop_dic:
+				prop[property] = prop_dic[property]
 	
 	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
 		c.room = current_room
@@ -515,6 +549,8 @@ func save_game(slot := 1, description := '') -> void:
 
 
 func load_game(slot := 1) -> void:
+	I.clean_inventory(true)
+	
 	_loaded_game = _saveload.load_game(slot)
 	
 	if not _loaded_game: return
@@ -584,6 +620,11 @@ func clear_hovered() -> void:
 	self.hovered = null
 
 
+func set_current_room(value: PopochiuRoom) -> void:
+	current_room = value
+	R.current = value
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _eval_string(text: String) -> void:
 	match text:
@@ -617,7 +658,7 @@ func _eval_string(text: String) -> void:
 				).to_lower()
 				
 				if not C.is_valid_character(character_name):
-					prints('[Popochiu] No PopochiuCharacter with name: %s'\
+					printerr('[Popochiu] No PopochiuCharacter with name: %s'\
 					% character_name)
 					return yield(get_tree(), 'idle_frame')
 				

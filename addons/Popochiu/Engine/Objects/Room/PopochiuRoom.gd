@@ -53,15 +53,15 @@ func _ready():
 	
 	if not get_tree().get_nodes_in_group('walkable_areas').empty():
 		_nav_path = get_tree().get_nodes_in_group('walkable_areas')[0]
+		Navigation2DServer.map_set_active(_nav_path.map_rid, true)
 	
 	set_process_unhandled_input(false)
+	set_physics_process(false)
+	
 	E.room_readied(self)
 
 
-func _process(delta):
-	if Engine.editor_hint or not is_instance_valid(C.player) or not has_player:
-		return
-	
+func _physics_process(delta: float) -> void:
 	if _path.empty(): return
 	
 	var walk_distance = _moving_character.walk_speed * delta
@@ -114,10 +114,13 @@ func on_entered_from_editor() -> void:
 # default, characters are removed only to keep their instances in the array
 # of characters in ICharacter.gd.
 func exit_room() -> void:
-	set_process(false)
+	set_physics_process(false)
 	
 	for c in $Characters.get_children():
 		$Characters.remove_child(c)
+	
+	for p in get_hotspots():
+		(p as PopochiuHotspot).disable_input()
 	
 	on_room_exited()
 
@@ -256,14 +259,17 @@ func _move_along_path(distance):
 	
 	while _path.size():
 		var distance_between_points = last_point.distance_to(_path[0])
+		
 		if distance <= distance_between_points:
 			_moving_character.position = last_point.linear_interpolate(
 				_path[0], distance / distance_between_points
 			)
+			
 			return
 
 		distance -= distance_between_points
 		last_point = _path[0]
+		
 		_path.remove(0)
 
 	_moving_character.position = last_point
@@ -284,7 +290,9 @@ func _update_navigation_path(
 		_path = PoolVector2Array([start_position, end_position])
 	else:
 		# if the character is forced into WAs, delegate pathfinding to the active WA
-		_path = _nav_path.get_simple_path(start_position, end_position, true)
+		_path = Navigation2DServer.map_get_path(
+			_nav_path.map_rid, start_position, end_position, true
+		)
 	
 	if _path.empty():
 		return
@@ -292,7 +300,7 @@ func _update_navigation_path(
 	_path.remove(0)
 	_moving_character = character
 	
-	set_process(true)
+	set_physics_process(true)
 
 
 func _clear_navigation_path() -> void:

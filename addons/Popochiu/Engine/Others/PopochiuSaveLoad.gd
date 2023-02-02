@@ -1,6 +1,7 @@
 extends Node
 # Class for saving and loading game data.
-# Thanks GDQuest for this! (https://github.com/GDQuest/godot-demos-2022/tree/main/save-game)
+# Thanks for this GDQuest! ↴↴↴ 
+# (https://github.com/GDQuest/godot-demos-2022/tree/main/save-game)
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 # TODO: This could be in PopochiuSettings for devs to change the path
@@ -142,55 +143,37 @@ func load_game(slot := 1) -> Dictionary:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _store_data(type: String, save: Dictionary) -> void:
 	for path in PopochiuResources.get_section(type):
+		# Read the State resource file
 		var data := load(path)
 		
 		save[type][data.script_name] = {}
 		
-		_check_and_store_properties(save[type][data.script_name], data)
+		# Read the State resource for each object to store its data
+		PopochiuResources.store_properties(save[type][data.script_name], data)
 		
-		if type == 'dialogs':
-			save[type][data.script_name].options = {}
-			
-			for opt in (data as PopochiuDialog).options:
-				save[type][data.script_name].options[opt.id] = {}
-				_check_and_store_properties(
-					save[type][data.script_name].options[opt.id],
-					opt,
-					['id']
-				)
+		match type:
+			'rooms':
+				# TODO: Save the state of Props and Hotspots?
+				data.save_childs_states()
+				
+				for category in PopochiuResources.ROOM_CHILDS:
+					save[type][data.script_name][category] = data[category]
+			'dialogs':
+				save[type][data.script_name].options = {}
+				
+				for opt in (data as PopochiuDialog).options:
+					save[type][data.script_name].options[opt.id] = {}
+					PopochiuResources.store_properties(
+						save[type][data.script_name].options[opt.id],
+						opt,
+						['id', 'always_on']
+					)
 		
 		if not save[type][data.script_name]:
 			save[type].erase(data.script_name)
 	
 	if not save[type]:
 		save.erase(type)
-
-
-func _check_and_store_properties(
-target: Dictionary, source: Object, ignore_too := []
-) -> void:
-	var props_to_ignore := ['script_name', 'scene']
-	
-	if not ignore_too.empty():
-		props_to_ignore.append_array(ignore_too)
-	
-	# ---- Store basic type properties -----------------------------------------
-	# prop = {class_name, hint, hint_string, name, type, usage}
-	for prop in source.get_script().get_script_property_list():
-		if prop.name in props_to_ignore: continue
-		if not prop.type in VALID_TYPES: continue
-		
-		# Check if the property is a script variable (8192)
-		# or a export variable (8199)
-		if prop.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or prop.usage == (
-			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
-		):
-			target[prop.name] = source[prop.name]
-	
-	# ---- Call custom function to store extra data ----------------------------
-	if source.has_method('on_save'):
-		target.custom_data = source.on_save()
-		if not target.custom_data: target.erase('custom_data')
 
 
 func _load_state(type: String, loaded_game: Dictionary) -> void:
@@ -203,21 +186,30 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 			
 			state[p] = loaded_game[type][id][p]
 		
-		if type == 'rooms':
-			E.rooms_states[id] = state
-		elif type == 'dialogs':
-			D.trees[id] = state
-			_load_dialog_options(state, loaded_game[type][id].options)
+		match type:
+			'rooms':
+				E.rooms_states[id] = state
+			'characters':
+				C.characters_states[id] = state
+			'inventory_items':
+				I.items_states[id] = state
+			'dialogs':
+				D.trees[id] = state
+				_load_dialog_options(state, loaded_game[type][id].options)
 		
 		if loaded_game[type][id].has('custom_data')\
 		and state.has_method('on_load'):
 			state.on_load(loaded_game[type][id].custom_data)
 
 
-func _load_dialog_options(dialog: PopochiuDialog, loaded_options: Dictionary) -> void:
+func _load_dialog_options(
+	dialog: PopochiuDialog, loaded_options: Dictionary
+) -> void:
 	for opt in dialog.options:
 		if not loaded_options.has(opt.id): continue
 		
 		for prop in opt.get_script().get_script_property_list():
+			if prop.name == 'always_on': continue
+			
 			if loaded_options[opt.id].has(prop.name):
 				opt[prop.name] = loaded_options[opt.id][prop.name]
