@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/explore-editor-theme/ui/CodePreview.gd" type="Script" id=1]
+
+[node name="CodePreview" type="VBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="CodeText" type="TextEdit" parent="."]
+margin_right = 1024.0
+margin_bottom = 64.0
+rect_min_size = Vector2( 0, 64 )
+readonly = true
+syntax_highlighting = true
+wrap_enabled = true
+
+[node name="Padding" type="Control" parent="."]
+margin_top = 68.0
+margin_right = 1024.0
+margin_bottom = 76.0
+rect_min_size = Vector2( 0, 8 )
+
+[node name="CopyCodeButton" type="Button" parent="."]
+margin_top = 80.0
+margin_right = 1024.0
+margin_bottom = 100.0
+text = "Copy Code"

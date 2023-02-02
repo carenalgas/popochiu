@@ -12,7 +12,6 @@ signal started_walk_to(character, start, end)
 signal stoped_walk
 
 export var text_color := Color.white
-export var is_player := false
 export(FlipsWhen) var flips_when := 0
 export(Array, Dictionary) var voices := [] setget set_voices
 export var follow_player := false
@@ -47,6 +46,13 @@ func idle(is_in_queue := true) -> void:
 	if E.cutscene_skipped:
 		yield(get_tree(), 'idle_frame')
 		return
+	
+	if has_node('Sprite'):
+		match flips_when:
+			FlipsWhen.MOVING_LEFT:
+				$Sprite.flip_h = _looking_dir == LOOKING.LEFT
+			FlipsWhen.MOVING_RIGHT:
+				$Sprite.flip_h = _looking_dir == LOOKING.RIGHT
 	
 	play_idle()
 	
@@ -196,6 +202,44 @@ func hide_helpers() -> void:
 func show_helpers() -> void:
 	.show_helpers()
 	if is_instance_valid(dialog_pos): dialog_pos.show()
+
+
+func walk_to(pos: Vector2) -> void:
+	yield()
+	
+	C.character_walk_to(script_name, pos, false)
+	
+	yield(C, 'character_move_ended')
+
+
+func walk_to_prop(id: String) -> void:
+	yield()
+	
+	C.character_walk_to(
+		script_name, E.current_room.get_prop(id).walk_to_point, false
+	)
+	
+	yield(C, 'character_move_ended')
+
+
+func walk_to_hotspot(id: String) -> void:
+	yield()
+	
+	C.character_walk_to(
+		script_name, E.current_room.get_hotspot(id).walk_to_point, false
+	)
+	
+	yield(C, 'character_move_ended')
+
+
+func walk_to_room_point(id: String) -> void:
+	yield()
+	
+	C.character_walk_to(
+		script_name, E.current_room.get_point(id), false
+	)
+	
+	yield(C, 'character_move_ended')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░

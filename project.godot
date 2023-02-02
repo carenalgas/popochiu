@@ -1,0 +1,206 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Area2D",
+"class": "PopochiuCharacter",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Character/PopochiuCharacter.gd"
+}, {
+"base": "Resource",
+"class": "PopochiuCharacterData",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Character/PopochiuCharacterData.gd"
+}, {
+"base": "Area2D",
+"class": "PopochiuClickable",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Clickable/PopochiuClickable.gd"
+}, {
+"base": "Resource",
+"class": "PopochiuDialog",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Dialog/PopochiuDialog.gd"
+}, {
+"base": "Resource",
+"class": "PopochiuDialogOption",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Dialog/PopochiuDialogOption.gd"
+}, {
+"base": "PanelContainer",
+"class": "PopochiuGroup",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Editor/MainDock/PopochiuGroup/PopochiuGroup.gd"
+}, {
+"base": "Area2D",
+"class": "PopochiuHotspot",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Hotspot/PopochiuHotspot.gd"
+}, {
+"base": "TextureRect",
+"class": "PopochiuInventoryItem",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/InventoryItem/PopochiuInventoryItem.gd"
+}, {
+"base": "Resource",
+"class": "PopochiuInventoryItemData",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/InventoryItem/PopochiuInventoryItemData.gd"
+}, {
+"base": "Area2D",
+"class": "PopochiuProp",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Prop/PopochiuProp.gd"
+}, {
+"base": "Area2D",
+"class": "PopochiuRegion",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Region/PopochiuRegion.gd"
+}, {
+"base": "Node",
+"class": "PopochiuResources",
+"language": "GDScript",
+"path": "res://addons/Popochiu/PopochiuResources.gd"
+}, {
+"base": "YSort",
+"class": "PopochiuRoom",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Room/PopochiuRoom.gd"
+}, {
+"base": "Resource",
+"class": "PopochiuRoomData",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/Room/PopochiuRoomData.gd"
+}, {
+"base": "Resource",
+"class": "PopochiuSettings",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/PopochiuSettings.gd"
+}, {
+"base": "Node2D",
+"class": "PopochiuWalkableArea",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/WalkableArea/PopochiuWalkableArea.gd"
+}, {
+"base": "CanvasLayer",
+"class": "TransitionLayer",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.gd"
+} ]
+_global_script_class_icons={
+"PopochiuCharacter": "res://addons/Popochiu/icons/character.png",
+"PopochiuCharacterData": "res://addons/Popochiu/icons/character.png",
+"PopochiuClickable": "",
+"PopochiuDialog": "res://addons/Popochiu/icons/dialog.png",
+"PopochiuDialogOption": "",
+"PopochiuGroup": "res://addons/Popochiu/Editor/MainDock/PopochiuGroup/popochiu_group.svg",
+"PopochiuHotspot": "res://addons/Popochiu/icons/hotspot.png",
+"PopochiuInventoryItem": "res://addons/Popochiu/icons/inventory_item.png",
+"PopochiuInventoryItemData": "res://addons/Popochiu/icons/inventory_item.png",
+"PopochiuProp": "res://addons/Popochiu/icons/prop.png",
+"PopochiuRegion": "res://addons/Popochiu/icons/region.png",
+"PopochiuResources": "",
+"PopochiuRoom": "res://addons/Popochiu/icons/room.png",
+"PopochiuRoomData": "res://addons/Popochiu/icons/room.png",
+"PopochiuSettings": "",
+"PopochiuWalkableArea": "res://addons/Popochiu/icons/walkable_area.png",
+"TransitionLayer": ""
+}
+
+[application]
+
+config/name="popochiu-dev"
+config/description="Development project for Popochiu."
+run/main_scene="res://popochiu/Rooms/101/Room101.tscn"
+config/icon="res://icon.png"
+config/windows_native_icon="res://popochiu.ico"
+
+[autoload]
+
+U="*res://addons/Popochiu/Engine/Others/PopochiuUtils.gd"
+Cursor="*res://addons/Popochiu/Engine/Cursor/Cursor.tscn"
+Globals="*res://popochiu/PopochiuGlobals.gd"
+E="*res://addons/Popochiu/Engine/Popochiu.tscn"
+C="*res://popochiu/Autoloads/C.gd"
+I="*res://popochiu/Autoloads/I.gd"
+D="*res://popochiu/Autoloads/D.gd"
+G="*res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd"
+A="*res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn"
+R="*res://popochiu/Autoloads/R.gd"
+
+[display]
+
+window/size/width=320
+window/size/height=180
+window/size/test_width=640
+window/size/test_height=360
+window/stretch/mode="2d"
+window/stretch/aspect="keep"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/Popochiu/plugin.cfg", "res://addons/explore-editor-theme/plugin.cfg", "res://addons/fc_colorpicker_palette/plugin.cfg" )
+
+[fc]
+
+colorpicker_palette/gpl_file="res://addons/Popochiu/palette/colodore.gpl"
+
+[importer_defaults]
+
+texture={
+"compress/bptc_ldr": 0,
+"compress/hdr_mode": 0,
+"compress/lossy_quality": 0.7,
+"compress/mode": 0,
+"compress/normal_map": 0,
+"detect_3d": false,
+"flags/anisotropic": false,
+"flags/filter": false,
+"flags/mipmaps": false,
+"flags/repeat": 0,
+"flags/srgb": 2,
+"process/HDR_as_SRGB": false,
+"process/fix_alpha_border": true,
+"process/invert_color": false,
+"process/normal_map_invert_y": false,
+"process/premult_alpha": false,
+"size_limit": 0,
+"stream": false,
+"svg/scale": 1.0
+}
+
+[input]
+
+popochiu-interact={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":1,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+popochiu-look={
+"deadzone": 0.5,
+"events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":2,"pressed":false,"doubleclick":false,"script":null)
+ ]
+}
+popochiu-skip={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777217,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
+[physics]
+
+common/enable_pause_aware_picking=true
+
+[rendering]
+
+quality/driver/driver_name="GLES2"
+vram_compression/import_etc=true
+vram_compression/import_etc2=false
+environment/default_environment="res://default_env.tres"

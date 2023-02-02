@@ -74,20 +74,36 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the room
-	var room_template: Script = load(ROOM_SCRIPT_TEMPLATE)
-	if ResourceSaver.save(_new_room_path + '.gd', room_template) != OK:
+	var room_script: Script = load(ROOM_SCRIPT_TEMPLATE)
+	var new_code := room_script.source_code
+	
+	room_script.source_code = ''
+	
+	if ResourceSaver.save(_new_room_path + '.gd', room_script) != OK:
 		push_error('[Popochiu] Could not create script: %s' %\
 		_new_room_name)
 		# TODO: Show feedback in the popup
 		return
 	
-	# Assign the state to the room
-	var room_script: Script = load(_new_room_path + '.gd')
-	room_script.source_code = room_script.source_code.replace(
-		'PopochiuRoomData = null',
-		"PopochiuRoomData = preload('Room%s.tres')" % _new_room_name
+	new_code = new_code.replace(
+		'RoomStateTemplate',
+		'Room%sState' % _new_room_name
 	)
-	ResourceSaver.save(_new_room_path + '.gd', room_script)
+	
+	new_code = new_code.replace(
+		'Data = null',
+		"Data = preload('Room%s.tres')" % _new_room_name
+	)
+	
+	room_script = load(_new_room_path + '.gd')
+	room_script.source_code = new_code
+	
+	if ResourceSaver.save(_new_room_path + '.gd', room_script) != OK:
+		push_error('[Popochiu] Could not update script: %s' %\
+		_new_room_name)
+		# TODO: Show feedback in the popup
+		return
+	
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the room instance
@@ -116,6 +132,11 @@ func create() -> void:
 		_new_room_name)
 		# TODO: Show feedback in the popup
 		return
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Add the character to the C singleton
+	PopochiuResources.update_autoloads(true)
+	_main_dock.fs.update_script_classes()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of rooms in the dock

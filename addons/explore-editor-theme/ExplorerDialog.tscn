@@ -1,0 +1,79 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://addons/explore-editor-theme/ExplorerDialog.gd" type="Script" id=1]
+[ext_resource path="res://addons/explore-editor-theme/tabs/EditorIcons.tscn" type="PackedScene" id=2]
+[ext_resource path="res://addons/explore-editor-theme/tabs/EditorColors.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/explore-editor-theme/tabs/EditorConstants.tscn" type="PackedScene" id=4]
+[ext_resource path="res://addons/explore-editor-theme/tabs/EditorFonts.tscn" type="PackedScene" id=5]
+[ext_resource path="res://addons/explore-editor-theme/tabs/EditorStyleboxes.tscn" type="PackedScene" id=6]
+
+[sub_resource type="Theme" id=1]
+
+[node name="ExplorerDialog" type="WindowDialog"]
+margin_right = 980.0
+margin_bottom = 640.0
+rect_min_size = Vector2( 996, 640 )
+theme = SubResource( 1 )
+window_title = "Editor Theme Explorer"
+resizable = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="Layout" type="MarginContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/margin_right = 8
+custom_constants/margin_top = 8
+custom_constants/margin_left = 8
+custom_constants/margin_bottom = 8
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TabContainer" type="TabContainer" parent="Layout"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 988.0
+margin_bottom = 632.0
+size_flags_vertical = 3
+
+[node name="Icons" parent="Layout/TabContainer" instance=ExtResource( 2 )]
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Colors" parent="Layout/TabContainer" instance=ExtResource( 3 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Fonts" parent="Layout/TabContainer" instance=ExtResource( 5 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Styleboxes" parent="Layout/TabContainer" instance=ExtResource( 6 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Constants" parent="Layout/TabContainer" instance=ExtResource( 4 )]
+visible = false
+margin_left = 4.0
+margin_top = 32.0
+margin_right = -4.0
+margin_bottom = -4.0

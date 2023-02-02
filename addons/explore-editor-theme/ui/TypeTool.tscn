@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/explore-editor-theme/ui/TypeTool.gd" type="Script" id=1]
+
+[node name="Type" type="HBoxContainer"]
+margin_left = 992.0
+margin_right = 1272.0
+margin_bottom = 24.0
+rect_min_size = Vector2( 280, 0 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="."]
+margin_top = 5.0
+margin_right = 30.0
+margin_bottom = 19.0
+text = "Type"
+
+[node name="Input" type="OptionButton" parent="."]
+margin_left = 34.0
+margin_right = 280.0
+margin_bottom = 24.0
+size_flags_horizontal = 3
+text = "Editor"
+selected = 0

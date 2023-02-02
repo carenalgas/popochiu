@@ -15,6 +15,7 @@ signal inventory_hide_requested(use_anim)
 var active: PopochiuInventoryItem
 # Used for saving the game
 var items := []
+var items_states := {}
 
 var _item_instances := []
 
@@ -97,6 +98,8 @@ func remove_item(
 		emit_signal('item_removed', i, animate)
 		
 		yield(self, 'item_remove_done')
+	else:
+		yield(get_tree(), 'idle_frame')
 
 
 func is_item_in_inventory(item_name: String) -> bool:
@@ -123,15 +126,18 @@ func discard_item(item_name: String, is_in_queue := true) -> void:
 		yield(remove_item(item_name, is_in_queue), 'completed')
 
 
-func clean_inventory() -> void:
+func clean_inventory(in_bg := false) -> void:
 	items.clear()
 	
 	for ii in _item_instances:
-		ii.on_discard()
+		if not ii.in_inventory: continue
+		
+		if not in_bg:
+			ii.on_discard()
 		
 		emit_signal('item_discarded', ii)
 		
-		remove_item(ii.script_name, false)
+		remove_item(ii.script_name, false, !in_bg)
 
 
 # Notifies that the inventory should appear.
@@ -155,6 +161,20 @@ func hide_inventory(use_anim := true, is_in_queue := true) -> void:
 	yield(get_tree(), 'idle_frame')
 
 
+#func get_runtime_inventory_item(script_name: String) -> PopochiuInventoryItem:
+#	var item: PopochiuInventoryItem = null
+#
+#	for ii in _item_instances:
+#		if ii.script_name.to_lower() == script_name.to_lower():
+#			item = ii
+#			break
+#
+#	if not item:
+#		printerr('[Popochiu] Inventory item %s is not in the inventory')
+#
+#	return item
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	for ii in _item_instances:
@@ -170,5 +190,7 @@ func _get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	if new_intentory_item:
 		_item_instances.append(new_intentory_item)
 		return new_intentory_item
+	
+	printerr('[Popochiu] Inventory item %s does not exists')
 	
 	return null

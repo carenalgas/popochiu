@@ -23,10 +23,11 @@ func show_dialog(script_name: String) -> void:
 	
 	if current_dialog:
 		active = true
-		current_dialog.start()
+		current_dialog._start()
 		
 		yield(self, 'dialog_finished')
 		
+		# Save the state of the dialog
 		trees[current_dialog.script_name] = current_dialog
 		
 		active = false

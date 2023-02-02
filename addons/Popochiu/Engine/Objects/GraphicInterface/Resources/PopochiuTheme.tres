@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=8 format=2]
+[gd_resource type="Theme" load_steps=12 format=2]
 
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Resources/DynamicFonts/MonkeyIsland-16.tres" type="DynamicFont" id=1]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Resources/sprites/close.png" type="Texture" id=2]
@@ -45,6 +45,34 @@ border_width_bottom = 1
 border_color = Color( 0.439216, 0.427451, 0.921569, 1 )
 corner_detail = 4
 
+[sub_resource type="StyleBoxFlat" id=14]
+bg_color = Color( 0.929412, 0.945098, 0.443137, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id=15]
+bg_color = Color( 1, 1, 1, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id=16]
+bg_color = Color( 0.439216, 0.427451, 0.921569, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id=17]
+content_margin_left = 4.0
+content_margin_right = 4.0
+content_margin_top = 2.0
+content_margin_bottom = 2.0
+bg_color = Color( 0.180392, 0.172549, 0.607843, 1 )
+
 [sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0.180392, 0.172549, 0.607843, 1 )
 border_width_left = 2
@@ -69,6 +97,10 @@ Button/styles/focus = SubResource( 9 )
 Button/styles/hover = SubResource( 7 )
 Button/styles/normal = SubResource( 7 )
 Button/styles/pressed = SubResource( 7 )
+VScrollBar/styles/grabber = SubResource( 14 )
+VScrollBar/styles/grabber_highlight = SubResource( 15 )
+VScrollBar/styles/grabber_pressed = SubResource( 16 )
+VScrollBar/styles/scroll = SubResource( 17 )
 WindowDialog/colors/title_color = Color( 1, 1, 1, 1 )
 WindowDialog/constants/close_h_ofs = 8
 WindowDialog/constants/close_v_ofs = 12

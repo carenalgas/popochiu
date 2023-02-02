@@ -1,6 +1,8 @@
 extends PopochiuInventoryItem
 
-var state: PopochiuInventoryItemData = null
+const Data := preload('InventoryItemStateTemplate.gd')
+
+var state: Data = null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░

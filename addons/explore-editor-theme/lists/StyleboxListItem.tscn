@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/explore-editor-theme/lists/StyleboxListItem.gd" type="Script" id=1]
+[ext_resource path="res://addons/explore-editor-theme/color-preview-icon.png" type="Texture" id=2]
+
+[node name="StyleboxListItem" type="Panel" groups=[
+"ETE_StyleBoxItems",
+]]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 160 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+preview_background_texture = ExtResource( 2 )
+
+[node name="Layout" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+custom_constants/separation = 0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="PreviewContainer" type="MarginContainer" parent="Layout"]
+margin_right = 1024.0
+margin_bottom = 120.0
+mouse_filter = 2
+
+[node name="PreviewBackground" type="TextureRect" parent="Layout/PreviewContainer"]
+modulate = Color( 1, 1, 1, 0.0392157 )
+margin_right = 1024.0
+margin_bottom = 120.0
+rect_min_size = Vector2( 0, 120 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch_mode = 2
+
+[node name="PreviewPanel" type="Panel" parent="Layout/PreviewContainer"]
+margin_left = 464.0
+margin_top = 12.0
+margin_right = 560.0
+margin_bottom = 108.0
+rect_min_size = Vector2( 96, 96 )
+mouse_filter = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="StyleboxName" type="Label" parent="Layout"]
+margin_top = 120.0
+margin_right = 1024.0
+margin_bottom = 600.0
+rect_min_size = Vector2( 0, 40 )
+size_flags_vertical = 3
+text = "test"
+align = 1
+valign = 1
+clip_text = true

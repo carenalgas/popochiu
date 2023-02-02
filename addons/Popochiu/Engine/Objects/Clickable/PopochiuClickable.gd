@@ -30,8 +30,8 @@ func _ready():
 		hide_helpers()
 		return
 	else:
-		remove_child($BaselineHelper)
-		remove_child($WalkToHelper)
+		$BaselineHelper.free()
+		$WalkToHelper.free()
 	
 	connect('visibility_changed', self, '_toggle_input')
 
@@ -86,6 +86,11 @@ func _process(delta):
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+# When the room this node is in has been charged
+func on_room_set() -> void:
+	pass
+
+
 # When the node is clicked
 func on_interact() -> void:
 	yield(E.run([
@@ -105,10 +110,6 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 	yield(E.run([
 		G.display("Can't USE %s here" % item.description)
 	]), 'completed')
-
-
-func on_room_set() -> void:
-	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -161,7 +162,7 @@ func _toggle_description(display: bool) -> void:
 	set_process_unhandled_input(display)
 	
 	if display:
-		if E.hovered and (
+		if E.hovered and is_instance_valid(E.hovered) and (
 			E.hovered.get_parent() == self or get_index() < E.hovered.get_index()
 		):
 			E.add_hovered(self, true)

@@ -36,9 +36,10 @@ func _init() -> void:
 	add_autoload_singleton('U', PopochiuResources.UTILS_SNGL)
 	add_autoload_singleton('Cursor', PopochiuResources.CURSOR_SNGL)
 	add_autoload_singleton('E', PopochiuResources.POPOCHIU_SNGL)
-	add_autoload_singleton('C', PopochiuResources.ICHARACTER_SNGL)
-	add_autoload_singleton('I', PopochiuResources.IINVENTORY_SNGL)
-	add_autoload_singleton('D', PopochiuResources.IDIALOG_SNGL)
+	add_autoload_singleton('R', PopochiuResources.R_SNGL)
+	add_autoload_singleton('C', PopochiuResources.C_SNGL)
+	add_autoload_singleton('I', PopochiuResources.I_SNGL)
+	add_autoload_singleton('D', PopochiuResources.D_SNGL)
 	add_autoload_singleton('G', PopochiuResources.IGRAPHIC_INTERFACE_SNGL)
 	add_autoload_singleton('A', PopochiuResources.IAUDIO_MANAGER_SNGL)
 
@@ -50,6 +51,8 @@ func _enter_tree() -> void:
 	prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
 	prints('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
 	
+	PopochiuResources.update_autoloads()
+	_editor_file_system.update_script_classes()
 	_editor_file_system.scan_sources()
 	
 	_types_helper =\
@@ -118,6 +121,10 @@ func _exit_tree() -> void:
 	
 	if is_instance_valid(_inspector_plugin):
 		remove_inspector_plugin(_inspector_plugin)
+
+
+func get_plugin_name() -> String:
+	return 'Popochiu'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░

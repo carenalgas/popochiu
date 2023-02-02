@@ -1,0 +1,12 @@
+[gd_resource type="Resource" load_steps=2 format=2]
+
+[ext_resource path="res://popochiu/Rooms/101/Room101State.gd" type="Script" id=1]
+
+[resource]
+resource_name = "101"
+script = ExtResource( 1 )
+script_name = "101"
+scene = "res://popochiu/Rooms/101/Room101.tscn"
+visited = false
+visited_first_time = false
+visited_times = 0

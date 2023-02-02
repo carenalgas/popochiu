@@ -10,6 +10,7 @@ signal character_grab_done(character)
 var player: PopochiuCharacter = null setget set_player
 var characters := []
 var camera_owner: PopochiuCharacter = null
+var characters_states := {}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -82,7 +83,7 @@ func walk_to_clicked(is_in_queue := true) -> void:
 func face_clicked(is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
-	yield(C.player.face_clicked(false), 'completed')
+	yield(player.face_clicked(false), 'completed')
 
 
 # Checks if the character exists in the array of PopochiuCharacter instances.
@@ -111,6 +112,8 @@ func get_character(script_name: String) -> PopochiuCharacter:
 	var new_character: PopochiuCharacter = E.get_character_instance(script_name)
 	if new_character:
 		characters.append(new_character)
+		C.set(new_character.script_name, new_character)
+		
 		return new_character
 
 	return null
@@ -145,6 +148,20 @@ func set_character_ignore_walkable_areas(chr_name: String, value: bool) -> void:
 
 func get_character_ignore_walkable_areas(chr_name: String) -> bool:
 	return get_character(chr_name).ignore_walkable_areas
+
+
+func get_runtime_character(script_name: String) -> PopochiuCharacter:
+	var character: PopochiuCharacter = null
+	
+	for c in characters:
+		if (c as PopochiuCharacter).script_name.to_lower() == script_name.to_lower():
+			character = c
+			break
+	
+	if not character:
+		printerr('[Popochiu] Character %s is not in the room' % script_name)
+	
+	return character
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░

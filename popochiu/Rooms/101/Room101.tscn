@@ -1,0 +1,140 @@
+[gd_scene load_steps=19 format=2]
+
+[ext_resource path="res://popochiu/Rooms/101/Room101.gd" type="Script" id=1]
+[ext_resource path="res://popochiu/Rooms/101/Hotspots/Door/HotspotDoor.gd" type="Script" id=2]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Prop/PopochiuProp.tscn" type="PackedScene" id=3]
+[ext_resource path="res://popochiu/Rooms/101/Props/Blanket/PropBlanket.gd" type="Script" id=4]
+[ext_resource path="res://popochiu/Rooms/101/Props/_NoInteraction/background.png" type="Texture" id=5]
+[ext_resource path="res://popochiu/Characters/Popsy/CharacterPopsy.tscn" type="PackedScene" id=6]
+[ext_resource path="res://popochiu/Characters/Goddiu/CharacterGoddiu.tscn" type="PackedScene" id=7]
+[ext_resource path="res://popochiu/Rooms/101/Props/ToyCar/PropToyCar.gd" type="Script" id=8]
+[ext_resource path="res://popochiu/Rooms/101/Props/Blanket/blanket.png" type="Texture" id=9]
+[ext_resource path="res://popochiu/Rooms/101/Props/ToyCar/toy_car.png" type="Texture" id=10]
+[ext_resource path="res://popochiu/Rooms/101/Props/_NoInteraction/table.png" type="Texture" id=11]
+[ext_resource path="res://popochiu/Rooms/101/WalkableAreas/Floor/WalkableAreaFloor.gd" type="Script" id=12]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/WalkableArea/PopochiuWalkableArea.tscn" type="PackedScene" id=13]
+[ext_resource path="res://popochiu/Rooms/101/Hotspots/Window/HotspotWindow.gd" type="Script" id=14]
+[ext_resource path="res://addons/Popochiu/Engine/Objects/Hotspot/PopochiuHotspot.tscn" type="PackedScene" id=15]
+[ext_resource path="res://popochiu/Rooms/101/Props/Drawer/PropDrawer.gd" type="Script" id=16]
+[ext_resource path="res://popochiu/Rooms/101/Props/Drawer/drawer.png" type="Texture" id=17]
+
+[sub_resource type="NavigationPolygon" id=1]
+vertices = PoolVector2Array( -9, 74, 14, 44, 34, 39, 57, 46, 81, 70, 83, 35, 102, 23, 113, 49, 70, 9, 77, 27, -12, 50, -83, 68, 39, 30, -67, 9, -7, 27, -30, 42, 13, 33, -111, 50, -106, 25, -27, 32 )
+polygons = [ PoolIntArray( 0, 1, 2, 3, 4 ), PoolIntArray( 5, 6, 7, 4 ), PoolIntArray( 8, 6, 5, 9 ), PoolIntArray( 3, 5, 4 ), PoolIntArray( 10, 1, 0, 11 ), PoolIntArray( 8, 9, 12, 13 ), PoolIntArray( 13, 12, 2, 14 ), PoolIntArray( 15, 10, 11 ), PoolIntArray( 2, 1, 16 ), PoolIntArray( 15, 11, 17, 18, 13, 19 ), PoolIntArray( 14, 19, 13 ), PoolIntArray( 14, 2, 16 ) ]
+outlines = [ PoolVector2Array( -67, 9, 70, 9, 102, 23, 113, 49, 81, 70, -9, 74, -83, 68, -111, 50, -106, 25 ), PoolVector2Array( -27, 32, -30, 42, -12, 50, 14, 44, 13, 33, -7, 27 ), PoolVector2Array( 39, 30, 34, 39, 57, 46, 83, 35, 77, 27 ) ]
+
+[node name="Room101" type="YSort"]
+sort_enabled = false
+script = ExtResource( 1 )
+script_name = "101"
+
+[node name="WalkableAreas" type="Node2D" parent="."]
+
+[node name="Floor" parent="WalkableAreas" instance=ExtResource( 13 )]
+position = Vector2( 160, 90 )
+script = ExtResource( 12 )
+script_name = "Floor"
+description = "Floor"
+
+[node name="Perimeter" type="NavigationPolygonInstance" parent="WalkableAreas/Floor"]
+modulate = Color( 0, 1, 0, 1 )
+navpoly = SubResource( 1 )
+
+[node name="Props" type="YSort" parent="."]
+sort_enabled = false
+
+[node name="Background" parent="Props" instance=ExtResource( 3 )]
+position = Vector2( 160, 90 )
+z_index = -1
+script_name = "Background"
+description = "Background"
+clickable = false
+baseline = -90
+cursor = 1
+texture = ExtResource( 5 )
+
+[node name="Blanket" parent="Props" instance=ExtResource( 3 )]
+position = Vector2( 92, 142 )
+script = ExtResource( 4 )
+script_name = "Blanket"
+description = "Blanket"
+baseline = -1
+walk_to_point = Vector2( 24, -4 )
+cursor = 1
+texture = ExtResource( 9 )
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/Blanket"]
+polygon = PoolVector2Array( -12, 5, -11, -4, -3, -7, 8, -6, 12, 0, 12, 5 )
+
+[node name="ToyCar" parent="Props/Blanket" instance=ExtResource( 3 )]
+position = Vector2( 0, -5 )
+script = ExtResource( 8 )
+script_name = "ToyCar"
+description = "ToyCar"
+walk_to_point = Vector2( 24, 1 )
+cursor = 1
+texture = ExtResource( 10 )
+link_to_item = "ToyCar"
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/Blanket/ToyCar"]
+polygon = PoolVector2Array( -9, 3, -8, -3, -1, -6, 6, -5, 9, 1, 6, 5 )
+
+[node name="Table" parent="Props" instance=ExtResource( 3 )]
+position = Vector2( 153, 122 )
+script_name = "Table"
+description = "Table"
+clickable = false
+cursor = 1
+texture = ExtResource( 11 )
+
+[node name="Drawer" parent="Props" instance=ExtResource( 3 )]
+position = Vector2( 63, 106 )
+script = ExtResource( 16 )
+script_name = "Drawer"
+description = "Drawer"
+baseline = 3
+cursor = 1
+texture = ExtResource( 17 )
+frames = 2
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/Drawer"]
+polygon = PoolVector2Array( -13, 15, -12, -6, -6, -16, 8, -15, 9, 3, 2, 15 )
+
+[node name="Hotspots" type="Node2D" parent="."]
+
+[node name="Window" parent="Hotspots" instance=ExtResource( 15 )]
+position = Vector2( 152, 62 )
+script = ExtResource( 14 )
+script_name = "Window"
+description = "Window"
+walk_to_point = Vector2( 24, 41 )
+cursor = 1
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Hotspots/Window"]
+modulate = Color( 0, 0, 1, 1 )
+polygon = PoolVector2Array( -26, 1, -24, -14, -9, -24, 14, -22, 24, -7, 20, 13, 0, 20, -17, 14 )
+
+[node name="Door" parent="Hotspots" instance=ExtResource( 15 )]
+position = Vector2( 98, 76 )
+script = ExtResource( 2 )
+script_name = "Door"
+description = "Door"
+walk_to_point = Vector2( 19, 27 )
+cursor = 1
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Hotspots/Door"]
+modulate = Color( 0, 0, 1, 1 )
+polygon = PoolVector2Array( -18, 22, -21, 2, -16, -20, -4, -28, 14, -22, 18, -5, 18, 18, 1, 19 )
+
+[node name="Regions" type="Node2D" parent="."]
+
+[node name="Points" type="Node2D" parent="."]
+
+[node name="Characters" type="YSort" parent="."]
+sort_enabled = false
+
+[node name="CharacterGoddiu *" parent="Characters" instance=ExtResource( 7 )]
+position = Vector2( 110, 106 )
+
+[node name="CharacterPopsy *" parent="Characters" instance=ExtResource( 6 )]
+position = Vector2( 219, 132 )

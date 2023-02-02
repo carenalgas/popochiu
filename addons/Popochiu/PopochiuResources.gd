@@ -42,13 +42,18 @@ const GLOBALS_SNGL := 'res://popochiu/PopochiuGlobals.gd'
 const UTILS_SNGL := 'res://addons/Popochiu/Engine/Others/PopochiuUtils.gd'
 const CURSOR_SNGL := 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn'
 const POPOCHIU_SNGL := 'res://addons/Popochiu/Engine/Popochiu.tscn'
-const ICHARACTER_SNGL := 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
-const IINVENTORY_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
-const IDIALOG_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
+const IROOM := 'res://addons/Popochiu/Engine/Interfaces/IRoom.gd'
+const ICHARACTER := 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
+const IINVENTORY := 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
+const IDIALOG := 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
 const IGRAPHIC_INTERFACE_SNGL :=\
 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
 const IAUDIO_MANAGER_SNGL :=\
 'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
+const R_SNGL := 'res://popochiu/Autoloads/R.gd'
+const C_SNGL := 'res://popochiu/Autoloads/C.gd'
+const I_SNGL := 'res://popochiu/Autoloads/I.gd'
+const D_SNGL := 'res://popochiu/Autoloads/D.gd'
 # ════ FIRST INSTALL ═══════════════════════════════════════════════════════════
 const GRAPHIC_INTERFACE_ADDON :=\
 'res://addons/Popochiu/Engine/Objects/GraphicInterface/GraphicInterface.tscn'
@@ -66,6 +71,81 @@ const DATA := 'res://popochiu//PopochiuData.cfg'
 const SETTINGS := 'res://popochiu//PopochiuSettings.tres'
 const SETTINGS_CLASS :=\
 preload('res://addons/Popochiu/Engine/Objects/PopochiuSettings.gd')
+const ROOM_CHILDS := ['props', 'hotspots', 'walkable_areas', 'regions']
+const VALID_TYPES := [
+	TYPE_BOOL, TYPE_INT, TYPE_REAL, TYPE_STRING,
+	TYPE_ARRAY, TYPE_STRING_ARRAY, TYPE_RAW_ARRAY, TYPE_INT_ARRAY
+]
+const PROPS_IGNORE := [
+	'description',
+	'baseline',
+	'clickable',
+	'cursor',
+	'always_on_top',
+	'frames',
+	'link_to_item',
+	'_description_code',
+]
+const HOTSPOTS_IGNORE := [
+	'description',
+	'baseline',
+	'clickable',
+	'cursor',
+	'always_on_top',
+	'_description_code',
+]
+const WALKABLE_AREAS_IGNORE := [
+	'description',
+	'tint'
+]
+const REGIONS_IGNORE := [
+	'description',
+	'tint'
+]
+const SNGL_TEMPLATE := 'extends "%s"\n\n' +\
+'# classes ----\n' +\
+'# ---- classes\n' +\
+'\n' +\
+'# nodes ----\n' +\
+'# ---- nodes\n' +\
+'\n' +\
+'# functions ----\n' +\
+'# ---- functions\n' +\
+'\n'
+const SNGL_SETUP := {
+	R_SNGL : {
+		interface = IROOM,
+		section = 'rooms',
+		'class' : 'res://popochiu/Rooms/%s/Room%s.gd',
+		'const' : "const PR%s := preload('%s')\n",
+		node = "var %s: PR%s setget , get_%s\n",
+		'func' : "func get_%s(): return .get_runtime_room('%s')\n",
+	},
+	C_SNGL : {
+		interface = ICHARACTER,
+		section = 'characters',
+		'class' : 'res://popochiu/Characters/%s/Character%s.gd',
+		'const' : "const PC%s := preload('%s')\n",
+		node = "var %s: PC%s setget , get_%s\n",
+		'func' : "func get_%s(): return .get_runtime_character('%s')\n",
+	},
+	I_SNGL : {
+		interface = IINVENTORY,
+		section = 'inventory_items',
+		'class' : 'res://popochiu/InventoryItems/%s/Inventory%s.gd',
+		'const' : "const PII%s := preload('%s')\n",
+		node = "var %s: PII%s setget , get_%s\n",
+		'func' : "func get_%s(): return ._get_item_instance('%s')\n",
+	},
+	D_SNGL : {
+		interface = IDIALOG,
+		section = 'dialogs',
+		'class' : 'res://popochiu/Dialogs/%s/Dialog%s.gd',
+		'const' : "const PD%s := preload('%s')\n",
+		node = "var %s: PD%s setget , get_%s\n",
+		'func' : "func get_%s(): return E.get_dialog('%s')\n",
+	}
+}
 # ════ GODOT PROJECT SETTINGS ══════════════════════════════════════════════════
 const DISPLAY_WIDTH := 'display/window/size/width'
 const DISPLAY_HEIGHT := 'display/window/size/height'
@@ -88,7 +168,7 @@ static func init_file_structure() -> bool:
 		if not directory.dir_exists(d):
 			directory.make_dir_recursive(d)
 	
-	# Create config files
+	# ---- Create config files -------------------------------------------------
 	
 	# Create .cfg file
 	if not directory.file_exists(DATA):
@@ -106,7 +186,82 @@ static func init_file_structure() -> bool:
 		file.store_string('extends Node')
 		file.close()
 	
+	# ---- Create autoload files -----------------------------------------------
+	var file = File.new()
+	
+	for key in SNGL_SETUP:
+		if not directory.file_exists(key):
+			file.open(key, File.WRITE)
+			file.store_string(SNGL_TEMPLATE % SNGL_SETUP[key].interface)
+			file.close()
+
 	return is_first_install
+
+
+static func update_autoloads(save := false) -> void:
+	var directory := Directory.new()
+	
+	# ---- Update autoload files -----------------------------------------------
+	for id in SNGL_SETUP:
+		if directory.file_exists(id):
+			var s: Script = load(id)
+			var code := s.source_code
+			var modified := false
+			
+			if not get_data_cfg().has_section(SNGL_SETUP[id].section):
+				continue
+			
+			for key in get_data_cfg().get_section_keys(SNGL_SETUP[id].section):
+				var var_name: String = key
+					
+				if int(var_name[0]) != 0:
+					var_name = var_name.insert(0, 'R')
+				
+				if code.find('var %s' % var_name) < 0:
+					var classes_idx := code.find('# ---- classes')
+					var class_path: String = SNGL_SETUP[id].class % [key, key]
+					
+					code = code.insert(
+						classes_idx,
+						SNGL_SETUP[id].const % [key, class_path]
+					)
+					
+					var characters_idx := code.find('# ---- nodes')
+					code = code.insert(
+						characters_idx,
+						SNGL_SETUP[id].node % [var_name, key, key]
+					)
+					
+					var functions_idx := code.find('# ---- functions')
+					code = code.insert(
+						functions_idx,
+						SNGL_SETUP[id].func % [key, key]
+					)
+					
+					modified = true
+			
+			if modified:
+				s.source_code = code
+				
+				if save: ResourceSaver.save(id, s)
+
+
+static func remove_autoload_obj(id: String, script_name: String) -> void:
+	var directory := Directory.new()
+	var class_path: String = SNGL_SETUP[id].class % [script_name, script_name]
+	var s: Script = load(id)
+	var code := s.source_code
+	
+	code = code.replace(SNGL_SETUP[id].const % [script_name, class_path], '')
+	
+	code = code.replace(
+		SNGL_SETUP[id].node % [script_name, script_name, script_name], ''
+	)
+	
+	code = code.replace(SNGL_SETUP[id].func % [script_name, script_name], '')
+	
+	s.source_code = code
+	ResourceSaver.save(id, s)
 
 
 # ▨▨▨▨ GAME DATA ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
@@ -163,6 +318,33 @@ static func get_section(section: String) -> Array:
 	return resource_paths
 
 
+static func store_properties(
+	target: Dictionary, source: Object, ignore_too := []
+) -> void:
+	var props_to_ignore := ['script_name', 'scene']
+	
+	if not ignore_too.empty():
+		props_to_ignore.append_array(ignore_too)
+	
+	# ---- Store basic type properties -----------------------------------------
+	# prop = {class_name, hint, hint_string, name, type, usage}
+	for prop in source.get_script().get_script_property_list():
+		if prop.name in props_to_ignore: continue
+		if not prop.type in VALID_TYPES: continue
+		
+		# Check if the property is a script variable (8192)
+		# or a export variable (8199)
+		if prop.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or prop.usage == (
+			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
+		):
+			target[prop.name] = source[prop.name]
+	
+	# ---- Call custom function to store extra data ----------------------------
+	if source.has_method('on_save'):
+		target.custom_data = source.on_save()
+		if not target.custom_data: target.erase('custom_data')
+
+
 # ▨▨▨▨ SETTINGS ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
 static func get_settings() -> PopochiuSettings:
 	return load(SETTINGS) as PopochiuSettings
@@ -209,4 +391,5 @@ static func _get_directories() -> Dictionary:
 		CHARACTERS = BASE_DIR + '/Characters',
 		INVENTORY_ITEMS = BASE_DIR + '/InventoryItems',
 		DIALOGS = BASE_DIR + '/Dialogs',
+		AUTOLOADS = BASE_DIR + '/Autoloads',
 	}
