@@ -89,9 +89,11 @@ func _ready() -> void:
 	add_child(tl)
 	add_child(am)
 	
-	if settings.player_character:
+	if PopochiuResources.has_data_value('setup', 'pc'):
 		var pc_data_path: String = PopochiuResources.get_data_value(
-			'characters', settings.player_character, ''
+			'characters',
+			PopochiuResources.get_data_value('setup', 'pc', ''),
+			''
 		)
 		
 		if pc_data_path:

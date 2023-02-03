@@ -18,4 +18,4 @@ toolbar_always_visible = false
 fade_color = Color( 0, 0, 0, 1 )
 scale_gui = true
 max_dialog_options = 3
-player_character = "Goddiu"
+player_character = "Popsy"

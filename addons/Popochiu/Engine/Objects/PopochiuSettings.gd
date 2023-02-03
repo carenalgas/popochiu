@@ -20,4 +20,3 @@ export var toolbar_always_visible := false
 export var fade_color: Color = Color.black
 export var scale_gui := true
 export var max_dialog_options := 3
-export var player_character := ''

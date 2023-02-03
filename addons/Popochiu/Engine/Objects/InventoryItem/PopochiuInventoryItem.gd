@@ -87,6 +87,10 @@ func remove_now(animate := true) -> void:
 	yield(I.remove_item(script_name, false, animate), 'completed')
 
 
+func set_active(ignore_block := false) -> void:
+	I.set_active_item(self, ignore_block)
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_in_inventory(value: bool) -> void:
 	in_inventory = value

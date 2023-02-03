@@ -163,7 +163,8 @@ func fill_data() -> void:
 							'characters', resource.script_name
 						)
 						
-						if resource.script_name == settings.player_character:
+						if resource.script_name ==\
+						PopochiuResources.get_data_value('setup', 'pc', ''):
 							row.is_pc = true
 					Constants.Types.INVENTORY_ITEM:
 						is_in_core = PopochiuResources.has_data_value(
@@ -236,13 +237,7 @@ func set_main_scene(path: String) -> void:
 
 
 func set_pc(script_name: String) -> void:
-	var settings := PopochiuResources.get_settings()
-	
-	settings.player_character = script_name
-	
-	PopochiuResources.save_settings(settings)
-	ei.get_inspector().refresh()
-	
+	PopochiuResources.set_data_value('setup', 'pc', script_name)
 	_types[Constants.Types.CHARACTER].group.clear_favs()
 
 

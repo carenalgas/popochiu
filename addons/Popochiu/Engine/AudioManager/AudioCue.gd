@@ -73,6 +73,14 @@ func stop_now(fade_duration := 0.0) -> void:
 	A.stop(resource_name, fade_duration)
 
 
+func change_pitch(pitch := 0.0) -> void:
+	A.change_cue_pitch(resource_name, pitch)
+
+
+func change_volume(volume := 0.0) -> void:
+	A.change_cue_volume(resource_name, volume)
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_values() -> Dictionary:
 	return {

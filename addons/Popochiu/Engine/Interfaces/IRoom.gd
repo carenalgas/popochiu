@@ -9,23 +9,23 @@ var _room_instances := {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func get_prop(prop_name: String) -> PopochiuProp:
-	return E.current_room.get_prop(prop_name)
+	return current.get_prop(prop_name)
 
 
 func get_hotspot(hotspot_name: String) -> PopochiuHotspot:
-	return E.current_room.get_hotspot(hotspot_name)
+	return current.get_hotspot(hotspot_name)
 
 
 func get_region(region_name: String) -> PopochiuRegion:
-	return E.current_room.get_region(region_name)
+	return current.get_region(region_name)
 
 
 func get_walkable_area(walkable_area_name: String) -> PopochiuWalkableArea:
-	return E.current_room.get_walkable_area(walkable_area_name)
+	return current.get_walkable_area(walkable_area_name)
 
 
 func get_point(point_name: String) -> Vector2:
-	return E.current_room.get_point(point_name)
+	return current.get_point(point_name)
 
 
 func get_props() -> Array:
@@ -41,7 +41,7 @@ func get_regions() -> Array:
 
 
 func get_points() -> Array:
-	return E.current_room.get_points()
+	return current.get_points()
 
 
 func get_walkable_areas() -> Array:
