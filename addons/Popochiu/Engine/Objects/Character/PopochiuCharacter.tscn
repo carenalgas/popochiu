@@ -33,3 +33,5 @@ color = Color( 0, 1, 1, 1 )
 
 [node name="DialogPos" type="Position2D" parent="."]
 visible = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

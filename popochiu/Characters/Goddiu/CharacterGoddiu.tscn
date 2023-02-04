@@ -1,7 +1,96 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://popochiu/Characters/Goddiu/CharacterGoddiu.gd" type="Script" id=1]
 [ext_resource path="res://popochiu/Characters/Goddiu/goddiu.png" type="Texture" id=2]
+
+[sub_resource type="Animation" id=1]
+resource_name = "idle"
+length = 0.5
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 1,
+"values": [ 0 ]
+}
+
+[sub_resource type="Animation" id=5]
+resource_name = "talk"
+length = 0.5
+loop = true
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.25 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 4, 5 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "walk"
+length = 0.3
+loop = true
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.15 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 7, 6 ]
+}
+
+[sub_resource type="Animation" id=4]
+resource_name = "walk_d"
+length = 0.3
+loop = true
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.15 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 8, 9 ]
+}
+
+[sub_resource type="Animation" id=3]
+resource_name = "walk_u"
+length = 0.3
+loop = true
+step = 0.05
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.15 ),
+"transitions": PoolRealArray( 1, 1 ),
+"update": 1,
+"values": [ 10, 11 ]
+}
 
 [node name="CharacterGoddiu" type="Area2D"]
 script = ExtResource( 1 )
@@ -18,12 +107,10 @@ flips_when = 2
 polygon = PoolVector2Array( -9, -45, -1, -47, 17, -39, 22, -34, 23, -26, 19, -18, 10, -13, -4, -12, -17, -14, -22, -20, -22, -28 )
 
 [node name="BaselineHelper" type="Line2D" parent="."]
-visible = false
 points = PoolVector2Array( -10000, 0, 10000, 0 )
 width = 1.0
 
 [node name="WalkToHelper" type="Position2D" parent="."]
-visible = false
 __meta__ = {
 "_edit_group_": true
 }
@@ -38,8 +125,14 @@ color = Color( 0, 1, 1, 1 )
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 0, -27 )
 texture = ExtResource( 2 )
-hframes = 6
+hframes = 12
 
 [node name="DialogPos" type="Position2D" parent="."]
-visible = false
 position = Vector2( -3, -48 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/idle = SubResource( 1 )
+anims/talk = SubResource( 5 )
+anims/walk = SubResource( 2 )
+anims/walk_d = SubResource( 4 )
+anims/walk_u = SubResource( 3 )
