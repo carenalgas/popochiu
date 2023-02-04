@@ -10,3 +10,6 @@ data_*/
 
 
 .godot
+
+# OS-specific
+.DS_Store
