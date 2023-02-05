@@ -248,6 +248,7 @@ type: String, path: String, audio_row: Container = null
 	match type:
 		'music':
 			ac = AudioCueMusic.new()
+			ac.loop = true
 		_:
 			ac = AudioCueSound.new()
 	

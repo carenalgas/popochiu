@@ -66,11 +66,11 @@ func play_fade_now(
 func stop(fade_duration := 0.0) -> void:
 	yield()
 	
-	yield(A.stop(resource_name, fade_duration), 'completed')
+	yield(A.stop_no_block(resource_name, fade_duration), 'completed')
 
 
 func stop_now(fade_duration := 0.0) -> void:
-	A.stop(resource_name, fade_duration)
+	A.stop_no_block(resource_name, fade_duration)
 
 
 func change_pitch(pitch := 0.0) -> void:

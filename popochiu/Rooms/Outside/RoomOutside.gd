@@ -14,7 +14,7 @@ var state: Data = preload('RoomOutside.tres')
 # What happens when Popochiu loads the room. At this point the room is in the
 # tree but it is not visible
 func on_room_entered() -> void:
-	prints(state.is_rainning)
+	A.mx_beach_time.play_now(5)
 	pass
 
 
@@ -35,7 +35,7 @@ func on_room_transition_finished() -> void:
 # At this point, the screen is black, processing is disabled and all characters
 # have been removed from the $Characters node.
 func on_room_exited() -> void:
-	pass
+	A.mx_beach_time.stop_now(2)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

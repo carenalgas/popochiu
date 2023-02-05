@@ -17,6 +17,7 @@ var _vo_cues := {}
 var _ui_cues := {}
 var _active := {}
 var _all_in_one := {}
+var _dflt_volumes := {}
 
 var _fading_sounds := {}
 
@@ -30,6 +31,9 @@ func _ready() -> void:
 			var ac: AudioCue = load(rp)
 			self['_%s' % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
+			# FIX: #27 AudioCues were losing the volume set in editor when
+			# played with a fade
+			_dflt_volumes[ac.resource_name] = ac.volume
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -46,7 +50,7 @@ cue_name := '', position_2d := Vector2.ZERO, wait_to_end = null) -> Node:
 		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
 		stream_player = _play(cue, position_2d)
 	else:
-		prints('[Popochiu] Sound not found:', cue_name)
+		printerr('[Popochiu] Sound not found:', cue_name)
 		
 		if wait_to_end != null:
 			yield(get_tree(), 'idle_frame')
@@ -73,6 +77,10 @@ cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
 	if _mx_cues.has(cue_name.to_lower()):
 		var cue: AudioCue = _mx_cues[cue_name.to_lower()]
 		
+		# FIX: #27 AudioCues were losing the volume set in editor when played
+		# with a fade
+		cue.volume = _dflt_volumes[cue_name.to_lower()]
+		
 		if fade_duration > 0.0:
 			stream_player = _fade_in(
 				cue, Vector2.ZERO, fade_duration, -80.0, cue.volume, music_position
@@ -80,7 +88,7 @@ cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
 		else:
 			stream_player = _play(cue, Vector2.ZERO, music_position)
 	else:
-		prints('[Popochiu] Music not found:', cue_name)
+		printerr('[Popochiu] Music not found:', cue_name)
 	
 	return stream_player
 
@@ -110,7 +118,7 @@ func play_fade_cue(
 			to if to != INF else cue.volume
 		)
 	else:
-		prints('[Popochiu] Sound for fade not found:', cue_name)
+		printerr('[Popochiu] Sound for fade not found:', cue_name)
 		
 		if wait_to_end != null:
 			yield(get_tree(), 'idle_frame')
@@ -178,7 +186,7 @@ func _play(cue: AudioCue, position := Vector2.ZERO, from_position := 0.0) -> Nod
 		player = _get_free_stream($Positional)
 		
 		if not is_instance_valid(player):
-			prints('[Popochiu] Run out of AudioStreamPlayer2D')
+			printerr('[Popochiu] Run out of AudioStreamPlayer2D')
 			return null
 
 		(player as AudioStreamPlayer2D).stream = cue.audio
@@ -190,7 +198,7 @@ func _play(cue: AudioCue, position := Vector2.ZERO, from_position := 0.0) -> Nod
 		player = _get_free_stream($Generic)
 		
 		if not is_instance_valid(player):
-			prints('[Popochiu] Run out of AudioStreamPlayer')
+			printerr('[Popochiu] Run out of AudioStreamPlayer')
 			return null
 	
 		(player as AudioStreamPlayer).stream = cue.audio
@@ -208,7 +216,7 @@ func _play(cue: AudioCue, position := Vector2.ZERO, from_position := 0.0) -> Nod
 	else:
 		_active[cue_name] = {
 			players = [player],
-			loop = cue.loop
+			loop = cue.loop,
 		}
 	
 	return player
