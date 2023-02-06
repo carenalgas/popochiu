@@ -20,7 +20,7 @@ func get_pitch() -> float:
 	return A.semitone_to_pitch(pitch)
 
 
-func play_fade(
+func fade(
 	duration := 1.0,
 	wait_to_end := false,
 	from := -80.0,
@@ -43,7 +43,7 @@ func play_fade(
 		yield(E.get_tree(), 'idle_frame')
 
 
-func play_fade_now(
+func fade_now(
 	duration := 1.0,
 	wait_to_end := false,
 	from := -80.0,
@@ -73,11 +73,11 @@ func stop_now(fade_duration := 0.0) -> void:
 	A.stop_no_block(resource_name, fade_duration)
 
 
-func change_pitch(pitch := 0.0) -> void:
+func change_audio_pitch(pitch := 0.0) -> void:
 	A.change_cue_pitch(resource_name, pitch)
 
 
-func change_volume(volume := 0.0) -> void:
+func change_audio_volume(volume := 0.0) -> void:
 	A.change_cue_volume(resource_name, volume)
 
 

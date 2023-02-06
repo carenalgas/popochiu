@@ -9,17 +9,14 @@ class_name PopochiuAudioManager
 
 const AudioCue := preload('AudioCue.gd')
 
-var twelfth_root_of_two := pow(2, (1.0 / 12))
-
 var _mx_cues := {}
 var _sfx_cues := {}
 var _vo_cues := {}
 var _ui_cues := {}
 var _active := {}
 var _all_in_one := {}
-var _dflt_volumes := {}
-
 var _fading_sounds := {}
+var _dflt_volumes := {}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
