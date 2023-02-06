@@ -1,0 +1,15 @@
+[remap]
+
+importer="ogg_vorbis"
+type="AudioStreamOGGVorbis"
+path="res://.import/mx_beach_time.ogg-72cee109fb3aa152fbb53dce56f19f54.oggstr"
+
+[deps]
+
+source_file="res://popochiu/Rooms/Outside/audio/mx_beach_time.ogg"
+dest_files=[ "res://.import/mx_beach_time.ogg-72cee109fb3aa152fbb53dce56f19f54.oggstr" ]
+
+[params]
+
+loop=true
+loop_offset=0

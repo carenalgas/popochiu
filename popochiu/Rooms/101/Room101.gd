@@ -15,7 +15,7 @@ var state: Data = preload('Room101.tres')
 # tree but it is not visible
 func on_room_entered() -> void:
 #	print_stray_nodes()
-	pass
+	A.play_music_no_block('mx_two_popochius', 5)
 
 
 # What happens when the room changing transition finishes. At this point the room
@@ -41,7 +41,7 @@ func on_room_transition_finished() -> void:
 # At this point, the screen is black, processing is disabled and all characters
 # have been removed from the $Characters node.
 func on_room_exited() -> void:
-	pass
+	A.mx_two_popochius.stop_now()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
