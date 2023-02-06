@@ -14,12 +14,17 @@ export(String, 'Master', 'Music') var bus = 'Master'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+# Returns the `pitch_scale` to apply to the audio stream player that will play
+# the audio of this audio cue.
 func get_pitch() -> float:
 	if rnd_pitch != Vector2.ZERO:
 		return _get_rnd_pitch()
 	return A.semitone_to_pitch(pitch)
 
 
+# Plays this audie cue with a fade that will last `duration` seconds.
+# You can specify the starting volume with `from` and the target volume with `to`.
+# (!) This is intended to run in queued instructions: E.run([]).
 func fade(
 	duration := 1.0,
 	wait_to_end := false,
@@ -43,6 +48,8 @@ func fade(
 		yield(E.get_tree(), 'idle_frame')
 
 
+# Plays immediately this audio cue with a fade that will last `duration` seconds.
+# You can specify the starting volume with `from` and the target volume with `to`.
 func fade_now(
 	duration := 1.0,
 	wait_to_end := false,
@@ -63,12 +70,16 @@ func fade_now(
 		)
 
 
+# Stops the audio cue. Can use a fade that will last `fade_duration` seconds.
+# (!) This is intended to run in queued instructions: E.run([]).
 func stop(fade_duration := 0.0) -> void:
 	yield()
 	
 	yield(A.stop_no_block(resource_name, fade_duration), 'completed')
 
 
+# Stops the audio cue immediately. Can use a fade that will last `fade_duration`
+# seconds.
 func stop_now(fade_duration := 0.0) -> void:
 	A.stop_no_block(resource_name, fade_duration)
 
@@ -86,6 +97,9 @@ func change_stream_volume(volume := 0.0) -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+# Returns the properties of this audio cue as a Dictionary.
+# Used by TabAudio when changing the script of the audio cue to one of the types:
+# AudioCueSound or AudioCueMusic (in projects prior to v1.9.0)
 func get_values() -> Dictionary:
 	return {
 		resource_name = resource_name,
@@ -102,6 +116,9 @@ func get_values() -> Dictionary:
 	}
 
 
+# Maps the values in `values` to the properties of this audio cue.
+# Used by TabAudio when changing the script of the audio cue to one of the types:
+# AudioCueSound or AudioCueMusic (in projects prior to v1.9.0)
 func set_values(values: Dictionary) -> void:
 	resource_name = values.resource_name
 	audio = values.audio
