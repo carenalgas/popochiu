@@ -73,11 +73,15 @@ func stop_now(fade_duration := 0.0) -> void:
 	A.stop_no_block(resource_name, fade_duration)
 
 
-func change_audio_pitch(pitch := 0.0) -> void:
+# Changes the pitch_scale of the AudioStreamPlayer(2D) that is playing the audio
+# file of this cue
+func change_stream_pitch(pitch := 0.0) -> void:
 	A.change_cue_pitch(resource_name, pitch)
 
 
-func change_audio_volume(volume := 0.0) -> void:
+# Changes the volume_db of the AudioStreamPlayer(2D) that is playing the audio
+# file of this cue
+func change_stream_volume(volume := 0.0) -> void:
 	A.change_cue_volume(resource_name, volume)
 
 
