@@ -15,9 +15,13 @@ export var text_color := Color.white
 export(FlipsWhen) var flips_when := 0
 export(Array, Dictionary) var voices := [] setget set_voices
 export var follow_player := false
-export var walk_speed := 200.0
+export var walk_speed := 100.0
 export var can_move := true
 export var ignore_walkable_areas := false
+
+export var animation_walk_name = 'walk'
+export var animation_talk_name = 'talk'
+export var animation_idle_name = 'idle'
 
 var last_room := ''
 var anim_suffix := ''
@@ -347,11 +351,10 @@ func _get_valid_oriented_animation(animation_label):
 	return null
 
 
-func play_animation(animation_label: String, animation_fallback := 'idle', blocking := false):
+func _animate(animation_label: String, animation_fallback := 'idle', is_in_queue := false):
 	if not has_node("AnimationPlayer"):
 		printerr("Expected AnimationPlayer not fount in character ", script_name)
 		return
-
 	# Search for a valid animation corresponding to animation_label
 	var animation = _get_valid_oriented_animation(animation_label)
 	# If is not present, do the same for the the fallback animation.
@@ -361,23 +364,39 @@ func play_animation(animation_label: String, animation_fallback := 'idle', block
 		printerr("Neither the requested nor the fallback animation could be found for character ", script_name, ". Requested: ", animation_label, " - Fallback: " , animation_fallback)
 		return
 	# Play the animation in the best available orientation.
-	$AnimationPlayer.play(animation)
-	
+	var f := funcref($AnimationPlayer, 'play')
+	var c = f.call_funcv([animation])
+
+	if is_in_queue:
+		yield($AnimationPlayer, 'animation_finished')
+
+
+func play_animation(animation_label: String, animation_fallback := 'idle'):
+	_animate(animation_label, animation_fallback)
+
+
+# Executes the animation as par of the E.run logic
+# use this if you need to play an animation as a result
+# of an interaction with a prop for example.
+# Please note that the animation should not be set to loop
+# or it will contractic the E.run concept itself.
+func run_animation(animation_label: String, animation_fallback := 'idle'):
+	yield()
+	yield( _animate(animation_label, animation_fallback, true), 'completed')
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func play_idle() -> void:
-	play_animation('idle');
+	play_animation(animation_idle_name);
 
 
-func play_walk(target_pos: Vector2) -> void:
+func play_walk() -> void:
 	# Set the default parameters for play_animation()
-	var animation_label = 'walk'
-	var animation_fallback = 'idle'
-	play_animation(animation_label, animation_fallback);
+	play_animation(animation_walk_name);
 
 
 func play_talk() -> void:
-	play_animation('talk');
+	play_animation(animation_talk_name);
 
 
 func play_grab() -> void:

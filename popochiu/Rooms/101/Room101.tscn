@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=20 format=2]
 
 [ext_resource path="res://popochiu/Rooms/101/Room101.gd" type="Script" id=1]
 [ext_resource path="res://popochiu/Rooms/101/Hotspots/Door/HotspotDoor.gd" type="Script" id=2]
@@ -17,6 +17,7 @@
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Hotspot/PopochiuHotspot.tscn" type="PackedScene" id=15]
 [ext_resource path="res://popochiu/Rooms/101/Props/Drawer/PropDrawer.gd" type="Script" id=16]
 [ext_resource path="res://popochiu/Rooms/101/Props/Drawer/drawer.png" type="Texture" id=17]
+[ext_resource path="res://popochiu/Rooms/101/Hotspots/Picture/HotspotPicture.gd" type="Script" id=18]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( -9, 74, 14, 44, 34, 39, 57, 46, 81, 70, 83, 35, 102, 23, 113, 49, 70, 9, 77, 27, -12, 50, -83, 68, 39, 30, -67, 9, -7, 27, -30, 42, 13, 33, -111, 50, -106, 25, -27, 32 )
@@ -126,6 +127,17 @@ cursor = 1
 modulate = Color( 0, 0, 1, 1 )
 polygon = PoolVector2Array( -18, 22, -21, 2, -16, -20, -4, -28, 14, -22, 18, -5, 18, 18, 1, 19 )
 
+[node name="Picture" type="Area2D" parent="Hotspots" instance=ExtResource( 15 )]
+position = Vector2( 160, 90 )
+script = ExtResource( 18 )
+script_name = "Picture"
+description = "Picture"
+cursor = 1
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Hotspots/Picture"]
+modulate = Color( 0, 0, 1, 1 )
+polygon = PoolVector2Array( 33, -38, 57, -36, 57, -19, 32, -20 )
+
 [node name="Regions" type="Node2D" parent="."]
 
 [node name="Points" type="Node2D" parent="."]
@@ -138,3 +150,4 @@ position = Vector2( 110, 106 )
 
 [node name="CharacterPopsy *" parent="Characters" instance=ExtResource( 6 )]
 position = Vector2( 219, 132 )
+walk_speed = 100.0

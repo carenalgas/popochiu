@@ -1,64 +1,42 @@
 tool
-extends PopochiuCharacter
+extends PopochiuHotspot
 # You can use E.run([]) to trigger a sequence of events.
 # Use yield(E.run([]), 'completed') if you want to pause the excecution of
 # the function until the sequence of events finishes.
-
-const Data := preload('CharacterGoddiuState.gd')
-
-var state: Data = preload('CharacterGoddiu.tres')
-var tired := false
-var hired := false
-var xxx
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func on_interact() -> void:
-	pass
+	E.run([
+		C.walk_to_clicked(),
+		C.face_clicked(),
+		C.Goddiu.run_animation('jump'),
+		"Player: Ah!! This pictures always scarse me...",
+		C.Goddiu.face_left(),
+		"Player: It reminds me how much I paid for it"
+	])
+	.on_interact()
 
 
 # When the node is right clicked
 func on_look() -> void:
 	# Replace the call to .on_look() to implement your code. This only makes
 	# the default behavior to happen.
-	C.player = self
+	# For example you can make the character walk to the Hotspot and then say
+	# something:
+#	E.run([
+#		C.face_clicked(),
+#		'Player: A closed door'
+#	])
+	.on_look()
 
 
 # When the node is clicked and there is an inventory item selected
 func on_item_used(item: PopochiuInventoryItem) -> void:
 	# Replace the call to .on_item_used(item) to implement your code. This only
 	# makes the default behavior to happen.
+	# For example you can make the PC react on using some items in this Hotspot
+#	if item.script_name == 'Key':
+#		E.run(['Player: No can do'])
 	.on_item_used(item)
-
-
-# Use it to play the idle animation for the character
-func play_idle() -> void:
-	.play_grab()
-	pass
-
-
-# Use it to play the walk animation for the character
-# target_pos can be used to know the movement direction
-func play_walk() -> void:
-	.play_walk()
-
-
-# Use it to play the talk animation for the character
-func play_talk() -> void:
-	.play_talk()
-	pass
-
-
-# Use it to play the grab animation for the character
-func play_grab() -> void:
-	.play_grab()
-	pass
-
-
-func coco() -> void:
-	prints('El coco es muy rico')
-
-
-func pera() -> void:
-	pass

@@ -263,7 +263,7 @@ func _move_along_path(distance):
 			# Based on the destination, turn the character
 			_moving_character.face_direction(_path[0])
 			# Play the animation on the character
-			_moving_character.play_walk(_path[0])
+			_moving_character.play_walk()
 			# Move the character on the destination
 			_moving_character.position = last_point.linear_interpolate(
 				_path[0], distance / distance_between_points

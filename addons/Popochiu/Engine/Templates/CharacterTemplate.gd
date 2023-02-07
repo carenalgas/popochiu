@@ -40,8 +40,8 @@ func play_idle() -> void:
 
 # Use it to play the walk animation for the character
 # target_pos can be used to know the movement direction
-func play_walk(target_pos: Vector2) -> void:
-	.play_walk(target_pos)
+func play_walk() -> void:
+	.play_walk()
 
 
 # Use it to play the talk animation for the character
