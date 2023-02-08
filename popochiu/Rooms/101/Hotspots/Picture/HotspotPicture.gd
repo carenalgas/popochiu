@@ -11,25 +11,21 @@ func on_interact() -> void:
 	E.run([
 		C.walk_to_clicked(),
 		C.face_clicked(),
-		C.Goddiu.run_animation('jump'),
-		"Player: Ah!! This pictures always scarse me...",
-		C.Goddiu.face_left(),
-		"Player: It reminds me how much I paid for it"
+		"Player: I don't want to touch it.",
+		"Player: Last time I did so it fell on my feet."
 	])
-	.on_interact()
 
 
 # When the node is right clicked
 func on_look() -> void:
-	# Replace the call to .on_look() to implement your code. This only makes
-	# the default behavior to happen.
-	# For example you can make the character walk to the Hotspot and then say
-	# something:
-#	E.run([
-#		C.face_clicked(),
-#		'Player: A closed door'
-#	])
-	.on_look()
+	E.run([
+		C.walk_to_clicked(),
+		C.face_clicked(),
+		C.Goddiu.run_animation('jump'),
+		"Player: Ah!! This pictures always scares me...",
+		C.Goddiu.face_left(),
+		"Player: It reminds me how much I paid for it"
+	])
 
 
 # When the node is clicked and there is an inventory item selected

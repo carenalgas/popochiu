@@ -364,8 +364,7 @@ func _animate(animation_label: String, animation_fallback := 'idle', is_in_queue
 		printerr("Neither the requested nor the fallback animation could be found for character ", script_name, ". Requested: ", animation_label, " - Fallback: " , animation_fallback)
 		return
 	# Play the animation in the best available orientation.
-	var f := funcref($AnimationPlayer, 'play')
-	var c = f.call_funcv([animation])
+	$AnimationPlayer.play(animation);
 
 	if is_in_queue:
 		yield($AnimationPlayer, 'animation_finished')
