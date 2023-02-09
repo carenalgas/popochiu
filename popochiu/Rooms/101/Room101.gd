@@ -15,7 +15,7 @@ var state: Data = preload('Room101.tres')
 # tree but it is not visible
 func on_room_entered() -> void:
 #	print_stray_nodes()
-	A.play_music_no_block('mx_two_popochius', 5)
+	A.mx_two_popochius.play_now(5)
 
 
 # What happens when the room changing transition finishes. At this point the room

@@ -2,5 +2,5 @@
 
 [ext_resource path="res://addons/Popochiu/Engine/Objects/WalkableArea/PopochiuWalkableArea.gd" type="Script" id=1]
 
-[node name="WalkableArea" type="Node2D"]
+[node name="WalkableArea" type="Navigation2D"]
 script = ExtResource( 1 )

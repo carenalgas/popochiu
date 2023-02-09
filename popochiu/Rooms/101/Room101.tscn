@@ -19,9 +19,9 @@
 [ext_resource path="res://popochiu/Rooms/101/Props/Drawer/drawer.png" type="Texture" id=17]
 
 [sub_resource type="NavigationPolygon" id=1]
-vertices = PoolVector2Array( -9, 74, 14, 44, 34, 39, 57, 46, 81, 70, 83, 35, 102, 23, 113, 49, 70, 9, 77, 27, -12, 50, -83, 68, 39, 30, -67, 9, -7, 27, -30, 42, 13, 33, -111, 50, -106, 25, -27, 32 )
-polygons = [ PoolIntArray( 0, 1, 2, 3, 4 ), PoolIntArray( 5, 6, 7, 4 ), PoolIntArray( 8, 6, 5, 9 ), PoolIntArray( 3, 5, 4 ), PoolIntArray( 10, 1, 0, 11 ), PoolIntArray( 8, 9, 12, 13 ), PoolIntArray( 13, 12, 2, 14 ), PoolIntArray( 15, 10, 11 ), PoolIntArray( 2, 1, 16 ), PoolIntArray( 15, 11, 17, 18, 13, 19 ), PoolIntArray( 14, 19, 13 ), PoolIntArray( 14, 2, 16 ) ]
-outlines = [ PoolVector2Array( -67, 9, 70, 9, 102, 23, 113, 49, 81, 70, -9, 74, -83, 68, -111, 50, -106, 25 ), PoolVector2Array( -27, 32, -30, 42, -12, 50, 14, 44, 13, 33, -7, 27 ), PoolVector2Array( 39, 30, 34, 39, 57, 46, 83, 35, 77, 27 ) ]
+vertices = PoolVector2Array( 15, 44, 16, 32, 80, 11, 105, 29, 111, 48, 102, 62, 27, 73, -46, 7, -5, 27, -28, 32, -90, 65, -14, 49, -101, 25, -32, 42, -108, 52, -78, 12 )
+polygons = [ PoolIntArray( 0, 1, 2, 3, 4, 5, 6 ), PoolIntArray( 7, 2, 1, 8 ), PoolIntArray( 7, 8, 9 ), PoolIntArray( 0, 6, 10, 11 ), PoolIntArray( 12, 13, 11, 10, 14 ), PoolIntArray( 13, 12, 15, 7, 9 ) ]
+outlines = [ PoolVector2Array( -78, 12, -46, 7, 80, 11, 105, 29, 111, 48, 102, 62, 27, 73, -90, 65, -108, 52, -101, 25 ), PoolVector2Array( -28, 32, -32, 42, -14, 49, 15, 44, 16, 32, -5, 27 ) ]
 
 [node name="Room101" type="YSort"]
 sort_enabled = false

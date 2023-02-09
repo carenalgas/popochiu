@@ -53,7 +53,6 @@ func _ready():
 	
 	if not get_tree().get_nodes_in_group('walkable_areas').empty():
 		_nav_path = get_tree().get_nodes_in_group('walkable_areas')[0]
-		Navigation2DServer.map_set_active(_nav_path.map_rid, true)
 	
 	set_process_unhandled_input(false)
 	set_physics_process(false)
@@ -280,7 +279,7 @@ func _update_navigation_path(
 	character: PopochiuCharacter, start_position: Vector2, end_position: Vector2
 ):
 	if not _nav_path:
-		prints('[Popochiu] No walkable areas in this room')
+		printerr('[Popochiu] No walkable areas in this room')
 		return
 	
 	# TODO: Use a Dictionary so more than one character can move around at the
@@ -290,9 +289,7 @@ func _update_navigation_path(
 		_path = PoolVector2Array([start_position, end_position])
 	else:
 		# if the character is forced into WAs, delegate pathfinding to the active WA
-		_path = Navigation2DServer.map_get_path(
-			_nav_path.map_rid, start_position, end_position, true
-		)
+		_path = _nav_path.get_simple_path(start_position, end_position, true)
 	
 	if _path.empty():
 		return
