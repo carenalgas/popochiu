@@ -235,8 +235,8 @@ func _create_audio_file_row(file_path: String) -> void:
 	_audio_files_to_assign.append(file_path)
 
 
-func _create_audio_cue(\
-type: String, path: String, audio_row: Container = null
+func _create_audio_cue(
+	type: String, path: String, audio_row: Container = null
 ) -> void:
 	var cue_name := path.get_file().get_basename()
 	var cue_file_name := U.snake2pascal(cue_name)

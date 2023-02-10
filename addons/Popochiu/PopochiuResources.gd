@@ -54,7 +54,9 @@ const C_SNGL := 'res://popochiu/Autoloads/C.gd'
 const I_SNGL := 'res://popochiu/Autoloads/I.gd'
 const D_SNGL := 'res://popochiu/Autoloads/D.gd'
 const A_SNGL := 'res://popochiu/Autoloads/A.gd'
-# ════ FIRST INSTALL ═══════════════════════════════════════════════════════════
+# ════ MOVE ════════════════════════════════════════════════════════════════════
+const GI := 0
+const TL := 1
 const GRAPHIC_INTERFACE_ADDON :=\
 'res://addons/Popochiu/Engine/Objects/GraphicInterface/GraphicInterface.tscn'
 const GRAPHIC_INTERFACE_POPOCHIU :=\
