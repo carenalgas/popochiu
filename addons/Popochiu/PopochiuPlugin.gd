@@ -15,6 +15,7 @@ var _input_actions :=\
 preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
 var _shown_helpers := []
 var _export_plugin: EditorExportPlugin = null
+var _inspector_plugins := []
 var _inspector_plugin: EditorInspectorPlugin = null
 var _selected_node: Node = null
 var _vsep := VSeparator.new()
@@ -58,11 +59,17 @@ func _enter_tree() -> void:
 	
 	_export_plugin = preload('PopochiuExportPlugin.gd').new()
 	add_export_plugin(_export_plugin)
-	
-	_inspector_plugin = load('res://addons/Popochiu/PopochiuInspectorPlugin.gd').new()
-	_inspector_plugin.ei = _editor_interface
-	add_inspector_plugin(_inspector_plugin)
-	
+
+
+	for ip in [
+		load('res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd').new(),
+		load('res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd').new(),
+		load('res://addons/Popochiu/Editor/Inspector/AsepriteImporterInspectorPlugin.gd').new()
+		]:
+		ip.ei = _editor_interface
+		add_inspector_plugin(ip)
+		
+
 	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instance()
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system
