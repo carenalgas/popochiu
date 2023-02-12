@@ -15,14 +15,14 @@ extends PanelContainer
 const result_code = preload("../config/result_codes.gd")
 
 const AnimationCreator = preload("../animation_creator.gd")
-const wizard_config = preload ("../config/wizard_config.gd")
+const local_obj_config = preload("../config/local_obj_config.gd")
 
 var animation_creator: AnimationCreator
 
 var scene: Node
 var target_node: Node
 
-var settings
+var config
 var file_system: EditorFileSystem
 
 var _layer: String = ""
@@ -53,7 +53,11 @@ func _ready():
 		printerr(result_code.get_error_message(result_code.ERR_NO_ANIMATION_PLAYER_FOUND))
 	_animation_player_path = $AnimationPlayer.get_path()
 
-	var cfg = wizard_config.load_config(target_node)
+	## TODO: this portion is loading the configuration for the SPECIFIC
+	##       node (say: a PopochiuCharacter, for example) so the aseprite
+	##       source path, specific preferences, etc.
+
+	var cfg = local_obj_config.load_config(target_node)
 	if cfg == null:
 		_load_default_config()
 	else:
@@ -179,7 +183,7 @@ func _save_config():
 	if _cleanup_hide_unused_nodes.pressed != config.is_set_visible_track_automatically_enabled():
 		cfg["set_vis_track"] = _cleanup_hide_unused_nodes.pressed
 
-	wizard_config.save_config(target_node, config.is_use_metadata_enabled(), cfg)
+	local_obj_config.save_config(target_node, config.is_use_metadata_enabled(), cfg)
 
 
 func _open_source_dialog():

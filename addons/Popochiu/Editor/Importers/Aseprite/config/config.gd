@@ -7,6 +7,8 @@ const _COMMAND_KEY = 'aseprite/general/command_path'
 
 # PROJECT SETTINGS
 
+## KEEP
+
 # animation import defaults
 const _DEFAULT_EXCLUSION_PATTERN_KEY = 'aseprite/animation/layers/exclusion_pattern'
 const _DEFAULT_LOOP_EX_PREFIX = '_'
@@ -14,35 +16,44 @@ const _LOOP_ENABLED = 'aseprite/animation/loop/enabled'
 const _LOOP_EXCEPTION_PREFIX = 'aseprite/animation/loop/exception_prefix'
 const _USE_METADATA = 'aseprite/animation/storage/use_metadata'
 
-# custom preset
-const _IMPORT_PRESET_ENABLED = 'aseprite/import/preset/enable_custom_preset'
-const _IMPORT_PRESET_KEY = 'aseprite/import/preset/preset'
-const _PIXEL_2D_PRESET_CFG = 'res://addons/AsepriteWizard/config/2d_pixel_preset.cfg'
-
 # cleanup
 const _REMOVE_SOURCE_FILES_KEY = 'aseprite/import/cleanup/remove_json_file'
-const _SET_VISIBLE_TRACK_AUTOMATICALLY = 'aseprite/import/cleanup/automatically_hide_sprites_not_in_animation'
-
-
-# automatic importer
-const _IMPORTER_ENABLE_KEY = 'aseprite/import/import_plugin/enable_automatic_importer'
-
-# wizard history
-const _HISTORY_CONFIG_FILE_CFG_KEY = 'aseprite/wizard/history/cache_file_path'
-const _HISTORY_SINGLE_ENTRY_KEY = 'aseprite/wizard/history/keep_one_entry_per_source_file'
-const _DEFAULT_HISTORY_CONFIG_FILE_PATH = 'res://.aseprite_wizard_history'
-
-# IMPORT SETTINGS
-const _I_LAST_SOURCE_PATH_KEY = 'i_source'
-const _I_LAST_OUTPUT_DIR_KEY = 'i_output'
-const _I_SHOULD_SPLIT_LAYERS_KEY = 'i_split_layers'
-const _I_EXCEPTIONS_KEY = 'i_exceptions_key'
-const _I_ONLY_VISIBLE_LAYERS_KEY = 'i_only_visible_layers'
-const _I_CUSTOM_NAME_KEY = 'i_custom_name'
-const _I_DO_NOT_CREATE_RES_KEY = 'i_disable_resource_creation'
 
 # export
 const _EXPORTER_ENABLE_KEY = 'aseprite/animation/storage/enable_metadata_removal_on_export'
+
+
+
+## REMOVE #############################################################
+
+# custom preset
+# const _IMPORT_PRESET_ENABLED = 'aseprite/import/preset/enable_custom_preset'
+# const _IMPORT_PRESET_KEY = 'aseprite/import/preset/preset'
+# const _PIXEL_2D_PRESET_CFG = 'res://addons/AsepriteWizard/config/2d_pixel_preset.cfg'
+
+# # cleanup
+# const _SET_VISIBLE_TRACK_AUTOMATICALLY = 'aseprite/import/cleanup/automatically_hide_sprites_not_in_animation'
+
+# # automatic importer
+# const _IMPORTER_ENABLE_KEY = 'aseprite/import/import_plugin/enable_automatic_importer'
+
+# # wizard history
+# const _HISTORY_CONFIG_FILE_CFG_KEY = 'aseprite/wizard/history/cache_file_path'
+# const _HISTORY_SINGLE_ENTRY_KEY = 'aseprite/wizard/history/keep_one_entry_per_source_file'
+# const _DEFAULT_HISTORY_CONFIG_FILE_PATH = 'res://.aseprite_wizard_history'
+
+# ## TODO: Capire a che servEno
+# # IMPORT SETTINGS
+# const _I_LAST_SOURCE_PATH_KEY = 'i_source'
+# const _I_LAST_OUTPUT_DIR_KEY = 'i_output'
+# const _I_SHOULD_SPLIT_LAYERS_KEY = 'i_split_layers'
+# const _I_EXCEPTIONS_KEY = 'i_exceptions_key'
+# const _I_ONLY_VISIBLE_LAYERS_KEY = 'i_only_visible_layers'
+# const _I_CUSTOM_NAME_KEY = 'i_custom_name'
+# const _I_DO_NOT_CREATE_RES_KEY = 'i_disable_resource_creation'
+
+####################### FINE DELLO ZAPPAMENTO #########################
+
 
 var _editor_settings: EditorSettings
 
@@ -65,10 +76,10 @@ func get_command() -> String:
 #######################################################
 # PROJECT SETTINGS
 ######################################################
-func is_importer_enabled() -> bool:
-	return _get_project_setting(_IMPORTER_ENABLE_KEY, false)
-	
-	
+# func is_importer_enabled() -> bool:
+# 	return _get_project_setting(_IMPORTER_ENABLE_KEY, false)
+
+
 func is_exporter_enabled() -> bool:
 	return _get_project_setting(_EXPORTER_ENABLE_KEY, true)
 	
@@ -92,119 +103,119 @@ func get_default_exclusion_pattern() -> String:
 	return _get_project_setting(_DEFAULT_EXCLUSION_PATTERN_KEY, "")
 
 
-func is_import_preset_enabled() -> bool:
-	return _get_project_setting(_IMPORT_PRESET_ENABLED, false)
+# func is_import_preset_enabled() -> bool:
+# 	return _get_project_setting(_IMPORT_PRESET_ENABLED, false)
 
 
-func is_single_file_history() -> bool:
-	return ProjectSettings.get(_HISTORY_SINGLE_ENTRY_KEY) == true
+# func is_single_file_history() -> bool:
+# 	return ProjectSettings.get(_HISTORY_SINGLE_ENTRY_KEY) == true
 
 
-func get_import_history() -> Array:
-	var history = []
-	var history_path := _get_history_file_path()
-	var file_object = File.new()
+# func get_import_history() -> Array:
+# 	var history = []
+# 	var history_path := _get_history_file_path()
+# 	var file_object = File.new()
 
-	if not file_object.file_exists(history_path):
-		return history
+# 	if not file_object.file_exists(history_path):
+# 		return history
 
-	file_object.open(history_path, File.READ)
+# 	file_object.open(history_path, File.READ)
 
-	while not file_object.eof_reached():
-		var line = file_object.get_line()
-		if line:
-			history.push_back(parse_json(line))
+# 	while not file_object.eof_reached():
+# 		var line = file_object.get_line()
+# 		if line:
+# 			history.push_back(parse_json(line))
 
-	return history
+# 	return history
 
-func is_set_visible_track_automatically_enabled() -> bool:
-	return _get_project_setting(_SET_VISIBLE_TRACK_AUTOMATICALLY, false)
+# func is_set_visible_track_automatically_enabled() -> bool:
+# 	return _get_project_setting(_SET_VISIBLE_TRACK_AUTOMATICALLY, false)
 
 # history is saved and retrieved line-by-line so
 # file becomes version control friendly
-func save_import_history(history: Array):
-	var file = File.new()
-	file.open(_get_history_file_path(), File.WRITE)
-	for entry in history:
-		file.store_line(to_json(entry))
-	file.close()
+# func save_import_history(history: Array):
+# 	var file = File.new()
+# 	file.open(_get_history_file_path(), File.WRITE)
+# 	for entry in history:
+# 		file.store_line(to_json(entry))
+# 	file.close()
 
 
-func _get_history_file_path() -> String:
-	return _get_project_setting(_HISTORY_CONFIG_FILE_CFG_KEY, _DEFAULT_HISTORY_CONFIG_FILE_PATH)
+# func _get_history_file_path() -> String:
+# 	return _get_project_setting(_HISTORY_CONFIG_FILE_CFG_KEY, _DEFAULT_HISTORY_CONFIG_FILE_PATH)
 
 
-func create_import_preset_setting() -> void:
-	if ProjectSettings.has_setting(_IMPORT_PRESET_KEY) && (ProjectSettings.get_setting(_IMPORT_PRESET_KEY) as Dictionary).size() > 0:
-		return
+# func create_import_preset_setting() -> void:
+# 	if ProjectSettings.has_setting(_IMPORT_PRESET_KEY) && (ProjectSettings.get_setting(_IMPORT_PRESET_KEY) as Dictionary).size() > 0:
+# 		return
 
-	var preset := ConfigFile.new()
-	preset.load(_PIXEL_2D_PRESET_CFG)
+# 	var preset := ConfigFile.new()
+# 	preset.load(_PIXEL_2D_PRESET_CFG)
 
-	var dict = {}
-	for key in preset.get_section_keys("preset"):
-		dict[key] = preset.get_value("preset", key)
+# 	var dict = {}
+# 	for key in preset.get_section_keys("preset"):
+# 		dict[key] = preset.get_value("preset", key)
 
-	_initialize_project_cfg(_IMPORT_PRESET_KEY, dict, TYPE_DICTIONARY)
+# 	_initialize_project_cfg(_IMPORT_PRESET_KEY, dict, TYPE_DICTIONARY)
 
 
 #######################################################
 # IMPORT CONFIGS
 ######################################################
-func get_last_source_path() -> String:
-	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_LAST_SOURCE_PATH_KEY, "")
+# func get_last_source_path() -> String:
+# 	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_LAST_SOURCE_PATH_KEY, "")
 
 
-func set_last_source_path(source_path: String) -> void:
-	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_LAST_SOURCE_PATH_KEY, source_path)
+# func set_last_source_path(source_path: String) -> void:
+# 	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_LAST_SOURCE_PATH_KEY, source_path)
 
 
-func get_last_output_path() -> String:
-	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_LAST_OUTPUT_DIR_KEY, "")
+# func get_last_output_path() -> String:
+# 	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_LAST_OUTPUT_DIR_KEY, "")
 
 
-func set_last_output_path(output_path: String) -> void:
-	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_LAST_OUTPUT_DIR_KEY, output_path)
+# func set_last_output_path(output_path: String) -> void:
+# 	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_LAST_OUTPUT_DIR_KEY, output_path)
 
 
-func should_split_layers() -> bool:
-	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_SHOULD_SPLIT_LAYERS_KEY, false)
+# func should_split_layers() -> bool:
+# 	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_SHOULD_SPLIT_LAYERS_KEY, false)
 
 
-func set_split_layers(should_split: bool) -> void:
-	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_SHOULD_SPLIT_LAYERS_KEY, false)
+# func set_split_layers(should_split: bool) -> void:
+# 	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_SHOULD_SPLIT_LAYERS_KEY, false)
 
 
-func get_exception_pattern() -> String:
-	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_EXCEPTIONS_KEY, "")
+# func get_exception_pattern() -> String:
+# 	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_EXCEPTIONS_KEY, "")
 
 
-func set_exception_pattern(pattern: String) -> void:
-	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_EXCEPTIONS_KEY, pattern)
+# func set_exception_pattern(pattern: String) -> void:
+# 	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_EXCEPTIONS_KEY, pattern)
 
 
-func should_include_only_visible_layers() -> bool:
-	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_ONLY_VISIBLE_LAYERS_KEY, false)
+# func should_include_only_visible_layers() -> bool:
+# 	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_ONLY_VISIBLE_LAYERS_KEY, false)
 
 
-func set_include_only_visible_layers(include_only_visible: bool) -> void:
-	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_ONLY_VISIBLE_LAYERS_KEY, include_only_visible)
+# func set_include_only_visible_layers(include_only_visible: bool) -> void:
+# 	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_ONLY_VISIBLE_LAYERS_KEY, include_only_visible)
 
 
-func get_last_custom_name() -> String:
-	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_CUSTOM_NAME_KEY, "")
+# func get_last_custom_name() -> String:
+# 	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_CUSTOM_NAME_KEY, "")
 
 
-func set_custom_name(custom_name: String) -> void:
-	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_CUSTOM_NAME_KEY, custom_name)
+# func set_custom_name(custom_name: String) -> void:
+# 	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_CUSTOM_NAME_KEY, custom_name)
 
 
-func should_not_create_resource() -> bool:
-	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_DO_NOT_CREATE_RES_KEY, false)
+# func should_not_create_resource() -> bool:
+# 	return _editor_settings.get_project_metadata(_CONFIG_SECTION_KEY, _I_DO_NOT_CREATE_RES_KEY, false)
 
 
-func set_do_not_create_resource(do_no_create: bool) -> void:
-	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_DO_NOT_CREATE_RES_KEY, do_no_create)
+# func set_do_not_create_resource(do_no_create: bool) -> void:
+# 	_editor_settings.set_project_metadata(_CONFIG_SECTION_KEY, _I_DO_NOT_CREATE_RES_KEY, do_no_create)
 
 #######################################################
 # INTERFACE SETTINGS
@@ -227,17 +238,17 @@ func initialize_project_settings():
 	_initialize_project_cfg(_LOOP_EXCEPTION_PREFIX, _DEFAULT_LOOP_EX_PREFIX, TYPE_STRING)
 	_initialize_project_cfg(_USE_METADATA, true, TYPE_BOOL)
 
-	_initialize_project_cfg(_IMPORT_PRESET_ENABLED, false, TYPE_BOOL)
+	# _initialize_project_cfg(_IMPORT_PRESET_ENABLED, false, TYPE_BOOL)
 
 	_initialize_project_cfg(_REMOVE_SOURCE_FILES_KEY, true, TYPE_BOOL)
-	_initialize_project_cfg(_IMPORTER_ENABLE_KEY, false, TYPE_BOOL)
+	# _initialize_project_cfg(_IMPORTER_ENABLE_KEY, false, TYPE_BOOL)
 	
 	_initialize_project_cfg(_EXPORTER_ENABLE_KEY, true, TYPE_BOOL)
 
-	_initialize_project_cfg(_HISTORY_CONFIG_FILE_CFG_KEY, _DEFAULT_HISTORY_CONFIG_FILE_PATH, TYPE_STRING, PROPERTY_HINT_GLOBAL_FILE)
-	_initialize_project_cfg(_HISTORY_SINGLE_ENTRY_KEY, false, TYPE_BOOL)
+	# _initialize_project_cfg(_HISTORY_CONFIG_FILE_CFG_KEY, _DEFAULT_HISTORY_CONFIG_FILE_PATH, TYPE_STRING, PROPERTY_HINT_GLOBAL_FILE)
+	# _initialize_project_cfg(_HISTORY_SINGLE_ENTRY_KEY, false, TYPE_BOOL)
 
-	_initialize_project_cfg(_SET_VISIBLE_TRACK_AUTOMATICALLY, false, TYPE_BOOL)
+	# _initialize_project_cfg(_SET_VISIBLE_TRACK_AUTOMATICALLY, false, TYPE_BOOL)
 
 	ProjectSettings.save()
 
@@ -250,14 +261,14 @@ func clear_project_settings():
 		_LOOP_ENABLED,
 		_LOOP_EXCEPTION_PREFIX,
 		_USE_METADATA,
-		_IMPORT_PRESET_ENABLED,
-		_IMPORT_PRESET_KEY,
+		# _IMPORT_PRESET_ENABLED,
+		# _IMPORT_PRESET_KEY,
 		_REMOVE_SOURCE_FILES_KEY,
-		_IMPORTER_ENABLE_KEY,
+		# _IMPORTER_ENABLE_KEY,
 		_EXPORTER_ENABLE_KEY,
-		_HISTORY_CONFIG_FILE_CFG_KEY,
-		_HISTORY_SINGLE_ENTRY_KEY,
-		_SET_VISIBLE_TRACK_AUTOMATICALLY
+		# _HISTORY_CONFIG_FILE_CFG_KEY,
+		# _HISTORY_SINGLE_ENTRY_KEY,
+		# _SET_VISIBLE_TRACK_AUTOMATICALLY
 	]
 	for key in _all_settings:
 		ProjectSettings.clear(key)
@@ -273,7 +284,7 @@ func _initialize_project_cfg(key: String, default_value, type: int, hint: int = 
 			"type": type,
 			"hint": hint,
 		})
-#		ProjectSettings.save()
+		ProjectSettings.save()
 
 
 func _get_project_setting(key: String, default_value):
@@ -281,23 +292,23 @@ func _get_project_setting(key: String, default_value):
 	return p if p else default_value
 
 
-func create_import_file(data: Dictionary) -> void:
-	if !ProjectSettings.has_setting(_IMPORT_PRESET_KEY):
-		push_warning("no import settings found for 'aseprite_texture' in Project Settings")
-		return
+# func create_import_file(data: Dictionary) -> void:
+# 	if !ProjectSettings.has_setting(_IMPORT_PRESET_KEY):
+# 		push_warning("no import settings found for 'aseprite_texture' in Project Settings")
+# 		return
 
-	var file_path := "%s.import" % [data.sprite_sheet]
-	var import_file := ConfigFile.new()
-	if import_file.load(file_path) == OK:
-		return
+# 	var file_path := "%s.import" % [data.sprite_sheet]
+# 	var import_file := ConfigFile.new()
+# 	if import_file.load(file_path) == OK:
+# 		return
 
-	import_file.set_value("remap", "importer", "texture")
-	import_file.set_value("remap", "type", "StreamTexture")
-	import_file.set_value("deps", "source_file", data.sprite_sheet)
-	var preset: Dictionary = ProjectSettings.get_setting(_IMPORT_PRESET_KEY)
-	for key in preset:
-		import_file.set_value("params", key, preset[key])
-	import_file.save(file_path)
+# 	import_file.set_value("remap", "importer", "texture")
+# 	import_file.set_value("remap", "type", "StreamTexture")
+# 	import_file.set_value("deps", "source_file", data.sprite_sheet)
+# 	var preset: Dictionary = ProjectSettings.get_setting(_IMPORT_PRESET_KEY)
+# 	for key in preset:
+# 		import_file.set_value("params", key, preset[key])
+# 	import_file.save(file_path)
 
 
 func _initialize_editor_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE):

@@ -25,6 +25,9 @@ var _types_helper: Resource = null
 var _tool_btn_stylebox :=\
 _editor_interface.get_base_control().get_stylebox("normal", "ToolButton")
 
+## TODO: refs #8: remove this as soon as we migrate the configuration to ProjectSettings
+var config = preload("./Editor/Importers/Aseprite/config/config.gd").new()
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _init() -> void:
@@ -60,7 +63,6 @@ func _enter_tree() -> void:
 	_export_plugin = preload('PopochiuExportPlugin.gd').new()
 	add_export_plugin(_export_plugin)
 
-
 	for ip in [
 		load('res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd').new(),
 		load('res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd').new(),
@@ -68,7 +70,7 @@ func _enter_tree() -> void:
 		]:
 		ip.ei = _editor_interface
 		add_inspector_plugin(ip)
-		
+
 
 	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instance()
 	main_dock.ei = _editor_interface

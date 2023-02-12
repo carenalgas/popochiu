@@ -1,12 +1,12 @@
 tool
 extends Reference
 
-const WIZARD_CONFIG_META_NAME = "_aseprite_wizard_config_"
-const WIZARD_CONFIG_MARKER = "aseprite_wizard_config"
+const LOCAL_OBJ_CONFIG_META_NAME = "_popochiu_aseprite_config_"
+const LOCAL_OBJ_CONFIG_MARKER = "popochiu_aseprite_config"
 const SEPARATOR = "|="
 
 static func encode(object: Dictionary):
-	var text = "%s\n" % WIZARD_CONFIG_MARKER
+	var text = "%s\n" % LOCAL_OBJ_CONFIG_MARKER
 
 	for prop in object:
 		text += "%s%s%s\n" % [prop, SEPARATOR, object[prop]]
@@ -16,7 +16,7 @@ static func encode(object: Dictionary):
 
 static func decode(string: String):
 	var decoded = _decode_base64(string)
-	if not _is_wizard_config(decoded):
+	if not _is_valid_config(decoded):
 		return null
 
 	var cfg = decoded.split("\n")
@@ -48,22 +48,22 @@ static func _decode_base64(string: String):
 	return null
 
 
-static func _is_wizard_config(cfg) -> bool:
-	return cfg != null and cfg.begins_with(WIZARD_CONFIG_MARKER)
+static func _is_valid_config(cfg) -> bool:
+	return cfg != null and cfg.begins_with(LOCAL_OBJ_CONFIG_MARKER)
 
 static func load_config(node:Node):
-	if node.has_meta(WIZARD_CONFIG_META_NAME):
-		return node.get_meta(WIZARD_CONFIG_META_NAME)
+	if node.has_meta(LOCAL_OBJ_CONFIG_META_NAME):
+		return node.get_meta(LOCAL_OBJ_CONFIG_META_NAME)
 		
 	return decode(node.editor_description)
 	
 static func save_config(node:Node, use_metadata:bool, cfg:Dictionary):
 	if use_metadata:
-		node.set_meta(WIZARD_CONFIG_META_NAME, cfg)
+		node.set_meta(LOCAL_OBJ_CONFIG_META_NAME, cfg)
 		
 		#Delete config from editor_description
 		var decoded = _decode_base64(node.editor_description)
-		if  _is_wizard_config(decoded):
+		if  _is_valid_config(decoded):
 			node.editor_description = ""
 	else:
 		node.editor_description = encode(cfg)
