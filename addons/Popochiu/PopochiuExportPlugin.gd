@@ -11,6 +11,10 @@ func _export_begin(features: PoolStringArray, is_debug: bool, path: String, flag
 	file.close()
 
 
+# Logic for Aseprite Importer
+# This code removes importer's metadata from nodes before exporting them
+# Thanks to Vinicius Gerevini and his Aseprite Wizard plugin for that!
+# TODO: may be moved to another file so we keep things separated
 func _export_file(path: String, type: String, features: PoolStringArray) -> void:
 	if type != "PackedScene": return
 

@@ -7,7 +7,8 @@ const CONFIG_SCRIPT = preload("../Importers/Aseprite/config/config.gd")
 var ei: EditorInterface
 var file_system: EditorFileSystem
 var _target_node: Node
-## TODO: this should be passed over by the general plugin BUT better to move this stuff with Popochiu default config
+## TODO: this should be passed over by the general plugin 
+## BUT better to move this stuff with Popochiu default config
 var config := CONFIG_SCRIPT.new()
 
 

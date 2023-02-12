@@ -100,8 +100,9 @@ func _set_layer(layer):
 	_layer = layer
 	_layer_field.add_item(_layer)
 
-## TODO: valutare se non zappare pure questa. Se possibile potremmo usare un 
-##       dropdown con dei checkbox, altrimenti via via via
+## TODO: This single-layer selection is a bit meh... it should
+##       be a list of checkboxes. Evaluate to delete this and
+##       reintroduce it in a second pass.
 func _on_layer_pressed():
 	if _source == "":
 		_show_message("Please. Select source file first.")
@@ -121,7 +122,7 @@ func _on_layer_pressed():
 			current = _layer_field.get_item_count() - 1
 	_layer_field.select(current)
 
-## TODO vedi sopra
+## TODO See above
 func _on_layer_item_selected(index):
 	if index == 0:
 		_layer = ""
@@ -158,7 +159,7 @@ func _on_import_pressed():
 		"only_visible_layers": _visible_layers_field.pressed,
 		"output_filename": _out_filename_field.text,
 		"cleanup_hide_unused_nodes": _cleanup_hide_unused_nodes.pressed,
-		"layer": _layer ## TODO: levala
+		"layer": _layer ## TODO: Delete this?
 	}
 
 	_save_config()
@@ -179,11 +180,12 @@ func _save_config():
 		"o_ex_p": _ex_pattern_field.text,
 	}
 
-	## TODO: capire questa perchè non ho capito manco cosa serve questa impostazione delle visible_track
+	## TODO: This is a very convoluted method to address a problem with HUGE spritemaps.
+	##       We can (and should) get rid of this, even if this has its value.
 	if _cleanup_hide_unused_nodes.pressed != config.is_set_visible_track_automatically_enabled():
 		cfg["set_vis_track"] = _cleanup_hide_unused_nodes.pressed
 
-	local_obj_config.save_config(target_node, config.is_use_metadata_enabled(), cfg)
+	local_obj_config.save_config(target_node, cfg)
 
 
 func _open_source_dialog():
@@ -249,5 +251,7 @@ func _on_output_folder_selected(path):
 	_output_folder_dialog.queue_free()
 
 
-## TODO: Aggiungere tutta la gestione dei tag trovati, quindi creare nuove componenti con l'elenco
-## dei tag e i pulsanti su ogni riga per fare quel che c'è da fare.
+## TODO: Add functions to list tags, populate the inspector with tag-related command lines
+## TODO: Introduce layer selection list, more or less as tags
+
+## TODO: IMPORTANT AND FIRST IN LINE! The importer has different behavior for Characters, Rooms and Inventory items!

@@ -102,7 +102,7 @@ func _add_animation_frames(target_node: Node, player: AnimationPlayer, anim_name
 		animation_name = anim_name.substr(_config.get_animation_loop_exception_prefix().length())
 		is_loopable = not is_loopable
 
-	if not player.has_animation(animation_name): # TODO: pare che si possano solo aggiungere animazioni...
+	if not player.has_animation(animation_name): # TODO: This is not getting rid of old animations!
 		player.add_animation(animation_name, Animation.new())
 
 	## NOTA: qui crea le animazioni (animation tracks) vere e proprie nell'animation player
@@ -159,8 +159,9 @@ func _get_property_track_path(player: AnimationPlayer, target_node: Node, prop: 
 		var node_path = player.get_node(player.root_node).get_path_to(target_node)
 		return "%s:%s" % [node_path, prop]
 
-## TODO: questa funzione pare non fare un cazzo, inoltre non capisco cosa minchia serve
-## il "nascondere" uno unused NODES
+## TODO: This is a very convoluted way of fixing the HUGE spritesheets Godot limitations.
+## We should get rid of this and reintroduce this logic only when we have a clear understanding
+## and possible alternative solutions.
 func _cleanup_animations(target_node: Node, player: AnimationPlayer, content: Dictionary, options: Dictionary):
 	if not (content.meta.has("frameTags") and content.meta.frameTags.size() > 0):
 		return result_code.SUCCESS
@@ -177,7 +178,7 @@ func _cleanup_animations(target_node: Node, player: AnimationPlayer, content: Di
 
 	return result_code.SUCCESS
 
-## TODO: capire che porcocazzo sta facendo.. CHE COS'È UN UNUSED NODE?
+## TODO: See above
 func _hide_unused_nodes(target_node: Node, player: AnimationPlayer, content: Dictionary):
 	var root_node := player.get_node(player.root_node)
 	var all_animations := player.get_animation_list()
@@ -257,7 +258,8 @@ func _remove_properties_from_path(path: NodePath) -> NodePath:
 	string_path.erase((string_path).length() - property_path.length() - 1, property_path.length() + 1)
 	return string_path as NodePath
 
-######################### TODO: Comment this stuff better, 
+## TODO: Comment those method better, it's something Strictly related to AnimationPlayer + texture
+## TextureRect should be treated in a different way (recover logic from the original plugin if needed)
 
 func _setup_texture(sprite: Node, sprite_sheet: String, content: Dictionary):
 	var texture = _load_texture(sprite_sheet)

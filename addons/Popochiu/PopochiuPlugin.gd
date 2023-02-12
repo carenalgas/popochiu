@@ -63,6 +63,16 @@ func _enter_tree() -> void:
 	_export_plugin = preload('PopochiuExportPlugin.gd').new()
 	add_export_plugin(_export_plugin)
 
+
+	## TODO: Clean up when Popochiu configuration is moved to ProjectSettings (refs #26)
+	var editor_gui = get_editor_interface().get_base_control()
+	config.set_icons({
+		"collapsed": editor_gui.get_icon("GuiTreeArrowRight", "EditorIcons"),
+		"expanded": editor_gui.get_icon("GuiTreeArrowDown", "EditorIcons"),
+	})
+	config.initialize_project_settings()
+
+
 	for ip in [
 		load('res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd').new(),
 		load('res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd').new(),
