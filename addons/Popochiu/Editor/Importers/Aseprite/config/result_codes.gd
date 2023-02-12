@@ -10,6 +10,7 @@ const ERR_UNKNOWN_EXPORT_MODE = 5
 const ERR_NO_VALID_LAYERS_FOUND = 6
 const ERR_INVALID_ASEPRITE_SPRITESHEET = 7
 const ERR_NO_ANIMATION_PLAYER_FOUND = 8
+const ERR_NO_SPRITE_FOUND = 9
 
 
 static func get_error_message(code: int):
@@ -27,6 +28,8 @@ static func get_error_message(code: int):
 		ERR_NO_VALID_LAYERS_FOUND:
 			return "no valid layers found"
 		ERR_NO_ANIMATION_PLAYER_FOUND:
-			return "no animation player found"
+			return "no animation player found in target node"
+		ERR_NO_SPRITE_FOUND:
+			return "no sprite found in target node"
 		_:
 			return "import failed with code %d" % code

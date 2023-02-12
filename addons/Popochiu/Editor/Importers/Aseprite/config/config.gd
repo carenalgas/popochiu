@@ -4,7 +4,6 @@ extends Reference
 # PROJECT SETTINGS
 
 # general settings
-#const _CONFIG_SECTION_KEY = 'aseprite'
 const _ASEPRITE_COMMAND_KEY = 'popochiu/import/aseprite/command_path'
 
 # animation import defaults
@@ -13,14 +12,11 @@ const _DEFAULT_LOOP_EX_PREFIX = '_'
 ## TODO: change the logic of this option: nail a behavior and exclude with a prefix
 const _LOOP_ENABLED = 'popochiu/import/aseprite/loop_enabled'
 const _LOOP_EXCEPTION_PREFIX = 'popochiu/import/aseprite/loop_exception_prefix'
-## TODO: evalutate if this has to be an option or if we'd better ALWAYS use metadata + remove them at build
 const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
-## TODO: ALWAYS use (end remove) metadata
-# const _USE_METADATA = 'popochiu/import/aseprite/use_metadata'
-# const _REMOVE_METADATA_ON_EXPORT_KEY = 'popochiu/import/aseprite/remove_metadata_on_export'
 
 # INTERFACE SETTINGS
 var _plugin_icons: Dictionary
+var ei: EditorInterface
 
 
 #######################################################
@@ -45,14 +41,6 @@ func is_default_animation_loop_enabled() -> bool:
 func get_animation_loop_exception_prefix() -> String:
 	return _get_project_setting(_LOOP_EXCEPTION_PREFIX, _DEFAULT_LOOP_EX_PREFIX)
 	
-# func is_use_metadata_enabled() -> bool:
-# 	return _get_project_setting(_USE_METADATA, true)
-
-## TODO: decide if testing this on export or separating the export plugin and register it
-## only if necessary
-# func is_remove_metadata_on_export() -> bool:
-# 	return _get_project_setting(_REMOVE_METADATA_ON_EXPORT_KEY, true)
-
 
 func get_default_exclusion_pattern() -> String:
 	return _get_project_setting(_DEFAULT_EXCLUSION_PATTERN_KEY, "")
@@ -63,8 +51,11 @@ func get_default_exclusion_pattern() -> String:
 # INTERFACE SETTINGS
 ######################################################
 
-func set_icons(plugin_icons: Dictionary) -> void:
-	_plugin_icons = plugin_icons
+func _set_icons() -> void:
+	_plugin_icons = {
+		"collapsed": ei.get_base_control().get_icon("GuiTreeArrowRight", "EditorIcons"),
+		"expanded": ei.get_base_control().get_icon("GuiTreeArrowDown", "EditorIcons"),
+	}
 
 
 func get_icon(icon_name: String) -> Texture:
@@ -80,12 +71,10 @@ func initialize_project_settings():
 	_initialize_project_cfg(_LOOP_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_LOOP_EXCEPTION_PREFIX, _DEFAULT_LOOP_EX_PREFIX, TYPE_STRING)
 	_initialize_project_cfg(_REMOVE_SOURCE_FILES_KEY, true, TYPE_BOOL)
+
+	_set_icons()
 	
-	# _initialize_project_cfg(_USE_METADATA, true, TYPE_BOOL)
-	# _initialize_project_cfg(_EXPORTER_ENABLE_KEY, true, TYPE_BOOL)
-
 	ProjectSettings.save()
-
 
 
 func clear_project_settings():
@@ -94,8 +83,6 @@ func clear_project_settings():
 		_LOOP_ENABLED,
 		_LOOP_EXCEPTION_PREFIX,
 		_REMOVE_SOURCE_FILES_KEY,
-		# _USE_METADATA,
-		# _EXPORTER_ENABLE_KEY,
 	]
 	for key in _all_settings:
 		ProjectSettings.clear(key)

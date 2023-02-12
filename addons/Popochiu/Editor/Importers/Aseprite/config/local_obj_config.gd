@@ -54,20 +54,7 @@ static func _is_valid_config(cfg) -> bool:
 static func load_config(node:Node):
 	if node.has_meta(LOCAL_OBJ_CONFIG_META_NAME):
 		return node.get_meta(LOCAL_OBJ_CONFIG_META_NAME)
-
-	## TODO: see below. If local config is saved, erase this
-	# return decode(node.editor_description)
 	
 static func save_config(node:Node, cfg:Dictionary):
 	node.set_meta(LOCAL_OBJ_CONFIG_META_NAME, cfg)
 
-	## TODO: Erase this if configuration in nodes is saved correctly!
-	# if use_metadata:
-	# 	node.set_meta(LOCAL_OBJ_CONFIG_META_NAME, cfg)
-		
-	# 	#Delete config from editor_description
-	# 	var decoded = _decode_base64(node.editor_description)
-	# 	if  _is_valid_config(decoded):
-	# 		node.editor_description = ""
-	# else:
-	# 	node.editor_description = encode(cfg)

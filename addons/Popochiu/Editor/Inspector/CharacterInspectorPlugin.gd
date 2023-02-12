@@ -1,7 +1,9 @@
 tool
-extends EditorInspectorPlugin
+extends EditorInspectorPlugin ## TODO: create a base class with pointer variables
 
 var ei: EditorInterface
+var fs: EditorFileSystem
+var config: Reference
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func can_handle(object: Object) -> bool:

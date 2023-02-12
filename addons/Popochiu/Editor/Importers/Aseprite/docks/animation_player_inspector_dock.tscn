@@ -218,27 +218,6 @@ margin_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="auto_visible_track" type="HBoxContainer" parent="margin/VBoxContainer/options"]
-margin_top = 124.0
-margin_right = 209.0
-margin_bottom = 164.0
-hint_tooltip = "If active, it will automatically determine unused Sprite and Sprite3D nodes in each animation and hide them."
-
-[node name="Label" type="Label" parent="margin/VBoxContainer/options/auto_visible_track"]
-margin_top = 13.0
-margin_right = 129.0
-margin_bottom = 27.0
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.0
-text = "Hide unused sprites"
-
-[node name="CheckButton" type="CheckButton" parent="margin/VBoxContainer/options/auto_visible_track"]
-margin_left = 133.0
-margin_right = 209.0
-margin_bottom = 40.0
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 2.0
-
 [node name="import" type="Button" parent="margin/VBoxContainer"]
 margin_top = 100.0
 margin_right = 97.0

@@ -65,11 +65,7 @@ func _enter_tree() -> void:
 
 
 	## TODO: Clean up when Popochiu configuration is moved to ProjectSettings (refs #26)
-	var editor_gui = get_editor_interface().get_base_control()
-	config.set_icons({
-		"collapsed": editor_gui.get_icon("GuiTreeArrowRight", "EditorIcons"),
-		"expanded": editor_gui.get_icon("GuiTreeArrowDown", "EditorIcons"),
-	})
+	config.ei = _editor_interface
 	config.initialize_project_settings()
 
 
@@ -79,6 +75,8 @@ func _enter_tree() -> void:
 		load('res://addons/Popochiu/Editor/Inspector/AsepriteImporterInspectorPlugin.gd').new()
 		]:
 		ip.ei = _editor_interface
+		ip.fs = _editor_file_system
+		ip.config = config
 		add_inspector_plugin(ip)
 
 

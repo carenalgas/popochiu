@@ -44,14 +44,13 @@ onready var _out_folder_field = $margin/VBoxContainer/options/out_folder/button
 onready var _out_filename_field = $margin/VBoxContainer/options/out_filename/LineEdit
 onready var _visible_layers_field =  $margin/VBoxContainer/options/visible_layers/CheckButton
 onready var _ex_pattern_field = $margin/VBoxContainer/options/ex_pattern/LineEdit
-onready var _cleanup_hide_unused_nodes =  $margin/VBoxContainer/options/auto_visible_track/CheckButton
 
 
 func _ready():
 	## TODO: this can be Popochiu config
-	if not has_node("AnimationPlayer"):
+	if not target_node.has_node("AnimationPlayer"):
 		printerr(result_code.get_error_message(result_code.ERR_NO_ANIMATION_PLAYER_FOUND))
-	_animation_player_path = $AnimationPlayer.get_path()
+	_animation_player_path = target_node.get_node("AnimationPlayer").get_path()
 
 	## TODO: this portion is loading the configuration for the SPECIFIC
 	##       node (say: a PopochiuCharacter, for example) so the aseprite
@@ -79,14 +78,12 @@ func _load_config(cfg):
 	_out_filename_field.text = cfg.get("o_name", "")
 	_visible_layers_field.pressed = cfg.get("only_visible", false)
 	_ex_pattern_field.text = cfg.get("o_ex_p", "")
-	_cleanup_hide_unused_nodes.pressed = cfg.get("set_vis_track", config.is_set_visible_track_automatically_enabled())
 
 	_set_options_visible(cfg.get("op_exp", false))
 
 
 func _load_default_config():
 	_ex_pattern_field.text = config.get_default_exclusion_pattern()
-	_cleanup_hide_unused_nodes.pressed = config.is_set_visible_track_automatically_enabled()
 	_set_options_visible(false)
 
 
@@ -158,7 +155,6 @@ func _on_import_pressed():
 		"exception_pattern": _ex_pattern_field.text,
 		"only_visible_layers": _visible_layers_field.pressed,
 		"output_filename": _out_filename_field.text,
-		"cleanup_hide_unused_nodes": _cleanup_hide_unused_nodes.pressed,
 		"layer": _layer ## TODO: Delete this?
 	}
 
@@ -179,11 +175,6 @@ func _save_config():
 		"only_visible": _visible_layers_field.pressed,
 		"o_ex_p": _ex_pattern_field.text,
 	}
-
-	## TODO: This is a very convoluted method to address a problem with HUGE spritemaps.
-	##       We can (and should) get rid of this, even if this has its value.
-	if _cleanup_hide_unused_nodes.pressed != config.is_set_visible_track_automatically_enabled():
-		cfg["set_vis_track"] = _cleanup_hide_unused_nodes.pressed
 
 	local_obj_config.save_config(target_node, cfg)
 

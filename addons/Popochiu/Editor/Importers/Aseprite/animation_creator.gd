@@ -1,3 +1,6 @@
+# This logic has been taken almost as-is from Vinicius Gerevini's
+# Aseprite Wizard plugin. Credits goes to him for the real magic.
+# See: https://godotengine.org/asset-library/asset/713
 extends Reference
 
 var result_code = preload("./config/result_codes.gd")
@@ -24,7 +27,12 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 	if not dir.dir_exists(options.output_folder):
 		return result_code.ERR_OUTPUT_FOLDER_NOT_FOUND
 
-	var result = _create_animations_from_file(target_node, player, options)
+	var target_sprite = _find_sprite_in_target(target_node)
+
+	if target_sprite == null:
+		return result_code.result_code.ERR_NO_SPRITE_FOUND
+
+	var result = _create_animations_from_file(target_sprite, player, options)
 	if result is GDScriptFunctionState:
 		result = yield(result, "completed")
 
@@ -32,7 +40,13 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 		printerr(result_code.get_error_message(result))
 
 
-func _create_animations_from_file(target_node: Node, player: AnimationPlayer, options: Dictionary):
+func _find_sprite_in_target(target_sprite: Node) -> Node:
+	if not target_sprite.has_node("Sprite"):
+		return null
+	return target_sprite.get_node("Sprite")
+
+
+func _create_animations_from_file(target_sprite: Node, player: AnimationPlayer, options: Dictionary):
 	var output
 
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
@@ -43,7 +57,7 @@ func _create_animations_from_file(target_node: Node, player: AnimationPlayer, op
 
 	yield(_scan_filesystem(), "completed")
 
-	var result = _import(target_node, player, output, options)
+	var result = _import(target_sprite, player, output, options)
 
 	if _config.should_remove_source_files():
 		var dir = Directory.new()
@@ -52,7 +66,7 @@ func _create_animations_from_file(target_node: Node, player: AnimationPlayer, op
 	return result
 
 
-func _import(target_node: Node, player: AnimationPlayer, data: Dictionary, options: Dictionary):
+func _import(target_sprite: Node, player: AnimationPlayer, data: Dictionary, options: Dictionary):
 	var source_file = data.data_file
 	var sprite_sheet = data.sprite_sheet
 
@@ -66,12 +80,12 @@ func _import(target_node: Node, player: AnimationPlayer, data: Dictionary, optio
 	if not _aseprite.is_valid_spritesheet(content):
 		return result_code.ERR_INVALID_ASEPRITE_SPRITESHEET
 
-	_setup_texture(target_node, sprite_sheet, content)
-	var result = _configure_animations(target_node, player, content)
+	_setup_texture(target_sprite, sprite_sheet, content)
+	var result = _configure_animations(target_sprite, player, content)
 	if result != result_code.SUCCESS:
 		return result
 
-	return _cleanup_animations(target_node, player, content, options)
+	return result_code.SUCCESS
 
 
 func _load_texture(sprite_sheet: String) -> Texture:
@@ -80,21 +94,21 @@ func _load_texture(sprite_sheet: String) -> Texture:
 	return texture
 
 
-func _configure_animations(target_node: Node, player: AnimationPlayer, content: Dictionary):
+func _configure_animations(target_sprite: Node, player: AnimationPlayer, content: Dictionary):
 	var frames = _aseprite.get_content_frames(content)
 	if content.meta.has("frameTags") and content.meta.frameTags.size() > 0:
 		var result = result_code.SUCCESS
 		for tag in content.meta.frameTags:
 			var selected_frames = frames.slice(tag.from, tag.to)
-			result = _add_animation_frames(target_node, player, tag.name, selected_frames, tag.direction)
+			result = _add_animation_frames(target_sprite, player, tag.name, selected_frames, tag.direction)
 			if result != result_code.SUCCESS:
 				break
 		return result
 	else:
-		return _add_animation_frames(target_node, player, "default", frames)
+		return _add_animation_frames(target_sprite, player, "default", frames)
 
 
-func _add_animation_frames(target_node: Node, player: AnimationPlayer, anim_name: String, frames: Array, direction = 'forward'):
+func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_name: String, frames: Array, direction = 'forward'):
 	var animation_name = anim_name
 	var is_loopable = _config.is_default_animation_loop_enabled()
 
@@ -105,12 +119,14 @@ func _add_animation_frames(target_node: Node, player: AnimationPlayer, anim_name
 	if not player.has_animation(animation_name): # TODO: This is not getting rid of old animations!
 		player.add_animation(animation_name, Animation.new())
 
-	## NOTA: qui crea le animazioni (animation tracks) vere e proprie nell'animation player
-	## è abbastanza convoluto e lo teniamo così com'è sulla fiducia, per ora.
+	# Here is where animations are created.
+	# TODO: we need to "fork" the logic so that Character has a single spritesheet
+	# containing all tags, while Rooms/Props and Inventory Items has a single spritesheet
+	# for each tag, so that you can have each prop with its own animation (PnC)
 	var animation = player.get_animation(animation_name)
-	_create_meta_tracks(target_node, player, animation)
-	var frame_track = _get_property_track_path(player, target_node, "frame")
-	var frame_track_index = _create_track(target_node, animation, frame_track)
+	_create_meta_tracks(target_sprite, player, animation)
+	var frame_track = _get_property_track_path(player, target_sprite, "frame")
+	var frame_track_index = _create_track(target_sprite, animation, frame_track)
 
 	if direction == 'reverse':
 		frames.invert()
@@ -118,9 +134,9 @@ func _add_animation_frames(target_node: Node, player: AnimationPlayer, anim_name
 	var animation_length = 0
 
 	for frame in frames:
-		var frame_key = _get_frame_key(target_node, frame)
+		var frame_key = _get_frame_key(target_sprite, frame)
 		animation.track_insert_key(frame_track_index, animation_length, frame_key)
-		animation_length += frame.duration / 1000 ## NOTA: animation_length è in secondi
+		animation_length += frame.duration / 1000 ## NOTE: animation_length is in seconds
 
 	if direction == 'pingpong':
 		frames.remove(frames.size() - 1)
@@ -129,7 +145,7 @@ func _add_animation_frames(target_node: Node, player: AnimationPlayer, anim_name
 		frames.invert()
 
 		for frame in frames:
-			var frame_key = _get_frame_key(target_node, frame)
+			var frame_key = _get_frame_key(target_sprite, frame)
 			animation.track_insert_key(frame_track_index, animation_length, frame_key)
 			animation_length += frame.duration / 1000
 
@@ -139,15 +155,15 @@ func _add_animation_frames(target_node: Node, player: AnimationPlayer, anim_name
 	return result_code.SUCCESS
 
 
-func _create_track(target_node: Node, animation: Animation, track: String):
+func _create_track(target_sprite: Node, animation: Animation, track: String):
 	var track_index = animation.find_track(track)
 
 	if track_index != -1:
 		animation.remove_track(track_index)
 
 	track_index = animation.add_track(Animation.TYPE_VALUE)
-	## NOTA: qui imposta la "etichetta" formato sprite_path:property_changed alla traccia
-	## in modo che poi la possa cercare in questo modo con _get_property_track_path (che è la funzione dopo)
+	## Here we set a label for the track in the sprite_path:property_changed format
+	## so that _get_property_track_path can rebuild it by naming convention
 	animation.track_set_path(track_index, track)
 	animation.track_set_interpolation_loop_wrap(track_index, false)
 	animation.value_track_set_update_mode(track_index, Animation.UPDATE_DISCRETE)
@@ -155,89 +171,9 @@ func _create_track(target_node: Node, animation: Animation, track: String):
 	return track_index
 
 
-func _get_property_track_path(player: AnimationPlayer, target_node: Node, prop: String) -> String:
-		var node_path = player.get_node(player.root_node).get_path_to(target_node)
+func _get_property_track_path(player: AnimationPlayer, target_sprite: Node, prop: String) -> String:
+		var node_path = player.get_node(player.root_node).get_path_to(target_sprite)
 		return "%s:%s" % [node_path, prop]
-
-## TODO: This is a very convoluted way of fixing the HUGE spritesheets Godot limitations.
-## We should get rid of this and reintroduce this logic only when we have a clear understanding
-## and possible alternative solutions.
-func _cleanup_animations(target_node: Node, player: AnimationPlayer, content: Dictionary, options: Dictionary):
-	if not (content.meta.has("frameTags") and content.meta.frameTags.size() > 0):
-		return result_code.SUCCESS
-
-	var tags = ["RESET"]
-	for t in content.meta.frameTags:
-		var a = t.name
-		if a.begins_with(_config.get_animation_loop_exception_prefix()):
-			a = a.substr(_config.get_animation_loop_exception_prefix().length())
-		tags.push_back(a)
-
-	if options.get("cleanup_hide_unused_nodes", false):
-		_hide_unused_nodes(target_node, player, content)	
-
-	return result_code.SUCCESS
-
-## TODO: See above
-func _hide_unused_nodes(target_node: Node, player: AnimationPlayer, content: Dictionary):
-	var root_node := player.get_node(player.root_node)
-	var all_animations := player.get_animation_list()
-	var all_sprite_nodes := []
-	var animation_sprites := {}
-
-	for a in all_animations:
-		var animation := player.get_animation(a)
-		var sprite_nodes := []
-
-		for track_idx in animation.get_track_count():
-			var raw_path := animation.track_get_path(track_idx)
-			## Se un'animazione per un determinato nodo ha già una traccia che
-			## ne governa la visibilità, non devo agire, altrimenti la sovrascrivo
-			## e potrebbe essere qualcosa che ha fatto un dev per cazzi suoi
-			if "visible" in raw_path as String:
-				continue
-
-			## Qui prendo solo il path del nodo rispetto alla root della scena
-			## escludendo dai : in avanti la proprietà della traccia, poi trovo il nodo vero e proprio
-			var path := _remove_properties_from_path(raw_path)
-			var sprite_node := root_node.get_node(path)
-
-			## Se questo nodo maledetto non è uno sprite o uno sprite3d, non faccio nulla
-			## (e se è una RectTexture?) -- forse questo è di troppo ma lasciamolo
-			if !(sprite_node is Sprite || sprite_node is Sprite3D):
-				continue
-
-			## Se ho già trovato questo sprite, non lo aggiungo in elenco (unique)
-			if sprite_nodes.has(sprite_node):
-				continue
-			## altrimenti aggiungo questo nodo che NON ha una traccia per la proprietà "visible"
-			## ed è uno sprite
-			sprite_nodes.append(sprite_node)
-
-		## per ogani animazione in una matrice salvo l'array dei nodi che non hanno una "visible"
-		animation_sprites[animation] = sprite_nodes
-		## poi creo un elenco di nodi che sono comparsi in almeno un'animazione e non hanno una track per "visible"
-		for sn in sprite_nodes:
-			if all_sprite_nodes.has(sn):
-				continue
-			all_sprite_nodes.append(sn)
-
-	## Ora ho un elenco di elenghi di sprite senza traccia "visible", separati per animazione
-	for animation in animation_sprites:
-		## per ogni animazione prendo tutti i nodi "senza visible track" nell'animazione
-		var sprite_nodes : Array = animation_sprites[animation]
-		## poi ciclando sull'elenco generale E UNICO dei nodi trovati nelle animazioni
-		for node in all_sprite_nodes:
-			## se questo sprite che compare ALMENO una volta viene trovato nell'animazione corrente
-			## non faccio nulla
-			if sprite_nodes.has(node):
-				continue
-			## altrimenti
-			var visible_track = _get_property_track_path(player, node, "visible")
-			if animation.find_track(visible_track) != -1:
-				continue
-			var visible_track_index = _create_track(node, animation, visible_track)
-			animation.track_insert_key(visible_track_index, 0, false)
 
 
 func _scan_filesystem():
@@ -258,8 +194,12 @@ func _remove_properties_from_path(path: NodePath) -> NodePath:
 	string_path.erase((string_path).length() - property_path.length() - 1, property_path.length() + 1)
 	return string_path as NodePath
 
-## TODO: Comment those method better, it's something Strictly related to AnimationPlayer + texture
-## TextureRect should be treated in a different way (recover logic from the original plugin if needed)
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SPRITE NODE LOGIC ░░░░
+# What follow is logic specifically gathered for Sprite elements. TextureRect should 
+# be treated in a different way (see texture_rect_animation_creator.gd file in
+# original Aseprite Wizard plugin by Vinicius Gerevini)
 
 func _setup_texture(sprite: Node, sprite_sheet: String, content: Dictionary):
 	var texture = _load_texture(sprite_sheet)

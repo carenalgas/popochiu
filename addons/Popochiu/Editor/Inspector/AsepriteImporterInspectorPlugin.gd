@@ -1,15 +1,13 @@
 tool
-extends EditorInspectorPlugin
+extends EditorInspectorPlugin ## TODO: create a base class with pointer variables
 
 const INSPECTOR_DOCK = preload("../Importers/Aseprite/docks/animation_player_inspector_dock.tscn")
 const CONFIG_SCRIPT = preload("../Importers/Aseprite/config/config.gd")
 
 var ei: EditorInterface
-var file_system: EditorFileSystem
+var fs: EditorFileSystem
+var config: Reference
 var _target_node: Node
-## TODO: this should be passed over by the general plugin 
-## BUT better to move this stuff with Popochiu default config
-var config := CONFIG_SCRIPT.new()
 
 
 func can_handle(object):
@@ -24,5 +22,5 @@ func parse_end():
 	var dock = INSPECTOR_DOCK.instance()
 	dock.target_node = _target_node
 	dock.config = config
-	dock.file_system = file_system
+	dock.file_system = fs
 	add_custom_control(dock)
