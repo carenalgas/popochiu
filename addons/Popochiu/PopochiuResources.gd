@@ -173,7 +173,7 @@ const TEST_WIDTH := 'display/window/size/test_width'
 const TEST_HEIGHT := 'display/window/size/test_height'
 const STRETCH_MODE := 'display/window/stretch/mode'
 const STRETCH_ASPECT := 'display/window/stretch/aspect'
-const IMPORTER_TEXTURE := 'importer_defaults/texture'
+const IMPORTER_TEXTURE := 'popochiu/import/general_import_settings/texture'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

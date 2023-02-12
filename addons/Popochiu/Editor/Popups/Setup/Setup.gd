@@ -114,12 +114,12 @@ func _update_project_settings() -> void:
 
 		if _game_type.selected == 1:
 			ProjectSettings.set_setting(
-				'importer_defaults/texture',
+				PopochiuResources.IMPORTER_TEXTURE, ## TODO: move everything in settings (refs #26)
 				null
 			)
 		else:
 			ProjectSettings.set_setting(
-				'importer_defaults/texture',
+				PopochiuResources.IMPORTER_TEXTURE,
 				ImporterDefaults.PIXEL_TEXTURES
 			)
 	else:
