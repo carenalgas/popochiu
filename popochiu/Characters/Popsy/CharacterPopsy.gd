@@ -50,7 +50,7 @@ func on_item_used(_item: PopochiuInventoryItem) -> void:
 
 # Use it to play the idle animation for the character
 func play_idle() -> void:
-	pass
+	.play_idle()
 
 
 # Use it to play the walk animation for the character
@@ -61,9 +61,9 @@ func play_walk() -> void:
 
 # Use it to play the talk animation for the character
 func play_talk() -> void:
-	pass
+	.play_talk()
 
 
 # Use it to play the grab animation for the character
 func play_grab() -> void:
-	pass
+	.play_grab()

@@ -384,13 +384,44 @@ func run_animation(animation_label: String, animation_fallback := 'idle'):
 	yield( _animate(animation_label, animation_fallback, true), 'completed')
 
 
+# Pauses the current character animation.
+# Use this if you need, for example, make a character
+# pay attention to an action the player is performing.
+func pause_animation(is_in_queue := true):
+	if is_in_queue: yield()
+
+	if not has_node("AnimationPlayer"):
+		printerr("Expected AnimationPlayer not fount in character ", script_name)
+		return
+
+	if not $AnimationPlayer.is_playing():
+		return
+
+	$AnimationPlayer.stop(false);
+
+	if is_in_queue:
+		yield(get_tree(), "idle_frame")
+
+# Resumes the current character animation.
+# Use this if you had paused an animation with pause_animation.
+func resume_animation(is_in_queue := true):
+	if is_in_queue: yield()
+
+	if not has_node("AnimationPlayer"):
+		printerr("Expected AnimationPlayer not fount in character ", script_name)
+		return
+	
+	$AnimationPlayer.play();
+
+	if is_in_queue:
+		yield(get_tree(), "idle_frame")
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func play_idle() -> void:
 	play_animation(animation_idle_name);
 
 
 func play_walk() -> void:
-	# Set the default parameters for play_animation()
 	play_animation(animation_walk_name);
 
 

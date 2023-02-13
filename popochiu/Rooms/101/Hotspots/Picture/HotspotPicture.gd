@@ -12,8 +12,10 @@ func on_interact() -> void:
 		C.walk_to_clicked(),
 		C.face_clicked(),
 		"Player: I don't want to touch it.",
-		"Player: Last time I did so it fell on my feet."
+		"Player: Last time I did so it fell on my feet.",
+		C.Popsy.say("Exactly..."),
 	])
+
 
 
 # When the node is right clicked
@@ -22,9 +24,11 @@ func on_look() -> void:
 		C.walk_to_clicked(),
 		C.face_clicked(),
 		C.Goddiu.run_animation('jump'),
+		C.Popsy.pause_animation(),
 		"Player: Ah!! This pictures always scares me...",
 		C.Goddiu.face_left(),
-		"Player: It reminds me how much I paid for it"
+		"Player: It reminds me how much I paid for it",
+		C.Popsy.resume_animation(),
 	])
 
 
