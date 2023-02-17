@@ -183,6 +183,8 @@ func fill_data() -> void:
 				
 				if not has_state_script:
 					row.show_create_state_script()
+				else:
+					row.remove_create_state_script()
 	
 	# Load other tabs data
 	_tab_audio.fill_data()

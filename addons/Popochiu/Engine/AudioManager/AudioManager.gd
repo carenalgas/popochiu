@@ -39,8 +39,9 @@ func _ready() -> void:
 # If wait_to_end is not null, that means the call is comming from a play
 # inside a E.run([])
 # In this method the calls to play and play_no_block converge.
-func play_sound_cue(\
-cue_name := '', position_2d := Vector2.ZERO, wait_to_end = null) -> Node:
+func play_sound_cue(
+	cue_name := '', position_2d := Vector2.ZERO, wait_to_end = null
+) -> Node:
 	var stream_player: Node = null
 	
 	if _all_in_one.has(cue_name.to_lower()):
@@ -64,8 +65,9 @@ cue_name := '', position_2d := Vector2.ZERO, wait_to_end = null) -> Node:
 
 # Looks for an AudioCue in the list of music cues and plays it.
 # In this method the calls to play_music and play_music_no_block converge.
-func play_music_cue(\
-cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
+func play_music_cue(
+	cue_name: String, fade_duration := 0.0, music_position := 0.0
+) -> Node:
 	var stream_player: Node = null
 	
 	if _active.has(cue_name):

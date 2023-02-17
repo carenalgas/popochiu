@@ -98,11 +98,12 @@ func _enter_tree() -> void:
 	
 	main_dock.scene_changed(_editor_interface.get_edited_scene_root())
 	main_dock.setup_dialog.es = _editor_interface.get_editor_settings()
+	main_dock.setup_dialog.connect('move_requested', self, '_move_to_project')
 	
 	if PopochiuResources.get_section('setup').empty():
 		main_dock.setup_dialog.appear(true)
 		(main_dock.setup_dialog as AcceptDialog).connect(
-			'popup_hide', self, '_move_addon_folders'
+			'popup_hide', self, '_set_setup_done'
 		)
 	
 	PopochiuResources.update_autoloads(true)
@@ -145,26 +146,6 @@ func enable_plugin() -> void:
 		'Proyecto > Volver a Cargar el Proyecto Actual\n\n' + \
 		'[en] Restart Godot to complete the instalation:\n' +\
 		'Project > Reload Current Project'
-#		var rtl := RichTextLabel.new()
-		
-#		rtl.rect_min_size = Vector2(640.0, 128.0)
-#		rtl.margin_left = 0.0
-#		rtl.margin_top = 0.0
-#		rtl.margin_right = 0.0
-#		rtl.margin_bottom = 0.0
-#		rtl.bbcode_enabled = true
-#		rtl.fit_content_height = true
-#		rtl.add_stylebox_override('normal', rtl.get_stylebox("Content", "EditorStyles"))
-#		rtl.append_bbcode(\
-#		'[es] Reinicia el motor para completar la instalación ([b]Proyecto > Volver a Cargar el Proyecto Actual[/b]).\n' + \
-#		'[en] Restart Godot to complete the instalation ([b]Project > Reload Current Project[/b]).'
-#		)
-#
-#		ad.add_child(rtl)
-#		prints('>>>', rtl.get_font('main', 'EditorFonts'))
-#		rtl.add_font_override('normal_font', rtl.get_font('main', 'EditorFonts'))
-#		rtl.add_font_override('bold_font', rtl.get_font("doc_source", 'EditorFonts'))
-#		ad.set_as_minsize()
 		
 		_editor_interface.get_base_control().add_child(ad)
 		ad.popup_centered()
@@ -226,32 +207,8 @@ func _remove_input_actions() -> void:
 	assert(result == OK, '[Popochiu] Failed to save project settings.')
 
 
-func _move_addon_folders() -> void:
-	# Move files and folders so developer can overwrite them
-#	_directory.rename(
-#		PopochiuResources.GRAPHIC_INTERFACE_ADDON.get_base_dir(),
-#		PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
-#	)
-#	_directory.rename(
-#		PopochiuResources.TRANSITION_LAYER_ADDON.get_base_dir(),
-#		PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
-#	)
-	
-	# Refresh FileSystem
-#	_editor_file_system.scan()
-
-	# Fix dependencies
-#	yield(_editor_file_system, 'filesystem_changed')
-#	yield(_check_popochiu_dependencies(), 'completed')
-	
-	# Save settings
-#	var settings := PopochiuResources.get_settings()
-#	settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
-#	settings.transition_layer = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU)
-#
-#	PopochiuResources.save_settings(settings)
-	
-	# Mark setup as done in PopochiuData.cfg
+# Marks setup as done in PopochiuData.cfg
+func _set_setup_done() -> void:
 	PopochiuResources.set_data_value('setup', 'done', true)
 
 
@@ -432,3 +389,38 @@ func _select_baseline() -> void:
 		_editor_interface.edit_node(_selected_node.get_node('BaselineHelper'))
 	else:
 		_editor_interface.edit_node(_selected_node.get_node('../BaselineHelper'))
+
+
+func _move_to_project(id: int) -> void:
+	# Move files and folders so developer can overwrite them
+	if id == PopochiuResources.GI:
+		_directory.rename(
+			PopochiuResources.GRAPHIC_INTERFACE_ADDON.get_base_dir(),
+			PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+		)
+	elif id == PopochiuResources.TL:
+		_directory.rename(
+			PopochiuResources.TRANSITION_LAYER_ADDON.get_base_dir(),
+			PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+		)
+	
+	# Refresh FileSystem
+	_editor_file_system.scan()
+
+	# Fix dependencies
+	yield(_editor_file_system, 'filesystem_changed')
+	yield(_check_popochiu_dependencies(), 'completed')
+	
+	# Save settings
+	var settings := PopochiuResources.get_settings()
+	
+	if id == PopochiuResources.GI:
+		settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
+		PopochiuResources.set_data_value('setup', 'gi_moved', true)
+	elif id == PopochiuResources.TL:
+		settings.transition_layer = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU)
+		PopochiuResources.set_data_value('setup', 'tl_moved', true)
+	
+	PopochiuResources.save_settings(settings)
+	
+	main_dock.setup_dialog.update_state()

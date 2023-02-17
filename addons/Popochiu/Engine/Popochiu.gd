@@ -391,8 +391,9 @@ func camera_offset(offset := Vector2.ZERO, is_in_queue := true) -> void:
 
 
 # Makes the camera shake with strength for duration seconds
-func camera_shake(\
-strength := 1.0, duration := 1.0, is_in_queue := true) -> void:
+func camera_shake(
+	strength := 1.0, duration := 1.0, is_in_queue := true
+) -> void:
 	if is_in_queue: yield()
 	
 	_camera_shake_amount = strength
@@ -404,8 +405,9 @@ strength := 1.0, duration := 1.0, is_in_queue := true) -> void:
 
 # Makes the camera shake with strength for duration seconds without blocking
 # excecution
-func camera_shake_no_block(\
-strength := 1.0, duration := 1.0, is_in_queue := true) -> void:
+func camera_shake_no_block(
+	strength := 1.0, duration := 1.0, is_in_queue := true
+) -> void:
 	if is_in_queue: yield()
 	
 	_camera_shake_amount = strength
@@ -418,8 +420,9 @@ strength := 1.0, duration := 1.0, is_in_queue := true) -> void:
 # Changes the camera zoom. If target is larger than Vector2(1, 1) the camera
 # will zoom out, smaller values make it zoom in. The effect will last duration
 # seconds
-func camera_zoom(\
-target := Vector2.ONE, duration := 1.0, is_in_queue := true) -> void:
+func camera_zoom(
+	target := Vector2.ONE, duration := 1.0, is_in_queue := true
+) -> void:
 	if is_in_queue: yield()
 	
 	$Tween.interpolate_property(

@@ -26,7 +26,6 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [node name="Setup" type="AcceptDialog"]
-visible = true
 margin_right = 320.0
 margin_bottom = 178.0
 window_title = "Popochiu setup"
@@ -239,11 +238,58 @@ text = "Pixel"
 items = [ "Default", null, false, 0, null, "2D", null, false, 1, null, "Pixel", null, false, 2, null ]
 selected = 2
 
+[node name="Advanced" type="HBoxContainer" parent="VBoxContainer"]
+visible = false
+margin_top = 243.0
+margin_right = 304.0
+margin_bottom = 275.0
+rect_min_size = Vector2( 0, 32 )
+
+[node name="LeftSeparator" type="HSeparator" parent="VBoxContainer/Advanced"]
+margin_right = 117.0
+margin_bottom = 32.0
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="VBoxContainer/Advanced"]
+margin_left = 121.0
+margin_top = 9.0
+margin_right = 183.0
+margin_bottom = 23.0
+text = "Advanced"
+
+[node name="RightSeparator" type="HSeparator" parent="VBoxContainer/Advanced"]
+margin_left = 187.0
+margin_right = 304.0
+margin_bottom = 32.0
+size_flags_horizontal = 3
+
+[node name="BtnMoveGI" type="Button" parent="VBoxContainer"]
+visible = false
+margin_left = 71.0
+margin_top = 279.0
+margin_right = 232.0
+margin_bottom = 311.0
+rect_min_size = Vector2( 0, 32 )
+hint_tooltip = "Move res://addons/Popochiu/Engine/Objects/GraphicInterface/ to res://popochiu/GraphicInterface/ so you can modify the default GUI."
+size_flags_horizontal = 4
+text = "Move Graphic Interface"
+
+[node name="BtnMoveTL" type="Button" parent="VBoxContainer"]
+visible = false
+margin_left = 71.0
+margin_top = 279.0
+margin_right = 232.0
+margin_bottom = 311.0
+rect_min_size = Vector2( 0, 32 )
+hint_tooltip = "Move res://addons/Popochiu/Engine/Objects/GraphicInterface/ to res://popochiu/GraphicInterface/ so you can modify the default GUI."
+size_flags_horizontal = 4
+text = "Move Transition Layer"
+
 [node name="BtnUpdateFiles" type="Button" parent="VBoxContainer"]
 visible = false
-margin_top = 192.0
+margin_top = 243.0
 margin_right = 304.0
-margin_bottom = 224.0
+margin_bottom = 275.0
 rect_min_size = Vector2( 0, 32 )
 hint_tooltip = "Browse the file system for .import files of images, and update them to match the current Game type selection.
 

@@ -44,8 +44,9 @@ func player_say_no_block(dialog: String, call_done := true) -> void:
 
 
 # Makes a character (script_name) walk to a position in the current room.
-func character_walk_to(\
-chr_name: String, position: Vector2, is_in_queue := true) -> void:
+func character_walk_to(
+	chr_name: String, position: Vector2, is_in_queue := true
+) -> void:
 	if is_in_queue: yield()
 	
 	var walking_character: PopochiuCharacter = get_character(chr_name)
@@ -131,8 +132,9 @@ func change_camera_owner(c: PopochiuCharacter, is_in_queue := true) -> void:
 	yield(get_tree(), 'idle_frame')
 
 
-func set_character_emotion(\
-chr_name: String, emotion: String, is_in_queue := true) -> void:
+func set_character_emotion(
+	chr_name: String, emotion: String, is_in_queue := true
+) -> void:
 	if is_in_queue: yield()
 	
 	if get_character(chr_name):
