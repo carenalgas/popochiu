@@ -77,8 +77,18 @@ func _ready() -> void:
 		_label.text = audio_cue.resource_name
 		name = audio_cue.resource_name
 		
-		for idx in range(4):
-			_menu_popup.set_item_disabled(idx, true)
+		_menu_popup.remove_item(
+			_menu_popup.get_item_index(MenuOptions.ADD_TO_MUSIC)
+		)
+		_menu_popup.remove_item(
+			_menu_popup.get_item_index(MenuOptions.ADD_TO_SFX)
+		)
+		_menu_popup.remove_item(
+			_menu_popup.get_item_index(MenuOptions.ADD_TO_VOICE)
+		)
+		_menu_popup.remove_item(
+			_menu_popup.get_item_index(MenuOptions.ADD_TO_UI)
+		)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
