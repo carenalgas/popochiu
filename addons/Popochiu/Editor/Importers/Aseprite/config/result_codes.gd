@@ -11,7 +11,11 @@ const ERR_NO_VALID_LAYERS_FOUND = 6
 const ERR_INVALID_ASEPRITE_SPRITESHEET = 7
 const ERR_NO_ANIMATION_PLAYER_FOUND = 8
 const ERR_NO_SPRITE_FOUND = 9
+const ERR_UNNAMED_TAG_DETECTED = 10
+const ERR_TAGS_OPTIONS_ARRAY_EMPTY = 11
 
+## TODO: these messages are a bit dull, having params would be better.
+## Maybe add a param argument
 
 static func get_error_message(code: int):
 	match code:
@@ -31,5 +35,9 @@ static func get_error_message(code: int):
 			return "no animation player found in target node"
 		ERR_NO_SPRITE_FOUND:
 			return "no sprite found in target node"
+		ERR_UNNAMED_TAG_DETECTED:
+			return "unnamed tag detected"
+		ERR_TAGS_OPTIONS_ARRAY_EMPTY:
+			return "tags options array is empty"
 		_:
 			return "import failed with code %d" % code

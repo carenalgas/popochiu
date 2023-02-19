@@ -89,6 +89,7 @@ func _add_ignore_layer_arguments(file_name: String, arguments: Array, exception_
 			arguments.push_front(l)
 			arguments.push_front('--ignore-layer')
 
+
 func _add_sheet_type_arguments(arguments: Array, options : Dictionary):
 	var column_count : int = options.get("column_count", 0)
 	if column_count > 0:
@@ -127,6 +128,25 @@ func list_layers(file_name: String, only_visible = false) -> Array:
 		printerr(output)
 		return []
 
+	return _sanitize_list_output(output)
+
+
+
+func list_tags(file_name: String) -> Array:
+	var output = []
+	var arguments = ["-b", "--list-tags", file_name]
+
+	var exit_code = _execute(arguments, output)
+
+	if exit_code != 0:
+		printerr('aseprite: failed listing tags')
+		printerr(output)
+		return []
+
+	return _sanitize_list_output(output)
+
+
+func _sanitize_list_output(output) -> Array:
 	if output.empty():
 		return output
 	

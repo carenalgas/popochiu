@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/Popochiu/Editor/Importers/Aseprite/docks/animation_tag_row.gd" type="Script" id=1]
+
+[node name="AnimationTagRow" type="HBoxContainer"]
+margin_right = 320.0
+margin_bottom = 40.0
+script = ExtResource( 1 )
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 91.0
+margin_bottom = 40.0
+
+[node name="Import" type="CheckBox" parent="HBoxContainer"]
+margin_right = 24.0
+margin_bottom = 40.0
+hint_tooltip = "Import this animation"
+pressed = true
+
+[node name="TagName" type="Label" parent="HBoxContainer"]
+margin_left = 28.0
+margin_top = 13.0
+margin_right = 91.0
+margin_bottom = 27.0
+text = "Tag Name"
+
+[node name="Panel" type="Panel" parent="."]
+margin_left = 95.0
+margin_right = 320.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+
+[node name="Loops" type="CheckButton" parent="Panel"]
+margin_right = 118.0
+margin_bottom = 40.0
+rect_pivot_offset = Vector2( -320, -64 )
+text = "Loops"
+
+[connection signal="toggled" from="HBoxContainer/Import" to="." method="_on_import_toggled"]
+[connection signal="toggled" from="Panel/Loops" to="." method="_on_loops_toggled"]

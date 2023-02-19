@@ -7,11 +7,8 @@ extends Reference
 const _ASEPRITE_COMMAND_KEY = 'popochiu/import/aseprite/command_path'
 
 # animation import defaults
-const _DEFAULT_EXCLUSION_PATTERN_KEY = 'popochiu/import/aseprite/layers_exclusion_pattern'
-const _DEFAULT_LOOP_EX_PREFIX = '_'
-## TODO: change the logic of this option: nail a behavior and exclude with a prefix
-const _LOOP_ENABLED = 'popochiu/import/aseprite/loop_enabled'
-const _LOOP_EXCEPTION_PREFIX = 'popochiu/import/aseprite/loop_exception_prefix'
+const _DEFAULT_IMPORT_ENABLED = 'popochiu/import/aseprite/import_animation_by_default'
+const _DEFAULT_LOOP_ENABLED = 'popochiu/import/aseprite/loop_animation_by_default'
 const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
 
 # INTERFACE SETTINGS
@@ -33,18 +30,11 @@ func get_command() -> String:
 func should_remove_source_files() -> bool:
 	return _get_project_setting(_REMOVE_SOURCE_FILES_KEY, true)
 
+func is_default_animation_import_enabled() -> bool:
+	return _get_project_setting(_DEFAULT_IMPORT_ENABLED, true)
 
 func is_default_animation_loop_enabled() -> bool:
-	return _get_project_setting(_LOOP_ENABLED, true)
-
-
-func get_animation_loop_exception_prefix() -> String:
-	return _get_project_setting(_LOOP_EXCEPTION_PREFIX, _DEFAULT_LOOP_EX_PREFIX)
-	
-
-func get_default_exclusion_pattern() -> String:
-	return _get_project_setting(_DEFAULT_EXCLUSION_PATTERN_KEY, "")
-
+	return _get_project_setting(_DEFAULT_LOOP_ENABLED, true)
 
 
 #######################################################
@@ -67,9 +57,8 @@ func get_icon(icon_name: String) -> Texture:
 ######################################################
 func initialize_project_settings():
 	_initialize_project_cfg(_ASEPRITE_COMMAND_KEY, default_command(), TYPE_STRING)
-	_initialize_project_cfg(_DEFAULT_EXCLUSION_PATTERN_KEY, "", TYPE_STRING)
-	_initialize_project_cfg(_LOOP_ENABLED, true, TYPE_BOOL)
-	_initialize_project_cfg(_LOOP_EXCEPTION_PREFIX, _DEFAULT_LOOP_EX_PREFIX, TYPE_STRING)
+	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_REMOVE_SOURCE_FILES_KEY, true, TYPE_BOOL)
 
 	_set_icons()
@@ -79,9 +68,8 @@ func initialize_project_settings():
 
 func clear_project_settings():
 	var _all_settings = [
-		_DEFAULT_EXCLUSION_PATTERN_KEY,
-		_LOOP_ENABLED,
-		_LOOP_EXCEPTION_PREFIX,
+		_DEFAULT_IMPORT_ENABLED,
+		_DEFAULT_LOOP_ENABLED,
 		_REMOVE_SOURCE_FILES_KEY,
 	]
 	for key in _all_settings:
@@ -103,4 +91,4 @@ func _initialize_project_cfg(key: String, default_value, type: int, hint: int = 
 
 func _get_project_setting(key: String, default_value):
 	var p = ProjectSettings.get(key)
-	return p if p else default_value
+	return p if p != null else default_value

@@ -9,6 +9,9 @@ var _aseprite = preload("./aseprite_controller.gd").new()
 var _config
 var _file_system
 
+var _tags_options_lookup = {}
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 
 func init(config, editor_file_system: EditorFileSystem = null):
 	_config = config
@@ -30,7 +33,12 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 	var target_sprite = _find_sprite_in_target(target_node)
 
 	if target_sprite == null:
-		return result_code.result_code.ERR_NO_SPRITE_FOUND
+		return result_code.ERR_NO_SPRITE_FOUND
+	
+	if typeof(options.get("tags")) != TYPE_ARRAY:
+		return result_code.ERR_TAGS_OPTIONS_ARRAY_EMPTY
+		
+	_load_tags_options_lookup(options.get("tags"))
 
 	var result = _create_animations_from_file(target_sprite, player, options)
 	if result is GDScriptFunctionState:
@@ -38,6 +46,21 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 
 	if result != result_code.SUCCESS:
 		printerr(result_code.get_error_message(result))
+
+
+## TODO: Keep this as reference to populate a checkable list of layers
+func list_layers(file: String, only_visibles = false) -> Array:
+	return _aseprite.list_layers(file, only_visibles)
+
+
+func list_tags(file: String) -> Array:
+	return _aseprite.list_tags(file)
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func _load_tags_options_lookup(tags: Array = []):
+	for t in tags:
+		_tags_options_lookup[t.tag_name] = t
 
 
 func _find_sprite_in_target(target_sprite: Node) -> Node:
@@ -76,7 +99,7 @@ func _import(target_sprite: Node, player: AnimationPlayer, data: Dictionary, opt
 		return err
 
 	var content = parse_json(file.get_as_text())
-
+	
 	if not _aseprite.is_valid_spritesheet(content):
 		return result_code.ERR_INVALID_ASEPRITE_SPRITESHEET
 
@@ -99,8 +122,11 @@ func _configure_animations(target_sprite: Node, player: AnimationPlayer, content
 	if content.meta.has("frameTags") and content.meta.frameTags.size() > 0:
 		var result = result_code.SUCCESS
 		for tag in content.meta.frameTags:
+			if not _tags_options_lookup.get(tag.name).get("import"):
+				continue
 			var selected_frames = frames.slice(tag.from, tag.to)
 			result = _add_animation_frames(target_sprite, player, tag.name, selected_frames, tag.direction)
+			result = result_code.SUCCESS
 			if result != result_code.SUCCESS:
 				break
 		return result
@@ -110,13 +136,10 @@ func _configure_animations(target_sprite: Node, player: AnimationPlayer, content
 
 func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_name: String, frames: Array, direction = 'forward'):
 	var animation_name = anim_name
-	var is_loopable = _config.is_default_animation_loop_enabled()
+	var is_loopable = _tags_options_lookup.get(anim_name).get("loops")
 
-	if animation_name.begins_with(_config.get_animation_loop_exception_prefix()):
-		animation_name = anim_name.substr(_config.get_animation_loop_exception_prefix().length())
-		is_loopable = not is_loopable
-
-	if not player.has_animation(animation_name): # TODO: This is not getting rid of old animations!
+	# TODO: This is not getting rid of old animations! We can add an option for that
+	if not player.has_animation(animation_name):
 		player.add_animation(animation_name, Animation.new())
 
 	# Here is where animations are created.
@@ -181,10 +204,6 @@ func _scan_filesystem():
 	yield(_file_system, "filesystem_changed")
 
 
-func list_layers(file: String, only_visibles = false) -> Array:
-	return _aseprite.list_layers(file, only_visibles)
-
-
 func _remove_properties_from_path(path: NodePath) -> NodePath:
 	var string_path := path as String
 	if !(":" in string_path):
@@ -210,6 +229,7 @@ func _setup_texture(sprite: Node, sprite_sheet: String, content: Dictionary):
 
 	sprite.hframes = content.meta.size.w / content.frames[0].sourceSize.w
 	sprite.vframes = content.meta.size.h / content.frames[0].sourceSize.h
+
 
 func _create_meta_tracks(sprite: Node, player: AnimationPlayer, animation: Animation):
 	var texture_track = _get_property_track_path(player, sprite, "texture")

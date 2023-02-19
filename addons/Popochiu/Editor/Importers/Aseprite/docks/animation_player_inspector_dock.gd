@@ -1,23 +1,14 @@
 tool
 extends PanelContainer
 
-## TODO: Understand where to put this, prolly into
-##       a section of Popochiu Config
-
-## AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA - Siamo a questo punto, manca da spostare
-## la configurazione. Metterla dentro ai PopochiuSettings per il momento.
-
-#const wizard_config = preload("../../config/wizard_config.gd")
-
-## Come carico la configurazione dalle risorse di popochiu?
-
-
 const result_code = preload("../config/result_codes.gd")
 
 const AnimationCreator = preload("../animation_creator.gd")
+const AnimationTagRow = preload("./animation_tag_row.gd")
 const local_obj_config = preload("../config/local_obj_config.gd")
 
 var animation_creator: AnimationCreator
+var _animation_tag_row_scene: PackedScene = preload('./animation_tag_row.tscn')
 
 var scene: Node
 var target_node: Node
@@ -25,8 +16,8 @@ var target_node: Node
 var config
 var file_system: EditorFileSystem
 
-var _layer: String = ""
 var _source: String = ""
+var _tags_cache: Array = []
 var _animation_player_path: String
 var _file_dialog_aseprite: FileDialog
 var _output_folder_dialog: FileDialog
@@ -34,56 +25,65 @@ var _importing := false
 
 var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
-var _layer_default := "[all]"
 
+# Source info fields
 onready var _source_field = $margin/VBoxContainer/source/button
-onready var _layer_field = $margin/VBoxContainer/layer/options
+onready var _rescan_source_button = $margin/VBoxContainer/source/rescan
+onready var _tags_ui_container = $margin/VBoxContainer/tags
+# Importer options fields
 onready var _options_title = $margin/VBoxContainer/options_title/options_title
 onready var _options_container = $margin/VBoxContainer/options
 onready var _out_folder_field = $margin/VBoxContainer/options/out_folder/button
 onready var _out_filename_field = $margin/VBoxContainer/options/out_filename/LineEdit
 onready var _visible_layers_field =  $margin/VBoxContainer/options/visible_layers/CheckButton
-onready var _ex_pattern_field = $margin/VBoxContainer/options/ex_pattern/LineEdit
 
 
 func _ready():
-	## TODO: this can be Popochiu config
 	if not target_node.has_node("AnimationPlayer"):
 		printerr(result_code.get_error_message(result_code.ERR_NO_ANIMATION_PLAYER_FOUND))
 	_animation_player_path = target_node.get_node("AnimationPlayer").get_path()
 
-	## TODO: this portion is loading the configuration for the SPECIFIC
-	##       node (say: a PopochiuCharacter, for example) so the aseprite
-	##       source path, specific preferences, etc.
+	# Instantiate animation creator
+	animation_creator = AnimationCreator.new()
+	animation_creator.init(config, file_system)
 
+	# Load inspector dock configuration from node
 	var cfg = local_obj_config.load_config(target_node)
 	if cfg == null:
 		_load_default_config()
 	else:
 		_load_config(cfg)
-
-	animation_creator = AnimationCreator.new()
-	animation_creator.init(config, file_system)
-
+	
 
 func _load_config(cfg):
 	if cfg.has("source"):
 		_set_source(cfg.source)
 
-	if cfg.get("layer", "") != "":
-		_set_layer(cfg.layer)
-
 	_output_folder = cfg.get("o_folder", "")
 	_out_folder_field.text = _output_folder if _output_folder != "" else _out_folder_default
 	_out_filename_field.text = cfg.get("o_name", "")
 	_visible_layers_field.pressed = cfg.get("only_visible", false)
-	_ex_pattern_field.text = cfg.get("o_ex_p", "")
 
 	_set_options_visible(cfg.get("op_exp", false))
+	_populate_tags(cfg.get("tags", []))
+
+
+func _save_config():
+	_update_tags_cache()
+	var cfg := {
+		"player": _animation_player_path,
+		"source": _source,
+		"tags": _tags_cache,
+		"op_exp": _options_title.pressed,
+		"o_folder": _output_folder,
+		"o_name": _out_filename_field.text,
+		"only_visible": _visible_layers_field.pressed,
+	}
+
+	local_obj_config.save_config(target_node, cfg)
 
 
 func _load_default_config():
-	_ex_pattern_field.text = config.get_default_exclusion_pattern()
 	_set_options_visible(false)
 
 
@@ -93,43 +93,20 @@ func _set_source(source):
 	_source_field.hint_tooltip = _source
 
 
-func _set_layer(layer):
-	_layer = layer
-	_layer_field.add_item(_layer)
-
-## TODO: This single-layer selection is a bit meh... it should
-##       be a list of checkboxes. Evaluate to delete this and
-##       reintroduce it in a second pass.
-func _on_layer_pressed():
-	if _source == "":
-		_show_message("Please. Select source file first.")
-		return
-
-	var layers = animation_creator.list_layers(ProjectSettings.globalize_path(_source))
-	var current = 0
-	_layer_field.clear()
-	_layer_field.add_item("[all]")
-
-	for l in layers:
-		if l == "":
-			continue
-
-		_layer_field.add_item(l)
-		if l == _layer:
-			current = _layer_field.get_item_count() - 1
-	_layer_field.select(current)
-
-## TODO See above
-func _on_layer_item_selected(index):
-	if index == 0:
-		_layer = ""
-		return
-	_layer = _layer_field.get_item_text(index)
-	_save_config()
-
-
 func _on_source_pressed():
 	_open_source_dialog()
+
+
+func _on_aseprite_file_selected(path):
+	_set_source(ProjectSettings.localize_path(path))
+	_populate_tags(_get_tags_from_source())
+	_save_config()
+	_file_dialog_aseprite.queue_free()
+
+
+func _on_rescan_pressed():
+	_populate_tags(_get_tags_from_source())
+	_save_config()
 
 
 func _on_import_pressed():
@@ -151,32 +128,16 @@ func _on_import_pressed():
 
 	var options = {
 		"source": ProjectSettings.globalize_path(_source),
+		"tags": _tags_cache,
 		"output_folder": _output_folder if _output_folder != "" else root.filename.get_base_dir(),
-		"exception_pattern": _ex_pattern_field.text,
-		"only_visible_layers": _visible_layers_field.pressed,
 		"output_filename": _out_filename_field.text,
-		"layer": _layer ## TODO: Delete this?
+		"only_visible_layers": _visible_layers_field.pressed,
 	}
 
 	_save_config()
 
 	animation_creator.create_animations(target_node, root.get_node(_animation_player_path), options)
 	_importing = false
-
-
-func _save_config():
-	var cfg := {
-		"player": _animation_player_path,
-		"source": _source,
-		"layer": _layer,
-		"op_exp": _options_title.pressed,
-		"o_folder": _output_folder,
-		"o_name": _out_filename_field.text,
-		"only_visible": _visible_layers_field.pressed,
-		"o_ex_p": _ex_pattern_field.text,
-	}
-
-	local_obj_config.save_config(target_node, cfg)
 
 
 func _open_source_dialog():
@@ -196,10 +157,49 @@ func _create_aseprite_file_selection():
 	return file_dialog
 
 
-func _on_aseprite_file_selected(path):
-	_set_source(ProjectSettings.localize_path(path))
-	_save_config()
-	_file_dialog_aseprite.queue_free()
+func _populate_tags(tags: Array):
+	# Clean the list empty
+	for tl in _tags_ui_container.get_children():
+		_tags_ui_container.remove_child(tl)
+		tl.queue_free()
+	
+	# Add each tag found
+	for t in tags:
+		if t.tag_name == "":
+			continue
+		
+		var tag_row: AnimationTagRow = _animation_tag_row_scene.instance()
+		_tags_ui_container.add_child(tag_row)
+		tag_row.init(config, t)
+		tag_row.connect("tag_state_changed", self, "_save_config")
+		
+	_update_tags_cache()
+
+
+func _update_tags_cache():
+	_tags_cache = _get_tags_from_ui()
+
+
+func _get_tags_from_ui() -> Array:
+	var tags_list = []
+	for tag_row in _tags_ui_container.get_children():
+		var tag_row_cfg = tag_row.get_cfg()
+		if tag_row_cfg.tag_name == "":
+			continue
+		tags_list.push_back(tag_row_cfg)
+	return tags_list
+
+
+func _get_tags_from_source() -> Array:
+	var tags_found = animation_creator.list_tags(ProjectSettings.globalize_path(_source))
+	var tags_list = []
+	for t in tags_found:
+		if t == "":
+			continue
+		tags_list.push_back({
+			"tag_name": t
+		})
+	return tags_list
 
 
 func _show_message(message: String):
@@ -242,7 +242,6 @@ func _on_output_folder_selected(path):
 	_output_folder_dialog.queue_free()
 
 
-## TODO: Add functions to list tags, populate the inspector with tag-related command lines
 ## TODO: Introduce layer selection list, more or less as tags
 
 ## TODO: IMPORTANT AND FIRST IN LINE! The importer has different behavior for Characters, Rooms and Inventory items!
