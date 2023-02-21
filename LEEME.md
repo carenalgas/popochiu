@@ -1,6 +1,6 @@
 ### 🌎 [Read this in English](./README.md) 🌎
 
-![cover](./repo_imgs/popochiu_hero-es.png "Popochiu")
+![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_hero-es.png "Popochiu")
 
 Plugin de Godot para crear juegos de aventura gráfica de manera similar a herramientas como [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
 
@@ -8,19 +8,19 @@ Plugin de Godot para crear juegos de aventura gráfica de manera similar a herra
 
 🔍 Lee la [Documentación](https://github.com/mapedorr/popochiu/wiki) (en progreso) para conocer lo que puedes hacer con el plugin.
 
-❤️ Únete al [Discord de Carenalga](https://discord.gg/Frv8C9Ters) para ver actualizaciones diarias y otras publicaciones
-
-🧠 Revisa el [repositorio de desarrollo](https://github.com/mapedorr/popochiu-dev) para saber acerca de los últimos cambios.
+❤️ Únete al [Discord de Carenalga](https://discord.gg/Frv8C9Ters) para ver actualizaciones diarias y otras publicaciones.
 
 ▶️ Sigue los [tutoriales](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) (en español) para aprender a usar el plugin.
+
+
 
 # ¿Qué es?
 
 Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facilita la creación de los Objetos que hacen uso de dicho núcleo. Está inspirado en como se desarrollan las aventuras gráficas en Adventure Game Studio y en el plugin de Unity de Power Hoof: PowerQuest. Esto es, utilizando Habitaciones (Room) como escenarios donde los Personajes (Character) pueden moverse e interactuar con Props y Hotspots, y proporcionando un sistema de inventario y de gestión de diálogos.
 
-![features](./repo_imgs/popochiu_list_of_features-es.png "Features")
+![features](https://github.com/mapedorr/popochiu/wiki/images/popochiu_list_of_features-es.png "Features")
 
-<!-- ![interaction](./repo_imgs/popochiu_interaction.png "Interaction") ![inventory](./repo_imgs/popochiu_inventory_management.png "Inventory management") ![items_use](./repo_imgs/popochiu_items_use.png "Items use") ![dialog_trees](./repo_imgs/popochiu_dialog_trees.png "Dialog trees") -->
+
 
 # Instalación
 
@@ -33,9 +33,16 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 5. Verás el dock de Popochiu a la derecha del editor. ¡Eso es todo!
 
 
+
+# ¿Qué hay de nuevo en la última versión?
+
+[![Lo nuevo en la versión 1.9](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.9_button-es.png)](https://youtu.be/P9Q4g5oyfQY "Lo nuevo en la versión v1.9.0")
+
+
+
 # Tutoriales
 
-[![tutoriales](./repo_imgs/popochiu_tutorials_button.png "Ir a los tutoriales")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
+[![tutoriales](https://github.com/mapedorr/popochiu/wiki/images/popochiu_tutorials_button-es.png "Ir a los tutoriales")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
 
 Ahora puedes seguir los tutoriales (¡Completamente en español! (la versión en Inglés la publicaremos pronto)) [en este enlace](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8). Allí aprenderás:
 
@@ -55,11 +62,7 @@ Más tutoriales vendrán en las próximas semanas para aprender:
 - Cómo utilizar las emociones cuando los personajes hablan.
 - Y mucho más...
 
-
-
 ---
-
-
 
 # Créditos
 
