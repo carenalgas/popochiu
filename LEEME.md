@@ -26,7 +26,7 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 **Popochiu puede usarse con Godot 3.3.x, 3.4.x. y 3.5.x**
 
-1. [Descarga el ZIP](https://github.com/mapedorr/popochiu/archive/refs/heads/main.zip).
+1. Si estás usando **Godot 3.5 o superior**, [Descarga el ZIP de la última versión (actualmente la v1.9.0)](https://github.com/mapedorr/popochiu/releases/download/v1.9.0/popochiu-v1.9.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, [Descarga la versión 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extra su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Proyecto > Ajustes del Proyecto > Plugins` (the tab on the top).
 4. Reinicia Godot `Proyecto > Volver a Cargar el Proyecto Actual`.
