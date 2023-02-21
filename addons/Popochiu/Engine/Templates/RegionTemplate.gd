@@ -1,4 +1,4 @@
-tool
+@tool
 extends PopochiuRegion
 
 
@@ -11,4 +11,4 @@ func on_character_entered(chr: PopochiuCharacter) -> void:
 
 func on_character_exited(chr: PopochiuCharacter) -> void:
 	# This is optional, too.
-	chr.modulate = Color.white
+	chr.modulate = Color.WHITE

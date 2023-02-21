@@ -1,4 +1,4 @@
-tool
+@tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Permite crear un nuevo diálogo con los archivos necesarios para que funcione
 # en el Popochiu: DialogDDD.gd, DialogDDD.tres.
@@ -14,18 +14,19 @@ var _dialog_path_template: String
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	super()
 	_clear_fields()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: PopochiuDock) -> void:
-	.set_main_dock(node)
+func set_main_dock(node: Panel) -> void:
+	super(node)
 	# Por defecto: res://popochiu/Dialogs
 	_dialog_path_template = _main_dock.DIALOGS_PATH + '%s/Dialog%s'
 
 
 func create() -> void:
-	if not _new_dialog_name:
+	if _new_dialog_name.is_empty():
 		_error_feedback.show()
 		return
 	
@@ -34,12 +35,12 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el directorio donde se guardará el nuevo diálogo
-	_main_dock.dir.make_dir(_main_dock.DIALOGS_PATH + _new_dialog_name)
+	DirAccess.make_dir_absolute(_main_dock.DIALOGS_PATH + _new_dialog_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script del nuevo diálogo
 	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE)
-	if ResourceSaver.save(_new_dialog_path + '.gd', dialog_template) != OK:
+	if ResourceSaver.save(dialog_template, _new_dialog_path + '.gd') != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_dialog_name)
 		# TODO: Show feedback in the popup
 		return
@@ -50,7 +51,7 @@ func create() -> void:
 	dialog_resource.set_script(load(_new_dialog_path + '.gd'))
 	dialog_resource.script_name = _new_dialog_name
 	dialog_resource.resource_name = _new_dialog_name
-	if ResourceSaver.save(_new_dialog_path + '.tres', dialog_resource) != OK:
+	if ResourceSaver.save(dialog_resource, _new_dialog_path + '.tres') != OK:
 		push_error('[Popochiu] Could not create dialog: %s' %_new_dialog_name)
 		# TODO: Show feedback in the popup
 		return
@@ -66,17 +67,12 @@ func create() -> void:
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the character to the C singleton
-	PopochiuResources.update_autoloads(true)
-	_main_dock.fs.update_script_classes()
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Actualizar la lista de habitaciones en el Dock
 	_main_dock.add_to_list(Constants.Types.DIALOG, _new_dialog_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir el diálogo en el Inspector
-	yield(get_tree().create_timer(0.1), 'timeout')
+	await get_tree().create_timer(0.1).timeout
 	_main_dock.ei.select_file(_new_dialog_path + '.tres')
 	_main_dock.ei.edit_resource(load(_new_dialog_path + '.tres'))
 	
@@ -84,16 +80,17 @@ func create() -> void:
 	# Fin
 	hide()
 
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
-	._update_name(new_text)
+	super(new_text)
 
 	if _name:
 		_new_dialog_name = _name
 		_new_dialog_path = _dialog_path_template %\
 		[_new_dialog_name, _new_dialog_name]
 
-		_info.bbcode_text = (
+		_info.text = (
 			'In [b]%s[/b] the following files will be created:\n[code]%s and %s[/code]' \
 			% [
 				_main_dock.DIALOGS_PATH + _new_dialog_name,
@@ -105,7 +102,7 @@ func _update_name(new_text: String) -> void:
 
 
 func _clear_fields() -> void:
-	._clear_fields()
+	super()
 	
 	_new_dialog_name = ''
 	_new_dialog_path = ''

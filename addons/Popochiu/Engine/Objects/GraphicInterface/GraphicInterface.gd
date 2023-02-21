@@ -10,34 +10,34 @@ const DialogMenu := preload('DialogMenu/DialogMenu.gd')
 const Toolbar := preload('Toolbar/Toolbar.gd')
 const History := preload('History/History.gd')
 
-onready var _info_bar: Label = find_node('InfoBar')
-onready var _dialog_text: DialogText = find_node('DialogText')
-onready var _display_box: DisplayBox = find_node('DisplayBox')
-onready var _inventory: Inventory = find_node('Inventory')
-onready var _click_handler: Button = $MainContainer/ClickHandler
-onready var _dialog_menu: DialogMenu = find_node('DialogMenu')
-onready var _toolbar: Toolbar = find_node('Toolbar')
-onready var _history: History = find_node('History')
+@onready var _info_bar: Label = find_child('InfoBar')
+@onready var _dialog_text: DialogText = find_child('DialogText')
+@onready var _display_box: DisplayBox = find_child('DisplayBox')
+@onready var _inventory: Inventory = find_child('Inventory')
+@onready var _click_handler: Button = $MainContainer/ClickHandler
+@onready var _dialog_menu: DialogMenu = find_child('DialogMenu')
+@onready var _toolbar: Toolbar = find_child('Toolbar')
+@onready var _history: History = find_child('History')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	# Connect to children signals
 	# TODO: Some of this could be in their own script
-	_click_handler.connect('pressed', self, '_continue')
-	_dialog_menu.connect('shown', self, '_disable_panels', [{ blocking = false }])
-	_display_box.connect('shown', self, '_disable_panels')
-	_display_box.connect('hidden', self, '_enable_panels')
+	_click_handler.pressed.connect(_continue)
+	_dialog_menu.shown.connect(_disable_panels.bind({ blocking = false }))
+	_display_box.shown.connect(_enable_panels)
 	
 	# Connect to singleton signals
-	C.connect('character_spoke', self, '_show_dialog_text')
-	G.connect('blocked', self, '_disable_panels')
-	G.connect('freed', self, '_enable_panels')
-	G.connect('interface_hidden', self, '_hide_panels')
-	G.connect('interface_shown', self, '_show_panels')
+	C.character_spoke.connect(_show_dialog_text)
+	G.blocked.connect(_disable_panels)
+	G.freed.connect(_enable_panels)
+	G.interface_hidden.connect(_hide_panels)
+	G.interface_shown.connect(_show_panels)
+	G.continue_requested.connect(_continue)
 	
 	if E.settings.scale_gui:
-		$MainContainer.rect_scale = E.scale
+		$MainContainer.scale = E.scale
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -68,7 +68,7 @@ func _enable_panels() -> void:
 	_click_handler.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	
 	_display_box.close()
-	_dialog_text.hide()
+	_dialog_text.disappear()
 	
 	_info_bar.show()
 	_inventory.show()
@@ -79,11 +79,11 @@ func _enable_panels() -> void:
 
 
 func _continue() -> void:
-	if _dialog_text.percent_visible == 1.0:
-		_dialog_text.hide()
+	if _dialog_text.visible_ratio == 1.0:
+		_dialog_text.disappear()
 		_display_box.close()
 		
-		G.emit_signal('continue_clicked')
+		G.continue_clicked.emit()
 	else:
 		_dialog_text.stop()
 

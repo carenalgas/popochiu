@@ -3,7 +3,7 @@ extends 'ToolbarButton.gd'
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func on_pressed() -> void:
-	G.show_save(format_date(OS.get_datetime()))
+	G.show_save(format_date(Time.get_datetime_dict_from_system()))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

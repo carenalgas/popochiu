@@ -25,8 +25,8 @@ func _ready():
 
 
 func _process(delta):
-	$AnimatedSprite.position = $AnimatedSprite.get_global_mouse_position()
-	$Sprite.position = $AnimatedSprite.get_global_mouse_position()
+	$AnimatedSprite2D.position = $AnimatedSprite2D.get_global_mouse_position()
+	$Sprite2D.position = $AnimatedSprite2D.get_global_mouse_position()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -36,26 +36,26 @@ func set_cursor(type := Type.IDLE, ignore_block := false) -> void:
 	var anim_name: String = Type.keys()[Type.IDLE]
 	if Type.values().has(type):
 		anim_name = Type.keys()[type]
-	$AnimatedSprite.play(anim_name.to_lower())
+	$AnimatedSprite2D.play(anim_name.to_lower())
 
 
-func set_cursor_texture(texture: Texture, ignore_block := false) -> void:
+func set_cursor_texture(texture: Texture2D, ignore_block := false) -> void:
 	if not ignore_block and is_blocked: return
 	
-	$AnimatedSprite.hide()
-	$Sprite.texture = texture
-	$Sprite.show()
+	$AnimatedSprite2D.hide()
+	$Sprite2D.texture = texture
+	$Sprite2D.show()
 
 
 func remove_cursor_texture() -> void:
-	$Sprite.texture = null
-	$Sprite.hide()
-	$AnimatedSprite.show()
+	$Sprite2D.texture = null
+	$Sprite2D.hide()
+	$AnimatedSprite2D.show()
 
 
 func toggle_visibility(is_visible: bool) -> void:
-	$AnimatedSprite.visible = is_visible
-	$Sprite.visible = is_visible
+	$AnimatedSprite2D.visible = is_visible
+	$Sprite2D.visible = is_visible
 
 
 func block() -> void:
@@ -67,9 +67,9 @@ func unlock() -> void:
 
 
 func scale_cursor(factor: Vector2) -> void:
-	$Sprite.scale = Vector2.ONE * factor
-	$AnimatedSprite.scale = Vector2.ONE * factor
+	$Sprite2D.scale = Vector2.ONE * factor
+	$AnimatedSprite2D.scale = Vector2.ONE * factor
 
 
 func get_position() -> Vector2:
-	return $Sprite.position
+	return $Sprite2D.position

@@ -6,4 +6,4 @@ extends PopochiuInventoryItemData
 # script_name and scene variables from the inherited class will not be saved.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-export var is_charged := false
+@export var is_charged := false

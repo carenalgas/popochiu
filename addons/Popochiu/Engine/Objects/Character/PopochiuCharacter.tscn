@@ -1,35 +1,32 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://cwtpncpx24dm7"]
 
-[ext_resource path="res://addons/Popochiu/Engine/Objects/Character/PopochiuCharacter.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://addons/Popochiu/Engine/Objects/Character/PopochiuCharacter.gd" id="1"]
 
 [node name="Character" type="Area2D"]
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_group_": true
-}
+script = ExtResource("1")
+voices = []
+walk_to_point = Vector2(0, 0)
+cursor = 8
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
-polygon = PoolVector2Array( -10, -10, 10, -10, 10, 10, -10, 10 )
+polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
 [node name="BaselineHelper" type="Line2D" parent="."]
-visible = false
-points = PoolVector2Array( -10000, 0, 10000, 0 )
+points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
 
-[node name="WalkToHelper" type="Position2D" parent="."]
-visible = false
-__meta__ = {
-"_edit_group_": true
-}
+[node name="WalkToHelper" type="Marker2D" parent="."]
 
 [node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
-margin_left = -2.5
-margin_top = -2.5
-margin_right = 2.5
-margin_bottom = 2.5
-color = Color( 0, 1, 1, 1 )
+offset_left = -2.5
+offset_top = -2.5
+offset_right = 2.5
+offset_bottom = 2.5
+color = Color(0, 1, 1, 1)
 
-[node name="Sprite" type="Sprite" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
 
-[node name="DialogPos" type="Position2D" parent="."]
-visible = false
+[node name="DialogPos" type="Marker2D" parent="."]
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

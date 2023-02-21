@@ -6,6 +6,6 @@ extends PopochiuCharacterData
 # script_name and scene variables from the inherited class will not be saved.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-export var is_hungry := true
+@export var is_hungry := true
 
 var wants := 'plátano'

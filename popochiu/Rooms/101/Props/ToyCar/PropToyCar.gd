@@ -1,40 +1,33 @@
-tool
+@tool
 extends PopochiuProp
 # You can use E.run([]) to trigger a sequence of events.
-# Use yield(E.run([]), 'completed') if you want to pause the excecution of
+# Use await E.run([]) if you want to pause the excecution of
 # the function until the sequence of events finishes.
+
+signal cocoed
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func on_interact() -> void:
-	yield(E.run([
+	E.run([
 		C.walk_to_clicked(),
 		C.face_clicked(),
-		"Player: I'm gonna take this with me",
-		A.sfx_toy_car.play(),
+		'Player: My old toycar',
+		'...',
+		'Player: [wave]The memories...[/wave]',
 		I.add_item('ToyCar')
-	]), 'completed')
+	])
 
 
 # When the node is right clicked
 func on_look() -> void:
-#	Replace the call to .on_look() to implement your code. This only makes
-#	the default behavior to happen.
-#	For example you can make the character walk to the Prop and then say
-#	something:
-#	E.run([
-#		C.face_clicked(),
-#		'Player: A deck of cards'
-#	])
-	.on_look()
+	super()
 
 
 # When the node is clicked and there is an inventory item selected
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	# Replace the call to .on_item_used(item) to implement your code. This only
-	# makes the default behavior to happen.
-	.on_item_used(item)
+	super(item)
 
 
 # When an inventory item linked to this Prop (link_to_item) is removed from

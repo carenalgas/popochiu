@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://popochiu/InventoryItems/ToyCar/InventoryToyCar.gd" type="Script" id=1]
-[ext_resource path="res://popochiu/InventoryItems/ToyCar/toy_car.png" type="Texture" id=2]
+[ext_resource path="res://popochiu/InventoryItems/ToyCar/toy_car.png" type="Texture2D" id=2]
 
 [node name="InventoryToyCar" type="TextureRect"]
 mouse_filter = 0

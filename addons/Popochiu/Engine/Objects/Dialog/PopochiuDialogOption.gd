@@ -1,14 +1,14 @@
-tool
+@tool
 class_name PopochiuDialogOption
 extends Resource
 # Each option in a dialog.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-export var id := '' setget set_id
-export var text := ''
-export var visible := true
-export var disabled := false
-export var always_on := false
+@export var id := '' : set = set_id
+@export var text := ''
+@export var visible := true
+@export var disabled := false
+@export var always_on := false
 
 # TODO: Store the localization code
 var script_name := ''
@@ -38,7 +38,7 @@ func set_id(value: String) -> void:
 	script_name = id
 	resource_name = id
 	
-	property_list_changed_notify()
+	notify_property_list_changed()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

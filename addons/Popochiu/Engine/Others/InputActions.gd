@@ -4,11 +4,11 @@ const SKIP := 'popochiu-skip'
 const ACTIONS := [
 	{
 		name = INTERACT,
-		button = BUTTON_LEFT
+		button = MOUSE_BUTTON_LEFT
 	},
 	{
 		name = LOOK,
-		button = BUTTON_RIGHT
+		button = MOUSE_BUTTON_RIGHT
 	},
 	{
 		name = SKIP,

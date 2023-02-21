@@ -1,4 +1,4 @@
-tool
+@tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Permite crear una nueva Region para una habitación.
 
@@ -18,23 +18,24 @@ var _room_dir: String
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	super()
 	_clear_fields()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: PopochiuDock) -> void:
-	.set_main_dock(node)
+func set_main_dock(node: Panel) -> void:
+	super(node)
 
 
 func room_opened(r: Node2D) -> void:
 	_room = r
-	_room_path = _room.filename
+	_room_path = _room.scene_file_path
 	_room_dir = _room_path.get_base_dir()
 	_region_path_template = _room_dir + '/Regions/%s/Region%s'
 
 
 func create() -> void:
-	if not _new_region_name:
+	if _new_region_name.is_empty():
 		_error_feedback.show()
 		return
 	
@@ -44,22 +45,22 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the folder for the Region
-	assert(
-		_main_dock.dir.make_dir_recursive(_new_region_path.get_base_dir()) == OK,
-		'[Popochiu] Could not create Region folder for ' + _new_region_name
+	assert(\
+		DirAccess.make_dir_recursive_absolute(_new_region_path.get_base_dir()) == OK,\
+		'[Popochiu] Could not create Region folder for ' + _new_region_name\
 	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de la región
 	var region_template := load(SCRIPT_TEMPLATE)
-	if ResourceSaver.save(script_path, region_template) != OK:
+	if ResourceSaver.save(region_template, script_path) != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_region_name)
 		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear la región a agregar a la habitación
-	var region: PopochiuRegion = ResourceLoader.load(REGION_SCENE).instance()
+	var region: PopochiuRegion = ResourceLoader.load(REGION_SCENE).instantiate()
 	region.set_script(ResourceLoader.load(script_path))
 	region.name = _new_region_name
 	region.script_name = _new_region_name
@@ -78,7 +79,7 @@ func create() -> void:
 	collision.name = 'InteractionPolygon'
 	region.add_child(collision)
 	collision.owner = _room
-	collision.modulate = Color.cyan
+	collision.modulate = Color.CYAN
 	
 	_main_dock.ei.save_scene()
 	
@@ -92,23 +93,24 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades de la región creada en el Inspector
-	yield(get_tree().create_timer(0.1), 'timeout')
+	await get_tree().create_timer(0.1).timeout
 	_main_dock.ei.edit_node(region)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
 	hide()
 
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
-	._update_name(new_text)
+	super(new_text)
 
 	if _name:
 		_new_region_name = _name
 		_new_region_path = _region_path_template %\
 		[_new_region_name, _new_region_name]
 
-		_info.bbcode_text = (
+		_info.text = (
 			'In [b]%s[/b] the following files will be created: [code]%s[/code]' \
 			% [
 				_room_dir + '/Regions',
@@ -120,7 +122,7 @@ func _update_name(new_text: String) -> void:
 
 
 func _clear_fields() -> void:
-	._clear_fields()
+	super()
 	
 	_new_region_name = ''
 	_new_region_path = ''

@@ -1,44 +1,35 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=3 uid="uid://cogbln3rqoqtm"]
 
-[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/Resources/DynamicFonts/MonkeyIsland-outline-16.tres" type="DynamicFont" id=1]
-[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/DialogText.gd" type="Script" id=2]
-[ext_resource path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/dialog_continue.png" type="Texture" id=3]
-
-[sub_resource type="StyleBoxFlat" id=1]
-content_margin_left = 0.0
-content_margin_right = 0.0
-content_margin_top = 0.0
-content_margin_bottom = 0.0
-bg_color = Color( 0.768627, 0.423529, 0.443137, 1 )
-draw_center = false
+[ext_resource type="FontFile" uid="uid://c7ig50my7y048" path="res://addons/Popochiu/fonts/monkeyisland-1991.ttf" id="1_njktv"]
+[ext_resource type="Script" path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/DialogText.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://dly2dmq2fhbet" path="res://addons/Popochiu/Engine/Objects/GraphicInterface/DialogText/dialog_continue.png" id="3"]
 
 [node name="DialogText" type="RichTextLabel"]
-margin_right = 16.0
-margin_bottom = 16.0
+clip_contents = false
+offset_right = 16.0
+offset_bottom = 16.0
 grow_horizontal = 2
-rect_clip_content = false
-mouse_filter = 2
 size_flags_horizontal = 3
-custom_fonts/normal_font = ExtResource( 1 )
-custom_styles/normal = SubResource( 1 )
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/normal_font = ExtResource("1_njktv")
 bbcode_enabled = true
-meta_underlined = false
 fit_content_height = true
 scroll_active = false
-script = ExtResource( 2 )
+autowrap_mode = 0
+meta_underlined = false
+script = ExtResource("2")
 
-[node name="Tween" type="Tween" parent="."]
-
-[node name="ContinueIcon" type="TextureProgress" parent="."]
+[node name="ContinueIcon" type="TextureProgressBar" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
 anchor_left = 1.0
-anchor_top = 1.0
 anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -16.0
+offset_left = -16.0
+offset_bottom = 16.0
+grow_horizontal = 0
 value = 100.0
-texture_progress = ExtResource( 3 )
 fill_mode = 2
-
-[node name="Tween" type="Tween" parent="ContinueIcon"]
-repeat = true
-playback/repeat = true
+texture_progress = ExtResource("3")

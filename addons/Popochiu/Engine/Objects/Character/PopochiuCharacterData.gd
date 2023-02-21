@@ -1,5 +1,6 @@
-class_name PopochiuCharacterData, 'res://addons/Popochiu/icons/character.png'
+@icon('res://addons/Popochiu/icons/character.png')
+class_name PopochiuCharacterData
 extends Resource
 
-export var script_name := ''
-export(String, FILE, "*.tscn") var scene = ''
+@export var script_name := ''
+@export_file("*.tscn") var scene := ''

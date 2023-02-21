@@ -1,6 +1,7 @@
-tool
-class_name PopochiuHotspot, 'res://addons/Popochiu/icons/hotspot.png'
-extends 'res://addons/Popochiu/Engine/Objects/Clickable/PopochiuClickable.gd'
+@tool
+@icon('res://addons/Popochiu/icons/hotspot.png')
+class_name PopochiuHotspot
+extends PopochiuClickable
 # Areas players can interact with.
 # E.g. Something that is part of the Room's background (the sky, an entrance).
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -8,4 +9,5 @@ extends 'res://addons/Popochiu/Engine/Objects/Clickable/PopochiuClickable.gd'
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	super()
 	add_to_group('hotspots')

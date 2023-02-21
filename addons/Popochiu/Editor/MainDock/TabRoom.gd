@@ -1,4 +1,4 @@
-tool
+@tool
 extends VBoxContainer
 # Handles the Room tab in Popochiu's dock
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -7,55 +7,55 @@ const PopochiuObjectRow := preload('ObjectRow/PopochiuObjectRow.gd')
 const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
 
 var opened_room: PopochiuRoom = null
-var main_dock: Panel setget _set_main_dock
+var main_dock: Panel : set = _set_main_dock
 var object_row: PackedScene = null
 var opened_room_state_path: String = ''
 
 var _rows_paths := []
 var _last_selected: PopochiuObjectRow = null
 
-onready var _types := {
+@onready var _types := {
 	Constants.Types.PROP: {
-		group = find_node('PropsGroup'),
+		group = find_child('PropsGroup'),
 		popup = 'CreateProp',
 		method = 'get_props',
 		type_class = PopochiuProp,
 		parent = 'Props'
 	},
 	Constants.Types.HOTSPOT: {
-		group = find_node('HotspotsGroup'),
+		group = find_child('HotspotsGroup'),
 		popup = 'CreateHotspot',
 		method = 'get_hotspots',
 		type_class = PopochiuHotspot,
 		parent = 'Hotspots'
 	},
 	Constants.Types.REGION: {
-		group = find_node('RegionsGroup'),
+		group = find_child('RegionsGroup'),
 		popup = 'CreateRegion',
 		method = 'get_regions',
 		type_class = PopochiuRegion,
 		parent = 'Regions'
 	},
 	Constants.Types.POINT: {
-		group = find_node('PointsGroup'),
+		group = find_child('PointsGroup'),
 		method = 'get_points',
-		type_class = Position2D,
+		type_class = Marker2D,
 		parent = 'Points'
 	},
 	Constants.Types.WALKABLE_AREA: {
-		group = find_node('WalkableAreasGroup'),
+		group = find_child('WalkableAreasGroup'),
 		popup = 'CreateWalkableArea',
 		method = 'get_walkable_areas',
 		type_class = PopochiuWalkableArea,
 		parent = 'WalkableAreas'
 	}
 }
-onready var _room_name: Button = find_node('RoomName')
-onready var _no_room_info: Label = find_node('NoRoomInfo')
-onready var _tool_buttons: HBoxContainer = find_node('ToolButtons')
-onready var _btn_script: Button = _tool_buttons.get_node('BtnScript')
-onready var _btn_resource: Button = _tool_buttons.get_node('BtnResource')
-onready var _btn_resource_script: Button = _tool_buttons.get_node('BtnResourceScript')
+@onready var _room_name: Button = find_child('RoomName')
+@onready var _no_room_info: Label = find_child('NoRoomInfo')
+@onready var _tool_buttons: HBoxContainer = find_child('ToolButtons')
+@onready var _btn_script: Button = _tool_buttons.get_node('BtnScript')
+@onready var _btn_resource: Button = _tool_buttons.get_node('BtnResource')
+@onready var _btn_resource_script: Button = _tool_buttons.get_node('BtnResourceScript')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -65,14 +65,14 @@ func _ready() -> void:
 	_no_room_info.show()
 	_tool_buttons.hide()
 	
-	_btn_script.icon = get_icon('Script', 'EditorIcons')
-	_btn_resource.icon = get_icon('Object', 'EditorIcons')
-	_btn_resource_script.icon = get_icon('GDScript', 'EditorIcons')
+	_btn_script.icon = get_theme_icon('Script', 'EditorIcons')
+	_btn_resource.icon = get_theme_icon('Object', 'EditorIcons')
+	_btn_resource_script.icon = get_theme_icon('GDScript', 'EditorIcons')
 	
-	_room_name.connect('pressed', self, '_select_file')
-	_btn_script.connect('pressed', self, '_open_script')
-	_btn_resource.connect('pressed', self, '_edit_resource')
-	_btn_resource_script.connect('pressed', self, '_open_resource_script')
+	_room_name.pressed.connect(_select_file)
+	_btn_script.pressed.connect(_open_script)
+	_btn_resource.pressed.connect(_edit_resource)
+	_btn_resource_script.pressed.connect(_open_resource_script)
 	
 	for t in _types.values():
 		t.group.disable_create()
@@ -82,9 +82,9 @@ func _ready() -> void:
 func scene_changed(scene_root: Node) -> void:
 	# Set the default tab state
 	if is_instance_valid(opened_room):
-		yield(_clear_content(), 'completed')
+		await _clear_content()
 	
-	if scene_root is PopochiuRoom:
+	if scene_root is PopochiuRoom and not scene_root.script_name.is_empty():
 		# Updated the opened room's info
 		opened_room = scene_root
 		opened_room_state_path = PopochiuResources.get_data_value(
@@ -100,7 +100,7 @@ func scene_changed(scene_root: Node) -> void:
 			for c in opened_room.call(_types[t].method):
 				var row_path := ''
 				
-				if c is Position2D:
+				if c is Marker2D:
 					var row: PopochiuObjectRow = _create_object_row(t, c.name)
 					_types[t].group.add(row)
 					continue
@@ -109,7 +109,7 @@ func scene_changed(scene_root: Node) -> void:
 					row_path = c.script.resource_path
 				else:
 					row_path = '%s/%s' % [
-						opened_room.filename.get_base_dir(),
+						opened_room.scene_file_path.get_base_dir(),
 						_types[t].parent
 					]
 				
@@ -138,7 +138,7 @@ func scene_changed(scene_root: Node) -> void:
 
 
 func scene_closed(filepath: String) -> void:
-	if is_instance_valid(opened_room) and opened_room.filename == filepath:
+	if is_instance_valid(opened_room) and opened_room.scene_file_path == filepath:
 		_clear_content()
 
 
@@ -155,7 +155,7 @@ func _set_main_dock(value: Panel) -> void:
 		t.popup = main_dock.get_popup(t.popup)
 		t.popup.set_main_dock(main_dock)
 		t.popup.room_tab = self
-		t.group.connect('create_clicked', main_dock, '_open_popup', [t.popup])
+		t.group.create_clicked.connect(main_dock._open_popup.bind(t.popup))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -169,27 +169,27 @@ func _clear_content() -> void:
 	_no_room_info.show()
 	
 	if is_instance_valid(_last_selected):
-		_last_selected.unselect()
+		_last_selected.deselect()
 		_last_selected = null
 	
 	for t in _types.values():
 		t.group.clear_list()
 		t.group.disable_create()
 	
-	yield(get_tree(), 'idle_frame')
+	await get_tree().process_frame
 
 
 func _create_object_row(
 	type: int, node_name: String, path := '', node_path := ''
 ) -> PopochiuObjectRow:
-	var new_obj: PopochiuObjectRow = object_row.instance()
+	var new_obj: PopochiuObjectRow = object_row.instantiate()
 	
 	new_obj.name = node_name
 	new_obj.type = type
 	new_obj.path = path # This will be useful for deleting objects with interaction
 	new_obj.main_dock = main_dock
 	new_obj.node_path = node_path
-	new_obj.connect('clicked', self, '_select_in_tree')
+	new_obj.clicked.connect(_select_in_tree)
 	
 	_rows_paths.append('%s/%d/%s' % [opened_room.script_name, type, node_name])
 	
@@ -198,7 +198,7 @@ func _create_object_row(
 
 func _select_in_tree(por: PopochiuObjectRow) -> void:
 	if _last_selected and _last_selected != por:
-		_last_selected.unselect()
+		_last_selected.deselect()
 	
 	if is_instance_valid(opened_room):
 		var node := opened_room.get_node('%s/%s'\
@@ -209,7 +209,7 @@ func _select_in_tree(por: PopochiuObjectRow) -> void:
 
 
 func _select_file() -> void:
-	main_dock.ei.select_file(opened_room.filename)
+	main_dock.ei.select_file(opened_room.scene_file_path)
 
 
 func _open_script() -> void:

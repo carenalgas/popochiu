@@ -1,7 +1,5 @@
-tool
+@tool
 extends AcceptDialog
-
-signal move_requested(id)
 
 const ImporterDefaults :=\
 preload('res://addons/Popochiu/Engine/Others/ImporterDefaults.gd')
@@ -13,34 +11,27 @@ const SCALE_MESSAGE :=\
 
 var es: EditorSettings = null
 
-onready var _welcome: RichTextLabel = find_node('Welcome')
-onready var _welcome_separator: HSeparator = find_node('WelcomeSeparator')
-onready var _game_width: SpinBox = find_node('GameWidth')
-onready var _scale_msg: RichTextLabel = find_node('ScaleMessage')
-onready var _game_height: SpinBox = find_node('GameHeight')
-onready var _test_width: SpinBox = find_node('TestWidth')
-onready var _test_height: SpinBox = find_node('TestHeight')
-onready var _game_type: OptionButton = find_node('GameType')
-onready var _advanced: HBoxContainer = find_node('Advanced')
-onready var _btn_move_gi: Button = find_node('BtnMoveGI')
-onready var _btn_move_tl: Button = find_node('BtnMoveTL')
-onready var _btn_update_imports: Button = find_node('BtnUpdateFiles')
+@onready var _welcome: RichTextLabel = find_child('Welcome')
+@onready var _welcome_separator: HSeparator = find_child('WelcomeSeparator')
+@onready var _game_width: SpinBox = find_child('GameWidth')
+@onready var _scale_msg: RichTextLabel = find_child('ScaleMessage')
+@onready var _game_height: SpinBox = find_child('GameHeight')
+@onready var _test_width: SpinBox = find_child('TestWidth')
+@onready var _test_height: SpinBox = find_child('TestHeight')
+@onready var _game_type: OptionButton = find_child('GameType')
+@onready var _btn_update_imports: Button = find_child('BtnUpdateFiles')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	# Connect to signals
-	connect('popup_hide', self, '_update_project_settings')
-	_game_width.connect('value_changed', self, '_update_scale')
-	_game_height.connect('value_changed', self, '_update_scale')
-	_btn_move_gi.connect('pressed', self, '_move_gi')
-	_btn_move_tl.connect('pressed', self, '_move_tl')
-	_btn_update_imports.connect('pressed', self, '_update_imports')
+	confirmed.connect(_update_project_settings)
+	close_requested.connect(_update_project_settings)
+	_game_width.value_changed.connect(_update_scale)
+	_game_height.value_changed.connect(_update_scale)
+	_btn_update_imports.pressed.connect(_update_imports)
 	
 	# Set default state
-	_advanced.hide()
-	_btn_move_gi.hide()
-	_btn_move_tl.hide()
 	_btn_update_imports.hide()
 
 
@@ -48,30 +39,36 @@ func _ready() -> void:
 func appear(show_welcome := false) -> void:
 	_welcome.hide()
 	_welcome_separator.hide()
-	_welcome.add_font_override('bold_font', get_font('bold', 'EditorFonts'))
-	_scale_msg.add_font_override('normal_font', get_font('main', 'EditorFonts'))
-	_scale_msg.add_font_override('bold_font', get_font('bold', 'EditorFonts'))
-	_scale_msg.add_font_override('mono_font', get_font('doc_source', 'EditorFonts'))
+	_welcome.add_theme_font_override(
+		'bold_font', get_theme_font('bold', 'EditorFonts')
+	)
+	_scale_msg.add_theme_font_override(
+		'normal_font', get_theme_font('main', 'EditorFonts')
+	)
+	_scale_msg.add_theme_font_override(
+		'bold_font', get_theme_font('bold', 'EditorFonts')
+	)
+	_scale_msg.add_theme_font_override(
+		'mono_font', get_theme_font('doc_source', 'EditorFonts')
+	)
 	_scale_msg.modulate = Color(\
-	'#000' if es.get_setting('interface/theme/preset').find('Light') > -1\
+	'#000' if es.get_setting('interface/theme/preset').find('Light3D') > -1\
 	else '#fff')
 	_scale_msg.modulate.a = 0.8
 
 	if show_welcome:
 		_welcome.show()
 		_welcome_separator.show()
-	else:
-		update_state()
 	
 	# Set initial values for fields
 	_game_width.value = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
 	_game_height.value = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	_test_width.value = ProjectSettings.get_setting(PopochiuResources.TEST_WIDTH)
 	_test_height.value = ProjectSettings.get_setting(PopochiuResources.TEST_HEIGHT)
-	_scale_msg.bbcode_text = _get_scale_msg()
+	_scale_msg.text = _get_scale_msg()
 	
 	_game_type.selected = 0
-	if ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE) == '2d'\
+	if ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE) == 'canvas_items'\
 	and ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT) == 'keep':
 		_game_type.selected = 1
 		
@@ -81,59 +78,58 @@ func appear(show_welcome := false) -> void:
 			_game_type.selected = 2
 	
 	if show_welcome:
-		# Make Pixel the default game type on first run
+		# Make Pixel the default game type checked during first run
 		_game_type.selected = 2
 	
-	popup_centered_minsize(Vector2(480.0, 180.0))
-	get_ok().text = 'Close'
-
-
-func update_state() -> void:
-	_advanced.hide()
-	_btn_move_gi.hide()
-	
-	if not PopochiuResources.get_data_value('setup', 'gi_moved', false):
-		_advanced.show()
-		_btn_move_gi.show()
-	
-	if not PopochiuResources.get_data_value('setup', 'tl_moved', false):
-		_advanced.show()
-		_btn_move_tl.show()
+	popup_centered_clamped(Vector2(480.0, 180.0))
+	get_ok_button().text = 'Close'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_project_settings() -> void:
-	ProjectSettings.set_setting('display/window/size/width', int(_game_width.value))
-	ProjectSettings.set_setting('display/window/size/height', int(_game_height.value))
-	ProjectSettings.set_setting('display/window/size/test_width', int(_test_width.value))
-	ProjectSettings.set_setting('display/window/size/test_height', int(_test_height.value))
+	ProjectSettings.set_setting(
+		PopochiuResources.DISPLAY_WIDTH,
+		int(_game_width.value)
+	)
+	ProjectSettings.set_setting(
+		PopochiuResources.DISPLAY_HEIGHT,
+		int(_game_height.value)
+	)
+	ProjectSettings.set_setting(
+		PopochiuResources.TEST_WIDTH,
+		int(_test_width.value)
+	)
+	ProjectSettings.set_setting(
+		PopochiuResources.TEST_HEIGHT,
+		int(_test_height.value)
+	)
 	
 	if _game_type.selected != 0:
-		ProjectSettings.set_setting('display/window/stretch/mode', '2d')
-		ProjectSettings.set_setting('display/window/stretch/aspect', 'keep')
+		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, 'canvas_items')
+		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, 'keep')
 
-		if _game_type.selected == 1:
-			ProjectSettings.set_setting(
-				'importer_defaults/texture',
-				null
-			)
-		else:
-			ProjectSettings.set_setting(
-				'importer_defaults/texture',
-				ImporterDefaults.PIXEL_TEXTURES
-			)
+#		if _game_type.selected == 1:
+#			ProjectSettings.set_setting(
+#				'importer_defaults/texture',
+#				null
+#			)
+#		else:
+#			ProjectSettings.set_setting(
+#				'importer_defaults/texture',
+#				ImporterDefaults.PIXEL_TEXTURES
+#			)
 	else:
-		ProjectSettings.set_setting('display/window/stretch/mode', 'disabled')
-		ProjectSettings.set_setting('display/window/stretch/aspect', 'ignore')
+		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, 'disabled')
+		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, 'ignore')
 	
-	assert(
-		ProjectSettings.save() == OK,
-		'[Popochiu] Could not save Project settings'
+	assert(\
+		ProjectSettings.save() == OK,\
+		'[Popochiu] Could not save Project settings'\
 	)
 
 
 func _update_scale(_value: float) -> void:
-	_scale_msg.bbcode_text = _get_scale_msg()
+	_scale_msg.text = _get_scale_msg()
 
 
 func _get_scale_msg() -> String:
@@ -142,19 +138,9 @@ func _get_scale_msg() -> String:
 	return SCALE_MESSAGE % [
 		scale.x, scale.y,
 		'res://addons/Popochiu/Editor/Popups/Setup/godot_tools_%s.png' %\
-		('light' if es.get_setting('interface/theme/preset').find('Light') > -1\
+		('light' if es.get_setting('interface/theme/preset').find('Light3D') > -1\
 		else 'dark'),
 	]
-
-
-func _move_gi() -> void:
-	_btn_move_gi.disabled = true
-	emit_signal('move_requested', PopochiuResources.GI)
-
-
-func _move_tl() -> void:
-	_btn_move_tl.disabled = true
-	emit_signal('move_requested', PopochiuResources.TL)
 
 
 func _update_imports() -> void:

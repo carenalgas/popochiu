@@ -9,8 +9,8 @@ signal animation_finished
 
 const DFLT_SIZE := 'dflt_size'
 
-export var wrap_width := 200.0
-export var limit_margin := 4.0
+@export var wrap_width := 200.0
+@export var limit_margin := 4.0
 
 var _secs_per_character := 1.0
 var _is_waiting_input := false
@@ -19,14 +19,14 @@ var _dialog_pos := Vector2.ZERO
 var _x_limit := 0.0
 var _y_limit := 0.0
 
-onready var _tween: Tween = $Tween
-onready var _continue_icon: TextureProgress = find_node('ContinueIcon')
-onready var _continue_icon_tween: Tween = _continue_icon.get_node('Tween')
+@onready var _tween: Tween = null
+@onready var _continue_icon: TextureProgressBar = find_child('ContinueIcon')
+@onready var _continue_icon_tween: Tween = null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	set_meta(DFLT_SIZE, rect_size)
+	set_meta(DFLT_SIZE, size)
 	
 	# Set the default values
 	clear()
@@ -38,13 +38,9 @@ func _ready() -> void:
 	
 	_continue_icon.hide()
 	
-	# Conectarse a señales de los hijos
-	_tween.connect('tween_all_completed', self, '_wait_input')
-	_continue_icon_tween.connect('tween_all_completed', self, '_continue')
-	
-	# Conectarse a eventos del universo Chimpoko
-	E.connect('text_speed_changed', self, 'change_speed')
-	C.connect('character_spoke', self, '_show_dialogue')
+	# Connect to singletons events
+	E.text_speed_changed.connect(change_speed)
+	C.character_spoke.connect(_show_dialogue)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -56,62 +52,66 @@ func play_text(props: Dictionary) -> void:
 	# ==== Calculate the width of the node =====================================
 	var rt := RichTextLabel.new()
 	var lbl := Label.new()
-	rt.append_bbcode(msg)
-	lbl.text = rt.text
+	rt.bbcode_enabled = true
+	rt.text = msg
+	lbl.text = rt.get_parsed_text()
 	add_child(lbl)
-	var size := lbl.rect_size
-	if size.x > wrap_width:
-		size.x = wrap_width
+	var _size := lbl.size
+	if _size.x > wrap_width:
+		_size.x = wrap_width
 		rt.fit_content_height = true
-		rt.rect_size = Vector2(size.x, 0.0)
+		rt.size = Vector2(_size.x, 0.0)
 		add_child(rt)
-		size.y = rt.get_content_height()
-	elif size.x < get_meta(DFLT_SIZE).x:
-		size.x = get_meta(DFLT_SIZE).x
+		_size.y = rt.get_content_height()
+	elif _size.x < get_meta(DFLT_SIZE).x:
+		_size.x = get_meta(DFLT_SIZE).x
 	
-	var character_count := lbl.get_total_character_count()
+	var characters_count := lbl.get_total_character_count()
 	
 	lbl.free()
 	rt.free()
 	# ===================================== Calculate the width of the node ====
 	# Define default position (before calculating overflow)
-	rect_size = size
-	rect_position = props.position - rect_size / 2.0
-	rect_position.y -= rect_size.y / 2.0
+	size = _size
+	position = props.position - size / 2.0
+	position.y -= size.y / 2.0
 	
 	# Calculate overflow and reposition
-	if rect_position.x < 0.0:
-		rect_position.x = limit_margin
-	elif rect_position.x + rect_size.x > _x_limit:
-		rect_position.x = _x_limit - limit_margin - rect_size.x
-	if rect_position.y < 0.0:
-		rect_position.y = limit_margin
-	elif rect_position.y + rect_size.y > _y_limit:
-		rect_position.y = _y_limit - limit_margin - rect_size.y
+	if position.x < 0.0:
+		position.x = limit_margin
+	elif position.x + size.x > _x_limit:
+		position.x = _x_limit - limit_margin - size.x
+	if position.y < 0.0:
+		position.y = limit_margin
+	elif position.y + size.y > _y_limit:
+		position.y = _y_limit - limit_margin - size.y
 	
-	# Assign text and align mode (based on overflow)
+	# Assign text and align mode (based checked overflow)
 	push_color(props.color)
 	
-	var center := floor(rect_position.x + (size.x / 2))
+	var center := floori(position.x + (size.x / 2))
 	if center == props.position.x:
-		append_bbcode('[center]%s[/center]' % msg)
+		append_text('[center]%s[/center]' % msg)
 	elif center < props.position.x:
-		append_bbcode('[right]%s[/right]' % msg)
+		append_text('[right]%s[/right]' % msg)
 	else:
-		append_bbcode(msg)
+		append_text(msg)
 
 	if _secs_per_character > 0.0:
 		# Que el texto aparezca animado
-		_tween.interpolate_property(
-			self, 'percent_visible',
-			0, 1,
-			_secs_per_character * character_count,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT
-		)
-		_tween.start()
+		if is_instance_valid(_tween) and _tween.is_running():
+			_tween.kill()
+		
+		_tween = create_tween()
+		_tween.tween_property(
+			self, 'visible_ratio',
+			1,
+			_secs_per_character * get_total_character_count()
+		).from(0.0)
+		_tween.finished.connect(_wait_input)
 	else:
 		_wait_input()
-
+	
 	modulate.a = 1.0
 
 
@@ -122,28 +122,34 @@ func stop() ->void:
 	if _is_waiting_input:
 		_notify_completion()
 	else:
-		# Saltarse las animaciones
-		_tween.remove_all()
-		percent_visible = 1.0
+		# Skip tweens
+		if is_instance_valid(_tween) and _tween.is_running():
+			_tween.kill()
+		
+		visible_ratio = 1.0
 		
 		_wait_input()
 
 
-func hide() -> void:
+func disappear() -> void:
 	if modulate.a == 0.0: return
 	
 	_auto_continue = false
 	modulate.a = 0.0
 	_is_waiting_input = false
 	
-	_tween.remove_all()
+	if is_instance_valid(_tween) and _tween.is_running():
+		_tween.kill()
 	clear()
 	
 	_continue_icon.hide()
 	_continue_icon.modulate.a = 1.0
-	_continue_icon_tween.remove_all()
 	
-	rect_size = get_meta(DFLT_SIZE)
+	if is_instance_valid(_continue_icon_tween)\
+	and _continue_icon_tween.is_running():
+		_continue_icon_tween.kill()
+	
+	size = get_meta(DFLT_SIZE)
 
 
 func change_speed() -> void:
@@ -164,9 +170,12 @@ func _show_dialogue(chr: PopochiuCharacter, msg := '') -> void:
 func _wait_input() -> void:
 	_is_waiting_input = true
 	
+	if is_instance_valid(_tween) and _tween.finished.is_connected(_wait_input):
+		_tween.finished.disconnect(_wait_input)
+	
 	if E.auto_continue_after >= 0.0:
 		_auto_continue = true
-		yield(get_tree().create_timer(E.auto_continue_after + 0.2), 'timeout')
+		await get_tree().create_timer(E.auto_continue_after + 0.2).timeout
 		
 		if _auto_continue:
 			_continue(true)
@@ -175,39 +184,45 @@ func _wait_input() -> void:
 
 
 func _notify_completion() -> void:
-	self.hide()
-	emit_signal('animation_finished')
+	disappear()
+	animation_finished.emit()
 
 
 func _show_icon() -> void:
+	if is_instance_valid(_continue_icon_tween)\
+	and _continue_icon_tween.is_running():
+		_continue_icon_tween.kill()
+	
+	_continue_icon_tween = create_tween()
+	_continue_icon.position.x = position.x + size.x
+	
 	if not E.settings.auto_continue_text:
 		# For manual continuation: make the continue icon jump
 		_continue_icon.value = 100.0
-		_continue_icon_tween.interpolate_property(
-			_continue_icon, 'rect_position:y',
-			rect_size.y,
-			rect_size.y + 3.0,
-			0.8,
-			Tween.TRANS_BOUNCE, Tween.EASE_OUT
-		)
-		_continue_icon_tween.repeat = true
+		_continue_icon_tween.tween_property(
+			_continue_icon, 'position:y',
+			size.y + 3.0, 0.8
+		).from(size.y).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+		_continue_icon_tween.set_loops()
 	else:
 		# For automatic continuation: Make the icon appear like a progress bar
 		# the time players wil have to read befor auto-continuing
 		_continue_icon.value = 0.0
-		_continue_icon_tween.interpolate_property(
+		_continue_icon.position.y = size.y + 3.0
+		_continue_icon_tween.tween_property(
 			_continue_icon, 'value',
-			null, 100.0, 3.0,
-			Tween.TRANS_LINEAR, Tween.EASE_OUT
-		)
-		_continue_icon_tween.repeat = false
+			100.0, 3.0,
+		).from_current().set_ease(Tween.EASE_OUT)
+		_continue_icon_tween.finished.connect(_continue)
+	
+	_continue_icon_tween.pause()
+	
+	await get_tree().create_timer(0.2).timeout
 
-	yield(get_tree().create_timer(0.2), 'timeout')
-
-	_continue_icon_tween.start()
+	_continue_icon_tween.play()
 	_continue_icon.show()
 
 
 func _continue(forced_continue := false) -> void:
 	if E.settings.auto_continue_text or forced_continue:
-		G.emit_signal('continue_clicked')
+		G.continue_requested.emit()

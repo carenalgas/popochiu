@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://ciufytcstpkcr"]
 
-[ext_resource path="res://addons/Popochiu/Engine/AudioManager/AudioManager.gd" type="Script" id=1]
+[ext_resource type="Script" path="res://addons/Popochiu/Engine/AudioManager/AudioManager.gd" id="1"]
 
 [node name="AudioManager" type="Node"]
-script = ExtResource( 1 )
+script = ExtResource("1")
 
 [node name="Positional" type="Node" parent="."]
 
@@ -32,5 +32,3 @@ script = ExtResource( 1 )
 [node name="AudioStreamPlayer5" type="AudioStreamPlayer" parent="Generic"]
 
 [node name="Active" type="Node" parent="."]
-
-[node name="Tween" type="Tween" parent="."]

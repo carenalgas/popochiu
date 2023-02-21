@@ -1,4 +1,4 @@
-tool
+@tool
 extends EditorPlugin
 # Plugin setup.
 # Some icons that might be useful:
@@ -9,7 +9,6 @@ var main_dock: Panel
 
 var _editor_interface := get_editor_interface()
 var _editor_file_system := _editor_interface.get_resource_filesystem()
-var _directory := Directory.new()
 var _is_first_install := false
 var _input_actions :=\
 preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
@@ -22,13 +21,16 @@ var _btn_baseline := Button.new()
 var _btn_walk_to := Button.new()
 var _types_helper: Resource = null
 var _tool_btn_stylebox :=\
-_editor_interface.get_base_control().get_stylebox("normal", "ToolButton")
+_editor_interface.get_base_control().get_theme_stylebox("normal", "Button")
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
-func _init() -> void:
-	# Thanks Dialogic ;)
-	if Engine.editor_hint:
+func _get_plugin_name():
+	return 'Popochiu 2.0'
+
+
+func _init():
+	if Engine.is_editor_hint():
 		_is_first_install = PopochiuResources.init_file_structure()
 	
 	# Load Popochiu singletons
@@ -36,12 +38,11 @@ func _init() -> void:
 	add_autoload_singleton('U', PopochiuResources.UTILS_SNGL)
 	add_autoload_singleton('Cursor', PopochiuResources.CURSOR_SNGL)
 	add_autoload_singleton('E', PopochiuResources.POPOCHIU_SNGL)
-	add_autoload_singleton('R', PopochiuResources.R_SNGL)
-	add_autoload_singleton('C', PopochiuResources.C_SNGL)
-	add_autoload_singleton('I', PopochiuResources.I_SNGL)
-	add_autoload_singleton('D', PopochiuResources.D_SNGL)
+	add_autoload_singleton('C', PopochiuResources.ICHARACTER_SNGL)
+	add_autoload_singleton('I', PopochiuResources.IINVENTORY_SNGL)
+	add_autoload_singleton('D', PopochiuResources.IDIALOG_SNGL)
 	add_autoload_singleton('G', PopochiuResources.IGRAPHIC_INTERFACE_SNGL)
-	add_autoload_singleton('A', PopochiuResources.A_SNGL)
+	add_autoload_singleton('A', PopochiuResources.IAUDIO_MANAGER_SNGL)
 
 
 func _enter_tree() -> void:
@@ -49,21 +50,23 @@ func _enter_tree() -> void:
 	
 	prints('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
 	prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
-	prints('▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
+	print_rich(\
+	'[wave]▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒[/wave]')
 	
 	_editor_file_system.scan_sources()
 	
 	_types_helper =\
 	load('res://addons/Popochiu/Editor/Helpers/PopochiuTypesHelper.gd')
 	
-	_export_plugin = preload('PopochiuExportPlugin.gd').new()
-	add_export_plugin(_export_plugin)
-	
-	_inspector_plugin = load('res://addons/Popochiu/PopochiuInspectorPlugin.gd').new()
+	var x := load('res://addons/Popochiu/PopochiuInspectorPlugin.gd')
+	_inspector_plugin = x.new()
 	_inspector_plugin.ei = _editor_interface
 	add_inspector_plugin(_inspector_plugin)
 	
-	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instance()
+	_export_plugin = preload('PopochiuExportPlugin.gd').new()
+	add_export_plugin(_export_plugin)
+	
+	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system
 	main_dock.focus_mode = Control.FOCUS_ALL
@@ -72,51 +75,36 @@ func _enter_tree() -> void:
 	
 	_create_container_buttons()
 	
-	yield(get_tree().create_timer(0.5), 'timeout')
+	await get_tree().create_timer(0.5).timeout
 	
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and Audio cues
 	main_dock.fill_data()
 	main_dock.grab_focus()
 	
 	# ==== Connect to signals ==================================================
-	_editor_interface.get_selection().connect(
-		'selection_changed', self, '_check_nodes'
-	)
-	_editor_interface.get_file_system_dock().connect(
-		'file_removed', self, '_on_file_removed'
-	)
-	_editor_interface.get_file_system_dock().connect(
-		'files_moved', self, '_on_files_moved'
-	)
+	_editor_interface.get_selection().selection_changed.connect(_check_nodes)
+	_editor_interface.get_file_system_dock().file_removed.connect(_on_file_removed)
+	_editor_interface.get_file_system_dock().files_moved.connect(_on_files_moved)
 	# TODO: This connection might be needed only by TabAudio.gd, so probably
 	# would be better if it is done there
-	_editor_file_system.connect('sources_changed', self, '_on_sources_changed')
+	_editor_file_system.sources_changed.connect(_on_sources_changed)
 	
-	connect('scene_changed', main_dock, 'scene_changed')
-	connect('scene_closed', main_dock, 'scene_closed')
+	scene_changed.connect(main_dock.scene_changed)
+	scene_closed.connect(main_dock.scene_closed)
 	# ================================================== Connect to signals ====
 	
-	main_dock.scene_changed(_editor_interface.get_edited_scene_root())
+	if _editor_interface.get_edited_scene_root():
+		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
+	
 	main_dock.setup_dialog.es = _editor_interface.get_editor_settings()
-	main_dock.setup_dialog.connect('move_requested', self, '_move_to_project')
 	
-	if PopochiuResources.get_section('setup').empty():
+	if PopochiuResources.get_section('setup').is_empty():
 		main_dock.setup_dialog.appear(true)
-		(main_dock.setup_dialog as AcceptDialog).connect(
-			'popup_hide', self, '_set_setup_done'
-		)
-	
-	PopochiuResources.update_autoloads(true)
-	_editor_file_system.update_script_classes()
-	_editor_file_system.scan_sources()
+		(main_dock.setup_dialog as AcceptDialog).confirmed.connect(_move_addon_folders)
 
 
 func _exit_tree() -> void:
 	remove_control_from_docks(main_dock)
-	remove_control_from_container(
-		EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU,
-		_btn_baseline
-	)
 	main_dock.queue_free()
 	
 	if is_instance_valid(_export_plugin):
@@ -126,21 +114,16 @@ func _exit_tree() -> void:
 		remove_inspector_plugin(_inspector_plugin)
 
 
-func get_plugin_name() -> String:
-	return 'Popochiu'
-
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func enable_plugin() -> void:
+func _enable_plugin() -> void:
 	_create_input_actions()
 	
 	if _is_first_install:
-		# Mostrar la ventana de diálogo para pedirle a la desarrolladora que reinicie
-		# el motor.
+		# Show the window that asks devs to reload the project
 		var ad := AcceptDialog.new()
 		
 		# TODO: Localize
-		ad.window_title = 'Popochiu'
+		ad.title = 'Popochiu'
 		ad.dialog_text =\
 		'[es] Reinicia el motor para completar la instalación:\n' +\
 		'Proyecto > Volver a Cargar el Proyecto Actual\n\n' + \
@@ -151,7 +134,7 @@ func enable_plugin() -> void:
 		ad.popup_centered()
 
 
-func disable_plugin() -> void:
+func _disable_plugin() -> void:
 	remove_autoload_singleton('Globals')
 	remove_autoload_singleton('U')
 	remove_autoload_singleton('Cursor')
@@ -193,7 +176,7 @@ func _create_input_actions() -> void:
 			)
 
 	var result = ProjectSettings.save()
-	assert(result == OK, '[Popochiu] Failed to save project settings.')
+	assert(result == OK) #,'[Popochiu] Failed to save project settings.')
 
 
 func _remove_input_actions() -> void:
@@ -204,11 +187,35 @@ func _remove_input_actions() -> void:
 			ProjectSettings.clear(setting_name)
 	
 	var result = ProjectSettings.save()
-	assert(result == OK, '[Popochiu] Failed to save project settings.')
+	assert(result == OK) #,'[Popochiu] Failed to save project settings.')
 
 
-# Marks setup as done in PopochiuData.cfg
-func _set_setup_done() -> void:
+func _move_addon_folders() -> void:
+	# Move files and folders so developer can overwrite them
+#	DirAccess.rename_absolute(
+#		PopochiuResources.GRAPHIC_INTERFACE_ADDON.get_base_dir(),
+#		PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+#	)
+#	DirAccess.rename_absolute(
+#		PopochiuResources.TRANSITION_LAYER_ADDON.get_base_dir(),
+#		PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+#	)
+	
+	# Refresh FileSystem
+#	_editor_file_system.scan()
+
+	# Fix dependencies
+#	await _editor_file_system.filesystem_changed
+#	await _check_popochiu_dependencies()
+	
+	# Save settings
+#	var settings := PopochiuResources.get_settings()
+#	settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
+#	settings.transition_layer = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU)
+#
+#	PopochiuResources.save_settings(settings)
+	
+	# Mark setup as done in PopochiuData.cfg
 	PopochiuResources.set_data_value('setup', 'done', true)
 
 
@@ -219,7 +226,7 @@ func _check_popochiu_dependencies() -> void:
 		)
 	)
 	
-	yield(get_tree().create_timer(0.3), 'timeout')
+	await get_tree().create_timer(0.3).timeout
 	
 	_fix_dependencies(
 		_editor_file_system.get_filesystem_path(
@@ -227,7 +234,7 @@ func _check_popochiu_dependencies() -> void:
 		)
 	)
 	
-	yield(get_tree(), 'idle_frame')
+	await get_tree().process_frame
 
 
 # Thanks PigDev ;)
@@ -238,25 +245,28 @@ func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
 	for f in dir.get_file_count():
 		var path = dir.get_file_path(f)
 		var dependencies = ResourceLoader.get_dependencies(path)
-		var file = File.new()
 
 		for d in dependencies:
-			if file.file_exists(d):
+			if FileAccess.file_exists(d):
 				continue
 			_fix_dependency(d, res, path)
 
-	for subdir in dir.get_subdir_count():
-		subdir = dir.get_subdir(subdir)
+	for subdir_id in dir.get_subdir_count():
+		var subdir := dir.get_subdir(subdir_id)
+		
 		for f in subdir.get_file_count():
 			var path = subdir.get_file_path(f)
 			var dependencies = ResourceLoader.get_dependencies(path)
+			
 			if dependencies.size() < 1:
 				continue
-			var file = File.new()
+			
 			for d in dependencies:
-				if file.file_exists(d):
+				if FileAccess.file_exists(d):
 					continue
+				
 				_fix_dependency(d, res, path)
+	
 	_editor_file_system.scan()
 
 
@@ -267,18 +277,17 @@ func _fix_dependency(dependency, directory, resource_path):
 	for f in directory.get_file_count():
 		if not directory.get_file(f) == dependency.get_file():
 			continue
-		var file = File.new()
-		file.open(resource_path, file.READ)
-		var text = file.get_as_text()
-		file.close()
+		var file_read = FileAccess.open(resource_path, FileAccess.READ)
+		var text = file_read.get_as_text()
+		
 		text = text.replace(dependency, directory.get_file_path(f))
-		file.open(resource_path, file.WRITE)
-		file.store_string(text)
-		file.close()
+		
+		var file_write = FileAccess.open(resource_path, FileAccess.WRITE)
+		file_write.store_string(text)
 
 
 func _on_sources_changed(exist: bool) -> void:
-	if Engine.editor_hint and is_instance_valid(main_dock):
+	if Engine.is_editor_hint() and is_instance_valid(main_dock):
 		main_dock.search_audio_files()
 
 
@@ -338,18 +347,18 @@ func _create_container_buttons() -> void:
 	var hbox := HBoxContainer.new()
 	
 	_btn_baseline.icon = preload('res://addons/Popochiu/icons/baseline.png')
-	_btn_baseline.hint_tooltip = 'Baseline'
+	_btn_baseline.tooltip_text = 'Baseline'
 	_btn_baseline.toggle_mode = true
-	_btn_baseline.add_stylebox_override('normal', _tool_btn_stylebox)
-	_btn_baseline.add_stylebox_override('hover', _tool_btn_stylebox)
-	_btn_baseline.connect('pressed', self, '_select_baseline')
+	_btn_baseline.add_theme_stylebox_override('normal', _tool_btn_stylebox)
+	_btn_baseline.add_theme_stylebox_override('hover', _tool_btn_stylebox)
+	_btn_baseline.pressed.connect(_select_baseline)
 	
 	_btn_walk_to.icon = preload('res://addons/Popochiu/icons/walk_to_point.png')
-	_btn_walk_to.hint_tooltip = 'Walk to point'
+	_btn_walk_to.tooltip_text = 'Walk to point'
 	_btn_walk_to.toggle_mode = true
-	_btn_walk_to.add_stylebox_override('normal', _tool_btn_stylebox)
-	_btn_walk_to.add_stylebox_override('hover', _tool_btn_stylebox)
-	_btn_walk_to.connect('pressed', self, '_select_walk_to')
+	_btn_walk_to.add_theme_stylebox_override('normal', _tool_btn_stylebox)
+	_btn_walk_to.add_theme_stylebox_override('hover', _tool_btn_stylebox)
+	_btn_walk_to.pressed.connect(_select_walk_to)
 	
 	hbox.add_child(_vsep)
 	hbox.add_child(_btn_baseline)
@@ -389,38 +398,3 @@ func _select_baseline() -> void:
 		_editor_interface.edit_node(_selected_node.get_node('BaselineHelper'))
 	else:
 		_editor_interface.edit_node(_selected_node.get_node('../BaselineHelper'))
-
-
-func _move_to_project(id: int) -> void:
-	# Move files and folders so developer can overwrite them
-	if id == PopochiuResources.GI:
-		_directory.rename(
-			PopochiuResources.GRAPHIC_INTERFACE_ADDON.get_base_dir(),
-			PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
-		)
-	elif id == PopochiuResources.TL:
-		_directory.rename(
-			PopochiuResources.TRANSITION_LAYER_ADDON.get_base_dir(),
-			PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
-		)
-	
-	# Refresh FileSystem
-	_editor_file_system.scan()
-
-	# Fix dependencies
-	yield(_editor_file_system, 'filesystem_changed')
-	yield(_check_popochiu_dependencies(), 'completed')
-	
-	# Save settings
-	var settings := PopochiuResources.get_settings()
-	
-	if id == PopochiuResources.GI:
-		settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
-		PopochiuResources.set_data_value('setup', 'gi_moved', true)
-	elif id == PopochiuResources.TL:
-		settings.transition_layer = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU)
-		PopochiuResources.set_data_value('setup', 'tl_moved', true)
-	
-	PopochiuResources.save_settings(settings)
-	
-	main_dock.setup_dialog.update_state()

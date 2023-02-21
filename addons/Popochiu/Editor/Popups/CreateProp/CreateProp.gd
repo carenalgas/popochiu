@@ -1,4 +1,4 @@
-tool
+@tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Permite crear una nueva Prop para una habitación. De tener interacción, se le
 # asignará un script que quedará guardado en la carpeta Props de la carpeta de
@@ -17,30 +17,31 @@ var _prop_path_template: String
 var _room_path: String
 var _room_dir: String
 
-onready var _interaction_checkbox: CheckBox = find_node('InteractionCheckbox')
+@onready var _interaction_checkbox: CheckBox = find_child('InteractionCheckbox')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	super()
 	_clear_fields()
 	
-	_interaction_checkbox.connect('toggled', self, '_interaction_toggled')
+	_interaction_checkbox.toggled.connect(_interaction_toggled)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: PopochiuDock) -> void:
-	.set_main_dock(node)
+func set_main_dock(node: Panel) -> void:
+	super(node)
 
 
 func room_opened(r: Node2D) -> void:
 	_room = r
-	_room_path = _room.filename
+	_room_path = _room.scene_file_path
 	_room_dir = _room_path.get_base_dir()
 	_prop_path_template = _room_dir + '/Props/%s/Prop%s'
 
 
 func create() -> void:
-	if not _new_prop_name:
+	if _new_prop_name.is_empty():
 		_error_feedback.show()
 		return
 	
@@ -49,40 +50,40 @@ func create() -> void:
 	var script_path := _new_prop_path + '.gd'
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	if _interaction_checkbox.pressed:
+	if _interaction_checkbox.button_pressed:
 		# Create the folder for the Prop
 		assert(\
-		_main_dock.dir.make_dir_recursive(_new_prop_path.get_base_dir()) == OK,
-		'[Popochiu] Could not create Prop folder for ' + _new_prop_name
+		DirAccess.make_dir_recursive_absolute(_new_prop_path.get_base_dir()) == OK,\
+		'[Popochiu] Could not create Prop folder for ' + _new_prop_name\
 		)
-	elif not _main_dock.dir.dir_exists(_room_dir + '/Props/'):
+	elif not DirAccess.dir_exists_absolute(_room_dir + '/Props/'):
 		# If the Prop doesn't have interaction, just try to create the Props
 		# folder to store there the assets that will be used by the Prop
 		assert(\
-		_main_dock.dir.make_dir_recursive(_room_dir + '/Props/_NoInteraction') == OK,
-		'[Popochiu] Could not create Props folder for ' + _room_path.get_file()
+		DirAccess.make_dir_recursive_absolute(_room_dir + '/Props/_NoInteraction') == OK,\
+		'[Popochiu] Could not create Props folder for ' + _room_path.get_file()\
 		)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de la prop (si tiene interacción)
-	if _interaction_checkbox.pressed:
+	if _interaction_checkbox.button_pressed:
 		var prop_template := load(PROP_SCRIPT_TEMPLATE)
-		if ResourceSaver.save(script_path, prop_template) != OK:
+		if ResourceSaver.save(prop_template, script_path) != OK:
 			push_error('[Popochiu] Could not create script: %s.gd' % _new_prop_name)
 			# TODO: Show feedback in the popup
 			return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear la prop a agregar a la habitación
-	var prop: PopochiuProp = ResourceLoader.load(BASE_PROP_PATH).instance()
+	var prop: PopochiuProp = ResourceLoader.load(BASE_PROP_PATH).instantiate()
 	
-	if _interaction_checkbox.pressed:
+	if _interaction_checkbox.button_pressed:
 		prop.set_script(ResourceLoader.load(script_path))
 	
 	prop.name = _new_prop_name
 	prop.script_name = _new_prop_name
 	prop.description = _new_prop_name
-	prop.clickable = _interaction_checkbox.pressed
+	prop.clickable = _interaction_checkbox.button_pressed
 	prop.cursor = Constants.CURSOR_TYPE.ACTIVE
 	
 	if _new_prop_name in ['Bg', 'Background']:
@@ -99,7 +100,7 @@ func create() -> void:
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
 	
-	if _interaction_checkbox.pressed:
+	if _interaction_checkbox.button_pressed:
 		var collision := CollisionPolygon2D.new()
 		collision.name = 'InteractionPolygon'
 		prop.add_child(collision)
@@ -112,16 +113,16 @@ func create() -> void:
 	room_tab.add_to_list(
 		Constants.Types.PROP,
 		_new_prop_name,
-		script_path if _interaction_checkbox.pressed else _room_dir + '/Props'
+		script_path if _interaction_checkbox.button_pressed else _room_dir + '/Props'
 	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades de la prop creada en el Inspector
 	_main_dock.fs.scan()
-	yield(get_tree().create_timer(0.1), 'timeout')
+	await get_tree().create_timer(0.1).timeout
 	_main_dock.ei.edit_node(prop)
 	
-	if _interaction_checkbox.pressed:
+	if _interaction_checkbox.button_pressed:
 		_main_dock.ei.select_file(script_path)
 	else:
 		_main_dock.ei.get_file_system_dock().navigate_to_path(
@@ -132,37 +133,38 @@ func create() -> void:
 	# Fin
 	hide()
 
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
-	._update_name(new_text)
+	super(new_text)
 
 	if _name:
 		_new_prop_name = _name
 		_new_prop_path = _prop_path_template % [_new_prop_name, _new_prop_name]
 
-		if _interaction_checkbox.pressed:
+		if _interaction_checkbox.button_pressed:
 			_update_info()
 	else:
 		_info.clear()
 
 
 func _clear_fields() -> void:
-	._clear_fields()
+	super()
 	
 	_new_prop_name = ''
 	_new_prop_path = ''
-	_interaction_checkbox.pressed = false
+	_interaction_checkbox.button_pressed = false
 
 
 func _interaction_toggled(is_pressed: bool) -> void:
-	if is_pressed and _name:
+	if is_pressed and not _name.is_empty():
 		_update_info()
 	else:
 		_info.clear()
 
 
 func _update_info() -> void:
-	_info.bbcode_text = (
+	_info.text = (
 		'In [b]%s[/b] the following file will be created: [code]%s[/code]' \
 		% [
 			_new_prop_path.get_base_dir(),

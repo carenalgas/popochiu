@@ -1,78 +1,63 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=4 format=3 uid="uid://byogegq0400tm"]
 
-[ext_resource path="res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.gd" type="Script" id=1]
-[ext_resource path="res://addons/Popochiu/icons/ui.png" type="Texture" id=2]
-[ext_resource path="res://addons/Popochiu/icons/voice.png" type="Texture" id=3]
-[ext_resource path="res://addons/Popochiu/icons/music.png" type="Texture" id=4]
-[ext_resource path="res://addons/Popochiu/icons/sfx.png" type="Texture" id=5]
+[ext_resource type="Script" path="res://addons/Popochiu/Editor/MainDock/AudioRow/PopochiuAudioRow.gd" id="1"]
 
-[sub_resource type="Image" id=3]
+[sub_resource type="Image" id="Image_6qyrd"]
 data = {
-"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"data": PackedByteArray(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0),
 "format": "LumAlpha8",
 "height": 16,
 "mipmaps": false,
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id=2]
-flags = 4
-flags = 4
-image = SubResource( 3 )
-size = Vector2( 16, 16 )
+[sub_resource type="ImageTexture" id="2"]
+image = SubResource("Image_6qyrd")
 
 [node name="PopochiuAudioRow" type="HBoxContainer"]
-margin_right = 320.0
-margin_bottom = 40.0
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
+offset_right = 320.0
+offset_bottom = 40.0
+script = ExtResource("1")
 
 [node name="Label" type="Label" parent="."]
-margin_top = 13.0
-margin_right = 140.0
-margin_bottom = 27.0
-rect_clip_content = true
+clip_contents = true
+offset_top = 7.0
+offset_right = 140.0
+offset_bottom = 33.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.8
 text = "PopochiuAudioRow"
 clip_text = true
 
 [node name="Panel" type="Panel" parent="."]
-margin_left = 144.0
-margin_right = 320.0
-margin_bottom = 40.0
-rect_min_size = Vector2( 0, 24 )
-mouse_filter = 1
+offset_left = 144.0
+offset_right = 320.0
+offset_bottom = 40.0
 size_flags_horizontal = 3
+mouse_filter = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-custom_constants/separation = 0
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="Play" type="Button" parent="Panel/HBoxContainer"]
-margin_right = 28.0
-margin_bottom = 40.0
+offset_right = 24.0
+offset_bottom = 40.0
 mouse_filter = 1
-icon = SubResource( 2 )
+icon = SubResource("2")
 flat = true
 
 [node name="Stop" type="Button" parent="Panel/HBoxContainer"]
-margin_left = 28.0
-margin_right = 56.0
-margin_bottom = 40.0
+offset_left = 28.0
+offset_right = 52.0
+offset_bottom = 40.0
 mouse_filter = 1
-icon = SubResource( 2 )
+icon = SubResource("2")
 flat = true
 
 [node name="MenuButton" type="MenuButton" parent="Panel/HBoxContainer"]
-margin_left = 56.0
-margin_right = 84.0
-margin_bottom = 40.0
-icon = SubResource( 2 )
-items = [ "Add to Music", ExtResource( 4 ), 0, false, false, 0, 0, null, "", false, "Add to Sound effects", ExtResource( 5 ), 0, false, false, 1, 0, null, "", false, "Add to Voices", ExtResource( 3 ), 0, false, false, 2, 0, null, "", false, "Add to Graphic interface", ExtResource( 2 ), 0, false, false, 3, 0, null, "", false, "", null, 0, false, false, -1, 0, null, "", true, "Remove", SubResource( 2 ), 0, false, false, 4, 0, null, "", false ]
+offset_left = 56.0
+offset_right = 80.0
+offset_bottom = 40.0
+icon = SubResource("2")

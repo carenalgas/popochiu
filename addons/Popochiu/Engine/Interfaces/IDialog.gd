@@ -14,7 +14,6 @@ var active := false
 var trees := {}
 var current_dialog: PopochiuDialog = null
 var selected_option: PopochiuDialogOption = null
-var prev_dialog: PopochiuDialog = null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -24,11 +23,10 @@ func show_dialog(script_name: String) -> void:
 	
 	if current_dialog:
 		active = true
-		current_dialog._start()
+		current_dialog.start()
 		
-		yield(self, 'dialog_finished')
+		await self.dialog_finished
 		
-		# Save the state of the dialog
 		trees[current_dialog.script_name] = current_dialog
 		
 		active = false
@@ -37,34 +35,20 @@ func show_dialog(script_name: String) -> void:
 		
 		G.done()
 	else:
-		yield(get_tree(), 'idle_frame')
+		await get_tree().process_frame
 
 
 # Shows a list of options (like a dialog tree would do) and returns the
 # PopochiuDialogOption of the selected option
 func show_inline_dialog(opts: Array) -> PopochiuDialogOption:
-	active = true
-	
-	if current_dialog:
-		D.disconnect('option_selected', current_dialog, '_on_option_selected')
-	
-	emit_signal('inline_dialog_requested', opts)
-	
-	var pdo: PopochiuDialogOption = yield(self, 'option_selected')
-	
-	if current_dialog:
-		D.connect('option_selected', current_dialog, '_on_option_selected')
-	else:
-		active = false
-		G.done()
-	
-	return pdo
+	inline_dialog_requested.emit(opts)
+	return await option_selected
 
 
 # Finishes the dialog currently in execution.
 func finish_dialog() -> void:
-	emit_signal('dialog_finished')
+	dialog_finished.emit()
 
 
 func say_selected() -> void:
-	yield(E.run(['Player: ' + selected_option.text]), 'completed')
+	await E.run(['Player: ' + selected_option.text])

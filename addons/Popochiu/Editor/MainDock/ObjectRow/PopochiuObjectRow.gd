@@ -1,4 +1,4 @@
-tool
+@tool
 extends HBoxContainer
 # The row that is created for Rooms, Characters, Inventory items, Dialogs,
 # Props, Hotspots, Regions and Points in the dock.
@@ -10,15 +10,12 @@ enum MenuOptions {
 	ADD_TO_CORE,
 	CREATE_STATE_SCRIPT,
 	SET_AS_MAIN,
-	SET_AS_PC,
 	START_WITH_IT,
-	CREATE_PROP_SCRIPT,
+	CREATE_SCRIPT,
 	DELETE
 }
 
 const SELECTED_FONT_COLOR := Color('706deb')
-const PLAYER_CHARACTER_ICON := preload(\
-'res://addons/Popochiu/icons/player_character.png')
 const INVENTORY_START_ICON := preload(\
 'res://addons/Popochiu/icons/inventory_item_start.png')
 const ROOM_STATE_TEMPLATE :=\
@@ -35,24 +32,23 @@ const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd
 var type := -1
 var path := ''
 var node_path := ''
-var main_dock: Panel = null setget set_main_dock
-var is_main := false setget set_is_main
-var is_pc := false setget set_is_pc
-var is_on_start := false setget set_is_on_start
+var main_dock: Panel : set = _set_main_dock
+var is_main := false : set = _set_is_main
+var is_on_start := false : set = set_is_on_start
 
 var _delete_dialog: ConfirmationDialog
 var _delete_all_checkbox: CheckBox
 
-onready var _label: Label = find_node('Label')
-onready var _dflt_font_color: Color = _label.get_color('font_color')
-onready var _fav_icon: TextureRect = find_node('FavIcon')
-onready var _menu_btn: MenuButton = find_node('MenuButton')
-onready var _menu_popup: PopupMenu = _menu_btn.get_popup()
-onready var _btn_open: Button = find_node('Open')
-onready var _btn_script: Button = find_node('Script')
-onready var _btn_state: Button = find_node('State')
-onready var _btn_state_script: Button = find_node('StateScript')
-onready var _menu_cfg := [
+@onready var _label: Label = find_child('Label')
+@onready var _dflt_font_color: Color = _label.get_theme_color('font_color')
+@onready var _fav_icon: TextureRect = find_child('FavIcon')
+@onready var _menu_btn: MenuButton = find_child('MenuButton')
+@onready var _menu_popup: PopupMenu = _menu_btn.get_popup()
+@onready var _btn_open: Button = find_child('Open')
+@onready var _btn_script: Button = find_child('Script')
+@onready var _btn_state: Button = find_child('State')
+@onready var _btn_state_script: Button = find_child('StateScript')
+@onready var _menu_cfg: Array = [
 	{
 		id = MenuOptions.ADD_TO_CORE,
 		icon = preload(\
@@ -62,21 +58,15 @@ onready var _menu_cfg := [
 	},
 	{
 		id = MenuOptions.CREATE_STATE_SCRIPT,
-		icon = get_icon('ScriptCreate', 'EditorIcons'),
+		icon = get_theme_icon('ScriptCreate', 'EditorIcons'),
 		label = 'Create state script',
 		types = Constants.MAIN_TYPES
 	},
 	{
 		id = MenuOptions.SET_AS_MAIN,
-		icon = get_icon('Heart', 'EditorIcons'),
+		icon = get_theme_icon('Heart', 'EditorIcons'),
 		label = 'Set as Main scene',
 		types = [Constants.Types.ROOM]
-	},
-	{
-		id = MenuOptions.SET_AS_PC,
-		icon = PLAYER_CHARACTER_ICON,
-		label = 'Set as Player Character',
-		types = [Constants.Types.CHARACTER]
 	},
 	{
 		id = MenuOptions.START_WITH_IT,
@@ -85,15 +75,15 @@ onready var _menu_cfg := [
 		types = [Constants.Types.INVENTORY_ITEM]
 	},
 	{
-		id = MenuOptions.CREATE_PROP_SCRIPT,
-		icon = get_icon('ScriptCreate', 'EditorIcons'),
+		id = MenuOptions.CREATE_SCRIPT,
+		icon = get_theme_icon('ScriptCreate', 'EditorIcons'),
 		label = 'Create script',
 		types = [Constants.Types.PROP]
 	},
 	null,
 	{
 		id = MenuOptions.DELETE,
-		icon = get_icon('Remove', 'EditorIcons'),
+		icon = get_theme_icon('Remove', 'EditorIcons'),
 		label = 'Remove'
 	}
 ]
@@ -101,48 +91,38 @@ onready var _menu_cfg := [
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	_label.text = name
-	hint_tooltip = path
+	_label.text = str(name)
+	tooltip_text = path
 	
 	# Assign icons
-	_fav_icon.texture = get_icon('Heart', 'EditorIcons')
+	_fav_icon.texture = get_theme_icon('Heart', 'EditorIcons')
 	
-	match type:
-		Constants.Types.CHARACTER:
-			_fav_icon.texture = PLAYER_CHARACTER_ICON
-		Constants.Types.INVENTORY_ITEM:
-			_fav_icon.texture = INVENTORY_START_ICON
+	if type == Constants.Types.INVENTORY_ITEM:
+		_fav_icon.texture = INVENTORY_START_ICON
 	
-	_btn_open.icon = get_icon('InstanceOptions', 'EditorIcons')
-	_btn_script.icon = get_icon('Script', 'EditorIcons')
-	_btn_state.icon = get_icon('Object', 'EditorIcons')
-	_btn_state_script.icon = get_icon('GDScript', 'EditorIcons')
-	_menu_btn.icon = get_icon('GuiTabMenuHl', 'EditorIcons')
+	_btn_open.icon = get_theme_icon('InstanceOptions', 'EditorIcons')
+	_btn_script.icon = get_theme_icon('Script', 'EditorIcons')
+	_btn_state.icon = get_theme_icon('Object', 'EditorIcons')
+	_btn_state_script.icon = get_theme_icon('GDScript', 'EditorIcons')
+	_menu_btn.icon = get_theme_icon('GuiTabMenuHl', 'EditorIcons')
 	
 	_btn_script.show()
 	_btn_state.show()
 	_btn_state_script.show()
 	
-	# Create the context menu based on the type of Object this row represents
+	# Create the context menu based checked the type of Object this row represents
 	_create_menu()
 	
 	if type in Constants.MAIN_TYPES:
-		# By default disable the Add to Popochiu and Create state script buttons
-		# This will be enabled by PopochiuDock.gd if the object is not in
-		# PopochiuData.cfg
-		_menu_popup.set_item_disabled(
-			_menu_popup.get_item_index(MenuOptions.ADD_TO_CORE), true
-		)
-		_menu_popup.set_item_disabled(
-			_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), true
-		)
-	elif type == Constants.Types.PROP and path.find('.gd') > -1:
-		# If the Room object has a script, disable the Create prop script button
-		_menu_popup.remove_item(
-			_menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT)
-		)
+		# By default disable the Add to Popochiu button. This will be enabled
+		# by PopochiuDock.gd if this object is not in PopochiuData.cfg
+		_menu_popup.set_item_disabled(0, true)
+		_menu_popup.set_item_disabled(1, true)
+	elif path.find('.gd') > -1:
+		# If the Room object has a script, disable the Create script button
+		_menu_popup.set_item_disabled(0, true)
 	
-	# Hide buttons based on the type of the Object this row represents
+	# Hide buttons based checked the type of the Object this row represents
 	_fav_icon.hide()
 	
 	if not type in Constants.MAIN_TYPES:
@@ -157,72 +137,32 @@ func _ready() -> void:
 		# Object (Prop, Hotspot, Region, Point)
 		_btn_open.hide()
 	
-	connect('gui_input', self, '_check_click')
-	_menu_popup.connect('id_pressed', self, '_menu_item_pressed')
-	_btn_open.connect('pressed', self, '_open')
-	_btn_script.connect('pressed', self, '_open_script')
-	_btn_state.connect('pressed', self, '_edit_state')
-	_btn_state_script.connect('pressed', self, '_open_state_script')
+	gui_input.connect(_check_click)
+	_menu_popup.id_pressed.connect(_menu_item_pressed)
+	_btn_open.pressed.connect(_open)
+	_btn_script.pressed.connect(_open_script)
+	_btn_state.pressed.connect(_edit_state)
+	_btn_state_script.pressed.connect(_open_state_script)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func select() -> void:
-	_label.add_color_override('font_color', SELECTED_FONT_COLOR)
-	emit_signal('clicked', self)
+	_label.add_theme_color_override('font_color', SELECTED_FONT_COLOR)
+	clicked.emit(self)
 
 
-func unselect() -> void:
-	_label.add_color_override('font_color', _dflt_font_color)
+func deselect() -> void:
+	_label.add_theme_color_override('font_color', _dflt_font_color)
 
 
 func show_add_to_core() -> void:
 	_label.modulate.a = 0.5
-	_menu_popup.set_item_disabled(
-		_menu_popup.get_item_index(MenuOptions.ADD_TO_CORE), false
-	)
+	_menu_popup.set_item_disabled(0, false)
 
 
 func show_create_state_script() -> void:
 	_btn_state_script.disabled = true
-	_menu_popup.set_item_disabled(
-		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), false
-	)
-
-
-func remove_create_state_script() -> void:
-	_menu_popup.remove_item(
-		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT)
-	)
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
-func set_main_dock(value: Panel) -> void:
-	main_dock = value
-	_delete_dialog = main_dock.delete_dialog
-	_delete_all_checkbox = _delete_dialog.find_node('CheckBox')
-
-
-func set_is_main(value: bool) -> void:
-	is_main = value
-	_fav_icon.visible = value
-	
-	_menu_popup.set_item_disabled(
-		_menu_popup.get_item_index(MenuOptions.SET_AS_MAIN), value
-	)
-
-
-func set_is_pc(value: bool) -> void:
-	is_pc = value
-	_fav_icon.visible = value
-	
-	_menu_popup.set_item_disabled(
-		_menu_popup.get_item_index(MenuOptions.SET_AS_PC), value
-	)
-
-
-func set_is_on_start(value: bool) -> void:
-	is_on_start = value
-	_fav_icon.visible = value
+	_menu_popup.set_item_disabled(1, false)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -245,7 +185,7 @@ func _create_menu() -> void:
 func _check_click(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
 	if mouse_event\
-	and mouse_event.button_index == BUTTON_LEFT and mouse_event.pressed:
+	and mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
 		main_dock.ei.select_file(path)
 		select()
 
@@ -254,14 +194,11 @@ func _menu_item_pressed(id: int) -> void:
 	match id:
 		MenuOptions.ADD_TO_CORE:
 			_add_object_to_core()
-		MenuOptions.CREATE_STATE_SCRIPT:
-			_create_state_script()
 		MenuOptions.SET_AS_MAIN:
 			main_dock.set_main_scene(path)
 			self.is_main = true
-		MenuOptions.SET_AS_PC:
-			main_dock.set_pc(name)
-			self.is_pc = true
+		MenuOptions.CREATE_STATE_SCRIPT:
+			_create_state_script()
 		MenuOptions.START_WITH_IT:
 			var settings := PopochiuResources.get_settings()
 			
@@ -274,7 +211,7 @@ func _menu_item_pressed(id: int) -> void:
 			(main_dock.ei as EditorInterface).get_inspector().refresh()
 			
 			self.is_on_start = name in settings.items_on_start
-		MenuOptions.CREATE_PROP_SCRIPT:
+		MenuOptions.CREATE_SCRIPT:
 			var prop_template := load(PROP_SCRIPT_TEMPLATE)
 			var script_path := path + '/%s/Prop%s.gd' % [name, name]
 			
@@ -283,11 +220,11 @@ func _menu_item_pressed(id: int) -> void:
 			
 			# Create the folder for the script
 			if main_dock.dir.make_dir_recursive(script_path.get_base_dir()) != OK:
-				push_error('[Popochiu] Could not create Prop folder for ' + name)
+				push_error('[Popochiu] Could not create Prop folder for ' + str(name))
 				return
 			
 			# Create the script
-			if ResourceSaver.save(script_path, prop_template) != OK:
+			if ResourceSaver.save(prop_template, script_path) != OK:
 				push_error('[Popochiu] Could not create script: %s.gd' % name)
 				return
 			
@@ -314,9 +251,7 @@ func _menu_item_pressed(id: int) -> void:
 			path = script_path
 			
 			_btn_script.show()
-			_menu_popup.set_item_disabled(
-				_menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT), true
-			)
+			_menu_popup.set_item_disabled(0, true)
 		MenuOptions.DELETE:
 			_remove_object()
 
@@ -349,15 +284,8 @@ func _add_object_to_core() -> void:
 		push_error("[Popochiu] Couldn't add Object to Popochiu: %s" % name)
 		return
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the object to its corresponding singleton
-	PopochiuResources.update_autoloads(true)
-	main_dock.fs.update_script_classes()
-	
 	_label.modulate.a = 1.0
-	_menu_popup.set_item_disabled(
-		_menu_popup.get_item_index(MenuOptions.ADD_TO_CORE), true
-	)
+	_menu_popup.set_item_disabled(0, true)
 
 
 # Selecciona el archivo principal del objeto en el FileSystem y lo abre para que
@@ -429,7 +357,7 @@ func _remove_object() -> void:
 		# Title
 		'Remove %s from %s' % [name, location],
 		# Body
-		'This will remove the [b]%s[/b] resource in %s.' % [name, location] +\
+		'This will remove_at the [b]%s[/b] resource in %s.' % [name, location] +\
 		' Uses of this object in scripts will not work anymore.' +\
 		' This action cannot be reversed. Continue?',
 		# Additional confirmation
@@ -444,11 +372,9 @@ func _remove_object() -> void:
 		else ''
 	)
 	
-	_delete_dialog.connect('confirmed', self, '_remove_from_core')
-	_delete_dialog.get_cancel().connect('pressed', self, '_disconnect_popup')
-	_delete_dialog.get_close_button().connect(
-		'pressed', self, '_disconnect_popup'
-	)
+	_delete_dialog.confirmed.connect(_remove_from_core)
+	_delete_dialog.get_cancel_button().pressed.connect(_disconnect_popup)
+	_delete_dialog.cancelled.connect(_disconnect_popup)
 
 
 func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
@@ -459,50 +385,36 @@ func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
 	
 	for idx in dir.get_file_count():
 		match dir.get_file_type(idx):
-			'AudioStreamOGGVorbis', 'AudioStreamMP3', 'AudioStreamSample':
+			'AudioStreamOggVorbis', 'AudioStreamMP3', 'AudioStreamWAV':
 				files.append(dir.get_file_path(idx))
 	
 	return files
 
 
 func _remove_from_core() -> void:
-	# Delete the object from Popochiu ------------------------------------------
+	# Eliminar el objeto de Popochiu -------------------------------------------
 	match type:
 		Constants.Types.ROOM:
-			PopochiuResources.remove_autoload_obj(PopochiuResources.R_SNGL, name)
-			main_dock.fs.update_script_classes()
-			
-			PopochiuResources.erase_data_value('rooms', name)
+			PopochiuResources.erase_data_value('rooms', str(name))
 		Constants.Types.CHARACTER:
-			PopochiuResources.remove_autoload_obj(PopochiuResources.C_SNGL, name)
-			main_dock.fs.update_script_classes()
-			
-			PopochiuResources.erase_data_value('characters', name)
+			PopochiuResources.erase_data_value('characters', str(name))
 		Constants.Types.INVENTORY_ITEM:
-			PopochiuResources.remove_autoload_obj(PopochiuResources.I_SNGL, name)
-			main_dock.fs.update_script_classes()
-			
-			PopochiuResources.erase_data_value('inventory_items', name)
+			PopochiuResources.erase_data_value('inventory_items', str(name))
 		Constants.Types.DIALOG:
-			PopochiuResources.remove_autoload_obj(PopochiuResources.D_SNGL, name)
-			main_dock.fs.update_script_classes()
-			
-			PopochiuResources.erase_data_value('dialogs', name)
-		Constants.Types.PROP,\
-		Constants.Types.HOTSPOT,\
-		Constants.Types.REGION,\
+			PopochiuResources.erase_data_value('dialogs', str(name))
+		Constants.Types.PROP, Constants.Types.HOTSPOT, Constants.Types.REGION,\
 		Constants.Types.WALKABLE_AREA:
 			var opened_room: PopochiuRoom = main_dock.get_opened_room()
 			if opened_room:
 				match type:
 					Constants.Types.PROP:
-						opened_room.get_prop(name).queue_free()
+						opened_room.get_prop(str(name)).queue_free()
 					Constants.Types.HOTSPOT:
-						opened_room.get_hotspot(name).queue_free()
+						opened_room.get_hotspot(str(name)).queue_free()
 					Constants.Types.REGION:
-						opened_room.get_region(name).queue_free()
+						opened_room.get_region(str(name)).queue_free()
 					Constants.Types.WALKABLE_AREA:
-						opened_room.get_walkable_area(name).queue_free()
+						opened_room.get_walkable_area(str(name)).queue_free()
 				
 				main_dock.ei.save_scene()
 			else:
@@ -512,7 +424,7 @@ func _remove_from_core() -> void:
 			# TODO: If it is a non-interactable Object, just delete the node from the
 			# scene, and maybe its sprite?
 			# TODO: Remove explicit exclusion, it's ugly
-			if not path:
+			if path.is_empty():
 				_disconnect_popup()
 				return
 	
@@ -520,14 +432,10 @@ func _remove_from_core() -> void:
 		_delete_from_file_system()
 	elif type in Constants.MAIN_TYPES:
 		show_add_to_core()
-	elif not path.get_extension():
+	elif path.get_extension().is_empty():
 		queue_free()
 	
 	_disconnect_popup()
-	
-	if main_dock.ei.get_edited_scene_root().script_name == name:
-		return
-	
 	main_dock.ei.save_scene()
 
 
@@ -537,15 +445,15 @@ func _delete_from_file_system() -> void:
 		main_dock.fs.get_filesystem_path(path.get_base_dir())
 	
 	# Remove files, sub folders and its files.
-	assert(
-		_recursive_delete(object_dir) == OK,
-		'[Popochiu] Error in recursive elimination of %s' % path.get_base_dir()
+	assert(\
+	_recursive_delete(object_dir) == OK,\
+	'[Popochiu] Error in recursive elimination of %s' % path.get_base_dir()\
 	)
 	
 	# Remove the object's folder
-	assert(
-		main_dock.dir.remove(path.get_base_dir()) == OK,
-		'[Popochiu] Could not delete folder: %s' % path.get_base_dir()
+	assert(\
+		main_dock.dir.remove_at(path.get_base_dir()) == OK,\
+		'[Popochiu] Could not delete folder: %s' % path.get_base_dir()\
 	)
 
 	# Update the file system structure in the EditorFileSystem.
@@ -569,7 +477,7 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 			_recursive_delete(subfolder)
 			
 			# Eliminar la carpeta
-			var err: int = main_dock.dir.remove(subfolder.get_path())
+			var err: int = main_dock.dir.remove_at(subfolder.get_path())
 			if err != OK:
 				push_error('[Popochiu(err_code:%d)] Could not delete subdirectory %s' %\
 				[err, subfolder.get_path()])
@@ -589,7 +497,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	
 	for file_idx in dir.get_file_count():
 		match dir.get_file_type(file_idx):
-			'AudioStreamOGGVorbis', 'AudioStreamMP3', 'AudioStreamSample':
+			'AudioStreamOggVorbis', 'AudioStreamMP3', 'AudioStreamWAV':
 				deleted_audios.append(dir.get_file_path(file_idx))
 			'Resource':
 				var resource: Resource = load(dir.get_file_path(file_idx))
@@ -603,13 +511,13 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 						)
 						if cues.has(resource.resource_path):
 							cues.erase(resource.resource_path)
-							assert(
+							assert(\
 								PopochiuResources.set_data_value(
 									'audio', arr, cues
-								) == OK,
+								) == OK,\
 								'[Popochiu] Could not save AudioManager after' +\
 								' attempting to delete AudioCue during deletion of' +\
-								' directory %s.' % dir.get_path()
+								' directory %s.' % dir.get_path()\
 							)
 							break
 		
@@ -618,7 +526,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	for fp in files_paths:
 		# Así es como se hace en el código fuente del motor para que se eliminen
 		# también los .import asociados a los archivos importados. ————————————
-		var err: int = main_dock.dir.remove(fp)
+		var err: int = main_dock.dir.remove_at(fp)
 		main_dock.fs.update_file(fp)
 		# —————————————————————————————————————————————————————————————————————
 		if err != OK:
@@ -628,7 +536,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	
 	# Eliminar las filas en la pestaña de Audio de los archivos de audio y los
 	# AudioCue eliminados.
-	if not deleted_audios.empty():
+	if not deleted_audios.is_empty():
 		main_dock.get_audio_tab().delete_rows(deleted_audios)
 	
 	return OK
@@ -636,11 +544,26 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 
 # Se desconecta de las señales del popup utilizado para configurar la eliminación.
 func _disconnect_popup() -> void:
-	_delete_dialog.disconnect('confirmed', self, '_remove_from_core')
-	_delete_dialog.get_cancel().disconnect('pressed', self, '_disconnect_popup')
-	_delete_dialog.get_close_button().disconnect(
-		'pressed', self, '_disconnect_popup'
-	)
+	_delete_dialog.confirmed.disconnect(_remove_from_core)
+	_delete_dialog.get_cancel_button().pressed.disconnect(_disconnect_popup)
+	_delete_dialog.cancelled.disconnect(_disconnect_popup)
+
+
+func _set_main_dock(value: Panel) -> void:
+	main_dock = value
+	_delete_dialog = main_dock.delete_dialog
+	_delete_all_checkbox = _delete_dialog.find_child('CheckBox')
+
+
+func _set_is_main(value: bool) -> void:
+	is_main = value
+	_fav_icon.visible = value
+	_menu_popup.set_item_disabled(MenuOptions.SET_AS_MAIN, value)
+
+
+func set_is_on_start(value: bool) -> void:
+	is_on_start = value
+	_fav_icon.visible = value
 
 
 func _create_state_script() -> void:
@@ -658,11 +581,11 @@ func _create_state_script() -> void:
 	
 	# Create the folder for the script
 	if main_dock.dir.make_dir_recursive(script_path.get_base_dir()) != OK:
-		push_error('[Popochiu] Could not create state script for ' + name)
+		push_error('[Popochiu] Could not create state script for ' + str(name))
 		return
 	
 	# Create the script
-	if ResourceSaver.save(script_path, template) != OK:
+	if ResourceSaver.save(template, script_path) != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % name)
 		return
 	
@@ -672,15 +595,13 @@ func _create_state_script() -> void:
 	state_resource.script_name = name
 	state_resource.scene = path
 	
-	if ResourceSaver.save(state_resource.resource_path, state_resource) != OK:
+	if ResourceSaver.save(state_resource, state_resource.resource_path) != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % name)
 		return
 	
 	# Disable the context menu option and enable the button to open the state
 	# script
-	_menu_popup.set_item_disabled(
-		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), true
-	)
+	_menu_popup.set_item_disabled(1, true)
 	_btn_state_script.disabled = false
 	
 	# Select and open the created script

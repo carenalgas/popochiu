@@ -1,4 +1,4 @@
-tool
+@tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Permite crear un nuevo Hotspot para una habitación.
 
@@ -18,23 +18,24 @@ var _room_dir: String
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	super()
 	_clear_fields()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: PopochiuDock) -> void:
-	.set_main_dock(node)
+func set_main_dock(node: Panel) -> void:
+	super(node)
 
 
 func room_opened(r: Node2D) -> void:
 	_room = r
-	_room_path = _room.filename
+	_room_path = _room.scene_file_path
 	_room_dir = _room_path.get_base_dir()
 	_hotspot_path_template = _room_dir + '/Hotspots/%s/Hotspot%s'
 
 
 func create() -> void:
-	if not _new_hotspot_name:
+	if _new_hotspot_name.is_empty():
 		_error_feedback.show()
 		return
 	
@@ -44,22 +45,22 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the folder for the Hotspot
-	assert(
-		_main_dock.dir.make_dir_recursive(_new_hotspot_path.get_base_dir()) == OK,
-		'[Popochiu] Could not create Hotspot folder for ' + _new_hotspot_name
+	assert(\
+		DirAccess.make_dir_recursive_absolute(_new_hotspot_path.get_base_dir()) == OK,\
+		'[Popochiu] Could not create Hotspot folder for ' + _new_hotspot_name\
 	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el script de el hotspot (si tiene interacción)
 	var hotspot_template := load(SCRIPT_TEMPLATE)
-	if ResourceSaver.save(script_path, hotspot_template) != OK:
+	if ResourceSaver.save(hotspot_template, script_path) != OK:
 		push_error('[Popochiu] Could not create: %s.gd' % _new_hotspot_name)
 		# TODO: Show feedback in the popup
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Crear el hotspot a agregar a la habitación
-	var hotspot: PopochiuHotspot = ResourceLoader.load(HOTSPOT_SCENE).instance()
+	var hotspot: PopochiuHotspot = ResourceLoader.load(HOTSPOT_SCENE).instantiate()
 	hotspot.set_script(ResourceLoader.load(script_path))
 	hotspot.name = _new_hotspot_name
 	hotspot.script_name = _new_hotspot_name
@@ -79,7 +80,7 @@ func create() -> void:
 	collision.name = 'InteractionPolygon'
 	hotspot.add_child(collision)
 	collision.owner = _room
-	collision.modulate = Color.blue
+	collision.modulate = Color.BLUE
 	
 	_main_dock.ei.save_scene()
 	
@@ -93,23 +94,24 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades del hotspot creado en el Inspector
-	yield(get_tree().create_timer(0.1), 'timeout')
+	await get_tree().create_timer(0.1).timeout
 	_main_dock.ei.edit_node(hotspot)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
 	hide()
 
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
-	._update_name(new_text)
+	super(new_text)
 
 	if _name:
 		_new_hotspot_name = _name
 		_new_hotspot_path = _hotspot_path_template %\
 		[_new_hotspot_name, _new_hotspot_name]
 
-		_info.bbcode_text = (
+		_info.text = (
 			'In [b]%s[/b] the following file will be created: [code]%s[/code]' \
 			% [
 				_new_hotspot_path.get_base_dir(),
@@ -121,7 +123,7 @@ func _update_name(new_text: String) -> void:
 
 
 func _clear_fields() -> void:
-	._clear_fields()
+	super()
 	
 	_new_hotspot_name = ''
 	_new_hotspot_path = ''

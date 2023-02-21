@@ -1,4 +1,4 @@
-tool
+@tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Allows to create a new PopochiuCharacter with the files required for its
 # operation within Popochiu and to store its state:
@@ -12,6 +12,8 @@ const CHARACTER_SCRIPT_TEMPLATE :=\
 const CHARACTER_SCENE :=\
 'res://addons/Popochiu/Engine/Objects/Character/PopochiuCharacter.tscn'
 const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
+const PopochiuDock :=\
+preload('res://addons/Popochiu/Editor/MainDock/PopochiuDock.gd')
 
 var _new_character_name := ''
 var _new_character_path := ''
@@ -20,18 +22,20 @@ var _character_path_template: String
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	super()
 	_clear_fields()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: PopochiuDock) -> void:
-	.set_main_dock(node)
+func set_main_dock(node: Panel) -> void:
+	super(node)
+	
 	# res://popochiu/Characters
 	_character_path_template = _main_dock.CHARACTERS_PATH + '%s/Character%s'
 
 
 func create() -> void:
-	if not _new_character_name:
+	if _new_character_name.is_empty():
 		_error_feedback.show()
 		return
 	
@@ -40,13 +44,13 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the folder for the character
-	_main_dock.dir.make_dir(_main_dock.CHARACTERS_PATH + _new_character_name)
+	DirAccess.make_dir_absolute(_main_dock.CHARACTERS_PATH + _new_character_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the state Resource for the character and a script so devs
 	# can add extra properties to that state
 	var state_template: Script = load(CHARACTER_STATE_TEMPLATE)
-	if ResourceSaver.save(_new_character_path + 'State.gd', state_template) != OK:
+	if ResourceSaver.save(state_template, _new_character_path + 'State.gd') != OK:
 		push_error('[Popochiu] Could not create character state script: %s' %\
 		_new_character_name)
 		# TODO: Show feedback in the popup
@@ -58,8 +62,7 @@ func create() -> void:
 	character_resource.scene = _new_character_path + '.tscn'
 	character_resource.resource_name = _new_character_name
 	
-	if ResourceSaver.save(_new_character_path + '.tres',\
-	character_resource) != OK:
+	if ResourceSaver.save(character_resource, _new_character_path + '.tres') != OK:
 		push_error('[Popochiu] Could not create PopochiuCharacterData for character: %s' %\
 		_new_character_name)
 		# TODO: Show feedback in the popup
@@ -67,37 +70,23 @@ func create() -> void:
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the character
-	var character_script: Script = load(CHARACTER_SCRIPT_TEMPLATE)
-	var new_code := character_script.source_code
-	
-	character_script.source_code = ''
-	
-	if ResourceSaver.save(_new_character_path + '.gd', character_script) != OK:
+	var character_template := load(CHARACTER_SCRIPT_TEMPLATE)
+	if ResourceSaver.save(character_template, _new_character_path + '.gd') != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_character_name)
 		# TODO: Show feedback in the popup
 		return
 	
-	new_code = new_code.replace(
-		'CharacterStateTemplate',
-		'Character%sState' % _new_character_name
+	# Assign the state to the character
+	var character_script: Script = load(_new_character_path + '.gd')
+	character_script.source_code = character_script.source_code.replace(
+		'PopochiuCharacterData = null',
+		"PopochiuCharacterData = preload('Character%s.tres')" % _new_character_name
 	)
-	
-	new_code = new_code.replace(
-		'Data = null',
-		"Data = preload('Character%s.tres')" % _new_character_name
-	)
-	
-	character_script = load(_new_character_path + '.gd')
-	character_script.source_code = new_code
-	
-	if ResourceSaver.save(_new_character_path + '.gd', character_script) != OK:
-		push_error('[Popochiu] Could not update script: %s.gd' % _new_character_name)
-		# TODO: Show feedback in the popup
-		return
+	ResourceSaver.save(character_script, _new_character_path + '.gd')
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the character instance
-	var new_character: PopochiuCharacter = preload(CHARACTER_SCENE).instance()
+	var new_character: PopochiuCharacter = preload(CHARACTER_SCENE).instantiate()
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_character.set_script(load(_new_character_path + '.gd'))
@@ -110,8 +99,9 @@ func create() -> void:
 	# Save the character scene (.tscn)
 	var new_character_packed_scene: PackedScene = PackedScene.new()
 	new_character_packed_scene.pack(new_character)
-	if ResourceSaver.save(_new_character_path + '.tscn',\
-	new_character_packed_scene) != OK:
+	if ResourceSaver.save(
+		new_character_packed_scene, _new_character_path + '.tscn'
+	) != OK:
 		push_error('[Popochiu] Could not create character: %s.tscn' % _new_character_name)
 		# TODO: Show feedback in the popup
 		return
@@ -127,18 +117,12 @@ func create() -> void:
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the character to the C singleton
-	PopochiuResources.update_autoloads(true)
-	_main_dock.fs.update_script_classes()
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of characters in the dock
 	_main_dock.add_to_list(Constants.Types.CHARACTER, _new_character_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor
-	yield(get_tree().create_timer(0.1), 'timeout')
-	
+	await get_tree().create_timer(0.1).timeout
 	_main_dock.ei.select_file(_new_character_path + '.tscn')
 	_main_dock.ei.open_scene_from_path(_new_character_path + '.tscn')
 	
@@ -146,16 +130,17 @@ func create() -> void:
 	# That's all!!!
 	hide()
 
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
-	._update_name(new_text)
+	super(new_text)
 
 	if _name:
 		_new_character_name = _name
 		_new_character_path = _character_path_template %\
 		[_new_character_name, _new_character_name]
 
-		_info.bbcode_text = (
+		_info.text = (
 			'In [b]%s[/b] the following files will be created:\n[code]%s, %s and %s[/code]' \
 			% [
 				_main_dock.CHARACTERS_PATH + _new_character_name,
@@ -169,7 +154,7 @@ func _update_name(new_text: String) -> void:
 
 
 func _clear_fields() -> void:
-	._clear_fields()
+	super()
 	
 	_new_character_name = ''
 	_new_character_path = ''

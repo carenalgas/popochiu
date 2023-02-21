@@ -14,3 +14,7 @@ static func is_hotspot(node: Node) -> bool:
 
 static func is_character(node: Node) -> bool:
 	return node is PopochiuCharacter
+
+
+static func is_walkable_area(node: Node) -> bool:
+	return node is PopochiuWalkableArea

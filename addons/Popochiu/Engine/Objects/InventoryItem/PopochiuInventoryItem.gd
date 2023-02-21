@@ -1,47 +1,46 @@
+@icon('res://addons/Popochiu/icons/inventory_item.png')
 extends TextureRect
-class_name PopochiuInventoryItem, 'res://addons/Popochiu/icons/inventory_item.png'
+class_name PopochiuInventoryItem
 # An inventory item.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-const CURSOR_TYPE := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
+const CURSOR := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd')
 
 signal description_toggled(description)
 signal selected(item)
 
-export var description := '' setget ,get_description
-export var stack := false
-export var script_name := ''
-export(CURSOR_TYPE) var cursor
+@export var description := '' : get = get_description
+@export var stack := false
+@export var script_name := ''
+@export var cursor: CURSOR.Type = CURSOR.Type.USE
 
 var amount := 1
-var in_inventory := false setget set_in_inventory
+var in_inventory := false : set = set_in_inventory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
-	connect('mouse_entered', self, '_toggle_description', [true])
-	connect('mouse_exited', self, '_toggle_description', [false])
-	connect('gui_input', self, '_on_action_pressed')
+	mouse_entered.connect(_toggle_description.bind(true))
+	mouse_exited.connect(_toggle_description.bind(false))
+	gui_input.connect(_on_action_pressed)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the item is clicked in the Inventory
 func on_interact() -> void:
-	emit_signal('selected', self)
+	selected.emit(self)
 
 
 # When the item is right clicked in the Inventory
 func on_look() -> void:
-	yield(E.run([
-		G.display('Nothing to see in this item')
-	]), 'completed')
+	await E.run([G.display('Nothing to see in this item')])
 
 
 # When the item is clicked and there is another inventory item selected
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	yield(E.run([
+	await E.run([
 		G.display('Nothing happens when using %s in this item' % item.description)
-	]), 'completed')
+	])
 
 
 # Actions to excecute after the item is added to the Inventory
@@ -54,43 +53,6 @@ func on_discard() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func add(animate := true) -> void:
-	yield()
-	
-	yield(I.add_item(script_name, false, animate), 'completed')
-
-
-func add_now(animate := true) -> void:
-	yield(I.add_item(script_name, false, animate), 'completed')
-
-
-func add_as_active(animate := true) -> void:
-	yield()
-	
-	yield(I.add_item(script_name, false, animate), 'completed')
-	I.set_active_item(self, true)
-
-
-func add_as_active_now(animate := true) -> void:
-	yield(I.add_item(script_name, false, animate), 'completed')
-	I.set_active_item(self, false)
-
-
-func remove(animate := true) -> void:
-	yield()
-	
-	yield(I.remove_item(script_name, false, animate), 'completed')
-
-
-func remove_now(animate := true) -> void:
-	yield(I.remove_item(script_name, false, animate), 'completed')
-
-
-func set_active(ignore_block := false) -> void:
-	I.set_active_item(self, ignore_block)
-
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_in_inventory(value: bool) -> void:
 	in_inventory = value
@@ -99,8 +61,8 @@ func set_in_inventory(value: bool) -> void:
 
 
 func get_description() -> String:
-	if Engine.editor_hint:
-		if not description:
+	if Engine.is_editor_hint():
+		if description.is_empty():
 			description = name
 		return description
 	return E.get_text(description)
@@ -108,14 +70,12 @@ func get_description() -> String:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _toggle_description(display: bool) -> void:
-	Cursor.set_cursor(cursor if display else null)
+	Cursor.set_cursor(cursor if display else CURSOR.Type.NONE)
 	G.show_info(self.description if display else '')
 	if display:
-		emit_signal(
-			'description_toggled', description if description else script_name
-		)
+		description_toggled.emit(description if description else script_name)
 	else:
-		emit_signal('description_toggled', '')
+		description_toggled.emit('')
 
 
 func _on_action_pressed(event: InputEvent) -> void: 

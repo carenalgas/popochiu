@@ -1,4 +1,4 @@
-tool
+@tool
 extends PopochiuDialog
 
 
@@ -8,12 +8,12 @@ func on_start() -> void:
 	# E.g. Make the PC to look at the character which it will talk to, walk to
 	# it, and say something (or make the character say something)
 	# (!) It MUST always use a yield
-	yield(E.run([]), 'completed')
+	await E.run([])
 
 
 func option_selected(opt: PopochiuDialogOption) -> void:
 	# You can make the player character say the selected option with:
-#	yield(D.say_selected(), 'completed')
+#	await D.say_selected()
 	
 	# Use match to check which option was selected and excecute something for
 	# each one

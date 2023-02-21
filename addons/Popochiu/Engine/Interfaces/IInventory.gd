@@ -21,11 +21,12 @@ var _item_instances := []
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-# Adds an item to the inventory. The item is added based on its script_name
+func add_item(item_name: String, animate := true) -> Callable:
+	return func (): await add_item_no_run(item_name, animate)
+
+# Adds an item to the inventory. The item is added based checked its script_name
 # property.
-func add_item(item_name: String, is_in_queue := true, animate := true) -> void:
-	if is_in_queue: yield()
-	
+func add_item_no_run(item_name: String, animate := true) -> PopochiuInventoryItem:
 	if E.settings.inventory_limit > 0\
 	and items.size() == E.settings.inventory_limit:
 		prints(
@@ -33,36 +34,36 @@ func add_item(item_name: String, is_in_queue := true, animate := true) -> void:
 			item_name
 		)
 		
-		return yield(get_tree(), 'idle_frame')
+		await get_tree().process_frame
+		return
 	
 	var i: PopochiuInventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i) and not i.in_inventory:
 		items.append(item_name)
 		
-		emit_signal('item_added', i, animate)
+		item_added.emit(i, animate)
 		i.in_inventory = true
 		
-		return yield(self, 'item_add_done')
+		await self.item_add_done
+		return i
 	
-	yield(get_tree(), 'idle_frame')
+	await get_tree().process_frame
+	return null
+
+
+func add_item_as_active(item_name: String, animate := true) -> Callable:
+	return func (): await add_item_as_active_no_run(item_name, animate)
 
 
 # Adds an item to the inventory and make it the current selected item. That is,
 # the cursor will thake the item's texture as its texture.
-func add_item_as_active(
-	item_name: String,
-	is_in_queue := true,
-	animate := true
-) -> void:
-	if is_in_queue: yield()
-	
-	var item: PopochiuInventoryItem = yield(
-		add_item(item_name, false, animate),
-		'completed'
-	)
+func add_item_as_active_no_run(
+	item_name: String, animate := true
+) -> PopochiuInventoryItem:
+	var item: PopochiuInventoryItem = await add_item_no_run(item_name, animate)
 	
 	if is_instance_valid(item):
-		set_active_item(item, is_in_queue)
+		set_active_item(item, E.in_no_run())
 	
 	return item
 
@@ -80,26 +81,24 @@ func set_active_item(
 		Cursor.remove_cursor_texture()
 
 
+func remove_item(item_name: String, animate := true) -> Callable:
+	return func (): await remove_item_no_run(item_name, animate)
+
+
 # Removes an item from the inventory. Its instance will be kept in the
 # _item_instances array.
-func remove_item(
-	item_name: String,
-	is_in_queue := true,
-	animate := true
-) -> void:
-	if is_in_queue: yield()
-	
+func remove_item_no_run(item_name: String, animate := true) -> void:
 	var i: PopochiuInventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i):
 		i.in_inventory = false
 		items.erase(item_name)
 		
 		set_active_item(null)
-		emit_signal('item_removed', i, animate)
 		
-		yield(self, 'item_remove_done')
-	else:
-		yield(get_tree(), 'idle_frame')
+		# TODO: Maybe this signal should be triggered once the await has finished
+		item_removed.emit(i, animate)
+		
+		await self.item_remove_done
 
 
 func is_item_in_inventory(item_name: String) -> bool:
@@ -112,18 +111,21 @@ func is_full() -> bool:
 	and E.settings.inventory_limit == items.size()
 
 
-func discard_item(item_name: String, is_in_queue := true) -> void:
-	if is_in_queue: yield()
-	
+func discard_item(item_name: String) -> Callable:
+	return func (): await discard_item_no_run(item_name)
+
+
+func discard_item_no_run(item_name: String) -> void:
 	var i: PopochiuInventoryItem = _get_item_instance(item_name)
 	
 	if is_instance_valid(i):
 		i.on_discard()
 		items.erase(item_name)
 		
-		emit_signal('item_discarded', i)
+		# TODO: Maybe this signal should be triggered once the await has finished
+		item_discarded.emit(i)
 		
-		yield(remove_item(item_name, is_in_queue), 'completed')
+		await remove_item(item_name)
 
 
 func clean_inventory(in_bg := false) -> void:
@@ -135,44 +137,34 @@ func clean_inventory(in_bg := false) -> void:
 		if not in_bg:
 			ii.on_discard()
 		
-		emit_signal('item_discarded', ii)
+		item_discarded.emit(ii)
 		
-		remove_item(ii.script_name, false, !in_bg)
+		remove_item_no_run(ii.script_name, !in_bg)
+
+
+func show_inventory(time := 1.0) -> Callable:
+	return func (): await show_inventory_no_run(time)
 
 
 # Notifies that the inventory should appear.
-func show_inventory(time := 1.0, is_in_queue := true) -> void:
-	if is_in_queue: yield()
-	
+func show_inventory_no_run(time := 1.0) -> void:
 	if E.cutscene_skipped:
-		yield(get_tree(), 'idle_frame')
+		await get_tree().process_frame
 		return
 	
-	emit_signal('inventory_show_requested', time)
+	inventory_show_requested.emit(time)
 	
-	yield(self, 'inventory_shown')
+	await self.inventory_shown
 
 
-func hide_inventory(use_anim := true, is_in_queue := true) -> void:
-	if is_in_queue: yield()
+func hide_inventory(use_anim := true) -> Callable:
+	return func (): await hide_inventory_no_run(use_anim)
+
+
+func hide_inventory_no_run(use_anim := true) -> void:
+	inventory_hide_requested.emit(use_anim)
 	
-	emit_signal('inventory_hide_requested', use_anim)
-	
-	yield(get_tree(), 'idle_frame')
-
-
-#func get_runtime_inventory_item(script_name: String) -> PopochiuInventoryItem:
-#	var item: PopochiuInventoryItem = null
-#
-#	for ii in _item_instances:
-#		if ii.script_name.to_lower() == script_name.to_lower():
-#			item = ii
-#			break
-#
-#	if not item:
-#		printerr('[Popochiu] Inventory item %s is not in the inventory')
-#
-#	return item
+	await get_tree().process_frame
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -182,7 +174,7 @@ func _get_item_instance(item_name: String) -> PopochiuInventoryItem:
 		if ii_name.to_lower() == item_name.to_lower():
 			return ii as PopochiuInventoryItem
 	
-	# If the item is not in the list of items, then instantiate it based on the
+	# If the item is not in the list of items, then instantiate it based checked the
 	# list of items (Resource) in Popochiu
 	var new_intentory_item: PopochiuInventoryItem = E.get_inventory_item_instance(
 		item_name
@@ -190,7 +182,5 @@ func _get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	if new_intentory_item:
 		_item_instances.append(new_intentory_item)
 		return new_intentory_item
-	
-	printerr('[Popochiu] Inventory item %s does not exists')
 	
 	return null

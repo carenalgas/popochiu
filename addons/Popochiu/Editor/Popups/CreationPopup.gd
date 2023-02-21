@@ -1,26 +1,25 @@
 extends ConfirmationDialog
 
-const PopochiuDock := preload('res://addons/Popochiu/Editor/MainDock/PopochiuDock.gd')
-
 var _name := ''
-var _main_dock: PopochiuDock setget set_main_dock
+var _main_dock: Panel : set = set_main_dock
 
-onready var _input: LineEdit = find_node('Input')
-onready var _error_feedback: Label = find_node('ErrorFeedback')
-onready var _info: RichTextLabel = find_node('Info')
+@onready var _input: LineEdit = find_child('Input')
+@onready var _error_feedback: Label = find_child('ErrorFeedback')
+@onready var _info: RichTextLabel = find_child('Info')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	register_text_enter(_input)
 	
-	connect('confirmed', self, 'create')
-	connect('popup_hide', self, '_clear_fields')
-	_input.connect('text_changed', self, '_update_name')
+	confirmed.connect(create)
+	canceled.connect(_clear_fields)
+	close_requested.connect(_clear_fields)
+	_input.text_changed.connect(_update_name)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: PopochiuDock) -> void:
+func set_main_dock(node: Panel) -> void:
 	_main_dock = node
 
 
@@ -33,14 +32,14 @@ func _update_name(new_text: String) -> void:
 	if _error_feedback.visible:
 		_error_feedback.hide()
 	
-	var casted_name := PoolStringArray()
+	var casted_name := PackedStringArray()
 	for idx in new_text.length():
 		if idx == 0:
 			casted_name.append(new_text[idx].to_upper())
 		else:
 			casted_name.append(new_text[idx])
 
-	_name = casted_name.join('').strip_edges()
+	_name = ''.join(casted_name).strip_edges()
 
 
 func _clear_fields() -> void:

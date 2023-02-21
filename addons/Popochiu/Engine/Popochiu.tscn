@@ -1,11 +1,9 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=2 format=3 uid="uid://rda8wggldt5o"]
 
-[ext_resource path="res://addons/Popochiu/Engine/Popochiu.gd" type="Script" id=3]
+[ext_resource type="Script" path="res://addons/Popochiu/Engine/Popochiu.gd" id="3"]
 
 [node name="Popochiu" type="Node"]
-script = ExtResource( 3 )
-
-[node name="Tween" type="Tween" parent="."]
+script = ExtResource("3")
 
 [node name="MainCamera" type="Camera2D" parent="."]
 current = true
@@ -13,10 +11,6 @@ limit_left = 0
 limit_top = 0
 limit_right = 320
 limit_bottom = 180
-smoothing_enabled = true
-smoothing_speed = 10.0
+position_smoothing_speed = 10.0
 editor_draw_limits = true
 editor_draw_drag_margin = true
-__meta__ = {
-"_editor_description_": ""
-}

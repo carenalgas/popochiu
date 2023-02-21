@@ -1,47 +1,44 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=3 format=3 uid="uid://dwurc22nw1rkx"]
 
-[ext_resource path="res://popochiu/Characters/Popsy/CharacterPopsy.gd" type="Script" id=1]
-[ext_resource path="res://popochiu/Characters/Popsy/popsy.png" type="Texture" id=2]
+[ext_resource type="Script" path="res://popochiu/Characters/Popsy/CharacterPopsy.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://brtwqynlt53mk" path="res://popochiu/Characters/Popsy/popsy.png" id="2"]
 
 [node name="CharacterPopsy" type="Area2D"]
-script = ExtResource( 1 )
-__meta__ = {
-"_edit_group_": true
-}
+script = ExtResource("1")
+text_color = Color(0.768627, 0.423529, 0.443137, 1)
+voices = []
 script_name = "Popsy"
 description = "Popsy"
-walk_to_point = Vector2( -34, -10 )
+walk_to_point = Vector2(-34, -10)
 cursor = 8
-text_color = Color( 0.768627, 0.423529, 0.443137, 1 )
-flips_when = 1
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PoolVector2Array( 0, -28, 5, -28, 15, -23, 20, -19, 19, -12, 15, -6, 2, -5, -3, -1, -20, -5, -20, -10, -10, -24 )
+polygon = PackedVector2Array(0, -28, 5, -28, 15, -23, 20, -19, 19, -12, 15, -6, 2, -5, -3, -1, -20, -5, -20, -10, -10, -24)
 
 [node name="BaselineHelper" type="Line2D" parent="."]
 visible = false
-points = PoolVector2Array( -10000, 0, 10000, 0 )
+points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
 
-[node name="WalkToHelper" type="Position2D" parent="."]
+[node name="WalkToHelper" type="Marker2D" parent="."]
 visible = false
-position = Vector2( -34, -10 )
-__meta__ = {
-"_edit_group_": true
-}
+position = Vector2(-34, -10)
 
 [node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
-margin_left = -2.5
-margin_top = -2.5
-margin_right = 2.5
-margin_bottom = 2.5
-color = Color( 0, 1, 1, 1 )
+offset_left = -2.5
+offset_top = -2.5
+offset_right = 2.5
+offset_bottom = 2.5
+color = Color(0, 1, 1, 1)
 
-[node name="Sprite" type="Sprite" parent="."]
-position = Vector2( 0, -17 )
-texture = ExtResource( 2 )
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -17)
+texture = ExtResource("2")
 hframes = 10
 
-[node name="DialogPos" type="Position2D" parent="."]
+[node name="DialogPos" type="Marker2D" parent="."]
 visible = false
-position = Vector2( 0, -33 )
+position = Vector2(0, -33)
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

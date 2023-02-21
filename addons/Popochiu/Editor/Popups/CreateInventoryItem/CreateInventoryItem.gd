@@ -1,4 +1,4 @@
-tool
+@tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
 # Allows to create a new PopochiuInventoryItem with the files required for its
 # operation within Popochiu and to store its state:
@@ -12,6 +12,8 @@ const INVENTORY_ITEM_SCRIPT_TEMPLATE := \
 const BASE_INVENTORY_ITEM_PATH := \
 'res://addons/Popochiu/Engine/Objects/InventoryItem/PopochiuInventoryItem.tscn'
 const Constants := preload('res://addons/Popochiu/PopochiuResources.gd')
+const PopochiuDock :=\
+preload('res://addons/Popochiu/Editor/MainDock/PopochiuDock.gd')
 
 var _new_item_name := ''
 var _new_item_path := ''
@@ -20,18 +22,20 @@ var _item_path_template: String
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	super()
 	_clear_fields()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: PopochiuDock) -> void:
-	.set_main_dock(node)
+func set_main_dock(node: Panel) -> void:
+	super(node)
+	
 	# res://popochiu/InventoryItems/
 	_item_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/Inventory%s'
 
 
 func create() -> void:
-	if not _new_item_name:
+	if _new_item_name.is_empty():
 		_error_feedback.show()
 		return
 	
@@ -40,13 +44,13 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the folder for the item
-	_main_dock.dir.make_dir(_main_dock.INVENTORY_ITEMS_PATH + _new_item_name)
+	DirAccess.make_dir_absolute(_main_dock.INVENTORY_ITEMS_PATH + _new_item_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the state Resource for the item and a script so devs
 	# can add extra properties to that state
 	var state_template: Script = load(INVENTORY_ITEM_STATE_TEMPLATE)
-	if ResourceSaver.save(_new_item_path + 'State.gd', state_template) != OK:
+	if ResourceSaver.save(state_template, _new_item_path + 'State.gd') != OK:
 		push_error('[Popochiu] Could not create item state script: %s' %\
 		_new_item_name)
 		# TODO: Show feedback in the popup
@@ -58,8 +62,7 @@ func create() -> void:
 	item_resource.scene = _new_item_path + '.tscn'
 	item_resource.resource_name = _new_item_name
 	
-	if ResourceSaver.save(_new_item_path + '.tres',\
-	item_resource) != OK:
+	if ResourceSaver.save(item_resource, _new_item_path + '.tres') != OK:
 		push_error(\
 		'[Popochiu] Could not create PopochiuInventoryItemData for item: %s' %\
 		_new_item_name)
@@ -68,38 +71,24 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the item
-	var item_script: Script = load(INVENTORY_ITEM_SCRIPT_TEMPLATE)
-	var new_code := item_script.source_code
-	
-	item_script.source_code = ''
-	
-	if ResourceSaver.save(_new_item_path + '.gd', item_script) != OK:
+	var item_template := load(INVENTORY_ITEM_SCRIPT_TEMPLATE)
+	if ResourceSaver.save(item_template, _new_item_path + '.gd') != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_item_name)
 		# TODO: Show feedback in the popup
 		return
 	
-	new_code = new_code.replace(
-		'InventoryItemStateTemplate',
-		'Inventory%sState' % _new_item_name
+	# Assign the state to the item
+	var item_script: Script = load(_new_item_path + '.gd')
+	item_script.source_code = item_script.source_code.replace(
+		'PopochiuInventoryItemData = null',
+		"PopochiuInventoryItemData = preload('Inventory%s.tres')" % _new_item_name
 	)
-	
-	new_code = new_code.replace(
-		'Data = null',
-		"Data = preload('Inventory%s.tres')" % _new_item_name
-	)
-	
-	item_script = load(_new_item_path + '.gd')
-	item_script.source_code = new_code
-	
-	if ResourceSaver.save(_new_item_path + '.gd', item_script) != OK:
-		push_error('[Popochiu] Could not update script: %s.gd' % _new_item_name)
-		# TODO: Show feedback in the popup
-		return
+	ResourceSaver.save(item_script, _new_item_path + '.gd')
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the item instance
 	var new_item: PopochiuInventoryItem =\
-	preload(BASE_INVENTORY_ITEM_PATH).instance()
+	preload(BASE_INVENTORY_ITEM_PATH).instantiate()
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_item.set_script(load(_new_item_path + '.gd'))
@@ -113,7 +102,7 @@ func create() -> void:
 	# Save the item scene (.tscn)
 	var new_item_packed_scene: PackedScene = PackedScene.new()
 	new_item_packed_scene.pack(new_item)
-	if ResourceSaver.save(_new_item_path + '.tscn', new_item_packed_scene) != OK:
+	if ResourceSaver.save(new_item_packed_scene, _new_item_path + '.tscn') != OK:
 		push_error('[Popochiu] Could not create item: %s.tscn' % _new_item_name)
 		# TODO: Show feedback in the popup
 		return
@@ -130,17 +119,12 @@ func create() -> void:
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the inventory item to the I singleton
-	PopochiuResources.update_autoloads(true)
-	_main_dock.fs.update_script_classes()
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of characters in the dock
 	_main_dock.add_to_list(Constants.Types.INVENTORY_ITEM, _new_item_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor
-	yield(get_tree().create_timer(0.1), 'timeout')
+	await get_tree().create_timer(0.1).timeout
 	_main_dock.ei.select_file(_new_item_path + '.tscn')
 	_main_dock.ei.open_scene_from_path(_new_item_path + '.tscn')
 	
@@ -148,16 +132,17 @@ func create() -> void:
 	# That's all!!!!!!!
 	hide()
 
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
-	._update_name(new_text)
+	super(new_text)
 
 	if _name:
 		_new_item_name = _name
 		_new_item_path = _item_path_template %\
 		[_new_item_name, _new_item_name]
 
-		_info.bbcode_text = (
+		_info.text = (
 			'In [b]%s[/b] the following files will be created:\n[code]%s, %s and %s[/code]' \
 			% [
 				_main_dock.INVENTORY_ITEMS_PATH + _new_item_name,
@@ -171,7 +156,7 @@ func _update_name(new_text: String) -> void:
 
 
 func _clear_fields() -> void:
-	._clear_fields()
+	super()
 	
 	_new_item_name = ''
 	_new_item_path = ''

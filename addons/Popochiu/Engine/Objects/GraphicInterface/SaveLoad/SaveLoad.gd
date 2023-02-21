@@ -9,11 +9,11 @@ var _date := ''
 var _prev_text := ''
 var _slot := 0
 
-onready var _dialog: ConfirmationDialog = $SaveLoadDialog
-onready var _label: Label = find_node('Title')
-onready var _slots: VBoxContainer = find_node('Slots')
-onready var _ok: Button = _dialog.get_ok()
-onready var _cancel: Button = _dialog.get_cancel()
+@onready var _dialog: ConfirmationDialog = $SaveLoadDialog
+@onready var _label: Label = find_child('Title')
+@onready var _slots: VBoxContainer = find_child('Slots')
+@onready var _ok: Button = _dialog.get_ok_button()
+@onready var _cancel: Button = _dialog.get_cancel_button()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -22,10 +22,13 @@ func _ready() -> void:
 	_cancel.text = 'close'
 	_ok.disabled = true
 	
-	_dialog.connect('popup_hide', self, '_close')
-	_ok.connect('pressed', self, '_confirmed')
+	_dialog.confirmed.connect(_close)
+	_dialog.close_requested.connect(_close)
+	_dialog.get_cancel_button().pressed.connect(_close)
+	_ok.pressed.connect(_confirmed)
 	
 	var saves: Dictionary = E.get_saves_descriptions()
+	
 	for btn in _slots.get_children():
 		(btn as Button).set_meta('has_save', false)
 		
@@ -35,17 +38,18 @@ func _ready() -> void:
 		else:
 			btn.disabled = true
 		
-		btn.connect('pressed', self, '_select_slot', [btn])
+		btn.pressed.connect(_select_slot.bind(btn))
 	
-	G.connect('save_requested', self, '_show_save')
-	G.connect('load_requested', self, '_show_load')
+	G.save_requested.connect(_show_save)
+	G.load_requested.connect(_show_load)
 	
 	hide()
+	_dialog.hide()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _show_save(date: String) -> void:
-	_dialog.window_title = 'Save'
+	_dialog.title = 'Save'
 	_label.text = 'Choose a slot to save the game'
 	_date = date
 	
@@ -56,7 +60,7 @@ func _show_save(date: String) -> void:
 
 
 func _show_load() -> void:
-	_dialog.window_title = 'Load'
+	_dialog.title = 'Load'
 	_label.text = 'Choose the slot to load'
 	_date = ''
 	
@@ -72,19 +76,19 @@ func _show() -> void:
 	
 	if _current_slot:
 		_current_slot.text = _prev_text
-		_current_slot.pressed = false
+		_current_slot.button_pressed = false
 		
 		_current_slot = null
 		_prev_text = ''
 	
 	if E.settings.scale_gui:
-		rect_scale = Vector2.ONE * E.scale
-		_dialog.rect_scale = Vector2.ONE * E.scale
+		scale = Vector2.ONE * E.scale
+		_dialog.size = Vector2.ONE * E.scale
 	
 	_dialog.popup_centered(Vector2(240.0, 120.0))
 	_cancel.grab_focus()
 	
-	G.emit_signal('blocked', { blocking = false })
+	G.blocked.emit({ blocking = false })
 	Cursor.set_cursor(Cursor.Type.USE)
 	Cursor.block()
 	
@@ -109,14 +113,14 @@ func _select_slot(btn: Button) -> void:
 	if _date:
 		if _current_slot:
 			_current_slot.text = _prev_text
-			_current_slot.pressed = false
+			_current_slot.button_pressed = false
 		
 		_current_slot = btn
 		_prev_text = _current_slot.text
 		_current_slot.text = _date
 	else:
 		if _current_slot:
-			_current_slot.pressed = false
+			_current_slot.button_pressed = false
 		
 		_current_slot = btn
 		_prev_text = _current_slot.text
