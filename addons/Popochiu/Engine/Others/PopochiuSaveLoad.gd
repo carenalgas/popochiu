@@ -32,6 +32,7 @@ func get_saves_descriptions() -> Dictionary:
 				return {}
 
 			var content := opened.get_as_text()
+			opened.close()
 			
 			var test_json_conv = JSON.new()
 			test_json_conv.parse(content)
@@ -97,6 +98,7 @@ func save_game(slot := 1, description := '') -> bool:
 	# Write the JSON -----------------------------------------------------------
 	var json_string := JSON.stringify(data)
 	opened.store_string(json_string)
+	opened.close()
 	
 	return true
 
@@ -110,6 +112,7 @@ func load_game(slot := 1) -> Dictionary:
 		return {}
 
 	var content := opened.get_as_text()
+	opened.close()
 	
 	var test_json_conv = JSON.new()
 	test_json_conv.parse(content)

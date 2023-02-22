@@ -336,6 +336,8 @@ func room_readied(room: PopochiuRoom) -> void:
 			rooms_states[room.script_name][type][script_name]
 			
 			for property in node_dic:
+				if not PopochiuResources.has_property(node, property): continue
+				
 				node[property] = node_dic[property]
 	
 	for c in get_tree().get_nodes_in_group('PopochiuClickable'):

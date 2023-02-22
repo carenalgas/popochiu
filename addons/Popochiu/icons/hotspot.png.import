@@ -16,9 +16,9 @@ dest_files=["res://.godot/imported/hotspot.png-b688d6a41f9d79cceb52d123c050b3a9.
 [params]
 
 compress/mode=0
+compress/high_quality=false
 compress/lossy_quality=0.7
 compress/hdr_compression=1
-compress/bptc_ldr=0
 compress/normal_map=0
 compress/channel_pack=0
 mipmaps/generate=false

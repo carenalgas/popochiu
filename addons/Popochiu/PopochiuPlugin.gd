@@ -279,11 +279,13 @@ func _fix_dependency(dependency, directory, resource_path):
 			continue
 		var file_read = FileAccess.open(resource_path, FileAccess.READ)
 		var text = file_read.get_as_text()
+		file_read.close()
 		
 		text = text.replace(dependency, directory.get_file_path(f))
 		
 		var file_write = FileAccess.open(resource_path, FileAccess.WRITE)
 		file_write.store_string(text)
+		file_write.close()
 
 
 func _on_sources_changed(exist: bool) -> void:

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dy2a8aeda5yjf"
-path="res://.godot/imported/baseline.png-9234cf895d1a3aaf23ba1e810241112f.ctex"
+uid="uid://xd1fsno20847"
+path="res://.godot/imported/icon_v2.png-2b009311921dda4f1025841a7da6df8c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/Popochiu/icons/baseline.png"
-dest_files=["res://.godot/imported/baseline.png-9234cf895d1a3aaf23ba1e810241112f.ctex"]
+source_file="res://icon_v2.png"
+dest_files=["res://.godot/imported/icon_v2.png-2b009311921dda4f1025841a7da6df8c.ctex"]
 
 [params]
 
@@ -31,4 +31,4 @@ process/normal_map_invert_y=false
 process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
-detect_3d/compress_to=0
+detect_3d/compress_to=1

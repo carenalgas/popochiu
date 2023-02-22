@@ -135,6 +135,7 @@ static func init_file_structure() -> bool:
 	if not FileAccess.file_exists(GLOBALS_SNGL):
 		var globals_file = FileAccess.open(GLOBALS_SNGL, FileAccess.WRITE)
 		globals_file.store_string('extends Node')
+		globals_file.close()
 	
 	return is_first_install
 
@@ -220,6 +221,14 @@ static func store_properties(
 		if target.custom_data.is_empty(): target.erase('custom_data')
 
 
+static func has_property(source: Object, property: String) -> bool:
+	for prop in source.get_script().get_script_property_list():
+		if prop.name == property:
+			return true
+	
+	return false
+
+
 # ▨▨▨▨ SETTINGS ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
 static func get_settings() -> PopochiuSettings:
 	return load(SETTINGS) as PopochiuSettings
@@ -255,6 +264,7 @@ static func get_version() -> String:
 static func _create_empty_file(path):
 	var file = FileAccess.open(path, FileAccess.WRITE)
 	file.store_string('')
+	file.close()
 
 
 static func _get_directories() -> Dictionary:

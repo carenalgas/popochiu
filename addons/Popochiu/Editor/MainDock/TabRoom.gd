@@ -14,7 +14,7 @@ var opened_room_state_path: String = ''
 var _rows_paths := []
 var _last_selected: PopochiuObjectRow = null
 
-@onready var _types := {
+@onready var _types: Dictionary = {
 	Constants.Types.PROP: {
 		group = find_child('PropsGroup'),
 		popup = 'CreateProp',
@@ -119,7 +119,7 @@ func scene_changed(scene_root: Node) -> void:
 				
 				if row_path in _rows_paths: continue
 				
-				if c is _types[t].type_class:
+				if is_instance_of(c, _types[t].type_class):
 					var row: PopochiuObjectRow = _create_object_row(
 						t, c.name, row_path, node_path
 					)

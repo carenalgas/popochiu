@@ -13,7 +13,7 @@ var _can_hide := true
 @onready var _tween: Tween = null
 @onready var _box: BoxContainer = find_child('Box')
 @onready var _btn_dialog_speed: ToolbarButton = find_child('BtnDialogSpeed')
-@onready var _btn_power: ToolbarButton = find_child('BtnPower')
+@onready var _btn_power: ToolbarButton = find_child('BtnQuit')
 @onready var _hide_y := position.y - (size.y - 4)
 
 
