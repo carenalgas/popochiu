@@ -116,13 +116,14 @@ func _find_polygon_instance(object: Object) -> void:
 	ei.edit_node(children[0])
 
 
-func parse_property(\
-object: Object,
-type: int,
-path: String,
-hint: int,
-hint_text: String,
-usage: int) -> bool:
+func parse_property(
+	object: Object,
+	type: int,
+	path: String,
+	hint: int,
+	hint_text: String,
+	usage: int
+) -> bool:
 	if object and object.get_parent() is Node2D and path != 'position':
 		return true
 	

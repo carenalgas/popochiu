@@ -13,6 +13,7 @@ var active := false
 var trees := {}
 var current_dialog: PopochiuDialog = null
 var selected_option: PopochiuDialogOption = null
+var prev_dialog: PopochiuDialog = null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -41,8 +42,22 @@ func show_dialog(script_name: String) -> void:
 # Shows a list of options (like a dialog tree would do) and returns the
 # PopochiuDialogOption of the selected option
 func show_inline_dialog(opts: Array) -> PopochiuDialogOption:
+	active = true
+	
+	if current_dialog:
+		D.option_selected.disconnect(current_dialog._on_option_selected)
+	
 	inline_dialog_requested.emit(opts)
-	return await option_selected
+	
+	var pdo: PopochiuDialogOption = await option_selected
+	
+	if current_dialog:
+		D.option_selected.connect(current_dialog._on_option_selected)
+	else:
+		active = false
+		G.done()
+	
+	return pdo
 
 
 # Finishes the dialog currently in execution.

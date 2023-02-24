@@ -1,11 +1,11 @@
 [gd_resource type="Resource" load_steps=3 format=3 uid="uid://vpg1the45v25"]
 
 [ext_resource type="AudioStream" uid="uid://dgn8cno1cbqtv" path="res://popochiu/Characters/Goddiu/audio/vo_goddiu_01.ogg" id="1_jrh2r"]
-[ext_resource type="Script" path="res://addons/Popochiu/Engine/AudioManager/AudioCue.gd" id="2_an823"]
+[ext_resource type="Script" path="res://addons/Popochiu/Engine/AudioManager/AudioCueSound.gd" id="2_qc7w6"]
 
 [resource]
 resource_name = "vo_goddiu_01"
-script = ExtResource("2_an823")
+script = ExtResource("2_qc7w6")
 audio = ExtResource("1_jrh2r")
 loop = false
 is_2d = false

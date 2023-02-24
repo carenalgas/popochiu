@@ -56,7 +56,7 @@ func get_runtime_room(script_name: String) -> PopochiuRoom:
 		printerr('[Popochiu] No PopochiuRoom with name: %s' % script_name)
 		return null
 	
-	_room_instances[script_name] = load(load(rp).scene).instance()
+	_room_instances[script_name] = load(load(rp).scene).instantiate()
 	
 	return _room_instances[script_name]
 

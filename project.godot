@@ -23,11 +23,12 @@ U="*res://addons/Popochiu/Engine/Others/PopochiuUtils.gd"
 Cursor="*res://addons/Popochiu/Engine/Cursor/Cursor.tscn"
 Globals="*res://popochiu/PopochiuGlobals.gd"
 E="*res://addons/Popochiu/Engine/Popochiu.tscn"
-C="*res://addons/Popochiu/Engine/Interfaces/ICharacter.gd"
-I="*res://addons/Popochiu/Engine/Interfaces/IInventory.gd"
-D="*res://addons/Popochiu/Engine/Interfaces/IDialog.gd"
 G="*res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd"
-A="*res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn"
+R="*res://popochiu/Autoloads/R.gd"
+C="*res://popochiu/Autoloads/C.gd"
+I="*res://popochiu/Autoloads/I.gd"
+D="*res://popochiu/Autoloads/D.gd"
+A="*res://popochiu/Autoloads/A.gd"
 
 [display]
 

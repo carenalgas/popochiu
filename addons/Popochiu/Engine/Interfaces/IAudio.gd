@@ -127,7 +127,7 @@ func change_cue_pitch(cue_name: String, pitch := 0.0) -> void:
 # Sets to `volume` the `volume_db` in the AudioStreamPlayer(2D) of the AudioCue
 # identified with `cue_name`.
 func change_cue_volume(cue_name: String, volume := 0.0) -> void:
-	E.am.change_cue_volume(cue_name)
+	E.am.change_cue_volume(cue_name, volume)
 
 
 # Transforms `pitch` to a value that can be used to modify the `pitch_scale` of

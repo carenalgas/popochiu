@@ -118,22 +118,22 @@ func show_helpers() -> void:
 
 
 func disable() -> Callable:
-	return func (): await disable_no_run()
+	return func (): await disable_now()
 
 
 # Hides the Node and disables its interaction
-func disable_no_run() -> void:
+func disable_now() -> void:
 	self.visible = false
 	
 	await get_tree().process_frame
 
 
 func enable() -> Callable:
-	return func (): await enable_no_run()
+	return func (): await enable_now()
 
 
 # Makes the Node visible and enables its interaction
-func enable_no_run() -> void:
+func enable_now() -> void:
 	self.visible = true
 	
 	await get_tree().process_frame

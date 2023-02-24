@@ -83,7 +83,7 @@ func _unhandled_input(event):
 		return
 	
 	if is_instance_valid(C.player) and C.player.can_move:
-		C.player.walk_no_run(get_local_mouse_position())
+		C.player.walk_now(get_local_mouse_position())
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
@@ -318,6 +318,6 @@ func _clear_navigation_path() -> void:
 	if not _path.is_empty():
 		_path.clear()
 	
-	_moving_character.idle_no_run()
+	_moving_character.idle_now()
 	C.character_move_ended.emit(_moving_character)
 	_moving_character = null

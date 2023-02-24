@@ -1,7 +1,9 @@
 @tool
 extends PopochiuRoom
 
-var state: PopochiuRoomData = null
+const Data := preload('RoomStateTemplate.gd')
+
+var state: Data = null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░

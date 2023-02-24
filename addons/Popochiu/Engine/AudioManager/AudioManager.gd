@@ -20,6 +20,7 @@ var _all_in_one := {}
 # Serves as a map that stores an AudioStreamPlayer/AudioStreamPlayer2D and the
 # tween used to fade its volume
 var _fading_sounds := {}
+var _dflt_volumes := {}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -28,9 +29,12 @@ func _ready() -> void:
 	
 	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
 		for rp in PopochiuResources.get_data_value('audio', arr, []):
-			var ac: AudioCue = load(rp)
+			var ac: AudioCue = load(rp) as AudioCue
 			self['_%s' % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
+			# FIX: #27 AudioCues were losing the volume set in editor when
+			# played with a fade
+			_dflt_volumes[ac.resource_name] = ac.volume
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -48,7 +52,7 @@ func play_sound_cue(
 		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
 		stream_player = _play(cue, position_2d)
 	else:
-		prints('[Popochiu] Sound not found:', cue_name)
+		printerr('[Popochiu] Sound not found:', cue_name)
 		
 		if wait_to_end != null:
 			await get_tree().process_frame
@@ -75,6 +79,9 @@ func play_music_cue(
 	
 	if _mx_cues.has(cue_name.to_lower()):
 		var cue: AudioCue = _mx_cues[cue_name.to_lower()]
+		# FIX: #27 AudioCues were losing the volume set in editor when played
+		# with a fade
+		cue.volume = _dflt_volumes[cue_name.to_lower()]
 		
 		if fade_duration > 0.0:
 			stream_player = _fade_in(
@@ -83,7 +90,7 @@ func play_music_cue(
 		else:
 			stream_player = _play(cue, Vector2.ZERO, music_position)
 	else:
-		prints('[Popochiu] Music not found:', cue_name)
+		printerr('[Popochiu] Music not found:', cue_name)
 	
 	return stream_player
 
@@ -113,7 +120,7 @@ func play_fade_cue(
 			to if to != INF else cue.volume
 		)
 	else:
-		prints('[Popochiu] Sound for fade not found:', cue_name)
+		printerr('[Popochiu] Sound for fade not found:', cue_name)
 		
 		if wait_to_end != null:
 			await get_tree().process_frame
@@ -199,7 +206,7 @@ func _play(
 		player = _get_free_stream($Positional)
 		
 		if not is_instance_valid(player):
-			prints('[Popochiu] Run out of AudioStreamPlayer2D')
+			printerr('[Popochiu] Run out of AudioStreamPlayer2D')
 			return null
 
 		(player as AudioStreamPlayer2D).stream = cue.audio
@@ -211,7 +218,7 @@ func _play(
 		player = _get_free_stream($Generic)
 		
 		if not is_instance_valid(player):
-			prints('[Popochiu] Run out of AudioStreamPlayer')
+			printerr('[Popochiu] Run out of AudioStreamPlayer')
 			return null
 	
 		(player as AudioStreamPlayer).stream = cue.audio
@@ -263,7 +270,8 @@ func _make_available(
 
 
 func _reparent(source: Node, target: Node, child_idx: int) -> Node:
-	if source.get_children().is_empty(): return null
+	if not is_instance_valid(source) or source.get_children().is_empty():
+		return null
 	
 	var node_to_reparent: Node = source.get_child(child_idx)
 	

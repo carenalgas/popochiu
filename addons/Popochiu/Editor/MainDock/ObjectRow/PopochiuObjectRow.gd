@@ -136,8 +136,8 @@ func _ready() -> void:
 		)
 	elif type == Constants.Types.PROP and path.find('.gd') > -1:
 		# If the Room object has a script, disable the Create prop script button
-		_menu_popup.set_item_disabled(
-			_menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT), true
+		_menu_popup.remove_item(
+			_menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT)
 		)
 	
 	# Hide buttons based checked the type of the Object this row represents
@@ -184,6 +184,12 @@ func show_create_state_script() -> void:
 	_btn_state_script.disabled = true
 	_menu_popup.set_item_disabled(
 		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), false
+	)
+
+
+func remove_create_state_script() -> void:
+	_menu_popup.remove_item(
+		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT)
 	)
 
 

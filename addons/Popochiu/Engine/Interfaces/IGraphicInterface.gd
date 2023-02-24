@@ -20,13 +20,13 @@ var is_blocked := false
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func display(msg: String) -> Callable:
-	return func (): await display_no_run(msg)
+	return func (): await display_now(msg)
 
 
 # Shows a text in the center of the screen. Can be used as the narrator or to
 # give instructions to players. The visual style of the node that shows this text
 # can be modified in DisplayBox.tscn.
-func display_no_run(msg: String) -> void:
+func display_now(msg: String) -> void:
 	if not E.in_run():
 		# Show the click handler that blocks interactions
 		block()

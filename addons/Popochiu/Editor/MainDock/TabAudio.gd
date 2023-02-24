@@ -6,6 +6,10 @@ const SEARCH_PATH := 'res://popochiu/'
 const AudioCue := preload('res://addons/Popochiu/Engine/AudioManager/AudioCue.gd')
 const PopochiuUtils := preload('res://addons/Popochiu/Engine/Others/PopochiuUtils.gd')
 const AudioManager := preload('res://addons/Popochiu/Engine/AudioManager/AudioManager.gd')
+const AudioCueSound :=\
+preload('res://addons/Popochiu/Engine/AudioManager/AudioCueSound.gd')
+const AudioCueMusic :=\
+preload('res://addons/Popochiu/Engine/AudioManager/AudioCueMusic.gd')
 
 var main_dock: Panel : set = _set_main_dock
 var last_played: Control = null
@@ -243,15 +247,23 @@ func _create_audio_file_row(file_path: String) -> void:
 	_audio_files_to_assign.append(file_path)
 
 
-func _create_audio_cue(\
-type: String, path: String, audio_row: Container = null
+func _create_audio_cue(
+	type: String, path: String, audio_row: Container = null
 ) -> void:
 	var cue_name := path.get_file().get_basename()
 	var cue_file_name := _utils.snake2pascal(cue_name)
 	cue_file_name += '.tres'
 	
 	# Create the AudioCue and save it in the file system
-	var ac: AudioCue = AudioCue.new()
+	var ac: AudioCue
+	
+	match type:
+		'music':
+			ac = AudioCueMusic.new()
+			ac.loop = true
+		_:
+			ac = AudioCueSound.new()
+	
 	var stream: AudioStream = load(path)
 	ac.audio = stream
 	ac.resource_name = cue_name.to_lower()
@@ -288,9 +300,12 @@ type: String, path: String, audio_row: Container = null
 		await get_tree().process_frame
 		return
 	
-	# ...
-#	main_dock.fs.scan()
 	await main_dock.fs.filesystem_changed
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Add the AudioCue to the A singleton
+	PopochiuResources.update_autoloads(true)
+	main_dock.fs.update_script_classes()
 	
 	# Check if the AudioCue was created when assigning the audio file from the
 	# "Not assigned" group

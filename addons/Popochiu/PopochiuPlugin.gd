@@ -97,13 +97,16 @@ func _enter_tree() -> void:
 		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
 	
 	main_dock.setup_dialog.es = _editor_interface.get_editor_settings()
+	main_dock.setup_dialog.move_requested.connect(_move_to_project)
 	
 	if PopochiuResources.get_section('setup').is_empty():
 		main_dock.setup_dialog.appear(true)
-		(main_dock.setup_dialog as AcceptDialog).confirmed.connect(_move_addon_folders)
+		(main_dock.setup_dialog as AcceptDialog).confirmed.connect(
+			_set_setup_done
+		)
 	
 	PopochiuResources.update_autoloads(true)
-	_editor_file_system.update_script_classes()
+#	_editor_file_system.update_script_classes()
 	_editor_file_system.scan_sources()
 
 
@@ -194,32 +197,7 @@ func _remove_input_actions() -> void:
 	assert(result == OK) #,'[Popochiu] Failed to save project settings.')
 
 
-func _move_addon_folders() -> void:
-	# Move files and folders so developer can overwrite them
-#	DirAccess.rename_absolute(
-#		PopochiuResources.GRAPHIC_INTERFACE_ADDON.get_base_dir(),
-#		PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
-#	)
-#	DirAccess.rename_absolute(
-#		PopochiuResources.TRANSITION_LAYER_ADDON.get_base_dir(),
-#		PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
-#	)
-	
-	# Refresh FileSystem
-#	_editor_file_system.scan()
-
-	# Fix dependencies
-#	await _editor_file_system.filesystem_changed
-#	await _check_popochiu_dependencies()
-	
-	# Save settings
-#	var settings := PopochiuResources.get_settings()
-#	settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
-#	settings.transition_layer = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU)
-#
-#	PopochiuResources.save_settings(settings)
-	
-	# Mark setup as done in PopochiuData.cfg
+func _set_setup_done() -> void:
 	PopochiuResources.set_data_value('setup', 'done', true)
 
 
@@ -404,3 +382,38 @@ func _select_baseline() -> void:
 		_editor_interface.edit_node(_selected_node.get_node('BaselineHelper'))
 	else:
 		_editor_interface.edit_node(_selected_node.get_node('../BaselineHelper'))
+
+
+func _move_to_project(id: int) -> void:
+	# Move files and folders so developer can overwrite them
+	if id == PopochiuResources.GI:
+		DirAccess.rename_absolute(
+			PopochiuResources.GRAPHIC_INTERFACE_ADDON.get_base_dir(),
+			PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+		)
+	elif id == PopochiuResources.TL:
+		DirAccess.rename_absolute(
+			PopochiuResources.TRANSITION_LAYER_ADDON.get_base_dir(),
+			PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+		)
+	
+	# Refresh FileSystem
+	_editor_file_system.scan()
+
+	# Fix dependencies
+	await _editor_file_system.filesystem_changed
+	await _check_popochiu_dependencies()
+	
+	# Save settings
+	var settings := PopochiuResources.get_settings()
+	
+	if id == PopochiuResources.GI:
+		settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
+		PopochiuResources.set_data_value('setup', 'gi_moved', true)
+	elif id == PopochiuResources.TL:
+		settings.transition_layer = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU)
+		PopochiuResources.set_data_value('setup', 'tl_moved', true)
+
+	PopochiuResources.save_settings(settings)
+	
+	main_dock.setup_dialog.update_state()

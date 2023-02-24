@@ -108,7 +108,8 @@ const REGIONS_IGNORE := [
 	'description',
 	'tint'
 ]
-const SNGL_TEMPLATE := 'extends "%s"\n\n' +\
+const SNGL_TEMPLATE := '@tool\n' +\
+'extends "%s"\n\n' +\
 '# classes ----\n' +\
 '# ---- classes\n' +\
 '\n' +\
@@ -124,35 +125,39 @@ const SNGL_SETUP := {
 		section = 'rooms',
 		'class' = 'res://popochiu/Rooms/%s/Room%s.gd',
 		'const' = "const PR%s := preload('%s')\n",
-		node = "var %s: PR%s setget , get_%s\n",
-		'func' = "func get_%s(): return .get_runtime_room('%s')\n",
+		node = "var %s: PR%s : get = get_%s\n",
+		'func' = "func get_%s() -> PR%s: return super.get_runtime_room('%s')\n",
+		prefix = 'R',
 	},
 	C_SNGL : {
 		interface = ICHARACTER,
 		section = 'characters',
 		'class' = 'res://popochiu/Characters/%s/Character%s.gd',
 		'const' = "const PC%s := preload('%s')\n",
-		node = "var %s: PC%s setget , get_%s\n",
-		'func' = "func get_%s(): return .get_runtime_character('%s')\n",
+		node = "var %s: PC%s : get = get_%s\n",
+		'func' = "func get_%s() -> PC%s: return super.get_runtime_character('%s')\n",
+		prefix = 'C',
 	},
 	I_SNGL : {
 		interface = IINVENTORY,
 		section = 'inventory_items',
 		'class' = 'res://popochiu/InventoryItems/%s/Inventory%s.gd',
 		'const' = "const PII%s := preload('%s')\n",
-		node = "var %s: PII%s setget , get_%s\n",
-		'func' = "func get_%s(): return ._get_item_instance('%s')\n",
+		node = "var %s: PII%s : get = get_%s\n",
+		'func' = "func get_%s() -> PII%s: return super._get_item_instance('%s')\n",
+		prefix = 'I',
 	},
 	D_SNGL : {
 		interface = IDIALOG,
 		section = 'dialogs',
 		'class' = 'res://popochiu/Dialogs/%s/Dialog%s.gd',
 		'const' = "const PD%s := preload('%s')\n",
-		node = "var %s: PD%s setget , get_%s\n",
-		'func' = "func get_%s(): return E.get_dialog('%s')\n",
+		node = "var %s: PD%s : get = get_%s\n",
+		'func' = "func get_%s() -> PD%s: return E.get_dialog('%s')\n",
+		prefix = 'D',
 	}
 }
-const A_TEMPLATE := 'tool\n' +\
+const A_TEMPLATE := '@tool\n' +\
 'extends "%s"\n\n' +\
 '# classes ----\n' +\
 '# ---- classes\n' +\
@@ -235,7 +240,7 @@ static func update_autoloads(save := false) -> void:
 				var var_name: String = key
 					
 				if int(var_name[0]) != 0:
-					var_name = var_name.insert(0, 'R')
+					var_name = var_name.insert(0, sngl_setup.prefix)
 				
 				if code.find('var %s' % var_name) < 0:
 					var classes_idx := code.find('# ---- classes')
@@ -255,7 +260,7 @@ static func update_autoloads(save := false) -> void:
 					var functions_idx := code.find('# ---- functions')
 					code = code.insert(
 						functions_idx,
-						sngl_setup['func'] % [key, key]
+						sngl_setup['func'] % [key, key, key]
 					)
 					
 					modified = true
@@ -314,6 +319,8 @@ static func update_autoloads(save := false) -> void:
 				# Restore the properties of the AudioCue
 				audio_cue.set_values(values)
 				old_audio_cues.append(audio_cue)
+				
+				ResourceSaver.save(audio_cue, path)
 			
 			var var_name := audio_cue.resource_name
 			

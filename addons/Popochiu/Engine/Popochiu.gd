@@ -63,7 +63,7 @@ var _saveload: Resource = null
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	am = load(PopochiuResources.AUDIO_MANAGER).instance()
+	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
 	
 	_saveload = load(SAVELOAD_PATH).new()
 	_config = PopochiuResources.get_data_cfg()
@@ -99,7 +99,7 @@ func _ready() -> void:
 		
 		if pc_data_path:
 			var pc_data: PopochiuCharacterData = load(pc_data_path)
-			var pc: PopochiuCharacter = load(pc_data.scene).instance()
+			var pc: PopochiuCharacter = load(pc_data.scene).instantiate()
 			
 			C.player = pc
 			C.characters.append(pc)
@@ -112,7 +112,7 @@ func _ready() -> void:
 		if not characters.is_empty():
 			var pc: PopochiuCharacter = load(
 				(load(characters[0]) as PopochiuCharacterData).scene
-			).instance()
+			).instantiate()
 
 			C.player = pc
 			C.characters.append(pc)
@@ -174,10 +174,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func wait(time := 1.0) -> Callable:
-	return func (): await wait_no_run(time)
+	return func (): await wait_now(time)
 
 
-func wait_no_run(time := 1.0) -> void:
+func wait_now(time := 1.0) -> void:
 	if cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -289,12 +289,13 @@ func goto_room(
 	
 	var rp: String = PopochiuResources.get_data_value('rooms', script_name, null)
 	if rp.is_empty():
-		prints('[Popochiu] No PopochiuRoom with name: %s' % script_name)
+		printerr('[Popochiu] No PopochiuRoom with name: %s' % script_name)
 		return
 	
 	if Engine.get_process_frames() == 0:
 		await get_tree().process_frame
 	
+	R.clear_instances()
 	clear_hovered()
 	get_tree().change_scene_to_file(load(rp).scene)
 
@@ -319,7 +320,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	# Update the core state
 	if _loaded_game:
-		C.set_player(C.get_character(_loaded_game.player.id))
+		C.player = C.get_character(_loaded_game.player.id)
 	else:
 		current_room.state.visited = true
 		current_room.state.visited_times += 1
@@ -329,22 +330,18 @@ func room_readied(room: PopochiuRoom) -> void:
 	for c in current_room.characters_cfg:
 		var chr: PopochiuCharacter = C.get_character(c.script_name)
 		
-		if chr:
-			# ░▒░▒ FIX ░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░
-			# Temporary fix to make the character with is_player == true to
-			# be the PC
-			if chr.is_player:
-				C.set_player(chr)
-			# ░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░▒░░▒░▒ FIX ░▒░▒
+		if not chr: continue
 			
-			chr.position = c.position
-			current_room.add_character(chr)
+		chr.position = c.position
+		current_room.add_character(chr)
 	
+	# If the room must have the player character but it is not part of its
+	# $Characters node, add it to the room
 	if current_room.has_player and is_instance_valid(C.player):
 		if not current_room.has_character(C.player.script_name):
 			current_room.add_character(C.player)
 		
-		await C.player.idle_no_run()
+		await C.player.idle_now()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDS:
@@ -375,7 +372,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	if _use_transition_on_room_change:
 		$TransitionLayer.play_transition($TransitionLayer.FADE_OUT)
 		await $TransitionLayer.transition_finished
-		await wait_no_run(0.3)
+		await wait_now(0.3)
 	else:
 		await get_tree().process_frame
 	
@@ -397,22 +394,22 @@ func room_readied(room: PopochiuRoom) -> void:
 
 
 func camera_offset(offset := Vector2.ZERO) -> Callable:
-	return func (): await camera_offset_no_run(offset)
+	return func (): await camera_offset_now(offset)
 
 
 # Changes the main camera's offset (useful when zooming the camera)
-func camera_offset_no_run(offset := Vector2.ZERO) -> void:
+func camera_offset_now(offset := Vector2.ZERO) -> void:
 	main_camera.offset = offset
 	
 	await get_tree().process_frame
 
 
 func camera_shake(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await camera_shake_no_run(strength, duration)
+	return func (): await camera_shake_now(strength, duration)
 
 
 # Makes the camera shake with `strength` for `duration` seconds
-func camera_shake_no_run(strength := 1.0, duration := 1.0) -> void:
+func camera_shake_now(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
 	_is_camera_shaking = true
@@ -421,12 +418,12 @@ func camera_shake_no_run(strength := 1.0, duration := 1.0) -> void:
 
 
 func camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await camera_shake_bg_no_run(strength, duration)
+	return func (): await camera_shake_bg_now(strength, duration)
 
 
 # Makes the camera shake with `strength` for `duration` seconds without blocking
 # excecution (a.k.a. in the background)
-func camera_shake_bg_no_run(strength := 1.0, duration := 1.0) -> void:
+func camera_shake_bg_now(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
 	_is_camera_shaking = true
@@ -435,13 +432,13 @@ func camera_shake_bg_no_run(strength := 1.0, duration := 1.0) -> void:
 
 
 func camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
-	return func (): await camera_zoom_no_run(target, duration)
+	return func (): await camera_zoom_now(target, duration)
 
 
 # Changes the camera zoom. If `target` is larger than Vector2(1, 1) the camera
 # will zoom out, smaller values make it zoom in. The effect will last `duration`
 # seconds
-func camera_zoom_no_run(target := Vector2.ONE, duration := 1.0) -> void:
+func camera_zoom_now(target := Vector2.ONE, duration := 1.0) -> void:
 	if is_instance_valid(_tween) and _tween.is_running():
 		_tween.kill()
 	
@@ -464,7 +461,7 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 		if popochiu_character.script_name == script_name:
 			return load(popochiu_character.scene).instantiate()
 	
-	prints("[Popochiu] Character %s doesn't exists" % script_name)
+	printerr("[Popochiu] Character %s doesn't exists" % script_name)
 	return null
 
 
@@ -475,7 +472,7 @@ func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 		if popochiu_inventory_item.script_name == script_name:
 			return load(popochiu_inventory_item.scene).instantiate()
 	
-	prints("[Popochiu] Item %s doesn't exists" % script_name)
+	printerr("[Popochiu] Item %s doesn't exists" % script_name)
 	return null
 
 
@@ -486,7 +483,7 @@ func get_dialog(script_name: String) -> PopochiuDialog:
 		if tree.script_name.to_lower() == script_name.to_lower():
 			return tree
 
-	prints("[Popochiu] Dialog '%s doesn't exists" % script_name)
+	printerr("[Popochiu] Dialog '%s doesn't exists" % script_name)
 	return null
 
 
@@ -517,12 +514,12 @@ func room_exists(script_name: String) -> bool:
 
 
 func play_transition(type: int, duration: float) -> Callable:
-	return func (): await play_transition_no_run(type, duration)
+	return func (): await play_transition_now(type, duration)
 
 
 # Plays the transition type animation in TransitionLayer.tscn that last duration
 # in seconds. Possible type values can be found in TransitionLayer
-func play_transition_no_run(type: int, duration: float) -> void:
+func play_transition_now(type: int, duration: float) -> void:
 	$TransitionLayer.play_transition(type, duration)
 	
 	await $TransitionLayer.transition_finished
@@ -643,13 +640,13 @@ func set_current_room(value: PopochiuRoom) -> void:
 func _eval_string(text: String) -> void:
 	match text:
 		'.':
-			await wait_no_run(0.25)
+			await wait_now(0.25)
 		'..':
-			await wait_no_run(0.5)
+			await wait_now(0.5)
 		'...':
-			await wait_no_run(1.0)
+			await wait_now(1.0)
 		'....':
-			await wait_no_run(2.0)
+			await wait_now(2.0)
 		_:
 			var colon_idx: int = text.find(':')
 			if colon_idx:
@@ -688,9 +685,9 @@ func _eval_string(text: String) -> void:
 				
 				if character_name == 'player'\
 				or C.player.script_name.to_lower() == character_name:
-					await C.player_say_no_run(dialogue)
+					await C.player_say_now(dialogue)
 				elif C.is_valid_character(character_name):
-					await C.character_say_no_run(character_name, dialogue)
+					await C.character_say_now(character_name, dialogue)
 				else:
 					await get_tree().process_frame
 			else:

@@ -27,7 +27,6 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(-82, 13, -68, 9, -50, 7
 
 [node name="Room101" type="Node2D"]
 script = ExtResource("1")
-script_name = "101"
 
 [node name="WalkableAreas" type="Node2D" parent="."]
 
@@ -47,16 +46,11 @@ navigation_polygon = SubResource("1")
 z_index = -1
 position = Vector2(160, 90)
 texture = ExtResource("5_ii3bp")
-script_name = "Background"
-clickable = false
 
 [node name="Blanket" parent="Props" instance=ExtResource("3")]
 position = Vector2(92, 142)
 script = ExtResource("4")
 texture = ExtResource("7_lvean")
-script_name = "Blanket"
-description = "Blanket"
-walk_to_point = Vector2(28, 5)
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/Blanket"]
 polygon = PackedVector2Array(-12, 5, -11, -4, -3, -7, 8, -6, 12, 0, 12, 5)
@@ -66,9 +60,6 @@ position = Vector2(0, -5)
 script = ExtResource("8")
 texture = ExtResource("9_okrhl")
 link_to_item = "ToyCar"
-script_name = "ToyCar"
-description = "Toy car"
-walk_to_point = Vector2(27, 1)
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/Blanket/ToyCar"]
 polygon = PackedVector2Array(-9, 3, -8, -3, -1, -6, 6, -5, 9, 1, 6, 5)
@@ -76,15 +67,11 @@ polygon = PackedVector2Array(-9, 3, -8, -3, -1, -6, 6, -5, 9, 1, 6, 5)
 [node name="Table" parent="Props" instance=ExtResource("3")]
 position = Vector2(153, 122)
 texture = ExtResource("10_wcis8")
-script_name = "Table"
-clickable = false
 
 [node name="Apple" parent="Props/Table" instance=ExtResource("3")]
 position = Vector2(-1, -5)
 script = ExtResource("13_vhvtq")
 texture = ExtResource("12_ro0vf")
-script_name = "Apple"
-description = "Apple"
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/Table/Apple"]
 polygon = PackedVector2Array(-5, 5, -6, -3, 1, -7, 5, -2, 4, 6)
@@ -94,8 +81,6 @@ position = Vector2(63, 106)
 script = ExtResource("16")
 texture = ExtResource("14_3m542")
 frames = 2
-script_name = "Drawer"
-description = "Drawer"
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/Drawer"]
 polygon = PackedVector2Array(-13, 15, -12, -6, -6, -16, 8, -15, 9, 3, 2, 15)
@@ -105,9 +90,6 @@ polygon = PackedVector2Array(-13, 15, -12, -6, -6, -16, 8, -15, 9, 3, 2, 15)
 [node name="Window" parent="Hotspots" instance=ExtResource("15")]
 position = Vector2(152, 62)
 script = ExtResource("14")
-script_name = "Window"
-description = "Window"
-walk_to_point = Vector2(30, 43)
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Hotspots/Window"]
 modulate = Color(0, 0, 1, 1)
@@ -116,8 +98,6 @@ polygon = PackedVector2Array(-26, 1, -24, -14, -9, -24, 14, -22, 24, -7, 20, 13,
 [node name="Door" parent="Hotspots" instance=ExtResource("15")]
 position = Vector2(98, 76)
 script = ExtResource("2")
-script_name = "Door"
-description = "Door"
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Hotspots/Door"]
 modulate = Color(0, 0, 1, 1)

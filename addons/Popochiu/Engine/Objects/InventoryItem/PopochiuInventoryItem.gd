@@ -53,7 +53,7 @@ func on_discard() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func add(animate := true) -> Callable:
 	return func (): await add_now(animate)
 
@@ -77,6 +77,10 @@ func remove(animate := true) -> Callable:
 
 func remove_now(animate := true) -> void:
 	await I.remove_item_now(script_name, animate)
+
+
+func set_active(ignore_block := false) -> void:
+	I.set_active_item(self, ignore_block)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
