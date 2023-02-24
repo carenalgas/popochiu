@@ -350,7 +350,6 @@ func _add_object_to_core() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Add the object to its corresponding singleton
 	PopochiuResources.update_autoloads(true)
-	main_dock.fs.update_script_classes()
 	
 	_label.modulate.a = 1.0
 	
@@ -467,22 +466,18 @@ func _remove_from_core() -> void:
 	match type:
 		Constants.Types.ROOM:
 			PopochiuResources.remove_autoload_obj(PopochiuResources.R_SNGL, name)
-			main_dock.fs.update_script_classes()
 			
 			PopochiuResources.erase_data_value('rooms', str(name))
 		Constants.Types.CHARACTER:
 			PopochiuResources.remove_autoload_obj(PopochiuResources.C_SNGL, name)
-			main_dock.fs.update_script_classes()
 			
 			PopochiuResources.erase_data_value('characters', str(name))
 		Constants.Types.INVENTORY_ITEM:
 			PopochiuResources.remove_autoload_obj(PopochiuResources.I_SNGL, name)
-			main_dock.fs.update_script_classes()
 			
 			PopochiuResources.erase_data_value('inventory_items', str(name))
 		Constants.Types.DIALOG:
 			PopochiuResources.remove_autoload_obj(PopochiuResources.D_SNGL, name)
-			main_dock.fs.update_script_classes()
 			
 			PopochiuResources.erase_data_value('dialogs', str(name))
 		Constants.Types.PROP,\

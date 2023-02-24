@@ -106,7 +106,6 @@ func _enter_tree() -> void:
 		)
 	
 	PopochiuResources.update_autoloads(true)
-#	_editor_file_system.update_script_classes()
 	_editor_file_system.scan_sources()
 
 
@@ -146,6 +145,7 @@ func _disable_plugin() -> void:
 	remove_autoload_singleton('U')
 	remove_autoload_singleton('Cursor')
 	remove_autoload_singleton('E')
+	remove_autoload_singleton('R')
 	remove_autoload_singleton('C')
 	remove_autoload_singleton('I')
 	remove_autoload_singleton('D')

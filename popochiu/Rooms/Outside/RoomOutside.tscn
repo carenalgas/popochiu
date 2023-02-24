@@ -11,8 +11,8 @@
 
 [sub_resource type="NavigationPolygon" id="1"]
 vertices = PackedVector2Array(122, 41, 215, 68, 218, 86, -220, 86, -220, 33, -191, 28, -125, 7, -38, 7, 27, 11, 116, 11)
-polygons = [PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(0, 5, 6, 7, 8), PackedInt32Array(0, 8, 9)]
-outlines = [PackedVector2Array(-220, 33, -220, 86, 218, 86, 215, 68, 122, 41, 116, 11, 27, 11, -38, 7, -125, 7, -191, 28)]
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5), PackedInt32Array(0, 5, 6, 7, 8), PackedInt32Array(0, 8, 9)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-220, 33, -220, 86, 218, 86, 215, 68, 122, 41, 116, 11, 27, 11, -38, 7, -125, 7, -191, 28)])
 
 [node name="RoomOutside" type="Node2D"]
 script = ExtResource("1")

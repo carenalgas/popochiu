@@ -29,7 +29,7 @@ func _ready() -> void:
 	
 	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
 		for rp in PopochiuResources.get_data_value('audio', arr, []):
-			var ac: AudioCue = load(rp) as AudioCue
+			var ac: AudioCue = load(rp)
 			self['_%s' % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
 			# FIX: #27 AudioCues were losing the volume set in editor when

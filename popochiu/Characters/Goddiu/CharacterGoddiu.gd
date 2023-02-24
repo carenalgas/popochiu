@@ -6,6 +6,8 @@ extends PopochiuCharacter
 
 var state: PopochiuCharacterData = preload('CharacterGoddiu.tres')
 
+var is_hungry := false
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked

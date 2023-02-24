@@ -231,7 +231,6 @@ func _remove_in_audio_manager() -> void:
 	PopochiuResources.remove_audio_autoload(
 		cue_group, name, audio_cue.resource_path
 	)
-	main_dock.fs.update_script_classes()
 	
 	# Add the audio file to the "Not assigned" group
 	deleted.emit(audio_cue.audio.resource_path)

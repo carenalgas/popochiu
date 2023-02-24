@@ -305,7 +305,6 @@ func _create_audio_cue(
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Add the AudioCue to the A singleton
 	PopochiuResources.update_autoloads(true)
-	main_dock.fs.update_script_classes()
 	
 	# Check if the AudioCue was created when assigning the audio file from the
 	# "Not assigned" group
