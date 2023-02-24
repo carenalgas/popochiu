@@ -70,19 +70,33 @@ func create() -> void:
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the character
-	var character_template := load(CHARACTER_SCRIPT_TEMPLATE)
-	if ResourceSaver.save(character_template, _new_character_path + '.gd') != OK:
+	var character_script: Script = load(CHARACTER_SCRIPT_TEMPLATE)
+	var new_code := character_script.source_code
+	
+	character_script.source_code = ''
+	
+	if ResourceSaver.save(character_script, _new_character_path + '.gd') != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_character_name)
 		# TODO: Show feedback in the popup
 		return
 	
-	# Assign the state to the character
-	var character_script: Script = load(_new_character_path + '.gd')
-	character_script.source_code = character_script.source_code.replace(
-		'PopochiuCharacterData = null',
-		"PopochiuCharacterData = preload('Character%s.tres')" % _new_character_name
+	new_code = new_code.replace(
+		'CharacterStateTemplate',
+		'Character%sState' % _new_character_name
 	)
-	ResourceSaver.save(character_script, _new_character_path + '.gd')
+	
+	new_code = new_code.replace(
+		'Data = null',
+		"Data = preload('Character%s.tres')" % _new_character_name
+	)
+	
+	character_script = load(_new_character_path + '.gd')
+	character_script.source_code = new_code
+	
+	if ResourceSaver.save(character_script, _new_character_path + '.gd') != OK:
+		push_error('[Popochiu] Could not update script: %s.gd' % _new_character_name)
+		# TODO: Show feedback in the popup
+		return
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the character instance
@@ -117,12 +131,18 @@ func create() -> void:
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Add the character to the C singleton
+	PopochiuResources.update_autoloads(true)
+	_main_dock.fs.update_script_classes()
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of characters in the dock
 	_main_dock.add_to_list(Constants.Types.CHARACTER, _new_character_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor
 	await get_tree().create_timer(0.1).timeout
+	
 	_main_dock.ei.select_file(_new_character_path + '.tscn')
 	_main_dock.ei.open_scene_from_path(_new_character_path + '.tscn')
 	

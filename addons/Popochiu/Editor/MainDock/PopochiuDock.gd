@@ -157,6 +157,10 @@ func fill_data() -> void:
 						is_in_core = PopochiuResources.has_data_value(
 							'characters', resource.script_name
 						)
+						
+						if resource.script_name ==\
+						PopochiuResources.get_data_value('setup', 'pc', ''):
+							row.is_pc = true
 					Constants.Types.INVENTORY_ITEM:
 						is_in_core = PopochiuResources.has_data_value(
 							'inventory_items', resource.script_name
@@ -225,6 +229,11 @@ func set_main_scene(path: String) -> void:
 	assert(result == OK) #,'[Popochiu] Failed to save project settings')
 	
 	_types[Constants.Types.ROOM].group.clear_favs()
+
+
+func set_pc(script_name: String) -> void:
+	PopochiuResources.set_data_value('setup', 'pc', script_name)
+	_types[Constants.Types.CHARACTER].group.clear_favs()
 
 
 func search_audio_files() -> void:

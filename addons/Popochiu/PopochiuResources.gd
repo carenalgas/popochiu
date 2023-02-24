@@ -42,14 +42,21 @@ const GLOBALS_SNGL := 'res://popochiu/PopochiuGlobals.gd'
 const UTILS_SNGL := 'res://addons/Popochiu/Engine/Others/PopochiuUtils.gd'
 const CURSOR_SNGL := 'res://addons/Popochiu/Engine/Cursor/Cursor.tscn'
 const POPOCHIU_SNGL := 'res://addons/Popochiu/Engine/Popochiu.tscn'
-const ICHARACTER_SNGL := 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
-const IINVENTORY_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
-const IDIALOG_SNGL := 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
+const IROOM := 'res://addons/Popochiu/Engine/Interfaces/IRoom.gd'
+const ICHARACTER := 'res://addons/Popochiu/Engine/Interfaces/ICharacter.gd'
+const IINVENTORY := 'res://addons/Popochiu/Engine/Interfaces/IInventory.gd'
+const IDIALOG := 'res://addons/Popochiu/Engine/Interfaces/IDialog.gd'
 const IGRAPHIC_INTERFACE_SNGL :=\
 'res://addons/Popochiu/Engine/Interfaces/IGraphicInterface.gd'
-const IAUDIO_MANAGER_SNGL :=\
-'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
+const IAUDIO := 'res://addons/Popochiu/Engine/Interfaces/IAudio.gd'
+const R_SNGL := 'res://popochiu/Autoloads/R.gd'
+const C_SNGL := 'res://popochiu/Autoloads/C.gd'
+const I_SNGL := 'res://popochiu/Autoloads/I.gd'
+const D_SNGL := 'res://popochiu/Autoloads/D.gd'
+const A_SNGL := 'res://popochiu/Autoloads/A.gd'
 # ════ FIRST INSTALL ═══════════════════════════════════════════════════════════
+const GI := 0
+const TL := 1
 const GRAPHIC_INTERFACE_ADDON :=\
 'res://addons/Popochiu/Engine/Objects/GraphicInterface/GraphicInterface.tscn'
 const GRAPHIC_INTERFACE_POPOCHIU :=\
@@ -60,6 +67,8 @@ const TRANSITION_LAYER_POPOCHIU :=\
 BASE_DIR + '/TransitionLayer/TransitionLayer.tscn'
 # ════ ENGINE ══════════════════════════════════════════════════════════════════
 const POPOCHIU_SCENE := 'res://addons/Popochiu/Engine/Popochiu.tscn'
+const AUDIO_MANAGER :=\
+'res://addons/Popochiu/Engine/AudioManager/AudioManager.tscn'
 const CURSOR_TYPE :=\
 preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd').Type
 const DATA := 'res://popochiu//PopochiuData.cfg'
@@ -99,6 +108,64 @@ const REGIONS_IGNORE := [
 	'description',
 	'tint'
 ]
+const SNGL_TEMPLATE := 'extends "%s"\n\n' +\
+'# classes ----\n' +\
+'# ---- classes\n' +\
+'\n' +\
+'# nodes ----\n' +\
+'# ---- nodes\n' +\
+'\n' +\
+'# functions ----\n' +\
+'# ---- functions\n' +\
+'\n'
+const SNGL_SETUP := {
+	R_SNGL : {
+		interface = IROOM,
+		section = 'rooms',
+		'class' = 'res://popochiu/Rooms/%s/Room%s.gd',
+		'const' = "const PR%s := preload('%s')\n",
+		node = "var %s: PR%s setget , get_%s\n",
+		'func' = "func get_%s(): return .get_runtime_room('%s')\n",
+	},
+	C_SNGL : {
+		interface = ICHARACTER,
+		section = 'characters',
+		'class' = 'res://popochiu/Characters/%s/Character%s.gd',
+		'const' = "const PC%s := preload('%s')\n",
+		node = "var %s: PC%s setget , get_%s\n",
+		'func' = "func get_%s(): return .get_runtime_character('%s')\n",
+	},
+	I_SNGL : {
+		interface = IINVENTORY,
+		section = 'inventory_items',
+		'class' = 'res://popochiu/InventoryItems/%s/Inventory%s.gd',
+		'const' = "const PII%s := preload('%s')\n",
+		node = "var %s: PII%s setget , get_%s\n",
+		'func' = "func get_%s(): return ._get_item_instance('%s')\n",
+	},
+	D_SNGL : {
+		interface = IDIALOG,
+		section = 'dialogs',
+		'class' = 'res://popochiu/Dialogs/%s/Dialog%s.gd',
+		'const' = "const PD%s := preload('%s')\n",
+		node = "var %s: PD%s setget , get_%s\n",
+		'func' = "func get_%s(): return E.get_dialog('%s')\n",
+	}
+}
+const A_TEMPLATE := 'tool\n' +\
+'extends "%s"\n\n' +\
+'# classes ----\n' +\
+'# ---- classes\n' +\
+'\n' +\
+'# cues ----\n' +\
+'# ---- cues\n' +\
+'\n'
+const AUDIO_CUE_SOUND :=\
+'res://addons/Popochiu/Engine/AudioManager/AudioCueSound.gd'
+const AUDIO_CUE_MUSIC :=\
+'res://addons/Popochiu/Engine/AudioManager/AudioCueMusic.gd'
+const VAR_AUDIO_CUE_SOUND := 'var %s: AudioCueSound = preload("%s")\n'
+const VAR_AUDIO_CUE_MUSIC := 'var %s: AudioCueMusic = preload("%s")\n'
 # ════ GODOT PROJECT SETTINGS ══════════════════════════════════════════════════
 const DISPLAY_WIDTH := 'display/window/size/viewport_width'
 const DISPLAY_HEIGHT := 'display/window/size/viewport_height'
@@ -120,7 +187,7 @@ static func init_file_structure() -> bool:
 		if not DirAccess.dir_exists_absolute(d):
 			DirAccess.make_dir_recursive_absolute(d)
 	
-	# Create config files
+	# ---- Create config files -------------------------------------------------
 	
 	# Create .cfg file
 	if not FileAccess.file_exists(DATA):
@@ -137,7 +204,174 @@ static func init_file_structure() -> bool:
 		globals_file.store_string('extends Node')
 		globals_file.close()
 	
+	# ---- Create autoload files -----------------------------------------------
+	for key in SNGL_SETUP:
+		if not FileAccess.file_exists(key):
+			var file := FileAccess.open(key, FileAccess.WRITE)
+			file.store_string(SNGL_TEMPLATE % SNGL_SETUP[key].interface)
+			file.close()
+	
+	if not FileAccess.file_exists(A_SNGL):
+		var file := FileAccess.open(A_SNGL, FileAccess.WRITE)
+		file.store_string(A_TEMPLATE % IAUDIO)
+		file.close()
+	
 	return is_first_install
+
+
+static func update_autoloads(save := false) -> void:
+	# ---- Update autoload files -----------------------------------------------
+	for id in SNGL_SETUP:
+		if FileAccess.file_exists(id):
+			var s: Script = load(id)
+			var code := s.source_code
+			var modified := false
+			var sngl_setup: Dictionary = SNGL_SETUP[id]
+			
+			if not get_data_cfg().has_section(sngl_setup.section):
+				continue
+			
+			for key in get_data_cfg().get_section_keys(sngl_setup.section):
+				var var_name: String = key
+					
+				if int(var_name[0]) != 0:
+					var_name = var_name.insert(0, 'R')
+				
+				if code.find('var %s' % var_name) < 0:
+					var classes_idx := code.find('# ---- classes')
+					var class_path: String = sngl_setup['class'] % [key, key]
+					
+					code = code.insert(
+						classes_idx,
+						sngl_setup['const'] % [key, class_path]
+					)
+					
+					var nodes_idx := code.find('# ---- nodes')
+					code = code.insert(
+						nodes_idx,
+						sngl_setup.node % [var_name, key, key]
+					)
+					
+					var functions_idx := code.find('# ---- functions')
+					code = code.insert(
+						functions_idx,
+						sngl_setup['func'] % [key, key]
+					)
+					
+					modified = true
+			
+			if modified:
+				s.source_code = code
+				
+				if save: ResourceSaver.save(s, id)
+	
+	# ---- Populate the A singleton --------------------------------------------
+	if not get_data_cfg().has_section('audio')\
+	or not FileAccess.file_exists(A_SNGL):
+		return
+	
+	# [mx_cues, sfx_cues, vo_cues, ui_cues]
+	var audio_groups := get_data_cfg().get_section_keys('audio')
+	var s: Script = load(A_SNGL)
+	var code := s.source_code
+	var modified := false
+	
+	# Add the AudioCueSound and AudioCueMusic constants
+	if code.find('const AudioCueSound') < 0:
+		modified = true
+		
+		code = code.insert(
+			code.find('# ---- classes'),
+			'const AudioCueSound := preload("%s")\n' % AUDIO_CUE_SOUND
+		)
+	
+	if code.find('const AudioCueMusic') < 0:
+		modified = true
+		
+		code = code.insert(
+			code.find('# ---- classes'),
+			'const AudioCueMusic := preload("%s")\n' % AUDIO_CUE_MUSIC
+		)
+	
+	var old_audio_cues := []
+	
+	# Add all the AudioCues as variables
+	for group in audio_groups:
+		for path in get_data_value('audio', group, []):
+			# Check if the AudioCue is of a valid type
+			var audio_cue: Resource = load(path)
+			var script_path: String = audio_cue.get_script().resource_path
+			
+			if not script_path in [AUDIO_CUE_MUSIC, AUDIO_CUE_SOUND]:
+				# Backup the properties of the AudioCue
+				var values = audio_cue.get_values()
+				
+				if group == 'mx_cues':
+					audio_cue.set_script(load(AUDIO_CUE_MUSIC))
+				else:
+					audio_cue.set_script(load(AUDIO_CUE_SOUND))
+				
+				# Restore the properties of the AudioCue
+				audio_cue.set_values(values)
+				old_audio_cues.append(audio_cue)
+			
+			var var_name := audio_cue.resource_name
+			
+			if code.find('var %s' % var_name) >= 0:
+				continue
+			
+			var cues_idx := code.find('# ---- cues')
+			
+			if group == 'mx_cues':
+				code = code.insert(
+					cues_idx, VAR_AUDIO_CUE_MUSIC % [var_name, path]
+				)
+			else:
+				code = code.insert(
+					cues_idx, VAR_AUDIO_CUE_SOUND % [var_name, path]
+				)
+			
+			modified = true
+	
+	if modified:
+		s.source_code = code
+		
+		if save: ResourceSaver.save(s, A_SNGL)
+	
+	# Save the script changes in the AudioCues
+	for cue in old_audio_cues:
+		ResourceSaver.call_deferred('save', cue.resource_path, cue)
+
+
+static func remove_autoload_obj(id: String, script_name: String) -> void:
+	var sngl_setup: Dictionary = SNGL_SETUP[id]
+	var class_path: String = sngl_setup['class'] % [script_name, script_name]
+	var s: Script = load(id)
+	var code := s.source_code
+	
+	code = code.replace(sngl_setup['const'] % [script_name, class_path], '')
+	
+	code = code.replace(
+		sngl_setup.node % [script_name, script_name, script_name], ''
+	)
+	
+	code = code.replace(sngl_setup['func'] % [script_name, script_name], '')
+	
+	s.source_code = code
+	ResourceSaver.save(s, id)
+
+
+static func remove_audio_autoload(type: String, var_name: String, path: String) -> void:
+	var s: Script = load(A_SNGL)
+	var code := s.source_code
+	
+	if type == 'mx_cues':
+		code = code.replace(VAR_AUDIO_CUE_MUSIC % [var_name, path], '')
+	else:
+		code = code.replace(VAR_AUDIO_CUE_SOUND % [var_name, path], '')
+	
+	s.source_code = code
+	ResourceSaver.save(s, A_SNGL)
 
 
 # ▨▨▨▨ GAME DATA ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
@@ -270,6 +504,7 @@ static func _create_empty_file(path):
 static func _get_directories() -> Dictionary:
 	return {
 		BASE = BASE_DIR,
+		AUTOLOADS = BASE_DIR + '/Autoloads',
 		ROOMS = BASE_DIR + '/Rooms',
 		CHARACTERS = BASE_DIR + '/Characters',
 		INVENTORY_ITEMS = BASE_DIR + '/InventoryItems',
