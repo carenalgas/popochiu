@@ -1,8 +1,7 @@
-@tool
-extends Panel
 # Acts like a HUD for working with Popochiu's objects:
 # Rooms, Characters, Inventory items, Dialog trees.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+@tool
+extends Panel
 
 signal move_folders_pressed
 

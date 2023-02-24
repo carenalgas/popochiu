@@ -1,6 +1,5 @@
-extends Node
 # (I) Data and functions to work with inventory items.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+extends Node
 
 signal item_added(item, animate)
 signal item_add_done(item)
@@ -22,14 +21,14 @@ var _item_instances := []
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func add_item(item_name: String, animate := true) -> Callable:
-	return func (): await add_item_no_run(item_name, animate)
+	return func (): await add_item_now(item_name, animate)
 
 # Adds an item to the inventory. The item is added based checked its script_name
 # property.
-func add_item_no_run(item_name: String, animate := true) -> PopochiuInventoryItem:
+func add_item_now(item_name: String, animate := true) -> PopochiuInventoryItem:
 	if E.settings.inventory_limit > 0\
 	and items.size() == E.settings.inventory_limit:
-		prints(
+		printerr(
 			'[Popochiu] Could not add %s to the inventory because it is full.' %\
 			item_name
 		)
@@ -52,18 +51,18 @@ func add_item_no_run(item_name: String, animate := true) -> PopochiuInventoryIte
 
 
 func add_item_as_active(item_name: String, animate := true) -> Callable:
-	return func (): await add_item_as_active_no_run(item_name, animate)
+	return func (): await add_item_as_active_now(item_name, animate)
 
 
 # Adds an item to the inventory and make it the current selected item. That is,
 # the cursor will thake the item's texture as its texture.
-func add_item_as_active_no_run(
+func add_item_as_active_now(
 	item_name: String, animate := true
 ) -> PopochiuInventoryItem:
-	var item: PopochiuInventoryItem = await add_item_no_run(item_name, animate)
+	var item: PopochiuInventoryItem = await add_item_now(item_name, animate)
 	
 	if is_instance_valid(item):
-		set_active_item(item, E.in_no_run())
+		set_active_item(item, E.in_now())
 	
 	return item
 
@@ -82,12 +81,12 @@ func set_active_item(
 
 
 func remove_item(item_name: String, animate := true) -> Callable:
-	return func (): await remove_item_no_run(item_name, animate)
+	return func (): await remove_item_now(item_name, animate)
 
 
 # Removes an item from the inventory. Its instance will be kept in the
 # _item_instances array.
-func remove_item_no_run(item_name: String, animate := true) -> void:
+func remove_item_now(item_name: String, animate := true) -> void:
 	var i: PopochiuInventoryItem = _get_item_instance(item_name)
 	if is_instance_valid(i):
 		i.in_inventory = false
@@ -99,6 +98,8 @@ func remove_item_no_run(item_name: String, animate := true) -> void:
 		item_removed.emit(i, animate)
 		
 		await self.item_remove_done
+	else:
+		await  get_tree().process_frame
 
 
 func is_item_in_inventory(item_name: String) -> bool:
@@ -112,10 +113,10 @@ func is_full() -> bool:
 
 
 func discard_item(item_name: String) -> Callable:
-	return func (): await discard_item_no_run(item_name)
+	return func (): await discard_item_now(item_name)
 
 
-func discard_item_no_run(item_name: String) -> void:
+func discard_item_now(item_name: String) -> void:
 	var i: PopochiuInventoryItem = _get_item_instance(item_name)
 	
 	if is_instance_valid(i):
@@ -139,15 +140,15 @@ func clean_inventory(in_bg := false) -> void:
 		
 		item_discarded.emit(ii)
 		
-		remove_item_no_run(ii.script_name, !in_bg)
+		remove_item_now(ii.script_name, !in_bg)
 
 
 func show_inventory(time := 1.0) -> Callable:
-	return func (): await show_inventory_no_run(time)
+	return func (): await show_inventory_now(time)
 
 
 # Notifies that the inventory should appear.
-func show_inventory_no_run(time := 1.0) -> void:
+func show_inventory_now(time := 1.0) -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -158,10 +159,10 @@ func show_inventory_no_run(time := 1.0) -> void:
 
 
 func hide_inventory(use_anim := true) -> Callable:
-	return func (): await hide_inventory_no_run(use_anim)
+	return func (): await hide_inventory_now(use_anim)
 
 
-func hide_inventory_no_run(use_anim := true) -> void:
+func hide_inventory_now(use_anim := true) -> void:
 	inventory_hide_requested.emit(use_anim)
 	
 	await get_tree().process_frame

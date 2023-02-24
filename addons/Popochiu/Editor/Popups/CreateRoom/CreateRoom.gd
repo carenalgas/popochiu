@@ -1,9 +1,13 @@
+# Creates a PopochiuRoom.
+# 
+# It creates all the necessary files to make a PopochiuRoom to work and
+# to store its state:
+# - RoomXXX.tsn
+# - RoomXXX.gd
+# - RoomXXX.tres
+# - RoomXXXState.gd
 @tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
-# Allows to create a new PopochiuRoom with the files required for its operation
-# within Popochiu and to store its state:
-#   Room???.tsn, Room???.gd, Room???.tres and Room???State.gd
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const ROOM_STATE_TEMPLATE :=\
 'res://addons/Popochiu/Engine/Templates/RoomStateTemplate.gd'
@@ -77,20 +81,35 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the room
-	var room_template: Script = load(ROOM_SCRIPT_TEMPLATE)
-	if ResourceSaver.save(room_template, _new_room_path + '.gd') != OK:
+	var room_script: Script = load(ROOM_SCRIPT_TEMPLATE)
+	var new_code := room_script.source_code
+	
+	room_script.source_code = ''
+	
+	if ResourceSaver.save(room_script, _new_room_path + '.gd') != OK:
 		push_error('[Popochiu] Could not create script: %s' %\
 		_new_room_name)
 		# TODO: Show feedback in the popup
 		return
 	
-	# Assign the state to the room
-	var room_script: Script = load(_new_room_path + '.gd')
-	room_script.source_code = room_script.source_code.replace(
-		'PopochiuRoomData = null',
-		"PopochiuRoomData = preload('Room%s.tres')" % _new_room_name
+	new_code = new_code.replace(
+		'RoomStateTemplate',
+		'Room%sState' % _new_room_name
 	)
-	ResourceSaver.save(room_script, _new_room_path + '.gd')
+	
+	new_code = new_code.replace(
+		'Data = null',
+		"Data = preload('Room%s.tres')" % _new_room_name
+	)
+	
+	room_script = load(_new_room_path + '.gd')
+	room_script.source_code = new_code
+	
+	if ResourceSaver.save(room_script, _new_room_path + '.gd') != OK:
+		push_error('[Popochiu] Could not update script: %s' %\
+		_new_room_name)
+		# TODO: Show feedback in the popup
+		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the room instance
@@ -119,6 +138,11 @@ func create() -> void:
 		_new_room_name)
 		# TODO: Show feedback in the popup
 		return
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Add the room to the R singleton
+	PopochiuResources.update_autoloads(true)
+	_main_dock.fs.update_script_classes()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of rooms in the dock

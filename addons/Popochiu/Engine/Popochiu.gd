@@ -13,7 +13,7 @@ const SAVELOAD_PATH := 'res://addons/Popochiu/Engine/Others/PopochiuSaveLoad.gd'
 
 # Used to prevent going to another room when there is one being loaded
 var in_room := false : set = _set_in_room
-var current_room: PopochiuRoom = null
+var current_room: PopochiuRoom : set = set_current_room
 # Stores the las PopochiuClickable node clicked to ease access to it from
 # any other class
 var clicked: Node = null
@@ -32,6 +32,7 @@ var current_text_speed: float = settings.text_speeds[current_text_speed_idx]
 var current_language := 0
 var auto_continue_after := -1.0
 var scale := Vector2.ONE
+var am: PopochiuAudioManager = null
 
 # TODO: This could be in the camera's own script
 var _is_camera_shaking := false
@@ -62,7 +63,7 @@ var _saveload: Resource = null
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	if Engine.is_editor_hint(): return
+	am = load(PopochiuResources.AUDIO_MANAGER).instance()
 	
 	_saveload = load(SAVELOAD_PATH).new()
 	_config = PopochiuResources.get_data_cfg()
@@ -87,15 +88,35 @@ func _ready() -> void:
 	
 	add_child(gi)
 	add_child(tl)
+	add_child(am)
 	
-	# Set the first character checked the list to be the default PC (playable character)
-	var characters := PopochiuResources.get_section('characters')
-	if not characters.is_empty():
-		var pc: PopochiuCharacter = load(
-			(load(characters[0]) as PopochiuCharacterData).scene
-		).instantiate()
-		C.player = pc
-		C.characters.append(pc)
+	if PopochiuResources.has_data_value('setup', 'pc'):
+		var pc_data_path: String = PopochiuResources.get_data_value(
+			'characters',
+			PopochiuResources.get_data_value('setup', 'pc', ''),
+			''
+		)
+		
+		if pc_data_path:
+			var pc_data: PopochiuCharacterData = load(pc_data_path)
+			var pc: PopochiuCharacter = load(pc_data.scene).instance()
+			
+			C.player = pc
+			C.characters.append(pc)
+			C.set(pc.script_name, pc)
+	
+	if not C.player:
+		# Set the first character on the list to be the default player character
+		var characters := PopochiuResources.get_section('characters')
+
+		if not characters.is_empty():
+			var pc: PopochiuCharacter = load(
+				(load(characters[0]) as PopochiuCharacterData).scene
+			).instance()
+
+			C.player = pc
+			C.characters.append(pc)
+			C.set(pc.script_name, pc)
 	
 	# Add inventory items checked start (ignore animations (3rd parameter))
 	for key in settings.items_on_start:
@@ -580,6 +601,11 @@ func in_run() -> bool:
 	return _running
 
 
+func clear_hovered() -> void:
+	_hovered_queue.clear()
+	self.hovered = null
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_width() -> float:
 	return get_viewport().get_visible_rect().end.x
@@ -608,9 +634,9 @@ func get_hovered() -> PopochiuClickable:
 	return null if _hovered_queue.is_empty() else _hovered_queue[-1]
 
 
-func clear_hovered() -> void:
-	_hovered_queue.clear()
-	self.hovered = null
+func set_current_room(value: PopochiuRoom) -> void:
+	current_room = value
+	R.current = value
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

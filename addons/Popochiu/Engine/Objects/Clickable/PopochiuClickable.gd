@@ -1,9 +1,8 @@
+# Allows to handle an Area2D that reacts to click events, and mouse entering,
+# and exiting.
 @tool
 class_name PopochiuClickable
 extends Area2D
-# Allows to handle an Area2D that reacts to click events, and mouse entering,
-# and exiting.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const CURSOR := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd')
 
@@ -87,6 +86,11 @@ func _process(delta):
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+# When the room this node belongs to has been added to the tree
+func on_room_set() -> void:
+	pass
+
+
 # When the node is clicked
 func on_interact() -> void:
 	await E.run([G.display("Can't INTERACT with it")])
@@ -100,10 +104,6 @@ func on_look() -> void:
 # When the node is clicked and there is an inventory item selected
 func on_item_used(item: PopochiuInventoryItem) -> void:
 	await E.run([G.display("Can't USE %s here" % item.description)])
-
-
-func on_room_set() -> void:
-	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

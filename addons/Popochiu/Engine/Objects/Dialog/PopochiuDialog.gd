@@ -1,9 +1,8 @@
+# For branching dialog, can have dialog options that trigger a script.
 @tool
 @icon('res://addons/Popochiu/icons/dialog.png')
 class_name PopochiuDialog
 extends Resource
-# For branching dialog, can have dialog options that trigger a script.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const PopochiuDialogOption := preload('PopochiuDialogOption.gd')
 
@@ -23,13 +22,7 @@ func option_selected(opt: PopochiuDialogOption) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func start() -> void:
-	await on_start()
-	
-	_show_options()
-	
-	await D.dialog_finished
-	
-	D.option_selected.disconnect(_on_option_selected)
+	D.show_dialog(script_name)
 
 
 func stop() -> void:
@@ -79,6 +72,16 @@ func set_options(value: Array) -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func _start() -> void:
+	await on_start()
+	
+	_show_options()
+	
+	await D.dialog_finished
+	
+	D.option_selected.disconnect(_on_option_selected)
+
+
 func _show_options() -> void:
 	if not D.active: return
 	

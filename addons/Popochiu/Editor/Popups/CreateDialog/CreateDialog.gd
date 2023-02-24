@@ -1,7 +1,11 @@
+# Creates a new PopochiuDialog.
+# 
+# It creates all the necessary files to make a PopochiuDialog to work:
+# - `DialogXXX.gd` > The script where the behavior for each dialog option is defined
+# - `DialogXXX.tres` > The Resource file used to create the dialog options in the
+# 	Inspector.
 @tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
-# Permite crear un nuevo diálogo con los archivos necesarios para que funcione
-# en el Popochiu: DialogDDD.gd, DialogDDD.tres.
 
 const DIALOG_SCRIPT_TEMPLATE :=\
 'res://addons/Popochiu/Engine/Templates/DialogTemplate.gd'
@@ -21,7 +25,7 @@ func _ready() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func set_main_dock(node: Panel) -> void:
 	super(node)
-	# Por defecto: res://popochiu/Dialogs
+	# res://popochiu/Dialogs
 	_dialog_path_template = _main_dock.DIALOGS_PATH + '%s/Dialog%s'
 
 
@@ -30,15 +34,15 @@ func create() -> void:
 		_error_feedback.show()
 		return
 	
-	# TODO: Verificar si no hay ya un diálogo en el mismo PATH.
-	# TODO: Eliminar archivos creados si la creación no se completa.
+	# TODO: Check if there is not already a dialog on the same PATH.
+	# TODO: Delete already created files if something breaks before finishing.
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear el directorio donde se guardará el nuevo diálogo
+	# Create the directory where the new dialog will be saved
 	DirAccess.make_dir_absolute(_main_dock.DIALOGS_PATH + _new_dialog_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear el script del nuevo diálogo
+	# Create the script of the new dialog
 	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE)
 	if ResourceSaver.save(dialog_template, _new_dialog_path + '.gd') != OK:
 		push_error('[Popochiu] Could not create script: %s.gd' % _new_dialog_name)
@@ -46,7 +50,7 @@ func create() -> void:
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Crear el Resource del diálogo
+	# Create dialog Resource
 	var dialog_resource := PopochiuDialog.new()
 	dialog_resource.set_script(load(_new_dialog_path + '.gd'))
 	dialog_resource.script_name = _new_dialog_name
@@ -57,7 +61,7 @@ func create() -> void:
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Agregar el diálogo al Popochiu
+	# Add the dialog to Popochiu
 	if _main_dock.add_resource_to_popochiu(
 		'dialogs', ResourceLoader.load(_new_dialog_path + '.tres')
 	) != OK:
@@ -67,17 +71,22 @@ func create() -> void:
 		return
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Actualizar la lista de habitaciones en el Dock
+	# Add the dialog to the D singleton
+	PopochiuResources.update_autoloads(true)
+	_main_dock.fs.update_script_classes()
+	
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Update the list of dialogs in the Dock
 	_main_dock.add_to_list(Constants.Types.DIALOG, _new_dialog_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Abrir el diálogo en el Inspector
+	# Open dialog in the Inspector
 	await get_tree().create_timer(0.1).timeout
 	_main_dock.ei.select_file(_new_dialog_path + '.tres')
 	_main_dock.ei.edit_resource(load(_new_dialog_path + '.tres'))
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Fin
+	# The end
 	hide()
 
 

@@ -1,7 +1,6 @@
+# Utility functions for Popochiu.
 @tool
 extends Node
-# Utility functions for Popochiu
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 
 func get_screen_coords_for(node: Node) -> Vector2:
@@ -25,6 +24,7 @@ func get_random_array_idx(arr: Array) -> int:
 
 
 # https://gist.github.com/me2beats/443b40ba79d5b589a96a16c565952419 ❱❱❱❱❱❱❱❱❱❱❱❱
+# Formats `string` from the_name to theName
 func snake2camel(string:String)->String:
 	var result = PackedStringArray()
 	var prev_is_underscore = false
@@ -42,12 +42,14 @@ func snake2camel(string:String)->String:
 	return ''.join(result)
 
 
+# Formats `string` from the_name to TheName
 func snake2pascal(string:String)->String:
 	var result = snake2camel(string)
 	result[0] = result[0].to_upper()
 	return result
 
 
+# Formats `string` from theName to the_name
 func camel2snake(string:String)->String:
 	var result = PackedStringArray()
 	for ch in string:
@@ -59,6 +61,7 @@ func camel2snake(string:String)->String:
 	return ''.join(result)
 
 
+# Formats `string` from TheName to the_name
 func pascal2snake(string:String)->String:
 	var result = PackedStringArray()
 	for ch in string:

@@ -1,8 +1,7 @@
-@tool
-extends HBoxContainer
 # The row that is created for Rooms, Characters, Inventory items, Dialogs,
 # Props, Hotspots, Regions and Points in the dock.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+@tool
+extends HBoxContainer
 
 signal clicked(node)
 

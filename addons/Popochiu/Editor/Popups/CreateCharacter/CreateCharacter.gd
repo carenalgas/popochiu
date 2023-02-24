@@ -1,9 +1,13 @@
+# Creates a new PopochiuCharacter.
+#
+# It creates all the necessary files to make a PopochiuCharacter to work and to
+# store its state:
+# - CharacterXXX.tsn
+# - CharacterXXX.gd
+# - CharacterXXX.tres
+# - CharacterXXXState.gd
 @tool
 extends 'res://addons/Popochiu/Editor/Popups/CreationPopup.gd'
-# Allows to create a new PopochiuCharacter with the files required for its
-# operation within Popochiu and to store its state:
-#   Character???.tsn, Character???.gd, Character???.tres and Character???State.gd
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 const CHARACTER_STATE_TEMPLATE :=\
 'res://addons/Popochiu/Engine/Templates/CharacterStateTemplate.gd'

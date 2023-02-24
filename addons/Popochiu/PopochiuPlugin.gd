@@ -1,9 +1,8 @@
+# Plugin setup.
+# 
+# Some icons that might be useful: godot\editor\editor_themes.cpp
 @tool
 extends EditorPlugin
-# Plugin setup.
-# Some icons that might be useful:
-#	godot\editor\editor_themes.cpp
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 var main_dock: Panel
 
@@ -38,11 +37,12 @@ func _init():
 	add_autoload_singleton('U', PopochiuResources.UTILS_SNGL)
 	add_autoload_singleton('Cursor', PopochiuResources.CURSOR_SNGL)
 	add_autoload_singleton('E', PopochiuResources.POPOCHIU_SNGL)
-	add_autoload_singleton('C', PopochiuResources.ICHARACTER_SNGL)
-	add_autoload_singleton('I', PopochiuResources.IINVENTORY_SNGL)
-	add_autoload_singleton('D', PopochiuResources.IDIALOG_SNGL)
+	add_autoload_singleton('R', PopochiuResources.R_SNGL)
+	add_autoload_singleton('C', PopochiuResources.C_SNGL)
+	add_autoload_singleton('I', PopochiuResources.I_SNGL)
+	add_autoload_singleton('D', PopochiuResources.D_SNGL)
 	add_autoload_singleton('G', PopochiuResources.IGRAPHIC_INTERFACE_SNGL)
-	add_autoload_singleton('A', PopochiuResources.IAUDIO_MANAGER_SNGL)
+	add_autoload_singleton('A', PopochiuResources.A_SNGL)
 
 
 func _enter_tree() -> void:
@@ -101,6 +101,10 @@ func _enter_tree() -> void:
 	if PopochiuResources.get_section('setup').is_empty():
 		main_dock.setup_dialog.appear(true)
 		(main_dock.setup_dialog as AcceptDialog).confirmed.connect(_move_addon_folders)
+	
+	PopochiuResources.update_autoloads(true)
+	_editor_file_system.update_script_classes()
+	_editor_file_system.scan_sources()
 
 
 func _exit_tree() -> void:

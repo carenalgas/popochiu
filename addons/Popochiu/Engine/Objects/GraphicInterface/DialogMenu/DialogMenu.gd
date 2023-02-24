@@ -1,6 +1,6 @@
 extends Container
-# warning-ignore-all:return_value_discarded
-# warning-ignore-all:unused_signal
+@warning_ignore("return_value_discarded")
+@warning_ignore("unused_signal")
 
 signal shown
 

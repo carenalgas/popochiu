@@ -53,6 +53,32 @@ func on_discard() -> void:
 	pass
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+func add(animate := true) -> Callable:
+	return func (): await add_now(animate)
+
+
+func add_now(animate := true) -> void:
+	await I.add_item_now(script_name, animate)
+
+
+func add_as_active(animate := true) -> Callable:
+	return func (): await add_as_active_now(animate)
+
+
+func add_as_active_now(animate := true) -> void:
+	await I.add_item_now(script_name, animate)
+	I.set_active_item(self, false)
+
+
+func remove(animate := true) -> Callable:
+	return func (): await remove_now(animate)
+
+
+func remove_now(animate := true) -> void:
+	await I.remove_item_now(script_name, animate)
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_in_inventory(value: bool) -> void:
 	in_inventory = value

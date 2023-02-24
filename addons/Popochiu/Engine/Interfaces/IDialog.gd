@@ -1,6 +1,5 @@
-extends Node
 # (D) Data and functions to start branching dialogs and listen options selection.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+extends Node
 
 signal option_selected(opt)
 signal dialog_options_requested(options)
@@ -23,10 +22,11 @@ func show_dialog(script_name: String) -> void:
 	
 	if current_dialog:
 		active = true
-		current_dialog.start()
+		current_dialog._start()
 		
 		await self.dialog_finished
 		
+		# Save the state of the dialog
 		trees[current_dialog.script_name] = current_dialog
 		
 		active = false

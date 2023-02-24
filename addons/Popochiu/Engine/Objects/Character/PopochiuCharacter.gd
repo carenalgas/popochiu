@@ -1,9 +1,8 @@
+# Any Object that can move, walk, navigate rooms, have an inventory, etc.
 @tool
 @icon('res://addons/Popochiu/icons/character.png')
 class_name PopochiuCharacter
 extends PopochiuClickable
-# Any Object that can move, walk, navigate rooms, have an inventory, etc.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 # TODO: Use a state machine
 
 enum FlipsWhen { NONE, MOVING_RIGHT, MOVING_LEFT }
@@ -64,13 +63,20 @@ func play_grab() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func idle() -> Callable:
-	return func (): await idle_no_run()
+	return func (): await idle_now()
 	
 	
-func idle_no_run() -> void:
+func idle_now() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
+	
+	if has_node('Sprite'):
+		match flips_when:
+			FlipsWhen.MOVING_LEFT:
+				$Sprite.flip_h = _looking_dir == Looking.LEFT
+			FlipsWhen.MOVING_RIGHT:
+				$Sprite.flip_h = _looking_dir == Looking.RIGHT
 	
 	# Call the virtual that plays the idle animation
 	play_idle()
@@ -79,10 +85,10 @@ func idle_no_run() -> void:
 
 
 func walk(target_pos: Vector2) -> Callable:
-	return func (): await walk_no_run(target_pos)
+	return func (): await walk_now(target_pos)
 
 
-func walk_no_run(target_pos: Vector2) -> void:
+func walk_now(target_pos: Vector2) -> void:
 	is_moving = true
 	_looking_dir = Looking.LEFT if target_pos.x < position.x else Looking.RIGHT
 	
@@ -120,10 +126,10 @@ func walk_no_run(target_pos: Vector2) -> void:
 
 
 func stop_walking() -> Callable:
-	return func (): await stop_walking_no_run()
+	return func (): await stop_walking_now()
 	
 	
-func stop_walking_no_run() -> void:
+func stop_walking_now() -> void:
 	is_moving = false
 	
 	stoped_walk.emit()
@@ -132,72 +138,72 @@ func stop_walking_no_run() -> void:
 
 
 func face_up() -> Callable:
-	return func (): await face_up_no_run()
+	return func (): await face_up_now()
 
 
-func face_up_no_run() -> void:
+func face_up_now() -> void:
 	_looking_dir = Looking.UP
-	await idle_no_run()
+	await idle_now()
 
 
 func face_up_right() -> Callable:
-	return func (): await face_up_right_no_run()
+	return func (): await face_up_right_now()
 
 
-func face_up_right_no_run() -> void:
+func face_up_right_now() -> void:
 	_looking_dir = Looking.UP_RIGHT
-	await idle_no_run()
+	await idle_now()
 
 
 func face_down() -> Callable:
-	return func (): await face_down_no_run()
+	return func (): await face_down_now()
 
 
-func face_down_no_run() -> void:
+func face_down_now() -> void:
 	_looking_dir = Looking.DOWN
-	await idle_no_run()
+	await idle_now()
 
 
 func face_left() -> Callable:
-	return func (): await face_left_no_run()
+	return func (): await face_left_now()
 
 
-func face_left_no_run() -> void:
+func face_left_now() -> void:
 	_looking_dir = Looking.LEFT
-	await idle_no_run()
+	await idle_now()
 
 
 func face_right() -> Callable:
-	return func (): await face_right_no_run()
+	return func (): await face_right_now()
 
 
-func face_right_no_run() -> void:
+func face_right_now() -> void:
 	_looking_dir = Looking.RIGHT
-	await idle_no_run()
+	await idle_now()
 
 
 func face_clicked() -> Callable:
-	return func (): await face_clicked_no_run()
+	return func (): await face_clicked_now()
 
 
-func face_clicked_no_run() -> void:
+func face_clicked_now() -> void:
 	if E.clicked.global_position < global_position:
 		if has_node('Sprite2D'):
 			$Sprite2D.flip_h = flips_when == FlipsWhen.MOVING_LEFT
 		
-		await face_left_no_run()
+		await face_left_now()
 	else:
 		if has_node('Sprite2D'):
 			$Sprite2D.flip_h = flips_when == FlipsWhen.MOVING_RIGHT
 		
-		await face_right_no_run()
+		await face_right_now()
 
 
 func say(dialog: String) -> Callable:
-	return func (): await say_no_run(dialog)
+	return func (): await say_now(dialog)
 
 
-func say_no_run(dialog: String) -> void:
+func say_now(dialog: String) -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -214,14 +220,14 @@ func say_no_run(dialog: String) -> void:
 	await G.continue_clicked
 	
 	emotion = ''
-	idle_no_run()
+	idle_now()
 
 
 func grab() -> Callable:
-	return func (): await grab_no_run()
+	return func (): await grab_now()
 
 
-func grab_no_run() -> void:
+func grab_now() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -231,7 +237,7 @@ func grab_no_run() -> void:
 	
 	await C.character_grab_done
 	
-	idle_no_run()
+	idle_now()
 
 
 func hide_helpers() -> void:
@@ -246,41 +252,41 @@ func show_helpers() -> void:
 
 
 func walk_to(pos: Vector2) -> Callable:
-	return func(): await walk_to_no_run(pos)
+	return func(): await walk_to_now(pos)
 
 
-func walk_to_no_run(pos: Vector2) -> void:
-	C.character_walk_to_no_run(script_name, pos)
+func walk_to_now(pos: Vector2) -> void:
+	C.character_walk_to_now(script_name, pos)
 	
 	await C.character_move_ended
 
 
 func walk_to_prop(id: String) -> Callable:
-	return func(): await walk_to_prop_no_run(id)
+	return func(): await walk_to_prop_now(id)
 
 
-func walk_to_prop_no_run(id: String) -> void:
+func walk_to_prop_now(id: String) -> void:
 	_walk_to_clickable(E.current_room.get_prop(id))
 	
 	await C.character_move_ended
 
 
 func walk_to_hotspot(id: String) -> Callable:
-	return func(): await walk_to_hotspot_no_run(id)
+	return func(): await walk_to_hotspot_now(id)
 
 
-func walk_to_hotspot_no_run(id: String) -> void:
+func walk_to_hotspot_now(id: String) -> void:
 	_walk_to_clickable(E.current_room.get_hotspot(id))
 	
 	await C.character_move_ended
 
 
 func walk_to_room_point(id: String) -> Callable:
-	return func(): await walk_to_room_point_no_run(id)
+	return func(): await walk_to_room_point_now(id)
 
 
-func walk_to_room_point_no_run(id: String) -> void:
-	C.character_walk_to_no_run(script_name, E.current_room.get_point(id))
+func walk_to_room_point_now(id: String) -> void:
+	C.character_walk_to_now(script_name, E.current_room.get_point(id))
 
 	await C.character_move_ended
 
@@ -333,6 +339,6 @@ func _walk_to_clickable(node: PopochiuClickable) -> void:
 		await get_tree().process_frame
 		return
 	
-	C.character_walk_to_no_run(
+	C.character_walk_to_now(
 		script_name, node.to_global(node.walk_to_point)
 	)

@@ -1,8 +1,8 @@
-extends Resource
 # Class for saving and loading game data.
+# 
 # Thanks GDQuest for this! ↴↴↴
 # https://github.com/GDQuest/godot-demos-2022/tree/main/save-game
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+extends Resource
 
 # TODO: This could be in PopochiuSettings for devs to change the path
 const SAVE_GAME_PATH := 'user://save_%d.json'
@@ -173,33 +173,6 @@ func _store_data(type: String, save: Dictionary) -> void:
 	
 	if save[type].is_empty():
 		save.erase(type)
-
-
-#func _check_and_store_properties(
-#target: Dictionary, source: Object, ignore_too := []
-#) -> void:
-#	var props_to_ignore := ['script_name', 'scene']
-#
-#	if not ignore_too.is_empty():
-#		props_to_ignore.append_array(ignore_too)
-#
-#	# ---- Store basic type properties -----------------------------------------
-#	# prop = {class_name, hint, hint_string, name, type, usage}
-#	for prop in source.get_script().get_script_property_list():
-#		if prop.name in props_to_ignore: continue
-#		if not prop.type in VALID_TYPES: continue
-#
-#		# Check if the property is a script variable (8192)
-#		# or a export variable (8199)
-#		if prop.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or prop.usage == (
-#			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
-#		):
-#			target[prop.name] = source[prop.name]
-#
-#	# ---- Call custom function to store extra data ----------------------------
-#	if source.has_method('on_save'):
-#		target.custom_data = source.on_save()
-#		if target.custom_data.is_empty(): target.erase('custom_data')
 
 
 func _load_state(type: String, loaded_game: Dictionary) -> void:
