@@ -22,12 +22,6 @@ func _ready() -> void:
 	super()
 	add_to_group('props')
 	
-	if not clickable:
-		if get_node_or_null('InteractionPolygon'):
-			$InteractionPolygon.hide()
-		elif get_node_or_null('CollisionPolygon2D'):
-			$CollisionPolygon2D.hide()
-	
 	if Engine.is_editor_hint(): return
 	
 	for c in get_children():
@@ -35,10 +29,10 @@ func _ready() -> void:
 			c.position.y -= baseline * c.scale.y
 		elif c.get('position') is Vector2:
 			c.position.y -= baseline * c.scale.y
-	
+
 	walk_to_point.y -= baseline * scale.y
 	position.y += baseline * scale.y
-	
+
 	if always_on_top:
 		z_index += 1
 	

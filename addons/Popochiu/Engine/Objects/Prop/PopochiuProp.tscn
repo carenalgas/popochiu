@@ -4,16 +4,12 @@
 
 [node name="Prop" type="Area2D"]
 script = ExtResource("1")
-walk_to_point = Vector2(0, 0)
-cursor = 1
 
 [node name="BaselineHelper" type="Line2D" parent="."]
-visible = false
 points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
 
 [node name="WalkToHelper" type="Marker2D" parent="."]
-visible = false
 
 [node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
 offset_left = -2.5

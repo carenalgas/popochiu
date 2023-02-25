@@ -10,8 +10,7 @@ const CURSOR := preload('res://addons/Popochiu/Engine/Cursor/Cursor.gd')
 @export var description := ''
 @export var clickable := true
 @export var baseline := 0 : set = set_baseline
-@export var walk_to_point: Vector2 : set = set_walk_to_point
-#@export var walk_to_point: Vector2 : set = set_walk_to_point, get = get_walk_to_point
+@export var walk_to_point := Vector2.ZERO : set = set_walk_to_point
 @export var cursor: CURSOR.Type = CURSOR.Type.NONE
 @export var always_on_top := false
 
@@ -79,9 +78,11 @@ func _process(delta):
 	if Engine.is_editor_hint():
 		if walk_to_point != get_node('WalkToHelper').position:
 			walk_to_point = get_node('WalkToHelper').position
+
 			notify_property_list_changed()
 		elif baseline != get_node('BaselineHelper').position.y:
 			baseline = get_node('BaselineHelper').position.y
+
 			notify_property_list_changed()
 
 

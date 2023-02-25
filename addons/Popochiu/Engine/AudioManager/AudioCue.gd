@@ -138,6 +138,8 @@ func _get_rnd_volume() -> float:
 func _set_loop(value: bool) -> void:
 	loop = value
 	
+	if not audio: return
+	
 	match audio.get_class():
 		'AudioStreamOggVorbis', 'AudioStreamMP3':
 			audio.loop = value

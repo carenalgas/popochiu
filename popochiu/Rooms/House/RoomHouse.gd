@@ -14,7 +14,7 @@ var state: Data = preload('RoomHouse.tres')
 # What happens when Popochiu loads the room. At this point the room is in the
 # tree but it is not visible
 func on_room_entered() -> void:
-	pass
+	A.mx_house.play_now()
 
 
 # What happens when the room changing transition finishes. At this point the room
