@@ -207,7 +207,7 @@ func add_resource_to_popochiu(target: String, resource: Resource) -> int:
 func show_confirmation(title: String, message: String, ask := '') -> void:
 	delete_checkbox.button_pressed = false
 	
-	delete_dialog.window_title = title
+	delete_dialog.title = title
 	delete_dialog.find_child('Message').text = message
 	
 	delete_extra.hide()

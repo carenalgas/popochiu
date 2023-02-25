@@ -10,10 +10,8 @@ signal linked_item_removed(node)
 signal linked_item_discarded(node)
 
 @export var texture: Texture2D : set = set_texture
-@export var frames := 1:
-	set = set_frames # (int, 1, 100)
-@export var current_frame := 0:
-	set = set_current_frame # (int, 0, 99)
+@export var frames := 1: set = set_frames # (int, 1, 100)
+@export var current_frame := 0: set = set_current_frame # (int, 0, 99)
 @export var link_to_item := ''
 
 @onready var _sprite: Sprite2D = $Sprite2D

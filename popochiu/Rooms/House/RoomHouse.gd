@@ -1,7 +1,9 @@
 @tool
 extends PopochiuRoom
 
-var state: PopochiuRoomData = preload('Room101.tres')
+const Data := preload('RoomHouseState.gd')
+
+var state: Data = preload('RoomHouse.tres')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -12,12 +14,13 @@ var state: PopochiuRoomData = preload('Room101.tres')
 # What happens when Popochiu loads the room. At this point the room is in the
 # tree but it is not visible
 func on_room_entered() -> void:
-	A.play_music_now('mx_two_popochius')
+	pass
 
 
 # What happens when the room changing transition finishes. At this point the room
 # is visible.
 func on_room_transition_finished() -> void:
+	# You can use await E.run([]) to excecute a queue of instructions
 	pass
 
 

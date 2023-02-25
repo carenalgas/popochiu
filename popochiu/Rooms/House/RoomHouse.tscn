@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://cwcph5aakntgi"]
+
+[ext_resource type="Script" path="res://popochiu/Rooms/House/RoomHouse.gd" id="1_pmm0k"]
+[ext_resource type="PackedScene" uid="uid://do1k681xt48cm" path="res://addons/Popochiu/Engine/Objects/Prop/PopochiuProp.tscn" id="2_0yn04"]
+[ext_resource type="Texture2D" uid="uid://dti4cp6111kpn" path="res://popochiu/Rooms/House/Props/_NoInteraction/background.png" id="4_af5ov"]
+
+[node name="RoomHouse" type="Node2D"]
+script = ExtResource("1_pmm0k")
+script_name = "House"
+
+[node name="WalkableAreas" type="Node2D" parent="."]
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="Bg" parent="Props" instance=ExtResource("2_0yn04")]
+z_index = -1
+position = Vector2(160, 90)
+texture = ExtResource("4_af5ov")
+script_name = "Bg"
+description = "Bg"
+clickable = false
+baseline = -90
+
+[node name="Hotspots" type="Node2D" parent="."]
+
+[node name="Regions" type="Node2D" parent="."]
+
+[node name="Points" type="Node2D" parent="."]
+
+[node name="Characters" type="Node2D" parent="."]

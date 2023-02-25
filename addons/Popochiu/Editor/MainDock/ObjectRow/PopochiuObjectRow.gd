@@ -444,7 +444,7 @@ func _remove_object() -> void:
 	
 	_delete_dialog.confirmed.connect(_remove_from_core)
 	_delete_dialog.get_cancel_button().pressed.connect(_disconnect_popup)
-	_delete_dialog.cancelled.connect(_disconnect_popup)
+	_delete_dialog.canceled.connect(_disconnect_popup)
 
 
 func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
@@ -630,7 +630,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 func _disconnect_popup() -> void:
 	_delete_dialog.confirmed.disconnect(_remove_from_core)
 	_delete_dialog.get_cancel_button().pressed.disconnect(_disconnect_popup)
-	_delete_dialog.cancelled.disconnect(_disconnect_popup)
+	_delete_dialog.canceled.disconnect(_disconnect_popup)
 
 
 func _create_state_script() -> void:

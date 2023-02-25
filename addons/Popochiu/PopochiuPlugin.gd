@@ -78,7 +78,7 @@ func _enter_tree() -> void:
 	await get_tree().create_timer(0.5).timeout
 	
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and Audio cues
-	main_dock.fill_data()
+#	main_dock.fill_data()
 	main_dock.grab_focus()
 	
 	# ==== Connect to signals ==================================================
