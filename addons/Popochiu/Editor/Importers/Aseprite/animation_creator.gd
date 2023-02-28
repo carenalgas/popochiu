@@ -40,6 +40,9 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 		
 	_load_tags_options_lookup(options.get("tags"))
 
+	if (options.wipe_old_animations):
+		_remove_animations_from_player(player)
+	
 	var result = _create_animations_from_file(target_sprite, player, options)
 	if result is GDScriptFunctionState:
 		result = yield(result, "completed")
@@ -87,6 +90,12 @@ func _create_animations_from_file(target_sprite: Node, player: AnimationPlayer, 
 		dir.remove(output.data_file)
 
 	return result
+
+func _remove_animations_from_player(player):
+	var animations = player.get_animation_list()
+	for a in animations:
+		if player.has_animation(a):
+			player.remove_animation(a)
 
 
 func _import(target_sprite: Node, player: AnimationPlayer, data: Dictionary, options: Dictionary):

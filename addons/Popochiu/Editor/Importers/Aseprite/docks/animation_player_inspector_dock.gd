@@ -36,6 +36,7 @@ onready var _options_container = $margin/VBoxContainer/options
 onready var _out_folder_field = $margin/VBoxContainer/options/out_folder/button
 onready var _out_filename_field = $margin/VBoxContainer/options/out_filename/LineEdit
 onready var _visible_layers_field =  $margin/VBoxContainer/options/visible_layers/CheckButton
+onready var _wipe_old_animations_field =  $margin/VBoxContainer/options/wipe_old_animations/CheckButton
 
 
 func _ready():
@@ -62,7 +63,8 @@ func _load_config(cfg):
 	_output_folder = cfg.get("o_folder", "")
 	_out_folder_field.text = _output_folder if _output_folder != "" else _out_folder_default
 	_out_filename_field.text = cfg.get("o_name", "")
-	_visible_layers_field.pressed = cfg.get("only_visible", false)
+	_visible_layers_field.pressed = cfg.get("only_visible_layers", false)
+	_wipe_old_animations_field.pressed = cfg.get("wipe_old_anims", false)
 
 	_set_options_visible(cfg.get("op_exp", false))
 	_populate_tags(cfg.get("tags", []))
@@ -77,13 +79,30 @@ func _save_config():
 		"op_exp": _options_title.pressed,
 		"o_folder": _output_folder,
 		"o_name": _out_filename_field.text,
-		"only_visible": _visible_layers_field.pressed,
+		"only_visible_layers": _visible_layers_field.pressed,
+		"wipe_old_anims": _wipe_old_animations_field.pressed,
 	}
 
 	local_obj_config.save_config(target_node, cfg)
 
 
 func _load_default_config():
+	# Reset variables
+	_source = ""
+	_tags_cache = []
+	_output_folder = ""
+
+	# Empty tags list
+	_empty_tags_container()
+
+	# Reset inspector fields
+	_source_field.text = "[empty]"
+	_source_field.hint_tooltip = ""
+	_out_folder_field.text = "[empty]"
+	_out_filename_field.clear()
+	_visible_layers_field.pressed = false
+	_wipe_old_animations_field.pressed = config.is_default_wipe_old_anims_enabled()
+	
 	_set_options_visible(false)
 
 
@@ -105,7 +124,9 @@ func _on_aseprite_file_selected(path):
 
 
 func _on_rescan_pressed():
-	_populate_tags(_get_tags_from_source())
+	_populate_tags(\
+		_merge_with_cache(_get_tags_from_source())\
+	)
 	_save_config()
 
 
@@ -132,12 +153,29 @@ func _on_import_pressed():
 		"output_folder": _output_folder if _output_folder != "" else root.filename.get_base_dir(),
 		"output_filename": _out_filename_field.text,
 		"only_visible_layers": _visible_layers_field.pressed,
+		"wipe_old_animations": _wipe_old_animations_field.pressed,
 	}
 
 	_save_config()
 
 	animation_creator.create_animations(target_node, root.get_node(_animation_player_path), options)
 	_importing = false
+	
+	_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
+
+
+func _on_reset_pressed():
+	var _confirmation_dialog = _show_confirmation(\
+		"This will reset the importer preferences." + \
+		"This cannot be undone! Are you sure?", "Confirmation required!")
+	_confirmation_dialog.get_ok().connect("pressed", self, "_reset_prefs_metadata")
+
+
+func _reset_prefs_metadata():
+	if target_node.has_meta(local_obj_config.LOCAL_OBJ_CONFIG_META_NAME):
+		target_node.remove_meta(local_obj_config.LOCAL_OBJ_CONFIG_META_NAME)
+		_load_default_config()
+		property_list_changed_notify()
 
 
 func _open_source_dialog():
@@ -158,11 +196,9 @@ func _create_aseprite_file_selection():
 
 
 func _populate_tags(tags: Array):
-	# Clean the list empty
-	for tl in _tags_ui_container.get_children():
-		_tags_ui_container.remove_child(tl)
-		tl.queue_free()
-	
+	## reset tags container
+	_empty_tags_container()
+
 	# Add each tag found
 	for t in tags:
 		if t.tag_name == "":
@@ -176,8 +212,30 @@ func _populate_tags(tags: Array):
 	_update_tags_cache()
 
 
+func _empty_tags_container():
+	# Clean the inspector tags container empty
+	for tl in _tags_ui_container.get_children():
+		_tags_ui_container.remove_child(tl)
+		tl.queue_free()
+
 func _update_tags_cache():
 	_tags_cache = _get_tags_from_ui()
+
+
+func _merge_with_cache(tags: Array) -> Array:
+	var tags_cache_index = {}
+	var result = []
+	for t in _tags_cache:
+		tags_cache_index[t.tag_name] = t
+	
+	for i in tags.size():
+		result.push_back( \
+			tags_cache_index[tags[i].tag_name] \
+			if tags_cache_index.has(tags[i].tag_name) \
+			else tags[i]
+		)
+
+	return result
 
 
 func _get_tags_from_ui() -> Array:
@@ -202,13 +260,25 @@ func _get_tags_from_source() -> Array:
 	return tags_list
 
 
-func _show_message(message: String):
+func _show_message(message: String, title: String = ""):
 	var _warning_dialog = AcceptDialog.new()
 	get_parent().add_child(_warning_dialog)
+	if title != "":
+		_warning_dialog.window_title = title
 	_warning_dialog.dialog_text = message
 	_warning_dialog.popup_centered()
 	_warning_dialog.connect("popup_hide", _warning_dialog, "queue_free")
 
+
+func _show_confirmation(message: String, title: String = ""):
+	var _confirmation_dialog = ConfirmationDialog.new()
+	get_parent().add_child(_confirmation_dialog)
+	if title != "":
+		_confirmation_dialog.window_title = title
+	_confirmation_dialog.dialog_text = message
+	_confirmation_dialog.popup_centered()
+	_confirmation_dialog.connect("popup_hide", _confirmation_dialog, "queue_free")
+	return _confirmation_dialog
 
 func _on_options_title_toggled(button_pressed):
 	_set_options_visible(button_pressed)
@@ -240,6 +310,7 @@ func _on_output_folder_selected(path):
 	_output_folder = path
 	_out_folder_field.text = _output_folder if _output_folder != "" else _out_folder_default
 	_output_folder_dialog.queue_free()
+	_save_config()
 
 
 ## TODO: Introduce layer selection list, more or less as tags

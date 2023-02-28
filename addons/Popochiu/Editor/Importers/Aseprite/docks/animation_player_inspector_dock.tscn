@@ -28,18 +28,18 @@ __meta__ = {
 }
 
 [node name="margin" type="MarginContainer" parent="."]
-margin_right = 198.0
-margin_bottom = 224.0
+margin_right = 212.0
+margin_bottom = 292.0
 custom_constants/margin_top = 2
 custom_constants/margin_bottom = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="margin"]
 margin_top = 2.0
-margin_right = 198.0
-margin_bottom = 222.0
+margin_right = 212.0
+margin_bottom = 290.0
 
 [node name="section_title" type="PanelContainer" parent="margin/VBoxContainer"]
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
 custom_styles/panel = SubResource( 2 )
@@ -50,7 +50,7 @@ __meta__ = {
 [node name="title" type="Label" parent="margin/VBoxContainer/section_title"]
 margin_left = 2.0
 margin_top = 1.0
-margin_right = 196.0
+margin_right = 210.0
 margin_bottom = 15.0
 size_flags_horizontal = 3
 text = "Aseprite"
@@ -58,7 +58,7 @@ align = 1
 
 [node name="source" type="HBoxContainer" parent="margin/VBoxContainer"]
 margin_top = 20.0
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 40.0
 hint_tooltip = "Location of the Aseprite (*.ase, *.aseprite)  source file."
 
@@ -72,7 +72,7 @@ text = "Aseprite File"
 
 [node name="button" type="Button" parent="margin/VBoxContainer/source"]
 margin_left = 85.0
-margin_right = 137.0
+margin_right = 151.0
 margin_bottom = 20.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
@@ -80,14 +80,14 @@ text = "[empty]"
 clip_text = true
 
 [node name="rescan" type="Button" parent="margin/VBoxContainer/source"]
-margin_left = 141.0
-margin_right = 198.0
+margin_left = 155.0
+margin_right = 212.0
 margin_bottom = 20.0
 text = "Rescan"
 
 [node name="tags_title" type="PanelContainer" parent="margin/VBoxContainer"]
 margin_top = 44.0
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 68.0
 custom_styles/panel = SubResource( 3 )
 __meta__ = {
@@ -97,7 +97,7 @@ __meta__ = {
 [node name="tags_title" type="ToolButton" parent="margin/VBoxContainer/tags_title"]
 margin_left = 1.0
 margin_top = 1.0
-margin_right = 197.0
+margin_right = 211.0
 margin_bottom = 23.0
 custom_colors/font_color_pressed = Color( 0.8, 0.807843, 0.827451, 1 )
 toggle_mode = true
@@ -106,12 +106,12 @@ align = 0
 
 [node name="tags" type="VBoxContainer" parent="margin/VBoxContainer"]
 margin_top = 72.0
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 72.0
 
 [node name="options_title" type="PanelContainer" parent="margin/VBoxContainer"]
 margin_top = 76.0
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 100.0
 custom_styles/panel = SubResource( 3 )
 __meta__ = {
@@ -121,7 +121,7 @@ __meta__ = {
 [node name="options_title" type="ToolButton" parent="margin/VBoxContainer/options_title"]
 margin_left = 1.0
 margin_top = 1.0
-margin_right = 197.0
+margin_right = 211.0
 margin_bottom = 23.0
 custom_colors/font_color_pressed = Color( 0.8, 0.807843, 0.827451, 1 )
 toggle_mode = true
@@ -130,25 +130,25 @@ align = 0
 
 [node name="options" type="VBoxContainer" parent="margin/VBoxContainer"]
 margin_top = 104.0
-margin_right = 198.0
-margin_bottom = 196.0
+margin_right = 212.0
+margin_bottom = 240.0
 
 [node name="out_folder" type="HBoxContainer" parent="margin/VBoxContainer/options"]
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 20.0
 hint_tooltip = "Location where the spritesheet file should be saved."
 
 [node name="Label" type="Label" parent="margin/VBoxContainer/options/out_folder"]
 margin_top = 3.0
-margin_right = 97.0
+margin_right = 104.0
 margin_bottom = 17.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Output folder"
 
 [node name="button" type="Button" parent="margin/VBoxContainer/options/out_folder"]
-margin_left = 101.0
-margin_right = 198.0
+margin_left = 108.0
+margin_right = 212.0
 margin_bottom = 20.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
@@ -157,7 +157,7 @@ clip_text = true
 
 [node name="out_filename" type="HBoxContainer" parent="margin/VBoxContainer/options"]
 margin_top = 24.0
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 48.0
 hint_tooltip = "Base filename for spritesheet. In case the layer option is used, this works as a prefix to the layer name."
 
@@ -171,14 +171,14 @@ text = "Output file name"
 
 [node name="LineEdit" type="LineEdit" parent="margin/VBoxContainer/options/out_filename"]
 margin_left = 113.0
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
 [node name="visible_layers" type="HBoxContainer" parent="margin/VBoxContainer/options"]
 margin_top = 52.0
-margin_right = 198.0
+margin_right = 212.0
 margin_bottom = 92.0
 hint_tooltip = "If active, layers not visible in the source file won't be included in the final image."
 
@@ -192,20 +192,53 @@ text = "Only visible layers"
 
 [node name="CheckButton" type="CheckButton" parent="margin/VBoxContainer/options/visible_layers"]
 margin_left = 122.0
-margin_right = 198.0
+margin_right = 212.0
+margin_bottom = 40.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="wipe_old_animations" type="HBoxContainer" parent="margin/VBoxContainer/options"]
+margin_top = 96.0
+margin_right = 212.0
+margin_bottom = 136.0
+hint_tooltip = "If active, layers not visible in the source file won't be included in the final image."
+
+[node name="Label" type="Label" parent="margin/VBoxContainer/options/wipe_old_animations"]
+margin_top = 13.0
+margin_right = 132.0
+margin_bottom = 27.0
+hint_tooltip = "Set this to OFF if you want to add new animations on top of old ones. Anims with same name will be updated."
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Wipe old animations"
+
+[node name="CheckButton" type="CheckButton" parent="margin/VBoxContainer/options/wipe_old_animations"]
+margin_left = 136.0
+margin_right = 212.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
 [node name="import" type="Button" parent="margin/VBoxContainer"]
-margin_top = 200.0
-margin_right = 198.0
-margin_bottom = 220.0
+margin_top = 244.0
+margin_right = 212.0
+margin_bottom = 264.0
 text = "Import"
+
+[node name="reset" type="Button" parent="margin/VBoxContainer"]
+margin_top = 268.0
+margin_right = 212.0
+margin_bottom = 288.0
+text = "Reset Preferences"
+flat = true
 
 [connection signal="pressed" from="margin/VBoxContainer/source/button" to="." method="_on_source_pressed"]
 [connection signal="pressed" from="margin/VBoxContainer/source/rescan" to="." method="_on_rescan_pressed"]
 [connection signal="toggled" from="margin/VBoxContainer/tags_title/tags_title" to="." method="_on_options_title_toggled"]
 [connection signal="toggled" from="margin/VBoxContainer/options_title/options_title" to="." method="_on_options_title_toggled"]
 [connection signal="pressed" from="margin/VBoxContainer/options/out_folder/button" to="." method="_on_out_folder_pressed"]
+[connection signal="focus_exited" from="margin/VBoxContainer/options/out_filename/LineEdit" to="." method="_save_config"]
+[connection signal="pressed" from="margin/VBoxContainer/options/visible_layers/CheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="margin/VBoxContainer/options/wipe_old_animations/CheckButton" to="." method="_save_config"]
 [connection signal="pressed" from="margin/VBoxContainer/import" to="." method="_on_import_pressed"]
+[connection signal="pressed" from="margin/VBoxContainer/reset" to="." method="_on_reset_pressed"]

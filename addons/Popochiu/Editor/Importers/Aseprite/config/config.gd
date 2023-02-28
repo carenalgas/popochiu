@@ -9,6 +9,7 @@ const _ASEPRITE_COMMAND_KEY = 'popochiu/import/aseprite/command_path'
 # animation import defaults
 const _DEFAULT_IMPORT_ENABLED = 'popochiu/import/aseprite/import_animation_by_default'
 const _DEFAULT_LOOP_ENABLED = 'popochiu/import/aseprite/loop_animation_by_default'
+const _DEFAULT_WIPE_OLD_ANIMS_ENABLED = 'popochiu/import/aseprite/wipe_old_animations'
 const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
 
 # INTERFACE SETTINGS
@@ -36,6 +37,8 @@ func is_default_animation_import_enabled() -> bool:
 func is_default_animation_loop_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_LOOP_ENABLED, true)
 
+func is_default_wipe_old_anims_enabled() -> bool:
+	return _get_project_setting(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true)
 
 #######################################################
 # INTERFACE SETTINGS
@@ -59,6 +62,7 @@ func initialize_project_settings():
 	_initialize_project_cfg(_ASEPRITE_COMMAND_KEY, default_command(), TYPE_STRING)
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_REMOVE_SOURCE_FILES_KEY, true, TYPE_BOOL)
 
 	_set_icons()
@@ -70,6 +74,7 @@ func clear_project_settings():
 	var _all_settings = [
 		_DEFAULT_IMPORT_ENABLED,
 		_DEFAULT_LOOP_ENABLED,
+		_DEFAULT_WIPE_OLD_ANIMS_ENABLED,
 		_REMOVE_SOURCE_FILES_KEY,
 	]
 	for key in _all_settings:
