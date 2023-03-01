@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6dm3xvvr7dvi"]
+
+[ext_resource type="FontFile" uid="uid://c7ig50my7y048" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_o6vvl"]
+
+[node name="DialogLine" type="Label"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+theme_override_fonts/font = ExtResource("1_o6vvl")
+text = "Dave: hola"

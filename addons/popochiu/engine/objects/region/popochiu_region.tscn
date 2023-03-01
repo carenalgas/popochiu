@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bslimpdskcmix"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/region/popochiu_region.gd" id="1"]
+
+[node name="Region" type="Area2D"]
+monitorable = false
+script = ExtResource("1")
