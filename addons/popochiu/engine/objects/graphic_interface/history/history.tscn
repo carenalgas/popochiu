@@ -1,0 +1,46 @@
+[gd_scene load_steps=6 format=3 uid="uid://bq7kpsehncsaf"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/history/history.gd" id="2"]
+
+[sub_resource type="StyleBoxFlat" id="7"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="8"]
+bg_color = Color(0.768627, 0.423529, 0.443137, 1)
+border_width_left = 8
+border_color = Color(0.388235, 0.607843, 1, 1)
+
+[sub_resource type="Theme" id="9"]
+VScrollBar/styles/grabber = SubResource("7")
+VScrollBar/styles/grabber_highlight = SubResource("7")
+VScrollBar/styles/grabber_pressed = SubResource("7")
+VScrollBar/styles/scroll = SubResource("8")
+VScrollBar/styles/scroll_focus = SubResource("8")
+
+[node name="History" type="PanelContainer"]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1")
+script = ExtResource("2")
+
+[node name="Window" type="Window" parent="."]
+visible = false
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Window"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("9")
+
+[node name="LinesList" type="VBoxContainer" parent="Window/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://esorelppu4hw"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/info_bar/info_bar.gd" id="2"]
+
+[node name="InfoBar" type="Label"]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "pa' mostrar info."
+horizontal_alignment = 1
+script = ExtResource("2")
