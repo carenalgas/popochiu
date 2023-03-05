@@ -8,9 +8,13 @@ var _config
 
 var _anim_tag_state: Dictionary = {}
 
-onready var import_toggle = $HBoxContainer/Import
 onready var tag_name_label = $HBoxContainer/TagName
-onready var loops_toggle = $Panel/Loops
+onready var import_toggle = $Panel/HBoxContainer/Import
+onready var loops_toggle = $Panel/HBoxContainer/Loops
+
+func _ready():
+	loops_toggle.icon = get_icon('Loop', 'EditorIcons')
+	import_toggle.icon = get_icon('Load', 'EditorIcons')
 
 func init(config, tag_cfg: Dictionary):
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == "":
