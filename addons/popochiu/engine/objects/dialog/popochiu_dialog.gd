@@ -12,11 +12,11 @@ const PopochiuDialogOption := preload('popochiu_dialog_option.gd')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func on_start() -> void:
+func _on_start() -> void:
 	pass
 
 
-func option_selected(opt: PopochiuDialogOption) -> void:
+func _option_selected(opt: PopochiuDialogOption) -> void:
 	pass
 
 
@@ -73,7 +73,7 @@ func set_options(value: Array) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _start() -> void:
-	await on_start()
+	await _on_start()
 	
 	_show_options()
 	
@@ -96,4 +96,4 @@ func _on_option_selected(opt: PopochiuDialogOption) -> void:
 	opt.used_times += 1
 	D.selected_option = opt
 	
-	option_selected(opt)
+	_option_selected(opt)

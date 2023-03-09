@@ -7,7 +7,7 @@ extends PopochiuHotspot
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
-func on_interact() -> void:
+func _on_click() -> void:
 	# Replace the call to super() to implement your code. This only makes
 	# the default behavior to happen.
 	# For example you can make the character walk to the Hotspot and then say
@@ -17,11 +17,11 @@ func on_interact() -> void:
 #		C.face_clicked(),
 #		"Player: Can't open it"
 #	])
-	super()
+	super.on_click()
 
 
 # When the node is right clicked
-func on_look() -> void:
+func _on_right_click() -> void:
 	# Replace the call to super() to implement your code. This only makes
 	# the default behavior to happen.
 	# For example you can make the character walk to the Hotspot and then say
@@ -30,14 +30,14 @@ func on_look() -> void:
 #		C.face_clicked(),
 #		'Player: A closed door'
 #	])
-	super()
+	super.on_right_click()
 
 
 # When the node is clicked and there is an inventory item selected
-func on_item_used(item: PopochiuInventoryItem) -> void:
+func _on_item_used(item: PopochiuInventoryItem) -> void:
 	# Replace the call to super(item) to implement your code. This only
 	# makes the default behavior to happen.
 	# For example you can make the PC react checked using some items in this Hotspot
 #	if item.script_name == 'Key':
 #		E.run(['Player: No can do'])
-	super(item)
+	super.on_item_used(item)

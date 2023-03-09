@@ -56,12 +56,12 @@ func _unhandled_input(event: InputEvent):
 			get_viewport().set_input_as_handled()
 			
 			if I.active:
-				on_item_used(I.active)
+				_on_item_used(I.active)
 			else:
 				E.add_history({
 					action = 'Interacted with: %s' % description
 				})
-				on_interact()
+				on_click()
 				
 				times_clicked += 1
 		elif event.is_action_pressed('popochiu-look'):
@@ -69,7 +69,7 @@ func _unhandled_input(event: InputEvent):
 				E.add_history({
 					action = 'Looked at: %s' % description
 				})
-				on_look()
+				_on_right_click()
 				
 				times_right_clicked += 1
 
@@ -88,23 +88,23 @@ func _process(delta):
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the room this node belongs to has been added to the tree
-func on_room_set() -> void:
+func _on_room_set() -> void:
 	pass
 
 
 # When the node is clicked
-func on_interact() -> void:
-	await E.run([G.display("Can't INTERACT with it")])
+func _on_click() -> void:
+	pass
 
 
 # When the node is right clicked
-func on_look() -> void:
-	await E.run([G.display("Can't EXAMINE it")])
+func _on_right_click() -> void:
+	pass
 
 
 # When the node is clicked and there is an inventory item selected
-func on_item_used(item: PopochiuInventoryItem) -> void:
-	await E.run([G.display("Can't USE %s here" % item.description)])
+func _on_item_used(item: PopochiuInventoryItem) -> void:
+	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -146,6 +146,18 @@ func get_description() -> String:
 			description = name
 		return description
 	return E.get_text(description)
+
+
+func on_click() -> void:
+	await E.run([G.display("Can't INTERACT with it")])
+
+
+func on_right_click() -> void:
+	await E.run([G.display("Can't EXAMINE it")])
+
+
+func on_item_used(item: PopochiuInventoryItem) -> void:
+	await E.run([G.display("Can't USE %s here" % item.description)])
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -213,4 +225,4 @@ func get_walk_to_point() -> Vector2:
 func set_room(value: Node2D) -> void:
 	room = value
 	
-	on_room_set()
+	_on_room_set()

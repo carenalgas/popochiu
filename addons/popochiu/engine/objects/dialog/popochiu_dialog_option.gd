@@ -39,12 +39,3 @@ func set_id(value: String) -> void:
 	resource_name = id
 	
 	notify_property_list_changed()
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _on_interacted() -> void:
-	pass
-
-
-func _on_interaction_canceled() -> void:
-	pass

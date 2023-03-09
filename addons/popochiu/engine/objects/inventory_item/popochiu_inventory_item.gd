@@ -27,29 +27,27 @@ func _ready():
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the item is clicked in the Inventory
-func on_interact() -> void:
-	selected.emit(self)
+func _on_click() -> void:
+	pass
 
 
 # When the item is right clicked in the Inventory
-func on_look() -> void:
-	await E.run([G.display('Nothing to see in this item')])
+func _on_right_click() -> void:
+	pass
 
 
 # When the item is clicked and there is another inventory item selected
-func on_item_used(item: PopochiuInventoryItem) -> void:
-	await E.run([
-		G.display('Nothing happens when using %s in this item' % item.description)
-	])
+func _on_item_used(item: PopochiuInventoryItem) -> void:
+	pass
 
 
 # Actions to excecute after the item is added to the Inventory
-func on_added_to_inventory() -> void:
+func _on_added_to_inventory() -> void:
 	pass
 
 
 # Actions to excecute when the item is discarded from the Inventory
-func on_discard() -> void:
+func _on_discard() -> void:
 	pass
 
 
@@ -83,11 +81,28 @@ func set_active(ignore_block := false) -> void:
 	I.set_active_item(self, ignore_block)
 
 
+# When the item is clicked in the Inventory
+func on_click() -> void:
+	selected.emit(self)
+
+
+# When the item is right clicked in the Inventory
+func on_right_click() -> void:
+	await E.run([G.display('Nothing to see in this item')])
+
+
+# When the item is clicked and there is another inventory item selected
+func on_item_used(item: PopochiuInventoryItem) -> void:
+	await E.run([
+		G.display('Nothing happens when using %s in this item' % item.description)
+	])
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_in_inventory(value: bool) -> void:
 	in_inventory = value
 	
-	if in_inventory: on_added_to_inventory()
+	if in_inventory: _on_added_to_inventory()
 
 
 func get_description() -> String:
@@ -113,8 +128,8 @@ func _on_action_pressed(event: InputEvent) -> void:
 	if mouse_event:
 		if mouse_event.is_action_pressed('popochiu-interact'):
 			if I.active:
-				on_item_used(I.active)
+				_on_item_used(I.active)
 			else:
-				on_interact()
+				_on_click()
 		elif mouse_event.is_action_pressed('popochiu-look'):
-			on_look()
+			_on_right_click()

@@ -7,7 +7,7 @@ extends PopochiuProp
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
-func on_interact() -> void:
+func _on_click() -> void:
 	# Replace the call to super() to implement your code. This only makes
 	# the default behavior to happen.
 	# For example you can make the character walk to the Prop and then say
@@ -17,11 +17,11 @@ func on_interact() -> void:
 #		C.face_clicked(),
 #		'Player: Not picking that up'
 #	])
-	super()
+	super.on_click()
 
 
 # When the node is right clicked
-func on_look() -> void:
+func _on_right_click() -> void:
 	# Replace the call to super() to implement your code. This only makes
 	# the default behavior to happen.
 	# For example you can make the character walk to the Prop and then say
@@ -30,7 +30,7 @@ func on_look() -> void:
 #		C.face_clicked(),
 #		'Player: A deck of cards'
 #	])
-	super()
+	super.on_right_click()
 
 
 # When the node is clicked and there is an inventory item selected

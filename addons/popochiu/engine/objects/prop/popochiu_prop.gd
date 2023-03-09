@@ -46,11 +46,11 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func on_linked_item_removed() -> void:
+func _on_linked_item_removed() -> void:
 	pass
 
 
-func on_linked_item_discarded() -> void:
+func _on_linked_item_discarded() -> void:
 	pass
 
 
@@ -92,7 +92,7 @@ func _on_item_added(item: PopochiuInventoryItem, _animate: bool) -> void:
 
 func _on_item_removed(item: PopochiuInventoryItem, _animate: bool) -> void:
 	if item.script_name == link_to_item:
-		on_linked_item_removed()
+		_on_linked_item_removed()
 		linked_item_removed.emit(self)
 
 
@@ -100,5 +100,5 @@ func _on_item_discarded(item: PopochiuInventoryItem) -> void:
 	if item.script_name == link_to_item:
 		enable_now()
 		
-		on_linked_item_discarded()
+		_on_linked_item_discarded()
 		linked_item_discarded.emit(self)

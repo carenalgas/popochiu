@@ -45,19 +45,19 @@ func _ready():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func play_idle() -> void:
+func _play_idle() -> void:
 	pass
 
 
-func play_walk(target_pos: Vector2) -> void:
+func _play_walk(target_pos: Vector2) -> void:
 	pass
 
 
-func play_talk() -> void:
+func _play_talk() -> void:
 	pass
 
 
-func play_grab() -> void:
+func _play_grab() -> void:
 	pass
 
 
@@ -79,7 +79,7 @@ func idle_now() -> void:
 				$Sprite.flip_h = _looking_dir == Looking.RIGHT
 	
 	# Call the virtual that plays the idle animation
-	play_idle()
+	_play_idle()
 	
 	await get_tree().create_timer(0.2).timeout
 
@@ -115,7 +115,7 @@ func walk_now(target_pos: Vector2) -> void:
 		return
 	
 	# Call the virtual that plays the walk animation
-	play_walk(target_pos)
+	_play_walk(target_pos)
 	
 	# Trigger the signal for the room  to start moving the character
 	started_walk_to.emit(self, position, target_pos)
@@ -209,7 +209,7 @@ func say_now(dialog: String) -> void:
 		return
 	
 	# Call the virtual that plays the talk animation
-	play_talk()
+	_play_talk()
 	
 	var vo_name := _get_vo_cue(emotion)
 	if vo_name:
@@ -233,7 +233,7 @@ func grab_now() -> void:
 		return
 	
 	# Call the virtual that plays the grab animation
-	play_grab()
+	_play_grab()
 	
 	await C.character_grab_done
 	
