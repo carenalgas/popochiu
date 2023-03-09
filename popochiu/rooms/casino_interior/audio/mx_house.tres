@@ -1,0 +1,18 @@
+[gd_resource type="Resource" load_steps=3 format=3 uid="uid://doj8w55c8e1jc"]
+
+[ext_resource type="AudioStream" uid="uid://bqr6ekvj5mspb" path="res://popochiu/rooms/casino_interior/audio/mx_house.ogg" id="1_ggcf6"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/audio_manager/audio_cue_music.gd" id="2_d3fps"]
+
+[resource]
+resource_name = "mx_house"
+script = ExtResource("2_d3fps")
+audio = ExtResource("1_ggcf6")
+loop = true
+is_2d = false
+pitch = 0.0
+volume = 0.0
+rnd_pitch = Vector2(0, 0)
+rnd_volume = Vector2(0, 0)
+max_distance = 2000
+attenuation = 1.0
+bus = "Master"

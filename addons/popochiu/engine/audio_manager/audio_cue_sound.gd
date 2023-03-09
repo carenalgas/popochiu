@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/popochiu/engine/audio_manager/audio_cue.gd"
+extends "audio_cue.gd"
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

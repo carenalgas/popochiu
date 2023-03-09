@@ -1,4 +1,4 @@
-extends 'ToolbarButton.gd'
+extends 'toolbar_button.gd'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

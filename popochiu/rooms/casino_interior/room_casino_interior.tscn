@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3 uid="uid://bm5dr7hmyy3i3"]
+
+[ext_resource type="Script" path="res://popochiu/rooms/casino_interior/room_casino_interior.gd" id="1_dtxxd"]
+
+[node name="RoomCasinoInterior" type="Node2D"]
+script = ExtResource("1_dtxxd")
+script_name = "CasinoInterior"
+has_player = false
+
+[node name="WalkableAreas" type="Node2D" parent="."]
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="Hotspots" type="Node2D" parent="."]
+
+[node name="Regions" type="Node2D" parent="."]
+
+[node name="Points" type="Node2D" parent="."]
+
+[node name="Characters" type="Node2D" parent="."]

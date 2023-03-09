@@ -41,25 +41,25 @@ var _rows_paths := []
 		path = ROOMS_PATH,
 		group = find_child('RoomsGroup'),
 		popup = find_child('CreateRoom'),
-		scene = ROOMS_PATH + ('%s/Room%s.tscn')
+		scene = ROOMS_PATH + ('%s/room_%s.tscn')
 	},
 	Constants.Types.CHARACTER: {
 		path = CHARACTERS_PATH,
 		group = find_child('CharactersGroup'),
 		popup = find_child('CreateCharacter'),
-		scene = CHARACTERS_PATH + ('%s/Character%s.tscn')
+		scene = CHARACTERS_PATH + ('%s/character_%s.tscn')
 	},
 	Constants.Types.INVENTORY_ITEM: {
 		path = INVENTORY_ITEMS_PATH,
 		group = find_child('ItemsGroup'),
 		popup = find_child('CreateInventoryItem'),
-		scene = INVENTORY_ITEMS_PATH + ('%s/Inventory%s.tscn')
+		scene = INVENTORY_ITEMS_PATH + ('%s/item_%s.tscn')
 	},
 	Constants.Types.DIALOG: {
 		path = DIALOGS_PATH,
 		group = find_child('DialogsGroup'),
 		popup = find_child('CreateDialog'),
-		scene = DIALOGS_PATH + ('%s/Dialog%s.tres')
+		scene = DIALOGS_PATH + ('%s/dialog_%s.tres')
 	}
 }
 
@@ -124,7 +124,7 @@ func fill_data() -> void:
 					continue
 				
 				var row_path: String = _types[t].scene %\
-				[resource.script_name, resource.script_name]
+				[resource.resource_name, resource.resource_name]
 				
 				if row_path in _rows_paths: continue
 				
@@ -137,7 +137,7 @@ func fill_data() -> void:
 				# in Popochiu (Popochiu.tscn)
 				var is_in_core := true
 				var has_state_script: bool = FileAccess.file_exists(
-					row.path.replace('.tscn', 'State.gd')
+					row.path.replace('.tscn', '_state.gd')
 				)
 				
 				match t:
@@ -265,7 +265,9 @@ func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
 
 	new_obj.name = name_to_add
 	new_obj.type = type
-	new_obj.path = _types[type].scene % [name_to_add, name_to_add]
+	new_obj.path = _types[type].scene % [
+		U.pascal2snake(name_to_add), U.pascal2snake(name_to_add)
+	]
 	new_obj.main_dock = self
 	new_obj.clicked.connect(_select_object)
 	

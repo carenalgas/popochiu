@@ -31,10 +31,10 @@ var _external_list: VBoxContainer = null
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	# Establecer estado inicial
-	_header.add_theme_stylebox_override(
-		'panel', _header.get_theme_stylebox('panel').duplicate()
+	add_theme_stylebox_override(
+		'panel', get_theme_stylebox('panel').duplicate()
 	)
-	(_header.get_theme_stylebox('panel') as StyleBoxFlat).bg_color = color
+	(get_theme_stylebox('panel') as StyleBoxFlat).border_color = color
 	_icon.texture = icon
 	_lbl_title.text = title
 	_btn_create.icon = get_theme_icon('Add', 'EditorIcons')
@@ -124,7 +124,7 @@ func _set_color(value: Color) -> void:
 	color = value
 	
 	if is_instance_valid(_header):
-		(_header.get_theme_stylebox('panel') as StyleBoxFlat).bg_color = value
+		(get_theme_stylebox('panel') as StyleBoxFlat).border_color = value
 
 
 func _set_title(value: String) -> void:

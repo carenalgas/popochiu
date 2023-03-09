@@ -238,13 +238,16 @@ static func update_autoloads(save := false) -> void:
 			
 			for key in get_data_cfg().get_section_keys(sngl_setup.section):
 				var var_name: String = key
+				var snake_name := U.pascal2snake(key)
 					
 				if int(var_name[0]) != 0:
 					var_name = var_name.insert(0, sngl_setup.prefix)
 				
 				if code.find('var %s' % var_name) < 0:
 					var classes_idx := code.find('# ---- classes')
-					var class_path: String = sngl_setup['class'] % [key, key]
+					var class_path: String = sngl_setup['class'] % [
+						snake_name, snake_name
+					]
 					
 					code = code.insert(
 						classes_idx,
@@ -352,7 +355,8 @@ static func update_autoloads(save := false) -> void:
 
 static func remove_autoload_obj(id: String, script_name: String) -> void:
 	var sngl_setup: Dictionary = SNGL_SETUP[id]
-	var class_path: String = sngl_setup['class'] % [script_name, script_name]
+	var snake_name := U.pascal2snake(script_name)
+	var class_path: String = sngl_setup['class'] % [snake_name, snake_name]
 	var s: Script = load(id)
 	var code := s.source_code
 	
@@ -362,7 +366,9 @@ static func remove_autoload_obj(id: String, script_name: String) -> void:
 		sngl_setup.node % [script_name, script_name, script_name], ''
 	)
 	
-	code = code.replace(sngl_setup['func'] % [script_name, script_name], '')
+	code = code.replace(sngl_setup['func'] % [
+		script_name, script_name, script_name
+	], '')
 	
 	s.source_code = code
 	ResourceSaver.save(s, id)

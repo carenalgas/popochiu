@@ -3,12 +3,12 @@ extends CanvasLayer
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 # warning-ignore-all:return_value_discarded
 
-const DialogText := preload('DialogText/DialogText.gd')
-const DisplayBox := preload('DisplayBox/DisplayBox.gd')
-const Inventory := preload('Inventory/Inventory.gd')
-const DialogMenu := preload('DialogMenu/DialogMenu.gd')
-const Toolbar := preload('Toolbar/Toolbar.gd')
-const History := preload('History/History.gd')
+const DialogText := preload('dialog_text/dialog_text.gd')
+const DisplayBox := preload('display_box/display_box.gd')
+const Inventory := preload('inventory/inventory.gd')
+const DialogMenu := preload('dialog_menu/dialog_menu.gd')
+const Toolbar := preload('toolbar/toolbar.gd')
+const History := preload('history/history.gd')
 
 @onready var _info_bar: Label = find_child('InfoBar')
 @onready var _dialog_text: DialogText = find_child('DialogText')

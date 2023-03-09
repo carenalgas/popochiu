@@ -1,12 +1,14 @@
-[gd_scene load_steps=13 format=3 uid="uid://k35rpa45ngms"]
+[gd_scene load_steps=15 format=3 uid="uid://k35rpa45ngms"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/graphic_interface.gd" id="1"]
-[ext_resource type="PackedScene" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_text/dialog_text.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_text/dialog_text.tscn" id="3"]
 [ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_menu/dialog_menu.tscn" id="5"]
-[ext_resource type="PackedScene" uid="uid://bos3mruwiw4a5" path="res://addons/popochiu/engine/objects/graphic_interface/history/history.tscn" id="7"]
-[ext_resource type="PackedScene" uid="uid://cm3mcl2hp08ef" path="res://addons/popochiu/engine/objects/graphic_interface/save_load/save_load.tscn" id="8"]
-[ext_resource type="PackedScene" uid="uid://cm34lgxbyi4bb" path="res://addons/popochiu/engine/objects/graphic_interface/info_bar/info_bar.tscn" id="9"]
-[ext_resource type="PackedScene" uid="uid://bvjq6ylvam48c" path="res://addons/popochiu/engine/objects/graphic_interface/display_box/display_box.tscn" id="11"]
+[ext_resource type="PackedScene" uid="uid://ciar5j7qm85bc" path="res://addons/popochiu/engine/objects/graphic_interface/inventory/inventory.tscn" id="6_v2npl"]
+[ext_resource type="PackedScene" uid="uid://bq7kpsehncsaf" path="res://addons/popochiu/engine/objects/graphic_interface/history/history.tscn" id="7"]
+[ext_resource type="PackedScene" uid="uid://0cqerawlxb3o" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/toolbar.tscn" id="7_0ydpp"]
+[ext_resource type="PackedScene" uid="uid://codc5gwfbqwth" path="res://addons/popochiu/engine/objects/graphic_interface/save_load/save_load.tscn" id="8"]
+[ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/info_bar/info_bar.tscn" id="9"]
+[ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/display_box/display_box.tscn" id="11"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dlu6y"]
 
@@ -75,6 +77,16 @@ theme_override_styles/hover = SubResource("StyleBoxEmpty_1w7s2")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_f0ojp")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_pcw4k")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_scpl3")
+
+[node name="Inventory" parent="MainContainer" instance=ExtResource("6_v2npl")]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 40.0
+
+[node name="Toolbar" parent="MainContainer" instance=ExtResource("7_0ydpp")]
+layout_mode = 1
+offset_left = -106.0
+offset_right = -4.0
 
 [node name="History" parent="." instance=ExtResource("7")]
 

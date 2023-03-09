@@ -1,7 +1,7 @@
 extends PanelContainer
 # warning-ignore-all:return_value_discarded
 
-const ToolbarButton := preload('ToolbarButton.gd')
+const ToolbarButton := preload('toolbar_button.gd')
 
 @export var script_name := ''
 @export var used_in_game := true

@@ -1,5 +1,6 @@
 @tool
 extends Resource
+class_name AudioCue
 
 @export var audio: AudioStream
 @export var loop := false : set = _set_loop
@@ -11,8 +12,6 @@ extends Resource
 @export var max_distance := 2000
 @export var attenuation := 1.0 # (float, EASE)
 @export var bus := 'Master' # (String, 'Master', 'Music')
-
-var twelfth_root_of_two := pow(2, (1.0 / 12))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -140,6 +139,7 @@ func _set_loop(value: bool) -> void:
 	
 	if not audio: return
 	
+	prints(resource_name, audio.get_class())
 	match audio.get_class():
 		'AudioStreamOggVorbis', 'AudioStreamMP3':
 			audio.loop = value

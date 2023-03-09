@@ -1,4 +1,4 @@
-extends 'ToolbarButton.gd'
+extends 'toolbar_button.gd'
 
 @export var btn_states := [] # (Array, Texture2D)
 @export var states_descriptions := ['manual', 'auto']

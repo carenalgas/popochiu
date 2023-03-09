@@ -2,7 +2,6 @@
 # 
 # TODO: Create AudioHandle so each AudioCue has its own AudioStreamPlayer...
 # http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
-@tool
 extends Node
 class_name PopochiuAudioManager
 @warning_ignore("return_value_discarded")

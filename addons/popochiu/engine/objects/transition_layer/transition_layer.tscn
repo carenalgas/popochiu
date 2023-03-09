@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://b1pvo43ed3eey"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/transition_layer/transition_layer.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://d0b8ujas8ejcj" path="res://addons/popochiu/engine/objects/transition_layer/fade.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://idhocibii42k" path="res://addons/popochiu/engine/objects/transition_layer/fade.png" id="2"]
 
 [sub_resource type="Animation" id="5"]
 length = 0.001

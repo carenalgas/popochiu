@@ -1,0 +1,13 @@
+[gd_resource type="Resource" load_steps=2 format=3 uid="uid://2flmjogybyk5"]
+
+[ext_resource type="Script" path="res://popochiu/rooms/casino_interior/room_casino_interior_state.gd" id="1_wrhu5"]
+
+[resource]
+resource_name = "casino_interior"
+script = ExtResource("1_wrhu5")
+is_fine = true
+script_name = "CasinoInterior"
+scene = "res://popochiu/rooms/casino_interior/room_casino_interior.tscn"
+visited = false
+visited_first_time = false
+visited_times = 0
