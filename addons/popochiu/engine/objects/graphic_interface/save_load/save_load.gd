@@ -1,5 +1,5 @@
 extends PanelContainer
-# warning-ignore-all:return_value_discarded
+@warning_ignore("return_value_discarded")
 
 const SELECTION_COLOR := Color('edf171')
 const OVERWRITE_COLOR := Color('c46c71')
@@ -9,23 +9,22 @@ var _date := ''
 var _prev_text := ''
 var _slot := 0
 
-@onready var _dialog: ConfirmationDialog = $SaveLoadDialog
-@onready var _label: Label = find_child('Title')
-@onready var _slots: VBoxContainer = find_child('Slots')
-@onready var _ok: Button = _dialog.get_ok_button()
-@onready var _cancel: Button = _dialog.get_cancel_button()
+@onready var _dialog: PanelContainer = $SaveLoadDialog
+@onready var _label: Label = %Title
+@onready var _slots: VBoxContainer = %Slots
+@onready var _ok: Button = %Ok
+@onready var _cancel: Button = %Close
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	_ok.text = 'ok'
-	_cancel.text = 'close'
 	_ok.disabled = true
 	
-	_dialog.confirmed.connect(_close)
-	_dialog.close_requested.connect(_close)
-	_dialog.get_cancel_button().pressed.connect(_close)
+#	_dialog.confirmed.connect(_close)
+#	_dialog.close_requested.connect(_close)
+#	_dialog.get_cancel_button().pressed.connect(_close)
 	_ok.pressed.connect(_confirmed)
+	_cancel.pressed.connect(_close)
 	
 	var saves: Dictionary = E.get_saves_descriptions()
 	
@@ -44,12 +43,12 @@ func _ready() -> void:
 	G.load_requested.connect(_show_load)
 	
 	hide()
-	_dialog.hide()
+#	_dialog.hide()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _show_save(date: String) -> void:
-	_dialog.title = 'Save'
+#	_dialog.title = 'Save'
 	_label.text = 'Choose a slot to save the game'
 	_date = date
 	
@@ -60,7 +59,7 @@ func _show_save(date: String) -> void:
 
 
 func _show_load() -> void:
-	_dialog.title = 'Load'
+#	_dialog.title = 'Load'
 	_label.text = 'Choose the slot to load'
 	_date = ''
 	
@@ -83,9 +82,9 @@ func _show() -> void:
 	
 	if E.settings.scale_gui:
 		scale = Vector2.ONE * E.scale
-		_dialog.size = Vector2.ONE * E.scale
+#		_dialog.size = Vector2.ONE * E.scale
 	
-	_dialog.popup_centered(Vector2(240.0, 120.0))
+#	_dialog.popup_centered(Vector2(240.0, 120.0))
 	_cancel.grab_focus()
 	
 	G.blocked.emit({ blocking = false })
@@ -134,3 +133,5 @@ func _confirmed() -> void:
 	if _date:
 		_prev_text = _current_slot.text
 		_current_slot.set_meta('has_save', true)
+	
+	_close()

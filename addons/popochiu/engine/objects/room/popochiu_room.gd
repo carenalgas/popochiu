@@ -89,25 +89,25 @@ func _unhandled_input(event):
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # What happens when Popochiu loads the room. At this point the room is in the
 # tree but it is not visible.
-func on_room_entered() -> void:
+func _on_room_entered() -> void:
 	pass
 
 
 # What happens when the room changing transition finishes. At this point the room
 # is visible.
-func on_room_transition_finished() -> void:
+func _on_room_transition_finished() -> void:
 	pass
 
 
 # What happens before Popochiu unloads the room. At this point the room is in the
 # tree but it is not visible, it is not processing and has no childs in the
 # $Characters node.
-func on_room_exited() -> void:
+func _on_room_exited() -> void:
 	pass
 
 
 # TODO: Make this to work and then add it to RoomTemplate.gd
-func on_entered_from_editor() -> void:
+func _on_entered_from_editor() -> void:
 	pass
 
 
@@ -121,7 +121,7 @@ func exit_room() -> void:
 	for c in $Characters.get_children():
 		$Characters.remove_child(c)
 	
-	on_room_exited()
+	_on_room_exited()
 
 
 func add_character(chr: PopochiuCharacter) -> void:

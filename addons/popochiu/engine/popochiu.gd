@@ -361,7 +361,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
 		c.room = current_room
 	
-	current_room.on_room_entered()
+	current_room._on_room_entered()
 	
 	if _loaded_game:
 		C.player.global_position = Vector2(
@@ -390,7 +390,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	# This enables the room to listen input events
 	current_room.is_current = true
 	
-	current_room.on_room_transition_finished()
+	current_room._on_room_transition_finished()
 
 
 func camera_offset(offset := Vector2.ZERO) -> Callable:

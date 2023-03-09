@@ -24,4 +24,4 @@ func on_load(data: Dictionary) -> void:
 
 
 func do_something() -> void:
-	prints('I do...')
+	prints('I am...', is_fine)
