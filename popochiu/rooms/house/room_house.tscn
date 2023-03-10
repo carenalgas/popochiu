@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://drdh1hgkebr6p"]
+
+[ext_resource type="Script" path="res://popochiu/rooms/house/room_house.gd" id="1_5s51l"]
+
+[node name="RoomHouse" type="Node2D"]
+script = ExtResource("1_5s51l")
+script_name = "House"
+
+[node name="WalkableAreas" type="Node2D" parent="."]
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="Hotspots" type="Node2D" parent="."]
+
+[node name="Regions" type="Node2D" parent="."]
+
+[node name="Points" type="Node2D" parent="."]
+
+[node name="Characters" type="Node2D" parent="."]

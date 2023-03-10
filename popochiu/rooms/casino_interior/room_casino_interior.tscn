@@ -1,11 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://bm5dr7hmyy3i3"]
+[gd_scene load_steps=3 format=3 uid="uid://bm5dr7hmyy3i3"]
 
 [ext_resource type="Script" path="res://popochiu/rooms/casino_interior/room_casino_interior.gd" id="1_dtxxd"]
+[ext_resource type="PackedScene" uid="uid://c7oacc86kxt3e" path="res://popochiu/characters/goddiu/character_goddiu.tscn" id="2_pwg4o"]
 
 [node name="RoomCasinoInterior" type="Node2D"]
 script = ExtResource("1_dtxxd")
 script_name = "CasinoInterior"
-has_player = false
 
 [node name="WalkableAreas" type="Node2D" parent="."]
 
@@ -18,3 +18,12 @@ has_player = false
 [node name="Points" type="Node2D" parent="."]
 
 [node name="Characters" type="Node2D" parent="."]
+
+[node name="CharacterGoddiu *" parent="Characters" instance=ExtResource("2_pwg4o")]
+position = Vector2(164, 109)
+flips_when = []
+voices = false
+follow_player = 200.0
+walk_speed = true
+can_move = false
+ignore_walkable_areas = ""

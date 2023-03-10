@@ -3,28 +3,30 @@
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_vjboj"]
 
 [node name="Setup" type="AcceptDialog"]
-size = Vector2i(377, 395)
+size = Vector2i(496, 350)
 visible = true
-dialog_autowrap = true
 script = ExtResource("1_vjboj")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 offset_left = 8.0
 offset_top = 8.0
-offset_right = 369.0
-offset_bottom = 346.0
+offset_right = 488.0
+offset_bottom = 301.0
 size_flags_horizontal = 4
 size_flags_vertical = 5
 
 [node name="Welcome" type="RichTextLabel" parent="VBoxContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 bbcode_enabled = true
 text = "Welcome to Popochiu \\( o )3(o)/
 
 This popup will appear automatically just this time. You can open it later with the Setup button at the bottom of Popochiu's dock."
+fit_content = true
 scroll_active = false
 meta_underlined = false
+hint_underlined = false
 
 [node name="WelcomeSeparator" type="HSeparator" parent="VBoxContainer"]
 unique_name_in_owner = true
@@ -84,8 +86,10 @@ text = "height"
 
 [node name="ScaleMessage" type="RichTextLabel" parent="VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 bbcode_enabled = true
+scroll_active = false
 
 [node name="TestContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2

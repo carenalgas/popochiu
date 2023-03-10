@@ -12,19 +12,20 @@ var _main_dock: Panel : set = set_main_dock
 func _ready() -> void:
 	register_text_enter(_input)
 	
-	confirmed.connect(create)
+	confirmed.connect(_create)
 	canceled.connect(_clear_fields)
 	close_requested.connect(_clear_fields)
 	_input.text_changed.connect(_update_name)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: Panel) -> void:
-	_main_dock = node
-
-
-func create() -> void:
+func _create() -> void:
 	pass
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func set_main_dock(value: Panel) -> void:
+	_main_dock = value
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

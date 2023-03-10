@@ -93,7 +93,7 @@ func appear(show_welcome := false) -> void:
 		# Make Pixel the default game type checked during first run
 		_game_type.selected = 2
 	
-	popup_centered_clamped(Vector2(480.0, 180.0))
+	popup_centered_clamped(Vector2(480.0, 180.0), 0.5)
 	get_ok_button().text = 'Close'
 
 

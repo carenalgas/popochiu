@@ -12,7 +12,6 @@ signal started_walk_to(character, start, end)
 signal stoped_walk
 
 @export var text_color := Color.WHITE
-@export var is_player := false
 @export var flips_when: FlipsWhen = FlipsWhen.NONE
 @export var voices := []:
 	set = set_voices # (Array, Dictionary)
@@ -71,12 +70,12 @@ func idle_now() -> void:
 		await get_tree().process_frame
 		return
 	
-	if has_node('Sprite'):
+	if has_node('Sprite2D'):
 		match flips_when:
 			FlipsWhen.MOVING_LEFT:
-				$Sprite.flip_h = _looking_dir == Looking.LEFT
+				$Sprite2D.flip_h = _looking_dir == Looking.LEFT
 			FlipsWhen.MOVING_RIGHT:
-				$Sprite.flip_h = _looking_dir == Looking.RIGHT
+				$Sprite2D.flip_h = _looking_dir == Looking.RIGHT
 	
 	# Call the virtual that plays the idle animation
 	_play_idle()

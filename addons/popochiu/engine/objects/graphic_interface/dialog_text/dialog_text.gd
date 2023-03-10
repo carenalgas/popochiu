@@ -20,7 +20,7 @@ var _x_limit := 0.0
 var _y_limit := 0.0
 
 @onready var _tween: Tween = null
-@onready var _continue_icon: TextureProgressBar = find_child('ContinueIcon')
+@onready var _continue_icon: TextureProgressBar = $ContinueIcon
 @onready var _continue_icon_tween: Tween = null
 
 
@@ -51,18 +51,19 @@ func play_text(props: Dictionary) -> void:
 	
 	# ==== Calculate the width of the node =====================================
 	var rt := RichTextLabel.new()
-	var lbl := Label.new()
 	rt.bbcode_enabled = true
+	rt.autowrap_mode = TextServer.AUTOWRAP_WORD
+	var lbl := Label.new()
 	rt.text = msg
 	lbl.text = rt.get_parsed_text()
 	add_child(lbl)
 	var _size := lbl.size
 	if _size.x > wrap_width:
 		_size.x = wrap_width
-		rt.fit_content_height = true
-		rt.size = Vector2(_size.x, 0.0)
+		rt.size = Vector2(_size.x, get_meta(DFLT_SIZE).y)
 		add_child(rt)
-		_size.y = rt.get_content_height()
+		_size.y = rt.get_line_count() * get_meta(DFLT_SIZE).y
+		_size.x = rt.get_content_width() + get_meta(DFLT_SIZE).x
 	elif _size.x < get_meta(DFLT_SIZE).x:
 		_size.x = get_meta(DFLT_SIZE).x
 	
@@ -89,7 +90,7 @@ func play_text(props: Dictionary) -> void:
 	# Assign text and align mode (based checked overflow)
 	push_color(props.color)
 	
-	var center := floori(position.x + (size.x / 2))
+	var center := floor(position.x + (size.x / 2))
 	if center == props.position.x:
 		append_text('[center]%s[/center]' % msg)
 	elif center < props.position.x:
@@ -194,15 +195,15 @@ func _show_icon() -> void:
 		_continue_icon_tween.kill()
 	
 	_continue_icon_tween = create_tween()
-	_continue_icon.position.x = position.x + size.x
+#	_continue_icon.position.x = size.x
 	
 	if not E.settings.auto_continue_text:
 		# For manual continuation: make the continue icon jump
 		_continue_icon.value = 100.0
 		_continue_icon_tween.tween_property(
 			_continue_icon, 'position:y',
-			size.y + 3.0, 0.8
-		).from(size.y).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+			size.y / 2.0 + 3.0, 0.8
+		).from(size.y / 2.0 - 1.0).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 		_continue_icon_tween.set_loops()
 	else:
 		# For automatic continuation: Make the icon appear like a progress bar

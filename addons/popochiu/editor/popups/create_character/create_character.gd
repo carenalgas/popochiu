@@ -21,7 +21,8 @@ preload('res://addons/popochiu/editor/main_dock/popochiu_dock.gd')
 
 var _new_character_name := ''
 var _new_character_path := ''
-var _character_path_template: String
+var _character_path_template := ''
+var _pascal_name := ''
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -31,14 +32,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: Panel) -> void:
-	super(node)
-	
-	# res://popochiu/characters
-	_character_path_template = _main_dock.CHARACTERS_PATH + '%s/character_%s'
-
-
-func create() -> void:
+func _create() -> void:
 	if _new_character_name.is_empty():
 		_error_feedback.show()
 		return
@@ -62,9 +56,9 @@ func create() -> void:
 	
 	var character_resource: PopochiuCharacterData =\
 	load(_new_character_path + '_state.gd').new()
-	character_resource.script_name = _new_character_name
+	character_resource.script_name = _pascal_name
 	character_resource.scene = _new_character_path + '.tscn'
-	character_resource.resource_name = _new_character_name
+	character_resource.resource_name = _pascal_name
 	
 	if ResourceSaver.save(character_resource, _new_character_path + '.tres') != OK:
 		push_error('[Popochiu] Could not create PopochiuCharacterData for character: %s' %\
@@ -85,13 +79,13 @@ func create() -> void:
 		return
 	
 	new_code = new_code.replace(
-		'CharacterStateTemplate',
-		'Character%sState' % _new_character_name
+		'character_state_template',
+		'character_%s_state' % _new_character_name
 	)
 	
 	new_code = new_code.replace(
 		'Data = null',
-		"Data = preload('character_%s.tres')" % _new_character_name
+		"Data = load('%s.tres')" % _new_character_path
 	)
 	
 	character_script = load(_new_character_path + '.gd')
@@ -103,13 +97,13 @@ func create() -> void:
 		return
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the character instance
+	# Create the Character instance
 	var new_character: PopochiuCharacter = preload(CHARACTER_SCENE).instantiate()
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_character.set_script(load(_new_character_path + '.gd'))
-	new_character.script_name = _new_character_name
-	new_character.name = 'Character' + _new_character_name
+	new_character.script_name = _pascal_name
+	new_character.name = 'Character' + _pascal_name
 	new_character.description = _new_character_name
 	new_character.cursor = Constants.CURSOR_TYPE.TALK
 	
@@ -140,7 +134,9 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of characters in the dock
-	_main_dock.add_to_list(Constants.Types.CHARACTER, _new_character_name)
+	(_main_dock as PopochiuDock).add_to_list(
+		Constants.Types.CHARACTER, _pascal_name
+	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor
@@ -154,12 +150,21 @@ func create() -> void:
 	hide()
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func set_main_dock(node: Panel) -> void:
+	super(node)
+	
+	# res://popochiu/characters
+	_character_path_template = _main_dock.CHARACTERS_PATH + '%s/character_%s'
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_character_name = _name
+		_new_character_name = U.pascal2snake(_name)
+		_pascal_name = _name
 		_new_character_path = _character_path_template %\
 		[_new_character_name, _new_character_name]
 

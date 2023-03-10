@@ -40,14 +40,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: Panel) -> void:
-	super(node)
-	
-	# res://popochiu/rooms
-	_room_path_template = _main_dock.ROOMS_PATH + '%s/room_%s'
-
-
-func create() -> void:
+func _create() -> void:
 	if _room_name.is_empty():
 		_error_feedback.show()
 		return
@@ -100,7 +93,7 @@ func create() -> void:
 	
 	new_code = new_code.replace(
 		'Data = null',
-		"Data = preload('room_%s.tres')" % _room_name
+		"Data = load('%s.tres')" % _room_path
 	)
 	
 	room_script = load(_room_path + '.gd')
@@ -164,6 +157,14 @@ func create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# That's all!
 	hide()
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func set_main_dock(node: Panel) -> void:
+	super(node)
+	
+	# res://popochiu/rooms
+	_room_path_template = _main_dock.ROOMS_PATH + '%s/room_%s'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
