@@ -161,7 +161,7 @@ func _on_import_pressed():
 	var result = animation_creator.create_animations(target_node, root.get_node(_animation_player_path), options)
 	_importing = false
 	
-	if result != result_code.SUCCESS:
+	if typeof(result) == TYPE_INT and result != result_code.SUCCESS:
 		print(result_code.get_error_message(result))
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:

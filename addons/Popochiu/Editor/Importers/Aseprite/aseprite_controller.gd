@@ -204,8 +204,9 @@ func check_command_path():
 	# Since the error is unclear, we have to check that the aseprite
 	# command is given as a full path and return an error if it's not.
 	var regex = RegEx.new()
+	regex.compile("^[A-Z|a-z]:[\\\\|\\/].+\\.exe$")
 	return \
-		regex.compile("^[A-Z|a-z]:[\\\\|\\/].+\\.exe$").search(_aseprite_command()) \
+		regex.search(_aseprite_command()) \
 		and \
 		File.new().file_exists(_aseprite_command())
 
