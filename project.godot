@@ -20,7 +20,6 @@ config/windows_native_icon="res://popochiu_v2.ico"
 [autoload]
 
 Globals="*res://popochiu/popochiu_globals.gd"
-U="*res://addons/popochiu/engine/others/popochiu_utils.gd"
 Cursor="*res://addons/popochiu/engine/cursor/cursor.tscn"
 E="*res://addons/popochiu/engine/popochiu.tscn"
 R="*res://popochiu/autoloads/r.gd"

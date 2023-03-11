@@ -324,7 +324,7 @@ func _get_vo_cue(emotion := '') -> String:
 					v['not_played'] = range(v.variations)
 				
 				var idx: int = (v['not_played'] as Array).pop_at(
-					U.get_random_array_idx(v['not_played'])
+					PopochiuUtils.get_random_array_idx(v['not_played'])
 				)
 				
 				cue_name += '_' + str(idx + 1).pad_zeros(2)

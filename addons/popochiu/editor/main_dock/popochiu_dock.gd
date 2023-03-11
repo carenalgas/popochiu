@@ -266,7 +266,7 @@ func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
 	new_obj.name = name_to_add
 	new_obj.type = type
 	new_obj.path = _types[type].scene % [
-		U.pascal2snake(name_to_add), U.pascal2snake(name_to_add)
+		PopochiuUtils.pascal2snake(name_to_add), PopochiuUtils.pascal2snake(name_to_add)
 	]
 	new_obj.main_dock = self
 	new_obj.clicked.connect(_select_object)

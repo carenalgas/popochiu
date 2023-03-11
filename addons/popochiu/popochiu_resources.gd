@@ -238,7 +238,7 @@ static func update_autoloads(save := false) -> void:
 			
 			for key in get_data_cfg().get_section_keys(sngl_setup.section):
 				var var_name: String = key
-				var snake_name := U.pascal2snake(key)
+				var snake_name := PopochiuUtils.pascal2snake(key)
 					
 				if int(var_name[0]) != 0:
 					var_name = var_name.insert(0, sngl_setup.prefix)
@@ -355,7 +355,7 @@ static func update_autoloads(save := false) -> void:
 
 static func remove_autoload_obj(id: String, script_name: String) -> void:
 	var sngl_setup: Dictionary = SNGL_SETUP[id]
-	var snake_name := U.pascal2snake(script_name)
+	var snake_name := PopochiuUtils.pascal2snake(script_name)
 	var class_path: String = sngl_setup['class'] % [snake_name, snake_name]
 	var s: Script = load(id)
 	var code := s.source_code

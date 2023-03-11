@@ -34,6 +34,7 @@ position = Vector2(0, -26)
 texture = ExtResource("2_qflu8")
 
 [node name="DialogPos" type="Marker2D" parent="."]
+visible = false
 position = Vector2(0, -45)
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

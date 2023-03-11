@@ -34,7 +34,6 @@ func _init():
 	
 	# Load Popochiu singletons
 	add_autoload_singleton('Globals', PopochiuResources.GLOBALS_SNGL)
-	add_autoload_singleton('U', PopochiuResources.UTILS_SNGL)
 	add_autoload_singleton('Cursor', PopochiuResources.CURSOR_SNGL)
 	add_autoload_singleton('E', PopochiuResources.POPOCHIU_SNGL)
 	add_autoload_singleton('R', PopochiuResources.R_SNGL)
@@ -142,7 +141,6 @@ func _enable_plugin() -> void:
 
 func _disable_plugin() -> void:
 	remove_autoload_singleton('Globals')
-	remove_autoload_singleton('U')
 	remove_autoload_singleton('Cursor')
 	remove_autoload_singleton('E')
 	remove_autoload_singleton('R')
