@@ -20,6 +20,9 @@ func init(config, editor_file_system: EditorFileSystem = null):
 
 
 func create_animations(target_node: Node, player: AnimationPlayer, options: Dictionary):
+	if not _aseprite.check_command_path():
+		return result_code.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+
 	if not _aseprite.test_command():
 		return result_code.ERR_ASEPRITE_CMD_NOT_FOUND
 
@@ -53,10 +56,18 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 
 ## TODO: Keep this as reference to populate a checkable list of layers
 func list_layers(file: String, only_visibles = false) -> Array:
+	if not _aseprite.check_command_path():
+		return result_code.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	if not _aseprite.test_command():
+		return result_code.ERR_ASEPRITE_CMD_NOT_FOUND
 	return _aseprite.list_layers(file, only_visibles)
 
 
 func list_tags(file: String) -> Array:
+	if not _aseprite.check_command_path():
+		return result_code.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	if not _aseprite.test_command():
+		return result_code.ERR_ASEPRITE_CMD_NOT_FOUND
 	return _aseprite.list_tags(file)
 
 

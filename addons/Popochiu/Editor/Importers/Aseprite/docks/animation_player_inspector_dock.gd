@@ -158,10 +158,14 @@ func _on_import_pressed():
 
 	_save_config()
 
-	animation_creator.create_animations(target_node, root.get_node(_animation_player_path), options)
+	var result = animation_creator.create_animations(target_node, root.get_node(_animation_player_path), options)
 	_importing = false
 	
-	_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
+	if result != result_code.SUCCESS:
+		print(result_code.get_error_message(result))
+		_show_message("Some errors occurred. Please check output panel.", "Warning!")
+	else:
+		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
 
 
 func _on_reset_pressed():
@@ -250,6 +254,9 @@ func _get_tags_from_ui() -> Array:
 
 func _get_tags_from_source() -> Array:
 	var tags_found = animation_creator.list_tags(ProjectSettings.globalize_path(_source))
+	if typeof(tags_found) == TYPE_INT:
+		print(result_code.get_error_message(tags_found))
+		return []
 	var tags_list = []
 	for t in tags_found:
 		if t == "":

@@ -194,6 +194,22 @@ func _compile_regex(pattern):
 	printerr('exception regex error')
 
 
+func check_command_path():
+	# On Linux, MacOS or other *nix platforms, nothing to do
+	if not OS.get_name() in ["Windows", "UWP"]:
+		return true
+	
+	# On Windows, OS.Execute() calls trigger an uncatchable
+	# internal error if the invoked executable is not found.
+	# Since the error is unclear, we have to check that the aseprite
+	# command is given as a full path and return an error if it's not.
+	var regex = RegEx.new()
+	return \
+		regex.compile("^[A-Z|a-z]:[\\\\|\\/].+\\.exe$").search(_aseprite_command()) \
+		and \
+		File.new().file_exists(_aseprite_command())
+
+
 func test_command():
 	var exit_code = OS.execute(_aseprite_command(), ['--version'], true)
 	return exit_code == 0

@@ -2,25 +2,28 @@ tool
 extends Reference
 
 const SUCCESS = 0
-const ERR_ASEPRITE_CMD_NOT_FOUND = 1
-const ERR_SOURCE_FILE_NOT_FOUND = 2
-const ERR_OUTPUT_FOLDER_NOT_FOUND = 3
-const ERR_ASEPRITE_EXPORT_FAILED = 4
-const ERR_UNKNOWN_EXPORT_MODE = 5
-const ERR_NO_VALID_LAYERS_FOUND = 6
-const ERR_INVALID_ASEPRITE_SPRITESHEET = 7
-const ERR_NO_ANIMATION_PLAYER_FOUND = 8
-const ERR_NO_SPRITE_FOUND = 9
-const ERR_UNNAMED_TAG_DETECTED = 10
-const ERR_TAGS_OPTIONS_ARRAY_EMPTY = 11
+const ERR_ASEPRITE_CMD_NOT_FULL_PATH = 1
+const ERR_ASEPRITE_CMD_NOT_FOUND = 2
+const ERR_SOURCE_FILE_NOT_FOUND = 3
+const ERR_OUTPUT_FOLDER_NOT_FOUND = 4
+const ERR_ASEPRITE_EXPORT_FAILED = 5
+const ERR_UNKNOWN_EXPORT_MODE = 6
+const ERR_NO_VALID_LAYERS_FOUND = 7
+const ERR_INVALID_ASEPRITE_SPRITESHEET = 8
+const ERR_NO_ANIMATION_PLAYER_FOUND = 9
+const ERR_NO_SPRITE_FOUND = 10
+const ERR_UNNAMED_TAG_DETECTED = 11
+const ERR_TAGS_OPTIONS_ARRAY_EMPTY = 12
 
 ## TODO: these messages are a bit dull, having params would be better.
 ## Maybe add a param argument
 
 static func get_error_message(code: int):
 	match code:
+		ERR_ASEPRITE_CMD_NOT_FULL_PATH:
+			return "Aseprite command not found at given path. Please check \"Project Settings > Popochiu > Import > Command Path\" to hold the FULL path to a valid Aseprite executable."
 		ERR_ASEPRITE_CMD_NOT_FOUND:
-			return "Aseprite command failed. Please, check if the right command is in your PATH or configured through \"Project > Tools > Aseprite Wizard Config\"."
+			return "Aseprite command failed. Please, check if the right command is in your PATH or configured through \"Project Settings > Popochiu > Import > Command Path\"."
 		ERR_SOURCE_FILE_NOT_FOUND:
 			return "source file does not exist"
 		ERR_OUTPUT_FOLDER_NOT_FOUND:
