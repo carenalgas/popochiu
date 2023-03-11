@@ -1,11 +1,11 @@
 tool
 extends PanelContainer
 
-const result_code = preload("../config/result_codes.gd")
+const result_code = preload("res://addons/Popochiu/Editor/Config/result_codes.gd")
 
 const AnimationCreator = preload("../animation_creator.gd")
 const AnimationTagRow = preload("./animation_tag_row.gd")
-const local_obj_config = preload("../config/local_obj_config.gd")
+const local_obj_config = preload("res://addons/Popochiu/Editor/Config/local_obj_config.gd")
 
 var animation_creator: AnimationCreator
 var _animation_tag_row_scene: PackedScene = preload('./animation_tag_row.tscn')

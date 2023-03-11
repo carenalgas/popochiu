@@ -1,6 +1,6 @@
 extends EditorExportPlugin
 
-const local_obj_config = preload("./Editor/Importers/Aseprite/config/local_obj_config.gd")
+const local_obj_config = preload("res://addons/Popochiu/Editor/Config/local_obj_config.gd")
 
 
 func _export_begin(features: PoolStringArray, is_debug: bool, path: String, flags: int) -> void:

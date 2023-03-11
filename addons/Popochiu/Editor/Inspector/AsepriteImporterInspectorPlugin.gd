@@ -2,7 +2,7 @@ tool
 extends EditorInspectorPlugin ## TODO: create a base class with pointer variables
 
 const INSPECTOR_DOCK = preload("../Importers/Aseprite/docks/animation_player_inspector_dock.tscn")
-const CONFIG_SCRIPT = preload("../Importers/Aseprite/config/config.gd")
+const CONFIG_SCRIPT = preload("res://addons/Popochiu/Editor/Config/config.gd")
 
 var ei: EditorInterface
 var fs: EditorFileSystem

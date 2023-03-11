@@ -3,7 +3,7 @@
 # See: https://godotengine.org/asset-library/asset/713
 extends Reference
 
-var result_code = preload("./config/result_codes.gd")
+var result_code = preload("res://addons/Popochiu/Editor/Config/result_codes.gd")
 var _aseprite = preload("./aseprite_controller.gd").new()
 
 var _config

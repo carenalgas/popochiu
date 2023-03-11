@@ -3,7 +3,7 @@ extends HBoxContainer
 
 signal tag_state_changed
 
-const result_code = preload("../config/result_codes.gd")
+const result_code = preload("res://addons/Popochiu/Editor/Config/result_codes.gd")
 var _config
 
 var _anim_tag_state: Dictionary = {}
