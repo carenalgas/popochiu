@@ -38,7 +38,7 @@ margin_top = 2.0
 margin_right = 212.0
 margin_bottom = 290.0
 
-[node name="section_title" type="PanelContainer" parent="margin/VBoxContainer"]
+[node name="SectionTitle" type="PanelContainer" parent="margin/VBoxContainer"]
 margin_right = 212.0
 margin_bottom = 16.0
 size_flags_horizontal = 3
@@ -47,7 +47,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="title" type="Label" parent="margin/VBoxContainer/section_title"]
+[node name="Title" type="Label" parent="margin/VBoxContainer/SectionTitle"]
 margin_left = 2.0
 margin_top = 1.0
 margin_right = 210.0
@@ -56,13 +56,13 @@ size_flags_horizontal = 3
 text = "Aseprite"
 align = 1
 
-[node name="source" type="HBoxContainer" parent="margin/VBoxContainer"]
+[node name="Source" type="HBoxContainer" parent="margin/VBoxContainer"]
 margin_top = 20.0
 margin_right = 212.0
 margin_bottom = 40.0
 hint_tooltip = "Location of the Aseprite (*.ase, *.aseprite)  source file."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/source"]
+[node name="Label" type="Label" parent="margin/VBoxContainer/Source"]
 margin_top = 3.0
 margin_right = 81.0
 margin_bottom = 17.0
@@ -70,7 +70,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Aseprite File"
 
-[node name="button" type="Button" parent="margin/VBoxContainer/source"]
+[node name="SourceButton" type="Button" parent="margin/VBoxContainer/Source"]
 margin_left = 85.0
 margin_right = 151.0
 margin_bottom = 20.0
@@ -79,13 +79,13 @@ size_flags_stretch_ratio = 2.0
 text = "[empty]"
 clip_text = true
 
-[node name="rescan" type="Button" parent="margin/VBoxContainer/source"]
+[node name="RescanButton" type="Button" parent="margin/VBoxContainer/Source"]
 margin_left = 155.0
 margin_right = 212.0
 margin_bottom = 20.0
 text = "Rescan"
 
-[node name="tags_title" type="PanelContainer" parent="margin/VBoxContainer"]
+[node name="TagsTitleBar" type="PanelContainer" parent="margin/VBoxContainer"]
 margin_top = 44.0
 margin_right = 212.0
 margin_bottom = 68.0
@@ -94,7 +94,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="tags_title" type="ToolButton" parent="margin/VBoxContainer/tags_title"]
+[node name="TagsTitle" type="ToolButton" parent="margin/VBoxContainer/TagsTitleBar"]
 margin_left = 1.0
 margin_top = 1.0
 margin_right = 211.0
@@ -104,12 +104,12 @@ toggle_mode = true
 text = "Animation tags"
 align = 0
 
-[node name="tags" type="VBoxContainer" parent="margin/VBoxContainer"]
+[node name="Tags" type="VBoxContainer" parent="margin/VBoxContainer"]
 margin_top = 72.0
 margin_right = 212.0
 margin_bottom = 72.0
 
-[node name="options_title" type="PanelContainer" parent="margin/VBoxContainer"]
+[node name="OptionsTitleBar" type="PanelContainer" parent="margin/VBoxContainer"]
 margin_top = 76.0
 margin_right = 212.0
 margin_bottom = 100.0
@@ -118,7 +118,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="options_title" type="ToolButton" parent="margin/VBoxContainer/options_title"]
+[node name="OptionsTitle" type="ToolButton" parent="margin/VBoxContainer/OptionsTitleBar"]
 margin_left = 1.0
 margin_top = 1.0
 margin_right = 211.0
@@ -128,17 +128,17 @@ toggle_mode = true
 text = "Options"
 align = 0
 
-[node name="options" type="VBoxContainer" parent="margin/VBoxContainer"]
+[node name="Options" type="VBoxContainer" parent="margin/VBoxContainer"]
 margin_top = 104.0
 margin_right = 212.0
 margin_bottom = 240.0
 
-[node name="out_folder" type="HBoxContainer" parent="margin/VBoxContainer/options"]
+[node name="OutFolder" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
 margin_right = 212.0
 margin_bottom = 20.0
 hint_tooltip = "Location where the spritesheet file should be saved."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/options/out_folder"]
+[node name="Label" type="Label" parent="margin/VBoxContainer/Options/OutFolder"]
 margin_top = 3.0
 margin_right = 104.0
 margin_bottom = 17.0
@@ -146,7 +146,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Output folder"
 
-[node name="button" type="Button" parent="margin/VBoxContainer/options/out_folder"]
+[node name="OutFolderButton" type="Button" parent="margin/VBoxContainer/Options/OutFolder"]
 margin_left = 108.0
 margin_right = 212.0
 margin_bottom = 20.0
@@ -155,13 +155,13 @@ size_flags_stretch_ratio = 2.0
 text = "[empty]"
 clip_text = true
 
-[node name="out_filename" type="HBoxContainer" parent="margin/VBoxContainer/options"]
+[node name="OutFile" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
 margin_top = 24.0
 margin_right = 212.0
 margin_bottom = 48.0
 hint_tooltip = "Base filename for spritesheet. In case the layer option is used, this works as a prefix to the layer name."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/options/out_filename"]
+[node name="Label" type="Label" parent="margin/VBoxContainer/Options/OutFile"]
 margin_top = 5.0
 margin_right = 109.0
 margin_bottom = 19.0
@@ -169,20 +169,20 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Output file name"
 
-[node name="LineEdit" type="LineEdit" parent="margin/VBoxContainer/options/out_filename"]
+[node name="OutFileName" type="LineEdit" parent="margin/VBoxContainer/Options/OutFile"]
 margin_left = 113.0
 margin_right = 212.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="visible_layers" type="HBoxContainer" parent="margin/VBoxContainer/options"]
+[node name="VisibleLayers" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
 margin_top = 52.0
 margin_right = 212.0
 margin_bottom = 92.0
 hint_tooltip = "If active, layers not visible in the source file won't be included in the final image."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/options/visible_layers"]
+[node name="Label" type="Label" parent="margin/VBoxContainer/Options/VisibleLayers"]
 margin_top = 13.0
 margin_right = 118.0
 margin_bottom = 27.0
@@ -190,20 +190,20 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Only visible layers"
 
-[node name="CheckButton" type="CheckButton" parent="margin/VBoxContainer/options/visible_layers"]
+[node name="VisibleLayersCheckButton" type="CheckButton" parent="margin/VBoxContainer/Options/VisibleLayers"]
 margin_left = 122.0
 margin_right = 212.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="wipe_old_animations" type="HBoxContainer" parent="margin/VBoxContainer/options"]
+[node name="WipeOldAnimations" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
 margin_top = 96.0
 margin_right = 212.0
 margin_bottom = 136.0
 hint_tooltip = "If active, layers not visible in the source file won't be included in the final image."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/options/wipe_old_animations"]
+[node name="Label" type="Label" parent="margin/VBoxContainer/Options/WipeOldAnimations"]
 margin_top = 13.0
 margin_right = 132.0
 margin_bottom = 27.0
@@ -212,33 +212,33 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Wipe old animations"
 
-[node name="CheckButton" type="CheckButton" parent="margin/VBoxContainer/options/wipe_old_animations"]
+[node name="WipeOldAnimationsCheckButton" type="CheckButton" parent="margin/VBoxContainer/Options/WipeOldAnimations"]
 margin_left = 136.0
 margin_right = 212.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="import" type="Button" parent="margin/VBoxContainer"]
+[node name="Import" type="Button" parent="margin/VBoxContainer"]
 margin_top = 244.0
 margin_right = 212.0
 margin_bottom = 264.0
 text = "Import"
 
-[node name="reset" type="Button" parent="margin/VBoxContainer"]
+[node name="Reset" type="Button" parent="margin/VBoxContainer"]
 margin_top = 268.0
 margin_right = 212.0
 margin_bottom = 288.0
 text = "Reset Preferences"
 flat = true
 
-[connection signal="pressed" from="margin/VBoxContainer/source/button" to="." method="_on_source_pressed"]
-[connection signal="pressed" from="margin/VBoxContainer/source/rescan" to="." method="_on_rescan_pressed"]
-[connection signal="toggled" from="margin/VBoxContainer/tags_title/tags_title" to="." method="_on_options_title_toggled"]
-[connection signal="toggled" from="margin/VBoxContainer/options_title/options_title" to="." method="_on_options_title_toggled"]
-[connection signal="pressed" from="margin/VBoxContainer/options/out_folder/button" to="." method="_on_out_folder_pressed"]
-[connection signal="focus_exited" from="margin/VBoxContainer/options/out_filename/LineEdit" to="." method="_save_config"]
-[connection signal="pressed" from="margin/VBoxContainer/options/visible_layers/CheckButton" to="." method="_save_config"]
-[connection signal="pressed" from="margin/VBoxContainer/options/wipe_old_animations/CheckButton" to="." method="_save_config"]
-[connection signal="pressed" from="margin/VBoxContainer/import" to="." method="_on_import_pressed"]
-[connection signal="pressed" from="margin/VBoxContainer/reset" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="margin/VBoxContainer/Source/SourceButton" to="." method="_on_source_pressed"]
+[connection signal="pressed" from="margin/VBoxContainer/Source/RescanButton" to="." method="_on_rescan_pressed"]
+[connection signal="toggled" from="margin/VBoxContainer/TagsTitleBar/TagsTitle" to="." method="_on_options_title_toggled"]
+[connection signal="toggled" from="margin/VBoxContainer/OptionsTitleBar/OptionsTitle" to="." method="_on_options_title_toggled"]
+[connection signal="pressed" from="margin/VBoxContainer/Options/OutFolder/OutFolderButton" to="." method="_on_out_folder_pressed"]
+[connection signal="focus_exited" from="margin/VBoxContainer/Options/OutFile/OutFileName" to="." method="_save_config"]
+[connection signal="pressed" from="margin/VBoxContainer/Options/VisibleLayers/VisibleLayersCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="margin/VBoxContainer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="margin/VBoxContainer/Import" to="." method="_on_import_pressed"]
+[connection signal="pressed" from="margin/VBoxContainer/Reset" to="." method="_on_reset_pressed"]

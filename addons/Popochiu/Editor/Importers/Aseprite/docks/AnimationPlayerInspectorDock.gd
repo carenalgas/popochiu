@@ -28,17 +28,17 @@ var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
 
 # Source info fields
-onready var _source_field = $margin/VBoxContainer/source/button
-onready var _rescan_source_button = $margin/VBoxContainer/source/rescan
-onready var _tags_ui_container = $margin/VBoxContainer/tags
+onready var _source_field = $margin/VBoxContainer/Source/SourceButton
+onready var _rescan_source_button = $margin/VBoxContainer/Source/RescanButton
+onready var _tags_ui_container = $margin/VBoxContainer/Tags
 
 # Importer options fields
-onready var _options_title = $margin/VBoxContainer/options_title/options_title
-onready var _options_container = $margin/VBoxContainer/options
-onready var _out_folder_field = $margin/VBoxContainer/options/out_folder/button
-onready var _out_filename_field = $margin/VBoxContainer/options/out_filename/LineEdit
-onready var _visible_layers_field =  $margin/VBoxContainer/options/visible_layers/CheckButton
-onready var _wipe_old_animations_field =  $margin/VBoxContainer/options/wipe_old_animations/CheckButton
+onready var _options_title = $margin/VBoxContainer/OptionsTitleBar/OptionsTitle
+onready var _options_container = $margin/VBoxContainer/Options
+onready var _out_folder_field = $margin/VBoxContainer/Options/OutFolder/OutFolderButton
+onready var _out_filename_field = $margin/VBoxContainer/Options/OutFile/OutFileName
+onready var _visible_layers_field = $margin/VBoxContainer/Options/VisibleLayers/VisibleLayersCheckButton
+onready var _wipe_old_animations_field = $margin/VBoxContainer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton
 
 
 
