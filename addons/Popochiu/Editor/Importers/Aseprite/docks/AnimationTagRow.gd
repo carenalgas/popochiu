@@ -3,22 +3,28 @@ extends HBoxContainer
 
 signal tag_state_changed
 
-const result_code = preload("res://addons/Popochiu/Editor/Config/result_codes.gd")
-var _config
+const RESULT_CODE = preload("res://addons/Popochiu/Editor/Config/ResultCodes.gd")
 
+var _config
 var _anim_tag_state: Dictionary = {}
 
 onready var tag_name_label = $HBoxContainer/TagName
 onready var import_toggle = $Panel/HBoxContainer/Import
 onready var loops_toggle = $Panel/HBoxContainer/Loops
 
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	loops_toggle.icon = get_icon('Loop', 'EditorIcons')
 	import_toggle.icon = get_icon('Load', 'EditorIcons')
 
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func init(config, tag_cfg: Dictionary):
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == "":
-		printerr(result_code.get_error_message(result_code.ERR_UNNAMED_TAG_DETECTED))
+		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_UNNAMED_TAG_DETECTED))
 		return false
 
 	_config = config
@@ -27,6 +33,14 @@ func init(config, tag_cfg: Dictionary):
 	_setup_scene()
 
 
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_cfg() -> Dictionary:
+	return _anim_tag_state
+
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _setup_scene():
 	import_toggle.pressed = _anim_tag_state.import
 	loops_toggle.pressed = _anim_tag_state.loops
@@ -40,9 +54,6 @@ func _load_default_tag_state() -> Dictionary:
 		"loops": _config.is_default_animation_loop_enabled(),
 	}
 
-
-func get_cfg() -> Dictionary:
-	return _anim_tag_state
 
 
 func _on_import_toggled(button_pressed):

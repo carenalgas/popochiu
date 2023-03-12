@@ -1,8 +1,8 @@
 tool
 extends EditorInspectorPlugin ## TODO: create a base class with pointer variables
 
-const INSPECTOR_DOCK = preload("../Importers/Aseprite/docks/animation_player_inspector_dock.tscn")
-const CONFIG_SCRIPT = preload("res://addons/Popochiu/Editor/Config/config.gd")
+const INSPECTOR_DOCK = preload("res://addons/Popochiu/Editor/Importers/Aseprite/docks/AnimationPlayerInspectorDock.tscn")
+const CONFIG_SCRIPT = preload("res://addons/Popochiu/Editor/Config/Config.gd")
 
 var ei: EditorInterface
 var fs: EditorFileSystem
@@ -10,6 +10,7 @@ var config: Reference
 var _target_node: Node
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func can_handle(object):
 	return object is PopochiuCharacter # || object is PopochiuInventoryItem || object is PopochiuProp
 

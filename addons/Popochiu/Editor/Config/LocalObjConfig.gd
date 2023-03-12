@@ -1,10 +1,14 @@
 tool
 extends Reference
 
+
 const LOCAL_OBJ_CONFIG_META_NAME = "_popochiu_aseprite_config_"
 const LOCAL_OBJ_CONFIG_MARKER = "popochiu_aseprite_config"
 const SEPARATOR = "|="
 
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 static func encode(object: Dictionary):
 	var text = "%s\n" % LOCAL_OBJ_CONFIG_MARKER
 
@@ -42,6 +46,17 @@ static func decode(string: String):
 	return config
 
 
+static func load_config(node:Node):
+	if node.has_meta(LOCAL_OBJ_CONFIG_META_NAME):
+		return node.get_meta(LOCAL_OBJ_CONFIG_META_NAME)
+
+
+static func save_config(node:Node, cfg:Dictionary):
+	node.set_meta(LOCAL_OBJ_CONFIG_META_NAME, cfg)
+
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 static func _decode_base64(string: String):
 	if string != "":
 		return Marshalls.base64_to_utf8(string)
@@ -50,11 +65,3 @@ static func _decode_base64(string: String):
 
 static func _is_valid_config(cfg) -> bool:
 	return cfg != null and cfg.begins_with(LOCAL_OBJ_CONFIG_MARKER)
-
-static func load_config(node:Node):
-	if node.has_meta(LOCAL_OBJ_CONFIG_META_NAME):
-		return node.get_meta(LOCAL_OBJ_CONFIG_META_NAME)
-	
-static func save_config(node:Node, cfg:Dictionary):
-	node.set_meta(LOCAL_OBJ_CONFIG_META_NAME, cfg)
-

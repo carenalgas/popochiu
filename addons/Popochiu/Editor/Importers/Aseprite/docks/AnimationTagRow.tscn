@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://addons/Popochiu/Editor/Importers/Aseprite/docks/animation_tag_row.gd" type="Script" id=1]
+[ext_resource path="res://addons/Popochiu/Editor/Importers/Aseprite/docks/AnimationTagRow.gd" type="Script" id=1]
 
 [sub_resource type="Image" id=6]
 data = {

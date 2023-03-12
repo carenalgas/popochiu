@@ -1,6 +1,7 @@
 tool
 extends Reference
 
+
 const SUCCESS = 0
 const ERR_ASEPRITE_CMD_NOT_FULL_PATH = 1
 const ERR_ASEPRITE_CMD_NOT_FOUND = 2
@@ -15,10 +16,12 @@ const ERR_NO_SPRITE_FOUND = 10
 const ERR_UNNAMED_TAG_DETECTED = 11
 const ERR_TAGS_OPTIONS_ARRAY_EMPTY = 12
 
-## TODO: these messages are a bit dull, having params would be better.
-## Maybe add a param argument
 
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 static func get_error_message(code: int):
+	## TODO: these messages are a bit dull, having params would be better.
+	## Maybe add a param argument
 	match code:
 		ERR_ASEPRITE_CMD_NOT_FULL_PATH:
 			return "Aseprite command not found at given path. Please check \"Project Settings > Popochiu > Import > Command Path\" to hold the FULL path to a valid Aseprite executable."

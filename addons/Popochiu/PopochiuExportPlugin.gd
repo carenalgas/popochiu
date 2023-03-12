@@ -1,6 +1,6 @@
 extends EditorExportPlugin
 
-const local_obj_config = preload("res://addons/Popochiu/Editor/Config/local_obj_config.gd")
+const LOCAL_OBJ_CONFIG = preload("res://addons/Popochiu/Editor/Config/LocalObjConfig.gd")
 
 
 func _export_begin(features: PoolStringArray, is_debug: bool, path: String, flags: int) -> void:
@@ -47,8 +47,8 @@ func _export_file(path: String, type: String, features: PoolStringArray) -> void
 	root_node.free()
 	
 func _remove_meta(node:Node, path: String) -> bool:
-	if node.has_meta(local_obj_config.LOCAL_OBJ_CONFIG_META_NAME):
-		node.remove_meta(local_obj_config.LOCAL_OBJ_CONFIG_META_NAME)
+	if node.has_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME):
+		node.remove_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME)
 		print("Popochiu Aseprite Importer: Removed metadata from scene %s" % path)
 		return true
 		

@@ -3,15 +3,12 @@ extends Reference
 
 var _config
 
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func init(config):
 	_config = config
 
-#
-# Output:
-# {
-#   "data_file": file path to the json file
-#   "sprite_sheet": file path to the raw image file
-# }
+
 func export_file(file_name: String, output_folder: String, options: Dictionary) -> Dictionary:
 	var exception_pattern = options.get('exception_pattern', "")
 	var only_visible_layers = options.get('only_visible_layers', false)
@@ -82,6 +79,69 @@ func export_layer(file_name: String, layer_name: String, output_folder: String, 
 	}
 
 
+func list_layers(file_name: String, only_visible = false) -> Array:
+	var output = []
+	var arguments = ["-b", "--list-layers", file_name]
+
+	if not only_visible:
+		arguments.push_front("--all-layers")
+
+	var exit_code = _execute(arguments, output)
+
+	if exit_code != 0:
+		printerr('aseprite: failed listing layers')
+		printerr(output)
+		return []
+
+	return _sanitize_list_output(output)
+
+
+func list_tags(file_name: String) -> Array:
+	var output = []
+	var arguments = ["-b", "--list-tags", file_name]
+
+	var exit_code = _execute(arguments, output)
+
+	if exit_code != 0:
+		printerr('aseprite: failed listing tags')
+		printerr(output)
+		return []
+
+	return _sanitize_list_output(output)
+
+
+func is_valid_spritesheet(content):
+	return content.has("frames") and content.has("meta") and content.meta.has('image')
+
+
+func get_content_frames(content):
+	return content.frames if typeof(content.frames) == TYPE_ARRAY  else content.frames.values()
+
+
+func check_command_path():
+	# On Linux, MacOS or other *nix platforms, nothing to do
+	if not OS.get_name() in ["Windows", "UWP"]:
+		return true
+	
+	# On Windows, OS.Execute() calls trigger an uncatchable
+	# internal error if the invoked executable is not found.
+	# Since the error is unclear, we have to check that the aseprite
+	# command is given as a full path and return an error if it's not.
+	var regex = RegEx.new()
+	regex.compile("^[A-Z|a-z]:[\\\\|\\/].+\\.exe$")
+	return \
+		regex.search(_aseprite_command()) \
+		and \
+		File.new().file_exists(_aseprite_command())
+
+
+func test_command():
+	var exit_code = OS.execute(_aseprite_command(), ['--version'], true)
+	return exit_code == 0
+
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _add_ignore_layer_arguments(file_name: String, arguments: Array, exception_pattern: String):
 	var layers = _get_exception_layers(file_name, exception_pattern)
 	if not layers.empty():
@@ -112,38 +172,6 @@ func _get_exception_layers(file_name: String, exception_pattern: String) -> Arra
 			exception_layers.push_back(layer)
 
 	return exception_layers
-
-
-func list_layers(file_name: String, only_visible = false) -> Array:
-	var output = []
-	var arguments = ["-b", "--list-layers", file_name]
-
-	if not only_visible:
-		arguments.push_front("--all-layers")
-
-	var exit_code = _execute(arguments, output)
-
-	if exit_code != 0:
-		printerr('aseprite: failed listing layers')
-		printerr(output)
-		return []
-
-	return _sanitize_list_output(output)
-
-
-
-func list_tags(file_name: String) -> Array:
-	var output = []
-	var arguments = ["-b", "--list-tags", file_name]
-
-	var exit_code = _execute(arguments, output)
-
-	if exit_code != 0:
-		printerr('aseprite: failed listing tags')
-		printerr(output)
-		return []
-
-	return _sanitize_list_output(output)
 
 
 func _sanitize_list_output(output) -> Array:
@@ -192,33 +220,3 @@ func _compile_regex(pattern):
 		return rgx
 
 	printerr('exception regex error')
-
-
-func check_command_path():
-	# On Linux, MacOS or other *nix platforms, nothing to do
-	if not OS.get_name() in ["Windows", "UWP"]:
-		return true
-	
-	# On Windows, OS.Execute() calls trigger an uncatchable
-	# internal error if the invoked executable is not found.
-	# Since the error is unclear, we have to check that the aseprite
-	# command is given as a full path and return an error if it's not.
-	var regex = RegEx.new()
-	regex.compile("^[A-Z|a-z]:[\\\\|\\/].+\\.exe$")
-	return \
-		regex.search(_aseprite_command()) \
-		and \
-		File.new().file_exists(_aseprite_command())
-
-
-func test_command():
-	var exit_code = OS.execute(_aseprite_command(), ['--version'], true)
-	return exit_code == 0
-
-
-func is_valid_spritesheet(content):
-	return content.has("frames") and content.has("meta") and content.meta.has('image')
-
-
-func get_content_frames(content):
-	return content.frames if typeof(content.frames) == TYPE_ARRAY  else content.frames.values()

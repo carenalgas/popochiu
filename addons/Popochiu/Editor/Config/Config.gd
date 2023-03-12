@@ -12,54 +12,15 @@ const _DEFAULT_LOOP_ENABLED = 'popochiu/import/aseprite/loop_animation_by_defaul
 const _DEFAULT_WIPE_OLD_ANIMS_ENABLED = 'popochiu/import/aseprite/wipe_old_animations'
 const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
 
+
 # INTERFACE SETTINGS
 var _plugin_icons: Dictionary
 var ei: EditorInterface
 
 
-#######################################################
-# PROJECT SETTINGS
-######################################################
-func default_command() -> String:
-	return 'aseprite'
-
-
-func get_command() -> String:
-	var command = ProjectSettings.get_setting(_ASEPRITE_COMMAND_KEY) if ProjectSettings.has_setting(_ASEPRITE_COMMAND_KEY) else ""
-	return command if command != "" else default_command()
-
-func should_remove_source_files() -> bool:
-	return _get_project_setting(_REMOVE_SOURCE_FILES_KEY, true)
-
-func is_default_animation_import_enabled() -> bool:
-	return _get_project_setting(_DEFAULT_IMPORT_ENABLED, true)
-
-func is_default_animation_loop_enabled() -> bool:
-	return _get_project_setting(_DEFAULT_LOOP_ENABLED, true)
-
-func is_default_wipe_old_anims_enabled() -> bool:
-	return _get_project_setting(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true)
-
-#######################################################
-# INTERFACE SETTINGS
-######################################################
-
-func _set_icons() -> void:
-	_plugin_icons = {
-		"collapsed": ei.get_base_control().get_icon("GuiTreeArrowRight", "EditorIcons"),
-		"expanded": ei.get_base_control().get_icon("GuiTreeArrowDown", "EditorIcons"),
-	}
-
-
-func get_icon(icon_name: String) -> Texture:
-	return _plugin_icons[icon_name]
-
-
-#######################################################
-# INITIALIZATION
-######################################################
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func initialize_project_settings():
-	_initialize_project_cfg(_ASEPRITE_COMMAND_KEY, default_command(), TYPE_STRING)
+	_initialize_project_cfg(_ASEPRITE_COMMAND_KEY, _default_command(), TYPE_STRING)
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true, TYPE_BOOL)
@@ -70,6 +31,7 @@ func initialize_project_settings():
 	ProjectSettings.save()
 
 
+# TODO: this is never used, go and check if we need it
 func clear_project_settings():
 	var _all_settings = [
 		_DEFAULT_IMPORT_ENABLED,
@@ -80,6 +42,46 @@ func clear_project_settings():
 	for key in _all_settings:
 		ProjectSettings.clear(key)
 	ProjectSettings.save()
+
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_command() -> String:
+	var command = ProjectSettings.get_setting(_ASEPRITE_COMMAND_KEY) if ProjectSettings.has_setting(_ASEPRITE_COMMAND_KEY) else ""
+	return command if command != "" else _default_command()
+
+
+func get_icon(icon_name: String) -> Texture:
+	return _plugin_icons[icon_name]
+
+
+func should_remove_source_files() -> bool:
+	return _get_project_setting(_REMOVE_SOURCE_FILES_KEY, true)
+
+
+func is_default_animation_import_enabled() -> bool:
+	return _get_project_setting(_DEFAULT_IMPORT_ENABLED, true)
+
+
+func is_default_animation_loop_enabled() -> bool:
+	return _get_project_setting(_DEFAULT_LOOP_ENABLED, true)
+
+
+func is_default_wipe_old_anims_enabled() -> bool:
+	return _get_project_setting(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true)
+
+
+	
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func _default_command() -> String:
+	return 'aseprite'
+
+
+func _set_icons() -> void:
+	_plugin_icons = {
+		"collapsed": ei.get_base_control().get_icon("GuiTreeArrowRight", "EditorIcons"),
+		"expanded": ei.get_base_control().get_icon("GuiTreeArrowDown", "EditorIcons"),
+	}
 
 
 func _initialize_project_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE):

@@ -1,28 +1,29 @@
 tool
 extends PanelContainer
 
-const result_code = preload("res://addons/Popochiu/Editor/Config/result_codes.gd")
+const RESULT_CODE = preload("res://addons/Popochiu/Editor/Config/ResultCodes.gd")
+const LOCAL_OBJ_CONFIG = preload("res://addons/Popochiu/Editor/Config/LocalObjConfig.gd")
+# TODO: import a class without breaking coding standards... how?
+const AnimationTagRow = preload("res://addons/Popochiu/Editor/Importers/Aseprite/docks/AnimationTagRow.gd")
 
-const AnimationCreator = preload("../animation_creator.gd")
-const AnimationTagRow = preload("./animation_tag_row.gd")
-const local_obj_config = preload("res://addons/Popochiu/Editor/Config/local_obj_config.gd")
-
-var animation_creator: AnimationCreator
-var _animation_tag_row_scene: PackedScene = preload('./animation_tag_row.tscn')
 
 var scene: Node
 var target_node: Node
-
 var config
 var file_system: EditorFileSystem
 
+
+# External logic
+var _animation_creator = preload("res://addons/Popochiu/Editor/Importers/Aseprite/AnimationCreator.gd").new()
+var _animation_tag_row_scene: PackedScene = preload('res://addons/Popochiu/Editor/Importers/Aseprite/docks/AnimationTagRow.tscn')
+
+# Importer parameters variables
 var _source: String = ""
 var _tags_cache: Array = []
 var _animation_player_path: String
 var _file_dialog_aseprite: FileDialog
 var _output_folder_dialog: FileDialog
 var _importing := false
-
 var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
 
@@ -30,6 +31,7 @@ var _out_folder_default := "[Same as scene]"
 onready var _source_field = $margin/VBoxContainer/source/button
 onready var _rescan_source_button = $margin/VBoxContainer/source/rescan
 onready var _tags_ui_container = $margin/VBoxContainer/tags
+
 # Importer options fields
 onready var _options_title = $margin/VBoxContainer/options_title/options_title
 onready var _options_container = $margin/VBoxContainer/options
@@ -39,23 +41,26 @@ onready var _visible_layers_field =  $margin/VBoxContainer/options/visible_layer
 onready var _wipe_old_animations_field =  $margin/VBoxContainer/options/wipe_old_animations/CheckButton
 
 
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	if not target_node.has_node("AnimationPlayer"):
-		printerr(result_code.get_error_message(result_code.ERR_NO_ANIMATION_PLAYER_FOUND))
+		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND))
 	_animation_player_path = target_node.get_node("AnimationPlayer").get_path()
 
 	# Instantiate animation creator
-	animation_creator = AnimationCreator.new()
-	animation_creator.init(config, file_system)
+	_animation_creator.init(config, file_system)
 
 	# Load inspector dock configuration from node
-	var cfg = local_obj_config.load_config(target_node)
+	var cfg = LOCAL_OBJ_CONFIG.load_config(target_node)
 	if cfg == null:
 		_load_default_config()
 	else:
 		_load_config(cfg)
-	
 
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _load_config(cfg):
 	if cfg.has("source"):
 		_set_source(cfg.source)
@@ -83,7 +88,7 @@ func _save_config():
 		"wipe_old_anims": _wipe_old_animations_field.pressed,
 	}
 
-	local_obj_config.save_config(target_node, cfg)
+	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
 
 
 func _load_default_config():
@@ -158,11 +163,11 @@ func _on_import_pressed():
 
 	_save_config()
 
-	var result = animation_creator.create_animations(target_node, root.get_node(_animation_player_path), options)
+	var result = _animation_creator.create_animations(target_node, root.get_node(_animation_player_path), options)
 	_importing = false
 	
-	if typeof(result) == TYPE_INT and result != result_code.SUCCESS:
-		print(result_code.get_error_message(result))
+	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
+		print(RESULT_CODE.get_error_message(result))
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
 		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
@@ -176,8 +181,8 @@ func _on_reset_pressed():
 
 
 func _reset_prefs_metadata():
-	if target_node.has_meta(local_obj_config.LOCAL_OBJ_CONFIG_META_NAME):
-		target_node.remove_meta(local_obj_config.LOCAL_OBJ_CONFIG_META_NAME)
+	if target_node.has_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME):
+		target_node.remove_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME)
 		_load_default_config()
 		property_list_changed_notify()
 
@@ -253,9 +258,9 @@ func _get_tags_from_ui() -> Array:
 
 
 func _get_tags_from_source() -> Array:
-	var tags_found = animation_creator.list_tags(ProjectSettings.globalize_path(_source))
+	var tags_found = _animation_creator.list_tags(ProjectSettings.globalize_path(_source))
 	if typeof(tags_found) == TYPE_INT:
-		print(result_code.get_error_message(tags_found))
+		print(RESULT_CODE.get_error_message(tags_found))
 		return []
 	var tags_list = []
 	for t in tags_found:

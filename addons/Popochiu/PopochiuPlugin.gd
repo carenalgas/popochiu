@@ -25,8 +25,8 @@ var _types_helper: Resource = null
 var _tool_btn_stylebox :=\
 _editor_interface.get_base_control().get_stylebox("normal", "ToolButton")
 
-## TODO: refs #8: remove this as soon as we migrate the configuration to ProjectSettings
-var config = preload("res://addons/Popochiu/Editor/Config/config.gd").new()
+## TODO: refs #26: use this as base to migrate the configuration to ProjectSettings
+var config = preload("res://addons/Popochiu/Editor/Config/Config.gd").new()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░

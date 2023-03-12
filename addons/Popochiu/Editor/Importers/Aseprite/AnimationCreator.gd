@@ -1,18 +1,19 @@
 # This logic has been taken almost as-is from Vinicius Gerevini's
 # Aseprite Wizard plugin. Credits goes to him for the real magic.
 # See: https://godotengine.org/asset-library/asset/713
+tool
 extends Reference
 
-var result_code = preload("res://addons/Popochiu/Editor/Config/result_codes.gd")
-var _aseprite = preload("./aseprite_controller.gd").new()
+
+const RESULT_CODE = preload("res://addons/Popochiu/Editor/Config/ResultCodes.gd")
+
+var _aseprite = preload("./AsepriteController.gd").new()
 
 var _config
 var _file_system
-
 var _tags_options_lookup = {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-
 func init(config, editor_file_system: EditorFileSystem = null):
 	_config = config
 	_file_system = editor_file_system
@@ -21,25 +22,25 @@ func init(config, editor_file_system: EditorFileSystem = null):
 
 func create_animations(target_node: Node, player: AnimationPlayer, options: Dictionary):
 	if not _aseprite.check_command_path():
-		return result_code.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
 
 	if not _aseprite.test_command():
-		return result_code.ERR_ASEPRITE_CMD_NOT_FOUND
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
 
 	var dir = Directory.new()
 	if not dir.file_exists(options.source):
-		return result_code.ERR_SOURCE_FILE_NOT_FOUND
+		return RESULT_CODE.ERR_SOURCE_FILE_NOT_FOUND
 
 	if not dir.dir_exists(options.output_folder):
-		return result_code.ERR_OUTPUT_FOLDER_NOT_FOUND
+		return RESULT_CODE.ERR_OUTPUT_FOLDER_NOT_FOUND
 
 	var target_sprite = _find_sprite_in_target(target_node)
 
 	if target_sprite == null:
-		return result_code.ERR_NO_SPRITE_FOUND
+		return RESULT_CODE.ERR_NO_SPRITE_FOUND
 	
 	if typeof(options.get("tags")) != TYPE_ARRAY:
-		return result_code.ERR_TAGS_OPTIONS_ARRAY_EMPTY
+		return RESULT_CODE.ERR_TAGS_OPTIONS_ARRAY_EMPTY
 		
 	_load_tags_options_lookup(options.get("tags"))
 
@@ -50,25 +51,26 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 	if result is GDScriptFunctionState:
 		result = yield(result, "completed")
 
-	if result != result_code.SUCCESS:
-		printerr(result_code.get_error_message(result))
+	if result != RESULT_CODE.SUCCESS:
+		printerr(RESULT_CODE.get_error_message(result))
 
 
 ## TODO: Keep this as reference to populate a checkable list of layers
-func list_layers(file: String, only_visibles = false) -> Array:
+func list_layers(file: String, only_visibles = false):
 	if not _aseprite.check_command_path():
-		return result_code.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
 	if not _aseprite.test_command():
-		return result_code.ERR_ASEPRITE_CMD_NOT_FOUND
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
 	return _aseprite.list_layers(file, only_visibles)
 
 
-func list_tags(file: String) -> Array:
+func list_tags(file: String):
 	if not _aseprite.check_command_path():
-		return result_code.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
 	if not _aseprite.test_command():
-		return result_code.ERR_ASEPRITE_CMD_NOT_FOUND
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
 	return _aseprite.list_tags(file)
+
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -90,7 +92,7 @@ func _create_animations_from_file(target_sprite: Node, player: AnimationPlayer, 
 	output = _aseprite.export_file(options.source, options.output_folder, options)
 
 	if output.empty():
-		return result_code.ERR_ASEPRITE_EXPORT_FAILED
+		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
 
 	yield(_scan_filesystem(), "completed")
 
@@ -121,14 +123,14 @@ func _import(target_sprite: Node, player: AnimationPlayer, data: Dictionary, opt
 	var content = parse_json(file.get_as_text())
 	
 	if not _aseprite.is_valid_spritesheet(content):
-		return result_code.ERR_INVALID_ASEPRITE_SPRITESHEET
+		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
 
 	_setup_texture(target_sprite, sprite_sheet, content)
 	var result = _configure_animations(target_sprite, player, content)
-	if result != result_code.SUCCESS:
+	if result != RESULT_CODE.SUCCESS:
 		return result
 
-	return result_code.SUCCESS
+	return RESULT_CODE.SUCCESS
 
 
 func _load_texture(sprite_sheet: String) -> Texture:
@@ -140,14 +142,14 @@ func _load_texture(sprite_sheet: String) -> Texture:
 func _configure_animations(target_sprite: Node, player: AnimationPlayer, content: Dictionary):
 	var frames = _aseprite.get_content_frames(content)
 	if content.meta.has("frameTags") and content.meta.frameTags.size() > 0:
-		var result = result_code.SUCCESS
+		var result = RESULT_CODE.SUCCESS
 		for tag in content.meta.frameTags:
 			if not _tags_options_lookup.get(tag.name).get("import"):
 				continue
 			var selected_frames = frames.slice(tag.from, tag.to)
 			result = _add_animation_frames(target_sprite, player, tag.name, selected_frames, tag.direction)
-			result = result_code.SUCCESS
-			if result != result_code.SUCCESS:
+			result = RESULT_CODE.SUCCESS
+			if result != RESULT_CODE.SUCCESS:
 				break
 		return result
 	else:
@@ -195,7 +197,7 @@ func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_na
 	animation.length = animation_length
 	animation.loop = is_loopable
 
-	return result_code.SUCCESS
+	return RESULT_CODE.SUCCESS
 
 
 func _create_track(target_sprite: Node, animation: Animation, track: String):
