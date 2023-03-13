@@ -111,8 +111,9 @@ func _create() -> void:
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_room.set_script(load(_room_path + '.gd'))
-	new_room.script_name = _pascal_name
+	
 	new_room.name = 'Room' + _pascal_name
+	new_room.script_name = _pascal_name
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Save the room scene (.tscn)

@@ -21,7 +21,8 @@ preload('res://addons/popochiu/editor/main_dock/popochiu_dock.gd')
 
 var _new_item_name := ''
 var _new_item_path := ''
-var _item_path_template: String
+var _item_path_template := ''
+var _pascal_name := ''
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -31,14 +32,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: Panel) -> void:
-	super(node)
-	
-	# res://popochiu/inventory_items/
-	_item_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/item_%s'
-
-
-func create() -> void:
+func _create() -> void:
 	if _new_item_name.is_empty():
 		_error_feedback.show()
 		return
@@ -62,9 +56,9 @@ func create() -> void:
 	
 	var item_resource: PopochiuInventoryItemData =\
 	load(_new_item_path + '_state.gd').new()
-	item_resource.script_name = _new_item_name
+	item_resource.script_name = _pascal_name
 	item_resource.scene = _new_item_path + '.tscn'
-	item_resource.resource_name = _new_item_name
+	item_resource.resource_name = _pascal_name
 	
 	if ResourceSaver.save(item_resource, _new_item_path + '.tres') != OK:
 		push_error(\
@@ -86,13 +80,13 @@ func create() -> void:
 		return
 	
 	new_code = new_code.replace(
-		'InventoryItemStateTemplate',
-		'Inventory%sState' % _new_item_name
+		'inventory_item_state_template',
+		'item_%s_state' % _new_item_name
 	)
 	
 	new_code = new_code.replace(
 		'Data = null',
-		"Data = preload('item_%s.tres')" % _new_item_name
+		"Data = load('%s.tres')" % _new_item_path
 	)
 	
 	item_script = load(_new_item_path + '.gd')
@@ -110,10 +104,11 @@ func create() -> void:
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_item.set_script(load(_new_item_path + '.gd'))
-	new_item.script_name = _new_item_name
-	new_item.description = _new_item_name.capitalize()
-	new_item.cursor = Constants.CURSOR_TYPE.USE
+	
 	new_item.name = 'Item' + _new_item_name
+	new_item.script_name = _pascal_name
+	new_item.description = _pascal_name.capitalize()
+	new_item.cursor = Constants.CURSOR_TYPE.USE
 	new_item.size_flags_vertical = new_item.SIZE_SHRINK_CENTER
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -142,7 +137,9 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of inventory items in the dock
-	_main_dock.add_to_list(Constants.Types.INVENTORY_ITEM, _new_item_name)
+	(_main_dock as PopochiuDock).add_to_list(
+		Constants.Types.INVENTORY_ITEM, _pascal_name
+	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor
@@ -155,12 +152,21 @@ func create() -> void:
 	hide()
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func set_main_dock(node: Panel) -> void:
+	super(node)
+	
+	# res://popochiu/inventory_items/
+	_item_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/item_%s'
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_item_name = _name
+		_new_item_name = PopochiuUtils.pascal2snake(_name)
+		_pascal_name = _name
 		_new_item_path = _item_path_template %\
 		[_new_item_name, _new_item_name]
 

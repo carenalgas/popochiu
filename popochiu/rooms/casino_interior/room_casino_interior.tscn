@@ -21,9 +21,6 @@ script_name = "CasinoInterior"
 
 [node name="CharacterGoddiu *" parent="Characters" instance=ExtResource("2_pwg4o")]
 position = Vector2(164, 109)
-flips_when = []
-voices = false
-follow_player = 200.0
-walk_speed = true
+follow_player = true
+walk_speed = 1.0
 can_move = false
-ignore_walkable_areas = ""

@@ -21,7 +21,9 @@ func _on_room_entered() -> void:
 # is visible.
 func _on_room_transition_finished() -> void:
 	state.is_fine = true
-	C.Goddiu.say_now('I am in Godot 4 with new singletons')
+	await C.Goddiu.say_now('I am in Godot 4 with new singletons')
+	await I.ToyCar.add_now()
+	await C.Goddiu.say_now('Oooooh!!! A toy cart')
 
 
 # What happens before Popochiu unloads the room.

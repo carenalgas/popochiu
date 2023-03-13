@@ -102,9 +102,10 @@ func _create() -> void:
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_character.set_script(load(_new_character_path + '.gd'))
-	new_character.script_name = _pascal_name
+	
 	new_character.name = 'Character' + _pascal_name
-	new_character.description = _new_character_name
+	new_character.script_name = _pascal_name
+	new_character.description = _new_character_name.capitalize()
 	new_character.cursor = Constants.CURSOR_TYPE.TALK
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
