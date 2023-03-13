@@ -1,22 +1,14 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Importers/Aseprite/docks/AnimationPlayerInspectorDock.gd" type="Script" id=1]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
-[sub_resource type="StyleBoxFlat" id=2]
-content_margin_left = 2.0
-content_margin_right = 2.0
-content_margin_top = 1.0
-content_margin_bottom = 1.0
-bg_color = Color( 0.25098, 0.270588, 0.32549, 1 )
+[sub_resource type="StyleBoxFlat" id=5]
 
-[sub_resource type="StyleBoxFlat" id=3]
-content_margin_left = 1.0
-content_margin_right = 1.0
-content_margin_top = 1.0
-content_margin_bottom = 1.0
-bg_color = Color( 0.2, 0.219608, 0.278431, 1 )
+[sub_resource type="StyleBoxFlat" id=6]
+
+[sub_resource type="StyleBoxFlat" id=4]
 
 [node name="sprite_inspector_dock" type="PanelContainer"]
 margin_right = 14.0
@@ -29,37 +21,35 @@ __meta__ = {
 
 [node name="margin" type="MarginContainer" parent="."]
 margin_right = 212.0
-margin_bottom = 292.0
+margin_bottom = 286.0
 custom_constants/margin_top = 2
 custom_constants/margin_bottom = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="margin"]
 margin_top = 2.0
 margin_right = 212.0
-margin_bottom = 290.0
+margin_bottom = 284.0
 
 [node name="SectionTitle" type="PanelContainer" parent="margin/VBoxContainer"]
 margin_right = 212.0
-margin_bottom = 16.0
+margin_bottom = 14.0
 size_flags_horizontal = 3
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="Title" type="Label" parent="margin/VBoxContainer/SectionTitle"]
-margin_left = 2.0
-margin_top = 1.0
-margin_right = 210.0
-margin_bottom = 15.0
+margin_right = 212.0
+margin_bottom = 14.0
 size_flags_horizontal = 3
 text = "Aseprite"
 align = 1
 
 [node name="Source" type="HBoxContainer" parent="margin/VBoxContainer"]
-margin_top = 20.0
+margin_top = 18.0
 margin_right = 212.0
-margin_bottom = 40.0
+margin_bottom = 38.0
 hint_tooltip = "Location of the Aseprite (*.ase, *.aseprite)  source file."
 
 [node name="Label" type="Label" parent="margin/VBoxContainer/Source"]
@@ -86,52 +76,48 @@ margin_bottom = 20.0
 text = "Rescan"
 
 [node name="TagsTitleBar" type="PanelContainer" parent="margin/VBoxContainer"]
-margin_top = 44.0
+margin_top = 42.0
 margin_right = 212.0
-margin_bottom = 68.0
-custom_styles/panel = SubResource( 3 )
+margin_bottom = 64.0
+custom_styles/panel = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="TagsTitle" type="ToolButton" parent="margin/VBoxContainer/TagsTitleBar"]
-margin_left = 1.0
-margin_top = 1.0
-margin_right = 211.0
-margin_bottom = 23.0
+margin_right = 212.0
+margin_bottom = 22.0
 custom_colors/font_color_pressed = Color( 0.8, 0.807843, 0.827451, 1 )
 toggle_mode = true
 text = "Animation tags"
 align = 0
 
 [node name="Tags" type="VBoxContainer" parent="margin/VBoxContainer"]
-margin_top = 72.0
+margin_top = 68.0
 margin_right = 212.0
-margin_bottom = 72.0
+margin_bottom = 68.0
 
 [node name="OptionsTitleBar" type="PanelContainer" parent="margin/VBoxContainer"]
-margin_top = 76.0
+margin_top = 72.0
 margin_right = 212.0
-margin_bottom = 100.0
-custom_styles/panel = SubResource( 3 )
+margin_bottom = 94.0
+custom_styles/panel = SubResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="OptionsTitle" type="ToolButton" parent="margin/VBoxContainer/OptionsTitleBar"]
-margin_left = 1.0
-margin_top = 1.0
-margin_right = 211.0
-margin_bottom = 23.0
+margin_right = 212.0
+margin_bottom = 22.0
 custom_colors/font_color_pressed = Color( 0.8, 0.807843, 0.827451, 1 )
 toggle_mode = true
 text = "Options"
 align = 0
 
 [node name="Options" type="VBoxContainer" parent="margin/VBoxContainer"]
-margin_top = 104.0
+margin_top = 98.0
 margin_right = 212.0
-margin_bottom = 240.0
+margin_bottom = 234.0
 
 [node name="OutFolder" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
 margin_right = 212.0
@@ -220,15 +206,15 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
 [node name="Import" type="Button" parent="margin/VBoxContainer"]
-margin_top = 244.0
+margin_top = 238.0
 margin_right = 212.0
-margin_bottom = 264.0
+margin_bottom = 258.0
 text = "Import"
 
 [node name="Reset" type="Button" parent="margin/VBoxContainer"]
-margin_top = 268.0
+margin_top = 262.0
 margin_right = 212.0
-margin_bottom = 288.0
+margin_bottom = 282.0
 text = "Reset Preferences"
 flat = true
 
