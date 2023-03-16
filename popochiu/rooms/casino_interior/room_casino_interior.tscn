@@ -1,7 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://bm5dr7hmyy3i3"]
+[gd_scene load_steps=11 format=3 uid="uid://bm5dr7hmyy3i3"]
 
 [ext_resource type="Script" path="res://popochiu/rooms/casino_interior/room_casino_interior.gd" id="1_dtxxd"]
+[ext_resource type="PackedScene" uid="uid://do1k681xt48cm" path="res://addons/popochiu/engine/objects/prop/popochiu_prop.tscn" id="2_o2pt3"]
 [ext_resource type="PackedScene" uid="uid://c7oacc86kxt3e" path="res://popochiu/characters/goddiu/character_goddiu.tscn" id="2_pwg4o"]
+[ext_resource type="PackedScene" uid="uid://uvtywyf3pq1a" path="res://addons/popochiu/engine/objects/walkable_area/popochiu_walkable_area.tscn" id="2_rstld"]
+[ext_resource type="PackedScene" uid="uid://dpnqksegjn80g" path="res://popochiu/characters/popsy/character_popsy.tscn" id="3_eej7p"]
+[ext_resource type="Script" path="res://popochiu/rooms/casino_interior/walkable_areas/floor/walkable_area_floor.gd" id="3_wlopx"]
+[ext_resource type="Texture2D" uid="uid://oaib33borv20" path="res://popochiu/rooms/casino_interior/props/background/background.png" id="4_2bbnk"]
+[ext_resource type="Script" path="res://popochiu/rooms/casino_interior/props/toy_car/prop_toy_car.gd" id="4_7jprv"]
+[ext_resource type="Texture2D" uid="uid://d1j8qhghb33o4" path="res://popochiu/rooms/casino_interior/props/toy_car/toy_car.png" id="5_7ierb"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_1df8x"]
+vertices = PackedVector2Array(-87, 15, -39, 8, 75, 10, 104, 26, 111, 52, 78, 69, 3, 72, -74, 68, -102, 54, -105, 30)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-87, 15, -39, 8, 75, 10, 104, 26, 111, 52, 78, 69, 3, 72, -74, 68, -102, 54, -105, 30)])
 
 [node name="RoomCasinoInterior" type="Node2D"]
 script = ExtResource("1_dtxxd")
@@ -9,7 +21,37 @@ script_name = "CasinoInterior"
 
 [node name="WalkableAreas" type="Node2D" parent="."]
 
+[node name="Floor" parent="WalkableAreas" instance=ExtResource("2_rstld")]
+position = Vector2(160, 90)
+script = ExtResource("3_wlopx")
+script_name = "Floor"
+description = "Floor"
+
+[node name="Perimeter" type="NavigationRegion2D" parent="WalkableAreas/Floor"]
+modulate = Color(0, 1, 0, 1)
+navigation_polygon = SubResource("NavigationPolygon_1df8x")
+
 [node name="Props" type="Node2D" parent="."]
+
+[node name="Background" parent="Props" instance=ExtResource("2_o2pt3")]
+position = Vector2(160, 90)
+texture = ExtResource("4_2bbnk")
+script_name = "Background"
+description = "Background"
+clickable = false
+cursor = 1
+
+[node name="ToyCar" parent="Props" instance=ExtResource("2_o2pt3")]
+position = Vector2(118, 127)
+script = ExtResource("4_7jprv")
+texture = ExtResource("5_7ierb")
+script_name = "ToyCar"
+description = "Toy Car"
+walk_to_point = Vector2(23, -4)
+cursor = 1
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/ToyCar"]
+polygon = PackedVector2Array(-7, 2, -6, -2, -2, -5, 3, -5, 8, 0, 3, 4)
 
 [node name="Hotspots" type="Node2D" parent="."]
 
@@ -20,7 +62,10 @@ script_name = "CasinoInterior"
 [node name="Characters" type="Node2D" parent="."]
 
 [node name="CharacterGoddiu *" parent="Characters" instance=ExtResource("2_pwg4o")]
-position = Vector2(164, 109)
+position = Vector2(85, 109)
 follow_player = true
 walk_speed = 1.0
 can_move = false
+
+[node name="CharacterPopsy *" parent="Characters" instance=ExtResource("3_eej7p")]
+position = Vector2(237, 114)

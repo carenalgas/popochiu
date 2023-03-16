@@ -25,5 +25,3 @@ color = Color(0, 1, 1, 1)
 texture_filter = 1
 
 [node name="DialogPos" type="Marker2D" parent="."]
-
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]

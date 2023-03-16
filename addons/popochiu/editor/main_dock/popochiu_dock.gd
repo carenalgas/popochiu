@@ -25,7 +25,9 @@ var _rows_paths := []
 
 @onready var delete_dialog: ConfirmationDialog = find_child('DeleteConfirmation')
 @onready var delete_checkbox: CheckBox = delete_dialog.find_child('CheckBox')
+@onready var delete_message: RichTextLabel = delete_dialog.find_child('Message')
 @onready var delete_extra: Container = delete_dialog.find_child('Extra')
+@onready var delete_ask: RichTextLabel = delete_extra.find_child('Ask')
 @onready var loading_dialog: Popup = find_child('Loading')
 @onready var setup_dialog: AcceptDialog = find_child('Setup')
 @onready var _tab_container: TabContainer = find_child('TabContainer')
@@ -72,6 +74,9 @@ func _ready() -> void:
 	_btn_settings.icon = get_theme_icon('Tools', 'EditorIcons')
 	_btn_docs.icon = get_theme_icon('HelpSearch', 'EditorIcons')
 	_version.text = 'v' + PopochiuResources.get_version()
+	
+	delete_message.add_theme_font_override('bold_font', get_theme_font('bold', 'EditorFonts'))
+	delete_ask.add_theme_font_override('bold_font', get_theme_font('bold', 'EditorFonts'))
 	
 	# Set the Main tab selected by default
 	_tab_container.current_tab = 0
@@ -208,12 +213,12 @@ func show_confirmation(title: String, message: String, ask := '') -> void:
 	delete_checkbox.button_pressed = false
 	
 	delete_dialog.title = title
-	delete_dialog.find_child('Message').text = message
+	delete_message.text = message
 	
 	delete_extra.hide()
 	
 	if ask:
-		delete_dialog.find_child('Ask').text = ask
+		delete_ask.text = ask
 		delete_extra.show()
 	
 	delete_dialog.popup_centered()

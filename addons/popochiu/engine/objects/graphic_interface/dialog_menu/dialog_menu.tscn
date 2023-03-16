@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dhsfl8ot4j5fj"]
+[gd_scene load_steps=5 format=3 uid="uid://dhsfl8ot4j5fj"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_menu/dialog_menu.gd" id="1_3dp72"]
+[ext_resource type="PackedScene" uid="uid://dcta4urojglil" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_menu/dialog_menu_option.tscn" id="2_xxbof"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s524m"]
 
@@ -15,6 +16,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_s524m")
 script = ExtResource("1_3dp72")
+option_scene = ExtResource("2_xxbof")
 
 [node name="Panel" type="PanelContainer" parent="."]
 layout_mode = 2

@@ -1,21 +1,23 @@
+# Creates a new walkable area in a room.
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
-# Creates a new walkable area in a room
 
 const SCRIPT_TEMPLATE :=\
 'res://addons/popochiu/engine/templates/walkable_area_template.gd'
 const WALKABLE_AREA_SCENE :=\
 'res://addons/popochiu/engine/objects/walkable_area/popochiu_walkable_area.tscn'
 const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
+const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
 
 var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_walkable_area_name := ''
 var _new_walkable_area_path := ''
-var _walkable_area_path_template: String
-var _room_path: String
-var _room_dir: String
+var _walkable_area_path_template := ''
+var _room_path := ''
+var _room_dir := ''
+var _pascal_name := ''
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -25,18 +27,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: Panel) -> void:
-	super(node)
-
-
-func room_opened(r: Node2D) -> void:
-	_room = r
-	_room_path = _room.scene_file_path
-	_room_dir = _room_path.get_base_dir()
-	_walkable_area_path_template = _room_dir + '/walkable_areas/%s/walkable_area%s'
-
-
-func create() -> void:
+func _create() -> void:
 	if _new_walkable_area_name.is_empty():
 		_error_feedback.show()
 		return
@@ -69,9 +60,9 @@ func create() -> void:
 		WALKABLE_AREA_SCENE
 	).instantiate()
 	walkable_area.set_script(ResourceLoader.load(script_path))
-	walkable_area.name = _new_walkable_area_name
-	walkable_area.script_name = _new_walkable_area_name
-	walkable_area.description = _new_walkable_area_name
+	walkable_area.name = _pascal_name
+	walkable_area.script_name = _pascal_name
+	walkable_area.description = _new_walkable_area_name.capitalize()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the NavigationRegion2D (instead of using the one that
@@ -105,9 +96,9 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Update the list of WalkableAreas in the Room tab
-	room_tab.add_to_list(
+	(room_tab as TabRoom).add_to_list(
 		Constants.Types.WALKABLE_AREA,
-		_new_walkable_area_name,
+		_pascal_name,
 		script_path
 	)
 	
@@ -121,12 +112,21 @@ func create() -> void:
 	hide()
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+func room_opened(r: Node2D) -> void:
+	_room = r
+	_room_path = _room.scene_file_path
+	_room_dir = _room_path.get_base_dir()
+	_walkable_area_path_template = _room_dir + '/walkable_areas/%s/walkable_area_%s'
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_walkable_area_name = _name
+		_new_walkable_area_name = PopochiuUtils.pascal2snake(_name)
+		_pascal_name = _name
 		_new_walkable_area_path = _walkable_area_path_template %\
 		[_new_walkable_area_name, _new_walkable_area_name]
 

@@ -28,7 +28,6 @@ var emotion := ''
 var _looking_dir: int = Looking.DOWN
 
 @onready var dialog_pos: Marker2D = $DialogPos
-@onready var agent = $NavigationAgent2D
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░

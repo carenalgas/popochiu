@@ -143,8 +143,11 @@ func _ready() -> void:
 	# Hide buttons based checked the type of the Object this row represents
 	_fav_icon.hide()
 	
-	if not type in Constants.MAIN_TYPES:
-		if path.find('.gd') == -1:
+	if type in Constants.ROOM_TYPES:
+		if (type == Constants.Types.PROP and\
+		not FileAccess.file_exists(path.replace('.tscn', '.gd'))) or (
+			type != Constants.Types.PROP and path.find('.gd') == -1
+		):
 			_btn_script.hide()
 		
 		_btn_state.hide()
@@ -375,11 +378,12 @@ func _open() -> void:
 func _open_script() -> void:
 	var script_path := path
 	
-	if type in Constants.MAIN_TYPES:
-		if path.find('.tres') < 0:
-			script_path = path.replace('.tscn', '.gd')
-		else:
-			script_path = path.replace('.tres', '.gd')
+	if path.find('.tscn') > -1:
+		# A room, character, inventory item, or prop
+		script_path = path.replace('.tscn', '.gd')
+	elif path.find('.tres') > -1:
+		# A dialog
+		script_path = path.replace('.tres', '.gd')
 	elif path.find('.gd') == -1:
 		return
 	
@@ -415,7 +419,9 @@ func _remove_object() -> void:
 	# Verify if the object to delete is a Prop, a Hotspot or a Region.
 	if type in Constants.ROOM_TYPES:
 		# res://popochiu/rooms/???/props/??/ > [res:, popochiu, rooms, ???, props, ??]
-		location = "%s's room" % path.split('/', false)[3]
+		location = PopochiuUtils.snake2pascal(
+			"Room%s" % path.split('/', false)[3]
+		)
 	
 	# Look into the Object's folder for audio files and AudioCues to show the
 	# developer that those files will be removed too.
@@ -427,11 +433,11 @@ func _remove_object() -> void:
 		# Title
 		'Remove %s from %s' % [name, location],
 		# Body
-		'This will remove_at the [b]%s[/b] resource in %s.' % [name, location] +\
+		'This will remove the [b]%s[/b] resource in [b]%s[/b].' % [name, location] +\
 		' Uses of this object in scripts will not work anymore.' +\
 		' This action cannot be reversed. Continue?',
 		# Additional confirmation
-		'Delete [b]%s[/b] folder/file too?' % path.get_base_dir() +\
+		'Want to delete the [b]%s[/b] folder too?' % path.get_base_dir() +\
 		(
 			' ([b]%d[/b] audio files will be deleted' % audio_files.size()\
 			if audio_files.size() > 0\

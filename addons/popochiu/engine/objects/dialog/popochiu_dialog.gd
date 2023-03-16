@@ -6,8 +6,7 @@ extends Resource
 
 const PopochiuDialogOption := preload('popochiu_dialog_option.gd')
 
-@export var options := []:
-	set = set_options # (Array, Resource)
+@export var options := [] : set = set_options
 @export var script_name := ''
 
 

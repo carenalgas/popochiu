@@ -61,7 +61,7 @@ func _unhandled_input(event: InputEvent):
 				E.add_history({
 					action = 'Interacted with: %s' % description
 				})
-				on_click()
+				_on_click()
 				
 				times_clicked += 1
 		elif event.is_action_pressed('popochiu-look'):

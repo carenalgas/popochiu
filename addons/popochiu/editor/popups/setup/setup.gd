@@ -47,8 +47,6 @@ func _ready() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func appear(show_welcome := false) -> void:
-	_welcome.hide()
-	_welcome_separator.hide()
 	_welcome.add_theme_font_override(
 		'bold_font', get_theme_font('bold', 'EditorFonts')
 	)
@@ -66,10 +64,9 @@ func appear(show_welcome := false) -> void:
 	else '#fff')
 	_scale_message.modulate.a = 0.8
 
-	if show_welcome:
-		_welcome.show()
-		_welcome_separator.show()
-	else:
+	if not show_welcome:
+		_welcome.text =\
+		'[center][shake][b]POPOCHIU \\( u )3(u)/[/b][/shake][/center]'
 		update_state()
 	
 	# Set initial values for fields

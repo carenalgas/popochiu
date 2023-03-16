@@ -33,7 +33,7 @@ func save_childs_states() -> void:
 	
 	for t in PopochiuResources.ROOM_CHILDS:
 		if (get(t) as Dictionary).is_empty():
-			var category := (t as String).capitalize().replace(' ', '')
+			var category := (t as String).replace(' ', '')
 			var objs_path := '%s/%s' % [base_dir, category]
 			
 			var dir := DirAccess.open(objs_path)
@@ -48,7 +48,7 @@ func save_childs_states() -> void:
 			var folder_name := dir.get_next()
 			
 			while folder_name != '':
-				if dir.current_is_dir() and folder_name != '_no_interaction':
+				if dir.current_is_dir():
 					
 					var script_path := '%s/%s/%s_%s.gd' % [
 						objs_path,
@@ -56,6 +56,10 @@ func save_childs_states() -> void:
 						category.trim_suffix('s'),
 						folder_name,
 					]
+					
+					if not FileAccess.file_exists(script_path):
+						folder_name = dir.get_next()
+						continue
 					
 					var node: Node2D = load(script_path).new()
 					node.script_name = folder_name

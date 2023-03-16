@@ -104,13 +104,19 @@ func scene_changed(scene_root: Node) -> void:
 					var row: PopochiuObjectRow = _create_object_row(t, c.name)
 					_types[t].group.add(row)
 					continue
-
-				if c.script.resource_path.find('addons') == -1:
+				
+				if t == Constants.Types.PROP:
+					row_path = '%s/props/%s/prop_%s.tscn' % [
+						opened_room.scene_file_path.get_base_dir(),
+						PopochiuUtils.pascal2snake(c.name),
+						PopochiuUtils.pascal2snake(c.name)
+					]
+				elif c.script.resource_path.find('addons') == -1:
 					row_path = c.script.resource_path
 				else:
 					row_path = '%s/%s' % [
 						opened_room.scene_file_path.get_base_dir(),
-						_types[t].parent
+						PopochiuUtils.pascal2snake(_types[t].parent)
 					]
 				
 				var node_path: String = String(c.get_path()).split(

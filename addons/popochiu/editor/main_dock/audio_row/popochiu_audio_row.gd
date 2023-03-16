@@ -190,7 +190,7 @@ func _ask_basic_delete() -> void:
 	if is_instance_valid(audio_cue):
 		main_dock.show_confirmation(
 			'Remove %s' % audio_cue.resource_name,
-			'This will remove_at the [b]%s[/b] resource.'\
+			'This will remove the [b]%s[/b] resource.'\
 			% audio_cue.resource_name +\
 			' Calls to this audio in scripts will not work anymore.' +\
 			' This action cannot be reversed. Continue?',

@@ -42,7 +42,9 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the folder for the character
-	DirAccess.make_dir_absolute(_main_dock.CHARACTERS_PATH + _new_character_name)
+	DirAccess.make_dir_absolute(
+		(_main_dock as PopochiuDock).CHARACTERS_PATH + _new_character_name
+	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the state Resource for the character and a script so devs
