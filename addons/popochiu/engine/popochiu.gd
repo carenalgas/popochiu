@@ -343,7 +343,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		if not current_room.has_character(C.player.script_name):
 			current_room.add_character(C.player)
 		
-		await C.player.idle_now()
+		await C.player.idle()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDS:
@@ -668,7 +668,15 @@ func _eval_string(text: String) -> void:
 				
 				var character_name: String = colon_prefix.substr(
 					0, name_idx
-				).to_lower()
+				)
+				
+				if not C.is_valid_character(character_name):
+					printerr('[Popochiu] No PopochiuCharacter with name: %s'\
+					% character_name)
+					await get_tree().process_frame
+					return
+				
+				var character := C.get_character(character_name)
 				
 				if not C.is_valid_character(character_name):
 					printerr('[Popochiu] No PopochiuCharacter with name: %s'\
@@ -688,11 +696,11 @@ func _eval_string(text: String) -> void:
 					)
 				
 				if not emotion.is_empty():
-					C.get_character(character_name).emotion = emotion
+					character.emotion = emotion
 				
 				var dialogue := text.substr(colon_idx + 1).trim_prefix(' ')
 				
-				C.get_character(character_name).say(dialogue)
+				await character.say(dialogue)
 			else:
 				await get_tree().process_frame
 	

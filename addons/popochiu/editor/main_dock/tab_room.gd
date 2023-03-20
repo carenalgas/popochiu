@@ -37,10 +37,10 @@ var _last_selected: PopochiuObjectRow = null
 		parent = 'Regions'
 	},
 	Constants.Types.POINT: {
-		group = find_child('PointsGroup'),
-		method = 'get_points',
+		group = find_child('MarkersGroup'),
+		method = 'get_markers',
 		type_class = Marker2D,
-		parent = 'Points'
+		parent = 'Markers'
 	},
 	Constants.Types.WALKABLE_AREA: {
 		group = find_child('WalkableAreasGroup'),

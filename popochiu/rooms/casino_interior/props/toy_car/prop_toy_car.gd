@@ -8,9 +8,10 @@ extends PopochiuProp
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func _on_click() -> void:
-	await C.Goddiu.walk_to_prop_now(script_name)
-	await C.Goddiu.face_left_now()
-	await C.Goddiu.say_now('My old toy car...')
+	await C.walk_to_clicked()
+	await C.face_clicked()
+	await C.Goddiu.say('My old toy car...')
+	
 	G.done()
 
 

@@ -39,8 +39,8 @@ func get_regions() -> Array:
 	return get_tree().get_nodes_in_group('regions')
 
 
-func get_points() -> Array:
-	return current.get_points()
+func get_markers() -> Array:
+	return current.get_markers()
 
 
 func get_walkable_areas() -> Array:

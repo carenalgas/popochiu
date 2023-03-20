@@ -8,9 +8,10 @@ extends PopochiuHotspot
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func _on_click() -> void:
-	await C.Goddiu.walk_to_hotspot_now(script_name)
-	await C.Goddiu.face_left_now()
-	await C.Goddiu.say_now('Oh... [wave]freedom...[/wave]')
+	await C.Goddiu.walk_to_hotspot(script_name)
+	await C.Goddiu.face_left()
+	await C.Goddiu.say('Oh... [wave]freedom...[/wave]')
+	
 	G.done()
 
 

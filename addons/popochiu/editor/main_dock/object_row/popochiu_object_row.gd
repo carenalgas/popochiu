@@ -1,5 +1,5 @@
 # The row that is created for Rooms, Characters, Inventory items, Dialogs,
-# Props, Hotspots, Regions and Points in the dock.
+# Props, Hotspots, Regions and Markers in the dock.
 @tool
 extends HBoxContainer
 

@@ -66,4 +66,4 @@ func finish_dialog() -> void:
 
 
 func say_selected() -> void:
-	await E.run(['Player: ' + selected_option.text])
+	await C.player.say(selected_option.text)

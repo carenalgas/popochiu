@@ -60,11 +60,11 @@ func _play_grab() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func idle() -> Callable:
-	return func (): await idle_now()
+func queue_idle() -> Callable:
+	return func (): await idle()
 	
 	
-func idle_now() -> void:
+func idle() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -82,11 +82,11 @@ func idle_now() -> void:
 	await get_tree().create_timer(0.2).timeout
 
 
-func walk(target_pos: Vector2) -> Callable:
-	return func (): await walk_now(target_pos)
+func queue_walk(target_pos: Vector2) -> Callable:
+	return func (): await walk(target_pos)
 
 
-func walk_now(target_pos: Vector2) -> void:
+func walk(target_pos: Vector2) -> void:
 	is_moving = true
 	_looking_dir = Looking.LEFT if target_pos.x < position.x else Looking.RIGHT
 	
@@ -123,11 +123,11 @@ func walk_now(target_pos: Vector2) -> void:
 	is_moving = false
 
 
-func stop_walking() -> Callable:
-	return func (): await stop_walking_now()
+func queue_stop_walking() -> Callable:
+	return func (): await stop_walking()
 	
 	
-func stop_walking_now() -> void:
+func stop_walking() -> void:
 	is_moving = false
 	
 	stoped_walk.emit()
@@ -135,73 +135,73 @@ func stop_walking_now() -> void:
 	await get_tree().process_frame
 
 
-func face_up() -> Callable:
-	return func (): await face_up_now()
+func queue_face_up() -> Callable:
+	return func (): await face_up()
 
 
-func face_up_now() -> void:
+func face_up() -> void:
 	_looking_dir = Looking.UP
-	await idle_now()
+	await idle()
 
 
-func face_up_right() -> Callable:
-	return func (): await face_up_right_now()
+func queue_face_up_right() -> Callable:
+	return func (): await face_up_right()
 
 
-func face_up_right_now() -> void:
+func face_up_right() -> void:
 	_looking_dir = Looking.UP_RIGHT
-	await idle_now()
+	await idle()
 
 
-func face_down() -> Callable:
-	return func (): await face_down_now()
+func queue_face_down() -> Callable:
+	return func (): await face_down()
 
 
-func face_down_now() -> void:
+func face_down() -> void:
 	_looking_dir = Looking.DOWN
-	await idle_now()
+	await idle()
 
 
-func face_left() -> Callable:
-	return func (): await face_left_now()
+func queue_face_left() -> Callable:
+	return func (): await face_left()
 
 
-func face_left_now() -> void:
+func face_left() -> void:
 	_looking_dir = Looking.LEFT
-	await idle_now()
+	await idle()
 
 
-func face_right() -> Callable:
-	return func (): await face_right_now()
+func queue_face_right() -> Callable:
+	return func (): await face_right()
 
 
-func face_right_now() -> void:
+func face_right() -> void:
 	_looking_dir = Looking.RIGHT
-	await idle_now()
+	await idle()
 
 
-func face_clicked() -> Callable:
-	return func (): await face_clicked_now()
+func queue_face_clicked() -> Callable:
+	return func (): await face_clicked()
 
 
-func face_clicked_now() -> void:
+func face_clicked() -> void:
 	if E.clicked.global_position < global_position:
 		if has_node('Sprite2D'):
 			$Sprite2D.flip_h = flips_when == FlipsWhen.MOVING_LEFT
 		
-		await face_left_now()
+		await face_left()
 	else:
 		if has_node('Sprite2D'):
 			$Sprite2D.flip_h = flips_when == FlipsWhen.MOVING_RIGHT
 		
-		await face_right_now()
+		await face_right()
 
 
-func say(dialog: String) -> Callable:
-	return func (): await say_now(dialog)
+func queue_say(dialog: String) -> Callable:
+	return func (): await say(dialog)
 
 
-func say_now(dialog: String) -> void:
+func say(dialog: String) -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -218,16 +218,16 @@ func say_now(dialog: String) -> void:
 	await G.continue_clicked
 	
 	emotion = ''
-	idle_now()
+	idle()
 	
 	G.done(true)
 
 
-func grab() -> Callable:
-	return func (): await grab_now()
+func queue_grab() -> Callable:
+	return func (): await grab()
 
 
-func grab_now() -> void:
+func grab() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -237,7 +237,7 @@ func grab_now() -> void:
 	
 	await C.character_grab_done
 	
-	idle_now()
+	idle()
 
 
 func hide_helpers() -> void:
@@ -251,44 +251,52 @@ func show_helpers() -> void:
 	if is_instance_valid(dialog_pos): dialog_pos.show()
 
 
-func walk_to(pos: Vector2) -> Callable:
-	return func(): await walk_to_now(pos)
+func queue_walk_to(pos: Vector2) -> Callable:
+	return func(): await walk_to(pos)
 
 
-func walk_to_now(pos: Vector2) -> void:
-	C.character_walk_to_now(script_name, pos)
+func walk_to(pos: Vector2) -> void:
+	walk(E.current_room.to_global(pos))
 	
 	await C.character_move_ended
 
 
-func walk_to_prop(id: String) -> Callable:
-	return func(): await walk_to_prop_now(id)
+func queue_walk_to_prop(id: String) -> Callable:
+	return func(): await walk_to_prop(id)
 
 
-func walk_to_prop_now(id: String) -> void:
+func walk_to_prop(id: String) -> void:
 	_walk_to_clickable(E.current_room.get_prop(id))
 	
 	await C.character_move_ended
 
 
-func walk_to_hotspot(id: String) -> Callable:
-	return func(): await walk_to_hotspot_now(id)
+func queue_walk_to_hotspot(id: String) -> Callable:
+	return func(): await walk_to_hotspot(id)
 
 
-func walk_to_hotspot_now(id: String) -> void:
+func walk_to_hotspot(id: String) -> void:
 	_walk_to_clickable(E.current_room.get_hotspot(id))
 	
 	await C.character_move_ended
 
 
-func walk_to_room_point(id: String) -> Callable:
-	return func(): await walk_to_room_point_now(id)
+func queue_walk_to_marker(id: String) -> Callable:
+	return func(): await walk_to_marker(id)
 
 
-func walk_to_room_point_now(id: String) -> void:
-	C.character_walk_to_now(script_name, E.current_room.get_point(id))
+func walk_to_marker(id: String) -> void:
+	walk(E.current_room.get_point(id))
 
 	await C.character_move_ended
+
+
+func queue_set_emotion(new_emotion: String) -> Callable:
+	return func(): emotion = new_emotion
+
+
+func queue_ignore_walkable_areas(new_value: bool) -> Callable:
+	return func(): ignore_walkable_areas = new_value
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
@@ -335,10 +343,8 @@ func _get_vo_cue(emotion := '') -> String:
 
 
 func _walk_to_clickable(node: PopochiuClickable) -> void:
-	if not node:
+	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
 	
-	C.character_walk_to_now(
-		script_name, node.to_global(node.walk_to_point)
-	)
+	walk(node.to_global(node.walk_to_point))

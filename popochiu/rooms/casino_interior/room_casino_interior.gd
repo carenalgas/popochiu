@@ -22,14 +22,12 @@ func _on_room_entered() -> void:
 func _on_room_transition_finished() -> void:
 	state.is_fine = true
 	
-	await C.Goddiu.say_now('I am in Godot 4 with new singletons')
-	await I.ToyCar.add_now()
-#	await C.Goddiu.say_now('Oooooh!!! A toy cart')
-#	await C.Goddiu.say_now('A')
-#	await C.Goddiu.say_now('E')
-#	await C.Goddiu.say_now('I')
-#	await C.Goddiu.say_now('O')
-#	await C.Goddiu.say_now('U')
+#	await C.Goddiu.say('I am in Godot 4 with new singletons')
+#	await I.ToyCar.add_now()
+#	await C.Goddiu.say('Oooooh!!! A toy cart')
+#
+#	G.done()
+
 
 # What happens before Popochiu unloads the room.
 # At this point, the screen is black, processing is disabled and all characters
