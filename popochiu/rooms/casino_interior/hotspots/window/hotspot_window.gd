@@ -30,9 +30,8 @@ func _on_right_click() -> void:
 
 # When the node is clicked and there is an inventory item selected
 func _on_item_used(item: PopochiuInventoryItem) -> void:
-	# Replace the call to super(item) to implement your code. This only
-	# makes the default behavior to happen.
-	# For example you can make the PC react checked using some items in this Hotspot
-#	if item.script_name == 'Key':
-#		E.run(['Player: No can do'])
-	super.on_item_used(item)
+	if item.script_name == 'ToyCar':
+		await C.Goddiu.say('Boing!')
+		await I.ToyCar.discard()
+		
+		G.done()

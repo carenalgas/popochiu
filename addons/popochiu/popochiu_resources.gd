@@ -144,7 +144,7 @@ const SNGL_SETUP := {
 		'class' = 'res://popochiu/inventory_items/%s/item_%s.gd',
 		'const' = "const PII%s := preload('%s')\n",
 		node = "var %s: PII%s : get = get_%s\n",
-		'func' = "func get_%s() -> PII%s: return super._get_item_instance('%s')\n",
+		'func' = "func get_%s() -> PII%s: return super.get_item_instance('%s')\n",
 		prefix = 'I',
 	},
 	D_SNGL : {

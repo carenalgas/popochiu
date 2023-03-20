@@ -175,11 +175,11 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func wait(time := 1.0) -> Callable:
-	return func (): await wait_now(time)
+func queue_wait(time := 1.0) -> Callable:
+	return func (): await wait(time)
 
 
-func wait_now(time := 1.0) -> void:
+func wait(time := 1.0) -> void:
 	if cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -374,7 +374,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	if _use_transition_on_room_change:
 		$TransitionLayer.play_transition($TransitionLayer.FADE_OUT)
 		await $TransitionLayer.transition_finished
-		await wait_now(0.3)
+		await wait(0.3)
 	else:
 		await get_tree().process_frame
 	
@@ -395,23 +395,23 @@ func room_readied(room: PopochiuRoom) -> void:
 	current_room._on_room_transition_finished()
 
 
-func camera_offset(offset := Vector2.ZERO) -> Callable:
-	return func (): await camera_offset_now(offset)
+func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
+	return func (): await camera_offset(offset)
 
 
 # Changes the main camera's offset (useful when zooming the camera)
-func camera_offset_now(offset := Vector2.ZERO) -> void:
+func camera_offset(offset := Vector2.ZERO) -> void:
 	main_camera.offset = offset
 	
 	await get_tree().process_frame
 
 
-func camera_shake(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await camera_shake_now(strength, duration)
+func queue_camera_shake(strength := 1.0, duration := 1.0) -> Callable:
+	return func (): await camera_shake(strength, duration)
 
 
 # Makes the camera shake with `strength` for `duration` seconds
-func camera_shake_now(strength := 1.0, duration := 1.0) -> void:
+func camera_shake(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
 	_is_camera_shaking = true
@@ -419,13 +419,13 @@ func camera_shake_now(strength := 1.0, duration := 1.0) -> void:
 	await get_tree().create_timer(duration).timeout
 
 
-func camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await camera_shake_bg_now(strength, duration)
+func queue_camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
+	return func (): await camera_shake_bg(strength, duration)
 
 
 # Makes the camera shake with `strength` for `duration` seconds without blocking
 # excecution (a.k.a. in the background)
-func camera_shake_bg_now(strength := 1.0, duration := 1.0) -> void:
+func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
 	_is_camera_shaking = true
@@ -433,14 +433,14 @@ func camera_shake_bg_now(strength := 1.0, duration := 1.0) -> void:
 	await get_tree().process_frame
 
 
-func camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
-	return func (): await camera_zoom_now(target, duration)
+func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
+	return func (): await camera_zoom(target, duration)
 
 
 # Changes the camera zoom. If `target` is larger than Vector2(1, 1) the camera
 # will zoom out, smaller values make it zoom in. The effect will last `duration`
 # seconds
-func camera_zoom_now(target := Vector2.ONE, duration := 1.0) -> void:
+func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
 	if is_instance_valid(_tween) and _tween.is_running():
 		_tween.kill()
 	
@@ -515,13 +515,13 @@ func room_exists(script_name: String) -> bool:
 	return false
 
 
-func play_transition(type: int, duration: float) -> Callable:
-	return func (): await play_transition_now(type, duration)
+func queue_play_transition(type: int, duration: float) -> Callable:
+	return func (): await play_transition(type, duration)
 
 
 # Plays the transition type animation in TransitionLayer.tscn that last duration
 # in seconds. Possible type values can be found in TransitionLayer
-func play_transition_now(type: int, duration: float) -> void:
+func play_transition(type: int, duration: float) -> void:
 	$TransitionLayer.play_transition(type, duration)
 	
 	await $TransitionLayer.transition_finished
@@ -642,13 +642,13 @@ func set_current_room(value: PopochiuRoom) -> void:
 func _eval_string(text: String) -> void:
 	match text:
 		'.':
-			await wait_now(0.25)
+			await wait(0.25)
 		'..':
-			await wait_now(0.5)
+			await wait(0.5)
 		'...':
-			await wait_now(1.0)
+			await wait(1.0)
 		'....':
-			await wait_now(2.0)
+			await wait(2.0)
 		_:
 			var colon_idx: int = text.find(':')
 			if colon_idx:

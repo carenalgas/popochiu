@@ -10,6 +10,6 @@ var ToyCar: PIIToyCar : get = get_ToyCar
 # ---- nodes
 
 # functions ----
-func get_ToyCar() -> PIIToyCar: return super._get_item_instance('ToyCar')
+func get_ToyCar() -> PIIToyCar: return super.get_item_instance('ToyCar')
 # ---- functions
 

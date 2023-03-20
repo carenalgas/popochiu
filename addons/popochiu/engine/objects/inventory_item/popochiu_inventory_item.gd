@@ -52,33 +52,73 @@ func _on_discard() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func add(animate := true) -> Callable:
-	return func (): await add_now(animate)
+func queue_add(animate := true) -> Callable:
+	return func (): await add(animate)
 
 
-func add_now(animate := true) -> void:
-	G.block()
+func add(animate := true) -> void:
+	if I.is_full():
+		printerr(
+			"[Popochiu] Couldn't add %s. Inventory is full." %\
+			script_name
+		)
+		
+		await get_tree().process_frame
+		return
 	
-	await I.add_item_now(script_name, animate)
+	if not in_inventory:
+		G.block()
+
+		I.items.append(script_name)
+		
+		I.item_added.emit(self, animate)
+		in_inventory = true
+		
+		await I.item_add_done
+
+		G.done(true)
+
+		return
 	
-	G.done(true)
+	await get_tree().process_frame
 
 
-func add_as_active(animate := true) -> Callable:
-	return func (): await add_as_active_now(animate)
+func queue_add_as_active(animate := true) -> Callable:
+	return func (): await add_as_active(animate)
 
 
-func add_as_active_now(animate := true) -> void:
-	await I.add_item_now(script_name, animate)
-	I.set_active_item(self, false)
+func add_as_active(animate := true) -> void:
+	await add(animate)
+	
+	I.set_active_item(self)
 
 
-func remove(animate := true) -> Callable:
-	return func (): await remove_now(animate)
+func queue_remove(animate := false) -> Callable:
+	return func (): await remove(animate)
 
 
-func remove_now(animate := true) -> void:
-	await I.remove_item_now(script_name, animate)
+func remove(animate := false) -> void:
+	in_inventory = false
+	
+	I.items.erase(script_name)
+	I.set_active_item(null)
+	# TODO: Maybe this signal should be triggered once the await has finished
+	I.item_removed.emit(self, animate)
+	
+	await I.item_remove_done
+
+
+func queue_discard(animate := false) -> Callable:
+	return func (): await discard(animate)
+
+
+func discard(animate := false) -> void:
+	_on_discard()
+	
+	I.items.erase(script_name)
+	I.item_discarded.emit(self)
+	
+	await remove(animate)
 
 
 func set_active(ignore_block := false) -> void:
@@ -119,7 +159,7 @@ func get_description() -> String:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _toggle_description(display: bool) -> void:
-	Cursor.set_cursor(cursor if display else CURSOR.Type.NONE)
+	Cursor.set_cursor(cursor if display else CURSOR.Type.IDLE)
 	G.show_info(self.description if display else '')
 	if display:
 		description_toggled.emit(description if description else script_name)
