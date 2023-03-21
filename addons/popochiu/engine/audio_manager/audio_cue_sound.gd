@@ -18,7 +18,7 @@ func play(wait_to_end := false, position_2d := Vector2.ZERO) -> void:
 # If `wait_to_end` is `true` the function will pause until the audio clip finishes
 # You can play the clip from a specific `position_2d` in the scene if `is_2d` is
 # `true`.
-# (!) This is intended to be used in queued instructions: E.run([]).
+# (!) This is intended to be used in queued instructions: E.queue([]).
 func queue_play(wait_to_end := false, position_2d := Vector2.ZERO) -> Callable:
 	return func ():
 		if wait_to_end:

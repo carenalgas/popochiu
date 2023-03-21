@@ -40,7 +40,7 @@ func fade(
 # Queue the call to play this audie cue with a fade that will last `duration`
 # seconds. You can specify the starting volume with `from` and the target volume
 # with `to`.
-# (!) This is intended to run in queued instructions: E.run([]).
+# (!) This is intended to run in queued instructions: E.queue([]).
 func queue_fade(
 	duration := 1.0,
 	wait_to_end := false,
@@ -64,7 +64,7 @@ func stop(fade_duration := 0.0) -> void:
 
 # Queue the call to stop the audio cue.
 # Can use a fade that will last `fade_duration` seconds.
-# (!) This is intended to run in queued instructions: E.run([]).
+# (!) This is intended to run in queued instructions: E.queue([]).
 func queue_stop(fade_duration := 0.0) -> Callable:
 	return func ():
 		stop(fade_duration)

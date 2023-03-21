@@ -33,16 +33,16 @@ var current_language := 0
 var auto_continue_after := -1.0
 var scale := Vector2.ONE
 var am: PopochiuAudioManager = null
+# TODO: This might not just be a boolean, but there could be an array that puts
+# the calls to queue in an Array and executes them in order. Or perhaps it could
+# be something that allows for more dynamism, such as putting one queue to execute
+# during the execution of another queue
+var playing_queue := false
 
 # TODO: This could be in the camera's own script
 var _is_camera_shaking := false
 var _camera_shake_amount := 15.0
 var _shake_timer := 0.0
-# TODO: This might not just be a boolean, but there could be an array that puts
-# the calls to run in a queue and executes them in order. Or perhaps it could be
-# something that allows for more dynamism, such as putting one run to execute
-# during the execution of another
-var _running := false
 var _use_transition_on_room_change := true
 var _config: ConfigFile = null
 var _loaded_game := {}
@@ -187,24 +187,24 @@ func wait(time := 1.0) -> void:
 	await get_tree().create_timer(time).timeout
 
 
-# TODO: Stop or break a run in excecution
-#func break_run() -> void:
+# TODO: Stop or break a queue in excecution
+#func break_queue() -> void:
 #	pass
 
 
 # Executes a series of instructions one by one. show_gi determines if the
 # Graphic Interface will appear once all instructions have ran.
-func run(instructions: Array, show_gi := true) -> void:
+func queue(instructions: Array, show_gi := true) -> void:
 	if instructions.is_empty():
 		await get_tree().process_frame
 		return
 	
-	if _running:
+	if playing_queue:
 		await get_tree().process_frame
-		await run(instructions, show_gi)
+		await queue(instructions, show_gi)
 		return
 	
-	_running = true
+	playing_queue = true
 	
 	G.block()
 	
@@ -215,11 +215,6 @@ func run(instructions: Array, show_gi := true) -> void:
 			await instruction.call()
 		elif instruction is String:
 			await _eval_string(instruction as String)
-#		elif instruction is Dictionary:
-#			if instruction.has('dialog'):
-#				_eval_string(instruction.dialog)
-#				await self.wait(instruction.time)
-#				G.continue_clicked.emit()
 	
 	if show_gi:
 		G.done()
@@ -230,13 +225,13 @@ func run(instructions: Array, show_gi := true) -> void:
 	if instructions.is_empty():
 		await get_tree().process_frame
 	
-	_running = false
+	playing_queue = false
 
 
-# Like run, but can be skipped with the input action: popochiu-skip.
-func run_cutscene(instructions: Array) -> void:
+# Like queue, but can be skipped with the input action: popochiu-skip.
+func cutscene(instructions: Array) -> void:
 	set_process_input(true)
-	await run(instructions)
+	await queue(instructions)
 	set_process_input(false)
 	
 	if cutscene_skipped:
@@ -386,7 +381,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	if _loaded_game:
 		game_loaded.emit(_loaded_game)
-		await run([G.display('Game loaded')])
+		await G.display('Game loaded')
 		
 		_loaded_game = {}
 	
@@ -442,7 +437,7 @@ func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
 # will zoom out, smaller values make it zoom in. The effect will last `duration`
 # seconds
 func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
-	if is_instance_valid(_tween) and _tween.is_running():
+	if is_instance_valid(_tween) and _tween.isplaying_queue():
 		_tween.kill()
 	
 	_tween = create_tween()
@@ -497,14 +492,14 @@ func add_history(data: Dictionary) -> void:
 	history.push_front(data)
 
 
-# Makes a method in node to be able to be used in a run call. Method parameters
-# can be passed with params, and yield_signal is the signal that will notify the
-# function has been completed (so run can continue with the next command in the
-# queue)
-func runnable(
+# Makes a method in node to be able to be used in a `queue()` call.
+# Method parameters can be passed with params, and yield_signal is the signal
+# that will notify the function has been completed (so `queue()` can continue
+# with the next command in the queue)
+func queueable(
 	node: Object, method: String, params := [], signal_name := ''
 ) -> Callable:
-	return func (): await _runnable(node, method, params, signal_name)
+	return func (): await _queueable(node, method, params, signal_name)
 
 
 # Checks if the room with script_name exists in the array of rooms of Popochiu
@@ -556,7 +551,7 @@ func save_game(slot := 1, description := '') -> void:
 	if _saveload.save_game(slot, description):
 		game_saved.emit()
 		
-		await run([G.display('Game saved')])
+		await G.display('Game saved')
 
 
 func load_game(slot := 1) -> void:
@@ -596,10 +591,6 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 		return false
 	
 	return true
-
-
-func in_run() -> bool:
-	return _running
 
 
 func clear_hovered() -> void:
@@ -720,7 +711,7 @@ func _set_in_room(value: bool) -> void:
 #	language_changed.emit()
 
 
-func _runnable(
+func _queueable(
 	node: Object, method: String, params := [], signal_name := ''
 ) -> void:
 	if cutscene_skipped:

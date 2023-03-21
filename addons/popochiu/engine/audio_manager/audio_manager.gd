@@ -40,7 +40,7 @@ func _ready() -> void:
 # Looks for an AudioCue and plays it if found. It also can wait until it
 # finishes playing.
 # If wait_to_end is not null, that means the call is comming from a play
-# inside a E.run([])
+# inside a E.queue([])
 # In this method the calls to play and play_no_block converge.
 func play_sound_cue(
 	cue_name := '', position_2d := Vector2.ZERO, wait_to_end = null
@@ -98,7 +98,7 @@ func play_music_cue(
 # Looks for an AudioCue and plays it with a fade if found. It also can wait until
 # it finishes playing.
 # If wait_to_end is not null, that means the call is comming from a play
-# inside a E.run([])
+# inside a E.queue([])
 # In this method the calls to play and play_no_block converge.
 func play_fade_cue(
 	cue_name := '',

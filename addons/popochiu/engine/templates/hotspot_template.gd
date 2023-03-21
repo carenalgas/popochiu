@@ -1,7 +1,7 @@
 @tool
 extends PopochiuHotspot
-# You can use E.run([]) to trigger a sequence of events.
-# Use await E.run([]) if you want to pause the excecution of
+# You can use E.queue([]) to trigger a sequence of events.
+# Use await E.queue([]) if you want to pause the excecution of
 # the function until the sequence of events finishes.
 
 
@@ -12,7 +12,7 @@ func _on_click() -> void:
 	# the default behavior to happen.
 	# For example you can make the character walk to the Hotspot and then say
 	# something:
-#	E.run([
+#	E.queue([
 #		C.walk_to_clicked(),
 #		C.face_clicked(),
 #		"Player: Can't open it"
@@ -26,7 +26,7 @@ func _on_right_click() -> void:
 	# the default behavior to happen.
 	# For example you can make the character walk to the Hotspot and then say
 	# something:
-#	E.run([
+#	E.queue([
 #		C.face_clicked(),
 #		'Player: A closed door'
 #	])
@@ -39,5 +39,5 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 	# makes the default behavior to happen.
 	# For example you can make the PC react checked using some items in this Hotspot
 #	if item.script_name == 'Key':
-#		E.run(['Player: No can do'])
+#		E.queue(['Player: No can do'])
 	super.on_item_used(item)

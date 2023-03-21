@@ -14,7 +14,7 @@ func play(fade_duration := 0.0, music_position := 0.0) -> void:
 # Queue the call to play this cue's music track.
 # It can fade for `fade_duration` seconds.
 # You can change the track starting position in seconds with `music_position`.
-# (!) This is intended to run in queued instructions: E.run([]).
+# (!) This is intended to run in queued instructions: E.queue([]).
 func queue_play(fade_duration := 0.0, music_position := 0.0) -> Callable:
 	return func ():
 		await play(fade_duration, music_position)

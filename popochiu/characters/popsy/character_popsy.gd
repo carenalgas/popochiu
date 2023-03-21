@@ -1,7 +1,7 @@
 @tool
 extends PopochiuCharacter
-# You can use E.run([]) to trigger a sequence of events.
-# Use await E.run([]) if you want to pause the excecution of
+# You can use E.queue([]) to trigger a sequence of events.
+# Use await E.queue([]) if you want to pause the excecution of
 # the function until the sequence of events finishes.
 
 const Data := preload('character_popsy_state.gd')
