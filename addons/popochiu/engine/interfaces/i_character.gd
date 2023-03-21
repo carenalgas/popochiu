@@ -56,8 +56,9 @@ func get_runtime_character(script_name: String) -> PopochiuCharacter:
 	var character: PopochiuCharacter = null
 
 	for c in characters:
-		if (c as PopochiuCharacter).script_name.to_lower() == script_name.to_lower():
+		if c.script_name.to_lower() == script_name.to_lower():
 			character = c
+			
 			break
 
 	if not character:
@@ -81,8 +82,9 @@ func is_valid_character(script_name: String) -> bool:
 		result = true
 	else:
 		for c in characters:
-			if (c as PopochiuCharacter).script_name.to_lower() == sn:
+			if c.script_name.to_lower() == sn:
 				result = true
+				
 				break
 	
 	return result
@@ -95,7 +97,7 @@ func get_character(script_name: String) -> PopochiuCharacter:
 		return player
 	
 	for c in characters:
-		if (c as PopochiuCharacter).script_name.to_lower() == script_name.to_lower():
+		if c.script_name.to_lower() == script_name.to_lower():
 			return c
 	
 	# If the character doesn't existis, try to instantiate it from the list of

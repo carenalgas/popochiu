@@ -10,42 +10,16 @@ signal inventory_show_requested(time)
 signal inventory_shown
 signal inventory_hide_requested(use_anim)
 
-
 var active: PopochiuInventoryItem
-# Used for saving the game
+# -- Used for saving the game -------- 
 var items := []
 var items_states := {}
+# -------- Used for saving the game --
 
 var _item_instances := []
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-# Makes the cursor use the texture of an item in the inventory.
-# If `ignore_block` is `true` the cursor texture will change no matter the
-# graphic interface is blocked (that is when, by default, the cursor texture is
-# an hourglass).
-func set_active_item(
-	item: PopochiuInventoryItem = null,
-	ignore_block := false
-) -> void:
-	if is_instance_valid(item):
-		active = item
-		Cursor.set_cursor_texture((item as TextureRect).texture, ignore_block)
-	else:
-		active = null
-		Cursor.remove_cursor_texture()
-
-
-func is_item_in_inventory(item_name: String) -> bool:
-	var i: PopochiuInventoryItem = get_item_instance(item_name)
-	return is_instance_valid(i) and i.in_inventory
-
-
-func is_full() -> bool:
-	return E.settings.inventory_limit > 0\
-	and E.settings.inventory_limit == items.size()
-
-
 func clean_inventory(in_bg := false) -> void:
 	items.clear()
 	
@@ -84,19 +58,46 @@ func hide_inventory(use_anim := true) -> void:
 	await get_tree().process_frame
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	for ii in _item_instances:
 		var ii_name: String = ii.script_name
 		if ii_name.to_lower() == item_name.to_lower():
 			return ii as PopochiuInventoryItem
 	
-	# If the item is not in the list of items, then instantiate it based checked the
-	# list of items (Resource) in Popochiu
-	var new_intentory_item: PopochiuInventoryItem = E.get_inventory_item_instance(
-		item_name
-	)
+	# If the item is not in the list of items, then instantiate it based checked
+	# the list of items (Resource) in Popochiu
+	var new_intentory_item: PopochiuInventoryItem =\
+	E.get_inventory_item_instance(item_name)
+	
 	if new_intentory_item:
 		_item_instances.append(new_intentory_item)
 		return new_intentory_item
 	
 	return null
+
+
+# Makes the cursor use the texture of an item in the inventory.
+# If `ignore_block` is `true` the cursor texture will change no matter the
+# graphic interface is blocked (that is when, by default, the cursor texture is
+# an hourglass).
+func set_active_item(
+	item: PopochiuInventoryItem = null,
+	ignore_block := false
+) -> void:
+	if is_instance_valid(item):
+		active = item
+		Cursor.set_cursor_texture((item as TextureRect).texture, ignore_block)
+	else:
+		active = null
+		Cursor.remove_cursor_texture()
+
+
+func is_item_in_inventory(item_name: String) -> bool:
+	var i: PopochiuInventoryItem = get_item_instance(item_name)
+	return is_instance_valid(i) and i.in_inventory
+
+
+func is_full() -> bool:
+	return E.settings.inventory_limit > 0\
+	and E.settings.inventory_limit == items.size()

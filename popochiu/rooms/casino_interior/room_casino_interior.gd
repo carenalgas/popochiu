@@ -14,7 +14,7 @@ var state: Data = load("res://popochiu/rooms/casino_interior/room_casino_interio
 # What happens when Popochiu loads the room. At this point the room is in the
 # tree but it is not visible
 func _on_room_entered() -> void:
-	A.mx_house.play_now()
+	A.mx_house.play()
 
 
 # What happens when the room changing transition finishes. At this point the room

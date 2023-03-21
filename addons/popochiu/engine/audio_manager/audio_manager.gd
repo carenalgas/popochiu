@@ -84,7 +84,8 @@ func play_music_cue(
 		
 		if fade_duration > 0.0:
 			stream_player = _fade_in(
-				cue, Vector2.ZERO, fade_duration, -80.0, cue.volume, music_position
+				cue, Vector2.ZERO, fade_duration,
+				-80.0, cue.volume, music_position
 			)
 		else:
 			stream_player = _play(cue, Vector2.ZERO, music_position)
@@ -140,7 +141,9 @@ func stop(cue_name: String, fade_duration := 0.0) -> void:
 		
 		if is_instance_valid(stream_player):
 			if fade_duration > 0.0:
-				_fade_sound(cue_name, fade_duration, stream_player.volume_db, -80.0)
+				_fade_sound(
+					cue_name, fade_duration, stream_player.volume_db, -80.0
+				)
 			else:
 				stream_player.stop()
 			
@@ -209,7 +212,7 @@ func _play(
 			return null
 
 		(player as AudioStreamPlayer2D).stream = cue.audio
-		(player as AudioStreamPlayer2D).pitch_scale = cue.get_pitch()
+		(player as AudioStreamPlayer2D).pitch_scale = cue.pitch
 		(player as AudioStreamPlayer2D).volume_db = cue.volume
 		(player as AudioStreamPlayer2D).max_distance = cue.max_distance
 		(player as AudioStreamPlayer2D).position = position
@@ -221,7 +224,7 @@ func _play(
 			return null
 	
 		(player as AudioStreamPlayer).stream = cue.audio
-		(player as AudioStreamPlayer).pitch_scale = cue.get_pitch()
+		(player as AudioStreamPlayer).pitch_scale = cue.pitch
 		(player as AudioStreamPlayer).volume_db = cue.volume
 	
 	var cue_name: String = cue.resource_name

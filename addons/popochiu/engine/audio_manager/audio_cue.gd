@@ -3,9 +3,9 @@ extends Resource
 class_name AudioCue
 
 @export var audio: AudioStream
-@export var loop := false : set = _set_loop
+@export var loop := false : set = set_loop
 @export var is_2d := false
-@export var pitch := 0.0
+@export var pitch := 0.0 : get = get_pitch
 @export var volume := 0.0
 @export var rnd_pitch := Vector2.ZERO
 @export var rnd_volume := Vector2.ZERO
@@ -15,18 +15,33 @@ class_name AudioCue
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-# Returns the `pitch_scale` to apply to the audio stream player that will play
-# the audio of this audio cue.
-func get_pitch() -> float:
-	if rnd_pitch != Vector2.ZERO:
-		return _get_rnd_pitch()
-	return A.semitone_to_pitch(pitch)
-
-
-# Plays this audie cue with a fade that will last `duration` seconds.
+# Plays immediately this audio cue with a fade that will last `duration` seconds.
 # You can specify the starting volume with `from` and the target volume with `to`.
-# (!) This is intended to run in queued instructions: E.run([]).
 func fade(
+	duration := 1.0,
+	wait_to_end := false,
+	from := -80.0,
+	to := INF,
+	position_2d := Vector2.ZERO
+) -> void:
+	if wait_to_end:
+		await E.am.play_fade_cue(
+			resource_name, 
+			duration,
+			from,
+			to,
+			position_2d,
+			true
+		)
+	else:
+		E.am.play_fade_cue(resource_name, duration, from, to, position_2d)
+
+
+# Queue the call to play this audie cue with a fade that will last `duration`
+# seconds. You can specify the starting volume with `from` and the target volume
+# with `to`.
+# (!) This is intended to run in queued instructions: E.run([]).
+func queue_fade(
 	duration := 1.0,
 	wait_to_end := false,
 	from := -80.0,
@@ -35,58 +50,74 @@ func fade(
 ) -> Callable:
 	return func ():
 		if wait_to_end:
-			await fade_now(duration, wait_to_end, from, to, position_2d)
+			await fade(duration, wait_to_end, from, to, position_2d)
 		else:
-			fade_now(duration, wait_to_end, from, to, position_2d)
+			fade(duration, wait_to_end, from, to, position_2d)
 			await E.get_tree().process_frame
 
 
-# Plays immediately this audio cue with a fade that will last `duration` seconds.
-# You can specify the starting volume with `from` and the target volume with `to`.
-func fade_now(
-	duration := 1.0,
-	wait_to_end := false,
-	from := -80.0,
-	to := INF,
-	position_2d := Vector2.ZERO
-) -> void:
-	if wait_to_end:
-		await A.play_fade_now(
-			resource_name, duration, wait_to_end, from, to, position_2d
-		)
-	else:
-		A.play_fade_now(
-			resource_name, duration, wait_to_end, from, to, position_2d
-		)
-
-
-# Stops the audio cue. Can use a fade that will last `fade_duration` seconds.
-# (!) This is intended to run in queued instructions: E.run([]).
-func stop(fade_duration := 0.0) -> Callable:
-	return func ():
-		stop_now(fade_duration)
-		await E.get_tree().process_frame
-
-
-# Stops the audio cue immediately. Can use a fade that will last `fade_duration`
+# Stops the audio cue. Can use a fade that will last `fade_duration`
 # seconds.
-func stop_now(fade_duration := 0.0) -> void:
-	A.stop_now(resource_name, fade_duration)
+func stop(fade_duration := 0.0) -> void:
+	E.am.stop(resource_name, fade_duration)
+
+
+# Queue the call to stop the audio cue.
+# Can use a fade that will last `fade_duration` seconds.
+# (!) This is intended to run in queued instructions: E.run([]).
+func queue_stop(fade_duration := 0.0) -> Callable:
+	return func ():
+		stop(fade_duration)
+		await E.get_tree().process_frame
 
 
 # Changes the pitch_scale of the AudioStreamPlayer(2D) that is playing the audio
 # file of this cue
 func change_stream_pitch(pitch := 0.0) -> void:
-	A.change_cue_pitch(resource_name, pitch)
+	E.am.change_cue_pitch(resource_name, pitch)
 
 
 # Changes the volume_db of the AudioStreamPlayer(2D) that is playing the audio
 # file of this cue
 func change_stream_volume(volume := 0.0) -> void:
-	A.change_cue_volume(resource_name, volume)
+	E.am.change_cue_volume(resource_name, volume)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func set_loop(value: bool) -> void:
+	loop = value
+	
+	if not audio: return
+	
+	prints(resource_name, audio.get_class())
+	match audio.get_class():
+		'AudioStreamOggVorbis', 'AudioStreamMP3':
+			audio.loop = value
+		'AudioStreamWAV':
+			(audio as AudioStreamWAV).loop_mode =\
+			AudioStreamWAV.LOOP_FORWARD if value\
+			else AudioStreamWAV.LOOP_DISABLED
+	
+	notify_property_list_changed()
+
+
+# Returns the `pitch_scale` to apply to the audio stream player that will play
+# the audio of this audio cue.
+func get_pitch() -> float:
+	var p := A.semitone_to_pitch(pitch)
+	
+	if rnd_pitch != Vector2.ZERO:
+		p = _get_rnd_pitch()
+	
+	return p
+
+
+# Returns the playback position of the AudioCue identified by `cue_name`.
+# If not found, returns -1.0.
+func get_cue_playback_position() -> float:
+	return E.am.get_cue_playback_position(resource_name)
+
+
 # Maps the values in `values` to the properties of this audio cue.
 # Used by TabAudio when changing the script of the audio cue to one of the types:
 # AudioCueSound or AudioCueMusic (in projects prior to v1.9.0)
@@ -132,20 +163,3 @@ func _get_rnd_pitch() -> float:
 func _get_rnd_volume() -> float:
 	randomize()
 	return volume + randf_range(rnd_volume.x, rnd_volume.y)
-
-
-func _set_loop(value: bool) -> void:
-	loop = value
-	
-	if not audio: return
-	
-	prints(resource_name, audio.get_class())
-	match audio.get_class():
-		'AudioStreamOggVorbis', 'AudioStreamMP3':
-			audio.loop = value
-		'AudioStreamWAV':
-			(audio as AudioStreamWAV).loop_mode =\
-			AudioStreamWAV.LOOP_FORWARD if value\
-			else AudioStreamWAV.LOOP_DISABLED
-	
-	notify_property_list_changed()

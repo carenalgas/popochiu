@@ -312,8 +312,8 @@ func room_readied(room: PopochiuRoom) -> void:
 
 		self.in_room = true
 		
-		# Calling this will make the camera be set to its default values and will
-		# store the state of the main room (the last parameter will prevent
+		# Calling this will make the camera be set to its default values and
+		# will store the state of the main room (the last parameter will prevent
 		# Popochiu from changing the scene to the same that is already loaded
 		goto_room(room.script_name, false, true, true)
 	
@@ -326,7 +326,8 @@ func room_readied(room: PopochiuRoom) -> void:
 	else:
 		current_room.state.visited = true
 		current_room.state.visited_times += 1
-		current_room.state.visited_first_time = current_room.state.visited_times == 1
+		current_room.state.visited_first_time =\
+		current_room.state.visited_times == 1
 	
 	# Add the PopochiuCharacter instances to the room
 	for c in current_room.characters_cfg:
@@ -498,7 +499,8 @@ func add_history(data: Dictionary) -> void:
 
 # Makes a method in node to be able to be used in a run call. Method parameters
 # can be passed with params, and yield_signal is the signal that will notify the
-# function has been completed (so run can continue with the next command in the queue)
+# function has been completed (so run can continue with the next command in the
+# queue)
 func runnable(
 	node: Object, method: String, params := [], signal_name := ''
 ) -> Callable:
