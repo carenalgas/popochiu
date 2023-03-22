@@ -262,7 +262,8 @@ func open_setup() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _open_popup(popup: ConfirmationDialog) -> void:
-	popup.popup_centered_clamped(Vector2(640, 360))
+	popup.clear_fields()
+	popup.popup_centered(Vector2(640.0, 160.0))
 
 
 func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:

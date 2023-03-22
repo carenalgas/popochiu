@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_inventory_item/create_inventory_item.gd" id="4"]
 
 [node name="CreateInventoryItem" type="ConfirmationDialog"]
+max_size = Vector2i(640, 320)
 dialog_hide_on_ok = false
 dialog_autowrap = true
 script = ExtResource("4")
@@ -45,7 +46,6 @@ layout_mode = 2
 text = "Use PascalCase. No spaces. i.e Scythe or WorkOrder or DeckOfCards."
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 bbcode_enabled = true

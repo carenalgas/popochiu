@@ -57,7 +57,7 @@ static func camel2snake(string:String)->String:
 		if ch == ch.to_lower():
 			result.append(ch)
 		else:
-			result.append('_'+ch.to_lower())
+			result.append('_' + ch.to_lower())
 
 	return ''.join(result)
 
@@ -65,11 +65,14 @@ static func camel2snake(string:String)->String:
 # Formats `string` from TheName to the_name
 static func pascal2snake(string:String)->String:
 	var result = PackedStringArray()
+	var idx := 0
 	for ch in string:
-		if ch == ch.to_lower():
+		# FIX: The second condition solves strings that start with a number
+		if ch == ch.to_lower() and not (idx == 0 and ch.is_valid_int()):
 			result.append(ch)
 		else:
-			result.append('_'+ch.to_lower())
+			result.append('_' + ch.to_lower())
+		idx += 1
 	result[0] = result[0][1]
 	return ''.join(result)
 # ==============================================================================

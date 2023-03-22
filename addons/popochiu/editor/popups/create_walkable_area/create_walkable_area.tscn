@@ -3,6 +3,7 @@
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_walkable_area/create_walkable_area.gd" id="1_bvuft"]
 
 [node name="CreateWalkableArea" type="ConfirmationDialog"]
+max_size = Vector2i(640, 320)
 dialog_hide_on_ok = false
 dialog_autowrap = true
 script = ExtResource("1_bvuft")
@@ -45,7 +46,6 @@ layout_mode = 2
 text = "Use PascalCase. No spaces. i.e Floor or SuspendedBridge.."
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 bbcode_enabled = true
