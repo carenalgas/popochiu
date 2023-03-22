@@ -57,7 +57,11 @@ func add(animate := true) -> Callable:
 
 
 func add_now(animate := true) -> void:
+	G.block()
+	
 	await I.add_item_now(script_name, animate)
+	
+	G.done(true)
 
 
 func add_as_active(animate := true) -> Callable:

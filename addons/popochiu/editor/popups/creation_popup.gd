@@ -12,6 +12,13 @@ var _main_dock: Panel : set = set_main_dock
 func _ready() -> void:
 	register_text_enter(_input)
 	
+	_info.add_theme_font_override(
+		'bold_font', get_theme_font('bold', 'EditorFonts')
+	)
+	_info.add_theme_font_override(
+		'mono_font', get_theme_font('source', 'EditorFonts')
+	)
+	
 	confirmed.connect(_create)
 	canceled.connect(_clear_fields)
 	close_requested.connect(_clear_fields)

@@ -26,19 +26,19 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func on_character_entered(chr: PopochiuCharacter) -> void:
+func _on_character_entered(chr: PopochiuCharacter) -> void:
 	pass
 
 
-func on_character_exited(chr: PopochiuCharacter) -> void:
+func _on_character_exited(chr: PopochiuCharacter) -> void:
 	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _check_area(area: PopochiuCharacter, entered: bool) -> void:
 	if area is PopochiuCharacter:
-		if entered: on_character_entered(area)
-		else: on_character_exited(area)
+		if entered: _on_character_entered(area)
+		else: _on_character_exited(area)
 
 
 func _set_enabled(value: bool) -> void:

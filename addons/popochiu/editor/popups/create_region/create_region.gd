@@ -11,9 +11,10 @@ var room_tab: VBoxContainer = null
 var _room: Node2D = null
 var _new_region_name := ''
 var _new_region_path := ''
-var _region_path_template: String
-var _room_path: String
-var _room_dir: String
+var _region_path_template := ''
+var _room_path := ''
+var _room_dir := ''
+var _pascal_name := ''
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -23,18 +24,7 @@ func _ready() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func set_main_dock(node: Panel) -> void:
-	super(node)
-
-
-func room_opened(r: Node2D) -> void:
-	_room = r
-	_room_path = _room.scene_file_path
-	_room_dir = _room_path.get_base_dir()
-	_region_path_template = _room_dir + '/regions/%s/region_%s'
-
-
-func create() -> void:
+func _create() -> void:
 	if _new_region_name.is_empty():
 		_error_feedback.show()
 		return
@@ -45,9 +35,11 @@ func create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the folder for the Region
-	assert(\
-		DirAccess.make_dir_recursive_absolute(_new_region_path.get_base_dir()) == OK,\
-		'[Popochiu] Could not create region folder for ' + _new_region_name\
+	assert(
+		DirAccess.make_dir_recursive_absolute(
+			_new_region_path.get_base_dir()
+		) == OK,
+		'[Popochiu] Could not create region folder for ' + _new_region_name
 	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
@@ -62,9 +54,9 @@ func create() -> void:
 	# Crear la región a agregar a la habitación
 	var region: PopochiuRegion = ResourceLoader.load(REGION_SCENE).instantiate()
 	region.set_script(ResourceLoader.load(script_path))
-	region.name = _new_region_name
-	region.script_name = _new_region_name
-	region.description = _new_region_name
+	region.name = _pascal_name
+	region.script_name = _pascal_name
+	region.description = _new_region_name.capitalize()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Agregar la región a su habitación
@@ -87,7 +79,7 @@ func create() -> void:
 	# Update the list of Regions in the Room tab
 	room_tab.add_to_list(
 		Constants.Types.REGION,
-		_new_region_name,
+		_pascal_name,
 		script_path
 	)
 	
@@ -101,12 +93,21 @@ func create() -> void:
 	hide()
 
 
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+func room_opened(r: Node2D) -> void:
+	_room = r
+	_room_path = _room.scene_file_path
+	_room_dir = _room_path.get_base_dir()
+	_region_path_template = _room_dir + '/regions/%s/region_%s'
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_region_name = _name
+		_new_region_name = PopochiuUtils.pascal2snake(_name)
+		_pascal_name = _name
 		_new_region_path = _region_path_template %\
 		[_new_region_name, _new_region_name]
 

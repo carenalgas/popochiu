@@ -29,7 +29,6 @@ func _ready():
 	_display_box.shown.connect(_enable_panels)
 	
 	# Connect to singleton signals
-	C.character_spoke.connect(_show_dialog_text)
 	G.blocked.connect(_disable_panels)
 	G.freed.connect(_enable_panels)
 	G.interface_hidden.connect(_hide_panels)
@@ -41,15 +40,6 @@ func _ready():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _show_dialog_text(chr: PopochiuCharacter, msg := '') -> void:
-	_disable_panels()
-	
-	E.add_history({
-		character = chr.description,
-		text = msg
-	})
-
-
 func _disable_panels(props := { blocking = true }) -> void:
 	if props.blocking:
 		_click_handler.mouse_filter = Control.MOUSE_FILTER_STOP

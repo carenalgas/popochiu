@@ -219,6 +219,8 @@ func say_now(dialog: String) -> void:
 	
 	emotion = ''
 	idle_now()
+	
+	G.done(true)
 
 
 func grab() -> Callable:

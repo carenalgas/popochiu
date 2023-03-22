@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_vjboj"]
 
 [node name="Setup" type="AcceptDialog"]
-size = Vector2i(496, 350)
-max_size = Vector2i(496, 350)
+size = Vector2i(496, 496)
+max_size = Vector2i(496, 496)
 script = ExtResource("1_vjboj")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]

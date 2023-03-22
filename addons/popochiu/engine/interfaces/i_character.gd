@@ -14,43 +14,43 @@ var characters_states := {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Makes a character (script_name) say something.
-func character_say(chr_name: String, dialog: String) -> Callable:
-	return func (): await character_say_now(chr_name, dialog)
-
-
-func character_say_now(chr_name: String, dialog: String) -> void:
-	if not E.in_run():
-		G.block()
-	
-	var talking_character: PopochiuCharacter = get_character(chr_name)
-	
-	if talking_character:
-		await talking_character.say_now(dialog)
-	else:
-		printerr(
-			'[Popochiu] ICharacter.character_say:',
-			'character %s not found' % chr_name
-		)
-		await get_tree().process_frame
-	
-	if not E.in_run():
-		G.done()
-
-
-# Makes the PC (player character) say something inside an E.run([])
-func player_say(dialog: String) -> Callable:
-	return func (): await player_say_now(dialog)
-
-
-# Makes the PC (player character) say something outside an E.run([])
-func player_say_now(dialog: String) -> void:
-	if not E.in_run():
-		G.block()
-	
-	await player.say_now(dialog)
-	
-	if not E.in_run():
-		G.done()
+#func character_say(chr_name: String, dialog: String) -> Callable:
+#	return func (): await character_say_now(chr_name, dialog)
+#
+#
+#func character_say_now(chr_name: String, dialog: String) -> void:
+#	if not E.in_run():
+#		G.block()
+#
+#	var talking_character: PopochiuCharacter = get_character(chr_name)
+#
+#	if talking_character:
+#		await talking_character.say_now(dialog)
+#	else:
+#		printerr(
+#			'[Popochiu] ICharacter.character_say:',
+#			'character %s not found' % chr_name
+#		)
+#		await get_tree().process_frame
+#
+#	if not E.in_run():
+#		G.done()
+#
+#
+## Makes the PC (player character) say something inside an E.run([])
+#func player_say(dialog: String) -> Callable:
+#	return func (): await player_say_now(dialog)
+#
+#
+## Makes the PC (player character) say something outside an E.run([])
+#func player_say_now(dialog: String) -> void:
+#	if not E.in_run():
+#		G.block()
+#
+#	await player.say_now(dialog)
+#
+#	if not E.in_run():
+#		G.done()
 
 
 func character_walk_to(chr_name: String, position: Vector2) -> Callable:

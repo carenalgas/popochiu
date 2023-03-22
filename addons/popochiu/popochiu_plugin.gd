@@ -50,7 +50,7 @@ func _enter_tree() -> void:
 	prints('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
 	prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
 	print_rich(\
-	'[wave]▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( o )3(o)/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒[/wave]')
+	'[wave]▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( u )3(u )/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒[/wave]')
 	
 	_editor_file_system.scan_sources()
 	

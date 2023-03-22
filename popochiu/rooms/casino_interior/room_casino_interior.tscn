@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://bm5dr7hmyy3i3"]
+[gd_scene load_steps=15 format=3 uid="uid://bm5dr7hmyy3i3"]
 
 [ext_resource type="Script" path="res://popochiu/rooms/casino_interior/room_casino_interior.gd" id="1_dtxxd"]
 [ext_resource type="PackedScene" uid="uid://do1k681xt48cm" path="res://addons/popochiu/engine/objects/prop/popochiu_prop.tscn" id="2_o2pt3"]
@@ -11,6 +11,8 @@
 [ext_resource type="Texture2D" uid="uid://d1j8qhghb33o4" path="res://popochiu/rooms/casino_interior/props/toy_car/toy_car.png" id="5_7ierb"]
 [ext_resource type="PackedScene" uid="uid://hfvjxu5map27" path="res://addons/popochiu/engine/objects/hotspot/popochiu_hotspot.tscn" id="8_e1ymr"]
 [ext_resource type="Script" path="res://popochiu/rooms/casino_interior/hotspots/window/hotspot_window.gd" id="9_gll3q"]
+[ext_resource type="PackedScene" uid="uid://bslimpdskcmix" path="res://addons/popochiu/engine/objects/region/popochiu_region.tscn" id="10_i7om1"]
+[ext_resource type="Script" path="res://popochiu/rooms/casino_interior/regions/color_changer/region_color_changer.gd" id="11_wlsfd"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_1df8x"]
 vertices = PackedVector2Array(-87, 15, -39, 8, 75, 10, 104, 26, 111, 52, 78, 69, 3, 72, -74, 68, -102, 54, -105, 30)
@@ -57,19 +59,29 @@ polygon = PackedVector2Array(-7, 2, -6, -2, -2, -5, 3, -5, 8, 0, 3, 4)
 
 [node name="Hotspots" type="Node2D" parent="."]
 
-[node name="Window" type="Area2D" parent="Hotspots" instance=ExtResource("8_e1ymr")]
+[node name="Window" parent="Hotspots" instance=ExtResource("8_e1ymr")]
 position = Vector2(151, 60)
 script = ExtResource("9_gll3q")
 script_name = "Window"
 description = "Window"
 walk_to_point = Vector2(28, 44)
-cursor = 1
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Hotspots/Window"]
 modulate = Color(0, 0, 1, 1)
 polygon = PackedVector2Array(-16, -17, -24, -3, -21, 12, -3, 21, 12, 19, 22, 11, 24, -6, 14, -18, -3, -21)
 
 [node name="Regions" type="Node2D" parent="."]
+
+[node name="ColorChanger" parent="Regions" instance=ExtResource("10_i7om1")]
+position = Vector2(160, 90)
+script = ExtResource("11_wlsfd")
+script_name = "ColorChanger"
+description = "Color Changer"
+tint = Color(0, 1, 1, 1)
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Regions/ColorChanger"]
+modulate = Color(0, 1, 1, 1)
+polygon = PackedVector2Array(-9, 55, 2, 34, 46, 41, 49, 68, 15, 68)
 
 [node name="Points" type="Node2D" parent="."]
 

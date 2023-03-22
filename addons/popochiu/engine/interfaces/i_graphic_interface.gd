@@ -57,8 +57,14 @@ func block() -> void:
 
 # Notifies that graphic interface elements can be unlocked (e.g. when a cutscene
 # has ended).
-func done() -> void:
+func done(wait := false) -> void:
 	is_blocked = false
+	
+	if wait:
+		await get_tree().create_timer(0.1).timeout
+		
+		if is_blocked: return
+	
 	Cursor.unlock()
 	Cursor.set_cursor()
 	freed.emit()

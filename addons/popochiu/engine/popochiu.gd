@@ -134,6 +134,8 @@ func _ready() -> void:
 		
 		res.save_childs_states()
 	
+	C.character_spoke.connect(_on_character_spoke)
+	
 	redied.emit()
 
 
@@ -668,6 +670,13 @@ func _eval_string(text: String) -> void:
 					0, name_idx
 				).to_lower()
 				
+				if not C.is_valid_character(character_name):
+					printerr('[Popochiu] No PopochiuCharacter with name: %s'\
+					% character_name)
+					
+					await get_tree().process_frame
+					return
+				
 				var emotion := ''
 				if emotion_idx > 0:
 					emotion = colon_prefix.substr(emotion_idx + 1).rstrip(')')
@@ -683,13 +692,7 @@ func _eval_string(text: String) -> void:
 				
 				var dialogue := text.substr(colon_idx + 1).trim_prefix(' ')
 				
-				if character_name == 'player'\
-				or C.player.script_name.to_lower() == character_name:
-					await C.player_say_now(dialogue)
-				elif C.is_valid_character(character_name):
-					await C.character_say_now(character_name, dialogue)
-				else:
-					await get_tree().process_frame
+				C.get_character(character_name).say(dialogue)
 			else:
 				await get_tree().process_frame
 	
@@ -728,3 +731,12 @@ func _runnable(
 			await node.get(signal_name)
 	else:
 		await get_tree().process_frame
+
+
+func _on_character_spoke(chr: PopochiuCharacter, msg := '') -> void:
+	G.block()
+	
+	add_history({
+		character = chr.description,
+		text = msg
+	})
