@@ -9,7 +9,7 @@ const AnimationTagRow = preload("res://addons/Popochiu/Editor/Importers/Aseprite
 
 var scene: Node
 var target_node: Node
-var config
+var config: Reference
 var file_system: EditorFileSystem
 
 
@@ -56,6 +56,8 @@ onready var _wipe_old_animations_field = $margin/VBoxContainer/Options/WipeOldAn
 func _ready():
 	if not target_node.has_node("AnimationPlayer"):
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND))
+		return
+
 	_animation_player_path = target_node.get_node("AnimationPlayer").get_path()
 
 	# Instantiate animation creator

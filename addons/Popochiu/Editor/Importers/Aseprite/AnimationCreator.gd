@@ -9,8 +9,8 @@ const RESULT_CODE = preload("res://addons/Popochiu/Editor/Config/ResultCodes.gd"
 
 var _aseprite = preload("./AsepriteController.gd").new()
 
-var _config
-var _file_system
+var _config: Reference
+var _file_system: EditorFileSystem
 var _tags_options_lookup = {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -104,7 +104,7 @@ func _create_animations_from_file(target_sprite: Node, player: AnimationPlayer, 
 
 	return result
 
-func _remove_animations_from_player(player):
+func _remove_animations_from_player(player: AnimationPlayer):
 	var animations = player.get_animation_list()
 	for a in animations:
 		if player.has_animation(a):

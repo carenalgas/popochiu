@@ -1,7 +1,7 @@
 tool
 extends Reference
 
-var _config
+var _config: Reference
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -130,13 +130,13 @@ func check_command_path():
 	var regex = RegEx.new()
 	regex.compile("^[A-Z|a-z]:[\\\\|\\/].+\\.exe$")
 	return \
-		regex.search(_aseprite_command()) \
+		regex.search(_get_aseprite_command()) \
 		and \
-		File.new().file_exists(_aseprite_command())
+		File.new().file_exists(_get_aseprite_command())
 
 
 func test_command():
-	var exit_code = OS.execute(_aseprite_command(), ['--version'], true)
+	var exit_code = OS.execute(_get_aseprite_command(), ['--version'], true)
 	return exit_code == 0
 
 
@@ -200,10 +200,10 @@ func _export_command_common_arguments(source_name: String, data_path: String, sp
 
 
 func _execute(arguments, output):
-	return OS.execute(_aseprite_command(), arguments, true, output, true)
+	return OS.execute(_get_aseprite_command(), arguments, true, output, true)
 
 
-func _aseprite_command() -> String:
+func _get_aseprite_command() -> String:
 	return _config.get_command()
 
 

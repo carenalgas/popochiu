@@ -5,7 +5,7 @@ signal tag_state_changed
 
 const RESULT_CODE = preload("res://addons/Popochiu/Editor/Config/ResultCodes.gd")
 
-var _config
+var _config: Reference
 var _anim_tag_state: Dictionary = {}
 
 onready var tag_name_label = $HBoxContainer/TagName

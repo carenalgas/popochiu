@@ -36,13 +36,13 @@ func parse_begin(object: Object) -> void:
 	add_custom_control(panel)
 
 
-#func parse_property(\
-#object: Object,
-#type: int,
-#path: String,
-#hint: int,
-#hint_text: String,
-#usage: int) -> bool:
-#	if object and object.get_parent() is YSort and path != 'position':
-#		return true
-#	return false
+func parse_property(\
+	object: Object,
+	type: int,
+	path: String,
+	hint: int,
+	hint_text: String,
+	usage: int) -> bool:
+	if object and object.get_parent() is YSort and path != 'position':
+		return true
+	return false
