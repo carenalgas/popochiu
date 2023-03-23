@@ -144,7 +144,7 @@ func _update_name(new_text: String) -> void:
 			'In [b]%s[/b] the following files will be created:\n[code]%s[/code]'\
 			% [
 				_room_dir + '/walkable_areas',
-				'walkable_area' + _new_walkable_area_name + '.gd'
+				'walkable_area_' + _new_walkable_area_name + '.gd'
 			]
 		)
 		_info.show()
