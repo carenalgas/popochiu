@@ -8,7 +8,7 @@ func _on_start() -> void:
 	# E.g. Make the PC to look at the character which it will talk to, walk to
 	# it, and say something (or make the character say something)
 	# (!) It MUST always use a yield
-	await E.run([])
+	await E.get_tree().process_frame
 
 
 func _option_selected(opt: PopochiuDialogOption) -> void:
@@ -19,19 +19,19 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 	# each one
 	match opt.id:
 		'Opt1':
-			await E.run([
+			await E.queue([
 				'Player: Oñiiiiiiiiii',
 				'Popsy: Oñiiiiiiiiiiii'
 			])
 			
 			opt.turn_off()
 		'Opt2':
-			await E.run([
+			await E.queue([
 				'Player: How are you?',
 				'Popsy: I am happy to be here!'
 			])
 		'Opt3':
-			await E.run([
+			await E.queue([
 				'Player: See ya!',
 				'Popsy: Adiós, señí'
 			])

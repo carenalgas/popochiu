@@ -1,6 +1,6 @@
 # The scenes used by Popochiu.
 # 
-# Can have: Props, Hotspots, Regions, Points and
+# Can have: Props, Hotspots, Regions, Markers and
 # Walkable areas. Characters can move through this and interact with its Props
 # and Hotspots. Regions can be used to trigger methods when a character enters
 # or leaves.
@@ -83,7 +83,7 @@ func _unhandled_input(event):
 		return
 	
 	if is_instance_valid(C.player) and C.player.can_move:
-		C.player.walk_now(get_local_mouse_position())
+		C.player.walk(get_local_mouse_position())
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
@@ -163,12 +163,12 @@ func setup_camera() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
-func get_point(point_name: String) -> Vector2:
-	var point: Marker2D = get_node_or_null('Points/' + point_name)
-	if point:
-		return point.global_position
+func get_marker(marker_name: String) -> Vector2:
+	var marker: Marker2D = get_node_or_null('Markers/' + marker_name)
+	if marker:
+		return marker.global_position
 	prints('[Popochiu] Room%s.get_point: No se encontró el punto %s' % [
-		script_name, point_name
+		script_name, marker_name
 	])
 	return Vector2.ZERO
 
@@ -222,8 +222,8 @@ func get_regions() -> Array:
 	return get_tree().get_nodes_in_group('regions')
 
 
-func get_points() -> Array:
-	return $Points.get_children()
+func get_markers() -> Array:
+	return $Markers.get_children()
 
 
 func get_walkable_areas() -> Array:
@@ -318,6 +318,6 @@ func _clear_navigation_path() -> void:
 	if not _path.is_empty():
 		_path.clear()
 	
-	_moving_character.idle_now()
+	_moving_character.idle()
 	C.character_move_ended.emit(_moving_character)
 	_moving_character = null

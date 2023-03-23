@@ -5,6 +5,7 @@
 
 [node name="CharacterPopsy" type="Area2D"]
 script = ExtResource("1_r3lb4")
+text_color = Color(0.768627, 0.423529, 0.443137, 1)
 script_name = "Popsy"
 description = "Popsy"
 cursor = 8
@@ -13,12 +14,10 @@ cursor = 8
 polygon = PackedVector2Array(-9, -23, 7, -24, 16, -18, 16, -2, -4, 3, -19, -1)
 
 [node name="BaselineHelper" type="Line2D" parent="."]
-visible = false
 points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
 
 [node name="WalkToHelper" type="Marker2D" parent="."]
-visible = false
 
 [node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
 offset_left = -2.5
@@ -33,4 +32,4 @@ position = Vector2(0, -13)
 texture = ExtResource("2_kngnh")
 
 [node name="DialogPos" type="Marker2D" parent="."]
-visible = false
+position = Vector2(0, -29)

@@ -20,14 +20,27 @@ func _ready() -> void:
 	)
 	
 	confirmed.connect(_create)
-	canceled.connect(_clear_fields)
-	close_requested.connect(_clear_fields)
+	canceled.connect(clear_fields)
+	close_requested.connect(clear_fields)
 	_input.text_changed.connect(_update_name)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func _create() -> void:
 	pass
+
+
+func _clear_fields() -> void:
+	pass
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+func clear_fields() -> void:
+	_input.clear()
+	_error_feedback.hide()
+	_info.clear()
+	_info.size = _info.custom_minimum_size
+	_clear_fields()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
@@ -48,10 +61,3 @@ func _update_name(new_text: String) -> void:
 			casted_name.append(new_text[idx])
 
 	_name = ''.join(casted_name).strip_edges()
-
-
-func _clear_fields() -> void:
-	_input.clear()
-	_error_feedback.hide()
-
-	_info.clear()

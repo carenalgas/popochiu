@@ -21,19 +21,24 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func start() -> void:
-	D.show_dialog(script_name)
+	# Start this dialog
+	D.current_dialog = self
+	
+	await _start()
+	
+	G.done()
+
+
+func queue_start() -> Callable:
+	return func (): await start()
 
 
 func stop() -> void:
 	D.finish_dialog()
 
 
-# Gets the option PopochiuDialogOption.id that matches opt_id
-func get_option(opt_id: String) -> PopochiuDialogOption:
-	for o in options:
-		if (o as PopochiuDialogOption).id == opt_id:
-			return o
-	return null
+func queue_stop() -> Callable:
+	return func (): await stop()
 
 
 func turn_on_options(ids: Array) -> void:
@@ -68,6 +73,14 @@ func set_options(value: Array) -> void:
 			options[v] = new_opt
 			
 			notify_property_list_changed()
+
+
+# Gets the option PopochiuDialogOption.id that matches opt_id
+func get_option(opt_id: String) -> PopochiuDialogOption:
+	for o in options:
+		if (o as PopochiuDialogOption).id == opt_id:
+			return o
+	return null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

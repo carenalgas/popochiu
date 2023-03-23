@@ -1,7 +1,7 @@
 @tool
 extends PopochiuCharacter
-# You can use E.run([]) to trigger a sequence of events.
-# Use await E.run([]) if you want to pause the excecution of
+# You can use E.queue([]) to trigger a sequence of events.
+# Use await E.queue([]) if you want to pause the excecution of
 # the function until the sequence of events finishes.
 
 const Data := preload('character_popsy_state.gd')
@@ -31,9 +31,12 @@ func _on_right_click() -> void:
 
 # When the node is clicked and there is an inventory item selected
 func _on_item_used(item: PopochiuInventoryItem) -> void:
-	# Replace the call to super(item) to implement your code. This only
-	# makes the default behavior to happen.
-	super.on_item_used(item)
+	if item.script_name == 'ToyCar':
+		await C.Goddiu.say('Take this')
+		await I.ToyCar.remove()
+		await C.Popsy.say('Thanks!')
+		
+		G.done()
 
 
 # Use it to play the idle animation for the character

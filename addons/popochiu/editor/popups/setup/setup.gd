@@ -129,17 +129,6 @@ func _update_project_settings() -> void:
 	if _game_type.selected != 0:
 		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, 'canvas_items')
 		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, 'keep')
-
-#		if _game_type.selected == 1:
-#			ProjectSettings.set_setting(
-#				'importer_defaults/texture',
-#				null
-#			)
-#		else:
-#			ProjectSettings.set_setting(
-#				'importer_defaults/texture',
-#				ImporterDefaults.PIXEL_TEXTURES
-#			)
 	else:
 		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, 'disabled')
 		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, 'ignore')

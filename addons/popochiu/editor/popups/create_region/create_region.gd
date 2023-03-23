@@ -46,7 +46,9 @@ func _create() -> void:
 	# Crear el script de la región
 	var region_template := load(SCRIPT_TEMPLATE)
 	if ResourceSaver.save(region_template, script_path) != OK:
-		push_error('[Popochiu] Could not create script: %s.gd' % _new_region_name)
+		push_error(
+			"[Popochiu] Couldn't create script: %s.gd" % _new_region_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -93,6 +95,11 @@ func _create() -> void:
 	hide()
 
 
+func _clear_fields() -> void:
+	_new_region_name = ''
+	_new_region_path = ''
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func room_opened(r: Node2D) -> void:
 	_room = r
@@ -112,18 +119,13 @@ func _update_name(new_text: String) -> void:
 		[_new_region_name, _new_region_name]
 
 		_info.text = (
-			'In [b]%s[/b] the following files will be created: [code]%s[/code]' \
+			'In [b]%s[/b] the following files will be created:\n[code]%s[/code]' \
 			% [
 				_room_dir + '/regions',
 				'region_' + _new_region_name + '.gd'
 			]
 		)
+		_info.show()
 	else:
 		_info.clear()
-
-
-func _clear_fields() -> void:
-	super()
-	
-	_new_region_name = ''
-	_new_region_path = ''
+		_info.hide()

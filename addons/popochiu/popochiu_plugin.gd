@@ -4,6 +4,13 @@
 @tool
 extends EditorPlugin
 
+const ES :=\
+"[es] Estás usando Popochiu, un plugin para crear juegos point n' click"
+const EN :=\
+"[en] You're using Popochiu, a plugin for making point n' click games"
+const SYMBOL :=\
+"▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( u )3(u )/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒"
+
 var main_dock: Panel
 
 var _editor_interface := get_editor_interface()
@@ -47,10 +54,9 @@ func _init():
 func _enter_tree() -> void:
 	if _is_first_install: return
 	
-	prints('[es] Estás usando Popochiu, un plugin para crear juegos point n\' click')
-	prints('[en] You\'re using Popochiu, a plugin for making point n\' click games')
-	print_rich(\
-	'[wave]▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( u )3(u )/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒[/wave]')
+	prints(ES)
+	prints(EN)
+	print_rich('[wave]%s[/wave]' % SYMBOL)
 	
 	_editor_file_system.scan_sources()
 	
@@ -76,8 +82,8 @@ func _enter_tree() -> void:
 	
 	await get_tree().create_timer(0.5).timeout
 	
-	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and Audio cues
-#	main_dock.fill_data()
+	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and
+	# AudioCues
 	main_dock.grab_focus()
 	
 	# ==== Connect to signals ==================================================

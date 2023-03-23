@@ -68,8 +68,10 @@ func _create() -> void:
 	room_resource.resource_name = _pascal_name
 	
 	if ResourceSaver.save(room_resource, _room_path + '.tres') != OK:
-		push_error('[Popochiu] Could not create PopochiuRoomData for room: %s' %\
-		_room_name)
+		push_error(
+			"[Popochiu] Couldn't create PopochiuRoomData for room: %s" %\
+			_room_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -81,8 +83,7 @@ func _create() -> void:
 	room_script.source_code = ''
 	
 	if ResourceSaver.save(room_script, _room_path + '.gd') != OK:
-		push_error('[Popochiu] Could not create script: %s' %\
-		_room_name)
+		push_error("[Popochiu] Couldn't create script: %s" % _room_name)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -120,7 +121,7 @@ func _create() -> void:
 	var new_room_packed_scene: PackedScene = PackedScene.new()
 	new_room_packed_scene.pack(new_room)
 	if ResourceSaver.save(new_room_packed_scene, _room_path + '.tscn') != OK:
-		push_error('[Popochiu] Could not create room: %s' % _room_name)
+		push_error("[Popochiu] Couldn't create room: %s" % _room_name)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -129,8 +130,10 @@ func _create() -> void:
 	if _main_dock.add_resource_to_popochiu(
 		'rooms', ResourceLoader.load(_room_path + '.tres')
 	) != OK:
-		push_error('[Popochiu] Could not add the created room to Popochiu: %s' %\
-		_room_name)
+		push_error(
+			"[Popochiu] Couldn't add the created room to Popochiu: %s" %\
+			_room_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -160,6 +163,12 @@ func _create() -> void:
 	hide()
 
 
+func _clear_fields() -> void:
+	_room_name = ''
+	_room_path = ''
+	_set_as_main_check.button_pressed = false
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_main_dock(node: Panel) -> void:
 	super(node)
@@ -178,7 +187,8 @@ func _update_name(new_text: String) -> void:
 		_room_path = _room_path_template % [_room_name, _room_name]
 
 		_info.text = (
-			'In [b]%s[/b] the following files will be created:\n[code]%s, %s and %s[/code]' \
+			'In [b]%s[/b] the following files will be created:\
+			\n[code]%s, %s and %s[/code]' \
 			% [
 				_main_dock.ROOMS_PATH + _room_name,
 				'room_' + _room_name + '.tscn',
@@ -186,16 +196,10 @@ func _update_name(new_text: String) -> void:
 				'room_' + _room_name + '.tres'
 			]
 		)
+		_info.show()
 	else:
 		_info.clear()
-
-
-func _clear_fields() -> void:
-	super()
-	
-	_room_name = ''
-	_room_path = ''
-	_set_as_main_check.button_pressed = false
+		_info.hide()
 
 
 func _check_if_first_room() -> void:

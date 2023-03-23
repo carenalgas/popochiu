@@ -50,27 +50,15 @@ func _create() -> void:
 		'[Popochiu] Could not create prop folder for ' + _new_prop_name
 	)
 	
-#	if _interaction_checkbox.button_pressed:
-#		# Create the folder for the Prop
-#		assert(\
-#		DirAccess.make_dir_recursive_absolute(_new_prop_path.get_base_dir()) == OK,\
-#		'[Popochiu] Could not create prop folder for ' + _new_prop_name\
-#		)
-#	elif not DirAccess.dir_exists_absolute(_room_dir + '/props/'):
-#		# If the Prop doesn't have interaction, just try to create the Props
-#		# folder to store there the assets that will be used by the Prop
-#		assert(\
-#		DirAccess.make_dir_recursive_absolute(_room_dir + '/props/_no_interaction') == OK,\
-#		'[Popochiu] Could not create props folder for ' + _room_path.get_file()\
-#		)
-	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the prop (if it has interaction)
 	if _interaction_checkbox.button_pressed:
 		var prop_template := load(PROP_SCRIPT_TEMPLATE)
 		
 		if ResourceSaver.save(prop_template, script_path) != OK:
-			push_error('[Popochiu] Could not create script: %s.gd' % _new_prop_name)
+			push_error(
+				"[Popochiu] Couldn't create script: %s.gd" % _new_prop_name
+			)
 			# TODO: Show feedback in the popup
 			return
 	
@@ -99,7 +87,7 @@ func _create() -> void:
 	if ResourceSaver.save(
 		prop_packed_scene, _new_prop_path + '.tscn'
 	) != OK:
-		push_error('[Popochiu] Could not create prop: %s.tscn' % _new_prop_name)
+		push_error("[Popochiu] Couldn't create prop: %s.tscn" % _new_prop_name)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -143,6 +131,12 @@ func _create() -> void:
 	hide()
 
 
+func _clear_fields() -> void:
+	_new_prop_name = ''
+	_new_prop_path = ''
+	_interaction_checkbox.button_pressed = false
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func room_opened(r: Node2D) -> void:
 	_room = r
@@ -160,18 +154,11 @@ func _update_name(new_text: String) -> void:
 		_pascal_name = _name
 		_new_prop_path = _prop_path_template % [_new_prop_name, _new_prop_name]
 
-		if _interaction_checkbox.button_pressed:
-			_update_info()
+		_update_info()
+		_info.show()
 	else:
 		_info.clear()
-
-
-func _clear_fields() -> void:
-	super()
-	
-	_new_prop_name = ''
-	_new_prop_path = ''
-	_interaction_checkbox.button_pressed = false
+		_info.hide()
 
 
 func _interaction_toggled(is_pressed: bool) -> void:
@@ -183,7 +170,7 @@ func _interaction_toggled(is_pressed: bool) -> void:
 
 func _update_info() -> void:
 	_info.text = (
-		'In [b]%s[/b] the following file will be created: [code]%s[/code]' \
+		'In [b]%s[/b] the following file will be created:\n[code]%s[/code]' \
 		% [
 			_new_prop_path.get_base_dir(),
 			'prop_' + _new_prop_name + '.gd'

@@ -47,9 +47,8 @@ func _create_inline_options(opts: Array) -> void:
 	var tmp_opts := []
 	for idx in opts.size():
 		var new_opt: PopochiuDialogOption = PopochiuDialogOption.new()
-		var id := 'Opt%d' % (idx as int + 1)
 		
-		new_opt.id = id
+		new_opt.id = str(idx)
 		new_opt.text = opts[idx]
 		
 		tmp_opts.append(new_opt)
@@ -100,7 +99,7 @@ func _create_options(options := [], autoshow := false) -> void:
 	_panel.custom_minimum_size.y = min(_options.size.y, _max_height)
 
 
-func remove_options() -> void:
+func remove_options(_dialog: PopochiuDialog = null) -> void:
 	_visible_options = 0
 	
 	if not current_options.is_empty():

@@ -49,8 +49,10 @@ func _create() -> void:
 	# can add extra properties to that state
 	var state_template: Script = load(INVENTORY_ITEM_STATE_TEMPLATE)
 	if ResourceSaver.save(state_template, _new_item_path + '_state.gd') != OK:
-		push_error('[Popochiu] Could not create item state script: %s' %\
-		_new_item_name)
+		push_error(
+			"[Popochiu] Couldn't create item state script: %s" %\
+			_new_item_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -61,9 +63,10 @@ func _create() -> void:
 	item_resource.resource_name = _pascal_name
 	
 	if ResourceSaver.save(item_resource, _new_item_path + '.tres') != OK:
-		push_error(\
-		'[Popochiu] Could not create PopochiuInventoryItemData for item: %s' %\
-		_new_item_name)
+		push_error(
+			"[Popochiu] Couldn't create PopochiuInventoryItemData for item: %s"\
+			% _new_item_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -125,9 +128,10 @@ func _create() -> void:
 	if _main_dock.add_resource_to_popochiu(
 		'inventory_items', ResourceLoader.load(_new_item_path + '.tres')
 	) != OK:
-		push_error(\
-		'[Popochiu] Could not add the created inventory item to Popochiu: %s' %\
-		_new_item_name)
+		push_error(
+			"[Popochiu] Couldn't add the created inventory item to Popochiu: %s"\
+			% _new_item_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -152,6 +156,11 @@ func _create() -> void:
 	hide()
 
 
+func _clear_fields() -> void:
+	_new_item_name = ''
+	_new_item_path = ''
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_main_dock(node: Panel) -> void:
 	super(node)
@@ -171,7 +180,8 @@ func _update_name(new_text: String) -> void:
 		[_new_item_name, _new_item_name]
 
 		_info.text = (
-			'In [b]%s[/b] the following files will be created:\n[code]%s, %s and %s[/code]' \
+			'In [b]%s[/b] the following files will be created:\
+			\n[code]%s, %s and %s[/code]' \
 			% [
 				_main_dock.INVENTORY_ITEMS_PATH + _new_item_name,
 				'item_' + _new_item_name + '.tscn',
@@ -179,12 +189,7 @@ func _update_name(new_text: String) -> void:
 				'item_' + _new_item_name + '.tres'
 			]
 		)
+		_info.show()
 	else:
 		_info.clear()
-
-
-func _clear_fields() -> void:
-	super()
-	
-	_new_item_name = ''
-	_new_item_path = ''
+		_info.hide()

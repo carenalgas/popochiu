@@ -98,7 +98,12 @@ func _create() -> void:
 	hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+func _clear_fields() -> void:
+	_new_hotspot_name = ''
+	_new_hotspot_path = ''
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func room_opened(r: Node2D) -> void:
 	_room = r
 	_room_path = _room.scene_file_path
@@ -117,18 +122,13 @@ func _update_name(new_text: String) -> void:
 		[_new_hotspot_name, _new_hotspot_name]
 
 		_info.text = (
-			'In [b]%s[/b] the following file will be created: [code]%s[/code]' \
+			'In [b]%s[/b] the following file will be created:\n[code]%s[/code]'\
 			% [
 				_new_hotspot_path.get_base_dir(),
 				'hotspot_' + _new_hotspot_name + '.gd'
 			]
 		)
+		_info.show()
 	else:
 		_info.clear()
-
-
-func _clear_fields() -> void:
-	super()
-	
-	_new_hotspot_name = ''
-	_new_hotspot_path = ''
+		_info.hide()

@@ -154,7 +154,7 @@ func _play() -> void:
 	elif not stream_player.stream or\
 	stream_player.stream.resource_path != audio_cue.audio.resource_path:
 		stream_player.stream = audio_cue.audio
-		stream_player.pitch_scale = audio_cue.get_pitch()
+		stream_player.pitch_scale = audio_cue.pitch
 		stream_player.volume_db = audio_cue.volume
 	
 	if stream_player.is_playing():

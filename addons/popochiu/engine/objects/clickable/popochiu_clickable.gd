@@ -149,15 +149,15 @@ func get_description() -> String:
 
 
 func on_click() -> void:
-	await E.run([G.display("Can't INTERACT with it")])
+	await G.display("Can't INTERACT with it")
 
 
 func on_right_click() -> void:
-	await E.run([G.display("Can't EXAMINE it")])
+	await G.display("Can't EXAMINE it")
 
 
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	await E.run([G.display("Can't USE %s here" % item.description)])
+	await G.display("Can't USE %s here" % item.description)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

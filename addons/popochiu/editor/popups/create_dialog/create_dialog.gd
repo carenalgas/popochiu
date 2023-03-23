@@ -43,7 +43,9 @@ func _create() -> void:
 	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE)
 	
 	if ResourceSaver.save(dialog_template, _new_dialog_path + '.gd') != OK:
-		push_error('[Popochiu] Could not create script: %s.gd' % _new_dialog_name)
+		push_error(
+			"[Popochiu] Couldn't create script: %s.gd" % _new_dialog_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -56,7 +58,7 @@ func _create() -> void:
 	dialog_resource.resource_name = _new_dialog_name
 	
 	if ResourceSaver.save(dialog_resource, _new_dialog_path + '.tres') != OK:
-		push_error('[Popochiu] Could not create dialog: %s' %_new_dialog_name)
+		push_error("[Popochiu] Couldn't create dialog: %s" %_new_dialog_name)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -65,8 +67,10 @@ func _create() -> void:
 	if _main_dock.add_resource_to_popochiu(
 		'dialogs', ResourceLoader.load(_new_dialog_path + '.tres')
 	) != OK:
-		push_error('[Popochiu] Could not add the created dialog to Popochiu: %s' %\
-		_new_dialog_name)
+		push_error(
+			"[Popochiu] Couldn't add the created dialog to Popochiu: %s" %\
+			_new_dialog_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -91,6 +95,11 @@ func _create() -> void:
 	hide()
 
 
+func _clear_fields() -> void:
+	_new_dialog_name = ''
+	_new_dialog_path = ''
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_main_dock(node: Panel) -> void:
 	super(node)
@@ -110,18 +119,14 @@ func _update_name(new_text: String) -> void:
 		[_new_dialog_name, _new_dialog_name]
 
 		_info.text = (
-			'In [b]%s[/b] the following files will be created:\n[code]%s and %s[/code]' \
+			'In [b]%s[/b] the following files will be created:\
+			\n[code]%s and %s[/code]' \
 			% [
 				_main_dock.DIALOGS_PATH + _new_dialog_name,
-				'Dialog' + _new_dialog_name + '.gd',
-				'Dialog' + _new_dialog_name + '.tres'
+				'dialog_' + _new_dialog_name + '.gd',
+				'dialog_' + _new_dialog_name + '.tres'
 			])
+		_info.show()
 	else:
 		_info.clear()
-
-
-func _clear_fields() -> void:
-	super()
-	
-	_new_dialog_name = ''
-	_new_dialog_path = ''
+		_info.hide()

@@ -49,6 +49,7 @@ cursor = 1
 position = Vector2(118, 127)
 script = ExtResource("4_7jprv")
 texture = ExtResource("5_7ierb")
+link_to_item = "ToyCar"
 script_name = "ToyCar"
 description = "Toy Car"
 walk_to_point = Vector2(23, -4)
@@ -83,7 +84,7 @@ tint = Color(0, 1, 1, 1)
 modulate = Color(0, 1, 1, 1)
 polygon = PackedVector2Array(-9, 55, 2, 34, 46, 41, 49, 68, 15, 68)
 
-[node name="Points" type="Node2D" parent="."]
+[node name="Markers" type="Node2D" parent="."]
 
 [node name="Characters" type="Node2D" parent="."]
 

@@ -1,16 +1,18 @@
 @tool
 extends PopochiuProp
-# You can use E.run([]) to trigger a sequence of events.
-# Use await E.run([]) if you want to pause the excecution of
+# You can use E.queue([]) to trigger a sequence of events.
+# Use await E.queue([]) if you want to pause the excecution of
 # the function until the sequence of events finishes.
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func _on_click() -> void:
-	await C.Goddiu.walk_to_prop_now(script_name)
-	await C.Goddiu.face_left_now()
-	await C.Goddiu.say_now('My old toy car...')
+	await C.walk_to_clicked()
+	await C.face_clicked()
+	await C.Goddiu.say('My old toy car...')
+	await I.ToyCar.add_as_active()
+	
 	G.done()
 
 
@@ -20,7 +22,7 @@ func _on_right_click() -> void:
 	# the default behavior to happen.
 	# For example you can make the character walk to the Prop and then say
 	# something:
-#	E.run([
+#	E.queue([
 #		C.face_clicked(),
 #		'Player: A deck of cards'
 #	])
@@ -33,7 +35,7 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 	# makes the default behavior to happen.
 	# For example you can make the PC react checked using some items in this Prop
 #	if item.script_name == 'Key':
-#		E.run(["Player: I can't do that"])
+#		E.queue(["Player: I can't do that"])
 	super(item)
 
 

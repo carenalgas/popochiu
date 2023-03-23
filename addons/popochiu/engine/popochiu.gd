@@ -33,16 +33,16 @@ var current_language := 0
 var auto_continue_after := -1.0
 var scale := Vector2.ONE
 var am: PopochiuAudioManager = null
+# TODO: This might not just be a boolean, but there could be an array that puts
+# the calls to queue in an Array and executes them in order. Or perhaps it could
+# be something that allows for more dynamism, such as putting one queue to execute
+# during the execution of another queue
+var playing_queue := false
 
 # TODO: This could be in the camera's own script
 var _is_camera_shaking := false
 var _camera_shake_amount := 15.0
 var _shake_timer := 0.0
-# TODO: This might not just be a boolean, but there could be an array that puts
-# the calls to run in a queue and executes them in order. Or perhaps it could be
-# something that allows for more dynamism, such as putting one run to execute
-# during the execution of another
-var _running := false
 var _use_transition_on_room_change := true
 var _config: ConfigFile = null
 var _loaded_game := {}
@@ -175,11 +175,11 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func wait(time := 1.0) -> Callable:
-	return func (): await wait_now(time)
+func queue_wait(time := 1.0) -> Callable:
+	return func (): await wait(time)
 
 
-func wait_now(time := 1.0) -> void:
+func wait(time := 1.0) -> void:
 	if cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -187,24 +187,24 @@ func wait_now(time := 1.0) -> void:
 	await get_tree().create_timer(time).timeout
 
 
-# TODO: Stop or break a run in excecution
-#func break_run() -> void:
+# TODO: Stop or break a queue in excecution
+#func break_queue() -> void:
 #	pass
 
 
 # Executes a series of instructions one by one. show_gi determines if the
 # Graphic Interface will appear once all instructions have ran.
-func run(instructions: Array, show_gi := true) -> void:
+func queue(instructions: Array, show_gi := true) -> void:
 	if instructions.is_empty():
 		await get_tree().process_frame
 		return
 	
-	if _running:
+	if playing_queue:
 		await get_tree().process_frame
-		await run(instructions, show_gi)
+		await queue(instructions, show_gi)
 		return
 	
-	_running = true
+	playing_queue = true
 	
 	G.block()
 	
@@ -215,11 +215,6 @@ func run(instructions: Array, show_gi := true) -> void:
 			await instruction.call()
 		elif instruction is String:
 			await _eval_string(instruction as String)
-#		elif instruction is Dictionary:
-#			if instruction.has('dialog'):
-#				_eval_string(instruction.dialog)
-#				await self.wait(instruction.time)
-#				G.continue_clicked.emit()
 	
 	if show_gi:
 		G.done()
@@ -230,13 +225,13 @@ func run(instructions: Array, show_gi := true) -> void:
 	if instructions.is_empty():
 		await get_tree().process_frame
 	
-	_running = false
+	playing_queue = false
 
 
-# Like run, but can be skipped with the input action: popochiu-skip.
-func run_cutscene(instructions: Array) -> void:
+# Like queue, but can be skipped with the input action: popochiu-skip.
+func cutscene(instructions: Array) -> void:
 	set_process_input(true)
-	await run(instructions)
+	await queue(instructions)
 	set_process_input(false)
 	
 	if cutscene_skipped:
@@ -312,8 +307,8 @@ func room_readied(room: PopochiuRoom) -> void:
 
 		self.in_room = true
 		
-		# Calling this will make the camera be set to its default values and will
-		# store the state of the main room (the last parameter will prevent
+		# Calling this will make the camera be set to its default values and
+		# will store the state of the main room (the last parameter will prevent
 		# Popochiu from changing the scene to the same that is already loaded
 		goto_room(room.script_name, false, true, true)
 	
@@ -326,7 +321,8 @@ func room_readied(room: PopochiuRoom) -> void:
 	else:
 		current_room.state.visited = true
 		current_room.state.visited_times += 1
-		current_room.state.visited_first_time = current_room.state.visited_times == 1
+		current_room.state.visited_first_time =\
+		current_room.state.visited_times == 1
 	
 	# Add the PopochiuCharacter instances to the room
 	for c in current_room.characters_cfg:
@@ -343,7 +339,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		if not current_room.has_character(C.player.script_name):
 			current_room.add_character(C.player)
 		
-		await C.player.idle_now()
+		await C.player.idle()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDS:
@@ -374,7 +370,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	if _use_transition_on_room_change:
 		$TransitionLayer.play_transition($TransitionLayer.FADE_OUT)
 		await $TransitionLayer.transition_finished
-		await wait_now(0.3)
+		await wait(0.3)
 	else:
 		await get_tree().process_frame
 	
@@ -385,7 +381,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	if _loaded_game:
 		game_loaded.emit(_loaded_game)
-		await run([G.display('Game loaded')])
+		await G.display('Game loaded')
 		
 		_loaded_game = {}
 	
@@ -395,23 +391,23 @@ func room_readied(room: PopochiuRoom) -> void:
 	current_room._on_room_transition_finished()
 
 
-func camera_offset(offset := Vector2.ZERO) -> Callable:
-	return func (): await camera_offset_now(offset)
+func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
+	return func (): await camera_offset(offset)
 
 
 # Changes the main camera's offset (useful when zooming the camera)
-func camera_offset_now(offset := Vector2.ZERO) -> void:
+func camera_offset(offset := Vector2.ZERO) -> void:
 	main_camera.offset = offset
 	
 	await get_tree().process_frame
 
 
-func camera_shake(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await camera_shake_now(strength, duration)
+func queue_camera_shake(strength := 1.0, duration := 1.0) -> Callable:
+	return func (): await camera_shake(strength, duration)
 
 
 # Makes the camera shake with `strength` for `duration` seconds
-func camera_shake_now(strength := 1.0, duration := 1.0) -> void:
+func camera_shake(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
 	_is_camera_shaking = true
@@ -419,13 +415,13 @@ func camera_shake_now(strength := 1.0, duration := 1.0) -> void:
 	await get_tree().create_timer(duration).timeout
 
 
-func camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await camera_shake_bg_now(strength, duration)
+func queue_camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
+	return func (): await camera_shake_bg(strength, duration)
 
 
 # Makes the camera shake with `strength` for `duration` seconds without blocking
 # excecution (a.k.a. in the background)
-func camera_shake_bg_now(strength := 1.0, duration := 1.0) -> void:
+func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
 	_is_camera_shaking = true
@@ -433,15 +429,15 @@ func camera_shake_bg_now(strength := 1.0, duration := 1.0) -> void:
 	await get_tree().process_frame
 
 
-func camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
-	return func (): await camera_zoom_now(target, duration)
+func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
+	return func (): await camera_zoom(target, duration)
 
 
 # Changes the camera zoom. If `target` is larger than Vector2(1, 1) the camera
 # will zoom out, smaller values make it zoom in. The effect will last `duration`
 # seconds
-func camera_zoom_now(target := Vector2.ONE, duration := 1.0) -> void:
-	if is_instance_valid(_tween) and _tween.is_running():
+func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
+	if is_instance_valid(_tween) and _tween.isplaying_queue():
 		_tween.kill()
 	
 	_tween = create_tween()
@@ -496,13 +492,14 @@ func add_history(data: Dictionary) -> void:
 	history.push_front(data)
 
 
-# Makes a method in node to be able to be used in a run call. Method parameters
-# can be passed with params, and yield_signal is the signal that will notify the
-# function has been completed (so run can continue with the next command in the queue)
-func runnable(
+# Makes a method in node to be able to be used in a `queue()` call.
+# Method parameters can be passed with params, and yield_signal is the signal
+# that will notify the function has been completed (so `queue()` can continue
+# with the next command in the queue)
+func queueable(
 	node: Object, method: String, params := [], signal_name := ''
 ) -> Callable:
-	return func (): await _runnable(node, method, params, signal_name)
+	return func (): await _queueable(node, method, params, signal_name)
 
 
 # Checks if the room with script_name exists in the array of rooms of Popochiu
@@ -515,13 +512,13 @@ func room_exists(script_name: String) -> bool:
 	return false
 
 
-func play_transition(type: int, duration: float) -> Callable:
-	return func (): await play_transition_now(type, duration)
+func queue_play_transition(type: int, duration: float) -> Callable:
+	return func (): await play_transition(type, duration)
 
 
 # Plays the transition type animation in TransitionLayer.tscn that last duration
 # in seconds. Possible type values can be found in TransitionLayer
-func play_transition_now(type: int, duration: float) -> void:
+func play_transition(type: int, duration: float) -> void:
 	$TransitionLayer.play_transition(type, duration)
 	
 	await $TransitionLayer.transition_finished
@@ -554,7 +551,7 @@ func save_game(slot := 1, description := '') -> void:
 	if _saveload.save_game(slot, description):
 		game_saved.emit()
 		
-		await run([G.display('Game saved')])
+		await G.display('Game saved')
 
 
 func load_game(slot := 1) -> void:
@@ -594,10 +591,6 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 		return false
 	
 	return true
-
-
-func in_run() -> bool:
-	return _running
 
 
 func clear_hovered() -> void:
@@ -642,13 +635,13 @@ func set_current_room(value: PopochiuRoom) -> void:
 func _eval_string(text: String) -> void:
 	match text:
 		'.':
-			await wait_now(0.25)
+			await wait(0.25)
 		'..':
-			await wait_now(0.5)
+			await wait(0.5)
 		'...':
-			await wait_now(1.0)
+			await wait(1.0)
 		'....':
-			await wait_now(2.0)
+			await wait(2.0)
 		_:
 			var colon_idx: int = text.find(':')
 			if colon_idx:
@@ -668,7 +661,15 @@ func _eval_string(text: String) -> void:
 				
 				var character_name: String = colon_prefix.substr(
 					0, name_idx
-				).to_lower()
+				)
+				
+				if not C.is_valid_character(character_name):
+					printerr('[Popochiu] No PopochiuCharacter with name: %s'\
+					% character_name)
+					await get_tree().process_frame
+					return
+				
+				var character := C.get_character(character_name)
 				
 				if not C.is_valid_character(character_name):
 					printerr('[Popochiu] No PopochiuCharacter with name: %s'\
@@ -688,11 +689,11 @@ func _eval_string(text: String) -> void:
 					)
 				
 				if not emotion.is_empty():
-					C.get_character(character_name).emotion = emotion
+					character.emotion = emotion
 				
 				var dialogue := text.substr(colon_idx + 1).trim_prefix(' ')
 				
-				C.get_character(character_name).say(dialogue)
+				await character.say(dialogue)
 			else:
 				await get_tree().process_frame
 	
@@ -710,7 +711,7 @@ func _set_in_room(value: bool) -> void:
 #	language_changed.emit()
 
 
-func _runnable(
+func _queueable(
 	node: Object, method: String, params := [], signal_name := ''
 ) -> void:
 	if cutscene_skipped:

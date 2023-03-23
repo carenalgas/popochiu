@@ -19,15 +19,15 @@ var is_blocked := false
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func display(msg: String) -> Callable:
-	return func (): await display_now(msg)
+func queue_display(msg: String) -> Callable:
+	return func (): await display(msg)
 
 
 # Shows a text in the center of the screen. Can be used as the narrator or to
 # give instructions to players. The visual style of the node that shows this text
 # can be modified in DisplayBox.tscn.
-func display_now(msg: String) -> void:
-	if not E.in_run():
+func display(msg: String) -> void:
+	if not E.playing_queue:
 		# Show the click handler that blocks interactions
 		block()
 	
@@ -38,6 +38,9 @@ func display_now(msg: String) -> void:
 	show_box_requested.emit(E.get_text(msg))
 	
 	await self.continue_clicked
+	
+	if not E.playing_queue:
+		done()
 
 
 # Shows a text at the bottom of the screen. It is used to show players the
@@ -49,10 +52,11 @@ func show_info(msg := '') -> void:
 
 # Makes the Graphic Interface to block.
 func block() -> void:
-	Cursor.set_cursor(Cursor.Type.WAIT)
-	blocked.emit()
 	is_blocked = true
+	
+	Cursor.set_cursor(Cursor.Type.WAIT)
 	Cursor.block()
+	blocked.emit()
 
 
 # Notifies that graphic interface elements can be unlocked (e.g. when a cutscene
@@ -75,9 +79,17 @@ func hide_interface() -> void:
 	interface_hidden.emit()
 
 
+func queue_hide_interface() -> Callable:
+	return func(): hide_interface()
+
+
 # Notifies that the graphic interface should show.
 func show_interface() -> void:
 	interface_shown.emit()
+
+
+func queue_show_interface() -> Callable:
+	return func(): show_interface()
 
 
 # Notifies that the history of events should appear.

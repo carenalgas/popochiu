@@ -50,7 +50,9 @@ func _create() -> void:
 	# Create the script for the WalkableArea
 	var walkable_area_template := load(SCRIPT_TEMPLATE)
 	if ResourceSaver.save(walkable_area_template, script_path) != OK:
-		push_error('[Popochiu] Could not create script: %s.gd' % _new_walkable_area_name)
+		push_error(
+			"[Popochiu] Couldn't create script: %s.gd" % _new_walkable_area_name
+		)
 		# TODO: Show feedback in the popup
 		return
 
@@ -111,13 +113,21 @@ func _create() -> void:
 	# Fin
 	hide()
 
+		
+func _clear_fields() -> void:
+	super()
+	
+	_new_walkable_area_name = ''
+	_new_walkable_area_path = ''
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func room_opened(r: Node2D) -> void:
 	_room = r
 	_room_path = _room.scene_file_path
 	_room_dir = _room_path.get_base_dir()
-	_walkable_area_path_template = _room_dir + '/walkable_areas/%s/walkable_area_%s'
+	_walkable_area_path_template = _room_dir +\
+	'/walkable_areas/%s/walkable_area_%s'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -131,18 +141,13 @@ func _update_name(new_text: String) -> void:
 		[_new_walkable_area_name, _new_walkable_area_name]
 
 		_info.text = (
-			'In [b]%s[/b] the following files will be created: [code]%s[/code]' \
+			'In [b]%s[/b] the following files will be created:\n[code]%s[/code]'\
 			% [
 				_room_dir + '/walkable_areas',
-				'walkable_area' + _new_walkable_area_name + '.gd'
+				'walkable_area_' + _new_walkable_area_name + '.gd'
 			]
 		)
+		_info.show()
 	else:
 		_info.clear()
-
-		
-func _clear_fields() -> void:
-	super()
-	
-	_new_walkable_area_name = ''
-	_new_walkable_area_path = ''
+		_info.hide()

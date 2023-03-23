@@ -50,7 +50,9 @@ func _create() -> void:
 	# Create the state Resource for the character and a script so devs
 	# can add extra properties to that state
 	var state_template: Script = load(CHARACTER_STATE_TEMPLATE)
-	if ResourceSaver.save(state_template, _new_character_path + '_state.gd') != OK:
+	if ResourceSaver.save(
+		state_template, _new_character_path + '_state.gd'
+	) != OK:
 		push_error('[Popochiu] Could not create character state script: %s' %\
 		_new_character_name)
 		# TODO: Show feedback in the popup
@@ -62,9 +64,13 @@ func _create() -> void:
 	character_resource.scene = _new_character_path + '.tscn'
 	character_resource.resource_name = _pascal_name
 	
-	if ResourceSaver.save(character_resource, _new_character_path + '.tres') != OK:
-		push_error('[Popochiu] Could not create PopochiuCharacterData for character: %s' %\
-		_new_character_name)
+	if ResourceSaver.save(
+		character_resource, _new_character_path + '.tres'
+	) != OK:
+		push_error(
+			"[Popochiu] Couldn't create PopochiuCharacterData for: %s" %\
+			_new_character_name
+		)
 		# TODO: Show feedback in the popup
 		return
 
@@ -76,7 +82,9 @@ func _create() -> void:
 	character_script.source_code = ''
 	
 	if ResourceSaver.save(character_script, _new_character_path + '.gd') != OK:
-		push_error('[Popochiu] Could not create script: %s.gd' % _new_character_name)
+		push_error(
+			'[Popochiu] Could not create script: %s.gd' % _new_character_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -94,7 +102,9 @@ func _create() -> void:
 	character_script.source_code = new_code
 	
 	if ResourceSaver.save(character_script, _new_character_path + '.gd') != OK:
-		push_error('[Popochiu] Could not update script: %s.gd' % _new_character_name)
+		push_error(
+			'[Popochiu] Could not update script: %s.gd' % _new_character_name
+		)
 		# TODO: Show feedback in the popup
 		return
 
@@ -117,7 +127,9 @@ func _create() -> void:
 	if ResourceSaver.save(
 		new_character_packed_scene, _new_character_path + '.tscn'
 	) != OK:
-		push_error('[Popochiu] Could not create character: %s.tscn' % _new_character_name)
+		push_error(
+			"[Popochiu] Couldn't create character: %s.tscn" % _new_character_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -126,8 +138,10 @@ func _create() -> void:
 	if _main_dock.add_resource_to_popochiu(
 		'characters', ResourceLoader.load(_new_character_path + '.tres')
 	) != OK:
-		push_error('[Popochiu] Could not add the created character to Popochiu: %s' %\
-		_new_character_name)
+		push_error(
+			"[Popochiu] Couldn't add the created character to Popochiu: %s" %\
+			_new_character_name
+		)
 		# TODO: Show feedback in the popup
 		return
 	
@@ -153,6 +167,11 @@ func _create() -> void:
 	hide()
 
 
+func _clear_fields() -> void:
+	_new_character_name = ''
+	_new_character_path = ''
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_main_dock(node: Panel) -> void:
 	super(node)
@@ -172,7 +191,8 @@ func _update_name(new_text: String) -> void:
 		[_new_character_name, _new_character_name]
 
 		_info.text = (
-			'In [b]%s[/b] the following files will be created:\n[code]%s, %s and %s[/code]' \
+			'In [b]%s[/b] the following files will be created:\
+			\n[code]%s, %s and %s[/code]' \
 			% [
 				_main_dock.CHARACTERS_PATH + _new_character_name,
 				'character_' + _new_character_name + '.tscn',
@@ -180,12 +200,7 @@ func _update_name(new_text: String) -> void:
 				'character_' + _new_character_name + '.tres'
 			]
 		)
+		_info.show()
 	else:
 		_info.clear()
-
-
-func _clear_fields() -> void:
-	super()
-	
-	_new_character_name = ''
-	_new_character_path = ''
+		_info.hide()
