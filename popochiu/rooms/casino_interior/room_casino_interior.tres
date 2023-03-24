@@ -5,7 +5,6 @@
 [resource]
 resource_name = "casino_interior"
 script = ExtResource("1_wrhu5")
-is_fine = true
 script_name = "CasinoInterior"
 scene = "res://popochiu/rooms/casino_interior/room_casino_interior.tscn"
 visited = false

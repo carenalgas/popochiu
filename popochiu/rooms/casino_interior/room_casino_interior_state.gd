@@ -6,8 +6,6 @@ extends PopochiuRoomData
 # script_name and scene variables from the inherited class will not be saved.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-@export var is_fine := false
-
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Use this to save custom data for this PopochiuRoom when saving the game.
@@ -21,7 +19,3 @@ func on_save() -> Dictionary:
 # one in on_save().
 func on_load(data: Dictionary) -> void:
 	prints(data)
-
-
-func do_something() -> void:
-	prints('I am...', is_fine)

@@ -20,13 +20,7 @@ func _on_room_entered() -> void:
 # What happens when the room changing transition finishes. At this point the room
 # is visible.
 func _on_room_transition_finished() -> void:
-	state.is_fine = true
-	
-#	await C.Goddiu.say('I am in Godot 4 with new singletons')
-#	await I.ToyCar.add_now()
-#	await C.Goddiu.say('Oooooh!!! A toy cart')
-#
-#	G.done()
+	pass
 
 
 # What happens before Popochiu unloads the room.

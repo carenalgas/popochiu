@@ -17,16 +17,14 @@ func _on_room_set() -> void:
 
 # When the node is clicked
 func _on_click() -> void:
-	# Replace the call to super() to implement your code. This only makes
-	# the default behavior to happen.
 	D.ChatWithPopsy.start()
 
 
 # When the node is right clicked
 func _on_right_click() -> void:
-	# Replace the call to super() to implement your code. This only makes
-	# the default behavior to happen.
-	super.on_right_click()
+	var res: PopochiuDialogOption = await D.show_inline_dialog([
+		'One', 'Two', 'Three'
+	])
 
 
 # When the node is clicked and there is an inventory item selected
@@ -35,8 +33,6 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 		await C.Goddiu.say('Take this')
 		await I.ToyCar.remove()
 		await C.Popsy.say('Thanks!')
-		
-		G.done()
 
 
 # Use it to play the idle animation for the character
