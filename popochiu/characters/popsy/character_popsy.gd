@@ -22,9 +22,17 @@ func _on_click() -> void:
 
 # When the node is right clicked
 func _on_right_click() -> void:
-	var res: PopochiuDialogOption = await D.show_inline_dialog([
-		'One', 'Two', 'Three'
+	var op: PopochiuDialogOption = await D.show_inline_dialog([
+		'Hi', 'Hola', 'Ciao'
 	])
+
+	match int(op.id): # You can compare the String if you prefer
+		0:
+			C.Goddiu.say("How is it going?")
+		1:
+			C.Goddiu.say("¿Cómo te va?")
+		2:
+			C.Goddiu.say("Come sta andando?")
 
 
 # When the node is clicked and there is an inventory item selected

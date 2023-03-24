@@ -11,9 +11,7 @@ func _on_click() -> void:
 	await C.walk_to_clicked()
 	await C.face_clicked()
 	await C.Goddiu.say('My old toy car...')
-	await I.ToyCar.add_as_active()
-	
-	G.done()
+	await I.ToyCar.add()
 
 
 # When the node is right clicked

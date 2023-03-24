@@ -10,9 +10,7 @@ extends PopochiuHotspot
 func _on_click() -> void:
 	await C.Goddiu.walk_to_hotspot(script_name)
 	await C.Goddiu.face_left()
-	await C.Goddiu.say('Oh... [wave]freedom...[/wave]')
-	
-	G.done()
+	await C.Goddiu.say('Oh... freedom...')
 
 
 # When the node is right clicked
