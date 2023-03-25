@@ -2,7 +2,7 @@
 
 ![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_hero-es.png "Popochiu")
 
-Plugin de Godot para crear juegos de aventura gráfica de manera similar a herramientas como [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [Power Quest](https://powerhoof.itch.io/powerquest).
+Un plugin para Godot que permite crear juegos de aventura gráfica con un flujo de trabajo como el de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [PowerQuest](https://powerhoof.itch.io/powerquest).
 
 ---
 
@@ -24,9 +24,9 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 # Instalación
 
-**Popochiu puede usarse con Godot 3.3.x, 3.4.x. y 3.5.x**
+**Popochiu puede usarse en Godot 3.3.x a 3.5.x**. **¡¡¡Y ahora también funciona en Godot 4!!!**
 
-1. Si estás usando **Godot 3.5 o superior**, [Descarga el ZIP de la última versión (actualmente la v1.9.0)](https://github.com/mapedorr/popochiu/releases/download/v1.9.0/popochiu-v1.9.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, [Descarga la versión 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Si usas Godot 4, descarga [Popochiu 2.0 Alpha 1](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha1/popochiu-v2.0-alpha1.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.9](https://github.com/mapedorr/popochiu/releases/download/v1.9.0/popochiu-v1.9.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extra su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Proyecto > Ajustes del Proyecto > Plugins` (the tab on the top).
 4. Reinicia Godot `Proyecto > Volver a Cargar el Proyecto Actual`.

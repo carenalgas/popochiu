@@ -2,20 +2,21 @@
 
 ![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_hero-en.png "Popochiu")
 
-Godot plugin to make point n' click games in a similar way to tools like [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [Power Quest](https://powerhoof.itch.io/powerquest).
+A Godot plugin to create point n' click games with a workflow similar to [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
 
 ---
 
-🔍 Read the [Documentation](https://github.com/mapedorr/popochiu/wiki) (w.i.p.) to know what you can do with the plugin.
+🔍 Read the [Documentation](https://github.com/mapedorr/popochiu/wiki) to know what you can do with the plugin.
 
 ❤️ Join [Carenalga's Discord](https://discord.gg/Frv8C9Ters) to know about daily updates and releases.
 
 ▶️ Follow the [tutorials](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) (English subs.) to learn how to use the plugin.
 
 
+
 # About
 
-This tool consists of two parts: the core (Popochiu) and the dock that helps with the creation of the Nodes that make use of that core. It is inspired in how graphic adventure games are created in Adventure Game Studio and Power Hoof's Unity plugin: Power Quest. This is, using Rooms as the scenes where Characters can move and interact with Props and Hotspots, and providing an Inventory system and Dialog trees.
+This tool consists of two parts: the core (Popochiu) and the dock that helps with the creation of the Nodes that make use of that core. It is inspired in how graphic adventure games are created in Adventure Game Studio and Power Hoof's Unity plugin: PowerQuest. This is, using Rooms as the scenes where Characters can move and interact with Props and Hotspots, and providing an Inventory system and Dialog trees.
 
 ![features](https://github.com/mapedorr/popochiu/wiki/images/popochiu_list_of_features-en.png "Features")
 
@@ -23,9 +24,9 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 # Installation
 
-**Popochiu works on Godot 3.3.x to 3.5.x.**
+**Popochiu works on Godot 3.3.x to 3.5.x**. **And now in Godot 4 too!!!**
 
-1. If you are using **Godot 3.5 onwards**, [Download the latest release ZIP (currently v1.9.0)](https://github.com/mapedorr/popochiu/releases/download/v1.9.0/popochiu-v1.9.0.zip). If you are using **Godot 3.3 to Godot 3.4.5**, [Download v1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Godot 4 users can download [Popochiu 2.0 Alpha 1](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha1/popochiu-v2.0-alpha1.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.9](https://github.com/mapedorr/popochiu/releases/download/v1.9.0/popochiu-v1.9.0.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins` (the tab on the top).
 4. Restart Godot `Project > Reload Current Project`.
