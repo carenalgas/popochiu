@@ -28,7 +28,6 @@ var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
 
 # Title bars, to address theme color problems
-onready var _title = $margin/VBoxContainer/SectionTitle/Title
 onready var _options_title_bar = $margin/VBoxContainer/OptionsTitleBar
 onready var _options_title = $margin/VBoxContainer/OptionsTitleBar/OptionsTitle
 onready var _tags_title_bar = $margin/VBoxContainer/TagsTitleBar
