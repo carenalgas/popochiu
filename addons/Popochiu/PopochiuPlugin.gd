@@ -16,9 +16,9 @@ preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
 var _shown_helpers := []
 var _export_plugin: EditorExportPlugin = null
 var _inspector_plugins := [
-	preload('res://addons/Popochiu/Editor/Inspector/AsepriteImporterInspectorPlugin.gd').new(),
-	preload('res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd').new(),
-	preload('res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd').new(),
+	load('res://addons/Popochiu/Editor/Inspector/AsepriteImporterInspectorPlugin.gd').new(),
+	load('res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd').new(),
+	load('res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd').new(),
 ]
 var _selected_node: Node = null
 var _vsep := VSeparator.new()
