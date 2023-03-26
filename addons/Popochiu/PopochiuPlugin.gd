@@ -15,8 +15,11 @@ var _input_actions :=\
 preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
 var _shown_helpers := []
 var _export_plugin: EditorExportPlugin = null
-var _inspector_plugins := []
-var _inspector_plugin: EditorInspectorPlugin = null
+var _inspector_plugins := [
+	preload('res://addons/Popochiu/Editor/Inspector/AsepriteImporterInspectorPlugin.gd').new(),
+	preload('res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd').new(),
+	preload('res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd').new(),
+]
 var _selected_node: Node = null
 var _vsep := VSeparator.new()
 var _btn_baseline := Button.new()
@@ -69,11 +72,7 @@ func _enter_tree() -> void:
 	config.initialize_project_settings()
 
 
-	for ip in [
-		load('res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd').new(),
-		load('res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd').new(),
-		load('res://addons/Popochiu/Editor/Inspector/AsepriteImporterInspectorPlugin.gd').new()
-		]:
+	for ip in _inspector_plugins:
 		ip.ei = _editor_interface
 		ip.fs = _editor_file_system
 		ip.config = config
@@ -138,9 +137,11 @@ func _exit_tree() -> void:
 	
 	if is_instance_valid(_export_plugin):
 		remove_export_plugin(_export_plugin)
-	
-	if is_instance_valid(_inspector_plugin):
-		remove_inspector_plugin(_inspector_plugin)
+
+	# Inspector plugins
+	for ip in _inspector_plugins:
+		if is_instance_valid(ip):
+			remove_inspector_plugin(ip)
 
 
 func get_plugin_name() -> String:
@@ -161,7 +162,7 @@ func enable_plugin() -> void:
 		ad.dialog_text =\
 		'[es] Reinicia el motor para completar la instalación:\n' +\
 		'Proyecto > Volver a Cargar el Proyecto Actual\n\n' + \
-		'[en] Restart Godot to complete the instalation:\n' +\
+		'[en] Restart Godot to complete the installation:\n' +\
 		'Project > Reload Current Project'
 		
 		_editor_interface.get_base_control().add_child(ad)

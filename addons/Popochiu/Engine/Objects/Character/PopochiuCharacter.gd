@@ -39,6 +39,23 @@ func _ready():
 		set_process(true)
 
 
+func _get_property_list():
+	var properties = []
+	properties.append({
+		name = "Aseprite",
+		type = TYPE_NIL,
+		usage = PROPERTY_USAGE_CATEGORY
+	})
+	# This is needed or the category won't be shown in the
+	# inspector. AsepriteImporterInspectorPlugin hides it.
+	properties.append({
+		name = "popochiu_placeholder",
+		type = TYPE_NIL,
+	})
+
+	return properties
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func idle(is_in_queue := true) -> void:
 	if is_in_queue: yield()

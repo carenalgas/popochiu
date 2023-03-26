@@ -28,7 +28,6 @@ var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
 
 # Title bars, to address theme color problems
-onready var _title_bar = $margin/VBoxContainer/SectionTitle
 onready var _title = $margin/VBoxContainer/SectionTitle/Title
 onready var _options_title_bar = $margin/VBoxContainer/OptionsTitleBar
 onready var _options_title = $margin/VBoxContainer/OptionsTitleBar/OptionsTitle
@@ -54,6 +53,8 @@ onready var _wipe_old_animations_field = $margin/VBoxContainer/Options/WipeOldAn
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
+	_fix_titlebars_colors()
+	
 	if not target_node.has_node("AnimationPlayer"):
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND))
 		return
@@ -69,8 +70,6 @@ func _ready():
 		_load_default_config()
 	else:
 		_load_config(cfg)
-	
-	_fix_titlebars_colors()
 
 
 
@@ -345,7 +344,6 @@ func _fix_titlebars_colors():
 	var section_color = get_color("prop_section", "Editor")
 	var section_style = StyleBoxFlat.new()
 	section_style.set_bg_color(section_color)
-	_title_bar.set('custom_styles/panel', section_style)
 	_tags_title_bar.set('custom_styles/panel', section_style)
 	_options_title_bar.set('custom_styles/panel', section_style)	
 

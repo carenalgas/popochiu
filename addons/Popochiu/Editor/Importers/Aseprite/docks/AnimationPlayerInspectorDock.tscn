@@ -1,14 +1,11 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Importers/Aseprite/docks/AnimationPlayerInspectorDock.gd" type="Script" id=1]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
-[sub_resource type="StyleBoxFlat" id=5]
-
-[sub_resource type="StyleBoxFlat" id=6]
-
-[sub_resource type="StyleBoxFlat" id=4]
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0, 0, 0, 1 )
 
 [node name="sprite_inspector_dock" type="PanelContainer"]
 margin_right = 14.0
@@ -21,35 +18,18 @@ __meta__ = {
 
 [node name="margin" type="MarginContainer" parent="."]
 margin_right = 212.0
-margin_bottom = 286.0
+margin_bottom = 268.0
 custom_constants/margin_top = 2
 custom_constants/margin_bottom = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="margin"]
 margin_top = 2.0
 margin_right = 212.0
-margin_bottom = 284.0
-
-[node name="SectionTitle" type="PanelContainer" parent="margin/VBoxContainer"]
-margin_right = 212.0
-margin_bottom = 14.0
-size_flags_horizontal = 3
-custom_styles/panel = SubResource( 5 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Title" type="Label" parent="margin/VBoxContainer/SectionTitle"]
-margin_right = 212.0
-margin_bottom = 14.0
-size_flags_horizontal = 3
-text = "Aseprite"
-align = 1
+margin_bottom = 266.0
 
 [node name="Source" type="HBoxContainer" parent="margin/VBoxContainer"]
-margin_top = 18.0
 margin_right = 212.0
-margin_bottom = 38.0
+margin_bottom = 20.0
 hint_tooltip = "Location of the Aseprite (*.ase, *.aseprite)  source file."
 
 [node name="Label" type="Label" parent="margin/VBoxContainer/Source"]
@@ -76,10 +56,10 @@ margin_bottom = 20.0
 text = "Rescan"
 
 [node name="TagsTitleBar" type="PanelContainer" parent="margin/VBoxContainer"]
-margin_top = 42.0
+margin_top = 24.0
 margin_right = 212.0
-margin_bottom = 64.0
-custom_styles/panel = SubResource( 6 )
+margin_bottom = 46.0
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -93,15 +73,15 @@ text = "Animation tags"
 align = 0
 
 [node name="Tags" type="VBoxContainer" parent="margin/VBoxContainer"]
-margin_top = 68.0
+margin_top = 50.0
 margin_right = 212.0
-margin_bottom = 68.0
+margin_bottom = 50.0
 
 [node name="OptionsTitleBar" type="PanelContainer" parent="margin/VBoxContainer"]
-margin_top = 72.0
+margin_top = 54.0
 margin_right = 212.0
-margin_bottom = 94.0
-custom_styles/panel = SubResource( 4 )
+margin_bottom = 76.0
+custom_styles/panel = SubResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -115,9 +95,9 @@ text = "Options"
 align = 0
 
 [node name="Options" type="VBoxContainer" parent="margin/VBoxContainer"]
-margin_top = 98.0
+margin_top = 80.0
 margin_right = 212.0
-margin_bottom = 234.0
+margin_bottom = 216.0
 
 [node name="OutFolder" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
 margin_right = 212.0
@@ -206,15 +186,15 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
 [node name="Import" type="Button" parent="margin/VBoxContainer"]
-margin_top = 238.0
+margin_top = 220.0
 margin_right = 212.0
-margin_bottom = 258.0
+margin_bottom = 240.0
 text = "Import"
 
 [node name="Reset" type="Button" parent="margin/VBoxContainer"]
-margin_top = 262.0
+margin_top = 244.0
 margin_right = 212.0
-margin_bottom = 282.0
+margin_bottom = 264.0
 text = "Reset Preferences"
 flat = true
 
