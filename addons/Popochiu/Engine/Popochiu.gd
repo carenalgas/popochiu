@@ -317,12 +317,27 @@ func room_readied(room: PopochiuRoom) -> void:
 		current_room.state.visited_first_time = current_room.state.visited_times == 1
 	
 	# Add the PopochiuCharacter instances to the room
-	for c in current_room.characters_cfg:
-		var chr: PopochiuCharacter = C.get_character(c.script_name)
+	if (rooms_states[room.script_name]['characters'] as Dictionary).empty():
+		# Store the initial state of the characters in the room
+		current_room.state.save_characters()
+		current_room.clean_characters()
+	else:
+		current_room.clean_characters()
+	
+	# Wait for placeholder character instances to dissapear from the tree
+#	yield(get_tree(), 'idle_frame')
+	
+	# Load the state of characters in the room
+	for chr_id in rooms_states[room.script_name]['characters']:
+		var chr_dic: Dictionary =\
+		rooms_states[room.script_name]['characters'][chr_id]
+		var chr: PopochiuCharacter = C.get_character(chr_id)
 		
 		if not chr: continue
 		
-		chr.position = c.position
+		chr.position = Vector2(chr_dic.x, chr_dic.y)
+		chr._looking_dir = chr_dic.facing
+		
 		current_room.add_character(chr)
 	
 	# If the room must have the player character but it is not part of its
@@ -330,21 +345,21 @@ func room_readied(room: PopochiuRoom) -> void:
 	if current_room.has_player and is_instance_valid(C.player):
 		if not current_room.has_character(C.player.script_name):
 			current_room.add_character(C.player)
-		
-		yield(C.player.idle(false), 'completed')
+			
+			yield(C.player.idle(false), 'completed')
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDS:
-		for prop_name in rooms_states[room.script_name][type]:
-			var prop: Node2D = current_room.callv(
+		for node_name in rooms_states[room.script_name][type]:
+			var node: Node2D = current_room.callv(
 				'get_' + type.trim_suffix('s'),
-				[prop_name]
+				[node_name]
 			)
-			var prop_dic: Dictionary =\
-			rooms_states[room.script_name][type][prop_name]
+			var properties: Dictionary =\
+			rooms_states[room.script_name][type][node_name]
 			
-			for property in prop_dic:
-				prop[property] = prop_dic[property]
+			for property in properties:
+				node[property] = properties[property]
 	
 	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
 		c.room = current_room

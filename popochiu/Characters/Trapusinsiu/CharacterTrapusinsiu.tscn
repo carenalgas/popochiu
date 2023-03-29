@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://popochiu/Characters/Trapusinsiu/CharacterTrapusinsiu.gd" type="Script" id=1]
+[ext_resource path="res://popochiu/Characters/Trapusinsiu/trapusinsiu_single.png" type="Texture" id=2]
+
+[node name="CharacterTrapusinsiu" type="Area2D"]
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+script_name = "Trapusinsiu"
+description = "Trapusinsiu"
+baseline = 6
+cursor = 8
+text_color = Color( 0.356863, 0.321569, 0.501961, 1 )
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( -11, -5, 12, -5, 20, 5, -19, 5 )
+
+[node name="BaselineHelper" type="Line2D" parent="."]
+position = Vector2( 0, 6 )
+points = PoolVector2Array( -10000, 0, 10000, 0 )
+width = 1.0
+
+[node name="WalkToHelper" type="Position2D" parent="."]
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
+margin_left = -2.5
+margin_top = -2.5
+margin_right = 2.5
+margin_bottom = 2.5
+color = Color( 0, 1, 1, 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 2 )
+
+[node name="DialogPos" type="Position2D" parent="."]
+position = Vector2( 0, -8 )

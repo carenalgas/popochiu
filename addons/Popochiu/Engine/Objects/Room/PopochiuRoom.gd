@@ -16,7 +16,6 @@ export var limit_top := INF
 export var limit_bottom := INF
 
 var is_current := false setget set_is_current
-var characters_cfg := [] # Array of Dictionary
 
 var _path := []
 var _moving_character: PopochiuCharacter = null
@@ -35,17 +34,6 @@ func _enter_tree() -> void:
 		sort_enabled = true
 		$Props.sort_enabled = true
 		$Characters.sort_enabled = true
-	
-	for c in $Characters.get_children():
-		if c is PopochiuCharacter:
-			var pc: PopochiuCharacter = c
-			characters_cfg.append({
-				script_name = pc.script_name,
-				position = pc.position
-			})
-			
-			$Characters.remove_child(pc)
-			pc.queue_free()
 
 
 func _ready():
@@ -130,6 +118,8 @@ func add_character(chr: PopochiuCharacter) -> void:
 	#warning-ignore:return_value_discarded
 	chr.connect('started_walk_to', self, '_update_navigation_path')
 	chr.connect('stoped_walk', self, '_clear_navigation_path')
+	
+	chr.idle(false)
 
 
 func remove_character(chr: PopochiuCharacter) -> void:
@@ -251,6 +241,22 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 	else:
 		printerr('PopochiuRoom[%s].set_active_walkable_area: Walkable area %s not found' %\
 		[script_name, walkable_area_name])
+
+
+func get_characters() -> Array:
+	var characters := []
+	
+	for c in $Characters.get_children():
+		if c is PopochiuCharacter:
+			characters.append(c)
+	
+	return characters
+
+
+func clean_characters() -> void:
+	for c in $Characters.get_children():
+		if c is PopochiuCharacter:
+			c.free()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

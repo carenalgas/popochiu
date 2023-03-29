@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Resource",
+"class": "PopochiuAudioCue",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/AudioManager/AudioCue.gd"
+}, {
 "base": "Node",
 "class": "PopochiuAudioManager",
 "language": "GDScript",
@@ -89,6 +94,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/PopochiuSettings.gd"
 }, {
+"base": "Node",
+"class": "PopochiuUtils",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Others/PopochiuUtils.gd"
+}, {
 "base": "Node2D",
 "class": "PopochiuWalkableArea",
 "language": "GDScript",
@@ -100,6 +110,7 @@ _global_script_classes=[ {
 "path": "res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.gd"
 } ]
 _global_script_class_icons={
+"PopochiuAudioCue": "",
 "PopochiuAudioManager": "",
 "PopochiuCharacter": "res://addons/Popochiu/icons/character.png",
 "PopochiuCharacterData": "res://addons/Popochiu/icons/character.png",
@@ -116,6 +127,7 @@ _global_script_class_icons={
 "PopochiuRoom": "res://addons/Popochiu/icons/room.png",
 "PopochiuRoomData": "res://addons/Popochiu/icons/room.png",
 "PopochiuSettings": "",
+"PopochiuUtils": "",
 "PopochiuWalkableArea": "res://addons/Popochiu/icons/walkable_area.png",
 "TransitionLayer": ""
 }
@@ -131,7 +143,6 @@ config/windows_native_icon="res://popochiu.ico"
 
 [autoload]
 
-U="*res://addons/Popochiu/Engine/Others/PopochiuUtils.gd"
 Cursor="*res://addons/Popochiu/Engine/Cursor/Cursor.tscn"
 Globals="*res://popochiu/PopochiuGlobals.gd"
 E="*res://addons/Popochiu/Engine/Popochiu.tscn"

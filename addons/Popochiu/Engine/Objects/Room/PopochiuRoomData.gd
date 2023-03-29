@@ -12,6 +12,7 @@ var props := {}
 var hotspots := {}
 var walkable_areas := {}
 var regions := {}
+var characters := {}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -26,6 +27,9 @@ func save_childs_states() -> void:
 					PopochiuResources['%s_IGNORE' % (t as String).to_upper()],
 					get(t)
 				)
+		
+		# Save the state of characters
+		save_characters()
 		
 		return
 	
@@ -64,6 +68,19 @@ func save_childs_states() -> void:
 					node.free()
 				
 				folder_name = dir.get_next()
+
+
+func save_characters() -> void:
+	for c in E.current_room.get_characters():
+		var pc: PopochiuCharacter = c
+		
+		characters[pc.script_name] = {
+			x = pc.position.x,
+			y = pc.position.y,
+			facing = pc._looking_dir,
+			# TODO: Store the state of the current animation (and more data if
+			# necessary)
+		}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

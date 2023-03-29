@@ -1,4 +1,5 @@
 tool
+class_name PopochiuAudioCue
 extends Resource
 
 export var audio: AudioStream
@@ -10,7 +11,7 @@ export var rnd_pitch := Vector2.ZERO
 export var rnd_volume := Vector2.ZERO
 export var max_distance := 2000
 export(float, EASE) var attenuation = 1.0
-export(String, 'Master', 'Music') var bus = 'Master'
+export var bus := 'Master'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

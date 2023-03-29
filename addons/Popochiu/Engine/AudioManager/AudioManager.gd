@@ -314,9 +314,3 @@ func _sort_cues(a: AudioCue, b: AudioCue) -> bool:
 	if a.resource_name < b.resource_name:
 		return true
 	return false
-
-
-func _sort_resource_paths(a: String, b: String) -> bool:
-	if a.get_file() < b.get_file():
-		return true
-	return false
