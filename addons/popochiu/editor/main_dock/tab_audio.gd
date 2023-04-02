@@ -148,7 +148,7 @@ func _group_audio_cues() -> void:
 			
 			var ar := _create_audio_cue_row(ac)
 			ar.cue_group = group_dic.array
-			(group_dic.group as PopochiuGroup).add(ar)
+			(group_dic.group as PopochiuGroup).add(ar, true)
 			
 			_audio_files_in_group.append(ac.audio.resource_path)
 	
@@ -171,8 +171,8 @@ func _group_audio_cues() -> void:
 			PopochiuResources.erase_data_value('audio', group)
 		else:
 			paths.sort_custom(
-				func (a: String, b: String):
-					PopochiuUtils.sort_by_file_name(a, b)
+				func (a: String, b: String) -> bool:
+					return PopochiuUtils.sort_by_file_name(a, b)
 			)
 			PopochiuResources.set_data_value('audio', group, paths)
 
@@ -249,7 +249,7 @@ func _create_audio_file_row(file_path: String) -> void:
 	
 	ar.target_clicked.connect(_create_audio_cue.bind(file_path, ar))
 	
-	_unassigned_group.add(ar)
+	_unassigned_group.add(ar, true)
 	_audio_files_to_assign.append(file_path)
 
 
@@ -302,8 +302,8 @@ func _create_audio_cue(
 	if not target_data.has(res.resource_path):
 		target_data.append(res.resource_path)
 		target_data.sort_custom(
-			func (a: String, b: String):
-				PopochiuUtils.sort_by_file_name(a, b)
+			func (a: String, b: String) -> bool:
+				return PopochiuUtils.sort_by_file_name(a, b)
 		)
 		PopochiuResources.set_data_value('audio', target, target_data)
 	else:

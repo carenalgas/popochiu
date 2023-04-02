@@ -89,7 +89,6 @@ func set_loop(value: bool) -> void:
 	
 	if not audio: return
 	
-	prints(resource_name, audio.get_class())
 	match audio.get_class():
 		'AudioStreamOggVorbis', 'AudioStreamMP3':
 			audio.loop = value

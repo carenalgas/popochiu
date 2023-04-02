@@ -1,5 +1,6 @@
 @tool
-extends "audio_cue.gd"
+extends PopochiuAudioCue
+class_name AudioCueSound
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

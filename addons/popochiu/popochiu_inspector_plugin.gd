@@ -38,7 +38,7 @@ func _parse_navigation_polygon_instance(object: Object) -> void:
 		panel.get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
 
-	hbox.minimum_size.y = 42.0
+	hbox.custom_minimum_size.y = 42.0
 	hbox.alignment = HBoxContainer.ALIGNMENT_CENTER
 
 	button.text = "Editing done"
@@ -61,7 +61,7 @@ func _parse_walkable_area(object: Object) -> void:
 		panel.get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
 
-	hbox.minimum_size.y = 42.0
+	hbox.custom_minimum_size.y = 42.0
 	hbox.alignment = HBoxContainer.ALIGNMENT_CENTER
 
 

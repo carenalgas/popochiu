@@ -31,8 +31,6 @@ func _ready() -> void:
 			var ac: AudioCue = load(rp)
 			self['_%s' % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
-			# FIX: #27 AudioCues were losing the volume set in editor when
-			# played with a fade
 			_dflt_volumes[ac.resource_name] = ac.volume
 
 

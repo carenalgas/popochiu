@@ -201,7 +201,7 @@ static func init_file_structure() -> bool:
 	# Create settings file
 	if not FileAccess.file_exists(SETTINGS):
 		if ResourceSaver.save(SETTINGS_CLASS.new(), SETTINGS) != OK:
-			prints('[Popochiu] Error %s creating PopochiuSettings.tres')
+			printerr('[Popochiu] Error %s creating PopochiuSettings.tres')
 	
 	# Create Globals file
 	if not FileAccess.file_exists(GLOBALS_SNGL):
@@ -395,7 +395,7 @@ static func get_data_cfg() -> ConfigFile:
 	if err == OK:
 		return config
 	
-	prints("[Popochiu] Couldn't load PopochiuData config.")
+	printerr("[Popochiu] Couldn't load PopochiuData config.")
 	return null
 
 
@@ -426,7 +426,7 @@ static func erase_data_value(section: String, key: String) -> void:
 		config.erase_section_key(section, key)
 		config.save(DATA)
 	else:
-		prints("[Popochiu] Can't delete %s key from %s section" %\
+		printerr("[Popochiu] Can't delete %s key from %s section" %\
 		[key, section])
 
 
@@ -499,7 +499,7 @@ static func get_plugin_cfg() -> ConfigFile:
 	if err == OK:
 		return config
 	
-	prints("[Popochiu] Couldn't load plugin config.")
+	printerr("[Popochiu] Couldn't load plugin config.")
 	return null
 
 

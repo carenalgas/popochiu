@@ -164,7 +164,7 @@ func _order_list(node: Node) -> void:
 	# Place the new row in its place alphabetically
 	var place_before: Node = null
 	for row in _list.get_children():
-		if node.name < row.name:
+		if str(node.name) < str(row.name):
 			place_before = row
 			break
 	
