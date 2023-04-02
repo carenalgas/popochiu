@@ -224,6 +224,10 @@ func _remove_in_audio_manager() -> void:
 		if group_data.is_empty():
 			PopochiuResources.erase_data_value('audio', cue_group)
 		else:
+			group_data.sort_custom(
+				func (a: String, b: String):
+					PopochiuUtils.sort_by_file_name(a, b)
+			)
 			PopochiuResources.set_data_value('audio', cue_group, group_data)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

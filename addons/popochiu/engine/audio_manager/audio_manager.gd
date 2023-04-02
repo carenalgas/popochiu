@@ -184,18 +184,6 @@ func semitone_to_pitch(pitch: float) -> float:
 	return pow(twelfth_root_of_two, pitch)
 
 
-func sort_cues(a: AudioCue, b: AudioCue) -> bool:
-	if a.resource_name < b.resource_name:
-		return true
-	return false
-
-
-func sort_resource_paths(a: String, b: String) -> bool:
-	if a.get_file() < b.get_file():
-		return true
-	return false
-
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 # Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if
 # there are no more

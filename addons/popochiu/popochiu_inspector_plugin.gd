@@ -7,7 +7,7 @@ load('res://addons/popochiu/editor/helpers/popochiu_types_helper.gd')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func can_handle(object: Object) -> bool:
+func _can_handle(object: Object) -> bool:
 	if object is PopochiuCharacter:
 		return true
 	if object is PopochiuWalkableArea:
@@ -17,7 +17,7 @@ func can_handle(object: Object) -> bool:
 	return false
 
 
-func parse_begin(object: Object) -> void:
+func _parse_begin(object: Object) -> void:
 	if object is PopochiuCharacter:
 		_parse_character(object)
 	if object is PopochiuWalkableArea:
@@ -86,9 +86,9 @@ func _parse_character(object: Object) -> void:
 		'panel',
 		panel.get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
-	hbox.minimum_size.y = 42.0
+	hbox.custom_minimum_size.y = 42.0
 	label.text = "* Open Node' scene to edit its properties"
-	label.autowrap = true
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.size_flags_horizontal = label.SIZE_EXPAND_FILL
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_color_override('font_color', Color('c46c71'))
@@ -111,13 +111,14 @@ func _find_polygon_instance(object: Object) -> void:
 	ei.edit_node(children[0])
 
 
-func parse_property(
+func _parse_property(
 	object: Object,
-	type: int,
+	type,
 	path: String,
-	hint: int,
+	hint,
 	hint_text: String,
-	usage: int
+	usage,
+	wide: bool
 ) -> bool:
 	if object and object.get_parent() is Node2D and path != 'position':
 		return true

@@ -87,7 +87,9 @@ func search_audio_files() -> void:
 		
 		for arr in _audio_cues_to_create:
 			await _create_audio_cue(arr[0], arr[1])
+			
 			progress.value = _created_audio_cues
+			
 			await get_tree().process_frame
 		
 		_group_audio_cues()
@@ -124,18 +126,18 @@ func _group_audio_cues() -> void:
 	
 	# Put already loaded (in PopochiuData.cfg) AudioCues into their corresponding
 	# group
-	for d in _groups:
-		var group: Dictionary = _groups[d]
+	for key in _groups:
+		var group_dic: Dictionary = _groups[key]
 		var group_data: Array = PopochiuResources.get_data_value(
-			'audio', group.array, []
+			'audio', group_dic.array, []
 		)
-		entries_to_delete[d] = []
+		entries_to_delete[key] = []
 		
 		if group_data.is_empty(): continue
 		
 		for rp in group_data:
 			if not FileAccess.file_exists(rp):
-				entries_to_delete[d].append(rp)
+				entries_to_delete[key].append(rp)
 				continue
 			
 			var ac: AudioCue = load(rp)
@@ -145,8 +147,8 @@ func _group_audio_cues() -> void:
 				continue
 			
 			var ar := _create_audio_cue_row(ac)
-			ar.cue_group = group.array
-			group.group.add(ar)
+			ar.cue_group = group_dic.array
+			(group_dic.group as PopochiuGroup).add(ar)
 			
 			_audio_files_in_group.append(ac.audio.resource_path)
 	
@@ -168,6 +170,10 @@ func _group_audio_cues() -> void:
 		if paths.is_empty():
 			PopochiuResources.erase_data_value('audio', group)
 		else:
+			paths.sort_custom(
+				func (a: String, b: String):
+					PopochiuUtils.sort_by_file_name(a, b)
+			)
 			PopochiuResources.set_data_value('audio', group, paths)
 
 
@@ -295,7 +301,10 @@ func _create_audio_cue(
 	
 	if not target_data.has(res.resource_path):
 		target_data.append(res.resource_path)
-		target_data.sort_custom(_audio_manager.sort_resource_paths)
+		target_data.sort_custom(
+			func (a: String, b: String):
+				PopochiuUtils.sort_by_file_name(a, b)
+		)
 		PopochiuResources.set_data_value('audio', target, target_data)
 	else:
 		await get_tree().process_frame

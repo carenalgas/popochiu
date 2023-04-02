@@ -325,12 +325,24 @@ func room_readied(room: PopochiuRoom) -> void:
 		current_room.state.visited_times == 1
 	
 	# Add the PopochiuCharacter instances to the room
-	for c in current_room.characters_cfg:
-		var chr: PopochiuCharacter = C.get_character(c.script_name)
+	if (rooms_states[room.script_name]['characters'] as Dictionary).is_empty():
+		# Store the initial state of the characters in the room
+		current_room.state.save_characters()
+		current_room.clean_characters()
+	else:
+		current_room.clean_characters()
+	
+	# Load the state of characters in the room
+	for chr_id in rooms_states[room.script_name]['characters']:
+		var chr_dic: Dictionary =\
+		rooms_states[room.script_name]['characters'][chr_id]
+		var chr: PopochiuCharacter = C.get_character(chr_id)
 		
 		if not chr: continue
-			
-		chr.position = c.position
+		
+		chr.position = Vector2(chr_dic.x, chr_dic.y)
+		chr._looking_dir = chr_dic.facing
+		
 		current_room.add_character(chr)
 	
 	# If the room must have the player character but it is not part of its
@@ -338,8 +350,8 @@ func room_readied(room: PopochiuRoom) -> void:
 	if current_room.has_player and is_instance_valid(C.player):
 		if not current_room.has_character(C.player.script_name):
 			current_room.add_character(C.player)
-		
-		await C.player.idle()
+			
+			await C.player.idle()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDS:

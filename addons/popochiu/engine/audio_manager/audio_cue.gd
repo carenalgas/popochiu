@@ -1,6 +1,6 @@
 @tool
 extends Resource
-class_name AudioCue
+class_name PopochiuAudioCue
 
 @export var audio: AudioStream
 @export var loop := false : set = set_loop
@@ -11,7 +11,7 @@ class_name AudioCue
 @export var rnd_volume := Vector2.ZERO
 @export var max_distance := 2000
 @export var attenuation := 1.0 # (float, EASE)
-@export var bus := 'Master' # (String, 'Master', 'Music')
+@export var bus := 'Master'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

@@ -20,7 +20,7 @@ var _input_actions :=\
 preload('res://addons/popochiu/engine/others/input_actions.gd')
 var _shown_helpers := []
 var _export_plugin: EditorExportPlugin = null
-var _inspector_plugin: EditorInspectorPlugin = null
+var _inspector_plugins := []
 var _selected_node: Node = null
 var _vsep := VSeparator.new()
 var _btn_baseline := Button.new()
@@ -63,10 +63,14 @@ func _enter_tree() -> void:
 	_types_helper =\
 	load('res://addons/popochiu/editor/helpers/popochiu_types_helper.gd')
 	
-	var x := load('res://addons/popochiu/popochiu_inspector_plugin.gd')
-	_inspector_plugin = x.new()
-	_inspector_plugin.ei = _editor_interface
-	add_inspector_plugin(_inspector_plugin)
+	for path in [
+		'res://addons/popochiu/popochiu_inspector_plugin.gd',
+		'res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd'
+	]:
+		var eip: EditorInspectorPlugin = load(path).new()
+		if eip.get('ei'): eip.ei = _editor_interface
+		_inspector_plugins.append(eip)
+		add_inspector_plugin(eip)
 	
 	_export_plugin = preload('popochiu_export_plugin.gd').new()
 	add_export_plugin(_export_plugin)
@@ -121,8 +125,9 @@ func _exit_tree() -> void:
 	if is_instance_valid(_export_plugin):
 		remove_export_plugin(_export_plugin)
 	
-	if is_instance_valid(_inspector_plugin):
-		remove_inspector_plugin(_inspector_plugin)
+	for eip in _inspector_plugins:
+		if is_instance_valid(eip):
+			remove_inspector_plugin(eip)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░

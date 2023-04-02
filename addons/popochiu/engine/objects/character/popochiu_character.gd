@@ -35,7 +35,6 @@ func _ready():
 	super()
 	
 	if not Engine.is_editor_hint():
-		idle()
 		set_process(follow_player)
 	else:
 		hide_helpers()

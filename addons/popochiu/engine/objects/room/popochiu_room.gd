@@ -12,13 +12,13 @@ extends Node2D
 @export var script_name := ''
 @export var has_player := true
 @export var hide_gi := false
+@export_category("Camera limits")
 @export var limit_left := INF
 @export var limit_right := INF
 @export var limit_top := INF
 @export var limit_bottom := INF
 
 var is_current := false : set = set_is_current
-var characters_cfg := [] # Array of Dictionary
 
 var _path: PackedVector2Array = PackedVector2Array()
 var _moving_character: PopochiuCharacter = null
@@ -37,17 +37,6 @@ func _enter_tree() -> void:
 		y_sort_enabled = true
 		$Props.y_sort_enabled = true
 		$Characters.y_sort_enabled = true
-	
-	for c in $Characters.get_children():
-		if c is PopochiuCharacter:
-			var pc: PopochiuCharacter = c
-			characters_cfg.append({
-				script_name = pc.script_name,
-				position = pc.position
-			})
-			
-			$Characters.remove_child(pc)
-			pc.queue_free()
 
 
 func _ready():
@@ -129,6 +118,8 @@ func add_character(chr: PopochiuCharacter) -> void:
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)
 	chr.stoped_walk.connect(_clear_navigation_path)
+	
+	chr.idle()
 
 
 func remove_character(chr: PopochiuCharacter) -> void:
@@ -160,6 +151,12 @@ func setup_camera() -> void:
 		E.main_camera.limit_top = limit_top
 	if limit_bottom != INF:
 		E.main_camera.limit_bottom = limit_bottom
+
+
+func clean_characters() -> void:
+	for c in $Characters.get_children():
+		if c is PopochiuCharacter:
+			c.free()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
@@ -236,6 +233,16 @@ func get_active_walkable_area() -> PopochiuWalkableArea:
 
 func get_active_walkable_area_name() -> String:
 	return _nav_path.script_name
+
+
+func get_characters() -> Array:
+	var characters := []
+	
+	for c in $Characters.get_children():
+		if c is PopochiuCharacter:
+			characters.append(c)
+	
+	return characters
 
 
 func get_characters_count() -> int:

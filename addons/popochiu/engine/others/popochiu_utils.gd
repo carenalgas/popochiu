@@ -4,26 +4,6 @@ extends Node
 class_name PopochiuUtils
 
 
-static func get_screen_coords_for(node: Node) -> Vector2:
-	return node.get_viewport().canvas_transform * node.get_global_position()
-
-
-# Gets a random element from an Array
-static func get_random_array_element(arr: Array):
-	randomize()
-	var idx := randi() % arr.size()
-
-	return arr[idx]
-
-
-# Gets a random index from an Array
-static func get_random_array_idx(arr: Array) -> int:
-	randomize()
-	var idx := randi() % arr.size()
-
-	return idx
-
-
 # https://gist.github.com/me2beats/443b40ba79d5b589a96a16c565952419 ============
 # Formats `string` from the_name to theName
 static func snake2camel(string:String)->String:
@@ -76,3 +56,29 @@ static func pascal2snake(string:String)->String:
 	result[0] = result[0][1]
 	return ''.join(result)
 # ==============================================================================
+
+
+static func get_screen_coords_for(node: Node) -> Vector2:
+	return node.get_viewport().canvas_transform * node.get_global_position()
+
+
+# Gets a random element from an Array
+static func get_random_array_element(arr: Array):
+	randomize()
+	var idx := randi() % arr.size()
+
+	return arr[idx]
+
+
+# Gets a random index from an Array
+static func get_random_array_idx(arr: Array) -> int:
+	randomize()
+	var idx := randi() % arr.size()
+
+	return idx
+
+
+static func sort_by_file_name(a: String, b: String) -> bool:
+	if a.get_file() < b.get_file():
+		return true
+	return false
