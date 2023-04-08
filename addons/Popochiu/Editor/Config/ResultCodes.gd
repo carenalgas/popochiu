@@ -28,22 +28,22 @@ static func get_error_message(code: int):
 		ERR_ASEPRITE_CMD_NOT_FOUND:
 			return "Aseprite command failed. Please, check if the right command is in your PATH or configured through \"Project Settings > Popochiu > Import > Command Path\"."
 		ERR_SOURCE_FILE_NOT_FOUND:
-			return "source file does not exist"
+			return "Source file does not exist"
 		ERR_OUTPUT_FOLDER_NOT_FOUND:
-			return "output location does not exist"
+			return "Output location does not exist"
 		ERR_ASEPRITE_EXPORT_FAILED:
-			return "unable to import file"
+			return "Unable to import file"
 		ERR_INVALID_ASEPRITE_SPRITESHEET:
-			return "aseprite generated bad data file"
+			return "Aseprite generated invalid data file"
 		ERR_NO_VALID_LAYERS_FOUND:
-			return "no valid layers found"
+			return "No valid layers found"
 		ERR_NO_ANIMATION_PLAYER_FOUND:
-			return "no animation player found in target node"
+			return "No AnimationPlayer found in target node"
 		ERR_NO_SPRITE_FOUND:
-			return "no sprite found in target node"
+			return "No sprite found in target node"
 		ERR_UNNAMED_TAG_DETECTED:
-			return "unnamed tag detected"
+			return "Unnamed tag detected"
 		ERR_TAGS_OPTIONS_ARRAY_EMPTY:
-			return "tags options array is empty"
+			return "Tags options array is empty"
 		_:
-			return "import failed with code %d" % code
+			return "Import failed with code %d" % code

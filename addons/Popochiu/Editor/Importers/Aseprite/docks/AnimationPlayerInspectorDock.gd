@@ -76,7 +76,7 @@ func _ready():
 	if result == RESULT_CODE.SUCCESS:
 		_show_importer()
 	else:
-		print(RESULT_CODE.get_error_message(result))
+		printerr(RESULT_CODE.get_error_message(result))
 		_hide_importer()
 
 
