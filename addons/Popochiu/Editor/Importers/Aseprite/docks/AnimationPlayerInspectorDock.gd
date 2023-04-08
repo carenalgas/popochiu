@@ -27,32 +27,40 @@ var _importing := false
 var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
 
+# Interface elements
+
+# UI Containers
+onready var _importer_container = $margin/Importer
+onready var _warning_container = $margin/Warning
+
 # Title bars, to address theme color problems
-onready var _options_title_bar = $margin/VBoxContainer/OptionsTitleBar
-onready var _options_title = $margin/VBoxContainer/OptionsTitleBar/OptionsTitle
-onready var _tags_title_bar = $margin/VBoxContainer/TagsTitleBar
-onready var _tags_title = $margin/VBoxContainer/TagsTitleBar/TagsTitle
+onready var _options_title_bar = $margin/Importer/OptionsTitleBar
+onready var _options_title = $margin/Importer/OptionsTitleBar/OptionsTitle
+onready var _tags_title_bar = $margin/Importer/TagsTitleBar
+onready var _tags_title = $margin/Importer/TagsTitleBar/TagsTitle
 
 # Source section
-onready var _source_field = $margin/VBoxContainer/Source/SourceButton
-onready var _rescan_source_button = $margin/VBoxContainer/Source/RescanButton
+onready var _source_field = $margin/Importer/Source/SourceButton
+onready var _rescan_source_button = $margin/Importer/Source/RescanButton
 
 # Tags section
-onready var _tags_ui_container = $margin/VBoxContainer/Tags
+onready var _tags_ui_container = $margin/Importer/Tags
 
 # Options section
-onready var _options_container = $margin/VBoxContainer/Options
-onready var _out_folder_field = $margin/VBoxContainer/Options/OutFolder/OutFolderButton
-onready var _out_filename_field = $margin/VBoxContainer/Options/OutFile/OutFileName
-onready var _visible_layers_field = $margin/VBoxContainer/Options/VisibleLayers/VisibleLayersCheckButton
-onready var _wipe_old_animations_field = $margin/VBoxContainer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton
+onready var _options_container = $margin/Importer/Options
+onready var _out_folder_field = $margin/Importer/Options/OutFolder/OutFolderButton
+onready var _out_filename_field = $margin/Importer/Options/OutFile/OutFileName
+onready var _visible_layers_field = $margin/Importer/Options/VisibleLayers/VisibleLayersCheckButton
+onready var _wipe_old_animations_field = $margin/Importer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton
 
-
+# Warning section
+onready var _warning_panel = $margin/Warning/HBoxContainer/Panel
+onready var _warning_panel_label = $margin/Warning/HBoxContainer/Panel/Label
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
-	_fix_titlebars_colors()
+	_set_elements_styles()
 	
 	if not target_node.has_node("AnimationPlayer"):
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND))
@@ -62,6 +70,15 @@ func _ready():
 
 	# Instantiate animation creator
 	_animation_creator.init(config, file_system)
+
+	# Check access to Aseprite executable
+	var result = _animation_creator.check_aseprite()
+	if result == RESULT_CODE.SUCCESS:
+		_show_importer()
+	else:
+		print(RESULT_CODE.get_error_message(result))
+		_hide_importer()
+
 
 	# Load inspector dock configuration from node
 	var cfg = LOCAL_OBJ_CONFIG.load_config(target_node)
@@ -337,14 +354,33 @@ func _on_output_folder_selected(path):
 	_save_config()
 
 
-func _fix_titlebars_colors():
-	# Set sections title colors, because Godot has nothing like
-	# section titles for us poor plugins developers :)
+func _set_elements_styles():
+	# Set sections title colors according to current theme
 	var section_color = get_color("prop_section", "Editor")
 	var section_style = StyleBoxFlat.new()
 	section_style.set_bg_color(section_color)
 	_tags_title_bar.set('custom_styles/panel', section_style)
 	_options_title_bar.set('custom_styles/panel', section_style)	
 
+	# Set style of warning panel
+	_warning_panel.add_stylebox_override(
+		'panel',
+		_warning_panel.get_stylebox("sub_inspector_bg11", "Editor")
+	)
+	_warning_panel_label.add_color_override('font_color', Color('c46c71'))
+
+
+func _hide_importer():
+	_importer_container.visible = false
+	_warning_container.visible = true
+
+
+func _show_importer():
+	_importer_container.visible = true
+	_warning_container.visible = false
+	
+	
+	
+	
 ## TODO: IMPORTANT AND FIRST IN LINE! The importer has different behavior for Characters, Rooms and Inventory items!
 ## TODO: Introduce layer selection list, more or less as tags

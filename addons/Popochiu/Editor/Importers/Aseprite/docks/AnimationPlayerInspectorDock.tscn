@@ -1,11 +1,34 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://addons/Popochiu/Editor/Importers/Aseprite/docks/AnimationPlayerInspectorDock.gd" type="Script" id=1]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=6]
 bg_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="Image" id=7]
+data = {
+"data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
+"format": "LumAlpha8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id=4]
+flags = 4
+flags = 4
+image = SubResource( 7 )
+size = Vector2( 16, 16 )
+
+[sub_resource type="StyleBoxTexture" id=5]
+texture = SubResource( 4 )
+region_rect = Rect2( 0, 0, 16, 16 )
+margin_left = 2.0
+margin_right = 2.0
+margin_top = 2.0
+margin_bottom = 2.0
 
 [node name="sprite_inspector_dock" type="PanelContainer"]
 margin_right = 14.0
@@ -17,22 +40,23 @@ __meta__ = {
 }
 
 [node name="margin" type="MarginContainer" parent="."]
-margin_right = 212.0
-margin_bottom = 268.0
+margin_right = 222.0
+margin_bottom = 54.0
 custom_constants/margin_top = 2
 custom_constants/margin_bottom = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="margin"]
+[node name="Importer" type="VBoxContainer" parent="margin"]
+visible = false
 margin_top = 2.0
-margin_right = 212.0
-margin_bottom = 266.0
+margin_right = 222.0
+margin_bottom = 222.0
 
-[node name="Source" type="HBoxContainer" parent="margin/VBoxContainer"]
+[node name="Source" type="HBoxContainer" parent="margin/Importer"]
 margin_right = 212.0
 margin_bottom = 20.0
 hint_tooltip = "Location of the Aseprite (*.ase, *.aseprite)  source file."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/Source"]
+[node name="Label" type="Label" parent="margin/Importer/Source"]
 margin_top = 3.0
 margin_right = 81.0
 margin_bottom = 17.0
@@ -40,7 +64,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Aseprite File"
 
-[node name="SourceButton" type="Button" parent="margin/VBoxContainer/Source"]
+[node name="SourceButton" type="Button" parent="margin/Importer/Source"]
 margin_left = 85.0
 margin_right = 151.0
 margin_bottom = 20.0
@@ -49,22 +73,22 @@ size_flags_stretch_ratio = 2.0
 text = "[empty]"
 clip_text = true
 
-[node name="RescanButton" type="Button" parent="margin/VBoxContainer/Source"]
+[node name="RescanButton" type="Button" parent="margin/Importer/Source"]
 margin_left = 155.0
 margin_right = 212.0
 margin_bottom = 20.0
 text = "Rescan"
 
-[node name="TagsTitleBar" type="PanelContainer" parent="margin/VBoxContainer"]
+[node name="TagsTitleBar" type="PanelContainer" parent="margin/Importer"]
 margin_top = 24.0
 margin_right = 212.0
 margin_bottom = 46.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TagsTitle" type="ToolButton" parent="margin/VBoxContainer/TagsTitleBar"]
+[node name="TagsTitle" type="ToolButton" parent="margin/Importer/TagsTitleBar"]
 margin_right = 212.0
 margin_bottom = 22.0
 custom_colors/font_color_pressed = Color( 0.8, 0.807843, 0.827451, 1 )
@@ -72,21 +96,21 @@ toggle_mode = true
 text = "Animation tags"
 align = 0
 
-[node name="Tags" type="VBoxContainer" parent="margin/VBoxContainer"]
+[node name="Tags" type="VBoxContainer" parent="margin/Importer"]
 margin_top = 50.0
 margin_right = 212.0
 margin_bottom = 50.0
 
-[node name="OptionsTitleBar" type="PanelContainer" parent="margin/VBoxContainer"]
+[node name="OptionsTitleBar" type="PanelContainer" parent="margin/Importer"]
 margin_top = 54.0
 margin_right = 212.0
 margin_bottom = 76.0
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 6 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="OptionsTitle" type="ToolButton" parent="margin/VBoxContainer/OptionsTitleBar"]
+[node name="OptionsTitle" type="ToolButton" parent="margin/Importer/OptionsTitleBar"]
 margin_right = 212.0
 margin_bottom = 22.0
 custom_colors/font_color_pressed = Color( 0.8, 0.807843, 0.827451, 1 )
@@ -94,17 +118,17 @@ toggle_mode = true
 text = "Options"
 align = 0
 
-[node name="Options" type="VBoxContainer" parent="margin/VBoxContainer"]
+[node name="Options" type="VBoxContainer" parent="margin/Importer"]
 margin_top = 80.0
 margin_right = 212.0
 margin_bottom = 216.0
 
-[node name="OutFolder" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
+[node name="OutFolder" type="HBoxContainer" parent="margin/Importer/Options"]
 margin_right = 212.0
 margin_bottom = 20.0
 hint_tooltip = "Location where the spritesheet file should be saved."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/Options/OutFolder"]
+[node name="Label" type="Label" parent="margin/Importer/Options/OutFolder"]
 margin_top = 3.0
 margin_right = 104.0
 margin_bottom = 17.0
@@ -112,7 +136,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Output folder"
 
-[node name="OutFolderButton" type="Button" parent="margin/VBoxContainer/Options/OutFolder"]
+[node name="OutFolderButton" type="Button" parent="margin/Importer/Options/OutFolder"]
 margin_left = 108.0
 margin_right = 212.0
 margin_bottom = 20.0
@@ -121,13 +145,13 @@ size_flags_stretch_ratio = 2.0
 text = "[empty]"
 clip_text = true
 
-[node name="OutFile" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
+[node name="OutFile" type="HBoxContainer" parent="margin/Importer/Options"]
 margin_top = 24.0
 margin_right = 212.0
 margin_bottom = 48.0
 hint_tooltip = "Base filename for spritesheet. In case the layer option is used, this works as a prefix to the layer name."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/Options/OutFile"]
+[node name="Label" type="Label" parent="margin/Importer/Options/OutFile"]
 margin_top = 5.0
 margin_right = 109.0
 margin_bottom = 19.0
@@ -135,20 +159,20 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Output file name"
 
-[node name="OutFileName" type="LineEdit" parent="margin/VBoxContainer/Options/OutFile"]
+[node name="OutFileName" type="LineEdit" parent="margin/Importer/Options/OutFile"]
 margin_left = 113.0
 margin_right = 212.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="VisibleLayers" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
+[node name="VisibleLayers" type="HBoxContainer" parent="margin/Importer/Options"]
 margin_top = 52.0
 margin_right = 212.0
 margin_bottom = 92.0
 hint_tooltip = "If active, layers not visible in the source file won't be included in the final image."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/Options/VisibleLayers"]
+[node name="Label" type="Label" parent="margin/Importer/Options/VisibleLayers"]
 margin_top = 13.0
 margin_right = 118.0
 margin_bottom = 27.0
@@ -156,55 +180,84 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Only visible layers"
 
-[node name="VisibleLayersCheckButton" type="CheckButton" parent="margin/VBoxContainer/Options/VisibleLayers"]
+[node name="VisibleLayersCheckButton" type="CheckButton" parent="margin/Importer/Options/VisibleLayers"]
 margin_left = 122.0
 margin_right = 212.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="WipeOldAnimations" type="HBoxContainer" parent="margin/VBoxContainer/Options"]
+[node name="WipeOldAnimations" type="HBoxContainer" parent="margin/Importer/Options"]
 margin_top = 96.0
 margin_right = 212.0
 margin_bottom = 136.0
 hint_tooltip = "If active, layers not visible in the source file won't be included in the final image."
 
-[node name="Label" type="Label" parent="margin/VBoxContainer/Options/WipeOldAnimations"]
+[node name="Label" type="Label" parent="margin/Importer/Options/WipeOldAnimations"]
 margin_top = 13.0
 margin_right = 132.0
 margin_bottom = 27.0
 hint_tooltip = "Set this to OFF if you want to add new animations on top of old ones. Anims with same name will be updated."
+mouse_filter = 0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Wipe old animations"
 
-[node name="WipeOldAnimationsCheckButton" type="CheckButton" parent="margin/VBoxContainer/Options/WipeOldAnimations"]
+[node name="WipeOldAnimationsCheckButton" type="CheckButton" parent="margin/Importer/Options/WipeOldAnimations"]
 margin_left = 136.0
 margin_right = 212.0
 margin_bottom = 40.0
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="Import" type="Button" parent="margin/VBoxContainer"]
+[node name="Import" type="Button" parent="margin/Importer"]
 margin_top = 220.0
 margin_right = 212.0
 margin_bottom = 240.0
 text = "Import"
 
-[node name="Reset" type="Button" parent="margin/VBoxContainer"]
+[node name="Reset" type="Button" parent="margin/Importer"]
 margin_top = 244.0
 margin_right = 212.0
 margin_bottom = 264.0
 text = "Reset Preferences"
-flat = true
 
-[connection signal="pressed" from="margin/VBoxContainer/Source/SourceButton" to="." method="_on_source_pressed"]
-[connection signal="pressed" from="margin/VBoxContainer/Source/RescanButton" to="." method="_on_rescan_pressed"]
-[connection signal="toggled" from="margin/VBoxContainer/TagsTitleBar/TagsTitle" to="." method="_on_options_title_toggled"]
-[connection signal="toggled" from="margin/VBoxContainer/OptionsTitleBar/OptionsTitle" to="." method="_on_options_title_toggled"]
-[connection signal="pressed" from="margin/VBoxContainer/Options/OutFolder/OutFolderButton" to="." method="_on_out_folder_pressed"]
-[connection signal="focus_exited" from="margin/VBoxContainer/Options/OutFile/OutFileName" to="." method="_save_config"]
-[connection signal="pressed" from="margin/VBoxContainer/Options/VisibleLayers/VisibleLayersCheckButton" to="." method="_save_config"]
-[connection signal="pressed" from="margin/VBoxContainer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton" to="." method="_save_config"]
-[connection signal="pressed" from="margin/VBoxContainer/Import" to="." method="_on_import_pressed"]
-[connection signal="pressed" from="margin/VBoxContainer/Reset" to="." method="_on_reset_pressed"]
+[node name="Warning" type="VBoxContainer" parent="margin"]
+margin_top = 2.0
+margin_right = 222.0
+margin_bottom = 52.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="margin/Warning"]
+margin_right = 222.0
+margin_bottom = 50.0
+
+[node name="Panel" type="Panel" parent="margin/Warning/HBoxContainer"]
+margin_right = 222.0
+margin_bottom = 50.0
+rect_min_size = Vector2( 222, 50 )
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_styles/panel = SubResource( 5 )
+
+[node name="Label" type="Label" parent="margin/Warning/HBoxContainer/Panel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+rect_min_size = Vector2( 0, 42 )
+size_flags_horizontal = 3
+size_flags_vertical = 6
+custom_colors/font_color = Color( 0.768627, 0.423529, 0.443137, 1 )
+text = "Problems with Aseprite command!
+Check Output panel for details."
+align = 1
+autowrap = true
+
+[connection signal="pressed" from="margin/Importer/Source/SourceButton" to="." method="_on_source_pressed"]
+[connection signal="pressed" from="margin/Importer/Source/RescanButton" to="." method="_on_rescan_pressed"]
+[connection signal="toggled" from="margin/Importer/TagsTitleBar/TagsTitle" to="." method="_on_options_title_toggled"]
+[connection signal="toggled" from="margin/Importer/OptionsTitleBar/OptionsTitle" to="." method="_on_options_title_toggled"]
+[connection signal="pressed" from="margin/Importer/Options/OutFolder/OutFolderButton" to="." method="_on_out_folder_pressed"]
+[connection signal="focus_exited" from="margin/Importer/Options/OutFile/OutFileName" to="." method="_save_config"]
+[connection signal="pressed" from="margin/Importer/Options/VisibleLayers/VisibleLayersCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="margin/Importer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="margin/Importer/Import" to="." method="_on_import_pressed"]
+[connection signal="pressed" from="margin/Importer/Reset" to="." method="_on_reset_pressed"]

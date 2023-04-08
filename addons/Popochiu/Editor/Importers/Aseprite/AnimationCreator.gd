@@ -20,6 +20,16 @@ func init(config, editor_file_system: EditorFileSystem = null):
 	_aseprite.init(config)
 
 
+func check_aseprite() -> int:
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	
+	return RESULT_CODE.SUCCESS
+
+
 func create_animations(target_node: Node, player: AnimationPlayer, options: Dictionary):
 	if not _aseprite.check_command_path():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
