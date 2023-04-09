@@ -37,7 +37,7 @@ func _export_file(path: String, type: String, features: PoolStringArray) -> void
 	if scene_changed:
 		var filtered_scene := PackedScene.new()
 		if filtered_scene.pack(root_node) != OK:
-			print("Error updating scene")
+			printerr("Error updating scene.")
 			return
 
 		var content := _get_scene_content(path, filtered_scene)

@@ -196,7 +196,7 @@ func _on_import_pressed():
 	_importing = false
 	
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
-		print(RESULT_CODE.get_error_message(result))
+		printerr(RESULT_CODE.get_error_message(result))
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
 		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
@@ -289,7 +289,7 @@ func _get_tags_from_ui() -> Array:
 func _get_tags_from_source() -> Array:
 	var tags_found = _animation_creator.list_tags(ProjectSettings.globalize_path(_source))
 	if typeof(tags_found) == TYPE_INT:
-		print(RESULT_CODE.get_error_message(tags_found))
+		printerr(RESULT_CODE.get_error_message(tags_found))
 		return []
 	var tags_list = []
 	for t in tags_found:

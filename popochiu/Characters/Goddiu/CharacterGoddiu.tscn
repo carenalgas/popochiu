@@ -125,7 +125,7 @@ color = Color( 0, 1, 1, 1 )
 [node name="Sprite" type="Sprite" parent="."]
 position = Vector2( 0, -27 )
 texture = ExtResource( 2 )
-hframes = 12
+hframes = 6
 
 [node name="DialogPos" type="Position2D" parent="."]
 position = Vector2( -3, -48 )

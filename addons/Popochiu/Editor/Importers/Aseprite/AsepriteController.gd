@@ -69,7 +69,7 @@ func export_layer(file_name: String, layer_name: String, output_folder: String, 
 
 	var exit_code = _execute(arguments, output)
 	if exit_code != 0:
-		print('aseprite: failed to export layer spritesheet')
+		printerr('Aseprite: Failed to export layer spritesheet. Command output follows:')
 		print(output)
 		return {}
 
