@@ -366,7 +366,7 @@ func _get_valid_oriented_animation(animation_label):
 
 func play_animation(animation_label: String, animation_fallback := 'idle', blocking := false):
 	if not has_node("AnimationPlayer"):
-		printerr("Expected AnimationPlayer not fount in character ", script_name)
+		printerr("Can't play character animation. Required AnimationPlayer not found in character %s" % [script_name])
 		return
 
 	# Search for a valid animation corresponding to animation_label
@@ -375,7 +375,7 @@ func play_animation(animation_label: String, animation_fallback := 'idle', block
 	if animation == null: animation = _get_valid_oriented_animation(animation_fallback)
 	# In neither are available, exit and throw an error to check for the presence of the animations.
 	if animation == null: # Again!
-		printerr("Neither the requested nor the fallback animation could be found for character ", script_name, ". Requested: ", animation_label, " - Fallback: " , animation_fallback)
+		printerr("Neither the requested nor the fallback animation could be found for character %s. Requested: %s - Fallback: %s" % [script_name, animation_label, animation_fallback])
 		return
 	# Play the animation in the best available orientation.
 	$AnimationPlayer.play(animation)

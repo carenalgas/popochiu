@@ -158,7 +158,6 @@ func _configure_animations(target_sprite: Node, player: AnimationPlayer, content
 				continue
 			var selected_frames = frames.slice(tag.from, tag.to)
 			result = _add_animation_frames(target_sprite, player, tag.name, selected_frames, tag.direction)
-			result = RESULT_CODE.SUCCESS
 			if result != RESULT_CODE.SUCCESS:
 				break
 		return result
@@ -167,10 +166,15 @@ func _configure_animations(target_sprite: Node, player: AnimationPlayer, content
 
 
 func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_name: String, frames: Array, direction = 'forward'):
-	var animation_name = anim_name
+	# TODO: Forcing lowercase is a design choice so we don't expose
+	# animation properties on the character "PowerQuest style".
+	# We may decide do switch to a more configurable design in the future.
+	# TODO: In Godot 4.0 this must be to_snake_case()!
+	var animation_name = anim_name.to_lower()
 	var is_loopable = _tags_options_lookup.get(anim_name).get("loops")
 
-	# TODO: This is not getting rid of old animations! We can add an option for that
+	# This is always true if the user selected to wipe old animations.
+	# See _remove_animations_from_player() function.
 	if not player.has_animation(animation_name):
 		player.add_animation(animation_name, Animation.new())
 
