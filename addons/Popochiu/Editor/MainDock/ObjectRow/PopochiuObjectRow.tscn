@@ -2,7 +2,7 @@
 
 [ext_resource path="res://addons/Popochiu/Editor/MainDock/ObjectRow/PopochiuObjectRow.gd" type="Script" id=1]
 
-[sub_resource type="Image" id=3]
+[sub_resource type="Image" id=6]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -11,10 +11,10 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id=2]
+[sub_resource type="ImageTexture" id=5]
 flags = 4
 flags = 4
-image = SubResource( 3 )
+image = SubResource( 6 )
 size = Vector2( 16, 16 )
 
 [node name="PopochiuObjectRow" type="HBoxContainer"]
@@ -44,7 +44,7 @@ margin_bottom = 16.0
 hint_tooltip = "Main scene"
 size_flags_horizontal = 10
 size_flags_vertical = 4
-texture = SubResource( 2 )
+texture = SubResource( 5 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -68,7 +68,7 @@ margin_bottom = 40.0
 hint_tooltip = "Open in Editor"
 size_flags_horizontal = 4
 size_flags_vertical = 3
-icon = SubResource( 2 )
+icon = SubResource( 5 )
 flat = true
 
 [node name="Script" type="Button" parent="Panel/HBoxContainer"]
@@ -79,7 +79,7 @@ margin_bottom = 40.0
 hint_tooltip = "Open in Script"
 size_flags_horizontal = 4
 size_flags_vertical = 3
-icon = SubResource( 2 )
+icon = SubResource( 5 )
 flat = true
 
 [node name="State" type="Button" parent="Panel/HBoxContainer"]
@@ -90,7 +90,7 @@ margin_bottom = 40.0
 hint_tooltip = "Open state"
 size_flags_horizontal = 4
 size_flags_vertical = 3
-icon = SubResource( 2 )
+icon = SubResource( 5 )
 flat = true
 
 [node name="StateScript" type="Button" parent="Panel/HBoxContainer"]
@@ -101,13 +101,13 @@ margin_bottom = 40.0
 hint_tooltip = "Open state Script"
 size_flags_horizontal = 4
 size_flags_vertical = 3
-icon = SubResource( 2 )
+icon = SubResource( 5 )
 flat = true
 
 [node name="MenuButton" type="MenuButton" parent="Panel/HBoxContainer"]
-margin_left = 64.0
-margin_right = 92.0
+margin_left = 32.0
+margin_right = 60.0
 margin_bottom = 40.0
-icon = SubResource( 2 )
-items = [ "", null, 0, false, false, -1, 0, null, "", true, "Remove", SubResource( 2 ), 0, false, false, 4, 0, null, "", false ]
+icon = SubResource( 5 )
+items = [ "", null, 0, false, false, -1, 0, null, "", true, "Remove", SubResource( 5 ), 0, false, false, 6, 0, null, "", false ]
 switch_on_hover = true

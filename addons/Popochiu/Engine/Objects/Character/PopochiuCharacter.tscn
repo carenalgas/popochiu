@@ -7,6 +7,7 @@ script = ExtResource( 1 )
 __meta__ = {
 "_edit_group_": true
 }
+popochiu_placeholder = null
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 polygon = PoolVector2Array( -10, -10, 10, -10, 10, 10, -10, 10 )
@@ -28,6 +29,8 @@ margin_top = -2.5
 margin_right = 2.5
 margin_bottom = 2.5
 color = Color( 0, 1, 1, 1 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="Sprite" type="Sprite" parent="."]
 

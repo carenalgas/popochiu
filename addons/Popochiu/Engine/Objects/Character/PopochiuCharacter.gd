@@ -6,7 +6,7 @@ extends 'res://addons/Popochiu/Engine/Objects/Clickable/PopochiuClickable.gd'
 # TODO: Use a state machine
 
 enum FlipsWhen { NONE, MOVING_RIGHT, MOVING_LEFT }
-enum LOOKING {UP, UP_RIGHT, RIGHT, RIGHT_DOWN, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
+enum LOOKING {UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
 
 signal started_walk_to(character, start, end)
 signal stoped_walk
@@ -39,6 +39,23 @@ func _ready():
 		set_process(true)
 
 
+func _get_property_list():
+	var properties = []
+	properties.append({
+		name = "Aseprite",
+		type = TYPE_NIL,
+		usage = PROPERTY_USAGE_CATEGORY
+	})
+	# This is needed or the category won't be shown in the
+	# inspector. AsepriteImporterInspectorPlugin hides it.
+	properties.append({
+		name = "popochiu_placeholder",
+		type = TYPE_NIL,
+	})
+
+	return properties
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func idle(is_in_queue := true) -> void:
 	if is_in_queue: yield()
@@ -63,8 +80,10 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 	if is_in_queue: yield()
 	
 	is_moving = true
-	_looking_dir = LOOKING.LEFT if target_pos.x < position.x else LOOKING.RIGHT
-	
+	# Make the char face in the correct direction
+	face_direction(target_pos)
+	# The ROOM will take care of moving the character
+	# and face her in the correct direction from here
 	if has_node('Sprite'):
 		match flips_when:
 			FlipsWhen.MOVING_LEFT:
@@ -87,9 +106,7 @@ func walk(target_pos: Vector2, is_in_queue := true) -> void:
 		
 		return
 	
-	play_walk(target_pos)
-	
-	# Trigger the signal for the room  to start moving the character
+	# Trigger the signal for the room to start moving the character
 	emit_signal('started_walk_to', self, position, target_pos)
 	
 	yield(C, 'character_move_ended')
@@ -285,18 +302,100 @@ func _get_vo_cue(emotion := '') -> String:
 	return ''
 
 
+func face_direction(destination: Vector2):
+	# Get the vector from the origin to the destination.
+	var vectX = destination.x - position.x
+	var vectY = destination.y - position.y
+	# Determine the angle of the movement vector.
+	var rad = atan2(vectY, vectX)
+	var angle = rad2deg(rad)
+	# Tolerance in degrees, to avoid U D L R are only
+	# achieved on precise angles such as 0 90 180 deg.
+	var t = 22.5
+	# Determine the direction the character is facing.
+	# Remember: Y coordinates have opposite sign in Godot.
+	# this means that negative angles are up movements.
+	# Set the direction using the _looking property.
+	# We cannot use the face_* functions because they
+	# set the state as IDLE.
+	if angle >= -(0 + t) and angle < (0 + t):
+		_looking_dir = LOOKING.RIGHT
+	elif angle >= (0 + t) and angle < (90 - t):
+		_looking_dir = LOOKING.DOWN_RIGHT
+	elif angle >= (90 - t) and angle < (90 + t):
+		_looking_dir = LOOKING.DOWN
+	elif angle >= (90 + t) and angle < (180 - t):
+		_looking_dir = LOOKING.DOWN_LEFT
+	elif angle >= (180 - t) or angle <= -(180 -t ):
+		_looking_dir = LOOKING.LEFT
+	elif angle <= -(0 + t) and angle > -(90 - t):
+		_looking_dir = LOOKING.UP_RIGHT
+	elif angle <= -(90 - t) and angle > -(90 + t):
+		_looking_dir = LOOKING.UP
+	elif angle <= -(90 + t) and angle > -(180 - t):
+		_looking_dir = LOOKING.UP_LEFT
+
+
+func _get_valid_oriented_animation(animation_label):
+	var suffixes = []
+	# Based on the character facing direction,
+	# define a set of animation suffixes in
+	# preference order.
+	match _looking_dir:
+		LOOKING.DOWN_LEFT: suffixes = ['_dl', '_l']
+		LOOKING.UP_LEFT: suffixes = ['_ul', '_l']
+		LOOKING.LEFT: suffixes = ['_l']
+		LOOKING.UP_RIGHT: suffixes = ['_ur', '_r']
+		LOOKING.DOWN_RIGHT: suffixes = ['_dr', '_r']
+		LOOKING.RIGHT: suffixes = ['_r']
+		LOOKING.DOWN: suffixes = ['_d']
+		LOOKING.UP: suffixes = ['_u']
+	# Add an empty suffix to support the most
+	# basic animation case.
+	suffixes = suffixes + ['']
+	# The list of prefixes is in order of preference
+	# Eg. walk_dl, walk_l, walk
+	# Scan the AnimationPlayer and return the first that matches.
+	for suffix in suffixes:
+		var animation = "%s%s" % [animation_label, suffix]
+		if $AnimationPlayer.has_animation(animation):
+			return animation
+	# No valid animation is found.
+	return null
+
+
+func play_animation(animation_label: String, animation_fallback := 'idle', blocking := false):
+	if not has_node("AnimationPlayer"):
+		printerr("Can't play character animation. Required AnimationPlayer not found in character %s" % [script_name])
+		return
+
+	# Search for a valid animation corresponding to animation_label
+	var animation = _get_valid_oriented_animation(animation_label)
+	# If is not present, do the same for the the fallback animation.
+	if animation == null: animation = _get_valid_oriented_animation(animation_fallback)
+	# In neither are available, exit and throw an error to check for the presence of the animations.
+	if animation == null: # Again!
+		printerr("Neither the requested nor the fallback animation could be found for character %s. Requested: %s - Fallback: %s" % [script_name, animation_label, animation_fallback])
+		return
+	# Play the animation in the best available orientation.
+	$AnimationPlayer.play(animation)
+	
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func play_idle() -> void:
-	pass
+	play_animation('idle');
 
 
 func play_walk(target_pos: Vector2) -> void:
-	pass
+	# Set the default parameters for play_animation()
+	var animation_label = 'walk'
+	var animation_fallback = 'idle'
+	play_animation(animation_label, animation_fallback);
 
 
 func play_talk() -> void:
-	pass
+	play_animation('talk');
 
 
 func play_grab() -> void:
-	pass
+	play_animation('grab');
