@@ -239,6 +239,7 @@ import/project_import_settings/texture={
 "stream": false,
 "svg/scale": 1.0
 }
+import/aseprite/command_path="D:\\visual\\Aseprite\\Aseprite.exe"
 
 [rendering]
 
