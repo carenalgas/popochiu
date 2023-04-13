@@ -359,6 +359,8 @@ func _on_add_character_pressed() -> void:
 		characters_menu.connect('id_pressed', self, '_on_character_seleced')
 
 
+# Adds the clicked character in the "+ Add character to room" menu to the
+# current room
 func _on_character_seleced(id: int) -> void:
 	var characters_menu := _btn_add_character.get_popup()
 	var char_name := characters_menu.get_item_text(
@@ -371,6 +373,10 @@ func _on_character_seleced(id: int) -> void:
 	
 	opened_room.get_node('Characters').add_child(instance)
 	instance.owner = opened_room
+	instance.position = Vector2(
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
+	) / 2.0
 	
 	_characters_in_room.append(char_name)
 	

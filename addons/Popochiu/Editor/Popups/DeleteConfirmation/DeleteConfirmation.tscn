@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIRegular.tres" type="DynamicFont" id=1]
-[ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIBold.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/Popochiu/Editor/Popups/DeleteConfirmation/DeleteConfirmation.gd" type="Script" id=1]
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
@@ -29,6 +28,7 @@ corner_radius_bottom_left = 4
 margin_right = 200.0
 margin_bottom = 99.0
 rect_min_size = Vector2( 200, 120 )
+script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -46,8 +46,6 @@ __meta__ = {
 margin_right = 184.0
 margin_bottom = 19.0
 size_flags_horizontal = 3
-custom_fonts/bold_font = ExtResource( 2 )
-custom_fonts/normal_font = ExtResource( 1 )
 custom_styles/normal = SubResource( 1 )
 bbcode_enabled = true
 bbcode_text = "Se va a eliminar [b]algo[/b]."
@@ -72,8 +70,6 @@ margin_right = 140.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
 custom_colors/default_color = Color( 0.768627, 0.423529, 0.443137, 1 )
-custom_fonts/bold_font = ExtResource( 2 )
-custom_fonts/normal_font = ExtResource( 1 )
 custom_styles/normal = SubResource( 3 )
 bbcode_enabled = true
 bbcode_text = "Eliminar también [b]carpeta[/b]."

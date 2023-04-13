@@ -14,6 +14,16 @@ onready var _info: RichTextLabel = find_node('Info')
 func _ready() -> void:
 	register_text_enter(_input)
 	
+	PopochiuUtils.override_font(
+		_info, 'normal_font', get_font("main", "EditorFonts")
+	)
+	PopochiuUtils.override_font(
+		_info, 'bold_font', get_font("bold", "EditorFonts")
+	)
+	PopochiuUtils.override_font(
+		_info, 'mono_font', get_font("source", "EditorFonts")
+	)
+	
 	connect('confirmed', self, 'create')
 	connect('popup_hide', self, '_clear_fields')
 	_input.connect('text_changed', self, '_update_name')

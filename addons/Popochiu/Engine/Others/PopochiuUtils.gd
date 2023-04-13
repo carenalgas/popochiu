@@ -88,6 +88,11 @@ static func filter_rows(new_text: String, source: Dictionary) -> void:
 	for type_dic in source.values():
 		type_dic.group.show()
 		
+		var title_in_filter := false
+		
+		if type_dic.group.title.findn(new_text) > -1:
+			title_in_filter = true
+		
 		var hidden_rows := 0
 		# type_dic.group is a PopochiuGroup
 		var rows: Array = type_dic.group.get_elements()
@@ -97,9 +102,14 @@ static func filter_rows(new_text: String, source: Dictionary) -> void:
 			
 			if new_text.empty(): continue
 			
-			if (row as Control).name.findn(new_text) < 0:
+			if (row as Control).name.findn(new_text) < 0\
+			and not title_in_filter:
 				hidden_rows += 1
 				row.hide()
 		
 		if hidden_rows == rows.size():
 			type_dic.group.hide()
+
+
+static func override_font(node: Control, font_name: String, font: Font) -> void:
+	node.add_font_override(font_name, font)

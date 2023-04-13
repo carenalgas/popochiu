@@ -27,6 +27,15 @@ onready var _set_as_main_check: CheckBox = _set_as_main.find_node('CheckBox')
 func _ready() -> void:
 	connect('about_to_show', self, '_check_if_first_room')
 	
+	PopochiuUtils.override_font(
+		_set_as_main.find_node('RichTextLabel'),
+		'normal_font', get_font("main", "EditorFonts")
+	)
+	PopochiuUtils.override_font(
+		_set_as_main.find_node('RichTextLabel'),
+		'bold_font', get_font("bold", "EditorFonts")
+	)
+	
 	_clear_fields()
 	_set_as_main.hide()
 

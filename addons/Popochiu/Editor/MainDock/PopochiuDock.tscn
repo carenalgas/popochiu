@@ -223,7 +223,6 @@ icon = SubResource( 12 )
 [node name="Popups" type="Control" parent="."]
 
 [node name="CreateRoom" parent="Popups" instance=ExtResource( 3 )]
-visible = false
 margin_right = 597.0
 margin_bottom = 270.0
 
