@@ -256,7 +256,7 @@ func get_characters() -> Array:
 func clean_characters() -> void:
 	for c in $Characters.get_children():
 		if c is PopochiuCharacter:
-			c.free()
+			c.queue_free()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

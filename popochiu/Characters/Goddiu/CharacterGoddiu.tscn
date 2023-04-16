@@ -301,12 +301,10 @@ popochiu_placeholder = null
 polygon = PoolVector2Array( -9, -45, -1, -47, 17, -39, 22, -34, 23, -26, 19, -18, 10, -13, -4, -12, -17, -14, -22, -20, -22, -28 )
 
 [node name="BaselineHelper" type="Line2D" parent="."]
-visible = false
 points = PoolVector2Array( -10000, 0, 10000, 0 )
 width = 1.0
 
 [node name="WalkToHelper" type="Position2D" parent="."]
-visible = false
 __meta__ = {
 "_edit_group_": true
 }
@@ -325,8 +323,7 @@ hframes = 3
 vframes = 2
 
 [node name="DialogPos" type="Position2D" parent="."]
-visible = false
-position = Vector2( -3, -48 )
+position = Vector2( 0, -51 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 anims/idle = SubResource( 1 )
