@@ -158,6 +158,8 @@ func _store_data(type: String, save: Dictionary) -> void:
 				
 				for category in PopochiuResources.ROOM_CHILDS:
 					save[type][data.script_name][category] = data[category]
+				
+				save[type][data.script_name]['characters'] = data.characters
 			'dialogs':
 				save[type][data.script_name].options = {}
 				

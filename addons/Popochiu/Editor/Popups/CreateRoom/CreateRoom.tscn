@@ -1,11 +1,6 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://addons/Popochiu/Editor/Fonts/NotoSansUI_Regular.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://addons/Popochiu/Editor/Fonts/Hack_Regular.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://addons/Popochiu/Editor/Fonts/NotoSansUI_Bold.ttf" type="DynamicFontData" id=3]
 [ext_resource path="res://addons/Popochiu/Editor/Popups/CreateRoom/CreateRoom.gd" type="Script" id=4]
-[ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIRegular.tres" type="DynamicFont" id=5]
-[ext_resource path="res://addons/Popochiu/Editor/Resources/DynamicFonts/NotoSansUIBold.tres" type="DynamicFont" id=6]
 
 [sub_resource type="StyleBoxFlat" id=1]
 content_margin_left = 4.0
@@ -39,22 +34,9 @@ corner_radius_bottom_left = 4
 
 [sub_resource type="StyleBoxEmpty" id=8]
 
-[sub_resource type="DynamicFont" id=3]
-size = 14
-font_data = ExtResource( 2 )
-
-[sub_resource type="DynamicFont" id=4]
-size = 14
-font_data = ExtResource( 3 )
-
-[sub_resource type="DynamicFont" id=5]
-size = 14
-font_data = ExtResource( 1 )
-
 [sub_resource type="StyleBoxEmpty" id=2]
 
 [node name="CreateRoom" type="ConfirmationDialog"]
-visible = true
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -128,6 +110,7 @@ text = "Use PascalCase. No spaces. i.e. Garage or CasinoInterior."
 autowrap = true
 
 [node name="SetAsMainContainer" type="PanelContainer" parent="VBoxContainer"]
+visible = false
 margin_top = 79.0
 margin_right = 624.0
 margin_bottom = 125.0
@@ -143,8 +126,6 @@ margin_bottom = 42.0
 margin_right = 588.0
 margin_bottom = 38.0
 size_flags_horizontal = 3
-custom_fonts/bold_font = ExtResource( 6 )
-custom_fonts/normal_font = ExtResource( 5 )
 custom_styles/focus = SubResource( 7 )
 custom_styles/normal = SubResource( 8 )
 bbcode_enabled = true
@@ -164,8 +145,5 @@ margin_right = 624.0
 margin_bottom = 316.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-custom_fonts/mono_font = SubResource( 3 )
-custom_fonts/bold_font = SubResource( 4 )
-custom_fonts/normal_font = SubResource( 5 )
 custom_styles/normal = SubResource( 2 )
 bbcode_enabled = true

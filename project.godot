@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Resource",
+"class": "PopochiuAudioCue",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/AudioManager/AudioCue.gd"
+}, {
 "base": "Node",
 "class": "PopochiuAudioManager",
 "language": "GDScript",
@@ -89,6 +94,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://addons/Popochiu/Engine/Objects/PopochiuSettings.gd"
 }, {
+"base": "Node",
+"class": "PopochiuUtils",
+"language": "GDScript",
+"path": "res://addons/Popochiu/Engine/Others/PopochiuUtils.gd"
+}, {
 "base": "Node2D",
 "class": "PopochiuWalkableArea",
 "language": "GDScript",
@@ -100,6 +110,7 @@ _global_script_classes=[ {
 "path": "res://addons/Popochiu/Engine/Objects/TransitionLayer/TransitionLayer.gd"
 } ]
 _global_script_class_icons={
+"PopochiuAudioCue": "",
 "PopochiuAudioManager": "",
 "PopochiuCharacter": "res://addons/Popochiu/icons/character.png",
 "PopochiuCharacterData": "res://addons/Popochiu/icons/character.png",
@@ -116,6 +127,7 @@ _global_script_class_icons={
 "PopochiuRoom": "res://addons/Popochiu/icons/room.png",
 "PopochiuRoomData": "res://addons/Popochiu/icons/room.png",
 "PopochiuSettings": "",
+"PopochiuUtils": "",
 "PopochiuWalkableArea": "res://addons/Popochiu/icons/walkable_area.png",
 "TransitionLayer": ""
 }
@@ -131,7 +143,6 @@ config/windows_native_icon="res://popochiu.ico"
 
 [autoload]
 
-U="*res://addons/Popochiu/Engine/Others/PopochiuUtils.gd"
 Cursor="*res://addons/Popochiu/Engine/Cursor/Cursor.tscn"
 Globals="*res://popochiu/PopochiuGlobals.gd"
 E="*res://addons/Popochiu/Engine/Popochiu.tscn"
@@ -159,30 +170,6 @@ enabled=PoolStringArray( "res://addons/Popochiu/plugin.cfg", "res://addons/explo
 
 colorpicker_palette/gpl_file="res://addons/Popochiu/palette/colodore.gpl"
 
-[importer_defaults]
-
-texture={
-"compress/bptc_ldr": 0,
-"compress/hdr_mode": 0,
-"compress/lossy_quality": 0.7,
-"compress/mode": 0,
-"compress/normal_map": 0,
-"detect_3d": false,
-"flags/anisotropic": false,
-"flags/filter": false,
-"flags/mipmaps": false,
-"flags/repeat": 0,
-"flags/srgb": 2,
-"process/HDR_as_SRGB": false,
-"process/fix_alpha_border": true,
-"process/invert_color": false,
-"process/normal_map_invert_y": false,
-"process/premult_alpha": false,
-"size_limit": 0,
-"stream": false,
-"svg/scale": 1.0
-}
-
 [input]
 
 popochiu-interact={
@@ -207,27 +194,7 @@ common/enable_pause_aware_picking=true
 
 [popochiu]
 
-import/project_import_settings/texture={
-"compress/bptc_ldr": 0,
-"compress/hdr_mode": 0,
-"compress/lossy_quality": 0.7,
-"compress/mode": 0,
-"compress/normal_map": 0,
-"detect_3d": false,
-"flags/anisotropic": false,
-"flags/filter": false,
-"flags/mipmaps": false,
-"flags/repeat": 0,
-"flags/srgb": 2,
-"process/HDR_as_SRGB": false,
-"process/fix_alpha_border": true,
-"process/invert_color": false,
-"process/normal_map_invert_y": false,
-"process/premult_alpha": false,
-"size_limit": 0,
-"stream": false,
-"svg/scale": 1.0
-}
+import/aseprite/command_path="D:\\visual\\Aseprite\\Aseprite.exe"
 
 [rendering]
 

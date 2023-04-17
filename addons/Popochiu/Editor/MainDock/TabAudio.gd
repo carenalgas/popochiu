@@ -43,13 +43,15 @@ onready var _groups := {
 	}
 }
 onready var _asp: AudioStreamPlayer = find_node('AudioStreamPlayer')
-onready var _btn_search_files: Button = find_node('BtnSearchAudioFiles')
+onready var _btn_scan_files: Button = find_node('BtnScanAudioFiles')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	_btn_search_files.icon = get_icon('Search', 'EditorIcons')
-	_btn_search_files.connect('pressed', self, 'search_audio_files')
+	$PopochiuFilter.groups = _groups
+	
+	_btn_scan_files.icon = get_icon('Search', 'EditorIcons')
+	_btn_scan_files.connect('pressed', self, 'search_audio_files')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -76,7 +78,9 @@ func search_audio_files() -> void:
 		
 		for arr in _audio_cues_to_create:
 			yield(_create_audio_cue(arr[0], arr[1]), 'completed')
+			
 			progress.value = _created_audio_cues
+			
 			yield(get_tree(), 'idle_frame')
 		
 		_group_audio_cues()
@@ -113,18 +117,18 @@ func _group_audio_cues() -> void:
 	
 	# Put already loaded (in PopochiuData.cfg) AudioCues into their corresponding
 	# group
-	for d in _groups:
-		var group: Dictionary = _groups[d]
+	for key in _groups:
+		var group_dic: Dictionary = _groups[key]
 		var group_data: Array = PopochiuResources.get_data_value(
-			'audio', group.array, []
+			'audio', group_dic.array, []
 		)
-		entries_to_delete[d] = []
+		entries_to_delete[key] = []
 		
 		if not group_data: continue
 		
 		for rp in group_data:
 			if not (main_dock.dir as Directory).file_exists(rp):
-				entries_to_delete[d].append(rp)
+				entries_to_delete[key].append(rp)
 				continue
 			
 			var ac: AudioCue = load(rp)
@@ -134,8 +138,10 @@ func _group_audio_cues() -> void:
 				continue
 			
 			var ar := _create_audio_cue_row(ac)
-			ar.cue_group = group.array
-			group.group.add(ar)
+			ar.cue_group = group_dic.array
+			
+			# group_dic.group is a PopochiuGroup
+			(group_dic.group as PopochiuGroup).add(ar, true)
 			
 			_audio_files_in_group.append(ac.audio.resource_path)
 	
@@ -156,6 +162,7 @@ func _group_audio_cues() -> void:
 		if paths.empty():
 			PopochiuResources.erase_data_value('audio', group)
 		else:
+			paths.sort_custom(PopochiuUtils, 'sort_by_file_name')
 			PopochiuResources.set_data_value('audio', group, paths)
 
 
@@ -239,7 +246,7 @@ func _create_audio_cue(
 	type: String, path: String, audio_row: Container = null
 ) -> void:
 	var cue_name := path.get_file().get_basename()
-	var cue_file_name := U.snake2pascal(cue_name)
+	var cue_file_name := PopochiuUtils.snake2pascal(cue_name)
 	cue_file_name += '.tres'
 	
 	# Create the AudioCue and save it in the file system
@@ -282,7 +289,7 @@ func _create_audio_cue(
 	
 	if not target_data.has(res.resource_path):
 		target_data.append(res.resource_path)
-		target_data.sort_custom(A, '_sort_resource_paths')
+		target_data.sort_custom(PopochiuUtils, 'sort_by_file_name')
 		PopochiuResources.set_data_value('audio', target, target_data)
 	else:
 		yield(get_tree(), 'idle_frame')

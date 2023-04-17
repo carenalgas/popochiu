@@ -173,7 +173,7 @@ const TEST_WIDTH := 'display/window/size/test_width'
 const TEST_HEIGHT := 'display/window/size/test_height'
 const STRETCH_MODE := 'display/window/stretch/mode'
 const STRETCH_ASPECT := 'display/window/stretch/aspect'
-const IMPORTER_TEXTURE := 'popochiu/import/general_import_settings/texture'
+const IMPORTER_TEXTURE := 'importer_defaults/texture'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -458,6 +458,16 @@ static func store_properties(
 	if source.has_method('on_save'):
 		target.custom_data = source.on_save()
 		if not target.custom_data: target.erase('custom_data')
+
+
+static func get_section_keys(section: String) -> Array:
+	var keys := []
+	var config := get_data_cfg()
+	
+	if config.has_section(section):
+		keys = config.get_section_keys(section)
+	
+	return keys
 
 
 # ▨▨▨▨ SETTINGS ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨

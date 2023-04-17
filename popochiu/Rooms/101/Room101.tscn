@@ -130,6 +130,12 @@ polygon = PoolVector2Array( -18, 22, -21, 2, -16, -20, -4, -28, 14, -22, 18, -5,
 
 [node name="Points" type="Node2D" parent="."]
 
+[node name="Down" type="Position2D" parent="Points"]
+position = Vector2( 165, 152 )
+
+[node name="Right" type="Position2D" parent="Points"]
+position = Vector2( 255, 130 )
+
 [node name="Characters" type="YSort" parent="."]
 sort_enabled = false
 
@@ -137,4 +143,5 @@ sort_enabled = false
 position = Vector2( 110, 106 )
 
 [node name="CharacterPopsy *" parent="Characters" instance=ExtResource( 6 )]
-position = Vector2( 219, 132 )
+position = Vector2( 218, 132 )
+popochiu_placeholder = null

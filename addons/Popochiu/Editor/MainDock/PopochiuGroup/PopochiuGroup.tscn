@@ -4,11 +4,11 @@
 
 [sub_resource type="StyleBoxEmpty" id=1]
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=3]
 content_margin_left = 6.0
 bg_color = Color( 0.6, 0.6, 0.6, 0.211765 )
 
-[sub_resource type="Image" id=5]
+[sub_resource type="Image" id=4]
 data = {
 "data": PoolByteArray( 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ),
 "format": "LumAlpha8",
@@ -17,10 +17,10 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id=4]
+[sub_resource type="ImageTexture" id=2]
 flags = 4
 flags = 4
-image = SubResource( 5 )
+image = SubResource( 4 )
 size = Vector2( 16, 16 )
 
 [node name="PopochiuGroup" type="PanelContainer"]
@@ -40,7 +40,7 @@ margin_right = 320.0
 margin_bottom = 24.0
 rect_min_size = Vector2( 0, 24 )
 size_flags_horizontal = 3
-custom_styles/panel = SubResource( 2 )
+custom_styles/panel = SubResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -56,7 +56,7 @@ margin_right = 16.0
 margin_bottom = 20.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = SubResource( 4 )
+texture = SubResource( 2 )
 stretch_mode = 4
 __meta__ = {
 "_edit_use_anchors_": false
@@ -85,15 +85,16 @@ text = "Group"
 visible = false
 margin_top = 28.0
 margin_right = 320.0
-margin_bottom = 52.0
+margin_bottom = 54.0
 
 [node name="BtnCreate" type="Button" parent="VBoxContainer/Body"]
-margin_left = 204.0
-margin_top = 4.0
+margin_left = 292.0
 margin_right = 320.0
-margin_bottom = 24.0
+margin_bottom = 22.0
 size_flags_horizontal = 8
-icon = SubResource( 4 )
+icon = SubResource( 2 )
 
 [node name="List" type="VBoxContainer" parent="VBoxContainer/Body"]
+margin_top = 26.0
 margin_right = 320.0
+margin_bottom = 26.0

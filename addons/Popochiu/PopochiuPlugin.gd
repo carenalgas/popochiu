@@ -6,6 +6,8 @@ extends EditorPlugin
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 var main_dock: Panel
+# TODO: refs #26: use this as base to migrate the configuration to ProjectSettings
+var config = preload("res://addons/Popochiu/Editor/Config/Config.gd").new()
 
 var _editor_interface := get_editor_interface()
 var _editor_file_system := _editor_interface.get_resource_filesystem()
@@ -15,11 +17,7 @@ var _input_actions :=\
 preload('res://addons/Popochiu/Engine/Others/InputActions.gd')
 var _shown_helpers := []
 var _export_plugin: EditorExportPlugin = null
-var _inspector_plugins := [
-	load('res://addons/Popochiu/Editor/Inspector/AsepriteImporterInspectorPlugin.gd').new(),
-	load('res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd').new(),
-	load('res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd').new(),
-]
+var _inspector_plugins := []
 var _selected_node: Node = null
 var _vsep := VSeparator.new()
 var _btn_baseline := Button.new()
@@ -27,9 +25,6 @@ var _btn_walk_to := Button.new()
 var _types_helper: Resource = null
 var _tool_btn_stylebox :=\
 _editor_interface.get_base_control().get_stylebox("normal", "ToolButton")
-
-## TODO: refs #26: use this as base to migrate the configuration to ProjectSettings
-var config = preload("res://addons/Popochiu/Editor/Config/Config.gd").new()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -40,7 +35,6 @@ func _init() -> void:
 	
 	# Load Popochiu singletons
 	add_autoload_singleton('Globals', PopochiuResources.GLOBALS_SNGL)
-	add_autoload_singleton('U', PopochiuResources.UTILS_SNGL)
 	add_autoload_singleton('Cursor', PopochiuResources.CURSOR_SNGL)
 	add_autoload_singleton('E', PopochiuResources.POPOCHIU_SNGL)
 	add_autoload_singleton('R', PopochiuResources.R_SNGL)
@@ -65,20 +59,28 @@ func _enter_tree() -> void:
 	
 	_export_plugin = preload('PopochiuExportPlugin.gd').new()
 	add_export_plugin(_export_plugin)
-
-
-	## TODO: Clean up when Popochiu configuration is moved to ProjectSettings (refs #26)
+	
+	# TODO: Clean up when Popochiu configuration is moved to ProjectSettings (refs #26)
 	config.ei = _editor_interface
 	config.initialize_project_settings()
-
-
-	for ip in _inspector_plugins:
-		ip.ei = _editor_interface
-		ip.fs = _editor_file_system
-		ip.config = config
-		add_inspector_plugin(ip)
-
-
+	
+	for path in [
+		'res://addons/Popochiu/Editor/Inspector/AsepriteImporterInspectorPlugin.gd',
+		'res://addons/Popochiu/Editor/Inspector/CharacterInspectorPlugin.gd',
+		'res://addons/Popochiu/Editor/Inspector/WalkableAreaInspectorPlugin.gd',
+		'res://addons/Popochiu/Editor/Inspector/AudioCueInspectorPlugin.gd',
+	]:
+		var eip: EditorInspectorPlugin = load(path).new()
+		
+		eip.set('ei', _editor_interface)
+		eip.set('fs', _editor_file_system)
+		eip.set('config', config)
+		
+		_inspector_plugins.append(eip)
+		add_inspector_plugin(eip)
+	
+	_create_container_buttons()
+	
 	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instance()
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system
@@ -86,9 +88,7 @@ func _enter_tree() -> void:
 	
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 	
-	_create_container_buttons()
-	
-	yield(get_tree().create_timer(0.5), 'timeout')
+	yield(get_tree().create_timer(0.7), 'timeout')
 	
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and Audio cues
 	main_dock.fill_data()
@@ -137,11 +137,10 @@ func _exit_tree() -> void:
 	
 	if is_instance_valid(_export_plugin):
 		remove_export_plugin(_export_plugin)
-
-	# Inspector plugins
-	for ip in _inspector_plugins:
-		if is_instance_valid(ip):
-			remove_inspector_plugin(ip)
+	
+	for eip in _inspector_plugins:
+		if is_instance_valid(eip):
+			remove_inspector_plugin(eip)
 
 
 func get_plugin_name() -> String:
@@ -171,7 +170,6 @@ func enable_plugin() -> void:
 
 func disable_plugin() -> void:
 	remove_autoload_singleton('Globals')
-	remove_autoload_singleton('U')
 	remove_autoload_singleton('Cursor')
 	remove_autoload_singleton('E')
 	remove_autoload_singleton('C')

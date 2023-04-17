@@ -39,6 +39,7 @@ var main_dock: Panel = null setget set_main_dock
 var is_main := false setget set_is_main
 var is_pc := false setget set_is_pc
 var is_on_start := false setget set_is_on_start
+var is_menu_hidden := false
 
 var _delete_dialog: ConfirmationDialog
 var _delete_all_checkbox: CheckBox
@@ -53,6 +54,7 @@ onready var _btn_script: Button = find_node('Script')
 onready var _btn_state: Button = find_node('State')
 onready var _btn_state_script: Button = find_node('StateScript')
 onready var _menu_cfg := [
+	# Room, Character, Inventory item, Dialog
 	{
 		id = MenuOptions.ADD_TO_CORE,
 		icon = preload(\
@@ -66,24 +68,28 @@ onready var _menu_cfg := [
 		label = 'Create state script',
 		types = Constants.MAIN_TYPES
 	},
+	# Room
 	{
 		id = MenuOptions.SET_AS_MAIN,
 		icon = get_icon('Heart', 'EditorIcons'),
 		label = 'Set as Main scene',
 		types = [Constants.Types.ROOM]
 	},
+	# Character
 	{
 		id = MenuOptions.SET_AS_PC,
 		icon = PLAYER_CHARACTER_ICON,
 		label = 'Set as Player Character',
 		types = [Constants.Types.CHARACTER]
 	},
+	# Inventory Item
 	{
 		id = MenuOptions.START_WITH_IT,
 		icon = INVENTORY_START_ICON,
 		label = 'Start with it',
 		types = [Constants.Types.INVENTORY_ITEM]
 	},
+	# Prop
 	{
 		id = MenuOptions.CREATE_PROP_SCRIPT,
 		icon = get_icon('ScriptCreate', 'EditorIcons'),
@@ -97,6 +103,7 @@ onready var _menu_cfg := [
 		label = 'Remove'
 	}
 ]
+onready var buttons_container: HBoxContainer = $Panel/ButtonsContainer
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -141,6 +148,9 @@ func _ready() -> void:
 		_menu_popup.remove_item(
 			_menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT)
 		)
+	
+	if is_menu_hidden:
+		_menu_btn.hide()
 	
 	# Hide buttons based on the type of the Object this row represents
 	_fav_icon.hide()
@@ -193,6 +203,14 @@ func remove_create_state_script() -> void:
 	_menu_popup.remove_item(
 		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT)
 	)
+
+
+func remove_menu_option(opt: int) -> void:
+	_menu_popup.remove_item(_menu_popup.get_item_index(opt))
+
+
+func add_button(btn: Button) -> void:
+	buttons_container.add_child(btn)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░

@@ -34,8 +34,7 @@ func _parse_walkable_area(object: Object) -> void:
 	
 	hbox.rect_min_size.y = 42.0
 	hbox.alignment = HBoxContainer.ALIGN_CENTER
-
-		
+	
 	button.text = "Edit Polygon"
 	button.size_flags_stretch_ratio = Button.SIZE_EXPAND
 	button.align = Button.ALIGN_CENTER
@@ -44,7 +43,7 @@ func _parse_walkable_area(object: Object) -> void:
 	hbox.add_child(button)
 	panel.add_child(hbox)
 	add_custom_control(panel)
-	
+
 
 func _parse_navigation_polygon_instance(object: Object) -> void:
 	if not object.get_parent() is PopochiuWalkableArea: return

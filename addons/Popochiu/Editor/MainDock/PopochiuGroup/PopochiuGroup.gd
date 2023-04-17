@@ -56,7 +56,10 @@ func clear_list() -> void:
 		c.queue_free()
 
 
-func add(node: Node) -> void:
+func add(node: Node, order := false) -> void:
+	if order:
+		node.connect('ready', self, '_order_list', [node])
+	
 	_list.add_child(node)
 	
 	_btn_create.disabled = false
@@ -92,6 +95,10 @@ func remove_by_name(node_name: String) -> void:
 		
 		_list.remove_child(node)
 		node.queue_free()
+
+
+func add_header_button(btn: Button) -> void:
+	_body.add_child_below_node(_btn_create, btn)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -150,3 +157,18 @@ func _update_child_count() -> void:
 	if is_instance_valid(_lbl_title):
 		var childs := _list.get_child_count()
 		_lbl_title.text = title + (' (%d)' % childs) if childs > 1 else title
+
+
+func _order_list(node: Node) -> void:
+	node.disconnect('ready', self, '_order_list')
+	
+	# Place the new row in its place alphabetically
+	var place_before: Node = null
+	for row in _list.get_children():
+		if node.name < row.name:
+			place_before = row
+			break
+	
+	if not place_before: return
+	
+	_list.move_child(node, place_before.get_index())
