@@ -1,3 +1,7 @@
+# Addons other than Popochiu
+# (we use some for development)
+addons/**
+!addons/Popochiu
 
 # Godot-specific ignores
 .import/
@@ -8,8 +12,13 @@ export_presets.cfg
 .mono/
 data_*/
 
-
 .godot
 
 # OS-specific
-.DS_Store
+DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
