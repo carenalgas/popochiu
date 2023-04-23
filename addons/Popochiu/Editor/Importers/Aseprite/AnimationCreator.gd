@@ -170,7 +170,7 @@ func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_na
 	# animation properties on the character "PowerQuest style".
 	# We may decide do switch to a more configurable design in the future.
 	# TODO: In Godot 4.0 this must be to_snake_case()!
-	var animation_name = PopochiuUtils.pascal2snake(anim_name)
+	var animation_name = anim_name.to_lower()
 	var is_loopable = _tags_options_lookup.get(anim_name).get("loops")
 
 	# This is always true if the user selected to wipe old animations.
