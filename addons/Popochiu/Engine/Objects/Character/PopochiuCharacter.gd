@@ -338,20 +338,22 @@ func face_direction(destination: Vector2):
 
 func _get_valid_oriented_animation(animation_label):
 	var suffixes = []
-	# Based on the character facing direction,
-	# define a set of animation suffixes in
-	# preference order.
+	# Based on the character facing direction, define a set of
+	# animation suffixes in èreference order.
+	# Notice how we seek for opposite directions for left and
+	# right. Flipping is done in other functions. We just define
+	# a preference order for animations when available.
 	match _looking_dir:
-		LOOKING.DOWN_LEFT: suffixes = ['_dl', '_l']
-		LOOKING.UP_LEFT: suffixes = ['_ul', '_l']
-		LOOKING.LEFT: suffixes = ['_l']
-		LOOKING.UP_RIGHT: suffixes = ['_ur', '_r']
-		LOOKING.DOWN_RIGHT: suffixes = ['_dr', '_r']
-		LOOKING.RIGHT: suffixes = ['_r']
-		LOOKING.DOWN: suffixes = ['_d']
-		LOOKING.UP: suffixes = ['_u']
+		LOOKING.DOWN_LEFT: suffixes = ['_dl', '_l', '_dr', '_r']
+		LOOKING.UP_LEFT: suffixes = ['_ul', '_l', '_ur', '_r']
+		LOOKING.LEFT: suffixes = ['_l', '_r']
+		LOOKING.UP_RIGHT: suffixes = ['_ur', '_r', '_ul', '_l']
+		LOOKING.DOWN_RIGHT: suffixes = ['_dr', '_r', '_dl', '_l']
+		LOOKING.RIGHT: suffixes = ['_r', '_l']
+		LOOKING.DOWN: suffixes = ['_d', '_l', '_r']
+		LOOKING.UP: suffixes = ['_u', '_l', '_r']
 	# Add an empty suffix to support the most
-	# basic animation case.
+	# basic animation case (ex. just "walk").
 	suffixes = suffixes + ['']
 	# The list of prefixes is in order of preference
 	# Eg. walk_dl, walk_l, walk
@@ -361,6 +363,7 @@ func _get_valid_oriented_animation(animation_label):
 		if $AnimationPlayer.has_animation(animation):
 			return animation
 	# No valid animation is found.
+	printerr('Animation not found %s' % [animation_label])
 	return null
 
 
