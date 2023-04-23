@@ -29,7 +29,7 @@ func export_file(file_name: String, output_folder: String, options: Dictionary) 
 
 	var exit_code = _execute(arguments, output)
 	if exit_code != 0:
-		printerr('aseprite: failed to export spritesheet')
+		printerr('[Popochiu] Aseprite: failed to export spritesheet')
 		printerr(output)
 		return {}
 
@@ -69,7 +69,7 @@ func export_layer(file_name: String, layer_name: String, output_folder: String, 
 
 	var exit_code = _execute(arguments, output)
 	if exit_code != 0:
-		printerr('Aseprite: Failed to export layer spritesheet. Command output follows:')
+		printerr('[Popochiu] Aseprite: Failed to export layer spritesheet. Command output follows:')
 		print(output)
 		return {}
 
@@ -89,7 +89,7 @@ func list_layers(file_name: String, only_visible = false) -> Array:
 	var exit_code = _execute(arguments, output)
 
 	if exit_code != 0:
-		printerr('aseprite: failed listing layers')
+		printerr('[Popochiu] Aseprite: failed listing layers')
 		printerr(output)
 		return []
 
@@ -103,7 +103,7 @@ func list_tags(file_name: String) -> Array:
 	var exit_code = _execute(arguments, output)
 
 	if exit_code != 0:
-		printerr('aseprite: failed listing tags')
+		printerr('[Popochiu] Aseprite: failed listing tags')
 		printerr(output)
 		return []
 
@@ -219,4 +219,4 @@ func _compile_regex(pattern):
 	if rgx.compile(pattern) == OK:
 		return rgx
 
-	printerr('exception regex error')
+	printerr('[Popochiu] exception regex error')

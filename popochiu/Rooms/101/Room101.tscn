@@ -1,11 +1,10 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://popochiu/Rooms/101/Room101.gd" type="Script" id=1]
 [ext_resource path="res://popochiu/Rooms/101/Hotspots/Door/HotspotDoor.gd" type="Script" id=2]
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Prop/PopochiuProp.tscn" type="PackedScene" id=3]
 [ext_resource path="res://popochiu/Rooms/101/Props/Blanket/PropBlanket.gd" type="Script" id=4]
 [ext_resource path="res://popochiu/Rooms/101/Props/_NoInteraction/background.png" type="Texture" id=5]
-[ext_resource path="res://popochiu/Characters/Popsy/CharacterPopsy.gd" type="Script" id=6]
 [ext_resource path="res://popochiu/Characters/Goddiu/CharacterGoddiu.tscn" type="PackedScene" id=7]
 [ext_resource path="res://popochiu/Rooms/101/Props/ToyCar/PropToyCar.gd" type="Script" id=8]
 [ext_resource path="res://popochiu/Rooms/101/Props/Blanket/blanket.png" type="Texture" id=9]
@@ -143,16 +142,6 @@ sort_enabled = false
 [node name="CharacterGoddiu *" parent="Characters" instance=ExtResource( 7 )]
 position = Vector2( 110, 106 )
 
-[node name="CharacterPopsy *" type="Area2D" parent="Characters" instance=ExtResource( 18 )]
+[node name="CharacterPopsy *" parent="Characters" instance=ExtResource( 18 )]
 position = Vector2( 220, 131 )
-script = ExtResource( 6 )
-__meta__ = {
-"_edit_group_": true
-}
-script_name = "Popsy"
-description = "Popsy"
-walk_to_point = Vector2( -34, -10 )
-cursor = 8
-text_color = Color( 0.768627, 0.423529, 0.443137, 1 )
-flips_when = 1
 popochiu_placeholder = null

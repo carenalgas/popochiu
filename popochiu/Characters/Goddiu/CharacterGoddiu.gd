@@ -7,9 +7,6 @@ extends PopochiuCharacter
 const Data := preload('CharacterGoddiuState.gd')
 
 var state: Data = preload('CharacterGoddiu.tres')
-var tired := false
-var hired := false
-var xxx
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
@@ -35,7 +32,6 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 # Use it to play the idle animation for the character
 func play_idle() -> void:
 	.play_idle()
-	pass
 
 
 # Use it to play the walk animation for the character
@@ -47,18 +43,8 @@ func play_walk(target_pos: Vector2) -> void:
 # Use it to play the talk animation for the character
 func play_talk() -> void:
 	.play_talk()
-	pass
 
 
 # Use it to play the grab animation for the character
 func play_grab() -> void:
 	.play_grab()
-	pass
-
-
-func coco() -> void:
-	prints('El coco es muy rico')
-
-
-func pera() -> void:
-	pass
