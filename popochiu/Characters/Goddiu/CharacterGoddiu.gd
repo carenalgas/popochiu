@@ -34,7 +34,7 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 
 # Use it to play the idle animation for the character
 func play_idle() -> void:
-	.play_grab()
+	.play_idle()
 	pass
 
 
