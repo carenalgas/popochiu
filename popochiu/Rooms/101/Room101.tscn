@@ -5,7 +5,6 @@
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Prop/PopochiuProp.tscn" type="PackedScene" id=3]
 [ext_resource path="res://popochiu/Rooms/101/Props/Blanket/PropBlanket.gd" type="Script" id=4]
 [ext_resource path="res://popochiu/Rooms/101/Props/_NoInteraction/background.png" type="Texture" id=5]
-[ext_resource path="res://popochiu/Characters/Popsy/CharacterPopsy.tscn" type="PackedScene" id=6]
 [ext_resource path="res://popochiu/Characters/Goddiu/CharacterGoddiu.tscn" type="PackedScene" id=7]
 [ext_resource path="res://popochiu/Rooms/101/Props/ToyCar/PropToyCar.gd" type="Script" id=8]
 [ext_resource path="res://popochiu/Rooms/101/Props/Blanket/blanket.png" type="Texture" id=9]
@@ -17,6 +16,7 @@
 [ext_resource path="res://addons/Popochiu/Engine/Objects/Hotspot/PopochiuHotspot.tscn" type="PackedScene" id=15]
 [ext_resource path="res://popochiu/Rooms/101/Props/Drawer/PropDrawer.gd" type="Script" id=16]
 [ext_resource path="res://popochiu/Rooms/101/Props/Drawer/drawer.png" type="Texture" id=17]
+[ext_resource path="res://popochiu/Characters/Popsy/CharacterPopsy.tscn" type="PackedScene" id=18]
 
 [sub_resource type="NavigationPolygon" id=1]
 vertices = PoolVector2Array( -9, 74, 14, 44, 34, 39, 57, 46, 81, 70, 83, 35, 102, 23, 113, 49, 70, 9, 77, 27, -12, 50, -83, 68, 39, 30, -67, 9, -7, 27, -30, 42, 13, 33, -111, 50, -106, 25, -27, 32 )
@@ -142,6 +142,6 @@ sort_enabled = false
 [node name="CharacterGoddiu *" parent="Characters" instance=ExtResource( 7 )]
 position = Vector2( 110, 106 )
 
-[node name="CharacterPopsy *" parent="Characters" instance=ExtResource( 6 )]
-position = Vector2( 218, 132 )
+[node name="CharacterPopsy *" parent="Characters" instance=ExtResource( 18 )]
+position = Vector2( 220, 131 )
 popochiu_placeholder = null

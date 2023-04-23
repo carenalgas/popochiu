@@ -349,7 +349,7 @@ func _on_add_character_pressed() -> void:
 	var idx := 0
 	for key in PopochiuResources.get_section_keys('characters'):
 		characters_menu.add_item(key, idx)
-		characters_menu.set_item_disabled(idx, key in _characters_in_room)
+		characters_menu.set_item_disabled(idx, _characters_in_room.has(key))
 		
 		idx += 1
 	

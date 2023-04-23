@@ -363,7 +363,7 @@ func _get_valid_oriented_animation(animation_label):
 		if $AnimationPlayer.has_animation(animation):
 			return animation
 	# No valid animation is found.
-	printerr('Animation not found %s' % [animation_label])
+	printerr('[Popochiu] Animation not found %s' % [animation_label])
 	return null
 
 
@@ -386,19 +386,20 @@ func play_animation(animation_label: String, animation_fallback := 'idle', block
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func play_idle() -> void:
-	play_animation('idle');
+	play_animation('idle')
 
 
 func play_walk(target_pos: Vector2) -> void:
 	# Set the default parameters for play_animation()
 	var animation_label = 'walk'
 	var animation_fallback = 'idle'
-	play_animation(animation_label, animation_fallback);
+	
+	play_animation(animation_label, animation_fallback)
 
 
 func play_talk() -> void:
-	play_animation('talk');
+	play_animation('talk')
 
 
 func play_grab() -> void:
-	play_animation('grab');
+	play_animation('grab')

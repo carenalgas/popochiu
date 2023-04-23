@@ -164,7 +164,7 @@ window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/Popochiu/plugin.cfg", "res://addons/explore-editor-theme/plugin.cfg", "res://addons/fc_colorpicker_palette/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/Popochiu/plugin.cfg" )
 
 [fc]
 
