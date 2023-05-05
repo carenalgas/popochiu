@@ -36,7 +36,7 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 # ¿Qué hay de nuevo en la última versión?
 
-[![Lo nuevo en la versión 1.9](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.9_button-es.png)](https://youtu.be/P9Q4g5oyfQY "Lo nuevo en la versión v1.9.0")
+[![Lo nuevo en la versión 1.10](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.10_button-en.png)](https://youtu.be/4pmjqYwXWHU "Lo nuevo en la versión v1.10.0")
 
 
 
