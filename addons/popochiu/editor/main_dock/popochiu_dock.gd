@@ -69,6 +69,7 @@ var _rows_paths := []
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	popochiu = load(POPOCHIU_SCENE).instantiate()
+	_tab_container.get_node('Main/PopochiuFilter').groups = _types
 	
 	_btn_setup.icon = get_theme_icon("Edit", "EditorIcons")
 	_btn_settings.icon = get_theme_icon('Tools', 'EditorIcons')
@@ -196,10 +197,12 @@ func add_to_list(type: int, name_to_add: String) -> PopochiuObjectRow:
 
 
 func scene_changed(scene_root: Node) -> void:
+	if not is_instance_valid(_tab_room): return
 	_tab_room.scene_changed(scene_root)
 
 
 func scene_closed(filepath: String) -> void:
+	if not is_instance_valid(_tab_room): return
 	_tab_room.scene_closed(filepath)
 
 
@@ -209,7 +212,9 @@ func add_resource_to_popochiu(target: String, resource: Resource) -> int:
 	)
 
 
-func show_confirmation(title: String, message: String, ask := '') -> void:
+func show_confirmation(
+	title: String, message: String, ask := '', min_size := Vector2(640, 120)
+) -> void:
 	delete_checkbox.button_pressed = false
 	
 	delete_dialog.title = title
@@ -221,7 +226,7 @@ func show_confirmation(title: String, message: String, ask := '') -> void:
 		delete_ask.text = ask
 		delete_extra.show()
 	
-	delete_dialog.popup_centered()
+	delete_dialog.popup_centered(min_size)
 
 
 func get_popup(name: String) -> ConfirmationDialog:
@@ -272,7 +277,7 @@ func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
 	new_obj.name = name_to_add
 	new_obj.type = type
 	new_obj.path = _types[type].scene % [
-		PopochiuUtils.pascal2snake(name_to_add), PopochiuUtils.pascal2snake(name_to_add)
+		name_to_add.to_snake_case(), name_to_add.to_snake_case()
 	]
 	new_obj.main_dock = self
 	new_obj.clicked.connect(_select_object)

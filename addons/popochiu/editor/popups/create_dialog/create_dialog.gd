@@ -104,6 +104,8 @@ func _clear_fields() -> void:
 func set_main_dock(node: Panel) -> void:
 	super(node)
 	
+	if not _main_dock: return
+	
 	# res://popochiu/dialogs
 	_dialog_path_template = _main_dock.DIALOGS_PATH + '%s/dialog_%s'
 
@@ -113,7 +115,7 @@ func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_dialog_name = PopochiuUtils.pascal2snake(_name)
+		_new_dialog_name = _name.to_snake_case()
 		_pascal_name = _name
 		_new_dialog_path = _dialog_path_template %\
 		[_new_dialog_name, _new_dialog_name]

@@ -38,6 +38,7 @@ var main_dock: Panel : set = set_main_dock
 var is_main := false : set = set_is_main
 var is_pc := false : set = set_is_pc
 var is_on_start := false : set = set_is_on_start
+var is_menu_hidden := false
 
 var _delete_dialog: ConfirmationDialog
 var _delete_all_checkbox: CheckBox
@@ -52,6 +53,7 @@ var _delete_all_checkbox: CheckBox
 @onready var _btn_state: Button = find_child('State')
 @onready var _btn_state_script: Button = find_child('StateScript')
 @onready var _menu_cfg: Array = [
+	# Room, Character, Inventory item, Dialog
 	{
 		id = MenuOptions.ADD_TO_CORE,
 		icon = preload(\
@@ -65,24 +67,28 @@ var _delete_all_checkbox: CheckBox
 		label = 'Create state script',
 		types = Constants.MAIN_TYPES
 	},
+	# Room
 	{
 		id = MenuOptions.SET_AS_MAIN,
 		icon = get_theme_icon('Heart', 'EditorIcons'),
 		label = 'Set as Main scene',
 		types = [Constants.Types.ROOM]
 	},
+	# Character
 	{
 		id = MenuOptions.SET_AS_PC,
 		icon = PLAYER_CHARACTER_ICON,
 		label = 'Set as Player Character',
 		types = [Constants.Types.CHARACTER]
 	},
+	# Inventory item
 	{
 		id = MenuOptions.START_WITH_IT,
 		icon = INVENTORY_START_ICON,
 		label = 'Start with it',
 		types = [Constants.Types.INVENTORY_ITEM]
 	},
+	# Prop
 	{
 		id = MenuOptions.CREATE_PROP_SCRIPT,
 		icon = get_theme_icon('ScriptCreate', 'EditorIcons'),
@@ -96,6 +102,7 @@ var _delete_all_checkbox: CheckBox
 		label = 'Remove'
 	}
 ]
+@onready var buttons_container: HBoxContainer = $Panel/ButtonsContainer
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -139,6 +146,9 @@ func _ready() -> void:
 		_menu_popup.remove_item(
 			_menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT)
 		)
+	
+	if is_menu_hidden:
+		_menu_btn.hide()
 	
 	# Hide buttons based checked the type of the Object this row represents
 	_fav_icon.hide()
@@ -194,6 +204,14 @@ func remove_create_state_script() -> void:
 	_menu_popup.remove_item(
 		_menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT)
 	)
+
+
+func remove_menu_option(opt: int) -> void:
+	_menu_popup.remove_item(_menu_popup.get_item_index(opt))
+
+
+func add_button(btn: Button) -> void:
+	buttons_container.add_child(btn)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
@@ -419,9 +437,7 @@ func _remove_object() -> void:
 	# Verify if the object to delete is a Prop, a Hotspot or a Region.
 	if type in Constants.ROOM_TYPES:
 		# res://popochiu/rooms/???/props/??/ > [res:, popochiu, rooms, ???, props, ??]
-		location = PopochiuUtils.snake2pascal(
-			"Room%s" % path.split('/', false)[3]
-		)
+		location = ("Room%s" % path.split('/', false)[3]).to_pascal_case()
 	
 	# Look into the Object's folder for audio files and AudioCues to show the
 	# developer that those files will be removed too.

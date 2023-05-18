@@ -64,11 +64,14 @@ func _enter_tree() -> void:
 	load('res://addons/popochiu/editor/helpers/popochiu_types_helper.gd')
 	
 	for path in [
-		'res://addons/popochiu/popochiu_inspector_plugin.gd',
-		'res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd'
+		'res://addons/popochiu/editor/inspector/character_inspector_plugin.gd',
+		'res://addons/popochiu/editor/inspector/walkable_area_inspector_plugin.gd',
+		'res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd',
 	]:
 		var eip: EditorInspectorPlugin = load(path).new()
-		if eip.get('ei'): eip.ei = _editor_interface
+		
+		eip.set('ei', _editor_interface)
+		
 		_inspector_plugins.append(eip)
 		add_inspector_plugin(eip)
 	
@@ -143,7 +146,7 @@ func _enable_plugin() -> void:
 		ad.dialog_text =\
 		'[es] Reinicia el motor para completar la instalación:\n' +\
 		'Proyecto > Volver a Cargar el Proyecto Actual\n\n' + \
-		'[en] Restart Godot to complete the instalation:\n' +\
+		'[en] Restart Godot to complete the installation:\n' +\
 		'Project > Reload Current Project'
 		
 		_editor_interface.get_base_control().add_child(ad)

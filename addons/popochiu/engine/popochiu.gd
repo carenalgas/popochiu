@@ -358,7 +358,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		for script_name in rooms_states[room.script_name][type]:
 			var node: Node2D = current_room.callv(
 				'get_' + type.trim_suffix('s'),
-				[PopochiuUtils.snake2pascal(script_name)]
+				[(script_name as String).to_pascal_case()]
 			)
 			var node_dic: Dictionary =\
 			rooms_states[room.script_name][type][script_name]

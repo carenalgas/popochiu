@@ -238,7 +238,7 @@ static func update_autoloads(save := false) -> void:
 			
 			for key in get_data_cfg().get_section_keys(sngl_setup.section):
 				var var_name: String = key
-				var snake_name := PopochiuUtils.pascal2snake(key)
+				var snake_name := key.to_snake_case()
 					
 				if int(var_name[0]) != 0:
 					var_name = var_name.insert(0, sngl_setup.prefix)
@@ -355,7 +355,7 @@ static func update_autoloads(save := false) -> void:
 
 static func remove_autoload_obj(id: String, script_name: String) -> void:
 	var sngl_setup: Dictionary = SNGL_SETUP[id]
-	var snake_name := PopochiuUtils.pascal2snake(script_name)
+	var snake_name := script_name.to_snake_case()
 	var class_path: String = sngl_setup['class'] % [snake_name, snake_name]
 	var s: Script = load(id)
 	var code := s.source_code
@@ -474,6 +474,16 @@ static func has_property(source: Object, property: String) -> bool:
 			return true
 	
 	return false
+
+
+static func get_section_keys(section: String) -> Array:
+	var keys := []
+	var config := get_data_cfg()
+
+	if config.has_section(section):
+		keys = config.get_section_keys(section)
+
+	return keys
 
 
 # ▨▨▨▨ SETTINGS ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨

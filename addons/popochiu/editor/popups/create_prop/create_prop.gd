@@ -150,7 +150,7 @@ func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_prop_name = PopochiuUtils.pascal2snake(_name)
+		_new_prop_name = _name.to_snake_case()
 		_pascal_name = _name
 		_new_prop_path = _prop_path_template % [_new_prop_name, _new_prop_name]
 

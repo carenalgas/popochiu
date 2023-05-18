@@ -176,6 +176,8 @@ func _clear_fields() -> void:
 func set_main_dock(node: Panel) -> void:
 	super(node)
 	
+	if not _main_dock: return
+	
 	# res://popochiu/characters
 	_character_path_template = _main_dock.CHARACTERS_PATH + '%s/character_%s'
 
@@ -185,7 +187,7 @@ func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_character_name = PopochiuUtils.pascal2snake(_name)
+		_new_character_name = _name.to_snake_case()
 		_pascal_name = _name
 		_new_character_path = _character_path_template %\
 		[_new_character_name, _new_character_name]

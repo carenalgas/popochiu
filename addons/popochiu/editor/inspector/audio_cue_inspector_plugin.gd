@@ -1,5 +1,6 @@
 extends EditorInspectorPlugin
 
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func _can_handle(object: Object) -> bool:
 	return object is PopochiuAudioCue
@@ -29,6 +30,7 @@ func _parse_property(
 	add_property_editor(path, ep)
 
 	return true
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_audio_cue_bus(idx: int, audio_cue: PopochiuAudioCue) -> void:

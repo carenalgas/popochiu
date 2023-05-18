@@ -100,6 +100,10 @@ func remove_by_name(node_name: String) -> void:
 		node.queue_free()
 
 
+func add_header_button(btn: Button) -> void:
+	_btn_create.add_sibling(btn)
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _on_input(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton

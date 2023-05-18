@@ -156,7 +156,7 @@ func setup_camera() -> void:
 func clean_characters() -> void:
 	for c in $Characters.get_children():
 		if c is PopochiuCharacter:
-			c.free()
+			c.queue_free()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
@@ -164,9 +164,7 @@ func get_marker(marker_name: String) -> Vector2:
 	var marker: Marker2D = get_node_or_null('Markers/' + marker_name)
 	if marker:
 		return marker.global_position
-	printerr('[Popochiu] Room%s.get_point: No se encontró el punto %s' % [
-		script_name, marker_name
-	])
+	printerr('[Popochiu] Marker %s not found' % marker_name)
 	return Vector2.ZERO
 
 
@@ -174,9 +172,7 @@ func get_prop(prop_name: String) -> PopochiuProp:
 	for p in get_tree().get_nodes_in_group('props'):
 		if p.script_name == prop_name or p.name == prop_name:
 			return p as PopochiuProp
-	printerr('[Popochiu] Room%s.get_prop: Prop %s not found' % [
-		script_name, prop_name
-	])
+	printerr('[Popochiu] Prop %s not found' % prop_name)
 	return null
 
 
@@ -184,8 +180,7 @@ func get_hotspot(hotspot_name: String) -> PopochiuHotspot:
 	for h in get_tree().get_nodes_in_group('hotspots'):
 		if h.script_name == hotspot_name or h.name == hotspot_name:
 			return h
-	printerr('[Popochiu] Room%s.get_hotspot: Hotspot %s not found' %\
-	[script_name, hotspot_name])
+	printerr('[Popochiu] Hotspot %s not found' % hotspot_name)
 	return null
 
 
@@ -193,8 +188,7 @@ func get_region(region_name: String) -> PopochiuRegion:
 	for r in get_tree().get_nodes_in_group('regions'):
 		if r.script_name == region_name or r.name == region_name:
 			return r
-	printerr('[Popochiu] Room%s.get_region: Region %s not found' %\
-	[script_name, region_name])
+	printerr('[Popochiu] Region %s not found' % region_name)
 	return null
 
 
@@ -202,8 +196,7 @@ func get_walkable_area(walkable_area_name: String) -> PopochiuWalkableArea:
 	for wa in get_tree().get_nodes_in_group('walkable_areas'):
 		if wa.name == walkable_area_name:
 			return wa
-	printerr('[Popochiu] Room%s.get_walkable_area: Walkable area %s not found' %\
-	[script_name, walkable_area_name])
+	printerr('[Popochiu] Walkable area %s not found' % walkable_area_name)
 	return null
 
 
@@ -259,8 +252,9 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 	if active_walkable_area != null:
 		_nav_path = active_walkable_area
 	else:
-		printerr('[Popochiu] Room%s.set_active_walkable_area: Walkable area %s not found' %\
-		[script_name, walkable_area_name])
+		printerr(
+			"[Popochiu] Can't set %s as active walkable area" % walkable_area_name
+		)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

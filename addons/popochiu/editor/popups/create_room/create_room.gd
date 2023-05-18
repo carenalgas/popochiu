@@ -35,6 +35,15 @@ func _ready() -> void:
 	super()
 	about_to_popup.connect(_check_if_first_room)
 	
+	PopochiuUtils.override_font(
+		_set_as_main.find_child('RichTextLabel'),
+		'normal_font', get_theme_font("main", "EditorFonts")
+	)
+	PopochiuUtils.override_font(
+		_set_as_main.find_child('RichTextLabel'),
+		'bold_font', get_theme_font("bold", "EditorFonts")
+	)
+	
 	_clear_fields()
 	_set_as_main.hide()
 
@@ -173,6 +182,8 @@ func _clear_fields() -> void:
 func set_main_dock(node: Panel) -> void:
 	super(node)
 	
+	if not _main_dock: return
+	
 	# res://popochiu/rooms
 	_room_path_template = _main_dock.ROOMS_PATH + '%s/room_%s'
 
@@ -182,7 +193,7 @@ func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_room_name = PopochiuUtils.pascal2snake(_name)
+		_room_name = _name.to_snake_case()
 		_pascal_name = _name
 		_room_path = _room_path_template % [_room_name, _room_name]
 
@@ -211,4 +222,7 @@ func _check_if_first_room() -> void:
 
 func _set_show_set_as_main(value: bool) -> void:
 	show_set_as_main = value
+	
+	if not _set_as_main: return
+	
 	_set_as_main.visible = value

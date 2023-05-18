@@ -113,7 +113,7 @@ func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_region_name = PopochiuUtils.pascal2snake(_name)
+		_new_region_name = _name.to_snake_case()
 		_pascal_name = _name
 		_new_region_path = _region_path_template %\
 		[_new_region_name, _new_region_name]
