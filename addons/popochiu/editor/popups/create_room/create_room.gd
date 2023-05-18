@@ -182,7 +182,7 @@ func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_room_name = PopochiuUtils.pascal2snake(_name)
+		_room_name = _name.to_snake_case()
 		_pascal_name = _name
 		_room_path = _room_path_template % [_room_name, _room_name]
 

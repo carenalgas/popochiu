@@ -185,7 +185,7 @@ func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_character_name = PopochiuUtils.pascal2snake(_name)
+		_new_character_name = _name.to_snake_case()
 		_pascal_name = _name
 		_new_character_path = _character_path_template %\
 		[_new_character_name, _new_character_name]

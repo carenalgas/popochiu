@@ -116,7 +116,7 @@ func _update_name(new_text: String) -> void:
 	super(new_text)
 
 	if _name:
-		_new_hotspot_name = PopochiuUtils.pascal2snake(_name)
+		_new_hotspot_name = _name.to_snake_case()
 		_pascal_name = _name
 		_new_hotspot_path = _hotspot_path_template %\
 		[_new_hotspot_name, _new_hotspot_name]

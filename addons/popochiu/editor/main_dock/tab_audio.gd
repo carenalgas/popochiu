@@ -258,7 +258,6 @@ func _create_audio_cue(
 ) -> void:
 	var cue_name := path.get_file().get_basename()
 	var cue_file_name := cue_name
-#	var cue_file_name := _utils.snake2pascal(cue_name)
 	cue_file_name += '.tres'
 	
 	# Create the AudioCue and save it in the file system

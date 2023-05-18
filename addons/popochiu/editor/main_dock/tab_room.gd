@@ -108,15 +108,15 @@ func scene_changed(scene_root: Node) -> void:
 				if t == Constants.Types.PROP:
 					row_path = '%s/props/%s/prop_%s.tscn' % [
 						opened_room.scene_file_path.get_base_dir(),
-						PopochiuUtils.pascal2snake(c.name),
-						PopochiuUtils.pascal2snake(c.name)
+						(c.name as String).to_snake_case(),
+						(c.name as String).to_snake_case()
 					]
 				elif c.script.resource_path.find('addons') == -1:
 					row_path = c.script.resource_path
 				else:
 					row_path = '%s/%s' % [
 						opened_room.scene_file_path.get_base_dir(),
-						PopochiuUtils.pascal2snake(_types[t].parent)
+						(_types[t].parent as String).to_snake_case()
 					]
 				
 				var node_path: String = String(c.get_path()).split(
