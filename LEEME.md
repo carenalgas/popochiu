@@ -26,8 +26,8 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 **Popochiu puede usarse en Godot 3.3.x a 3.5.x**. **¡¡¡Y ahora también funciona en Godot 4!!!**
 
-1. Si usas Godot 4, descarga [Popochiu 2.0 Alpha 1](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha1/popochiu-v2.0-alpha1.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.9](https://github.com/mapedorr/popochiu/releases/download/v1.9.0/popochiu-v1.9.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
-2. Extra su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
+1. Si usas Godot 4, descarga [Popochiu 2.0 Alpha 1](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha1/popochiu-v2.0-alpha1.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+2. Extrae su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Proyecto > Ajustes del Proyecto > Plugins` (the tab on the top).
 4. Reinicia Godot `Proyecto > Volver a Cargar el Proyecto Actual`.
 5. Verás el dock de Popochiu a la derecha del editor. ¡Eso es todo!
@@ -36,7 +36,7 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 # ¿Qué hay de nuevo en la última versión?
 
-[![Lo nuevo en la versión 1.10](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.10_button-en.png)](https://youtu.be/4pmjqYwXWHU "Lo nuevo en la versión v1.10.0")
+[![Lo nuevo en la versión 1.10](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.10_button-es.png)](https://youtu.be/0UBy9AoAk80 "Lo nuevo en la versión v1.10.0")
 
 
 
@@ -57,7 +57,7 @@ Ahora puedes seguir los tutoriales (¡Completamente en español! (la versión en
 Más tutoriales vendrán en las próximas semanas para aprender:
 
 - Cómo guardar y cargar el estado del juego.
-- Cómo trabajar con Props que tienen más de un fotograme.
+- Cómo trabajar con Props que tienen más de un fotograma.
 - Cómo agregar animaciones a tus Personajes.
 - Cómo utilizar las emociones cuando los personajes hablan.
 - Y mucho más...
@@ -67,4 +67,4 @@ Más tutoriales vendrán en las próximas semanas para aprender:
 # Créditos
 
 Hecho por [Carenalga](https://mapedorr.itch.io).
-Ahora con la colaboración de [StickGrinder](https://twitter.com/StickGrinder) ([itch.io](https://illiteratecodegames.itch.io))
+Ahora con la colaboración de @stickgrinder , @mgdesign y @drbbgh , miembros de [Illiterate Code Games](https://illiteratecodegames.itch.io).
