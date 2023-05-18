@@ -176,6 +176,8 @@ func _clear_fields() -> void:
 func set_main_dock(node: Panel) -> void:
 	super(node)
 	
+	if not _main_dock: return
+	
 	# res://popochiu/characters
 	_character_path_template = _main_dock.CHARACTERS_PATH + '%s/character_%s'
 

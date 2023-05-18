@@ -165,6 +165,8 @@ func _clear_fields() -> void:
 func set_main_dock(node: Panel) -> void:
 	super(node)
 	
+	if not _main_dock: return
+	
 	# res://popochiu/inventory_items/
 	_item_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/item_%s'
 

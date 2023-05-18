@@ -48,13 +48,15 @@ var _audio_manager := AudioManager.new()
 	}
 }
 @onready var _asp: AudioStreamPlayer = find_child('AudioStreamPlayer')
-@onready var _btn_search_files: Button = find_child('BtnSearchAudioFiles')
+@onready var _btn_scan_files: Button = find_child('BtnScanAudioFiles')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
-	_btn_search_files.icon = get_theme_icon('Search', 'EditorIcons')
-	_btn_search_files.pressed.connect(search_audio_files)
+	$PopochiuFilter.groups = _groups
+	
+	_btn_scan_files.icon = get_theme_icon('Search', 'EditorIcons')
+	_btn_scan_files.pressed.connect(search_audio_files)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

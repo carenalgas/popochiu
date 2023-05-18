@@ -12,11 +12,14 @@ var _main_dock: Panel : set = set_main_dock
 func _ready() -> void:
 	register_text_enter(_input)
 	
-	_info.add_theme_font_override(
-		'bold_font', get_theme_font('bold', 'EditorFonts')
+	PopochiuUtils.override_font(
+		_info, 'normal_font', get_theme_font("main", "EditorFonts")
 	)
-	_info.add_theme_font_override(
-		'mono_font', get_theme_font('source', 'EditorFonts')
+	PopochiuUtils.override_font(
+		_info, 'bold_font', get_theme_font("bold", "EditorFonts")
+	)
+	PopochiuUtils.override_font(
+		_info, 'mono_font', get_theme_font("source", "EditorFonts")
 	)
 	
 	confirmed.connect(_create)
