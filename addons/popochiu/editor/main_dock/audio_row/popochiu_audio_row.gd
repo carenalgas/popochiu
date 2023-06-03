@@ -247,7 +247,7 @@ func _remove_in_audio_manager() -> void:
 
 func _delete_from_file_system(path: String) -> void:
 	# Delete the AudioCue .tres file from the file system
-	var err: int = main_dock.dir.remove_at(path)
+	var err: int = DirAccess.remove_absolute(path)
 	main_dock.fs.update_file(path)
 	
 	if err != OK:

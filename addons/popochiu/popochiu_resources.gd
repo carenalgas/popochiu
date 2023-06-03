@@ -159,9 +159,11 @@ const SNGL_SETUP := {
 }
 const A_TEMPLATE := '@tool\n' +\
 'extends "%s"\n\n' +\
-'# classes ----\n' +\
-'# ---- classes\n' +\
-'\n' +\
+# --- fix #53 ------------------------------------------------------------------
+#'# classes ----\n' +\
+#'# ---- classes\n' +\
+#'\n' +\
+# ------------------------------------------------------------------ fix #53 ---
 '# cues ----\n' +\
 '# ---- cues\n' +\
 '\n'
@@ -284,22 +286,24 @@ static func update_autoloads(save := false) -> void:
 	var code := s.source_code
 	var modified := false
 	
-	# Add the AudioCueSound and AudioCueMusic constants
-	if code.find('const AudioCueSound') < 0:
-		modified = true
-		
-		code = code.insert(
-			code.find('# ---- classes'),
-			'const AudioCueSound := preload("%s")\n' % AUDIO_CUE_SOUND
-		)
+	# --- fix #53 --------------------------------------------------------------
+#	# Add the AudioCueSound and AudioCueMusic constants
+#	if code.find('const AudioCueSound') < 0:
+#		modified = true
+#
+#		code = code.insert(
+#			code.find('# ---- classes'),
+#			'const AudioCueSound := preload("%s")\n' % AUDIO_CUE_SOUND
+#		)
 	
-	if code.find('const AudioCueMusic') < 0:
-		modified = true
-		
-		code = code.insert(
-			code.find('# ---- classes'),
-			'const AudioCueMusic := preload("%s")\n' % AUDIO_CUE_MUSIC
-		)
+#	if code.find('const AudioCueMusic') < 0:
+#		modified = true
+#
+#		code = code.insert(
+#			code.find('# ---- classes'),
+#			'const AudioCueMusic := preload("%s")\n' % AUDIO_CUE_MUSIC
+#		)
+	# -------------------------------------------------------------- fix #53 ---
 	
 	var old_audio_cues := []
 	
