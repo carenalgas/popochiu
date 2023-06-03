@@ -301,7 +301,7 @@ func _menu_item_pressed(id: int) -> void:
 			main_dock.ei.get_edited_scene_root().get_node('Props/' + node_path)
 			
 			# Create the folder for the script
-			if main_dock.dir.make_dir_recursive(script_path.get_base_dir()) != OK:
+			if DirAccess.make_dir_recursive_absolute(script_path.get_base_dir()) != OK:
 				push_error('[Popochiu] Could not create Prop folder for ' + str(name))
 				return
 			
@@ -558,7 +558,7 @@ func _delete_from_file_system() -> void:
 	
 	# Remove the object's folder
 	assert(\
-		main_dock.dir.remove_at(path.get_base_dir()) == OK,\
+		DirAccess.remove_absolute(path.get_base_dir()) == OK,\
 		'[Popochiu] Could not delete folder: %s' % path.get_base_dir()\
 	)
 
@@ -583,7 +583,7 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> int:
 			_recursive_delete(subfolder)
 			
 			# Eliminar la carpeta
-			var err: int = main_dock.dir.remove_at(subfolder.get_path())
+			var err: int = DirAccess.remove_absolute(subfolder.get_path())
 			if err != OK:
 				push_error('[Popochiu(err_code:%d)] Could not delete subdirectory %s' %\
 				[err, subfolder.get_path()])
@@ -632,7 +632,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	for fp in files_paths:
 		# Así es como se hace en el código fuente del motor para que se eliminen
 		# también los .import asociados a los archivos importados. ————————————
-		var err: int = main_dock.dir.remove_at(fp)
+		var err: int = DirAccess.remove_absolute(fp)
 		main_dock.fs.update_file(fp)
 		# —————————————————————————————————————————————————————————————————————
 		if err != OK:
@@ -669,7 +669,7 @@ func _create_state_script() -> void:
 	var script_path := path.replace('.tscn', 'State.gd')
 	
 	# Create the folder for the script
-	if main_dock.dir.make_dir_recursive(script_path.get_base_dir()) != OK:
+	if DirAccess.make_dir_recursive_absolute(script_path.get_base_dir()) != OK:
 		push_error('[Popochiu] Could not create state script for ' + str(name))
 		return
 	

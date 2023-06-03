@@ -110,7 +110,7 @@ func _create() -> void:
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the Character instance
-	var new_character: PopochiuCharacter = preload(CHARACTER_SCENE).instantiate()
+	var new_character: PopochiuCharacter = load(CHARACTER_SCENE).instantiate()
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_character.set_script(load(_new_character_path + '.gd'))
