@@ -1,7 +1,7 @@
 # Addons other than Popochiu
 # (we use some for development)
-# addons/**
-# !addons/Popochiu
+addons/**
+!addons/popochiu/**
 
 # Godot-specific ignores
 .import/
@@ -13,3 +13,6 @@ export_presets.cfg
 # Mono-specific ignores
 .mono/
 data_*/
+
+# Other local stuff
+.vscode
