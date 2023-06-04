@@ -5,9 +5,10 @@
 extends RefCounted
 
 
-const RESULT_CODE = preload("res://addons/Popochiu/Editor/Config/ResultCodes.gd")
+const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
+const _DEFAULT_AL = "" # Empty string equals default "Global" animation library
 
-var _aseprite = preload("./AsepriteController.gd").new()
+var _aseprite = preload("./aseprite_controller.gd").new()
 
 var _config: RefCounted
 var _file_system: EditorFileSystem
@@ -37,11 +38,10 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 	if not _aseprite.test_command():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
 
-	var dir = DirAccess.new()
-	if not dir.file_exists(options.source):
+	if not FileAccess.file_exists(options.source):
 		return RESULT_CODE.ERR_SOURCE_FILE_NOT_FOUND
 
-	if not dir.dir_exists(options.output_folder):
+	if not DirAccess.dir_exists_absolute(options.output_folder):
 		return RESULT_CODE.ERR_OUTPUT_FOLDER_NOT_FOUND
 
 	var target_sprite = _find_sprite_in_target(target_node)
@@ -57,10 +57,8 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 	if (options.wipe_old_animations):
 		_remove_animations_from_player(player)
 	
-	var result = _create_animations_from_file(target_sprite, player, options)
-	if result is GDScriptFunctionState:
-		result = await result.completed
-
+	var result = await _create_animations_from_file(target_sprite, player, options)
+	
 	if result != RESULT_CODE.SUCCESS:
 		printerr(RESULT_CODE.get_error_message(result))
 
@@ -104,31 +102,32 @@ func _create_animations_from_file(target_sprite: Node, player: AnimationPlayer, 
 	if output.is_empty():
 		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
 
-	await _scan_filesystem().completed
+	await _scan_filesystem()
 
 	var result = _import(target_sprite, player, output, options)
 
 	if _config.should_remove_source_files():
-		var dir = DirAccess.new()
-		dir.remove(output.data_file)
+		DirAccess.remove_absolute(output.data_file)
+		await _scan_filesystem()
 
 	return result
 
 func _remove_animations_from_player(player: AnimationPlayer):
-	var animations = player.get_animation_list()
-	for a in animations:
-		if player.has_animation(a):
-			player.remove_animation_library(a)
+	player.remove_animation_library(_DEFAULT_AL)
+	# TODO: remove this if it works
+	# var animations = player.get_animation_library(_DEFAULT_AL).get_animation_list()
+	# for a in animations:
+	# 	if player.get_animation_library(_DEFAULT_AL).has_animation(a):
+	# 		player.get_animation_library(_DEFAULT_AL).remove_animation(a)
 
 
 func _import(target_sprite: Node, player: AnimationPlayer, data: Dictionary, options: Dictionary):
 	var source_file = data.data_file
 	var sprite_sheet = data.sprite_sheet
 
-	var file = File.new()
-	var err = file.open(source_file, File.READ)
-	if err != OK:
-		return err
+	var file = FileAccess.open(source_file, FileAccess.READ)
+	if file == null:
+		return file.get_open_error()
 
 	var test_json_conv = JSON.new()
 	test_json_conv.parse(file.get_as_text())
@@ -146,19 +145,23 @@ func _import(target_sprite: Node, player: AnimationPlayer, data: Dictionary, opt
 
 
 func _load_texture(sprite_sheet: String) -> Texture2D:
-	var texture = ResourceLoader.load(sprite_sheet, 'Image', true)
+	var texture = ResourceLoader.load(sprite_sheet, 'Image', ResourceLoader.CACHE_MODE_IGNORE)
 	texture.take_over_path(sprite_sheet)
 	return texture
 
 
 func _configure_animations(target_sprite: Node, player: AnimationPlayer, content: Dictionary):
 	var frames = _aseprite.get_content_frames(content)
+
+	if not player.has_animation_library(_DEFAULT_AL):
+		player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
+
 	if content.meta.has("frameTags") and content.meta.frameTags.size() > 0:
 		var result = RESULT_CODE.SUCCESS
 		for tag in content.meta.frameTags:
 			if not _tags_options_lookup.get(tag.name).get("import"):
 				continue
-			var selected_frames = frames.slice(tag.from, tag.to)
+			var selected_frames = frames.slice(tag.from, tag.to) ## TODO verify the +1
 			result = _add_animation_frames(target_sprite, player, tag.name, selected_frames, tag.direction)
 			if result != RESULT_CODE.SUCCESS:
 				break
@@ -171,14 +174,17 @@ func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_na
 	# TODO: Forcing lowercase is a design choice so we don't expose
 	# animation properties on the character "PowerQuest style".
 	# We may decide do switch to a more configurable design in the future.
-	# TODO: In Godot 4.0 this must be to_snake_case()!
-	var animation_name = anim_name.to_lower()
+	var animation_name = anim_name.to_snake_case()
 	var is_loopable = _tags_options_lookup.get(anim_name).get("loops")
 
+	# Create animation library if it doesn't exist
 	# This is always true if the user selected to wipe old animations.
 	# See _remove_animations_from_player() function.
-	if not player.has_animation(animation_name):
-		player.add_animation_library(animation_name, Animation.new())
+	if not player.has_animation_library(_DEFAULT_AL):
+		player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
+	
+	if not player.get_animation_library(_DEFAULT_AL).has_animation(animation_name):
+		player.get_animation_library(_DEFAULT_AL).add_animation(animation_name, Animation.new())
 
 	# Here is where animations are created.
 	# TODO: we need to "fork" the logic so that Character has a single spritesheet
@@ -190,7 +196,7 @@ func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_na
 	var frame_track_index = _create_track(target_sprite, animation, frame_track)
 
 	if direction == 'reverse':
-		frames.invert()
+		frames.reverse()
 
 	var animation_length = 0
 
@@ -200,24 +206,26 @@ func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_na
 		animation_length += frame.duration / 1000 ## NOTE: animation_length is in seconds
 
 	if direction == 'pingpong':
-		frames.remove(frames.size() - 1)
+		frames.remove_at(frames.size() - 1)
 		if is_loopable:
-			frames.remove(0)
-		frames.invert()
+			frames.remove_at(0)
+		frames.reverse()
 
 		for frame in frames:
 			var frame_key = _get_frame_key(target_sprite, frame)
 			animation.track_insert_key(frame_track_index, animation_length, frame_key)
-			animation_length += frame.duration / 1000
+			animation_length += frame.duration / 1000 ## NOTE: animation_length is in seconds
 
 	animation.length = animation_length
-	animation.loop = is_loopable
+	animation.loop = Animation.LOOP_LINEAR if is_loopable else Animation.LOOP_NONE
 
 	return RESULT_CODE.SUCCESS
 
 
+## TODO: insert validate tokens in amination name
+
 func _create_track(target_sprite: Node, animation: Animation, track: String):
-	var track_index = animation.find_track(track)
+	var track_index = animation.find_track(track, Animation.TYPE_VALUE)
 
 	if track_index != -1:
 		animation.remove_track(track_index)
@@ -233,8 +241,8 @@ func _create_track(target_sprite: Node, animation: Animation, track: String):
 
 
 func _get_property_track_path(player: AnimationPlayer, target_sprite: Node, prop: String) -> String:
-		var node_path = player.get_node(player.root_node).get_path_to(target_sprite)
-		return "%s:%s" % [node_path, prop]
+	var node_path = player.get_node(player.root_node).get_path_to(target_sprite)
+	return "%s:%s" % [node_path, prop]
 
 
 func _scan_filesystem():
@@ -248,9 +256,9 @@ func _remove_properties_from_path(path: NodePath) -> NodePath:
 		return string_path as NodePath
 
 	var property_path := path.get_concatenated_subnames() as String
-	string_path.erase((string_path).length() - property_path.length() - 1, property_path.length() + 1)
-	return string_path as NodePath
+	string_path = string_path.substr(0, string_path.length() - property_path.length() - 1)
 
+	return string_path as NodePath
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SPRITE NODE LOGIC ░░░░

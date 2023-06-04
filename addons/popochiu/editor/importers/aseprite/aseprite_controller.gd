@@ -200,11 +200,11 @@ func _export_command_common_arguments(source_name: String, data_path: String, sp
 
 
 func _execute(arguments, output):
-	return OS.execute(_get_aseprite_command(), arguments, true, output, true)
+	return OS.execute(_get_aseprite_command(), arguments, output, true, true)
 
 
 func _get_aseprite_command() -> String:
-	return _config.is_command_or_control_pressed()
+	return _config.get_command()
 
 
 func _get_file_basename(file_path: String) -> String:

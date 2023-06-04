@@ -12,6 +12,9 @@ const SYMBOL :=\
 "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( u )3(u )/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒"
 
 var main_dock: Panel
+## TODO: refs #26: use this as base to migrate the configuration to ProjectSettings
+var config = preload("res://addons/popochiu/editor/config/config.gd").new()
+
 
 var _editor_interface := get_editor_interface()
 var _editor_file_system := _editor_interface.get_resource_filesystem()
@@ -62,22 +65,29 @@ func _enter_tree() -> void:
 	
 	_types_helper =\
 	load('res://addons/popochiu/editor/helpers/popochiu_types_helper.gd')
+
+	## TODO: Clean up when Popochiu configuration is moved to ProjectSettings (refs #26)
+	config.ei = _editor_interface
+	config.initialize_project_settings()
 	
 	for path in [
 		'res://addons/popochiu/editor/inspector/character_inspector_plugin.gd',
 		'res://addons/popochiu/editor/inspector/walkable_area_inspector_plugin.gd',
+		'res://addons/popochiu/editor/inspector/aseprite_importer_inspector_plugin.gd',
 		'res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd',
 	]:
 		var eip: EditorInspectorPlugin = load(path).new()
 		
 		eip.set('ei', _editor_interface)
+		eip.set('fs', _editor_file_system)
+		eip.set('config', config)
 		
 		_inspector_plugins.append(eip)
 		add_inspector_plugin(eip)
 	
 	_export_plugin = preload('popochiu_export_plugin.gd').new()
 	add_export_plugin(_export_plugin)
-	
+
 	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system

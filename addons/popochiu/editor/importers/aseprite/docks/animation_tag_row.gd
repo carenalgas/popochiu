@@ -3,7 +3,7 @@ extends HBoxContainer
 
 signal tag_state_changed
 
-const RESULT_CODE = preload("res://addons/Popochiu/Editor/Config/ResultCodes.gd")
+const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 
 var _config: RefCounted
 var _anim_tag_state: Dictionary = {}
@@ -16,8 +16,8 @@ var _anim_tag_state: Dictionary = {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
-	loops_toggle.icon = get_icon('Loop', 'EditorIcons')
-	import_toggle.icon = get_icon('Load', 'EditorIcons')
+	loops_toggle.icon = get_theme_icon('Loop', 'EditorIcons')
+	import_toggle.icon = get_theme_icon('Load', 'EditorIcons')
 
 
 

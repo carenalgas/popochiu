@@ -6,21 +6,70 @@
 [node name="CharacterGoddiu" type="Area2D"]
 script = ExtResource("1_0bak1")
 flips_when = 2
+popochiu_placeholder = null
 script_name = "Goddiu"
 description = "goddiu"
 clickable = false
 cursor = 8
+metadata/_popochiu_aseprite_config_ = {
+"o_folder": "",
+"o_name": "",
+"only_visible_layers": ,
+"op_exp": ,
+"player": "/root/@@16579/@@655/@@656/@@664/@@667/@@675/@@683/@@684/@@686/@@712/@@713/@@752/MainScreen/@@9766/@@9593/@@9595/@@9597/@@9598/@@9599/@@9600/CharacterGoddiu/AnimationPlayer",
+"source": "res://popochiu/sources/Aseprite/goddiu_extended_2.aseprite",
+"tags": [{
+"import": true,
+"loops": true,
+"tag_name": "idle_r"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "idle_d"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "idle_u"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "talk_r"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "talk_d"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "talk_u"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "walk_r"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "walk_d"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "walk_u"
+}, {
+"import": true,
+"loops": true,
+"tag_name": "jump"
+}],
+"wipe_old_anims": 
+}
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
 [node name="BaselineHelper" type="Line2D" parent="."]
-visible = false
 points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
 
 [node name="WalkToHelper" type="Marker2D" parent="."]
-visible = false
 
 [node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
 offset_left = -2.5
@@ -29,11 +78,12 @@ offset_right = 2.5
 offset_bottom = 2.5
 color = Color(0, 1, 1, 1)
 
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(0, -26)
 texture = ExtResource("2_qflu8")
 
 [node name="DialogPos" type="Marker2D" parent="."]
-visible = false
 position = Vector2(0, -45)

@@ -365,7 +365,7 @@ func _set_elements_styles():
 	# Set style of warning panel
 	_warning_panel.add_theme_stylebox_override(
 		'panel',
-		_warning_panel.get_stylebox("sub_inspector_bg11", "Editor")
+		_warning_panel.get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
 	_warning_panel_label.add_theme_color_override('font_color', Color('c46c71'))
 

@@ -1,31 +1,30 @@
-@tool
 extends EditorInspectorPlugin ## TODO: create a base class with pointer variables
 
-const INSPECTOR_DOCK = preload("res://addons/Popochiu/Editor/Importers/Aseprite/docks/AnimationPlayerInspectorDock.tscn")
-const CONFIG_SCRIPT = preload("res://addons/Popochiu/Editor/Config/Config.gd")
+const INSPECTOR_DOCK = preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_player_inspector_dock.tscn")
+const CONFIG_SCRIPT = preload("res://addons/popochiu/editor/config/config.gd")
 
 var ei: EditorInterface
 var fs: EditorFileSystem
 var config: RefCounted
 var _target_node: Node
 	
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
-func can_handle(object):
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+func _can_handle(object):
 	if object.has_method("get_parent") and object.get_parent() is Node2D:
 		return false
 	return object is PopochiuCharacter #|| object is PopochiuInventoryItem || object is PopochiuProp
 
 
-func parse_begin(object):
+func _parse_begin(object):
 	_target_node = object
 
-func parse_category(object, category):
+func _parse_category(object, category):
 	if category == 'Aseprite':
 		var dock = INSPECTOR_DOCK.instantiate()
-		dock.target_node = _target_node
+		dock.target_node = object
 		dock.config = config
 		dock.file_system = fs
 		add_custom_control(dock)
 
-func parse_property(object, type, path, hint, hint_text, usage):
-	return path == 'popochiu_placeholder'
+func _parse_property(object, type, name, hint_type, hint_string, usage_flags, wide):
+	return name == 'popochiu_placeholder'
