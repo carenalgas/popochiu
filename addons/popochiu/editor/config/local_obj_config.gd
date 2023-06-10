@@ -22,6 +22,8 @@ static func decode(string: String):
 	var decoded = _decode_base64(string)
 	if not _is_valid_config(decoded):
 		return null
+	
+	print(decoded)
 
 	var cfg = decoded.split("\n")
 	var config = {}
@@ -32,7 +34,7 @@ static func decode(string: String):
 			var value = parts[1].strip_edges()
 			
 			#Convert bool properties
-			if key == "only_visible" or key == "op_exp":
+			if key in ["only_visible_layers", "wipe_old_anims", "op_exp"]:
 				match value:
 					"True":
 						config[key] = true
@@ -53,7 +55,6 @@ static func load_config(node:Node):
 
 static func save_config(node:Node, cfg:Dictionary):
 	node.set_meta(LOCAL_OBJ_CONFIG_META_NAME, cfg)
-
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

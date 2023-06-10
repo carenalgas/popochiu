@@ -4,10 +4,10 @@
 
 [sub_resource type="StyleBoxEmpty" id="1"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qwdqv"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5xq4e"]
 bg_color = Color(0, 0, 0, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j4hd0"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nuhm8"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
@@ -58,7 +58,7 @@ text = "Rescan"
 
 [node name="TagsTitleBar" type="PanelContainer" parent="margin/Importer"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_qwdqv")
+theme_override_styles/panel = SubResource("StyleBoxFlat_5xq4e")
 
 [node name="TagsTitle" type="Button" parent="margin/Importer/TagsTitleBar"]
 layout_mode = 2
@@ -71,7 +71,7 @@ layout_mode = 2
 
 [node name="OptionsTitleBar" type="PanelContainer" parent="margin/Importer"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_qwdqv")
+theme_override_styles/panel = SubResource("StyleBoxFlat_5xq4e")
 
 [node name="OptionsTitle" type="Button" parent="margin/Importer/OptionsTitleBar"]
 layout_mode = 2
@@ -165,7 +165,7 @@ custom_minimum_size = Vector2(222, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_j4hd0")
+theme_override_styles/panel = SubResource("StyleBoxFlat_nuhm8")
 
 [node name="Label" type="Label" parent="margin/Warning/HBoxContainer/Panel"]
 custom_minimum_size = Vector2(0, 42)
@@ -177,6 +177,7 @@ size_flags_vertical = 6
 theme_override_colors/font_color = Color(0.768627, 0.423529, 0.443137, 1)
 text = "Error loading Aseprite Importer!
 Check Output panel for details."
+horizontal_alignment = 1
 
 [connection signal="pressed" from="margin/Importer/Source/SourceButton" to="." method="_on_source_pressed"]
 [connection signal="pressed" from="margin/Importer/Source/RescanButton" to="." method="_on_rescan_pressed"]

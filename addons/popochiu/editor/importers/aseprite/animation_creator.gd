@@ -217,7 +217,7 @@ func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_na
 			animation_length += frame.duration / 1000 ## NOTE: animation_length is in seconds
 
 	animation.length = animation_length
-	animation.loop = Animation.LOOP_LINEAR if is_loopable else Animation.LOOP_NONE
+	animation.loop_mode = Animation.LOOP_LINEAR if is_loopable else Animation.LOOP_NONE
 
 	return RESULT_CODE.SUCCESS
 

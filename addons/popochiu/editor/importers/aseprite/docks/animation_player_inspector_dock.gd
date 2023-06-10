@@ -87,6 +87,7 @@ func _ready():
 	else:
 		_load_config(cfg)
 
+	_set_options_visible(cfg.get("op_exp"))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -97,8 +98,8 @@ func _load_config(cfg):
 	_output_folder = cfg.get("o_folder", "")
 	_out_folder_field.text = _output_folder if _output_folder != "" else _out_folder_default
 	_out_filename_field.text = cfg.get("o_name", "")
-	_visible_layers_field.button_pressed = cfg.get("only_visible_layers", false)
-	_wipe_old_animations_field.button_pressed = cfg.get("wipe_old_anims", false)
+	_visible_layers_field.set_pressed_no_signal(cfg.get("only_visible_layers", false))
+	_wipe_old_animations_field.set_pressed_no_signal(cfg.get("wipe_old_anims", false))
 
 	_set_options_visible(cfg.get("op_exp", false))
 	_populate_tags(cfg.get("tags", []))
@@ -110,11 +111,11 @@ func _save_config():
 		"player": _animation_player_path,
 		"source": _source,
 		"tags": _tags_cache,
-		"op_exp": _options_title.pressed,
+		"op_exp": _options_container.visible,
 		"o_folder": _output_folder,
 		"o_name": _out_filename_field.text,
-		"only_visible_layers": _visible_layers_field.pressed,
-		"wipe_old_anims": _wipe_old_animations_field.pressed,
+		"only_visible_layers": _visible_layers_field.is_pressed(),
+		"wipe_old_anims": _wipe_old_animations_field.is_pressed(),
 	}
 
 	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
@@ -134,10 +135,8 @@ func _load_default_config():
 	_source_field.tooltip_text = ""
 	_out_folder_field.text = "[empty]"
 	_out_filename_field.clear()
-	_visible_layers_field.button_pressed = false
-	_wipe_old_animations_field.button_pressed = config.is_default_wipe_old_anims_enabled()
-	
-	_set_options_visible(false)
+	_visible_layers_field.set_pressed_no_signal(false)
+	_wipe_old_animations_field.set_pressed_no_signal(config.is_default_wipe_old_anims_enabled())
 
 
 func _set_source(source):
@@ -184,10 +183,10 @@ func _on_import_pressed():
 	var options = {
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
-		"output_folder": _output_folder if _output_folder != "" else root.filename.get_base_dir(),
+		"output_folder": _output_folder if _output_folder != "" else root.scene_file_path.get_base_dir(),
 		"output_filename": _out_filename_field.text,
-		"only_visible_layers": _visible_layers_field.pressed,
-		"wipe_old_animations": _wipe_old_animations_field.pressed,
+		"only_visible_layers": _visible_layers_field.is_pressed(),
+		"wipe_old_animations": _wipe_old_animations_field.is_pressed(),
 	}
 
 	_save_config()
@@ -226,8 +225,9 @@ func _open_source_dialog():
 
 func _create_aseprite_file_selection():
 	var file_dialog = FileDialog.new()
-	file_dialog.mode = FileDialog.FILE_MODE_OPEN_FILE
+	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog.title = "Select Aseprite animation file"
 	file_dialog.connect("file_selected", Callable(self, "_on_aseprite_file_selected"))
 	file_dialog.set_filters(PackedStringArray(["*.ase","*.aseprite"]))
 	return file_dialog
@@ -305,20 +305,20 @@ func _show_message(message: String, title: String = ""):
 	var _warning_dialog = AcceptDialog.new()
 	get_parent().add_child(_warning_dialog)
 	if title != "":
-		_warning_dialog.window_title = title
+		_warning_dialog.title = title
 	_warning_dialog.dialog_text = message
 	_warning_dialog.popup_centered()
-	_warning_dialog.connect("popup_hide", Callable(_warning_dialog, "queue_free"))
+	_warning_dialog.connect("close_requested", Callable(_warning_dialog, "queue_free"))
 
 
 func _show_confirmation(message: String, title: String = ""):
 	var _confirmation_dialog = ConfirmationDialog.new()
 	get_parent().add_child(_confirmation_dialog)
 	if title != "":
-		_confirmation_dialog.window_title = title
+		_confirmation_dialog.title = title
 	_confirmation_dialog.dialog_text = message
 	_confirmation_dialog.popup_centered()
-	_confirmation_dialog.connect("popup_hide", Callable(_confirmation_dialog, "queue_free"))
+	_confirmation_dialog.connect("close_requested", Callable(_confirmation_dialog, "queue_free"))
 	return _confirmation_dialog
 
 func _on_options_title_toggled(button_pressed):
@@ -341,8 +341,9 @@ func _on_out_folder_pressed():
 
 func _create_output_folder_selection():
 	var file_dialog = FileDialog.new()
-	file_dialog.mode = FileDialog.FILE_MODE_OPEN_DIR
+	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
 	file_dialog.access = FileDialog.ACCESS_RESOURCES
+	file_dialog.title = "Select destination folder"
 	file_dialog.connect("dir_selected", Callable(self, "_on_output_folder_selected"))
 	return file_dialog
 
@@ -378,9 +379,7 @@ func _hide_importer():
 func _show_importer():
 	_importer_container.visible = true
 	_warning_container.visible = false
-	
-	
-	
-	
+
+
 ## TODO: IMPORTANT AND FIRST IN LINE! The importer has different behavior for Characters, Rooms and Inventory items!
 ## TODO: Introduce layer selection list, more or less as tags
