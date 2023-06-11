@@ -68,6 +68,7 @@ func _enter_tree() -> void:
 
 	## TODO: Clean up when Popochiu configuration is moved to ProjectSettings (refs #26)
 	config.ei = _editor_interface
+	config.initialize_editor_settings()
 	config.initialize_project_settings()
 	
 	for path in [

@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://popochiu/characters/goddiu/character_goddiu.gd" id="1_0bak1"]
 [ext_resource type="Texture2D" uid="uid://d1uh3dibal84v" path="res://popochiu/characters/goddiu/goddiu.png" id="2_1b5aa"]
 
-[sub_resource type="Animation" id="Animation_uvq8t"]
+[sub_resource type="Animation" id="Animation_8k31x"]
 length = 1.1
 loop_mode = 1
 tracks/0/type = "value"
@@ -67,7 +67,7 @@ tracks/4/keys = {
 "values": [0, 1]
 }
 
-[sub_resource type="Animation" id="Animation_obp5d"]
+[sub_resource type="Animation" id="Animation_ftaal"]
 length = 0.3
 loop_mode = 1
 tracks/0/type = "value"
@@ -131,7 +131,7 @@ tracks/4/keys = {
 "values": [0, 2]
 }
 
-[sub_resource type="Animation" id="Animation_qjwec"]
+[sub_resource type="Animation" id="Animation_a75lp"]
 length = 0.2
 loop_mode = 1
 tracks/0/type = "value"
@@ -195,7 +195,7 @@ tracks/4/keys = {
 "values": [0, 3]
 }
 
-[sub_resource type="Animation" id="Animation_4v1ld"]
+[sub_resource type="Animation" id="Animation_bgj5a"]
 length = 0.2
 loop_mode = 1
 tracks/0/type = "value"
@@ -259,12 +259,12 @@ tracks/4/keys = {
 "values": [4, 5]
 }
 
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_gujfm"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6c2hj"]
 _data = {
-"idle": SubResource("Animation_uvq8t"),
-"jump": SubResource("Animation_obp5d"),
-"talk": SubResource("Animation_qjwec"),
-"walk": SubResource("Animation_4v1ld")
+"idle": SubResource("Animation_8k31x"),
+"jump": SubResource("Animation_ftaal"),
+"talk": SubResource("Animation_a75lp"),
+"walk": SubResource("Animation_bgj5a")
 }
 
 [node name="CharacterGoddiu" type="Area2D"]
@@ -331,5 +331,5 @@ position = Vector2(0, -45)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_gujfm")
+"": SubResource("AnimationLibrary_6c2hj")
 }

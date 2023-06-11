@@ -166,9 +166,12 @@ func _configure_animations(target_sprite: Node, player: AnimationPlayer, content
 
 
 func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_name: String, frames: Array, direction = 'forward'):
-	# TODO: Forcing lower/snake case is a design choice so we don't expose
-	# animation properties on the character "PowerQuest style".
-	# We may decide to switch to a more configurable design in the future.
+	# TODO: ATM there is no way to assign a walk/talk/grab/idle animation
+	# with a different name than the standard ones. The engine is searching for
+	# lowercase names in the AnimationPlayer, thus we are forcing snake_case
+	# animations name conversion.
+	# We have to add methods or properties to the Character to assign different
+	# animations (but maybe we can do with anim_prefix or other strategies).
 	var animation_name = anim_name.to_snake_case()
 	var is_loopable = _tags_options_lookup.get(anim_name).get("loops")
 
@@ -177,7 +180,7 @@ func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_na
 	# See _remove_animations_from_player() function.
 	if not player.has_animation_library(_DEFAULT_AL):
 		player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
-	
+
 	if not player.get_animation_library(_DEFAULT_AL).has_animation(animation_name):
 		player.get_animation_library(_DEFAULT_AL).add_animation(animation_name, Animation.new())
 
