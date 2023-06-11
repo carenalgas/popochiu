@@ -9,7 +9,7 @@ enum FlipsWhen { NONE, MOVING_RIGHT, MOVING_LEFT }
 enum Looking {UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
 
 signal started_walk_to(character, start, end)
-signal stoped_walk
+signal stopped_walk
 
 @export var text_color := Color.WHITE
 @export var flips_when: FlipsWhen = FlipsWhen.NONE
@@ -140,9 +140,7 @@ func walk(target_pos: Vector2) -> void:
 	
 	# Trigger the signal for the room to start moving the character
 	started_walk_to.emit(self, position, target_pos)
-	
 	await C.character_move_ended
-	
 	is_moving = false
 
 
@@ -153,7 +151,7 @@ func queue_stop_walking() -> Callable:
 func stop_walking() -> void:
 	is_moving = false
 	
-	stoped_walk.emit()
+	stopped_walk.emit()
 	
 	await get_tree().process_frame
 

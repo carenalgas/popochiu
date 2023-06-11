@@ -114,11 +114,6 @@ func _create_animations_from_file(target_sprite: Node, player: AnimationPlayer, 
 
 func _remove_animations_from_player(player: AnimationPlayer):
 	player.remove_animation_library(_DEFAULT_AL)
-	# TODO: remove this if it works
-	# var animations = player.get_animation_library(_DEFAULT_AL).get_animation_list()
-	# for a in animations:
-	# 	if player.get_animation_library(_DEFAULT_AL).has_animation(a):
-	# 		player.get_animation_library(_DEFAULT_AL).remove_animation(a)
 
 
 func _import(target_sprite: Node, player: AnimationPlayer, data: Dictionary, options: Dictionary):
@@ -161,7 +156,7 @@ func _configure_animations(target_sprite: Node, player: AnimationPlayer, content
 		for tag in content.meta.frameTags:
 			if not _tags_options_lookup.get(tag.name).get("import"):
 				continue
-			var selected_frames = frames.slice(tag.from, tag.to) ## TODO verify the +1
+			var selected_frames = frames.slice(tag.from, tag.to+1) # slice is [)
 			result = _add_animation_frames(target_sprite, player, tag.name, selected_frames, tag.direction)
 			if result != RESULT_CODE.SUCCESS:
 				break
@@ -171,9 +166,9 @@ func _configure_animations(target_sprite: Node, player: AnimationPlayer, content
 
 
 func _add_animation_frames(target_sprite: Node, player: AnimationPlayer, anim_name: String, frames: Array, direction = 'forward'):
-	# TODO: Forcing lowercase is a design choice so we don't expose
+	# TODO: Forcing lower/snake case is a design choice so we don't expose
 	# animation properties on the character "PowerQuest style".
-	# We may decide do switch to a more configurable design in the future.
+	# We may decide to switch to a more configurable design in the future.
 	var animation_name = anim_name.to_snake_case()
 	var is_loopable = _tags_options_lookup.get(anim_name).get("loops")
 
