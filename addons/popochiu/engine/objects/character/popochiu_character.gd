@@ -341,6 +341,9 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 	$AnimationPlayer.play(animation)
 	# If the playing is blocking, wait for the animation to finish
 	await $AnimationPlayer.animation_finished
+	
+	# Go back to idle state
+	_play_idle()
 
 
 func face_direction(destination: Vector2):
