@@ -24,9 +24,9 @@ static func get_error_message(code: int):
 	## Maybe add a param argument
 	match code:
 		ERR_ASEPRITE_CMD_NOT_FULL_PATH:
-			return "Aseprite command not found at given path. Please check \"Project Settings > Popochiu > Import > Command Path3D\" to hold the FULL path to a valid Aseprite executable."
+			return "Aseprite command not found at given path. Please check \"Editor Settings > Popochiu > Import > Command Path\" to hold the FULL path to a valid Aseprite executable."
 		ERR_ASEPRITE_CMD_NOT_FOUND:
-			return "Aseprite command failed. Please, check if the right command is in your PATH or configured through \"Project Settings > Popochiu > Import > Command Path\"."
+			return "Aseprite command failed. Please, check if the right command is in your PATH or configured through \"Editor Settings > Popochiu > Import > Command Path\"."
 		ERR_SOURCE_FILE_NOT_FOUND:
 			return "Source file does not exist"
 		ERR_OUTPUT_FOLDER_NOT_FOUND:

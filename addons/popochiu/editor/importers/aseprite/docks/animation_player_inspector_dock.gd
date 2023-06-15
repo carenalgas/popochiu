@@ -27,36 +27,6 @@ var _importing := false
 var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
 
-# Interface elements
-
-# UI Containers
-@onready var _importer_container = $margin/Importer
-@onready var _warning_container = $margin/Warning
-
-# Title bars, to address theme color problems
-@onready var _options_title_bar = $margin/Importer/OptionsTitleBar
-@onready var _options_title = $margin/Importer/OptionsTitleBar/OptionsTitle
-@onready var _tags_title_bar = $margin/Importer/TagsTitleBar
-@onready var _tags_title = $margin/Importer/TagsTitleBar/TagsTitle
-
-# Source section
-@onready var _source_field = $margin/Importer/Source/SourceButton
-@onready var _rescan_source_button = $margin/Importer/Source/RescanButton
-
-# Tags section
-@onready var _tags_ui_container = $margin/Importer/Tags
-
-# Options section
-@onready var _options_container = $margin/Importer/Options
-@onready var _out_folder_field = $margin/Importer/Options/OutFolder/OutFolderButton
-@onready var _out_filename_field = $margin/Importer/Options/OutFile/OutFileName
-@onready var _visible_layers_field = $margin/Importer/Options/VisibleLayers/VisibleLayersCheckButton
-@onready var _wipe_old_animations_field = $margin/Importer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton
-
-# Warning section
-@onready var _warning_panel = $margin/Warning/HBoxContainer/Panel
-@onready var _warning_panel_label = $margin/Warning/HBoxContainer/Panel/Label
-
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
@@ -96,10 +66,10 @@ func _load_config(cfg):
 		_set_source(cfg.source)
 
 	_output_folder = cfg.get("o_folder", "")
-	_out_folder_field.text = _output_folder if _output_folder != "" else _out_folder_default
-	_out_filename_field.text = cfg.get("o_name", "")
-	_visible_layers_field.set_pressed_no_signal(cfg.get("only_visible_layers", false))
-	_wipe_old_animations_field.set_pressed_no_signal(cfg.get("wipe_old_anims", false))
+	get_node('%OutFolderButton').text = _output_folder if _output_folder != "" else _out_folder_default
+	get_node('%OutFileName').text = cfg.get("o_name", "")
+	get_node('%VisibleLayersCheckButton').set_pressed_no_signal(cfg.get("only_visible_layers", false))
+	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(cfg.get("wipe_old_anims", false))
 
 	_set_options_visible(cfg.get("op_exp", false))
 	_populate_tags(cfg.get("tags", []))
@@ -111,11 +81,11 @@ func _save_config():
 		"player": _animation_player_path,
 		"source": _source,
 		"tags": _tags_cache,
-		"op_exp": _options_container.visible,
+		"op_exp": get_node('%Options').visible,
 		"o_folder": _output_folder,
-		"o_name": _out_filename_field.text,
-		"only_visible_layers": _visible_layers_field.is_pressed(),
-		"wipe_old_anims": _wipe_old_animations_field.is_pressed(),
+		"o_name": get_node('%OutFileName').text,
+		"only_visible_layers": get_node('%VisibleLayersCheckButton').is_pressed(),
+		"wipe_old_anims": get_node('%WipeOldAnimationsCheckButton').is_pressed(),
 	}
 
 	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
@@ -131,18 +101,18 @@ func _load_default_config():
 	_empty_tags_container()
 
 	# Reset inspector fields
-	_source_field.text = "[empty]"
-	_source_field.tooltip_text = ""
-	_out_folder_field.text = "[empty]"
-	_out_filename_field.clear()
-	_visible_layers_field.set_pressed_no_signal(false)
-	_wipe_old_animations_field.set_pressed_no_signal(config.is_default_wipe_old_anims_enabled())
+	get_node('%SourceButton').text = "[empty]"
+	get_node('%SourceButton').tooltip_text = ""
+	get_node('%OutFolderButton').text = "[empty]"
+	get_node('%OutFileName').clear()
+	get_node('%VisibleLayersCheckButton').set_pressed_no_signal(false)
+	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(config.is_default_wipe_old_anims_enabled())
 
 
 func _set_source(source):
 	_source = source
-	_source_field.text = _source
-	_source_field.tooltip_text = _source
+	get_node('%SourceButton').text = _source
+	get_node('%SourceButton').tooltip_text = _source
 
 
 func _on_source_pressed():
@@ -184,9 +154,9 @@ func _on_import_pressed():
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
 		"output_folder": _output_folder if _output_folder != "" else root.scene_file_path.get_base_dir(),
-		"output_filename": _out_filename_field.text,
-		"only_visible_layers": _visible_layers_field.is_pressed(),
-		"wipe_old_animations": _wipe_old_animations_field.is_pressed(),
+		"output_filename": get_node('%OutFileName').text,
+		"only_visible_layers": get_node('%VisibleLayersCheckButton').is_pressed(),
+		"wipe_old_animations": get_node('%WipeOldAnimationsCheckButton').is_pressed(),
 	}
 
 	_save_config()
@@ -247,7 +217,7 @@ func _populate_tags(tags: Array):
 			continue
 		
 		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
-		_tags_ui_container.add_child(tag_row)
+		get_node('%Tags').add_child(tag_row)
 		tag_row.init(config, t)
 		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
 		
@@ -256,8 +226,8 @@ func _populate_tags(tags: Array):
 
 func _empty_tags_container():
 	# Clean the inspector tags container empty
-	for tl in _tags_ui_container.get_children():
-		_tags_ui_container.remove_child(tl)
+	for tl in get_node('%Tags').get_children():
+		get_node('%Tags').remove_child(tl)
 		tl.queue_free()
 
 func _update_tags_cache():
@@ -282,7 +252,7 @@ func _merge_with_cache(tags: Array) -> Array:
 
 func _get_tags_from_ui() -> Array:
 	var tags_list = []
-	for tag_row in _tags_ui_container.get_children():
+	for tag_row in get_node('%Tags').get_children():
 		var tag_row_cfg = tag_row.get_cfg()
 		if tag_row_cfg.tag_name == "":
 			continue
@@ -331,8 +301,8 @@ func _on_options_title_toggled(button_pressed):
 
 
 func _set_options_visible(is_visible):
-	_options_container.visible = is_visible
-	_options_title.icon = config.get_icon("expanded") if is_visible else config.get_icon("collapsed")
+	get_node('%Options').visible = is_visible
+	get_node('%OptionsTitle').icon = config.get_icon("expanded") if is_visible else config.get_icon("collapsed")
 
 
 func _on_out_folder_pressed():
@@ -354,7 +324,7 @@ func _create_output_folder_selection():
 
 func _on_output_folder_selected(path):
 	_output_folder = path
-	_out_folder_field.text = _output_folder if _output_folder != "" else _out_folder_default
+	get_node('%OutFolderButton').text = _output_folder if _output_folder != "" else _out_folder_default
 	_output_folder_dialog.queue_free()
 	_save_config()
 
@@ -364,25 +334,25 @@ func _set_elements_styles():
 	var section_color = get_theme_color("prop_section", "Editor")
 	var section_style = StyleBoxFlat.new()
 	section_style.set_bg_color(section_color)
-	_tags_title_bar.set('theme_override_styles/panel', section_style)
-	_options_title_bar.set('theme_override_styles/panel', section_style)
+	get_node('%TagsTitleBar').set('theme_override_styles/panel', section_style)
+	get_node('%OptionsTitleBar').set('theme_override_styles/panel', section_style)
 
 	# Set style of warning panel
-	_warning_panel.add_theme_stylebox_override(
+	get_node('%WarningPanel').add_theme_stylebox_override(
 		'panel',
-		_warning_panel.get_theme_stylebox("sub_inspector_bg11", "Editor")
+		get_node('%WarningPanel').get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
-	_warning_panel_label.add_theme_color_override('font_color', Color('c46c71'))
+	get_node('%WarningLabel').add_theme_color_override('font_color', Color('c46c71'))
 
 
 func _hide_importer():
-	_importer_container.visible = false
-	_warning_container.visible = true
+	get_node('%Importer').visible = false
+	get_node('%Warning').visible = true
 
 
 func _show_importer():
-	_importer_container.visible = true
-	_warning_container.visible = false
+	get_node('%Importer').visible = true
+	get_node('%Warning').visible = false
 
 
 ## TODO: IMPORTANT AND FIRST IN LINE! The importer has different behavior for Characters, Rooms and Inventory items!

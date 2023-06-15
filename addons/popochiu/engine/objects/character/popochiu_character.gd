@@ -59,22 +59,22 @@ func _get_property_list():
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func _play_idle() -> void:
-	play_animation('idle');
+	play_animation('idle')
 
 
 func _play_walk(target_pos: Vector2) -> void:
 	# Set the default parameters for play_animation()
 	var animation_label = 'walk'
 	var animation_fallback = 'idle'
-	play_animation(animation_label, animation_fallback);
+	play_animation(animation_label, animation_fallback)
 
 
 func _play_talk() -> void:
-	play_animation('talk');
+	play_animation('talk')
 
 
 func _play_grab() -> void:
-	play_animation('grab');
+	play_animation('grab')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
