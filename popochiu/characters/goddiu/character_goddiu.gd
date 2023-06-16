@@ -38,7 +38,7 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 
 # Use it to play the idle animation for the character
 func _play_idle() -> void:
-	pass
+	super()
 
 
 # Use it to play the walk animation for the character
@@ -49,9 +49,9 @@ func _play_walk(target_pos: Vector2) -> void:
 
 # Use it to play the talk animation for the character
 func _play_talk() -> void:
-	pass
+	super()
 
 
 # Use it to play the grab animation for the character
 func _play_grab() -> void:
-	pass
+	super()

@@ -6,10 +6,10 @@ extends PopochiuClickable
 # TODO: Use a state machine
 
 enum FlipsWhen { NONE, MOVING_RIGHT, MOVING_LEFT }
-enum Looking {UP, UP_RIGHT, RIGHT, RIGHT_DOWN, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
+enum Looking {UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
 
 signal started_walk_to(character, start, end)
-signal stoped_walk
+signal stopped_walk
 
 @export var text_color := Color.WHITE
 @export var flips_when: FlipsWhen = FlipsWhen.NONE
@@ -40,22 +40,41 @@ func _ready():
 		hide_helpers()
 		set_process(true)
 
+func _get_property_list():
+	var properties = []
+	properties.append({
+		name = "Aseprite",
+		type = TYPE_NIL,
+		usage = PROPERTY_USAGE_CATEGORY
+	})
+	# This is needed or the category won't be shown in the
+	# inspector. AsepriteImporterInspectorPlugin hides it.
+	properties.append({
+		name = "popochiu_placeholder",
+		type = TYPE_NIL,
+	})
+
+	return properties
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func _play_idle() -> void:
-	pass
+	play_animation('idle')
 
 
 func _play_walk(target_pos: Vector2) -> void:
-	pass
+	# Set the default parameters for play_animation()
+	var animation_label = 'walk'
+	var animation_fallback = 'idle'
+	play_animation(animation_label, animation_fallback)
 
 
 func _play_talk() -> void:
-	pass
+	play_animation('talk')
 
 
 func _play_grab() -> void:
-	pass
+	play_animation('grab')
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -67,7 +86,7 @@ func idle() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
-	
+
 	if has_node('Sprite2D'):
 		match flips_when:
 			FlipsWhen.MOVING_LEFT:
@@ -88,7 +107,12 @@ func queue_walk(target_pos: Vector2) -> Callable:
 func walk(target_pos: Vector2) -> void:
 	is_moving = true
 	_looking_dir = Looking.LEFT if target_pos.x < position.x else Looking.RIGHT
-	
+
+	# Make the char face in the correct direction
+	face_direction(target_pos)
+	# The ROOM will take care of moving the character
+	# and face her in the correct direction from here
+
 	if has_node('Sprite2D'):
 		match flips_when:
 			FlipsWhen.MOVING_LEFT:
@@ -114,11 +138,9 @@ func walk(target_pos: Vector2) -> void:
 	# Call the virtual that plays the walk animation
 	_play_walk(target_pos)
 	
-	# Trigger the signal for the room  to start moving the character
+	# Trigger the signal for the room to start moving the character
 	started_walk_to.emit(self, position, target_pos)
-	
 	await C.character_move_ended
-	
 	is_moving = false
 
 
@@ -129,7 +151,7 @@ func queue_stop_walking() -> Callable:
 func stop_walking() -> void:
 	is_moving = false
 	
-	stoped_walk.emit()
+	stopped_walk.emit()
 	
 	await get_tree().process_frame
 
@@ -298,6 +320,66 @@ func queue_ignore_walkable_areas(new_value: bool) -> Callable:
 	return func(): ignore_walkable_areas = new_value
 
 
+func queue_play_animation(animation_label: String, animation_fallback := 'idle', blocking := false) -> Callable:
+	return func(): await play_animation(animation_label, animation_fallback)
+
+
+func play_animation(animation_label: String, animation_fallback := 'idle'):
+	if not has_node("AnimationPlayer"):
+		printerr("Can't play character animation. Required AnimationPlayer not found in character %s" % [script_name])
+		return
+
+	# Search for a valid animation corresponding to animation_label
+	var animation = _get_valid_oriented_animation(animation_label)
+	# If is not present, do the same for the the fallback animation.
+	if animation == null: animation = _get_valid_oriented_animation(animation_fallback)
+	# In neither are available, exit and throw an error to check for the presence of the animations.
+	if animation == null: # Again!
+		printerr("Neither the requested nor the fallback animation could be found for character %s. Requested: %s - Fallback: %s" % [script_name, animation_label, animation_fallback])
+		return
+	# Play the animation in the best available orientation
+	$AnimationPlayer.play(animation)
+	# If the playing is blocking, wait for the animation to finish
+	await $AnimationPlayer.animation_finished
+	
+	# Go back to idle state
+	_play_idle()
+
+
+func face_direction(destination: Vector2):
+	# Get the vector from the origin to the destination.
+	var vectX = destination.x - position.x
+	var vectY = destination.y - position.y
+	# Determine the angle of the movement vector.
+	var rad = atan2(vectY, vectX)
+	var angle = rad_to_deg(rad)
+	# Tolerance in degrees, to avoid U D L R are only
+	# achieved on precise angles such as 0 90 180 deg.
+	var t = 22.5
+	# Determine the direction the character is facing.
+	# Remember: Y coordinates have opposite sign in Godot.
+	# this means that negative angles are up movements.
+	# Set the direction using the _looking property.
+	# We cannot use the face_* functions because they
+	# set the state as IDLE.
+	if angle >= -(0 + t) and angle < (0 + t):
+		_looking_dir = Looking.RIGHT
+	elif angle >= (0 + t) and angle < (90 - t):
+		_looking_dir = Looking.DOWN_RIGHT
+	elif angle >= (90 - t) and angle < (90 + t):
+		_looking_dir = Looking.DOWN
+	elif angle >= (90 + t) and angle < (180 - t):
+		_looking_dir = Looking.DOWN_LEFT
+	elif angle >= (180 - t) or angle <= -(180 -t ):
+		_looking_dir = Looking.LEFT
+	elif angle <= -(0 + t) and angle > -(90 - t):
+		_looking_dir = Looking.UP_RIGHT
+	elif angle <= -(90 - t) and angle > -(90 + t):
+		_looking_dir = Looking.UP
+	elif angle <= -(90 + t) and angle > -(180 - t):
+		_looking_dir = Looking.UP_LEFT
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_dialog_pos() -> float:
 	return $DialogPos.position.y
@@ -341,9 +423,40 @@ func _get_vo_cue(emotion := '') -> String:
 	return ''
 
 
+func _get_valid_oriented_animation(animation_label):
+	var suffixes = []
+	# Based on the character facing direction, define a set of
+	# animation suffixes in èreference order.
+	# Notice how we seek for opposite directions for left and
+	# right. Flipping is done in other functions. We just define
+	# a preference order for animations when available.
+	match _looking_dir:
+		Looking.DOWN_LEFT: suffixes = ['_dl', '_l', '_dr', '_r']
+		Looking.UP_LEFT: suffixes = ['_ul', '_l', '_ur', '_r']
+		Looking.LEFT: suffixes = ['_l', '_r']
+		Looking.UP_RIGHT: suffixes = ['_ur', '_r', '_ul', '_l']
+		Looking.DOWN_RIGHT: suffixes = ['_dr', '_r', '_dl', '_l']
+		Looking.RIGHT: suffixes = ['_r', '_l']
+		Looking.DOWN: suffixes = ['_d', '_l', '_r']
+		Looking.UP: suffixes = ['_u', '_l', '_r']
+	# Add an empty suffix to support the most
+	# basic animation case  (ex. just "walk").
+	suffixes = suffixes + ['']
+	# The list of prefixes is in order of preference
+	# Eg. walk_dl, walk_l, walk
+	# Scan the AnimationPlayer and return the first that matches.
+	for suffix in suffixes:
+		var animation = "%s%s" % [animation_label, suffix]
+		if $AnimationPlayer.has_animation(animation):
+			return animation
+	# No valid animation is found.
+	printerr('Animation not found %s' % [animation_label])
+	return null
+
+
 func _walk_to_clickable(node: PopochiuClickable) -> void:
 	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
-	
+
 	walk(node.to_global(node.walk_to_point))

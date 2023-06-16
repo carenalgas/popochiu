@@ -117,7 +117,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)
-	chr.stoped_walk.connect(_clear_navigation_path)
+	chr.stopped_walk.connect(_clear_navigation_path)
 	
 	chr.idle()
 
@@ -264,6 +264,9 @@ func _move_along_path(distance):
 	while _path.size():
 		var distance_between_points = last_point.distance_to(_path[0])
 		if distance <= distance_between_points:
+			# Based on the destination, turn the character
+			_moving_character.face_direction(_path[0])
+			# Move the character on the destination
 			_moving_character.position = last_point.lerp(
 				_path[0], distance / distance_between_points
 			)
