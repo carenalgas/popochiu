@@ -57,6 +57,7 @@ func _init():
 func _enter_tree() -> void:
 	if _is_first_install: return
 	
+	# Good morning, starshine. The Earth says hello.
 	prints(ES)
 	prints(EN)
 	print_rich('[wave]%s[/wave]' % SYMBOL)
@@ -102,7 +103,7 @@ func _enter_tree() -> void:
 	
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and
 	# AudioCues
-	main_dock.grab_focus()
+	main_dock.call_deferred('grab_focus')
 	
 	# ==== Connect to signals ==================================================
 	_editor_interface.get_selection().selection_changed.connect(_check_nodes)
@@ -130,6 +131,8 @@ func _enter_tree() -> void:
 	
 	PopochiuResources.update_autoloads(true)
 	_editor_file_system.scan_sources()
+	
+	main_dock.call_deferred('fill_data')
 
 
 func _exit_tree() -> void:

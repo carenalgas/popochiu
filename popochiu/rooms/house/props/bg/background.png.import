@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://oaib33borv20"
-path="res://.godot/imported/background.png-b0909125453b5c9d9c5fc74762211b7e.ctex"
+uid="uid://bgr746xh7k5ed"
+path="res://.godot/imported/background.png-0a61ca4c2d015825bbcdf9f33ebd5527.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://popochiu/rooms/casino_interior/props/background/background.png"
-dest_files=["res://.godot/imported/background.png-b0909125453b5c9d9c5fc74762211b7e.ctex"]
+source_file="res://popochiu/rooms/house/props/bg/background.png"
+dest_files=["res://.godot/imported/background.png-0a61ca4c2d015825bbcdf9f33ebd5527.ctex"]
 
 [params]
 

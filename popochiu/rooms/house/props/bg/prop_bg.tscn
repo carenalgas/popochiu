@@ -1,14 +1,18 @@
-[gd_scene load_steps=2 format=3 uid="uid://bxiva61kqxqnp"]
+[gd_scene load_steps=2 format=3 uid="uid://c0yuinu6anryy"]
 
-[ext_resource type="Script" path="res://popochiu/rooms/casino_interior/props/toy_car/prop_toy_car.gd" id="1_gt822"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/prop/popochiu_prop.gd" id="1_7m6v3"]
 
-[node name="ToyCar" type="Area2D"]
-script = ExtResource("1_gt822")
-script_name = "ToyCar"
-description = "Toy Car"
+[node name="Bg" type="Area2D"]
+z_index = -1
+script = ExtResource("1_7m6v3")
+script_name = "Bg"
+description = "Bg"
+clickable = false
+baseline = -90
 cursor = 1
 
 [node name="BaselineHelper" type="Line2D" parent="."]
+position = Vector2(0, -90)
 points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
 

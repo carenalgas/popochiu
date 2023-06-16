@@ -21,8 +21,7 @@ func _on_room_entered() -> void:
 # is visible.
 func _on_room_transition_finished() -> void:
 	# You can use await E.queue([]) to excecute a queue of instructions
-	prints(state.coco)
-	
+	pass
 
 
 # What happens before Popochiu unloads the room.

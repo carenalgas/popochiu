@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1j8qhghb33o4"
-path="res://.godot/imported/toy_car.png-a74c03fb318709cf6a6b94e68499a0e7.ctex"
+uid="uid://ct4gttx7etote"
+path="res://.godot/imported/toy_car.png-0f7886db3f166fbbf00354e94c064ff6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://popochiu/rooms/casino_interior/props/toy_car/toy_car.png"
-dest_files=["res://.godot/imported/toy_car.png-a74c03fb318709cf6a6b94e68499a0e7.ctex"]
+source_file="res://popochiu/rooms/house/props/toy_car/toy_car.png"
+dest_files=["res://.godot/imported/toy_car.png-0f7886db3f166fbbf00354e94c064ff6.ctex"]
 
 [params]
 

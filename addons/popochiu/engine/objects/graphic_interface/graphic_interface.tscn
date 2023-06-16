@@ -45,6 +45,7 @@ offset_left = -8.0
 offset_top = -8.0
 offset_right = 8.0
 offset_bottom = 8.0
+grow_horizontal = 2
 grow_vertical = 2
 
 [node name="DisplayBox" parent="MainContainer" instance=ExtResource("11")]

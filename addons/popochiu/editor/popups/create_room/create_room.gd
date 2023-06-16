@@ -117,7 +117,8 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the room instance
-	var new_room: PopochiuRoom = preload(BASE_ROOM_PATH).instantiate()
+	var new_room: PopochiuRoom = load(BASE_ROOM_PATH).instantiate()
+	
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_room.set_script(load(_room_path + '.gd'))
@@ -157,9 +158,11 @@ func _create() -> void:
 	)
 	
 	# Establecer como la escena principal
-	if _set_as_main_check.pressed:
+	# Changed _set_as_main_check.pressed to _set_as_main_check.button_pressed
+	# in order to fix #56
+	if _set_as_main_check.button_pressed:
 		_main_dock.set_main_scene(room_resource.scene)
-		row.is_main = true # Para que se vea el corazón
+		row.is_main = true # So the Heart icon shows
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor
@@ -169,6 +172,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# That's all!
+	clear_fields()
 	hide()
 
 
