@@ -324,6 +324,18 @@ func queue_play_animation(animation_label: String, animation_fallback := 'idle',
 	return func(): await play_animation(animation_label, animation_fallback)
 
 
+func queue_stop_animation():
+	return func(): await stop_animation()
+
+
+func queue_pause_animation():
+	return func(): pause_animation()
+
+
+func queue_resume_animation():
+	return func(): resume_animation()
+
+
 func play_animation(animation_label: String, animation_fallback := 'idle'):
 	if not has_node("AnimationPlayer"):
 		printerr("Can't play character animation. Required AnimationPlayer not found in character %s" % [script_name])
@@ -344,6 +356,25 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 	
 	# Go back to idle state
 	_play_idle()
+
+
+func stop_animation():
+	# TODO: consider returning if idle is playing, but in a way
+	# that's directions and animation_prefix aware!
+	var animation = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
+	var animation_loop_mode = animation.loop_mode
+	animation.loop_mode = Animation.LOOP_NONE
+	await $AnimationPlayer.animation_finished
+	_play_idle()
+	animation.loop_mode = animation_loop_mode
+
+
+func pause_animation():
+	$AnimationPlayer.pause()
+
+
+func resume_animation():
+	$AnimationPlayer.play()
 
 
 func face_direction(destination: Vector2):
