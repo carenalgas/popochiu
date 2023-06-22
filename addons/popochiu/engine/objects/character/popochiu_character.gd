@@ -328,6 +328,10 @@ func queue_stop_animation():
 	return func(): await stop_animation()
 
 
+func queue_halt_animation():
+	return func(): halt_animation()
+
+
 func queue_pause_animation():
 	return func(): pause_animation()
 
@@ -359,14 +363,22 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 
 
 func stop_animation():
-	# TODO: consider returning if idle is playing, but in a way
-	# that's directions and animation_prefix aware!
+	# If the animation is not looping or is an idle one, do nothing
+	if  $AnimationPlayer.get_animation($AnimationPlayer.current_animation) == Animation.LOOP_NONE or \
+		$AnimationPlayer.current_animation == 'idle' or \
+		$AnimationPlayer.current_animation.begins_with('idle_'):
+		return
+	# save the loop mode, wait for the anim to be over as designed, then restore the mode
 	var animation = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
 	var animation_loop_mode = animation.loop_mode
 	animation.loop_mode = Animation.LOOP_NONE
 	await $AnimationPlayer.animation_finished
 	_play_idle()
 	animation.loop_mode = animation_loop_mode
+
+
+func halt_animation():
+	_play_idle()
 
 
 func pause_animation():
