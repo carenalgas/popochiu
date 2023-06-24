@@ -64,7 +64,7 @@ func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the state Resource for the room and a script so devs can add extra
 	# properties to that state
-	var state_template: Script = load(ROOM_STATE_TEMPLATE)
+	var state_template: Script = load(ROOM_STATE_TEMPLATE).duplicate()
 	if ResourceSaver.save(state_template, _room_path + '_state.gd') != OK:
 		push_error('[Popochiu] Could not create room state script: %s' %\
 		_room_name)
@@ -86,7 +86,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the room
-	var room_script: Script = load(ROOM_SCRIPT_TEMPLATE)
+	var room_script: Script = load(ROOM_SCRIPT_TEMPLATE).duplicate()
 	var new_code := room_script.source_code
 	
 	room_script.source_code = ''

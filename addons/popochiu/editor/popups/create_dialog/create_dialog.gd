@@ -40,7 +40,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script of the new dialog
-	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE)
+	var dialog_template := load(DIALOG_SCRIPT_TEMPLATE).duplicate()
 	
 	if ResourceSaver.save(dialog_template, _new_dialog_path + '.gd') != OK:
 		push_error(

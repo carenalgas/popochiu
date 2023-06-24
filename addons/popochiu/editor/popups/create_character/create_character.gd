@@ -49,7 +49,7 @@ func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the state Resource for the character and a script so devs
 	# can add extra properties to that state
-	var state_template: Script = load(CHARACTER_STATE_TEMPLATE)
+	var state_template: Script = load(CHARACTER_STATE_TEMPLATE).duplicate()
 	if ResourceSaver.save(
 		state_template, _new_character_path + '_state.gd'
 	) != OK:
@@ -76,7 +76,7 @@ func _create() -> void:
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the character
-	var character_script: Script = load(CHARACTER_SCRIPT_TEMPLATE)
+	var character_script: Script = load(CHARACTER_SCRIPT_TEMPLATE).duplicate()
 	var new_code := character_script.source_code
 	
 	character_script.source_code = ''
