@@ -219,6 +219,9 @@ func _populate_tags(tags: Array):
 		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
 		get_node('%Tags').add_child(tag_row)
 		tag_row.init(config, t)
+		# Show props-related buttons if we are in a room
+		if target_node is PopochiuRoom:
+			tag_row.show_prop_buttons()
 		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
 		
 	_update_tags_cache()

@@ -1,6 +1,6 @@
 extends EditorInspectorPlugin ## TODO: create a base class with pointer variables
 
-const INSPECTOR_DOCK = preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_player_inspector_dock.tscn")
+const INSPECTOR_DOCK = preload("res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock.tscn")
 const CONFIG_SCRIPT = preload("res://addons/popochiu/editor/config/config.gd")
 
 var ei: EditorInterface

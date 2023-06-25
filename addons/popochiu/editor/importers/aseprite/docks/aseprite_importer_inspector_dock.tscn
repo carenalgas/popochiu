@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://qtefsrha1b7s"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/importers/aseprite/docks/animation_player_inspector_dock.gd" id="1"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock.gd" id="1"]
 
 [sub_resource type="StyleBoxEmpty" id="1"]
 
