@@ -59,6 +59,23 @@ func _ready():
 	E.room_readied(self)
 
 
+func _get_property_list():
+	var properties = []
+	properties.append({
+		name = "Aseprite",
+		type = TYPE_NIL,
+		usage = PROPERTY_USAGE_CATEGORY
+	})
+	# This is needed or the category won't be shown in the
+	# inspector. AsepriteImporterInspectorPlugin hides it.
+	properties.append({
+		name = "popochiu_placeholder",
+		type = TYPE_NIL,
+	})
+
+	return properties
+
+
 func _physics_process(delta):
 	if _moving_characters.is_empty(): return
 

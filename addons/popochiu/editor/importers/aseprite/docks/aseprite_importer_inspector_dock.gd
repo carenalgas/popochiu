@@ -1,9 +1,10 @@
 @tool
 extends PanelContainer
 
+# TODO: review coding standards for those constants
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 const LOCAL_OBJ_CONFIG = preload("res://addons/popochiu/editor/config/local_obj_config.gd")
-# TODO: import a class without breaking coding standards... how?
+## TODO: this can be specialized, even if for a two buttons... ?
 const AnimationTagRow = preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd")
 
 
@@ -14,13 +15,17 @@ var file_system: EditorFileSystem
 
 
 # External logic
-var _animation_creator = preload("res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
 var _animation_tag_row_scene: PackedScene = preload('res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.tscn')
+var _aseprite = preload("../aseprite_controller.gd").new() ## TODO: should be absolute?
+
+# References for children scripts
+var _root_node: Node
+var _options: Dictionary
 
 # Importer parameters variables
 var _source: String = ""
 var _tags_cache: Array = []
-var _animation_player_path: String
+#var _animation_player_path: String ## TODO: remove / move into specific class (Character)
 var _file_dialog_aseprite: FileDialog
 var _output_folder_dialog: FileDialog
 var _importing := false
@@ -31,24 +36,16 @@ var _out_folder_default := "[Same as scene]"
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	_set_elements_styles()
-	
-	if not target_node.has_node("AnimationPlayer"):
-		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND))
-		return
 
-	_animation_player_path = target_node.get_node("AnimationPlayer").get_path()
-
-	# Instantiate animation creator
-	_animation_creator.init(config, file_system)
-
+	# Init Aseprite helper library
+	_aseprite.init(config)
 	# Check access to Aseprite executable
-	var result = _animation_creator.check_aseprite()
+	var result = _check_aseprite()
 	if result == RESULT_CODE.SUCCESS:
 		_show_importer()
 	else:
 		printerr(RESULT_CODE.get_error_message(result))
 		_hide_importer()
-
 
 	# Load inspector dock configuration from node
 	var cfg = LOCAL_OBJ_CONFIG.load_config(target_node)
@@ -61,6 +58,36 @@ func _ready():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func _check_aseprite() -> int:
+	_aseprite.init(config)
+
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	
+	return RESULT_CODE.SUCCESS	
+
+
+func _list_tags(file: String):
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	return _aseprite.list_tags(file)
+
+
+## TODO: Currently unused. keeping this as reference
+## to populate a checkable list of layers
+func _list_layers(file: String, only_visibles = false):
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	return _aseprite.list_layers(file, only_visibles)
+
+
 func _load_config(cfg):
 	if cfg.has("source"):
 		_set_source(cfg.source)
@@ -78,7 +105,7 @@ func _load_config(cfg):
 func _save_config():
 	_update_tags_cache()
 	var cfg := {
-		"player": _animation_player_path,
+#		"player": _animation_player_path, # TODO: is this really necessary?
 		"source": _source,
 		"tags": _tags_cache,
 		"op_exp": get_node('%Options').visible,
@@ -138,37 +165,23 @@ func _on_import_pressed():
 		return
 	_importing = true
 
-	var root = get_tree().get_edited_scene_root()
-
-	if _animation_player_path == "" or not root.has_node(_animation_player_path):
-		_show_message("AnimationPlayer not found")
-		_importing = false
-		return
+	_root_node = get_tree().get_edited_scene_root()
 
 	if _source == "":
 		_show_message("Aseprite file not selected")
 		_importing = false
 		return
 
-	var options = {
+	_options = {
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
-		"output_folder": _output_folder if _output_folder != "" else root.scene_file_path.get_base_dir(),
+		"output_folder": _output_folder if _output_folder != "" else _root_node.scene_file_path.get_base_dir(),
 		"output_filename": get_node('%OutFileName').text,
 		"only_visible_layers": get_node('%VisibleLayersCheckButton').is_pressed(),
 		"wipe_old_animations": get_node('%WipeOldAnimationsCheckButton').is_pressed(),
 	}
 
 	_save_config()
-
-	var result = await _animation_creator.create_animations(target_node, root.get_node(_animation_player_path), options)
-	_importing = false
-	
-	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
-		printerr(RESULT_CODE.get_error_message(result))
-		_show_message("Some errors occurred. Please check output panel.", "Warning!")
-	else:
-		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
 
 
 func _on_reset_pressed():
@@ -219,12 +232,15 @@ func _populate_tags(tags: Array):
 		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
 		get_node('%Tags').add_child(tag_row)
 		tag_row.init(config, t)
-		# Show props-related buttons if we are in a room
-		if target_node is PopochiuRoom:
-			tag_row.show_prop_buttons()
 		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
-		
+		_customize_tag_ui(tag_row)
+		# Invoke customization hook implementable in child classes		
 	_update_tags_cache()
+
+
+func _customize_tag_ui(tagrow: AnimationTagRow):
+	## This can be implemented by child classes if necessary
+	pass
 
 
 func _empty_tags_container():
@@ -264,7 +280,7 @@ func _get_tags_from_ui() -> Array:
 
 
 func _get_tags_from_source() -> Array:
-	var tags_found = _animation_creator.list_tags(ProjectSettings.globalize_path(_source))
+	var tags_found = _list_tags(ProjectSettings.globalize_path(_source))
 	if typeof(tags_found) == TYPE_INT:
 		printerr(RESULT_CODE.get_error_message(tags_found))
 		return []
@@ -357,6 +373,4 @@ func _show_importer():
 	get_node('%Importer').visible = true
 	get_node('%Warning').visible = false
 
-
-## TODO: IMPORTANT AND FIRST IN LINE! The importer has different behavior for Characters, Rooms and Inventory items!
 ## TODO: Introduce layer selection list, more or less as tags

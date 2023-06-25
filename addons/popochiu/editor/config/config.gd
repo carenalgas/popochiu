@@ -8,6 +8,8 @@ const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
 # PROJECT SETTINGS
 const _DEFAULT_IMPORT_ENABLED = 'popochiu/import/aseprite/import_animation_by_default'
 const _DEFAULT_LOOP_ENABLED = 'popochiu/import/aseprite/loop_animation_by_default'
+const _DEFAULT_PROP_VISIBLE_ENABLED = 'popochiu/import/aseprite/new_props_visible_by_default'
+const _DEFAULT_PROP_CLICKABLE_ENABLED = 'popochiu/import/aseprite/new_props_clickable_by_default'
 const _DEFAULT_WIPE_OLD_ANIMS_ENABLED = 'popochiu/import/aseprite/wipe_old_animations'
 
 
@@ -27,6 +29,8 @@ func initialize_editor_settings():
 func initialize_project_settings():
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_PROP_VISIBLE_ENABLED, true, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_PROP_CLICKABLE_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true, TYPE_BOOL)
 
 	_set_icons()
@@ -52,6 +56,14 @@ func is_default_animation_import_enabled() -> bool:
 
 func is_default_animation_loop_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_LOOP_ENABLED, true)
+
+
+func is_default_animation_prop_visible() -> bool:
+	return _get_project_setting(_DEFAULT_PROP_VISIBLE_ENABLED, true)
+
+
+func is_default_animation_prop_clickable() -> bool:
+	return _get_project_setting(_DEFAULT_PROP_CLICKABLE_ENABLED, true)
 
 
 func is_default_wipe_old_anims_enabled() -> bool:

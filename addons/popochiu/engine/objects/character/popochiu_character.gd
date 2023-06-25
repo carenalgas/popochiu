@@ -41,6 +41,7 @@ func _ready():
 		hide_helpers()
 		set_process(true)
 
+
 func _get_property_list():
 	var properties = []
 	properties.append({

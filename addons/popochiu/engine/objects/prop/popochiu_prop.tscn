@@ -20,3 +20,5 @@ color = Color(0, 1, 1, 1)
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]

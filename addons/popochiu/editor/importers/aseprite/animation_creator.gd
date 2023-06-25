@@ -8,27 +8,17 @@ extends RefCounted
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 const _DEFAULT_AL = "" # Empty string equals default "Global" animation library
 
-var _aseprite = preload("./aseprite_controller.gd").new()
-
 var _config: RefCounted
 var _file_system: EditorFileSystem
 var _tags_options_lookup = {}
+var _aseprite: RefCounted
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func init(config, editor_file_system: EditorFileSystem = null):
+func init(config, aseprite: RefCounted, editor_file_system: EditorFileSystem = null):
 	_config = config
 	_file_system = editor_file_system
-	_aseprite.init(config)
-
-
-func check_aseprite() -> int:
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	
-	return RESULT_CODE.SUCCESS
+	_aseprite = aseprite
 
 
 func create_animations(target_node: Node, player: AnimationPlayer, options: Dictionary):
@@ -61,24 +51,6 @@ func create_animations(target_node: Node, player: AnimationPlayer, options: Dict
 	
 	if result != RESULT_CODE.SUCCESS:
 		printerr(RESULT_CODE.get_error_message(result))
-
-
-## TODO: Keep this as reference to populate a checkable list of layers
-func list_layers(file: String, only_visibles = false):
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	return _aseprite.list_layers(file, only_visibles)
-
-
-func list_tags(file: String):
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	return _aseprite.list_tags(file)
-
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
