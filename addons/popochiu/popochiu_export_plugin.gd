@@ -9,11 +9,11 @@ func _export_begin(features: PackedStringArray, is_debug: bool, path: String, fl
 	
 	file.close()
 
-
-## Logic for Aseprite Importer
-## This code removes importer's metadata from nodes before exporting them
-## Thanks to Vinicius Gerevini and his Aseprite Wizard plugin for that!
-## TODO: may be moved to another file so we keep things separated
+# Logic for Aseprite Importer
+# This code removes importer's metadata from nodes before exporting them
+# Thanks to Vinicius Gerevini and his Aseprite Wizard plugin for that!
+# This code is run independent of the importer to be enabled, to clean things up.
+# TODO: may be moved to another file so we keep things separated
 func _export_file(path: String, type: String, features: PackedStringArray) -> void:
 	if type != "PackedScene": return
 

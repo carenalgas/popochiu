@@ -5,22 +5,15 @@
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 
-const PROP_SCRIPT_TEMPLATE :=\
-'res://addons/popochiu/engine/templates/prop_template.gd'
-const BASE_PROP_PATH :=\
-'res://addons/popochiu/engine/objects/prop/popochiu_prop.tscn'
-const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
-const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
+## TODO: remove this legacy...
+#const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
 
+## TODO: remove this legacy...
 var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_prop_name := ''
-var _new_prop_path := ''
-var _prop_path_template := ''
-var _room_path := ''
-var _room_dir := ''
-var _pascal_name := ''
+var _factory: PopochiuPropFactory
 
 @onready var _interaction_checkbox: CheckBox = find_child('InteractionCheckbox')
 
@@ -38,108 +31,41 @@ func _create() -> void:
 	if _new_prop_name.is_empty():
 		_error_feedback.show()
 		return
-	
-	# TODO: Check if another Prop was created in the same PATH.
-	# TODO: Remove created files if the creation process failed.
-	var script_path := _new_prop_path + '.gd'
-	
+
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the folder for the Prop
-	assert(
-		DirAccess.make_dir_recursive_absolute(_new_prop_path.get_base_dir()) == OK,
-		'[Popochiu] Could not create prop folder for ' + _new_prop_name
-	)
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the script for the prop (if it has interaction)
-	if _interaction_checkbox.button_pressed:
-		var prop_template := load(PROP_SCRIPT_TEMPLATE)
-		
-		if ResourceSaver.save(prop_template, script_path) != OK:
-			push_error(
-				"[Popochiu] Couldn't create script: %s.gd" % _new_prop_name
-			)
-			# TODO: Show feedback in the popup
-			return
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the prop
-	var prop: PopochiuProp = ResourceLoader.load(BASE_PROP_PATH).instantiate()
-	
-	if _interaction_checkbox.button_pressed:
-		prop.set_script(ResourceLoader.load(script_path))
-	
-	prop.name = _pascal_name
-	prop.script_name = _pascal_name
-	prop.description = _new_prop_name.capitalize()
-	prop.clickable = _interaction_checkbox.button_pressed
-	prop.cursor = Constants.CURSOR_TYPE.ACTIVE
-	
-	if PopochiuResources.get_settings().is_pixel_art_game:
-		prop.get_node("Sprite2D").texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-	
-	if _new_prop_name in ['bg', 'background']:
-		prop.baseline =\
-		-ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT) / 2.0
-		prop.z_index = -1
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Save the prop scene (.tscn)
-	var prop_packed_scene: PackedScene = PackedScene.new()
-	prop_packed_scene.pack(prop)
-	if ResourceSaver.save(
-		prop_packed_scene, _new_prop_path + '.tscn'
-	) != OK:
-		push_error("[Popochiu] Couldn't create prop: %s.tscn" % _new_prop_name)
-		# TODO: Show feedback in the popup
+	# Setup the prop helper and use it to create the prop
+	_factory = PopochiuPropFactory.new(_main_dock)
+
+	if _factory.create(
+		_new_prop_name, _room,
+		_interaction_checkbox.button_pressed
+	) != ResultCodes.SUCCESS:
+		# TODO: show a message in the popup!
 		return
-	
+
+	var prop_instance = _factory.get_obj_scene()
+
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the prop to its room
-	# Instancing the created .tscn file fixes #58
-	var prop_instance: PopochiuProp = load(_new_prop_path + '.tscn').instantiate()
-	
-	_room.get_node('Props').add_child(prop_instance)
-	
-	prop_instance.owner = _room
-	prop_instance.position = Vector2(
-		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
-		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
-	) / 2.0
-	
-	if _interaction_checkbox.button_pressed:
-		var collision := CollisionPolygon2D.new()
-		collision.name = 'InteractionPolygon'
-		
-		prop_instance.add_child(collision)
-		collision.owner = _room
-	
-	_main_dock.ei.save_scene()
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Abrir las propiedades de la prop creada en el Inspector
+	# Open the properties of the created prop in the inspector
+	# Done here because the creation is interactive in this case
 	_main_dock.fs.scan()
 	await get_tree().create_timer(0.1).timeout
-	PopochiuEditorHelper.select_node(prop_instance)
-	_main_dock.ei.select_file(_new_prop_path + '.tscn')
+	_main_dock.ei.edit_node(prop_instance)
+	_main_dock.ei.select_file(prop_instance.scene_file_path)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Fin
+	# End
 	hide()
 
 
 func _clear_fields() -> void:
 	_new_prop_name = ''
-	_new_prop_path = ''
 	_interaction_checkbox.button_pressed = false
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func room_opened(r: Node2D) -> void:
 	_room = r
-	_room_path = _room.scene_file_path
-	_room_dir = _room_path.get_base_dir()
-	_prop_path_template = _room_dir + '/props/%s/prop_%s'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -148,8 +74,6 @@ func _update_name(new_text: String) -> void:
 
 	if _name:
 		_new_prop_name = _name.to_snake_case()
-		_pascal_name = _name
-		_new_prop_path = _prop_path_template % [_new_prop_name, _new_prop_name]
 
 		_update_info()
 		_info.show()
@@ -169,7 +93,7 @@ func _update_info() -> void:
 	_info.text = (
 		'In [b]%s[/b] the following file will be created:\n[code]%s[/code]' \
 		% [
-			_new_prop_path.get_base_dir(),
+			_room.scene_file_path.get_base_dir() + '/props',
 			'prop_' + _new_prop_name + '.gd'
 		]
 	)

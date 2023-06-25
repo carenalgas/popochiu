@@ -17,6 +17,7 @@ extends Node2D
 @export var limit_right := INF
 @export var limit_top := INF
 @export var limit_bottom := INF
+@export_category("Aseprite")
 
 var is_current := false : set = set_is_current
 
@@ -57,6 +58,15 @@ func _ready():
 	set_physics_process(false)
 	
 	E.room_readied(self)
+
+
+func _get_property_list() -> Array[Dictionary]:
+	return [
+		{
+			name = "popochiu_placeholder",
+			type = TYPE_NIL,
+		}
+	]
 
 
 func _physics_process(delta):

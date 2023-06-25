@@ -27,6 +27,7 @@ var _inspector_plugins := []
 var _selected_node: Node = null
 var _btn_baseline := Button.new()
 var _btn_walk_to := Button.new()
+var _btn_interaction_polygon := Button.new()
 var _types_helper: Resource = null
 var _tool_btn_stylebox :=\
 _editor_interface.get_base_control().get_theme_stylebox("normal", "Button")
@@ -70,7 +71,15 @@ func _enter_tree() -> void:
 	config.ei = _editor_interface
 	config.initialize_editor_settings()
 	config.initialize_project_settings()
-	
+
+	# Configure main dock to be passed down the plugin chain
+	# TODO: Get rid of this cascading assignment and switch to
+	# a signalbus instead!
+	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
+	main_dock.ei = _editor_interface
+	main_dock.fs = _editor_file_system
+	main_dock.focus_mode = Control.FOCUS_ALL
+
 	for path in [
 		'res://addons/popochiu/editor/inspector/character_inspector_plugin.gd',
 		'res://addons/popochiu/editor/inspector/walkable_area_inspector_plugin.gd',
@@ -82,6 +91,7 @@ func _enter_tree() -> void:
 		eip.set('ei', _editor_interface)
 		eip.set('fs', _editor_file_system)
 		eip.set('config', config)
+		eip.set('main_dock', main_dock) # TODO: change with SignalBus
 		
 		_inspector_plugins.append(eip)
 		add_inspector_plugin(eip)
@@ -360,10 +370,15 @@ func _check_nodes() -> void:
 			or _types_helper.is_hotspot(_selected_node):
 				_btn_baseline.set_pressed_no_signal(false)
 				_btn_walk_to.set_pressed_no_signal(false)
+				_btn_interaction_polygon.set_pressed_no_signal(false)
 			
-			_btn_baseline.get_parent().show()
+			_btn_baseline.show()
+			_btn_walk_to.show()
+			_btn_interaction_polygon.show()
 		else:
-			_btn_baseline.get_parent().hide()
+			_btn_baseline.hide()
+			_btn_walk_to.hide()
+			_btn_interaction_polygon.hide()
 
 
 func _on_files_moved(old_file: String, new_file: String) -> void:
@@ -393,21 +408,31 @@ func _create_container_buttons() -> void:
 	_btn_walk_to.add_theme_stylebox_override('hover', _tool_btn_stylebox)
 	_btn_walk_to.pressed.connect(_select_walk_to)
 	
+	_btn_interaction_polygon.icon = preload('res://addons/popochiu/icons/interaction_polygon.png')
+	_btn_interaction_polygon.tooltip_text = 'Interaction Polygon'
+	_btn_interaction_polygon.toggle_mode = true
+	_btn_interaction_polygon.add_theme_stylebox_override('normal', _tool_btn_stylebox)
+	_btn_interaction_polygon.add_theme_stylebox_override('hover', _tool_btn_stylebox)
+	_btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
+	
+	hbox.add_child(_vsep)
 	hbox.add_child(_btn_baseline)
 	hbox.add_child(_btn_walk_to)
+	hbox.add_child(_btn_interaction_polygon)
 	
 	add_control_to_container(
 		EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU,
 		hbox
 	)
-	
-	hbox.hide()
+
+	_vsep.hide()
+	_btn_baseline.hide()
+	_btn_walk_to.hide()
 
 
 func _select_walk_to() -> void:
 	_btn_walk_to.set_pressed_no_signal(true)
 	_btn_baseline.set_pressed_no_signal(false)
-	
 	_editor_interface.get_selection().clear()
 	
 	if _types_helper.is_prop(_selected_node)\
@@ -422,9 +447,7 @@ func _select_walk_to() -> void:
 
 
 func _select_baseline() -> void:
-	_btn_baseline.set_pressed_no_signal(true)
 	_btn_walk_to.set_pressed_no_signal(false)
-	
 	_editor_interface.get_selection().clear()
 	
 	if _types_helper.is_prop(_selected_node)\
@@ -436,6 +459,24 @@ func _select_baseline() -> void:
 		_editor_interface.get_selection().add_node(
 			_selected_node.get_node("../BaselineHelper")
 		)
+
+
+func _select_interaction_polygon() -> void:
+	_btn_walk_to.set_pressed_no_signal(false)
+	_btn_baseline.set_pressed_no_signal(false)
+	_btn_interaction_polygon.set_pressed_no_signal(true)
+	_vsep.hide()
+	
+	var collision_polygon: CollisionPolygon2D = null
+	
+	if _types_helper.is_prop(_selected_node)\
+	or _types_helper.is_hotspot(_selected_node):
+		collision_polygon = _selected_node.get_node('InteractionPolygon')
+	else:
+		collision_polygon = _selected_node.get_node('../InteractionPolygon')
+	
+	_editor_interface.edit_node(collision_polygon)
+	collision_polygon.get_parent().editing_polygon = true
 
 
 func _move_to_project(id: int) -> void:
