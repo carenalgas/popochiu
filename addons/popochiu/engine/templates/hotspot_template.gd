@@ -13,8 +13,8 @@ func _on_click() -> void:
 	# For example you can make the character walk to the Hotspot and then say
 	# something:
 #	E.queue([
-#		C.walk_to_clicked(),
-#		C.face_clicked(),
+#		C.queue_walk_to_clicked(),
+#		C.queue_face_clicked(),
 #		"Player: Can't open it"
 #	])
 	super.on_click()
@@ -27,7 +27,7 @@ func _on_right_click() -> void:
 	# For example you can make the character walk to the Hotspot and then say
 	# something:
 #	E.queue([
-#		C.face_clicked(),
+#		C.queue_face_clicked(),
 #		'Player: A closed door'
 #	])
 	super.on_right_click()
