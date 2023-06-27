@@ -171,8 +171,8 @@ const AUDIO_CUE_SOUND :=\
 'res://addons/popochiu/engine/audio_manager/audio_cue_sound.gd'
 const AUDIO_CUE_MUSIC :=\
 'res://addons/popochiu/engine/audio_manager/audio_cue_music.gd'
-const VAR_AUDIO_CUE_SOUND := 'var %s: AudioCueSound = preload("%s")\n'
-const VAR_AUDIO_CUE_MUSIC := 'var %s: AudioCueMusic = preload("%s")\n'
+const VAR_AUDIO_CUE_SOUND := 'var %s: AudioCueSound = load("%s")\n'
+const VAR_AUDIO_CUE_MUSIC := 'var %s: AudioCueMusic = load("%s")\n'
 # ════ GODOT PROJECT SETTINGS ══════════════════════════════════════════════════
 const DISPLAY_WIDTH := 'display/window/size/viewport_width'
 const DISPLAY_HEIGHT := 'display/window/size/viewport_height'
