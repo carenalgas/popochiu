@@ -20,8 +20,10 @@ func _on_room_entered() -> void:
 # What happens when the room changing transition finishes. At this point the room
 # is visible.
 func _on_room_transition_finished() -> void:
-	# You can use await E.queue([]) to excecute a queue of instructions
-	pass
+	E.queue([
+		C.Goddiu.queue_say('Hi 01'),
+		"01: [wave]Hi!!!!!!![/wave]"
+	])
 
 
 # What happens before Popochiu unloads the room.
