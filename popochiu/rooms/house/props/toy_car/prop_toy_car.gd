@@ -8,21 +8,25 @@ extends PopochiuProp
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func _on_click() -> void:
-	await C.walk_to_clicked()
-	await C.face_clicked()
-	await C.Goddiu.say('My old toy car...')
-	await I.ToyCar.add()
+	E.queue([
+		C.queue_walk_to_clicked(),
+		C.queue_face_clicked(),
+		A.vo_goddiu_01.queue_play(),
+		'Player: My old toy car!',
+	])
 
 
 # When the node is right clicked
 func _on_right_click() -> void:
-	E.queue([
-		C.queue_walk_to_clicked(),
-		C.queue_face_clicked(),
-		'Player: I used to play a lot with this when I was a child',
-		"Popsy: What? You're still a child",
-		"Player: [shake]Hmmmmm[/shake]"
-	])
+	# Replace the call to super() to implement your code. This only makes
+	# the default behavior to happen.
+	# For example you can make the character walk to the Prop and then say
+	# something:
+#	E.queue([
+#		C.face_clicked(),
+#		'Player: A deck of cards'
+#	])
+	super.on_right_click()
 
 
 # When the node is clicked and there is an inventory item selected

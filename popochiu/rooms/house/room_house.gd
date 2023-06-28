@@ -14,15 +14,16 @@ var state: Data = load('res://popochiu/rooms/house/room_house.tres')
 # What happens when Popochiu loads the room. At this point the room is in the
 # tree but it is not visible
 func _on_room_entered() -> void:
-	pass
+	A.mx_house.play()
 
 
 # What happens when the room changing transition finishes. At this point the room
 # is visible.
 func _on_room_transition_finished() -> void:
-	# You can use await E.queue([]) to excecute a queue of instructions
-	prints(state.coco)
-	
+	E.queue([
+		C.Goddiu.queue_say('Hi 01'),
+		"01: [wave]Hi!!!!!!![/wave]"
+	])
 
 
 # What happens before Popochiu unloads the room.

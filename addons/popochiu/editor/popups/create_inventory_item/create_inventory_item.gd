@@ -47,7 +47,7 @@ func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the state Resource for the item and a script so devs
 	# can add extra properties to that state
-	var state_template: Script = load(INVENTORY_ITEM_STATE_TEMPLATE)
+	var state_template: Script = load(INVENTORY_ITEM_STATE_TEMPLATE).duplicate()
 	if ResourceSaver.save(state_template, _new_item_path + '_state.gd') != OK:
 		push_error(
 			"[Popochiu] Couldn't create item state script: %s" %\
@@ -72,7 +72,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the item
-	var item_script: Script = load(INVENTORY_ITEM_SCRIPT_TEMPLATE)
+	var item_script: Script = load(INVENTORY_ITEM_SCRIPT_TEMPLATE).duplicate()
 	var new_code := item_script.source_code
 	
 	item_script.source_code = ''

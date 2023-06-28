@@ -64,7 +64,7 @@ func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the state Resource for the room and a script so devs can add extra
 	# properties to that state
-	var state_template: Script = load(ROOM_STATE_TEMPLATE)
+	var state_template: Script = load(ROOM_STATE_TEMPLATE).duplicate()
 	if ResourceSaver.save(state_template, _room_path + '_state.gd') != OK:
 		push_error('[Popochiu] Could not create room state script: %s' %\
 		_room_name)
@@ -86,7 +86,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the room
-	var room_script: Script = load(ROOM_SCRIPT_TEMPLATE)
+	var room_script: Script = load(ROOM_SCRIPT_TEMPLATE).duplicate()
 	var new_code := room_script.source_code
 	
 	room_script.source_code = ''
@@ -117,7 +117,8 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the room instance
-	var new_room: PopochiuRoom = preload(BASE_ROOM_PATH).instantiate()
+	var new_room: PopochiuRoom = load(BASE_ROOM_PATH).instantiate()
+	
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	new_room.set_script(load(_room_path + '.gd'))
@@ -157,9 +158,11 @@ func _create() -> void:
 	)
 	
 	# Establecer como la escena principal
-	if _set_as_main_check.pressed:
+	# Changed _set_as_main_check.pressed to _set_as_main_check.button_pressed
+	# in order to fix #56
+	if _set_as_main_check.button_pressed:
 		_main_dock.set_main_scene(room_resource.scene)
-		row.is_main = true # Para que se vea el corazón
+		row.is_main = true # So the Heart icon shows
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor
@@ -169,6 +172,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# That's all!
+	clear_fields()
 	hide()
 
 

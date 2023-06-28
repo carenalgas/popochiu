@@ -530,7 +530,7 @@ func _remove_from_core() -> void:
 				_disconnect_popup()
 				return
 	
-	if _delete_all_checkbox.pressed:
+	if _delete_all_checkbox.button_pressed:
 		_delete_from_file_system()
 	elif type in Constants.MAIN_TYPES:
 		show_add_to_core()
@@ -539,7 +539,8 @@ func _remove_from_core() -> void:
 	
 	_disconnect_popup()
 	
-	if main_dock.ei.get_edited_scene_root().script_name == name:
+	if main_dock.ei.get_edited_scene_root().get('script_name')\
+	and main_dock.ei.get_edited_scene_root().script_name == name:
 		return
 	
 	main_dock.ei.save_scene()

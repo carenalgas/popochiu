@@ -1,12 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://bsuahdl3vk4c5"]
+[gd_scene load_steps=2 format=3 uid="uid://61e3u8ba5jrq"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/prop/popochiu_prop.gd" id="1_xno5k"]
+[ext_resource type="Script" path="res://popochiu/rooms/house/props/toy_car/prop_toy_car.gd" id="1_y43oq"]
 
-[node name="Background" type="Area2D"]
-script = ExtResource("1_xno5k")
-script_name = "Background"
-description = "Background"
-clickable = false
+[node name="ToyCar" type="Area2D"]
+script = ExtResource("1_y43oq")
+script_name = "ToyCar"
+description = "Toy Car"
 cursor = 1
 
 [node name="BaselineHelper" type="Line2D" parent="."]

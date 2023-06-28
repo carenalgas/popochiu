@@ -171,8 +171,8 @@ const AUDIO_CUE_SOUND :=\
 'res://addons/popochiu/engine/audio_manager/audio_cue_sound.gd'
 const AUDIO_CUE_MUSIC :=\
 'res://addons/popochiu/engine/audio_manager/audio_cue_music.gd'
-const VAR_AUDIO_CUE_SOUND := 'var %s: AudioCueSound = preload("%s")\n'
-const VAR_AUDIO_CUE_MUSIC := 'var %s: AudioCueMusic = preload("%s")\n'
+const VAR_AUDIO_CUE_SOUND := 'var %s: AudioCueSound = load("%s")\n'
+const VAR_AUDIO_CUE_MUSIC := 'var %s: AudioCueMusic = load("%s")\n'
 # ════ GODOT PROJECT SETTINGS ══════════════════════════════════════════════════
 const DISPLAY_WIDTH := 'display/window/size/viewport_width'
 const DISPLAY_HEIGHT := 'display/window/size/viewport_height'
@@ -242,7 +242,7 @@ static func update_autoloads(save := false) -> void:
 				var var_name: String = key
 				var snake_name := key.to_snake_case()
 					
-				if int(var_name[0]) != 0:
+				if var_name[0].is_valid_int():
 					var_name = var_name.insert(0, sngl_setup.prefix)
 				
 				if code.find('var %s' % var_name) < 0:

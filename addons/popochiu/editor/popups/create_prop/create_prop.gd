@@ -75,7 +75,7 @@ func _create() -> void:
 	prop.clickable = _interaction_checkbox.button_pressed
 	prop.cursor = Constants.CURSOR_TYPE.ACTIVE
 	
-	if _new_prop_name in ['Bg', 'Background']:
+	if _new_prop_name in ['bg', 'background']:
 		prop.baseline =\
 		-ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT) / 2.0
 		prop.z_index = -1
@@ -93,10 +93,13 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Add the prop to its room
-	_room.get_node('Props').add_child(prop)
+	# Instancing the created .tscn file fixes #58
+	var prop_instance: PopochiuProp = load(_new_prop_path + '.tscn').instantiate()
 	
-	prop.owner = _room
-	prop.position = Vector2(
+	_room.get_node('Props').add_child(prop_instance)
+	
+	prop_instance.owner = _room
+	prop_instance.position = Vector2(
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
@@ -105,7 +108,7 @@ func _create() -> void:
 		var collision := CollisionPolygon2D.new()
 		collision.name = 'InteractionPolygon'
 		
-		prop.add_child(collision)
+		prop_instance.add_child(collision)
 		collision.owner = _room
 	
 	_main_dock.ei.save_scene()
@@ -122,8 +125,7 @@ func _create() -> void:
 	# Abrir las propiedades de la prop creada en el Inspector
 	_main_dock.fs.scan()
 	await get_tree().create_timer(0.1).timeout
-	_main_dock.ei.edit_node(prop)
-	
+	_main_dock.ei.edit_node(prop_instance)
 	_main_dock.ei.select_file(_new_prop_path + '.tscn')
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
