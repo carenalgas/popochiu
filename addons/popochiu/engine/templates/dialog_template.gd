@@ -6,8 +6,11 @@ extends PopochiuDialog
 func _on_start() -> void:
 	# One can put here something to excecute before showing the dialog options.
 	# E.g. Make the PC to look at the character which it will talk to, walk to
-	# it, and say something (or make the character say something)
-	# (!) It MUST always use a yield
+	# it, and say something (or make the character say something):
+# 	await C.player.face_clicked()
+# 	await C.player.say("Hi")
+# 	await C.Popsy.say("Oh! Hi...")
+	# (!) It MUST always use an await
 	await E.get_tree().process_frame
 
 
