@@ -6,9 +6,20 @@ const _ASEPRITE_COMMAND_KEY = 'popochiu/import/aseprite/command_path'
 const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
 
 # PROJECT SETTINGS
+
+# Interface
+const _DEFAULT_INVENTORY_ALWAYS_VISIBLE = 'popochiu/interface/inventory_always_visible'
+const _DEFAULT_SCALE_GUI = 'popochiu/interface/scale_gui'
+const _DEFAULT_TOOLBAR_ALWAYS_VISIBLE = 'popochiu/interface/toolbar_always_visible'
+
+# Import
 const _DEFAULT_IMPORT_ENABLED = 'popochiu/import/aseprite/import_animation_by_default'
 const _DEFAULT_LOOP_ENABLED = 'popochiu/import/aseprite/loop_animation_by_default'
 const _DEFAULT_WIPE_OLD_ANIMS_ENABLED = 'popochiu/import/aseprite/wipe_old_animations'
+
+# Text
+const _DEFAULT_AUTO_CONTINUE_TEXT = 'popochiu/text/auto_continue_text'
+const _DEFAULT_USE_TRANSLATIONS = 'popochiu/text/use_translations'
 
 
 var ei: EditorInterface
@@ -25,9 +36,16 @@ func initialize_editor_settings():
 
 
 func initialize_project_settings():
+	_initialize_project_cfg(_DEFAULT_INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_SCALE_GUI, true, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
+
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true, TYPE_BOOL)
+
+	_initialize_project_cfg(_DEFAULT_AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_USE_TRANSLATIONS, false, TYPE_BOOL)
 
 	_set_icons()
 	ProjectSettings.save()
@@ -58,7 +76,6 @@ func is_default_wipe_old_anims_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true)
 
 
-	
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _default_command() -> String:
 	return 'aseprite'
