@@ -12,15 +12,20 @@ const _DEFAULT_SCALE_GUI = 'popochiu/interface/scale_gui'
 const _DEFAULT_INVENTORY_ALWAYS_VISIBLE = 'popochiu/interface/inventory_always_visible'
 const _DEFAULT_TOOLBAR_ALWAYS_VISIBLE = 'popochiu/interface/toolbar_always_visible'
 const _DEFAULT_FADE_COLOR = 'popochiu/interface/fade_color'
+const _DEFAULT_SKIP_CUTSCENE_TIME = 'popochiu/interface/skip_cutscene_time'
+
+# Text
+const _DEFAULT_AUTO_CONTINUE_TEXT = 'popochiu/text/auto_continue_text'
+const _DEFAULT_USE_TRANSLATIONS = 'popochiu/text/use_translations'
+const _DEFAULT_MAX_DIALOG_OPTIONS = 'popochiu/text/max_dialog_options'
+
+# Inventory
+const _DEFAULT_INVENTORY_LIMIT = 'popochiu/inventory/inventory_limit'
 
 # Import
 const _DEFAULT_IMPORT_ENABLED = 'popochiu/import/aseprite/import_animation_by_default'
 const _DEFAULT_LOOP_ENABLED = 'popochiu/import/aseprite/loop_animation_by_default'
 const _DEFAULT_WIPE_OLD_ANIMS_ENABLED = 'popochiu/import/aseprite/wipe_old_animations'
-
-# Text
-const _DEFAULT_AUTO_CONTINUE_TEXT = 'popochiu/text/auto_continue_text'
-const _DEFAULT_USE_TRANSLATIONS = 'popochiu/text/use_translations'
 
 
 var ei: EditorInterface
@@ -41,13 +46,17 @@ func initialize_project_settings():
 	_initialize_project_cfg(_DEFAULT_INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_FADE_COLOR, Color(0, 0, 0, 1), TYPE_COLOR)
+	_initialize_project_cfg(_DEFAULT_SKIP_CUTSCENE_TIME, 0.2, TYPE_FLOAT)
+
+	_initialize_project_cfg(_DEFAULT_AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_USE_TRANSLATIONS, false, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_MAX_DIALOG_OPTIONS, 3, TYPE_INT)
+
+	_initialize_project_cfg(_DEFAULT_INVENTORY_LIMIT, 0, TYPE_INT)
 
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true, TYPE_BOOL)
-
-	_initialize_project_cfg(_DEFAULT_AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
-	_initialize_project_cfg(_DEFAULT_USE_TRANSLATIONS, false, TYPE_BOOL)
 
 	_set_icons()
 	ProjectSettings.save()
@@ -82,6 +91,26 @@ func get_default_fade_color() -> Color:
 	return _get_project_setting(_DEFAULT_FADE_COLOR, Color(0, 0, 0, 1))
 
 
+func get_default_skip_cutscene_time() -> float:
+	return _get_project_setting(_DEFAULT_SKIP_CUTSCENE_TIME, 0.2)
+
+
+func is_default_auto_continue_text() -> bool:
+	return _get_project_setting(_DEFAULT_AUTO_CONTINUE_TEXT, false)
+
+
+func is_default_use_translations() -> bool:
+	return _get_project_setting(_DEFAULT_USE_TRANSLATIONS, false)
+
+
+func get_default_max_dialog_options() -> int:
+	return _get_project_setting(_DEFAULT_MAX_DIALOG_OPTIONS, 3)
+
+
+func get_default_inventory_limit() -> int:
+	return _get_project_setting(_DEFAULT_INVENTORY_LIMIT, 0)
+
+
 func is_default_animation_import_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_IMPORT_ENABLED, true)
 
@@ -92,14 +121,6 @@ func is_default_animation_loop_enabled() -> bool:
 
 func is_default_wipe_old_anims_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true)
-
-
-func is_default_auto_continue_text() -> bool:
-	return _get_project_setting(_DEFAULT_AUTO_CONTINUE_TEXT, false)
-
-
-func is_default_use_translations() -> bool:
-	return _get_project_setting(_DEFAULT_USE_TRANSLATIONS, false)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
