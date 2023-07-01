@@ -8,9 +8,10 @@ const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
 # PROJECT SETTINGS
 
 # Interface
-const _DEFAULT_INVENTORY_ALWAYS_VISIBLE = 'popochiu/interface/inventory_always_visible'
 const _DEFAULT_SCALE_GUI = 'popochiu/interface/scale_gui'
+const _DEFAULT_INVENTORY_ALWAYS_VISIBLE = 'popochiu/interface/inventory_always_visible'
 const _DEFAULT_TOOLBAR_ALWAYS_VISIBLE = 'popochiu/interface/toolbar_always_visible'
+const _DEFAULT_FADE_COLOR = 'popochiu/interface/fade_color'
 
 # Import
 const _DEFAULT_IMPORT_ENABLED = 'popochiu/import/aseprite/import_animation_by_default'
@@ -39,6 +40,7 @@ func initialize_project_settings():
 	_initialize_project_cfg(_DEFAULT_SCALE_GUI, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_FADE_COLOR, Color(0, 0, 0, 1), TYPE_COLOR)
 
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
@@ -74,6 +76,10 @@ func is_default_inventory_always_visible() -> bool:
 
 func is_default_toolbar_always_visible() -> bool:
 	return _get_project_setting(_DEFAULT_TOOLBAR_ALWAYS_VISIBLE, false)
+
+
+func get_default_fade_color() -> Color:
+	return _get_project_setting(_DEFAULT_FADE_COLOR, Color(0, 0, 0, 1))
 
 
 func is_default_animation_import_enabled() -> bool:
