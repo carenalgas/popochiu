@@ -51,10 +51,10 @@ func _ready():
 	var cfg = LOCAL_OBJ_CONFIG.load_config(target_node)
 	if cfg == null:
 		_load_default_config()
+		_set_options_visible(true)
 	else:
 		_load_config(cfg)
-
-	_set_options_visible(cfg.get("op_exp"))
+		_set_options_visible(cfg.get("op_exp"))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
