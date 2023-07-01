@@ -17,6 +17,7 @@ const _DEFAULT_FADE_COLOR = 'popochiu/interface/fade_color'
 const _DEFAULT_SKIP_CUTSCENE_TIME = 'popochiu/interface/skip_cutscene_time'
 
 # Text
+const _DEFAULT_TEXT_SPEED = 'popochiu/text/text_speed'
 const _DEFAULT_AUTO_CONTINUE_TEXT = 'popochiu/text/auto_continue_text'
 const _DEFAULT_USE_TRANSLATIONS = 'popochiu/text/use_translations'
 const _DEFAULT_MAX_DIALOG_OPTIONS = 'popochiu/text/max_dialog_options'
@@ -52,6 +53,7 @@ func initialize_project_settings():
 	_initialize_project_cfg(_DEFAULT_FADE_COLOR, Color(0, 0, 0, 1), TYPE_COLOR)
 	_initialize_project_cfg(_DEFAULT_SKIP_CUTSCENE_TIME, 0.2, TYPE_FLOAT)
 
+	_initialize_project_cfg(_DEFAULT_TEXT_SPEED, 0.1, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
 	_initialize_project_cfg(_DEFAULT_AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_USE_TRANSLATIONS, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_MAX_DIALOG_OPTIONS, 3, TYPE_INT)
@@ -105,6 +107,10 @@ func get_default_fade_color() -> Color:
 
 func get_default_skip_cutscene_time() -> float:
 	return _get_project_setting(_DEFAULT_SKIP_CUTSCENE_TIME, 0.2)
+
+
+func get_default_text_speed() -> float:
+	return _get_project_setting(_DEFAULT_TEXT_SPEED, 0.1)
 
 
 func is_default_auto_continue_text() -> bool:
