@@ -36,8 +36,8 @@ func initialize_editor_settings():
 
 
 func initialize_project_settings():
-	_initialize_project_cfg(_DEFAULT_INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_SCALE_GUI, true, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
 
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
@@ -64,6 +64,18 @@ func get_icon(icon_name: String) -> Texture2D:
 	return _plugin_icons[icon_name]
 
 
+func is_default_scale_gui() -> bool:
+	return _get_project_setting(_DEFAULT_SCALE_GUI, true)
+
+
+func is_default_inventory_always_visible() -> bool:
+	return _get_project_setting(_DEFAULT_INVENTORY_ALWAYS_VISIBLE, false)
+
+
+func is_default_toolbar_always_visible() -> bool:
+	return _get_project_setting(_DEFAULT_TOOLBAR_ALWAYS_VISIBLE, false)
+
+
 func is_default_animation_import_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_IMPORT_ENABLED, true)
 
@@ -74,6 +86,14 @@ func is_default_animation_loop_enabled() -> bool:
 
 func is_default_wipe_old_anims_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true)
+
+
+func is_default_auto_continue_text() -> bool:
+	return _get_project_setting(_DEFAULT_AUTO_CONTINUE_TEXT, false)
+
+
+func is_default_use_translations() -> bool:
+	return _get_project_setting(_DEFAULT_USE_TRANSLATIONS, false)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
