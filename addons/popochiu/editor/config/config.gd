@@ -8,6 +8,8 @@ const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
 # PROJECT SETTINGS
 
 # Interface
+const _DEFAULT_GRAPHIC_INTERFACE = 'popochiu/interface/graphic_interface'
+const _DEFAULT_TRANSITION_LAYER = 'popochiu/interface/transition_layer'
 const _DEFAULT_SCALE_GUI = 'popochiu/interface/scale_gui'
 const _DEFAULT_INVENTORY_ALWAYS_VISIBLE = 'popochiu/interface/inventory_always_visible'
 const _DEFAULT_TOOLBAR_ALWAYS_VISIBLE = 'popochiu/interface/toolbar_always_visible'
@@ -42,6 +44,8 @@ func initialize_editor_settings():
 
 
 func initialize_project_settings():
+	_initialize_project_cfg(_DEFAULT_GRAPHIC_INTERFACE, "", TYPE_STRING, PROPERTY_HINT_FILE, "*tscn")
+	_initialize_project_cfg(_DEFAULT_TRANSITION_LAYER, "", TYPE_STRING, PROPERTY_HINT_FILE, "*tscn")
 	_initialize_project_cfg(_DEFAULT_SCALE_GUI, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
@@ -73,6 +77,14 @@ func should_remove_source_files() -> bool:
 
 func get_icon(icon_name: String) -> Texture2D:
 	return _plugin_icons[icon_name]
+
+
+func get_default_graphic_interface() -> PackedScene:
+	return _get_project_setting(_DEFAULT_GRAPHIC_INTERFACE, "")
+
+
+func get_default_transition_layer() -> PackedScene:
+	return _get_project_setting(_DEFAULT_TRANSITION_LAYER, "")
 
 
 func is_default_scale_gui() -> bool:
@@ -135,7 +147,7 @@ func _set_icons() -> void:
 	}
 
 
-func _initialize_editor_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE):
+func _initialize_editor_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE, hint_string: String = ""):
 	if not editor_settings.has_setting(key):
 		editor_settings.set_setting(key, default_value)
 		editor_settings.set_initial_value(key, default_value, false)
@@ -143,9 +155,10 @@ func _initialize_editor_cfg(key: String, default_value, type: int, hint: int = P
 			"name": key,
 			"type": type,
 			"hint": hint,
+			"hint_string": hint_string,
 		})
 
-func _initialize_project_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE):
+func _initialize_project_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE, hint_string: String = ""):
 	if not ProjectSettings.has_setting(key):
 		ProjectSettings.set_setting(key, default_value)
 		ProjectSettings.set_initial_value(key, default_value)
@@ -153,6 +166,7 @@ func _initialize_project_cfg(key: String, default_value, type: int, hint: int = 
 			"name": key,
 			"type": type,
 			"hint": hint,
+			"hint_string": hint_string,
 		})
 
 
