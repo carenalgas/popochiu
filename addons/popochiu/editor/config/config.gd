@@ -24,6 +24,7 @@ const _DEFAULT_MAX_DIALOG_OPTIONS = 'popochiu/text/max_dialog_options'
 
 # Inventory
 const _DEFAULT_INVENTORY_LIMIT = 'popochiu/inventory/inventory_limit'
+const _DEFAULT_INVENTORY_ITEMS_ON_START = 'popochiu/inventory/items_on_start'
 
 # Import
 const _DEFAULT_IMPORT_ENABLED = 'popochiu/import/aseprite/import_animation_by_default'
@@ -59,6 +60,9 @@ func initialize_project_settings():
 	_initialize_project_cfg(_DEFAULT_MAX_DIALOG_OPTIONS, 3, TYPE_INT)
 
 	_initialize_project_cfg(_DEFAULT_INVENTORY_LIMIT, 0, TYPE_INT)
+	_initialize_project_cfg(_DEFAULT_INVENTORY_ITEMS_ON_START, [], TYPE_ARRAY,
+		PROPERTY_HINT_TYPE_STRING, "%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE, "*tscn"]
+	)
 
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
@@ -127,6 +131,10 @@ func get_default_max_dialog_options() -> int:
 
 func get_default_inventory_limit() -> int:
 	return _get_project_setting(_DEFAULT_INVENTORY_LIMIT, 0)
+
+
+func get_default_inventory_items_on_start() -> Array[int]:
+	return _get_project_setting(_DEFAULT_INVENTORY_ITEMS_ON_START, [])
 
 
 func is_default_animation_import_enabled() -> bool:
