@@ -20,9 +20,9 @@ var _room_dir := ''
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 
-func init(ei: EditorInterface, room_tab: VBoxContainer) -> void:
-	_ei = ei
-	_room_tab = room_tab
+func init(_main_dock: Panel) -> void:
+	_ei = _main_dock.ei
+	_room_tab = _main_dock.get_opened_room_tab()
 
 
 func create(prop_name: String, room: PopochiuRoom, is_interactive:bool = false) -> PopochiuProp:

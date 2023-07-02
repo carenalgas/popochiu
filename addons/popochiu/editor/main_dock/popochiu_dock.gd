@@ -261,6 +261,10 @@ func get_opened_room() -> PopochiuRoom:
 	return _tab_room.opened_room
 
 
+func get_opened_room_tab() -> VBoxContainer:
+	return _tab_room
+
+
 func open_setup() -> void:
 	setup_dialog.appear()
 

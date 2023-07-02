@@ -6,8 +6,10 @@
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 
 const Helper := preload("res://addons/popochiu/editor/helpers/popochiu_prop_helper.gd")
-const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
+## TODO: remove this legacy...
+#const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
 
+## TODO: remove this legacy...
 var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
@@ -32,7 +34,7 @@ func _create() -> void:
 		return
 
 	_helper = Helper.new()
-	_helper.init(_main_dock.ei, room_tab)
+	_helper.init(_main_dock)
 
 	var prop_instance = _helper.create(_new_prop_name, _room, _interaction_checkbox.button_pressed)
 

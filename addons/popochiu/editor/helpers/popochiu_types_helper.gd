@@ -23,36 +23,6 @@ static func is_walkable_area(node: Node) -> bool:
 
 ## TODO: provide more helpers like this maybe?
 
-
-# Functions used to create Popochiu objects of various types.
-# They are designed to be used from the Editor plugin, not the Engine code.
-static func create_character():
-	pass
-
-
-static func create_dialog():
-	pass
-
-
-static func create_hotspot():
-	pass
-
-
-static func create_inventory_item():
-	pass
-
-
-static func create_prop():
-	pass
-
-
-static func create_region():
-	pass
-
-
-static func create_room():
-	pass
-
-
-static func create_walkable_area():
-	pass
+## TODO: If and when #67 is ready, add static facade metods to create items
+## so we can just pass this object as entry point for all operations
+## on Popochiu objects
