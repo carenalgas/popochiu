@@ -88,7 +88,7 @@ func _update_info() -> void:
 	_info.text = (
 		'In [b]%s[/b] the following file will be created:\n[code]%s[/code]' \
 		% [
-			_room.scene_file_path.get_base_dir(),
+			_room.scene_file_path.get_base_dir() + '/props',
 			'prop_' + _new_prop_name + '.gd'
 		]
 	)
