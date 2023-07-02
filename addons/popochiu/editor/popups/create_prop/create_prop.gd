@@ -33,20 +33,23 @@ func _create() -> void:
 		_error_feedback.show()
 		return
 
+	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Setup the prop helper and use it to create the prop
 	_helper = Helper.new()
 	_helper.init(_main_dock)
 
 	var prop_instance = _helper.create(_new_prop_name, _room, _interaction_checkbox.button_pressed)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Abrir las propiedades de la prop creada en el Inspector
+	# Open the properties of the created prop in the inspector
+	# Done here because the creation is interactive in this case
 	_main_dock.fs.scan()
 	await get_tree().create_timer(0.1).timeout
 	_main_dock.ei.edit_node(prop_instance)
 	_main_dock.ei.select_file(prop_instance.scene_file_path)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Fin
+	# End
 	hide()
 
 
