@@ -1,6 +1,7 @@
 # Creates a new walkable area in a room.
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
+
 const Helper := preload("res://addons/popochiu/editor/helpers/popochiu_walkable_area_helper.gd")
 
 ## TODO: remove this legacy...
@@ -8,7 +9,7 @@ var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_walkable_area_name := ''
-var _helper: PopochiuWalkableAreanHelper
+var _helper: PopochiuWalkableAreaHelper
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -54,7 +55,6 @@ func _update_name(new_text: String) -> void:
 
 	if _name:
 		_new_walkable_area_name = _name.to_snake_case()
-		[_new_walkable_area_name, _new_walkable_area_name]
 
 		_info.text = (
 			'In [b]%s[/b] the following files will be created: [code]%s[/code]'\

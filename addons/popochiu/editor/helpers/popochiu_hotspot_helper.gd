@@ -1,34 +1,34 @@
 extends 'res://addons/popochiu/editor/helpers/popochiu_obj_helper.gd'
-class_name PopochiuWalkableAreaHelper
+class_name PopochiuHotspotHelper
 
-const BASE_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/walkable_area_template.gd'
-const BASE_OBJ_PATH := 'res://addons/popochiu/engine/objects/walkable_area/popochiu_walkable_area.tscn'
+const BASE_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/hotspot_template.gd'
+const BASE_OBJ_PATH := 'res://addons/popochiu/engine/objects/hotspot/popochiu_hotspot.tscn'
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func init(_main_dock: Panel) -> void:
 	super(_main_dock)
-	_obj_path_template = '/walkable_areas/%s/walkable_area_%s'
+	_obj_path_template = '/hotspots/%s/hotspot_%s'
 
 
-func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -> PopochiuWalkableArea:
+func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -> PopochiuHotspot:
 	_open_room(room)
 	_setup_name(obj_name)
 
-	# TODO: Check if another WalkableArea was created in the same PATH.
+	# TODO: Check if another Hotspot was created in the same PATH.
 	# TODO: Remove created files if the creation process failed.
 	var script_path := _obj_path + '.gd'
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the folder for the WalkableArea
+	# Create the folder for the Hotspot
 	assert(
 		DirAccess.make_dir_recursive_absolute(
 			_obj_path.get_base_dir()
 		) == OK,
-		'[Popochiu] Could not create walkable_area folder for '	+ _obj_name
+		'[Popochiu] Could not create hotspot folder for '	+ _obj_name
 	)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the script for the WalkableArea
+	# Create the script for the Hotspot
 	var obj_template := load(BASE_SCRIPT_TEMPLATE)
 	
 	if ResourceSaver.save(obj_template, script_path) != OK:
@@ -39,47 +39,37 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -
 		return
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the new WalkableArea and add it to the room
-	var obj: PopochiuWalkableArea = ResourceLoader.load(BASE_OBJ_PATH).instantiate()
+	# Create the new Hotspot and add it to the room
+	var obj: PopochiuHotspot = ResourceLoader.load(BASE_OBJ_PATH).instantiate()
 	obj.set_script(ResourceLoader.load(script_path))
 	obj.name = _obj_name
 	obj.script_name = _obj_name
 	obj.description = _obj_script_name.capitalize()
+	obj.cursor = Constants.CURSOR_TYPE.ACTIVE
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the NavigationRegion2D (instead of using the one that
-	# was part of the original scene)
-	var perimeter := NavigationRegion2D.new()
-	obj.add_child(perimeter)
-	perimeter.name = 'Perimeter'
-	
-	var polygon := NavigationPolygon.new()
-	polygon.add_outline(PackedVector2Array([
-		Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
-	]))
-	polygon.make_polygons_from_outlines()
-	
-	perimeter.navpoly = polygon
-	perimeter.modulate = Color.GREEN
-	
-	# Attach the walkable area to the room
-	_room.get_node('WalkableAreas').add_child(obj)
+	# Attach the hotspot to the room
+	_room.get_node('Hotspots').add_child(obj)
 	
 	# Make the room the owner of both the Node2D and its NavigationRegion2D
 	obj.owner = _room
-	perimeter.owner = _room
-	
 	obj.position = Vector2(
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
-	
+
+	var collision := CollisionPolygon2D.new()
+	collision.name = 'InteractionPolygon'
+	obj.add_child(collision)
+	collision.owner = _room
+	collision.modulate = Color.BLUE
+
 	_ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Update the list of WalkableAreas in the Room tab
+	# Update the list of Hotspots in the Room tab
 	(_room_tab as TabRoom).add_to_list(
-		Constants.Types.WALKABLE_AREA,
+		Constants.Types.HOTSPOT,
 		_obj_name,
 		script_path
 	)
