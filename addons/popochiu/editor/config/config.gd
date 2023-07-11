@@ -46,8 +46,8 @@ func initialize_editor_settings():
 
 
 func initialize_project_settings():
-	_initialize_project_cfg(_DEFAULT_GRAPHIC_INTERFACE, "", TYPE_STRING, PROPERTY_HINT_FILE, "*tscn")
-	_initialize_project_cfg(_DEFAULT_TRANSITION_LAYER, "", TYPE_STRING, PROPERTY_HINT_FILE, "*tscn")
+	_initialize_project_cfg(_DEFAULT_GRAPHIC_INTERFACE, PopochiuResources.GRAPHIC_INTERFACE_ADDON, TYPE_STRING, PROPERTY_HINT_FILE, "*tscn")
+	_initialize_project_cfg(_DEFAULT_TRANSITION_LAYER, PopochiuResources.TRANSITION_LAYER_ADDON, TYPE_STRING, PROPERTY_HINT_FILE, "*tscn")
 	_initialize_project_cfg(_DEFAULT_SCALE_GUI, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
@@ -85,12 +85,12 @@ func get_icon(icon_name: String) -> Texture2D:
 	return _plugin_icons[icon_name]
 
 
-func get_default_graphic_interface() -> PackedScene:
-	return _get_project_setting(_DEFAULT_GRAPHIC_INTERFACE, "")
+func get_graphic_interface() -> CanvasLayer:
+	return load(_get_project_setting(_DEFAULT_GRAPHIC_INTERFACE, PopochiuResources.GRAPHIC_INTERFACE_ADDON)).instantiate()
 
 
-func get_default_transition_layer() -> PackedScene:
-	return _get_project_setting(_DEFAULT_TRANSITION_LAYER, "")
+func get_transition_layer() -> CanvasLayer:
+	return load(_get_project_setting(_DEFAULT_TRANSITION_LAYER, PopochiuResources.TRANSITION_LAYER_ADDON)).instantiate()
 
 
 func is_default_scale_gui() -> bool:
