@@ -20,7 +20,6 @@ var _obj_path_template := ''
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-
 func init(_main_dock: Panel) -> void:
 	_ei = _main_dock.ei
 	_room_tab = _main_dock.get_opened_room_tab()
@@ -29,6 +28,7 @@ func init(_main_dock: Panel) -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░
 func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false):
 	pass
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _open_room(room: PopochiuRoom) -> void:
