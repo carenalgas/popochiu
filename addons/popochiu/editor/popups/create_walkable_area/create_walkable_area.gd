@@ -25,7 +25,7 @@ func _create() -> void:
 	_helper = Helper.new()
 	_helper.init(_main_dock)
 
-	var walkable_area = _helper.create(_new_walkable_area_name, _room, false)
+	var walkable_area = _helper.create(_new_walkable_area_name, _room)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created region in the inspector

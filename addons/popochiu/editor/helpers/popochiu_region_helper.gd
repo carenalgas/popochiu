@@ -1,4 +1,4 @@
-extends 'res://addons/popochiu/editor/helpers/popochiu_obj_helper.gd'
+extends 'res://addons/popochiu/editor/helpers/popochiu_room_obj_base_helper.gd'
 class_name PopochiuRegionHelper
 
 const BASE_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/region_template.gd'
@@ -11,7 +11,7 @@ func init(_main_dock: Panel) -> void:
 	_obj_path_template = '/regions/%s/region_%s'
 
 
-func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -> PopochiuRegion:
+func create(obj_name: String, room: PopochiuRoom) -> PopochiuRegion:
 	_open_room(room)
 	_setup_name(obj_name)
 

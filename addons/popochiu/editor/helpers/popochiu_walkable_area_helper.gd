@@ -1,4 +1,4 @@
-extends 'res://addons/popochiu/editor/helpers/popochiu_obj_helper.gd'
+extends 'res://addons/popochiu/editor/helpers/popochiu_room_obj_base_helper.gd'
 class_name PopochiuWalkableAreaHelper
 
 const BASE_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/walkable_area_template.gd'
@@ -10,7 +10,7 @@ func init(_main_dock: Panel) -> void:
 	_obj_path_template = '/walkable_areas/%s/walkable_area_%s'
 
 
-func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -> PopochiuWalkableArea:
+func create(obj_name: String, room: PopochiuRoom) -> PopochiuWalkableArea:
 	_open_room(room)
 	_setup_name(obj_name)
 

@@ -1,4 +1,4 @@
-extends 'res://addons/popochiu/editor/helpers/popochiu_obj_helper.gd'
+extends 'res://addons/popochiu/editor/helpers/popochiu_room_obj_base_helper.gd'
 class_name PopochiuPropHelper
 
 const BASE_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/prop_template.gd'

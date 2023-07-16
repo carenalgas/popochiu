@@ -30,7 +30,7 @@ func _create() -> void:
 	_helper = Helper.new()
 	_helper.init(_main_dock)
 
-	var region = _helper.create(_new_region_name, _room, false)
+	var region = _helper.create(_new_region_name, _room)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created region in the inspector
