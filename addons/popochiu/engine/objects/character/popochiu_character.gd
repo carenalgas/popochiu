@@ -277,9 +277,15 @@ func queue_walk_to(pos: Vector2) -> Callable:
 
 
 func walk_to(pos: Vector2) -> void:
-	walk(E.current_room.to_global(pos))
-	
-	await C.character_move_ended
+	await walk(E.current_room.to_global(pos))
+
+
+func queue_walk_to_clicked() -> Callable:
+	return func (): await walk_to_clicked()
+
+
+func walk_to_clicked() -> void:
+	await _walk_to_clickable(E.clicked as PopochiuClickable)
 
 
 func queue_walk_to_prop(id: String) -> Callable:
@@ -287,9 +293,7 @@ func queue_walk_to_prop(id: String) -> Callable:
 
 
 func walk_to_prop(id: String) -> void:
-	_walk_to_clickable(E.current_room.get_prop(id))
-	
-	await C.character_move_ended
+	await _walk_to_clickable(E.current_room.get_prop(id))
 
 
 func queue_walk_to_hotspot(id: String) -> Callable:
@@ -297,9 +301,7 @@ func queue_walk_to_hotspot(id: String) -> Callable:
 
 
 func walk_to_hotspot(id: String) -> void:
-	_walk_to_clickable(E.current_room.get_hotspot(id))
-	
-	await C.character_move_ended
+	await _walk_to_clickable(E.current_room.get_hotspot(id))
 
 
 func queue_walk_to_marker(id: String) -> Callable:
@@ -307,9 +309,7 @@ func queue_walk_to_marker(id: String) -> Callable:
 
 
 func walk_to_marker(id: String) -> void:
-	walk(E.current_room.get_point(id))
-
-	await C.character_move_ended
+	await walk(E.current_room.get_point(id))
 
 
 func queue_set_emotion(new_emotion: String) -> Callable:
@@ -502,4 +502,4 @@ func _walk_to_clickable(node: PopochiuClickable) -> void:
 		await get_tree().process_frame
 		return
 
-	walk(node.to_global(node.walk_to_point))
+	await walk(node.to_global(node.walk_to_point))

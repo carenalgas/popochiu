@@ -22,9 +22,7 @@ func queue_walk_to_clicked() -> Callable:
 # of the last clicked PopochiuClickable (e.g. a PopochiuProp, a PopochiuHotspot,
 # another PopochiuCharacter, etc.) in the room.
 func walk_to_clicked() -> void:
-	await player.walk(
-		(E.clicked as PopochiuClickable).to_global(E.clicked.walk_to_point)
-	)
+	await player.walk_to_clicked()
 
 
 # Queues the call to face_clicked()
