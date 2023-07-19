@@ -65,8 +65,6 @@ func _update_name(new_text: String) -> void:
 	if _name:
 		_new_item_name = _name.to_snake_case()
 
-		[_new_item_name, _new_item_name]
-
 		_info.text = (
 			'In [b]%s[/b] the following files will be created:\
 			\n[code]%s, %s and %s[/code]' \
