@@ -10,7 +10,9 @@ const BASE_OBJ_PATH := 'res://addons/popochiu/engine/objects/character/popochiu_
 func init(_main_dock: Panel) -> void:
 	super(_main_dock)
 	_obj_path_template = _main_dock.CHARACTERS_PATH + '%s/character_%s'
-
+	_obj_type = Constants.Types.CHARACTER
+	_obj_type_label = 'character'
+	_obj_type_target = 'characters'
 
 
 func create(obj_name: String) -> PopochiuCharacter:
@@ -100,22 +102,7 @@ func create(obj_name: String) -> PopochiuCharacter:
 
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the created character to Popochiu's characters list
-	if _main_dock.add_resource_to_popochiu(
-		'characters', ResourceLoader.load(_obj_path + '.tres')
-	) != OK:
-		push_error("[Popochiu] Couldn't add the created character to Popochiu: %s" % _obj_name)
-		# TODO: Show feedback in the popup
-		return
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the character to the C singleton
-	PopochiuResources.update_autoloads(true)
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Update the list of characters in the dock
-	var row := (_main_dock as MainDock).add_to_list(
-		Constants.Types.CHARACTER, _obj_name
-	)
+	# Add the object to Popochiu dock list, plus open it in the editor
+	_add_resource_to_popochiu()
 	
 	return obj_instance

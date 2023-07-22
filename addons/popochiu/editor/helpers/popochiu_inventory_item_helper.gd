@@ -10,7 +10,9 @@ const BASE_OBJ_PATH := 'res://addons/popochiu/engine/objects/inventory_item/popo
 func init(_main_dock: Panel) -> void:
 	super(_main_dock)
 	_obj_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/item_%s'
-
+	_obj_type = Constants.Types.INVENTORY_ITEM
+	_obj_type_label = 'inventory item'
+	_obj_type_target = 'inventory_items'
 
 
 func create(obj_name: String) -> PopochiuInventoryItem:
@@ -101,22 +103,7 @@ func create(obj_name: String) -> PopochiuInventoryItem:
 
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the created item to Popochiu's inventory items list
-	if _main_dock.add_resource_to_popochiu(
-		'inventory_items', ResourceLoader.load(_obj_path + '.tres')
-	) != OK:
-		push_error("[Popochiu] Couldn't add the created inventory item to Popochiu: %s" % _obj_name)
-		# TODO: Show feedback in the popup
-		return
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the item to the C singleton
-	PopochiuResources.update_autoloads(true)
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Update the list of inventory items in the dock
-	var row := (_main_dock as MainDock).add_to_list(
-		Constants.Types.INVENTORY_ITEM, _obj_name
-	)
+	# Add the object to Popochiu dock list, plus open it in the editor
+	_add_resource_to_popochiu()
 	
 	return obj_instance

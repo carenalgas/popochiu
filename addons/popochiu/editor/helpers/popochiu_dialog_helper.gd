@@ -8,6 +8,9 @@ const BASE_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/dialog_tem
 func init(_main_dock: Panel) -> void:
 	super(_main_dock)
 	_obj_path_template = _main_dock.DIALOGS_PATH + '%s/dialog_%s'
+	_obj_type = Constants.Types.DIALOG
+	_obj_type_label = 'dialog'
+	_obj_type_target = 'dialogs'
 
 func create(obj_name: String) -> PopochiuDialog:
 	# TODO: Check if another Prop was created in the same PATH.
@@ -44,22 +47,7 @@ func create(obj_name: String) -> PopochiuDialog:
 	var obj_instance: PopochiuDialog = load(_obj_path + '.tres')
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the created dialog to Popochiu's doalogs list
-	if _main_dock.add_resource_to_popochiu(
-		'dialogs', ResourceLoader.load(_obj_path + '.tres')
-	) != OK:
-		push_error("[Popochiu] Couldn't add the created dialog to Popochiu: %s" % _obj_name)
-		# TODO: Show feedback in the popup
-		return
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the item to the C singleton
-	PopochiuResources.update_autoloads(true)
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Update the list of inventory items in the dock
-	var row := (_main_dock as MainDock).add_to_list(
-		Constants.Types.DIALOG, _obj_name
-	)
+	# Add the object to Popochiu dock list, plus open it in the editor
+	_add_resource_to_popochiu()
 	
 	return obj_instance

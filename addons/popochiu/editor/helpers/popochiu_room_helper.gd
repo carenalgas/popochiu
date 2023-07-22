@@ -5,12 +5,13 @@ const BASE_STATE_TEMPLATE := 'res://addons/popochiu/engine/templates/room_state_
 const BASE_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/room_template.gd'
 const BASE_OBJ_PATH := 'res://addons/popochiu/engine/objects/room/popochiu_room.tscn'
 
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func init(_main_dock: Panel) -> void:
 	super(_main_dock)
 	_obj_path_template = _main_dock.ROOMS_PATH + '%s/room_%s'
-
+	_obj_type = Constants.Types.ROOM
+	_obj_type_label = 'room'
+	_obj_type_target = 'rooms'
 
 
 func create(obj_name: String, set_as_main:bool = false) -> PopochiuRoom:
@@ -98,23 +99,8 @@ func create(obj_name: String, set_as_main:bool = false) -> PopochiuRoom:
 
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the created room to Popochiu's rooms list
-	if _main_dock.add_resource_to_popochiu(
-		'rooms', ResourceLoader.load(_obj_path + '.tres')
-	) != OK:
-		push_error("[Popochiu] Couldn't add the created room to Popochiu: %s" %	_obj_name)
-		# TODO: Show feedback in the popup
-		return
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Add the room to the R singleton
-	PopochiuResources.update_autoloads(true)
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Update the list of rooms in the dock
-	var row := (_main_dock as MainDock).add_to_list(
-		Constants.Types.ROOM, _obj_name
-	)
+	# Add the object to Popochiu dock list, plus open it in the editor
+	var row = _add_resource_to_popochiu()
 	
 	# Establecer como la escena principal
 	# Changed _set_as_main_check.pressed to _set_as_main_check.button_pressed
