@@ -16,7 +16,7 @@ var in_room := false : set = _set_in_room
 var current_room: PopochiuRoom : set = set_current_room
 # Stores the las PopochiuClickable node clicked to ease access to it from
 # any other class
-var clicked: Node = null
+var clicked: PopochiuClickable = null
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
 var cutscene_skipped := false
 var rooms_states := {}

@@ -14,15 +14,15 @@ var characters_states := {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Queues the call to walk_to_clicked()
-func queue_walk_to_clicked() -> Callable:
-	return func (): await walk_to_clicked()
+func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
+	return func (): await walk_to_clicked(offset)
 
 
 # Makes the PC (player-controlled character) walk to the walk_to_point position
 # of the last clicked PopochiuClickable (e.g. a PopochiuProp, a PopochiuHotspot,
 # another PopochiuCharacter, etc.) in the room.
-func walk_to_clicked() -> void:
-	await player.walk_to_clicked()
+func walk_to_clicked(offset := Vector2.ZERO) -> void:
+	await player.walk_to_clicked(offset)
 
 
 # Queues the call to face_clicked()
