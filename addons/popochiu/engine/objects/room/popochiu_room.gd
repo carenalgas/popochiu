@@ -160,12 +160,17 @@ func clean_characters() -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
-func get_marker(marker_name: String) -> Vector2:
+func get_marker(marker_name: String) -> Marker2D:
 	var marker: Marker2D = get_node_or_null('Markers/' + marker_name)
 	if marker:
-		return marker.global_position
+		return marker
 	printerr('[Popochiu] Marker %s not found' % marker_name)
-	return Vector2.ZERO
+	return null
+
+
+func get_marker_position(marker_name: String) -> Vector2:
+	var marker := get_marker(marker_name)
+	return marker.global_position if marker != null else Vector2.ZERO
 
 
 func get_prop(prop_name: String) -> PopochiuProp:

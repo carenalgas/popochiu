@@ -10,7 +10,7 @@ enum Types {
 	PROP,
 	HOTSPOT,
 	REGION,
-	POINT,
+	MARKER,
 	WALKABLE_AREA
 }
 enum CursorType {
@@ -34,7 +34,7 @@ const MAIN_DOCK_PATH := 'res://addons/popochiu/editor/main_dock/popochiu_dock.ts
 const MAIN_TYPES := [
 	Types.ROOM, Types.CHARACTER, Types.INVENTORY_ITEM, Types.DIALOG
 ]
-const ROOM_TYPES := [Types.PROP, Types.HOTSPOT, Types.REGION, Types.POINT, Types.WALKABLE_AREA]
+const ROOM_TYPES := [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
 const WIKI := 'https://github.com/mapedorr/popochiu/wiki/'
 const CFG := 'res://addons/popochiu/plugin.cfg'
 # ════ SINGLETONS ══════════════════════════════════════════════════════════════

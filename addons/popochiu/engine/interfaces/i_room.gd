@@ -23,8 +23,12 @@ func get_walkable_area(walkable_area_name: String) -> PopochiuWalkableArea:
 	return current.get_walkable_area(walkable_area_name)
 
 
-func get_point(point_name: String) -> Vector2:
-	return current.get_point(point_name)
+func get_marker(marker_name: String) -> Marker2D:
+	return current.get_marker(marker_name)
+
+
+func get_marker_position(marker_name: String) -> Vector2:
+	return current.get_marker_position(marker_name)
 
 
 func get_props() -> Array:
