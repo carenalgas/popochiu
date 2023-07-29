@@ -280,36 +280,36 @@ func walk_to(pos: Vector2) -> void:
 	await walk(E.current_room.to_global(pos))
 
 
-func queue_walk_to_clicked() -> Callable:
-	return func (): await walk_to_clicked()
+func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
+	return func (): await walk_to_clicked(offset)
 
 
-func walk_to_clicked() -> void:
-	await _walk_to_clickable(E.clicked as PopochiuClickable)
+func walk_to_clicked(offset := Vector2.ZERO) -> void:
+	await _walk_to_clickable(E.clicked, offset)
 
 
-func queue_walk_to_prop(id: String) -> Callable:
-	return func(): await walk_to_prop(id)
+func queue_walk_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await walk_to_prop(id, offset)
 
 
-func walk_to_prop(id: String) -> void:
-	await _walk_to_clickable(E.current_room.get_prop(id))
+func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
+	await _walk_to_clickable(E.current_room.get_prop(id), offset)
 
 
-func queue_walk_to_hotspot(id: String) -> Callable:
-	return func(): await walk_to_hotspot(id)
+func queue_walk_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await walk_to_hotspot(id, offset)
 
 
-func walk_to_hotspot(id: String) -> void:
-	await _walk_to_clickable(E.current_room.get_hotspot(id))
+func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
+	await _walk_to_clickable(E.current_room.get_hotspot(id), offset)
 
 
-func queue_walk_to_marker(id: String) -> Callable:
-	return func(): await walk_to_marker(id)
+func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await walk_to_marker(id, offset)
 
 
-func walk_to_marker(id: String) -> void:
-	await walk(E.current_room.get_point(id))
+func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
+	await walk(E.current_room.get_point(id) + offset)
 
 
 func queue_set_emotion(new_emotion: String) -> Callable:
@@ -497,9 +497,9 @@ func _get_valid_oriented_animation(animation_label):
 	return null
 
 
-func _walk_to_clickable(node: PopochiuClickable) -> void:
+func _walk_to_clickable(node: PopochiuClickable, offset: Vector2) -> void:
 	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
 
-	await walk(node.to_global(node.walk_to_point))
+	await walk(node.to_global(node.walk_to_point) + offset)
