@@ -36,7 +36,6 @@ func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open dialog in the Inspector
 	await get_tree().create_timer(0.1).timeout
-	print(dialog_resource.resource_path)
 	_main_dock.ei.select_file(dialog_resource.resource_path)
 	_main_dock.ei.edit_resource(load(dialog_resource.resource_path))
 	

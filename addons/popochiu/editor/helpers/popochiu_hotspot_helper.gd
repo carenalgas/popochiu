@@ -1,77 +1,46 @@
 extends 'res://addons/popochiu/editor/helpers/popochiu_room_obj_base_helper.gd'
 class_name PopochiuHotspotHelper
 
-const BASE_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/hotspot_template.gd'
-const BASE_OBJ_PATH := 'res://addons/popochiu/engine/objects/hotspot/popochiu_hotspot.tscn'
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func init(_main_dock: Panel) -> void:
 	super(_main_dock)
+	_obj_type = Constants.Types.HOTSPOT
+	_obj_type_label = 'hotspot'
+	_obj_room_group = 'Hotspots'
 	_obj_path_template = '/hotspots/%s/hotspot_%s'
 
 
 func create(obj_name: String, room: PopochiuRoom) -> PopochiuHotspot:
-	_open_room(room)
+	_setup_room(room)
 	_setup_name(obj_name)
-
-	# TODO: Check if another Hotspot was created in the same PATH.
-	# TODO: Remove created files if the creation process failed.
-	var script_path := _obj_path + '.gd'
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the folder for the Hotspot
-	assert(
-		DirAccess.make_dir_recursive_absolute(
-			_obj_path.get_base_dir()
-		) == OK,
-		'[Popochiu] Could not create hotspot folder for '	+ _obj_name
-	)
+	if _create_obj_folder() == ResultCodes.FAILURE: return
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the script for the Hotspot
-	var obj_template := load(BASE_SCRIPT_TEMPLATE)
-	
-	if ResourceSaver.save(obj_template, script_path) != OK:
-		push_error(
-			"[Popochiu] Couldn't create script: %s.gd" % _obj_name
-		)
-		# TODO: Show feedback in the popup
-		return
+	if _copy_script_template() == ResultCodes.FAILURE: return
 
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the new Hotspot and add it to the room
-	var obj: PopochiuHotspot = ResourceLoader.load(BASE_OBJ_PATH).instantiate()
-	obj.set_script(ResourceLoader.load(script_path))
-	obj.name = _obj_name
-	obj.script_name = _obj_name
-	obj.description = _obj_script_name.capitalize()
-	obj.cursor = Constants.CURSOR_TYPE.ACTIVE
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Attach the hotspot to the room
-	_room.get_node('Hotspots').add_child(obj)
-	
-	# Make the room the owner of both the Node2D and its NavigationRegion2D
-	obj.owner = _room
-	obj.position = Vector2(
-		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
-		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
-	) / 2.0
+	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# Create the hotspot instance
+	var new_obj: PopochiuHotspot = _load_obj_base_scene()
 
+	new_obj.name = _obj_name
+	new_obj.script_name = _obj_name
+	new_obj.description = _obj_script_name.capitalize()
+	new_obj.cursor = Constants.CURSOR_TYPE.ACTIVE
+
+	# Save the hostspot scene (.tscn) and put it into _obj class property
+	if _save_obj_scene(new_obj) == ResultCodes.FAILURE: return
+
+	# Create the collision polygon for the hotspot
 	var collision := CollisionPolygon2D.new()
 	collision.name = 'InteractionPolygon'
-	obj.add_child(collision)
-	collision.owner = _room
 	collision.modulate = Color.BLUE
+	_obj.add_child(collision)
+	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-	_ei.save_scene()
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Update the list of Hotspots in the Room tab
-	(_room_tab as TabRoom).add_to_list(
-		Constants.Types.HOTSPOT,
-		_obj_name,
-		script_path
-	)
+	# Add the prop to its room
+	_add_resource_to_room()
 
-	return obj
+	# This factory returns the object scene
+	return _obj
