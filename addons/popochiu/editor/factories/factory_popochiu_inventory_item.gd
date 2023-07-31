@@ -7,7 +7,7 @@ func _init(_main_dock: Panel) -> void:
 	_obj_type = Constants.Types.INVENTORY_ITEM
 	_obj_type_label = 'inventory_item'
 	_obj_type_target = 'inventory_items'
-	_obj_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/item_%s'
+	_obj_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/inventory_item_%s'
 
 
 func create(obj_name: String) -> PopochiuInventoryItem:

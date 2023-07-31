@@ -55,7 +55,7 @@ var _rows_paths := []
 		path = INVENTORY_ITEMS_PATH,
 		group = find_child('ItemsGroup'),
 		popup = find_child('CreateInventoryItem'),
-		scene = INVENTORY_ITEMS_PATH + ('%s/item_%s.tscn')
+		scene = INVENTORY_ITEMS_PATH + ('%s/inventory_item_%s.tscn')
 	},
 	Constants.Types.DIALOG: {
 		path = DIALOGS_PATH,

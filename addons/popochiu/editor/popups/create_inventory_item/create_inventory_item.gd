@@ -70,9 +70,9 @@ func _update_name(new_text: String) -> void:
 			\n[code]%s, %s and %s[/code]' \
 			% [
 				_main_dock.INVENTORY_ITEMS_PATH + _new_item_name,
-				'item_' + _new_item_name + '.tscn',
-				'item_' + _new_item_name + '.gd',
-				'item_' + _new_item_name + '.tres'
+				'inventory_item_' + _new_item_name + '.tscn',
+				'inventory_item_' + _new_item_name + '.gd',
+				'inventory_item_' + _new_item_name + '.tres'
 			]
 		)
 		_info.show()
