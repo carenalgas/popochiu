@@ -2,14 +2,12 @@
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 
-const Helper := preload("res://addons/popochiu/editor/helpers/popochiu_hotspot_helper.gd")
-
 ## TODO: remove this legacy...
 var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_hotspot_name := ''
-var _helper: PopochiuHotspotHelper
+var _helper: PopochiuHotspotFactory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -22,7 +20,7 @@ func _ready() -> void:
 func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the region helper and use it to create the hotspot
-	_helper = Helper.new()
+	_helper = PopochiuHotspotFactory.new()
 	_helper.init(_main_dock)
 
 	var hotspot = _helper.create(_new_hotspot_name, _room)

@@ -9,11 +9,12 @@
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 
-const Helper := preload("res://addons/popochiu/editor/helpers/popochiu_inventory_item_helper.gd")
+# TODO: Giving a proper class name to PopochiuDock eliminates the need to preload it
+# and to cast it as the right type later in code.
 const PopochiuDock := preload('res://addons/popochiu/editor/main_dock/popochiu_dock.gd')
 
 var _new_item_name := ''
-var _helper: PopochiuInventoryItemHelper
+var _helper: PopochiuInventoryItemFactory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -30,7 +31,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = Helper.new()
+	_helper = PopochiuInventoryItemFactory.new()
 	_helper.init(_main_dock)
 
 	var item_scene = _helper.create(_new_item_name)

@@ -1,4 +1,4 @@
-extends 'res://addons/popochiu/editor/helpers/popochiu_obj_base_helper.gd'
+extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd'
 
 const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
 

@@ -1,5 +1,5 @@
-extends 'res://addons/popochiu/editor/helpers/popochiu_obj_base_helper.gd'
-class_name PopochiuRoomHelper
+extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd'
+class_name PopochiuRoomFactory
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func init(_main_dock: Panel) -> void:

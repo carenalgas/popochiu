@@ -9,13 +9,14 @@
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 
-const Helper := preload("res://addons/popochiu/editor/helpers/popochiu_room_helper.gd")
+# TODO: Giving a proper class name to PopochiuDock eliminates the need to preload it
+# and to cast it as the right type later in code.
 const PopochiuDock := preload('res://addons/popochiu/editor/main_dock/popochiu_dock.gd')
 
 var show_set_as_main := false : set = _set_show_set_as_main
 
 var _new_room_name := ''
-var _helper: PopochiuRoomHelper
+var _helper: PopochiuRoomFactory
 
 @onready var _set_as_main: PanelContainer = find_child('SetAsMainContainer')
 @onready var _set_as_main_check: CheckBox = _set_as_main.find_child('CheckBox')
@@ -47,7 +48,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = Helper.new()
+	_helper = PopochiuRoomFactory.new()
 	_helper.init(_main_dock)
 
 	var room_scene = _helper.create(_new_room_name, _set_as_main_check.button_pressed)

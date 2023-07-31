@@ -3,14 +3,12 @@
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 
-const Helper := preload("res://addons/popochiu/editor/helpers/popochiu_region_helper.gd")
-
 ## TODO: remove this legacy...
 var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_region_name := ''
-var _helper: PopochiuRegionHelper
+var _helper: PopochiuRegionFactory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -27,7 +25,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the region helper and use it to create the region
-	_helper = Helper.new()
+	_helper = PopochiuRegionFactory.new()
 	_helper.init(_main_dock)
 
 	var region = _helper.create(_new_region_name, _room)
