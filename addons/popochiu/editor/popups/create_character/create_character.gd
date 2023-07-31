@@ -30,8 +30,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuCharacterFactory.new()
-	_helper.init(_main_dock)
+	_helper = PopochiuCharacterFactory.new(_main_dock)
 
 	var character_scene = _helper.create(_new_character_name)
 	

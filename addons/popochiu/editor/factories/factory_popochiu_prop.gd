@@ -2,7 +2,7 @@ extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.g
 class_name PopochiuPropFactory
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func init(_main_dock: Panel) -> void:
+func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
 	_obj_type = Constants.Types.PROP
 	_obj_type_label = 'prop'

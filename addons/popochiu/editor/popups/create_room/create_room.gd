@@ -48,8 +48,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuRoomFactory.new()
-	_helper.init(_main_dock)
+	_helper = PopochiuRoomFactory.new(_main_dock)
 
 	var room_scene = _helper.create(_new_room_name, _set_as_main_check.button_pressed)
 	

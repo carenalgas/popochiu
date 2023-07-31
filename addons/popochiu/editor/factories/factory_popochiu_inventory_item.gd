@@ -2,7 +2,7 @@ extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd'
 class_name PopochiuInventoryItemFactory
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func init(_main_dock: Panel) -> void:
+func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
 	_obj_type = Constants.Types.INVENTORY_ITEM
 	_obj_type_label = 'inventory_item'

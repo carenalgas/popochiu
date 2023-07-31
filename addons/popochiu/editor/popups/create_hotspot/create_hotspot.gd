@@ -20,8 +20,8 @@ func _ready() -> void:
 func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the region helper and use it to create the hotspot
-	_helper = PopochiuHotspotFactory.new()
-	_helper.init(_main_dock)
+	_helper = PopochiuHotspotFactory.new(_main_dock)
+
 
 	var hotspot = _helper.create(_new_hotspot_name, _room)
 

@@ -14,7 +14,7 @@ var _room_dir := ''
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func init(main_dock: Panel) -> void:
+func _init(main_dock: Panel) -> void:
 	super(main_dock)
 	_room_tab = _main_dock.get_opened_room_tab()
 

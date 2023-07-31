@@ -34,8 +34,7 @@ func _create() -> void:
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuPropFactory.new()
-	_helper.init(_main_dock)
+	_helper = PopochiuPropFactory.new(_main_dock)
 
 	var prop_instance = _helper.create(_new_prop_name, _room, _interaction_checkbox.button_pressed)
 

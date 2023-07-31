@@ -20,8 +20,7 @@ func _ready() -> void:
 func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the region helper and use it to create the region
-	_helper = PopochiuWalkableAreaFactory.new()
-	_helper.init(_main_dock)
+	_helper = PopochiuWalkableAreaFactory.new(_main_dock)
 
 	var walkable_area = _helper.create(_new_walkable_area_name, _room)
 

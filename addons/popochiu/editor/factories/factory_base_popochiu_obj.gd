@@ -36,7 +36,7 @@ var _obj_dock_row: PopochiuObjectRow
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func init(main_dock: Panel) -> void:
+func _init(main_dock: Panel) -> void:
 	_main_dock = main_dock
 	_ei = _main_dock.ei
 

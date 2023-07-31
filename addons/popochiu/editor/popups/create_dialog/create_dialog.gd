@@ -29,8 +29,7 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuDialogFactory.new()
-	_helper.init(_main_dock)
+	_helper = PopochiuDialogFactory.new(_main_dock)
 
 	var dialog_resource = _helper.create(_new_dialog_name)
 
