@@ -29,8 +29,8 @@ func create(obj_name: String, set_as_main:bool = false) -> PopochiuRoom:
 	# Create the room instance
 	var obj: PopochiuRoom = _load_obj_base_scene()
 	
-	obj.name = 'Room' + _obj_name
-	obj.script_name = _obj_name
+	obj.name = 'Room' + _obj_pascal_name
+	obj.script_name = _obj_pascal_name
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	
 	# Save the room scene (.tscn)

@@ -29,9 +29,9 @@ func create(obj_name: String) -> PopochiuInventoryItem:
 	# Create the item instance
 	var obj: PopochiuInventoryItem = _load_obj_base_scene()
 
-	obj.name = 'Item' + _obj_name
-	obj.script_name = _obj_name
-	obj.description = _obj_name.capitalize()
+	obj.name = 'Item' + _obj_pascal_name
+	obj.script_name = _obj_pascal_name
+	obj.description = _obj_pascal_name.capitalize()
 	obj.cursor = Constants.CURSOR_TYPE.USE
 	obj.size_flags_vertical = obj.SIZE_SHRINK_CENTER
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

@@ -24,16 +24,16 @@ func create(obj_name: String) -> PopochiuDialog:
 	# Create dialog resource (not a scene, so we don't invoke _load_base_scene()
 	# and _save_obj_scene(). We work directly on _obj class property.
 	var _obj := PopochiuDialog.new()
-	_obj.set_script(load(_obj_path + '.gd'))
+	_obj.set_script(load(_obj_path_script))
 	
-	_obj.script_name = _obj_name
-	_obj.resource_name = _obj_name
+	_obj.script_name = _obj_pascal_name
+	_obj.resource_name = _obj_pascal_name
 	
 	# Save dialog resource (local code because it's not a scene)
-	if ResourceSaver.save(_obj, _obj_path + '.tres') != OK:
+	if ResourceSaver.save(_obj, _obj_path_resource) != OK:
 		push_error(
 			"[Popochiu] Couldn't create %s: %s" %
-			[_obj_type_label, _obj_name]
+			[_obj_type_label, _obj_pascal_name]
 		)
 		# TODO: Show feedback in the popup via signals/signalbus
 		return
@@ -42,4 +42,4 @@ func create(obj_name: String) -> PopochiuDialog:
 	# Add the object to Popochiu dock list, plus open it in the editor
 	_add_resource_to_popochiu()
 	
-	return load(_obj_path + '.tres')
+	return load(_obj_path_resource)

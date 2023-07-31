@@ -15,11 +15,14 @@ var _ei: EditorInterface
 # The following variables are setup on creation
 # Names variants and name parameter passed to
 # the create method.
-var _obj_script_name := ''
-var _obj_name := ''
-var _obj_path := ''
-var _obj_path_template := ''
-var _obj_script_path := ''
+var _obj_path_template := '' # always set by child class
+var _obj_snake_name := ''
+var _obj_pascal_name := ''
+var _obj_path_base := ''
+var _obj_path_script := ''
+var _obj_path_state = ''
+var _obj_path_resource = ''
+var _obj_path_scene = ''
 # The following variables are setup by the sub-class constructor
 # to define the type of object to be processed
 # TODO: reduce this to just "type", too much redundancy
@@ -43,21 +46,24 @@ func _init(main_dock: Panel) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░
 func _setup_name(obj_name: String) -> void:
-	_obj_name = obj_name.to_pascal_case()
-	_obj_script_name = obj_name.to_snake_case()
-	_obj_path = _obj_path_template % [_obj_script_name, _obj_script_name]
-	_obj_script_path = _obj_path + '.gd'
+	_obj_pascal_name = obj_name.to_pascal_case()
+	_obj_snake_name = obj_name.to_snake_case()
+	_obj_path_base = _obj_path_template % [_obj_snake_name, _obj_snake_name]
+	_obj_path_script = _obj_path_base + '.gd'
+	_obj_path_state = _obj_path_base + '_state.gd'
+	_obj_path_resource = _obj_path_base + '.tres'
+	_obj_path_scene = _obj_path_base + '.tscn'
 
 
 func _add_resource_to_popochiu() -> void:
 	# Add the created obj to Popochiu's correct list
 	if _main_dock.add_resource_to_popochiu(
 		_obj_type_target,
-		ResourceLoader.load(_obj_path + '.tres')
+		ResourceLoader.load(_obj_path_resource)
 	) != OK:
 		push_error(
 			"[Popochiu] Couldn't add the created %s to Popochiu: %s" %
-			[_obj_type_label, _obj_name]
+			[_obj_type_label, _obj_pascal_name]
 		)
 		return
 	
@@ -66,17 +72,17 @@ func _add_resource_to_popochiu() -> void:
 	
 	# Update the related list in the dock
 	_obj_dock_row = (_main_dock as MainDock).add_to_list(
-		_obj_type, _obj_name
+		_obj_type, _obj_pascal_name
 	)
 
 
 func _create_obj_folder() -> int:
 	# TODO: Check if another object was created in the same PATH.
 	# TODO: Remove created files if the creation process failed.
-	if  DirAccess.make_dir_recursive_absolute(_obj_path.get_base_dir()) != OK:
+	if  DirAccess.make_dir_recursive_absolute(_obj_path_base.get_base_dir()) != OK:
 		push_error(
 			'[Popochiu] Could not create %s directory: %s' %
-			[_obj_path.get_base_dir(), _obj_name]
+			[_obj_path_base.get_base_dir(), _obj_pascal_name]
 		)
 		return ResultCodes.FAILURE
 	return ResultCodes.SUCCESS
@@ -86,23 +92,23 @@ func _create_state_resource() -> int:
 	var state_template: Script = load(
 		BASE_STATE_TEMPLATE % _obj_type_label
 	).duplicate()
-	if ResourceSaver.save(state_template, _obj_path + '_state.gd') != OK:
+	if ResourceSaver.save(state_template, _obj_path_state) != OK:
 		push_error(
 			'[Popochiu] Could not create %s state script: %s' %
-			[_obj_type_label, _obj_name]
+			[_obj_type_label, _obj_pascal_name]
 		)
 		# TODO: Show feedback in the popup via signals/signalbus
 		return ResultCodes.FAILURE
 	
-	_obj_state_resource = load(_obj_path + '_state.gd').new()
-	_obj_state_resource.script_name = _obj_name
-	_obj_state_resource.scene = _obj_path + '.tscn'
-	_obj_state_resource.resource_name = _obj_name
+	_obj_state_resource = load(_obj_path_state).new()
+	_obj_state_resource.script_name = _obj_pascal_name
+	_obj_state_resource.scene = _obj_path_scene
+	_obj_state_resource.resource_name = _obj_pascal_name
 	
-	if ResourceSaver.save(_obj_state_resource, _obj_path + '.tres') != OK:
+	if ResourceSaver.save(_obj_state_resource, _obj_path_resource) != OK:
 		push_error(
 			"[Popochiu] Couldn't create PopochiuRoomData for %s: %s" %
-			[_obj_type_label, _obj_name]
+			[_obj_type_label, _obj_pascal_name]
 		)
 		# TODO: Show feedback in the popup via signals/signalbus
 		return ResultCodes.FAILURE
@@ -115,10 +121,10 @@ func _copy_script_template() -> int:
 		BASE_SCRIPT_TEMPLATE % _obj_type_label
 	).duplicate()
 
-	if ResourceSaver.save(_obj_script, _obj_script_path) != OK:
+	if ResourceSaver.save(_obj_script, _obj_path_script) != OK:
 		push_error(
 			"[Popochiu] Couldn't create %s script: %s" %
-			[_obj_type_label, _obj_script_path]
+			[_obj_type_label, _obj_path_script]
 		)
 		# TODO: Show feedback in the popup via signals/signalbus
 		return ResultCodes.FAILURE
@@ -140,21 +146,21 @@ func _create_script_from_template() -> int:
 
 	new_code = new_code.replace(
 		'%s_state_template' % _obj_type_label,
-		'%s_%s_state' % [_obj_type_label, _obj_script_name]
+		'%s_%s_state' % [_obj_type_label, _obj_snake_name]
 	)
 
 	new_code = new_code.replace(
 		'Data = null',
-		"Data = load('%s.tres')" % _obj_path
+		"Data = load('%s.tres')" % _obj_path_base
 	)
 
 	_obj_script = load(EMPTY_SCRIPT).duplicate()
 	_obj_script.source_code = new_code
 
-	if ResourceSaver.save(_obj_script, _obj_script_path) != OK:
+	if ResourceSaver.save(_obj_script, _obj_path_script) != OK:
 		push_error(
 			"[Popochiu] Couldn't create %s script: %s" %
-			[_obj_type_label, _obj_script_path]
+			[_obj_type_label, _obj_path_script]
 		)
 		# TODO: Show feedback in the popup via signals/signalbus
 		return ResultCodes.FAILURE
@@ -165,17 +171,17 @@ func _create_script_from_template() -> int:
 func _save_obj_scene(obj: Node) -> int:
 	var packed_scene: PackedScene = PackedScene.new()
 	packed_scene.pack(obj)
-	if ResourceSaver.save(packed_scene, _obj_path + '.tscn') != OK:
+	if ResourceSaver.save(packed_scene, _obj_path_scene) != OK:
 		push_error(
 			"[Popochiu] Couldn't create %s: %s" %
-			[_obj_type_label, _obj_path + '.gd']
+			[_obj_type_label, _obj_path_script]
 		)
 		# TODO: Show feedback in the popup via signals/signalbus
 		return ResultCodes.FAILURE
 
 	# Load the scene to be returned to the calling code
 	# Instancing the created .tscn file fixes #58
-	_obj = load(_obj_path + '.tscn').instantiate()
+	_obj = load(_obj_path_scene).instantiate()
 	
 	return ResultCodes.SUCCESS
 
@@ -188,6 +194,6 @@ func _load_obj_base_scene() -> Node:
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.
 	if _obj_script != null:
-		obj.set_script(load(_obj_script_path))
+		obj.set_script(load(_obj_path_script))
 
 	return obj

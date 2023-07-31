@@ -50,6 +50,6 @@ func _add_resource_to_room() -> void:
 	# Update the correct list in the Room tab
 	(_room_tab as TabRoom).add_to_list(
 		_obj_type,
-		_obj_name,
-		_obj_path + '.tscn'
+		_obj_pascal_name,
+		_obj_path_scene
 	)

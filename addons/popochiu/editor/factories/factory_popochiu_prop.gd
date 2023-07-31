@@ -27,15 +27,15 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -
 	var new_obj: PopochiuProp = _load_obj_base_scene()
 	
 	if is_interactive:
-		new_obj.set_script(ResourceLoader.load(_obj_script_path))
+		new_obj.set_script(ResourceLoader.load(_obj_path_script))
 	
-	new_obj.name = _obj_name
-	new_obj.script_name = _obj_name
-	new_obj.description = _obj_script_name.capitalize()
+	new_obj.name = _obj_pascal_name
+	new_obj.script_name = _obj_pascal_name
+	new_obj.description = _obj_snake_name.capitalize()
 	new_obj.cursor = Constants.CURSOR_TYPE.ACTIVE
 	new_obj.clickable = is_interactive
 	
-	if _obj_script_name in ['bg', 'background']:
+	if _obj_snake_name in ['bg', 'background']:
 		new_obj.baseline =\
 		-ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT) / 2.0
 		new_obj.z_index = -1

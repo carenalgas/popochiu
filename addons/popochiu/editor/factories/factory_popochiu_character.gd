@@ -29,9 +29,9 @@ func create(obj_name: String) -> PopochiuCharacter:
 	# Create the character instance
 	var obj: PopochiuCharacter = _load_obj_base_scene()
 
-	obj.name = 'Character' + _obj_name
-	obj.script_name = _obj_name
-	obj.description = _obj_name.capitalize()
+	obj.name = 'Character' + _obj_pascal_name
+	obj.script_name = _obj_pascal_name
+	obj.description = _obj_pascal_name.capitalize()
 	obj.cursor = Constants.CURSOR_TYPE.TALK
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	

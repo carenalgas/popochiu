@@ -24,9 +24,9 @@ func create(obj_name: String, room: PopochiuRoom) -> PopochiuRegion:
 	# Create the region instance
 	var new_obj: PopochiuRegion = _load_obj_base_scene()
 
-	new_obj.name = _obj_name
-	new_obj.script_name = _obj_name
-	new_obj.description = _obj_script_name.capitalize()
+	new_obj.name = _obj_pascal_name
+	new_obj.script_name = _obj_pascal_name
+	new_obj.description = _obj_snake_name.capitalize()
 
 	# Save the region scene (.tscn) and put it into _obj class property
 	if _save_obj_scene(new_obj) == ResultCodes.FAILURE: return

@@ -24,9 +24,9 @@ func create(obj_name: String, room: PopochiuRoom) -> PopochiuHotspot:
 	# Create the hotspot instance
 	var new_obj: PopochiuHotspot = _load_obj_base_scene()
 
-	new_obj.name = _obj_name
-	new_obj.script_name = _obj_name
-	new_obj.description = _obj_script_name.capitalize()
+	new_obj.name = _obj_pascal_name
+	new_obj.script_name = _obj_pascal_name
+	new_obj.description = _obj_snake_name.capitalize()
 	new_obj.cursor = Constants.CURSOR_TYPE.ACTIVE
 
 	# Save the hostspot scene (.tscn) and put it into _obj class property
