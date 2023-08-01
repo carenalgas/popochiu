@@ -7,7 +7,7 @@ var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_hotspot_name := ''
-var _helper: PopochiuHotspotFactory
+var _factory: PopochiuHotspotFactory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -20,10 +20,10 @@ func _ready() -> void:
 func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the region helper and use it to create the hotspot
-	_helper = PopochiuHotspotFactory.new(_main_dock)
+	_factory = PopochiuHotspotFactory.new(_main_dock)
 
 
-	var hotspot = _helper.create(_new_hotspot_name, _room)
+	var hotspot = _factory.create(_new_hotspot_name, _room)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created region in the inspector

@@ -8,7 +8,7 @@ var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_region_name := ''
-var _helper: PopochiuRegionFactory
+var _factory: PopochiuRegionFactory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -25,9 +25,9 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the region helper and use it to create the region
-	_helper = PopochiuRegionFactory.new(_main_dock)
+	_factory = PopochiuRegionFactory.new(_main_dock)
 
-	var region = _helper.create(_new_region_name, _room)
+	var region = _factory.create(_new_region_name, _room)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created region in the inspector

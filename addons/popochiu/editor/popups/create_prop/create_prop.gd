@@ -13,7 +13,7 @@ var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_prop_name := ''
-var _helper: PopochiuPropFactory
+var _factory: PopochiuPropFactory
 
 @onready var _interaction_checkbox: CheckBox = find_child('InteractionCheckbox')
 
@@ -34,9 +34,9 @@ func _create() -> void:
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuPropFactory.new(_main_dock)
+	_factory = PopochiuPropFactory.new(_main_dock)
 
-	var prop_instance = _helper.create(_new_prop_name, _room, _interaction_checkbox.button_pressed)
+	var prop_instance = _factory.create(_new_prop_name, _room, _interaction_checkbox.button_pressed)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created prop in the inspector

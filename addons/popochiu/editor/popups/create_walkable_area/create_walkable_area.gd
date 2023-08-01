@@ -7,7 +7,7 @@ var room_tab: VBoxContainer = null
 
 var _room: Node2D = null
 var _new_walkable_area_name := ''
-var _helper: PopochiuWalkableAreaFactory
+var _factory: PopochiuWalkableAreaFactory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -20,9 +20,9 @@ func _ready() -> void:
 func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the region helper and use it to create the region
-	_helper = PopochiuWalkableAreaFactory.new(_main_dock)
+	_factory = PopochiuWalkableAreaFactory.new(_main_dock)
 
-	var walkable_area = _helper.create(_new_walkable_area_name, _room)
+	var walkable_area = _factory.create(_new_walkable_area_name, _room)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created region in the inspector

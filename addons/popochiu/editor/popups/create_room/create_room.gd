@@ -16,7 +16,7 @@ const PopochiuDock := preload('res://addons/popochiu/editor/main_dock/popochiu_d
 var show_set_as_main := false : set = _set_show_set_as_main
 
 var _new_room_name := ''
-var _helper: PopochiuRoomFactory
+var _factory: PopochiuRoomFactory
 
 @onready var _set_as_main: PanelContainer = find_child('SetAsMainContainer')
 @onready var _set_as_main_check: CheckBox = _set_as_main.find_child('CheckBox')
@@ -48,9 +48,9 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuRoomFactory.new(_main_dock)
+	_factory = PopochiuRoomFactory.new(_main_dock)
 
-	var room_scene = _helper.create(_new_room_name, _set_as_main_check.button_pressed)
+	var room_scene = _factory.create(_new_room_name, _set_as_main_check.button_pressed)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor

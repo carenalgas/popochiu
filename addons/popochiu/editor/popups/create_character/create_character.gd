@@ -14,7 +14,7 @@ extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 const PopochiuDock := preload('res://addons/popochiu/editor/main_dock/popochiu_dock.gd')
 
 var _new_character_name := ''
-var _helper: PopochiuCharacterFactory
+var _factory: PopochiuCharacterFactory
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
@@ -30,9 +30,9 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuCharacterFactory.new(_main_dock)
+	_factory = PopochiuCharacterFactory.new(_main_dock)
 
-	var character_scene = _helper.create(_new_character_name)
+	var character_scene = _factory.create(_new_character_name)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor

@@ -14,7 +14,7 @@ extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 const PopochiuDock := preload('res://addons/popochiu/editor/main_dock/popochiu_dock.gd')
 
 var _new_item_name := ''
-var _helper: PopochiuInventoryItemFactory
+var _factory: PopochiuInventoryItemFactory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -31,9 +31,9 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuInventoryItemFactory.new(_main_dock)
+	_factory = PopochiuInventoryItemFactory.new(_main_dock)
 
-	var item_scene = _helper.create(_new_item_name)
+	var item_scene = _factory.create(_new_item_name)
 
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

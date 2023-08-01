@@ -12,7 +12,7 @@ extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 const PopochiuDock := preload('res://addons/popochiu/editor/main_dock/popochiu_dock.gd')
 
 var _new_dialog_name := ''
-var _helper: PopochiuDialogFactory
+var _factory: PopochiuDialogFactory
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -29,9 +29,9 @@ func _create() -> void:
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Setup the prop helper and use it to create the prop
-	_helper = PopochiuDialogFactory.new(_main_dock)
+	_factory = PopochiuDialogFactory.new(_main_dock)
 
-	var dialog_resource = _helper.create(_new_dialog_name)
+	var dialog_resource = _factory.create(_new_dialog_name)
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open dialog in the Inspector
