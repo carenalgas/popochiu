@@ -39,7 +39,7 @@ var _remove_dialog: ConfirmationDialog
 		type_class = PopochiuRegion,
 		parent = 'Regions'
 	},
-	Constants.Types.POINT: {
+	Constants.Types.MARKER: {
 		group = find_child('MarkersGroup'),
 		method = 'get_markers',
 		type_class = Marker2D,

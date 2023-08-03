@@ -285,7 +285,7 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 
 
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
-	await _walk_to_clickable(E.clicked, offset)
+	await _walk_to_node(E.clicked, offset)
 
 
 func queue_walk_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
@@ -293,7 +293,7 @@ func queue_walk_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 
 
 func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
-	await _walk_to_clickable(E.current_room.get_prop(id), offset)
+	await _walk_to_node(E.current_room.get_prop(id), offset)
 
 
 func queue_walk_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
@@ -301,7 +301,7 @@ func queue_walk_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 
 
 func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
-	await _walk_to_clickable(E.current_room.get_hotspot(id), offset)
+	await _walk_to_node(E.current_room.get_hotspot(id), offset)
 
 
 func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
@@ -309,7 +309,7 @@ func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 
 
 func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
-	await walk(E.current_room.get_point(id) + offset)
+	await _walk_to_node(E.current_room.get_marker(id), offset)
 
 
 func queue_set_emotion(new_emotion: String) -> Callable:
@@ -497,9 +497,9 @@ func _get_valid_oriented_animation(animation_label):
 	return null
 
 
-func _walk_to_clickable(node: PopochiuClickable, offset: Vector2) -> void:
+func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
 
-	await walk(node.to_global(node.walk_to_point) + offset)
+	await walk(node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset)
