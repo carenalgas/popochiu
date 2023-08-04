@@ -48,7 +48,7 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	polygon.make_polygons_from_outlines()
 	perimeter.navpoly = polygon
 	perimeter.modulate = Color.GREEN
-	_obj_scene.add_child(perimeter)
+	_add_visible_child(perimeter)
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 	# Add the prop to its room

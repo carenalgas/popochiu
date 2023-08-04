@@ -1,5 +1,6 @@
 extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd'
 
+const CHiLD_VISIBLE_IN_ROOM_META = '_popochiu_obj_factory_child_visible_in_room_'
 const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
 
 var _room_tab: VBoxContainer = null
@@ -28,6 +29,14 @@ func _setup_room(room: PopochiuRoom) -> void:
 	_obj_path_template = _room_dir + _obj_path_template
 
 
+# This function adds a child to the new object scene
+# marking it as "visilbe in room scene"
+func _add_visible_child(child: Node) -> void:
+	child.set_meta(CHiLD_VISIBLE_IN_ROOM_META, true)
+	child.owner = _obj_scene
+	_obj_scene.add_child(child)
+
+
 func _add_resource_to_room() -> void:
 	# Add the newly created obj to its room
 	_room.get_node(_obj_room_group).add_child(_obj_scene)
@@ -36,7 +45,9 @@ func _add_resource_to_room() -> void:
 	# (this address colliders, polygons, etc)
 	_obj_scene.owner = _room
 	for child in _obj_scene.get_children():
-		child.owner = _room
+		if child.has_meta(CHiLD_VISIBLE_IN_ROOM_META):
+			child.owner = _room
+			child.remove_meta(CHiLD_VISIBLE_IN_ROOM_META)
 
 	# Center the object on the scene
 	_obj_scene.position = Vector2(

@@ -53,7 +53,8 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -
 	if is_interactive:
 		var collision := CollisionPolygon2D.new()
 		collision.name = 'InteractionPolygon'
-		_obj_scene.add_child(collision)
+		_add_visible_child(collision)
+
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 	# Add the prop to its room
