@@ -33,8 +33,11 @@ func _create() -> void:
 	# Setup the prop helper and use it to create the prop
 	_factory = PopochiuInventoryItemFactory.new(_main_dock)
 
-	var item_scene = _factory.create(_new_item_name)
+	if _factory.create(_new_item_name) != ResultCodes.SUCCESS:
+		# TODO: show a message in the popup!
+		return
 
+	var item_scene = _factory.get_obj_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor

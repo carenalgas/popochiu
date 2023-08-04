@@ -10,20 +10,24 @@ func _init(_main_dock: Panel) -> void:
 	_obj_path_template = '/props/%s/prop_%s'
 
 
-func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -> PopochiuProp:
+func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -> int:
+	# If everything goes well, this won't change.
+	var result_code := ResultCodes.SUCCESS
+
 	_setup_room(room)
 	_setup_name(obj_name)
 
 	# Create the folder for the Prop
-	if _create_obj_folder() == ResultCodes.FAILURE: return
+	result_code = _create_obj_folder()
+	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# Create the script for the prop (if it has interaction)
 	if is_interactive:
-		if _copy_script_template() == ResultCodes.FAILURE: return
-	
+		result_code = _copy_script_template()
+		if result_code != ResultCodes.SUCCESS: return result_code
+		
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the prop instance (not in _obj, it will be set by _save_obj_scene()
-	# at the end of the local code)
+	# Create the prop instance
 	var new_obj: PopochiuProp = _load_obj_base_scene()
 	
 	if is_interactive:
@@ -40,18 +44,19 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -
 		-ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT) / 2.0
 		new_obj.z_index = -1
 
-	# Save the prop scene (.tscn) and put it into _obj class property
-	if _save_obj_scene(new_obj) == ResultCodes.FAILURE: return
+	# Save the prop scene (.tscn) and put it into _obj_scene class property
+	result_code = _save_obj_scene(new_obj)
+	if result_code != ResultCodes.SUCCESS: return result_code
 
+	# TODO: Introduce here the logic to handle children in scene
 	# Add collision polygon to the prop if it's interactive
 	if is_interactive:
 		var collision := CollisionPolygon2D.new()
 		collision.name = 'InteractionPolygon'
-		_obj.add_child(collision)
+		_obj_scene.add_child(collision)
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 	# Add the prop to its room
 	_add_resource_to_room()
 
-	# This factory returns the object scene
-	return _obj
+	return result_code

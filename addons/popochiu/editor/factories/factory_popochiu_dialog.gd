@@ -10,36 +10,36 @@ func _init(_main_dock: Panel) -> void:
 	_obj_path_template = _main_dock.DIALOGS_PATH + '%s/dialog_%s'
 
 
-func create(obj_name: String) -> PopochiuDialog:
+func create(obj_name: String) -> int:
+	# If everything goes well, this won't change.
+	var result_code := ResultCodes.SUCCESS
+
 	# Setup the class variables that depends on the object name
 	_setup_name(obj_name)
 
 	# Create the folder for the dialog
-	if _create_obj_folder() == ResultCodes.FAILURE: return
+	result_code = _create_obj_folder()
+	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# Create the script for the dialog
-	if _copy_script_template() == ResultCodes.FAILURE: return
+	result_code = _copy_script_template()
+	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create dialog resource (not a scene, so we don't invoke _load_base_scene()
-	# and _save_obj_scene(). We work directly on _obj class property.
-	var _obj := PopochiuDialog.new()
-	_obj.set_script(load(_obj_path_script))
+	# and _save_obj_scene(). We work directly on _obj_scene class property.
+	var new_obj := PopochiuDialog.new()
+	new_obj.set_script(load(_obj_path_script))
 	
-	_obj.script_name = _obj_pascal_name
-	_obj.resource_name = _obj_pascal_name
-	
-	# Save dialog resource (local code because it's not a scene)
-	if ResourceSaver.save(_obj, _obj_path_resource) != OK:
-		push_error(
-			"[Popochiu] Couldn't create %s: %s" %
-			[_obj_type_label, _obj_pascal_name]
-		)
-		# TODO: Show feedback in the popup via signals/signalbus
-		return
+	new_obj.script_name = _obj_pascal_name
+	new_obj.resource_name = _obj_pascal_name
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+
+	# Save dialog resource (dialogs are not scenes)
+	result_code = _save_obj_resource(new_obj)
+	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# Add the object to Popochiu dock list, plus open it in the editor
 	_add_resource_to_popochiu()
 	
-	return load(_obj_path_resource)
+	return result_code

@@ -30,16 +30,16 @@ func _setup_room(room: PopochiuRoom) -> void:
 
 func _add_resource_to_room() -> void:
 	# Add the newly created obj to its room
-	_room.get_node(_obj_room_group).add_child(_obj)
+	_room.get_node(_obj_room_group).add_child(_obj_scene)
 
 	# Set the ownership for the node plus all it's children
 	# (this address colliders, polygons, etc)
-	_obj.owner = _room
-	for child in _obj.get_children():
+	_obj_scene.owner = _room
+	for child in _obj_scene.get_children():
 		child.owner = _room
 
 	# Center the object on the scene
-	_obj.position = Vector2(
+	_obj_scene.position = Vector2(
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0

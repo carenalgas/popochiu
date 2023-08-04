@@ -22,8 +22,11 @@ func _create() -> void:
 	# Setup the region helper and use it to create the hotspot
 	_factory = PopochiuHotspotFactory.new(_main_dock)
 
+	if _factory.create(_new_hotspot_name, _room) != ResultCodes.SUCCESS:
+		# TODO: show a message in the popup!
+		return
 
-	var hotspot = _factory.create(_new_hotspot_name, _room)
+	var hotspot = _factory.get_obj_scene()
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created region in the inspector

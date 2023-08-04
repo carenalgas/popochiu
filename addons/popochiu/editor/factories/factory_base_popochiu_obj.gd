@@ -19,30 +19,51 @@ var _obj_path_template := '' # always set by child class
 var _obj_snake_name := ''
 var _obj_pascal_name := ''
 var _obj_path_base := ''
-var _obj_path_script := ''
-var _obj_path_state = ''
-var _obj_path_resource = ''
 var _obj_path_scene = ''
+var _obj_path_resource = ''
+var _obj_path_state = ''
+var _obj_path_script := ''
 # The following variables are setup by the sub-class constructor
 # to define the type of object to be processed
 # TODO: reduce this to just "type", too much redundancy
 var _obj_type := -1
 var _obj_type_label := ''
 var _obj_type_target := ''
+# The following variable is needed because the room factory
+# must set a property on the dock row if the room is the
+# primary one.
+# TODO: remove the need for this using signals #67
+var _obj_dock_row: PopochiuObjectRow
 # The following variables are references to the elements
 # generated for the creation of the new Popochiu object,
 # such as resources, scenes, scripts, state scripts, etc
-var _obj: Node # Can be a scene or a simple node in the tree
+var _obj_scene: Node
+var _obj_resource: Resource
 var _obj_state_resource: Resource
 var _obj_script: Resource
-var _obj_dock_row: PopochiuObjectRow
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 func _init(main_dock: Panel) -> void:
 	_main_dock = main_dock
 	_ei = _main_dock.ei
 
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_obj_scene() -> Node:
+	return _obj_scene
+
+
+func get_obj_resource() -> Resource:
+	return _obj_resource
+	
+
+func get_state_resource() -> Resource:
+	return _obj_state_resource
+
+
+func get_obj_script() -> Resource:
+	return _obj_script
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░
 func _setup_name(obj_name: String) -> void:
@@ -55,27 +76,6 @@ func _setup_name(obj_name: String) -> void:
 	_obj_path_scene = _obj_path_base + '.tscn'
 
 
-func _add_resource_to_popochiu() -> void:
-	# Add the created obj to Popochiu's correct list
-	if _main_dock.add_resource_to_popochiu(
-		_obj_type_target,
-		ResourceLoader.load(_obj_path_resource)
-	) != OK:
-		push_error(
-			"[Popochiu] Couldn't add the created %s to Popochiu: %s" %
-			[_obj_type_label, _obj_pascal_name]
-		)
-		return
-	
-	# Add the room to the proper singleton
-	PopochiuResources.update_autoloads(true)
-	
-	# Update the related list in the dock
-	_obj_dock_row = (_main_dock as MainDock).add_to_list(
-		_obj_type, _obj_pascal_name
-	)
-
-
 func _create_obj_folder() -> int:
 	# TODO: Check if another object was created in the same PATH.
 	# TODO: Remove created files if the creation process failed.
@@ -84,7 +84,7 @@ func _create_obj_folder() -> int:
 			'[Popochiu] Could not create %s directory: %s' %
 			[_obj_path_base.get_base_dir(), _obj_pascal_name]
 		)
-		return ResultCodes.FAILURE
+		return ResultCodes.ERR_CANT_CREATE_OBJ_FOLDER
 	return ResultCodes.SUCCESS
 
 
@@ -97,7 +97,6 @@ func _create_state_resource() -> int:
 			'[Popochiu] Could not create %s state script: %s' %
 			[_obj_type_label, _obj_pascal_name]
 		)
-		# TODO: Show feedback in the popup via signals/signalbus
 		return ResultCodes.FAILURE
 	
 	_obj_state_resource = load(_obj_path_state).new()
@@ -110,8 +109,7 @@ func _create_state_resource() -> int:
 			"[Popochiu] Couldn't create PopochiuRoomData for %s: %s" %
 			[_obj_type_label, _obj_pascal_name]
 		)
-		# TODO: Show feedback in the popup via signals/signalbus
-		return ResultCodes.FAILURE
+		return ResultCodes.ERR_CANT_CREATE_OBJ_STATE
 	
 	return ResultCodes.SUCCESS
 
@@ -126,8 +124,7 @@ func _copy_script_template() -> int:
 			"[Popochiu] Couldn't create %s script: %s" %
 			[_obj_type_label, _obj_path_script]
 		)
-		# TODO: Show feedback in the popup via signals/signalbus
-		return ResultCodes.FAILURE
+		return ResultCodes.ERR_CANT_CREATE_OBJ_SCRIPT
 
 	return ResultCodes.SUCCESS
 
@@ -139,8 +136,7 @@ func _create_script_from_template() -> int:
 			"[Popochiu] Couldn't read script template from %s" %
 			[BASE_SCRIPT_TEMPLATE % _obj_type_label]
 		)
-		# TODO: Show feedback in the popup via signals/signalbus
-		return ResultCodes.FAILURE
+		return ResultCodes.ERR_CANT_OPEN_OBJ_SCRIPT_TEMPLATE
 	var new_code: String = script_template_file.get_as_text()
 	script_template_file.close()
 
@@ -162,8 +158,7 @@ func _create_script_from_template() -> int:
 			"[Popochiu] Couldn't create %s script: %s" %
 			[_obj_type_label, _obj_path_script]
 		)
-		# TODO: Show feedback in the popup via signals/signalbus
-		return ResultCodes.FAILURE
+		return ResultCodes.ERR_CANT_CREATE_OBJ_SCRIPT
 
 	return ResultCodes.SUCCESS
 
@@ -176,15 +171,30 @@ func _save_obj_scene(obj: Node) -> int:
 			"[Popochiu] Couldn't create %s: %s" %
 			[_obj_type_label, _obj_path_script]
 		)
-		# TODO: Show feedback in the popup via signals/signalbus
-		return ResultCodes.FAILURE
+		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
 
 	# Load the scene to be returned to the calling code
 	# Instancing the created .tscn file fixes #58
-	_obj = load(_obj_path_scene).instantiate()
+	_obj_scene = load(_obj_path_scene).instantiate()
 	
 	return ResultCodes.SUCCESS
 
+
+func _save_obj_resource(obj: Resource) -> int:
+	# Save dialog resource (local code because it's not a scene)
+	if ResourceSaver.save(obj, _obj_path_resource) != OK:
+		push_error(
+			"[Popochiu] Couldn't create %s: %s" %
+			[_obj_type_label, _obj_pascal_name]
+		)
+		return ResultCodes.ERR_CANT_SAVE_OBJ_RESOURCE
+	
+	# Load the scene to be returned to the calling code
+	# Instancing the created .tscn file fixes #58
+	_obj_resource = load(_obj_path_resource)
+
+	return ResultCodes.SUCCESS
+	
 
 func _load_obj_base_scene() -> Node:
 	var obj = load(
@@ -197,3 +207,24 @@ func _load_obj_base_scene() -> Node:
 		obj.set_script(load(_obj_path_script))
 
 	return obj
+
+
+func _add_resource_to_popochiu() -> void:
+	# Add the created obj to Popochiu's correct list
+	if _main_dock.add_resource_to_popochiu(
+		_obj_type_target,
+		ResourceLoader.load(_obj_path_resource)
+	) != OK:
+		push_error(
+			"[Popochiu] Couldn't add the created %s to Popochiu: %s" %
+			[_obj_type_label, _obj_pascal_name]
+		)
+		return
+
+	# Add the room to the proper singleton
+	PopochiuResources.update_autoloads(true)
+
+	# Update the related list in the dock
+	_obj_dock_row = (_main_dock as MainDock).add_to_list(
+		_obj_type, _obj_pascal_name
+	)

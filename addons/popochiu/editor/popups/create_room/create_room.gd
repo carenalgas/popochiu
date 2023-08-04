@@ -50,7 +50,14 @@ func _create() -> void:
 	# Setup the prop helper and use it to create the prop
 	_factory = PopochiuRoomFactory.new(_main_dock)
 
-	var room_scene = _factory.create(_new_room_name, _set_as_main_check.button_pressed)
+	if _factory.create(
+		_new_room_name,
+		_set_as_main_check.button_pressed
+	) != ResultCodes.SUCCESS:
+		# TODO: show a message in the popup!
+		return
+
+	var room_scene = _factory.get_obj_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the scene in the editor

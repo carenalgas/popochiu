@@ -27,7 +27,11 @@ func _create() -> void:
 	# Setup the region helper and use it to create the region
 	_factory = PopochiuRegionFactory.new(_main_dock)
 
-	var region = _factory.create(_new_region_name, _room)
+	if _factory.create(_new_region_name, _room) != ResultCodes.SUCCESS:
+		# TODO: show a message in the popup!
+		return
+
+	var region = _factory.get_obj_scene()
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created region in the inspector

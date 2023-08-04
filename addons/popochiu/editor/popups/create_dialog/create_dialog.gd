@@ -31,7 +31,11 @@ func _create() -> void:
 	# Setup the prop helper and use it to create the prop
 	_factory = PopochiuDialogFactory.new(_main_dock)
 
-	var dialog_resource = _factory.create(_new_dialog_name)
+	if _factory.create(_new_dialog_name) != ResultCodes.SUCCESS:
+		# TODO: show a message in the popup!
+		return
+
+	var dialog_resource = _factory.get_obj_resource()
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open dialog in the Inspector

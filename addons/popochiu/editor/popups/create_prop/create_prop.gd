@@ -36,7 +36,14 @@ func _create() -> void:
 	# Setup the prop helper and use it to create the prop
 	_factory = PopochiuPropFactory.new(_main_dock)
 
-	var prop_instance = _factory.create(_new_prop_name, _room, _interaction_checkbox.button_pressed)
+	if _factory.create(
+		_new_prop_name, _room,
+		_interaction_checkbox.button_pressed
+	) != ResultCodes.SUCCESS:
+		# TODO: show a message in the popup!
+		return
+
+	var prop_instance = _factory.get_obj_scene()
 
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Open the properties of the created prop in the inspector
