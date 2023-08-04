@@ -17,28 +17,27 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	_setup_room(room)
 	_setup_name(obj_name)
 	
-	# Create the folder for the WalkableArea
+	# Create the folder
 	result_code = _create_obj_folder()
 	if result_code != ResultCodes.SUCCESS: return result_code
 	
-	# Create the script for the WalkableArea
+	# Create the script
 	result_code = _copy_script_template()
 	if result_code != ResultCodes.SUCCESS: return result_code
 	
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the new walkable area instance
+	# Create the instance
 	var new_obj: PopochiuWalkableArea = _load_obj_base_scene()
 
 	new_obj.name = _obj_pascal_name
 	new_obj.script_name = _obj_pascal_name
 	new_obj.description = _obj_snake_name.capitalize()
 
-	# Save the region scene (.tscn) and put it into _obj_scene class property
+	# Save the scene (.tscn) and put it into _obj_scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 
-	# TODO: Introduce here the logic to handle children in scene
-	# Create the NavigationRegion2D for the walkable area
+	# Create a NavigationRegion2D with its polygon as a child in the room scene
 	var perimeter := NavigationRegion2D.new()
 	perimeter.name = 'Perimeter'
 	var polygon := NavigationPolygon.new()
@@ -51,7 +50,7 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	_add_visible_child(perimeter)
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-	# Add the prop to its room
+	# Add the object to its room
 	_add_resource_to_room()
 
 	return result_code

@@ -17,17 +17,17 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -
 	_setup_room(room)
 	_setup_name(obj_name)
 
-	# Create the folder for the Prop
+	# Create the folder
 	result_code = _create_obj_folder()
 	if result_code != ResultCodes.SUCCESS: return result_code
 
-	# Create the script for the prop (if it has interaction)
+	# Create the script (if the prop is interactive)
 	if is_interactive:
 		result_code = _copy_script_template()
 		if result_code != ResultCodes.SUCCESS: return result_code
 		
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the prop instance
+	# Create the instance
 	var new_obj: PopochiuProp = _load_obj_base_scene()
 	
 	if is_interactive:
@@ -44,12 +44,12 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -
 		-ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT) / 2.0
 		new_obj.z_index = -1
 
-	# Save the prop scene (.tscn) and put it into _obj_scene class property
+	# Save the scene (.tscn) and put it into _obj_scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 
-	# TODO: Introduce here the logic to handle children in scene
-	# Add collision polygon to the prop if it's interactive
+	# Create a collision polygon as a child in the room scene
+	# if the prop is interactive
 	if is_interactive:
 		var collision := CollisionPolygon2D.new()
 		collision.name = 'InteractionPolygon'
@@ -57,7 +57,7 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false) -
 
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-	# Add the prop to its room
+	# Add the object to its room
 	_add_resource_to_room()
 
 	return result_code

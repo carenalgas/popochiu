@@ -106,7 +106,7 @@ func _create_state_resource() -> int:
 	
 	if ResourceSaver.save(_obj_state_resource, _obj_path_resource) != OK:
 		push_error(
-			"[Popochiu] Couldn't create PopochiuRoomData for %s: %s" %
+			"[Popochiu] Couldn't create state resource for %s: %s" %
 			[_obj_type_label, _obj_pascal_name]
 		)
 		return ResultCodes.ERR_CANT_CREATE_OBJ_STATE
@@ -130,7 +130,9 @@ func _copy_script_template() -> int:
 
 
 func _create_script_from_template() -> int:
-	var script_template_file = FileAccess.open(BASE_SCRIPT_TEMPLATE % _obj_type_label, FileAccess.READ)
+	var script_template_file = FileAccess.open(
+		BASE_SCRIPT_TEMPLATE % _obj_type_label, FileAccess.READ
+	)
 	if script_template_file == null:
 		push_error(
 			"[Popochiu] Couldn't read script template from %s" %
@@ -173,7 +175,7 @@ func _save_obj_scene(obj: Node) -> int:
 		)
 		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
 
-	# Load the scene to be returned to the calling code
+	# Load the scene to be get by the calling code
 	# Instancing the created .tscn file fixes #58
 	_obj_scene = load(_obj_path_scene).instantiate()
 	
@@ -181,7 +183,6 @@ func _save_obj_scene(obj: Node) -> int:
 
 
 func _save_obj_resource(obj: Resource) -> int:
-	# Save dialog resource (local code because it's not a scene)
 	if ResourceSaver.save(obj, _obj_path_resource) != OK:
 		push_error(
 			"[Popochiu] Couldn't create %s: %s" %
@@ -189,8 +190,7 @@ func _save_obj_resource(obj: Resource) -> int:
 		)
 		return ResultCodes.ERR_CANT_SAVE_OBJ_RESOURCE
 	
-	# Load the scene to be returned to the calling code
-	# Instancing the created .tscn file fixes #58
+	# Load the resource to be get by the calling code
 	_obj_resource = load(_obj_path_resource)
 
 	return ResultCodes.SUCCESS
@@ -221,7 +221,7 @@ func _add_resource_to_popochiu() -> void:
 		)
 		return
 
-	# Add the room to the proper singleton
+	# Add the object to the proper singleton
 	PopochiuResources.update_autoloads(true)
 
 	# Update the related list in the dock

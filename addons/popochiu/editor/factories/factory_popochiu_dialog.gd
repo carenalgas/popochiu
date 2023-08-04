@@ -17,17 +17,16 @@ func create(obj_name: String) -> int:
 	# Setup the class variables that depends on the object name
 	_setup_name(obj_name)
 
-	# Create the folder for the dialog
+	# Create the folder
 	result_code = _create_obj_folder()
 	if result_code != ResultCodes.SUCCESS: return result_code
 
-	# Create the script for the dialog
+	# Create the script
 	result_code = _copy_script_template()
 	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create dialog resource (not a scene, so we don't invoke _load_base_scene()
-	# and _save_obj_scene(). We work directly on _obj_scene class property.
+	# Create the resource (dialogs are not scenes)
 	var new_obj := PopochiuDialog.new()
 	new_obj.set_script(load(_obj_path_script))
 	
@@ -35,7 +34,7 @@ func create(obj_name: String) -> int:
 	new_obj.resource_name = _obj_pascal_name
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-	# Save dialog resource (dialogs are not scenes)
+	# Save resource (dialogs are not scenes)
 	result_code = _save_obj_resource(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 

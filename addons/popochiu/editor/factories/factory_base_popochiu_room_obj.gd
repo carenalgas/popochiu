@@ -25,12 +25,12 @@ func _setup_room(room: PopochiuRoom) -> void:
 	_room = room
 	_room_path = _room.scene_file_path
 	_room_dir = _room_path.get_base_dir()
-	# Adding room to room object path template
+	# Adding room path to room object path template
 	_obj_path_template = _room_dir + _obj_path_template
 
 
 # This function adds a child to the new object scene
-# marking it as "visilbe in room scene"
+# marking it as "visible in room scene"
 func _add_visible_child(child: Node) -> void:
 	child.set_meta(CHiLD_VISIBLE_IN_ROOM_META, true)
 	child.owner = _obj_scene

@@ -17,22 +17,21 @@ func create(obj_name: String) -> int:
 	# Setup the class variables that depends on the object name
 	_setup_name(obj_name)
 
-	# Create the folder for the item
+	# Create the folder
 	result_code = _create_obj_folder()
 	if result_code != ResultCodes.SUCCESS: return result_code
 	
-	# Create the state Resource for the item and a script
+	# Create the state Resource and a script
 	# so devs can add extra properties to that state
 	result_code = _create_state_resource()
 	if result_code != ResultCodes.SUCCESS: return result_code
 		
-	# Create the script for the item
-	# populating the template with the right references
+	# Create the script populating the template with the right references
 	result_code = _create_script_from_template()
 	if result_code != ResultCodes.SUCCESS: return result_code
 	
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the item instance
+	# Create the instance
 	var new_obj: PopochiuInventoryItem = _load_obj_base_scene()
 
 	new_obj.name = 'Item' + _obj_pascal_name
@@ -42,7 +41,7 @@ func create(obj_name: String) -> int:
 	new_obj.size_flags_vertical = new_obj.SIZE_SHRINK_CENTER
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	
-	# Save the item scene (.tscn)
+	# Save the scene (.tscn)
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 

@@ -17,16 +17,16 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	_setup_room(room)
 	_setup_name(obj_name)
 	
-	# Create the folder for the Hotspot
+	# Create the folder
 	result_code = _create_obj_folder()
 	if result_code != ResultCodes.SUCCESS: return result_code
 	
-	# Create the script for the Hotspot
+	# Create the script
 	result_code = _copy_script_template()
 	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Create the hotspot instance
+	# Create the instance
 	var new_obj: PopochiuHotspot = _load_obj_base_scene()
 
 	new_obj.name = _obj_pascal_name
@@ -38,15 +38,14 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 
-	# TODO: Introduce here the logic to handle children in scene
-	# Create the collision polygon for the hotspot
+	# Create a collision polygon as a child in the room scene
 	var collision := CollisionPolygon2D.new()
 	collision.name = 'InteractionPolygon'
 	collision.modulate = Color.BLUE
 	_add_visible_child(collision)
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
-	# Add the prop to its room
+	# Add the object to its room
 	_add_resource_to_room()
 
 	return result_code
