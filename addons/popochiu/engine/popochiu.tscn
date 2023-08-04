@@ -6,7 +6,6 @@
 script = ExtResource("3")
 
 [node name="MainCamera" type="Camera2D" parent="."]
-current = true
 limit_left = 0
 limit_top = 0
 limit_right = 320
