@@ -33,7 +33,6 @@ func _setup_room(room: PopochiuRoom) -> void:
 # marking it as "visible in room scene"
 func _add_visible_child(child: Node) -> void:
 	child.set_meta(CHILD_VISIBLE_IN_ROOM_META, true)
-	child.owner = _scene
 	_scene.add_child(child)
 
 
