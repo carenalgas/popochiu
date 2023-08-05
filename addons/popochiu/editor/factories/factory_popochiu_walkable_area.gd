@@ -4,10 +4,10 @@ class_name PopochiuWalkableAreaFactory
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
-	_obj_type = Constants.Types.WALKABLE_AREA
-	_obj_type_label = 'walkable_area'
+	_type = Constants.Types.WALKABLE_AREA
+	_type_label = 'walkable_area'
 	_obj_room_group = 'WalkableAreas'
-	_obj_path_template = '/walkable_areas/%s/walkable_area_%s'
+	_path_template = '/walkable_areas/%s/walkable_area_%s'
 
 
 func create(obj_name: String, room: PopochiuRoom) -> int:
@@ -29,11 +29,11 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	# Create the instance
 	var new_obj: PopochiuWalkableArea = _load_obj_base_scene()
 
-	new_obj.name = _obj_pascal_name
-	new_obj.script_name = _obj_pascal_name
-	new_obj.description = _obj_snake_name.capitalize()
+	new_obj.name = _pascal_name
+	new_obj.script_name = _pascal_name
+	new_obj.description = _snake_name.capitalize()
 
-	# Save the scene (.tscn) and put it into _obj_scene class property
+	# Save the scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 

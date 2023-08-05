@@ -1,6 +1,6 @@
 extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd'
 
-const CHiLD_VISIBLE_IN_ROOM_META = '_popochiu_obj_factory_child_visible_in_room_'
+const CHILD_VISIBLE_IN_ROOM_META = '_popochiu_obj_factory_child_visible_in_room_'
 const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
 
 var _room_tab: VBoxContainer = null
@@ -26,31 +26,31 @@ func _setup_room(room: PopochiuRoom) -> void:
 	_room_path = _room.scene_file_path
 	_room_dir = _room_path.get_base_dir()
 	# Adding room path to room object path template
-	_obj_path_template = _room_dir + _obj_path_template
+	_path_template = _room_dir + _path_template
 
 
 # This function adds a child to the new object scene
 # marking it as "visible in room scene"
 func _add_visible_child(child: Node) -> void:
-	child.set_meta(CHiLD_VISIBLE_IN_ROOM_META, true)
-	child.owner = _obj_scene
-	_obj_scene.add_child(child)
+	child.set_meta(CHILD_VISIBLE_IN_ROOM_META, true)
+	child.owner = _scene
+	_scene.add_child(child)
 
 
 func _add_resource_to_room() -> void:
 	# Add the newly created obj to its room
-	_room.get_node(_obj_room_group).add_child(_obj_scene)
+	_room.get_node(_obj_room_group).add_child( _scene)
 
 	# Set the ownership for the node plus all it's children
 	# (this address colliders, polygons, etc)
-	_obj_scene.owner = _room
-	for child in _obj_scene.get_children():
-		if child.has_meta(CHiLD_VISIBLE_IN_ROOM_META):
+	_scene.owner = _room
+	for child in _scene.get_children():
+		if child.has_meta(CHILD_VISIBLE_IN_ROOM_META):
 			child.owner = _room
-			child.remove_meta(CHiLD_VISIBLE_IN_ROOM_META)
+			child.remove_meta(CHILD_VISIBLE_IN_ROOM_META)
 
 	# Center the object on the scene
-	_obj_scene.position = Vector2(
+	_scene.position = Vector2(
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
@@ -60,7 +60,7 @@ func _add_resource_to_room() -> void:
 
 	# Update the correct list in the Room tab
 	(_room_tab as TabRoom).add_to_list(
-		_obj_type,
-		_obj_pascal_name,
-		_obj_path_scene
+		_type,
+		_pascal_name,
+		_path_scene
 	)

@@ -4,10 +4,10 @@ class_name PopochiuDialogFactory
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
-	_obj_type = Constants.Types.DIALOG
-	_obj_type_label = 'dialog'
-	_obj_type_target = 'dialogs'
-	_obj_path_template = _main_dock.DIALOGS_PATH + '%s/dialog_%s'
+	_type = Constants.Types.DIALOG
+	_type_label = 'dialog'
+	_type_target = 'dialogs'
+	_path_template = _main_dock.DIALOGS_PATH + '%s/dialog_%s'
 
 
 func create(obj_name: String) -> int:
@@ -28,10 +28,10 @@ func create(obj_name: String) -> int:
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the resource (dialogs are not scenes)
 	var new_obj := PopochiuDialog.new()
-	new_obj.set_script(load(_obj_path_script))
+	new_obj.set_script(load(_path_script))
 	
-	new_obj.script_name = _obj_pascal_name
-	new_obj.resource_name = _obj_pascal_name
+	new_obj.script_name = _pascal_name
+	new_obj.resource_name = _pascal_name
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 	# Save resource (dialogs are not scenes)

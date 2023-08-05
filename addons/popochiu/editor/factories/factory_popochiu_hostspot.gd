@@ -4,10 +4,10 @@ class_name PopochiuHotspotFactory
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
-	_obj_type = Constants.Types.HOTSPOT
-	_obj_type_label = 'hotspot'
+	_type = Constants.Types.HOTSPOT
+	_type_label = 'hotspot'
 	_obj_room_group = 'Hotspots'
-	_obj_path_template = '/hotspots/%s/hotspot_%s'
+	_path_template = '/hotspots/%s/hotspot_%s'
 
 
 func create(obj_name: String, room: PopochiuRoom) -> int:
@@ -29,12 +29,12 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	# Create the instance
 	var new_obj: PopochiuHotspot = _load_obj_base_scene()
 
-	new_obj.name = _obj_pascal_name
-	new_obj.script_name = _obj_pascal_name
-	new_obj.description = _obj_snake_name.capitalize()
+	new_obj.name = _pascal_name
+	new_obj.script_name = _pascal_name
+	new_obj.description = _snake_name.capitalize()
 	new_obj.cursor = Constants.CURSOR_TYPE.ACTIVE
 
-	# Save the hostspot scene (.tscn) and put it into _obj_scene class property
+	# Save the hostspot scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 

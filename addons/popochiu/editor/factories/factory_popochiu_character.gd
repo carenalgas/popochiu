@@ -4,10 +4,10 @@ class_name PopochiuCharacterFactory
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
-	_obj_type = Constants.Types.CHARACTER
-	_obj_type_label = 'character'
-	_obj_type_target = 'characters'
-	_obj_path_template = _main_dock.CHARACTERS_PATH + '%s/character_%s'
+	_type = Constants.Types.CHARACTER
+	_type_label = 'character'
+	_type_target = 'characters'
+	_path_template = _main_dock.CHARACTERS_PATH + '%s/character_%s'
 
 
 func create(obj_name: String) -> int:
@@ -34,9 +34,9 @@ func create(obj_name: String) -> int:
 	# Create the instance
 	var new_obj: PopochiuCharacter = _load_obj_base_scene()
 
-	new_obj.name = 'Character' + _obj_pascal_name
-	new_obj.script_name = _obj_pascal_name
-	new_obj.description = _obj_pascal_name.capitalize()
+	new_obj.name = 'Character' + _pascal_name
+	new_obj.script_name = _pascal_name
+	new_obj.description = _pascal_name.capitalize()
 	new_obj.cursor = Constants.CURSOR_TYPE.TALK
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	

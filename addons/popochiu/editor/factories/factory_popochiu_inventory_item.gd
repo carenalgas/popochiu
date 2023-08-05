@@ -4,10 +4,10 @@ class_name PopochiuInventoryItemFactory
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
-	_obj_type = Constants.Types.INVENTORY_ITEM
-	_obj_type_label = 'inventory_item'
-	_obj_type_target = 'inventory_items'
-	_obj_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/inventory_item_%s'
+	_type = Constants.Types.INVENTORY_ITEM
+	_type_label = 'inventory_item'
+	_type_target = 'inventory_items'
+	_path_template = _main_dock.INVENTORY_ITEMS_PATH + '%s/inventory_item_%s'
 
 
 func create(obj_name: String) -> int:
@@ -34,9 +34,9 @@ func create(obj_name: String) -> int:
 	# Create the instance
 	var new_obj: PopochiuInventoryItem = _load_obj_base_scene()
 
-	new_obj.name = 'Item' + _obj_pascal_name
-	new_obj.script_name = _obj_pascal_name
-	new_obj.description = _obj_pascal_name.capitalize()
+	new_obj.name = 'Item' + _pascal_name
+	new_obj.script_name = _pascal_name
+	new_obj.description = _pascal_name.capitalize()
 	new_obj.cursor = Constants.CURSOR_TYPE.USE
 	new_obj.size_flags_vertical = new_obj.SIZE_SHRINK_CENTER
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

@@ -4,10 +4,10 @@ class_name PopochiuRoomFactory
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
-	_obj_type = Constants.Types.ROOM
-	_obj_type_label = 'room'
-	_obj_type_target = 'rooms'
-	_obj_path_template = _main_dock.ROOMS_PATH + '%s/room_%s'
+	_type = Constants.Types.ROOM
+	_type_label = 'room'
+	_type_target = 'rooms'
+	_path_template = _main_dock.ROOMS_PATH + '%s/room_%s'
 
 
 func create(obj_name: String, set_as_main:bool = false) -> int:
@@ -34,8 +34,8 @@ func create(obj_name: String, set_as_main:bool = false) -> int:
 	# Create the instance
 	var new_obj: PopochiuRoom = _load_obj_base_scene()
 	
-	new_obj.name = 'Room' + _obj_pascal_name
-	new_obj.script_name = _obj_pascal_name
+	new_obj.name = 'Room' + _pascal_name
+	new_obj.script_name = _pascal_name
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	
 	# Save the scene (.tscn)
@@ -50,9 +50,9 @@ func create(obj_name: String, set_as_main:bool = false) -> int:
 	# Changed _set_as_main_check.pressed to _set_as_main_check.button_pressed
 	# in order to fix #56
 	if set_as_main:
-		_main_dock.set_main_scene(_obj_scene.scene)
+		_main_dock.set_main_scene( _scene.scene)
 		# TODO: next line should be in set_main_scene() function!
-		_obj_dock_row.is_main = true # So the Heart icon shows
+		_dock_row.is_main = true # So the Heart icon shows
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 	return result_code
