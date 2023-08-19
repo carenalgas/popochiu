@@ -2,7 +2,6 @@
 extends Node
 
 # `character` is a PopochiuCharacter
-signal character_move_ended(character)
 signal character_spoke(character, message)
 signal character_grab_done(character)
 
