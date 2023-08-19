@@ -1,9 +1,9 @@
-# The scenes used by Popochiu.
-# 
-# Can have: Props, Hotspots, Regions, Markers and
-# Walkable areas. Characters can move through this and interact with its Props
-# and Hotspots. Regions can be used to trigger methods when a character enters
-# or leaves.
+## The scenes used by Popochiu.
+## 
+## Can have: Props, Hotspots, Regions, Markers and
+## Walkable areas. Characters can move through this and interact with its Props
+## and Hotspots. Regions can be used to trigger methods when a character enters
+## or leaves.
 @tool
 @icon('res://addons/popochiu/icons/room.png')
 class_name PopochiuRoom
@@ -20,9 +20,16 @@ extends Node2D
 
 var is_current := false : set = set_is_current
 
-var _path: PackedVector2Array = PackedVector2Array()
-var _moving_character: PopochiuCharacter = null
 var _nav_path: PopochiuWalkableArea = null
+## It contains the information of the characters moving around the room.[br]
+## Each entry has the form:
+## [codeblock]
+## PopochiuCharacter.ID: int = {
+##     character: PopochiuCharacter,
+##     path: PackedVector2Array
+## }
+## [/codeblock]
+var _moving_characters := {}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -53,10 +60,15 @@ func _ready():
 
 
 func _physics_process(delta):
-	if _path.is_empty(): return
-	
-	var walk_distance = _moving_character.walk_speed * delta
-	_move_along_path(walk_distance)
+	if _moving_characters.is_empty(): return
+
+	for character_id in _moving_characters:
+		var moving_character_data: Dictionary = _moving_characters[character_id]
+		var walk_distance = (
+			moving_character_data.character as PopochiuCharacter
+		).walk_speed * delta
+
+		_move_along_path(walk_distance, moving_character_data)
 
 
 func _unhandled_input(event):
@@ -117,7 +129,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)
-	chr.stopped_walk.connect(_clear_navigation_path)
+	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
 	
 	chr.idle()
 
@@ -263,26 +275,25 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _move_along_path(distance):
-	var last_point = _moving_character.position
-	
-	while _path.size():
-		var distance_between_points = last_point.distance_to(_path[0])
+func _move_along_path(distance: float, moving_character_data: Dictionary):
+	var last_point = moving_character_data.character.position
+
+	while moving_character_data.path.size():
+		var distance_between_points = last_point.distance_to(
+			moving_character_data.path[0]
+		)
 		if distance <= distance_between_points:
-			# Based on the destination, turn the character
-			_moving_character.face_direction(_path[0])
-			# Move the character on the destination
-			_moving_character.position = last_point.lerp(
-				_path[0], distance / distance_between_points
+			moving_character_data.character.position = last_point.lerp(
+				moving_character_data.path[0], distance / distance_between_points
 			)
 			return
 
 		distance -= distance_between_points
-		last_point = _path[0]
-		_path.remove_at(0)
+		last_point = moving_character_data.path[0]
+		moving_character_data.path.remove_at(0)
 
-	_moving_character.position = last_point
-	_clear_navigation_path()
+	moving_character_data.character.position = last_point
+	_clear_navigation_path(moving_character_data.character)
 
 
 func _update_navigation_path(
@@ -292,16 +303,21 @@ func _update_navigation_path(
 		printerr('[Popochiu] No walkable areas in this room')
 		return
 	
-	_moving_character = character
+	_moving_characters[character.get_instance_id()] = {}
+
+	var moving_character_data: Dictionary =\
+	_moving_characters[character.get_instance_id()]
+
+	moving_character_data.character = character
 	
 	# TODO: Use a Dictionary so more than one character can move around at the
 	# same time. Or maybe each character should handle its own movement? (;￢＿￢)
 	if character.ignore_walkable_areas:
 		# if the character can ignore WAs, just move over a straight line
-		_path = PackedVector2Array([start_position, end_position])
+		moving_character_data.path = PackedVector2Array([start_position, end_position])
 	else:
 		# if the character is forced into WAs, delegate pathfinding to the active WA
-		_path = NavigationServer2D.map_get_path(
+		moving_character_data.path = NavigationServer2D.map_get_path(
 			_nav_path.map_rid, start_position, end_position, true
 		)
 		
@@ -313,20 +329,20 @@ func _update_navigation_path(
 #		set_physics_process(true)
 #		return
 	
-	if _path.is_empty():
+	if moving_character_data.path.is_empty():
 		return
 	
-	_path.remove_at(0)
+	moving_character_data.path.remove_at(0)
 	
 	set_physics_process(true)
 
 
-func _clear_navigation_path() -> void:
+func _clear_navigation_path(character: PopochiuCharacter) -> void:
 	# FIX: 'function signature missmatch in Web export' error thrown when clearing
 	# an empty Array.
-	if not _path.is_empty():
-		_path.clear()
+	if not _moving_characters.has(character.get_instance_id()):
+		return
 	
-	_moving_character.idle()
-	C.character_move_ended.emit(_moving_character)
-	_moving_character = null
+	_moving_characters.erase(character.get_instance_id())
+	character.idle()
+	character.move_ended.emit()
