@@ -13,3 +13,9 @@ limit_bottom = 180
 position_smoothing_speed = 10.0
 editor_draw_limits = true
 editor_draw_drag_margin = true
+
+[node name="GraphicInterfaceLayer" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="TransitionsLayer" type="CanvasLayer" parent="."]
+layer = 15

@@ -23,10 +23,7 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 func start() -> void:
 	# Start this dialog
 	D.current_dialog = self
-	
 	await _start()
-	
-	G.done()
 
 
 func queue_start() -> Callable:
@@ -85,12 +82,16 @@ func get_option(opt_id: String) -> PopochiuDialogOption:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _start() -> void:
+	G.block()
+	D.dialog_started.emit(self)
+	
 	await _on_start()
 	
 	_show_options()
 	
 	await D.dialog_finished
 	
+	G.unblock()
 	D.option_selected.disconnect(_on_option_selected)
 
 

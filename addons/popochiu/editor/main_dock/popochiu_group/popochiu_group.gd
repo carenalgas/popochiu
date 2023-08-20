@@ -35,7 +35,10 @@ func _ready() -> void:
 		'panel', get_theme_stylebox('panel').duplicate()
 	)
 	(get_theme_stylebox('panel') as StyleBoxFlat).border_color = color
-	_icon.texture = icon
+	
+	if is_instance_valid(icon):
+		_icon.texture = icon
+	
 	_lbl_title.text = title
 	_btn_create.icon = get_theme_icon('Add', 'EditorIcons')
 	_btn_create.text = create_text
@@ -152,7 +155,6 @@ func _set_icon(value: Texture2D) -> void:
 	
 	if is_instance_valid(_icon):
 		_icon.texture = value
-		notify_property_list_changed()
 
 
 func _update_child_count() -> void:

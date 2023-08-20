@@ -117,15 +117,14 @@ func scene_changed(scene_root: Node) -> void:
 	if is_instance_valid(opened_room):
 		await _clear_content()
 	
+	if not scene_root is PopochiuRoom:
+		return
+	
 	if scene_root is PopochiuRoom and scene_root.script_name.is_empty():
 		PopochiuUtils.print_error(
 			"This room doesn't have a [code]script_name[/code] value!"
 		)
 		
-		return
-	
-	if not scene_root is PopochiuRoom:
-		get_parent().current_tab = 0
 		return
 	
 	# Updated the opened room's info

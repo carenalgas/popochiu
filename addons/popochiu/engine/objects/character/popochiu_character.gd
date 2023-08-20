@@ -1,8 +1,8 @@
 ## Any Object that can move, walk, navigate rooms, have an inventory, etc.
 @tool
 @icon('res://addons/popochiu/icons/character.png')
-class_name PopochiuCharacter
 extends PopochiuClickable
+class_name PopochiuCharacter
 # TODO: Use a state machine
 
 enum FlipsWhen { NONE, LOOKING_RIGHT, LOOKING_LEFT }
@@ -18,6 +18,8 @@ signal move_ended
 	set = set_voices # (Array, Dictionary)
 @export var follow_player := false
 @export var follow_player_offset := Vector2(20,0)
+@export var avatars := []:
+	set = set_avatars # (Array, Dictionary)
 @export var walk_speed := 200.0
 @export var can_move := true
 @export var ignore_walkable_areas := false
@@ -47,7 +49,7 @@ func _ready():
 	else:
 		hide_helpers()
 		set_process(true)
-
+	
 	for child in get_children():
 		if not child is Sprite2D:
 			continue
@@ -241,6 +243,12 @@ func say(dialog: String, emo := "") -> void:
 		await get_tree().process_frame
 		return
 	
+	# Blocks the graphic interface so players can't interact with it while the
+	# dialog line plays
+	# NOTE: What if players want NPCs talking without blocking the graphic
+	# 		interface?
+	G.block()
+	
 	if not emo.is_empty():
 		emotion = emo
 	
@@ -253,12 +261,14 @@ func say(dialog: String, emo := "") -> void:
 	
 	C.character_spoke.emit(self, dialog)
 	
-	await G.continue_clicked
+	await G.dialog_line_finished
 	
 	emotion = ''
 	idle()
 	
-	G.done(true)
+	# Unblock the graphic interface with a delay to prevent cursor flickering
+	# (rapid state changes) between multiple lines of text or actions in sequence
+	G.unblock(true)
 
 
 func queue_grab() -> Callable:
@@ -440,6 +450,20 @@ func face_direction(destination: Vector2):
 		_looking_dir = Looking.UP_LEFT
 
 
+func get_avatar_for_emotion(emo := "") -> Texture:
+	var texture: Texture = null
+	
+	while not texture:
+		for dic in avatars:
+			if dic.emotion == "":
+				texture = dic.avatar
+			elif dic.emotion == emo:
+				texture = dic.avatar
+				break
+	
+	return texture
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_dialog_pos() -> float:
 	return $DialogPos.position.y
@@ -456,13 +480,20 @@ func set_voices(value: Array) -> void:
 				emotion = '',
 				variations = arr
 			}
-			
-			notify_property_list_changed()
 		elif not value[idx].variations.is_empty():
 			if value[idx].variations[-1] == null:
 				value[idx].variations[-1] = AudioCueSound.new()
-			
-			notify_property_list_changed()
+
+
+func set_avatars(value: Array) -> void:
+	avatars = value
+	
+	for idx in value.size():
+		if not value[idx]:
+			avatars[idx] = {
+				emotion = '',
+				avatar = Texture.new(),
+			}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

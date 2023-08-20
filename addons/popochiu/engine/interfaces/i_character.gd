@@ -90,7 +90,7 @@ func is_valid_character(script_name: String) -> bool:
 # Gets a character identified by the received script_name.
 func get_character(script_name: String) -> PopochiuCharacter:
 	if script_name.to_lower() == 'player'\
-	or player.script_name.to_lower() == script_name:
+	or (is_instance_valid(player) and player.script_name.to_lower() == script_name):
 		return player
 	
 	for c in characters:

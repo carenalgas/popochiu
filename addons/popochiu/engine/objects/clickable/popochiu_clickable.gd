@@ -1,8 +1,8 @@
 # Allows to handle an Area2D that reacts to click events, and mouse entering,
 # and exiting.
 @tool
-class_name PopochiuClickable
 extends Area2D
+class_name PopochiuClickable
 
 const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
 
@@ -17,6 +17,10 @@ const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
 var room: Node2D = null : set = set_room # It is a PopochiuRoom
 var times_clicked := 0
 var times_right_clicked := 0
+var times_middle_clicked := 0
+# NOTE Don't know if this will make sense, or if it this object should emit
+# a signal about the click (command execution)
+var last_click_button := -1
 
 @onready var _description_code := description
 
@@ -36,42 +40,45 @@ func _ready():
 
 	if clickable:
 		# Connect to own signals
-		mouse_entered.connect(_toggle_description.bind(true))
-		mouse_exited.connect(_toggle_description.bind(false))
+		mouse_entered.connect(_on_mouse_entered)
+		mouse_exited.connect(_on_mouse_exited)
 		
 		# Connect to singleton signals
 		E.language_changed.connect(_translate)
+		G.blocked.connect(_on_graphic_interface_blocked)
+		G.unblocked.connect(_on_graphic_interface_unblocked)
 	
 	set_process_unhandled_input(false)
 	_translate()
 
 
 func _unhandled_input(event: InputEvent):
-	var mouse_event: = event as InputEventMouseButton 
+	var mouse_event := event as InputEventMouseButton
 	if mouse_event and mouse_event.pressed:
 		if not E.hovered or E.hovered != self: return
 		
 		E.clicked = self
-		if event.is_action_pressed('popochiu-interact'):
-			get_viewport().set_input_as_handled()
-			
-			if I.active:
-				_on_item_used(I.active)
-			else:
-				E.add_history({
-					action = 'Interacted with: %s' % description
-				})
-				_on_click()
+		last_click_button = mouse_event.button_index
+		
+		get_viewport().set_input_as_handled()
+		
+		match mouse_event.button_index:
+			MOUSE_BUTTON_LEFT:
+				if I.active:
+					_on_item_used(I.active)
+				else:
+					handle_command(mouse_event.button_index)
+					
+					times_clicked += 1
+			MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
+				if I.active: return
 				
-				times_clicked += 1
-		elif event.is_action_pressed('popochiu-look'):
-			if not I.active:
-				E.add_history({
-					action = 'Looked at: %s' % description
-				})
-				_on_right_click()
+				handle_command(mouse_event.button_index)
 				
-				times_right_clicked += 1
+				if mouse_event.button_index == MOUSE_BUTTON_RIGHT:
+					times_right_clicked += 1
+				else:
+					times_middle_clicked += 1
 
 
 func _process(delta):
@@ -87,22 +94,27 @@ func _process(delta):
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-# When the room this node belongs to has been added to the tree
+## When the room this node belongs to has been added to the tree
 func _on_room_set() -> void:
 	pass
 
 
-# When the node is clicked
+## When the node is clicked
 func _on_click() -> void:
 	pass
 
 
-# When the node is right clicked
+## When the node is right clicked
 func _on_right_click() -> void:
 	pass
 
 
-# When the node is clicked and there is an inventory item selected
+## When the node is middle clicked
+func _on_middle_click() -> void:
+	pass
+
+
+## When the node is clicked and there is an inventory item selected
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
@@ -149,39 +161,64 @@ func get_description() -> String:
 
 
 func on_click() -> void:
-	await G.display("Can't INTERACT with it")
+	E.command_fallback()
 
 
 func on_right_click() -> void:
-	await G.display("Can't EXAMINE it")
+	E.command_fallback()
 
 
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	await G.display("Can't USE %s here" % item.description)
+	await G.show_system_text("Can't USE %s here" % item.description)
+
+
+func handle_command(button_idx: int) -> void:
+	var command: String = E.get_current_command_name().to_snake_case()
+	var prefix := "_on_%s"
+	var suffix := "click"
+	
+	match button_idx:
+		MOUSE_BUTTON_RIGHT:
+			suffix = "right_" + suffix
+		MOUSE_BUTTON_MIDDLE:
+			suffix = "middle_" + suffix
+	
+	if not command.is_empty():
+		var command_method := suffix.replace("click", command)
+		
+		if has_method(prefix % command_method):
+			suffix = command_method
+	
+	E.add_history({
+		action = suffix if command.is_empty() else command,
+		target = description
+	})
+	
+	await call(prefix % suffix)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _toggle_description(display: bool) -> void:
-	set_process_unhandled_input(display)
+func _on_mouse_entered() -> void:
+	set_process_unhandled_input(true)
 	
-	if display:
-		if E.hovered and is_instance_valid(E.hovered) and (
-			E.hovered.get_parent() == self or get_index() < E.hovered.get_index()
-		):
-			E.add_hovered(self, true)
-			return
-		
-		E.add_hovered(self)
-		Cursor.set_cursor(cursor)
-		
-		if not I.active:
-			G.show_info(description)
-		else:
-			G.show_info('Use %s with %s' % [I.active.description, description])
-	else:
-		if E.remove_hovered(self):
-			Cursor.set_cursor()
-			G.show_info()
+	if E.hovered and is_instance_valid(E.hovered) and (
+		E.hovered.get_parent() == self or get_index() < E.hovered.get_index()
+	):
+		E.add_hovered(self, true)
+		return
+	
+	E.add_hovered(self)
+	
+	G.mouse_entered_clickable.emit(self)
+
+
+func _on_mouse_exited() -> void:
+	set_process_unhandled_input(false)
+	
+	last_click_button = -1
+	
+	if E.remove_hovered(self):
+		G.mouse_exited_clickable.emit(self)
 
 
 func _toggle_input() -> void:
@@ -197,6 +234,16 @@ func _translate() -> void:
 	description = E.get_text(
 		'%s-%s' % [get_tree().current_scene.name, _description_code]
 	)
+
+
+func _on_graphic_interface_blocked() -> void:
+	input_pickable = false
+	set_process_unhandled_input(false)
+
+
+func _on_graphic_interface_unblocked() -> void:
+	input_pickable = true
+	set_process_unhandled_input(true)
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░

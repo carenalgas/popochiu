@@ -37,6 +37,7 @@ const MAIN_TYPES := [
 const ROOM_TYPES := [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
 const WIKI := 'https://github.com/mapedorr/popochiu/wiki/'
 const CFG := 'res://addons/popochiu/plugin.cfg'
+const GRAPHIC_INTERFACE_TEMPLATES := "res://addons/popochiu/engine/templates/graphic_interface/"
 # ════ SINGLETONS ══════════════════════════════════════════════════════════════
 const GLOBALS_SNGL := 'res://popochiu/popochiu_globals.gd'
 const UTILS_SNGL := 'res://addons/popochiu/engine/others/popochiu_utils.gd'
@@ -54,11 +55,12 @@ const C_SNGL := 'res://popochiu/autoloads/c.gd'
 const I_SNGL := 'res://popochiu/autoloads/i.gd'
 const D_SNGL := 'res://popochiu/autoloads/d.gd'
 const A_SNGL := 'res://popochiu/autoloads/a.gd'
+const G_SNGL := 'res://popochiu/autoloads/g.gd'
 # ════ FIRST INSTALL ═══════════════════════════════════════════════════════════
 const GI := 0
 const TL := 1
 const GRAPHIC_INTERFACE_ADDON :=\
-'res://addons/popochiu/engine/objects/graphic_interface/graphic_interface.tscn'
+'res://addons/popochiu/engine/objects/graphic_interface/'
 const GRAPHIC_INTERFACE_POPOCHIU :=\
 BASE_DIR + '/graphic_interface/graphic_interface.tscn'
 const TRANSITION_LAYER_ADDON :=\

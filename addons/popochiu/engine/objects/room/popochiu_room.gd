@@ -56,6 +56,10 @@ func _ready():
 	set_process_unhandled_input(false)
 	set_physics_process(false)
 	
+	# Connect to singletons signals
+	G.blocked.connect(_on_graphic_interface_blocked)
+	G.unblocked.connect(_on_graphic_interface_unblocked)
+	
 	E.room_readied(self)
 
 
@@ -319,6 +323,15 @@ func _update_character_scale(chr):
 		chr.scale = chr.default_scale
 		chr.walk_speed = chr.default_walk_speed
 
+
+func _on_graphic_interface_blocked() -> void:
+	set_process_unhandled_input(false)
+
+
+func _on_graphic_interface_unblocked() -> void:
+	set_process_unhandled_input(true)
+
+
 func _move_along_path(distance: float, moving_character_data: Dictionary):
 	var last_point: Vector2 =( 
 		moving_character_data.character.position_stored 
@@ -393,8 +406,8 @@ func _update_navigation_path(
 
 
 func _clear_navigation_path(character: PopochiuCharacter) -> void:
-	# FIX: 'function signature missmatch in Web export' error thrown when clearing
-	# an empty Array.
+	# INFO: fixes 'function signature missmatch in Web export' error thrown when
+	# clearing an empty Array.
 	if not _moving_characters.has(character.get_instance_id()):
 		return
 	

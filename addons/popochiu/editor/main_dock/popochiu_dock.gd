@@ -33,6 +33,7 @@ var _rows_paths := []
 @onready var _tab_container: TabContainer = find_child('TabContainer')
 @onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
 @onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
+@onready var tab_ui: VBoxContainer = %UI
 # ▨▨▨▨ FOOTER ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
 @onready var _btn_docs: Button = find_child('BtnDocs')
 @onready var _btn_settings: Button = find_child('BtnSettings')
@@ -90,6 +91,7 @@ func _ready() -> void:
 	_tab_room.main_dock = self
 	_tab_room.object_row = _object_row
 	_tab_audio.main_dock = self
+	tab_ui.main_dock = self
 	
 	_tab_container.tab_changed.connect(_on_tab_changed)
 	_btn_docs.pressed.connect(OS.shell_open.bind(Constants.WIKI))
@@ -199,6 +201,14 @@ func add_to_list(type: int, name_to_add: String) -> PopochiuObjectRow:
 func scene_changed(scene_root: Node) -> void:
 	if not is_instance_valid(_tab_room): return
 	_tab_room.scene_changed(scene_root)
+	
+	if not is_instance_valid(tab_ui): return
+	tab_ui.on_scene_changed(scene_root)
+	
+	if not scene_root is PopochiuRoom and not scene_root is PopochiuGraphicInterface:
+		# Open the Popochiu Main tab if the opened scene in the Editor2D is not
+		# a PopochiuRoom nor a PopochiuGraphicInterface
+		_tab_container.current_tab = 0
 
 
 func scene_closed(filepath: String) -> void:
@@ -294,6 +304,9 @@ func _on_tab_changed(tab: int) -> void:
 		# Try to load the Main tab data in case they couldn't be loaded while
 		# opening the engine
 		fill_data()
+	
+	if tab == tab_ui.get_index():
+		tab_ui.open_gui_scene()
 
 
 func _select_object(por: PopochiuObjectRow) -> void:
@@ -311,5 +324,3 @@ func _check_node(node: Node) -> void:
 	if node is PopochiuCharacter and node.get_parent() is Node2D:
 		# The node is a PopochiuCharacter in a room
 		node.set_name.call_deferred('Character%s *' % node.script_name)
-		# TODO: Show something in the Inspector to alert devs about editing this
-		# node.

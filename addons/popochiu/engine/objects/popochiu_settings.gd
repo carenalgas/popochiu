@@ -23,3 +23,4 @@ preload('res://addons/popochiu/engine/others/importer_defaults.gd')
 @export var max_dialog_options := 3
 @export var is_pixel_art_game := false
 @export var is_pixel_perfect := false
+@export_enum("Above Character", "Portrait", "Caption") var dialog_style := 0

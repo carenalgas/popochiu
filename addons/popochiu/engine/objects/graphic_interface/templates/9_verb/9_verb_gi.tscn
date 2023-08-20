@@ -1,0 +1,339 @@
+[gd_scene load_steps=29 format=3 uid="uid://bd0fika4hyhvw"]
+
+[ext_resource type="Theme" uid="uid://6vk2wej0sape" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/resources/9_verb_theme.tres" id="1_qh2tb"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/9_verb_gi.gd" id="2_v01ea"]
+[ext_resource type="ButtonGroup" uid="uid://y1thfsxxjowe" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/resources/9_verb_button_group.tres" id="3_77ocs"]
+[ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.tscn" id="3_oliab"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/commands_container/9_verb_command_button.gd" id="3_su7pr"]
+[ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="4_ljv1q"]
+[ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/components/system_text/system_text.tscn" id="4_ninsa"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_hover_text.gd" id="6_olqnt"]
+[ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn" id="7_n3yn3"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/commands_container/9_verb_commands_container.gd" id="7_uavso"]
+[ext_resource type="PackedScene" uid="uid://djan6vy0xq8dq" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/inventory_grid/9_verb_inventory_grid.tscn" id="11_tq2t0"]
+[ext_resource type="Texture2D" uid="uid://d0fwvj88bhggm" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/sprites/9verb_cursor.png" id="11_y5a23"]
+[ext_resource type="PackedScene" uid="uid://crla6to4mm0p7" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/settings_popup/9_verb_settings_popup.tscn" id="12_b7ut3"]
+[ext_resource type="Texture2D" uid="uid://dcl6wrqgsdqa1" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/sprites/9verb_ico_settings.png" id="13_80hcp"]
+[ext_resource type="PackedScene" uid="uid://dfrsiyyqncspo" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/history/history_popup.tscn" id="15_5234w"]
+[ext_resource type="PackedScene" uid="uid://cndputybyj57n" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/save_and_load/save_and_load_popup.tscn" id="15_t7jqg"]
+[ext_resource type="PackedScene" uid="uid://dv1gec8q4h6b7" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/quit_popup/9_verb_quit_popup.tscn" id="20_qsfrl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ckh2"]
+atlas = ExtResource("11_y5a23")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jysoy"]
+atlas = ExtResource("11_y5a23")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m2brv"]
+atlas = ExtResource("11_y5a23")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flm5d"]
+atlas = ExtResource("11_y5a23")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wwabf"]
+atlas = ExtResource("11_y5a23")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vpmp7"]
+atlas = ExtResource("11_y5a23")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0twu0"]
+atlas = ExtResource("11_y5a23")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xtf0b"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ckh2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jysoy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m2brv")
+}],
+"loop": true,
+"name": &"active",
+"speed": 8.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flm5d")
+}],
+"loop": true,
+"name": &"gui",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wwabf")
+}],
+"loop": true,
+"name": &"normal",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vpmp7")
+}],
+"loop": true,
+"name": &"wait",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0twu0")
+}],
+"loop": true,
+"name": &"walk_to",
+"speed": 5.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bfdxb"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_detail = 4
+anti_aliasing = false
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gcqg0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5sf8c"]
+bg_color = Color(0, 0, 0, 1)
+anti_aliasing = false
+
+[node name="9VerbGI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_qh2tb")
+script = ExtResource("2_v01ea")
+
+[node name="Cursor" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_xtf0b")
+animation = &"active"
+
+[node name="DialogText" parent="." instance=ExtResource("3_oliab")]
+layout_mode = 1
+
+[node name="SystemText" parent="." instance=ExtResource("4_ninsa")]
+layout_mode = 1
+offset_left = 39.0
+offset_top = -10.0
+offset_right = -39.0
+offset_bottom = 10.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bfdxb")
+
+[node name="BottomContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_gcqg0")
+metadata/_edit_group_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="BottomContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="HoverTextCentered" parent="BottomContainer/VBoxContainer" instance=ExtResource("4_ljv1q")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 12
+fit_content = true
+script = ExtResource("6_olqnt")
+follows_cursor = false
+
+[node name="Verbs&InventoryContainer" type="PanelContainer" parent="BottomContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer"]
+layout_mode = 2
+
+[node name="CommandsContainer" type="GridContainer" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 3
+script = ExtResource("7_uavso")
+
+[node name="Open" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Open"
+script = ExtResource("3_su7pr")
+command = 1
+
+[node name="PickUp" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Pick Up"
+script = ExtResource("3_su7pr")
+command = 2
+
+[node name="Push" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Push"
+script = ExtResource("3_su7pr")
+command = 3
+
+[node name="Close" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Close"
+script = ExtResource("3_su7pr")
+command = 4
+
+[node name="LookAt" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Look At"
+script = ExtResource("3_su7pr")
+command = 5
+
+[node name="Pull" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Pull"
+script = ExtResource("3_su7pr")
+command = 6
+
+[node name="Give" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Give"
+script = ExtResource("3_su7pr")
+command = 7
+
+[node name="TalkTo" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Talk To"
+script = ExtResource("3_su7pr")
+command = 8
+
+[node name="Use" type="Button" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+toggle_mode = true
+button_group = ExtResource("3_77ocs")
+text = "Use"
+script = ExtResource("3_su7pr")
+command = 9
+
+[node name="9VerbInventoryGrid" parent="BottomContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer" instance=ExtResource("11_tq2t0")]
+layout_mode = 2
+
+[node name="DialogMenu" parent="." instance=ExtResource("7_n3yn3")]
+visible = false
+layout_mode = 1
+theme_override_styles/panel = SubResource("StyleBoxFlat_5sf8c")
+default = Color(0.698039, 0.698039, 0.698039, 1)
+used = Color(0.482353, 0.482353, 0.482353, 1)
+
+[node name="BtnSettings" type="TextureButton" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -21.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = 21.0
+grow_horizontal = 0
+texture_normal = ExtResource("13_80hcp")
+
+[node name="HoverTextCursor" parent="." instance=ExtResource("4_ljv1q")]
+unique_name_in_owner = true
+layout_mode = 1
+offset_right = -199.0
+size_flags_vertical = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/normal_font_size = 12
+fit_content = true
+script = ExtResource("6_olqnt")
+follows_cursor = true
+
+[node name="Popups" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
+
+[node name="9VerbSettingsPopup" parent="Popups" instance=ExtResource("12_b7ut3")]
+visible = false
+layout_mode = 1
+
+[node name="SaveAndLoadPopup" parent="Popups" instance=ExtResource("15_t7jqg")]
+visible = false
+layout_mode = 1
+
+[node name="HistoryPopup" parent="Popups" instance=ExtResource("15_5234w")]
+visible = false
+layout_mode = 1
+
+[node name="9VerbQuitPopup" parent="Popups" instance=ExtResource("20_qsfrl")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1

@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://db6csk6i4f3un"]
+
+[node name="Slot" type="PanelContainer"]
+custom_minimum_size = Vector2(31, 25)

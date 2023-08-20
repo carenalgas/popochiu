@@ -1,16 +1,20 @@
-# (I) Data and functions to work with inventory items.
+## (I) Data and functions to work with inventory items.
 extends Node
 
-signal item_added(item, animate)
-signal item_add_done(item)
-signal item_removed(item, animate)
-signal item_remove_done(item)
-signal item_discarded(item)
-signal inventory_show_requested(time)
+signal item_added(item: PopochiuInventoryItem, animate: bool)
+signal item_add_done(item: PopochiuInventoryItem)
+signal item_removed(item: PopochiuInventoryItem, animate: bool)
+signal item_remove_done(item: PopochiuInventoryItem)
+signal item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem)
+signal item_replace_done
+signal item_discarded(item: PopochiuInventoryItem)
+signal item_selected(item: PopochiuInventoryItem)
+signal inventory_show_requested(time: float)
 signal inventory_shown
-signal inventory_hide_requested(use_anim)
+signal inventory_hide_requested(use_anim: bool)
 
-var active: PopochiuInventoryItem
+var active: PopochiuInventoryItem : set = set_active
+var clicked: PopochiuInventoryItem
 # -- Used for saving the game -------- 
 var items := []
 var items_states := {}
@@ -58,7 +62,6 @@ func hide_inventory(use_anim := true) -> void:
 	await get_tree().process_frame
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	for ii in _item_instances:
 		var ii_name: String = ii.script_name
@@ -77,20 +80,18 @@ func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	return null
 
 
-# Makes the cursor use the texture of an item in the inventory.
-# If `ignore_block` is `true` the cursor texture will change no matter the
-# graphic interface is blocked (that is when, by default, the cursor texture is
-# an hourglass).
+## Makes the cursor use the texture of an item in the inventory.
+## If `ignore_block` is `true` the cursor texture will change no matter the
+## graphic interface is blocked (that is when, by default, the cursor texture is
+## an hourglass).
 func set_active_item(
 	item: PopochiuInventoryItem = null,
 	ignore_block := false
 ) -> void:
 	if is_instance_valid(item):
 		active = item
-		Cursor.set_cursor_texture((item as TextureRect).texture, ignore_block)
 	else:
 		active = null
-		Cursor.remove_cursor_texture()
 
 
 func is_item_in_inventory(item_name: String) -> bool:
@@ -101,3 +102,15 @@ func is_item_in_inventory(item_name: String) -> bool:
 func is_full() -> bool:
 	return E.settings.inventory_limit > 0\
 	and E.settings.inventory_limit == items.size()
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SETGET ░░░░
+func set_active(value: PopochiuInventoryItem) -> void:
+	active = value
+	
+	if is_instance_valid(active):
+		Cursor.set_secondary_cursor_texture(active.texture)
+	else:
+		Cursor.remove_secondary_cursor_texture()
+	
+	item_selected.emit(active)

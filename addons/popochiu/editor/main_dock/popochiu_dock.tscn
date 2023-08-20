@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://bardo4kb80rvg"]
+[gd_scene load_steps=30 format=3 uid="uid://bardo4kb80rvg"]
 
 [ext_resource type="PackedScene" uid="uid://byxufkqv2sncb" path="res://addons/popochiu/editor/popups/create_character/create_character.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://rvbosisbkiob" path="res://addons/popochiu/editor/popups/create_dialog/create_dialog.tscn" id="2"]
@@ -12,13 +12,14 @@
 [ext_resource type="PackedScene" uid="uid://b4xgqqfpot7cc" path="res://addons/popochiu/editor/popups/create_inventory_item/create_inventory_item.tscn" id="6"]
 [ext_resource type="Texture2D" uid="uid://bb53j2q1cm45l" path="res://addons/popochiu/icons/dialog.png" id="6_evjo7"]
 [ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/popochiu_dock.gd" id="7"]
+[ext_resource type="PackedScene" uid="uid://4etgd0rwjgct" path="res://addons/popochiu/editor/main_dock/tab_ui/tab_ui.tscn" id="10_82goo"]
 [ext_resource type="PackedScene" uid="uid://q1bjkxavt2ay" path="res://addons/popochiu/editor/main_dock/tab_room.tscn" id="12"]
 [ext_resource type="PackedScene" uid="uid://bpj8jlet25coy" path="res://addons/popochiu/editor/main_dock/tab_audio.tscn" id="13"]
 [ext_resource type="PackedScene" uid="uid://yybwvwbsf7en" path="res://addons/popochiu/editor/popups/create_hotspot/create_hotspot.tscn" id="14"]
 [ext_resource type="PackedScene" uid="uid://chnpxfme1xmpb" path="res://addons/popochiu/editor/popups/create_region/create_region.tscn" id="15"]
 [ext_resource type="PackedScene" path="res://addons/popochiu/editor/popups/loading/loading.tscn" id="16"]
 [ext_resource type="PackedScene" uid="uid://bcb865akap0mt" path="res://addons/popochiu/editor/popups/delete_confirmation/delete_confirmation.tscn" id="17"]
-[ext_resource type="PackedScene" uid="uid://dbqppogchdate" path="res://addons/popochiu/editor/popups/setup/setup.tscn" id="18"]
+[ext_resource type="PackedScene" uid="uid://c3r8juwutb1gr" path="res://addons/popochiu/editor/popups/setup/setup.tscn" id="18"]
 [ext_resource type="PackedScene" uid="uid://c054k1ux04waq" path="res://addons/popochiu/editor/popups/create_walkable_area/create_walkable_area.tscn" id="19"]
 
 [sub_resource type="Image" id="Image_uchp8"]
@@ -72,6 +73,18 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.556863, 0.235294, 0.592157, 0.74902)
+
+[sub_resource type="Image" id="Image_cpqpn"]
+data = {
+"data": PackedByteArray(255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 93, 93, 41, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0),
+"format": "RGBA8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id="ImageTexture_cg4n0"]
+image = SubResource("Image_cpqpn")
 
 [node name="Popochiu" type="Panel"]
 clip_contents = true
@@ -165,6 +178,11 @@ focus_mode = 2
 visible = false
 layout_mode = 2
 focus_mode = 2
+
+[node name="UI" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("10_82goo")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
 
 [node name="FooterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
