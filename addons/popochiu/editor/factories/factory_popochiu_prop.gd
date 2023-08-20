@@ -40,6 +40,9 @@ func create(
 	new_obj.cursor = Constants.CURSOR_TYPE.ACTIVE
 	new_obj.clickable = is_interactive
 	new_obj.visible = is_visible
+
+	if PopochiuResources.get_settings().is_pixel_art_game:
+		new_obj.get_node("Sprite2D").texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	
 	if _snake_name in ['bg', 'background']:
 		new_obj.baseline =\

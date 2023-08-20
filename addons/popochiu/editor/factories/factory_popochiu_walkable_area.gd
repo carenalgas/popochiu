@@ -40,13 +40,17 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	# Create a NavigationRegion2D with its polygon as a child in the room scene
 	var perimeter := NavigationRegion2D.new()
 	perimeter.name = 'Perimeter'
+	
 	var polygon := NavigationPolygon.new()
 	polygon.add_outline(PackedVector2Array([
 		Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
 	]))
 	polygon.make_polygons_from_outlines()
+	polygon.agent_radius = 0.0
+	
 	perimeter.navpoly = polygon
 	perimeter.modulate = Color.GREEN
+	
 	_add_visible_child(perimeter)
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 

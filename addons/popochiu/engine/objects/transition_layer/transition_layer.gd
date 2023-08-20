@@ -1,5 +1,5 @@
-extends CanvasLayer
-class_name TransitionLayer
+extends Node2D
+class_name PopochiuTransitionLayer
 # warning-ignore-all:return_value_discarded
 
 signal transition_finished(transition_name)

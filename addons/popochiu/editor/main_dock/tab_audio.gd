@@ -2,7 +2,7 @@
 @tool
 extends VBoxContainer
 
-const SEARCH_PATH := 'res://popochiu/'
+const SEARCH_PATH := 'res://game/'
 const AudioCue := preload('res://addons/popochiu/engine/audio_manager/audio_cue.gd')
 const PopochiuUtils := preload('res://addons/popochiu/engine/others/popochiu_utils.gd')
 const AudioManager := preload('res://addons/popochiu/engine/audio_manager/audio_manager.gd')
@@ -71,7 +71,7 @@ func search_audio_files() -> void:
 	_group_audio_cues()
 	
 	var fs_directory: EditorFileSystemDirectory =\
-	main_dock.fs.get_filesystem_path(SEARCH_PATH)
+	EditorInterface.get_resource_filesystem().get_filesystem_path(SEARCH_PATH)
 	
 	if not fs_directory: return
 	
@@ -82,10 +82,12 @@ func search_audio_files() -> void:
 		var progress: ProgressBar = main_dock.loading_dialog.find_child('Progress')
 		
 		progress.max_value = _audio_cues_to_create.size()
-#		(main_dock.loading_dialog as Popup).set_as_minsize()
 		(main_dock.loading_dialog as Popup).popup_centered()
 		
 		await get_tree().process_frame
+		
+		(main_dock.loading_dialog as Popup).reset_size()
+		(main_dock.loading_dialog as Popup).move_to_center()
 		
 		for arr in _audio_cues_to_create:
 			await _create_audio_cue(arr[0], arr[1])
@@ -311,7 +313,7 @@ func _create_audio_cue(
 		await get_tree().process_frame
 		return
 	
-	await main_dock.fs.filesystem_changed
+	await EditorInterface.get_resource_filesystem().filesystem_changed
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Add the AudioCue to the A singleton

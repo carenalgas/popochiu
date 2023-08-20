@@ -1,8 +1,6 @@
 @tool
 extends VBoxContainer
-
-# Handles the Room tab in Popochiu's dock
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+## Handles the Room tab in Popochiu's dock
 
 const PopochiuObjectRow := preload('object_row/popochiu_object_row.gd')
 const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
@@ -68,7 +66,7 @@ var _remove_dialog: ConfirmationDialog
 @onready var _btn_resource_script: Button = _tool_buttons.get_node('BtnResourceScript')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	$PopochiuFilter.groups = _types
 	
@@ -112,20 +110,21 @@ func _ready() -> void:
 		t.group.disable_create()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func scene_changed(scene_root: Node) -> void:
 	# Set the default tab state
 	if is_instance_valid(opened_room):
 		await _clear_content()
 	
+	if not scene_root is PopochiuRoom:
+		return
+	
 	if scene_root is PopochiuRoom and scene_root.script_name.is_empty():
 		PopochiuUtils.print_error(
 			"This room doesn't have a [code]script_name[/code] value!"
 		)
-		return
-	
-	if not scene_root is PopochiuRoom:
-		get_parent().current_tab = 0
 		return
 	
 	# Updated the opened room's info
@@ -167,7 +166,9 @@ func scene_closed(filepath: String) -> void:
 		_clear_content()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func set_main_dock(value: Panel) -> void:
 	main_dock = value
 	_remove_dialog = main_dock.delete_dialog
@@ -182,7 +183,9 @@ func set_main_dock(value: Panel) -> void:
 		t.group.create_clicked.connect(main_dock._open_popup.bind(t.popup))
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _clear_content() -> void:
 	for type_id in _types:
 		var container: Node2D = opened_room.get_node(_types[type_id].parent)
@@ -252,25 +255,25 @@ func _select_in_tree(por: PopochiuObjectRow) -> void:
 
 
 func _select_file() -> void:
-	main_dock.ei.select_file(opened_room.scene_file_path)
+	EditorInterface.select_file(opened_room.scene_file_path)
 
 
 func _open_script() -> void:
-	main_dock.ei.select_file(opened_room.get_script().resource_path)
-	main_dock.ei.set_main_screen_editor('Script')
-	main_dock.ei.edit_script(opened_room.get_script())
+	EditorInterface.select_file(opened_room.get_script().resource_path)
+	EditorInterface.set_main_screen_editor('Script')
+	EditorInterface.edit_script(opened_room.get_script())
 
 
 func _edit_resource() -> void:
-	main_dock.ei.select_file(opened_room_state_path)
-	main_dock.ei.edit_resource(load(opened_room_state_path))
+	EditorInterface.select_file(opened_room_state_path)
+	EditorInterface.edit_resource(load(opened_room_state_path))
 
 
 func _open_resource_script() -> void:
 	var prd: PopochiuRoomData = load(opened_room_state_path)
-	main_dock.ei.select_file(prd.get_script().resource_path)
-	main_dock.ei.set_main_screen_editor('Script')
-	main_dock.ei.edit_resource(prd.get_script())
+	EditorInterface.select_file(prd.get_script().resource_path)
+	EditorInterface.set_main_screen_editor('Script')
+	EditorInterface.edit_resource(prd.get_script())
 
 
 # Removes the character from the room
@@ -305,7 +308,7 @@ func _on_remove_character_confirmed(row: PopochiuObjectRow) -> void:
 		'Character%s *' % row.name
 	).queue_free()
 	row.queue_free()
-	main_dock.ei.save_scene()
+	EditorInterface.save_scene()
 	
 	_on_remove_dialog_hide()
 
@@ -334,17 +337,17 @@ func _on_character_seleced(id: int) -> void:
 	var char_name := characters_menu.get_item_text(
 		characters_menu.get_item_index(id)
 	)
-	var instance: PopochiuCharacter = load(
-		'res://popochiu/characters/%s/character_%s.tscn' % [
+	var instance: PopochiuCharacter = (load(
+		'res://game/characters/%s/character_%s.tscn' % [
 			char_name.to_snake_case(),
 			char_name.to_snake_case()
 		]
-	).instantiate()
+	) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	
 	opened_room.get_node('Characters').add_child(instance)
 	instance.owner = opened_room
 	
-	main_dock.ei.save_scene()
+	EditorInterface.save_scene()
 	PopochiuEditorHelper.select_node(instance)
 
 
@@ -364,7 +367,7 @@ func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 		row = _create_object_row(
 			type_id,
 			char_name,
-			'res://popochiu/characters/%s/character_%s.tscn' % [
+			'res://game/characters/%s/character_%s.tscn' % [
 				char_name, char_name
 			],
 			child.name
@@ -463,3 +466,6 @@ func _check_undoredo_history() -> void:
 	
 	for wa: PopochiuWalkableArea in walkable_areas:
 		(wa.get_node("Perimeter") as NavigationRegion2D).bake_navigation_polygon()
+
+
+#endregion

@@ -16,6 +16,7 @@ preload('res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.g
 @export var can_create := true
 @export var create_text := ''
 @export var target_list: NodePath = ''
+@export var custom_title_count := false
 
 var _external_list: VBoxContainer = null
 
@@ -35,7 +36,10 @@ func _ready() -> void:
 		'panel', get_theme_stylebox('panel').duplicate()
 	)
 	(get_theme_stylebox('panel') as StyleBoxFlat).border_color = color
-	_icon.texture = icon
+	
+	if is_instance_valid(icon):
+		_icon.texture = icon
+	
 	_lbl_title.text = title
 	_btn_create.icon = get_theme_icon('Add', 'EditorIcons')
 	_btn_create.text = create_text
@@ -104,6 +108,13 @@ func add_header_button(btn: Button) -> void:
 	_btn_create.add_sibling(btn)
 
 
+func set_title_count(count: int, max_count := 0) -> void:
+	if max_count > 0:
+		_lbl_title.text = '%s (%d/%d)' % [title, count, max_count]
+	else:
+		_lbl_title.text = '%s (%d)' % [title, count]
+
+
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _on_input(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
@@ -152,10 +163,11 @@ func _set_icon(value: Texture2D) -> void:
 	
 	if is_instance_valid(_icon):
 		_icon.texture = value
-		notify_property_list_changed()
 
 
 func _update_child_count() -> void:
+	if custom_title_count: return
+	
 	if is_instance_valid(_lbl_title):
 		var childs := _list.get_child_count()
 		_lbl_title.text = title + (' (%d)' % childs) if childs > 1 else title

@@ -1,0 +1,5 @@
+[gd_resource type="ButtonGroup" format=3 uid="uid://y1thfsxxjowe"]
+
+[resource]
+resource_local_to_scene = false
+resource_name = "9VerbButtonGroup"

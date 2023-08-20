@@ -1,13 +1,13 @@
-# Creates a PopochiuRoom.
-# 
-# It creates all the necessary files to make a PopochiuRoom to work and
-# to store its state:
-# - RoomXXX.tsn
-# - RoomXXX.gd
-# - RoomXXX.tres
-# - RoomXXXState.gd
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
+## Creates a PopochiuRoom.
+## 
+## It creates all the necessary files to make a PopochiuRoom to work and
+## to store its state:
+## - RoomXXX.tsn
+## - RoomXXX.gd
+## - RoomXXX.tres
+## - RoomXXXState.gd
 
 # TODO: Giving a proper class name to PopochiuDock eliminates the need to preload it
 # and to cast it as the right type later in code.
@@ -22,7 +22,7 @@ var _factory: PopochiuRoomFactory
 @onready var _set_as_main_check: CheckBox = _set_as_main.find_child('CheckBox')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	about_to_popup.connect(_check_if_first_room)
@@ -40,14 +40,15 @@ func _ready() -> void:
 	_set_as_main.hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 func _create() -> void:
 	if _new_room_name.is_empty():
 		_error_feedback.show()
 		return
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Setup the prop helper and use it to create the prop
+	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuRoomFactory.new(_main_dock)
 
 	if _factory.create(
@@ -59,14 +60,12 @@ func _create() -> void:
 
 	var room_scene = _factory.get_obj_scene()
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Open the scene in the editor
+	# Open the scene in the editor -----------------------------------------------------------------
 	await get_tree().create_timer(0.1).timeout
-	_main_dock.ei.select_file(room_scene.scene_file_path)
-	_main_dock.ei.open_scene_from_path(room_scene.scene_file_path)
+	EditorInterface.select_file(room_scene.scene_file_path)
+	EditorInterface.open_scene_from_path(room_scene.scene_file_path)
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# That's all!
+	# That's all! ----------------------------------------------------------------------------------
 	clear_fields()
 	hide()
 
@@ -76,14 +75,18 @@ func _clear_fields() -> void:
 	_set_as_main_check.button_pressed = false
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func set_main_dock(node: Panel) -> void:
 	super(node)
 	
 	if not _main_dock: return
 	
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _update_name(new_text: String) -> void:
 	super(new_text)
 
@@ -92,7 +95,7 @@ func _update_name(new_text: String) -> void:
 
 		_info.text = (
 			'In [b]%s[/b] the following files will be created:\
-			\n[code]%s, %s and %s[/code]' \
+			\n[code]- %s\n- %s\n- %s[/code]' \
 			% [
 				_main_dock.ROOMS_PATH + _new_room_name,
 				'room_' + _new_room_name + '.tscn',
@@ -104,6 +107,8 @@ func _update_name(new_text: String) -> void:
 	else:
 		_info.clear()
 		_info.hide()
+	
+	_update_size_and_position()
 
 
 func _check_if_first_room() -> void:
@@ -119,3 +124,6 @@ func _set_show_set_as_main(value: bool) -> void:
 	if not _set_as_main: return
 	
 	_set_as_main.visible = value
+
+
+#endregion

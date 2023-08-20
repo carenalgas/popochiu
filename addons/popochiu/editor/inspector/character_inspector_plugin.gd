@@ -1,9 +1,7 @@
 extends EditorInspectorPlugin
 
-var ei: EditorInterface
 
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#region Virtual ####################################################################################
 func _can_handle(object: Object) -> bool:
 	if object is PopochiuCharacter:
 		return true
@@ -57,7 +55,12 @@ func _parse_property(
 	return false
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _open_scene(path: String) -> void:
-	ei.set_main_screen_editor('2D')
-	ei.open_scene_from_path(path)
+	EditorInterface.set_main_screen_editor('2D')
+	EditorInterface.open_scene_from_path(path)
+
+
+#endregion

@@ -14,15 +14,14 @@ const _DEFAULT_PROP_CLICKABLE_ENABLED = 'popochiu/import/aseprite/new_props_clic
 const _DEFAULT_WIPE_OLD_ANIMS_ENABLED = 'popochiu/import/aseprite/wipe_old_animations'
 
 
-var ei: EditorInterface
-var editor_settings: EditorSettings
+var ei := EditorInterface
+var editor_settings: EditorSettings = ei.get_editor_settings()
 
 var _plugin_icons: Dictionary
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#region Public #####################################################################################
 func initialize_editor_settings():
-	editor_settings = ei.get_editor_settings()
 	_initialize_editor_cfg(_ASEPRITE_IMPORTER_ENABLED_KEY, false, TYPE_BOOL)
 	_initialize_editor_cfg(_ASEPRITE_COMMAND_KEY, _default_command(), TYPE_STRING)
 	_initialize_editor_cfg(_REMOVE_SOURCE_FILES_KEY, true, TYPE_BOOL)
@@ -39,7 +38,9 @@ func initialize_project_settings():
 	ProjectSettings.save()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func aseprite_importer_enabled() -> bool:
 	return _get_editor_setting(_ASEPRITE_IMPORTER_ENABLED_KEY, false)
 
@@ -76,8 +77,10 @@ func is_default_wipe_old_anims_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true)
 
 
-	
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+
+#endregion
+
+#region Private ####################################################################################
 func _default_command() -> String:
 	return 'aseprite'
 
@@ -119,3 +122,6 @@ func _get_editor_setting(key: String, default_value):
 func _get_project_setting(key: String, default_value):
 	var p = ProjectSettings.get_setting(key)
 	return p if p != null else default_value
+
+
+#endregion

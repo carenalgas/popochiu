@@ -18,7 +18,7 @@ var _factory: PopochiuPropFactory
 @onready var _interaction_checkbox: CheckBox = find_child('InteractionCheckbox')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	_clear_fields()
@@ -26,14 +26,15 @@ func _ready() -> void:
 	_interaction_checkbox.toggled.connect(_interaction_toggled)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 func _create() -> void:
 	if _new_prop_name.is_empty():
 		_error_feedback.show()
 		return
 
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Setup the prop helper and use it to create the prop
+	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuPropFactory.new(_main_dock)
 
 	if _factory.create(
@@ -45,16 +46,16 @@ func _create() -> void:
 
 	var prop_instance = _factory.get_obj_scene()
 
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Open the properties of the created prop in the inspector
+	# Open the properties of the created prop in the inspector -------------------------------------
 	# Done here because the creation is interactive in this case
-	_main_dock.fs.scan()
-	await get_tree().create_timer(0.1).timeout
-	_main_dock.ei.edit_node(prop_instance)
-	_main_dock.ei.select_file(prop_instance.scene_file_path)
+	EditorInterface.get_resource_filesystem().scan()
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# End
+	await get_tree().create_timer(0.1).timeout
+	
+	EditorInterface.edit_node(prop_instance)
+	EditorInterface.select_file(prop_instance.scene_file_path)
+	
+	# End ------------------------------------------------------------------------------------------
 	hide()
 
 
@@ -63,12 +64,16 @@ func _clear_fields() -> void:
 	_interaction_checkbox.button_pressed = false
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func room_opened(r: Node2D) -> void:
 	_room = r
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _update_name(new_text: String) -> void:
 	super(new_text)
 
@@ -80,6 +85,8 @@ func _update_name(new_text: String) -> void:
 	else:
 		_info.clear()
 		_info.hide()
+	
+	_update_size_and_position()
 
 
 func _interaction_toggled(is_pressed: bool) -> void:
@@ -87,6 +94,8 @@ func _interaction_toggled(is_pressed: bool) -> void:
 		_update_info()
 	else:
 		_info.clear()
+	
+	_update_size_and_position()
 
 
 func _update_info() -> void:
@@ -97,3 +106,6 @@ func _update_info() -> void:
 			'prop_' + _new_prop_name + '.gd'
 		]
 	)
+
+
+#endregion

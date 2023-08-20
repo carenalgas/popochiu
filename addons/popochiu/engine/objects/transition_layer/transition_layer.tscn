@@ -296,8 +296,7 @@ _data = {
 "pass_down_out": SubResource("4")
 }
 
-[node name="TransitionLayer" type="CanvasLayer"]
-layer = 15
+[node name="TransitionLayer" type="Node2D"]
 script = ExtResource("1")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

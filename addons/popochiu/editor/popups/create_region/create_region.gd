@@ -70,3 +70,5 @@ func _update_name(new_text: String) -> void:
 	else:
 		_info.clear()
 		_info.hide()
+	
+	_update_size_and_position()

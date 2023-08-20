@@ -8,7 +8,7 @@ var _main_dock: Panel : set = set_main_dock
 @onready var _info: RichTextLabel = find_child('Info')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	register_text_enter(_input)
 	
@@ -28,7 +28,9 @@ func _ready() -> void:
 	_input.text_changed.connect(_update_name)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 func _create() -> void:
 	pass
 
@@ -37,7 +39,9 @@ func _clear_fields() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func clear_fields() -> void:
 	_input.clear()
 	_error_feedback.hide()
@@ -46,14 +50,26 @@ func clear_fields() -> void:
 	_clear_fields()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func set_main_dock(value: Panel) -> void:
 	_main_dock = value
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _update_name(new_text: String) -> void:
 	if _error_feedback.visible:
 		_error_feedback.hide()
 	
 	_name = new_text.to_pascal_case()
+
+
+func _update_size_and_position() -> void:
+	reset_size()
+	move_to_center()
+
+
+#endregion

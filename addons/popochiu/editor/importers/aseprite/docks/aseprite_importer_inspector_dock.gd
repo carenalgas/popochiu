@@ -345,6 +345,7 @@ func _show_confirmation(message: String, title: String = ""):
 	_confirmation_dialog.connect("close_requested", Callable(_confirmation_dialog, "queue_free"))
 	return _confirmation_dialog
 
+
 func _on_options_title_toggled(button_pressed):
 	_set_options_visible(button_pressed)
 	_save_config()

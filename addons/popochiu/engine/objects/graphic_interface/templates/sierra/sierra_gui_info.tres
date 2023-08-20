@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="PopochiuGUIInfo" load_steps=3 format=3 uid="uid://g70ov7n7io6l"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/others/popochiu_gui_info.gd" id="1_0p2sc"]
+[ext_resource type="Texture2D" uid="uid://c7ncrxebt8ry" path="res://addons/popochiu/icons/ico_sierra.png" id="1_4w2ga"]
+
+[resource]
+script = ExtResource("1_0p2sc")
+description = "- Use the Sierra Online commands: [b]Walk[/b], [b]Look[/b], [b]Interact[/b] and [b]Talk[/b]. Which can be selected in the top menu.
+- [b]Left click[/b] to execute selected command.
+- [b]Right click[/b] to change command.
+- [b]Inventory popup[/b] which opens with a button in the top menu.
+- [b]Settings popup[/b] which opens with a button in the top menu.
+
+Like in games such as Gabriel Knight, Crusader King."
+icon = ExtResource("1_4w2ga")

@@ -57,7 +57,7 @@ var _delete_all_checkbox: CheckBox
 ]
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	_label.text = file_name if file_name else name
 	tooltip_text = file_path if file_name else audio_cue.resource_path
@@ -91,13 +91,15 @@ func _ready() -> void:
 		)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func select() -> void:
 	if is_instance_valid(audio_tab.last_selected):
 		audio_tab.last_selected.deselect()
 	
-	main_dock.ei.select_file(audio_cue.resource_path)
-	main_dock.ei.edit_resource(audio_cue)
+	EditorInterface.select_file(audio_cue.resource_path)
+	EditorInterface.edit_resource(audio_cue)
 	_label.add_theme_color_override('font_color', SELECTED_FONT_COLOR)
 	audio_tab.last_selected = self
 
@@ -106,7 +108,18 @@ func deselect() -> void:
 	_label.add_theme_color_override('font_color', _dflt_font_color)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region SetGet #####################################################################################
+func _set_main_dock(value: Panel) -> void:
+	main_dock = value
+	_confirmation_dialog = main_dock.delete_dialog
+	_delete_all_checkbox = _confirmation_dialog.find_child('CheckBox')
+
+
+#endregion
+
+#region Private ####################################################################################
 func _create_menu() -> void:
 	_menu_popup.clear()
 	
@@ -214,7 +227,7 @@ func _ask_basic_delete() -> void:
 func _remove_in_audio_manager() -> void:
 	_confirmation_dialog.confirmed.disconnect(_remove_in_audio_manager)
 	
-	# Remove the AudioCue from PopochiuData.cfg --------------------------------
+	# Remove the AudioCue from PopochiuData.cfg ----------------------------------------------------
 	var group_data: Array = PopochiuResources.get_data_value(
 		'audio', cue_group, []
 	)
@@ -230,8 +243,7 @@ func _remove_in_audio_manager() -> void:
 			)
 			PopochiuResources.set_data_value('audio', cue_group, group_data)
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Remove the AudioCue from the A singleton
+	# Remove the AudioCue from the A singleton -----------------------------------------------------
 	PopochiuResources.remove_audio_autoload(
 		cue_group, name, audio_cue.resource_path
 	)
@@ -248,7 +260,7 @@ func _remove_in_audio_manager() -> void:
 func _delete_from_file_system(path: String) -> void:
 	# Delete the AudioCue .tres file from the file system
 	var err: int = DirAccess.remove_absolute(path)
-	main_dock.fs.update_file(path)
+	EditorInterface.get_resource_filesystem().update_file(path)
 	
 	if err != OK:
 		push_error('[Popochiu(err_code:%d)] Could not delete file %s' %\
@@ -269,7 +281,4 @@ func _disconnect_popup() -> void:
 		_confirmation_dialog.confirmed.disconnect(_delete_from_file_system)
 
 
-func _set_main_dock(value: Panel) -> void:
-	main_dock = value
-	_confirmation_dialog = main_dock.delete_dialog
-	_delete_all_checkbox = _confirmation_dialog.find_child('CheckBox')
+#endregion
