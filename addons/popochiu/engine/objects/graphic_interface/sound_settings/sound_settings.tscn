@@ -45,47 +45,17 @@ text = "Sound Settings"
 [node name="HBoxContainer" type="HBoxContainer" parent="SoundSettingsDialog/VBoxContainer"]
 layout_mode = 2
 
-[node name="Channels" type="VBoxContainer" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer"]
+[node name="ChannelsContainer" type="VBoxContainer" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
 alignment = 1
 
-[node name="MasterBtn" type="Label" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer/Channels"]
-layout_mode = 2
-text = "Master"
-
-[node name="MusicBtn" type="Label" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer/Channels"]
-layout_mode = 2
-text = "Music"
-
-[node name="SFXBtn" type="Label" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer/Channels"]
-layout_mode = 2
-text = "SFX"
-vertical_alignment = 1
-
-[node name="VBoxContainer" type="VBoxContainer" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer"]
+[node name="SlidersContainer" type="VBoxContainer" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(145, 0)
 layout_mode = 2
 size_flags_vertical = 4
-
-[node name="MasterSlider" type="HSlider" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-min_value = -70.0
-max_value = 0.0
-
-[node name="MusicSlider" type="HSlider" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-min_value = -80.0
-max_value = 0.0
-
-[node name="SFXSlider" type="HSlider" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-min_value = -65.0
-max_value = 0.0
 
 [node name="Buttons" type="HBoxContainer" parent="SoundSettingsDialog/VBoxContainer"]
 layout_mode = 2

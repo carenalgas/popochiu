@@ -3,6 +3,7 @@ extends PanelContainer
 
 const SELECTION_COLOR := Color('edf171')
 const OVERWRITE_COLOR := Color('c46c71')
+const MASTER_BUS_INDEX = 0
 
 var am: PopochiuAudioManager = null
 var _current_slot: Button = null
@@ -11,24 +12,30 @@ var _prev_text := ''
 var _slot := 0
 
 @onready var _cancel: Button = %Close
-@onready var _master_slider: HSlider = %MasterSlider
-@onready var _music_slider: HSlider = %MusicSlider
-@onready var _sfx_slider: HSlider = %SFXSlider
+@onready var _channels_container: VBoxContainer = %ChannelsContainer
+@onready var _sliders_container: VBoxContainer = %SlidersContainer
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	G.sound_settings_requested.connect(_show_sound_settings)
 	_cancel.pressed.connect(_close)
+	E.am.load_sound_settings()
 	
-	_master_slider.value_changed.connect(_update_master_volume)
-	_music_slider.value_changed.connect(_update_music_volume)
-	_sfx_slider.value_changed.connect(_update_sfx_volume)
+	# Build sound settings UI
+	for bus_idx in range(AudioServer.get_bus_count()):
+		var bus_name = AudioServer.get_bus_name(bus_idx)
+		var label = Label.new()
+		label.text = bus_name
+		_channels_container.add_child(label)
+		
+		var slider = HSlider.new()
+		slider.min_value = -70
+		slider.max_value = 0
+		slider.set_value(E.am.volume_settings[bus_name])
+		slider.value_changed.connect(_update_volume.bind(bus_name))
 
-	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
-	am.load_sound_settings()
-	_master_slider.set_value(am.volume_settings["Master"])
-	_music_slider.set_value(am.volume_settings["Music"])
-	_sfx_slider.set_value(am.volume_settings["Effects"])
+		_sliders_container.add_child(slider)
+
 	hide()
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -44,17 +51,11 @@ func _show() -> void:
 	Cursor.block()
 	show()
 
-func _update_master_volume(value: float) -> void:
-	am.set_bus_volume_db("Master", value)
-	
-func _update_music_volume(value: float) -> void:
-	am.set_bus_volume_db("Music", value)
-
-func _update_sfx_volume(value: float) -> void:
-	am.set_bus_volume_db("Effects", value)
+func _update_volume(value: float, name: String) -> void:
+	E.am.set_bus_volume_db(name, value)
 	
 func _close() -> void:
-	am.save_sound_settings()
+	E.am.save_sound_settings()
 	G.done()
 	Cursor.unlock()
 	hide()

@@ -7,6 +7,7 @@ class_name PopochiuAudioManager
 @warning_ignore("return_value_discarded")
 
 const AudioCue := preload('audio_cue.gd')
+var bus_layout_resource : AudioBusLayout = preload("res://default_bus_layout.tres")
 
 var twelfth_root_of_two := pow(2, (1.0 / 12))
 
@@ -22,16 +23,16 @@ var _fading_sounds := {}
 var _dflt_volumes := {}
 
 var settings_path = "user://audio_settings.save"
-var volume_settings := {
-	"Master": 0,
-	"Music": 0,
-	"Effects": 0
-}
+var volume_settings := {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
 
+	for bus_idx in range(AudioServer.get_bus_count()):
+		var bus_name = AudioServer.get_bus_name(bus_idx)
+		volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)
+	
 	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
 		for rp in PopochiuResources.get_data_value('audio', arr, []):
 			var ac: AudioCue = load(rp)
@@ -53,7 +54,6 @@ func play_sound_cue(
 	
 	if _all_in_one.has(cue_name.to_lower()):
 		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
-		cue.bus = "Effects"
 		stream_player = _play(cue, position_2d)
 	else:
 		printerr('[Popochiu] Sound not found:', cue_name)
@@ -86,7 +86,6 @@ func play_music_cue(
 		# FIX: #27 AudioCues were losing the volume set in editor when played
 		# with a fade
 		cue.volume = _dflt_volumes[cue_name.to_lower()]
-		cue.bus = "Music"
 		if fade_duration > 0.0:
 			stream_player = _fade_in(
 				cue, Vector2.ZERO, fade_duration,
@@ -338,14 +337,18 @@ func _fadeout_finished(stream_player: Node, tween: Tween) -> void:
 
 func save_sound_settings():
 	var file = FileAccess.open(settings_path, FileAccess.WRITE)
-	file.store_var(volume_settings)
-	file.close()
+
+	if file == null:
+		printerr("Error opening file: " + settings_path)
+	else:
+		file.store_var(volume_settings)
+		file.close()
 
 func load_sound_settings():
 	var file = FileAccess.open(settings_path, FileAccess.READ)
 	if file:
 		volume_settings = file.get_var(true)
 		file.close()
-		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"),volume_settings["Master"])
-		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Music"), volume_settings["Music"])
-		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Effects"), volume_settings["Effects"])
+		for bus_idx in range(AudioServer.get_bus_count()):
+			var bus_name = AudioServer.get_bus_name(bus_idx)
+			AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus_name),volume_settings[bus_name])
