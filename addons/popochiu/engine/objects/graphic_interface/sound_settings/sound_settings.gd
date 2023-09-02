@@ -19,6 +19,7 @@ var _slot := 0
 func _ready() -> void:
 	G.sound_settings_requested.connect(_show_sound_settings)
 	_cancel.pressed.connect(_close)
+	await E.am.ready
 	E.am.load_sound_settings()
 	
 	# Build sound settings UI
@@ -36,7 +37,7 @@ func _ready() -> void:
 
 		_sliders_container.add_child(slider)
 
-	hide()
+	hide()	
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _show_sound_settings() -> void:

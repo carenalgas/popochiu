@@ -7,7 +7,6 @@ class_name PopochiuAudioManager
 @warning_ignore("return_value_discarded")
 
 const AudioCue := preload('audio_cue.gd')
-var bus_layout_resource : AudioBusLayout = preload("res://default_bus_layout.tres")
 
 var twelfth_root_of_two := pow(2, (1.0 / 12))
 
