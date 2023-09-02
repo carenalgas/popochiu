@@ -5,7 +5,6 @@ const SELECTION_COLOR := Color('edf171')
 const OVERWRITE_COLOR := Color('c46c71')
 const MASTER_BUS_INDEX = 0
 
-var am: PopochiuAudioManager = null
 var _current_slot: Button = null
 var _date := ''
 var _prev_text := ''
@@ -21,7 +20,7 @@ func _ready() -> void:
 	_cancel.pressed.connect(_close)
 	await E.am.ready
 	E.am.load_sound_settings()
-	
+
 	# Build sound settings UI
 	for bus_idx in range(AudioServer.get_bus_count()):
 		var bus_name = AudioServer.get_bus_name(bus_idx)

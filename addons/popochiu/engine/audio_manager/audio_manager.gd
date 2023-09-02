@@ -345,9 +345,13 @@ func save_sound_settings():
 
 func load_sound_settings():
 	var file = FileAccess.open(settings_path, FileAccess.READ)
+
 	if file:
 		volume_settings = file.get_var(true)
 		file.close()
 		for bus_idx in range(AudioServer.get_bus_count()):
 			var bus_name = AudioServer.get_bus_name(bus_idx)
-			AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus_name),volume_settings[bus_name])
+			if volume_settings.has(bus_name):
+				AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus_name),volume_settings[bus_name])
+			else:
+				volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)
