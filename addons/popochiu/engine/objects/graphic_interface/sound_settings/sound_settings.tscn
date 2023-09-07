@@ -1,0 +1,70 @@
+[gd_scene load_steps=5 format=3 uid="uid://cxrrluhs3ugqx"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_k50u1"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/sound_settings/sound_settings.gd" id="2_xvxxy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_st5xf"]
+bg_color = Color(0, 0, 0, 0.498039)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ych3d"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+shadow_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[node name="SoundSettings" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_k50u1")
+theme_override_styles/panel = SubResource("StyleBoxFlat_st5xf")
+script = ExtResource("2_xvxxy")
+
+[node name="SoundSettingsDialog" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_ych3d")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SoundSettingsDialog"]
+custom_minimum_size = Vector2(200, 0)
+layout_mode = 2
+
+[node name="Title" type="Label" parent="SoundSettingsDialog/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Sound Settings"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SoundSettingsDialog/VBoxContainer"]
+layout_mode = 2
+
+[node name="ChannelsContainer" type="VBoxContainer" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+alignment = 1
+
+[node name="SlidersContainer" type="VBoxContainer" parent="SoundSettingsDialog/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(145, 0)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Buttons" type="HBoxContainer" parent="SoundSettingsDialog/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Close" type="Button" parent="SoundSettingsDialog/VBoxContainer/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SoundSettingsDialog/VBoxContainer"]
+layout_mode = 2

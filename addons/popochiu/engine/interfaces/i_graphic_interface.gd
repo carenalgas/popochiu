@@ -14,6 +14,7 @@ signal history_opened
 signal save_requested(date) # The date in YYYY/MM/DD HH:MM:SS format
 signal load_requested
 signal continue_requested
+signal sound_settings_requested
 
 var is_blocked := false
 
@@ -103,3 +104,6 @@ func show_save(date: String) -> void:
 
 func show_load() -> void:
 	load_requested.emit()
+	
+func show_sound_settings() -> void:
+	sound_settings_requested.emit()

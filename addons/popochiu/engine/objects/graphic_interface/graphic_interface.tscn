@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://k35rpa45ngms"]
+[gd_scene load_steps=16 format=3 uid="uid://k35rpa45ngms"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/graphic_interface.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_text/dialog_text.tscn" id="3"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://0cqerawlxb3o" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/toolbar.tscn" id="7_0ydpp"]
 [ext_resource type="PackedScene" uid="uid://codc5gwfbqwth" path="res://addons/popochiu/engine/objects/graphic_interface/save_load/save_load.tscn" id="8"]
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/info_bar/info_bar.tscn" id="9"]
+[ext_resource type="PackedScene" uid="uid://cxrrluhs3ugqx" path="res://addons/popochiu/engine/objects/graphic_interface/sound_settings/sound_settings.tscn" id="10_dkhrk"]
 [ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/display_box/display_box.tscn" id="11"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dlu6y"]
@@ -90,4 +91,7 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_scpl3")
 [node name="History" parent="." instance=ExtResource("7")]
 
 [node name="SaveLoad" parent="." instance=ExtResource("8")]
+visible = false
+
+[node name="SoundSettings" parent="." instance=ExtResource("10_dkhrk")]
 visible = false

@@ -1,10 +1,12 @@
-[gd_scene load_steps=19 format=3 uid="uid://0cqerawlxb3o"]
+[gd_scene load_steps=21 format=3 uid="uid://0cqerawlxb3o"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/btn_quit.gd" id="1"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/toolbar.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://bkwo41gqhl5ic" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/sprites/btn_dialog_speed_01.png" id="3"]
 [ext_resource type="Texture2D" uid="uid://s7ksvmp5vkc8" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/sprites/btn_dialog_speed_03.png" id="4"]
 [ext_resource type="Texture2D" uid="uid://dl2gqtc0ay0nk" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/sprites/btn_dialog_speed_02.png" id="5"]
+[ext_resource type="Texture2D" uid="uid://cyvd8h2ouw8rg" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/sprites/btn_audio.png" id="5_qnhmu"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/btn_sound_settings.gd" id="5_ug87h"]
 [ext_resource type="Texture2D" uid="uid://c4lgasdx1ow1d" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/sprites/toolbar_bg.png" id="6"]
 [ext_resource type="Texture2D" uid="uid://cxpcw7xvcjcfy" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/sprites/btn_quit.png" id="7"]
 [ext_resource type="Texture2D" uid="uid://bexxkrmqdiemq" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/sprites/btn_save.png" id="8"]
@@ -50,6 +52,13 @@ texture_normal = ExtResource("8")
 script = ExtResource("16")
 description = "Save game"
 script_name = "SaveGame"
+
+[node name="BtnSoundSettings" type="TextureButton" parent="Box"]
+layout_mode = 2
+texture_normal = ExtResource("5_qnhmu")
+script = ExtResource("5_ug87h")
+description = "Sound settings"
+script_name = "SoundSettings"
 
 [node name="BtnLoad" type="TextureButton" parent="Box"]
 visible = false

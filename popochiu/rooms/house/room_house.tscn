@@ -64,7 +64,6 @@ position = Vector2(109, 112)
 
 [node name="CharacterPopsy *" parent="Characters" instance=ExtResource("10_cxlhm")]
 position = Vector2(221, 128)
-popochiu_placeholder = null
 
 [node name="Character01 *" parent="Characters" instance=ExtResource("10_pnj5o")]
 position = Vector2(172, 156)
