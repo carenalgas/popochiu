@@ -1,6 +1,6 @@
 ### 🌎 [Lee la versión en Español](./LEEME.md) 🌎
 
-![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_hero-en.png "Popochiu")
+![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_2_hero-en.png "Popochiu")
 
 A Godot plugin to create point n' click games with a workflow similar to [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
 
@@ -26,7 +26,7 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 **Popochiu works on Godot 3.3.x to 3.5.x**. **And now in Godot 4 too!!!**
 
-1. Godot 4 users can download [Popochiu 2.0 Alpha 1](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha1/popochiu-v2.0-alpha1.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.9](https://github.com/mapedorr/popochiu/releases/download/v1.9.0/popochiu-v1.9.0.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Godot 4 users can download [Popochiu 2.0 Alpha 2](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha2/popochiu_v2.0-alpha2.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins` (the tab on the top).
 4. Restart Godot `Project > Reload Current Project`.
@@ -34,9 +34,9 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 
 
-# What's new in the latest version
+# What's new in the latest stable version
 
-[![New features in 1.9](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.9_button-en.png)](https://youtu.be/P9Q4g5oyfQY "New features in v1.9.0")
+[![New features in 1.10](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.10_button-en.png)](https://youtu.be/4pmjqYwXWHU "New features in v1.10.0")
 
 
 
@@ -44,7 +44,7 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 [![tutorials](https://github.com/mapedorr/popochiu/wiki/images/popochiu_tutorials_button-en.png "Go to the tutorials")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
 
-You can follow the tutorials (English subs. (English version will be uploaded soon!)) [in this list](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) to learn:
+You can follow the tutorials (English subs) [in this list](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) to learn:
 
 - How to setup your project.
 - How to create rooms where the player can walk around, and how to setup them if the exceed the limits of the game window.
@@ -54,18 +54,10 @@ You can follow the tutorials (English subs. (English version will be uploaded so
 - How to create branching dialogs.
 - How to add sound effects, music, voices, and graphic interface sounds.
 
-More tutorials will come in the following weeks to learn:
-
-- How to save/load the game state.
-- How to work with Props that have more than one frame in their spritesheet.
-- How to add animations to your Characters.
-- How to use emotions when characters speak.
-- And much more...
-
 ---
 
 # Credits
 
 Made by [Carenalga](https://mapedorr.itch.io).
 
-Now with the collaboration of [StickGrinder](https://twitter.com/StickGrinder) ([itch.io](https://illiteratecodegames.itch.io))
+Now with the collaboration of [StickGrinder](https://twitter.com/StickGrinder) ([itch.io](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), and [@JuannFerrari](https://github.com/JuannFerrari).

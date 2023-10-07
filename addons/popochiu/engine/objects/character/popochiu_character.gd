@@ -233,7 +233,7 @@ func say(dialog: String) -> void:
 	
 	var vo_name := _get_vo_cue(emotion)
 	if vo_name:
-		A.play(vo_name, false, global_position)
+		A[vo_name].play(false, global_position)
 	
 	C.character_spoke.emit(self, dialog)
 	
