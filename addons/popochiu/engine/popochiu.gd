@@ -664,7 +664,7 @@ func _eval_string(text: String) -> void:
 				var name_idx := -1
 				
 				if emotion_idx > 0:
-					if auto_idx > 0 and auto_idx > emotion_idx:
+					if auto_idx < 0 or (auto_idx > 0 and auto_idx > emotion_idx):
 						name_idx = emotion_idx
 					elif auto_idx > 0:
 						name_idx = auto_idx
