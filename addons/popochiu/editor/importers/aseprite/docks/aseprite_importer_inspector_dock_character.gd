@@ -29,7 +29,7 @@ func _on_import_pressed():
 		_importing = false
 		return
 
-	var result = await _animation_creator.create_animations(target_node, _root_node.get_node(_animation_player_path), _options)
+	var result = await _animation_creator.create_character_animations(target_node, _root_node.get_node(_animation_player_path), _options)
 	_importing = false
 	
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:

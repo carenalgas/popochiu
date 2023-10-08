@@ -17,11 +17,9 @@ var _aseprite: RefCounted
 var _target_node: Node
 var _player: AnimationPlayer
 var _options: Dictionary
-var _tags_subset: Array
-
 
 # Class-logic vars
-var _tags_options_lookup = {}
+var _spritesheet_metadata = {}
 var _target_sprite: Sprite2D
 var _output: Dictionary
 
@@ -32,135 +30,57 @@ func init(config, aseprite: RefCounted, editor_file_system: EditorFileSystem = n
 	_file_system = editor_file_system
 	_aseprite = aseprite
 
-# Public access to the creation of animations. Params are passed downstream almost entirely.
-# If tags_subset is not empty, only the animations tags contained in that list will be imported.
-# NOTE: the tags list must contain valid tag dictionaries, not just strings.
-
-# RESTART_FROM_HERE: I need to split this class in two. A good chunk of code is
-# the same for characters and rooms, but some functions are better implemented
-# vertically for the two cases! Starting from this public method.
-# The version for rooms MUST expose a public method such as create_single_animation() or
-# create_tag_animation().
-func create_animations(target_node: Node, player: AnimationPlayer, options: Dictionary, tags_subset: Array = []):
+# Public interfaces, dedicated to specific popochiu objects
+func create_character_animations(target_node: Node, player: AnimationPlayer, options: Dictionary):
 	# Chores
 	_target_node = target_node
 	_player = player
 	_options = options
-	_tags_subset = tags_subset
 
-	# Checks
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	# Duly check everything is valid and cleanup animations
+	var result = _perform_common_checks()
+	if result != RESULT_CODE.SUCCESS:
+		return result
 
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	# Create the spritesheet and load tags information
+	await _create_spritesheet_from_file()
+	await _load_spritesheet_metadata()
 
-	if not FileAccess.file_exists(options.source):
-		return RESULT_CODE.ERR_SOURCE_FILE_NOT_FOUND
+	result = _import()
+	return result
 
-	if not DirAccess.dir_exists_absolute(options.output_folder):
-		return RESULT_CODE.ERR_OUTPUT_FOLDER_NOT_FOUND
+	if result != RESULT_CODE.SUCCESS:
+		printerr(RESULT_CODE.get_error_message(result))
 
-	_target_sprite = _find_sprite_in_target()
 
-	if _target_sprite == null:
-		return RESULT_CODE.ERR_NO_SPRITE_FOUND
-	
-	if typeof(options.get("tags")) != TYPE_ARRAY:
-		return RESULT_CODE.ERR_TAGS_OPTIONS_ARRAY_EMPTY
-
-	if (options.wipe_old_animations):
-		_remove_animations_from_player(player)
-
-	# RESTART_FROM_HERE: this can be avoided by having two different classes
-	# the code above here must be super()-ized
-
-	# If no tags are specified, import all of them
-	if _tags_subset.is_empty():
-		_load_tags_options_lookup(options.get("tags"))
-		
-		var result = await _create_animations_from_file()
-		
-		if result != RESULT_CODE.SUCCESS:
-			printerr(RESULT_CODE.get_error_message(result))
-	else:
-		# CLEANUP: from the inspector dock `_on_import_pressed()` method
-		# we are receiving the whole set of tags, some of them not to be
-		# imported (import flag disabled by the user interface).
-		# Then we artificially limit the tags list in this method to
-		# allow rooms to import one tag at the time.
-		# That's a bit of a mess in terms of separation of concerns.
-		# Maybe we should expose different methods from this class to
-		# create animations, like create_all_animations() and create_animation(tag)
-		_load_tags_options_lookup(_tags_subset)
-		for tag in _tags_subset:
-			var result = await _create_animations_from_tag(tag)
-
-			if result != RESULT_CODE.SUCCESS:
-				printerr(RESULT_CODE.get_error_message(result))
+# TODO: this has to be implemented
+func create_prop_animations(target_node: Node, player: AnimationPlayer, options: Dictionary):
+	# result = await _create_animations_from_tag(tag)
+	# if result != RESULT_CODE.SUCCESS:
+	#	printerr(RESULT_CODE.get_error_message(result))
+	pass
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _load_tags_options_lookup(tags: Array = []):
-	for t in tags:
-		_tags_options_lookup[t.tag_name] = t
 
-
-func _find_sprite_in_target() -> Node:
-	if not _target_node.has_node("Sprite2D"):
-		return null
-	return _target_node.get_node("Sprite2D")
-
-
-func _remove_animations_from_player(player: AnimationPlayer):
-	player.remove_animation_library(_DEFAULT_AL)
-
-
-# RESTART_FROM_HERE: this function is still good, but maybe it has to be
-# available only in character class?
-
-func _create_animations_from_file():
+# This function creates a spritesheet with the whole file content
+func _create_spritesheet_from_file():
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
 	_output = _aseprite.export_file(_options.source, _options.output_folder, _options)
 
 	if _output.is_empty():
 		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
 
-	await _scan_filesystem()	
-
-	var result = _import()
-
-	if _config.should_remove_source_files():
-		DirAccess.remove_absolute(_output.data_file)
-		await _scan_filesystem()
-
-	return result
-
-# RESTART_FROM_HERE: same as above, should it belong to animation_creator_room subclass only?
 
 func _create_animations_from_tag(tag: Dictionary):
-	print(">>>>>>>> Creating animations for all tags")
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
 	_output = _aseprite.export_tag(_options.source, tag.tag_name, _options.output_folder, _options)
 	
 	if _output.is_empty():
 		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
 
-	await _scan_filesystem()	
+	await _scan_filesystem()
 
-	var result = _import()
-
-	if _config.should_remove_source_files():
-		DirAccess.remove_absolute(_output.data_file)
-		await _scan_filesystem()
-
-	#return result
-
-
-# RESTART_FROM_HERE: from here, downstream, check the whole implementation
-# and externalize everything that's different.
-# this import function should be ok, I guess
-func _import():
 	var source_file = _output.data_file
 	var sprite_sheet = _output.sprite_sheet
 
@@ -175,10 +95,68 @@ func _import():
 	if not _aseprite.is_valid_spritesheet(content):
 		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
 
-	_setup_texture(sprite_sheet, content)
-	var result = _configure_animations(content)
-	if result != RESULT_CODE.SUCCESS:
-		return result
+	var result = _import()
+
+	if _config.should_remove_source_files():
+		DirAccess.remove_absolute(_output.data_file)
+		await _scan_filesystem()
+
+	#return result
+
+
+func _load_spritesheet_metadata():
+	_spritesheet_metadata = {
+		tags = {},
+		frames = {}
+	}
+
+	# Refresh filesystem
+	await _scan_filesystem()
+
+	# Collect all needed info
+	var source_file = _output.data_file
+	var sprite_sheet = _output.sprite_sheet
+	
+	# Try to access, decode and validate Aseprite JSON output
+	var file = FileAccess.open(source_file, FileAccess.READ)
+	if file == null:
+		return file.get_open_error()
+		
+	var test_json_conv = JSON.new()
+	test_json_conv.parse(file.get_as_text())
+	var content = test_json_conv.get_data()
+	
+	if not _aseprite.is_valid_spritesheet(content):
+		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
+	
+	# Save frames metadata from JSON data
+	_spritesheet_metadata.frames = _aseprite.get_content_frames(content)
+
+	# Save tags metadata, starting from user's selection, and retrieving
+	# other information from JSON data
+	var tags = _options.get("tags").filter(func(tag): return tag.get("import"))
+
+	for t in tags:
+		_spritesheet_metadata.tags[t.tag_name] = t
+	
+	for ft in _aseprite.get_content_meta_tags(content):
+		if not _spritesheet_metadata.tags.has(ft.name): continue
+		_spritesheet_metadata.tags.get(ft.name).merge({
+			from = ft.from,
+			to = ft.to,
+			direction = ft.direction,
+		})
+
+	if _config.should_remove_source_files():
+		DirAccess.remove_absolute(_output.data_file)
+		await _scan_filesystem()
+
+
+func _import():
+	#_setup_texture(sprite_sheet)
+	#var result = _configure_animations(content)
+	#if result != RESULT_CODE.SUCCESS:
+	#	return result
 
 	return RESULT_CODE.SUCCESS
 
@@ -189,31 +167,23 @@ func _load_texture(sprite_sheet: String) -> Texture2D:
 	return texture
 
 
-# RESTART_FROM_HERE: this is SURELY to be externalized! It's the most important
-# culprit actually
-
-func _configure_animations(content: Dictionary):
-	var frames = _aseprite.get_content_frames(content)
-
+func _configure_animations():
 	if not _player.has_animation_library(_DEFAULT_AL):
 		_player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
 
-	if content.meta.has("frameTags") and content.meta.frameTags.size() > 0:
+	if _spritesheet_metadata.tags.size() > 0:
 		var result = RESULT_CODE.SUCCESS
-		# RESTART_FROM_HERE: this is not necessary, BUT the output JSON is
-		# needed to know how long the animation is... too bad it contains
+		# RESTART_FROM_HERE: WARNING: in case of prop and inventory, the JSON file contains
 		# the whole set of tags, so we must take the tag.from and tag.to and do
 		# from 1 to tag.to+1 - tag.from + 1 (do the math an you'll see that's correct)
-		for tag in content.meta.frameTags:
-			if not _tags_options_lookup.get(tag.tag_name).get("import"):
-				continue
-			var selected_frames = frames.slice(tag.from, tag.to+1) # slice is [)
+		for tag in _spritesheet_metadata.tags:
+			var selected_frames = _spritesheet_metadata.frames.slice(tag.from, tag.to+1) # slice is [)
 			result = _add_animation_frames(tag.name, selected_frames, tag.direction)
 			if result != RESULT_CODE.SUCCESS:
 				break
 		return result
 	else:
-		return _add_animation_frames("default", frames)
+		return _add_animation_frames("default", _spritesheet_metadata.frames)
 
 
 # RESTART_FROM_HERE: ====================================
@@ -228,7 +198,7 @@ func _add_animation_frames(anim_name: String, frames: Array, direction = 'forwar
 	# We have to add methods or properties to the Character to assign different
 	# animations (but maybe we can do with anim_prefix or other strategies).
 	var animation_name = anim_name.to_snake_case()
-	var is_loopable = _tags_options_lookup.get(anim_name).get("loops")
+	var is_loopable = _spritesheet_metadata.tags.get(anim_name).get("loops")
 
 	# Create animation library if it doesn't exist
 	# This is always true if the user selected to wipe old animations.
@@ -276,7 +246,6 @@ func _add_animation_frames(anim_name: String, frames: Array, direction = 'forwar
 
 
 ## TODO: insert validate tokens in amination name
-
 func _create_track(target_sprite: Node, animation: Animation, track: String):
 	var track_index = animation.find_track(track, Animation.TYPE_VALUE)
 
@@ -356,3 +325,40 @@ func _calculate_frame_index(sprite: Node, frame: Dictionary) -> int:
 	var row = floor(frame.frame.y * sprite.vframes / sprite.texture.get_height())
 	return (row * sprite.hframes) + column
 
+
+func _perform_common_checks():
+	# Checks
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+
+	if not FileAccess.file_exists(_options.source):
+		return RESULT_CODE.ERR_SOURCE_FILE_NOT_FOUND
+
+	if not DirAccess.dir_exists_absolute(_options.output_folder):
+		return RESULT_CODE.ERR_OUTPUT_FOLDER_NOT_FOUND
+
+	_target_sprite = _find_sprite_in_target()
+
+	if _target_sprite == null:
+		return RESULT_CODE.ERR_NO_SPRITE_FOUND
+	
+	if typeof(_options.get("tags")) != TYPE_ARRAY:
+		return RESULT_CODE.ERR_TAGS_OPTIONS_ARRAY_EMPTY
+
+	if (_options.wipe_old_animations):
+		_remove_animations_from_player(_player)
+	
+	return RESULT_CODE.SUCCESS
+
+
+func _find_sprite_in_target() -> Node:
+	if not _target_node.has_node("Sprite2D"):
+		return null
+	return _target_node.get_node("Sprite2D")
+
+
+func _remove_animations_from_player(player: AnimationPlayer):
+	player.remove_animation_library(_DEFAULT_AL)

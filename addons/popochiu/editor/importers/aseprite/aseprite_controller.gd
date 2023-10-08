@@ -144,6 +144,10 @@ func get_content_frames(content):
 	return content.frames if typeof(content.frames) == TYPE_ARRAY  else content.frames.values()
 
 
+func get_content_meta_tags(content):
+	return content.meta.frameTags if content.meta.has("frameTags")  else []
+
+
 func check_command_path():
 	# On Linux, MacOS or other *nix platforms, nothing to do
 	if not OS.get_name() in ["Windows", "UWP"]:

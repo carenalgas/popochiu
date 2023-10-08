@@ -33,8 +33,6 @@ func _on_import_pressed():
 	var prop: PopochiuProp = null
 	
 	for tag in _options.get("tags"):
-		print(">>>> Elaborating tag %s", tag.tag_name)
-
 		# Always convert to PascalCase as a standard
 		# TODO: check Godot 4 standards, I can't find info
 		var prop_name = tag.tag_name.to_pascal_case()
@@ -50,11 +48,10 @@ func _on_import_pressed():
 		#       same for Sprite2D even if it should be there...
 
 		# Import a single tag animation
-		var result = await _animation_creator.create_animations(
+		var result = await _animation_creator.create_character_animations(
 			prop,
 			prop.get_node("AnimationPlayer"),
-			_options,
-			[tag]
+			_options
 		)
 		# TODO: maybe check if this is better done with signals
 		_importing = false
