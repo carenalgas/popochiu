@@ -7,6 +7,7 @@ const CONFIG_SCRIPT = preload("res://addons/popochiu/editor/config/config.gd")
 var ei: EditorInterface
 var fs: EditorFileSystem
 var config: RefCounted
+var main_dock: Panel
 var _target_node: Node
 
 
@@ -34,7 +35,8 @@ func _parse_category(object, category):
 		dock.target_node = object
 		dock.config = config
 		dock.file_system = fs
-		
+		dock.main_dock = main_dock # TODO: change for SignalBus
+
 		# Add the dock to the inspector
 		add_custom_control(dock)
 

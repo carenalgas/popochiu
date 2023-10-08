@@ -11,6 +11,7 @@ const AnimationTagRow = preload("res://addons/popochiu/editor/importers/aseprite
 var scene: Node
 var target_node: Node
 var config: RefCounted
+var main_dock: Panel
 var file_system: EditorFileSystem
 
 
@@ -25,7 +26,6 @@ var _options: Dictionary
 # Importer parameters variables
 var _source: String = ""
 var _tags_cache: Array = []
-#var _animation_player_path: String ## TODO: remove / move into specific class (Character)
 var _file_dialog_aseprite: FileDialog
 var _output_folder_dialog: FileDialog
 var _importing := false
@@ -105,7 +105,6 @@ func _load_config(cfg):
 func _save_config():
 	_update_tags_cache()
 	var cfg := {
-#		"player": _animation_player_path, # TODO: is this really necessary?
 		"source": _source,
 		"tags": _tags_cache,
 		"op_exp": get_node('%Options').visible,

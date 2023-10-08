@@ -314,6 +314,6 @@ func _open_settings() -> void:
 func _check_node(node: Node) -> void:
 	if node is PopochiuCharacter and node.get_parent() is Node2D:
 		# The node is a PopochiuCharacter in a room
-		node.name = 'Character%s *' % node.script_name
+		node.set_name.call_deferred('Character%s *' % node.script_name)
 		# TODO: Show something in the Inspector to alert devs about editing this
 		# node.

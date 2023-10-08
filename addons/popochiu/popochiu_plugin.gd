@@ -71,7 +71,15 @@ func _enter_tree() -> void:
 	config.ei = _editor_interface
 	config.initialize_editor_settings()
 	config.initialize_project_settings()
-	
+
+	# Configure main dock to be passed down the plugin chain
+	# TODO: Get rid of this cascading assignment and switch to
+	# a signalbus instead!
+	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
+	main_dock.ei = _editor_interface
+	main_dock.fs = _editor_file_system
+	main_dock.focus_mode = Control.FOCUS_ALL
+
 	for path in [
 		'res://addons/popochiu/editor/inspector/character_inspector_plugin.gd',
 		'res://addons/popochiu/editor/inspector/walkable_area_inspector_plugin.gd',
@@ -83,17 +91,13 @@ func _enter_tree() -> void:
 		eip.set('ei', _editor_interface)
 		eip.set('fs', _editor_file_system)
 		eip.set('config', config)
+		eip.set('main_dock', main_dock) # TODO: change with SignalBus
 		
 		_inspector_plugins.append(eip)
 		add_inspector_plugin(eip)
 	
 	_export_plugin = preload('popochiu_export_plugin.gd').new()
 	add_export_plugin(_export_plugin)
-
-	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
-	main_dock.ei = _editor_interface
-	main_dock.fs = _editor_file_system
-	main_dock.focus_mode = Control.FOCUS_ALL
 	
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 	
