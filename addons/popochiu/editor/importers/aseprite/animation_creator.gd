@@ -72,6 +72,7 @@ func _create_spritesheet_from_file():
 		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
 
 
+# TODO: rename this _create_spritesheet_from_tag
 func _create_animations_from_tag(tag: Dictionary):
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
 	_output = _aseprite.export_tag(_options.source, tag.tag_name, _options.output_folder, _options)
@@ -107,7 +108,9 @@ func _create_animations_from_tag(tag: Dictionary):
 func _load_spritesheet_metadata():
 	_spritesheet_metadata = {
 		tags = {},
-		frames = {}
+		frames = {},
+		meta = {},
+		sprite_sheet = {}
 	}
 
 	# Refresh filesystem
@@ -129,6 +132,9 @@ func _load_spritesheet_metadata():
 	if not _aseprite.is_valid_spritesheet(content):
 		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
 	
+	# Save image metadata from JSON data
+	_spritesheet_metadata.meta = content.meta
+
 	# Save frames metadata from JSON data
 	_spritesheet_metadata.frames = _aseprite.get_content_frames(content)
 
@@ -146,15 +152,19 @@ func _load_spritesheet_metadata():
 			to = ft.to,
 			direction = ft.direction,
 		})
+	
+	# Save spritesheet path from the command output
+	_spritesheet_metadata.sprite_sheet = sprite_sheet
 
+	# Remove the JSON file if config says so
 	if _config.should_remove_source_files():
 		DirAccess.remove_absolute(_output.data_file)
 		await _scan_filesystem()
 
 
-func _import():
-	#_setup_texture(sprite_sheet)
-	#var result = _configure_animations(content)
+func _import(): # TODO: possiamo evitarcelo credo... portiamo ste due righe nella funzione sopra
+	_setup_texture(_sprite_sheet_metadata.sprite_sheet)
+	var result = _configure_animations()
 	#if result != RESULT_CODE.SUCCESS:
 	#	return result
 
@@ -174,8 +184,8 @@ func _configure_animations():
 	if _spritesheet_metadata.tags.size() > 0:
 		var result = RESULT_CODE.SUCCESS
 		# RESTART_FROM_HERE: WARNING: in case of prop and inventory, the JSON file contains
-		# the whole set of tags, so we must take the tag.from and tag.to and do
-		# from 1 to tag.to+1 - tag.from + 1 (do the math an you'll see that's correct)
+		# the whole set of tags, so we must take the tag.from and tag.to and remap the range
+		# from "1" to "tag.to +1 - tag.from + 1" (do the math an you'll see that's correct)
 		for tag in _spritesheet_metadata.tags:
 			var selected_frames = _spritesheet_metadata.frames.slice(tag.from, tag.to+1) # slice is [)
 			result = _add_animation_frames(tag.name, selected_frames, tag.direction)
@@ -245,7 +255,7 @@ func _add_animation_frames(anim_name: String, frames: Array, direction = 'forwar
 	return RESULT_CODE.SUCCESS
 
 
-## TODO: insert validate tokens in amination name
+## TODO: insert validate tokens in animation name
 func _create_track(target_sprite: Node, animation: Animation, track: String):
 	var track_index = animation.find_track(track, Animation.TYPE_VALUE)
 
@@ -287,15 +297,15 @@ func _remove_properties_from_path(path: NodePath) -> NodePath:
 # What follow is logic specifically gathered for Sprite elements. TextureRect should 
 # be treated in a different way (see texture_rect_animation_creator.gd file in
 # original Aseprite Wizard plugin by Vinicius Gerevini)
-func _setup_texture(sprite_sheet: String, content: Dictionary):
+func _setup_texture(sprite_sheet: String):
 	var texture = _load_texture(sprite_sheet)
 	_target_sprite.texture = texture
 
-	if content.frames.is_empty():
+	if _spritesheet_metadata.frames.is_empty():
 		return
 
-	_target_sprite.hframes = content.meta.size.w / content.frames[0].sourceSize.w
-	_target_sprite.vframes = content.meta.size.h / content.frames[0].sourceSize.h
+	_target_sprite.hframes = _spritesheet_metadata.meta.size.w / _spritesheet_metadata.frames[0].sourceSize.w
+	_target_sprite.vframes = _spritesheet_metadata.meta.size.h / _spritesheet_metadata.frames[0].sourceSize.h
 
 
 func _create_meta_tracks(animation: Animation):
