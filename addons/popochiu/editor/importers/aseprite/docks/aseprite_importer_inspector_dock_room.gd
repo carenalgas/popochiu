@@ -18,21 +18,16 @@ func _on_import_pressed():
 	# This will populate _root_node and _options class variables
 	super()
 	
-	# TODO: Here we have to
-	# - Foreach options.get("tags")
-	#   - If a Prop named `tag_name.to_camel()` is not availabe
-	#     - Create it from scratch in the Props container (invoke the factory)
-	#   - If the Prop has not a Sprite2D and an AnimationPlayer
-	#     - Instantiate both
-	#   - Create animation passing the Prop as the target node, and all needed params
-	#   NOTE: THIS REQUIRE TO EXPORT TAGS INSTEAD OF THE ENTIRE FILE.
-	#         I must extend the signature of create_animations specifying a tag or a range
-	#         or do a create animations for tag or whatever...
-
 	var props_container = _root_node.get_node("Props")
 	var prop: PopochiuProp = null
-	
+	var result: int = RESULT_CODE.SUCCESS
+
+	# Create a prop for each tag that must be imported
+	# and populate it with the right sprite
 	for tag in _options.get("tags"):
+		# Ignore unwanted tags
+		if not tag.import: continue
+
 		# Always convert to PascalCase as a standard
 		# TODO: check Godot 4 standards, I can't find info
 		var prop_name = tag.tag_name.to_pascal_case()
@@ -48,21 +43,33 @@ func _on_import_pressed():
 		#       same for Sprite2D even if it should be there...
 
 		# Import a single tag animation
-		var result = await _animation_creator.create_character_animations(
+		result = await _animation_creator.create_prop_animations(
 			prop,
-			prop.get_node("AnimationPlayer"),
+			tag.tag_name, # original name
 			_options
 		)
+
+		# Save the prop scene after adding that stuff
+		var packed_scene: PackedScene = PackedScene.new()
+		packed_scene.pack(prop)
+		if ResourceSaver.save(packed_scene, prop.scene_file_path) != OK:
+			push_error(
+				"[Popochiu] Couldn't save animations for prop %s at %s" %
+				[prop.name, prop.scene_file_path]
+			)
+			result = ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
+
 		# TODO: maybe check if this is better done with signals
 		_importing = false
 
-		if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
-			printerr(RESULT_CODE.get_error_message(result))
-			_show_message("Some errors occurred. Please check output panel.", "Warning!")
-		else:
-			_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
-		
 		prop = null
+
+	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
+		printerr(RESULT_CODE.get_error_message(result))
+		_show_message("Some errors occurred. Please check output panel.", "Warning!")
+	else:
+		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
+
 
 
 func _customize_tag_ui(tag_row: AnimationTagRow):

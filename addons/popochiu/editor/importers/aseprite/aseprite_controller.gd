@@ -90,7 +90,7 @@ func export_tag(file_name: String, tag_name: String, output_folder: String, opti
 	var arguments = _export_command_common_arguments(file_name, data_file, sprite_sheet)
 	arguments.push_front(tag_name)
 	arguments.push_front("--tag")
-	
+
 	_add_sheet_type_arguments(arguments, options)
 
 	var exit_code = _execute(arguments, output)

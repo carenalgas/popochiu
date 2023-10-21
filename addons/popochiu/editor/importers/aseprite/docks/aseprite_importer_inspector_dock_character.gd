@@ -28,10 +28,10 @@ func _on_import_pressed():
 		_show_message("AnimationPlayer not found")
 		_importing = false
 		return
-
+	
 	var result = await _animation_creator.create_character_animations(target_node, _root_node.get_node(_animation_player_path), _options)
 	_importing = false
-	
+
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
 		printerr(RESULT_CODE.get_error_message(result))
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")

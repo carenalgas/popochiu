@@ -31,9 +31,9 @@ func init(config, aseprite: RefCounted, editor_file_system: EditorFileSystem = n
 	_aseprite = aseprite
 
 # Public interfaces, dedicated to specific popochiu objects
-func create_character_animations(target_node: Node, player: AnimationPlayer, options: Dictionary):
+func create_character_animations(character: Node, player: AnimationPlayer, options: Dictionary):
 	# Chores
-	_target_node = target_node
+	_target_node = character
 	_player = player
 	_options = options
 
@@ -42,23 +42,57 @@ func create_character_animations(target_node: Node, player: AnimationPlayer, opt
 	if result != RESULT_CODE.SUCCESS:
 		return result
 
-	# Create the spritesheet and load tags information
-	await _create_spritesheet_from_file()
-	await _load_spritesheet_metadata()
+	# Create the spritesheet
+	result = await _create_spritesheet_from_file()
+	if result != RESULT_CODE.SUCCESS:
+		return result
 
-	result = _import()
+	# Load tags information
+	result = await _load_spritesheet_metadata()
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	# Set the texture in the sprite and configure
+	# the animations in the AnimationPlayer
+	_setup_texture()
+	result = _configure_animations()
+
 	return result
 
+
+func create_prop_animations(prop: Node, aseprite_tag: String, options: Dictionary):
+	# Chores
+	_target_node = prop
+	# TODO: if the prop has no AnimationPlayer, add one!
+	_player = prop.get_node("AnimationPlayer")
+	_options = options
+
+	var prop_animation_name = aseprite_tag.to_snake_case()
+
+	# Duly check everything is valid and cleanup animations
+	var result = _perform_common_checks()
 	if result != RESULT_CODE.SUCCESS:
-		printerr(RESULT_CODE.get_error_message(result))
+		return result
 
+	# Create the spritesheet
+	result = await _create_spritesheet_from_tag(aseprite_tag)
+	if result != RESULT_CODE.SUCCESS:
+		return result
 
-# TODO: this has to be implemented
-func create_prop_animations(target_node: Node, player: AnimationPlayer, options: Dictionary):
-	# result = await _create_animations_from_tag(tag)
-	# if result != RESULT_CODE.SUCCESS:
-	#	printerr(RESULT_CODE.get_error_message(result))
-	pass
+	# Load tags information
+	result = await _load_spritesheet_metadata(aseprite_tag)
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	# Set the texture in the sprite and configure
+	# the animations in the AnimationPlayer
+	_setup_texture()
+	result = _configure_animations()
+
+	# Sorry, mom...
+	_player.autoplay = prop.name.to_snake_case()
+
+	return result
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -67,45 +101,22 @@ func create_prop_animations(target_node: Node, player: AnimationPlayer, options:
 func _create_spritesheet_from_file():
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
 	_output = _aseprite.export_file(_options.source, _options.output_folder, _options)
-
 	if _output.is_empty():
 		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
+	return RESULT_CODE.SUCCESS
 
 
-# TODO: rename this _create_spritesheet_from_tag
-func _create_animations_from_tag(tag: Dictionary):
+# This function creates a spritesheet with the frames of a specific tag
+# WARNING: it's case sensitive
+func _create_spritesheet_from_tag(selected_tag: String):
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
-	_output = _aseprite.export_tag(_options.source, tag.tag_name, _options.output_folder, _options)
-	
+	_output = _aseprite.export_tag(_options.source, selected_tag, _options.output_folder, _options)
 	if _output.is_empty():
 		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
-
-	await _scan_filesystem()
-
-	var source_file = _output.data_file
-	var sprite_sheet = _output.sprite_sheet
-
-	var file = FileAccess.open(source_file, FileAccess.READ)
-	if file == null:
-		return file.get_open_error()
-
-	var test_json_conv = JSON.new()
-	test_json_conv.parse(file.get_as_text())
-	var content = test_json_conv.get_data()
-
-	if not _aseprite.is_valid_spritesheet(content):
-		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
-
-	var result = _import()
-
-	if _config.should_remove_source_files():
-		DirAccess.remove_absolute(_output.data_file)
-		await _scan_filesystem()
-
-	#return result
+	return RESULT_CODE.SUCCESS
 
 
-func _load_spritesheet_metadata():
+func _load_spritesheet_metadata(selected_tag: String = ""):
 	_spritesheet_metadata = {
 		tags = {},
 		frames = {},
@@ -143,8 +154,11 @@ func _load_spritesheet_metadata():
 	var tags = _options.get("tags").filter(func(tag): return tag.get("import"))
 
 	for t in tags:
+		# If a tag is specified, ignore every other ones
+		if not selected_tag.is_empty() and selected_tag != t.tag_name: continue
+		# Create a lookup table for tags
 		_spritesheet_metadata.tags[t.tag_name] = t
-	
+
 	for ft in _aseprite.get_content_meta_tags(content):
 		if not _spritesheet_metadata.tags.has(ft.name): continue
 		_spritesheet_metadata.tags.get(ft.name).merge({
@@ -153,6 +167,18 @@ func _load_spritesheet_metadata():
 			direction = ft.direction,
 		})
 	
+	# If a tag is specified, the tags lookup table should contain
+	# a single tag information. In this case the to and from properties
+	# must be shifted back in the [1 - tag_length] range.
+	if not selected_tag.is_empty():
+		# Using a temp variable to make this readable
+		var t = _spritesheet_metadata.tags[selected_tag]
+		# NOTE: imagine this goes from 34 to 54, we need to shift
+		# the range back of a 33 amount, so it goes from 1 to (54 - 33)
+		t.to = t.to - t.from + 1
+		t.from = 1
+		_spritesheet_metadata.tags[selected_tag] = t
+
 	# Save spritesheet path from the command output
 	_spritesheet_metadata.sprite_sheet = sprite_sheet
 
@@ -161,20 +187,7 @@ func _load_spritesheet_metadata():
 		DirAccess.remove_absolute(_output.data_file)
 		await _scan_filesystem()
 
-
-func _import(): # TODO: possiamo evitarcelo credo... portiamo ste due righe nella funzione sopra
-	_setup_texture(_sprite_sheet_metadata.sprite_sheet)
-	var result = _configure_animations()
-	#if result != RESULT_CODE.SUCCESS:
-	#	return result
-
 	return RESULT_CODE.SUCCESS
-
-
-func _load_texture(sprite_sheet: String) -> Texture2D:
-	var texture = ResourceLoader.load(sprite_sheet, 'Image', ResourceLoader.CACHE_MODE_IGNORE)
-	texture.take_over_path(sprite_sheet)
-	return texture
 
 
 func _configure_animations():
@@ -186,19 +199,15 @@ func _configure_animations():
 		# RESTART_FROM_HERE: WARNING: in case of prop and inventory, the JSON file contains
 		# the whole set of tags, so we must take the tag.from and tag.to and remap the range
 		# from "1" to "tag.to +1 - tag.from + 1" (do the math an you'll see that's correct)
-		for tag in _spritesheet_metadata.tags:
-			var selected_frames = _spritesheet_metadata.frames.slice(tag.from, tag.to+1) # slice is [)
-			result = _add_animation_frames(tag.name, selected_frames, tag.direction)
+		for tag in _spritesheet_metadata.tags.values():
+			var selected_frames = _spritesheet_metadata.frames.slice(tag.from, tag.to + 1) # slice is [)
+			result = _add_animation_frames(tag.tag_name, selected_frames, tag.direction)
 			if result != RESULT_CODE.SUCCESS:
 				break
 		return result
 	else:
 		return _add_animation_frames("default", _spritesheet_metadata.frames)
 
-
-# RESTART_FROM_HERE: ====================================
-# what follows SHOULD be OK to keep as it is. The problem is all above.
-# Cardinality is paramount here.
 
 func _add_animation_frames(anim_name: String, frames: Array, direction = 'forward'):
 	# TODO: ATM there is no way to assign a walk/talk/grab/idle animation
@@ -297,8 +306,10 @@ func _remove_properties_from_path(path: NodePath) -> NodePath:
 # What follow is logic specifically gathered for Sprite elements. TextureRect should 
 # be treated in a different way (see texture_rect_animation_creator.gd file in
 # original Aseprite Wizard plugin by Vinicius Gerevini)
-func _setup_texture(sprite_sheet: String):
-	var texture = _load_texture(sprite_sheet)
+func _setup_texture():
+	# Load texture in target sprite (ignoring cache and forcing a refres)
+	var texture = ResourceLoader.load(_spritesheet_metadata.sprite_sheet, 'Image', ResourceLoader.CACHE_MODE_IGNORE)
+	texture.take_over_path(_spritesheet_metadata.sprite_sheet)
 	_target_sprite.texture = texture
 
 	if _spritesheet_metadata.frames.is_empty():
@@ -371,4 +382,5 @@ func _find_sprite_in_target() -> Node:
 
 
 func _remove_animations_from_player(player: AnimationPlayer):
-	player.remove_animation_library(_DEFAULT_AL)
+	if player.has_animation_library(_DEFAULT_AL):
+		player.remove_animation_library(_DEFAULT_AL)
