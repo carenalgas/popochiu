@@ -77,6 +77,7 @@ func appear(show_welcome := false) -> void:
 	_scale_message.text = _get_scale_message()
 	
 	_game_type.selected = 0
+	
 	if ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE) == 'canvas_items'\
 	and ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT) == 'keep':
 		_game_type.selected = 1
@@ -126,12 +127,9 @@ func _update_project_settings() -> void:
 		int(_test_height.value)
 	)
 	
-	if _game_type.selected != 0:
+	if _game_type.selected == 1:
 		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, 'canvas_items')
 		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, 'keep')
-	else:
-		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, 'disabled')
-		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, 'ignore')
 	
 	assert(\
 		ProjectSettings.save() == OK,\

@@ -391,11 +391,17 @@ func _select_walk_to() -> void:
 	_btn_baseline.set_pressed_no_signal(false)
 	_vsep.hide()
 	
+	_editor_interface.get_selection().clear()
+	
 	if _types_helper.is_prop(_selected_node)\
 	or _types_helper.is_hotspot(_selected_node):
-		_editor_interface.edit_node(_selected_node.get_node('WalkToHelper'))
+		_editor_interface.get_selection().add_node(
+			_selected_node.get_node("WalkToHelper")
+		)
 	else:
-		_editor_interface.edit_node(_selected_node.get_node('../WalkToHelper'))
+		_editor_interface.get_selection().add_node(
+			_selected_node.get_node("../WalkToHelper")
+		)
 
 
 func _select_baseline() -> void:
@@ -403,11 +409,17 @@ func _select_baseline() -> void:
 	_btn_walk_to.set_pressed_no_signal(false)
 	_vsep.show()
 	
+	_editor_interface.get_selection().clear()
+	
 	if _types_helper.is_prop(_selected_node)\
 	or _types_helper.is_hotspot(_selected_node):
-		_editor_interface.edit_node(_selected_node.get_node('BaselineHelper'))
+		_editor_interface.get_selection().add_node(
+			_selected_node.get_node("BaselineHelper")
+		)
 	else:
-		_editor_interface.edit_node(_selected_node.get_node('../BaselineHelper'))
+		_editor_interface.get_selection().add_node(
+			_selected_node.get_node("../BaselineHelper")
+		)
 
 
 func _move_to_project(id: int) -> void:

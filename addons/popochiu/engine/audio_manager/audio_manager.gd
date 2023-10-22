@@ -207,7 +207,7 @@ func _play(
 			return null
 
 		(player as AudioStreamPlayer2D).stream = cue.audio
-		(player as AudioStreamPlayer2D).pitch_scale = cue.pitch
+		(player as AudioStreamPlayer2D).pitch_scale = cue.get_pitch_scale()
 		(player as AudioStreamPlayer2D).volume_db = cue.volume
 		(player as AudioStreamPlayer2D).max_distance = cue.max_distance
 		(player as AudioStreamPlayer2D).position = position
@@ -219,7 +219,7 @@ func _play(
 			return null
 	
 		(player as AudioStreamPlayer).stream = cue.audio
-		(player as AudioStreamPlayer).pitch_scale = cue.pitch
+		(player as AudioStreamPlayer).pitch_scale = cue.get_pitch_scale()
 		(player as AudioStreamPlayer).volume_db = cue.volume
 	
 	var cue_name: String = cue.resource_name

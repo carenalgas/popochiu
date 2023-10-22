@@ -9,10 +9,12 @@ description = "Toy Car"
 cursor = 1
 
 [node name="BaselineHelper" type="Line2D" parent="."]
+visible = false
 points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
 
 [node name="WalkToHelper" type="Marker2D" parent="."]
+visible = false
 
 [node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
 offset_left = -2.5
