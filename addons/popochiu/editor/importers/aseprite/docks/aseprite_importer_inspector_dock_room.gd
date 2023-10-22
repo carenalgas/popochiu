@@ -19,7 +19,6 @@ func _on_import_pressed():
 	super()
 
 	var props_container = _root_node.get_node("Props")
-	var prop: PopochiuProp = null
 	var result: int = RESULT_CODE.SUCCESS
 
 	# Create a prop for each tag that must be imported
@@ -33,22 +32,23 @@ func _on_import_pressed():
 		var prop_name = tag.tag_name.to_pascal_case()
 		
 		# In case the prop is there, use the one we already have
-		prop = props_container.get_node_or_null(prop_name)
+		var prop = props_container.get_node_or_null(prop_name)
 		if prop == null:
 			prop = await _create_prop(prop_name, tag.prop_clickable, tag.prop_visible)
+			prop.set_meta("ANIM_NAME", tag.tag_name)
 		
-		# Wait for the filesystem to update
-		await get_tree().create_timer(0.3).timeout
-
+	for prop in props_container.get_children():
+		if not prop.has_meta("ANIM_NAME"): continue
 		# TODO: check if animation player exists in prop, if not add it
 		#       same for Sprite2D even if it should be there...
 		# Import a single tag animation
 		result = await _animation_creator.create_prop_animations(
 			prop,
-			tag.tag_name, # original name
+			prop.get_meta("ANIM_NAME"),
 			_options
 		)
-
+	
+	for prop in props_container.get_children():
 		# Save the prop
 		result = _save_prop(prop)
 	
