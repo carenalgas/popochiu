@@ -32,3 +32,7 @@ static func sort_by_file_name(a: String, b: String) -> bool:
 
 static func override_font(node: Control, font_name: String, font: Font) -> void:
 	node.add_theme_font_override(font_name, font)
+
+
+static func print_error(msg: String) -> void:
+	print_rich("[color=red][Popochiu] %s[/color]" % msg)

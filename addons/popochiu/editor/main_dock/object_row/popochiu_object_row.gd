@@ -437,7 +437,7 @@ func _remove_object() -> void:
 	# Verify if the object to delete is a Prop, a Hotspot or a Region.
 	if type in Constants.ROOM_TYPES:
 		# res://popochiu/rooms/???/props/??/ > [res:, popochiu, rooms, ???, props, ??]
-		location = ("Room%s" % path.split('/', false)[3]).to_pascal_case()
+		location = "Room%s" % (path.split('/', false)[3]).to_pascal_case()
 	
 	# Look into the Object's folder for audio files and AudioCues to show the
 	# developer that those files will be removed too.
@@ -445,11 +445,15 @@ func _remove_object() -> void:
 		main_dock.fs.get_filesystem_path(path.get_base_dir())
 	)
 	
+	_delete_dialog.confirmed.connect(_remove_from_core)
+	_delete_dialog.get_cancel_button().pressed.connect(_disconnect_popup)
+	_delete_dialog.canceled.connect(_disconnect_popup)
+	
 	main_dock.show_confirmation(
 		# Title
 		'Remove %s from %s' % [name, location],
 		# Body
-		'This will remove the [b]%s[/b] resource in [b]%s[/b].' % [name, location] +\
+		'This will remove the [b]%s[/b] object in [b]%s[/b] scene.' % [name, location] +\
 		' Uses of this object in scripts will not work anymore.' +\
 		' This action cannot be reversed. Continue?',
 		# Additional confirmation
@@ -463,10 +467,6 @@ func _remove_object() -> void:
 		if path.get_extension()
 		else ''
 	)
-	
-	_delete_dialog.confirmed.connect(_remove_from_core)
-	_delete_dialog.get_cancel_button().pressed.connect(_disconnect_popup)
-	_delete_dialog.canceled.connect(_disconnect_popup)
 
 
 func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
@@ -507,7 +507,8 @@ func _remove_from_core() -> void:
 		Constants.Types.REGION,\
 		Constants.Types.WALKABLE_AREA:
 			var opened_room: PopochiuRoom = main_dock.get_opened_room()
-			if opened_room:
+			
+			if is_instance_valid(opened_room):
 				match type:
 					Constants.Types.PROP:
 						opened_room.get_prop(str(name)).queue_free()
@@ -518,6 +519,12 @@ func _remove_from_core() -> void:
 					Constants.Types.WALKABLE_AREA:
 						opened_room.get_walkable_area(str(name)).queue_free()
 				
+				# Delete the row of the deleted object
+				queue_free()
+				
+				await opened_room.get_tree().process_frame
+				
+				# Save the changes in the scene
 				main_dock.ei.save_scene()
 			else:
 				# TODO: open the Room' scene, delete the node and save the Room
@@ -641,19 +648,23 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 			[err, fp])
 			return err
 	
-	# Eliminar las filas en la pestaña de Audio de los archivos de audio y los
-	# AudioCue eliminados.
+	# Delete the rows of audio files and the deleted AudioCues in the Audio tab
 	if not deleted_audios.is_empty():
 		main_dock.get_audio_tab().delete_rows(deleted_audios)
 	
 	return OK
 
 
-# Se desconecta de las señales del popup utilizado para configurar la eliminación.
+## Disconnect the signals from the popup used to confrim a deletion.
 func _disconnect_popup() -> void:
-	_delete_dialog.confirmed.disconnect(_remove_from_core)
-	_delete_dialog.get_cancel_button().pressed.disconnect(_disconnect_popup)
-	_delete_dialog.canceled.disconnect(_disconnect_popup)
+	if _delete_dialog.confirmed.is_connected(_remove_from_core):
+		_delete_dialog.confirmed.disconnect(_remove_from_core)
+	
+	if _delete_dialog.get_cancel_button().pressed.is_connected(_disconnect_popup):
+		_delete_dialog.get_cancel_button().pressed.disconnect(_disconnect_popup)
+	
+	if _delete_dialog.canceled.is_connected(_disconnect_popup):
+		_delete_dialog.canceled.disconnect(_disconnect_popup)
 
 
 func _create_state_script() -> void:
