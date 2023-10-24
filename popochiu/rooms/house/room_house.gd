@@ -15,6 +15,7 @@ var state: Data = load('res://popochiu/rooms/house/room_house.tres')
 # tree but it is not visible
 func _on_room_entered() -> void:
 	A.mx_house.play()
+	A.sfx_astral_plane.play()
 
 
 # What happens when the room changing transition finishes. At this point the room
@@ -24,8 +25,9 @@ func _on_room_transition_finished() -> void:
 		C.Goddiu.queue_say('Hi 01'),
 		"01: [wave]Hi!!!!!!![/wave]"
 	])
-	
-	
+	await E.camera_zoom(Vector2.ONE * 1.5, .5)
+	await C.Goddiu.say("What!?")
+	await E.camera_zoom()
 
 
 # What happens before Popochiu unloads the room.

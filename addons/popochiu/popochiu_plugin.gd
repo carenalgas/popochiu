@@ -94,6 +94,7 @@ func _enter_tree() -> void:
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system
 	main_dock.focus_mode = Control.FOCUS_ALL
+	PopochiuUtils.ei = _editor_interface
 	
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 	

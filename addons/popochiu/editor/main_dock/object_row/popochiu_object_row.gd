@@ -326,7 +326,7 @@ func _menu_item_pressed(id: int) -> void:
 			prop.set_script(script)
 			
 			main_dock.ei.save_scene()
-			main_dock.ei.edit_node(prop)
+			PopochiuUtils.select_node(prop)
 			main_dock.ei.select_file(script_path)
 			
 			# Update this row properties and state

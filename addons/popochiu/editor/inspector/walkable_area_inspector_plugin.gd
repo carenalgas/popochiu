@@ -78,4 +78,4 @@ func _parse_navigation_polygon_instance(object: Object) -> void:
 
 func _back_to_walkable_area(object: Object) -> void:
 	if not object.get_parent() is PopochiuWalkableArea: return
-	ei.edit_node(object.get_parent())
+	PopochiuUtils.select_node(object.get_parent())

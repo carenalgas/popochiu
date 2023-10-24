@@ -15,4 +15,4 @@ rnd_pitch = Vector2(0, 0)
 rnd_volume = Vector2(0, 0)
 max_distance = 2000
 attenuation = 1.0
-bus = "Master"
+bus = "Music"

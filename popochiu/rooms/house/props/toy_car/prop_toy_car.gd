@@ -8,12 +8,14 @@ extends PopochiuProp
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func _on_click() -> void:
-	E.queue([
-		C.queue_walk_to_clicked(),
-		C.queue_face_clicked(),
-		A.vo_goddiu_01.queue_play(),
-		'Player: My old toy car!',
-	])
+	await A.sfx_toy_car.play()
+	
+#	E.queue([
+#		C.queue_walk_to_clicked(),
+#		C.queue_face_clicked(),
+#		A.vo_goddiu_01.queue_play(),
+#		'Player: My old toy car!',
+#	])
 
 
 # When the node is right clicked

@@ -125,8 +125,7 @@ func _create() -> void:
 	# Abrir las propiedades de la prop creada en el Inspector
 	_main_dock.fs.scan()
 	await get_tree().create_timer(0.1).timeout
-	_main_dock.ei.get_selection().clear()
-	_main_dock.ei.get_selection().add_node(prop_instance)
+	PopochiuUtils.select_node(prop_instance)
 	_main_dock.ei.select_file(_new_prop_path + '.tscn')
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

@@ -3,6 +3,8 @@
 extends Node
 class_name PopochiuUtils
 
+static var ei: EditorInterface = null
+
 
 static func get_screen_coords_for(node: Node) -> Vector2:
 	return node.get_viewport().canvas_transform * node.get_global_position()
@@ -36,3 +38,8 @@ static func override_font(node: Control, font_name: String, font: Font) -> void:
 
 static func print_error(msg: String) -> void:
 	print_rich("[color=red][Popochiu] %s[/color]" % msg)
+
+
+static func select_node(node: Node) -> void:
+	ei.get_selection().clear()
+	ei.get_selection().add_node(node)

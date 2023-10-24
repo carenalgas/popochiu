@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="AudioCueSound" load_steps=3 format=3 uid="uid://ciyl1u57d6kki"]
+
+[ext_resource type="AudioStream" uid="uid://bjne3vd2mcpn4" path="res://popochiu/rooms/house/audio/sfx_door_open.ogg" id="1_2c0ib"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/audio_manager/audio_cue_sound.gd" id="2_iy0kq"]
+
+[resource]
+resource_name = "sfx_door_open"
+script = ExtResource("2_iy0kq")
+audio = ExtResource("1_2c0ib")
+loop = false
+is_2d = false
+pitch = 1.0
+volume = 0.0
+rnd_pitch = Vector2(0, 0)
+rnd_volume = Vector2(0, 0)
+max_distance = 2000
+attenuation = 1.0
+bus = "Effects"

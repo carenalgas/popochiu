@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="AudioCueSound" load_steps=3 format=3 uid="uid://mi8uc2ehj0o6"]
+
+[ext_resource type="AudioStream" uid="uid://dp8damknakblr" path="res://popochiu/rooms/house/audio/sfx_astral_plane.ogg" id="1_nkae1"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/audio_manager/audio_cue_sound.gd" id="2_ddumh"]
+
+[resource]
+resource_name = "sfx_astral_plane"
+script = ExtResource("2_ddumh")
+audio = ExtResource("1_nkae1")
+loop = false
+is_2d = false
+pitch = 1.0
+volume = 0.0
+rnd_pitch = Vector2(0, 0)
+rnd_volume = Vector2(0, 0)
+max_distance = 2000
+attenuation = 1.0
+bus = "Ambience"

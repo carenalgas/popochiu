@@ -8,13 +8,7 @@ extends PopochiuProp
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func _on_click() -> void:
-	# Replace the call to super.on_click() to implement your code.
-	# E.g. you can make the character walk to the Prop and then say
-	# something:
-#	await C.player.walk_to_clicked()
-#	await C.player.face_clicked()
-#	await C.player.say("Not picking that up!")
-	super.on_click()
+	A.sfx_drawer_close.play()
 
 
 # When the node is right clicked

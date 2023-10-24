@@ -1,8 +1,12 @@
-### 🌎 [Read this in English](./README.md) 🌎
+# Popochiu 2
+
+[![Godot v4.0.x](https://img.shields.io/badge/Godot-4.0.x-blue)](https://godotengine.org/download/archive/4.0.4-stable/) [![Godot v4.1.x](https://img.shields.io/badge/Godot-4.1.x-blue)](https://godotengine.org/download) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
 ![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_2_hero-es.png "Popochiu")
 
 Un plugin para Godot que permite crear juegos de aventura gráfica con un flujo de trabajo como el de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [PowerQuest](https://powerhoof.itch.io/powerquest).
+
+### 🌎 [Read this in English](./README.md) 🌎
 
 ---
 

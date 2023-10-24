@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="AudioCueSound" load_steps=3 format=3 uid="uid://6aaffoqjaici"]
+
+[ext_resource type="AudioStream" uid="uid://grctr0kgw7r8" path="res://popochiu/rooms/house/audio/sfx_key.ogg" id="1_6x13x"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/audio_manager/audio_cue_sound.gd" id="2_tg110"]
+
+[resource]
+resource_name = "sfx_key"
+script = ExtResource("2_tg110")
+audio = ExtResource("1_6x13x")
+loop = false
+is_2d = false
+pitch = 1.0
+volume = 0.0
+rnd_pitch = Vector2(0, 0)
+rnd_volume = Vector2(0, 0)
+max_distance = 2000
+attenuation = 1.0
+bus = "Effects"

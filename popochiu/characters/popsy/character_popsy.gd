@@ -17,7 +17,8 @@ func _on_room_set() -> void:
 
 # When the node is clicked
 func _on_click() -> void:
-	D.ChatWithPopsy.start()
+	A.vo_goddiu_01.play()
+#	D.ChatWithPopsy.start()
 
 
 # When the node is right clicked
