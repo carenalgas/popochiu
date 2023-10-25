@@ -5,6 +5,9 @@ const Data := preload('CharacterStateTemplate.gd')
 
 var state: Data = null
 
+# turns anti-glide animation on.
+# will not work if call method track in animation player is not calling update_position every frame
+export var anti_glide_animation: bool = false
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the PopochiuRoom where this node was already loaded
@@ -52,3 +55,9 @@ func play_talk() -> void:
 # Use it to play the grab animation for the character
 func play_grab() -> void:
 	.play_grab()
+
+# Updates character position in the current room if anti-glide animation is on
+# should be called every frame in call method track in animation player
+func update_position():
+	E.current_room.update_characters_position(C.PLAYER_2)
+	

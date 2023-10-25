@@ -21,6 +21,13 @@ var _path := []
 var _moving_character: PopochiuCharacter = null
 var _nav_path: PopochiuWalkableArea = null
 
+#stores character position between frames if anti-glide animation is on
+var moving_character_position_stored = (
+	_moving_character.position 
+	if _moving_character 
+	else null
+	)
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _enter_tree() -> void:
@@ -259,10 +266,20 @@ func clean_characters() -> void:
 		if c is PopochiuCharacter:
 			c.queue_free()
 
+func update_characters_position(character):
+	character.position = (
+		moving_character_position_stored 
+		if moving_character_position_stored 
+		else character.position
+		)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _move_along_path(distance):
-	var last_point = _moving_character.position
+	var last_point = (
+		moving_character_position_stored 
+		if moving_character_position_stored 
+		else _moving_character.position
+		)
 	
 	while _path.size():
 		var distance_between_points = last_point.distance_to(_path[0])
@@ -272,9 +289,20 @@ func _move_along_path(distance):
 			# Play the animation on the character
 			_moving_character.play_walk(_path[0])
 			# Move the character on the destination
-			_moving_character.position = last_point.linear_interpolate(
-				_path[0], distance / distance_between_points
-			)
+			#in order to run anti-glide animation you need to add call method 
+			#track in animation player and call update_position every frame
+			#additional condition to avoid crash if update_position method
+			#would be deleted
+			if (_moving_character.anti_glide_animation == true 
+			and _moving_character.has_method("update_position")
+			):
+				moving_character_position_stored = last_point.linear_interpolate(
+					_path[0], distance / distance_between_points
+				)
+			else:
+				_moving_character.position = last_point.linear_interpolate(
+					_path[0], distance / distance_between_points
+				)
 			return
 
 		distance -= distance_between_points

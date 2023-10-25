@@ -258,6 +258,23 @@ tracks/4/keys = {
 "update": 1,
 "values": [ 4.0, 5.0 ]
 }
+tracks/5/type = "method"
+tracks/5/path = NodePath(".")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/keys = {
+"times": PoolRealArray( 0, 0.1 ),
+"transitions": PoolRealArray( 1, 1 ),
+"values": [ {
+"args": [  ],
+"method": "update_position"
+}, {
+"args": [  ],
+"method": "update_position"
+} ]
+}
 
 [node name="CharacterGoddiu" type="Area2D"]
 script = ExtResource( 1 )
@@ -295,6 +312,7 @@ description = "Goddiu"
 clickable = false
 cursor = 8
 flips_when = 2
+anti_glide_animation = true
 popochiu_placeholder = null
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
@@ -321,6 +339,7 @@ position = Vector2( 0, -27 )
 texture = ExtResource( 2 )
 hframes = 3
 vframes = 2
+frame = 4
 
 [node name="DialogPos" type="Position2D" parent="."]
 position = Vector2( 0, -51 )
