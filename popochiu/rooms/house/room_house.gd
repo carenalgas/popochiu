@@ -22,12 +22,13 @@ func _on_room_entered() -> void:
 # is visible.
 func _on_room_transition_finished() -> void:
 	await E.queue([
-		C.Goddiu.queue_say('Hi 01'),
-		"01: [wave]Hi!!!!!!![/wave]"
+		C.Goddiu.queue_say("Hi", "happy"),
+		"Popsy: [wave]Hi!!!!!!![/wave]",
+		E.queue_camera_zoom(Vector2.ONE * 1.5, .5),
+		"Player: What!?",
+		E.queue_camera_zoom(),
+		"Player: Oh my..."
 	])
-	await E.camera_zoom(Vector2.ONE * 1.5, .5)
-	await C.Goddiu.say("What!?")
-	await E.camera_zoom()
 
 
 # What happens before Popochiu unloads the room.

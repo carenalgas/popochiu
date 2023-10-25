@@ -1,7 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://c7oacc86kxt3e"]
+[gd_scene load_steps=11 format=3 uid="uid://c7oacc86kxt3e"]
 
 [ext_resource type="Script" path="res://popochiu/characters/goddiu/character_goddiu.gd" id="1_0bak1"]
 [ext_resource type="Texture2D" uid="uid://d1uh3dibal84v" path="res://popochiu/characters/goddiu/goddiu.png" id="2_1b5aa"]
+[ext_resource type="Resource" uid="uid://bo06pafb13006" path="res://popochiu/characters/goddiu/audio/vo_goddiu_01.tres" id="2_b7e5j"]
+[ext_resource type="Resource" uid="uid://c0r1fqtm2j8wq" path="res://popochiu/characters/goddiu/audio/vo_goddiu_02.tres" id="3_y7c7w"]
+[ext_resource type="Resource" uid="uid://b44hljegxi44e" path="res://popochiu/characters/goddiu/audio/vo_goddiu_03.tres" id="4_0bdvw"]
 
 [sub_resource type="Animation" id="Animation_8k31x"]
 length = 1.1
@@ -271,6 +274,10 @@ _data = {
 position = Vector2(0, -1)
 script = ExtResource("1_0bak1")
 flips_when = 2
+voices = [{
+"emotion": "",
+"variations": Array[Resource("res://addons/popochiu/engine/audio_manager/audio_cue_sound.gd")]([ExtResource("2_b7e5j"), ExtResource("3_y7c7w"), ExtResource("4_0bdvw")])
+}]
 popochiu_placeholder = null
 script_name = "Goddiu"
 description = "goddiu"
@@ -307,10 +314,12 @@ metadata/_popochiu_aseprite_config_ = {
 polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
 [node name="BaselineHelper" type="Line2D" parent="."]
+visible = false
 points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
 
 [node name="WalkToHelper" type="Marker2D" parent="."]
+visible = false
 
 [node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
 offset_left = -2.5
@@ -327,6 +336,7 @@ hframes = 3
 vframes = 2
 
 [node name="DialogPos" type="Marker2D" parent="."]
+visible = false
 position = Vector2(0, -45)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

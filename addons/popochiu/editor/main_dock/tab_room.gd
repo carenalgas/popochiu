@@ -167,8 +167,8 @@ func scene_closed(filepath: String) -> void:
 		_clear_content()
 
 
-func add_to_list(type: int, node_name: String, path := '') -> void:
-	_types[type].group.add(_create_object_row(type, node_name, path))
+#func add_to_list(type: int, node_name: String, path := '') -> void:
+#	_types[type].group.add(_create_object_row(type, node_name, path))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░

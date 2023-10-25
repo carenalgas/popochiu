@@ -34,10 +34,9 @@ A="*res://popochiu/autoloads/a.gd"
 
 window/size/viewport_width=320
 window/size/viewport_height=180
-window/size/window_width_override=640
-window/size/window_height_override=360
+window/size/window_width_override=1920
+window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
-window/stretch/aspect="expand"
 
 [editor_plugins]
 

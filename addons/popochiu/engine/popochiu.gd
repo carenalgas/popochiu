@@ -656,7 +656,7 @@ func _eval_string(text: String) -> void:
 			await wait(2.0)
 		_:
 			var colon_idx: int = text.find(':')
-			if colon_idx:
+			if colon_idx >= 0:
 				var colon_prefix: String = text.substr(0, colon_idx)
 				
 				var emotion_idx := colon_prefix.find('(')

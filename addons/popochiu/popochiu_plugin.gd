@@ -306,6 +306,22 @@ func _on_sources_changed(exist: bool) -> void:
 # position (PopochiuCharacter) only when a node of that type is selected in the
 # scene tree.
 func _check_nodes() -> void:
+	var deselect_helpers_buttons := false
+	
+	if _editor_interface.get_selection().get_selected_nodes().is_empty():
+		deselect_helpers_buttons = true
+	
+	# Deselect any BaselineHelper or WalkToPointHelper
+	if _editor_interface.get_selection().get_selected_nodes().size() > 1:
+		for node in _editor_interface.get_selection().get_selected_nodes():
+			if node.name in ["BaselineHelper", "WalkToHelper"]:
+				_editor_interface.get_selection().remove_node.call_deferred(node)
+				deselect_helpers_buttons = true
+	
+	if deselect_helpers_buttons:
+		_btn_baseline.set_pressed_no_signal(false)
+		_btn_walk_to.set_pressed_no_signal(false)
+	
 	for n in _shown_helpers:
 		if is_instance_valid(n):
 			n.hide_helpers()
