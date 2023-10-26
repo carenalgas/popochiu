@@ -22,6 +22,9 @@ export var ignore_walkable_areas := false
 # will not work if call method track in animation player is not calling update_position every frame
 export var anti_glide_animation: bool = false
 
+#stores character position between frames if anti-glide animation is on
+var position_stored = null
+
 var last_room := ''
 var anim_suffix := ''
 var is_moving := false

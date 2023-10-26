@@ -21,14 +21,6 @@ var _path := []
 var _moving_character: PopochiuCharacter = null
 var _nav_path: PopochiuWalkableArea = null
 
-#stores character position between frames if anti-glide animation is on
-var moving_character_position_stored = (
-	_moving_character.position 
-	if _moving_character 
-	else null
-	)
-
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _enter_tree() -> void:
 	if Engine.editor_hint:
@@ -257,7 +249,7 @@ func get_characters() -> Array:
 	for c in $Characters.get_children():
 		if c is PopochiuCharacter:
 			characters.append(c)
-	
+			
 	return characters
 
 
@@ -268,16 +260,17 @@ func clean_characters() -> void:
 
 func update_characters_position(character):
 	character.position = (
-		moving_character_position_stored 
-		if moving_character_position_stored 
+		character.position_stored 
+		if character.position_stored 
 		else character.position
 		)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _move_along_path(distance):
+	
 	var last_point = (
-		moving_character_position_stored 
-		if moving_character_position_stored 
+		_moving_character.position_stored 
+		if _moving_character.position_stored 
 		else _moving_character.position
 		)
 	
@@ -299,7 +292,7 @@ func _move_along_path(distance):
 			if (_moving_character.anti_glide_animation == true 
 			and _moving_character.has_method("update_position")
 			):
-				moving_character_position_stored = next_position
+				_moving_character.position_stored = next_position
 			else:
 				_moving_character.position = next_position
 			return
@@ -344,7 +337,7 @@ func _clear_navigation_path() -> void:
 	# an empty Array.
 	if not _path.empty():
 		_path.clear()
-	
+	_moving_character.position_stored = null
 	_moving_character.idle(false)
 	C.emit_signal('character_move_ended', _moving_character)
 	_moving_character = null
