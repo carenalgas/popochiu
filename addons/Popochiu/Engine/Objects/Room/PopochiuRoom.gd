@@ -293,16 +293,15 @@ func _move_along_path(distance):
 			#track in animation player and call update_position every frame
 			#additional condition to avoid crash if update_position method
 			#would be deleted
+			var next_position = last_point.linear_interpolate(
+					_path[0], distance / distance_between_points
+				)
 			if (_moving_character.anti_glide_animation == true 
 			and _moving_character.has_method("update_position")
 			):
-				moving_character_position_stored = last_point.linear_interpolate(
-					_path[0], distance / distance_between_points
-				)
+				moving_character_position_stored = next_position
 			else:
-				_moving_character.position = last_point.linear_interpolate(
-					_path[0], distance / distance_between_points
-				)
+				_moving_character.position = next_position
 			return
 
 		distance -= distance_between_points
