@@ -36,10 +36,14 @@ static func override_font(node: Control, font_name: String, font: Font) -> void:
 	node.add_theme_font_override(font_name, font)
 
 
-static func print_error(msg: String) -> void:
-	print_rich("[color=red][Popochiu] %s[/color]" % msg)
-
-
 static func select_node(node: Node) -> void:
 	ei.get_selection().clear()
 	ei.get_selection().add_node(node)
+
+
+static func print_error(msg: String) -> void:
+	print_rich("[bgcolor=c46c71][color=ffffff][b][Popochiu][/b] %s[/color][/bgcolor]" % msg)
+
+
+static func print_warning(msg: String) -> void:
+	print_rich("[bgcolor=edf171][color=4a4a4a][b][Popochiu][/b] %s[/color][/bgcolor]" % msg)

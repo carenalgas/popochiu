@@ -229,19 +229,25 @@ func _set_setup_done() -> void:
 
 
 func _check_popochiu_dependencies() -> void:
-	_fix_dependencies(
-		_editor_file_system.get_filesystem_path(
-			PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+	if DirAccess.dir_exists_absolute(
+		PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+	):
+		_fix_dependencies(
+			_editor_file_system.get_filesystem_path(
+				PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+			)
 		)
-	)
+		
+		await get_tree().create_timer(0.3).timeout
 	
-	await get_tree().create_timer(0.3).timeout
-	
-	_fix_dependencies(
-		_editor_file_system.get_filesystem_path(
-			PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+	if DirAccess.dir_exists_absolute(
+		PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+	):
+		_fix_dependencies(
+			_editor_file_system.get_filesystem_path(
+				PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+			)
 		)
-	)
 	
 	await get_tree().process_frame
 
@@ -249,7 +255,10 @@ func _check_popochiu_dependencies() -> void:
 # Thanks PigDev ;)
 # https://github.com/pigdevstudio/godot_tools/blob/master/source/tools/DependencyFixer.gd
 func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
-	var res := _editor_file_system.get_filesystem()
+	if not is_instance_valid(dir):
+		return
+	
+	var fs := _editor_file_system.get_filesystem()
 	
 	for f in dir.get_file_count():
 		var path = dir.get_file_path(f)
@@ -258,7 +267,7 @@ func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
 		for d in dependencies:
 			if FileAccess.file_exists(d):
 				continue
-			_fix_dependency(d, res, path)
+			_fix_dependency(d, fs, path)
 
 	for subdir_id in dir.get_subdir_count():
 		var subdir := dir.get_subdir(subdir_id)
@@ -274,7 +283,7 @@ func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
 				if FileAccess.file_exists(d):
 					continue
 				
-				_fix_dependency(d, res, path)
+				_fix_dependency(d, fs, path)
 	
 	_editor_file_system.scan()
 

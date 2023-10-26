@@ -1,4 +1,4 @@
-extends 'res://addons/popochiu/engine/objects/graphic_interface/toolbar/toolbar_button.gd'
+extends 'toolbar_button.gd'
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░

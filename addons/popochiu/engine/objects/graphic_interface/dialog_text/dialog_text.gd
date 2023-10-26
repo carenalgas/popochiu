@@ -122,7 +122,7 @@ func play_text(props: Dictionary) -> void:
 	# Assign text and align mode (based checked overflow)
 	push_color(props.color)
 	
-	var center := floor(position.x + (size.x / 2))
+	var center: float = floor(position.x + (size.x / 2))
 	if center == props.position.x:
 		append_text('[center]%s[/center]' % msg)
 	elif center < props.position.x:
