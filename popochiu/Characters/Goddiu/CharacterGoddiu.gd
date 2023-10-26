@@ -8,10 +8,6 @@ const Data := preload('CharacterGoddiuState.gd')
 
 var state: Data = preload('CharacterGoddiu.tres')
 
-# turns anti-glide animation on.
-# will not work if call method track in animation player is not calling update_position every frame
-export var anti_glide_animation: bool = false
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func on_interact() -> void:
@@ -51,9 +47,3 @@ func play_talk() -> void:
 # Use it to play the grab animation for the character
 func play_grab() -> void:
 	.play_grab()
-
-# Updates character position in the current room if anti-glide animation is on
-# should be called every frame in call method track in animation player
-func update_position():
-	E.current_room.update_characters_position(self)
-	

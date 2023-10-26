@@ -18,6 +18,9 @@ export var follow_player := false
 export var walk_speed := 200.0
 export var can_move := true
 export var ignore_walkable_areas := false
+# turns anti-glide animation on.
+# will not work if call method track in animation player is not calling update_position every frame
+export var anti_glide_animation: bool = false
 
 var last_room := ''
 var anim_suffix := ''
@@ -257,6 +260,12 @@ func walk_to_room_point(id: String) -> void:
 	)
 	
 	yield(C, 'character_move_ended')
+
+# Updates character position in the current room if anti-glide animation is on
+# should be called every frame in call method track in animation player
+func update_position():
+	E.current_room.update_characters_position(self)
+	
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
