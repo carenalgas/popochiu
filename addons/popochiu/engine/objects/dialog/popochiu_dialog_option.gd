@@ -40,7 +40,6 @@ func turn_off_forever() -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func set_id(value: String) -> void:
 	id = value
+	
 	script_name = id
 	resource_name = id
-	
-	notify_property_list_changed()

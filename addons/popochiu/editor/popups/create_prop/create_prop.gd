@@ -114,18 +114,10 @@ func _create() -> void:
 	_main_dock.ei.save_scene()
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Update the list of Props in the Room tab
-	(room_tab as TabRoom).add_to_list(
-		Constants.Types.PROP,
-		_pascal_name,
-		_new_prop_path + '.tscn'
-	)
-	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades de la prop creada en el Inspector
 	_main_dock.fs.scan()
 	await get_tree().create_timer(0.1).timeout
-	_main_dock.ei.edit_node(prop_instance)
+	PopochiuUtils.select_node(prop_instance)
 	_main_dock.ei.select_file(_new_prop_path + '.tscn')
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

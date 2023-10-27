@@ -49,29 +49,61 @@ func play_text(props: Dictionary) -> void:
 	_is_waiting_input = false
 	_dialog_pos = props.position
 	
-	# ==== Calculate the width of the node =====================================
+	# ==== Calculate the size of the node ======================================
+	# Create a RichTextLabel to calculate the resulting size of this node once
+	# the whole text is shown
 	var rt := RichTextLabel.new()
+	rt.add_theme_font_override(
+		'normal_font',
+		get_theme_font("normal_font")
+	)
 	rt.bbcode_enabled = true
-	rt.autowrap_mode = TextServer.AUTOWRAP_WORD
-	var lbl := Label.new()
+	rt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rt.text = msg
+	rt.size = get_meta(DFLT_SIZE)
+	add_child(rt)
+	
+	# Create a Label to check if the text exceeds the wrap_width
+	var lbl := Label.new()
+	lbl.add_theme_font_override(
+		'normal_font',
+		get_theme_font("normal_font")
+	)
+	
+	lbl.size.y = get_meta(DFLT_SIZE).y
 	lbl.text = rt.get_parsed_text()
 	add_child(lbl)
+	
+	rt.clear()
+	rt.text = ""
+	
+	await get_tree().process_frame
+	
 	var _size := lbl.size
+	
 	if _size.x > wrap_width:
+		# This node will have the width of the wrap_width
 		_size.x = wrap_width
-		rt.size = Vector2(_size.x, get_meta(DFLT_SIZE).y)
-		add_child(rt)
-		_size.y = rt.get_line_count() * get_meta(DFLT_SIZE).y
-		_size.x = rt.get_content_width() + get_meta(DFLT_SIZE).x
+		rt.fit_content = true
+		rt.size.x = _size.x
+		rt.text = msg
+		
+		await get_tree().process_frame
+		
+		_size = rt.size
 	elif _size.x < get_meta(DFLT_SIZE).x:
+		# This node will have the minimum width
 		_size.x = get_meta(DFLT_SIZE).x
+	else:
+		# This node will have the width of the text
+		_size.y = get_meta(DFLT_SIZE).y
 	
 	var characters_count := lbl.get_total_character_count()
 	
 	lbl.free()
 	rt.free()
-	# ===================================== Calculate the width of the node ====
+	# ====================================== Calculate the size of the node ====
+	
 	# Define default position (before calculating overflow)
 	size = _size
 	position = props.position - size / 2.0
@@ -90,7 +122,7 @@ func play_text(props: Dictionary) -> void:
 	# Assign text and align mode (based checked overflow)
 	push_color(props.color)
 	
-	var center := floor(position.x + (size.x / 2))
+	var center: float = floor(position.x + (size.x / 2))
 	if center == props.position.x:
 		append_text('[center]%s[/center]' % msg)
 	elif center < props.position.x:

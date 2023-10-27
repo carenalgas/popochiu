@@ -1,8 +1,12 @@
-### 🌎 [Read this in English](./README.md) 🌎
+# Popochiu 2
+
+[![Godot v4.0.x](https://img.shields.io/badge/Godot-4.0.x-blue)](https://godotengine.org/download/archive/4.0.4-stable/) [![Godot v4.1.x](https://img.shields.io/badge/Godot-4.1.x-blue)](https://godotengine.org/download) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
 ![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_2_hero-es.png "Popochiu")
 
 Un plugin para Godot que permite crear juegos de aventura gráfica con un flujo de trabajo como el de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [PowerQuest](https://powerhoof.itch.io/powerquest).
+
+### 🌎 [Read this in English](./README.md) 🌎
 
 ---
 
@@ -26,7 +30,7 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 **Popochiu puede usarse en Godot 3.3.x a 3.5.x**. **¡¡¡Y ahora también funciona en Godot 4!!!**
 
-1. Si usas Godot 4, descarga [Popochiu 2.0 Alpha 2](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha2/popochiu_v2.0-alpha2.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Si usas Godot 4, descarga [Popochiu 2.0 Alpha 3](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha3/popochiu_v2.0-alpha3.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extra su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Proyecto > Ajustes del Proyecto > Plugins` (the tab on the top).
 4. Reinicia Godot `Proyecto > Volver a Cargar el Proyecto Actual`.

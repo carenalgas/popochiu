@@ -449,7 +449,7 @@ func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
 # will zoom out, smaller values make it zoom in. The effect will last `duration`
 # seconds
 func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
-	if is_instance_valid(_tween) and _tween.isplaying_queue():
+	if is_instance_valid(_tween) and _tween.is_running():
 		_tween.kill()
 	
 	_tween = create_tween()
@@ -656,7 +656,7 @@ func _eval_string(text: String) -> void:
 			await wait(2.0)
 		_:
 			var colon_idx: int = text.find(':')
-			if colon_idx:
+			if colon_idx >= 0:
 				var colon_prefix: String = text.substr(0, colon_idx)
 				
 				var emotion_idx := colon_prefix.find('(')

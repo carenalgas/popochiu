@@ -94,6 +94,7 @@ func _enter_tree() -> void:
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system
 	main_dock.focus_mode = Control.FOCUS_ALL
+	PopochiuUtils.ei = _editor_interface
 	
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 	
@@ -228,19 +229,25 @@ func _set_setup_done() -> void:
 
 
 func _check_popochiu_dependencies() -> void:
-	_fix_dependencies(
-		_editor_file_system.get_filesystem_path(
-			PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+	if DirAccess.dir_exists_absolute(
+		PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+	):
+		_fix_dependencies(
+			_editor_file_system.get_filesystem_path(
+				PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+			)
 		)
-	)
+		
+		await get_tree().create_timer(0.3).timeout
 	
-	await get_tree().create_timer(0.3).timeout
-	
-	_fix_dependencies(
-		_editor_file_system.get_filesystem_path(
-			PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+	if DirAccess.dir_exists_absolute(
+		PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+	):
+		_fix_dependencies(
+			_editor_file_system.get_filesystem_path(
+				PopochiuResources.TRANSITION_LAYER_POPOCHIU.get_base_dir()
+			)
 		)
-	)
 	
 	await get_tree().process_frame
 
@@ -248,7 +255,10 @@ func _check_popochiu_dependencies() -> void:
 # Thanks PigDev ;)
 # https://github.com/pigdevstudio/godot_tools/blob/master/source/tools/DependencyFixer.gd
 func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
-	var res := _editor_file_system.get_filesystem()
+	if not is_instance_valid(dir):
+		return
+	
+	var fs := _editor_file_system.get_filesystem()
 	
 	for f in dir.get_file_count():
 		var path = dir.get_file_path(f)
@@ -257,7 +267,7 @@ func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
 		for d in dependencies:
 			if FileAccess.file_exists(d):
 				continue
-			_fix_dependency(d, res, path)
+			_fix_dependency(d, fs, path)
 
 	for subdir_id in dir.get_subdir_count():
 		var subdir := dir.get_subdir(subdir_id)
@@ -273,7 +283,7 @@ func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
 				if FileAccess.file_exists(d):
 					continue
 				
-				_fix_dependency(d, res, path)
+				_fix_dependency(d, fs, path)
 	
 	_editor_file_system.scan()
 
@@ -305,6 +315,22 @@ func _on_sources_changed(exist: bool) -> void:
 # position (PopochiuCharacter) only when a node of that type is selected in the
 # scene tree.
 func _check_nodes() -> void:
+	var deselect_helpers_buttons := false
+	
+	if _editor_interface.get_selection().get_selected_nodes().is_empty():
+		deselect_helpers_buttons = true
+	
+	# Deselect any BaselineHelper or WalkToPointHelper
+	if _editor_interface.get_selection().get_selected_nodes().size() > 1:
+		for node in _editor_interface.get_selection().get_selected_nodes():
+			if node.name in ["BaselineHelper", "WalkToHelper"]:
+				_editor_interface.get_selection().remove_node.call_deferred(node)
+				deselect_helpers_buttons = true
+	
+	if deselect_helpers_buttons:
+		_btn_baseline.set_pressed_no_signal(false)
+		_btn_walk_to.set_pressed_no_signal(false)
+	
 	for n in _shown_helpers:
 		if is_instance_valid(n):
 			n.hide_helpers()
@@ -391,11 +417,17 @@ func _select_walk_to() -> void:
 	_btn_baseline.set_pressed_no_signal(false)
 	_vsep.hide()
 	
+	_editor_interface.get_selection().clear()
+	
 	if _types_helper.is_prop(_selected_node)\
 	or _types_helper.is_hotspot(_selected_node):
-		_editor_interface.edit_node(_selected_node.get_node('WalkToHelper'))
+		_editor_interface.get_selection().add_node(
+			_selected_node.get_node("WalkToHelper")
+		)
 	else:
-		_editor_interface.edit_node(_selected_node.get_node('../WalkToHelper'))
+		_editor_interface.get_selection().add_node(
+			_selected_node.get_node("../WalkToHelper")
+		)
 
 
 func _select_baseline() -> void:
@@ -403,11 +435,17 @@ func _select_baseline() -> void:
 	_btn_walk_to.set_pressed_no_signal(false)
 	_vsep.show()
 	
+	_editor_interface.get_selection().clear()
+	
 	if _types_helper.is_prop(_selected_node)\
 	or _types_helper.is_hotspot(_selected_node):
-		_editor_interface.edit_node(_selected_node.get_node('BaselineHelper'))
+		_editor_interface.get_selection().add_node(
+			_selected_node.get_node("BaselineHelper")
+		)
 	else:
-		_editor_interface.edit_node(_selected_node.get_node('../BaselineHelper'))
+		_editor_interface.get_selection().add_node(
+			_selected_node.get_node("../BaselineHelper")
+		)
 
 
 func _move_to_project(id: int) -> void:

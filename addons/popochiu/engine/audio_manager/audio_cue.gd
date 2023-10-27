@@ -5,7 +5,7 @@ class_name PopochiuAudioCue
 @export var audio: AudioStream
 @export var loop := false : set = set_loop
 @export var is_2d := false
-@export var pitch := 0.0 : get = get_pitch
+@export var pitch := 1.0
 @export var volume := 0.0
 @export var rnd_pitch := Vector2.ZERO
 @export var rnd_volume := Vector2.ZERO
@@ -102,7 +102,7 @@ func set_loop(value: bool) -> void:
 
 # Returns the `pitch_scale` to apply to the audio stream player that will play
 # the audio of this audio cue.
-func get_pitch() -> float:
+func get_pitch_scale() -> float:
 	var p := A.semitone_to_pitch(pitch)
 	
 	if rnd_pitch != Vector2.ZERO:

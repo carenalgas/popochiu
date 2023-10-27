@@ -16,3 +16,6 @@ data_*/
 
 # Other local stuff
 .vscode
+
+# Project-specific ignores
+popochiu/**

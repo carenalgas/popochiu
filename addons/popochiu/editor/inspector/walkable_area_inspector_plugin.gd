@@ -46,7 +46,7 @@ func _parse_walkable_area(object: Object) -> void:
 func _find_polygon_instance(object: Object) -> void:
 	if not object is PopochiuWalkableArea: return
 	var children = object.get_children()
-	ei.edit_node(children[0])
+	PopochiuUtils.select_node(children[0])
 
 
 func _parse_navigation_polygon_instance(object: Object) -> void:
@@ -78,4 +78,4 @@ func _parse_navigation_polygon_instance(object: Object) -> void:
 
 func _back_to_walkable_area(object: Object) -> void:
 	if not object.get_parent() is PopochiuWalkableArea: return
-	ei.edit_node(object.get_parent())
+	PopochiuUtils.select_node(object.get_parent())

@@ -5,7 +5,7 @@ class_name PopochiuCharacter
 extends PopochiuClickable
 # TODO: Use a state machine
 
-enum FlipsWhen { NONE, MOVING_RIGHT, MOVING_LEFT }
+enum FlipsWhen { NONE, LOOKING_RIGHT, LOOKING_LEFT }
 enum Looking {UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
 
 signal started_walk_to(character, start, end)
@@ -90,9 +90,9 @@ func idle() -> void:
 
 	if has_node('Sprite2D'):
 		match flips_when:
-			FlipsWhen.MOVING_LEFT:
+			FlipsWhen.LOOKING_LEFT:
 				$Sprite2D.flip_h = _looking_dir == Looking.LEFT
-			FlipsWhen.MOVING_RIGHT:
+			FlipsWhen.LOOKING_RIGHT:
 				$Sprite2D.flip_h = _looking_dir == Looking.RIGHT
 	
 	# Call the virtual that plays the idle animation
@@ -116,9 +116,9 @@ func walk(target_pos: Vector2) -> void:
 
 	if has_node('Sprite2D'):
 		match flips_when:
-			FlipsWhen.MOVING_LEFT:
+			FlipsWhen.LOOKING_LEFT:
 				$Sprite2D.flip_h = target_pos.x < position.x
-			FlipsWhen.MOVING_RIGHT:
+			FlipsWhen.LOOKING_RIGHT:
 				$Sprite2D.flip_h = target_pos.x > position.x
 	
 	if E.cutscene_skipped:
@@ -209,30 +209,33 @@ func queue_face_clicked() -> Callable:
 func face_clicked() -> void:
 	if E.clicked.global_position < global_position:
 		if has_node('Sprite2D'):
-			$Sprite2D.flip_h = flips_when == FlipsWhen.MOVING_LEFT
+			$Sprite2D.flip_h = flips_when == FlipsWhen.LOOKING_LEFT
 		
 		await face_left()
 	else:
 		if has_node('Sprite2D'):
-			$Sprite2D.flip_h = flips_when == FlipsWhen.MOVING_RIGHT
+			$Sprite2D.flip_h = flips_when == FlipsWhen.LOOKING_RIGHT
 		
 		await face_right()
 
 
-func queue_say(dialog: String) -> Callable:
-	return func (): await say(dialog)
+func queue_say(dialog: String, emo := "") -> Callable:
+	return func (): await say(dialog, emo)
 
 
-func say(dialog: String) -> void:
+func say(dialog: String, emo := "") -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
+	
+	if not emo.is_empty():
+		emotion = emo
 	
 	# Call the virtual that plays the talk animation
 	_play_talk()
 	
 	var vo_name := _get_vo_cue(emotion)
-	if vo_name:
+	if not vo_name.is_empty() and A.get(vo_name):
 		A[vo_name].play(false, global_position)
 	
 	C.character_spoke.emit(self, dialog)
@@ -434,11 +437,18 @@ func set_voices(value: Array) -> void:
 	
 	for idx in value.size():
 		if not value[idx]:
+			var arr: Array[AudioCueSound] = []
+			
 			voices[idx] = {
 				emotion = '',
-				cue = '',
-				variations = 0
+				variations = arr
 			}
+			
+			notify_property_list_changed()
+		elif not value[idx].variations.is_empty():
+			if value[idx].variations[-1] == null:
+				value[idx].variations[-1] = AudioCueSound.new()
+			
 			notify_property_list_changed()
 
 
@@ -451,17 +461,17 @@ func _translate() -> void:
 func _get_vo_cue(emotion := '') -> String:
 	for v in voices:
 		if v.emotion.to_lower() == emotion.to_lower():
-			var cue_name: String = v.cue
+			var cue_name := ""
 			
-			if v.variations:
+			if not v.variations.is_empty():
 				if not v.has('not_played') or v.not_played.is_empty():
-					v['not_played'] = range(v.variations)
+					v['not_played'] = range(v.variations.size())
 				
 				var idx: int = (v['not_played'] as Array).pop_at(
 					PopochiuUtils.get_random_array_idx(v['not_played'])
 				)
 				
-				cue_name += '_' + str(idx + 1).pad_zeros(2)
+				cue_name = v.variations[idx].resource_name
 			
 			return cue_name
 	return ''

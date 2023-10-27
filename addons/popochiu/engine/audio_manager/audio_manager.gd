@@ -6,6 +6,7 @@ extends Node
 class_name PopochiuAudioManager
 @warning_ignore("return_value_discarded")
 
+const TEMP_PLAYER := "temporal"
 const AudioCue := preload('audio_cue.gd')
 
 var twelfth_root_of_two := pow(2, (1.0 / 12))
@@ -203,11 +204,12 @@ func _play(
 		player = _get_free_stream($Positional)
 		
 		if not is_instance_valid(player):
-			printerr('[Popochiu] Run out of AudioStreamPlayer2D')
-			return null
+			player = AudioStreamPlayer2D.new()
+			player.set_meta(TEMP_PLAYER, true)
+			$Active.add_child(player)
 
 		(player as AudioStreamPlayer2D).stream = cue.audio
-		(player as AudioStreamPlayer2D).pitch_scale = cue.pitch
+		(player as AudioStreamPlayer2D).pitch_scale = cue.get_pitch_scale()
 		(player as AudioStreamPlayer2D).volume_db = cue.volume
 		(player as AudioStreamPlayer2D).max_distance = cue.max_distance
 		(player as AudioStreamPlayer2D).position = position
@@ -215,18 +217,21 @@ func _play(
 		player = _get_free_stream($Generic)
 		
 		if not is_instance_valid(player):
-			printerr('[Popochiu] Run out of AudioStreamPlayer')
-			return null
+			player = AudioStreamPlayer.new()
+			player.set_meta(TEMP_PLAYER, true)
+			$Active.add_child(player)
 	
 		(player as AudioStreamPlayer).stream = cue.audio
-		(player as AudioStreamPlayer).pitch_scale = cue.pitch
+		(player as AudioStreamPlayer).pitch_scale = cue.get_pitch_scale()
 		(player as AudioStreamPlayer).volume_db = cue.volume
 	
 	var cue_name: String = cue.resource_name
 	
 	player.bus = cue.bus
 	player.play(from_position)
-	player.finished.connect(_make_available.bind(player, cue_name, 0))
+	
+	if not player.finished.is_connected(_make_available):
+		player.finished.connect(_make_available.bind(player, cue_name, 0))
 	
 	if _active.has(cue_name):
 		_active[cue_name].players.append(player)
@@ -243,24 +248,27 @@ func _get_free_stream(group: Node):
 	return _reparent(group, $Active, 0)
 
 
-# Reassigns the AudioStreamPlayer to its original group when it finishes so it
-# can be available for being used
+## Reassigns the AudioStreamPlayer to its original group when it finishes so it
+## can be available for being used
 func _make_available(
 	stream_player: Node, cue_name: String, _debug_idx: int
 ) -> void:
-	if stream_player is AudioStreamPlayer:
+	if stream_player.has_meta(TEMP_PLAYER):
+		stream_player.queue_free()
+	elif stream_player is AudioStreamPlayer:
 		_reparent($Active, $Generic, stream_player.get_index())
 	else:
 		_reparent($Active, $Positional, stream_player.get_index())
 	
-	var players: Array = _active[cue_name].players
-	for idx in players.size():
-		if players[idx].get_instance_id() == stream_player.get_instance_id():
-			players.remove_at(idx)
-			break
+	if _active.has(cue_name):
+		var players: Array = _active[cue_name].players
+		for idx in players.size():
+			if players[idx].get_instance_id() == stream_player.get_instance_id():
+				players.remove_at(idx)
+				break
 	
-	if players.is_empty():
-		_active.erase(cue_name)
+		if players.is_empty():
+			_active.erase(cue_name)
 	
 	if not stream_player.finished.is_connected(_make_available):
 		stream_player.finished.connect(_make_available)
@@ -272,8 +280,7 @@ func _reparent(source: Node, target: Node, child_idx: int) -> Node:
 	
 	var node_to_reparent: Node = source.get_child(child_idx)
 	
-	source.remove_child(node_to_reparent)
-	target.add_child(node_to_reparent)
+	node_to_reparent.reparent(target)
 	
 	return node_to_reparent
 

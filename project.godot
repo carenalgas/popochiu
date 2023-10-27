@@ -12,6 +12,7 @@ config_version=5
 
 config/name="popochiu 2.0"
 config/description="Make 2D point n' click games with a smooth workflow (like in Adventure Game Studio or PowerQuest)."
+config/tags=PackedStringArray("4.1.x")
 run/main_scene="res://popochiu/rooms/house/room_house.tscn"
 config/features=PackedStringArray("4.1")
 config/icon="res://icon_v2.png"
@@ -33,8 +34,8 @@ A="*res://popochiu/autoloads/a.gd"
 
 window/size/viewport_width=320
 window/size/viewport_height=180
-window/size/window_width_override=640
-window/size/window_height_override=360
+window/size/window_width_override=1920
+window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
 
 [editor_plugins]

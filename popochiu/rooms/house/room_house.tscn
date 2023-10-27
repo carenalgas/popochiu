@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bhth611pb4a2l"]
+[gd_scene load_steps=18 format=3 uid="uid://bhth611pb4a2l"]
 
 [ext_resource type="Script" path="res://popochiu/rooms/house/room_house.gd" id="1_5s51l"]
 [ext_resource type="PackedScene" uid="uid://c0yuinu6anryy" path="res://popochiu/rooms/house/props/bg/prop_bg.tscn" id="2_s2nyx"]
@@ -9,15 +9,22 @@
 [ext_resource type="Texture2D" uid="uid://ct4gttx7etote" path="res://popochiu/rooms/house/props/toy_car/toy_car.png" id="7_ys5mq"]
 [ext_resource type="PackedScene" uid="uid://c7oacc86kxt3e" path="res://popochiu/characters/goddiu/character_goddiu.tscn" id="8_kbv2w"]
 [ext_resource type="PackedScene" uid="uid://dpnqksegjn80g" path="res://popochiu/characters/popsy/character_popsy.tscn" id="10_cxlhm"]
-[ext_resource type="PackedScene" uid="uid://fc5mg17vx1r2" path="res://popochiu/characters/01/character_01.tscn" id="10_pnj5o"]
+[ext_resource type="PackedScene" uid="uid://cwdhow7c3406h" path="res://popochiu/rooms/house/props/table/prop_table.tscn" id="10_uqp0n"]
+[ext_resource type="Texture2D" uid="uid://ccio5nqynwwp5" path="res://popochiu/rooms/house/props/table/table.png" id="11_3rmkc"]
+[ext_resource type="PackedScene" uid="uid://rspikvepnmgu" path="res://popochiu/rooms/house/props/drawer/prop_drawer.tscn" id="11_c5dc6"]
+[ext_resource type="PackedScene" uid="uid://hfvjxu5map27" path="res://addons/popochiu/engine/objects/hotspot/popochiu_hotspot.tscn" id="12_hr71v"]
+[ext_resource type="Texture2D" uid="uid://bbht2npokp2yf" path="res://popochiu/rooms/house/props/drawer/drawer.png" id="13_ldbft"]
+[ext_resource type="Script" path="res://popochiu/rooms/house/hotspots/door/hotspot_door.gd" id="13_mqguk"]
+[ext_resource type="Script" path="res://popochiu/rooms/house/hotspots/window/hotspot_window.gd" id="14_bo6on"]
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_ig1rh"]
-vertices = PackedVector2Array(-88, 16, -40, 7, 81, 12, 111, 54, 59, 71, -78, 68, -111, 49)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4, 5, 6)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-88, 16, -40, 7, 81, 12, 111, 54, 59, 71, -78, 68, -111, 49)])
+vertices = PackedVector2Array(18, 35, 81, 12, 111, 54, 59, 71, 12, 42, -104, 55, -109, 37, -92, 37, -78, 68, -24, 42, -29, 35, -85, 13, -40, 7, -25, 27, 13, 27)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8), PackedInt32Array(4, 3, 8, 9), PackedInt32Array(10, 9, 8, 7, 11), PackedInt32Array(10, 11, 12, 13), PackedInt32Array(13, 12, 1, 14), PackedInt32Array(14, 1, 0)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-85, 13, -40, 7, 81, 12, 111, 54, 59, 71, -78, 68, -104, 55, -109, 37, -92, 37), PackedVector2Array(-29, 35, -25, 27, 13, 27, 18, 35, 12, 42, -24, 42)])
 
 [node name="RoomHouse" type="Node2D"]
 script = ExtResource("1_5s51l")
+script_name = "House"
 
 [node name="WalkableAreas" type="Node2D" parent="."]
 
@@ -45,7 +52,41 @@ walk_to_point = Vector2(26, -2)
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/ToyCar"]
 polygon = PackedVector2Array(-8, 1, -7, -4, 0, -5, 7, -2, 7, 3, 2, 5, -6, 4)
 
+[node name="Drawer" parent="Props" instance=ExtResource("11_c5dc6")]
+position = Vector2(63, 101)
+texture = ExtResource("13_ldbft")
+frames = 2
+walk_to_point = Vector2(21, 5)
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/Drawer"]
+polygon = PackedVector2Array(-15, 17, -13, -8, -8, -18, 10, -16, 10, 3, 4, 18)
+
+[node name="Table" parent="Props" instance=ExtResource("10_uqp0n")]
+position = Vector2(155, 116)
+texture = ExtResource("11_3rmkc")
+baseline = -6
+
 [node name="Hotspots" type="Node2D" parent="."]
+
+[node name="Door" parent="Hotspots" instance=ExtResource("12_hr71v")]
+position = Vector2(99, 76)
+script = ExtResource("13_mqguk")
+script_name = "Door"
+description = "Door"
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Hotspots/Door"]
+modulate = Color(0, 0, 1, 1)
+polygon = PackedVector2Array(-19, 23, -22, -7, -9, -29, 13, -25, 17, -12, 17, 19)
+
+[node name="Window" parent="Hotspots" instance=ExtResource("12_hr71v")]
+position = Vector2(152, 61)
+script = ExtResource("14_bo6on")
+script_name = "Window"
+description = "Window"
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="Hotspots/Window"]
+modulate = Color(0, 0, 1, 1)
+polygon = PackedVector2Array(-25, 6, -24, -14, -3, -25, 21, -14, 22, 12, 3, 22, -18, 18)
 
 [node name="Regions" type="Node2D" parent="."]
 
@@ -64,6 +105,4 @@ position = Vector2(109, 112)
 
 [node name="CharacterPopsy *" parent="Characters" instance=ExtResource("10_cxlhm")]
 position = Vector2(221, 128)
-
-[node name="Character01 *" parent="Characters" instance=ExtResource("10_pnj5o")]
-position = Vector2(172, 156)
+popochiu_placeholder = null
