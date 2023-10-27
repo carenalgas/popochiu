@@ -153,13 +153,11 @@ func scene_changed(scene_root: Node) -> void:
 		# Listen to node additions/deletions in container nodes
 		var container: Node2D = opened_room.get_node(_types[type_id].parent)
 		
-		container.child_entered_tree.connect(_on_child_added.bind(type_id), CONNECT_DEFERRED)
-		container.child_exiting_tree.connect(_on_child_removed.bind(type_id), CONNECT_DEFERRED)
+		container.child_entered_tree.connect(_on_child_added.bind(type_id))
+		container.child_exiting_tree.connect(_on_child_removed.bind(type_id))
 	
 	_no_room_info.hide()
 	get_parent().current_tab = 1
-	
-	opened_room.child_entered_tree.connect(_on_child_added)
 
 
 func scene_closed(filepath: String) -> void:

@@ -139,7 +139,6 @@ func _set_title(value: String) -> void:
 	
 	if is_instance_valid(_lbl_title):
 		_lbl_title.text = value
-		notify_property_list_changed()
 
 
 func _set_is_open(value: bool) -> void:
