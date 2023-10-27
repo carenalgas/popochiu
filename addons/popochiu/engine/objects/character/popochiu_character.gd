@@ -5,7 +5,7 @@ class_name PopochiuCharacter
 extends PopochiuClickable
 # TODO: Use a state machine
 
-enum FlipsWhen { NONE, MOVING_RIGHT, MOVING_LEFT }
+enum FlipsWhen { NONE, LOOKING_RIGHT, LOOKING_LEFT }
 enum Looking {UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
 
 signal started_walk_to(character, start, end)
@@ -90,9 +90,9 @@ func idle() -> void:
 
 	if has_node('Sprite2D'):
 		match flips_when:
-			FlipsWhen.MOVING_LEFT:
+			FlipsWhen.LOOKING_LEFT:
 				$Sprite2D.flip_h = _looking_dir == Looking.LEFT
-			FlipsWhen.MOVING_RIGHT:
+			FlipsWhen.LOOKING_RIGHT:
 				$Sprite2D.flip_h = _looking_dir == Looking.RIGHT
 	
 	# Call the virtual that plays the idle animation
@@ -116,9 +116,9 @@ func walk(target_pos: Vector2) -> void:
 
 	if has_node('Sprite2D'):
 		match flips_when:
-			FlipsWhen.MOVING_LEFT:
+			FlipsWhen.LOOKING_LEFT:
 				$Sprite2D.flip_h = target_pos.x < position.x
-			FlipsWhen.MOVING_RIGHT:
+			FlipsWhen.LOOKING_RIGHT:
 				$Sprite2D.flip_h = target_pos.x > position.x
 	
 	if E.cutscene_skipped:
@@ -209,12 +209,12 @@ func queue_face_clicked() -> Callable:
 func face_clicked() -> void:
 	if E.clicked.global_position < global_position:
 		if has_node('Sprite2D'):
-			$Sprite2D.flip_h = flips_when == FlipsWhen.MOVING_LEFT
+			$Sprite2D.flip_h = flips_when == FlipsWhen.LOOKING_LEFT
 		
 		await face_left()
 	else:
 		if has_node('Sprite2D'):
-			$Sprite2D.flip_h = flips_when == FlipsWhen.MOVING_RIGHT
+			$Sprite2D.flip_h = flips_when == FlipsWhen.LOOKING_RIGHT
 		
 		await face_right()
 
