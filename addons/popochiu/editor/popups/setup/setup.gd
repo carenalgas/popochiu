@@ -125,6 +125,9 @@ func _update_project_settings() -> void:
 		int(_test_height.value)
 	)
 	
+	var settings := PopochiuResources.get_settings()
+	settings.is_pixel_art_game = false
+	
 	match _game_type.selected:
 		1:
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, 'canvas_items')
@@ -132,6 +135,10 @@ func _update_project_settings() -> void:
 		2:
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, 'canvas_items')
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, 'keep')
+			
+			settings.is_pixel_art_game = true
+	
+	PopochiuResources.save_settings(settings)
 	
 	assert(\
 		ProjectSettings.save() == OK,\

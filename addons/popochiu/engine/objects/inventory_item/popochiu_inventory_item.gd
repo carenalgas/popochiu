@@ -90,7 +90,7 @@ func queue_add_as_active(animate := true) -> Callable:
 func add_as_active(animate := true) -> void:
 	await add(animate)
 	
-	I.set_active_item(self)
+	I.set_active_item(self, true)
 
 
 func queue_remove(animate := false) -> Callable:
