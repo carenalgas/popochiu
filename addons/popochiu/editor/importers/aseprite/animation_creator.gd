@@ -176,7 +176,7 @@ func _load_spritesheet_metadata(selected_tag: String = ""):
 		# NOTE: imagine this goes from 34 to 54, we need to shift
 		# the range back of a 33 amount, so it goes from 1 to (54 - 33)
 		t.to = t.to - t.from + 1
-		t.from = 1
+		t.from = 0
 		_spritesheet_metadata.tags[selected_tag] = t
 
 	# Save spritesheet path from the command output
