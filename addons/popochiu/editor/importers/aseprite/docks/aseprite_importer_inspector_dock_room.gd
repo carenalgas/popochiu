@@ -34,8 +34,9 @@ func _on_import_pressed():
 		# In case the prop is there, use the one we already have
 		var prop = props_container.get_node_or_null(prop_name)
 		if prop == null:
-			prop = await _create_prop(prop_name, tag.prop_clickable, tag.prop_visible)
-			prop.set_meta("ANIM_NAME", tag.tag_name)
+			prop = _create_prop(prop_name, tag.prop_clickable, tag.prop_visible)
+
+		prop.set_meta("ANIM_NAME", tag.tag_name)
 		
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
@@ -48,21 +49,23 @@ func _on_import_pressed():
 			_options
 		)
 	
-	for prop in props_container.get_children():
-		# Save the prop
-		result = _save_prop(prop)
-	
-	# TODO: maybe check if this is better done with signals
-	_importing = false
-
 	# Save the room scene to hopefully solve a strange behavior
 	# NOTE: didn't work
-	#main_dock.ei.save_scene()
+	main_dock.ei.save_scene()
+
+	for prop in props_container.get_children():
+		if not prop.has_meta("ANIM_NAME"): continue
+		# Save the prop
+		result = await _save_prop(prop)
+
+	# TODO: maybe check if this is better done with signals
+	_importing = false
 
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
 		printerr(RESULT_CODE.get_error_message(result))
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
+		await get_tree().create_timer(0.1).timeout
 		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
 
 
@@ -82,6 +85,8 @@ func _create_prop(name: String, clickable: bool = true, visible: bool = true):
 
 func _save_prop(prop: PopochiuProp):
 	var packed_scene: PackedScene = PackedScene.new()
+	# for child in prop.get_children():
+	# 	if child.owner != prop: prop.remove_child(child)
 	packed_scene.pack(prop)
 	if ResourceSaver.save(packed_scene, prop.scene_file_path) != OK:
 		push_error(
