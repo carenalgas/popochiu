@@ -17,6 +17,7 @@ signal move_ended
 @export var voices := []:
 	set = set_voices # (Array, Dictionary)
 @export var follow_player := false
+@export var follow_player_offset := Vector2(20,0)
 @export var walk_speed := 200.0
 @export var can_move := true
 @export var ignore_walkable_areas := false

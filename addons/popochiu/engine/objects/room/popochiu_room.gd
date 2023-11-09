@@ -131,8 +131,19 @@ func add_character(chr: PopochiuCharacter) -> void:
 	chr.started_walk_to.connect(_update_navigation_path)
 	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
 	
+	if chr == C.player:
+		chr.started_walk_to.connect(_follow_player)
+
 	chr.idle()
 
+func _follow_player(
+	character: PopochiuCharacter, start_position: Vector2, end_position: Vector2
+):
+	await _update_navigation_path(character, start_position, end_position)
+	for c in get_characters():
+		var room_character = c as PopochiuCharacter
+		if not room_character.script_name == C.player.script_name && room_character.follow_player:
+			room_character.walk_to(end_position + room_character.follow_player_offset)
 
 func remove_character(chr: PopochiuCharacter) -> void:
 	$Characters.remove_child(chr)
