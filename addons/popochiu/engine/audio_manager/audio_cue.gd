@@ -93,9 +93,12 @@ func set_loop(value: bool) -> void:
 		'AudioStreamOggVorbis', 'AudioStreamMP3':
 			audio.loop = value
 		'AudioStreamWAV':
-			(audio as AudioStreamWAV).loop_mode =\
-			AudioStreamWAV.LOOP_FORWARD if value\
-			else AudioStreamWAV.LOOP_DISABLED
+			if (audio as AudioStreamWAV).get_loop_end() == 0 && value:
+				push_warning("res://addons/popochiu/engine/audio_manager/audio_cue.gd:97 " + resource_name + " does not have the correct metadata for loop, please check AudioStreamWAV documentation")
+			else:
+				(audio as AudioStreamWAV).loop_mode =\
+				AudioStreamWAV.LOOP_FORWARD if value\
+				else AudioStreamWAV.LOOP_DISABLED
 	
 	notify_property_list_changed()
 
