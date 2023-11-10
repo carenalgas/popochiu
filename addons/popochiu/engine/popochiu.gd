@@ -120,7 +120,7 @@ func _ready() -> void:
 	
 	# Add inventory items checked start (ignore animations (3rd parameter))
 	for key in settings.items_on_start:
-		I.add_item(key, false)
+		I[key].add(false)
 	
 	set_process_input(false)
 	

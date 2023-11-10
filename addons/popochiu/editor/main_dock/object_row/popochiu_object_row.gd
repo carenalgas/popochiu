@@ -290,7 +290,6 @@ func _menu_item_pressed(id: int) -> void:
 				settings.items_on_start.append(name)
 			
 			PopochiuResources.save_settings(settings)
-			(main_dock.ei as EditorInterface).get_inspector().refresh()
 			
 			self.is_on_start = name in settings.items_on_start
 		MenuOptions.CREATE_PROP_SCRIPT:

@@ -75,6 +75,9 @@ func _create() -> void:
 	prop.clickable = _interaction_checkbox.button_pressed
 	prop.cursor = Constants.CURSOR_TYPE.ACTIVE
 	
+	if PopochiuResources.get_settings().is_pixel_art_game:
+		prop.get_node("Sprite2D").texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	
 	if _new_prop_name in ['bg', 'background']:
 		prop.baseline =\
 		-ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT) / 2.0

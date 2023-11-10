@@ -10,7 +10,8 @@ signal linked_item_removed(node)
 signal linked_item_discarded(node)
 
 @export var texture: Texture2D : set = set_texture
-@export var frames := 1: set = set_frames # (int, 1, 100)
+@export var frames := 1 : set = set_frames
+@export var v_frames := 1 : set = set_v_frames
 @export var current_frame := 0: set = set_current_frame # (int, 0, 99)
 @export var link_to_item := ''
 
@@ -73,6 +74,11 @@ func set_texture(value: Texture2D) -> void:
 func set_frames(value: int) -> void:
 	frames = value
 	$Sprite2D.hframes = value
+
+
+func set_v_frames(value: int) -> void:
+	v_frames = value
+	$Sprite2D.vframes = value
 
 
 func set_current_frame(value: int) -> void:

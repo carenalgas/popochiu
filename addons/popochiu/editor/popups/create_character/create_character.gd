@@ -120,6 +120,9 @@ func _create() -> void:
 	new_character.description = _new_character_name.capitalize()
 	new_character.cursor = Constants.CURSOR_TYPE.TALK
 	
+	if PopochiuResources.get_settings().is_pixel_art_game:
+		new_character.get_node("Sprite2D").texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Save the character scene (.tscn)
 	var new_character_packed_scene: PackedScene = PackedScene.new()

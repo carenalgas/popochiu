@@ -131,8 +131,20 @@ func add_character(chr: PopochiuCharacter) -> void:
 	chr.started_walk_to.connect(_update_navigation_path)
 	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
 	
+	if chr.follow_player:
+		C.player.started_walk_to.connect(_follow_player.bind(chr))
+
 	chr.idle()
 
+func _follow_player(
+	character: PopochiuCharacter, start_position: Vector2, end_position: Vector2, follower: PopochiuCharacter
+):
+	var follower_end_position
+	if end_position.x > follower.position.x:
+		follower_end_position = end_position - follower.follow_player_offset
+	else:
+		follower_end_position = end_position + follower.follow_player_offset
+	follower.walk_to(follower_end_position)
 
 func remove_character(chr: PopochiuCharacter) -> void:
 	$Characters.remove_child(chr)
