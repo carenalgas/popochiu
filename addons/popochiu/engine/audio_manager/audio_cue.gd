@@ -94,7 +94,11 @@ func set_loop(value: bool) -> void:
 			audio.loop = value
 		'AudioStreamWAV':
 			if (audio as AudioStreamWAV).get_loop_end() == 0 && value:
-				push_warning("res://addons/popochiu/engine/audio_manager/audio_cue.gd:97 " + resource_name + " does not have the correct metadata for loop, please check AudioStreamWAV documentation")
+				PopochiuUtils.print_warning(
+					"[b]%s[/b]" % resource_name +\
+					" does not have the correct metadata to loop, please check" +\
+					" AudioStreamWAV documentation"
+				)
 			else:
 				(audio as AudioStreamWAV).loop_mode =\
 				AudioStreamWAV.LOOP_FORWARD if value\
