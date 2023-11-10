@@ -21,19 +21,19 @@
 [ext_resource type="PackedScene" uid="uid://dbqppogchdate" path="res://addons/popochiu/editor/popups/setup/setup.tscn" id="18"]
 [ext_resource type="PackedScene" uid="uid://c054k1ux04waq" path="res://addons/popochiu/editor/popups/create_walkable_area/create_walkable_area.tscn" id="19"]
 
-[sub_resource type="Image" id="Image_66yk4"]
+[sub_resource type="Image" id="Image_uchp8"]
 data = {
-"data": PackedByteArray(255, 255, 255, 0, 255, 255, 255, 0, 255, 128, 128, 4, 255, 128, 128, 4, 255, 128, 128, 4, 255, 128, 128, 4, 255, 128, 128, 4, 255, 128, 128, 4, 255, 128, 128, 4, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 131, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 131, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 131, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 128, 128, 4, 255, 128, 128, 4, 255, 128, 128, 4, 255, 128, 128, 4, 255, 128, 128, 4, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 231, 255, 93, 93, 55, 255, 97, 97, 58, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 93, 93, 41, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 97, 97, 42, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 98, 98, 47, 255, 97, 97, 42, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 93, 93, 233, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 94, 94, 46, 255, 93, 93, 236, 255, 93, 93, 233, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 93, 93, 252, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0),
+"data": PackedByteArray(255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 93, 93, 41, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0),
 "format": "RGBA8",
 "height": 16,
 "mipmaps": false,
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_fi3iu"]
-image = SubResource("Image_66yk4")
+[sub_resource type="ImageTexture" id="ImageTexture_jd3rb"]
+image = SubResource("Image_uchp8")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ahs1a"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ce6p7"]
 content_margin_left = 8.0
 content_margin_right = 8.0
 draw_center = false
@@ -43,7 +43,7 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.439216, 0.427451, 0.921569, 0.74902)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bccaf"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x1dqg"]
 content_margin_left = 8.0
 content_margin_right = 8.0
 draw_center = false
@@ -53,7 +53,7 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.556863, 0.313726, 0.160784, 0.74902)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gksij"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_02hx0"]
 content_margin_left = 8.0
 content_margin_right = 8.0
 draw_center = false
@@ -63,7 +63,7 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.337255, 0.67451, 0.301961, 0.74902)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7efei"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_73yk6"]
 content_margin_left = 8.0
 content_margin_right = 8.0
 draw_center = false
@@ -75,7 +75,7 @@ border_color = Color(0.556863, 0.235294, 0.592157, 0.74902)
 
 [node name="Popochiu" type="Panel"]
 clip_contents = true
-custom_minimum_size = Vector2(392, 0)
+custom_minimum_size = Vector2(408, 0)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -110,7 +110,7 @@ focus_mode = 2
 layout_mode = 2
 placeholder_text = "Filter Popochiu objects"
 clear_button_enabled = true
-right_icon = SubResource("ImageTexture_fi3iu")
+right_icon = SubResource("ImageTexture_jd3rb")
 script = ExtResource("2_i87mb")
 
 [node name="MainScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main"]
@@ -126,7 +126,7 @@ size_flags_vertical = 3
 
 [node name="RoomsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource("4")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_ahs1a")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ce6p7")
 icon = ExtResource("3_uwncn")
 color = Color(0.439216, 0.427451, 0.921569, 0.74902)
 title = "Rooms"
@@ -134,7 +134,7 @@ create_text = "Create room"
 
 [node name="CharactersGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource("4")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_bccaf")
+theme_override_styles/panel = SubResource("StyleBoxFlat_x1dqg")
 icon = ExtResource("4_h14xk")
 color = Color(0.556863, 0.313726, 0.160784, 0.74902)
 title = "Characters"
@@ -142,7 +142,7 @@ create_text = "Create character"
 
 [node name="ItemsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource("4")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_gksij")
+theme_override_styles/panel = SubResource("StyleBoxFlat_02hx0")
 icon = ExtResource("5_ritjh")
 color = Color(0.337255, 0.67451, 0.301961, 0.74902)
 title = "Inventory items"
@@ -150,7 +150,7 @@ create_text = "Create inventory item"
 
 [node name="DialogsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource("4")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_7efei")
+theme_override_styles/panel = SubResource("StyleBoxFlat_73yk6")
 icon = ExtResource("6_evjo7")
 color = Color(0.556863, 0.235294, 0.592157, 0.74902)
 title = "Dialog trees"
@@ -177,58 +177,79 @@ alignment = 2
 [node name="Version" type="Label" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "v2.0.0"
+text = "v2.0-alpha_4"
 
 [node name="BtnSetup" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
 layout_mode = 2
 tooltip_text = "Opens wiki in web browser"
 text = "Setup"
-icon = SubResource("ImageTexture_fi3iu")
+icon = SubResource("ImageTexture_jd3rb")
 
 [node name="BtnSettings" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
 layout_mode = 2
 tooltip_text = "Opens wiki in web browser"
 text = "Settings"
-icon = SubResource("ImageTexture_fi3iu")
+icon = SubResource("ImageTexture_jd3rb")
 
 [node name="BtnDocs" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
 layout_mode = 2
 tooltip_text = "Opens wiki in web browser"
 text = "Documentation"
-icon = SubResource("ImageTexture_fi3iu")
+icon = SubResource("ImageTexture_jd3rb")
 
 [node name="Popups" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
 
 [node name="CreateRoom" parent="Popups" instance=ExtResource("3")]
+max_size = Vector2i(1280, 720)
 
 [node name="CreateCharacter" parent="Popups" instance=ExtResource("1")]
 title = "Create Character"
+size = Vector2i(590, 172)
+max_size = Vector2i(1280, 720)
 
 [node name="CreateInventoryItem" parent="Popups" instance=ExtResource("6")]
 title = "Create Inventory item"
+size = Vector2i(545, 172)
+max_size = Vector2i(1280, 720)
 
 [node name="CreateDialog" parent="Popups" instance=ExtResource("2")]
 title = "Create Dialog tree"
+size = Vector2i(494, 172)
+max_size = Vector2i(1280, 720)
 
 [node name="CreateProp" parent="Popups" instance=ExtResource("5")]
 title = "Create prop"
+size = Vector2i(421, 202)
+max_size = Vector2i(1280, 720)
 
 [node name="CreateHotspot" parent="Popups" instance=ExtResource("14")]
 title = "Create hotspot"
+size = Vector2i(414, 172)
+max_size = Vector2i(1280, 720)
 
 [node name="CreateRegion" parent="Popups" instance=ExtResource("15")]
 title = "Create Region"
+size = Vector2i(405, 172)
+max_size = Vector2i(1280, 720)
 
 [node name="CreateWalkableArea" parent="Popups" instance=ExtResource("19")]
 title = "Create Walkable area"
+size = Vector2i(461, 172)
+max_size = Vector2i(1280, 720)
 
 [node name="DeleteConfirmation" parent="Popups" instance=ExtResource("17")]
 title = "Delete?"
+size = Vector2i(200, 720)
+max_size = Vector2i(1280, 720)
 
 [node name="Loading" parent="Popups" instance=ExtResource("16")]
 title = "Loading...."
+size = Vector2i(320, 180)
+min_size = Vector2i(320, 180)
+max_size = Vector2i(1280, 720)
 
 [node name="Setup" parent="Popups" instance=ExtResource("18")]
 title = "Setup"
+max_size = Vector2i(1280, 720)
