@@ -25,8 +25,30 @@ func _ready():
 
 
 func _process(delta):
-	$AnimatedSprite2D.position = $AnimatedSprite2D.get_global_mouse_position()
-	$Sprite2D.position = $AnimatedSprite2D.get_global_mouse_position()
+	var texture_size := ($AnimatedSprite2D.sprite_frames.get_frame_texture(
+		$AnimatedSprite2D.animation,
+		$AnimatedSprite2D.frame
+	) as Texture2D).get_size()
+	
+	var mouse_position: Vector2 = $AnimatedSprite2D.get_global_mouse_position()
+	
+	if E.settings.is_pixel_perfect:
+		# Thanks to @whyshchuck
+		$AnimatedSprite2D.position = Vector2i(mouse_position)
+		$Sprite2D.position = Vector2i(mouse_position)
+	else:
+		$AnimatedSprite2D.position = mouse_position
+		$Sprite2D.position = mouse_position
+	
+	if $AnimatedSprite2D.position.x < 1.0:
+		$AnimatedSprite2D.position.x = 1.0
+	elif $AnimatedSprite2D.position.x > E.width - 2.0:
+		$AnimatedSprite2D.position.x = E.width - 2.0
+	
+	if $AnimatedSprite2D.position.y < 1.0:
+		$AnimatedSprite2D.position.y = 1.0
+	elif $AnimatedSprite2D.position.y > E.height - 2.0:
+		$AnimatedSprite2D.position.y = E.height - 2.0
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
