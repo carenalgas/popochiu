@@ -20,13 +20,15 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 ![features](https://github.com/mapedorr/popochiu/wiki/images/popochiu_list_of_features-es.png "Features")
 
+# ¿Usas Godot 4? Prueba la última alfa de Popochiu versión 2
 
+Estamos trabajando para que la siguiente versión de Popochiu sea mucho mejor, pero es algo que toma tiempo. Puedes seguir el progreso de esta actualización en la rama [2.0](https://github.com/mapedorr/popochiu/tree/2.0) y todas las que deriven de esta. Nuestro último lanzamiento fue la [alfa 4](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha4/popochiu_v2.0-alpha4.zip).
 
 # Instalación
 
 **Popochiu puede usarse en Godot 3.3.x a 3.5.x**. **¡¡¡Y ahora también funciona en Godot 4!!!**
 
-1. Si usas Godot 4, descarga [Popochiu 2.0 Alpha 1](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha1/popochiu-v2.0-alpha1.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Si usas Godot 4, descarga [Popochiu 2.0 Alpha 4](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha4/popochiu_v2.0-alpha4.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extrae su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Proyecto > Ajustes del Proyecto > Plugins` (the tab on the top).
 4. Reinicia Godot `Proyecto > Volver a Cargar el Proyecto Actual`.

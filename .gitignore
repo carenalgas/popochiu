@@ -22,3 +22,6 @@ DS_Store
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Other local stuff
+.vscode
