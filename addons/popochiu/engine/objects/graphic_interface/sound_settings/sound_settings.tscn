@@ -17,11 +17,8 @@ shadow_size = 4
 shadow_offset = Vector2(0, 2)
 
 [node name="SoundSettings" type="PanelContainer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_right = 320.0
+offset_bottom = 180.0
 theme = ExtResource("1_k50u1")
 theme_override_styles/panel = SubResource("StyleBoxFlat_st5xf")
 script = ExtResource("2_xvxxy")
