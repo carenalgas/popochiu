@@ -15,5 +15,7 @@ var sfx_astral_plane: AudioCueSound = load("res://popochiu/rooms/house/audio/sfx
 var sfx_window: AudioCueSound = load("res://popochiu/rooms/house/audio/sfx_window.tres")
 var vo_goddiu_02: AudioCueSound = load("res://popochiu/characters/goddiu/audio/vo_goddiu_02.tres")
 var vo_goddiu_03: AudioCueSound = load("res://popochiu/characters/goddiu/audio/vo_goddiu_03.tres")
+var sfx_fs_01: AudioCueSound = load("res://popochiu/characters/goddiu/audio/sfx_fs_01.tres")
+var sfx_fs_02: AudioCueSound = load("res://popochiu/characters/goddiu/audio/sfx_fs_02.tres")
 # ---- cues
 

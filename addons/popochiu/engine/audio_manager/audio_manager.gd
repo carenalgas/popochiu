@@ -151,7 +151,7 @@ func stop(cue_name: String, fade_duration := 0.0) -> void:
 			else:
 				stream_player.stop()
 			
-			if stream_player is AudioStreamPlayer2D and _active[cue_name].loop:
+			if _active[cue_name].loop:
 				# When stopped (.stop()) an audio in loop, for some reason
 				# 'finished' is not emitted.
 				stream_player.finished.emit()
@@ -235,6 +235,11 @@ func _play(
 	
 	if _active.has(cue_name):
 		_active[cue_name].players.append(player)
+		
+		# NOTE: Fix for #94. Stop the previous stream player created to play the
+		# 		audio cue that is in loop.
+		if _active[cue_name].loop:
+			stop(cue_name)
 	else:
 		_active[cue_name] = {
 			players = [player],

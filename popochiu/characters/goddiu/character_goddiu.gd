@@ -39,12 +39,14 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 # Use it to play the idle animation for the character
 func _play_idle() -> void:
 	super()
+	A.sfx_fs_01.stop()
 
 
 # Use it to play the walk animation for the character
 # target_pos can be used to know the movement direction
 func _play_walk(target_pos: Vector2) -> void:
 	super(target_pos)
+	A.sfx_fs_01.play()
 
 
 # Use it to play the talk animation for the character
