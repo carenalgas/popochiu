@@ -17,5 +17,7 @@ var vo_goddiu_02: AudioCueSound = load("res://popochiu/characters/goddiu/audio/v
 var vo_goddiu_03: AudioCueSound = load("res://popochiu/characters/goddiu/audio/vo_goddiu_03.tres")
 var sfx_fs_01: AudioCueSound = load("res://popochiu/characters/goddiu/audio/sfx_fs_01.tres")
 var sfx_fs_02: AudioCueSound = load("res://popochiu/characters/goddiu/audio/sfx_fs_02.tres")
+var sfx_steps_squirrel: AudioCueSound = load("res://popochiu/characters/goddiu/audio/sfx_steps_squirrel.tres")
+var sfx_fs_03: AudioCueSound = load("res://popochiu/characters/goddiu/audio/sfx_fs_03.tres")
 # ---- cues
 

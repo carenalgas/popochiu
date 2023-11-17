@@ -150,10 +150,8 @@ func stop(cue_name: String, fade_duration := 0.0) -> void:
 				)
 			else:
 				stream_player.stop()
-			
-			if _active[cue_name].loop:
-				# When stopped (.stop()) an audio in loop, for some reason
-				# 'finished' is not emitted.
+				# Always emit the signal since it won't be emited if the audio
+				# file haven't reach the end yet
 				stream_player.finished.emit()
 		else:
 			_active.erase(cue_name)
@@ -187,10 +185,12 @@ func change_cue_volume(cue_name: String, volume := 0.0) -> void:
 func semitone_to_pitch(pitch: float) -> float:
 	return pow(twelfth_root_of_two, pitch)
 
+
 func set_bus_volume_db(bus_name: String, value: float) -> void:
 	if volume_settings.has(bus_name):
 		volume_settings[bus_name] = value
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus_name), volume_settings[bus_name])
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 # Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if
@@ -230,20 +230,21 @@ func _play(
 	player.bus = cue.bus
 	player.play(from_position)
 	
-	if not player.finished.is_connected(_make_available):
-		player.finished.connect(_make_available.bind(player, cue_name, 0))
+	if not player.finished.is_connected(_on_audio_stream_player_finished):
+		player.finished.connect(_on_audio_stream_player_finished.bind(player, cue_name, 0))
 	
 	if _active.has(cue_name):
 		_active[cue_name].players.append(player)
 		
-		# NOTE: Fix for #94. Stop the previous stream player created to play the
-		# 		audio cue that is in loop.
-		if _active[cue_name].loop:
+		# NOTE: Stop the previous stream player created to play the audio cue
+		# 		that is in loop to avoid having more than one sound playing.
+		if not _active[cue_name].can_play_simultaneous:
 			stop(cue_name)
 	else:
 		_active[cue_name] = {
 			players = [player],
-			loop = cue.loop
+			loop = cue.loop,
+			can_play_simultaneous = cue.can_play_simultaneous
 		}
 	
 	return player
@@ -255,7 +256,7 @@ func _get_free_stream(group: Node):
 
 ## Reassigns the AudioStreamPlayer to its original group when it finishes so it
 ## can be available for being used
-func _make_available(
+func _on_audio_stream_player_finished(
 	stream_player: Node, cue_name: String, _debug_idx: int
 ) -> void:
 	if stream_player.has_meta(TEMP_PLAYER):
@@ -275,8 +276,8 @@ func _make_available(
 		if players.is_empty():
 			_active.erase(cue_name)
 	
-	if not stream_player.finished.is_connected(_make_available):
-		stream_player.finished.connect(_make_available)
+	if not stream_player.finished.is_connected(_on_audio_stream_player_finished):
+		stream_player.finished.connect(_on_audio_stream_player_finished)
 
 
 func _reparent(source: Node, target: Node, child_idx: int) -> Node:
@@ -284,6 +285,9 @@ func _reparent(source: Node, target: Node, child_idx: int) -> Node:
 		return null
 	
 	var node_to_reparent: Node = source.get_child(child_idx)
+	
+	if not is_instance_valid(node_to_reparent):
+		return null
 	
 	node_to_reparent.reparent(target)
 	
@@ -346,6 +350,7 @@ func _fadeout_finished(stream_player: Node, tween: Tween) -> void:
 		stream_player.stop()
 		tween.finished.disconnect(_fadeout_finished)
 
+
 func save_sound_settings():
 	var file = FileAccess.open(settings_path, FileAccess.WRITE)
 
@@ -354,6 +359,7 @@ func save_sound_settings():
 	else:
 		file.store_var(volume_settings)
 		file.close()
+
 
 func load_sound_settings():
 	var file = FileAccess.open(settings_path, FileAccess.READ)
