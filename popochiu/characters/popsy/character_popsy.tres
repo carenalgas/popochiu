@@ -1,9 +1,0 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://cp5hqh7881qua"]
-
-[ext_resource type="Script" path="res://popochiu/characters/popsy/character_popsy_state.gd" id="1_mbuy0"]
-
-[resource]
-resource_name = "Popsy"
-script = ExtResource("1_mbuy0")
-script_name = "Popsy"
-scene = "res://popochiu/characters/popsy/character_popsy.tscn"

@@ -5,6 +5,9 @@ class_name PopochiuAudioCue
 @export var audio: AudioStream
 @export var loop := false : set = set_loop
 @export var is_2d := false
+## Indicates if the audio can be played simultaniously with other instances of
+## itself. Specially useful for audio cues in loop.
+@export var can_play_simultaneous := true
 @export var pitch := 1.0
 @export var volume := 0.0
 @export var rnd_pitch := Vector2.ZERO
