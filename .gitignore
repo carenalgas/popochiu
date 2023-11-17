@@ -18,4 +18,5 @@ data_*/
 .vscode
 
 # Project-specific ignores
+popochiu
 popochiu/**

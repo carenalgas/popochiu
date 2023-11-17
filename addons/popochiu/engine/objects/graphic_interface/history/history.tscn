@@ -1,7 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://bq7kpsehncsaf"]
+[gd_scene load_steps=7 format=3 uid="uid://bq7kpsehncsaf"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/history/history.gd" id="2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_age8d"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+shadow_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [sub_resource type="StyleBoxFlat" id="7"]
 bg_color = Color(1, 1, 1, 1)
@@ -18,26 +28,48 @@ VScrollBar/styles/grabber_pressed = SubResource("7")
 VScrollBar/styles/scroll = SubResource("8")
 VScrollBar/styles/scroll_focus = SubResource("8")
 
-[node name="History" type="PanelContainer"]
-visible = false
+[node name="HistoryPopup" type="PanelContainer"]
 offset_right = 320.0
 offset_bottom = 180.0
 mouse_filter = 2
 theme = ExtResource("1")
 script = ExtResource("2")
 
-[node name="Window" type="Window" parent="."]
-visible = false
+[node name="PopupPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(256, 144)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_age8d")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Window"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="PopupPanel"]
+layout_mode = 2
+
+[node name="Empty" type="Label" parent="PopupPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "Nothing to show yet"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LinesScroll" type="ScrollContainer" parent="PopupPanel/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
 theme = SubResource("9")
 
-[node name="LinesList" type="VBoxContainer" parent="Window/ScrollContainer"]
+[node name="LinesList" type="VBoxContainer" parent="PopupPanel/VBoxContainer/LinesScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="Buttons" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Close" type="Button" parent="PopupPanel/VBoxContainer/Buttons"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Close"

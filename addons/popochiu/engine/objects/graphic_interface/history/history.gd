@@ -1,43 +1,49 @@
 extends Control
 # warning-ignore-all:return_value_discarded
 
+const DIALOG_LINE := preload('components/dialog_line.tscn')
+const INTERACTION_LINE := preload('components/interaction_line.tscn')
+
 @onready var _lines_list: VBoxContainer = find_child('LinesList')
-@onready var _dialog_line_path := scene_file_path.get_base_dir() + '/DialogLine.tscn'
-@onready var _interaction_line_path := scene_file_path.get_base_dir() + '/InteractionLine.tscn'
+@onready var close: Button = %Close
+@onready var empty: Label = %Empty
+@onready var lines_scroll: ScrollContainer = %LinesScroll
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
 	# Connect to child signals
-	$Window.close_requested.connect(_destroy_history)
+	close.pressed.connect(_destroy_history)
 	
 	# Connect to singletons signals
 	G.history_opened.connect(_show_history)
 	
 	hide()
-	$Window.hide()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _show_history() -> void:
+	if E.history.is_empty():
+		empty.show()
+		lines_scroll.hide()
+	else:
+		empty.hide()
+		lines_scroll.show()
+	
 	for data in E.history:
 		var lbl: Label
 		
 		if data.has('character'):
-			lbl = load(_dialog_line_path).instantiate()
+			lbl = DIALOG_LINE.instantiate()
 			lbl.text = '%s: %s' % [data.character, data.text]
 		else:
-			lbl = load(_interaction_line_path).instantiate()
+			lbl = INTERACTION_LINE.instantiate()
 			lbl.text = '(%s)' % data.action
 	
 		_lines_list.add_child(lbl)
 	
 	if E.settings.scale_gui:
 		scale = Vector2.ONE * E.scale
-		$Window.scale = Vector2.ONE * E.scale
-	
-#	popup(Rect2(8, 16, 304, 160))
-	$Window.popup_centered(Vector2(240.0, 120.0))
 	
 	G.blocked.emit({ blocking = false })
 	
