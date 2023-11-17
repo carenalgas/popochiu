@@ -1,9 +1,0 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://bp113wl8b5nij"]
-
-[ext_resource type="Script" path="res://popochiu/inventory_items/toy_car/item_toy_car_state.gd" id="1_ucmbc"]
-
-[resource]
-resource_name = "ToyCar"
-script = ExtResource("1_ucmbc")
-script_name = "ToyCar"
-scene = "res://popochiu/inventory_items/toy_car/item_toy_car.tscn"
