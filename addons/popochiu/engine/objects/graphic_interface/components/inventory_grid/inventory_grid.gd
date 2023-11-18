@@ -92,7 +92,9 @@ func set_v_separation(value: int) -> void:
 
 func set_show_arrows(value: bool) -> void:
 	show_arrows = value
-	scroll_buttons.visible = value
+	
+	if is_instance_valid(scroll_buttons):
+		scroll_buttons.visible = value
 
 
 #endregion

@@ -1,9 +1,11 @@
-extends PanelContainer
+@tool
 class_name PopochiuPopup
+extends PanelContainer
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
 @export var closes_by_clicking_out := true
 @export var script_name: StringName = ""
+@export var title := "" : set = set_title
 
 @onready var lbl_title: Label = %Title
 @onready var btn_ok: Button = %Ok
@@ -13,6 +15,11 @@ class_name PopochiuPopup
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready() -> void:
+	if not title.is_empty():
+		lbl_title.text = title
+	
+	if Engine.is_editor_hint(): return
+	
 	# Connect to own signals
 	gui_input.connect(_check_click)
 	
@@ -98,6 +105,14 @@ func on_close_pressed() -> void:
 	_on_cancel()
 	
 	close()
+
+
+# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SETGET ░░░░
+func set_title(value: String) -> void:
+	title = value
+	
+	if is_instance_valid(lbl_title):
+		lbl_title.text = title
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░

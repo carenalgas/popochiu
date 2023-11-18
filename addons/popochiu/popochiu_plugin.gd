@@ -494,9 +494,9 @@ func _copy_gui_template(template_name: String) -> void:
 		"sierra":
 			scene_path += "templates/sierra/sierra_gi.tscn"
 			commands_template_path += "sierra_commands_template.gd"
-		"empty":
+		"custom":
 			scene_path += "popochiu_graphic_interface.tscn"
-			commands_template_path += "empty_commands_template.gd"
+			commands_template_path += "custom_commands_template.gd"
 	
 	# Create the res://popochiu/graphic_interface/ folder
 	if not FileAccess.file_exists(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU):
@@ -504,6 +504,7 @@ func _copy_gui_template(template_name: String) -> void:
 			PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
 		)
 	else:
+		# Remove the graphic_interface.tscn file
 		DirAccess.remove_absolute(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
 	
 	await get_tree().create_timer(0.1)

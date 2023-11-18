@@ -1,9 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://cn2b5v8k1lseo"]
+[gd_scene load_steps=12 format=3 uid="uid://cn2b5v8k1lseo"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/inventory_grid.gd" id="1_0y5i1"]
 [ext_resource type="Texture2D" uid="uid://dfa511cxg31g5" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/sprites/inventory_grid_up_button.png" id="2_6y3so"]
 [ext_resource type="Texture2D" uid="uid://s4phlorab5ds" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/sprites/inventory_grid_down_button.png" id="3_yoinj"]
-[ext_resource type="PackedScene" uid="uid://db6csk6i4f3un" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/inventory_grid_slot.tscn" id="4_5ed5a"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7tbkh"]
 atlas = ExtResource("2_6y3so")
@@ -37,9 +36,9 @@ region = Rect2(16, 0, 16, 16)
 atlas = ExtResource("3_yoinj")
 region = Rect2(48, 0, 16, 16)
 
-[node name="InventoryGrid" type="HBoxContainer"]
-offset_right = 158.0
-offset_bottom = 52.0
+[node name="InventoryGrid" type="HBoxContainer" groups=["popochiu_gui_component"]]
+offset_right = 152.0
+offset_bottom = 50.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 0
@@ -71,6 +70,7 @@ texture_disabled = SubResource("AtlasTexture_pejpn")
 stretch_mode = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
+custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 scroll_vertical_custom_step = 27.0
@@ -82,54 +82,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/h_separation = 2
-theme_override_constants/v_separation = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
 columns = 4
-
-[node name="Slot" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot2" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot3" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot4" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot5" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot6" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot7" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot8" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot9" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot10" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot11" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot12" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot13" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot14" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot15" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2
-
-[node name="Slot16" parent="ScrollContainer/Box" instance=ExtResource("4_5ed5a")]
-layout_mode = 2

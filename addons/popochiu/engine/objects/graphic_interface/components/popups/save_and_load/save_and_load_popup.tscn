@@ -8,7 +8,7 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u4bt4"]
 bg_color = Color(0, 0, 0, 0.498039)
 
-[node name="SaveAndLoadPopup" type="PanelContainer"]
+[node name="SaveAndLoadPopup" type="PanelContainer" groups=["popochiu_gui_popup"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

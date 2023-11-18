@@ -13,8 +13,9 @@ var _commands_path := PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.replace(
 	"graphic_interface.tscn", "commands.gd"
 )
 
-@onready var btn_script: Button = $Header/BtnScript
-@onready var btn_commands: Button = $Header/BtnCommands
+@onready var template_name: Label = %TemplateName
+@onready var btn_script: Button = %BtnScript
+@onready var btn_commands: Button = %BtnCommands
 
 
 #region Godot
@@ -22,8 +23,10 @@ func _ready() -> void:
 	btn_script.icon = get_theme_icon('Script', 'EditorIcons')
 	btn_commands.icon = get_theme_icon('Script', 'EditorIcons')
 	
+	# Connect to child signals
 	btn_script.pressed.connect(_on_script_pressed)
 	btn_commands.pressed.connect(_on_commands_pressed)
+	%PopupsGroup.create_clicked.connect(_on_create_popup_clicked)
 
 
 #endregion
@@ -39,15 +42,18 @@ func on_scene_changed(gui_node: Node) -> void:
 		# FIXME: This override the tab change done by tab_room.gd
 		get_parent().current_tab = get_index()
 		
-		_components_basedir.clear()
-		for container in [%BaseComponentsGroup, %PopupsGroup]:
-			container.clear_list()
+		_clear_elements()
 		
 		await get_tree().process_frame
 		
 		_read_dir(COMPONENTS_PATH)
 		_create_buttons()
 		_find_components(gui_node)
+		_update_groups_titles()
+		
+		template_name.text = "Template: %s" % (
+			PopochiuResources.get_data_value("ui", "template", "---") as String
+		).capitalize()
 		
 		_opened_scene.child_exiting_tree.connect(_on_child_removed)
 		
@@ -93,6 +99,18 @@ func _on_commands_pressed() -> void:
 	main_dock.ei.edit_script(load(_commands_path))
 
 
+func _on_create_popup_clicked() -> void:
+	$CreatePopupWindow.popup_centered()
+
+
+func _clear_elements() -> void:
+	_components_basedir.clear()
+	for container in [%BaseComponentsGroup, %PopupsGroup]:
+		container.clear_list()
+
+
+## Reads a directory in the project (addons folder) looking for Popochiu GUI
+## components and popups.
 func _read_dir(path: String) -> void:
 	var dir = DirAccess.open(path)
 	
@@ -141,6 +159,26 @@ func _find_components(node: Control) -> void:
 		var component_name := child.scene_file_path.get_base_dir().split("/")[-1]
 		if has_meta(component_name):
 			(get_meta(component_name) as Button).disabled = true
+
+
+func _update_groups_titles() -> void:
+	var disabled_count := 0
+	for btn in %BaseComponentsGroup.get_elements():
+		if btn.disabled:
+			disabled_count += 1
+	
+	%BaseComponentsGroup.set_title_count(
+		disabled_count, %BaseComponentsGroup.get_elements().size()
+	)
+	
+	disabled_count = 0
+	for btn in %PopupsGroup.get_elements():
+		if btn.disabled:
+			disabled_count += 1
+	
+	%PopupsGroup.set_title_count(
+		disabled_count, %PopupsGroup.get_elements().size()
+	)
 
 
 func _add_component(btn: Button) -> void:

@@ -256,7 +256,7 @@ func _show_gui_warning() -> void:
  opened in the Editor.\nIn order to change the GUI template please close that\
  scene first."
 	
-	get_parent().add_child.call_deferred(warning_dialog)
+	add_child.call_deferred(warning_dialog)
 	
 	warning_dialog.popup_centered.call_deferred()
 

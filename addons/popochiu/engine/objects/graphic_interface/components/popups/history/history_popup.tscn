@@ -23,7 +23,7 @@ VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_pm06l")
 VScrollBar/styles/scroll = SubResource("StyleBoxFlat_gr6a3")
 VScrollBar/styles/scroll_focus = SubResource("StyleBoxFlat_gr6a3")
 
-[node name="HistoryPopup" type="PanelContainer"]
+[node name="HistoryPopup" type="PanelContainer" groups=["popochiu_gui_popup"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
