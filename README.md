@@ -22,14 +22,14 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 # Using Godot 4? Try the latest alpha of Popochiu version 2
 
-We're working on making Popochiu version 2 even better, but it takes time. You can follow our progress in branch [2.0](https://github.com/mapedorr/popochiu/tree/2.0) and the branches that start from it. Our latest release is [Alpha 4](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha4/popochiu_v2.0-alpha4.zip).
+We're working on making Popochiu version 2 even better, but it takes time. You can follow our progress in branch [2.0](https://github.com/mapedorr/popochiu/tree/2.0) and the branches that start from it. Our latest release is [Alpha 5](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha5/popochiu_v2.0-alpha5.zip).
 
 
 # Installation
 
 **Popochiu works on Godot 3.3.x to 3.5.x**. **And now in Godot 4 too!!!**
 
-1. Godot 4 users can download [Popochiu 2.0 Alpha 4](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha4/popochiu_v2.0-alpha4.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Godot 4 users can download [Popochiu 2.0 Alpha 5](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha5/popochiu_v2.0-alpha5.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins` (the tab on the top).
 4. Restart Godot `Project > Reload Current Project`.
