@@ -43,6 +43,10 @@ func _ready():
 	else:
 		hide_helpers()
 		set_process(true)
+	for child in get_children():
+		if not child is Sprite:
+			continue
+		child.connect("frame_changed", self, "update_position")
 
 
 func _get_property_list():
@@ -411,6 +415,8 @@ func play_walk(target_pos: Vector2) -> void:
 
 func play_talk() -> void:
 	play_animation('talk')
+
+
 
 
 func play_grab() -> void:
