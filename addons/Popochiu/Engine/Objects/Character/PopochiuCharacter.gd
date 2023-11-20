@@ -18,8 +18,7 @@ export var follow_player := false
 export var walk_speed := 200.0
 export var can_move := true
 export var ignore_walkable_areas := false
-# turns anti-glide animation on.
-# will not work if call method track in animation player is not calling update_position every frame
+# turns anti-glide animation on
 export var anti_glide_animation: bool = false
 
 #stores character position between frames if anti-glide animation is on
@@ -37,6 +36,7 @@ onready var dialog_pos: Position2D = $DialogPos
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
+	print('call_ready')
 	if not Engine.editor_hint:
 #		idle(false)
 		set_process(follow_player)
@@ -47,7 +47,7 @@ func _ready():
 		if not child is Sprite:
 			continue
 		child.connect("frame_changed", self, "update_position")
-
+		print(self.name, child)
 
 func _get_property_list():
 	var properties = []

@@ -282,10 +282,7 @@ func _move_along_path(distance):
 			# Play the animation on the character
 			_moving_character.play_walk(_path[0])
 			# Move the character on the destination
-			#in order to run anti-glide animation you need to add call method 
-			#track in animation player and call update_position every frame
-			#additional condition to avoid crash if update_position method
-			#would be deleted
+			
 			var next_position = last_point.linear_interpolate(
 					_path[0], distance / distance_between_points
 				)
