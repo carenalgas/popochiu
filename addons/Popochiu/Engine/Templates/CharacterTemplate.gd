@@ -5,7 +5,6 @@ const Data := preload('CharacterStateTemplate.gd')
 
 var state: Data = null
 
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the PopochiuRoom where this node was already loaded
 func on_room_set() -> void:

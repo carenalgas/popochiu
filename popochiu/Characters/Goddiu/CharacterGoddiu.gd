@@ -8,7 +8,6 @@ const Data := preload('CharacterGoddiuState.gd')
 
 var state: Data = preload('CharacterGoddiu.tres')
 
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func on_interact() -> void:

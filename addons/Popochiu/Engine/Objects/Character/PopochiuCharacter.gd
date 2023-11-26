@@ -18,6 +18,11 @@ export var follow_player := false
 export var walk_speed := 200.0
 export var can_move := true
 export var ignore_walkable_areas := false
+# turns anti-glide animation on
+export var anti_glide_animation: bool = false
+
+#stores character position between frames if anti-glide animation is on
+var position_stored = null
 
 var last_room := ''
 var anim_suffix := ''
@@ -31,13 +36,18 @@ onready var dialog_pos: Position2D = $DialogPos
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
+	print('call_ready')
 	if not Engine.editor_hint:
 #		idle(false)
 		set_process(follow_player)
 	else:
 		hide_helpers()
 		set_process(true)
-
+	for child in get_children():
+		if not child is Sprite:
+			continue
+		child.connect("frame_changed", self, "update_position")
+		print(self.name, child)
 
 func _get_property_list():
 	var properties = []
@@ -258,6 +268,12 @@ func walk_to_room_point(id: String) -> void:
 	
 	yield(C, 'character_move_ended')
 
+# Updates character position in the current room if anti-glide animation is on
+# should be called every frame in call method track in animation player
+func update_position():
+	E.current_room.update_characters_position(self)
+	
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_dialog_pos() -> float:
@@ -399,6 +415,8 @@ func play_walk(target_pos: Vector2) -> void:
 
 func play_talk() -> void:
 	play_animation('talk')
+
+
 
 
 func play_grab() -> void:

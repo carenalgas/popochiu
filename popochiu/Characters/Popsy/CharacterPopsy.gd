@@ -8,7 +8,6 @@ const Data := preload('CharacterPopsyState.gd')
 
 var state: Data = preload('CharacterPopsy.tres')
 
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the node is clicked
 func on_interact() -> void:
@@ -65,3 +64,4 @@ func play_talk() -> void:
 # Use it to play the grab animation for the character
 func play_grab() -> void:
 	pass
+

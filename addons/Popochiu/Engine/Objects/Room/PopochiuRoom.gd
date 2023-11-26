@@ -21,7 +21,6 @@ var _path := []
 var _moving_character: PopochiuCharacter = null
 var _nav_path: PopochiuWalkableArea = null
 
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _enter_tree() -> void:
 	if Engine.editor_hint:
@@ -250,7 +249,7 @@ func get_characters() -> Array:
 	for c in $Characters.get_children():
 		if c is PopochiuCharacter:
 			characters.append(c)
-	
+			
 	return characters
 
 
@@ -259,10 +258,21 @@ func clean_characters() -> void:
 		if c is PopochiuCharacter:
 			c.queue_free()
 
+func update_characters_position(character):
+	character.position = (
+		character.position_stored 
+		if character.position_stored 
+		else character.position
+		)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _move_along_path(distance):
-	var last_point = _moving_character.position
+	
+	var last_point = (
+		_moving_character.position_stored 
+		if _moving_character.position_stored 
+		else _moving_character.position
+		)
 	
 	while _path.size():
 		var distance_between_points = last_point.distance_to(_path[0])
@@ -272,9 +282,16 @@ func _move_along_path(distance):
 			# Play the animation on the character
 			_moving_character.play_walk(_path[0])
 			# Move the character on the destination
-			_moving_character.position = last_point.linear_interpolate(
-				_path[0], distance / distance_between_points
-			)
+			
+			var next_position = last_point.linear_interpolate(
+					_path[0], distance / distance_between_points
+				)
+			if (_moving_character.anti_glide_animation == true 
+			and _moving_character.has_method("update_position")
+			):
+				_moving_character.position_stored = next_position
+			else:
+				_moving_character.position = next_position
 			return
 
 		distance -= distance_between_points
@@ -317,7 +334,7 @@ func _clear_navigation_path() -> void:
 	# an empty Array.
 	if not _path.empty():
 		_path.clear()
-	
+	_moving_character.position_stored = null
 	_moving_character.idle(false)
 	C.emit_signal('character_move_ended', _moving_character)
 	_moving_character = null

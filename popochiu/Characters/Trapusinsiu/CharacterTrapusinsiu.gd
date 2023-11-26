@@ -5,7 +5,6 @@ const Data := preload('CharacterTrapusinsiuState.gd')
 
 var state: Data = preload('CharacterTrapusinsiu.tres')
 
-
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
 # When the PopochiuRoom where this node was already loaded
 func on_room_set() -> void:
@@ -52,3 +51,4 @@ func play_talk() -> void:
 # Use it to play the grab animation for the character
 func play_grab() -> void:
 	pass
+
