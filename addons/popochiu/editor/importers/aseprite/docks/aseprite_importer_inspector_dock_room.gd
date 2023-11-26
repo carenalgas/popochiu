@@ -49,10 +49,6 @@ func _on_import_pressed():
 			_options
 		)
 	
-	# Save the room scene to hopefully solve a strange behavior
-	# NOTE: didn't work
-	main_dock.ei.save_scene()
-
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
 		# Save the prop
@@ -74,11 +70,9 @@ func _customize_tag_ui(tag_row: AnimationTagRow):
 	tag_row.show_prop_buttons()
 
 
-func _create_prop(name: String, clickable: bool = true, visible: bool = true):
+func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = true):
 	var factory = PopochiuPropFactory.new(main_dock)
-	# TODO: Add "prop visibility" parameter to the create method in the factory
-	#       currently all props are created visible.
-	if factory.create(name, _root_node, clickable) != ResultCodes.SUCCESS:
+	if factory.create(name, _root_node, is_clickable, is_visible) != ResultCodes.SUCCESS:
 		return
 
 	return factory.get_obj_scene()

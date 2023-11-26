@@ -38,7 +38,7 @@ func _add_visible_child(child: Node) -> void:
 
 func _add_resource_to_room() -> void:
 	# Add the newly created obj to its room
-	_room.get_node(_obj_room_group).add_child( _scene)
+	_room.get_node(_obj_room_group).add_child(_scene)
 
 	# Set the ownership for the node plus all it's children
 	# (this address colliders, polygons, etc)
