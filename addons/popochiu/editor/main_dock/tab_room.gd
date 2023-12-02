@@ -237,7 +237,7 @@ func _select_in_tree(por: PopochiuObjectRow) -> void:
 		var node := opened_room.get_node('%s/%s'\
 		% [_types[por.type].parent, por.node_path])
 		
-		PopochiuUtils.select_node(node)
+		PopochiuEditorHelper.select_node(node)
 	
 	_last_selected = por
 
@@ -336,7 +336,7 @@ func _on_character_seleced(id: int) -> void:
 	instance.owner = opened_room
 	
 	main_dock.ei.save_scene()
-	PopochiuUtils.select_node(instance)
+	PopochiuEditorHelper.select_node(instance)
 
 
 func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:

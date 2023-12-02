@@ -1,8 +1,8 @@
-# Plugin setup.
-# 
-# Some icons that might be useful: godot\editor\editor_themes.cpp
 @tool
 extends EditorPlugin
+## Plugin setup.
+## 
+## Some icons that might be useful: godot\editor\editor_themes.cpp
 
 const ES :=\
 "[es] Estás usando Popochiu, un plugin para crear juegos point n' click"
@@ -25,7 +25,6 @@ var _shown_helpers := []
 var _export_plugin: EditorExportPlugin = null
 var _inspector_plugins := []
 var _selected_node: Node = null
-var _vsep := VSeparator.new()
 var _btn_baseline := Button.new()
 var _btn_walk_to := Button.new()
 var _types_helper: Resource = null
@@ -94,7 +93,7 @@ func _enter_tree() -> void:
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system
 	main_dock.focus_mode = Control.FOCUS_ALL
-	PopochiuUtils.ei = _editor_interface
+	PopochiuEditorHelper.ei = _editor_interface
 	
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 	
@@ -361,11 +360,9 @@ func _check_nodes() -> void:
 				_btn_baseline.set_pressed_no_signal(false)
 				_btn_walk_to.set_pressed_no_signal(false)
 			
-			_btn_baseline.show()
-			_btn_walk_to.show()
+			_btn_baseline.get_parent().show()
 		else:
-			_btn_baseline.hide()
-			_btn_walk_to.hide()
+			_btn_baseline.get_parent().hide()
 
 
 func _on_files_moved(old_file: String, new_file: String) -> void:
@@ -379,7 +376,6 @@ func _on_file_removed(file: String) -> void:
 
 
 func _create_container_buttons() -> void:
-	var panl := Panel.new()
 	var hbox := HBoxContainer.new()
 	
 	_btn_baseline.icon = preload('res://addons/popochiu/icons/baseline.png')
@@ -396,26 +392,20 @@ func _create_container_buttons() -> void:
 	_btn_walk_to.add_theme_stylebox_override('hover', _tool_btn_stylebox)
 	_btn_walk_to.pressed.connect(_select_walk_to)
 	
-	hbox.add_child(_vsep)
 	hbox.add_child(_btn_baseline)
 	hbox.add_child(_btn_walk_to)
 	
-	panl.add_child(hbox)
-	
 	add_control_to_container(
 		EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU,
-		panl
+		hbox
 	)
 	
-	_vsep.hide()
-	_btn_baseline.hide()
-	_btn_walk_to.hide()
+	hbox.hide()
 
 
 func _select_walk_to() -> void:
 	_btn_walk_to.set_pressed_no_signal(true)
 	_btn_baseline.set_pressed_no_signal(false)
-	_vsep.hide()
 	
 	_editor_interface.get_selection().clear()
 	
@@ -433,7 +423,6 @@ func _select_walk_to() -> void:
 func _select_baseline() -> void:
 	_btn_baseline.set_pressed_no_signal(true)
 	_btn_walk_to.set_pressed_no_signal(false)
-	_vsep.show()
 	
 	_editor_interface.get_selection().clear()
 	
