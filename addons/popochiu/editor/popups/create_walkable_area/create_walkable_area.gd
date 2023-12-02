@@ -74,6 +74,7 @@ func _create() -> void:
 	perimeter.name = 'Perimeter'
 	
 	var polygon := NavigationPolygon.new()
+	polygon.agent_radius = 0
 	polygon.add_outline(PackedVector2Array([
 		Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
 	]))

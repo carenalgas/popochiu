@@ -94,6 +94,7 @@ func _enter_tree() -> void:
 	main_dock.fs = _editor_file_system
 	main_dock.focus_mode = Control.FOCUS_ALL
 	PopochiuEditorHelper.ei = _editor_interface
+	PopochiuEditorHelper.undo_redo = get_undo_redo()
 	
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 	
