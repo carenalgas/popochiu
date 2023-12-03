@@ -28,6 +28,7 @@ var _selected_node: Node = null
 var _vsep := VSeparator.new()
 var _btn_baseline := Button.new()
 var _btn_walk_to := Button.new()
+var _btn_interaction_polygon := Button.new()
 var _types_helper: Resource = null
 var _tool_btn_stylebox :=\
 _editor_interface.get_base_control().get_theme_stylebox("normal", "Button")
@@ -341,9 +342,11 @@ func _check_nodes() -> void:
 			
 			_btn_baseline.show()
 			_btn_walk_to.show()
+			_btn_interaction_polygon.show()
 		else:
 			_btn_baseline.hide()
 			_btn_walk_to.hide()
+			_btn_interaction_polygon.hide()
 
 
 func _on_files_moved(old_file: String, new_file: String) -> void:
@@ -374,9 +377,17 @@ func _create_container_buttons() -> void:
 	_btn_walk_to.add_theme_stylebox_override('hover', _tool_btn_stylebox)
 	_btn_walk_to.pressed.connect(_select_walk_to)
 	
+	_btn_interaction_polygon.icon = preload('res://addons/popochiu/icons/interaction_polygon.png')
+	_btn_interaction_polygon.tooltip_text = 'Interaction Polygon'
+	_btn_interaction_polygon.toggle_mode = true
+	_btn_interaction_polygon.add_theme_stylebox_override('normal', _tool_btn_stylebox)
+	_btn_interaction_polygon.add_theme_stylebox_override('hover', _tool_btn_stylebox)
+	_btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
+	
 	hbox.add_child(_vsep)
 	hbox.add_child(_btn_baseline)
 	hbox.add_child(_btn_walk_to)
+	hbox.add_child(_btn_interaction_polygon)
 	
 	panl.add_child(hbox)
 	
@@ -384,7 +395,7 @@ func _create_container_buttons() -> void:
 		EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU,
 		panl
 	)
-	
+
 	_vsep.hide()
 	_btn_baseline.hide()
 	_btn_walk_to.hide()
@@ -393,6 +404,7 @@ func _create_container_buttons() -> void:
 func _select_walk_to() -> void:
 	_btn_walk_to.set_pressed_no_signal(true)
 	_btn_baseline.set_pressed_no_signal(false)
+	_btn_interaction_polygon.set_pressed_no_signal(false)
 	_vsep.hide()
 	
 	if _types_helper.is_prop(_selected_node)\
@@ -403,8 +415,9 @@ func _select_walk_to() -> void:
 
 
 func _select_baseline() -> void:
-	_btn_baseline.set_pressed_no_signal(true)
 	_btn_walk_to.set_pressed_no_signal(false)
+	_btn_baseline.set_pressed_no_signal(true)
+	_btn_interaction_polygon.set_pressed_no_signal(false)
 	_vsep.show()
 	
 	if _types_helper.is_prop(_selected_node)\
@@ -412,6 +425,19 @@ func _select_baseline() -> void:
 		_editor_interface.edit_node(_selected_node.get_node('BaselineHelper'))
 	else:
 		_editor_interface.edit_node(_selected_node.get_node('../BaselineHelper'))
+
+
+func _select_interaction_polygon() -> void:
+	_btn_walk_to.set_pressed_no_signal(false)
+	_btn_baseline.set_pressed_no_signal(false)
+	_btn_interaction_polygon.set_pressed_no_signal(true)
+	_vsep.hide()
+	
+	if _types_helper.is_prop(_selected_node)\
+	or _types_helper.is_hotspot(_selected_node):
+		_editor_interface.edit_node(_selected_node.get_node('InteractionPolygon'))
+	else:
+		_editor_interface.edit_node(_selected_node.get_node('../InteractionPolygon'))
 
 
 func _move_to_project(id: int) -> void:

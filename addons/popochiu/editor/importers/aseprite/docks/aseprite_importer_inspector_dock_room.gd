@@ -86,25 +86,6 @@ func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = tr
 
 func _save_prop(prop: PopochiuProp):
 	var packed_scene: PackedScene = PackedScene.new()
-
-	# FIXME
-	# IMPROVE This function contains a workaround for Godot's GH-81982
-	# this is probably not needed if they fix an unwanted behavior in
-	# Godot 4.1. See comments below to get rid of the WA as soon as possible.
-
-	# Working around a Godot 4.1 problem with not-owned children
-	# See:
-	# - https://github.com/godotengine/godot/issues/81982
-	# - https://ask.godotengine.org/35684/packedscene-errore-is_a_parent_of-pnode-is-true
-	var not_owned_children = []
-	for child in prop.get_children():
-		if child.owner == prop: continue
-		# This node is not owned by the prop
-		not_owned_children.append(child)
-		# Unparent the offending node
-		child.get_parent().remove_child(child)
-
-	# Saving the prop in a sane way
 	packed_scene.pack(prop)
 	if ResourceSaver.save(packed_scene, prop.scene_file_path) != OK:
 		push_error(
@@ -112,13 +93,4 @@ func _save_prop(prop: PopochiuProp):
 			[prop.name, prop.scene_file_path]
 		)
 		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
-
-	# Working around a Godot 4.1 problem with not-owned children
-	# See:
-	# - https://github.com/godotengine/godot/issues/81982
-	# - https://ask.godotengine.org/35684/packedscene-errore-is_a_parent_of-pnode-is-true
-	for child in not_owned_children:
-		# Unparent the offending node
-		prop.add_child(child)
-
 	return ResultCodes.SUCCESS

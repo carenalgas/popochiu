@@ -111,11 +111,13 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 func hide_helpers() -> void:
 	$BaselineHelper.hide()
 	$WalkToHelper.hide()
+	$InteractionPolygon.hide()
 
 
 func show_helpers() -> void:
 	$BaselineHelper.show()
 	$WalkToHelper.show()
+	$InteractionPolygon.show()
 
 
 func disable() -> Callable:
