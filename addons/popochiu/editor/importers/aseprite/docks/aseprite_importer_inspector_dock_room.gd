@@ -34,7 +34,14 @@ func _on_import_pressed():
 		# In case the prop is there, use the one we already have
 		var prop = props_container.get_node_or_null(prop_name)
 		if prop == null:
+			# Create a new prop if necessary, specifying the
+			# interaction flags.
 			prop = _create_prop(prop_name, tag.prop_clickable, tag.prop_visible)
+		else:
+			# Force flags (a bit redundant but they may have been changed
+			# in the Importer interface, for already imported props)
+			prop.clickable = tag.prop_clickable
+			prop.visible = tag.prop_visible
 
 		prop.set_meta("ANIM_NAME", tag.tag_name)
 		

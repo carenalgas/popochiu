@@ -22,16 +22,14 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false, i
 	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# Create the script (if the prop is interactive)
-	if is_interactive:
-		result_code = _copy_script_template()
-		if result_code != ResultCodes.SUCCESS: return result_code
+	result_code = _copy_script_template()
+	if result_code != ResultCodes.SUCCESS: return result_code
 		
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the instance
 	var new_obj: PopochiuProp = _load_obj_base_scene()
 	
-	if is_interactive:
-		new_obj.set_script(ResourceLoader.load(_path_script))
+	new_obj.set_script(ResourceLoader.load(_path_script))
 	
 	new_obj.name = _pascal_name
 	new_obj.script_name = _pascal_name
@@ -50,11 +48,9 @@ func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false, i
 	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# Create a collision polygon as a child in the room scene
-	# if the prop is interactive
-	if is_interactive:
-		var collision := CollisionPolygon2D.new()
-		collision.name = 'InteractionPolygon'
-		_add_visible_child(collision)
+	var collision := CollisionPolygon2D.new()
+	collision.name = 'InteractionPolygon'
+	_add_visible_child(collision)
 
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
