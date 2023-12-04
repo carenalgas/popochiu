@@ -293,14 +293,26 @@ func _get_tags_from_source() -> Array:
 	return tags_list
 
 
-func _show_message(message: String, title: String = ""):
+func _show_message(
+	message: String, title: String = "", object: Object = null, method := ""
+):
 	var _warning_dialog = AcceptDialog.new()
 	get_parent().add_child(_warning_dialog)
 	if title != "":
 		_warning_dialog.title = title
 	_warning_dialog.dialog_text = message
+	_warning_dialog.popup_window = true
 	_warning_dialog.popup_centered()
-	_warning_dialog.connect("close_requested", Callable(_warning_dialog, "queue_free"))
+	
+	var callback := Callable(_warning_dialog, "queue_free")
+	
+	if is_instance_valid(object) and not method.is_empty():
+		callback = func():
+			_warning_dialog.queue_free()
+			object.call(method)
+	
+	_warning_dialog.confirmed.connect(callback)
+	_warning_dialog.close_requested.connect(callback)
 
 
 func _show_confirmation(message: String, title: String = ""):

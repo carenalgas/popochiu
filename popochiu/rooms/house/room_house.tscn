@@ -18,6 +18,7 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(-88, 16, -40, 7, 81, 12
 
 [node name="RoomHouse" type="Node2D"]
 script = ExtResource("1_5s51l")
+popochiu_placeholder = null
 
 [node name="WalkableAreas" type="Node2D" parent="."]
 
@@ -43,6 +44,7 @@ texture = ExtResource("7_ys5mq")
 walk_to_point = Vector2(26, -2)
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/ToyCar"]
+visible = false
 polygon = PackedVector2Array(-8, 1, -7, -4, 0, -5, 7, -2, 7, 3, 2, 5, -6, 4)
 
 [node name="Hotspots" type="Node2D" parent="."]

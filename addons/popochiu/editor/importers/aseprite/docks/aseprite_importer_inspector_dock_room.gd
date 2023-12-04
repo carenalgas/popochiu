@@ -69,7 +69,13 @@ func _on_import_pressed():
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
 		await get_tree().create_timer(0.1).timeout
-		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
+		# Once the popup is closed, call _clean_props()
+		_show_message(
+			"%d animation tags processed." % [_tags_cache.size()],
+			"Done!",
+			self,
+			"_clean_props"
+		)
 
 
 func _customize_tag_ui(tag_row: AnimationTagRow):
@@ -94,3 +100,16 @@ func _save_prop(prop: PopochiuProp):
 		)
 		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
 	return ResultCodes.SUCCESS
+
+
+## Removes the script in all the created props so the properties (basically their
+## texture) is not overwritten by the room's .tscn file. Then the scene is saved
+## and reloaded so the nodes in the tree doesn't appear as Area2D but as the
+## corresponding ones: PopochiuProp.
+func _clean_props() -> void:
+	for prop in _root_node.get_node("Props").get_children():
+		prop.set_script(null)
+		prop.remove_meta("ANIM_NAME")
+
+	main_dock.ei.save_scene()
+	main_dock.ei.reload_scene_from_path(_root_node.scene_file_path)
