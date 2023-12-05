@@ -1,7 +1,8 @@
 @tool
 extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock.gd"
 
-var _animation_creator = preload("res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
+var _animation_creator = preload(\
+"res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░

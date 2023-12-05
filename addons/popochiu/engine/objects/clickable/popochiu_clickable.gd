@@ -13,10 +13,12 @@ const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
 @export var walk_to_point := Vector2.ZERO : set = set_walk_to_point
 @export var cursor: CURSOR.Type = CURSOR.Type.NONE
 @export var always_on_top := false
+@export var interaction_polygon := PackedVector2Array()
 
 var room: Node2D = null : set = set_room # It is a PopochiuRoom
 var times_clicked := 0
 var times_right_clicked := 0
+var editing_polygon := false
 
 @onready var _description_code := description
 
@@ -27,10 +29,21 @@ func _ready():
 	
 	if Engine.is_editor_hint():
 		hide_helpers()
+		
+		if get_node_or_null("InteractionPolygon") == null: return
+		
+		if interaction_polygon.is_empty():
+			interaction_polygon = get_node('InteractionPolygon').polygon
+		else:
+			get_node('InteractionPolygon').polygon = interaction_polygon
+		
 		return
 	else:
 		$BaselineHelper.free()
 		$WalkToHelper.free()
+		
+		if get_node_or_null("InteractionPolygon"):
+			get_node("InteractionPolygon").polygon = interaction_polygon
 	
 	visibility_changed.connect(_toggle_input)
 
@@ -78,12 +91,15 @@ func _process(delta):
 	if Engine.is_editor_hint():
 		if walk_to_point != get_node('WalkToHelper').position:
 			walk_to_point = get_node('WalkToHelper').position
-
+			
 			notify_property_list_changed()
 		elif baseline != get_node('BaselineHelper').position.y:
 			baseline = get_node('BaselineHelper').position.y
-
+			
 			notify_property_list_changed()
+		
+		if editing_polygon:
+			interaction_polygon = get_node('InteractionPolygon').polygon
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
@@ -111,13 +127,17 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 func hide_helpers() -> void:
 	$BaselineHelper.hide()
 	$WalkToHelper.hide()
-	$InteractionPolygon.hide()
+	
+	if get_node_or_null("InteractionPolygon"):
+		$InteractionPolygon.hide()
 
 
 func show_helpers() -> void:
 	$BaselineHelper.show()
 	$WalkToHelper.show()
-	$InteractionPolygon.show()
+	
+	if get_node_or_null("InteractionPolygon"):
+		$InteractionPolygon.show()
 
 
 func disable() -> Callable:
@@ -199,6 +219,10 @@ func _translate() -> void:
 	description = E.get_text(
 		'%s-%s' % [get_tree().current_scene.name, _description_code]
 	)
+
+
+func _on_interaction_polygon_changed() -> void:
+	prints("Me la cambiaron")
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░

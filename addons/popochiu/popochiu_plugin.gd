@@ -339,6 +339,7 @@ func _check_nodes() -> void:
 			or _types_helper.is_hotspot(_selected_node):
 				_btn_baseline.set_pressed_no_signal(false)
 				_btn_walk_to.set_pressed_no_signal(false)
+				_btn_interaction_polygon.set_pressed_no_signal(false)
 			
 			_btn_baseline.show()
 			_btn_walk_to.show()
@@ -433,11 +434,16 @@ func _select_interaction_polygon() -> void:
 	_btn_interaction_polygon.set_pressed_no_signal(true)
 	_vsep.hide()
 	
+	var collision_polygon: CollisionPolygon2D = null
+	
 	if _types_helper.is_prop(_selected_node)\
 	or _types_helper.is_hotspot(_selected_node):
-		_editor_interface.edit_node(_selected_node.get_node('InteractionPolygon'))
+		collision_polygon = _selected_node.get_node('InteractionPolygon')
 	else:
-		_editor_interface.edit_node(_selected_node.get_node('../InteractionPolygon'))
+		collision_polygon = _selected_node.get_node('../InteractionPolygon')
+	
+	_editor_interface.edit_node(collision_polygon)
+	collision_polygon.get_parent().editing_polygon = true
 
 
 func _move_to_project(id: int) -> void:
