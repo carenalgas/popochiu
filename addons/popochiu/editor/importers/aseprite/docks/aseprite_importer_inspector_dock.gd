@@ -5,7 +5,8 @@ extends PanelContainer
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 const LOCAL_OBJ_CONFIG = preload("res://addons/popochiu/editor/config/local_obj_config.gd")
 ## TODO: this can be specialized, even if for a two buttons... ?
-const AnimationTagRow = preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd")
+const AnimationTagRow =\
+preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd")
 
 
 var scene: Node
@@ -16,7 +17,8 @@ var file_system: EditorFileSystem
 
 
 # External logic
-var _animation_tag_row_scene: PackedScene = preload('res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.tscn')
+var _animation_tag_row_scene: PackedScene =\
+preload('res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.tscn')
 var _aseprite = preload("../aseprite_controller.gd").new() ## TODO: should be absolute?
 
 # References for children scripts
@@ -93,10 +95,16 @@ func _load_config(cfg):
 		_set_source(cfg.source)
 
 	_output_folder = cfg.get("o_folder", "")
-	get_node('%OutFolderButton').text = _output_folder if _output_folder != "" else _out_folder_default
+	get_node('%OutFolderButton').text = (
+		_output_folder if _output_folder != "" else _out_folder_default
+	)
 	get_node('%OutFileName').text = cfg.get("o_name", "")
-	get_node('%VisibleLayersCheckButton').set_pressed_no_signal(cfg.get("only_visible_layers", false))
-	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(cfg.get("wipe_old_anims", false))
+	get_node('%VisibleLayersCheckButton').set_pressed_no_signal(
+		cfg.get("only_visible_layers", false)
+	)
+	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(
+		cfg.get("wipe_old_anims", false)
+	)
 
 	_set_options_visible(cfg.get("op_exp", false))
 	_populate_tags(cfg.get("tags", []))
@@ -132,7 +140,9 @@ func _load_default_config():
 	get_node('%OutFolderButton').text = "[empty]"
 	get_node('%OutFileName').clear()
 	get_node('%VisibleLayersCheckButton').set_pressed_no_signal(false)
-	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(config.is_default_wipe_old_anims_enabled())
+	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(
+		config.is_default_wipe_old_anims_enabled()
+	)
 
 
 func _set_source(source):
@@ -174,7 +184,9 @@ func _on_import_pressed():
 	_options = {
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
-		"output_folder": _output_folder if _output_folder != "" else _root_node.scene_file_path.get_base_dir(),
+		"output_folder": (
+			_output_folder if _output_folder != "" else _root_node.scene_file_path.get_base_dir()
+		),
 		"output_filename": get_node('%OutFileName').text,
 		"only_visible_layers": get_node('%VisibleLayersCheckButton').is_pressed(),
 		"wipe_old_animations": get_node('%WipeOldAnimationsCheckButton').is_pressed(),
@@ -309,7 +321,7 @@ func _show_message(
 	if is_instance_valid(object) and not method.is_empty():
 		callback = func():
 			_warning_dialog.queue_free()
-			object.call(method)
+			object.call_deferred(method)
 	
 	_warning_dialog.confirmed.connect(callback)
 	_warning_dialog.close_requested.connect(callback)
@@ -332,7 +344,9 @@ func _on_options_title_toggled(button_pressed):
 
 func _set_options_visible(is_visible):
 	get_node('%Options').visible = is_visible
-	get_node('%OptionsTitle').icon = config.get_icon("expanded") if is_visible else config.get_icon("collapsed")
+	get_node('%OptionsTitle').icon = (
+		config.get_icon("expanded") if is_visible else config.get_icon("collapsed")
+	)
 
 
 func _on_out_folder_pressed():
@@ -354,7 +368,9 @@ func _create_output_folder_selection():
 
 func _on_output_folder_selected(path):
 	_output_folder = path
-	get_node('%OutFolderButton').text = _output_folder if _output_folder != "" else _out_folder_default
+	get_node('%OutFolderButton').text = (
+		_output_folder if _output_folder != "" else _out_folder_default
+	)
 	_output_folder_dialog.queue_free()
 	_save_config()
 

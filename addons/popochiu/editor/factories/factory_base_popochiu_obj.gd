@@ -92,6 +92,7 @@ func _create_state_resource() -> int:
 	var state_template: Script = load(
 		BASE_STATE_TEMPLATE % _type_label
 	).duplicate()
+
 	if ResourceSaver.save(state_template, _path_state) != OK:
 		push_error(
 			'[Popochiu] Could not create %s state script: %s' %
@@ -104,7 +105,7 @@ func _create_state_resource() -> int:
 	_state_resource.scene = _path_scene
 	_state_resource.resource_name = _pascal_name
 	
-	if ResourceSaver.save( _state_resource, _path_resource) != OK:
+	if ResourceSaver.save(_state_resource, _path_resource) != OK:
 		push_error(
 			"[Popochiu] Couldn't create state resource for %s: %s" %
 			[_type_label, _pascal_name]
@@ -129,16 +130,19 @@ func _copy_script_template() -> int:
 	return ResultCodes.SUCCESS
 
 
+## Create the script for the object based on the template of its type.
 func _create_script_from_template() -> int:
 	var script_template_file = FileAccess.open(
 		BASE_SCRIPT_TEMPLATE % _type_label, FileAccess.READ
 	)
+	
 	if script_template_file == null:
 		push_error(
 			"[Popochiu] Couldn't read script template from %s" %
 			[BASE_SCRIPT_TEMPLATE % _type_label]
 		)
 		return ResultCodes.ERR_CANT_OPEN_OBJ_SCRIPT_TEMPLATE
+	
 	var new_code: String = script_template_file.get_as_text()
 	script_template_file.close()
 
@@ -194,8 +198,10 @@ func _save_obj_resource(obj: Resource) -> int:
 	_resource = load(_path_resource)
 
 	return ResultCodes.SUCCESS
-	
 
+
+## Makes a copy of the base scene for the object (e.g. popochiu_room.tscn,
+## popochiu_inventory_item.tscn, popochiu_prop.tscn).
 func _load_obj_base_scene() -> Node:
 	var obj = load(
 		BASE_SCENE_PATH % [_type_label, _type_label]
@@ -205,7 +211,7 @@ func _load_obj_base_scene() -> Node:
 	# 	overwritten by that assignment.
 	if _script != null:
 		obj.set_script(load(_path_script))
-
+	
 	return obj
 
 

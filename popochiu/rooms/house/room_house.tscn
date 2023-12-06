@@ -37,11 +37,13 @@ navigation_polygon = SubResource("NavigationPolygon_ig1rh")
 [node name="Bg" parent="Props" instance=ExtResource("2_s2nyx")]
 position = Vector2(160, 90)
 texture = ExtResource("4_lih8o")
+interaction_polygon = PackedVector2Array()
 
 [node name="ToyCar" parent="Props" instance=ExtResource("4_0fq0w")]
 position = Vector2(104, 127)
 texture = ExtResource("7_ys5mq")
 walk_to_point = Vector2(26, -2)
+interaction_polygon = PackedVector2Array(-8, 1, -7, -4, 0, -5, 7, -2, 7, 3, 2, 5, -6, 4)
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="Props/ToyCar"]
 visible = false
@@ -63,10 +65,13 @@ position = Vector2(244, 127)
 
 [node name="CharacterGoddiu *" parent="Characters" instance=ExtResource("8_kbv2w")]
 position = Vector2(109, 112)
+interaction_polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
 [node name="CharacterPopsy *" parent="Characters" instance=ExtResource("10_cxlhm")]
 position = Vector2(221, 128)
 popochiu_placeholder = null
+interaction_polygon = PackedVector2Array(-9, -23, 7, -24, 16, -18, 16, -2, -4, 3, -19, -1)
 
 [node name="Character01 *" parent="Characters" instance=ExtResource("10_pnj5o")]
 position = Vector2(172, 156)
+interaction_polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
