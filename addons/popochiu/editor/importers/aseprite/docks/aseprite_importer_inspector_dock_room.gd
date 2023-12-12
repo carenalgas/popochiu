@@ -70,6 +70,7 @@ func _on_import_pressed():
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
 		await get_tree().create_timer(0.1).timeout
+		
 		# Once the popup is closed, call _clean_props()
 		_show_message(
 			"%d animation tags processed." % [_tags_cache.size()],

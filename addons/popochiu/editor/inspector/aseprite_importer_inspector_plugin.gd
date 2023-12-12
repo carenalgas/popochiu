@@ -1,7 +1,10 @@
 extends EditorInspectorPlugin ## TODO: create a base class with pointer variables
 
-const INSPECTOR_DOCK = preload("res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock.tscn")
+const DOCKS_PATH := "res://addons/popochiu/editor/importers/aseprite/docks/"
+const INSPECTOR_DOCK = preload(DOCKS_PATH + "aseprite_importer_inspector_dock.tscn")
 const CONFIG_SCRIPT = preload("res://addons/popochiu/editor/config/config.gd")
+const INSPECTOR_DOCK_CHARACTER := DOCKS_PATH + "aseprite_importer_inspector_dock_character.gd"
+const INSPECTOR_DOCK_ROOM := DOCKS_PATH + "aseprite_importer_inspector_dock_room.gd"
 
 
 var ei: EditorInterface
@@ -21,6 +24,7 @@ func _can_handle(object):
 func _parse_begin(object):
 	_target_node = object
 
+
 func _parse_category(object, category):
 	if category == 'Aseprite':
 		# Instanciate and configure the dock
@@ -28,9 +32,9 @@ func _parse_category(object, category):
 
 		# Load the specific script in the dock
 		if object is PopochiuCharacter:
-			dock.set_script(load("res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock_character.gd"))
+			dock.set_script(load(INSPECTOR_DOCK_CHARACTER))
 		if object is PopochiuRoom:
-			dock.set_script(load("res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock_room.gd"))
+			dock.set_script(load(INSPECTOR_DOCK_ROOM))
 
 		dock.target_node = object
 		dock.config = config

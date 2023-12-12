@@ -112,6 +112,7 @@ func _load_config(cfg):
 
 func _save_config():
 	_update_tags_cache()
+	
 	var cfg := {
 		"source": _source,
 		"tags": _tags_cache,
@@ -172,15 +173,15 @@ func _on_rescan_pressed():
 func _on_import_pressed():
 	if _importing:
 		return
+	
 	_importing = true
-
 	_root_node = get_tree().get_edited_scene_root()
-
+	
 	if _source == "":
 		_show_message("Aseprite file not selected")
 		_importing = false
 		return
-
+	
 	_options = {
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
@@ -191,7 +192,7 @@ func _on_import_pressed():
 		"only_visible_layers": get_node('%VisibleLayersCheckButton').is_pressed(),
 		"wipe_old_animations": get_node('%WipeOldAnimationsCheckButton').is_pressed(),
 	}
-
+	
 	_save_config()
 
 
@@ -260,6 +261,7 @@ func _empty_tags_container():
 		get_node('%Tags').remove_child(tl)
 		tl.queue_free()
 
+
 func _update_tags_cache():
 	_tags_cache = _get_tags_from_ui()
 
@@ -309,22 +311,24 @@ func _show_message(
 	message: String, title: String = "", object: Object = null, method := ""
 ):
 	var _warning_dialog = AcceptDialog.new()
-	get_parent().add_child(_warning_dialog)
+	
 	if title != "":
 		_warning_dialog.title = title
+	
 	_warning_dialog.dialog_text = message
 	_warning_dialog.popup_window = true
-	_warning_dialog.popup_centered()
 	
 	var callback := Callable(_warning_dialog, "queue_free")
 	
 	if is_instance_valid(object) and not method.is_empty():
 		callback = func():
-			_warning_dialog.queue_free()
-			object.call_deferred(method)
+			object.call(method)
 	
 	_warning_dialog.confirmed.connect(callback)
 	_warning_dialog.close_requested.connect(callback)
+	
+	get_parent().add_child(_warning_dialog)
+	_warning_dialog.popup_centered()
 
 
 func _show_confirmation(message: String, title: String = ""):
