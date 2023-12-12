@@ -327,7 +327,7 @@ func _show_message(
 	_warning_dialog.confirmed.connect(callback)
 	_warning_dialog.close_requested.connect(callback)
 	
-	get_parent().add_child(_warning_dialog)
+	main_dock.add_child(_warning_dialog)
 	_warning_dialog.popup_centered()
 
 
