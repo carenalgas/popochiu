@@ -26,6 +26,9 @@ var last_room := ''
 var anim_suffix := ''
 var is_moving := false
 var emotion := ''
+var on_scaling_region: Dictionary = {}
+var default_walk_speed: int
+var default_scale: Vector2
 
 var _looking_dir: int = Looking.DOWN
 
@@ -35,7 +38,8 @@ var _looking_dir: int = Looking.DOWN
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	super()
-	
+	default_walk_speed = walk_speed
+	default_scale = Vector2(scale)
 	if not Engine.is_editor_hint():
 		set_process(follow_player)
 	else:
