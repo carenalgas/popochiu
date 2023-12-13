@@ -182,6 +182,12 @@ func clean_characters() -> void:
 		if c is PopochiuCharacter:
 			c.queue_free()
 
+func update_characters_position(character):
+	character.position = (
+		character.position_stored 
+		if character.position_stored 
+		else character.position
+		)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_marker(marker_name: String) -> Marker2D:
@@ -288,16 +294,26 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _move_along_path(distance: float, moving_character_data: Dictionary):
-	var last_point = moving_character_data.character.position
+	var last_point: Vector2 =( 
+		moving_character_data.character.position_stored 
+		if moving_character_data.character.position_stored 
+		else moving_character_data.character.position
+		)
 
 	while moving_character_data.path.size():
 		var distance_between_points = last_point.distance_to(
 			moving_character_data.path[0]
 		)
+		
 		if distance <= distance_between_points:
-			moving_character_data.character.position = last_point.lerp(
-				moving_character_data.path[0], distance / distance_between_points
-			)
+			var next_position = last_point.lerp(
+					moving_character_data.path[0], distance / distance_between_points
+				)
+			if moving_character_data.character.anti_glide_animation:
+				moving_character_data.character.position_stored = next_position
+			else:
+				moving_character_data.character.position = next_position
+			
 			return
 
 		distance -= distance_between_points
