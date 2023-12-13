@@ -4,13 +4,16 @@ class_name PopochiuPropFactory
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
+	
 	_type = Constants.Types.PROP
 	_type_label = 'prop'
 	_obj_room_group = 'Props'
 	_path_template = '/props/%s/prop_%s'
 
 
-func create(obj_name: String, room: PopochiuRoom, is_interactive:bool = false, is_visible:bool = true) -> int:
+func create(
+	obj_name: String, room: PopochiuRoom, is_interactive:bool = false, is_visible:bool = true
+) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
 
