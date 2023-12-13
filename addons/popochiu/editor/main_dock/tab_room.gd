@@ -197,7 +197,14 @@ func scene_changed(scene_root: Node) -> void:
 					var row: PopochiuObjectRow = _create_object_row(
 						t, c.name, row_path, node_path
 					)
+					
 					_types[t].group.add(row)
+					
+					# NOTE: Temporary fix for incorrect row naming after importing
+					# 		the props from Aseprite
+					if row.name != c.name:
+						row.name = c.name
+						row._label.text = str(c.name)
 			
 			if _types[t].has('popup'):
 				_types[t].popup.room_opened(opened_room)

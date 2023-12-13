@@ -18,6 +18,7 @@ outlines = Array[PackedVector2Array]([PackedVector2Array(-88, 16, -40, 7, 81, 12
 
 [node name="RoomHouse" type="Node2D"]
 script = ExtResource("1_5s51l")
+script_name = "House"
 popochiu_placeholder = null
 
 [node name="WalkableAreas" type="Node2D" parent="."]
