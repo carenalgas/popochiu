@@ -130,7 +130,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)
 	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
-	
+	update_characters_position(chr)
 	if chr.follow_player:
 		C.player.started_walk_to.connect(_follow_player.bind(chr))
 
