@@ -21,7 +21,9 @@ signal move_ended
 @export var walk_speed := 200.0
 @export var can_move := true
 @export var ignore_walkable_areas := false
+@export var anti_glide_animation: bool = false
 
+var position_stored = null
 var last_room := ''
 var anim_suffix := ''
 var is_moving := false
@@ -46,6 +48,11 @@ func _ready():
 		hide_helpers()
 		set_process(true)
 
+	for child in get_children():
+		if not child is Sprite2D:
+			continue
+		child.frame_changed.connect(_update_position)
+		
 func _get_property_list():
 	var properties = []
 	properties.append({
@@ -81,6 +88,7 @@ func _play_talk() -> void:
 
 func _play_grab() -> void:
 	play_animation('grab')
+
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -519,3 +527,7 @@ func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 		return
 
 	await walk(node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset)
+
+func _update_position():
+	E.current_room.update_characters_position(self)
+
