@@ -296,10 +296,16 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _update_character_scale(chr):
 	if chr.on_scaling_region:
-		var polygon_range = chr.on_scaling_region['polygon_bottom_y'] - chr.on_scaling_region['polygon_top_y']
-		var scale_range = chr.on_scaling_region['scale_bottom'] - chr.on_scaling_region['scale_top']
+		var polygon_range = (
+			chr.on_scaling_region['polygon_bottom_y'] - chr.on_scaling_region['polygon_top_y']
+			)
+		var scale_range = (
+			chr.on_scaling_region['scale_bottom'] - chr.on_scaling_region['scale_top']
+			)
 
-		var position_from_the_top_of_region = chr.position.y-chr.on_scaling_region['polygon_top_y']
+		var position_from_the_top_of_region = (
+			chr.position.y-chr.on_scaling_region['polygon_top_y']
+			)
 
 		var scale_for_position = (
 			chr.on_scaling_region['scale_top']+(

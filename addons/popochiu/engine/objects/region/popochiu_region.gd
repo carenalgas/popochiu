@@ -41,8 +41,15 @@ func _update_scaling_region(chr: PopochiuCharacter) -> void:
 		'region_description': self.description,
 		'scale_top': self.scale_top, 
 		'scale_bottom': self.scale_bottom,  
-		'polygon_top_y': polygon_y_array.min()+self.position.y+get_node("InteractionPolygon").position.y if self.position else '',
-		'polygon_bottom_y': polygon_y_array.max()+self.position.y+get_node("InteractionPolygon").position.y if self.position else '',
+		'polygon_top_y': (
+			polygon_y_array.min()+self.position.y+get_node("InteractionPolygon").position.y 
+			if self.position 
+			else ''
+			),
+		'polygon_bottom_y': (
+			polygon_y_array.max()+self.position.y+get_node("InteractionPolygon").position.y 
+			if self.position 
+			else ''),
 
 		}
 
