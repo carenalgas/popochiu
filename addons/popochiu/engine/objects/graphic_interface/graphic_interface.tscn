@@ -89,6 +89,7 @@ theme_override_styles/disabled = SubResource("StyleBoxEmpty_pcw4k")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_scpl3")
 
 [node name="History" parent="." instance=ExtResource("7")]
+visible = false
 
 [node name="SaveLoad" parent="." instance=ExtResource("8")]
 visible = false

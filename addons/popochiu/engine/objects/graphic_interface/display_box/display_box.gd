@@ -2,8 +2,6 @@ extends RichTextLabel
 # Show a text in the form of GUI. Can be used to show game (or narrator)
 # messages.
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# warning-ignore-all:unused_signal
-# warning-ignore-all:return_value_discarded
 
 signal shown
 
@@ -44,9 +42,11 @@ func _show_box(msg := '') -> void:
 	rt.append_text(msg)
 	lbl.text = rt.text
 	add_child(lbl)
-	var size := lbl.size
-	if size.x > get_meta(DFLT_SIZE).x:
-		size.x = get_meta(DFLT_SIZE).x - 16.0
+	
+	var lbl_size := lbl.size
+	if lbl_size.x > get_meta(DFLT_SIZE).x:
+		lbl_size.x = get_meta(DFLT_SIZE).x - 16.0
+	
 	lbl.free()
 	rt.free()
 	# ===================================== Calculate the width of the node ====
