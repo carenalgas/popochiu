@@ -61,7 +61,7 @@ const GI := 0
 const TL := 1
 const GRAPHIC_INTERFACE_ADDON :=\
 'res://addons/popochiu/engine/objects/graphic_interface/'
-const GRAPHIC_INTERFACE_POPOCHIU :=\
+const GRAPHIC_INTERFACE_GAME :=\
 BASE_DIR + '/graphic_interface/graphic_interface.tscn'
 const TRANSITION_LAYER_ADDON :=\
 'res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn'

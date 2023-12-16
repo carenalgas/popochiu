@@ -116,7 +116,7 @@ func appear(show_welcome := false) -> void:
 	
 	popup_centered_clamped(dflt_size, 0.5)
 	
-	if PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU in PopochiuUtils.ei.get_open_scenes():
+	if PopochiuResources.GRAPHIC_INTERFACE_GAME in PopochiuEditorHelper.ei.get_open_scenes():
 		_show_gui_warning()
 		for btn in gui_templates.get_children():
 			btn.disabled = true

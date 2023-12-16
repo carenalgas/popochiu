@@ -75,16 +75,16 @@ func _create_popup() -> void:
 	
 	# Add the popup to the Popups node in the graphic interface scene ----------
 	var popup_node: PopochiuPopup = load(scene_path).instantiate()
-	var graphic_interface_node := PopochiuUtils.ei.get_edited_scene_root()
+	var graphic_interface_node := PopochiuEditorHelper.ei.get_edited_scene_root()
 	
 	graphic_interface_node.get_node("Popups").add_child(popup_node)
 	popup_node.owner = graphic_interface_node
-	PopochiuUtils.ei.save_scene()
+	PopochiuEditorHelper.ei.save_scene()
 	
 	# Open the scene of the created popup for edition --------------------------
-	PopochiuUtils.ei.get_resource_filesystem().scan()
-	PopochiuUtils.ei.select_file(scene_path)
-	PopochiuUtils.ei.open_scene_from_path(scene_path)
+	PopochiuEditorHelper.ei.get_resource_filesystem().scan()
+	PopochiuEditorHelper.ei.select_file(scene_path)
+	PopochiuEditorHelper.ei.open_scene_from_path(scene_path)
 
 
 #endregion

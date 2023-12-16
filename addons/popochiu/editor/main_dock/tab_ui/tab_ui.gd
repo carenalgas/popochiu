@@ -8,8 +8,8 @@ var main_dock: Panel
 
 var _opened_scene: Control = null
 var _components_basedir := []
-var _script_path := PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.replace(".tscn", ".gd")
-var _commands_path := PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.replace(
+var _script_path := PopochiuResources.GRAPHIC_INTERFACE_GAME.replace(".tscn", ".gd")
+var _commands_path := PopochiuResources.GRAPHIC_INTERFACE_GAME.replace(
 	"graphic_interface.tscn", "commands.gd"
 )
 
@@ -77,7 +77,7 @@ func open_gui_scene() -> void:
 	and _opened_scene is PopochiuGraphicInterface:
 		return
 	
-	var path := PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU
+	var path := PopochiuResources.GRAPHIC_INTERFACE_GAME
 	
 	main_dock.ei.select_file(path)
 	main_dock.ei.set_main_screen_editor('2D')
@@ -210,10 +210,10 @@ func _add_component(btn: Button) -> void:
 	
 	instance.owner = _opened_scene
 	
-	var result: int = PopochiuUtils.ei.save_scene()
+	var result: int = PopochiuEditorHelper.ei.save_scene()
 	
 	if result == OK:
-		PopochiuUtils.select_node(instance)
+		PopochiuEditorHelper.select_node(instance)
 	else:
 		btn.disabled = false
 

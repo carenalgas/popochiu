@@ -6,6 +6,7 @@ extends Resource
 static var ei: EditorInterface = null
 static var undo_redo: EditorUndoRedoManager = null
 
+
 static func select_node(node: Node) -> void:
 	ei.get_selection().clear()
 	ei.get_selection().add_node(node)

@@ -11,6 +11,7 @@ const EN :=\
 const SYMBOL :=\
 "▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒ \\( u )3(u )/ ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒"
 
+
 var main_dock: Panel
 ## TODO: refs #26: use this as base to migrate the configuration to ProjectSettings
 var config = preload("res://addons/popochiu/editor/config/config.gd").new()
@@ -30,6 +31,8 @@ var _btn_walk_to := Button.new()
 var _types_helper: Resource = null
 var _tool_btn_stylebox :=\
 _editor_interface.get_base_control().get_theme_stylebox("normal", "Button")
+var _gui_templates_helper :=\
+preload("res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd")
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
@@ -123,7 +126,7 @@ func _enter_tree() -> void:
 	
 	main_dock.setup_dialog.es = _editor_interface.get_editor_settings()
 	main_dock.setup_dialog.move_requested.connect(_move_to_project)
-	main_dock.setup_dialog.gui_selected.connect(_copy_gui_template)
+	main_dock.setup_dialog.gui_selected.connect(_gui_templates_helper.copy_gui_template)
 	
 	if PopochiuResources.get_data_value("setup", "done", false) == false:
 		main_dock.setup_dialog.appear(true)
@@ -231,11 +234,11 @@ func _set_setup_done() -> void:
 
 func _check_popochiu_dependencies() -> void:
 	if DirAccess.dir_exists_absolute(
-		PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+		PopochiuResources.GRAPHIC_INTERFACE_GAME.get_base_dir()
 	):
 		_fix_dependencies(
 			_editor_file_system.get_filesystem_path(
-				PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+				PopochiuResources.GRAPHIC_INTERFACE_GAME.get_base_dir()
 			)
 		)
 		
@@ -264,7 +267,7 @@ func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
 	for f in dir.get_file_count():
 		var path = dir.get_file_path(f)
 		var dependencies = ResourceLoader.get_dependencies(path)
-
+		
 		for d in dependencies:
 			if FileAccess.file_exists(d):
 				continue
@@ -444,7 +447,7 @@ func _move_to_project(id: int) -> void:
 	if id == PopochiuResources.GI:
 		DirAccess.rename_absolute(
 			PopochiuResources.GRAPHIC_INTERFACE_ADDON.get_base_dir(),
-			PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
+			PopochiuResources.GRAPHIC_INTERFACE_GAME.get_base_dir()
 		)
 	elif id == PopochiuResources.TL:
 		DirAccess.rename_absolute(
@@ -463,7 +466,7 @@ func _move_to_project(id: int) -> void:
 	var settings := PopochiuResources.get_settings()
 	
 	if id == PopochiuResources.GI:
-		settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
+		settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_GAME)
 		PopochiuResources.set_data_value('setup', 'gi_moved', true)
 	elif id == PopochiuResources.TL:
 		settings.transition_layer = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU)
@@ -472,91 +475,3 @@ func _move_to_project(id: int) -> void:
 	PopochiuResources.save_settings(settings)
 	
 	main_dock.setup_dialog.update_state()
-
-
-func _copy_gui_template(template_name: String) -> void:
-	if template_name == PopochiuResources.get_data_value("ui", "template", ""):
-		PopochiuUtils.print_normal("No changes in GUI tempalte.")
-		return
-	
-	var scene_path := PopochiuResources.GRAPHIC_INTERFACE_ADDON
-	var template_path :=\
-	PopochiuResources.GRAPHIC_INTERFACE_TEMPLATES + "graphic_interface_template.gd"
-	var commands_template_path := PopochiuResources.GRAPHIC_INTERFACE_TEMPLATES
-	
-	match template_name.to_snake_case():
-		"simple_click":
-			scene_path += "templates/simple_click/simple_click_gi.tscn"
-			commands_template_path += "simple_click_commands_template.gd"
-		"9_verb":
-			scene_path += "templates/9_verb/9_verb_gi.tscn"
-			commands_template_path += "9_verb_commands_template.gd"
-		"sierra":
-			scene_path += "templates/sierra/sierra_gi.tscn"
-			commands_template_path += "sierra_commands_template.gd"
-		"custom":
-			scene_path += "popochiu_graphic_interface.tscn"
-			commands_template_path += "custom_commands_template.gd"
-	
-	# Create the res://popochiu/graphic_interface/ folder
-	if not FileAccess.file_exists(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU):
-		DirAccess.make_dir_recursive_absolute(
-			PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.get_base_dir()
-		)
-	else:
-		# Remove the graphic_interface.tscn file
-		DirAccess.remove_absolute(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
-	
-	await get_tree().create_timer(0.1)
-	
-	# Make a copy of the selected GUI template (.tscn) and save it as
-	# res://popochiu/graphic_interface/graphic_interface.tscn ------------------
-	DirAccess.copy_absolute(
-		scene_path,
-		PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU
-	)
-	
-	# Create a copy of the corresponding commands template ---------------------
-	var commands_path := PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.replace(
-		"graphic_interface.tscn", "commands.gd"
-	)
-	DirAccess.copy_absolute(commands_template_path, commands_path)
-	
-	# Create a copy of the graphic interface script template -------------------
-	var script_path := PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU.replace(".tscn", ".gd")
-	var script_file := FileAccess.open(template_path, FileAccess.READ)
-	var source_code := script_file.get_as_text()
-	script_file.close()
-	source_code = source_code.replace(
-		"extends PopochiuGraphicInterface",
-		'extends "%s"' % scene_path.replace(".tscn", ".gd")
-	)
-	script_file = FileAccess.open(script_path, FileAccess.WRITE)
-	script_file.store_string(source_code)
-	script_file.close()
-	
-	# Update the script of the created graphic_interface.tscn so it uses the
-	# copy created above -------------------------------------------------------
-	var scene := (load(
-		PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU
-	) as PackedScene).instantiate()
-	scene.set_script(load(script_path))
-	var packed_scene: PackedScene = PackedScene.new()
-	packed_scene.pack(scene)
-	if ResourceSaver.save(
-		packed_scene, PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU
-	) != OK:
-		push_error("[Popochiu] Couldn't update graphic_interface.tscn script")
-		return
-	
-	await get_tree().create_timer(0.1)
-	
-	# Save the GI template in Settings
-	var settings := PopochiuResources.get_settings()
-	settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_POPOCHIU)
-	PopochiuResources.save_settings(settings)
-	
-	# Update the info related to the GUI template and the GUI commands script
-	# in the popochiu_data.cfg file
-	PopochiuResources.set_data_value("ui", "template", template_name)
-	PopochiuResources.set_data_value("ui", "commands", commands_path)
