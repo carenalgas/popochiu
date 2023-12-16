@@ -134,6 +134,8 @@ func scene_changed(scene_root: Node) -> void:
 		'rooms', opened_room.script_name, null
 	)
 	
+	PopochiuEditorHelper.undo_redo.history_changed.connect(_check_undoredo_history)
+	
 	_room_name.text = opened_room.script_name
 	
 	_room_name.show()
@@ -191,6 +193,13 @@ func _clear_content() -> void:
 		if container.child_exiting_tree.is_connected(_on_child_removed):
 			container.child_exiting_tree.disconnect(_on_child_removed)
 	
+	if PopochiuEditorHelper.undo_redo.history_changed.is_connected(
+		_check_undoredo_history
+	):
+		PopochiuEditorHelper.undo_redo.history_changed.disconnect(
+			_check_undoredo_history
+		)
+	
 	opened_room = null
 	opened_room_state_path = ''
 	
@@ -237,7 +246,7 @@ func _select_in_tree(por: PopochiuObjectRow) -> void:
 		var node := opened_room.get_node('%s/%s'\
 		% [_types[por.type].parent, por.node_path])
 		
-		PopochiuUtils.select_node(node)
+		PopochiuEditorHelper.select_node(node)
 	
 	_last_selected = por
 
@@ -336,7 +345,7 @@ func _on_character_seleced(id: int) -> void:
 	instance.owner = opened_room
 	
 	main_dock.ei.save_scene()
-	PopochiuUtils.select_node(instance)
+	PopochiuEditorHelper.select_node(instance)
 
 
 func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
@@ -443,3 +452,14 @@ func _on_child_removed(node: Node, type_id: int) -> void:
 		])
 	
 	_types[type_id].group.remove_by_name(node_name)
+
+
+func _check_undoredo_history() -> void:
+	var walkable_areas: Array = opened_room.call(
+		_types[Constants.Types.WALKABLE_AREA].method
+	)
+	
+	if walkable_areas.is_empty(): return
+	
+	for wa: PopochiuWalkableArea in walkable_areas:
+		(wa.get_node("Perimeter") as NavigationRegion2D).bake_navigation_polygon()

@@ -74,6 +74,7 @@ func _create() -> void:
 	perimeter.name = 'Perimeter'
 	
 	var polygon := NavigationPolygon.new()
+	polygon.agent_radius = 0
 	polygon.add_outline(PackedVector2Array([
 		Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
 	]))
@@ -99,7 +100,7 @@ func _create() -> void:
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Abrir las propiedades de la walkable area creada en el Inspector
 	await get_tree().create_timer(0.1).timeout
-	PopochiuUtils.select_node(walkable_area)
+	PopochiuEditorHelper.select_node(walkable_area)
 	
 	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Fin
