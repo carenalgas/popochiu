@@ -2,6 +2,7 @@
 extends Resource
 ## Helper class for operations related to the GUI templates
 
+static var _components_path := PopochiuResources.GUI_GAME_SCENE.get_base_dir() + "/components"
 
 
 ## Create a copy of the selected template, including its components.
@@ -31,10 +32,6 @@ static func copy_gui_template(template_name: String) -> void:
 		"graphic_interface.tscn", "commands.gd"
 	)
 	
-	# Copy the components used by the GUI template to the res://game/graphic_interface/components
-	# folder so devs can play with them freely -----------------------------------------------------
-	_copy_components(scene_path)
-	
 	# ---- Make a copy of the selected GUI template ------------------------------------------------
 	_create_scene(scene_path)
 	
@@ -55,10 +52,17 @@ static func copy_gui_template(template_name: String) -> void:
 		
 		return
 	
+	# Copy the components used by the GUI template to the res://game/graphic_interface/components
+	# folder so devs can play with them freely -----------------------------------------------------
+	_copy_components(scene_path)
+	
 	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
 	_update_settings_and_config(template_name, commands_path)
 
 
+## Create the **graphic_interface.tscn** file as a copy of the selected GUI template scene.
+## If a template change is being made, all components of the previous template are removed along
+## with the **.tscn** file before copying the new one.
 static func _create_scene(scene_path: String) -> void:
 	# Create the res://game/graphic_interface/ folder
 	if not FileAccess.file_exists(PopochiuResources.GUI_GAME_SCENE):
@@ -68,8 +72,12 @@ static func _create_scene(scene_path: String) -> void:
 	else:
 		# Remove the graphic_interface.tscn file
 		DirAccess.remove_absolute(PopochiuResources.GUI_GAME_SCENE)
+		
+		if DirAccess.dir_exists_absolute(_components_path):
+			_remove_components(_components_path)
 	
 	#await EditorInterface.get_base_control().get_tree().create_timer(0.1).timeout
+	EditorInterface.get_resource_filesystem().scan()
 	
 	# Make a copy of the selected GUI template (.tscn) and save it in
 	# res://game/graphic_interface/graphic_interface.tscn ------------------------------------------
@@ -79,6 +87,26 @@ static func _create_scene(scene_path: String) -> void:
 	)
 
 
+static func _remove_components(dir_path: String) -> void:
+	for dir_name: String in DirAccess.get_directories_at(dir_path):
+		var sub_dir_path := dir_path + "/" + dir_name
+		prints(dir_name, sub_dir_path)
+		
+		for file_name: String in DirAccess.get_files_at(sub_dir_path):
+			prints(file_name, sub_dir_path + "/" + file_name)
+			
+			DirAccess.remove_absolute(sub_dir_path + "/" + file_name)
+			EditorInterface.get_resource_filesystem().scan()
+		
+		_remove_components(sub_dir_path)
+	
+	# Once the directory is empty, remove it
+	DirAccess.remove_absolute(dir_path)
+
+
+## Copy the commands and graphic interface scripts of the chosen GUI template. The new graphic
+## interface scripts inherits from the one originally assigned to the .tscn file of the selected
+## template.
 static func _copy_scripts(
 	commands_template_path: String, commands_path: String, script_path: String, scene_path: String
 ) -> void:
@@ -98,6 +126,8 @@ static func _copy_scripts(
 	script_file.close()
 
 
+## Updates the script of the created **res://game/graphic_interface/graphic_interface.tscn** file so
+## it uses the one created in `_copy_scripts(...)`.
 static func _update_scene_script(script_path: String) -> int:
 	# Update the script of the GUI -----------------------------------------------------------------
 	var scene := (load(
@@ -111,95 +141,53 @@ static func _update_scene_script(script_path: String) -> int:
 	return ResourceSaver.save(packed_scene, PopochiuResources.GUI_GAME_SCENE)
 
 
+## Makes a copy of the components used by the original GUI template to the
+## **res://game/graphic_interface/components/** folder so devs can play with those scenes without
+## affecting the ones in the plugin's folder.
 static func _copy_components(gui_template_scene_path: String) -> void:
 	# Create the res://game/graphic_interface/components folder ------------------------------------
-	var components_path := PopochiuResources.GUI_GAME_SCENE.get_base_dir() + "/components"
-	DirAccess.make_dir_recursive_absolute(components_path)
+	DirAccess.make_dir_recursive_absolute(_components_path)
 	
-	
-	for dep in ResourceLoader.get_dependencies(gui_template_scene_path):
-		#print(dep.get_slice("::", 0)) # Prints UID.
-		print(dep.get_slice("::", 2)) # Prints path.
-	
-	#for c: Node in graphic_interface_scene.get_children():
-		#if c.scene_file_path.is_empty(): continue
-		#
-		##prints(c.name, c.scene_file_path.get_base_dir().split("/")[-1])
-		#var source_folder := c.scene_file_path.get_base_dir()
-		#var target_folder_name := source_folder.split("/")[-1]
-		#var target_folder := "%s/%s" % [components_path, target_folder_name]
-		#
-		#DirAccess.make_dir_recursive_absolute(target_folder)
-		#
-		#prints(c.name, ResourceLoader.get_dependencies(c.scene_file_path))
-		#
-		#for file_name: String in DirAccess.get_files_at(source_folder):
-			#DirAccess.copy_absolute(
-				#"%s/%s" % [source_folder, file_name],
-				#"%s/%s" % [target_folder, file_name]
-			#)
-	
-	#_fix_dependencies(
-		#EditorInterface.get_resource_filesystem().get_filesystem_path(
-			#PopochiuResources.GUI_GAME_SCENE.get_base_dir()
-		#)
-	#)
-	#
-	#await EditorInterface.get_base_control().get_tree().create_timer(0.1).timeout
-
-
-static func _fix_dependencies(dir: EditorFileSystemDirectory) -> void:
-	if not is_instance_valid(dir):
-		return
-	
-	var fs := EditorInterface.get_resource_filesystem().get_filesystem()
-	
-	for f in dir.get_file_count():
-		var path = dir.get_file_path(f)
-		var dependencies = ResourceLoader.get_dependencies(path)
+	for dep: String in ResourceLoader.get_dependencies(gui_template_scene_path):
+		var source_component_path := dep.get_slice("::", 2)
 		
-		for d in dependencies:
-			if FileAccess.file_exists(d):
-				continue
-			
-			_fix_dependency(d, fs, path)
-
-	for subdir_id in dir.get_subdir_count():
-		var subdir := dir.get_subdir(subdir_id)
+		if source_component_path.find(".tscn") == -1: continue
 		
-		for f in subdir.get_file_count():
-			var path = subdir.get_file_path(f)
-			var dependencies = ResourceLoader.get_dependencies(path)
-			
-			if dependencies.size() < 1:
-				continue
-			
-			for d in dependencies:
-				if FileAccess.file_exists(d):
-					continue
-				
-				_fix_dependency(d, fs, path)
-	
-	EditorInterface.get_resource_filesystem().scan()
-
-
-static func _fix_dependency(dependency, directory, resource_path):
-	for subdir in directory.get_subdir_count():
-		_fix_dependency(dependency, directory.get_subdir(subdir), resource_path)
-
-	for f in directory.get_file_count():
-		if not directory.get_file(f) == dependency.get_file():
-			continue
+		# ---- Create the folder of the component --------------------------------------------------
+		var file_name := source_component_path.get_file()
+		var source_folder := source_component_path.get_base_dir()
+		var target_folder_name := source_folder.split("/")[-1]
+		var target_folder := "%s/%s" % [_components_path, target_folder_name]
+		var target_scene_path := "%s/%s" % [target_folder, file_name]
 		
-		var file_read = FileAccess.open(resource_path, FileAccess.READ)
+		DirAccess.make_dir_recursive_absolute(target_folder)
+		
+		# ---- Create a copy of the scene component ------------------------------------------------
+		var component_resource := load(source_component_path).duplicate(true)
+		var source_component_uid := ResourceUID.id_to_text(
+			ResourceLoader.get_resource_uid(source_component_path)
+		)
+		
+		if ResourceSaver.save(component_resource, target_scene_path) != OK:
+			DirAccess.remove_absolute(target_folder)
+		
+		# ---- Replace the UID and paths of the components in the graphic interface scene ----------
+		var component_uid := ResourceUID.id_to_text(
+			ResourceLoader.get_resource_uid(target_scene_path)
+		)
+		
+		var file_read = FileAccess.open(PopochiuResources.GUI_GAME_SCENE, FileAccess.READ)
 		var text = file_read.get_as_text()
 		file_read.close()
 		
-		text = text.replace(dependency, directory.get_file_path(f))
+		text = text.replace(source_component_uid, component_uid)
+		text = text.replace(source_component_path, target_scene_path)
 		
-		var file_write = FileAccess.open(resource_path, FileAccess.WRITE)
+		var file_write = FileAccess.open(PopochiuResources.GUI_GAME_SCENE, FileAccess.WRITE)
 		file_write.store_string(text)
 		file_write.close()
+	
+		EditorInterface.get_resource_filesystem().scan()
 
 
 static func _update_settings_and_config(template_name: String, commands_path: String) -> void:
