@@ -35,7 +35,7 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("10_vngai")
 region = Rect2(0, 32, 32, 32)
 
-[node name="SierraInventoryPopup" type="PanelContainer"]
+[node name="SierraInventoryPopup" type="PanelContainer" groups=["popochiu_gui_popup"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

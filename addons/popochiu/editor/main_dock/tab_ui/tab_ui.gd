@@ -147,15 +147,12 @@ func _create_buttons() -> void:
 
 
 func _find_components(node: Control) -> void:
-	for child in node.get_children():
-		if child.name == "Popups":
-			_find_components(child)
-			continue
-		
-		var is_component := child.scene_file_path.get_base_dir() in _components_basedir
-		
-		if not is_component:continue
-		
+	var components := (
+		node.get_tree().get_nodes_in_group("popochiu_gui_component") +
+		node.get_tree().get_nodes_in_group("popochiu_gui_popup")
+	)
+	
+	for child: Node in components:
 		var component_name := child.scene_file_path.get_base_dir().split("/")[-1]
 		if has_meta(component_name):
 			(get_meta(component_name) as Button).disabled = true

@@ -8,7 +8,7 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_se5fd"]
 bg_color = Color(0, 0, 0, 0.247059)
 
-[node name="SierraSettingsPopup" type="PanelContainer"]
+[node name="SierraSettingsPopup" type="PanelContainer" groups=["popochiu_gui_popup"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

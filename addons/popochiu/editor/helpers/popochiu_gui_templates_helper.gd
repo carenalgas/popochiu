@@ -33,7 +33,13 @@ static func copy_gui_template(template_name: String) -> void:
 	)
 	
 	# ---- Make a copy of the selected GUI template ------------------------------------------------
-	_create_scene(scene_path)
+	if _create_scene(scene_path) != OK:
+		# TODO: Delete the graphic_interface folder and all its contents?
+		PopochiuUtils.print_error(
+			"[Popochiu] Couldn't create %s file" % PopochiuResources.GUI_GAME_SCENE
+		)
+		
+		return
 	
 	# Create a copy of the corresponding commands template -----------------------------------------
 	_copy_scripts(commands_template_path, commands_path, script_path, scene_path)
@@ -63,7 +69,7 @@ static func copy_gui_template(template_name: String) -> void:
 ## Create the **graphic_interface.tscn** file as a copy of the selected GUI template scene.
 ## If a template change is being made, all components of the previous template are removed along
 ## with the **.tscn** file before copying the new one.
-static func _create_scene(scene_path: String) -> void:
+static func _create_scene(scene_path: String) -> int:
 	# Create the res://game/graphic_interface/ folder
 	if not FileAccess.file_exists(PopochiuResources.GUI_GAME_SCENE):
 		DirAccess.make_dir_recursive_absolute(
@@ -81,20 +87,16 @@ static func _create_scene(scene_path: String) -> void:
 	
 	# Make a copy of the selected GUI template (.tscn) and save it in
 	# res://game/graphic_interface/graphic_interface.tscn ------------------------------------------
-	DirAccess.copy_absolute(
-		scene_path,
-		PopochiuResources.GUI_GAME_SCENE
-	)
+	var gi_scene := load(scene_path).duplicate(true)
+	
+	return ResourceSaver.save(gi_scene, PopochiuResources.GUI_GAME_SCENE)
 
 
 static func _remove_components(dir_path: String) -> void:
 	for dir_name: String in DirAccess.get_directories_at(dir_path):
 		var sub_dir_path := dir_path + "/" + dir_name
-		prints(dir_name, sub_dir_path)
 		
 		for file_name: String in DirAccess.get_files_at(sub_dir_path):
-			prints(file_name, sub_dir_path + "/" + file_name)
-			
 			DirAccess.remove_absolute(sub_dir_path + "/" + file_name)
 			EditorInterface.get_resource_filesystem().scan()
 		
@@ -102,6 +104,7 @@ static func _remove_components(dir_path: String) -> void:
 	
 	# Once the directory is empty, remove it
 	DirAccess.remove_absolute(dir_path)
+	EditorInterface.get_resource_filesystem().scan()
 
 
 ## Copy the commands and graphic interface scripts of the chosen GUI template. The new graphic
@@ -145,20 +148,23 @@ static func _update_scene_script(script_path: String) -> int:
 ## **res://game/graphic_interface/components/** folder so devs can play with those scenes without
 ## affecting the ones in the plugin's folder.
 static func _copy_components(gui_template_scene_path: String) -> void:
+	var dependencies_to_update: Array[Dictionary] = []
+	
 	# Create the res://game/graphic_interface/components folder ------------------------------------
 	DirAccess.make_dir_recursive_absolute(_components_path)
 	
 	for dep: String in ResourceLoader.get_dependencies(gui_template_scene_path):
 		var source_component_path := dep.get_slice("::", 2)
 		
-		if source_component_path.find(".tscn") == -1: continue
+		if source_component_path.find(".tscn") == -1 and source_component_path.find(".png") == -1:
+			continue
 		
 		# ---- Create the folder of the component --------------------------------------------------
 		var file_name := source_component_path.get_file()
 		var source_folder := source_component_path.get_base_dir()
 		var target_folder_name := source_folder.split("/")[-1]
 		var target_folder := "%s/%s" % [_components_path, target_folder_name]
-		var target_scene_path := "%s/%s" % [target_folder, file_name]
+		var target_component_path := "%s/%s" % [target_folder, file_name]
 		
 		DirAccess.make_dir_recursive_absolute(target_folder)
 		
@@ -168,26 +174,42 @@ static func _copy_components(gui_template_scene_path: String) -> void:
 			ResourceLoader.get_resource_uid(source_component_path)
 		)
 		
-		if ResourceSaver.save(component_resource, target_scene_path) != OK:
+		if ResourceSaver.save(component_resource, target_component_path) != OK:
 			DirAccess.remove_absolute(target_folder)
 		
 		# ---- Replace the UID and paths of the components in the graphic interface scene ----------
-		var component_uid := ResourceUID.id_to_text(
-			ResourceLoader.get_resource_uid(target_scene_path)
+		var target_component_uid := ResourceUID.id_to_text(
+			ResourceLoader.get_resource_uid(target_component_path)
 		)
 		
-		var file_read = FileAccess.open(PopochiuResources.GUI_GAME_SCENE, FileAccess.READ)
-		var text = file_read.get_as_text()
-		file_read.close()
-		
-		text = text.replace(source_component_uid, component_uid)
-		text = text.replace(source_component_path, target_scene_path)
-		
-		var file_write = FileAccess.open(PopochiuResources.GUI_GAME_SCENE, FileAccess.WRITE)
-		file_write.store_string(text)
-		file_write.close()
-	
 		EditorInterface.get_resource_filesystem().scan()
+		
+		prints({
+			src_uid = source_component_uid,
+			src_path = source_component_path,
+			tar_uid = target_component_uid,
+			tar_path = target_component_path
+		})
+		
+		dependencies_to_update.append({
+			src_uid = source_component_uid,
+			src_path = source_component_path,
+			tar_uid = target_component_uid,
+			tar_path = target_component_path
+		})
+	
+	# ---- Update the UID and paths of the copied components ---------------------------------------
+	var file_read = FileAccess.open(PopochiuResources.GUI_GAME_SCENE, FileAccess.READ)
+	var text = file_read.get_as_text()
+	file_read.close()
+	
+	for dic: Dictionary in dependencies_to_update:
+		text = text.replace(dic.src_uid, dic.tar_uid)
+		text = text.replace(dic.src_path, dic.tar_path)
+	
+	var file_write = FileAccess.open(PopochiuResources.GUI_GAME_SCENE, FileAccess.WRITE)
+	file_write.store_string(text)
+	file_write.close()
 
 
 static func _update_settings_and_config(template_name: String, commands_path: String) -> void:

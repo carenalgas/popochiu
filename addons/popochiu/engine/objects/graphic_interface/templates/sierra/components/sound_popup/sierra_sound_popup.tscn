@@ -8,7 +8,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ygj01"]
 
-[node name="SierraSoundPopup" type="PanelContainer"]
+[node name="SierraSoundPopup" type="PanelContainer" groups=["popochiu_gui_popup"]]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0

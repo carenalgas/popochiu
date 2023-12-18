@@ -104,7 +104,7 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("11_marqj")
 region = Rect2(0, 32, 32, 32)
 
-[node name="SierraTopMenu" type="PanelContainer"]
+[node name="SierraTopMenu" type="PanelContainer" groups=["popochiu_gui_component"]]
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 32.0

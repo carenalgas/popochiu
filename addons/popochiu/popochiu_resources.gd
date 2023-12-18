@@ -60,8 +60,7 @@ const G_SNGL := 'res://game/autoloads/g.gd'
 const GI := 0
 const TL := 1
 const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/"
-const GUI_GAME_SCENE :=\
-BASE_DIR + '/graphic_interface/graphic_interface.tscn'
+const GUI_GAME_SCENE := BASE_DIR + '/graphic_interface/graphic_interface.tscn'
 const TRANSITION_LAYER_ADDON :=\
 'res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn'
 const TRANSITION_LAYER_POPOCHIU :=\
