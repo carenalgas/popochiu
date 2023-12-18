@@ -20,3 +20,5 @@ data_*/
 # Project-specific ignores
 popochiu
 popochiu/**
+game
+game/**

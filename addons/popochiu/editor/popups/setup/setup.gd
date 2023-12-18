@@ -116,7 +116,7 @@ func appear(show_welcome := false) -> void:
 	
 	popup_centered_clamped(dflt_size, 0.5)
 	
-	if PopochiuResources.GRAPHIC_INTERFACE_GAME in PopochiuEditorHelper.ei.get_open_scenes():
+	if PopochiuResources.GUI_GAME_SCENE in PopochiuEditorHelper.ei.get_open_scenes():
 		_show_gui_warning()
 		for btn in gui_templates.get_children():
 			btn.disabled = true
@@ -265,7 +265,7 @@ func _show_template_change_confirmation() -> void:
 	var confirmation_dialog := ConfirmationDialog.new()
 	confirmation_dialog.title = "Confirm GUI template change"
 	confirmation_dialog.dialog_text = "You changed the GUI template.\
- Making this will override any changes you made to the files in res://popochiu/\
+ Making this will override any changes you made to the files in res://game/\
 graphic_interface/.\nAre you sure you want to make the change?"
 	
 	confirmation_dialog.confirmed.connect(

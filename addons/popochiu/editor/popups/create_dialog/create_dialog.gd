@@ -106,7 +106,7 @@ func set_main_dock(node: Panel) -> void:
 	
 	if not _main_dock: return
 	
-	# res://popochiu/dialogs
+	# res://game/dialogs
 	_dialog_path_template = _main_dock.DIALOGS_PATH + '%s/dialog_%s'
 
 

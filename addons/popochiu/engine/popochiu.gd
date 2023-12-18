@@ -91,7 +91,7 @@ func _ready() -> void:
 		gi = settings.graphic_interface.instantiate()
 		gi.name = 'GraphicInterface'
 	else:
-		gi = load(PopochiuResources.GRAPHIC_INTERFACE_ADDON).instantiate()
+		gi = load(PopochiuResources.GUI_ADDON_FOLDER).instantiate()
 	
 	# Load the commands for the game
 	var commands_path: String = PopochiuResources.get_data_value("ui", "commands", "")

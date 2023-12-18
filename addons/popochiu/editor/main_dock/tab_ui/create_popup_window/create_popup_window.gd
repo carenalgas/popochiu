@@ -5,7 +5,7 @@ const POPOCHIU_POPUP_SCENE :=\
 "res://addons/popochiu/engine/objects/graphic_interface/components/popups/popochiu_popup.tscn"
 const POPOCHIU_POPUP_SCRIPT :=\
 "res://addons/popochiu/engine/templates/graphic_interface/popup_template.gd"
-const POPUPS_FOLDER := "res://popochiu/graphic_interface/popups/%s/"
+const POPUPS_FOLDER := "res://game/graphic_interface/popups/%s/"
 
 var _popup_id := ""
 var _scene_path := POPUPS_FOLDER + "%s.tscn"

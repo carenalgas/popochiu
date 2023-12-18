@@ -188,7 +188,7 @@ func set_main_dock(node: Panel) -> void:
 	
 	if not _main_dock: return
 	
-	# res://popochiu/rooms
+	# res://game/rooms
 	_room_path_template = _main_dock.ROOMS_PATH + '%s/room_%s'
 
 

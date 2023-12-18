@@ -435,7 +435,7 @@ func _remove_object() -> void:
 	
 	# Verify if the object to delete is a Prop, a Hotspot or a Region.
 	if type in Constants.ROOM_TYPES:
-		# res://popochiu/rooms/???/props/??/ > [res:, popochiu, rooms, ???, props, ??]
+		# res://game/rooms/???/props/??/ > [res:, popochiu, rooms, ???, props, ??]
 		location = "Room%s" % (path.split('/', false)[3]).to_pascal_case()
 	
 	# Look into the Object's folder for audio files and AudioCues to show the

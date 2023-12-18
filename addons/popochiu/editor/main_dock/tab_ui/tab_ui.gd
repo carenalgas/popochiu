@@ -8,8 +8,8 @@ var main_dock: Panel
 
 var _opened_scene: Control = null
 var _components_basedir := []
-var _script_path := PopochiuResources.GRAPHIC_INTERFACE_GAME.replace(".tscn", ".gd")
-var _commands_path := PopochiuResources.GRAPHIC_INTERFACE_GAME.replace(
+var _script_path := PopochiuResources.GUI_GAME_SCENE.replace(".tscn", ".gd")
+var _commands_path := PopochiuResources.GUI_GAME_SCENE.replace(
 	"graphic_interface.tscn", "commands.gd"
 )
 
@@ -77,7 +77,7 @@ func open_gui_scene() -> void:
 	and _opened_scene is PopochiuGraphicInterface:
 		return
 	
-	var path := PopochiuResources.GRAPHIC_INTERFACE_GAME
+	var path := PopochiuResources.GUI_GAME_SCENE
 	
 	main_dock.ei.select_file(path)
 	main_dock.ei.set_main_screen_editor('2D')

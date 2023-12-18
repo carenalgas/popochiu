@@ -334,7 +334,7 @@ func _on_character_seleced(id: int) -> void:
 		characters_menu.get_item_index(id)
 	)
 	var instance: PopochiuCharacter = load(
-		'res://popochiu/characters/%s/character_%s.tscn' % [
+		'res://game/characters/%s/character_%s.tscn' % [
 			char_name.to_snake_case(),
 			char_name.to_snake_case()
 		]
@@ -363,7 +363,7 @@ func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 		row = _create_object_row(
 			type_id,
 			char_name,
-			'res://popochiu/characters/%s/character_%s.tscn' % [
+			'res://game/characters/%s/character_%s.tscn' % [
 				char_name, char_name
 			],
 			child.name

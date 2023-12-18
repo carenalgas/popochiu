@@ -6,10 +6,10 @@ extends Panel
 signal move_folders_pressed
 
 const POPOCHIU_SCENE := 'res://addons/popochiu/engine/popochiu.tscn'
-const ROOMS_PATH := 'res://popochiu/rooms/'
-const CHARACTERS_PATH := 'res://popochiu/characters/'
-const INVENTORY_ITEMS_PATH := 'res://popochiu/inventory_items/'
-const DIALOGS_PATH := 'res://popochiu/dialogs/'
+const ROOMS_PATH := 'res://game/rooms/'
+const CHARACTERS_PATH := 'res://game/characters/'
+const INVENTORY_ITEMS_PATH := 'res://game/inventory_items/'
+const DIALOGS_PATH := 'res://game/dialogs/'
 const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
 const PopochiuObjectRow := preload('object_row/popochiu_object_row.gd')
 

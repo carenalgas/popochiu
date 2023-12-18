@@ -2,7 +2,7 @@
 @tool
 extends VBoxContainer
 
-const SEARCH_PATH := 'res://popochiu/'
+const SEARCH_PATH := 'res://game/'
 const AudioCue := preload('res://addons/popochiu/engine/audio_manager/audio_cue.gd')
 const PopochiuUtils := preload('res://addons/popochiu/engine/others/popochiu_utils.gd')
 const AudioManager := preload('res://addons/popochiu/engine/audio_manager/audio_manager.gd')

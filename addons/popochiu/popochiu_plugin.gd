@@ -234,11 +234,11 @@ func _set_setup_done() -> void:
 
 func _check_popochiu_dependencies() -> void:
 	if DirAccess.dir_exists_absolute(
-		PopochiuResources.GRAPHIC_INTERFACE_GAME.get_base_dir()
+		PopochiuResources.GUI_GAME_SCENE.get_base_dir()
 	):
 		_fix_dependencies(
 			_editor_file_system.get_filesystem_path(
-				PopochiuResources.GRAPHIC_INTERFACE_GAME.get_base_dir()
+				PopochiuResources.GUI_GAME_SCENE.get_base_dir()
 			)
 		)
 		
@@ -446,8 +446,8 @@ func _move_to_project(id: int) -> void:
 	# Move files and folders so developer can overwrite them
 	if id == PopochiuResources.GI:
 		DirAccess.rename_absolute(
-			PopochiuResources.GRAPHIC_INTERFACE_ADDON.get_base_dir(),
-			PopochiuResources.GRAPHIC_INTERFACE_GAME.get_base_dir()
+			PopochiuResources.GUI_ADDON_FOLDER.get_base_dir(),
+			PopochiuResources.GUI_GAME_SCENE.get_base_dir()
 		)
 	elif id == PopochiuResources.TL:
 		DirAccess.rename_absolute(
@@ -466,7 +466,7 @@ func _move_to_project(id: int) -> void:
 	var settings := PopochiuResources.get_settings()
 	
 	if id == PopochiuResources.GI:
-		settings.graphic_interface = load(PopochiuResources.GRAPHIC_INTERFACE_GAME)
+		settings.graphic_interface = load(PopochiuResources.GUI_GAME_SCENE)
 		PopochiuResources.set_data_value('setup', 'gi_moved', true)
 	elif id == PopochiuResources.TL:
 		settings.transition_layer = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU)

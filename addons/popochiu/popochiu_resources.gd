@@ -28,8 +28,8 @@ enum CursorType {
 	WAIT,
 }
 
-# ════ PLUGIN ══════════════════════════════════════════════════════════════════
-const BASE_DIR := 'res://popochiu'
+# ════ PLUGIN ══════════════════════════════════════════════════════════════════════════════════════
+const BASE_DIR := 'res://game'
 const MAIN_DOCK_PATH := 'res://addons/popochiu/editor/main_dock/popochiu_dock.tscn'
 const MAIN_TYPES := [
 	Types.ROOM, Types.CHARACTER, Types.INVENTORY_ITEM, Types.DIALOG
@@ -37,9 +37,9 @@ const MAIN_TYPES := [
 const ROOM_TYPES := [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
 const WIKI := 'https://github.com/mapedorr/popochiu/wiki/'
 const CFG := 'res://addons/popochiu/plugin.cfg'
-const GRAPHIC_INTERFACE_TEMPLATES := "res://addons/popochiu/engine/templates/graphic_interface/"
-# ════ SINGLETONS ══════════════════════════════════════════════════════════════
-const GLOBALS_SNGL := 'res://popochiu/popochiu_globals.gd'
+const GUI_TEMPLATES_FOLDER := "res://addons/popochiu/engine/templates/graphic_interface/"
+# ════ SINGLETONS ══════════════════════════════════════════════════════════════════════════════════
+const GLOBALS_SNGL := 'res://game/popochiu_globals.gd'
 const UTILS_SNGL := 'res://addons/popochiu/engine/others/popochiu_utils.gd'
 const CURSOR_SNGL := 'res://addons/popochiu/engine/cursor/cursor.tscn'
 const POPOCHIU_SNGL := 'res://addons/popochiu/engine/popochiu.tscn'
@@ -50,31 +50,30 @@ const IDIALOG := 'res://addons/popochiu/engine/interfaces/i_dialog.gd'
 const IGRAPHIC_INTERFACE_SNGL :=\
 'res://addons/popochiu/engine/interfaces/i_graphic_interface.gd'
 const IAUDIO := 'res://addons/popochiu/engine/interfaces/i_audio.gd'
-const R_SNGL := 'res://popochiu/autoloads/r.gd'
-const C_SNGL := 'res://popochiu/autoloads/c.gd'
-const I_SNGL := 'res://popochiu/autoloads/i.gd'
-const D_SNGL := 'res://popochiu/autoloads/d.gd'
-const A_SNGL := 'res://popochiu/autoloads/a.gd'
-const G_SNGL := 'res://popochiu/autoloads/g.gd'
-# ════ FIRST INSTALL ═══════════════════════════════════════════════════════════
+const R_SNGL := 'res://game/autoloads/r.gd'
+const C_SNGL := 'res://game/autoloads/c.gd'
+const I_SNGL := 'res://game/autoloads/i.gd'
+const D_SNGL := 'res://game/autoloads/d.gd'
+const A_SNGL := 'res://game/autoloads/a.gd'
+const G_SNGL := 'res://game/autoloads/g.gd'
+# ════ FIRST INSTALL ═══════════════════════════════════════════════════════════════════════════════
 const GI := 0
 const TL := 1
-const GRAPHIC_INTERFACE_ADDON :=\
-'res://addons/popochiu/engine/objects/graphic_interface/'
-const GRAPHIC_INTERFACE_GAME :=\
+const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/"
+const GUI_GAME_SCENE :=\
 BASE_DIR + '/graphic_interface/graphic_interface.tscn'
 const TRANSITION_LAYER_ADDON :=\
 'res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn'
 const TRANSITION_LAYER_POPOCHIU :=\
 BASE_DIR + '/transition_layer/transition_layer.tscn'
-# ════ ENGINE ══════════════════════════════════════════════════════════════════
+# ════ ENGINE ══════════════════════════════════════════════════════════════════════════════════════
 const POPOCHIU_SCENE := 'res://addons/popochiu/engine/popochiu.tscn'
 const AUDIO_MANAGER :=\
 'res://addons/popochiu/engine/audio_manager/audio_manager.tscn'
 const CURSOR_TYPE :=\
 preload('res://addons/popochiu/engine/cursor/cursor.gd').Type
-const DATA := 'res://popochiu//popochiu_data.cfg'
-const SETTINGS := 'res://popochiu//popochiu_settings.tres'
+const DATA := 'res://game//popochiu_data.cfg'
+const SETTINGS := 'res://game//popochiu_settings.tres'
 const SETTINGS_CLASS :=\
 preload('res://addons/popochiu/engine/objects/popochiu_settings.gd')
 const ROOM_CHILDS := ['props', 'hotspots', 'walkable_areas', 'regions']
@@ -125,7 +124,7 @@ const SNGL_SETUP := {
 	R_SNGL : {
 		interface = IROOM,
 		section = 'rooms',
-		'class' = 'res://popochiu/rooms/%s/room_%s.gd',
+		'class' = 'res://game/rooms/%s/room_%s.gd',
 		'const' = "const PR%s := preload('%s')\n",
 		node = "var %s: PR%s : get = get_%s\n",
 		'func' = "func get_%s() -> PR%s: return super.get_runtime_room('%s')\n",
@@ -134,7 +133,7 @@ const SNGL_SETUP := {
 	C_SNGL : {
 		interface = ICHARACTER,
 		section = 'characters',
-		'class' = 'res://popochiu/characters/%s/character_%s.gd',
+		'class' = 'res://game/characters/%s/character_%s.gd',
 		'const' = "const PC%s := preload('%s')\n",
 		node = "var %s: PC%s : get = get_%s\n",
 		'func' = "func get_%s() -> PC%s: return super.get_runtime_character('%s')\n",
@@ -143,7 +142,7 @@ const SNGL_SETUP := {
 	I_SNGL : {
 		interface = IINVENTORY,
 		section = 'inventory_items',
-		'class' = 'res://popochiu/inventory_items/%s/item_%s.gd',
+		'class' = 'res://game/inventory_items/%s/item_%s.gd',
 		'const' = "const PII%s := preload('%s')\n",
 		node = "var %s: PII%s : get = get_%s\n",
 		'func' = "func get_%s() -> PII%s: return super.get_item_instance('%s')\n",
@@ -152,7 +151,7 @@ const SNGL_SETUP := {
 	D_SNGL : {
 		interface = IDIALOG,
 		section = 'dialogs',
-		'class' = 'res://popochiu/dialogs/%s/dialog_%s.gd',
+		'class' = 'res://game/dialogs/%s/dialog_%s.gd',
 		'const' = "const PD%s := preload('%s')\n",
 		node = "var %s: PD%s : get = get_%s\n",
 		'func' = "func get_%s() -> PD%s: return E.get_dialog('%s')\n",
@@ -161,11 +160,6 @@ const SNGL_SETUP := {
 }
 const A_TEMPLATE := '@tool\n' +\
 'extends "%s"\n\n' +\
-# --- fix #53 ------------------------------------------------------------------
-#'# classes ----\n' +\
-#'# ---- classes\n' +\
-#'\n' +\
-# ------------------------------------------------------------------ fix #53 ---
 '# cues ----\n' +\
 '# ---- cues\n' +\
 '\n'
@@ -175,7 +169,7 @@ const AUDIO_CUE_MUSIC :=\
 'res://addons/popochiu/engine/audio_manager/audio_cue_music.gd'
 const VAR_AUDIO_CUE_SOUND := 'var %s: AudioCueSound = load("%s")\n'
 const VAR_AUDIO_CUE_MUSIC := 'var %s: AudioCueMusic = load("%s")\n'
-# ════ GODOT PROJECT SETTINGS ══════════════════════════════════════════════════
+# ════ GODOT PROJECT SETTINGS ══════════════════════════════════════════════════════════════════════
 const DISPLAY_WIDTH := 'display/window/size/viewport_width'
 const DISPLAY_HEIGHT := 'display/window/size/viewport_height'
 const MAIN_SCENE := 'application/run/main_scene'
@@ -184,6 +178,19 @@ const TEST_HEIGHT := 'display/window/size/window_height_override'
 const STRETCH_MODE := 'display/window/stretch/mode'
 const STRETCH_ASPECT := 'display/window/stretch/aspect'
 const IMPORTER_TEXTURE := 'popochiu/import/general_import_settings/texture'
+# ════ GUI TEMPLATES ═══════════════════════════════════════════════════════════════════════════════
+const GUI_SIMPLE_CLICK := "simple_click"
+const GUI_9_VERB := "9_verb"
+const GUI_SIERRA := "sierra"
+const GUI_CUSTOM := "custom"
+const GUI_SIMPLE_CLICK_SCENE := GUI_ADDON_FOLDER + "templates/simple_click/simple_click_gi.tscn"
+const GUI_9_VERB_SCENE := GUI_ADDON_FOLDER + "templates/9_verb/9_verb_gi.tscn"
+const GUI_SIERRA_SCENE := GUI_ADDON_FOLDER + "templates/sierra/sierra_gi.tscn"
+const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
+const GUI_SIMPLE_CLICK_TEMPLATE := GUI_TEMPLATES_FOLDER + "simple_click_commands_template.gd"
+const GUI_9_VERB_TEMPLATE := GUI_TEMPLATES_FOLDER + "9_verb_commands_template.gd"
+const GUI_SIERRA_TEMPLATE := GUI_TEMPLATES_FOLDER + "sierra_commands_template.gd"
+const GUI_CUSTOM_TEMPLATE := GUI_TEMPLATES_FOLDER + "custom_commands_template.gd"
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░

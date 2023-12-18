@@ -19,14 +19,14 @@ config/windows_native_icon="res://popochiu_v2.ico"
 
 [autoload]
 
-Globals="*res://popochiu/popochiu_globals.gd"
+Globals="*res://game/popochiu_globals.gd"
 Cursor="*res://addons/popochiu/engine/cursor/cursor.tscn"
 E="*res://addons/popochiu/engine/popochiu.tscn"
-R="*res://popochiu/autoloads/r.gd"
-C="*res://popochiu/autoloads/c.gd"
-I="*res://popochiu/autoloads/i.gd"
-D="*res://popochiu/autoloads/d.gd"
-A="*res://popochiu/autoloads/a.gd"
+R="*res://game/autoloads/r.gd"
+C="*res://game/autoloads/c.gd"
+I="*res://game/autoloads/i.gd"
+D="*res://game/autoloads/d.gd"
+A="*res://game/autoloads/a.gd"
 G="*res://addons/popochiu/engine/interfaces/i_graphic_interface.gd"
 
 [display]
