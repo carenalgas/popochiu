@@ -63,7 +63,7 @@ static func copy_gui_template(template_name: String) -> void:
 	
 	# Copy the components used by the GUI template to the res://game/graphic_interface/components
 	# folder so devs can play with them freely -----------------------------------------------------
-	_copy_components(scene_path, true)
+	await _copy_components(PopochiuResources.GUI_GAME_SCENE, true)
 	
 	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
 	_update_settings_and_config(template_name, commands_path)
@@ -148,15 +148,15 @@ static func _update_scene_script(script_path: String) -> int:
 ## Makes a copy of the components used by the original GUI template to the
 ## **res://game/graphic_interface/components/** folder so devs can play with those scenes without
 ## affecting the ones in the plugin's folder.
-static func _copy_components(source_scene_path: String, ignore_base_dir := false) -> void:
+static func _copy_components(scene_path: String, ignore_base_dir := false) -> void:
 	var dependencies_to_update: Array[Dictionary] = []
 	
 	# Make a copy of the dependencies of the graphic interface
-	for dep: String in ResourceLoader.get_dependencies(source_scene_path):
+	for dep: String in ResourceLoader.get_dependencies(scene_path):
 		var source_file_path := dep.get_slice("::", 2)
 		
 		if ignore_base_dir and source_file_path.get_extension() == "gd"\
-		and source_scene_path.get_base_dir() == source_file_path.get_base_dir():
+		and scene_path.get_base_dir() == source_file_path.get_base_dir():
 			# Ignore the script of the GUI template scene file
 			continue
 		
@@ -195,9 +195,9 @@ static func _copy_components(source_scene_path: String, ignore_base_dir := false
 		
 		# Repeat the process for each of the dependencies of the .tscn resources
 		if source_file_path.get_extension() == "tscn":
-			_copy_components(source_file_path)
+			_copy_components(dependency_data.target_path)
 	
-	#_update_dependencies(PopochiuResources.GUI_GAME_SCENE, dependencies_to_update)
+	_update_dependencies(scene_path, dependencies_to_update)
 
 
 static func _copy_script(
