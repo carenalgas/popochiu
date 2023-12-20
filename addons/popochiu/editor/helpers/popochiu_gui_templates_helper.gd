@@ -42,7 +42,9 @@ static func copy_gui_template(template_name: String) -> void:
 		
 		return
 	
-	EditorInterface.get_resource_filesystem().scan()
+	# Copy the components used by the GUI template to the res://game/graphic_interface/components
+	# folder so devs can play with them freely -----------------------------------------------------
+	await _copy_components(scene_path, true)
 	
 	# Create a copy of the corresponding commands template -----------------------------------------
 	_copy_scripts(commands_template_path, commands_path, script_path, scene_path)
@@ -60,10 +62,6 @@ static func copy_gui_template(template_name: String) -> void:
 		)
 		
 		return
-	
-	# Copy the components used by the GUI template to the res://game/graphic_interface/components
-	# folder so devs can play with them freely -----------------------------------------------------
-	#_copy_components(scene_path, true)
 	
 	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
 	_update_settings_and_config(template_name, commands_path)
@@ -195,7 +193,7 @@ static func _copy_components(source_scene_path: String, is_gui_game_scene := fal
 		
 		# Repeat the process for each of the dependencies of the .tscn resources
 		if source_file_path.get_extension() == "tscn":
-			_copy_components(source_file_path)
+			await _copy_components(source_file_path)
 	
 	if is_gui_game_scene:
 		_update_dependencies(PopochiuResources.GUI_GAME_SCENE, dependencies_to_update)
