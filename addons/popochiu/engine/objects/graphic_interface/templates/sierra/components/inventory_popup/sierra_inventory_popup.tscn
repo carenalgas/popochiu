@@ -5,8 +5,8 @@
 [ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/close.png" id="3_7aa5u"]
 [ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/close_highlight.png" id="4_vd0bg"]
 [ext_resource type="PackedScene" uid="uid://26dqxcqhmj44" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/inventory_popup/sierra_inventory_grid.tscn" id="5_i15hx"]
-[ext_resource type="Texture2D" uid="uid://57nl6xfjetoe" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/sprites/btn_look.png" id="8_m3ulb"]
-[ext_resource type="Texture2D" uid="uid://pxmndq6c60g3" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/sprites/btn_select.png" id="10_vngai"]
+[ext_resource type="Texture2D" uid="uid://57nl6xfjetoe" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_look.png" id="8_m3ulb"]
+[ext_resource type="Texture2D" uid="uid://pxmndq6c60g3" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_select.png" id="10_vngai"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_roir4"]
 bg_color = Color(0, 0, 0, 0.247059)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dcta4urojglil"]
 
-[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_lugee"]
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_lugee"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_we03b"]
 

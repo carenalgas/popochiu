@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://esorelppu4hw"]
 
-[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_k4y5q"]
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_k4y5q"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.gd" id="2_r2ckj"]
 
 [node name="HoverText" type="RichTextLabel" groups=["popochiu_gui_component"]]

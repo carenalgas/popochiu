@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dv1gec8q4h6b7"]
 
-[ext_resource type="PackedScene" uid="uid://bnjo044fkdcq7" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/quit/quit_popup.tscn" id="1_8vq27"]
+[ext_resource type="PackedScene" uid="uid://bnjo044fkdcq7" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/quit_popup/quit_popup.tscn" id="1_8vq27"]
 [ext_resource type="Theme" uid="uid://6vk2wej0sape" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/resources/9_verb_theme.tres" id="2_pq8jb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i0r24"]

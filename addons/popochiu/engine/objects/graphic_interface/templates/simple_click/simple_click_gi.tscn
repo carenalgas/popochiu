@@ -4,14 +4,14 @@
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="2_6qu0l"]
 [ext_resource type="Texture2D" uid="uid://bl3ecai6lvat1" path="res://addons/popochiu/engine/cursor/sprites/cursor.png" id="2_qf61v"]
 [ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.tscn" id="2_v42aw"]
-[ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/sprites/simple_click_cursor.png" id="3_718yk"]
+[ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/images/simple_click_cursor.png" id="3_718yk"]
 [ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/components/system_text/system_text.tscn" id="4_o82xq"]
 [ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn" id="5_ayg0j"]
 [ext_resource type="PackedScene" uid="uid://ciar5j7qm85bc" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_bar/inventory_bar.tscn" id="6_ovwnh"]
 [ext_resource type="PackedScene" uid="uid://0cqerawlxb3o" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/settings_bar.tscn" id="7_mtpwc"]
-[ext_resource type="PackedScene" uid="uid://dfrsiyyqncspo" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/history/history_popup.tscn" id="8_207hf"]
-[ext_resource type="PackedScene" uid="uid://cndputybyj57n" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/save_and_load/save_and_load_popup.tscn" id="9_ueme0"]
-[ext_resource type="PackedScene" uid="uid://dwxm2p1iyhpx6" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/sound_settings/sound_settings_popup.tscn" id="10_csjib"]
+[ext_resource type="PackedScene" uid="uid://dfrsiyyqncspo" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/history_popup/history_popup.tscn" id="8_207hf"]
+[ext_resource type="PackedScene" uid="uid://cndputybyj57n" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/save_and_load_popup/save_and_load_popup.tscn" id="9_ueme0"]
+[ext_resource type="PackedScene" uid="uid://dwxm2p1iyhpx6" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/sound_settings_popup/sound_settings_popup.tscn" id="10_csjib"]
 
 [sub_resource type="AtlasTexture" id="10"]
 atlas = ExtResource("2_qf61v")

@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=16 format=3 uid="uid://csr0n32rthycw"]
 
-[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_nr34n"]
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_nr34n"]
 [ext_resource type="Texture2D" uid="uid://d1ywqbehmtuv" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/down_arrow.png" id="2_cg14b"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bnnre"]

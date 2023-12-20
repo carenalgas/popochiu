@@ -1,6 +1,6 @@
 [gd_resource type="Theme" load_steps=18 format=3 uid="uid://6vk2wej0sape"]
 
-[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_13dqu"]
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_13dqu"]
 [ext_resource type="Texture2D" uid="uid://pl1ch71kfj72" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/check_button_checked.png" id="2_l1qok"]
 [ext_resource type="Texture2D" uid="uid://cqxqfxobqltga" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/grabber.png" id="2_m8a8v"]
 [ext_resource type="Texture2D" uid="uid://dukr75slqli45" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/check_button_unchecked.png" id="3_v1wp4"]
