@@ -3,6 +3,9 @@ extends Resource
 ## Helper class for operations related to the GUI templates
 
 static var _template_id := ""
+static var _progress_window: Window
+static var _progress_lines := ["|", "/", "-", "\\", "-"]
+static var _progress_idx := 0
 
 ## Create a copy of the selected template, including its components.
 ## Also, generate the necessary scripts to define custom logic for the graphical
@@ -11,6 +14,8 @@ static func copy_gui_template(template_name: String) -> void:
 	if template_name == PopochiuResources.get_data_value("ui", "template", ""):
 		PopochiuUtils.print_normal("No changes in GUI tempalte.")
 		return
+	
+	_create_progress_window()
 	
 	var scene_path := PopochiuResources.GUI_CUSTOM_SCENE
 	var commands_template_path := PopochiuResources.GUI_CUSTOM_TEMPLATE
@@ -65,6 +70,8 @@ static func copy_gui_template(template_name: String) -> void:
 	
 	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
 	_update_settings_and_config(template_name, commands_path)
+	
+	_progress_window.queue_free()
 
 
 ## Create the **graphic_interface.tscn** file as a copy of the selected GUI template scene.
@@ -89,6 +96,54 @@ static func _create_scene(scene_path: String) -> int:
 	return ResourceSaver.save(gi_scene, PopochiuResources.GUI_GAME_SCENE)
 
 
+static func _create_progress_window() -> void:
+	_progress_window = Window.new()
+	_progress_window.borderless = true
+	_progress_window.popup_window = true
+	_progress_window.exclusive = true
+	EditorInterface.get_base_control().add_child(_progress_window)
+	
+	var label := Label.new()
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_color_override("font_color", Color.WHITE)
+	
+	_animate_progress_text(label)
+	
+	var margin_container := MarginContainer.new()
+	margin_container.add_child(label)
+	margin_container.add_theme_constant_override("margin_top", 12)
+	margin_container.add_theme_constant_override("margin_left", 12)
+	margin_container.add_theme_constant_override("margin_bottom", 12)
+	margin_container.add_theme_constant_override("margin_right", 12)
+	
+	var panel_container := PanelContainer.new()
+	panel_container.add_child(margin_container)
+	
+	var style_box_flat := StyleBoxFlat.new()
+	style_box_flat.bg_color = Color("2e2c9b")
+	style_box_flat.border_color = Color("edf171")
+	style_box_flat.set_border_width_all(4)
+	style_box_flat.shadow_color = Color(Color.BLACK, 0.8)
+	style_box_flat.shadow_offset = Vector2(0.0, 4.0)
+	style_box_flat.shadow_size = 2
+	
+	panel_container.add_theme_stylebox_override("panel", style_box_flat)
+	
+	_progress_window.add_child(panel_container)
+	_progress_window.popup_centered(_progress_window.get_contents_minimum_size())
+
+
+static func _animate_progress_text(label: Label) -> void:
+	if not is_instance_valid(label): return
+	
+	label.text = "Copying files to graphic interface folder... %s" % _progress_lines[_progress_idx]
+	await EditorInterface.get_base_control().get_tree().create_timer(0.1).timeout
+	
+	_progress_idx = posmod(_progress_idx + 1, _progress_lines.size())
+	_animate_progress_text(label)
+
+
 static func _remove_components(dir_path: String) -> void:
 	for file_name: String in DirAccess.get_files_at(dir_path):
 		DirAccess.remove_absolute(dir_path + "/" + file_name)
@@ -101,46 +156,6 @@ static func _remove_components(dir_path: String) -> void:
 	# Once the directory is empty, remove it
 	DirAccess.remove_absolute(dir_path)
 	EditorInterface.get_resource_filesystem().scan()
-
-
-## Copy the commands and graphic interface scripts of the chosen GUI template. The new graphic
-## interface scripts inherits from the one originally assigned to the .tscn file of the selected
-## template.
-static func _copy_scripts(
-	commands_template_path: String, commands_path: String, script_path: String, scene_path: String
-) -> void:
-	DirAccess.copy_absolute(commands_template_path, commands_path)
-	
-	# Create a copy of the graphic interface script template ---------------------------------------
-	var template_path := PopochiuResources.GUI_TEMPLATES_FOLDER + "graphic_interface_template.gd"
-	var script_file := FileAccess.open(template_path, FileAccess.READ)
-	var source_code := script_file.get_as_text()
-	script_file.close()
-	source_code = source_code.replace(
-		"extends PopochiuGraphicInterface",
-		'extends "%s"' % scene_path.replace(".tscn", ".gd")
-	)
-	script_file = FileAccess.open(script_path, FileAccess.WRITE)
-	script_file.store_string(source_code)
-	script_file.close()
-
-
-## Updates the script of the created **res://game/graphic_interface/graphic_interface.tscn** file so
-## it uses the one created in `_copy_scripts(...)`.
-static func _update_scene_script(script_path: String) -> int:
-	# Update the script of the GUI -----------------------------------------------------------------
-	var scene := (load(
-		PopochiuResources.GUI_GAME_SCENE
-	) as PackedScene).instantiate()
-	scene.set_script(load(script_path))
-	
-	# Set the name of the root node
-	scene.name = "GraphicInterface"
-	
-	var packed_scene: PackedScene = PackedScene.new()
-	packed_scene.pack(scene)
-	
-	return ResourceSaver.save(packed_scene, PopochiuResources.GUI_GAME_SCENE)
 
 
 ## Makes a copy of the components used by the original GUI template to the
@@ -176,6 +191,10 @@ static func _copy_components(source_scene_path: String, is_gui_game_scene := fal
 		target_folder = PopochiuResources.GUI_GAME_FOLDER + target_folder
 		
 		dependency_data.target_path = "%s/%s" % [target_folder, file_name]
+		
+		if FileAccess.file_exists(dependency_data.target_path):
+			# Ignore any file that has already been copied
+			continue
 		
 		if not DirAccess.dir_exists_absolute(target_folder):
 			DirAccess.make_dir_recursive_absolute(target_folder)
@@ -253,6 +272,46 @@ static func _update_dependencies(scene_path: String, dependencies_to_update: Arr
 	var file_write = FileAccess.open(scene_path, FileAccess.WRITE)
 	file_write.store_string(text)
 	file_write.close()
+
+
+## Copy the commands and graphic interface scripts of the chosen GUI template. The new graphic
+## interface scripts inherits from the one originally assigned to the .tscn file of the selected
+## template.
+static func _copy_scripts(
+	commands_template_path: String, commands_path: String, script_path: String, scene_path: String
+) -> void:
+	DirAccess.copy_absolute(commands_template_path, commands_path)
+	
+	# Create a copy of the graphic interface script template ---------------------------------------
+	var template_path := PopochiuResources.GUI_TEMPLATES_FOLDER + "graphic_interface_template.gd"
+	var script_file := FileAccess.open(template_path, FileAccess.READ)
+	var source_code := script_file.get_as_text()
+	script_file.close()
+	source_code = source_code.replace(
+		"extends PopochiuGraphicInterface",
+		'extends "%s"' % scene_path.replace(".tscn", ".gd")
+	)
+	script_file = FileAccess.open(script_path, FileAccess.WRITE)
+	script_file.store_string(source_code)
+	script_file.close()
+
+
+## Updates the script of the created **res://game/graphic_interface/graphic_interface.tscn** file so
+## it uses the one created in `_copy_scripts(...)`.
+static func _update_scene_script(script_path: String) -> int:
+	# Update the script of the GUI -----------------------------------------------------------------
+	var scene := (load(
+		PopochiuResources.GUI_GAME_SCENE
+	) as PackedScene).instantiate()
+	scene.set_script(load(script_path))
+	
+	# Set the name of the root node
+	scene.name = "GraphicInterface"
+	
+	var packed_scene: PackedScene = PackedScene.new()
+	packed_scene.pack(scene)
+	
+	return ResourceSaver.save(packed_scene, PopochiuResources.GUI_GAME_SCENE)
 
 
 static func _update_settings_and_config(template_name: String, commands_path: String) -> void:

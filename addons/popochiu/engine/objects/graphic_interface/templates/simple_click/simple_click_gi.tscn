@@ -1,8 +1,7 @@
-[gd_scene load_steps=33 format=3 uid="uid://cwvuu8g0ih3i8"]
+[gd_scene load_steps=32 format=3 uid="uid://cwvuu8g0ih3i8"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/simple_click_gi.gd" id="1_268ni"]
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="2_6qu0l"]
-[ext_resource type="Texture2D" uid="uid://bl3ecai6lvat1" path="res://addons/popochiu/engine/cursor/sprites/cursor.png" id="2_qf61v"]
 [ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.tscn" id="2_v42aw"]
 [ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/images/simple_click_cursor.png" id="3_718yk"]
 [ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/components/system_text/system_text.tscn" id="4_o82xq"]
@@ -14,23 +13,23 @@
 [ext_resource type="PackedScene" uid="uid://dwxm2p1iyhpx6" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/sound_settings_popup/sound_settings_popup.tscn" id="10_csjib"]
 
 [sub_resource type="AtlasTexture" id="10"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="11"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="12"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(64, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="15"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(96, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="16"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(128, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_t3qtx"]
@@ -38,55 +37,55 @@ atlas = ExtResource("3_718yk")
 region = Rect2(576, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="4"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(192, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="5"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(224, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="18"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(256, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="17"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(288, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="9"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="2"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(320, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="3"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(352, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="14"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(384, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="19"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(416, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="6"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(448, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="7"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(480, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="13"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(512, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="8"]
-atlas = ExtResource("2_qf61v")
+atlas = ExtResource("3_718yk")
 region = Rect2(544, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_1bbe3"]
