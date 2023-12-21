@@ -191,6 +191,7 @@ static func _copy_components(source_scene_path: String, is_gui_game_scene := fal
 		target_folder = PopochiuResources.GUI_GAME_FOLDER + target_folder
 		
 		dependency_data.target_path = "%s/%s" % [target_folder, file_name]
+		dependencies_to_update.append(dependency_data)
 		
 		if FileAccess.file_exists(dependency_data.target_path):
 			# Ignore any file that has already been copied
@@ -204,8 +205,6 @@ static func _copy_components(source_scene_path: String, is_gui_game_scene := fal
 			_copy_script(source_file_path, target_folder, dependency_data.target_path)
 		else:
 			_copy_file(source_file_path, target_folder, dependency_data.target_path)
-		
-		dependencies_to_update.append(dependency_data)
 	
 		EditorInterface.get_resource_filesystem().scan()
 		await EditorInterface.get_resource_filesystem().filesystem_changed
