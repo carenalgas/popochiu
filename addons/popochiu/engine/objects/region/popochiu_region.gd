@@ -67,9 +67,11 @@ func _check_area(area: PopochiuCharacter, entered: bool) -> void:
 			_on_character_entered(area)
 			if scaling:
 				_update_scaling_region(area)
+				E.current_room.update_character_scale(area)
 		else:
 			_on_character_exited(area)
 			_clear_scaling_region(area)
+			E.current_room.update_character_scale(area)
 
 
 func _set_enabled(value: bool) -> void:
