@@ -50,7 +50,7 @@ func create(obj_name: String, set_as_main:bool = false) -> int:
 	# Changed _set_as_main_check.pressed to _set_as_main_check.button_pressed
 	# in order to fix #56
 	if set_as_main:
-		_main_dock.set_main_scene( _scene.scene)
+		_main_dock.set_main_scene( _scene.scene_file_path)
 		# TODO: next line should be in set_main_scene() function!
 		_dock_row.is_main = true # So the Heart icon shows
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

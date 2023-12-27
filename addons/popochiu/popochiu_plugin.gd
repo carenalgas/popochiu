@@ -415,7 +415,6 @@ func _create_container_buttons() -> void:
 	_btn_interaction_polygon.add_theme_stylebox_override('hover', _tool_btn_stylebox)
 	_btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
 	
-	hbox.add_child(_vsep)
 	hbox.add_child(_btn_baseline)
 	hbox.add_child(_btn_walk_to)
 	hbox.add_child(_btn_interaction_polygon)
@@ -425,7 +424,6 @@ func _create_container_buttons() -> void:
 		hbox
 	)
 
-	_vsep.hide()
 	_btn_baseline.hide()
 	_btn_walk_to.hide()
 
@@ -465,7 +463,6 @@ func _select_interaction_polygon() -> void:
 	_btn_walk_to.set_pressed_no_signal(false)
 	_btn_baseline.set_pressed_no_signal(false)
 	_btn_interaction_polygon.set_pressed_no_signal(true)
-	_vsep.hide()
 	
 	var collision_polygon: CollisionPolygon2D = null
 	
