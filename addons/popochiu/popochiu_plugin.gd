@@ -79,6 +79,8 @@ func _enter_tree() -> void:
 	main_dock.ei = _editor_interface
 	main_dock.fs = _editor_file_system
 	main_dock.focus_mode = Control.FOCUS_ALL
+	PopochiuEditorHelper.ei = _editor_interface
+	PopochiuEditorHelper.undo_redo = get_undo_redo()
 
 	for path in [
 		'res://addons/popochiu/editor/inspector/character_inspector_plugin.gd',
@@ -98,13 +100,6 @@ func _enter_tree() -> void:
 	
 	_export_plugin = preload('popochiu_export_plugin.gd').new()
 	add_export_plugin(_export_plugin)
-
-	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
-	main_dock.ei = _editor_interface
-	main_dock.fs = _editor_file_system
-	main_dock.focus_mode = Control.FOCUS_ALL
-	PopochiuEditorHelper.ei = _editor_interface
-	PopochiuEditorHelper.undo_redo = get_undo_redo()
 	
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
 	

@@ -56,10 +56,3 @@ func _add_resource_to_room() -> void:
 
 	# Save the room scene (it's open in the editor)
 	EditorInterface.save_scene()
-
-	# Update the correct list in the Room tab
-	(_room_tab as TabRoom).add_to_list(
-		_type,
-		_pascal_name,
-		_path_scene
-	)
