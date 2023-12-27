@@ -200,8 +200,14 @@ func update_character_scale(chr):
 				scale_range/polygon_range*position_from_the_top_of_region
 		)
 		)
-		chr.scale.x = [[scale_for_position, chr.on_scaling_region['scale_min']].max(), chr.on_scaling_region['scale_max']].min()
-		chr.scale.y = [[scale_for_position, chr.on_scaling_region['scale_min']].max(), chr.on_scaling_region['scale_max']].min()
+		chr.scale.x = [
+			[scale_for_position, chr.on_scaling_region['scale_min']].max(), 
+			chr.on_scaling_region['scale_max']
+		].min()
+		chr.scale.y = [
+			[scale_for_position, chr.on_scaling_region['scale_min']].max(), 
+			chr.on_scaling_region['scale_max']
+		].min()
 		chr.walk_speed = chr.default_walk_speed/chr.default_scale.x*scale_for_position
 	else:
 		chr.scale = chr.default_scale
