@@ -40,7 +40,9 @@ func _update_scaling_region(chr: PopochiuCharacter) -> void:
 	chr.on_scaling_region= {
 		'region_description': self.description,
 		'scale_top': self.scale_top, 
-		'scale_bottom': self.scale_bottom,  
+		'scale_bottom': self.scale_bottom,
+		'scale_max': [self.scale_top, self.scale_bottom].max(),
+		'scale_min': [self.scale_top, self.scale_bottom].min(),
 		'polygon_top_y': (
 			polygon_y_array.min()+self.position.y+get_node("InteractionPolygon").position.y 
 			if self.position 
@@ -65,9 +67,11 @@ func _check_area(area: PopochiuCharacter, entered: bool) -> void:
 			_on_character_entered(area)
 			if scaling:
 				_update_scaling_region(area)
+				E.current_room.update_character_scale(area)
 		else:
 			_on_character_exited(area)
 			_clear_scaling_region(area)
+			E.current_room.update_character_scale(area)
 
 
 func _set_enabled(value: bool) -> void:

@@ -182,13 +182,44 @@ func clean_characters() -> void:
 		if c is PopochiuCharacter:
 			c.queue_free()
 
+func update_character_scale(chr):
+	if chr.on_scaling_region:
+		var polygon_range = (
+			chr.on_scaling_region['polygon_bottom_y'] - chr.on_scaling_region['polygon_top_y']
+			)
+		var scale_range = (
+			chr.on_scaling_region['scale_bottom'] - chr.on_scaling_region['scale_top']
+			)
+
+		var position_from_the_top_of_region = (
+			chr.position.y-chr.on_scaling_region['polygon_top_y']
+			)
+
+		var scale_for_position = (
+			chr.on_scaling_region['scale_top']+(
+				scale_range/polygon_range*position_from_the_top_of_region
+		)
+		)
+		chr.scale.x = [
+			[scale_for_position, chr.on_scaling_region['scale_min']].max(), 
+			chr.on_scaling_region['scale_max']
+		].min()
+		chr.scale.y = [
+			[scale_for_position, chr.on_scaling_region['scale_min']].max(), 
+			chr.on_scaling_region['scale_max']
+		].min()
+		chr.walk_speed = chr.default_walk_speed/chr.default_scale.x*scale_for_position
+	else:
+		chr.scale = chr.default_scale
+		chr.walk_speed = chr.default_walk_speed
+
 func update_characters_position(character):
 	character.position = (
 		character.position_stored 
 		if character.position_stored 
 		else character.position
 		)
-	_update_character_scale(character)
+	update_character_scale(character)
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
 func get_marker(marker_name: String) -> Marker2D:
@@ -294,30 +325,6 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _update_character_scale(chr):
-	if chr.on_scaling_region:
-		var polygon_range = (
-			chr.on_scaling_region['polygon_bottom_y'] - chr.on_scaling_region['polygon_top_y']
-			)
-		var scale_range = (
-			chr.on_scaling_region['scale_bottom'] - chr.on_scaling_region['scale_top']
-			)
-
-		var position_from_the_top_of_region = (
-			chr.position.y-chr.on_scaling_region['polygon_top_y']
-			)
-
-		var scale_for_position = (
-			chr.on_scaling_region['scale_top']+(
-				scale_range/polygon_range*position_from_the_top_of_region
-		)
-		)
-		chr.scale.x = scale_for_position
-		chr.scale.y = scale_for_position
-		chr.walk_speed = chr.default_walk_speed/chr.default_scale.x*scale_for_position
-	else:
-		chr.scale = chr.default_scale
-		chr.walk_speed = chr.default_walk_speed
 
 func _move_along_path(distance: float, moving_character_data: Dictionary):
 	var last_point: Vector2 =( 
@@ -339,7 +346,7 @@ func _move_along_path(distance: float, moving_character_data: Dictionary):
 				moving_character_data.character.position_stored = next_position
 			else:
 				moving_character_data.character.position = next_position
-				_update_character_scale(moving_character_data.character)
+				update_character_scale(moving_character_data.character)
 			return
 
 		distance -= distance_between_points
@@ -347,7 +354,7 @@ func _move_along_path(distance: float, moving_character_data: Dictionary):
 		moving_character_data.path.remove_at(0)
 
 	moving_character_data.character.position = last_point
-	_update_character_scale(moving_character_data.character)
+	update_character_scale(moving_character_data.character)
 	_clear_navigation_path(moving_character_data.character)
 
 

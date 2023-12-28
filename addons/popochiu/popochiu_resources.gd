@@ -106,7 +106,10 @@ const WALKABLE_AREAS_IGNORE := [
 ]
 const REGIONS_IGNORE := [
 	'description',
-	'tint'
+	'tint',
+	'scaling',
+	'scale_top',
+	'scale_bottom'
 ]
 const SNGL_TEMPLATE := '@tool\n' +\
 'extends "%s"\n\n' +\
