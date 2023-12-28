@@ -9,6 +9,9 @@ popochiu_placeholder = null
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
+[node name="ScalingPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0)
+
 [node name="BaselineHelper" type="Line2D" parent="."]
 points = PackedVector2Array(-10000, 0, 10000, 0)
 width = 1.0
