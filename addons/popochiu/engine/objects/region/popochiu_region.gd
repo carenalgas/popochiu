@@ -22,6 +22,8 @@ func _ready() -> void:
 	
 	area_entered.connect(_check_area.bind(true))
 	area_exited.connect(_check_area.bind(false))
+	area_shape_entered.connect(_check_scaling.bind(true))
+	area_shape_exited.connect(_check_scaling.bind(false))
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
@@ -61,17 +63,29 @@ func _clear_scaling_region(chr: PopochiuCharacter) -> void:
 		chr.on_scaling_region = {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func _check_scaling(
+	area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool
+	):
+	if (
+		area is PopochiuCharacter 
+		and area.get_node_or_null("ScalingPolygon") 
+		and area_shape_index == area.get_node("ScalingPolygon").get_index()
+		):
+		if entered:
+			if scaling:
+				_update_scaling_region(area)
+				E.current_room._update_character_scale(area)
+		else:
+			_clear_scaling_region(area)
+		
+
 func _check_area(area: PopochiuCharacter, entered: bool) -> void:
+	
 	if area is PopochiuCharacter:
 		if entered:
 			_on_character_entered(area)
-			if scaling:
-				_update_scaling_region(area)
-				E.current_room.update_character_scale(area)
 		else:
 			_on_character_exited(area)
-			_clear_scaling_region(area)
-			E.current_room.update_character_scale(area)
 
 
 func _set_enabled(value: bool) -> void:
