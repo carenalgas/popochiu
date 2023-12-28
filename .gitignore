@@ -1,7 +1,12 @@
 # Addons other than Popochiu
 # (we use some for development)
+<<<<<<< HEAD
 # addons/*
 # !addons/popochiu/
+=======
+addons/*
+!addons/popochiu/
+>>>>>>> 87c52d8 (refs #37: Rooms Aseprite importer preparatory code and PopochiuObjects creation refactoring (#64))
 
 # Godot-specific ignores
 .import/

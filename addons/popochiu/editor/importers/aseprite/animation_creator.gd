@@ -30,6 +30,12 @@ func init(config, aseprite: RefCounted, editor_file_system: EditorFileSystem = n
 	_file_system = editor_file_system
 	_aseprite = aseprite
 
+# Public interfaces, dedicated to specific popochiu objects
+func create_character_animations(character: Node, player: AnimationPlayer, options: Dictionary):
+	# Chores
+	_target_node = character
+	_player = player
+	_options = options
 
 ## Public interfaces, dedicated to specific popochiu objects
 func create_character_animations(character: Node, player: AnimationPlayer, options: Dictionary):

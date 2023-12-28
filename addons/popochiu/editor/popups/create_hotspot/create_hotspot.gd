@@ -1,3 +1,4 @@
+# Creates a new hotspot in the room.
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
 # Creates a new hotspot in the room.
