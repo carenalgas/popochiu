@@ -1,7 +1,7 @@
 # Addons other than Popochiu
 # (we use some for development)
-addons/*
-!addons/popochiu/
+# addons/*
+# !addons/popochiu/
 
 # Godot-specific ignores
 .import/
