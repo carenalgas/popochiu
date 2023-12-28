@@ -63,8 +63,14 @@ func _clear_scaling_region(chr: PopochiuCharacter) -> void:
 		chr.on_scaling_region = {}
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _check_scaling(area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool):
-	if area is PopochiuCharacter and area.get_node("ScalingPolygon") and area_shape_index == area.get_node("ScalingPolygon").get_index():
+func _check_scaling(
+	area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool
+	):
+	if (
+		area is PopochiuCharacter 
+		and area.get_node_or_null("ScalingPolygon") 
+		and area_shape_index == area.get_node("ScalingPolygon").get_index()
+		):
 		if entered:
 			if scaling:
 				_update_scaling_region(area)
