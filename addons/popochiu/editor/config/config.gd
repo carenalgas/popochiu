@@ -2,12 +2,15 @@
 extends RefCounted
 
 # EDITOR SETTINGS
+const _ASEPRITE_IMPORTER_ENABLED_KEY = 'popochiu/import/aseprite/enable_aseprite_importer'
 const _ASEPRITE_COMMAND_KEY = 'popochiu/import/aseprite/command_path'
 const _REMOVE_SOURCE_FILES_KEY = 'popochiu/import/aseprite/remove_json_file'
 
 # PROJECT SETTINGS
 const _DEFAULT_IMPORT_ENABLED = 'popochiu/import/aseprite/import_animation_by_default'
 const _DEFAULT_LOOP_ENABLED = 'popochiu/import/aseprite/loop_animation_by_default'
+const _DEFAULT_PROP_VISIBLE_ENABLED = 'popochiu/import/aseprite/new_props_visible_by_default'
+const _DEFAULT_PROP_CLICKABLE_ENABLED = 'popochiu/import/aseprite/new_props_clickable_by_default'
 const _DEFAULT_WIPE_OLD_ANIMS_ENABLED = 'popochiu/import/aseprite/wipe_old_animations'
 
 
@@ -20,6 +23,7 @@ var _plugin_icons: Dictionary
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func initialize_editor_settings():
 	editor_settings = ei.get_editor_settings()
+	_initialize_editor_cfg(_ASEPRITE_IMPORTER_ENABLED_KEY, false, TYPE_BOOL)
 	_initialize_editor_cfg(_ASEPRITE_COMMAND_KEY, _default_command(), TYPE_STRING)
 	_initialize_editor_cfg(_REMOVE_SOURCE_FILES_KEY, true, TYPE_BOOL)
 
@@ -27,6 +31,8 @@ func initialize_editor_settings():
 func initialize_project_settings():
 	_initialize_project_cfg(_DEFAULT_IMPORT_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_LOOP_ENABLED, true, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_PROP_VISIBLE_ENABLED, true, TYPE_BOOL)
+	_initialize_project_cfg(_DEFAULT_PROP_CLICKABLE_ENABLED, true, TYPE_BOOL)
 	_initialize_project_cfg(_DEFAULT_WIPE_OLD_ANIMS_ENABLED, true, TYPE_BOOL)
 
 	_set_icons()
@@ -34,6 +40,10 @@ func initialize_project_settings():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func aseprite_importer_enabled() -> bool:
+	return _get_editor_setting(_ASEPRITE_IMPORTER_ENABLED_KEY, false)
+
+
 func get_command() -> String:
 	return _get_editor_setting(_ASEPRITE_COMMAND_KEY, _default_command())
 
@@ -52,6 +62,14 @@ func is_default_animation_import_enabled() -> bool:
 
 func is_default_animation_loop_enabled() -> bool:
 	return _get_project_setting(_DEFAULT_LOOP_ENABLED, true)
+
+
+func is_default_animation_prop_visible() -> bool:
+	return _get_project_setting(_DEFAULT_PROP_VISIBLE_ENABLED, true)
+
+
+func is_default_animation_prop_clickable() -> bool:
+	return _get_project_setting(_DEFAULT_PROP_CLICKABLE_ENABLED, true)
 
 
 func is_default_wipe_old_anims_enabled() -> bool:
@@ -80,6 +98,7 @@ func _initialize_editor_cfg(key: String, default_value, type: int, hint: int = P
 			"type": type,
 			"hint": hint,
 		})
+
 
 func _initialize_project_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE):
 	if not ProjectSettings.has_setting(key):

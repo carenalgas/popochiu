@@ -1,0 +1,131 @@
+[gd_scene load_steps=12 format=3 uid="uid://imgyvjiqcabs"]
+
+[ext_resource type="Script" path="res://popochiu/rooms/house/room_house.gd" id="1_2rfwu"]
+[ext_resource type="PackedScene" uid="uid://jrp1r8uco7vy" path="res://popochiu/rooms/house/props/background/prop_background.tscn" id="2_amufg"]
+[ext_resource type="Script" path="res://popochiu/rooms/house/props/background/prop_background.gd" id="3_fxlxc"]
+[ext_resource type="PackedScene" uid="uid://dbkathyetrso7" path="res://popochiu/rooms/house/props/door/prop_door.tscn" id="4_qpaur"]
+[ext_resource type="Script" path="res://popochiu/rooms/house/props/door/prop_door.gd" id="5_h0lr0"]
+[ext_resource type="PackedScene" uid="uid://mqwbrgbk0llc" path="res://popochiu/rooms/house/props/drawer/prop_drawer.tscn" id="6_uvcj4"]
+[ext_resource type="Script" path="res://popochiu/rooms/house/props/drawer/prop_drawer.gd" id="7_o4euj"]
+[ext_resource type="PackedScene" uid="uid://diukdigj0f4io" path="res://popochiu/rooms/house/props/table/prop_table.tscn" id="8_hg5ln"]
+[ext_resource type="Script" path="res://popochiu/rooms/house/props/table/prop_table.gd" id="9_ktt1q"]
+[ext_resource type="PackedScene" uid="uid://1467eig2vwbo" path="res://popochiu/rooms/house/props/toy_car/prop_toy_car.tscn" id="10_nkfsd"]
+[ext_resource type="Script" path="res://popochiu/rooms/house/props/toy_car/prop_toy_car.gd" id="11_earee"]
+
+[node name="RoomHouse" type="Node2D"]
+script = ExtResource("1_2rfwu")
+script_name = "House"
+popochiu_placeholder = null
+metadata/_popochiu_aseprite_config_ = {
+"o_folder": "",
+"o_name": "",
+"only_visible_layers": false,
+"op_exp": true,
+"source": "res://popochiu/rooms/house/house.aseprite",
+"tags": [{
+"direction": "forward",
+"from": 0,
+"import": true,
+"loops": true,
+"prop_clickable": true,
+"prop_visible": true,
+"tag_name": "background",
+"to": 1.0
+}, {
+"direction": "forward",
+"from": 0,
+"import": true,
+"loops": true,
+"prop_clickable": true,
+"prop_visible": true,
+"tag_name": "door",
+"to": 2.0
+}, {
+"direction": "forward",
+"from": 0,
+"import": true,
+"loops": true,
+"prop_clickable": true,
+"prop_visible": true,
+"tag_name": "drawer",
+"to": 2.0
+}, {
+"direction": "forward",
+"from": 0,
+"import": true,
+"loops": true,
+"prop_clickable": true,
+"prop_visible": true,
+"tag_name": "table",
+"to": 1.0
+}, {
+"direction": "forward",
+"from": 0,
+"import": true,
+"loops": true,
+"prop_clickable": true,
+"prop_visible": true,
+"tag_name": "toy_car",
+"to": 1.0
+}],
+"wipe_old_anims": true
+}
+
+[node name="WalkableAreas" type="Node2D" parent="."]
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="Background" type="Area2D" parent="Props" instance=ExtResource("2_amufg")]
+z_index = -1
+position = Vector2(160, 90)
+script = ExtResource("3_fxlxc")
+script_name = "Background"
+description = "Background"
+baseline = -90
+cursor = 1
+interaction_polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
+metadata/ANIM_NAME = "background"
+
+[node name="Door" type="Area2D" parent="Props" instance=ExtResource("4_qpaur")]
+position = Vector2(160, 90)
+script = ExtResource("5_h0lr0")
+script_name = "Door"
+description = "Door"
+cursor = 1
+interaction_polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
+metadata/ANIM_NAME = "door"
+
+[node name="Drawer" type="Area2D" parent="Props" instance=ExtResource("6_uvcj4")]
+position = Vector2(160, 90)
+script = ExtResource("7_o4euj")
+script_name = "Drawer"
+description = "Drawer"
+cursor = 1
+interaction_polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
+metadata/ANIM_NAME = "drawer"
+
+[node name="Table" type="Area2D" parent="Props" instance=ExtResource("8_hg5ln")]
+position = Vector2(160, 90)
+script = ExtResource("9_ktt1q")
+script_name = "Table"
+description = "Table"
+cursor = 1
+interaction_polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
+metadata/ANIM_NAME = "table"
+
+[node name="ToyCar" type="Area2D" parent="Props" instance=ExtResource("10_nkfsd")]
+position = Vector2(160, 90)
+script = ExtResource("11_earee")
+script_name = "ToyCar"
+description = "Toy Car"
+cursor = 1
+interaction_polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
+metadata/ANIM_NAME = "toy_car"
+
+[node name="Hotspots" type="Node2D" parent="."]
+
+[node name="Regions" type="Node2D" parent="."]
+
+[node name="Markers" type="Node2D" parent="."]
+
+[node name="Characters" type="Node2D" parent="."]

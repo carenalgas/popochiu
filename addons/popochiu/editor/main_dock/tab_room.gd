@@ -1,5 +1,6 @@
 @tool
 extends VBoxContainer
+
 # Handles the Room tab in Popochiu's dock
 # ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 
@@ -121,7 +122,6 @@ func scene_changed(scene_root: Node) -> void:
 		PopochiuUtils.print_error(
 			"This room doesn't have a [code]script_name[/code] value!"
 		)
-		
 		return
 	
 	if not scene_root is PopochiuRoom:

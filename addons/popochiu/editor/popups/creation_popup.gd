@@ -56,11 +56,4 @@ func _update_name(new_text: String) -> void:
 	if _error_feedback.visible:
 		_error_feedback.hide()
 	
-	var casted_name := PackedStringArray()
-	for idx in new_text.length():
-		if idx == 0:
-			casted_name.append(new_text[idx].to_upper())
-		else:
-			casted_name.append(new_text[idx])
-
-	_name = ''.join(casted_name).strip_edges()
+	_name = new_text.to_pascal_case()

@@ -55,7 +55,7 @@ var _rows_paths := []
 		path = INVENTORY_ITEMS_PATH,
 		group = find_child('ItemsGroup'),
 		popup = find_child('CreateInventoryItem'),
-		scene = INVENTORY_ITEMS_PATH + ('%s/item_%s.tscn')
+		scene = INVENTORY_ITEMS_PATH + ('%s/inventory_item_%s.tscn')
 	},
 	Constants.Types.DIALOG: {
 		path = DIALOGS_PATH,
@@ -259,6 +259,10 @@ func get_audio_tab() -> Node:
 
 func get_opened_room() -> PopochiuRoom:
 	return _tab_room.opened_room
+
+
+func get_opened_room_tab() -> VBoxContainer:
+	return _tab_room
 
 
 func open_setup() -> void:
