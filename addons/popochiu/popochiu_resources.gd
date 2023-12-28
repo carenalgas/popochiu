@@ -144,7 +144,7 @@ const SNGL_SETUP := {
 	I_SNGL : {
 		interface = IINVENTORY,
 		section = 'inventory_items',
-		'class' = 'res://popochiu/inventory_items/%s/item_%s.gd',
+		'class' = 'res://popochiu/inventory_items/%s/inventory_item_%s.gd',
 		'const' = "const PII%s := preload('%s')\n",
 		node = "var %s: PII%s : get = get_%s\n",
 		'func' = "func get_%s() -> PII%s: return super.get_item_instance('%s')\n",

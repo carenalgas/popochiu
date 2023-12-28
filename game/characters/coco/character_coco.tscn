@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://0xuudaicncjr"]
+
+[ext_resource type="Script" path="res://game/characters/coco/character_coco.gd" id="1_2t5s8"]
+[ext_resource type="Texture2D" uid="uid://f3sw4anftswi" path="res://game/characters/coco/coco_01.png" id="2_b7dce"]
+
+[node name="CharacterCoco" type="Area2D"]
+script = ExtResource("1_2t5s8")
+popochiu_placeholder = null
+script_name = "Coco"
+description = "Coco"
+cursor = 8
+interaction_polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
+visible = false
+polygon = PackedVector2Array(-24, -45, 3, -52, 25, -43, 33, -23, 31, 0, 3, 7, -25, 0, -30, -20)
+
+[node name="ScalingPolygon" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0)
+
+[node name="BaselineHelper" type="Line2D" parent="."]
+visible = false
+points = PackedVector2Array(-10000, 0, 10000, 0)
+width = 1.0
+
+[node name="WalkToHelper" type="Marker2D" parent="."]
+visible = false
+
+[node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
+offset_left = -2.5
+offset_top = -2.5
+offset_right = 2.5
+offset_bottom = 2.5
+color = Color(0, 1, 1, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -19)
+texture = ExtResource("2_b7dce")
+
+[node name="DialogPos" type="Marker2D" parent="."]
+visible = false

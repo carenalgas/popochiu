@@ -79,6 +79,32 @@ func export_layer(file_name: String, layer_name: String, output_folder: String, 
 	}
 
 
+# IMPROVE: See if we can extract JSON data limited to the single tag
+# (so we don't have to reckon offset framerange)
+func export_tag(file_name: String, tag_name: String, output_folder: String, options: Dictionary) -> Dictionary:
+	var output_prefix = options.get('output_filename', "").strip_edges()
+	var output_dir = output_folder.replace("res://", "./").strip_edges()
+	var data_file = "%s/%s%s.json" % [output_dir, output_prefix, tag_name]
+	var sprite_sheet = "%s/%s%s.png" % [output_dir, output_prefix, tag_name]
+	var output = []
+	var arguments = _export_command_common_arguments(file_name, data_file, sprite_sheet)
+	arguments.push_front(tag_name)
+	arguments.push_front("--tag")
+
+	_add_sheet_type_arguments(arguments, options)
+
+	var exit_code = _execute(arguments, output)
+	if exit_code != 0:
+		printerr('[Popochiu] Aseprite: Failed to export tag spritesheet. Command output follows:')
+		print(output)
+		return {}
+
+	return {
+		'data_file': data_file.replace("./", "res://"),
+		"sprite_sheet": sprite_sheet.replace("./", "res://")
+	}
+
+
 func list_layers(file_name: String, only_visible = false) -> Array:
 	var output = []
 	var arguments = ["-b", "--list-layers", file_name]
@@ -116,6 +142,10 @@ func is_valid_spritesheet(content):
 
 func get_content_frames(content):
 	return content.frames if typeof(content.frames) == TYPE_ARRAY  else content.frames.values()
+
+
+func get_content_meta_tags(content):
+	return content.meta.frameTags if content.meta.has("frameTags")  else []
 
 
 func check_command_path():

@@ -4,7 +4,6 @@
 
 [node name="Hotspot" type="Area2D"]
 script = ExtResource("1")
-walk_to_point = Vector2(0, 0)
 cursor = 1
 
 [node name="BaselineHelper" type="Line2D" parent="."]
@@ -19,3 +18,7 @@ offset_top = -2.5
 offset_right = 2.5
 offset_bottom = 2.5
 color = Color(0, 1, 1, 1)
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
+modulate = Color(0, 0, 1, 1)
+polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)

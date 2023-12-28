@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://2mnjw3qsi8hc"]
 
-[ext_resource type="FontFile" uid="uid://c7ig50my7y048" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_i1qxr"]
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_i1qxr"]
 
 [node name="InteractionLine" type="Label"]
 anchors_preset = 15

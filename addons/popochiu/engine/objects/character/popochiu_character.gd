@@ -22,6 +22,7 @@ signal move_ended
 @export var can_move := true
 @export var ignore_walkable_areas := false
 @export var anti_glide_animation: bool = false
+@export_category("Aseprite")
 
 var position_stored = null
 var last_room := ''
@@ -54,20 +55,12 @@ func _ready():
 		child.frame_changed.connect(_update_position)
 		
 func _get_property_list():
-	var properties = []
-	properties.append({
-		name = "Aseprite",
-		type = TYPE_NIL,
-		usage = PROPERTY_USAGE_CATEGORY
-	})
-	# This is needed or the category won't be shown in the
-	# inspector. AsepriteImporterInspectorPlugin hides it.
-	properties.append({
-		name = "popochiu_placeholder",
-		type = TYPE_NIL,
-	})
-
-	return properties
+	return [
+		{
+			name = "popochiu_placeholder",
+			type = TYPE_NIL,
+		}
+	]
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░

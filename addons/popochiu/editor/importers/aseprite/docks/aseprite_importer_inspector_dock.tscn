@@ -1,30 +1,23 @@
-[gd_scene load_steps=5 format=3 uid="uid://qtefsrha1b7s"]
-
-[ext_resource type="Script" path="res://addons/popochiu/editor/importers/aseprite/docks/animation_player_inspector_dock.gd" id="1"]
+[gd_scene load_steps=4 format=3 uid="uid://bcanby6n3eahm"]
 
 [sub_resource type="StyleBoxEmpty" id="1"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lr3up"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wwoxk"]
 bg_color = Color(0, 0, 0, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uvby7"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctsm1"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
-bg_color = Color(1, 0.365, 0.365, 1)
+bg_color = Color(1, 0.364706, 0.364706, 1)
 draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
 corner_detail = 1
 
 [node name="sprite_inspector_dock" type="PanelContainer"]
 offset_right = 14.0
 offset_bottom = 14.0
 theme_override_styles/panel = SubResource("1")
-script = ExtResource("1")
 
 [node name="margin" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -62,7 +55,7 @@ text = "Rescan"
 [node name="TagsTitleBar" type="PanelContainer" parent="margin/Importer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_lr3up")
+theme_override_styles/panel = SubResource("StyleBoxFlat_wwoxk")
 
 [node name="TagsTitle" type="Button" parent="margin/Importer/TagsTitleBar"]
 layout_mode = 2
@@ -77,7 +70,7 @@ layout_mode = 2
 [node name="OptionsTitleBar" type="PanelContainer" parent="margin/Importer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_lr3up")
+theme_override_styles/panel = SubResource("StyleBoxFlat_wwoxk")
 
 [node name="OptionsTitle" type="Button" parent="margin/Importer/OptionsTitleBar"]
 unique_name_in_owner = true
@@ -168,6 +161,7 @@ text = "Reset Preferences"
 
 [node name="Warning" type="VBoxContainer" parent="margin"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="margin/Warning"]
@@ -179,7 +173,7 @@ custom_minimum_size = Vector2(222, 50)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_uvby7")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
 
 [node name="WarningLabel" type="Label" parent="margin/Warning/HBoxContainer/WarningPanel"]
 unique_name_in_owner = true
@@ -193,6 +187,30 @@ theme_override_colors/font_color = Color(0.768627, 0.423529, 0.443137, 1)
 text = "Error loading Aseprite Importer!
 Check Output panel for details."
 horizontal_alignment = 1
+
+[node name="Info" type="VBoxContainer" parent="margin"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="margin/Info"]
+layout_mode = 2
+
+[node name="InfoPanel" type="Panel" parent="margin/Info/HBoxContainer"]
+custom_minimum_size = Vector2(222, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
+
+[node name="InfoLabel" type="Label" parent="margin/Info/HBoxContainer/InfoPanel"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "Aseprite Importer disabled.
+Can be enabled in Editor Settings."
 
 [connection signal="pressed" from="margin/Importer/Source/SourceButton" to="." method="_on_source_pressed"]
 [connection signal="pressed" from="margin/Importer/Source/RescanButton" to="." method="_on_rescan_pressed"]

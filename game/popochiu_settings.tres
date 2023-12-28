@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="PopochiuSettings" load_steps=3 format=3 uid="uid://ufwse5x862ji"]
+
+[ext_resource type="PackedScene" uid="uid://w4vph8t0uaub" path="res://game/graphic_interface/graphic_interface.tscn" id="1_eoyte"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/popochiu_settings.gd" id="1_kpmlm"]
+
+[resource]
+script = ExtResource("1_kpmlm")
+graphic_interface = ExtResource("1_eoyte")
+skip_cutscene_time = 0.2
+text_speeds = [0.1, 0.01, 0.0]
+default_text_speed = 0
+auto_continue_text = false
+use_translations = false
+items_on_start = []
+inventory_limit = 0
+inventory_always_visible = false
+toolbar_always_visible = false
+fade_color = Color(0, 0, 0, 1)
+scale_gui = true
+max_dialog_options = 3
+is_pixel_art_game = true
+is_pixel_perfect = false
+dialog_style = 0

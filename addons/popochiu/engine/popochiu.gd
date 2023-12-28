@@ -159,7 +159,7 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_released('popochiu-skip'):
 		cutscene_skipped = true
 		$TransitionLayer.play_transition(
-			TransitionLayer.PASS_DOWN_IN,
+			$TransitionLayer.PASS_DOWN_IN,
 			settings.skip_cutscene_time
 		)
 		
