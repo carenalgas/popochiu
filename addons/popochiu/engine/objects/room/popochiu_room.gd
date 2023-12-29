@@ -130,6 +130,7 @@ func exit_room() -> void:
 	set_physics_process(false)
 	
 	for c in $Characters.get_children():
+		c.position_stored = null
 		$Characters.remove_child(c)
 	
 	_on_room_exited()
