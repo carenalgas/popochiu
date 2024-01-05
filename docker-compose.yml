@@ -1,0 +1,10 @@
+version: "3"
+services:
+    mkdocs:
+        volumes:
+            - ./docs:/app
+        working_dir: /app
+        labels:
+            - com.dnsdock.alias=docs.popochiu.loc
+        image: minidocks/mkdocs
+        command: serve -a 0.0.0.0:80 -t readthedocs
