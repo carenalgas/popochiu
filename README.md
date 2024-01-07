@@ -1,8 +1,12 @@
-### 🌎 [Lee la versión en Español](./LEEME.md) 🌎
+# Popochiu 2 (alpha 5)
 
-![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_hero-en.png "Popochiu")
+[![Godot v4.0.x](https://img.shields.io/badge/Godot-4.0.x-blue)](https://godotengine.org/download/archive/4.0.4-stable/) [![Godot v4.1.x](https://img.shields.io/badge/Godot-4.1.x-blue)](https://godotengine.org/download) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
-A Godot plugin to create point n' click games with a workflow similar to [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
+![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_2_hero-en.png "Popochiu")
+
+A Godot plugin to make point n' click games the easy way with a workflow similar to [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
+
+### 🌎👉🏽 [Lee la versión en Español](./LEEME.md) 👈🏽🌎
 
 ---
 
@@ -20,9 +24,6 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 ![features](https://github.com/mapedorr/popochiu/wiki/images/popochiu_list_of_features-en.png "Features")
 
-# Using Godot 4? Try the latest alpha of Popochiu version 2
-
-We're working on making Popochiu version 2 even better, but it takes time. You can follow our progress in branch [2.0](https://github.com/mapedorr/popochiu/tree/2.0) and the branches that start from it. Our latest release is [Alpha 5](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha5/popochiu_v2.0-alpha5.zip).
 
 
 # Installation
@@ -37,7 +38,7 @@ We're working on making Popochiu version 2 even better, but it takes time. You c
 
 
 
-# What's new in the latest version
+# What's new in the latest stable version
 
 [![New features in 1.10](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.10_button-en.png)](https://youtu.be/4pmjqYwXWHU "New features in v1.10.0")
 
@@ -47,7 +48,7 @@ We're working on making Popochiu version 2 even better, but it takes time. You c
 
 [![tutorials](https://github.com/mapedorr/popochiu/wiki/images/popochiu_tutorials_button-en.png "Go to the tutorials")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
 
-You can follow the tutorials (English subs. (English version will be uploaded soon!)) [in this list](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) to learn:
+You can follow the tutorials (English subs) [in this list](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) to learn:
 
 - How to setup your project.
 - How to create rooms where the player can walk around, and how to setup them if the exceed the limits of the game window.
@@ -57,18 +58,10 @@ You can follow the tutorials (English subs. (English version will be uploaded so
 - How to create branching dialogs.
 - How to add sound effects, music, voices, and graphic interface sounds.
 
-More tutorials will come in the following weeks to learn:
-
-- How to save/load the game state.
-- How to work with Props that have more than one frame in their spritesheet.
-- How to add animations to your Characters.
-- How to use emotions when characters speak.
-- And much more...
-
 ---
 
 # Credits
 
 Made by [Carenalga](https://mapedorr.itch.io).
 
-Now with the collaboration of @stickgrinder , @mgdesign and @drbbgh , members from [Illiterate Code Games](https://illiteratecodegames.itch.io).
+Now with the collaboration of [StickGrinder](https://twitter.com/StickGrinder) ([itch.io](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), and [@JuannFerrari](https://github.com/JuannFerrari).

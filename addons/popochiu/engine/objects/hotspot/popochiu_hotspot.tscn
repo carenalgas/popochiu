@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://hfvjxu5map27"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/hotspot/popochiu_hotspot.gd" id="1"]
+
+[node name="Hotspot" type="Area2D"]
+script = ExtResource("1")
+walk_to_point = Vector2(0, 0)
+cursor = 1
+
+[node name="BaselineHelper" type="Line2D" parent="."]
+points = PackedVector2Array(-10000, 0, 10000, 0)
+width = 1.0
+
+[node name="WalkToHelper" type="Marker2D" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
+offset_left = -2.5
+offset_top = -2.5
+offset_right = 2.5
+offset_bottom = 2.5
+color = Color(0, 1, 1, 1)

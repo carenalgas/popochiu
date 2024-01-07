@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfml3lrhiixmi"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/room/popochiu_room.gd" id="1"]
+
+[node name="Room" type="Node2D"]
+script = ExtResource("1")
+
+[node name="WalkableAreas" type="Node2D" parent="."]
+
+[node name="Props" type="Node2D" parent="."]
+
+[node name="Hotspots" type="Node2D" parent="."]
+
+[node name="Regions" type="Node2D" parent="."]
+
+[node name="Markers" type="Node2D" parent="."]
+
+[node name="Characters" type="Node2D" parent="."]

@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dcta4urojglil"]
+
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_lugee"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_we03b"]
+
+[node name="DialogOption" type="Button"]
+offset_right = 320.0
+offset_bottom = 17.0
+theme_override_fonts/font = ExtResource("1_lugee")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_we03b")
+text = "asdasd"
+flat = true
+alignment = 0

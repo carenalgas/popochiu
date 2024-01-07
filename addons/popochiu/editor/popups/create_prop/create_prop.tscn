@@ -1,0 +1,65 @@
+[gd_scene load_steps=2 format=3 uid="uid://cd4waqogbca4x"]
+
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_prop/create_prop.gd" id="1_ku3uq"]
+
+[node name="CreateProp" type="ConfirmationDialog"]
+max_size = Vector2i(640, 320)
+dialog_hide_on_ok = false
+dialog_autowrap = true
+script = ExtResource("1_ku3uq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -36.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InputContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/InputContainer"]
+layout_mode = 2
+text = "Prop name"
+
+[node name="Input" type="LineEdit" parent="VBoxContainer/InputContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+context_menu_enabled = false
+virtual_keyboard_enabled = false
+shortcut_keys_enabled = false
+
+[node name="InteractionContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/InteractionContainer"]
+layout_mode = 2
+text = "Will have interaction?"
+
+[node name="InteractionCheckbox" type="CheckBox" parent="VBoxContainer/InteractionContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ErrorFeedback" type="Label" parent="VBoxContainer"]
+visible = false
+layout_mode = 2
+text = "Prop name is mandatory!"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Guide" type="Label" parent="VBoxContainer"]
+modulate = Color(1, 1, 1, 0.698039)
+layout_mode = 2
+text = "Use PascalCase. No spaces. i.e Bucket or WineBottle."
+
+[node name="Info" type="RichTextLabel" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 2
+bbcode_enabled = true

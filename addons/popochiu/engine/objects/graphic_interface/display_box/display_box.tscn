@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://bdgs3xsbq3gdd"]
+
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_6ussd"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/display_box/display_box.gd" id="2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4eue6"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_detail = 4
+anti_aliasing = false
+
+[node name="DisplayBox" type="RichTextLabel"]
+offset_right = 24.0
+offset_bottom = 24.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/normal_font = ExtResource("1_6ussd")
+theme_override_styles/normal = SubResource("StyleBoxFlat_4eue6")
+bbcode_enabled = true
+scroll_active = false
+script = ExtResource("2")

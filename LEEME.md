@@ -1,8 +1,12 @@
+# Popochiu 2 (alpha 5)
+
+[![Godot v4.0.x](https://img.shields.io/badge/Godot-4.0.x-blue)](https://godotengine.org/download/archive/4.0.4-stable/) [![Godot v4.1.x](https://img.shields.io/badge/Godot-4.1.x-blue)](https://godotengine.org/download) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
+
+![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_2_hero-es.png "Popochiu")
+
+Un plugin para Godot que permite crear juegos de aventura gráfica fácilmente con un flujo de trabajo como el de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [PowerQuest](https://powerhoof.itch.io/powerquest).
+
 ### 🌎 [Read this in English](./README.md) 🌎
-
-![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_hero-es.png "Popochiu")
-
-Un plugin para Godot que permite crear juegos de aventura gráfica con un flujo de trabajo como el de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [PowerQuest](https://powerhoof.itch.io/powerquest).
 
 ---
 
@@ -20,16 +24,14 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 ![features](https://github.com/mapedorr/popochiu/wiki/images/popochiu_list_of_features-es.png "Features")
 
-# ¿Usas Godot 4? Prueba la última alfa de Popochiu versión 2
 
-Estamos trabajando para que la siguiente versión de Popochiu sea mucho mejor, pero es algo que toma tiempo. Puedes seguir el progreso de esta actualización en la rama [2.0](https://github.com/mapedorr/popochiu/tree/2.0) y todas las que deriven de esta. Nuestro último lanzamiento fue la [Alfa 5](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha5/popochiu_v2.0-alpha5.zip).
 
 # Instalación
 
 **Popochiu puede usarse en Godot 3.3.x a 3.5.x**. **¡¡¡Y ahora también funciona en Godot 4!!!**
 
-1. Si usas Godot 4, descarga [Popochiu 2.0 Alfa 5](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha5/popochiu_v2.0-alpha5.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
-2. Extrae su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
+1. Si usas Godot 4, descarga [Popochiu 2.0 Alpha 5](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha5/popochiu_v2.0-alpha5.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+2. Extra su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Proyecto > Ajustes del Proyecto > Plugins` (the tab on the top).
 4. Reinicia Godot `Proyecto > Volver a Cargar el Proyecto Actual`.
 5. Verás el dock de Popochiu a la derecha del editor. ¡Eso es todo!
@@ -56,17 +58,9 @@ Ahora puedes seguir los tutoriales (¡Completamente en español! (la versión en
 - Cómo crear árboles de diálogo.
 - Cómo agregar efectos de sonido, música, voces y sonidos de interfaz gráfica.
 
-Más tutoriales vendrán en las próximas semanas para aprender:
-
-- Cómo guardar y cargar el estado del juego.
-- Cómo trabajar con Props que tienen más de un fotograma.
-- Cómo agregar animaciones a tus Personajes.
-- Cómo utilizar las emociones cuando los personajes hablan.
-- Y mucho más...
-
 ---
 
 # Créditos
 
 Hecho por [Carenalga](https://mapedorr.itch.io).
-Ahora con la colaboración de @stickgrinder , @mgdesign y @drbbgh , miembros de [Illiterate Code Games](https://illiteratecodegames.itch.io).
+Ahora con la colaboración de [StickGrinder](https://twitter.com/StickGrinder) ([itch.io](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), y [@JuannFerrari](https://github.com/JuannFerrari).

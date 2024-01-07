@@ -1,0 +1,97 @@
+[gd_scene load_steps=16 format=3 uid="uid://k35rpa45ngms"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/graphic_interface.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_text/dialog_text.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_menu/dialog_menu.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://ciar5j7qm85bc" path="res://addons/popochiu/engine/objects/graphic_interface/inventory/inventory.tscn" id="6_v2npl"]
+[ext_resource type="PackedScene" uid="uid://bq7kpsehncsaf" path="res://addons/popochiu/engine/objects/graphic_interface/history/history.tscn" id="7"]
+[ext_resource type="PackedScene" uid="uid://0cqerawlxb3o" path="res://addons/popochiu/engine/objects/graphic_interface/toolbar/toolbar.tscn" id="7_0ydpp"]
+[ext_resource type="PackedScene" uid="uid://codc5gwfbqwth" path="res://addons/popochiu/engine/objects/graphic_interface/save_load/save_load.tscn" id="8"]
+[ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/info_bar/info_bar.tscn" id="9"]
+[ext_resource type="PackedScene" uid="uid://cxrrluhs3ugqx" path="res://addons/popochiu/engine/objects/graphic_interface/sound_settings/sound_settings.tscn" id="10_dkhrk"]
+[ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/display_box/display_box.tscn" id="11"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dlu6y"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1w7s2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_f0ojp"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pcw4k"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_scpl3"]
+
+[node name="GraphicInterface" type="CanvasLayer"]
+layer = 10
+script = ExtResource("1")
+
+[node name="MainContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 320.0
+offset_bottom = 180.0
+mouse_filter = 2
+
+[node name="InfoBar" parent="MainContainer" instance=ExtResource("9")]
+layout_mode = 1
+
+[node name="DialogText" parent="MainContainer" instance=ExtResource("3")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DisplayBox" parent="MainContainer" instance=ExtResource("11")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -12.0
+offset_right = 120.0
+offset_bottom = 12.0
+
+[node name="DialogMenu" parent="MainContainer" instance=ExtResource("5")]
+layout_mode = 1
+
+[node name="Inventory" parent="MainContainer" instance=ExtResource("6_v2npl")]
+layout_mode = 0
+offset_left = 4.0
+offset_right = 40.0
+
+[node name="Toolbar" parent="MainContainer" instance=ExtResource("7_0ydpp")]
+layout_mode = 1
+offset_left = -106.0
+offset_right = -4.0
+
+[node name="ClickHandler" type="Button" parent="MainContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_dlu6y")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_1w7s2")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_f0ojp")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_pcw4k")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_scpl3")
+
+[node name="History" parent="." instance=ExtResource("7")]
+
+[node name="SaveLoad" parent="." instance=ExtResource("8")]
+visible = false
+
+[node name="SoundSettings" parent="." instance=ExtResource("10_dkhrk")]
+visible = false

@@ -1,0 +1,33 @@
+[gd_scene load_steps=4 format=3 uid="uid://cg18h3icrip1r"]
+
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/fonts/monkeyisland_1991.ttf" id="1_njktv"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_text/dialog_text.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_text/dialog_continue.png" id="3"]
+
+[node name="DialogText" type="RichTextLabel"]
+clip_contents = false
+custom_minimum_size = Vector2(16, 16)
+offset_right = 16.0
+offset_bottom = 16.0
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/normal_font = ExtResource("1_njktv")
+bbcode_enabled = true
+scroll_active = false
+meta_underlined = false
+script = ExtResource("2")
+
+[node name="ContinueIcon" type="TextureProgressBar" parent="."]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -16.0
+offset_bottom = 16.0
+grow_horizontal = 0
+value = 100.0
+fill_mode = 2
+texture_progress = ExtResource("3")

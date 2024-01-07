@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://dhsfl8ot4j5fj"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_menu/dialog_menu.gd" id="1_3dp72"]
+[ext_resource type="PackedScene" uid="uid://dcta4urojglil" path="res://addons/popochiu/engine/objects/graphic_interface/dialog_menu/dialog_menu_option.tscn" id="2_xxbof"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s524m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b2awe"]
+bg_color = Color(0, 0, 0.6, 1)
+
+[node name="DialogMenu" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_s524m")
+script = ExtResource("1_3dp72")
+option_scene = ExtResource("2_xxbof")
+
+[node name="Panel" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_styles/panel = SubResource("StyleBoxFlat_b2awe")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Panel"]
+layout_mode = 2
+
+[node name="Options" type="VBoxContainer" parent="Panel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_override_constants/separation = 1

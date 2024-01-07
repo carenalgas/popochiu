@@ -1,12 +1,14 @@
 # Addons other than Popochiu
 # (we use some for development)
-addons/**
-!addons/Popochiu
+# addons/**
+# !addons/popochiu/**
 
 # Godot-specific ignores
 .import/
 export.cfg
 export_presets.cfg
+.godot
+.godot/
 
 # Mono-specific ignores
 .mono/
@@ -25,3 +27,7 @@ Thumbs.db
 
 # Other local stuff
 .vscode
+
+# Project-specific ignores
+popochiu
+popochiu/**

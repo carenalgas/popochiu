@@ -1,0 +1,33 @@
+[gd_scene format=2]
+
+[node name="Loading" type="PopupPanel"]
+offset_right = 320.0
+offset_bottom = 180.0
+minimum_size = Vector2( 320, 96 )
+exclusive = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+offset_top = 60.0
+offset_right = 320.0
+offset_bottom = 92.0
+minimum_size = Vector2( 160, 32 )
+text = "Creating audio cues..."
+align = 1
+valign = 1
+
+[node name="Progress" type="ProgressBar" parent="VBoxContainer"]
+offset_left = 32.0
+offset_top = 96.0
+offset_right = 288.0
+offset_bottom = 120.0
+minimum_size = Vector2( 256, 24 )
+size_flags_horizontal = 4
