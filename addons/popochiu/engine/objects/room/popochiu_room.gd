@@ -350,6 +350,8 @@ func _move_along_path(distance: float, moving_character_data: Dictionary):
 		)
 		
 		if distance <= distance_between_points:
+			moving_character_data.character.face_direction(moving_character_data.path[0])
+			moving_character_data.character._play_walk(moving_character_data.path[0])
 			var next_position = last_point.lerp(
 					moving_character_data.path[0], distance / distance_between_points
 				)
