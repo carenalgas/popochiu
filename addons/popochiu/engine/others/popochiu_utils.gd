@@ -47,4 +47,8 @@ static func print_error(msg: String) -> void:
 
 ## Prints the text in `msg` with the warning style for Popochiu.
 static func print_warning(msg: String) -> void:
-	print_rich("[bgcolor=edf171][color=4a4a4a][b][Popochiu][/b] %s[/color][/bgcolor]" % msg)
+	print_rich("[bgcolor=edf171][color=000000][b][Popochiu][/b] %s[/color][/bgcolor]" % msg)
+
+
+static func print_normal(msg: String) -> void:
+	print_rich("[bgcolor=75cec8][color=000000][b][Popochiu][/b] %s[/color][/bgcolor]" % msg)

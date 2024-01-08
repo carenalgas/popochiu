@@ -38,6 +38,11 @@ func create(obj_name: String) -> int:
 	new_obj.script_name = _pascal_name
 	new_obj.description = _pascal_name.capitalize()
 	new_obj.cursor = Constants.CURSOR_TYPE.TALK
+	
+	if PopochiuResources.get_settings().is_pixel_art_game:
+		new_obj.get_node("Sprite2D").texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	
 	# Save the scene (.tscn)

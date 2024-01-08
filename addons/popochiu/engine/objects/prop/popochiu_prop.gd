@@ -2,9 +2,8 @@
 @icon('res://addons/popochiu/icons/prop.png')
 class_name PopochiuProp
 extends PopochiuClickable
-# Visual elements in the Room. Can have interaction.
-# E.g. Background, foreground, a table, a cup, etc.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+## Visual elements in the Room. Can have interaction.
+## E.g. Background, foreground, a table, a cup, etc.
 
 signal linked_item_removed(node)
 signal linked_item_discarded(node)
@@ -18,7 +17,7 @@ signal linked_item_discarded(node)
 @onready var _sprite: Sprite2D = $Sprite2D
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	add_to_group('props')
@@ -46,7 +45,9 @@ func _ready() -> void:
 			disable()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 func _on_linked_item_removed() -> void:
 	pass
 
@@ -55,7 +56,9 @@ func _on_linked_item_discarded() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func queue_change_frame(new_frame: int) -> Callable:
 	return func (): await change_frame(new_frame)
 
@@ -65,7 +68,9 @@ func change_frame(new_frame: int) -> void:
 	await get_tree().process_frame
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func set_texture(value: Texture2D) -> void:
 	texture = value
 	$Sprite2D.texture = value
@@ -90,7 +95,9 @@ func set_current_frame(value: int) -> void:
 	$Sprite2D.frame = current_frame
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _on_item_added(item: PopochiuInventoryItem, _animate: bool) -> void:
 	if item.script_name == link_to_item:
 		disable()
@@ -108,3 +115,6 @@ func _on_item_discarded(item: PopochiuInventoryItem) -> void:
 		
 		_on_linked_item_discarded()
 		linked_item_discarded.emit(self)
+
+
+#endregion

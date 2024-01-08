@@ -1,6 +1,6 @@
 [gd_scene load_steps=22 format=3 uid="uid://c2pqh7ajiuiy0"]
 
-[ext_resource type="Texture2D" uid="uid://bl3ecai6lvat1" path="res://addons/popochiu/engine/Cursor/sprites/cursor.png" id="1"]
+[ext_resource type="Texture2D" uid="uid://bl3ecai6lvat1" path="res://addons/popochiu/engine/cursor/sprites/cursor.png" id="1"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/cursor/cursor.gd" id="1_n3epl"]
 
 [sub_resource type="AtlasTexture" id="10"]
@@ -198,14 +198,14 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Cursor" type="CanvasLayer"]
+[node name="CursorLayer" type="CanvasLayer"]
 layer = 100
 script = ExtResource("1_n3epl")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="MainCursor" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("1")
 animation = &"active"
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="SecondaryCursor" type="Sprite2D" parent="."]
 texture_filter = 1

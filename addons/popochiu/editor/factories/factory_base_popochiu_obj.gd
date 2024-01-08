@@ -179,7 +179,7 @@ func _save_obj_scene(obj: Node) -> int:
 
 	# Load the scene to be get by the calling code
 	# Instancing the created .tscn file fixes #58
-	_scene = load(_path_scene).instantiate()
+	_scene = (load(_path_scene) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	
 	return ResultCodes.SUCCESS
 
@@ -201,9 +201,9 @@ func _save_obj_resource(obj: Resource) -> int:
 ## Makes a copy of the base scene for the object (e.g. popochiu_room.tscn,
 ## popochiu_inventory_item.tscn, popochiu_prop.tscn).
 func _load_obj_base_scene() -> Node:
-	var obj = load(
-		BASE_SCENE_PATH % [_type_label, _type_label]
-	).instantiate()
+	var obj = (
+		load(BASE_SCENE_PATH % [_type_label, _type_label]) as PackedScene
+	).instantiate(PackedScene.GEN_EDIT_STATE_MAIN_INHERITED)
 
 	# 	The script is assigned first so that other properties will not be
 	# 	overwritten by that assignment.

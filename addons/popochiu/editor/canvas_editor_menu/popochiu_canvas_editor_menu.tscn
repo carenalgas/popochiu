@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://wd748u1vdybq"]
+
+[ext_resource type="Texture2D" uid="uid://dasi6853uqkmu" path="res://addons/popochiu/icons/baseline.png" id="1_8j5rt"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/canvas_editor_menu/popochiu_canvas_editor_menu.gd" id="1_vs7c6"]
+[ext_resource type="Texture2D" uid="uid://4ovxgn77a0ax" path="res://addons/popochiu/icons/walk_to_point.png" id="2_po7va"]
+[ext_resource type="Texture2D" uid="uid://cesndtvbchw7v" path="res://addons/popochiu/icons/interaction_polygon.png" id="3_kma38"]
+
+[node name="PopochiuCanvasEditorMenu" type="HBoxContainer"]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_vs7c6")
+
+[node name="BtnBaseline" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Baseline"
+toggle_mode = true
+icon = ExtResource("1_8j5rt")
+
+[node name="BtnWalkPoint" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Walk point"
+toggle_mode = true
+icon = ExtResource("2_po7va")
+
+[node name="BtnInteractionPolygon" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Interaction Polygon"
+toggle_mode = true
+icon = ExtResource("3_kma38")

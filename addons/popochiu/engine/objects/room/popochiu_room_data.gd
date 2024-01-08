@@ -15,7 +15,31 @@ var regions := {}
 var characters := {}
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#region Virtual ####################################################################################
+func _on_save() -> Dictionary:
+	return {}
+
+
+func _on_load(_data: Dictionary) -> void:
+	pass
+
+
+#endregion
+
+#region Public #####################################################################################
+# Use this to save custom data for this PopochiuRoom when saving the game.
+# The Dictionary must contain only JSON supported types: bool, int, float, String.
+func on_save() -> Dictionary:
+	return _on_save()
+
+
+# Called when the game is loaded.
+# This Dictionary should has the same structure you defined for the returned
+# one in on_save().
+func on_load(data: Dictionary) -> void:
+	_on_load(data)
+
+
 func save_childs_states() -> void:
 	if E.current_room and E.current_room.state == self:
 		for t in PopochiuResources.ROOM_CHILDS:
@@ -87,15 +111,24 @@ func save_characters() -> void:
 			x = pc.position.x,
 			y = pc.position.y,
 			facing = pc._looking_dir,
+			visible = pc.visible,
+			modulate = pc.modulate,
+			self_modulate = pc.self_modulate,
+			light_mask = pc.light_mask
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)
 		}
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _save_object_state(node: Node2D, ignore: Array, target: Dictionary) -> void:
 	var state := {}
 	PopochiuResources.store_properties(state, node, ignore)
 	
 	# Add the PopochiuProp state to the room's props
 	target[node.script_name] = state
+
+
+#endregion

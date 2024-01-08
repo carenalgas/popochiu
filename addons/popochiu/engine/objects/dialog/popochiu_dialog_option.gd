@@ -6,6 +6,7 @@ extends Resource
 
 @export var id := '' : set = set_id
 @export var text := ''
+@export var icon: Texture = null
 @export var visible := true
 @export var disabled := false
 @export var always_on := false

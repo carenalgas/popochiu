@@ -3,7 +3,8 @@
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_prop/create_prop.gd" id="1_ku3uq"]
 
 [node name="CreateProp" type="ConfirmationDialog"]
-max_size = Vector2i(640, 320)
+size = Vector2i(656, 155)
+visible = true
 dialog_hide_on_ok = false
 dialog_autowrap = true
 script = ExtResource("1_ku3uq")
@@ -15,7 +16,7 @@ anchor_bottom = 1.0
 offset_left = 8.0
 offset_top = 8.0
 offset_right = -8.0
-offset_bottom = -36.0
+offset_bottom = -49.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -30,9 +31,7 @@ text = "Prop name"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-context_menu_enabled = false
-virtual_keyboard_enabled = false
-shortcut_keys_enabled = false
+draw_control_chars = true
 
 [node name="InteractionContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
@@ -60,6 +59,8 @@ layout_mode = 2
 text = "Use PascalCase. No spaces. i.e Bucket or WineBottle."
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(640, 0)
 layout_mode = 2
 bbcode_enabled = true
+fit_content = true
+scroll_active = false

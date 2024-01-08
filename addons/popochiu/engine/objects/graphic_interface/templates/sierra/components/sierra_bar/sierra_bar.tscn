@@ -1,0 +1,36 @@
+[gd_scene load_steps=5 format=3 uid="uid://cv2o5p3gp1fgx"]
+
+[ext_resource type="Theme" uid="uid://csr0n32rthycw" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/resources/sierra_theme.tres" id="1_b1kac"]
+[ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="1_tlpex"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_bar/sierra_bar.gd" id="2_u87it"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ecos1"]
+content_margin_left = 6.0
+content_margin_right = 6.0
+bg_color = Color(0.596078, 0.796078, 0.784314, 1)
+
+[node name="SierraBar" type="PanelContainer" groups=["popochiu_gui_component"]]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 15.0
+grow_horizontal = 2
+theme = ExtResource("1_b1kac")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ecos1")
+script = ExtResource("2_u87it")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="LblGameName" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sierra GUI"
+
+[node name="HoverText" parent="HBoxContainer" instance=ExtResource("1_tlpex")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LblScore" type="Label" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Score: 0"
