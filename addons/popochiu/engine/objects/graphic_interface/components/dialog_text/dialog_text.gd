@@ -239,6 +239,7 @@ func disappear() -> void:
 
 func change_speed() -> void:
 	_secs_per_character = E.current_text_speed
+#endregion
 
 
 #endregion

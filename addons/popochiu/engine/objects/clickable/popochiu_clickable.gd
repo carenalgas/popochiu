@@ -349,15 +349,25 @@ func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree()\
 	or not E.settings.use_translations: return
 	
-	description = E.get_text(
-		'%s-%s' % [get_tree().current_scene.name, _description_code]
-	)
+	if not command.is_empty():
+		var command_method := suffix.replace("click", command)
+		
+		if has_method(prefix % command_method):
+			suffix = command_method
+	
+	E.add_history({
+		action = suffix if command.is_empty() else command,
+		target = description
+	})
+	
+	await call(prefix % suffix)
 
 
 func _on_graphic_interface_blocked() -> void:
 	input_pickable = false
 	set_process_unhandled_input(false)
 
+#endregion
 
 func _on_graphic_interface_unblocked() -> void:
 	input_pickable = true
