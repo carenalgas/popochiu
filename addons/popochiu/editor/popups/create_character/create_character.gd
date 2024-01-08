@@ -31,8 +31,7 @@ func _create() -> void:
 		_error_feedback.show()
 		return
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Setup the prop helper and use it to create the prop
+	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuCharacterFactory.new(_main_dock)
 
 	if _factory.create(_new_character_name) != ResultCodes.SUCCESS:
@@ -41,15 +40,12 @@ func _create() -> void:
 
 	var character_scene = _factory.get_obj_scene()
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Open the scene in the editor
+	# Open the scene in the editor -----------------------------------------------------------------
 	await get_tree().create_timer(0.1).timeout
 	
 	EditorInterface.select_file(character_scene.scene_file_path)
 	EditorInterface.open_scene_from_path(character_scene.scene_file_path)
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# That's all!!!
 	hide()
 
 

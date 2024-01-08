@@ -37,36 +37,15 @@ var _is_closing := false
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	welcome.add_theme_font_override(
-		"bold_font", get_theme_font("bold", "EditorFonts")
-	)
-	scale_message.add_theme_font_override(
-		"normal_font", get_theme_font("main", "EditorFonts")
-	)
-	scale_message.add_theme_font_override(
-		"bold_font", get_theme_font("bold", "EditorFonts")
-	)
-	scale_message.add_theme_font_override(
-		"mono_font", get_theme_font("doc_source", "EditorFonts")
-	)
-	gui_templates_title.add_theme_font_override(
-		"font", get_theme_font("bold", "EditorFonts")
-	)
-	gui_templates_description.add_theme_font_override(
-		"font", get_theme_font("doc_source", "EditorFonts")
-	)
-	template_description.add_theme_font_override(
-		"bold_font", get_theme_font("bold", "EditorFonts")
-	)
+	# Connect to own signals
+	confirmed.connect(_on_close)
+	close_requested.connect(_on_close)
+	about_to_popup.connect(_on_about_to_popup)
 	
 	# Connect to child signals
 	game_width.value_changed.connect(_update_scale)
 	game_height.value_changed.connect(_update_scale)
 	btn_change_template.pressed.connect(_show_template_change_confirmation)
-	
-	# Connect to own signals
-	confirmed.connect(_on_close)
-	close_requested.connect(_on_close)
 	
 	# Set default state
 	template_description_container.hide()
@@ -172,6 +151,30 @@ func _on_close() -> void:
 		gui_selected.emit(_selected_template.name)
 	
 	_save_settings()
+
+
+func _on_about_to_popup() -> void:
+	welcome.add_theme_font_override(
+		"bold_font", get_theme_font("bold", "EditorFonts")
+	)
+	scale_message.add_theme_font_override(
+		"normal_font", get_theme_font("main", "EditorFonts")
+	)
+	scale_message.add_theme_font_override(
+		"bold_font", get_theme_font("bold", "EditorFonts")
+	)
+	scale_message.add_theme_font_override(
+		"mono_font", get_theme_font("doc_source", "EditorFonts")
+	)
+	gui_templates_title.add_theme_font_override(
+		"font", get_theme_font("bold", "EditorFonts")
+	)
+	gui_templates_description.add_theme_font_override(
+		"font", get_theme_font("doc_source", "EditorFonts")
+	)
+	template_description.add_theme_font_override(
+		"bold_font", get_theme_font("bold", "EditorFonts")
+	)
 
 
 func _save_settings() -> void:

@@ -369,15 +369,18 @@ func room_readied(room: PopochiuRoom) -> void:
 		current_room.clean_characters()
 	
 	# Load the state of characters in the room
-	for chr_id in rooms_states[room.script_name]['characters']:
-		var chr_dic: Dictionary =\
-		rooms_states[room.script_name]['characters'][chr_id]
-		var chr: PopochiuCharacter = C.get_character(chr_id)
+	for chr_script_name: String in rooms_states[room.script_name]['characters']:
+		var chr_dic: Dictionary = rooms_states[room.script_name]['characters'][chr_script_name]
+		var chr: PopochiuCharacter = C.get_character(chr_script_name)
 		
 		if not chr: continue
 		
 		chr.position = Vector2(chr_dic.x, chr_dic.y)
 		chr._looking_dir = chr_dic.facing
+		chr.visible = chr_dic.visible
+		chr.modulate = chr_dic.modulate
+		chr.self_modulate = chr_dic.self_modulate
+		chr.light_mask = chr_dic.light_mask
 		
 		current_room.add_character(chr)
 	

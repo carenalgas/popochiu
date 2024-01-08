@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://cuokybjvunmhq"]
+[gd_scene load_steps=10 format=3 uid="uid://cuokybjvunmhq"]
 
 [ext_resource type="Theme" uid="uid://6vk2wej0sape" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/resources/9_verb_theme.tres" id="1_8cwro"]
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="1_8t0fs"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_panel/9_verb_panel.gd" id="2_55o6l"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_hover_text/9_verb_hover_text.gd" id="2_qt1af"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/commands_container/9_verb_commands_container.gd" id="3_q8l3d"]
 [ext_resource type="ButtonGroup" uid="uid://y1thfsxxjowe" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/resources/9_verb_button_group.tres" id="4_6lnif"]
@@ -21,6 +22,7 @@ grow_vertical = 0
 mouse_filter = 2
 theme = ExtResource("1_8cwro")
 theme_override_styles/panel = SubResource("StyleBoxEmpty_gcqg0")
+script = ExtResource("2_55o6l")
 metadata/_edit_group_ = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]

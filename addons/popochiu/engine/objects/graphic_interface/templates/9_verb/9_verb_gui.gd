@@ -1,13 +1,11 @@
 class_name NineVerbGUI
 extends PopochiuGraphicInterface
 
-@onready var commands_container: GridContainer = %CommandsContainer
 @onready var settings_popup: PopochiuPopup = $"Popups/9VerbSettingsPopup"
 @onready var quit_popup: PanelContainer = %"9VerbQuitPopup"
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
-#region Godot
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	
@@ -15,8 +13,6 @@ func _ready() -> void:
 	Cursor.show_cursor()
 	
 	$Cursor.hide()
-	
-	%HoverTextCentered.hide()
 	
 	# Connect to childs signals
 	$BtnSettings.pressed.connect(_on_settings_pressed)
@@ -36,12 +32,11 @@ func _unhandled_input(event: InputEvent) -> void:
 
 #endregion
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-#region Virtual
+#region Virtual ####################################################################################
 func _on_blocked(props := { blocking = true }) -> void:
 	E.current_command = -1
 	G.show_hover_text()
-	$BottomContainer.hide()
+	$"9VerbPanel".hide()
 	
 	set_process_unhandled_input(false)
 
@@ -55,10 +50,10 @@ func _on_unblocked() -> void:
 	
 	E.current_command = NineVerbCommands.Commands.WALK_TO
 	G.show_hover_text()
-	$BottomContainer.show()
+	$"9VerbPanel".show()
 	
 	# Make all commands to look as no pressed
-	commands_container.unpress_commands()
+	$"9VerbPanel".unpress_commands()
 	
 	set_process_unhandled_input(true)
 
@@ -75,7 +70,8 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if G.is_blocked: return
 	
 	if clickable.get("suggested_command"):
-		commands_container.highlight_command(clickable.suggested_command)
+		$"9VerbPanel".highlight_command(clickable.suggested_command)
+	
 	Cursor.show_cursor("active")
 	
 	if I.active:
@@ -95,7 +91,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	if G.is_blocked: return
 	
 	if clickable.get("suggested_command"):
-		commands_container.highlight_command(clickable.suggested_command, false)
+		$"9VerbPanel".highlight_command(clickable.suggested_command, false)
 	Cursor.show_cursor("normal")
 	
 	if I.active: return
@@ -106,7 +102,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 	if E.current_command == NineVerbCommands.Commands.WALK_TO:
 		E.current_command = NineVerbCommands.Commands.LOOK_AT
 	
-	commands_container.highlight_command(NineVerbCommands.Commands.LOOK_AT)
+	$"9VerbPanel".highlight_command(NineVerbCommands.Commands.LOOK_AT)
 	Cursor.show_cursor("active")
 	
 	if I.active:
@@ -129,7 +125,7 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 	if E.current_command == NineVerbCommands.Commands.LOOK_AT:
 		E.current_command = NineVerbCommands.Commands.WALK_TO
 	
-	commands_container.highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
+	$"9VerbPanel".highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
 	Cursor.show_cursor("normal")
 	
 	if I.active:
@@ -157,8 +153,7 @@ func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 
 #endregion
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-#region private
+#region Private ####################################################################################
 func _on_popochiu_ready() -> void:
 	if is_instance_valid(C.player):
 		C.player.started_walk_to.connect(_on_player_started_walk)
@@ -176,7 +171,7 @@ func _on_player_started_walk(
 
 func _on_classic_sentence_toggled(button_pressed: bool) -> void:
 	%HoverTextCursor.visible = not button_pressed
-	%HoverTextCentered.visible = button_pressed
+	$"9VerbPanel".hover_text_centered.visible = button_pressed
 
 
 func _on_quit_pressed() -> void:

@@ -5,8 +5,8 @@ extends ConfirmationDialog
 @onready var ask: RichTextLabel = $VBoxContainer/Extra/HBoxContainer/Ask
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
-func _ready() -> void:
+#region Virtual ####################################################################################
+func _on_about_to_popup() -> void:
 	PopochiuUtils.override_font(
 		message, 'normal_font', get_theme_font("main", "EditorFonts")
 	)
@@ -25,3 +25,6 @@ func _ready() -> void:
 	PopochiuUtils.override_font(
 		ask, 'mono_font', get_theme_font("source", "EditorFonts")
 	)
+
+
+#endregion

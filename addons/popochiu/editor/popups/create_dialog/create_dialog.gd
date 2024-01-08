@@ -29,8 +29,7 @@ func _create() -> void:
 		_error_feedback.show()
 		return
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Setup the prop helper and use it to create the prop
+	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuDialogFactory.new(_main_dock)
 
 	if _factory.create(_new_dialog_name) != ResultCodes.SUCCESS:
@@ -39,14 +38,11 @@ func _create() -> void:
 
 	var dialog_resource = _factory.get_obj_resource()
 
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Open dialog in the Inspector
+	# Open dialog in the Inspector -----------------------------------------------------------------
 	await get_tree().create_timer(0.1).timeout
 	EditorInterface.select_file(dialog_resource.resource_path)
 	EditorInterface.edit_resource(load(dialog_resource.resource_path))
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# The end
 	hide()
 
 

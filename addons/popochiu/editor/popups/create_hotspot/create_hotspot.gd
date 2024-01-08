@@ -10,16 +10,17 @@ var _new_hotspot_name := ''
 var _factory: PopochiuHotspotFactory
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	_clear_fields()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 func _create() -> void:
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Setup the region helper and use it to create the hotspot
+	# Setup the region helper and use it to create the hotspot -------------------------------------
 	_factory = PopochiuHotspotFactory.new(_main_dock)
 
 	if _factory.create(_new_hotspot_name, _room) != ResultCodes.SUCCESS:
@@ -28,14 +29,11 @@ func _create() -> void:
 
 	var hotspot = _factory.get_obj_scene()
 
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Open the properties of the created region in the inspector
+	# Open the properties of the created region in the inspector -----------------------------------
 	# Done here because the creation is interactive in this case
 	await get_tree().create_timer(0.1).timeout
 	PopochiuEditorHelper.select_node(hotspot)
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# End
 	hide()
 
 
@@ -44,12 +42,16 @@ func _clear_fields() -> void:
 	_new_hotspot_name = ''
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func room_opened(r: Node2D) -> void:
 	_room = r
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _update_name(new_text: String) -> void:
 	super(new_text)
 
@@ -69,3 +71,6 @@ func _update_name(new_text: String) -> void:
 		_info.hide()
 	
 	_update_size_and_position()
+
+
+#endregion

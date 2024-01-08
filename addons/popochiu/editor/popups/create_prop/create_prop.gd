@@ -1,9 +1,9 @@
-# Allows you to create a new Prop for a room.
-# 
-# If it has interaction, it will be assigned a script that will be saved in the
-# prop's folder.
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
+## Allows you to create a new Prop for a room.
+## 
+## If it has interaction, it will be assigned a script that will be saved in the
+## prop's folder.
 
 ## TODO: remove this legacy...
 #const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
@@ -55,7 +55,6 @@ func _create() -> void:
 	EditorInterface.edit_node(prop_instance)
 	EditorInterface.select_file(prop_instance.scene_file_path)
 	
-	# End ------------------------------------------------------------------------------------------
 	hide()
 
 

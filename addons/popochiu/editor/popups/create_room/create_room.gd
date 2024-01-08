@@ -18,8 +18,8 @@ var show_set_as_main := false : set = _set_show_set_as_main
 var _new_room_name := ''
 var _factory: PopochiuRoomFactory
 
-@onready var _set_as_main: PanelContainer = find_child('SetAsMainContainer')
-@onready var _set_as_main_check: CheckBox = _set_as_main.find_child('CheckBox')
+@onready var set_as_main_panel: PanelContainer = %SetAsMainPanel
+@onready var btn_is_main: CheckBox = %BtnIsMain
 
 
 #region Godot ######################################################################################
@@ -27,17 +27,8 @@ func _ready() -> void:
 	super()
 	about_to_popup.connect(_check_if_first_room)
 	
-	PopochiuUtils.override_font(
-		_set_as_main.find_child('RichTextLabel'),
-		'normal_font', get_theme_font("main", "EditorFonts")
-	)
-	PopochiuUtils.override_font(
-		_set_as_main.find_child('RichTextLabel'),
-		'bold_font', get_theme_font("bold", "EditorFonts")
-	)
-	
 	_clear_fields()
-	_set_as_main.hide()
+	set_as_main_panel.hide()
 
 
 #endregion
@@ -53,7 +44,7 @@ func _create() -> void:
 
 	if _factory.create(
 		_new_room_name,
-		_set_as_main_check.button_pressed
+		btn_is_main.button_pressed
 	) != ResultCodes.SUCCESS:
 		# TODO: show a message in the popup!
 		return
@@ -72,7 +63,12 @@ func _create() -> void:
 
 func _clear_fields() -> void:
 	_new_room_name = ''
-	_set_as_main_check.button_pressed = false
+	btn_is_main.button_pressed = false
+
+
+func _on_about_to_popup() -> void:
+	PopochiuUtils.override_font(%RtlIsMain, 'normal_font', get_theme_font("main", "EditorFonts"))
+	PopochiuUtils.override_font(%RtlIsMain, 'bold_font', get_theme_font("bold", "EditorFonts"))
 
 
 #endregion
@@ -112,18 +108,16 @@ func _update_name(new_text: String) -> void:
 
 
 func _check_if_first_room() -> void:
-	# Mostrar una casilla de verificación para establecer la habitación a crear
-	# como la escene principal del proyecto si se trata de la primera.
-#	self.show_set_as_main = _main_dock.popochiu.rooms.is_empty()
+	# Display a checkbox to set the room as the main scene of the project if it's the first created
 	self.show_set_as_main = PopochiuResources.get_section('rooms').is_empty()
 
 
 func _set_show_set_as_main(value: bool) -> void:
 	show_set_as_main = value
 	
-	if not _set_as_main: return
+	if not set_as_main_panel: return
 	
-	_set_as_main.visible = value
+	set_as_main_panel.visible = value
 
 
 #endregion

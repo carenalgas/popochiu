@@ -111,6 +111,10 @@ func save_characters() -> void:
 			x = pc.position.x,
 			y = pc.position.y,
 			facing = pc._looking_dir,
+			visible = pc.visible,
+			modulate = pc.modulate,
+			self_modulate = pc.self_modulate,
+			light_mask = pc.light_mask
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)
 		}

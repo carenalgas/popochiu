@@ -33,7 +33,7 @@ var _nav_path: PopochiuWalkableArea = null
 var _moving_characters := {}
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _enter_tree() -> void:
 	if Engine.is_editor_hint():
 		y_sort_enabled = false
@@ -101,7 +101,9 @@ func _unhandled_input(event):
 		C.player.walk(get_local_mouse_position())
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 # What happens when Popochiu loads the room. At this point the room is in the
 # tree but it is not visible.
 func _on_room_entered() -> void:
@@ -126,7 +128,9 @@ func _on_entered_from_editor() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 # This function is called by Popochiu before moving the PC to another room. By
 # default, characters are removed only to keep their instances in the array
 # of characters in ICharacter.gd.
@@ -145,14 +149,20 @@ func add_character(chr: PopochiuCharacter) -> void:
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)
 	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
+	
 	update_characters_position(chr)
+	
 	if chr.follow_player:
 		C.player.started_walk_to.connect(_follow_player.bind(chr))
 
 	chr.idle()
 
+
 func _follow_player(
-	character: PopochiuCharacter, start_position: Vector2, end_position: Vector2, follower: PopochiuCharacter
+	character: PopochiuCharacter,
+	start_position: Vector2,
+	end_position: Vector2,
+	follower: PopochiuCharacter
 ):
 	var follower_end_position
 	if end_position.x > follower.position.x:
@@ -160,6 +170,7 @@ func _follow_player(
 	else:
 		follower_end_position = end_position + follower.follow_player_offset
 	follower.walk_to(follower_end_position)
+
 
 func remove_character(chr: PopochiuCharacter) -> void:
 	$Characters.remove_child(chr)
@@ -197,6 +208,7 @@ func clean_characters() -> void:
 		if c is PopochiuCharacter:
 			c.queue_free()
 
+
 func update_character_scale(chr):
 	if chr.on_scaling_region:
 		var polygon_range = (
@@ -228,6 +240,7 @@ func update_character_scale(chr):
 		chr.scale = chr.default_scale
 		chr.walk_speed = chr.default_walk_speed
 
+
 func update_characters_position(character):
 	character.position = (
 		character.position_stored 
@@ -236,7 +249,10 @@ func update_characters_position(character):
 		)
 	update_character_scale(character)
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+
+#endregion
+
+#region SetGet #####################################################################################
 func get_marker(marker_name: String) -> Marker2D:
 	var marker: Marker2D = get_node_or_null('Markers/' + marker_name)
 	if marker:
@@ -339,9 +355,9 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 		)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
 
-
+#region Private ####################################################################################
 func _on_graphic_interface_blocked() -> void:
 	set_process_unhandled_input(false)
 
@@ -432,3 +448,6 @@ func _clear_navigation_path(character: PopochiuCharacter) -> void:
 	_moving_characters.erase(character.get_instance_id())
 	character.idle()
 	character.move_ended.emit()
+
+
+#endregion

@@ -44,7 +44,6 @@ func _create() -> void:
 	EditorInterface.select_file(item_scene.scene_file_path)
 	EditorInterface.open_scene_from_path(item_scene.scene_file_path)
 	
-	# That's all!!!!!!! ----------------------------------------------------------------------------
 	hide()
 
 
