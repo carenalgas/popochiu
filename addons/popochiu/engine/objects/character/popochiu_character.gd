@@ -1,8 +1,8 @@
-## Any Object that can move, walk, navigate rooms, have an inventory, etc.
 @tool
 @icon('res://addons/popochiu/icons/character.png')
 class_name PopochiuCharacter
 extends PopochiuClickable
+## Any Object that can move, walk, navigate rooms, have an inventory, etc.
 # TODO: Use a state machine
 
 enum FlipsWhen { NONE, LOOKING_RIGHT, LOOKING_LEFT }
@@ -18,6 +18,8 @@ signal move_ended
 	set = set_voices # (Array, Dictionary)
 @export var follow_player := false
 @export var follow_player_offset := Vector2(20,0)
+@export var avatars := []:
+	set = set_avatars # (Array, Dictionary)
 @export var walk_speed := 200.0
 @export var can_move := true
 @export var ignore_walkable_areas := false
@@ -38,7 +40,7 @@ var _looking_dir: int = Looking.DOWN
 @onready var dialog_pos: Marker2D = $DialogPos
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready():
 	super()
 	default_walk_speed = walk_speed
@@ -48,7 +50,7 @@ func _ready():
 	else:
 		hide_helpers()
 		set_process(true)
-
+	
 	for child in get_children():
 		if not child is Sprite2D:
 			continue
@@ -63,7 +65,9 @@ func _get_property_list():
 	]
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 func _play_idle() -> void:
 	play_animation('idle')
 
@@ -84,7 +88,9 @@ func _play_grab() -> void:
 
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func queue_idle() -> Callable:
 	return func (): await idle()
 	
@@ -234,6 +240,12 @@ func say(dialog: String, emo := "") -> void:
 		await get_tree().process_frame
 		return
 	
+	# Blocks the graphic interface so players can't interact with it while the
+	# dialog line plays
+	# NOTE: What if players want NPCs talking without blocking the graphic
+	# 		interface?
+	G.block()
+	
 	if not emo.is_empty():
 		emotion = emo
 	
@@ -246,12 +258,14 @@ func say(dialog: String, emo := "") -> void:
 	
 	C.character_spoke.emit(self, dialog)
 	
-	await G.continue_clicked
+	await G.dialog_line_finished
 	
 	emotion = ''
 	idle()
 	
-	G.done(true)
+	# Unblock the graphic interface with a delay to prevent cursor flickering
+	# (rapid state changes) between multiple lines of text or actions in sequence
+	G.unblock(true)
 
 
 func queue_grab() -> Callable:
@@ -330,7 +344,9 @@ func queue_ignore_walkable_areas(new_value: bool) -> Callable:
 	return func(): ignore_walkable_areas = new_value
 
 
-func queue_play_animation(animation_label: String, animation_fallback := 'idle', blocking := false) -> Callable:
+func queue_play_animation(
+	animation_label: String, animation_fallback := 'idle', blocking := false
+) -> Callable:
 	return func(): await play_animation(animation_label, animation_fallback)
 
 
@@ -352,7 +368,10 @@ func queue_resume_animation():
 
 func play_animation(animation_label: String, animation_fallback := 'idle'):
 	if not has_node("AnimationPlayer"):
-		printerr("Can't play character animation. Required AnimationPlayer not found in character %s" % [script_name])
+		PopochiuUtils.print_error(
+			"Can't play character animation. Required AnimationPlayer not found in character %s" %
+			[script_name]
+		)
 		return
 
 	# Search for a valid animation corresponding to animation_label
@@ -361,7 +380,10 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 	if animation == null: animation = _get_valid_oriented_animation(animation_fallback)
 	# In neither are available, exit and throw an error to check for the presence of the animations.
 	if animation == null: # Again!
-		printerr("Neither the requested nor the fallback animation could be found for character %s. Requested: %s - Fallback: %s" % [script_name, animation_label, animation_fallback])
+		PopochiuUtils.print_error(
+			"Neither the requested nor the fallback animation could be found for character %s.\
+ Requested: %s - Fallback: %s" % [script_name, animation_label, animation_fallback]
+		)
 		return
 	# Play the animation in the best available orientation
 	$AnimationPlayer.play(animation)
@@ -374,9 +396,11 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 
 func stop_animation():
 	# If the animation is not looping or is an idle one, do nothing
-	if  $AnimationPlayer.get_animation($AnimationPlayer.current_animation) == Animation.LOOP_NONE or \
-		$AnimationPlayer.current_animation == 'idle' or \
-		$AnimationPlayer.current_animation.begins_with('idle_'):
+	if  (
+		$AnimationPlayer.get_animation($AnimationPlayer.current_animation) == Animation.LOOP_NONE or
+		$AnimationPlayer.current_animation == 'idle' or
+		$AnimationPlayer.current_animation.begins_with('idle_')
+	):
 		return
 	# save the loop mode, wait for the anim to be over as designed, then restore the mode
 	var animation = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
@@ -433,7 +457,23 @@ func face_direction(destination: Vector2):
 		_looking_dir = Looking.UP_LEFT
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func get_avatar_for_emotion(emo := "") -> Texture:
+	var texture: Texture = null
+	
+	while not texture:
+		for dic in avatars:
+			if dic.emotion == "":
+				texture = dic.avatar
+			elif dic.emotion == emo:
+				texture = dic.avatar
+				break
+	
+	return texture
+
+
+#endregion
+
+#region SetGet #####################################################################################
 func get_dialog_pos() -> float:
 	return $DialogPos.position.y
 
@@ -449,16 +489,25 @@ func set_voices(value: Array) -> void:
 				emotion = '',
 				variations = arr
 			}
-			
-			notify_property_list_changed()
 		elif not value[idx].variations.is_empty():
 			if value[idx].variations[-1] == null:
 				value[idx].variations[-1] = AudioCueSound.new()
-			
-			notify_property_list_changed()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func set_avatars(value: Array) -> void:
+	avatars = value
+	
+	for idx in value.size():
+		if not value[idx]:
+			avatars[idx] = {
+				emotion = '',
+				avatar = Texture.new(),
+			}
+
+
+#endregion
+
+#region Private ####################################################################################
 func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree(): return
 	description = E.get_text(_description_code)
@@ -519,8 +568,12 @@ func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 		await get_tree().process_frame
 		return
 
-	await walk(node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset)
+	await walk(
+		node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
+	)
 
 func _update_position():
 	E.current_room.update_characters_position(self)
 
+
+#endregion

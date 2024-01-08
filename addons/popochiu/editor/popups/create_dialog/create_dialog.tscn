@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_dialog/create_dialog.gd" id="1_sv710"]
 
 [node name="CreateDialog" type="ConfirmationDialog"]
-max_size = Vector2i(640, 320)
+size = Vector2i(656, 127)
 dialog_hide_on_ok = false
 dialog_autowrap = true
 script = ExtResource("1_sv710")
@@ -28,9 +28,6 @@ text = "Dialog name"
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-context_menu_enabled = false
-virtual_keyboard_enabled = false
-shortcut_keys_enabled = false
 
 [node name="ErrorFeedback" type="Label" parent="VBoxContainer"]
 visible = false
@@ -46,6 +43,8 @@ layout_mode = 2
 text = "Use PascalCase. No spaces. i.e EvaDesk or GlottisFirstMeeting."
 
 [node name="Info" type="RichTextLabel" parent="VBoxContainer"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(640, 0)
 layout_mode = 2
 bbcode_enabled = true
+fit_content = true
+scroll_active = false

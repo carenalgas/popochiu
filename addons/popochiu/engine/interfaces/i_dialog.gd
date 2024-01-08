@@ -1,13 +1,11 @@
 # (D) Data and functions to start branching dialogs and listen options selection.
 extends Node
 
-signal option_selected(opt)
-signal dialog_options_requested(options)
-signal dialog_finished(dlg)
-signal inline_dialog_requested(options)
-
-const PopochiuDialogOption :=\
-preload('res://addons/popochiu/engine/objects/dialog/popochiu_dialog_option.gd')
+signal dialog_started(dlg: PopochiuDialog)
+signal option_selected(opt: PopochiuDialogOption)
+signal dialog_finished(dlg: PopochiuDialog)
+signal dialog_options_requested(options: Array[PopochiuDialogOption])
+signal inline_dialog_requested(options: Array)
 
 var active := false
 var trees := {}
@@ -33,7 +31,7 @@ func show_inline_dialog(opts: Array) -> PopochiuDialogOption:
 		D.option_selected.connect(current_dialog._on_option_selected)
 	else:
 		active = false
-		G.done()
+		G.unblock()
 	
 	return pdo
 

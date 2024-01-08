@@ -1,0 +1,178 @@
+[gd_scene load_steps=8 format=3 uid="uid://cg18h3icrip1r"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_kxlqu"]
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_njktv"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.gd" id="2"]
+[ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_continue.png" id="3"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/portrait_text_panel.gd" id="5_rqqo1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cff0b"]
+bg_color = Color(0, 0, 0, 1)
+draw_center = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6snsd"]
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+corner_detail = 1
+expand_margin_left = 2.0
+expand_margin_right = 2.0
+anti_aliasing = false
+
+[node name="DialogText" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_kxlqu")
+
+[node name="AboveCharacterText" type="RichTextLabel" parent="."]
+visible = false
+clip_contents = false
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+offset_right = 16.0
+offset_bottom = 16.0
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/normal_font = ExtResource("1_njktv")
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+meta_underlined = false
+script = ExtResource("2")
+
+[node name="ContinueIcon" type="TextureProgressBar" parent="AboveCharacterText"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 0
+value = 100.0
+fill_mode = 2
+texture_progress = ExtResource("3")
+
+[node name="PortraitTextPanel" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = -56.0
+offset_right = -8.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_cff0b")
+script = ExtResource("5_rqqo1")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PortraitTextPanel"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="LeftAvatar" type="TextureRect" parent="PortraitTextPanel/HBoxContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+size_flags_vertical = 4
+stretch_mode = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="PortraitTextPanel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_6snsd")
+
+[node name="PortraitText" type="RichTextLabel" parent="PortraitTextPanel/HBoxContainer/PanelContainer"]
+unique_name_in_owner = true
+clip_contents = false
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/normal_font = ExtResource("1_njktv")
+bbcode_enabled = true
+text = "[wave]Hi my popochiu!!![/wave]"
+scroll_active = false
+meta_underlined = false
+script = ExtResource("2")
+used_when = 1
+
+[node name="ContinueIcon" type="TextureProgressBar" parent="PortraitTextPanel/HBoxContainer/PanelContainer/PortraitText"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_top = -16.0
+grow_horizontal = 0
+grow_vertical = 0
+value = 100.0
+fill_mode = 2
+texture_progress = ExtResource("3")
+
+[node name="RightAvatar" type="TextureRect" parent="PortraitTextPanel/HBoxContainer"]
+texture_filter = 1
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+size_flags_vertical = 4
+stretch_mode = 3
+
+[node name="CaptionText" type="RichTextLabel" parent="."]
+visible = false
+clip_contents = false
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -20.0
+offset_right = -20.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_fonts/normal_font = ExtResource("1_njktv")
+bbcode_enabled = true
+text = "[center]Hi my friend[/center]"
+fit_content = true
+scroll_active = false
+meta_underlined = false
+script = ExtResource("2")
+used_when = 2
+
+[node name="ContinueIcon" type="TextureProgressBar" parent="CaptionText"]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+offset_right = 16.0
+grow_horizontal = 0
+grow_vertical = 0
+value = 100.0
+fill_mode = 2
+texture_progress = ExtResource("3")

@@ -7,14 +7,12 @@ const INSPECTOR_DOCK_CHARACTER := DOCKS_PATH + "aseprite_importer_inspector_dock
 const INSPECTOR_DOCK_ROOM := DOCKS_PATH + "aseprite_importer_inspector_dock_room.gd"
 
 
-var ei: EditorInterface
-var fs: EditorFileSystem
 var config: RefCounted
 var main_dock: Panel
 var _target_node: Node
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#region Virtual ####################################################################################
 func _can_handle(object):
 	if object.has_method("get_parent") and object.get_parent() is Node2D:
 		return false
@@ -40,9 +38,12 @@ func _parse_property(object, type, name, hint_type, hint_string, usage_flags, wi
 
 	dock.target_node = object
 	dock.config = config
-	dock.file_system = fs
+	dock.file_system = EditorInterface.get_resource_filesystem()
 	dock.main_dock = main_dock # TODO: change for SignalBus
 
 	# Add the dock to the inspector
 	add_custom_control(dock)
 	return true
+
+
+#endregion

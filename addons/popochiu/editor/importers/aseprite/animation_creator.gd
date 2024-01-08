@@ -24,13 +24,14 @@ var _target_sprite: Sprite2D
 var _output: Dictionary
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#region Public #####################################################################################
 func init(config, aseprite: RefCounted, editor_file_system: EditorFileSystem = null):
 	_config = config
 	_file_system = editor_file_system
 	_aseprite = aseprite
 
-# Public interfaces, dedicated to specific popochiu objects
+
+## Public interfaces, dedicated to specific popochiu objects
 func create_character_animations(character: Node, player: AnimationPlayer, options: Dictionary):
 	# Chores
 	_target_node = character
@@ -95,9 +96,10 @@ func create_prop_animations(prop: Node, aseprite_tag: String, options: Dictionar
 	return result
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
 
-# This function creates a spritesheet with the whole file content
+#region Private ####################################################################################
+## This function creates a spritesheet with the whole file content
 func _create_spritesheet_from_file():
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
 	_output = _aseprite.export_file(_options.source, _options.output_folder, _options)
@@ -106,8 +108,8 @@ func _create_spritesheet_from_file():
 	return RESULT_CODE.SUCCESS
 
 
-# This function creates a spritesheet with the frames of a specific tag
-# WARNING: it's case sensitive
+## This function creates a spritesheet with the frames of a specific tag
+## WARNING: it's case sensitive
 func _create_spritesheet_from_tag(selected_tag: String):
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
 	_output = _aseprite.export_tag(_options.source, selected_tag, _options.output_folder, _options)
@@ -302,28 +304,30 @@ func _remove_properties_from_path(path: NodePath) -> NodePath:
 	return string_path as NodePath
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SPRITE NODE LOGIC ░░░░
-# What follow is logic specifically gathered for Sprite elements. TextureRect should 
-# be treated in a different way (see texture_rect_animation_creator.gd file in
-# original Aseprite Wizard plugin by Vinicius Gerevini)
+# ---- SPRITE NODE LOGIC ---------------------------------------------------------------------------
+## What follow is logic specifically gathered for Sprite elements. TextureRect should 
+## be treated in a different way (see texture_rect_animation_creator.gd file in
+## original Aseprite Wizard plugin by Vinicius Gerevini)
 func _setup_texture():
 	# Load texture in target sprite (ignoring cache and forcing a refres)
-	var texture = ResourceLoader.load(_spritesheet_metadata.sprite_sheet, 'Image', ResourceLoader.CACHE_MODE_IGNORE)
+	var texture = ResourceLoader.load(
+		_spritesheet_metadata.sprite_sheet, 'Image', ResourceLoader.CACHE_MODE_IGNORE
+	)
 	texture.take_over_path(_spritesheet_metadata.sprite_sheet)
 	_target_sprite.texture = texture
 
 	if _spritesheet_metadata.frames.is_empty():
 		return
 
-	_target_sprite.hframes = _spritesheet_metadata.meta.size.w / _spritesheet_metadata.frames[0].sourceSize.w
-	_target_sprite.vframes = _spritesheet_metadata.meta.size.h / _spritesheet_metadata.frames[0].sourceSize.h
+	_target_sprite.hframes = (
+		_spritesheet_metadata.meta.size.w / _spritesheet_metadata.frames[0].sourceSize.w
+	)
+	_target_sprite.vframes = (
+		_spritesheet_metadata.meta.size.h / _spritesheet_metadata.frames[0].sourceSize.h
+	)
 
 
 func _create_meta_tracks(animation: Animation):
-	var texture_track = _get_property_track_path("texture")
-	var texture_track_index = _create_track(_target_sprite, animation, texture_track)
-	animation.track_insert_key(texture_track_index, 0, _target_sprite.texture)
-
 	var hframes_track = _get_property_track_path("hframes")
 	var hframes_track_index = _create_track(_target_sprite, animation, hframes_track)
 	animation.track_insert_key(hframes_track_index, 0, _target_sprite.hframes)
@@ -384,3 +388,6 @@ func _find_sprite_in_target() -> Node:
 func _remove_animations_from_player(player: AnimationPlayer):
 	if player.has_animation_library(_DEFAULT_AL):
 		player.remove_animation_library(_DEFAULT_AL)
+
+
+#endregion

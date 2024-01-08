@@ -39,6 +39,10 @@ func create(obj_name: String) -> int:
 	new_obj.description = _pascal_name.capitalize()
 	new_obj.cursor = Constants.CURSOR_TYPE.USE
 	new_obj.size_flags_vertical = new_obj.SIZE_SHRINK_CENTER
+
+	if PopochiuResources.get_settings().is_pixel_art_game:
+		new_obj.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	
 	# Save the scene (.tscn)

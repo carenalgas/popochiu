@@ -1,21 +1,21 @@
 extends Node
-# (E) Popochiu's core
-# It is the system main class, and is in charge of a making the game to work
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+## (E) Popochiu's core
+## It is the system main class, and is in charge of a making the game to work.
 
 signal text_speed_changed
 signal language_changed
 signal game_saved
 signal game_loaded(data)
-signal redied
+signal command_selected
+signal dialog_style_changed
 
 const SAVELOAD_PATH := 'res://addons/popochiu/engine/others/popochiu_save_load.gd'
 
-# Used to prevent going to another room when there is one being loaded
+## Used to prevent going to another room when there is one being loaded
 var in_room := false : set = _set_in_room
-var current_room: PopochiuRoom : set = set_current_room
-# Stores the las PopochiuClickable node clicked to ease access to it from
-# any other class
+var current_room: PopochiuRoom
+## Stores the las PopochiuClickable node clicked to ease access to it from
+## any other class
 var clicked: PopochiuClickable = null
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
 var cutscene_skipped := false
@@ -28,9 +28,11 @@ var half_width := 0.0 : get = get_half_width
 var half_height := 0.0 : get = get_half_height
 var settings := PopochiuResources.get_settings()
 var current_text_speed_idx := settings.default_text_speed
-var current_text_speed: float = settings.text_speeds[current_text_speed_idx]
+var current_text_speed: float = settings.text_speeds[current_text_speed_idx] :
+	set = set_current_text_speed
 var current_language := 0
 var auto_continue_after := -1.0
+var current_dialog_style := settings.dialog_style : set = set_dialog_style
 var scale := Vector2.ONE
 var am: PopochiuAudioManager = null
 # TODO: This might not just be a boolean, but there could be an array that puts
@@ -38,6 +40,18 @@ var am: PopochiuAudioManager = null
 # be something that allows for more dynamism, such as putting one queue to execute
 # during the execution of another queue
 var playing_queue := false
+var gi: PopochiuGraphicInterface = null
+var tl: Node2D = null
+## The current class used as the game commands
+## (i.e. NineVerbsCommands, SierraCommands, and so on)
+var commands: PopochiuCommands = null
+var commands_map := {
+	-1: {
+		"name" = "fallback",
+		fallback = _command_fallback
+	}
+}
+var current_command := -1 : set = set_current_command
 
 # TODO: This could be in the camera's own script
 var _is_camera_shaking := false
@@ -61,50 +75,58 @@ var _saveload: Resource = null
 }
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
-	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
-	
 	_saveload = load(SAVELOAD_PATH).new()
 	_config = PopochiuResources.get_data_cfg()
 	
-	var gi: CanvasLayer = null
-	var tl: CanvasLayer = null
+	# Create the AudioManager
+	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
 	
+	# Set the Graphic Interface node
 	if settings.graphic_interface:
 		gi = settings.graphic_interface.instantiate()
 		gi.name = 'GraphicInterface'
 	else:
-		gi = load(PopochiuResources.GRAPHIC_INTERFACE_ADDON).instantiate()
+		gi = load(PopochiuResources.GUI_ADDON_FOLDER).instantiate()
 	
+	# Load the commands for the game
+	var commands_path: String = PopochiuResources.get_data_value("ui", "commands", "")
+	if not commands_path.is_empty():
+		commands = load(commands_path).new()
+	
+	# Set the Transitions Layer node
 	if settings.transition_layer:
 		tl = settings.transition_layer.instantiate()
 		tl.name = 'TransitionLayer'
 	else:
 		tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
 	
-	# Scale GI and TL
+	# Calculate the scale that could be applied
 	scale = Vector2(self.width, self.height) / Vector2(320.0, 180.0)
 	
-	add_child(gi)
-	add_child(tl)
+	# Add the AudioManager, the Graphic Interface, and the Transitions Layer to the tree
+	$GraphicInterfaceLayer.add_child(gi)
+	$TransitionsLayer.add_child(tl)
 	add_child(am)
 	
+	# Load the player-controlled character defined by the dev
 	if PopochiuResources.has_data_value('setup', 'pc'):
 		var pc_data_path: String = PopochiuResources.get_data_value(
 			'characters',
 			PopochiuResources.get_data_value('setup', 'pc', ''),
 			''
 		)
-		
+
 		if pc_data_path:
 			var pc_data: PopochiuCharacterData = load(pc_data_path)
 			var pc: PopochiuCharacter = load(pc_data.scene).instantiate()
-			
+
 			C.player = pc
 			C.characters.append(pc)
 			C.set(pc.script_name, pc)
 	
+	# Load the first PopochiuCharacter in the project as the default PC
 	if not C.player:
 		# Set the first character on the list to be the default player character
 		var characters := PopochiuResources.get_section('characters')
@@ -120,7 +142,10 @@ func _ready() -> void:
 	
 	# Add inventory items checked start (ignore animations (3rd parameter))
 	for key in settings.items_on_start:
-		I[key].add(false)
+		var ii: PopochiuInventoryItem = I.get_item_instance(key)
+		
+		if is_instance_valid(ii):
+			ii.add(false)
 	
 	set_process_input(false)
 	
@@ -134,9 +159,12 @@ func _ready() -> void:
 		
 		res.save_childs_states()
 	
+	# Connect to singletons signals
 	C.character_spoke.connect(_on_character_spoke)
+	G.unblocked.connect(_on_graphic_interface_unblocked)
 	
-	redied.emit()
+	# Assign property values to singletons and other global classes
+	G.gui = gi
 
 
 func _process(delta: float) -> void:
@@ -164,14 +192,14 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_released('popochiu-skip'):
 		cutscene_skipped = true
-		$TransitionLayer.play_transition(
-			$TransitionLayer.PASS_DOWN_IN,
+		tl.play_transition(
+			PopochiuTransitionLayer.PASS_DOWN_IN,
 			settings.skip_cutscene_time
 		)
 		
-		await $TransitionLayer.transition_finished
+		await tl.transition_finished
 		
-		G.continue_clicked.emit()
+		#G.continue_clicked.emit()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -180,7 +208,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func queue_wait(time := 1.0) -> Callable:
 	return func (): await wait(time)
 
@@ -198,8 +228,8 @@ func wait(time := 1.0) -> void:
 #	pass
 
 
-# Executes a series of instructions one by one. show_gi determines if the
-# Graphic Interface will appear once all instructions have ran.
+## Executes a series of instructions one by one. show_gi determines if the
+## Graphic Interface will appear once all instructions have ran.
 func queue(instructions: Array, show_gi := true) -> void:
 	if instructions.is_empty():
 		await get_tree().process_frame
@@ -223,7 +253,7 @@ func queue(instructions: Array, show_gi := true) -> void:
 			await _eval_string(instruction as String)
 	
 	if show_gi:
-		G.done()
+		G.unblock()
 	
 	if _is_camera_shaking:
 		stop_camera_shake()
@@ -234,24 +264,24 @@ func queue(instructions: Array, show_gi := true) -> void:
 	playing_queue = false
 
 
-# Like queue, but can be skipped with the input action: popochiu-skip.
+## Like queue, but can be skipped with the input action: popochiu-skip.
 func cutscene(instructions: Array) -> void:
 	set_process_input(true)
 	await queue(instructions)
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		$TransitionLayer.play_transition(
-			$TransitionLayer.PASS_DOWN_OUT,
+		tl.play_transition(
+			tl.PASS_DOWN_OUT,
 			settings.skip_cutscene_time
 		)
-		await $TransitionLayer.transition_finished
+		await tl.transition_finished
 	
 	cutscene_skipped = false
 
 
-# Loads the room with script_name. use_transition can be used to trigger a fade
-# out animation before loading the room, and a fade in animation once it is ready
+## Loads the room with script_name. use_transition can be used to trigger a fade
+## out animation before loading the room, and a fade in animation once it is ready
 func goto_room(
 	script_name := '',
 	use_transition := true,
@@ -266,8 +296,8 @@ func goto_room(
 	
 	_use_transition_on_room_change = use_transition
 	if use_transition:
-		$TransitionLayer.play_transition($TransitionLayer.FADE_IN)
-		await $TransitionLayer.transition_finished
+		tl.play_transition(tl.FADE_IN)
+		await tl.transition_finished
 	
 	if is_instance_valid(C.player) and Engine.get_process_frames() > 0:
 		C.player.last_room = current_room.script_name
@@ -303,9 +333,12 @@ func goto_room(
 	get_tree().change_scene_to_file(load(rp).scene)
 
 
-# Called once the loaded room is _ready
+## Called once the loaded room is _ready
 func room_readied(room: PopochiuRoom) -> void:
 	current_room = room
+	
+	if R.current != room:
+		R.current = room
 	
 	# When running from the Editor the first time, use goto_room
 	if Engine.get_process_frames() == 0:
@@ -334,20 +367,22 @@ func room_readied(room: PopochiuRoom) -> void:
 	if (rooms_states[room.script_name]['characters'] as Dictionary).is_empty():
 		# Store the initial state of the characters in the room
 		current_room.state.save_characters()
-		current_room.clean_characters()
-	else:
-		current_room.clean_characters()
+	
+	current_room.clean_characters()
 	
 	# Load the state of characters in the room
-	for chr_id in rooms_states[room.script_name]['characters']:
-		var chr_dic: Dictionary =\
-		rooms_states[room.script_name]['characters'][chr_id]
-		var chr: PopochiuCharacter = C.get_character(chr_id)
+	for chr_script_name: String in rooms_states[room.script_name]['characters']:
+		var chr_dic: Dictionary = rooms_states[room.script_name]['characters'][chr_script_name]
+		var chr: PopochiuCharacter = C.get_character(chr_script_name)
 		
 		if not chr: continue
 		
 		chr.position = Vector2(chr_dic.x, chr_dic.y)
 		chr._looking_dir = chr_dic.facing
+		chr.visible = chr_dic.visible
+		chr.modulate = chr_dic.modulate
+		chr.self_modulate = chr_dic.self_modulate
+		chr.light_mask = chr_dic.light_mask
 		
 		current_room.add_character(chr)
 	
@@ -385,20 +420,20 @@ func room_readied(room: PopochiuRoom) -> void:
 		)
 	
 	if _use_transition_on_room_change:
-		$TransitionLayer.play_transition($TransitionLayer.FADE_OUT)
-		await $TransitionLayer.transition_finished
+		tl.play_transition(tl.FADE_OUT)
+		await tl.transition_finished
 		await wait(0.3)
 	else:
 		await get_tree().process_frame
 	
 	if not current_room.hide_gi:
-		G.done()
+		G.unblock()
 	
 	self.in_room = true
 	
 	if _loaded_game:
 		game_loaded.emit(_loaded_game)
-		await G.display('Game loaded')
+		await G.show_system_text('Game loaded')
 		
 		_loaded_game = {}
 	
@@ -412,7 +447,7 @@ func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
 	return func (): await camera_offset(offset)
 
 
-# Changes the main camera's offset (useful when zooming the camera)
+## Changes the main camera's offset (useful when zooming the camera)
 func camera_offset(offset := Vector2.ZERO) -> void:
 	main_camera.offset = offset
 	
@@ -423,7 +458,7 @@ func queue_camera_shake(strength := 1.0, duration := 1.0) -> Callable:
 	return func (): await camera_shake(strength, duration)
 
 
-# Makes the camera shake with `strength` for `duration` seconds
+## Makes the camera shake with `strength` for `duration` seconds
 func camera_shake(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
@@ -436,8 +471,8 @@ func queue_camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
 	return func (): await camera_shake_bg(strength, duration)
 
 
-# Makes the camera shake with `strength` for `duration` seconds without blocking
-# excecution (a.k.a. in the background)
+## Makes the camera shake with `strength` for `duration` seconds without blocking
+## excecution (a.k.a. in the background)
 func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
@@ -450,9 +485,9 @@ func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
 	return func (): await camera_zoom(target, duration)
 
 
-# Changes the camera zoom. If `target` is larger than Vector2(1, 1) the camera
-# will zoom out, smaller values make it zoom in. The effect will last `duration`
-# seconds
+## Changes the camera zoom. If `target` is larger than Vector2(1, 1) the camera
+## will zoom out, smaller values make it zoom in. The effect will last `duration`
+## seconds
 func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
 	if is_instance_valid(_tween) and _tween.is_running():
 		_tween.kill()
@@ -464,12 +499,12 @@ func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
 	await _tween.finished
 
 
-# Returns a String of a text that could be a position key
+## Returns a String of a text that could be a position key
 func get_text(msg: String) -> String:
 	return tr(msg) if settings.use_translations else msg
 
 
-# Gets the PopochiuCharacter with script_name
+## Gets the PopochiuCharacter with script_name
 func get_character_instance(script_name: String) -> PopochiuCharacter:
 	for rp in PopochiuResources.get_section('characters'):
 		var popochiu_character: PopochiuCharacterData = load(rp)
@@ -480,7 +515,7 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 	return null
 
 
-# Gets the PopochiuInventoryItem with script_name
+## Gets the PopochiuInventoryItem with script_name
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 	for rp in PopochiuResources.get_section('inventory_items'):
 		var popochiu_inventory_item: PopochiuInventoryItemData = load(rp)
@@ -491,7 +526,7 @@ func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 	return null
 
 
-# Gets the PopochiuDialog with script_name
+## Gets the PopochiuDialog with script_name
 func get_dialog(script_name: String) -> PopochiuDialog:
 	for rp in PopochiuResources.get_section('dialogs'):
 		var tree: PopochiuDialog = load(rp)
@@ -502,24 +537,24 @@ func get_dialog(script_name: String) -> PopochiuDialog:
 	return null
 
 
-# Adds an action to the history of actions.
-# Look PopochiuClickable._unhandled_input or GraphicInterface._show_dialog_text
-# for examples
+## Adds an action to the history of actions.
+## Look PopochiuClickable._unhandled_input or GraphicInterface._show_dialog_text
+## for examples.
 func add_history(data: Dictionary) -> void:
 	history.push_front(data)
 
 
-# Makes a method in node to be able to be used in a `queue()` call.
-# Method parameters can be passed with params, and yield_signal is the signal
-# that will notify the function has been completed (so `queue()` can continue
-# with the next command in the queue)
+## Makes a method in node to be able to be used in a `queue()` call.
+## Method parameters can be passed with params, and yield_signal is the signal
+## that will notify the function has been completed (so `queue()` can continue
+## with the next command in the queue)
 func queueable(
 	node: Object, method: String, params := [], signal_name := ''
 ) -> Callable:
 	return func (): await _queueable(node, method, params, signal_name)
 
 
-# Checks if the room with script_name exists in the array of rooms of Popochiu
+## Checks if the room with script_name exists in the array of rooms of Popochiu
 func room_exists(script_name: String) -> bool:
 #	for r in rooms:
 	for rp in PopochiuResources.get_section('rooms'):
@@ -533,12 +568,12 @@ func queue_play_transition(type: int, duration: float) -> Callable:
 	return func (): await play_transition(type, duration)
 
 
-# Plays the transition type animation in TransitionLayer.tscn that last duration
-# in seconds. Possible type values can be found in TransitionLayer
+## Plays the transition type animation in TransitionLayer.tscn that last duration
+## in seconds. Possible type values can be found in TransitionLayer
 func play_transition(type: int, duration: float) -> void:
-	$TransitionLayer.play_transition(type, duration)
+	tl.play_transition(type, duration)
 	
-	await $TransitionLayer.transition_finished
+	await tl.transition_finished
 
 
 func change_text_speed() -> void:
@@ -568,7 +603,7 @@ func save_game(slot := 1, description := '') -> void:
 	if _saveload.save_game(slot, description):
 		game_saved.emit()
 		
-		await G.display('Game saved')
+		await G.show_system_text('Game saved')
 
 
 func load_game(slot := 1) -> void:
@@ -602,9 +637,11 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 	_hovered_queue.erase(node)
 	
 	if not _hovered_queue.is_empty() and is_instance_valid(_hovered_queue[-1]):
-		var pc: PopochiuClickable = _hovered_queue[-1]
-		G.show_info(pc.description)
-		Cursor.set_cursor(pc.cursor)
+		var clickable: PopochiuClickable = _hovered_queue[-1]
+		G.show_hover_text(clickable.description)
+		
+		if clickable.get("cursor"):
+			Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
 		
 		return false
 	
@@ -616,7 +653,45 @@ func clear_hovered() -> void:
 	self.hovered = null
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func register_command(id: int, command_name: String, fallback: Callable) -> void:
+	commands_map[id] = {
+		"name" = command_name,
+		"fallback" = fallback
+	}
+
+
+func register_command_without_id(command_name: String, fallback: Callable) -> int:
+	var id := commands_map.size()
+	register_command(id, command_name, fallback)
+	
+	return id
+
+
+func command_fallback() -> void:
+	var fallback: Callable = commands_map[-1].fallback
+	
+	if commands_map.has(E.current_command):
+		fallback = commands_map[E.current_command].fallback
+	
+	await fallback.call()
+
+
+func get_command_name(command_id: int) -> String:
+	var command_name := ""
+	
+	if commands_map.has(command_id):
+		command_name = commands_map[command_id].name
+	
+	return command_name
+
+
+func get_current_command_name() -> String:
+	return get_command_name(current_command)
+
+
+#endregion
+
+#region SetGet #####################################################################################
 func get_width() -> float:
 	return get_viewport().get_visible_rect().end.x
 
@@ -637,7 +712,7 @@ func set_hovered(value: PopochiuClickable) -> void:
 	hovered = value
 	
 	if not hovered:
-		G.show_info()
+		G.show_hover_text()
 
 
 func get_hovered() -> PopochiuClickable:
@@ -647,12 +722,25 @@ func get_hovered() -> PopochiuClickable:
 	return null
 
 
-func set_current_room(value: PopochiuRoom) -> void:
-	current_room = value
-	R.current = value
+func set_current_text_speed(value: float) -> void:
+	current_text_speed = value
+	text_speed_changed.emit()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func set_current_command(value: int) -> void:
+	current_command = value
+	
+	command_selected.emit()
+
+
+func set_dialog_style(value: int) -> void:
+	current_dialog_style = value
+	dialog_style_changed.emit()
+
+
+#endregion
+
+#region Private ####################################################################################
 func _eval_string(text: String) -> void:
 	match text:
 		'.':
@@ -756,9 +844,19 @@ func _queueable(
 
 
 func _on_character_spoke(chr: PopochiuCharacter, msg := '') -> void:
-	G.block()
-	
 	add_history({
-		character = chr.description,
+		character = chr,
 		text = msg
 	})
+
+
+func _on_graphic_interface_unblocked() -> void:
+	clicked = null
+	#current_command = 0
+
+
+func _command_fallback() -> void:
+	PopochiuUtils.print_warning("[color=red]No fallback for that command![/color]")
+
+
+#endregion

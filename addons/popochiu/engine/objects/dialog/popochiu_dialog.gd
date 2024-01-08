@@ -1,8 +1,8 @@
-# For branching dialog, can have dialog options that trigger a script.
 @tool
 @icon('res://addons/popochiu/icons/dialog.png')
 class_name PopochiuDialog
 extends Resource
+## For branching dialog, can have dialog options that trigger a script.
 
 const PopochiuDialogOption := preload('popochiu_dialog_option.gd')
 
@@ -10,7 +10,7 @@ const PopochiuDialogOption := preload('popochiu_dialog_option.gd')
 @export var script_name := ''
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#region Virtual ####################################################################################
 func _on_start() -> void:
 	pass
 
@@ -19,14 +19,21 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+func _on_save() -> Dictionary:
+	return {}
+
+
+func _on_load(_data: Dictionary) -> void:
+	pass
+
+
+#endregion
+
+#region Public #####################################################################################
 func start() -> void:
 	# Start this dialog
 	D.current_dialog = self
-	
 	await _start()
-	
-	G.done()
 
 
 func queue_start() -> Callable:
@@ -59,7 +66,21 @@ func turn_off_forever_options(ids: Array) -> void:
 		if opt: opt.turn_off_forever()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+## Use this to save custom data for this PopochiuDialog when saving the game.
+## The Dictionary must contain only JSON supported types: bool, int, float, String.
+func on_save() -> Dictionary:
+	return _on_save()
+
+
+## Called when the game is loaded.
+## This Dictionary should has the same structure you defined for the returned one in _on_save().
+func on_load(data: Dictionary) -> void:
+	_on_load(data)
+
+
+#endregion
+
+#region SetGet #####################################################################################
 func set_options(value: Array) -> void:
 	options = value
 	
@@ -83,14 +104,20 @@ func get_option(opt_id: String) -> PopochiuDialogOption:
 	return null
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _start() -> void:
+	G.block()
+	D.dialog_started.emit(self)
+	
 	await _on_start()
 	
 	_show_options()
 	
 	await D.dialog_finished
 	
+	G.unblock()
 	D.option_selected.disconnect(_on_option_selected)
 
 
@@ -109,3 +136,6 @@ func _on_option_selected(opt: PopochiuDialogOption) -> void:
 	D.selected_option = opt
 	
 	_option_selected(opt)
+
+
+#endregion

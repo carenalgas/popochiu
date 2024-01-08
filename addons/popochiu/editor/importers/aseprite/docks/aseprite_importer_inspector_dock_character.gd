@@ -2,9 +2,11 @@
 extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock.gd"
 
 var _animation_player_path: String
-var _animation_creator = preload("res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
+var _animation_creator = preload(
+	"res://addons/popochiu/editor/importers/aseprite/animation_creator.gd"
+).new()
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready():
 	if not target_node.has_node("AnimationPlayer"):
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND))
@@ -18,7 +20,9 @@ func _ready():
 	super()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _on_import_pressed():
 	# Set everything up
 	# This will populate _root_node and _options class variables
@@ -29,7 +33,9 @@ func _on_import_pressed():
 		_importing = false
 		return
 	
-	var result = await _animation_creator.create_character_animations(target_node, _root_node.get_node(_animation_player_path), _options)
+	var result = await _animation_creator.create_character_animations(
+		target_node, _root_node.get_node(_animation_player_path), _options
+	)
 	_importing = false
 
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
@@ -42,3 +48,6 @@ func _on_import_pressed():
 func _customize_tag_ui(tag_row: AnimationTagRow):
 	# Nothing special has to be done for Character tags
 	pass
+
+
+#endregion

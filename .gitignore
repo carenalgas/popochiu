@@ -31,3 +31,5 @@ Thumbs.db
 # Project-specific ignores
 popochiu
 popochiu/**
+game
+game/**

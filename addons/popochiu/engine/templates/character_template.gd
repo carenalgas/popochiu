@@ -9,7 +9,7 @@ const Data := preload('character_state_template.gd')
 var state: Data = null
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#region Virtual ####################################################################################
 # When the room in which this node is located finishes being added to the tree
 func _on_room_set() -> void:
 	pass
@@ -17,14 +17,20 @@ func _on_room_set() -> void:
 
 # When the node is clicked
 func _on_click() -> void:
-	# Replace the call to super.on_click() to implement your code.
-	super.on_click()
+	# Replace the call to E.command_fallback() to implement your code.
+	E.command_fallback()
 
 
 # When the node is right clicked
 func _on_right_click() -> void:
-	# Replace the call to super.on_right_click() to implement your code.
-	super.on_right_click()
+	# Replace the call to E.command_fallback() to implement your code.
+	E.command_fallback()
+
+
+# When the node is middle clicked
+func _on_middle_click() -> void:
+	# Replace the call to E.command_fallback() to implement your code.
+	E.command_fallback()
 
 
 # When the node is clicked and there is an inventory item selected
@@ -52,3 +58,15 @@ func _play_talk() -> void:
 # Use it to play the grab animation for the character
 func _play_grab() -> void:
 	super()
+
+
+#endregion
+
+#region Public #####################################################################################
+# You can add here functions triggered by the GUI commands. For example, if your GUI has a command
+# for look_at, you could have the function:
+#func on_look_at() -> void:
+	#pass
+
+
+#endregion

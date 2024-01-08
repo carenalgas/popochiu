@@ -17,20 +17,21 @@ var _new_item_name := ''
 var _factory: PopochiuInventoryItemFactory
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	_clear_fields()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 func _create() -> void:
 	if _new_item_name.is_empty():
 		_error_feedback.show()
 		return
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Setup the prop helper and use it to create the prop
+	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuInventoryItemFactory.new(_main_dock)
 
 	if _factory.create(_new_item_name) != ResultCodes.SUCCESS:
@@ -38,14 +39,11 @@ func _create() -> void:
 		return
 	var item_scene = _factory.get_obj_scene()
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# Open the scene in the editor
+	# Open the scene in the editor -----------------------------------------------------------------
 	await get_tree().create_timer(0.1).timeout
-	_main_dock.ei.select_file(item_scene.scene_file_path)
-	_main_dock.ei.open_scene_from_path(item_scene.scene_file_path)
+	EditorInterface.select_file(item_scene.scene_file_path)
+	EditorInterface.open_scene_from_path(item_scene.scene_file_path)
 	
-	# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-	# That's all!!!!!!!
 	hide()
 
 
@@ -53,14 +51,18 @@ func _clear_fields() -> void:
 	_new_item_name = ''
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func set_main_dock(node: Panel) -> void:
 	super(node)
 	
 	if not _main_dock: return
-	
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+
+#endregion
+
+#region Private ####################################################################################
 func _update_name(new_text: String) -> void:
 	super(new_text)
 
@@ -69,7 +71,7 @@ func _update_name(new_text: String) -> void:
 
 		_info.text = (
 			'In [b]%s[/b] the following files will be created:\
-			\n[code]%s, %s and %s[/code]' \
+			\n[code]- %s\n- %s\n- %s[/code]' \
 			% [
 				_main_dock.INVENTORY_ITEMS_PATH + _new_item_name,
 				'inventory_item_' + _new_item_name + '.tscn',
@@ -81,3 +83,8 @@ func _update_name(new_text: String) -> void:
 	else:
 		_info.clear()
 		_info.hide()
+	
+	_update_size_and_position()
+
+
+#endregion

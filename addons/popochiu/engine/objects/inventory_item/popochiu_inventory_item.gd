@@ -1,13 +1,12 @@
 @icon('res://addons/popochiu/icons/inventory_item.png')
-extends TextureRect
 class_name PopochiuInventoryItem
-# An inventory item.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+extends TextureRect
+## An inventory item.
 
 const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
 
-signal description_toggled(description)
 signal selected(item)
+signal unselected
 
 @export var description := '' : get = get_description
 @export var stack := false
@@ -16,42 +15,54 @@ signal selected(item)
 
 var amount := 1
 var in_inventory := false : set = set_in_inventory
+# NOTE Don't know if this will make sense, or if it this object should emit
+# a signal about the click (command execution)
+var last_click_button := -1
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready():
 	mouse_entered.connect(_toggle_description.bind(true))
 	mouse_exited.connect(_toggle_description.bind(false))
-	gui_input.connect(_on_action_pressed)
+	gui_input.connect(_on_gui_input)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-# When the item is clicked in the Inventory
+#endregion
+
+#region Virtual ####################################################################################
+## When the item is clicked in the Inventory
 func _on_click() -> void:
 	pass
 
 
-# When the item is right clicked in the Inventory
+## When the item is right clicked in the Inventory
 func _on_right_click() -> void:
 	pass
 
 
-# When the item is clicked and there is another inventory item selected
+## When the item is middle clicked in the Inventory
+func _on_middle_click() -> void:
+	pass
+
+
+## When the item is clicked and there is another inventory item selected
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
 
-# Actions to excecute after the item is added to the Inventory
+## Actions to excecute after the item is added to the Inventory
 func _on_added_to_inventory() -> void:
 	pass
 
 
-# Actions to excecute when the item is discarded from the Inventory
+## Actions to excecute when the item is discarded from the Inventory
 func _on_discard() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func queue_add(animate := true) -> Callable:
 	return func (): await add(animate)
 
@@ -76,7 +87,7 @@ func add(animate := true) -> void:
 		
 		await I.item_add_done
 
-		G.done(true)
+		G.unblock(true)
 
 		return
 	
@@ -106,6 +117,23 @@ func remove(animate := false) -> void:
 	I.item_removed.emit(self, animate)
 	
 	await I.item_remove_done
+	
+	G.unblock()
+
+
+func replace(new_item: PopochiuInventoryItem) -> void:
+	in_inventory = false
+	
+	I.items.erase(script_name)
+	I.set_active_item(null)
+	I.items.append(new_item.script_name)
+	new_item.in_inventory = true
+	
+	I.item_replaced.emit(self, new_item)
+	
+	await I.item_replace_done
+	
+	G.unblock()
 
 
 func queue_discard(animate := false) -> Callable:
@@ -122,27 +150,60 @@ func discard(animate := false) -> void:
 
 
 func set_active(ignore_block := false) -> void:
-	I.set_active_item(self, ignore_block)
-
-
-# When the item is clicked in the Inventory
-func on_click() -> void:
+	#I.set_active_item(self, ignore_block)
 	selected.emit(self)
 
 
-# When the item is right clicked in the Inventory
+## Called when the item is clicked in the Inventory
+func on_click() -> void:
+	_on_click()
+
+
+## Called when the item is right clicked in the Inventory
 func on_right_click() -> void:
-	await G.display('Nothing to see in this item')
+	_on_right_click()
 
 
-# When the item is clicked and there is another inventory item selected
+## Called when the item is middle clicked in the Inventory
+func on_middle_click() -> void:
+	_on_middle_click()
+
+
+## When the item is clicked and there is another inventory item selected
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	await G.display(
+	await G.show_system_text(
 		'Nothing happens when using %s in this item' % item.description
 	)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+func handle_command(button_idx: int) -> void:
+	var command: String = E.get_current_command_name().to_snake_case()
+	var suffix := "click"
+	var prefix := "on_%s"
+	
+	match button_idx:
+		MOUSE_BUTTON_RIGHT:
+			suffix = "right_" + suffix
+		MOUSE_BUTTON_MIDDLE:
+			suffix = "middle_" + suffix
+	
+	if not command.is_empty():
+		var command_method := suffix.replace("click", command)
+		
+		if has_method(prefix % command_method):
+			suffix = command_method
+	
+	E.add_history({
+		action = suffix if command.is_empty() else command,
+		target = description
+	})
+	
+	call(prefix % suffix)
+
+
+#endregion
+
+#region SetGet #####################################################################################
 func set_in_inventory(value: bool) -> void:
 	in_inventory = value
 	
@@ -157,23 +218,37 @@ func get_description() -> String:
 	return E.get_text(description)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _toggle_description(display: bool) -> void:
-	Cursor.set_cursor(cursor if display else CURSOR.Type.IDLE)
-	G.show_info(self.description if display else '')
-	if display:
-		description_toggled.emit(description if description else script_name)
+#endregion
+
+#region Private ####################################################################################
+func _toggle_description(is_hover: bool) -> void:
+	if is_hover:
+		G.mouse_entered_inventory_item.emit(self)
 	else:
-		description_toggled.emit('')
+		last_click_button = -1
+		
+		G.mouse_exited_inventory_item.emit(self)
+	
+	# NOTE: Not sure this should go here
+	#Cursor.set_cursor(cursor if is_hover else CURSOR.Type.IDLE)
+	#G.show_hover_text(self.description if is_hover else '')
 
 
-func _on_action_pressed(event: InputEvent) -> void: 
+func _on_gui_input(event: InputEvent) -> void: 
 	var mouse_event := event as InputEventMouseButton 
-	if mouse_event:
-		if mouse_event.is_action_pressed('popochiu-interact'):
-			if I.active:
-				_on_item_used(I.active)
-			else:
-				_on_click()
-		elif mouse_event.is_action_pressed('popochiu-look'):
-			_on_right_click()
+	if mouse_event and mouse_event.pressed:
+		I.clicked = self
+		last_click_button = mouse_event.button_index
+		
+		match mouse_event.button_index:
+			MOUSE_BUTTON_LEFT:
+				if I.active:
+					_on_item_used(I.active)
+				else:
+					handle_command(mouse_event.button_index)
+			MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
+				if not I.active:
+					handle_command(mouse_event.button_index)
+
+
+#endregion
