@@ -150,6 +150,9 @@ func walk(target_pos: Vector2) -> void:
 	await move_ended
 	is_moving = false
 
+func take_turn(target_pos: Vector2):
+	face_direction(target_pos)
+	_play_walk(target_pos)
 
 func queue_stop_walking() -> Callable:
 	return func (): await stop_walking()
