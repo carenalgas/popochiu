@@ -1,7 +1,8 @@
-extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd'
 class_name PopochiuWalkableAreaFactory
+extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd'
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+
+#region Public #####################################################################################
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
 	_type = Constants.Types.WALKABLE_AREA
@@ -28,6 +29,8 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
 	# Create the instance
 	var new_obj: PopochiuWalkableArea = _load_obj_base_scene()
+	
+	new_obj.set_script(ResourceLoader.load(_path_script))
 
 	new_obj.name = _pascal_name
 	new_obj.script_name = _pascal_name
@@ -58,3 +61,6 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	_add_resource_to_room()
 
 	return result_code
+
+
+#endregion

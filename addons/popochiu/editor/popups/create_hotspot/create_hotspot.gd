@@ -1,6 +1,6 @@
-# Creates a new hotspot in the room.
 @tool
 extends 'res://addons/popochiu/editor/popups/creation_popup.gd'
+# Creates a new hotspot in the room.
 
 ## TODO: remove this legacy...
 var room_tab: VBoxContainer = null

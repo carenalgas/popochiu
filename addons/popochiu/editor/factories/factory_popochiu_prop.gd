@@ -1,7 +1,8 @@
-extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd'
 class_name PopochiuPropFactory
+extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd'
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+
+#region Public #####################################################################################
 func _init(_main_dock: Panel) -> void:
 	super(_main_dock)
 	
@@ -58,3 +59,6 @@ func create(
 	_add_resource_to_room()
 
 	return result_code
+
+
+#endregion

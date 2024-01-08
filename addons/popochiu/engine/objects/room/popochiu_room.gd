@@ -1,13 +1,13 @@
+@tool
+@icon('res://addons/popochiu/icons/room.png')
+class_name PopochiuRoom
+extends Node2D
 ## The scenes used by Popochiu.
 ## 
 ## Can have: Props, Hotspots, Regions, Markers and
 ## Walkable areas. Characters can move through this and interact with its Props
 ## and Hotspots. Regions can be used to trigger methods when a character enters
 ## or leaves.
-@tool
-@icon('res://addons/popochiu/icons/room.png')
-class_name PopochiuRoom
-extends Node2D
 
 @export var script_name := ''
 @export var has_player := true
@@ -31,6 +31,7 @@ var _nav_path: PopochiuWalkableArea = null
 ## }
 ## [/codeblock]
 var _moving_characters := {}
+var _characters_childs := {}
 
 
 #region Godot ######################################################################################
@@ -104,21 +105,19 @@ func _unhandled_input(event):
 #endregion
 
 #region Virtual ####################################################################################
-# What happens when Popochiu loads the room. At this point the room is in the
-# tree but it is not visible.
+## What happens when Popochiu loads the room. At this point the room is in the tree but it is not
+## visible.
 func _on_room_entered() -> void:
 	pass
 
 
-# What happens when the room changing transition finishes. At this point the room
-# is visible.
+## What happens when the room changing transition finishes. At this point the room is visible.
 func _on_room_transition_finished() -> void:
 	pass
 
 
-# What happens before Popochiu unloads the room. At this point the room is in the
-# tree but it is not visible, it is not processing and has no childs in the
-# $Characters node.
+## What happens before Popochiu unloads the room. At this point the room is in the tree but it is
+## not visible, it is not processing and has no childs in the $Characters node.
 func _on_room_exited() -> void:
 	pass
 
@@ -131,14 +130,18 @@ func _on_entered_from_editor() -> void:
 #endregion
 
 #region Public #####################################################################################
-# This function is called by Popochiu before moving the PC to another room. By
-# default, characters are removed only to keep their instances in the array
-# of characters in ICharacter.gd.
+## This function is called by Popochiu before moving the PC to another room. By default, characters
+## are removed only to keep their instances in the array of characters in ICharacter.gd.
 func exit_room() -> void:
 	set_physics_process(false)
 	
 	for c in $Characters.get_children():
 		c.position_stored = null
+		
+		for character_child: Node in c.get_children():
+			if character_child.owner != c:
+				character_child.queue_free()
+		
 		$Characters.remove_child(c)
 	
 	_on_room_exited()
@@ -146,6 +149,11 @@ func exit_room() -> void:
 
 func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
+	
+	# Add child nodes (defined in the Scene tree of the room) to the instance of the character
+	for child: Node in _characters_childs[chr.script_name]:
+		chr.add_child(child)
+	
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)
 	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
@@ -156,20 +164,6 @@ func add_character(chr: PopochiuCharacter) -> void:
 		C.player.started_walk_to.connect(_follow_player.bind(chr))
 
 	chr.idle()
-
-
-func _follow_player(
-	character: PopochiuCharacter,
-	start_position: Vector2,
-	end_position: Vector2,
-	follower: PopochiuCharacter
-):
-	var follower_end_position
-	if end_position.x > follower.position.x:
-		follower_end_position = end_position - follower.follow_player_offset
-	else:
-		follower_end_position = end_position + follower.follow_player_offset
-	follower.walk_to(follower_end_position)
 
 
 func remove_character(chr: PopochiuCharacter) -> void:
@@ -205,8 +199,17 @@ func setup_camera() -> void:
 
 func clean_characters() -> void:
 	for c in $Characters.get_children():
-		if c is PopochiuCharacter:
-			c.queue_free()
+		if not c is PopochiuCharacter: continue
+		
+		_characters_childs[c.script_name] = []
+		
+		for character_child: Node in c.get_children():
+			if not character_child.owner == self: continue
+			
+			c.remove_child(character_child)
+			_characters_childs[c.script_name].append(character_child)
+		
+		c.queue_free()
 
 
 func update_character_scale(chr):
@@ -448,6 +451,20 @@ func _clear_navigation_path(character: PopochiuCharacter) -> void:
 	_moving_characters.erase(character.get_instance_id())
 	character.idle()
 	character.move_ended.emit()
+
+
+func _follow_player(
+	character: PopochiuCharacter,
+	start_position: Vector2,
+	end_position: Vector2,
+	follower: PopochiuCharacter
+):
+	var follower_end_position
+	if end_position.x > follower.position.x:
+		follower_end_position = end_position - follower.follow_player_offset
+	else:
+		follower_end_position = end_position + follower.follow_player_offset
+	follower.walk_to(follower_end_position)
 
 
 #endregion

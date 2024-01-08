@@ -13,7 +13,7 @@ const SAVELOAD_PATH := 'res://addons/popochiu/engine/others/popochiu_save_load.g
 
 ## Used to prevent going to another room when there is one being loaded
 var in_room := false : set = _set_in_room
-var current_room: PopochiuRoom : set = set_current_room
+var current_room: PopochiuRoom
 ## Stores the las PopochiuClickable node clicked to ease access to it from
 ## any other class
 var clicked: PopochiuClickable = null
@@ -337,6 +337,9 @@ func goto_room(
 func room_readied(room: PopochiuRoom) -> void:
 	current_room = room
 	
+	if R.current != room:
+		R.current = room
+	
 	# When running from the Editor the first time, use goto_room
 	if Engine.get_process_frames() == 0:
 		await get_tree().process_frame
@@ -364,9 +367,8 @@ func room_readied(room: PopochiuRoom) -> void:
 	if (rooms_states[room.script_name]['characters'] as Dictionary).is_empty():
 		# Store the initial state of the characters in the room
 		current_room.state.save_characters()
-		current_room.clean_characters()
-	else:
-		current_room.clean_characters()
+	
+	current_room.clean_characters()
 	
 	# Load the state of characters in the room
 	for chr_script_name: String in rooms_states[room.script_name]['characters']:
@@ -719,11 +721,6 @@ func get_hovered() -> PopochiuClickable:
 		return _hovered_queue[-1]
 	
 	return null
-
-
-func set_current_room(value: PopochiuRoom) -> void:
-	current_room = value
-	R.current = value
 
 
 func set_current_text_speed(value: float) -> void:
