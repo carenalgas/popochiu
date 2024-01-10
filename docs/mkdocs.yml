@@ -1,2 +1,6 @@
 site_name: Popochiu
 theme: readthedocs
+extra_css:
+  - _assets/css/custom.css
+extra_javascript:
+  - _assets/js/custom.js
