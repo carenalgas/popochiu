@@ -1,5 +1,4 @@
-extends Control
-class_name PopochiuGraphicInterface
+class_name PopochiuGraphicInterface extends Control
 ## Handles the in-game Graphic Interface.
 
 var popups_stack := []

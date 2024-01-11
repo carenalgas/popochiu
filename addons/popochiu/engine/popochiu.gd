@@ -1,56 +1,120 @@
-extends Node
-## (E) Popochiu's core
-## It is the system main class, and is in charge of a making the game to work.
+class_name Popochiu extends Node
+## This is Popochiu's main class, and is in charge of making the game to work.
+## 
+## Is the shortcut for [b]Popochiu.gd[/b], and can be used (from any script) with [b]E[/b] (E.g.
+## [code]E.goto_room("House")[/code]).
+## 
+## Some things you can do with it:
+## - Change to another room.
+## - Access the main camera and some game settings.
+## - Run commands sequentialy (even in a form that makes the skippable).
+## - Use some utility methods (such as making a function of yours able to be in a run queue).
+## 
+## Examples
+## [codeblock]
+## # Makes the player-controlled character say "Hi", wait a second, and then say another thing
+## E.queue([
+##     "Player: Hi",
+##     "...",
+##     "Player: I'm the character you can control!!!",
+## ])
+## # Make the camera shake with a strength of 2.0 during 3.0 seconds
+## E.camera_shake(2.0, 3.0)
+## [/codeblock]
 
+## Emitted when the text speed changes in [PopochiuSettings].
 signal text_speed_changed
+## Emitted when the language changes in [PopochiuSettings].
 signal language_changed
+## Emitted after [method save_game] saves a file with the current game data.
 signal game_saved
-signal game_loaded(data)
+## Emitted by [method room_readied] when stored game [param data] is loaded for the current room.
+signal game_loaded(data: Dictionary)
+## Emitted when [member current_command] changes. Can be used to know the active command for the
+## current GUI template.
 signal command_selected
+## Emitted when the dialog style changes in [PopochiuSettings].
 signal dialog_style_changed
 
+## Path to the script with the class used to save and load game data.
 const SAVELOAD_PATH := 'res://addons/popochiu/engine/others/popochiu_save_load.gd'
 
-## Used to prevent going to another room when there is one being loaded
+## Used to prevent going to another room when there is one being loaded.
 var in_room := false : set = _set_in_room
+## Stores a reference to the current [PopochiuRoom].
 var current_room: PopochiuRoom
-## Stores the las PopochiuClickable node clicked to ease access to it from
-## any other class
+## Stores the last clicked [PopochiuClickable] node to ease access to it from any other class.
 var clicked: PopochiuClickable = null
+## Stores the last hovered [PopochiuClickable] node to ease access to it from any other class.
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
-var cutscene_skipped := false
-var rooms_states := {}
-var dialog_states := {}
-var history := []
-var width := 0.0 : get = get_width
-var height := 0.0 : get = get_height
-var half_width := 0.0 : get = get_half_width
-var half_height := 0.0 : get = get_half_height
+## Used to know if a cutscene was skipped.
+## A reference to [PopochiuSettings]. Can be used to quickly access its members.
 var settings := PopochiuResources.get_settings()
-var current_text_speed_idx := settings.default_text_speed
-var current_text_speed: float = settings.text_speeds[current_text_speed_idx] :
-	set = set_current_text_speed
-var current_language := 0
-var auto_continue_after := -1.0
-var current_dialog_style := settings.dialog_style : set = set_dialog_style
-var scale := Vector2.ONE
+## Reference to the [PopochiuAudioManager].
 var am: PopochiuAudioManager = null
-# TODO: This might not just be a boolean, but there could be an array that puts
+# NOTE: This might not just be a boolean, but there could be an array that puts
 # the calls to queue in an Array and executes them in order. Or perhaps it could
 # be something that allows for more dynamism, such as putting one queue to execute
-# during the execution of another queue
+# during the execution of another one.
+## Indicates if the game is playing a queue of instructions.
 var playing_queue := false
+## Reference to the [PopochiuGraphicInterface].
 var gi: PopochiuGraphicInterface = null
+## Reference to the [PopochiuTransitionLayer].
 var tl: Node2D = null
 ## The current class used as the game commands
-## (i.e. NineVerbsCommands, SierraCommands, and so on)
+var cutscene_skipped := false
+## Stores the state of each [PopochiuRoom] in the game. The key of each room is its
+## [member PopochiuRoom.script_name], and each value is a [Dictionary] with its properties and the
+## data of all its [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s, [PopochiuRegion]s,
+## and some data related with the [PopochiuCharacter]s in it. For more info about the data stored,
+## check the documentation for [PopochiuRoomData].
+var rooms_states := {}
+## Stores the state of each [PopochiuDialog] in the game. The key of each dialog is its
+## [member PopochiuDialog.script_name]. For more info about the stored data, check [PopochiuDialog].
+var dialog_states := {}
+## Stores a list of game events (triggered actions and dialog lines). Each event is defined by a
+## [Dictionary].
+var history := []
+## The width, in pixels, of the game native resolution
+## (that is [code]get_viewport().get_visible_rect().end.x[/code]).
+var width := 0.0 : get = get_width
+## The height, in pixels, of the game native resolution
+## (that is [code]get_viewport().get_visible_rect().end.y[/code]).
+var height := 0.0 : get = get_height
+## [member width] divided by 2.
+var half_width := 0.0 : get = get_half_width
+## [member height] divided by 2.
+var half_height := 0.0 : get = get_half_height
+## Used to access the value of the current text speed. The possible text speed values are stored
+## in the [member PopochiuSettings.text_speeds] [Array], so this property has the index of the
+## speed being used by the game.
+var current_text_speed_idx := settings.default_text_speed
+## The text speed being used by the game. When this property changes, the
+## [signal text_speed_changed] signal is emitted.
+var current_text_speed: float = settings.text_speeds[current_text_speed_idx] :
+	set = set_current_text_speed
+## The number of seconds to wait before moving to the next dialog line (when playing dialog lines
+## triggered inside a [method queue].
+var auto_continue_after := -1.0
+## The current dialog style used by the game. When this property changes, the
+## [signal dialog_style_changed] signal is emitted.
+var current_dialog_style := settings.dialog_style : set = set_dialog_style
+## The scale value of the game. Defined by the native game resolution compared with (320, 180),
+## which is the default game resolution defined by Popochiu.
+var scale := Vector2.ONE
+## A reference to the current commands script.
+## (i.e. [NineVerbsCommands], [SierraCommands] or [SimpleClickCommands)
 var commands: PopochiuCommands = null
+## Serves as a map to access the fallback methods of the current GUI.
 var commands_map := {
 	-1: {
 		"name" = "fallback",
 		fallback = _command_fallback
 	}
 }
+## The ID of the current active command in the GUI. When this property changes, the
+## [signal command_selected] signal is emitted.
 var current_command := -1 : set = set_current_command
 
 # TODO: This could be in the camera's own script
@@ -63,8 +127,9 @@ var _loaded_game := {}
 var _hovered_queue := []
 var _saveload: Resource = null
 
-@onready var _tween: Tween = null
+## A reference to the game [Camera2D].
 @onready var main_camera: Camera2D = find_child('MainCamera')
+@onready var _tween: Tween = null
 @onready var _defaults := {
 	camera_limits = {
 		left = main_camera.limit_left,

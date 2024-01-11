@@ -1,5 +1,5 @@
-class_name SimpleClickCommands
-extends PopochiuCommands
+class_name SimpleClickCommands extends PopochiuCommands
+## Defines the commands and fallback methods for the Simple-click/Context-sensitive GUI.
 
 
 ## Called when `E.command_fallback()` is triggered.

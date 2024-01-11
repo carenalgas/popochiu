@@ -1,6 +1,6 @@
 @tool
-extends Resource
-class_name PopochiuSettings
+class_name PopochiuSettings extends Resource
+## Defines properties as settings for the game.
 
 const ImporterDefaults :=\
 preload('res://addons/popochiu/engine/others/importer_defaults.gd')

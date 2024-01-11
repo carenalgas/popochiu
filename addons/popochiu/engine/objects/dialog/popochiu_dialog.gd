@@ -1,8 +1,7 @@
 @tool
 @icon('res://addons/popochiu/icons/dialog.png')
-class_name PopochiuDialog
-extends Resource
-## For branching dialog, can have dialog options that trigger a script.
+class_name PopochiuDialog extends Resource
+## A class for branching dialogs. Can have dialog options that trigger a script when selected.
 
 const PopochiuDialogOption := preload('popochiu_dialog_option.gd')
 

@@ -1,7 +1,6 @@
 @tool
 @icon('res://addons/popochiu/icons/prop.png')
-class_name PopochiuProp
-extends PopochiuClickable
+class_name PopochiuProp extends PopochiuClickable
 ## Visual elements in the Room. Can have interaction.
 ## E.g. Background, foreground, a table, a cup, etc.
 
