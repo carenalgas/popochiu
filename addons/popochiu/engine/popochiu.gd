@@ -725,6 +725,8 @@ func play_transition(type: int, duration: float) -> void:
 	await tl.transition_finished
 
 
+## Changes the speed of the text in dialog lines looping through the values in
+## [member PopochiuSettings.text_speeds].
 func change_text_speed() -> void:
 	current_text_speed_idx = wrapi(
 		current_text_speed_idx + 1,
@@ -736,18 +738,24 @@ func change_text_speed() -> void:
 	text_speed_changed.emit()
 
 
+## Checks if there are any saved game sessions in the game's folder. By default Godot's
+## [code]user://[/code] (you can open this folder with [b]Project > Open User Data Folder[/b]).
 func has_save() -> bool:
 	return !_saveload.get_saves_descriptions().is_empty()
 
 
+## Counts the number of saved game files in the game's folder. By default Godot's
+## [code]user://[/code] (you can open this folder with [b]Project > Open User Data Folder[/b]).
 func saves_count() -> int:
 	return _saveload.count_saves()
 
 
+## Gets the names of the saved games (the name given to the slot when the game is saved).
 func get_saves_descriptions() -> Dictionary:
 	return _saveload.get_saves_descriptions()
 
 
+## Saves the current game state in a given [param slot] with the name in [param description].
 func save_game(slot := 1, description := '') -> void:
 	if _saveload.save_game(slot, description):
 		game_saved.emit()
@@ -755,6 +763,7 @@ func save_game(slot := 1, description := '') -> void:
 		await G.show_system_text('Game saved')
 
 
+## Loads the game in the given [param slot].
 func load_game(slot := 1) -> void:
 	I.clean_inventory(true)
 	
@@ -769,12 +778,15 @@ func load_game(slot := 1) -> void:
 	)
 
 
+## Makes the camera stop shaking.
 func stop_camera_shake() -> void:
 	_is_camera_shaking = false
 	_shake_timer = 0.0
 	main_camera.offset = Vector2.ZERO
 
 
+## Adds the [param node] to the array of hovered PopochiuClickable. If [param prepend] is
+## [code]true[/code], then the [param node] will be added at the beginning of the array.
 func add_hovered(node: PopochiuClickable, prepend := false) -> void:
 	if prepend:
 		_hovered_queue.push_front(node)
@@ -782,6 +794,8 @@ func add_hovered(node: PopochiuClickable, prepend := false) -> void:
 		_hovered_queue.append(node)
 
 
+## Removes a [param node] from the array of hovered PopochiuClickable. Returns [code]true[/code]
+## if, after deletion, the array becomes empty.
 func remove_hovered(node: PopochiuClickable) -> bool:
 	_hovered_queue.erase(node)
 	
@@ -797,11 +811,15 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 	return true
 
 
+## Clears the array of hovered PopochiuClickable.
 func clear_hovered() -> void:
 	_hovered_queue.clear()
 	self.hovered = null
 
 
+## Registers a GUI command identified by [param id], with name [param command_name] and a
+## [param fallback] method to be called when the object receiving the interaction doesn't has an
+## implementation for the registered command.
 func register_command(id: int, command_name: String, fallback: Callable) -> void:
 	commands_map[id] = {
 		"name" = command_name,
@@ -809,6 +827,9 @@ func register_command(id: int, command_name: String, fallback: Callable) -> void
 	}
 
 
+## Registers a GUI command with just its name in [param command_name] and a [param fallback] method
+## to be called when the object receiving the interaction doesn't has an implementation for the
+## registered command. Returns the [code]id[/code] assigned to the registered command.
 func register_command_without_id(command_name: String, fallback: Callable) -> int:
 	var id := commands_map.size()
 	register_command(id, command_name, fallback)
@@ -816,6 +837,8 @@ func register_command_without_id(command_name: String, fallback: Callable) -> in
 	return id
 
 
+## Calls the fallback method registered for the current active GUI command. If no fallback method is
+## registered, [method _command_fallback] is called.
 func command_fallback() -> void:
 	var fallback: Callable = commands_map[-1].fallback
 	
@@ -825,6 +848,7 @@ func command_fallback() -> void:
 	await fallback.call()
 
 
+## Returns the name of the GUI command registered with [param command_id].
 func get_command_name(command_id: int) -> String:
 	var command_name := ""
 	
@@ -834,6 +858,7 @@ func get_command_name(command_id: int) -> String:
 	return command_name
 
 
+## Returns the name of the current active GUI command.
 func get_current_command_name() -> String:
 	return get_command_name(current_command)
 
@@ -971,9 +996,9 @@ func _set_in_room(value: bool) -> void:
 
 func _queueable(node: Object, method: String, params := [], signal_name := '') -> void:
 	if cutscene_skipped:
-		# TODO: What should happen if the skipped function was an animation that
-		# triggers calls during execution? What should happen if the skipped
-		# function has to change the state of the game?
+		# TODO: What should happen if the skipped function was an animation that triggers calls
+		# during execution? What should happen if the skipped function has to change the state of
+		# the game?
 		await get_tree().process_frame
 		return
 	
