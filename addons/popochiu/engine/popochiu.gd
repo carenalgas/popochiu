@@ -117,7 +117,6 @@ var commands_map := {
 ## [signal command_selected] signal is emitted.
 var current_command := -1 : set = set_current_command
 
-# TODO: This could be in the camera's own script
 var _is_camera_shaking := false
 var _camera_shake_amount := 15.0
 var _shake_timer := 0.0
@@ -125,6 +124,8 @@ var _use_transition_on_room_change := true
 var _config: ConfigFile = null
 var _loaded_game := {}
 var _hovered_queue := []
+# Will have the instance of the PopochiuSaveLoad class in order to call the methods that save and
+# load the game.
 var _saveload: Resource = null
 
 ## A reference to the game [Camera2D].
@@ -263,23 +264,23 @@ func _input(event: InputEvent) -> void:
 		)
 		
 		await tl.transition_finished
-		
-		#G.continue_clicked.emit()
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
-	# TODO: Capture keys for debugging or for triggering game signals that can
-	# ease tests
+	# TODO: Capture keys for debugging or for triggering game signals that can ease tests
 	pass
 
 
 #endregion
 
 #region Public #####################################################################################
+## Creates a delay timer that will last [param time] seconds. This method is intended to be used
+## inside a [method queue] of instructions.
 func queue_wait(time := 1.0) -> Callable:
 	return func (): await wait(time)
 
 
+## Creates a delay timer that will last [param time] seconds.
 func wait(time := 1.0) -> void:
 	if cutscene_skipped:
 		await get_tree().process_frame
@@ -293,7 +294,7 @@ func wait(time := 1.0) -> void:
 #	pass
 
 
-## Executes a series of instructions one by one. show_gi determines if the
+## Executes an array of [param instructions] one by one. [param show_gi] determines if the
 ## Graphic Interface will appear once all instructions have ran.
 func queue(instructions: Array, show_gi := true) -> void:
 	if instructions.is_empty():
@@ -329,7 +330,8 @@ func queue(instructions: Array, show_gi := true) -> void:
 	playing_queue = false
 
 
-## Like queue, but can be skipped with the input action: popochiu-skip.
+## Like [method queue], but [param instructions] can be skipped with the input action:
+## [code]popochiu-skip[/code] (see Project Settings... > Input Map).
 func cutscene(instructions: Array) -> void:
 	set_process_input(true)
 	await queue(instructions)
@@ -345,8 +347,11 @@ func cutscene(instructions: Array) -> void:
 	cutscene_skipped = false
 
 
-## Loads the room with script_name. use_transition can be used to trigger a fade
-## out animation before loading the room, and a fade in animation once it is ready
+## Loads the room with [param script_name]. [param use_transition] can be used to trigger a [i]fade
+## out[/i] animation before loading the room, and a [i]fade in[/i] animation once it is ready.
+## If [param store_state] is [code]true[/code] the state of the room will be stored in memory.
+## [param ignore_change] is used internally by Popochiu to know if it's the first time the room is
+## loaded when starting the game.
 func goto_room(
 	script_name := '',
 	use_transition := true,
@@ -398,7 +403,7 @@ func goto_room(
 	get_tree().change_scene_to_file(load(rp).scene)
 
 
-## Called once the loaded room is _ready
+## Called once the loaded [param room] is "ready" ([method Node._ready]).
 func room_readied(room: PopochiuRoom) -> void:
 	current_room = room
 	
@@ -411,9 +416,9 @@ func room_readied(room: PopochiuRoom) -> void:
 
 		self.in_room = true
 		
-		# Calling this will make the camera be set to its default values and
-		# will store the state of the main room (the last parameter will prevent
-		# Popochiu from changing the scene to the same that is already loaded
+		# Calling this will make the camera be set to its default values and will store the state of
+		# the main room (the last parameter will prevent Popochiu from changing the scene to the
+		# same that is already loaded)
 		goto_room(room.script_name, false, true, true)
 	
 	# Make the camera be ready for the room
@@ -451,8 +456,8 @@ func room_readied(room: PopochiuRoom) -> void:
 		
 		current_room.add_character(chr)
 	
-	# If the room must have the player character but it is not part of its
-	# $Characters node, add it to the room
+	# If the room must have the player character but it is not part of its $Characters node, then
+	# add the PopochiuCharacter to the room
 	if current_room.has_player and is_instance_valid(C.player):
 		if not current_room.has_character(C.player.script_name):
 			current_room.add_character(C.player)
@@ -509,22 +514,26 @@ func room_readied(room: PopochiuRoom) -> void:
 	current_room._on_room_transition_finished()
 
 
+## Changes the main camera's offset by [param offset] pixels. This method is intended to be used
+## inside a [method queue] of instructions.
 func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
 	return func (): await camera_offset(offset)
 
 
-## Changes the main camera's offset (useful when zooming the camera)
+## Changes the main camera's offset by [param offset] pixels. Useful when zooming the camera.
 func camera_offset(offset := Vector2.ZERO) -> void:
 	main_camera.offset = offset
 	
 	await get_tree().process_frame
 
 
+## Makes the camera shake with [param strength] during [param duration] seconds. This method is
+## intended to be used inside a [method queue] of instructions.
 func queue_camera_shake(strength := 1.0, duration := 1.0) -> Callable:
 	return func (): await camera_shake(strength, duration)
 
 
-## Makes the camera shake with `strength` for `duration` seconds
+## Makes the camera shake with [param strength] during [param duration] seconds.
 func camera_shake(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
@@ -533,12 +542,15 @@ func camera_shake(strength := 1.0, duration := 1.0) -> void:
 	await get_tree().create_timer(duration).timeout
 
 
+## Makes the camera shake with [param strength] during [param duration] seconds without blocking
+## excecution (that means it runs in the background). This method is intended to be used inside a
+## [method queue] of instructions.
 func queue_camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
 	return func (): await camera_shake_bg(strength, duration)
 
 
-## Makes the camera shake with `strength` for `duration` seconds without blocking
-## excecution (a.k.a. in the background)
+## Makes the camera shake with [param strength] during [param duration] seconds without blocking
+## excecution (that means it runs in the background).
 func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
@@ -547,13 +559,17 @@ func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
 	await get_tree().process_frame
 
 
+## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code] the camera
+## will [b]zoom out[/b], smaller values will make it [b]zoom in[/b]. The effect will last
+## [param duration] seconds. This method is intended to be used inside a [method queue] of
+## instructions.
 func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
 	return func (): await camera_zoom(target, duration)
 
 
-## Changes the camera zoom. If `target` is larger than Vector2(1, 1) the camera
-## will zoom out, smaller values make it zoom in. The effect will last `duration`
-## seconds
+## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code] the camera
+## will [b]zoom out[/b], smaller values will make it [b]zoom in[/b]. The effect will last
+## [param duration] seconds.
 func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
 	if is_instance_valid(_tween) and _tween.is_running():
 		_tween.kill()
@@ -565,12 +581,14 @@ func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
 	await _tween.finished
 
 
-## Returns a String of a text that could be a position key
+## Returns [param msg] translated to the current language if the game is using translations
+## [member PopochiuSettings.use_translations]. Otherwise, the returned [String] will be the same
+## as the one received as a parameter.
 func get_text(msg: String) -> String:
 	return tr(msg) if settings.use_translations else msg
 
 
-## Gets the PopochiuCharacter with script_name
+## Gets the instance of the [PopochiuCharacter] identified with [param script_name].
 func get_character_instance(script_name: String) -> PopochiuCharacter:
 	for rp in PopochiuResources.get_section('characters'):
 		var popochiu_character: PopochiuCharacterData = load(rp)
@@ -581,7 +599,7 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 	return null
 
 
-## Gets the PopochiuInventoryItem with script_name
+## Gets the instance of the [PopochiuInventoryItem] identified with [param script_name].
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 	for rp in PopochiuResources.get_section('inventory_items'):
 		var popochiu_inventory_item: PopochiuInventoryItemData = load(rp)
@@ -592,7 +610,7 @@ func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 	return null
 
 
-## Gets the PopochiuDialog with script_name
+## Gets the instance of the [PopochiuDialog] identified with [param script_name].
 func get_dialog(script_name: String) -> PopochiuDialog:
 	for rp in PopochiuResources.get_section('dialogs'):
 		var tree: PopochiuDialog = load(rp)
@@ -603,26 +621,88 @@ func get_dialog(script_name: String) -> PopochiuDialog:
 	return null
 
 
-## Adds an action to the history of actions.
-## Look PopochiuClickable._unhandled_input or GraphicInterface._show_dialog_text
-## for examples.
+## Adds an action, represented by [param data], to the [member history] of actions. 
+## The structure that [param data] can have may be in the form:
+## [codeblock]# To store the Look At interaction with the prop ToyCar:
+## {
+##     action = "look_at",
+##     target = "ToyCar"
+## }[/codeblock]
+## or
+## [codeblock]# To store a dialog line said by the Popsy character
+## {
+##     character = "Popsy",
+##     text = "Hi. I said this and now it is recorded in the game's log!"
+## }[/codeblock]
+## [method PopochiuClickable.handle_command] and [method PopochiuInventoryItem.handle_command] store
+## interactions with clickables and inventory items.
+## [method PopochiuGraphicInterface.on_dialog_line_started] stores dialog lines said by characters.
 func add_history(data: Dictionary) -> void:
 	history.push_front(data)
 
 
-## Makes a method in node to be able to be used in a `queue()` call.
-## Method parameters can be passed with params, and yield_signal is the signal
-## that will notify the function has been completed (so `queue()` can continue
-## with the next command in the queue)
+## Makes a [param method] in [param node] to be able to be used inside an array of instructions for
+## [method queue]. Parameters for [param method] can be passed as an array in [param params].
+## By default the queued method will wait for [code]"completed"[/code], but in can wait for a
+## specific signal given the [param signal_name].
+## Examples:
+## [codeblock]
+## # queue() will wait until $AnimationPlayer.animation_finished signal is emitted
+## E.queue([
+##     "Player: Ok. This is a queueable example",
+##     E.queueable($AnimationPlayer, "play", ["glottis_appears"], "animation_finished"),
+##     'Popsy: Hi Goddiu!',
+##     "Player: You're finally here!!!"
+## ])
+## [/codeblock]
+## An example with a custom method:
+## [codeblock]
+## # queue pauses until _make_glottis_appear.completed signal is emitted
+## func _ready() -> void:
+## E.queue([
+##     "Player: Ok. This is another queueable example",
+##     E.queueable(self, '_make_glottis_appear', [], 'completed'),
+##     "Popsy: Hi Goddiu!",
+##     "Player: So... you're finally here!!!",
+## ])
+## 
+## func _make_glottis_appear() -> void:
+##     $AnimationPlayer.play("make_glottis_appear")
+##     await $AnimationPlayer.animation_finished
+##     Globals.glottis_appeared = true
+##     await E.wait(1.0)
+## [/codeblock]
+## An example with a custom signal
+## [codeblock]
+## # queue pauses until the "clicked" signal is emitted in the %PopupButton
+## # ---- In some prop ----
+## func on_click() -> void:
+##     E.run([
+##         "Player: Ok. This is the last queueable example.",
+##         "Player: Promise!",
+##         E.queueable(%PopupButton, "_show_button", [], "clicked"),
+##         "Popsy: Are we done!?",
+##         "Player: Yup",
+##     ])
+## 
+## # ---- In the PopupButton node ----
+## signal clicked
+## 
+## func _show_button() -> void:
+##     $BtnPlay.show()
+## 
+## func _on_BtnPlay_pressed() -> void:
+##     await A.mx_mysterious_place.play()
+##     clicked.emit()
+## [/codeblock]
 func queueable(
 	node: Object, method: String, params := [], signal_name := ''
 ) -> Callable:
 	return func (): await _queueable(node, method, params, signal_name)
 
 
-## Checks if the room with script_name exists in the array of rooms of Popochiu
+## Checks if the room with [param script_name] exists in the list of rooms of the game.
 func room_exists(script_name: String) -> bool:
-#	for r in rooms:
 	for rp in PopochiuResources.get_section('rooms'):
 		var room: PopochiuRoomData = load(rp)
 		if room.script_name.to_lower() == script_name.to_lower():
@@ -630,12 +710,15 @@ func room_exists(script_name: String) -> bool:
 	return false
 
 
+## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
+## seconds. Available type values can be found in [member TransitionLayer.Types]. This method is
+## intended to be used inside a [method queue] of instructions.
 func queue_play_transition(type: int, duration: float) -> Callable:
 	return func (): await play_transition(type, duration)
 
 
-## Plays the transition type animation in TransitionLayer.tscn that last duration
-## in seconds. Possible type values can be found in TransitionLayer
+## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
+## seconds. Available type values can be found in [member TransitionLayer.Types].
 func play_transition(type: int, duration: float) -> void:
 	tl.play_transition(type, duration)
 	
@@ -886,9 +969,7 @@ func _set_in_room(value: bool) -> void:
 #	language_changed.emit()
 
 
-func _queueable(
-	node: Object, method: String, params := [], signal_name := ''
-) -> void:
+func _queueable(node: Object, method: String, params := [], signal_name := '') -> void:
 	if cutscene_skipped:
 		# TODO: What should happen if the skipped function was an animation that
 		# triggers calls during execution? What should happen if the skipped
@@ -903,7 +984,7 @@ func _queueable(
 		if signal_name == 'completed':
 			await c
 		else:
-			# TODO: How to do this in GDScript 2
+			# TODO: Is there a better way to do this in GDScript 2?
 			await node.get(signal_name)
 	else:
 		await get_tree().process_frame
