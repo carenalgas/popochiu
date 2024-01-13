@@ -1,29 +1,45 @@
 @tool
-class_name PopochiuClickable
-extends Area2D
-## Allows to handle an Area2D that reacts to click events, and mouse entering,
-## and exiting.
+class_name PopochiuClickable extends Area2D
+## Allows to handle an Area2D that reacts to mouse events.
 
+## Used to allow devs to define the cursor type for the clickable.
 const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
 
+## The identifier of the object used in scripts.
 @export var script_name := ''
+## The text shown to players when the cursor hovers the object.
 @export var description := ''
+## Whether the object will listen to interactions.
 @export var clickable := true
+## The [code]y[/code] position of the baseline relative to the center of the object.
 @export var baseline := 0 : set = set_baseline
+## The [Vector2] position where characters will move when aproaching the object.
 @export var walk_to_point := Vector2.ZERO : set = set_walk_to_point
+## The cursor to use when the mouse hovers the object.
 @export var cursor: CURSOR.Type = CURSOR.Type.NONE
+## Whether the object will be rendered always above other objects in the room.
 @export var always_on_top := false
+## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
+## by [b]PopochiuRoom[/b] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := PackedVector2Array()
+## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
+## by [b]PopochiuRoom[/b] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
 
-var room: Node2D = null : set = set_room # It is a PopochiuRoom
+## The [PopochiuRoom] to which the object belongs.
+var room: Node2D = null : set = set_room
+## The number of times this object has been left-clicked.
 var times_clicked := 0
+## The number of times this object has been right-clicked.
 var times_right_clicked := 0
-var editing_polygon := false
+## The number of times this object has been middle-clicked.
 var times_middle_clicked := 0
-# NOTE Don't know if this will make sense, or if it this object should emit
-# a signal about the click (command execution)
-var last_click_button := -1
+## Used by the editor to know if the [b]InteractionPolygon[/b] child its being edited in Godot's
+## 2D Canvas Editor.
+var editing_polygon := false
+## Stores the last [enum MouseButton] pressed on this object.
+var last_click_button := -1 # NOTE Don't know if this will make sense, or if this object should
+# emit a signal about the click (command execution).
 
 @onready var _description_code := description
 
@@ -117,27 +133,27 @@ func _process(delta):
 #endregion
 
 #region Virtual ####################################################################################
-## When the room this node belongs to has been added to the tree
+## When the room this node belongs to has been added to the tree. [i]Virtual[/i].
 func _on_room_set() -> void:
 	pass
 
 
-## When the node is clicked
+## When the node is clicked. [i]Virtual[/i].
 func _on_click() -> void:
 	pass
 
 
-## When the node is right clicked
+## When the node is right clicked. [i]Virtual[/i].
 func _on_right_click() -> void:
 	pass
 
 
-## When the node is middle clicked
+## When the node is middle clicked. [i]Virtual[/i].
 func _on_middle_click() -> void:
 	pass
 
 
-## When the node is clicked and there is an inventory item selected
+## When the node is clicked and there is an inventory item selected. [i]Virtual[/i].
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
@@ -145,6 +161,9 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 #endregion
 
 #region Public #####################################################################################
+## Used by the plugin to hide the visual helpers that show the [member baseline] and
+## [member walk_to_point] in Godot´s 2D Canvas Editor when this node is unselected in the Scene
+## panel.
 func hide_helpers() -> void:
 	$BaselineHelper.hide()
 	$WalkToHelper.hide()
@@ -153,6 +172,9 @@ func hide_helpers() -> void:
 		$InteractionPolygon.hide()
 
 
+## Used by the plugin to make visible the visual helpers that show the [member baseline] and
+## [member walk_to_point] of the object in Godot´s 2D Canvas Editor when the is selected in the
+## Scene panel.
 func show_helpers() -> void:
 	$BaselineHelper.show()
 	$WalkToHelper.show()
@@ -161,28 +183,33 @@ func show_helpers() -> void:
 		$InteractionPolygon.show()
 
 
+## Hides this Node. This method is intended to be used inside a [method queue] of instructions.
 func queue_disable() -> Callable:
 	return func (): await disable()
 
 
-# Hides the Node and disables its interaction
+## Hides this Node.
 func disable() -> void:
 	self.visible = false
 	
 	await get_tree().process_frame
 
 
+## Shows this Node. This method is intended to be used inside a [method queue] of instructions.
 func queue_enable() -> Callable:
 	return func (): await enable()
 
 
-# Makes the Node visible and enables its interaction
+## Shows this Node.
 func enable() -> void:
 	self.visible = true
 	
 	await get_tree().process_frame
 
 
+## Returns the [member description] of the node using [method Object.tr] if
+## [member PopochiuSettings.use_translations] is [code]true[/code]. Otherwise, it returns just the
+## value of [member description].
 func get_description() -> String:
 	if Engine.is_editor_hint():
 		if description.is_empty():
@@ -191,21 +218,22 @@ func get_description() -> String:
 	return E.get_text(description)
 
 
-## Called when the object is left clicked
+## Called when the object is left clicked.
 func on_click() -> void:
 	_on_click()
 
 
-## Called when the object is right clicked
+## Called when the object is right clicked.
 func on_right_click() -> void:
 	_on_right_click()
 
 
-## Called when the object is middle clicked
+## Called when the object is middle clicked.
 func on_middle_click() -> void:
 	_on_middle_click()
 
 
+## Called when an [param item] is used on this object.
 func on_item_used(item: PopochiuInventoryItem) -> void:
 	await G.show_system_text("Can't USE %s here" % item.description)
 

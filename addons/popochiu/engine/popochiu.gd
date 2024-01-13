@@ -331,7 +331,8 @@ func queue(instructions: Array, show_gi := true) -> void:
 
 
 ## Like [method queue], but [param instructions] can be skipped with the input action:
-## [code]popochiu-skip[/code] (see Project Settings... > Input Map).
+## [code]popochiu-skip[/code] (see [b]Project Settings... > Input Map[/b]). By default you can skip
+## a cutscene with the [kbd]ESC[/kbd] key.
 func cutscene(instructions: Array) -> void:
 	set_process_input(true)
 	await queue(instructions)
