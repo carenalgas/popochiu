@@ -140,27 +140,27 @@ func _process(delta):
 #endregion
 
 #region Virtual ####################################################################################
-## When the room this node belongs to has been added to the tree. [i]Virtual[/i].
+## Called when the room this node belongs to has been added to the tree. [i]Virtual[/i].
 func _on_room_set() -> void:
 	pass
 
 
-## When the node is clicked. [i]Virtual[/i].
+## Called when the node is clicked. [i]Virtual[/i].
 func _on_click() -> void:
 	pass
 
 
-## When the node is right clicked. [i]Virtual[/i].
+## Called when the node is right clicked. [i]Virtual[/i].
 func _on_right_click() -> void:
 	pass
 
 
-## When the node is middle clicked. [i]Virtual[/i].
+## Called when the node is middle clicked. [i]Virtual[/i].
 func _on_middle_click() -> void:
 	pass
 
 
-## When the node is clicked and there is an inventory item selected. [i]Virtual[/i].
+## Called when the node is clicked and there is an inventory item selected. [i]Virtual[/i].
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
@@ -256,7 +256,7 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
 ## which can be [enum MouseButton].MOUSE_BUTTON_LEFT, [enum MouseButton].MOUSE_BUTTON_RIGHT or
-## [enum MouseButton].MOUSE_BUTTON_MIDDLE .
+## [enum MouseButton].MOUSE_BUTTON_MIDDLE.
 func handle_command(button_idx: int) -> void:
 	var command: String = E.get_current_command_name().to_snake_case()
 	var prefix := "on_%s"

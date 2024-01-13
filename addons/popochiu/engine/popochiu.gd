@@ -245,14 +245,14 @@ func _process(delta: float) -> void:
 		if _shake_timer <= 0.0:
 			stop_camera_shake()
 	elif (
-	not Engine.is_editor_hint() 
-	and is_instance_valid(C.camera_owner) 
-	and C.camera_owner.is_inside_tree()
+		not Engine.is_editor_hint() 
+		and is_instance_valid(C.camera_owner) 
+		and C.camera_owner.is_inside_tree()
 	):
 		main_camera.position = (
-		C.camera_owner.position_stored 
-		if C.camera_owner.position_stored 
-		else C.camera_owner.position
+			C.camera_owner.position_stored 
+			if C.camera_owner.position_stored 
+			else C.camera_owner.position
 		)
 
 
