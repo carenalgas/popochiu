@@ -1,6 +1,7 @@
 @tool
 @icon('res://addons/popochiu/icons/region.png')
-class_name PopochiuRegion extends Area2D
+class_name PopochiuRegion
+extends Area2D
 ## Can trigger events when the player walks checked them. Can tint the PC.
 
 

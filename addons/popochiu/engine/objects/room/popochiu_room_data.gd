@@ -1,5 +1,6 @@
 @icon('res://addons/popochiu/icons/room.png')
-class_name PopochiuRoomData extends Resource
+class_name PopochiuRoomData
+extends Resource
 ## Has data of the [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s, [PopochiuRegion]s,
 ## and [PopochiuCharacter]s in a [PopochiuRoom].
 

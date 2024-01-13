@@ -1,4 +1,5 @@
-class_name PopochiuAudioManager extends Node
+class_name PopochiuAudioManager
+extends Node
 @warning_ignore("return_value_discarded")
 ## Handles playing audio with AudioCues.
 

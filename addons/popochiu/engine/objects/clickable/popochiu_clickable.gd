@@ -1,6 +1,13 @@
 @tool
-class_name PopochiuClickable extends Area2D
-## Allows to handle an Area2D that reacts to mouse events.
+class_name PopochiuClickable
+extends Area2D
+## Handles an Area2D that reacts to mouse events.
+##
+## Is the base clase for [PopochiuProp], [PopochiuHotspot] and [PopochiuCharacter].
+## It has a property to determine when the object should render in front or back to other, another
+## property that can be used to define the position to which characters will move to when moving
+## to the item, and tow [CollisionPolygon2D] which are used to handle players interaction and
+## handle scaling.
 
 ## Used to allow devs to define the cursor type for the clickable.
 const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
@@ -20,10 +27,10 @@ const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
 ## Whether the object will be rendered always above other objects in the room.
 @export var always_on_top := false
 ## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
-## by [b]PopochiuRoom[/b] to store the info in its [code].tscn[/code].
+## by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := PackedVector2Array()
 ## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
-## by [b]PopochiuRoom[/b] to store the info in its [code].tscn[/code].
+## by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
 
 ## The [PopochiuRoom] to which the object belongs.
@@ -218,6 +225,15 @@ func get_description() -> String:
 	return E.get_text(description)
 
 
+## Returns the global position of [member walk_to_point].
+func get_walk_to_point() -> Vector2:
+	if Engine.is_editor_hint():
+		return walk_to_point
+	elif is_inside_tree():
+		return to_global(walk_to_point)
+	return walk_to_point
+
+
 ## Called when the object is left clicked.
 func on_click() -> void:
 	_on_click()
@@ -238,6 +254,9 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 	await G.show_system_text("Can't USE %s here" % item.description)
 
 
+## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
+## which can be [enum MouseButton].MOUSE_BUTTON_LEFT, [enum MouseButton].MOUSE_BUTTON_RIGHT or
+## [enum MouseButton].MOUSE_BUTTON_MIDDLE .
 func handle_command(button_idx: int) -> void:
 	var command: String = E.get_current_command_name().to_snake_case()
 	var prefix := "on_%s"
@@ -280,14 +299,6 @@ func set_walk_to_point(value: Vector2) -> void:
 	
 	if Engine.is_editor_hint() and get_node_or_null('WalkToHelper'):
 		get_node('WalkToHelper').position = value
-
-
-func get_walk_to_point() -> Vector2:
-	if Engine.is_editor_hint():
-		return walk_to_point
-	elif is_inside_tree():
-		return to_global(walk_to_point)
-	return walk_to_point
 
 
 func set_room(value: Node2D) -> void:

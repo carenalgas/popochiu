@@ -1,5 +1,6 @@
 @tool
-class_name PopochiuSettings extends Resource
+class_name PopochiuSettings
+extends Resource
 ## Defines properties as settings for the game.
 
 ## @deprecated
@@ -52,8 +53,8 @@ const ImporterDefaults := preload('res://addons/popochiu/engine/others/importer_
 ## The number of dialog options to show before showing a scroll bar to render those that exceed this
 ## limit.
 @export var max_dialog_options := 3
-## If [code]true[/code], the [member CanvasItem.texture_filter] of [code]PopochiuClickable[/code]
-## and [code]PopochiuInventoryItem[/code] will be set to
+## If [code]true[/code], the [member CanvasItem.texture_filter] of [PopochiuClickable]
+## and [PopochiuInventoryItem] will be set to
 ## [enum CanvasItem.TextureFilter].TEXTURE_FILTER_NEAREST when those objects are created.
 @export var is_pixel_art_game := false
 ## Whether the cursor should move in whole pixels or not.

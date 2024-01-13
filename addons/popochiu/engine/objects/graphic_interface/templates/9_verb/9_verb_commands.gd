@@ -1,4 +1,5 @@
-class_name NineVerbCommands extends PopochiuCommands
+class_name NineVerbCommands
+extends PopochiuCommands
 ## Defines the commands and fallback methods for the 9 Verb GUI.
 
 enum Commands {

@@ -9,6 +9,7 @@ extends Node2D
 ## and Hotspots. Regions can be used to trigger methods when a character enters
 ## or leaves.
 
+## The identifier of the object used in scripts.
 @export var script_name := ''
 @export var has_player := true
 @export var hide_gi := false

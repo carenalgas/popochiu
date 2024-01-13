@@ -8,9 +8,11 @@ const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
 signal selected(item)
 signal unselected
 
+## The identifier of the item used in scripts.
+@export var script_name := ''
+## The text shown to players when the cursor hovers the item.
 @export var description := '' : get = get_description
 @export var stack := false
-@export var script_name := ''
 @export var cursor: CURSOR.Type = CURSOR.Type.USE
 
 var amount := 1

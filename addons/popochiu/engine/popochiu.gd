@@ -1,4 +1,5 @@
-class_name Popochiu extends Node
+class_name Popochiu
+extends Node
 ## This is Popochiu's main class, and is in charge of making the game to work.
 ## 
 ## Is the shortcut for [b]Popochiu.gd[/b], and can be used (from any script) with [b]E[/b] (E.g.
@@ -104,7 +105,7 @@ var current_dialog_style := settings.dialog_style : set = set_dialog_style
 ## which is the default game resolution defined by Popochiu.
 var scale := Vector2.ONE
 ## A reference to the current commands script.
-## (i.e. [NineVerbsCommands], [SierraCommands] or [SimpleClickCommands)
+## (i.e. [NineVerbCommands], [SierraCommands] or [SimpleClickCommands])
 var commands: PopochiuCommands = null
 ## Serves as a map to access the fallback methods of the current GUI.
 var commands_map := {

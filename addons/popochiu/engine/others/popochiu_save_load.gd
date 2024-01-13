@@ -1,4 +1,5 @@
-class_name PopochiuSaveLoad extends Resource
+class_name PopochiuSaveLoad
+extends Resource
 ## Class that allows to save and load game data.
 ## 
 ## Thanks GDQuest for this! ↴↴↴

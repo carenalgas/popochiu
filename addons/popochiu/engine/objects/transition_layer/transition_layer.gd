@@ -1,4 +1,5 @@
-class_name PopochiuTransitionLayer extends Node2D
+class_name PopochiuTransitionLayer
+extends Node2D
 ## Used to play different transition animations when moving between rooms, skipping a cutscene,
 ## and so on.
 
