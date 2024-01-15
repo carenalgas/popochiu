@@ -2,8 +2,7 @@
 @icon('res://addons/popochiu/icons/character.png')
 class_name PopochiuCharacter
 extends PopochiuClickable
-## Any Object that can move, walk, navigate rooms, have an inventory, etc.
-# TODO: Use a state machine
+## Any Object that can move, walk, navigate rooms, or have an inventory.
 
 enum FlipsWhen { NONE, LOOKING_RIGHT, LOOKING_LEFT }
 enum Looking {UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
@@ -24,6 +23,8 @@ signal move_ended
 @export var can_move := true
 @export var ignore_walkable_areas := false
 @export var anti_glide_animation: bool = false
+# This category is used by the Aseprite Importer in order to allow the creation of a section in the
+# Inspector for it.
 @export_category("Aseprite")
 
 var position_stored = null
