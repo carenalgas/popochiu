@@ -70,10 +70,14 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
+## Called when the [PopochiuInventoryItem] linked to this prop is removed from the inventory.
+## [i]Virtual[/i].
 func _on_linked_item_removed() -> void:
 	pass
 
 
+## Called when the [PopochiuInventoryItem] linked to this prop is discarded from the inventory.
+## [i]Virtual[/i].
 func _on_linked_item_discarded() -> void:
 	pass
 

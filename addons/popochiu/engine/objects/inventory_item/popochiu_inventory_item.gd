@@ -40,32 +40,38 @@ func _ready():
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the item is clicked in the inventory GUI. [i]Virtual[/i].
+## Called when the item is clicked in the inventory GUI.
+## [i]Virtual[/i].
 func _on_click() -> void:
 	pass
 
 
-## Called when the item is right clicked in the inventory GUI. [i]Virtual[/i].
+## Called when the item is right clicked in the inventory GUI.
+## [i]Virtual[/i].
 func _on_right_click() -> void:
 	pass
 
 
-## Called when the item is middle clicked in the inventory GUI. [i]Virtual[/i].
+## Called when the item is middle clicked in the inventory GUI.
+## [i]Virtual[/i].
 func _on_middle_click() -> void:
 	pass
 
 
-## When the item is clicked and there is another [param item] currently selected. [i]Virtual[/i].
+## When the item is clicked and there is another [param item] currently selected.
+## [i]Virtual[/i].
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
 
-## Called after the item is added to the inventory. [i]Virtual[/i].
+## Called after the item is added to the inventory.
+## [i]Virtual[/i].
 func _on_added_to_inventory() -> void:
 	pass
 
 
-## Called when the item is discarded from the inventory. [i]Virtual[/i].
+## Called when the item is discarded from the inventory.
+## [i]Virtual[/i].
 func _on_discard() -> void:
 	pass
 
