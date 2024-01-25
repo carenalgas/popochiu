@@ -2,42 +2,105 @@
 @icon('res://addons/popochiu/icons/character.png')
 class_name PopochiuCharacter
 extends PopochiuClickable
-## Any Object that can move, walk, navigate rooms, or have an inventory.
+## Any object that can move, walk, navigate rooms, or have an inventory.
 
-enum FlipsWhen { NONE, LOOKING_RIGHT, LOOKING_LEFT }
-enum Looking {UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT}
+## Determines when to flip the [b]$Sprite2D[/b] child.
+enum FlipsWhen {
+	## The [b]$Sprite2D[/b] child is not flipped.
+	NONE,
+	## The [b]$Sprite2D[/b] child is flipped when the character is looking to the right.
+	LOOKING_RIGHT,
+	## The [b]$Sprite2D[/b] child is flipped when the character is looking to the left.
+	LOOKING_LEFT
+}
+## Determines the direction the character is facing
+enum Looking {
+	## The character is facing up [code](0, -y)[/code].
+	UP,
+	## The character is facing up-right [code](x, -y)[/code].
+	UP_RIGHT,
+	## The character is facing right [code](x, 0)[/code].
+	RIGHT,
+	## The character is facing down-right [code](x, y)[/code].
+	DOWN_RIGHT,
+	## The character is facing down [code](0, y)[/code].
+	DOWN,
+	## The character is facing down-left [code](-x, y)[/code].
+	DOWN_LEFT,
+	## The character is facing left [code](-x, 0)[/code].
+	LEFT,
+	## The character is facing up-left [code](-x, -y)[/code].
+	UP_LEFT
+}
 
-signal started_walk_to(character, start, end)
+## Emitted when the character starts walking. As parameters, it sends itself, the starting position
+## and the ending position. [PopochiuRoom]s connect to this signal in order to make characters move
+## inside them from one point to another.
+signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector2)
+## Emitted when the character is forced to stop while walking.
 signal stopped_walk
+## Emitted when the character reaches the ending position when moving from one point to another.
 signal move_ended
 
+## The [Color] in which the dialogue lines of the character are rendered.
 @export var text_color := Color.WHITE
+## Depending on its value, the [b]$Sprite2D[/b] child will be flipped horizontally depending on
+## which way the character is facing. If the value is [constant NONE], then the
+## [b]$Sprite2D[/b] child won't be flipped.
 @export var flips_when: FlipsWhen = FlipsWhen.NONE
-@export var voices := []:
-	set = set_voices # (Array, Dictionary)
+## Array of [Dictionary] where each element has
+## [code]{ emotion: String, variations: Array[PopochiuAudioCue] }[/code].
+## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a 
+## specific emotion.
+@export var voices := [] : set = set_voices
+## Whether the character should follow the player-controlled character (PC) when it moves through
+## the room.
 @export var follow_player := false
+## The offset between the player-controlled character (PC) and this character when it follows the
+## former one.
 @export var follow_player_offset := Vector2(20,0)
-@export var avatars := []:
-	set = set_avatars # (Array, Dictionary)
+## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
+## You can use this to define which [Texture] to use as avatar for the character when it speaks
+## using a specific emotion.
+@export var avatars := [] : set = set_avatars
+## The speed at which the character will move in pixels per frame.
 @export var walk_speed := 200.0
+## Whether the character can or not move.
 @export var can_move := true
+## Whether the character ignores or not walkable areas. If [code]true[/code], the character will
+## move to any point in the room clicked by players without taking into account the walkable areas
+## in it.
 @export var ignore_walkable_areas := false
+## Whether the character will move only when the frame changes on its animation.
 @export var anti_glide_animation: bool = false
 # This category is used by the Aseprite Importer in order to allow the creation of a section in the
-# Inspector for it.
+# Inspector for the character.
 @export_category("Aseprite")
 
+## The stored position of the character. Used when [member anti_glide_animation] is
+## [code]true[/code].
 var position_stored = null
+## Stores the [member PopochiuRoom.script_name] of the preiously visited [PopochiuRoom].
 var last_room := ''
+## The suffix text to add to animation names.
 var anim_suffix := ''
+## Whether the character is or not moving through the room.
 var is_moving := false
+## The current emotion used by the character.
 var emotion := ''
+## 
 var on_scaling_region: Dictionary = {}
-var default_walk_speed: int
-var default_scale: Vector2
+## Stores the default walk speed defined in [member walk_speed]. Used by [PopochiuRoom] when scaling
+## the character if it is inside a [PopochiuRegion] that modifies the scale.
+var default_walk_speed := 0
+## Stores the default scale. Used by [PopochiuRoom] when scaling the character if it is inside a
+## [PopochiuRegion] that modifies the scale.
+var default_scale := Vector2.ONE
 
 var _looking_dir: int = Looking.DOWN
 
+## A to the [b]$DialogPos[/b] child. Used by the GUI to calculate where to render the dialogue lines
+## said by the character when it speaks.
 @onready var dialog_pos: Marker2D = $DialogPos
 
 
