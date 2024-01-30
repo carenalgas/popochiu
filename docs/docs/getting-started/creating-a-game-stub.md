@@ -4,7 +4,7 @@ The purpose of this page is to quickly get you set up to experiment and tinker a
 
 ## Example resources
 
-If you are experimenting with Popochiu for the first time, or still evaluating if it's for you, you can speed up the following step, downloading the [Example Game Assets](#).
+If you are experimenting with Popochiu for the first time, or still evaluating if it's for you, you can speed up the following step, downloading the [Example Game Assets](/getting-started/example-resources#example-assets).
 
 If you prefer to skip the steps and jump to the meat of the learning, you can just clone the [Example Game](#). It's a project containing the game setup and assets, plus a working version of Popochiu.
 
