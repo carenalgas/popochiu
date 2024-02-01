@@ -26,7 +26,7 @@ func _ready() -> void:
 	
 	if Engine.editor_hint: return
 	
-	map_rid = Navigation2DServer.get_maps()[0]
+	map_rid = Navigation2DServer.map_create()
 	rid = ($Perimeter as NavigationPolygonInstance).get_region_rid()
 	
 	Navigation2DServer.region_set_map(rid, map_rid)

@@ -131,6 +131,7 @@ func scene_changed(scene_root: Node) -> void:
 		_room_name.show()
 		_tool_buttons.show()
 		$PopochiuFilter.show()
+		_characters_in_room.clear()
 		
 		# Fill info of Props, Hotspots, Walkable areas, Regions and Points
 		for t in _types:
@@ -145,7 +146,7 @@ func scene_changed(scene_root: Node) -> void:
 				elif c is PopochiuCharacter:
 					# Get the script_name of the character
 					var char_name: String =\
-					c.name.lstrip('Character').rstrip(' *')
+					c.name.trim_prefix('Character').rstrip(' *')
 					_characters_in_room.append(char_name)
 					
 					# Create the row for the character
