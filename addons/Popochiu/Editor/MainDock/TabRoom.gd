@@ -131,6 +131,7 @@ func scene_changed(scene_root: Node) -> void:
 		_room_name.show()
 		_tool_buttons.show()
 		$PopochiuFilter.show()
+		_characters_in_room.clear()
 		
 		# Fill info of Props, Hotspots, Walkable areas, Regions and Points
 		for t in _types:
