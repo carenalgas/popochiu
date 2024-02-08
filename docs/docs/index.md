@@ -1,4 +1,4 @@
-![Popochiu itch.io](./images/getting_started-itch_cover.png)
+![Popochiu itch.io](./_assets/images/getting_started-itch_cover.png)
 
 **Popochiu is a Godot addon that allows you to create point-and-click adventure games.**
 

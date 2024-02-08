@@ -23,7 +23,7 @@ Let's see examples for both.
 
 Please take a look at the following image:
 
-![Character Aseprite source file example](../images/aseprite_importer-source_file_example-character.png "Aseprite source file example - Character")
+![Character Aseprite source file example](../_assets/images/aseprite_importer-source_file_example-character.png "Aseprite source file example - Character")
 
 First notable thing is, a single file contains all animations for the character, identified by tags (_marker 1_). Each tag will be used to create a single animation, named after the tag, for the Character.
 
@@ -33,17 +33,17 @@ Your file can also be organized in layers (_marker 2_). Layer names are complete
 
 Layers are particularly useful in Rooms source files, because without them, isolating props tend to become pretty messy. Take a look at the following example.
 
-![Room Aseprite source file example](../images/aseprite_importer-source_file_example-room-1.png "Aseprite source file example - Room")
+![Room Aseprite source file example](../_assets/images/aseprite_importer-source_file_example-room-1.png "Aseprite source file example - Room")
 
 To keep different props apart, the image is organized in layers (_marker 1_). In the specific case, layer names and tag names match, but you can of course have situations where more than one layer is necessary to render a specific tag (it's pretty common really); a typical example is the background: in the example above, we could have decided to have the trees on the background prop. The resulting Aseprite file would have looked like this then:
 
-![Room Aseprite source file example - Joined layers](../images/aseprite_importer-source_file_example-room-3.png "Aseprite source file example - Multi-layer background")
+![Room Aseprite source file example - Joined layers](../_assets/images/aseprite_importer-source_file_example-room-3.png "Aseprite source file example - Multi-layer background")
 
 Notice how the _Tree_ tag disappeared and the _Tree layer_ is now present with the _Background_ one in the _Background_ tag.
 
 On the other hand, you can have tags with many frames on the same layer. This is the most common case because you often wants your props to be animated, like in the case of our crackling bonefire (see _marker 2_ in the image above):
 
-![Room Aseprite source file example - Multi frame animation](../images/aseprite_importer-source_file_example-room-2.png "Aseprite source file example - Multi-frame animation")
+![Room Aseprite source file example - Multi frame animation](../_assets/images/aseprite_importer-source_file_example-room-2.png "Aseprite source file example - Multi-frame animation")
 
 Here we have an isolated fire, composed by 4 frames, all grouped by the proper tag.
 
@@ -92,7 +92,7 @@ The Aseprite Importer exposes its configuration under the **Popochiu -> Import**
 
 Editor Settings contain those configurations that may change between team members' local development environment, like the Aseprite command path, and/or that are valid across different projects.
 
-![Editor Settings](../images/aseprite_importer-settings-es.png "Editor Settings")
+![Editor Settings](../_assets/images/aseprite_importer-settings-es.png "Editor Settings")
 
 * **Enable Aseprite Importer**: Allows the user to enable or disable the importer in their editor. Useful to avoid cluttering the inspector or getting errors for those who don't use Aseprite or don't have it available in a specific environment.
   > **Note**: This option is only available starting from Popochiu 2.0. In Popochiu 1.0 the importer can't be disabled.
@@ -106,7 +106,7 @@ Anyway, the plugin will check for the correct execution of the command before in
 
 Among the Project Settings you'll find those you may want to share with your team, and that mostly impact the importing workflow, setting defaults shared by every instance of the plugin.
 
-![Project Settings](../images/aseprite_importer-settings-ps.png "Project Settings")
+![Project Settings](../_assets/images/aseprite_importer-settings-ps.png "Project Settings")
 
 > **Note**: since Godot 4, Project Settings have an "Advanced Settings" filter. Plugins can't declare their settings as _basic_, so please make sure you have the upper left toggle _activated_ or you won't see Popochiu's settings section.
 
@@ -126,13 +126,13 @@ The following sections show examples for both Characters and Rooms, highlighting
 
 The Character importer tool is visible in the inspector, when you select a [PopochiuCharacter](./PopochiuCharacter.md) object, opening the related scene.
 
-![Character Aseprite importer](../images/aseprite_importer-activate_importer-character.png "Character Aseprite importer")
+![Character Aseprite importer](../_assets/images/aseprite_importer-activate_importer-character.png "Character Aseprite importer")
 
 You will not see the importer when you select a character instance in a specific room. To see the importer, you must open the character scene and select its root node.
 
 Likewise, a Room importer is shown in the Room inspector, when you select the root node of an open Room scene.
 
-![Room Aseprite importer](../images/aseprite_importer-activate_importer-room.png "Room Aseprite importer")
+![Room Aseprite importer](../_assets/images/aseprite_importer-activate_importer-room.png "Room Aseprite importer")
 
 > **Note**: if any error occurs when the plugin starts (for example if there are problems with the Aseprite command or missing dependencies in the scene tree), a warning will be visualized in place of the plugin. Head to the Output Panel to learn how to fix the error.
 
@@ -142,7 +142,7 @@ Likewise, a Room importer is shown in the Room inspector, when you select the ro
 
 When you select a [PopochiuCharacter](./PopochiuCharacter.md) node, you should see this interface in the node inspector, right after the script variables section:
 
-![Character Aseprite Importer interface](../images/aseprite_importer-importer_interface-character.png "Character Aseprite importer interface")
+![Character Aseprite Importer interface](../_assets/images/aseprite_importer-importer_interface-character.png "Character Aseprite importer interface")
 
 Use **Aseprite file** field (_1_) to select the source file. When you do this, the plugin automatically scans the file and lists every tag found (_2_) (or none if the file is a single animation with no tags).
 
@@ -150,7 +150,7 @@ For each tag that is found and listed, two flags are available (_3_): **Import t
 
 For [PopochiuRoom](./PopochiuRoom.md) node, the interface is only slightly different, showing two more flags for each tag (_1_ below):
 
-![Room Aseprite Importer interface](../images/aseprite_importer-importer_interface-room-diff.png "Room Aseprite importer interface differences")
+![Room Aseprite Importer interface](../_assets/images/aseprite_importer-importer_interface-room-diff.png "Room Aseprite importer interface differences")
 
 **This prop will be visible** and **This prop will be clickable** flags will make the imported prop visible and interactive, respectively.
 
