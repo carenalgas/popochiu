@@ -6,5 +6,7 @@ services:
         working_dir: /app
         labels:
             - com.dnsdock.alias=docs.popochiu.loc
-        image: minidocks/mkdocs
-        command: serve -a 0.0.0.0:80 -t readthedocs
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: serve -a 0.0.0.0:80

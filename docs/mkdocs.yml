@@ -1,8 +1,12 @@
 site_name: Popochiu
-theme: alabaster_theme
 extra_css:
   - _assets/css/custom.css
 extra_javascript:
   - _assets/js/custom.js
 markdown_extensions:
   - admonition
+plugins:
+  - search
+  - mkdocs-nav-weight
+theme: readthedocs
+docs_dir: content
