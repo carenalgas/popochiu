@@ -195,7 +195,7 @@ func show_helpers() -> void:
 
 
 ## Hides this Node.
-## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_disable() -> Callable:
 	return func (): await disable()
 
@@ -208,7 +208,7 @@ func disable() -> void:
 
 
 ## Shows this Node.
-## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_enable() -> Callable:
 	return func (): await enable()
 

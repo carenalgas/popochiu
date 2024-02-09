@@ -82,7 +82,7 @@ func _on_discard() -> void:
 ## Adds this item to the inventory. If [param animate] is [code]true[/code], the inventory GUI will
 ## show an animation as a feedback of this action. It will depend on the implementation of the
 ## inventory in the GUI.
-## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ## [br][br]Example of how to use it when interacting with a [PopochiuProp]:
 ## [codeblock]
 ## func on_click() -> void:
@@ -136,7 +136,7 @@ func add(animate := true) -> void:
 ## Adds this item to the inventory and makes it the current selected item (the cursor will look like
 ## the item's texture). Pass [param animate] as [code]false[/code] if you do not want the inventory
 ## GUI to animate when the item is added.
-## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_add_as_active(animate := true) -> Callable:
 	return func (): await add_as_active(animate)
 
@@ -152,7 +152,7 @@ func add_as_active(animate := true) -> void:
 
 ## Removes the item from the inventory (its instance will be kept in memory). Pass [param animate]
 ## as [code]true[/code] if you want the inventory GUI to animate when the item is removed.
-## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ## [br][br]Example of how to use it when using an item on a [PopochiuProp]:
 ## [codeblock]
 ## func on_item_used(item: PopochiuInventoryItem) -> void:
@@ -189,7 +189,7 @@ func remove(animate := false) -> void:
 
 
 ## Replaces this inventory item by [param new_item]. Useful when combining items.
-## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ## [br][br]Example of how to use it when combining two inventory items:
 ## [codeblock]
 ## # This is the script of the InventoryItemHook.gd (I.Hook)
@@ -231,7 +231,7 @@ func replace(new_item: PopochiuInventoryItem) -> void:
 # NOTE: Maybe this is not necessary since we can have the same with [method queue_remove].
 ## Removes the item from the inventory (its instance will be kept in memory). Pass [param animate]
 ## as [code]true[/code] if you want the inventory GUI to animate when the item is removed.
-## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_discard(animate := false) -> Callable:
 	return func (): await discard(animate)
 
