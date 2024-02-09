@@ -132,33 +132,50 @@ func _get_property_list():
 #endregion
 
 #region Virtual ####################################################################################
+## Use it to play the idle animation of the character.
+## [i]Virtual[/i].
 func _play_idle() -> void:
 	play_animation('idle')
 
 
+## Use it to play the walk animation of the character.
+## [i]Virtual[/i].
 func _play_walk(target_pos: Vector2) -> void:
 	# Set the default parameters for play_animation()
 	var animation_label = 'walk'
 	var animation_fallback = 'idle'
+	
 	play_animation(animation_label, animation_fallback)
 
 
+## Use it to play the talk animation of the character.
+## [i]Virtual[/i].
 func _play_talk() -> void:
 	play_animation('talk')
 
 
+## Use it to play the grab animation of the character.
+## [i]Virtual[/i].
 func _play_grab() -> void:
 	play_animation('grab')
-
 
 
 #endregion
 
 #region Public #####################################################################################
+## Puts the character in the idle state by playing its idle animation, then waits for
+## [code]0.2[/code] seconds.
+## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+## value.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_idle() -> Callable:
 	return func (): await idle()
 	
 	
+## Puts the character in the idle state by playing its idle animation, then waits for
+## [code]0.2[/code] seconds.
+## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+## value.
 func idle() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
@@ -177,10 +194,17 @@ func idle() -> void:
 	await get_tree().create_timer(0.2).timeout
 
 
+## Makes the character move to [param target_pos] and plays its walk animation.
+## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+## value.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_walk(target_pos: Vector2) -> Callable:
 	return func (): await walk(target_pos)
 
 
+## Makes the character move to [param target_pos] and plays its walk animation.
+## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+## value.
 func walk(target_pos: Vector2) -> void:
 	is_moving = true
 	_looking_dir = Looking.LEFT if target_pos.x < position.x else Looking.RIGHT
@@ -224,10 +248,13 @@ func take_turn(target_pos: Vector2):
 	face_direction(target_pos)
 	_play_walk(target_pos)
 
+## Makes the character stop moving and emits [signal stopped_walk].
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_stop_walking() -> Callable:
 	return func (): await stop_walking()
-	
-	
+
+
+## Makes the character stop moving and emits [signal stopped_walk].
 func stop_walking() -> void:
 	is_moving = false
 	
@@ -236,55 +263,127 @@ func stop_walking() -> void:
 	await get_tree().process_frame
 
 
+## Makes the character to look up by setting [member _looking_dir] to [constant UP] and waits until
+## [method idle] finishes.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_face_up() -> Callable:
 	return func (): await face_up()
 
 
+## Makes the character to look up by setting [member _looking_dir] to [constant UP] and waits until
+## [method idle] finishes.
 func face_up() -> void:
 	_looking_dir = Looking.UP
 	await idle()
 
 
+## Makes the character to look up and right by setting [member _looking_dir] to [constant UP_RIGHT]
+## and waits until [method idle] finishes.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_face_up_right() -> Callable:
 	return func (): await face_up_right()
 
 
+## Makes the character to look up and right by setting [member _looking_dir] to [constant UP_RIGHT]
+## and waits until [method idle] finishes.
 func face_up_right() -> void:
 	_looking_dir = Looking.UP_RIGHT
 	await idle()
 
 
-func queue_face_down() -> Callable:
-	return func (): await face_down()
-
-
-func face_down() -> void:
-	_looking_dir = Looking.DOWN
-	await idle()
-
-
-func queue_face_left() -> Callable:
-	return func (): await face_left()
-
-
-func face_left() -> void:
-	_looking_dir = Looking.LEFT
-	await idle()
-
-
+## Makes the character to look right by setting [member _looking_dir] to [constant RIGHT] and waits
+## until [method idle] finishes.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_face_right() -> Callable:
 	return func (): await face_right()
 
 
+## Makes the character to look right by setting [member _looking_dir] to [constant RIGHT] and waits
+## until [method idle] finishes.
 func face_right() -> void:
 	_looking_dir = Looking.RIGHT
 	await idle()
 
 
+## Makes the character to look down and right by setting [member _looking_dir] to
+## [constant DOWN_RIGHT] and waits until [method idle] finishes.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+func queue_face_down_right() -> Callable:
+	return func (): await face_down_right()
+
+
+## Makes the character to look down and right by setting [member _looking_dir] to
+## [constant DOWN_RIGHT] and waits until [method idle] finishes.
+func face_down_right() -> void:
+	_looking_dir = Looking.DOWN_RIGHT
+	await idle()
+
+
+## Makes the character to look down by setting [member _looking_dir] to [constant DOWN] and waits
+## until [method idle] finishes.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+func queue_face_down() -> Callable:
+	return func (): await face_down()
+
+
+## Makes the character to look down by setting [member _looking_dir] to [constant DOWN] and waits
+## until [method idle] finishes.
+func face_down() -> void:
+	_looking_dir = Looking.DOWN
+	await idle()
+
+
+## Makes the character to look down and left by setting [member _looking_dir] to
+## [constant DOWN_LEFT] and waits until [method idle] finishes.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+func queue_face_down_left() -> Callable:
+	return func (): await face_down_left()
+
+
+## Makes the character to look down and left by setting [member _looking_dir] to
+## [constant DOWN_LEFT] and waits until [method idle] finishes.
+func face_down_left() -> void:
+	_looking_dir = Looking.DOWN_LEFT
+	await idle()
+
+
+## Makes the character to look left by setting [member _looking_dir] to [constant LEFT] and waits
+## until [method idle] finishes.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+func queue_face_left() -> Callable:
+	return func (): await face_left()
+
+
+## Makes the character to look left by setting [member _looking_dir] to [constant LEFT] and waits
+## until [method idle] finishes.
+func face_left() -> void:
+	_looking_dir = Looking.LEFT
+	await idle()
+
+
+## Makes the character to look up and left by setting [member _looking_dir] to [constant UP_LEFT]
+## and waits until [method idle] finishes.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
+func queue_face_up_left() -> Callable:
+	return func (): await face_up_left()
+
+
+## Makes the character to look up and left by setting [member _looking_dir] to [constant UP_LEFT]
+## and waits until [method idle] finishes.
+func face_up_left() -> void:
+	_looking_dir = Looking.UP_LEFT
+	await idle()
+
+
+## Makes the character face in the direction of the last clicked [PopochiuClickable], which is
+## stored in [member Popochiu.clicked].
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_face_clicked() -> Callable:
 	return func (): await face_clicked()
 
 
+## Makes the character face in the direction of the last clicked [PopochiuClickable], which is
+## stored in [member Popochiu.clicked].
 func face_clicked() -> void:
 	if E.clicked.global_position < global_position:
 		if has_node('Sprite2D'):
@@ -298,10 +397,19 @@ func face_clicked() -> void:
 		await face_right()
 
 
+## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
+## [param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
+## [AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
+## characters return to its idle state.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_say(dialog: String, emo := "") -> Callable:
 	return func (): await say(dialog, emo)
 
 
+## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
+## [param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
+## [AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
+## characters return to its idle state.
 func say(dialog: String, emo := "") -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
@@ -335,10 +443,15 @@ func say(dialog: String, emo := "") -> void:
 	G.unblock(true)
 
 
+## Calls [method _play_grab] and waits until the [signal character_grab_done] is emitted, then goes
+## back to [method idle].
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_grab() -> Callable:
 	return func (): await grab()
 
 
+## Calls [method _play_grab] and waits until the [signal character_grab_done] is emitted, then goes
+## back to [method idle].
 func grab() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
@@ -352,61 +465,95 @@ func grab() -> void:
 	idle()
 
 
+## Calls [method PopochiuClickable.hide_helpers] and then hides the `$DialogPos` child.
 func hide_helpers() -> void:
 	super()
 	
-	if is_instance_valid(dialog_pos): dialog_pos.hide()
+	if is_instance_valid(dialog_pos):
+		dialog_pos.hide()
 
 
+## Calls [method PopochiuClickable.show_helpers] and then shows the `$DialogPos` child.
 func show_helpers() -> void:
 	super()
-	if is_instance_valid(dialog_pos): dialog_pos.show()
+	
+	if is_instance_valid(dialog_pos):
+		dialog_pos.show()
 
 
+## Makes the character walk to [param pos].
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_walk_to(pos: Vector2) -> Callable:
 	return func(): await walk_to(pos)
 
 
+## Makes the character walk to [param pos].
 func walk_to(pos: Vector2) -> void:
 	await walk(E.current_room.to_global(pos))
 
 
+## Makes the character walk to the last clicked [PopochiuClickable], which is stored in
+## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 	return func (): await walk_to_clicked(offset)
 
 
+## Makes the character walk to the last clicked [PopochiuClickable], which is stored in
+## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	await _walk_to_node(E.clicked, offset)
 
 
+## Makes the character walk to the [PopochiuProp] (in the current room) which
+## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
+## relative to the target position.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_walk_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await walk_to_prop(id, offset)
 
 
+## Makes the character walk to the [PopochiuProp] (in the current room) which
+## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
+## relative to the target position.
 func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(E.current_room.get_prop(id), offset)
 
 
+## Makes the character walk to the [PopochiuHotspot] (in the current room) which
+## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
+## relative to the target position.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_walk_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await walk_to_hotspot(id, offset)
 
 
+## Makes the character walk to the [PopochiuHotspot] (in the current room) which
+## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
+## relative to the target position.
 func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(E.current_room.get_hotspot(id), offset)
 
 
+## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
+## equal to [param id]. You can set an [param offset] relative to the target position.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await walk_to_marker(id, offset)
 
 
+## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
+## equal to [param id]. You can set an [param offset] relative to the target position.
 func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(E.current_room.get_marker(id), offset)
 
 
+## Sets [member emotion] to [param new_emotion] when in a [method Popochiu.queue].
 func queue_set_emotion(new_emotion: String) -> Callable:
 	return func(): emotion = new_emotion
 
 
+## Sets [member ignore_walkable_areas] to [param new_value] when in a [method Popochiu.queue].
 func queue_ignore_walkable_areas(new_value: bool) -> Callable:
 	return func(): ignore_walkable_areas = new_value
 
@@ -415,22 +562,6 @@ func queue_play_animation(
 	animation_label: String, animation_fallback := 'idle', blocking := false
 ) -> Callable:
 	return func(): await play_animation(animation_label, animation_fallback)
-
-
-func queue_stop_animation():
-	return func(): await stop_animation()
-
-
-func queue_halt_animation():
-	return func(): halt_animation()
-
-
-func queue_pause_animation():
-	return func(): pause_animation()
-
-
-func queue_resume_animation():
-	return func(): resume_animation()
 
 
 func play_animation(animation_label: String, animation_fallback := 'idle'):
@@ -459,6 +590,22 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 	
 	# Go back to idle state
 	_play_idle()
+
+
+func queue_stop_animation():
+	return func(): await stop_animation()
+
+
+func queue_halt_animation():
+	return func(): halt_animation()
+
+
+func queue_pause_animation():
+	return func(): pause_animation()
+
+
+func queue_resume_animation():
+	return func(): resume_animation()
 
 
 func stop_animation():

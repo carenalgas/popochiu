@@ -174,8 +174,7 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 
 #region Public #####################################################################################
 ## Used by the plugin to hide the visual helpers that show the [member baseline] and
-## [member walk_to_point] in Godot´s 2D Canvas Editor when this node is unselected in the Scene
-## panel.
+## [member walk_to_point] in the 2D Canvas Editor when this node is unselected in the Scene panel.
 func hide_helpers() -> void:
 	$BaselineHelper.hide()
 	$WalkToHelper.hide()
@@ -185,7 +184,7 @@ func hide_helpers() -> void:
 
 
 ## Used by the plugin to make visible the visual helpers that show the [member baseline] and
-## [member walk_to_point] of the object in Godot´s 2D Canvas Editor when the is selected in the
+## [member walk_to_point] of the object in the 2D Canvas Editor when the is selected in the
 ## Scene panel.
 func show_helpers() -> void:
 	$BaselineHelper.show()
@@ -195,7 +194,8 @@ func show_helpers() -> void:
 		$InteractionPolygon.show()
 
 
-## Hides this Node. This method is intended to be used inside a [method queue] of instructions.
+## Hides this Node.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_disable() -> Callable:
 	return func (): await disable()
 
@@ -207,7 +207,8 @@ func disable() -> void:
 	await get_tree().process_frame
 
 
-## Shows this Node. This method is intended to be used inside a [method queue] of instructions.
+## Shows this Node.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_enable() -> Callable:
 	return func (): await enable()
 

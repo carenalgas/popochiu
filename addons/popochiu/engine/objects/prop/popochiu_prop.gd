@@ -87,7 +87,7 @@ func _on_linked_item_discarded() -> void:
 #region Public #####################################################################################
 ## Changes the value of the [member Sprite2D.frame] property to [param new_frame] in the
 ## [b]$Sprite2D[/b] child.
-## This method is intended to be used inside a [method queue] of instructions.
+## This method is intended to be used inside a [method Popochiu.queue] of instructions.
 func queue_change_frame(new_frame: int) -> Callable:
 	return func (): await change_frame(new_frame)
 
