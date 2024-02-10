@@ -89,8 +89,8 @@ func turn_off_forever_options(ids: Array) -> void:
 		if opt: opt.turn_off_forever()
 
 
-## Use this to save custom data when saving the game. The [Dictionary] must contain only JSON
-## supported types: bool, int, float, String.
+## Use this to save custom data when saving the game. The returned [Dictionary] must contain only
+## JSON supported types: [bool], [int], [float], [String].
 func on_save() -> Dictionary:
 	return _on_save()
 
