@@ -13,23 +13,27 @@ extends Resource
 #region Virtual ####################################################################################
 ## Called when the dialog starts. [b]You have to use an [code]await[/code] in this method in order
 ## to make the dialog to work properly[/b].
+## [i]Virtual[/i].
 func _on_start() -> void:
 	pass
 
 
 ## Called when the [param opt] dialog option is clicked. The [member PopochiuDialogOption.id] in
 ## [param opt] can be used to check which was the selected option.
+## [i]Virtual[/i].
 func _option_selected(opt: PopochiuDialogOption) -> void:
 	pass
 
 
 ## Called when the game is saved.
+## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
 
 ## Called when the game is loaded. The structure of [param data] is the same returned by
 ## [method _on_save].
+## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:
 	pass
 
