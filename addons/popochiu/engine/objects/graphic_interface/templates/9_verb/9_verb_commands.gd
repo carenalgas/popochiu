@@ -1,5 +1,6 @@
 class_name NineVerbCommands
 extends PopochiuCommands
+## Defines the commands and fallback methods for the 9 Verb GUI.
 
 enum Commands {
 	WALK_TO, OPEN, PICK_UP, PUSH, CLOSE, LOOK_AT, PULL, GIVE, TALK_TO, USE

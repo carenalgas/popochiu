@@ -1,6 +1,10 @@
 @tool
 extends Resource
 class_name PopochiuAudioCue
+## Used to play audio files with extra properties.
+##
+## You can set the pitch (with random values), volume, and audio bus. Whether it loops or not, or
+## whether it is 2D positioned.
 
 @export var audio: AudioStream
 @export var loop := false : set = set_loop

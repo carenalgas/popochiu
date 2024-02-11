@@ -1,5 +1,6 @@
 class_name SierraCommands
 extends PopochiuCommands
+## Defines the commands and fallback methods for the Sierra GUI.
 
 enum Commands {
 	WALK, LOOK, INTERACT, TALK

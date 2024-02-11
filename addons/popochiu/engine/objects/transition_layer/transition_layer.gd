@@ -1,5 +1,8 @@
-extends Node2D
 class_name PopochiuTransitionLayer
+extends Node2D
+## Used to play different transition animations when moving between rooms, skipping a cutscene,
+## and so on.
+
 # warning-ignore-all:return_value_discarded
 
 signal transition_finished(transition_name)
