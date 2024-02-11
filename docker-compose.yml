@@ -1,11 +1,13 @@
 version: "3"
 services:
-    mkdocs:
+    documentation:
+        ports:
+            - 286:80
         volumes:
             - ./docs:/app
         working_dir: /app
         labels:
-            - com.dnsdock.alias=docs.popochiu.loc
+            - com.dnsdock.alias=docs.popochiu.local
         build:
             context: .
             dockerfile: Dockerfile
