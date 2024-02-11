@@ -1,0 +1,14 @@
+version: "3"
+services:
+    documentation:
+        ports:
+            - 286:80
+        volumes:
+            - ./docs:/app
+        working_dir: /app
+        labels:
+            - com.dnsdock.alias=docs.popochiu.local
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: serve -a 0.0.0.0:80
