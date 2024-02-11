@@ -1,8 +1,9 @@
-# Class for saving and loading game data.
-# 
-# Thanks GDQuest for this! ↴↴↴
-# https://github.com/GDQuest/godot-demos-2022/tree/main/save-game
+class_name PopochiuSaveLoad
 extends Resource
+## Class that allows to save and load game data.
+## 
+## Thanks GDQuest for this! ↴↴↴
+## https://github.com/GDQuest/godot-demos-2022/tree/main/save-game
 
 # TODO: This could be in PopochiuSettings for devs to change the path
 const SAVE_GAME_PATH := 'user://save_%d.json'

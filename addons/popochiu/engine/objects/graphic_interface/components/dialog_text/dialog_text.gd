@@ -28,8 +28,7 @@ var _y_limit := 0.0
 @onready var _continue_icon_tween: Tween = null
 
 
-#region Godot
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	set_meta(DFLT_SIZE, size)
 	set_meta(DFLT_POSITION, position)
@@ -65,17 +64,17 @@ func _input(event: InputEvent) -> void:
 			disappear()
 		else:
 			stop()
+
+
 #endregion
 
-
-#region Public
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#region Public #####################################################################################
 func play_text(props: Dictionary) -> void:
 	var msg: String = E.get_text(props.text)
 	_is_waiting_input = false
 	_dialog_pos = props.position
 	
-	# ==== Calculate the size of the node ======================================
+	# ==== Calculate the size of the node ==========================================================
 	# Create a RichTextLabel to calculate the resulting size of this node once
 	# the whole text is shown
 	var rt := RichTextLabel.new()
@@ -133,7 +132,7 @@ func play_text(props: Dictionary) -> void:
 	
 	lbl.free()
 	rt.free()
-	# ====================================== Calculate the size of the node ====
+	# ========================================================== Calculate the size of the node ====
 	
 	match E.current_dialog_style:
 		0:
@@ -240,11 +239,11 @@ func disappear() -> void:
 
 func change_speed() -> void:
 	_secs_per_character = E.current_text_speed
+
+
 #endregion
 
-
-#region Private
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#region Private ####################################################################################
 func _show_dialogue(chr: PopochiuCharacter, msg := '') -> void:
 	if not visible: return
 	
@@ -343,4 +342,6 @@ func _on_dialog_style_changed() -> void:
 	
 	if E.current_dialog_style != 0 and E.current_dialog_style == used_when:
 		wrap_width = size.x
+
+
 #endregion

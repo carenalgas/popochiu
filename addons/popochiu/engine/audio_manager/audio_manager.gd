@@ -1,10 +1,10 @@
-# Handles playing audio with AudioCues.
-# 
+class_name PopochiuAudioManager
+extends Node
+@warning_ignore("return_value_discarded")
+## Handles playing audio with AudioCues.
+
 # TODO: Create AudioHandle so each AudioCue has its own AudioStreamPlayer...
 # http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
-extends Node
-class_name PopochiuAudioManager
-@warning_ignore("return_value_discarded")
 
 const TEMP_PLAYER := "temporal"
 const AudioCue := preload('audio_cue.gd')
