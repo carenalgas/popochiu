@@ -22,3 +22,9 @@ popochiu
 popochiu/**
 game
 game/**
+
+# Documentation ignores
+docs/**/*.import
+Collector*.gd
+ReferenceCollectorCLI*.gd
+reference.json

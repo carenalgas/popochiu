@@ -1,0 +1,28 @@
+FROM python:3.13-rc-alpine
+
+RUN apk add --no-cache libatomic \
+    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.31-r0/glibc-2.31-r0.apk \
+    && apk add --allow-untrusted --force-overwrite glibc-2.31-r0.apk \
+    && rm -f glibc-2.31-r0.apk \
+    # Install Godot 4.1.x (pinned version - see )
+    && wget https://github.com/godotengine/godot-builds/releases/download/4.1.3-stable/Godot_v4.1.3-stable_linux.x86_64.zip \
+    && unzip Godot_v4.1.3-stable_linux.x86_64.zip \
+    && mv Godot_v4.1.3-stable_linux.x86_64 /usr/local/bin/godot \
+    && chmod +x /usr/local/bin/godot \
+    && rm -f Godot_v4.1.3-stable_linux.x86_64.zip \
+    && godot -v -e --quit --headless \
+    # Ensure Python dependencies
+    && pip3 install --no-cache --upgrade pip setuptools \
+    # Download gdscript-docs-maker repo
+    && wget https://github.com/GDQuest/gdscript-docs-maker/archive/refs/tags/v1.7.0.zip \
+    && unzip v1.7.0.zip \
+    && mv gdscript-docs-maker-1.7.0 /app \
+    && rm -f v1.7.0.zip
+
+WORKDIR /app
+
+# Install application dependencies
+RUN python3 setup.py install
+
+# Run dockmaker script
+ENTRYPOINT ["./generate_reference"]

@@ -10,5 +10,5 @@ services:
             - com.dnsdock.alias=docs.popochiu.local
         build:
             context: .
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile.MkDocs
         command: serve -a 0.0.0.0:80
