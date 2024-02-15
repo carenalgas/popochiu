@@ -1,18 +1,29 @@
 FROM python:3.13-rc-alpine
 
-RUN apk add --no-cache libatomic \
-    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.31-r0/glibc-2.31-r0.apk \
-    && apk add --allow-untrusted --force-overwrite glibc-2.31-r0.apk \
-    && rm -f glibc-2.31-r0.apk \
-    # Install Godot 4.1.x (pinned version - see )
-    && wget https://github.com/godotengine/godot-builds/releases/download/4.1.3-stable/Godot_v4.1.3-stable_linux.x86_64.zip \
-    && unzip Godot_v4.1.3-stable_linux.x86_64.zip \
-    && mv Godot_v4.1.3-stable_linux.x86_64 /usr/local/bin/godot \
-    && chmod +x /usr/local/bin/godot \
-    && rm -f Godot_v4.1.3-stable_linux.x86_64.zip \
-    && godot -v -e --quit --headless \
+ARG GODOT_VERSION="4.1.3"
+ARG RELEASE_NAME="stable"
+ARG SUBDIR=""
+ARG GODOT_PLATFORM="linux.x86_64"
+
+# Override user name at build. If build-arg is not passed, will create user named `host_user`
+ARG DOCKER_USER=host_user
+ARG DOCKER_USER_UID=1000
+ARG DOCKER_USER_GID=1000
+
+# Create a group and user
+RUN addgroup -g ${DOCKER_USER_GID} -S ${DOCKER_USER} && adduser -u ${DOCKER_USER_UID} -S ${DOCKER_USER} -G ${DOCKER_USER}
+
+RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing godot=4.1.3-r0 \
+    && mkdir /home/${DOCKER_USER}/.cache \
+    && mkdir -p /home/${DOCKER_USER}/.config/godot \
+    && mkdir -p /home/${DOCKER_USER}/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME} \
+#    && wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}${SUBDIR}/Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz \
+#    && unzip Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz \
+#    && mv templates/* /home/${DOCKER_USER}/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME} \
+#    && rm -f Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz \
+    && chown -R ${DOCKER_USER}:${DOCKER_USER} /home/${DOCKER_USER} \
     # Ensure Python dependencies
-    && pip3 install --no-cache --upgrade pip setuptools \
+    # && pip3 install --no-cache --upgrade pip setuptools \
     # Download gdscript-docs-maker repo
     && wget https://github.com/GDQuest/gdscript-docs-maker/archive/refs/tags/v1.7.0.zip \
     && unzip v1.7.0.zip \
@@ -23,6 +34,8 @@ WORKDIR /app
 
 # Install application dependencies
 RUN python3 setup.py install
+
+COPY generate_reference /app/generate_reference
 
 # Run dockmaker script
 ENTRYPOINT ["./generate_reference"]

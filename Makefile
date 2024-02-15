@@ -14,7 +14,7 @@ api-docs:
 		-v .:/project \
 		-v ./docs/content/the-engine-handbook/scripting-reference:/output \
 		-u $(CURRENT_UID) \
-		gdquest/gdscript-docs-maker:master /project \
+		popochiu-docs-maker:gdm-1.7.0 /project \
 		-o /output \
 		-d addons/popochiu/engine/
 
