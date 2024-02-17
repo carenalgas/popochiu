@@ -1,0 +1,271 @@
+#!/usr/bin/env sh
+
+project_directory="$1"
+output_directory="export"
+directories_override=""
+format="markdown"
+author="developer"
+
+echo_help() {
+	cat <<'EOT'
+    Generate a code reference from GDScript
+    Usage:
+    generate_reference $project_directory [options]
+
+    Required arguments:
+
+    $project_directory -- path to your Godot project directory.
+    This directory or one of its subdirectories should contain a
+    project.godot file.
+
+    Options:
+
+    -h/--help             -- Display this help message.
+    -o/--output-directory -- directory path to output the documentation into.
+    -d/--directory        -- Name of a directory to find files and generate the code reference in the Godot project.
+                             You can use the option multiple times to generate a reference for multiple directories.
+    -f/--format           -- Either `markdown` or `hugo`. If `hugo`, the output document includes a TOML front-matter
+                             at the top. Default: `markdown`.
+    -a/--author           -- If --format is `hugo`, controls the author property in the TOML front-matter.
+
+
+    Usage example:
+
+    generate_reference ~/Repositories/other/nakama-godot/project/ -o export-nakama -d addons
+
+    This command walks files in the res://addons directory of the Godot Nakama project, and converts it
+    to markdown files output in ./export-nakama.
+EOT
+	exit 0
+}
+
+get_godot_cmd() {
+	if command -v godot > /dev/null
+	then
+		echo godot
+	else
+		godotcmd=""
+		
+		if [ "$(echo $OSTYPE | head -c 6)" = "darwin" ] 
+		then
+			godotcmd=$(find $(echo $PATH | tr ":" " ") -name "Godot*.app" -maxdepth 1 2>/dev/null | head -n 1 | tr -d '\n')
+			if [ "$(echo $godotcmd | tr -d '\n' | tail -c 4)" = ".app" ]
+			then
+				godotcmd="$godotcmd/Contents/MacOS/Godot"
+			fi
+		fi
+				
+		if [ "$godotcmd" = "" ]
+		then
+			if command -v zsh > /dev/null
+ 			then
+				godotcmd=$(zsh -c "whence -ap -m 'Godot*' | head -n 1")
+			elif command -v bash > /dev/null
+			then
+				godotcmd=$(bash -c "compgen -c Godot | head -n 1")
+			fi
+		fi 
+		
+		if [ "$godotcmd" = "" ]
+		then
+			echo godot
+		else
+			echo $godotcmd
+		fi 
+	fi
+}
+
+is_gnu_sed(){
+  sed --version >/dev/null 2>&1
+}
+
+
+# Interpret arguments
+
+if [ $(echo $1 | head -c 1) != "-" ]
+then
+	shift 1 
+fi
+
+while getopts ':hodfa-:' OPTION; do
+	# Support of long options with this syntax: --format=hugo
+	if [ "$OPTION" = "-" ]; then
+		OPTION="${OPTARG%%=*}"
+		OPTARG="${OPTARG#$OPTION}"
+		OPTARG="${OPTARG#=}"
+	fi
+	
+	# Support of long options with this syntax: --format hugo
+	if [ "$OPTARG" = "" ]
+	then
+		OPTARG="$(eval echo \${$OPTIND})"; OPTIND=$(( $OPTIND + 1 ))
+	fi
+	if [ "$(echo $OPTARG | cut -c1)" = "-" ]
+	then
+		OPTARG=""
+		OPTIND=$(( $OPTIND - 1 ))
+	fi
+	
+	# Option processing
+	if [ "$OPTION" = "h" -o "$OPTION" = "help" ]
+	then
+		echo_help
+	elif [ "$OPTARG" = "" ]
+	then
+		echo "Missing value for option $OPTION. Try 'generate_reference --help' for more information"
+		exit 1
+	else
+		case "$OPTION" in
+			o | output-directory)
+				output_directory="$OPTARG"
+				;;
+			d | directory)
+				directories_override="$directories_override $OPTARG"
+				;;
+			f | format)
+				format="$OPTARG"
+				;;
+			a | author)
+				author="$OPTARG"
+				;;
+			?)
+				echo "Missing arguments. Try 'generate_reference --help' for more information"
+				exit 1
+				;;
+		esac	
+	fi
+done
+
+echo "Checking parameters"
+
+if test -z "$project_directory"; then
+	echo "Missing first parameter: project_directory."
+	exit 1
+fi
+
+if ! test -d "$project_directory"; then
+	echo "Directory $project_directory does not exist, exiting."
+	exit 1
+fi
+
+godot_project_file=$(find "$project_directory" -iname project.godot -print -quit)
+if ! test -f "$godot_project_file"; then
+	echo "Could not find a project.godot file in $project_directory. This program needs a Godot project to work."
+	exit 1
+fi
+
+
+ERROR_LOG=$(mktemp)
+LOG=$(mktemp)
+godot_project_dir=$(dirname "$godot_project_file")
+godot=$(get_godot_cmd)
+
+$godot --version 2>"$ERROR_LOG" >/dev/null
+test $? -eq 0 -o $? -eq 255
+godot_exec_ok=$?
+
+if [ $godot_exec_ok -eq 0 ]
+then
+  version=$($godot --version | tail -n 1 | cut -c1-1)
+
+  if [ "$version" = "3" ]
+  then
+     ref_collector="ReferenceCollectorCLI.gd"
+     path_collector="godot-scripts/Collector.gd"
+     path_ref_collector="godot-scripts/ReferenceCollectorCLI.gd"
+  else
+     ref_collector="ReferenceCollectorCLIGd4.gd"
+     path_collector="godot-scripts/CollectorGd4.gd"
+     path_ref_collector="godot-scripts/ReferenceCollectorCLIGd4.gd"
+  fi
+  
+  # Override the content of the directories variable in ReferenceCollectorCLI.gd if we got --directory arguments
+  file_ref_collector=$(mktemp)
+  cat $path_ref_collector > "$file_ref_collector"
+  if test "$directories_override" != ""; then
+    echo "Setting directories"
+    args=$(echo "$directories_override" | sed -r 's#([-/._a-zA-Z0-9]+)#"res://\1",#g' | sed -r 's/,$//')
+        
+    if is_gnu_sed 
+    then
+      sed -ri "s#^var directories.+#var directories := [$args]#" "$file_ref_collector"
+    else
+      sed -i "" -r "s#^var directories.+#var directories := [$args]#" "$file_ref_collector"
+    fi
+  fi
+  
+  echo "Copying collectors to project directory"
+  
+  cp "$file_ref_collector" "$godot_project_dir/$(basename $path_ref_collector)" >/dev/null
+  cp $path_collector "$godot_project_dir" >/dev/null
+  
+  echo "Generating reference json data..."
+  
+  if [ "$version" = "3" ]
+  then
+     $godot --editor --quit --no-window --script $ref_collector \
+       --path "$godot_project_dir" 2>"$ERROR_LOG" >"$LOG"
+  else
+     $godot --editor --quit --headless --script $ref_collector \
+       --path "$godot_project_dir" 2>"$ERROR_LOG" >"$LOG"
+  fi
+  
+  godot_exec_ok=1
+  if grep -q -F "Saved data to res://reference.json" "$LOG" >/dev/null 2>/dev/null 
+  then
+    godot_exec_ok=0
+  fi
+fi
+
+if [ $godot_exec_ok -ne 0 ]
+then
+  ERRORS=$(cat "$ERROR_LOG")
+  cat <<EOT
+There was an error running 'godot'.
+The program 'godot' must be available on the system '\$PATH' variable for this program to work.
+For more information, see https://en.wikipedia.org/wiki/PATH_(variable).
+
+This was the error log:
+
+$ERRORS
+EOT
+  rm "$ERROR_LOG"
+  rm "$LOG"
+  exit 1
+fi
+
+echo "Done."
+
+if ! [ -f "$godot_project_dir/reference.json" ]
+then
+	echo "There was an error generating the reference from Godot. The file $godot_project_dir/reference.json was not found."
+	exit 1
+fi
+
+echo "Fixing constants export in generated JSON file."
+
+sed -i -E 's/:\s(pi|tau|inf|nan|PI|TAU|INF|NAN)(,?)\s*$/: "\1"\2/g' "$godot_project_dir/reference.json"
+
+echo "Generating markdown files in $output_directory"
+
+if [ ! -d "$output_directory" ]
+then
+   mkdir -v "$output_directory" >/dev/null
+fi
+
+if ! python3 -m gdscript_docs_maker "$godot_project_dir/reference.json" --path "$output_directory" --format "$format" \
+  --author "$author" 2>"$ERROR_LOG"
+then
+  echo "Error running gdscript_docs_maker. This is the log:"
+  cat "$ERROR_LOG"
+  exit 1
+fi
+
+echo "Cleaning up..."
+rm "$ERROR_LOG" >/dev/null
+rm "$LOG" >/dev/null
+rm "$godot_project_dir/$(basename $path_ref_collector)" >/dev/null
+rm "$godot_project_dir/$(basename $path_collector)" >/dev/null
+rm "$godot_project_dir/reference.json" >/dev/null
+
+exit 0

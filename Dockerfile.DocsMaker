@@ -1,41 +1,46 @@
-FROM python:3.13-rc-alpine
+FROM python:slim
 
 ARG GODOT_VERSION="4.1.3"
-ARG RELEASE_NAME="stable"
-ARG SUBDIR=""
+ARG GODOT_RELEASE_NAME="stable"
+ARG GODOT_SUBDIR=""
 ARG GODOT_PLATFORM="linux.x86_64"
+
+ARG GDM_COMMIT_SHA="07cb0d8f0af6da745260d7bfabfc475504c413f1"
 
 # Override user name at build. If build-arg is not passed, will create user named `host_user`
 ARG DOCKER_USER=host_user
 ARG DOCKER_USER_UID=1000
 ARG DOCKER_USER_GID=1000
 
-# Create a group and user
-RUN addgroup -g ${DOCKER_USER_GID} -S ${DOCKER_USER} && adduser -u ${DOCKER_USER_UID} -S ${DOCKER_USER} -G ${DOCKER_USER}
 
-RUN apk add --no-cache --repository=https://dl-cdn.alpinelinux.org/alpine/edge/testing godot=4.1.3-r0 \
+RUN addgroup --system --gid ${DOCKER_USER_GID} ${DOCKER_USER} \
+    && adduser --system --uid ${DOCKER_USER_UID} --gid ${DOCKER_USER_GID} --home /home/${DOCKER_USER} ${DOCKER_USER} \
+    # Ensure proper permissions on user's home directory
+    && chown -R ${DOCKER_USER}:${DOCKER_USER} /home/${DOCKER_USER} \
+    # Install system-wide dependencies
+    && apt-get update && apt-get install -y --no-install-recommends unzip wget zip libfontconfig1 \
+    && rm -rf /var/lib/apt/lists/* \
+    # Install Godot from CDN
+    && wget -q https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}${GODOT_SUBDIR}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM}.zip \
     && mkdir /home/${DOCKER_USER}/.cache \
     && mkdir -p /home/${DOCKER_USER}/.config/godot \
-    && mkdir -p /home/${DOCKER_USER}/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME} \
-#    && wget https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}${SUBDIR}/Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz \
-#    && unzip Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz \
-#    && mv templates/* /home/${DOCKER_USER}/.local/share/godot/export_templates/${GODOT_VERSION}.${RELEASE_NAME} \
-#    && rm -f Godot_v${GODOT_VERSION}-${RELEASE_NAME}_export_templates.tpz \
-    && chown -R ${DOCKER_USER}:${DOCKER_USER} /home/${DOCKER_USER} \
-    # Ensure Python dependencies
-    # && pip3 install --no-cache --upgrade pip setuptools \
-    # Download gdscript-docs-maker repo
-    && wget https://github.com/GDQuest/gdscript-docs-maker/archive/refs/tags/v1.7.0.zip \
-    && unzip v1.7.0.zip \
-    && mv gdscript-docs-maker-1.7.0 /app \
-    && rm -f v1.7.0.zip
+    && mkdir -p /home/${DOCKER_USER}/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE_NAME} \
+    && unzip Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM}.zip \
+    && mv Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM} /usr/local/bin/godot \
+    && chmod a+x /usr/local/bin/godot \
+    && rm -f Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM}.zip \
+    # Download gdscript-docs-maker source code
+    && wget https://github.com/GDQuest/gdscript-docs-maker/archive/${GDM_COMMIT_SHA}.zip -O gdscript-docs-maker.zip \
+    && unzip gdscript-docs-maker.zip \
+    && mv gdscript-docs-maker-${GDM_COMMIT_SHA} /app \
+    && rm -f gdscript-docs-maker.zip
 
 WORKDIR /app
 
+COPY --chmod=777 generate_reference generate_reference
+
 # Install application dependencies
 RUN python3 setup.py install
-
-COPY generate_reference /app/generate_reference
 
 # Run dockmaker script
 ENTRYPOINT ["./generate_reference"]

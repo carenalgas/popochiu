@@ -2,19 +2,27 @@ CURRENT_UID := $(shell id -u):$(shell id -g)
 
 all: up
 
-up:
+docs-up:
 	docker compose pull
 	docker compose up -d
 
-down:
+docs-down:
 	docker compose down
 
-api-docs:
+gdm-build:
+	docker build \
+		--no-cache \
+		--build-arg="DOCKER_USER_UID=$(shell id -u)" \
+		--build-arg="DOCKER_USER_GID=$(shell id -g)" \
+		-t popochiu-docs-maker:latest \
+		-f Dockerfile.DocsMaker .
+
+gdm-generate:
 	docker run --rm \
 		-v .:/project \
 		-v ./docs/content/the-engine-handbook/scripting-reference:/output \
 		-u $(CURRENT_UID) \
-		popochiu-docs-maker:gdm-1.7.0 /project \
+		popochiu-docs-maker:latest /project \
 		-o /output \
 		-d addons/popochiu/engine/
 
