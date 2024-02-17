@@ -805,6 +805,10 @@ code,
     border: none;
     border-radius: 4px;
 }
+.rst-content pre code {
+    color: inherit;
+    background-color: var(--code-background-color);
+}
 
 .rst-content tt.literal,
 .rst-content code.literal {
