@@ -2,14 +2,14 @@
 extends PopochiuDialog
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#region Virtual ####################################################################################
 func _on_start() -> void:
 	# One can put here something to excecute before showing the dialog options.
 	# E.g. Make the PC to look at the character which it will talk to, walk to
 	# it, and say something (or make the character say something):
-# 	await C.player.face_clicked()
-# 	await C.player.say("Hi")
-# 	await C.Popsy.say("Oh! Hi...")
+#	await C.player.face_clicked()
+#	await C.player.say("Hi")
+#	await C.Popsy.say("Oh! Hi...")
 	# (!) It MUST always use an await
 	await E.get_tree().process_frame
 
@@ -29,15 +29,16 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 	_show_options()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Use this to save custom data for this PopochiuDialog when saving the game.
 # The Dictionary must contain only JSON supported types: bool, int, float, String.
-func on_save() -> Dictionary:
+func _on_save() -> Dictionary:
 	return {}
 
 
 # Called when the game is loaded.
-# This Dictionary should has the same structure you defined for the returned
-# one in on_save().
-func on_load(data: Dictionary) -> void:
+# This Dictionary should has the same structure you defined for the returned one in _on_save().
+func _on_load(data: Dictionary) -> void:
 	prints(data)
+
+
+#endregion

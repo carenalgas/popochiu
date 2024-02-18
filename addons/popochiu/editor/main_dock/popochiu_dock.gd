@@ -6,15 +6,13 @@ extends Panel
 signal move_folders_pressed
 
 const POPOCHIU_SCENE := 'res://addons/popochiu/engine/popochiu.tscn'
-const ROOMS_PATH := 'res://popochiu/rooms/'
-const CHARACTERS_PATH := 'res://popochiu/characters/'
-const INVENTORY_ITEMS_PATH := 'res://popochiu/inventory_items/'
-const DIALOGS_PATH := 'res://popochiu/dialogs/'
+const ROOMS_PATH := 'res://game/rooms/'
+const CHARACTERS_PATH := 'res://game/characters/'
+const INVENTORY_ITEMS_PATH := 'res://game/inventory_items/'
+const DIALOGS_PATH := 'res://game/dialogs/'
 const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
 const PopochiuObjectRow := preload('object_row/popochiu_object_row.gd')
 
-var ei: EditorInterface
-var fs: EditorFileSystem
 var popochiu: Node = null
 var last_selected: PopochiuObjectRow = null
 
@@ -33,6 +31,7 @@ var _rows_paths := []
 @onready var _tab_container: TabContainer = find_child('TabContainer')
 @onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
 @onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
+@onready var tab_ui: VBoxContainer = %UI
 # ▨▨▨▨ FOOTER ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
 @onready var _btn_docs: Button = find_child('BtnDocs')
 @onready var _btn_settings: Button = find_child('BtnSettings')
@@ -55,7 +54,7 @@ var _rows_paths := []
 		path = INVENTORY_ITEMS_PATH,
 		group = find_child('ItemsGroup'),
 		popup = find_child('CreateInventoryItem'),
-		scene = INVENTORY_ITEMS_PATH + ('%s/item_%s.tscn')
+		scene = INVENTORY_ITEMS_PATH + ('%s/inventory_item_%s.tscn')
 	},
 	Constants.Types.DIALOG: {
 		path = DIALOGS_PATH,
@@ -66,7 +65,7 @@ var _rows_paths := []
 }
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	popochiu = load(POPOCHIU_SCENE).instantiate()
 	_tab_container.get_node('Main/PopochiuFilter').groups = _types
@@ -98,7 +97,9 @@ func _ready() -> void:
 	get_tree().node_added.connect(_check_node)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func fill_data() -> void:
 	var settings := PopochiuResources.get_settings()
 	
@@ -106,20 +107,21 @@ func fill_data() -> void:
 	for t in _types:
 		if not _types[t].has('path'): continue
 		
-		var type_dir: EditorFileSystemDirectory = fs.get_filesystem_path(
+		var type_dir := EditorInterface.get_resource_filesystem().get_filesystem_path(
 			_types[t].path
 		)
 		
 		if not is_instance_valid(type_dir):
 			continue
 		
-		for d in type_dir.get_subdir_count():
+		for d: int in type_dir.get_subdir_count():
 			var efsd: EditorFileSystemDirectory = type_dir.get_subdir(d)
 			
 			for f in efsd.get_file_count():
 				var path = efsd.get_file_path(f)
 				
-				if not fs.get_file_type(path) == "Resource": continue
+				if not EditorInterface.get_resource_filesystem().get_file_type(path) == "Resource":
+					continue
 				
 				var resource: Resource = load(path)
 				
@@ -199,6 +201,14 @@ func add_to_list(type: int, name_to_add: String) -> PopochiuObjectRow:
 func scene_changed(scene_root: Node) -> void:
 	if not is_instance_valid(_tab_room): return
 	_tab_room.scene_changed(scene_root)
+	
+	if not is_instance_valid(tab_ui): return
+	tab_ui.on_scene_changed(scene_root)
+	
+	if not scene_root is PopochiuRoom and not scene_root is PopochiuGraphicInterface:
+		# Open the Popochiu Main tab if the opened scene in the Editor2D is not
+		# a PopochiuRoom nor a PopochiuGraphicInterface
+		_tab_container.current_tab = 0
 
 
 func scene_closed(filepath: String) -> void:
@@ -261,14 +271,26 @@ func get_opened_room() -> PopochiuRoom:
 	return _tab_room.opened_room
 
 
+func get_opened_room_tab() -> VBoxContainer:
+	return _tab_room
+
+
 func open_setup() -> void:
 	setup_dialog.appear()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _open_popup(popup: ConfirmationDialog) -> void:
 	popup.clear_fields()
-	popup.popup_centered(Vector2(640.0, 160.0))
+	popup.popup_centered()
+	
+	await get_tree().process_frame
+	popup.reset_size()
+	
+	await get_tree().process_frame
+	popup.move_to_center()
 
 
 func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
@@ -294,6 +316,9 @@ func _on_tab_changed(tab: int) -> void:
 		# Try to load the Main tab data in case they couldn't be loaded while
 		# opening the engine
 		fill_data()
+	
+	if tab == tab_ui.get_index():
+		tab_ui.open_gui_scene()
 
 
 func _select_object(por: PopochiuObjectRow) -> void:
@@ -304,12 +329,13 @@ func _select_object(por: PopochiuObjectRow) -> void:
 
 
 func _open_settings() -> void:
-	ei.edit_resource(PopochiuResources.get_settings())
+	EditorInterface.edit_resource(PopochiuResources.get_settings())
 
 
 func _check_node(node: Node) -> void:
 	if node is PopochiuCharacter and node.get_parent() is Node2D:
 		# The node is a PopochiuCharacter in a room
 		node.set_name.call_deferred('Character%s *' % node.script_name)
-		# TODO: Show something in the Inspector to alert devs about editing this
-		# node.
+
+
+#endregion

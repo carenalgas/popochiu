@@ -2,23 +2,44 @@
 @icon('res://addons/popochiu/icons/prop.png')
 class_name PopochiuProp
 extends PopochiuClickable
-# Visual elements in the Room. Can have interaction.
-# E.g. Background, foreground, a table, a cup, etc.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+## Visual elements in the Room that can have interaction (i.e. the background, the foreground, a
+## table, a cup).
+##
+## When selecting a Prop in the scene tree (Scene dock), Popochiu will enable three buttons in
+## the Canvas Editor Menu: Baseline, Walk to, and Interaction. This can be used to select the child
+## nodes that allow to modify the position of the [member PopochiuClickable.baseline],
+## the position of the [member PopochiuClickable.walk_to_point], and the position and the polygon
+## points of the [b]$InteractionPolygon[/b] child.
 
-signal linked_item_removed(node)
-signal linked_item_discarded(node)
+## Emitted when the [param item] linked to this object (by [member link_to_item]) is removed from
+## the inventory. This may happen when the inventory item dissapears forever from the game.
+signal linked_item_removed(item: PopochiuInventoryItem)
+## Emitted when the [param item] linked to this object (by [member link_to_item]) is discarded from
+## the inventory. This may happen when the inventory item dissapears forever from the game.
+signal linked_item_discarded(item: PopochiuInventoryItem)
 
+## The image to use as the [member Sprite2D.texture] of the [b]$Sprite2D[/b] child.
 @export var texture: Texture2D : set = set_texture
+## The number of horizontal frames this node's texture image has. Modifying this will change the
+## value of the [member Sprite2D.hframes] property in the [b]$Sprite2D[/b] child.
 @export var frames := 1 : set = set_frames
+## The number of vertical frames this node's texture image has. Modifying this will change the
+## value of the [member Sprite2D.vframes] property in the [b]$Sprite2D[/b] child.
 @export var v_frames := 1 : set = set_v_frames
-@export var current_frame := 0: set = set_current_frame # (int, 0, 99)
+## The current frame to use as the texture of this node. Modifying this will change the value of the
+## [member Sprite2D.frame] property in the [b]$Sprite2D[/b] child. Trying to assign a value lesser
+## than 0 will make this property to be 0, and trying to assign a value higher than the number of
+## total frames will make this property to be [code](frames + v_frames) - 1[/code].
+@export var current_frame := 0: set = set_current_frame
+## Links the prop to a [PopochiuInventoryItem] by its [member PopochiuInventoryItem.script_name].
+## This will make the prop disappear from the room, depending on whether or not said inventory item
+## is inside the inventory.
 @export var link_to_item := ''
 
 @onready var _sprite: Sprite2D = $Sprite2D
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	add_to_group('props')
@@ -46,26 +67,40 @@ func _ready() -> void:
 			disable()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
+## Called when the [PopochiuInventoryItem] linked to this prop is removed from the inventory.
+## [i]Virtual[/i].
 func _on_linked_item_removed() -> void:
 	pass
 
 
+## Called when the [PopochiuInventoryItem] linked to this prop is discarded from the inventory.
+## [i]Virtual[/i].
 func _on_linked_item_discarded() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
+## Changes the value of the [member Sprite2D.frame] property to [param new_frame] in the
+## [b]$Sprite2D[/b] child.
+## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_frame(new_frame: int) -> Callable:
 	return func (): await change_frame(new_frame)
 
-
+## Changes the value of the [member Sprite2D.frame] property to [param new_frame] in the
+## [b]$Sprite2D[/b] child.
 func change_frame(new_frame: int) -> void:
 	self.current_frame = new_frame
 	await get_tree().process_frame
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func set_texture(value: Texture2D) -> void:
 	texture = value
 	$Sprite2D.texture = value
@@ -90,7 +125,9 @@ func set_current_frame(value: int) -> void:
 	$Sprite2D.frame = current_frame
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _on_item_added(item: PopochiuInventoryItem, _animate: bool) -> void:
 	if item.script_name == link_to_item:
 		disable()
@@ -108,3 +145,6 @@ func _on_item_discarded(item: PopochiuInventoryItem) -> void:
 		
 		_on_linked_item_discarded()
 		linked_item_discarded.emit(self)
+
+
+#endregion

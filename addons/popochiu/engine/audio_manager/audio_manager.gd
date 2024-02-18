@@ -1,10 +1,10 @@
-# Handles playing audio with AudioCues.
-# 
+class_name PopochiuAudioManager
+extends Node
+@warning_ignore("return_value_discarded")
+## Handles playing audio with AudioCues.
+
 # TODO: Create AudioHandle so each AudioCue has its own AudioStreamPlayer...
 # http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
-extends Node
-class_name PopochiuAudioManager
-@warning_ignore("return_value_discarded")
 
 const TEMP_PLAYER := "temporal"
 const AudioCue := preload('audio_cue.gd')
@@ -83,8 +83,8 @@ func play_music_cue(
 	
 	if _mx_cues.has(cue_name.to_lower()):
 		var cue: AudioCue = _mx_cues[cue_name.to_lower()]
-		# FIX: #27 AudioCues were losing the volume set in editor when played
-		# with a fade
+		# NOTE: fixes #27 AudioCues were losing the volume set in editor when
+		# played with a fade
 		cue.volume = _dflt_volumes[cue_name.to_lower()]
 		if fade_duration > 0.0:
 			stream_player = _fade_in(
@@ -189,7 +189,10 @@ func semitone_to_pitch(pitch: float) -> float:
 func set_bus_volume_db(bus_name: String, value: float) -> void:
 	if volume_settings.has(bus_name):
 		volume_settings[bus_name] = value
-		AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus_name), volume_settings[bus_name])
+		AudioServer.set_bus_volume_db(
+			AudioServer.get_bus_index(bus_name), volume_settings[bus_name]
+		)
+
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
@@ -370,6 +373,9 @@ func load_sound_settings():
 		for bus_idx in range(AudioServer.get_bus_count()):
 			var bus_name = AudioServer.get_bus_name(bus_idx)
 			if volume_settings.has(bus_name):
-				AudioServer.set_bus_volume_db(AudioServer.get_bus_index(bus_name),volume_settings[bus_name])
+				AudioServer.set_bus_volume_db(
+					AudioServer.get_bus_index(bus_name),
+					volume_settings[bus_name]
+				)
 			else:
 				volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)

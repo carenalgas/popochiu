@@ -1,9 +1,7 @@
 extends EditorInspectorPlugin
 
-var ei: EditorInterface
 
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#region Virtual ####################################################################################
 func _can_handle(object: Object) -> bool:
 	if object is PopochiuCharacter:
 		return true
@@ -51,13 +49,22 @@ func _parse_property(
 	usage,
 	wide: bool
 ) -> bool:
-	if object and object.get_parent() is Node2D and path != 'position':
+	# NOTE: We could add this as an option of the plugin settings. So devs can add extra properties
+	# 		if needed.
+	if object and object.get_parent() is Node2D and not path in [
+		'position', 'visible', 'modulate', 'self_modulate', 'light_mask'
+	]:
 		return true
 	
 	return false
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _open_scene(path: String) -> void:
-	ei.set_main_screen_editor('2D')
-	ei.open_scene_from_path(path)
+	EditorInterface.set_main_screen_editor('2D')
+	EditorInterface.open_scene_from_path(path)
+
+
+#endregion

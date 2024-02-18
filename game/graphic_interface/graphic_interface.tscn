@@ -1,0 +1,434 @@
+[gd_scene load_steps=54 format=3 uid="uid://w4vph8t0uaub"]
+
+[ext_resource type="Script" path="res://game/graphic_interface/graphic_interface.gd" id="2_b3x8b"]
+[ext_resource type="Texture2D" uid="uid://so0hhy035mq1" path="res://game/graphic_interface/images/simple_click_cursor.png" id="2_kyed4"]
+[ext_resource type="PackedScene" uid="uid://d3yjs0vlxlgxu" path="res://game/graphic_interface/components/dialog_text/dialog_text.tscn" id="3_qhj5j"]
+[ext_resource type="PackedScene" uid="uid://rve6gq0durfk" path="res://game/graphic_interface/components/hover_text/hover_text.tscn" id="4_5ybjr"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="4_o7ijp"]
+[ext_resource type="PackedScene" uid="uid://cclfkskv04n4j" path="res://game/graphic_interface/components/system_text/system_text.tscn" id="5_caqib"]
+[ext_resource type="PackedScene" uid="uid://b1xkub0t6tflc" path="res://game/graphic_interface/components/dialog_menu/dialog_menu.tscn" id="6_1g66p"]
+[ext_resource type="FontFile" uid="uid://duqqonlsions7" path="res://game/graphic_interface/fonts/monkeyisland_1991.ttf" id="6_c7ycl"]
+[ext_resource type="PackedScene" uid="uid://dskkqohop5a6" path="res://game/graphic_interface/components/inventory_bar/inventory_bar.tscn" id="7_6b4ft"]
+[ext_resource type="Script" path="res://game/graphic_interface/components/hover_text/hover_text.gd" id="7_mccyk"]
+[ext_resource type="PackedScene" uid="uid://cowy6htnqv78b" path="res://game/graphic_interface/components/settings_bar/settings_bar.tscn" id="8_dwmyr"]
+[ext_resource type="Script" path="res://game/graphic_interface/components/system_text/system_text.gd" id="9_46qvx"]
+[ext_resource type="PackedScene" uid="uid://bj42y1qtsx3x2" path="res://game/graphic_interface/components/popups/history_popup/history_popup.tscn" id="9_ccht7"]
+[ext_resource type="PackedScene" uid="uid://bk7eqvkxnhndf" path="res://game/graphic_interface/components/popups/save_and_load_popup/save_and_load_popup.tscn" id="10_ryfro"]
+[ext_resource type="Script" path="res://game/graphic_interface/components/dialog_menu/dialog_menu.gd" id="11_10fqj"]
+[ext_resource type="PackedScene" uid="uid://r468b35wewe0" path="res://game/graphic_interface/components/popups/sound_settings_popup/sound_settings_popup.tscn" id="11_w3i38"]
+[ext_resource type="PackedScene" uid="uid://cr2m24odoj6o1" path="res://game/graphic_interface/components/dialog_menu/dialog_menu_option.tscn" id="12_2e4ti"]
+[ext_resource type="Texture2D" uid="uid://biphyw4pamlil" path="res://game/graphic_interface/components/inventory_bar/inventory_bg.png" id="14_kxc06"]
+[ext_resource type="Script" path="res://game/graphic_interface/components/inventory_bar/inventory_bar.gd" id="15_d88ft"]
+[ext_resource type="Texture2D" uid="uid://cpkkog3lv6764" path="res://game/graphic_interface/components/settings_bar/sprites/toolbar_bg.png" id="17_vv3ec"]
+[ext_resource type="Script" path="res://game/graphic_interface/components/settings_bar/settings_bar.gd" id="18_sbgjd"]
+[ext_resource type="Script" path="res://game/graphic_interface/components/popups/history_popup/history_popup.gd" id="20_xlkkf"]
+[ext_resource type="PackedScene" uid="uid://b8uu14sad35m" path="res://game/graphic_interface/components/popups/history_popup/components/dialog_line.tscn" id="21_4iuoo"]
+[ext_resource type="PackedScene" uid="uid://cmxgxf1530o6j" path="res://game/graphic_interface/components/popups/history_popup/components/interaction_line.tscn" id="22_4xic3"]
+[ext_resource type="Script" path="res://game/graphic_interface/components/popups/save_and_load_popup/save_and_load_popup.gd" id="24_cejkv"]
+[ext_resource type="Script" path="res://game/graphic_interface/components/popups/sound_settings_popup/sound_settings_popup.gd" id="26_iyvep"]
+
+[sub_resource type="AtlasTexture" id="10"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="11"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="12"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="15"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="16"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t3qtx"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(576, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="4"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="5"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(224, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="18"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(256, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="17"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(288, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="9"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="2"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(320, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="3"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(352, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="14"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(384, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="19"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(416, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="6"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(448, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="7"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(480, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="13"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(512, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="8"]
+atlas = ExtResource("2_kyed4")
+region = Rect2(544, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1bbe3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("10")
+}, {
+"duration": 1.0,
+"texture": SubResource("11")
+}, {
+"duration": 1.0,
+"texture": SubResource("12")
+}, {
+"duration": 1.0,
+"texture": SubResource("12")
+}, {
+"duration": 1.0,
+"texture": SubResource("11")
+}],
+"loop": true,
+"name": &"active",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("15")
+}, {
+"duration": 1.0,
+"texture": SubResource("16")
+}],
+"loop": true,
+"name": &"down",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t3qtx")
+}],
+"loop": true,
+"name": &"gui",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("4")
+}, {
+"duration": 1.0,
+"texture": SubResource("5")
+}],
+"loop": true,
+"name": &"left",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("18")
+}],
+"loop": false,
+"name": &"look",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("17")
+}],
+"loop": false,
+"name": &"none",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("9")
+}],
+"loop": false,
+"name": &"normal",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("2")
+}, {
+"duration": 1.0,
+"texture": SubResource("3")
+}],
+"loop": true,
+"name": &"right",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("14")
+}],
+"loop": false,
+"name": &"search",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("19")
+}],
+"loop": false,
+"name": &"talk",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("6")
+}, {
+"duration": 1.0,
+"texture": SubResource("7")
+}],
+"loop": true,
+"name": &"up",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("13")
+}],
+"loop": false,
+"name": &"use",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("8")
+}],
+"loop": false,
+"name": &"wait",
+"speed": 5.0
+}]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4eue6"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+corner_detail = 4
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b2awe"]
+bg_color = Color(0, 0, 0.6, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_75cei"]
+content_margin_left = 3.0
+content_margin_top = 1.0
+content_margin_right = 3.0
+content_margin_bottom = 5.0
+texture = ExtResource("14_kxc06")
+texture_margin_left = 11.0
+texture_margin_top = 1.0
+texture_margin_right = 1.0
+region_rect = Rect2(0, 0, 36, 24)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3b8bi"]
+content_margin_left = 3.0
+content_margin_right = 3.0
+texture = ExtResource("17_vv3ec")
+texture_margin_left = 1.0
+texture_margin_top = 1.0
+texture_margin_right = 11.0
+texture_margin_bottom = 5.0
+region_rect = Rect2(0, 0, 36, 24)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_roir4"]
+bg_color = Color(0, 0, 0, 0.498039)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u4bt4"]
+bg_color = Color(0, 0, 0, 0.498039)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ceuxp"]
+bg_color = Color(0, 0, 0, 0.498039)
+
+[node name="GraphicInterface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_b3x8b")
+
+[node name="Cursor" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_1bbe3")
+animation = &"gui"
+
+[node name="DialogText" type="Control" parent="." groups=["popochiu_gui_component"] instance=ExtResource("3_qhj5j")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("4_o7ijp")
+
+[node name="HoverText" type="RichTextLabel" parent="." groups=["popochiu_gui_component"] instance=ExtResource("4_5ybjr")]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -19.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme = ExtResource("4_o7ijp")
+theme_override_fonts/normal_font = ExtResource("6_c7ycl")
+bbcode_enabled = true
+text = "[center]text for hovered objects[/center]"
+scroll_active = false
+script = ExtResource("7_mccyk")
+
+[node name="SystemText" type="RichTextLabel" parent="." groups=["popochiu_gui_component"] instance=ExtResource("5_caqib")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -12.0
+offset_right = 120.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_o7ijp")
+theme_override_fonts/normal_font = ExtResource("6_c7ycl")
+theme_override_styles/normal = SubResource("StyleBoxFlat_4eue6")
+bbcode_enabled = true
+text = "[center]Text from the game itself[/center]"
+fit_content = true
+scroll_active = false
+script = ExtResource("9_46qvx")
+
+[node name="DialogMenu" type="PanelContainer" parent="." groups=["popochiu_gui_component"] instance=ExtResource("6_1g66p")]
+visible = false
+custom_minimum_size = Vector2(0, 53)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("4_o7ijp")
+theme_override_styles/panel = SubResource("StyleBoxFlat_b2awe")
+script = ExtResource("11_10fqj")
+option_scene = ExtResource("12_2e4ti")
+used = Color(0.698039, 0.698039, 0.698039, 1)
+
+[node name="InventoryBar" type="PanelContainer" parent="." groups=["popochiu_gui_component"] instance=ExtResource("7_6b4ft")]
+texture_filter = 1
+layout_mode = 0
+offset_left = 4.0
+offset_right = 40.0
+offset_bottom = 24.0
+theme = ExtResource("4_o7ijp")
+theme_override_styles/panel = SubResource("StyleBoxTexture_75cei")
+script = ExtResource("15_d88ft")
+
+[node name="SettingsBar" type="PanelContainer" parent="." groups=["popochiu_gui_component"] instance=ExtResource("8_dwmyr")]
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -126.0
+offset_right = -4.0
+offset_bottom = 24.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxTexture_3b8bi")
+script = ExtResource("18_sbgjd")
+
+[node name="Popups" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="HistoryPopup" type="PanelContainer" parent="Popups" groups=["popochiu_gui_popup"] instance=ExtResource("9_ccht7")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_o7ijp")
+theme_override_styles/panel = SubResource("StyleBoxFlat_roir4")
+script = ExtResource("20_xlkkf")
+dialog_line = ExtResource("21_4iuoo")
+interaction_line = ExtResource("22_4xic3")
+
+[node name="SaveAndLoadPopup" type="PanelContainer" parent="Popups" groups=["popochiu_gui_popup"] instance=ExtResource("10_ryfro")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_o7ijp")
+theme_override_styles/panel = SubResource("StyleBoxFlat_u4bt4")
+script = ExtResource("24_cejkv")
+script_name = &"SaveAndLoadPopup"
+
+[node name="SoundSettingsPopup" type="PanelContainer" parent="Popups" groups=["popochiu_gui_popup"] instance=ExtResource("11_w3i38")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_o7ijp")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ceuxp")
+script = ExtResource("26_iyvep")

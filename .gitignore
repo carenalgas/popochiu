@@ -1,7 +1,7 @@
 # Addons other than Popochiu
 # (we use some for development)
-# addons/**
-# !addons/popochiu/**
+# addons/*
+# !addons/popochiu/
 
 # Godot-specific ignores
 .import/
@@ -31,3 +31,13 @@ Thumbs.db
 # Project-specific ignores
 popochiu
 popochiu/**
+game
+game/**
+
+# Documentation ignores
+docs/**/*.import
+docs/**/scripting-reference/*.md
+!docs/**/scripting-reference/index.md
+Collector*.gd
+ReferenceCollectorCLI*.gd
+reference.json

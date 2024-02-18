@@ -12,13 +12,14 @@ func _export_begin(features: PackedStringArray, is_debug: bool, path: String, fl
 # Logic for Aseprite Importer
 # This code removes importer's metadata from nodes before exporting them
 # Thanks to Vinicius Gerevini and his Aseprite Wizard plugin for that!
+# This code is run independent of the importer to be enabled, to clean things up.
 # TODO: may be moved to another file so we keep things separated
 func _export_file(path: String, type: String, features: PackedStringArray) -> void:
 	if type != "PackedScene": return
 
 	var scene : PackedScene =  ResourceLoader.load(path, type, 0)
 	var scene_changed := false
-	var root_node: Node = scene.instance(PackedScene.GEN_EDIT_STATE_INSTANCE)
+	var root_node: Node = scene.instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	var nodes := [root_node]
 
 	#remove metadata from scene
@@ -44,6 +45,7 @@ func _export_file(path: String, type: String, features: PackedStringArray) -> vo
 
 	root_node.free()
 
+
 func _remove_meta(node:Node, path: String) -> bool:
 	if node.has_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME):
 		node.remove_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME)
@@ -51,6 +53,7 @@ func _remove_meta(node:Node, path: String) -> bool:
 		return true
 
 	return false
+
 
 func _get_scene_content(path:String, scene:PackedScene) -> PackedByteArray:
 	var tmp_path = OS.get_cache_dir()  + "tmp_scene." + path.get_extension()

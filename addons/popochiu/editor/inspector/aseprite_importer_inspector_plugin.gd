@@ -1,30 +1,49 @@
 extends EditorInspectorPlugin ## TODO: create a base class with pointer variables
 
-const INSPECTOR_DOCK = preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_player_inspector_dock.tscn")
+const DOCKS_PATH := "res://addons/popochiu/editor/importers/aseprite/docks/"
+const INSPECTOR_DOCK = preload(DOCKS_PATH + "aseprite_importer_inspector_dock.tscn")
 const CONFIG_SCRIPT = preload("res://addons/popochiu/editor/config/config.gd")
+const INSPECTOR_DOCK_CHARACTER := DOCKS_PATH + "aseprite_importer_inspector_dock_character.gd"
+const INSPECTOR_DOCK_ROOM := DOCKS_PATH + "aseprite_importer_inspector_dock_room.gd"
 
-var ei: EditorInterface
-var fs: EditorFileSystem
+
 var config: RefCounted
+var main_dock: Panel
 var _target_node: Node
-	
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+
+
+#region Virtual ####################################################################################
 func _can_handle(object):
 	if object.has_method("get_parent") and object.get_parent() is Node2D:
 		return false
-	return object is PopochiuCharacter #|| object is PopochiuInventoryItem || object is PopochiuProp
+	
+	return object is PopochiuCharacter || object is PopochiuRoom #|| object is PopochiuInventoryItem
 
 
-func _parse_begin(object):
+func _parse_begin(object: Object):
 	_target_node = object
 
-func _parse_category(object, category):
-	if category == 'Aseprite':
-		var dock = INSPECTOR_DOCK.instantiate()
-		dock.target_node = object
-		dock.config = config
-		dock.file_system = fs
-		add_custom_control(dock)
 
 func _parse_property(object, type, name, hint_type, hint_string, usage_flags, wide):
-	return name == 'popochiu_placeholder'
+	if name != 'popochiu_placeholder': return false
+
+	# Instanciate and configure the dock
+	var dock = INSPECTOR_DOCK.instantiate()
+
+	# Load the specific script in the dock
+	if object is PopochiuCharacter:
+		dock.set_script(load(INSPECTOR_DOCK_CHARACTER))
+	if object is PopochiuRoom:
+		dock.set_script(load(INSPECTOR_DOCK_ROOM))
+
+	dock.target_node = object
+	dock.config = config
+	dock.file_system = EditorInterface.get_resource_filesystem()
+	dock.main_dock = main_dock # TODO: change for SignalBus
+
+	# Add the dock to the inspector
+	add_custom_control(dock)
+	return true
+
+
+#endregion

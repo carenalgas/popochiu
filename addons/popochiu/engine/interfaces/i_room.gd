@@ -1,12 +1,12 @@
 # (R) Data and functions to work with rooms.
 extends Node
 
-var current: PopochiuRoom = null
+var current: PopochiuRoom = null : set = set_current
 
 var _room_instances := {}
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#region Public #####################################################################################
 func get_prop(prop_name: String) -> PopochiuProp:
 	return current.get_prop(prop_name)
 
@@ -70,3 +70,15 @@ func clear_instances() -> void:
 		(_room_instances[r] as PopochiuRoom).free()
 	
 	_room_instances.clear()
+
+
+#endregion
+
+#region SetGet #####################################################################################
+func set_current(value: PopochiuRoom) -> void:
+	current = value
+	
+	E.goto_room(current.script_name)
+
+
+#endregion

@@ -1,6 +1,6 @@
-# Popochiu 2 (alpha 5)
+# Popochiu 2 (beta 1)
 
-[![Godot v4.0.x](https://img.shields.io/badge/Godot-4.0.x-blue)](https://godotengine.org/download/archive/4.0.4-stable/) [![Godot v4.1.x](https://img.shields.io/badge/Godot-4.1.x-blue)](https://godotengine.org/download) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
+[![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.0.4-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
 ![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_2_hero-en.png "Popochiu")
 
@@ -30,7 +30,7 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 **Popochiu works on Godot 3.3.x to 3.5.x**. **And now in Godot 4 too!!!**
 
-1. Godot 4 users can download [Popochiu 2.0 Alpha 5](https://github.com/mapedorr/popochiu/releases/download/v2.0-alpha5/popochiu_v2.0-alpha5.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10](https://github.com/mapedorr/popochiu/releases/download/v1.10.0/popochiu-v1.10.0.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Godot 4.2 users can download [Popochiu 2.0 - Beta 1](https://github.com/mapedorr/popochiu/releases/download/v2.0.0-beta1/popochiu_v2.0.0-beta1.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10.1](https://github.com/mapedorr/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins` (the tab on the top).
 4. Restart Godot `Project > Reload Current Project`.
@@ -40,7 +40,7 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 # What's new in the latest stable version
 
-[![New features in 1.10](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.10_button-en.png)](https://youtu.be/4pmjqYwXWHU "New features in v1.10.0")
+[![New features in 1.10](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.10_button-en.png)](https://youtu.be/4pmjqYwXWHU "New features in v1.10")
 
 
 
@@ -50,18 +50,35 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 You can follow the tutorials (English subs) [in this list](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) to learn:
 
-- How to setup your project.
-- How to create rooms where the player can walk around, and how to setup them if the exceed the limits of the game window.
-- How to create characters and play their voices when they talk.
-- How to create Props and Hotspots to interact with the environment.
-- How to create Inventory items and how to add interactions between them and the Props, Hotspots and Characters of your game.
-- How to create branching dialogs.
-- How to add sound effects, music, voices, and graphic interface sounds.
+- [Install the plugin, create a room, a walkable area, and a character](https://youtu.be/-N62S1DHbcs).
+- [Configure baselines, holes in walkable areas, and create Hotspots](https://youtu.be/5RbqbG3_0ak).
+- [Create interactive Props and an inventory object](https://youtu.be/_an0YF3Bd50).
+- [Create dialogues with options](https://youtu.be/Aql4wh2itF4).
+- [Enable options within a dialogue and use inventory objects](https://youtu.be/Ad_YBG-_wYE).
+- [Add another room and configure the camera to follow the character](https://youtu.be/YFEZaSty3aw).
+- [Add audio](https://youtu.be/VF7V6BJmQVQ).
 
----
+
+
+# Games made with Popochiu
+
+- [Gustavo the Shy Ghost](https://lexibobble.itch.io/gustavo-the-shy-ghost-project) - English.
+- [Detective Paws](https://benjatk.itch.io/detective-paws) - English.
+- [Zappin' da Mubis](https://carenalga.itch.io/zappin-da-mubis) - English.
+- [Reality-On-The-Norm: Ghost of Reality's Past](https://edmundito.itch.io/ron-ghost) (password: `popochiu`) - English.
+- [Breakout (demo)](https://rockyrococo.itch.io/breakout-demo) - English.
+- [Poin'n'Sueldo](https://matata-exe.itch.io/pointnsueldo) - Spanish.
+- [Dr. Rajoy](https://guldann.itch.io/dr-rajoy) - Spanish.
+- [I'm Byron Mental](https://leocantus23.itch.io/im-byron-mental-colombia) - Spanish.
+- [Benito Simulator](https://panconqueso94.itch.io/benito-simulator) - Spanish.
+- [Pato & Lobo](https://perroviejo.itch.io/patolobo) - English and Spanish (this was the first game made with Popochiu!).
+
+
 
 # Credits
 
 Made by [Carenalga](https://mapedorr.itch.io).
 
-Now with the collaboration of [StickGrinder](https://twitter.com/StickGrinder) ([itch.io](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), and [@JuannFerrari](https://github.com/JuannFerrari).
+Now with the collaboration of [StickGrinder](https://twitter.com/StickGrinder) (and other members of [Illiterate Code Games](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), [@JuannFerrari](https://github.com/JuannFerrari), [Whyschuck](https://github.com/Whyshchuck), and our lovely community.
+
+:heart::heart::heart: Special thanks to [Edmundito](https://github.com/edmundito) for his monthly contribution to our [Ko-fi](https://ko-fi.com/carenalga) :heart::heart::heart:

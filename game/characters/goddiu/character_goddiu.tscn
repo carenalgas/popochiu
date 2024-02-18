@@ -1,0 +1,49 @@
+[gd_scene load_steps=4 format=3 uid="uid://df4s3g75ksvhb"]
+
+[ext_resource type="Script" path="res://game/characters/goddiu/character_goddiu.gd" id="1_m800a"]
+[ext_resource type="AnimationLibrary" uid="uid://ddwtxcv0xs66k" path="res://game/characters/goddiu/goddiu_animations.tres" id="2_3l0wa"]
+[ext_resource type="Texture2D" uid="uid://dw76laj7ydlv7" path="res://game/characters/goddiu/goddiu.png" id="2_cnuga"]
+
+[node name="CharacterGoddiu" type="Area2D"]
+script = ExtResource("1_m800a")
+flips_when = 2
+popochiu_placeholder = null
+script_name = "Goddiu"
+description = "Goddiu"
+clickable = false
+cursor = 8
+interaction_polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+
+[node name="ScalingPolygon" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0)
+
+[node name="BaselineHelper" type="Line2D" parent="."]
+points = PackedVector2Array(-10000, 0, 10000, 0)
+width = 1.0
+
+[node name="WalkToHelper" type="Marker2D" parent="."]
+
+[node name="ColorRect" type="ColorRect" parent="WalkToHelper"]
+offset_left = -2.5
+offset_top = -2.5
+offset_right = 2.5
+offset_bottom = 2.5
+color = Color(0, 1, 1, 1)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": ExtResource("2_3l0wa")
+}
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -25)
+texture = ExtResource("2_cnuga")
+hframes = 4
+vframes = 4
+
+[node name="DialogPos" type="Marker2D" parent="."]
+position = Vector2(-4, -48)

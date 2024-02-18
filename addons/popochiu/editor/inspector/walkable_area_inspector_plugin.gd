@@ -1,9 +1,7 @@
 extends EditorInspectorPlugin
 
-var ei: EditorInterface
 
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#region Virtual ####################################################################################
 func _can_handle(object: Object) -> bool:
 	if object is PopochiuWalkableArea or object is NavigationRegion2D:
 		return true
@@ -17,7 +15,9 @@ func _parse_begin(object: Object) -> void:
 		_parse_navigation_polygon_instance(object)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _parse_walkable_area(object: Object) -> void:
 	var panel := PanelContainer.new()
 	var hbox := HBoxContainer.new()
@@ -46,7 +46,7 @@ func _parse_walkable_area(object: Object) -> void:
 func _find_polygon_instance(object: Object) -> void:
 	if not object is PopochiuWalkableArea: return
 	var children = object.get_children()
-	PopochiuUtils.select_node(children[0])
+	PopochiuEditorHelper.select_node(children[0])
 
 
 func _parse_navigation_polygon_instance(object: Object) -> void:
@@ -78,4 +78,7 @@ func _parse_navigation_polygon_instance(object: Object) -> void:
 
 func _back_to_walkable_area(object: Object) -> void:
 	if not object.get_parent() is PopochiuWalkableArea: return
-	PopochiuUtils.select_node(object.get_parent())
+	PopochiuEditorHelper.select_node(object.get_parent())
+
+
+#endregion

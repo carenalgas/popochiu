@@ -8,10 +8,47 @@ var _main_dock: Panel : set = set_main_dock
 @onready var _info: RichTextLabel = find_child('Info')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	register_text_enter(_input)
 	
+	# Connect to own signals
+	confirmed.connect(_create)
+	canceled.connect(clear_fields)
+	close_requested.connect(clear_fields)
+	about_to_popup.connect(on_about_to_popup)
+	
+	# Connect to childs' signals
+	_input.text_changed.connect(_update_name)
+
+
+#endregion
+
+#region Virtual ####################################################################################
+func _create() -> void:
+	pass
+
+
+func _clear_fields() -> void:
+	pass
+
+
+func _on_about_to_popup() -> void:
+	pass
+
+
+#endregion
+
+#region Public #####################################################################################
+func clear_fields() -> void:
+	_input.clear()
+	_error_feedback.hide()
+	_info.clear()
+	_info.size = _info.custom_minimum_size
+	_clear_fields()
+
+
+func on_about_to_popup() -> void:
 	PopochiuUtils.override_font(
 		_info, 'normal_font', get_theme_font("main", "EditorFonts")
 	)
@@ -22,45 +59,29 @@ func _ready() -> void:
 		_info, 'mono_font', get_theme_font("source", "EditorFonts")
 	)
 	
-	confirmed.connect(_create)
-	canceled.connect(clear_fields)
-	close_requested.connect(clear_fields)
-	_input.text_changed.connect(_update_name)
+	_on_about_to_popup()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func _create() -> void:
-	pass
+#endregion
 
-
-func _clear_fields() -> void:
-	pass
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func clear_fields() -> void:
-	_input.clear()
-	_error_feedback.hide()
-	_info.clear()
-	_info.size = _info.custom_minimum_size
-	_clear_fields()
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#region SetGet #####################################################################################
 func set_main_dock(value: Panel) -> void:
 	_main_dock = value
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _update_name(new_text: String) -> void:
 	if _error_feedback.visible:
 		_error_feedback.hide()
 	
-	var casted_name := PackedStringArray()
-	for idx in new_text.length():
-		if idx == 0:
-			casted_name.append(new_text[idx].to_upper())
-		else:
-			casted_name.append(new_text[idx])
+	_name = new_text.to_pascal_case()
 
-	_name = ''.join(casted_name).strip_edges()
+
+func _update_size_and_position() -> void:
+	reset_size()
+	move_to_center()
+
+
+#endregion
