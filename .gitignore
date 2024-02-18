@@ -35,9 +35,9 @@ game
 game/**
 
 # Documentation ignores
-docs/**/*.import
-docs/**/scripting-reference/*.md
-!docs/**/scripting-reference/index.md
+docs-src/**/*.import
+docs-src/**/scripting-reference/*.md
+!docs-src/**/scripting-reference/index.md
 Collector*.gd
 ReferenceCollectorCLI*.gd
 reference.json

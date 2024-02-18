@@ -4,7 +4,7 @@ services:
         ports:
             - 286:80
         volumes:
-            - ./docs:/app
+            - .:/app
         working_dir: /app
         labels:
             - com.dnsdock.alias=docs.popochiu.local

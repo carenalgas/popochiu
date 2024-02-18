@@ -1,4 +1,5 @@
 site_name: Popochiu
+repo_url: https://github.com/carenalgas/popochiu/
 extra_css:
   - _assets/css/custom.css
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css
@@ -18,4 +19,5 @@ plugins:
   - search
   - mkdocs-nav-weight
 theme: readthedocs
-docs_dir: content
+docs_dir: docs-src/content
+site_dir: docs
