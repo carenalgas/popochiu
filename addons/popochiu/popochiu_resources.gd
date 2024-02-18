@@ -493,16 +493,6 @@ static func get_section_keys(section: String) -> Array:
 	return keys
 
 
-static func get_section_keys(section: String) -> Array:
-	var keys := []
-	var config := get_data_cfg()
-	
-	if config.has_section(section):
-		keys = config.get_section_keys(section)
-	
-	return keys
-
-
 # ▨▨▨▨ SETTINGS ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
 static func get_settings() -> PopochiuSettings:
 	return load(SETTINGS) as PopochiuSettings
