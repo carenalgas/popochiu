@@ -34,7 +34,7 @@ Please remember to install Docker as well as the Compose plugin.
 
 Make is provided by the `build-essential` metapackage on Ubuntu and derivatives, while on Arch and derivatives you can install `base-devel`:
 
-* **Ubuntu**: `sudo apt install build-essentials`
+* **Ubuntu**: `sudo apt install build-essential`
 * **Arch**: `sudo pacman -Sy base-devel`
 
 That's it. You can go to the "Run the docs" section to learn how to run your dock.
