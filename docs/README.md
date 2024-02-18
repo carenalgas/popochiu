@@ -34,7 +34,7 @@ Please remember to install Docker as well as the Compose plugin.
 
 Make is provided by the `build-essential` metapackage on Ubuntu and derivatives, while on Arch and derivatives you can install `base-devel`:
 
-* **Ubuntu**: `sudo apt install build-essentials`
+* **Ubuntu**: `sudo apt install build-essential`
 * **Arch**: `sudo pacman -Sy base-devel`
 
 That's it. You can go to the "Run the docs" section to learn how to run your dock.
@@ -78,17 +78,37 @@ About Make, there are different ways to install it:
 
 To run the documentation, just enter the project's directory and issue this command:
 
-> `make local-docs-up'
+> `make docs-up'
 
 This will start the Docker container, and will bind port 286 of the host to the running instance of MkDocs in the container. To view the docs live in your browser, just visit [http://localhost:286](http://localhost:286).
 
 To stop the container service, just issue
 
-> `make local-docs-down`
+> `make docs-down`
 
 The documentation supports live reloading, so your browser will automatically update when you save a file you're working on, create a new file or folder.
 
 Please, read the contribution rules before pushing changes to Popochiu Documentation.
+
+## How to export scripting reference to the local development environment
+
+Scripting reference is automatically exported by GitHub Actions when the doc is published to production.  
+Should you want to export the refs locally to preview your work on the docs, a make command is available for that.
+
+**IMPORTANT:** a preliminary step to export the scripting reference is to build the necessary docker image. For that, issue:
+
+> `make gdm-build`
+
+and wait for the build to end successfully. Once it's done you can issue:
+
+> `make gdm-generate`
+
+to export all of the engine API docs to markdown format.  
+The exported refereces will be available in `The Engine Handbook > Scripting Reference` section of the documentation.
+
+**NOTE**: There is no live-reload of the source code. If you change the docblocks in the engine's source files, you will have to manually export local refs again.
+
+**NOTE**: Locally generated exports are ignored by Git.
 
 ## How to publish the documentation to production
 

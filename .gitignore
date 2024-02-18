@@ -33,3 +33,11 @@ popochiu
 popochiu/**
 game
 game/**
+
+# Documentation ignores
+docs/**/*.import
+docs/**/scripting-reference/*.md
+!docs/**/scripting-reference/index.md
+Collector*.gd
+ReferenceCollectorCLI*.gd
+reference.json
