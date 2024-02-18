@@ -360,7 +360,7 @@ func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 	elif child is PopochiuCharacter:
 		# Get the script_name of the character
 		var char_name: String =\
-		child.name.lstrip('Character').rstrip(' *')
+		child.name.trim_prefix('Character').rstrip(' *')
 		_characters_in_room.append(char_name)
 
 		# Create the row for the character
