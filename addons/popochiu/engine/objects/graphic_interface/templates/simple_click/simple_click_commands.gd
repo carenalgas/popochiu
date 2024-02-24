@@ -2,8 +2,9 @@ class_name SimpleClickCommands
 extends PopochiuCommands
 ## Defines the commands and fallback methods for the 2-click Context-sensitive GUI.
 ##
-## This GUI makes objects react depending on the mouse button pressed when interacting with them.
-## Examples of this GUI are: Beneath A Steel Sky, Broken Sword Shadow of the Templars.
+## In this GUI, players interact with objects in the game based on the clicked mouse button.
+## Usually, the left click is used to INTERACT with objects, while the RIGHT click is used to
+## EXAMINE objects. This behavior is based on the one used in Beneath A Steel Sky and Broken Sword.
 
 
 #region Public #####################################################################################

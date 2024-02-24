@@ -1,6 +1,10 @@
 class_name SimpleClickGUI
 extends PopochiuGraphicInterface
 ## Defines the behavior of the 2-click Context-sensitive GUI.
+##
+## In this GUI, players interact with objects in the game based on the clicked mouse button. The
+## inventory bar is in the top left corner of the screen, and the settings bar is in the top right
+## corner of the screen.
 
 
 #region Godot ######################################################################################

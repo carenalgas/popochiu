@@ -17,7 +17,7 @@ static func get_script_name() -> String:
 	return "PopochiuCommands"
 
 
-## Called by [Popochiu] when a command doesn't have an associated method.
+## Called by [Popochiu] when a command doesn't have an associated [Callable].
 func fallback() -> void:
 	PopochiuUtils.print_normal("[rainbow]The default Popochiu command fallback[/rainbow]")
 
