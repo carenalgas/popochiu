@@ -1,9 +1,13 @@
 class_name SimpleClickCommands
 extends PopochiuCommands
-## Defines the commands and fallback methods for the Simple-click/Context-sensitive GUI.
+## Defines the commands and fallback methods for the 2-click Context-sensitive GUI.
+##
+## This GUI makes objects react depending on the mouse button pressed when interacting with them.
+## Examples of this GUI are: Beneath A Steel Sky, Broken Sword Shadow of the Templars.
 
 
-## Called when `E.command_fallback()` is triggered.
+#region Public #####################################################################################
+## Called by [Popochiu] when a command doesn't have an associated method.
 func fallback() -> void:
 	if is_instance_valid(E.clicked):
 		if E.clicked.last_click_button == MOUSE_BUTTON_LEFT:
@@ -17,21 +21,24 @@ func fallback() -> void:
 			right_click_inventory_item()
 
 
-## Called when players click (LMB) a `PopochiuClickable`.
+## Called when players click (LMB) a [PopochiuClickable].
 func click_clickable() -> void:
 	await G.show_system_text("Can't INTERACT with it")
 
 
-## Called when players right click (RMB) a `PopochiuClickable`.
+## Called when players right click (RMB) a [PopochiuClickable].
 func right_click_clickable() -> void:
 	await G.show_system_text("Can't EXAMINE it")
 
 
-## Called when players click (LMB) a `PopochiuInvenoryItem`.
+## Called when players click (LMB) a [PopochiuInvenoryItem].
 func click_inventory_item() -> void:
 	I.clicked.set_active()
 
 
-## Called when players right click (RMB) a `PopochiuInvenoryItem`.
+## Called when players right click (RMB) a [PopochiuInvenoryItem].
 func right_click_inventory_item() -> void:
 	await G.show_system_text('Nothing to see in this item')
+
+
+#endregion
