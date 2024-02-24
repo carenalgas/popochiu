@@ -1,1 +1,0 @@
-extends "res://addons/popochiu/engine/objects/graphic_interface/components/popups/sound_settings_popup/sound_settings_popup.gd"

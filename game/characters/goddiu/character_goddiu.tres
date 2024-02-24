@@ -1,9 +1,0 @@
-[gd_resource type="Resource" load_steps=2 format=3 uid="uid://xlq53w1k0nld"]
-
-[ext_resource type="Script" path="res://game/characters/goddiu/character_goddiu_state.gd" id="1_522nh"]
-
-[resource]
-resource_name = "Goddiu"
-script = ExtResource("1_522nh")
-script_name = "Goddiu"
-scene = "res://game/characters/goddiu/character_goddiu.tscn"
