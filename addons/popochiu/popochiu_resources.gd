@@ -289,25 +289,6 @@ static func update_autoloads(save := false) -> void:
 	var code := s.source_code
 	var modified := false
 	
-	# --- fix #53 --------------------------------------------------------------
-#	# Add the AudioCueSound and AudioCueMusic constants
-#	if code.find('const AudioCueSound') < 0:
-#		modified = true
-#
-#		code = code.insert(
-#			code.find('# ---- classes'),
-#			'const AudioCueSound := preload("%s")\n' % AUDIO_CUE_SOUND
-#		)
-	
-#	if code.find('const AudioCueMusic') < 0:
-#		modified = true
-#
-#		code = code.insert(
-#			code.find('# ---- classes'),
-#			'const AudioCueMusic := preload("%s")\n' % AUDIO_CUE_MUSIC
-#		)
-	# -------------------------------------------------------------- fix #53 ---
-	
 	var old_audio_cues := []
 	
 	# Add all the AudioCues as variables

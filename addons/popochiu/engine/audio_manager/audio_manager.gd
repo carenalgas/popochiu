@@ -1,9 +1,9 @@
 class_name PopochiuAudioManager
 extends Node
+## Handles playing audio using [PopochiuAudioCue]s.
 @warning_ignore("return_value_discarded")
-## Handles playing audio with AudioCues.
 
-# TODO: Create AudioHandle so each AudioCue has its own AudioStreamPlayer...
+# TODO: Create AudioHandle so each PopochiuAudioCue has its own AudioStreamPlayer...
 # http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
 
 const TEMP_PLAYER := "temporal"
@@ -25,7 +25,8 @@ var _dflt_volumes := {}
 var settings_path = "user://audio_settings.save"
 var volume_settings := {}
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+
+#region Godot ######################################################################################
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
 
@@ -41,7 +42,9 @@ func _ready() -> void:
 			_dflt_volumes[ac.resource_name] = ac.volume
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 # Looks for an AudioCue and plays it if found. It also can wait until it
 # finishes playing.
 # If wait_to_end is not null, that means the call is comming from a play
@@ -194,10 +197,37 @@ func set_bus_volume_db(bus_name: String, value: float) -> void:
 		)
 
 
+func save_sound_settings():
+	var file = FileAccess.open(settings_path, FileAccess.WRITE)
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-# Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if
-# there are no more
+	if file == null:
+		printerr("Error opening file: " + settings_path)
+	else:
+		file.store_var(volume_settings)
+		file.close()
+
+
+func load_sound_settings():
+	var file = FileAccess.open(settings_path, FileAccess.READ)
+
+	if file:
+		volume_settings = file.get_var(true)
+		file.close()
+		for bus_idx in range(AudioServer.get_bus_count()):
+			var bus_name = AudioServer.get_bus_name(bus_idx)
+			if volume_settings.has(bus_name):
+				AudioServer.set_bus_volume_db(
+					AudioServer.get_bus_index(bus_name),
+					volume_settings[bus_name]
+				)
+			else:
+				volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)
+
+
+#endregion
+
+#region Private ####################################################################################
+# Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if there are no more.
 func _play(
 	cue: AudioCue, position := Vector2.ZERO, from_position := 0.0
 ) -> Node:
@@ -257,8 +287,8 @@ func _get_free_stream(group: Node):
 	return _reparent(group, $Active, 0)
 
 
-## Reassigns the AudioStreamPlayer to its original group when it finishes so it
-## can be available for being used
+# Reassigns the [AudioStreamPlayer] to its original group when it finishes so it can be available
+# for being used again.
 func _on_audio_stream_player_finished(
 	stream_player: Node, cue_name: String, _debug_idx: int
 ) -> void:
@@ -354,28 +384,4 @@ func _fadeout_finished(stream_player: Node, tween: Tween) -> void:
 		tween.finished.disconnect(_fadeout_finished)
 
 
-func save_sound_settings():
-	var file = FileAccess.open(settings_path, FileAccess.WRITE)
-
-	if file == null:
-		printerr("Error opening file: " + settings_path)
-	else:
-		file.store_var(volume_settings)
-		file.close()
-
-
-func load_sound_settings():
-	var file = FileAccess.open(settings_path, FileAccess.READ)
-
-	if file:
-		volume_settings = file.get_var(true)
-		file.close()
-		for bus_idx in range(AudioServer.get_bus_count()):
-			var bus_name = AudioServer.get_bus_name(bus_idx)
-			if volume_settings.has(bus_name):
-				AudioServer.set_bus_volume_db(
-					AudioServer.get_bus_index(bus_name),
-					volume_settings[bus_name]
-				)
-			else:
-				volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)
+#endregion
