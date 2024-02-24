@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dpmacim76vvt7"]
-
-[ext_resource type="Script" path="res://game/rooms/outside/walkable_areas/ground/walkable_area_ground.gd" id="1_gftsl"]
-
-[node name="Ground" type="Node2D"]
-script = ExtResource("1_gftsl")
-script_name = "Ground"
-description = "Ground"

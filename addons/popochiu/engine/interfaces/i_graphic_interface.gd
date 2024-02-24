@@ -1,7 +1,5 @@
 extends Node
-## (G) Data and functions to work with the graphic interface.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# warning-ignore-all:unused_signal
+## Allows to work with the in-game graphic interface (GUI) using the autoload [code]G[/code].
 
 signal blocked
 signal unblocked

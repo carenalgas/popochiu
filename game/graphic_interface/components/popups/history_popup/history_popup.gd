@@ -1,1 +1,0 @@
-extends "res://addons/popochiu/engine/objects/graphic_interface/components/popups/history_popup/history_popup.gd"

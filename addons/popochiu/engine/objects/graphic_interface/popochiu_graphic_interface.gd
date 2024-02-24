@@ -1,7 +1,11 @@
 class_name PopochiuGraphicInterface
 extends Control
 ## Handles the in-game Graphic Interface.
+##
+## You can extend this class to create your own GUI, or use one of the built-in templates for:
+## 2-click context-sensitive, 9 verbs and Sierra style.
 
+## Stack of opened popups.
 var popups_stack := []
 
 var _components_map := {}
@@ -49,71 +53,71 @@ func _on_unblocked() -> void:
 	pass
 
 
-## Called to hide the GUI.
+## Called when the GUI is hidden.
 func _on_hidden() -> void:
 	pass
 
 
-## Called to show the GUI.
+## Called when the GUI is shown.
 func _on_shown() -> void:
 	pass
 
 
-## Called when G.show_system_text() is triggered. Shows `msg` in the SystemText
+## Called when [method G.show_system_text] is executed. Shows [param msg] in the [SystemText]
 ## component.
 func _on_system_text_shown(msg: String) -> void:
 	pass
 
 
-## Called once the player closes the SystemText component (by clicking the screen
-## anywhere).
+## Called once the player closes the [SystemText] component by default when clicking anywhere on the
+## screen.
 func _on_system_text_hidden() -> void:
 	pass
 
 
-## Called when the mouse enters (hover) a `clickable`.
+## Called when the mouse enters (hovers) [param clickable].
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	pass
 
 
-## Called when the mouse exits a `clickable`.
+## Called when the mouse exits [param clickable].
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	pass
 
 
-## Called when the mouse enters (hover) an `inventory_item`.
+## Called when the mouse enters (hovers) [param inventory_item].
 func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	pass
 
 
-## Called when the mouse exits an `inventory_item`.
+## Called when the mouse exits [param inventory_item].
 func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	pass
 
 
-## Called when a dialog line is said be a `PopochiuCharacter` (this is when
-## `PopochiuCharacter.say()` is called.
+## Called when a dialog line is said by a [PopochiuCharacter] (this is when
+## [method PopochiuCharacter.say] is called.
 func _on_dialog_line_started() -> void:
 	pass
 
 
-## Called when a dialog line finishes (this is after players click the screen
-## anywhere to make the dialog line dissapear).
+## Called when a dialog line said by a [PopochiuCharacter] finishes (this is after players click the
+## screen anywhere to make the dialog line dissapear).
 func _on_dialog_line_finished() -> void:
 	pass
 
 
-## Called when a `dialog` starts (afet calling `PopochiuDialog.start()`).
+## Called when [param dialog] starts (this is afet calling [method PopochiuDialog.start]).
 func _on_dialog_started(dialog: PopochiuDialog) -> void:
 	pass
 
 
-## Called when a `dialog` finishes (after calling `PopochiuDialog.stop()`).
+## Called when [param dialog] finishes (this is afet calling [method PopochiuDialog.stop]).
 func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 	pass
 
 
-## Called when an `item` in the inventory is selected (i.e. by clicking it).
+## Called when [param item] is selected in the inventory (i.e. by clicking it).
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	pass
 
@@ -121,6 +125,9 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 #endregion
 
 #region Public #####################################################################################
+## Returns the GUI component which [member Node.name] matches [param component_name].
+## GUI components are those nodes that are in any of this groups:
+## [code]popochiu_gui_component[/code] and [code]popochiu_gui_popup[/code].
 func get_component(component_name: String) -> Control:
 	if _components_map.has(component_name):
 		return _components_map[component_name]
