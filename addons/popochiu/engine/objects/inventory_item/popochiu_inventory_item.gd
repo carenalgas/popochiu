@@ -271,9 +271,10 @@ func on_middle_click() -> void:
 
 ## Called when the item is clicked and there is another [param item] currently selected.
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	await G.show_system_text(
-		'Nothing happens when using %s in this item' % item.description
-	)
+	_on_item_used(item)
+	#await G.show_system_text(
+		#'Nothing happens when using %s in this item' % item.description
+	#)
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
@@ -346,7 +347,7 @@ func _on_gui_input(event: InputEvent) -> void:
 		match mouse_event.button_index:
 			MOUSE_BUTTON_LEFT:
 				if I.active:
-					_on_item_used(I.active)
+					on_item_used(I.active)
 				else:
 					handle_command(mouse_event.button_index)
 			MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:

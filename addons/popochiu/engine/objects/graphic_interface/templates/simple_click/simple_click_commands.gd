@@ -24,7 +24,10 @@ func fallback() -> void:
 
 ## Called when players click (LMB) a [PopochiuClickable].
 func click_clickable() -> void:
-	await G.show_system_text("Can't INTERACT with it")
+	if I.active:
+		G.show_system_text("Can't USE %s with %s" % [I.active.description, E.clicked.description])
+	else:
+		await G.show_system_text("Can't INTERACT with it")
 
 
 ## Called when players right click (RMB) a [PopochiuClickable].
@@ -34,7 +37,10 @@ func right_click_clickable() -> void:
 
 ## Called when players click (LMB) a [PopochiuInvenoryItem].
 func click_inventory_item() -> void:
-	I.clicked.set_active()
+	if I.active and I.active != I.clicked:
+		G.show_system_text("Can't USE %s with %s" % [I.active.description, I.clicked.description])
+	else:
+		I.clicked.set_active()
 
 
 ## Called when players right click (RMB) a [PopochiuInvenoryItem].

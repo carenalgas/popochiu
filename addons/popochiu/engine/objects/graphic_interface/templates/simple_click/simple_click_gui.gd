@@ -83,7 +83,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 	
 	if not I.active:
 		G.show_hover_text(inventory_item.description)
-	else:
+	elif I.active != inventory_item:
 		G.show_hover_text(
 			'Use %s with %s' % [I.active.description, inventory_item.description]
 		)
@@ -129,8 +129,10 @@ func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 ## default cursor.
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if is_instance_valid(item):
+		Cursor.set_secondary_cursor_texture(item.texture)
 		Cursor.hide_main_cursor()
 	else:
+		Cursor.remove_secondary_cursor_texture()
 		Cursor.show_cursor()
 
 

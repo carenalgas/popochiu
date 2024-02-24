@@ -55,8 +55,14 @@ func look() -> void:
 ## Called when [code]E.current_command == Commands.INTERACT[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func interact() -> void:
-	if is_instance_valid(I.clicked):
+	if (I.active and I.clicked) and I.active != I.clicked:
+		G.show_system_text("%s can't use %s with %s" % [
+			C.player.description, I.active.description, I.clicked.description
+		])
+		I.clicked = null
+	elif I.clicked:
 		I.clicked.set_active()
+		I.clicked = null
 	else:
 		G.show_system_text("%s doesn't want to do anything with that object" % C.player.description)
 

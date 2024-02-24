@@ -54,6 +54,10 @@ func fallback() -> void:
 ## By default makes the character walk to the clicked [code]PopochiuClickable[/code].
 func walk_to() -> void:
 #	E.get_node("/root/C").walk_to_clicked()
+	if I.active:
+		I.active = null
+		return
+	
 	C.player.walk_to_clicked()
 	
 	await C.player.move_ended
@@ -67,25 +71,25 @@ func walk_to() -> void:
 ## Called when [code]E.current_command == Commands.OPEN[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func open() -> void:
-	C.player.say("Can't open that")
+	await C.player.say("Can't open that")
 
 
 ## Called when [code]E.current_command == Commands.PICK_UP[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func pick_up() -> void:
-	C.player.say("Not picking that up")
+	await C.player.say("Not picking that up")
 
 
 ## Called when [code]E.current_command == Commands.PUSH[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func push() -> void:
-	C.player.say("I don't want to push that")
+	await C.player.say("I don't want to push that")
 
 
 ## Called when [code]E.current_command == Commands.CLOSE[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func close() -> void:
-	C.player.say("Can't close that")
+	await C.player.say("Can't close that")
 
 
 ## Called when [code]E.current_command == Commands.LOOK_AT[/code] and
@@ -94,35 +98,55 @@ func look_at() -> void:
 	if E.clicked:
 		await C.player.face_clicked()
 	
-	if I.clicked:
-		I.clicked.set_active(true)
-		return
-	
 	await C.player.say("I have nothing to say about that")
 
 
 ## Called when [code]E.current_command == Commands.PULL[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func pull() -> void:
-	C.player.say("I don't want to pull that")
+	await C.player.say("I don't want to pull that")
 
 
 ## Called when [code]E.current_command == Commands.GIVE[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func give() -> void:
-	C.player.say("What?")
+	await C.player.say("What?")
 
 
 ## Called when [code]E.current_command == Commands.TALK_TO[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func talk_to() -> void:
-	C.player.say("Emmmm...")
+	await C.player.say("Emmmm...")
 
 
 ## Called when [code]E.current_command == Commands.USE[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func use() -> void:
-	C.player.say("What?")
+	if I.active and E.clicked:
+		use_item_on(I.active, E.clicked)
+	elif I.active and I.clicked and I.active != I.clicked:
+		use_item_on(I.active, I.clicked)
+	elif I.clicked:
+		match I.clicked.last_click_button:
+			MOUSE_BUTTON_LEFT:
+				I.clicked.set_active(true)
+			MOUSE_BUTTON_RIGHT:
+				# TODO: I'm not sure this is the right way to do this. Maybe GUIs should capture
+				# 		click inputs on clickables and inventory items. ----------------------------
+				E.current_command = (
+					I.clicked.suggested_command if I.clicked.get("suggested_command")
+					else Commands.LOOK_AT
+				)
+				
+				I.clicked.handle_command(MOUSE_BUTTON_LEFT)
+				# ----------------------------------------------------------------------------------
+	else:
+		await C.player.say("What?")
+
+
+func use_item_on(_item: PopochiuInventoryItem, _target: Node) -> void:
+	I.active = null
+	await C.player.say("I don't want to do that")
 
 
 #endregion

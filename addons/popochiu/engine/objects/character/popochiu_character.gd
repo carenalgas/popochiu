@@ -701,7 +701,7 @@ func face_direction(destination: Vector2):
 func get_avatar_for_emotion(emo := "") -> Texture:
 	var texture: Texture = null
 	
-	while not texture:
+	while not texture and not avatars.is_empty():
 		for dic in avatars:
 			if dic.emotion == "":
 				texture = dic.avatar

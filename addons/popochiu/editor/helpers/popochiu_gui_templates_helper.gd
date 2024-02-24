@@ -9,9 +9,8 @@ static var _progress_idx := 0
 static var _template_theme_path := ""
 
 #region Public #####################################################################################
-## Create a copy of the selected template, including its components.
-## Also, generate the necessary scripts to define custom logic for the graphical
-## interface and its commands.
+## Creates a copy of the selected template, including its components. Also, generate the necessary
+## scripts to define custom logic for the graphical interface and its commands.
 static func copy_gui_template(template_name: String) -> void:
 	if template_name == PopochiuResources.get_data_value("ui", "template", ""):
 		PopochiuUtils.print_normal("No changes in GUI tempalte.")
@@ -141,10 +140,10 @@ static func _create_progress_window() -> void:
 	EditorInterface.get_base_control().add_child(_progress_window)
 	
 	var label := Label.new()
-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	label.uppercase = true
+	label.custom_minimum_size.x = 512.0
 	label.add_theme_color_override("font_color", Color.WHITE)
+	PopochiuUtils.override_font(label, 'font', label.get_theme_font("source", "EditorFonts"))
 	
 	_animate_progress_text(label)
 	

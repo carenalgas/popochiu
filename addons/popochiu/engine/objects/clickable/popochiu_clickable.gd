@@ -105,7 +105,7 @@ func _unhandled_input(event: InputEvent):
 		match mouse_event.button_index:
 			MOUSE_BUTTON_LEFT:
 				if I.active:
-					_on_item_used(I.active)
+					on_item_used(I.active)
 				else:
 					handle_command(mouse_event.button_index)
 					
@@ -257,7 +257,7 @@ func on_middle_click() -> void:
 
 ## Called when an [param item] is used on this object.
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	await G.show_system_text("Can't USE %s here" % item.description)
+	_on_item_used(item)
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
