@@ -4,10 +4,17 @@ all: up
 
 docs-up:
 	docker compose pull
-	docker compose up -d
+	docker compose up -d --remove-orphans
 
 docs-down:
 	docker compose down
+
+docs-deploy:
+	docker run --rm \
+		-v ".:/app" \
+		-u $(CURRENT_UID) \
+		-w /app \
+		minidocks/mkdocs gh-deploy --verbose
 
 gdm-build:
 	docker build \
@@ -20,7 +27,7 @@ gdm-build:
 gdm-generate:
 	docker run --rm \
 		-v .:/project \
-		-v ./docs/content/the-engine-handbook/scripting-reference:/output \
+		-v ./docs-src/content/the-engine-handbook/scripting-reference:/output \
 		-u $(CURRENT_UID) \
 		popochiu-docs-maker:latest /project \
 		-o /output \
