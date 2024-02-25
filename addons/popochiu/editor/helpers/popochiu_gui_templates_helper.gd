@@ -62,7 +62,7 @@ static func copy_gui_template(template_name: String, on_complete: Callable) -> v
 	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
 	_update_settings_and_config(template_name, commands_path)
 	
-	PopochiuUtils.print_normal("[wave]GUI template assignation finished[/wave]")
+	PopochiuUtils.print_normal("[wave]Selected GUI template successfully applied[/wave]")
 	on_complete.call()
 
 
