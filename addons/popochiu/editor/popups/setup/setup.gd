@@ -1,15 +1,15 @@
 @tool
 extends AcceptDialog
 
-signal move_requested(id)
-signal gui_selected(gui_name)
+signal gui_selected(gui_name: String, on_complete: Callable)
 
-const ImporterDefaults := preload("res://addons/popochiu/engine/others/importer_defaults.gd")
 const SCALE_MESSAGE :=\
 "[center]▶ Base size = 320x180 | [b]scale = ( %.2f, %.2f )[/b] ◀[/center]\n" +\
 "By default the GUI will scale to match your game size. " +\
 "You can change this in [img]%s[/img] [b]Settings[/b] with the" +\
 " [code]Scale Gui[/code] checkbox."
+const COPY_ALPHA := .3
+const ImporterDefaults := preload("res://addons/popochiu/engine/others/importer_defaults.gd")
 const GUITemplateButton := preload(
 	"res://addons/popochiu/editor/popups/setup/gui_template_button.gd"
 )
@@ -18,6 +18,8 @@ var es: EditorSettings = null
 
 var _selected_template: GUITemplateButton
 var _is_closing := false
+var _progress_lines := ["|", "/", "―", "\\", "―"]
+var _progress_idx := 0
 
 @onready var welcome: RichTextLabel = %Welcome
 @onready var game_width: SpinBox = %GameWidth
@@ -33,6 +35,8 @@ var _is_closing := false
 @onready var template_description_container: PanelContainer = %TemplateDescriptionContainer
 @onready var template_description: RichTextLabel = %TemplateDescription
 @onready var btn_change_template: Button = %BtnChangeTemplate
+@onready var copy_process_container: MarginContainer = %CopyProcessContainer
+@onready var copy_process_label: Label = %CopyProcessLabel
 
 
 #region Godot ######################################################################################
@@ -61,11 +65,14 @@ func appear(show_welcome := false) -> void:
 	_is_closing = false
 	_selected_template = null
 	btn_change_template.hide()
+	copy_process_container.hide()
 	
 	scale_message.modulate = Color(
 		"#000" if es.get_setting("interface/theme/preset").find("Light3D") > -1 else "#fff"
 	)
 	scale_message.modulate.a = 0.8
+	
+	PopochiuUtils.override_font(copy_process_label, 'font', get_theme_font("source", "EditorFonts"))
 
 	if not show_welcome:
 		welcome.text =\
@@ -148,7 +155,7 @@ func _on_close() -> void:
 	PopochiuResources.save_settings(settings)
 	
 	if PopochiuResources.get_data_value("setup", "done", false) == false:
-		gui_selected.emit(_selected_template.name)
+		_copy_template()
 	
 	_save_settings()
 
@@ -263,8 +270,13 @@ func _show_template_change_confirmation() -> void:
 	confirmation_dialog.confirmed.connect(
 		func():
 			confirmation_dialog.queue_free()
-			gui_selected.emit(_selected_template.name)
+			
+			_copy_template()
+			
 			_save_settings()
+			
+			get_ok_button().disabled = true
+			copy_process_container.show()
 	)
 	
 	add_child(confirmation_dialog)
@@ -299,6 +311,33 @@ func _load_templates() -> void:
 		button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		
 		gui_templates.add_child(button)
+
+
+func _copy_template() -> void:
+	$PanelContainer/VBoxContainer.modulate.a = COPY_ALPHA
+	gui_selected.emit(_selected_template.name, _template_copy_completed)
+	_animate_progress_text()
+
+
+func _animate_progress_text() -> void:
+	copy_process_label.text = (
+		"Copying files to graphic interface folder... %s" % _progress_lines[_progress_idx]
+	)
+	await get_tree().create_timer(0.1).timeout
+	
+	if $PanelContainer/VBoxContainer.modulate.a == 1:
+		return
+	
+	_progress_idx = posmod(_progress_idx + 1, _progress_lines.size())
+	_animate_progress_text()
+
+
+func _template_copy_completed() -> void:
+	get_ok_button().disabled = false
+	btn_change_template.disabled = true
+	$PanelContainer/VBoxContainer.modulate.a = 1
+	
+	copy_process_container.hide()
 
 
 #endregion

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://c3r8juwutb1gr"]
+[gd_scene load_steps=6 format=3 uid="uid://c3r8juwutb1gr"]
 
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_vjboj"]
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/gui_template_button.gd" id="3_jf6nd"]
@@ -20,11 +20,16 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l5gxt"]
+content_margin_left = 16.0
+content_margin_right = 16.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+
 [node name="Setup" type="AcceptDialog"]
 gui_embed_subwindows = true
 title = "Setup"
 initial_position = 2
-size = Vector2i(560, 4248)
+size = Vector2i(560, 608)
 popup_window = true
 script = ExtResource("1_vjboj")
 
@@ -32,7 +37,7 @@ script = ExtResource("1_vjboj")
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 552.0
-offset_bottom = 738.0
+offset_bottom = 559.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -271,3 +276,25 @@ layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 text = "Use this GUI Template"
+
+[node name="CopyProcessContainer" type="MarginContainer" parent="PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="ColorRect" type="ColorRect" parent="PanelContainer/CopyProcessContainer"]
+layout_mode = 2
+color = Color(0, 0, 0, 0)
+
+[node name="CopyProcessLabel" type="Label" parent="PanelContainer/CopyProcessContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.929412, 0.945098, 0.443137, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_l5gxt")
+text = "Copying files to graphic interface folder..."
+vertical_alignment = 1
+uppercase = true

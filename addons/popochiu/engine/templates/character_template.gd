@@ -35,8 +35,8 @@ func _on_middle_click() -> void:
 
 # When the node is clicked and there is an inventory item selected
 func _on_item_used(item: PopochiuInventoryItem) -> void:
-	# Replace the call to super.on_item_used(item) to implement your code.
-	super.on_item_used(item)
+	# Replace the call to E.command_fallback() to implement your code.
+	E.command_fallback()
 
 
 # Use it to play the idle animation for the character

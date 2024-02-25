@@ -97,7 +97,7 @@ func _enter_tree() -> void:
 	# AudioCues
 	main_dock.call_deferred('grab_focus')
 	
-	# ==== Connect to signals ==================================================
+	# ==== Connect to signals ======================================================================
 	_editor_interface.get_file_system_dock().file_removed.connect(_on_file_removed)
 	_editor_interface.get_file_system_dock().files_moved.connect(_on_files_moved)
 	# TODO: This connection might be needed only by TabAudio.gd, so probably
@@ -106,13 +106,16 @@ func _enter_tree() -> void:
 	
 	scene_changed.connect(main_dock.scene_changed)
 	scene_closed.connect(main_dock.scene_closed)
-	# ================================================== Connect to signals ====
+	# ====================================================================== Connect to signals ====
 	
 	if _editor_interface.get_edited_scene_root():
 		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
 	
 	main_dock.setup_dialog.es = _editor_interface.get_editor_settings()
+	
+	# Connect signals between other nodes
 	main_dock.setup_dialog.gui_selected.connect(_gui_templates_helper.copy_gui_template)
+	_gui_templates_helper
 	
 	if PopochiuResources.get_data_value("setup", "done", false) == false:
 		main_dock.setup_dialog.appear(true)

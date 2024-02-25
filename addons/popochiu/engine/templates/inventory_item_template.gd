@@ -26,8 +26,8 @@ func _on_middle_click() -> void:
 
 # When the item is clicked and there is another inventory item selected
 func _on_item_used(item: PopochiuInventoryItem) -> void:
-	# Replace the call to super.on_item_used(item) to implement your code.
-	super.on_item_used(item)
+	# Replace the call to E.command_fallback() to implement your code.
+	E.command_fallback()
 
 
 # Actions to excecute after the item is added to the Inventory

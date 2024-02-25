@@ -2,22 +2,20 @@
 extends Resource
 ## Helper class for operations related to the GUI templates
 
+signal copy_completed
+
 static var _template_id := ""
-static var _progress_window: Window
-static var _progress_lines := ["|", "/", "―", "\\", "―"]
-static var _progress_idx := 0
 static var _template_theme_path := ""
 
 #region Public #####################################################################################
-## Creates a copy of the selected template, including its components. Also, generate the necessary
+## Creates a copy of the selected template, including its components. Also generate the necessary
 ## scripts to define custom logic for the graphical interface and its commands.
-static func copy_gui_template(template_name: String) -> void:
+static func copy_gui_template(template_name: String, on_complete: Callable) -> void:
 	if template_name == PopochiuResources.get_data_value("ui", "template", ""):
 		PopochiuUtils.print_normal("No changes in GUI tempalte.")
 		return
 	
 	_template_theme_path = ""
-	_create_progress_window()
 	
 	var scene_path := PopochiuResources.GUI_CUSTOM_SCENE
 	var commands_template_path := PopochiuResources.GUI_CUSTOM_TEMPLATE
@@ -64,7 +62,8 @@ static func copy_gui_template(template_name: String) -> void:
 	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
 	_update_settings_and_config(template_name, commands_path)
 	
-	_progress_window.queue_free()
+	PopochiuUtils.print_normal("[wave]GUI template assignation finished[/wave]")
+	on_complete.call()
 
 
 static func copy_component(source_scene_path: String) -> String:
@@ -125,61 +124,6 @@ static func _create_scene(scene_path: String) -> int:
 	var gi_scene := load(scene_path).duplicate(true)
 		
 	return ResourceSaver.save(gi_scene, PopochiuResources.GUI_GAME_SCENE)
-
-
-static func _create_progress_window() -> void:
-	if is_instance_valid(_progress_window):
-		return
-	
-	_progress_idx = 0
-	
-	_progress_window = Window.new()
-	_progress_window.borderless = true
-	_progress_window.popup_window = true
-	_progress_window.exclusive = true
-	EditorInterface.get_base_control().add_child(_progress_window)
-	
-	var label := Label.new()
-	label.uppercase = true
-	label.custom_minimum_size.x = 512.0
-	label.add_theme_color_override("font_color", Color.WHITE)
-	PopochiuUtils.override_font(label, 'font', label.get_theme_font("source", "EditorFonts"))
-	
-	_animate_progress_text(label)
-	
-	var margin_container := MarginContainer.new()
-	margin_container.add_child(label)
-	margin_container.add_theme_constant_override("margin_top", 12)
-	margin_container.add_theme_constant_override("margin_left", 12)
-	margin_container.add_theme_constant_override("margin_bottom", 12)
-	margin_container.add_theme_constant_override("margin_right", 12)
-	
-	var panel_container := PanelContainer.new()
-	panel_container.add_child(margin_container)
-	panel_container.custom_minimum_size.x = 384.0
-	
-	var style_box_flat := StyleBoxFlat.new()
-	style_box_flat.bg_color = Color("2e2c9b")
-	style_box_flat.border_color = Color("edf171")
-	style_box_flat.set_border_width_all(4)
-	
-	panel_container.add_theme_stylebox_override("panel", style_box_flat)
-	
-	_progress_window.add_child(panel_container)
-	_progress_window.popup_centered(_progress_window.get_contents_minimum_size())
-
-
-static func _animate_progress_text(label: Label) -> void:
-	if not is_instance_valid(label): return
-	
-	label.text = "Copying files to graphic interface folder... %s" % _progress_lines[_progress_idx]
-	await EditorInterface.get_base_control().get_tree().create_timer(0.1).timeout
-	
-	if not is_instance_valid(_progress_window) or not is_instance_valid(label):
-		return
-	
-	_progress_idx = posmod(_progress_idx + 1, _progress_lines.size())
-	_animate_progress_text(label)
 
 
 static func _remove_components(dir_path: String) -> void:
