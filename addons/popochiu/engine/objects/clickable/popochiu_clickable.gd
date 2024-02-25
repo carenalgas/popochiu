@@ -58,7 +58,13 @@ func _ready():
 	if Engine.is_editor_hint():
 		hide_helpers()
 		
-		if get_node_or_null("InteractionPolygon") == null: return
+		# Ignore assigning the polygon when:
+		if (
+			get_node_or_null("InteractionPolygon") == null # there is no InteractionPolygon node
+			or not get_parent() is Node2D # editing it in the .tscn file
+			or self is PopochiuCharacter # the node is a character
+		):
+			return
 		
 		if interaction_polygon.is_empty():
 			interaction_polygon = get_node('InteractionPolygon').polygon
@@ -72,7 +78,7 @@ func _ready():
 		$BaselineHelper.free()
 		$WalkToHelper.free()
 		
-		if get_node_or_null("InteractionPolygon"):
+		if not self is PopochiuCharacter and get_node_or_null("InteractionPolygon"):
 			get_node("InteractionPolygon").polygon = interaction_polygon
 			get_node("InteractionPolygon").position = interaction_polygon_position
 	
