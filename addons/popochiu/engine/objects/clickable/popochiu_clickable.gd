@@ -61,8 +61,8 @@ func _ready():
 		# Ignore assigning the polygon when:
 		if (
 			get_node_or_null("InteractionPolygon") == null # there is no InteractionPolygon node
-			or not get_parent() is Node2D # editing it in the .tscn file
-			or self is PopochiuCharacter # the node is a character
+			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
+			or self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
 		):
 			return
 		
@@ -78,7 +78,11 @@ func _ready():
 		$BaselineHelper.free()
 		$WalkToHelper.free()
 		
-		if not self is PopochiuCharacter and get_node_or_null("InteractionPolygon"):
+		# Update the node's polygon when:
+		if (
+			get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
+			and not self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+		):
 			get_node("InteractionPolygon").polygon = interaction_polygon
 			get_node("InteractionPolygon").position = interaction_polygon_position
 	

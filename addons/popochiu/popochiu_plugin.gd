@@ -115,7 +115,6 @@ func _enter_tree() -> void:
 	
 	# Connect signals between other nodes
 	main_dock.setup_dialog.gui_selected.connect(_gui_templates_helper.copy_gui_template)
-	_gui_templates_helper
 	
 	if PopochiuResources.get_data_value("setup", "done", false) == false:
 		main_dock.setup_dialog.appear(true)

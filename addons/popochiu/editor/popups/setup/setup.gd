@@ -18,8 +18,6 @@ var es: EditorSettings = null
 
 var _selected_template: GUITemplateButton
 var _is_closing := false
-var _progress_lines := ["|", "/", "―", "\\", "―"]
-var _progress_idx := 0
 
 @onready var welcome: RichTextLabel = %Welcome
 @onready var game_width: SpinBox = %GameWidth
@@ -37,6 +35,7 @@ var _progress_idx := 0
 @onready var btn_change_template: Button = %BtnChangeTemplate
 @onready var copy_process_container: MarginContainer = %CopyProcessContainer
 @onready var copy_process_label: Label = %CopyProcessLabel
+@onready var copy_process_bar: ProgressBar = %CopyProcessBar
 
 
 #region Godot ######################################################################################
@@ -315,21 +314,15 @@ func _load_templates() -> void:
 
 func _copy_template() -> void:
 	$PanelContainer/VBoxContainer.modulate.a = COPY_ALPHA
-	gui_selected.emit(_selected_template.name, _template_copy_completed)
-	_animate_progress_text()
+	copy_process_label.text = ""
+	copy_process_bar.value = 0
+	
+	gui_selected.emit(_selected_template.name, _template_copy_progressed, _template_copy_completed)
 
 
-func _animate_progress_text() -> void:
-	copy_process_label.text = (
-		"Copying files to graphic interface folder... %s" % _progress_lines[_progress_idx]
-	)
-	await get_tree().create_timer(0.1).timeout
-	
-	if $PanelContainer/VBoxContainer.modulate.a == 1:
-		return
-	
-	_progress_idx = posmod(_progress_idx + 1, _progress_lines.size())
-	_animate_progress_text()
+func _template_copy_progressed(value: int, message: String) -> void:
+	copy_process_label.text = message
+	copy_process_bar.value = value
 
 
 func _template_copy_completed() -> void:

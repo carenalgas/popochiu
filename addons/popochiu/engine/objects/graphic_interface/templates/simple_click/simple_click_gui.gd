@@ -80,13 +80,14 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 			Cursor.show_cursor(Cursor.get_type_name(inventory_item.cursor))
 		else:
 			Cursor.show_cursor("active")
-	
-	if not I.active:
+		
 		G.show_hover_text(inventory_item.description)
 	elif I.active != inventory_item:
 		G.show_hover_text(
 			'Use %s with %s' % [I.active.description, inventory_item.description]
 		)
+	else:
+		G.show_hover_text(inventory_item.description)
 
 
 ## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component

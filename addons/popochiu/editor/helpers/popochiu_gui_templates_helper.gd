@@ -10,10 +10,16 @@ static var _template_theme_path := ""
 #region Public #####################################################################################
 ## Creates a copy of the selected template, including its components. Also generate the necessary
 ## scripts to define custom logic for the graphical interface and its commands.
-static func copy_gui_template(template_name: String, on_complete: Callable) -> void:
+static func copy_gui_template(
+	template_name: String, on_progress: Callable, on_complete: Callable
+) -> void:
 	if template_name == PopochiuResources.get_data_value("ui", "template", ""):
 		PopochiuUtils.print_normal("No changes in GUI tempalte.")
+		
+		on_complete.call()
 		return
+	
+	on_progress.call(0, "Starting GUI template application")
 	
 	_template_theme_path = ""
 	
@@ -35,6 +41,9 @@ static func copy_gui_template(template_name: String, on_complete: Callable) -> v
 		"graphic_interface.tscn", "commands.gd"
 	)
 	
+	await EditorInterface.get_base_control().get_tree().create_timer(1.0).timeout
+	on_progress.call(5, "Creating Graphic Interface scene")
+	
 	# ---- Make a copy of the selected GUI template ------------------------------------------------
 	if _create_scene(scene_path) != OK:
 		# TODO: Delete the graphic_interface folder and all its contents?
@@ -44,12 +53,20 @@ static func copy_gui_template(template_name: String, on_complete: Callable) -> v
 		
 		return
 	
+	await EditorInterface.get_base_control().get_tree().create_timer(2.0).timeout
+	on_progress.call(10, "Copying a bunch of components")
+	
 	# Copy the components used by the GUI template to the res://game/graphic_interface/components
 	# folder so devs can play with them freely -----------------------------------------------------
 	await _copy_components(scene_path, true)
 	
+	on_progress.call(60, "Creating scripts")
+	
 	# Create a copy of the corresponding commands template -----------------------------------------
 	_copy_scripts(commands_template_path, commands_path, script_path, scene_path)
+	
+	await EditorInterface.get_base_control().get_tree().create_timer(1.5).timeout
+	on_progress.call(80, "Assigning scripts")
 	
 	# Update the script of the created graphic_interface.tscn so it uses the copy created above ----
 	if _update_scene_script(script_path) != OK:
@@ -59,10 +76,17 @@ static func copy_gui_template(template_name: String, on_complete: Callable) -> v
 		
 		return
 	
+	await EditorInterface.get_base_control().get_tree().create_timer(1.0).timeout
+	on_progress.call(90, "Updating Settings and Config files")
+	
 	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
 	_update_settings_and_config(template_name, commands_path)
+	await EditorInterface.get_base_control().get_tree().create_timer(0.8).timeout
 	
+	on_progress.call(100, "All in place. Thanks for your patience.")
 	PopochiuUtils.print_normal("[wave]Selected GUI template successfully applied[/wave]")
+	
+	await EditorInterface.get_base_control().get_tree().create_timer(1.0).timeout
 	on_complete.call()
 
 
