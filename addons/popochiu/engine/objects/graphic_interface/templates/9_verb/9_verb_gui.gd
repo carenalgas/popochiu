@@ -118,7 +118,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	Cursor.show_cursor("normal")
 	
 	if I.active:
-		_show_use_in(I.active)
+		_show_use_on(I.active)
 		
 		return
 	
@@ -195,7 +195,7 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 		E.current_command = NineVerbCommands.Commands.WALK_TO
 		G.show_hover_text()
 	else:
-		_show_use_in(item)
+		_show_use_on(item)
 
 
 #endregion
@@ -225,7 +225,7 @@ func _on_quit_pressed() -> void:
 	quit_popup.open()
 
 
-func _show_use_in(item: PopochiuInventoryItem) -> void:
+func _show_use_on(item: PopochiuInventoryItem) -> void:
 	G.show_hover_text("%s %s in" % [E.get_current_command_name(), item.description])
 
 

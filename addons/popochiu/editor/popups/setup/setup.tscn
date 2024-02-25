@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://c3r8juwutb1gr"]
+[gd_scene load_steps=5 format=3 uid="uid://c3r8juwutb1gr"]
 
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_vjboj"]
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/gui_template_button.gd" id="3_jf6nd"]
@@ -19,33 +19,6 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l5gxt"]
-content_margin_left = 8.0
-content_margin_top = 12.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.180392, 0.172549, 0.607843, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n1vfx"]
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.929412, 0.945098, 0.443137, 1)
-expand_margin_left = 4.0
-expand_margin_top = 4.0
-expand_margin_right = 4.0
-expand_margin_bottom = 4.0
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_olemu"]
-bg_color = Color(0.929412, 0.945098, 0.443137, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.180392, 0.172549, 0.607843, 1)
 
 [node name="Setup" type="AcceptDialog"]
 gui_embed_subwindows = true
@@ -311,30 +284,24 @@ theme_override_constants/margin_bottom = 0
 layout_mode = 2
 color = Color(0, 0, 0, 0)
 
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/CopyProcessContainer"]
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_l5gxt")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CopyProcessContainer/PanelContainer"]
-layout_mode = 2
-size_flags_vertical = 4
-
-[node name="CopyProcessBar" type="ProgressBar" parent="PanelContainer/CopyProcessContainer/PanelContainer/VBoxContainer"]
+[node name="CopyProcessPanel" type="PanelContainer" parent="PanelContainer/CopyProcessContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_colors/font_color = Color(0.929412, 0.945098, 0.443137, 1)
-theme_override_colors/font_outline_color = Color(0.180392, 0.172549, 0.607843, 1)
-theme_override_constants/outline_size = 8
-theme_override_styles/background = SubResource("StyleBoxFlat_n1vfx")
-theme_override_styles/fill = SubResource("StyleBoxFlat_olemu")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="CopyProcessBar" type="ProgressBar" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
 value = 50.0
 
-[node name="CopyProcessLabel" type="Label" parent="PanelContainer/CopyProcessContainer/PanelContainer/VBoxContainer"]
+[node name="CopyProcessLabel" type="Label" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_colors/font_color = Color(0.929412, 0.945098, 0.443137, 1)
 text = "Starting GUI template application"
 horizontal_alignment = 1
 vertical_alignment = 1

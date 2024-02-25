@@ -8,7 +8,7 @@ const SCALE_MESSAGE :=\
 "By default the GUI will scale to match your game size. " +\
 "You can change this in [img]%s[/img] [b]Settings[/b] with the" +\
 " [code]Scale Gui[/code] checkbox."
-const COPY_ALPHA := .3
+const COPY_ALPHA := .1
 const ImporterDefaults := preload("res://addons/popochiu/engine/others/importer_defaults.gd")
 const GUITemplateButton := preload(
 	"res://addons/popochiu/editor/popups/setup/gui_template_button.gd"
@@ -34,6 +34,7 @@ var _is_closing := false
 @onready var template_description: RichTextLabel = %TemplateDescription
 @onready var btn_change_template: Button = %BtnChangeTemplate
 @onready var copy_process_container: MarginContainer = %CopyProcessContainer
+@onready var copy_process_panel: PanelContainer = %CopyProcessPanel
 @onready var copy_process_label: Label = %CopyProcessLabel
 @onready var copy_process_bar: ProgressBar = %CopyProcessBar
 
@@ -71,7 +72,9 @@ func appear(show_welcome := false) -> void:
 	)
 	scale_message.modulate.a = 0.8
 	
-	PopochiuUtils.override_font(copy_process_label, 'font', get_theme_font("source", "EditorFonts"))
+	copy_process_panel.add_theme_stylebox_override(
+		"panel", get_theme_stylebox("panel", "PopupPanel")
+	)
 
 	if not show_welcome:
 		welcome.text =\
