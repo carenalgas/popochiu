@@ -38,13 +38,6 @@ func create_character_animations(character: Node, player: AnimationPlayer, optio
 	_player = player
 	_options = options
 
-## Public interfaces, dedicated to specific popochiu objects
-func create_character_animations(character: Node, player: AnimationPlayer, options: Dictionary):
-	# Chores
-	_target_node = character
-	_player = player
-	_options = options
-
 	# Duly check everything is valid and cleanup animations
 	var result = _perform_common_checks()
 	if result != RESULT_CODE.SUCCESS:

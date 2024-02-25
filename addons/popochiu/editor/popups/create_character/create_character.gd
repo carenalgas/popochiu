@@ -16,6 +16,7 @@ const PopochiuDock := preload('res://addons/popochiu/editor/main_dock/popochiu_d
 var _new_character_name := ''
 var _factory: PopochiuCharacterFactory
 
+
 #region Godot ######################################################################################
 func _ready() -> void:
 	super()
@@ -59,6 +60,7 @@ func set_main_dock(node: Panel) -> void:
 	super(node)
 	
 	if not _main_dock: return
+
 
 #endregion
 

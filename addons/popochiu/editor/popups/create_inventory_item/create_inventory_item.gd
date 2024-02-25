@@ -59,6 +59,7 @@ func set_main_dock(node: Panel) -> void:
 	
 	if not _main_dock: return
 
+
 #endregion
 
 #region Private ####################################################################################

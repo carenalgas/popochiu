@@ -243,9 +243,6 @@ func change_speed() -> void:
 
 #endregion
 
-
-#endregion
-
 #region Private ####################################################################################
 func _show_dialogue(chr: PopochiuCharacter, msg := '') -> void:
 	if not visible: return
