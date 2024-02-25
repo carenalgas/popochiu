@@ -7,6 +7,9 @@ extends PopochiuGraphicInterface
 ## bottom right corner of the screen, and the settings popup can be opened using the button in the
 ## top right corner of the sceen.
 
+# Used to go back to the WALK_TO command when hovering an inventory item without a verb selected
+var _return_to_walk_to := false
+
 ## Used to access the [b]9VerbSettingsPopup[/b] node.
 @onready var settings_popup: PopochiuPopup = $"Popups/9VerbSettingsPopup"
 ## Used to access the [b]9VerbQuitPopup[/b] node.
@@ -114,7 +117,11 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 		$"9VerbPanel".highlight_command(clickable.suggested_command, false)
 	Cursor.show_cursor("normal")
 	
-	if I.active: return
+	if I.active:
+		_show_use_on(I.active)
+		
+		return
+	
 	G.show_hover_text()
 
 
@@ -123,16 +130,15 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 ## [code]"active"[/code] cursor.
 func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	if E.current_command == NineVerbCommands.Commands.WALK_TO:
-		E.current_command = NineVerbCommands.Commands.LOOK_AT
+		_return_to_walk_to = true
+		E.current_command = NineVerbCommands.Commands.USE
 	
 	$"9VerbPanel".highlight_command(NineVerbCommands.Commands.LOOK_AT)
-	Cursor.show_cursor("active")
+	Cursor.show_cursor("normal")
 	
 	if I.active:
-		if (
-			E.current_command == NineVerbCommands.Commands.USE
-			and I.active != inventory_item
-		):
+		if E.current_command == NineVerbCommands.Commands.USE and I.active != inventory_item:
+			# Show a hover text in the form: Use xxx in yyy
 			G.show_hover_text(
 				"%s %s in %s" % [
 					E.get_current_command_name(),
@@ -147,8 +153,9 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 ## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component and
 ## shows the [code]"normal"[/code] cursor.
 func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
-	if E.current_command == NineVerbCommands.Commands.LOOK_AT:
+	if not I.active and _return_to_walk_to:
 		E.current_command = NineVerbCommands.Commands.WALK_TO
+		_return_to_walk_to = false
 	
 	$"9VerbPanel".highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
 	Cursor.show_cursor("normal")
@@ -181,6 +188,16 @@ func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 	Cursor.show_cursor("normal")
 
 
+## Called when [param item] is selected in the inventory (i.e. by clicking it). For this GUI, this
+## will only occur when the current command is [constant NineVerbCommands.USE].
+func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
+	if not item:
+		E.current_command = NineVerbCommands.Commands.WALK_TO
+		G.show_hover_text()
+	else:
+		_show_use_on(item)
+
+
 #endregion
 
 #region Private ####################################################################################
@@ -206,6 +223,10 @@ func _on_classic_sentence_toggled(button_pressed: bool) -> void:
 
 func _on_quit_pressed() -> void:
 	quit_popup.open()
+
+
+func _show_use_on(item: PopochiuInventoryItem) -> void:
+	G.show_hover_text("%s %s in" % [E.get_current_command_name(), item.description])
 
 
 #endregion

@@ -35,8 +35,8 @@ func _on_middle_click() -> void:
 
 # When the node is clicked and there is an inventory item selected
 func _on_item_used(item: PopochiuInventoryItem) -> void:
-	# Replace the call to super.on_item_used(item) with your code.
-	super.on_item_used(item)
+	# Replace the call to E.command_fallback() to implement your code.
+	E.command_fallback()
 	# E.g. Make the player-controlled character to react when using a specific
 	# item on this Hotspot:
 #	if item.script_name == 'Key':

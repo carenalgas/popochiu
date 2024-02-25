@@ -58,7 +58,13 @@ func _ready():
 	if Engine.is_editor_hint():
 		hide_helpers()
 		
-		if get_node_or_null("InteractionPolygon") == null: return
+		# Ignore assigning the polygon when:
+		if (
+			get_node_or_null("InteractionPolygon") == null # there is no InteractionPolygon node
+			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
+			or self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+		):
+			return
 		
 		if interaction_polygon.is_empty():
 			interaction_polygon = get_node('InteractionPolygon').polygon
@@ -72,7 +78,11 @@ func _ready():
 		$BaselineHelper.free()
 		$WalkToHelper.free()
 		
-		if get_node_or_null("InteractionPolygon"):
+		# Update the node's polygon when:
+		if (
+			get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
+			and not self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+		):
 			get_node("InteractionPolygon").polygon = interaction_polygon
 			get_node("InteractionPolygon").position = interaction_polygon_position
 	
@@ -105,7 +115,7 @@ func _unhandled_input(event: InputEvent):
 		match mouse_event.button_index:
 			MOUSE_BUTTON_LEFT:
 				if I.active:
-					_on_item_used(I.active)
+					on_item_used(I.active)
 				else:
 					handle_command(mouse_event.button_index)
 					
@@ -257,7 +267,7 @@ func on_middle_click() -> void:
 
 ## Called when an [param item] is used on this object.
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	await G.show_system_text("Can't USE %s here" % item.description)
+	_on_item_used(item)
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],

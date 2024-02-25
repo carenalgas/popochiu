@@ -107,19 +107,22 @@ var _looking_dir: int = Looking.DOWN
 #region Godot ######################################################################################
 func _ready():
 	super()
+	
 	default_walk_speed = walk_speed
 	default_scale = Vector2(scale)
-	if not Engine.is_editor_hint():
-		set_process(follow_player)
-	else:
+	
+	if Engine.is_editor_hint():
 		hide_helpers()
 		set_process(true)
+	else:
+		set_process(follow_player)
 	
 	for child in get_children():
 		if not child is Sprite2D:
 			continue
 		child.frame_changed.connect(_update_position)
-		
+
+
 func _get_property_list():
 	return [
 		{
@@ -701,7 +704,7 @@ func face_direction(destination: Vector2):
 func get_avatar_for_emotion(emo := "") -> Texture:
 	var texture: Texture = null
 	
-	while not texture:
+	while not texture and not avatars.is_empty():
 		for dic in avatars:
 			if dic.emotion == "":
 				texture = dic.avatar

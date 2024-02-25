@@ -110,10 +110,4 @@ func set_active(value: PopochiuInventoryItem) -> void:
 		active.unselected.emit()
 	
 	active = value
-	
-	if is_instance_valid(active):
-		Cursor.set_secondary_cursor_texture(active.texture)
-	else:
-		Cursor.remove_secondary_cursor_texture()
-	
 	item_selected.emit(active)
