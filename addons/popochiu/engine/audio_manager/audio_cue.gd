@@ -15,7 +15,7 @@ extends Resource
 ## Whether the audio can be played simultaniously with other instances of itself. Specially useful
 ## for audio cues in loop ([member loop] is [code]true[/code]).
 @export var can_play_simultaneous := true
-## The pitch value to use when playing the audio file.
+## The pitch value (in semitones) to use when playing the audio file.
 @export var pitch := 1.0
 ## The volume to use when playing the audio file.
 @export var volume := 0.0
@@ -89,14 +89,14 @@ func queue_stop(fade_duration := 0.0) -> Callable:
 
 
 ## Changes the [member AudioStreamPlayer.pitch_scale] of the [AudioStreamPlayer] that plays the
-## audio file of this audio cue. If the audio was played with a 2D position, then
+## audio file of this audio cue to [param pitch]. If the audio was played with a 2D position, then
 ## [member AudioStreamPlayer2D.pitch_scale] will be the one affected.
 func change_stream_pitch(pitch := 0.0) -> void:
 	E.am.change_cue_pitch(resource_name, pitch)
 
 
 ## Changes the [member AudioStreamPlayer.volume_db] of the [AudioStreamPlayer] that plays the
-## audio file of this audio cue. If the audio was played with a 2D position, then
+## audio file of this audio cue to [param volume]. If the audio was played with a 2D position, then
 ## [member AudioStreamPlayer2D.volume_db] will be the one affected.
 func change_stream_volume(volume := 0.0) -> void:
 	E.am.change_cue_volume(resource_name, volume)
