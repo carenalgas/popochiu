@@ -2,19 +2,19 @@ class_name PopochiuAudioManager
 extends Node
 ## Handles playing audio using [PopochiuAudioCue]s.
 ##
-## It plays sound effects and music using [AudioStreamPlayer] or [AudioStreamPlayer2D], and creating
-## these nodes in runtime if needed. By default it has 6 nodes for positional streams, and 5 for
-## playing non-positionally streams.[br][br]
+## It plays sound effects and music using [AudioStreamPlayer] or [AudioStreamPlayer2D], creating
+## these nodes at runtime if needed. By default, it has 6 nodes for positional streams and 5 for
+## playing non-positional streams.[br][br]
 ## The [b]PopochiuAudioManager[/b] is loaded as a child of [Popochiu] when the game starts.
 
-## Used to mark stream players that are created in runtime and should be [method Node.free] when
-## they are not needed anymore.
+## Used to mark stream players created at runtime that should be [method Node.free] when they are
+## no longer needed.
 const TEMP_PLAYER := "temporal"
-## The path where the volume configuration for the audio buses used in the game is stored.
+## Specifies the path where the volume configuration for the audio buses used in the game is stored.
 const SETTINGS_PATH = "user://audio_settings.save"
 
-## Used to convert the value of the pitch set on [member PopochiuAudioCue.pitch] to the one needed
-## for the [code]pitch_scale[/code] property of the audio stream players.
+## Used to convert the value of the pitch set on [member PopochiuAudioCue.pitch] to the
+## corresponding value needed for the [code]pitch_scale[/code] property of the audio stream players.
 var twelfth_root_of_two := pow(2, (1.0 / 12))
 ## Stores the volume values for each of the audio buses used by the game.
 var volume_settings := {}
@@ -43,7 +43,7 @@ func _ready() -> void:
 		for rp in PopochiuResources.get_data_value("audio", arr, []):
 			var ac: PopochiuAudioCue = load(rp)
 			
-			self['_%s' % arr][ac.resource_name] = ac
+			self["_%s" % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
 			_dflt_volumes[ac.resource_name] = ac.volume
 
@@ -51,9 +51,10 @@ func _ready() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Looks for the [PopochiuAudioCue] identified by [param cue_name] in the cues that are NOT part
-## of the music group, and plays it. You can set a [param position_2d] to play it positionally. If
-## [param wait_to_end] is [code]true[/code] the function will pause until the audio finishes.
+## Searches for the [PopochiuAudioCue] identified by [param cue_name] among the cues that are NOT
+## part of the music group and plays it. You can set a [param position_2d] to play it positionally.
+## If [param wait_to_end] is set to [code]true[/code], the function will pause until the audio
+## finishes.
 func play_sound_cue(cue_name := "", position_2d := Vector2.ZERO, wait_to_end = null) -> Node:
 	var stream_player: Node = null
 	
@@ -76,9 +77,9 @@ func play_sound_cue(cue_name := "", position_2d := Vector2.ZERO, wait_to_end = n
 	return stream_player
 
 
-## Looks for the [PopochiuAudioCue] identified by [param cue_name] in the cues that are part of the
-## music group, and plays it. It can fade for [param fade_duration] seconds, and you can play it
-## from a given [param music_position] in seconds.
+## Searches for the [PopochiuAudioCue] identified by [param cue_name] among the cues that are part
+## of the music group and plays it. It can fade for [param fade_duration] seconds, and you can start
+## playing it from a given [param music_position] in seconds.
 func play_music_cue(cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
 	var stream_player: Node = null
 	
@@ -92,8 +93,12 @@ func play_music_cue(cue_name: String, fade_duration := 0.0, music_position := 0.
 		cue.volume = _dflt_volumes[cue_name.to_lower()]
 		if fade_duration > 0.0:
 			stream_player = _fade_in(
-				cue, Vector2.ZERO, fade_duration,
-				-80.0, cue.volume, music_position
+				cue,
+				Vector2.ZERO,
+				fade_duration,
+				-80.0,
+				cue.volume,
+				music_position
 			)
 		else:
 			stream_player = _play(cue, Vector2.ZERO, music_position)
@@ -105,8 +110,8 @@ func play_music_cue(cue_name: String, fade_duration := 0.0, music_position := 0.
 
 ## Plays the [PopochiuAudioCue] identified by [param cue_name] using a fade that will last
 ## [param duration] seconds. Specify the starting volume with [param from] and the target volume
-## with [param to]. You can play the audio positionally with [param position_2d], and wait for it
-## to finish if [param wait_to_end] is [code]true[/code].
+## with [param to]. You can play the audio positionally with [param position_2d] and wait for it
+## to finish if [param wait_to_end] is set to [code]true[/code].
 func play_fade_cue(
 	cue_name := "",
 	duration := 1.0,
@@ -119,13 +124,7 @@ func play_fade_cue(
 	
 	if _all_in_one.has(cue_name.to_lower()):
 		var cue: PopochiuAudioCue = _all_in_one[cue_name.to_lower()]
-		stream_player = _fade_in(
-			cue,
-			position_2d,
-			duration,
-			from,
-			to if to != INF else cue.volume
-		)
+		stream_player = _fade_in(cue, position_2d, duration, from, to if to != INF else cue.volume)
 	else:
 		PopochiuUtils.print_error("Sound to fade not found " + cue_name)
 		
@@ -142,8 +141,8 @@ func play_fade_cue(
 	return stream_player
 
 
-## Stops the [PopochiuAudioCue] identified by [param cue_name]. Can use a fade effect that will last
-## [param fade_duration] seconds.
+## Stops the [PopochiuAudioCue] identified by [param cue_name]. It can use a fade effect that will
+## last [param fade_duration] seconds.
 func stop(cue_name: String, fade_duration := 0.0) -> void:
 	if _active.has(cue_name):
 		var stream_player: Node = (_active[cue_name].players as Array).front()
@@ -197,14 +196,18 @@ func semitone_to_pitch(pitch: float) -> float:
 	return pow(twelfth_root_of_two, pitch)
 
 
+## Sets [param value] as the volume of the audio bus identified with [param bus_name].
 func set_bus_volume_db(bus_name: String, value: float) -> void:
 	if volume_settings.has(bus_name):
 		volume_settings[bus_name] = value
 		AudioServer.set_bus_volume_db(
 			AudioServer.get_bus_index(bus_name), volume_settings[bus_name]
 		)
+		
+		save_sound_settings()
 
 
+## Saves in the file at [constant SETTINGS_PATH] the volume values of all the audio buses.
 func save_sound_settings():
 	var file = FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
 
@@ -215,6 +218,7 @@ func save_sound_settings():
 		file.close()
 
 
+## Loads the volume values stored at [constant SETTINGS_PATH] for all the audio buses.
 func load_sound_settings():
 	var file = FileAccess.open(SETTINGS_PATH, FileAccess.READ)
 
@@ -373,10 +377,9 @@ func _fade_sound(cue_name: String, duration = 1, from = 0, to = 0) -> void:
 	if _fading_sounds.has(stream_player.stream.get_instance_id()):
 		_fading_sounds[stream_player.stream.get_instance_id()].tween.kill()
 	
-	var t := create_tween()
+	var t := create_tween().set_ease(Tween.EASE_IN_OUT)
 	t.finished.connect(_fadeout_finished.bind(stream_player, t))
-	t.tween_property(stream_player, 'volume_db', to, duration)\
-	.from(from).set_ease(Tween.EASE_IN_OUT)
+	t.tween_property(stream_player, "volume_db", to, duration).from(from)
 	
 	if from > to :
 		_fading_sounds[stream_player.stream.get_instance_id()] = {

@@ -204,8 +204,8 @@ func show_helpers() -> void:
 		$InteractionPolygon.show()
 
 
-## Hides this Node.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Hides this Node.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_disable() -> Callable:
 	return func (): await disable()
 
@@ -217,8 +217,8 @@ func disable() -> void:
 	await get_tree().process_frame
 
 
-## Shows this Node.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Shows this Node.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_enable() -> Callable:
 	return func (): await enable()
 

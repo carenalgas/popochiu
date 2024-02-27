@@ -41,8 +41,8 @@ func _on_load(_data: Dictionary) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Starts this dialog, then [method _on_start] is called.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Starts this dialog, then [method _on_start] is called.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_start() -> Callable:
 	return func (): await start()
 
@@ -54,8 +54,8 @@ func start() -> void:
 	await _start()
 
 
-## Stops the dialog (which makes the menu with the options to disappear).
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Stops the dialog (which makes the menu with the options to disappear).[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop() -> Callable:
 	return func (): await stop()
 

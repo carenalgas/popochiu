@@ -28,17 +28,11 @@ func restore_last_volumes() -> void:
 		if not slider.has_meta("bus_name"): continue
 		
 		var bus_name: String = slider.get_meta("bus_name")
-		
-		E.am.set_bus_volume_db(
-			bus_name,
-			dflt_volumes[bus_name]
-		)
+		E.am.set_bus_volume_db(bus_name, dflt_volumes[bus_name])
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _on_audio_manager_ready() -> void:
-	# TODO: Check if this is necessary. Loading volumes from a file should happen
-	# 		only when loading a saved game
 	E.am.load_sound_settings()
 	
 	# Build sound settings UI
