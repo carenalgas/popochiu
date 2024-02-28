@@ -33,14 +33,15 @@ enum Looking {
 	UP_LEFT
 }
 
-## Emitted when the character starts walking. As parameters, it sends itself, the starting position
-## and the ending position. [PopochiuRoom]s connect to this signal in order to make characters move
-## inside them from one point to another.
+## Emitted when a [param character] starts moving from [param start] to [param end]. [PopochiuRoom]
+## connects to this signal in order to make characters move inside them from one point to another.
 signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector2)
 ## Emitted when the character is forced to stop while walking.
 signal stopped_walk
 ## Emitted when the character reaches the ending position when moving from one point to another.
 signal move_ended
+## Emitted when the animation to grab things has finished.
+signal grab_done
 
 ## The [Color] in which the dialogue lines of the character are rendered.
 @export var text_color := Color.WHITE
@@ -446,15 +447,15 @@ func say(dialog: String, emo := "") -> void:
 	G.unblock(true)
 
 
-## Calls [method _play_grab] and waits until the [signal character_grab_done] is emitted, then goes
-## back to [method idle].[br][br]
+## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
+## [method idle].[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_grab() -> Callable:
 	return func (): await grab()
 
 
-## Calls [method _play_grab] and waits until the [signal character_grab_done] is emitted, then goes
-## back to [method idle].
+## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
+## [method idle].
 func grab() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
@@ -463,7 +464,7 @@ func grab() -> void:
 	# Call the virtual that plays the grab animation
 	_play_grab()
 	
-	await C.character_grab_done
+	await grab_done
 	
 	idle()
 

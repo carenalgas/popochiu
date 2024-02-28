@@ -179,7 +179,7 @@ func change_cue_pitch(cue_name: String, pitch := 0.0) -> void:
 	if not _active.has(cue_name): return
 	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
-	stream_player.set_pitch_scale(semitone_to_pitch(pitch))
+	stream_player.set_pitch_scale(_semitone_to_pitch(pitch))
 
 
 ## Changes the [code]volume_db[/code] of the [PopochiuAudioCue] identified by [param cue_name] to
@@ -189,11 +189,6 @@ func change_cue_volume(cue_name: String, volume := 0.0) -> void:
 	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
 	stream_player.volume_db = volume
-
-
-## Calculates the [code]pitch_scale[/code] value of [param pitch], which is in semitones.
-func semitone_to_pitch(pitch: float) -> float:
-	return pow(twelfth_root_of_two, pitch)
 
 
 ## Sets [param value] as the volume of the audio bus identified with [param bus_name].
@@ -239,6 +234,11 @@ func load_sound_settings():
 #endregion
 
 #region Private ####################################################################################
+# Calculates the [code]pitch_scale[/code] value of [param pitch], which is in semitones.
+func _semitone_to_pitch(pitch: float) -> float:
+	return pow(twelfth_root_of_two, pitch)
+
+
 # Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if there are no more.
 func _play(
 	cue: PopochiuAudioCue, position := Vector2.ZERO, from_position := 0.0
