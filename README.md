@@ -77,7 +77,7 @@ You can follow the tutorials (English subs) [in this list](https://www.youtube.c
 
 # Credits
 
-Made by [Carenalga](https://carenalgas.itch.io).
+Made by [Carenalga](https://carenalga.itch.io).
 
 Now with the collaboration of [StickGrinder](https://twitter.com/StickGrinder) (and other members of [Illiterate Code Games](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), [@JuannFerrari](https://github.com/JuannFerrari), [Whyschuck](https://github.com/Whyshchuck), and our lovely community.
 

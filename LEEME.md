@@ -77,7 +77,7 @@ Ahora puedes seguir los tutoriales (¡Completamente en español! (la versión en
 
 # Créditos
 
-Hecho por [Carenalga](https://carenalgas.itch.io).
+Hecho por [Carenalga](https://carenalga.itch.io).
 
 Ahora con la colaboración de [StickGrinder](https://twitter.com/StickGrinder) (y otros miembros de [Illiterate Code Games](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), [@JuannFerrari](https://github.com/JuannFerrari), [Whyschuck](https://github.com/Whyshchuck), y nuestra querida comunidad.
 
