@@ -225,6 +225,8 @@ func replace(new_item: PopochiuInventoryItem) -> void:
 	
 	await I.item_replace_done
 	
+	# NOTE: Inventory items should not be in charge of handling the GUI unblock. This should be
+	# 		done by the GUI itself.
 	G.unblock()
 
 

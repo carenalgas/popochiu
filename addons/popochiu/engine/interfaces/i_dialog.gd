@@ -41,23 +41,30 @@ signal dialog_options_requested(options: Array[PopochiuDialogOption])
 ## Emitted when an inline dialog is created based on a list of [param options].
 signal inline_dialog_requested(options: Array)
 
+## Whether a dialog is playing.
 var active := false
+## Stores data about the state of each [PopochiuDialog] in the game. The key of each entry is the
+## [member PopochiuDialog.script_name] of the dialog.
 var trees := {}
+## Provides access to the dialog that is currently playing.
 var current_dialog: PopochiuDialog = null : set = set_current_dialog
+## Provides access to the currently selected option in the dialog that is currently playing.
 var selected_option: PopochiuDialogOption = null
+## Provides access to the branching dialog that was played before the current one. I.e. Could be
+## used to return to the previous dialog after exhausting the options in the currently playing one.
 var prev_dialog: PopochiuDialog = null
 
 
 #region Public #####################################################################################
-# Shows a list of options (like a dialog tree would do) and returns the
-# PopochiuDialogOption of the selected option
-func show_inline_dialog(opts: Array) -> PopochiuDialogOption:
+## Displays a list of [param options], similar to a branching dialog, and returns the selected
+## [PopochiuDialogOption].
+func show_inline_dialog(options: Array) -> PopochiuDialogOption:
 	active = true
 	
 	if current_dialog:
 		D.option_selected.disconnect(current_dialog._on_option_selected)
 	
-	inline_dialog_requested.emit(opts)
+	inline_dialog_requested.emit(options)
 	
 	var pdo: PopochiuDialogOption = await option_selected
 	
@@ -70,11 +77,12 @@ func show_inline_dialog(opts: Array) -> PopochiuDialogOption:
 	return pdo
 
 
-# Finishes the dialog currently in execution.
+## Halts the currently playing [PopochiuDialog].
 func finish_dialog() -> void:
 	dialog_finished.emit(current_dialog)
 
 
+## Makes the Player-controlled Character (PC) to say the selected option in a branching dialog.
 func say_selected() -> void:
 	await C.player.say(selected_option.text)
 
