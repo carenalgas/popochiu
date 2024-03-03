@@ -3,21 +3,24 @@ extends Node
 ## Provides access to the [PopochiuInventoryItem]s in the game. Access with [b]I[/b] (e.g.,
 ## [code]I.Key.add()[/code]).
 ##
-## Use it to manage the inventory.
+## Use it to manage the inventory. Its script is [b]i_inventory.gd[/b].[br][br]
 ##
 ## Some things you can do with it:[br][br]
-## [b]•[/b] Add and remove items in the inventory.
-## [b]•[/b] Change the cursor to the appearance of an inventory item.
-## [b]•[/b] Detect when an item has been added or removed.
+## [b]•[/b] Add and remove items in the inventory.[br]
+## [b]•[/b] Change the cursor to the appearance of an inventory item.[br]
+## [b]•[/b] Detect when an item has been added or removed.[br][br]
 ##
-## Example:
+## Examples:
 ## [codeblock]
 ## # Add the DeckOfCards item to the inventory.
 ## I.DeckOfCards.add_now(false)
+##
 ## # Add the Key item to the inventory and make it the selected one.
 ## I.Key.add_as_active()
+##
 ## # Remove the Card item from the inventory. Inside an E.run([])
 ## I.Card.remove()
+##
 ## # Add the ToyCar item after some dialog lines
 ## E.queue([
 ##     "Player: Oh, is the toy car I need",

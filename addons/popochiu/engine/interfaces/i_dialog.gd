@@ -4,12 +4,13 @@ extends Node
 ## [code]C.AskAboutLoom.start()[/code]).
 ##
 ## Use it to work with branching dialogs and listen to options selection. Its script is
-## [b]i_dialog.gd[/b].
+## [b]i_dialog.gd[/b].[br][br]
 ##
 ## Some things you can do with it:[br][br]
-## [b]•[/b] Start a branching dialog.
-## [b]•[/b] Know when a dialog has finished, or an option in the current list of options is selected.
-## [b]•[/b] Create a list of options on the fly.
+## [b]•[/b] Start a branching dialog.[br]
+## [b]•[/b] Know when a dialog has finished, or an option in the current list of options is
+## selected.[br]
+## [b]•[/b] Create a list of options on the fly.[br][br]
 ##
 ## Example:
 ## [codeblock]

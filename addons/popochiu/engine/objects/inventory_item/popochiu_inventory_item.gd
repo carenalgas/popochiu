@@ -147,7 +147,7 @@ func queue_add_as_active(animate := true) -> Callable:
 func add_as_active(animate := true) -> void:
 	await add(animate)
 	
-	I.set_active_item(self, true)
+	I.set_active_item(self)
 
 
 ## Removes the item from the inventory (its instance will be kept in memory). Pass [param animate]
@@ -252,7 +252,6 @@ func discard(animate := false) -> void:
 
 ## Makes this item the current active item (the cursor will look like the item's texture).
 func set_active(_ignore_block := false) -> void:
-	#I.set_active_item(self, ignore_block)
 	selected.emit(self)
 
 

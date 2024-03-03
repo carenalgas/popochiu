@@ -7,13 +7,14 @@ extends Node
 ## sound effects and music.[br][br]
 ## Use examples:[br]
 ## [codeblock]
-## await A.sfx_tv_on.play()
-## await E.queue([
-##     A.mx_toon_town.queue_play(),
-##     A.vo_scream.queue_play(true), # Wait for the audio to finish
-##     A.sfx_boing.queue_play(),
-## ])
-## A.mx_house.play()
+## func _on_click() -> void:
+##     await A.sfx_tv_on.play()
+##     await E.queue([
+##         A.mx_toon_town.queue_play(),
+##         A.vo_scream.queue_play(true), # Wait for the audio to finish
+##         A.sfx_boing.queue_play(),
+##     ])
+##     A.mx_house.play()
 ## [/codeblock]
 
 ## Used to convert the value of the pitch set on [member PopochiuAudioCue.pitch] to the

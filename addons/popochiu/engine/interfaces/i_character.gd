@@ -3,12 +3,12 @@ extends Node
 ## Provides access to the [PopochiuCharacter]s in the game. Access with [b]C[/b] (e.g.
 ## [code]C.player.say("What a wonderful plugin")[/code]).
 ##
-## Use it to manipulate Characters. Its script is [b]i_character.gd[/b].
+## Use it to manipulate Characters. Its script is [b]i_character.gd[/b].[br][br]
 ##
 ## Some things you can do with it:[br][br]
 ## [b]•[/b] Access the Player-controlled Character (PC) directly [code]C.player[/code].[br]
 ## [b]•[/b] Access any character (with autocompletion based on its name).[br]
-## [b]•[/b] Make characters move or say something.
+## [b]•[/b] Make characters move or say something.[br][br]
 ##
 ## Example:
 ## [codeblock]
