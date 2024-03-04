@@ -1,15 +1,23 @@
 class_name PopochiuAudioManager
 extends Node
-@warning_ignore("return_value_discarded")
-## Handles playing audio with AudioCues.
+## Handles playing audio using [PopochiuAudioCue]s.
+##
+## It plays sound effects and music using [AudioStreamPlayer] or [AudioStreamPlayer2D], creating
+## these nodes at runtime if needed. By default, it has 6 nodes for positional streams and 5 for
+## playing non-positional streams.[br][br]
+## The [b]PopochiuAudioManager[/b] is loaded as a child of [Popochiu] when the game starts.
 
-# TODO: Create AudioHandle so each AudioCue has its own AudioStreamPlayer...
-# http://www.powerhoof.com/public/powerquestdocs/class_power_tools_1_1_quest_1_1_audio_handle.html
-
+## Used to mark stream players created at runtime that should be [method Node.free] when they are
+## no longer needed.
 const TEMP_PLAYER := "temporal"
-const AudioCue := preload('audio_cue.gd')
+## Specifies the path where the volume configuration for the audio buses used in the game is stored.
+const SETTINGS_PATH = "user://audio_settings.save"
 
+## Used to convert the value of the pitch set on [member PopochiuAudioCue.pitch] to the
+## corresponding value needed for the [code]pitch_scale[/code] property of the audio stream players.
 var twelfth_root_of_two := pow(2, (1.0 / 12))
+## Stores the volume values for each of the audio buses used by the game.
+var volume_settings := {}
 
 var _mx_cues := {}
 var _sfx_cues := {}
@@ -17,15 +25,13 @@ var _vo_cues := {}
 var _ui_cues := {}
 var _active := {}
 var _all_in_one := {}
-# Serves as a map that stores an AudioStreamPlayer/AudioStreamPlayer2D and the
-# tween used to fade its volume
+# Serves as a map that stores an AudioStreamPlayer/AudioStreamPlayer2D and the tween used to fade
+# its volume
 var _fading_sounds := {}
 var _dflt_volumes := {}
 
-var settings_path = "user://audio_settings.save"
-var volume_settings := {}
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	if Engine.is_editor_hint(): return
 
@@ -33,30 +39,30 @@ func _ready() -> void:
 		var bus_name = AudioServer.get_bus_name(bus_idx)
 		volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)
 	
-	for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
-		for rp in PopochiuResources.get_data_value('audio', arr, []):
-			var ac: AudioCue = load(rp)
-			self['_%s' % arr][ac.resource_name] = ac
+	for arr in ["mx_cues", "sfx_cues", "vo_cues", "ui_cues"]:
+		for rp in PopochiuResources.get_data_value("audio", arr, []):
+			var ac: PopochiuAudioCue = load(rp)
+			
+			self["_%s" % arr][ac.resource_name] = ac
 			_all_in_one[ac.resource_name] = ac
 			_dflt_volumes[ac.resource_name] = ac.volume
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-# Looks for an AudioCue and plays it if found. It also can wait until it
-# finishes playing.
-# If wait_to_end is not null, that means the call is comming from a play
-# inside a E.queue([])
-# In this method the calls to play and play_no_block converge.
-func play_sound_cue(
-	cue_name := '', position_2d := Vector2.ZERO, wait_to_end = null
-) -> Node:
+#endregion
+
+#region Public #####################################################################################
+## Searches for the [PopochiuAudioCue] identified by [param cue_name] among the cues that are NOT
+## part of the music group and plays it. You can set a [param position_2d] to play it positionally.
+## If [param wait_to_end] is set to [code]true[/code], the function will pause until the audio
+## finishes.
+func play_sound_cue(cue_name := "", position_2d := Vector2.ZERO, wait_to_end = null) -> Node:
 	var stream_player: Node = null
 	
 	if _all_in_one.has(cue_name.to_lower()):
-		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
+		var cue: PopochiuAudioCue = _all_in_one[cue_name.to_lower()]
 		stream_player = _play(cue, position_2d)
 	else:
-		printerr('[Popochiu] Sound not found:', cue_name)
+		PopochiuUtils.print_error("Sound not found: " + cue_name)
 		
 		if wait_to_end != null:
 			await get_tree().process_frame
@@ -71,41 +77,43 @@ func play_sound_cue(
 	return stream_player
 
 
-# Looks for an AudioCue in the list of music cues and plays it.
-# In this method the calls to play_music and play_music_no_block converge.
-func play_music_cue(
-	cue_name: String, fade_duration := 0.0, music_position := 0.0
-) -> Node:
+## Searches for the [PopochiuAudioCue] identified by [param cue_name] among the cues that are part
+## of the music group and plays it. It can fade for [param fade_duration] seconds, and you can start
+## playing it from a given [param music_position] in seconds.
+func play_music_cue(cue_name: String, fade_duration := 0.0, music_position := 0.0) -> Node:
 	var stream_player: Node = null
 	
 	if _active.has(cue_name):
 		return _active[cue_name].players[0]
 	
 	if _mx_cues.has(cue_name.to_lower()):
-		var cue: AudioCue = _mx_cues[cue_name.to_lower()]
+		var cue: PopochiuAudioCue = _mx_cues[cue_name.to_lower()]
 		# NOTE: fixes #27 AudioCues were losing the volume set in editor when
 		# played with a fade
 		cue.volume = _dflt_volumes[cue_name.to_lower()]
 		if fade_duration > 0.0:
 			stream_player = _fade_in(
-				cue, Vector2.ZERO, fade_duration,
-				-80.0, cue.volume, music_position
+				cue,
+				Vector2.ZERO,
+				fade_duration,
+				-80.0,
+				cue.volume,
+				music_position
 			)
 		else:
 			stream_player = _play(cue, Vector2.ZERO, music_position)
 	else:
-		printerr('[Popochiu] Music not found:', cue_name)
+		PopochiuUtils.print_error("Music not found: " + cue_name)
 	
 	return stream_player
 
 
-# Looks for an AudioCue and plays it with a fade if found. It also can wait until
-# it finishes playing.
-# If wait_to_end is not null, that means the call is comming from a play
-# inside a E.queue([])
-# In this method the calls to play and play_no_block converge.
+## Plays the [PopochiuAudioCue] identified by [param cue_name] using a fade that will last
+## [param duration] seconds. Specify the starting volume with [param from] and the target volume
+## with [param to]. You can play the audio positionally with [param position_2d] and wait for it
+## to finish if [param wait_to_end] is set to [code]true[/code].
 func play_fade_cue(
-	cue_name := '',
+	cue_name := "",
 	duration := 1.0,
 	from := -80.0,
 	to := INF,
@@ -115,16 +123,10 @@ func play_fade_cue(
 	var stream_player: Node = null
 	
 	if _all_in_one.has(cue_name.to_lower()):
-		var cue: AudioCue = _all_in_one[cue_name.to_lower()]
-		stream_player = _fade_in(
-			cue,
-			position_2d,
-			duration,
-			from,
-			to if to != INF else cue.volume
-		)
+		var cue: PopochiuAudioCue = _all_in_one[cue_name.to_lower()]
+		stream_player = _fade_in(cue, position_2d, duration, from, to if to != INF else cue.volume)
 	else:
-		printerr('[Popochiu] Sound for fade not found:', cue_name)
+		PopochiuUtils.print_error("Sound to fade not found " + cue_name)
 		
 		if wait_to_end != null:
 			await get_tree().process_frame
@@ -139,6 +141,8 @@ func play_fade_cue(
 	return stream_player
 
 
+## Stops the [PopochiuAudioCue] identified by [param cue_name]. It can use a fade effect that will
+## last [param fade_duration] seconds.
 func stop(cue_name: String, fade_duration := 0.0) -> void:
 	if _active.has(cue_name):
 		var stream_player: Node = (_active[cue_name].players as Array).front()
@@ -157,6 +161,7 @@ func stop(cue_name: String, fade_duration := 0.0) -> void:
 			_active.erase(cue_name)
 
 
+## Returns the playback position of the [PopochiuAudioCue] identified by [param cue_name].
 func get_cue_playback_position(cue_name: String) -> float:
 	if not _active.has(cue_name): return -1.0
 	
@@ -168,13 +173,17 @@ func get_cue_playback_position(cue_name: String) -> float:
 	return -1.0
 
 
+## Changes the [code]pitch_scale[/code] of the [PopochiuAudioCue] identified by [param cue_name] to
+## the value set (in semitones) in [param pitch].
 func change_cue_pitch(cue_name: String, pitch := 0.0) -> void:
 	if not _active.has(cue_name): return
 	
 	var stream_player: Node = (_active[cue_name].players as Array).front()
-	stream_player.set_pitch_scale(semitone_to_pitch(pitch))
+	stream_player.set_pitch_scale(_semitone_to_pitch(pitch))
 
 
+## Changes the [code]volume_db[/code] of the [PopochiuAudioCue] identified by [param cue_name] to
+## the value set in [param volume].
 func change_cue_volume(cue_name: String, volume := 0.0) -> void:
 	if not _active.has(cue_name): return
 	
@@ -182,24 +191,57 @@ func change_cue_volume(cue_name: String, volume := 0.0) -> void:
 	stream_player.volume_db = volume
 
 
-func semitone_to_pitch(pitch: float) -> float:
-	return pow(twelfth_root_of_two, pitch)
-
-
+## Sets [param value] as the volume of the audio bus identified with [param bus_name].
 func set_bus_volume_db(bus_name: String, value: float) -> void:
 	if volume_settings.has(bus_name):
 		volume_settings[bus_name] = value
 		AudioServer.set_bus_volume_db(
 			AudioServer.get_bus_index(bus_name), volume_settings[bus_name]
 		)
+		
+		save_sound_settings()
 
 
+## Saves in the file at [constant SETTINGS_PATH] the volume values of all the audio buses.
+func save_sound_settings():
+	var file = FileAccess.open(SETTINGS_PATH, FileAccess.WRITE)
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-# Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if
-# there are no more
+	if file == null:
+		PopochiuUtils.print_error("Error opening file: " + SETTINGS_PATH)
+	else:
+		file.store_var(volume_settings)
+		file.close()
+
+
+## Loads the volume values stored at [constant SETTINGS_PATH] for all the audio buses.
+func load_sound_settings():
+	var file = FileAccess.open(SETTINGS_PATH, FileAccess.READ)
+
+	if file:
+		volume_settings = file.get_var(true)
+		file.close()
+		for bus_idx in range(AudioServer.get_bus_count()):
+			var bus_name = AudioServer.get_bus_name(bus_idx)
+			if volume_settings.has(bus_name):
+				AudioServer.set_bus_volume_db(
+					AudioServer.get_bus_index(bus_name),
+					volume_settings[bus_name]
+				)
+			else:
+				volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)
+
+
+#endregion
+
+#region Private ####################################################################################
+# Calculates the [code]pitch_scale[/code] value of [param pitch], which is in semitones.
+func _semitone_to_pitch(pitch: float) -> float:
+	return pow(twelfth_root_of_two, pitch)
+
+
+# Plays the sound and assigns it to a free AudioStreamPlayer, or creates one if there are no more.
 func _play(
-	cue: AudioCue, position := Vector2.ZERO, from_position := 0.0
+	cue: PopochiuAudioCue, position := Vector2.ZERO, from_position := 0.0
 ) -> Node:
 	var player: Node = null
 	
@@ -257,8 +299,8 @@ func _get_free_stream(group: Node):
 	return _reparent(group, $Active, 0)
 
 
-## Reassigns the AudioStreamPlayer to its original group when it finishes so it
-## can be available for being used
+# Reassigns the [AudioStreamPlayer] to its original group when it finishes so it can be available
+# for being used again.
 func _on_audio_stream_player_finished(
 	stream_player: Node, cue_name: String, _debug_idx: int
 ) -> void:
@@ -298,7 +340,7 @@ func _reparent(source: Node, target: Node, child_idx: int) -> Node:
 
 
 func _fade_in(
-	cue: AudioCue,
+	cue: PopochiuAudioCue,
 	position: Vector2,
 	duration := 1.0,
 	from := -80.0,
@@ -335,10 +377,9 @@ func _fade_sound(cue_name: String, duration = 1, from = 0, to = 0) -> void:
 	if _fading_sounds.has(stream_player.stream.get_instance_id()):
 		_fading_sounds[stream_player.stream.get_instance_id()].tween.kill()
 	
-	var t := create_tween()
+	var t := create_tween().set_ease(Tween.EASE_IN_OUT)
 	t.finished.connect(_fadeout_finished.bind(stream_player, t))
-	t.tween_property(stream_player, 'volume_db', to, duration)\
-	.from(from).set_ease(Tween.EASE_IN_OUT)
+	t.tween_property(stream_player, "volume_db", to, duration).from(from)
 	
 	if from > to :
 		_fading_sounds[stream_player.stream.get_instance_id()] = {
@@ -354,28 +395,4 @@ func _fadeout_finished(stream_player: Node, tween: Tween) -> void:
 		tween.finished.disconnect(_fadeout_finished)
 
 
-func save_sound_settings():
-	var file = FileAccess.open(settings_path, FileAccess.WRITE)
-
-	if file == null:
-		printerr("Error opening file: " + settings_path)
-	else:
-		file.store_var(volume_settings)
-		file.close()
-
-
-func load_sound_settings():
-	var file = FileAccess.open(settings_path, FileAccess.READ)
-
-	if file:
-		volume_settings = file.get_var(true)
-		file.close()
-		for bus_idx in range(AudioServer.get_bus_count()):
-			var bus_name = AudioServer.get_bus_name(bus_idx)
-			if volume_settings.has(bus_name):
-				AudioServer.set_bus_volume_db(
-					AudioServer.get_bus_index(bus_name),
-					volume_settings[bus_name]
-				)
-			else:
-				volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)
+#endregion

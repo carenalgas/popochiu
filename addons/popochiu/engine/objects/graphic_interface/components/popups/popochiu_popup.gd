@@ -1,7 +1,7 @@
 @tool
 class_name PopochiuPopup
 extends PanelContainer
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+## The base popup node used by Popochiu GUIs.
 
 @export var closes_by_clicking_out := true
 @export var script_name: StringName = ""
@@ -13,7 +13,7 @@ extends PanelContainer
 @onready var btn_close: TextureButton = %Close
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	if not title.is_empty():
 		lbl_title.text = title
@@ -34,7 +34,9 @@ func _ready() -> void:
 	close()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 ## Called when the popup is opened. At this point it is not visible yet.
 func _open() -> void:
 	pass
@@ -55,7 +57,9 @@ func _on_cancel() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 ## Shows the popup scaling it and blocking interactions with the graphic interface.
 func open() -> void:
 	_open()
@@ -107,7 +111,9 @@ func on_close_pressed() -> void:
 	close()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SETGET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func set_title(value: String) -> void:
 	title = value
 	
@@ -115,7 +121,9 @@ func set_title(value: String) -> void:
 		lbl_title.text = title
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 ## Checks if the overlay area of the popup was clicked in order to close it.
 func _check_click(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.is_pressed()\
@@ -128,3 +136,6 @@ func _check_click(event: InputEvent) -> void:
 func _on_popup_requested(popup_script_name: StringName) -> void:
 	if popup_script_name == script_name:
 		open()
+
+
+#endregion

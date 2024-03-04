@@ -33,14 +33,15 @@ enum Looking {
 	UP_LEFT
 }
 
-## Emitted when the character starts walking. As parameters, it sends itself, the starting position
-## and the ending position. [PopochiuRoom]s connect to this signal in order to make characters move
-## inside them from one point to another.
+## Emitted when a [param character] starts moving from [param start] to [param end]. [PopochiuRoom]
+## connects to this signal in order to make characters move inside them from one point to another.
 signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector2)
 ## Emitted when the character is forced to stop while walking.
 signal stopped_walk
 ## Emitted when the character reaches the ending position when moving from one point to another.
 signal move_ended
+## Emitted when the animation to grab things has finished.
+signal grab_done
 
 ## The [Color] in which the dialogue lines of the character are rendered.
 @export var text_color := Color.WHITE
@@ -169,8 +170,8 @@ func _play_grab() -> void:
 ## Puts the character in the idle state by playing its idle animation, then waits for
 ## [code]0.2[/code] seconds.
 ## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
-## value.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## value.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_idle() -> Callable:
 	return func (): await idle()
 	
@@ -199,8 +200,8 @@ func idle() -> void:
 
 ## Makes the character move to [param target_pos] and plays its walk animation.
 ## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
-## value.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## value.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk(target_pos: Vector2) -> Callable:
 	return func (): await walk(target_pos)
 
@@ -251,8 +252,8 @@ func take_turn(target_pos: Vector2):
 	face_direction(target_pos)
 	_play_walk(target_pos)
 
-## Makes the character stop moving and emits [signal stopped_walk].
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Makes the character stop moving and emits [signal stopped_walk].[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop_walking() -> Callable:
 	return func (): await stop_walking()
 
@@ -267,8 +268,8 @@ func stop_walking() -> void:
 
 
 ## Makes the character to look up by setting [member _looking_dir] to [constant UP] and waits until
-## [method idle] finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## [method idle] finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_up() -> Callable:
 	return func (): await face_up()
 
@@ -281,8 +282,8 @@ func face_up() -> void:
 
 
 ## Makes the character to look up and right by setting [member _looking_dir] to [constant UP_RIGHT]
-## and waits until [method idle] finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## and waits until [method idle] finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_up_right() -> Callable:
 	return func (): await face_up_right()
 
@@ -295,8 +296,8 @@ func face_up_right() -> void:
 
 
 ## Makes the character to look right by setting [member _looking_dir] to [constant RIGHT] and waits
-## until [method idle] finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## until [method idle] finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_right() -> Callable:
 	return func (): await face_right()
 
@@ -309,8 +310,8 @@ func face_right() -> void:
 
 
 ## Makes the character to look down and right by setting [member _looking_dir] to
-## [constant DOWN_RIGHT] and waits until [method idle] finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## [constant DOWN_RIGHT] and waits until [method idle] finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_down_right() -> Callable:
 	return func (): await face_down_right()
 
@@ -323,8 +324,8 @@ func face_down_right() -> void:
 
 
 ## Makes the character to look down by setting [member _looking_dir] to [constant DOWN] and waits
-## until [method idle] finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## until [method idle] finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_down() -> Callable:
 	return func (): await face_down()
 
@@ -337,8 +338,8 @@ func face_down() -> void:
 
 
 ## Makes the character to look down and left by setting [member _looking_dir] to
-## [constant DOWN_LEFT] and waits until [method idle] finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## [constant DOWN_LEFT] and waits until [method idle] finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_down_left() -> Callable:
 	return func (): await face_down_left()
 
@@ -351,8 +352,8 @@ func face_down_left() -> void:
 
 
 ## Makes the character to look left by setting [member _looking_dir] to [constant LEFT] and waits
-## until [method idle] finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## until [method idle] finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_left() -> Callable:
 	return func (): await face_left()
 
@@ -365,8 +366,8 @@ func face_left() -> void:
 
 
 ## Makes the character to look up and left by setting [member _looking_dir] to [constant UP_LEFT]
-## and waits until [method idle] finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## and waits until [method idle] finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_up_left() -> Callable:
 	return func (): await face_up_left()
 
@@ -379,8 +380,8 @@ func face_up_left() -> void:
 
 
 ## Makes the character face in the direction of the last clicked [PopochiuClickable], which is
-## stored in [member Popochiu.clicked].
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## stored in [member Popochiu.clicked].[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_clicked() -> Callable:
 	return func (): await face_clicked()
 
@@ -403,8 +404,8 @@ func face_clicked() -> void:
 ## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
 ## [param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
 ## [AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
-## characters return to its idle state.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## characters return to its idle state.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_say(dialog: String, emo := "") -> Callable:
 	return func (): await say(dialog, emo)
 
@@ -446,15 +447,15 @@ func say(dialog: String, emo := "") -> void:
 	G.unblock(true)
 
 
-## Calls [method _play_grab] and waits until the [signal character_grab_done] is emitted, then goes
-## back to [method idle].
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
+## [method idle].[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_grab() -> Callable:
 	return func (): await grab()
 
 
-## Calls [method _play_grab] and waits until the [signal character_grab_done] is emitted, then goes
-## back to [method idle].
+## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
+## [method idle].
 func grab() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
@@ -463,7 +464,7 @@ func grab() -> void:
 	# Call the virtual that plays the grab animation
 	_play_grab()
 	
-	await C.character_grab_done
+	await grab_done
 	
 	idle()
 
@@ -484,8 +485,8 @@ func show_helpers() -> void:
 		dialog_pos.show()
 
 
-## Makes the character walk to [param pos].
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Makes the character walk to [param pos].[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to(pos: Vector2) -> Callable:
 	return func(): await walk_to(pos)
 
@@ -496,8 +497,8 @@ func walk_to(pos: Vector2) -> void:
 
 
 ## Makes the character walk to the last clicked [PopochiuClickable], which is stored in
-## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 	return func (): await walk_to_clicked(offset)
 
@@ -510,8 +511,8 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 
 ## Makes the character walk to the [PopochiuProp] (in the current room) which
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
-## relative to the target position.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await walk_to_prop(id, offset)
 
@@ -525,8 +526,8 @@ func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
 
 ## Makes the character walk to the [PopochiuHotspot] (in the current room) which
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
-## relative to the target position.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await walk_to_hotspot(id, offset)
 
@@ -539,8 +540,8 @@ func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 
 
 ## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
-## equal to [param id]. You can set an [param offset] relative to the target position.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## equal to [param id]. You can set an [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await walk_to_marker(id, offset)
 
@@ -562,8 +563,8 @@ func queue_ignore_walkable_areas(new_value: bool) -> Callable:
 
 
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
-## [param animation_fallback] in case the former one doesn't exists.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## [param animation_fallback] in case the former one doesn't exists.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation(
 	animation_label: String, animation_fallback := 'idle', blocking := false
 ) -> Callable:
@@ -601,8 +602,8 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 
 
 ## Makes the animation that is currently playing to stop. Works only if it is looping and is not an
-## idle animation. The animation stops when the current loop finishes.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## idle animation. The animation stops when the current loop finishes.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop_animation():
 	return func(): await stop_animation()
 
@@ -630,7 +631,8 @@ func stop_animation():
 
 
 ## Immediately stops the animation that is currently playing by changing to the idle animation.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## [br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_halt_animation():
 	return func(): halt_animation()
 
@@ -640,8 +642,8 @@ func halt_animation():
 	_play_idle()
 
 
-## Pauses the animation that is currently playing.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Pauses the animation that is currently playing.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_pause_animation():
 	return func(): pause_animation()
 
@@ -651,8 +653,8 @@ func pause_animation():
 	$AnimationPlayer.pause()
 
 
-## Resumes the current animation (that was previously paused).
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Resumes the current animation (that was previously paused).[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_resume_animation():
 	return func(): resume_animation()
 
