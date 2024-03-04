@@ -1,6 +1,6 @@
 CURRENT_UID := $(shell id -u):$(shell id -g)
 
-all: up
+all: docs-up
 
 docs-up:
 	docker compose pull
@@ -10,26 +10,17 @@ docs-down:
 	docker compose down
 
 docs-deploy:
-	docker run --rm \
-		-v ".:/app" \
-		-u $(CURRENT_UID) \
-		-w /app \
-		minidocks/mkdocs gh-deploy --verbose
+	docker compose run \
+		--rm \
+		--user ${CURRENT_UID}
+		documentation \
+		mkdocs build --verbose
 
-gdm-build:
-	docker build \
-		--no-cache \
-		--build-arg="DOCKER_USER_UID=$(shell id -u)" \
-		--build-arg="DOCKER_USER_GID=$(shell id -g)" \
-		-t popochiu-docs-maker:latest \
-		-f Dockerfile.DocsMaker .
-
-gdm-generate:
-	docker run --rm \
-		-v .:/project \
-		-v ./docs-src/content/the-engine-handbook/scripting-reference:/output \
-		-u $(CURRENT_UID) \
-		popochiu-docs-maker:latest /project \
+docs-extract:
+	docker compose run \
+		--rm \
+		--user $(CURRENT_UID) \
+		docs-generator /project \
 		-o /output \
 		-d addons/popochiu/engine/
 

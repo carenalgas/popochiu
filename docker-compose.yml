@@ -12,3 +12,12 @@ services:
             context: .
             dockerfile: Dockerfile.MkDocs
         command: serve -a 0.0.0.0:80
+    docs-generator:
+        volumes:
+            - .:/project
+            - ./docs-src/content/the-engine-handbook/scripting-reference:/output
+        profiles:
+            - tools
+        build:
+            context: .
+            dockerfile: Dockerfile.DocsMaker
