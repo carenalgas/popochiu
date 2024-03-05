@@ -81,7 +81,7 @@ func _on_system_text_shown(_msg: String) -> void:
 
 ## Called when [method G.show_system_text] is executed. Shows the [code]"normal"[/code] cursor.
 func _on_system_text_hidden() -> void:
-	Cursor.show_cursor("normal")
+	Cursor.show_cursor()
 
 
 ## Called when the mouse enters (hovers) [param clickable]. It displays a text with the
@@ -92,8 +92,6 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	
 	if clickable.get("suggested_command"):
 		$"9VerbPanel".highlight_command(clickable.suggested_command)
-	
-	Cursor.show_cursor("active")
 	
 	if I.active:
 		G.show_hover_text(
@@ -115,7 +113,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	
 	if clickable.get("suggested_command"):
 		$"9VerbPanel".highlight_command(clickable.suggested_command, false)
-	Cursor.show_cursor("normal")
+	Cursor.show_cursor()
 	
 	if I.active:
 		_show_use_on(I.active)
@@ -134,7 +132,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 		E.current_command = NineVerbCommands.Commands.USE
 	
 	$"9VerbPanel".highlight_command(NineVerbCommands.Commands.LOOK_AT)
-	Cursor.show_cursor("normal")
+	Cursor.show_cursor()
 	
 	if I.active:
 		if E.current_command == NineVerbCommands.Commands.USE and I.active != inventory_item:
@@ -158,7 +156,7 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 		_return_to_walk_to = false
 	
 	$"9VerbPanel".highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
-	Cursor.show_cursor("normal")
+	Cursor.show_cursor()
 	
 	if I.active:
 		G.show_hover_text("Use %s in" % I.active.description)
@@ -185,7 +183,7 @@ func _on_dialog_started(_dialog: PopochiuDialog) -> void:
 
 ## Called when a [PopochiuDialog] finishes. It shows the [code]"normal"[/code] cursor.
 func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor("normal")
+	Cursor.show_cursor()
 
 
 ## Called when [param item] is selected in the inventory (i.e. by clicking it). For this GUI, this
