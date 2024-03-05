@@ -135,6 +135,7 @@ func unblock(wait := false) -> void:
 	
 	unblocked.emit()
 
+
 ## Makes the in-game graphic interface (GUI) to hide.
 func hide_interface() -> void:
 	hidden.emit()

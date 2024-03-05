@@ -10,21 +10,20 @@ extends PopochiuHotspot
 func _on_click() -> void:
 	# Replace the call to E.command_fallback() with your code.
 	E.command_fallback()
-	# E.g. Make the player-controlled character walk to the Hotspot and then say
+	# For example, you can make the player character walk to this hotspot, gaze at it, and then say
 	# something:
 #	await C.player.walk_to_clicked()
 #	await C.player.face_clicked()
-#	await C.player.say("Can't open it")
+#	await C.player.say("What a nice view")
 
 
 # When the node is right clicked
 func _on_right_click() -> void:
 	# Replace the call to E.command_fallback() with your code.
 	E.command_fallback()
-	# E.g. Make the player-controlled character walk to the Hotspot and then say
-	# something:
+	# For example, you can make the player character gaze at this hotspot and then say something:
 #	await C.player.face_clicked()
-#	await C.player.say("A closed door")
+#	await C.player.say("A window")
 
 
 # When the node is middle clicked
@@ -34,12 +33,12 @@ func _on_middle_click() -> void:
 
 
 # When the node is clicked and there is an inventory item selected
-func _on_item_used(item: PopochiuInventoryItem) -> void:
+func _on_item_used(_item: PopochiuInventoryItem) -> void:
 	# Replace the call to E.command_fallback() to implement your code.
 	E.command_fallback()
-	# E.g. Make the player-controlled character to react when using a specific
-	# item on this Hotspot:
-#	if item.script_name == 'Key':
+	# For example, you can make the player character say something when the Key item is used in this
+	# hotspot. Note that you have to change the name of the `_item` parameter to `item`.
+#	if item == I.Key:
 #		await C.player.say("No can do")
 
 
