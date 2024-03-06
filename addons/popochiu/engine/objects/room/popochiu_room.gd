@@ -405,6 +405,12 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 		PopochiuUtils.print_error("Can't set %s as active walkable area" % walkable_area_name)
 
 
+func get_move_target_position(start_position: Vector2, end_position: Vector2) -> Vector2:
+	return NavigationServer2D.map_get_path(
+		_nav_path.map_rid, start_position, end_position, true
+	)[-1]
+
+
 #endregion
 
 #region SetGet #####################################################################################
@@ -465,10 +471,7 @@ func _update_navigation_path(
 		return
 	
 	_moving_characters[character.get_instance_id()] = {}
-
-	var moving_character_data: Dictionary =\
-	_moving_characters[character.get_instance_id()]
-
+	var moving_character_data: Dictionary = _moving_characters[character.get_instance_id()]
 	moving_character_data.character = character
 	
 	# TODO: Use a Dictionary so more than one character can move around at the

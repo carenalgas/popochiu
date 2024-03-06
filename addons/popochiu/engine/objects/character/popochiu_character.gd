@@ -246,6 +246,7 @@ func walk(target_pos: Vector2) -> void:
 	# Trigger the signal for the room to start moving the character
 	started_walk_to.emit(self, position, target_pos)
 	await move_ended
+	
 	is_moving = false
 
 func take_turn(target_pos: Vector2):
@@ -419,12 +420,6 @@ func say(dialog: String, emo := "") -> void:
 		await get_tree().process_frame
 		return
 	
-	# Blocks the graphic interface so players can't interact with it while the
-	# dialog line plays
-	# NOTE: What if players want NPCs talking without blocking the graphic
-	# 		interface?
-	G.block()
-	
 	if not emo.is_empty():
 		emotion = emo
 	
@@ -441,10 +436,6 @@ func say(dialog: String, emo := "") -> void:
 	
 	emotion = ''
 	idle()
-	
-	# Unblock the graphic interface with a delay to prevent cursor flickering
-	# (rapid state changes) between multiple lines of text or actions in sequence
-	G.unblock(true)
 
 
 ## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
@@ -507,6 +498,14 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 ## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	await _walk_to_node(E.clicked, offset)
+
+
+func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
+	G.block()
+	
+	await _walk_to_node(E.clicked, offset, true)
+	
+	G.unblock()
 
 
 ## Makes the character walk to the [PopochiuProp] (in the current room) which
@@ -811,14 +810,21 @@ func _get_valid_oriented_animation(animation_label):
 	return null
 
 
-func _walk_to_node(node: Node2D, offset: Vector2) -> void:
+func _walk_to_node(node: Node2D, offset: Vector2, is_blocking := false) -> void:
 	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
-
-	await walk(
+	
+	var target_pos := (
 		node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
 	)
+	var target_move_pos: Vector2 = R.current.get_move_target_position(position, target_pos)
+	
+	await walk(target_pos)
+	
+	if not is_blocking and position != target_move_pos:
+		await E.await_stopped
+
 
 func _update_position():
 	E.current_room.update_characters_position(self)

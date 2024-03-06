@@ -36,6 +36,7 @@ signal game_loaded(data: Dictionary)
 signal command_selected
 ## Emitted when the dialog style changes in [PopochiuSettings].
 signal dialog_style_changed
+signal await_stopped
 
 ## Path to the script with the class used to save and load game data.
 const SAVELOAD_PATH := 'res://addons/popochiu/engine/others/popochiu_save_load.gd'
@@ -1023,7 +1024,8 @@ func _on_character_spoke(chr: PopochiuCharacter, msg := '') -> void:
 
 
 func _on_graphic_interface_unblocked() -> void:
-	clicked = null
+	pass
+	#clicked = null
 	#current_command = 0
 
 
