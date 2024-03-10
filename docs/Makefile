@@ -9,7 +9,7 @@ docs-up:
 docs-down:
 	docker compose down
 
-docs-deploy:
+docs-deploy: docs-extract
 	rm -rf ./dist && git restore dist
 	docker compose run \
 		--rm \
