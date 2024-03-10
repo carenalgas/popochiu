@@ -19,5 +19,5 @@ plugins:
   - search
   - mkdocs-nav-weight
 theme: readthedocs
-docs_dir: docs-src/content
-site_dir: docs
+docs_dir: src/content
+site_dir: dist

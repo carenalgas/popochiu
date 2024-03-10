@@ -15,6 +15,7 @@ docs-deploy:
 		--user ${CURRENT_UID} \
 		documentation \
 		mkdocs build --verbose
+	
 
 docs-extract:
 	docker compose run \

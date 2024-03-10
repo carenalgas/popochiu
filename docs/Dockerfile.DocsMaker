@@ -37,7 +37,7 @@ RUN addgroup --system --gid ${DOCKER_USER_GID} ${DOCKER_USER} \
 
 WORKDIR /app
 
-COPY --chmod=777 generate_reference generate_reference
+COPY --chmod=777 scripts/generate_reference generate_reference
 
 # Install application dependencies
 RUN python3 setup.py install
