@@ -10,12 +10,13 @@ docs-down:
 	docker compose down
 
 docs-deploy:
+	rm -rf ./dist && git restore dist
 	docker compose run \
 		--rm \
 		--user ${CURRENT_UID} \
 		documentation \
 		mkdocs build --verbose
-	
+	GIT_DEPLOY_USERNAME="$(shell git config user.name)" GIT_DEPLOY_MAIL="$(shell git config user.email)" scripts/deploy_to_ghpages
 
 docs-extract:
 	docker compose run \
