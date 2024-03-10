@@ -1,5 +1,12 @@
-site_name: Popochiu
+site_name: Popochiu Documentation
+site_description: Home to the documentation of Popochiu, a Godot plugin to build point-and-click adventure games.
+site_author: The Carenalgas Community
+copyright: Copyright (c) 2024 - The Carenalgas Community
 repo_url: https://github.com/carenalgas/popochiu/
+edit_uri: edit/develop/docs/src/
+docs_dir: src
+site_dir: dist
+theme: readthedocs
 extra_css:
   - assets/css/custom.css
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css
@@ -18,6 +25,3 @@ markdown_extensions:
 plugins:
   - search
   - mkdocs-nav-weight
-theme: readthedocs
-docs_dir: src
-site_dir: dist
