@@ -12,7 +12,7 @@ docs-down:
 docs-deploy:
 	docker compose run \
 		--rm \
-		--user ${CURRENT_UID}
+		--user ${CURRENT_UID} \
 		documentation \
 		mkdocs build --verbose
 
