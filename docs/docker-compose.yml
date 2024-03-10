@@ -15,7 +15,7 @@ services:
     docs-extractor:
         volumes:
             - ..:/project
-            - ./src/content/the-engine-handbook/scripting-reference:/output
+            - ./src/the-engine-handbook/scripting-reference:/output
         profiles:
             - tools
         build:
