@@ -21,7 +21,7 @@ docs-extract:
 	docker compose run \
 		--rm \
 		--user $(CURRENT_UID) \
-		docs-generator /project \
+		docs-extractor /project \
 		-o /output \
 		-d addons/popochiu/engine/
 

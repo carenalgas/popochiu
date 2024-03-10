@@ -12,7 +12,7 @@ services:
             context: .
             dockerfile: Dockerfile.MkDocs
         command: serve -a 0.0.0.0:80
-    docs-generator:
+    docs-extractor:
         volumes:
             - ..:/project
             - ./src/content/the-engine-handbook/scripting-reference:/output
@@ -20,4 +20,4 @@ services:
             - tools
         build:
             context: .
-            dockerfile: Dockerfile.DocsMaker
+            dockerfile: Dockerfile.DocsExtractor
