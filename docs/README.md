@@ -76,9 +76,9 @@ About Make, there are different ways to install it:
 
 ## Run the documentation
 
-To run the documentation, just enter the project's directory and issue this command:
+To run the documentation, just enter the `docs` directory in the project's repository and issue this command:
 
-> `make docs-up'
+> `make docs-up`
 
 This will start the Docker container, and will bind port 286 of the host to the running instance of MkDocs in the container. To view the docs live in your browser, just visit [http://localhost:286](http://localhost:286).
 
@@ -92,34 +92,39 @@ Please, read the contribution rules before pushing changes to Popochiu Documenta
 
 ## How to export scripting reference to the local development environment
 
-Scripting reference is automatically exported by GitHub Actions when the doc is published to production.  
-Should you want to export the refs locally to preview your work on the docs, a make command is available for that.
+Scripting reference ~~is~~ will be automatically exported by GitHub Actions when the doc is published to production.
 
-**IMPORTANT:** a preliminary step to export the scripting reference is to build the necessary docker image. For that, issue:
+> **NOTE**: At the time of writing, the documentation has to deployed manually to production. Please refer to the dedicated section below.
 
-> `make gdm-build`
+Exporting the Engine API refs is necessary to preview it locally. Also, the export procedure will be automatically triggered before every manual deploy to production. To extract the API refs without issuing a deploy, a make command has been made available.
 
-and wait for the build to end successfully. Once it's done you can issue:
+> `make docs-extract`
 
-> `make gdm-generate`
-
-to export all of the engine API docs to markdown format.  
+All of the engine API docs will be exported to markdown format.  
 The exported refereces will be available in `The Engine Handbook > Scripting Reference` section of the documentation.
 
-**NOTE**: There is no live-reload of the source code. If you change the docblocks in the engine's source files, you will have to manually export local refs again.
+**NOTE**: There is no live-reload from the plugin source code. If you change the docblocks in the engine's source files, you will have to manually export local refs again.
 
-**NOTE**: Locally generated exports are ignored by Git.
+**NOTE**: To avoid redundancy, exported API refs are ignored by Git, so only the documentation source files and the GDScript source files are versioned.
 
 ## How to publish the documentation to production
 
-MkDocs is automatically triggered by GitHub automation so that new versions of the documentation are published whit every new release.
+~~MkDocs is automatically triggered by GitHub Actions automation so that new versions of the documentation are published whit every new release.~~
 
-> TODO: create a live documentation site for dev branch too.
+At the time of writing, the documentation has to be deployed manually to Github Pages. A make command is available for this task, that takes care of everything, that can be issued from every working branch (but will be usually be run from `develop`).
+
+> `make docs-deploy`
+
+> **NOTE**: This command requires writing permissions on Popochiu main repository, so it can be issued only by core project contributors.
+
+This command will create a local `gh-pages` branch. This branch can be thrown away, but the best option is to keep a local copy of it, because this will speed up subsequent update deploys.
+
+> **NOTE**: The `gh-pages` branch contents will differ entirely from the other branches of the project. You should **NEVER** commit manually on the `gh-pages` branch, nor trying to merge it back to a source branch. It would be bad. Like... try to imagine all life as you know it stopping instantaneously and every molecule in your body exploding at the speed of light. Allright, that's bad.
 
 ## Additional information
 
 1. For those who make use of DNSDock or Dinghy Proxy, the documentation can be accessed visiting [http://docs.popochiu.local](docs.popochiu.local) on port `80`.
-2. You can do without GNU Make and use Docker Compose direcly, issueing:
+2. If you are really searching for trouble, and/or if you know what you're doing, you can do without GNU Make and use Docker Compose direcly, with:
     * `docker compose up -d` to run the service in background
     * `docker compose down` to stop the service
     * `docker compose up` to run the service and display logs in the console (`ctrl-c` will stop the service and send you back to the console)

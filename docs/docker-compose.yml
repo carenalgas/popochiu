@@ -1,0 +1,23 @@
+version: "3"
+services:
+    documentation:
+        ports:
+            - 286:80
+        volumes:
+            - .:/app
+        working_dir: /app
+        labels:
+            - com.dnsdock.alias=docs.popochiu.local
+        build:
+            context: .
+            dockerfile: Dockerfile.MkDocs
+        command: serve -a 0.0.0.0:80
+    docs-extractor:
+        volumes:
+            - ..:/project
+            - ./src/the-engine-handbook/scripting-reference:/output
+        profiles:
+            - tools
+        build:
+            context: .
+            dockerfile: Dockerfile.DocsExtractor

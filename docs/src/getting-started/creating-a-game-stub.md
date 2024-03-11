@@ -2,7 +2,7 @@
 weight: 1020
 ---
 
-This page will guide you trought the process of creating a very small stub for a game.
+This page will guide you through the process of creating a very small stub for a game.
 
 The purpose of this page is to quickly get you set up to experiment and tinker as you read this documentation. If you are already familiar with Popochiu or have already created your project, you can skip to the [Tutorials](/getting-started/tutorials) section.
 
