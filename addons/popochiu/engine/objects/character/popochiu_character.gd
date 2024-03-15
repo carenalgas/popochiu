@@ -497,7 +497,13 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 ## Makes the character walk to the last clicked [PopochiuClickable], which is stored in
 ## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
+	var clicked_id: String = E.clicked.script_name
+	
 	await _walk_to_node(E.clicked, offset)
+	
+	# A double check in case two PopochiuClickable share the same `walk_to_point` coordinates
+	if clicked_id != E.clicked.script_name:
+		await E.await_stopped
 
 
 func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
