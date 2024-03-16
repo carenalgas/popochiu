@@ -1,5 +1,8 @@
 name: Release new version
 
+permissions:
+  contents: write
+
 on:
   push:
     tags:
