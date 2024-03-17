@@ -1,0 +1,75 @@
+name: Publish updated documentation
+
+# on:
+#   push:
+#     tags:
+#       - "v*.*.*"
+#       - "v*.*.*-alpha*"
+#       - "v*.*.*-beta*"
+#       - "v*.*.*-rc*"
+
+on:
+  push:
+    branches:
+      - feature/147-docs-release-automation
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.11
+      - run: >
+          pip install
+            mkdocs==1.5.3
+            mkdocs-nav-weight
+            mkdocs-abs-rel-plugin
+            mkdocs-add-number-plugin
+            mkdocs-autolinks-plugin
+            mkdocs-autorefs
+            mkdocs-awesome-pages-plugin
+            mkdocs-codeinclude-plugin
+            mkdocs-enumerate-headings-plugin
+            mkdocs-exclude
+            mkdocs-exclude-search
+            mkdocs-gallery
+            mkdocs-gen-files
+            mkdocs-git-authors-plugin
+            mkdocs-git-committers-plugin-2
+            mkdocs-git-revision-date-localized-plugin
+            mkdocs-img2fig-plugin
+            mkdocs-include-markdown-plugin
+            mkdocs-kroki-plugin
+            mkdocs-literate-nav
+            mkdocs-localsearch
+            mkdocs-macros-plugin
+            mkdocs-markdownextradata-plugin
+            mkdocs-merge
+            mkdocs-minify-plugin
+            mkdocs-monorepo-plugin
+            mkdocs-multirepo
+            mkdocs-multirepo-plugin
+            mkdocs-no-sitemap-plugin
+            mkdocs-print-site-plugin
+            mkdocs_pymdownx_material_extras
+            mkdocs-safe-text-plugin
+            mkdocs-same-dir
+            mkdocs-section-index
+            mkdocs-simple-hooks
+            mkdocs-simple-plugin
+            mkdocs-swagger-ui-tag
+            mkdocs-redirects
+            mkdocs-versioning
+            mkdocs-with-confluence
+            mkdocstrings
+            mkdocs-alabaster
+            mkdocs-cinder
+            mkdocs-kpn
+            mkdocs-material
+            neoteroi-mkdocs
+            markdown-include
+            pygments
+            pymdown-extensions            
+      - run: mkdocs gh-deploy --force --clean --verbose

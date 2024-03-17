@@ -1,8 +1,5 @@
 name: Release new version
 
-permissions:
-  contents: write
-
 on:
   push:
     tags:
@@ -14,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
