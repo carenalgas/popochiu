@@ -1,17 +1,12 @@
 name: Publish updated documentation
 
-# on:
-#   push:
-#     tags:
-#       - "v*.*.*"
-#       - "v*.*.*-alpha*"
-#       - "v*.*.*-beta*"
-#       - "v*.*.*-rc*"
-
 on:
   push:
-    branches:
-      - feature/147-docs-release-automation
+    tags:
+      - "v*.*.*"
+      - "v*.*.*-alpha*"
+      - "v*.*.*-beta*"
+      - "v*.*.*-rc*"
 
 jobs:
   deploy-gh-pages:
