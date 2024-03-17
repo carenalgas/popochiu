@@ -494,8 +494,8 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 	return func (): await walk_to_clicked(offset)
 
 
-## Makes the character walk to the last clicked [PopochiuClickable], which is stored in
-## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
+## Makes the character walk (NON-BLOCKING) to the last clicked [PopochiuClickable], which is stored
+## in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	var clicked_id: String = E.clicked.script_name
 	
@@ -506,12 +506,21 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 		await E.await_stopped
 
 
+## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
+## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
 	G.block()
 	
 	await _walk_to_node(E.clicked, offset)
 	
 	G.unblock()
+
+
+## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
+## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_walk_to_clicked_blocking(offset := Vector2.ZERO) -> Callable:
+	return func (): await walk_to_clicked_blocking(offset)
 
 
 ## Makes the character walk to the [PopochiuProp] (in the current room) which

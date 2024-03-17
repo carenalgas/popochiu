@@ -10,7 +10,7 @@ A Godot plugin to make point n' click games the easy way with a workflow similar
 
 ---
 
-🔍 Read the [Documentation](https://github.com/carenalgas/popochiu/wiki) to know what you can do with the plugin.
+🔍 Read the [Documentation](https://carenalgas.github.io/popochiu/) to know what you can do with the plugin.
 
 ❤️ Join [Carenalgas Discord](https://discord.gg/Frv8C9Ters) to know about daily updates and releases.
 
@@ -30,17 +30,11 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 **Popochiu works on Godot 3.3.x to 3.5.x**. **And now in Godot 4 too!!!**
 
-1. Godot 4.2 users can download [Popochiu 2.0 - Beta 1](https://github.com/carenalgas/popochiu/releases/download/v2.0.0-beta1/popochiu_v2.0.0-beta1.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Godot 4.2 users can download [Popochiu 2.0 - Beta 2](https://github.com/carenalgas/popochiu/releases/download/v2.0.0-beta2/popochiu_v2.0.0-beta2.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins` (the tab on the top).
 4. Restart Godot `Project > Reload Current Project`.
 5. You'll see the Popochiu dock at the right. That's all!
-
-
-
-# What's new in the latest stable version
-
-[![New features in 1.10](https://github.com/carenalgas/popochiu/wiki/images/popochiu-v1.10_button-en.png)](https://youtu.be/4pmjqYwXWHU "New features in v1.10")
 
 
 

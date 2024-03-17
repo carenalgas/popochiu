@@ -1,6 +1,6 @@
 # Popochiu official documentation
 
-This folder stores the official documentation for Popochiu, available at https://popochiu.github.com
+This folder stores the official documentation for Popochiu, available at https://carenalgas.github.io/popochiu/
 
 The documentation is maintained alongside the code in the same repository, which makes it easier to enforce our _Definition of Done_.
 
