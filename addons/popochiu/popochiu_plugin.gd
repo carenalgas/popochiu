@@ -149,14 +149,12 @@ func _enable_plugin() -> void:
 	if _is_first_install:
 		# Show the window that asks devs to reload the project
 		var ad := AcceptDialog.new()
-		
-		# TODO: Localize
-		ad.title = 'Popochiu'
+		ad.title = "Popochiu"
 		ad.dialog_text =\
-		'[es] Reinicia el motor para completar la instalación:\n' +\
-		'Proyecto > Volver a Cargar el Proyecto Actual\n\n' + \
-		'[en] Restart Godot to complete the installation:\n' +\
-		'Project > Reload Current Project'
+		"[ ES ] Se reiniciará Godot para completar la instalación.\n" +\
+		"[ EN ] Godot will restart to complete the installation."
+		ad.confirmed.connect(EditorInterface.restart_editor.bind(false))
+		ad.close_requested.connect(EditorInterface.restart_editor.bind(false))
 		
 		_editor_interface.get_base_control().add_child(ad)
 		ad.popup_centered()

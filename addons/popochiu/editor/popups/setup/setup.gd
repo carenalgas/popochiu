@@ -2,6 +2,7 @@
 extends AcceptDialog
 
 signal gui_selected(gui_name: String, on_complete: Callable)
+signal template_copy_completed
 
 const SCALE_MESSAGE :=\
 "[center]▶ Base size = 320x180 | [b]scale = ( %.2f, %.2f )[/b] ◀[/center]\n" +\
@@ -131,9 +132,6 @@ func _on_close() -> void:
 	if _is_closing:
 		return
 	
-	for idx in range(1, gui_templates.get_child_count()):
-		gui_templates.get_child(idx).queue_free()
-	
 	_is_closing = true
 	
 	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, int(game_width.value))
@@ -157,9 +155,9 @@ func _on_close() -> void:
 	PopochiuResources.save_settings(settings)
 	
 	if PopochiuResources.get_data_value("setup", "done", false) == false:
-		_copy_template()
-	
-	_save_settings()
+		_copy_template(true)
+	else:
+		_save_settings()
 
 
 func _on_about_to_popup() -> void:
@@ -272,13 +270,7 @@ func _show_template_change_confirmation() -> void:
 	confirmation_dialog.confirmed.connect(
 		func():
 			confirmation_dialog.queue_free()
-			
 			_copy_template()
-			
-			_save_settings()
-			
-			get_ok_button().disabled = true
-			copy_process_container.show()
 	)
 	
 	add_child(confirmation_dialog)
@@ -293,6 +285,9 @@ func _setup_inner_dialog(dialog: Window, ttl: String, txt: String) -> void:
 
 
 func _load_templates() -> void:
+	for idx in range(1, gui_templates.get_child_count()):
+		gui_templates.get_child(idx).free()
+	
 	for dir_name: String in DirAccess.get_directories_at(PopochiuResources.GUI_TEMPLATES_FOLDER):
 		var template_info: PopochiuGUIInfo = load(PopochiuResources.GUI_TEMPLATES_FOLDER.path_join(
 			"%s/%s_gui_info.tres" % [dir_name, dir_name]
@@ -315,12 +310,24 @@ func _load_templates() -> void:
 		gui_templates.add_child(button)
 
 
-func _copy_template() -> void:
+func _copy_template(is_first_copy := false) -> void:
+	get_ok_button().disabled = true
+	
 	$PanelContainer/VBoxContainer.modulate.a = COPY_ALPHA
 	copy_process_label.text = ""
 	copy_process_bar.value = 0
 	
 	gui_selected.emit(_selected_template.name, _template_copy_progressed, _template_copy_completed)
+	
+	_save_settings()
+	copy_process_container.show()
+	
+	# if true, make the popup visible so devs can see the copy process feedback
+	if is_first_copy:
+		show()
+		await template_copy_completed
+		
+		hide()
 
 
 func _template_copy_progressed(value: int, message: String) -> void:
@@ -334,6 +341,7 @@ func _template_copy_completed() -> void:
 	$PanelContainer/VBoxContainer.modulate.a = 1
 	
 	copy_process_container.hide()
+	template_copy_completed.emit()
 
 
 #endregion
