@@ -501,15 +501,15 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	
 	await _walk_to_node(E.clicked, offset)
 	
-	# A double check in case two PopochiuClickable share the same `walk_to_point` coordinates
-	if clicked_id != E.clicked.script_name:
+	# Check if the action was cancelled
+	if not E.clicked or clicked_id != E.clicked.script_name:
 		await E.await_stopped
 
 
 func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
 	G.block()
 	
-	await _walk_to_node(E.clicked, offset, true)
+	await _walk_to_node(E.clicked, offset)
 	
 	G.unblock()
 
@@ -816,20 +816,14 @@ func _get_valid_oriented_animation(animation_label):
 	return null
 
 
-func _walk_to_node(node: Node2D, offset: Vector2, is_blocking := false) -> void:
+func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
 	
-	var target_pos := (
+	await walk(
 		node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
 	)
-	var target_move_pos: Vector2 = R.current.get_move_target_position(position, target_pos)
-	
-	await walk(target_pos)
-	
-	if not is_blocking and position != target_move_pos:
-		await E.await_stopped
 
 
 func _update_position():

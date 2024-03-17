@@ -126,6 +126,10 @@ func _unhandled_input(event):
 		return
 	
 	if is_instance_valid(C.player) and C.player.can_move:
+		# Set this property to null in order to cancel any running interaction with a
+		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...))
+		E.clicked = null
+		
 		C.player.walk(get_local_mouse_position())
 
 
@@ -403,12 +407,6 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 		_nav_path = active_walkable_area
 	else:
 		PopochiuUtils.print_error("Can't set %s as active walkable area" % walkable_area_name)
-
-
-func get_move_target_position(start_position: Vector2, end_position: Vector2) -> Vector2:
-	return NavigationServer2D.map_get_path(
-		_nav_path.map_rid, start_position, end_position, true
-	)[-1]
 
 
 #endregion
