@@ -58,7 +58,13 @@ func _ready():
 	if Engine.is_editor_hint():
 		hide_helpers()
 		
-		if get_node_or_null("InteractionPolygon") == null: return
+		# Ignore assigning the polygon when:
+		if (
+			get_node_or_null("InteractionPolygon") == null # there is no InteractionPolygon node
+			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
+			or self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+		):
+			return
 		
 		if interaction_polygon.is_empty():
 			interaction_polygon = get_node('InteractionPolygon').polygon
@@ -72,7 +78,11 @@ func _ready():
 		$BaselineHelper.free()
 		$WalkToHelper.free()
 		
-		if get_node_or_null("InteractionPolygon"):
+		# Update the node's polygon when:
+		if (
+			get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
+			and not self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+		):
 			get_node("InteractionPolygon").polygon = interaction_polygon
 			get_node("InteractionPolygon").position = interaction_polygon_position
 	
@@ -85,8 +95,6 @@ func _ready():
 		
 		# Connect to singleton signals
 		E.language_changed.connect(_translate)
-		G.blocked.connect(_on_graphic_interface_blocked)
-		G.unblocked.connect(_on_graphic_interface_unblocked)
 	
 	set_process_unhandled_input(false)
 	_translate()
@@ -105,7 +113,7 @@ func _unhandled_input(event: InputEvent):
 		match mouse_event.button_index:
 			MOUSE_BUTTON_LEFT:
 				if I.active:
-					_on_item_used(I.active)
+					on_item_used(I.active)
 				else:
 					handle_command(mouse_event.button_index)
 					
@@ -194,8 +202,8 @@ func show_helpers() -> void:
 		$InteractionPolygon.show()
 
 
-## Hides this Node.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Hides this Node.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_disable() -> Callable:
 	return func (): await disable()
 
@@ -207,8 +215,8 @@ func disable() -> void:
 	await get_tree().process_frame
 
 
-## Shows this Node.
-## [br][i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+## Shows this Node.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_enable() -> Callable:
 	return func (): await enable()
 
@@ -257,7 +265,7 @@ func on_middle_click() -> void:
 
 ## Called when an [param item] is used on this object.
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	await G.show_system_text("Can't USE %s here" % item.description)
+	_on_item_used(item)
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
@@ -317,6 +325,8 @@ func set_room(value: Node2D) -> void:
 
 #region Private ####################################################################################
 func _on_mouse_entered() -> void:
+	if G.is_blocked: return
+	
 	set_process_unhandled_input(true)
 	
 	if E.hovered and is_instance_valid(E.hovered) and (
@@ -352,16 +362,6 @@ func _translate() -> void:
 	description = E.get_text(
 		'%s-%s' % [get_tree().current_scene.name, _description_code]
 	)
-
-
-func _on_graphic_interface_blocked() -> void:
-	input_pickable = false
-	set_process_unhandled_input(false)
-
-
-func _on_graphic_interface_unblocked() -> void:
-	input_pickable = true
-	set_process_unhandled_input(true)
 
 
 #endregion

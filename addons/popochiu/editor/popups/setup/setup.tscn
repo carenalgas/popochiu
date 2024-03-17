@@ -24,7 +24,7 @@ corner_radius_bottom_left = 4
 gui_embed_subwindows = true
 title = "Setup"
 initial_position = 2
-size = Vector2i(560, 4248)
+size = Vector2i(560, 608)
 popup_window = true
 script = ExtResource("1_vjboj")
 
@@ -32,7 +32,7 @@ script = ExtResource("1_vjboj")
 offset_left = 8.0
 offset_top = 8.0
 offset_right = 552.0
-offset_bottom = 738.0
+offset_bottom = 559.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -271,3 +271,38 @@ layout_mode = 2
 size_flags_horizontal = 4
 mouse_default_cursor_shape = 2
 text = "Use this GUI Template"
+
+[node name="CopyProcessContainer" type="MarginContainer" parent="PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="Overlay" type="ColorRect" parent="PanelContainer/CopyProcessContainer"]
+layout_mode = 2
+color = Color(0, 0, 0, 0)
+
+[node name="CopyProcessPanel" type="PanelContainer" parent="PanelContainer/CopyProcessContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="CopyProcessBar" type="ProgressBar" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+value = 50.0
+
+[node name="CopyProcessLabel" type="Label" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Starting GUI template application"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true

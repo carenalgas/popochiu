@@ -1,13 +1,13 @@
 @tool
-extends PopochiuAudioCue
 class_name AudioCueSound
+extends PopochiuAudioCue
+## A specific type of [PopochiuAudioCue] designed for playing sounds.
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-# Plays immediately this cue's sound.
-# If `wait_to_end` is `true` the function will pause until the audio clip finishes.
-# You can play the clip from a specific `position_2d` in the scene if `is_2d` is
-# `true`.
+#region Public #####################################################################################
+## Plays this audio cue. If [param wait_to_end] is set to [code]true[/code], the function will pause
+## until the audio clip finishes. You can play the file from a specific [param position_2d] in the
+## scene if [member PopochiuAudioCue.is_2d] is [code]true[/code].
 func play(wait_to_end := false, position_2d := Vector2.ZERO) -> void:
 	if wait_to_end:
 		await E.am.play_sound_cue(resource_name, position_2d, true)
@@ -15,11 +15,10 @@ func play(wait_to_end := false, position_2d := Vector2.ZERO) -> void:
 		E.am.play_sound_cue(resource_name, position_2d)
 
 
-# Queue the call to play this cue's sound.
-# If `wait_to_end` is `true` the function will pause until the audio clip finishes
-# You can play the clip from a specific `position_2d` in the scene if `is_2d` is
-# `true`.
-# (!) This is intended to be used in queued instructions: E.queue([]).
+## Plays this audio cue. If [param wait_to_end] is set to [code]true[/code], the function will pause
+## until the audio clip finishes. You can play the file from a specific [param position_2d] in the
+## scene if [member PopochiuAudioCue.is_2d] is [code]true[/code].[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play(wait_to_end := false, position_2d := Vector2.ZERO) -> Callable:
 	return func ():
 		if wait_to_end:
@@ -27,3 +26,6 @@ func queue_play(wait_to_end := false, position_2d := Vector2.ZERO) -> Callable:
 		else:
 			play(false, position_2d)
 			await E.get_tree().process_frame
+
+
+#endregion

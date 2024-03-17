@@ -1,15 +1,16 @@
 @tool
 extends AcceptDialog
 
-signal move_requested(id)
-signal gui_selected(gui_name)
+signal gui_selected(gui_name: String, on_complete: Callable)
+signal template_copy_completed
 
-const ImporterDefaults := preload("res://addons/popochiu/engine/others/importer_defaults.gd")
 const SCALE_MESSAGE :=\
 "[center]▶ Base size = 320x180 | [b]scale = ( %.2f, %.2f )[/b] ◀[/center]\n" +\
 "By default the GUI will scale to match your game size. " +\
 "You can change this in [img]%s[/img] [b]Settings[/b] with the" +\
 " [code]Scale Gui[/code] checkbox."
+const COPY_ALPHA := .1
+const ImporterDefaults := preload("res://addons/popochiu/engine/others/importer_defaults.gd")
 const GUITemplateButton := preload(
 	"res://addons/popochiu/editor/popups/setup/gui_template_button.gd"
 )
@@ -33,6 +34,10 @@ var _is_closing := false
 @onready var template_description_container: PanelContainer = %TemplateDescriptionContainer
 @onready var template_description: RichTextLabel = %TemplateDescription
 @onready var btn_change_template: Button = %BtnChangeTemplate
+@onready var copy_process_container: MarginContainer = %CopyProcessContainer
+@onready var copy_process_panel: PanelContainer = %CopyProcessPanel
+@onready var copy_process_label: Label = %CopyProcessLabel
+@onready var copy_process_bar: ProgressBar = %CopyProcessBar
 
 
 #region Godot ######################################################################################
@@ -61,11 +66,16 @@ func appear(show_welcome := false) -> void:
 	_is_closing = false
 	_selected_template = null
 	btn_change_template.hide()
+	copy_process_container.hide()
 	
 	scale_message.modulate = Color(
 		"#000" if es.get_setting("interface/theme/preset").find("Light3D") > -1 else "#fff"
 	)
 	scale_message.modulate.a = 0.8
+	
+	copy_process_panel.add_theme_stylebox_override(
+		"panel", get_theme_stylebox("panel", "PopupPanel")
+	)
 
 	if not show_welcome:
 		welcome.text =\
@@ -122,9 +132,6 @@ func _on_close() -> void:
 	if _is_closing:
 		return
 	
-	for idx in range(1, gui_templates.get_child_count()):
-		gui_templates.get_child(idx).queue_free()
-	
 	_is_closing = true
 	
 	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, int(game_width.value))
@@ -148,9 +155,9 @@ func _on_close() -> void:
 	PopochiuResources.save_settings(settings)
 	
 	if PopochiuResources.get_data_value("setup", "done", false) == false:
-		gui_selected.emit(_selected_template.name)
-	
-	_save_settings()
+		_copy_template(true)
+	else:
+		_save_settings()
 
 
 func _on_about_to_popup() -> void:
@@ -263,8 +270,7 @@ func _show_template_change_confirmation() -> void:
 	confirmation_dialog.confirmed.connect(
 		func():
 			confirmation_dialog.queue_free()
-			gui_selected.emit(_selected_template.name)
-			_save_settings()
+			_copy_template()
 	)
 	
 	add_child(confirmation_dialog)
@@ -279,6 +285,9 @@ func _setup_inner_dialog(dialog: Window, ttl: String, txt: String) -> void:
 
 
 func _load_templates() -> void:
+	for idx in range(1, gui_templates.get_child_count()):
+		gui_templates.get_child(idx).free()
+	
 	for dir_name: String in DirAccess.get_directories_at(PopochiuResources.GUI_TEMPLATES_FOLDER):
 		var template_info: PopochiuGUIInfo = load(PopochiuResources.GUI_TEMPLATES_FOLDER.path_join(
 			"%s/%s_gui_info.tres" % [dir_name, dir_name]
@@ -299,6 +308,40 @@ func _load_templates() -> void:
 		button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		
 		gui_templates.add_child(button)
+
+
+func _copy_template(is_first_copy := false) -> void:
+	get_ok_button().disabled = true
+	
+	$PanelContainer/VBoxContainer.modulate.a = COPY_ALPHA
+	copy_process_label.text = ""
+	copy_process_bar.value = 0
+	
+	gui_selected.emit(_selected_template.name, _template_copy_progressed, _template_copy_completed)
+	
+	_save_settings()
+	copy_process_container.show()
+	
+	# if true, make the popup visible so devs can see the copy process feedback
+	if is_first_copy:
+		show()
+		await template_copy_completed
+		
+		hide()
+
+
+func _template_copy_progressed(value: int, message: String) -> void:
+	copy_process_label.text = message
+	copy_process_bar.value = value
+
+
+func _template_copy_completed() -> void:
+	get_ok_button().disabled = false
+	btn_change_template.disabled = true
+	$PanelContainer/VBoxContainer.modulate.a = 1
+	
+	copy_process_container.hide()
+	template_copy_completed.emit()
 
 
 #endregion

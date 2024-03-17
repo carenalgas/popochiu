@@ -1,0 +1,46 @@
+FROM python:slim
+
+ARG GODOT_VERSION="4.1.3"
+ARG GODOT_RELEASE_NAME="stable"
+ARG GODOT_SUBDIR=""
+ARG GODOT_PLATFORM="linux.x86_64"
+
+ARG GDM_COMMIT_SHA="07cb0d8f0af6da745260d7bfabfc475504c413f1"
+
+# Override user name at build. If build-arg is not passed, will create user named `host_user`
+ARG DOCKER_USER=host_user
+ARG DOCKER_USER_UID=1000
+ARG DOCKER_USER_GID=1000
+
+
+RUN addgroup --system --gid ${DOCKER_USER_GID} ${DOCKER_USER} \
+    && adduser --system --uid ${DOCKER_USER_UID} --gid ${DOCKER_USER_GID} --home /home/${DOCKER_USER} ${DOCKER_USER} \
+    # Ensure proper permissions on user's home directory
+    && chown -R ${DOCKER_USER}:${DOCKER_USER} /home/${DOCKER_USER} \
+    # Install system-wide dependencies
+    && apt-get update && apt-get install -y --no-install-recommends unzip wget zip libfontconfig1 \
+    && rm -rf /var/lib/apt/lists/* \
+    # Install Godot from CDN
+    && wget -q https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}${GODOT_SUBDIR}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM}.zip \
+    && mkdir /home/${DOCKER_USER}/.cache \
+    && mkdir -p /home/${DOCKER_USER}/.config/godot \
+    && mkdir -p /home/${DOCKER_USER}/.local/share/godot/export_templates/${GODOT_VERSION}.${GODOT_RELEASE_NAME} \
+    && unzip Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM}.zip \
+    && mv Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM} /usr/local/bin/godot \
+    && chmod a+x /usr/local/bin/godot \
+    && rm -f Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM}.zip \
+    # Download gdscript-docs-maker source code
+    && wget https://github.com/GDQuest/gdscript-docs-maker/archive/${GDM_COMMIT_SHA}.zip -O gdscript-docs-maker.zip \
+    && unzip gdscript-docs-maker.zip \
+    && mv gdscript-docs-maker-${GDM_COMMIT_SHA} /app \
+    && rm -f gdscript-docs-maker.zip
+
+WORKDIR /app
+
+COPY --chmod=777 scripts/generate_reference generate_reference
+
+# Install application dependencies
+RUN python3 setup.py install
+
+# Run dockmaker script
+ENTRYPOINT ["./generate_reference"]

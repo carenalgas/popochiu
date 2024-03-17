@@ -201,7 +201,7 @@ func _replace_item(
 
 
 func _change_cursor(item: PopochiuInventoryItem) -> void:
-	I.set_active_item(item, true)
+	I.set_active_item(item)
 
 
 ## Checks if the UP and DOWN buttons should be enabled

@@ -1,6 +1,6 @@
 class_name Popochiu
 extends Node
-## This is Popochiu's main class, and is in charge of making the game to work.
+## This is Popochiu's main hub, and is in charge of making the game to work.
 ## 
 ## Is the shortcut for [b]Popochiu.gd[/b], and can be used (from any script) with [b]E[/b] (E.g.
 ## [code]E.goto_room("House")[/code]).
@@ -36,6 +36,7 @@ signal game_loaded(data: Dictionary)
 signal command_selected
 ## Emitted when the dialog style changes in [PopochiuSettings].
 signal dialog_style_changed
+signal await_stopped
 
 ## Path to the script with the class used to save and load game data.
 const SAVELOAD_PATH := 'res://addons/popochiu/engine/others/popochiu_save_load.gd'
@@ -259,11 +260,7 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_released('popochiu-skip'):
 		cutscene_skipped = true
-		tl.play_transition(
-			PopochiuTransitionLayer.PASS_DOWN_IN,
-			settings.skip_cutscene_time
-		)
-		
+		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.skip_cutscene_time)
 		await tl.transition_finished
 
 
@@ -337,13 +334,11 @@ func queue(instructions: Array, show_gi := true) -> void:
 func cutscene(instructions: Array) -> void:
 	set_process_input(true)
 	await queue(instructions)
+	
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		tl.play_transition(
-			tl.PASS_DOWN_OUT,
-			settings.skip_cutscene_time
-		)
+		tl.play_transition(tl.PASS_DOWN_OUT, settings.skip_cutscene_time)
 		await tl.transition_finished
 	
 	cutscene_skipped = false
@@ -370,6 +365,10 @@ func goto_room(
 	if use_transition:
 		tl.play_transition(tl.FADE_IN)
 		await tl.transition_finished
+	
+	# Prevent the GUI to show info from the previous room
+	G.show_hover_text()
+	Cursor.show_cursor()
 	
 	if is_instance_valid(C.player) and Engine.get_process_frames() > 0:
 		C.player.last_room = current_room.script_name
@@ -494,6 +493,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	if _use_transition_on_room_change:
 		tl.play_transition(tl.FADE_OUT)
 		await tl.transition_finished
+		
 		await wait(0.3)
 	else:
 		await get_tree().process_frame
@@ -1024,7 +1024,8 @@ func _on_character_spoke(chr: PopochiuCharacter, msg := '') -> void:
 
 
 func _on_graphic_interface_unblocked() -> void:
-	clicked = null
+	pass
+	#clicked = null
 	#current_command = 0
 
 

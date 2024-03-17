@@ -1,8 +1,8 @@
 # Popochiu 2 (beta 1)
 
-[![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.0.4-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
+[![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.2.1-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
-![cover](https://github.com/mapedorr/popochiu/wiki/images/popochiu_2_hero-en.png "Popochiu")
+![cover](https://github.com/carenalgas/popochiu/wiki/images/popochiu_2_hero-en.png "Popochiu")
 
 A Godot plugin to make point n' click games the easy way with a workflow similar to [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
 
@@ -10,9 +10,9 @@ A Godot plugin to make point n' click games the easy way with a workflow similar
 
 ---
 
-🔍 Read the [Documentation](https://github.com/mapedorr/popochiu/wiki) to know what you can do with the plugin.
+🔍 Read the [Documentation](https://carenalgas.github.io/popochiu/) to know what you can do with the plugin.
 
-❤️ Join [Carenalga's Discord](https://discord.gg/Frv8C9Ters) to know about daily updates and releases.
+❤️ Join [Carenalgas Discord](https://discord.gg/Frv8C9Ters) to know about daily updates and releases.
 
 ▶️ Follow the [tutorials](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) (English subs.) to learn how to use the plugin.
 
@@ -22,7 +22,7 @@ A Godot plugin to make point n' click games the easy way with a workflow similar
 
 This tool consists of two parts: the core (Popochiu) and the dock that helps with the creation of the Nodes that make use of that core. It is inspired in how graphic adventure games are created in Adventure Game Studio and Power Hoof's Unity plugin: PowerQuest. This is, using Rooms as the scenes where Characters can move and interact with Props and Hotspots, and providing an Inventory system and Dialog trees.
 
-![features](https://github.com/mapedorr/popochiu/wiki/images/popochiu_list_of_features-en.png "Features")
+![features](https://github.com/carenalgas/popochiu/wiki/images/popochiu_list_of_features-en.png "Features")
 
 
 
@@ -30,7 +30,7 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 **Popochiu works on Godot 3.3.x to 3.5.x**. **And now in Godot 4 too!!!**
 
-1. Godot 4.2 users can download [Popochiu 2.0 - Beta 1](https://github.com/mapedorr/popochiu/releases/download/v2.0.0-beta1/popochiu_v2.0.0-beta1.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10.1](https://github.com/mapedorr/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/mapedorr/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Godot 4.2 users can download [Popochiu 2.0 - Beta 2](https://github.com/carenalgas/popochiu/releases/download/v2.0.0-beta2/popochiu_v2.0.0-beta2.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins` (the tab on the top).
 4. Restart Godot `Project > Reload Current Project`.
@@ -38,15 +38,9 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 
 
-# What's new in the latest stable version
-
-[![New features in 1.10](https://github.com/mapedorr/popochiu/wiki/images/popochiu-v1.10_button-en.png)](https://youtu.be/4pmjqYwXWHU "New features in v1.10")
-
-
-
 # Tutorials
 
-[![tutorials](https://github.com/mapedorr/popochiu/wiki/images/popochiu_tutorials_button-en.png "Go to the tutorials")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
+[![tutorials](https://github.com/carenalgas/popochiu/wiki/images/popochiu_tutorials_button-en.png "Go to the tutorials")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
 
 You can follow the tutorials (English subs) [in this list](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) to learn:
 
@@ -77,7 +71,7 @@ You can follow the tutorials (English subs) [in this list](https://www.youtube.c
 
 # Credits
 
-Made by [Carenalga](https://mapedorr.itch.io).
+Made by [Carenalga](https://carenalga.itch.io).
 
 Now with the collaboration of [StickGrinder](https://twitter.com/StickGrinder) (and other members of [Illiterate Code Games](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), [@JuannFerrari](https://github.com/JuannFerrari), [Whyschuck](https://github.com/Whyshchuck), and our lovely community.
 

@@ -3,9 +3,7 @@ extends Node2D
 ## Used to play different transition animations when moving between rooms, skipping a cutscene,
 ## and so on.
 
-# warning-ignore-all:return_value_discarded
-
-signal transition_finished(transition_name)
+signal transition_finished(transition_name: String)
 
 enum {
 	FADE_IN_OUT,
@@ -17,10 +15,10 @@ enum {
 }
 
 @onready var n := {
-	fade = find_child('Fade')
+	fade = find_child("Fade")
 }
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
 	
@@ -28,8 +26,15 @@ func _ready() -> void:
 		$Transitions.scale = E.scale
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func play_transition(type := FADE_IN, duration := 1.0) -> void:
+	# ---- Play RESET in order to fix #168 ---------------------------------------------------------
+	$AnimationPlayer.play("RESET")
+	await get_tree().process_frame
+	# --------------------------------------------------------- Play RESET in order to fix #168 ----
+	
 	for c in $Transitions.get_children():
 		(c as Sprite2D).modulate = E.settings.fade_color
 	
@@ -37,23 +42,33 @@ func play_transition(type := FADE_IN, duration := 1.0) -> void:
 	
 	match type:
 		FADE_IN_OUT:
-			$AnimationPlayer.play('fade_in')
+			$AnimationPlayer.play("fade_in")
 			await $AnimationPlayer.animation_finished
-			$AnimationPlayer.play('fade_out')
+			
+			$AnimationPlayer.play("fade_out")
 		FADE_IN:
-			$AnimationPlayer.play('fade_in')
+			$AnimationPlayer.play("fade_in")
 		FADE_OUT:
-			$AnimationPlayer.play('fade_out')
+			$AnimationPlayer.play("fade_out")
 		PASS_DOWN_IN_OUT:
-			$AnimationPlayer.play('pass_down_in')
+			$AnimationPlayer.play("pass_down_in")
 			await $AnimationPlayer.animation_finished
-			$AnimationPlayer.play('pass_down_out')
+			
+			$AnimationPlayer.play("pass_down_out")
 		PASS_DOWN_IN:
-			$AnimationPlayer.play('pass_down_in')
+			$AnimationPlayer.play("pass_down_in")
 		PASS_DOWN_OUT:
-			$AnimationPlayer.play('pass_down_out')
+			$AnimationPlayer.play("pass_down_out")
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _transition_finished(anim_name := '') -> void:
+#endregion
+
+#region Private ####################################################################################
+func _transition_finished(anim_name := "") -> void:
+	if anim_name == "RESET":
+		return
+	
 	transition_finished.emit(anim_name)
+
+
+#endregion

@@ -45,15 +45,15 @@ func _show_text(txt := "") -> void:
 		size = Vector2.ZERO
 	
 	if txt.is_empty():
-		if E.current_command == NineVerbCommands.Commands.WALK_TO\
-		and is_instance_valid(E.get_hovered()):
-			text = '[center]%s %s[/center]' % [
-				E.get_current_command_name(), E.get_hovered().description
-			]
+		if (
+			E.current_command == NineVerbCommands.Commands.WALK_TO
+			and is_instance_valid(E.get_hovered())
+		):
+			super("%s %s" % [E.get_current_command_name(), E.get_hovered().description])
 		elif E.current_command != NineVerbCommands.Commands.WALK_TO:
-			text = '[center]%s[/center]' % E.get_current_command_name()
+			super(E.get_current_command_name())
 	elif not txt.is_empty() and not I.active:
-		text = '[center]%s %s[/center]' % [E.get_current_command_name(), txt]
+		super("%s %s" % [E.get_current_command_name(), txt])
 	elif I.active:
 		super(txt)
 	
