@@ -18,10 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Install Python environment
+        uses: actions/setup-python@v2
         with:
           python-version: 3.11
-      - run: >
+      - name: Install MkDocs and dependencies
+        run: >
           pip install
           mkdocs==1.5.3
           mkdocs-nav-weight
@@ -72,4 +74,6 @@ jobs:
           markdown-include
           pygments
           pymdown-extensions
-      - run: mkdocs gh-deploy --force --clean --verbose
+      - name: Deploy to production
+        working-directory: ./docs
+        run: mkdocs gh-deploy --force --clean --verbose
