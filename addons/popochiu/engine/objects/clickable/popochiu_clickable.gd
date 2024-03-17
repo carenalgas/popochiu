@@ -95,8 +95,6 @@ func _ready():
 		
 		# Connect to singleton signals
 		E.language_changed.connect(_translate)
-		G.blocked.connect(_on_graphic_interface_blocked)
-		G.unblocked.connect(_on_graphic_interface_unblocked)
 	
 	set_process_unhandled_input(false)
 	_translate()
@@ -327,6 +325,8 @@ func set_room(value: Node2D) -> void:
 
 #region Private ####################################################################################
 func _on_mouse_entered() -> void:
+	if G.is_blocked: return
+	
 	set_process_unhandled_input(true)
 	
 	if E.hovered and is_instance_valid(E.hovered) and (
@@ -362,16 +362,6 @@ func _translate() -> void:
 	description = E.get_text(
 		'%s-%s' % [get_tree().current_scene.name, _description_code]
 	)
-
-
-func _on_graphic_interface_blocked() -> void:
-	input_pickable = false
-	set_process_unhandled_input(false)
-
-
-func _on_graphic_interface_unblocked() -> void:
-	input_pickable = true
-	set_process_unhandled_input(true)
 
 
 #endregion

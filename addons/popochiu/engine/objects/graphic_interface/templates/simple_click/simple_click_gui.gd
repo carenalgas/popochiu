@@ -60,7 +60,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 ## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component and
 ## shows the default cursor texture if there is no [PopochiuInventoryItem] active.
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
-	if G.is_blocked: return
+	#if G.is_blocked: return
 	
 	G.show_hover_text()
 	

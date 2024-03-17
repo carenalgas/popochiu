@@ -246,6 +246,7 @@ func walk(target_pos: Vector2) -> void:
 	# Trigger the signal for the room to start moving the character
 	started_walk_to.emit(self, position, target_pos)
 	await move_ended
+	
 	is_moving = false
 
 func take_turn(target_pos: Vector2):
@@ -419,12 +420,6 @@ func say(dialog: String, emo := "") -> void:
 		await get_tree().process_frame
 		return
 	
-	# Blocks the graphic interface so players can't interact with it while the
-	# dialog line plays
-	# NOTE: What if players want NPCs talking without blocking the graphic
-	# 		interface?
-	G.block()
-	
 	if not emo.is_empty():
 		emotion = emo
 	
@@ -441,10 +436,6 @@ func say(dialog: String, emo := "") -> void:
 	
 	emotion = ''
 	idle()
-	
-	# Unblock the graphic interface with a delay to prevent cursor flickering
-	# (rapid state changes) between multiple lines of text or actions in sequence
-	G.unblock(true)
 
 
 ## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
@@ -506,7 +497,21 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 ## Makes the character walk to the last clicked [PopochiuClickable], which is stored in
 ## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
+	var clicked_id: String = E.clicked.script_name
+	
 	await _walk_to_node(E.clicked, offset)
+	
+	# Check if the action was cancelled
+	if not E.clicked or clicked_id != E.clicked.script_name:
+		await E.await_stopped
+
+
+func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
+	G.block()
+	
+	await _walk_to_node(E.clicked, offset)
+	
+	G.unblock()
 
 
 ## Makes the character walk to the [PopochiuProp] (in the current room) which
@@ -815,10 +820,11 @@ func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
-
+	
 	await walk(
 		node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
 	)
+
 
 func _update_position():
 	E.current_room.update_characters_position(self)

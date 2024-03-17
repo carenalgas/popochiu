@@ -22,11 +22,14 @@ enum Type {
 var is_blocked := false
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
-#region Godot
+#region Godot ######################################################################################
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
+	
+	# Connect to autoload signals
 	E.ready.connect(show_cursor)
+	G.blocked.connect(_on_gui_blocked)
+	G.unblocked.connect(_on_gui_unblocked)
 
 
 func _process(delta):
@@ -57,7 +60,8 @@ func _process(delta):
 
 
 #endregion
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+
+#region Public #####################################################################################
 func show_cursor(anim_name := "normal", ignore_block := false) -> void:
 	if not ignore_block and is_blocked: return
 	
@@ -134,3 +138,19 @@ func show_secondary_cursor() -> void:
 
 func get_type_name(idx: int) -> String:
 	return Type.keys()[idx].to_snake_case()
+
+
+#endregion
+
+#region Private ####################################################################################
+func _on_gui_blocked() -> void:
+	show_cursor("wait")
+	is_blocked = true
+
+
+func _on_gui_unblocked() -> void:
+	is_blocked = false
+	show_cursor()
+
+
+#endregion
