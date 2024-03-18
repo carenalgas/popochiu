@@ -1,7 +1,7 @@
 class_name PopochiuIDialog
 extends Node
 ## Provides access to the [PopochiuDialog]s in the game. Access with [b]D[/b] (e.g.
-## [code]C.AskAboutLoom.start()[/code]).
+## [code]D.AskAboutLoom.start()[/code]).
 ##
 ## Use it to work with branching dialogs and listen to options selection. Its script is
 ## [b]i_dialog.gd[/b].[br][br]
