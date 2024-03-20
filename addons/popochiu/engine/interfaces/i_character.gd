@@ -35,21 +35,33 @@ var characters_states := {}
 
 
 #region Public #####################################################################################
-## Makes the Player-controlled Character (PC) move to the [member PopochiuClickable.walk_to_point]
-## position of the last clicked [PopochiuClickable] (i.e. a [PopochiuProp], a [PopochiuHotspot],
-## or another [PopochiuCharacter]) in the room. You can set an [param offset] relative to the target
-## position.
+## Makes the Player-controlled Character (PC) move (NON-BLOCKING) to the
+## [member PopochiuClickable.walk_to_point] position of the last clicked [PopochiuClickable] (i.e. a
+## [PopochiuProp], a [PopochiuHotspot], or another [PopochiuCharacter]) in the room. You can set an
+## [param offset] relative to the target position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	await player.walk_to_clicked(offset)
 
 
-## Makes the Player-controlled Character (PC) move to the [member PopochiuClickable.walk_to_point]
-## position of the last clicked [PopochiuClickable] (i.e. a [PopochiuProp], a [PopochiuHotspot],
-## or another [PopochiuCharacter]) in the room. You can set an [param offset] relative to the target
-## position.[br][br]
+## Makes the Player-controlled Character (PC) move (NON-BLOCKING) to the
+## [member PopochiuClickable.walk_to_point] position of the last clicked [PopochiuClickable] (i.e. a
+## [PopochiuProp], a [PopochiuHotspot], or another [PopochiuCharacter]) in the room. You can set an
+## [param offset] relative to the target position.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 	return func (): await walk_to_clicked(offset)
+
+
+## Similar to [method walk_to_clicked] but BLOCKING the GUI to prevent players from clicking other
+## objects or any point in the room.
+func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
+	await player.walk_to_clicked_blocking(offset)
+
+
+## Similar to [method walk_to_clicked] but BLOCKING the GUI to prevent players from clicking other
+## objects or any point in the room.
+func queue_walk_to_clicked_blocking(offset := Vector2.ZERO) -> Callable:
+	return func (): await walk_to_clicked_blocking(offset)
 
 
 ## Makes the Player-controlled Character (PC) look at the last clicked [PopochiuClickable].

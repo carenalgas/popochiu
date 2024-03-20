@@ -126,6 +126,10 @@ func _unhandled_input(event):
 		return
 	
 	if is_instance_valid(C.player) and C.player.can_move:
+		# Set this property to null in order to cancel any running interaction with a
+		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...))
+		E.clicked = null
+		
 		C.player.walk(get_local_mouse_position())
 
 
@@ -465,10 +469,7 @@ func _update_navigation_path(
 		return
 	
 	_moving_characters[character.get_instance_id()] = {}
-
-	var moving_character_data: Dictionary =\
-	_moving_characters[character.get_instance_id()]
-
+	var moving_character_data: Dictionary = _moving_characters[character.get_instance_id()]
 	moving_character_data.character = character
 	
 	# TODO: Use a Dictionary so more than one character can move around at the
