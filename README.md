@@ -30,7 +30,7 @@ This tool consists of two parts: the core (Popochiu) and the dock that helps wit
 
 **Popochiu works on Godot 3.3.x to 3.5.x**. **And now in Godot 4 too!!!**
 
-1. Godot 4.2 users can download [Popochiu 2.0 - Beta 2](https://github.com/carenalgas/popochiu/releases/download/v2.0.0-beta2/popochiu_v2.0.0-beta2.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Godot 4.2 users can download [Popochiu 2.0 - Beta 2](https://github.com/carenalgas/popochiu/releases/download/v2.0.0-beta2/popochiu-v2.0.0-beta2.zip). If you are using **Godot 3.5 onwards**, download [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). If you are using **Godot 3.3 to Godot 3.4.5**, download [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings... > Plugins` (the tab on the top).
 4. Restart Godot `Project > Reload Current Project`.
