@@ -286,7 +286,10 @@ func _setup_inner_dialog(dialog: Window, ttl: String, txt: String) -> void:
 
 func _load_templates() -> void:
 	for idx in range(1, gui_templates.get_child_count()):
-		gui_templates.get_child(idx).free()
+		gui_templates.get_child(idx).queue_free()
+	
+	# This is better than awating for SceneTree.process_frame
+	await RenderingServer.frame_post_draw
 	
 	for dir_name: String in DirAccess.get_directories_at(PopochiuResources.GUI_TEMPLATES_FOLDER):
 		var template_info: PopochiuGUIInfo = load(PopochiuResources.GUI_TEMPLATES_FOLDER.path_join(
