@@ -75,4 +75,4 @@ Made by [Carenalga](https://carenalga.itch.io).
 
 Now with the collaboration of [StickGrinder](https://twitter.com/StickGrinder) (and other members of [Illiterate Code Games](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), [@JuannFerrari](https://github.com/JuannFerrari), [Whyschuck](https://github.com/Whyshchuck), and our lovely community.
 
-:heart::heart::heart: Special thanks to [Edmundito](https://github.com/edmundito) for his monthly contribution to our [Ko-fi](https://ko-fi.com/carenalga) :heart::heart::heart:
+:heart::heart::heart: Special thanks to [Edmundito](https://github.com/edmundito), [Whyschuck](https://github.com/Whyshchuck), and **Matthew** for their monthly contribution to our [Ko-fi](https://ko-fi.com/carenalga) :heart::heart::heart:
