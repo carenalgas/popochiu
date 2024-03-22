@@ -103,11 +103,16 @@ func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 ## default cursor.
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if is_instance_valid(item):
-		Cursor.set_secondary_cursor_texture(item.texture)
 		Cursor.hide_main_cursor()
+		Cursor.set_secondary_cursor_texture(item.texture, true)
 	else:
 		Cursor.remove_secondary_cursor_texture()
 		Cursor.show_cursor()
+
+
+## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
+func _get_cursor_name() -> String:
+	return E.get_current_command_name().to_snake_case()
 
 
 #endregion

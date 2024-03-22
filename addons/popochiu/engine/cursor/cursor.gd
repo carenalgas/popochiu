@@ -150,7 +150,7 @@ func _on_gui_blocked() -> void:
 
 func _on_gui_unblocked() -> void:
 	is_blocked = false
-	show_cursor()
+	show_cursor(G.get_cursor_name())
 
 
 #endregion

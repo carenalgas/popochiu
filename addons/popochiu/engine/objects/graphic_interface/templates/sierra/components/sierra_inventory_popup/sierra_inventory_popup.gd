@@ -15,6 +15,7 @@ func _open() -> void:
 func _close() -> void:
 	if I.active:
 		Cursor.set_secondary_cursor_texture(I.active.texture)
+		Cursor.hide_main_cursor()
 	else:
 		if E.current_command == -1:
 			E.current_command = _command_when_opened

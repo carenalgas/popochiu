@@ -54,7 +54,7 @@ var last_click_button := -1 # NOTE Don't know if this will make sense, or if thi
 #region Godot ######################################################################################
 func _ready():
 	add_to_group('PopochiuClickable')
-	
+		
 	if Engine.is_editor_hint():
 		hide_helpers()
 		
@@ -92,41 +92,14 @@ func _ready():
 		# Connect to own signals
 		mouse_entered.connect(_on_mouse_entered)
 		mouse_exited.connect(_on_mouse_exited)
+		# Fix #183 by listening only to inputs in this CollisionObject2D
+		input_event.connect(_on_input_event)
 		
 		# Connect to singleton signals
 		E.language_changed.connect(_translate)
 	
 	set_process_unhandled_input(false)
 	_translate()
-
-
-func _unhandled_input(event: InputEvent):
-	var mouse_event := event as InputEventMouseButton
-	if mouse_event and mouse_event.pressed:
-		if not E.hovered or E.hovered != self: return
-		
-		E.clicked = self
-		last_click_button = mouse_event.button_index
-		
-		get_viewport().set_input_as_handled()
-		
-		match mouse_event.button_index:
-			MOUSE_BUTTON_LEFT:
-				if I.active:
-					on_item_used(I.active)
-				else:
-					handle_command(mouse_event.button_index)
-					
-					times_clicked += 1
-			MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
-				if I.active: return
-				
-				handle_command(mouse_event.button_index)
-				
-				if mouse_event.button_index == MOUSE_BUTTON_RIGHT:
-					times_right_clicked += 1
-				else:
-					times_middle_clicked += 1
 
 
 func _process(delta):
@@ -347,6 +320,34 @@ func _on_mouse_exited() -> void:
 	
 	if E.remove_hovered(self):
 		G.mouse_exited_clickable.emit(self)
+
+
+func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
+	if not PopochiuUtils.is_mouse_button_pressed(event): return
+	if not E.hovered or E.hovered != self: return
+	
+	E.clicked = self
+	last_click_button = event.button_index
+	
+	get_viewport().set_input_as_handled()
+	
+	match event.button_index:
+		MOUSE_BUTTON_LEFT:
+			if I.active:
+				on_item_used(I.active)
+			else:
+				handle_command(event.button_index)
+				
+				times_clicked += 1
+		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
+			if I.active: return
+			
+			handle_command(event.button_index)
+			
+			if event.button_index == MOUSE_BUTTON_RIGHT:
+				times_right_clicked += 1
+			else:
+				times_middle_clicked += 1
 
 
 func _toggle_input() -> void:
