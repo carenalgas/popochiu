@@ -180,4 +180,11 @@ func show_sound_settings() -> void:
 	sound_settings_requested.emit()
 
 
+## Returns the name of the cursor texture to show.
+func get_cursor_name() -> String:
+	if not is_instance_valid(gui): return ""
+	
+	return gui.get_cursor_name()
+
+
 #endregion

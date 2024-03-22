@@ -52,3 +52,8 @@ static func print_warning(msg: String) -> void:
 
 static func print_normal(msg: String) -> void:
 	print_rich("[bgcolor=75cec8][color=000000][b][Popochiu][/b] %s[/color][/bgcolor]" % msg)
+
+
+static func is_mouse_button_pressed(event: InputEvent) -> bool:
+	# Fix #183 by including `event is InputEventScreenTouch` validation
+	return (event is InputEventMouseButton or event is InputEventScreenTouch) and event.pressed

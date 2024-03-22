@@ -122,6 +122,11 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	pass
 
 
+## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
+func _get_cursor_name() -> String:
+	return ""
+
+
 #endregion
 
 #region Public #####################################################################################
@@ -135,6 +140,11 @@ func get_component(component_name: String) -> Control:
 		PopochiuUtils.print_warning("No GUI component with name %s" % component_name)
 	
 	return null
+
+
+## Returns the name of the cursor texture to show. [code]"normal"[/code] is returned by default.
+func get_cursor_name() -> String:
+	return "normal" if _get_cursor_name().is_empty() else _get_cursor_name()
 
 
 #endregion

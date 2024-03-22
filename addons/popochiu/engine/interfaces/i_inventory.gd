@@ -172,6 +172,7 @@ func set_active(value: PopochiuInventoryItem) -> void:
 		active.unselected.emit()
 	
 	active = value
+	
 	item_selected.emit(active)
 
 

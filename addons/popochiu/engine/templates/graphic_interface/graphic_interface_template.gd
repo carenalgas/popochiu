@@ -81,4 +81,9 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	super(item)
 
 
+# Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
+func _get_cursor_name() -> String:
+	return super()
+
+
 #endregion
