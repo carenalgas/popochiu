@@ -64,10 +64,6 @@ func _on_cancel() -> void:
 func open() -> void:
 	_open()
 	
-	# TODO: I'm not sure we should do this...
-	if E.settings.scale_gui:
-		scale = Vector2.ONE * E.scale
-	
 	G.block()
 	Cursor.show_cursor("gui", true)
 	

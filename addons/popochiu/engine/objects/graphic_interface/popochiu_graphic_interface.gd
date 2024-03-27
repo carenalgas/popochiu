@@ -38,8 +38,10 @@ func _ready():
 	D.dialog_finished.connect(_on_dialog_finished)
 	I.item_selected.connect(_on_inventory_item_selected)
 	
-#	if E.settings.scale_gui:
-#		$MainContainer.scale = E.scale
+	if E.settings.scale_gui:
+		size = get_viewport_rect().size / E.scale
+		scale = E.scale
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 
 #endregion

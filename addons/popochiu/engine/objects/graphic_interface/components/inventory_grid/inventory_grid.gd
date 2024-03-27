@@ -27,8 +27,7 @@ var slot_size: float = 0.0
 @onready var gap_size: int = box.get_theme_constant("v_separation")
 
 
-#region Godot
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready():
 	if Engine.is_editor_hint():
 		_update_box()
@@ -57,8 +56,7 @@ func _ready():
 
 #endregion
 
-#region setget
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SETGET ░░░░
+#region SetGet #####################################################################################
 func set_visible_rows(value: int) -> void:
 	visible_rows = value
 	_update_box()
@@ -98,8 +96,7 @@ func set_show_arrows(value: bool) -> void:
 
 #endregion
 
-#region Private
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#region Private ####################################################################################
 func _update_box() -> void:
 	if not is_instance_valid(box): return
 	
@@ -108,7 +105,9 @@ func _update_box() -> void:
 	box.add_theme_constant_override("v_separation", v_separation)
 	
 	for child in box.get_children():
-		child.free()
+		child.queue_free()
+	
+	await RenderingServer.frame_post_draw
 	
 	for idx in number_of_slots:
 		var slot := (SLOT if not slot_scene else slot_scene).instantiate()
@@ -156,16 +155,24 @@ func _on_down_pressed() -> void:
 
 func _add_item(item: PopochiuInventoryItem, _animate := true) -> void:
 	var slot := box.get_child(I.items.size() - 1)
-	
-	slot.add_child(item)
 	slot.name = "[%s]" % item.script_name
+	slot.add_child(item)
+	
+	if E.settings.scale_gui:
+		item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+		
+		if slot.has_method("get_content_height"):
+			item.custom_minimum_size.y = slot.get_content_height()
+		else:
+			item.custom_minimum_size.y = slot.size.y
+	
 	box.set_meta(item.script_name, slot)
 	
 	item.selected.connect(_change_cursor)
 	_check_scroll_buttons()
 	
-	# Common call to all inventories. Should be in the class from where inventory
-	# panels will inherit from
+	# Common call to all inventories. Should be in the class from where inventory panels will
+	# inherit from
 	await get_tree().process_frame
 	
 	I.item_add_done.emit(item)

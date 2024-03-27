@@ -155,27 +155,15 @@ func _on_close() -> void:
 
 
 func _on_about_to_popup() -> void:
-	welcome.add_theme_font_override(
-		"bold_font", get_theme_font("bold", "EditorFonts")
-	)
-	scale_message.add_theme_font_override(
-		"normal_font", get_theme_font("main", "EditorFonts")
-	)
-	scale_message.add_theme_font_override(
-		"bold_font", get_theme_font("bold", "EditorFonts")
-	)
-	scale_message.add_theme_font_override(
-		"mono_font", get_theme_font("doc_source", "EditorFonts")
-	)
-	gui_templates_title.add_theme_font_override(
-		"font", get_theme_font("bold", "EditorFonts")
-	)
+	welcome.add_theme_font_override("bold_font", get_theme_font("bold", "EditorFonts"))
+	scale_message.add_theme_font_override("normal_font", get_theme_font("main", "EditorFonts"))
+	scale_message.add_theme_font_override("bold_font", get_theme_font("bold", "EditorFonts"))
+	scale_message.add_theme_font_override("mono_font", get_theme_font("doc_source", "EditorFonts"))
+	gui_templates_title.add_theme_font_override("font", get_theme_font("bold", "EditorFonts"))
 	gui_templates_description.add_theme_font_override(
 		"font", get_theme_font("doc_source", "EditorFonts")
 	)
-	template_description.add_theme_font_override(
-		"bold_font", get_theme_font("bold", "EditorFonts")
-	)
+	template_description.add_theme_font_override("bold_font", get_theme_font("bold", "EditorFonts"))
 
 
 func _update_scale(_value: float) -> void:

@@ -41,10 +41,15 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		if _is_hidden and get_rect().has_point(get_global_mouse_position()):
+		var rect := get_rect()
+		
+		if E.settings.scale_gui:
+			rect = Rect2(get_rect().position * E.scale, get_rect().size * E.scale)
+		
+		if _is_hidden and rect.has_point(get_global_mouse_position()):
 			_open()
 		elif not _is_hidden\
-		and not get_rect().has_point(get_global_mouse_position()):
+		and not rect.has_point(get_global_mouse_position()):
 			_close()
 
 
