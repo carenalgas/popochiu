@@ -18,6 +18,14 @@ func _ready() -> void:
 
 #endregion
 
+#region Public #####################################################################################
+func get_content_height() -> float:
+	# Subtract the value of the sum of the top and bottom borders of the StyleBoxFlat of this slot
+	return size.y - 2
+
+
+#endregion
+
 #region Private ####################################################################################
 func _on_mouse_entered() -> void:
 	_style_box_flat.border_color = Color("edf171")

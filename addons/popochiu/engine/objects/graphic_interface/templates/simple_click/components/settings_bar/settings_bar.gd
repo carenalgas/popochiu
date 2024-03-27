@@ -17,7 +17,7 @@ var _is_hidden := true
 @onready var _hide_y := position.y - (size.y - 4)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	if not E.settings.toolbar_always_visible:
 		position.y = _hide_y
@@ -39,19 +39,28 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		if _is_hidden and get_rect().has_point(get_global_mouse_position()):
+		var rect := get_rect()
+		
+		if E.settings.scale_gui:
+			rect = Rect2(get_rect().position * E.scale, get_rect().size * E.scale)
+		
+		if _is_hidden and rect.has_point(get_global_mouse_position()):
 			_open()
 		elif not _is_hidden\
-		and not get_rect().has_point(get_global_mouse_position()):
+		and not rect.has_point(get_global_mouse_position()):
 			_close()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func is_open() -> bool:
 	return _is_hidden == false
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _open() -> void:
 	if E.settings.toolbar_always_visible: return
 	if not is_disabled and position.y != _hide_y: return
@@ -106,3 +115,6 @@ func _on_graphic_interface_blocked() -> void:
 
 func _on_graphic_interface_unblocked() -> void:
 	set_process_input(true)
+
+
+#endregion

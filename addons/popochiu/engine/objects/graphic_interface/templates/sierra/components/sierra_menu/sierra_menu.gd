@@ -19,13 +19,24 @@ func _input(event: InputEvent) -> void:
 	if G.is_blocked: return
 	
 	if event is InputEventMouseMotion:
-		if get_global_mouse_position().y < 16.0:
+		var rect := get_rect()
+		
+		if E.settings.scale_gui:
+			rect = Rect2(
+				get_rect().position * E.scale,
+				(Vector2(
+					get_rect().size.x,
+					get_rect().size.y if visible else get_rect().size.y / 2.0
+				)) * E.scale
+			)
+		
+		if not visible and rect.has_point(get_global_mouse_position()):
 			# Show the top menu
 			if not I.active:
 				Cursor.show_cursor("gui")
 			
 			show()
-		elif get_global_mouse_position().y > size.y and visible:
+		elif visible and not rect.has_point(get_global_mouse_position()):
 			# Hide the top menu
 			if not I.active:
 				Cursor.show_cursor(E.get_current_command_name().to_snake_case())
