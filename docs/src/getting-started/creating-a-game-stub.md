@@ -162,7 +162,7 @@ To do this, locate the first character you have created in Popochiu main dock (i
 
 ![Set as Player Character](../assets/images/getting-started/game_stub-character-4-set_pc.png "Select our first character as player character")
 
-!!! info "Multiple character games
+!!! info "Multiple character games"
     Even if we are not going to cover this detail, Popochiu supports multiple player character in the style of _Maniac Mansion_ or _Day of the Tentacle_. It's as easy as programmatically change a variable from your scripts.
 
 Pat yourself a shoulder! You have succesfully created your first characters.
