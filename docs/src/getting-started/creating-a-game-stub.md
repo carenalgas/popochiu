@@ -2,19 +2,40 @@
 weight: 1020
 ---
 
+# Creating a game stub
+
 This page will guide you through the process of creating a very small stub for a game.
 
-The purpose of this page is to quickly get you set up to experiment and tinker as you read this documentation. If you are already familiar with Popochiu or have already created your project, you can jump to the [Tutorials](/getting-started/tutorials) section.
+You will set up a quick game with a single location, a couple interacting characters and items, plus dialogs and inventory.
 
-## Example resources
+You can use the resulting stub to experiment and tinker as you read the documentation. If you are already familiar with Popochiu and have already created your project, you can jump to the [Tutorials](/getting-started/tutorials) section to learn more about more advanced features.
 
-If you are experimenting with Popochiu for the first time, or still evaluating if it's for you, you can speed up the following step, downloading the [Example Game Assets](/getting-started/example-resources#example-assets).
+!!! info
+    If you are moving your first steps in Adventure Games development, or just evaluating if Popochiu is for you, you may want to download the [Example Game Assets Pack](/getting-started/example-resources#example-assets), that contains all the assets used in this tutorial.
 
-If you prefer to skip the steps and jump to the meat of the learning, you can just clone the [Example Game](/getting-started/example-resources#example-game). It's a project containing the game setup and assets, plus a matching version of Popochiu.
+    If you just want to tinker with Popochiu or experiment on a throw-away project, you can just clone the [Example Game](/getting-started/example-resources#example-game), that's already complete and ready to run.
 
-If you want to learn the basics of setting up your very project, follow along.
+## Table of contents
 
-## Setup the game
+!!! warning
+    To follow this introductory guide you must have already created a new Godot project and [installed Popochiu](/getting-started/installing-popochiu).  
+
+To create our game stub we will:
+
+1. [Setup a new adventure game in your Godot project](#game-setup)
+2. [Select the game user interface](#select-game-gui)
+3. Create two Characters with static sprites
+4. Set a character as a player character
+5. Create a Room, that's a game location
+6. Create a couple of key room elements: a Prop and an Hotspot
+7. Make the Characters have a quick dialogue
+8. Collect a prop and add it to the inventory
+
+There is more to Popochiu, but this will showcase the foundamental building blocks of how the engine works.
+
+Let's start!
+
+## Game setup
 
 When you first start your project, you are greated with the **Setup** popup, where you can define the base paramenters of your game.
 
@@ -96,21 +117,55 @@ Now click on the scene's root node (it should be named `Character<YourCharacterN
 
 ![Character inspector](../assets/images/getting-started/game_stub-character-5-inspector.png "The newly created character's inspector")
 
-Set the **Flips when** parameter as `Looking Left`, and leave the rest untouched.
+Set the **Flips when** parameter (_5_) to `Looking Left`, and leave the rest untouched.
+
+!!! warning
+    The suggested value is based on the example sprite direction (right). If you are using a self-made sprite for your character and it's facing left, you should set this property to `Looking right` instead.
 
 The character scene shows nothing. That's because we've set no sprite for our character. Popochiu characters support a full set of standard and custom animations, but since we are only stubbing the game, we'll just set a static sprite for now.
 
 If you don't have a spritesheet ready for your character, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/goddiu/goddiu.png) from the demo game.  
-Save it into your project, in the folder `game/characters/<your character name>/` folder, and rename it as you see fit.
+Save it into your project, in the `game/characters/<your character name>/` folder, and rename it as you see fit.
 
+!!! tip
+    You can actually save the spritesheet anywhere in your project, but keeping it in the Character folder makes the project structure more tidy and maintainable. You may want to create subfolders to organize assets, but we strongly advice to start simple and reorganize only when it's necessary.
 
-### Create the main character
+To set the character sprite, go back to your editor and select the **Sprite2D** node in you character's scene (_6_), then locate your spritesheet filename in your file manager (_7_). Select and drag it to the **Texture** property in the inspector (_8_).
 
-TODO
+![Set Character's sprite](../assets/images/getting-started/game_stub-character-6-set_texture.png "Drag and drop the spritesheet in the Sprite2D texture")
 
-### Create a secondary character
+You can see from the screenshot that the entire image is now visible in the Character scene. Of course we want to select just a single sprite from the spritesheet. For that, head to the **Animation** section in the inspector and set **Hframes** and **Vframes** value to match the number of sprites in the spritesheet, like this (_9_):
 
-TODO
+![Set Character's sprite frames](../assets/images/getting-started/game_stub-character-7-set_frames.png "The example asset is a four-by-four matrix of sprites, so we are setting horizontal and vertical frames accordingly")
+
+Now the sprite on the scene should be OK, showing your character in the standing position.
+
+---
+
+> `!!!!!!!!!!!!!!!!!!!! WIP !!!!!!!!!!!!!!!!!!!!!!`  
+> `TODO: Configure baseline, text positioning etc.`  
+> `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`
+
+---
+
+### Add another character
+
+We are almost done creating our player character. Before moving on, follow [the same steps](#create-characters) to create another one, to keep our main character company and test some interaction.
+
+!!! tip
+    In the example game, the second character is named _Popsy_ and [its sprite can be found here](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/popsy/popsy.png).
+
+### Select the main character
+
+Now that we have two characters, it's time to tell Popochiu which one will be our main character. That's the one that will be used by the player.  
+To do this, locate the first character you have created in Popochiu main dock (in our example it was _Goddiu_), open the drop-down menu, and select `Set as Player Character` (_10_).
+
+![Set as Player Character](../assets/images/getting-started/game_stub-character-4-set_pc.png "Select our first character as player character")
+
+!!! info "Multiple character games
+    Even if we are not going to cover this detail, Popochiu supports multiple player character in the style of _Maniac Mansion_ or _Day of the Tentacle_. It's as easy as programmatically change a variable from your scripts.
+
+Pat yourself a shoulder! You have succesfully created your first characters.
 
 ## Create the first room
 
