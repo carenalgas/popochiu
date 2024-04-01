@@ -24,10 +24,10 @@ To create our game stub we will:
 
 1. [Setup a new adventure game in your Godot project](#game-setup)
 2. [Select the game user interface](#select-game-gui)
-3. Create two Characters with static sprites
-4. Set a character as a player character
+3. [Create two Characters with static sprites](#create-characters)
+4. [Set a character as a player character](#select-the-main-character)
 5. Create a Room, that's a game location
-6. Create a couple of key room elements: a Prop and an Hotspot
+6. Create key elements in the room: a Walkable Area, a Prop and an Hotspot
 7. Make the Characters have a quick dialogue
 8. Collect a prop and add it to the inventory
 
@@ -138,15 +138,35 @@ You can see from the screenshot that the entire image is now visible in the Char
 
 ![Set Character's sprite frames](../assets/images/getting-started/game_stub-character-7-set_frames.png "The example asset is a four-by-four matrix of sprites, so we are setting horizontal and vertical frames accordingly")
 
-Now the sprite on the scene should be OK, showing your character in the standing position.
+Now the sprite on the scene should be OK, showing your character in the standing position. We just miss a little change to make things work as intended: when a new character is created, its sprite is centered on the scene origin:
 
----
+![Set Character's sprite position](../assets/images/getting-started/game_stub-character-8-set_feet_center.png "Move the Character so its feet are in the scene's origin")
 
-> `!!!!!!!!!!!!!!!!!!!! WIP !!!!!!!!!!!!!!!!!!!!!!`  
-> `TODO: Configure baseline, text positioning etc.`  
-> `!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`
+This is a problem, because the scene origin point is the one that the engine will check to understand if the character is still inside a walking area, or if it reached a certain position when moving around the scene. In short, the scene origin should be where the character's feet are.  
+Fixing this is as simple as selecting the **Sprite2D** node in the character scene (_10_), and move it so that the origin is in between the two feet, like in the image below.
 
----
+![Correct Character's sprite position](../assets/images/getting-started/game_stub-character-9-set_feet_center.png "The character is now correctly positioned")
+
+!!! tip "Tips for great character sprite positioning"
+    Most game characters' idle position is depicted in a three-quarter view. In this type of shots, the foot facing the camera will be slightly lower than the foot pointing to the side of the sprite (look at Goddiu above). To achieve perfect results when positioning your sprite, you should position the side-facing foot on the zero line, and the camera-facing foot toe should be a bit lower.
+
+    In case of floating characters (ghosts, fairies, anti-gravity-powered mad scientists, etc), you should leave some vertical space between the scene's center and your character. Try to envision the scene line as the "floor" and decide how high above the floor the character should float.
+
+The last thing to do is to position the place where the dialog text will be shown for the talking character. Popochiu can be customized to show dialog lines in many different positions or fashions, but it's default is to show the dialogue lines somewhere above the character's head. Since the engine doesn't know how high your sprite is (see "Under the hood" note below), that's for you to decide.
+
+Just select the **DialogPos** node in the scene tree (_11_). A small cross will be highlighted in the scene's origin. Drag it somewhere above the character's head (or wherever makes sense to you).
+
+![Correct Character's text position](../assets/images/getting-started/game_stub-character-10-set_dialog_position.png "Position the dialogue where it's more convenient")
+
+This may require a bit of experimentation, but for now, this will do.
+
+!!! info "Under the hood"
+    You may be wondering how exactly the text is located in relation to the position of the **DialogPos** node. Here is an explanation on how Popochiu decides how your text is rendered.
+
+    1. The baseline of the text will always match the vertical position of **DialogPos**, so the text will be rendered vertically **right above** that point.
+    2. The dialog line length is calculated and the text is centered on the horizontal position of **DialogPos**, so the text will be rendered horizontally **around** that point.
+    3. If the text spans multiple line, Popochiu will expand it **towards the top**, so that it doesn't cover your character (this means if you want your text under the character for some reason, multiple lines will cover your character).
+    4. If the character is near the window or screen border, the text will be repositioned so that it will be entirely visible, so you don't have to worry about it becoming unreadable. This is true both for horizontal and vertical coordinates.
 
 ### Add another character
 
