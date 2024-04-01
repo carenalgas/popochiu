@@ -56,7 +56,7 @@ If you want to create a high-res game like the modern Deponia series, with beaut
 
     * `320x180`: vertically very small, good to emulate pioneering 80s games like Sierra's _King's Quest_ or similar.
     * `356x200`: more vertical space, this is a "widescreen" version of the 320x200 that games like _The Secret of Monkey Island_ or _King's Quest V_ had on an IBM PC or Amiga, back then.
-    * `384x216`: there where no games back then sporting this resolution, but it can be used if you want to have a bit more vertical space for higher sprites, or for a bulky interface like the 9-verbs one, without ruining the _retro-vibe_.
+    * `384x216`: there were no games back then featuring this resolution, but it can be used if you want to have a bit more vertical space for higher sprites, or for a bulky interface like the 9-verbs one, without ruining the _retro-vibe_.
 
 Some prefer not to play adventure games in full-screen so, once you've set the native resolution for you game, you may use the **Playing window resolution** (_2_) values to set the size your game will have when played in windowed mode. For low-res games, you want to provide a larger window than the native resolution, or on most modern displays, it will be very tiny.  
 
@@ -65,12 +65,15 @@ Some prefer not to play adventure games in full-screen so, once you've set the n
 
 Finally, the **Game type** (_3_) select box will set a bunch of project settings that are better kept coherent, from sprite importing, to scaling algorithms, etc. The options are:
 
-* **Custom**: TBD
+* **Custom**: This does nothing, leaving all the settings to the developer.
 * **2D**: Chose this for high-res games, that may benefit from anti-aliasing when scaled up or down.
 * **Pixel**: Chose this for low-res and pixel-art games, so that you graphics remain crisp when scaled up or down.
 
+!!! info "Under the hood"
+    For the more technical readers, what the **Game type** options do is pre-configuring **Stretch mode** to `canvas_item` and **Stretch aspect** to `keep` for you. The `Pixel` mode also sets textures use the `Nearest` filter, so that no anti-alias or blurring happens when the game is scaled.
+
 !!! note
-    Nowadays there are so many different display aspect ratios, that doing assumptions on how your game will be played is futile. Nonetheless, the vast majority of devices out there (mobile or PCs) have displays close enough to `16:9` that you will probably end up keeping this ratio into consideration. That's the reason why Popochiu default values are set to `320x180`: it has the same ratio of a widescreen display.
+    Nowadays there are so many different display aspect ratios, that doing assumptions on how your game will be played is futile. Nonetheless, the vast majority of devices out there (mobile or PCs) have displays close enough to `16:9` that you will probably end up keeping this ratio into consideration. That's the reason why Popochiu default values are set to `320x180`: it is an old-style resolution, with the aspect ratio of a modern display.
 
 ### Select game GUI
 
@@ -90,7 +93,7 @@ In the **GUI Template** (_4_) section of the Setup popup, you can click on a GUI
     Also, keep in mind that some GUIs will take space on screen (like the 9 Verbs one), and this will impact your backgrounds.
 
 !!! note
-    You can go back and review your game setup choices at any moment, clicking the "Setup" button at the bottom of the [Popochiu Main Dock](#TBD).
+    You can go back and review your game setup choices at any moment, clicking the "Setup" button at the bottom of the [Popochiu Main Dock](#TODO).
 
     ![Setup button](../assets/images/getting-started/game_stub-setup_dock_button.png "Reopen the Setup window anytime from the main dock")
 
@@ -178,7 +181,7 @@ We are almost done creating our player character. Before moving on, follow [the 
 ### Select the main character
 
 Now that we have two characters, it's time to tell Popochiu which one will be our main character. That's the one that will be used by the player.  
-To do this, locate the first character you have created in Popochiu main dock (in our example it was _Goddiu_), open the drop-down menu, and select `Set as Player Character` (_10_).
+To do this, locate the first character you have created in Popochiu main dock (in our example it was _Goddiu_), open the drop-down menu, and select `Set as Player Character` (_12_).
 
 ![Set as Player Character](../assets/images/getting-started/game_stub-character-4-set_pc.png "Select our first character as player character")
 
@@ -189,7 +192,102 @@ Pat yourself a shoulder! You have succesfully created your first characters.
 
 ## Create the first room
 
-TODO
+Now that we have two characters, it's time to create a location for them to interact with.
+
+In Popochiu, game locations are referred to as _rooms_. More broadly, a room can serve as any game screen, including splash screens, menus, or close-ups. Not all rooms need to feature characters, and the main character may be rendered invisible in specific rooms.
+
+To create our first room, just click the **Create room** button in Popochiu's main dock (_13_).
+
+![Create Room button](../assets/images/getting-started/game_stub-room-1-create_button.png "Press the button to create a new room")
+
+A popup will appear, very similar to the one to create a new character. This time, an additional checkbox is available.
+This allows us to set the newly created room as the main scene of the Godot project. Check it out so we don't have to do it later. This scene will also be the only room in this game stub.
+
+![Create Room popup](../assets/images/getting-started/game_stub-room-2-creation_popup.png "Name the room and select it as the project's main scene")
+
+Name the new room whatever you want. If you want to follow along, let's name this room "_House_" and make it the main scene.  
+Popochiu will create the new room, open the room scene in the editor, and open the corresponding [Room tab](#TODO) in the plugin interface.
+
+Much like a character, a room needs a sprite to represent the background of the location. We are going to use [this background](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/rooms/house/props/background/house_bg.png) from the example game.
+
+But hey! The room has nothing like a sprite in it! Quite the opposite, the scene tree seem to be pretty empty:
+
+![An empty room scene tree](../assets/images/getting-started/game_stub-room-3-empty_room_scene.png "Nothing meaningful in here")
+
+Unlike other objects in Popochiu, rooms are basically containers for other more specialized objects, the most important of which are **Props**. Props are every visible part of a location, used to make the environment believable. They can go from a small collectable item, all the way to location backgrounds.
+
+!!! info "Under the hood"
+    Popochiu makes no distinction based on the prop function in the game, he knows little about that actually. You add as many as you want into a scene and interact with them via your game script.  
+    The only thing the engine knows about props is their **visibility** and their **clickability**. By flagging those two properties on or off, you can switch objects in and out of a location, an make them interactive.
+
+Armed with this knowledge, it's now clear we must create a prop to hold our background. That's easy. If you followed the steps above, Popochiu dock should be showing the **Home** room tab.
+
+![Add a background prop](../assets/images/getting-started/game_stub-room-4-prop_create_button_.png "Let's add a new prop")
+
+Click the **Create prop** button and as usual, a new window will pop up:
+
+![Name the prop](../assets/images/getting-started/game_stub-room-5-prop_creation_popup.png "Background won't be interactive")
+
+Name the new prop "_Background_" and leave the "Will have interaction?" option unchecked. You don't want all of your screen to react to clicks when you move around.
+
+!!! note
+    Moving around the screen doesn't require the background or anything else to be interactive. Popochiu will take care of moving the character for you when you click on a non-interactive area.  
+    Go on to learn how to constraint character movement to the right zones.
+
+Click OK and your prop will be created. You should see it in the scene tree, under the **Props** grouping node. The inspector should look something like this:
+
+![New prop inspector](../assets/images/getting-started/game_stub-room-6-prop_inspector.png.png "We can now set the background for the scene")
+
+Now you can see the Prop has a **Texture** parameter. By this time you should be able to figure out what to do. Save the downloaded background sprite in the `game/rooms/house/props/background/` folder, then drag it from Godot Editor file manager to the field in the inspector.  
+Your scene should now show the background image.
+
+!!! success
+    At this point you have a main character and a main scene defined. This is the minimum steps needed to run a Popochiu game. Treat yourself after all this effort, by hitting the **Run** button at the top right of the editor and seeing you game in action.
+
+    If you did everything right, you should see your main character standing in the center of the room. Clicking on the screen will flip the character so that it faces the cursor coordinates.
+
+### Add a Walkable Area
+
+Our characters is standing there in the middle of the room, doing nothing. If we click on the screen we would expect it to walk to the clicked location, but that's not happening.
+
+The reason is that we defined no areas in which the character is allowed to move. Popochiu refers to those elements as **Walkable Areas**. They are objects that can live only inside rooms, and each room can have more than one (see the box below for an explanation).
+
+For now, let's create a single walkable area representing the room floor.
+
+In the Room tab of Popochiu dock, click the **Create walkable area** button (_16_).
+
+![Create a walkable area](../assets/images/getting-started/game_stub-room-7-wa_create_button.png "Let's define a new walkable area")
+
+In the popup window, just name your new walkable area "_Floor_" (or whatever you find descriptive enough). Click **OK** and a new element will be added to the scene.
+
+![New walkable area in the scene tree](../assets/images/getting-started/game_stub-room-8-wa_scene_tree.png "Select the Perimeter node to edit the area shape")
+
+Selecting the **Perimeter** node in the scene tree (_17_) to highlight a squared polygon in the center of the scene. Now you have to adjust the vertices of that polygon (_18_) to whatever makes sense.
+
+!!! tip
+    To adjust the polygon, just click and drag the vertice handles around.  
+    It's quite intuitive, but you can add vertices to the polygon by clicking anywhere along a segment.
+
+When you have adjusted your walkable area, it should look something like this:
+
+![The polygon for the floor is over](../assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click 'Bake NavigationPolygon' to complete the walkable area")
+
+To finish the work, you must click the **Bake NavigationPolygon** button in the toolbar (_19_).
+
+Save the project and run your game. You character should now be able to move around the room, without leaving the area you defined.
+
+!!! tip
+    You usually don't want your walkable area to cover the entire floor that you painted, or your character will be able to stand on the very border of it, too near the wall, creating a terrible effect.  
+    Remember that Popochiu will stop the movement as soon as the origin point of your character scene will reach one of the walkable area borders.
+
+!!! tip "Additional walkable areas"
+    It may not be obvious but you may want (or need) a room to have more than a single walkable area. Here is some example cases:
+
+    * A location with two areas separated by an obstacle (like a chasm), that the character can enter both sides.
+    * A location with different levels, the character can climb to or reach depending on the game script or specific conditions.
+    * A location with a large prop that can be removed (like a pile of fallen rocks): when the prop is removed a larger walkable area is used in place of the smaller one.
+
+    Since you can define which walkable area is the active one for the character from your scripts, having multiple walkable areas actually unlocks a lot of possibilities for complex locations.
 
 ### Add an interactive prop
 
