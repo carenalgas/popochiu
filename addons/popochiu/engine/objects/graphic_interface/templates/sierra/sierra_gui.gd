@@ -101,8 +101,8 @@ func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 ## default cursor.
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if is_instance_valid(item):
-		Cursor.hide_main_cursor()
 		Cursor.set_secondary_cursor_texture(item.texture, true)
+		Cursor.hide_main_cursor()
 	else:
 		Cursor.remove_secondary_cursor_texture()
 		Cursor.show_cursor()

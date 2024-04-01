@@ -85,14 +85,22 @@ func set_secondary_cursor_texture(texture: Texture2D, ignore_block := false) -> 
 	
 	secondary_cursor.texture = texture
 	
-	#main_cursor.hide()
+	if E.settings.scale_gui:
+		# Scale the cursor based on the size of the relation of the texture size against
+		# the main cursor size
+		secondary_cursor.scale = Vector2.ONE * ceil(
+			float(texture.get_height()) / float(get_cursor_height())
+		)
+	
 	secondary_cursor.show()
 
 
 func remove_secondary_cursor_texture() -> void:
 	secondary_cursor.texture = null
 	
-	#main_cursor.show()
+	if E.settings.scale_gui:
+		secondary_cursor.scale = E.scale
+	
 	secondary_cursor.hide()
 
 
@@ -110,8 +118,8 @@ func unblock() -> void:
 
 
 func scale_cursor(factor: Vector2) -> void:
-	secondary_cursor.scale = Vector2.ONE * factor
-	main_cursor.scale = Vector2.ONE * factor
+	secondary_cursor.scale = factor
+	main_cursor.scale = factor
 
 
 func get_position() -> Vector2:

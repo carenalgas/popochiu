@@ -6,9 +6,9 @@ var is_disabled := false
 
 var _is_hidden := true
 
+@onready var box: Container = find_child('Box')
 @onready var _tween: Tween = null
 @onready var _hidden_y := position.y - (size.y - 4)
-@onready var _box: Container = find_child('Box')
 
 
 #region Godot ######################################################################################
@@ -26,7 +26,7 @@ func _ready():
 	I.inventory_hide_requested.connect(_close)
 	
 	# Check if there are already items in the inventory (set manually in the scene)
-	for ii in _box.get_children():
+	for ii in box.get_children():
 		if ii is PopochiuInventoryItem:
 			ii.in_inventory = true
 			ii.selected.connect(_change_cursor)
@@ -101,7 +101,11 @@ func _on_graphic_interface_unblocked() -> void:
 
 
 func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
-	_box.add_child(item)
+	box.add_child(item)
+	
+	if E.settings.scale_gui:
+		item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+		item.custom_minimum_size.y = box.size.y
 	
 	item.selected.connect(_change_cursor)
 	
@@ -126,7 +130,7 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 	item.selected.disconnect(_change_cursor)
 	
-	_box.remove_child(item)
+	box.remove_child(item)
 	
 	if not always_visible:
 		Cursor.show_cursor()
