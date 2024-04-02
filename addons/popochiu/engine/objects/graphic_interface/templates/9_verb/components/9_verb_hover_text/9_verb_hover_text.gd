@@ -31,7 +31,6 @@ func _process(delta: float) -> void:
 		position /= E.scale
 	
 	position -= size / 2.0
-	# TODO: Make this value depend of the height of the cursor or a value in a settings file.
 	position.y -= Cursor.get_cursor_height() / 2
 	
 	# Check viewport limits

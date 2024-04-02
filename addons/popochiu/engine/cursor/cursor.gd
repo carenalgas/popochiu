@@ -86,8 +86,8 @@ func set_secondary_cursor_texture(texture: Texture2D, ignore_block := false) -> 
 	secondary_cursor.texture = texture
 	
 	if E.settings.scale_gui:
-		# Scale the cursor based on the size of the relation of the texture size against
-		# the main cursor size
+		# Scale the cursor based the relation of the texture size compared to the main cursor
+		# texture size
 		secondary_cursor.scale = Vector2.ONE * ceil(
 			float(texture.get_height()) / float(get_cursor_height())
 		)

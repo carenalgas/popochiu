@@ -41,6 +41,9 @@ func _ready():
 	if E.settings.scale_gui:
 		size = get_viewport_rect().size / E.scale
 		scale = E.scale
+		# Apply this filter so the font doesn't blur
+		# NOTE: Maybe here we should take into account if the game is marked as Pixel (or if the
+		# 		font is the default one.
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 
