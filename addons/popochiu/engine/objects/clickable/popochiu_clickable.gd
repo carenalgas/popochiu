@@ -323,28 +323,29 @@ func _on_mouse_exited() -> void:
 
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
-	if not PopochiuUtils.is_mouse_button_pressed(event): return
+	if not PopochiuUtils.is_click_or_touch_pressed(event): return
 	if not E.hovered or E.hovered != self: return
 	
+	var event_index := PopochiuUtils.get_click_or_touch_index(event)
 	E.clicked = self
-	last_click_button = event.button_index
+	last_click_button = event_index
 	
 	get_viewport().set_input_as_handled()
 	
-	match event.button_index:
+	match event_index:
 		MOUSE_BUTTON_LEFT:
 			if I.active:
 				on_item_used(I.active)
 			else:
-				handle_command(event.button_index)
+				handle_command(event_index)
 				
 				times_clicked += 1
 		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
 			if I.active: return
 			
-			handle_command(event.button_index)
+			handle_command(event_index)
 			
-			if event.button_index == MOUSE_BUTTON_RIGHT:
+			if event_index == MOUSE_BUTTON_RIGHT:
 				times_right_clicked += 1
 			else:
 				times_middle_clicked += 1

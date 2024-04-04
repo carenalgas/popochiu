@@ -125,9 +125,11 @@ func _unhandled_input(event: InputEvent):
 			I.set_active_item()
 		return
 	
-	if not (
-		PopochiuUtils.is_mouse_button_pressed(event) and event.button_index == MOUSE_BUTTON_LEFT
-	):
+	if PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
+		return
+	
+	if not event is InputEventScreenTouch and E.hovered:
+		prints("ayyyyyyyyyyyyyyyyyyy")
 		return
 	
 	if is_instance_valid(C.player) and C.player.can_move:

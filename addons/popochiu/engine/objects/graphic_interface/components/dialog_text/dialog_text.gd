@@ -52,18 +52,18 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton or modulate.a == 0.0:
+	if not PopochiuUtils.is_click_or_touch(event) or modulate.a == 0.0:
 		return
-	
-	var e: InputEventMouseButton = event
 	
 	get_viewport().set_input_as_handled()
 	
-	if e.is_pressed() and e.button_index == MOUSE_BUTTON_LEFT:
-		if visible_ratio == 1.0:
-			disappear()
-		else:
-			stop()
+	if PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
+		return
+	
+	if visible_ratio == 1.0:
+		disappear()
+	else:
+		stop()
 
 
 #endregion
