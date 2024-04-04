@@ -37,10 +37,8 @@ func _ready() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _clicked(event: InputEvent) -> void:
-	var mouse_event: = event as InputEventMouseButton
-	if mouse_event and mouse_event.button_index == MOUSE_BUTTON_LEFT \
-		and mouse_event.pressed:
-			pass
+	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
+		pass
 
 
 # Creates an Array of PopochiuDialogOption to show dialog tree options created

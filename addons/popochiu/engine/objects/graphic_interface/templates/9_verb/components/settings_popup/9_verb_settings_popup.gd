@@ -9,7 +9,7 @@ signal classic_sentence_toggled(pressed)
 @onready var quit: Button = %Quit
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	
@@ -19,9 +19,14 @@ func _ready() -> void:
 	history.pressed.connect(_on_history_pressed)
 	quit.pressed.connect(_on_quit_pressed)
 	%ClassicSentence.toggled.connect(_on_classic_sentence_toggled)
+	
+	if OS.has_feature("web"):
+		quit.hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _on_save_pressed() -> void:
 	G.show_save()
 
@@ -40,3 +45,6 @@ func _on_quit_pressed() -> void:
 
 func _on_classic_sentence_toggled(button_pressed: bool) -> void:
 	classic_sentence_toggled.emit(button_pressed)
+
+
+#endregion

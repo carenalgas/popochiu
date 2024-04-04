@@ -17,7 +17,7 @@ var _is_hidden := true
 @onready var _hide_y := position.y - (size.y - 4)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	if not E.settings.toolbar_always_visible:
 		position.y = _hide_y
@@ -35,6 +35,8 @@ func _ready() -> void:
 		hide()
 	
 	set_process_input(not E.settings.toolbar_always_visible)
+	
+	size.x = $Box.size.x
 
 
 func _input(event: InputEvent) -> void:
@@ -46,12 +48,16 @@ func _input(event: InputEvent) -> void:
 			_close()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func is_open() -> bool:
 	return _is_hidden == false
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _open() -> void:
 	if E.settings.toolbar_always_visible: return
 	if not is_disabled and position.y != _hide_y: return
@@ -106,3 +112,6 @@ func _on_graphic_interface_blocked() -> void:
 
 func _on_graphic_interface_unblocked() -> void:
 	set_process_input(true)
+
+
+#endregion

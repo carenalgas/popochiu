@@ -9,6 +9,7 @@ signal option_selected(option_name)
 @onready var quit: Button = %Quit
 
 
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	
@@ -17,7 +18,16 @@ func _ready() -> void:
 	sound.pressed.connect(_on_option_pressed.bind("sound"))
 	text.pressed.connect(_on_option_pressed.bind("text"))
 	quit.pressed.connect(_on_option_pressed.bind("quit"))
+	
+	if OS.has_feature("web"):
+		quit.hide()
 
 
+#endregion
+
+#region Private ####################################################################################
 func _on_option_pressed(option_name: String) -> void:
 	option_selected.emit(option_name)
+
+
+#endregion

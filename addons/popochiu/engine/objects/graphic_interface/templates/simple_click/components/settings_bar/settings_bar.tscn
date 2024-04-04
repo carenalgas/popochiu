@@ -40,6 +40,7 @@ script = ExtResource("2_hk0vm")
 [node name="Box" type="HBoxContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
+alignment = 2
 
 [node name="BtnSave" type="TextureButton" parent="Box"]
 layout_mode = 2
