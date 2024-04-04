@@ -35,6 +35,8 @@ func _ready() -> void:
 		hide()
 	
 	set_process_input(not E.settings.toolbar_always_visible)
+	
+	size.x = $Box.size.x
 
 
 func _input(event: InputEvent) -> void:
