@@ -129,7 +129,6 @@ func _unhandled_input(event: InputEvent):
 		return
 	
 	if not event is InputEventScreenTouch and E.hovered:
-		prints("ayyyyyyyyyyyyyyyyyyy")
 		return
 	
 	if is_instance_valid(C.player) and C.player.can_move:
