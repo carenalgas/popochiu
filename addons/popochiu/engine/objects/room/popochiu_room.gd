@@ -186,9 +186,11 @@ func exit_room() -> void:
 func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
 	
-	# Add child nodes (defined in the Scene tree of the room) to the instance of the character
-	for child: Node in _characters_childs[chr.script_name]:
-		chr.add_child(child)
+	# Fix #191 by checking if the character had childs defined in the Room's Scene (Editor)
+	if _characters_childs.has(chr.script_name):
+		# Add child nodes (defined in the Scene tree of the room) to the instance of the character
+		for child: Node in _characters_childs[chr.script_name]:
+			chr.add_child(child)
 	
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)
