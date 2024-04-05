@@ -459,10 +459,15 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	# If the room must have the player character but it is not part of its $Characters node, then
 	# add the PopochiuCharacter to the room
-	if current_room.has_player and is_instance_valid(C.player):
-		if not current_room.has_character(C.player.script_name):
-			current_room.add_character(C.player)
-			await C.player.idle()
+	if (
+		current_room.has_player
+		and is_instance_valid(C.player)
+		and not current_room.has_character(C.player.script_name)
+	):
+		current_room.add_character(C.player)
+		# Place the PC in the middle of the room
+		C.player.position = Vector2(width, height) / 2.0
+		await C.player.idle()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDS:
