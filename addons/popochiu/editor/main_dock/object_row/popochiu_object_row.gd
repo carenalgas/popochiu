@@ -200,15 +200,11 @@ func show_add_to_core() -> void:
 
 func show_create_state_script() -> void:
 	btn_state_script.disabled = true
-	menu_popup.set_item_disabled(
-		menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), false
-	)
+	menu_popup.set_item_disabled(menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), false)
 
 
 func remove_create_state_script() -> void:
-	menu_popup.remove_item(
-		menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT)
-	)
+	menu_popup.remove_item(menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT))
 
 
 func remove_menu_option(opt: int) -> void:
@@ -496,6 +492,8 @@ func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
 
 
 func _remove_from_core() -> void:
+	var room_child_to_free: Node = null
+	
 	# Delete the object from Popochiu
 	match type:
 		Constants.Types.ROOM:
@@ -519,24 +517,13 @@ func _remove_from_core() -> void:
 			if is_instance_valid(opened_room):
 				match type:
 					Constants.Types.PROP:
-						opened_room.get_prop(str(name)).queue_free()
+						room_child_to_free = opened_room.get_prop(str(name))
 					Constants.Types.HOTSPOT:
-						opened_room.get_hotspot(str(name)).queue_free()
+						room_child_to_free = opened_room.get_hotspot(str(name))
 					Constants.Types.REGION:
-						opened_room.get_region(str(name)).queue_free()
+						room_child_to_free = opened_room.get_region(str(name))
 					Constants.Types.WALKABLE_AREA:
-						opened_room.get_walkable_area(str(name)).queue_free()
-				
-				# Delete the row of the deleted object
-				queue_free()
-				
-				await opened_room.get_tree().process_frame
-				
-				# Save the changes in the scene
-				EditorInterface.save_scene()
-			else:
-				# TODO: open the Room' scene, delete the node and save the Room
-				pass
+						room_child_to_free = opened_room.get_walkable_area(str(name))
 			
 			# TODO: If it is a non-interactable Object, just delete the node from the
 			# scene, and maybe its sprite?
@@ -553,6 +540,12 @@ func _remove_from_core() -> void:
 		queue_free()
 	
 	_disconnect_popup()
+	
+	# Fix #196 by removing the node from the Room scene after (if it is the case) deleting the
+	# folder of the node (this applies to Props, Hotspots, Walkable areas and Regions).
+	if room_child_to_free:
+		room_child_to_free.queue_free()
+		await RenderingServer.frame_post_draw
 	
 	if (
 		EditorInterface.get_edited_scene_root()

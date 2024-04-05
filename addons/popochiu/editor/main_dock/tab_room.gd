@@ -285,28 +285,18 @@ func _on_remove_character_pressed(row: PopochiuObjectRow) -> void:
 		Vector2(200, 120)
 	)
 	
-	_remove_dialog.confirmed.connect(
-		_on_remove_character_confirmed.bind(row)
-	)
+	_remove_dialog.confirmed.connect(_on_remove_character_confirmed.bind(row))
 	_remove_dialog.canceled.connect(_on_remove_dialog_hide)
 
 
 func _on_remove_dialog_hide() -> void:
-	_remove_dialog.call_deferred(
-		'disconnect',
-		'confirmed', _on_remove_character_confirmed
-	)
-	_remove_dialog.call_deferred(
-		'disconnect',
-		'canceled', _on_remove_dialog_hide
-	)
+	_remove_dialog.call_deferred('disconnect', 'confirmed', _on_remove_character_confirmed)
+	_remove_dialog.call_deferred('disconnect', 'canceled', _on_remove_dialog_hide)
 
 
 func _on_remove_character_confirmed(row: PopochiuObjectRow) -> void:
 	_characters_in_room.erase(str(row.name))
-	opened_room.get_node('Characters').get_node(
-		'Character%s *' % row.name
-	).queue_free()
+	opened_room.get_node('Characters').get_node('Character%s *' % row.name).queue_free()
 	row.queue_free()
 	EditorInterface.save_scene()
 	

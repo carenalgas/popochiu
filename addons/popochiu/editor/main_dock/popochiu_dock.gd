@@ -237,6 +237,12 @@ func show_confirmation(
 		delete_extra.show()
 	
 	delete_dialog.popup_centered(min_size)
+	
+	await RenderingServer.frame_post_draw
+	delete_dialog.reset_size()
+	
+	await RenderingServer.frame_post_draw
+	delete_dialog.move_to_center()
 
 
 func get_popup(name: String) -> ConfirmationDialog:
