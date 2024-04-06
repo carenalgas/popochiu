@@ -366,7 +366,7 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 			
 			if event_index == MOUSE_BUTTON_RIGHT:
 				times_right_clicked += 1
-			else:
+			elif event_index == MOUSE_BUTTON_MIDDLE:
 				times_middle_clicked += 1
 
 
