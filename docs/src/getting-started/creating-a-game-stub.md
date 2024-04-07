@@ -249,7 +249,10 @@ If you did everything right, you should see your main character standing in the 
     If you followed this tutorial from the start, when you run the game Popochiu will complain about not found animations. Don't worry about those errors, we didn't include animations to keep this introduction short.  
     Rest assured though that Popochiu has full animations support: it already manages standard animations (for an idle character, for walking and for talking), without having to write any code. A game dev can add a full set of custom animations to play during cutscenes, or to support different emotions in dialogues, and so on.
 
-    Learn more about animations in the [dedicated section](/how-to-develop-a-game/playing-animations) of this documentation.
+    For those who work with [Aseprite](https://www.aseprite.org/), Popochiu also provides a powerful automated importer that will make creating rooms and characters a breeze, and will enable a fast iterative development workflow.
+
+    * Learn more about [animations](/how-to-develop-a-game/playing-animations).
+    * Learn more about the [Aseprite importers](/the-editor-handbook/importers)
 
 ### Add a Walkable Area
 
@@ -476,34 +479,49 @@ By this time, you should be able to figure out what will happen by yourself. Run
 
 ### Add a prop
 
-* Create a new prop
-* Select a name
-* Add the sprite
-* Select in the scene tree and draw the polygon
-* Script an interaction (examine)
+> This section is TODO. It will explain how to:
+>
+> * Create a new prop in the room
+> * Give it a sprite sprite
+> * Draw the interaction polygon
+> * Script an interaction (examine)
 
-### Add an inventory item to the game
+## Add an inventory item
 
-* Create a new inventory item
-* Name it
-* Add a texture
-* Go back to the prop and script the collection of the item
+> This section is TODO. It will explain how to:
+>
+> * Create a new inventory item in the game
+> * Give it a texture
+> * Go back to the prop and script the collection of the item
 
 ## Script your first dialogue
 
-### Place a character to the room
+> This section is TODO. It will explain how to:
 
 ### Add a dialogue
 
-### Script the dialogue
-
-## Homeworks
-
-* Add a vase (provide link) and make an interaction with the flower in the inventory
-* Make the flower collectable again
-* Give the flower to the character
-* Add a locked dialogue line "Do you like the flower?" and the other character's response
+> This section is TODO. It will explain how to:
+>
+> * Create a new Dialog
+> * Add dialog options
+> * Place a second character in the room
+> * Script the dialog when the user selects an option
+> * Start and end a dialogue with the new character
 
 ## Recap
 
+> This section is TODO. Not sure it will be necessary.
+
+## Homeworks
+
+> This section is TODO. It will challenge the readers providing some tasks to check if they have learned all the basics:
+>
+> * Add a prop (TODO: provide link to the sprite) and make an interaction to combine it with the item in the inventory (idea: a vase and a flower)
+> * Collect the item back into the inventory
+> * Add a locked dialogue line that's conditioned by the presence of the item in the inventory
+> * Give the item to the character
+
+
 ## What's next
+
+> This section is TODO. Links to the possible sections the reader may want to deepen different topics.
