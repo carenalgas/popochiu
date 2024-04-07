@@ -105,7 +105,7 @@ Let's start creating the player character. In the Popochiu main dock, click the 
 
 ![Create Character button](../assets/images/getting-started/game_stub-character-1-create-button.png "Press the button to create a new character")
 
-A popup will apper, asking for the character name. This is the machine name of your character, not the one the player will see in game, and it needs to be written in `PascalCase`, with no spaces in it.  
+A popup will apper, asking for the character name. This is the machine name of your character, not the one the player will see in game, and it needs to be written in `PascalCase` (no spaces or punctuation and all capitalized words).  
 Once you entered the name, click the **OK** button (_2_).
 
 ![Confirmation button](../assets/images/getting-started/game_stub-character-2-creation-popup.png "Confirm the character name")
@@ -236,15 +236,20 @@ Name the new prop "_Background_" and leave the "Will have interaction?" option u
 
 Click OK and your prop will be created. You should see it in the scene tree, under the **Props** grouping node. The inspector should look something like this:
 
-![New prop inspector](../assets/images/getting-started/game_stub-room-6-prop_inspector.png.png "We can now set the background for the scene")
+![New prop inspector](../assets/images/getting-started/game_stub-room-6-prop_inspector.png "We can now set the background for the scene")
 
 Now you can see the Prop has a **Texture** parameter. By this time you should be able to figure out what to do. Save the downloaded background sprite in the `game/rooms/house/props/background/` folder, then drag it from Godot Editor file manager to the field in the inspector.  
 Your scene should now show the background image.
 
-!!! success
-    At this point you have a main character and a main scene defined. This is the minimum steps needed to run a Popochiu game. Treat yourself after all this effort, by hitting the **Run** button at the top right of the editor and seeing you game in action.
+At this point you have a main character and a main scene defined. This is the minimum steps needed to run a Popochiu game. Treat yourself after all this effort, by hitting the **Run** button at the top right of the editor and seeing you game in action.
 
-    If you did everything right, you should see your main character standing in the center of the room. Clicking on the screen will flip the character so that it faces the cursor coordinates.
+If you did everything right, you should see your main character standing in the center of the room. Clicking on the screen will flip the character so that it faces the cursor coordinates.
+
+!!! note
+    If you followed this tutorial from the start, when you run the game Popochiu will complain about not found animations. Don't worry about those errors, we didn't include animations to keep this introduction short.  
+    Rest assured though that Popochiu has full animations support: it already manages standard animations (for an idle character, for walking and for talking), without having to write any code. A game dev can add a full set of custom animations to play during cutscenes, or to support different emotions in dialogues, and so on.
+
+    Learn more about animations in the [dedicated section](/how-to-develop-a-game/playing-animations) of this documentation.
 
 ### Add a Walkable Area
 
@@ -272,15 +277,16 @@ When you have adjusted your walkable area, it should look something like this:
 
 ![The polygon for the floor is over](../assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click 'Bake NavigationPolygon' to complete the walkable area")
 
-To finish the work, you must click the **Bake NavigationPolygon** button in the toolbar (_19_).
-
 Save the project and run your game. You character should now be able to move around the room, without leaving the area you defined.
+
+!!! note
+    If you aren't new to Godot, you may think we forgot mentioning the **Bake NavigationPolygon** button in the toolbar (_19_). That's not the case, Popochiu bakes the polygon for you.
 
 !!! tip
     You usually don't want your walkable area to cover the entire floor that you painted, or your character will be able to stand on the very border of it, too near the wall, creating a terrible effect.  
     Remember that Popochiu will stop the movement as soon as the origin point of your character scene will reach one of the walkable area borders.
 
-!!! tip "Additional walkable areas"
+!!! info "Additional walkable areas"
     It may not be obvious but you may want (or need) a room to have more than a single walkable area. Here is some example cases:
 
     * A location with two areas separated by an obstacle (like a chasm), that the character can enter both sides.
@@ -289,7 +295,7 @@ Save the project and run your game. You character should now be able to move aro
 
     Since you can define which walkable area is the active one for the character from your scripts, having multiple walkable areas actually unlocks a lot of possibilities for complex locations.
 
-### Add an hotspot
+### Add a hotspot
 
 Our character can now move around the room, but there is little it can do. It is time to add some interaction.
 
@@ -297,12 +303,176 @@ An **hotspot** is the most basic form of interaction you can have in a room. It 
 
 By mean of its script, it can react to events like mouse clicks. That's exactly what we're going to do.
 
-* Create a new hotspot
-* Select a name
-* Select in the scene tree and draw the polygon
-* Test that it works moving the mouse
-* Script an interaction (examine)
-* Trigger the fallback interaction (interact)
+Creating a hotspot is much like creating a walkable area. In the Room tab of Popochiu dock, click the **Create hotspot** button (_20_).
+
+![Create a hotspot](../assets/images/getting-started/game_stub-room-10-hs_create_button.png "Let's define a new hotspot")
+
+In the popup window, just name your new hotspot "_Window_" (or whatever you find descriptive enough). Click **OK** and a new element will be added to the scene.
+
+![New hotspot in the scene tree](../assets/images/getting-started/game_stub-room-11-hs_scene_tree.png "Select the right tool in the toolbar to set the hotspot properties")
+
+When you select the new hotspot in the scene tree (_21_), a bunch of gizmos are shown in the scene preview. We are going to interactively edit three important properties of the hotspot (the _interaction polygon_, the _baseline_ and the _walk to point_) by using the dedicated buttons in the toolbar (_23_).
+
+!!! info
+    _Walk to point_, _Baseline_ and _Interaction Polygon_ properties are all common to clickable objects like Hotspots, Props and Characters.
+
+First of all, click the _Intaraction Polygon_ button to show the handles of the standard square polygon for the hotspot. This is basically the same as the walkable area polygon but instead of limiting the character movements, this polygon will just react when the cursor will hover it.  
+Let's draw a shape around the window on the wall:
+
+![New hotspot's clickable area](../assets/images/getting-started/game_stub-room-12-hs_draw_polygon.png "Draw the hotspot shape with a polygon")
+
+No need to be too precise or polished, rough edges won't be perceivable while playing your game. You just need to avoid, if possible, overlapping with other hotspots (see "_Baseline_" below, to understand how polygon overlapping works).
+
+Another important property of the hotspot is the "_Walk to point_", that is the coordinates that the character will reach, when you click over the hotspot.  
+You can set these coordinates interactively by clicking on the "_Walk point_" button in the toolbar. A squared marker will appear in the center of the screen. You can drag the marker wherever you want in the room.
+
+For our example room, we'll set the following coordinates for the `Window` hotspot:
+
+* `x`: `-30`
+* `y`: `-10`
+
+so that our main character will walk beside the window.
+
+The last property that you want to set is the _Baseline_. The baseline is simply a coordinate on the `Y` axis, that represents a point in the imaginary space of the room. If the main character walks **above** the baseline (_above_ means the character's origin has a `Y` coordinate that's lower than the baseline value), it is considered **behind** the object (in this case the hotspot). If the character origin is **below** the baseline, it is considered **in front of** the object.  
+
+!!! warning
+    This becomes evident when you have a prop or a character in a room, and you want your main character to walk behind them when its feet are "farther away" from the camera, but a hotspot has no sprite to walk behind, so you may think setting the baseline is useless.  
+
+    That's not the case at all. If you don't set your baseline the right way, the polygon-delimited area of the hotspot may remain clickable even when the character is in front of it; or the other way around, a hotspot that should always be in front of the scene, may be covered by your character, making it unreacheable. So, **always** set your baseline.
+
+Our window is in the back of the room and the main character has no way to be placed behind it, so we'll set the hotspot baseline to `0` (zero). This means that the baseline is "as high as the scene". The character has no way to walk so high.  
+
+!!! info
+    Note that you can set the baseline even to negative values, that can be useful to make sure your background is always very far, even if you change the baseline of other elements programmatically (via a script).
+
+!!! tip
+    If you need pixel-perfect precision, you can set the baseline and the hotspot's _Walk to point_ coordinates by inputing them in the inspector.
+
+    ![Popochiu Clickable properties](../assets/images/getting-started/game_stub-room-13-hs_interaction.png "Set baseline and walk to point in the inspector")
+
+With the hotspot properly configured, we can now run a quick test. Start your game, move the cursor over the window and you should see the name of the hotspot in the action bar (_24_).
+
+![The hotspot interaction](../assets/images/getting-started/game_stub-room-13-hs_interaction.png "We can now interact with the hotspot")
+
+Clicking on the hotspot, the character will move to the point we defined and face the window.
+
+!!! info "Under the hood"
+    Remember that we set our character so that its origin is between its feet. When your character moves towards a point, Popochiu will make sure the origin of the character will match the destination point's coordinates.
+
+    What if the destination coordinates lie outside of the walkable area? In this case Popochiu will trace the path towards the coordinates, but will stop the movement as soon as the character will reach the walkable area's borders. Despite this is a safe scenario, placing a _Walk to point_ inside the walkable polygon always give the best results, making the movement predictable. Keep this in mind.
+
+### Scripting our first interaction
+
+If you ran the game, you may have seen that, while the character moves towards the window, a message is printed on top of the scene: `Can't INTERACT with it`.  
+That's because we didn't define what should happen when we interact with the window. Remember, in [the GUI we selected](#select-game-gui), clicking on an object will trigger an interaction, while right-clicking on an object will trigger an examination.
+
+We are now going to script our first interaction, using Godot **GDScript** language and the very convenient [engine API](/the-engine-handbook/scriting-overview) that Popochiu provides to make our life easier.
+
+!!! info "Help! I'm not a developer!"
+    "API" stands for "Application Programming Interface" and in our context it's the set of objects and functions that makes it really easy to implement all those behaviors common to most adventure games (like making a character talk, or adding an item to the inventory), without knowing the ins and outs of the undelying Godot game engine.
+
+In the room tab of the Popochiu dock, locate the "_Open Script_" icon for the `Window` hotsport (_25_):
+
+![Open hotspot's script](../assets/images/getting-started/game_stub-room-15-hs_script.png "Open the script for the Window hotspot")
+
+This will open the GDScript connected to this hotspot in the Godot scripting editor (_26_):
+
+![The "Window" script](../assets/images/getting-started/game_stub-room-16-hs_script_editor.png "Here is the script for the Window. Scary?")
+
+!!! info "Under the hood"
+    Every clickable object that Popochiu creates for you comes with an attached script. Those scripts does nothing by themselves, but are based on commented templates that will make easier to implement the desired behaviors, by editing and filling out some predefined functions.
+
+We will now add some interaction to the script. So far it will be simple stuff: we'll make our main character say something meaningful when we examine the window, and - in absence of other elements in the room - act a bit weird when we try to interact with the window.
+
+Locate the `_on_click()` function in the script. It should read something like this:
+
+```gdscript
+# When the node is clicked
+func _on_click() -> void:
+	# Replace the call to E.command_fallback() with your code.
+	E.command_fallback()
+	# For example, you can make the player character walk to this hotspot, gaze at it, and then say
+	# something:
+#	await C.player.walk_to_clicked()
+#	await C.player.face_clicked()
+#	await C.player.say("What a nice view")
+```
+
+Popochiu automatically executes this function when you click over the `Window` hotspot. We just need to put something meaningful into it. Let's try something. Change the function so it looks like this:
+
+```gdscript
+# When the node is clicked
+func _on_click() -> void:
+	await C.player.walk_to_clicked()
+	await C.player.face_clicked()
+	await E.wait(0.5)
+	for n in 3:
+		await C.player.face_left()
+		await E.wait(0.3)
+		await C.player.face_right()
+		await E.wait(0.3)
+	await C.player.face_clicked()
+	await C.player.say("I wanted to open the window but I can't find the handle")
+```
+
+Save the script (`ctrl/cmd + s`) and run your game.  
+Now when you click the window, the character will walk to it, turn around three times like it is looking around for something, then face the window and say a phrase.
+
+**Yay!** You reached an important milestone! Now your game feels more alive, isn't it?
+
+Let's see what happened, breaking the function down to pieces. Ignore for a moment the `await` keyword.
+
+```gdscript
+    await C.player.walk_to_clicked()
+	await C.player.face_clicked()
+```
+
+These two lines use the `C` Popochiu object. It holds a reference to every character in the game. Our character is called `Goddiu`, so `C.Goddiu` allows us to give commands to that character. But since Goddiu is also the character that the player controls, we can use the shortcut `C.player`.
+
+This comes in very handy for those games that have more player-controlled characters, like _Maniac Mansion_, or _Day of the Tentacle_. You can change the active character as the game progress but your scripts will point to the current active character, sparing you the effort to duplicate the code for each and every playable character.
+
+```gdscript
+	await E.wait(0.5)
+	for n in 3:
+		await C.player.face_left()
+		await E.wait(0.3)
+		await C.player.face_right()
+		await E.wait(0.3)
+```
+
+Here we are literally awaiting for some time to pass. `E` is the object representing the game engine (Popochiu!) and we are asking it to wait for half a second.
+After that we are using the `for` GDScript keywork to repeat the same code for three times.
+
+!!! info
+    This is not a feature of Popochiu, it is standard Godot language. All Popochiu objects and functions are standard Godot functions.  
+    As Popochiu will mature, it will take care of more and more work in a standardized and simplified way. Stuff like translations, dynamic lightning and music, parallax, and more.  
+    In the meantime, since its language is standard GDScript, you have all the power of Godot at your fingertips and you can customize your game the way you want.
+
+The executed code just flips the character left and right after a small pause, as it is looking around.
+
+```gdscript
+	await C.player.face_clicked()
+	await C.player.say("I wanted to open the window but I can't find the handle")
+```
+
+These last two lines make sure the character finally looks towards the window and say its line.
+
+!!! info "Help! I'm not a developer!
+    As the `for` keyword, `await` is provided by Godot out of the box. Without going too deep in technical details, what it does is making sure that while the subsequent function is executed, no other things will happen. In our example, if we omitted the `await` keyword in every line, the character would have started walking to the window, while flipping frantically left and right and talking at the same time (but finishing printing the line in a strange way).
+
+    There are times you want this to happen, like a character who talks in the background without "blocking" the game flow, but omitting `await` usually leads to strange, unexpected behaviors and should be done only on purpose.
+
+Now let's provide an _examine_ interaction. Edit the `_on_right_click()` function you can find further down the script so it looks like this:
+
+```gdscript
+# When the node is right clicked
+func _on_right_click() -> void:
+	await C.player.face_clicked()
+	await C.player.say("The weather is so nice today")
+	await C.player.say("I may as well open that window!")
+```
+
+By this time, you should be able to figure out what will happen by yourself. Run the game and see your masterpiece in action.
 
 ### Add a prop
 
