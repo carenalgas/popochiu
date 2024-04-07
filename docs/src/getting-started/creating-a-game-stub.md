@@ -289,12 +289,51 @@ Save the project and run your game. You character should now be able to move aro
 
     Since you can define which walkable area is the active one for the character from your scripts, having multiple walkable areas actually unlocks a lot of possibilities for complex locations.
 
-### Add an interactive prop
+### Add an hotspot
 
-TODO
+Our character can now move around the room, but there is little it can do. It is time to add some interaction.
 
-## Script your first interaction
+An **hotspot** is the most basic form of interaction you can have in a room. It basically is an area of the screen, delimited by a polygon drawn at a specific position, that has a name and a script attached to it. It has no sprite of its own, it just sits there on top of other elements, waiting to react to the cursor.
 
-TODO
+By mean of its script, it can react to events like mouse clicks. That's exactly what we're going to do.
 
-That's it
+* Create a new hotspot
+* Select a name
+* Select in the scene tree and draw the polygon
+* Test that it works moving the mouse
+* Script an interaction (examine)
+* Trigger the fallback interaction (interact)
+
+### Add a prop
+
+* Create a new prop
+* Select a name
+* Add the sprite
+* Select in the scene tree and draw the polygon
+* Script an interaction (examine)
+
+### Add an inventory item to the game
+
+* Create a new inventory item
+* Name it
+* Add a texture
+* Go back to the prop and script the collection of the item
+
+## Script your first dialogue
+
+### Place a character to the room
+
+### Add a dialogue
+
+### Script the dialogue
+
+## Homeworks
+
+* Add a vase (provide link) and make an interaction with the flower in the inventory
+* Make the flower collectable again
+* Give the flower to the character
+* Add a locked dialogue line "Do you like the flower?" and the other character's response
+
+## Recap
+
+## What's next
