@@ -51,7 +51,7 @@ var clicked: PopochiuClickable = null
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
 ## Used to know if a cutscene was skipped.
 ## A reference to [PopochiuSettings]. Can be used to quickly access its members.
-var settings := PopochiuResources.get_settings()
+var settings: PopochiuSettings = PopochiuResources.get_settings()
 ## Reference to the [PopochiuAudioManager].
 var am: PopochiuAudioManager = null
 # NOTE: This might not just be a boolean, but there could be an array that puts

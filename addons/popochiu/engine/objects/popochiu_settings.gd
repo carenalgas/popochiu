@@ -4,7 +4,31 @@ extends Resource
 ## Defines properties as settings for the game.
 
 ## @deprecated
-const ImporterDefaults := preload('res://addons/popochiu/engine/others/importer_defaults.gd')
+const ImporterDefaults := preload("res://addons/popochiu/engine/others/importer_defaults.gd")
+
+# ---- GUI -----------------------------------------------------------------------------------------
+#const GRAPHIC_INTERFACE = "popochiu/gui/graphic_interface"
+#const TRANSITION_LAYER = "popochiu/gui/transition_layer"
+const SCALE_GUI = "popochiu/gui/scale_gui"
+const INVENTORY_ALWAYS_VISIBLE = "popochiu/gui/inventory_always_visible"
+const TOOLBAR_ALWAYS_VISIBLE = "popochiu/gui/toolbar_always_visible"
+const FADE_COLOR = "popochiu/gui/fade_color"
+const SKIP_CUTSCENE_TIME = "popochiu/gui/skip_cutscene_time"
+
+# ---- Dialogs -------------------------------------------------------------------------------------
+const TEXT_SPEED = "popochiu/dialogs/text_speed"
+const AUTO_CONTINUE_TEXT = "popochiu/dialogs/auto_continue_text"
+const USE_TRANSLATIONS = "popochiu/dialogs/use_translations"
+const MAX_DIALOG_OPTIONS = "popochiu/dialogs/max_dialog_options"
+
+# ---- Inventory -----------------------------------------------------------------------------------
+const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
+const INVENTORY_ITEMS_ON_START = "popochiu/inventory/items_on_start"
+
+# ---- Aseprite Importing --------------------------------------------------------------------------
+const IMPORT_ENABLED = "popochiu/aseprite/import_animation_by_default"
+const LOOP_ENABLED = "popochiu/aseprite/loop_animation_by_default"
+const WIPE_OLD_ANIMS_ENABLED = "popochiu/aseprite/wipe_old_animations"
 
 # TODO: Deprecate this property. There is no need for this anymore since we have to GUI templates,
 # 		and a tab dedicated to the GUI.
@@ -68,3 +92,60 @@ const ImporterDefaults := preload('res://addons/popochiu/engine/others/importer_
 ## - [b]Caption[/b]. The texts will appear at the bottom of the game window (as if they were
 ## subtitles).
 @export_enum("Above Character", "Portrait", "Caption") var dialog_style := 0
+
+#var _plugin_icons := {}
+
+
+#region Public #####################################################################################
+# Thanks to @drbloop for providing the bases of this function
+func initialize_project_settings() -> PopochiuSettings:
+	_initialize_project_cfg(SCALE_GUI, true, TYPE_BOOL)
+	_initialize_project_cfg(INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
+	_initialize_project_cfg(TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
+	_initialize_project_cfg(FADE_COLOR, Color(0, 0, 0, 1), TYPE_COLOR)
+	_initialize_project_cfg(SKIP_CUTSCENE_TIME, 0.2, TYPE_FLOAT)
+
+	_initialize_project_cfg(TEXT_SPEED, 0.1, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
+	_initialize_project_cfg(AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
+	_initialize_project_cfg(USE_TRANSLATIONS, false, TYPE_BOOL)
+	_initialize_project_cfg(MAX_DIALOG_OPTIONS, 3, TYPE_INT)
+
+	_initialize_project_cfg(INVENTORY_LIMIT, 0, TYPE_INT)
+	_initialize_project_cfg(INVENTORY_ITEMS_ON_START, [], TYPE_ARRAY,
+		PROPERTY_HINT_TYPE_STRING, "%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE, "*tscn"]
+	)
+
+	_initialize_project_cfg(IMPORT_ENABLED, true, TYPE_BOOL)
+	_initialize_project_cfg(LOOP_ENABLED, true, TYPE_BOOL)
+	_initialize_project_cfg(WIPE_OLD_ANIMS_ENABLED, true, TYPE_BOOL)
+
+	#_set_icons()
+	ProjectSettings.save()
+	return self
+
+
+#endregion
+
+#region Private ####################################################################################
+func _initialize_project_cfg(
+	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
+) -> void:
+	if not ProjectSettings.has_setting(key):
+		ProjectSettings.set_setting(key, default_value)
+		ProjectSettings.set_initial_value(key, default_value)
+		ProjectSettings.add_property_info({
+			"name": key,
+			"type": type,
+			"hint": hint,
+			"hint_string": hint_string,
+		})
+
+
+#func _set_icons() -> void:
+	#_plugin_icons = {
+		#"collapsed": EditorInterface.get_editor_theme().get_icon("GuiTreeArrowRight", "EditorIcons"),
+		#"expanded": EditorInterface.get_editor_theme().get_icon("GuiTreeArrowDown", "EditorIcons"),
+	#}
+
+
+#endregion

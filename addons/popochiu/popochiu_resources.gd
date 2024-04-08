@@ -186,6 +186,8 @@ const GUI_CUSTOM := "custom"
 const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
 const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
 
+static var popochiu_settings: PopochiuSettings = null
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 # Verify if the folders (where Popochiu's objects will be) exists
@@ -476,7 +478,11 @@ static func get_section_keys(section: String) -> Array:
 
 # ▨▨▨▨ SETTINGS ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
 static func get_settings() -> PopochiuSettings:
-	return load(SETTINGS) as PopochiuSettings
+	if not is_instance_valid(popochiu_settings):
+		popochiu_settings = PopochiuSettings.new().initialize_project_settings()
+	
+	#return load(SETTINGS) as PopochiuSettings
+	return popochiu_settings
 
 
 static func save_settings(new_settings: PopochiuSettings) -> bool:
