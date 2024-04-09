@@ -100,7 +100,7 @@ static func is_double_click_or_tap(event: InputEvent) -> bool:
 	return false
 
 ## Resets the double click status to false by default
-static func reset_double_click(double_click: bool = false):
+static func reset_double_click(double_click: bool = false) -> void:
 	await E.wait(double_click_delay) # this delay is needed to prevent single click being detected after double click event
 	has_double_click = double_click
 
