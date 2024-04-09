@@ -2,7 +2,7 @@ extends 'settings_bar_button.gd'
 
 
 #region Virtual ####################################################################################
-func on_pressed() -> void:
+func _on_pressed() -> void:
 	G.show_save()
 
 
