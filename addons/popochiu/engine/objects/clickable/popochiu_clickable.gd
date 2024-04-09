@@ -236,6 +236,7 @@ func on_click() -> void:
 
 ## Called when the object is double clicked.
 func on_double_click() -> void:
+	PopochiuUtils.reset_double_click()
 	_on_double_click()
 
 
@@ -257,7 +258,7 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
 ## which can be [enum MouseButton].MOUSE_BUTTON_LEFT, [enum MouseButton].MOUSE_BUTTON_RIGHT or
 ## [enum MouseButton].MOUSE_BUTTON_MIDDLE.
-func handle_command(button_idx: int, double_click: bool = false) -> void:
+func handle_command(button_idx: int) -> void:
 	var command: String = E.get_current_command_name().to_snake_case()
 	var prefix := "on_%s"
 	var suffix := "click"
@@ -266,10 +267,7 @@ func handle_command(button_idx: int, double_click: bool = false) -> void:
 		MOUSE_BUTTON_RIGHT:
 			suffix = "right_" + suffix
 		MOUSE_BUTTON_MIDDLE:
-			suffix = "middle_" + suffix
-	
-	if button_idx == MOUSE_BUTTON_LEFT and double_click:
-		suffix = "double_" + suffix
+			suffix = "middle_" + suffix	
 
 	if not command.is_empty():
 		var command_method := suffix.replace("click", command)
@@ -339,10 +337,18 @@ func _on_mouse_exited() -> void:
 
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
-	if not PopochiuUtils.is_click_or_touch_pressed(event): return
 	if not E.hovered or E.hovered != self: return
 	
-	var event_index := PopochiuUtils.get_click_or_touch_index(event)
+	if await PopochiuUtils.is_double_click_or_tap(event):
+		times_double_clicked += 1
+		E.clicked = self
+		on_double_click()
+		return
+	
+	if not await PopochiuUtils.is_click_or_touch_pressed(event): return
+			
+	
+	var event_index := await PopochiuUtils.get_click_or_touch_index(event)
 	E.clicked = self
 	last_click_button = event_index
 	
@@ -353,12 +359,8 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 			if I.active:
 				on_item_used(I.active)
 			else:
-				if event.double_click:
-					handle_command(event_index, true)
-					times_double_clicked += 1
-				else:
-					handle_command(event_index)
-					times_clicked += 1
+				handle_command(event_index)
+				times_clicked += 1
 		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
 			if I.active: return
 			

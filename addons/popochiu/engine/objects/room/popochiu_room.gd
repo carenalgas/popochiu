@@ -125,7 +125,7 @@ func _unhandled_input(event: InputEvent):
 			I.set_active_item()
 		return
 	
-	if PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
+	if await PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
 		return
 	
 	if not event is InputEventScreenTouch and E.hovered:

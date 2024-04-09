@@ -22,12 +22,12 @@ func _draw() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not PopochiuUtils.is_click_or_touch(event) or not visible:
+	if not await PopochiuUtils.is_click_or_touch(event) or not visible:
 		return
 	
 	get_viewport().set_input_as_handled()
 	
-	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
+	if await PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
 		close()
 
 
