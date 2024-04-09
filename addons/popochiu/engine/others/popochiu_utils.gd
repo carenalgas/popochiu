@@ -53,7 +53,7 @@ static func print_normal(msg: String) -> void:
 
 ## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
 static func is_click_or_touch(event: InputEvent) -> bool:
-	if (event is InputEventMouseButton and not event.double_click) or event is InputEventScreenTouch:
+	if (event is InputEventMouseButton and not event.double_click) or (event is InputEventScreenTouch and not event.double_tap):
 		await E.wait(double_click_delay) # This delay is need to prevent a single click being detected before double click
 		
 		if not has_double_click:
