@@ -347,12 +347,12 @@ The last property that you want to set is the _Baseline_. The baseline is simply
 Our window is in the back of the room and the main character has no way to be placed behind it, so we'll set the hotspot baseline to `0` (zero). This means that the baseline is "as high as the scene". The character has no way to walk so high.  
 
 !!! info
-    Note that you can set the baseline even to negative values, that can be useful to make sure your background is always very far, even if you change the baseline of other elements programmatically (via a script).
+    Note that you can set the baseline even to negative values. This is what Popochiu automatically does when you name your prop `Background` or `bg`, to make sure your background is always at the very back of the scene. Keep this in mind too, if you change the baseline of other elements programmatically (via a script).
 
 !!! tip
     If you need pixel-perfect precision, you can set the baseline and the hotspot's _Walk to point_ coordinates by inputing them in the inspector.
 
-    ![Popochiu Clickable properties](../assets/images/getting-started/game_stub-room-13-hs_interaction.png "Set baseline and walk to point in the inspector")
+    ![Popochiu Clickable properties](../assets/images/getting-started/game_stub-room-14-hs_pc_inspector.png "Set baseline and walk to point in the inspector")
 
 With the hotspot properly configured, we can now run a quick test. Start your game, move the cursor over the window and you should see the name of the hotspot in the action bar (_24_).
 
@@ -461,7 +461,7 @@ The executed code just flips the character left and right after a small pause, a
 
 These last two lines make sure the character finally looks towards the window and say its line.
 
-!!! info "Help! I'm not a developer!
+!!! info "Help! I'm not a developer!"
     As the `for` keyword, `await` is provided by Godot out of the box. Without going too deep in technical details, what it does is making sure that while the subsequent function is executed, no other things will happen. In our example, if we omitted the `await` keyword in every line, the character would have started walking to the window, while flipping frantically left and right and talking at the same time (but finishing printing the line in a strange way).
 
     There are times you want this to happen, like a character who talks in the background without "blocking" the game flow, but omitting `await` usually leads to strange, unexpected behaviors and should be done only on purpose.
@@ -488,7 +488,7 @@ But the real boon is that their visibility and "clickability" can be turned on a
 
 Enough talk, let's see them in action.
 
-Since we already created a "_Background_" for our scene, you should now at this point how to create a new prop. Click on the **Create Prop** button in the tab room of the Popochiu dock, name it "_ToyCar_" and this time, check out the **Will have interaction** option (_27_).
+Since we already created a "_Background_" for our scene, you should know at this point how to create a new prop. Click on the **Create Prop** button in the tab room of the Popochiu dock, name it "_ToyCar_" and this time, check out the **Will have interaction** option (_27_).
 
 ![Name the prop](../assets/images/getting-started/game_stub-room-17-p_creation_popup.png "Toy car will be interactive")
 
