@@ -4,7 +4,7 @@ extends Node
 ## Utility functions for Popochiu.
 
 ## Used for setting the double click delay. Windows default is 500 miliseconds.
-static var double_click_delay: float = 0.35 # 0.5 felt like too long of a delay before acting
+static var double_click_delay: float = 0.2 # 0.5 felt like too long of a delay before acting
 ## Used for tracking if a double click has occured.
 static var has_double_click: bool = false
 
