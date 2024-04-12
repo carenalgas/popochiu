@@ -10,7 +10,6 @@ const SCALE_MESSAGE :=\
 "You can change this in [img]%s[/img] [b]Settings[/b] with the" +\
 " [code]Scale Gui[/code] checkbox."
 const COPY_ALPHA := .1
-const ImporterDefaults := preload("res://addons/popochiu/engine/others/importer_defaults.gd")
 const GUITemplateButton := preload(
 	"res://addons/popochiu/editor/popups/setup/gui_template_button.gd"
 )

@@ -187,6 +187,7 @@ const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
 const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
 
 static var popochiu_settings: PopochiuSettings = null
+static var config = null
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -479,9 +480,8 @@ static func get_section_keys(section: String) -> Array:
 # ▨▨▨▨ SETTINGS ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
 static func get_settings() -> PopochiuSettings:
 	if not is_instance_valid(popochiu_settings):
-		popochiu_settings = PopochiuSettings.new().initialize_project_settings()
+		popochiu_settings = PopochiuSettings.new()
 	
-	#return load(SETTINGS) as PopochiuSettings
 	return popochiu_settings
 
 
@@ -527,3 +527,10 @@ static func _get_directories() -> Dictionary:
 		INVENTORY_ITEMS = BASE_DIR + '/inventory_items',
 		DIALOGS = BASE_DIR + '/dialogs',
 	}
+
+
+static func get_config() -> RefCounted:
+	if not config:
+		config = load("res://addons/popochiu/editor/config/config.gd").new()
+	
+	return config

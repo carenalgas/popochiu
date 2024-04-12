@@ -51,7 +51,7 @@ var clicked: PopochiuClickable = null
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
 ## Used to know if a cutscene was skipped.
 ## A reference to [PopochiuSettings]. Can be used to quickly access its members.
-var settings: PopochiuSettings = PopochiuResources.get_settings()
+var settings := PopochiuSettings.new()
 ## Reference to the [PopochiuAudioManager].
 var am: PopochiuAudioManager = null
 # NOTE: This might not just be a boolean, but there could be an array that puts
@@ -91,11 +91,10 @@ var half_height := 0.0 : get = get_half_height
 ## Used to access the value of the current text speed. The possible text speed values are stored
 ## in the [member PopochiuSettings.text_speeds] [Array], so this property has the index of the
 ## speed being used by the game.
-var current_text_speed_idx := settings.default_text_speed
+var current_text_speed_idx := settings.default_text_speed_idx
 ## The text speed being used by the game. When this property changes, the
 ## [signal text_speed_changed] signal is emitted.
-var current_text_speed: float = settings.text_speeds[current_text_speed_idx] :
-	set = set_current_text_speed
+var current_text_speed: float = settings.text_speeds[current_text_speed_idx] : set = set_current_text_speed
 ## The number of seconds to wait before moving to the next dialog line (when playing dialog lines
 ## triggered inside a [method queue].
 var auto_continue_after := -1.0
@@ -152,11 +151,13 @@ func _ready() -> void:
 	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
 	
 	# Set the Graphic Interface node
-	if settings.graphic_interface:
-		gi = settings.graphic_interface.instantiate()
+	if FileAccess.file_exists(PopochiuResources.GUI_GAME_SCENE):
+		gi = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
 		gi.name = 'GraphicInterface'
 	else:
-		gi = load(PopochiuResources.GUI_ADDON_FOLDER).instantiate()
+		gi = load(
+			PopochiuResources.GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
+		).instantiate()
 	
 	# Load the commands for the game
 	var commands_path: String = PopochiuResources.get_data_value("ui", "commands", "")
@@ -164,8 +165,8 @@ func _ready() -> void:
 		commands = load(commands_path).new()
 	
 	# Set the Transitions Layer node
-	if settings.transition_layer:
-		tl = settings.transition_layer.instantiate()
+	if FileAccess.file_exists(PopochiuResources.TRANSITION_LAYER_POPOCHIU):
+		tl = load(PopochiuResources.TRANSITION_LAYER_POPOCHIU).instantiate()
 		tl.name = 'TransitionLayer'
 	else:
 		tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
@@ -260,7 +261,7 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_released('popochiu-skip'):
 		cutscene_skipped = true
-		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.skip_cutscene_time)
+		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.get_skip_cutscene_time())
 		await tl.transition_finished
 
 
@@ -338,7 +339,7 @@ func cutscene(instructions: Array) -> void:
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		tl.play_transition(tl.PASS_DOWN_OUT, settings.skip_cutscene_time)
+		tl.play_transition(tl.PASS_DOWN_OUT, settings.get_skip_cutscene_time())
 		await tl.transition_finished
 	
 	cutscene_skipped = false
@@ -731,14 +732,12 @@ func play_transition(type: int, duration: float) -> void:
 	await tl.transition_finished
 
 
+# TODO: Move this logic to the button in the 2-click Context-sensitive template in charge of
+# 		changing the text speed.
 ## Changes the speed of the text in dialog lines looping through the values in
 ## [member PopochiuSettings.text_speeds].
 func change_text_speed() -> void:
-	current_text_speed_idx = wrapi(
-		current_text_speed_idx + 1,
-		0,
-		settings.text_speeds.size()
-	)
+	current_text_speed_idx = wrapi(current_text_speed_idx + 1, 0, settings.text_speeds.size())
 	current_text_speed = settings.text_speeds[current_text_speed_idx]
 	
 	text_speed_changed.emit()
@@ -909,7 +908,6 @@ func set_current_text_speed(value: float) -> void:
 
 func set_current_command(value: int) -> void:
 	current_command = value
-	
 	command_selected.emit()
 
 
