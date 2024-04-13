@@ -22,14 +22,27 @@ You can use the resulting stub to experiment and tinker as you read the document
 
 To create our game stub we will:
 
-1. [Setup a new adventure game in your Godot project](#game-setup)
-2. [Select the game user interface](#select-game-gui)
-3. [Create two Characters with static sprites](#create-characters)
-4. [Set a character as a player character](#select-the-main-character)
-5. Create a Room, that's a game location
-6. Create key elements in the room: a Walkable Area, a Prop and an Hotspot
-7. Make the Characters have a quick dialogue
-8. Collect a prop and add it to the inventory
+- [Game setup](#game-setup)
+  - [Set game resolution](#set-game-resolution)
+  - [Select game GUI](#select-game-gui)
+- [Create characters](#create-characters)
+  - [Add another character](#add-another-character)
+  - [Select the main character](#select-the-main-character)
+- [Create the first room](#create-the-first-room)
+  - [Add a Walkable Area](#add-a-walkable-area)
+  - [Add a hotspot](#add-a-hotspot)
+  - [Scripting our first interaction](#scripting-our-first-interaction)
+  - [Add a prop](#add-a-prop)
+- [Add an inventory item](#add-an-inventory-item)
+- [Script your first dialogue](#script-your-first-dialogue)
+  - [Script a dialog](#script-a-dialog)
+- [Use inventory items](#use-inventory-items)
+- [Conclusions](#conclusions)
+- [Homeworks](#homeworks)
+  - [Add a prop and an inventory item](#add-a-prop-and-an-inventory-item)
+  - [Prevent losing the key](#prevent-losing-the-key)
+  - [Solve a problem with the implemented dialog](#solve-a-problem-with-the-implemented-dialog)
+- [What's next](#whats-next)
 
 There is more to Popochiu, but this will showcase the foundamental building blocks of how the engine works.
 
@@ -883,4 +896,10 @@ If you start the game, give the toy car to Popsy, then talk to him and select th
 
 ## What's next
 
-> TODO
+Now that you've broken the ice with the basic concepts, you can learn more.
+
+* Go and get our [example resources](/getting-started/example-resources) to learn directly from code and find a quick start in your experimentation.
+* Throughout this guide, we've given you a taste of the plugin interface, but you may want to learn everything there is to know on how to use Popochiu's interface, by reading [the editor handbook](/the-editor-handbook).
+* At the same time, the engine (the part of Popochiu that you will ship with your game) deserves its own deep dive. Read [the engine handbook](/the-engine-handbook) and keep [the scripting API reference](/the-engine-handbook/scripting-reference) at hand while you code your game.
+* This tutorial overlooks many important parts, among which [animations](/how-to-develop-a-game/playing-animations) and [audio management](/how-to-develop-a-game/adding-sounds) certainly stand out. The [How to Develop a Game](/how-to-develop-a-game) section contains basics and advanced techniques that will help you get the most out of Godot and Popochiu.
+* Last but not least, Popochiu is a community effort. Learn [how to get help](/getting-started/getting-help) and, if you feel like contributing, read our [contribution guidelines](/contributing-to-popochiu).
