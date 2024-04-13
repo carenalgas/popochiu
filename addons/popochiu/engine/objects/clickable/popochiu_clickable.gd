@@ -394,6 +394,9 @@ func _translate() -> void:
 
 #endregion
 
+## Temporarily duplicating PopochiuUtils functions here with an added delay for double click
+## Having delay in the PopochiuUtils class that other gui code calls introduced unwanted issues.
+## This is a temporary work around until a more permanent solution is found.
 
 ## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
 static func is_click_or_touch(event: InputEvent) -> bool:
@@ -405,10 +408,6 @@ static func is_click_or_touch(event: InputEvent) -> bool:
 
 	return false
 
-
-## Temporarily duplicating PopochiuUtils functions here with an added delay for double click
-## Having delay in the PopochiuUtils class that other gui code calls introduced unwanted issues.
-## This is a temporary work around until a more permanent solution is found.
 
 ## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event and if
 ## it is pressed.
