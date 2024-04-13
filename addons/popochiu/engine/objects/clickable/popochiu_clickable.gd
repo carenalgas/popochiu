@@ -52,6 +52,11 @@ var last_click_button := -1 # NOTE Don't know if this will make sense, or if thi
 
 @onready var _description_code := description
 
+## Used for setting the double click delay. Windows default is 500 miliseconds.
+static var double_click_delay: float = 0.2 # 0.5 felt like too long of a delay before acting
+## Used for tracking if a double click has occured.
+static var has_double_click: bool = false
+
 
 #region Godot ######################################################################################
 func _ready():
@@ -236,7 +241,7 @@ func on_click() -> void:
 
 ## Called when the object is double clicked.
 func on_double_click() -> void:
-	PopochiuUtils.reset_double_click()
+	reset_double_click()
 	_on_double_click()
 
 
@@ -339,16 +344,16 @@ func _on_mouse_exited() -> void:
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	if not E.hovered or E.hovered != self: return
 	
-	if await PopochiuUtils.is_double_click_or_tap(event):
+	if await is_double_click_or_tap(event):
 		times_double_clicked += 1
 		E.clicked = self
 		on_double_click()
 		return
 	
-	if not await PopochiuUtils.is_click_or_touch_pressed(event): return
+	if not await is_click_or_touch_pressed(event): return
 			
 	
-	var event_index := await PopochiuUtils.get_click_or_touch_index(event)
+	var event_index := await get_click_or_touch_index(event)
 	E.clicked = self
 	last_click_button = event_index
 	
@@ -388,3 +393,62 @@ func _translate() -> void:
 
 
 #endregion
+
+
+## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
+static func is_click_or_touch(event: InputEvent) -> bool:
+	if (event is InputEventMouseButton and not event.double_click) or (event is InputEventScreenTouch and not event.double_tap):
+		await E.wait(double_click_delay) # This delay is need to prevent a single click being detected before double click
+		
+		if not has_double_click:
+			return (event is InputEventMouseButton or event is InputEventScreenTouch)
+
+	return false
+
+
+## Temporarily duplicating PopochiuUtils functions here with an added delay for double click
+## Having delay in the PopochiuUtils class that other gui code calls introduced unwanted issues.
+## This is a temporary work around until a more permanent solution is found.
+
+## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event and if
+## it is pressed.
+static func is_click_or_touch_pressed(event: InputEvent) -> bool:
+	# Fix #183 by including `event is InputEventScreenTouch` validation
+	if not has_double_click:
+		return await is_click_or_touch(event) and event.pressed
+	else:
+		return false
+
+
+## Returns the index of [param event] when it is an [InputEventMouseButton] or
+## [InputEventScreenTouch] event. For a click, [member InputEventMouseButton.button_index] is
+## returned. For a touch, [member InputEventScreenTouch.index] is returned. Returns [code]0[/code]
+## if the event isn't pressed or is not neither a click or a touch.
+static func get_click_or_touch_index(event: InputEvent) -> int:
+	var index := 0
+	
+	if await is_click_or_touch_pressed(event):
+		if event is InputEventMouseButton:
+			index = event.button_index
+		elif event is InputEventScreenTouch:
+			index = event.index
+	
+	return index
+
+
+## Checks if [param event] is a double click or double tap event.
+static func is_double_click_or_tap(event: InputEvent) -> bool:
+	if (event is InputEventMouseButton and event.double_click) or (event is InputEventScreenTouch and event.double_tap):
+		has_double_click = true
+		
+		if event is InputEventMouseButton:
+			return event.double_click
+		elif event is InputEventScreenTouch:
+			return event.double_tap
+	return false
+
+## Resets the double click status to false by default
+static func reset_double_click(double_click: bool = false) -> void:
+	await E.wait(double_click_delay) # this delay is needed to prevent single click being detected after double click event
+	has_double_click = double_click
+
