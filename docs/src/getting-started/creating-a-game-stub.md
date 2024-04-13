@@ -459,7 +459,7 @@ The executed code just flips the character left and right after a small pause, a
 	await C.player.say("I wanted to open the window but I can't find the handle")
 ```
 
-These last two lines make sure the character finally looks towards the window and say its line.
+These last two lines make sure the character finally looks towards the window and says its line.
 
 !!! info "Help! I'm not a developer!"
     As the `for` keyword, `await` is provided by Godot out of the box. Without going too deep in technical details, what it does is making sure that while the subsequent function is executed, no other things will happen. In our example, if we omitted the `await` keyword in every line, the character would have started walking to the window, while flipping frantically left and right and talking at the same time (but finishing printing the line in a strange way).
@@ -490,18 +490,41 @@ Enough talk, let's see them in action.
 
 Since we already created a "_Background_" for our scene, you should know at this point how to create a new prop. Click on the **Create Prop** button in the tab room of the Popochiu dock, name it "_ToyCar_" and this time, check out the **Will have interaction** option (_27_).
 
-![Name the prop](../assets/images/getting-started/game_stub-room-17-p_creation_popup.png "Toy car will be interactive")
+![Name the prop](../assets/images/getting-started/game_stub-room-17-prop_creation_popup.png "Toy car will be interactive")
 
 !!! note
     If you forget to check this mark, don't worry. You can always make your prop interactive from the inspector.
 
-You new prop will be added to the scene tree as a child of the **Props** node.
+You new prop will be added to the scene tree as a child of the **Props** node (_28_). You should also notice a squared area in the center of the scene (_29_). That's the new prop's interaction polygon, set to the default squared shape.
 
-> TODO: add a toy car in the example game and link it here!
-> 
-> TODO: draw the interaction polygon
->
-> TODO: set the walktopoint and baseline and test that the character walks behind the prop
+![Prop added](../assets/images/getting-started/game_stub-room-18-prop_scene.png "Toy car prop is now in the scene")
+
+Our prop is very much like a hotspot at the moment, since it has no texture. Let's add one.
+
+If you don't have a sprite ready for your prop, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/rooms/house/props/toy_car/toy_car.png) from the demo game.  
+Save it into your project, in the `game/rooms/<your room name>/props/<your prop name>/toy_car.png` folder, and rename it as you see fit.
+
+Now we can set the **Texture** property in the prop inspector, by dragging the image from the **FileSystem** in place (_30_).
+
+![Sprite added](../assets/images/getting-started/game_stub-room-19-prop_set_texture.png "Now there is a toy car on the floor")
+
+Make sure your prop is selected in the scene tree and drag it somewhere to the left part of the walkable area. Then select the **Interaction Polygon** button in the toolbar, like you did for the hotspot and change the shape of the polygon so that it matches the one of the sprite.  
+Your scene should look more or less like this:
+
+![Prop setup](../assets/images/getting-started/game_stub-room-20-prop_scene.png "The prop is now correctly set")
+
+Since the baseline is in the middle of the prop, it is already correctly positioned so the character can walk behind it. You can run the game and test that's the case.
+
+![Prop stays in front](../assets/images/getting-started/game_stub-room-22-prop_baseline.png "The prop stays in front of the character")
+
+!!! tip
+    This prop is pretty small and it can be difficult to position your character's feet behind it, without triggering the script of the prop itself. One possible trick is to edit the polygon so that it stays out of the way if you click on the prop itself. But there is a simpler and less destructive way to achieve that. Locate the **PopochiuClickable** section in the prop inspector, and uncheck the **Clickable** property (_32_) for the toy car.
+
+    ![Non interactive prop](../assets/images/getting-started/game_stub-room-21-prop_clickable.png "The prop is now not interactive")
+
+    This will render the prop non-interactive. The **Clickable** property can also be set on or off in a script, nice when the nature of the prop depends on your game's status.
+
+    **Remember to turn on this property** to follow up with this tutorial!
 
 Eventually we want to enable our main character to pick up the toy car and add it to the inventory. For that though, we need some more elements, so we'll get back to that later.  
 For the moment, we'll just script a simple examine interaction, but we'll seize the opportunity to learn something new.
