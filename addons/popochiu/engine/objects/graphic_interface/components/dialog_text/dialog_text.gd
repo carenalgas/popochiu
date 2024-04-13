@@ -52,12 +52,12 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not await PopochiuUtils.is_click_or_touch_pressed(event) or modulate.a == 0.0:
+	if not PopochiuUtils.is_click_or_touch_pressed(event) or modulate.a == 0.0:
 		return
 	
 	get_viewport().set_input_as_handled()
 	
-	if await PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
+	if PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
 		return
 	
 	if visible_ratio == 1.0:

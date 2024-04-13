@@ -37,7 +37,7 @@ func _ready() -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _clicked(event: InputEvent) -> void:
-	if await PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
+	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
 		pass
 
 

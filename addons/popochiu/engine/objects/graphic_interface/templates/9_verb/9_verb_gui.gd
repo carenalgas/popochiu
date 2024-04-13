@@ -36,7 +36,7 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Make the PC move to the clicked point on RIGHT CLICK
-	if await PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_RIGHT:
+	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_RIGHT:
 		C.player.walk(R.current.get_local_mouse_position())
 
 

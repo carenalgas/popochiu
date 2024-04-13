@@ -340,9 +340,9 @@ func _toggle_description(is_hover: bool) -> void:
 
 
 func _on_gui_input(event: InputEvent) -> void: 
-	if not await PopochiuUtils.is_click_or_touch_pressed(event): return
+	if not PopochiuUtils.is_click_or_touch_pressed(event): return
 	
-	var event_index := await PopochiuUtils.get_click_or_touch_index(event)
+	var event_index := PopochiuUtils.get_click_or_touch_index(event)
 	I.clicked = self
 	last_click_button = event_index
 	

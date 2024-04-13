@@ -127,7 +127,7 @@ func set_title(value: String) -> void:
 ## Checks if the overlay area of the popup was clicked in order to close it.
 func _check_click(event: InputEvent) -> void:
 	if (
-		await PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT
+		PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT
 		and closes_by_clicking_out
 	):
 		_on_cancel()
