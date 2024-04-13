@@ -727,12 +727,12 @@ Leave the rest untouched.
 Create other two options clicking the "Add Element" button (_40_) and populate them like this:
 
 * Second option
-  * **ID**: `AskBored`
-  * **Text**: `Are you bored?`
-  * **Visible**: `Off` (uncheck it)
+    * **ID**: `AskBored`
+    * **Text**: `Are you bored?`
+    * **Visible**: `Off` (uncheck it)
 * Third option
-  * **ID**: `Bye`
-  * **Text**: `Bye, Popsy!`
+    * **ID**: `Bye`
+    * **Text**: `Bye, Popsy!`
 
 This will do for now. Hit `ctrl/cmd-s` to save your project, and the dialog tree resource.
 
