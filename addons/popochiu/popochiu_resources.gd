@@ -183,9 +183,6 @@ const GUI_CUSTOM := "custom"
 const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
 const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
 
-static var popochiu_settings: PopochiuSettings = null : get = get_settings
-static var config = null : get = get_config
-
 
 #region Public #####################################################################################
 # Verify if the folders (where Popochiu's objects will be) exists
@@ -198,7 +195,6 @@ static func init_file_structure() -> bool:
 			DirAccess.make_dir_recursive_absolute(d)
 	
 	# ---- Create config files ---------------------------------------------------------------------
-	
 	# Create .cfg file
 	if not FileAccess.file_exists(DATA):
 		_create_empty_file(DATA)
@@ -468,14 +464,6 @@ static func get_section_keys(section: String) -> Array:
 	return keys
 
 
-# ---- SETTINGS ------------------------------------------------------------------------------------
-static func get_settings() -> PopochiuSettings:
-	if not is_instance_valid(popochiu_settings):
-		popochiu_settings = PopochiuSettings.new()
-	
-	return popochiu_settings
-
-
 # ---- PLUGIN --------------------------------------------------------------------------------------
 static func get_plugin_cfg() -> ConfigFile:
 	var config := ConfigFile.new()
@@ -510,13 +498,6 @@ static func _get_directories() -> Dictionary:
 		INVENTORY_ITEMS = BASE_DIR + "/inventory_items",
 		DIALOGS = BASE_DIR + "/dialogs",
 	}
-
-
-static func get_config() -> RefCounted:
-	if not config:
-		config = load("res://addons/popochiu/editor/config/config.gd").new()
-	
-	return config
 
 
 #endregion

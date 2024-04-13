@@ -98,8 +98,6 @@ func _ready() -> void:
 
 #region Public #####################################################################################
 func fill_data() -> void:
-	var settings := PopochiuResources.popochiu_settings
-	
 	# Search the FileSystem for Rooms, Characters, InventoryItems and Dialogs
 	for t in _types:
 		if not _types[t].has("path"): continue
@@ -170,7 +168,10 @@ func fill_data() -> void:
 							"inventory_items", resource.script_name
 						)
 						
-						if resource.script_name in settings.items_on_start:
+						var items: Array =\
+						PopochiuConfig.get_inventory_items_on_start()
+						
+						if resource.script_name in items:
 							row.is_on_start = true
 					Constants.Types.DIALOG:
 						is_in_core = PopochiuResources.has_data_value(
@@ -316,7 +317,7 @@ func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
 
 func _on_tab_changed(tab: int) -> void:
 	if not _has_data and tab == 0:
-		# Try to load the Main tab data in case they couldn"t be loaded while
+		# Try to load the Main tab data in case they couldn't be loaded while
 		# opening the engine
 		fill_data()
 	

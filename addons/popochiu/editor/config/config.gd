@@ -1,4 +1,5 @@
 @tool
+class_name PopochiuConfig
 extends RefCounted
 
 enum DialogStyle {
@@ -9,12 +10,6 @@ enum DialogStyle {
 	BUBBLE_ABOVE_CHARACTER,
 }
 
-# EDITOR SETTINGS ----------------------------------------------------------------------------------
-const ASEPRITE_IMPORTER_ENABLED = "popochiu/aseprite_import/enable_aseprite_importer"
-const ASEPRITE_COMMAND_PATH = "popochiu/aseprite_import/command_path"
-const ASEPRITE_REMOVE_JSON_FILE = "popochiu/aseprite_import/remove_json_file"
-
-# PROJECT SETTINGS ---------------------------------------------------------------------------------
 # Thanks to @drbloop for providing the bases of the new approach for moving the popochiu settings to
 # Godot's ProjectSettings instead of using a Resource file.
 # ---- GUI -----------------------------------------------------------------------------------------
@@ -46,21 +41,9 @@ const ASEPRITE_WIPE_OLD_ANIMATIONS = "popochiu/aseprite_import/wipe_old_animatio
 const PIXEL_ART_TEXTURES = "popochiu/pixel/pixel_art_textures"
 const PIXEL_PERFECT = "popochiu/pixel/pixel_perfect"
 
-var editor_settings: EditorSettings
-
-var _plugin_icons: Dictionary
-
 
 #region Public #####################################################################################
-func initialize_editor_settings():
-	editor_settings = EditorInterface.get_editor_settings()
-	
-	_initialize_editor_cfg(ASEPRITE_IMPORTER_ENABLED, false, TYPE_BOOL)
-	_initialize_editor_cfg(ASEPRITE_COMMAND_PATH, _default_command(), TYPE_STRING)
-	_initialize_editor_cfg(ASEPRITE_REMOVE_JSON_FILE, true, TYPE_BOOL)
-
-
-func initialize_project_settings():
+static func initialize_project_settings():
 	# ---- GUI -------------------------------------------------------------------------------------
 	_initialize_project_cfg(SCALE_GUI, false, TYPE_BOOL)
 	# TODO: Move this to the properties of the 2-click Context-sensitive template or its InventoryBar
@@ -99,153 +82,106 @@ func initialize_project_settings():
 	_initialize_project_cfg(PIXEL_ART_TEXTURES, false, TYPE_BOOL)
 	_initialize_project_cfg(PIXEL_PERFECT, false, TYPE_BOOL)
 
-	_set_icons()
 	ProjectSettings.save()
 
 
-func get_icon(icon_name: String) -> Texture2D:
-	return _plugin_icons[icon_name]
-
-
-# EDITOR -------------------------------------------------------------------------------------------
-func aseprite_importer_enabled() -> bool:
-	return _get_editor_setting(ASEPRITE_IMPORTER_ENABLED, false)
-
-
-func get_command() -> String:
-	return _get_editor_setting(ASEPRITE_COMMAND_PATH, _default_command())
-
-
-func should_remove_source_files() -> bool:
-	return _get_editor_setting(ASEPRITE_REMOVE_JSON_FILE, true)
-
-
-# PROJECT ------------------------------------------------------------------------------------------
 # ---- GUI -----------------------------------------------------------------------------------------
-func is_scale_gui() -> bool:
+static func is_scale_gui() -> bool:
 	return _get_project_setting(SCALE_GUI, false)
 
 
 # TODO: Move this to the properties of the 2-click Context-sensitive template or its InventoryBar
 # 		component
-func is_inventory_always_visible() -> bool:
+static func is_inventory_always_visible() -> bool:
 	return _get_project_setting(INVENTORY_ALWAYS_VISIBLE, false)
 
 
 # TODO: Move this to the properties of the 2-click Context-sensitive template or its SettingsBar
 # 		component
-func is_toolbar_always_visible() -> bool:
+static func is_toolbar_always_visible() -> bool:
 	return _get_project_setting(TOOLBAR_ALWAYS_VISIBLE, false)
 
 
-func get_fade_color() -> Color:
+static func get_fade_color() -> Color:
 	return _get_project_setting(FADE_COLOR, Color.BLACK)
 
 
-func get_skip_cutscene_time() -> float:
+static func get_skip_cutscene_time() -> float:
 	return _get_project_setting(SKIP_CUTSCENE_TIME, 0.2)
 
 
 # ---- Dialogs -------------------------------------------------------------------------------------
-func get_text_speed() -> float:
+static func get_text_speed() -> float:
 	return _get_project_setting(TEXT_SPEED, 0.1)
 
 
-func is_auto_continue_text() -> bool:
+static func is_auto_continue_text() -> bool:
 	return _get_project_setting(AUTO_CONTINUE_TEXT, false)
 
 
-func is_use_translations() -> bool:
+static func is_use_translations() -> bool:
 	return _get_project_setting(USE_TRANSLATIONS, false)
 
 
-func get_max_dialog_options() -> int:
+static func get_max_dialog_options() -> int:
 	return _get_project_setting(MAX_DIALOG_OPTIONS, 3)
 
 
-func get_dialog_style() -> int:
+static func get_dialog_style() -> int:
 	return _get_project_setting(DIALOG_STYLE, DialogStyle.ABOVE_CHARACTER)
 
 
 # ---- Inventory -----------------------------------------------------------------------------------
-func get_inventory_limit() -> int:
+static func get_inventory_limit() -> int:
 	return _get_project_setting(INVENTORY_LIMIT, 0)
 
 
-func set_inventory_items_on_start(items: Array) -> void:
+static func set_inventory_items_on_start(items: Array) -> void:
 	_set_project_setting(INVENTORY_ITEMS_ON_START, items)
 
 
-func get_inventory_items_on_start() -> Array:
+static func get_inventory_items_on_start() -> Array:
 	return _get_project_setting(INVENTORY_ITEMS_ON_START, [])
 
 
 # ---- Aseprite Importing --------------------------------------------------------------------------
-func is_default_animation_import_enabled() -> bool:
+static func is_default_animation_import_enabled() -> bool:
 	return _get_project_setting(ASEPRITE_IMPORT_ANIMATION, true)
 
 
-func is_default_animation_loop_enabled() -> bool:
+static func is_default_animation_loop_enabled() -> bool:
 	return _get_project_setting(ASEPRITE_LOOP_ANIMATION, true)
 
 
-func is_default_animation_prop_visible() -> bool:
+static func is_default_animation_prop_visible() -> bool:
 	return _get_project_setting(ASEPRITE_PROPS_VISIBLE, true)
 
 
-func is_default_animation_prop_clickable() -> bool:
+static func is_default_animation_prop_clickable() -> bool:
 	return _get_project_setting(ASEPRITE_PROPS_CLICKABLE, true)
 
 
-func is_default_wipe_old_anims_enabled() -> bool:
+static func is_default_wipe_old_anims_enabled() -> bool:
 	return _get_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS, true)
 
 
 # ---- Pixel game ----------------------------------------------------------------------------------
-func set_pixel_art_textures(use_pixel_art_textures: bool) -> void:
+static func set_pixel_art_textures(use_pixel_art_textures: bool) -> void:
 	_set_project_setting(PIXEL_ART_TEXTURES, use_pixel_art_textures)
 
 
-func is_pixel_art_textures() -> bool:
+static func is_pixel_art_textures() -> bool:
 	return _get_project_setting(PIXEL_ART_TEXTURES, false)
 
 
-func is_pixel_perfect() -> bool:
+static func is_pixel_perfect() -> bool:
 	return _get_project_setting(PIXEL_PERFECT, false)
 
 
 #endregion
 
 #region Private ####################################################################################
-func _default_command() -> String:
-	return 'aseprite'
-
-
-func _set_icons() -> void:
-	_plugin_icons = {
-		"collapsed": EditorInterface.get_base_control().get_theme_icon(
-			"GuiTreeArrowRight", "EditorIcons"
-		),
-		"expanded": EditorInterface.get_base_control().get_theme_icon(
-			"GuiTreeArrowDown", "EditorIcons"
-		),
-	}
-
-
-func _initialize_editor_cfg(
-	key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE
-) -> void:
-	if editor_settings.has_setting(key): return
-	editor_settings.set_setting(key, default_value)
-	editor_settings.set_initial_value(key, default_value, false)
-	editor_settings.add_property_info({
-		"name": key,
-		"type": type,
-		"hint": hint,
-	})
-
-
-func _initialize_project_cfg(
+static func _initialize_project_cfg(
 	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
 ) -> void:
 	if ProjectSettings.has_setting(key): return
@@ -261,17 +197,12 @@ func _initialize_project_cfg(
 	})
 
 
-func _get_editor_setting(key: String, default_value):
-	var e = editor_settings.get_setting(key)
-	return e if e != null else default_value
-
-
-func _get_project_setting(key: String, default_value):
+static func _get_project_setting(key: String, default_value):
 	var p = ProjectSettings.get_setting(key)
 	return p if p != null else default_value
 
 
-func _set_project_setting(key: String, value) -> void:
+static func _set_project_setting(key: String, value) -> void:
 	ProjectSettings.set_setting(key, value)
 	ProjectSettings.save()
 

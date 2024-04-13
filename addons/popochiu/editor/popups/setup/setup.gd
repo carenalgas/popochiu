@@ -143,12 +143,12 @@ func _on_close() -> void:
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
 			
-			PopochiuResources.get_config().set_pixel_art_textures(false)
+			PopochiuConfig.set_pixel_art_textures(false)
 		2:
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
 			
-			PopochiuResources.get_config().set_pixel_art_textures(true)
+			PopochiuConfig.set_pixel_art_textures(true)
 	
 	if PopochiuResources.get_data_value("setup", "done", false) == false:
 		_copy_template(true)

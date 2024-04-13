@@ -1,18 +1,15 @@
 @tool
 extends RefCounted
 
-var _config: RefCounted
-
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func init(config):
-	_config = config
-
-
 func export_file(file_name: String, output_folder: String, options: Dictionary) -> Dictionary:
 	var exception_pattern = options.get('exception_pattern', "")
 	var only_visible_layers = options.get('only_visible_layers', false)
-	var output_name = file_name if options.get('output_filename') == "" else options.get('output_filename', file_name)
+	var output_name = (
+		file_name if options.get('output_filename') == ""
+		else options.get('output_filename', file_name)
+	)
 	var basename = _get_file_basename(output_name)
 	var output_dir = output_folder.replace("res://", "./")
 	var data_file = "%s/%s.json" % [output_dir, basename]
@@ -234,7 +231,7 @@ func _execute(arguments, output):
 
 
 func _get_aseprite_command() -> String:
-	return _config.get_command()
+	return PopochiuEditorConfig.get_command()
 
 
 func _get_file_basename(file_path: String) -> String:

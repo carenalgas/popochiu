@@ -594,6 +594,9 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 			[script_name]
 		)
 		return
+	
+	if $AnimationPlayer.get_animation_list().is_empty():
+		return
 
 	# Search for a valid animation corresponding to animation_label
 	var animation = _get_valid_oriented_animation(animation_label)
@@ -820,8 +823,7 @@ func _get_valid_oriented_animation(animation_label):
 		var animation = "%s%s" % [animation_label, suffix]
 		if $AnimationPlayer.has_animation(animation):
 			return animation
-	# No valid animation is found.
-	printerr('Animation not found %s' % [animation_label])
+	
 	return null
 
 

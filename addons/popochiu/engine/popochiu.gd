@@ -94,7 +94,8 @@ var half_height := 0.0 : get = get_half_height
 var current_text_speed_idx := settings.default_text_speed_idx
 ## The text speed being used by the game. When this property changes, the
 ## [signal text_speed_changed] signal is emitted.
-var current_text_speed: float = settings.text_speeds[current_text_speed_idx] : set = set_current_text_speed
+var current_text_speed: float = settings.text_speeds[current_text_speed_idx] :
+	set = set_current_text_speed
 ## The number of seconds to wait before moving to the next dialog line (when playing dialog lines
 ## triggered inside a [method queue].
 var auto_continue_after := -1.0
@@ -252,7 +253,7 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_released('popochiu-skip'):
 		cutscene_skipped = true
-		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.get_skip_cutscene_time())
+		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.skip_cutscene_time)
 		await tl.transition_finished
 
 
@@ -330,7 +331,7 @@ func cutscene(instructions: Array) -> void:
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		tl.play_transition(tl.PASS_DOWN_OUT, settings.get_skip_cutscene_time())
+		tl.play_transition(tl.PASS_DOWN_OUT, settings.skip_cutscene_time)
 		await tl.transition_finished
 	
 	cutscene_skipped = false

@@ -12,7 +12,6 @@ const POPOCHIU_CANVAS_EDITOR_MENU = preload(
 )
 
 var main_dock: Panel
-var config: RefCounted = preload("res://addons/popochiu/editor/config/config.gd").new()
 
 var _editor_interface := get_editor_interface()
 var _editor_file_system := _editor_interface.get_resource_filesystem()
@@ -56,8 +55,8 @@ func _enter_tree() -> void:
 	
 	_editor_file_system.scan_sources()
 	
-	config.initialize_editor_settings()
-	config.initialize_project_settings()
+	PopochiuEditorConfig.initialize_editor_settings()
+	PopochiuConfig.initialize_project_settings()
 	
 	# Configure main dock to be passed down the plugin chain
 	# TODO: Get rid of this cascading assignment and switch to a SignalBus instead!
@@ -73,7 +72,6 @@ func _enter_tree() -> void:
 	]:
 		var eip: EditorInspectorPlugin = load(path).new()
 		
-		eip.set("config", config)
 		eip.set("main_dock", main_dock) # TODO: change with SignalBus
 		
 		_inspector_plugins.append(eip)

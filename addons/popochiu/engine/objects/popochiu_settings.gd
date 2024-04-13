@@ -56,19 +56,19 @@ var dialog_style := 0
 
 #region Godot ######################################################################################
 func _init() -> void:
-	skip_cutscene_time = PopochiuResources.get_config().get_skip_cutscene_time()
-	auto_continue_text = PopochiuResources.get_config().is_auto_continue_text()
-	use_translations = PopochiuResources.get_config().is_use_translations()
-	items_on_start = PopochiuResources.get_config().get_inventory_items_on_start()
-	inventory_limit = PopochiuResources.get_config().get_inventory_limit()
-	inventory_always_visible = PopochiuResources.get_config().is_inventory_always_visible()
-	toolbar_always_visible = PopochiuResources.get_config().is_toolbar_always_visible()
-	fade_color = PopochiuResources.get_config().get_fade_color()
-	scale_gui = PopochiuResources.get_config().is_scale_gui()
-	max_dialog_options = PopochiuResources.get_config().get_max_dialog_options()
-	is_pixel_art_game = PopochiuResources.get_config().is_pixel_art_textures()
-	is_pixel_perfect = PopochiuResources.get_config().is_pixel_perfect()
-	dialog_style = PopochiuResources.get_config().get_dialog_style()
+	skip_cutscene_time = PopochiuConfig.get_skip_cutscene_time()
+	auto_continue_text = PopochiuConfig.is_auto_continue_text()
+	use_translations = PopochiuConfig.is_use_translations()
+	items_on_start = PopochiuConfig.get_inventory_items_on_start()
+	inventory_limit = PopochiuConfig.get_inventory_limit()
+	inventory_always_visible = PopochiuConfig.is_inventory_always_visible()
+	toolbar_always_visible = PopochiuConfig.is_toolbar_always_visible()
+	fade_color = PopochiuConfig.get_fade_color()
+	scale_gui = PopochiuConfig.is_scale_gui()
+	max_dialog_options = PopochiuConfig.get_max_dialog_options()
+	is_pixel_art_game = PopochiuConfig.is_pixel_art_textures()
+	is_pixel_perfect = PopochiuConfig.is_pixel_perfect()
+	dialog_style = PopochiuConfig.get_dialog_style()
 
 
 #endregion
