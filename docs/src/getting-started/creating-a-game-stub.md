@@ -590,40 +590,297 @@ Done, we have a prop in the scene! It's now time to learn how to use the charact
 
 ## Add an inventory item
 
-> This section is TODO. It will explain how to:
->
-> * Create a new inventory item in the game
-> * Give it a texture
-> * Go back to the prop and script the collection of the item
+The inventory is where your player will collect all items that will be useful to progress in your game.  
+In Popochiu, inventory items are global objects, like rooms or characters. They have a script, to hold all the game logic related to them, and a texture, so that they can be rendered somewhere the GUI.
+
+To create a new inventory item click on the **Create Inventory Item** button in the tab room of the Popochiu dock (_32_), and name the new item in the popup window that appears.
+
+![Create inventory item](../assets/images/getting-started/game_stub-inv_item-23-create_button.png "Create the inventory item from the Popochiu main dock")
+
+We'll name our new inventory item "_ToyCar_", because we are going to make the prop we just created collectable. Go on and click OK. Popochiu will open the new inventory item's scene in the editor.
+
+Inventory items are very simple. They have no interaction polygons or similar, because representing them in an interactive grid of sort is responsibility of the GUI.  
+The only thing we need to do is to assign a texture to them, that will be painted in the inventory GUI by Popochiu.
+
+If you don't have a sprite ready for your inventory item, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/inventory_items/toy_car/inv_toy_car.png) from the demo game.  
+Save it into your project, in the `game/inventory_items/<your inventory item name>/inv_toy_car.png` folder, and rename it as you see fit.
+
+Assigning the texture to the iventory item is done the same as props, by dragging the image from the **FileSystem**, to the **Texture** property in the inspector (_33_).
+
+![Sprite added](../assets/images/getting-started/game_stub-inv_item-24-set_texture.png "Now the inventory item has an icon")
+
+That's it. Your inventory item is configured and it is now possible to add it to the main character's inventory.  
+We are going to script this part by interacting with the toy car prop we placed in our room.
+
+Go back to the room scene (you can press the **Open in Editor** button on the "_House_" room row in Popochiu's main dock) and use the room tab to open the "_ToyCar_" prop script.
+
+If you followed along, you will see that we just scripted the _examine_ interaction for it, implementing the `_on_right_click()` function. It's now time to write an `_on_click()` function that allows us to pick the prop up and add it to the inventory.
+
+```gdscript
+# When the node is clicked
+func _on_click() -> void:
+	await C.player.walk_to_clicked()
+    await C.player.face_clicked()
+	await C.player.say("Better picking them up, before I trip over it!")
+	R.get_prop("ToyCar").hide()
+	I.ToyCar.add()
+```
+
+Save the project and run the game. Now if you click on the toy car on the floor, the main character will say its line, then the item will disappear from the scene and appear in the inventory.
+
+!!! warning
+    It's worth to clarify a couple of things that may be misleading.
+
+    1. The fact that the inventory item exists in Popochiu catalog **does not mean** it is automatically available in the character's inventory: quite the opposite, we want to create many inventory items that the character will collect as the player makes progress throught the game.
+    2. If you paid attention to the code, you should have noticed that there is no connection between the **_ToyCar_ prop** and the **_ToyCar_ inventory item**. Since they are representing the same object in the game world, they have the same name and a very similar texture. This makes sense to us as human beings, but **for Popochiu the two objects are completely unrelated**.
+
+    In fact, our script is telling the engine to **hide a prop** that's in the room, and then to **add an inventory item** to the character's inventory. The prop is still there, just disabled.
+
+    But why not just having a "collectable" prop? Well, the reason is that, although the most common way to collect objects is "picking them up", there are so many other ways. You may want to add an item to the inventory when the character opens a drawer (implying that he found something in there), or maybe during a dialog with another character (implying that it has been given by someone for a reason). Or maybe you just want the character to win loot after a successful action.
+
+    Popochiu does not force a specific game structure on you. Of course it provides sensible defaults for the staples of the genre, but it gives you the tools to build the adventure **you** want to build.
+
+!!! note
+    See how the last two lines of the `_on_click()` function are not `await`-ed? The reason is that those functions are just changing the state of the game, without triggering animations, or dialogs.
+
+    To learn if a function must be awaited, the best option is to check in the [API reference](/the-engine-handbook/scripting-reference) section. As a rule of thumb, if the function "is not making something happen on the screen as it was in a movie" (animating, moving stuff around, printing text... everthing that needs time to be seen), then it probably doesn't need to be awaited.
 
 ## Script your first dialogue
 
-> This section is TODO. It will explain how to:
+The last very common case we want to cover with this introductory guide, is the interaction with another character.
 
-### Add a dialogue
+If you followed this tutorial from the start, [you should have created two characters](#add-another-character). Popochiu adds our main character to the room for us when the game starts, so we don't need to do it manually. On the other hands, as we are the directors of our own game, it leaves on us to place non-player characters where they belong.
 
-> This section is TODO. It will explain how to:
->
-> * Create a new Dialog
-> * Add dialog options
-> * Place a second character in the room
-> * Script the dialog when the user selects an option
-> * Start and end a dialogue with the new character
+We will then add Popsy (or whatever you called your secondary character) to our sole room, and script some interactions.
 
-## Recap
+To add the character to the room, click on the **Add character to room** button in the tab room of the Popochiu dock (_34_), then select Popsy from the dropdown list.
 
-> This section is TODO. Not sure it will be necessary.
+![Add character to room button](../assets/images/getting-started/game_stub-dialog-25-add_character_to_room.png "Click and select the character from the dropdown list")
+
+The character will be added in the center of the scene. Move it somewhere to the right, so the scene looks like this:
+
+![Character setup](../assets/images/getting-started/game_stub-dialog-26-scene.png "The character is in place")
+
+Now that we have a character to talk to, let's create our first dialog.
+
+Dialogs in Popochiu are managed by _Dialog trees_, global objects like characters, rooms and inventory items. Each dialog tree is a catalog of lines that will be shown by the dialog GUI when that specific dialog tree is started. When the user selects one of the lines, a script is triggered. Simple and effective.
+
+!!! info
+    Lines in a specific dialog tree can be turned on and off, and you can start a different dialog tree from scripts, so you can branch out of a dialog into another one, and back writing simple wiring code.
+
+To create a new dialog tree click on the **Create dialog tree** button in the tab room of the Popochiu dock (_36_), and name the new dialog in the popup window that appears.
+
+![Create dialog tree](../assets/images/getting-started/game_stub-dialog-27-create_button.png "Create the dialog tree from the Popochiu main dock")
+
+We'll name our new dialog tree "_PopsyHouseChat_".
+
+!!! tip
+    Keep your dialog tree names clear and meaningful. Medium to large games, with several characters that may appear in different locations, or in different moments along the story, will soon become a mess if every dialog is named like `PirateDlg`, `Dialog1`, `FirstTalkTentacle` or similar.
+
+    You may want to find a pattern that makes it easier to remember what's the dialog content, participants and place, like `CharacterPlaceTopic` or whatever makes sense to you. This will also make the list easier to navigate and will help with autocomplete in scripts.
+
+Now that we have a dialog tree, we want to add options for the player to choose. To edit the "_PopsyHouseChat_" dialog tree, click the **Open in Editor** icon (find in on the row in the main dock list of Dialog trees).
+
+!!! info "Under the hood"
+    While most of the Popochiu objects we have encountered so far are Godot [Scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/nodes_and_scenes.html#scenes), dialog trees are Godot [Resources](https://docs.godotengine.org/en/stable/tutorials/scripting/resources.html).
+
+    Scenes are edited in the "Scene preview" area, in the center of the editor. Resources are edited in the inspector, so when you click the **Open in Editor** icon for a dialog tree, nothing will happen in the center.
+
+Head to the inspector panel and you will see something like this:
+
+![Dialog tree inspector](../assets/images/getting-started/game_stub-dialog-28-inspector.png "The dialog tree inspector")
+
+To add a dialog option, click the **Options** property (_37_), then the **Add Element** button that appears.  
+An option named "_Opt1_" is added to the list (_38_) (you can see the **Size** of the **Options** property is now `1`). Click on the **Opt1** field to open the drop down and you should see something like this:
+
+![Create new dialog option](../assets/images/getting-started/game_stub-dialog-29-add_option.png "Add a new dialog option")
+
+Every dialog option in a tree has many different properties (_39_):
+
+* **ID** is a univoque handler that will make easier to manipulate that option from your scripts.
+* **Text** is the text that is shown in the GUI when the dialog is started, and the user is asked to select the options.
+* **Icon** is useful if you want to use an image-based interface for your dialogs instead of a text-based one (and example of this can be found in LucasArts classic _Sam & Max Hit the Road_)
+* **Visible** is a flag by which you can turn specific options on and off, for example if you consider a topic explored and no more useful in the context of the game.
+* **Disabled** means this option is "consumed". It is make invisible and can't be made visible anymore.
+* Options flagged as **Always on** can't be disabled. This is useful if you have some bulk logic to disable more options in a dialog tree, and don't want to cherry-pick the important ones in your script. This is also useful to avoid softlock situations due to a mistake in a script (it may happen, most of all if you work in team).
+
+Let's create a first line of dialog about the toy car that Popsy left on the floor. Populate "_Opt1_" as follows:
+
+* **ID**: `MessyRoom`
+* **Text**: `Popsy, I told you to put your toys away when you're done!`
+
+Leave the rest untouched.
+
+Create other two options clicking the "Add Element" button (_40_) and populate them like this:
+
+* Second option
+  * **ID**: `AskBored`
+  * **Text**: `Are you bored?`
+  * **Visible**: `Off` (uncheck it)
+* Third option
+  * **ID**: `Bye`
+  * **Text**: `Bye, Popsy!`
+
+This will do for now. Hit `ctrl/cmd-s` to save your project, and the dialog tree resource.
+
+!!! tip
+    It may be useless to say at this point, but keep your options IDs meaningful and "talking" (no pun intended). Find your own conventions, but remember you will have to navigate your dialogs in scripts by these identifiers, so choose names that are love letters to your future self.
+
+To see our dialog in action, we need to start it somehow. In the context of our game, we'll simply start the dialog when we click on our companion character in the room.
+
+Locate the secondary character in Popochiu main dock, and open its script clicking on the **Open in Script** icon.  
+Find the `_on_click()` function and edit it like this:
+
+```gdscript
+# When the node is clicked
+func _on_click() -> void:
+	await C.player.face_clicked()
+	D.PopsyHouseChat.start()
+```
+
+Run the game and click on the secondary character. Your dialog should start and you should see the first and last options only:
+
+![The running dialog](../assets/images/getting-started/game_stub-dialog-30-dialog_run.png "The dialog runs when you click on Popsy")
+
+### Script a dialog
+
+We have a dialog in place, but so far, no matter which option we choose, the dialog ends abruptly. This is because the script template works like this. We are going to change the script to implement some meaningful dialog.
+
+Go back to Popochiu main dock and open the script clicking on the **Open in Script** icon on the dialog tree row (_41_).
+
+![Dialog tree script](../assets/images/getting-started/game_stub-dialog-31-script_icon.png "Edit the dialog tree script")
+
+The dialog script contains a small number of functions. The one we are going to change is `_option_selected()`. As the name implies, it is invoked by the engine when the user selects an option. The engine will pass the selected option as the argument of the function, so we can inspect it and decide what to do.
+
+Let's change the function like this:
+
+```gdscript
+func _option_selected(opt: PopochiuDialogOption) -> void:
+	# Use match to check which option was selected and excecute something for
+	# each one
+	match opt.id:
+		"MessyRoom":
+			await D.say_selected()
+			await C.Popsy.say("Errr... sorry, I forgot to tidy up!")
+			await C.player.say("OK, but it's better not to leave toy cars around.")
+			await C.player.say("Someone can step over them and fall.")
+			await C.Popsy.say("Can you help me tidy up?")
+			await E.wait(1.0)
+			await C.player.say("You little lazy rascal!")
+			turn_off_options(["MessyRoom"])
+			turn_on_options(["AskBored"])
+		"AskBored":
+			await D.say_selected()
+			await C.Popsy.say("Yes! I want my toy car!")
+		"Bye":
+			await D.say_selected()
+            stop()
+		_:
+			# By default close the dialog. Options won't show after calling
+			# stop()
+			stop()
+	
+	_show_options()
+```
+
+In this function we are using the `match` construct of the GDScript language to do something different for each option of our dialogue.
+
+We are going to match against the dialog option **ID** (we told you that would have come in handy). For each one we execute a script that in this case works as a short cutscene.
+
+!!! warning
+    Please note that the `turn_off_options()` function takes an array as parameter. In the example code, we are always passing a one-element array to it. Don't be tricked into feeding it a string.
+
+When the dialog starts, we only have one option (plus the exit line to stop the dialog). This first option starts an exchange that goes for some lines. At the end of the exchange, that option is turned off, and another one is turned on, with a signpost to a possible goal for the player (find the toy car for Popsy).
+
+The scope of this small game is too narrow for this to makes sense, but that's an example of how dialogs can be shaped to follow the story flow.
+
+!!! info "Help! I'm not a developer!"
+    The `match` keyword is a GDScript powerful tool when you have a single variable that can assume a large number of known values. Basically you ask the language to inspect the variable and only exectue the lines of code that are in the block that is nested inside a specified value.
+
+    Since we are matching agains the option ID, and we populated the option IDs as strings, we expect that variable to have one of the values we choosed at design time.
+
+    The `_` value at the end is a fallback one. If none of the above matches, this block of code is executed. It's smart to always leave a fallback here, that calls the `stop()` function, because if someone adds an option and forget to code a block for it, the game won't block.
+
+!!! tip
+    This function can grow very long in case of articulated dialogs. The best option is to create private functions in the dialog tree script to isolate particularly long branches. Of course, don't forget to `await` them when you write your call!
+
+The savvy reader may have understood at this point, how powerful this dialog system is. Since you execute a full script when the user selects an option, the sky is the limit here. You may play animations, populate the inventory, change the game state in different locations, trigger cutscenes (flashbacks?), switch the player character, or do something really strange like saving the game during a dialog (hardly seen in point-and-click games, but why not?).
+
+Other engines describe dialogs as declarative, nested lists of lines that the characters can say. Popochiu takes a more dev-oriented road and leaves the developer total control.
+
+We're almost done. Since Popsy wants its toy car, let's make it happy!
+
+## Use inventory items
+
+The last common task in an adventure game is use inventory items. Giving them to characters, combining them together or with elements in the game world.
+
+We are going to give the item we collected earlier to our secondary character. This will disable the dialog line forever and remove the item from our inventory.
+
+Fortunately we already have all the elements we need to achieve this. Every Popochiu clickable object (characters, props, hotspots, and inventory items) expose a function named `_on_item_used()`, that is invoked by the engine when the player tries to combine an inventory item with that object. Of course, the engine passes the inventory item that the player is using as a parameter, so that the target object can react differently to differnt items.
+
+We'll give the toy car to Popsy, so open the script of the secondary character, locate the `_on_item_used()` function and change it like this:
+
+```gdscript
+# When the node is clicked and there is an inventory item selected
+func _on_item_used(item: PopochiuInventoryItem) -> void:
+	if item == I.ToyCar:
+		await C.player.walk_to_clicked()
+		await C.player.face_clicked()
+		await C.player.say("Honey, here is your toy car!")
+		await C.Popsy.say("YAY! Thanks a lot!!!")
+		I.ToyCar.remove()
+		D.PopsyHouseChat.turn_off_options(["AskBored"])
+```
+
+Save the script and run the game. Pick the toy car up, select it from the inventory (note how the cursor takes the shape of the item) and click on Popsy.
+
+You should see the dialog happen, and the car is removed from your inventory.
+
+**Congratulations! You've get to the end of this introductory guide!**
+
+## Conclusions
+
+It has been a long journey, and we learned a lot.
+
+We know how to:
+
+* **Setup a game** in Popochiu
+* **Select a GUI** among the available ones
+* **Create locations** for our characters to explore
+* **Add characters** to our game and make them interact with dialogues and actions
+* **Move and control** our game character
+* **Add interactions** to our locations, both via **hotspots** and actual **props**
+* Collect and get rid of stuff in **the inventory**
+* We can create interesting, dynamic **dialogs**
+
+These are the basics of every adventure games and an inch of what Popochiu can do for you.  
+We hope that this appetizer was enough to understand if Popochiu is the game engine that you need for your project, and you are enticed to learn more!
 
 ## Homeworks
 
-> This section is TODO. It will challenge the readers providing some tasks to check if they have learned all the basics:
->
-> * Add a prop (TODO: provide link to the sprite) and make an interaction to combine it with the item in the inventory (idea: a vase and a flower)
-> * Collect the item back into the inventory
-> * Add a locked dialogue line that's conditioned by the presence of the item in the inventory
-> * Give the item to the character
+If you want to tinker with this first game a bit, get your hands dirty and learn by doing, here is a list of assignments you can try to solve by yourself, with some hint in case you get lost.
 
+### Add a prop and an inventory item
+
+Add a cabinet with a drawer to the scene and a key as inventory item. When the character interacts with the cabinet, it says something about having found a key in the drawer and the key is added to the inventory
+
+!!! tip "Hint"
+    Find the sprites for [the key](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/inventory_items/key/key.png) and [the cabinet](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/rooms/house/props/drawer/house_drawer.png) in the example project GitHub repository.
+
+### Prevent losing the key
+
+If the player tries to give the key to Popsy, the main character will say something to make clear it doesn't want to give away the key.
+
+!!! tip "Hint"
+    Tntroduce another block dedicated to the new inventory item in `_on_item_used()` for Popsy character.
+
+### Solve a problem with the implemented dialog
+
+If you start the game, give the toy car to Popsy, then talk to him and select the line about the messy room, the line "Popsy, are you bored?" will appear again. That's a bug, Popsy already has its toy. Find a way to fix this.
+
+!!! tip "Hint"
+    You can tie the "give toy car" action to the state of the second dialog line (so that the main character refuses to give Popsy the toy unless it **knows** that the little one is bored). Or you can disable the second line forever so even after exploring the first line of dialogue, it will never pop up again; there is a way to achieve this, find it ;)
 
 ## What's next
 
-> This section is TODO. Links to the possible sections the reader may want to deepen different topics.
+> TODO
