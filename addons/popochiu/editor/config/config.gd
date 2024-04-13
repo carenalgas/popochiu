@@ -225,28 +225,30 @@ func _set_icons() -> void:
 
 
 func _initialize_editor_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE):
-	if not editor_settings.has_setting(key):
-		editor_settings.set_setting(key, default_value)
-		editor_settings.set_initial_value(key, default_value, false)
-		editor_settings.add_property_info({
-			"name": key,
-			"type": type,
-			"hint": hint,
-		})
+	if editor_settings.has_setting(key): return
+	editor_settings.set_setting(key, default_value)
+	editor_settings.set_initial_value(key, default_value, false)
+	editor_settings.add_property_info({
+		"name": key,
+		"type": type,
+		"hint": hint,
+	})
 
 
 func _initialize_project_cfg(
 	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
 ):
-	if not ProjectSettings.has_setting(key):
-		ProjectSettings.set_setting(key, default_value)
-		ProjectSettings.set_initial_value(key, default_value)
-		ProjectSettings.add_property_info({
-			"name": key,
-			"type": type,
-			"hint": hint,
-			"hint_string": hint_string,
-		})
+	if ProjectSettings.has_setting(key): return
+	
+	ProjectSettings.set_setting(key, default_value)
+	ProjectSettings.set_as_basic(key, true)
+	ProjectSettings.set_initial_value(key, default_value)
+	ProjectSettings.add_property_info({
+		"name": key,
+		"type": type,
+		"hint": hint,
+		"hint_string": hint_string,
+	})
 
 
 func _get_editor_setting(key: String, default_value):
