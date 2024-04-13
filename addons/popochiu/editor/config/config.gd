@@ -10,15 +10,15 @@ enum DialogStyle {
 }
 
 # EDITOR SETTINGS ----------------------------------------------------------------------------------
-const ASEPRITE_IMPORTER_ENABLED = "popochiu/import/aseprite/enable_aseprite_importer"
-const ASEPRITE_COMMAND_PATH = "popochiu/import/aseprite/command_path"
-const ASEPRITE_REMOVE_JSON_FILE = "popochiu/import/aseprite/remove_json_file"
+const ASEPRITE_IMPORTER_ENABLED = "popochiu/aseprite_import/enable_aseprite_importer"
+const ASEPRITE_COMMAND_PATH = "popochiu/aseprite_import/command_path"
+const ASEPRITE_REMOVE_JSON_FILE = "popochiu/aseprite_import/remove_json_file"
 
 # PROJECT SETTINGS ---------------------------------------------------------------------------------
 # Thanks to @drbloop for providing the bases of the new approach for moving the popochiu settings to
 # Godot's ProjectSettings instead of using a Resource file.
 # ---- GUI -----------------------------------------------------------------------------------------
-const SCALE_GUI = "popochiu/gui/scale_gui"
+const SCALE_GUI = "popochiu/gui/experimental_scale_gui"
 const INVENTORY_ALWAYS_VISIBLE = "popochiu/gui/inventory_always_visible"
 const TOOLBAR_ALWAYS_VISIBLE = "popochiu/gui/toolbar_always_visible"
 const FADE_COLOR = "popochiu/gui/fade_color"
@@ -36,11 +36,11 @@ const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
 const INVENTORY_ITEMS_ON_START = "popochiu/inventory/items_on_start"
 
 # ---- Aseprite Importing --------------------------------------------------------------------------
-const ASEPRITE_IMPORT_ANIMATION = "popochiu/import/aseprite/import_animation_by_default"
-const ASEPRITE_LOOP_ANIMATION = "popochiu/import/aseprite/loop_animation_by_default"
-const ASEPRITE_PROPS_VISIBLE = "popochiu/import/aseprite/new_props_visible_by_default"
-const ASEPRITE_PROPS_CLICKABLE = "popochiu/import/aseprite/new_props_clickable_by_default"
-const ASEPRITE_WIPE_OLD_ANIMATIONS = "popochiu/import/aseprite/wipe_old_animations"
+const ASEPRITE_IMPORT_ANIMATION = "popochiu/aseprite_import/import_animation_by_default"
+const ASEPRITE_LOOP_ANIMATION = "popochiu/aseprite_import/loop_animation_by_default"
+const ASEPRITE_PROPS_VISIBLE = "popochiu/aseprite_import/new_props_visible_by_default"
+const ASEPRITE_PROPS_CLICKABLE = "popochiu/aseprite_import/new_props_clickable_by_default"
+const ASEPRITE_WIPE_OLD_ANIMATIONS = "popochiu/aseprite_import/wipe_old_animations"
 
 # ---- Pixel game ----------------------------------------------------------------------------------
 const PIXEL_ART_TEXTURES = "popochiu/pixel/pixel_art_textures"
@@ -172,6 +172,10 @@ func get_inventory_limit() -> int:
 	return _get_project_setting(INVENTORY_LIMIT, 0)
 
 
+func set_inventory_items_on_start(items: Array) -> void:
+	_set_project_setting(INVENTORY_ITEMS_ON_START, items)
+
+
 func get_inventory_items_on_start() -> Array:
 	return _get_project_setting(INVENTORY_ITEMS_ON_START, [])
 
@@ -198,6 +202,10 @@ func is_default_wipe_old_anims_enabled() -> bool:
 
 
 # ---- Pixel game ----------------------------------------------------------------------------------
+func set_pixel_art_textures(use_pixel_art_textures: bool) -> void:
+	_set_project_setting(PIXEL_ART_TEXTURES, use_pixel_art_textures)
+
+
 func is_pixel_art_textures() -> bool:
 	return _get_project_setting(PIXEL_ART_TEXTURES, false)
 
@@ -224,7 +232,9 @@ func _set_icons() -> void:
 	}
 
 
-func _initialize_editor_cfg(key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE):
+func _initialize_editor_cfg(
+	key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE
+) -> void:
 	if editor_settings.has_setting(key): return
 	editor_settings.set_setting(key, default_value)
 	editor_settings.set_initial_value(key, default_value, false)
@@ -237,7 +247,7 @@ func _initialize_editor_cfg(key: String, default_value, type: int, hint: int = P
 
 func _initialize_project_cfg(
 	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
-):
+) -> void:
 	if ProjectSettings.has_setting(key): return
 	
 	ProjectSettings.set_setting(key, default_value)
@@ -259,6 +269,11 @@ func _get_editor_setting(key: String, default_value):
 func _get_project_setting(key: String, default_value):
 	var p = ProjectSettings.get_setting(key)
 	return p if p != null else default_value
+
+
+func _set_project_setting(key: String, value) -> void:
+	ProjectSettings.set_setting(key, value)
+	ProjectSettings.save()
 
 
 #endregion

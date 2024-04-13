@@ -80,7 +80,7 @@ static func copy_gui_template(
 	on_progress.call(90, "Updating Settings and Config files")
 	
 	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
-	_update_settings_and_config(template_name, commands_path)
+	_update_popochiu_config(template_name, commands_path)
 	await EditorInterface.get_base_control().get_tree().create_timer(0.8).timeout
 	
 	on_progress.call(100, "All in place. Thanks for your patience.")
@@ -335,11 +335,7 @@ static func _update_scene_script(script_path: String) -> int:
 	return ResourceSaver.save(packed_scene, PopochiuResources.GUI_GAME_SCENE)
 
 
-static func _update_settings_and_config(template_name: String, commands_path: String) -> void:
-	var settings := PopochiuResources.get_settings()
-	settings.graphic_interface = load(PopochiuResources.GUI_GAME_SCENE)
-	PopochiuResources.save_settings(settings)
-	
+static func _update_popochiu_config(template_name: String, commands_path: String) -> void:
 	# Update the info related to the GUI template and the GUI commands script
 	# in the popochiu_data.cfg file ----------------------------------------------------------------
 	PopochiuResources.set_data_value("ui", "template", template_name)

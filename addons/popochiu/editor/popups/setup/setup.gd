@@ -138,25 +138,20 @@ func _on_close() -> void:
 	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, int(test_width.value))
 	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, int(test_height.value))
 	
-	var settings := PopochiuResources.get_settings()
-	settings.is_pixel_art_game = false
-	
 	match game_type.selected:
 		1:
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
+			
+			PopochiuResources.get_config().set_pixel_art_textures(false)
 		2:
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
 			
-			settings.is_pixel_art_game = true
-	
-	PopochiuResources.save_settings(settings)
+			PopochiuResources.get_config().set_pixel_art_textures(true)
 	
 	if PopochiuResources.get_data_value("setup", "done", false) == false:
 		_copy_template(true)
-	else:
-		_save_settings()
 
 
 func _on_about_to_popup() -> void:
@@ -181,10 +176,6 @@ func _on_about_to_popup() -> void:
 	template_description.add_theme_font_override(
 		"bold_font", get_theme_font("bold", "EditorFonts")
 	)
-
-
-func _save_settings() -> void:
-	assert(ProjectSettings.save() == OK, "[Popochiu] Could not save Project settings")
 
 
 func _update_scale(_value: float) -> void:
@@ -321,7 +312,6 @@ func _copy_template(is_first_copy := false) -> void:
 	
 	gui_selected.emit(_selected_template.name, _template_copy_progressed, _template_copy_completed)
 	
-	_save_settings()
 	copy_process_container.show()
 	
 	# if true, make the popup visible so devs can see the copy process feedback
