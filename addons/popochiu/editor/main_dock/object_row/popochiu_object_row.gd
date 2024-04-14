@@ -287,16 +287,16 @@ func _menu_item_pressed(id: int) -> void:
 			main_dock.set_pc(name)
 			self.is_pc = true
 		MenuOptions.START_WITH_IT:
-			var settings := PopochiuResources.get_settings()
+			var items: Array = PopochiuConfig.get_inventory_items_on_start()
 			
-			if name in settings.items_on_start:
-				settings.items_on_start.erase(name)
+			if name in items:
+				items.erase(name)
 			else:
-				settings.items_on_start.append(name)
+				items.append(name)
 			
-			PopochiuResources.save_settings(settings)
+			PopochiuConfig.set_inventory_items_on_start(items)
 			
-			self.is_on_start = name in settings.items_on_start
+			self.is_on_start = name in items
 		MenuOptions.CREATE_PROP_SCRIPT:
 			var prop_template := load(PROP_SCRIPT_TEMPLATE)
 			var script_path := path + '/%s/Prop%s.gd' % [name, name]

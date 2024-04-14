@@ -11,7 +11,6 @@ preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row
 
 var scene: Node
 var target_node: Node
-var config: RefCounted
 var main_dock: Panel
 var file_system: EditorFileSystem
 
@@ -38,13 +37,11 @@ var _out_folder_default := "[Same as scene]"
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	_set_elements_styles()
-
-	if not config.aseprite_importer_enabled():
+	
+	if not PopochiuEditorConfig.aseprite_importer_enabled():
 		_show_info()
 		return
-
-	# Init Aseprite helper library
-	_aseprite.init(config)
+	
 	# Check access to Aseprite executable
 	var result = _check_aseprite()
 	if result == RESULT_CODE.SUCCESS:
@@ -52,7 +49,7 @@ func _ready():
 	else:
 		printerr(RESULT_CODE.get_error_message(result))
 		_show_warning()
-
+	
 	# Load inspector dock configuration from node
 	var cfg = LOCAL_OBJ_CONFIG.load_config(target_node)
 	if cfg == null:
@@ -65,11 +62,9 @@ func _ready():
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _check_aseprite() -> int:
-	_aseprite.init(config)
-
 	if not _aseprite.check_command_path():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-
+	
 	if not _aseprite.test_command():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
 	
@@ -146,7 +141,7 @@ func _load_default_config():
 	get_node('%OutFileName').clear()
 	get_node('%VisibleLayersCheckButton').set_pressed_no_signal(false)
 	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(
-		config.is_default_wipe_old_anims_enabled()
+		PopochiuConfig.is_default_wipe_old_anims_enabled()
 	)
 
 
@@ -247,7 +242,7 @@ func _populate_tags(tags: Array):
 		
 		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
 		get_node('%Tags').add_child(tag_row)
-		tag_row.init(config, t)
+		tag_row.init(t)
 		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
 		_customize_tag_ui(tag_row)
 		# Invoke customization hook implementable in child classes		
@@ -354,7 +349,8 @@ func _on_options_title_toggled(button_pressed):
 func _set_options_visible(is_visible):
 	get_node('%Options').visible = is_visible
 	get_node('%OptionsTitle').icon = (
-		config.get_icon("expanded") if is_visible else config.get_icon("collapsed")
+		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
+		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
 	)
 
 

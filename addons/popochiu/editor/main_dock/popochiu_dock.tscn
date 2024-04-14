@@ -22,7 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://c3r8juwutb1gr" path="res://addons/popochiu/editor/popups/setup/setup.tscn" id="18"]
 [ext_resource type="PackedScene" uid="uid://c054k1ux04waq" path="res://addons/popochiu/editor/popups/create_walkable_area/create_walkable_area.tscn" id="19"]
 
-[sub_resource type="Image" id="Image_h206q"]
+[sub_resource type="Image" id="Image_haudd"]
 data = {
 "data": PackedByteArray(255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 93, 93, 41, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0),
 "format": "RGBA8",
@@ -31,10 +31,10 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_kg4hx"]
-image = SubResource("Image_h206q")
+[sub_resource type="ImageTexture" id="ImageTexture_ojmgi"]
+image = SubResource("Image_haudd")
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lery6"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_15p2s"]
 content_margin_left = 8.0
 content_margin_right = 8.0
 draw_center = false
@@ -44,7 +44,7 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.439216, 0.427451, 0.921569, 0.74902)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vr205"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_08lb1"]
 content_margin_left = 8.0
 content_margin_right = 8.0
 draw_center = false
@@ -54,7 +54,7 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.556863, 0.313726, 0.160784, 0.74902)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ycgn"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y885n"]
 content_margin_left = 8.0
 content_margin_right = 8.0
 draw_center = false
@@ -64,7 +64,7 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.337255, 0.67451, 0.301961, 0.74902)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tnt20"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ko4r8"]
 content_margin_left = 8.0
 content_margin_right = 8.0
 draw_center = false
@@ -97,6 +97,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -111,7 +112,7 @@ focus_mode = 2
 layout_mode = 2
 placeholder_text = "Filter Popochiu objects"
 clear_button_enabled = true
-right_icon = SubResource("ImageTexture_kg4hx")
+right_icon = SubResource("ImageTexture_ojmgi")
 script = ExtResource("2_i87mb")
 
 [node name="MainScrollContainer" type="ScrollContainer" parent="MarginContainer/VBoxContainer/TabContainer/Main"]
@@ -127,7 +128,7 @@ size_flags_vertical = 3
 
 [node name="RoomsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource("4")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_lery6")
+theme_override_styles/panel = SubResource("StyleBoxFlat_15p2s")
 icon = ExtResource("3_uwncn")
 color = Color(0.439216, 0.427451, 0.921569, 0.74902)
 title = "Rooms"
@@ -135,7 +136,7 @@ create_text = "Create room"
 
 [node name="CharactersGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource("4")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_vr205")
+theme_override_styles/panel = SubResource("StyleBoxFlat_08lb1")
 icon = ExtResource("4_h14xk")
 color = Color(0.556863, 0.313726, 0.160784, 0.74902)
 title = "Characters"
@@ -143,7 +144,7 @@ create_text = "Create character"
 
 [node name="ItemsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource("4")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_3ycgn")
+theme_override_styles/panel = SubResource("StyleBoxFlat_y885n")
 icon = ExtResource("5_ritjh")
 color = Color(0.337255, 0.67451, 0.301961, 0.74902)
 title = "Inventory items"
@@ -151,18 +152,20 @@ create_text = "Create inventory item"
 
 [node name="DialogsGroup" parent="MarginContainer/VBoxContainer/TabContainer/Main/MainScrollContainer/VBoxContainer" instance=ExtResource("4")]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_tnt20")
+theme_override_styles/panel = SubResource("StyleBoxFlat_ko4r8")
 icon = ExtResource("6_evjo7")
 color = Color(0.556863, 0.235294, 0.592157, 0.74902)
 title = "Dialog trees"
 create_text = "Create dialog tree"
 
 [node name="Room" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("12")]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 focus_mode = 2
 
 [node name="Audio" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("13")]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 focus_mode = 2
@@ -181,27 +184,24 @@ size_flags_vertical = 3
 alignment = 2
 
 [node name="Version" type="Label" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "v2.0-beta_3"
 
 [node name="BtnSetup" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Opens wiki in web browser"
 text = "Setup"
-icon = SubResource("ImageTexture_kg4hx")
-
-[node name="BtnSettings" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
-layout_mode = 2
-tooltip_text = "Opens wiki in web browser"
-text = "Settings"
-icon = SubResource("ImageTexture_kg4hx")
+icon = SubResource("ImageTexture_ojmgi")
 
 [node name="BtnDocs" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Opens wiki in web browser"
 text = "Documentation"
-icon = SubResource("ImageTexture_kg4hx")
+icon = SubResource("ImageTexture_ojmgi")
 
 [node name="Popups" type="Control" parent="."]
 layout_mode = 3
@@ -232,11 +232,14 @@ title = "Create Region"
 title = "Create Walkable area"
 
 [node name="DeleteConfirmation" parent="Popups" instance=ExtResource("17")]
+unique_name_in_owner = true
 title = "Delete?"
 
 [node name="Loading" parent="Popups" instance=ExtResource("16")]
+unique_name_in_owner = true
 title = "Loading...."
 size = Vector2i(320, 180)
 min_size = Vector2i(320, 180)
 
 [node name="Setup" parent="Popups" instance=ExtResource("18")]
+unique_name_in_owner = true

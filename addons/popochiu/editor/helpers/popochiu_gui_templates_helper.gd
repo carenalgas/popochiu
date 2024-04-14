@@ -37,9 +37,6 @@ static func copy_gui_template(
 		)
 	
 	var script_path := PopochiuResources.GUI_GAME_SCENE.replace(".tscn", ".gd")
-	var commands_path := PopochiuResources.GUI_GAME_SCENE.replace(
-		"graphic_interface.tscn", "commands.gd"
-	)
 	
 	await EditorInterface.get_base_control().get_tree().create_timer(1.0).timeout
 	on_progress.call(5, "Creating Graphic Interface scene")
@@ -63,7 +60,7 @@ static func copy_gui_template(
 	on_progress.call(60, "Creating scripts")
 	
 	# Create a copy of the corresponding commands template -----------------------------------------
-	_copy_scripts(commands_template_path, commands_path, script_path, scene_path)
+	_copy_scripts(commands_template_path, PopochiuResources.GUI_COMMANDS, script_path, scene_path)
 	
 	await EditorInterface.get_base_control().get_tree().create_timer(1.5).timeout
 	on_progress.call(80, "Assigning scripts")
@@ -79,8 +76,9 @@ static func copy_gui_template(
 	await EditorInterface.get_base_control().get_tree().create_timer(1.0).timeout
 	on_progress.call(90, "Updating Settings and Config files")
 	
-	# Save the GUI template in Settings and popochiu_data.cfg --------------------------------------
-	_update_settings_and_config(template_name, commands_path)
+	# Update the info related to the GUI template and the GUI commands script
+	# in the popochiu_data.cfg file ----------------------------------------------------------------
+	PopochiuResources.set_data_value("ui", "template", template_name)
 	await EditorInterface.get_base_control().get_tree().create_timer(0.8).timeout
 	
 	on_progress.call(100, "All in place. Thanks for your patience.")
@@ -333,17 +331,6 @@ static func _update_scene_script(script_path: String) -> int:
 	packed_scene.pack(scene)
 	
 	return ResourceSaver.save(packed_scene, PopochiuResources.GUI_GAME_SCENE)
-
-
-static func _update_settings_and_config(template_name: String, commands_path: String) -> void:
-	var settings := PopochiuResources.get_settings()
-	settings.graphic_interface = load(PopochiuResources.GUI_GAME_SCENE)
-	PopochiuResources.save_settings(settings)
-	
-	# Update the info related to the GUI template and the GUI commands script
-	# in the popochiu_data.cfg file ----------------------------------------------------------------
-	PopochiuResources.set_data_value("ui", "template", template_name)
-	PopochiuResources.set_data_value("ui", "commands", commands_path)
 
 
 #endregion

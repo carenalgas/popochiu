@@ -3,6 +3,7 @@ class_name PopochiuUtils
 extends Node
 ## Utility functions for Popochiu.
 
+#region Public #####################################################################################
 ## Used by the GUI to get the position of [param node] in the scene transformed to the space of the
 ## [CanvasLayer] where it is is rendered.
 static func get_screen_coords_for(node: Node) -> Vector2:
@@ -47,7 +48,10 @@ static func print_normal(msg: String) -> void:
 
 ## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
 static func is_click_or_touch(event: InputEvent) -> bool:
-	if (event is InputEventMouseButton and not event.double_click) or (event is InputEventScreenTouch and not event.double_tap):
+	if (
+		(event is InputEventMouseButton and not event.double_click)
+		or (event is InputEventScreenTouch and not event.double_tap)
+	):
 		return (event is InputEventMouseButton or event is InputEventScreenTouch)
 
 	return false
@@ -57,7 +61,7 @@ static func is_click_or_touch(event: InputEvent) -> bool:
 ## it is pressed.
 static func is_click_or_touch_pressed(event: InputEvent) -> bool:
 	# Fix #183 by including `event is InputEventScreenTouch` validation
-	return is_click_or_touch(event) and event.pressed	
+	return is_click_or_touch(event) and event.pressed
 
 
 ## Returns the index of [param event] when it is an [InputEventMouseButton] or
@@ -76,4 +80,4 @@ static func get_click_or_touch_index(event: InputEvent) -> int:
 	return index
 
 
-
+#endregion

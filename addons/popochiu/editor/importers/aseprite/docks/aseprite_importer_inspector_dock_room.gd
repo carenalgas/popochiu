@@ -8,7 +8,7 @@ var _animation_creator = preload(\
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
 	# Instantiate animation creator
-	_animation_creator.init(config, _aseprite, file_system)
+	_animation_creator.init(_aseprite, file_system)
 
 	super()
 

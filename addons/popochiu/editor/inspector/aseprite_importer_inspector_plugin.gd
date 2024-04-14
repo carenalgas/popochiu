@@ -6,8 +6,6 @@ const CONFIG_SCRIPT = preload("res://addons/popochiu/editor/config/config.gd")
 const INSPECTOR_DOCK_CHARACTER := DOCKS_PATH + "aseprite_importer_inspector_dock_character.gd"
 const INSPECTOR_DOCK_ROOM := DOCKS_PATH + "aseprite_importer_inspector_dock_room.gd"
 
-
-var config: RefCounted
 var main_dock: Panel
 var _target_node: Node
 
@@ -37,7 +35,6 @@ func _parse_property(object, type, name, hint_type, hint_string, usage_flags, wi
 		dock.set_script(load(INSPECTOR_DOCK_ROOM))
 
 	dock.target_node = object
-	dock.config = config
 	dock.file_system = EditorInterface.get_resource_filesystem()
 	dock.main_dock = main_dock # TODO: change for SignalBus
 

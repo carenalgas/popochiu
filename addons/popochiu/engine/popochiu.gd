@@ -51,7 +51,7 @@ var clicked: PopochiuClickable = null
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
 ## Used to know if a cutscene was skipped.
 ## A reference to [PopochiuSettings]. Can be used to quickly access its members.
-var settings := PopochiuResources.get_settings()
+var settings := PopochiuSettings.new()
 ## Reference to the [PopochiuAudioManager].
 var am: PopochiuAudioManager = null
 # NOTE: This might not just be a boolean, but there could be an array that puts
@@ -91,7 +91,7 @@ var half_height := 0.0 : get = get_half_height
 ## Used to access the value of the current text speed. The possible text speed values are stored
 ## in the [member PopochiuSettings.text_speeds] [Array], so this property has the index of the
 ## speed being used by the game.
-var current_text_speed_idx := settings.default_text_speed
+var current_text_speed_idx := settings.default_text_speed_idx
 ## The text speed being used by the game. When this property changes, the
 ## [signal text_speed_changed] signal is emitted.
 var current_text_speed: float = settings.text_speeds[current_text_speed_idx] :
@@ -152,23 +152,14 @@ func _ready() -> void:
 	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
 	
 	# Set the Graphic Interface node
-	if settings.graphic_interface:
-		gi = settings.graphic_interface.instantiate()
-		gi.name = 'GraphicInterface'
-	else:
-		gi = load(PopochiuResources.GUI_ADDON_FOLDER).instantiate()
+	gi = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
+	gi.name = 'GraphicInterface'
 	
 	# Load the commands for the game
-	var commands_path: String = PopochiuResources.get_data_value("ui", "commands", "")
-	if not commands_path.is_empty():
-		commands = load(commands_path).new()
+	commands = load(PopochiuResources.GUI_COMMANDS).new()
 	
 	# Set the Transitions Layer node
-	if settings.transition_layer:
-		tl = settings.transition_layer.instantiate()
-		tl.name = 'TransitionLayer'
-	else:
-		tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
+	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
 	
 	# Calculate the scale that could be applied
 	scale = Vector2(self.width, self.height) / Vector2(320.0, 180.0)
@@ -189,7 +180,7 @@ func _ready() -> void:
 		if pc_data_path:
 			var pc_data: PopochiuCharacterData = load(pc_data_path)
 			var pc: PopochiuCharacter = load(pc_data.scene).instantiate()
-
+			
 			C.player = pc
 			C.characters.append(pc)
 			C.set(pc.script_name, pc)
@@ -731,14 +722,12 @@ func play_transition(type: int, duration: float) -> void:
 	await tl.transition_finished
 
 
+# TODO: Move this logic to the button in the 2-click Context-sensitive template in charge of
+# 		changing the text speed.
 ## Changes the speed of the text in dialog lines looping through the values in
 ## [member PopochiuSettings.text_speeds].
 func change_text_speed() -> void:
-	current_text_speed_idx = wrapi(
-		current_text_speed_idx + 1,
-		0,
-		settings.text_speeds.size()
-	)
+	current_text_speed_idx = wrapi(current_text_speed_idx + 1, 0, settings.text_speeds.size())
 	current_text_speed = settings.text_speeds[current_text_speed_idx]
 	
 	text_speed_changed.emit()
@@ -909,7 +898,6 @@ func set_current_text_speed(value: float) -> void:
 
 func set_current_command(value: int) -> void:
 	current_command = value
-	
 	command_selected.emit()
 
 
