@@ -62,6 +62,7 @@ const TL := 1
 const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/"
 const GUI_GAME_FOLDER := BASE_DIR + "/graphic_interface/"
 const GUI_GAME_SCENE := GUI_GAME_FOLDER + "graphic_interface.tscn"
+const GUI_COMMANDS := GUI_GAME_FOLDER + "commands.gd"
 const TRANSITION_LAYER_ADDON :=\
 "res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn"
 const TRANSITION_LAYER_POPOCHIU :=\
@@ -478,6 +479,14 @@ static func get_plugin_cfg() -> ConfigFile:
 
 static func get_version() -> String:
 	return get_plugin_cfg().get_value("plugin", "version")
+
+
+static func is_setup_done() -> bool:
+	return get_data_value("setup", "done", false)
+
+
+static func is_gui_set() -> bool:
+	return !get_data_value("ui", "template", "").is_empty()
 
 
 #endregion

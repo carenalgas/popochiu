@@ -156,9 +156,7 @@ func _ready() -> void:
 	gi.name = 'GraphicInterface'
 	
 	# Load the commands for the game
-	var commands_path: String = PopochiuResources.get_data_value("ui", "commands", "")
-	if not commands_path.is_empty():
-		commands = load(commands_path).new()
+	commands = load(PopochiuResources.GUI_COMMANDS).new()
 	
 	# Set the Transitions Layer node
 	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
@@ -182,7 +180,7 @@ func _ready() -> void:
 		if pc_data_path:
 			var pc_data: PopochiuCharacterData = load(pc_data_path)
 			var pc: PopochiuCharacter = load(pc_data.scene).instantiate()
-
+			
 			C.player = pc
 			C.characters.append(pc)
 			C.set(pc.script_name, pc)

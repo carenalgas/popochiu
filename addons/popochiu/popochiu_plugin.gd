@@ -88,8 +88,7 @@ func _enter_tree() -> void:
 	
 	await get_tree().create_timer(0.5).timeout
 	
-	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and
-	# AudioCues
+	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues
 	main_dock.call_deferred("grab_focus")
 	
 	# ==== Connect to signals ======================================================================
@@ -111,7 +110,9 @@ func _enter_tree() -> void:
 	# Connect signals between other nodes
 	main_dock.setup_dialog.gui_selected.connect(_gui_templates_helper.copy_gui_template)
 	
-	if PopochiuResources.get_data_value("setup", "done", false) == false:
+	# Check if the Setup popup should be shown: the first time the Editor is opened after installing
+	# the plugin or if there is no GUI scene (template) selected.
+	if not (PopochiuResources.is_setup_done() or PopochiuResources.is_gui_set()):
 		main_dock.setup_dialog.appear(true)
 		(main_dock.setup_dialog as AcceptDialog).confirmed.connect(
 			_set_setup_done

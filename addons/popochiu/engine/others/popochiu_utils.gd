@@ -3,6 +3,7 @@ class_name PopochiuUtils
 extends Node
 ## Utility functions for Popochiu.
 
+#region Public #####################################################################################
 ## Used by the GUI to get the position of [param node] in the scene transformed to the space of the
 ## [CanvasLayer] where it is is rendered.
 static func get_screen_coords_for(node: Node) -> Vector2:
@@ -77,3 +78,6 @@ static func get_click_or_touch_index(event: InputEvent) -> int:
 			index = event.index
 	
 	return index
+
+
+#endregion
