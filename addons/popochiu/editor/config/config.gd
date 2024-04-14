@@ -45,21 +45,21 @@ const PIXEL_PERFECT = "popochiu/pixel/pixel_perfect"
 #region Public #####################################################################################
 static func initialize_project_settings():
 	# ---- GUI -------------------------------------------------------------------------------------
-	_initialize_project_cfg(SCALE_GUI, false, TYPE_BOOL)
+	_initialize_project_setting(SCALE_GUI, false, TYPE_BOOL)
 	# TODO: Move this to the properties of the 2-click Context-sensitive template or its InventoryBar
 	# 		component
-	_initialize_project_cfg(INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
+	_initialize_project_setting(INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	# TODO: Move this to the properties of the 2-click Context-sensitive template or its SettingsBar
 	# 		component
-	_initialize_project_cfg(TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
-	_initialize_project_cfg(FADE_COLOR, Color.BLACK, TYPE_COLOR)
-	_initialize_project_cfg(SKIP_CUTSCENE_TIME, 0.2, TYPE_FLOAT)
+	_initialize_project_setting(TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
+	_initialize_project_setting(FADE_COLOR, Color.BLACK, TYPE_COLOR)
+	_initialize_project_setting(SKIP_CUTSCENE_TIME, 0.2, TYPE_FLOAT)
 	# ---- Dialogs ---------------------------------------------------------------------------------
-	_initialize_project_cfg(TEXT_SPEED, 0.1, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
-	_initialize_project_cfg(AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
-	_initialize_project_cfg(USE_TRANSLATIONS, false, TYPE_BOOL)
-	_initialize_project_cfg(MAX_DIALOG_OPTIONS, 3, TYPE_INT)
-	_initialize_project_cfg(
+	_initialize_project_setting(TEXT_SPEED, 0.1, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
+	_initialize_project_setting(AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
+	_initialize_project_setting(USE_TRANSLATIONS, false, TYPE_BOOL)
+	_initialize_project_setting(MAX_DIALOG_OPTIONS, 3, TYPE_INT)
+	_initialize_project_setting(
 		DIALOG_STYLE,
 		DialogStyle.ABOVE_CHARACTER,
 		TYPE_INT,
@@ -68,19 +68,19 @@ static func initialize_project_settings():
 		"Above Character,Portrait,Caption"
 	)
 	# ---- Inventory -------------------------------------------------------------------------------
-	_initialize_project_cfg(INVENTORY_LIMIT, 0, TYPE_INT)
-	_initialize_project_cfg(INVENTORY_ITEMS_ON_START, [], TYPE_ARRAY,
+	_initialize_project_setting(INVENTORY_LIMIT, 0, TYPE_INT)
+	_initialize_project_setting(INVENTORY_ITEMS_ON_START, [], TYPE_ARRAY,
 		PROPERTY_HINT_TYPE_STRING, "%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE, "*tscn"]
 	)
 	# ---- Aseprite Importing ----------------------------------------------------------------------
-	_initialize_project_cfg(ASEPRITE_IMPORT_ANIMATION, true, TYPE_BOOL)
-	_initialize_project_cfg(ASEPRITE_LOOP_ANIMATION, true, TYPE_BOOL)
-	_initialize_project_cfg(ASEPRITE_PROPS_VISIBLE, true, TYPE_BOOL)
-	_initialize_project_cfg(ASEPRITE_PROPS_CLICKABLE, true, TYPE_BOOL)
-	_initialize_project_cfg(ASEPRITE_WIPE_OLD_ANIMATIONS, true, TYPE_BOOL)
+	_initialize_project_setting(ASEPRITE_IMPORT_ANIMATION, true, TYPE_BOOL)
+	_initialize_project_setting(ASEPRITE_LOOP_ANIMATION, true, TYPE_BOOL)
+	_initialize_project_setting(ASEPRITE_PROPS_VISIBLE, true, TYPE_BOOL)
+	_initialize_project_setting(ASEPRITE_PROPS_CLICKABLE, true, TYPE_BOOL)
+	_initialize_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS, true, TYPE_BOOL)
 	# ---- Pixel game ------------------------------------------------------------------------------
-	_initialize_project_cfg(PIXEL_ART_TEXTURES, false, TYPE_BOOL)
-	_initialize_project_cfg(PIXEL_PERFECT, false, TYPE_BOOL)
+	_initialize_project_setting(PIXEL_ART_TEXTURES, false, TYPE_BOOL)
+	_initialize_project_setting(PIXEL_PERFECT, false, TYPE_BOOL)
 
 	ProjectSettings.save()
 
@@ -181,7 +181,7 @@ static func is_pixel_perfect() -> bool:
 #endregion
 
 #region Private ####################################################################################
-static func _initialize_project_cfg(
+static func _initialize_project_setting(
 	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
 ) -> void:
 	if ProjectSettings.has_setting(key): return
