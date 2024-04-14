@@ -17,6 +17,12 @@ func _on_click() -> void:
 #	await C.player.say("Not picking that up!")
 
 
+func _on_double_click() -> void:
+	# Replace the call to E.command_fallback() with your code.
+	E.command_fallback()
+	# For example, you could make the player instantly do something instead of walking there first
+
+
 # When the node is right clicked
 func _on_right_click() -> void:
 	# Replace the call to E.command_fallback() to implement your code.

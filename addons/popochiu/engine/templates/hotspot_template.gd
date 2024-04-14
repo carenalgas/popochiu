@@ -17,6 +17,14 @@ func _on_click() -> void:
 #	await C.player.say("What a nice view")
 
 
+func _on_double_click() -> void:
+	# Replace the call to E.command_fallback() with your code.
+	E.command_fallback()
+	# For example, you could make the player instantly goto another room on an exit hotspot instead
+	# of waiting for the player to walk there.
+#	await E.goto_room("NewRoom")
+
+
 # When the node is right clicked
 func _on_right_click() -> void:
 	# Replace the call to E.command_fallback() with your code.

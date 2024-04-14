@@ -22,7 +22,7 @@ func _draw() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not PopochiuUtils.is_click_or_touch(event) or not visible:
+	if not PopochiuUtils.is_click_or_touch_pressed(event) or not visible:
 		return
 	
 	get_viewport().set_input_as_handled()
