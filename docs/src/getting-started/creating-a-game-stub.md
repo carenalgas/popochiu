@@ -653,6 +653,10 @@ Save the project and run the game. Now if you click on the toy car on the floor,
 
     Popochiu does not force a specific game structure on you. Of course it provides sensible defaults for the staples of the genre, but it gives you the tools to build the adventure **you** want to build.
 
+!!! tip
+    Despite what we just said Popochiu **does** provide a way to automatically hide a prop when it's collected. Populate the **Link to item** property in the inspector with the name of the inventory item that corresponds to that prop. When the item is added to the character's inventory, the engine will remove the corresponding prop from the stage for you.  
+    Magic!
+
 !!! note
     See how the last two lines of the `_on_click()` function are not `await`-ed? The reason is that those functions are just changing the state of the game, without triggering animations, or dialogs.
 
@@ -662,7 +666,7 @@ Save the project and run the game. Now if you click on the toy car on the floor,
 
 The last very common case we want to cover with this introductory guide, is the interaction with another character.
 
-If you followed this tutorial from the start, [you should have created two characters](#add-another-character). Popochiu adds our main character to the room for us when the game starts, so we don't need to do it manually. On the other hands, as we are the directors of our own game, it leaves on us to place non-player characters where they belong.
+If you followed this tutorial from the start, [you should have created two characters](#add-another-character). Popochiu adds our main character to the room for us when the game starts, so we don't need to do it manually. On the other hand, as we are the directors of our own game, it leaves on us to place non-player characters where they belong.
 
 We will then add Popsy (or whatever you called your secondary character) to our sole room, and script some interactions.
 
@@ -681,7 +685,7 @@ Dialogs in Popochiu are managed by _Dialog trees_, global objects like character
 !!! info
     Lines in a specific dialog tree can be turned on and off, and you can start a different dialog tree from scripts, so you can branch out of a dialog into another one, and back writing simple wiring code.
 
-To create a new dialog tree click on the **Create dialog tree** button in the tab room of the Popochiu dock (_36_), and name the new dialog in the popup window that appears.
+To create a new dialog tree, click on the **Create dialog tree** button in the main tab of the Popochiu dock (_36_), and name the new dialog in the popup window that appears.
 
 ![Create dialog tree](../assets/images/getting-started/game_stub-dialog-27-create_button.png "Create the dialog tree from the Popochiu main dock")
 
@@ -692,7 +696,7 @@ We'll name our new dialog tree "_PopsyHouseChat_".
 
     You may want to find a pattern that makes it easier to remember what's the dialog content, participants and place, like `CharacterPlaceTopic` or whatever makes sense to you. This will also make the list easier to navigate and will help with autocomplete in scripts.
 
-Now that we have a dialog tree, we want to add options for the player to choose. To edit the "_PopsyHouseChat_" dialog tree, click the **Open in Editor** icon (find in on the row in the main dock list of Dialog trees).
+Now that we have a dialog tree, we want to add options for the player to choose. To edit the "_PopsyHouseChat_" dialog tree, click the **Open in Editor** icon (locate the dialog tree in the main tab list and find the icon on the entry row).
 
 !!! info "Under the hood"
     While most of the Popochiu objects we have encountered so far are Godot [Scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/nodes_and_scenes.html#scenes), dialog trees are Godot [Resources](https://docs.godotengine.org/en/stable/tutorials/scripting/resources.html).
@@ -866,7 +870,7 @@ We know how to:
 * Collect and get rid of stuff in **the inventory**
 * We can create interesting, dynamic **dialogs**
 
-These are the basics of every adventure games and an inch of what Popochiu can do for you.  
+These are the basics of every adventure game and an inch of what Popochiu can do for you.  
 We hope that this appetizer was enough to understand if Popochiu is the game engine that you need for your project, and you are enticed to learn more!
 
 ## Homeworks
@@ -885,7 +889,7 @@ Add a cabinet with a drawer to the scene and a key as inventory item. When the c
 If the player tries to give the key to Popsy, the main character will say something to make clear it doesn't want to give away the key.
 
 !!! tip "Hint"
-    Tntroduce another block dedicated to the new inventory item in `_on_item_used()` for Popsy character.
+    Introduce another block dedicated to the new inventory item in `_on_item_used()` for Popsy character.
 
 ### Solve a problem with the implemented dialog
 
@@ -899,7 +903,7 @@ If you start the game, give the toy car to Popsy, then talk to him and select th
 Now that you've broken the ice with the basic concepts, you can learn more.
 
 * Go and get our [example resources](/getting-started/example-resources) to learn directly from code and find a quick start in your experimentation.
-* Throughout this guide, we've given you a taste of the plugin interface, but you may want to learn everything there is to know on how to use Popochiu's interface, by reading [the editor handbook](/the-editor-handbook).
-* At the same time, the engine (the part of Popochiu that you will ship with your game) deserves its own deep dive. Read [the engine handbook](/the-engine-handbook) and keep [the scripting API reference](/the-engine-handbook/scripting-reference) at hand while you code your game.
+* Throughout this guide, we've given you a taste of the plugin interface, but you may want to learn everything there is to know about Popochiu's editor functions, by reading [the editor handbook](/the-editor-handbook).
+* At the same time, the engine (the part of Popochiu that will ship with your game) deserves its own deep dive. Read [the engine handbook](/the-engine-handbook) and keep [the scripting API reference](/the-engine-handbook/scripting-reference) at hand while you code your game.
 * This tutorial overlooks many important parts, among which [animations](/how-to-develop-a-game/playing-animations) and [audio management](/how-to-develop-a-game/adding-sounds) certainly stand out. The [How to Develop a Game](/how-to-develop-a-game) section contains basics and advanced techniques that will help you get the most out of Godot and Popochiu.
 * Last but not least, Popochiu is a community effort. Learn [how to get help](/getting-started/getting-help) and, if you feel like contributing, read our [contribution guidelines](/contributing-to-popochiu).
