@@ -2,8 +2,8 @@ extends PanelContainer
 
 const ToolbarButton := preload('buttons/settings_bar_button.gd')
 
-@export var script_name := ''
 @export var used_in_game := true
+@export var always_visible := false
 
 var is_disabled := false
 
@@ -19,7 +19,7 @@ var _is_hidden := true
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	if not E.settings.toolbar_always_visible:
+	if not always_visible:
 		position.y = _hide_y
 	
 	# Connect to child signals
@@ -34,7 +34,7 @@ func _ready() -> void:
 	if not used_in_game:
 		hide()
 	
-	set_process_input(not E.settings.toolbar_always_visible)
+	set_process_input(not always_visible)
 	
 	size.x = $Box.size.x
 
@@ -59,7 +59,7 @@ func is_open() -> bool:
 
 #region Private ####################################################################################
 func _open() -> void:
-	if E.settings.toolbar_always_visible: return
+	if always_visible: return
 	if not is_disabled and position.y != _hide_y: return
 	
 	if is_instance_valid(_tween) and _tween.is_running():
@@ -76,7 +76,7 @@ func _open() -> void:
 
 
 func _close() -> void:
-	if E.settings.toolbar_always_visible: return
+	if always_visible: return
 	
 	await get_tree().process_frame
 	
