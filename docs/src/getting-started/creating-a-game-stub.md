@@ -6,12 +6,12 @@ weight: 1020
 
 This page will guide you through the process of creating a very small stub for a game.
 
-You will set up a quick game with a single location, a couple interacting characters and items, plus dialogs and inventory.
+You will set up a quick game with a single location, a couple of interacting characters and items, plus dialogs and inventory.
 
 You can use the resulting stub to experiment and tinker as you read the documentation. If you are already familiar with Popochiu and have already created your project, you can jump to the [Tutorials](/getting-started/tutorials) section to learn more about more advanced features.
 
 !!! info
-    If you are moving your first steps in Adventure Games development, or just evaluating if Popochiu is for you, you may want to download the [Example Game Assets Pack](/getting-started/example-resources#example-assets), that contains all the assets used in this tutorial.
+    If you are moving your first steps in Adventure Games development, or just evaluating if Popochiu is for you, you may want to download the [Example Game Assets [Pack](/getting-started/example-resources#example-assets), which contains all the assets used in this tutorial.
 
     If you just want to tinker with Popochiu or experiment on a throw-away project, you can just clone the [Example Game](/getting-started/example-resources#example-game), that's already complete and ready to run.
 
@@ -44,49 +44,49 @@ To create our game stub we will:
     - [Solve a problem with the implemented dialog](#solve-a-problem-with-the-implemented-dialog)
 - [What's next](#whats-next)
 
-There is more to Popochiu, but this will showcase the foundamental building blocks of how the engine works.
+There is more to Popochiu, but this will showcase the fundamental building blocks of how the engine works.
 
 Let's start!
 
 ## Game setup
 
-When you first start your project, you are greated with the **Setup** popup, where you can define the base paramenters of your game.
+When you first start your project, you are greeted with the **Setup** popup, where you can define the base parameters of your game.
 
 ![Setup Popup](../assets/images/getting-started/game_stub-setup_popup.png "Popochiu's Setup popup window")
 
-Using this window will take care of configuring Godot project with a coherent preset of paramenters so that your game looks good in all situations.  
+Using this window will take care of configuring Godot project with a coherent preset of parameters so that your game looks good in all situations.  
 Also, it will preconfigure the Game User Interface (GUI) of your choice, so that you don't have to.
 
 ### Set game resolution
 
-The **Native game resolution** (_1_) is the actual resolution of your assets (i.e. background). This resolution will be scaled up or down to match the actual display resolution (see below). Usually you want to set this to the size of a full-game background tha fills the entire "screen".
+The **Native game resolution** (_1_) is the actual resolution of your assets (i.e. background). This resolution will be scaled up or down to match the actual display resolution (see below). Usually, you want to set this to the size of a full-game background that fills the entire "screen".
 
-For example, if you plan to create a retro-vibes pixel-art adventure game like the early ones by Sierra or LucasArts, you may want to keep this resolution down to `320x200`, that was the native resolution of VGA displays back then.  
-If you want to create a high-res game like the modern Deponia series, with beautifully painted art, you may want to bring this up to `1920x1080`, that's a modern Full-HD display resolution.
+For example, if you plan to create a retro-vibes pixel-art adventure game like the early ones by Sierra or LucasArts, you may want to keep this resolution down to `320x200`, which was the native resolution of VGA displays back then.  
+If you want to create a high-res game like the modern Deponia series, with beautifully painted art, you may want to bring this up to `1920x1080`, which is a modern Full-HD display resolution.
 
 !!! tip
-    If you plan to develop a pixel-art game for widescreen displays, these are commond resolutions that can work on a modern PC:
+    If you plan to develop a pixel-art game for widescreen displays, these are common resolutions that can work on a modern PC:
 
     * `320x180`: vertically very small, good to emulate pioneering 80s games like Sierra's _King's Quest_ or similar.
     * `356x200`: more vertical space, this is a "widescreen" version of the 320x200 that games like _The Secret of Monkey Island_ or _King's Quest V_ had on an IBM PC or Amiga, back then.
-    * `384x216`: there were no games back then featuring this resolution, but it can be used if you want to have a bit more vertical space for higher sprites, or for a bulky interface like the 9-verbs one, without ruining the _retro-vibe_.
+    * `384x216`: there were no games back then featuring this resolution, but it can be used if you want to have a bit more vertical space for higher sprites or to accommodate a bulky interface like the 9-verbs one, without ruining the _retro-vibe_.
 
-Some prefer not to play adventure games in full-screen so, once you've set the native resolution for you game, you may use the **Playing window resolution** (_2_) values to set the size your game will have when played in windowed mode. For low-res games, you want to provide a larger window than the native resolution, or on most modern displays, it will be very tiny.  
+Some prefer not to play adventure games in full-screen so, once you've set the native resolution for your game, you may use the **Playing window resolution** (_2_) values to set the size your game will have when played in windowed mode. For low-res games, you want to provide a larger window than the native resolution, or on most modern displays, it will be very tiny.  
 
 !!! note
-    The provided default is a good fit for most Full-HD displays, and the player will be able to resize the window anyway.Probably it's worth adjusting the window size only if you know your game will be played in specific contexts.
+    The provided default is a good fit for most Full-HD displays, and the player will be able to resize the window anyway. Probably it's worth adjusting the window size only if you know your game will be played in specific contexts.
 
-Finally, the **Game type** (_3_) select box will set a bunch of project settings that are better kept coherent, from sprite importing, to scaling algorithms, etc. The options are:
+Finally, the **Game type** (_3_) select box will set a bunch of project settings that are better kept coherent, from sprite importing to scaling algorithms, etc. The options are:
 
 * **Custom**: This does nothing, leaving all the settings to the developer.
-* **2D**: Chose this for high-res games, that may benefit from anti-aliasing when scaled up or down.
-* **Pixel**: Chose this for low-res and pixel-art games, so that you graphics remain crisp when scaled up or down.
+**2D**: Choose this for high-res games, that may benefit from anti-aliasing when scaled up or down.
+**Pixel**: Choose this for low-res and pixel-art games, so that your graphics remain crisp when scaled up or down.
 
 !!! info "Under the hood"
-    For the more technical readers, what the **Game type** options do is pre-configuring **Stretch mode** to `canvas_item` and **Stretch aspect** to `keep` for you. The `Pixel` mode also sets textures use the `Nearest` filter, so that no anti-alias or blurring happens when the game is scaled.
+    For the more technical readers, what the **Game type** options do is preconfigure the **Stretch mode** to `canvas_item` and **Stretch aspect** to `keep` for you. The `Pixel` mode also sets textures using the `Nearest` filter, so that no anti-alias or blurring happens when the game is scaled.
 
 !!! note
-    Nowadays there are so many different display aspect ratios, that doing assumptions on how your game will be played is futile. Nonetheless, the vast majority of devices out there (mobile or PCs) have displays close enough to `16:9` that you will probably end up keeping this ratio into consideration. That's the reason why Popochiu default values are set to `320x180`: it is an old-style resolution, with the aspect ratio of a modern display.
+    Nowadays there are so many different display aspect ratios, that making assumptions about how your game will be played is futile. Nonetheless, the vast majority of devices out there (mobile or PCs) have displays close enough to `16:9` that you will probably end up keeping this ratio into consideration. That's the reason why Popochiu default values are set to `320x180`: it is an old-style resolution, with the aspect ratio of a modern display.
 
 ### Select game GUI
 
@@ -97,16 +97,16 @@ In the **GUI Template** (_4_) section of the Setup popup, you can click on a GUI
 
 * **Custom**: select this if you want to create your own GUI. That's basically the "No template, please" option.
 * **9 Verbs**: inspired by the original SCUMM interface, first seen in _Monkey Island 2: LeChuck's Revenge_.
-* **Sierra**: inspired by the early 90s SCI interface, common to _King's Quest_ and _Space Quest_ games in early 90s.
+* **Sierra**: inspired by the early 90s SCI interface, common to _King's Quest_ and _Space Quest_ games in the early 90s.
 * **2-Click Context-sensitive**: the most basic interface for an Adventure Game, common to many modern titles like _Deponia_ - left-click to walk and interact, right-click to examine.
 
 !!! warning
     You can change your mind and apply a different template later during the development of your game, but mind that doing this will **replace** your GUI (and all the custom logic or graphics) with a new template.
 
-    Also, keep in mind that some GUIs will take space on screen (like the 9 Verbs one), and this will impact your backgrounds.
+    Also, keep in mind that some GUIs will take up space on the screen (like the 9 Verbs one), and this will impact your backgrounds.
 
 !!! note
-    You can go back and review your game setup choices at any moment, clicking the "Setup" button at the bottom of the [Popochiu Main Dock](#TODO).
+    You can go back and review your game setup choices at any moment, by clicking the "Setup" button at the bottom of the [Popochiu Main Dock](#TODO).
 
     ![Setup button](../assets/images/getting-started/game_stub-setup_dock_button.png "Reopen the Setup window anytime from the main dock")
 
@@ -118,10 +118,10 @@ Let's start creating the player character. In the Popochiu main dock, click the 
 
 ![Create Character button](../assets/images/getting-started/game_stub-character-1-create-button.png "Press the button to create a new character")
 
-A popup will apper, asking for the character name. This is the machine name of your character, not the one the player will see in game, and it needs to be written in `PascalCase` (no spaces or punctuation and all capitalized words).  
+A popup will appear, asking for the character name. This is the machine name of your character, not the one the player will see ingame, and it needs to be written in `PascalCase` (no spaces or punctuation and all capitalized words).  
 Once you entered the name, click the **OK** button (_2_).
 
-![Confirmation button](../assets/images/getting-started/game_stub-character-2-creation-popup.png "Confirm the character name")
+![Confirmation button](../assets/images/getting-started/game_stub-character-2-creation-popup.png "Confirm the character's name")
 
 As you can see the editor is giving you a preview of the files and assets that will be created. If everything went well, your editor should look like this now:
 
@@ -140,17 +140,17 @@ Set the **Flips when** parameter (_5_) to `Looking Left`, and leave the rest unt
 
 The character scene shows nothing. That's because we've set no sprite for our character. Popochiu characters support a full set of standard and custom animations, but since we are only stubbing the game, we'll just set a static sprite for now.
 
-If you don't have a spritesheet ready for your character, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/goddiu/goddiu.png) from the demo game.  
+If you don't have a sprite sheet ready for your character, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/goddiu/goddiu.png) from the demo game.  
 Save it into your project, in the `game/characters/<your character name>/` folder, and rename it as you see fit.
 
 !!! tip
-    You can actually save the spritesheet anywhere in your project, but keeping it in the Character folder makes the project structure more tidy and maintainable. You may want to create subfolders to organize assets, but we strongly advice to start simple and reorganize only when it's necessary.
+    You can save the spritesheet anywhere in your project, but keeping it in the Character folder makes the project structure more tidy and maintainable. You may want to create subfolders to organize assets, but we strongly advise starting simple and reorganizing only when it's necessary.
 
-To set the character sprite, go back to your editor and select the **Sprite2D** node in you character's scene (_6_), then locate your spritesheet filename in your file manager (_7_). Select and drag it to the **Texture** property in the inspector (_8_).
+To set the character sprite, go back to your editor and select the **Sprite2D** node in your character's scene (_6_), then locate your sprite sheet filename in your file manager (_7_). Select and drag it to the **Texture** property in the inspector (_8_).
 
 ![Set Character's sprite](../assets/images/getting-started/game_stub-character-6-set_texture.png "Drag and drop the spritesheet in the Sprite2D texture")
 
-You can see from the screenshot that the entire image is now visible in the Character scene. Of course we want to select just a single sprite from the spritesheet. For that, head to the **Animation** section in the inspector and set **Hframes** and **Vframes** value to match the number of sprites in the spritesheet, like this (_9_):
+You can see from the screenshot that the entire image is now visible in the Character scene. Of course, we want to select just a single sprite from the sprite sheet. For that, head to the **Animation** section in the inspector and set **Hframes** and **Vframes** values to match the number of sprites in the sprite sheet, like this (_9_):
 
 ![Set Character's sprite frames](../assets/images/getting-started/game_stub-character-7-set_frames.png "The example asset is a four-by-four matrix of sprites, so we are setting horizontal and vertical frames accordingly")
 
@@ -158,17 +158,17 @@ Now the sprite on the scene should be OK, showing your character in the standing
 
 ![Set Character's sprite position](../assets/images/getting-started/game_stub-character-8-set_feet_center.png "Move the Character so its feet are in the scene's origin")
 
-This is a problem, because the scene origin point is the one that the engine will check to understand if the character is still inside a walking area, or if it reached a certain position when moving around the scene. In short, the scene origin should be where the character's feet are.  
-Fixing this is as simple as selecting the **Sprite2D** node in the character scene (_10_), and move it so that the origin is in between the two feet, like in the image below.
+This is a problem because the scene origin point is the one that the engine will check to understand if the character is still inside a walking area, or if it reached a certain position when moving around the scene. In short, the scene origin should be where the character's feet are.  
+Fixing this is as simple as selecting the **Sprite2D** node in the character scene (_10_), and moving it so that the origin is in between the two feet, like in the image below.
 
-![Correct Character's sprite position](../assets/images/getting-started/game_stub-character-9-set_feet_center.png "The character is now correctly positioned")
+![Correct the Character's sprite position](../assets/images/getting-started/game_stub-character-9-set_feet_center.png "The character is now correctly positioned")
 
 !!! tip "Tips for great character sprite positioning"
-    Most game characters' idle position is depicted in a three-quarter view. In this type of shots, the foot facing the camera will be slightly lower than the foot pointing to the side of the sprite (look at Goddiu above). To achieve perfect results when positioning your sprite, you should position the side-facing foot on the zero line, and the camera-facing foot toe should be a bit lower.
+    Most game characters' idle position is depicted in a three-quarter view. In this type of shot, the foot facing the camera will be slightly lower than the foot pointing to the side of the sprite (look at Goddiu above). To achieve perfect results when positioning your sprite, you should position the side-facing foot on the zero line, and the camera-facing foot toe should be a bit lower.
 
-    In case of floating characters (ghosts, fairies, anti-gravity-powered mad scientists, etc), you should leave some vertical space between the scene's center and your character. Try to envision the scene line as the "floor" and decide how high above the floor the character should float.
+    In the case of floating characters (ghosts, fairies, anti-gravity-powered mad scientists, etc), you should leave some vertical space between the scene's center and your character. Try to envision the scene line as the "floor" and decide how high above the floor the character should float.
 
-The last thing to do is to position the place where the dialog text will be shown for the talking character. Popochiu can be customized to show dialog lines in many different positions or fashions, but it's default is to show the dialogue lines somewhere above the character's head. Since the engine doesn't know how high your sprite is (see "Under the hood" note below), that's for you to decide.
+The last thing to do is to position the place where the dialog text will be shown for the talking character. Popochiu can be customized to show dialog lines in many different positions or fashions, but its default is to show the dialogue lines somewhere above the character's head. Since the engine doesn't know how high your sprite is (see "Under the hood" note below), that's for you to decide.
 
 Just select the **DialogPos** node in the scene tree (_11_). A small cross will be highlighted in the scene's origin. Drag it somewhere above the character's head (or wherever makes sense to you).
 
@@ -177,11 +177,11 @@ Just select the **DialogPos** node in the scene tree (_11_). A small cross will 
 This may require a bit of experimentation, but for now, this will do.
 
 !!! info "Under the hood"
-    You may be wondering how exactly the text is located in relation to the position of the **DialogPos** node. Here is an explanation on how Popochiu decides how your text is rendered.
+    You may be wondering how exactly the text is located in relation to the position of the **DialogPos** node. Here is an explanation of how Popochiu decides how your text is rendered.
 
     1. The baseline of the text will always match the vertical position of **DialogPos**, so the text will be rendered vertically **right above** that point.
     2. The dialog line length is calculated and the text is centered on the horizontal position of **DialogPos**, so the text will be rendered horizontally **around** that point.
-    3. If the text spans multiple line, Popochiu will expand it **towards the top**, so that it doesn't cover your character (this means if you want your text under the character for some reason, multiple lines will cover your character).
+    3. If the text spans multiple lines, Popochiu will expand it **towards the top**, so that it doesn't cover your character (this means if you want your text under the character for some reason, multiple lines will cover your character).
     4. If the character is near the window or screen border, the text will be repositioned so that it will be entirely visible, so you don't have to worry about it becoming unreadable. This is true both for horizontal and vertical coordinates.
 
 ### Add another character
@@ -196,12 +196,12 @@ We are almost done creating our player character. Before moving on, follow [the 
 Now that we have two characters, it's time to tell Popochiu which one will be our main character. That's the one that will be used by the player.  
 To do this, locate the first character you have created in Popochiu main dock (in our example it was _Goddiu_), open the drop-down menu, and select `Set as Player Character` (_12_).
 
-![Set as Player Character](../assets/images/getting-started/game_stub-character-4-set_pc.png "Select our first character as player character")
+![Set as Player Character](../assets/images/getting-started/game_stub-character-4-set_pc.png "Select our first character as the player character")
 
 !!! info "Multiple character games"
-    Even if we are not going to cover this detail, Popochiu supports multiple player character in the style of _Maniac Mansion_ or _Day of the Tentacle_. It's as easy as programmatically change a variable from your scripts.
+    Even if we are not going to cover this detail, Popochiu supports multiple player characters in the style of _Maniac Mansion_ or _Day of the Tentacle_. It's as easy as programmatically changing a variable from your scripts.
 
-Pat yourself a shoulder! You have succesfully created your first characters.
+Pat yourself a shoulder! You have successfully created your first characters.
 
 ## Create the first room
 
@@ -223,16 +223,16 @@ Popochiu will create the new room, open the room scene in the editor, and open t
 
 Much like a character, a room needs a sprite to represent the background of the location. We are going to use [this background](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/rooms/house/props/background/house_bg.png) from the example game.
 
-But hey! The room has nothing like a sprite in it! Quite the opposite, the scene tree seem to be pretty empty:
+But hey! The room has nothing like a sprite in it! Quite the opposite, the scene tree seems to be pretty empty:
 
-![An empty room scene tree](../assets/images/getting-started/game_stub-room-3-empty_room_scene.png "Nothing meaningful in here")
+![An empty room scene tree](../assets/images/getting-started/game_stub-room-3-empty_room_scene.png "Nothing meaningful here")
 
 <a name="intbkmk-props-explanation"></a>
 Unlike other objects in Popochiu, rooms are basically containers for other more specialized objects, the most important of which are **Props**. Props are every visible part of a location, used to make the environment believable. They can go from a small collectable item, all the way to location backgrounds.
 
 !!! info "Under the hood"
     Popochiu makes no distinction based on the prop function in the game, he knows little about that actually. You add as many as you want into a scene and interact with them via your game script.  
-    The only thing the engine knows about props is their **visibility** and their **clickability**. By flagging those two properties on or off, you can switch objects in and out of a location, an make them interactive.
+    The only thing the engine knows about props is their **visibility** and their **clickability**. By flagging those two properties on or off, you can switch objects in and out of a location, and make them interactive.
 
 Armed with this knowledge, it's now clear we must create a prop to hold our background. That's easy. If you followed the steps above, Popochiu dock should be showing the **Home** room tab.
 
@@ -240,7 +240,7 @@ Armed with this knowledge, it's now clear we must create a prop to hold our back
 
 Click the **Create prop** button and as usual, a new window will pop up:
 
-![Name the prop](../assets/images/getting-started/game_stub-room-5-prop_creation_popup.png "Background won't be interactive")
+![Name the prop](../assets/images/getting-started/game_stub-room-5-prop_creation_popup.png "The background won't be interactive")
 
 Name the new prop "_Background_" and leave the "Will have interaction?" option unchecked. You don't want all of your screen to react to clicks when you move around.
 
@@ -255,22 +255,22 @@ Click OK and your prop will be created. You should see it in the scene tree, und
 Now you can see the Prop has a **Texture** parameter. By this time you should be able to figure out what to do. Save the downloaded background sprite in the `game/rooms/house/props/background/` folder, then drag it from Godot Editor file manager to the field in the inspector.  
 Your scene should now show the background image.
 
-At this point you have a main character and a main scene defined. This is the minimum steps needed to run a Popochiu game. Treat yourself after all this effort, by hitting the **Run** button at the top right of the editor and seeing you game in action.
+At this point you have a main character and a main scene defined. These are the minimum steps needed to run a Popochiu game. Treat yourself after all this effort, by hitting the **Run** button at the top right of the editor and seeing your game in action.
 
 If you did everything right, you should see your main character standing in the center of the room. Clicking on the screen will flip the character so that it faces the cursor coordinates.
 
 !!! note
     If you followed this tutorial from the start, when you run the game Popochiu will complain about not found animations. Don't worry about those errors, we didn't include animations to keep this introduction short.  
-    Rest assured though that Popochiu has full animations support: it already manages standard animations (for an idle character, for walking and for talking), without having to write any code. A game dev can add a full set of custom animations to play during cutscenes, or to support different emotions in dialogues, and so on.
+    Rest assured though that Popochiu has full animation support: it already manages standard animations (for an idle character, for walking and for talking), without having to write any code. A game dev can add a full set of custom animations to play during cutscenes or to support different emotions in dialogues, and so on.
 
-    For those who work with [Aseprite](https://www.aseprite.org/), Popochiu also provides a powerful automated importer that will make creating rooms and characters a breeze, and will enable a fast iterative development workflow.
+    For those who work with [Aseprite](https://www.aseprite.org/), Popochiu also provides a powerful automated importer that will make creating rooms and characters a breeze and will enable a fast iterative development workflow.
 
     * Learn more about [animations](/how-to-develop-a-game/playing-animations).
     * Learn more about the [Aseprite importers](/the-editor-handbook/importers)
 
 ### Add a Walkable Area
 
-Our characters is standing there in the middle of the room, doing nothing. If we click on the screen we would expect it to walk to the clicked location, but that's not happening.
+Our character is standing there in the middle of the room, doing nothing. If we click on the screen we would expect it to walk to the clicked location, but that's not happening.
 
 The reason is that we defined no areas in which the character is allowed to move. Popochiu refers to those elements as **Walkable Areas**. They are objects that can live only inside rooms, and each room can have more than one (see the box below for an explanation).
 
@@ -282,7 +282,7 @@ In the Room tab of Popochiu dock, click the **Create walkable area** button (_16
 
 In the popup window, just name your new walkable area "_Floor_" (or whatever you find descriptive enough). Click **OK** and a new element will be added to the scene.
 
-![New walkable area in the scene tree](../assets/images/getting-started/game_stub-room-8-wa_scene_tree.png "Select the Perimeter node to edit the area shape")
+![A new walkable area in the scene tree](../assets/images/getting-started/game_stub-room-8-wa_scene_tree.png "Select the Perimeter node to edit the area shape")
 
 Selecting the **Perimeter** node in the scene tree (_17_) to highlight a squared polygon in the center of the scene. Now you have to adjust the vertices of that polygon (_18_) to whatever makes sense.
 
@@ -294,31 +294,31 @@ When you have adjusted your walkable area, it should look something like this:
 
 ![The polygon for the floor is over](../assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click 'Bake NavigationPolygon' to complete the walkable area")
 
-Save the project and run your game. You character should now be able to move around the room, without leaving the area you defined.
+Save the project and run your game. Your character should now be able to move around the room, without leaving the area you defined.
 
 !!! note
-    If you aren't new to Godot, you may think we forgot mentioning the **Bake NavigationPolygon** button in the toolbar (_19_). That's not the case, Popochiu bakes the polygon for you.
+    If you aren't new to Godot, you may think we forgot to mention the **Bake** NavigationPolygon** button in the toolbar (_19_). That's not the case, Popochiu bakes the polygon for you.
 
 !!! tip
     You usually don't want your walkable area to cover the entire floor that you painted, or your character will be able to stand on the very border of it, too near the wall, creating a terrible effect.  
-    Remember that Popochiu will stop the movement as soon as the origin point of your character scene will reach one of the walkable area borders.
+    Remember that Popochiu will stop the movement as soon as the origin point of your character scene reaches one of the walkable area borders.
 
 !!! info "Additional walkable areas"
-    It may not be obvious but you may want (or need) a room to have more than a single walkable area. Here is some example cases:
+    It may not be obvious but you may want (or need) a room to have more than a single walkable area. Here are some example cases:
 
     * A location with two areas separated by an obstacle (like a chasm), that the character can enter both sides.
     * A location with different levels, the character can climb to or reach depending on the game script or specific conditions.
     * A location with a large prop that can be removed (like a pile of fallen rocks): when the prop is removed a larger walkable area is used in place of the smaller one.
 
-    Since you can define which walkable area is the active one for the character from your scripts, having multiple walkable areas actually unlocks a lot of possibilities for complex locations.
+    Since you can define which walkable area is the active one for the character from your scripts, having multiple walkable areas unlocks a lot of possibilities for complex locations.
 
 ### Add a hotspot
 
 Our character can now move around the room, but there is little it can do. It is time to add some interaction.
 
-An **hotspot** is the most basic form of interaction you can have in a room. It basically is an area of the screen, delimited by a polygon drawn at a specific position, that has a name and a script attached to it. It has no sprite of its own, it just sits there on top of other elements, waiting to react to the cursor.
+A **hotspot** is the most basic form of interaction you can have in a room. It basically is an area of the screen, delimited by a polygon drawn at a specific position, that has a name and a script attached to it. It has no sprite of its own, it just sits there on top of other elements, waiting to react to the cursor.
 
-By mean of its script, it can react to events like mouse clicks. That's exactly what we're going to do.
+By means of its script, it can react to events like mouse clicks. That's exactly what we're going to do.
 
 Creating a hotspot is much like creating a walkable area. In the Room tab of Popochiu dock, click the **Create hotspot** button (_20_).
 
@@ -326,22 +326,22 @@ Creating a hotspot is much like creating a walkable area. In the Room tab of Pop
 
 In the popup window, just name your new hotspot "_Window_" (or whatever you find descriptive enough). Click **OK** and a new element will be added to the scene.
 
-![New hotspot in the scene tree](../assets/images/getting-started/game_stub-room-11-hs_scene_tree.png "Select the right tool in the toolbar to set the hotspot properties")
+![A new hotspot in the scene tree](../assets/images/getting-started/game_stub-room-11-hs_scene_tree.png "Select the right tool in the toolbar to set the hotspot properties")
 
-When you select the new hotspot in the scene tree (_21_), a bunch of gizmos are shown in the scene preview. We are going to interactively edit three important properties of the hotspot (the _interaction polygon_, the _baseline_ and the _walk to point_) by using the dedicated buttons in the toolbar (_23_).
+When you select the new hotspot in the scene tree (_21_), a bunch of gizmos are shown in the scene preview. We are going to interactively edit three important properties of the hotspot (the _interaction polygon_, the _baseline_ and the _walk-to point_) by using the dedicated buttons in the toolbar (_23_).
 
 !!! info
-    _Walk to point_, _Baseline_ and _Interaction Polygon_ properties are all common to clickable objects like Hotspots, Props and Characters.
+    _Walk-to point_, _Baseline_ and _Interaction Polygon_ properties are all common to clickable objects like Hotspots, Props and Characters.
 
-First of all, click the _Intaraction Polygon_ button to show the handles of the standard square polygon for the hotspot. This is basically the same as the walkable area polygon but instead of limiting the character movements, this polygon will just react when the cursor will hover it.  
+First of all, click the _Interaction Polygon_ button to show the handles of the standard square polygon for the hotspot. This is basically the same as the walkable area polygon but instead of limiting the character movements, this polygon will just react when the cursor hovers it.  
 Let's draw a shape around the window on the wall:
 
 ![New hotspot's clickable area](../assets/images/getting-started/game_stub-room-12-hs_draw_polygon.png "Draw the hotspot shape with a polygon")
 
 No need to be too precise or polished, rough edges won't be perceivable while playing your game. You just need to avoid, if possible, overlapping with other hotspots (see "_Baseline_" below, to understand how polygon overlapping works).
 
-Another important property of the hotspot is the "_Walk to point_", that is the coordinates that the character will reach, when you click over the hotspot.  
-You can set these coordinates interactively by clicking on the "_Walk point_" button in the toolbar. A squared marker will appear in the center of the screen. You can drag the marker wherever you want in the room.
+Another important property of the hotspot is the "_Walk to point", which is the coordinates that the character will reach when you click over the hotspot.  
+You can set these coordinates interactively by clicking on the "_Walk-to point_" button in the toolbar. A squared marker will appear in the center of the screen. You can drag the marker wherever you want in the room.
 
 For our example room, we'll set the following coordinates for the `Window` hotspot:
 
@@ -355,7 +355,7 @@ The last property that you want to set is the _Baseline_. The baseline is simply
 !!! warning
     This becomes evident when you have a prop or a character in a room, and you want your main character to walk behind them when its feet are "farther away" from the camera, but a hotspot has no sprite to walk behind, so you may think setting the baseline is useless.  
 
-    That's not the case at all. If you don't set your baseline the right way, the polygon-delimited area of the hotspot may remain clickable even when the character is in front of it; or the other way around, a hotspot that should always be in front of the scene, may be covered by your character, making it unreacheable. So, **always** set your baseline.
+    That's not the case at all. If you don't set your baseline the right way, the polygon-delimited area of the hotspot may remain clickable even when the character is in front of it; or the other way around, a hotspot that should always be in front of the scene, may be covered by your character, making it unreachable. So, **always** set your baseline.
 
 Our window is in the back of the room and the main character has no way to be placed behind it, so we'll set the hotspot baseline to `0` (zero). This means that the baseline is "as high as the scene". The character has no way to walk so high.  
 
@@ -363,7 +363,7 @@ Our window is in the back of the room and the main character has no way to be pl
     Note that you can set the baseline even to negative values. This is what Popochiu automatically does when you name your prop `Background` or `bg`, to make sure your background is always at the very back of the scene. Keep this in mind too, if you change the baseline of other elements programmatically (via a script).
 
 !!! tip
-    If you need pixel-perfect precision, you can set the baseline and the hotspot's _Walk to point_ coordinates by inputing them in the inspector.
+    If you need pixel-perfect precision, you can set the baseline and the hotspot's _Walk to point_ coordinates by inputting them in the inspector.
 
     ![Popochiu Clickable properties](../assets/images/getting-started/game_stub-room-14-hs_pc_inspector.png "Set baseline and walk to point in the inspector")
 
@@ -374,32 +374,32 @@ With the hotspot properly configured, we can now run a quick test. Start your ga
 Clicking on the hotspot, the character will move to the point we defined and face the window.
 
 !!! info "Under the hood"
-    Remember that we set our character so that its origin is between its feet. When your character moves towards a point, Popochiu will make sure the origin of the character will match the destination point's coordinates.
+    Remember that we set our character so that its origin is between its feet. When your character moves toward a point, Popochiu will make sure the origin of the character matches the destination point's coordinates.
 
-    What if the destination coordinates lie outside of the walkable area? In this case Popochiu will trace the path towards the coordinates, but will stop the movement as soon as the character will reach the walkable area's borders. Despite this is a safe scenario, placing a _Walk to point_ inside the walkable polygon always give the best results, making the movement predictable. Keep this in mind.
+    What if the destination coordinates lie outside of the walkable area? In this case, Popochiu will trace the path toward the coordinates but will stop the movement as soon as the character reaches the walkable area's borders. Despite this being a safe scenario, placing a _Walk-to point_ inside the walkable polygon always gives the best results, making the movement predictable. Keep this in mind.
 
 ### Scripting our first interaction
 
 If you ran the game, you may have seen that, while the character moves towards the window, a message is printed on top of the scene: `Can't INTERACT with it`.  
-That's because we didn't define what should happen when we interact with the window. Remember, in [the GUI we selected](#select-game-gui), clicking on an object will trigger an interaction, while right-clicking on an object will trigger an examination.
+That's because we didn't define what should happen when we interact with the window. Remember, in [the GUI we selected](#select-game-gui), clicking on an object will trigger an interaction while right-clicking on an object will trigger an examination.
 
 We are now going to script our first interaction, using Godot **GDScript** language and the very convenient [engine API](/the-engine-handbook/scriting-overview) that Popochiu provides to make our life easier.
 
 !!! info "Help! I'm not a developer!"
-    "API" stands for "Application Programming Interface" and in our context it's the set of objects and functions that makes it really easy to implement all those behaviors common to most adventure games (like making a character talk, or adding an item to the inventory), without knowing the ins and outs of the undelying Godot game engine.
+    "API" stands for "Application Programming Interface" and in our context, it's the set of objects and functions that makes it really easy to implement all those behaviors common to most adventure games (like making a character talk, or adding an item to the inventory), without knowing the ins and outs of the underlying Godot game engine.
 
-In the room tab of the Popochiu dock, locate the "_Open Script_" icon for the `Window` hotsport (_25_):
+In the room tab of the Popochiu dock, locate the "_Open Script_" icon for the `Window` hotspot (_25_):
 
-![Open hotspot's script](../assets/images/getting-started/game_stub-room-15-hs_script.png "Open the script for the Window hotspot")
+![Open the hotspot's script](../assets/images/getting-started/game_stub-room-15-hs_script.png "Open the script for the Window hotspot")
 
 This will open the GDScript connected to this hotspot in the Godot scripting editor (_26_):
 
 ![The "Window" script](../assets/images/getting-started/game_stub-room-16-hs_script_editor.png "Here is the script for the Window. Scary?")
 
 !!! info "Under the hood"
-    Every clickable object that Popochiu creates for you comes with an attached script. Those scripts does nothing by themselves, but are based on commented templates that will make easier to implement the desired behaviors, by editing and filling out some predefined functions.
+    Every clickable object that Popochiu creates for you comes with an attached script. Those scripts do nothing by themselves but are based on commented templates that will make it easier to implement the desired behaviors, by editing and filling out some predefined functions.
 
-We will now add some interaction to the script. So far it will be simple stuff: we'll make our main character say something meaningful when we examine the window, and - in absence of other elements in the room - act a bit weird when we try to interact with the window.
+We will now add some interaction to the script. So far it will be simple stuff: we'll make our main character say something meaningful when we examine the window, and - in the absence of other elements in the room - act a bit weird when we try to interact with the window.
 
 Locate the `_on_click()` function in the script. It should read something like this:
 
@@ -446,7 +446,7 @@ Let's see what happened, breaking the function down to pieces. Ignore for a mome
 
 These two lines use the `C` Popochiu object. It holds a reference to every character in the game. Our character is called `Goddiu`, so `C.Goddiu` allows us to give commands to that character. But since Goddiu is also the character that the player controls, we can use the shortcut `C.player`.
 
-This comes in very handy for those games that have more player-controlled characters, like _Maniac Mansion_, or _Day of the Tentacle_. You can change the active character as the game progress but your scripts will point to the current active character, sparing you the effort to duplicate the code for each and every playable character.
+This comes in very handy for those games that have more player-controlled characters, like _Maniac Mansion_, or _Day of the Tentacle_. You can change the active character as the game progresses but your scripts will point to the current active character, sparing you the effort to duplicate the code for each and every playable character.
 
 ```gdscript
 	await E.wait(0.5)
@@ -457,12 +457,12 @@ This comes in very handy for those games that have more player-controlled charac
 		await E.wait(0.3)
 ```
 
-Here we are literally awaiting for some time to pass. `E` is the object representing the game engine (Popochiu!) and we are asking it to wait for half a second.
-After that we are using the `for` GDScript keywork to repeat the same code for three times.
+Here we are literally waiting for some time to pass. `E` is the object representing the game engine (Popochiu!) and we are asking it to wait for half a second.
+After that, we use the `for`` GDScript keyword to repeat the same code three times.
 
 !!! info
     This is not a feature of Popochiu, it is standard Godot language. All Popochiu objects and functions are standard Godot functions.  
-    As Popochiu will mature, it will take care of more and more work in a standardized and simplified way. Stuff like translations, dynamic lightning and music, parallax, and more.  
+    As Popochiu matures, it will take care of more and more work in a standardized and simplified way. Stuff like translations, dynamic lightning and music, parallax, and more.  
     In the meantime, since its language is standard GDScript, you have all the power of Godot at your fingertips and you can customize your game the way you want.
 
 The executed code just flips the character left and right after a small pause, as it is looking around.
@@ -475,7 +475,7 @@ The executed code just flips the character left and right after a small pause, a
 These last two lines make sure the character finally looks towards the window and says its line.
 
 !!! info "Help! I'm not a developer!"
-    As the `for` keyword, `await` is provided by Godot out of the box. Without going too deep in technical details, what it does is making sure that while the subsequent function is executed, no other things will happen. In our example, if we omitted the `await` keyword in every line, the character would have started walking to the window, while flipping frantically left and right and talking at the same time (but finishing printing the line in a strange way).
+    As the `for` keyword, `await` is provided by Godot out of the box. Without going too deep into technical details, what it does is make sure that while the subsequent function is executed, no other things will happen. In our example, if we omitted the `await` keyword in every line, the character would have started walking to the window, while flipping frantically left and right and talking at the same time (but finishing printing the line in a strange way).
 
     There are times you want this to happen, like a character who talks in the background without "blocking" the game flow, but omitting `await` usually leads to strange, unexpected behaviors and should be done only on purpose.
 
@@ -495,20 +495,20 @@ By this time, you should be able to figure out what will happen by yourself. Run
 
 We already encountered props, when we [added our background](#intbkmk-props-explanation) to the game's first room. It's now time for a bit more information.
 
-Props are arguably the most important elements in a room. Like hotspots, they can be interactive; they have a baseline and a _walk to point_; the shape of the interaction area is represented by a polygon. Unlike hotspots they have their own **Sprite2D** node, and an internal **AnimationPlayer**. Simply put, props can represent visible (an animated, if necessary) items on the scene. Since they have a baseline, characters can walk behind them, creating a deep, interesting gaming world.
+Props are arguably the most important elements in a room. Like hotspots, they can be interactive; they have a baseline and a _walk-to point_; the shape of the interaction area is represented by a polygon. Unlike hotspots they have their own **Sprite2D** node and an internal **AnimationPlayer**. Simply put, props can represent visible (an animated, if necessary) items on the scene. Since they have a baseline, characters can walk behind them, creating a deep, interesting gaming world.
 
-But the real boon is that their visibility and "clickability" can be turned on and off by code, allowing you to articulate their presence or their function as the game progress.
+But the real boon is that their visibility and "clickability" can be turned on and off by code, allowing you to articulate their presence or their function as the game progresses.
 
 Enough talk, let's see them in action.
 
 Since we already created a "_Background_" for our scene, you should know at this point how to create a new prop. Click on the **Create Prop** button in the tab room of the Popochiu dock, name it "_ToyCar_" and this time, check out the **Will have interaction** option (_27_).
 
-![Name the prop](../assets/images/getting-started/game_stub-room-17-prop_creation_popup.png "Toy car will be interactive")
+![Name the prop](../assets/images/getting-started/game_stub-room-17-prop_creation_popup.png "The toy car will be interactive")
 
 !!! note
     If you forget to check this mark, don't worry. You can always make your prop interactive from the inspector.
 
-You new prop will be added to the scene tree as a child of the **Props** node (_28_). You should also notice a squared area in the center of the scene (_29_). That's the new prop's interaction polygon, set to the default squared shape.
+Your new prop will be added to the scene tree as a child of the **Props** node (_28_). You should also notice a squared area in the center of the scene (_29_). That's the new prop's interaction polygon, set to the default squared shape.
 
 ![Prop added](../assets/images/getting-started/game_stub-room-18-prop_scene.png "Toy car prop is now in the scene")
 
@@ -539,10 +539,10 @@ Since the baseline is in the middle of the prop, it is already correctly positio
 
     **Remember to turn on this property** to follow up with this tutorial!
 
-Eventually we want to enable our main character to pick up the toy car and add it to the inventory. For that though, we need some more elements, so we'll get back to that later.  
-For the moment, we'll just script a simple examine interaction, but we'll seize the opportunity to learn something new.
+Eventually, we want to enable our main character to pick up the toy car and add it to the inventory. For that though, we need some more elements, so we'll get back to that later.  
+For the moment, we'll just script a simple "examine" interaction, but we'll seize the opportunity to learn something new.
 
-Click the **Open in Script** icon that you can find on the prop line in the Popochiu dock to edit the prop script. If you skim through it, you will notice it's very similar to the script for a hotspot. This makes sense, since the interaction part is mostly the same.
+Click the **Open in Script** icon that you can find on the prop line in the Popochiu dock to edit the prop script. If you skim through it, you will notice it's very similar to the script for a hotspot. This makes sense since the interaction part is mostly the same.
 
 Our GUI dictates that the character examines the surroundings by clicking the right mouse button, so let's make our `_on_right_click()` function like this:
 
@@ -553,8 +553,8 @@ func _on_right_click() -> void:
 	await C.player.say("I have to pay attention or I will step on it.")
 ```
 
-At this point you should be familiar with those instructions. Run the game and see how the main character comments on the mess left by its younger friend.  
-This comment conveys some lore about the game world, telling the player something about Popsy's personality (we added Popsy as a second character earlier), but it's pretty long and we may want to put our accent on the second part: paying attention before stepping over it. This may be a signpost to suggest the player that it's better to pick the toy car up.
+At this point, you should be familiar with those instructions. Run the game and see how the main character comments on the mess left by its younger friend.  
+This comment conveys some lore about the game world, telling the player something about Popsy's personality (we added Popsy as a second character earlier), but it's pretty long and we may want to put our accent on the second part: paying attention before stepping over it. This may be a signpost to suggest to the player that it's better to pick the toy car up.
 
 To achieve our design goal, we'll add a bit of logic to our interaction, leveraging the power of GDScript.  
 We will create a boolean property for the toy car  (boolean means the property can be either `true` or `false`, no other values are allowed), and will use it like a switch, to know if we already examined the prop at least one time. This way we'll make the main character say only the second line if the player examines the prop more than once.
@@ -576,7 +576,7 @@ var first_time_seen := true   # <--- add this instruction
 The assignment of the `true` value happens only when the prop is created, as soon as you start the game.
 
 !!! tip
-    You may be asking yourself if the name of the variable has to be exactly that one. That's not the case: this property is completely custom and Popochiu doesn't care about its name, and not even about its value actually, it doesn't even want you to actually use it.  
+    You may be asking yourself if the name of the variable has to be exactly that one. That's not the case: this property is completely custom and Popochiu doesn't care about its name, and not even about its value actually, it doesn't even want you to use it.  
     You can name your variables whatever you want, but it's a best practice to have names that reflect their purpose. You don't want to end up with scripts full of `a`, `b`, `c`, `x` or `my_var`... they will be a mess to maintain!
 
 Now that we have a way to know if it's the first time we examined the prop, let's change the `_on_right_click()` like this:
@@ -596,7 +596,7 @@ As long as we run the game, the value won't change back so the next time you exa
 
 !!! info
     If the variable is reset to true every time the game is started, what happens when I restore a saved game?  
-    Saving your game is not part of this introductory guide, but don't worry! Popochiu automatically saves the values of all custom properties , and restores them back for you when you load a saved game.
+    Saving your game is not part of this introductory guide, but don't worry! Popochiu automatically saves the values of all custom properties and restores them back for you when you load a saved game.
 
 Run the game and test it.  
 Done, we have a prop in the scene! It's now time to learn how to use the character's inventory.
@@ -604,21 +604,21 @@ Done, we have a prop in the scene! It's now time to learn how to use the charact
 ## Add an inventory item
 
 The inventory is where your player will collect all items that will be useful to progress in your game.  
-In Popochiu, inventory items are global objects, like rooms or characters. They have a script, to hold all the game logic related to them, and a texture, so that they can be rendered somewhere the GUI.
+In Popochiu, inventory items are global objects, like rooms or characters. They have a script, to hold all the game logic related to them, and a texture, so that they can be rendered somewhere in the GUI.
 
 To create a new inventory item click on the **Create Inventory Item** button in the tab room of the Popochiu dock (_32_), and name the new item in the popup window that appears.
 
 ![Create inventory item](../assets/images/getting-started/game_stub-inv_item-23-create_button.png "Create the inventory item from the Popochiu main dock")
 
-We'll name our new inventory item "_ToyCar_", because we are going to make the prop we just created collectable. Go on and click OK. Popochiu will open the new inventory item's scene in the editor.
+We'll name our new inventory item "_ToyCar_", because we are going to make the prop we just created collectible. Go on and click OK. Popochiu will open the new inventory item's scene in the editor.
 
-Inventory items are very simple. They have no interaction polygons or similar, because representing them in an interactive grid of sort is responsibility of the GUI.  
+Inventory items are very simple. They have no interaction polygons or similar because representing them in an interactive grid of sorts is the responsibility of the GUI.  
 The only thing we need to do is to assign a texture to them, that will be painted in the inventory GUI by Popochiu.
 
 If you don't have a sprite ready for your inventory item, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/inventory_items/toy_car/inv_toy_car.png) from the demo game.  
 Save it into your project, in the `game/inventory_items/<your inventory item name>/inv_toy_car.png` folder, and rename it as you see fit.
 
-Assigning the texture to the iventory item is done the same as props, by dragging the image from the **FileSystem**, to the **Texture** property in the inspector (_33_).
+Assigning the texture to the inventory item is done the same as props, by dragging the image from the **FileSystem** to the **Texture** property in the inspector (_33_).
 
 ![Sprite added](../assets/images/getting-started/game_stub-inv_item-24-set_texture.png "Now the inventory item has an icon")
 
@@ -627,7 +627,7 @@ We are going to script this part by interacting with the toy car prop we placed 
 
 Go back to the room scene (you can press the **Open in Editor** button on the "_House_" room row in Popochiu's main dock) and use the room tab to open the "_ToyCar_" prop script.
 
-If you followed along, you will see that we just scripted the _examine_ interaction for it, implementing the `_on_right_click()` function. It's now time to write an `_on_click()` function that allows us to pick the prop up and add it to the inventory.
+If you've followed along, you will see that we just scripted the _examine_ interaction for it, implementing the `_on_right_click()` function. It's now time to write an `_on_click()` function that allows us to pick the prop up and add it to the inventory.
 
 ```gdscript
 # When the node is clicked
@@ -639,19 +639,19 @@ func _on_click() -> void:
 	I.ToyCar.add()
 ```
 
-Save the project and run the game. Now if you click on the toy car on the floor, the main character will say its line, then the item will disappear from the scene and appear in the inventory.
+Save the project and run the game. Now if you click on the toy car on the floor, the main character will say its line, and then the item will disappear from the scene and appear in the inventory.
 
 !!! warning
-    It's worth to clarify a couple of things that may be misleading.
+    It's worth clarifying a couple of things that may be misleading.
 
-    1. The fact that the inventory item exists in Popochiu catalog **does not mean** it is automatically available in the character's inventory: quite the opposite, we want to create many inventory items that the character will collect as the player makes progress throught the game.
-    2. If you paid attention to the code, you should have noticed that there is no connection between the **_ToyCar_ prop** and the **_ToyCar_ inventory item**. Since they are representing the same object in the game world, they have the same name and a very similar texture. This makes sense to us as human beings, but **for Popochiu the two objects are completely unrelated**.
+    1. The fact that the inventory item exists in Popochiu catalog **does not mean** it is automatically available in the character's inventory: quite the opposite, we want to create many inventory items that the character will collect as the player makes progress throughout the game.
+    2. If you paid attention to the code, you should have noticed that there is no connection between the **_ToyCar_ prop** and the **_ToyCar_ inventory item**. Since they represent the same object in the game world, they have the same name and a very similar texture. This makes sense to us as human beings, but **for Popochiu the two objects are completely unrelated**.
 
-    In fact, our script is telling the engine to **hide a prop** that's in the room, and then to **add an inventory item** to the character's inventory. The prop is still there, just disabled.
+    Indeed, our script is telling the engine to **hide a prop** that's in the room, and then to **add an inventory item** to the character's inventory. The prop is still there, just disabled.
 
-    But why not just having a "collectable" prop? Well, the reason is that, although the most common way to collect objects is "picking them up", there are so many other ways. You may want to add an item to the inventory when the character opens a drawer (implying that he found something in there), or maybe during a dialog with another character (implying that it has been given by someone for a reason). Or maybe you just want the character to win loot after a successful action.
+    But why not just have a "collectible" prop? Well, the reason is that, although the most common way to collect objects is "picking them up", there are so many other ways. You may want to add an item to the inventory when the character opens a drawer (implying that he found something in there), or maybe during a dialog with another character (implying that it has been given by someone for a reason). Or maybe you just want the character to win loot after a successful action.
 
-    Popochiu does not force a specific game structure on you. Of course it provides sensible defaults for the staples of the genre, but it gives you the tools to build the adventure **you** want to build.
+    Popochiu does not force a specific game structure on you. Of course, it provides sensible defaults for the staples of the genre, but it gives you the tools to build the adventure **you** want to build.
 
 !!! tip
     Despite what we just said Popochiu **does** provide a way to automatically hide a prop when it's collected. Populate the **Link to item** property in the inspector with the name of the inventory item that corresponds to that prop. When the item is added to the character's inventory, the engine will remove the corresponding prop from the stage for you.  
@@ -660,15 +660,15 @@ Save the project and run the game. Now if you click on the toy car on the floor,
 !!! note
     See how the last two lines of the `_on_click()` function are not `await`-ed? The reason is that those functions are just changing the state of the game, without triggering animations, or dialogs.
 
-    To learn if a function must be awaited, the best option is to check in the [API reference](/the-engine-handbook/scripting-reference) section. As a rule of thumb, if the function "is not making something happen on the screen as it was in a movie" (animating, moving stuff around, printing text... everthing that needs time to be seen), then it probably doesn't need to be awaited.
+    To learn if a function must be awaited, the best option is to check in the [API reference](/the-engine-handbook/scripting-reference) section. As a rule of thumb, if the function "is not making something happen on the screen as it was in a movie" (animating, moving stuff around, printing text... everything that needs time to be seen), then it probably doesn't need to be awaited.
 
 ## Script your first dialogue
 
-The last very common case we want to cover with this introductory guide, is the interaction with another character.
+The last very common case we want to cover with this introductory guide is the interaction with another character.
 
-If you followed this tutorial from the start, [you should have created two characters](#add-another-character). Popochiu adds our main character to the room for us when the game starts, so we don't need to do it manually. On the other hand, as we are the directors of our own game, it leaves on us to place non-player characters where they belong.
+If you followed this tutorial from the start, [you should have created two characters](#add-another-character). Popochiu adds our main character to the room for us when the game starts, so we don't need to do it manually. On the other hand, as we are the directors of our own game, it leaves us to place non-player characters where they belong.
 
-We will then add Popsy (or whatever you called your secondary character) to our sole room, and script some interactions.
+We will then add Popsy (or whatever you named your secondary character) to our sole room, and script some interactions.
 
 To add the character to the room, click on the **Add character to room** button in the tab room of the Popochiu dock (_34_), then select Popsy from the dropdown list.
 
@@ -683,7 +683,7 @@ Now that we have a character to talk to, let's create our first dialog.
 Dialogs in Popochiu are managed by _Dialog trees_, global objects like characters, rooms and inventory items. Each dialog tree is a catalog of lines that will be shown by the dialog GUI when that specific dialog tree is started. When the user selects one of the lines, a script is triggered. Simple and effective.
 
 !!! info
-    Lines in a specific dialog tree can be turned on and off, and you can start a different dialog tree from scripts, so you can branch out of a dialog into another one, and back writing simple wiring code.
+    Lines in a specific dialog tree can be turned on and off, and you can start a different dialog tree from scripts, so you can branch out of a dialog into another one, and back to writing simple wiring code.
 
 To create a new dialog tree, click on the **Create dialog tree** button in the main tab of the Popochiu dock (_36_), and name the new dialog in the popup window that appears.
 
@@ -696,30 +696,30 @@ We'll name our new dialog tree "_PopsyHouseChat_".
 
     You may want to find a pattern that makes it easier to remember what's the dialog content, participants and place, like `CharacterPlaceTopic` or whatever makes sense to you. This will also make the list easier to navigate and will help with autocomplete in scripts.
 
-Now that we have a dialog tree, we want to add options for the player to choose. To edit the "_PopsyHouseChat_" dialog tree, click the **Open in Editor** icon (locate the dialog tree in the main tab list and find the icon on the entry row).
+Now that we have a dialog tree, we want to add options for the player to choose from. To edit the "_PopsyHouseChat_" dialog tree, click the **Open in Editor** icon (locate the dialog tree in the main tab list and find the icon on the entry row).
 
 !!! info "Under the hood"
     While most of the Popochiu objects we have encountered so far are Godot [Scenes](https://docs.godotengine.org/en/stable/getting_started/step_by_step/nodes_and_scenes.html#scenes), dialog trees are Godot [Resources](https://docs.godotengine.org/en/stable/tutorials/scripting/resources.html).
 
-    Scenes are edited in the "Scene preview" area, in the center of the editor. Resources are edited in the inspector, so when you click the **Open in Editor** icon for a dialog tree, nothing will happen in the center.
+    Scenes are edited in the "scene preview" area, in the center of the editor. Resources are edited in the inspector, so when you click the **Open in Editor** icon for a dialog tree, nothing will happen in the center.
 
 Head to the inspector panel and you will see something like this:
 
 ![Dialog tree inspector](../assets/images/getting-started/game_stub-dialog-28-inspector.png "The dialog tree inspector")
 
 To add a dialog option, click the **Options** property (_37_), then the **Add Element** button that appears.  
-An option named "_Opt1_" is added to the list (_38_) (you can see the **Size** of the **Options** property is now `1`). Click on the **Opt1** field to open the drop down and you should see something like this:
+An option named "_Opt1_" is added to the list (_38_) (you can see the **Size** of the **Options** property is now `1`). Click on the **Opt1** field to open the drop-down and you should see something like this:
 
-![Create new dialog option](../assets/images/getting-started/game_stub-dialog-29-add_option.png "Add a new dialog option")
+![Create a new dialog option](../assets/images/getting-started/game_stub-dialog-29-add_option.png "Add a new dialog option")
 
 Every dialog option in a tree has many different properties (_39_):
 
-* **ID** is a univoque handler that will make easier to manipulate that option from your scripts.
+* **ID** is a unique handler that will make it easier to manipulate that option from your scripts.
 * **Text** is the text that is shown in the GUI when the dialog is started, and the user is asked to select the options.
-* **Icon** is useful if you want to use an image-based interface for your dialogs instead of a text-based one (and example of this can be found in LucasArts classic _Sam & Max Hit the Road_)
-* **Visible** is a flag by which you can turn specific options on and off, for example if you consider a topic explored and no more useful in the context of the game.
-* **Disabled** means this option is "consumed". It is make invisible and can't be made visible anymore.
-* Options flagged as **Always on** can't be disabled. This is useful if you have some bulk logic to disable more options in a dialog tree, and don't want to cherry-pick the important ones in your script. This is also useful to avoid softlock situations due to a mistake in a script (it may happen, most of all if you work in team).
+* **Icon** is useful if you want to use an image-based interface for your dialogs instead of a text-based one (an example of this can be found in LucasArts classic _Sam & Max Hit the Road_)
+* **Visible** is a flag by which you can turn specific options on and off, for example, if you consider a topic explored and no more useful in the context of the game.
+* **Disabled** means this option is "consumed". It is made invisible and can't be made visible anymore.
+* Options flagged as **Always on** can't be disabled. This is useful if you have some bulk logic to disable more options in a dialog tree, and don't want to cherry-pick the important ones in your script. This is also useful to avoid soft-lock situations due to a mistake in a script (it may happen, most of all if you work in a team).
 
 Let's create a first line of dialog about the toy car that Popsy left on the floor. Populate "_Opt1_" as follows:
 
@@ -728,7 +728,7 @@ Let's create a first line of dialog about the toy car that Popsy left on the flo
 
 Leave the rest untouched.
 
-Create other two options clicking the "Add Element" button (_40_) and populate them like this:
+Create other two options by clicking the "Add Element" button (_40_) and populate them like this:
 
 * Second option
     * **ID**: `AskBored`
@@ -738,14 +738,14 @@ Create other two options clicking the "Add Element" button (_40_) and populate t
     * **ID**: `Bye`
     * **Text**: `Bye, Popsy!`
 
-This will do for now. Hit `ctrl/cmd-s` to save your project, and the dialog tree resource.
+This will do for now. Hit `ctrl/cmd-s` to save your project and the dialog tree resource.
 
 !!! tip
     It may be useless to say at this point, but keep your options IDs meaningful and "talking" (no pun intended). Find your own conventions, but remember you will have to navigate your dialogs in scripts by these identifiers, so choose names that are love letters to your future self.
 
 To see our dialog in action, we need to start it somehow. In the context of our game, we'll simply start the dialog when we click on our companion character in the room.
 
-Locate the secondary character in Popochiu main dock, and open its script clicking on the **Open in Script** icon.  
+Locate the secondary character in Popochiu main dock, and open its script by clicking on the **Open in Script** icon.  
 Find the `_on_click()` function and edit it like this:
 
 ```gdscript
@@ -763,7 +763,7 @@ Run the game and click on the secondary character. Your dialog should start and 
 
 We have a dialog in place, but so far, no matter which option we choose, the dialog ends abruptly. This is because the script template works like this. We are going to change the script to implement some meaningful dialog.
 
-Go back to Popochiu main dock and open the script clicking on the **Open in Script** icon on the dialog tree row (_41_).
+Go back to Popochiu main dock and open the script by clicking on the **Open in Script** icon on the dialog tree row (_41_).
 
 ![Dialog tree script](../assets/images/getting-started/game_stub-dialog-31-script_icon.png "Edit the dialog tree script")
 
@@ -800,40 +800,40 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 	_show_options()
 ```
 
-In this function we are using the `match` construct of the GDScript language to do something different for each option of our dialogue.
+In this function, we are using the `match` construct of the GDScript language to do something different for each option of our dialogue.
 
-We are going to match against the dialog option **ID** (we told you that would have come in handy). For each one we execute a script that in this case works as a short cutscene.
+We are going to match against the dialog option **ID** (we told you that would have come in handy). For each one, we execute a script that in this case works as a short cutscene.
 
 !!! warning
-    Please note that the `turn_off_options()` function takes an array as parameter. In the example code, we are always passing a one-element array to it. Don't be tricked into feeding it a string.
+    Please note that the `turn_off_options()` function takes an array as a parameter. In the example code, we are always passing a one-element array to it. Don't be tricked into feeding it a string.
 
 When the dialog starts, we only have one option (plus the exit line to stop the dialog). This first option starts an exchange that goes for some lines. At the end of the exchange, that option is turned off, and another one is turned on, with a signpost to a possible goal for the player (find the toy car for Popsy).
 
-The scope of this small game is too narrow for this to makes sense, but that's an example of how dialogs can be shaped to follow the story flow.
+The scope of this small game is too narrow for this to make sense, but that's an example of how dialogs can be shaped to follow the story flow.
 
 !!! info "Help! I'm not a developer!"
-    The `match` keyword is a GDScript powerful tool when you have a single variable that can assume a large number of known values. Basically you ask the language to inspect the variable and only exectue the lines of code that are in the block that is nested inside a specified value.
+    The `match` keyword is a GDScript powerful tool when you have a single variable that can assume a large number of known values. Basically, you ask the language to inspect the variable and only execute the lines of code that are in the block that is nested inside a specified value.
 
-    Since we are matching agains the option ID, and we populated the option IDs as strings, we expect that variable to have one of the values we choosed at design time.
+    Since we are matching against the option ID, and we populated the option IDs as strings, we expect that variable to have one of the values we choose at design time.
 
-    The `_` value at the end is a fallback one. If none of the above matches, this block of code is executed. It's smart to always leave a fallback here, that calls the `stop()` function, because if someone adds an option and forget to code a block for it, the game won't block.
+    The `_` value at the end is a fallback one. If none of the above matches, this block of code is executed. It's smart to always leave a fallback here, that calls the `stop()` function because if someone adds an option and forgets to code a block for it, the game won't block.
 
 !!! tip
-    This function can grow very long in case of articulated dialogs. The best option is to create private functions in the dialog tree script to isolate particularly long branches. Of course, don't forget to `await` them when you write your call!
+    This function can grow very long in the case of articulated dialogs. The best option is to create private functions in the dialog tree script to isolate particularly long branches. Of course, don't forget to `await` for them when you write your call!
 
 The savvy reader may have understood at this point, how powerful this dialog system is. Since you execute a full script when the user selects an option, the sky is the limit here. You may play animations, populate the inventory, change the game state in different locations, trigger cutscenes (flashbacks?), switch the player character, or do something really strange like saving the game during a dialog (hardly seen in point-and-click games, but why not?).
 
-Other engines describe dialogs as declarative, nested lists of lines that the characters can say. Popochiu takes a more dev-oriented road and leaves the developer total control.
+Other engines describe dialogs as declarative, nested lists of lines that the characters can say. Popochiu takes a more dev-oriented road and leaves the developer in total control.
 
 We're almost done. Since Popsy wants its toy car, let's make it happy!
 
 ## Use inventory items
 
-The last common task in an adventure game is use inventory items. Giving them to characters, combining them together or with elements in the game world.
+The last common task in an adventure game is to use inventory items. Giving them to characters, combining them together or with elements in the game world.
 
 We are going to give the item we collected earlier to our secondary character. This will disable the dialog line forever and remove the item from our inventory.
 
-Fortunately we already have all the elements we need to achieve this. Every Popochiu clickable object (characters, props, hotspots, and inventory items) expose a function named `_on_item_used()`, that is invoked by the engine when the player tries to combine an inventory item with that object. Of course, the engine passes the inventory item that the player is using as a parameter, so that the target object can react differently to differnt items.
+Fortunately, we already have all the elements we need to achieve this. Every Popochiu clickable object (characters, props, hotspots, and inventory items) exposes a function named `_on_item_used()`, that is invoked by the engine when the player tries to combine an inventory item with that object. Of course, the engine passes the inventory item that the player is using as a parameter so that the target object can react differently to different items.
 
 We'll give the toy car to Popsy, so open the script of the secondary character, locate the `_on_item_used()` function and change it like this:
 
@@ -853,7 +853,7 @@ Save the script and run the game. Pick the toy car up, select it from the invent
 
 You should see the dialog happen, and the car is removed from your inventory.
 
-**Congratulations! You've get to the end of this introductory guide!**
+**Congratulations! You've got to the end of this introductory guide!**
 
 ## Conclusions
 
@@ -868,18 +868,18 @@ We know how to:
 * **Move and control** our game character
 * **Add interactions** to our locations, both via **hotspots** and actual **props**
 * Collect and get rid of stuff in **the inventory**
-* We can create interesting, dynamic **dialogs**
+* We can create interesting, dynamic **dialogues**
 
 These are the basics of every adventure game and an inch of what Popochiu can do for you.  
-We hope that this appetizer was enough to understand if Popochiu is the game engine that you need for your project, and you are enticed to learn more!
+We hope that this appetizer was enough to understand if Popochiu is the game engine that you need for your project, and that you are enticed to learn more!
 
 ## Homeworks
 
-If you want to tinker with this first game a bit, get your hands dirty and learn by doing, here is a list of assignments you can try to solve by yourself, with some hint in case you get lost.
+If you want to tinker with this first game a bit, get your hands dirty and learn by doing, here is a list of assignments you can try to solve by yourself, with some hints in case you get lost.
 
 ### Add a prop and an inventory item
 
-Add a cabinet with a drawer to the scene and a key as inventory item. When the character interacts with the cabinet, it says something about having found a key in the drawer and the key is added to the inventory
+Add a cabinet with a drawer to the scene and a key as an inventory item. When the character interacts with the cabinet, it says something about having found a key in the drawer and the key is added to the inventory
 
 !!! tip "Hint"
     Find the sprites for [the key](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/inventory_items/key/key.png) and [the cabinet](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/rooms/house/props/drawer/house_drawer.png) in the example project GitHub repository.
