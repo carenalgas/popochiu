@@ -112,7 +112,7 @@ func save_childs_states() -> void:
 						continue
 					
 					var node: Node2D = load(script_path).new()
-					node.script_name = folder_name
+					node.script_name = folder_name.to_pascal_case()
 					
 					_save_object_state(
 						node,
@@ -138,14 +138,14 @@ func save_childs_states() -> void:
 func save_characters() -> void:
 	for c in E.current_room.get_characters():
 		var pc: PopochiuCharacter = c
-
+		
 		characters[pc.script_name] = {
 			x = pc.position.x,
 			y = pc.position.y,
 			facing = pc._looking_dir,
 			visible = pc.visible,
-			modulate = pc.modulate,
-			self_modulate = pc.self_modulate,
+			modulate = pc.modulate.to_html(),
+			self_modulate = pc.self_modulate.to_html(),
 			light_mask = pc.light_mask
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)

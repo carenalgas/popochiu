@@ -442,8 +442,8 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.position = Vector2(chr_dic.x, chr_dic.y)
 		chr._looking_dir = chr_dic.facing
 		chr.visible = chr_dic.visible
-		chr.modulate = chr_dic.modulate
-		chr.self_modulate = chr_dic.self_modulate
+		chr.modulate = Color.from_string(chr_dic.modulate, Color.WHITE)
+		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
 		chr.light_mask = chr_dic.light_mask
 		
 		current_room.add_character(chr)
