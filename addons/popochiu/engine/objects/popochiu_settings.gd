@@ -23,9 +23,13 @@ var use_translations := false
 var items_on_start := []
 ## The max number of items players will be able to put in the inventory.
 var inventory_limit := 0
+## @deprecated
+## [b]NOTE[/b] This option is now a property in the InventoryBar component.
 ## Whether the inventory will be always visible, or players will have to do something to make it
 ## appear. [b]This is specific to the ContextSensitive GUI[/b].
 var inventory_always_visible := false
+## @deprecated
+## [b]NOTE[/b] This option is now a property in the SettingsBar component.
 ## Whether the toolbar (SettingsBar) will be always visible, or players will have to do something to
 ## make it appear. [b]This is specific to the ContextSensitive GUI[/b].
 var toolbar_always_visible := false
@@ -61,8 +65,6 @@ func _init() -> void:
 	use_translations = PopochiuConfig.is_use_translations()
 	items_on_start = PopochiuConfig.get_inventory_items_on_start()
 	inventory_limit = PopochiuConfig.get_inventory_limit()
-	inventory_always_visible = PopochiuConfig.is_inventory_always_visible()
-	toolbar_always_visible = PopochiuConfig.is_toolbar_always_visible()
 	fade_color = PopochiuConfig.get_fade_color()
 	scale_gui = PopochiuConfig.is_scale_gui()
 	max_dialog_options = PopochiuConfig.get_max_dialog_options()

@@ -442,8 +442,8 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.position = Vector2(chr_dic.x, chr_dic.y)
 		chr._looking_dir = chr_dic.facing
 		chr.visible = chr_dic.visible
-		chr.modulate = chr_dic.modulate
-		chr.self_modulate = chr_dic.self_modulate
+		chr.modulate = Color.from_string(chr_dic.modulate, Color.WHITE)
+		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
 		chr.light_mask = chr_dic.light_mask
 		
 		current_room.add_character(chr)
@@ -496,6 +496,9 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	if not current_room.hide_gi:
 		G.unblock()
+	
+	if hovered:
+		G.mouse_entered_clickable.emit(hovered)
 	
 	self.in_room = true
 	
@@ -796,11 +799,7 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 	
 	if not _hovered_queue.is_empty() and is_instance_valid(_hovered_queue[-1]):
 		var clickable: PopochiuClickable = _hovered_queue[-1]
-		G.show_hover_text(clickable.description)
-		
-		if clickable.get("cursor"):
-			Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
-		
+		G.mouse_entered_clickable.emit(clickable)
 		return false
 	
 	return true

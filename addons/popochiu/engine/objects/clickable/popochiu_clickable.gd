@@ -62,7 +62,7 @@ var _has_double_click: bool = false
 #region Godot ######################################################################################
 func _ready():
 	add_to_group('PopochiuClickable')
-		
+	
 	if Engine.is_editor_hint():
 		hide_helpers()
 		
@@ -95,8 +95,9 @@ func _ready():
 			get_node("InteractionPolygon").position = interaction_polygon_position
 	
 	visibility_changed.connect(_toggle_input)
-
-	if clickable:
+	
+	# Ignore this object if it is a temporary one (its name has *)
+	if clickable and not "*" in name:
 		# Connect to own signals
 		mouse_entered.connect(_on_mouse_entered)
 		mouse_exited.connect(_on_mouse_exited)
@@ -106,7 +107,6 @@ func _ready():
 		# Connect to singleton signals
 		E.language_changed.connect(_translate)
 	
-	set_process_unhandled_input(false)
 	_translate()
 
 
@@ -318,10 +318,6 @@ func set_room(value: Node2D) -> void:
 
 #region Private ####################################################################################
 func _on_mouse_entered() -> void:
-	if G.is_blocked: return
-	
-	set_process_unhandled_input(true)
-	
 	if E.hovered and is_instance_valid(E.hovered) and (
 		E.hovered.get_parent() == self or get_index() < E.hovered.get_index()
 	):
@@ -334,8 +330,6 @@ func _on_mouse_entered() -> void:
 
 
 func _on_mouse_exited() -> void:
-	set_process_unhandled_input(false)
-	
 	last_click_button = -1
 	
 	if E.remove_hovered(self):
@@ -381,7 +375,6 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 func _toggle_input() -> void:
 	if clickable:
 		input_pickable = visible
-		set_process_unhandled_input(false)
 
 
 func _translate() -> void:

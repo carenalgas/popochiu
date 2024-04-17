@@ -90,6 +90,10 @@ const PROPS_IGNORE := [
 	"frames",
 	"link_to_item",
 	"_description_code",
+	"editing_polygon",
+	"last_click_button",
+	"_double_click_delay",
+	"_has_double_click",
 ]
 const HOTSPOTS_IGNORE := [
 	"description",
@@ -98,6 +102,10 @@ const HOTSPOTS_IGNORE := [
 	"cursor",
 	"always_on_top",
 	"_description_code",
+	"editing_polygon",
+	"last_click_button",
+	"_double_click_delay",
+	"_has_double_click",
 ]
 const WALKABLE_AREAS_IGNORE := [
 	"description",

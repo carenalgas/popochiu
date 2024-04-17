@@ -14,8 +14,6 @@ enum DialogStyle {
 # Godot's ProjectSettings instead of using a Resource file.
 # ---- GUI -----------------------------------------------------------------------------------------
 const SCALE_GUI = "popochiu/gui/experimental_scale_gui"
-const INVENTORY_ALWAYS_VISIBLE = "popochiu/gui/inventory_always_visible"
-const TOOLBAR_ALWAYS_VISIBLE = "popochiu/gui/toolbar_always_visible"
 const FADE_COLOR = "popochiu/gui/fade_color"
 const SKIP_CUTSCENE_TIME = "popochiu/gui/skip_cutscene_time"
 const DIALOG_STYLE = "popochiu/gui/dialog_style"
@@ -46,12 +44,6 @@ const PIXEL_PERFECT = "popochiu/pixel/pixel_perfect"
 static func initialize_project_settings():
 	# ---- GUI -------------------------------------------------------------------------------------
 	_initialize_project_setting(SCALE_GUI, false, TYPE_BOOL)
-	# TODO: Move this to the properties of the 2-click Context-sensitive template or its InventoryBar
-	# 		component
-	_initialize_project_setting(INVENTORY_ALWAYS_VISIBLE, false, TYPE_BOOL)
-	# TODO: Move this to the properties of the 2-click Context-sensitive template or its SettingsBar
-	# 		component
-	_initialize_project_setting(TOOLBAR_ALWAYS_VISIBLE, false, TYPE_BOOL)
 	_initialize_project_setting(FADE_COLOR, Color.BLACK, TYPE_COLOR)
 	_initialize_project_setting(SKIP_CUTSCENE_TIME, 0.2, TYPE_FLOAT)
 	# ---- Dialogs ---------------------------------------------------------------------------------
@@ -88,18 +80,6 @@ static func initialize_project_settings():
 # ---- GUI -----------------------------------------------------------------------------------------
 static func is_scale_gui() -> bool:
 	return _get_project_setting(SCALE_GUI, false)
-
-
-# TODO: Move this to the properties of the 2-click Context-sensitive template or its InventoryBar
-# 		component
-static func is_inventory_always_visible() -> bool:
-	return _get_project_setting(INVENTORY_ALWAYS_VISIBLE, false)
-
-
-# TODO: Move this to the properties of the 2-click Context-sensitive template or its SettingsBar
-# 		component
-static func is_toolbar_always_visible() -> bool:
-	return _get_project_setting(TOOLBAR_ALWAYS_VISIBLE, false)
 
 
 static func get_fade_color() -> Color:

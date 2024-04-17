@@ -1,5 +1,6 @@
 extends Control
-# warning-ignore-all:return_value_discarded
+
+@export var always_visible := false
 
 var is_disabled := false
 
@@ -12,7 +13,7 @@ var _is_hidden := true
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
 func _ready():
-	if not E.settings.inventory_always_visible:
+	if not always_visible:
 		position.y = _hidden_y
 	
 	# Connect to singletons signals
@@ -30,7 +31,7 @@ func _ready():
 			ii.in_inventory = true
 			ii.selected.connect(_change_cursor)
 	
-	set_process_input(not E.settings.inventory_always_visible)
+	set_process_input(not always_visible)
 
 
 func _input(event: InputEvent) -> void:
@@ -44,7 +45,7 @@ func _input(event: InputEvent) -> void:
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
 func _open() -> void:
-	if E.settings.inventory_always_visible: return
+	if always_visible: return
 	if not is_disabled and position.y != _hidden_y: return
 	
 	if is_instance_valid(_tween) and _tween.is_running():
@@ -59,7 +60,7 @@ func _open() -> void:
 
 
 func _close() -> void:
-	if E.settings.inventory_always_visible: return
+	if always_visible: return
 	
 	await get_tree().process_frame
 	
@@ -97,9 +98,9 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 	
 	item.selected.connect(_change_cursor)
 	
-	if not E.settings.inventory_always_visible and animate:
-		# Show the inventory for a while and hide after a couple of seconds
-		# so players can see the item being added to the inventory
+	if not always_visible and animate:
+		# Show the inventory for a while and hide after a couple of seconds so players can see the
+		# item being added to the inventory
 		set_process_input(false)
 		
 		_open()
@@ -120,7 +121,7 @@ func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 	
 	_box.remove_child(item)
 	
-	if not E.settings.inventory_always_visible:
+	if not always_visible:
 		Cursor.show_cursor()
 		G.show_hover_text()
 		
@@ -133,9 +134,7 @@ func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 	I.item_remove_done.emit(item)
 
 
-func _replace_item(
-	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem
-) -> void:
+func _replace_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
 	item.replace_by(new_item)
 	
 	await get_tree().process_frame
