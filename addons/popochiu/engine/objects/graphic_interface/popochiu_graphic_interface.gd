@@ -7,6 +7,8 @@ extends Control
 
 ## Stack of opened popups.
 var popups_stack := []
+## Whether a dialog line is being displayed.
+var is_showing_dialog_line := false
 
 var _components_map := {}
 
