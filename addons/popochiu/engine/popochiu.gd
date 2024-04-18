@@ -88,14 +88,9 @@ var height := 0.0 : get = get_height
 var half_width := 0.0 : get = get_half_width
 ## [member height] divided by 2.
 var half_height := 0.0 : get = get_half_height
-## Used to access the value of the current text speed. The possible text speed values are stored
-## in the [member PopochiuSettings.text_speeds] [Array], so this property has the index of the
-## speed being used by the game.
-var current_text_speed_idx := settings.default_text_speed_idx
 ## The text speed being used by the game. When this property changes, the
 ## [signal text_speed_changed] signal is emitted.
-var current_text_speed: float = settings.text_speeds[current_text_speed_idx] :
-	set = set_current_text_speed
+var text_speed: float = settings.text_speed : set = set_text_speed
 ## The number of seconds to wait before moving to the next dialog line (when playing dialog lines
 ## triggered inside a [method queue].
 var auto_continue_after := -1.0
@@ -725,17 +720,6 @@ func play_transition(type: int, duration: float) -> void:
 	await tl.transition_finished
 
 
-# TODO: Move this logic to the button in the 2-click Context-sensitive template in charge of
-# 		changing the text speed.
-## Changes the speed of the text in dialog lines looping through the values in
-## [member PopochiuSettings.text_speeds].
-func change_text_speed() -> void:
-	current_text_speed_idx = wrapi(current_text_speed_idx + 1, 0, settings.text_speeds.size())
-	current_text_speed = settings.text_speeds[current_text_speed_idx]
-	
-	text_speed_changed.emit()
-
-
 ## Checks if there are any saved game sessions in the game's folder. By default Godot's
 ## [code]user://[/code] (you can open this folder with [b]Project > Open User Data Folder[/b]).
 func has_save() -> bool:
@@ -890,8 +874,8 @@ func get_hovered() -> PopochiuClickable:
 	return null
 
 
-func set_current_text_speed(value: float) -> void:
-	current_text_speed = value
+func set_text_speed(value: float) -> void:
+	text_speed = value
 	text_speed_changed.emit()
 
 

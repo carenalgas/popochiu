@@ -5,11 +5,16 @@ extends Resource
 
 ## The time, in seconds, that will take the game to skip a cutscene.
 var skip_cutscene_time := 0.0
+## @deprecated
 ## The text speed options that will be available in the game. In the ContextSensitive GUI you can
 ## loop between them usin the text speed button in the SettingsBar.
 var text_speeds := [0.1, 0.01, 0.0]
+## @deprecated
 ## The index of the default text speed value in [member text_speeds].
 var default_text_speed_idx := 0
+## The speed at which characters are displayed when a character speaks and the text is being
+## animated
+var text_speed := 0.0
 ## If [code]true[/code], then dialog lines should auto continue once the animation that shows them
 ## finishes. Otherwise, players will have to click the screen in order to continue.
 var auto_continue_text := false
@@ -60,17 +65,22 @@ var dialog_style := 0
 
 #region Godot ######################################################################################
 func _init() -> void:
+	# ---- GUI -------------------------------------------------------------------------------------
+	scale_gui = PopochiuConfig.is_scale_gui()
+	fade_color = PopochiuConfig.get_fade_color()
 	skip_cutscene_time = PopochiuConfig.get_skip_cutscene_time()
+	# ---- Dialogs ---------------------------------------------------------------------------------
+	text_speed = PopochiuConfig.get_text_speed()
 	auto_continue_text = PopochiuConfig.is_auto_continue_text()
 	use_translations = PopochiuConfig.is_use_translations()
-	items_on_start = PopochiuConfig.get_inventory_items_on_start()
-	inventory_limit = PopochiuConfig.get_inventory_limit()
-	fade_color = PopochiuConfig.get_fade_color()
-	scale_gui = PopochiuConfig.is_scale_gui()
 	max_dialog_options = PopochiuConfig.get_max_dialog_options()
+	dialog_style = PopochiuConfig.get_dialog_style()
+	# ---- Inventory -------------------------------------------------------------------------------
+	inventory_limit = PopochiuConfig.get_inventory_limit()
+	items_on_start = PopochiuConfig.get_inventory_items_on_start()
+	# ---- Pixel game ------------------------------------------------------------------------------
 	is_pixel_art_game = PopochiuConfig.is_pixel_art_textures()
 	is_pixel_perfect = PopochiuConfig.is_pixel_perfect()
-	dialog_style = PopochiuConfig.get_dialog_style()
 
 
 #endregion

@@ -37,7 +37,7 @@ func _ready() -> void:
 	clear()
 	
 	modulate.a = 0.0
-	_secs_per_character = E.current_text_speed
+	_secs_per_character = E.text_speed
 	_x_limit = E.width / (E.scale.x if E.settings.scale_gui else 1.0)
 	_y_limit = E.height / (E.scale.y if E.settings.scale_gui else 1.0)
 	
@@ -238,7 +238,7 @@ func disappear() -> void:
 
 
 func change_speed() -> void:
-	_secs_per_character = E.current_text_speed
+	_secs_per_character = E.text_speed
 
 
 #endregion

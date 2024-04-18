@@ -8,7 +8,7 @@ extends PopochiuPopup
 func _ready() -> void:
 	super()
 	
-	text_speed.value = 0.1 - E.current_text_speed
+	text_speed.value = 0.1 - E.text_speed
 	dialog_style.selected = E.settings.dialog_style
 	continue_mode.button_pressed = E.settings.auto_continue_text
 	
@@ -19,7 +19,7 @@ func _ready() -> void:
 
 
 func _on_text_speed_changed(value: float) -> void:
-	E.current_text_speed = 0.1 - value
+	E.text_speed = 0.1 - value
 
 
 func _on_dialog_style_selected(idx: int) -> void:
