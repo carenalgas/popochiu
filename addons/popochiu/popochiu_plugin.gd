@@ -189,7 +189,7 @@ func _create_input_actions() -> void:
 				event.button_index = d.button
 			elif d.has("key"):
 				event = InputEventKey.new()
-				event.scancode = d.key
+				event.keycode = d.key
 			
 			ProjectSettings.set_setting(
 				setting_name,
