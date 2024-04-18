@@ -345,10 +345,7 @@ func _on_character_seleced(id: int) -> void:
 func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 	var row: PopochiuObjectRow = null
 	
-	if child is Marker2D:
-		row = _create_object_row(type_id, child.name)
-		_types[type_id].group.add(row)
-	elif child is PopochiuCharacter:
+	if child is PopochiuCharacter:
 		# Get the script_name of the character
 		var char_name: String =\
 		child.name.trim_prefix('Character').rstrip(' *')
