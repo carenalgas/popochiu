@@ -2,7 +2,7 @@
 extends VBoxContainer
 ## Handles the Room tab in Popochiu's dock
 
-const PopochiuObjectRow := preload('object_row/popochiu_object_row.gd')
+const PopochiuObjectRow := preload('res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.gd')
 const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
 
 var opened_room: PopochiuRoom = null
@@ -40,6 +40,7 @@ var _remove_dialog: ConfirmationDialog
 	},
 	Constants.Types.MARKER: {
 		group = find_child('MarkersGroup') as PopochiuGroup,
+		popup = 'CreateMarker',
 		method = 'get_markers',
 		type_class = Marker2D,
 		parent = 'Markers'
