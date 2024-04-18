@@ -2,7 +2,7 @@
 extends VBoxContainer
 ## Handles the Room tab in Popochiu's dock
 
-const PopochiuObjectRow := preload('object_row/popochiu_object_row.gd')
+const PopochiuObjectRow := preload('res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.gd')
 const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
 
 var opened_room: PopochiuRoom = null
@@ -40,6 +40,7 @@ var _remove_dialog: ConfirmationDialog
 	},
 	Constants.Types.MARKER: {
 		group = find_child('MarkersGroup') as PopochiuGroup,
+		popup = 'CreateMarker',
 		method = 'get_markers',
 		type_class = Marker2D,
 		parent = 'Markers'
@@ -344,10 +345,7 @@ func _on_character_seleced(id: int) -> void:
 func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 	var row: PopochiuObjectRow = null
 	
-	if child is Marker2D:
-		row = _create_object_row(type_id, child.name)
-		_types[type_id].group.add(row)
-	elif child is PopochiuCharacter:
+	if child is PopochiuCharacter:
 		# Get the script_name of the character
 		var char_name: String =\
 		child.name.trim_prefix('Character').rstrip(' *')
