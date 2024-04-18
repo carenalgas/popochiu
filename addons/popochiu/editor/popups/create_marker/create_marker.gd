@@ -20,7 +20,7 @@ func _ready() -> void:
 
 #region Virtual ####################################################################################
 func _create() -> void:
-	# Setup the region helper and use it to create the marker -------------------------------------
+	# Setup the region helper and use it to create the marker 
 	_factory = PopochiuMarkerFactory.new(_main_dock)
 
 	if _factory.create(_new_marker_name, _room) != ResultCodes.SUCCESS:
@@ -29,7 +29,7 @@ func _create() -> void:
 
 	var marker = _factory.get_obj_scene()
 
-	# Open the properties of the created region in the inspector -----------------------------------
+	# Open the properties of the created region in the inspector 
 	# Done here because the creation is interactive in this case
 	await get_tree().create_timer(0.1).timeout
 	PopochiuEditorHelper.select_node(marker)
