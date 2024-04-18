@@ -396,19 +396,12 @@ func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 func _get_row_path(type_id: int, child: Node) -> String:
 	var row_path := ""
 	
-	if type_id == Constants.Types.PROP:
-		row_path = '%s/props/%s/prop_%s.tscn' % [
-			opened_room.scene_file_path.get_base_dir(),
-			(child.name as String).to_snake_case(),
-			(child.name as String).to_snake_case()
-		]
-	elif child.script.resource_path.find('addons') == -1:
+	if child.script and child.script.resource_path.find('addons') == -1:
 		row_path = child.script.resource_path
 	else:
-		row_path = '%s/%s' % [
-			opened_room.scene_file_path.get_base_dir(),
-			(_types[type_id].parent as String).to_snake_case()
-		]
+		# If the node doesn't have an associated script, then clicking on its
+		# row should select its scene (.tscn) file
+		row_path = child.scene_file_path
 	
 	return row_path
 
