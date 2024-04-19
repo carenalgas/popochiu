@@ -73,6 +73,7 @@ tooltip_text = "Show hover text centered"
 text = "Classic sentence"
 
 [node name="Buttons" type="VBoxContainer" parent="PopupPanel/VBoxContainer/OptionsContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 

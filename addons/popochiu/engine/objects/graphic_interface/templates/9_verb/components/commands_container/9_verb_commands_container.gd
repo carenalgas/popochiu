@@ -22,7 +22,6 @@ func highlight_command(command: int, highlighted := true) -> void:
 	
 	if btn:
 		btn.grab_focus() if highlighted else btn.release_focus()
-		#btn.set_pressed_no_signal(highlighted)
 
 
 #endregion

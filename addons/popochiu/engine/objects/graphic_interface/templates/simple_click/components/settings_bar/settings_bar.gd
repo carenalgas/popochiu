@@ -1,6 +1,9 @@
 extends PanelContainer
 
-const ToolbarButton := preload('buttons/settings_bar_button.gd')
+const ToolbarButton := preload(
+	PopochiuResources.GUI_TEMPLATES_FOLDER +
+	"simple_click/components/settings_bar/buttons/settings_bar_button.gd"
+)
 
 @export var used_in_game := true
 @export var always_visible := false
@@ -11,9 +14,9 @@ var _can_hide := true
 var _is_hidden := true
 
 @onready var _tween: Tween = null
-@onready var _box: BoxContainer = find_child('Box')
-@onready var _btn_dialog_speed: ToolbarButton = find_child('BtnDialogSpeed')
-@onready var _btn_power: ToolbarButton = find_child('BtnQuit')
+@onready var _box: BoxContainer = find_child("Box")
+@onready var _btn_dialog_speed: ToolbarButton = find_child("BtnDialogSpeed")
+@onready var _btn_power: ToolbarButton = find_child("BtnQuit")
 @onready var _hide_y := position.y - (size.y - 4)
 
 
@@ -71,7 +74,7 @@ func _open() -> void:
 		_tween.kill()
 	
 	_tween = create_tween()
-	_tween.tween_property(self, 'position:y', 0.0, 0.5)\
+	_tween.tween_property(self, "position:y", 0.0, 0.5)\
 	.from(_hide_y if not is_disabled else position.y)\
 	.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	
@@ -92,7 +95,7 @@ func _close() -> void:
 	
 	_tween = create_tween()
 	_tween.tween_property(
-		self, 'position:y',
+		self, "position:y",
 		_hide_y if not is_disabled else _hide_y - 3.5,
 		0.2
 	).from(0.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)

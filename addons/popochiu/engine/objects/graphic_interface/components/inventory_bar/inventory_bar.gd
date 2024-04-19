@@ -6,7 +6,7 @@ var is_disabled := false
 
 var _is_hidden := true
 
-@onready var box: Container = find_child('Box')
+@onready var box: Container = find_child("Box")
 @onready var _tween: Tween = null
 @onready var _hidden_y := position.y - (size.y - 4)
 
@@ -59,7 +59,7 @@ func _open() -> void:
 		_tween.kill()
 	
 	_tween = create_tween()
-	_tween.tween_property(self, 'position:y', 0.0, 0.5)\
+	_tween.tween_property(self, "position:y", 0.0, 0.5)\
 	.from(_hidden_y if not is_disabled else position.y)\
 	.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	
@@ -76,7 +76,7 @@ func _close() -> void:
 	
 	_tween = create_tween()
 	_tween.tween_property(
-		self, 'position:y',
+		self, "position:y",
 		_hidden_y if not is_disabled else _hidden_y - 3.5,
 		0.2
 	).from(0.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)

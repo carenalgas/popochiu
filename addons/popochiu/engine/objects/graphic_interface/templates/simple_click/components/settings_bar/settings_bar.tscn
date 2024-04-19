@@ -81,7 +81,6 @@ script_name = "LoadGame"
 
 [node name="BtnDialogSpeed" type="TextureButton" parent="Box"]
 layout_mode = 2
-texture_normal = ExtResource("7_otoev")
 script = ExtResource("8_xj7pu")
 speed_options = [SubResource("Resource_ie5nq"), SubResource("Resource_dhkav"), SubResource("Resource_kqq7u")]
 description = "Text speed"

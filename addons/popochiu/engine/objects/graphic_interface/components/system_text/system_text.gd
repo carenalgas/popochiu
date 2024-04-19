@@ -4,7 +4,7 @@ extends RichTextLabel
 
 signal shown
 
-const DFLT_SIZE := 'dflt_size'
+const DFLT_SIZE := "dflt_size"
 
 
 #region Godot ######################################################################################
@@ -53,7 +53,7 @@ func close() -> void:
 #endregion
 
 #region Private ####################################################################################
-func _show_text(msg := '') -> void:
+func _show_text(msg := "") -> void:
 	clear()
 	text = ""
 	size = get_meta(DFLT_SIZE)
@@ -73,7 +73,7 @@ func _show_text(msg := '') -> void:
 	rt.free()
 	# ========================================================= Calculate the width of the node ====
 	
-	append_text('[center]%s[/center]' % msg)
+	append_text("[center]%s[/center]" % msg)
 	
 	if msg:
 		appear()

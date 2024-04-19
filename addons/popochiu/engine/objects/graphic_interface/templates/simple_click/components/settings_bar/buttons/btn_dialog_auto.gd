@@ -1,7 +1,7 @@
-extends 'settings_bar_button.gd'
+extends "settings_bar_button.gd"
 
 @export var btn_states := [] # (Array, Texture2D)
-@export var states_descriptions := ['manual', 'auto']
+@export var states_descriptions := ["manual", "auto"]
 
 
 #region Godot ######################################################################################
@@ -24,7 +24,7 @@ func _on_pressed() -> void:
 
 #region SetGet #####################################################################################
 func get_description() -> String:
-	return '%s: %s' % [description, states_descriptions[1 if E.settings.auto_continue_text else 0]]
+	return "%s: %s" % [description, states_descriptions[1 if E.settings.auto_continue_text else 0]]
 
 
 #endregion

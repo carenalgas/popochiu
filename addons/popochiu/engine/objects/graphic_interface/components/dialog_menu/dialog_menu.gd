@@ -5,8 +5,8 @@ extends Container
 signal shown
 
 @export var option_scene: PackedScene
-@export var default: Color = Color('5B6EE1')
-@export var used: Color = Color('3F3F74')
+@export var default: Color = Color("5B6EE1")
+@export var used: Color = Color("3F3F74")
 @export var hover: Color = Color.WHITE
 
 var current_options := []
@@ -17,7 +17,7 @@ var _visible_options := 0
 @onready var dialog_options_container: VBoxContainer = %DialogOptionsContainer
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	for child in dialog_options_container.get_children():
 		child.queue_free()
@@ -35,7 +35,9 @@ func _ready() -> void:
 	hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _clicked(event: InputEvent) -> void:
 	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
 		pass
@@ -71,11 +73,11 @@ func _create_options(options := [], autoshow := false) -> void:
 		var dialog_option: PopochiuDialogOption = opt
 
 		btn.text = dialog_option.text
-		btn.add_theme_color_override('font_color', default)
-		btn.add_theme_color_override('font_hover_color', hover)
+		btn.add_theme_color_override("font_color", default)
+		btn.add_theme_color_override("font_hover_color", hover)
 		
 		if dialog_option.used and not dialog_option.always_on:
-			btn.add_theme_color_override('font_color', used)
+			btn.add_theme_color_override("font_color", used)
 		
 		btn.pressed.connect(_on_option_clicked.bind(dialog_option))
 
@@ -127,3 +129,6 @@ func _on_option_clicked(opt: PopochiuDialogOption) -> void:
 	
 	hide()
 	D.option_selected.emit(opt)
+
+
+#endregion

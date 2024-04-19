@@ -6,7 +6,7 @@ var _gui_width := 0.0
 var _gui_height := 0.0
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	
@@ -45,7 +45,9 @@ func _process(delta: float) -> void:
 		position.y = _gui_height - size.y
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _show_text(txt := "") -> void:
 	text = ""
 	
@@ -67,3 +69,6 @@ func _show_text(txt := "") -> void:
 	
 	if follows_cursor:
 		size += Vector2.ONE * (Cursor.get_cursor_height() / 2)
+
+
+#endregion
