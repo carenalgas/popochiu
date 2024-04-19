@@ -35,7 +35,7 @@ const MAIN_TYPES := [
 	Types.ROOM, Types.CHARACTER, Types.INVENTORY_ITEM, Types.DIALOG
 ]
 const ROOM_TYPES := [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
-const WIKI := "https://github.com/mapedorr/popochiu/wiki/"
+const DOCUMENTATION := "https://carenalgas.github.io/popochiu/"
 const CFG := "res://addons/popochiu/plugin.cfg"
 const GUI_SCRIPT_TEMPLATES_FOLDER := "res://addons/popochiu/engine/templates/graphic_interface/"
 const GUI_TEMPLATES_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/templates/"

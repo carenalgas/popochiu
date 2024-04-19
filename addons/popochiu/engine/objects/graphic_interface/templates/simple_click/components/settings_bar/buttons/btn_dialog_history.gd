@@ -1,4 +1,4 @@
-extends 'settings_bar_button.gd'
+extends "settings_bar_button.gd"
 
 
 #region Virtual ####################################################################################

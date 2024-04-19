@@ -27,6 +27,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_roir4")
 script = ExtResource("2_fpv5p")
 
 [node name="PopupPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(264, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -72,6 +73,8 @@ tooltip_text = "Show hover text centered"
 text = "Classic sentence"
 
 [node name="Buttons" type="VBoxContainer" parent="PopupPanel/VBoxContainer/OptionsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
 
 [node name="Save" type="Button" parent="PopupPanel/VBoxContainer/OptionsContainer/Buttons"]

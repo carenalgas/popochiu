@@ -38,8 +38,17 @@ func _ready():
 	D.dialog_finished.connect(_on_dialog_finished)
 	I.item_selected.connect(_on_inventory_item_selected)
 	
-#	if E.settings.scale_gui:
-#		$MainContainer.scale = E.scale
+	if E.settings.scale_gui:
+		size = get_viewport_rect().size / E.scale
+		scale = E.scale
+		# Apply this filter so the font doesn't blur
+		# NOTE: Maybe here we should take into account if the game is marked as Pixel (or if the
+		# 		font is the default one.
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		
+		# Adjust nodes with a "text" property that is a String in order to try to prevent glitches
+		# when rendering its font
+		_adjust_nodes_text(get_children())
 
 
 #endregion
@@ -147,6 +156,18 @@ func get_component(component_name: String) -> Control:
 ## Returns the name of the cursor texture to show. [code]"normal"[/code] is returned by default.
 func get_cursor_name() -> String:
 	return "normal" if _get_cursor_name().is_empty() else _get_cursor_name()
+
+
+#endregion
+
+#region Private ####################################################################################
+func _adjust_nodes_text(nodes_array: Array) -> void:
+	for node: Node in nodes_array:
+		_adjust_nodes_text(node.get_children())
+		if not node.get("text") or not typeof(node.get("text")) == TYPE_STRING: continue
+		if node.text.length() % 2 != 0:
+			node.text += " "
+			prints(node.text, node.size)
 
 
 #endregion

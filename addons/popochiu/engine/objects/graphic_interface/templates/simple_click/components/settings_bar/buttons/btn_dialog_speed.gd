@@ -1,5 +1,5 @@
 @tool
-extends 'settings_bar_button.gd'
+extends "settings_bar_button.gd"
 
 const TextSpeedOption = preload(
 	PopochiuResources.GUI_TEMPLATES_FOLDER
@@ -17,6 +17,10 @@ func _ready() -> void:
 		return
 	
 	super()
+	
+	if speed_options.is_empty():
+		hide()
+	
 	texture_normal = (speed_options[_speed_idx] as TextSpeedOption).icon
 
 
@@ -35,7 +39,7 @@ func get_description() -> String:
 	if speed_options.is_empty() or Engine.is_editor_hint():
 		return description
 	
-	return '%s: %s' % [description, (speed_options[_speed_idx] as TextSpeedOption).description]
+	return "%s: %s" % [description, (speed_options[_speed_idx] as TextSpeedOption).description]
 
 
 func set_speed_options(value: Array) -> void:
@@ -47,6 +51,11 @@ func set_speed_options(value: Array) -> void:
 			x.resource_name = "Speed %d" % idx
 			
 			value[idx] = x
+	
+	if speed_options.is_empty():
+		texture_normal = null
+	else:
+		texture_normal = speed_options[0].icon
 
 
 #endregion

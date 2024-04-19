@@ -7,7 +7,7 @@ extends PanelContainer
 @onready var lbl_score: Label = %LblScore
 
 
-#region Public #################################################################
+#region Public #####################################################################################
 func set_game_name(game_name: String) -> void:
 	lbl_game_name.text = game_name
 
@@ -29,7 +29,7 @@ func subtract_score(value: int) -> void:
 
 #endregion
 
-#region Public #################################################################
+#region Private ####################################################################################
 func _update_text() -> void:
 	lbl_score.text = "%d/%d" % [score, max_score]
 

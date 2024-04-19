@@ -1,17 +1,17 @@
 extends PopochiuPopup
 
-const SELECTION_COLOR := Color('edf171')
-const OVERWRITE_COLOR := Color('c46c71')
+const SELECTION_COLOR := Color("edf171")
+const OVERWRITE_COLOR := Color("c46c71")
 
 var _current_slot: Button = null
-var _slot_name := ''
-var _prev_text := ''
+var _slot_name := ""
+var _prev_text := ""
 var _slot := 0
 
 @onready var slots: VBoxContainer = %Slots
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	
@@ -23,19 +23,21 @@ func _ready() -> void:
 	
 	var saves: Dictionary = E.get_saves_descriptions()
 	
-	for btn in slots.get_children():
-		(btn as Button).set_meta('has_save', false)
+	for btn: Button in slots.get_children():
+		btn.set_meta("has_save", false)
 		
 		if saves.has(btn.get_index() + 1):
 			btn.text = saves[btn.get_index() + 1]
-			(btn as Button).set_meta('has_save', true)
+			btn.set_meta("has_save", true)
 		else:
 			btn.disabled = true
 		
 		btn.pressed.connect(_select_slot.bind(btn))
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 func _open() -> void:
 	btn_ok.disabled = true
 	_slot = 0
@@ -45,7 +47,7 @@ func _open() -> void:
 		_current_slot.button_pressed = false
 		
 		_current_slot = null
-		_prev_text = ''
+		_prev_text = ""
 
 
 func _close() -> void:
@@ -62,12 +64,14 @@ func _on_ok() -> void:
 	
 	if _slot_name:
 		_prev_text = _current_slot.text
-		_current_slot.set_meta('has_save', true)
+		_current_slot.set_meta("has_save", true)
 	
 	close()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func open_save() -> void:
 	_show_save()
 
@@ -76,9 +80,11 @@ func open_load() -> void:
 	_show_load()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _show_save(slot_text := "") -> void:
-	lbl_title.text = 'Choose a slot to save the game'
+	lbl_title.text = "Choose a slot to save the game"
 	_slot_name = slot_text
 	
 	if _slot_name.is_empty():
@@ -91,11 +97,11 @@ func _show_save(slot_text := "") -> void:
 
 
 func _show_load() -> void:
-	lbl_title.text = 'Choose the slot to load'
-	_slot_name = ''
+	lbl_title.text = "Choose the slot to load"
+	_slot_name = ""
 	
 	for btn in slots.get_children():
-		btn.disabled = !(btn as Button).get_meta('has_save')
+		btn.disabled = !(btn as Button).get_meta("has_save")
 	
 	open()
 
@@ -120,6 +126,9 @@ func _select_slot(btn: Button) -> void:
 
 
 func _format_date(date: Dictionary) -> String:
-	return '%d/%02d/%02d %02d:%02d:%02d' % [
+	return "%d/%02d/%02d %02d:%02d:%02d" % [
 		date.year, date.month, date.day, date.hour, date.minute, date.second
 	]
+
+
+#endregion

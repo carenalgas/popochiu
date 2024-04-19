@@ -1,7 +1,7 @@
 extends TextureButton
 
-@export var description := '' : get = get_description
-@export var script_name := ''
+@export var description := "" : get = get_description
+@export var script_name := ""
 
 
 #region Godot ######################################################################################

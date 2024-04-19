@@ -9,7 +9,7 @@ signal animation_finished
 signal text_show_started
 signal text_show_finished
 
-const DFLT_SIZE := 'dflt_size'
+const DFLT_SIZE := "dflt_size"
 const DFLT_POSITION := "dflt_position"
 
 @export var wrap_width := 200.0
@@ -79,7 +79,7 @@ func play_text(props: Dictionary) -> void:
 	# the whole text is shown
 	var rt := RichTextLabel.new()
 	rt.add_theme_font_override(
-		'normal_font',
+		"normal_font",
 		get_theme_font("normal_font")
 	)
 	rt.bbcode_enabled = true
@@ -91,7 +91,7 @@ func play_text(props: Dictionary) -> void:
 	# Create a Label to check if the text exceeds the wrap_width
 	var lbl := Label.new()
 	lbl.add_theme_font_override(
-		'normal_font',
+		"normal_font",
 		get_theme_font("normal_font")
 	)
 	
@@ -164,15 +164,15 @@ func play_text(props: Dictionary) -> void:
 		0:
 			var center := floor(position.x + (size.x / 2))
 			if center == props.position.x:
-				append_text('[center]%s[/center]' % msg)
+				append_text("[center]%s[/center]" % msg)
 			elif center < props.position.x:
-				append_text('[right]%s[/right]' % msg)
+				append_text("[right]%s[/right]" % msg)
 			else:
 				append_text(msg)
 		1:
 			append_text(msg)
 		2:
-			text = '[center][color=%s]%s[/color][/center]' % [
+			text = "[center][color=%s]%s[/color][/center]" % [
 				props.color.to_html(), msg
 			]
 	
@@ -183,7 +183,7 @@ func play_text(props: Dictionary) -> void:
 		
 		_tween = create_tween()
 		_tween.tween_property(
-			self, 'visible_ratio',
+			self, "visible_ratio",
 			1,
 			_secs_per_character * get_total_character_count()
 		).from(0.0)
@@ -244,7 +244,7 @@ func change_speed() -> void:
 #endregion
 
 #region Private ####################################################################################
-func _show_dialogue(chr: PopochiuCharacter, msg := '') -> void:
+func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
 	if not visible: return
 	
 	play_text({
@@ -306,7 +306,7 @@ func _show_icon() -> void:
 				from_pos = size.y - _continue_icon.size.y - 1.0
 		
 		_continue_icon_tween.tween_property(
-			_continue_icon, 'position:y', to_pos, 0.8
+			_continue_icon, "position:y", to_pos, 0.8
 		).from(from_pos).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 		_continue_icon_tween.set_loops()
 	else:
@@ -319,7 +319,7 @@ func _show_icon() -> void:
 				_continue_icon.position.y = size.y / 2.0
 		
 		_continue_icon_tween.tween_property(
-			_continue_icon, 'value',
+			_continue_icon, "value",
 			100.0, 3.0,
 		).from_current().set_ease(Tween.EASE_OUT)
 		_continue_icon_tween.finished.connect(_continue)

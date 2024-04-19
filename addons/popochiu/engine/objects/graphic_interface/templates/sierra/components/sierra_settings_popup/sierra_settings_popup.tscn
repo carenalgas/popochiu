@@ -20,6 +20,7 @@ script = ExtResource("2_3iqg8")
 script_name = &"SierraSettingsPopup"
 
 [node name="PopupPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -49,6 +50,7 @@ texture_pressed = ExtResource("4_38rye")
 texture_hover = ExtResource("4_38rye")
 
 [node name="BodyContainer" type="VBoxContainer" parent="PopupPanel/VBoxContainer"]
+custom_minimum_size = Vector2(112, 0)
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer/BodyContainer"]

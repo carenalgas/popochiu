@@ -3,6 +3,7 @@ extends PopochiuPopup
 signal quit_pressed
 signal classic_sentence_toggled(pressed)
 
+@onready var classic_sentence: CheckButton = %ClassicSentence
 @onready var save: Button = %Save
 @onready var load: Button = %Load
 @onready var history: Button = %History
@@ -18,7 +19,7 @@ func _ready() -> void:
 	load.pressed.connect(_on_load_pressed)
 	history.pressed.connect(_on_history_pressed)
 	quit.pressed.connect(_on_quit_pressed)
-	%ClassicSentence.toggled.connect(_on_classic_sentence_toggled)
+	classic_sentence.toggled.connect(_on_classic_sentence_toggled)
 	
 	if OS.has_feature("web"):
 		quit.hide()

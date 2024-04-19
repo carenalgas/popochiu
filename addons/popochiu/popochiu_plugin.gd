@@ -94,8 +94,8 @@ func _enter_tree() -> void:
 	# ==== Connect to signals ======================================================================
 	_editor_interface.get_file_system_dock().file_removed.connect(_on_file_removed)
 	_editor_interface.get_file_system_dock().files_moved.connect(_on_files_moved)
-	# TODO: This connection might be needed only by TabAudio.gd, so probably
-	# would be better if it is done there
+	# TODO: This connection might be needed only by TabAudio.gd, so probably would be better if it
+	# is done there
 	_editor_file_system.sources_changed.connect(_on_sources_changed)
 	
 	scene_changed.connect(main_dock.scene_changed)
@@ -114,9 +114,7 @@ func _enter_tree() -> void:
 	# the plugin or if there is no GUI scene (template) selected.
 	if not (PopochiuResources.is_setup_done() or PopochiuResources.is_gui_set()):
 		main_dock.setup_dialog.appear(true)
-		(main_dock.setup_dialog as AcceptDialog).confirmed.connect(
-			_set_setup_done
-		)
+		(main_dock.setup_dialog as AcceptDialog).confirmed.connect(_set_setup_done)
 	
 	PopochiuResources.update_autoloads(true)
 	_editor_file_system.scan_sources()

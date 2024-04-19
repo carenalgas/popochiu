@@ -90,7 +90,7 @@ func _ready() -> void:
 	
 	tab_container.tab_changed.connect(_on_tab_changed)
 	btn_setup.pressed.connect(open_setup)
-	btn_docs.pressed.connect(OS.shell_open.bind(Constants.WIKI))
+	btn_docs.pressed.connect(OS.shell_open.bind(Constants.DOCUMENTATION))
 	get_tree().node_added.connect(_check_node)
 
 
@@ -203,9 +203,12 @@ func scene_changed(scene_root: Node) -> void:
 	if not is_instance_valid(tab_ui): return
 	tab_ui.on_scene_changed(scene_root)
 	
-	if not scene_root is PopochiuRoom and not scene_root is PopochiuGraphicInterface:
-		# Open the Popochiu Main tab if the opened scene in the Editor2D is not
-		# a PopochiuRoom nor a PopochiuGraphicInterface
+	if (
+		not scene_root is PopochiuRoom
+		and not scene_root.scene_file_path == PopochiuResources.GUI_GAME_SCENE
+	):
+		# Open the Popochiu Main tab if the opened scene in the Editor2D is not a PopochiuRoom nor
+		# the GUI scene
 		tab_container.current_tab = 0
 
 
