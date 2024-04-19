@@ -510,6 +510,7 @@ func _remove_from_core() -> void:
 			PopochiuResources.erase_data_value('dialogs', str(name))
 		Constants.Types.PROP,\
 		Constants.Types.HOTSPOT,\
+		Constants.Types.MARKER, \
 		Constants.Types.REGION,\
 		Constants.Types.WALKABLE_AREA:
 			var opened_room: PopochiuRoom = main_dock.get_opened_room()
@@ -520,6 +521,8 @@ func _remove_from_core() -> void:
 						room_child_to_free = opened_room.get_prop(str(name))
 					Constants.Types.HOTSPOT:
 						room_child_to_free = opened_room.get_hotspot(str(name))
+					Constants.Types.MARKER:
+						room_child_to_free = opened_room.get_marker(str(name))
 					Constants.Types.REGION:
 						room_child_to_free = opened_room.get_region(str(name))
 					Constants.Types.WALKABLE_AREA:
