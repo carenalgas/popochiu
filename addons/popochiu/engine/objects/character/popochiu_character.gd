@@ -892,7 +892,7 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 		await get_tree().process_frame
 		return
 	
-	position = node.global_position + offset
+	position = node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
 
 
 func _update_position():
