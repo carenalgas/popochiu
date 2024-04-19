@@ -542,6 +542,21 @@ func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(E.current_room.get_prop(id), offset)
 
 
+## Makes the character teleport (disappear at one location and instantly appear at another) to the 
+## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to 
+## [param id]. You can set an [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_prop(id, offset)
+
+
+## Makes the character teleport (disappear at one location and instantly appear at another) to the 
+## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to 
+## [param id]. You can set an [param offset] relative to the target position.
+func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
+	await _teleport_to_node(E.current_room.get_prop(id), offset)
+
+
 ## Makes the character walk to the [PopochiuHotspot] (in the current room) which
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
 ## relative to the target position.[br][br]
@@ -557,6 +572,21 @@ func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(E.current_room.get_hotspot(id), offset)
 
 
+## Makes the character teleport (disappear at one location and instantly appear at another) to the 
+## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to 
+## [param id]. You can set an [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_hotspot(id, offset)
+
+
+## Makes the character teleport (disappear at one location and instantly appear at another) to the 
+## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to 
+## [param id]. You can set an [param offset] relative to the target position.
+func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
+	await _teleport_to_node(E.current_room.get_hotspot(id), offset)
+
+
 ## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
 ## equal to [param id]. You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
@@ -568,6 +598,21 @@ func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 ## equal to [param id]. You can set an [param offset] relative to the target position.
 func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(E.current_room.get_marker(id), offset)
+
+
+## Makes the character teleport (disappear at one location and instantly appear at another) to the 
+## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an 
+## [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_marker(id, offset)
+
+
+## Makes the character teleport (disappear at one location and instantly appear at another) to the 
+## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an 
+## [param offset] relative to the target position.
+func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
+	await _teleport_to_node(E.current_room.get_marker(id), offset)
 
 
 ## Sets [member emotion] to [param new_emotion] when in a [method Popochiu.queue].
@@ -839,6 +884,15 @@ func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 	await walk(
 		node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
 	)
+
+
+# Instantly move to the node position
+func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
+	if not is_instance_valid(node):
+		await get_tree().process_frame
+		return
+	
+	position = node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
 
 
 func _update_position():
