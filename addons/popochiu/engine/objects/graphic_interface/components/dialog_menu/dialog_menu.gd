@@ -119,6 +119,7 @@ func remove_options(_dialog: PopochiuDialog = null) -> void:
 
 func show_options() -> void:
 	G.block()
+	G.dialog_options_shown.emit()
 	
 	show()
 	shown.emit()

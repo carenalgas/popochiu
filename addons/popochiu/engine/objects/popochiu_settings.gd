@@ -61,6 +61,11 @@ var is_pixel_perfect := false
 ## - [b]Caption[/b]. The texts will appear at the bottom of the game window (as if they were
 ## subtitles).
 var dialog_style := 0
+## Setting intended for development of the plugin. It makes the game to use the original files of
+## the selected template to make testing changes on it easier. This is a workaround while we find
+## how to make the scenes moved to [code]res://game/graphic_interface[/code] inherit from the
+## source ones.
+var dev_use_addon_template := false
 
 
 #region Godot ######################################################################################
@@ -69,18 +74,24 @@ func _init() -> void:
 	scale_gui = PopochiuConfig.is_scale_gui()
 	fade_color = PopochiuConfig.get_fade_color()
 	skip_cutscene_time = PopochiuConfig.get_skip_cutscene_time()
+	
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	text_speed = PopochiuConfig.get_text_speed()
 	auto_continue_text = PopochiuConfig.is_auto_continue_text()
 	use_translations = PopochiuConfig.is_use_translations()
 	max_dialog_options = PopochiuConfig.get_max_dialog_options()
 	dialog_style = PopochiuConfig.get_dialog_style()
+	
 	# ---- Inventory -------------------------------------------------------------------------------
 	inventory_limit = PopochiuConfig.get_inventory_limit()
 	items_on_start = PopochiuConfig.get_inventory_items_on_start()
+	
 	# ---- Pixel game ------------------------------------------------------------------------------
 	is_pixel_art_game = PopochiuConfig.is_pixel_art_textures()
 	is_pixel_perfect = PopochiuConfig.is_pixel_perfect()
+	
+	# ---- DEV -------------------------------------------------------------------------------------
+	dev_use_addon_template = PopochiuConfig.is_use_addon_template()
 
 
 #endregion

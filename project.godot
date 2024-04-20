@@ -67,9 +67,6 @@ popochiu-look={
 
 common/enable_pause_aware_picking=true
 
-[popochiu]
-
-import/aseprite/command_path="D:\\visual\\Aseprite\\Aseprite.exe"
 
 [rendering]
 

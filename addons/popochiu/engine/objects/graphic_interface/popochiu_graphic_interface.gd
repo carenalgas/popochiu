@@ -35,6 +35,7 @@ func _ready():
 	G.dialog_line_started.connect(_on_dialog_line_started)
 	G.dialog_line_finished.connect(_on_dialog_line_finished)
 	D.dialog_started.connect(_on_dialog_started)
+	G.dialog_options_shown.connect(_on_dialog_options_shown)
 	D.dialog_finished.connect(_on_dialog_finished)
 	I.item_selected.connect(_on_inventory_item_selected)
 	
@@ -123,6 +124,11 @@ func _on_dialog_started(dialog: PopochiuDialog) -> void:
 	pass
 
 
+## Called when the running [PopochiuDialog] shows its options on screen.
+func _on_dialog_options_shown() -> void:
+	pass
+
+
 ## Called when [param dialog] finishes (this is afet calling [method PopochiuDialog.stop]).
 func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 	pass
@@ -167,7 +173,6 @@ func _adjust_nodes_text(nodes_array: Array) -> void:
 		if not node.get("text") or not typeof(node.get("text")) == TYPE_STRING: continue
 		if node.text.length() % 2 != 0:
 			node.text += " "
-			prints(node.text, node.size)
 
 
 #endregion

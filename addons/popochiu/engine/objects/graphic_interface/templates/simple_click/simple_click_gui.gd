@@ -111,7 +111,7 @@ func _on_dialog_line_started() -> void:
 func _on_dialog_line_finished() -> void:
 	is_showing_dialog_line = false
 	if D.current_dialog:
-		Cursor.show_cursor("use")
+		Cursor.show_cursor("gui")
 	elif E.hovered:
 		Cursor.show_cursor(Cursor.get_type_name(E.hovered.cursor))
 	else:
@@ -121,8 +121,15 @@ func _on_dialog_line_finished() -> void:
 ## Called when a [PopochiuDialog] starts. It shows the [code]"use"[/code] cursor and clears the
 ## [HoverText] component.
 func _on_dialog_started(dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor("use")
+	Cursor.show_cursor("gui")
 	G.show_hover_text()
+
+
+## Called when the running [PopochiuDialog] shows its options on screen. It shows the
+## [code]"gui"[/code] cursor.
+func _on_dialog_options_shown() -> void:
+	Cursor.unblock()
+	Cursor.show_cursor("gui")
 
 
 ## Called when a [PopochiuDialog] finishes. It shows the default cursor.

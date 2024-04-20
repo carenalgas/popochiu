@@ -39,6 +39,9 @@ const ASEPRITE_WIPE_OLD_ANIMATIONS = "popochiu/aseprite_import/wipe_old_animatio
 const PIXEL_ART_TEXTURES = "popochiu/pixel/pixel_art_textures"
 const PIXEL_PERFECT = "popochiu/pixel/pixel_perfect"
 
+# ---- DEV -----------------------------------------------------------------------------------------
+const DEV_USE_ADDON_TEMPLATE = "popochiu/gui/dev_use_addon_template"
+
 
 #region Public #####################################################################################
 static func initialize_project_settings():
@@ -46,6 +49,7 @@ static func initialize_project_settings():
 	_initialize_project_setting(SCALE_GUI, false, TYPE_BOOL)
 	_initialize_project_setting(FADE_COLOR, Color.BLACK, TYPE_COLOR)
 	_initialize_project_setting(SKIP_CUTSCENE_TIME, 0.2, TYPE_FLOAT)
+	
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	_initialize_project_setting(TEXT_SPEED, 0.1, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
 	_initialize_project_setting(AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
@@ -59,21 +63,27 @@ static func initialize_project_settings():
 		# TODO: Add the other options: Portrait Above Character, Bubble Above Character
 		"Above Character,Portrait,Caption"
 	)
+	
 	# ---- Inventory -------------------------------------------------------------------------------
 	_initialize_project_setting(INVENTORY_LIMIT, 0, TYPE_INT)
 	_initialize_project_setting(INVENTORY_ITEMS_ON_START, [], TYPE_ARRAY,
 		PROPERTY_HINT_TYPE_STRING, "%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE, "*tscn"]
 	)
+	
 	# ---- Aseprite Importing ----------------------------------------------------------------------
 	_initialize_project_setting(ASEPRITE_IMPORT_ANIMATION, true, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_LOOP_ANIMATION, true, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_PROPS_VISIBLE, true, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_PROPS_CLICKABLE, true, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS, true, TYPE_BOOL)
+	
 	# ---- Pixel game ------------------------------------------------------------------------------
 	_initialize_project_setting(PIXEL_ART_TEXTURES, false, TYPE_BOOL)
 	_initialize_project_setting(PIXEL_PERFECT, false, TYPE_BOOL)
-
+	
+	# ---- DEV -------------------------------------------------------------------------------------
+	_initialize_advanced_project_setting(DEV_USE_ADDON_TEMPLATE, false, TYPE_BOOL)
+	
 	ProjectSettings.save()
 
 
@@ -158,6 +168,11 @@ static func is_pixel_perfect() -> bool:
 	return _get_project_setting(PIXEL_PERFECT, false)
 
 
+# ---- DEV -----------------------------------------------------------------------------------------
+static func is_use_addon_template() -> bool:
+	return _get_project_setting(DEV_USE_ADDON_TEMPLATE, false)
+
+
 #endregion
 
 #region Private ####################################################################################
@@ -166,8 +181,20 @@ static func _initialize_project_setting(
 ) -> void:
 	if ProjectSettings.has_setting(key): return
 	
-	ProjectSettings.set_setting(key, default_value)
+	_create_setting(key, default_value, type, hint)
 	ProjectSettings.set_as_basic(key, true)
+
+
+static func _initialize_advanced_project_setting(
+	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
+) -> void:
+	_create_setting(key, default_value, type, hint)
+
+
+static func _create_setting(
+	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
+) -> void:
+	ProjectSettings.set_setting(key, default_value)
 	ProjectSettings.set_initial_value(key, default_value)
 	ProjectSettings.add_property_info({
 		"name": key,
