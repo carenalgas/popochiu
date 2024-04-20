@@ -64,7 +64,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	
 	if I.active or is_showing_dialog_line: return
 	
-	Cursor.show_cursor()
+	Cursor.show_cursor("gui" if D.current_dialog else "normal")
 
 
 ## Called when the mouse enters (hovers) [param inventory_item]. It changes the texture of the

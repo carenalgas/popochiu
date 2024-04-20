@@ -40,7 +40,7 @@ const PIXEL_ART_TEXTURES = "popochiu/pixel/pixel_art_textures"
 const PIXEL_PERFECT = "popochiu/pixel/pixel_perfect"
 
 # ---- DEV -----------------------------------------------------------------------------------------
-const DEV_USE_ADDON_TEMPLATE = "popochiu/gui/dev_use_addon_template"
+const DEV_USE_ADDON_TEMPLATE = "popochiu/dev/use_addon_template"
 
 
 #region Public #####################################################################################

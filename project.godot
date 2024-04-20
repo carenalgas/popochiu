@@ -67,6 +67,9 @@ popochiu-look={
 
 common/enable_pause_aware_picking=true
 
+[popochiu]
+
+pixel/pixel_art_textures=true
 
 [rendering]
 

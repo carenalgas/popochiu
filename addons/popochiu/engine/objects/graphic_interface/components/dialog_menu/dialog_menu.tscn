@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.gd" id="1_3dp72"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_cvsnu"]
-[ext_resource type="PackedScene" uid="uid://dcta4urojglil" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu_option.tscn" id="2_xxbof"]
+[ext_resource type="PackedScene" uid="uid://dcta4urojglil" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu_option/dialog_menu_option.tscn" id="3_0jfsm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b2awe"]
-bg_color = Color(0, 0, 0.6, 1)
+bg_color = Color(0, 0, 0, 1)
 
 [node name="DialogMenu" type="PanelContainer" groups=["popochiu_gui_component"]]
 custom_minimum_size = Vector2(0, 53)
@@ -18,8 +18,7 @@ grow_vertical = 0
 theme = ExtResource("1_cvsnu")
 theme_override_styles/panel = SubResource("StyleBoxFlat_b2awe")
 script = ExtResource("1_3dp72")
-option_scene = ExtResource("2_xxbof")
-used = Color(0.698039, 0.698039, 0.698039, 1)
+option_scene = ExtResource("3_0jfsm")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
@@ -31,15 +30,3 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
 theme_override_constants/separation = 1
-
-[node name="DialogOption" parent="ScrollContainer/DialogOptionsContainer" instance=ExtResource("2_xxbof")]
-layout_mode = 2
-text = "Option 1"
-
-[node name="DialogOption2" parent="ScrollContainer/DialogOptionsContainer" instance=ExtResource("2_xxbof")]
-layout_mode = 2
-text = "Option 2"
-
-[node name="DialogOption3" parent="ScrollContainer/DialogOptionsContainer" instance=ExtResource("2_xxbof")]
-layout_mode = 2
-text = "Option 3"

@@ -39,13 +39,13 @@ func _ready():
 	D.dialog_finished.connect(_on_dialog_finished)
 	I.item_selected.connect(_on_inventory_item_selected)
 	
+	if E.settings.is_pixel_art_game:
+		# Apply this filter so the font doesn't blur
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	
 	if E.settings.scale_gui:
 		size = get_viewport_rect().size / E.scale
 		scale = E.scale
-		# Apply this filter so the font doesn't blur
-		# NOTE: Maybe here we should take into account if the game is marked as Pixel (or if the
-		# 		font is the default one.
-		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		
 		# Adjust nodes with a "text" property that is a String in order to try to prevent glitches
 		# when rendering its font
