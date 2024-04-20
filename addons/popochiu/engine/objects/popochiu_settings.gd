@@ -43,6 +43,7 @@ var fade_color: Color
 ## Whether the GUI should scale to match the native game resolution. The default GUI has a 320x180
 ## resolution.
 var scale_gui := false
+## @deprecated
 ## The number of dialog options to show before showing a scroll bar to render those that exceed this
 ## limit.
 var max_dialog_options := 0
@@ -79,7 +80,6 @@ func _init() -> void:
 	text_speed = PopochiuConfig.get_text_speed()
 	auto_continue_text = PopochiuConfig.is_auto_continue_text()
 	use_translations = PopochiuConfig.is_use_translations()
-	max_dialog_options = PopochiuConfig.get_max_dialog_options()
 	dialog_style = PopochiuConfig.get_dialog_style()
 	
 	# ---- Inventory -------------------------------------------------------------------------------

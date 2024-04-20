@@ -22,7 +22,6 @@ const DIALOG_STYLE = "popochiu/gui/dialog_style"
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
 const AUTO_CONTINUE_TEXT = "popochiu/dialogs/auto_continue_text"
 const USE_TRANSLATIONS = "popochiu/dialogs/use_translations"
-const MAX_DIALOG_OPTIONS = "popochiu/dialogs/max_dialog_options"
 
 # ---- Inventory -----------------------------------------------------------------------------------
 const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
@@ -54,7 +53,6 @@ static func initialize_project_settings():
 	_initialize_project_setting(TEXT_SPEED, 0.1, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
 	_initialize_project_setting(AUTO_CONTINUE_TEXT, false, TYPE_BOOL)
 	_initialize_project_setting(USE_TRANSLATIONS, false, TYPE_BOOL)
-	_initialize_project_setting(MAX_DIALOG_OPTIONS, 3, TYPE_INT)
 	_initialize_project_setting(
 		DIALOG_STYLE,
 		DialogStyle.ABOVE_CHARACTER,
@@ -111,10 +109,6 @@ static func is_auto_continue_text() -> bool:
 
 static func is_use_translations() -> bool:
 	return _get_project_setting(USE_TRANSLATIONS, false)
-
-
-static func get_max_dialog_options() -> int:
-	return _get_project_setting(MAX_DIALOG_OPTIONS, 3)
 
 
 static func get_dialog_style() -> int:
