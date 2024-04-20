@@ -95,7 +95,7 @@ GUI templates will contain everything you need, from assets to logic, to mimic o
 
 In the **GUI Template** (_4_) section of the Setup popup, you can click on a GUI icon to select which template to apply:
 
-* **Custom**: select this if you want to create your own GUI. That's basically the "No template, please" option.
+* **Custom**: select this if you want to create your GUI. That's the "No template, please" option.
 * **9 Verbs**: inspired by the original SCUMM interface, first seen in _Monkey Island 2: LeChuck's Revenge_.
 * **Sierra**: inspired by the early 90s SCI interface, common to _King's Quest_ and _Space Quest_ games in the early 90s.
 * **2-Click Context-sensitive**: the most basic interface for an Adventure Game, common to many modern titles like _Deponia_ - left-click to walk and interact, right-click to examine.
@@ -140,7 +140,7 @@ Set the **Flips when** parameter (_5_) to `Looking Left`, and leave the rest unt
 
 The character scene shows nothing. That's because we've set no sprite for our character. Popochiu characters support a full set of standard and custom animations, but since we are only stubbing the game, we'll just set a static sprite for now.
 
-If you don't have a sprite sheet ready for your character, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/goddiu/goddiu.png) from the demo game.  
+If you don't have a sprite sheet ready for your character, you can download [this one](https://github.com/carenalgas/popochiu-sample-game/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/goddiu/goddiu.png) from the demo game.  
 Save it into your project, in the `game/characters/<your character name>/` folder, and rename it as you see fit.
 
 !!! tip
@@ -177,7 +177,7 @@ Just select the **DialogPos** node in the scene tree (_11_). A small cross will 
 This may require a bit of experimentation, but for now, this will do.
 
 !!! info "Under the hood"
-    You may be wondering how exactly the text is located in relation to the position of the **DialogPos** node. Here is an explanation of how Popochiu decides how your text is rendered.
+    You may be wondering how exactly the text is positioned in relation to the **DialogPos** node. Here is an explanation of how Popochiu decides how your text is rendered.
 
     1. The baseline of the text will always match the vertical position of **DialogPos**, so the text will be rendered vertically **right above** that point.
     2. The dialog line length is calculated and the text is centered on the horizontal position of **DialogPos**, so the text will be rendered horizontally **around** that point.
@@ -189,7 +189,7 @@ This may require a bit of experimentation, but for now, this will do.
 We are almost done creating our player character. Before moving on, follow [the same steps](#create-characters) to create another one, to keep our main character company and test some interaction.
 
 !!! tip
-    In the example game, the second character is named _Popsy_ and [its sprite can be found here](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/popsy/popsy.png).
+    In the example game, the second character is named _Popsy_ and [its sprite can be found here](https://github.com/carenalgas/popochiu-sample-game/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/popsy/popsy.png).
 
 ### Select the main character
 
@@ -221,17 +221,17 @@ This allows us to set the newly created room as the main scene of the Godot proj
 Name the new room whatever you want. If you want to follow along, let's name this room "_House_" and make it the main scene.  
 Popochiu will create the new room, open the room scene in the editor, and open the corresponding [Room tab](#TODO) in the plugin interface.
 
-Much like a character, a room needs a sprite to represent the background of the location. We are going to use [this background](https://github.com/carenalgas/popochiu_2-sample_project/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/rooms/house/props/background/house_bg.png) from the example game.
+Much like a character, a room needs a sprite to represent the background of the location. We are going to use [this background](https://github.com/carenalgas/popochiu-sample-game/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/rooms/house/props/background/house_bg.png) from the example game.
 
 But hey! The room has nothing like a sprite in it! Quite the opposite, the scene tree seems to be pretty empty:
 
 ![An empty room scene tree](../assets/images/getting-started/game_stub-room-3-empty_room_scene.png "Nothing meaningful here")
 
 <a name="intbkmk-props-explanation"></a>
-Unlike other objects in Popochiu, rooms are basically containers for other more specialized objects, the most important of which are **Props**. Props are every visible part of a location, used to make the environment believable. They can go from a small collectable item, all the way to location backgrounds.
+Unlike other objects in Popochiu, rooms are containers for other more specialized objects, the most important of which are **Props**. Props are every visible part of a location, used to make the environment believable. They can go from a small collectable item, all the way to location backgrounds.
 
 !!! info "Under the hood"
-    Popochiu makes no distinction based on the prop function in the game, he knows little about that actually. You add as many as you want into a scene and interact with them via your game script.  
+    Popochiu makes no distinction based on the prop function in the game, it knows little about that. You add as many as you want into a scene and interact with them via your game script.  
     The only thing the engine knows about props is their **visibility** and their **clickability**. By flagging those two properties on or off, you can switch objects in and out of a location, and make them interactive.
 
 Armed with this knowledge, it's now clear we must create a prop to hold our background. That's easy. If you followed the steps above, Popochiu dock should be showing the **Home** room tab.
@@ -316,7 +316,7 @@ Save the project and run your game. Your character should now be able to move ar
 
 Our character can now move around the room, but there is little it can do. It is time to add some interaction.
 
-A **hotspot** is the most basic form of interaction you can have in a room. It basically is an area of the screen, delimited by a polygon drawn at a specific position, that has a name and a script attached to it. It has no sprite of its own, it just sits there on top of other elements, waiting to react to the cursor.
+A **hotspot** is the most basic form of interaction you can have in a room. It is just an area of the screen, delimited by a polygon drawn at a specific position, that has a name and a script attached to it. It has no sprite of its own, it just sits there on top of other elements, waiting to react to the cursor.
 
 By means of its script, it can react to events like mouse clicks. That's exactly what we're going to do.
 
@@ -514,7 +514,7 @@ Your new prop will be added to the scene tree as a child of the **Props** node (
 
 Our prop is very much like a hotspot at the moment, since it has no texture. Let's add one.
 
-If you don't have a sprite ready for your prop, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/rooms/house/props/toy_car/toy_car.png) from the demo game.  
+If you don't have a sprite ready for your prop, you can download [this one](https://github.com/carenalgas/popochiu-sample-game/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/rooms/house/props/toy_car/toy_car.png) from the demo game.  
 Save it into your project, in the `game/rooms/<your room name>/props/<your prop name>/toy_car.png` folder, and rename it as you see fit.
 
 Now we can set the **Texture** property in the prop inspector, by dragging the image from the **FileSystem** in place (_30_).
@@ -596,7 +596,7 @@ As long as we run the game, the value won't change back so the next time you exa
 
 !!! info
     If the variable is reset to true every time the game is started, what happens when I restore a saved game?  
-    Saving your game is not part of this introductory guide, but don't worry! Popochiu automatically saves the values of all custom properties and restores them back for you when you load a saved game.
+    Saving your game is not part of this introductory guide, but don't worry! Popochiu automatically saves the values of all custom properties and restores them for you when you load a saved game.
 
 Run the game and test it.  
 Done, we have a prop in the scene! It's now time to learn how to use the character's inventory.
@@ -615,7 +615,7 @@ We'll name our new inventory item "_ToyCar_", because we are going to make the p
 Inventory items are very simple. They have no interaction polygons or similar because representing them in an interactive grid of sorts is the responsibility of the GUI.  
 The only thing we need to do is to assign a texture to them, that will be painted in the inventory GUI by Popochiu.
 
-If you don't have a sprite ready for your inventory item, you can download [this one](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/inventory_items/toy_car/inv_toy_car.png) from the demo game.  
+If you don't have a sprite ready for your inventory item, you can download [this one](https://github.com/carenalgas/popochiu-sample-game/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/inventory_items/toy_car/inv_toy_car.png) from the demo game.  
 Save it into your project, in the `game/inventory_items/<your inventory item name>/inv_toy_car.png` folder, and rename it as you see fit.
 
 Assigning the texture to the inventory item is done the same as props, by dragging the image from the **FileSystem** to the **Texture** property in the inspector (_33_).
@@ -882,7 +882,7 @@ If you want to tinker with this first game a bit, get your hands dirty and learn
 Add a cabinet with a drawer to the scene and a key as an inventory item. When the character interacts with the cabinet, it says something about having found a key in the drawer and the key is added to the inventory
 
 !!! tip "Hint"
-    Find the sprites for [the key](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/inventory_items/key/key.png) and [the cabinet](https://github.com/carenalgas/popochiu_2-sample_project/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/rooms/house/props/drawer/house_drawer.png) in the example project GitHub repository.
+    Find the sprites for [the key](https://github.com/carenalgas/popochiu-sample-game/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/inventory_items/key/key.png) and [the cabinet](https://github.com/carenalgas/popochiu-sample-game/blob/801bdbb5cdc9139e05e496e7a703f5f4e37bc861/game/rooms/house/props/drawer/house_drawer.png) in the example project GitHub repository.
 
 ### Prevent losing the key
 
