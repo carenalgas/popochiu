@@ -91,6 +91,13 @@ func _on_dialog_started(_dialog: PopochiuDialog) -> void:
 	Cursor.show_cursor("gui")
 
 
+## Called when the running [PopochiuDialog] shows its options on screen. It shows the
+## [code]"gui"[/code] cursor.
+func _on_dialog_options_shown() -> void:
+	Cursor.unblock()
+	Cursor.show_cursor("gui")
+
+
 ## Called when a [PopochiuDialog] finishes. It shows the cursor of the last active command.
 func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 	Cursor.show_cursor(E.get_current_command_name().to_snake_case())

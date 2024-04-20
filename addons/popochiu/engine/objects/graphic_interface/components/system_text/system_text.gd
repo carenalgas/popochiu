@@ -14,6 +14,9 @@ func _ready() -> void:
 	# Connect to singletons signals
 	G.system_text_shown.connect(_show_text)
 	
+	# This await fixes a warning shown by Godot related to the anchors of the node and changing its
+	# size during _ready execution
+	await RenderingServer.frame_post_draw
 	close()
 
 

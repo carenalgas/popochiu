@@ -59,6 +59,7 @@ static func _initialize_editor_setting(
 	key: String, default_value, type: int, hint: int = PROPERTY_HINT_NONE
 ) -> void:
 	if editor_settings.has_setting(key): return
+	
 	editor_settings.set_setting(key, default_value)
 	editor_settings.set_initial_value(key, default_value, false)
 	editor_settings.add_property_info({

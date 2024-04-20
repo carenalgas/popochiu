@@ -18,10 +18,14 @@ func _ready() -> void:
 		_gui_height /= E.scale.y
 	
 	E.current_command = NineVerbCommands.Commands.WALK_TO
-	_show_text()
 	
 	set_process(follows_cursor)
 	autowrap_mode = TextServer.AUTOWRAP_OFF if follows_cursor else TextServer.AUTOWRAP_WORD_SMART
+	
+	# This await fixes a warning shown by Godot related to the anchors of the node and changing its
+	# size during _ready execution
+	await RenderingServer.frame_post_draw
+	_show_text()
 
 
 func _process(delta: float) -> void:

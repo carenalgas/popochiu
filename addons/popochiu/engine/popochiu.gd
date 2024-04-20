@@ -118,7 +118,6 @@ var _is_camera_shaking := false
 var _camera_shake_amount := 15.0
 var _shake_timer := 0.0
 var _use_transition_on_room_change := true
-var _config: ConfigFile = null
 var _loaded_game := {}
 var _hovered_queue := []
 # Will have the instance of the PopochiuSaveLoad class in order to call the methods that save and
@@ -141,14 +140,23 @@ var _saveload: Resource = null
 #region Godot ######################################################################################
 func _ready() -> void:
 	_saveload = load(SAVELOAD_PATH).new()
-	_config = PopochiuResources.get_data_cfg()
 	
 	# Create the AudioManager
 	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
 	
 	# Set the Graphic Interface node
-	gi = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
-	gi.name = 'GraphicInterface'
+	if settings.dev_use_addon_template:
+		var template: String = PopochiuResources.get_data_value("ui", "template", "")
+		var path := PopochiuResources.GUI_CUSTOM_SCENE
+		
+		if template != "custom":
+			template = template.to_snake_case()
+			path = PopochiuResources.GUI_TEMPLATES_FOLDER + "%s/%s_gui.tscn" % [template, template]
+		
+		gi = load(path).instantiate()
+	else:
+		gi = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
+		gi.name = 'GraphicInterface'
 	
 	# Load the commands for the game
 	commands = load(PopochiuResources.GUI_COMMANDS).new()
