@@ -12,11 +12,11 @@ We will then add Popsy (or whatever you named your secondary character) to our s
 
 To add the character to the room, click on the **Add character to room** button in the tab room of the Popochiu dock (_34_), then select Popsy from the dropdown list.
 
-![Add character to room button](../assets/images/getting-started/game_stub-dialog-25-add_character_to_room.png "Click and select the character from the dropdown list")
+![Add character to room button](/assets/images/getting-started/game_stub-dialog-25-add_character_to_room.png "Click and select the character from the dropdown list")
 
 The character will be added in the center of the scene. Move it somewhere to the right, so the scene looks like this:
 
-![Character setup](../assets/images/getting-started/game_stub-dialog-26-scene.png "The character is in place")
+![Character setup](/assets/images/getting-started/game_stub-dialog-26-scene.png "The character is in place")
 
 Now that we have a character to talk to, let's create our first dialog.
 
@@ -27,7 +27,7 @@ Dialogs in Popochiu are managed by _Dialog trees_, global objects like character
 
 To create a new dialog tree, click on the **Create dialog tree** button in the main tab of the Popochiu dock (_36_), and name the new dialog in the popup window that appears.
 
-![Create dialog tree](../assets/images/getting-started/game_stub-dialog-27-create_button.png "Create the dialog tree from the Popochiu main dock")
+![Create dialog tree](/assets/images/getting-started/game_stub-dialog-27-create_button.png "Create the dialog tree from the Popochiu main dock")
 
 We'll name our new dialog tree "_PopsyHouseChat_".
 
@@ -45,12 +45,12 @@ Now that we have a dialog tree, we want to add options for the player to choose 
 
 Head to the inspector panel and you will see something like this:
 
-![Dialog tree inspector](../assets/images/getting-started/game_stub-dialog-28-inspector.png "The dialog tree inspector")
+![Dialog tree inspector](/assets/images/getting-started/game_stub-dialog-28-inspector.png "The dialog tree inspector")
 
 To add a dialog option, click the **Options** property (_37_), then the **Add Element** button that appears.  
 An option named "_Opt1_" is added to the list (_38_) (you can see the **Size** of the **Options** property is now `1`). Click on the **Opt1** field to open the drop-down and you should see something like this:
 
-![Create a new dialog option](../assets/images/getting-started/game_stub-dialog-29-add_option.png "Add a new dialog option")
+![Create a new dialog option](/assets/images/getting-started/game_stub-dialog-29-add_option.png "Add a new dialog option")
 
 Every dialog option in a tree has many different properties (_39_):
 
@@ -97,7 +97,7 @@ func _on_click() -> void:
 
 Run the game and click on the secondary character. Your dialog should start and you should see the first and last options only:
 
-![The running dialog](../assets/images/getting-started/game_stub-dialog-30-dialog_run.png "The dialog runs when you click on Popsy")
+![The running dialog](/assets/images/getting-started/game_stub-dialog-30-dialog_run.png "The dialog runs when you click on Popsy")
 
 ### Script a dialog
 
@@ -105,7 +105,7 @@ We have a dialog in place, but so far, no matter which option we choose, the dia
 
 Go back to Popochiu main dock and open the script by clicking on the **Open in Script** icon on the dialog tree row (_41_).
 
-![Dialog tree script](../assets/images/getting-started/game_stub-dialog-31-script_icon.png "Edit the dialog tree script")
+![Dialog tree script](/assets/images/getting-started/game_stub-dialog-31-script_icon.png "Edit the dialog tree script")
 
 The dialog script contains a small number of functions. The one we are going to change is `_option_selected()`. As the name implies, it is invoked by the engine when the user selects an option. The engine will pass the selected option as the argument of the function, so we can inspect it and decide what to do.
 
