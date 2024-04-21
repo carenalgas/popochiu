@@ -435,7 +435,7 @@ func say(dialog: String, emo := "") -> void:
 	await G.dialog_line_finished
 	
 	# Stop the voice if it is still playing (feature #202)
-	if E.am.is_playing_cue(vo_name):
+	if A[vo_name].is_playing():
 		A[vo_name].stop(0.3)
 	
 	emotion = ''
