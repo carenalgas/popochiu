@@ -29,7 +29,7 @@ If you need the character to be scaled the same across the whole region, just se
 The Character's scaling and the region scaling factors are independent, so if your character's scale is different than `1`, you have to take it into account while setting the scale for a region, or the character will "snap" to a different size when it enters the region.
 
 !!! tip
-    Usually you don't want to **upscale** your character, because it gives bad results in almost every situation. This is particularly true for pixel-art or low-resolution games.  
+    Usually you don't want to **upscale** your character, because it gives bad results in almost every situation. This is particularly true for pixel art or low-resolution games.  
     There is nothing wrong in doing this if it works for you, but - if you want to play safe - design your game so that the largest scaling factor for a sprite is `1` in every location.
 
 ## Walking between regions
