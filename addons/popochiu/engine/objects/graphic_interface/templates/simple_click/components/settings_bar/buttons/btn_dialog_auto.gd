@@ -1,31 +1,37 @@
-extends 'settings_bar_button.gd'
+extends "settings_bar_button.gd"
 
 @export var btn_states := [] # (Array, Texture2D)
-@export var states_descriptions := ['manual', 'auto']
+@export var states_descriptions := ["manual", "auto"]
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
-	texture_normal = btn_states[
-		1 if E.settings.auto_continue_text else 0
-	]
+	texture_normal = _get_texture()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
-func on_pressed() -> void:
+#endregion
+
+#region Virtual ####################################################################################
+func _on_pressed() -> void:
 	E.settings.auto_continue_text = !E.settings.auto_continue_text
-	texture_normal = btn_states[
-		1 if E.settings.auto_continue_text else 0
-	]
+	texture_normal = _get_texture()
 
 	G.show_hover_text(self.description)
 
 
+#endregion
+
+#region SetGet #####################################################################################
 func get_description() -> String:
-	return '%s: %s' % [
-		description,
-		states_descriptions[
-			1 if E.settings.auto_continue_text else 0
-		]
-	]
+	return "%s: %s" % [description, states_descriptions[1 if E.settings.auto_continue_text else 0]]
+
+
+#endregion
+
+#region Private ####################################################################################
+func _get_texture() -> Texture2D:
+	return btn_states[1 if E.settings.auto_continue_text else 0]
+
+
+#endregion

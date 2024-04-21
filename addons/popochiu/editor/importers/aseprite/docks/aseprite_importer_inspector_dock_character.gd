@@ -15,7 +15,7 @@ func _ready():
 	_animation_player_path = target_node.get_node("AnimationPlayer").get_path()
 
 	# Instantiate animation creator
-	_animation_creator.init(config, _aseprite, file_system)
+	_animation_creator.init(_aseprite, file_system)
 
 	super()
 

@@ -12,14 +12,19 @@ extends PopochiuCommands
 func fallback() -> void:
 	if is_instance_valid(E.clicked):
 		if E.clicked.last_click_button == MOUSE_BUTTON_LEFT:
-			click_clickable()
+			await click_clickable()
+		elif E.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
+			await right_click_clickable()
 		else:
-			right_click_clickable()
-	elif is_instance_valid(I.clicked):
+			await RenderingServer.frame_post_draw
+	
+	if is_instance_valid(I.clicked):
 		if I.clicked.last_click_button == MOUSE_BUTTON_LEFT:
-			click_inventory_item()
+			await click_inventory_item()
+		elif E.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
+			await right_click_inventory_item()
 		else:
-			right_click_inventory_item()
+			await RenderingServer.frame_post_draw
 
 
 ## Called when players click (LMB) a [PopochiuClickable].

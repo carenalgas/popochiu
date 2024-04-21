@@ -40,7 +40,7 @@ func create(obj_name: String) -> int:
 	new_obj.cursor = Constants.CURSOR_TYPE.USE
 	new_obj.size_flags_vertical = new_obj.SIZE_SHRINK_CENTER
 
-	if PopochiuResources.get_settings().is_pixel_art_game:
+	if PopochiuConfig.is_pixel_art_textures():
 		new_obj.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	
 	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓

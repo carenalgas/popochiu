@@ -8,7 +8,7 @@ signal quit_pressed
 @onready var quit: Button = %Quit
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	
@@ -19,7 +19,9 @@ func _ready() -> void:
 	quit.pressed.connect(_on_quit_pressed)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#endregion
+
+#region Virtual ####################################################################################
 ## Called when the popup is opened. At this point it is not visible yet.
 func _open() -> void:
 	pass
@@ -40,7 +42,9 @@ func _on_cancel() -> void:
 	pass
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _on_save_pressed() -> void:
 	G.show_save()
 
@@ -56,3 +60,6 @@ func _on_history_pressed() -> void:
 func _on_quit_pressed() -> void:
 	close()
 	quit_pressed.emit()
+
+
+#endregion

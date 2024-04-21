@@ -113,16 +113,22 @@ func _physics_process(delta):
 		_move_along_path(walk_distance, moving_character_data)
 
 
-func _unhandled_input(event):
+func _unhandled_input(event: InputEvent):
 	if not has_player: return
 	
 	if I.active:
 		if event.is_action_released("popochiu-look")\
 		or event.is_action_pressed("popochiu-interact"):
+			# Wait so PopochiuClickable can handle the interaction
+			await get_tree().create_timer(0.1).timeout
+			
 			I.set_active_item()
 		return
 	
-	if not event.is_action_pressed("popochiu-interact"):
+	if PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
+		return
+	
+	if not event is InputEventScreenTouch and E.hovered:
 		return
 	
 	if is_instance_valid(C.player) and C.player.can_move:
@@ -179,9 +185,11 @@ func exit_room() -> void:
 func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
 	
-	# Add child nodes (defined in the Scene tree of the room) to the instance of the character
-	for child: Node in _characters_childs[chr.script_name]:
-		chr.add_child(child)
+	# Fix #191 by checking if the character had childs defined in the Room's Scene (Editor)
+	if _characters_childs.has(chr.script_name):
+		# Add child nodes (defined in the Scene tree of the room) to the instance of the character
+		for child: Node in _characters_childs[chr.script_name]:
+			chr.add_child(child)
 	
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)

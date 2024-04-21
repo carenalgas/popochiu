@@ -51,7 +51,7 @@ var clicked: PopochiuClickable = null
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
 ## Used to know if a cutscene was skipped.
 ## A reference to [PopochiuSettings]. Can be used to quickly access its members.
-var settings := PopochiuResources.get_settings()
+var settings := PopochiuSettings.new()
 ## Reference to the [PopochiuAudioManager].
 var am: PopochiuAudioManager = null
 # NOTE: This might not just be a boolean, but there could be an array that puts
@@ -88,14 +88,9 @@ var height := 0.0 : get = get_height
 var half_width := 0.0 : get = get_half_width
 ## [member height] divided by 2.
 var half_height := 0.0 : get = get_half_height
-## Used to access the value of the current text speed. The possible text speed values are stored
-## in the [member PopochiuSettings.text_speeds] [Array], so this property has the index of the
-## speed being used by the game.
-var current_text_speed_idx := settings.default_text_speed
 ## The text speed being used by the game. When this property changes, the
 ## [signal text_speed_changed] signal is emitted.
-var current_text_speed: float = settings.text_speeds[current_text_speed_idx] :
-	set = set_current_text_speed
+var text_speed: float = settings.text_speed : set = set_text_speed
 ## The number of seconds to wait before moving to the next dialog line (when playing dialog lines
 ## triggered inside a [method queue].
 var auto_continue_after := -1.0
@@ -123,7 +118,6 @@ var _is_camera_shaking := false
 var _camera_shake_amount := 15.0
 var _shake_timer := 0.0
 var _use_transition_on_room_change := true
-var _config: ConfigFile = null
 var _loaded_game := {}
 var _hovered_queue := []
 # Will have the instance of the PopochiuSaveLoad class in order to call the methods that save and
@@ -146,29 +140,29 @@ var _saveload: Resource = null
 #region Godot ######################################################################################
 func _ready() -> void:
 	_saveload = load(SAVELOAD_PATH).new()
-	_config = PopochiuResources.get_data_cfg()
 	
 	# Create the AudioManager
 	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
 	
 	# Set the Graphic Interface node
-	if settings.graphic_interface:
-		gi = settings.graphic_interface.instantiate()
-		gi.name = 'GraphicInterface'
+	if settings.dev_use_addon_template:
+		var template: String = PopochiuResources.get_data_value("ui", "template", "")
+		var path := PopochiuResources.GUI_CUSTOM_SCENE
+		
+		if template != "custom":
+			template = template.to_snake_case()
+			path = PopochiuResources.GUI_TEMPLATES_FOLDER + "%s/%s_gui.tscn" % [template, template]
+		
+		gi = load(path).instantiate()
 	else:
-		gi = load(PopochiuResources.GUI_ADDON_FOLDER).instantiate()
+		gi = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
+		gi.name = 'GraphicInterface'
 	
 	# Load the commands for the game
-	var commands_path: String = PopochiuResources.get_data_value("ui", "commands", "")
-	if not commands_path.is_empty():
-		commands = load(commands_path).new()
+	commands = load(PopochiuResources.GUI_COMMANDS).new()
 	
 	# Set the Transitions Layer node
-	if settings.transition_layer:
-		tl = settings.transition_layer.instantiate()
-		tl.name = 'TransitionLayer'
-	else:
-		tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
+	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
 	
 	# Calculate the scale that could be applied
 	scale = Vector2(self.width, self.height) / Vector2(320.0, 180.0)
@@ -189,7 +183,7 @@ func _ready() -> void:
 		if pc_data_path:
 			var pc_data: PopochiuCharacterData = load(pc_data_path)
 			var pc: PopochiuCharacter = load(pc_data.scene).instantiate()
-
+			
 			C.player = pc
 			C.characters.append(pc)
 			C.set(pc.script_name, pc)
@@ -451,18 +445,23 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.position = Vector2(chr_dic.x, chr_dic.y)
 		chr._looking_dir = chr_dic.facing
 		chr.visible = chr_dic.visible
-		chr.modulate = chr_dic.modulate
-		chr.self_modulate = chr_dic.self_modulate
+		chr.modulate = Color.from_string(chr_dic.modulate, Color.WHITE)
+		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
 		chr.light_mask = chr_dic.light_mask
 		
 		current_room.add_character(chr)
 	
 	# If the room must have the player character but it is not part of its $Characters node, then
 	# add the PopochiuCharacter to the room
-	if current_room.has_player and is_instance_valid(C.player):
-		if not current_room.has_character(C.player.script_name):
-			current_room.add_character(C.player)
-			await C.player.idle()
+	if (
+		current_room.has_player
+		and is_instance_valid(C.player)
+		and not current_room.has_character(C.player.script_name)
+	):
+		current_room.add_character(C.player)
+		# Place the PC in the middle of the room
+		C.player.position = Vector2(width, height) / 2.0
+		await C.player.idle()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDS:
@@ -500,6 +499,9 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	if not current_room.hide_gi:
 		G.unblock()
+	
+	if hovered:
+		G.mouse_entered_clickable.emit(hovered)
 	
 	self.in_room = true
 	
@@ -726,19 +728,6 @@ func play_transition(type: int, duration: float) -> void:
 	await tl.transition_finished
 
 
-## Changes the speed of the text in dialog lines looping through the values in
-## [member PopochiuSettings.text_speeds].
-func change_text_speed() -> void:
-	current_text_speed_idx = wrapi(
-		current_text_speed_idx + 1,
-		0,
-		settings.text_speeds.size()
-	)
-	current_text_speed = settings.text_speeds[current_text_speed_idx]
-	
-	text_speed_changed.emit()
-
-
 ## Checks if there are any saved game sessions in the game's folder. By default Godot's
 ## [code]user://[/code] (you can open this folder with [b]Project > Open User Data Folder[/b]).
 func has_save() -> bool:
@@ -802,11 +791,7 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 	
 	if not _hovered_queue.is_empty() and is_instance_valid(_hovered_queue[-1]):
 		var clickable: PopochiuClickable = _hovered_queue[-1]
-		G.show_hover_text(clickable.description)
-		
-		if clickable.get("cursor"):
-			Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
-		
+		G.mouse_entered_clickable.emit(clickable)
 		return false
 	
 	return true
@@ -897,14 +882,13 @@ func get_hovered() -> PopochiuClickable:
 	return null
 
 
-func set_current_text_speed(value: float) -> void:
-	current_text_speed = value
+func set_text_speed(value: float) -> void:
+	text_speed = value
 	text_speed_changed.emit()
 
 
 func set_current_command(value: int) -> void:
 	current_command = value
-	
 	command_selected.emit()
 
 

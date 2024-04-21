@@ -231,6 +231,11 @@ func load_sound_settings():
 				volume_settings[bus_name] = AudioServer.get_bus_volume_db(bus_idx)
 
 
+## Returns [code]true[/code] if the [PopochiuAudioCue] identified by [param cue_name] is playing.
+func is_playing_cue(cue_name: String) -> bool:
+	return get_cue_playback_position(cue_name) > -1
+
+
 #endregion
 
 #region Private ####################################################################################

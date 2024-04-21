@@ -4,7 +4,7 @@ extends RichTextLabel
 
 signal shown
 
-const DFLT_SIZE := 'dflt_size'
+const DFLT_SIZE := "dflt_size"
 
 
 #region Godot ######################################################################################
@@ -14,6 +14,9 @@ func _ready() -> void:
 	# Connect to singletons signals
 	G.system_text_shown.connect(_show_text)
 	
+	# This await fixes a warning shown by Godot related to the anchors of the node and changing its
+	# size during _ready execution
+	await RenderingServer.frame_post_draw
 	close()
 
 
@@ -22,14 +25,12 @@ func _draw() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton or not visible:
+	if not PopochiuUtils.is_click_or_touch_pressed(event) or not visible:
 		return
-	
-	var e: InputEventMouseButton = event
 	
 	get_viewport().set_input_as_handled()
 	
-	if e.is_pressed() and e.button_index == MOUSE_BUTTON_LEFT:
+	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
 		close()
 
 
@@ -55,7 +56,7 @@ func close() -> void:
 #endregion
 
 #region Private ####################################################################################
-func _show_text(msg := '') -> void:
+func _show_text(msg := "") -> void:
 	clear()
 	text = ""
 	size = get_meta(DFLT_SIZE)
@@ -75,7 +76,7 @@ func _show_text(msg := '') -> void:
 	rt.free()
 	# ========================================================= Calculate the width of the node ====
 	
-	append_text('[center]%s[/center]' % msg)
+	append_text("[center]%s[/center]" % msg)
 	
 	if msg:
 		appear()

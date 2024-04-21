@@ -29,4 +29,9 @@ func semitone_to_pitch(pitch: float) -> float:
 	return pow(twelfth_root_of_two, pitch)
 
 
+## Returns [code]true[/code] if the [PopochiuAudioCue] identified by [param cue_name] is playing.
+func is_playing_cue(cue_name: String) -> bool:
+	return E.am.is_playing_cue(cue_name)
+
+
 #endregion

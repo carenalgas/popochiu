@@ -157,9 +157,6 @@ visible = false
 layout_mode = 1
 theme = ExtResource("1_kw4gp")
 theme_override_styles/panel = SubResource("StyleBoxFlat_dfmxi")
-default = Color(0.662745, 1, 0.623529, 1)
-used = Color(0.290196, 0.290196, 0.290196, 1)
-hover = Color(0.929412, 0.945098, 0.443137, 1)
 
 [node name="Popups" type="Control" parent="."]
 layout_mode = 1

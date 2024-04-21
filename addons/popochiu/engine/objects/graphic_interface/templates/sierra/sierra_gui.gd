@@ -24,25 +24,23 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	# TODO: This was `if D.current_dialog:`. Check if everything works as expected
 	if G.is_blocked: return
 	
-	if event is InputEventMouseButton and event.is_pressed():
-		match (event as InputEventMouseButton).button_index:
-			MOUSE_BUTTON_LEFT:
-				# NOTE: When clicking anywhere with the Left Mouse Button, block
-				# the player from moving to the clicked position since the Sierra
-				# GUI allows characters to move only when the WALK command is
-				# active.
-				if not $SierraMenu.visible and not E.hovered\
-				 and E.current_command != SierraCommands.Commands.WALK:
-					get_viewport().set_input_as_handled()
-			MOUSE_BUTTON_RIGHT:
+	match PopochiuUtils.get_click_or_touch_index(event):
+		MOUSE_BUTTON_LEFT:
+			# NOTE: When clicking anywhere with the Left Mouse Button, block
+			# the player from moving to the clicked position since the Sierra
+			# GUI allows characters to move only when the WALK command is
+			# active.
+			if not $SierraMenu.visible and not E.hovered\
+			 and E.current_command != SierraCommands.Commands.WALK:
 				get_viewport().set_input_as_handled()
-				
-				E.current_command = posmod(
-					E.current_command + 1, SierraCommands.Commands.size()
-				)
+		MOUSE_BUTTON_RIGHT:
+			get_viewport().set_input_as_handled()
+			
+			E.current_command = posmod(
+				E.current_command + 1, SierraCommands.Commands.size()
+			)
 
 
 #endregion
@@ -93,6 +91,13 @@ func _on_dialog_started(_dialog: PopochiuDialog) -> void:
 	Cursor.show_cursor("gui")
 
 
+## Called when the running [PopochiuDialog] shows its options on screen. It shows the
+## [code]"gui"[/code] cursor.
+func _on_dialog_options_shown() -> void:
+	Cursor.unblock()
+	Cursor.show_cursor("gui")
+
+
 ## Called when a [PopochiuDialog] finishes. It shows the cursor of the last active command.
 func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 	Cursor.show_cursor(E.get_current_command_name().to_snake_case())
@@ -103,11 +108,16 @@ func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 ## default cursor.
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if is_instance_valid(item):
-		Cursor.set_secondary_cursor_texture(item.texture)
+		Cursor.set_secondary_cursor_texture(item.texture, true)
 		Cursor.hide_main_cursor()
 	else:
 		Cursor.remove_secondary_cursor_texture()
 		Cursor.show_cursor()
+
+
+## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
+func _get_cursor_name() -> String:
+	return E.get_current_command_name().to_snake_case()
 
 
 #endregion

@@ -2,7 +2,7 @@
 extends VBoxContainer
 ## Handles the Room tab in Popochiu's dock
 
-const PopochiuObjectRow := preload('object_row/popochiu_object_row.gd')
+const PopochiuObjectRow := preload('res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.gd')
 const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
 
 var opened_room: PopochiuRoom = null
@@ -40,6 +40,7 @@ var _remove_dialog: ConfirmationDialog
 	},
 	Constants.Types.MARKER: {
 		group = find_child('MarkersGroup') as PopochiuGroup,
+		popup = 'CreateMarker',
 		method = 'get_markers',
 		type_class = Marker2D,
 		parent = 'Markers'
@@ -285,28 +286,18 @@ func _on_remove_character_pressed(row: PopochiuObjectRow) -> void:
 		Vector2(200, 120)
 	)
 	
-	_remove_dialog.confirmed.connect(
-		_on_remove_character_confirmed.bind(row)
-	)
+	_remove_dialog.confirmed.connect(_on_remove_character_confirmed.bind(row))
 	_remove_dialog.canceled.connect(_on_remove_dialog_hide)
 
 
 func _on_remove_dialog_hide() -> void:
-	_remove_dialog.call_deferred(
-		'disconnect',
-		'confirmed', _on_remove_character_confirmed
-	)
-	_remove_dialog.call_deferred(
-		'disconnect',
-		'canceled', _on_remove_dialog_hide
-	)
+	_remove_dialog.call_deferred('disconnect', 'confirmed', _on_remove_character_confirmed)
+	_remove_dialog.call_deferred('disconnect', 'canceled', _on_remove_dialog_hide)
 
 
 func _on_remove_character_confirmed(row: PopochiuObjectRow) -> void:
 	_characters_in_room.erase(str(row.name))
-	opened_room.get_node('Characters').get_node(
-		'Character%s *' % row.name
-	).queue_free()
+	opened_room.get_node('Characters').get_node('Character%s *' % row.name).queue_free()
 	row.queue_free()
 	EditorInterface.save_scene()
 	
@@ -354,10 +345,7 @@ func _on_character_seleced(id: int) -> void:
 func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 	var row: PopochiuObjectRow = null
 	
-	if child is Marker2D:
-		row = _create_object_row(type_id, child.name)
-		_types[type_id].group.add(row)
-	elif child is PopochiuCharacter:
+	if child is PopochiuCharacter:
 		# Get the script_name of the character
 		var char_name: String =\
 		child.name.trim_prefix('Character').rstrip(' *')
@@ -406,19 +394,12 @@ func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 func _get_row_path(type_id: int, child: Node) -> String:
 	var row_path := ""
 	
-	if type_id == Constants.Types.PROP:
-		row_path = '%s/props/%s/prop_%s.tscn' % [
-			opened_room.scene_file_path.get_base_dir(),
-			(child.name as String).to_snake_case(),
-			(child.name as String).to_snake_case()
-		]
-	elif child.script.resource_path.find('addons') == -1:
+	if child.script and child.script.resource_path.find('addons') == -1:
 		row_path = child.script.resource_path
 	else:
-		row_path = '%s/%s' % [
-			opened_room.scene_file_path.get_base_dir(),
-			(_types[type_id].parent as String).to_snake_case()
-		]
+		# If the node doesn't have an associated script, then clicking on its
+		# row should select its scene (.tscn) file
+		row_path = child.scene_file_path
 	
 	return row_path
 

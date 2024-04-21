@@ -340,20 +340,24 @@ func _toggle_description(is_hover: bool) -> void:
 
 
 func _on_gui_input(event: InputEvent) -> void: 
-	var mouse_event := event as InputEventMouseButton 
-	if mouse_event and mouse_event.pressed:
-		I.clicked = self
-		last_click_button = mouse_event.button_index
-		
-		match mouse_event.button_index:
-			MOUSE_BUTTON_LEFT:
-				if I.active:
-					on_item_used(I.active)
-				else:
-					handle_command(mouse_event.button_index)
-			MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
-				if not I.active:
-					handle_command(mouse_event.button_index)
+	if not PopochiuUtils.is_click_or_touch_pressed(event): return
+	
+	var event_index := PopochiuUtils.get_click_or_touch_index(event)
+	I.clicked = self
+	last_click_button = event_index
+	
+	match event_index:
+		MOUSE_BUTTON_LEFT:
+			if I.active:
+				on_item_used(I.active)
+			else:
+				if DisplayServer.is_touchscreen_available():
+					G.mouse_entered_inventory_item.emit(self)
+				
+				handle_command(event_index)
+		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
+			if not I.active:
+				handle_command(event_index)
 
 
 #endregion

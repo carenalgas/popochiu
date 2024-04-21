@@ -2,42 +2,56 @@ extends PopochiuHoverText
 
 @export var follows_cursor := false
 
+var _gui_width := 0.0
+var _gui_height := 0.0
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	
+	_gui_width = E.width
+	_gui_height = E.height
+	
+	if E.settings.scale_gui:
+		_gui_width /= E.scale.x
+		_gui_height /= E.scale.y
+	
 	E.current_command = NineVerbCommands.Commands.WALK_TO
-	_show_text()
 	
 	set_process(follows_cursor)
-	autowrap_mode = (
-		TextServer.AUTOWRAP_OFF
-		if follows_cursor
-		else TextServer.AUTOWRAP_WORD_SMART
-	)
+	autowrap_mode = TextServer.AUTOWRAP_OFF if follows_cursor else TextServer.AUTOWRAP_WORD_SMART
+	
+	# This await fixes a warning shown by Godot related to the anchors of the node and changing its
+	# size during _ready execution
+	await RenderingServer.frame_post_draw
+	_show_text()
 
 
 func _process(delta: float) -> void:
 	position = get_viewport().get_mouse_position()
+	
+	if E.settings.scale_gui:
+		position /= E.scale
+	
 	position -= size / 2.0
-	# TODO: Make this value depend of the height of the cursor or a value in
-	#       a settings file.
-	position.y -= 16.0
+	position.y -= Cursor.get_cursor_height() / 2
 	
 	# Check viewport limits
 	if position.x < 0.0:
 		position.x = 0.0
-	elif position.x + size.x > E.width:
-		position.x = E.width - size.x
+	elif position.x + size.x > _gui_width:
+		position.x = _gui_width - size.x
 	
 	if position.y < 0.0:
 		position.y = 0.0
-	elif position.y + size.y > E.height:
-		position.y = E.height - size.y
+	elif position.y + size.y > _gui_height:
+		position.y = _gui_height - size.y
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _show_text(txt := "") -> void:
 	text = ""
 	
@@ -58,6 +72,7 @@ func _show_text(txt := "") -> void:
 		super(txt)
 	
 	if follows_cursor:
-		# TODO: Make this value depend of the height of the cursor or a value in
-	#       a settings file.
-		size += Vector2.ONE * 16.0
+		size += Vector2.ONE * (Cursor.get_cursor_height() / 2)
+
+
+#endregion

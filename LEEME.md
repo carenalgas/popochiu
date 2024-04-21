@@ -30,7 +30,7 @@ Esta herramienta consta de dos partes: el núcleo (Popochiu) y el dock que facil
 
 **Popochiu puede usarse en Godot 3.3.x a 3.5.x**. **¡¡¡Y ahora también funciona en Godot 4!!!**
 
-1. Si usas Godot 4.2, descarga [Popochiu 2.0 Beta 2](https://github.com/carenalgas/popochiu/releases/download/v2.0.0-beta2/popochiu_v2.0.0-beta2.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
+1. Si usas Godot 4.2, descarga [Popochiu 2.0 Beta 2](https://github.com/carenalgas/popochiu/releases/download/v2.0.0-beta2/popochiu-v2.0.0-beta2.zip). Si usas **Godot 3.5 o superior**, descarga [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip). Si estás usando **Godot 3.3 a Godot 3.4.5**, descarga [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip).
 2. Extra su contenido y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin Popochiu: `Proyecto > Ajustes del Proyecto > Plugins` (the tab on the top).
 4. Reinicia Godot `Proyecto > Volver a Cargar el Proyecto Actual`.
@@ -76,4 +76,4 @@ Hecho por [Carenalga](https://carenalga.itch.io).
 
 Ahora con la colaboración de [StickGrinder](https://twitter.com/StickGrinder) (y otros miembros de [Illiterate Code Games](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), [@JuannFerrari](https://github.com/JuannFerrari), [Whyschuck](https://github.com/Whyshchuck), y nuestra querida comunidad.
 
-:heart::heart::heart: Unas muchísimas gracias a [Edmundito](https://github.com/edmundito) por su aporte mensual a nuestra [Ko-fi](https://ko-fi.com/carenalga) :heart::heart::heart:
+:heart::heart::heart: Unas muchísimas gracias a [Edmundito](https://github.com/edmundito), [Whyschuck](https://github.com/Whyshchuck), y **Matthew** por su aporte mensual a nuestra [Ko-fi](https://ko-fi.com/carenalga) :heart::heart::heart:

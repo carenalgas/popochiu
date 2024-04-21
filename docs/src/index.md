@@ -2,7 +2,7 @@
 weight: 0
 ---
 
-![Popochiu itch.io](./assets/images/getting_started-itch_cover.png)
+![Popochiu itch.io](./assets/images/_other/home_cover.png)
 
 **Popochiu is a Godot addon that allows you to create point-and-click adventure games.**
 

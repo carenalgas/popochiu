@@ -36,8 +36,7 @@ func _ready() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Make the PC move to the clicked point on RIGHT CLICK
-	if (event is InputEventMouseButton and event.is_pressed()
-	and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_RIGHT):
+	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_RIGHT:
 		C.player.walk(R.current.get_local_mouse_position())
 
 
@@ -178,6 +177,13 @@ func _on_dialog_line_finished() -> void:
 
 ## Called when a [PopochiuDialog] starts. It shows the [code]"gui"[/code] cursor.
 func _on_dialog_started(_dialog: PopochiuDialog) -> void:
+	Cursor.show_cursor("gui")
+
+
+## Called when the running [PopochiuDialog] shows its options on screen. It shows the
+## [code]"gui"[/code] cursor.
+func _on_dialog_options_shown() -> void:
+	Cursor.unblock()
 	Cursor.show_cursor("gui")
 
 

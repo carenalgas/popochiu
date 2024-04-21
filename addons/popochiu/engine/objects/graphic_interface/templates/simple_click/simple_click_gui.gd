@@ -43,7 +43,7 @@ func _on_system_text_hidden() -> void:
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if G.is_blocked: return
 	
-	if not I.active:
+	if not (I.active or is_showing_dialog_line):
 		if clickable.get("cursor"):
 			Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
 		else:
@@ -60,13 +60,11 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 ## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component and
 ## shows the default cursor texture if there is no [PopochiuInventoryItem] active.
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
-	#if G.is_blocked: return
-	
 	G.show_hover_text()
 	
-	if I.active: return
+	if I.active or is_showing_dialog_line: return
 	
-	Cursor.show_cursor()
+	Cursor.show_cursor("gui" if D.current_dialog else "normal")
 
 
 ## Called when the mouse enters (hovers) [param inventory_item]. It changes the texture of the
@@ -104,20 +102,34 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 
 ## Called when a dialog line starts. It shows the [code]"wait"[/code] cursor.
 func _on_dialog_line_started() -> void:
+	is_showing_dialog_line = true
 	Cursor.show_cursor("wait")
 
 
 ## Called when a dialog line finishes. It shows the [code]"normal"[/code] cursor if there is no
 ## [PopochiuDialog] active, otherwise shows the [code]"use"[/code] cursor.
 func _on_dialog_line_finished() -> void:
-	Cursor.show_cursor("use" if D.current_dialog else "normal")
+	is_showing_dialog_line = false
+	if D.current_dialog:
+		Cursor.show_cursor("gui")
+	elif E.hovered:
+		Cursor.show_cursor(Cursor.get_type_name(E.hovered.cursor))
+	else:
+		Cursor.show_cursor("normal")
 
 
 ## Called when a [PopochiuDialog] starts. It shows the [code]"use"[/code] cursor and clears the
 ## [HoverText] component.
 func _on_dialog_started(dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor("use")
+	Cursor.show_cursor("gui")
 	G.show_hover_text()
+
+
+## Called when the running [PopochiuDialog] shows its options on screen. It shows the
+## [code]"gui"[/code] cursor.
+func _on_dialog_options_shown() -> void:
+	Cursor.unblock()
+	Cursor.show_cursor("gui")
 
 
 ## Called when a [PopochiuDialog] finishes. It shows the default cursor.

@@ -1,7 +1,7 @@
-extends 'settings_bar_button.gd'
+extends "settings_bar_button.gd"
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	E.game_saved.connect(show)
@@ -12,6 +12,11 @@ func _ready() -> void:
 		hide()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func on_pressed() -> void:
+#endregion
+
+#region Virtual ####################################################################################
+func _on_pressed() -> void:
 	G.show_load()
+
+
+#endregion

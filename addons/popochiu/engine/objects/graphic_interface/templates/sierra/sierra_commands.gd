@@ -43,7 +43,8 @@ func fallback() -> void:
 ## By default makes the character walk to the clicked [PopochiuClickable].
 func walk() -> void:
 #	E.get_node("/root/C").walk_to_clicked()
-	C.walk_to_clicked()
+	if E.clicked:
+		C.walk_to_clicked()
 
 
 ## Called when [code]E.current_command == Commands.LOOK[/code] and [code]E.command_fallback()[/code]

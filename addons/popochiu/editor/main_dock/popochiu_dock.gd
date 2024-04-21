@@ -1,66 +1,65 @@
-# Acts like a HUD for working with Popochiu's objects:
+# Acts like a HUD for working with Popochiu objects:
 # Rooms, Characters, Inventory items, Dialog trees.
 @tool
 extends Panel
 
 signal move_folders_pressed
 
-const POPOCHIU_SCENE := 'res://addons/popochiu/engine/popochiu.tscn'
-const ROOMS_PATH := 'res://game/rooms/'
-const CHARACTERS_PATH := 'res://game/characters/'
-const INVENTORY_ITEMS_PATH := 'res://game/inventory_items/'
-const DIALOGS_PATH := 'res://game/dialogs/'
-const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
-const PopochiuObjectRow := preload('object_row/popochiu_object_row.gd')
+const POPOCHIU_SCENE := "res://addons/popochiu/engine/popochiu.tscn"
+const ROOMS_PATH := "res://game/rooms/"
+const CHARACTERS_PATH := "res://game/characters/"
+const INVENTORY_ITEMS_PATH := "res://game/inventory_items/"
+const DIALOGS_PATH := "res://game/dialogs/"
+const Constants := preload("res://addons/popochiu/popochiu_resources.gd")
+const PopochiuObjectRow := preload("object_row/popochiu_object_row.gd")
 
 var popochiu: Node = null
 var last_selected: PopochiuObjectRow = null
 
 var _has_data := false
 var _object_row: PackedScene = preload(\
-'res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.tscn')
+"res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.tscn")
 var _rows_paths := []
 
-@onready var delete_dialog: ConfirmationDialog = find_child('DeleteConfirmation')
-@onready var delete_checkbox: CheckBox = delete_dialog.find_child('CheckBox')
-@onready var delete_message: RichTextLabel = delete_dialog.find_child('Message')
-@onready var delete_extra: Container = delete_dialog.find_child('Extra')
-@onready var delete_ask: RichTextLabel = delete_extra.find_child('Ask')
-@onready var loading_dialog: Popup = find_child('Loading')
-@onready var setup_dialog: AcceptDialog = find_child('Setup')
-@onready var _tab_container: TabContainer = find_child('TabContainer')
-@onready var _tab_room: VBoxContainer = _tab_container.get_node('Room')
-@onready var _tab_audio: VBoxContainer = _tab_container.get_node('Audio')
+@onready var delete_dialog: ConfirmationDialog = %DeleteConfirmation
+@onready var delete_checkbox: CheckBox = delete_dialog.find_child("CheckBox")
+@onready var delete_message: RichTextLabel = delete_dialog.find_child("Message")
+@onready var delete_extra: Container = delete_dialog.find_child("Extra")
+@onready var delete_ask: RichTextLabel = delete_extra.find_child("Ask")
+@onready var loading_dialog: Popup = %Loading
+@onready var setup_dialog: AcceptDialog = %Setup
+@onready var tab_container: TabContainer = %TabContainer
+@onready var tab_room: VBoxContainer = %Room
+@onready var tab_audio: VBoxContainer = %Audio
 @onready var tab_ui: VBoxContainer = %UI
 # ▨▨▨▨ FOOTER ▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨▨
-@onready var _btn_docs: Button = find_child('BtnDocs')
-@onready var _btn_settings: Button = find_child('BtnSettings')
-@onready var _btn_setup: Button = find_child('BtnSetup')
-@onready var _version: Label = find_child('Version')
+@onready var version: Label = %Version
+@onready var btn_setup: Button = %BtnSetup
+@onready var btn_docs: Button = %BtnDocs
 @onready var _types := {
 	Constants.Types.ROOM: {
 		path = ROOMS_PATH,
-		group = find_child('RoomsGroup'),
-		popup = find_child('CreateRoom'),
-		scene = ROOMS_PATH + ('%s/room_%s.tscn')
+		group = find_child("RoomsGroup"),
+		popup = find_child("CreateRoom"),
+		scene = ROOMS_PATH + ("%s/room_%s.tscn")
 	},
 	Constants.Types.CHARACTER: {
 		path = CHARACTERS_PATH,
-		group = find_child('CharactersGroup'),
-		popup = find_child('CreateCharacter'),
-		scene = CHARACTERS_PATH + ('%s/character_%s.tscn')
+		group = find_child("CharactersGroup"),
+		popup = find_child("CreateCharacter"),
+		scene = CHARACTERS_PATH + ("%s/character_%s.tscn")
 	},
 	Constants.Types.INVENTORY_ITEM: {
 		path = INVENTORY_ITEMS_PATH,
-		group = find_child('ItemsGroup'),
-		popup = find_child('CreateInventoryItem'),
-		scene = INVENTORY_ITEMS_PATH + ('%s/inventory_item_%s.tscn')
+		group = find_child("ItemsGroup"),
+		popup = find_child("CreateInventoryItem"),
+		scene = INVENTORY_ITEMS_PATH + ("%s/inventory_item_%s.tscn")
 	},
 	Constants.Types.DIALOG: {
 		path = DIALOGS_PATH,
-		group = find_child('DialogsGroup'),
-		popup = find_child('CreateDialog'),
-		scene = DIALOGS_PATH + ('%s/dialog_%s.tres')
+		group = find_child("DialogsGroup"),
+		popup = find_child("CreateDialog"),
+		scene = DIALOGS_PATH + ("%s/dialog_%s.tres")
 	}
 }
 
@@ -68,32 +67,30 @@ var _rows_paths := []
 #region Godot ######################################################################################
 func _ready() -> void:
 	popochiu = load(POPOCHIU_SCENE).instantiate()
-	_tab_container.get_node('Main/PopochiuFilter').groups = _types
+	tab_container.get_node("Main/PopochiuFilter").groups = _types
 	
-	_btn_setup.icon = get_theme_icon("Edit", "EditorIcons")
-	_btn_settings.icon = get_theme_icon('Tools', 'EditorIcons')
-	_btn_docs.icon = get_theme_icon('HelpSearch', 'EditorIcons')
-	_version.text = 'v' + PopochiuResources.get_version()
+	version.text = "v" + PopochiuResources.get_version()
+	btn_setup.icon = get_theme_icon("Edit", "EditorIcons")
+	btn_docs.icon = get_theme_icon("HelpSearch", "EditorIcons")
 	
-	delete_message.add_theme_font_override('bold_font', get_theme_font('bold', 'EditorFonts'))
-	delete_ask.add_theme_font_override('bold_font', get_theme_font('bold', 'EditorFonts'))
+	delete_message.add_theme_font_override("bold_font", get_theme_font("bold", "EditorFonts"))
+	delete_ask.add_theme_font_override("bold_font", get_theme_font("bold", "EditorFonts"))
 	
 	# Set the Main tab selected by default
-	_tab_container.current_tab = 0
+	tab_container.current_tab = 0
 	
 	# Connect to children signals
 	for t in _types:
 		_types[t].popup.set_main_dock(self)
 		_types[t].group.create_clicked.connect(_open_popup.bind(_types[t].popup))
 	
-	_tab_room.main_dock = self
-	_tab_room.object_row = _object_row
-	_tab_audio.main_dock = self
+	tab_room.main_dock = self
+	tab_room.object_row = _object_row
+	tab_audio.main_dock = self
 	
-	_tab_container.tab_changed.connect(_on_tab_changed)
-	_btn_docs.pressed.connect(OS.shell_open.bind(Constants.WIKI))
-	_btn_settings.pressed.connect(_open_settings)
-	_btn_setup.pressed.connect(open_setup)
+	tab_container.tab_changed.connect(_on_tab_changed)
+	btn_setup.pressed.connect(open_setup)
+	btn_docs.pressed.connect(OS.shell_open.bind(Constants.DOCUMENTATION))
 	get_tree().node_added.connect(_check_node)
 
 
@@ -101,11 +98,9 @@ func _ready() -> void:
 
 #region Public #####################################################################################
 func fill_data() -> void:
-	var settings := PopochiuResources.get_settings()
-	
 	# Search the FileSystem for Rooms, Characters, InventoryItems and Dialogs
 	for t in _types:
-		if not _types[t].has('path'): continue
+		if not _types[t].has("path"): continue
 		
 		var type_dir := EditorInterface.get_resource_filesystem().get_filesystem_path(
 			_types[t].path
@@ -145,13 +140,13 @@ func fill_data() -> void:
 				# in Popochiu (Popochiu.tscn)
 				var is_in_core := true
 				var has_state_script: bool = FileAccess.file_exists(
-					row.path.replace('.tscn', '_state.gd')
+					row.path.replace(".tscn", "_state.gd")
 				)
 				
 				match t:
 					Constants.Types.ROOM:
 						is_in_core = PopochiuResources.has_data_value(
-							'rooms', resource.script_name
+							"rooms", resource.script_name
 						)
 						
 						# Check if the room is the main scene
@@ -162,22 +157,25 @@ func fill_data() -> void:
 							row.is_main = true
 					Constants.Types.CHARACTER:
 						is_in_core = PopochiuResources.has_data_value(
-							'characters', resource.script_name
+							"characters", resource.script_name
 						)
 						
 						if resource.script_name ==\
-						PopochiuResources.get_data_value('setup', 'pc', ''):
+						PopochiuResources.get_data_value("setup", "pc", ""):
 							row.is_pc = true
 					Constants.Types.INVENTORY_ITEM:
 						is_in_core = PopochiuResources.has_data_value(
-							'inventory_items', resource.script_name
+							"inventory_items", resource.script_name
 						)
 						
-						if resource.script_name in settings.items_on_start:
+						var items: Array =\
+						PopochiuConfig.get_inventory_items_on_start()
+						
+						if resource.script_name in items:
 							row.is_on_start = true
 					Constants.Types.DIALOG:
 						is_in_core = PopochiuResources.has_data_value(
-							'dialogs', resource.script_name
+							"dialogs", resource.script_name
 						)
 				
 				if not is_in_core:
@@ -189,7 +187,7 @@ func fill_data() -> void:
 					row.remove_create_state_script()
 	
 	# Load other tabs data
-	_tab_audio.fill_data()
+	tab_audio.fill_data()
 
 
 func add_to_list(type: int, name_to_add: String) -> PopochiuObjectRow:
@@ -199,21 +197,24 @@ func add_to_list(type: int, name_to_add: String) -> PopochiuObjectRow:
 
 
 func scene_changed(scene_root: Node) -> void:
-	if not is_instance_valid(_tab_room): return
-	_tab_room.scene_changed(scene_root)
+	if not is_instance_valid(tab_room): return
+	tab_room.scene_changed(scene_root)
 	
 	if not is_instance_valid(tab_ui): return
 	tab_ui.on_scene_changed(scene_root)
 	
-	if not scene_root is PopochiuRoom and not scene_root is PopochiuGraphicInterface:
-		# Open the Popochiu Main tab if the opened scene in the Editor2D is not
-		# a PopochiuRoom nor a PopochiuGraphicInterface
-		_tab_container.current_tab = 0
+	if (
+		not scene_root is PopochiuRoom
+		and not scene_root.scene_file_path == PopochiuResources.GUI_GAME_SCENE
+	):
+		# Open the Popochiu Main tab if the opened scene in the Editor2D is not a PopochiuRoom nor
+		# the GUI scene
+		tab_container.current_tab = 0
 
 
 func scene_closed(filepath: String) -> void:
-	if not is_instance_valid(_tab_room): return
-	_tab_room.scene_closed(filepath)
+	if not is_instance_valid(tab_room): return
+	tab_room.scene_closed(filepath)
 
 
 func add_resource_to_popochiu(target: String, resource: Resource) -> int:
@@ -223,7 +224,7 @@ func add_resource_to_popochiu(target: String, resource: Resource) -> int:
 
 
 func show_confirmation(
-	title: String, message: String, ask := '', min_size := Vector2(640, 120)
+	title: String, message: String, ask := "", min_size := Vector2(640, 120)
 ) -> void:
 	delete_checkbox.button_pressed = false
 
@@ -237,6 +238,12 @@ func show_confirmation(
 		delete_extra.show()
 	
 	delete_dialog.popup_centered(min_size)
+	
+	await RenderingServer.frame_post_draw
+	delete_dialog.reset_size()
+	
+	await RenderingServer.frame_post_draw
+	delete_dialog.move_to_center()
 
 
 func get_popup(name: String) -> ConfirmationDialog:
@@ -244,35 +251,35 @@ func get_popup(name: String) -> ConfirmationDialog:
 
 
 func set_main_scene(path: String) -> void:
-	ProjectSettings.set_setting('application/run/main_scene', path)
+	ProjectSettings.set_setting("application/run/main_scene", path)
 	
 	var result = ProjectSettings.save()
-	assert(result == OK) #,'[Popochiu] Failed to save project settings')
+	assert(result == OK)
 	
 	_types[Constants.Types.ROOM].group.clear_favs()
 
 
 func set_pc(script_name: String) -> void:
-	PopochiuResources.set_data_value('setup', 'pc', script_name)
+	PopochiuResources.set_data_value("setup", "pc", script_name)
 	_types[Constants.Types.CHARACTER].group.clear_favs()
 
 
 func search_audio_files() -> void:
-	if not is_instance_valid(_tab_audio): return
+	if not is_instance_valid(tab_audio): return
 	
-	_tab_audio.search_audio_files()
+	tab_audio.search_audio_files()
 
 
 func get_audio_tab() -> Node:
-	return _tab_audio
+	return tab_audio
 
 
 func get_opened_room() -> PopochiuRoom:
-	return _tab_room.opened_room
+	return tab_room.opened_room
 
 
 func get_opened_room_tab() -> VBoxContainer:
-	return _tab_room
+	return tab_room
 
 
 func open_setup() -> void:
@@ -328,14 +335,10 @@ func _select_object(por: PopochiuObjectRow) -> void:
 	last_selected = por
 
 
-func _open_settings() -> void:
-	EditorInterface.edit_resource(PopochiuResources.get_settings())
-
-
 func _check_node(node: Node) -> void:
 	if node is PopochiuCharacter and node.get_parent() is Node2D:
 		# The node is a PopochiuCharacter in a room
-		node.set_name.call_deferred('Character%s *' % node.script_name)
+		node.set_name.call_deferred("Character%s *" % node.script_name)
 
 
 #endregion

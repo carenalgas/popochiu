@@ -3,12 +3,17 @@ extends TextureButton
 @export var command: SierraCommands.Commands = 0
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready() -> void:
 	toggled.connect(on_toggled)
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func on_toggled(button_pressed: bool) -> void:
 	if button_pressed:
 		E.current_command = command
+
+
+#endregion

@@ -36,7 +36,7 @@ func _export_file(path: String, type: String, features: PackedStringArray) -> vo
 	if scene_changed:
 		var filtered_scene := PackedScene.new()
 		if filtered_scene.pack(root_node) != OK:
-			printerr("Error updating scene.")
+			PopochiuUtils.print_error("Error updating scene.")
 			return
 
 		var content := _get_scene_content(path, filtered_scene)
@@ -49,7 +49,8 @@ func _export_file(path: String, type: String, features: PackedStringArray) -> vo
 func _remove_meta(node:Node, path: String) -> bool:
 	if node.has_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME):
 		node.remove_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME)
-		print("Popochiu Aseprite Importer: Removed metadata from scene %s" % path)
+		PopochiuUtils.print_normal("Aseprite Importer: Removed metadata from scene %s" % path)
+		
 		return true
 
 	return false
@@ -63,7 +64,7 @@ func _get_scene_content(path:String, scene:PackedScene) -> PackedByteArray:
 	var content : PackedByteArray = tmp_file.get_buffer(tmp_file.get_length())
 
 	var tmp_dir := DirAccess.open(tmp_path)
-	if tmp_dir.file_exists(tmp_path):
+	if tmp_dir and tmp_dir.file_exists(tmp_path):
 		tmp_dir.remove(tmp_path)
 
 	return content

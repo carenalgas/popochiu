@@ -4,12 +4,10 @@
 # See: https://godotengine.org/asset-library/asset/713
 extends RefCounted
 
-
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 const _DEFAULT_AL = "" # Empty string equals default "Global" animation library
 
 # Vars configured on initialization
-var _config: RefCounted
 var _file_system: EditorFileSystem
 var _aseprite: RefCounted
 
@@ -25,8 +23,7 @@ var _output: Dictionary
 
 
 #region Public #####################################################################################
-func init(config, aseprite: RefCounted, editor_file_system: EditorFileSystem = null):
-	_config = config
+func init(aseprite: RefCounted, editor_file_system: EditorFileSystem = null):
 	_file_system = editor_file_system
 	_aseprite = aseprite
 
@@ -185,7 +182,7 @@ func _load_spritesheet_metadata(selected_tag: String = ""):
 	_spritesheet_metadata.sprite_sheet = sprite_sheet
 
 	# Remove the JSON file if config says so
-	if _config.should_remove_source_files():
+	if PopochiuEditorConfig.should_remove_source_files():
 		DirAccess.remove_absolute(_output.data_file)
 		await _scan_filesystem()
 

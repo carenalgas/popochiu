@@ -7,6 +7,8 @@ extends Control
 
 ## Stack of opened popups.
 var popups_stack := []
+## Whether a dialog line is being displayed.
+var is_showing_dialog_line := false
 
 var _components_map := {}
 
@@ -33,11 +35,21 @@ func _ready():
 	G.dialog_line_started.connect(_on_dialog_line_started)
 	G.dialog_line_finished.connect(_on_dialog_line_finished)
 	D.dialog_started.connect(_on_dialog_started)
+	G.dialog_options_shown.connect(_on_dialog_options_shown)
 	D.dialog_finished.connect(_on_dialog_finished)
 	I.item_selected.connect(_on_inventory_item_selected)
 	
-#	if E.settings.scale_gui:
-#		$MainContainer.scale = E.scale
+	if E.settings.is_pixel_art_game:
+		# Apply this filter so the font doesn't blur
+		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	
+	if E.settings.scale_gui:
+		size = get_viewport_rect().size / E.scale
+		scale = E.scale
+		
+		# Adjust nodes with a "text" property that is a String in order to try to prevent glitches
+		# when rendering its font
+		_adjust_nodes_text(get_children())
 
 
 #endregion
@@ -112,6 +124,11 @@ func _on_dialog_started(dialog: PopochiuDialog) -> void:
 	pass
 
 
+## Called when the running [PopochiuDialog] shows its options on screen.
+func _on_dialog_options_shown() -> void:
+	pass
+
+
 ## Called when [param dialog] finishes (this is afet calling [method PopochiuDialog.stop]).
 func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 	pass
@@ -120,6 +137,11 @@ func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 ## Called when [param item] is selected in the inventory (i.e. by clicking it).
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	pass
+
+
+## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
+func _get_cursor_name() -> String:
+	return ""
 
 
 #endregion
@@ -135,6 +157,22 @@ func get_component(component_name: String) -> Control:
 		PopochiuUtils.print_warning("No GUI component with name %s" % component_name)
 	
 	return null
+
+
+## Returns the name of the cursor texture to show. [code]"normal"[/code] is returned by default.
+func get_cursor_name() -> String:
+	return "normal" if _get_cursor_name().is_empty() else _get_cursor_name()
+
+
+#endregion
+
+#region Private ####################################################################################
+func _adjust_nodes_text(nodes_array: Array) -> void:
+	for node: Node in nodes_array:
+		_adjust_nodes_text(node.get_children())
+		if not node.get("text") or not typeof(node.get("text")) == TYPE_STRING: continue
+		if node.text.length() % 2 != 0:
+			node.text += " "
 
 
 #endregion

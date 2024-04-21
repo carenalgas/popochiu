@@ -64,10 +64,6 @@ func _on_cancel() -> void:
 func open() -> void:
 	_open()
 	
-	# TODO: I'm not sure we should do this...
-	if E.settings.scale_gui:
-		scale = Vector2.ONE * E.scale
-	
 	G.block()
 	Cursor.show_cursor("gui", true)
 	
@@ -126,9 +122,10 @@ func set_title(value: String) -> void:
 #region Private ####################################################################################
 ## Checks if the overlay area of the popup was clicked in order to close it.
 func _check_click(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.is_pressed()\
-	and (event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT\
-	and closes_by_clicking_out:
+	if (
+		PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT
+		and closes_by_clicking_out
+	):
 		_on_cancel()
 		close()
 

@@ -2,7 +2,7 @@
 weight: 2020
 ---
 
-![Popochiu dock](./assets/images/getting_started-popochiu_dock.png)
+![Popochiu dock](./assets/images/_other/_popochiu_dock.png)
 
 The Popochiu dock consists of different tabs, used to group the objects that build the game.
 

@@ -5,7 +5,6 @@ signal tag_state_changed
 
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 
-var _config: RefCounted
 var _anim_tag_state: Dictionary = {}
 
 @onready var tag_name_label = $HBoxContainer/TagName
@@ -27,12 +26,11 @@ func _ready():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func init(config, tag_cfg: Dictionary):
+func init(tag_cfg: Dictionary):
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == "":
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_UNNAMED_TAG_DETECTED))
 		return false
-
-	_config = config
+	
 	_anim_tag_state = _load_default_tag_state()
 	_anim_tag_state.merge(tag_cfg, true)
 	_setup_scene()
@@ -61,10 +59,10 @@ func _setup_scene():
 func _load_default_tag_state() -> Dictionary:
 	return {
 		"tag_name": "",
-		"import": _config.is_default_animation_import_enabled(),
-		"loops": _config.is_default_animation_loop_enabled(),
-		"prop_visible": _config.is_default_animation_prop_visible(),
-		"prop_clickable": _config.is_default_animation_prop_clickable(),
+		"import": PopochiuConfig.is_default_animation_import_enabled(),
+		"loops": PopochiuConfig.is_default_animation_loop_enabled(),
+		"prop_visible": PopochiuConfig.is_default_animation_prop_visible(),
+		"prop_clickable": PopochiuConfig.is_default_animation_prop_clickable(),
 	}
 
 

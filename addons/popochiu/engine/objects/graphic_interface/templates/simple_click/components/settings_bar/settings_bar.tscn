@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://0cqerawlxb3o"]
+[gd_scene load_steps=25 format=3 uid="uid://0cqerawlxb3o"]
 
 [ext_resource type="Texture2D" uid="uid://c4lgasdx1ow1d" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/toolbar_bg.png" id="1_hwsmr"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/settings_bar.gd" id="2_hk0vm"]
@@ -7,10 +7,11 @@
 [ext_resource type="Texture2D" uid="uid://bns33w6nl2qkb" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_load.png" id="5_8xdf1"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/buttons/btn_load.gd" id="6_dfxoh"]
 [ext_resource type="Texture2D" uid="uid://bkwo41gqhl5ic" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_dialog_speed_01.png" id="7_otoev"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/buttons/btn_dialog_speed.gd" id="8_7atal"]
-[ext_resource type="Texture2D" uid="uid://dl2gqtc0ay0nk" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_dialog_speed_02.png" id="9_jfw1a"]
-[ext_resource type="Texture2D" uid="uid://s7ksvmp5vkc8" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_dialog_speed_03.png" id="10_a2bgs"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/buttons/btn_dialog_speed.gd" id="8_xj7pu"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/resources/text_speed_option.gd" id="9_81q7g"]
+[ext_resource type="Texture2D" uid="uid://dl2gqtc0ay0nk" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_dialog_speed_02.png" id="10_kfiam"]
 [ext_resource type="Texture2D" uid="uid://cyvd8h2ouw8rg" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_audio.png" id="11_id5s2"]
+[ext_resource type="Texture2D" uid="uid://s7ksvmp5vkc8" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_dialog_speed_03.png" id="11_mkapw"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/buttons/btn_sound_settings.gd" id="12_jqlr0"]
 [ext_resource type="Texture2D" uid="uid://brnf51r7xuec4" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_dialog_auto_01.png" id="13_n5ueq"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/buttons/btn_dialog_auto.gd" id="14_e58le"]
@@ -30,6 +31,27 @@ texture_margin_right = 11.0
 texture_margin_bottom = 5.0
 region_rect = Rect2(0, 0, 36, 24)
 
+[sub_resource type="Resource" id="Resource_ie5nq"]
+resource_name = "Speed 0"
+script = ExtResource("9_81q7g")
+icon = ExtResource("7_otoev")
+description = "normal"
+speed = 0.1
+
+[sub_resource type="Resource" id="Resource_dhkav"]
+resource_name = "Speed 1"
+script = ExtResource("9_81q7g")
+icon = ExtResource("10_kfiam")
+description = "fast"
+speed = 0.01
+
+[sub_resource type="Resource" id="Resource_kqq7u"]
+resource_name = "Speed 2"
+script = ExtResource("9_81q7g")
+icon = ExtResource("11_mkapw")
+description = "immediate"
+speed = 0.0
+
 [node name="SettingsBar" type="PanelContainer" groups=["popochiu_gui_component"]]
 texture_filter = 1
 offset_right = 122.0
@@ -40,6 +62,7 @@ script = ExtResource("2_hk0vm")
 [node name="Box" type="HBoxContainer" parent="."]
 layout_mode = 2
 mouse_filter = 2
+alignment = 2
 
 [node name="BtnSave" type="TextureButton" parent="Box"]
 layout_mode = 2
@@ -58,9 +81,8 @@ script_name = "LoadGame"
 
 [node name="BtnDialogSpeed" type="TextureButton" parent="Box"]
 layout_mode = 2
-texture_normal = ExtResource("7_otoev")
-script = ExtResource("8_7atal")
-btn_states = [ExtResource("7_otoev"), ExtResource("9_jfw1a"), ExtResource("10_a2bgs")]
+script = ExtResource("8_xj7pu")
+speed_options = [SubResource("Resource_ie5nq"), SubResource("Resource_dhkav"), SubResource("Resource_kqq7u")]
 description = "Text speed"
 script_name = "TextSpeed"
 
