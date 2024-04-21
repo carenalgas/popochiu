@@ -139,6 +139,11 @@ func get_values() -> Dictionary:
 	}
 
 
+## Returns [code]true[/code] if playing.
+func is_playing() -> bool:
+	return A.is_playing_cue(resource_name)
+
+
 #endregion
 
 #region SetGet #####################################################################################
