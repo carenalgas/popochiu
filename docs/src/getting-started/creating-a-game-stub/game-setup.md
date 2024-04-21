@@ -6,7 +6,7 @@ weight: 1520
 
 When you first start your project, you are greeted with the **Setup** popup, where you can define the base parameters of your game.
 
-![Setup Popup](/assets/images/getting-started/game_stub-setup_popup.png "Popochiu's Setup popup window")
+![Setup Popup](../../assets/images/getting-started/game_stub-setup_popup.png "Popochiu's Setup popup window")
 
 Using this window will take care of configuring Godot project with a coherent preset of parameters so that your game looks good in all situations.  
 Also, it will preconfigure the Game User Interface (GUI) of your choice, so that you don't have to.
@@ -62,4 +62,4 @@ In the **GUI Template** (_4_) section of the Setup popup, you can click on a GUI
 !!! note
     You can go back and review your game setup choices at any moment, by clicking the "Setup" button at the bottom of the [Popochiu Main Dock](#TODO).
 
-    ![Setup button](/assets/images/getting-started/game_stub-setup_dock_button.png "Reopen the Setup window anytime from the main dock")
+    ![Setup button](../../assets/images/getting-started/game_stub-setup_dock_button.png "Reopen the Setup window anytime from the main dock")

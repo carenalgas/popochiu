@@ -10,12 +10,12 @@ In Popochiu, game locations are referred to as _rooms_. More broadly, a room can
 
 To create our first room, just click the **Create room** button in Popochiu's main dock (_13_).
 
-![Create Room button](/assets/images/getting-started/game_stub-room-1-create_button.png "Press the button to create a new room")
+![Create Room button](../../assets/images/getting-started/game_stub-room-1-create_button.png "Press the button to create a new room")
 
 A popup will appear, very similar to the one to create a new character. This time, an additional checkbox is available.
 This allows us to set the newly created room as the main scene of the Godot project. Check it out so we don't have to do it later. This scene will also be the only room in this game stub.
 
-![Create Room popup](/assets/images/getting-started/game_stub-room-2-creation_popup.png "Name the room and select it as the project's main scene")
+![Create Room popup](../../assets/images/getting-started/game_stub-room-2-creation_popup.png "Name the room and select it as the project's main scene")
 
 Name the new room whatever you want. If you want to follow along, let's name this room "_House_" and make it the main scene.  
 Popochiu will create the new room, open the room scene in the editor, and open the corresponding [Room tab](#TODO) in the plugin interface.
@@ -24,7 +24,7 @@ Much like a character, a room needs a sprite to represent the background of the 
 
 But hey! The room has nothing like a sprite in it! Quite the opposite, the scene tree seems to be pretty empty:
 
-![An empty room scene tree](/assets/images/getting-started/game_stub-room-3-empty_room_scene.png "Nothing meaningful here")
+![An empty room scene tree](../../assets/images/getting-started/game_stub-room-3-empty_room_scene.png "Nothing meaningful here")
 
 <a name="intbkmk-props-explanation"></a>
 Unlike other objects in Popochiu, rooms are containers for other more specialized objects, the most important of which are **Props**. Props are every visible part of a location, used to make the environment believable. They can go from a small collectable item, all the way to location backgrounds.
@@ -35,11 +35,11 @@ Unlike other objects in Popochiu, rooms are containers for other more specialize
 
 Armed with this knowledge, it's now clear we must create a prop to hold our background. That's easy. If you followed the steps above, Popochiu dock should be showing the **Home** room tab.
 
-![Add a background prop](/assets/images/getting-started/game_stub-room-4-prop_create_button_.png "Let's add a new prop")
+![Add a background prop](../../assets/images/getting-started/game_stub-room-4-prop_create_button_.png "Let's add a new prop")
 
 Click the **Create prop** button and as usual, a new window will pop up:
 
-![Name the prop](/assets/images/getting-started/game_stub-room-5-prop_creation_popup.png "The background won't be interactive")
+![Name the prop](../../assets/images/getting-started/game_stub-room-5-prop_creation_popup.png "The background won't be interactive")
 
 Name the new prop "_Background_" and leave the "Will have interaction?" option unchecked. You don't want all of your screen to react to clicks when you move around.
 
@@ -49,7 +49,7 @@ Name the new prop "_Background_" and leave the "Will have interaction?" option u
 
 Click OK and your prop will be created. You should see it in the scene tree, under the **Props** grouping node. The inspector should look something like this:
 
-![New prop inspector](/assets/images/getting-started/game_stub-room-6-prop_inspector.png "We can now set the background for the scene")
+![New prop inspector](../../assets/images/getting-started/game_stub-room-6-prop_inspector.png "We can now set the background for the scene")
 
 Now you can see the Prop has a **Texture** parameter. By this time you should be able to figure out what to do. Save the downloaded background sprite in the `game/rooms/house/props/background/` folder, then drag it from Godot Editor file manager to the field in the inspector.  
 Your scene should now show the background image.
@@ -77,11 +77,11 @@ For now, let's create a single walkable area representing the room floor.
 
 In the Room tab of Popochiu dock, click the **Create walkable area** button (_16_).
 
-![Create a walkable area](/assets/images/getting-started/game_stub-room-7-wa_create_button.png "Let's define a new walkable area")
+![Create a walkable area](../../assets/images/getting-started/game_stub-room-7-wa_create_button.png "Let's define a new walkable area")
 
 In the popup window, just name your new walkable area "_Floor_" (or whatever you find descriptive enough). Click **OK** and a new element will be added to the scene.
 
-![A new walkable area in the scene tree](/assets/images/getting-started/game_stub-room-8-wa_scene_tree.png "Select the Perimeter node to edit the area shape")
+![A new walkable area in the scene tree](../../assets/images/getting-started/game_stub-room-8-wa_scene_tree.png "Select the Perimeter node to edit the area shape")
 
 Selecting the **Perimeter** node in the scene tree (_17_) to highlight a squared polygon in the center of the scene. Now you have to adjust the vertices of that polygon (_18_) to whatever makes sense.
 
@@ -91,7 +91,7 @@ Selecting the **Perimeter** node in the scene tree (_17_) to highlight a squared
 
 When you have adjusted your walkable area, it should look something like this:
 
-![The polygon for the floor is over](/assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click 'Bake NavigationPolygon' to complete the walkable area")
+![The polygon for the floor is over](../../assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click 'Bake NavigationPolygon' to complete the walkable area")
 
 Save the project and run your game. Your character should now be able to move around the room, without leaving the area you defined.
 
@@ -121,11 +121,11 @@ By means of its script, it can react to events like mouse clicks. That's exactly
 
 Creating a hotspot is much like creating a walkable area. In the Room tab of Popochiu dock, click the **Create hotspot** button (_20_).
 
-![Create a hotspot](/assets/images/getting-started/game_stub-room-10-hs_create_button.png "Let's define a new hotspot")
+![Create a hotspot](../../assets/images/getting-started/game_stub-room-10-hs_create_button.png "Let's define a new hotspot")
 
 In the popup window, just name your new hotspot "_Window_" (or whatever you find descriptive enough). Click **OK** and a new element will be added to the scene.
 
-![A new hotspot in the scene tree](/assets/images/getting-started/game_stub-room-11-hs_scene_tree.png "Select the right tool in the toolbar to set the hotspot properties")
+![A new hotspot in the scene tree](../../assets/images/getting-started/game_stub-room-11-hs_scene_tree.png "Select the right tool in the toolbar to set the hotspot properties")
 
 When you select the new hotspot in the scene tree (_21_), a bunch of gizmos are shown in the scene preview. We are going to interactively edit three important properties of the hotspot (the _interaction polygon_, the _baseline_ and the _walk-to point_) by using the dedicated buttons in the toolbar (_23_).
 
@@ -135,7 +135,7 @@ When you select the new hotspot in the scene tree (_21_), a bunch of gizmos are 
 First of all, click the _Interaction Polygon_ button to show the handles of the standard square polygon for the hotspot. This is basically the same as the walkable area polygon but instead of limiting the character movements, this polygon will just react when the cursor hovers it.  
 Let's draw a shape around the window on the wall:
 
-![New hotspot's clickable area](/assets/images/getting-started/game_stub-room-12-hs_draw_polygon.png "Draw the hotspot shape with a polygon")
+![New hotspot's clickable area](../../assets/images/getting-started/game_stub-room-12-hs_draw_polygon.png "Draw the hotspot shape with a polygon")
 
 No need to be too precise or polished, rough edges won't be perceivable while playing your game. You just need to avoid, if possible, overlapping with other hotspots (see "_Baseline_" below, to understand how polygon overlapping works).
 
@@ -164,11 +164,11 @@ Our window is in the back of the room and the main character has no way to be pl
 !!! tip
     If you need pixel-perfect precision, you can set the baseline and the hotspot's _Walk to point_ coordinates by inputting them in the inspector.
 
-    ![Popochiu Clickable properties](/assets/images/getting-started/game_stub-room-14-hs_pc_inspector.png "Set baseline and walk to point in the inspector")
+    ![Popochiu Clickable properties](../../assets/images/getting-started/game_stub-room-14-hs_pc_inspector.png "Set baseline and walk to point in the inspector")
 
 With the hotspot properly configured, we can now run a quick test. Start your game, move the cursor over the window and you should see the name of the hotspot in the action bar (_24_).
 
-![The hotspot interaction](/assets/images/getting-started/game_stub-room-13-hs_interaction.png "We can now interact with the hotspot")
+![The hotspot interaction](../../assets/images/getting-started/game_stub-room-13-hs_interaction.png "We can now interact with the hotspot")
 
 Clicking on the hotspot, the character will move to the point we defined and face the window.
 
@@ -189,11 +189,11 @@ We are now going to script our first interaction, using Godot **GDScript** langu
 
 In the room tab of the Popochiu dock, locate the "_Open Script_" icon for the `Window` hotspot (_25_):
 
-![Open the hotspot's script](/assets/images/getting-started/game_stub-room-15-hs_script.png "Open the script for the Window hotspot")
+![Open the hotspot's script](../../assets/images/getting-started/game_stub-room-15-hs_script.png "Open the script for the Window hotspot")
 
 This will open the GDScript connected to this hotspot in the Godot scripting editor (_26_):
 
-![The "Window" script](/assets/images/getting-started/game_stub-room-16-hs_script_editor.png "Here is the script for the Window. Scary?")
+![The "Window" script](../../assets/images/getting-started/game_stub-room-16-hs_script_editor.png "Here is the script for the Window. Scary?")
 
 !!! info "Under the hood"
     Every clickable object that Popochiu creates for you comes with an attached script. Those scripts do nothing by themselves but are based on commented templates that will make it easier to implement the desired behaviors, by editing and filling out some predefined functions.
@@ -302,14 +302,14 @@ Enough talk, let's see them in action.
 
 Since we already created a "_Background_" for our scene, you should know at this point how to create a new prop. Click on the **Create Prop** button in the tab room of the Popochiu dock, name it "_ToyCar_" and this time, check out the **Will have interaction** option (_27_).
 
-![Name the prop](/assets/images/getting-started/game_stub-room-17-prop_creation_popup.png "The toy car will be interactive")
+![Name the prop](../../assets/images/getting-started/game_stub-room-17-prop_creation_popup.png "The toy car will be interactive")
 
 !!! note
     If you forget to check this mark, don't worry. You can always make your prop interactive from the inspector.
 
 Your new prop will be added to the scene tree as a child of the **Props** node (_28_). You should also notice a squared area in the center of the scene (_29_). That's the new prop's interaction polygon, set to the default squared shape.
 
-![Prop added](/assets/images/getting-started/game_stub-room-18-prop_scene.png "Toy car prop is now in the scene")
+![Prop added](../../assets/images/getting-started/game_stub-room-18-prop_scene.png "Toy car prop is now in the scene")
 
 Our prop is very much like a hotspot at the moment, since it has no texture. Let's add one.
 
@@ -318,21 +318,21 @@ Save it into your project, in the `game/rooms/<your room name>/props/<your prop 
 
 Now we can set the **Texture** property in the prop inspector, by dragging the image from the **FileSystem** in place (_30_).
 
-![Sprite added](/assets/images/getting-started/game_stub-room-19-prop_set_texture.png "Now there is a toy car on the floor")
+![Sprite added](../../assets/images/getting-started/game_stub-room-19-prop_set_texture.png "Now there is a toy car on the floor")
 
 Make sure your prop is selected in the scene tree and drag it somewhere to the left part of the walkable area. Then select the **Interaction Polygon** button in the toolbar, like you did for the hotspot and change the shape of the polygon so that it matches the one of the sprite.  
 Your scene should look more or less like this:
 
-![Prop setup](/assets/images/getting-started/game_stub-room-20-prop_scene.png "The prop is now correctly set")
+![Prop setup](../../assets/images/getting-started/game_stub-room-20-prop_scene.png "The prop is now correctly set")
 
 Since the baseline is in the middle of the prop, it is already correctly positioned so the character can walk behind it. You can run the game and test that's the case.
 
-![Prop stays in front](/assets/images/getting-started/game_stub-room-22-prop_baseline.png "The prop stays in front of the character")
+![Prop stays in front](../../assets/images/getting-started/game_stub-room-22-prop_baseline.png "The prop stays in front of the character")
 
 !!! tip
     This prop is pretty small and it can be difficult to position your character's feet behind it, without triggering the script of the prop itself. One possible trick is to edit the polygon so that it stays out of the way if you click on the prop itself. But there is a simpler and less destructive way to achieve that. Locate the **PopochiuClickable** section in the prop inspector, and uncheck the **Clickable** property (_32_) for the toy car.
 
-    ![Non interactive prop](/assets/images/getting-started/game_stub-room-21-prop_clickable.png "The prop is now not interactive")
+    ![Non interactive prop](../../assets/images/getting-started/game_stub-room-21-prop_clickable.png "The prop is now not interactive")
 
     This will render the prop non-interactive. The **Clickable** property can also be set on or off in a script, nice when the nature of the prop depends on your game's status.
 

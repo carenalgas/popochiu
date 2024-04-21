@@ -9,7 +9,7 @@ In Popochiu, inventory items are global objects, like rooms or characters. They 
 
 To create a new inventory item click on the **Create Inventory Item** button in the tab room of the Popochiu dock (_32_), and name the new item in the popup window that appears.
 
-![Create inventory item](/assets/images/getting-started/game_stub-inv_item-23-create_button.png "Create the inventory item from the Popochiu main dock")
+![Create inventory item](../../assets/images/getting-started/game_stub-inv_item-23-create_button.png "Create the inventory item from the Popochiu main dock")
 
 We'll name our new inventory item "_ToyCar_", because we are going to make the prop we just created collectible. Go on and click OK. Popochiu will open the new inventory item's scene in the editor.
 
@@ -21,7 +21,7 @@ Save it into your project, in the `game/inventory_items/<your inventory item nam
 
 Assigning the texture to the inventory item is done the same as props, by dragging the image from the **FileSystem** to the **Texture** property in the inspector (_33_).
 
-![Sprite added](/assets/images/getting-started/game_stub-inv_item-24-set_texture.png "Now the inventory item has an icon")
+![Sprite added](../../assets/images/getting-started/game_stub-inv_item-24-set_texture.png "Now the inventory item has an icon")
 
 That's it. Your inventory item is configured and it is now possible to add it to the main character's inventory.  
 We are going to script this part by interacting with the toy car prop we placed in our room.
