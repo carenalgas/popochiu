@@ -72,9 +72,9 @@ func _create_options(options := [], autoshow := false) -> void:
 		if not current_options.is_empty():
 			show_options()
 		return
-
+	
 	current_options = options.duplicate(true)
-
+	
 	for dialog_option: PopochiuDialogOption in options:
 		var dialog_menu_option := option_scene.instantiate()
 		dialog_menu_option.normal_color = normal_font_color
@@ -94,9 +94,22 @@ func _create_options(options := [], autoshow := false) -> void:
 			dialog_menu_option.show()
 	
 	if autoshow: show_options()
-	await get_tree().process_frame
+	await get_tree().create_timer(0.1).timeout
 	
-	custom_minimum_size.y = min(dialog_options_container.size.y, max_height)
+	# Fix: Height and position of the dialog menu was wrong when changing the amount of options to
+	# show.
+	var options_height := 0
+	var visible_options := 0
+	for opt in dialog_options_container.get_children():
+		if not opt.visible: continue
+		
+		options_height += opt.size.y
+		visible_options += 1
+	
+	options_height += dialog_options_container.get_theme_constant("separation") * (visible_options - 1)
+	
+	size.y = min(options_height, max_height)
+	position.y = E.height - size.y
 
 
 func remove_options(_dialog: PopochiuDialog = null) -> void:
