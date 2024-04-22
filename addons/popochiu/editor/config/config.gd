@@ -22,6 +22,8 @@ const DIALOG_STYLE = "popochiu/gui/dialog_style"
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
 const AUTO_CONTINUE_TEXT = "popochiu/dialogs/auto_continue_text"
 const USE_TRANSLATIONS = "popochiu/dialogs/use_translations"
+const GIBBERISH_SPOKEN_TEXT = 'popochiu/dialogs/gibberish_spoken_text'
+const GIBBERISH_DIALOG_OPTIONS = 'popochiu/dialogs/gibberish_dialog_options'
 
 # ---- Inventory -----------------------------------------------------------------------------------
 const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
@@ -61,6 +63,8 @@ static func initialize_project_settings():
 		# TODO: Add the other options: Portrait Above Character, Bubble Above Character
 		"Above Character,Portrait,Caption"
 	)
+	_initialize_project_setting(GIBBERISH_SPOKEN_TEXT, false, TYPE_BOOL)
+	_initialize_project_setting(GIBBERISH_DIALOG_OPTIONS, false, TYPE_BOOL)
 	
 	# ---- Inventory -------------------------------------------------------------------------------
 	_initialize_project_setting(INVENTORY_LIMIT, 0, TYPE_INT)
@@ -114,6 +118,11 @@ static func is_use_translations() -> bool:
 static func get_dialog_style() -> int:
 	return _get_project_setting(DIALOG_STYLE, DialogStyle.ABOVE_CHARACTER)
 
+static func should_talk_gibberish() -> bool:
+	return _get_project_setting(GIBBERISH_SPOKEN_TEXT, false)
+
+static func should_dialog_options_be_gibberish() -> bool:
+	return _get_project_setting(GIBBERISH_DIALOG_OPTIONS, false)
 
 # ---- Inventory -----------------------------------------------------------------------------------
 static func get_inventory_limit() -> int:

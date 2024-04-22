@@ -87,7 +87,25 @@ func finish_dialog() -> void:
 func say_selected() -> void:
 	await C.player.say(selected_option.text)
 
-
+## Transforms any text to gibberish preserving bbcode tags
+func create_gibberish(input_string: String) -> String:
+	var output_text: String = ""
+	var bbcode: bool = false
+	var letters = ['a','e','i','o','u','y','b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z']
+	for chr in input_string:
+		if(chr == '['):
+			bbcode = true
+			
+		if (!bbcode):
+			if (chr != ' '):
+					output_text += letters[randi_range(0,letters.size()-1)]
+			else:
+				output_text += ' ' 
+		else:
+			output_text += chr
+		if(chr == ']'):
+			bbcode = false
+	return output_text
 #endregion
 
 #region SetGet #####################################################################################

@@ -70,7 +70,14 @@ func _input(event: InputEvent) -> void:
 
 #region Public #####################################################################################
 func play_text(props: Dictionary) -> void:
-	var msg: String = E.get_text(props.text)
+	var display_text: String = ""
+	
+	if PopochiuConfig.should_talk_gibberish():
+		display_text = D.create_gibberish(props.text)
+	else:
+		display_text = props.text
+	
+	var msg: String = E.get_text(display_text) #E.get_text(props.text)
 	_is_waiting_input = false
 	_dialog_pos = props.position
 	
