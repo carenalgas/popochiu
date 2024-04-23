@@ -21,7 +21,8 @@ Spoken text to gibberish feature on:
 ![Spoken text to gibberish on](../../assets/images/how-to-develop-a-game/adv_tech_talk_gibberish_on.png "Talking character without gibberish on")
 
 ### Dialog options
-To change all spoken text by characters to gibberish you need to change one option in **Project Settings -> Popochiu -> Dialogs** :
+To change all dialog options text to gibberish you need to change one option in **Project Settings -> Popochiu -> Dialogs** :
+
 ![Dialog options to gibberish toggle](../../assets/images/how-to-develop-a-game/adv_tech_dialog_option_setting.png "Dialog option feature")
 
 Dialog options text to gibberish feature off:
