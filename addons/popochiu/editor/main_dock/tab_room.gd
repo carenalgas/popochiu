@@ -2,13 +2,15 @@
 extends VBoxContainer
 ## Handles the Room tab in Popochiu's dock
 
-const PopochiuObjectRow := preload('res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.gd')
-const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
+const PopochiuObjectRow := preload(
+	"res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.gd"
+)
+const Constants := preload("res://addons/popochiu/popochiu_resources.gd")
 
 var opened_room: PopochiuRoom = null
 var main_dock: Panel : set = set_main_dock
 var object_row: PackedScene = null
-var opened_room_state_path: String = ''
+var opened_room_state_path: String = ""
 
 var _rows_paths := []
 var _last_selected: PopochiuObjectRow = null
@@ -18,53 +20,53 @@ var _remove_dialog: ConfirmationDialog
 
 @onready var _types: Dictionary = {
 	Constants.Types.PROP: {
-		group = find_child('PropsGroup') as PopochiuGroup,
-		popup = 'CreateProp',
-		method = 'get_props',
+		group = find_child("PropsGroup") as PopochiuGroup,
+		popup = "CreateProp",
+		method = "get_props",
 		type_class = PopochiuProp,
-		parent = 'Props'
+		parent = "Props"
 	},
 	Constants.Types.HOTSPOT: {
-		group = find_child('HotspotsGroup') as PopochiuGroup,
-		popup = 'CreateHotspot',
-		method = 'get_hotspots',
+		group = find_child("HotspotsGroup") as PopochiuGroup,
+		popup = "CreateHotspot",
+		method = "get_hotspots",
 		type_class = PopochiuHotspot,
-		parent = 'Hotspots'
+		parent = "Hotspots"
 	},
 	Constants.Types.REGION: {
-		group = find_child('RegionsGroup') as PopochiuGroup,
-		popup = 'CreateRegion',
-		method = 'get_regions',
+		group = find_child("RegionsGroup") as PopochiuGroup,
+		popup = "CreateRegion",
+		method = "get_regions",
 		type_class = PopochiuRegion,
-		parent = 'Regions'
+		parent = "Regions"
 	},
 	Constants.Types.MARKER: {
-		group = find_child('MarkersGroup') as PopochiuGroup,
-		popup = 'CreateMarker',
-		method = 'get_markers',
+		group = find_child("MarkersGroup") as PopochiuGroup,
+		popup = "CreateMarker",
+		method = "get_markers",
 		type_class = Marker2D,
-		parent = 'Markers'
+		parent = "Markers"
 	},
 	Constants.Types.WALKABLE_AREA: {
-		group = find_child('WalkableAreasGroup') as PopochiuGroup,
-		popup = 'CreateWalkableArea',
-		method = 'get_walkable_areas',
+		group = find_child("WalkableAreasGroup") as PopochiuGroup,
+		popup = "CreateWalkableArea",
+		method = "get_walkable_areas",
 		type_class = PopochiuWalkableArea,
-		parent = 'WalkableAreas'
+		parent = "WalkableAreas"
 	},
 	Constants.Types.CHARACTER: {
-		group = find_child('CharactersGroup') as PopochiuGroup,
-		method = 'get_characters',
+		group = find_child("CharactersGroup") as PopochiuGroup,
+		method = "get_characters",
 		type_class = PopochiuCharacter,
-		parent = 'Characters'
+		parent = "Characters"
 	}
 }
-@onready var _room_name: Button = find_child('RoomName')
-@onready var _no_room_info: Label = find_child('NoRoomInfo')
-@onready var _tool_buttons: HBoxContainer = find_child('ToolButtons')
-@onready var _btn_script: Button = _tool_buttons.get_node('BtnScript')
-@onready var _btn_resource: Button = _tool_buttons.get_node('BtnResource')
-@onready var _btn_resource_script: Button = _tool_buttons.get_node('BtnResourceScript')
+@onready var _room_name: Button = find_child("RoomName")
+@onready var _no_room_info: Label = find_child("NoRoomInfo")
+@onready var _tool_buttons: HBoxContainer = find_child("ToolButtons")
+@onready var _btn_script: Button = _tool_buttons.get_node("BtnScript")
+@onready var _btn_resource: Button = _tool_buttons.get_node("BtnResource")
+@onready var _btn_resource_script: Button = _tool_buttons.get_node("BtnResourceScript")
 
 
 #region Godot ######################################################################################
@@ -73,19 +75,15 @@ func _ready() -> void:
 	
 	# Setup the button that will allow to add characters to the room
 	_btn_add_character = MenuButton.new()
-	_btn_add_character.text = 'Add character to room'
-	_btn_add_character.icon = get_theme_icon('Add', 'EditorIcons')
+	_btn_add_character.text = "Add character to room"
+	_btn_add_character.icon = get_theme_icon("Add", "EditorIcons")
 	_btn_add_character.flat = false
 	_btn_add_character.size_flags_horizontal = SIZE_SHRINK_END
 	
+	_btn_add_character.add_theme_stylebox_override("normal", get_theme_stylebox("normal", "Button"))
+	_btn_add_character.add_theme_stylebox_override("hover", get_theme_stylebox("hover", "Button"))
 	_btn_add_character.add_theme_stylebox_override(
-		'normal', get_theme_stylebox("normal", "Button")
-	)
-	_btn_add_character.add_theme_stylebox_override(
-		'hover', get_theme_stylebox("hover", "Button")
-	)
-	_btn_add_character.add_theme_stylebox_override(
-		'pressed', get_theme_stylebox("pressed", "Button")
+		"pressed", get_theme_stylebox("pressed", "Button")
 	)
 	
 	_btn_add_character.about_to_popup.connect(_on_add_character_pressed)
@@ -98,9 +96,9 @@ func _ready() -> void:
 	_no_room_info.show()
 	_tool_buttons.hide()
 	
-	_btn_script.icon = get_theme_icon('Script', 'EditorIcons')
-	_btn_resource.icon = get_theme_icon('Object', 'EditorIcons')
-	_btn_resource_script.icon = get_theme_icon('GDScript', 'EditorIcons')
+	_btn_script.icon = get_theme_icon("Script", "EditorIcons")
+	_btn_resource.icon = get_theme_icon("Object", "EditorIcons")
+	_btn_resource_script.icon = get_theme_icon("GDScript", "EditorIcons")
 	
 	_room_name.pressed.connect(_select_file)
 	_btn_script.pressed.connect(_open_script)
@@ -123,18 +121,20 @@ func scene_changed(scene_root: Node) -> void:
 		return
 	
 	if scene_root is PopochiuRoom and scene_root.script_name.is_empty():
-		PopochiuUtils.print_error(
-			"This room doesn't have a [code]script_name[/code] value!"
-		)
+		PopochiuUtils.print_error("This room doesn't have a [code]script_name[/code] value!")
+		return
+	
+	if opened_room == scene_root:
 		return
 	
 	# Updated the opened room's info
 	opened_room = scene_root
 	opened_room_state_path = PopochiuResources.get_data_value(
-		'rooms', opened_room.script_name, null
+		"rooms", opened_room.script_name, null
 	)
 	
-	PopochiuEditorHelper.undo_redo.history_changed.connect(_check_undoredo_history)
+	if not PopochiuEditorHelper.undo_redo.history_changed.is_connected(_check_undoredo_history):
+		PopochiuEditorHelper.undo_redo.history_changed.connect(_check_undoredo_history)
 	
 	_room_name.text = opened_room.script_name
 	
@@ -147,7 +147,7 @@ func scene_changed(scene_root: Node) -> void:
 		for child in opened_room.call(_types[type_id].method):
 			_create_row_in_dock(type_id, child)
 		
-		if _types[type_id].has('popup'):
+		if _types[type_id].has("popup"):
 			_types[type_id].popup.room_opened(opened_room)
 		
 		_types[type_id].group.enable_create()
@@ -175,7 +175,7 @@ func set_main_dock(value: Panel) -> void:
 	_remove_dialog = main_dock.delete_dialog
 	
 	for t in _types.values():
-		if not t.has('popup'): continue
+		if not t.has("popup"): continue
 		
 		t.popup = main_dock.get_popup(t.popup)
 		t.popup.set_main_dock(main_dock)
@@ -197,15 +197,11 @@ func _clear_content() -> void:
 		if container.child_exiting_tree.is_connected(_on_child_removed):
 			container.child_exiting_tree.disconnect(_on_child_removed)
 	
-	if PopochiuEditorHelper.undo_redo.history_changed.is_connected(
-		_check_undoredo_history
-	):
-		PopochiuEditorHelper.undo_redo.history_changed.disconnect(
-			_check_undoredo_history
-		)
+	if PopochiuEditorHelper.undo_redo.history_changed.is_connected(_check_undoredo_history):
+		PopochiuEditorHelper.undo_redo.history_changed.disconnect(_check_undoredo_history)
 	
 	opened_room = null
-	opened_room_state_path = ''
+	opened_room_state_path = ""
 	
 	_characters_in_room.clear()
 	_rows_paths.clear()
@@ -226,7 +222,7 @@ func _clear_content() -> void:
 
 
 func _create_object_row(
-	type: int, node_name: String, path := '', node_path := ''
+	type: int, node_name: String, path := "", node_path := ""
 ) -> PopochiuObjectRow:
 	var new_obj: PopochiuObjectRow = object_row.instantiate()
 	
@@ -237,7 +233,7 @@ func _create_object_row(
 	new_obj.node_path = node_path
 	new_obj.clicked.connect(_select_in_tree)
 	
-	_rows_paths.append('%s/%d/%s' % [opened_room.script_name, type, node_name])
+	_rows_paths.append("%s/%d/%s" % [opened_room.script_name, type, node_name])
 	
 	return new_obj
 
@@ -247,9 +243,7 @@ func _select_in_tree(por: PopochiuObjectRow) -> void:
 		_last_selected.deselect()
 	
 	if is_instance_valid(opened_room):
-		var node := opened_room.get_node('%s/%s'\
-		% [_types[por.type].parent, por.node_path])
-		
+		var node := opened_room.get_node("%s/%s" % [_types[por.type].parent, por.node_path])
 		PopochiuEditorHelper.select_node(node)
 	
 	_last_selected = por
@@ -261,7 +255,7 @@ func _select_file() -> void:
 
 func _open_script() -> void:
 	EditorInterface.select_file(opened_room.get_script().resource_path)
-	EditorInterface.set_main_screen_editor('Script')
+	EditorInterface.set_main_screen_editor("Script")
 	EditorInterface.edit_script(opened_room.get_script())
 
 
@@ -273,16 +267,16 @@ func _edit_resource() -> void:
 func _open_resource_script() -> void:
 	var prd: PopochiuRoomData = load(opened_room_state_path)
 	EditorInterface.select_file(prd.get_script().resource_path)
-	EditorInterface.set_main_screen_editor('Script')
+	EditorInterface.set_main_screen_editor("Script")
 	EditorInterface.edit_resource(prd.get_script())
 
 
 # Removes the character from the room
 func _on_remove_character_pressed(row: PopochiuObjectRow) -> void:
 	main_dock.show_confirmation(
-		'Remove character in room',
-		'Are you sure you want to remove [b]%s[/b] from this room?' % row.name,
-		'',
+		"Remove character in room",
+		"Are you sure you want to remove [b]%s[/b] from this room?" % row.name,
+		"",
 		Vector2(200, 120)
 	)
 	
@@ -291,27 +285,27 @@ func _on_remove_character_pressed(row: PopochiuObjectRow) -> void:
 
 
 func _on_remove_dialog_hide() -> void:
-	_remove_dialog.call_deferred('disconnect', 'confirmed', _on_remove_character_confirmed)
-	_remove_dialog.call_deferred('disconnect', 'canceled', _on_remove_dialog_hide)
+	_remove_dialog.call_deferred("disconnect", "confirmed", _on_remove_character_confirmed)
+	_remove_dialog.call_deferred("disconnect", "canceled", _on_remove_dialog_hide)
 
 
 func _on_remove_character_confirmed(row: PopochiuObjectRow) -> void:
 	_characters_in_room.erase(str(row.name))
-	opened_room.get_node('Characters').get_node('Character%s *' % row.name).queue_free()
+	opened_room.get_node("Characters").get_node("Character%s *" % row.name).queue_free()
 	row.queue_free()
 	EditorInterface.save_scene()
 	
 	_on_remove_dialog_hide()
 
 
-# Fills the list to show after pressing "+ Add character to room" and listens
-# to selections to add the clicked character to the room
+# Fills the list to show after pressing "+ Add character to room" and listens to selections to add
+# the clicked character to the room
 func _on_add_character_pressed() -> void:
 	var characters_menu := _btn_add_character.get_popup()
 	characters_menu.clear()
 	
 	var idx := 0
-	for key in PopochiuResources.get_section_keys('characters'):
+	for key in PopochiuResources.get_section_keys("characters"):
 		characters_menu.add_item(key, idx)
 		characters_menu.set_item_disabled(idx, _characters_in_room.has(key))
 		
@@ -329,13 +323,10 @@ func _on_character_seleced(id: int) -> void:
 		characters_menu.get_item_index(id)
 	)
 	var instance: PopochiuCharacter = (load(
-		'res://game/characters/%s/character_%s.tscn' % [
-			char_name.to_snake_case(),
-			char_name.to_snake_case()
-		]
+		"res://game/characters/%s/character_%s.tscn".replace("%s", char_name.to_snake_case())
 	) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	
-	opened_room.get_node('Characters').add_child(instance)
+	opened_room.get_node("Characters").add_child(instance)
 	instance.owner = opened_room
 	
 	EditorInterface.save_scene()
@@ -347,33 +338,26 @@ func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 	
 	if child is PopochiuCharacter:
 		# Get the script_name of the character
-		var char_name: String =\
-		child.name.trim_prefix('Character').rstrip(' *')
+		var char_name: String = child.name.trim_prefix("Character").rstrip(" *")
 		_characters_in_room.append(char_name)
-
+		
 		# Create the row for the character
 		row = _create_object_row(
 			type_id,
 			char_name,
-			'res://game/characters/%s/character_%s.tscn' % [
-				char_name, char_name
-			],
+			"res://game/characters/%s/character_%s.tscn".replace("%s", char_name),
 			child.name
 		)
 		row.is_menu_hidden = true
-
 		_types[type_id].group.add(row)
-
+		
 		# Create button to remove the character from the room
 		var remove_btn := Button.new()
 		remove_btn.icon = get_theme_icon("Remove", "EditorIcons")
-		remove_btn.tooltip_text = 'Remove character from room'
+		remove_btn.tooltip_text = "Remove character from room"
 		remove_btn.flat = true
 		
-		remove_btn.pressed.connect(
-			_on_remove_character_pressed.bind(row)
-		)
-
+		remove_btn.pressed.connect(_on_remove_character_pressed.bind(row))
 		row.add_button(remove_btn)
 	elif is_instance_of(child, _types[type_id].type_class):
 		var row_path := _get_row_path(type_id, child)
@@ -382,10 +366,7 @@ func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 	
 		var node_path := _get_node_path(type_id, child)
 		
-		row = _create_object_row(
-			type_id, child.name, row_path, node_path
-		)
-		
+		row = _create_object_row(type_id, child.name, row_path, node_path)
 		_types[type_id].group.add(row)
 	
 	return row
@@ -394,10 +375,10 @@ func _create_row_in_dock(type_id: int, child: Node) -> PopochiuObjectRow:
 func _get_row_path(type_id: int, child: Node) -> String:
 	var row_path := ""
 	
-	if child.script and child.script.resource_path.find('addons') == -1:
+	if child.script and child.script.resource_path.find("addons") == -1:
 		row_path = child.script.resource_path
 	else:
-		# If the node doesn't have an associated script, then clicking on its
+		# If the node doesn"t have an associated script, then clicking on its
 		# row should select its scene (.tscn) file
 		row_path = child.scene_file_path
 	
@@ -405,9 +386,7 @@ func _get_row_path(type_id: int, child: Node) -> String:
 
 
 func _get_node_path(type_id: int, child: Node) -> String:
-	return String(child.get_path()).split(
-		'%s/' % _types[type_id].parent
-	)[1]
+	return String(child.get_path()).split("%s/" % _types[type_id].parent)[1]
 
 
 func _on_child_added(node: Node, type_id: int) -> void:
@@ -428,20 +407,16 @@ func _on_child_removed(node: Node, type_id: int) -> void:
 	
 	if node is PopochiuCharacter:
 		# Get the script_name of the character
-		node_name = node_name.lstrip('Character').rstrip(' *')
+		node_name = node_name.lstrip("Character").rstrip(" *")
 		_characters_in_room.erase(str(node_name))
 	else:
-		_rows_paths.erase('%s/%d/%s' % [
-			opened_room.script_name, type_id, node_name
-		])
+		_rows_paths.erase("%s/%d/%s" % [opened_room.script_name, type_id, node_name])
 	
 	_types[type_id].group.remove_by_name(node_name)
 
 
 func _check_undoredo_history() -> void:
-	var walkable_areas: Array = opened_room.call(
-		_types[Constants.Types.WALKABLE_AREA].method
-	)
+	var walkable_areas: Array = opened_room.call(_types[Constants.Types.WALKABLE_AREA].method)
 	
 	if walkable_areas.is_empty(): return
 	

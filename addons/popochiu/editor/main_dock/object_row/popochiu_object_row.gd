@@ -15,21 +15,21 @@ enum MenuOptions {
 	DELETE
 }
 
-const SELECTED_FONT_COLOR := Color('706deb')
-const PLAYER_CHARACTER_ICON := preload('res://addons/popochiu/icons/player_character.png')
-const INVENTORY_START_ICON := preload('res://addons/popochiu/icons/inventory_item_start.png')
-const ROOM_STATE_TEMPLATE := 'res://addons/popochiu/engine/templates/room_state_template.gd'
+const SELECTED_FONT_COLOR := Color("706deb")
+const PLAYER_CHARACTER_ICON := preload("res://addons/popochiu/icons/player_character.png")
+const INVENTORY_START_ICON := preload("res://addons/popochiu/icons/inventory_item_start.png")
+const ROOM_STATE_TEMPLATE := "res://addons/popochiu/engine/templates/room_state_template.gd"
 const CHARACTER_STATE_TEMPLATE :=\
-'res://addons/popochiu/engine/templates/character_state_template.gd'
+"res://addons/popochiu/engine/templates/character_state_template.gd"
 const INVENTORY_ITEM_STATE_TEMPLATE :=\
-'res://addons/popochiu/engine/templates/inventory_item_state_template.gd'
-const PROP_SCRIPT_TEMPLATE := 'res://addons/popochiu/engine/templates/prop_template.gd'
-const Constants := preload('res://addons/popochiu/popochiu_resources.gd')
-const AudioCue := preload('res://addons/popochiu/engine/audio_manager/audio_cue.gd')
+"res://addons/popochiu/engine/templates/inventory_item_state_template.gd"
+const PROP_SCRIPT_TEMPLATE := "res://addons/popochiu/engine/templates/prop_template.gd"
+const Constants := preload("res://addons/popochiu/popochiu_resources.gd")
+const AudioCue := preload("res://addons/popochiu/engine/audio_manager/audio_cue.gd")
 
 var type := -1
-var path := ''
-var node_path := ''
+var path := ""
+var node_path := ""
 var main_dock: Panel : set = set_main_dock
 var is_main := false : set = set_is_main
 var is_pc := false : set = set_is_pc
@@ -39,9 +39,9 @@ var is_menu_hidden := false
 var _delete_dialog: ConfirmationDialog
 var _delete_all_checkbox: CheckBox
 
-@onready var _label: Label = find_child('Label')
-@onready var _dflt_font_color: Color = _label.get_theme_color('font_color')
-@onready var _fav_icon: TextureRect = find_child('FavIcon')
+@onready var _label: Label = find_child("Label")
+@onready var _dflt_font_color: Color = _label.get_theme_color("font_color")
+@onready var _fav_icon: TextureRect = find_child("FavIcon")
 @onready var btn_play: Button = %BtnPlay
 @onready var btn_open: Button = %BtnOpen
 @onready var btn_script: Button = %BtnScript
@@ -54,49 +54,49 @@ var _delete_all_checkbox: CheckBox
 	{
 		id = MenuOptions.ADD_TO_CORE,
 		icon = preload(\
-		'res://addons/popochiu/editor/main_dock/object_row/add_to_core.png'),
-		label = 'Add to Popochiu',
+		"res://addons/popochiu/editor/main_dock/object_row/add_to_core.png"),
+		label = "Add to Popochiu",
 		types = Constants.MAIN_TYPES
 	},
 	{
 		id = MenuOptions.CREATE_STATE_SCRIPT,
-		icon = get_theme_icon('ScriptCreate', 'EditorIcons'),
-		label = 'Create state script',
+		icon = get_theme_icon("ScriptCreate", "EditorIcons"),
+		label = "Create state script",
 		types = Constants.MAIN_TYPES
 	},
 	# Room
 	{
 		id = MenuOptions.SET_AS_MAIN,
-		icon = get_theme_icon('Heart', 'EditorIcons'),
-		label = 'Set as Main scene',
+		icon = get_theme_icon("Heart", "EditorIcons"),
+		label = "Set as Main scene",
 		types = [Constants.Types.ROOM]
 	},
 	# Character
 	{
 		id = MenuOptions.SET_AS_PC,
 		icon = PLAYER_CHARACTER_ICON,
-		label = 'Set as Player Character',
+		label = "Set as Player Character",
 		types = [Constants.Types.CHARACTER]
 	},
 	# Inventory item
 	{
 		id = MenuOptions.START_WITH_IT,
 		icon = INVENTORY_START_ICON,
-		label = 'Start with it',
+		label = "Start with it",
 		types = [Constants.Types.INVENTORY_ITEM]
 	},
 	# Prop
 	{
 		id = MenuOptions.CREATE_PROP_SCRIPT,
-		icon = get_theme_icon('ScriptCreate', 'EditorIcons'),
-		label = 'Create script',
+		icon = get_theme_icon("ScriptCreate", "EditorIcons"),
+		label = "Create script",
 		types = [Constants.Types.PROP]
 	},
 	null,
 	{
 		id = MenuOptions.DELETE,
-		icon = get_theme_icon('Remove', 'EditorIcons'),
-		label = 'Remove'
+		icon = get_theme_icon("Remove", "EditorIcons"),
+		label = "Remove"
 	}
 ]
 @onready var buttons_container: HBoxContainer = $Panel/ButtonsContainer
@@ -108,7 +108,7 @@ func _ready() -> void:
 	tooltip_text = path
 	
 	# Assign icons
-	_fav_icon.texture = get_theme_icon('Heart', 'EditorIcons')
+	_fav_icon.texture = get_theme_icon("Heart", "EditorIcons")
 	
 	btn_play.hide()
 	
@@ -120,12 +120,12 @@ func _ready() -> void:
 		Constants.Types.INVENTORY_ITEM:
 			_fav_icon.texture = INVENTORY_START_ICON
 	
-	btn_play.icon = get_theme_icon('MainPlay', 'EditorIcons')
-	btn_open.icon = get_theme_icon('InstanceOptions', 'EditorIcons')
-	btn_script.icon = get_theme_icon('Script', 'EditorIcons')
-	btn_state.icon = get_theme_icon('Object', 'EditorIcons')
-	btn_state_script.icon = get_theme_icon('GDScript', 'EditorIcons')
-	btn_menu.icon = get_theme_icon('GuiTabMenuHl', 'EditorIcons')
+	btn_play.icon = get_theme_icon("MainPlay", "EditorIcons")
+	btn_open.icon = get_theme_icon("InstanceOptions", "EditorIcons")
+	btn_script.icon = get_theme_icon("Script", "EditorIcons")
+	btn_state.icon = get_theme_icon("Object", "EditorIcons")
+	btn_state_script.icon = get_theme_icon("GDScript", "EditorIcons")
+	btn_menu.icon = get_theme_icon("GuiTabMenuHl", "EditorIcons")
 	
 	btn_script.show()
 	btn_state.show()
@@ -143,7 +143,7 @@ func _ready() -> void:
 		menu_popup.set_item_disabled(
 			menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), true
 		)
-	elif type == Constants.Types.PROP and path.find('.gd') > -1:
+	elif type == Constants.Types.PROP and path.find(".gd") > -1:
 		# If the Room object has a script, disable the Create prop script button
 		menu_popup.remove_item(
 			menu_popup.get_item_index(MenuOptions.CREATE_PROP_SCRIPT)
@@ -157,8 +157,8 @@ func _ready() -> void:
 	
 	if type in Constants.ROOM_TYPES:
 		if (type == Constants.Types.PROP and\
-		not FileAccess.file_exists(path.replace('.tscn', '.gd'))) or (
-			type != Constants.Types.PROP and path.find('.gd') == -1
+		not FileAccess.file_exists(path.replace(".tscn", ".gd"))) or (
+			type != Constants.Types.PROP and path.find(".gd") == -1
 		):
 			btn_script.hide()
 		
@@ -166,7 +166,7 @@ func _ready() -> void:
 		btn_state_script.hide()
 	
 	if type in Constants.ROOM_TYPES:
-		# Do not show the button to open this Object' scene if it is a Room Object (Prop, Hotspot,
+		# Do not show the button to open this Object" scene if it is a Room Object (Prop, Hotspot,
 		# Region, Point)
 		btn_open.hide()
 	
@@ -183,12 +183,12 @@ func _ready() -> void:
 
 #region Public #####################################################################################
 func select() -> void:
-	_label.add_theme_color_override('font_color', SELECTED_FONT_COLOR)
+	_label.add_theme_color_override("font_color", SELECTED_FONT_COLOR)
 	clicked.emit(self)
 
 
 func deselect() -> void:
-	_label.add_theme_color_override('font_color', _dflt_font_color)
+	_label.add_theme_color_override("font_color", _dflt_font_color)
 
 
 func show_add_to_core() -> void:
@@ -221,7 +221,7 @@ func add_button(btn: Button) -> void:
 func set_main_dock(value: Panel) -> void:
 	main_dock = value
 	_delete_dialog = main_dock.delete_dialog
-	_delete_all_checkbox = _delete_dialog.find_child('CheckBox')
+	_delete_all_checkbox = _delete_dialog.find_child("CheckBox")
 
 
 func set_is_main(value: bool) -> void:
@@ -255,7 +255,7 @@ func _create_menu() -> void:
 	
 	for option in menu_cfg:
 		if option:
-			if option.has('types') and not type in option.types: continue
+			if option.has("types") and not type in option.types: continue
 			
 			menu_popup.add_icon_item(
 				option.icon,
@@ -299,19 +299,19 @@ func _menu_item_pressed(id: int) -> void:
 			self.is_on_start = name in items
 		MenuOptions.CREATE_PROP_SCRIPT:
 			var prop_template := load(PROP_SCRIPT_TEMPLATE)
-			var script_path := path + '/%s/Prop%s.gd' % [name, name]
+			var script_path := path + "/%s/Prop%s.gd" % [name, name]
 			
 			var prop: PopochiuProp =\
-			EditorInterface.get_edited_scene_root().get_node('Props/' + node_path)
+			EditorInterface.get_edited_scene_root().get_node("Props/" + node_path)
 			
 			# Create the folder for the script
 			if DirAccess.make_dir_recursive_absolute(script_path.get_base_dir()) != OK:
-				push_error('[Popochiu] Could not create Prop folder for ' + str(name))
+				push_error("[Popochiu] Could not create Prop folder for " + str(name))
 				return
 			
 			# Create the script
 			if ResourceSaver.save(prop_template, script_path) != OK:
-				push_error('[Popochiu] Could not create script: %s.gd' % name)
+				push_error("[Popochiu] Could not create script: %s.gd" % name)
 				return
 			
 			# Assign the created Script to the Prop, save the scene, and select the node in the tree
@@ -347,23 +347,23 @@ func _menu_item_pressed(id: int) -> void:
 ## Add this Object (Room, Character, InventoryItem, Dialog) to PopochiuData.cfg so it can be used by
 ## Popochiu.
 func _add_object_to_core() -> void:
-	var target_array := ''
+	var target_array := ""
 	var resource: Resource
 	
-	if path.find('.tscn') > -1:
-		resource = load(path.replace('.tscn', '.tres'))
+	if path.find(".tscn") > -1:
+		resource = load(path.replace(".tscn", ".tres"))
 	else:
 		resource = load(path)
 	
 	match type:
 		Constants.Types.ROOM:
-			target_array = 'rooms'
+			target_array = "rooms"
 		Constants.Types.CHARACTER:
-			target_array = 'characters'
+			target_array = "characters"
 		Constants.Types.INVENTORY_ITEM:
-			target_array = 'inventory_items'
+			target_array = "inventory_items"
 		Constants.Types.DIALOG:
-			target_array = 'dialogs'
+			target_array = "dialogs"
 		_:
 			# TODO: Show an error message
 			return
@@ -392,8 +392,8 @@ func _play() -> void:
 func _open() -> void:
 	EditorInterface.select_file(path)
 	
-	if path.find('.tres') < 0:
-		EditorInterface.set_main_screen_editor('2D')
+	if path.find(".tres") < 0:
+		EditorInterface.set_main_screen_editor("2D")
 		EditorInterface.open_scene_from_path(path)
 	else:
 		EditorInterface.edit_resource(load(path))
@@ -404,34 +404,34 @@ func _open() -> void:
 func _open_script() -> void:
 	var script_path := path
 	
-	if path.find('.tscn') > -1:
+	if path.find(".tscn") > -1:
 		# A room, character, inventory item, or prop
-		script_path = path.replace('.tscn', '.gd')
-	elif path.find('.tres') > -1:
+		script_path = path.replace(".tscn", ".gd")
+	elif path.find(".tres") > -1:
 		# A dialog
-		script_path = path.replace('.tres', '.gd')
-	elif path.find('.gd') == -1:
+		script_path = path.replace(".tres", ".gd")
+	elif path.find(".gd") == -1:
 		return
 	
 	EditorInterface.select_file(script_path)
-	EditorInterface.set_main_screen_editor('Script')
+	EditorInterface.set_main_screen_editor("Script")
 	EditorInterface.edit_script(load(script_path))
 	
 	select()
 
 
 func _edit_state() -> void:
-	EditorInterface.select_file(path.replace('.tscn', '.tres'))
-	EditorInterface.edit_resource(load(path.replace('.tscn', '.tres')))
+	EditorInterface.select_file(path.replace(".tscn", ".tres"))
+	EditorInterface.edit_resource(load(path.replace(".tscn", ".tres")))
 	
 	select()
 
 
 func _open_state_script() -> void:
-	var state := load(path.replace('.tscn', '.tres'))
+	var state := load(path.replace(".tscn", ".tres"))
 	
 	EditorInterface.select_file(state.get_script().resource_path)
-	EditorInterface.set_main_screen_editor('Script')
+	EditorInterface.set_main_screen_editor("Script")
 	EditorInterface.edit_resource(state.get_script())
 	
 	select()
@@ -440,14 +440,14 @@ func _open_state_script() -> void:
 ## Shows a confirmation popup to ask the developer if the Popochiu object should be removed only
 ## from the core, or from the file system too.
 func _remove_object() -> void:
-	var location := 'Popochiu'
+	var location := "Popochiu"
 	
 	# Verify if the object to delete is a Prop, a Hotspot or a Region.
 	if type in Constants.ROOM_TYPES:
 		# res://game/rooms/???/props/??/ > [res:, popochiu, rooms, ???, props, ??]
-		location = "Room%s" % (path.split('/', false)[3]).to_pascal_case()
+		location = "Room%s" % (path.split("/", false)[3]).to_pascal_case()
 	
-	# Look into the Object's folder for audio files and AudioCues to show the developer that those
+	# Look into the Object"s folder for audio files and AudioCues to show the developer that those
 	# files will be removed too.
 	var audio_files := _search_audio_files(
 		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
@@ -459,21 +459,21 @@ func _remove_object() -> void:
 	
 	main_dock.show_confirmation(
 		# Title
-		'Remove %s from %s' % [name, location],
+		"Remove %s from %s" % [name, location],
 		# Body
-		'This will remove the [b]%s[/b] object in [b]%s[/b] scene.' % [name, location] +\
-		' Uses of this object in scripts will not work anymore.' +\
-		' This action cannot be reversed. Continue?',
+		"This will remove the [b]%s[/b] object in [b]%s[/b] scene." % [name, location] +\
+		" Uses of this object in scripts will not work anymore." +\
+		" This action cannot be reversed. Continue?",
 		# Additional confirmation
-		'Want to delete the [b]%s[/b] folder too?' % path.get_base_dir() +\
+		"Want to delete the [b]%s[/b] folder too?" % path.get_base_dir() +\
 		(
-			' ([b]%d[/b] audio files will be deleted' % audio_files.size()\
+			" ([b]%d[/b] audio files will be deleted" % audio_files.size()\
 			if audio_files.size() > 0\
-			else ''
+			else ""
 		) +\
-		' (cannot be reversed))'\
+		" (cannot be reversed))"\
 		if path.get_extension()
-		else ''
+		else ""
 	)
 
 
@@ -485,7 +485,7 @@ func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
 	
 	for idx in dir.get_file_count():
 		match dir.get_file_type(idx):
-			'AudioStreamOggVorbis', 'AudioStreamMP3', 'AudioStreamWAV':
+			"AudioStreamOggVorbis", "AudioStreamMP3", "AudioStreamWAV":
 				files.append(dir.get_file_path(idx))
 	
 	return files
@@ -498,16 +498,16 @@ func _remove_from_core() -> void:
 	match type:
 		Constants.Types.ROOM:
 			PopochiuResources.remove_autoload_obj(PopochiuResources.R_SNGL, name)
-			PopochiuResources.erase_data_value('rooms', str(name))
+			PopochiuResources.erase_data_value("rooms", str(name))
 		Constants.Types.CHARACTER:
 			PopochiuResources.remove_autoload_obj(PopochiuResources.C_SNGL, name)
-			PopochiuResources.erase_data_value('characters', str(name))
+			PopochiuResources.erase_data_value("characters", str(name))
 		Constants.Types.INVENTORY_ITEM:
 			PopochiuResources.remove_autoload_obj(PopochiuResources.I_SNGL, name)
-			PopochiuResources.erase_data_value('inventory_items', str(name))
+			PopochiuResources.erase_data_value("inventory_items", str(name))
 		Constants.Types.DIALOG:
 			PopochiuResources.remove_autoload_obj(PopochiuResources.D_SNGL, name)
-			PopochiuResources.erase_data_value('dialogs', str(name))
+			PopochiuResources.erase_data_value("dialogs", str(name))
 		Constants.Types.PROP,\
 		Constants.Types.HOTSPOT,\
 		Constants.Types.MARKER, \
@@ -530,7 +530,7 @@ func _remove_from_core() -> void:
 			
 			# TODO: If it is a non-interactable Object, just delete the node from the
 			# scene, and maybe its sprite?
-			# TODO: Remove explicit exclusion, it's ugly
+			# TODO: Remove explicit exclusion, it"s ugly
 			if path.is_empty():
 				_disconnect_popup()
 				return
@@ -552,7 +552,7 @@ func _remove_from_core() -> void:
 	
 	if (
 		EditorInterface.get_edited_scene_root()
-		and EditorInterface.get_edited_scene_root().get('script_name')
+		and EditorInterface.get_edited_scene_root().get("script_name")
 		and EditorInterface.get_edited_scene_root().script_name == name
 	):
 		return
@@ -560,7 +560,7 @@ func _remove_from_core() -> void:
 	EditorInterface.save_scene()
 
 
-## Remove this object's directory (subfolders included) from the file system.
+## Remove this object"s directory (subfolders included) from the file system.
 func _delete_from_file_system() -> void:
 	var object_dir: EditorFileSystemDirectory = \
 		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
@@ -568,7 +568,7 @@ func _delete_from_file_system() -> void:
 	# Remove files, sub folders and its files.
 	_recursive_delete(object_dir)
 	
-	# Delete the element's row
+	# Delete the element"s row
 	queue_free()
 
 
@@ -579,7 +579,7 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> void:
 	if dir.get_file_count() > 0:
 		assert(
 			_delete_files(dir) == OK,
-			'[Popochiu] Error removing files in recursive elimination of %s' % dir.get_path()
+			"[Popochiu] Error removing files in recursive elimination of %s" % dir.get_path()
 		)
 	
 	if dir.get_subdir_count() > 0:
@@ -590,13 +590,13 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> void:
 	
 	assert(
 		 DirAccess.remove_absolute(dir.get_path()) == OK,
-		'[Popochiu] Error removing folder in recursive elimination of %s' % dir.get_path()
+		"[Popochiu] Error removing folder in recursive elimination of %s" % dir.get_path()
 	)
 	EditorInterface.get_resource_filesystem().scan()
 
 
 ## Delete files within `dir`. First, get the paths to each file, then delete them one by one,
-## calling `EditorFileSystem.update_file(path: String)` so that, in case it's an imported file, its
+## calling `EditorFileSystem.update_file(path: String)` so that, in case it"s an imported file, its
 ## **.import** is also deleted.
 func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	# This array will store the paths of the files to be deleted.
@@ -605,27 +605,27 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	
 	for file_idx: int in dir.get_file_count():
 		match dir.get_file_type(file_idx):
-			'AudioStreamOggVorbis', 'AudioStreamMP3', 'AudioStreamWAV':
+			"AudioStreamOggVorbis", "AudioStreamMP3", "AudioStreamWAV":
 				deleted_audios.append(dir.get_file_path(file_idx))
-			'Resource':
+			"Resource":
 				var resource: Resource = load(dir.get_file_path(file_idx))
 				if resource is AudioCue:
 					deleted_audios.append(resource.audio.resource_path)
 					
 					# Delete the AudioCue in the PopochiuData.cfg
-					for arr in ['mx_cues', 'sfx_cues', 'vo_cues', 'ui_cues']:
+					for arr in ["mx_cues", "sfx_cues", "vo_cues", "ui_cues"]:
 						var cues: Array = PopochiuResources.get_data_value(
-							'audio', arr, []
+							"audio", arr, []
 						)
 						if cues.has(resource.resource_path):
 							cues.erase(resource.resource_path)
 							assert(\
 								PopochiuResources.set_data_value(
-									'audio', arr, cues
+									"audio", arr, cues
 								) == OK,\
-								'[Popochiu] Could not save AudioManager after' +\
-								' attempting to delete AudioCue during deletion of' +\
-								' directory %s.' % dir.get_path()\
+								"[Popochiu] Could not save AudioManager after" +\
+								" attempting to delete AudioCue during deletion of" +\
+								" directory %s." % dir.get_path()\
 							)
 							break
 		
@@ -674,26 +674,26 @@ func _create_state_script() -> void:
 		Constants.Types.INVENTORY_ITEM:
 			template = load(INVENTORY_ITEM_STATE_TEMPLATE)
 	
-	var script_path := path.replace('.tscn', 'State.gd')
+	var script_path := path.replace(".tscn", "State.gd")
 	
 	# Create the folder for the script
 	if DirAccess.make_dir_recursive_absolute(script_path.get_base_dir()) != OK:
-		push_error('[Popochiu] Could not create state script for ' + str(name))
+		push_error("[Popochiu] Could not create state script for " + str(name))
 		return
 	
 	# Create the script
 	if ResourceSaver.save(template, script_path) != OK:
-		push_error('[Popochiu] Could not create script: %s.gd' % name)
+		push_error("[Popochiu] Could not create script: %s.gd" % name)
 		return
 	
-	# Assign the created Script to the object's state resource
-	var state_resource := load(path.replace('tscn', 'tres'))
+	# Assign the created Script to the object"s state resource
+	var state_resource := load(path.replace("tscn", "tres"))
 	state_resource.set_script(load(script_path))
 	state_resource.script_name = name
 	state_resource.scene = path
 	
 	if ResourceSaver.save(state_resource, state_resource.resource_path) != OK:
-		push_error('[Popochiu] Could not create script: %s.gd' % name)
+		push_error("[Popochiu] Could not create script: %s.gd" % name)
 		return
 	
 	# Disable the context menu option and enable the button to open the state script
