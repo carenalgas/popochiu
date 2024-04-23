@@ -95,7 +95,11 @@ func create_gibberish(input_string: String) -> String:
 	for chr in input_string:
 		if(chr == '['):
 			bbcode = true
-			
+		elif(chr == ']'):
+			output_text += chr
+			bbcode = false
+			continue
+		
 		if (!bbcode):
 			if (chr != ' '):
 					output_text += letters[randi_range(0,letters.size()-1)]
@@ -103,8 +107,7 @@ func create_gibberish(input_string: String) -> String:
 				output_text += ' ' 
 		else:
 			output_text += chr
-		if(chr == ']'):
-			bbcode = false
+			
 	return output_text
 #endregion
 
