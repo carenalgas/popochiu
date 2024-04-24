@@ -87,7 +87,6 @@ func clean_inventory(in_bg := false) -> void:
 		if not pii.in_inventory: continue
 		if not in_bg: await pii.discard()
 		
-		item_discarded.emit(pii)
 		pii.remove(!in_bg)
 
 

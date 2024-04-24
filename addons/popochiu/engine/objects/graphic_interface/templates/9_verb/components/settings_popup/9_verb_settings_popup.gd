@@ -1,7 +1,7 @@
 extends PopochiuPopup
 
 signal quit_pressed
-signal classic_sentence_toggled(pressed)
+signal classic_sentence_toggled(pressed: bool)
 
 @onready var classic_sentence: CheckButton = %ClassicSentence
 @onready var save: Button = %Save
@@ -20,6 +20,11 @@ func _ready() -> void:
 	history.pressed.connect(_on_history_pressed)
 	quit.pressed.connect(_on_quit_pressed)
 	classic_sentence.toggled.connect(_on_classic_sentence_toggled)
+	
+	# Connect to autoloads signals
+	# Fix #219: Close the popup whenever a slot is selected for saving or loading
+	E.game_saved.connect(close)
+	E.game_load_started.connect(close)
 	
 	if OS.has_feature("web"):
 		quit.hide()

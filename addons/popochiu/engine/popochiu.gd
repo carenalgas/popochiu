@@ -29,6 +29,8 @@ signal text_speed_changed
 signal language_changed
 ## Emitted after [method save_game] saves a file with the current game data.
 signal game_saved
+## Emitted before a loaded game starts the transition to show the loaded data.
+signal game_load_started
 ## Emitted by [method room_readied] when stored game [param data] is loaded for the current room.
 signal game_loaded(data: Dictionary)
 ## Emitted when [member current_command] changes. Can be used to know the active command for the
@@ -344,7 +346,7 @@ func cutscene(instructions: Array) -> void:
 ## [param ignore_change] is used internally by Popochiu to know if it's the first time the room is
 ## loaded when starting the game.
 func goto_room(
-	script_name := '',
+	script_name := "",
 	use_transition := true,
 	store_state := true,
 	ignore_change := false
@@ -425,8 +427,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	else:
 		current_room.state.visited = true
 		current_room.state.visited_times += 1
-		current_room.state.visited_first_time =\
-		current_room.state.visited_times == 1
+		current_room.state.visited_first_time = current_room.state.visited_times == 1
 	
 	# Add the PopochiuCharacter instances to the room
 	if (rooms_states[room.script_name]['characters'] as Dictionary).is_empty():
@@ -481,7 +482,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
 		c.room = current_room
 	
-	current_room._on_room_entered()
+	await current_room._on_room_entered()
 	
 	if _loaded_game:
 		C.player.global_position = Vector2(
@@ -507,14 +508,16 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	if _loaded_game:
 		game_loaded.emit(_loaded_game)
-		await G.show_system_text('Game loaded')
+		await G.show_system_text("Game loaded")
 		
 		_loaded_game = {}
 	
 	# This enables the room to listen input events
 	current_room.is_current = true
+	await current_room._on_room_transition_finished()
 	
-	current_room._on_room_transition_finished()
+	# Fix #219: Update visited_first_time state once _on_room_transition_finished() finishes
+	current_room.state.visited_first_time = false
 
 
 ## Changes the main camera's offset by [param offset] pixels. This method is intended to be used
@@ -761,6 +764,7 @@ func load_game(slot := 1) -> void:
 	
 	if _loaded_game.is_empty(): return
 	
+	game_load_started.emit()
 	goto_room(
 		_loaded_game.player.room,
 		true,

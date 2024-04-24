@@ -34,9 +34,9 @@ func _input(event: InputEvent) -> void:
 			# active.
 			if not $SierraMenu.visible and not E.hovered\
 			 and E.current_command != SierraCommands.Commands.WALK:
-				get_viewport().set_input_as_handled()
+				accept_event()
 		MOUSE_BUTTON_RIGHT:
-			get_viewport().set_input_as_handled()
+			accept_event()
 			
 			E.current_command = posmod(
 				E.current_command + 1, SierraCommands.Commands.size()
