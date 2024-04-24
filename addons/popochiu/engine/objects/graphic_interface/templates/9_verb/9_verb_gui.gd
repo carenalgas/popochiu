@@ -30,6 +30,7 @@ func _ready() -> void:
 	settings_popup.classic_sentence_toggled.connect(_on_classic_sentence_toggled)
 	settings_popup.quit_pressed.connect(_on_quit_pressed)
 	
+	
 	# Connect to singletons signals
 	E.ready.connect(_on_popochiu_ready)
 

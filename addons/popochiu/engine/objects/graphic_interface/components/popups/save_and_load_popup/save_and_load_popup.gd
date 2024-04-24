@@ -1,5 +1,7 @@
 extends PopochiuPopup
 
+signal slot_selected
+
 const SELECTION_COLOR := Color("edf171")
 const OVERWRITE_COLOR := Color("c46c71")
 
@@ -52,6 +54,8 @@ func _open() -> void:
 
 func _close() -> void:
 	if not _slot: return
+	
+	slot_selected.emit()
 	
 	if _slot_name:
 		E.save_game(_slot, _slot_name)

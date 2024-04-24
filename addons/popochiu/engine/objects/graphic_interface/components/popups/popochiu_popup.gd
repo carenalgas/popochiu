@@ -81,7 +81,6 @@ func close() -> void:
 		Cursor.unblock()
 	
 	_close()
-	
 	hide()
 
 

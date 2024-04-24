@@ -14,6 +14,7 @@ func _ready() -> void:
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
 	child_entered_tree.connect(_on_item_assigned)
+	child_exiting_tree.connect(_on_item_removed)
 
 
 #endregion
@@ -45,6 +46,18 @@ func _on_item_assigned(node: Node) -> void:
 	inventory_item.mouse_exited.connect(_on_mouse_exited)
 	inventory_item.selected.connect(_on_item_selected)
 	inventory_item.unselected.connect(_on_item_unselected)
+
+
+func _on_item_removed(node: Node) -> void:
+	if not node is PopochiuInventoryItem:
+		return
+	
+	var inventory_item: PopochiuInventoryItem = node
+	
+	inventory_item.mouse_entered.disconnect(_on_mouse_entered)
+	inventory_item.mouse_exited.disconnect(_on_mouse_exited)
+	inventory_item.selected.disconnect(_on_item_selected)
+	inventory_item.unselected.disconnect(_on_item_unselected)
 
 
 func _on_item_selected(item: PopochiuInventoryItem) -> void:

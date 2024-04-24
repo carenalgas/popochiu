@@ -55,15 +55,19 @@ signal popup_requested(script_name: StringName)
 # NOTE: Maybe add some signals for clicking objects and items
 #signal clicked_clickable(clickable: PopochiuClickable)
 #signal clicked_inventory_item(inventory_item: PopochiuInventoryItem)
+# TODO: deprecate this
 ## Emitted when [method show_history] is called in order to open the History popup.
-signal history_opened # TODO: deprecate this
+signal history_opened
 ## Emitted to open the popup to save the game. You can specify the name of the saved game with
+# TODO: deprecate this
 ## [param slot_text].
-signal save_requested(slot_text: String) # TODO: deprecate this
+signal save_requested(slot_text: String)
+# TODO: deprecate this
 ## Emitted to open the popup to load the game.
-signal load_requested # TODO: deprecate this
+signal load_requested
+# TODO: deprecate this
 ## Emitted to open the popup that allows to change the volume of the audio buses in the game.
-signal sound_settings_requested # TODO: deprecate this
+signal sound_settings_requested
 ## Emitted when the dialog options of the running [PopochiuDialog] are shown.
 signal dialog_options_shown
 
