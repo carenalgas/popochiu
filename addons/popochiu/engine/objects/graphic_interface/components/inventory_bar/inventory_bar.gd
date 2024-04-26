@@ -103,9 +103,8 @@ func _on_graphic_interface_unblocked() -> void:
 func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 	box.add_child(item)
 	
-	if E.settings.scale_gui:
-		item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
-		item.custom_minimum_size.y = box.size.y
+	item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+	item.custom_minimum_size.y = box.size.y
 	
 	item.selected.connect(_change_cursor)
 	

@@ -114,8 +114,16 @@ func _physics_process(delta):
 
 
 func _unhandled_input(event: InputEvent):
-	if not has_player: return
+	if (
+		not PopochiuUtils.get_click_or_touch_index(event) in [
+			MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT
+		]
+		or (not event is InputEventScreenTouch and E.hovered)
+	):
+		return
 	
+	# Fix #224 Item should be removed only if the click was done anywhere in the room when the
+	# cursor is not hovering another object
 	if I.active:
 		if event.is_action_released("popochiu-look")\
 		or event.is_action_pressed("popochiu-interact"):
@@ -125,13 +133,7 @@ func _unhandled_input(event: InputEvent):
 			I.set_active_item()
 		return
 	
-	if PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
-		return
-	
-	if not event is InputEventScreenTouch and E.hovered:
-		return
-	
-	if is_instance_valid(C.player) and C.player.can_move:
+	if has_player and is_instance_valid(C.player) and C.player.can_move:
 		# Set this property to null in order to cancel any running interaction with a
 		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...))
 		E.clicked = null
