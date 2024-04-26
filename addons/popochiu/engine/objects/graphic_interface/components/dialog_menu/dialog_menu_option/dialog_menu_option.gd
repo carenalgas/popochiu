@@ -43,7 +43,11 @@ func _ready() -> void:
 #region SetGet #####################################################################################
 func set_dialog_option(value: PopochiuDialogOption) -> void:
 	option = value
-	text = option.text
+	if PopochiuConfig.should_dialog_options_be_gibberish():
+		text = D.create_gibberish(option.text)
+	else:
+		text = option.text 
+	
 	used = option.used and not option.always_on
 
 
