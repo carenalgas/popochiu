@@ -52,13 +52,15 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if not PopochiuUtils.is_click_or_touch_pressed(event) or modulate.a == 0.0:
+	if (
+		not PopochiuUtils.get_click_or_touch_index(event) in [
+			MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT
+		]
+		or modulate.a == 0.0
+	):
 		return
 	
 	accept_event()
-	
-	if PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
-		return
 	
 	if visible_ratio == 1.0:
 		disappear()

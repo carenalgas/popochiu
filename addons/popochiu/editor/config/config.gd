@@ -173,9 +173,7 @@ static func is_use_addon_template() -> bool:
 static func _initialize_project_setting(
 	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
 ) -> void:
-	if ProjectSettings.has_setting(key): return
-	
-	_create_setting(key, default_value, type, hint)
+	_create_setting(key, default_value, type, hint, hint_string)
 	ProjectSettings.set_as_basic(key, true)
 
 
@@ -188,7 +186,7 @@ static func _initialize_advanced_project_setting(
 static func _create_setting(
 	key: String, default_value, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
 ) -> void:
-	ProjectSettings.set_setting(key, default_value)
+	ProjectSettings.set_setting(key, ProjectSettings.get_setting(key, default_value))
 	ProjectSettings.set_initial_value(key, default_value)
 	ProjectSettings.add_property_info({
 		"name": key,

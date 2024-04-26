@@ -12,6 +12,7 @@ var is_disabled := false
 
 var _can_hide := true
 var _is_hidden := true
+var _is_mouse_hover := false
 
 @onready var _tween: Tween = null
 @onready var _box: BoxContainer = find_child("Box")
@@ -43,17 +44,27 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		var rect := get_rect()
-		
-		if E.settings.scale_gui:
-			rect = Rect2(get_rect().position * E.scale, get_rect().size * E.scale)
-		
-		if _is_hidden and rect.has_point(get_global_mouse_position()):
-			_open()
-		elif not _is_hidden\
-		and not rect.has_point(get_global_mouse_position()):
-			_close()
+	if not event is InputEventMouseMotion: return
+	
+	var rect := get_rect()
+	
+	if E.settings.scale_gui:
+		rect = Rect2(get_rect().position * E.scale, get_rect().size * E.scale)
+	
+	if rect.has_point(get_global_mouse_position()):
+		_is_mouse_hover = true
+		Cursor.show_cursor("gui")
+	elif _is_mouse_hover:
+		_is_mouse_hover = false
+		Cursor.show_cursor(
+			"wait" if (D.current_dialog or G.gui.is_showing_dialog_line)
+			else "normal"
+		)
+	
+	if _is_hidden and rect.has_point(get_global_mouse_position()):
+		_open()
+	elif not _is_hidden and not rect.has_point(get_global_mouse_position()):
+		_close()
 
 
 #endregion
@@ -78,8 +89,6 @@ func _open() -> void:
 	.from(_hide_y if not is_disabled else position.y)\
 	.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	
-	Cursor.show_cursor("gui")
-	
 	_is_hidden = false
 
 
@@ -94,13 +103,8 @@ func _close() -> void:
 		_tween.kill()
 	
 	_tween = create_tween()
-	_tween.tween_property(
-		self, "position:y",
-		_hide_y if not is_disabled else _hide_y - 3.5,
-		0.2
-	).from(0.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	
-	Cursor.show_cursor()
+	_tween.tween_property(self, "position:y", _hide_y if not is_disabled else _hide_y - 3.5, 0.2)\
+	.from(0.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	
 	_is_hidden = true
 

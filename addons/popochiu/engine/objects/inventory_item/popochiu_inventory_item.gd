@@ -333,16 +333,18 @@ func _toggle_description(is_hover: bool) -> void:
 		last_click_button = -1
 		
 		G.mouse_exited_inventory_item.emit(self)
-	
-	# NOTE: Not sure this should go here
-	#Cursor.set_cursor(cursor if is_hover else CURSOR.Type.IDLE)
-	#G.show_hover_text(self.description if is_hover else '')
 
 
 func _on_gui_input(event: InputEvent) -> void: 
 	if not PopochiuUtils.is_click_or_touch_pressed(event): return
 	
 	var event_index := PopochiuUtils.get_click_or_touch_index(event)
+	
+	# Fix #224 Clean E.clicked when an inventory item is clicked to ensure that the event is not
+	# mishandled by the GUI
+	if E.clicked:
+		E.clicked = null
+	
 	I.clicked = self
 	last_click_button = event_index
 	

@@ -103,6 +103,7 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 ## Called when a dialog line starts. It shows the [code]"wait"[/code] cursor.
 func _on_dialog_line_started() -> void:
 	is_showing_dialog_line = true
+	
 	Cursor.show_cursor("wait")
 
 
@@ -110,6 +111,7 @@ func _on_dialog_line_started() -> void:
 ## [PopochiuDialog] active, otherwise shows the [code]"use"[/code] cursor.
 func _on_dialog_line_finished() -> void:
 	is_showing_dialog_line = false
+	
 	if D.current_dialog:
 		Cursor.show_cursor("gui")
 	elif E.hovered:
