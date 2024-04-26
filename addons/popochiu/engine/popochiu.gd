@@ -204,7 +204,9 @@ func _ready() -> void:
 			C.characters.append(pc)
 			C.set(pc.script_name, pc)
 	
-	# Add inventory items checked start (ignore animations (3rd parameter))
+	# Add inventory items checked to start with
+	await get_tree().process_frame
+	
 	for key in settings.items_on_start:
 		var ii: PopochiuInventoryItem = I.get_item_instance(key)
 		
