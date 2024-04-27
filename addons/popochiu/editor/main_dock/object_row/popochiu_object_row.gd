@@ -613,21 +613,29 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 					deleted_audios.append(resource.audio.resource_path)
 					
 					# Delete the AudioCue in the PopochiuData.cfg
-					for arr in ["mx_cues", "sfx_cues", "vo_cues", "ui_cues"]:
+					for cue_group in ["mx_cues", "sfx_cues", "vo_cues", "ui_cues"]:
 						var cues: Array = PopochiuResources.get_data_value(
-							"audio", arr, []
+							"audio", cue_group, []
 						)
-						if cues.has(resource.resource_path):
-							cues.erase(resource.resource_path)
-							assert(\
-								PopochiuResources.set_data_value(
-									"audio", arr, cues
-								) == OK,\
-								"[Popochiu] Could not save AudioManager after" +\
-								" attempting to delete AudioCue during deletion of" +\
-								" directory %s." % dir.get_path()\
-							)
-							break
+						if not cues.has(resource.resource_path): continue
+						
+						cues.erase(resource.resource_path)
+						
+						assert(\
+							PopochiuResources.set_data_value(
+								"audio", cue_group, cues
+							) == OK,\
+							"[Popochiu] Could not save AudioManager after" +\
+							" attempting to delete AudioCue during deletion of" +\
+							" directory %s." % dir.get_path()\
+						)
+						
+						# Fix #59 : remove the AudioCue from the A singleton
+						PopochiuResources.remove_audio_autoload(
+							cue_group, resource.resource_name, resource.resource_path
+						)
+						
+						break
 		
 		files_paths.append(dir.get_file_path(file_idx))
 	

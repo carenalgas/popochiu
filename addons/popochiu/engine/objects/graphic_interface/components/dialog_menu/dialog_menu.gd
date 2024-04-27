@@ -47,7 +47,7 @@ func _ready() -> void:
 #region Private ####################################################################################
 func _clicked(event: InputEvent) -> void:
 	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
-		pass
+		accept_event()
 
 
 # Creates an Array of PopochiuDialogOption to show dialog tree options created
@@ -67,7 +67,7 @@ func _create_inline_options(opts: Array) -> void:
 
 func _create_options(options := [], autoshow := false) -> void:
 	remove_options()
-
+	
 	if options.is_empty():
 		if not current_options.is_empty():
 			show_options()
@@ -115,7 +115,7 @@ func _create_options(options := [], autoshow := false) -> void:
 func remove_options(_dialog: PopochiuDialog = null) -> void:
 	if not current_options.is_empty():
 		current_options.clear()
-
+		
 		for btn in dialog_options_container.get_children():
 			btn.queue_free()
 	

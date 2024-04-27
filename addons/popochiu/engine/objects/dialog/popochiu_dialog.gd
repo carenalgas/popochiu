@@ -49,6 +49,9 @@ func queue_start() -> Callable:
 
 ## Starts this dialog, then [method _on_start] is called.
 func start() -> void:
+	if D.current_dialog == self:
+		return
+	
 	# Start this dialog
 	D.current_dialog = self
 	await _start()

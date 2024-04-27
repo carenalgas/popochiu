@@ -762,6 +762,9 @@ func save_game(slot := 1, description := '') -> void:
 func load_game(slot := 1) -> void:
 	I.clean_inventory(true)
 	
+	if D.current_dialog:
+		D.current_dialog.stop()
+	
 	_loaded_game = _saveload.load_game(slot)
 	
 	if _loaded_game.is_empty(): return

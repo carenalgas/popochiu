@@ -337,7 +337,8 @@ func _on_mouse_exited() -> void:
 
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
-	if not E.hovered or E.hovered != self: return
+	if G.is_blocked or not E.hovered or E.hovered != self:
+		return
 	
 	if _is_double_click_or_tap(event):
 		times_double_clicked += 1

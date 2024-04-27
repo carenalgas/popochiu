@@ -244,9 +244,7 @@ func _remove_in_audio_manager() -> void:
 			PopochiuResources.set_data_value('audio', cue_group, group_data)
 	
 	# Remove the AudioCue from the A singleton -----------------------------------------------------
-	PopochiuResources.remove_audio_autoload(
-		cue_group, name, audio_cue.resource_path
-	)
+	PopochiuResources.remove_audio_autoload(cue_group, name, audio_cue.resource_path)
 	
 	# Add the audio file to the "Not assigned" group
 	deleted.emit(audio_cue.audio.resource_path)

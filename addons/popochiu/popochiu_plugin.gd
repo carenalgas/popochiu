@@ -13,8 +13,8 @@ const POPOCHIU_CANVAS_EDITOR_MENU = preload(
 
 var main_dock: Panel
 
-var _editor_interface := get_editor_interface()
-var _editor_file_system := _editor_interface.get_resource_filesystem()
+#var EditorInterface := get_editor_interface()
+var _editor_file_system := EditorInterface.get_resource_filesystem()
 var _is_first_install := false
 var _input_actions := preload("res://addons/popochiu/engine/others/input_actions.gd")
 var _export_plugin: EditorExportPlugin = null
@@ -92,8 +92,6 @@ func _enter_tree() -> void:
 	main_dock.call_deferred("grab_focus")
 	
 	# ==== Connect to signals ======================================================================
-	_editor_interface.get_file_system_dock().file_removed.connect(_on_file_removed)
-	_editor_interface.get_file_system_dock().files_moved.connect(_on_files_moved)
 	# TODO: This connection might be needed only by TabAudio.gd, so probably would be better if it
 	# is done there
 	_editor_file_system.sources_changed.connect(_on_sources_changed)
@@ -102,10 +100,10 @@ func _enter_tree() -> void:
 	scene_closed.connect(main_dock.scene_closed)
 	# ====================================================================== Connect to signals ====
 	
-	if _editor_interface.get_edited_scene_root():
-		main_dock.scene_changed(_editor_interface.get_edited_scene_root())
+	if EditorInterface.get_edited_scene_root():
+		main_dock.scene_changed(EditorInterface.get_edited_scene_root())
 	
-	main_dock.setup_dialog.es = _editor_interface.get_editor_settings()
+	main_dock.setup_dialog.es = EditorInterface.get_editor_settings()
 	
 	# Connect signals between other nodes
 	main_dock.setup_dialog.gui_selected.connect(_gui_templates_helper.copy_gui_template)
@@ -150,7 +148,7 @@ func _enable_plugin() -> void:
 		ad.confirmed.connect(EditorInterface.restart_editor.bind(false))
 		ad.close_requested.connect(EditorInterface.restart_editor.bind(false))
 		
-		_editor_interface.get_base_control().add_child(ad)
+		EditorInterface.get_base_control().add_child(ad)
 		ad.popup_centered()
 
 
@@ -219,16 +217,6 @@ func _set_setup_done() -> void:
 func _on_sources_changed(exist: bool) -> void:
 	if Engine.is_editor_hint() and is_instance_valid(main_dock):
 		main_dock.search_audio_files()
-
-
-func _on_files_moved(old_file: String, new_file: String) -> void:
-	# TODO: Check if the change affects one of the .tres files created by
-	# Popochiu and update the respective file names and rows in the Dock
-	pass
-
-
-func _on_file_removed(file: String) -> void:
-	pass
 
 
 #endregion

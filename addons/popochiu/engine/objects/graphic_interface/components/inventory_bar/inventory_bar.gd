@@ -1,6 +1,7 @@
 extends Control
 
 @export var always_visible := false
+@export var hide_when_gui_is_blocked := true
 
 var is_disabled := false
 
@@ -94,10 +95,16 @@ func _change_cursor(item: PopochiuInventoryItem) -> void:
 
 func _on_graphic_interface_blocked() -> void:
 	set_process_input(false)
+	
+	if hide_when_gui_is_blocked:
+		hide()
 
 
 func _on_graphic_interface_unblocked() -> void:
 	set_process_input(true)
+	
+	if hide_when_gui_is_blocked:
+		show()
 
 
 func _add_item(item: PopochiuInventoryItem, animate := true) -> void:

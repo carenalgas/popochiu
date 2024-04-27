@@ -24,8 +24,8 @@ func _ready():
 	# Connect to singleton signals
 	G.blocked.connect(_on_blocked)
 	G.unblocked.connect(_on_unblocked)
-	G.hidden.connect(_on_hidden)
-	G.shown.connect(_on_shown)
+	G.hidden.connect(on_hidden)
+	G.shown.connect(on_shown)
 	G.system_text_shown.connect(_on_system_text_shown)
 	G.system_text_hidden.connect(_on_system_text_hidden)
 	G.mouse_entered_clickable.connect(_on_mouse_entered_clickable)
@@ -162,6 +162,16 @@ func get_component(component_name: String) -> Control:
 ## Returns the name of the cursor texture to show. [code]"normal"[/code] is returned by default.
 func get_cursor_name() -> String:
 	return "normal" if _get_cursor_name().is_empty() else _get_cursor_name()
+
+
+func on_hidden() -> void:
+	hide()
+	_on_hidden()
+
+
+func on_shown() -> void:
+	show()
+	_on_shown()
 
 
 #endregion

@@ -24,12 +24,17 @@ func _ready() -> void:
 	
 	if E.settings.scale_gui:
 		$Transitions.scale = E.scale
+	
+	$InputBlockerLayer.hide()
 
 
 #endregion
 
 #region Public #####################################################################################
 func play_transition(type := FADE_IN, duration := 1.0) -> void:
+	$InputBlockerLayer.show()
+	G.hide_interface()
+	
 	# ---- Play RESET in order to fix #168 ---------------------------------------------------------
 	$AnimationPlayer.play("RESET")
 	await get_tree().process_frame
@@ -67,6 +72,9 @@ func play_transition(type := FADE_IN, duration := 1.0) -> void:
 func _transition_finished(anim_name := "") -> void:
 	if anim_name == "RESET":
 		return
+	
+	$InputBlockerLayer.hide()
+	G.show_interface()
 	
 	transition_finished.emit(anim_name)
 
