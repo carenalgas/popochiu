@@ -431,15 +431,15 @@ static func get_section(section: String) -> Array:
 static func store_properties(
 	target: Dictionary, source: Object, ignore_too := []
 ) -> void:
-	var props_to_ignore := ["script_name", "scene"]
+	var properties_to_ignore := ["script_name", "scene"]
 	
 	if not ignore_too.is_empty():
-		props_to_ignore.append_array(ignore_too)
+		properties_to_ignore.append_array(ignore_too)
 	
 	# ---- Store basic type properties -------------------------------------------------------------
 	# prop = {class_name, hint, hint_string, name, type, usage}
 	for prop in source.get_script().get_script_property_list():
-		if prop.name in props_to_ignore: continue
+		if prop.name in properties_to_ignore: continue
 		if not prop.type in VALID_TYPES: continue
 		
 		# Check if the property is a script variable (8192)

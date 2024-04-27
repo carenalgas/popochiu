@@ -7,6 +7,7 @@ const ToolbarButton := preload(
 
 @export var used_in_game := true
 @export var always_visible := false
+@export var hide_when_gui_is_blocked := false
 
 var is_disabled := false
 
@@ -32,8 +33,9 @@ func _ready() -> void:
 		(b as TextureButton).mouse_exited.connect(_enable_hide)
 	
 	# Connect to singletons signals
-	G.blocked.connect(_on_graphic_interface_blocked)
-	G.unblocked.connect(_on_graphic_interface_unblocked)
+	if hide_when_gui_is_blocked:
+		G.blocked.connect(_on_graphic_interface_blocked)
+		G.unblocked.connect(_on_graphic_interface_unblocked)
 	
 	if not used_in_game:
 		hide()
@@ -56,10 +58,13 @@ func _input(event: InputEvent) -> void:
 		Cursor.show_cursor("gui")
 	elif _is_mouse_hover:
 		_is_mouse_hover = false
-		Cursor.show_cursor(
-			"wait" if (D.current_dialog or G.gui.is_showing_dialog_line)
-			else "normal"
-		)
+		
+		if D.current_dialog:
+			Cursor.show_cursor("gui")
+		elif G.gui.is_showing_dialog_line:
+			Cursor.show_cursor("wait")
+		else:
+			Cursor.show_cursor("normal")
 	
 	if _is_hidden and rect.has_point(get_global_mouse_position()):
 		_open()
@@ -119,11 +124,12 @@ func _enable_hide() -> void:
 
 func _on_graphic_interface_blocked() -> void:
 	set_process_input(false)
-	# TODO: Should the component hide itself when the GUI is blocked?
+	hide()
 
 
 func _on_graphic_interface_unblocked() -> void:
 	set_process_input(true)
+	show()
 
 
 #endregion
