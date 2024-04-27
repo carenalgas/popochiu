@@ -6,13 +6,14 @@ extends PanelContainer
 signal create_clicked
 
 const Constants := preload("res://addons/popochiu/popochiu_resources.gd")
-const PopochiuObjectRow :=\
-preload("res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.gd")
+const PopochiuObjectRow := preload(
+	"res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.gd"
+)
 
-@export var icon: Texture2D : set = _set_icon
-@export var is_open := true : set = _set_is_open
-@export var color: Color = Color("999999") : set = _set_color
-@export var title := "Group" : set = _set_title
+@export var icon: Texture2D : set = set_icon
+@export var is_open := true : set = set_is_open
+@export var color: Color = Color("999999") : set = set_color
+@export var title := "Group" : set = set_title
 @export var can_create := true
 @export var create_text := ""
 @export var target_list: NodePath = ""
@@ -121,6 +122,36 @@ func set_title_count(count: int, max_count := 0) -> void:
 
 #endregion
 
+#region SetGet #####################################################################################
+func set_icon(value: Texture2D) -> void:
+	icon = value
+	
+	if is_instance_valid(_icon):
+		_icon.texture = value
+
+
+func set_is_open(value: bool) -> void:
+	is_open = value
+	
+	_toggled(value)
+
+
+func set_color(value: Color) -> void:
+	color = value
+	
+	if is_instance_valid(_header):
+		(get_theme_stylebox("panel") as StyleBoxFlat).border_color = value
+
+
+func set_title(value: String) -> void:
+	title = value
+	
+	if is_instance_valid(_lbl_title):
+		_lbl_title.text = value
+
+
+#endregion
+
 #region Private ####################################################################################
 func _on_input(event: InputEvent) -> void:
 	var mouse_event: = event as InputEventMouseButton
@@ -143,33 +174,6 @@ func _toggled(button_pressed: bool) -> void:
 	
 	if is_instance_valid(_external_list):
 		_external_list.visible = button_pressed
-
-
-func _set_color(value: Color) -> void:
-	color = value
-	
-	if is_instance_valid(_header):
-		(get_theme_stylebox("panel") as StyleBoxFlat).border_color = value
-
-
-func _set_title(value: String) -> void:
-	title = value
-	
-	if is_instance_valid(_lbl_title):
-		_lbl_title.text = value
-
-
-func _set_is_open(value: bool) -> void:
-	is_open = value
-	
-	_toggled(value)
-
-
-func _set_icon(value: Texture2D) -> void:
-	icon = value
-	
-	if is_instance_valid(_icon):
-		_icon.texture = value
 
 
 func _update_child_count() -> void:
