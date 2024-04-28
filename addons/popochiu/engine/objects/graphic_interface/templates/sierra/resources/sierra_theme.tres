@@ -1,0 +1,86 @@
+[gd_resource type="Theme" load_steps=16 format=3 uid="uid://csr0n32rthycw"]
+
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_nr34n"]
+[ext_resource type="Texture2D" uid="uid://d1ywqbehmtuv" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/down_arrow.png" id="2_cg14b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bnnre"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_plnae"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r50cx"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.662745, 1, 0.623529, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_00rv3"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.45098, 0.431373, 0.901961, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7awjj"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.662745, 1, 0.623529, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_a32yv"]
+load_path = "res://.godot/imported/check_button_checked.png-2468104f5ede624d527af9eda0d5778b.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_ovawv"]
+load_path = "res://.godot/imported/check_button_unchecked.png-dba6c92351c8f844f3056f0ee8b9f7ec.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_3p6em"]
+load_path = "res://.godot/imported/grabber.png-7198537c09dd15d8a4e96515620721f5.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_18ol6"]
+load_path = "res://.godot/imported/grabber.png-7198537c09dd15d8a4e96515620721f5.ctex"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v1yct"]
+bg_color = Color(0.698039, 0.698039, 0.698039, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_idv6l"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_3kmsf"]
+thickness = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e2cci"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.596078, 0.796078, 0.784314, 1)
+
+[resource]
+default_font = ExtResource("1_nr34n")
+default_font_size = 16
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_disabled_color = Color(0.698039, 0.698039, 0.698039, 1)
+Button/colors/font_hover_color = Color(0.439216, 0.427451, 0.921569, 1)
+Button/colors/font_hover_pressed_color = Color(0.439216, 0.427451, 0.921569, 1)
+Button/colors/font_pressed_color = Color(0.439216, 0.427451, 0.921569, 1)
+Button/fonts/font = ExtResource("1_nr34n")
+Button/styles/disabled = SubResource("StyleBoxFlat_bnnre")
+Button/styles/focus = SubResource("StyleBoxEmpty_plnae")
+Button/styles/hover = SubResource("StyleBoxFlat_r50cx")
+Button/styles/normal = SubResource("StyleBoxFlat_00rv3")
+Button/styles/pressed = SubResource("StyleBoxFlat_7awjj")
+CheckButton/icons/checked = SubResource("CompressedTexture2D_a32yv")
+CheckButton/icons/unchecked = SubResource("CompressedTexture2D_ovawv")
+HSlider/icons/grabber = SubResource("CompressedTexture2D_3p6em")
+HSlider/icons/grabber_highlight = SubResource("CompressedTexture2D_18ol6")
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_v1yct")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_idv6l")
+HSlider/styles/slider = SubResource("StyleBoxLine_3kmsf")
+OptionButton/icons/arrow = ExtResource("2_cg14b")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_e2cci")

@@ -1,0 +1,224 @@
+[gd_scene load_steps=4 format=3 uid="uid://bcanby6n3eahm"]
+
+[sub_resource type="StyleBoxEmpty" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wwoxk"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctsm1"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 0.364706, 0.364706, 1)
+draw_center = false
+corner_detail = 1
+
+[node name="sprite_inspector_dock" type="PanelContainer"]
+offset_right = 14.0
+offset_bottom = 14.0
+theme_override_styles/panel = SubResource("1")
+
+[node name="margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="Importer" type="VBoxContainer" parent="margin"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Source" type="HBoxContainer" parent="margin/Importer"]
+layout_mode = 2
+tooltip_text = "Location of the Aseprite (*.ase, *.aseprite)  source file."
+
+[node name="Label" type="Label" parent="margin/Importer/Source"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Aseprite File"
+
+[node name="SourceButton" type="Button" parent="margin/Importer/Source"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "[empty]"
+clip_text = true
+
+[node name="RescanButton" type="Button" parent="margin/Importer/Source"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rescan"
+
+[node name="TagsTitleBar" type="PanelContainer" parent="margin/Importer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wwoxk")
+
+[node name="TagsTitle" type="Button" parent="margin/Importer/TagsTitleBar"]
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(0.8, 0.807843, 0.827451, 1)
+toggle_mode = true
+text = "Animation tags"
+
+[node name="Tags" type="VBoxContainer" parent="margin/Importer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OptionsTitleBar" type="PanelContainer" parent="margin/Importer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wwoxk")
+
+[node name="OptionsTitle" type="Button" parent="margin/Importer/OptionsTitleBar"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(0.8, 0.807843, 0.827451, 1)
+toggle_mode = true
+text = "Options"
+
+[node name="Options" type="VBoxContainer" parent="margin/Importer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OutFolder" type="HBoxContainer" parent="margin/Importer/Options"]
+layout_mode = 2
+tooltip_text = "Location where the spritesheet file should be saved."
+
+[node name="Label" type="Label" parent="margin/Importer/Options/OutFolder"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Output folder"
+
+[node name="OutFolderButton" type="Button" parent="margin/Importer/Options/OutFolder"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "[empty]"
+clip_text = true
+
+[node name="OutFile" type="HBoxContainer" parent="margin/Importer/Options"]
+layout_mode = 2
+tooltip_text = "Base filename for spritesheet. In case the layer option is used, this works as a prefix to the layer name."
+
+[node name="Label" type="Label" parent="margin/Importer/Options/OutFile"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Output file name"
+
+[node name="OutFileName" type="LineEdit" parent="margin/Importer/Options/OutFile"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="VisibleLayers" type="HBoxContainer" parent="margin/Importer/Options"]
+layout_mode = 2
+tooltip_text = "If active, layers not visible in the source file won't be included in the final image."
+
+[node name="Label" type="Label" parent="margin/Importer/Options/VisibleLayers"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Only visible layers"
+
+[node name="VisibleLayersCheckButton" type="CheckButton" parent="margin/Importer/Options/VisibleLayers"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="WipeOldAnimations" type="HBoxContainer" parent="margin/Importer/Options"]
+layout_mode = 2
+tooltip_text = "If active, layers not visible in the source file won't be included in the final image."
+
+[node name="Label" type="Label" parent="margin/Importer/Options/WipeOldAnimations"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+tooltip_text = "Set this to OFF if you want to add new animations on top of old ones. Anims with same name will be updated."
+mouse_filter = 0
+text = "Wipe old animations"
+
+[node name="WipeOldAnimationsCheckButton" type="CheckButton" parent="margin/Importer/Options/WipeOldAnimations"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="Import" type="Button" parent="margin/Importer"]
+layout_mode = 2
+text = "Import"
+
+[node name="Reset" type="Button" parent="margin/Importer"]
+layout_mode = 2
+text = "Reset Preferences"
+
+[node name="Warning" type="VBoxContainer" parent="margin"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="margin/Warning"]
+layout_mode = 2
+
+[node name="WarningPanel" type="Panel" parent="margin/Warning/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(222, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
+
+[node name="WarningLabel" type="Label" parent="margin/Warning/HBoxContainer/WarningPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0.768627, 0.423529, 0.443137, 1)
+text = "Error loading Aseprite Importer!
+Check Output panel for details."
+horizontal_alignment = 1
+
+[node name="Info" type="VBoxContainer" parent="margin"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="margin/Info"]
+layout_mode = 2
+
+[node name="InfoPanel" type="Panel" parent="margin/Info/HBoxContainer"]
+custom_minimum_size = Vector2(222, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
+
+[node name="InfoLabel" type="Label" parent="margin/Info/HBoxContainer/InfoPanel"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "Aseprite Importer disabled.
+Can be enabled in Editor Settings."
+
+[connection signal="pressed" from="margin/Importer/Source/SourceButton" to="." method="_on_source_pressed"]
+[connection signal="pressed" from="margin/Importer/Source/RescanButton" to="." method="_on_rescan_pressed"]
+[connection signal="toggled" from="margin/Importer/TagsTitleBar/TagsTitle" to="." method="_on_options_title_toggled"]
+[connection signal="toggled" from="margin/Importer/OptionsTitleBar/OptionsTitle" to="." method="_on_options_title_toggled"]
+[connection signal="pressed" from="margin/Importer/Options/OutFolder/OutFolderButton" to="." method="_on_out_folder_pressed"]
+[connection signal="focus_exited" from="margin/Importer/Options/OutFile/OutFileName" to="." method="_save_config"]
+[connection signal="pressed" from="margin/Importer/Options/VisibleLayers/VisibleLayersCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="margin/Importer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="margin/Importer/Import" to="." method="_on_import_pressed"]
+[connection signal="pressed" from="margin/Importer/Reset" to="." method="_on_reset_pressed"]

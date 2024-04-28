@@ -39,3 +39,5 @@ docs/dist/**/*
 Collector*.gd
 ReferenceCollectorCLI*.gd
 reference.json
+
+!addons/*

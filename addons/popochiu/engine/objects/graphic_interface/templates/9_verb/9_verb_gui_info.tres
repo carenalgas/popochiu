@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="PopochiuGUIInfo" load_steps=3 format=3 uid="uid://ecktw1j2mpea"]
+
+[ext_resource type="Texture2D" uid="uid://brnmaiifdxwm" path="res://addons/popochiu/icons/ico_9verb.png" id="1_4efef"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/others/popochiu_gui_info.gd" id="1_pkhv6"]
+
+[resource]
+script = ExtResource("1_pkhv6")
+title = "9 Verb (LucasArts)"
+description = "- Uses the 9 Verbs (commands) of LucasArts games: [b]Open[/b], [b]Pick Up[/b], [b]Push[/b], [b]Close[/b], [b]Look At[/b], [b]Pull[/b], [b]Give[/b], [b]Talk To[/b], [b]Use[/b].
+- [b]Right click[/b] to trigger the suggested command or walk.
+- [b]Inventory grid[/b] on the bottom.
+- [b]Settings popup[/b] that opens with a button in the top-right corner.
+
+Like in games such as Day of the Tentacle, Thimbleweed Park, The Secret of Monkey Island."
+icon = ExtResource("1_4efef")

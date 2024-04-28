@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://uvtywyf3pq1a"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/walkable_area/popochiu_walkable_area.gd" id="1"]
+
+[node name="WalkableArea" type="Node2D"]
+script = ExtResource("1")

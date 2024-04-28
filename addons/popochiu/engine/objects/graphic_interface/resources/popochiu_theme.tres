@@ -1,0 +1,77 @@
+[gd_resource type="Theme" load_steps=12 format=3 uid="uid://dpequqav4rjaf"]
+
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_sgqra"]
+[ext_resource type="Texture2D" uid="uid://cqxqfxobqltga" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/grabber.png" id="2_7mnxi"]
+[ext_resource type="Texture2D" uid="uid://pl1ch71kfj72" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/check_button_checked.png" id="2_ys82w"]
+[ext_resource type="Texture2D" uid="uid://dukr75slqli45" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/check_button_unchecked.png" id="3_jfo2j"]
+
+[sub_resource type="StyleBoxFlat" id="8"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.482353, 0.482353, 0.482353, 1)
+corner_detail = 4
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jts3x"]
+
+[sub_resource type="StyleBoxFlat" id="7"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.439216, 0.427451, 0.921569, 1)
+corner_detail = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pr0tq"]
+bg_color = Color(0.698039, 0.698039, 0.698039, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mp7ca"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_1vxxo"]
+thickness = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_respd"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.180392, 0.172549, 0.607843, 1)
+shadow_color = Color(0, 0, 0, 1)
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[resource]
+default_font = ExtResource("1_sgqra")
+default_font_size = 16
+Button/colors/font_color = Color(0.698039, 0.698039, 0.698039, 1)
+Button/colors/font_disabled_color = Color(0.482353, 0.482353, 0.482353, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_hover_pressed_color = Color(0.929412, 0.945098, 0.443137, 1)
+Button/colors/font_pressed_color = Color(0.929412, 0.945098, 0.443137, 1)
+Button/fonts/font = ExtResource("1_sgqra")
+Button/styles/disabled = SubResource("8")
+Button/styles/focus = SubResource("StyleBoxEmpty_jts3x")
+Button/styles/hover = SubResource("7")
+Button/styles/normal = SubResource("7")
+Button/styles/pressed = SubResource("7")
+CheckButton/icons/checked = ExtResource("2_ys82w")
+CheckButton/icons/unchecked = ExtResource("3_jfo2j")
+HSlider/icons/grabber = ExtResource("2_7mnxi")
+HSlider/icons/grabber_highlight = ExtResource("2_7mnxi")
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_pr0tq")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_mp7ca")
+HSlider/styles/slider = SubResource("StyleBoxLine_1vxxo")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_respd")

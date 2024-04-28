@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://boct0aosqfhao"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/inventory_item/popochiu_inventory_item.gd" id="1"]
+
+[node name="InventoryItem" type="TextureRect"]
+texture_filter = 1
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+stretch_mode = 5
+script = ExtResource("1")

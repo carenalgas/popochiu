@@ -1,0 +1,308 @@
+[gd_scene load_steps=5 format=3 uid="uid://c3r8juwutb1gr"]
+
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_vjboj"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/gui_template_button.gd" id="3_jf6nd"]
+[ext_resource type="Texture2D" uid="uid://c00kw8v34vtsb" path="res://addons/popochiu/icons/ico_custom.png" id="5_joicf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ntnwv"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.698039, 0.698039, 0.698039, 1)
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="Setup" type="AcceptDialog"]
+gui_embed_subwindows = true
+title = "Setup"
+initial_position = 2
+size = Vector2i(560, 608)
+popup_window = true
+script = ExtResource("1_vjboj")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 552.0
+offset_bottom = 559.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 5
+
+[node name="Welcome" type="RichTextLabel" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "[center]Welcome to [shake]Popochiu \\( o )3(o)/[/shake][/center]
+
+This popup will appear automatically just this time. You can open it later with the Setup button at the bottom of Popochiu's dock."
+fit_content = true
+scroll_active = false
+meta_underlined = false
+hint_underlined = false
+
+[node name="WelcomeSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SizeContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="GameSize" type="Label" parent="PanelContainer/VBoxContainer/SizeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+tooltip_text = "The width and height of the game's window. Changing this will update display/window/size/width and display/window/size/height."
+mouse_filter = 0
+text = "Native game resolution"
+
+[node name="VBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SizeContainer"]
+layout_mode = 2
+
+[node name="WidthContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/SizeContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GameWidth" type="SpinBox" parent="PanelContainer/VBoxContainer/SizeContainer/VBoxContainer/WidthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 64.0
+max_value = 1440.0
+value = 320.0
+rounded = true
+allow_greater = true
+
+[node name="Width" type="Label" parent="PanelContainer/VBoxContainer/SizeContainer/VBoxContainer/WidthContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "width"
+
+[node name="HeightContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/SizeContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="GameHeight" type="SpinBox" parent="PanelContainer/VBoxContainer/SizeContainer/VBoxContainer/HeightContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 64.0
+max_value = 1440.0
+value = 180.0
+rounded = true
+allow_greater = true
+
+[node name="Height" type="Label" parent="PanelContainer/VBoxContainer/SizeContainer/VBoxContainer/HeightContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "height"
+
+[node name="ScaleMessage" type="RichTextLabel" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="TestContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TestSize" type="Label" parent="PanelContainer/VBoxContainer/TestContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+tooltip_text = "The width and height of the game's test window. Changing this will update display/window/size/test_width and display/window/size/test_height."
+mouse_filter = 0
+text = "Playing window resolution"
+
+[node name="VBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/TestContainer"]
+layout_mode = 2
+
+[node name="WidthContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/TestContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TestWidth" type="SpinBox" parent="PanelContainer/VBoxContainer/TestContainer/VBoxContainer/WidthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1440.0
+value = 640.0
+rounded = true
+allow_greater = true
+
+[node name="Width" type="Label" parent="PanelContainer/VBoxContainer/TestContainer/VBoxContainer/WidthContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "width"
+
+[node name="HeightContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/TestContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TestHeight" type="SpinBox" parent="PanelContainer/VBoxContainer/TestContainer/VBoxContainer/HeightContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1440.0
+value = 360.0
+rounded = true
+allow_greater = true
+
+[node name="Height" type="Label" parent="PanelContainer/VBoxContainer/TestContainer/VBoxContainer/HeightContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "height"
+
+[node name="TypeContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Type" type="Label" parent="PanelContainer/VBoxContainer/TypeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "The type of game modifies the stretch mode and the default preset for importing 2D images.
+
+Default: No stretch. Texture2D import preset set to: 2D.
+2D: Stretch mode set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D.
+Pixel: Stretch mode set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D Pixel."
+mouse_filter = 0
+text = "Game type"
+
+[node name="GameType" type="OptionButton" parent="PanelContainer/VBoxContainer/TypeContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "Custom"
+popup/item_0/id = 0
+popup/item_1/text = "2D"
+popup/item_1/id = 1
+popup/item_2/text = "Pixel"
+popup/item_2/id = 2
+
+[node name="TemplateSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="GUITemplatesPanel" type="PanelContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="GUITemplatesContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel"]
+layout_mode = 2
+
+[node name="GUITemplatesTitle" type="Label" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(544, 0)
+layout_mode = 2
+text = "GUI Template"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="GUITemplatesDescription" type="Label" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(544, 0)
+layout_mode = 2
+text = "Select a template to define the look and feel of your game. Click each button to see a short description."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ntnwv")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="GUITemplates" type="GridContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 4
+columns = 4
+
+[node name="Custom" type="Button" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer/GUITemplates"]
+texture_filter = 1
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+toggle_mode = true
+text = "Custom"
+icon = ExtResource("5_joicf")
+icon_alignment = 1
+vertical_icon_alignment = 0
+expand_icon = true
+script = ExtResource("3_jf6nd")
+description = "You are an adventorous developer who wants to implement each own Graphic Interface. [shake]You rock!!![/shake]"
+
+[node name="TemplateDescriptionContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer/TemplateDescriptionContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="TemplateDescription" type="RichTextLabel" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer/TemplateDescriptionContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="BtnChangeTemplate" type="Button" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_default_cursor_shape = 2
+text = "Use this GUI Template"
+
+[node name="CopyProcessContainer" type="MarginContainer" parent="PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 0
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 0
+
+[node name="Overlay" type="ColorRect" parent="PanelContainer/CopyProcessContainer"]
+layout_mode = 2
+color = Color(0, 0, 0, 0)
+
+[node name="CopyProcessPanel" type="PanelContainer" parent="PanelContainer/CopyProcessContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="CopyProcessBar" type="ProgressBar" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+value = 50.0
+
+[node name="CopyProcessLabel" type="Label" parent="PanelContainer/CopyProcessContainer/CopyProcessPanel/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Starting GUI template application"
+horizontal_alignment = 1
+vertical_alignment = 1
+uppercase = true

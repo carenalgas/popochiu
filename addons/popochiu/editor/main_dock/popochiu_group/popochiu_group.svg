@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;">
+    <g id="PopochiuGroup" transform="matrix(0.5,0,0,0.5,0,0)">
+        <rect x="0" y="0" width="32" height="32" style="fill:none;"/>
+        <g transform="matrix(3.25,0,0,3.25,-32.75,-39.25)">
+            <path d="M19,13.615C19,13.276 18.724,13 18.385,13L11.615,13C11.276,13 11,13.276 11,13.615L11,20.385C11,20.724 11.276,21 11.615,21L18.385,21C18.724,21 19,20.724 19,20.385L19,13.615Z" style="fill:none;stroke:rgb(112,109,235);stroke-width:1.23px;"/>
+        </g>
+        <g transform="matrix(0.673999,0,0,0.570028,13,-2.18068)">
+            <path d="M0,24L8.902,31.902L-0,39.789" style="fill:none;stroke:rgb(112,109,235);stroke-width:6.41px;"/>
+        </g>
+    </g>
+</svg>
