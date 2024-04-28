@@ -1,8 +1,3 @@
-# Addons other than Popochiu
-# (we use some for development)
-# addons/*
-# !addons/popochiu/
-
 # Godot-specific ignores
 .import/
 export.cfg
@@ -44,3 +39,5 @@ docs/dist/**/*
 Collector*.gd
 ReferenceCollectorCLI*.gd
 reference.json
+
+!addons/*
