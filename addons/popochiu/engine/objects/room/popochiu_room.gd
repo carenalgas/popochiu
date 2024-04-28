@@ -89,7 +89,7 @@ func _ready():
 	G.blocked.connect(_on_graphic_interface_blocked)
 	G.unblocked.connect(_on_graphic_interface_unblocked)
 	
-	E.room_readied(self)
+	R.room_readied(self)
 
 
 func _get_property_list() -> Array[Dictionary]:

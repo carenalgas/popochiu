@@ -20,7 +20,7 @@ extends Node
 ##     "Player: I'm the character you can control!!!",
 ## ])
 ## # Make the camera shake with a strength of 2.0 during 3.0 seconds
-## E.camera_shake(2.0, 3.0)
+## E.camera.shake(2.0, 3.0)
 ## [/codeblock]
 
 ## Emitted when the text speed changes in [PopochiuSettings].
@@ -41,7 +41,7 @@ signal dialog_style_changed
 signal await_stopped
 
 ## Path to the script with the class used to save and load game data.
-const SAVELOAD_PATH := 'res://addons/popochiu/engine/others/popochiu_save_load.gd'
+const SAVELOAD_PATH := "res://addons/popochiu/engine/others/popochiu_save_load.gd"
 
 ## Used to prevent going to another room when there is one being loaded.
 var in_room := false : set = _set_in_room
@@ -63,7 +63,7 @@ var am: PopochiuAudioManager = null
 ## Indicates if the game is playing a queue of instructions.
 var playing_queue := false
 ## Reference to the [PopochiuGraphicInterface].
-var gi: PopochiuGraphicInterface = null
+var gui: PopochiuGraphicInterface = null
 ## Reference to the [PopochiuTransitionLayer].
 var tl: Node2D = null
 ## The current class used as the game commands
@@ -115,28 +115,15 @@ var commands_map := {
 ## The ID of the current active command in the GUI. When this property changes, the
 ## [signal command_selected] signal is emitted.
 var current_command := -1 : set = set_current_command
+var loaded_game := {}
 
-var _is_camera_shaking := false
-var _camera_shake_amount := 15.0
-var _shake_timer := 0.0
-var _use_transition_on_room_change := true
-var _loaded_game := {}
 var _hovered_queue := []
 # Will have the instance of the PopochiuSaveLoad class in order to call the methods that save and
 # load the game.
 var _saveload: Resource = null
 
-## A reference to the game [Camera2D].
-@onready var main_camera: Camera2D = find_child('MainCamera')
-@onready var _tween: Tween = null
-@onready var _defaults := {
-	camera_limits = {
-		left = main_camera.limit_left,
-		right = get_viewport().get_visible_rect().end.x,
-		top = main_camera.limit_top,
-		bottom = get_viewport().get_visible_rect().end.y
-	}
-}
+## A reference to the [PopochiuMainCamera].
+@onready var camera: PopochiuMainCamera = %PopochiuMainCamera
 
 
 #region Godot ######################################################################################
@@ -155,10 +142,10 @@ func _ready() -> void:
 			template = template.to_snake_case()
 			path = PopochiuResources.GUI_TEMPLATES_FOLDER + "%s/%s_gui.tscn" % [template, template]
 		
-		gi = load(path).instantiate()
+		gui = load(path).instantiate()
 	else:
-		gi = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
-		gi.name = 'GraphicInterface'
+		gui = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
+		gui.name = "GraphicInterface"
 	
 	# Load the commands for the game
 	commands = load(PopochiuResources.GUI_COMMANDS).new()
@@ -167,42 +154,16 @@ func _ready() -> void:
 	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
 	
 	# Calculate the scale that could be applied
-	scale = Vector2(self.width, self.height) / Vector2(320.0, 180.0)
+	# FIXME We should not assume 320x180 as the default viewport size
+	scale = Vector2(width, height) / Vector2(320.0, 180.0)
 	
 	# Add the AudioManager, the Graphic Interface, and the Transitions Layer to the tree
-	$GraphicInterfaceLayer.add_child(gi)
+	$GraphicInterfaceLayer.add_child(gui)
 	$TransitionsLayer.add_child(tl)
 	add_child(am)
 	
-	# Load the player-controlled character defined by the dev
-	if PopochiuResources.has_data_value('setup', 'pc'):
-		var pc_data_path: String = PopochiuResources.get_data_value(
-			'characters',
-			PopochiuResources.get_data_value('setup', 'pc', ''),
-			''
-		)
-
-		if pc_data_path:
-			var pc_data: PopochiuCharacterData = load(pc_data_path)
-			var pc: PopochiuCharacter = load(pc_data.scene).instantiate()
-			
-			C.player = pc
-			C.characters.append(pc)
-			C.set(pc.script_name, pc)
-	
-	# Load the first PopochiuCharacter in the project as the default PC
-	if not C.player:
-		# Set the first character on the list to be the default player character
-		var characters := PopochiuResources.get_section('characters')
-
-		if not characters.is_empty():
-			var pc: PopochiuCharacter = load(
-				(load(characters[0]) as PopochiuCharacterData).scene
-			).instantiate()
-
-			C.player = pc
-			C.characters.append(pc)
-			C.set(pc.script_name, pc)
+	# Load the Player-controlled Character (PC)
+	PopochiuCharactersHelper.define_player()
 	
 	# Add inventory items checked to start with
 	await get_tree().process_frame
@@ -219,7 +180,7 @@ func _ready() -> void:
 		Cursor.scale_cursor(scale)
 	
 	# Save the default state for the objects in the game
-	for room_tres in PopochiuResources.get_section('rooms'):
+	for room_tres in PopochiuResources.get_section("rooms"):
 		var res: PopochiuRoomData = load(room_tres)
 		E.rooms_states[res.script_name] = res
 		
@@ -227,36 +188,13 @@ func _ready() -> void:
 	
 	# Connect to singletons signals
 	C.character_spoke.connect(_on_character_spoke)
-	G.unblocked.connect(_on_graphic_interface_unblocked)
 	
 	# Assign property values to singletons and other global classes
-	G.gui = gi
-
-
-func _process(delta: float) -> void:
-	if _is_camera_shaking:
-		_shake_timer -= delta
-		main_camera.offset = Vector2.ZERO + Vector2(
-			randf_range(-1.0, 1.0) * _camera_shake_amount,
-			randf_range(-1.0, 1.0) * _camera_shake_amount
-		)
-		
-		if _shake_timer <= 0.0:
-			stop_camera_shake()
-	elif (
-		not Engine.is_editor_hint() 
-		and is_instance_valid(C.camera_owner) 
-		and C.camera_owner.is_inside_tree()
-	):
-		main_camera.position = (
-			C.camera_owner.position_stored 
-			if C.camera_owner.position_stored 
-			else C.camera_owner.position
-		)
+	G.gui = gui
 
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_released('popochiu-skip'):
+	if event.is_action_released("popochiu-skip"):
 		cutscene_skipped = true
 		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.skip_cutscene_time)
 		await tl.transition_finished
@@ -295,11 +233,13 @@ func wait(time := 1.0) -> void:
 func queue(instructions: Array, show_gi := true) -> void:
 	if instructions.is_empty():
 		await get_tree().process_frame
+		
 		return
 	
 	if playing_queue:
 		await get_tree().process_frame
 		await queue(instructions, show_gi)
+		
 		return
 	
 	playing_queue = true
@@ -312,13 +252,13 @@ func queue(instructions: Array, show_gi := true) -> void:
 		if instruction is Callable:
 			await instruction.call()
 		elif instruction is String:
-			await _eval_string(instruction as String)
+			await PopochiuCharactersHelper.exec_string(instruction as String)
 	
 	if show_gi:
 		G.unblock()
 	
-	if _is_camera_shaking:
-		stop_camera_shake()
+	if camera.is_shaking:
+		camera.stop_shake()
 	
 	if instructions.is_empty():
 		await get_tree().process_frame
@@ -353,240 +293,7 @@ func goto_room(
 	store_state := true,
 	ignore_change := false
 ) -> void:
-	if not in_room: return
-	
-	self.in_room = false
-	
-	G.block()
-	
-	_use_transition_on_room_change = use_transition
-	if use_transition:
-		tl.play_transition(tl.FADE_IN)
-		await tl.transition_finished
-	
-	# Prevent the GUI to show info from the previous room
-	G.show_hover_text()
-	Cursor.show_cursor()
-	
-	if is_instance_valid(C.player) and Engine.get_process_frames() > 0:
-		C.player.last_room = current_room.script_name
-	
-	# Store the room state
-	if store_state:
-		rooms_states[current_room.script_name] = current_room.state
-		current_room.state.save_childs_states()
-	
-	# Remove PopochiuCharacter nodes from the room so they are not deleted
-	if Engine.get_process_frames() > 0:
-		current_room.exit_room()
-	
-	# Reset camera config
-	# TODO: This could be in the Camera3D's own script... along with shaking
-	main_camera.limit_left = _defaults.camera_limits.left
-	main_camera.limit_right = _defaults.camera_limits.right
-	main_camera.limit_top = _defaults.camera_limits.top
-	main_camera.limit_bottom = _defaults.camera_limits.bottom
-	
-	if ignore_change: return
-	
-	var rp: String = PopochiuResources.get_data_value('rooms', script_name, null)
-	if rp.is_empty():
-		printerr('[Popochiu] No PopochiuRoom with name: %s' % script_name)
-		return
-	
-	if Engine.get_process_frames() == 0:
-		await get_tree().process_frame
-	
-	R.clear_instances()
-	clear_hovered()
-	get_tree().change_scene_to_file(load(rp).scene)
-
-
-## Called once the loaded [param room] is "ready" ([method Node._ready]).
-func room_readied(room: PopochiuRoom) -> void:
-	current_room = room
-	
-	if R.current != room:
-		R.current = room
-	
-	# When running from the Editor the first time, use goto_room
-	if Engine.get_process_frames() == 0:
-		await get_tree().process_frame
-
-		self.in_room = true
-		
-		# Calling this will make the camera be set to its default values and will store the state of
-		# the main room (the last parameter will prevent Popochiu from changing the scene to the
-		# same that is already loaded)
-		goto_room(room.script_name, false, true, true)
-	
-	# Make the camera be ready for the room
-	current_room.setup_camera()
-	
-	# Update the core state
-	if _loaded_game:
-		C.player = C.get_character(_loaded_game.player.id)
-	else:
-		current_room.state.visited = true
-		current_room.state.visited_times += 1
-		current_room.state.visited_first_time = current_room.state.visited_times == 1
-	
-	# Add the PopochiuCharacter instances to the room
-	if (rooms_states[room.script_name]['characters'] as Dictionary).is_empty():
-		# Store the initial state of the characters in the room
-		current_room.state.save_characters()
-	
-	current_room.clean_characters()
-	
-	# Load the state of characters in the room
-	for chr_script_name: String in rooms_states[room.script_name]['characters']:
-		var chr_dic: Dictionary = rooms_states[room.script_name]['characters'][chr_script_name]
-		var chr: PopochiuCharacter = C.get_character(chr_script_name)
-		
-		if not chr: continue
-		
-		chr.position = Vector2(chr_dic.x, chr_dic.y)
-		chr._looking_dir = chr_dic.facing
-		chr.visible = chr_dic.visible
-		chr.modulate = Color.from_string(chr_dic.modulate, Color.WHITE)
-		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
-		chr.light_mask = chr_dic.light_mask
-		
-		current_room.add_character(chr)
-	
-	# If the room must have the player character but it is not part of its $Characters node, then
-	# add the PopochiuCharacter to the room
-	if (
-		current_room.has_player
-		and is_instance_valid(C.player)
-		and not current_room.has_character(C.player.script_name)
-	):
-		current_room.add_character(C.player)
-		# Place the PC in the middle of the room
-		C.player.position = Vector2(width, height) / 2.0
-		await C.player.idle()
-	
-	# Load the state of Props, Hotspots, Regions and WalkableAreas
-	for type in PopochiuResources.ROOM_CHILDS:
-		for script_name in rooms_states[room.script_name][type]:
-			var node: Node2D = current_room.callv(
-				'get_' + type.trim_suffix('s'),
-				[(script_name as String).to_pascal_case()]
-			)
-			var node_dic: Dictionary =\
-			rooms_states[room.script_name][type][script_name]
-			
-			for property in node_dic:
-				if not PopochiuResources.has_property(node, property): continue
-				
-				node[property] = node_dic[property]
-	
-	for c in get_tree().get_nodes_in_group('PopochiuClickable'):
-		c.room = current_room
-	
-	await current_room._on_room_entered()
-	
-	if _loaded_game:
-		C.player.global_position = Vector2(
-			_loaded_game.player.position.x,
-			_loaded_game.player.position.y
-		)
-	
-	if _use_transition_on_room_change:
-		tl.play_transition(tl.FADE_OUT)
-		await tl.transition_finished
-		
-		await wait(0.3)
-	else:
-		await get_tree().process_frame
-	
-	if not current_room.hide_gi:
-		G.unblock()
-	
-	if hovered:
-		G.mouse_entered_clickable.emit(hovered)
-	
-	self.in_room = true
-	
-	if _loaded_game:
-		game_loaded.emit(_loaded_game)
-		await G.show_system_text("Game loaded")
-		
-		_loaded_game = {}
-	
-	# This enables the room to listen input events
-	current_room.is_current = true
-	await current_room._on_room_transition_finished()
-	
-	# Fix #219: Update visited_first_time state once _on_room_transition_finished() finishes
-	current_room.state.visited_first_time = false
-
-
-## Changes the main camera's offset by [param offset] pixels. This method is intended to be used
-## inside a [method queue] of instructions.
-func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
-	return func (): await camera_offset(offset)
-
-
-## Changes the main camera's offset by [param offset] pixels. Useful when zooming the camera.
-func camera_offset(offset := Vector2.ZERO) -> void:
-	main_camera.offset = offset
-	
-	await get_tree().process_frame
-
-
-## Makes the camera shake with [param strength] during [param duration] seconds. This method is
-## intended to be used inside a [method queue] of instructions.
-func queue_camera_shake(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await camera_shake(strength, duration)
-
-
-## Makes the camera shake with [param strength] during [param duration] seconds.
-func camera_shake(strength := 1.0, duration := 1.0) -> void:
-	_camera_shake_amount = strength
-	_shake_timer = duration
-	_is_camera_shaking = true
-	
-	await get_tree().create_timer(duration).timeout
-
-
-## Makes the camera shake with [param strength] during [param duration] seconds without blocking
-## excecution (that means it runs in the background). This method is intended to be used inside a
-## [method queue] of instructions.
-func queue_camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await camera_shake_bg(strength, duration)
-
-
-## Makes the camera shake with [param strength] during [param duration] seconds without blocking
-## excecution (that means it runs in the background).
-func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
-	_camera_shake_amount = strength
-	_shake_timer = duration
-	_is_camera_shaking = true
-	
-	await get_tree().process_frame
-
-
-## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code] the camera
-## will [b]zoom out[/b], smaller values will make it [b]zoom in[/b]. The effect will last
-## [param duration] seconds. This method is intended to be used inside a [method queue] of
-## instructions.
-func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
-	return func (): await camera_zoom(target, duration)
-
-
-## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code] the camera
-## will [b]zoom out[/b], smaller values will make it [b]zoom in[/b]. The effect will last
-## [param duration] seconds.
-func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
-	if is_instance_valid(_tween) and _tween.is_running():
-		_tween.kill()
-	
-	_tween = create_tween()
-	_tween.tween_property(main_camera, 'zoom', target, duration)\
-	.from_current().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
-	
-	await _tween.finished
+	R.goto_room(script_name, use_transition, store_state, ignore_change)
 
 
 ## Returns [param msg] translated to the current language if the game is using translations
@@ -598,34 +305,34 @@ func get_text(msg: String) -> String:
 
 ## Gets the instance of the [PopochiuCharacter] identified with [param script_name].
 func get_character_instance(script_name: String) -> PopochiuCharacter:
-	for rp in PopochiuResources.get_section('characters'):
+	for rp in PopochiuResources.get_section("characters"):
 		var popochiu_character: PopochiuCharacterData = load(rp)
 		if popochiu_character.script_name == script_name:
 			return load(popochiu_character.scene).instantiate()
 	
-	printerr("[Popochiu] Character %s doesn't exists" % script_name)
+	PopochiuUtils.print_error("Character %s doesn't exists" % script_name)
 	return null
 
 
 ## Gets the instance of the [PopochiuInventoryItem] identified with [param script_name].
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	for rp in PopochiuResources.get_section('inventory_items'):
+	for rp in PopochiuResources.get_section("inventory_items"):
 		var popochiu_inventory_item: PopochiuInventoryItemData = load(rp)
 		if popochiu_inventory_item.script_name == script_name:
 			return load(popochiu_inventory_item.scene).instantiate()
 	
-	printerr("[Popochiu] Item %s doesn't exists" % script_name)
+	PopochiuUtils.print_error("Item %s doesn't exists" % script_name)
 	return null
 
 
 ## Gets the instance of the [PopochiuDialog] identified with [param script_name].
 func get_dialog(script_name: String) -> PopochiuDialog:
-	for rp in PopochiuResources.get_section('dialogs'):
+	for rp in PopochiuResources.get_section("dialogs"):
 		var tree: PopochiuDialog = load(rp)
 		if tree.script_name.to_lower() == script_name.to_lower():
 			return tree
 
-	printerr("[Popochiu] Dialog '%s doesn't exists" % script_name)
+	PopochiuUtils.print_error("Dialog '%s doesn't exists" % script_name)
 	return null
 
 
@@ -659,7 +366,7 @@ func add_history(data: Dictionary) -> void:
 ## E.queue([
 ##     "Player: Ok. This is a queueable example",
 ##     E.queueable($AnimationPlayer, "play", ["glottis_appears"], "animation_finished"),
-##     'Popsy: Hi Goddiu!',
+##     "Popsy: Hi Goddiu!",
 ##     "Player: You're finally here!!!"
 ## ])
 ## [/codeblock]
@@ -669,7 +376,7 @@ func add_history(data: Dictionary) -> void:
 ## func _ready() -> void:
 ## E.queue([
 ##     "Player: Ok. This is another queueable example",
-##     E.queueable(self, '_make_glottis_appear', [], 'completed'),
+##     E.queueable(self, "_make_glottis_appear", [], "completed"),
 ##     "Popsy: Hi Goddiu!",
 ##     "Player: So... you're finally here!!!",
 ## ])
@@ -704,14 +411,14 @@ func add_history(data: Dictionary) -> void:
 ##     clicked.emit()
 ## [/codeblock]
 func queueable(
-	node: Object, method: String, params := [], signal_name := ''
+	node: Object, method: String, params := [], signal_name := ""
 ) -> Callable:
 	return func (): await _queueable(node, method, params, signal_name)
 
 
 ## Checks if the room with [param script_name] exists in the list of rooms of the game.
 func room_exists(script_name: String) -> bool:
-	for rp in PopochiuResources.get_section('rooms'):
+	for rp in PopochiuResources.get_section("rooms"):
 		var room: PopochiuRoomData = load(rp)
 		if room.script_name.to_lower() == script_name.to_lower():
 			return true
@@ -751,11 +458,11 @@ func get_saves_descriptions() -> Dictionary:
 
 
 ## Saves the current game state in a given [param slot] with the name in [param description].
-func save_game(slot := 1, description := '') -> void:
+func save_game(slot := 1, description := "") -> void:
 	if _saveload.save_game(slot, description):
 		game_saved.emit()
 		
-		await G.show_system_text('Game saved')
+		await G.show_system_text("Game saved")
 
 
 ## Loads the game in the given [param slot].
@@ -765,23 +472,16 @@ func load_game(slot := 1) -> void:
 	if D.current_dialog:
 		D.current_dialog.stop()
 	
-	_loaded_game = _saveload.load_game(slot)
+	loaded_game = _saveload.load_game(slot)
 	
-	if _loaded_game.is_empty(): return
+	if loaded_game.is_empty(): return
 	
 	game_load_started.emit()
-	goto_room(
-		_loaded_game.player.room,
+	R.goto_room(
+		loaded_game.player.room,
 		true,
 		false # Do not store the state of the current room
 	)
-
-
-## Makes the camera stop shaking.
-func stop_camera_shake() -> void:
-	_is_camera_shaking = false
-	_shake_timer = 0.0
-	main_camera.offset = Vector2.ZERO
 
 
 ## Adds the [param node] to the array of hovered PopochiuClickable. If [param prepend] is
@@ -909,86 +609,12 @@ func set_dialog_style(value: int) -> void:
 #endregion
 
 #region Private ####################################################################################
-func _eval_string(text: String) -> void:
-	match text:
-		'.':
-			await wait(0.25)
-		'..':
-			await wait(0.5)
-		'...':
-			await wait(1.0)
-		'....':
-			await wait(2.0)
-		_:
-			var colon_idx: int = text.find(':')
-			if colon_idx >= 0:
-				var colon_prefix: String = text.substr(0, colon_idx)
-				
-				var emotion_idx := colon_prefix.find('(')
-				var auto_idx := colon_prefix.find('[')
-				var name_idx := -1
-				
-				if emotion_idx > 0:
-					if auto_idx < 0 or (auto_idx > 0 and auto_idx > emotion_idx):
-						name_idx = emotion_idx
-					elif auto_idx > 0:
-						name_idx = auto_idx
-				elif auto_idx > 0:
-					name_idx = auto_idx
-				
-				var character_name: String = colon_prefix.substr(
-					0, name_idx
-				)
-				
-				if not C.is_valid_character(character_name):
-					printerr('[Popochiu] No PopochiuCharacter with name: %s'\
-					% character_name)
-					await get_tree().process_frame
-					return
-				
-				var character := C.get_character(character_name)
-				
-				if not C.is_valid_character(character_name):
-					printerr('[Popochiu] No PopochiuCharacter with name: %s'\
-					% character_name)
-					
-					await get_tree().process_frame
-					return
-				
-				var emotion := ''
-				if emotion_idx > 0:
-					emotion = colon_prefix.substr(emotion_idx + 1).rstrip(')')
-				
-				var auto := -1.0
-				if auto_idx > 0:
-					auto_continue_after = float(
-						colon_prefix.substr(auto_idx + 1).rstrip(')')
-					)
-				
-				if not emotion.is_empty():
-					character.emotion = emotion
-				
-				var dialogue := text.substr(colon_idx + 1).trim_prefix(' ')
-				
-				await character.say(dialogue)
-			else:
-				await get_tree().process_frame
-	
-	auto_continue_after = -1.0
-
-
 func _set_in_room(value: bool) -> void:
 	in_room = value
 	Cursor.toggle_visibility(in_room)
 
 
-#func _set_language_idx(value: int) -> void:
-#	default_language = value
-#	TranslationServer.set_locale(languages[value])
-#	language_changed.emit()
-
-
-func _queueable(node: Object, method: String, params := [], signal_name := '') -> void:
+func _queueable(node: Object, method: String, params := [], signal_name := "") -> void:
 	if cutscene_skipped:
 		# TODO: What should happen if the skipped function was an animation that triggers calls
 		# during execution? What should happen if the skipped function has to change the state of
@@ -1000,7 +626,7 @@ func _queueable(node: Object, method: String, params := [], signal_name := '') -
 	var c = f.callv(params)
 	
 	if not signal_name.is_empty():
-		if signal_name == 'completed':
+		if signal_name == "completed":
 			await c
 		else:
 			# TODO: Is there a better way to do this in GDScript 2?
@@ -1009,17 +635,11 @@ func _queueable(node: Object, method: String, params := [], signal_name := '') -
 		await get_tree().process_frame
 
 
-func _on_character_spoke(chr: PopochiuCharacter, msg := '') -> void:
+func _on_character_spoke(chr: PopochiuCharacter, msg := "") -> void:
 	add_history({
 		character = chr,
 		text = msg
 	})
-
-
-func _on_graphic_interface_unblocked() -> void:
-	pass
-	#clicked = null
-	#current_command = 0
 
 
 func _command_fallback() -> void:

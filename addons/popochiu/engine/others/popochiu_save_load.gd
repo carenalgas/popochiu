@@ -62,7 +62,7 @@ func save_game(slot := 1, description := "") -> bool:
 	var data := {
 		description = description,
 		player = {
-			room = E.current_room.script_name,
+			room = R.current.script_name,
 			inventory = I.items,
 		},
 		rooms = {}, # Stores the state of each PopochiuRoomData

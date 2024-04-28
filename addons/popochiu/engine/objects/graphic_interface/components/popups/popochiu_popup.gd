@@ -67,16 +67,16 @@ func open() -> void:
 	G.block()
 	Cursor.show_cursor("gui", true)
 	
-	(E.gi as PopochiuGraphicInterface).popups_stack.append(self)
+	(E.gui as PopochiuGraphicInterface).popups_stack.append(self)
 	
 	show()
 
 
 ## Closes the popup unlocking interactions with the graphic interface.
 func close() -> void:
-	(E.gi as PopochiuGraphicInterface).popups_stack.erase(self)
+	(E.gui as PopochiuGraphicInterface).popups_stack.erase(self)
 	
-	if (E.gi as PopochiuGraphicInterface).popups_stack.is_empty():
+	if (E.gui as PopochiuGraphicInterface).popups_stack.is_empty():
 		G.unblock()
 		Cursor.unblock()
 	
