@@ -227,16 +227,16 @@ func walk(target_pos: Vector2) -> void:
 	
 	if E.cutscene_skipped:
 		is_moving = false
-		E.main_camera.follow_smoothing_enabled = false
+		E.camera.follow_smoothing_enabled = false
 		
 		await get_tree().process_frame
 		
 		position = target_pos
-		E.main_camera.position = target_pos
+		E.camera.position = target_pos
 		
 		await get_tree().process_frame
 		
-		E.main_camera.follow_smoothing_enabled = true
+		E.camera.follow_smoothing_enabled = true
 		
 		return
 	

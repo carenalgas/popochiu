@@ -230,13 +230,13 @@ func has_character(character_name: String) -> bool:
 ## Called by Popochiu when loading the room to assign its camera limits to the player camera.
 func setup_camera() -> void:
 	if limit_left != INF:
-		E.main_camera.limit_left = limit_left
+		E.camera.limit_left = limit_left
 	if limit_right != INF:
-		E.main_camera.limit_right = limit_right
+		E.camera.limit_right = limit_right
 	if limit_top != INF:
-		E.main_camera.limit_top = limit_top
+		E.camera.limit_top = limit_top
 	if limit_bottom != INF:
-		E.main_camera.limit_bottom = limit_bottom
+		E.camera.limit_bottom = limit_bottom
 
 
 ## Remove all children from the [b]$Characters[/b] node, storing the children of each node to later
