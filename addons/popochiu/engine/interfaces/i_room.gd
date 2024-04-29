@@ -17,8 +17,14 @@ extends Node
 ## R.Outside.state.is_rainning # Access the is_rainning property in the Outside room
 ## [/codeblock]
 
-## Provides access to the current room.
+## Provides access to the current [PopochiuRoom].
 var current: PopochiuRoom = null : set = set_current
+## Stores the state of each [PopochiuRoom] in the game. The key of each room is its
+## [member PopochiuRoom.script_name], and each value is a [Dictionary] with its properties and the
+## data of all its [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s, [PopochiuRegion]s,
+## and some data related with the [PopochiuCharacter]s in it. For more info about the data stored,
+## check the documentation for [PopochiuRoomData].
+var rooms_states := {}
 
 var _room_instances := {}
 var _use_transition_on_room_change := true
@@ -141,7 +147,7 @@ func goto_room(
 	
 	# Store the room state
 	if store_state:
-		E.rooms_states[current.script_name] = current.state
+		rooms_states[current.script_name] = current.state
 		current.state.save_childs_states()
 	
 	# Remove PopochiuCharacter nodes from the room so they are not deleted
@@ -194,15 +200,15 @@ func room_readied(room: PopochiuRoom) -> void:
 		current.state.visited_first_time = current.state.visited_times == 1
 	
 	# Add the PopochiuCharacter instances to the room
-	if (E.rooms_states[room.script_name]["characters"] as Dictionary).is_empty():
+	if (rooms_states[room.script_name]["characters"] as Dictionary).is_empty():
 		# Store the initial state of the characters in the room
 		current.state.save_characters()
 	
 	current.clean_characters()
 	
 	# Load the state of characters in the room
-	for chr_script_name: String in E.rooms_states[room.script_name]["characters"]:
-		var chr_dic: Dictionary = E.rooms_states[room.script_name]["characters"][chr_script_name]
+	for chr_script_name: String in rooms_states[room.script_name]["characters"]:
+		var chr_dic: Dictionary = rooms_states[room.script_name]["characters"][chr_script_name]
 		var chr: PopochiuCharacter = C.get_character(chr_script_name)
 		
 		if not chr: continue
@@ -230,13 +236,13 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDS:
-		for script_name in E.rooms_states[room.script_name][type]:
+		for script_name in rooms_states[room.script_name][type]:
 			var node: Node2D = current.callv(
 				"get_" + type.trim_suffix("s"),
 				[(script_name as String).to_pascal_case()]
 			)
 			var node_dic: Dictionary =\
-			E.rooms_states[room.script_name][type][script_name]
+			rooms_states[room.script_name][type][script_name]
 			
 			for property in node_dic:
 				if not PopochiuResources.has_property(node, property): continue
@@ -282,6 +288,14 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	# Fix #219: Update visited_first_time state once _on_room_transition_finished() finishes
 	current.state.visited_first_time = false
+
+
+func store_states() -> void:
+	# Store the default state of rooms in the game
+	for room_tres in PopochiuResources.get_section("rooms"):
+		var res: PopochiuRoomData = load(room_tres)
+		rooms_states[res.script_name] = res
+		res.save_childs_states()
 
 
 #endregion

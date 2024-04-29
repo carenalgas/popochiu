@@ -116,6 +116,8 @@ func _enter_tree() -> void:
 	
 	PopochiuResources.update_autoloads(true)
 	_editor_file_system.scan_sources()
+	# Wait before trying to load main objects data to avoid having an empty dock
+	await get_tree().create_timer(0.5).timeout
 	
 	main_dock.call_deferred("fill_data")
 

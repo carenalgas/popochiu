@@ -227,7 +227,7 @@ func _ask_basic_delete() -> void:
 func _remove_in_audio_manager() -> void:
 	_confirmation_dialog.confirmed.disconnect(_remove_in_audio_manager)
 	
-	# Remove the AudioCue from PopochiuData.cfg ----------------------------------------------------
+	# Remove the AudioCue from popochiu_data.cfg ---------------------------------------------------
 	var group_data: Array = PopochiuResources.get_data_value(
 		'audio', cue_group, []
 	)

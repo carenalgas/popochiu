@@ -134,12 +134,23 @@ func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	# If the item is not in the list of items, then instantiate it based checked
 	# the list of items (Resource) in Popochiu
 	var new_intentory_item: PopochiuInventoryItem =\
-	E.get_inventory_item_instance(item_name)
+	get_inventory_item_instance(item_name)
 	
 	if new_intentory_item:
 		_item_instances.append(new_intentory_item)
 		return new_intentory_item
 	
+	return null
+
+
+## Gets the instance of the [PopochiuInventoryItem] identified with [param script_name].
+func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
+	for rp in PopochiuResources.get_section("inventory_items"):
+		var popochiu_inventory_item: PopochiuInventoryItemData = load(rp)
+		if popochiu_inventory_item.script_name == script_name:
+			return load(popochiu_inventory_item.scene).instantiate()
+	
+	PopochiuUtils.print_error("Item %s doesn't exists" % script_name)
 	return null
 
 

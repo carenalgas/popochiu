@@ -38,6 +38,8 @@ signal game_loaded(data: Dictionary)
 signal command_selected
 ## Emitted when the dialog style changes in [PopochiuSettings].
 signal dialog_style_changed
+## A signal that is never emitted and serves to stop the execution of instructions by clicking
+## anywhere in a [PopochiuRoom] when a [PopochiuClickable] has already been clicked.
 signal await_stopped
 
 ## Path to the script with the class used to save and load game data.
@@ -45,7 +47,8 @@ const SAVELOAD_PATH := "res://addons/popochiu/engine/others/popochiu_save_load.g
 
 ## Used to prevent going to another room when there is one being loaded.
 var in_room := false : set = _set_in_room
-## Stores a reference to the current [PopochiuRoom].
+## @deprecated
+## [br][br][b]Deprecated[/b]. Now this is [member PopochiuIRoom.current].
 var current_room: PopochiuRoom
 ## Stores the last clicked [PopochiuClickable] node to ease access to it from any other class.
 var clicked: PopochiuClickable = null
@@ -56,10 +59,9 @@ var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
 var settings := PopochiuSettings.new()
 ## Reference to the [PopochiuAudioManager].
 var am: PopochiuAudioManager = null
-# NOTE: This might not just be a boolean, but there could be an array that puts
-# the calls to queue in an Array and executes them in order. Or perhaps it could
-# be something that allows for more dynamism, such as putting one queue to execute
-# during the execution of another one.
+# NOTE: This might not just be a boolean, but there could be an array that puts the calls to queue
+# in an Array and executes them in order. Or perhaps it could be something that allows for more
+# dynamism, such as putting one queue to execute during the execution of another one.
 ## Indicates if the game is playing a queue of instructions.
 var playing_queue := false
 ## Reference to the [PopochiuGraphicInterface].
@@ -68,15 +70,9 @@ var gui: PopochiuGraphicInterface = null
 var tl: Node2D = null
 ## The current class used as the game commands
 var cutscene_skipped := false
-## Stores the state of each [PopochiuRoom] in the game. The key of each room is its
-## [member PopochiuRoom.script_name], and each value is a [Dictionary] with its properties and the
-## data of all its [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s, [PopochiuRegion]s,
-## and some data related with the [PopochiuCharacter]s in it. For more info about the data stored,
-## check the documentation for [PopochiuRoomData].
+## @deprecated
+## [br][br][b]Deprecated[/b]. Now this is [member PopochiuIRoom.rooms_states].
 var rooms_states := {}
-## Stores the state of each [PopochiuDialog] in the game. The key of each dialog is its
-## [member PopochiuDialog.script_name]. For more info about the stored data, check [PopochiuDialog].
-var dialog_states := {}
 ## Stores a list of game events (triggered actions and dialog lines). Each event is defined by a
 ## [Dictionary].
 var history := []
@@ -94,7 +90,7 @@ var half_height := 0.0 : get = get_half_height
 ## [signal text_speed_changed] signal is emitted.
 var text_speed: float = settings.text_speed : set = set_text_speed
 ## The number of seconds to wait before moving to the next dialog line (when playing dialog lines
-## triggered inside a [method queue].
+## triggered inside a [method queue]).
 var auto_continue_after := -1.0
 ## The current dialog style used by the game. When this property changes, the
 ## [signal dialog_style_changed] signal is emitted.
@@ -128,12 +124,13 @@ var _saveload: Resource = null
 
 #region Godot ######################################################################################
 func _ready() -> void:
+	set_process_input(false)
 	_saveload = load(SAVELOAD_PATH).new()
 	
 	# Create the AudioManager
 	am = load(PopochiuResources.AUDIO_MANAGER).instantiate()
 	
-	# Set the Graphic Interface node
+	# Instantiate the Graphic Interface node
 	if settings.dev_use_addon_template:
 		var template: String = PopochiuResources.get_data_value("ui", "template", "")
 		var path := PopochiuResources.GUI_CUSTOM_SCENE
@@ -150,7 +147,7 @@ func _ready() -> void:
 	# Load the commands for the game
 	commands = load(PopochiuResources.GUI_COMMANDS).new()
 	
-	# Set the Transitions Layer node
+	# Instantiate the Transitions Layer node
 	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
 	
 	# Calculate the scale that could be applied
@@ -174,19 +171,12 @@ func _ready() -> void:
 		if is_instance_valid(ii):
 			ii.add(false)
 	
-	set_process_input(false)
-	
 	if settings.scale_gui:
 		Cursor.scale_cursor(scale)
 	
-	# Save the default state for the objects in the game
-	for room_tres in PopochiuResources.get_section("rooms"):
-		var res: PopochiuRoomData = load(room_tres)
-		E.rooms_states[res.script_name] = res
-		
-		res.save_childs_states()
+	R.store_states()
 	
-	# Connect to singletons signals
+	# Connect to autoloads' signals
 	C.character_spoke.connect(_on_character_spoke)
 	
 	# Assign property values to singletons and other global classes
@@ -282,16 +272,10 @@ func cutscene(instructions: Array) -> void:
 	cutscene_skipped = false
 
 
-## Loads the room with [param script_name]. [param use_transition] can be used to trigger a [i]fade
-## out[/i] animation before loading the room, and a [i]fade in[/i] animation once it is ready.
-## If [param store_state] is [code]true[/code] the state of the room will be stored in memory.
-## [param ignore_change] is used internally by Popochiu to know if it's the first time the room is
-## loaded when starting the game.
+## @deprecated
+## [br][br][b]Deprecated[/b]. Now this is done by [method PopochiuIRoom.goto_room].
 func goto_room(
-	script_name := "",
-	use_transition := true,
-	store_state := true,
-	ignore_change := false
+	script_name := "", use_transition := true, store_state := true, ignore_change := false
 ) -> void:
 	R.goto_room(script_name, use_transition, store_state, ignore_change)
 
@@ -303,37 +287,10 @@ func get_text(msg: String) -> String:
 	return tr(msg) if settings.use_translations else msg
 
 
-## Gets the instance of the [PopochiuCharacter] identified with [param script_name].
-func get_character_instance(script_name: String) -> PopochiuCharacter:
-	for rp in PopochiuResources.get_section("characters"):
-		var popochiu_character: PopochiuCharacterData = load(rp)
-		if popochiu_character.script_name == script_name:
-			return load(popochiu_character.scene).instantiate()
-	
-	PopochiuUtils.print_error("Character %s doesn't exists" % script_name)
-	return null
-
-
-## Gets the instance of the [PopochiuInventoryItem] identified with [param script_name].
-func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	for rp in PopochiuResources.get_section("inventory_items"):
-		var popochiu_inventory_item: PopochiuInventoryItemData = load(rp)
-		if popochiu_inventory_item.script_name == script_name:
-			return load(popochiu_inventory_item.scene).instantiate()
-	
-	PopochiuUtils.print_error("Item %s doesn't exists" % script_name)
-	return null
-
-
-## Gets the instance of the [PopochiuDialog] identified with [param script_name].
+## @deprecated
+## [br][br][b]Deprecated[/b]. Now this is done by [method PopochiuIDialog.get_dialog_instance].
 func get_dialog(script_name: String) -> PopochiuDialog:
-	for rp in PopochiuResources.get_section("dialogs"):
-		var tree: PopochiuDialog = load(rp)
-		if tree.script_name.to_lower() == script_name.to_lower():
-			return tree
-
-	PopochiuUtils.print_error("Dialog '%s doesn't exists" % script_name)
-	return null
+	return D.get_dialog_instance(script_name)
 
 
 ## Adds an action, represented by [param data], to the [member history] of actions. 
@@ -410,19 +367,8 @@ func add_history(data: Dictionary) -> void:
 ##     await A.mx_mysterious_place.play()
 ##     clicked.emit()
 ## [/codeblock]
-func queueable(
-	node: Object, method: String, params := [], signal_name := ""
-) -> Callable:
+func queueable(node: Object, method: String, params := [], signal_name := "") -> Callable:
 	return func (): await _queueable(node, method, params, signal_name)
-
-
-## Checks if the room with [param script_name] exists in the list of rooms of the game.
-func room_exists(script_name: String) -> bool:
-	for rp in PopochiuResources.get_section("rooms"):
-		var room: PopochiuRoomData = load(rp)
-		if room.script_name.to_lower() == script_name.to_lower():
-			return true
-	return false
 
 
 ## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
@@ -461,7 +407,6 @@ func get_saves_descriptions() -> Dictionary:
 func save_game(slot := 1, description := "") -> void:
 	if _saveload.save_game(slot, description):
 		game_saved.emit()
-		
 		await G.show_system_text("Game saved")
 
 

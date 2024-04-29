@@ -198,7 +198,7 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 		
 		match type:
 			"rooms":
-				E.rooms_states[id] = state
+				R.rooms_states[id] = state
 			"characters":
 				C.characters_states[id] = state
 			"inventory_items":

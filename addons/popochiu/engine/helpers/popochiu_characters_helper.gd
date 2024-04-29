@@ -1,7 +1,9 @@
 class_name PopochiuCharactersHelper
 extends RefCounted
+## Helper class to handle things related to [PopochiuCharacters] but that may not be the
+## responsibility of [PopochiuICharacter].
 
-
+## Stablishes the [PopochiuCharacter] that will be controlled by players.
 static func define_player() -> void:
 	if PopochiuResources.has_data_value("setup", "pc"):
 		var pc_data_path: String = PopochiuResources.get_data_value(
@@ -33,9 +35,9 @@ static func define_player() -> void:
 			C.set(pc.script_name, pc)
 
 
+## Evals [param text] to know if it is a wait inside a dialog or if it is a [PopochiuCharacter]
+## saying something. This is used when calling [method E.queue].
 static func exec_string(text: String) -> void:
-	var auto_continue_after := 0.0
-	
 	match text:
 		".":
 			await E.wait(0.25)
@@ -86,9 +88,7 @@ static func exec_string(text: String) -> void:
 				
 				var auto := -1.0
 				if auto_idx > 0:
-					auto_continue_after = float(
-						colon_prefix.substr(auto_idx + 1).rstrip(")")
-					)
+					E.auto_continue_after = float(colon_prefix.substr(auto_idx + 1).rstrip(")"))
 				
 				if not emotion.is_empty():
 					character.emotion = emotion
@@ -99,4 +99,4 @@ static func exec_string(text: String) -> void:
 			else:
 				await E.get_tree().process_frame
 	
-	auto_continue_after = -1.0
+	E.auto_continue_after = -1.0

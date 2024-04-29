@@ -140,15 +140,26 @@ func get_character(script_name: String) -> PopochiuCharacter:
 		if c.script_name.to_lower() == script_name.to_lower():
 			return c
 	
-	# If the character doesn't existis, try to instantiate it from the list of
-	# characters (Resource) in PopochiuData.cfg
-	var new_character: PopochiuCharacter = E.get_character_instance(script_name)
+	# If the character doesn't existis, try to instantiate it from the list of characters (Resource)
+	# in popochiu_data.cfg
+	var new_character: PopochiuCharacter = get_character_instance(script_name)
 	if new_character:
 		characters.append(new_character)
 		set(new_character.script_name, new_character)
 		
 		return new_character
 
+	return null
+
+
+## Gets the instance of the [PopochiuCharacter] identified with [param script_name].
+func get_character_instance(script_name: String) -> PopochiuCharacter:
+	for rp in PopochiuResources.get_section("characters"):
+		var popochiu_character: PopochiuCharacterData = load(rp)
+		if popochiu_character.script_name == script_name:
+			return load(popochiu_character.scene).instantiate()
+	
+	PopochiuUtils.print_error("Character %s doesn't exists" % script_name)
 	return null
 
 

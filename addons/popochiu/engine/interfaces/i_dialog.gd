@@ -88,6 +88,17 @@ func say_selected() -> void:
 	await C.player.say(selected_option.text)
 
 
+## Gets the instance of the [PopochiuDialog] identified with [param script_name].
+func get_dialog_instance(script_name: String) -> PopochiuDialog:
+	for rp in PopochiuResources.get_section("dialogs"):
+		var tree: PopochiuDialog = load(rp)
+		if tree.script_name.to_lower() == script_name.to_lower():
+			return tree
+
+	PopochiuUtils.print_error("Dialog '%s doesn't exists" % script_name)
+	return null
+
+
 #endregion
 
 #region SetGet #####################################################################################
