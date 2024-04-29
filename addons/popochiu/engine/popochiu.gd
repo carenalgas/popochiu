@@ -48,7 +48,7 @@ const SAVELOAD_PATH := "res://addons/popochiu/engine/others/popochiu_save_load.g
 ## Used to prevent going to another room when there is one being loaded.
 var in_room := false : set = _set_in_room
 ## @deprecated
-## [br][br][b]Deprecated[/b]. Now this is [member PopochiuIRoom.current].
+## [b]Deprecated[/b]. Now this is [member PopochiuIRoom.current].
 var current_room: PopochiuRoom
 ## Stores the last clicked [PopochiuClickable] node to ease access to it from any other class.
 var clicked: PopochiuClickable = null
@@ -71,7 +71,7 @@ var tl: Node2D = null
 ## The current class used as the game commands
 var cutscene_skipped := false
 ## @deprecated
-## [br][br][b]Deprecated[/b]. Now this is [member PopochiuIRoom.rooms_states].
+## [b]Deprecated[/b]. Now this is [member PopochiuIRoom.rooms_states].
 var rooms_states := {}
 ## Stores a list of game events (triggered actions and dialog lines). Each event is defined by a
 ## [Dictionary].
@@ -273,11 +273,59 @@ func cutscene(instructions: Array) -> void:
 
 
 ## @deprecated
-## [br][br][b]Deprecated[/b]. Now this is done by [method PopochiuIRoom.goto_room].
+## [b]Deprecated[/b]. Now this is done by [method PopochiuIRoom.goto_room].
 func goto_room(
 	script_name := "", use_transition := true, store_state := true, ignore_change := false
 ) -> void:
 	R.goto_room(script_name, use_transition, store_state, ignore_change)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_change_offset].
+func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
+	return camera.queue_change_offset(offset)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.change_offset].
+func camera_offset(offset := Vector2.ZERO) -> void:
+	camera.change_offset(offset)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_shake].
+func queue_camera_shake(strength := 1.0, duration := 1.0) -> Callable:
+	return camera.queue_shake(strength, duration)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.shake].
+func camera_shake(strength := 1.0, duration := 1.0) -> void:
+	camera.shake(strength, duration)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_shake_bg].
+func queue_camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
+	return camera.queue_shake_bg(strength, duration)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.shake_bg].
+func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
+	camera.shake_bg(strength, duration)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_change_zoom].
+func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
+	return camera.queue_change_zoom(target, duration)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.change_zoom].
+func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
+	camera.change_zoom(target, duration)
 
 
 ## Returns [param msg] translated to the current language if the game is using translations
@@ -288,7 +336,19 @@ func get_text(msg: String) -> String:
 
 
 ## @deprecated
-## [br][br][b]Deprecated[/b]. Now this is done by [method PopochiuIDialog.get_dialog_instance].
+## [b]Deprecated[/b]. Now this is done by [method PopochiuICharacter.get_character_instance].
+func get_character_instance(script_name: String) -> PopochiuCharacter:
+	return C.get_character_instance(script_name)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuIInventory.get_inventory_item_instance].
+func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
+	return I.get_inventory_item_instance(script_name)
+
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuIDialog.get_dialog_instance].
 func get_dialog(script_name: String) -> PopochiuDialog:
 	return D.get_dialog_instance(script_name)
 
