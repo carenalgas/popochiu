@@ -281,6 +281,12 @@ func goto_room(
 
 
 ## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuIRoom.room_readied].
+func room_readied(room: PopochiuRoom) -> void:
+	R.room_readied(room)
+
+
+## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_change_offset].
 func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
 	return camera.queue_change_offset(offset)
@@ -487,6 +493,11 @@ func load_game(slot := 1) -> void:
 		true,
 		false # Do not store the state of the current room
 	)
+
+## @deprecated
+## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.stop_shake].
+func stop_camera_shake() -> void:
+	camera.stop_shake()
 
 
 ## Adds the [param node] to the array of hovered PopochiuClickable. If [param prepend] is
