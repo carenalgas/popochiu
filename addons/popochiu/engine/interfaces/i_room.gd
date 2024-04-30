@@ -28,7 +28,6 @@ var rooms_states := {}
 
 var _room_instances := {}
 var _use_transition_on_room_change := true
-var _tmp_current: PopochiuRoom = null
 
 
 #region Public #####################################################################################
@@ -144,16 +143,16 @@ func goto_room(
 	Cursor.show_cursor()
 	
 	if is_instance_valid(C.player) and Engine.get_process_frames() > 0:
-		C.player.last_room = _tmp_current.script_name
+		C.player.last_room = current.script_name
 	
 	# Store the room state
 	if store_state:
-		rooms_states[_tmp_current.script_name] = _tmp_current.state
-		_tmp_current.state.save_childs_states()
+		rooms_states[current.script_name] = current.state
+		current.state.save_childs_states()
 	
 	# Remove PopochiuCharacter nodes from the room so they are not deleted
 	if Engine.get_process_frames() > 0:
-		_tmp_current.exit_room()
+		current.exit_room()
 	
 	# Reset camera config
 	E.camera.restore_default_limits()
@@ -177,8 +176,8 @@ func goto_room(
 
 ## Called once the loaded [param room] is "ready" ([method Node._ready]).
 func room_readied(room: PopochiuRoom) -> void:
-	if not is_instance_valid(_tmp_current):
-		_tmp_current = room
+	if not is_instance_valid(current):
+		current = room
 	
 	# When running from the Editor the first time, use goto_room
 	if Engine.get_process_frames() == 0:
@@ -189,9 +188,6 @@ func room_readied(room: PopochiuRoom) -> void:
 		# the main room (the last parameter will prevent Popochiu from changing the scene to the
 		# same that is already loaded)
 		goto_room(room.script_name, false, true, true)
-	
-	if not is_instance_valid(current):
-		current = room
 	
 	# Make the camera be ready for the room
 	current.setup_camera()
@@ -307,10 +303,11 @@ func store_states() -> void:
 
 #region SetGet #####################################################################################
 func set_current(value: PopochiuRoom) -> void:
-	current = value
-	
-	if current != _tmp_current:
-		goto_room(current.script_name)
+	if not value.is_inside_tree():
+		goto_room(value.script_name)
+		#value.queue_free()
+	else:
+		current = value
 
 
 #endregion

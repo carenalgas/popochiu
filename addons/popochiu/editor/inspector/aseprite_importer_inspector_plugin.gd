@@ -19,6 +19,9 @@ func _can_handle(object):
 
 
 func _parse_begin(object: Object):
+	# Fix showing error messages in Output when inspecting nodes in the Debugger
+	if not object is Node: return
+	
 	_target_node = object
 
 

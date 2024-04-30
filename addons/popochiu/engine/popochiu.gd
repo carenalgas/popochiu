@@ -3,7 +3,7 @@ extends Node
 ## This is Popochiu's main hub, and is in charge of making the game to work.
 ## 
 ## Is the shortcut for [b]Popochiu.gd[/b], and can be used (from any script) with [b]E[/b] (E.g.
-## [code]E.goto_room("House")[/code]).
+## [code]E.camera.shake()[/code]).
 ## 
 ## Some things you can do with it:
 ## - Change to another room.
