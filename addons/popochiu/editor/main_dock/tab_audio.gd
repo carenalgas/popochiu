@@ -66,7 +66,7 @@ func fill_data() -> void:
 
 
 func search_audio_files() -> void:
-	# Look popochiu_data.cfg to remove_at entries for AudioCue files that don't exists in the
+	# Look popochiu_data.cfg to remove_at entries for AudioCue files that don't exist in the
 	# project anymore
 	_group_audio_cues()
 	

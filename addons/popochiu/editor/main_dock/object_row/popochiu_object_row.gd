@@ -198,12 +198,12 @@ func show_add_to_core() -> void:
 	)
 
 
-func show_create_state_script() -> void:
+func show_create_state_script_button() -> void:
 	btn_state_script.disabled = true
 	menu_popup.set_item_disabled(menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), false)
 
 
-func remove_create_state_script() -> void:
+func hide_create_state_script_button() -> void:
 	menu_popup.remove_item(menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT))
 
 

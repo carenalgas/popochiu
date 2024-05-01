@@ -99,36 +99,13 @@ func _ready() -> void:
 #region Public #####################################################################################
 func fill_data() -> void:
 	# Search the FileSystem for Rooms, Characters, InventoryItems and Dialogs
-	var resource_filesystem := EditorInterface.get_resource_filesystem()
 	for type_key: int in _types:
-		if not _types[type_key].has("path"):
-			continue
+		var resources := Array(DirAccess.get_directories_at(_types[type_key].path)).map(
+			_get_popochiu_objects_resources.bind(type_key)
+		)
 		
-		var type_dir := resource_filesystem.get_filesystem_path(_types[type_key].path)
-		
-		if not is_instance_valid(type_dir):
-			continue
-		
-		for dir_idx: int in type_dir.get_subdir_count():
-			var efsd: EditorFileSystemDirectory = type_dir.get_subdir(dir_idx)
-			
-			for file_idx: int in efsd.get_file_count():
-				var path := efsd.get_file_path(file_idx)
-				
-				if not resource_filesystem.get_file_type(path) == "Resource":
-					continue
-				
-				var resource: Resource = load(path)
-				
-				if not (
-					resource is PopochiuRoomData
-					or resource is PopochiuCharacterData
-					or resource is PopochiuInventoryItemData
-					or resource is PopochiuDialog
-				):
-					continue
-				
-				_create_row(type_key, resource)
+		for resource: Resource in resources:
+			_create_row(type_key, resource)
 	
 	# Load other tabs data
 	tab_audio.fill_data()
@@ -282,9 +259,9 @@ func _create_row(type_key: int, resource: Resource) -> void:
 		row.show_add_to_core()
 	
 	if not has_state_script:
-		row.show_create_state_script()
+		row.show_create_state_script_button()
 	else:
-		row.remove_create_state_script()
+		row.hide_create_state_script_button()
 
 
 func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
@@ -326,6 +303,28 @@ func _check_node(node: Node) -> void:
 	if node is PopochiuCharacter and node.get_parent() is Node2D:
 		# The node is a PopochiuCharacter in a room
 		node.set_name.call_deferred("Character%s *" % node.script_name)
+
+
+func _get_popochiu_objects_resources(dir_name: String, type_key: Constants.Types) -> Resource:
+	var resource_filesystem := EditorInterface.get_resource_filesystem()
+	var dir_path: String = _types[type_key].path + dir_name
+	
+	for file_name: String in DirAccess.get_files_at(dir_path):
+		if file_name.get_extension() != "tres": continue
+		
+		var resource: Resource = load(dir_path.path_join(file_name))
+		if not (
+			resource is PopochiuRoomData
+			or resource is PopochiuCharacterData
+			or resource is PopochiuInventoryItemData
+			or resource is PopochiuDialog
+		):
+			continue
+		
+		return resource
+	
+	PopochiuUtils.print_error("No data file (.tres) found for [b]%s[/b]" % dir_path)
+	return null
 
 
 #endregion
