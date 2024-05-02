@@ -62,7 +62,7 @@ func save_game(slot := 1, description := "") -> bool:
 	var data := {
 		description = description,
 		player = {
-			room = E.current_room.script_name,
+			room = R.current.script_name,
 			inventory = I.items,
 		},
 		rooms = {}, # Stores the state of each PopochiuRoomData
@@ -162,9 +162,9 @@ func _store_data(type: String, save: Dictionary) -> void:
 		
 		match type:
 			"rooms":
-				data.save_childs_states()
+				data.save_children_states()
 				
-				for category in PopochiuResources.ROOM_CHILDS:
+				for category in PopochiuResources.ROOM_CHILDREN:
 					save[type][data.script_name][category] = data[category]
 				
 				save[type][data.script_name]["characters"] = data.characters
@@ -198,7 +198,7 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 		
 		match type:
 			"rooms":
-				E.rooms_states[id] = state
+				R.rooms_states[id] = state
 			"characters":
 				C.characters_states[id] = state
 			"inventory_items":

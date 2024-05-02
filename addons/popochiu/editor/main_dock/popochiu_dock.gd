@@ -99,92 +99,13 @@ func _ready() -> void:
 #region Public #####################################################################################
 func fill_data() -> void:
 	# Search the FileSystem for Rooms, Characters, InventoryItems and Dialogs
-	for t in _types:
-		if not _types[t].has("path"): continue
-		
-		var type_dir := EditorInterface.get_resource_filesystem().get_filesystem_path(
-			_types[t].path
+	for type_key: int in _types:
+		var resources := Array(DirAccess.get_directories_at(_types[type_key].path)).map(
+			_get_popochiu_objects_resources.bind(type_key)
 		)
 		
-		if not is_instance_valid(type_dir):
-			continue
-		
-		for d: int in type_dir.get_subdir_count():
-			var efsd: EditorFileSystemDirectory = type_dir.get_subdir(d)
-			
-			for f in efsd.get_file_count():
-				var path = efsd.get_file_path(f)
-				
-				if not EditorInterface.get_resource_filesystem().get_file_type(path) == "Resource":
-					continue
-				
-				var resource: Resource = load(path)
-				
-				if not (resource is PopochiuRoomData
-				or resource is PopochiuCharacterData
-				or resource is PopochiuInventoryItemData
-				or resource is PopochiuDialog):
-					continue
-				
-				var row_path: String = _types[t].scene %\
-				[resource.resource_name, resource.resource_name]
-				
-				if row_path in _rows_paths: continue
-				
-				var row: PopochiuObjectRow = _create_object_row(
-					t, resource.script_name
-				)
-				_types[t].group.add(row)
-				
-				# Check if the object in the list is in its corresponding array
-				# in Popochiu (Popochiu.tscn)
-				var is_in_core := true
-				var has_state_script: bool = FileAccess.file_exists(
-					row.path.replace(".tscn", "_state.gd")
-				)
-				
-				match t:
-					Constants.Types.ROOM:
-						is_in_core = PopochiuResources.has_data_value(
-							"rooms", resource.script_name
-						)
-						
-						# Check if the room is the main scene
-						var main_scene: String = ProjectSettings.get_setting(
-							PopochiuResources.MAIN_SCENE
-						)
-						if main_scene == resource.scene:
-							row.is_main = true
-					Constants.Types.CHARACTER:
-						is_in_core = PopochiuResources.has_data_value(
-							"characters", resource.script_name
-						)
-						
-						if resource.script_name ==\
-						PopochiuResources.get_data_value("setup", "pc", ""):
-							row.is_pc = true
-					Constants.Types.INVENTORY_ITEM:
-						is_in_core = PopochiuResources.has_data_value(
-							"inventory_items", resource.script_name
-						)
-						
-						var items: Array =\
-						PopochiuConfig.get_inventory_items_on_start()
-						
-						if resource.script_name in items:
-							row.is_on_start = true
-					Constants.Types.DIALOG:
-						is_in_core = PopochiuResources.has_data_value(
-							"dialogs", resource.script_name
-						)
-				
-				if not is_in_core:
-					row.show_add_to_core()
-				
-				if not has_state_script:
-					row.show_create_state_script()
-				else:
-					row.remove_create_state_script()
+		for resource: Resource in resources:
+			_create_row(type_key, resource)
 	
 	# Load other tabs data
 	tab_audio.fill_data()
@@ -300,6 +221,49 @@ func _open_popup(popup: ConfirmationDialog) -> void:
 	popup.move_to_center()
 
 
+func _create_row(type_key: int, resource: Resource) -> void:
+	if _types[type_key].scene.replace("%s", resource.resource_name) in _rows_paths: return
+	
+	var row: PopochiuObjectRow = _create_object_row(type_key, resource.script_name)
+	_types[type_key].group.add(row)
+	
+	# Check if the object in the list is in its corresponding array in Popochiu (Popochiu.tscn)
+	var is_in_core := true
+	var has_state_script: bool = FileAccess.file_exists(row.path.replace(".tscn", "_state.gd"))
+	
+	match type_key:
+		Constants.Types.ROOM:
+			is_in_core = PopochiuResources.has_data_value("rooms", resource.script_name)
+			
+			# Check if the room is the main scene
+			var main_scene: String = ProjectSettings.get_setting(PopochiuResources.MAIN_SCENE)
+			
+			if main_scene == resource.scene:
+				row.is_main = true
+		Constants.Types.CHARACTER:
+			is_in_core = PopochiuResources.has_data_value("characters", resource.script_name)
+			
+			if resource.script_name == PopochiuResources.get_data_value("setup", "pc", ""):
+				row.is_pc = true
+		Constants.Types.INVENTORY_ITEM:
+			is_in_core = PopochiuResources.has_data_value("inventory_items", resource.script_name)
+			
+			var items: Array = PopochiuConfig.get_inventory_items_on_start()
+			
+			if resource.script_name in items:
+				row.is_on_start = true
+		Constants.Types.DIALOG:
+			is_in_core = PopochiuResources.has_data_value("dialogs", resource.script_name)
+	
+	if not is_in_core:
+		row.show_add_to_core()
+	
+	if not has_state_script:
+		row.show_create_state_script_button()
+	else:
+		row.hide_create_state_script_button()
+
+
 func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
 	var new_obj: PopochiuObjectRow = _object_row.instantiate()
 
@@ -339,6 +303,26 @@ func _check_node(node: Node) -> void:
 	if node is PopochiuCharacter and node.get_parent() is Node2D:
 		# The node is a PopochiuCharacter in a room
 		node.set_name.call_deferred("Character%s *" % node.script_name)
+
+
+func _get_popochiu_objects_resources(dir_name: String, type_key: Constants.Types) -> Resource:
+	var resource_filesystem := EditorInterface.get_resource_filesystem()
+	var dir_path: String = _types[type_key].path + dir_name
+	
+	for file_name: String in DirAccess.get_files_at(dir_path):
+		if file_name.get_extension() != "tres": continue
+		
+		var resource: Resource = load(dir_path.path_join(file_name))
+		if (
+			resource is PopochiuRoomData
+			or resource is PopochiuCharacterData
+			or resource is PopochiuInventoryItemData
+			or resource is PopochiuDialog
+		):
+			return resource
+	
+	PopochiuUtils.print_error("No data file (.tres) found for [b]%s[/b]" % dir_path)
+	return null
 
 
 #endregion

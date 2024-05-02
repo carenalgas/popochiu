@@ -136,7 +136,7 @@ func _ready() -> void:
 	
 	if type in Constants.MAIN_TYPES:
 		# By default disable the Add to Popochiu button. This will be enabled by PopochiuDock.gd if
-		# this object is not in PopochiuData.cfg
+		# this object is not in popochiu_data.cfg
 		menu_popup.set_item_disabled(
 			menu_popup.get_item_index(MenuOptions.ADD_TO_CORE), true
 		)
@@ -198,12 +198,12 @@ func show_add_to_core() -> void:
 	)
 
 
-func show_create_state_script() -> void:
+func show_create_state_script_button() -> void:
 	btn_state_script.disabled = true
 	menu_popup.set_item_disabled(menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT), false)
 
 
-func remove_create_state_script() -> void:
+func hide_create_state_script_button() -> void:
 	menu_popup.remove_item(menu_popup.get_item_index(MenuOptions.CREATE_STATE_SCRIPT))
 
 
@@ -344,8 +344,8 @@ func _menu_item_pressed(id: int) -> void:
 			_remove_object()
 
 
-## Add this Object (Room, Character, InventoryItem, Dialog) to PopochiuData.cfg so it can be used by
-## Popochiu.
+## Add this Object (Room, Character, InventoryItem, Dialog) to popochiu_data.cfg so it can be used
+## by Popochiu.
 func _add_object_to_core() -> void:
 	var target_array := ""
 	var resource: Resource
@@ -612,7 +612,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 				if resource is AudioCue:
 					deleted_audios.append(resource.audio.resource_path)
 					
-					# Delete the AudioCue in the PopochiuData.cfg
+					# Delete the AudioCue in the popochiu_data.cfg
 					for cue_group in ["mx_cues", "sfx_cues", "vo_cues", "ui_cues"]:
 						var cues: Array = PopochiuResources.get_data_value(
 							"audio", cue_group, []

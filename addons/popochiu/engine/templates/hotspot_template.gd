@@ -22,7 +22,7 @@ func _on_double_click() -> void:
 	E.command_fallback()
 	# For example, you could make the player instantly goto another room on an exit hotspot instead
 	# of waiting for the player to walk there.
-#	await E.goto_room("NewRoom")
+#	await R.current = R.NewRoom
 
 
 # When the node is right clicked

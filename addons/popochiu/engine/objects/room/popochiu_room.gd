@@ -15,7 +15,7 @@ extends Node2D
 @export var has_player := true
 ## If [code]true[/code] the whole GUI will be hidden when the room is loaded. Useful for cutscenes,
 ## splash screens and when showing game menus or popups.
-@export var hide_gi := false
+@export var hide_gui := false
 @export_category("Camera limits")
 ## If this different from [constant INF], the value will define the left limit of the camera
 ## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
@@ -89,7 +89,7 @@ func _ready():
 	G.blocked.connect(_on_graphic_interface_blocked)
 	G.unblocked.connect(_on_graphic_interface_unblocked)
 	
-	E.room_readied(self)
+	R.room_readied(self)
 
 
 func _get_property_list() -> Array[Dictionary]:
@@ -230,13 +230,13 @@ func has_character(character_name: String) -> bool:
 ## Called by Popochiu when loading the room to assign its camera limits to the player camera.
 func setup_camera() -> void:
 	if limit_left != INF:
-		E.main_camera.limit_left = limit_left
+		E.camera.limit_left = limit_left
 	if limit_right != INF:
-		E.main_camera.limit_right = limit_right
+		E.camera.limit_right = limit_right
 	if limit_top != INF:
-		E.main_camera.limit_top = limit_top
+		E.camera.limit_top = limit_top
 	if limit_bottom != INF:
-		E.main_camera.limit_bottom = limit_bottom
+		E.camera.limit_bottom = limit_bottom
 
 
 ## Remove all children from the [b]$Characters[/b] node, storing the children of each node to later

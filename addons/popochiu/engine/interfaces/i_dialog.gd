@@ -88,6 +88,23 @@ func say_selected() -> void:
 	await C.player.say(selected_option.text)
 
 
+## @deprecated
+## Now it is [method get_instance].
+func get_dialog_instance(script_name: String) -> PopochiuDialog:
+	return get_instance(script_name)
+
+
+## Gets the instance of the [PopochiuDialog] identified with [param script_name].
+func get_instance(script_name: String) -> PopochiuDialog:
+	var tres_path: String = PopochiuResources.get_data_value("dialogs", script_name, "")
+	
+	if not tres_path:
+		PopochiuUtils.print_error("Dialog [b]%s[/b] doesn't exist in the project" % script_name)
+		return null
+	
+	return load(tres_path)
+
+
 #endregion
 
 #region SetGet #####################################################################################

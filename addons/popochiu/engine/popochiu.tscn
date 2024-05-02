@@ -1,11 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://rda8wggldt5o"]
+[gd_scene load_steps=3 format=3 uid="uid://rda8wggldt5o"]
 
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/popochiu_main_camera.gd" id="2_hac1i"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/popochiu.gd" id="3"]
 
 [node name="Popochiu" type="Node"]
 script = ExtResource("3")
 
-[node name="MainCamera" type="Camera2D" parent="."]
+[node name="PopochiuMainCamera" type="Camera2D" parent="."]
+unique_name_in_owner = true
 limit_left = 0
 limit_top = 0
 limit_right = 320
@@ -13,6 +15,7 @@ limit_bottom = 180
 position_smoothing_speed = 10.0
 editor_draw_limits = true
 editor_draw_drag_margin = true
+script = ExtResource("2_hac1i")
 
 [node name="GraphicInterfaceLayer" type="CanvasLayer" parent="."]
 layer = 10

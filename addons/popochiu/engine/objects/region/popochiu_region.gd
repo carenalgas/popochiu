@@ -82,7 +82,7 @@ func _check_scaling(
 		if entered:
 			if scaling:
 				_update_scaling_region(area)
-				E.current_room.update_character_scale(area)
+				R.current.update_character_scale(area)
 		else:
 			_clear_scaling_region(area)
 

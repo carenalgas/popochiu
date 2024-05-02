@@ -74,7 +74,7 @@ const AUDIO_MANAGER :=\
 const CURSOR_TYPE :=\
 preload("res://addons/popochiu/engine/cursor/cursor.gd").Type
 const DATA := "res://game//popochiu_data.cfg"
-const ROOM_CHILDS := ["props", "hotspots", "walkable_areas", "regions"]
+const ROOM_CHILDREN := ["props", "hotspots", "walkable_areas", "regions"]
 const VALID_TYPES := [
 	TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING,
 	TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY,
@@ -136,7 +136,7 @@ const SNGL_SETUP := {
 		"class" = "res://game/rooms/%s/room_%s.gd",
 		"const" = "const PR%s := preload(\"%s\")\n",
 		node = "var %s: PR%s : get = get_%s\n",
-		"func" = "func get_%s() -> PR%s: return super.get_runtime_room(\"%s\")\n",
+		"func" = "func get_%s() -> PR%s: return get_runtime_room(\"%s\")\n",
 		prefix = "R",
 	},
 	C_SNGL : {
@@ -145,7 +145,7 @@ const SNGL_SETUP := {
 		"class" = "res://game/characters/%s/character_%s.gd",
 		"const" = "const PC%s := preload(\"%s\")\n",
 		node = "var %s: PC%s : get = get_%s\n",
-		"func" = "func get_%s() -> PC%s: return super.get_runtime_character(\"%s\")\n",
+		"func" = "func get_%s() -> PC%s: return get_runtime_character(\"%s\")\n",
 		prefix = "C",
 	},
 	I_SNGL : {
@@ -154,7 +154,7 @@ const SNGL_SETUP := {
 		"class" = "res://game/inventory_items/%s/inventory_item_%s.gd",
 		"const" = "const PII%s := preload(\"%s\")\n",
 		node = "var %s: PII%s : get = get_%s\n",
-		"func" = "func get_%s() -> PII%s: return super.get_item_instance(\"%s\")\n",
+		"func" = "func get_%s() -> PII%s: return get_item_instance(\"%s\")\n",
 		prefix = "I",
 	},
 	D_SNGL : {
@@ -163,7 +163,7 @@ const SNGL_SETUP := {
 		"class" = "res://game/dialogs/%s/dialog_%s.gd",
 		"const" = "const PD%s := preload(\"%s\")\n",
 		node = "var %s: PD%s : get = get_%s\n",
-		"func" = "func get_%s() -> PD%s: return E.get_dialog(\"%s\")\n",
+		"func" = "func get_%s() -> PD%s: return get_instance(\"%s\")\n",
 		prefix = "D",
 	}
 }

@@ -70,6 +70,8 @@ signal load_requested
 signal sound_settings_requested
 ## Emitted when the dialog options of the running [PopochiuDialog] are shown.
 signal dialog_options_shown
+## Emitted when a game is loaded and the GUI has shown (or not shown) a notification to the player.
+signal load_feedback_finished
 
 ## Whether the GUI is blocked or not.
 var is_blocked := false

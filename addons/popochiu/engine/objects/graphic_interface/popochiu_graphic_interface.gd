@@ -38,6 +38,8 @@ func _ready():
 	G.dialog_options_shown.connect(_on_dialog_options_shown)
 	D.dialog_finished.connect(_on_dialog_finished)
 	I.item_selected.connect(_on_inventory_item_selected)
+	E.game_saved.connect(_on_game_saved)
+	E.game_loaded.connect(_on_game_loaded)
 	
 	if E.settings.is_pixel_art_game:
 		# Apply this filter so the font doesn't blur
@@ -137,6 +139,18 @@ func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 ## Called when [param item] is selected in the inventory (i.e. by clicking it).
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	pass
+
+
+## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
+## component.
+func _on_game_saved() -> void:
+	pass
+
+
+## Called when a game is loaded. [param loaded_game] has the loaded data. By default, this emits
+## the [signal G.load_feedback_finished] signal.
+func _on_game_loaded(loaded_game: Dictionary) -> void:
+	G.load_feedback_finished.emit()
 
 
 ## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.

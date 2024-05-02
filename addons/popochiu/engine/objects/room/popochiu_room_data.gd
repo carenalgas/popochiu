@@ -62,10 +62,10 @@ func on_load(data: Dictionary) -> void:
 
 ## Stores the data of each of the childrens inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
-func save_childs_states() -> void:
-	if E.current_room and E.current_room.state == self:
-		for t in PopochiuResources.ROOM_CHILDS:
-			for node in E.current_room.call('get_' + t):
+func save_children_states() -> void:
+	if R.current and R.current.state == self:
+		for t in PopochiuResources.ROOM_CHILDREN:
+			for node in R.current.call('get_' + t):
 				if node is PopochiuProp and not node.clickable: continue
 				
 				_save_object_state(
@@ -81,7 +81,7 @@ func save_childs_states() -> void:
 	
 	var base_dir := resource_path.get_base_dir()
 	
-	for t in PopochiuResources.ROOM_CHILDS:
+	for t in PopochiuResources.ROOM_CHILDREN:
 		if (get(t) as Dictionary).is_empty():
 			var category := (t as String).replace(' ', '')
 			var objs_path := '%s/%s' % [base_dir, category]
@@ -136,7 +136,7 @@ func save_childs_states() -> void:
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
 func save_characters() -> void:
-	for c in E.current_room.get_characters():
+	for c in R.current.get_characters():
 		var pc: PopochiuCharacter = c
 		
 		characters[pc.script_name] = {

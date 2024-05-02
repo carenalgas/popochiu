@@ -16,8 +16,7 @@ var last_selected: Control = null
 var _audio_row := preload(
 	"res://addons/popochiu/editor/main_dock/audio_row/popochiu_audio_row.tscn"
 )
-# Array with all the paths to files that are already assigned to a category
-# in PopochiuData.cfg
+# Array with all the paths to files that are already assigned to a category in popochiu_data.cfg
 var _audio_files_in_group := []
 var _audio_files_to_assign := []
 var _audio_cues_to_create := []
@@ -67,8 +66,8 @@ func fill_data() -> void:
 
 
 func search_audio_files() -> void:
-	# Look PopochiuData.cfg to remove_at entries for AudioCue files that don't
-	# exists in the project anymore
+	# Look popochiu_data.cfg to remove_at entries for AudioCue files that don't exist in the
+	# project anymore
 	_group_audio_cues()
 	
 	var fs_directory: EditorFileSystemDirectory =\
@@ -129,8 +128,7 @@ func delete_rows(filepaths: Array) -> void:
 func _group_audio_cues() -> void:
 	var entries_to_delete := {}
 	
-	# Put already loaded (in PopochiuData.cfg) AudioCues into their corresponding
-	# group
+	# Put already loaded (in popochiu_data.cfg) PopochiuAudioCues into their corresponding group
 	for key: String in _groups:
 		var group_dic: Dictionary = _groups[key]
 		var group_data: Array = PopochiuResources.get_data_value("audio", group_dic.array, [])
@@ -218,8 +216,8 @@ func _read_files(dir: EditorFileSystemDirectory) -> void:
 		
 		if dir.get_file_path(idx) in _audio_files_in_group\
 		or dir.get_file_path(idx) in _audio_files_to_assign:
-			# Don't put in the list an audio file already assigned to an
-			# AudioCue in PopochiuData.cfg
+			# Don't put in the list an audio file already assigned to a PopochiuAudioCue in
+			# popochiu_data.cfg
 			continue
 			
 		# Check if the file prefix matches one of the defined for automatic
