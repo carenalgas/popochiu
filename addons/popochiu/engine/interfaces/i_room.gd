@@ -96,16 +96,28 @@ func get_markers() -> Array:
 ## This method is used by [b]res://game/autoloads/r.gd[/b] to load the instace of each room (present
 ## in that script as a variable for code autocompletion) in runtime.
 func get_runtime_room(script_name: String) -> PopochiuRoom:
-	if _room_instances.has(script_name):
-		return _room_instances[script_name]
+	var room: PopochiuRoom = null
 	
-	var tres_path: String = PopochiuResources.get_data_value("rooms", script_name, null)
-	if tres_path.is_empty():
+	if _room_instances.has(script_name):
+		room = _room_instances[script_name]
+	else:
+		room = get_instance(script_name)
+	
+		if room:
+			_room_instances[room.script_name] = room
+	
+	return room
+
+
+## Gets the instance of the [PopochiuRoom] identified with [param script_name].
+func get_instance(script_name: String) -> PopochiuRoom:
+	var tres_path: String = PopochiuResources.get_data_value("rooms", script_name, "")
+	
+	if not tres_path:
 		PopochiuUtils.print_error("Room [b]%s[/b] doesn't exist in the project" % script_name)
 		return null
 	
-	_room_instances[script_name] = load(load(tres_path).scene).instantiate()
-	return _room_instances[script_name]
+	return load(load(tres_path).scene).instantiate()
 
 
 ## Clears all the [PopochiuRoom] instances to free memory and orphan childs.
