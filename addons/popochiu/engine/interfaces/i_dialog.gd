@@ -90,13 +90,13 @@ func say_selected() -> void:
 
 ## Gets the instance of the [PopochiuDialog] identified with [param script_name].
 func get_dialog_instance(script_name: String) -> PopochiuDialog:
-	for rp in PopochiuResources.get_section("dialogs"):
-		var tree: PopochiuDialog = load(rp)
-		if tree.script_name.to_lower() == script_name.to_lower():
-			return tree
-
-	PopochiuUtils.print_error("Dialog '%s doesn't exists" % script_name)
-	return null
+	var tres_path: String = PopochiuResources.get_data_value("dialogs", script_name, "")
+	
+	if not tres_path:
+		PopochiuUtils.print_error("Dialog [b]%s[/b] doesn't exist in the project" % script_name)
+		return null
+	
+	return load(tres_path)
 
 
 #endregion

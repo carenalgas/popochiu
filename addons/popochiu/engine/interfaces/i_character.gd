@@ -154,13 +154,13 @@ func get_character(script_name: String) -> PopochiuCharacter:
 
 ## Gets the instance of the [PopochiuCharacter] identified with [param script_name].
 func get_character_instance(script_name: String) -> PopochiuCharacter:
-	for rp in PopochiuResources.get_section("characters"):
-		var popochiu_character: PopochiuCharacterData = load(rp)
-		if popochiu_character.script_name == script_name:
-			return load(popochiu_character.scene).instantiate()
+	var tres_path: String = PopochiuResources.get_data_value("characters", script_name, "")
 	
-	PopochiuUtils.print_error("Character %s doesn't exists" % script_name)
-	return null
+	if not tres_path:
+		PopochiuUtils.print_error("Character [b]%s[/b] doesn't exist in the project" % script_name)
+		return null
+	
+	return load(load(tres_path).scene).instantiate()
 
 
 #endregion

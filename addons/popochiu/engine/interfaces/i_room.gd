@@ -13,7 +13,7 @@ extends Node
 ##
 ## Examples:
 ## [codeblock]
-## R.get_prop('Scissors').modulate.a = 1.0 # Get Scissors prop and make it visible
+## R.get_prop("Scissors").modulate.a = 1.0 # Get Scissors prop and make it visible
 ## R.Outside.state.is_rainning # Access the is_rainning property in the Outside room
 ## [/codeblock]
 
@@ -68,22 +68,22 @@ func get_marker_position(marker_name: String) -> Vector2:
 
 ## Returns all the [PopochiuProp]s in the room.
 func get_props() -> Array:
-	return get_tree().get_nodes_in_group('props')
+	return get_tree().get_nodes_in_group("props")
 
 
 ## Returns all the [PopochiuHotspot]s in the room.
 func get_hotspots() -> Array:
-	return get_tree().get_nodes_in_group('hotspots')
+	return get_tree().get_nodes_in_group("hotspots")
 
 
 ## Returns all the [PopochiuRegion]s in the room.
 func get_regions() -> Array:
-	return get_tree().get_nodes_in_group('regions')
+	return get_tree().get_nodes_in_group("regions")
 
 
 ## Returns all the [PopochiuWalkableArea]s in the room.
 func get_walkable_areas() -> Array:
-	return get_tree().get_nodes_in_group('walkable_areas')
+	return get_tree().get_nodes_in_group("walkable_areas")
 
 
 ## Returns all the [Marker2D]s in the room.
@@ -99,13 +99,12 @@ func get_runtime_room(script_name: String) -> PopochiuRoom:
 	if _room_instances.has(script_name):
 		return _room_instances[script_name]
 	
-	var rp: String = PopochiuResources.get_data_value('rooms', script_name, null)
-	if rp.is_empty():
-		PopochiuUtils.print_error('No PopochiuRoom with name: %s' % script_name)
+	var tres_path: String = PopochiuResources.get_data_value("rooms", script_name, null)
+	if tres_path.is_empty():
+		PopochiuUtils.print_error("Room [b]%s[/b] doesn't exist in the project" % script_name)
 		return null
 	
-	_room_instances[script_name] = load(load(rp).scene).instantiate()
-	
+	_room_instances[script_name] = load(load(tres_path).scene).instantiate()
 	return _room_instances[script_name]
 
 
@@ -138,7 +137,7 @@ func goto_room(
 		E.tl.play_transition(E.tl.FADE_IN)
 		await E.tl.transition_finished
 	
-	# Prevent the GUI to show info from the previous room
+	# Prevent the GUI from showing info coming from the previous room
 	G.show_hover_text()
 	Cursor.show_cursor()
 	
@@ -148,7 +147,7 @@ func goto_room(
 	# Store the room state
 	if store_state:
 		rooms_states[current.script_name] = current.state
-		current.state.save_childs_states()
+		current.state.save_children_states()
 	
 	# Remove PopochiuCharacter nodes from the room so they are not deleted
 	if Engine.get_process_frames() > 0:
@@ -162,7 +161,9 @@ func goto_room(
 	
 	var rp: String = PopochiuResources.get_data_value("rooms", script_name, null)
 	if rp.is_empty():
-		PopochiuUtils.print_error("No PopochiuRoom with name: %s" % script_name)
+		PopochiuUtils.print_error(
+			"Can't go to room [b]%s[/b] because it doesn't exist" % script_name
+		)
 		return
 	
 	if Engine.get_process_frames() == 0:
@@ -236,7 +237,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		await C.player.idle()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
-	for type in PopochiuResources.ROOM_CHILDS:
+	for type in PopochiuResources.ROOM_CHILDREN:
 		for script_name in rooms_states[room.script_name][type]:
 			var node: Node2D = current.callv(
 				"get_" + type.trim_suffix("s"),
@@ -269,7 +270,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	else:
 		await get_tree().process_frame
 	
-	if not current.hide_gi:
+	if not current.hide_gui:
 		G.unblock()
 	
 	if E.hovered:
@@ -296,7 +297,7 @@ func store_states() -> void:
 	for room_tres in PopochiuResources.get_section("rooms"):
 		var res: PopochiuRoomData = load(room_tres)
 		rooms_states[res.script_name] = res
-		res.save_childs_states()
+		res.save_children_states()
 
 
 #endregion
@@ -305,7 +306,6 @@ func store_states() -> void:
 func set_current(value: PopochiuRoom) -> void:
 	if not value.is_inside_tree():
 		goto_room(value.script_name)
-		#value.queue_free()
 	else:
 		current = value
 

@@ -145,13 +145,15 @@ func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 
 ## Gets the instance of the [PopochiuInventoryItem] identified with [param script_name].
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	for rp in PopochiuResources.get_section("inventory_items"):
-		var popochiu_inventory_item: PopochiuInventoryItemData = load(rp)
-		if popochiu_inventory_item.script_name == script_name:
-			return load(popochiu_inventory_item.scene).instantiate()
+	var tres_path: String = PopochiuResources.get_data_value("inventory_items", script_name, "")
 	
-	PopochiuUtils.print_error("Item %s doesn't exists" % script_name)
-	return null
+	if not tres_path:
+		PopochiuUtils.print_error(
+			"Inventory item [b]%s[/b] doesn't exist in the project" % script_name
+		)
+		return null
+	
+	return load(load(tres_path).scene).instantiate()
 
 
 ## Sets the cursor to use the texture of [param item].

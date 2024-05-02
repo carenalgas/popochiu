@@ -164,7 +164,7 @@ func _store_data(type: String, save: Dictionary) -> void:
 			"rooms":
 				data.save_childs_states()
 				
-				for category in PopochiuResources.ROOM_CHILDS:
+				for category in PopochiuResources.ROOM_CHILDREN:
 					save[type][data.script_name][category] = data[category]
 				
 				save[type][data.script_name]["characters"] = data.characters

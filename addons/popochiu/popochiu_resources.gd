@@ -74,7 +74,7 @@ const AUDIO_MANAGER :=\
 const CURSOR_TYPE :=\
 preload("res://addons/popochiu/engine/cursor/cursor.gd").Type
 const DATA := "res://game//popochiu_data.cfg"
-const ROOM_CHILDS := ["props", "hotspots", "walkable_areas", "regions"]
+const ROOM_CHILDREN := ["props", "hotspots", "walkable_areas", "regions"]
 const VALID_TYPES := [
 	TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING,
 	TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY,

@@ -3,6 +3,14 @@ extends RefCounted
 ## Helper class to handle things related to [PopochiuCharacters] but that may not be the
 ## responsibility of [PopochiuICharacter].
 
+static var char_pattern := r'(?<character>.+?)'
+static var emo_pattern := r'(?:\((?<emotion>\w+)\))?'
+static var time_pattern := r'(?:\[(?<time>\d+)\])?'
+static var line_pattern := r':\s*(?<line>.+)'
+static var emo_or_time_pattern := r'(%s%s|%s%s)?' % [
+	emo_pattern, time_pattern, time_pattern, emo_pattern
+]
+
 
 #region Public #####################################################################################
 ## Defines the [PopochiuCharacter] that will be controlled by players.
@@ -38,20 +46,17 @@ static func define_player() -> void:
 ## Evals [param text] to know if it is a wait inside a dialog or if it is a [PopochiuCharacter]
 ## saying something. This is used when calling [method E.queue].
 static func exec_string(text: String) -> void:
-	match text:
-		".":
-			await E.wait(0.25)
-		"..":
-			await E.wait(0.5)
-		"...":
-			await E.wait(1.0)
-		"....":
-			await E.wait(2.0)
-		_:
-			if not ":" in text:
-				await E.get_tree().process_frame
-			else:
-				await _trigger_dialog_line(text)
+	var regex = RegEx.new()
+	regex.compile(r'^\.+$')
+	var result = regex.search(text)
+	
+	if result:
+		# A shortcut to wait X seconds
+		await E.wait(0.25 * pow(2, result.get_string(0).count(".") - 1))
+	elif ":" in text:
+		await _trigger_dialog_line(text)
+	else:
+		await E.get_tree().process_frame
 	
 	E.auto_continue_after = -1.0
 #endregion
@@ -59,17 +64,19 @@ static func exec_string(text: String) -> void:
 #region Private ####################################################################################
 static func _trigger_dialog_line(text: String) -> void:
 	var regex = RegEx.new()
-	regex.compile(r'^(.+?)(?:\((\w+)\))?(?:\[(\d+)\])?:\s*(.+)$')
+	regex.compile(r'^%s%s%s$' % [char_pattern, emo_or_time_pattern, line_pattern])
 	var result = regex.search(text)
 	
-	var character_name := result.get_string(1)
-	var emotion := result.get_string(2)
-	var change_time := float(result.get_string(3))
-	var dialogue_line := result.get_string(4)
+	var character_name := result.get_string("character")
+	var emotion := result.get_string("emotion")
+	var change_time := result.get_string("time")
+	var dialogue_line := result.get_string("line")
 	
 	var character := C.get_character(character_name)
 	
 	if not character:
+		PopochiuUtils.print_warning("Character %s not found to play dialog line." % character_name)
+		
 		await E.get_tree().process_frame
 		return
 	
@@ -77,7 +84,7 @@ static func _trigger_dialog_line(text: String) -> void:
 		character.emotion = emotion
 	
 	if change_time:
-		E.auto_continue_after = change_time
+		E.auto_continue_after = float(change_time)
 	
 	await character.say(dialogue_line)
 

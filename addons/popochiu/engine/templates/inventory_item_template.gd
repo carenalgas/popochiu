@@ -9,7 +9,7 @@ var state: Data = null
 # When the item is clicked in the inventory
 func _on_click() -> void:
 	# Replace the call to E.command_fallback() to implement your code.
-	E.command_fallback()
+	set_active()
 
 
 # When the item is right clicked in the inventory

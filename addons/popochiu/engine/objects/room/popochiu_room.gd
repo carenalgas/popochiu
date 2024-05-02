@@ -15,7 +15,7 @@ extends Node2D
 @export var has_player := true
 ## If [code]true[/code] the whole GUI will be hidden when the room is loaded. Useful for cutscenes,
 ## splash screens and when showing game menus or popups.
-@export var hide_gi := false
+@export var hide_gui := false
 @export_category("Camera limits")
 ## If this different from [constant INF], the value will define the left limit of the camera
 ## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
