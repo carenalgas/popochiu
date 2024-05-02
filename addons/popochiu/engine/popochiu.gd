@@ -218,9 +218,9 @@ func wait(time := 1.0) -> void:
 #	pass
 
 
-## Executes an array of [param instructions] one by one. [param show_gi] determines if the
+## Executes an array of [param instructions] one by one. [param show_gui] determines if the
 ## Graphic Interface will appear once all instructions have ran.
-func queue(instructions: Array, show_gi := true) -> void:
+func queue(instructions: Array, show_gui := true) -> void:
 	if instructions.is_empty():
 		await get_tree().process_frame
 		
@@ -228,7 +228,7 @@ func queue(instructions: Array, show_gi := true) -> void:
 	
 	if playing_queue:
 		await get_tree().process_frame
-		await queue(instructions, show_gi)
+		await queue(instructions, show_gui)
 		
 		return
 	
@@ -242,9 +242,9 @@ func queue(instructions: Array, show_gi := true) -> void:
 		if instruction is Callable:
 			await instruction.call()
 		elif instruction is String:
-			await PopochiuCharactersHelper.exec_string(instruction as String)
+			await PopochiuCharactersHelper.execute_string(instruction as String)
 	
-	if show_gi:
+	if show_gui:
 		G.unblock()
 	
 	if camera.is_shaking:
@@ -342,21 +342,21 @@ func get_text(msg: String) -> String:
 
 
 ## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuICharacter.get_character_instance].
+## [b]Deprecated[/b]. Now this is done by [method PopochiuICharacter.get_instance].
 func get_character_instance(script_name: String) -> PopochiuCharacter:
-	return C.get_character_instance(script_name)
+	return C.get_instance(script_name)
 
 
 ## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuIInventory.get_inventory_item_instance].
+## [b]Deprecated[/b]. Now this is done by [method PopochiuIInventory.get_instance].
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	return I.get_inventory_item_instance(script_name)
+	return I.get_instance(script_name)
 
 
 ## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuIDialog.get_dialog_instance].
+## [b]Deprecated[/b]. Now this is done by [method PopochiuIDialog.get_instance].
 func get_dialog(script_name: String) -> PopochiuDialog:
-	return D.get_dialog_instance(script_name)
+	return D.get_instance(script_name)
 
 
 ## Adds an action, represented by [param data], to the [member history] of actions. 
@@ -473,7 +473,6 @@ func get_saves_descriptions() -> Dictionary:
 func save_game(slot := 1, description := "") -> void:
 	if _saveload.save_game(slot, description):
 		game_saved.emit()
-		await G.show_system_text("Game saved")
 
 
 ## Loads the game in the given [param slot].

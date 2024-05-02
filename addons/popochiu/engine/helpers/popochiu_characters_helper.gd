@@ -32,20 +32,18 @@ static func define_player() -> void:
 	# PopochiuCharacter in the project as it
 	if not C.player:
 		# Set the first character on the list to be the default player character
-		var characters := PopochiuResources.get_section("characters")
-
+		var characters := PopochiuResources.get_section_keys("characters")
+		
 		if not characters.is_empty():
-			pc = load((load(characters[0]) as PopochiuCharacterData).scene).instantiate()
+			pc = C.get_character(characters[0])
 	
 	if pc:
 		C.player = pc
-		C.characters.append(pc)
-		C.set(pc.script_name, pc)
 
 
 ## Evals [param text] to know if it is a wait inside a dialog or if it is a [PopochiuCharacter]
 ## saying something. This is used when calling [method E.queue].
-static func exec_string(text: String) -> void:
+static func execute_string(text: String) -> void:
 	var regex = RegEx.new()
 	regex.compile(r'^\.+$')
 	var result = regex.search(text)
@@ -59,6 +57,8 @@ static func exec_string(text: String) -> void:
 		await E.get_tree().process_frame
 	
 	E.auto_continue_after = -1.0
+
+
 #endregion
 
 #region Private ####################################################################################

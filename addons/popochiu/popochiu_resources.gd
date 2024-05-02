@@ -163,7 +163,7 @@ const SNGL_SETUP := {
 		"class" = "res://game/dialogs/%s/dialog_%s.gd",
 		"const" = "const PD%s := preload(\"%s\")\n",
 		node = "var %s: PD%s : get = get_%s\n",
-		"func" = "func get_%s() -> PD%s: return get_dialog_instance(\"%s\")\n",
+		"func" = "func get_%s() -> PD%s: return get_instance(\"%s\")\n",
 		prefix = "D",
 	}
 }

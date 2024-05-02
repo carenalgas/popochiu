@@ -313,15 +313,13 @@ func _get_popochiu_objects_resources(dir_name: String, type_key: Constants.Types
 		if file_name.get_extension() != "tres": continue
 		
 		var resource: Resource = load(dir_path.path_join(file_name))
-		if not (
+		if (
 			resource is PopochiuRoomData
 			or resource is PopochiuCharacterData
 			or resource is PopochiuInventoryItemData
 			or resource is PopochiuDialog
 		):
-			continue
-		
-		return resource
+			return resource
 	
 	PopochiuUtils.print_error("No data file (.tres) found for [b]%s[/b]" % dir_path)
 	return null

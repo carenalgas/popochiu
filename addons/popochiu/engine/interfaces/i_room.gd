@@ -280,7 +280,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	if E.loaded_game:
 		E.game_loaded.emit(E.loaded_game)
-		await G.show_system_text("Game loaded")
+		await G.load_feedback_finished
 		
 		E.loaded_game = {}
 	

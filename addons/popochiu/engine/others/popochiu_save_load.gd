@@ -162,7 +162,7 @@ func _store_data(type: String, save: Dictionary) -> void:
 		
 		match type:
 			"rooms":
-				data.save_childs_states()
+				data.save_children_states()
 				
 				for category in PopochiuResources.ROOM_CHILDREN:
 					save[type][data.script_name][category] = data[category]

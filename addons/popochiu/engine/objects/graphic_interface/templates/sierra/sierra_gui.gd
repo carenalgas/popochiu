@@ -115,6 +115,20 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 		Cursor.show_cursor()
 
 
+## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
+## component.
+func _on_game_saved() -> void:
+	G.show_system_text("Game saved")
+
+
+## Called when a game is loaded. [param loaded_game] has the loaded data. By default, it shows
+## [code]Game loaded[/code] in the SystemText component.
+func _on_game_loaded(loaded_game: Dictionary) -> void:
+	await G.show_system_text("Game loaded")
+	
+	super(loaded_game)
+
+
 ## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
 func _get_cursor_name() -> String:
 	return E.get_current_command_name().to_snake_case()
