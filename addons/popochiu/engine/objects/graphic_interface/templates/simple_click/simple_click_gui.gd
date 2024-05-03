@@ -20,6 +20,23 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
+## Called when the GUI is blocked and not intended to handle input events.
+func _on_blocked(props := { blocking = true }) -> void:
+	Cursor.show_cursor("wait")
+	Cursor.is_blocked = true
+
+
+## Called when the GUI is unblocked and can handle input events again.
+func _on_unblocked() -> void:
+	Cursor.is_blocked = false
+	
+	if I.active:
+		Cursor.hide_main_cursor()
+		Cursor.show_secondary_cursor()
+	else:
+		Cursor.show_cursor(get_cursor_name())
+
+
 ## Called when a text is shown in the [SystemText] component. This erases the text in the
 ## [HoverText] component and shows the [code]"wait"[/code] cursor.
 func _on_system_text_shown(msg: String) -> void:

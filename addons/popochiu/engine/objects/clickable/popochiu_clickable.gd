@@ -10,12 +10,12 @@ extends Area2D
 ## handle scaling.
 
 ## Used to allow devs to define the cursor type for the clickable.
-const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
+const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 
 ## The identifier of the object used in scripts.
-@export var script_name := ''
+@export var script_name := ""
 ## The text shown to players when the cursor hovers the object.
-@export var description := ''
+@export var description := ""
 ## Whether the object will listen to interactions.
 @export var clickable := true
 ## The [code]y[/code] position of the baseline relative to the center of the object.
@@ -61,7 +61,7 @@ var _has_double_click: bool = false
 
 #region Godot ######################################################################################
 func _ready():
-	add_to_group('PopochiuClickable')
+	add_to_group("PopochiuClickable")
 	
 	if Engine.is_editor_hint():
 		hide_helpers()
@@ -75,11 +75,11 @@ func _ready():
 			return
 		
 		if interaction_polygon.is_empty():
-			interaction_polygon = get_node('InteractionPolygon').polygon
-			interaction_polygon_position = get_node('InteractionPolygon').position
+			interaction_polygon = get_node("InteractionPolygon").polygon
+			interaction_polygon_position = get_node("InteractionPolygon").position
 		else:
-			get_node('InteractionPolygon').polygon = interaction_polygon
-			get_node('InteractionPolygon').position = interaction_polygon_position
+			get_node("InteractionPolygon").polygon = interaction_polygon
+			get_node("InteractionPolygon").position = interaction_polygon_position
 		
 		return
 	else:
@@ -112,18 +112,18 @@ func _ready():
 
 func _process(delta):
 	if Engine.is_editor_hint():
-		if walk_to_point != get_node('WalkToHelper').position:
-			walk_to_point = get_node('WalkToHelper').position
+		if walk_to_point != get_node("WalkToHelper").position:
+			walk_to_point = get_node("WalkToHelper").position
 			
 			notify_property_list_changed()
-		elif baseline != get_node('BaselineHelper').position.y:
-			baseline = get_node('BaselineHelper').position.y
+		elif baseline != get_node("BaselineHelper").position.y:
+			baseline = get_node("BaselineHelper").position.y
 			
 			notify_property_list_changed()
 		
 		if editing_polygon:
-			interaction_polygon = get_node('InteractionPolygon').polygon
-			interaction_polygon_position = get_node('InteractionPolygon').position
+			interaction_polygon = get_node("InteractionPolygon").polygon
+			interaction_polygon_position = get_node("InteractionPolygon").position
 
 
 #endregion
@@ -237,28 +237,28 @@ func get_walk_to_point() -> Vector2:
 
 ## Called when the object is left clicked.
 func on_click() -> void:
-	_on_click()
+	await _on_click()
 
 
 ## Called when the object is double clicked.
 func on_double_click() -> void:
 	_reset_double_click()
-	_on_double_click()
+	await _on_double_click()
 
 
 ## Called when the object is right clicked.
 func on_right_click() -> void:
-	_on_right_click()
+	await _on_right_click()
 
 
 ## Called when the object is middle clicked.
 func on_middle_click() -> void:
-	_on_middle_click()
+	await _on_middle_click()
 
 
 ## Called when an [param item] is used on this object.
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	_on_item_used(item)
+	await _on_item_used(item)
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
@@ -297,15 +297,15 @@ func handle_command(button_idx: int) -> void:
 func set_baseline(value: int) -> void:
 	baseline = value
 	
-	if Engine.is_editor_hint() and get_node_or_null('BaselineHelper'):
-		get_node('BaselineHelper').position = Vector2.DOWN * value
+	if Engine.is_editor_hint() and get_node_or_null("BaselineHelper"):
+		get_node("BaselineHelper").position = Vector2.DOWN * value
 
 
 func set_walk_to_point(value: Vector2) -> void:
 	walk_to_point = value
 	
-	if Engine.is_editor_hint() and get_node_or_null('WalkToHelper'):
-		get_node('WalkToHelper').position = value
+	if Engine.is_editor_hint() and get_node_or_null("WalkToHelper"):
+		get_node("WalkToHelper").position = value
 
 
 func set_room(value: Node2D) -> void:
@@ -358,19 +358,21 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	match event_index:
 		MOUSE_BUTTON_LEFT:
 			if I.active:
-				on_item_used(I.active)
+				await on_item_used(I.active)
 			else:
-				handle_command(event_index)
+				await handle_command(event_index)
 				times_clicked += 1
 		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
 			if I.active: return
 			
-			handle_command(event_index)
+			await handle_command(event_index)
 			
 			if event_index == MOUSE_BUTTON_RIGHT:
 				times_right_clicked += 1
 			elif event_index == MOUSE_BUTTON_MIDDLE:
 				times_middle_clicked += 1
+	
+	E.clicked = null
 
 
 func _toggle_input() -> void:
@@ -382,9 +384,7 @@ func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree()\
 	or not E.settings.use_translations: return
 	
-	description = E.get_text(
-		'%s-%s' % [get_tree().current_scene.name, _description_code]
-	)
+	description = E.get_text("%s-%s" % [get_tree().current_scene.name, _description_code])
 
 
 # ---- @anthonyirwin82 -----------------------------------------------------------------------------
