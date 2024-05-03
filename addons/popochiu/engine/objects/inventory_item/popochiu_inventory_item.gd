@@ -1,4 +1,4 @@
-@icon('res://addons/popochiu/icons/inventory_item.png')
+@icon("res://addons/popochiu/icons/inventory_item.png")
 class_name PopochiuInventoryItem
 extends TextureRect
 ## An inventory item.
@@ -7,7 +7,7 @@ extends TextureRect
 ## be used on other objects (i.e. [PopochiuClickable] or other inventory items).
 
 ## Used to allow devs to define the cursor type for the clickable.
-const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
+const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 
 ## Emitted when the item is selected. 
 signal selected(item)
@@ -16,9 +16,9 @@ signal selected(item)
 signal unselected
 
 ## The identifier of the item used in scripts.
-@export var script_name := ''
+@export var script_name := ""
 ## The text shown to players when the cursor hovers the item.
-@export var description := '' : get = get_description
+@export var description := "" : get = get_description
 ## The cursor to use when the mouse hovers the object.
 @export var cursor: CURSOR.Type = CURSOR.Type.USE
 
@@ -108,10 +108,7 @@ func queue_add(animate := true) -> Callable:
 ## [/codeblock]
 func add(animate := true) -> void:
 	if I.is_full():
-		printerr(
-			"[Popochiu] Couldn't add %s. Inventory is full." %\
-			script_name
-		)
+		PopochiuUtils.print_error("Couldn't add %s. Inventory is full." % script_name)
 		
 		await get_tree().process_frame
 		return
@@ -257,25 +254,22 @@ func set_active(_ignore_block := false) -> void:
 
 ## Called when the item is clicked in the inventory.
 func on_click() -> void:
-	_on_click()
+	await _on_click()
 
 
 ## Called when the item is right clicked in the inventory.
 func on_right_click() -> void:
-	_on_right_click()
+	await _on_right_click()
 
 
 ## Called when the item is middle clicked in the inventory.
 func on_middle_click() -> void:
-	_on_middle_click()
+	await _on_middle_click()
 
 
 ## Called when the item is clicked and there is another [param item] currently selected.
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	_on_item_used(item)
-	#await G.show_system_text(
-		#'Nothing happens when using %s in this item' % item.description
-	#)
+	await _on_item_used(item)
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
@@ -303,7 +297,7 @@ func handle_command(button_idx: int) -> void:
 		target = description
 	})
 	
-	call(prefix % suffix)
+	await call(prefix % suffix)
 
 
 #endregion
@@ -351,15 +345,17 @@ func _on_gui_input(event: InputEvent) -> void:
 	match event_index:
 		MOUSE_BUTTON_LEFT:
 			if I.active:
-				on_item_used(I.active)
+				await on_item_used(I.active)
 			else:
 				if DisplayServer.is_touchscreen_available():
 					G.mouse_entered_inventory_item.emit(self)
 				
-				handle_command(event_index)
+				await handle_command(event_index)
 		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
 			if not I.active:
-				handle_command(event_index)
+				await handle_command(event_index)
+	
+	I.clicked = null
 
 
 #endregion

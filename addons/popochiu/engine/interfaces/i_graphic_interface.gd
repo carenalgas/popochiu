@@ -100,10 +100,10 @@ func show_system_text(msg: String) -> void:
 	
 	if E.cutscene_skipped:
 		await get_tree().process_frame
+		
 		return
 	
 	system_text_shown.emit(E.get_text(msg))
-	
 	await system_text_hidden
 	
 	if not E.playing_queue and gui.popups_stack.is_empty():

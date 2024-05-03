@@ -1,7 +1,7 @@
 extends Control
 
 @export var always_visible := false
-@export var hide_when_gui_is_blocked := true
+@export var hide_when_gui_is_blocked := false
 
 var is_disabled := false
 

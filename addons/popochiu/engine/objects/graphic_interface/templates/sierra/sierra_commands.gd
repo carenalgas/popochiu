@@ -57,14 +57,20 @@ func look() -> void:
 ## [code]E.command_fallback()[/code] is triggered.
 func interact() -> void:
 	if (I.active and I.clicked) and I.active != I.clicked:
+		# Item used on another item
 		G.show_system_text("%s can't use %s with %s" % [
 			C.player.description, I.active.description, I.clicked.description
 		])
-		I.clicked = null
+	elif I.active and E.clicked:
+		# Item used on a PopochiuClickable
+		G.show_system_text("%s can't use %s with %s" % [
+			C.player.description, I.active.description, E.clicked.description
+		])
 	elif I.clicked:
+		# Item selected in inventory
 		I.clicked.set_active()
-		I.clicked = null
 	else:
+		# PopochiuClickable clicked
 		G.show_system_text("%s doesn't want to do anything with that object" % C.player.description)
 
 
