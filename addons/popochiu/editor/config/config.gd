@@ -38,6 +38,13 @@ const ASEPRITE_WIPE_OLD_ANIMATIONS = "popochiu/aseprite_import/wipe_old_animatio
 const PIXEL_ART_TEXTURES = "popochiu/pixel/pixel_art_textures"
 const PIXEL_PERFECT = "popochiu/pixel/pixel_perfect"
 
+# ---- Audio ---------------------------------------------------------------------------------------
+const PREFIX_CHARACTER = "popochiu/audio/prefix_character"
+const MUSIC_PREFIXES = "popochiu/audio/music_prefixes"
+const SOUND_EFFECT_PREFIXES = "popochiu/audio/sound_effect_prefixes"
+const VOICE_PREFIXES = "popochiu/audio/voice_prefixes"
+const UI_PREFIXES = "popochiu/audio/ui_prefixes"
+
 # ---- DEV -----------------------------------------------------------------------------------------
 const DEV_USE_ADDON_TEMPLATE = "popochiu/dev/use_addon_template"
 
@@ -58,7 +65,7 @@ static func initialize_project_settings():
 		DialogStyle.ABOVE_CHARACTER,
 		TYPE_INT,
 		PROPERTY_HINT_ENUM,
-		# TODO: Add the other options: Portrait Above Character, Bubble Above Character
+		# TODO: Add other options: Portrait Above Character, Bubble Above Character
 		"Above Character,Portrait,Caption"
 	)
 	
@@ -78,6 +85,13 @@ static func initialize_project_settings():
 	# ---- Pixel game ------------------------------------------------------------------------------
 	_initialize_project_setting(PIXEL_ART_TEXTURES, false, TYPE_BOOL)
 	_initialize_project_setting(PIXEL_PERFECT, false, TYPE_BOOL)
+	
+	# ---- Audio -----------------------------------------------------------------------------------
+	_initialize_project_setting(PREFIX_CHARACTER, "_", TYPE_STRING)
+	_initialize_project_setting(MUSIC_PREFIXES, "mx,", TYPE_STRING)
+	_initialize_project_setting(SOUND_EFFECT_PREFIXES, "sfx,", TYPE_STRING)
+	_initialize_project_setting(VOICE_PREFIXES, "vo,", TYPE_STRING)
+	_initialize_project_setting(UI_PREFIXES, "ui,", TYPE_STRING)
 	
 	# ---- DEV -------------------------------------------------------------------------------------
 	_initialize_advanced_project_setting(DEV_USE_ADDON_TEMPLATE, false, TYPE_BOOL)
@@ -160,6 +174,27 @@ static func is_pixel_art_textures() -> bool:
 
 static func is_pixel_perfect() -> bool:
 	return _get_project_setting(PIXEL_PERFECT, false)
+
+
+# ---- Audio ---------------------------------------------------------------------------------------
+static func get_prefix_character() -> String:
+	return _get_project_setting(PREFIX_CHARACTER, "_")
+
+
+static func get_music_prefixes() -> String:
+	return _get_project_setting(MUSIC_PREFIXES, "mx,")
+
+
+static func get_sound_effect_prefixes() -> String:
+	return _get_project_setting(SOUND_EFFECT_PREFIXES, "sfx,")
+
+
+static func get_voice_prefixes() -> String:
+	return _get_project_setting(VOICE_PREFIXES, "vo,")
+
+
+static func get_ui_prefixes() -> String:
+	return _get_project_setting(UI_PREFIXES, "ui,")
 
 
 # ---- DEV -----------------------------------------------------------------------------------------

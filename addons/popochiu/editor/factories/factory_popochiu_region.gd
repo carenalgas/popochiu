@@ -1,16 +1,17 @@
 class_name PopochiuRegionFactory
-extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd'
+extends "res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd"
 
+#region Godot ######################################################################################
+func _init() -> void:
+	_type = PopochiuResources.Types.REGION
+	_type_label = "region"
+	_obj_room_group = "Regions"
+	_path_template = "/regions/%s/region_%s"
+
+
+#endregion
 
 #region Public #####################################################################################
-func _init(_main_dock: Panel) -> void:
-	super(_main_dock)
-	_type = Constants.Types.REGION
-	_type_label = 'region'
-	_obj_room_group = 'Regions'
-	_path_template = '/regions/%s/region_%s'
-
-
 func create(obj_name: String, room: PopochiuRoom) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
@@ -26,7 +27,7 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	result_code = _copy_script_template()
 	if result_code != ResultCodes.SUCCESS: return result_code
 
-	# ▓▓▓ LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# ---- LOCAL CODE ------------------------------------------------------------------------------
 	# Create the instance
 	var new_obj: PopochiuRegion = _load_obj_base_scene()
 	
@@ -42,10 +43,10 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 
 	# Create a collision polygon as a child in the room scene
 	var collision := CollisionPolygon2D.new()
-	collision.name = 'InteractionPolygon'
+	collision.name = "InteractionPolygon"
 	collision.modulate = Color.CYAN
 	_add_visible_child(collision)
-	# ▓▓▓ END OF LOCAL CODE ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
+	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
 
 	# Add the object to its room
 	_add_resource_to_room()

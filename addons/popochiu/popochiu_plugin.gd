@@ -11,7 +11,7 @@ const POPOCHIU_CANVAS_EDITOR_MENU = preload(
 	"res://addons/popochiu/editor/canvas_editor_menu/popochiu_canvas_editor_menu.tscn"
 )
 
-var main_dock: Panel
+var dock: Panel
 
 #var EditorInterface := get_editor_interface()
 var _editor_file_system := EditorInterface.get_resource_filesystem()
@@ -19,9 +19,6 @@ var _is_first_install := false
 var _input_actions := preload("res://addons/popochiu/engine/others/input_actions.gd")
 var _export_plugin: EditorExportPlugin = null
 var _inspector_plugins := []
-var _gui_templates_helper := preload(
-	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
-)
 
 
 #region Godot ######################################################################################
@@ -53,17 +50,14 @@ func _enter_tree() -> void:
 	prints(EN)
 	print_rich("[wave]%s[/wave]" % SYMBOL)
 	
-	_editor_file_system.scan_sources()
+	# ---- Assign values to the utility script for the Editor side of the plugin -------------------
+	PopochiuEditorHelper.undo_redo = get_undo_redo()
 	
+	# ---- Add custom categories to the Editor settings and Project settings -----------------------
 	PopochiuEditorConfig.initialize_editor_settings()
 	PopochiuConfig.initialize_project_settings()
 	
-	# Configure main dock to be passed down the plugin chain
-	# TODO: Get rid of this cascading assignment and switch to a SignalBus instead!
-	main_dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
-	main_dock.focus_mode = Control.FOCUS_ALL
-	PopochiuEditorHelper.undo_redo = get_undo_redo()
-
+	# ---- Load Popochiu's Inspector plugins -------------------------------------------------------
 	for path in [
 		"res://addons/popochiu/editor/inspector/character_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/walkable_area_inspector_plugin.gd",
@@ -71,60 +65,29 @@ func _enter_tree() -> void:
 		"res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd",
 	]:
 		var eip: EditorInspectorPlugin = load(path).new()
-		
-		eip.set("main_dock", main_dock) # TODO: change with SignalBus
-		
 		_inspector_plugins.append(eip)
 		add_inspector_plugin(eip)
 
 	_export_plugin = preload("popochiu_export_plugin.gd").new()
 	add_export_plugin(_export_plugin)
 	
-	add_control_to_dock(DOCK_SLOT_RIGHT_BL, main_dock)
+	# ---- Load the Popochiu dock and add it to the Editor -----------------------------------------
+	dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
+	dock.focus_mode = Control.FOCUS_ALL
+	dock.ready.connect(_on_dock_ready)
+	
+	add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
+	
+	# ---- Add Popochiu's menus for the Canvas Editor ----------------------------------------------
 	add_control_to_container(
 		EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU,
 		POPOCHIU_CANVAS_EDITOR_MENU.instantiate()
 	)
-	
-	await get_tree().create_timer(0.5).timeout
-	
-	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues
-	main_dock.call_deferred("grab_focus")
-	
-	# ==== Connect to signals ======================================================================
-	# TODO: This connection might be needed only by TabAudio.gd, so probably would be better if it
-	# is done there
-	_editor_file_system.sources_changed.connect(_on_sources_changed)
-	
-	scene_changed.connect(main_dock.scene_changed)
-	scene_closed.connect(main_dock.scene_closed)
-	# ====================================================================== Connect to signals ====
-	
-	if EditorInterface.get_edited_scene_root():
-		main_dock.scene_changed(EditorInterface.get_edited_scene_root())
-	
-	main_dock.setup_dialog.es = EditorInterface.get_editor_settings()
-	
-	# Connect signals between other nodes
-	main_dock.setup_dialog.gui_selected.connect(_gui_templates_helper.copy_gui_template)
-	
-	# Check if the Setup popup should be shown: the first time the Editor is opened after installing
-	# the plugin or if there is no GUI scene (template) selected.
-	if not (PopochiuResources.is_setup_done() or PopochiuResources.is_gui_set()):
-		main_dock.setup_dialog.appear(true)
-		(main_dock.setup_dialog as AcceptDialog).confirmed.connect(_set_setup_done)
-	
-	PopochiuResources.update_autoloads(true)
-	_editor_file_system.scan_sources()
-	# Wait before trying to load main objects data to avoid having an empty dock
-	await get_tree().create_timer(0.5).timeout
-	
-	main_dock.call_deferred("fill_data")
 
 
 func _exit_tree() -> void:
-	remove_control_from_docks(main_dock)
-	main_dock.queue_free()
+	remove_control_from_docks(dock)
+	dock.queue_free()
 	
 	if is_instance_valid(_export_plugin):
 		remove_export_plugin(_export_plugin)
@@ -166,12 +129,9 @@ func _disable_plugin() -> void:
 	remove_autoload_singleton("D")
 	remove_autoload_singleton("G")
 	remove_autoload_singleton("A")
-	
 	_remove_input_actions()
-	
 	EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", false)
-
-	remove_control_from_docks(main_dock)
+	remove_control_from_docks(dock)
 
 
 #endregion
@@ -216,13 +176,24 @@ func _remove_input_actions() -> void:
 	assert(result == OK)
 
 
-func _set_setup_done() -> void:
-	PopochiuResources.set_data_value("setup", "done", true)
-
-
-func _on_sources_changed(exist: bool) -> void:
-	if Engine.is_editor_hint() and is_instance_valid(main_dock):
-		main_dock.search_audio_files()
+func _on_dock_ready() -> void:
+	PopochiuEditorHelper.dock = dock
+	
+	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues
+	dock.grab_focus()
+	
+	scene_changed.connect(dock.scene_changed)
+	scene_closed.connect(dock.scene_closed)
+	
+	if EditorInterface.get_edited_scene_root():
+		dock.scene_changed(EditorInterface.get_edited_scene_root())
+	
+	PopochiuResources.update_autoloads(true)
+	_editor_file_system.scan_sources()
+	dock.fill_data()
+	
+	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
+		PopochiuEditorHelper.show_setup(true)
 
 
 #endregion

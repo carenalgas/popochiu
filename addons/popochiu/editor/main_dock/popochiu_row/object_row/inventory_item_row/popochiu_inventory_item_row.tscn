@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://dyghi33l06nem"]
+
+[ext_resource type="PackedScene" uid="uid://dwbo3pl372ugo" path="res://addons/popochiu/editor/main_dock/popochiu_row/object_row/popochiu_object_row.tscn" id="1_5no3h"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/popochiu_row/object_row/inventory_item_row/popochiu_inventory_item_row.gd" id="2_r2x4o"]
+
+[node name="PopochiuInventoryItemRow" instance=ExtResource("1_5no3h")]
+script = ExtResource("2_r2x4o")

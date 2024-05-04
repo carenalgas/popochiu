@@ -53,7 +53,7 @@ func save_game(slot := 1, description := "") -> bool:
 	var opened := FileAccess.open(SAVE_GAME_PATH % slot, FileAccess.WRITE)
 	if not opened:
 		PopochiuUtils.print_error(
-			"[Popochiu] Could not open the file %s. Error code: %s" % [
+			"Could not open the file %s. Error code: %s" % [
 				SAVE_GAME_PATH % slot, opened.get_open_error()
 			]
 		)

@@ -3,7 +3,6 @@ extends HBoxContainer
 ## Used to show new buttons in the EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU (the top bar in the
 ## 2D editor) to select specific nodes in PopochiuClickable objects.
 
-var _types_helper: Resource = null
 var _selected_node: Node = null
 var _shown_helpers := []
 
@@ -14,8 +13,6 @@ var _shown_helpers := []
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	_types_helper = load('res://addons/popochiu/editor/helpers/popochiu_types_helper.gd')
-	
 	# Connect to child signals
 	btn_baseline.pressed.connect(_toggle_baseline_visibile)
 	btn_walk_point.pressed.connect(_toggle_walk_to_point_visibile)
@@ -48,8 +45,8 @@ func _select_interaction_polygon() -> void:
 	
 	var collision_polygon: CollisionPolygon2D = null
 	
-	if _types_helper.is_prop(_selected_node)\
-	or _types_helper.is_hotspot(_selected_node):
+	if PopochiuEditorHelper.is_prop(_selected_node)\
+	or PopochiuEditorHelper.is_hotspot(_selected_node):
 		collision_polygon = _selected_node.get_node('InteractionPolygon')
 	else:
 		collision_polygon = _selected_node.get_node('../InteractionPolygon')
@@ -93,19 +90,19 @@ func _check_nodes() -> void:
 			n.get_parent().show_helpers()
 			_shown_helpers.append(n.get_parent())
 	
-	if not is_instance_valid(_types_helper): return
+	if not is_instance_valid(PopochiuEditorHelper): return
 	
 	hide()
 
 	if EditorInterface.get_selection().get_selected_nodes().size() == 1:
 		_selected_node = EditorInterface.get_selection().get_selected_nodes()[0]
 		
-		if _types_helper.is_prop(_selected_node)\
-		or _types_helper.is_hotspot(_selected_node)\
-		or _types_helper.is_prop(_selected_node.get_parent())\
-		or _types_helper.is_hotspot(_selected_node.get_parent()):
-			if _types_helper.is_prop(_selected_node)\
-			or _types_helper.is_hotspot(_selected_node):
+		if PopochiuEditorHelper.is_prop(_selected_node)\
+		or PopochiuEditorHelper.is_hotspot(_selected_node)\
+		or PopochiuEditorHelper.is_prop(_selected_node.get_parent())\
+		or PopochiuEditorHelper.is_hotspot(_selected_node.get_parent()):
+			if PopochiuEditorHelper.is_prop(_selected_node)\
+			or PopochiuEditorHelper.is_hotspot(_selected_node):
 				_deselect_buttons()
 			
 			show()

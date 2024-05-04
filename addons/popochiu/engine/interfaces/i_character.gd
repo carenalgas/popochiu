@@ -125,6 +125,9 @@ func is_valid_character(script_name: String) -> bool:
 func get_character(script_name: String) -> PopochiuCharacter:
 	var character: PopochiuCharacter = null
 	
+	if script_name.is_empty():
+		return character
+	
 	if (
 		script_name.to_lower() == "player"
 		or (is_instance_valid(player) and player.script_name.to_lower() == script_name)
