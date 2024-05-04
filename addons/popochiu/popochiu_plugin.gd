@@ -77,6 +77,12 @@ func _enter_tree() -> void:
 		_inspector_plugins.append(eip)
 		add_inspector_plugin(eip)
 	
+	for gep in [
+		"popochiu/editor/gizmos/",
+	]:
+		EditorInterface.set_plugin_enabled(gep, true)
+		print("Gizmo status: ",EditorInterface.is_plugin_enabled(gep))
+
 	_export_plugin = preload("popochiu_export_plugin.gd").new()
 	add_export_plugin(_export_plugin)
 	
