@@ -24,11 +24,13 @@ static func get_user_migration_version() -> int:
 	# return the migration version in the popochiu_data.cfg file
 	if config.has_section_key('migration', 'version'):
 		return config.get_value('migration', 'version')
-	else: # Assume user is running Popochiu 2.0 Beta 1 to Beta 3, no project structure migration needed
+	else: # Assume user is running Popochiu 2.0 Beta 1 to Beta 3, no project structure 
+		  # migration needed
 		  # set user migration version to 1 (Assume correct project structure exists)
 		config.set_value('migration', 'version', 1)
 		config.save(config_file)
-		PopochiuUtils.print_normal('Popochiu Migration: Set Migration Version to 1 for existing Popochiu 2.0 project')
+		PopochiuUtils.print_normal('Popochiu Migration: Set Migration Version to 1 for existing ' +
+			'Popochiu 2.0 project')
 		return 1
 
 	# no valid versions found
@@ -99,4 +101,33 @@ static func get_absolute_file_paths_at(folder_name: String) -> PackedStringArray
 			file_array.append(folder_name + '/' + file)
 	
 	return file_array
+
+
+# Helper function to recursively scan the directory and return an array of file paths with the 
+# specified extension.
+# [param path] is a String for the absolute path to scan.
+# [param file_extension] is a String for the file extension e.g. '.tres'
+# This returns an array with an absolute path to the files with the [param file_extension]
+func get_absolute_file_paths_for_file_extension(path: String, file_extension: String) \
+		-> PackedStringArray:
+	var result: PackedStringArray = []
+	var dir: DirAccess = DirAccess.open(path)
+
+	if dir.dir_exists(path):
+		dir.list_dir_begin()
+		while true:
+			var file: String = dir.get_next()
+			if file.is_empty():
+				break
+			var file_path: String = path + '/' + file
+			if dir.current_is_dir():
+				# Recurse into subdirectories
+				result += get_absolute_file_paths_for_file_extension(file_path, file_extension)
+			elif file_path.ends_with(file_extension):
+				# Add files with the specified extension to the result array
+				result.append(file_path)
+		dir.list_dir_end()
+		dir.close()
+
+	return result
 

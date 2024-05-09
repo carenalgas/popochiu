@@ -28,16 +28,16 @@ static func check_for_updates() -> bool:
     return get_current_version() > get_user_version()
 
 
-## A helper function to display an error message in the output if there is an error doing the migration
-## or a completed message if it is successful.
+## A helper function to display an error message in the output if there is an error doing 
+## the migration or a completed message if it is successful.
 ## Updates the popochiu_data.cfg file to have a new migration version if successful.
 ## [param migration] is an instansiated PopochiuMigration object 
 ## from 'res://addons/popochiu/migration/migration_files/*.gd'.
 ## [param version] is an integer for the migration version being run.
 ## This is intended to be called from 'res://addons/popochiu/migration/do_migration.gd'.
 static func run_migration(migration: PopochiuMigration, version: int) -> bool:
-    # the do_migration() method comes from the 'res://addons/popochiu/migration/migration_files/*.gd' files
-    # that extends PopochiuMigration
+    # the do_migration() method comes from 'res://addons/popochiu/migration/migration_files/*.gd' 
+    # files that extends PopochiuMigration
     if not migration.do_migration():
         PopochiuUtils.print_error('An error has occured while doing migration ' + str(version))
         return false
