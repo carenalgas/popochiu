@@ -88,6 +88,7 @@ const PROPS_IGNORE := [
 	"cursor",
 	"always_on_top",
 	"frames",
+	"v_frames",
 	"link_to_item",
 	"_description_code",
 	"editing_polygon",
