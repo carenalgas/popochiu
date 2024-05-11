@@ -97,7 +97,7 @@ func _draw_outlines(viewport: Control):
 
 	viewport.draw_string_outline(
 		_font,
-		_handle.position + Vector2(0, _size.y + _font.get_ascent()),
+		_handle.position + Vector2(0, _size.y + 2 + _font.get_ascent(_font_size)),
 		_label, HORIZONTAL_ALIGNMENT_CENTER,
 		- 1,
 		_font_size,
@@ -108,7 +108,7 @@ func _draw_outlines(viewport: Control):
 	if show_target_name:
 		viewport.draw_string_outline(
 			_font,
-			_handle.position + Vector2(0, -_font.get_descent()),
+			_handle.position + Vector2(0, -_font.get_descent(_font_size)),
 			_target_node.name,
 			HORIZONTAL_ALIGNMENT_CENTER,
 			- 1,
@@ -144,22 +144,22 @@ func _draw_gizmo(viewport: Control):
 	if _label:
 		viewport.draw_string(
 			_font,
-			_handle.position + Vector2(0, _size.y + _font.get_ascent()),
+			_handle.position + Vector2(0, _size.y + 2 + _font.get_ascent(_font_size)),
 			_label, HORIZONTAL_ALIGNMENT_CENTER,
 			- 1,
 			_font_size,
-			_color.lightened(0.7)
+			_current_color
 		)
 
 	if show_target_name:
 		viewport.draw_string(
 			_font,
-			_handle.position + Vector2(0, -_font.get_descent()),
+			_handle.position + Vector2(0, -_font.get_descent(_font_size)),
 			_target_node.name,
 			HORIZONTAL_ALIGNMENT_CENTER,
 			- 1,
 			_font_size,
-			_color.lightened(0.7)
+			_current_color
 		)
 
 func _can_draw():
