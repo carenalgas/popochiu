@@ -82,10 +82,7 @@ func _ready():
 			get_node("InteractionPolygon").position = interaction_polygon_position
 		
 		return
-	else:
-		$BaselineHelper.free()
-		$WalkToHelper.free()
-		
+	else:	
 		# Update the node's polygon when:
 		if (
 			get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
@@ -111,16 +108,7 @@ func _ready():
 
 
 func _process(delta):
-	if Engine.is_editor_hint():
-		if walk_to_point != get_node("WalkToHelper").position:
-			walk_to_point = get_node("WalkToHelper").position
-			
-			notify_property_list_changed()
-		elif baseline != get_node("BaselineHelper").position.y:
-			baseline = get_node("BaselineHelper").position.y
-			
-			notify_property_list_changed()
-		
+	if Engine.is_editor_hint():		
 		if editing_polygon:
 			interaction_polygon = get_node("InteractionPolygon").polygon
 			interaction_polygon_position = get_node("InteractionPolygon").position
@@ -171,9 +159,8 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 ## Used by the plugin to hide the visual helpers that show the [member baseline] and
 ## [member walk_to_point] in the 2D Canvas Editor when this node is unselected in the Scene panel.
 func hide_helpers() -> void:
-	$BaselineHelper.hide()
-	$WalkToHelper.hide()
-	
+	# TODO: visibility logic for gizmos
+
 	if get_node_or_null("InteractionPolygon"):
 		$InteractionPolygon.hide()
 
@@ -182,9 +169,8 @@ func hide_helpers() -> void:
 ## [member walk_to_point] of the object in the 2D Canvas Editor when the is selected in the
 ## Scene panel.
 func show_helpers() -> void:
-	$BaselineHelper.show()
-	$WalkToHelper.show()
-	
+	# TODO: visibility logic for gizmos
+
 	if get_node_or_null("InteractionPolygon"):
 		$InteractionPolygon.show()
 
@@ -296,16 +282,10 @@ func handle_command(button_idx: int) -> void:
 #region SetGet #####################################################################################
 func set_baseline(value: int) -> void:
 	baseline = value
-	
-	if Engine.is_editor_hint() and get_node_or_null("BaselineHelper"):
-		get_node("BaselineHelper").position = Vector2.DOWN * value
 
 
 func set_walk_to_point(value: Vector2) -> void:
 	walk_to_point = value
-	
-	if Engine.is_editor_hint() and get_node_or_null("WalkToHelper"):
-		get_node("WalkToHelper").position = value
 
 
 func set_room(value: Node2D) -> void:
