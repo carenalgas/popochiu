@@ -127,12 +127,12 @@ In the popup window, just name your new hotspot "_Window_" (or whatever you find
 
 ![A new hotspot in the scene tree](../../assets/images/getting-started/game_stub-room-11-hs_scene_tree.png "Select the right tool in the toolbar to set the hotspot properties")
 
-When you select the new hotspot in the scene tree (_21_), a bunch of gizmos are shown in the scene preview. We are going to interactively edit three important properties of the hotspot (the _interaction polygon_, the _baseline_ and the _walk-to point_) by using the dedicated buttons in the toolbar (_23_).
+When you select the new hotspot in the scene tree (_21_), a bunch of gizmos are shown in the scene preview (_22_). We are going to interactively edit two important properties of the hotspot (the _baseline_ and the _walk-to point_) by moving the gizmos on the screen. In addition, the dedicated button in the toolbar (_23_) will allow us to edit the hotspot's _interaction polygon_.
 
 !!! info
     _Walk-to point_, _Baseline_ and _Interaction Polygon_ properties are all common to clickable objects like Hotspots, Props and Characters.
 
-First of all, click the _Interaction Polygon_ button to show the handles of the standard square polygon for the hotspot. This is basically the same as the walkable area polygon but instead of limiting the character movements, this polygon will just react when the cursor hovers it.  
+First of all, click the _Interaction Polygon_ button to show the handles of the standard square polygon for the hotspot. Basically, that's the same as the walkable area polygon but instead of limiting the character movements, this polygon will just react when the cursor hovers over it.  
 Let's draw a shape around the window on the wall:
 
 ![New hotspot's clickable area](../../assets/images/getting-started/game_stub-room-12-hs_draw_polygon.png "Draw the hotspot shape with a polygon")
@@ -140,7 +140,7 @@ Let's draw a shape around the window on the wall:
 No need to be too precise or polished, rough edges won't be perceivable while playing your game. You just need to avoid, if possible, overlapping with other hotspots (see "_Baseline_" below, to understand how polygon overlapping works).
 
 Another important property of the hotspot is the "_Walk to point", which is the coordinates that the character will reach when you click over the hotspot.  
-You can set these coordinates interactively by clicking on the "_Walk-to point_" button in the toolbar. A squared marker will appear in the center of the screen. You can drag the marker wherever you want in the room.
+You can set these coordinates interactively by clicking and dragging the "_Walk To point_" gizmo wherever you want in the room. You will see that the property with the same name in the inspector will update to reflect the coordinates.
 
 For our example room, we'll set the following coordinates for the `Window` hotspot:
 
@@ -156,10 +156,14 @@ The last property that you want to set is the _Baseline_. The baseline is simply
 
     That's not the case at all. If you don't set your baseline the right way, the polygon-delimited area of the hotspot may remain clickable even when the character is in front of it; or the other way around, a hotspot that should always be in front of the scene, may be covered by your character, making it unreachable. So, **always** set your baseline.
 
-Our window is in the back of the room and the main character has no way to be placed behind it, so we'll set the hotspot baseline to `0` (zero). This means that the baseline is "as high as the scene". The character has no way to walk so high.  
+Our window is in the back of the room and the main character has no way to be placed behind it, so just click the baseline gizmo handler (the square in the middle of the line) and drag it at the very top so that the baseline is "as high as the scene" (or more). The character has no way to walk so high.  
 
 !!! info
-    Note that you can set the baseline even to negative values. This is what Popochiu automatically does when you name your prop `Background` or `bg`, to make sure your background is always at the very back of the scene. Keep this in mind too, if you change the baseline of other elements programmatically (via a script).
+    You can set the baseline even to negative values. This is what Popochiu automatically does when you name your prop `Background` or `bg`, to make sure your background is always at the very back of the scene. Keep this in mind too, if you change the baseline of other elements programmatically (via a script).
+
+!!! info
+    In the example we made, the hotspot is in the center of the screen. You may have noticed that by dragging its baseline upwards, we set its value in the inspector to `-90` or less (half the vertical size of the viewport in this case). That's because the baseline coordinates are always local to the clickable element.  
+    Moving an element from the center position will also move its walk-to point, baseline and interaction polygon.
 
 !!! tip
     If you need pixel-perfect precision, you can set the baseline and the hotspot's _Walk to point_ coordinates by inputting them in the inspector.
