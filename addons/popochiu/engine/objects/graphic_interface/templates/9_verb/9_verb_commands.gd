@@ -62,8 +62,10 @@ func walk_to() -> void:
 	
 	await C.player.move_ended
 	
-	if E.clicked and E.clicked.get("suggested_command")\
-	and E.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
+	if (
+		E.clicked and E.clicked.get("suggested_command")
+		and E.clicked.last_click_button == MOUSE_BUTTON_RIGHT
+	):
 		E.current_command = E.clicked.suggested_command
 		E.clicked.handle_command(MOUSE_BUTTON_LEFT)
 
