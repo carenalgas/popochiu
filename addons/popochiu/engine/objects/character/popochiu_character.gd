@@ -122,6 +122,8 @@ func _ready():
 		if not child is Sprite2D:
 			continue
 		child.frame_changed.connect(_update_position)
+	
+	move_ended.connect(_on_move_ended)
 
 
 func _get_property_list():
@@ -162,6 +164,10 @@ func _play_talk() -> void:
 ## [i]Virtual[/i].
 func _play_grab() -> void:
 	play_animation('grab')
+
+
+func _on_move_ended() -> void:
+	pass
 
 
 #endregion
