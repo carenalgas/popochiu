@@ -66,7 +66,14 @@ func _check_nodes() -> void:
 	
 	if EditorInterface.get_selection().get_selected_nodes().is_empty():
 		deselect_helpers_buttons = true
-	
+
+	# Deselect any BaselineHelper or WalkToPointHelper
+	if EditorInterface.get_selection().get_selected_nodes().size() != 1:
+		for node in EditorInterface.get_selection().get_selected_nodes():
+			if node.name in ["InteractionPolygon"]:
+				EditorInterface.get_selection().remove_node.call_deferred(node)
+				deselect_helpers_buttons = true
+
 	if deselect_helpers_buttons:
 		_deselect_buttons()
 	
@@ -88,6 +95,8 @@ func _check_nodes() -> void:
 	
 	if not is_instance_valid(_types_helper): return
 	
+	hide()
+
 	if EditorInterface.get_selection().get_selected_nodes().size() == 1:
 		_selected_node = EditorInterface.get_selection().get_selected_nodes()[0]
 		
@@ -100,8 +109,6 @@ func _check_nodes() -> void:
 				_deselect_buttons()
 			
 			show()
-		else:
-			hide()
 
 
 func _deselect_buttons() -> void:

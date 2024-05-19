@@ -151,10 +151,10 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 		# LOOK_AT_POINT:
 		# 	gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
 		# 	gizmo.set_theme(
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR, Color.RED),
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE, 32),
+		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
+		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 		# 		default_font,
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE, default_font_size)
+		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 		# 	)
 		BASELINE:
 			gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VPOS)
