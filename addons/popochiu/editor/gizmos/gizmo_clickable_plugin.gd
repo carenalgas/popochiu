@@ -163,7 +163,7 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 	return gizmo
 
 
-func _try_grab_gizmo(event: InputEvent) -> bool:
+func _try_grab_gizmo(event: InputEventMouseButton) -> bool:
 	# Check if the mouse click happened on a gizmo
 	# The order is reversed to the topmost gizmo
 	# (the last been drawn) is selected
