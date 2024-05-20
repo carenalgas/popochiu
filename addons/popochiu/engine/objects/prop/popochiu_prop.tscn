@@ -4,8 +4,6 @@
 
 [node name="Prop" type="Area2D"]
 script = ExtResource("1")
-baseline = 154
-walk_to_point = Vector2(129.083, 190.819)
 interaction_polygon = PackedVector2Array()
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
