@@ -16,7 +16,7 @@ var _gizmos: Array
 var _grabbed_gizmo: Gizmo2D
 
 
-#region Virtual Methods implementations
+#region Godot ######################################################################################
 
 func _enter_tree() -> void:
 	# TODO: remove the following 2 lines when the plugin is connected to the appropriate signal
@@ -33,6 +33,10 @@ func _enter_tree() -> void:
 
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
 
+
+#endregion
+
+#region Virtual ####################################################################################
 
 func _edit(object: Object) -> void:
 	_target_node = object
@@ -75,10 +79,12 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	
 	## Nothing to handle outside the cases above
 	return false
+
+
 #endregion
 
+#region Private ####################################################################################
 
-#region Signals handlers
 func _on_property_changed(property: String):
 	update_overlays()
 
@@ -118,10 +124,8 @@ func _on_gizmo_settings_changed() -> void:
 		gizmo_id += 1
 	
 	update_overlays()
-#endregion
 
 
-#region Private Methods
 func _update_properties():
 	if _grabbed_gizmo and _grabbed_gizmo.target_property:
 		_target_node.set(
@@ -234,4 +238,6 @@ func _cancel_dragging_gizmo(event: InputEvent) -> bool:
 	update_overlays()
 	_grabbed_gizmo = null
 	return true
+
+
 #endregion

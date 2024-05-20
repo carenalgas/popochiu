@@ -44,6 +44,9 @@ var _is_grabbed: bool = false # Gizmo is moving
 var _grab_center_pos: Vector2 # Starting center position when grabbing
 var _grab_mouse_pos: Vector2 # Starting mouse position when grabbing
 
+
+#region Virtual ####################################################################################
+
 func _init(
 	node: Node,
 	property: String,
@@ -63,6 +66,11 @@ func _init(
 	)
 	
 	_current_color = _color
+
+
+#endregion
+
+#region SetGet #####################################################################################
 
 func set_theme(
 	color: Color,
@@ -88,6 +96,11 @@ func get_target_property() -> String:
 	if _target_property:
 		return _target_property
 	return ""
+
+
+#endregion
+
+#region Private ####################################################################################
 
 func _draw_outlines(viewport: Control):
 	viewport.draw_rect(
@@ -164,6 +177,11 @@ func _draw_gizmo(viewport: Control):
 
 func _can_draw():
 	return (visible and _target_node != null and _target_node.is_visible_in_tree())
+
+
+#endregion
+
+#region Public #####################################################################################
 
 func draw(viewport: Control, coord: Variant) -> void:
 	# Handmade coordinates type overloading
@@ -251,3 +269,6 @@ func get_position():
 			return _current_position.x
 		GIZMO_VPOS:
 			return _current_position.y
+
+
+#endregion
