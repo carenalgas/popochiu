@@ -34,10 +34,6 @@ func _enter_tree() -> void:
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
 
 
-func _exit_tree():
-	pass
-
-
 func _edit(object: Object) -> void:
 	_target_node = object
 	for gizmo in _gizmos:
