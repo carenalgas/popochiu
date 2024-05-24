@@ -17,8 +17,8 @@ func _ready() -> void:
 	_types_helper = load('res://addons/popochiu/editor/helpers/popochiu_types_helper.gd')
 	
 	# Connect to child signals
-	btn_baseline.pressed.connect(_select_baseline)
-	btn_walk_point.pressed.connect(_select_walk_point)
+	btn_baseline.pressed.connect(_toggle_baseline_visibile)
+	btn_walk_point.pressed.connect(_toggle_walk_to_point_visibile)
 	btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
 	
 	# Connect to singleton signals
@@ -30,38 +30,14 @@ func _ready() -> void:
 #endregion
 
 #region Private ####################################################################################
-func _select_walk_point() -> void:
-	btn_baseline.set_pressed_no_signal(false)
-	btn_interaction_polygon.set_pressed_no_signal(false)
-	
-	EditorInterface.get_selection().clear()
-	
-	var walk_point_helper: Marker2D = null
-	
-	if _types_helper.is_prop(_selected_node)\
-	or _types_helper.is_hotspot(_selected_node):
-		walk_point_helper = _selected_node.get_node("WalkToHelper")
-	else:
-		walk_point_helper = _selected_node.get_node("../WalkToHelper")
-	
-	EditorInterface.get_selection().add_node(walk_point_helper)
+func _toggle_walk_to_point_visibile() -> void:
+	#TODO: gizmo visibility logic
+	pass
 
 
-func _select_baseline() -> void:
-	btn_walk_point.set_pressed_no_signal(false)
-	btn_interaction_polygon.set_pressed_no_signal(false)
-	
-	EditorInterface.get_selection().clear()
-	
-	var baseline_helper: Line2D = null
-	
-	if _types_helper.is_prop(_selected_node)\
-	or _types_helper.is_hotspot(_selected_node):
-		baseline_helper = _selected_node.get_node("BaselineHelper")
-	else:
-		baseline_helper = _selected_node.get_node("../BaselineHelper")
-	
-	EditorInterface.get_selection().add_node(baseline_helper)
+func _toggle_baseline_visibile() -> void:
+	#TODO: gizmo visibility logic
+	pass
 
 
 func _select_interaction_polygon() -> void:
@@ -90,14 +66,14 @@ func _check_nodes() -> void:
 	
 	if EditorInterface.get_selection().get_selected_nodes().is_empty():
 		deselect_helpers_buttons = true
-	
+
 	# Deselect any BaselineHelper or WalkToPointHelper
-	if EditorInterface.get_selection().get_selected_nodes().size() > 1:
+	if EditorInterface.get_selection().get_selected_nodes().size() != 1:
 		for node in EditorInterface.get_selection().get_selected_nodes():
-			if node.name in ["BaselineHelper", "WalkToHelper", "InteractionPolygon"]:
+			if node.name in ["InteractionPolygon"]:
 				EditorInterface.get_selection().remove_node.call_deferred(node)
 				deselect_helpers_buttons = true
-	
+
 	if deselect_helpers_buttons:
 		_deselect_buttons()
 	
@@ -119,6 +95,8 @@ func _check_nodes() -> void:
 	
 	if not is_instance_valid(_types_helper): return
 	
+	hide()
+
 	if EditorInterface.get_selection().get_selected_nodes().size() == 1:
 		_selected_node = EditorInterface.get_selection().get_selected_nodes()[0]
 		
@@ -131,8 +109,6 @@ func _check_nodes() -> void:
 				_deselect_buttons()
 			
 			show()
-		else:
-			hide()
 
 
 func _deselect_buttons() -> void:

@@ -76,7 +76,7 @@ func _enter_tree() -> void:
 		
 		_inspector_plugins.append(eip)
 		add_inspector_plugin(eip)
-	
+
 	_export_plugin = preload("popochiu_export_plugin.gd").new()
 	add_export_plugin(_export_plugin)
 	
@@ -153,6 +153,8 @@ func _enable_plugin() -> void:
 		EditorInterface.get_base_control().add_child(ad)
 		ad.popup_centered()
 
+	EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", true)
+
 
 func _disable_plugin() -> void:
 	remove_autoload_singleton("Globals")
@@ -167,6 +169,8 @@ func _disable_plugin() -> void:
 	
 	_remove_input_actions()
 	
+	EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", false)
+
 	remove_control_from_docks(main_dock)
 
 
