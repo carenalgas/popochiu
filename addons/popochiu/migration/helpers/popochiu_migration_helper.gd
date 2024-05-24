@@ -108,13 +108,13 @@ static func get_absolute_file_paths_at(folder_name: String) -> PackedStringArray
 # [param path] is a String for the absolute path to scan.
 # [param file_extension] is a String for the file extension e.g. '.tres'
 # This returns an array with an absolute path to the files with the [param file_extension]
-func get_absolute_file_paths_for_file_extension(path: String, file_extension: String) \
+static func get_absolute_file_paths_for_file_extension(path: String, file_extension: String) \
 		-> PackedStringArray:
 	var result: PackedStringArray = []
 	var dir: DirAccess = DirAccess.open(path)
 
 	if dir.dir_exists(path):
-		dir.list_dir_begin()
+		dir.list_dir_begin() # TODOConverter3To4 fill missing arguments https://github.com/godotengine/godot/pull/40547
 		while true:
 			var file: String = dir.get_next()
 			if file.is_empty():
@@ -130,4 +130,85 @@ func get_absolute_file_paths_for_file_extension(path: String, file_extension: St
 		dir.close()
 
 	return result
+
+
+static func rebuild_popochiu_data_file() -> void:
+	var game_path := PopochiuMigrationConfig.get_game_path()
+	var commands_file := game_path + '/graphic_interface/commands.gd'
+
+	# project specific things to store before rebuilding the file
+	var pc := ''
+	var template := ''
+	var commands := ''
+	var migration := 0
+
+	# variables for working with the config file
+	var config_file := game_path + '/' + 'popochiu_data.cfg'
+	var config := ConfigFile.new()
+	var error := config.load(config_file)
+
+	# popochiu_data.cfg config file can be loaded so try to get some project specific values
+	if error == OK:
+		# get the player character
+		if config.has_section('setup'):
+			pc = config.get_value('setup', 'pc', '') # default to blank string if not found
+		
+		# get the migration version
+		if config.has_section('migration'):
+			migration = config.get_value('migration', 'version', 0) # default to 0 if not found
+		
+		# get ui values
+		if config.has_section('ui'):
+			template = config.get_value('ui', 'template', 'SimpleClick') # default to SimpleClick
+			commands = config.get_value('ui', 'commands', '') # default to blank string if not found
+	
+	if template == '':
+		template = 'SimpleClick'
+
+	if commands == '':
+		if FileAccess.file_exists(commands_file):
+			commands = commands_file
+	
+	# Build new config file
+	config = ConfigFile.new()
+
+	# Set project specific values from original popochiu_data.cfg file
+	config.set_value('setup', 'done', false)
+	config.set_value('setup', 'pc', pc)
+	config.set_value('migration', 'version', migration)
+	config.set_value('ui', 'template', template)
+	if commands != '':
+		config.set_value('ui', 'commands', commands)
+	
+	_rebuild_popochiu_data_section(config, game_path, 'rooms')
+	_rebuild_popochiu_data_section(config, game_path, 'characters')
+	_rebuild_popochiu_data_section(config, game_path, 'dialogs')
+	_rebuild_popochiu_data_section(config, game_path, 'inventory_items')
+
+	config.set_value('setup', 'done', true)
+	config.save(config_file)
+	
+
+static func _rebuild_popochiu_data_section(config_file: ConfigFile, game_path: String, \
+		data_section: String) -> void:
+	var data_path := game_path + '/' + data_section
+	var section_name := data_section
+	
+	# Make sure the section name does not have an 's' character at the end
+	if section_name.length() > 0 and section_name[-1] == 's':
+		section_name = section_name.erase(section_name.length() - 1)
+
+	# add the keys and tres files for each directory in the data section
+	for folder in DirAccess.get_directories_at(data_path):
+		var key_name := folder.to_pascal_case()
+		var tres_file := section_name + '_' + folder + '.tres'
+		var key_value := game_path + '/' + data_section + '/' + folder + '/' + tres_file
+
+		if not FileAccess.file_exists(key_value):
+			if section_name == 'inventory_item':
+				section_name = 'inventory'
+				tres_file = section_name + '_' + folder + '.tres'
+				key_value = game_path + '/' + data_section + '/' + folder + '/' + tres_file
+
+		config_file.set_value(data_section, key_name, key_value)
 
