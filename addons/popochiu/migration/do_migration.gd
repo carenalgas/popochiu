@@ -2,15 +2,17 @@
 class_name DoMigration
 extends Node
 
+
+#region Public #####################################################################################
 ## While the user migration version is less than the popochiu migration version
 ## do the needed migrations in order.
 static func do_migrations() -> void:
-	if PopochiuMigration.check_for_updates():
+	if PopochiuMigration.is_migration_needed():
 		PopochiuUtils.print_normal('Processing Popochiu Migrations')
 	else:
 		return
 	
-	while PopochiuMigration.check_for_updates():
+	while PopochiuMigration.is_migration_needed():
 		# if this is < 0 then an error has occured so break out of the loop
 		# if the user version is equal or higher then current version then an error has occured
 		if PopochiuMigration.get_user_version() < 0 or \
@@ -29,3 +31,4 @@ static func do_migrations() -> void:
 			# Add new migrations here
 
 
+#endregion
