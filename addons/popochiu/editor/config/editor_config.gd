@@ -14,6 +14,7 @@ const GIZMOS_FONT_SIZE = "popochiu/gizmos/font_size"
 const GIZMOS_BASELINE_COLOR = "popochiu/gizmos/baseline_color"
 const GIZMOS_WALK_TO_POINT_COLOR = "popochiu/gizmos/walk_to_point_color"
 const GIZMOS_LOOK_AT_POINT_COLOR = "popochiu/gizmos/look_at_point_color"
+const GIZMOS_DIALOG_POS_COLOR = "popochiu/gizmos/dialog_position_color"
 const GIZMOS_HANDLER_SIZE = "popochiu/gizmos/handler_size"
 const GIZMOS_SHOW_CONNECTORS = "popochiu/gizmos/show_connectors"
 const GIZMOS_SHOW_OUTLINE = "popochiu/gizmos/show_handler_outline"
@@ -28,6 +29,7 @@ static var defaults := {
 	GIZMOS_BASELINE_COLOR: Color.CYAN,
 	GIZMOS_WALK_TO_POINT_COLOR: Color.GREEN,
 	GIZMOS_LOOK_AT_POINT_COLOR: Color.RED,
+	GIZMOS_DIALOG_POS_COLOR: Color.MAGENTA,
 	GIZMOS_HANDLER_SIZE: 32,
 	GIZMOS_SHOW_CONNECTORS: true,
 	GIZMOS_SHOW_OUTLINE: true,
@@ -49,6 +51,7 @@ static func initialize_editor_settings():
 	_initialize_editor_setting(GIZMOS_BASELINE_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_WALK_TO_POINT_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_LOOK_AT_POINT_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_DIALOG_POS_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_HANDLER_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
 	_initialize_editor_setting(GIZMOS_FONT_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
 	_initialize_editor_setting(GIZMOS_SHOW_CONNECTORS, TYPE_BOOL)
