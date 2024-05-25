@@ -17,7 +17,7 @@ extends Resource
 ## for audio cues set in a loop (where [member loop] is [code]true[/code]).
 @export var can_play_simultaneous := true
 ## The pitch value (in semitones) to use when playing the audio file.
-@export var pitch := 1.0
+@export var pitch := 0.0
 ## The volume to use when playing the audio file.
 @export var volume := 0.0
 ## The range of values to use for randomly changing the pitch of the audio file when played.

@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://cpqg77rjfaa0l"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_l6xki"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_prop/create_prop.gd" id="2_c5stu"]
+
+[node name="CreatePropConfirmation" instance=ExtResource("1_l6xki")]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("2_c5stu")
+title = "Create PopochiuProp"
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Prop name:"
+
+[node name="InteractionContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer" index="1"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/InteractionContainer" index="0"]
+layout_mode = 2
+text = "Will this prop have interaction?"
+
+[node name="InteractionCheckbox" type="CheckBox" parent="PanelContainer/VBoxContainer/InteractionContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ErrorFeedback" parent="PanelContainer/VBoxContainer" index="2"]
+text = "Prop name is mandatory!"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="4"]
+text = "Use a descriptive name in PascalCase (e.g. Bucket or WineBottle)."

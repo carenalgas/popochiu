@@ -1,26 +1,17 @@
-extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd'
+extends "res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd"
 
-const CHILD_VISIBLE_IN_ROOM_META = '_popochiu_obj_factory_child_visible_in_room_'
-const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
-
-var _room_tab: VBoxContainer = null
+const CHILD_VISIBLE_IN_ROOM_META = "_popochiu_obj_factory_child_visible_in_room_"
 
 # The following variable is setup by the sub-class constructor to
 # define the holder node for the new room object (Props, Hotspots, etc)
-var _obj_room_group := ''
+var _obj_room_group := ""
 # The following variables are setup by the _setup_room method
 var _room: Node2D = null
-var _room_path := ''
-var _room_dir := ''
+var _room_path := ""
+var _room_dir := ""
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func _init(main_dock: Panel) -> void:
-	super(main_dock)
-	_room_tab = _main_dock.get_opened_room_tab()
-
-
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#region Private ####################################################################################
 func _setup_room(room: PopochiuRoom) -> void:
 	_room = room
 	_room_path = _room.scene_file_path
@@ -56,3 +47,6 @@ func _add_resource_to_room() -> void:
 
 	# Save the room scene (it's open in the editor)
 	EditorInterface.save_scene()
+
+
+#endregion

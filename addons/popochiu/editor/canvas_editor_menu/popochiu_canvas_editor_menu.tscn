@@ -6,13 +6,13 @@
 [ext_resource type="Texture2D" uid="uid://cesndtvbchw7v" path="res://addons/popochiu/icons/interaction_polygon.png" id="3_kma38"]
 
 [node name="PopochiuCanvasEditorMenu" type="HBoxContainer"]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_vs7c6")
 
 [node name="BtnBaseline" type="Button" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 tooltip_text = "Baseline"
 toggle_mode = true
@@ -20,6 +20,7 @@ icon = ExtResource("1_8j5rt")
 
 [node name="BtnWalkPoint" type="Button" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 tooltip_text = "Walk point"
 toggle_mode = true

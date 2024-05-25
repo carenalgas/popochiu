@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://b7nvdcut38577"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_feyc5"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_hotspot/create_hotspot.gd" id="2_hf5i2"]
+
+[node name="CreateHotspotConfirmation" instance=ExtResource("1_feyc5")]
+script = ExtResource("2_hf5i2")
+title = "Create PopochiuHotspot"
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Hotspot name:"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
+text = "Use a descriptive name in PascalCase (e.g. Sky, CaveEntrance)."

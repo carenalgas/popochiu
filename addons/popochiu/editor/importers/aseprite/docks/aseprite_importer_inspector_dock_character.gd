@@ -9,7 +9,9 @@ var _animation_creator = preload(
 #region Godot ######################################################################################
 func _ready():
 	if not target_node.has_node("AnimationPlayer"):
-		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND))
+		PopochiuUtils.print_error(
+			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
+		)
 		return
 
 	_animation_player_path = target_node.get_node("AnimationPlayer").get_path()
@@ -39,7 +41,7 @@ func _on_import_pressed():
 	_importing = false
 
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
-		printerr(RESULT_CODE.get_error_message(result))
+		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
 		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")

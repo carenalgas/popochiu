@@ -15,25 +15,12 @@ static var emo_or_time_pattern := r'(%s%s|%s%s)?' % [
 #region Public #####################################################################################
 ## Defines the [PopochiuCharacter] that will be controlled by players.
 static func define_player() -> void:
-	var pc: PopochiuCharacter
-	
-	if PopochiuResources.has_data_value("setup", "pc"):
-		var pc_data_path: String = PopochiuResources.get_data_value(
-			"characters",
-			PopochiuResources.get_data_value("setup", "pc", ""),
-			""
-		)
-
-		if pc_data_path:
-			var pc_data: PopochiuCharacterData = load(pc_data_path)
-			pc = load(pc_data.scene).instantiate()
+	var pc := C.get_character(PopochiuResources.get_data_value("setup", "pc", ""))
 	
 	# If there is no explicitly configured Player-controlled Character (PC), select the first
-	# PopochiuCharacter in the project as it
-	if not C.player:
-		# Set the first character on the list to be the default player character
+	# PopochiuCharacter on the list of characters to be the default PC
+	if not pc:
 		var characters := PopochiuResources.get_section_keys("characters")
-		
 		if not characters.is_empty():
 			pc = C.get_character(characters[0])
 	

@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://bsl3blhb8sw5"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_t4kty"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_room/create_room.gd" id="2_s1x3y"]
+
+[node name="CreateRoomConfirmation" instance=ExtResource("1_t4kty")]
+script = ExtResource("2_s1x3y")
+title = "Create PopochiuRoom"
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Room name:"
+
+[node name="ErrorFeedback" parent="PanelContainer/VBoxContainer" index="1"]
+text = "A room name is mandatory!"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
+text = "Use a descriptive name in PascalCase (e.g. Garage or CasinoInterior)."
+
+[node name="SetAsMainPanel" type="PanelContainer" parent="PanelContainer/VBoxContainer" index="4"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SetAsMainPanel" index="0"]
+layout_mode = 2
+
+[node name="RtlIsMain" type="RichTextLabel" parent="PanelContainer/VBoxContainer/SetAsMainPanel/HBoxContainer" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "You don't have a main scene. Do you want this room to become the main scene of the project? This will modify [code]ProjectSettings.application/run/main_scene[/code]."
+fit_content = true
+scroll_active = false
+
+[node name="BtnIsMain" type="CheckBox" parent="PanelContainer/VBoxContainer/SetAsMainPanel/HBoxContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2

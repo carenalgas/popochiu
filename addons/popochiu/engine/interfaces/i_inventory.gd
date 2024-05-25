@@ -82,7 +82,7 @@ func clean_inventory(in_bg := false) -> void:
 	items.clear()
 	
 	for instance in _item_instances:
-		var pii: PopochiuInventoryItem = instance
+		var pii: PopochiuInventoryItem = _item_instances[instance]
 		
 		if not pii.in_inventory: continue
 		if not in_bg: await pii.discard()

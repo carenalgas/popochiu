@@ -2,39 +2,49 @@
 
 [ext_resource type="Script" path="res://addons/popochiu/editor/popups/delete_confirmation/delete_confirmation.gd" id="1_j7hpd"]
 
-[node name="DeleteConfirmation" type="ConfirmationDialog"]
-size = Vector2i(656, 108)
-dialog_autowrap = true
+[node name="DeleteConfirmation" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_j7hpd")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 648.0
-offset_bottom = 59.0
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Message" type="RichTextLabel" parent="VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Message" type="RichTextLabel" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "You're gonna delete [b]something[/b]"
+fit_content = true
+
+[node name="Extra" type="PanelContainer" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Extra"]
+layout_mode = 2
+
+[node name="Ask" type="RichTextLabel" parent="PanelContainer/VBoxContainer/Extra/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 0
 bbcode_enabled = true
-text = "Se va a eliminar algo."
+text = "Delete also [b]this[/b]?"
 fit_content = true
-scroll_active = false
 
-[node name="Extra" type="PanelContainer" parent="VBoxContainer"]
-custom_minimum_size = Vector2(640, 0)
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Extra"]
-layout_mode = 2
-
-[node name="Ask" type="RichTextLabel" parent="VBoxContainer/Extra/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-bbcode_enabled = true
-text = "Eliminar también carpeta."
-fit_content = true
-scroll_active = false
-
-[node name="CheckBox" type="CheckBox" parent="VBoxContainer/Extra/HBoxContainer"]
+[node name="CheckBox" type="CheckBox" parent="PanelContainer/VBoxContainer/Extra/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2

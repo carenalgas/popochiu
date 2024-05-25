@@ -5,10 +5,7 @@ extends PanelContainer
 
 signal create_clicked
 
-const Constants := preload("res://addons/popochiu/popochiu_resources.gd")
-const PopochiuObjectRow := preload(
-	"res://addons/popochiu/editor/main_dock/object_row/popochiu_object_row.gd"
-)
+const PopochiuRow := preload("res://addons/popochiu/editor/main_dock/popochiu_row/popochiu_row.gd")
 
 @export var icon: Texture2D : set = set_icon
 @export var is_open := true : set = set_is_open
@@ -21,37 +18,35 @@ const PopochiuObjectRow := preload(
 
 var _external_list: VBoxContainer = null
 
-@onready var _header: PanelContainer = find_child("Header")
-@onready var _arrow: TextureRect = find_child("Arrow")
-@onready var _icon: TextureRect = find_child("Icon")
-@onready var _lbl_title: Label = find_child("Title")
-@onready var _body: Container = find_child("Body")
-@onready var _list: VBoxContainer = find_child("List")
-@onready var _btn_create: Button = find_child("BtnCreate")
+@onready var header: PanelContainer = %Header
+@onready var arrow: TextureRect = %Arrow
+@onready var trt_icon: TextureRect = %Icon
+@onready var lbl_title: Label = %Title
+@onready var body: Container = %Body
+@onready var btn_create: Button = %BtnCreate
+@onready var list: VBoxContainer = %List
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
 	# Establecer estado inicial
-	add_theme_stylebox_override(
-		"panel", get_theme_stylebox("panel").duplicate()
-	)
+	add_theme_stylebox_override("panel", get_theme_stylebox("panel").duplicate())
 	(get_theme_stylebox("panel") as StyleBoxFlat).border_color = color
 	
 	if is_instance_valid(icon):
-		_icon.texture = icon
+		trt_icon.texture = icon
 	
-	_lbl_title.text = title
-	_btn_create.icon = get_theme_icon("Add", "EditorIcons")
-	_btn_create.text = create_text
-	self.is_open = _list.get_child_count() > 0
+	lbl_title.text = title
+	btn_create.icon = get_theme_icon("Add", "EditorIcons")
+	btn_create.text = create_text
+	self.is_open = list.get_child_count() > 0
 	
 	if not can_create:
-		_btn_create.hide()
+		btn_create.hide()
 	
-	_header.gui_input.connect(_on_input)
-	_list.resized.connect(_update_child_count)
-	_btn_create.pressed.connect(emit_signal.bind("create_clicked"))
+	header.gui_input.connect(_on_input)
+	list.resized.connect(_update_child_count)
+	btn_create.pressed.connect(emit_signal.bind("create_clicked"))
 	
 	if target_list:
 		_external_list = get_node(target_list) as VBoxContainer
@@ -62,7 +57,7 @@ func _ready() -> void:
 
 #region Public #####################################################################################
 func clear_list() -> void:
-	for c in _list.get_children():
+	for c in list.get_children():
 		# Fix #216: Delete the row immediately so that it does not interfere with the creation of
 		# other rows that may have the same name as it
 		c.free()
@@ -72,52 +67,54 @@ func add(node: Node, sort := false) -> void:
 	if sort:
 		node.ready.connect(_order_list.bind(node))
 	
-	_list.add_child(node)
+	list.add_child(node)
 	
-	_btn_create.disabled = false
+	btn_create.disabled = false
 	
 	if not is_open:
 		self.is_open = true
 
 
 func clear_favs() -> void:
-	for por in _list.get_children():
-		if (por as PopochiuObjectRow).type == Constants.Types.ROOM:
-			(por as PopochiuObjectRow).is_main = false
-		
-		if (por as PopochiuObjectRow).type == Constants.Types.CHARACTER:
-			(por as PopochiuObjectRow).is_pc = false
+	for popochiu_row: PopochiuRow in list.get_children():
+		popochiu_row.clear_tag()
 
 
 func disable_create() -> void:
-	_btn_create.disabled = true
+	btn_create.disabled = true
 
 
 func enable_create() -> void:
-	_btn_create.disabled = false
+	btn_create.disabled = false
 
 
 func get_elements() -> Array:
-	return _list.get_children()
+	return list.get_children()
 
 
 func remove_by_name(node_name: String) -> void:
-	if _list.has_node(node_name):
-		var node: HBoxContainer = _list.get_node(node_name)
+	if list.has_node(node_name):
+		var node: HBoxContainer = list.get_node(node_name)
 		
-		_list.remove_child(node)
-		node.queue_free()
+		list.remove_child(node)
+		node.free()
 
 
 func add_header_button(btn: Button) -> void:
-	_btn_create.add_sibling(btn)
+	btn_create.add_sibling(btn)
 
 
 func set_title_count(count: int, max_count := 0) -> void:
 	if max_count > 0:
-		_lbl_title.text = "%s (%d/%d)" % [title, count, max_count]
+		lbl_title.text = "%s (%d/%d)" % [title, count, max_count]
 	else:
-		_lbl_title.text = "%s (%d)" % [title, count]
+		lbl_title.text = "%s (%d)" % [title, count]
+
+
+func get_by_name(node_name: String) -> HBoxContainer:
+	if list.has_node(node_name):
+		return list.get_node(node_name)
+	return null
 
 
 #endregion
@@ -126,8 +123,8 @@ func set_title_count(count: int, max_count := 0) -> void:
 func set_icon(value: Texture2D) -> void:
 	icon = value
 	
-	if is_instance_valid(_icon):
-		_icon.texture = value
+	if is_instance_valid(trt_icon):
+		trt_icon.texture = value
 
 
 func set_is_open(value: bool) -> void:
@@ -139,15 +136,15 @@ func set_is_open(value: bool) -> void:
 func set_color(value: Color) -> void:
 	color = value
 	
-	if is_instance_valid(_header):
+	if is_instance_valid(header):
 		(get_theme_stylebox("panel") as StyleBoxFlat).border_color = value
 
 
 func set_title(value: String) -> void:
 	title = value
 	
-	if is_instance_valid(_lbl_title):
-		_lbl_title.text = value
+	if is_instance_valid(lbl_title):
+		lbl_title.text = value
 
 
 #endregion
@@ -162,15 +159,15 @@ func _on_input(event: InputEvent) -> void:
 
 
 func _toggled(button_pressed: bool) -> void:
-	if is_instance_valid(_arrow):
-		_arrow.texture = (
+	if is_instance_valid(arrow):
+		arrow.texture = (
 			get_theme_icon("GuiTreeArrowDown", "EditorIcons") if button_pressed
 			else get_theme_icon("GuiTreeArrowRight", "EditorIcons")
 		)
 	
-	if is_instance_valid(_body):
-		if button_pressed: _body.show()
-		else: _body.hide()
+	if is_instance_valid(body):
+		if button_pressed: body.show()
+		else: body.hide()
 	
 	if is_instance_valid(_external_list):
 		_external_list.visible = button_pressed
@@ -179,9 +176,9 @@ func _toggled(button_pressed: bool) -> void:
 func _update_child_count() -> void:
 	if custom_title_count: return
 	
-	if is_instance_valid(_lbl_title):
-		var childs := _list.get_child_count()
-		_lbl_title.text = title + (" (%d)" % childs) if childs > 1 else title
+	if is_instance_valid(lbl_title):
+		var childs := list.get_child_count()
+		lbl_title.text = title + (" (%d)" % childs) if childs > 1 else title
 
 
 func _order_list(node: Node) -> void:
@@ -189,14 +186,14 @@ func _order_list(node: Node) -> void:
 	
 	# Place the new row in its place alphabetically
 	var place_before: Node = null
-	for row in _list.get_children():
+	for row in list.get_children():
 		if str(node.name) < str(row.name):
 			place_before = row
 			break
 	
 	if not place_before: return
 	
-	_list.move_child(node, place_before.get_index())
+	list.move_child(node, place_before.get_index())
 
 
 #endregion

@@ -15,7 +15,7 @@ var _anim_tag_state: Dictionary = {}
 @onready var clickable_toggle = $Panel/HBoxContainer/Clickable
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready():
 	# Common toggle icons
 	import_toggle.icon = get_theme_icon('Load', 'EditorIcons')
@@ -25,7 +25,9 @@ func _ready():
 	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#endregion
+
+#region Public #####################################################################################
 func init(tag_cfg: Dictionary):
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == "":
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_UNNAMED_TAG_DETECTED))
@@ -41,12 +43,16 @@ func show_prop_buttons():
 	clickable_toggle.visible = true
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ SET & GET ░░░░
+#endregion
+
+#region SetGet #####################################################################################
 func get_cfg() -> Dictionary:
 	return _anim_tag_state
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _setup_scene():
 	import_toggle.button_pressed = _anim_tag_state.import
 	loops_toggle.button_pressed = _anim_tag_state.loops
@@ -83,3 +89,6 @@ func _on_visible_toggled(button_pressed):
 func _on_clickable_toggled(button_pressed):
 	_anim_tag_state.prop_clickable = button_pressed
 	emit_signal("tag_state_changed")
+
+
+#endregion

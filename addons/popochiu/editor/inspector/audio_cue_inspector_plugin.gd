@@ -1,7 +1,7 @@
 extends EditorInspectorPlugin
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ VIRTUAL ░░░░
+#region Godot ######################################################################################
 func _can_handle(object: Object) -> bool:
 	return object is PopochiuAudioCue
 
@@ -15,7 +15,7 @@ func _parse_property(
 	usage,
 	wide: bool
 ) -> bool:
-	if not object is PopochiuAudioCue or path != 'bus':
+	if not object is PopochiuAudioCue or path != "bus":
 		return false
 
 	var ep := EditorProperty.new()
@@ -32,7 +32,9 @@ func _parse_property(
 	return true
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _update_audio_cue_bus(idx: int, audio_cue: PopochiuAudioCue) -> void:
 	audio_cue.bus = AudioServer.get_bus_name(idx)
 	ResourceSaver.save(audio_cue, audio_cue.resource_path)
@@ -45,3 +47,6 @@ func _update_buses_list(ob: OptionButton, pac: PopochiuAudioCue) -> void:
 		ob.add_item(AudioServer.get_bus_name(idx), idx)
 	
 	ob.selected = AudioServer.get_bus_index(pac.bus)
+
+
+#endregion

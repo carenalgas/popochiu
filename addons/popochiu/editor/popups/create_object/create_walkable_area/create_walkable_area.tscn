@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://ya4nebuu2575"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_4gtmy"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_walkable_area/create_walkable_area.gd" id="2_ey5rs"]
+
+[node name="CreateWalkableAreaConfirmation" instance=ExtResource("1_4gtmy")]
+script = ExtResource("2_ey5rs")
+title = "Create PopochiuWalkableArea"
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Walkable area name:"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
+text = "Use a descriptive name in PascalCase (e.g. Floor, SuspendedBridge)."

@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://dlhcgfucwffgr"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_i1dna"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_dialog/create_dialog.gd" id="2_ep8bb"]
+
+[node name="CreateDialogConfirmation" instance=ExtResource("1_i1dna")]
+script = ExtResource("2_ep8bb")
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Dialog name:"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
+text = "Use a descriptive name in PascalCase (e.g. GarageGlottis, OfficeEvaDesk)."

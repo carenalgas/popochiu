@@ -1,0 +1,76 @@
+[gd_scene load_steps=3 format=3 uid="uid://c1pfl2gwjjot5"]
+
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_object.gd" id="1_ksc3t"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kdu1t"]
+
+[node name="CreateObjectConfirmation" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ksc3t")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 66.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_kdu1t")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="InputContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="PanelContainer/VBoxContainer/InputContainer"]
+layout_mode = 2
+text = "Name:"
+
+[node name="Input" type="LineEdit" parent="PanelContainer/VBoxContainer/InputContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+draw_control_chars = true
+
+[node name="ErrorContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ErrorIcon" type="TextureRect" parent="PanelContainer/VBoxContainer/ErrorContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+expand_mode = 2
+stretch_mode = 5
+
+[node name="ErrorFeedback" type="Label" parent="PanelContainer/VBoxContainer/ErrorContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Error!"
+autowrap_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Guide" type="Label" parent="PanelContainer/VBoxContainer"]
+modulate = Color(1, 1, 1, 0.698039)
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+text = "Use a descriptive name in PascalCase (e.g. xxx)."
+autowrap_mode = 2
+
+[node name="Info" type="RichTextLabel" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+bbcode_enabled = true
+text = "Additional info..."
+fit_content = true
+scroll_active = false

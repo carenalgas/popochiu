@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://crtkojrvhklpp"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_haco6"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_region/create_region.gd" id="2_ft6um"]
+
+[node name="CreateRegionConfirmation" instance=ExtResource("1_haco6")]
+script = ExtResource("2_ft6um")
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Region name:"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
+text = "Use a descriptive name in PascalCase (e.g. Sand, StickyFloor)."
