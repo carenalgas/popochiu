@@ -1,5 +1,5 @@
-extends Node
 class_name PopochiuResources
+extends Node
 
 enum Types {
 	ROOM,
@@ -26,6 +26,13 @@ enum CursorType {
 	UP,
 	USE,
 	WAIT,
+}
+enum AudioTypes {
+	NONE = -1,
+	MUSIC,
+	SOUND_EFFECT,
+	VOICE,
+	UI
 }
 
 # PLUGIN -------------------------------------------------------------------------------------------
@@ -60,13 +67,9 @@ const G_SNGL := "res://game/autoloads/g.gd"
 const GI := 0
 const TL := 1
 const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/"
-const GUI_GAME_FOLDER := BASE_DIR + "/graphic_interface/"
-const GUI_GAME_SCENE := GUI_GAME_FOLDER + "graphic_interface.tscn"
-const GUI_COMMANDS := GUI_GAME_FOLDER + "commands.gd"
 const TRANSITION_LAYER_ADDON :=\
 "res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn"
-const TRANSITION_LAYER_POPOCHIU :=\
-BASE_DIR + "/transition_layer/transition_layer.tscn"
+const TRANSITION_LAYER_POPOCHIU := BASE_DIR + "/transition_layer/transition_layer.tscn"
 # ENGINE -------------------------------------------------------------------------------------------
 const POPOCHIU_SCENE := "res://addons/popochiu/engine/popochiu.tscn"
 const AUDIO_MANAGER :=\
@@ -192,6 +195,14 @@ const IMPORTER_TEXTURE := "popochiu/import/general_import_settings/texture"
 const GUI_CUSTOM := "custom"
 const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
 const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
+# GAME ---------------------------------------------------------------------------------------------
+const ROOMS_PATH = BASE_DIR + "/rooms"
+const CHARACTERS_PATH = BASE_DIR + "/characters"
+const INVENTORY_ITEMS_PATH = BASE_DIR + "/inventory_items"
+const DIALOGS_PATH = BASE_DIR + "/dialogs"
+const GUI_GAME_FOLDER := BASE_DIR + "/graphic_interface/"
+const GUI_GAME_SCENE := GUI_GAME_FOLDER + "graphic_interface.tscn"
+const GUI_COMMANDS := GUI_GAME_FOLDER + "commands.gd"
 
 
 #region Public #####################################################################################
@@ -249,7 +260,7 @@ static func update_autoloads(save := false) -> void:
 				if var_name[0].is_valid_int():
 					var_name = var_name.insert(0, sngl_setup.prefix)
 				
-				if code.find("var %s" % var_name) < 0:
+				if not ("var %s" % var_name) in code:
 					var classes_idx := code.find("# ---- classes")
 					var class_path: String = sngl_setup["class"] % [
 						snake_name, snake_name
@@ -316,7 +327,7 @@ static func update_autoloads(save := false) -> void:
 			
 			var var_name := audio_cue.resource_name
 			
-			if code.find("var %s" % var_name) >= 0:
+			if ("var %s" % var_name) in code:
 				continue
 			
 			var cues_idx := code.find("# ---- cues")
@@ -495,7 +506,10 @@ static func is_setup_done() -> bool:
 
 
 static func is_gui_set() -> bool:
-	return !get_data_value("ui", "template", "").is_empty()
+	return (
+		!get_data_value("ui", "template", "").is_empty()
+		and DirAccess.dir_exists_absolute(GUI_GAME_FOLDER)
+	)
 
 
 #endregion
@@ -511,10 +525,10 @@ static func _get_directories() -> Dictionary:
 	return {
 		BASE = BASE_DIR,
 		AUTOLOADS = BASE_DIR + "/autoloads",
-		ROOMS = BASE_DIR + "/rooms",
-		CHARACTERS = BASE_DIR + "/characters",
-		INVENTORY_ITEMS = BASE_DIR + "/inventory_items",
-		DIALOGS = BASE_DIR + "/dialogs",
+		ROOMS = ROOMS_PATH,
+		CHARACTERS = CHARACTERS_PATH,
+		INVENTORY_ITEMS = INVENTORY_ITEMS_PATH,
+		DIALOGS = DIALOGS_PATH,
 	}
 
 

@@ -139,7 +139,7 @@ func _create_buttons() -> void:
 		btn.set_meta("path", component_path)
 		btn.pressed.connect(_add_component.bind(btn))
 		
-		if component_path.find("popups") >= 0:
+		if "popups" in component_path:
 			%PopupsGroup.add(btn)
 		else:
 			%BaseComponentsGroup.add(btn)
@@ -183,7 +183,7 @@ func _update_groups_titles() -> void:
 func _add_component(btn: Button) -> void:
 	btn.disabled = true
 	
-	var is_popup: bool = btn.get_meta("path").find("popups") >= 0
+	var is_popup: bool = "popups" in btn.get_meta("path")
 	var scene_path := "%s/%s.tscn" % [
 		btn.get_meta("path"),
 		btn.name + "_popup" if is_popup else btn.name

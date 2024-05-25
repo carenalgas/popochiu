@@ -24,7 +24,7 @@ func _parse_walkable_area(object: Object) -> void:
 	var button := Button.new() # Adding a button to edit polygon
 
 	panel.add_theme_stylebox_override(
-		'panel',
+		"panel",
 		panel.get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
 	
@@ -57,7 +57,7 @@ func _parse_navigation_polygon_instance(object: Object) -> void:
 	var button := Button.new() # Adding a button to edit polygon
 	
 	panel.add_theme_stylebox_override(
-		'panel',
+		"panel",
 		panel.get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
 	

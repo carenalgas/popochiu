@@ -8,9 +8,9 @@ extends Area2D
 ## By default, can be used to apply a tint to characters when they enter or leave the region.
 
 ## The identifier of the object used in scripts.
-@export var script_name := ''
+@export var script_name := ""
 ## Can be used to show the name of the area to players.
-@export var description := ''
+@export var description := ""
 ## Whether the region is or not enabled.
 @export var enabled := true : set = _set_enabled
 ## The [Color] to apply to the character that enters this region.
@@ -27,7 +27,7 @@ extends Area2D
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	add_to_group('regions')
+	add_to_group("regions")
 	
 	area_entered.connect(_check_area.bind(true))
 	area_exited.connect(_check_area.bind(false))
@@ -63,28 +63,32 @@ func _set_enabled(value: bool) -> void:
 #endregion
 
 #region Private ####################################################################################
-func _check_area(area: PopochiuCharacter, entered: bool) -> void:
-	if area is PopochiuCharacter:
-		if entered:
-			_on_character_entered(area)
-		else:
-			_on_character_exited(area)
+func _check_area(area: Area2D, entered: bool) -> void:
+	if not area is PopochiuCharacter: return
+	
+	if entered:
+		_on_character_entered(area)
+	else:
+		_on_character_exited(area)
 
 
 func _check_scaling(
 	area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool
 ):
-	if (
+	if not (
 		area is PopochiuCharacter 
 		and area.get_node_or_null("ScalingPolygon") 
 		and area_shape_index == area.get_node("ScalingPolygon").get_index()
-		):
-		if entered:
-			if scaling:
-				_update_scaling_region(area)
-				R.current.update_character_scale(area)
-		else:
-			_clear_scaling_region(area)
+	):
+		return
+	
+	if not entered:
+		_clear_scaling_region(area)
+		return
+		
+	if scaling:
+		_update_scaling_region(area)
+		R.current.update_character_scale(area)
 
 
 func _update_scaling_region(chr: PopochiuCharacter) -> void:
@@ -93,26 +97,26 @@ func _update_scaling_region(chr: PopochiuCharacter) -> void:
 		polygon_y_array.append(x.y)
 
 	chr.on_scaling_region= {
-		'region_description': self.description,
-		'scale_top': self.scale_top, 
-		'scale_bottom': self.scale_bottom,
-		'scale_max': [self.scale_top, self.scale_bottom].max(),
-		'scale_min': [self.scale_top, self.scale_bottom].min(),
-		'polygon_top_y': (
+		"region_description": self.description,
+		"scale_top": self.scale_top, 
+		"scale_bottom": self.scale_bottom,
+		"scale_max": [self.scale_top, self.scale_bottom].max(),
+		"scale_min": [self.scale_top, self.scale_bottom].min(),
+		"polygon_top_y": (
 			polygon_y_array.min()+self.position.y+get_node("InteractionPolygon").position.y 
 			if self.position 
-			else ''
+			else ""
 			),
-		'polygon_bottom_y': (
+		"polygon_bottom_y": (
 			polygon_y_array.max()+self.position.y+get_node("InteractionPolygon").position.y 
 			if self.position 
-			else ''),
+			else ""),
 
 		}
 
 
 func _clear_scaling_region(chr: PopochiuCharacter) -> void:
-	if chr.on_scaling_region and chr.on_scaling_region['region_description'] == self.description:
+	if chr.on_scaling_region and chr.on_scaling_region["region_description"] == self.description:
 		chr.on_scaling_region = {}
 
 

@@ -2,8 +2,6 @@
 extends Resource
 ## Helper class for operations related to the GUI templates
 
-signal copy_completed
-
 static var _template_id := ""
 static var _template_theme_path := ""
 
@@ -13,7 +11,10 @@ static var _template_theme_path := ""
 static func copy_gui_template(
 	template_name: String, on_progress: Callable, on_complete: Callable
 ) -> void:
-	if template_name == PopochiuResources.get_data_value("ui", "template", ""):
+	if (
+		DirAccess.dir_exists_absolute(PopochiuResources.GUI_GAME_FOLDER)
+		and template_name == PopochiuResources.get_data_value("ui", "template", "")
+	):
 		PopochiuUtils.print_normal("No changes in GUI tempalte.")
 		
 		on_complete.call()
@@ -44,10 +45,7 @@ static func copy_gui_template(
 	# ---- Make a copy of the selected GUI template ------------------------------------------------
 	if _create_scene(scene_path) != OK:
 		# TODO: Delete the graphic_interface folder and all its contents?
-		PopochiuUtils.print_error(
-			"[Popochiu] Couldn't create %s file" % PopochiuResources.GUI_GAME_SCENE
-		)
-		
+		PopochiuUtils.print_error("Couldn't create %s file" % PopochiuResources.GUI_GAME_SCENE)
 		return
 	
 	await _wait(2.0)
@@ -67,10 +65,7 @@ static func copy_gui_template(
 	
 	# Update the script of the created graphic_interface.tscn so it uses the copy created above ----
 	if _update_scene_script(script_path) != OK:
-		PopochiuUtils.print_error(
-			"[Popochiu] Couldn't update graphic_interface.tscn script"
-		)
-		
+		PopochiuUtils.print_error("Couldn't update graphic_interface.tscn script")
 		return
 	
 	await _wait()
@@ -144,7 +139,7 @@ static func _create_scene(scene_path: String) -> int:
 	# Make a copy of the selected GUI template (.tscn) and save it in
 	# res://game/graphic_interface/graphic_interface.tscn ------------------------------------------
 	var gi_scene := load(scene_path).duplicate(true)
-		
+	
 	return ResourceSaver.save(gi_scene, PopochiuResources.GUI_GAME_SCENE)
 
 
