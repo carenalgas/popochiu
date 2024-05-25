@@ -91,7 +91,13 @@ func _customize_tag_ui(tag_row: AnimationTagRow):
 
 func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = true):
 	var factory = PopochiuPropFactory.new()
-	if factory.create(name, _root_node, is_clickable, is_visible) != ResultCodes.SUCCESS:
+	var param := PopochiuPropFactory.PopochiuPropFactoryParam.new()
+	param.obj_name = name
+	param.room = _root_node
+	param.is_interactive = is_clickable
+	param.is_visible = is_visible
+	
+	if factory.create(param) != ResultCodes.SUCCESS:
 		return
 
 	return factory.get_obj_scene()

@@ -26,11 +26,17 @@ const PROGRESS_DIALOG_SCENE = preload(POPUPS_FOLDER + "progress/progress.tscn")
 const SETUP_SCENE = preload("res://addons/popochiu/editor/popups/setup/setup.tscn")
 # ---- Identifiers ---------------------------------------------------------------------------------
 const POPOCHIU_OBJECT_POLYGON_GROUP = "popochiu_object_polygon"
+const MIGRATIONS_PANEL_SCENE = preload(
+	"res://addons/popochiu/editor/popups/migrations_panel/migrations_panel.tscn"
+)
 # ---- Classes -------------------------------------------------------------------------------------
 const PopochiuSignalBus = preload("res://addons/popochiu/editor/helpers/popochiu_signal_bus.gd")
 const DeleteConfirmation = preload(POPUPS_FOLDER + "delete_confirmation/delete_confirmation.gd")
 const Progress = preload(POPUPS_FOLDER + "progress/progress.gd")
 const CreateObject = preload(CREATE_OBJECT_FOLDER + "create_object.gd")
+const MigrationsPanel = preload(
+	"res://addons/popochiu/editor/popups/migrations_panel/migrations_panel.gd"
+)
 
 static var signal_bus := PopochiuSignalBus.new()
 static var ei := EditorInterface
@@ -134,6 +140,18 @@ static func show_setup(is_welcome := false) -> void:
 	await show_dialog(dialog, content.custom_minimum_size)
 
 
+static func show_migrations(
+	content: MigrationsPanel, min_size := Vector2i(640, 640)
+) -> AcceptDialog:
+	var dialog := AcceptDialog.new()
+	dialog.title = "Migration Tool"
+	content.anchors_preset = Control.PRESET_FULL_RECT
+	dialog.add_child(content)
+	await show_dialog(dialog, min_size)
+	
+	return dialog
+
+
 static func show_dialog(dialog: Window, min_size := Vector2i.ZERO) -> void:
 	if not dialog.is_inside_tree():
 		dock.add_child.call_deferred(dialog)
@@ -181,6 +199,10 @@ static func is_region(node: Node) -> bool:
 	return node is PopochiuRegion
 
 
+static func is_marker(node: Node) -> bool:
+	return node is Marker2D
+
+
 static func is_popochiu_obj_polygon(node: Node):
 	return node.is_in_group(POPOCHIU_OBJECT_POLYGON_GROUP)
 
@@ -209,10 +231,34 @@ static func get_all_children(node, children := []) -> Array:
 		children = get_all_children(child, children)
 	return children
 
+
 ## Overrides the font [param font_name] in [param node] by the theme [Font] identified by
 ## [param editor_font_name].
 static func override_font(node: Control, font_name: String, editor_font_name: String) -> void:
 	node.add_theme_font_override(font_name, node.get_theme_font(editor_font_name, "EditorFonts"))
+
+
+static func wait_process_frame() -> void:
+	await EditorInterface.get_base_control().get_tree().process_frame
+
+
+static func wait(secs := 1.0) -> void:
+	await EditorInterface.get_base_control().get_tree().create_timer(secs).timeout
+
+
+static func scan() -> void:
+	EditorInterface.get_resource_filesystem().scan.call_deferred()
+	await EditorInterface.get_resource_filesystem().filesystem_changed
+
+
+static func pack_scene(node: Node, path := "") -> int:
+	var packed_scene := PackedScene.new()
+	packed_scene.pack(node)
+	
+	if path.is_empty():
+		path = node.scene_file_path
+	
+	return ResourceSaver.save(packed_scene, path)
 
 
 #endregion

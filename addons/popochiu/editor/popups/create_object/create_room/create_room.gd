@@ -78,7 +78,7 @@ func set_show_set_as_main(value: bool) -> void:
 #region Private ####################################################################################
 func _check_if_first_room() -> void:
 	# Display a checkbox if no main scene has been defined for the project yet
-	_show_set_as_main = ProjectSettings.get_setting("application/run/main_scene", "").is_empty()
+	_show_set_as_main = ProjectSettings.get_setting(PopochiuResources.MAIN_SCENE, "").is_empty()
 
 
 #endregion

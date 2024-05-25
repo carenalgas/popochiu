@@ -20,7 +20,11 @@ func _ready() -> void:
 func _create() -> void:
 	# Setup the region helper and use it to create the hotspot -------------------------------------
 	_factory = PopochiuHotspotFactory.new()
-	if _factory.create(_new_hotspot_name, _room) != ResultCodes.SUCCESS:
+	var param := PopochiuHotspotFactory.PopochiuHotspotFactoryParam.new()
+	param.obj_name = _new_hotspot_name
+	param.room = _room
+	
+	if _factory.create(param) != ResultCodes.SUCCESS:
 		# TODO: show a message in the popup!
 		return
 	

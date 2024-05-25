@@ -36,7 +36,6 @@ enum AudioTypes {
 }
 
 # PLUGIN -------------------------------------------------------------------------------------------
-const BASE_DIR := "res://game"
 const MAIN_DOCK_PATH := "res://addons/popochiu/editor/main_dock/popochiu_dock.tscn"
 const MAIN_TYPES := [
 	Types.ROOM, Types.CHARACTER, Types.INVENTORY_ITEM, Types.DIALOG
@@ -69,7 +68,6 @@ const TL := 1
 const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/"
 const TRANSITION_LAYER_ADDON :=\
 "res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn"
-const TRANSITION_LAYER_POPOCHIU := BASE_DIR + "/transition_layer/transition_layer.tscn"
 # ENGINE -------------------------------------------------------------------------------------------
 const POPOCHIU_SCENE := "res://addons/popochiu/engine/popochiu.tscn"
 const AUDIO_MANAGER :=\
@@ -188,25 +186,26 @@ const TEST_WIDTH := "display/window/size/window_width_override"
 const TEST_HEIGHT := "display/window/size/window_height_override"
 const STRETCH_MODE := "display/window/stretch/mode"
 const STRETCH_ASPECT := "display/window/stretch/aspect"
-const IMPORTER_TEXTURE := "popochiu/import/general_import_settings/texture"
 # GUI TEMPLATES ------------------------------------------------------------------------------------
 const GUI_CUSTOM := "custom"
 const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
 const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
 # GAME ---------------------------------------------------------------------------------------------
-const ROOMS_PATH = BASE_DIR + "/rooms"
-const CHARACTERS_PATH = BASE_DIR + "/characters"
-const INVENTORY_ITEMS_PATH = BASE_DIR + "/inventory_items"
-const DIALOGS_PATH = BASE_DIR + "/dialogs"
-const GUI_GAME_FOLDER := BASE_DIR + "/graphic_interface/"
+const GAME_PATH := "res://game/"
+const ROOMS_PATH = GAME_PATH + "rooms/"
+const CHARACTERS_PATH = GAME_PATH + "characters/"
+const INVENTORY_ITEMS_PATH = GAME_PATH + "inventory_items/"
+const DIALOGS_PATH = GAME_PATH + "dialogs/"
+const GUI_GAME_FOLDER := GAME_PATH + "graphic_interface/"
 const GUI_GAME_SCENE := GUI_GAME_FOLDER + "graphic_interface.tscn"
 const GUI_COMMANDS := GUI_GAME_FOLDER + "commands.gd"
+const TRANSITION_LAYER := GAME_PATH + "transition_layer/transition_layer.tscn"
 
 
 #region Public #####################################################################################
 # Verify if the folders (where Popochiu's objects will be) exists
 static func init_file_structure() -> bool:
-	var is_first_install := !DirAccess.dir_exists_absolute(BASE_DIR)
+	var is_first_install := !DirAccess.dir_exists_absolute(GAME_PATH)
 	
 	# Create the folders that does not exist
 	for d in _get_directories().values():
@@ -225,6 +224,12 @@ static func init_file_structure() -> bool:
 		globals_file.close()
 	
 	# ---- Create autoload files -------------------------------------------------------------------
+	create_auto_loads()
+	
+	return is_first_install
+
+
+static func create_auto_loads() -> void:
 	for key in SNGL_SETUP:
 		if not FileAccess.file_exists(key):
 			var file := FileAccess.open(key, FileAccess.WRITE)
@@ -235,11 +240,12 @@ static func init_file_structure() -> bool:
 		var file := FileAccess.open(A_SNGL, FileAccess.WRITE)
 		file.store_string(A_TEMPLATE % IAUDIO)
 		file.close()
-	
-	return is_first_install
 
 
 static func update_autoloads(save := false) -> void:
+	# ---- Create autoload files -------------------------------------------------------------------
+	create_auto_loads()
+	
 	# ---- Update autoload files -------------------------------------------------------------------
 	for id in SNGL_SETUP:
 		if FileAccess.file_exists(id):
@@ -359,14 +365,8 @@ static func remove_autoload_obj(id: String, script_name: String) -> void:
 	var code := s.source_code
 	
 	code = code.replace(sngl_setup["const"] % [script_name, class_path], "")
-	
-	code = code.replace(
-		sngl_setup.node % [script_name, script_name, script_name], ""
-	)
-	
-	code = code.replace(sngl_setup["func"] % [
-		script_name, script_name, script_name
-	], "")
+	code = code.replace(sngl_setup.node % [script_name, script_name, script_name], "")
+	code = code.replace(sngl_setup["func"] % [script_name, script_name, script_name], "")
 	
 	s.source_code = code
 	ResourceSaver.save(s, id)
@@ -393,7 +393,7 @@ static func get_data_cfg() -> ConfigFile:
 	if err == OK:
 		return config
 	
-	PopochiuUtils.print_error("Couldn't load PopochiuData config")
+	PopochiuUtils.print_error("Couldn't load popochiu_data.cfg")
 	return null
 
 
@@ -521,8 +521,8 @@ static func _create_empty_file(path):
 
 static func _get_directories() -> Dictionary:
 	return {
-		BASE = BASE_DIR,
-		AUTOLOADS = BASE_DIR + "/autoloads",
+		BASE = GAME_PATH,
+		AUTOLOADS = GAME_PATH + "/autoloads/",
 		ROOMS = ROOMS_PATH,
 		CHARACTERS = CHARACTERS_PATH,
 		INVENTORY_ITEMS = INVENTORY_ITEMS_PATH,

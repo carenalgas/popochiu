@@ -1,10 +1,6 @@
 @tool
 extends "res://addons/popochiu/editor/main_dock/popochiu_row/object_row/popochiu_object_row.gd"
 
-enum RoomObjectOptions {
-	DELETE = MenuOptions.DELETE,
-}
-
 const PROP_TEMPLATE = "res://addons/popochiu/engine/templates/prop_template.gd"
 
 var node_path := ""
