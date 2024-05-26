@@ -110,7 +110,26 @@ func pull() -> void:
 ## Called when [code]E.current_command == Commands.GIVE[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func give() -> void:
-	await C.player.say("What?")
+	if I.active and E.clicked:
+		give_item_to(I.active, E.clicked)
+	elif I.active and I.clicked and I.active != I.clicked:
+		give_item_to(I.active, I.clicked)
+	elif I.clicked:
+		match I.clicked.last_click_button:
+			MOUSE_BUTTON_LEFT:
+				I.clicked.set_active(true)
+			MOUSE_BUTTON_RIGHT:
+				# TODO: I'm not sure this is the right way to do this. Maybe GUIs should capture
+				# 		click inputs on clickables and inventory items. ----------------------------
+				E.current_command = (
+					I.clicked.suggested_command if I.clicked.get("suggested_command")
+					else Commands.LOOK_AT
+				)
+				
+				I.clicked.handle_command(MOUSE_BUTTON_LEFT)
+				# ----------------------------------------------------------------------------------
+	else:	
+		await C.player.say("What?")
 
 
 ## Called when [code]E.current_command == Commands.TALK_TO[/code] and
@@ -148,5 +167,9 @@ func use_item_on(_item: PopochiuInventoryItem, _target: Node) -> void:
 	I.active = null
 	await C.player.say("I don't want to do that")
 
+
+func give_item_to(_item: PopochiuInventoryItem, _target: Node) -> void:
+	I.active = null
+	await C.player.say("I don't want to do that")
 
 #endregion
