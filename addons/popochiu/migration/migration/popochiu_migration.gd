@@ -20,7 +20,7 @@ func _do_migration() -> bool:
 ## Returns the current migration version. If the current Popochiu version is greater than the user's
 ## version, then a migration needs to be done.
 static func get_current_version() -> int:
-	return PopochiuMigrationConfig.get_version()
+	return PopochiuMigrationHelper.version
 
 
 ## Returns the user migration version. If the current Popochiu version is greater than the user's
@@ -66,6 +66,21 @@ func can_do_migration() -> bool:
 		return false
 	else:
 		return true
+
+
+## Attempts to do the migration. Returns [code]true[/code] if successful.
+func do_migration() -> bool:
+	set_migration_version(get("VERSION"))
+
+	# Make sure the user migration version is less then this migration version
+	if not can_do_migration():
+		return false
+	
+	PopochiuUtils.print_normal("Performing Migration %s: %s" % [
+		str(get("VERSION")), get("DESCRIPTION")
+	])
+	
+	return _do_migration()
 
 
 #endregion

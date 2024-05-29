@@ -8,7 +8,7 @@ extends Node
 ## do the needed migrations in order.
 static func do_migrations() -> void:
 	if PopochiuMigration.is_migration_needed():
-		PopochiuUtils.print_normal('Processing Popochiu Migrations')
+		PopochiuUtils.print_normal("Processing Popochiu Migrations")
 	else:
 		return
 	
@@ -23,7 +23,7 @@ static func do_migrations() -> void:
 		var migration_version := PopochiuMigration.get_user_version() + 1
 
 		# This will match the versions that need a migration
-		# The migration classes are located at 'res://addons/popochiu/migration/migration_files/*.gd'
+		# Migration classes are located at "res://addons/popochiu/migration/migration_files/*.gd"
 		match migration_version:
 			1: # Migrate the project to the popochiu 2.0 project structure
 				if not PopochiuMigration.run_migration(PopochiuMigration1.new(), migration_version):

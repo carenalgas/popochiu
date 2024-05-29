@@ -145,11 +145,11 @@ static func _create_scene(scene_path: String) -> int:
 
 static func _remove_components(dir_path: String) -> void:
 	for file_name: String in DirAccess.get_files_at(dir_path):
-		DirAccess.remove_absolute(dir_path + "/" + file_name)
+		DirAccess.remove_absolute(dir_path.path_join(file_name))
 		EditorInterface.get_resource_filesystem().scan()
 	
 	for dir_name: String in DirAccess.get_directories_at(dir_path):
-		var sub_dir_path := dir_path + "/" + dir_name
+		var sub_dir_path := dir_path.path_join(dir_name)
 		_remove_components(sub_dir_path)
 	
 	# Once the directory is empty, remove it

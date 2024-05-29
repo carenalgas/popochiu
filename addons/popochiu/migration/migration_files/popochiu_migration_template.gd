@@ -17,19 +17,3 @@ func _do_migration() -> bool:
 
 
 #endregion
-
-#region Public #####################################################################################
-## Attempts to do the migration. Returns [code]true[/code] if successful.
-func do_migration() -> bool:
-	set_migration_version(VERSION)
-
-	# Make sure the user migration version is less then this migration version
-	if not can_do_migration():
-		return false
-	
-	PopochiuUtils.print_normal("Performing Migration %s: %s" % [str(VERSION), DESCRIPTION])
-	
-	return _do_migration()
-
-
-#endregion
