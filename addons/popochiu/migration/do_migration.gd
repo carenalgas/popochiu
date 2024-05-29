@@ -7,28 +7,35 @@ extends Node
 ## While the user migration version is less than the popochiu migration version
 ## do the needed migrations in order.
 static func do_migrations() -> void:
-	if PopochiuMigration.is_migration_needed():
-		PopochiuUtils.print_normal("Processing Popochiu Migrations")
-	else:
+	if not PopochiuMigrationHelper.is_migration_needed():
 		return
 	
-	while PopochiuMigration.is_migration_needed():
+	PopochiuUtils.print_normal("Processing Popochiu Migrations")
+	while PopochiuMigrationHelper.is_migration_needed():
+		var user_migration_version := PopochiuMigrationHelper.get_user_migration_version()
+		
 		# if this is < 0 then an error has occured so break out of the loop
 		# if the user version is equal or higher then current version then an error has occured
-		if PopochiuMigration.get_user_version() < 0 or \
-			PopochiuMigration.get_user_version() >= PopochiuMigration.get_current_version():
-				break
-
+		if (
+			user_migration_version < 0
+			or user_migration_version >= PopochiuMigrationHelper.version
+		):
+			break
+		
 		# adding 1 to user migration version to match with the migration that needs to be done
-		var migration_version := PopochiuMigration.get_user_version() + 1
-
+		var migration_version := user_migration_version + 1
 		# This will match the versions that need a migration
 		# Migration classes are located at "res://addons/popochiu/migration/migration_files/*.gd"
-		match migration_version:
-			1: # Migrate the project to the popochiu 2.0 project structure
-				if not PopochiuMigration.run_migration(PopochiuMigration1.new(), migration_version):
-					break
-			# Add new migrations here
+		var migration: PopochiuMigration = load(
+			"res://addons/popochiu/migration/migration_files/popochiu_migration_%d.gd" %
+			migration_version
+		).new()
+		
+		if not migration.is_migration_needed():
+			continue
+		
+		if not PopochiuMigration.run_migration(migration, migration_version):
+			break
 
 
 #endregion

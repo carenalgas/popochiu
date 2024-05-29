@@ -52,6 +52,12 @@ static func get_user_migration_version() -> int:
 	return -1
 
 
+## Returns [true] if the current Popochiu migration version is newer than the user's migration
+## version, which means a migration is needed.
+static func is_migration_needed() -> bool:
+	return version > get_user_migration_version()
+
+
 ## Updates [code]res://game/popochiu_data.cfg[/code] migration version to [param version].
 static func update_user_migration_version(version: int) -> void:
 	if PopochiuResources.set_data_value("migration", "version", version) != OK:

@@ -9,6 +9,13 @@ extends Node
 var _version := -1
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	set_migration_version(get("VERSION"))
+
+
+#endregion
+
 #region Virtual ####################################################################################
 func _do_migration() -> bool:
 	return false
@@ -17,23 +24,15 @@ func _do_migration() -> bool:
 #endregion
 
 #region Public #####################################################################################
-## Returns the current migration version. If the current Popochiu version is greater than the user's
-## version, then a migration needs to be done.
-static func get_current_version() -> int:
-	return PopochiuMigrationHelper.version
-
-
-## Returns the user migration version. If the current Popochiu version is greater than the user's
-## version, then a migration needs to be done. If [code]-1[/code] is returned, then an error has
-## occurred.
-static func get_user_version() -> int:
-	return PopochiuMigrationHelper.get_user_migration_version()
+## Sets [param version] as the migration version for the migration script.
+func set_migration_version(version: int) -> void:
+	_version = version
 
 
 ## Returns [true] if the current Popochiu migration version is newer than the user's migration
 ## version, which means a migration is needed.
-static func is_migration_needed() -> bool:
-	return get_current_version() > get_user_version()
+func is_migration_needed() -> bool:
+	return _version > PopochiuMigrationHelper.get_user_migration_version()
 
 
 ## A helper function to display an error message in the [b]Output[/b] if there is an error doing 
@@ -52,9 +51,17 @@ static func run_migration(migration: PopochiuMigration, version: int) -> bool:
 		return true
 
 
-## Sets [param version] as the migration version for the migration script.
-func set_migration_version(version: int) -> void:
-	_version = version
+## Attempts to do the migration. Returns [code]true[/code] if successful.
+func do_migration() -> bool:
+	# Make sure the user migration version is less then this migration version
+	if not can_do_migration():
+		return false
+	
+	PopochiuUtils.print_normal("Performing Migration %s: %s" % [
+		str(get("VERSION")), get("DESCRIPTION")
+	])
+	
+	return _do_migration()
 
 
 ## Makes sure that the user migration version is less than the current migration version and the
@@ -66,21 +73,6 @@ func can_do_migration() -> bool:
 		return false
 	else:
 		return true
-
-
-## Attempts to do the migration. Returns [code]true[/code] if successful.
-func do_migration() -> bool:
-	set_migration_version(get("VERSION"))
-
-	# Make sure the user migration version is less then this migration version
-	if not can_do_migration():
-		return false
-	
-	PopochiuUtils.print_normal("Performing Migration %s: %s" % [
-		str(get("VERSION")), get("DESCRIPTION")
-	])
-	
-	return _do_migration()
 
 
 #endregion
