@@ -29,11 +29,6 @@ static func get_game_path() -> String:
 ## then a migration needs to be done.
 ## If -1 gets returned then an error has occured.
 static func get_user_migration_version() -> int:
-	# The project is older than Popochiu 2.0 Beta 1, so return 0 so that the version 1 project
-	# structure migration gets done
-	if get_game_path() in POPOCHIU_PATH:
-		return 0
-
 	# popochiu_data.cfg config file could not be loaded, return error
 	if PopochiuResources.get_data_cfg() == null:
 		return -1
@@ -41,6 +36,10 @@ static func get_user_migration_version() -> int:
 	if PopochiuResources.has_data_value("migration", "version"):
 		# Return the migration version in the popochiu_data.cfg file
 		return PopochiuResources.get_data_value("migration", "version", 1)
+	elif get_game_path() == POPOCHIU_PATH:
+		# The project is older than Popochiu 2.0 Beta 1, so return 0 so that the version 1 project
+		# structure migration gets done
+		return 0
 	else:
 		# Assume user is running Popochiu 2.0, no project structure migration needed, so set user
 		# migration version to 1 (assume correct project structure exists)
@@ -71,7 +70,7 @@ static func get_popochiu_migration_version() -> int:
 
 
 ## Helper function to delete a folders and files inside [param folder_path].
-static func delete_folder_and_contents(folder_path: String) -> void:
+static func delete_folder_and_contents(folder_path: String) -> bool:
 	if DirAccess.dir_exists_absolute(folder_path):
 		# Delete subfolders and their contents recursively in folder_path
 		for subfolder_path: String in get_absolute_directory_paths_at(folder_path):
@@ -79,10 +78,13 @@ static func delete_folder_and_contents(folder_path: String) -> void:
 		
 		# Delete all files in folder_path
 		for file_path: String in get_absolute_file_paths_at(folder_path):
-			DirAccess.remove_absolute(file_path)
+			if DirAccess.remove_absolute(file_path) != OK:
+				return false
 		
 		# Once all files are deleted in folder_path, remove folder_path
-		DirAccess.remove_absolute(folder_path)
+		if DirAccess.remove_absolute(folder_path) != OK:
+			return false
+	return true
 
 
 ## Helper function to get the absolute directory paths for all folders under [param folder_path].
@@ -107,77 +109,80 @@ static func get_absolute_file_paths_at(folder_path: String) -> PackedStringArray
 	return file_array
 
 
-# Helper function to recursively scan the directory and return an array of file paths with the 
-# specified extension.
-# [param path] is a String for the absolute path to scan.
-# [param file_extension] is a String for the file extension e.g. ".tres"
-# This returns an array with an absolute path to the files with the [param file_extension]
-static func get_absolute_file_paths_for_file_extension(
-	path: String, file_extension: String
+## Helper function to recursively scan the directory in [param path] and return an [Array] of absolute
+## file paths with the specified extension.
+static func get_absolute_file_paths_for_file_extensions(
+	path: String, file_extensions: Array[String], folders_to_ignore: Array[String] = []
 ) -> PackedStringArray:
 	var result: PackedStringArray = []
 	var dir: DirAccess = DirAccess.open(path)
 
-	if dir.dir_exists(path):
-		# TODO Converter3To4 fill missing arguments (https://github.com/godotengine/godot/pull/40547)
-		dir.list_dir_begin()
-		while true:
-			var file: String = dir.get_next()
-			if file.is_empty():
-				break
-			var file_path: String = path + "/" + file
-			if dir.current_is_dir():
-				# Recurse into subdirectories
-				result += get_absolute_file_paths_for_file_extension(file_path, file_extension)
-			elif file_path.ends_with(file_extension):
-				# Add files with the specified extension to the result array
-				result.append(file_path)
-		dir.list_dir_end()
-		dir.close()
+	if not dir.dir_exists(path):
+		return result
+	
+	dir.list_dir_begin()
+	var element_name = dir.get_next()
+	while not element_name.is_empty():
+		var file_path := path.path_join(element_name)
+		if dir.current_is_dir():
+			if element_name in folders_to_ignore:
+				element_name = dir.get_next()
+				continue
+			
+			# Recurse into subdirectories
+			result += get_absolute_file_paths_for_file_extensions(
+				file_path, file_extensions, folders_to_ignore
+			)
+		elif file_extensions.is_empty() or file_path.get_extension() in file_extensions:
+			# Add files with the specified extension to the result array
+			result.append(file_path)
+		
+		element_name = dir.get_next()
+	dir.list_dir_end()
 
 	return result
 
 
 static func rebuild_popochiu_data_file() -> void:
-	var game_path := get_game_path()
-	var commands_file := game_path.path_join("graphic_interface/commands.gd")
-
-	# Project specific things to store before rebuilding the file
-	var pc := ""
-	var template := ""
-	var commands := ""
-	var migration := 0
-	
-	# popochiu_data.cfg config file can be loaded so try to get some project specific values
-	if PopochiuResources.get_data_cfg():
-		# get the player character
-		pc = PopochiuResources.get_data_value("setup", "pc", "")
-		
-		# get the migration version
-		migration = PopochiuResources.get_data_value("migration", "version", 0)
-		
-		# get ui values
-		template = PopochiuResources.get_data_value("ui", "template", "SimpleClick")
-		commands = PopochiuResources.get_data_value("ui", "commands", "")
-	
-	if template.is_empty():
-		template = "SimpleClick"
-	
-	if commands.is_empty():
-		if FileAccess.file_exists(commands_file):
-			commands = commands_file
+	#var game_path := get_game_path()
+	#var commands_file := game_path.path_join("graphic_interface/commands.gd")
+#
+	## Project specific things to store before rebuilding the file
+	#var pc := ""
+	#var template := ""
+	#var commands := ""
+	#var migration := 0
+	#
+	## popochiu_data.cfg config file can be loaded so try to get some project specific values
+	#if PopochiuResources.get_data_cfg():
+		## get the player character
+		#pc = PopochiuResources.get_data_value("setup", "pc", "")
+		#
+		## get the migration version
+		#migration = PopochiuResources.get_data_value("migration", "version", 0)
+		#
+		## get ui values
+		#template = PopochiuResources.get_data_value("ui", "template", "SimpleClick")
+		#commands = PopochiuResources.get_data_value("ui", "commands", "")
+	#
+	#if template.is_empty():
+		#template = "SimpleClick"
+	#
+	#if commands.is_empty():
+		#if FileAccess.file_exists(commands_file):
+			#commands = commands_file
 	
 	# Set project specific values from original popochiu_data.cfg file
-	PopochiuResources.set_data_value("setup", "done", false)
-	PopochiuResources.set_data_value("setup", "pc", pc)
-	PopochiuResources.set_data_value("migration", "version", migration)
-	PopochiuResources.set_data_value("ui", "template", template)
-	PopochiuResources.set_data_value("ui", "commands", commands)
+	#PopochiuResources.set_data_value("setup", "done", false)
+	#PopochiuResources.set_data_value("setup", "pc", pc)
+	#PopochiuResources.set_data_value("migration", "version", migration)
+	#PopochiuResources.set_data_value("ui", "template", template)
+	#PopochiuResources.set_data_value("ui", "commands", commands)
 	
-	_rebuild_popochiu_data_section(game_path, "rooms")
-	_rebuild_popochiu_data_section(game_path, "characters")
-	_rebuild_popochiu_data_section(game_path, "dialogs")
-	_rebuild_popochiu_data_section(game_path, "inventory_items")
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "rooms")
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "characters")
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "dialogs")
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "inventory_items")
 	
 	PopochiuResources.set_data_value("setup", "done", true)
 
@@ -193,16 +198,33 @@ static func _rebuild_popochiu_data_section(game_path: String, data_section: Stri
 	# Add the keys and tres files for each directory in the data section
 	for folder: String in DirAccess.get_directories_at(data_path):
 		var key_name := folder.to_pascal_case()
-		var tres_file := section_name + "_" + folder + ".tres"
-		var key_value := game_path + "/" + data_section + "/" + folder + "/" + tres_file
+		var tres_file := "%s_%s.tres" % [section_name, folder]
+		var key_value := game_path.path_join("%s/%s/%s" % [data_section, folder, tres_file])
 	
-		if not FileAccess.file_exists(key_value):
-			if section_name == "inventory_item":
-				section_name = "inventory"
-				tres_file = section_name + "_" + folder + ".tres"
-				key_value = game_path + "/" + data_section + "/" + folder + "/" + tres_file
+		#if not FileAccess.file_exists(key_value):
+			#if section_name == "inventory_item":
+				#section_name = "inventory"
+				#tres_file = "%s_%s.tres" % [section_name, folder]
+				#key_value = game_path.path_join("%s/%s/%s" % [data_section, folder, tres_file])
 		
 		PopochiuResources.set_data_value(data_section, key_name, key_value)
+
+
+## Look in the text of each file in [param file_paths] for coincidencies to [param from] and
+## replace them by [param to].
+static func replace_path_reference(file_paths: Array, from: String, to: String) -> void:
+	for file_path: String in file_paths:
+		var file_read := FileAccess.open(file_path, FileAccess.READ)
+		var text := file_read.get_as_text()
+		file_read.close()
+		
+		if not from in text:
+			continue
+		
+		var file_write := FileAccess.open(file_path, FileAccess.WRITE)
+		text = text.replace(from, to)
+		file_write.store_string(text)
+		file_write.close()
 
 
 #endregion

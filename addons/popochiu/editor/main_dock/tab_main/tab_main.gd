@@ -84,7 +84,7 @@ func check_data() -> void:
 
 #region Private ####################################################################################
 func _set_main_scene(path: String) -> void:
-	ProjectSettings.set_setting("application/run/main_scene", path)
+	ProjectSettings.set_setting(PopochiuResources.MAIN_SCENE, path)
 	
 	assert(
 		ProjectSettings.save() == OK,

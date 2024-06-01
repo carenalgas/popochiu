@@ -166,4 +166,13 @@ static func override_font(node: Control, font_name: String, editor_font_name: St
 	node.add_theme_font_override(font_name, node.get_theme_font(editor_font_name, "EditorFonts"))
 
 
+static func wait_process_frame() -> void:
+	await EditorInterface.get_base_control().get_tree().process_frame
+
+
+static func scan() -> void:
+	EditorInterface.get_resource_filesystem().scan.call_deferred()
+	await EditorInterface.get_resource_filesystem().filesystem_changed
+
+
 #endregion

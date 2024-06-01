@@ -50,9 +50,6 @@ func _enter_tree() -> void:
 	prints(EN)
 	print_rich("[wave]%s[/wave]" % SYMBOL)
 	
-	# ---- Check if new migrations exist and run them if they do -----------------------------------
-	DoMigration.do_migrations()
-	
 	# ---- Assign values to the utility script for the Editor side of the plugin -------------------
 	PopochiuEditorHelper.undo_redo = get_undo_redo()
 	
@@ -181,6 +178,10 @@ func _remove_input_actions() -> void:
 
 func _on_dock_ready() -> void:
 	PopochiuEditorHelper.dock = dock
+	
+	# ---- Check if new migrations exist and run them if they do -----------------------------------
+	# TODO: Show a popup to inform devs which changes will be applied
+	await DoMigration.do_migrations()
 	
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues
 	dock.grab_focus()

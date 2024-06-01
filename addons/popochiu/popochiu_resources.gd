@@ -194,15 +194,15 @@ const GUI_CUSTOM := "custom"
 const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
 const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
 # GAME ---------------------------------------------------------------------------------------------
-const GAME_PATH := "res://game"
-const ROOMS_PATH = GAME_PATH + "/rooms"
-const CHARACTERS_PATH = GAME_PATH + "/characters"
-const INVENTORY_ITEMS_PATH = GAME_PATH + "/inventory_items"
-const DIALOGS_PATH = GAME_PATH + "/dialogs"
-const GUI_GAME_FOLDER := GAME_PATH + "/graphic_interface/"
+const GAME_PATH := "res://game/"
+const ROOMS_PATH = GAME_PATH + "rooms/"
+const CHARACTERS_PATH = GAME_PATH + "characters/"
+const INVENTORY_ITEMS_PATH = GAME_PATH + "inventory_items/"
+const DIALOGS_PATH = GAME_PATH + "dialogs/"
+const GUI_GAME_FOLDER := GAME_PATH + "graphic_interface/"
 const GUI_GAME_SCENE := GUI_GAME_FOLDER + "graphic_interface.tscn"
 const GUI_COMMANDS := GUI_GAME_FOLDER + "commands.gd"
-const TRANSITION_LAYER_POPOCHIU := GAME_PATH + "/transition_layer/transition_layer.tscn"
+const TRANSITION_LAYER := GAME_PATH + "transition_layer/transition_layer.tscn"
 
 
 #region Public #####################################################################################
@@ -227,6 +227,12 @@ static func init_file_structure() -> bool:
 		globals_file.close()
 	
 	# ---- Create autoload files -------------------------------------------------------------------
+	create_auto_loads()
+	
+	return is_first_install
+
+
+static func create_auto_loads() -> void:
 	for key in SNGL_SETUP:
 		if not FileAccess.file_exists(key):
 			var file := FileAccess.open(key, FileAccess.WRITE)
@@ -237,11 +243,12 @@ static func init_file_structure() -> bool:
 		var file := FileAccess.open(A_SNGL, FileAccess.WRITE)
 		file.store_string(A_TEMPLATE % IAUDIO)
 		file.close()
-	
-	return is_first_install
 
 
 static func update_autoloads(save := false) -> void:
+	# ---- Create autoload files -------------------------------------------------------------------
+	create_auto_loads()
+	
 	# ---- Update autoload files -------------------------------------------------------------------
 	for id in SNGL_SETUP:
 		if FileAccess.file_exists(id):
@@ -524,7 +531,7 @@ static func _create_empty_file(path):
 static func _get_directories() -> Dictionary:
 	return {
 		BASE = GAME_PATH,
-		AUTOLOADS = GAME_PATH + "/autoloads",
+		AUTOLOADS = GAME_PATH + "/autoloads/",
 		ROOMS = ROOMS_PATH,
 		CHARACTERS = CHARACTERS_PATH,
 		INVENTORY_ITEMS = INVENTORY_ITEMS_PATH,

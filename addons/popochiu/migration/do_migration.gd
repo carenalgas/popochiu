@@ -8,6 +8,7 @@ extends Node
 ## do the needed migrations in order.
 static func do_migrations() -> void:
 	if not PopochiuMigrationHelper.is_migration_needed():
+		await PopochiuEditorHelper.wait_process_frame()
 		return
 	
 	PopochiuUtils.print_normal("Processing Popochiu Migrations")
@@ -24,6 +25,7 @@ static func do_migrations() -> void:
 		
 		# adding 1 to user migration version to match with the migration that needs to be done
 		var migration_version := user_migration_version + 1
+		
 		# This will match the versions that need a migration
 		# Migration classes are located at "res://addons/popochiu/migration/migration_files/*.gd"
 		var migration: PopochiuMigration = load(
@@ -34,7 +36,7 @@ static func do_migrations() -> void:
 		if not migration.is_migration_needed():
 			continue
 		
-		if not PopochiuMigration.run_migration(migration, migration_version):
+		if not await PopochiuMigration.run_migration(migration, migration_version):
 			break
 
 

@@ -42,12 +42,12 @@ func is_migration_needed() -> bool:
 ## [param version] is an integer for the migration version being run. This is intended to be called
 ## [DoMigration].
 static func run_migration(migration: PopochiuMigration, version: int) -> bool:
-	if not migration.do_migration():
+	if not await migration.do_migration():
 		PopochiuUtils.print_error("An error has occured while doing migration " + str(version))
 		return false
 	else:
 		PopochiuMigrationHelper.update_user_migration_version(version)
-		PopochiuUtils.print_normal("Migration " + str(version) + " completed")
+		PopochiuUtils.print_normal("Migration %d completed" % version)
 		return true
 
 
@@ -61,7 +61,7 @@ func do_migration() -> bool:
 		str(get("VERSION")), get("DESCRIPTION")
 	])
 	
-	return _do_migration()
+	return await _do_migration()
 
 
 ## Makes sure that the user migration version is less than the current migration version and the
@@ -73,6 +73,13 @@ func can_do_migration() -> bool:
 		return false
 	else:
 		return true
+
+
+#endregion
+
+#region Private ####################################################################################
+func _print_step(msg: String) -> void:
+	PopochiuUtils.print_normal(" - " + msg)
 
 
 #endregion

@@ -14,6 +14,9 @@ extends PopochiuMigration
 
 const VERSION = 1
 const DESCRIPTION = "Migrate project structure to Popochiu 2.0 format"
+const PopochiuGuiTemplatesHelper = preload(
+	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
+)
 
 
 #region Virtual ####################################################################################
@@ -27,10 +30,32 @@ func _do_migration() -> bool:
 		DirAccess.dir_exists_absolute(PopochiuMigrationHelper.POPOCHIU_PATH)
 		and DirAccess.dir_exists_absolute(PopochiuResources.GAME_PATH)
 	):
-		_move_game_data_to_game_folder()
+		# No need to move the autoloads directory as Popochiu 2 creates them automatically. This
+		# will also fix the issue related with using [preload()] in old [A] autoload.
+		_print_step("Delete [b]res://popochiu/autoloads/[/b]")
+		if not _delete_popochiu_folder_autoloads():
+			return false
+		
+		_print_step("Move folders in [b]res://popochiu/[/b] to [b]res://game/[/b]")
+		if not _move_game_data():
+			return false
+		
+		_print_step("Rename all to snake_case")
 		_rename_data_to_snake_case()
+		
+		if PopochiuResources.get_data_value("ui", "template", "").is_empty():
+			_print_step("Select the default GUI template")
+			await _select_gui_template()
+		
+		_print_step("Update paths in [b]res://game/popochiu_data.cfg[/b]")
 		PopochiuMigrationHelper.rebuild_popochiu_data_file()
+		
+		_print_step("Rename [b]res://popochiu/[/b] references to [b]res://game/[/b]")
 		_update_game_folder_references()
+		
+		_print_step("Rename inventory items from [b]item_xxx[/b] to [b]inventory_item_xxx[/b]")
+		_update_inventory_item_filenames()
+		
 		return true
 	else:
 		PopochiuUtils.print_error(
@@ -44,46 +69,49 @@ func _do_migration() -> bool:
 #endregion
 
 #region Private ####################################################################################
-## Change the folder used for storing the game from "res://popochiu" to "res://game". 
-func _move_game_data_to_game_folder() -> void:
-	# We don't need the autoloads directory as Popochiu 2.x creates it automatically. 
-	# Delete the POPOCHIU_PATH autoloads directory if it exists
-	_delete_autoloads()
-
-	# Moves game data from PopochiuMigrationHelper.POPOCHIU_PATH to PopochiuResources.GAME_PATH
-	_move_game_data()
-
-
 ## Delete the POPOCHIU_PATH autoloads directory if it exists
-func _delete_autoloads() -> void:
+func _delete_popochiu_folder_autoloads() -> bool:
+	var all_done := false
 	var autoloads_path := PopochiuMigrationHelper.POPOCHIU_PATH.path_join("Autoloads")
 	
 	if DirAccess.dir_exists_absolute(autoloads_path):
-		PopochiuMigrationHelper.delete_folder_and_contents(autoloads_path)
+		all_done = PopochiuMigrationHelper.delete_folder_and_contents(autoloads_path)
 	elif DirAccess.dir_exists_absolute(autoloads_path.to_lower()):
-		PopochiuMigrationHelper.delete_folder_and_contents(autoloads_path.to_lower())
+		all_done = PopochiuMigrationHelper.delete_folder_and_contents(autoloads_path.to_lower())
+	
+	return all_done
 
 
 ## Moves game data from PopochiuMigrationHelper.POPOCHIU_PATH to PopochiuResources.GAME_PATH
-func _move_game_data() -> void:
+func _move_game_data() -> bool:
 	var folders := DirAccess.get_directories_at(PopochiuMigrationHelper.POPOCHIU_PATH)
 	var files := DirAccess.get_files_at(PopochiuMigrationHelper.POPOCHIU_PATH)
-
-	# Move folders from PopochiuMigrationHelper.POPOCHIU_PATH to PopochiuResources.GAME_PATH
-	for folder in folders:
-		var src := PopochiuMigrationHelper.POPOCHIU_PATH.path_join(folder)
-		var dest := PopochiuResources.GAME_PATH.path_join(folder.to_snake_case())
-		DirAccess.rename_absolute(src, dest)
-
+	
 	# Move files from PopochiuMigrationHelper.POPOCHIU_PATH to PopochiuResources.GAME_PATH
 	for file in files:
 		var src := PopochiuMigrationHelper.POPOCHIU_PATH.path_join(file)
 		var dest := PopochiuResources.GAME_PATH.path_join(file.to_snake_case())
-		DirAccess.rename_absolute(src, dest)
-
+		
+		var err := DirAccess.rename_absolute(src, dest)
+		if err != OK:
+			PopochiuUtils.print_error("Couldn't move %s to %s: %d" % [src, dest, err])
+			return false
+	
+	# Move folders from PopochiuMigrationHelper.POPOCHIU_PATH to PopochiuResources.GAME_PATH
+	for folder in folders:
+		var src := PopochiuMigrationHelper.POPOCHIU_PATH.path_join(folder)
+		var dest := PopochiuResources.GAME_PATH.path_join(folder.to_snake_case())
+		
+		DirAccess.remove_absolute(dest)
+		
+		var err := DirAccess.rename_absolute(src, dest)
+		if err != OK:
+			PopochiuUtils.print_error("Couldn't move %s to %s: %d" % [src, dest, err])
+			return false
+	
 	# All files/folders moved to PopochiuResources.GAME_PATH so delete the
 	# PopochiuMigrationHelper.POPOCHIU_PATH directory
-	DirAccess.remove_absolute(PopochiuMigrationHelper.POPOCHIU_PATH)
+	return DirAccess.remove_absolute(PopochiuMigrationHelper.POPOCHIU_PATH) == OK
 
 
 ## Rename PopochiuResources.GAME_PATH files and folders to snake case
@@ -95,25 +123,81 @@ func _rename_data_to_snake_case():
 		_rename_folders_to_snake_case(folder)
 
 
-## Rename [param path] files to snake_case
-func _rename_files_to_snake_case(path: String) -> void:
-	for file in DirAccess.get_files_at(path):
-		var src := path.path_join(file)
-		var dest := path.path_join(file.to_snake_case())
+## Rename [param folder_path] files to snake_case
+func _rename_files_to_snake_case(folder_path: String) -> void:
+	for file: String in DirAccess.get_files_at(folder_path):
+		var src := folder_path.path_join(file)
+		var dest := folder_path.path_join(file.to_snake_case())
 		DirAccess.rename_absolute(src, dest)
 
 
 ## Rename [param path] folders and the content in the folders recursively to snake_case
 func _rename_folders_to_snake_case(path: String) -> void:
-	for folder in PopochiuMigrationHelper.get_absolute_directory_paths_at(path):
-		_rename_files_to_snake_case(folder)
-		DirAccess.rename_absolute(folder, folder.to_snake_case())
+	for sub_folder: String in PopochiuMigrationHelper.get_absolute_directory_paths_at(path):
+		_rename_files_to_snake_case(sub_folder)
+		DirAccess.rename_absolute(sub_folder, sub_folder.to_snake_case())
 		# recursively rename files/folders to snake_case
-		_rename_folders_to_snake_case(folder.to_snake_case())
+		_rename_folders_to_snake_case(sub_folder.to_snake_case())
 
 
+func _select_gui_template() -> void:
+	# Assume the project is from Popochiu 1.x or Popochiu 2 - Alpha X and assign the SimpleCick
+	# GUI template
+	await PopochiuGuiTemplatesHelper.copy_gui_template(
+		"SimpleClick",
+		func (_progress: int, _msg: String) -> void: return,
+		func () -> void: return,
+	)
+
+
+## Renames uses of [b]res://popochiu/[/b] to [b]res://game/[/b] in .tscn, .tres, and .gd files.
 func _update_game_folder_references() -> void:
-	pass
+	# Update the path to the main scene in Project Settings
+	var main_scene_path := ProjectSettings.get_setting(PopochiuResources.MAIN_SCENE, "")
+	
+	if PopochiuMigrationHelper.POPOCHIU_PATH in main_scene_path:
+		ProjectSettings.set_setting(PopochiuResources.MAIN_SCENE, main_scene_path.replace(
+			PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
+		))
+	
+	# Go over gd, tscn, and tres files to update their references to res://popochiu/ by res://game/
+	var files := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
+		PopochiuResources.GAME_PATH,
+		["gd", "tscn", "tres"],
+		["autoloads"]
+	)
+	
+	PopochiuMigrationHelper.replace_path_reference(
+		Array(files), PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
+	)
+
+
+func _update_inventory_item_filenames() -> void:
+	var inventory_items_folders := PopochiuMigrationHelper.get_absolute_directory_paths_at(
+		PopochiuResources.INVENTORY_ITEMS_PATH
+	)
+	
+	# Get all the inventory item file paths that were previously called item_*.*
+	var files_by_folder := Array(inventory_items_folders).map(
+		func (folder_path: String) -> Array:
+			return Array(PopochiuMigrationHelper.get_absolute_file_paths_at(folder_path)).filter(
+				func (file_path: String) -> bool:
+					return "/item_" in file_path
+			)
+	)
+	
+	# Rename the files to inventory_item_*.* and update the internal paths to match the new path
+	files_by_folder.all(
+		func (file_paths: Array) -> bool:
+			var old_file_name := (file_paths[0] as String).get_file().get_basename()
+			var new_file_name := old_file_name.replace("item_", "inventory_item_")
+			PopochiuMigrationHelper.replace_path_reference(file_paths, old_file_name, new_file_name)
+			
+			for path: String in file_paths:
+				DirAccess.rename_absolute(path, path.replace("/item_", "/inventory_item_"))
+			
+			return true
+	)
 
 
 #endregion

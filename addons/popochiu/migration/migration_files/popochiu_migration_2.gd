@@ -4,6 +4,7 @@ extends PopochiuMigration
 ## Migrates changes from Beta 1 and Beta 2 to Beta 3.
 ##
 ## This migration does the following:
+## - Update how voices are now defined in PopochiuCharacter
 ## - Move the values defined in the old popochiu_settings.tres to the new section in
 ## Project Settings / Popochiu
 ## - Update the dialog_menu component.
@@ -18,7 +19,8 @@ const DESCRIPTION = "Move settings to Project Settings and update DialogMenu com
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
 ## should be done before calling this.
 func _do_migration() -> bool:
-	# Your migration code goes here.
+	PopochiuUtils.print_normal("Soy la migración 2 y no estoy lista...")
+	await PopochiuEditorHelper.wait_process_frame()
 	return false
 
 

@@ -18,7 +18,8 @@ const DESCRIPTION = "Remove helper nodes in PopochiuClickable objects, replace d
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
 ## should be done before calling this.
 func _do_migration() -> bool:
-	# Your migration code goes here.
+	PopochiuUtils.print_normal("Soy la migración 3 y no estoy lista...")
+	await PopochiuEditorHelper.wait_process_frame()
 	return false
 
 

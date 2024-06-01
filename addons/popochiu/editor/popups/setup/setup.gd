@@ -156,11 +156,7 @@ func define_content(show_welcome := false) -> void:
 		
 		template_description_container.hide()
 	
-	# Wait for the popup content to be rendered in order to get its size
-	await get_tree().process_frame
-	
-	custom_minimum_size = get_child(0).size
-	size_calculated.emit()
+	_update_size()
 
 
 #endregion
@@ -191,6 +187,8 @@ func _on_gui_template_selected(button: GUITemplateButton) -> void:
 		btn_change_template.disabled = (
 			_selected_template.name == PopochiuResources.get_data_value("ui", "template", "")
 		)
+	
+	_update_size()
 
 
 func _select_config_template() -> void:
@@ -238,9 +236,6 @@ func _show_template_change_confirmation() -> void:
 			confirmation_dialog.queue_free()
 			_copy_template()
 	)
-	
-	add_child(confirmation_dialog)
-	confirmation_dialog.popup_centered()
 
 
 func _setup_inner_dialog(dialog: Window, ttl: String, txt: String) -> void:
@@ -310,6 +305,14 @@ func _template_copy_completed() -> void:
 	
 	copy_process_container.hide()
 	template_copy_completed.emit()
+
+
+func _update_size() -> void:
+	# Wait for the popup content to be rendered in order to get its size
+	await get_tree().process_frame
+	
+	custom_minimum_size = get_child(0).size
+	size_calculated.emit()
 
 
 #endregion
