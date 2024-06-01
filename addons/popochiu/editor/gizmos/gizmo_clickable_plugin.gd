@@ -1,10 +1,11 @@
 @tool
+class_name PopochiuGizmoClickablePlugin
 extends EditorPlugin
 
 # TODO: move these out of the plugin and into Popochiu (enums) or PopochiuClickable
 enum {
 	WALK_TO_POINT,
-	# LOOK_AT_POINT, # TODO: enable this when the look_at_point logic is implemented
+	#LOOK_AT_POINT, # TODO: enable this when the look_at_point logic is implemented
 	BASELINE,
 	DIALOG_POS
 }
@@ -35,6 +36,7 @@ func _enter_tree() -> void:
 	_gizmos.insert(DIALOG_POS, _init_popochiu_gizmo(DIALOG_POS))
 
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(_on_gizmo_visibility_changed)
 
 
 #endregion
@@ -146,6 +148,11 @@ func _on_gizmo_settings_changed() -> void:
 	
 	update_overlays()
 
+
+func _on_gizmo_visibility_changed(gizmo_id:int, visibility:bool):
+	if gizmo_id < _gizmos.size():
+		_gizmos[gizmo_id].visible = visibility
+		update_overlays()
 
 func _update_properties():
 	if _grabbed_gizmo and _grabbed_gizmo.target_property:

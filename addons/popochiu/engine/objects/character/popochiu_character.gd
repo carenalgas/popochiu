@@ -51,7 +51,7 @@ signal grab_done
 @export var flips_when: FlipsWhen = FlipsWhen.NONE
 ## Array of [Dictionary] where each element has
 ## [code]{ emotion: String, variations: Array[PopochiuAudioCue] }[/code].
-## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a 
+## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
 ## specific emotion.
 @export var voices := [] : set = set_voices
 ## Whether the character should follow the player-controlled character (PC) when it moves through
