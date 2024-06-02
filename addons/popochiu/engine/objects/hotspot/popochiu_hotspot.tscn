@@ -9,5 +9,5 @@ interaction_polygon = PackedVector2Array()
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 visible = false
-modulate = Color(0, 0, 1, 1)
+modulate = Color(1, 0, 1, 1)
 polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)

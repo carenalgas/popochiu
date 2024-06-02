@@ -38,13 +38,8 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	new_obj.script_name = _pascal_name
 	new_obj.description = _snake_name.capitalize()
 
-	# Save the scene (.tscn) and put it into _scene class property
-	result_code = _save_obj_scene(new_obj)
-	if result_code != ResultCodes.SUCCESS: return result_code
-
-	# Create a NavigationRegion2D with its polygon as a child in the room scene
-	var perimeter := NavigationRegion2D.new()
-	perimeter.name = "Perimeter"
+	# Find the NavigationRegion2D for the WA and populate it with a default rectangle polygon
+	var perimeter := new_obj.find_child("Perimeter")
 	
 	var polygon := NavigationPolygon.new()
 	polygon.add_outline(PackedVector2Array([
@@ -54,9 +49,10 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	polygon.agent_radius = 0.0
 	
 	perimeter.navpoly = polygon
-	perimeter.modulate = Color.GREEN
-	
-	_add_visible_child(perimeter)
+
+	# Save the scene (.tscn) and put it into _scene class property
+	result_code = _save_obj_scene(new_obj)
+	if result_code != ResultCodes.SUCCESS: return result_code
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
 
 	# Add the object to its room
