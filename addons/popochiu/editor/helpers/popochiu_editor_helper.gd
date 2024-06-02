@@ -140,6 +140,21 @@ static func show_dialog(dialog: Window, min_size := Vector2i.ZERO) -> void:
 	dialog.popup_centered(min_size * EditorInterface.get_editor_scale())
 
 
+
+# Type-checking functions
+static func is_popochiu_object(node: Node) -> bool:
+	return node is PopochiuRoom \
+	or is_popochiu_room_object(node)
+
+
+static func is_popochiu_room_object(node: Node) -> bool:
+	return node is PopochiuCharacter \
+	or node is PopochiuProp \
+	or node is PopochiuHotspot \
+	or node is PopochiuWalkableArea \
+	or node is PopochiuRegion
+
+
 static func is_room(node: Node) -> bool:
 	return node is PopochiuRoom
 
@@ -158,6 +173,22 @@ static func is_hotspot(node: Node) -> bool:
 
 static func is_walkable_area(node: Node) -> bool:
 	return node is PopochiuWalkableArea
+
+
+static func is_region(node: Node) -> bool:
+	return node is PopochiuRegion
+
+
+static func is_popochiu_obj_polygon(node: Node):
+	return node.has_meta("POPOCHIU_OBJ_POLYGON_GIZMO")
+
+
+# Quick-access functions
+static func get_first_child_by_metadata(node: Node, meta: String) -> Node:
+	for n in node.get_children():
+		if n.has_meta(meta):
+			return n
+	return null
 
 
 ## Overrides the font [param font_name] in [param node] by the theme [Font] identified by

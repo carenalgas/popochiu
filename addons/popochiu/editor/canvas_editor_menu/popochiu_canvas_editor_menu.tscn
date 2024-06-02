@@ -15,19 +15,33 @@ script = ExtResource("1_vs7c6")
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Baseline"
+theme_type_variation = &"FlatButton"
 toggle_mode = true
+button_pressed = true
 icon = ExtResource("1_8j5rt")
 
-[node name="BtnWalkPoint" type="Button" parent="."]
+[node name="BtnWalkToPoint" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Walk point"
+tooltip_text = "Walk-To Point"
+theme_type_variation = &"FlatButton"
 toggle_mode = true
+button_pressed = true
+icon = ExtResource("2_po7va")
+
+[node name="BtnDialogPos" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Dialog Position"
+theme_type_variation = &"FlatButton"
+toggle_mode = true
+button_pressed = true
 icon = ExtResource("2_po7va")
 
 [node name="BtnInteractionPolygon" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Interaction Polygon"
+theme_type_variation = &"FlatButton"
 toggle_mode = true
 icon = ExtResource("3_kma38")

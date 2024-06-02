@@ -10,6 +10,7 @@ interaction_polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 visible = false
 polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
+metadata/POPOCHIU_OBJ_POLYGON_GIZMO = true
 
 [node name="ScalingPolygon" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0)

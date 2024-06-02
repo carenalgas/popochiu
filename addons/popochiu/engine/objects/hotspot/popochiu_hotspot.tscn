@@ -11,3 +11,4 @@ interaction_polygon = PackedVector2Array()
 visible = false
 modulate = Color(1, 0, 1, 1)
 polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
+metadata/POPOCHIU_OBJ_POLYGON_GIZMO = true
