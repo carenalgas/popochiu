@@ -14,6 +14,16 @@ extends PopochiuMigration
 
 const VERSION = 1
 const DESCRIPTION = "Migrate project structure to Popochiu 2.0 format"
+const STEPS = [
+	"Delete [b]res://popochiu/autoloads/[/b]",
+	"Move folders in [b]res://popochiu/[/b] to [b]res://game/[/b]",
+	"Rename all to snake_case",
+	"Select the default GUI template (OPTIONAL)",
+	"Update paths in [b]res://game/popochiu_data.cfg[/b]",
+	"Rename [b]res://popochiu/[/b] references to [b]res://game/[/b]",
+	"Rename inventory items from [b]item_xxx[/b] to [b]inventory_item_xxx[/b]",
+	"Update assignation of voices in [b]PopochiuCharacter[/b]",
+]
 const PopochiuGuiTemplatesHelper = preload(
 	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
 )
@@ -35,26 +45,38 @@ func _do_migration() -> bool:
 		_print_step("Delete [b]res://popochiu/autoloads/[/b]")
 		if not _delete_popochiu_folder_autoloads():
 			return false
+		completed.append(1)
 		
 		_print_step("Move folders in [b]res://popochiu/[/b] to [b]res://game/[/b]")
 		if not _move_game_data():
 			return false
+		completed.append(2)
 		
 		_print_step("Rename all to snake_case")
 		_rename_data_to_snake_case()
+		completed.append(3)
 		
 		if PopochiuResources.get_data_value("ui", "template", "").is_empty():
 			_print_step("Select the default GUI template")
 			await _select_gui_template()
+			
+			completed.append(4)
 		
 		_print_step("Update paths in [b]res://game/popochiu_data.cfg[/b]")
 		PopochiuMigrationHelper.rebuild_popochiu_data_file()
+		completed.append(5)
 		
 		_print_step("Rename [b]res://popochiu/[/b] references to [b]res://game/[/b]")
-		_update_game_folder_references()
+		_rename_game_folder_references()
+		completed.append(6)
 		
 		_print_step("Rename inventory items from [b]item_xxx[/b] to [b]inventory_item_xxx[/b]")
-		_update_inventory_item_filenames()
+		_rename_inventory_item_filenames()
+		completed.append(7)
+		
+		_print_step("Update assignation of voices in [b]PopochiuCharacter[/b]")
+		_update_characters_voices()
+		completed.append(8)
 		
 		return true
 	else:
@@ -151,7 +173,7 @@ func _select_gui_template() -> void:
 
 
 ## Renames uses of [b]res://popochiu/[/b] to [b]res://game/[/b] in .tscn, .tres, and .gd files.
-func _update_game_folder_references() -> void:
+func _rename_game_folder_references() -> void:
 	# Update the path to the main scene in Project Settings
 	var main_scene_path := ProjectSettings.get_setting(PopochiuResources.MAIN_SCENE, "")
 	
@@ -163,7 +185,7 @@ func _update_game_folder_references() -> void:
 	# Go over gd, tscn, and tres files to update their references to res://popochiu/ by res://game/
 	var files := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.GAME_PATH,
-		["gd", "tscn", "tres"],
+		["gd", "tscn", "tres", "cfg"],
 		["autoloads"]
 	)
 	
@@ -172,7 +194,7 @@ func _update_game_folder_references() -> void:
 	)
 
 
-func _update_inventory_item_filenames() -> void:
+func _rename_inventory_item_filenames() -> void:
 	var inventory_items_folders := PopochiuMigrationHelper.get_absolute_directory_paths_at(
 		PopochiuResources.INVENTORY_ITEMS_PATH
 	)
@@ -198,6 +220,52 @@ func _update_inventory_item_filenames() -> void:
 			
 			return true
 	)
+
+
+func _update_characters_voices() -> void:
+	# Get the characters' .tscn files
+	var file_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
+		PopochiuResources.CHARACTERS_PATH,
+		["tscn"]
+	)
+	
+	Array(file_paths).all(_load_character_voices)
+
+
+func _load_character_voices(scene_path: String) -> bool:
+	var popochiu_character: PopochiuCharacter = (load(scene_path) as PackedScene).instantiate()
+	var voices: Array = PopochiuResources.get_data_value("audio", "vo_cues", [])
+	
+	popochiu_character.voices = popochiu_character.voices.map(
+		func (emotion_dic: Dictionary) -> Dictionary:
+			var arr: Array[AudioCueSound] = []
+			var new_emotion_dic := {
+				emotion = emotion_dic.emotion,
+				variations = arr
+			}
+			
+			for num: int in emotion_dic.variations:
+				var cue_name := "%s_%s" % [emotion_dic.cue, str(num + 1).pad_zeros(2)]
+				var cue_path: String = voices.filter(
+					func (cue_path: String) -> bool:
+						return cue_name in cue_path
+				)[0]
+				
+				var popochiu_audio_cue: AudioCueSound = load(cue_path)
+				new_emotion_dic.variations.append(popochiu_audio_cue)
+			
+			return new_emotion_dic
+	)
+	
+	var packed_scene := PackedScene.new()
+	packed_scene.pack(popochiu_character)
+	
+	if ResourceSaver.save(packed_scene, scene_path) != OK:
+		PopochiuUtils.print_error(
+			"Couldn't update [b]%s[/b] with new voices array." % popochiu_character.script_name
+		)
+		return false
+	return true
 
 
 #endregion

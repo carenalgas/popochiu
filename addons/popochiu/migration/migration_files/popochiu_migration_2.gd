@@ -12,6 +12,7 @@ extends PopochiuMigration
 
 const VERSION = 2
 const DESCRIPTION = "Move settings to Project Settings and update DialogMenu component"
+const STEPS = []
 
 
 #region Virtual ####################################################################################

@@ -6,7 +6,15 @@ extends Node
 ## Migration files in [code]res://addons/popochiu/migration/migration_files/*.gd[/code] should
 ## extend this class.
 
+signal step_completed(migration: PopochiuMigration)
+
 var _version := -1
+
+## [Array] of completed steps
+var completed := [] :
+	set (value):
+		completed = value
+		step_completed.emit(self)
 
 
 #region Godot ######################################################################################

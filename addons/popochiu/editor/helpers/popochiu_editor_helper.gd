@@ -24,11 +24,13 @@ const DELETE_CONFIRMATION_SCENE = preload(
 )
 const PROGRESS_DIALOG_SCENE = preload(POPUPS_FOLDER + "progress/progress.tscn")
 const SETUP_SCENE = preload("res://addons/popochiu/editor/popups/setup/setup.tscn")
+const MIGRATIONS_SCENE = preload("res://addons/popochiu/editor/popups/migrations/migrations.tscn")
 # ---- Classes -------------------------------------------------------------------------------------
 const PopochiuSignalBus = preload("res://addons/popochiu/editor/helpers/popochiu_signal_bus.gd")
 const DeleteConfirmation = preload(POPUPS_FOLDER + "delete_confirmation/delete_confirmation.gd")
 const Progress = preload(POPUPS_FOLDER + "progress/progress.gd")
 const CreateObject = preload(CREATE_OBJECT_FOLDER + "create_object.gd")
+const Migrations = preload("res://addons/popochiu/editor/popups/migrations/migrations.gd")
 
 static var signal_bus := PopochiuSignalBus.new()
 static var ei := EditorInterface
@@ -130,6 +132,15 @@ static func show_setup(is_welcome := false) -> void:
 	)
 	
 	await show_dialog(dialog, content.custom_minimum_size)
+
+
+static func show_migrations(content: Migrations, min_size := Vector2i(640, 160)) -> void:
+	var popup := AcceptDialog.new()
+	popup.title = content.title
+	popup.get_ok_button().hide()
+	popup.add_child(content)
+	
+	await show_dialog(popup, min_size)
 
 
 static func show_dialog(dialog: Window, min_size := Vector2i.ZERO) -> void:

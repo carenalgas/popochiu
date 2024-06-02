@@ -114,11 +114,11 @@ static func get_absolute_file_paths_at(folder_path: String) -> PackedStringArray
 static func get_absolute_file_paths_for_file_extensions(
 	path: String, file_extensions: Array[String], folders_to_ignore: Array[String] = []
 ) -> PackedStringArray:
-	var result: PackedStringArray = []
+	var file_paths: PackedStringArray = []
 	var dir: DirAccess = DirAccess.open(path)
 
 	if not dir.dir_exists(path):
-		return result
+		return file_paths
 	
 	dir.list_dir_begin()
 	var element_name = dir.get_next()
@@ -130,55 +130,20 @@ static func get_absolute_file_paths_for_file_extensions(
 				continue
 			
 			# Recurse into subdirectories
-			result += get_absolute_file_paths_for_file_extensions(
+			file_paths += get_absolute_file_paths_for_file_extensions(
 				file_path, file_extensions, folders_to_ignore
 			)
 		elif file_extensions.is_empty() or file_path.get_extension() in file_extensions:
-			# Add files with the specified extension to the result array
-			result.append(file_path)
+			# Add files with the specified extension to the [file_paths] array
+			file_paths.append(file_path)
 		
 		element_name = dir.get_next()
 	dir.list_dir_end()
 
-	return result
+	return file_paths
 
 
 static func rebuild_popochiu_data_file() -> void:
-	#var game_path := get_game_path()
-	#var commands_file := game_path.path_join("graphic_interface/commands.gd")
-#
-	## Project specific things to store before rebuilding the file
-	#var pc := ""
-	#var template := ""
-	#var commands := ""
-	#var migration := 0
-	#
-	## popochiu_data.cfg config file can be loaded so try to get some project specific values
-	#if PopochiuResources.get_data_cfg():
-		## get the player character
-		#pc = PopochiuResources.get_data_value("setup", "pc", "")
-		#
-		## get the migration version
-		#migration = PopochiuResources.get_data_value("migration", "version", 0)
-		#
-		## get ui values
-		#template = PopochiuResources.get_data_value("ui", "template", "SimpleClick")
-		#commands = PopochiuResources.get_data_value("ui", "commands", "")
-	#
-	#if template.is_empty():
-		#template = "SimpleClick"
-	#
-	#if commands.is_empty():
-		#if FileAccess.file_exists(commands_file):
-			#commands = commands_file
-	
-	# Set project specific values from original popochiu_data.cfg file
-	#PopochiuResources.set_data_value("setup", "done", false)
-	#PopochiuResources.set_data_value("setup", "pc", pc)
-	#PopochiuResources.set_data_value("migration", "version", migration)
-	#PopochiuResources.set_data_value("ui", "template", template)
-	#PopochiuResources.set_data_value("ui", "commands", commands)
-	
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "rooms")
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "characters")
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "dialogs")
@@ -200,12 +165,6 @@ static func _rebuild_popochiu_data_section(game_path: String, data_section: Stri
 		var key_name := folder.to_pascal_case()
 		var tres_file := "%s_%s.tres" % [section_name, folder]
 		var key_value := game_path.path_join("%s/%s/%s" % [data_section, folder, tres_file])
-	
-		#if not FileAccess.file_exists(key_value):
-			#if section_name == "inventory_item":
-				#section_name = "inventory"
-				#tres_file = "%s_%s.tres" % [section_name, folder]
-				#key_value = game_path.path_join("%s/%s/%s" % [data_section, folder, tres_file])
 		
 		PopochiuResources.set_data_value(data_section, key_name, key_value)
 
