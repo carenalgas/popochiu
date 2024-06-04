@@ -15,18 +15,26 @@ extends PopochiuMigration
 const VERSION = 1
 const DESCRIPTION = "Migrate project structure to Popochiu 2.0 format"
 const STEPS = [
-	"Delete [b]res://popochiu/autoloads/[/b]",
-	"Move folders in [b]res://popochiu/[/b] to [b]res://game/[/b]",
-	"Rename all to snake_case",
-	"Select the default GUI template (OPTIONAL)",
-	"Update paths in [b]res://game/popochiu_data.cfg[/b]",
-	"Rename [b]res://popochiu/[/b] references to [b]res://game/[/b]",
-	"Rename inventory items from [b]item_xxx[/b] to [b]inventory_item_xxx[/b]",
-	"Update assignation of voices in [b]PopochiuCharacter[/b]",
+	"Delete [b]res://popochiu/autoloads/[/b].",
+	"Move folders in [b]res://popochiu/[/b] to [b]res://game/[/b].",
+	"Rename all to snake_case.",
+	"Select the default GUI template (OPTIONAL).",
+	"Update paths in [b]res://game/popochiu_data.cfg[/b].",
+	"Rename [b]res://popochiu/[/b] references to [b]res://game/[/b].",
+	"Rename inventory item files from [b]item_xxx[/b] to [b]inventory_item_xxx[/b].",
+	"Update assignation of voices in [b]PopochiuCharacter[/b].",
+	"Assign script to all PopochiuProps and fix possible scene ref issues (alpha 1).",
+	"Update PopochiuWalkableArea's Perimeter [b]agent_radius[/b] to 0",
+	"Replace calls to [b]R.get_point[/b] by [b]R.get_marker[/b]",
+	"Replace calls to [b]G.display[/b] to [b]G.show_system_text[/b].",
+	"Replace calls to methods with [b]_now[/b] suffix.",
 ]
 const PopochiuGuiTemplatesHelper = preload(
 	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
 )
+
+var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
+var _prop_file_template := "%s/props/&p/prop_&p"
 
 
 #region Virtual ####################################################################################
@@ -42,41 +50,51 @@ func _do_migration() -> bool:
 	):
 		# No need to move the autoloads directory as Popochiu 2 creates them automatically. This
 		# will also fix the issue related with using [preload()] in old [A] autoload.
-		_print_step("Delete [b]res://popochiu/autoloads/[/b]")
+		_print_step(0)
 		if not _delete_popochiu_folder_autoloads():
+			return false
+		completed.append(0)
+		
+		_print_step(1)
+		if not _move_game_data():
 			return false
 		completed.append(1)
 		
-		_print_step("Move folders in [b]res://popochiu/[/b] to [b]res://game/[/b]")
-		if not _move_game_data():
-			return false
+		_print_step(2)
+		_rename_data_to_snake_case()
 		completed.append(2)
 		
-		_print_step("Rename all to snake_case")
-		_rename_data_to_snake_case()
-		completed.append(3)
-		
 		if PopochiuResources.get_data_value("ui", "template", "").is_empty():
-			_print_step("Select the default GUI template")
+			_print_step(3)
 			await _select_gui_template()
 			
-			completed.append(4)
+			completed.append(3)
 		
-		_print_step("Update paths in [b]res://game/popochiu_data.cfg[/b]")
+		_print_step(4)
 		PopochiuMigrationHelper.rebuild_popochiu_data_file()
+		completed.append(4)
+		
+		_print_step(5)
+		_rename_game_folder_references()
 		completed.append(5)
 		
-		_print_step("Rename [b]res://popochiu/[/b] references to [b]res://game/[/b]")
-		_rename_game_folder_references()
+		_print_step(6)
+		_rename_inventory_item_filenames()
 		completed.append(6)
 		
-		_print_step("Rename inventory items from [b]item_xxx[/b] to [b]inventory_item_xxx[/b]")
-		_rename_inventory_item_filenames()
+		_print_step(7)
+		_update_characters_voices()
 		completed.append(7)
 		
-		_print_step("Update assignation of voices in [b]PopochiuCharacter[/b]")
-		_update_characters_voices()
+		_print_step(8)
+		await PopochiuEditorHelper.wait(0.1)
+		_assign_prop_script_and_fix_scene_ref()
 		completed.append(8)
+		
+		#"Update PopochiuWalkableArea's Perimeter [b]agent_radius[/b] to 0",
+		#"Replace calls to [b]R.get_point[/b] by [b]R.get_marker[/b]",
+		#"Replace calls to [b]G.display[/b] to [b]G.show_system_text[/b].",
+		#"Replace calls to methods with [b]_now[/b] suffix.",
 		
 		return true
 	else:
@@ -184,9 +202,7 @@ func _rename_game_folder_references() -> void:
 	
 	# Go over gd, tscn, and tres files to update their references to res://popochiu/ by res://game/
 	var files := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
-		PopochiuResources.GAME_PATH,
-		["gd", "tscn", "tres", "cfg"],
-		["autoloads"]
+		PopochiuResources.GAME_PATH, ["gd", "tscn", "tres", "cfg"], ["autoloads"]
 	)
 	
 	PopochiuMigrationHelper.replace_path_reference(
@@ -257,14 +273,81 @@ func _load_character_voices(scene_path: String) -> bool:
 			return new_emotion_dic
 	)
 	
-	var packed_scene := PackedScene.new()
-	packed_scene.pack(popochiu_character)
-	
-	if ResourceSaver.save(packed_scene, scene_path) != OK:
+	if PopochiuEditorHelper.pack_scene(popochiu_character, scene_path) != OK:
 		PopochiuUtils.print_error(
 			"Couldn't update [b]%s[/b] with new voices array." % popochiu_character.script_name
 		)
 		return false
+	return true
+
+
+func _assign_prop_script_and_fix_scene_ref() -> bool:
+	var room_scene_paths := PopochiuResources.get_section_keys("rooms").map(
+		func (room_name: String) -> PopochiuRoom:
+			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
+			return (load(scene_path) as PackedScene).instantiate()
+	)
+	
+	return room_scene_paths.all(_update_room)
+
+
+func _update_room(popochiu_room: PopochiuRoom) -> bool:
+	# Update PopochiuWalkableArea's Perimeter [agent_radius] to 0
+	for wa: PopochiuWalkableArea in popochiu_room.get_node("WalkableAreas").get_children():
+		(wa.get_child(0) as NavigationRegion2D).navigation_polygon.agent_radius = 0.0
+	
+	# Assign script to all PopochiuProps and fix scene ref issues
+	var props_to_add := []
+	for prop: PopochiuProp in popochiu_room.get_node("Props").get_children():
+		prints("@@@", prop.script_name)
+		var prop_file_path := (_prop_file_template % 
+			popochiu_room.scene_file_path.get_base_dir()
+		).replace("&p", prop.script_name.to_snake_case())
+		var prop_scene_path := prop_file_path + ".tscn"
+		var new_prop: PopochiuProp = (load(prop_scene_path) as PackedScene).instantiate()
+		
+		if prop.clickable:
+			prints(">>>>>>>>", prop.get_child(0))
+			new_prop.interaction_polygon = prop.get_child(0).polygon
+		else:
+			var prop_script: Script = load(
+				"res://addons/popochiu/engine/templates/prop_template.gd"
+			).duplicate()
+			var prop_script_path := prop_file_path + ".gd"
+			
+			if ResourceSaver.save(prop_script, prop_script_path) != OK:
+				PopochiuUtils.print_error("Could not create [b]%s[/b] script: %s" % [
+					new_prop.script_name, prop_script_path
+				])
+				return false
+			
+			new_prop.set_script(load(prop_script_path))
+		
+		if prop.script_name.to_lower() in ["bg", "background"]:
+			new_prop.z_index = -1
+		
+		new_prop.name = prop.name
+		new_prop.texture = prop.texture
+		new_prop.frames = prop.frames
+		new_prop.v_frames = prop.v_frames
+		new_prop.link_to_item = prop.link_to_item
+		new_prop.position = prop.position
+		props_to_add.append(new_prop)
+		
+		prop.free()
+	
+	prints("---")
+	for new_prop: PopochiuProp in props_to_add:
+		popochiu_room.get_node("Props").add_child(new_prop)
+		new_prop.owner = popochiu_room
+	
+	if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
+		PopochiuUtils.print_error(
+			"Migration 1: Couldn't update [b]%s[/b]." % popochiu_room.script_name
+		)
+		return false
+	
+	popochiu_room.free()
 	return true
 
 

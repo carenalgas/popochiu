@@ -86,8 +86,8 @@ func can_do_migration() -> bool:
 #endregion
 
 #region Private ####################################################################################
-func _print_step(msg: String) -> void:
-	PopochiuUtils.print_normal(" - " + msg)
+func _print_step(idx: int) -> void:
+	PopochiuUtils.print_normal(" - " + get("STEPS")[idx])
 
 
 #endregion

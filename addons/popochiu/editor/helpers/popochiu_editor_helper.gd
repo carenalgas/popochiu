@@ -181,9 +181,23 @@ static func wait_process_frame() -> void:
 	await EditorInterface.get_base_control().get_tree().process_frame
 
 
+static func wait(secs: float) -> void:
+	await EditorInterface.get_base_control().get_tree().create_timer(secs).timeout
+
+
 static func scan() -> void:
 	EditorInterface.get_resource_filesystem().scan.call_deferred()
 	await EditorInterface.get_resource_filesystem().filesystem_changed
+
+
+static func pack_scene(node: Node, path := "") -> int:
+	var packed_scene := PackedScene.new()
+	packed_scene.pack(node)
+	
+	if path.is_empty():
+		path = node.scene_file_path
+	
+	return ResourceSaver.save(packed_scene, path)
 
 
 #endregion

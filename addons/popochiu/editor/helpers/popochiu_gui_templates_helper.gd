@@ -95,10 +95,10 @@ static func copy_component(source_scene_path: String) -> String:
 	
 	# Make a copy of the component and save it in the graphic interface components folder
 	var component_instance := (load(source_scene_path) as PackedScene).instantiate()
+	var target_scene_file := "%s/%s" % [target_folder, file_name]
+	
 	var packed_scene := PackedScene.new()
 	packed_scene.pack(component_instance)
-	
-	var target_scene_file := "%s/%s" % [target_folder, file_name]
 	
 	var err := ResourceSaver.save(packed_scene, target_scene_file)
 	
