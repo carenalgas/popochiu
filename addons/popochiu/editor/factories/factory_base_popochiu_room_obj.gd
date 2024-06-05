@@ -17,6 +17,31 @@ func get_group() -> String:
 	return _obj_room_group
 
 
+func create_from(node: Node, room: PopochiuRoom) -> int:
+	_setup_room(room)
+	_setup_name(node.name)
+	
+	prints(">>>> _room_path:", _room_path)
+	prints(">>>> _path_template:", _path_template)
+	prints(">>>> _path_base:", _path_base)
+	
+	var param := _get_param(node)
+	param.room = room
+	param.obj_name = node.name
+	param.is_visible = node.visible
+	param.should_setup_room_and_name = false
+	param.should_add_to_room = false
+	param.should_create_script = !FileAccess.file_exists(_path_script)
+	# TODO: Enable this once the last gizmos PR is merged
+	#param.interaction_polygon = node.interaction_polygon
+	
+	return call("create", param)
+
+
+func get_new_instance() -> PopochiuRoomObjFactory:
+	return new()
+
+
 #endregion
 
 #region Private ####################################################################################
@@ -57,6 +82,10 @@ func _add_resource_to_room() -> void:
 	EditorInterface.save_scene()
 
 
+func _get_param(_node: Node) -> PopochiuRoomObjFactoryParam:
+	return PopochiuRoomObjFactoryParam.new()
+
+
 #endregion
 
 #region Subclass ###################################################################################
@@ -64,6 +93,7 @@ class PopochiuRoomObjFactoryParam extends RefCounted:
 	var obj_name: String
 	var room: PopochiuRoom
 	var is_visible := true
+	var should_setup_room_and_name := true
 	var should_create_script := true
 	var should_add_to_room := true
 	var interaction_polygon := PackedVector2Array()

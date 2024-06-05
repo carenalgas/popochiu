@@ -16,9 +16,10 @@ func _init() -> void:
 func create(param: PopochiuHotspotFactoryParam) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
-
-	_setup_room(param.room)
-	_setup_name(param.obj_name)
+	
+	if param.should_setup_room_and_name:
+		_setup_room(param.room)
+		_setup_name(param.obj_name)
 	
 	# Create the folder
 	result_code = _create_obj_folder()
@@ -48,6 +49,17 @@ func create(param: PopochiuHotspotFactoryParam) -> int:
 	_add_resource_to_room()
 
 	return result_code
+
+
+#endregion
+
+#region Private ####################################################################################
+func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
+	var param := PopochiuHotspotFactoryParam.new()
+	param.is_interactive = node.clickable
+	# TODO: Remove this line once the last gizmos PR is merged
+	param.interaction_polygon = node.interaction_polygon
+	return param
 
 
 #endregion

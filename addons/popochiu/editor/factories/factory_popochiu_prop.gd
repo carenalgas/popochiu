@@ -16,9 +16,10 @@ func _init() -> void:
 func create(param: PopochiuPropFactoryParam) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
-
-	_setup_room(param.room)
-	_setup_name(param.obj_name)
+	
+	if param.should_setup_room_and_name:
+		_setup_room(param.room)
+		_setup_name(param.obj_name)
 
 	# Create the folder
 	result_code = _create_obj_folder()
@@ -63,20 +64,15 @@ func create(param: PopochiuPropFactoryParam) -> int:
 	return result_code
 
 
-func create_from(prop: PopochiuProp, room: PopochiuRoom) -> int:
-	_setup_room(room)
-	_setup_name(prop.name)
-	
+#endregion
+
+#region Private ####################################################################################
+func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
 	var param := PopochiuPropFactoryParam.new()
-	param.obj_name = prop.name
-	param.room = room
-	param.is_interactive = prop.clickable
-	param.is_visible = prop.visible
-	param.should_add_to_room = false
-	param.should_create_script = !FileAccess.file_exists(_path_script)
-	param.interaction_polygon = prop.interaction_polygon
-	
-	return create(param)
+	param.is_interactive = node.clickable
+	# TODO: Remove this line once the last gizmos PR is merged
+	param.interaction_polygon = node.interaction_polygon
+	return param
 
 
 #endregion

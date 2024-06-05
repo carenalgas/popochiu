@@ -34,7 +34,6 @@ const PopochiuGuiTemplatesHelper = preload(
 )
 
 var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
-var _prop_file_template := "%s/props/&p/prop_&p"
 
 
 #region Virtual ####################################################################################
@@ -290,10 +289,6 @@ func _assign_prop_script_and_fix_scene_ref() -> bool:
 			return (load(scene_path) as PackedScene).instantiate()
 	)
 	return room_scene_paths.all(_update_room)
-	#return await room_scene_paths.all(
-		#func (popochiu_room: PopochiuRoom) -> void:
-			#await _update_room(popochiu_room)
-	#)
 
 
 func _update_room(popochiu_room: PopochiuRoom) -> bool:
@@ -332,13 +327,16 @@ func _create_new_obj(
 		objects = []
 	}
 	for obj in popochiu_room.get_node(factory.get_group()).get_children():
-		if obj.has_node("InteractionPolygon2"):
+		prints("@@@@@@@@", obj.name)
+		
+		if (obj is PopochiuProp or obj is PopochiuHotspot) and obj.has_node("InteractionPolygon2"):
 			obj.interaction_polygon = obj.get_node("InteractionPolygon2").polygon
 		
-		if factory.create_from(obj, popochiu_room) != ResultCodes.SUCCESS:
+		var obj_factory := factory.get_new_instance()
+		if obj_factory.create_from(obj, popochiu_room) != ResultCodes.SUCCESS:
 			return false
 		
-		var new_obj = (load(factory.get_scene_path()) as PackedScene).instantiate()
+		var new_obj = (load(obj_factory.get_scene_path()) as PackedScene).instantiate()
 		
 		if new_obj is PopochiuProp:
 			new_obj.texture = obj.texture

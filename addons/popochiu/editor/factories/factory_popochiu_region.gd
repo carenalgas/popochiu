@@ -15,9 +15,10 @@ func _init() -> void:
 func create(param: PopochiuRoomObjFactoryParam) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
-
-	_setup_room(param.room)
-	_setup_name(param.obj_name)
+	
+	if param.should_setup_room_and_name:
+		_setup_room(param.room)
+		_setup_name(param.obj_name)
 
 	# Create the folder
 	result_code = _create_obj_folder()
