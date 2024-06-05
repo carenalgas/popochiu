@@ -1,5 +1,5 @@
 class_name PopochiuHotspotFactory
-extends "res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd"
+extends PopochiuRoomObjFactory
 
 
 #region Godot ######################################################################################
@@ -13,12 +13,12 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-func create(obj_name: String, room: PopochiuRoom) -> int:
+func create(param: PopochiuHotspotFactoryParam) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
 
-	_setup_room(room)
-	_setup_name(obj_name)
+	_setup_room(param.room)
+	_setup_name(param.obj_name)
 	
 	# Create the folder
 	result_code = _create_obj_folder()
@@ -48,6 +48,13 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	_add_resource_to_room()
 
 	return result_code
+
+
+#endregion
+
+#region Subclass ###################################################################################
+class PopochiuHotspotFactoryParam extends PopochiuRoomObjFactory.PopochiuRoomObjFactoryParam:
+	var is_interactive := true
 
 
 #endregion

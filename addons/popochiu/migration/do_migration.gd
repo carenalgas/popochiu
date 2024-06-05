@@ -11,7 +11,7 @@ static func do_migrations() -> void:
 		await PopochiuEditorHelper.wait_process_frame()
 		return
 	
-	var migrations_popup := PopochiuEditorHelper.MIGRATIONS_SCENE.instantiate()
+	#var migrations_popup := PopochiuEditorHelper.MIGRATIONS_SCENE.instantiate()
 	
 	PopochiuUtils.print_normal("Processing Popochiu Migrations")
 	while PopochiuMigrationHelper.is_migration_needed():
@@ -38,13 +38,13 @@ static func do_migrations() -> void:
 		if not migration.is_migration_needed():
 			continue
 		
-		migration.step_completed.connect(migrations_popup.update_steps)
-		migrations_popup.add_migration(migration)
-		PopochiuEditorHelper.show_migrations(migrations_popup)
+		#migration.step_completed.connect(migrations_popup.update_steps)
+		#migrations_popup.add_migration(migration)
+		#PopochiuEditorHelper.show_migrations(migrations_popup)
 		if not await PopochiuMigration.run_migration(migration, migration_version):
 			break
 		
-		migrations_popup.queue_free()
+		#migrations_popup.queue_free()
 
 
 #endregion

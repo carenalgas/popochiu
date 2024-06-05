@@ -1,5 +1,5 @@
 class_name PopochiuRegionFactory
-extends "res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd"
+extends PopochiuRoomObjFactory
 
 #region Godot ######################################################################################
 func _init() -> void:
@@ -12,12 +12,12 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-func create(obj_name: String, room: PopochiuRoom) -> int:
+func create(param: PopochiuRoomObjFactoryParam) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
 
-	_setup_room(room)
-	_setup_name(obj_name)
+	_setup_room(param.room)
+	_setup_name(param.obj_name)
 
 	# Create the folder
 	result_code = _create_obj_folder()

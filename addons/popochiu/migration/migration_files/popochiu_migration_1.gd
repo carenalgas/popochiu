@@ -67,7 +67,7 @@ func _do_migration() -> bool:
 		if PopochiuResources.get_data_value("ui", "template", "").is_empty():
 			_print_step(3)
 			await _select_gui_template()
-			
+				
 			completed.append(3)
 		
 		_print_step(4)
@@ -87,8 +87,7 @@ func _do_migration() -> bool:
 		completed.append(7)
 		
 		_print_step(8)
-		await PopochiuEditorHelper.wait(0.1)
-		_assign_prop_script_and_fix_scene_ref()
+		await _assign_prop_script_and_fix_scene_ref()
 		completed.append(8)
 		
 		#"Update PopochiuWalkableArea's Perimeter [b]agent_radius[/b] to 0",
@@ -199,6 +198,7 @@ func _rename_game_folder_references() -> void:
 		ProjectSettings.set_setting(PopochiuResources.MAIN_SCENE, main_scene_path.replace(
 			PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
 		))
+		ProjectSettings.save()
 	
 	# Go over gd, tscn, and tres files to update their references to res://popochiu/ by res://game/
 	var files := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
@@ -282,13 +282,18 @@ func _load_character_voices(scene_path: String) -> bool:
 
 
 func _assign_prop_script_and_fix_scene_ref() -> bool:
+	await PopochiuEditorHelper.wait(0.1)
+	
 	var room_scene_paths := PopochiuResources.get_section_keys("rooms").map(
 		func (room_name: String) -> PopochiuRoom:
 			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
 			return (load(scene_path) as PackedScene).instantiate()
 	)
-	
 	return room_scene_paths.all(_update_room)
+	#return await room_scene_paths.all(
+		#func (popochiu_room: PopochiuRoom) -> void:
+			#await _update_room(popochiu_room)
+	#)
 
 
 func _update_room(popochiu_room: PopochiuRoom) -> bool:
@@ -296,50 +301,18 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	for wa: PopochiuWalkableArea in popochiu_room.get_node("WalkableAreas").get_children():
 		(wa.get_child(0) as NavigationRegion2D).navigation_polygon.agent_radius = 0.0
 	
-	# Assign script to all PopochiuProps and fix scene ref issues
-	var props_to_add := []
-	for prop: PopochiuProp in popochiu_room.get_node("Props").get_children():
-		prints("@@@", prop.script_name)
-		var prop_file_path := (_prop_file_template % 
-			popochiu_room.scene_file_path.get_base_dir()
-		).replace("&p", prop.script_name.to_snake_case())
-		var prop_scene_path := prop_file_path + ".tscn"
-		var new_prop: PopochiuProp = (load(prop_scene_path) as PackedScene).instantiate()
-		
-		if prop.clickable:
-			prints(">>>>>>>>", prop.get_child(0))
-			new_prop.interaction_polygon = prop.get_child(0).polygon
-		else:
-			var prop_script: Script = load(
-				"res://addons/popochiu/engine/templates/prop_template.gd"
-			).duplicate()
-			var prop_script_path := prop_file_path + ".gd"
-			
-			if ResourceSaver.save(prop_script, prop_script_path) != OK:
-				PopochiuUtils.print_error("Could not create [b]%s[/b] script: %s" % [
-					new_prop.script_name, prop_script_path
-				])
-				return false
-			
-			new_prop.set_script(load(prop_script_path))
-		
-		if prop.script_name.to_lower() in ["bg", "background"]:
-			new_prop.z_index = -1
-		
-		new_prop.name = prop.name
-		new_prop.texture = prop.texture
-		new_prop.frames = prop.frames
-		new_prop.v_frames = prop.v_frames
-		new_prop.link_to_item = prop.link_to_item
-		new_prop.position = prop.position
-		props_to_add.append(new_prop)
-		
-		prop.free()
+	var room_objects_to_add := []
+	[PopochiuPropFactory.new(), PopochiuHotspotFactory.new(), PopochiuRegionFactory.new()].all(
+		_create_new_obj.bind(popochiu_room, room_objects_to_add)
+	)
 	
-	prints("---")
-	for new_prop: PopochiuProp in props_to_add:
-		popochiu_room.get_node("Props").add_child(new_prop)
-		new_prop.owner = popochiu_room
+	for group: Dictionary in room_objects_to_add:
+		group.objects.all(
+			func (new_obj) -> bool:
+				popochiu_room.get_node(group.factory.get_group()).add_child(new_obj)
+				new_obj.owner = popochiu_room
+				return true
+		)
 	
 	if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
 		PopochiuUtils.print_error(
@@ -348,6 +321,41 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 		return false
 	
 	popochiu_room.free()
+	return true
+
+
+func _create_new_obj(
+	factory: PopochiuRoomObjFactory, popochiu_room: PopochiuRoom, room_objects_to_add := []
+) -> bool:
+	var group := {
+		factory = factory,
+		objects = []
+	}
+	for obj in popochiu_room.get_node(factory.get_group()).get_children():
+		if obj.has_node("InteractionPolygon2"):
+			obj.interaction_polygon = obj.get_node("InteractionPolygon2").polygon
+		
+		if factory.create_from(obj, popochiu_room) != ResultCodes.SUCCESS:
+			return false
+		
+		var new_obj = (load(factory.get_scene_path()) as PackedScene).instantiate()
+		
+		if new_obj is PopochiuProp:
+			new_obj.texture = obj.texture
+			new_obj.frames = obj.frames
+			new_obj.v_frames = obj.v_frames
+			new_obj.link_to_item = obj.link_to_item
+		
+		if new_obj is PopochiuProp or new_obj is PopochiuHotspot:
+			new_obj.baseline = obj.baseline
+			new_obj.walk_to_point = obj.walk_to_point
+		
+		new_obj.position = obj.position
+		
+		group.objects.append(new_obj)
+		obj.free()
+	
+	room_objects_to_add.append(group)
 	return true
 
 

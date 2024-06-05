@@ -1,5 +1,5 @@
 class_name PopochiuPropFactory
-extends "res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd"
+extends PopochiuRoomObjFactory
 
 
 #region Godot ######################################################################################
@@ -13,22 +13,21 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-func create(
-	obj_name: String, room: PopochiuRoom, is_interactive:bool = false, is_visible:bool = true
-) -> int:
+func create(param: PopochiuPropFactoryParam) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
 
-	_setup_room(room)
-	_setup_name(obj_name)
+	_setup_room(param.room)
+	_setup_name(param.obj_name)
 
 	# Create the folder
 	result_code = _create_obj_folder()
 	if result_code != ResultCodes.SUCCESS: return result_code
 
 	# Create the script (if the prop is interactive)
-	result_code = _copy_script_template()
-	if result_code != ResultCodes.SUCCESS: return result_code
+	if param.should_create_script:
+		result_code = _copy_script_template()
+		if result_code != ResultCodes.SUCCESS: return result_code
 		
 	# ---- LOCAL CODE ------------------------------------------------------------------------------
 	# Create the instance
@@ -40,8 +39,9 @@ func create(
 	new_obj.script_name = _pascal_name
 	new_obj.description = _snake_name.capitalize()
 	new_obj.cursor = PopochiuResources.CURSOR_TYPE.ACTIVE
-	new_obj.clickable = is_interactive
-	new_obj.visible = is_visible
+	new_obj.clickable = param.is_interactive
+	new_obj.visible = param.is_visible
+	new_obj.interaction_polygon = param.interaction_polygon
 
 	if PopochiuConfig.is_pixel_art_textures():
 		new_obj.get_node("Sprite2D").texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -55,11 +55,35 @@ func create(
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
-
-	# Add the object to its room
-	_add_resource_to_room()
+	
+	if param.should_add_to_room:
+		# Add the object to its room
+		_add_resource_to_room()
 
 	return result_code
+
+
+func create_from(prop: PopochiuProp, room: PopochiuRoom) -> int:
+	_setup_room(room)
+	_setup_name(prop.name)
+	
+	var param := PopochiuPropFactoryParam.new()
+	param.obj_name = prop.name
+	param.room = room
+	param.is_interactive = prop.clickable
+	param.is_visible = prop.visible
+	param.should_add_to_room = false
+	param.should_create_script = !FileAccess.file_exists(_path_script)
+	param.interaction_polygon = prop.interaction_polygon
+	
+	return create(param)
+
+
+#endregion
+
+#region Subclass ###################################################################################
+class PopochiuPropFactoryParam extends PopochiuRoomObjFactory.PopochiuRoomObjFactoryParam:
+	var is_interactive := false
 
 
 #endregion

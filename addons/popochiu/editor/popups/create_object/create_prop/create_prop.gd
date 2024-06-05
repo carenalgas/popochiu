@@ -31,10 +31,12 @@ func _create() -> void:
 	
 	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuPropFactory.new()
-	if _factory.create(
-		_new_prop_name, _room,
-		interaction_checkbox.button_pressed
-	) != ResultCodes.SUCCESS:
+	var param := PopochiuPropFactory.PopochiuPropFactoryParam.new()
+	param.obj_name = _new_prop_name
+	param.room = _room
+	param.is_interactive = interaction_checkbox.button_pressed
+	
+	if _factory.create(param) != ResultCodes.SUCCESS:
 		# TODO: show a message in the popup!
 		return
 	

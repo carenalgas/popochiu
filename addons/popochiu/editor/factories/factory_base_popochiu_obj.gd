@@ -45,6 +45,15 @@ func get_state_resource() -> Resource:
 func get_obj_script() -> Resource:
 	return _script
 
+
+func get_scene_path() -> String:
+	return _path_scene
+
+
+func get_type() -> int:
+	return _type
+
+
 #endregion
 
 #region Private ####################################################################################
