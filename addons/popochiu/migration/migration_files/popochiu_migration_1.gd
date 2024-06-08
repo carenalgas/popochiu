@@ -23,11 +23,8 @@ const STEPS = [
 	"Rename [b]res://popochiu/[/b] references to [b]res://game/[/b].",
 	"Rename inventory item files from [b]item_xxx[/b] to [b]inventory_item_xxx[/b].",
 	"Update assignation of voices in [b]PopochiuCharacter[/b].",
-	"Assign script to all PopochiuProps and fix possible scene ref issues (alpha 1).",
-	"Update PopochiuWalkableArea's Perimeter [b]agent_radius[/b] to 0",
-	"Replace calls to [b]R.get_point[/b] by [b]R.get_marker[/b]",
-	"Replace calls to [b]G.display[/b] to [b]G.show_system_text[/b].",
-	"Replace calls to methods with [b]_now[/b] suffix.",
+	"Update external scenes and assign scripts that didn't exist before.",
+	"Replace deprecated method calls.",
 ]
 const RESET_CHILDREN_OWNER = "reset_children_owner"
 const PopochiuGuiTemplatesHelper = preload(
@@ -87,13 +84,12 @@ func _do_migration() -> bool:
 		completed.append(7)
 		
 		_print_step(8)
-		await _assign_prop_script_and_fix_scene_ref()
+		await _update_external_scenes_and_missing_scripts()
 		completed.append(8)
 		
-		#"Update PopochiuWalkableArea's Perimeter [b]agent_radius[/b] to 0",
-		#"Replace calls to [b]R.get_point[/b] by [b]R.get_marker[/b]",
-		#"Replace calls to [b]G.display[/b] to [b]G.show_system_text[/b].",
-		#"Replace calls to methods with [b]_now[/b] suffix.",
+		_print_step(9)
+		_replace_deprecated_method_calls()
+		completed.append(9)
 		
 		return true
 	else:
@@ -205,7 +201,7 @@ func _rename_game_folder_references() -> void:
 		PopochiuResources.GAME_PATH, ["gd", "tscn", "tres", "cfg"], ["autoloads"]
 	)
 	
-	PopochiuMigrationHelper.replace_path_reference(
+	PopochiuMigrationHelper.replace_text_in_files(
 		Array(files), PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
 	)
 
@@ -229,7 +225,7 @@ func _rename_inventory_item_filenames() -> void:
 		func (file_paths: Array) -> bool:
 			var old_file_name := (file_paths[0] as String).get_file().get_basename()
 			var new_file_name := old_file_name.replace("item_", "inventory_item_")
-			PopochiuMigrationHelper.replace_path_reference(file_paths, old_file_name, new_file_name)
+			PopochiuMigrationHelper.replace_text_in_files(file_paths, old_file_name, new_file_name)
 			
 			for path: String in file_paths:
 				DirAccess.rename_absolute(path, path.replace("/item_", "/inventory_item_"))
@@ -281,9 +277,9 @@ func _load_character_voices(scene_path: String) -> bool:
 	return true
 
 
-func _assign_prop_script_and_fix_scene_ref() -> bool:
-	await PopochiuEditorHelper.wait(0.1)
-	
+## Update external scenes and assign missing scripts for each prop, hotspot, region, and walkable area
+## that didn't exist prior [i]beta 1[/i].
+func _update_external_scenes_and_missing_scripts() -> bool:
 	var room_scene_paths := PopochiuResources.get_section_keys("rooms").map(
 		func (room_name: String) -> PopochiuRoom:
 			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
@@ -292,30 +288,27 @@ func _assign_prop_script_and_fix_scene_ref() -> bool:
 	return room_scene_paths.all(_update_room)
 
 
+## Update the children of the different groups in [param popochiu_room] so the use instances of the
+## new objects: [PopochiuProp], [PopochiuHotspot], [PopochiuRegion], and [PopochiuWalkableArea].
 func _update_room(popochiu_room: PopochiuRoom) -> bool:
-	# Update PopochiuWalkableArea's Perimeter [agent_radius] to 0
-	for wa: PopochiuWalkableArea in popochiu_room.get_node("WalkableAreas").get_children():
-		(wa.get_child(0) as NavigationRegion2D).navigation_polygon.agent_radius = 0.0
-	
 	var room_objects_to_add := []
 	[
 		PopochiuPropFactory.new(),
 		PopochiuHotspotFactory.new(),
 		PopochiuRegionFactory.new(),
 		PopochiuWalkableAreaFactory.new(),
+		# TODO: Include Position2D to update them to Marker2D
 	].all(_create_new_obj.bind(popochiu_room, room_objects_to_add))
 	
 	for group: Dictionary in room_objects_to_add:
 		group.objects.all(
 			func (new_obj) -> bool:
-				prints(">>>>", new_obj.name)
 				# Add the new instance to the room and do the same for its children (those that
 				# were marked as PopochiuRoomObjFactory.CHILD_VISIBLE_IN_ROOM_META)
 				popochiu_room.get_node(group.factory.get_group()).add_child(new_obj)
 				new_obj.owner = popochiu_room
 				
 				for child: Node in new_obj.get_meta(RESET_CHILDREN_OWNER):
-					prints(">>>>>>>>", child.name)
 					child.owner = popochiu_room
 				new_obj.remove_meta(RESET_CHILDREN_OWNER)
 				
@@ -332,6 +325,9 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	return true
 
 
+## Create a new scene of the [param factory] type. The scene will be placed in its corresponding
+## folder inside the [param popochiu_room] folder. Created [Node]s will be stored in
+## [param room_objects_to_add] so they are added to the room later.
 func _create_new_obj(
 	factory: PopochiuRoomObjFactory, popochiu_room: PopochiuRoom, room_objects_to_add := []
 ) -> bool:
@@ -339,10 +335,7 @@ func _create_new_obj(
 		factory = factory,
 		objects = []
 	}
-	print_rich("---- Creating new [b]%s[/b] --------------------------" % factory.get_group())
 	for obj in popochiu_room.get_node(factory.get_group()).get_children():
-		prints("@@@@@@@@ START @@@@", obj.name)
-		
 		# Copy the points of the polygon to use as [PopochiuClickable.interaction_polygon]
 		if obj is PopochiuProp or obj is PopochiuHotspot:
 			var polygon: PackedVector2Array = obj.get_node("InteractionPolygon").polygon
@@ -356,16 +349,13 @@ func _create_new_obj(
 		var obj_factory: PopochiuRoomObjFactory = factory.get_new_instance()
 		if obj_factory.create_from(obj, popochiu_room) != ResultCodes.SUCCESS:
 			return false
-		#obj_factory.add_subresources_to_room()
 		
 		# Map the properties of the [obj] to its new instance
 		group.objects.append(_create_new_room_obj(obj_factory, obj, popochiu_room))
 		
 		# Remove the old [obj] from the room
-		prints("@@@@ END @@@@@@@@", obj.name)
 		obj.free()
 	
-	prints(":::: Objetos a crear ::::", group.objects.size())
 	room_objects_to_add.append(group)
 	return true
 
@@ -404,6 +394,30 @@ func _create_new_room_obj(
 	
 	new_obj.position = source.position
 	return new_obj
+
+
+## Replace calls to old methods:
+## - [code]R.get_point[/code] by [code]R.get_marker[/code].
+## - [code]G.display[/code] to [code]G.show_system_text[/code].
+## - Methods with [code]_now[/code] suffix.
+## - [code]super.on_click() | super.on_right_click() | super.on_item_used(item)[/code] by
+## [code]E.command_fallback()[/code]
+func _replace_deprecated_method_calls() -> void:
+	var scripts_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
+		PopochiuResources.GAME_PATH, ["gd"]
+	)
+	
+	for dic: Dictionary in [
+		{from = "R.get_point", to = "R.get_marker"},
+		{from = "G.display", to = "G.show_system_text"},
+		{from = "disable_now()", to = "disable()"},
+		{from = "enable_now()", to = "enable()"},
+		{from = "change_frame_now(", to = "change_frame("},
+		{from = "super.on_click()", to = "E.command_fallback()"},
+		{from = "super.on_right_click()", to = "E.command_fallback()"},
+		{from = "super.on_item_used(item)", to = "E.command_fallback()"},
+	]:
+		PopochiuMigrationHelper.replace_text_in_files(Array(scripts_paths), dic.from, dic.to)
 
 
 #endregion

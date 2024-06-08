@@ -171,7 +171,7 @@ static func _rebuild_popochiu_data_section(game_path: String, data_section: Stri
 
 ## Look in the text of each file in [param file_paths] for coincidencies to [param from] and
 ## replace them by [param to].
-static func replace_path_reference(file_paths: Array, from: String, to: String) -> void:
+static func replace_text_in_files(file_paths: Array, from: String, to: String) -> void:
 	for file_path: String in file_paths:
 		var file_read := FileAccess.open(file_path, FileAccess.READ)
 		var text := file_read.get_as_text()

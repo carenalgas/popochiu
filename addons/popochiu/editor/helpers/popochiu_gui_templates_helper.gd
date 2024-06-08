@@ -99,6 +99,7 @@ static func copy_component(source_scene_path: String) -> String:
 	
 	var packed_scene := PackedScene.new()
 	packed_scene.pack(component_instance)
+	packed_scene.resource_path = target_scene_file
 	
 	var err := ResourceSaver.save(packed_scene, target_scene_file)
 	
@@ -139,6 +140,7 @@ static func _create_scene(scene_path: String) -> int:
 	# Make a copy of the selected GUI template (.tscn) and save it in
 	# res://game/graphic_interface/graphic_interface.tscn ------------------------------------------
 	var gi_scene := load(scene_path).duplicate(true)
+	gi_scene.resource_path = PopochiuResources.GUI_GAME_SCENE
 	
 	return ResourceSaver.save(gi_scene, PopochiuResources.GUI_GAME_SCENE)
 
@@ -329,6 +331,7 @@ static func _update_scene_script(script_path: String) -> int:
 	
 	var packed_scene: PackedScene = PackedScene.new()
 	packed_scene.pack(scene)
+	packed_scene.resource_path = PopochiuResources.GUI_GAME_SCENE
 	
 	return ResourceSaver.save(packed_scene, PopochiuResources.GUI_GAME_SCENE)
 

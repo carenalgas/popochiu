@@ -54,6 +54,7 @@ func create(param: PopochiuWalkableAreaFactoryParam) -> int:
 		polygon.add_outline(PackedVector2Array([
 			Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
 		]))
+		# TODO: Update this by NavigationServer2D.bake_from_source_geometry_data(...)
 		#polygon.make_polygons_from_outlines()
 		perimeter.navpoly = polygon
 		perimeter.modulate = Color.GREEN

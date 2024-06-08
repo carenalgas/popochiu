@@ -40,15 +40,6 @@ func get_new_instance() -> PopochiuRoomObjFactory:
 	return new()
 
 
-func add_subresources_to_room() -> void:
-	for child in _scene.get_children():
-		prints(">>>>>>>>>>>>>", child.name, child.has_meta(CHILD_VISIBLE_IN_ROOM_META))
-		if child.has_meta(CHILD_VISIBLE_IN_ROOM_META):
-			prints(">>>>>>>>>>>>>>>>>>> Me agrego", _room)
-			child.owner = _room
-			child.remove_meta(CHILD_VISIBLE_IN_ROOM_META)
-
-
 #endregion
 
 #region Private ####################################################################################
@@ -74,7 +65,10 @@ func _add_resource_to_room() -> void:
 	# Set the ownership for the node plus all it's children
 	# (this address colliders, polygons, etc)
 	_scene.owner = _room
-	add_subresources_to_room()
+	for child in _scene.get_children():
+		if child.has_meta(CHILD_VISIBLE_IN_ROOM_META):
+			child.owner = _room
+			child.remove_meta(CHILD_VISIBLE_IN_ROOM_META)
 
 	# Center the object on the scene
 	_scene.position = Vector2(
