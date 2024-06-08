@@ -134,13 +134,15 @@ static func show_setup(is_welcome := false) -> void:
 	await show_dialog(dialog, content.custom_minimum_size)
 
 
-static func show_migrations(content: Migrations, min_size := Vector2i(640, 160)) -> void:
-	var popup := AcceptDialog.new()
-	popup.title = content.title
-	popup.get_ok_button().hide()
-	popup.add_child(content)
+static func show_migrations(content: Migrations, min_size := Vector2i(640, 160)) -> AcceptDialog:
+	var dialog := AcceptDialog.new()
+	dialog.borderless = true
+	dialog.always_on_top = true
+	content.anchors_preset = Control.PRESET_FULL_RECT
+	dialog.add_child(content)
 	
-	await show_dialog(popup, min_size)
+	await show_dialog(dialog, min_size)
+	return dialog
 
 
 static func show_dialog(dialog: Window, min_size := Vector2i.ZERO) -> void:

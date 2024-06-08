@@ -21,8 +21,6 @@ func create_from(node: Node, room: PopochiuRoom) -> int:
 	_setup_room(room)
 	_setup_name(node.name)
 	
-	prints(">>>> _path_base:", _path_base)
-	
 	var param := _get_param(node)
 	param.room = room
 	param.obj_name = node.name

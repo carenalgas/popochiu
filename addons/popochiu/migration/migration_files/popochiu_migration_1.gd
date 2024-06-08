@@ -47,49 +47,48 @@ func _do_migration() -> bool:
 	):
 		# No need to move the autoloads directory as Popochiu 2 creates them automatically. This
 		# will also fix the issue related with using [preload()] in old [A] autoload.
-		_print_step(0)
+		_start(0)
 		if not _delete_popochiu_folder_autoloads():
 			return false
-		completed.append(0)
+		await _complete(0)
 		
-		_print_step(1)
+		_start(1)
 		if not _move_game_data():
 			return false
-		completed.append(1)
+		await _complete(1)
 		
-		_print_step(2)
+		_start(2)
 		_rename_data_to_snake_case()
-		completed.append(2)
+		await _complete(2)
 		
 		if PopochiuResources.get_data_value("ui", "template", "").is_empty():
-			_print_step(3)
+			_start(3)
 			await _select_gui_template()
-				
-			completed.append(3)
+			await _complete(3)
 		
-		_print_step(4)
+		_start(4)
 		PopochiuMigrationHelper.rebuild_popochiu_data_file()
-		completed.append(4)
+		await _complete(4)
 		
-		_print_step(5)
+		_start(5)
 		_rename_game_folder_references()
-		completed.append(5)
+		await _complete(5)
 		
-		_print_step(6)
+		_start(6)
 		_rename_inventory_item_filenames()
-		completed.append(6)
+		await _complete(6)
 		
-		_print_step(7)
+		_start(7)
 		_update_characters_voices()
-		completed.append(7)
+		await _complete(7)
 		
-		_print_step(8)
+		_start(8)
 		await _update_external_scenes_and_missing_scripts()
-		completed.append(8)
+		await _complete(8)
 		
-		_print_step(9)
+		_start(9)
 		_replace_deprecated_method_calls()
-		completed.append(9)
+		await _complete(9)
 		
 		return true
 	else:

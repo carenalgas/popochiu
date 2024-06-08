@@ -6,15 +6,13 @@ extends Node
 ## Migration files in [code]res://addons/popochiu/migration/migration_files/*.gd[/code] should
 ## extend this class.
 
+signal step_started(migration: PopochiuMigration, idx: int)
 signal step_completed(migration: PopochiuMigration)
 
 var _version := -1
 
 ## [Array] of completed steps
-var completed := [] :
-	set (value):
-		completed = value
-		step_completed.emit(self)
+var completed := []
 
 
 #region Godot ######################################################################################
@@ -88,6 +86,16 @@ func can_do_migration() -> bool:
 #region Private ####################################################################################
 func _print_step(idx: int) -> void:
 	PopochiuUtils.print_normal(" - " + get("STEPS")[idx])
+
+
+func _start(idx: int) -> void:
+	step_started.emit(self, idx)
+
+
+func _complete(idx: int) -> void:
+	completed.append(idx)
+	step_completed.emit(self)
+	await PopochiuEditorHelper.wait(randf_range(0.3, 1.0))
 
 
 #endregion

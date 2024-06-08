@@ -10,19 +10,30 @@ const Migration = preload("res://addons/popochiu/editor/popups/migrations/migrat
 #region Public #####################################################################################
 func add_migration(popochiu_migration: PopochiuMigration) -> void:
 	var migration := MIGRATION_SCENE.instantiate()
-	migration.name = "Migration%d" % popochiu_migration.VERSION
+	migration.name = "Migration %d" % popochiu_migration.VERSION
+	migration.anchors_preset = Control.PRESET_FULL_RECT
+	tab_container.add_child.call_deferred(migration)
+	await migration.ready
+	
 	migration.description.text = popochiu_migration.DESCRIPTION
 	migration.set_steps(popochiu_migration.STEPS)
 	
 	PopochiuEditorHelper.override_font(migration.steps, "normal_font", "main")
 	PopochiuEditorHelper.override_font(migration.steps, "bold_font", "bold")
 	PopochiuEditorHelper.override_font(migration.steps, "mono_font", "source")
+	await get_tree().process_frame
 	
-	tab_container.add_child(migration)
+	custom_minimum_size = $PanelContainer.size
+	(get_parent() as AcceptDialog).reset_size()
+
+
+func start_step(popochiu_migration: PopochiuMigration, idx: int) -> void:
+	var migration: Migration = tab_container.get_child(popochiu_migration.VERSION - 1)
+	migration.start_step(idx)
 
 
 func update_steps(popochiu_migration: PopochiuMigration) -> void:
-	var migration: Migration = tab_container.get_child(popochiu_migration.version - 1)
+	var migration: Migration = tab_container.get_child(popochiu_migration.VERSION - 1)
 	migration.mark_steps(popochiu_migration.completed)
 
 
