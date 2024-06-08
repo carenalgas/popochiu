@@ -29,6 +29,7 @@ const STEPS = [
 	"Replace calls to [b]G.display[/b] to [b]G.show_system_text[/b].",
 	"Replace calls to methods with [b]_now[/b] suffix.",
 ]
+const RESET_CHILDREN_OWNER = "reset_children_owner"
 const PopochiuGuiTemplatesHelper = preload(
 	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
 )
@@ -297,15 +298,27 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 		(wa.get_child(0) as NavigationRegion2D).navigation_polygon.agent_radius = 0.0
 	
 	var room_objects_to_add := []
-	[PopochiuPropFactory.new(), PopochiuHotspotFactory.new(), PopochiuRegionFactory.new()].all(
-		_create_new_obj.bind(popochiu_room, room_objects_to_add)
-	)
+	[
+		PopochiuPropFactory.new(),
+		PopochiuHotspotFactory.new(),
+		PopochiuRegionFactory.new(),
+		PopochiuWalkableAreaFactory.new(),
+	].all(_create_new_obj.bind(popochiu_room, room_objects_to_add))
 	
 	for group: Dictionary in room_objects_to_add:
 		group.objects.all(
 			func (new_obj) -> bool:
+				prints(">>>>", new_obj.name)
+				# Add the new instance to the room and do the same for its children (those that
+				# were marked as PopochiuRoomObjFactory.CHILD_VISIBLE_IN_ROOM_META)
 				popochiu_room.get_node(group.factory.get_group()).add_child(new_obj)
 				new_obj.owner = popochiu_room
+				
+				for child: Node in new_obj.get_meta(RESET_CHILDREN_OWNER):
+					prints(">>>>>>>>", child.name)
+					child.owner = popochiu_room
+				new_obj.remove_meta(RESET_CHILDREN_OWNER)
+				
 				return true
 		)
 	
@@ -326,35 +339,71 @@ func _create_new_obj(
 		factory = factory,
 		objects = []
 	}
+	print_rich("---- Creating new [b]%s[/b] --------------------------" % factory.get_group())
 	for obj in popochiu_room.get_node(factory.get_group()).get_children():
-		prints("@@@@@@@@", obj.name)
+		prints("@@@@@@@@ START @@@@", obj.name)
 		
-		if (obj is PopochiuProp or obj is PopochiuHotspot) and obj.has_node("InteractionPolygon2"):
-			obj.interaction_polygon = obj.get_node("InteractionPolygon2").polygon
+		# Copy the points of the polygon to use as [PopochiuClickable.interaction_polygon]
+		if obj is PopochiuProp or obj is PopochiuHotspot:
+			var polygon: PackedVector2Array = obj.get_node("InteractionPolygon").polygon
+			
+			if obj.has_node("InteractionPolygon2"):
+				polygon = obj.get_node("InteractionPolygon2").polygon
+			
+			obj.interaction_polygon = polygon
 		
-		var obj_factory := factory.get_new_instance()
+		# Create the new scene (and script if needed) of the [obj]
+		var obj_factory: PopochiuRoomObjFactory = factory.get_new_instance()
 		if obj_factory.create_from(obj, popochiu_room) != ResultCodes.SUCCESS:
 			return false
+		#obj_factory.add_subresources_to_room()
 		
-		var new_obj = (load(obj_factory.get_scene_path()) as PackedScene).instantiate()
+		# Map the properties of the [obj] to its new instance
+		group.objects.append(_create_new_room_obj(obj_factory, obj, popochiu_room))
 		
-		if new_obj is PopochiuProp:
-			new_obj.texture = obj.texture
-			new_obj.frames = obj.frames
-			new_obj.v_frames = obj.v_frames
-			new_obj.link_to_item = obj.link_to_item
-		
-		if new_obj is PopochiuProp or new_obj is PopochiuHotspot:
-			new_obj.baseline = obj.baseline
-			new_obj.walk_to_point = obj.walk_to_point
-		
-		new_obj.position = obj.position
-		
-		group.objects.append(new_obj)
+		# Remove the old [obj] from the room
+		prints("@@@@ END @@@@@@@@", obj.name)
 		obj.free()
 	
+	prints(":::: Objetos a crear ::::", group.objects.size())
 	room_objects_to_add.append(group)
 	return true
+
+
+## Maps the properties (and nodes if needed) of [param source] to a new instance of itself created
+## from [param obj_factory]. This assures that objects coming from versions prior to [i]beta 1[/i]
+## will have the corresponding structure of new Popochiu versions.
+func _create_new_room_obj(
+	obj_factory: PopochiuRoomObjFactory, source: Node, room: PopochiuRoom
+) -> Node:
+	var new_obj: Node = (load(obj_factory.get_scene_path()) as PackedScene).instantiate()
+	new_obj.set_meta(RESET_CHILDREN_OWNER, [])
+	
+	if new_obj is PopochiuProp or new_obj is PopochiuHotspot:
+		new_obj.baseline = source.baseline
+		new_obj.walk_to_point = source.walk_to_point
+	
+	if new_obj is PopochiuProp:
+		new_obj.texture = source.texture
+		new_obj.frames = source.frames
+		new_obj.v_frames = source.v_frames
+		new_obj.link_to_item = source.link_to_item
+	
+	if new_obj is PopochiuRegion:
+		var interaction_polygon := source.get_node("InteractionPolygon")
+		interaction_polygon.owner = null
+		interaction_polygon.reparent(new_obj, false)
+		new_obj.get_meta(RESET_CHILDREN_OWNER).append(interaction_polygon)
+	
+	if new_obj is PopochiuWalkableArea:
+		var perimeter: NavigationRegion2D = source.get_node("Perimeter")
+		perimeter.navigation_polygon.agent_radius = 0.0
+		perimeter.owner = null
+		perimeter.reparent(new_obj, false)
+		new_obj.get_meta(RESET_CHILDREN_OWNER).append(perimeter)
+	
+	new_obj.position = source.position
+	return new_obj
 
 
 #endregion

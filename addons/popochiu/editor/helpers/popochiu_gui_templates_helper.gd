@@ -257,6 +257,7 @@ static func _copy_file(
 	# ---- Create a copy of the scene file -----------------------------------------------------
 	if source_file_path.get_extension() in ["tscn", "tres"]:
 		var file_resource := load(source_file_path).duplicate(true)
+		file_resource.resource_path = target_file_path
 		
 		if ResourceSaver.save(file_resource, target_file_path) != OK:
 			DirAccess.remove_absolute(target_folder)

@@ -13,20 +13,22 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-func create(obj_name: String, room: PopochiuRoom) -> int:
+func create(param: PopochiuWalkableAreaFactoryParam) -> int:
 	# If everything goes well, this won't change.
 	var result_code := ResultCodes.SUCCESS
-
-	_setup_room(room)
-	_setup_name(obj_name)
+	
+	if param.should_setup_room_and_name:
+		_setup_room(param.room)
+		_setup_name(param.obj_name)
 	
 	# Create the folder
 	result_code = _create_obj_folder()
 	if result_code != ResultCodes.SUCCESS: return result_code
 	
 	# Create the script
-	result_code = _copy_script_template()
-	if result_code != ResultCodes.SUCCESS: return result_code
+	if param.should_create_script:
+		result_code = _copy_script_template()
+		if result_code != ResultCodes.SUCCESS: return result_code
 	
 	# ---- LOCAL CODE ------------------------------------------------------------------------------
 	# Create the instance
@@ -41,28 +43,50 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	# Save the scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
-
-	# Create a NavigationRegion2D with its polygon as a child in the room scene
-	var perimeter := NavigationRegion2D.new()
-	perimeter.name = "Perimeter"
 	
-	var polygon := NavigationPolygon.new()
-	polygon.add_outline(PackedVector2Array([
-		Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
-	]))
-	polygon.make_polygons_from_outlines()
-	polygon.agent_radius = 0.0
-	
-	perimeter.navpoly = polygon
-	perimeter.modulate = Color.GREEN
-	
-	_add_visible_child(perimeter)
+	if param.should_create_perimeter:
+		# Create a NavigationRegion2D with its polygon as a child in the room scene
+		var perimeter := NavigationRegion2D.new()
+		perimeter.name = "Perimeter"
+		
+		var polygon := NavigationPolygon.new()
+		polygon.agent_radius = 0.0
+		polygon.add_outline(PackedVector2Array([
+			Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
+		]))
+		#polygon.make_polygons_from_outlines()
+		perimeter.navpoly = polygon
+		perimeter.modulate = Color.GREEN
+		
+		_add_visible_child(perimeter)
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
-
-	# Add the object to its room
-	_add_resource_to_room()
+	
+	if param.should_add_to_room:
+		# Add the object to its room
+		_add_resource_to_room()
 
 	return result_code
+
+
+#endregion
+
+#region Private ####################################################################################
+func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
+	var param := PopochiuWalkableAreaFactoryParam.new()
+	param.should_create_perimeter = false
+	
+	#param.navigation_polygon = (
+		#node.get_node("Perimeter") as NavigationRegion2D
+	#).navigation_polygon.get_outline(0)
+	return param
+
+
+#endregion
+
+#region Subclass ###################################################################################
+class PopochiuWalkableAreaFactoryParam extends PopochiuRoomObjFactory.PopochiuRoomObjFactoryParam:
+	#var navigation_polygon := PackedVector2Array()
+	var should_create_perimeter := true
 
 
 #endregion

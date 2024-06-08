@@ -25,15 +25,14 @@ func create(param: PopochiuRoomObjFactoryParam) -> int:
 	if result_code != ResultCodes.SUCCESS: return result_code
 	
 	# Create the script
-	result_code = _copy_script_template()
-	if result_code != ResultCodes.SUCCESS: return result_code
+	if param.should_create_script:
+		result_code = _copy_script_template()
+		if result_code != ResultCodes.SUCCESS: return result_code
 
 	# ---- LOCAL CODE ------------------------------------------------------------------------------
 	# Create the instance
 	var new_obj: PopochiuRegion = _load_obj_base_scene()
-	
 	new_obj.set_script(ResourceLoader.load(_path_script))
-
 	new_obj.name = _pascal_name
 	new_obj.script_name = _pascal_name
 	new_obj.description = _snake_name.capitalize()
@@ -41,18 +40,42 @@ func create(param: PopochiuRoomObjFactoryParam) -> int:
 	# Save the scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
-
-	# Create a collision polygon as a child in the room scene
-	var collision := CollisionPolygon2D.new()
-	collision.name = "InteractionPolygon"
-	collision.modulate = Color.CYAN
-	_add_visible_child(collision)
+	
+	if param.should_create_interaction_polygon:
+		# Create a collision polygon as a child in the room scene
+		var collision := CollisionPolygon2D.new()
+		collision.name = "InteractionPolygon"
+		collision.modulate = Color.CYAN
+		
+		_add_visible_child(collision)
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
-
-	# Add the object to its room
-	_add_resource_to_room()
+	
+	if param.should_add_to_room:
+		# Add the object to its room
+		_add_resource_to_room()
 
 	return result_code
+
+
+#endregion
+
+#region Private ####################################################################################
+func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
+	var param := PopochiuRegionFactoryParam.new()
+	param.should_create_interaction_polygon = false
+	
+	#param.is_interactive = node.clickable
+	# TODO: Remove this line once the last gizmos PR is merged
+	#param.interaction_polygon = node.interaction_polygon
+	return param
+
+
+#endregion
+
+#region Subclass ###################################################################################
+class PopochiuRegionFactoryParam extends PopochiuRoomObjFactory.PopochiuRoomObjFactoryParam:
+	#var is_interactive := true
+	var should_create_interaction_polygon := true
 
 
 #endregion
