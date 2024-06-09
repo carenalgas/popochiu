@@ -81,21 +81,21 @@ func can_do_migration() -> bool:
 		return true
 
 
+func start(idx: int) -> void:
+	step_started.emit(self, idx)
+
+
+func complete(idx: int) -> void:
+	completed.append(idx)
+	step_completed.emit(self)
+	await PopochiuEditorHelper.wait(randf_range(0.3, 1.0))
+
+
 #endregion
 
 #region Private ####################################################################################
 func _print_step(idx: int) -> void:
 	PopochiuUtils.print_normal(" - " + get("STEPS")[idx])
-
-
-func _start(idx: int) -> void:
-	step_started.emit(self, idx)
-
-
-func _complete(idx: int) -> void:
-	completed.append(idx)
-	step_completed.emit(self)
-	await PopochiuEditorHelper.wait(randf_range(0.3, 1.0))
 
 
 #endregion

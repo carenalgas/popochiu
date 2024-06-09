@@ -10,8 +10,8 @@ static var version := 1
 
 
 #region Public #####################################################################################
-## Returns the game folder path. If this returns POPOCHIU_PATH then the project is from Popochiu 1.x
-## or Popochiu 2.0 Alpha.
+## Returns the game folder path. If this returns [member POPOCHIU_PATH], then the project is from
+## Popochiu 1.x or Popochiu 2.0.0-AlphaX.
 static func get_game_path() -> String:
 	if (
 		DirAccess.dir_exists_absolute(PopochiuResources.GAME_PATH)
@@ -33,16 +33,16 @@ static func get_user_migration_version() -> int:
 	if PopochiuResources.get_data_cfg() == null:
 		return -1
 	
-	if PopochiuResources.has_data_value("migration", "version"):
+	if get_game_path() == POPOCHIU_PATH:
+		# The project is older than Popochiu 2.0.0-Beta1. Return 0 so the project structure
+		# migration gets done
+		return 0
+	elif PopochiuResources.has_data_value("migration", "version"):
 		# Return the migration version in the popochiu_data.cfg file
 		return PopochiuResources.get_data_value("migration", "version", 1)
-	elif get_game_path() == POPOCHIU_PATH:
-		# The project is older than Popochiu 2.0 Beta 1, so return 0 so that the version 1 project
-		# structure migration gets done
-		return 0
 	else:
-		# Assume user is running Popochiu 2.0, no project structure migration needed, so set user
-		# migration version to 1 (assume correct project structure exists)
+		# Assume user is running Popochiu 2.0. No project structure migration is needed, so set user
+		# migration version to 1.
 		PopochiuResources.set_data_value("migration", "version", 1)
 		PopochiuUtils.print_normal("Set migration version to 1 for existing Popochiu 2.0 project")
 		return 1
@@ -58,15 +58,27 @@ static func is_migration_needed() -> bool:
 
 
 ## Updates [code]res://game/popochiu_data.cfg[/code] migration version to [param version].
-static func update_user_migration_version(version: int) -> void:
-	if PopochiuResources.set_data_value("migration", "version", version) != OK:
-		PopochiuUtils.print_error("Couldn't update the Migration version in Data file.")
+static func update_user_migration_version(new_version: int) -> void:
+	if PopochiuResources.set_data_value("migration", "version", new_version) != OK:
+		PopochiuUtils.print_error(
+			"Couldn't update the Migration version from [b]%d[/b] to [b]%d[/b] in Data file." % [
+				version, new_version
+			]
+		)
 
 
-## Returns the migration version. If the Popochiu Migration Version is greater than the user project
-## migration version then a migration needs to be done.
-static func get_popochiu_migration_version() -> int:
-	return version
+static func execute_migration_steps(migration: PopochiuMigration, steps: Array) -> bool:
+	var idx := 0
+	for step: Callable in steps:
+		migration.start(idx)
+		if await step.call():
+			await migration.complete(idx)
+		else:
+			return false
+		
+		idx += 1
+	
+	return true
 
 
 ## Helper function to delete a folders and files inside [param folder_path].
@@ -141,32 +153,6 @@ static func get_absolute_file_paths_for_file_extensions(
 	dir.list_dir_end()
 
 	return file_paths
-
-
-static func rebuild_popochiu_data_file() -> void:
-	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "rooms")
-	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "characters")
-	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "dialogs")
-	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "inventory_items")
-	
-	PopochiuResources.set_data_value("setup", "done", true)
-
-
-static func _rebuild_popochiu_data_section(game_path: String, data_section: String) -> void:
-	var data_path := game_path.path_join(data_section)
-	var section_name := data_section
-	
-	# Make sure the section name does not have an "s" character at the end
-	if section_name.length() > 0 and section_name[-1] == "s":
-		section_name = section_name.rstrip("s")
-	
-	# Add the keys and tres files for each directory in the data section
-	for folder: String in DirAccess.get_directories_at(data_path):
-		var key_name := folder.to_pascal_case()
-		var tres_file := "%s_%s.tres" % [section_name, folder]
-		var key_value := game_path.path_join("%s/%s/%s" % [data_section, folder, tres_file])
-		
-		PopochiuResources.set_data_value(data_section, key_name, key_value)
 
 
 ## Look in the text of each file in [param file_paths] for coincidencies to [param from] and

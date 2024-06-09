@@ -18,7 +18,7 @@ const STEPS = [
 	"Delete [b]res://popochiu/autoloads/[/b].",
 	"Move folders in [b]res://popochiu/[/b] to [b]res://game/[/b].",
 	"Rename all to snake_case.",
-	"Select the default GUI template (OPTIONAL).",
+	"Select the default GUI template.",
 	"Update paths in [b]res://game/popochiu_data.cfg[/b].",
 	"Rename [b]res://popochiu/[/b] references to [b]res://game/[/b].",
 	"Rename inventory item files from [b]item_xxx[/b] to [b]inventory_item_xxx[/b].",
@@ -45,56 +45,27 @@ func _do_migration() -> bool:
 		DirAccess.dir_exists_absolute(PopochiuMigrationHelper.POPOCHIU_PATH)
 		and DirAccess.dir_exists_absolute(PopochiuResources.GAME_PATH)
 	):
-		# No need to move the autoloads directory as Popochiu 2 creates them automatically. This
-		# will also fix the issue related with using [preload()] in old [A] autoload.
-		_start(0)
-		if not _delete_popochiu_folder_autoloads():
-			return false
-		await _complete(0)
-		
-		_start(1)
-		if not _move_game_data():
-			return false
-		await _complete(1)
-		
-		_start(2)
-		_rename_data_to_snake_case()
-		await _complete(2)
-		
-		if PopochiuResources.get_data_value("ui", "template", "").is_empty():
-			_start(3)
-			await _select_gui_template()
-			await _complete(3)
-		
-		_start(4)
-		PopochiuMigrationHelper.rebuild_popochiu_data_file()
-		await _complete(4)
-		
-		_start(5)
-		_rename_game_folder_references()
-		await _complete(5)
-		
-		_start(6)
-		_rename_inventory_item_filenames()
-		await _complete(6)
-		
-		_start(7)
-		_update_characters_voices()
-		await _complete(7)
-		
-		_start(8)
-		await _update_external_scenes_and_missing_scripts()
-		await _complete(8)
-		
-		_start(9)
-		_replace_deprecated_method_calls()
-		await _complete(9)
+		await PopochiuMigrationHelper.execute_migration_steps(
+			self,
+			[
+				_delete_popochiu_folder_autoloads,
+				_move_game_data,
+				_rename_data_to_snake_case,
+				_select_gui_template,
+				_rebuild_popochiu_data_file,
+				_rename_game_folder_references,
+				_update_inventory_items,
+				_update_characters_voices,
+				_update_external_scenes_and_missing_scripts,
+				_replace_deprecated_method_calls,
+			]
+		)
 		
 		return true
 	else:
 		PopochiuUtils.print_error(
-			"Both the %s and %s folders must exist. Make sure that the Popochiu plugin is enabled" \
-			+ " and that there is Popochiu 1.x data to convert." % [
+			"Both [b]%s[/b] and [b]%s[/b] folders must exist." \
+			+ " Make sure that the Popochiu plugin is enabled." % [
 			PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
 		])
 		return false
@@ -105,6 +76,8 @@ func _do_migration() -> bool:
 #region Private ####################################################################################
 ## Delete the POPOCHIU_PATH autoloads directory if it exists
 func _delete_popochiu_folder_autoloads() -> bool:
+	# No need to move the autoloads directory as Popochiu 2 creates them automatically. This will
+	# also fix the issue related with using [preload()] in old [A] autoload.
 	var all_done := false
 	var autoloads_path := PopochiuMigrationHelper.POPOCHIU_PATH.path_join("Autoloads")
 	
@@ -149,12 +122,14 @@ func _move_game_data() -> bool:
 
 
 ## Rename PopochiuResources.GAME_PATH files and folders to snake case
-func _rename_data_to_snake_case():
+func _rename_data_to_snake_case() -> bool:
 	for folder: String in PopochiuMigrationHelper.get_absolute_directory_paths_at(
 		PopochiuResources.GAME_PATH
 	):
 		_rename_files_to_snake_case(folder)
 		_rename_folders_to_snake_case(folder)
+	
+	return true
 
 
 ## Rename [param folder_path] files to snake_case
@@ -174,18 +149,49 @@ func _rename_folders_to_snake_case(path: String) -> void:
 		_rename_folders_to_snake_case(sub_folder.to_snake_case())
 
 
-func _select_gui_template() -> void:
-	# Assume the project is from Popochiu 1.x or Popochiu 2 - Alpha X and assign the SimpleCick
-	# GUI template
-	await PopochiuGuiTemplatesHelper.copy_gui_template(
-		"SimpleClick",
-		func (_progress: int, _msg: String) -> void: return,
-		func () -> void: return,
-	)
+func _select_gui_template() -> bool:
+	if PopochiuResources.get_data_value("ui", "template", "").is_empty():
+		# Assume the project is from Popochiu 1.x or Popochiu 2 - Alpha X and assign the SimpleCick
+		# GUI template
+		await PopochiuGuiTemplatesHelper.copy_gui_template(
+			"SimpleClick",
+			func (_progress: int, _msg: String) -> void: return,
+			func () -> void: return,
+		)
+	else:
+		await PopochiuEditorHelper.wait_process_frame()
+	
+	return true
+
+
+func _rebuild_popochiu_data_file() -> bool:
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "rooms")
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "characters")
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "dialogs")
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "inventory_items")
+	
+	return PopochiuResources.set_data_value("setup", "done", true) == OK
+
+
+func _rebuild_popochiu_data_section(game_path: String, data_section: String) -> void:
+	var data_path := game_path.path_join(data_section)
+	var section_name := data_section
+	
+	# Make sure the section name does not have an "s" character at the end
+	if section_name.length() > 0 and section_name[-1] == "s":
+		section_name = section_name.rstrip("s")
+	
+	# Add the keys and tres files for each directory in the data section
+	for folder: String in DirAccess.get_directories_at(data_path):
+		var key_name := folder.to_pascal_case()
+		var tres_file := "%s_%s.tres" % [section_name, folder]
+		var key_value := game_path.path_join("%s/%s/%s" % [data_section, folder, tres_file])
+		
+		PopochiuResources.set_data_value(data_section, key_name, key_value)
 
 
 ## Renames uses of [b]res://popochiu/[/b] to [b]res://game/[/b] in .tscn, .tres, and .gd files.
-func _rename_game_folder_references() -> void:
+func _rename_game_folder_references() -> bool:
 	# Update the path to the main scene in Project Settings
 	var main_scene_path := ProjectSettings.get_setting(PopochiuResources.MAIN_SCENE, "")
 	
@@ -203,76 +209,114 @@ func _rename_game_folder_references() -> void:
 	PopochiuMigrationHelper.replace_text_in_files(
 		Array(files), PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
 	)
+	
+	return true
 
 
-func _rename_inventory_item_filenames() -> void:
+func _update_inventory_items() -> bool:
 	var inventory_items_folders := PopochiuMigrationHelper.get_absolute_directory_paths_at(
 		PopochiuResources.INVENTORY_ITEMS_PATH
 	)
 	
 	# Get all the inventory item file paths that were previously called item_*.*
+	var scene_file_paths := []
 	var files_by_folder := Array(inventory_items_folders).map(
 		func (folder_path: String) -> Array:
 			return Array(PopochiuMigrationHelper.get_absolute_file_paths_at(folder_path)).filter(
 				func (file_path: String) -> bool:
+					if file_path.get_extension() == "tscn":
+						scene_file_paths.append(file_path)
+					
 					return "/item_" in file_path
 			)
 	)
 	
-	# Rename the files to inventory_item_*.* and update the internal paths to match the new path
-	files_by_folder.all(
-		func (file_paths: Array) -> bool:
-			var old_file_name := (file_paths[0] as String).get_file().get_basename()
-			var new_file_name := old_file_name.replace("item_", "inventory_item_")
-			PopochiuMigrationHelper.replace_text_in_files(file_paths, old_file_name, new_file_name)
-			
-			for path: String in file_paths:
-				DirAccess.rename_absolute(path, path.replace("/item_", "/inventory_item_"))
-			
-			return true
+	return (
+		scene_file_paths.all(_update_root_name_and_texture_filter)
+		and files_by_folder.all(_rename_inventory_item_filenames)
 	)
 
 
-func _update_characters_voices() -> void:
+func _update_root_name_and_texture_filter(scene_file_path: String) -> bool:
+	# Update root node name to PascalCase
+	var scene: PopochiuInventoryItem = (load(scene_file_path) as PackedScene).instantiate()
+	scene.name = "Item%s" % scene.script_name.to_pascal_case()
+	
+	# Update the texture_filter if needed
+	if PopochiuConfig.is_pixel_art_textures():
+		scene.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+
+	if PopochiuEditorHelper.pack_scene(scene, scene_file_path) != OK:
+		PopochiuUtils.print_error(
+			"Couldn't update root node name for inventory item: [b]%s[/b]" % scene.script_name
+		)
+		return false
+	return true
+
+
+## For each PopochiuInventoryItem, updates the root node name to PascalCase, renames the files to
+## inventory_item_*.*, and updates the internal paths to match the new file path.
+func _rename_inventory_item_filenames(files_paths: Array) -> bool:
+	var old_file_name := (files_paths[0] as String).get_file().get_basename()
+	var new_file_name := old_file_name.replace("item_", "inventory_item_")
+	PopochiuMigrationHelper.replace_text_in_files(files_paths, old_file_name, new_file_name)
+	
+	for path: String in files_paths:
+		DirAccess.rename_absolute(path, path.replace("/item_", "/inventory_item_"))
+	
+	return true
+
+
+func _update_characters_voices() -> bool:
 	# Get the characters' .tscn files
 	var file_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.CHARACTERS_PATH,
 		["tscn"]
 	)
 	
-	Array(file_paths).all(_load_character_voices)
+	return Array(file_paths).all(_load_character_voices)
 
 
 func _load_character_voices(scene_path: String) -> bool:
 	var popochiu_character: PopochiuCharacter = (load(scene_path) as PackedScene).instantiate()
-	var voices: Array = PopochiuResources.get_data_value("audio", "vo_cues", [])
+	var was_scene_updated := false
 	
-	popochiu_character.voices = popochiu_character.voices.map(
-		func (emotion_dic: Dictionary) -> Dictionary:
-			var arr: Array[AudioCueSound] = []
-			var new_emotion_dic := {
-				emotion = emotion_dic.emotion,
-				variations = arr
-			}
-			
-			for num: int in emotion_dic.variations:
-				var cue_name := "%s_%s" % [emotion_dic.cue, str(num + 1).pad_zeros(2)]
-				var cue_path: String = voices.filter(
-					func (cue_path: String) -> bool:
-						return cue_name in cue_path
-				)[0]
+	# Check if updating the voices [Dictionary] is needed
+	if not popochiu_character.voices.is_empty() and popochiu_character.voices[0].has("cue"):
+		was_scene_updated = true
+		var voices: Array = PopochiuResources.get_data_value("audio", "vo_cues", [])
+		popochiu_character.voices = popochiu_character.voices.map(
+			func (emotion_dic: Dictionary) -> Dictionary:
+				var arr: Array[AudioCueSound] = []
+				var new_emotion_dic := {
+					emotion = emotion_dic.emotion,
+					variations = arr
+				}
 				
-				var popochiu_audio_cue: AudioCueSound = load(cue_path)
-				new_emotion_dic.variations.append(popochiu_audio_cue)
-			
-			return new_emotion_dic
-	)
+				for num: int in emotion_dic.variations:
+					var cue_name := "%s_%s" % [emotion_dic.cue, str(num + 1).pad_zeros(2)]
+					var cue_path: String = voices.filter(
+						func (cue_path: String) -> bool:
+							return cue_name in cue_path
+					)[0]
+					
+					var popochiu_audio_cue: AudioCueSound = load(cue_path)
+					new_emotion_dic.variations.append(popochiu_audio_cue)
+				
+				return new_emotion_dic
+		)
 	
-	if PopochiuEditorHelper.pack_scene(popochiu_character, scene_path) != OK:
+	# Update the texture_filter if needed
+	if PopochiuConfig.is_pixel_art_textures():
+		was_scene_updated = true
+		popochiu_character.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	
+	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_character, scene_path) != OK:
 		PopochiuUtils.print_error(
 			"Couldn't update [b]%s[/b] with new voices array." % popochiu_character.script_name
 		)
 		return false
+	
 	return true
 
 
@@ -401,7 +445,7 @@ func _create_new_room_obj(
 ## - Methods with [code]_now[/code] suffix.
 ## - [code]super.on_click() | super.on_right_click() | super.on_item_used(item)[/code] by
 ## [code]E.command_fallback()[/code]
-func _replace_deprecated_method_calls() -> void:
+func _replace_deprecated_method_calls() -> bool:
 	var scripts_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.GAME_PATH, ["gd"]
 	)
@@ -417,6 +461,8 @@ func _replace_deprecated_method_calls() -> void:
 		{from = "super.on_item_used(item)", to = "E.command_fallback()"},
 	]:
 		PopochiuMigrationHelper.replace_text_in_files(Array(scripts_paths), dic.from, dic.to)
+	
+	return true
 
 
 #endregion

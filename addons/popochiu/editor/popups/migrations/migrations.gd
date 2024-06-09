@@ -1,8 +1,8 @@
 @tool
 extends Control
 
-const MIGRATION_SCENE = preload("res://addons/popochiu/editor/popups/migrations/migration.tscn")
-const Migration = preload("res://addons/popochiu/editor/popups/migrations/migration.gd")
+const MIGRATION_SCENE = preload("res://addons/popochiu/editor/popups/migrations/migration_tab.tscn")
+const Migration = preload("res://addons/popochiu/editor/popups/migrations/migration_tab.gd")
 
 @onready var tab_container: TabContainer = %TabContainer
 
