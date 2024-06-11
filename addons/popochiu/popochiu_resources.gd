@@ -188,7 +188,6 @@ const TEST_WIDTH := "display/window/size/window_width_override"
 const TEST_HEIGHT := "display/window/size/window_height_override"
 const STRETCH_MODE := "display/window/stretch/mode"
 const STRETCH_ASPECT := "display/window/stretch/aspect"
-const IMPORTER_TEXTURE := "popochiu/import/general_import_settings/texture"
 # GUI TEMPLATES ------------------------------------------------------------------------------------
 const GUI_CUSTOM := "custom"
 const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"

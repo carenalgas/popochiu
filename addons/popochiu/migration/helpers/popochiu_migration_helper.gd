@@ -172,4 +172,16 @@ static func replace_text_in_files(file_paths: Array, from: String, to: String) -
 		file_write.close()
 
 
+static func is_pixel_art_game() -> bool:
+	var is_pixel_art := PopochiuConfig.is_pixel_art_textures()
+	var old_settings_file := PopochiuResources.GAME_PATH.path_join("popochiu_settings.tres")
+	
+	if FileAccess.file_exists(old_settings_file):
+		var old_settings := load(old_settings_file)
+		if old_settings.get("is_pixel_art_game") != null:
+			is_pixel_art = old_settings.is_pixel_art_game
+	
+	return is_pixel_art
+
+
 #endregion

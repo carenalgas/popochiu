@@ -1,41 +1,32 @@
 @tool
 extends PanelContainer
 
-const INCOMPLETED_FORMAT = "[code][color=b2b2b2]%s[/color][/code]"
-
 var _steps := []
 
 @onready var description: Label = %Description
-@onready var steps: RichTextLabel = %Steps
+@onready var steps: VBoxContainer = %Steps
 
 
 #region Public #####################################################################################
 func set_steps(steps_texts: Array) -> void:
-	_steps = steps_texts.map(
-		func (step: String) -> String:
-			return "- [ ] %s\n" % step
-	)
-	steps.text = INCOMPLETED_FORMAT % _get_steps_text(_steps)
+	for text: String in steps_texts:
+		var check_box := CheckBox.new()
+		check_box.text = text.replace("[b]", "").replace("[/b]", "")
+		check_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		check_box.modulate.a = 0.3
+		steps.add_child(check_box)
+		PopochiuEditorHelper.override_font(check_box, "font", "source")
 
 
 func start_step(idx: int) -> void:
-	var steps_copy := _steps.duplicate()
-	steps_copy[idx] = "[color=edf171]%s[/color]" % steps_copy[idx]
-	steps.text = INCOMPLETED_FORMAT % _get_steps_text(steps_copy)
+	steps.get_child(idx).modulate.a = 0.6
 
 
 func mark_steps(completed: Array) -> void:
 	for idx: int in completed:
-		_steps[idx] = "[color=a9ff9f]%s[/color]" % _steps[idx].replace("- [ ]", "- [X]")
-	
-	steps.text = INCOMPLETED_FORMAT % _get_steps_text(_steps)
-
-
-#endregion
-
-#region Private ####################################################################################
-func _get_steps_text(steps_texts: Array) -> String:
-	return _steps.reduce(func (accum: String, step: String): return accum + step, "")
+		var check_box: CheckBox = steps.get_child(idx)
+		check_box.set_pressed_no_signal(true)
+		check_box.modulate.a = 1.0
 
 
 #endregion

@@ -8,7 +8,6 @@ popochiu_placeholder = null
 interaction_polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
-visible = false
 polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
 [node name="ScalingPolygon" type="CollisionPolygon2D" parent="."]
@@ -19,4 +18,3 @@ polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0)
 [node name="Sprite2D" type="Sprite2D" parent="."]
 
 [node name="DialogPos" type="Marker2D" parent="."]
-visible = false

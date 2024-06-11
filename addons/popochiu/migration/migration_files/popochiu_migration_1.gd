@@ -55,7 +55,7 @@ func _do_migration() -> bool:
 				_rebuild_popochiu_data_file,
 				_rename_game_folder_references,
 				_update_inventory_items,
-				_update_characters_voices,
+				_update_characters,
 				_update_external_scenes_and_missing_scripts,
 				_replace_deprecated_method_calls,
 			]
@@ -74,8 +74,17 @@ func _do_migration() -> bool:
 #endregion
 
 #region Private ####################################################################################
+## Checks if the folder where the game is stored is the one used since Beta 1. This means the
+## [code]res://popochiu/[/code] folder doesn't exists in the project
+func _ignore_popochiu_folder_step() -> bool:
+	return PopochiuMigrationHelper.get_game_path() == PopochiuResources.GAME_PATH
+
+
 ## Delete the POPOCHIU_PATH autoloads directory if it exists
 func _delete_popochiu_folder_autoloads() -> bool:
+	if _ignore_popochiu_folder_step():
+		return true
+	
 	# No need to move the autoloads directory as Popochiu 2 creates them automatically. This will
 	# also fix the issue related with using [preload()] in old [A] autoload.
 	var all_done := false
@@ -91,6 +100,9 @@ func _delete_popochiu_folder_autoloads() -> bool:
 
 ## Moves game data from PopochiuMigrationHelper.POPOCHIU_PATH to PopochiuResources.GAME_PATH
 func _move_game_data() -> bool:
+	if _ignore_popochiu_folder_step():
+		return true
+	
 	var folders := DirAccess.get_directories_at(PopochiuMigrationHelper.POPOCHIU_PATH)
 	var files := DirAccess.get_files_at(PopochiuMigrationHelper.POPOCHIU_PATH)
 	
@@ -149,6 +161,8 @@ func _rename_folders_to_snake_case(path: String) -> void:
 		_rename_folders_to_snake_case(sub_folder.to_snake_case())
 
 
+## Copies the 2-click Context-sensitive GUI to [code]res://game/graphic_interface/[/code] if there
+## is no GUI template selected.
 func _select_gui_template() -> bool:
 	if PopochiuResources.get_data_value("ui", "template", "").is_empty():
 		# Assume the project is from Popochiu 1.x or Popochiu 2 - Alpha X and assign the SimpleCick
@@ -164,15 +178,19 @@ func _select_gui_template() -> bool:
 	return true
 
 
+## Updates the paths to rooms, characters, inventory items and dialogs so they point to
+## [code]res://game/[/code] (for cases where the project still used [code]res://popochiu/[/code]).
 func _rebuild_popochiu_data_file() -> bool:
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "rooms")
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "characters")
-	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "dialogs")
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "inventory_items")
+	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "dialogs")
 	
 	return PopochiuResources.set_data_value("setup", "done", true) == OK
 
 
+## Updates the path to [param game_path] for each value in the [param data_section] in the
+## [code]popochiu_data.cfg[/code] ([ConfigFile]) file.
 func _rebuild_popochiu_data_section(game_path: String, data_section: String) -> void:
 	var data_path := game_path.path_join(data_section)
 	var section_name := data_section
@@ -213,37 +231,44 @@ func _rename_game_folder_references() -> bool:
 	return true
 
 
+## Updates all inventory items in the project so:[br]
+## - Their file names (.tscn, .gd, and .tres) match the namig defined since beta-1 (inventory_item_*.*).
+## - All the paths inside those files point to the new file.
+## - Fixes a naming issue from alpha-1 where the root node name was set wrong. And also applies the
+## [constant CanvasItem.TEXTURE_FILTER_NEAREST] to each node in case the project is marked as
+## Pixel-art game.
 func _update_inventory_items() -> bool:
-	var inventory_items_folders := PopochiuMigrationHelper.get_absolute_directory_paths_at(
-		PopochiuResources.INVENTORY_ITEMS_PATH
+	var inventory_item_files := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
+		PopochiuResources.INVENTORY_ITEMS_PATH,
+		["tscn", "gd", "tres"]
 	)
 	
 	# Get all the inventory item file paths that were previously called item_*.*
-	var scene_file_paths := []
-	var files_by_folder := Array(inventory_items_folders).map(
-		func (folder_path: String) -> Array:
-			return Array(PopochiuMigrationHelper.get_absolute_file_paths_at(folder_path)).filter(
-				func (file_path: String) -> bool:
-					if file_path.get_extension() == "tscn":
-						scene_file_paths.append(file_path)
-					
-					return "/item_" in file_path
-			)
+	var scene_files := []
+	var files_to_update := Array(inventory_item_files).filter(
+		func (file_path: String) -> bool:
+			if file_path.get_extension() == "tscn":
+				scene_files.append(file_path)
+			
+			return "/item_" in file_path
 	)
 	
 	return (
-		scene_file_paths.all(_update_root_name_and_texture_filter)
-		and files_by_folder.all(_rename_inventory_item_filenames)
+		scene_files.all(_update_root_name_and_texture_filter)
+		and files_to_update.all(_rename_inventory_item_filenames)
 	)
 
 
+## Loads the [PopochiuInventoryItem] in [param scene_file_path] and updates its root node name
+## and makes its [member CanvasItem.texture_filter] to [constant CanvasItem.TEXTURE_FILTER_NEAREST]
+## if this is a Pixel-art game.
 func _update_root_name_and_texture_filter(scene_file_path: String) -> bool:
 	# Update root node name to PascalCase
 	var scene: PopochiuInventoryItem = (load(scene_file_path) as PackedScene).instantiate()
 	scene.name = "Item%s" % scene.script_name.to_pascal_case()
 	
 	# Update the texture_filter if needed
-	if PopochiuConfig.is_pixel_art_textures():
+	if PopochiuMigrationHelper.is_pixel_art_game():
 		scene.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
 	if PopochiuEditorHelper.pack_scene(scene, scene_file_path) != OK:
@@ -254,62 +279,68 @@ func _update_root_name_and_texture_filter(scene_file_path: String) -> bool:
 	return true
 
 
-## For each PopochiuInventoryItem, updates the root node name to PascalCase, renames the files to
-## inventory_item_*.*, and updates the internal paths to match the new file path.
-func _rename_inventory_item_filenames(files_paths: Array) -> bool:
-	var old_file_name := (files_paths[0] as String).get_file().get_basename()
+## For each [PopochiuInventoryItem] in [param files_paths], updates the root node name to PascalCase,
+## renames the files to inventory_item_*.*, and updates the internal paths to match the new path.
+func _rename_inventory_item_filenames(file_path: String) -> bool:
+	var old_file_name := file_path.get_file().get_basename()
 	var new_file_name := old_file_name.replace("item_", "inventory_item_")
-	PopochiuMigrationHelper.replace_text_in_files(files_paths, old_file_name, new_file_name)
-	
-	for path: String in files_paths:
-		DirAccess.rename_absolute(path, path.replace("/item_", "/inventory_item_"))
-	
+	PopochiuMigrationHelper.replace_text_in_files([file_path], old_file_name, new_file_name)
+	DirAccess.rename_absolute(file_path, file_path.replace("/item_", "/inventory_item_"))
 	return true
 
 
-func _update_characters_voices() -> bool:
+## For each [PopochiuCharacter] updates the way its voices are set to the structure defined in
+## alpha-3. It also adds new required nodes like an [AnimationPlayer] and a [CollisionPolygon2D] for
+## the [code]ScalingPolygon[/code].
+func _update_characters() -> bool:
 	# Get the characters' .tscn files
 	var file_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.CHARACTERS_PATH,
 		["tscn"]
 	)
 	
-	return Array(file_paths).all(_load_character_voices)
+	return Array(file_paths).all(_update_character)
 
 
-func _load_character_voices(scene_path: String) -> bool:
+## Loads the [PopochiuCharacter] in [param scene_path] and:[br]
+## - Updates its [member PopochiuCharacter.voices] so they match the structure defined in alpha-3.
+## - Makes its [member CanvasItem.texture_filter] to [constant CanvasItem.TEXTURE_FILTER_NEAREST] if
+## this is a Pixel-art game.
+## - Adds [AnimationPlayer] and [CollisionPolygon2D] nodes if necessary.
+func _update_character(scene_path: String) -> bool:
 	var popochiu_character: PopochiuCharacter = (load(scene_path) as PackedScene).instantiate()
 	var was_scene_updated := false
 	
-	# Check if updating the voices [Dictionary] is needed
+	# ---- Check if updating the voices [Dictionary] is needed -------------------------------------
 	if not popochiu_character.voices.is_empty() and popochiu_character.voices[0].has("cue"):
 		was_scene_updated = true
 		var voices: Array = PopochiuResources.get_data_value("audio", "vo_cues", [])
-		popochiu_character.voices = popochiu_character.voices.map(
-			func (emotion_dic: Dictionary) -> Dictionary:
-				var arr: Array[AudioCueSound] = []
-				var new_emotion_dic := {
-					emotion = emotion_dic.emotion,
-					variations = arr
-				}
-				
-				for num: int in emotion_dic.variations:
-					var cue_name := "%s_%s" % [emotion_dic.cue, str(num + 1).pad_zeros(2)]
-					var cue_path: String = voices.filter(
-						func (cue_path: String) -> bool:
-							return cue_name in cue_path
-					)[0]
-					
-					var popochiu_audio_cue: AudioCueSound = load(cue_path)
-					new_emotion_dic.variations.append(popochiu_audio_cue)
-				
-				return new_emotion_dic
-		)
+		popochiu_character.voices = popochiu_character.voices.map(_map_voices.bind(voices))
 	
-	# Update the texture_filter if needed
-	if PopochiuConfig.is_pixel_art_textures():
+	# ---- Update the texture_filter if needed -----------------------------------------------------
+	if PopochiuMigrationHelper.is_pixel_art_game():
 		was_scene_updated = true
 		popochiu_character.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	
+	# ---- Add an [AnimationPlayer] node if needed -------------------------------------------------
+	if not popochiu_character.has_node("AnimationPlayer"):
+		was_scene_updated = true
+		var animation_player := AnimationPlayer.new()
+		animation_player.name = "AnimationPlayer"
+		popochiu_character.add_child(animation_player)
+		animation_player.owner = popochiu_character
+	
+	# ---- Add the ScalingPolygon node if needed ---------------------------------------------------
+	if not popochiu_character.has_node("ScalingPolygon"):
+		was_scene_updated = true
+		var scaling_polygon := CollisionPolygon2D.new()
+		scaling_polygon.name = "ScalingPolygon"
+		scaling_polygon.polygon = PackedVector2Array([
+			Vector2(-5, -5), Vector2(5, -5), Vector2(5, 5), Vector2(-5, 5)
+		])
+		popochiu_character.add_child(scaling_polygon)
+		popochiu_character.move_child(scaling_polygon, 1)
+		scaling_polygon.owner = popochiu_character
 	
 	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_character, scene_path) != OK:
 		PopochiuUtils.print_error(
@@ -318,6 +349,29 @@ func _load_character_voices(scene_path: String) -> bool:
 		return false
 	
 	return true
+
+
+## Maps the data [param emotion_dic] to a new [Dictionary] with the new format defined for
+## [member PopochiuCharacter.voices]. The [param voices] array is used to get the path to the
+## [PopochiuAudioCue] file that should be used in each voice variation.
+func _map_voices(emotion_dic: Dictionary, voices: Array) -> Dictionary:
+	var arr: Array[AudioCueSound] = []
+	var new_emotion_dic := {
+		emotion = emotion_dic.emotion,
+		variations = arr
+	}
+	
+	for num: int in emotion_dic.variations:
+		var cue_name := "%s_%s" % [emotion_dic.cue, str(num + 1).pad_zeros(2)]
+		var cue_path: String = voices.filter(
+			func (cue_path: String) -> bool:
+				return cue_name in cue_path
+		)[0]
+		
+		var popochiu_audio_cue: AudioCueSound = load(cue_path)
+		new_emotion_dic.variations.append(popochiu_audio_cue)
+	
+	return new_emotion_dic
 
 
 ## Update external scenes and assign missing scripts for each prop, hotspot, region, and walkable area

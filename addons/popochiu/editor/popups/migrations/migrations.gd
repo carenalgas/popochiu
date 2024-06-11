@@ -17,14 +17,11 @@ func add_migration(popochiu_migration: PopochiuMigration) -> void:
 	
 	migration.description.text = popochiu_migration.DESCRIPTION
 	migration.set_steps(popochiu_migration.STEPS)
-	
-	PopochiuEditorHelper.override_font(migration.steps, "normal_font", "main")
-	PopochiuEditorHelper.override_font(migration.steps, "bold_font", "bold")
-	PopochiuEditorHelper.override_font(migration.steps, "mono_font", "source")
 	await get_tree().process_frame
 	
 	custom_minimum_size = $PanelContainer.size
 	(get_parent() as AcceptDialog).reset_size()
+	(get_parent() as AcceptDialog).move_to_center()
 
 
 func start_step(popochiu_migration: PopochiuMigration, idx: int) -> void:
