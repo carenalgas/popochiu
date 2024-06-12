@@ -2,7 +2,7 @@
 extends Control
 
 const MIGRATION_SCENE = preload("res://addons/popochiu/editor/popups/migrations/migration_tab.tscn")
-const Migration = preload("res://addons/popochiu/editor/popups/migrations/migration_tab.gd")
+const MigrationTab = preload("res://addons/popochiu/editor/popups/migrations/migration_tab.gd")
 
 @onready var tab_container: TabContainer = %TabContainer
 
@@ -25,13 +25,13 @@ func add_migration(popochiu_migration: PopochiuMigration) -> void:
 
 
 func start_step(popochiu_migration: PopochiuMigration, idx: int) -> void:
-	var migration: Migration = tab_container.get_child(popochiu_migration.VERSION - 1)
-	migration.start_step(idx)
+	var migration_tab: MigrationTab = tab_container.get_child(popochiu_migration.VERSION - 1)
+	migration_tab.start_step(idx)
 
 
 func update_steps(popochiu_migration: PopochiuMigration) -> void:
-	var migration: Migration = tab_container.get_child(popochiu_migration.VERSION - 1)
-	migration.mark_steps(popochiu_migration.completed)
+	var migration_tab: MigrationTab = tab_container.get_child(popochiu_migration.VERSION - 1)
+	migration_tab.update_steps(popochiu_migration)
 
 
 #endregion

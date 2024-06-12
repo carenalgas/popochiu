@@ -22,11 +22,16 @@ func start_step(idx: int) -> void:
 	steps.get_child(idx).modulate.a = 0.6
 
 
-func mark_steps(completed: Array) -> void:
-	for idx: int in completed:
+func update_steps(popochiu_migration: PopochiuMigration) -> void:
+	for idx: int in popochiu_migration.completed:
 		var check_box: CheckBox = steps.get_child(idx)
 		check_box.set_pressed_no_signal(true)
 		check_box.modulate.a = 1.0
+	
+	for idx: int in popochiu_migration.ignored:
+		var check_box: CheckBox = steps.get_child(idx)
+		check_box.set_pressed_no_signal(false)
+		check_box.disabled = true
 
 
 #endregion

@@ -71,8 +71,11 @@ static func execute_migration_steps(migration: PopochiuMigration, steps: Array) 
 	var idx := 0
 	for step: Callable in steps:
 		migration.start(idx)
-		if await step.call():
-			await migration.complete(idx)
+		var completion_type: PopochiuMigration.Completion = await step.call()
+		if completion_type in [
+			PopochiuMigration.Completion.DONE, PopochiuMigration.Completion.IGNORED
+		]:
+			await migration.step_finished(idx, completion_type)
 		else:
 			return false
 		
@@ -172,6 +175,9 @@ static func replace_text_in_files(file_paths: Array, from: String, to: String) -
 		file_write.close()
 
 
+## Returns [true] if the game is checked as pixel-art based on the value in
+## [code]popochiu/pixel/pixel_art_textures[/code] or in the old [code]popochiu_settings.tres[/code]
+## file in versions prior to [i]2.0.0-beta3[/i].
 static func is_pixel_art_game() -> bool:
 	var is_pixel_art := PopochiuConfig.is_pixel_art_textures()
 	var old_settings_file := PopochiuResources.GAME_PATH.path_join("popochiu_settings.tres")

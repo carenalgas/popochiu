@@ -136,7 +136,7 @@ static func show_setup(is_welcome := false) -> void:
 
 static func show_migrations(content: Migrations, min_size := Vector2i(640, 160)) -> AcceptDialog:
 	var dialog := AcceptDialog.new()
-	dialog.borderless = true
+	dialog.title = "Migration Tool"
 	dialog.always_on_top = true
 	content.anchors_preset = Control.PRESET_FULL_RECT
 	dialog.add_child(content)
