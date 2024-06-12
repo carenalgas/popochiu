@@ -44,6 +44,9 @@ static func do_migrations() -> void:
 		migration.step_started.connect(migrations_content.start_step)
 		migration.step_completed.connect(migrations_content.update_steps)
 		if not await PopochiuMigration.run_migration(migration, migration_version):
+			PopochiuUtils.print_error(
+				"Something went wrong while executing Migration %d" % migration_version
+			)
 			break
 	
 	migrations_popup.get_ok_button().disabled = false

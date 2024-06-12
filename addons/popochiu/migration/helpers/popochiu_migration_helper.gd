@@ -31,24 +31,15 @@ static func get_game_path() -> String:
 static func get_user_migration_version() -> int:
 	# popochiu_data.cfg config file could not be loaded, return error
 	if PopochiuResources.get_data_cfg() == null:
+		PopochiuUtils.print_error("Can't load [code]popochiu_data.cfg[/code] file.")
 		return -1
 	
-	if get_game_path() == POPOCHIU_PATH:
-		# The project is older than Popochiu 2.0.0-Beta1. Return 0 so the project structure
-		# migration gets done
-		return 0
-	elif PopochiuResources.has_data_value("migration", "version"):
+	if PopochiuResources.has_data_value("migration", "version"):
 		# Return the migration version in the popochiu_data.cfg file
 		return PopochiuResources.get_data_value("migration", "version", 1)
 	else:
-		# Assume user is running Popochiu 2.0. No project structure migration is needed, so set user
-		# migration version to 1.
-		PopochiuResources.set_data_value("migration", "version", 1)
-		PopochiuUtils.print_normal("Set migration version to 1 for existing Popochiu 2.0 project")
-		return 1
-	
-	# no valid versions found
-	return -1
+		# Run Migration 1 and so on
+		return 0
 
 
 ## Returns [true] if the current Popochiu migration version is newer than the user's migration
@@ -158,21 +149,24 @@ static func get_absolute_file_paths_for_file_extensions(
 	return file_paths
 
 
-## Look in the text of each file in [param file_paths] for coincidencies to [param from] and
-## replace them by [param to].
-static func replace_text_in_files(file_paths: Array, from: String, to: String) -> void:
-	for file_path: String in file_paths:
-		var file_read := FileAccess.open(file_path, FileAccess.READ)
-		var text := file_read.get_as_text()
-		file_read.close()
-		
-		if not from in text:
-			continue
-		
-		var file_write := FileAccess.open(file_path, FileAccess.WRITE)
-		text = text.replace(from, to)
-		file_write.store_string(text)
-		file_write.close()
+## Looks in the text of each file in [param file_paths] for coincidencies to [param from] and
+## replace them by [param to]. If any replacement was done, returns [code]true[/code].
+static func replace_text_in_files(file_paths: Array, from: String, to: String) -> bool:
+	return file_paths.any(
+		func (file_path: String) -> bool:
+			var file_read := FileAccess.open(file_path, FileAccess.READ)
+			var text := file_read.get_as_text()
+			file_read.close()
+			
+			if not from in text:
+				return false
+			
+			var file_write := FileAccess.open(file_path, FileAccess.WRITE)
+			text = text.replace(from, to)
+			file_write.store_string(text)
+			file_write.close()
+			return true
+	)
 
 
 ## Returns [true] if the game is checked as pixel-art based on the value in
@@ -188,6 +182,14 @@ static func is_pixel_art_game() -> bool:
 			is_pixel_art = old_settings.is_pixel_art_game
 	
 	return is_pixel_art
+
+
+static func is_text_in_file(text: String, file_path: String) -> bool:
+	var file_read := FileAccess.open(file_path, FileAccess.READ)
+	var file_text := file_read.get_as_text()
+	file_read.close()
+	
+	return text in file_text
 
 
 #endregion

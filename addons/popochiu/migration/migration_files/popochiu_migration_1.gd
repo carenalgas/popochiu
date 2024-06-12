@@ -39,36 +39,21 @@ var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
 ## should be done before calling this.
 func _do_migration() -> bool:
-	# Only perform conversion if both the PopochiuMigrationHelper.POPOCHIU_PATH and
-	# PopochiuResources.GAME_PATH directories exist
-	if (
-		DirAccess.dir_exists_absolute(PopochiuMigrationHelper.POPOCHIU_PATH)
-		and DirAccess.dir_exists_absolute(PopochiuResources.GAME_PATH)
-	):
-		await PopochiuMigrationHelper.execute_migration_steps(
-			self,
-			[
-				_delete_popochiu_folder_autoloads,
-				_move_game_data,
-				_rename_data_to_snake_case,
-				_select_gui_template,
-				_rebuild_popochiu_data_file,
-				_rename_game_folder_references,
-				_update_inventory_items,
-				_update_characters,
-				_update_external_scenes_and_missing_scripts,
-				_replace_deprecated_method_calls,
-			]
-		)
-		
-		return true
-	else:
-		PopochiuUtils.print_error(
-			"Both [b]%s[/b] and [b]%s[/b] folders must exist." \
-			+ " Make sure that the Popochiu plugin is enabled." % [
-			PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
-		])
-		return false
+	return await PopochiuMigrationHelper.execute_migration_steps(
+		self,
+		[
+			_delete_popochiu_folder_autoloads,
+			_move_game_data,
+			_rename_data_to_snake_case,
+			_select_gui_template,
+			_rebuild_popochiu_data_file,
+			_rename_game_folder_references,
+			_update_inventory_items,
+			_update_characters,
+			_update_external_scenes_and_missing_scripts,
+			_replace_deprecated_method_calls,
+		]
+	)
 
 
 #endregion
@@ -138,30 +123,49 @@ func _move_game_data() -> Completion:
 
 ## Rename PopochiuResources.GAME_PATH files and folders to snake case
 func _rename_data_to_snake_case() -> Completion:
-	for folder: String in PopochiuMigrationHelper.get_absolute_directory_paths_at(
-		PopochiuResources.GAME_PATH
-	):
-		_rename_files_to_snake_case(folder)
-		_rename_folders_to_snake_case(folder)
+	var any_renamed := Array(
+		PopochiuMigrationHelper.get_absolute_directory_paths_at(PopochiuResources.GAME_PATH)
+	).any(
+		func (folder: String) -> bool:
+			var any_file_renamed := _rename_files_to_snake_case(folder)
+			var any_folder_renamed := _rename_folders_to_snake_case(folder)
+			
+			return any_file_renamed or any_folder_renamed
+	)
 	
-	return Completion.DONE
+	return Completion.DONE if any_renamed else Completion.IGNORED
 
 
 ## Rename [param folder_path] files to snake_case
-func _rename_files_to_snake_case(folder_path: String) -> void:
-	for file: String in DirAccess.get_files_at(folder_path):
-		var src := folder_path.path_join(file)
-		var dest := folder_path.path_join(file.to_snake_case())
-		DirAccess.rename_absolute(src, dest)
+func _rename_files_to_snake_case(folder_path: String) -> bool:
+	return Array(DirAccess.get_files_at(folder_path)).any(
+		func (file: String) -> bool:
+			var src := folder_path.path_join(file)
+			var dest := folder_path.path_join(file.to_snake_case())
+			
+			if src != dest:
+				DirAccess.rename_absolute(src, dest)
+				return true
+			return false
+	)
 
 
 ## Rename [param path] folders and the content in the folders recursively to snake_case
-func _rename_folders_to_snake_case(path: String) -> void:
-	for sub_folder: String in PopochiuMigrationHelper.get_absolute_directory_paths_at(path):
-		_rename_files_to_snake_case(sub_folder)
-		DirAccess.rename_absolute(sub_folder, sub_folder.to_snake_case())
-		# recursively rename files/folders to snake_case
-		_rename_folders_to_snake_case(sub_folder.to_snake_case())
+func _rename_folders_to_snake_case(path: String) -> bool:
+	return Array(PopochiuMigrationHelper.get_absolute_directory_paths_at(path)).any(
+		func (sub_folder: String) -> bool:
+			var any_file_renamed := _rename_files_to_snake_case(sub_folder)
+			var snake_case_name := sub_folder.to_snake_case()
+			var folder_renamed := sub_folder != snake_case_name
+			
+			if folder_renamed:
+				DirAccess.rename_absolute(sub_folder, snake_case_name)
+				# recursively rename files/folders to snake_case
+				_rename_folders_to_snake_case(snake_case_name)
+				folder_renamed = true
+			
+			return any_file_renamed or folder_renamed
+	)
 
 
 ## Copies the 2-click Context-sensitive GUI to [code]res://game/graphic_interface/[/code] if there
@@ -175,15 +179,20 @@ func _select_gui_template() -> Completion:
 			func (_progress: int, _msg: String) -> void: return,
 			func () -> void: return,
 		)
+		return Completion.DONE
 	else:
 		await PopochiuEditorHelper.wait_process_frame()
-	
-	return Completion.DONE
+		return Completion.IGNORED
 
 
 ## Updates the paths to rooms, characters, inventory items and dialogs so they point to
 ## [code]res://game/[/code] (for cases where the project still used [code]res://popochiu/[/code]).
 func _rebuild_popochiu_data_file() -> bool:
+	if PopochiuMigrationHelper.is_text_in_file(
+		PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.DATA
+	) == false:
+		return Completion.IGNORED
+	
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "rooms")
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "characters")
 	_rebuild_popochiu_data_section(PopochiuResources.GAME_PATH, "inventory_items")
@@ -216,10 +225,13 @@ func _rebuild_popochiu_data_section(game_path: String, data_section: String) -> 
 
 ## Renames uses of [b]res://popochiu/[/b] to [b]res://game/[/b] in .tscn, .tres, and .gd files.
 func _rename_game_folder_references() -> Completion:
+	var changes_done := false
+	
 	# Update the path to the main scene in Project Settings
 	var main_scene_path := ProjectSettings.get_setting(PopochiuResources.MAIN_SCENE, "")
 	
 	if PopochiuMigrationHelper.POPOCHIU_PATH in main_scene_path:
+		changes_done = true
 		ProjectSettings.set_setting(PopochiuResources.MAIN_SCENE, main_scene_path.replace(
 			PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
 		))
@@ -230,11 +242,12 @@ func _rename_game_folder_references() -> Completion:
 		PopochiuResources.GAME_PATH, ["gd", "tscn", "tres", "cfg"], ["autoloads"]
 	)
 	
-	PopochiuMigrationHelper.replace_text_in_files(
+	if PopochiuMigrationHelper.replace_text_in_files(
 		Array(files), PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
-	)
+	):
+		changes_done = true
 	
-	return Completion.DONE
+	return Completion.DONE if changes_done else Completion.IGNORED
 
 
 ## Updates all inventory items in the project so:[br]
@@ -258,6 +271,9 @@ func _update_inventory_items() -> Completion:
 			
 			return "/item_" in file_path
 	)
+	
+	if files_to_update.is_empty():
+		return Completion.IGNORED
 	
 	return Completion.DONE if (
 		scene_files.all(_update_root_name_and_texture_filter)
@@ -304,8 +320,8 @@ func _update_characters() -> Completion:
 		PopochiuResources.CHARACTERS_PATH,
 		["tscn"]
 	)
-	
-	return Completion.DONE if Array(file_paths).all(_update_character) else Completion.FAILED
+	var any_character_updated := Array(file_paths).any(_update_character)
+	return Completion.DONE if any_character_updated else Completion.IGNORED
 
 
 ## Loads the [PopochiuCharacter] in [param scene_path] and:[br]
@@ -352,9 +368,8 @@ func _update_character(scene_path: String) -> bool:
 		PopochiuUtils.print_error(
 			"Couldn't update [b]%s[/b] with new voices array." % popochiu_character.script_name
 		)
-		return false
 	
-	return true
+	return was_scene_updated
 
 
 ## Maps the data [param emotion_dic] to a new [Dictionary] with the new format defined for
@@ -380,15 +395,15 @@ func _map_voices(emotion_dic: Dictionary, voices: Array) -> Dictionary:
 	return new_emotion_dic
 
 
-## Update external scenes and assign missing scripts for each prop, hotspot, region, and walkable area
-## that didn't exist prior [i]beta 1[/i].
+## Update external prop scenes and assign missing scripts for each prop, hotspot, region, and
+## walkable area that didn't exist prior [i]beta 1[/i].
 func _update_external_scenes_and_missing_scripts() -> Completion:
 	var room_scene_paths := PopochiuResources.get_section_keys("rooms").map(
 		func (room_name: String) -> PopochiuRoom:
 			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
 			return (load(scene_path) as PackedScene).instantiate()
 	)
-	return Completion.DONE if room_scene_paths.all(_update_room) else Completion.FAILED
+	return Completion.DONE if room_scene_paths.any(_update_room) else Completion.IGNORED
 
 
 ## Update the children of the different groups in [param popochiu_room] so the use instances of the
@@ -402,6 +417,10 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 		PopochiuWalkableAreaFactory.new(),
 		# TODO: Include Position2D to update them to Marker2D
 	].all(_create_new_obj.bind(popochiu_room, room_objects_to_add))
+	
+	if room_objects_to_add.is_empty():
+		# No need to update the room
+		return false
 	
 	for group: Dictionary in room_objects_to_add:
 		group.objects.all(
@@ -422,7 +441,6 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 		PopochiuUtils.print_error(
 			"Migration 1: Couldn't update [b]%s[/b]." % popochiu_room.script_name
 		)
-		return false
 	
 	popochiu_room.free()
 	return true
@@ -513,6 +531,7 @@ func _replace_deprecated_method_calls() -> Completion:
 		PopochiuResources.GAME_PATH, ["gd"]
 	)
 	
+	var replaced_matches := 0
 	for dic: Dictionary in [
 		{from = "R.get_point", to = "R.get_marker"},
 		{from = "G.display", to = "G.show_system_text"},
@@ -523,9 +542,11 @@ func _replace_deprecated_method_calls() -> Completion:
 		{from = "super.on_right_click()", to = "E.command_fallback()"},
 		{from = "super.on_item_used(item)", to = "E.command_fallback()"},
 	]:
-		PopochiuMigrationHelper.replace_text_in_files(Array(scripts_paths), dic.from, dic.to)
+		replaced_matches += 1 if PopochiuMigrationHelper.replace_text_in_files(
+			Array(scripts_paths), dic.from, dic.to
+		) else 0
 	
-	return Completion.DONE
+	return Completion.DONE if replaced_matches > 0 else Completion.IGNORED
 
 
 #endregion
