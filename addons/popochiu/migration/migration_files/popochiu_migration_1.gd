@@ -353,21 +353,9 @@ func _update_character(scene_path: String) -> bool:
 		popochiu_character.add_child(animation_player)
 		animation_player.owner = popochiu_character
 	
-	# ---- Add the ScalingPolygon node if needed ---------------------------------------------------
-	if not popochiu_character.has_node("ScalingPolygon"):
-		was_scene_updated = true
-		var scaling_polygon := CollisionPolygon2D.new()
-		scaling_polygon.name = "ScalingPolygon"
-		scaling_polygon.polygon = PackedVector2Array([
-			Vector2(-5, -5), Vector2(5, -5), Vector2(5, 5), Vector2(-5, 5)
-		])
-		popochiu_character.add_child(scaling_polygon)
-		popochiu_character.move_child(scaling_polygon, 1)
-		scaling_polygon.owner = popochiu_character
-	
 	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_character, scene_path) != OK:
 		PopochiuUtils.print_error(
-			"Couldn't update [b]%s[/b] with new voices array." % popochiu_character.script_name
+			"Couldn't update [b]%s[/b]'s voices." % popochiu_character.script_name
 		)
 	
 	return was_scene_updated

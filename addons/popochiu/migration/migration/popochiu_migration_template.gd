@@ -5,6 +5,11 @@ extends PopochiuMigration
 # Update constant values to be correct for your migration
 const VERSION = -1
 const DESCRIPTION = "short description of migration goes here"
+const STEPS = [
+	# Include a short description of each step here
+	#"Step 1"
+]
+
 
 
 #region Virtual ####################################################################################
@@ -12,8 +17,15 @@ const DESCRIPTION = "short description of migration goes here"
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
 ## should be done before calling this.
 func _do_migration() -> bool:
-	# Your migration code goes here.
-	return false
+	return await PopochiuMigrationHelper.execute_migration_steps(
+		self,
+		[
+			# Include the function names for each step here
+			#_step1
+		]
+	)
 
+#func _step1() -> Completion:
+	#return Completion.DONE
 
 #endregion

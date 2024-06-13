@@ -43,6 +43,11 @@ func set_migration_version(version: int) -> void:
 	_version = version
 
 
+## Returns the [member _version] of this migration.
+func get_version() -> int:
+	return _version
+
+
 ## Returns [true] if the current Popochiu migration version is newer than the user's migration
 ## version, which means a migration is needed.
 func is_migration_needed() -> bool:
@@ -57,7 +62,7 @@ func is_migration_needed() -> bool:
 ## [DoMigration].
 static func run_migration(migration: PopochiuMigration, version: int) -> bool:
 	if not await migration.do_migration():
-		PopochiuUtils.print_error("An error has occured while doing migration " + str(version))
+		PopochiuUtils.print_error("Migration %d failed" % version)
 		return false
 	else:
 		PopochiuMigrationHelper.update_user_migration_version(version)
@@ -89,10 +94,16 @@ func can_do_migration() -> bool:
 		return true
 
 
-func start(idx: int) -> void:
+## Emits [signal step_started] sending the [param idx], which is the index of the migration step
+## that just started.
+func start_step(idx: int) -> void:
 	step_started.emit(self, idx)
 
 
+## Add the migration step ([param idx]) to its corresponding array depending on whether it was
+## completed ([param type] == [constant Completion.DONE]) or ignored
+## ([param type] == [constant Completion.IGNORED]). Then emits [signal step_completed] so the GUI
+## provides feedback to the developer.
 func step_finished(idx: int, type: Completion) -> void:
 	match type:
 		Completion.DONE:
@@ -101,10 +112,6 @@ func step_finished(idx: int, type: Completion) -> void:
 			ignored.append(idx)
 	
 	step_completed.emit(self)
-
-
-func print_step(idx: int) -> void:
-	PopochiuUtils.print_normal(" - " + get("STEPS")[idx])
 
 
 #endregion

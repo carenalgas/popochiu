@@ -1,15 +1,19 @@
 @tool
 extends Control
 
-const MIGRATION_SCENE = preload("res://addons/popochiu/editor/popups/migrations/migration_tab.tscn")
-const MigrationTab = preload("res://addons/popochiu/editor/popups/migrations/migration_tab.gd")
+const MIGRATION_TAB_SCENE = preload(
+	"res://addons/popochiu/editor/popups/migrations_panel/migration_tab.tscn"
+)
+const MigrationTab = preload(
+	"res://addons/popochiu/editor/popups/migrations_panel/migration_tab.gd"
+)
 
 @onready var tab_container: TabContainer = %TabContainer
 
 
 #region Public #####################################################################################
 func add_migration(popochiu_migration: PopochiuMigration) -> void:
-	var migration := MIGRATION_SCENE.instantiate()
+	var migration := MIGRATION_TAB_SCENE.instantiate()
 	migration.name = "Migration %d" % popochiu_migration.VERSION
 	migration.anchors_preset = Control.PRESET_FULL_RECT
 	tab_container.add_child.call_deferred(migration)

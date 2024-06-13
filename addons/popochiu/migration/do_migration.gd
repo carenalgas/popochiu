@@ -11,8 +11,8 @@ static func do_migrations() -> void:
 		await PopochiuEditorHelper.wait_process_frame()
 		return
 	
-	var migrations_content := PopochiuEditorHelper.MIGRATIONS_SCENE.instantiate()
-	var migrations_popup := await PopochiuEditorHelper.show_migrations(migrations_content)
+	var migrations_panel := PopochiuEditorHelper.MIGRATIONS_PANEL_SCENE.instantiate()
+	var migrations_popup := await PopochiuEditorHelper.show_migrations(migrations_panel)
 	migrations_popup.get_ok_button().disabled = true
 	
 	PopochiuUtils.print_normal("Processing Popochiu Migrations")
@@ -40,9 +40,9 @@ static func do_migrations() -> void:
 		if not migration.is_migration_needed():
 			continue
 		
-		await migrations_content.add_migration(migration)
-		migration.step_started.connect(migrations_content.start_step)
-		migration.step_completed.connect(migrations_content.update_steps)
+		await migrations_panel.add_migration(migration)
+		migration.step_started.connect(migrations_panel.start_step)
+		migration.step_completed.connect(migrations_panel.update_steps)
 		if not await PopochiuMigration.run_migration(migration, migration_version):
 			PopochiuUtils.print_error(
 				"Something went wrong while executing Migration %d" % migration_version

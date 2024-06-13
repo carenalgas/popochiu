@@ -58,10 +58,19 @@ static func update_user_migration_version(new_version: int) -> void:
 		)
 
 
+## Executes the [param steps] in [param migration] one by one and returns [code]true[/code] if
+## all finished without failing. It stops execution if a step fails.
 static func execute_migration_steps(migration: PopochiuMigration, steps: Array) -> bool:
+	if steps.is_empty():
+		PopochiuUtils.print_error(
+			"No steps to execute for Migration %d" % migration.get_version()
+		)
+		await PopochiuEditorHelper.wait_process_frame()
+		return false
+	
 	var idx := 0
 	for step: Callable in steps:
-		migration.start(idx)
+		migration.start_step(idx)
 		var completion_type: PopochiuMigration.Completion = await step.call()
 		if completion_type in [
 			PopochiuMigration.Completion.DONE, PopochiuMigration.Completion.IGNORED
