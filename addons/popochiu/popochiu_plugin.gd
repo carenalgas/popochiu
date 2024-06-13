@@ -87,7 +87,9 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	remove_control_from_docks(dock)
-	dock.queue_free()
+	
+	if is_instance_valid(dock):
+		dock.queue_free()
 	
 	if is_instance_valid(_export_plugin):
 		remove_export_plugin(_export_plugin)

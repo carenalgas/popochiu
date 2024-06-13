@@ -50,7 +50,7 @@ func _do_migration() -> bool:
 			_rename_game_folder_references,
 			_update_inventory_items,
 			_update_characters,
-			_update_external_scenes_and_missing_scripts,
+			_update_objects_in_rooms,
 			_replace_deprecated_method_calls,
 		]
 	)
@@ -123,9 +123,8 @@ func _move_game_data() -> Completion:
 
 ## Rename PopochiuResources.GAME_PATH files and folders to snake case
 func _rename_data_to_snake_case() -> Completion:
-	var any_renamed := Array(
-		PopochiuMigrationHelper.get_absolute_directory_paths_at(PopochiuResources.GAME_PATH)
-	).any(
+	var any_renamed := PopochiuUtils.any(
+		PopochiuMigrationHelper.get_absolute_directory_paths_at(PopochiuResources.GAME_PATH),
 		func (folder: String) -> bool:
 			var any_file_renamed := _rename_files_to_snake_case(folder)
 			var any_folder_renamed := _rename_folders_to_snake_case(folder)
@@ -138,7 +137,8 @@ func _rename_data_to_snake_case() -> Completion:
 
 ## Rename [param folder_path] files to snake_case
 func _rename_files_to_snake_case(folder_path: String) -> bool:
-	return Array(DirAccess.get_files_at(folder_path)).any(
+	return PopochiuUtils.any(
+		Array(DirAccess.get_files_at(folder_path)),
 		func (file: String) -> bool:
 			var src := folder_path.path_join(file)
 			var dest := folder_path.path_join(file.to_snake_case())
@@ -152,7 +152,8 @@ func _rename_files_to_snake_case(folder_path: String) -> bool:
 
 ## Rename [param path] folders and the content in the folders recursively to snake_case
 func _rename_folders_to_snake_case(path: String) -> bool:
-	return Array(PopochiuMigrationHelper.get_absolute_directory_paths_at(path)).any(
+	return PopochiuUtils.any(
+		PopochiuMigrationHelper.get_absolute_directory_paths_at(path),
 		func (sub_folder: String) -> bool:
 			var any_file_renamed := _rename_files_to_snake_case(sub_folder)
 			var snake_case_name := sub_folder.to_snake_case()
@@ -316,11 +317,11 @@ func _rename_inventory_item_filenames(file_path: String) -> bool:
 ## the [code]ScalingPolygon[/code].
 func _update_characters() -> Completion:
 	# Get the characters' .tscn files
-	var file_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
+	var file_paths := Array(PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.CHARACTERS_PATH,
 		["tscn"]
-	)
-	var any_character_updated := Array(file_paths).any(_update_character)
+	))
+	var any_character_updated := PopochiuUtils.any(file_paths, _update_character)
 	return Completion.DONE if any_character_updated else Completion.IGNORED
 
 
@@ -397,13 +398,14 @@ func _map_voices(emotion_dic: Dictionary, voices: Array) -> Dictionary:
 
 ## Update external prop scenes and assign missing scripts for each prop, hotspot, region, and
 ## walkable area that didn't exist prior [i]beta 1[/i].
-func _update_external_scenes_and_missing_scripts() -> Completion:
-	var room_scene_paths := PopochiuResources.get_section_keys("rooms").map(
+func _update_objects_in_rooms() -> Completion:
+	var rooms := PopochiuResources.get_section_keys("rooms").map(
 		func (room_name: String) -> PopochiuRoom:
 			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
 			return (load(scene_path) as PackedScene).instantiate()
 	)
-	return Completion.DONE if room_scene_paths.any(_update_room) else Completion.IGNORED
+	var any_room_updated := PopochiuUtils.any(rooms, _update_room)
+	return Completion.DONE if any_room_updated else Completion.IGNORED
 
 
 ## Update the children of the different groups in [param popochiu_room] so the use instances of the
@@ -442,7 +444,6 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 			"Migration 1: Couldn't update [b]%s[/b]." % popochiu_room.script_name
 		)
 	
-	popochiu_room.free()
 	return true
 
 
@@ -462,12 +463,12 @@ func _create_new_obj(
 			(obj is PopochiuProp or obj is PopochiuHotspot)
 			and (obj.has_node("InteractionPolygon") or obj.has_node("InteractionPolygon2"))
 		):
-			var polygon: PackedVector2Array = obj.get_node("InteractionPolygon").polygon
-			
+			var interaction_polygon: CollisionPolygon2D = obj.get_node("InteractionPolygon")
 			if obj.has_node("InteractionPolygon2"):
-				polygon = obj.get_node("InteractionPolygon2").polygon
+				interaction_polygon = obj.get_node("InteractionPolygon2")
 			
-			obj.interaction_polygon = polygon
+			if interaction_polygon.owner == popochiu_room:
+				obj.interaction_polygon = interaction_polygon.polygon
 		
 		# Create the new scene (and script if needed) of the [obj]
 		var obj_factory: PopochiuRoomObjFactory = factory.get_new_instance()
@@ -512,6 +513,7 @@ func _create_new_room_obj(
 	if new_obj is PopochiuWalkableArea:
 		var perimeter: NavigationRegion2D = source.get_node("Perimeter")
 		perimeter.navigation_polygon.agent_radius = 0.0
+		perimeter.bake_navigation_polygon()
 		perimeter.owner = null
 		perimeter.reparent(new_obj, false)
 		new_obj.get_meta(RESET_CHILDREN_OWNER).append(perimeter)

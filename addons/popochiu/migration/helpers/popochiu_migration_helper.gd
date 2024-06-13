@@ -94,14 +94,14 @@ static func delete_folder_and_contents(folder_path: String) -> bool:
 
 
 ## Helper function to get the absolute directory paths for all folders under [param folder_path].
-static func get_absolute_directory_paths_at(folder_path: String) -> PackedStringArray:
+static func get_absolute_directory_paths_at(folder_path: String) -> Array:
 	var dir_array : PackedStringArray = []
 	
 	if DirAccess.dir_exists_absolute(folder_path):
 		for folder in DirAccess.get_directories_at(folder_path):
 			dir_array.append(folder_path.path_join(folder))
 	
-	return dir_array
+	return Array(dir_array)
 
 
 ## Helper function to get the absolute file paths for all files under [param folder_path].
@@ -152,7 +152,8 @@ static func get_absolute_file_paths_for_file_extensions(
 ## Looks in the text of each file in [param file_paths] for coincidencies to [param from] and
 ## replace them by [param to]. If any replacement was done, returns [code]true[/code].
 static func replace_text_in_files(file_paths: Array, from: String, to: String) -> bool:
-	return file_paths.any(
+	return PopochiuUtils.any(
+		file_paths,
 		func (file_path: String) -> bool:
 			var file_read := FileAccess.open(file_path, FileAccess.READ)
 			var text := file_read.get_as_text()
