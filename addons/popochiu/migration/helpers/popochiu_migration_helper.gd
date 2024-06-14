@@ -5,11 +5,12 @@ extends Node
 
 const POPOCHIU_PATH = "res://popochiu/"
 
-# Needs to be increased when a new migration is written
-static var version := 1
-
 
 #region Public #####################################################################################
+static func get_migrations_count() -> int:
+	return DirAccess.get_files_at("res://addons/popochiu/migration/migration_files/").size()
+
+
 ## Returns the game folder path. If this returns [member POPOCHIU_PATH], then the project is from
 ## Popochiu 1.x or Popochiu 2.0.0-AlphaX.
 static func get_game_path() -> String:
@@ -45,7 +46,7 @@ static func get_user_migration_version() -> int:
 ## Returns [true] if the current Popochiu migration version is newer than the user's migration
 ## version, which means a migration is needed.
 static func is_migration_needed() -> bool:
-	return version > get_user_migration_version()
+	return get_migrations_count() > get_user_migration_version()
 
 
 ## Updates [code]res://game/popochiu_data.cfg[/code] migration version to [param version].
@@ -53,7 +54,7 @@ static func update_user_migration_version(new_version: int) -> void:
 	if PopochiuResources.set_data_value("migration", "version", new_version) != OK:
 		PopochiuUtils.print_error(
 			"Couldn't update the Migration version from [b]%d[/b] to [b]%d[/b] in Data file." % [
-				version, new_version
+				get_migrations_count(), new_version
 			]
 		)
 

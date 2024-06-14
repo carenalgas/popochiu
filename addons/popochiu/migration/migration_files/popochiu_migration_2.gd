@@ -13,7 +13,9 @@ extends PopochiuMigration
 const VERSION = 2
 const DESCRIPTION = "Move settings to Project Settings and update DialogMenu component"
 const STEPS = [
-	"Add a [b]ScalingPolygon[/b] node to each [b]PopochiuCharacter[/b]."
+	"Add a [b]ScalingPolygon[/b] node to each [b]PopochiuCharacter[/b].",
+	#"Move popochiu_settings.tres to ProjectSettings.",
+	#"",
 ]
 
 
@@ -26,8 +28,8 @@ func _do_migration() -> bool:
 		self,
 		[
 			_update_characters,
-			_move_settings_to_project_settings,
-			_update_dialog_menu,
+			#_move_settings_to_project_settings,
+			#_update_dialog_menu,
 		]
 	)
 
