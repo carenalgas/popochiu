@@ -27,14 +27,17 @@ var map_rid: RID
 ## Used to assign a map in the [NavigationServer2D] to the region RID of the [b]$Perimeter[/b]
 ## child.
 var rid: RID
+## Used by the editor to know if the [b]InteractionPolygon[/b] child its being edited in Godot's
+## 2D Canvas Editor.
+var editing_polygon := false
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
 	add_to_group('walkable_areas')
-	
+
 	if Engine.is_editor_hint(): return
-	
+
 	map_rid = NavigationServer2D.get_maps()[0]
 	rid = ($Perimeter as NavigationRegion2D).get_region_rid()
 	NavigationServer2D.region_set_map(rid, map_rid)
