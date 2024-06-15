@@ -11,7 +11,7 @@ var skip_cutscene_time := 0.0
 var text_speeds := [0.1, 0.01, 0.0]
 ## @deprecated
 ## The index of the default text speed value in [member text_speeds].
-var default_text_speed_idx := 0
+var default_text_speed := 0
 ## The speed at which characters are displayed when a character speaks and the text is being
 ## animated
 var text_speed := 0.0

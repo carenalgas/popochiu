@@ -1,7 +1,7 @@
 @tool
 class_name PopochiuMigration2
 extends PopochiuMigration
-## Migrates changes from Beta 1 and Beta 2 to Beta 3.
+## Migrates projects from Beta 1 and Beta 2 to Beta 3.
 ##
 ## This migration does the following:
 ## - Add a CollisionPolygon2D to each character so it can be used for scaling in PopochiuRegion.

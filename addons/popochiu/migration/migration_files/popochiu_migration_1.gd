@@ -411,7 +411,7 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 		PopochiuWalkableAreaFactory.new(),
 		# TODO: Include Position2D to update them to Marker2D
 	].all(
-		_create_new_obj.bind(popochiu_room, room_objects_to_add)
+		_create_new_room_objects.bind(popochiu_room, room_objects_to_add)
 	)
 	
 	if room_objects_to_add.is_empty():
@@ -423,7 +423,7 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 			func (new_obj) -> bool:
 				# Add the new instance to the room and do the same for its children (those that
 				# were marked as PopochiuRoomObjFactory.CHILD_VISIBLE_IN_ROOM_META)
-				popochiu_room.get_node(group.factory.get_group()).add_child(new_obj)
+				#popochiu_room.get_node(group.factory.get_group()).add_child(new_obj)
 				new_obj.owner = popochiu_room
 				
 				for child: Node in new_obj.get_meta(RESET_CHILDREN_OWNER):
@@ -444,7 +444,7 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 ## Create a new scene of the [param factory] type. The scene will be placed in its corresponding
 ## folder inside the [param popochiu_room] folder. Created [Node]s will be stored in
 ## [param room_objects_to_add] so they are added to the room later.
-func _create_new_obj(
+func _create_new_room_objects(
 	factory: PopochiuRoomObjFactory,
 	popochiu_room: PopochiuRoom,
 	room_objects_to_add := []
@@ -453,7 +453,7 @@ func _create_new_obj(
 		factory = factory,
 		objects = []
 	}
-	for obj in get_room_objects(
+	for obj in _get_room_objects(
 		popochiu_room.get_node(factory.get_group()),
 		[],
 		factory.get_type_method()
@@ -469,6 +469,7 @@ func _create_new_obj(
 			
 			if interaction_polygon.owner == popochiu_room:
 				obj.interaction_polygon = interaction_polygon.polygon
+				interaction_polygon.free()
 		
 		# Create the new scene (and script if needed) of the [obj]
 		var obj_factory: PopochiuRoomObjFactory = factory.get_new_instance()
@@ -477,24 +478,19 @@ func _create_new_obj(
 		
 		# Map the properties of the [obj] to its new instance
 		group.objects.append(_create_new_room_obj(obj_factory, obj, popochiu_room))
-		
-		# Remove the old [obj] from the room
-		obj.free()
 	
 	room_objects_to_add.append(group)
 	return true
 
 
-func get_room_objects(parent: Node, objects: Array, type_method: Callable) -> Array:
-	prints("@@@ get_room_objects", parent, objects, type_method)
+func _get_room_objects(parent: Node, objects: Array, type_method: Callable) -> Array:
 	for child: Node in parent.get_children():
 		if type_method.call(child):
-			prints(">>> %s is a room object" % child.script_name)
 			objects.append(child)
 		else:
 			# If the child is a Node containing other nodes, go deeper in the tree looking for room
 			# object nodes
-			get_room_objects(child, objects, type_method)
+			_get_room_objects(child, objects, type_method)
 	
 	return objects
 
@@ -533,6 +529,13 @@ func _create_new_room_obj(
 		new_obj.get_meta(RESET_CHILDREN_OWNER).append(perimeter)
 	
 	new_obj.position = source.position
+	new_obj.scale = source.scale
+	new_obj.z_index = source.z_index
+	
+	# Remove the old [source] node from the room
+	source.replace_by(new_obj)
+	source.free()
+	
 	return new_obj
 
 

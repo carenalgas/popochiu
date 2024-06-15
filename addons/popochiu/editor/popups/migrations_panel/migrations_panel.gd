@@ -14,7 +14,6 @@ const MigrationTab = preload(
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	prints(":::::::::::::::::::::::::::::: READYYYYYYYYYYYYY :::::::::::::::::::::::::::::::::")
 	reload_label.hide()
 
 
@@ -23,7 +22,7 @@ func _ready() -> void:
 #region Public #####################################################################################
 func add_migration(popochiu_migration: PopochiuMigration) -> void:
 	var migration := MIGRATION_TAB_SCENE.instantiate()
-	migration.name = "Migration %d" % popochiu_migration.VERSION
+	migration.name = popochiu_migration.get_migration_name()
 	migration.anchors_preset = Control.PRESET_FULL_RECT
 	tab_container.add_child.call_deferred(migration)
 	await migration.ready
@@ -38,12 +37,16 @@ func add_migration(popochiu_migration: PopochiuMigration) -> void:
 
 
 func start_step(popochiu_migration: PopochiuMigration, idx: int) -> void:
-	var migration_tab: MigrationTab = tab_container.get_child(popochiu_migration.VERSION - 1)
+	var migration_tab: MigrationTab = tab_container.get_node(
+		popochiu_migration.get_migration_name()
+	)
 	migration_tab.start_step(idx)
 
 
 func update_steps(popochiu_migration: PopochiuMigration) -> void:
-	var migration_tab: MigrationTab = tab_container.get_child(popochiu_migration.VERSION - 1)
+	var migration_tab: MigrationTab = tab_container.get_node(
+		popochiu_migration.get_migration_name()
+	)
 	tab_container.current_tab = migration_tab.get_index()
 	migration_tab.update_steps(popochiu_migration)
 

@@ -48,6 +48,10 @@ func get_version() -> int:
 	return _version
 
 
+func get_migration_name() -> String:
+	return "Migration %d" % _version
+
+
 ## Returns [true] if the current Popochiu migration version is newer than the user's migration
 ## version, which means a migration is needed.
 func is_migration_needed() -> bool:

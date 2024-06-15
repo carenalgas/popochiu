@@ -14,6 +14,7 @@ static func do_migrations() -> void:
 	var migrations_panel := PopochiuEditorHelper.MIGRATIONS_PANEL_SCENE.instantiate()
 	var migrations_popup := await PopochiuEditorHelper.show_migrations(migrations_panel)
 	migrations_popup.get_ok_button().disabled = true
+	migrations_popup.hide()
 	
 	PopochiuUtils.print_normal("Processing Popochiu Migrations")
 	while PopochiuMigrationHelper.is_migration_needed():
@@ -42,6 +43,7 @@ static func do_migrations() -> void:
 		if not migration.is_migration_needed():
 			continue
 		
+		migrations_popup.show()
 		migration.step_started.connect(migrations_panel.start_step)
 		migration.step_completed.connect(migrations_panel.update_steps)
 		if not await PopochiuMigration.run_migration(migration, migration_version):
@@ -49,6 +51,10 @@ static func do_migrations() -> void:
 				"Something went wrong while executing Migration %d" % migration_version
 			)
 			break
+	
+	if not migrations_popup.visible:
+		migrations_popup.free()
+		return
 	
 	migrations_popup.get_ok_button().disabled = false
 	
