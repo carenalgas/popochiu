@@ -84,17 +84,16 @@ func _select_interaction_polygon() -> void:
 		_active_popochiu_object,
 		"POPOCHIU_OBJ_POLYGON_GIZMO"
 	)
-	
+
 	if obj_polygon == null:
 		return
 
 	EditorInterface.get_selection().clear()
 	EditorInterface.get_selection().add_node(obj_polygon)
-	if PopochiuEditorHelper.is_popochiu_room_object(obj_polygon):
+	if PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object):
 		# Used to auto-bake navigation polygons
-		obj_polygon.get_parent().editing_polygon = true
+		_active_popochiu_object.editing_polygon = true
 	obj_polygon.show()
-
 
 
 func _on_selection_changed():
@@ -105,17 +104,23 @@ func _on_selection_changed():
 	):
 		return
 
-	# Reset the clickable reference and hide the toolbar
-	# (restart from a blank state)
-	_active_popochiu_object = null
-	hide()
 
 	# If we have no selection in the tree (the user clicked on an
-	# empty area, or similar), we pop all the buttons up and
+	# empty area or pressed ESC), we pop all the buttons up and
 	# leave the toolbar hidden.
 	if EditorInterface.get_selection().get_selected_nodes().is_empty():
+		if _active_popochiu_object != null:
+			for node in _active_popochiu_object.get_children():
+				if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
+					node.hide()
+				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
+		# Reset the clickable reference and hide the toolbar
+		# (restart from a blank state)
+		_active_popochiu_object = null
+		hide()
 		_release_all_buttons()
 		return
+
 
 	# We identify which PopochiuClickable we are working on in the editor._active
 

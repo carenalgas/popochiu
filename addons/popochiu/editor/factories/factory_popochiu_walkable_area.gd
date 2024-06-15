@@ -45,10 +45,9 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	polygon.add_outline(PackedVector2Array([
 		Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
 	]))
-	polygon.make_polygons_from_outlines()
+	NavigationServer2D.bake_from_source_geometry_data(polygon, NavigationMeshSourceGeometryData2D.new());
 	polygon.agent_radius = 0.0
-	
-	perimeter.navpoly = polygon
+	perimeter.navigation_polygon = polygon
 
 	# Save the scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)

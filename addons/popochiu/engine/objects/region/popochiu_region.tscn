@@ -7,6 +7,6 @@ monitorable = false
 script = ExtResource("1")
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
-visible = false
 modulate = Color(0, 1, 1, 1)
+polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 metadata/POPOCHIU_OBJ_POLYGON_GIZMO = true
