@@ -5,6 +5,8 @@ extends Node
 
 const POPOCHIU_PATH = "res://popochiu/"
 
+static var is_reload_required := false
+
 
 #region Public #####################################################################################
 static func get_migrations_count() -> int:

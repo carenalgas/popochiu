@@ -39,6 +39,7 @@ var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
 ## should be done before calling this.
 func _do_migration() -> bool:
+	PopochiuMigrationHelper.is_reload_required = true
 	return await PopochiuMigrationHelper.execute_migration_steps(
 		self,
 		[

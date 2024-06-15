@@ -9,7 +9,15 @@ const MigrationTab = preload(
 )
 
 @onready var tab_container: TabContainer = %TabContainer
+@onready var reload_label: Label = %ReloadLabel
 
+
+#region Godot ######################################################################################
+func _ready() -> void:
+	reload_label.hide()
+
+
+#endregion
 
 #region Public #####################################################################################
 func add_migration(popochiu_migration: PopochiuMigration) -> void:

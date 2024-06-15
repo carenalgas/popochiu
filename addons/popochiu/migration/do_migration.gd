@@ -16,13 +16,13 @@ static func do_migrations() -> void:
 	var migrations_popup := await PopochiuEditorHelper.show_migrations(migrations_panel)
 	migrations_popup.get_ok_button().disabled = true
 	
-	prints(">>>>>>>>>>> migrations_panel", migrations_panel)
 	PopochiuUtils.print_normal("Processing Popochiu Migrations")
 	while PopochiuMigrationHelper.is_migration_needed():
 		var user_migration_version := PopochiuMigrationHelper.get_user_migration_version()
 		
-		# if this is < 0 then an error has occured so break out of the loop
-		# if the user version is equal or higher then current version then an error has occured
+		# If the user migration version is less than 0, then an error has occured
+		# If the user migration version is equal or higher the migrations count, then there's no
+		# need to execute any
 		if (
 			user_migration_version < 0
 			or user_migration_version >= PopochiuMigrationHelper.get_migrations_count()
@@ -42,7 +42,6 @@ static func do_migrations() -> void:
 		if not migration.is_migration_needed():
 			continue
 		
-		prints("::::::: migration", migration)
 		await migrations_panel.add_migration(migration)
 		
 		migration.step_started.connect(migrations_panel.start_step)
@@ -54,7 +53,10 @@ static func do_migrations() -> void:
 			break
 	
 	migrations_popup.get_ok_button().disabled = false
-	migrations_popup.confirmed.connect(EditorInterface.restart_editor.bind(false))
+	
+	if PopochiuMigrationHelper.is_reload_required:
+		migrations_panel.reload_label.show()
+		migrations_popup.confirmed.connect(EditorInterface.restart_editor.bind(false))
 
 
 #endregion
