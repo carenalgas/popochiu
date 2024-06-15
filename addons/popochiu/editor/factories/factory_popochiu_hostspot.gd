@@ -6,6 +6,7 @@ extends PopochiuRoomObjFactory
 func _init() -> void:
 	_type = PopochiuResources.Types.HOTSPOT
 	_type_label = "hotspot"
+	_type_method = PopochiuEditorHelper.is_hotspot
 	_obj_room_group = "Hotspots"
 	_path_template = "/hotspots/%s/hotspot_%s"
 

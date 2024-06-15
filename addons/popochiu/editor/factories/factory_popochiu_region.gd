@@ -5,6 +5,7 @@ extends PopochiuRoomObjFactory
 func _init() -> void:
 	_type = PopochiuResources.Types.REGION
 	_type_label = "region"
+	_type_method = PopochiuEditorHelper.is_region
 	_obj_room_group = "Regions"
 	_path_template = "/regions/%s/region_%s"
 

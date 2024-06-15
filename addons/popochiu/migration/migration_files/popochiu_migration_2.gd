@@ -14,7 +14,7 @@ const VERSION = 2
 const DESCRIPTION = "Move settings to Project Settings and update DialogMenu component"
 const STEPS = [
 	"Add a [b]ScalingPolygon[/b] node to each [b]PopochiuCharacter[/b].",
-	#"Move popochiu_settings.tres to ProjectSettings.",
+	"Move popochiu_settings.tres to ProjectSettings.",
 	#"",
 ]
 
@@ -28,7 +28,7 @@ func _do_migration() -> bool:
 		self,
 		[
 			_update_characters,
-			#_move_settings_to_project_settings,
+			_move_settings_to_project_settings,
 			#_update_dialog_menu,
 		]
 	)
@@ -71,6 +71,43 @@ func _update_character(scene_path: String) -> bool:
 
 
 func _move_settings_to_project_settings() -> Completion:
+	var old_settings_file := PopochiuMigrationHelper.old_settings_file
+	
+	if not FileAccess.file_exists(old_settings_file):
+		return Completion.IGNORED
+	
+	var old_settings := load(old_settings_file)
+	
+	#max_dialog_options
+	#inventory_always_visible
+	#toolbar_always_visible
+	
+	var settings_map := {
+		# ---- GUI ----------------------------------------------------------------
+		"SCALE_GUI": "",
+		"FADE_COLOR": "",
+		"SKIP_CUTSCENE_TIME": "",
+		# ---- Dialogs ------------------------------------------------------------
+		"TEXT_SPEED": old_settings.text_speeds[old_settings.default_text_speed],
+		"AUTO_CONTINUE_TEXT": "",
+		"USE_TRANSLATIONS": "",
+		# ---- Inventory ----------------------------------------------------------
+		"INVENTORY_LIMIT": "",
+		"ITEMS_ON_START": "",
+		# ---- Pixel game ---------------------------------------------------------
+		"PIXEL_ART_TEXTURES": "is_pixel_art_game",
+		"PIXEL_PERFECT": "is_pixel_perfect",
+	}
+	for key: String in settings_map:
+		PopochiuConfig.set_project_setting(
+			key,
+			old_settings[key.to_lower()] if key.is_empty() else settings_map[key]
+		)
+	
+	if DirAccess.remove_absolute(old_settings_file) != OK:
+		PopochiuUtils.print_error("Couldn't delete [code]%s[/code]." % old_settings_file)
+		return Completion.FAILED
+	
 	return Completion.DONE
 
 

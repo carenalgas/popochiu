@@ -6,6 +6,7 @@ extends PopochiuRoomObjFactory
 func _init() -> void:
 	_type = PopochiuResources.Types.PROP
 	_type_label = "prop"
+	_type_method = PopochiuEditorHelper.is_prop
 	_obj_room_group = "Props"
 	_path_template = "/props/%s/prop_%s"
 

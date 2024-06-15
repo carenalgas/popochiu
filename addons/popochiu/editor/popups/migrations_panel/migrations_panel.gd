@@ -14,6 +14,7 @@ const MigrationTab = preload(
 
 #region Godot ######################################################################################
 func _ready() -> void:
+	prints(":::::::::::::::::::::::::::::: READYYYYYYYYYYYYY :::::::::::::::::::::::::::::::::")
 	reload_label.hide()
 
 

@@ -6,6 +6,7 @@ extends "res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.g
 func _init() -> void:
 	_type = PopochiuResources.Types.WALKABLE_AREA
 	_type_label = "walkable_area"
+	_type_method = PopochiuEditorHelper.is_walkable_area
 	_obj_room_group = "WalkableAreas"
 	_path_template = "/walkable_areas/%s/walkable_area_%s"
 

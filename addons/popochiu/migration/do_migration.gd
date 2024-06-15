@@ -8,7 +8,6 @@ extends Node
 ## do the needed migrations in order.
 static func do_migrations() -> void:
 	if not PopochiuMigrationHelper.is_migration_needed():
-		PopochiuUtils.print_normal("No Migrations needed")
 		await PopochiuEditorHelper.wait_process_frame()
 		return
 	
@@ -38,11 +37,10 @@ static func do_migrations() -> void:
 			"res://addons/popochiu/migration/migration_files/popochiu_migration_%d.gd" %
 			migration_version
 		).new()
+		await migrations_panel.add_migration(migration)
 		
 		if not migration.is_migration_needed():
 			continue
-		
-		await migrations_panel.add_migration(migration)
 		
 		migration.step_started.connect(migrations_panel.start_step)
 		migration.step_completed.connect(migrations_panel.update_steps)

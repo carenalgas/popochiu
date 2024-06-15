@@ -21,6 +21,7 @@ var _path_script := ""
 var _type := -1
 var _type_label := ""
 var _type_target := ""
+var _type_method: Callable
 # The following variables are references to the elements generated for the creation of the new
 # Popochiu object, such as resources, scenes, scripts, state scripts, etc
 var _scene: Node
@@ -52,6 +53,10 @@ func get_scene_path() -> String:
 
 func get_type() -> int:
 	return _type
+
+
+func get_type_method() -> Callable:
+	return _type_method
 
 
 #endregion

@@ -6,6 +6,7 @@ extends Node
 const POPOCHIU_PATH = "res://popochiu/"
 
 static var is_reload_required := false
+static var old_settings_file := PopochiuResources.GAME_PATH.path_join("popochiu_settings.tres")
 
 
 #region Public #####################################################################################
@@ -161,12 +162,15 @@ static func get_absolute_file_paths_for_file_extensions(
 	return file_paths
 
 
-## Looks in the text of each file in [param file_paths] for coincidencies to [param from] and
+## Looks in the text of each file in [param file_paths] for coincidencies of [param from], and
 ## replace them by [param to]. If any replacement was done, returns [code]true[/code].
-static func replace_text_in_files(file_paths: Array, from: String, to: String) -> bool:
+static func replace_text_in_files(from: String, to: String, file_paths: Array) -> bool:
 	return PopochiuUtils.any(
 		file_paths,
 		func (file_path: String) -> bool:
+			if not FileAccess.file_exists(file_path):
+				return true
+			
 			var file_read := FileAccess.open(file_path, FileAccess.READ)
 			var text := file_read.get_as_text()
 			file_read.close()
@@ -187,7 +191,6 @@ static func replace_text_in_files(file_paths: Array, from: String, to: String) -
 ## file in versions prior to [i]2.0.0-beta3[/i].
 static func is_pixel_art_game() -> bool:
 	var is_pixel_art := PopochiuConfig.is_pixel_art_textures()
-	var old_settings_file := PopochiuResources.GAME_PATH.path_join("popochiu_settings.tres")
 	
 	if FileAccess.file_exists(old_settings_file):
 		var old_settings := load(old_settings_file)

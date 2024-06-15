@@ -245,7 +245,7 @@ func _rename_game_folder_references() -> Completion:
 	)
 	
 	if PopochiuMigrationHelper.replace_text_in_files(
-		Array(files), PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH
+		PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH, Array(files)
 	):
 		changes_done = true
 	
@@ -253,7 +253,7 @@ func _rename_game_folder_references() -> Completion:
 
 
 ## Updates all inventory items in the project so:[br]
-## - Their file names (.tscn, .gd, and .tres) match the namig defined since beta-1 (inventory_item_*.*).
+## - Their files (.tscn, .gd, and .tres) match the namig defined since beta-1 (inventory_item_*.*).
 ## - All the paths inside those files point to the new file.
 ## - Fixes a naming issue from alpha-1 where the root node name was set wrong. And also applies the
 ## [constant CanvasItem.TEXTURE_FILTER_NEAREST] to each node in case the project is marked as
@@ -270,7 +270,6 @@ func _update_inventory_items() -> Completion:
 		func (file_path: String) -> bool:
 			if file_path.get_extension() == "tscn":
 				scene_files.append(file_path)
-			
 			return "/item_" in file_path
 	)
 	
@@ -279,7 +278,11 @@ func _update_inventory_items() -> Completion:
 	
 	return Completion.DONE if (
 		scene_files.all(_update_root_name_and_texture_filter)
-		and files_to_update.all(_rename_inventory_item_filenames)
+		and files_to_update.all(_rename_inventory_item_files_name)
+		# Update the paths in the [i.gd] script
+		and PopochiuMigrationHelper.replace_text_in_files(
+			"/item_", "/inventory_item_", [PopochiuResources.I_SNGL]
+		)
 	) else Completion.FAILED
 
 
@@ -305,10 +308,10 @@ func _update_root_name_and_texture_filter(scene_file_path: String) -> bool:
 
 ## For each [PopochiuInventoryItem] in [param files_paths], updates the root node name to PascalCase,
 ## renames the files to inventory_item_*.*, and updates the internal paths to match the new path.
-func _rename_inventory_item_filenames(file_path: String) -> bool:
+func _rename_inventory_item_files_name(file_path: String) -> bool:
 	var old_file_name := file_path.get_file().get_basename()
 	var new_file_name := old_file_name.replace("item_", "inventory_item_")
-	PopochiuMigrationHelper.replace_text_in_files([file_path], old_file_name, new_file_name)
+	PopochiuMigrationHelper.replace_text_in_files(old_file_name, new_file_name, [file_path])
 	DirAccess.rename_absolute(file_path, file_path.replace("/item_", "/inventory_item_"))
 	return true
 
@@ -407,7 +410,9 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 		PopochiuRegionFactory.new(),
 		PopochiuWalkableAreaFactory.new(),
 		# TODO: Include Position2D to update them to Marker2D
-	].all(_create_new_obj.bind(popochiu_room, room_objects_to_add))
+	].all(
+		_create_new_obj.bind(popochiu_room, room_objects_to_add)
+	)
 	
 	if room_objects_to_add.is_empty():
 		# No need to update the room
@@ -440,13 +445,19 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 ## folder inside the [param popochiu_room] folder. Created [Node]s will be stored in
 ## [param room_objects_to_add] so they are added to the room later.
 func _create_new_obj(
-	factory: PopochiuRoomObjFactory, popochiu_room: PopochiuRoom, room_objects_to_add := []
+	factory: PopochiuRoomObjFactory,
+	popochiu_room: PopochiuRoom,
+	room_objects_to_add := []
 ) -> bool:
 	var group := {
 		factory = factory,
 		objects = []
 	}
-	for obj in popochiu_room.get_node(factory.get_group()).get_children():
+	for obj in get_room_objects(
+		popochiu_room.get_node(factory.get_group()),
+		[],
+		factory.get_type_method()
+	):
 		# Copy the points of the polygon to use as [PopochiuClickable.interaction_polygon]
 		if (
 			(obj is PopochiuProp or obj is PopochiuHotspot)
@@ -472,6 +483,20 @@ func _create_new_obj(
 	
 	room_objects_to_add.append(group)
 	return true
+
+
+func get_room_objects(parent: Node, objects: Array, type_method: Callable) -> Array:
+	prints("@@@ get_room_objects", parent, objects, type_method)
+	for child: Node in parent.get_children():
+		if type_method.call(child):
+			prints(">>> %s is a room object" % child.script_name)
+			objects.append(child)
+		else:
+			# If the child is a Node containing other nodes, go deeper in the tree looking for room
+			# object nodes
+			get_room_objects(child, objects, type_method)
+	
+	return objects
 
 
 ## Maps the properties (and nodes if needed) of [param source] to a new instance of itself created
@@ -534,7 +559,7 @@ func _replace_deprecated_method_calls() -> Completion:
 		{from = "super.on_item_used(item)", to = "E.command_fallback()"},
 	]:
 		replaced_matches += 1 if PopochiuMigrationHelper.replace_text_in_files(
-			Array(scripts_paths), dic.from, dic.to
+			dic.from, dic.to, Array(scripts_paths)
 		) else 0
 	
 	return Completion.DONE if replaced_matches > 0 else Completion.IGNORED

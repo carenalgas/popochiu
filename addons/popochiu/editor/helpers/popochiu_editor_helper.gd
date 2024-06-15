@@ -146,8 +146,8 @@ static func show_migrations(
 	dialog.always_on_top = true
 	content.anchors_preset = Control.PRESET_FULL_RECT
 	dialog.add_child(content)
-	
 	await show_dialog(dialog, min_size)
+	
 	return dialog
 
 
@@ -177,6 +177,10 @@ static func is_hotspot(node: Node) -> bool:
 
 static func is_walkable_area(node: Node) -> bool:
 	return node is PopochiuWalkableArea
+
+
+static func is_region(node: Node) -> bool:
+	return node is PopochiuRegion
 
 
 ## Overrides the font [param font_name] in [param node] by the theme [Font] identified by
