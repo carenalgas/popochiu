@@ -13,7 +13,7 @@ extends PopochiuMigration
 ## - add the [migration] section and version key to the "res://game/popochiu_data.cfg" file
 
 const VERSION = 1
-const DESCRIPTION = "Migrate project structure to Popochiu 2.0 format"
+const DESCRIPTION = "Migrate project structure from alpha-x to beta"
 const STEPS = [
 	"Delete [b]res://popochiu/autoloads/[/b].",
 	"Move folders in [b]res://popochiu/[/b] to [b]res://game/[/b].",
@@ -245,7 +245,7 @@ func _rename_game_folder_references() -> Completion:
 	)
 	
 	if PopochiuMigrationHelper.replace_text_in_files(
-		PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH, Array(files)
+		PopochiuMigrationHelper.POPOCHIU_PATH, PopochiuResources.GAME_PATH, files
 	):
 		changes_done = true
 	
@@ -266,7 +266,7 @@ func _update_inventory_items() -> Completion:
 	
 	# Get all the inventory item file paths that were previously called item_*.*
 	var scene_files := []
-	var files_to_update := Array(inventory_item_files).filter(
+	var files_to_update := inventory_item_files.filter(
 		func (file_path: String) -> bool:
 			if file_path.get_extension() == "tscn":
 				scene_files.append(file_path)
@@ -321,10 +321,10 @@ func _rename_inventory_item_files_name(file_path: String) -> bool:
 ## the [code]ScalingPolygon[/code].
 func _update_characters() -> Completion:
 	# Get the characters' .tscn files
-	var file_paths := Array(PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
+	var file_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.CHARACTERS_PATH,
 		["tscn"]
-	))
+	)
 	var any_character_updated := PopochiuUtils.any(file_paths, _update_character)
 	return Completion.DONE if any_character_updated else Completion.IGNORED
 
@@ -562,7 +562,7 @@ func _replace_deprecated_method_calls() -> Completion:
 		{from = "super.on_item_used(item)", to = "E.command_fallback()"},
 	]:
 		replaced_matches += 1 if PopochiuMigrationHelper.replace_text_in_files(
-			dic.from, dic.to, Array(scripts_paths)
+			dic.from, dic.to, scripts_paths
 		) else 0
 	
 	return Completion.DONE if replaced_matches > 0 else Completion.IGNORED

@@ -128,12 +128,12 @@ static func get_absolute_file_paths_at(folder_path: String) -> PackedStringArray
 	return file_array
 
 
-## Helper function to recursively scan the directory in [param path] and return an [Array] of absolute
-## file paths with the specified extension.
+## Helper function to recursively scan the directory in [param path] and return an [Array] of
+## absolute file paths with the specified extension.
 static func get_absolute_file_paths_for_file_extensions(
 	path: String, file_extensions: Array[String], folders_to_ignore: Array[String] = []
-) -> PackedStringArray:
-	var file_paths: PackedStringArray = []
+) -> Array:
+	var file_paths := []
 	var dir: DirAccess = DirAccess.open(path)
 
 	if not dir.dir_exists(path):
