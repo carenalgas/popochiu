@@ -458,6 +458,10 @@ func _create_new_room_objects(
 		[],
 		factory.get_type_method()
 	):
+		# If the object already has its own scene and a script that is not inside Popochiu's folder
+		if not obj.scene_file_path.is_empty() and not "addons" in obj.get_script().resource_path:
+			return false
+		
 		# Copy the points of the polygon to use as [PopochiuClickable.interaction_polygon]
 		if (
 			(obj is PopochiuProp or obj is PopochiuHotspot)

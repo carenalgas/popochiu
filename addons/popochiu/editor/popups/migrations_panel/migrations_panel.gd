@@ -31,9 +31,10 @@ func add_migration(popochiu_migration: PopochiuMigration) -> void:
 	migration.set_steps(popochiu_migration.STEPS)
 	await get_tree().process_frame
 	
-	custom_minimum_size = $PanelContainer.size
-	(get_parent() as AcceptDialog).reset_size()
-	(get_parent() as AcceptDialog).move_to_center()
+	if $PanelContainer.size > custom_minimum_size:
+		custom_minimum_size = $PanelContainer.size
+		(get_parent() as AcceptDialog).reset_size()
+		(get_parent() as AcceptDialog).move_to_center()
 
 
 func start_step(popochiu_migration: PopochiuMigration, idx: int) -> void:

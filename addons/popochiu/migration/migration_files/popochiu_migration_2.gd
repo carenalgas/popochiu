@@ -21,6 +21,12 @@ const STEPS = [
 	"Remove [b]BaselineHelper[/b] and [b]WalkToHelper[/b] nodes in [b]PopochiuClickable[/b]s." \
 	+ " Also remove [b]DialogPos[/b] node in [b]PopochiuCharacter[/b]s",
 ]
+const GAME_SETTINGS_BAR_PATH =\
+"res://game/graphic_interface/components/settings_bar/settings_bar.tscn"
+const TextSpeedOption = preload(
+	PopochiuResources.GUI_TEMPLATES_FOLDER
+	+ "simple_click/components/settings_bar/resources/text_speed_option.gd"
+)
 
 # Used to store the custom values in the old [popochiu_settings.tres].
 var _inventory_always_visible := false
@@ -127,7 +133,43 @@ func _update_dialog_menu() -> Completion:
 
 
 func _update_simple_click_settings_bar() -> Completion:
-	return Completion.IGNORED
+	if not FileAccess.file_exists(GAME_SETTINGS_BAR_PATH):
+		# The game's GUI does not use the SettingsBar GUI component
+		return Completion.IGNORED
+	
+	var game_settings_bar: PanelContainer = load(GAME_SETTINGS_BAR_PATH).instantiate()
+	var dialog_speed_button: TextureButton = game_settings_bar.get_node("Box/BtnDialogSpeed")
+	
+	if not dialog_speed_button.speed_options.is_empty():
+		# The component is up to date with the beta-3 version
+		return Completion.IGNORED
+	
+	var addons_settings_bar: PanelContainer = load(PopochiuResources.GUI_TEMPLATES_FOLDER.path_join(
+		"simple_click/components/settings_bar/settings_bar.tscn"
+	)).instantiate()
+	
+	# Store the speed options defined in the original component
+	var speed_options := []
+	for opt: TextSpeedOption in addons_settings_bar.get_node("Box/BtnDialogSpeed").speed_options:
+		var option := TextSpeedOption.new()
+		option.resource_name = opt.resource_name
+		option.speed = opt.speed
+		option.description = opt.description
+		option.icon = load(opt.icon.resource_path.replace(
+			PopochiuResources.GUI_TEMPLATES_FOLDER.path_join(
+				"simple_click/components/settings_bar/sprites/"
+			),
+			"res://game/graphic_interface/components/settings_bar/sprites/"
+		))
+		
+		speed_options.append(option)
+	
+	# Assign the options to the component in the game's graphic interface component and save the
+	# SettingsBat scene
+	dialog_speed_button.speed_options = speed_options
+	var scene_updated := PopochiuEditorHelper.pack_scene(game_settings_bar, GAME_SETTINGS_BAR_PATH)
+	
+	return Completion.DONE if scene_updated == OK else Completion.FAILED
 
 
 func _remove_helper_nodes() -> Completion:
@@ -162,8 +204,9 @@ func _remove_helper_nodes_in(scene_path: String) -> bool:
 		was_scene_updated = true
 	
 	# ---- Remove the DialogPos node ---------------------------------------------------------------
-	if popochiu_clickable is PopochiuCharacter and _remove_node(popochiu_clickable, "DialogPos"):
-		was_scene_updated = true
+	# TODO: Uncomment this once PR #241
+	#if popochiu_clickable is PopochiuCharacter and _remove_node(popochiu_clickable, "DialogPos"):
+		#was_scene_updated = true
 	
 	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_clickable, scene_path) != OK:
 		PopochiuUtils.print_error(
@@ -174,7 +217,7 @@ func _remove_helper_nodes_in(scene_path: String) -> bool:
 
 
 func _remove_node(parent: Node, node_path: NodePath) -> bool:
-	if parent.has(node_path):
+	if parent.has_node(node_path):
 		var child: Node = parent.get_node(node_path)
 		child.owner = null
 		child.free()
