@@ -22,16 +22,16 @@ func _ready() -> void:
 #region Public #####################################################################################
 func add_migration(popochiu_migration: PopochiuMigration) -> void:
 	var migration := MIGRATION_TAB_SCENE.instantiate()
-	migration.name = popochiu_migration.get_migration_name()
-	migration.anchors_preset = Control.PRESET_FULL_RECT
 	tab_container.add_child.call_deferred(migration)
 	await migration.ready
 	
+	migration.name = popochiu_migration.get_migration_name()
+	migration.anchors_preset = Control.PRESET_FULL_RECT
 	migration.description.text = popochiu_migration.DESCRIPTION
 	migration.set_steps(popochiu_migration.STEPS)
-	await get_tree().process_frame
+	await get_tree().create_timer(0.1).timeout
 	
-	if $PanelContainer.size > custom_minimum_size:
+	if $PanelContainer.size.y > custom_minimum_size.y:
 		custom_minimum_size = $PanelContainer.size
 		(get_parent() as AcceptDialog).reset_size()
 		(get_parent() as AcceptDialog).move_to_center()

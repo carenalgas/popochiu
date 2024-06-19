@@ -21,6 +21,9 @@ const STEPS = [
 	"Remove [b]BaselineHelper[/b] and [b]WalkToHelper[/b] nodes in [b]PopochiuClickable[/b]s." \
 	+ " Also remove [b]DialogPos[/b] node in [b]PopochiuCharacter[/b]s",
 ]
+const GAME_DIALOG_MENU_PATH = "res://game/graphic_interface/components/dialog_menu/dialog_menu.tscn"
+const ADDON_DIALOG_MENU_PATH =\
+"res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn"
 const GAME_SETTINGS_BAR_PATH =\
 "res://game/graphic_interface/components/settings_bar/settings_bar.tscn"
 const TextSpeedOption = preload(
@@ -31,6 +34,9 @@ const TextSpeedOption = preload(
 # Used to store the custom values in the old [popochiu_settings.tres].
 var _inventory_always_visible := false
 var _toolbar_always_visible := false
+var _gui_templates_helper := preload(
+	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
+)
 
 
 #region Virtual ####################################################################################
@@ -78,7 +84,7 @@ func _add_scaling_polygon_to(scene_path: String) -> bool:
 		popochiu_character.move_child(scaling_polygon, 1)
 		scaling_polygon.owner = popochiu_character
 	
-	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_character, scene_path) != OK:
+	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_character) != OK:
 		PopochiuUtils.print_error(
 			"Couldn't update [b]%s[/b] with new voices array." % popochiu_character.script_name
 		)
@@ -129,7 +135,54 @@ func _move_settings_to_project_settings() -> Completion:
 
 
 func _update_dialog_menu() -> Completion:
-	return Completion.IGNORED
+	if not FileAccess.file_exists(GAME_DIALOG_MENU_PATH):
+		# The game's GUI is not using the DialogMenu GUI component
+		return Completion.IGNORED
+	
+	# Copy the new [PopochiuDialogMenuOption] component to the game's GUI components folder
+	await _gui_templates_helper.copy_components(ADDON_DIALOG_MENU_PATH)
+	
+	# Store the scene of the new [PopochiuDialogMenuOption] in the game's graphic interface folder
+	var game_dialog_menu_option: PackedScene = load(PopochiuResources.GUI_GAME_FOLDER.path_join(
+		"components/dialog_menu/dialog_menu_option/dialog_menu_option.tscn"
+	))
+	
+	# Assign the new [PopochiuDialogMenuOption] to the game's GUI dialog menu component and delete
+	# any option inside its DialogOptionsContainer child
+	var game_dialog_menu: PopochiuDialogMenu = load(GAME_DIALOG_MENU_PATH).instantiate()
+	game_dialog_menu.option_scene = game_dialog_menu_option
+	for opt in game_dialog_menu.get_node("ScrollContainer/DialogOptionsContainer").get_children():
+		opt.owner = null
+		opt.free()
+	
+	var done := PopochiuEditorHelper.pack_scene(game_dialog_menu)
+	if done != OK:
+		PopochiuUtils.print_error(
+			"Couldn't update PopochiuDialogMenuOption reference in PopochiuDialogMenu"
+		)
+		return Completion.FAILED
+	
+	# Update the dependency to [PopochiuDialogMenuOption] in the game's graphic interface scene
+	var game_gui: PopochiuGraphicInterface = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
+	game_gui.get_node("DialogMenu").option_scene = game_dialog_menu_option
+	done = PopochiuEditorHelper.pack_scene(game_gui)
+	if done != OK:
+		PopochiuUtils.print_error(
+			"Couldn't update PopochiuDialogMenuOption reference in PopochiuGraphicInterface"
+		)
+		return Completion.FAILED
+	
+	# Delete the old [dialog_menu_option.tscn] file
+	done = DirAccess.remove_absolute(
+		"res://game/graphic_interface/components/dialog_menu/dialog_menu_option.tscn"
+	)
+	if done != OK:
+		PopochiuUtils.print_error(
+			"Couldn't update PopochiuDialogMenuOption reference in PopochiuDialogMenu"
+		)
+		return Completion.FAILED
+	
+	return Completion.DONE
 
 
 func _update_simple_click_settings_bar() -> Completion:
@@ -167,7 +220,7 @@ func _update_simple_click_settings_bar() -> Completion:
 	# Assign the options to the component in the game's graphic interface component and save the
 	# SettingsBat scene
 	dialog_speed_button.speed_options = speed_options
-	var scene_updated := PopochiuEditorHelper.pack_scene(game_settings_bar, GAME_SETTINGS_BAR_PATH)
+	var scene_updated := PopochiuEditorHelper.pack_scene(game_settings_bar)
 	
 	return Completion.DONE if scene_updated == OK else Completion.FAILED
 
@@ -208,7 +261,7 @@ func _remove_helper_nodes_in(scene_path: String) -> bool:
 	#if popochiu_clickable is PopochiuCharacter and _remove_node(popochiu_clickable, "DialogPos"):
 		#was_scene_updated = true
 	
-	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_clickable, scene_path) != OK:
+	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_clickable) != OK:
 		PopochiuUtils.print_error(
 			"Couldn't remove helper nodes in [b]%s[/b]." % popochiu_clickable.script_name
 		)

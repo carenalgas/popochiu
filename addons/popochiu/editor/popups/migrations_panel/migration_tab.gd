@@ -11,11 +11,11 @@ var _steps := []
 func set_steps(steps_texts: Array) -> void:
 	for text: String in steps_texts:
 		var check_box := CheckBox.new()
+		steps.add_child(check_box)
 		check_box.text = text.replace("[b]", "").replace("[/b]", "")
 		check_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		check_box.modulate.a = 0.3
 		check_box.text_overrun_behavior = TextServer.OVERRUN_TRIM_WORD
-		steps.add_child(check_box)
 		PopochiuEditorHelper.override_font(check_box, "font", "source")
 
 
