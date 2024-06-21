@@ -182,7 +182,7 @@ func _on_dock_ready() -> void:
 	PopochiuEditorHelper.dock = dock
 	
 	# ---- Check if new migrations exist and run them if they do -----------------------------------
-	# TODO: Show a popup to inform devs which changes will be applied
+	
 	await DoMigration.do_migrations()
 	
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues

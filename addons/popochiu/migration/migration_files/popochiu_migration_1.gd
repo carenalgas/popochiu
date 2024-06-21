@@ -550,12 +550,7 @@ func _create_new_room_obj(
 ## - [code]super.on_click() | super.on_right_click() | super.on_item_used(item)[/code] by
 ## [code]E.command_fallback()[/code]
 func _replace_deprecated_method_calls() -> Completion:
-	var scripts_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
-		PopochiuResources.GAME_PATH, ["gd"]
-	)
-	
-	var replaced_matches := 0
-	for dic: Dictionary in [
+	return Completion.DONE if PopochiuMigrationHelper.replace_in_scripts([
 		{from = "R.get_point", to = "R.get_marker"},
 		{from = "G.display", to = "G.show_system_text"},
 		{from = "disable_now()", to = "disable()"},
@@ -564,12 +559,7 @@ func _replace_deprecated_method_calls() -> Completion:
 		{from = "super.on_click()", to = "E.command_fallback()"},
 		{from = "super.on_right_click()", to = "E.command_fallback()"},
 		{from = "super.on_item_used(item)", to = "E.command_fallback()"},
-	]:
-		replaced_matches += 1 if PopochiuMigrationHelper.replace_text_in_files(
-			dic.from, dic.to, scripts_paths
-		) else 0
-	
-	return Completion.DONE if replaced_matches > 0 else Completion.IGNORED
+	]) else Completion.IGNORED
 
 
 #endregion

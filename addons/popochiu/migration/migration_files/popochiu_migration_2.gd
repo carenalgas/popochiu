@@ -10,6 +10,7 @@ extends PopochiuMigration
 ## - Update the dialog_menu component.
 ## - Update btn_dialog_speed in SimpleClick template (???).
 ## - Remove BaselineHelper, WalkToHelper, and DialogPos nodes in Props, Hotspots, and Characters.
+## - Replace uses of deprecated properties and methods
 
 const VERSION = 2
 const DESCRIPTION = "Make changes from beta-x to 2.0.0 release"
@@ -20,7 +21,10 @@ const STEPS = [
 	"Update SettingsBar in 2-click Context-sensitive GUI template. (Optional)",
 	"Remove [b]BaselineHelper[/b] and [b]WalkToHelper[/b] nodes in [b]PopochiuClickable[/b]s." \
 	+ " Also remove [b]DialogPos[/b] node in [b]PopochiuCharacter[/b]s",
+	"Update uses of deprecated properties and methods."
 ]
+const GAME_INVENTORY_BAR_PATH =\
+"res://game/graphic_interface/components/inventory_bar/inventory_bar.tscn"
 const GAME_DIALOG_MENU_PATH = "res://game/graphic_interface/components/dialog_menu/dialog_menu.tscn"
 const ADDON_DIALOG_MENU_PATH =\
 "res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn"
@@ -31,9 +35,6 @@ const TextSpeedOption = preload(
 	+ "simple_click/components/settings_bar/resources/text_speed_option.gd"
 )
 
-# Used to store the custom values in the old [popochiu_settings.tres].
-var _inventory_always_visible := false
-var _toolbar_always_visible := false
 var _gui_templates_helper := preload(
 	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
 )
@@ -52,6 +53,7 @@ func _do_migration() -> bool:
 			_update_dialog_menu,
 			_update_simple_click_settings_bar,
 			_remove_helper_nodes,
+			_replace_deprecated,
 		]
 	)
 
@@ -98,7 +100,7 @@ func _move_settings_to_project_settings() -> Completion:
 	if not FileAccess.file_exists(old_settings_file):
 		return Completion.IGNORED
 	
-	# Move custom defined values in the old popochiu_settings.tres file to Project Settings
+	# Move custom defined values in the old [popochiu_settings.tres] file to Project Settings
 	var old_settings: PopochiuSettings = load(old_settings_file)
 	var settings_map := {
 		# ---- GUI ---------------------------------------------------------------------------------
@@ -122,11 +124,19 @@ func _move_settings_to_project_settings() -> Completion:
 			old_settings[key.to_lower()] if key.is_empty() else settings_map[key]
 		)
 	
-	# Move custom defined values in the old popochiu_settings.tres to their corresponding GUI
+	# Move custom defined values in the old [popochiu_settings.tres] to their corresponding GUI
 	# components
-	_inventory_always_visible = old_settings.inventory_always_visible
-	_toolbar_always_visible = old_settings.toolbar_always_visible
+	if FileAccess.file_exists(GAME_INVENTORY_BAR_PATH):
+		var inventory_bar: Control = load(GAME_INVENTORY_BAR_PATH).instantiate()
+		inventory_bar.always_visible = old_settings.inventory_always_visible
+		PopochiuEditorHelper.pack_scene(inventory_bar)
 	
+	if FileAccess.file_exists(GAME_SETTINGS_BAR_PATH):
+		var settings_bar: PanelContainer = load(GAME_SETTINGS_BAR_PATH).instantiate()
+		settings_bar.always_visible = old_settings.toolbar_always_visible
+		PopochiuEditorHelper.pack_scene(settings_bar)
+	
+	# Remove the old [popochiu_settings.tres]
 	if DirAccess.remove_absolute(old_settings_file) != OK:
 		PopochiuUtils.print_error("Couldn't delete [code]%s[/code]." % old_settings_file)
 		return Completion.FAILED
@@ -276,6 +286,24 @@ func _remove_node(parent: Node, node_path: NodePath) -> bool:
 		child.free()
 		return true
 	return false
+
+
+## Replace calls to deprecated properties and methods:
+## - [code]E.current_room[/code] by [code]R.current[/code].
+func _replace_deprecated() -> Completion:
+	return Completion.DONE if PopochiuMigrationHelper.replace_in_scripts([
+		{from = "E.current_room", to = "R.current"},
+		{from = "E.goto_room(", to = "R.goto_room("},
+		{from = "E.queue_camera_offset(", to = "E.camera.queue_camera_offset("},
+		{from = "E.camera_offset(", to = "E.camera.camera_offset("},
+		{from = "E.queue_camera_shake(", to = "E.camera.queue_camera_shake("},
+		{from = "E.camera_shake(", to = "E.camera.camera_shake("},
+		{from = "E.queue_camera_shake_bg(", to = "E.camera.queue_camera_shake_bg("},
+		{from = "E.camera_shake_bg(", to = "E.camera.camera_shake_bg("},
+		{from = "E.queue_camera_zoom(", to = "E.camera.queue_camera_zoom("},
+		{from = "E.camera_zoom(", to = "E.camera.camera_zoom("},
+		{from = "E.stop_camera_shake()", to = "E.camera.stop_camera_shake()"},
+	]) else Completion.IGNORED
 
 
 #endregion

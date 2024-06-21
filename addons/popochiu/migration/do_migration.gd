@@ -7,6 +7,13 @@ extends Node
 ## While the user migration version is less than the popochiu migration version
 ## do the needed migrations in order.
 static func do_migrations() -> void:
+	if PopochiuMigrationHelper.is_empty_project():
+		PopochiuMigrationHelper.update_user_migration_version(
+			PopochiuMigrationHelper.get_migrations_count()
+		)
+		await PopochiuEditorHelper.wait_process_frame()
+		return
+	
 	if not PopochiuMigrationHelper.is_migration_needed():
 		await PopochiuEditorHelper.wait_process_frame()
 		return

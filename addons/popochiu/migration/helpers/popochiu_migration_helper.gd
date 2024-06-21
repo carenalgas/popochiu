@@ -46,6 +46,22 @@ static func get_user_migration_version() -> int:
 		return 0
 
 
+## Returns [code]true[/code] if this is an empty project: no rooms, no characters, no inventory
+## items, no dialogues, and no audio files.
+static func is_empty_project() -> bool:
+	if (
+		get_game_path() == PopochiuResources.GAME_PATH
+		and PopochiuResources.get_section_keys("rooms").is_empty()
+		and PopochiuResources.get_section_keys("characters").is_empty()
+		and PopochiuResources.get_section_keys("inventory_items").is_empty()
+		and PopochiuResources.get_section_keys("dialogs").is_empty()
+		and PopochiuResources.get_section_keys("audio").is_empty()
+	):
+		return true
+	
+	return false
+
+
 ## Returns [true] if the current Popochiu migration version is newer than the user's migration
 ## version, which means a migration is needed.
 static func is_migration_needed() -> bool:
@@ -206,6 +222,19 @@ static func is_text_in_file(text: String, file_path: String) -> bool:
 	file_read.close()
 	
 	return text in file_text
+
+
+static func replace_in_scripts(replacements: Array[Dictionary]) -> bool:
+	var scripts_paths := get_absolute_file_paths_for_file_extensions(
+		PopochiuResources.GAME_PATH, ["gd"]
+	)
+	
+	var replaced_matches := 0
+	for dic: Dictionary in replacements:
+		replaced_matches += 1 if replace_text_in_files(dic.from, dic.to, scripts_paths) else 0
+	
+	return replaced_matches > 0
+
 
 
 #endregion
