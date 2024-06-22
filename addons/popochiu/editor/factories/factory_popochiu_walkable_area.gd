@@ -49,13 +49,13 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	polygon.agent_radius = 0.0
 	perimeter.navigation_polygon = polygon
 
+	# Show the WA perimeter, depending on user prefs
+	perimeter.visible = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_WA)
+
 	# Save the scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
-
-	# Show the interaction polygons, depending on user prefs
-	_set_polygons_visibility(new_obj)
 
 	# Add the object to its room
 	_add_resource_to_room()

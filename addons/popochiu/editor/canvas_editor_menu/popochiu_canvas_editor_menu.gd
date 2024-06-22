@@ -115,10 +115,7 @@ func _on_selection_changed():
 			# _set_polygons_visibility() in the base Popochiu object
 			# factory, and should be removed as well.
 			for node in _active_popochiu_object.get_children():
-				if PopochiuEditorHelper.is_popochiu_obj_polygon(node) \
-				and not PopochiuEditorConfig.get_editor_setting(
-					PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS
-				):
+				if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
 					node.hide()
 				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
 		# Reset the clickable reference and hide the toolbar
@@ -153,23 +150,30 @@ func _on_selection_changed():
 	elif EditorInterface.get_selection().get_selected_nodes().size() > 1:
 		for node in EditorInterface.get_selection().get_selected_nodes():
 			if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
-				if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS):
-					node.hide()
+				node.hide()
 				EditorInterface.get_selection().remove_node.call_deferred(node)
 				btn_interaction_polygon.set_pressed_no_signal(false)
 
+	# Always reset the walkable areas visibility depending on the user preferences
+	_set_walkable_areas_visibility()
 	# Always reset the button visibility depending on the state of the internal variables	
 	_set_buttons_visibility()
 
 
 func _on_gizmo_settings_changed() -> void:
-	for child in PopochiuEditorHelper.get_all_children(get_tree().get_root()):
+	_set_walkable_areas_visibility()
+
+
+func _set_walkable_areas_visibility() -> void:
+	for child in PopochiuEditorHelper.get_all_children(
+		EditorInterface.get_edited_scene_root().find_child("WalkableAreas")
+	):
 		# Not a polygon? Skip
 		if not PopochiuEditorHelper.is_popochiu_obj_polygon(child):
 			continue
 		# Should we show all the polygons? Show and go to the next one
 		if PopochiuEditorConfig.get_editor_setting(
-			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS
+			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_WA
 		):
 			child.show()
 			continue

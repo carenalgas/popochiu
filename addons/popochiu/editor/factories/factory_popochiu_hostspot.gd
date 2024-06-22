@@ -44,9 +44,6 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	if result_code != ResultCodes.SUCCESS: return result_code
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
 
-	# Show the interaction polygons, depending on user prefs
-	_set_polygons_visibility(new_obj)
-
 	# Add the object to its room
 	_add_resource_to_room()
 
