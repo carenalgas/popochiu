@@ -99,7 +99,7 @@ static func initialize_project_settings():
 		INVENTORY_ITEMS_ON_START,
 		TYPE_ARRAY,
 		PROPERTY_HINT_TYPE_STRING,
-		"%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE, "*tscn"]
+		"%d:" % [TYPE_STRING]
 	)
 	
 	# ---- Aseprite Importing ----------------------------------------------------------------------

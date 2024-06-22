@@ -8,9 +8,9 @@ extends PopochiuMigration
 ## - Move the values defined in the old popochiu_settings.tres to the new section in
 ## Project Settings / Popochiu.
 ## - Update the dialog_menu component.
-## - Update btn_dialog_speed in SimpleClick template (???).
+## - Update btn_dialog_speed in SimpleClick template.
 ## - Remove BaselineHelper, WalkToHelper, and DialogPos nodes in Props, Hotspots, and Characters.
-## - Replace uses of deprecated properties and methods
+## - Replace uses of deprecated properties and methods.
 
 const VERSION = 2
 const DESCRIPTION = "Make changes from beta-x to 2.0.0 release"
@@ -113,16 +113,21 @@ func _move_settings_to_project_settings() -> Completion:
 		"USE_TRANSLATIONS": "",
 		# ---- Inventory ---------------------------------------------------------------------------
 		"INVENTORY_LIMIT": "",
-		"ITEMS_ON_START": "",
 		# ---- Pixel game --------------------------------------------------------------------------
 		"PIXEL_ART_TEXTURES": "is_pixel_art_game",
 		"PIXEL_PERFECT": "is_pixel_perfect",
 	}
+	
 	for key: String in settings_map:
 		PopochiuConfig.set_project_setting(
 			key,
 			old_settings[key.to_lower()] if key.is_empty() else settings_map[key]
 		)
+	
+	for item_name: StringName in old_settings.items_on_start:
+		var items_on_start := PopochiuConfig.get_inventory_items_on_start()
+		items_on_start.append(str(item_name))
+		PopochiuConfig.set_inventory_items_on_start(items_on_start)
 	
 	# Move custom defined values in the old [popochiu_settings.tres] to their corresponding GUI
 	# components
@@ -294,15 +299,15 @@ func _replace_deprecated() -> Completion:
 	return Completion.DONE if PopochiuMigrationHelper.replace_in_scripts([
 		{from = "E.current_room", to = "R.current"},
 		{from = "E.goto_room(", to = "R.goto_room("},
-		{from = "E.queue_camera_offset(", to = "E.camera.queue_camera_offset("},
-		{from = "E.camera_offset(", to = "E.camera.camera_offset("},
-		{from = "E.queue_camera_shake(", to = "E.camera.queue_camera_shake("},
-		{from = "E.camera_shake(", to = "E.camera.camera_shake("},
-		{from = "E.queue_camera_shake_bg(", to = "E.camera.queue_camera_shake_bg("},
-		{from = "E.camera_shake_bg(", to = "E.camera.camera_shake_bg("},
-		{from = "E.queue_camera_zoom(", to = "E.camera.queue_camera_zoom("},
-		{from = "E.camera_zoom(", to = "E.camera.camera_zoom("},
-		{from = "E.stop_camera_shake()", to = "E.camera.stop_camera_shake()"},
+		{from = "E.queue_camera_offset(", to = "E.camera.queue_change_offset("},
+		{from = "E.camera_offset(", to = "E.camera.change_offset("},
+		{from = "E.queue_camera_shake(", to = "E.camera.queue_shake("},
+		{from = "E.camera_shake(", to = "E.camera.shake("},
+		{from = "E.queue_camera_shake_bg(", to = "E.camera.queue_shake_bg("},
+		{from = "E.camera_shake_bg(", to = "E.camera.shake_bg("},
+		{from = "E.queue_camera_zoom(", to = "E.camera.queue_change_zoom("},
+		{from = "E.camera_zoom(", to = "E.camera.change_zoom("},
+		{from = "E.stop_camera_shake()", to = "E.camera.stop_shake()"},
 	]) else Completion.IGNORED
 
 

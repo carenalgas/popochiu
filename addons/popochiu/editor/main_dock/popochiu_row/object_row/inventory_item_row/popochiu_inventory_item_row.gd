@@ -52,15 +52,16 @@ func _menu_item_pressed(id: int) -> void:
 	match id:
 		InventoryItemOptions.START_WITH_IT:
 			var items: Array = PopochiuConfig.get_inventory_items_on_start()
+			var script_name := str(name)
 			
-			if name in items:
-				items.erase(name)
+			if script_name in items:
+				items.erase(script_name)
 			else:
-				items.append(name)
+				items.append(script_name)
 			
 			PopochiuConfig.set_inventory_items_on_start(items)
 			
-			self.is_on_start = name in items
+			self.is_on_start = script_name in items
 		_:
 			super(id)
 
