@@ -19,6 +19,7 @@ const GIZMOS_HANDLER_SIZE = "popochiu/gizmos/handler_size"
 const GIZMOS_SHOW_CONNECTORS = "popochiu/gizmos/show_connectors"
 const GIZMOS_SHOW_OUTLINE = "popochiu/gizmos/show_handler_outline"
 const GIZMOS_SHOW_NODE_NAME = "popochiu/gizmos/show_node_name"
+const GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS = "popochiu/gizmos/show_collision_polygons_when_not_editing"
 
 # Settings default values
 static var defaults := {
@@ -34,6 +35,7 @@ static var defaults := {
 	GIZMOS_SHOW_CONNECTORS: true,
 	GIZMOS_SHOW_OUTLINE: true,
 	GIZMOS_SHOW_NODE_NAME: true,
+	GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS: false,
 }
 
 static var editor_settings: EditorSettings
@@ -57,6 +59,7 @@ static func initialize_editor_settings():
 	_initialize_editor_setting(GIZMOS_SHOW_CONNECTORS, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_SHOW_OUTLINE, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_SHOW_NODE_NAME, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS, TYPE_BOOL)
 
 
 static func get_icon(icon: Icons) -> Texture2D:
@@ -75,15 +78,15 @@ static func get_icon(icon: Icons) -> Texture2D:
 
 # ASEPRITE IMPORTER --------------------------------------------------------------------------------
 static func aseprite_importer_enabled() -> bool:
-	return _get_editor_setting(ASEPRITE_IMPORTER_ENABLED)
+	return get_editor_setting(ASEPRITE_IMPORTER_ENABLED)
 
 
 static func get_command() -> String:
-	return _get_editor_setting(ASEPRITE_COMMAND_PATH)
+	return get_editor_setting(ASEPRITE_COMMAND_PATH)
 
 
 static func should_remove_source_files() -> bool:
-	return _get_editor_setting(ASEPRITE_REMOVE_JSON_FILE)
+	return get_editor_setting(ASEPRITE_REMOVE_JSON_FILE)
 
 #endregion
 
@@ -108,7 +111,7 @@ static func _initialize_editor_setting(
 	})
 
 
-static func _get_editor_setting(key: String):
+static func get_editor_setting(key: String):
 	var e = editor_settings.get_setting(key)
 	return e if e != null else defaults[e]
 

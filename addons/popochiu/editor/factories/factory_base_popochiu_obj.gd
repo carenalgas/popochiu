@@ -150,6 +150,16 @@ func _create_script_from_template() -> int:
 	return ResultCodes.SUCCESS
 
 
+# Set interaction polygons visibility depeding on user prefs
+func _set_polygons_visibility(obj: Node) -> void:
+	for node in obj.get_children():
+		if PopochiuEditorHelper.is_popochiu_obj_polygon(node) \
+		and PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS
+		):
+			node.show()
+
+
 func _save_obj_scene(obj: Node) -> int:
 	var packed_scene: PackedScene = PackedScene.new()
 	packed_scene.pack(obj)

@@ -191,6 +191,12 @@ static func get_first_child_by_metadata(node: Node, meta: String) -> Node:
 	return null
 
 
+static func get_all_children(node, children := []) -> Array:
+	children.push_back(node)
+	for child in node.get_children():
+		children = get_all_children(child, children)
+	return children
+
 ## Overrides the font [param font_name] in [param node] by the theme [Font] identified by
 ## [param editor_font_name].
 static func override_font(node: Control, font_name: String, editor_font_name: String) -> void:

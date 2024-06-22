@@ -113,37 +113,37 @@ func _on_gizmo_settings_changed() -> void:
 		match gizmo_id:
 			WALK_TO_POINT:
 				gizmo.set_theme(
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 					default_font,
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				)
 			# TODO: enable this when the look_at_point logic is implemented
 			# LOOK_AT_POINT:
 				# gizmo.set_theme(
-				# 	PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
-				# 	PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
+				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 				# 	default_font,
-				# 	PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				# )
 			BASELINE:
 				gizmo.set_theme(
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 					default_font,
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				)
 			DIALOG_POS:
 				gizmo.set_theme(
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR),
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 					default_font,
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				)
 
-		gizmo.show_connector = PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
-		gizmo.show_outlines = PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
-		gizmo.show_target_name = PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
+		gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
+		gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
+		gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
 		gizmo_id += 1
 	
 	update_overlays()
@@ -170,35 +170,35 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 		WALK_TO_POINT:
 			gizmo = Gizmo2D.new(_target_node, "walk_to_point", "Walk To Point", Gizmo2D.GIZMO_POS)
 			gizmo.set_theme(
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 				default_font,
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
 		# TODO: enable this when the look_at_point logic is implemented
 		# LOOK_AT_POINT:
 		# 	gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
 		# 	gizmo.set_theme(
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
+		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 		# 		default_font,
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 		# 	)
 		BASELINE:
 			gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VPOS)
 			gizmo.set_theme(
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 				default_font,
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
 		DIALOG_POS:
 			gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_POS)
 			gizmo.set_theme(
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR),
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 				default_font,
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
 	return gizmo
 

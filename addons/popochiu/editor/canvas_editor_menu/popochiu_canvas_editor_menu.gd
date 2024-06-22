@@ -28,7 +28,7 @@ func _ready() -> void:
 
 	# Connect to singleton signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
-
+	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
 	hide()
 
 #endregion
@@ -110,8 +110,15 @@ func _on_selection_changed():
 	# leave the toolbar hidden.
 	if EditorInterface.get_selection().get_selected_nodes().is_empty():
 		if _active_popochiu_object != null:
+			# TODO: this is not a helper function, because we want to get
+			# rid of this ASAP. The same logic is also in the function
+			# _set_polygons_visibility() in the base Popochiu object
+			# factory, and should be removed as well.
 			for node in _active_popochiu_object.get_children():
-				if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
+				if PopochiuEditorHelper.is_popochiu_obj_polygon(node) \
+				and not PopochiuEditorConfig.get_editor_setting(
+					PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS
+				):
 					node.hide()
 				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
 		# Reset the clickable reference and hide the toolbar
@@ -146,12 +153,32 @@ func _on_selection_changed():
 	elif EditorInterface.get_selection().get_selected_nodes().size() > 1:
 		for node in EditorInterface.get_selection().get_selected_nodes():
 			if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
-				node.hide()
+				if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS):
+					node.hide()
 				EditorInterface.get_selection().remove_node.call_deferred(node)
 				btn_interaction_polygon.set_pressed_no_signal(false)
 
 	# Always reset the button visibility depending on the state of the internal variables	
 	_set_buttons_visibility()
+
+
+func _on_gizmo_settings_changed() -> void:
+	for child in PopochiuEditorHelper.get_all_children(get_tree().get_root()):
+		# Not a polygon? Skip
+		if not PopochiuEditorHelper.is_popochiu_obj_polygon(child):
+			continue
+		# Should we show all the polygons? Show and go to the next one
+		if PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_COLLISION_POLYGONS
+		):
+			child.show()
+			continue
+		# If we are editing the polygon, make sure it stays visible!
+		if child in EditorInterface.get_selection().get_selected_nodes():
+			child.show()
+			continue
+		# OK, we know we must hide this polygon now!
+		child.hide()
 
 
 func _set_buttons_visibility():
