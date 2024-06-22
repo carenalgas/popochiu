@@ -139,7 +139,7 @@ static func show_setup(is_welcome := false) -> void:
 
 
 static func show_migrations(
-	content: MigrationsPanel, min_size := Vector2i(640, 160)
+	content: MigrationsPanel, min_size := Vector2i(640, 500)
 ) -> AcceptDialog:
 	var dialog := AcceptDialog.new()
 	dialog.title = "Migration Tool"
@@ -181,6 +181,11 @@ static func is_walkable_area(node: Node) -> bool:
 
 static func is_region(node: Node) -> bool:
 	return node is PopochiuRegion
+
+
+static func is_marker(node: Node) -> bool:
+	prints("-------------------------------", node, node is Marker2D)
+	return node is Marker2D
 
 
 ## Overrides the font [param font_name] in [param node] by the theme [Font] identified by

@@ -64,10 +64,9 @@ func create(param: PopochiuRoomObjFactoryParam) -> int:
 func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
 	var param := PopochiuRegionFactoryParam.new()
 	param.should_create_interaction_polygon = false
-	
-	#param.is_interactive = node.clickable
 	# TODO: Remove this line once the last gizmos PR is merged
 	#param.interaction_polygon = node.interaction_polygon
+	
 	return param
 
 
@@ -75,7 +74,6 @@ func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
 
 #region Subclass ###################################################################################
 class PopochiuRegionFactoryParam extends PopochiuRoomObjFactory.PopochiuRoomObjFactoryParam:
-	#var is_interactive := true
 	var should_create_interaction_polygon := true
 
 

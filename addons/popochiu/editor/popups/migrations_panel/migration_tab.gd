@@ -35,4 +35,8 @@ func update_steps(popochiu_migration: PopochiuMigration) -> void:
 		check_box.disabled = true
 
 
+func get_total_height() -> float:
+	return description.size.y + steps.size.y
+
+
 #endregion

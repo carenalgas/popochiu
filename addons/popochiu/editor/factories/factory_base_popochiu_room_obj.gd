@@ -28,8 +28,6 @@ func create_from(node: Node, room: PopochiuRoom) -> int:
 	param.should_setup_room_and_name = false
 	param.should_add_to_room = false
 	param.should_create_script = !FileAccess.file_exists(_path_script)
-	# TODO: Enable this once the last gizmos PR is merged
-	#param.interaction_polygon = node.interaction_polygon
 	
 	return call("create", param)
 

@@ -24,7 +24,7 @@ func _create() -> void:
 	
 	# Setup the region helper and use it to create the region --------------------------------------
 	_factory = PopochiuRegionFactory.new()
-	var param := PopochiuRegionFactory.PopochiuRoomObjFactoryParam.new()
+	var param := PopochiuRegionFactory.PopochiuRegionFactoryParam.new()
 	param.obj_name = _new_region_name
 	param.room = _room
 	

@@ -31,8 +31,6 @@ const PopochiuGuiTemplatesHelper = preload(
 	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
 )
 
-var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
-
 
 #region Virtual ####################################################################################
 ## This is code specific for this migration. This should return [code]true[/code] if the migration
@@ -391,12 +389,7 @@ func _map_voices(emotion_dic: Dictionary, voices: Array) -> Dictionary:
 ## Update external prop scenes and assign missing scripts for each prop, hotspot, region, and
 ## walkable area that didn't exist prior [i]beta 1[/i].
 func _update_objects_in_rooms() -> Completion:
-	var rooms := PopochiuResources.get_section_keys("rooms").map(
-		func (room_name: String) -> PopochiuRoom:
-			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
-			return (load(scene_path) as PackedScene).instantiate()
-	)
-	var any_room_updated := PopochiuUtils.any(rooms, _update_room)
+	var any_room_updated := PopochiuUtils.any(PopochiuMigrationHelper.get_rooms(), _update_room)
 	return Completion.DONE if any_room_updated else Completion.IGNORED
 
 
@@ -404,15 +397,13 @@ func _update_objects_in_rooms() -> Completion:
 ## new objects: [PopochiuProp], [PopochiuHotspot], [PopochiuRegion], and [PopochiuWalkableArea].
 func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	var room_objects_to_add := []
-	[
+	PopochiuUtils.any([
 		PopochiuPropFactory.new(),
 		PopochiuHotspotFactory.new(),
 		PopochiuRegionFactory.new(),
 		PopochiuWalkableAreaFactory.new(),
-		# TODO: Include Position2D to update them to Marker2D
-	].all(
-		_create_new_room_objects.bind(popochiu_room, room_objects_to_add)
-	)
+		PopochiuMarkerFactory.new(),
+	], _create_new_room_objects.bind(popochiu_room, room_objects_to_add))
 	
 	if room_objects_to_add.is_empty():
 		# No need to update the room
@@ -421,9 +412,8 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	for group: Dictionary in room_objects_to_add:
 		group.objects.all(
 			func (new_obj) -> bool:
-				# Add the new instance to the room and do the same for its children (those that
+				# Set the owner of the new object and do the same for its children (those that
 				# were marked as PopochiuRoomObjFactory.CHILD_VISIBLE_IN_ROOM_META)
-				#popochiu_room.get_node(group.factory.get_group()).add_child(new_obj)
 				new_obj.owner = popochiu_room
 				
 				for child: Node in new_obj.get_meta(RESET_CHILDREN_OWNER):
@@ -458,8 +448,13 @@ func _create_new_room_objects(
 		[],
 		factory.get_type_method()
 	):
-		# If the object already has its own scene and a script that is not inside Popochiu's folder
-		if not obj.scene_file_path.is_empty() and not "addons" in obj.get_script().resource_path:
+		# If the object is a Marker2D, or already has its own scene and a script that is not inside
+		# Popochiu's folder
+		if (
+			not obj is Marker2D
+			and not obj.scene_file_path.is_empty()
+			and not "addons" in obj.get_script().resource_path
+		):
 			return false
 		
 		# Copy the points of the polygon to use as [PopochiuClickable.interaction_polygon]
@@ -496,6 +491,7 @@ func _get_room_objects(parent: Node, objects: Array, type_method: Callable) -> A
 			# object nodes
 			_get_room_objects(child, objects, type_method)
 	
+	prints(":::::::: Objects for", parent.name, objects)
 	return objects
 
 
@@ -505,8 +501,11 @@ func _get_room_objects(parent: Node, objects: Array, type_method: Callable) -> A
 func _create_new_room_obj(
 	obj_factory: PopochiuRoomObjFactory, source: Node, room: PopochiuRoom
 ) -> Node:
-	var new_obj: Node = (load(obj_factory.get_scene_path()) as PackedScene).instantiate()
+	var new_obj: Node = obj_factory.get_obj_scene()
 	new_obj.set_meta(RESET_CHILDREN_OWNER, [])
+	
+	source.name += "_"
+	room.get_node(obj_factory.get_group()).add_child(new_obj)
 	
 	if new_obj is PopochiuProp or new_obj is PopochiuHotspot:
 		new_obj.baseline = source.baseline
@@ -537,7 +536,6 @@ func _create_new_room_obj(
 	new_obj.z_index = source.z_index
 	
 	# Remove the old [source] node from the room
-	source.replace_by(new_obj)
 	source.free()
 	
 	return new_obj

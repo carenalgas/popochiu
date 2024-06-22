@@ -8,6 +8,8 @@ const POPOCHIU_PATH = "res://popochiu/"
 static var is_reload_required := false
 static var old_settings_file := PopochiuResources.GAME_PATH.path_join("popochiu_settings.tres")
 
+static var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
+
 
 #region Public #####################################################################################
 static func get_migrations_count() -> int:
@@ -235,6 +237,15 @@ static func replace_in_scripts(replacements: Array[Dictionary]) -> bool:
 	
 	return replaced_matches > 0
 
+
+static func get_rooms() -> Array[PopochiuRoom]:
+	var rooms: Array[PopochiuRoom] = []
+	rooms.assign(PopochiuResources.get_section_keys("rooms").map(
+		func (room_name: String) -> PopochiuRoom:
+			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
+			return (load(scene_path) as PackedScene).instantiate()
+	))
+	return rooms
 
 
 #endregion

@@ -29,12 +29,6 @@ func add_migration(popochiu_migration: PopochiuMigration) -> void:
 	migration.anchors_preset = Control.PRESET_FULL_RECT
 	migration.description.text = popochiu_migration.DESCRIPTION
 	migration.set_steps(popochiu_migration.STEPS)
-	await get_tree().create_timer(0.1).timeout
-	
-	if $PanelContainer.size.y > custom_minimum_size.y:
-		custom_minimum_size = $PanelContainer.size
-		(get_parent() as AcceptDialog).reset_size()
-		(get_parent() as AcceptDialog).move_to_center()
 
 
 func start_step(popochiu_migration: PopochiuMigration, idx: int) -> void:
