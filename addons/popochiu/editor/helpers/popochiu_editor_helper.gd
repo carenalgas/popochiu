@@ -184,7 +184,6 @@ static func is_region(node: Node) -> bool:
 
 
 static func is_marker(node: Node) -> bool:
-	prints("-------------------------------", node, node is Marker2D)
 	return node is Marker2D
 
 

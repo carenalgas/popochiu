@@ -181,8 +181,7 @@ func _remove_input_actions() -> void:
 func _on_dock_ready() -> void:
 	PopochiuEditorHelper.dock = dock
 	
-	# ---- Check if new migrations exist and run them if they do -----------------------------------
-	
+	# Check if new migrations exist and run them if they do
 	await DoMigration.do_migrations()
 	
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues

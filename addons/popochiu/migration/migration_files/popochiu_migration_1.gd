@@ -439,10 +439,7 @@ func _create_new_room_objects(
 	popochiu_room: PopochiuRoom,
 	room_objects_to_add := []
 ) -> bool:
-	var group := {
-		factory = factory,
-		objects = []
-	}
+	var created_objects := []
 	for obj in _get_room_objects(
 		popochiu_room.get_node(factory.get_group()),
 		[],
@@ -455,7 +452,7 @@ func _create_new_room_objects(
 			and not obj.scene_file_path.is_empty()
 			and not "addons" in obj.get_script().resource_path
 		):
-			return false
+			continue
 		
 		# Copy the points of the polygon to use as [PopochiuClickable.interaction_polygon]
 		if (
@@ -473,12 +470,18 @@ func _create_new_room_objects(
 		# Create the new scene (and script if needed) of the [obj]
 		var obj_factory: PopochiuRoomObjFactory = factory.get_new_instance()
 		if obj_factory.create_from(obj, popochiu_room) != ResultCodes.SUCCESS:
-			return false
+			continue
 		
 		# Map the properties of the [obj] to its new instance
-		group.objects.append(_create_new_room_obj(obj_factory, obj, popochiu_room))
+		created_objects.append(_create_new_room_obj(obj_factory, obj, popochiu_room))
 	
-	room_objects_to_add.append(group)
+	if created_objects.is_empty():
+		return false
+	
+	room_objects_to_add.append({
+		factory = factory,
+		objects = created_objects
+	})
 	return true
 
 
@@ -491,7 +494,6 @@ func _get_room_objects(parent: Node, objects: Array, type_method: Callable) -> A
 			# object nodes
 			_get_room_objects(child, objects, type_method)
 	
-	prints(":::::::: Objects for", parent.name, objects)
 	return objects
 
 
@@ -505,7 +507,8 @@ func _create_new_room_obj(
 	new_obj.set_meta(RESET_CHILDREN_OWNER, [])
 	
 	source.name += "_"
-	room.get_node(obj_factory.get_group()).add_child(new_obj)
+	source.get_parent().add_child(new_obj)
+	source.get_parent().move_child(new_obj, source.get_index())
 	
 	if new_obj is PopochiuProp or new_obj is PopochiuHotspot:
 		new_obj.baseline = source.baseline

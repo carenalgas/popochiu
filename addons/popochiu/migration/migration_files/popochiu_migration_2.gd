@@ -27,11 +27,13 @@ const STEPS = [
 ]
 const GAME_INVENTORY_BAR_PATH =\
 "res://game/graphic_interface/components/inventory_bar/inventory_bar.tscn"
-const GAME_DIALOG_MENU_PATH = "res://game/graphic_interface/components/dialog_menu/dialog_menu.tscn"
-const ADDON_DIALOG_MENU_PATH =\
-"res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn"
 const GAME_SETTINGS_BAR_PATH =\
 "res://game/graphic_interface/components/settings_bar/settings_bar.tscn"
+const GAME_DIALOG_MENU_PATH = "res://game/graphic_interface/components/dialog_menu/dialog_menu.tscn"
+const GAME_DIALOG_MENU_OPTION_PATH =\
+"res://game/graphic_interface/components/dialog_menu/dialog_menu_option/"
+const ADDON_DIALOG_MENU_PATH =\
+"res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn"
 const TextSpeedOption = preload(
 	PopochiuResources.GUI_TEMPLATES_FOLDER
 	+ "simple_click/components/settings_bar/resources/text_speed_option.gd"
@@ -97,46 +99,46 @@ func _add_scaling_polygon_to(scene_path: String) -> bool:
 	return was_scene_updated
 
 
-func _create_markers() -> Completion:
-	var any_room_updated := PopochiuUtils.any(
-		PopochiuMigrationHelper.get_rooms(), _create_room_marker
-	)
-	return Completion.DONE if any_room_updated else Completion.IGNORED
-
-
-func _create_room_marker(popochiu_room: PopochiuRoom) -> bool:
-	var markers := popochiu_room.get_markers()
-	if markers.is_empty():
-		return false
-	
-	var markers_to_add := []
-	for source: Marker2D in markers.filter(
-		func (node: Node) -> bool: return node is Marker2D
-	):
-		var factory := PopochiuMarkerFactory.new()
-		if factory.create_from(source, popochiu_room) != ResultCodes.SUCCESS:
-			continue
-		
-		source.name += "_"
-		var new_obj: Marker2D = factory.get_obj_scene()
-		popochiu_room.get_node(factory.get_group()).add_child(new_obj)
-		markers_to_add.append(new_obj)
-		new_obj.position = source.position
-		
-		source.free()
-	
-	if markers_to_add.is_empty():
-		return false
-	
-	for marker: Marker2D in markers_to_add:
-		marker.owner = popochiu_room
-	
-	if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
-		PopochiuUtils.print_error(
-			"Migration 2: Couldn't update markes in [b]%s[/b]." % popochiu_room.script_name
-		)
-	
-	return true
+#func _create_markers() -> Completion:
+	#var any_room_updated := PopochiuUtils.any(
+		#PopochiuMigrationHelper.get_rooms(), _create_room_marker
+	#)
+	#return Completion.DONE if any_room_updated else Completion.IGNORED
+#
+#
+#func _create_room_marker(popochiu_room: PopochiuRoom) -> bool:
+	#var markers := popochiu_room.get_markers()
+	#if markers.is_empty():
+		#return false
+	#
+	#var markers_to_add := []
+	#for source: Marker2D in markers.filter(
+		#func (node: Node) -> bool: return node is Marker2D
+	#):
+		#var factory := PopochiuMarkerFactory.new()
+		#if factory.create_from(source, popochiu_room) != ResultCodes.SUCCESS:
+			#continue
+		#
+		#source.name += "_"
+		#var new_obj: Marker2D = factory.get_obj_scene()
+		#popochiu_room.get_node(factory.get_group()).add_child(new_obj)
+		#markers_to_add.append(new_obj)
+		#new_obj.position = source.position
+		#
+		#source.free()
+	#
+	#if markers_to_add.is_empty():
+		#return false
+	#
+	#for marker: Marker2D in markers_to_add:
+		#marker.owner = popochiu_room
+	#
+	#if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
+		#PopochiuUtils.print_error(
+			#"Migration 2: Couldn't update markes in [b]%s[/b]." % popochiu_room.script_name
+		#)
+	#
+	#return true
 
 
 func _move_settings_to_project_settings() -> Completion:
@@ -195,8 +197,12 @@ func _move_settings_to_project_settings() -> Completion:
 
 
 func _update_dialog_menu() -> Completion:
-	if not FileAccess.file_exists(GAME_DIALOG_MENU_PATH):
-		# The game's GUI is not using the DialogMenu GUI component
+	if (
+		not FileAccess.file_exists(GAME_DIALOG_MENU_PATH)
+		or DirAccess.dir_exists_absolute(GAME_DIALOG_MENU_OPTION_PATH)
+	):
+		# The game's GUI is not using the DialogMenu GUI component or is already using its beta-3
+		# version
 		return Completion.IGNORED
 	
 	# Copy the new [PopochiuDialogMenuOption] component to the game's GUI components folder

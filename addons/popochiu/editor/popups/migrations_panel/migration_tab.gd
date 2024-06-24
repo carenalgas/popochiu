@@ -15,7 +15,7 @@ func set_steps(steps_texts: Array) -> void:
 		check_box.text = text.replace("[b]", "").replace("[/b]", "")
 		check_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		check_box.modulate.a = 0.3
-		check_box.text_overrun_behavior = TextServer.OVERRUN_TRIM_WORD
+		check_box.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		PopochiuEditorHelper.override_font(check_box, "font", "source")
 
 

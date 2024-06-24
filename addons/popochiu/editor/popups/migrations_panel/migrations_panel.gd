@@ -35,6 +35,7 @@ func start_step(popochiu_migration: PopochiuMigration, idx: int) -> void:
 	var migration_tab: MigrationTab = tab_container.get_node(
 		popochiu_migration.get_migration_name()
 	)
+	tab_container.current_tab = migration_tab.get_index()
 	migration_tab.start_step(idx)
 
 
