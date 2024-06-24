@@ -118,6 +118,8 @@ func _on_selection_changed():
 				if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
 					node.hide()
 				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
+		# Set the editing status to false
+		_active_popochiu_object.editing_polygon = false
 		# Reset the clickable reference and hide the toolbar
 		# (restart from a blank state)
 		_active_popochiu_object = null
@@ -151,6 +153,8 @@ func _on_selection_changed():
 		for node in EditorInterface.get_selection().get_selected_nodes():
 			if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
 				node.hide()
+				# Set the editing status to false
+				_active_popochiu_object.editing_polygon = false
 				EditorInterface.get_selection().remove_node.call_deferred(node)
 				btn_interaction_polygon.set_pressed_no_signal(false)
 

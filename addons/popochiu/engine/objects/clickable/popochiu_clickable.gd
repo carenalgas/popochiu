@@ -80,8 +80,7 @@ func _ready():
 		else:
 			get_node("InteractionPolygon").polygon = interaction_polygon
 			get_node("InteractionPolygon").position = interaction_polygon_position
-		
-		return
+
 	else:	
 		# Update the node's polygon when:
 		if (

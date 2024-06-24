@@ -43,12 +43,6 @@ var editing_polygon := false
 func _ready() -> void:
 	add_to_group('walkable_areas')
 
-	if Engine.is_editor_hint(): return
-
-	map_rid = NavigationServer2D.get_maps()[0]
-	rid = ($Perimeter as NavigationRegion2D).get_region_rid()
-	NavigationServer2D.region_set_map(rid, map_rid)
-
 	if Engine.is_editor_hint():
 		# Ignore assigning the polygon when:
 		if (
@@ -59,10 +53,9 @@ func _ready() -> void:
 
 		# Take the reference to the navigation polygon
 		var navpoly: NavigationPolygon = get_node("Perimeter").navigation_polygon
-
 		if interaction_polygon.is_empty():
 			# Save all the NavigationPolygon outlines in the local variable
-			for idx in range(0, navpoly.get_outline_count()-1):
+			for idx in range(0, navpoly.get_outline_count()):
 				interaction_polygon.append(navpoly.get_outline(idx))
 			# Save the NavigationRegion2D position
 			interaction_polygon_position = get_node("Perimeter").position
@@ -73,9 +66,8 @@ func _ready() -> void:
 				navpoly.add_outline(outline)
 			NavigationServer2D.bake_from_source_geometry_data(navpoly, NavigationMeshSourceGeometryData2D.new());
 			# Restore the NagivationRegion2D position
-			get_node("InteractionPolygon").position = interaction_polygon_position
+			get_node("Perimeter").position = interaction_polygon_position
 
-		return
 	else:
 		# Update the node's polygon when:
 		if (
@@ -89,7 +81,12 @@ func _ready() -> void:
 				navpoly.add_outline(outline)
 			NavigationServer2D.bake_from_source_geometry_data(navpoly, NavigationMeshSourceGeometryData2D.new());
 			# Restore the NagivationRegion2D position
-			get_node("InteractionPolygon").position = interaction_polygon_position
+			get_node("Perimeter").position = interaction_polygon_position
+
+		# Map the necessary resources
+		map_rid = NavigationServer2D.get_maps()[0]
+		rid = ($Perimeter as NavigationRegion2D).get_region_rid()
+		NavigationServer2D.region_set_map(rid, map_rid)
 
 
 func _process(delta):
@@ -97,8 +94,9 @@ func _process(delta):
 		if editing_polygon:
 			# Take the reference to the navigation polygon
 			var navpoly: NavigationPolygon = get_node("Perimeter").navigation_polygon
+			interaction_polygon.clear()
 			# Save all the NavigationPolygon outlines in the local variable
-			for idx in range(0, navpoly.get_outline_count()-1):
+			for idx in range(0, navpoly.get_outline_count()):
 				interaction_polygon.append(navpoly.get_outline(idx))
 			# Save the NavigationRegion2D position
 			interaction_polygon_position = get_node("Perimeter").position
