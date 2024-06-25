@@ -30,10 +30,6 @@ extends Area2D
 ## by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
 
-## Used by the editor to know if the [b]InteractionPolygon[/b] child its being edited in Godot's
-## 2D Canvas Editor.
-var editing_polygon := false
-
 #region Godot ######################################################################################
 func _ready() -> void:
 	add_to_group("regions")
@@ -60,20 +56,22 @@ func _ready() -> void:
 			get_node("InteractionPolygon").polygon = interaction_polygon
 			get_node("InteractionPolygon").position = interaction_polygon_position
 
-	else:
-		# Update the node's polygon when:
-		if (
-			get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
-		):
-			get_node("InteractionPolygon").polygon = interaction_polygon
-			get_node("InteractionPolygon").position = interaction_polygon_position
+		# If we are in the editor, we're done
+		return
+
+	# When the game is running...
+	# Update the node's polygon when:
+	if (
+		get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
+	):
+		get_node("InteractionPolygon").polygon = interaction_polygon
+		get_node("InteractionPolygon").position = interaction_polygon_position
 
 
-func _process(delta):
-	if Engine.is_editor_hint():
-		if editing_polygon:
-			interaction_polygon = get_node("InteractionPolygon").polygon
-			interaction_polygon_position = get_node("InteractionPolygon").position
+func _notification(event):
+	if event == NOTIFICATION_EDITOR_PRE_SAVE:
+		interaction_polygon = get_node("InteractionPolygon").polygon
+		interaction_polygon_position = get_node("InteractionPolygon").position
 
 
 #endregion
