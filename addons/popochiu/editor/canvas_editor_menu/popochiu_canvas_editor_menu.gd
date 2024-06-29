@@ -80,9 +80,9 @@ func _select_interaction_polygon() -> void:
 	# Since different Popochiu Objects have different polygons (NavigationRegion2D
 	# for Walkable Areas, InteractionPolygon2D for props, etc...) we tagged them
 	# by a special metadata
-	obj_polygon = PopochiuEditorHelper.get_first_child_by_metadata(
+	obj_polygon = PopochiuEditorHelper.get_first_child_by_group(
 		_active_popochiu_object,
-		"POPOCHIU_OBJ_POLYGON_GIZMO"
+		PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
 	)
 
 	if obj_polygon == null:
@@ -90,9 +90,6 @@ func _select_interaction_polygon() -> void:
 
 	EditorInterface.get_selection().clear()
 	EditorInterface.get_selection().add_node(obj_polygon)
-	if PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object):
-		# Used to auto-bake navigation polygons
-		_active_popochiu_object.editing_polygon = true
 	obj_polygon.show()
 
 
@@ -118,8 +115,6 @@ func _on_selection_changed():
 				if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
 					node.hide()
 				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
-		# Set the editing status to false
-		_active_popochiu_object.editing_polygon = false
 		# Reset the clickable reference and hide the toolbar
 		# (restart from a blank state)
 		_active_popochiu_object = null
@@ -153,8 +148,6 @@ func _on_selection_changed():
 		for node in EditorInterface.get_selection().get_selected_nodes():
 			if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
 				node.hide()
-				# Set the editing status to false
-				_active_popochiu_object.editing_polygon = false
 				EditorInterface.get_selection().remove_node.call_deferred(node)
 				btn_interaction_polygon.set_pressed_no_signal(false)
 

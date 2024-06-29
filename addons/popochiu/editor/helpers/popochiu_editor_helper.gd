@@ -24,6 +24,8 @@ const DELETE_CONFIRMATION_SCENE = preload(
 )
 const PROGRESS_DIALOG_SCENE = preload(POPUPS_FOLDER + "progress/progress.tscn")
 const SETUP_SCENE = preload("res://addons/popochiu/editor/popups/setup/setup.tscn")
+# ---- Identifiers ---------------------------------------------------------------------------------
+const POPOCHIU_OBJECT_POLYGON_GROUP = "popochiu_object_polygon"
 # ---- Classes -------------------------------------------------------------------------------------
 const PopochiuSignalBus = preload("res://addons/popochiu/editor/helpers/popochiu_signal_bus.gd")
 const DeleteConfirmation = preload(POPUPS_FOLDER + "delete_confirmation/delete_confirmation.gd")
@@ -180,13 +182,13 @@ static func is_region(node: Node) -> bool:
 
 
 static func is_popochiu_obj_polygon(node: Node):
-	return node.has_meta("POPOCHIU_OBJ_POLYGON_GIZMO")
+	return node.is_in_group(POPOCHIU_OBJECT_POLYGON_GROUP)
 
 
 # Quick-access functions
-static func get_first_child_by_metadata(node: Node, meta: String) -> Node:
+static func get_first_child_by_group(node: Node, group: StringName) -> Node:
 	for n in node.get_children():
-		if n.has_meta(meta):
+		if n.is_in_group(group):
 			return n
 	return null
 
