@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://wd748u1vdybq"]
+[gd_scene load_steps=7 format=3 uid="uid://wd748u1vdybq"]
 
-[ext_resource type="Texture2D" uid="uid://dasi6853uqkmu" path="res://addons/popochiu/icons/baseline.png" id="1_8j5rt"]
 [ext_resource type="Script" path="res://addons/popochiu/editor/canvas_editor_menu/popochiu_canvas_editor_menu.gd" id="1_vs7c6"]
-[ext_resource type="Texture2D" uid="uid://4ovxgn77a0ax" path="res://addons/popochiu/icons/walk_to_point.png" id="2_po7va"]
-[ext_resource type="Texture2D" uid="uid://cesndtvbchw7v" path="res://addons/popochiu/icons/interaction_polygon.png" id="3_kma38"]
+[ext_resource type="Texture2D" uid="uid://b3sku5v1n23ni" path="res://addons/popochiu/icons/baseline.svg" id="2_vs16l"]
+[ext_resource type="Texture2D" uid="uid://dmt2epjmlpv56" path="res://addons/popochiu/icons/walk_to_point.svg" id="3_ifql1"]
+[ext_resource type="Texture2D" uid="uid://skjlvpct7ah7" path="res://addons/popochiu/icons/look_at_point.svg" id="4_7iasq"]
+[ext_resource type="Texture2D" uid="uid://cyun4rylrtrvm" path="res://addons/popochiu/icons/interaction_polygon.svg" id="5_55p3c"]
+[ext_resource type="Texture2D" uid="uid://cekffh7bsuanp" path="res://addons/popochiu/icons/dialog_position.svg" id="5_hik6d"]
 
 [node name="PopochiuCanvasEditorMenu" type="HBoxContainer"]
 visible = false
@@ -18,7 +20,7 @@ tooltip_text = "Baseline"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 button_pressed = true
-icon = ExtResource("1_8j5rt")
+icon = ExtResource("2_vs16l")
 
 [node name="BtnWalkToPoint" type="Button" parent="."]
 unique_name_in_owner = true
@@ -27,7 +29,17 @@ tooltip_text = "Walk-To Point"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 button_pressed = true
-icon = ExtResource("2_po7va")
+icon = ExtResource("3_ifql1")
+
+[node name="BtnLookAtPoint" type="Button" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Look-At Point"
+theme_type_variation = &"FlatButton"
+toggle_mode = true
+button_pressed = true
+icon = ExtResource("4_7iasq")
 
 [node name="BtnDialogPos" type="Button" parent="."]
 unique_name_in_owner = true
@@ -36,7 +48,7 @@ tooltip_text = "Dialog Position"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 button_pressed = true
-icon = ExtResource("2_po7va")
+icon = ExtResource("5_hik6d")
 
 [node name="BtnInteractionPolygon" type="Button" parent="."]
 unique_name_in_owner = true
@@ -44,4 +56,4 @@ layout_mode = 2
 tooltip_text = "Interaction Polygon"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
-icon = ExtResource("3_kma38")
+icon = ExtResource("5_55p3c")
