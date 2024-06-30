@@ -13,6 +13,11 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_vs7c6")
 
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Popochiu "
+vertical_alignment = 1
+
 [node name="BtnBaseline" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
