@@ -8,6 +8,7 @@ var _shown_helpers := []
 
 @onready var btn_baseline: Button = %BtnBaseline
 @onready var btn_walk_to_point: Button = %BtnWalkToPoint
+@onready var btn_look_at_point: Button = %BtnLookAtPoint
 @onready var btn_dialog_pos: Button = %BtnDialogPos
 @onready var btn_interaction_polygon: Button = %BtnInteractionPolygon
 
@@ -16,19 +17,20 @@ var _shown_helpers := []
 func _ready() -> void:
 	# Gizmos are always visible at editor load, so we'll set the buttons down
 	# to sync the status (hardcoded, not very good but enough for now)
-	btn_baseline.set_pressed_no_signal(true)
-	btn_walk_to_point.set_pressed_no_signal(true)
-	btn_dialog_pos.set_pressed_no_signal(true)
+	_reset_buttons_state()
 
 	# Connect to child signals
 	btn_baseline.pressed.connect(_toggle_baseline_visibility)
 	btn_walk_to_point.pressed.connect(_toggle_walk_to_point_visibility)
+	#btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
 	btn_dialog_pos.pressed.connect(_toggle_dialog_pos_visibility)
 	btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
 
 	# Connect to singleton signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
+
+	_set_toolbar_buttons_color()
 	hide()
 
 #endregion
@@ -93,14 +95,20 @@ func _select_interaction_polygon() -> void:
 	obj_polygon.show()
 
 
-func _on_selection_changed():
+func _on_gizmo_settings_changed() -> void:
+	# Pretty self explanatory
+	_set_walkable_areas_visibility()
+	_set_toolbar_buttons_color()
+
+
+func _on_selection_changed() -> void:
 	# Make sure this function works only if the user is editing a
 	# supported scene
 	if not PopochiuEditorHelper.is_popochiu_object(
 		EditorInterface.get_edited_scene_root()
 	):
+		hide()
 		return
-
 
 	# If we have no selection in the tree (the user clicked on an
 	# empty area or pressed ESC), we pop all the buttons up and
@@ -119,11 +127,10 @@ func _on_selection_changed():
 		# (restart from a blank state)
 		_active_popochiu_object = null
 		hide()
-		_release_all_buttons()
+		_reset_buttons_state()
 		return
 
-
-	# We identify which PopochiuClickable we are working on in the editor._active
+	# We identify which PopochiuClickable we are working on in the editor.
 
 	# Case 1:
 	# There is only one selected node in the editor. It can be anything the user
@@ -136,7 +143,8 @@ func _on_selection_changed():
 			_active_popochiu_object = selected_node.get_parent()
 		elif PopochiuEditorHelper.is_popochiu_room_object(selected_node):
 			_active_popochiu_object = selected_node
-
+		else:
+			_active_popochiu_object =  null
 
 	# Case 2:
 	# We have more than one node selected. This can happen because the user selected
@@ -157,10 +165,8 @@ func _on_selection_changed():
 	_set_buttons_visibility()
 
 
-func _on_gizmo_settings_changed() -> void:
-	_set_walkable_areas_visibility()
-
-
+## Handles the editor config that allows the WAs polygons to be always visible,
+## not only during editing.
 func _set_walkable_areas_visibility() -> void:
 	for child in PopochiuEditorHelper.get_all_children(
 		EditorInterface.get_edited_scene_root().find_child("WalkableAreas")
@@ -182,7 +188,64 @@ func _set_walkable_areas_visibility() -> void:
 		child.hide()
 
 
-func _set_buttons_visibility():
+## Sets all the buttons color so that they are the same as the gizmos
+## or make them theme-standard if the use so prefer (see editor settigs)
+func _set_toolbar_buttons_color() -> void:
+	if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_COLOR_TOOLBAR_BUTTONS):
+		# Reset button colors
+		_reset_toolbar_button_color(btn_baseline)
+		_reset_toolbar_button_color(btn_walk_to_point)
+		_reset_toolbar_button_color(btn_look_at_point)
+		_reset_toolbar_button_color(btn_dialog_pos)
+		_reset_toolbar_button_color(btn_interaction_polygon)
+		# Done
+		return
+
+	_set_toolbar_button_color(
+		btn_baseline,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_BASELINE_COLOR)
+	)
+	_set_toolbar_button_color(
+		btn_walk_to_point,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR)
+	)
+	_set_toolbar_button_color(
+		btn_look_at_point,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR)
+	)
+	_set_toolbar_button_color(
+		btn_dialog_pos,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR)
+	)
+	_set_toolbar_button_color(
+		btn_interaction_polygon,
+		Color.RED # no config for this at the moment
+	)
+
+
+## Internal helper to reduce code duplication
+func _set_toolbar_button_color(btn, color) -> void:
+	btn.add_theme_color_override("icon_normal_color", color)
+	btn.add_theme_color_override("icon_hover_color", color.lightened(1.0))
+	btn.add_theme_color_override("icon_focused_color", color.lightened(1.0))
+	btn.add_theme_color_override("icon_pressed_color", color.darkened(0.2))
+	btn.add_theme_color_override("icon_hover_pressed_color", color.lightened(1.0))
+
+
+## Internal helper to reduce code duplication
+func _reset_toolbar_button_color(btn) -> void:
+		btn.remove_theme_color_override("icon_normal_color")
+		btn.remove_theme_color_override("icon_hover_color")
+		btn.remove_theme_color_override("icon_focused_color")
+		btn.remove_theme_color_override("icon_pressed_color")
+		btn.remove_theme_color_override("icon_hover_pressed_color")
+
+
+func _set_buttons_visibility() -> void:
 	# Let's assume the buttons are all hidden...
 	hide()
 	btn_baseline.hide()
@@ -219,7 +282,10 @@ func _set_buttons_visibility():
 	elif PopochiuEditorHelper.is_character(EditorInterface.get_edited_scene_root()):
 		btn_dialog_pos.show()
 
+
 # Make all buttons pop-up
-func _release_all_buttons() -> void:
-	for button: Button in get_children():
-		button.set_pressed_no_signal(false)
+func _reset_buttons_state() -> void:
+	btn_baseline.set_pressed_no_signal(true)
+	btn_walk_to_point.set_pressed_no_signal(true)
+	#btn_look_at_point.set_pressed_no_signal(true)
+	btn_dialog_pos.set_pressed_no_signal(true)
