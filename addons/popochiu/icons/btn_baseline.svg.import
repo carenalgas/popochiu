@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmt2epjmlpv56"
-path="res://.godot/imported/walk_to_point.svg-f4a10c73d0806a9445673d36a7361c48.ctex"
+uid="uid://b3sku5v1n23ni"
+path="res://.godot/imported/btn_baseline.svg-fb297583e303b0e5253746eada654b32.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/icons/walk_to_point.svg"
-dest_files=["res://.godot/imported/walk_to_point.svg-f4a10c73d0806a9445673d36a7361c48.ctex"]
+source_file="res://addons/popochiu/icons/btn_baseline.svg"
+dest_files=["res://.godot/imported/btn_baseline.svg-fb297583e303b0e5253746eada654b32.ctex"]
 
 [params]
 

@@ -1,11 +1,11 @@
 [gd_scene load_steps=7 format=3 uid="uid://wd748u1vdybq"]
 
 [ext_resource type="Script" path="res://addons/popochiu/editor/canvas_editor_menu/popochiu_canvas_editor_menu.gd" id="1_vs7c6"]
-[ext_resource type="Texture2D" uid="uid://b3sku5v1n23ni" path="res://addons/popochiu/icons/baseline.svg" id="2_vs16l"]
-[ext_resource type="Texture2D" uid="uid://dmt2epjmlpv56" path="res://addons/popochiu/icons/walk_to_point.svg" id="3_ifql1"]
-[ext_resource type="Texture2D" uid="uid://skjlvpct7ah7" path="res://addons/popochiu/icons/look_at_point.svg" id="4_7iasq"]
-[ext_resource type="Texture2D" uid="uid://cyun4rylrtrvm" path="res://addons/popochiu/icons/interaction_polygon.svg" id="5_55p3c"]
-[ext_resource type="Texture2D" uid="uid://cekffh7bsuanp" path="res://addons/popochiu/icons/dialog_position.svg" id="5_hik6d"]
+[ext_resource type="Texture2D" uid="uid://b3sku5v1n23ni" path="res://addons/popochiu/icons/btn_baseline.svg" id="2_w3cau"]
+[ext_resource type="Texture2D" uid="uid://dmt2epjmlpv56" path="res://addons/popochiu/icons/btn_walk_to_point.svg" id="3_ifql1"]
+[ext_resource type="Texture2D" uid="uid://skjlvpct7ah7" path="res://addons/popochiu/icons/btn_look_at_point.svg" id="4_bge33"]
+[ext_resource type="Texture2D" uid="uid://cekffh7bsuanp" path="res://addons/popochiu/icons/btn_dialog_position.svg" id="5_803mj"]
+[ext_resource type="Texture2D" uid="uid://cyun4rylrtrvm" path="res://addons/popochiu/icons/btn_interaction_polygon.svg" id="6_6oxl8"]
 
 [node name="PopochiuCanvasEditorMenu" type="HBoxContainer"]
 visible = false

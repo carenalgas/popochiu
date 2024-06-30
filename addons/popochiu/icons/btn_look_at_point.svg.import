@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cyun4rylrtrvm"
-path="res://.godot/imported/interaction_polygon.svg-02d7caffbee11d9119e3a2f6d69d2ff5.ctex"
+uid="uid://skjlvpct7ah7"
+path="res://.godot/imported/btn_look_at_point.svg-a1eb3c8b1982250ffd39840ee799e2f8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/icons/interaction_polygon.svg"
-dest_files=["res://.godot/imported/interaction_polygon.svg-02d7caffbee11d9119e3a2f6d69d2ff5.ctex"]
+source_file="res://addons/popochiu/icons/btn_look_at_point.svg"
+dest_files=["res://.godot/imported/btn_look_at_point.svg-a1eb3c8b1982250ffd39840ee799e2f8.ctex"]
 
 [params]
 

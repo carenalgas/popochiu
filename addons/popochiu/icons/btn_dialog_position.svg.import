@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b3sku5v1n23ni"
-path="res://.godot/imported/baseline.svg-fc0ab0f8a4a31044fedd779671c294fb.ctex"
+uid="uid://cekffh7bsuanp"
+path="res://.godot/imported/btn_dialog_position.svg-7c547474e36c7658b54def641334925a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/icons/baseline.svg"
-dest_files=["res://.godot/imported/baseline.svg-fc0ab0f8a4a31044fedd779671c294fb.ctex"]
+source_file="res://addons/popochiu/icons/btn_dialog_position.svg"
+dest_files=["res://.godot/imported/btn_dialog_position.svg-7c547474e36c7658b54def641334925a.ctex"]
 
 [params]
 
