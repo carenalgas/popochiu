@@ -194,6 +194,8 @@ static func get_first_child_by_group(node: Node, group: StringName) -> Node:
 
 
 static func get_all_children(node, children := []) -> Array:
+	if node == null:
+		return []
 	children.push_back(node)
 	for child in node.get_children():
 		children = get_all_children(child, children)
