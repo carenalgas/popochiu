@@ -17,7 +17,7 @@ const VERSION = 2
 const DESCRIPTION = "Make changes from beta-x to 2.0.0 release"
 const STEPS = [
 	"Add a [b]ScalingPolygon[/b] node to each [b]PopochiuCharacter[/b].",
-	#"Create PopochiuMarkers",
+	"Create PopochiuMarkers",
 	"Move popochiu_settings.tres to ProjectSettings.",
 	"Update the DialogMenu GUI component.",
 	"Update SettingsBar in 2-click Context-sensitive GUI template. (Optional)",
@@ -49,11 +49,14 @@ var _gui_templates_helper := preload(
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
 ## should be done before calling this.
 func _do_migration() -> bool:
+	#await get_tree().create_timer(1.0).timeout
+	#return true
+	
 	return await PopochiuMigrationHelper.execute_migration_steps(
 		self,
 		[
 			_add_scaling_polygon_to_characters,
-			#_create_markers,
+			_create_markers,
 			_move_settings_to_project_settings,
 			_update_dialog_menu,
 			_update_simple_click_settings_bar,
@@ -99,46 +102,46 @@ func _add_scaling_polygon_to(scene_path: String) -> bool:
 	return was_scene_updated
 
 
-#func _create_markers() -> Completion:
-	#var any_room_updated := PopochiuUtils.any(
-		#PopochiuMigrationHelper.get_rooms(), _create_room_marker
-	#)
-	#return Completion.DONE if any_room_updated else Completion.IGNORED
-#
-#
-#func _create_room_marker(popochiu_room: PopochiuRoom) -> bool:
-	#var markers := popochiu_room.get_markers()
-	#if markers.is_empty():
-		#return false
-	#
-	#var markers_to_add := []
-	#for source: Marker2D in markers.filter(
-		#func (node: Node) -> bool: return node is Marker2D
-	#):
-		#var factory := PopochiuMarkerFactory.new()
-		#if factory.create_from(source, popochiu_room) != ResultCodes.SUCCESS:
-			#continue
-		#
-		#source.name += "_"
-		#var new_obj: Marker2D = factory.get_obj_scene()
-		#popochiu_room.get_node(factory.get_group()).add_child(new_obj)
-		#markers_to_add.append(new_obj)
-		#new_obj.position = source.position
-		#
-		#source.free()
-	#
-	#if markers_to_add.is_empty():
-		#return false
-	#
-	#for marker: Marker2D in markers_to_add:
-		#marker.owner = popochiu_room
-	#
-	#if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
-		#PopochiuUtils.print_error(
-			#"Migration 2: Couldn't update markes in [b]%s[/b]." % popochiu_room.script_name
-		#)
-	#
-	#return true
+func _create_markers() -> Completion:
+	var any_room_updated := PopochiuUtils.any(
+		PopochiuMigrationHelper.get_rooms(), _create_room_marker
+	)
+	return Completion.DONE if any_room_updated else Completion.IGNORED
+
+
+func _create_room_marker(popochiu_room: PopochiuRoom) -> bool:
+	var markers := popochiu_room.get_markers()
+	if markers.is_empty():
+		return false
+	
+	var markers_to_add := []
+	for source: Marker2D in markers.filter(
+		func (node: Node) -> bool: return node is Marker2D
+	):
+		var factory := PopochiuMarkerFactory.new()
+		if factory.create_from(source, popochiu_room) != ResultCodes.SUCCESS:
+			continue
+		
+		source.name += "_"
+		var new_obj: Marker2D = factory.get_obj_scene()
+		popochiu_room.get_node(factory.get_group()).add_child(new_obj)
+		markers_to_add.append(new_obj)
+		new_obj.position = source.position
+		
+		source.free()
+	
+	if markers_to_add.is_empty():
+		return false
+	
+	for marker: Marker2D in markers_to_add:
+		marker.owner = popochiu_room
+	
+	if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
+		PopochiuUtils.print_error(
+			"Migration 2: Couldn't update markes in [b]%s[/b]." % popochiu_room.script_name
+		)
+	
+	return true
 
 
 func _move_settings_to_project_settings() -> Completion:
@@ -312,7 +315,11 @@ func _remove_helper_nodes() -> Completion:
 
 
 func _remove_helper_nodes_in(scene_path: String) -> bool:
-	var popochiu_clickable: PopochiuClickable = (load(scene_path) as PackedScene).instantiate()
+	# Load the scene ignoring cache so changes made in previous steps are taken into account
+	var popochiu_clickable: PopochiuClickable = (
+		ResourceLoader.load(scene_path, "", ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+	).instantiate(PackedScene.GEN_EDIT_STATE_MAIN)
+	
 	var was_scene_updated := false
 	
 	# ---- Remove the BaselineHelper and WalkToHelper nodes ----------------------------------------
@@ -327,10 +334,10 @@ func _remove_helper_nodes_in(scene_path: String) -> bool:
 	#if popochiu_clickable is PopochiuCharacter and _remove_node(popochiu_clickable, "DialogPos"):
 		#was_scene_updated = true
 	
-	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_clickable) != OK:
-		PopochiuUtils.print_error(
-			"Couldn't remove helper nodes in [b]%s[/b]." % popochiu_clickable.script_name
-		)
+	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_clickable, scene_path) != OK:
+			PopochiuUtils.print_error(
+				"Couldn't remove helper nodes in [b]%s[/b]." % popochiu_clickable.script_name
+			)
 	
 	return was_scene_updated
 

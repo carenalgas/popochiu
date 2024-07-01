@@ -274,14 +274,16 @@ func _update_inventory_items() -> Completion:
 	if files_to_update.is_empty():
 		return Completion.IGNORED
 	
-	return Completion.DONE if (
-		scene_files.all(_update_root_name_and_texture_filter)
-		and files_to_update.all(_rename_inventory_item_files_name)
-		# Update the paths in the [i.gd] script
-		and PopochiuMigrationHelper.replace_text_in_files(
+	var update_done := scene_files.all(_update_root_name_and_texture_filter)
+	if update_done:
+		update_done = files_to_update.all(_rename_inventory_item_files_name)
+	
+	if update_done and PopochiuMigrationHelper.is_text_in_file("/item_", PopochiuResources.I_SNGL):
+		update_done = PopochiuMigrationHelper.replace_text_in_files(
 			"/item_", "/inventory_item_", [PopochiuResources.I_SNGL]
 		)
-	) else Completion.FAILED
+	
+	return Completion.DONE if update_done else Completion.FAILED
 
 
 ## Loads the [PopochiuInventoryItem] in [param scene_file_path] and updates its root node name
@@ -402,7 +404,6 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 		PopochiuHotspotFactory.new(),
 		PopochiuRegionFactory.new(),
 		PopochiuWalkableAreaFactory.new(),
-		PopochiuMarkerFactory.new(),
 	], _create_new_room_objects.bind(popochiu_room, room_objects_to_add))
 	
 	if room_objects_to_add.is_empty():
@@ -448,8 +449,8 @@ func _create_new_room_objects(
 		# If the object is a Marker2D, or already has its own scene and a script that is not inside
 		# Popochiu's folder
 		if (
-			not obj is Marker2D
-			and not obj.scene_file_path.is_empty()
+			not obj.scene_file_path.is_empty()
+			and not "addons" in obj.scene_file_path
 			and not "addons" in obj.get_script().resource_path
 		):
 			continue
@@ -503,12 +504,18 @@ func _get_room_objects(parent: Node, objects: Array, type_method: Callable) -> A
 func _create_new_room_obj(
 	obj_factory: PopochiuRoomObjFactory, source: Node, room: PopochiuRoom
 ) -> Node:
-	var new_obj: Node = obj_factory.get_obj_scene()
+	var new_obj: Node = (ResourceLoader.load(
+		obj_factory.get_scene_path()
+	) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	new_obj.set_meta(RESET_CHILDREN_OWNER, [])
 	
 	source.name += "_"
 	source.get_parent().add_child(new_obj)
 	source.get_parent().move_child(new_obj, source.get_index())
+	
+	new_obj.position = source.position
+	new_obj.scale = source.scale
+	new_obj.z_index = source.z_index
 	
 	if new_obj is PopochiuProp or new_obj is PopochiuHotspot:
 		new_obj.baseline = source.baseline
@@ -519,6 +526,10 @@ func _create_new_room_obj(
 		new_obj.frames = source.frames
 		new_obj.v_frames = source.v_frames
 		new_obj.link_to_item = source.link_to_item
+		new_obj.interaction_polygon = source.interaction_polygon
+		
+		if obj_factory.get_snake_name() in ["bg", "background"]:
+			new_obj.z_index = -1
 	
 	if new_obj is PopochiuRegion:
 		var interaction_polygon := source.get_node("InteractionPolygon")
@@ -533,10 +544,6 @@ func _create_new_room_obj(
 		perimeter.owner = null
 		perimeter.reparent(new_obj, false)
 		new_obj.get_meta(RESET_CHILDREN_OWNER).append(perimeter)
-	
-	new_obj.position = source.position
-	new_obj.scale = source.scale
-	new_obj.z_index = source.z_index
 	
 	# Remove the old [source] node from the room
 	source.free()

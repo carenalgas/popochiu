@@ -218,6 +218,7 @@ static func is_pixel_art_game() -> bool:
 	return is_pixel_art
 
 
+## Checks if [param text] exists in the text of the file at [param file_path].
 static func is_text_in_file(text: String, file_path: String) -> bool:
 	var file_read := FileAccess.open(file_path, FileAccess.READ)
 	var file_text := file_read.get_as_text()
@@ -226,6 +227,7 @@ static func is_text_in_file(text: String, file_path: String) -> bool:
 	return text in file_text
 
 
+## TODO: Document this function.
 static func replace_in_scripts(replacements: Array[Dictionary]) -> bool:
 	var scripts_paths := get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.GAME_PATH, ["gd"]
@@ -238,12 +240,13 @@ static func replace_in_scripts(replacements: Array[Dictionary]) -> bool:
 	return replaced_matches > 0
 
 
+## TODO: Document this function.
 static func get_rooms() -> Array[PopochiuRoom]:
 	var rooms: Array[PopochiuRoom] = []
 	rooms.assign(PopochiuResources.get_section_keys("rooms").map(
 		func (room_name: String) -> PopochiuRoom:
 			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
-			return (load(scene_path) as PackedScene).instantiate()
+			return (load(scene_path) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	))
 	return rooms
 

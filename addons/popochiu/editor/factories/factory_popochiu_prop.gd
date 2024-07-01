@@ -61,7 +61,7 @@ func create(param: PopochiuPropFactoryParam) -> int:
 	if param.should_add_to_room:
 		# Add the object to its room
 		_add_resource_to_room()
-
+	
 	return result_code
 
 

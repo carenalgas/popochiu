@@ -309,7 +309,7 @@ func _template_copy_completed() -> void:
 
 func _update_size() -> void:
 	# Wait for the popup content to be rendered in order to get its size
-	await get_tree().process_frame
+	await get_tree().create_timer(0.05).timeout
 	
 	custom_minimum_size = get_child(0).size
 	size_calculated.emit()

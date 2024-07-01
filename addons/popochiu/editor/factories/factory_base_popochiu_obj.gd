@@ -35,6 +35,10 @@ func get_obj_scene() -> Node:
 	return _scene
 
 
+func get_snake_name() -> String:
+	return _snake_name
+
+
 func get_obj_resource() -> Resource:
 	return _resource
 	
@@ -173,7 +177,7 @@ func _save_obj_scene(obj: Node) -> int:
 			[_type_label, _path_script]
 		)
 		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
-
+	
 	# Load the scene to be get by the calling code
 	# Instancing the created .tscn file fixes #58
 	_scene = (load(_path_scene) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)

@@ -143,7 +143,6 @@ static func show_migrations(
 ) -> AcceptDialog:
 	var dialog := AcceptDialog.new()
 	dialog.title = "Migration Tool"
-	dialog.always_on_top = true
 	content.anchors_preset = Control.PRESET_FULL_RECT
 	dialog.add_child(content)
 	await show_dialog(dialog, min_size)

@@ -49,6 +49,8 @@ static func do_migrations() -> void:
 	migrations_popup.get_ok_button().text = "Run migrations"
 	migrations_popup.confirmed.connect(_run_migrations)
 	migrations_popup.show()
+	
+	await PopochiuEditorHelper.signal_bus.migrations_done
 
 
 #endregion
@@ -71,7 +73,7 @@ static func _run_migrations() -> void:
 				"Something went wrong while executing Migration %d" % migration_version
 			)
 			break
-		await migrations_popup.get_tree().create_timer(2.0).timeout
+		await migrations_popup.get_tree().create_timer(1.0).timeout
 	
 	if PopochiuMigrationHelper.is_reload_required:
 		migrations_panel.reload_label.show()
@@ -82,6 +84,7 @@ static func _run_migrations() -> void:
 			if PopochiuMigrationHelper.is_reload_required:
 				EditorInterface.restart_editor(false)
 			else:
+				PopochiuEditorHelper.signal_bus.migrations_done.emit()
 				migrations_popup.queue_free()
 	)
 
