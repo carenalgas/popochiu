@@ -88,7 +88,7 @@ func _ready() -> void:
 	NavigationServer2D.region_set_map(rid, map_rid)
 
 
-func _notification(event):
+func _notification(event: int) -> void:
 	if event == NOTIFICATION_EDITOR_PRE_SAVE:
 		# Take the reference to the navigation polygon
 		var navpoly: NavigationPolygon = get_node("Perimeter").navigation_polygon
