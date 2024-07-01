@@ -106,7 +106,7 @@ func _ready():
 	_translate()
 
 
-func _notification(event):
+func _notification(event: int) -> void:
 	if event == NOTIFICATION_EDITOR_PRE_SAVE:
 		interaction_polygon = get_node("InteractionPolygon").polygon
 		interaction_polygon_position = get_node("InteractionPolygon").position
