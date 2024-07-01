@@ -238,11 +238,11 @@ func _set_toolbar_button_color(btn, color) -> void:
 
 ## Internal helper to reduce code duplication
 func _reset_toolbar_button_color(btn) -> void:
-		btn.remove_theme_color_override("icon_normal_color")
-		btn.remove_theme_color_override("icon_hover_color")
-		btn.remove_theme_color_override("icon_focused_color")
-		btn.remove_theme_color_override("icon_pressed_color")
-		btn.remove_theme_color_override("icon_hover_pressed_color")
+	btn.remove_theme_color_override("icon_normal_color")
+	btn.remove_theme_color_override("icon_hover_color")
+	btn.remove_theme_color_override("icon_focused_color")
+	btn.remove_theme_color_override("icon_pressed_color")
+	btn.remove_theme_color_override("icon_hover_pressed_color")
 
 
 func _set_buttons_visibility() -> void:
