@@ -70,7 +70,12 @@ func _ready():
 			or self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
 		):
 			return
-		
+
+		# Add interaction polygon to the proper group
+		get_node("InteractionPolygon").add_to_group(
+			PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+		)
+
 		if interaction_polygon.is_empty():
 			interaction_polygon = get_node("InteractionPolygon").polygon
 			interaction_polygon_position = get_node("InteractionPolygon").position

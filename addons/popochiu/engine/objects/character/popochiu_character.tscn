@@ -7,7 +7,7 @@ script = ExtResource("1_2xmr4")
 popochiu_placeholder = null
 interaction_polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 
-[node name="InteractionPolygon" type="CollisionPolygon2D" parent="." groups=["popochiu_object_polygon"]]
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 visible = false
 polygon = PackedVector2Array(-10, -10, 10, -10, 10, 10, -10, 10)
 

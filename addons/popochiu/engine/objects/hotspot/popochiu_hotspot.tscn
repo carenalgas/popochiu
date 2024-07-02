@@ -7,7 +7,7 @@ script = ExtResource("1")
 cursor = 1
 interaction_polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
 
-[node name="InteractionPolygon" type="CollisionPolygon2D" parent="." groups=["popochiu_object_polygon"]]
+[node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 visible = false
 modulate = Color(1, 0, 1, 1)
 polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)

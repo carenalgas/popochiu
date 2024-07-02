@@ -47,6 +47,11 @@ func _ready() -> void:
 		):
 			return
 
+		# Add interaction polygon to the proper group
+		get_node("Perimeter").add_to_group(
+			PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+		)
+
 		# Take the reference to the navigation polygon
 		var navpoly: NavigationPolygon = get_node("Perimeter").navigation_polygon
 		if interaction_polygon.is_empty():
