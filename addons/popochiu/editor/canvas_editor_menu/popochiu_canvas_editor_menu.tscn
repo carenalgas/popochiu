@@ -25,7 +25,7 @@ tooltip_text = "Baseline"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 button_pressed = true
-icon = ExtResource("2_vs16l")
+icon = ExtResource("2_w3cau")
 
 [node name="BtnWalkToPoint" type="Button" parent="."]
 unique_name_in_owner = true
@@ -44,16 +44,17 @@ tooltip_text = "Look-At Point"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 button_pressed = true
-icon = ExtResource("4_7iasq")
+icon = ExtResource("4_bge33")
 
 [node name="BtnDialogPos" type="Button" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 tooltip_text = "Dialog Position"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 button_pressed = true
-icon = ExtResource("5_hik6d")
+icon = ExtResource("5_803mj")
 
 [node name="BtnInteractionPolygon" type="Button" parent="."]
 unique_name_in_owner = true
@@ -61,4 +62,4 @@ layout_mode = 2
 tooltip_text = "Interaction Polygon"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
-icon = ExtResource("5_55p3c")
+icon = ExtResource("6_6oxl8")
