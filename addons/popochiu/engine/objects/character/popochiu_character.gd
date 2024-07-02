@@ -51,7 +51,7 @@ signal grab_done
 @export var flips_when: FlipsWhen = FlipsWhen.NONE
 ## Array of [Dictionary] where each element has
 ## [code]{ emotion: String, variations: Array[PopochiuAudioCue] }[/code].
-## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a 
+## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
 ## specific emotion.
 @export var voices := [] : set = set_voices
 ## Whether the character should follow the player-controlled character (PC) when it moves through
@@ -74,6 +74,9 @@ signal grab_done
 @export var ignore_walkable_areas := false
 ## Whether the character will move only when the frame changes on its animation.
 @export var anti_glide_animation: bool = false
+## Used by the GUI to calculate where to render the dialogue lines said by the character when it
+## speaks.
+@export var dialog_pos: Vector2
 # This category is used by the Aseprite Importer in order to allow the creation of a section in the
 # Inspector for the character.
 @export_category("Aseprite")
@@ -100,9 +103,6 @@ var default_scale := Vector2.ONE
 
 var _looking_dir: int = Looking.DOWN
 
-## A to the [b]$DialogPos[/b] child. Used by the GUI to calculate where to render the dialogue lines
-## said by the character when it speaks.
-@onready var dialog_pos: Marker2D = $DialogPos
 
 
 #region Godot ######################################################################################
@@ -465,20 +465,16 @@ func grab() -> void:
 	idle()
 
 
-## Calls [method PopochiuClickable.hide_helpers] and then hides the `$DialogPos` child.
+## Calls [method PopochiuClickable.hide_helpers].
 func hide_helpers() -> void:
 	super()
-	
-	if is_instance_valid(dialog_pos):
-		dialog_pos.hide()
+	# TODO: add visibility logic for dialog_pos gizmo
 
 
-## Calls [method PopochiuClickable.show_helpers] and then shows the `$DialogPos` child.
+## Calls [method PopochiuClickable.show_helpers].
 func show_helpers() -> void:
 	super()
-	
-	if is_instance_valid(dialog_pos):
-		dialog_pos.show()
+	# TODO: add visibility logic for dialog_pos gizmo
 
 
 ## Makes the character walk to [param pos].[br][br]
@@ -784,10 +780,10 @@ func get_avatar_for_emotion(emo := "") -> Texture:
 	return texture
 
 
-## Returns the [code]y[/code] value of the [b]$DialogPos[/b] [Marker2D] (the node that defines the
-## position of the dialog lines said by the character when it talks).
+## Returns the [code]y[/code] value of the dialog_pos [Vector2] that defines the
+## position of the dialog lines said by the character when it talks.
 func get_dialog_pos() -> float:
-	return $DialogPos.position.y
+	return dialog_pos.y
 
 
 #endregion

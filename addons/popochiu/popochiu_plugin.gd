@@ -60,7 +60,6 @@ func _enter_tree() -> void:
 	# ---- Load Popochiu's Inspector plugins -------------------------------------------------------
 	for path in [
 		"res://addons/popochiu/editor/inspector/character_inspector_plugin.gd",
-		"res://addons/popochiu/editor/inspector/walkable_area_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/aseprite_importer_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd",
 	]:

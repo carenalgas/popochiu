@@ -6,8 +6,8 @@ extends Node
 #region Public #####################################################################################
 ## Used by the GUI to get the position of [param node] in the scene transformed to the space of the
 ## [CanvasLayer] where it is is rendered.
-static func get_screen_coords_for(node: Node) -> Vector2:
-	return node.get_viewport().canvas_transform * node.get_global_position()
+static func get_screen_coords_for(node: Node, offset: Vector2 = Vector2.ZERO) -> Vector2:
+	return node.get_viewport().canvas_transform * (node.get_global_position() + offset)
 
 
 ## Gets a random index from [param array].

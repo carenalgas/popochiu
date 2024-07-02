@@ -1,11 +1,13 @@
 @tool
+class_name PopochiuGizmoClickablePlugin
 extends EditorPlugin
 
 # TODO: move these out of the plugin and into Popochiu (enums) or PopochiuClickable
 enum {
 	WALK_TO_POINT,
-	# LOOK_AT_POINT, # TODO: enable this when the look_at_point logic is implemented
-	BASELINE
+	#LOOK_AT_POINT, # TODO: enable this when the look_at_point logic is implemented
+	BASELINE,
+	DIALOG_POS
 }
 
 # Private vars
@@ -13,6 +15,7 @@ enum {
 var _target_node: Node2D
 var _undo: EditorUndoRedoManager
 var _gizmos: Array
+var _active_gizmos: Array
 var _grabbed_gizmo: Gizmo2D
 
 
@@ -30,8 +33,10 @@ func _enter_tree() -> void:
 	# TODO: enable this when the look_at_point logic is implemented
 	# _gizmos.insert(LOOK_AT_POINT, _init_popochiu_gizmo(LOOK_AT_POINT))
 	_gizmos.insert(BASELINE, _init_popochiu_gizmo(BASELINE))
+	_gizmos.insert(DIALOG_POS, _init_popochiu_gizmo(DIALOG_POS))
 
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(_on_gizmo_visibility_changed)
 
 
 #endregion
@@ -40,15 +45,26 @@ func _enter_tree() -> void:
 
 func _edit(object: Object) -> void:
 	_target_node = object
-	for gizmo in _gizmos:
+	_active_gizmos.clear()
+
+	if EditorInterface.get_edited_scene_root() is PopochiuCharacter:
+		_active_gizmos.append(_gizmos[DIALOG_POS])
+	elif EditorInterface.get_edited_scene_root() is PopochiuRoom:
+		_active_gizmos.append(_gizmos[WALK_TO_POINT])
+		# TODO: enable this when the look_at_point logic is implemented
+		#_active_gizmos.append(_gizmos[LOOK_AT_POINT])
+		_active_gizmos.append(_gizmos[BASELINE])
+
+	for gizmo in _active_gizmos:
 		gizmo.set_target_node(_target_node)
+
 	if not EditorInterface.get_inspector().property_edited.is_connected(_on_property_changed):
 		EditorInterface.get_inspector().property_edited.connect(_on_property_changed)
 	update_overlays()
 
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
-	for gizmo in _gizmos:
+	for gizmo in _active_gizmos:
 		gizmo.draw(viewport_control, _target_node.get(gizmo.target_property))
 
 
@@ -97,34 +113,46 @@ func _on_gizmo_settings_changed() -> void:
 		match gizmo_id:
 			WALK_TO_POINT:
 				gizmo.set_theme(
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 					default_font,
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				)
 			# TODO: enable this when the look_at_point logic is implemented
 			# LOOK_AT_POINT:
 				# gizmo.set_theme(
-				# 	PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
-				# 	PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
+				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 				# 	default_font,
-				# 	PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				# )
 			BASELINE:
 				gizmo.set_theme(
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 					default_font,
-					PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				)
+			DIALOG_POS:
+				gizmo.set_theme(
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+					default_font,
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				)
 
-		gizmo.show_connector = PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
-		gizmo.show_outlines = PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
-		gizmo.show_target_name = PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
+		gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
+		gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
+		gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
 		gizmo_id += 1
 	
 	update_overlays()
 
+
+func _on_gizmo_visibility_changed(gizmo_id:int, visibility:bool):
+	if gizmo_id < _gizmos.size():
+		_gizmos[gizmo_id].visible = visibility
+		update_overlays()
 
 func _update_properties():
 	if _grabbed_gizmo and _grabbed_gizmo.target_property:
@@ -142,27 +170,35 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 		WALK_TO_POINT:
 			gizmo = Gizmo2D.new(_target_node, "walk_to_point", "Walk To Point", Gizmo2D.GIZMO_POS)
 			gizmo.set_theme(
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 				default_font,
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
 		# TODO: enable this when the look_at_point logic is implemented
 		# LOOK_AT_POINT:
 		# 	gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
 		# 	gizmo.set_theme(
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
+		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 		# 		default_font,
-		# 		PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 		# 	)
 		BASELINE:
 			gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VPOS)
 			gizmo.set_theme(
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 				default_font,
-				PopochiuEditorConfig._get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+			)
+		DIALOG_POS:
+			gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_POS)
+			gizmo.set_theme(
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				default_font,
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
 	return gizmo
 
@@ -171,10 +207,10 @@ func _try_grab_gizmo(event: InputEventMouseButton) -> bool:
 	# Check if the mouse click happened on a gizmo
 	# The order is reversed to the topmost gizmo
 	# (the last been drawn) is selected
-	for i in range(_gizmos.size() - 1, -1, -1):
-		if not _gizmos[i].has_point(event.position):
+	for i in range(_active_gizmos.size() - 1, -1, -1):
+		if not _active_gizmos[i].has_point(event.position):
 			continue
-		_grabbed_gizmo = _gizmos[i]
+		_grabbed_gizmo = _active_gizmos[i]
 		break
 
 	# If user clicked on no gizmos

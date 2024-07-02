@@ -17,6 +17,3 @@ polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0)
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-
-[node name="DialogPos" type="Marker2D" parent="."]
-visible = false

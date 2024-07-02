@@ -40,12 +40,6 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	# Save the scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
-
-	# Create a collision polygon as a child in the room scene
-	var collision := CollisionPolygon2D.new()
-	collision.name = "InteractionPolygon"
-	collision.modulate = Color.CYAN
-	_add_visible_child(collision)
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
 
 	# Add the object to its room
