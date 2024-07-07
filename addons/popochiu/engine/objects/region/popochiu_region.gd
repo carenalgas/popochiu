@@ -20,19 +20,63 @@ extends Area2D
 ## The scale to apply to the character inside the region when it moves to the top ([code]y[/code])
 ## of it.
 @export var scale_top :float = 1.0
-## The scale to apply to the character inside the region when it moves to the bottom 
+## The scale to apply to the character inside the region when it moves to the bottom
 ## ([code]y[/code]) of it.
 @export var scale_bottom :float = 1.0
-
+## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
+## by [PopochiuRoom] to store the info in its [code].tscn[/code].
+@export var interaction_polygon := PackedVector2Array()
+## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
+## by [PopochiuRoom] to store the info in its [code].tscn[/code].
+@export var interaction_polygon_position := Vector2.ZERO
 
 #region Godot ######################################################################################
 func _ready() -> void:
 	add_to_group("regions")
-	
+
 	area_entered.connect(_check_area.bind(true))
 	area_exited.connect(_check_area.bind(false))
 	area_shape_entered.connect(_check_scaling.bind(true))
 	area_shape_exited.connect(_check_scaling.bind(false))
+
+	if Engine.is_editor_hint():
+		hide_helpers()
+
+		# Ignore assigning the polygon when:
+		if (
+			get_node_or_null("InteractionPolygon") == null # there is no InteractionPolygon node
+			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
+		):
+			return
+
+		# Add interaction polygon to the proper group
+		get_node("InteractionPolygon").add_to_group(
+			PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+		)
+
+		if interaction_polygon.is_empty():
+			interaction_polygon = get_node("InteractionPolygon").polygon
+			interaction_polygon_position = get_node("InteractionPolygon").position
+		else:
+			get_node("InteractionPolygon").polygon = interaction_polygon
+			get_node("InteractionPolygon").position = interaction_polygon_position
+
+		# If we are in the editor, we're done
+		return
+
+	# When the game is running...
+	# Update the node's polygon when:
+	if (
+		get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
+	):
+		get_node("InteractionPolygon").polygon = interaction_polygon
+		get_node("InteractionPolygon").position = interaction_polygon_position
+
+
+func _notification(event: int) -> void:
+	if event == NOTIFICATION_EDITOR_PRE_SAVE:
+		interaction_polygon = get_node("InteractionPolygon").polygon
+		interaction_polygon_position = get_node("InteractionPolygon").position
 
 
 #endregion
@@ -118,6 +162,19 @@ func _update_scaling_region(chr: PopochiuCharacter) -> void:
 func _clear_scaling_region(chr: PopochiuCharacter) -> void:
 	if chr.on_scaling_region and chr.on_scaling_region["region_description"] == self.description:
 		chr.on_scaling_region = {}
+
+
+#endregion
+
+
+#region Public #####################################################################################
+## Used by the plugin to hide the visual helpers that show the [member baseline] and
+## [member walk_to_point] in the 2D Canvas Editor when this node is unselected in the Scene panel.
+func hide_helpers() -> void:
+	# TODO: visibility logic for gizmos
+
+	if get_node_or_null("InteractionPolygon"):
+		$InteractionPolygon.hide()
 
 
 #endregion

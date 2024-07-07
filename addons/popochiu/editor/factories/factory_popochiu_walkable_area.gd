@@ -38,25 +38,23 @@ func create(obj_name: String, room: PopochiuRoom) -> int:
 	new_obj.script_name = _pascal_name
 	new_obj.description = _snake_name.capitalize()
 
-	# Save the scene (.tscn) and put it into _scene class property
-	result_code = _save_obj_scene(new_obj)
-	if result_code != ResultCodes.SUCCESS: return result_code
-
-	# Create a NavigationRegion2D with its polygon as a child in the room scene
-	var perimeter := NavigationRegion2D.new()
-	perimeter.name = "Perimeter"
+	# Find the NavigationRegion2D for the WA and populate it with a default rectangle polygon
+	var perimeter := new_obj.find_child("Perimeter")
 	
 	var polygon := NavigationPolygon.new()
 	polygon.add_outline(PackedVector2Array([
 		Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
 	]))
-	polygon.make_polygons_from_outlines()
+	NavigationServer2D.bake_from_source_geometry_data(polygon, NavigationMeshSourceGeometryData2D.new());
 	polygon.agent_radius = 0.0
-	
-	perimeter.navpoly = polygon
-	perimeter.modulate = Color.GREEN
-	
-	_add_visible_child(perimeter)
+	perimeter.navigation_polygon = polygon
+
+	# Show the WA perimeter, depending on user prefs
+	perimeter.visible = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_WA)
+
+	# Save the scene (.tscn) and put it into _scene class property
+	result_code = _save_obj_scene(new_obj)
+	if result_code != ResultCodes.SUCCESS: return result_code
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
 
 	# Add the object to its room

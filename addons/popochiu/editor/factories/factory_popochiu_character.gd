@@ -44,7 +44,7 @@ func create(obj_name: String, is_pc := false) -> int:
 	if PopochiuConfig.is_pixel_art_textures():
 		new_obj.get_node("Sprite2D").texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
-	
+
 	# Save the scene (.tscn)
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code

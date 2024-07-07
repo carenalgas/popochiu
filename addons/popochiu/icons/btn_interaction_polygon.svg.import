@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cesndtvbchw7v"
-path="res://.godot/imported/interaction_polygon.png-28f3d05312276a3121232981bf4f2bee.ctex"
+uid="uid://cyun4rylrtrvm"
+path="res://.godot/imported/btn_interaction_polygon.svg-ae6d67a13164518efc1cb27b565b9ce0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/icons/interaction_polygon.png"
-dest_files=["res://.godot/imported/interaction_polygon.png-28f3d05312276a3121232981bf4f2bee.ctex"]
+source_file="res://addons/popochiu/icons/btn_interaction_polygon.svg"
+dest_files=["res://.godot/imported/btn_interaction_polygon.svg-ae6d67a13164518efc1cb27b565b9ce0.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

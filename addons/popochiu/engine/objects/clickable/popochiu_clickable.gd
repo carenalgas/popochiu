@@ -43,9 +43,6 @@ var times_double_clicked := 0
 var times_right_clicked := 0
 ## The number of times this object has been middle-clicked.
 var times_middle_clicked := 0
-## Used by the editor to know if the [b]InteractionPolygon[/b] child its being edited in Godot's
-## 2D Canvas Editor.
-var editing_polygon := false
 # NOTE: Don't know if this will make sense, or if this object should emit a signal about the click
 # 		(command execution).
 ## Stores the last [enum MouseButton] pressed on this object.
@@ -66,14 +63,20 @@ func _ready():
 	if Engine.is_editor_hint():
 		hide_helpers()
 		
+		# Add interaction polygon to the proper group
+		if (get_node_or_null("InteractionPolygon") != null):
+			get_node("InteractionPolygon").add_to_group(
+				PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+			)
+
 		# Ignore assigning the polygon when:
 		if (
 			get_node_or_null("InteractionPolygon") == null # there is no InteractionPolygon node
 			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
-			or self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+			or self is PopochiuCharacter # avoid resetting the polygon for characters (see issue #158))
 		):
 			return
-		
+
 		if interaction_polygon.is_empty():
 			interaction_polygon = get_node("InteractionPolygon").polygon
 			interaction_polygon_position = get_node("InteractionPolygon").position
@@ -81,16 +84,18 @@ func _ready():
 			get_node("InteractionPolygon").polygon = interaction_polygon
 			get_node("InteractionPolygon").position = interaction_polygon_position
 		
+		# If we are in the editor, we're done
 		return
-	else:	
-		# Update the node's polygon when:
-		if (
-			get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
-			and not self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
-		):
-			get_node("InteractionPolygon").polygon = interaction_polygon
-			get_node("InteractionPolygon").position = interaction_polygon_position
-	
+
+	# When the game is running...
+	# Update the node's polygon when:
+	if (
+		get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
+		and not self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+	):
+		get_node("InteractionPolygon").polygon = interaction_polygon
+		get_node("InteractionPolygon").position = interaction_polygon_position
+
 	visibility_changed.connect(_toggle_input)
 	
 	# Ignore this object if it is a temporary one (its name has *)
@@ -107,11 +112,10 @@ func _ready():
 	_translate()
 
 
-func _process(delta):
-	if Engine.is_editor_hint():		
-		if editing_polygon:
-			interaction_polygon = get_node("InteractionPolygon").polygon
-			interaction_polygon_position = get_node("InteractionPolygon").position
+func _notification(event: int) -> void:
+	if event == NOTIFICATION_EDITOR_PRE_SAVE:
+		interaction_polygon = get_node("InteractionPolygon").polygon
+		interaction_polygon_position = get_node("InteractionPolygon").position
 
 
 #endregion

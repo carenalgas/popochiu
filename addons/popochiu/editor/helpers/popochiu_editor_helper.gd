@@ -24,6 +24,8 @@ const DELETE_CONFIRMATION_SCENE = preload(
 )
 const PROGRESS_DIALOG_SCENE = preload(POPUPS_FOLDER + "progress/progress.tscn")
 const SETUP_SCENE = preload("res://addons/popochiu/editor/popups/setup/setup.tscn")
+# ---- Identifiers ---------------------------------------------------------------------------------
+const POPOCHIU_OBJECT_POLYGON_GROUP = "popochiu_object_polygon"
 # ---- Classes -------------------------------------------------------------------------------------
 const PopochiuSignalBus = preload("res://addons/popochiu/editor/helpers/popochiu_signal_bus.gd")
 const DeleteConfirmation = preload(POPUPS_FOLDER + "delete_confirmation/delete_confirmation.gd")
@@ -140,6 +142,21 @@ static func show_dialog(dialog: Window, min_size := Vector2i.ZERO) -> void:
 	dialog.popup_centered(min_size * EditorInterface.get_editor_scale())
 
 
+
+# Type-checking functions
+static func is_popochiu_object(node: Node) -> bool:
+	return node is PopochiuRoom \
+	or is_popochiu_room_object(node)
+
+
+static func is_popochiu_room_object(node: Node) -> bool:
+	return node is PopochiuCharacter \
+	or node is PopochiuProp \
+	or node is PopochiuHotspot \
+	or node is PopochiuWalkableArea \
+	or node is PopochiuRegion
+
+
 static func is_room(node: Node) -> bool:
 	return node is PopochiuRoom
 
@@ -159,6 +176,36 @@ static func is_hotspot(node: Node) -> bool:
 static func is_walkable_area(node: Node) -> bool:
 	return node is PopochiuWalkableArea
 
+
+static func is_region(node: Node) -> bool:
+	return node is PopochiuRegion
+
+
+static func is_popochiu_obj_polygon(node: Node):
+	return node.is_in_group(POPOCHIU_OBJECT_POLYGON_GROUP)
+
+
+# Context-checking functions
+static func is_editing_room() -> bool:
+	# If the open scene in the editor is a PopochiuRoom, return true
+	return is_room(ei.get_edited_scene_root())
+
+
+# Quick-access functions
+static func get_first_child_by_group(node: Node, group: StringName) -> Node:
+	for n in node.get_children():
+		if n.is_in_group(group):
+			return n
+	return null
+
+
+static func get_all_children(node, children := []) -> Array:
+	if node == null:
+		return []
+	children.push_back(node)
+	for child in node.get_children():
+		children = get_all_children(child, children)
+	return children
 
 ## Overrides the font [param font_name] in [param node] by the theme [Font] identified by
 ## [param editor_font_name].
