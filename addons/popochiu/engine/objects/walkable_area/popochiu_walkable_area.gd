@@ -103,6 +103,9 @@ func _notification(event: int) -> void:
 			interaction_polygon.append(navpoly.get_outline(idx))
 		# Save the NavigationRegion2D position
 		interaction_polygon_position = get_node("Perimeter").position
+		# Saving the scene is necessary to make the changes permanent.
+		# If you remove this the character won't be able to walk in the area.
+		_save_current_scene()
 
 
 func _exit_tree():
@@ -112,6 +115,18 @@ func _exit_tree():
 
 
 #endregion
+
+#region private ####################################################################################
+func _save_current_scene():
+	var packed_scene = PackedScene.new()
+
+	if packed_scene.pack(self) != OK:
+		print("Failed to pack current scene")
+		return
+
+	if ResourceSaver.save(packed_scene, self.scene_file_path) != OK:
+		print("Failed to save scene")
+
 
 #region SetGet #####################################################################################
 func _set_enabled(value: bool) -> void:

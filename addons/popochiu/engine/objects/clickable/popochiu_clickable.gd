@@ -63,18 +63,19 @@ func _ready():
 	if Engine.is_editor_hint():
 		hide_helpers()
 		
+		# Add interaction polygon to the proper group
+		if (get_node_or_null("InteractionPolygon") != null):
+			get_node("InteractionPolygon").add_to_group(
+				PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+			)
+
 		# Ignore assigning the polygon when:
 		if (
 			get_node_or_null("InteractionPolygon") == null # there is no InteractionPolygon node
 			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
-			or self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+			or self is PopochiuCharacter # avoid resetting the polygon for characters (see issue #158))
 		):
 			return
-
-		# Add interaction polygon to the proper group
-		get_node("InteractionPolygon").add_to_group(
-			PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
-		)
 
 		if interaction_polygon.is_empty():
 			interaction_polygon = get_node("InteractionPolygon").polygon

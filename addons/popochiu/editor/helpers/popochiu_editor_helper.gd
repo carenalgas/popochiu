@@ -185,6 +185,12 @@ static func is_popochiu_obj_polygon(node: Node):
 	return node.is_in_group(POPOCHIU_OBJECT_POLYGON_GROUP)
 
 
+# Context-checking functions
+static func is_editing_room() -> bool:
+	# If the open scene in the editor is a PopochiuRoom, return true
+	return is_room(ei.get_edited_scene_root())
+
+
 # Quick-access functions
 static func get_first_child_by_group(node: Node, group: StringName) -> Node:
 	for n in node.get_children():

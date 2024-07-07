@@ -25,9 +25,9 @@ const GIZMOS_ALWAYS_SHOW_WA = "popochiu/gizmos/always_show_walkable_areas"
 # Settings default values
 static var defaults := {
 	ASEPRITE_IMPORTER_ENABLED: false,
-	ASEPRITE_COMMAND_PATH: _default_command(),
+	ASEPRITE_COMMAND_PATH: _default_aseprite_command(),
 	ASEPRITE_REMOVE_JSON_FILE: true,
-	GIZMOS_FONT_SIZE: EditorInterface.get_editor_theme().default_font_size,
+	GIZMOS_FONT_SIZE: _default_font_size(),
 	GIZMOS_BASELINE_COLOR: Color.CYAN,
 	GIZMOS_WALK_TO_POINT_COLOR: Color.GREEN,
 	GIZMOS_LOOK_AT_POINT_COLOR: Color.RED,
@@ -95,8 +95,14 @@ static func should_remove_source_files() -> bool:
 
 
 #region Private ####################################################################################
-static func _default_command() -> String:
+static func _default_aseprite_command() -> String:
 	return 'aseprite'
+
+
+static func _default_font_size() -> int:
+	if Engine.is_editor_hint():
+		return EditorInterface.get_editor_theme().default_font_size
+	return 16
 
 
 static func _initialize_editor_setting(

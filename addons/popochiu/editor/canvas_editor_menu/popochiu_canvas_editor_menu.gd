@@ -261,7 +261,12 @@ func _set_buttons_visibility() -> void:
 	show()
 
 	# Every Popochiu Object always shows the polygon editing button when edited
-	btn_interaction_polygon.show()
+	# unless we are in a room scene and selected a character
+	if not (
+		PopochiuEditorHelper.is_character(_active_popochiu_object)
+		and PopochiuEditorHelper.is_editing_room()
+	):
+		btn_interaction_polygon.show()
 	
 	# If the selected node in the editor is actually a popochiu object polygon
 	# We don't have to show the other buttons, only the polygon editing toggle
