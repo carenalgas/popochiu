@@ -37,6 +37,7 @@ func create(param: PopochiuRoomObjFactoryParam) -> int:
 	new_obj.name = _pascal_name
 	new_obj.script_name = _pascal_name
 	new_obj.description = _snake_name.capitalize()
+	new_obj.interaction_polygon = param.interaction_polygon
 
 	# Save the scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
@@ -55,9 +56,7 @@ func create(param: PopochiuRoomObjFactoryParam) -> int:
 #region Private ####################################################################################
 func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
 	var param := PopochiuRegionFactoryParam.new()
-	param.should_create_interaction_polygon = false
-	# TODO: Remove this line once the last gizmos PR is merged
-	#param.interaction_polygon = node.interaction_polygon
+	param.interaction_polygon = node.interaction_polygon
 	
 	return param
 

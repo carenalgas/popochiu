@@ -321,10 +321,10 @@ func _remove_helper_nodes_in(scene_path: String) -> bool:
 	
 	# ---- Remove the DialogPos node ---------------------------------------------------------------
 	# TODO: Uncomment this once PR #241 is merged
-	#if popochiu_clickable is PopochiuCharacter and popochiu_clickable.has_node("DialogPos"):
-		#popochiu_clickable.dialog_pos = popochiu_clickable.get_node("DialogPos").position
-		#_remove_node(popochiu_clickable, "DialogPos")
-		#was_scene_updated = true
+	if popochiu_clickable is PopochiuCharacter and popochiu_clickable.has_node("DialogPos"):
+		popochiu_clickable.dialog_pos = popochiu_clickable.get_node("DialogPos").position
+		_remove_node(popochiu_clickable, "DialogPos")
+		was_scene_updated = true
 	
 	if was_scene_updated and PopochiuEditorHelper.pack_scene(popochiu_clickable, scene_path) != OK:
 			PopochiuUtils.print_error(

@@ -378,10 +378,8 @@ func _update_character(scene_path: String) -> bool:
 				popochiu_character.get_path_to(popochiu_character.get_node("Sprite2D")),
 				"texture"
 			]
-			prints(">>>> >>>> texture_path", texture_path)
 			var texture_track: int = animation.find_track(texture_path, Animation.TYPE_VALUE)
 			if texture_track > -1:
-				prints(">>>> >>>> >>>> quito el texture track")
 				animation.remove_track(texture_track)
 				was_scene_updated = true
 	
@@ -481,9 +479,10 @@ func _create_new_room_objects(
 		):
 			continue
 		
-		# Copy the points of the polygon to use as [PopochiuClickable.interaction_polygon]
+		# Copy the points of the polygons that were previously a node visible in the Room tree, but
+		# now are only properties
 		if (
-			(obj is PopochiuProp or obj is PopochiuHotspot)
+			(obj is PopochiuProp or obj is PopochiuHotspot or obj is PopochiuRegion)
 			and (obj.has_node("InteractionPolygon") or obj.has_node("InteractionPolygon2"))
 		):
 			var interaction_polygon: CollisionPolygon2D = obj.get_node("InteractionPolygon")
@@ -491,8 +490,25 @@ func _create_new_room_objects(
 				interaction_polygon = obj.get_node("InteractionPolygon2")
 			
 			if interaction_polygon.owner == popochiu_room:
+				# Store the polygon vectors into the new @export variable
 				obj.interaction_polygon = interaction_polygon.polygon
+				# Delete the CollisionPolygon2D node that in previous versions was attached to the
+				# room
 				interaction_polygon.free()
+		elif (
+			obj is PopochiuWalkableArea
+			and (obj.has_node("Perimeter") or obj.has_node("Perimeter2"))
+		):
+			var perimeter: NavigationRegion2D = obj.get_node("Perimeter")
+			if obj.has_node("Perimeter2"):
+				perimeter = obj.get_node("Perimeter2")
+			
+			if perimeter.owner == popochiu_room:
+				# Store the navigation polygon vectors into the new @export variable
+				obj.map_navigation_polygon(perimeter)
+				# Delete the NavigationRegion2D node that in previous versions was attached to the
+				# room
+				perimeter.free()
 		
 		# Create the new scene (and script if needed) of the [obj]
 		var obj_factory: PopochiuRoomObjFactory = factory.get_new_instance()
@@ -509,6 +525,7 @@ func _create_new_room_objects(
 		factory = factory,
 		objects = created_objects
 	})
+	
 	return true
 
 
@@ -553,23 +570,18 @@ func _create_new_room_obj(
 		new_obj.v_frames = source.v_frames
 		new_obj.link_to_item = source.link_to_item
 		new_obj.interaction_polygon = source.interaction_polygon
+		new_obj.interaction_polygon_position = source.interaction_polygon_position
 		
 		if obj_factory.get_snake_name() in ["bg", "background"]:
 			new_obj.z_index = -1
 	
 	if new_obj is PopochiuRegion:
-		var interaction_polygon := source.get_node("InteractionPolygon")
-		interaction_polygon.owner = null
-		interaction_polygon.reparent(new_obj, false)
-		new_obj.get_meta(RESET_CHILDREN_OWNER).append(interaction_polygon)
+		new_obj.interaction_polygon = source.interaction_polygon
+		new_obj.interaction_polygon_position = source.interaction_polygon_position
 	
 	if new_obj is PopochiuWalkableArea:
-		var perimeter: NavigationRegion2D = source.get_node("Perimeter")
-		perimeter.navigation_polygon.agent_radius = 0.0
-		perimeter.bake_navigation_polygon()
-		perimeter.owner = null
-		perimeter.reparent(new_obj, false)
-		new_obj.get_meta(RESET_CHILDREN_OWNER).append(perimeter)
+		new_obj.interaction_polygon = source.interaction_polygon
+		new_obj.interaction_polygon_position = source.interaction_polygon_position
 	
 	# Remove the old [source] node from the room
 	source.free()

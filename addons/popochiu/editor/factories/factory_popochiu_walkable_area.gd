@@ -1,5 +1,5 @@
 class_name PopochiuWalkableAreaFactory
-extends "res://addons/popochiu/editor/factories/factory_base_popochiu_room_obj.gd"
+extends PopochiuRoomObjFactory
 
 
 #region Godot ######################################################################################
@@ -43,17 +43,18 @@ func create(param: PopochiuWalkableAreaFactoryParam) -> int:
 
 	# Find the NavigationRegion2D for the WA and populate it with a default rectangle polygon
 	var perimeter := new_obj.find_child("Perimeter")
+	var polygon := NavigationPolygon.new()
+	polygon.add_outline(PackedVector2Array([
+		Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
+	]))
+	NavigationServer2D.bake_from_source_geometry_data(
+		polygon, NavigationMeshSourceGeometryData2D.new()
+	)
+	polygon.agent_radius = 0.0
+	perimeter.navigation_polygon = polygon
 	
-	if param.should_create_perimeter:
-		var polygon := NavigationPolygon.new()
-		polygon.add_outline(PackedVector2Array([
-			Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
-		]))
-		NavigationServer2D.bake_from_source_geometry_data(
-			polygon, NavigationMeshSourceGeometryData2D.new()
-		)
-		polygon.agent_radius = 0.0
-		perimeter.navigation_polygon = polygon
+	if not param.navigation_polygon.is_empty():
+		new_obj.interaction_polygon = param.navigation_polygon
 
 	# Show the WA perimeter, depending on user prefs
 	perimeter.visible = PopochiuEditorConfig.get_editor_setting(
@@ -77,11 +78,8 @@ func create(param: PopochiuWalkableAreaFactoryParam) -> int:
 #region Private ####################################################################################
 func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
 	var param := PopochiuWalkableAreaFactoryParam.new()
-	param.should_create_perimeter = false
+	param.navigation_polygon = node.interaction_polygon
 	
-	#param.navigation_polygon = (
-		#node.get_node("Perimeter") as NavigationRegion2D
-	#).navigation_polygon.get_outline(0)
 	return param
 
 
@@ -89,8 +87,7 @@ func _get_param(node: Node) -> PopochiuRoomObjFactoryParam:
 
 #region Subclass ###################################################################################
 class PopochiuWalkableAreaFactoryParam extends PopochiuRoomObjFactory.PopochiuRoomObjFactoryParam:
-	#var navigation_polygon := PackedVector2Array()
-	var should_create_perimeter := true
+	var navigation_polygon := []
 
 
 #endregion

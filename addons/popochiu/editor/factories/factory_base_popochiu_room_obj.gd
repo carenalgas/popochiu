@@ -90,6 +90,8 @@ class PopochiuRoomObjFactoryParam extends RefCounted:
 	var should_setup_room_and_name := true
 	var should_create_script := true
 	var should_add_to_room := true
+	## Property used to store the vectors stored in the [member CollisionPolygon2D.polygon] for
+	## [PopochiuProp], [PopochiuHotspot], and [PopochiuRegion].
 	var interaction_polygon := PackedVector2Array()
 
 
