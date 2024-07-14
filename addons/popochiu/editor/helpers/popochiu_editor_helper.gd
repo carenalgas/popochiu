@@ -193,6 +193,8 @@ static func is_editing_room() -> bool:
 
 # Quick-access functions
 static func get_first_child_by_group(node: Node, group: StringName) -> Node:
+	if (node == null):
+		return null
 	for n in node.get_children():
 		if n.is_in_group(group):
 			return n
