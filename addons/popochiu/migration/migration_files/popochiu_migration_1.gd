@@ -423,16 +423,13 @@ func _update_objects_in_rooms() -> Completion:
 ## new objects: [PopochiuProp], [PopochiuHotspot], [PopochiuRegion], and [PopochiuWalkableArea].
 func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	var room_objects_to_add := []
+	var room_objects_to_check := []
 	PopochiuUtils.any([
 		PopochiuPropFactory.new(),
 		PopochiuHotspotFactory.new(),
 		PopochiuRegionFactory.new(),
 		PopochiuWalkableAreaFactory.new(),
-	], _create_new_room_objects.bind(popochiu_room, room_objects_to_add))
-	
-	if room_objects_to_add.is_empty():
-		# No need to update the room
-		return false
+	], _create_new_room_objects.bind(popochiu_room, room_objects_to_add, room_objects_to_check))
 	
 	for group: Dictionary in room_objects_to_add:
 		group.objects.all(
@@ -453,6 +450,10 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 			"Migration 1: Couldn't update [b]%s[/b]." % popochiu_room.script_name
 		)
 	
+	for obj: Node2D in room_objects_to_check:
+		# Check if the node's scene has all the expected nodes based on its base scene
+		_add_lacking_nodes(obj)
+	
 	return true
 
 
@@ -462,7 +463,8 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 func _create_new_room_objects(
 	factory: PopochiuRoomObjFactory,
 	popochiu_room: PopochiuRoom,
-	room_objects_to_add := []
+	room_objects_to_add := [],
+	room_objects_to_check := []
 ) -> bool:
 	var created_objects := []
 	for obj in _get_room_objects(
@@ -470,15 +472,6 @@ func _create_new_room_objects(
 		[],
 		factory.get_type_method()
 	):
-		# If the object is a Marker2D, or already has its own scene and a script that is not inside
-		# Popochiu's folder
-		if (
-			not obj.scene_file_path.is_empty()
-			and not "addons" in obj.scene_file_path
-			and not "addons" in obj.get_script().resource_path
-		):
-			continue
-		
 		# Copy the points of the polygons that were previously a node visible in the Room tree, but
 		# now are only properties
 		if (
@@ -492,8 +485,10 @@ func _create_new_room_objects(
 			if interaction_polygon.owner == popochiu_room:
 				# Store the polygon vectors into the new @export variable
 				obj.interaction_polygon = interaction_polygon.polygon
+				obj.interaction_polygon_position = interaction_polygon.position
 				# Delete the CollisionPolygon2D node that in previous versions was attached to the
 				# room
+				interaction_polygon.owner = null
 				interaction_polygon.free()
 		elif (
 			obj is PopochiuWalkableArea
@@ -508,7 +503,18 @@ func _create_new_room_objects(
 				obj.map_navigation_polygon(perimeter)
 				# Delete the NavigationRegion2D node that in previous versions was attached to the
 				# room
+				perimeter.owner = null
 				perimeter.free()
+		
+		# If the object already has its own scene and a script that is not inside Popochiu's folder,
+		# then just check if there are lacking nodes inside its scene
+		if (
+			not obj.scene_file_path.is_empty()
+			and not "addons" in obj.scene_file_path
+			and not "addons" in obj.get_script().resource_path
+		):
+			room_objects_to_check.append(obj)
+			continue
 		
 		# Create the new scene (and script if needed) of the [obj]
 		var obj_factory: PopochiuRoomObjFactory = factory.get_new_instance()
@@ -539,6 +545,45 @@ func _get_room_objects(parent: Node, objects: Array, type_method: Callable) -> A
 			_get_room_objects(child, objects, type_method)
 	
 	return objects
+
+
+## Checks the [code].tscn[/code] file of [param obj] for lacking nodes based on its type. If there
+## are any, then it will add them so the structure of the scene matches the one of the object it
+## inherits from.
+func _add_lacking_nodes(obj: Node) -> void:
+	var obj_scene: Node2D = ResourceLoader.load(obj.scene_file_path).instantiate()
+	
+	if (
+		PopochiuEditorHelper.is_prop(obj_scene)
+		or PopochiuEditorHelper.is_hotspot(obj_scene)
+		or PopochiuEditorHelper.is_region(obj_scene)
+	):
+		if not obj_scene.has_node("InteractionPolygon"):
+			var interaction_polygon := CollisionPolygon2D.new()
+			interaction_polygon.name = "InteractionPolygon"
+			interaction_polygon.polygon = PackedVector2Array([
+				Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
+			])
+			obj_scene.add_child(interaction_polygon)
+			obj_scene.move_child(interaction_polygon, 0)
+			interaction_polygon.owner = obj_scene
+	elif PopochiuEditorHelper.is_walkable_area(obj_scene):
+		if not obj_scene.has_node("Perimeter"):
+			var perimeter := NavigationRegion2D.new()
+			perimeter.name = "Perimeter"
+			var polygon := NavigationPolygon.new()
+			polygon.agent_radius = 0.0
+			perimeter.navigation_polygon = polygon
+			obj_scene.add_child(perimeter)
+			perimeter.owner = obj_scene
+	
+	if PopochiuEditorHelper.is_prop(obj_scene):
+		if not obj_scene.has_node("AnimationPlayer"):
+			var animation_player := AnimationPlayer.new()
+			obj_scene.add_child(animation_player)
+			animation_player.owner = obj_scene
+	
+	PopochiuEditorHelper.pack_scene(obj_scene)
 
 
 ## Maps the properties (and nodes if needed) of [param source] to a new instance of itself created
@@ -605,7 +650,8 @@ func _replace_deprecated_method_calls() -> Completion:
 		{from = "super.on_click()", to = "E.command_fallback()"},
 		{from = "super.on_right_click()", to = "E.command_fallback()"},
 		{from = "super.on_item_used(item)", to = "E.command_fallback()"},
-	]) else Completion.IGNORED
+		{from = "super(item)", to = "E.command_fallback()"},
+	], ["graphic_interface"]) else Completion.IGNORED
 
 
 #endregion

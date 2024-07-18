@@ -115,6 +115,10 @@ func _exit_tree():
 func map_navigation_polygon(perimeter: NavigationRegion2D) -> void:
 	# Take the reference to the navigation polygon
 	var navpoly: NavigationPolygon = perimeter.navigation_polygon
+	
+	if not navpoly or not is_instance_valid(navpoly):
+		return
+	
 	interaction_polygon.clear()
 	# Save all the NavigationPolygon outlines in the local variable
 	for idx in range(0, navpoly.get_outline_count()):

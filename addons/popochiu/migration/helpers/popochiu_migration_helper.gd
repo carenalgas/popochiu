@@ -228,9 +228,11 @@ static func is_text_in_file(text: String, file_path: String) -> bool:
 
 
 ## TODO: Document this function.
-static func replace_in_scripts(replacements: Array[Dictionary]) -> bool:
+static func replace_in_scripts(
+	replacements: Array[Dictionary], folders_to_ignore: Array[String] = []
+) -> bool:
 	var scripts_paths := get_absolute_file_paths_for_file_extensions(
-		PopochiuResources.GAME_PATH, ["gd"]
+		PopochiuResources.GAME_PATH, ["gd"], folders_to_ignore
 	)
 	
 	var replaced_matches := 0
