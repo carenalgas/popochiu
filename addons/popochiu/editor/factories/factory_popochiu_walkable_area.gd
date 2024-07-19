@@ -55,6 +55,7 @@ func create(param: PopochiuWalkableAreaFactoryParam) -> int:
 	
 	if not param.navigation_polygon.is_empty():
 		new_obj.interaction_polygon = param.navigation_polygon
+		new_obj.clear_and_bake(perimeter.navigation_polygon)
 
 	# Show the WA perimeter, depending on user prefs
 	perimeter.visible = PopochiuEditorConfig.get_editor_setting(

@@ -21,7 +21,7 @@ const SKIP_CUTSCENE_TIME = "popochiu/gui/skip_cutscene_time"
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
 const AUTO_CONTINUE_TEXT = "popochiu/dialogs/auto_continue_text"
 const USE_TRANSLATIONS = "popochiu/dialogs/use_translations"
-const DIALOG_STYLE = "popochiu/gui/dialog_style"
+const DIALOG_STYLE = "popochiu/dialogs/dialog_style"
 
 # ---- Inventory -----------------------------------------------------------------------------------
 const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
@@ -247,7 +247,7 @@ static func _initialize_project_setting(
 static func _initialize_advanced_project_setting(
 	key: String, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
 ) -> void:
-	_create_setting(key, type, hint)
+	_create_setting(key, type, hint, hint_string)
 
 
 static func _create_setting(

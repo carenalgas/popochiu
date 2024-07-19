@@ -547,45 +547,6 @@ func _get_room_objects(parent: Node, objects: Array, type_method: Callable) -> A
 	return objects
 
 
-## Checks the [code].tscn[/code] file of [param obj] for lacking nodes based on its type. If there
-## are any, then it will add them so the structure of the scene matches the one of the object it
-## inherits from.
-func _add_lacking_nodes(obj: Node) -> void:
-	var obj_scene: Node2D = ResourceLoader.load(obj.scene_file_path).instantiate()
-	
-	if (
-		PopochiuEditorHelper.is_prop(obj_scene)
-		or PopochiuEditorHelper.is_hotspot(obj_scene)
-		or PopochiuEditorHelper.is_region(obj_scene)
-	):
-		if not obj_scene.has_node("InteractionPolygon"):
-			var interaction_polygon := CollisionPolygon2D.new()
-			interaction_polygon.name = "InteractionPolygon"
-			interaction_polygon.polygon = PackedVector2Array([
-				Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
-			])
-			obj_scene.add_child(interaction_polygon)
-			obj_scene.move_child(interaction_polygon, 0)
-			interaction_polygon.owner = obj_scene
-	elif PopochiuEditorHelper.is_walkable_area(obj_scene):
-		if not obj_scene.has_node("Perimeter"):
-			var perimeter := NavigationRegion2D.new()
-			perimeter.name = "Perimeter"
-			var polygon := NavigationPolygon.new()
-			polygon.agent_radius = 0.0
-			perimeter.navigation_polygon = polygon
-			obj_scene.add_child(perimeter)
-			perimeter.owner = obj_scene
-	
-	if PopochiuEditorHelper.is_prop(obj_scene):
-		if not obj_scene.has_node("AnimationPlayer"):
-			var animation_player := AnimationPlayer.new()
-			obj_scene.add_child(animation_player)
-			animation_player.owner = obj_scene
-	
-	PopochiuEditorHelper.pack_scene(obj_scene)
-
-
 ## Maps the properties (and nodes if needed) of [param source] to a new instance of itself created
 ## from [param obj_factory]. This assures that objects coming from versions prior to [i]beta 1[/i]
 ## will have the corresponding structure of new Popochiu versions.
@@ -632,6 +593,47 @@ func _create_new_room_obj(
 	source.free()
 	
 	return new_obj
+
+
+## Checks the [code].tscn[/code] file of [param obj] for lacking nodes based on its type. If there
+## are any, then it will add them so the structure of the scene matches the one of the object it
+## inherits from.
+func _add_lacking_nodes(obj: Node) -> void:
+	var obj_scene: Node2D = ResourceLoader.load(obj.scene_file_path).instantiate()
+	
+	if (
+		PopochiuEditorHelper.is_prop(obj_scene)
+		or PopochiuEditorHelper.is_hotspot(obj_scene)
+		or PopochiuEditorHelper.is_region(obj_scene)
+	):
+		if not obj_scene.has_node("InteractionPolygon"):
+			var interaction_polygon := CollisionPolygon2D.new()
+			interaction_polygon.name = "InteractionPolygon"
+			interaction_polygon.polygon = PackedVector2Array([
+				Vector2(-10, -10), Vector2(10, -10), Vector2(10, 10), Vector2(-10, 10)
+			])
+			obj_scene.add_child(interaction_polygon)
+			obj_scene.move_child(interaction_polygon, 0)
+			interaction_polygon.owner = obj_scene
+	elif PopochiuEditorHelper.is_walkable_area(obj_scene):
+		if not obj_scene.has_node("Perimeter"):
+			var perimeter := NavigationRegion2D.new()
+			perimeter.name = "Perimeter"
+			var polygon := NavigationPolygon.new()
+			polygon.agent_radius = 0.0
+			perimeter.navigation_polygon = polygon
+			obj_scene.add_child(perimeter)
+			perimeter.owner = obj_scene
+			obj_scene.interaction_polygon = obj.interaction_polygon
+			obj_scene.interaction_polygon_position = obj.interaction_polygon_position
+	
+	if PopochiuEditorHelper.is_prop(obj_scene):
+		if not obj_scene.has_node("AnimationPlayer"):
+			var animation_player := AnimationPlayer.new()
+			obj_scene.add_child(animation_player)
+			animation_player.owner = obj_scene
+	
+	PopochiuEditorHelper.pack_scene(obj_scene)
 
 
 ## Replace calls to old methods:

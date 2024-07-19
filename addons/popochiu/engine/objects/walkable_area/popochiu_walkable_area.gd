@@ -61,13 +61,7 @@ func _ready() -> void:
 			# Save the NavigationRegion2D position
 			interaction_polygon_position = get_node("Perimeter").position
 		else:
-			# Populate the NavigationPolygon with all the outlines and bake it back
-			navpoly.clear_outlines()
-			for outline in interaction_polygon:
-				navpoly.add_outline(outline)
-			NavigationServer2D.bake_from_source_geometry_data(navpoly, NavigationMeshSourceGeometryData2D.new());
-			# Restore the NagivationRegion2D position
-			get_node("Perimeter").position = interaction_polygon_position
+			clear_and_bake(navpoly)
 
 		# If we are in the editor, we're done
 		return
@@ -79,13 +73,7 @@ func _ready() -> void:
 	):
 		# Take the reference to the navigation polygon
 		var navpoly: NavigationPolygon = get_node("Perimeter").navigation_polygon
-		# Populate the NavigationPolygon with all the outlines and bake it back
-		navpoly.clear_outlines()
-		for outline in interaction_polygon:
-			navpoly.add_outline(outline)
-		NavigationServer2D.bake_from_source_geometry_data(navpoly, NavigationMeshSourceGeometryData2D.new());
-		# Restore the NagivationRegion2D position
-		get_node("Perimeter").position = interaction_polygon_position
+		clear_and_bake(navpoly)
 
 	# Map the necessary resources
 	map_rid = NavigationServer2D.get_maps()[0]
@@ -98,7 +86,7 @@ func _notification(event: int) -> void:
 		map_navigation_polygon(get_node("Perimeter"))
 		# Saving the scene is necessary to make the changes permanent.
 		# If you remove this the character won't be able to walk in the area.
-		_save_current_scene()
+		PopochiuEditorHelper.pack_scene(self)
 
 
 func _exit_tree():
@@ -127,6 +115,18 @@ func map_navigation_polygon(perimeter: NavigationRegion2D) -> void:
 	interaction_polygon_position = perimeter.position
 
 
+## Populates [param navpoly] with all the outlines and bakes it back.
+func clear_and_bake(navpoly: NavigationPolygon) -> void:
+	navpoly.clear_outlines()
+	for outline in interaction_polygon:
+		navpoly.add_outline(outline)
+	NavigationServer2D.bake_from_source_geometry_data(
+		navpoly, NavigationMeshSourceGeometryData2D.new()
+	)
+	# Restore the NagivationRegion2D position
+	get_node("Perimeter").position = interaction_polygon_position
+
+
 #endregion
 
 #region SetGet #####################################################################################
@@ -138,15 +138,4 @@ func _set_enabled(value: bool) -> void:
 #endregion
 
 #region Private ####################################################################################
-func _save_current_scene():
-	var packed_scene = PackedScene.new()
-
-	if packed_scene.pack(self) != OK:
-		print("Failed to pack current scene")
-		return
-
-	if ResourceSaver.save(packed_scene, self.scene_file_path) != OK:
-		print("Failed to save scene")
-
-
 #endregion
