@@ -92,10 +92,7 @@ func do_migration() -> bool:
 func can_do_migration() -> bool:
 	# If the user migration version is equal to, or higher than [_version], ignore the migration.
 	# If [_version] is less than 0, then version has not been set so do not do the migration
-	if PopochiuMigrationHelper.get_user_migration_version() >= _version or _version < 0:
-		return false
-	else:
-		return true
+	return PopochiuMigrationHelper.get_user_migration_version() < _version and _version >= 0
 
 
 ## Emits [signal step_started] sending the [param idx], which is the index of the migration step

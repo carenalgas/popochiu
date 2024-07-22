@@ -51,17 +51,14 @@ static func get_user_migration_version() -> int:
 ## Returns [code]true[/code] if this is an empty project: no rooms, no characters, no inventory
 ## items, no dialogues, and no audio files.
 static func is_empty_project() -> bool:
-	if (
+	return (
 		get_game_path() == PopochiuResources.GAME_PATH
 		and PopochiuResources.get_section_keys("rooms").is_empty()
 		and PopochiuResources.get_section_keys("characters").is_empty()
 		and PopochiuResources.get_section_keys("inventory_items").is_empty()
 		and PopochiuResources.get_section_keys("dialogs").is_empty()
 		and PopochiuResources.get_section_keys("audio").is_empty()
-	):
-		return true
-	
-	return false
+	)
 
 
 ## Returns [true] if the current Popochiu migration version is newer than the user's migration

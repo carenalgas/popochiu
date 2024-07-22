@@ -8,8 +8,8 @@ static var migrations_popup: AcceptDialog
 
 
 #region Public #####################################################################################
-## While the user migration version is less than the popochiu migration version
-## do the needed migrations in order.
+## If there are migrations available with a higher number then the last one
+## applied to the project, apply them all in order.
 static func do_migrations() -> void:
 	if PopochiuMigrationHelper.is_empty_project():
 		PopochiuMigrationHelper.update_user_migration_version(
