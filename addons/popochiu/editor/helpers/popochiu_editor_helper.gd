@@ -43,6 +43,8 @@ static var ei := EditorInterface
 static var undo_redo: EditorUndoRedoManager = null
 static var dock: Panel = null
 
+static var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
+
 
 #region Public #####################################################################################
 static func select_node(node: Node) -> void:
@@ -259,6 +261,57 @@ static func pack_scene(node: Node, path := "") -> int:
 		path = node.scene_file_path
 	
 	return ResourceSaver.save(packed_scene, path)
+
+
+## Helper function to recursively remove all folders and files inside [param folder_path].
+static func remove_recursive(folder_path: String) -> bool:
+	if DirAccess.dir_exists_absolute(folder_path):
+		# Delete subfolders and their contents recursively in folder_path
+		for subfolder_path: String in get_absolute_directory_paths_at(folder_path):
+			remove_recursive(subfolder_path)
+		
+		# Delete all files in folder_path
+		for file_path: String in get_absolute_file_paths_at(folder_path):
+			if DirAccess.remove_absolute(file_path) != OK:
+				return false
+		
+		# Once all files are deleted in folder_path, remove folder_path
+		if DirAccess.remove_absolute(folder_path) != OK:
+			return false
+	return true
+
+
+## Helper function to get the absolute directory paths for all folders under [param folder_path].
+static func get_absolute_directory_paths_at(folder_path: String) -> Array:
+	var dir_array : PackedStringArray = []
+	
+	if DirAccess.dir_exists_absolute(folder_path):
+		for folder in DirAccess.get_directories_at(folder_path):
+			dir_array.append(folder_path.path_join(folder))
+	
+	return Array(dir_array)
+
+
+## Helper function to get the absolute file paths for all files under [param folder_path].
+static func get_absolute_file_paths_at(folder_path: String) -> PackedStringArray:
+	var file_array : PackedStringArray = []
+	
+	if DirAccess.dir_exists_absolute(folder_path):
+		for file in DirAccess.get_files_at(folder_path): 
+			file_array.append(folder_path.path_join(file))
+	
+	return file_array
+
+
+## Returns an array of [PopochiuRoom] (instances) for all the rooms in the project.
+static func get_rooms() -> Array[PopochiuRoom]:
+	var rooms: Array[PopochiuRoom] = []
+	rooms.assign(PopochiuResources.get_section_keys("rooms").map(
+		func (room_name: String) -> PopochiuRoom:
+			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
+			return (load(scene_path) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+	))
+	return rooms
 
 
 #endregion

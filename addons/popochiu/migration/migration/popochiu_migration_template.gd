@@ -25,6 +25,14 @@ func _do_migration() -> bool:
 		]
 	)
 
+
+func _is_reload_required() -> bool:
+	return false
+
+
+#endregion
+
+#region Private ####################################################################################
 #func _step1() -> Completion:
 	#return Completion.DONE
 

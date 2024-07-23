@@ -3,7 +3,7 @@ class_name PopochiuMigration
 extends Node
 ## This provides the core features needed to do a migration.
 ##
-## Migration files in [code]res://addons/popochiu/migration/migration_files/*.gd[/code] should
+## Migration files in [code]res://addons/popochiu/migration/migrations/*.gd[/code] should
 ## extend this class.
 
 enum Completion {
@@ -35,6 +35,10 @@ func _do_migration() -> bool:
 	return false
 
 
+func _is_reload_required() -> bool:
+	return false
+
+
 #endregion
 
 #region Public #####################################################################################
@@ -61,7 +65,7 @@ func is_migration_needed() -> bool:
 ## A helper function to display an error message in the [b]Output[/b] if there is an error doing 
 ## the migration, or a message if it is successful. This updates the [code]popochiu_data.cfg[/code]
 ## file to have a new migration version if successful. [param migration] is an instansiated
-## [PopochiuMigration] from [code]res://addons/popochiu/migration/migration_files/*.gd[/code].
+## [PopochiuMigration] from [code]res://addons/popochiu/migration/migrations/*.gd[/code].
 ## [param version] is an integer for the migration version being run. This is intended to be called
 ## [DoMigration].
 static func run_migration(migration: PopochiuMigration, version: int) -> bool:
@@ -113,6 +117,11 @@ func step_finished(idx: int, type: Completion) -> void:
 			ignored.append(idx)
 	
 	step_completed.emit(self)
+
+
+## Returns [code]true[/code] if this migration needs an Engine restart once applied.
+func is_reload_required() -> bool:
+	return _is_reload_required()
 
 
 #endregion

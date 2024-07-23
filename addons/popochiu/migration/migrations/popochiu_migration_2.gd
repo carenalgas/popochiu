@@ -39,9 +39,6 @@ var _gui_templates_helper := preload(
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
 ## should be done before calling this.
 func _do_migration() -> bool:
-	#await get_tree().create_timer(1.0).timeout
-	#return true
-	
 	return await PopochiuMigrationHelper.execute_migration_steps(
 		self,
 		[
@@ -56,13 +53,16 @@ func _do_migration() -> bool:
 	)
 
 
+#endregion
+
+#region Private ####################################################################################
 func _add_scaling_polygon_to_characters() -> Completion:
 	# Get the characters' .tscn files
 	var file_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.CHARACTERS_PATH,
 		["tscn"]
 	)
-	var any_character_updated := PopochiuUtils.any(file_paths, _add_scaling_polygon_to)
+	var any_character_updated := PopochiuUtils.any_exhaustive(file_paths, _add_scaling_polygon_to)
 	return Completion.DONE if any_character_updated else Completion.IGNORED
 
 
@@ -93,8 +93,8 @@ func _add_scaling_polygon_to(scene_path: String) -> bool:
 
 
 func _create_markers() -> Completion:
-	var any_room_updated := PopochiuUtils.any(
-		PopochiuMigrationHelper.get_rooms(), _create_room_marker
+	var any_room_updated := PopochiuUtils.any_exhaustive(
+		PopochiuEditorHelper.get_rooms(), _create_room_marker
 	)
 	return Completion.DONE if any_room_updated else Completion.IGNORED
 
@@ -299,7 +299,7 @@ func _remove_helper_nodes() -> Completion:
 			return not "room_" in file_path
 	)
 	var popochiu_clickables := characters_paths + props_and_hotspots_paths
-	var any_updated := PopochiuUtils.any(popochiu_clickables, _remove_helper_nodes_in)
+	var any_updated := PopochiuUtils.any_exhaustive(popochiu_clickables, _remove_helper_nodes_in)
 	
 	return Completion.DONE if any_updated else Completion.IGNORED
 

@@ -3,17 +3,17 @@ class_name PopochiuMigrationHelper
 extends Node
 ## Helper class to assist migrating Popochiu Projects to newer versions
 
+const MIGRATIONS_PATH = "res://addons/popochiu/migration/migrations/"
+const MIGRATION_SECTION = "last_migration"
+const MIGRATION_KEY = "version"
 const POPOCHIU_PATH = "res://popochiu/"
 
-static var is_reload_required := false
 static var old_settings_file := PopochiuResources.GAME_PATH.path_join("popochiu_settings.tres")
-
-static var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
 
 
 #region Public #####################################################################################
 static func get_migrations_count() -> int:
-	return DirAccess.get_files_at("res://addons/popochiu/migration/migration_files/").size()
+	return DirAccess.get_files_at(MIGRATIONS_PATH).size()
 
 
 ## Returns the game folder path. If this returns [member POPOCHIU_PATH], then the project is from
@@ -40,9 +40,9 @@ static func get_user_migration_version() -> int:
 		PopochiuUtils.print_error("Can't load [code]popochiu_data.cfg[/code] file.")
 		return -1
 	
-	if PopochiuResources.has_data_value("migration", "version"):
+	if PopochiuResources.has_data_value(MIGRATION_SECTION, MIGRATION_KEY):
 		# Return the migration version in the popochiu_data.cfg file
-		return PopochiuResources.get_data_value("migration", "version", 1)
+		return PopochiuResources.get_data_value(MIGRATION_SECTION, MIGRATION_KEY, 1)
 	else:
 		# Run Migration 1 and so on
 		return 0
@@ -69,7 +69,7 @@ static func is_migration_needed() -> bool:
 
 ## Updates [code]res://game/popochiu_data.cfg[/code] migration version to [param version].
 static func update_user_migration_version(new_version: int) -> void:
-	if PopochiuResources.set_data_value("migration", "version", new_version) != OK:
+	if PopochiuResources.set_data_value(MIGRATION_SECTION, MIGRATION_KEY, new_version) != OK:
 		PopochiuUtils.print_error(
 			"Couldn't update the Migration version from [b]%d[/b] to [b]%d[/b] in Data file." % [
 				get_migrations_count(), new_version
@@ -84,7 +84,7 @@ static func execute_migration_steps(migration: PopochiuMigration, steps: Array) 
 		PopochiuUtils.print_error(
 			"No steps to execute for Migration %d" % migration.get_version()
 		)
-		await PopochiuEditorHelper.wait_process_frame()
+		await PopochiuEditorHelper.frame_processed()
 		return false
 	
 	var idx := 0
@@ -101,46 +101,6 @@ static func execute_migration_steps(migration: PopochiuMigration, steps: Array) 
 		idx += 1
 	
 	return true
-
-
-## Helper function to delete a folders and files inside [param folder_path].
-static func delete_folder_and_contents(folder_path: String) -> bool:
-	if DirAccess.dir_exists_absolute(folder_path):
-		# Delete subfolders and their contents recursively in folder_path
-		for subfolder_path: String in get_absolute_directory_paths_at(folder_path):
-			delete_folder_and_contents(subfolder_path)
-		
-		# Delete all files in folder_path
-		for file_path: String in get_absolute_file_paths_at(folder_path):
-			if DirAccess.remove_absolute(file_path) != OK:
-				return false
-		
-		# Once all files are deleted in folder_path, remove folder_path
-		if DirAccess.remove_absolute(folder_path) != OK:
-			return false
-	return true
-
-
-## Helper function to get the absolute directory paths for all folders under [param folder_path].
-static func get_absolute_directory_paths_at(folder_path: String) -> Array:
-	var dir_array : PackedStringArray = []
-	
-	if DirAccess.dir_exists_absolute(folder_path):
-		for folder in DirAccess.get_directories_at(folder_path):
-			dir_array.append(folder_path.path_join(folder))
-	
-	return Array(dir_array)
-
-
-## Helper function to get the absolute file paths for all files under [param folder_path].
-static func get_absolute_file_paths_at(folder_path: String) -> PackedStringArray:
-	var file_array : PackedStringArray = []
-	
-	if DirAccess.dir_exists_absolute(folder_path):
-		for file in DirAccess.get_files_at(folder_path): 
-			file_array.append(folder_path.path_join(file))
-	
-	return file_array
 
 
 ## Helper function to recursively scan the directory in [param path] and return an [Array] of
@@ -180,7 +140,7 @@ static func get_absolute_file_paths_for_file_extensions(
 ## Looks in the text of each file in [param file_paths] for coincidencies of [param from], and
 ## replace them by [param to]. If any replacement was done, returns [code]true[/code].
 static func replace_text_in_files(from: String, to: String, file_paths: Array) -> bool:
-	return PopochiuUtils.any(
+	return PopochiuUtils.any_exhaustive(
 		file_paths,
 		func (file_path: String) -> bool:
 			if not FileAccess.file_exists(file_path):
@@ -237,17 +197,6 @@ static func replace_in_scripts(
 		replaced_matches += 1 if replace_text_in_files(dic.from, dic.to, scripts_paths) else 0
 	
 	return replaced_matches > 0
-
-
-## TODO: Document this function.
-static func get_rooms() -> Array[PopochiuRoom]:
-	var rooms: Array[PopochiuRoom] = []
-	rooms.assign(PopochiuResources.get_section_keys("rooms").map(
-		func (room_name: String) -> PopochiuRoom:
-			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
-			return (load(scene_path) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
-	))
-	return rooms
 
 
 #endregion

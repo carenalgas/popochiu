@@ -31,7 +31,6 @@ var _snake_renamed := []
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
 ## should be done before calling this.
 func _do_migration() -> bool:
-	PopochiuMigrationHelper.is_reload_required = true
 	return await PopochiuMigrationHelper.execute_migration_steps(
 		self,
 		[
@@ -47,6 +46,10 @@ func _do_migration() -> bool:
 			_replace_deprecated_method_calls,
 		]
 	)
+
+
+func _is_reload_required() -> bool:
+	return true
 
 
 #endregion
@@ -69,9 +72,9 @@ func _delete_popochiu_folder_autoloads() -> Completion:
 	var autoloads_path := PopochiuMigrationHelper.POPOCHIU_PATH.path_join("Autoloads")
 	
 	if DirAccess.dir_exists_absolute(autoloads_path):
-		all_done = PopochiuMigrationHelper.delete_folder_and_contents(autoloads_path)
+		all_done = PopochiuEditorHelper.remove_recursive(autoloads_path)
 	elif DirAccess.dir_exists_absolute(autoloads_path.to_lower()):
-		all_done = PopochiuMigrationHelper.delete_folder_and_contents(autoloads_path.to_lower())
+		all_done = PopochiuEditorHelper.remove_recursive(autoloads_path.to_lower())
 	
 	return Completion.DONE if all_done else Completion.FAILED
 
@@ -116,8 +119,8 @@ func _move_game_data() -> Completion:
 
 ## Rename PopochiuResources.GAME_PATH files and folders to snake case
 func _rename_files_and_folders_to_snake_case() -> Completion:
-	var any_renamed := PopochiuUtils.any(
-		PopochiuMigrationHelper.get_absolute_directory_paths_at(PopochiuResources.GAME_PATH),
+	var any_renamed := PopochiuUtils.any_exhaustive(
+		PopochiuEditorHelper.get_absolute_directory_paths_at(PopochiuResources.GAME_PATH),
 		func (folder: String) -> bool:
 			var any_file_renamed := _rename_files_to_snake_case(folder)
 			var any_folder_renamed := _rename_folders_to_snake_case(folder)
@@ -139,7 +142,7 @@ func _rename_files_and_folders_to_snake_case() -> Completion:
 
 ## Rename [param folder_path] files to snake_case
 func _rename_files_to_snake_case(folder_path: String) -> bool:
-	return PopochiuUtils.any(
+	return PopochiuUtils.any_exhaustive(
 		Array(DirAccess.get_files_at(folder_path)),
 		func (file: String) -> bool:
 			var src := folder_path.path_join(file)
@@ -159,8 +162,8 @@ func _rename_files_to_snake_case(folder_path: String) -> bool:
 
 ## Rename [param path] folders and the content in the folders recursively to snake_case
 func _rename_folders_to_snake_case(path: String) -> bool:
-	return PopochiuUtils.any(
-		PopochiuMigrationHelper.get_absolute_directory_paths_at(path),
+	return PopochiuUtils.any_exhaustive(
+		PopochiuEditorHelper.get_absolute_directory_paths_at(path),
 		func (sub_folder: String) -> bool:
 			# recursively rename files/folders to snake_case
 			var any_subfolder_renamed = _rename_folders_to_snake_case(sub_folder)
@@ -194,7 +197,7 @@ func _select_gui_template() -> Completion:
 		)
 		return Completion.DONE
 	else:
-		await PopochiuEditorHelper.wait_process_frame()
+		await PopochiuEditorHelper.frame_processed()
 		return Completion.IGNORED
 
 
@@ -338,7 +341,7 @@ func _update_characters() -> Completion:
 		PopochiuResources.CHARACTERS_PATH,
 		["tscn"]
 	)
-	var any_character_updated := PopochiuUtils.any(file_paths, _update_character)
+	var any_character_updated := PopochiuUtils.any_exhaustive(file_paths, _update_character)
 	return Completion.DONE if any_character_updated else Completion.IGNORED
 
 
@@ -415,7 +418,9 @@ func _map_voices(emotion_dic: Dictionary, voices: Array) -> Dictionary:
 ## Update external prop scenes and assign missing scripts for each prop, hotspot, region, and
 ## walkable area that didn't exist prior [i]beta 1[/i].
 func _update_objects_in_rooms() -> Completion:
-	var any_room_updated := PopochiuUtils.any(PopochiuMigrationHelper.get_rooms(), _update_room)
+	var any_room_updated := PopochiuUtils.any_exhaustive(
+		PopochiuEditorHelper.get_rooms(), _update_room
+	)
 	return Completion.DONE if any_room_updated else Completion.IGNORED
 
 
@@ -424,7 +429,7 @@ func _update_objects_in_rooms() -> Completion:
 func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	var room_objects_to_add := []
 	var room_objects_to_check := []
-	PopochiuUtils.any([
+	PopochiuUtils.any_exhaustive([
 		PopochiuPropFactory.new(),
 		PopochiuHotspotFactory.new(),
 		PopochiuRegionFactory.new(),

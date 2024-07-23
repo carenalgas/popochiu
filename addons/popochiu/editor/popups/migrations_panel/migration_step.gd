@@ -22,7 +22,7 @@ func start() -> void:
 	progress.visible = true
 	while progress.visible:
 		progress.texture = get_theme_icon("Progress%d" % idx, "EditorIcons")
-		await PopochiuEditorHelper.wait(0.1)
+		await PopochiuEditorHelper.secs_passed(0.1)
 		
 		idx = wrapi(idx + 1, 1, 9)
 

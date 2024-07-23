@@ -1,5 +1,5 @@
 @tool
-class_name DoMigration
+class_name MigrationsManager
 extends Node
 
 static var migrations_to_execute := []
@@ -15,11 +15,11 @@ static func do_migrations() -> void:
 		PopochiuMigrationHelper.update_user_migration_version(
 			PopochiuMigrationHelper.get_migrations_count()
 		)
-		await PopochiuEditorHelper.wait_process_frame()
+		await PopochiuEditorHelper.frame_processed()
 		return
 	
 	if not PopochiuMigrationHelper.is_migration_needed():
-		await PopochiuEditorHelper.wait_process_frame()
+		await PopochiuEditorHelper.frame_processed()
 		return
 	
 	migrations_panel = PopochiuEditorHelper.MIGRATIONS_PANEL_SCENE.instantiate()
@@ -28,9 +28,9 @@ static func do_migrations() -> void:
 	
 	# Get the list of migrations to apply
 	for idx: int in PopochiuMigrationHelper.get_migrations_count():
-		# Migration classes are located at "res://addons/popochiu/migration/migration_files/*.gd"
+		# Migration classes are located at "res://addons/popochiu/migration/migrations/*.gd"
 		var migration: PopochiuMigration = load(
-			"res://addons/popochiu/migration/migration_files/popochiu_migration_%d.gd" % (idx + 1)
+			PopochiuMigrationHelper.MIGRATIONS_PATH.path_join("popochiu_migration_%d.gd" % (idx + 1))
 		).new()
 		
 		if not migration.is_migration_needed():
@@ -69,6 +69,7 @@ static func _run_migrations() -> void:
 	migrations_popup.popup()
 	
 	PopochiuUtils.print_normal("Processing Popochiu Migrations")
+	var should_reload := false
 	for migration: PopochiuMigration in migrations_to_execute:
 		var user_migration_version := PopochiuMigrationHelper.get_user_migration_version()
 		# adding 1 to user migration version to match with the migration that needs to be done
@@ -78,15 +79,16 @@ static func _run_migrations() -> void:
 				"Something went wrong while executing Migration %d" % migration_version
 			)
 			break
+		should_reload = should_reload or migration.is_reload_required()
 		await migrations_popup.get_tree().create_timer(1.0).timeout
 	
-	if PopochiuMigrationHelper.is_reload_required:
+	if should_reload:
 		migrations_panel.reload_label.show()
 	
 	migrations_popup.get_ok_button().disabled = false
 	migrations_popup.confirmed.connect(
 		func () -> void:
-			if PopochiuMigrationHelper.is_reload_required:
+			if should_reload:
 				EditorInterface.restart_editor(false)
 			else:
 				PopochiuEditorHelper.signal_bus.migrations_done.emit()
