@@ -540,6 +540,9 @@ func _create_new_room_objects(
 	return true
 
 
+## Recursively search for nodes of a specific type in the [param parent] and its children. The nodes
+## found are added to the [param objects] array. The [param type_method] is used to determine if a
+## node is the desired type.
 func _get_room_objects(parent: Node, objects: Array, type_method: Callable) -> Array:
 	for child: Node in parent.get_children():
 		if type_method.call(child):

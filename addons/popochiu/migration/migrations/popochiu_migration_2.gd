@@ -56,6 +56,9 @@ func _do_migration() -> bool:
 #endregion
 
 #region Private ####################################################################################
+## Add a [CollisionPolygon2D] node named "ScalingPolygon" to each [PopochiuCharacter] that doesn't
+## have it. Returns [code]Completion.DONE[/code] if any character is updated, 
+## [code]Completion.IGNORED[/code] otherwise.
 func _add_scaling_polygon_to_characters() -> Completion:
 	# Get the characters' .tscn files
 	var file_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(

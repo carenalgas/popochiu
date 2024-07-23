@@ -184,7 +184,10 @@ static func is_text_in_file(text: String, file_path: String) -> bool:
 	return text in file_text
 
 
-## TODO: Document this function.
+## Replaces all text matches in all scripts of the game with the [param replacements].
+## [param replacements] is an [Array] of [Dictionary] with the keys [code]from[/code] and
+## [code]to[/code] to replace in the scripts. The [param folders_to_ignore] is an [Array] of
+## folder names that should be ignored when searching for scripts.
 static func replace_in_scripts(
 	replacements: Array[Dictionary], folders_to_ignore: Array[String] = []
 ) -> bool:
