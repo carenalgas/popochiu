@@ -61,7 +61,7 @@ func _ignore_popochiu_folder_step() -> bool:
 	return PopochiuMigrationHelper.get_game_path() == PopochiuResources.GAME_PATH
 
 
-## Delete the POPOCHIU_PATH autoloads directory if it exists
+## Delete the [constant PopochiuMigrationHelper.POPOCHIU_PATH] autoloads directory if it exists.
 func _delete_popochiu_folder_autoloads() -> Completion:
 	if _ignore_popochiu_folder_step():
 		return Completion.IGNORED
@@ -79,7 +79,8 @@ func _delete_popochiu_folder_autoloads() -> Completion:
 	return Completion.DONE if all_done else Completion.FAILED
 
 
-## Moves game data from PopochiuMigrationHelper.POPOCHIU_PATH to PopochiuResources.GAME_PATH
+## Moves game data from [constant PopochiuMigrationHelper.POPOCHIU_PATH] to
+## [constant PopochiuResources.GAME_PATH].
 func _move_game_data() -> Completion:
 	if _ignore_popochiu_folder_step():
 		return Completion.IGNORED
@@ -117,7 +118,7 @@ func _move_game_data() -> Completion:
 	)
 
 
-## Rename PopochiuResources.GAME_PATH files and folders to snake case
+## Rename [constant PopochiuResources.GAME_PATH] files and folders to snake case.
 func _rename_files_and_folders_to_snake_case() -> Completion:
 	var any_renamed := PopochiuUtils.any_exhaustive(
 		PopochiuEditorHelper.get_absolute_directory_paths_at(PopochiuResources.GAME_PATH),
@@ -140,7 +141,7 @@ func _rename_files_and_folders_to_snake_case() -> Completion:
 	return Completion.DONE if any_renamed else Completion.IGNORED
 
 
-## Rename [param folder_path] files to snake_case
+## Renames all the folders and files in [param folder_path] to snake_case.
 func _rename_files_to_snake_case(folder_path: String) -> bool:
 	return PopochiuUtils.any_exhaustive(
 		Array(DirAccess.get_files_at(folder_path)),
@@ -239,7 +240,8 @@ func _rebuild_popochiu_data_section(game_path: String, data_section: String) -> 
 		PopochiuResources.set_data_value(data_section, key_name, key_value)
 
 
-## Renames uses of [b]res://popochiu/[/b] to [b]res://game/[/b] in .tscn, .tres, and .gd files.
+## Renames uses of [b]res://popochiu/[/b] to [b]res://game/[/b] in [code].tscn[/code],
+## [code].tres[/code], and [code].gd[/code] files.
 func _rename_game_folder_references() -> Completion:
 	var changes_done := false
 	
@@ -644,12 +646,13 @@ func _add_lacking_nodes(obj: Node) -> void:
 	PopochiuEditorHelper.pack_scene(obj_scene)
 
 
-## Replace calls to old methods:
+## Replace calls to old methods ignoring the [code]res://game/graphic_interface/[/code] folder:
 ## - [code]R.get_point[/code] by [code]R.get_marker[/code].
 ## - [code]G.display[/code] to [code]G.show_system_text[/code].
 ## - Methods with [code]_now[/code] suffix.
 ## - [code]super.on_click() | super.on_right_click() | super.on_item_used(item)[/code] by
 ## [code]E.command_fallback()[/code]
+## - [code]super(item)[/code] to [code]E.command_fallback()[/code].
 func _replace_deprecated_method_calls() -> Completion:
 	return Completion.DONE if PopochiuMigrationHelper.replace_in_scripts([
 		{from = "R.get_point", to = "R.get_marker"},

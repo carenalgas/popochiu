@@ -95,6 +95,8 @@ func _add_scaling_polygon_to(scene_path: String) -> bool:
 	return was_scene_updated
 
 
+## Create [PopochiuMarker]s from the [Marker2D] nodes in the rooms that don't have them. Returns 
+## [code]Completion.DONE[/code] if any room is updated, [code]Completion.IGNORED[/code] otherwise.
 func _create_markers() -> Completion:
 	var any_room_updated := PopochiuUtils.any_exhaustive(
 		PopochiuEditorHelper.get_rooms(), _create_room_marker
@@ -102,6 +104,8 @@ func _create_markers() -> Completion:
 	return Completion.DONE if any_room_updated else Completion.IGNORED
 
 
+## Looks for [Marker2D] nodes in the [param popochiu_room] and creates a [PopochiuMarker] from them.
+## Returns [code]true[/code] if any marker is added, [code]false[/code] otherwise.
 func _create_room_marker(popochiu_room: PopochiuRoom) -> bool:
 	var markers := popochiu_room.get_markers()
 	if markers.is_empty():
@@ -137,6 +141,10 @@ func _create_room_marker(popochiu_room: PopochiuRoom) -> bool:
 	return true
 
 
+## Move the values from the old [code]popochiu_settings.tres[/code] file to the new 
+## [code]Project Settings > Popochiu[/code] section. Returns [constant Completion.DONE] if the values
+## are moved, [constant Completion.IGNORED] if the file doesn't exist, [constant Completion.FAILED]
+## otherwise.
 func _move_settings_to_project_settings() -> Completion:
 	var old_settings_file := PopochiuMigrationHelper.old_settings_file
 	
@@ -192,6 +200,10 @@ func _move_settings_to_project_settings() -> Completion:
 	return Completion.DONE
 
 
+## Update the [code]DialogMenu[/code] GUI component to use the new [code]DialogMenuOption[/code].
+## Returns [constant Completion.DONE] if the component is updated, [constant Completion.IGNORED] if 
+## the game's GUI is not using the [code]DialogMenu[/code] component or is already using the new 
+## version, [constant Completion.FAILED] otherwise.
 func _update_dialog_menu() -> Completion:
 	if (
 		not FileAccess.file_exists(GAME_DIALOG_MENU_PATH)
@@ -247,6 +259,10 @@ func _update_dialog_menu() -> Completion:
 	return Completion.DONE
 
 
+## Update the [code]SettingsBar[/code] GUI component in the 2-click Context-sensitive GUI template.
+## Returns [constant Completion.DONE] if the component is updated, [constant Completion.IGNORED] if
+## the game's GUI does not use the [code]SettingsBar[/code] GUI component or is already using the
+## new version, [constant Completion.FAILED] otherwise.
 func _update_simple_click_settings_bar() -> Completion:
 	if not FileAccess.file_exists(GAME_SETTINGS_BAR_PATH):
 		# The game's GUI does not use the SettingsBar GUI component
@@ -287,6 +303,7 @@ func _update_simple_click_settings_bar() -> Completion:
 	return Completion.DONE if scene_updated == OK else Completion.FAILED
 
 
+## Remove visual helper nodes in all [PopochiuProp]s, [PopochiuHotspot]s, and [PopochiuCharacter]s.
 func _remove_helper_nodes() -> Completion:
 	var characters_paths := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
 		PopochiuResources.CHARACTERS_PATH,
@@ -307,6 +324,9 @@ func _remove_helper_nodes() -> Completion:
 	return Completion.DONE if any_updated else Completion.IGNORED
 
 
+## Remove the [code]BaselineHelper[/code] and [code]WalkToHelper[/code] nodes in [param scene_path].
+## Also remove the [code]DialogPos[/code] node if it is a [PopochiuCharacter]. Returns
+## [constant Completion.DONE] if any node is removed, [constant Completion.IGNORED] otherwise.
 func _remove_helper_nodes_in(scene_path: String) -> bool:
 	# Load the scene ignoring cache so changes made in previous steps are taken into account
 	var popochiu_clickable: PopochiuClickable = (
@@ -337,6 +357,8 @@ func _remove_helper_nodes_in(scene_path: String) -> bool:
 	return was_scene_updated
 
 
+## Remove the node in [param parent] with the path [param node_path]. Returns [code]true[/code] if
+## the node is removed, [code]false[/code] otherwise.
 func _remove_node(parent: Node, node_path: NodePath) -> bool:
 	if parent.has_node(node_path):
 		var child: Node = parent.get_node(node_path)
@@ -348,6 +370,22 @@ func _remove_node(parent: Node, node_path: NodePath) -> bool:
 
 ## Replace calls to deprecated properties and methods:
 ## - [code]E.current_room[/code] by [code]R.current[/code].
+## - [code]E.goto_room()[/code] by [code]R.goto_room()[/code].
+## - [code]E.queue_camera_offset()[/code] by [code]E.camera.queue_change_offset()[/code].
+## - [code]E.camera_offset()[/code] by [code]E.camera.change_offset()[/code].
+## - [code]E.queue_camera_shake()[/code] by [code]E.camera.queue_shake()[/code].
+## - [code]E.camera_shake()[/code] by [code]E.camera.shake()[/code].
+## - [code]E.queue_camera_shake_bg()[/code] by [code]E.camera.queue_shake_bg()[/code].
+## - [code]E.camera_shake_bg()[/code] by [code]E.camera.shake_bg()[/code].
+## - [code]E.queue_camera_zoom()[/code] by [code]E.camera.queue_change_zoom()[/code].
+## - [code]E.camera_zoom()[/code] by [code]E.camera.change_zoom()[/code].
+## - [code]E.stop_camera_shake()[/code] by [code]E.camera.stop_shake()[/code].
+## - [code]return super.get_runtime_room()[/code] by [code]return get_runtime_room()[/code].
+## - [code]return super.get_runtime_character()[/code] by [code]return get_runtime_character()[/code].
+## - [code]return super.get_item_instance()[/code] by [code]return get_item_instance()[/code].
+## - [code]return E.get_dialog()[/code] by [code]return get_instance()[/code].
+## Returns [constant Completion.DONE] if any replacement is done, [constant Completion.IGNORED]
+## otherwise.
 func _replace_deprecated() -> Completion:
 	return Completion.DONE if PopochiuMigrationHelper.replace_in_scripts([
 		{from = "E.current_room", to = "R.current"},
