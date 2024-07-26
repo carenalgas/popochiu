@@ -89,11 +89,14 @@ static func execute_migration_steps(migration: PopochiuMigration, steps: Array) 
 	
 	var idx := 0
 	for step: Callable in steps:
+		# Update the migration step interface to show a loader
 		migration.start_step(idx)
+		# Run the actual step
 		var completion_type: PopochiuMigration.Completion = await step.call()
 		if completion_type in [
 			PopochiuMigration.Completion.DONE, PopochiuMigration.Completion.IGNORED
 		]:
+			# Update the interface, no more loader
 			await migration.step_finished(idx, completion_type)
 		else:
 			return false
