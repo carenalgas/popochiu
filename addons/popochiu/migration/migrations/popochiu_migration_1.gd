@@ -572,6 +572,24 @@ func _create_new_room_obj(
 	source.get_parent().add_child(new_obj)
 	source.get_parent().move_child(new_obj, source.get_index())
 	
+	# Check if the object has a script attached (different from the default one)
+	if not "addons" in source.get_script().resource_path:
+		# Change the default script by the one attached to the original object
+		new_obj.set_script(load(source.get_script().resource_path))
+		
+		# Copy its properties to the new instance
+		var properties_to_ignore := ["script_name", "scene"]
+		properties_to_ignore += PopochiuResources["%s_IGNORE" % obj_factory.get_group().to_upper()]
+		for property in source.get_script().get_script_property_list():
+			if property.name in properties_to_ignore: continue
+			if not property.type in PopochiuResources.VALID_TYPES: continue
+			
+			# Check if the property is a script variable (8192) or a export variable (8199)
+			if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or property.usage == (
+				PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
+			):
+				new_obj[property.name] = source[property.name]
+	
 	new_obj.position = source.position
 	new_obj.scale = source.scale
 	new_obj.z_index = source.z_index
