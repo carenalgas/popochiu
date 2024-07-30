@@ -441,6 +441,15 @@ static func get_section(section: String) -> Array:
 static func store_properties(
 	target: Dictionary, source: Object, ignore_too := []
 ) -> void:
+	copy_popochiu_object_properties(target, source, ignore_too)
+	
+	# ---- Call custom function to store extra data ------------------------------------------------
+	if source.has_method("on_save"):
+		target.custom_data = source.on_save()
+		if target.custom_data.is_empty(): target.erase("custom_data")
+
+
+static func copy_popochiu_object_properties(target, source: Object, ignore_too := []) -> void:
 	var properties_to_ignore := ["script_name", "scene"]
 	
 	if not ignore_too.is_empty():
@@ -458,11 +467,6 @@ static func store_properties(
 			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
 		):
 			target[prop.name] = source[prop.name]
-	
-	# ---- Call custom function to store extra data ------------------------------------------------
-	if source.has_method("on_save"):
-		target.custom_data = source.on_save()
-		if target.custom_data.is_empty(): target.erase("custom_data")
 
 
 static func has_property(source: Object, property: String) -> bool:

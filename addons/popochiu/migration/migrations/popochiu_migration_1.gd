@@ -469,7 +469,9 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	var room_object_updated := false
 	for obj: Node2D in room_objects_to_check:
 		# Check if the node's scene has all the expected nodes based on its base scene
-		room_object_updated = _add_lacking_nodes(obj)
+		var added_nodes := _add_lacking_nodes(obj)
+		if added_nodes and not room_object_updated:
+			room_object_updated = added_nodes
 	
 	if room_object_updated and PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
 		PopochiuUtils.print_error(
@@ -588,6 +590,21 @@ func _create_new_room_obj(
 	source.get_parent().add_child(new_obj)
 	source.get_parent().move_child(new_obj, source.get_index())
 	
+	# Check if the original object has a script attached (different from the default one)
+	if (
+		not "addons" in source.get_script().resource_path
+		and source.get_script().resource_path != new_obj.get_script().resource_path
+	):
+		# Change the default script by the one attached to the original object
+		new_obj.set_script(load(source.get_script().resource_path))
+		
+		# Copy its extra properties (those declared as vars in the script) to the new instance
+		PopochiuResources.copy_popochiu_object_properties(
+			new_obj, source, PopochiuResources[
+				"%s_IGNORE" % obj_factory.get_group().to_snake_case().to_upper()
+			]
+		)
+	
 	new_obj.position = source.position
 	new_obj.scale = source.scale
 	new_obj.z_index = source.z_index
@@ -615,37 +632,17 @@ func _create_new_room_obj(
 		new_obj.interaction_polygon = source.interaction_polygon
 		new_obj.interaction_polygon_position = source.interaction_polygon_position
 	
-	# Check if the original object has a script attached (different from the default one)
-	if not "addons" in source.get_script().resource_path:
-		# Change the default script by the one attached to the original object
-		new_obj.set_script(load(source.get_script().resource_path))
-		
-		# Copy its extra properties (those declared as vars in the script) to the new instance
-		var properties_to_ignore := ["script_name", "scene"]
-		properties_to_ignore += PopochiuResources[
-			"%s_IGNORE" % obj_factory.get_group().to_snake_case().to_upper()
-		]
-		for property in source.get_script().get_script_property_list():
-			if property.name in properties_to_ignore: continue
-			if not property.type in PopochiuResources.VALID_TYPES: continue
-			
-			# Check if the property is a script variable (8192) or a export variable (8199)
-			if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or property.usage == (
-				PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
-			):
-				new_obj[property.name] = source[property.name]
-	
 	# Remove the old [source] node from the room
 	source.free()
 	
 	return new_obj
 
 
-## Checks the [code].tscn[/code] file of [param obj] for lacking nodes based on its type. If there
-## are any, then it will add them so the structure of the scene matches the one of the object it
-## inherits from.
-func _add_lacking_nodes(obj: Node) -> bool:
-	var obj_scene: Node2D = ResourceLoader.load(obj.scene_file_path).instantiate()
+## Checks the [code].tscn[/code] file of [param source] for lacking nodes based on its type. If
+## there are any, then it will add them so the structure of the scene matches the one of the object
+## it inherits from.
+func _add_lacking_nodes(source: Node) -> bool:
+	var obj_scene: Node2D = ResourceLoader.load(source.scene_file_path).instantiate()
 	var was_updated := false
 	
 	if (
@@ -670,8 +667,8 @@ func _add_lacking_nodes(obj: Node) -> bool:
 		perimeter.navigation_polygon = polygon
 		obj_scene.add_child(perimeter)
 		perimeter.owner = obj_scene
-		obj_scene.interaction_polygon = obj.interaction_polygon
-		obj_scene.interaction_polygon_position = obj.interaction_polygon_position
+		obj_scene.interaction_polygon = source.interaction_polygon
+		obj_scene.clear_and_bake(perimeter.navigation_polygon)
 		was_updated = true
 	
 	if PopochiuEditorHelper.is_prop(obj_scene) and not obj_scene.has_node("AnimationPlayer"):

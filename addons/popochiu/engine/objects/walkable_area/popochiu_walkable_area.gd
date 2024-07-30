@@ -12,11 +12,11 @@ extends Node2D
 @export var description := ''
 ## Whether the area is or not enabled.
 @export var enabled := true : set = _set_enabled
-## Stores the outlines to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during runtime.
-## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
+## Stores the outlines to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
+## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := []
-## Stores the position to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during runtime.
-## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
+## Stores the position to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
+## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
 # TODO: If walkable is false, characters should not be able to walk through this.
 #@export var walkable := true
