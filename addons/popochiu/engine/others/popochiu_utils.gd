@@ -80,4 +80,18 @@ static func get_click_or_touch_index(event: InputEvent) -> int:
 	return index
 
 
+## For each element in [param array] calls [param callback] passing the element as a parameter. If
+## any of the calls returns [code]true[/code], then this function returns [code]true[/code],
+## otherwise [code]false[/code] is returned.[br][br]
+## This is an alternate version for [method Array.any] that doesn't stops execution even when one
+## of the results is [code]true[/code].
+static func any_exhaustive(array: Array, callback: Callable) -> bool:
+	var any_updated := false
+	for element in array:
+		var updated: bool = callback.call(element)
+		if updated:
+			any_updated = true
+	return any_updated
+
+
 #endregion

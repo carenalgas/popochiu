@@ -2,13 +2,11 @@
 extends VBoxContainer
 ## Handles the Room tab in Popochiu's dock
 
+const OBJECT_ROW_FOLDER = "res://addons/popochiu/editor/main_dock/popochiu_row/object_row/"
+const POPOCHIU_OBJECT_ROW_SCENE = preload(OBJECT_ROW_FOLDER + "popochiu_object_row.tscn")
 const PopochiuRoomObjectRow = preload(
 	"res://addons/popochiu/editor/main_dock/popochiu_row/object_row/" +
 	"room_object_row/popochiu_room_object_row.gd"
-)
-const POPOCHIU_ROOM_OBJECT_ROW = preload(
-	"res://addons/popochiu/editor/main_dock/popochiu_row/object_row/" +
-	"room_object_row/popochiu_room_object_row.tscn"
 )
 
 var opened_room: PopochiuRoom = null
@@ -212,7 +210,9 @@ func _clear_content() -> void:
 func _create_object_row(
 	type: int, node_name: String, path := "", node_path := ""
 ) -> PopochiuRoomObjectRow:
-	var new_obj: PopochiuRoomObjectRow = POPOCHIU_ROOM_OBJECT_ROW.instantiate()
+	var object_row_instance := POPOCHIU_OBJECT_ROW_SCENE.instantiate()
+	object_row_instance.set_script(PopochiuRoomObjectRow)
+	var new_obj: PopochiuRoomObjectRow = object_row_instance
 	
 	new_obj.name = node_name
 	new_obj.type = type

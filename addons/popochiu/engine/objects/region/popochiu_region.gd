@@ -30,6 +30,7 @@ extends Area2D
 ## by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
 
+
 #region Godot ######################################################################################
 func _ready() -> void:
 	add_to_group("regions")

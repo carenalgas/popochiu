@@ -86,7 +86,9 @@ func _enter_tree() -> void:
 
 func _exit_tree() -> void:
 	remove_control_from_docks(dock)
-	dock.queue_free()
+	
+	if is_instance_valid(dock):
+		dock.queue_free()
 	
 	if is_instance_valid(_export_plugin):
 		remove_export_plugin(_export_plugin)
@@ -178,6 +180,9 @@ func _remove_input_actions() -> void:
 func _on_dock_ready() -> void:
 	PopochiuEditorHelper.dock = dock
 	
+	# Check if new migrations exist and run them if they do
+	await MigrationsManager.do_migrations()
+	
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues
 	dock.grab_focus()
 	
@@ -193,6 +198,9 @@ func _on_dock_ready() -> void:
 	
 	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
 		PopochiuEditorHelper.show_setup(true)
+	
+	if not EditorInterface.is_plugin_enabled("popochiu/editor/gizmos"):
+		EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", true)
 
 
 #endregion

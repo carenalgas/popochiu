@@ -39,7 +39,9 @@ func _ready() -> void:
 	btn_state_script.pressed.connect(_open_state_script)
 	
 	# Disable some options by default
-	menu_popup.set_item_disabled(menu_popup.get_item_index(Options.ADD_TO_CORE), true)
+	var add_to_core_idx := menu_popup.get_item_index(Options.ADD_TO_CORE)
+	if add_to_core_idx >= 0:
+		menu_popup.set_item_disabled(add_to_core_idx, true)
 
 
 #endregion

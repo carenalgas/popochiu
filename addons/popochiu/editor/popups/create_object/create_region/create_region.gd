@@ -24,7 +24,11 @@ func _create() -> void:
 	
 	# Setup the region helper and use it to create the region --------------------------------------
 	_factory = PopochiuRegionFactory.new()
-	if _factory.create(_new_region_name, _room) != ResultCodes.SUCCESS:
+	var param := PopochiuRegionFactory.PopochiuRegionFactoryParam.new()
+	param.obj_name = _new_region_name
+	param.room = _room
+	
+	if _factory.create(param) != ResultCodes.SUCCESS:
 		# TODO: show a message in the popup!
 		return
 	

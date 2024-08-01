@@ -12,6 +12,12 @@ extends Node2D
 @export var description := ''
 ## Whether the area is or not enabled.
 @export var enabled := true : set = _set_enabled
+## Stores the outlines to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
+## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
+@export var interaction_polygon := []
+## Stores the position to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
+## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
+@export var interaction_polygon_position := Vector2.ZERO
 # TODO: If walkable is false, characters should not be able to walk through this.
 #@export var walkable := true
 # TODO: Make the value of the tint property to modify the modulate color of the polygon (or the
@@ -27,12 +33,6 @@ var map_rid: RID
 ## Used to assign a map in the [NavigationServer2D] to the region RID of the [b]$Perimeter[/b]
 ## child.
 var rid: RID
-## Stores the outlines to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during runtime.
-## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
-@export var interaction_polygon := []
-## Stores the position to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during runtime.
-## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
-@export var interaction_polygon_position := Vector2.ZERO
 
 
 #region Godot ######################################################################################
@@ -61,13 +61,7 @@ func _ready() -> void:
 			# Save the NavigationRegion2D position
 			interaction_polygon_position = get_node("Perimeter").position
 		else:
-			# Populate the NavigationPolygon with all the outlines and bake it back
-			navpoly.clear_outlines()
-			for outline in interaction_polygon:
-				navpoly.add_outline(outline)
-			NavigationServer2D.bake_from_source_geometry_data(navpoly, NavigationMeshSourceGeometryData2D.new());
-			# Restore the NagivationRegion2D position
-			get_node("Perimeter").position = interaction_polygon_position
+			clear_and_bake(navpoly)
 
 		# If we are in the editor, we're done
 		return
@@ -79,13 +73,7 @@ func _ready() -> void:
 	):
 		# Take the reference to the navigation polygon
 		var navpoly: NavigationPolygon = get_node("Perimeter").navigation_polygon
-		# Populate the NavigationPolygon with all the outlines and bake it back
-		navpoly.clear_outlines()
-		for outline in interaction_polygon:
-			navpoly.add_outline(outline)
-		NavigationServer2D.bake_from_source_geometry_data(navpoly, NavigationMeshSourceGeometryData2D.new());
-		# Restore the NagivationRegion2D position
-		get_node("Perimeter").position = interaction_polygon_position
+		clear_and_bake(navpoly)
 
 	# Map the necessary resources
 	map_rid = NavigationServer2D.get_maps()[0]
@@ -95,17 +83,10 @@ func _ready() -> void:
 
 func _notification(event: int) -> void:
 	if event == NOTIFICATION_EDITOR_PRE_SAVE:
-		# Take the reference to the navigation polygon
-		var navpoly: NavigationPolygon = get_node("Perimeter").navigation_polygon
-		interaction_polygon.clear()
-		# Save all the NavigationPolygon outlines in the local variable
-		for idx in range(0, navpoly.get_outline_count()):
-			interaction_polygon.append(navpoly.get_outline(idx))
-		# Save the NavigationRegion2D position
-		interaction_polygon_position = get_node("Perimeter").position
+		map_navigation_polygon(get_node("Perimeter"))
 		# Saving the scene is necessary to make the changes permanent.
 		# If you remove this the character won't be able to walk in the area.
-		_save_current_scene()
+		PopochiuEditorHelper.pack_scene(self)
 
 
 func _exit_tree():
@@ -116,17 +97,37 @@ func _exit_tree():
 
 #endregion
 
-#region private ####################################################################################
-func _save_current_scene():
-	var packed_scene = PackedScene.new()
-
-	if packed_scene.pack(self) != OK:
-		print("Failed to pack current scene")
+#region Public #####################################################################################
+## Maps the outlines in [param perimeter] to the [member interaction_polygon] property and also
+## stores its position in [member interaction_polygon_position].
+func map_navigation_polygon(perimeter: NavigationRegion2D) -> void:
+	# Take the reference to the navigation polygon
+	var navpoly: NavigationPolygon = perimeter.navigation_polygon
+	
+	if not navpoly or not is_instance_valid(navpoly):
 		return
+	
+	interaction_polygon.clear()
+	# Save all the NavigationPolygon outlines in the local variable
+	for idx in range(0, navpoly.get_outline_count()):
+		interaction_polygon.append(navpoly.get_outline(idx))
+	# Save the NavigationRegion2D position
+	interaction_polygon_position = perimeter.position
 
-	if ResourceSaver.save(packed_scene, self.scene_file_path) != OK:
-		print("Failed to save scene")
 
+## Populates [param navpoly] with all the outlines and bakes it back.
+func clear_and_bake(navpoly: NavigationPolygon) -> void:
+	navpoly.clear_outlines()
+	for outline in interaction_polygon:
+		navpoly.add_outline(outline)
+	NavigationServer2D.bake_from_source_geometry_data(
+		navpoly, NavigationMeshSourceGeometryData2D.new()
+	)
+	# Restore the NagivationRegion2D position
+	get_node("Perimeter").position = interaction_polygon_position
+
+
+#endregion
 
 #region SetGet #####################################################################################
 func _set_enabled(value: bool) -> void:
@@ -134,4 +135,7 @@ func _set_enabled(value: bool) -> void:
 	notify_property_list_changed()
 
 
+#endregion
+
+#region Private ####################################################################################
 #endregion

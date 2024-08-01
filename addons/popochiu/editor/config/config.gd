@@ -21,7 +21,7 @@ const SKIP_CUTSCENE_TIME = "popochiu/gui/skip_cutscene_time"
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
 const AUTO_CONTINUE_TEXT = "popochiu/dialogs/auto_continue_text"
 const USE_TRANSLATIONS = "popochiu/dialogs/use_translations"
-const DIALOG_STYLE = "popochiu/gui/dialog_style"
+const DIALOG_STYLE = "popochiu/dialogs/dialog_style"
 
 # ---- Inventory -----------------------------------------------------------------------------------
 const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
@@ -99,7 +99,7 @@ static func initialize_project_settings():
 		INVENTORY_ITEMS_ON_START,
 		TYPE_ARRAY,
 		PROPERTY_HINT_TYPE_STRING,
-		"%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE, "*tscn"]
+		"%d:" % [TYPE_STRING]
 	)
 	
 	# ---- Aseprite Importing ----------------------------------------------------------------------
@@ -123,6 +123,11 @@ static func initialize_project_settings():
 	# ---- DEV -------------------------------------------------------------------------------------
 	_initialize_advanced_project_setting(DEV_USE_ADDON_TEMPLATE, TYPE_BOOL)
 	
+	ProjectSettings.save()
+
+
+static func set_project_setting(key: String, value) -> void:
+	ProjectSettings.set_setting(key, value)
 	ProjectSettings.save()
 
 
@@ -162,7 +167,7 @@ static func get_inventory_limit() -> int:
 
 
 static func set_inventory_items_on_start(items: Array) -> void:
-	_set_project_setting(INVENTORY_ITEMS_ON_START, items)
+	set_project_setting(INVENTORY_ITEMS_ON_START, items)
 
 
 static func get_inventory_items_on_start() -> Array:
@@ -192,7 +197,7 @@ static func is_default_wipe_old_anims_enabled() -> bool:
 
 # ---- Pixel game ----------------------------------------------------------------------------------
 static func set_pixel_art_textures(use_pixel_art_textures: bool) -> void:
-	_set_project_setting(PIXEL_ART_TEXTURES, use_pixel_art_textures)
+	set_project_setting(PIXEL_ART_TEXTURES, use_pixel_art_textures)
 
 
 static func is_pixel_art_textures() -> bool:
@@ -242,7 +247,7 @@ static func _initialize_project_setting(
 static func _initialize_advanced_project_setting(
 	key: String, type: int, hint := PROPERTY_HINT_NONE, hint_string := ""
 ) -> void:
-	_create_setting(key, type, hint)
+	_create_setting(key, type, hint, hint_string)
 
 
 static func _create_setting(
@@ -261,11 +266,6 @@ static func _create_setting(
 static func _get_project_setting(key: String):
 	var p = ProjectSettings.get_setting(key)
 	return p if p != null else defaults[key]
-
-
-static func _set_project_setting(key: String, value) -> void:
-	ProjectSettings.set_setting(key, value)
-	ProjectSettings.save()
 
 
 #endregion

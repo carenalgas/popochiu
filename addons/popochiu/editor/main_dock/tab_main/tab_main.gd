@@ -7,12 +7,11 @@ const OBJECT_ROW_FOLDER = "res://addons/popochiu/editor/main_dock/popochiu_row/o
 const POPOCHIU_OBJECT_ROW_SCENE = preload(OBJECT_ROW_FOLDER + "popochiu_object_row.tscn")
 const POPOCHIU_ROOM_ROW_SCENE = preload(OBJECT_ROW_FOLDER + "room_row/popochiu_room_row.tscn")
 const PopochiuObjectRow := preload(OBJECT_ROW_FOLDER + "popochiu_object_row.gd")
-const PopochiuCharacterRow = preload(
-	OBJECT_ROW_FOLDER + "character_row/popochiu_character_row.gd"
-)
+const PopochiuCharacterRow = preload(OBJECT_ROW_FOLDER + "character_row/popochiu_character_row.gd")
 const PopochiuInventoryItemRow = preload(
 	OBJECT_ROW_FOLDER + "inventory_item_row/popochiu_inventory_item_row.gd"
 )
+const PopochiuDialogRow = preload(OBJECT_ROW_FOLDER + "dialog_row/popochiu_dialog_row.gd")
 
 var last_selected: PopochiuObjectRow = null
 
@@ -84,23 +83,26 @@ func check_data() -> void:
 
 #region Private ####################################################################################
 func _set_main_scene(path: String) -> void:
-	ProjectSettings.set_setting("application/run/main_scene", path)
-	
+	ProjectSettings.set_setting(PopochiuResources.MAIN_SCENE, path)
 	assert(
 		ProjectSettings.save() == OK,
 		"[Popochiu] Couldn't set %s as the Main Scene in Project Settings" % path
 	)
-	
 	_types[PopochiuResources.Types.ROOM].group.clear_favs()
 
 
 func _set_pc(script_name: String) -> void:
+	if PopochiuResources.get_data_value("setup", "pc", "") == script_name:
+		return
+	
 	assert(
 		PopochiuResources.set_data_value("setup", "pc", script_name) == OK,
 		"[Popochiu] Couldn't set %s as the Player-controlled Character (PC)" % script_name
 	)
 	
-	_types[PopochiuResources.Types.CHARACTER].group.clear_favs()
+	var characters_group: PopochiuGroup = _types[PopochiuResources.Types.CHARACTER].group
+	characters_group.clear_favs()
+	(characters_group.get_by_name(script_name) as PopochiuCharacterRow).is_pc = true
 
 
 func _add_to_list(type: int, name_to_add: String) -> PopochiuObjectRow:
@@ -181,8 +183,9 @@ func _create_object_row(type: int, name_to_add: String) -> PopochiuObjectRow:
 		PopochiuResources.Types.INVENTORY_ITEM:
 			new_obj = POPOCHIU_OBJECT_ROW_SCENE.instantiate()
 			new_obj.set_script(PopochiuInventoryItemRow)
-		_:
+		PopochiuResources.Types.DIALOG:
 			new_obj = POPOCHIU_OBJECT_ROW_SCENE.instantiate()
+			new_obj.set_script(PopochiuDialogRow)
 	
 	new_obj.name = name_to_add
 	new_obj.type = type

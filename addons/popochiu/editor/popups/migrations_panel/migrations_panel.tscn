@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=3 uid="uid://dws64ahd0a1s6"]
+
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/migrations_panel/migrations_panel.gd" id="1_brkhu"]
+
+[node name="MigrationsPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_brkhu")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="TabContainer" type="TabContainer" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ReloadLabel" type="Label" parent="PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+text = "The engine will restart after clicking OK."
+autowrap_mode = 2

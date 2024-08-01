@@ -21,6 +21,7 @@ var _path_script := ""
 var _type := -1
 var _type_label := ""
 var _type_target := ""
+var _type_method: Callable
 # The following variables are references to the elements generated for the creation of the new
 # Popochiu object, such as resources, scenes, scripts, state scripts, etc
 var _scene: Node
@@ -34,6 +35,10 @@ func get_obj_scene() -> Node:
 	return _scene
 
 
+func get_snake_name() -> String:
+	return _snake_name
+
+
 func get_obj_resource() -> Resource:
 	return _resource
 	
@@ -44,6 +49,19 @@ func get_state_resource() -> Resource:
 
 func get_obj_script() -> Resource:
 	return _script
+
+
+func get_scene_path() -> String:
+	return _path_scene
+
+
+func get_type() -> int:
+	return _type
+
+
+func get_type_method() -> Callable:
+	return _type_method
+
 
 #endregion
 
@@ -159,7 +177,6 @@ func _save_obj_scene(obj: Node) -> int:
 			[_type_label, _path_script]
 		)
 		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
-
 	# Load the scene to be get by the calling code
 	# Instancing the created .tscn file fixes #58
 	_scene = (load(_path_scene) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
