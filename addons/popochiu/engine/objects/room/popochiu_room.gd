@@ -136,6 +136,9 @@ func _unhandled_input(event: InputEvent):
 		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...))
 		E.clicked = null
 		
+		if C.player.is_moving:
+			C.player.move_ended.emit()
+		
 		C.player.walk(get_local_mouse_position())
 
 
@@ -493,11 +496,11 @@ func _update_navigation_path(
 		
 		# TODO: Use NavigationAgent2D target_location and get_next_location() to
 		#		maybe improve characters movement with obstacles avoidance?
-#		NavigationServer2D.agent_set_map(character.agent.get_rid(), _nav_path.map_rid)
-#		character.agent.target_location = end_position
-#		_path = character.agent.get_nav_path()
-#		set_physics_process(true)
-#		return
+		#NavigationServer2D.agent_set_map(character.agent.get_rid(), _nav_path.map_rid)
+		#character.agent.target_location = end_position
+		#_path = character.agent.get_nav_path()
+		#set_physics_process(true)
+		#return
 	
 	if moving_character_data.path.is_empty():
 		return
@@ -508,8 +511,8 @@ func _update_navigation_path(
 
 
 func _clear_navigation_path(character: PopochiuCharacter) -> void:
-	# INFO: fixes "function signature missmatch in Web export" error thrown when
-	# clearing an empty Array.
+	# INFO: fixes "function signature missmatch in Web export" error thrown when clearing an empty
+	# Array
 	if not _moving_characters.has(character.get_instance_id()):
 		return
 	
