@@ -16,6 +16,7 @@ signal step_started(migration: PopochiuMigration, idx: int)
 signal step_completed(migration: PopochiuMigration)
 
 var _version := -1
+var _reload_needed := false
 
 ## [Array] of completed steps
 var completed := []
@@ -36,7 +37,7 @@ func _do_migration() -> bool:
 
 
 func _is_reload_required() -> bool:
-	return false
+	return _reload_needed
 
 
 #endregion
