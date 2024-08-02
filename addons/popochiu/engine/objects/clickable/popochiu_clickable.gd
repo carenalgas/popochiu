@@ -17,7 +17,7 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 ## The text shown to players when the cursor hovers the object.
 @export var description := ""
 ## Whether the object will listen to interactions.
-@export var clickable := true
+@export var clickable := true : set = set_clickable
 ## The [code]y[/code] position of the baseline relative to the center of the object.
 @export var baseline := 0 : set = set_baseline
 ## The [Vector2] position where characters will move when aproaching the object.
@@ -284,6 +284,11 @@ func handle_command(button_idx: int) -> void:
 #endregion
 
 #region SetGet #####################################################################################
+func set_clickable(value: bool) -> void:
+	clickable = value
+	input_pickable = clickable
+
+
 func set_baseline(value: int) -> void:
 	baseline = value
 

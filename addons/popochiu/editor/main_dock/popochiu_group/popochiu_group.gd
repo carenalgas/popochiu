@@ -1,5 +1,5 @@
 @tool
-@icon("res://addons/popochiu/editor/main_dock/popochiu_group/popochiu_group.svg")
+@icon("res://addons/popochiu/editor/main_dock/popochiu_group/images/popochiu_group.svg")
 class_name PopochiuGroup
 extends PanelContainer
 
