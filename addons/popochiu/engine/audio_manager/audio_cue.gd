@@ -156,15 +156,9 @@ func set_loop(value: bool) -> void:
 		'AudioStreamOggVorbis', 'AudioStreamMP3':
 			audio.loop = value
 		'AudioStreamWAV':
-			if (audio as AudioStreamWAV).get_loop_end() == 0 && value:
-				PopochiuUtils.print_warning(
-					"[b]%s[/b]" % resource_name \
-					+ " does not have the correct metadata to loop, please reimport the file by" \
-					+ " setting its Loop Mode to Forward."
-				)
-			else:
-				(audio as AudioStreamWAV).loop_mode =\
+			(audio as AudioStreamWAV).loop_mode = (
 				AudioStreamWAV.LOOP_FORWARD if value else AudioStreamWAV.LOOP_DISABLED
+			)
 	
 	notify_property_list_changed()
 
