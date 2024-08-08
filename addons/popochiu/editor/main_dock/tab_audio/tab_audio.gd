@@ -25,6 +25,7 @@ var _audio_files_in_group := {}
 var _audio_files_to_assign := {}
 var _audio_cues_to_create := []
 var _created_audio_cues := 0
+var _wavs_to_reimport := []
 
 @onready var _asp: AudioStreamPlayer = $AudioStreamPlayer
 @onready var _btn_scan_files: Button = %BtnScanAudioFiles
@@ -95,13 +96,18 @@ func search_audio_files() -> void:
 		await _create_audio_cue(arr[0], arr[1])
 		
 		progress_dialog.progress_bar.value = _created_audio_cues
-		await get_tree().create_timer(0.1).timeout
 	
 	_put_audio_cues_in_group()
 	_audio_cues_to_create.clear()
 	
 	EditorInterface.get_resource_filesystem().sources_changed.connect(_on_sources_changed)
 	progress_dialog.close()
+	
+	# Reimport WAV files so they can be changed to LOOP without the need to manually reimport them
+	if not _wavs_to_reimport.is_empty():
+		await PopochiuEditorHelper.secs_passed(0.1)
+		
+		_reimport_wavs()
 
 
 func delete_rows(filepaths: Array) -> void:
@@ -275,13 +281,20 @@ func _read_files(dir: EditorFileSystemDirectory) -> void:
 
 
 func _create_audio_cue(type: int, path: String, audio_row: Container = null) -> void:
+	# Check if the audio file is a WAV file so its LoopMode is set properly
+	var stream: AudioStream = load(path)
+	if stream is AudioStreamWAV:
+		_wavs_to_reimport.append({
+			stream = stream,
+			type = type
+		})
+	
 	var cue_name := path.get_file().get_basename()
 	var cue_file_name := cue_name
 	cue_file_name += ".tres"
 	
 	# Create the AudioCue and save it in the file system
 	var ac: AudioCue
-	
 	match type:
 		PopochiuResources.AudioTypes.MUSIC:
 			ac = AudioCueMusic.new()
@@ -289,7 +302,6 @@ func _create_audio_cue(type: int, path: String, audio_row: Container = null) -> 
 		_:
 			ac = AudioCueSound.new()
 	
-	var stream: AudioStream = load(path)
 	ac.audio = stream
 	ac.resource_name = cue_name.to_lower()
 	
@@ -320,10 +332,10 @@ func _create_audio_cue(type: int, path: String, audio_row: Container = null) -> 
 		)
 		PopochiuResources.set_data_value("audio", target, target_data)
 	else:
-		await get_tree().process_frame
+		await PopochiuEditorHelper.frame_processed()
 		return
 	
-	await EditorInterface.get_resource_filesystem().filesystem_changed
+	await PopochiuEditorHelper.secs_passed(0.1)
 	
 	# Add the AudioCue to the A singleton ----------------------------------------------------------
 	PopochiuResources.update_autoloads(true)
@@ -349,6 +361,56 @@ func _on_row_clicked(row: HBoxContainer) -> void:
 		last_selected.deselect()
 	
 	last_selected = row
+
+
+## Reimport WAV files so they can be changed to LOOP without the need to manually reimport them.
+func _reimport_wavs() -> void:
+	var streams_to_reimport := _wavs_to_reimport.filter(
+		func (stream_dic: Dictionary):
+			return _change_wav_loop_mode(stream_dic.stream)
+	)
+	
+	EditorInterface.get_resource_filesystem().reimport_files(PackedStringArray(
+		streams_to_reimport.map(
+			func (stream_dic: Dictionary) -> String:
+				return stream_dic.stream.resource_path
+	)))
+	await PopochiuEditorHelper.filesystem_scanned()
+	
+	for stream_dic: Dictionary in streams_to_reimport:
+		var stream: AudioStreamWAV = stream_dic.stream
+		var type: PopochiuResources.AudioTypes = stream_dic.type
+		stream.loop_mode = (
+			AudioStreamWAV.LOOP_FORWARD if type == PopochiuResources.AudioTypes.MUSIC
+			else AudioStreamWAV.LOOP_DISABLED
+		)
+	
+	_wavs_to_reimport.clear()
+
+
+func _change_wav_loop_mode(audio_stream: AudioStreamWAV) -> bool:
+	var import_path := audio_stream.resource_path + ".import"
+	
+	if not FileAccess.file_exists(import_path):
+		PopochiuUtils.print_warning(
+			"[b]%s[/b]" % audio_stream.resource_name \
+			+ " does not have the correct metadata to loop, please reimport the file" \
+			+ " by setting its Loop Mode to Forward."
+		)
+		return false
+	
+	var config := ConfigFile.new()
+	var err := config.load(import_path)
+	if err != OK:
+		PopochiuUtils.print_error("Couldn't open %s to change its Loop mode." % audio_stream)
+		return false
+	
+	if config.get_value("params", "edit/loop_mode", 0) != 0:
+		return false
+	
+	config.set_value("params", "edit/loop_mode", 1 + AudioStreamWAV.LOOP_FORWARD)
+	config.save(import_path)
+	return true
 
 
 #endregion

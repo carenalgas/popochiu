@@ -124,7 +124,8 @@ func set_is_playing(value: bool) -> void:
 	is_playing = value
 	
 	if is_playing:
-		stream_player.finished.connect(stop)
+		if not stream_player.finished.is_connected(stop):
+			stream_player.finished.connect(stop)
 		stream_player.play(current_playback_position)
 		audio_tab.last_played = self
 	else:
@@ -211,24 +212,25 @@ func _remove_from_popochiu() -> void:
 func _delete_from_file_system() -> void:
 	# Delete the .tres file from the file system
 	var err: int = DirAccess.remove_absolute(path)
-	EditorInterface.get_resource_filesystem().update_file(path)
 	
 	if err != OK:
-		PopochiuUtils.print_error("Could not delete audio cue %s (err_code: %d)" % [path, err])
+		PopochiuUtils.print_error("Couldn't delete audio cue %s (err_code: %d)" % [path, err])
 		return
 	
 	# Delete the audio file linked to the cue
 	var audio_file_path := audio_cue.audio.resource_path
 	err = DirAccess.remove_absolute(audio_file_path)
-	EditorInterface.get_resource_filesystem().update_file(path)
 	
 	if err != OK:
 		PopochiuUtils.print_error(
-			"Could not delete audio file %s (err_code: %d)" % [audio_file_path, err]
+			"Couldn't delete audio file %s (err_code: %d)" % [audio_file_path, err]
 		)
 		return
 	
+	# Do this so Godot removes the .import file of the audio file
+	EditorInterface.get_resource_filesystem().update_file(audio_file_path)
 	EditorInterface.get_resource_filesystem().scan()
+	EditorInterface.get_resource_filesystem().scan_sources()
 	queue_free()
 
 
