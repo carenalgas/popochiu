@@ -38,6 +38,8 @@ func create(obj_name: String, set_as_main := false) -> int:
 	
 	new_obj.name = "Room" + _pascal_name
 	new_obj.script_name = _pascal_name
+	new_obj.width = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
+	new_obj.height = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------
 	
 	# Save the scene (.tscn)
