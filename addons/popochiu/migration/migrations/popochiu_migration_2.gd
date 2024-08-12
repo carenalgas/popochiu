@@ -643,21 +643,21 @@ func _update_room_size(popochiu_room: PopochiuRoom) -> bool:
 	var viewport_width := ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
 	var viewport_height := ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	
-	if is_inf(popochiu_room.limit_left) and is_inf(popochiu_room.limit_right):
-		popochiu_room.width = viewport_width
-	else:
-		var left := 0.0 if is_inf(popochiu_room.limit_left) else popochiu_room.limit_left
-		var right := 0.0 if is_inf(popochiu_room.limit_right) else popochiu_room.limit_right
-		popochiu_room.width = viewport_width - left
-		popochiu_room.width += right - viewport_width
+	# Calculate the width based on the camera limits
+	var left := 0.0 if is_inf(popochiu_room.limit_left) else popochiu_room.limit_left
+	var right := 0.0 if is_inf(popochiu_room.limit_right) else popochiu_room.limit_right
+	var width: int = viewport_width - int(left)
+	width += int(right) - viewport_width
 	
-	if is_inf(popochiu_room.limit_top) and is_inf(popochiu_room.limit_bottom):
-		popochiu_room.height = viewport_height
-	else:
-		var top := 0.0 if is_inf(popochiu_room.limit_top) else popochiu_room.limit_top
-		var bottom := 0.0 if is_inf(popochiu_room.limit_bottom) else popochiu_room.limit_bottom
-		popochiu_room.height = viewport_height - top
-		popochiu_room.height += bottom - viewport_height
+	popochiu_room.width = maxi(width, viewport_width)
+	
+	# Calculate the height based on the camera limits
+	var top := 0.0 if is_inf(popochiu_room.limit_top) else popochiu_room.limit_top
+	var bottom := 0.0 if is_inf(popochiu_room.limit_bottom) else popochiu_room.limit_bottom
+	var height: int = viewport_height - int(top)
+	height += int(bottom) - viewport_height
+	
+	popochiu_room.height = maxi(height, viewport_height)
 	
 	if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
 		PopochiuUtils.print_error(

@@ -251,11 +251,11 @@ func has_character(character_name: String) -> bool:
 
 ## Called by Popochiu when loading the room to assign its camera limits to the player camera.
 func setup_camera() -> void:
-	if width > 0 and width != E.width:
+	if width > 0 and width > E.width:
 		var h_diff: int = (E.width - width) / 2
 		E.camera.limit_left = h_diff
 		E.camera.limit_right = E.width - h_diff
-	if height > 0 and height != E.height:
+	if height > 0 and height > E.height:
 		var v_diff: int = (E.height - height) / 2
 		E.camera.limit_top = -v_diff
 		E.camera.limit_bottom = E.height - v_diff
