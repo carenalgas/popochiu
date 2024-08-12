@@ -14,6 +14,7 @@ const STEPS = [
 	"Remove [b]BaselineHelper[/b] and [b]WalkToHelper[/b] nodes in [b]PopochiuClickable[/b]s." \
 	+ " Also remove [b]DialogPos[/b] node in [b]PopochiuCharacter[/b]s. (pre [i]release[/i])",
 	"Update uses of deprecated properties and methods. (pre [i]release[/i])",
+	"Update how camera limits are defined",
 ]
 const RESET_CHILDREN_OWNER = "reset_children_owner"
 const GAME_INVENTORY_BAR_PATH =\
@@ -50,6 +51,7 @@ func _do_migration() -> bool:
 			_update_simple_click_settings_bar,
 			_remove_helper_nodes,
 			_replace_deprecated,
+			_update_camera_limits,
 		]
 	)
 
@@ -97,7 +99,7 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	
 	if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
 		PopochiuUtils.print_error(
-			"Migration 1: Couldn't update [b]%s[/b] after adding new nodes." %
+			"Migration 2: Couldn't update [b]%s[/b] after adding new nodes." %
 			popochiu_room.script_name
 		)
 	
@@ -110,7 +112,7 @@ func _update_room(popochiu_room: PopochiuRoom) -> bool:
 	
 	if room_object_updated and PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
 		PopochiuUtils.print_error(
-			"Migration 1: Couldn't update [b]%s[/b] after adding lacking nodes." %
+			"Migration 2: Couldn't update [b]%s[/b] after adding lacking nodes." %
 			popochiu_room.script_name
 		)
 	
@@ -622,6 +624,49 @@ func _replace_deprecated() -> Completion:
 		{from = "return super.get_item_instance(", to = "return get_item_instance("},
 		{from = "return E.get_dialog(", to = "return get_instance("},
 	]) else Completion.IGNORED
+
+
+## Update the way camera limits are defined for each room to use the new `width` and `height`
+## properties.
+func _update_camera_limits() -> Completion:
+	var any_room_updated := PopochiuUtils.any_exhaustive(
+		PopochiuEditorHelper.get_rooms(), _update_room_size
+	)
+	
+	_reload_needed = any_room_updated
+	return Completion.DONE if any_room_updated else Completion.IGNORED
+
+
+## Updates the values of [member PopochiuRoom.width] and [member PopochiuRoom.height] in
+## [param popochiu_room] based on the values of the deprecated camera limits properties.
+func _update_room_size(popochiu_room: PopochiuRoom) -> bool:
+	var viewport_width := ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
+	var viewport_height := ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
+	
+	if is_inf(popochiu_room.limit_left) and is_inf(popochiu_room.limit_right):
+		popochiu_room.width = viewport_width
+	else:
+		var left := 0.0 if is_inf(popochiu_room.limit_left) else popochiu_room.limit_left
+		var right := 0.0 if is_inf(popochiu_room.limit_right) else popochiu_room.limit_right
+		popochiu_room.width = viewport_width - left
+		popochiu_room.width += right - viewport_width
+	
+	if is_inf(popochiu_room.limit_top) and is_inf(popochiu_room.limit_bottom):
+		popochiu_room.height = viewport_height
+	else:
+		var top := 0.0 if is_inf(popochiu_room.limit_top) else popochiu_room.limit_top
+		var bottom := 0.0 if is_inf(popochiu_room.limit_bottom) else popochiu_room.limit_bottom
+		popochiu_room.height = viewport_height - top
+		popochiu_room.height += bottom - viewport_height
+	
+	if PopochiuEditorHelper.pack_scene(popochiu_room) != OK:
+		PopochiuUtils.print_error(
+			"Migration 2: Couldn't update the [code]width[/code] and [code]height[/code] of" +\
+			" [b]%s[/b] room." % popochiu_room.script_name
+		)
+		return false
+	
+	return true
 
 
 #endregion
