@@ -16,7 +16,16 @@ extends Node2D
 ## If [code]true[/code] the whole GUI will be hidden when the room is loaded. Useful for cutscenes,
 ## splash screens and when showing game menus or popups.
 @export var hide_gui := false
+@export_category("Room size")
+## Defines the room's width. If this exceeds from the project's viewport width, this value is used
+## to calculate the camera limits, ensuring it follows the player as they move within the room.
+@export var width: int = 0
+## Defines the room's height. If this exceeds from the project's viewport height, this value is used
+## to calculate the camera limits, ensuring it follows the player as they move within the room.
+@export var height: int = 0
+## @deprecated
 @export_category("Camera limits")
+## @deprecated
 ## If this different from [constant INF], the value will define the left limit of the camera
 ## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
 ## background (size) of the room is 448x180, the left limit of the camera should be -64 (this is the
@@ -24,6 +33,7 @@ extends Node2D
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_left := INF
+## @deprecated
 ## If this different from [constant INF], the value will define the right limit of the camera
 ## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
 ## background (size) of the room is 448x180, the right limit of the camera should be 384 (320 + 64
@@ -31,11 +41,13 @@ extends Node2D
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_right := INF
+## @deprecated
 ## If this different from [constant INF], the value will define the top limit of the camera
 ## relative to the native game resolution.
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_top := INF
+## @deprecated
 ## If this different from [constant INF], the value will define the bottom limit of the camera
 ## relative to the native game resolution.
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
@@ -67,6 +79,11 @@ func _enter_tree() -> void:
 		y_sort_enabled = false
 		$Props.y_sort_enabled = false
 		$Characters.y_sort_enabled = false
+		
+		if width == 0:
+			width = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
+		if height == 0:
+			height = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 		
 		return
 	else:
@@ -232,14 +249,14 @@ func has_character(character_name: String) -> bool:
 
 ## Called by Popochiu when loading the room to assign its camera limits to the player camera.
 func setup_camera() -> void:
-	if limit_left != INF:
-		E.camera.limit_left = limit_left
-	if limit_right != INF:
-		E.camera.limit_right = limit_right
-	if limit_top != INF:
-		E.camera.limit_top = limit_top
-	if limit_bottom != INF:
-		E.camera.limit_bottom = limit_bottom
+	if width > 0 and width > E.width:
+		var h_diff: int = (E.width - width) / 2
+		E.camera.limit_left = h_diff
+		E.camera.limit_right = E.width - h_diff
+	if height > 0 and height > E.height:
+		var v_diff: int = (E.height - height) / 2
+		E.camera.limit_top = -v_diff
+		E.camera.limit_bottom = E.height - v_diff
 
 
 ## Remove all children from the [b]$Characters[/b] node, storing the children of each node to later
