@@ -14,7 +14,7 @@ const STEPS = [
 	"Remove [b]BaselineHelper[/b] and [b]WalkToHelper[/b] nodes in [b]PopochiuClickable[/b]s." \
 	+ " Also remove [b]DialogPos[/b] node in [b]PopochiuCharacter[/b]s. (pre [i]release[/i])",
 	"Update uses of deprecated properties and methods. (pre [i]release[/i])",
-	"Update how camera limits are defined",
+	"Update rooms sizes",
 ]
 const RESET_CHILDREN_OWNER = "reset_children_owner"
 const GAME_INVENTORY_BAR_PATH =\
@@ -51,7 +51,7 @@ func _do_migration() -> bool:
 			_update_simple_click_settings_bar,
 			_remove_helper_nodes,
 			_replace_deprecated,
-			_update_camera_limits,
+			_update_rooms_sizes,
 		]
 	)
 
@@ -626,9 +626,9 @@ func _replace_deprecated() -> Completion:
 	]) else Completion.IGNORED
 
 
-## Update the way camera limits are defined for each room to use the new `width` and `height`
-## properties.
-func _update_camera_limits() -> Completion:
+## Update camera limit calculations for each room to utilize the new [member PopochiuRoom.width]
+## and [member PopochiuRoom.height] properties.
+func _update_rooms_sizes() -> Completion:
 	var any_room_updated := PopochiuUtils.any_exhaustive(
 		PopochiuEditorHelper.get_rooms(), _update_room_size
 	)

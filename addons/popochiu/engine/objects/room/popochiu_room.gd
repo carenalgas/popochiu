@@ -17,13 +17,11 @@ extends Node2D
 ## splash screens and when showing game menus or popups.
 @export var hide_gui := false
 @export_category("Room size")
-## Defines the width of the room. If it is different from the viewport width defined for the
-## project, this value is used to calculate the camera limits so that it follows the player as they
-## move through the room.
+## Defines the room's width. If this exceeds from the project's viewport width, this value is used
+## to calculate the camera limits, ensuring it follows the player as they move within the room.
 @export var width: int = 0
-## Defines the height of the room. If it is different from the viewport height defined for the
-## project, this value is used to calculate the camera limits so that it follows the player as they
-## move through the room.
+## Defines the room's height. If this exceeds from the project's viewport height, this value is used
+## to calculate the camera limits, ensuring it follows the player as they move within the room.
 @export var height: int = 0
 ## @deprecated
 @export_category("Camera limits")
