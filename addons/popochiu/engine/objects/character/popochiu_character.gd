@@ -56,7 +56,7 @@ signal grab_done
 @export var voices := [] : set = set_voices
 ## Whether the character should follow the player-controlled character (PC) when it moves through
 ## the room.
-@export var follow_player := false
+@export var follow_player := false : set = set_follow_player
 ## The offset between the player-controlled character (PC) and this character when it follows the
 ## former one.
 @export var follow_player_offset := Vector2(20,0)
@@ -809,6 +809,13 @@ func set_voices(value: Array) -> void:
 		elif not value[idx].variations.is_empty():
 			if value[idx].variations[-1] == null:
 				value[idx].variations[-1] = AudioCueSound.new()
+
+
+func set_follow_player(value: bool) -> void:
+	follow_player = value
+	
+	if not Engine.is_editor_hint():
+		set_process(follow_player)
 
 
 func set_avatars(value: Array) -> void:

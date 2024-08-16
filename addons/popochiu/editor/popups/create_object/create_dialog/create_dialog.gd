@@ -21,25 +21,19 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-func _create() -> void:
+func _create() -> Object:
 	if _new_dialog_name.is_empty():
 		error_feedback.show()
-		return
+		return null
 	
 	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuDialogFactory.new()
-
 	if _factory.create(_new_dialog_name) != ResultCodes.SUCCESS:
 		# TODO: show a message in the popup!
-		return
-
-
-	# Open dialog in the Inspector -----------------------------------------------------------------
-	var dialog_resource = _factory.get_obj_resource()
+		return null
 	await get_tree().create_timer(0.1).timeout
 	
-	EditorInterface.select_file(dialog_resource.resource_path)
-	EditorInterface.edit_resource(load(dialog_resource.resource_path))
+	return _factory.get_obj_resource()
 
 
 func _set_info_text() -> void:

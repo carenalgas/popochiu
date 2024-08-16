@@ -17,7 +17,7 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-func _create() -> void:
+func _create() -> Object:
 	# Setup the region helper and use it to create the region --------------------------------------
 	_factory = PopochiuWalkableAreaFactory.new()
 	var param := PopochiuWalkableAreaFactory.PopochiuWalkableAreaFactoryParam.new()
@@ -26,14 +26,10 @@ func _create() -> void:
 	
 	if _factory.create(param) != ResultCodes.SUCCESS:
 		# TODO: show a message in the popup!
-		return
-	
-	# Open the properties of the created region in the inspector -----------------------------------
-	# Done here because the creation is interactive in this case
-	var walkable_area = _factory.get_obj_scene()
+		return null
 	await get_tree().create_timer(0.1).timeout
 	
-	PopochiuEditorHelper.select_node(walkable_area)
+	return _factory.get_obj_scene()
 
 
 func _set_info_text() -> void:

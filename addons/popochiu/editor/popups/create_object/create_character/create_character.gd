@@ -28,23 +28,19 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-func _create() -> void:
+func _create() -> Object:
 	if _new_character_name.is_empty():
 		error_feedback.show()
-		return
+		return null
 	
 	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuCharacterFactory.new()
 	if _factory.create(_new_character_name, btn_is_pc.button_pressed) != ResultCodes.SUCCESS:
 		# TODO: show a message in the popup!
-		return
-	
-	# Open the scene in the editor -----------------------------------------------------------------
-	var character_scene = _factory.get_obj_scene()
+		return null
 	await get_tree().create_timer(0.1).timeout
 	
-	EditorInterface.select_file(character_scene.scene_file_path)
-	EditorInterface.open_scene_from_path(character_scene.scene_file_path)
+	return _factory.get_obj_scene()
 
 
 func _on_about_to_popup() -> void:
