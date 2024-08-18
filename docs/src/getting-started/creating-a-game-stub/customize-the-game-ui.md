@@ -78,9 +78,11 @@ There is nothing that's inherently mandatory in every single interface, and this
 All the provided interfaces thou, share some common elements:
 
 * The **Cursor** node is there to hold the animations for the actual cursor.
-  !!! warning
-  At the time of writing, this is NOT the actual cursor that will be shown by the engine. Popochiu will just rob this node of its animations but will ignore all the other properties. For example, changing the size or modulation of this node, won't affect the cursor at all.  
-  We plan to change this in the future, for convenience.
+
+  	!!! warning
+  		At the time of writing, this is NOT the actual cursor that will be shown by the engine. Popochiu will just rob this node of its animations but will ignore all the other properties. For example, changing the size or modulation of this node, won't affect the cursor at all.  
+		We plan to change this in the future, for convenience.
+
 * The **DialogText** is the element that will show what the characters say in the game. This node has its scene, that provides a configurable set of variations, like "above the head" text, to text panel, with or without a character portrait, to caption text displayed at a fixed position.
 * The **DialogMenu** is the panel on which you select the dialog lines. This can be changed to an icon bar (as in "Sam & Max Hit the Road") or any other stuff, but it's pretty common in its basic form (scrollable list of phrases).
 * The **Popups**: conveniently grouped under their own control parent, are those windows for saving and loading the game, configuring settings, and showing messages to the user.
