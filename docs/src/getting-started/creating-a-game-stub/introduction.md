@@ -12,7 +12,6 @@ You can use the resulting stub to experiment and tinker as you read the document
 
 !!! info
     If you are moving your first steps in Adventure Games development, or just evaluating if Popochiu is for you, you may want to download the [Example Game Assets [Pack](/getting-started/example-resources#example-assets), which contains all the assets used in this tutorial.
-
     If you just want to tinker with Popochiu or experiment on a throw-away project, you can just clone the [Example Game](/getting-started/example-resources#example-game), that's already complete and ready to run.
 
 ## Table of contents
