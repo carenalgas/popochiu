@@ -24,10 +24,10 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-func _create() -> void:
+func _create() -> Object:
 	if _new_prop_name.is_empty():
 		error_feedback.show()
-		return
+		return null
 	
 	# Setup the prop helper and use it to create the prop ------------------------------------------
 	_factory = PopochiuPropFactory.new()
@@ -38,16 +38,10 @@ func _create() -> void:
 	
 	if _factory.create(param) != ResultCodes.SUCCESS:
 		# TODO: show a message in the popup!
-		return
-	
-	# Open the properties of the created prop in the inspector -------------------------------------
-	# Done here because the creation is interactive in this case
-	var prop_instance = _factory.get_obj_scene()
-	EditorInterface.get_resource_filesystem().scan()
+		return null
 	await get_tree().create_timer(0.1).timeout
 	
-	EditorInterface.edit_node(prop_instance)
-	EditorInterface.select_file(prop_instance.scene_file_path)
+	return _factory.get_obj_scene()
 
 
 func _set_info_text() -> void:

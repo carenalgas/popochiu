@@ -32,8 +32,8 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-func _create() -> void:
-	pass
+func _create() -> Object:
+	return null
 
 
 func _on_about_to_popup() -> void:
@@ -63,7 +63,18 @@ func on_about_to_popup() -> void:
 
 
 func create() -> void:
-	_create()
+	var created_object := await _create()
+	if not created_object or not is_instance_valid(created_object):
+		return
+	await PopochiuEditorHelper.filesystem_scanned()
+	
+	# Open the scene in the editor and select the file in the FileSystem dock ----------------------
+	if created_object is Node:
+		EditorInterface.select_file(created_object.scene_file_path)
+		EditorInterface.open_scene_from_path(created_object.scene_file_path)
+	else:
+		EditorInterface.select_file(created_object.resource_path)
+		EditorInterface.edit_resource(load(created_object.resource_path))
 
 
 #endregion

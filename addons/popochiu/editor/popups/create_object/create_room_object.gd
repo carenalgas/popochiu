@@ -21,3 +21,17 @@ func _ready() -> void:
 
 
 #endregion
+
+#region Public #####################################################################################
+func create() -> void:
+	var created_node: Node = await _create()
+	if not created_node or not is_instance_valid(created_node):
+		return
+	await PopochiuEditorHelper.filesystem_scanned()
+	
+	# Select the node in the Scene tree and its file in the FileSystem dock ------------------------
+	EditorInterface.edit_node(created_node)
+	EditorInterface.select_file(created_node.scene_file_path)
+
+
+#endregion
