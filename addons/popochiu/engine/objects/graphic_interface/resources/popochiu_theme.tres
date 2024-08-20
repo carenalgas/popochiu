@@ -43,15 +43,8 @@ bg_color = Color(1, 1, 1, 1)
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_1vxxo"]
 thickness = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_respd"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.180392, 0.172549, 0.607843, 1)
-shadow_color = Color(0, 0, 0, 1)
-shadow_size = 4
-shadow_offset = Vector2(0, 2)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8gde"]
+bg_color = Color(0, 0, 0, 0.498039)
 
 [resource]
 default_font = ExtResource("1_sgqra")
@@ -74,4 +67,4 @@ HSlider/icons/grabber_highlight = ExtResource("2_7mnxi")
 HSlider/styles/grabber_area = SubResource("StyleBoxFlat_pr0tq")
 HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_mp7ca")
 HSlider/styles/slider = SubResource("StyleBoxLine_1vxxo")
-PanelContainer/styles/panel = SubResource("StyleBoxFlat_respd")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_d8gde")

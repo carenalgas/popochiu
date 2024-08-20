@@ -12,7 +12,7 @@ config_version=5
 
 config/name="popochiu 2.0"
 config/description="Make 2D point n' click games with a smooth workflow (like in Adventure Game Studio or PowerQuest)."
-config/tags=PackedStringArray("4.2.x", "4.3")
+config/tags=PackedStringArray()
 config/features=PackedStringArray("4.3")
 config/icon="res://icon_v2.png"
 config/windows_native_icon="res://popochiu_v2.ico"
@@ -76,6 +76,7 @@ common/enable_pause_aware_picking=true
 [popochiu]
 
 pixel/pixel_art_textures=true
+inventory/items_on_start=["Key"]
 
 [rendering]
 

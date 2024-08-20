@@ -1,6 +1,6 @@
-[gd_scene load_steps=25 format=3 uid="uid://0cqerawlxb3o"]
+[gd_scene load_steps=24 format=3 uid="uid://0cqerawlxb3o"]
 
-[ext_resource type="Texture2D" uid="uid://c4lgasdx1ow1d" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/toolbar_bg.png" id="1_hwsmr"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_457q0"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/settings_bar.gd" id="2_hk0vm"]
 [ext_resource type="Texture2D" uid="uid://bexxkrmqdiemq" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_save.png" id="3_b0ddg"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/buttons/btn_save.gd" id="4_q3d3e"]
@@ -20,16 +20,6 @@
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/buttons/btn_dialog_history.gd" id="17_i76cd"]
 [ext_resource type="Texture2D" uid="uid://cxpcw7xvcjcfy" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_quit.png" id="18_64yvb"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/buttons/btn_quit.gd" id="19_5u3hw"]
-
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_3b8bi"]
-content_margin_left = 3.0
-content_margin_right = 3.0
-texture = ExtResource("1_hwsmr")
-texture_margin_left = 1.0
-texture_margin_top = 1.0
-texture_margin_right = 11.0
-texture_margin_bottom = 5.0
-region_rect = Rect2(0, 0, 36, 24)
 
 [sub_resource type="Resource" id="Resource_ie5nq"]
 resource_name = "Speed 0"
@@ -56,7 +46,7 @@ speed = 0.0
 texture_filter = 1
 offset_right = 122.0
 offset_bottom = 24.0
-theme_override_styles/panel = SubResource("StyleBoxTexture_3b8bi")
+theme = ExtResource("1_457q0")
 script = ExtResource("2_hk0vm")
 
 [node name="Box" type="HBoxContainer" parent="."]

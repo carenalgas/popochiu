@@ -1,10 +1,12 @@
-extends RichTextLabel
+extends PanelContainer
 class_name PopochiuHoverText
+
+@onready var hover_text: RichTextLabel = $Label
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	text = ""
+	hover_text.text = ""
 	
 	G.hover_text_shown.connect(_show_text)
 
@@ -13,7 +15,7 @@ func _ready() -> void:
 
 #region Virtual ####################################################################################
 func _show_text(txt := "") -> void:
-	text = "[center]%s[/center]" % txt
+	hover_text.text = "[center]%s[/center]" % txt
 
 
 #endregion

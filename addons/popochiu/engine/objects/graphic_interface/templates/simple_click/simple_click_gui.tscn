@@ -1,6 +1,7 @@
-[gd_scene load_steps=32 format=3 uid="uid://cwvuu8g0ih3i8"]
+[gd_scene load_steps=33 format=3 uid="uid://cwvuu8g0ih3i8"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/simple_click_gui.gd" id="1_268ni"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_uf1ey"]
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="2_6qu0l"]
 [ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.tscn" id="2_v42aw"]
 [ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/images/simple_click_cursor.png" id="3_718yk"]
@@ -227,6 +228,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("1_uf1ey")
 script = ExtResource("1_268ni")
 
 [node name="Cursor" type="AnimatedSprite2D" parent="."]
@@ -241,9 +243,12 @@ layout_mode = 1
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
+anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -19.0
+offset_right = 0.0
 offset_bottom = -4.0
+grow_horizontal = 2
 grow_vertical = 0
 
 [node name="SystemText" parent="." instance=ExtResource("4_o82xq")]
