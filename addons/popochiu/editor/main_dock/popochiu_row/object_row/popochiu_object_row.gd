@@ -47,6 +47,30 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
+## Shows a confirmation popup to ask the developer if the Popochiu object should be removed only
+## from the core, or from the file system too.
+func _remove_object() -> void:
+	var location := _get_location()
+	
+	# Look into the Object"s folder for audio files and AudioCues to show the developer that those
+	# files will be removed too.
+	var audio_files := _search_audio_files(
+		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
+	)
+	
+	_delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
+	_delete_dialog.title = "Remove %s from %s" % [name, location]
+	_delete_dialog.message = DELETE_MESSAGE % [name, location]
+	_delete_dialog.ask = DELETE_ASK_MESSAGE % [
+		path.get_base_dir(),
+		"" if audio_files.is_empty()
+		else " ([b]%d[/b] audio cues will be deleted)" % audio_files.size()
+	]
+	_delete_dialog.on_confirmed = _remove_from_core
+	
+	PopochiuEditorHelper.show_delete_confirmation(_delete_dialog)
+
+
 func _get_state_template() -> Script:
 	return null
 
@@ -171,30 +195,6 @@ func _open_state_script() -> void:
 	select()
 
 
-## Shows a confirmation popup to ask the developer if the Popochiu object should be removed only
-## from the core, or from the file system too.
-func _remove_object() -> void:
-	var location := _get_location()
-	
-	# Look into the Object"s folder for audio files and AudioCues to show the developer that those
-	# files will be removed too.
-	var audio_files := _search_audio_files(
-		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
-	)
-	
-	_delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
-	_delete_dialog.title = "Remove %s from %s" % [name, location]
-	_delete_dialog.message = DELETE_MESSAGE % [name, location]
-	_delete_dialog.ask = DELETE_ASK_MESSAGE % [
-		path.get_base_dir(),
-		"" if audio_files.is_empty()
-		else " ([b]%d[/b] audio cues will be deleted)" % audio_files.size()
-	]
-	_delete_dialog.on_confirmed = _remove_from_core
-	
-	PopochiuEditorHelper.show_delete_confirmation(_delete_dialog)
-
-
 func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
 	var files := []
 	
@@ -294,7 +294,6 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 		if err != OK:
 			PopochiuUtils.print_error("Couldn't delete file %s. err_code:%d" % [err, fp])
 			return err
-		
 		EditorInterface.get_resource_filesystem().scan()
 	
 	# Delete the rows of audio files and the deleted AudioCues in the Audio tab
