@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://yw6qpn52gnp5"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_6ds34"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_inventory_popup/sierra_inventory_slot/sierra_inventory_slot.gd" id="1_ettj2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7pmgd"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.482353, 0.482353, 0.482353, 1)
+
+[node name="SierraInventorySlot" type="PanelContainer"]
+custom_minimum_size = Vector2(24, 24)
+theme = ExtResource("1_6ds34")
+theme_override_styles/panel = SubResource("StyleBoxFlat_7pmgd")
+script = ExtResource("1_ettj2")

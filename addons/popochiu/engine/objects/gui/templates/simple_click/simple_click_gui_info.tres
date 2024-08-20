@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="PopochiuGUIInfo" load_steps=3 format=3 uid="uid://b8ywbuj4wcljy"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/others/popochiu_gui_info.gd" id="1_bvg81"]
+[ext_resource type="Texture2D" uid="uid://d0kfwop28dwxj" path="res://addons/popochiu/icons/ico_simple_click.png" id="1_sp7kq"]
+
+[resource]
+script = ExtResource("1_bvg81")
+title = "Simple Click"
+description = "- [b]Left click[/b] to interact.
+- [b]Right click[/b] to examine.
+- [b]Inventory bar[/b] on top-left corner (by default).
+- [b]Settings bar[/b] on top-right corner (by default).
+
+Like in games such as Beneath A Steel Sky, Broken Sword, Samorost, Machinarium."
+icon = ExtResource("1_sp7kq")

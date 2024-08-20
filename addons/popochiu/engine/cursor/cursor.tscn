@@ -23,10 +23,6 @@ region = Rect2(96, 0, 32, 32)
 atlas = ExtResource("1")
 region = Rect2(128, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="9"]
-atlas = ExtResource("1")
-region = Rect2(160, 0, 32, 32)
-
 [sub_resource type="AtlasTexture" id="4"]
 atlas = ExtResource("1")
 region = Rect2(192, 0, 32, 32)
@@ -42,6 +38,10 @@ region = Rect2(256, 0, 32, 32)
 [sub_resource type="AtlasTexture" id="17"]
 atlas = ExtResource("1")
 region = Rect2(288, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="9"]
+atlas = ExtResource("1")
+region = Rect2(160, 0, 32, 32)
 
 [sub_resource type="AtlasTexture" id="2"]
 atlas = ExtResource("1")
@@ -110,14 +110,6 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("9")
-}],
-"loop": false,
-"name": &"idle",
-"speed": 5.0
-}, {
-"frames": [{
-"duration": 1.0,
 "texture": SubResource("4")
 }, {
 "duration": 1.0,
@@ -141,6 +133,14 @@ animations = [{
 }],
 "loop": false,
 "name": &"none",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("9")
+}],
+"loop": false,
+"name": &"normal",
 "speed": 5.0
 }, {
 "frames": [{
@@ -205,7 +205,7 @@ script = ExtResource("1_n3epl")
 [node name="MainCursor" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("1")
-animation = &"active"
+animation = &"normal"
 
 [node name="SecondaryCursor" type="Sprite2D" parent="."]
 texture_filter = 1

@@ -1,0 +1,40 @@
+[gd_scene load_steps=6 format=3 uid="uid://dcta4urojglil"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_y0k4l"]
+[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/gui/fonts/monkeyisland_1991.ttf" id="2_5iw2f"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu_option/dialog_menu_option.gd" id="2_nywcv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_un1pr"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_we03b"]
+
+[node name="DialogMenuOption" type="PanelContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 24.0
+grow_horizontal = 2
+mouse_filter = 2
+theme = ExtResource("1_y0k4l")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_un1pr")
+script = ExtResource("2_nywcv")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "A [wave]veeeeeeeeeeeeeery[/wave] long line option that should wrap so devs can have long options......"
+fit_content = true
+scroll_active = false
+
+[node name="Handler" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_5iw2f")
+theme_override_font_sizes/font_size = 12
+theme_override_styles/focus = SubResource("StyleBoxEmpty_we03b")
+flat = true
+alignment = 0
+text_overrun_behavior = 4

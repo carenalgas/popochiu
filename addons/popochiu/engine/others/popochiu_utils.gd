@@ -48,13 +48,17 @@ static func print_normal(msg: String) -> void:
 
 ## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
 static func is_click_or_touch(event: InputEvent) -> bool:
-	if (
-		(event is InputEventMouseButton and not event.double_click)
-		or (event is InputEventScreenTouch and not event.double_tap)
-	):
-		return (event is InputEventMouseButton or event is InputEventScreenTouch)
+	return (event is InputEventMouseButton or event is InputEventScreenTouch)
 
-	return false
+
+## Checks if [param event] is an [InputEventMouseButton] with [member InputEventMouseButton.double_click]
+## as [code]true[/code], or an [InputEventScreenTouch] with [member InputEventScreenTouch.double_tap].
+## as [code]true[/code].
+static func is_double_click_or_double_tap(event: InputEvent) -> bool:
+	return (
+		(event is InputEventMouseButton and event.double_click)
+		or (event is InputEventScreenTouch and not event.double_tap)
+	)
 
 
 ## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event and if

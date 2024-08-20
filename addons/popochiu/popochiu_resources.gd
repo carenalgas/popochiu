@@ -36,53 +36,54 @@ enum AudioTypes {
 }
 
 # PLUGIN -------------------------------------------------------------------------------------------
-const MAIN_DOCK_PATH := "res://addons/popochiu/editor/main_dock/popochiu_dock.tscn"
-const MAIN_TYPES := [
+const MAIN_DOCK_PATH = "res://addons/popochiu/editor/main_dock/popochiu_dock.tscn"
+const MAIN_TYPES = [
 	Types.ROOM, Types.CHARACTER, Types.INVENTORY_ITEM, Types.DIALOG
 ]
-const ROOM_TYPES := [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
-const DOCUMENTATION := "https://carenalgas.github.io/popochiu/"
-const CFG := "res://addons/popochiu/plugin.cfg"
-const GUI_SCRIPT_TEMPLATES_FOLDER := "res://addons/popochiu/engine/templates/graphic_interface/"
-const GUI_TEMPLATES_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/templates/"
+const ROOM_TYPES = [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
+const DOCUMENTATION = "https://carenalgas.github.io/popochiu/"
+const CFG = "res://addons/popochiu/plugin.cfg"
+const GUI_SCRIPT_TEMPLATES_FOLDER = "res://addons/popochiu/engine/templates/gui/"
+const GUI_TEMPLATES_FOLDER = "res://addons/popochiu/engine/objects/gui/templates/"
+const RETRO_RESOLUTION = Vector2(356.0, 200.0)
 # SINGLETONS ---------------------------------------------------------------------------------------
-const GLOBALS_SNGL := "res://game/popochiu_globals.gd"
-const UTILS_SNGL := "res://addons/popochiu/engine/others/popochiu_utils.gd"
-const CURSOR_SNGL := "res://addons/popochiu/engine/cursor/cursor.tscn"
-const POPOCHIU_SNGL := "res://addons/popochiu/engine/popochiu.tscn"
-const IROOM := "res://addons/popochiu/engine/interfaces/i_room.gd"
-const ICHARACTER := "res://addons/popochiu/engine/interfaces/i_character.gd"
-const IINVENTORY := "res://addons/popochiu/engine/interfaces/i_inventory.gd"
-const IDIALOG := "res://addons/popochiu/engine/interfaces/i_dialog.gd"
-const IGRAPHIC_INTERFACE_SNGL := "res://addons/popochiu/engine/interfaces/i_graphic_interface.gd"
-const IAUDIO := "res://addons/popochiu/engine/interfaces/i_audio.gd"
-const R_SNGL := "res://game/autoloads/r.gd"
-const C_SNGL := "res://game/autoloads/c.gd"
-const I_SNGL := "res://game/autoloads/i.gd"
-const D_SNGL := "res://game/autoloads/d.gd"
-const A_SNGL := "res://game/autoloads/a.gd"
-const G_SNGL := "res://game/autoloads/g.gd"
+const GLOBALS_SNGL = "res://game/popochiu_globals.gd"
+const UTILS_SNGL = "res://addons/popochiu/engine/others/popochiu_utils.gd"
+const CURSOR_SNGL = "res://addons/popochiu/engine/cursor/cursor.tscn"
+const POPOCHIU_SNGL = "res://addons/popochiu/engine/popochiu.tscn"
+const IROOM = "res://addons/popochiu/engine/interfaces/i_room.gd"
+const ICHARACTER = "res://addons/popochiu/engine/interfaces/i_character.gd"
+const IINVENTORY = "res://addons/popochiu/engine/interfaces/i_inventory.gd"
+const IDIALOG = "res://addons/popochiu/engine/interfaces/i_dialog.gd"
+const IGRAPHIC_INTERFACE_SNGL = "res://addons/popochiu/engine/interfaces/i_graphic_interface.gd"
+const IAUDIO = "res://addons/popochiu/engine/interfaces/i_audio.gd"
+const R_SNGL = "res://game/autoloads/r.gd"
+const C_SNGL = "res://game/autoloads/c.gd"
+const I_SNGL = "res://game/autoloads/i.gd"
+const D_SNGL = "res://game/autoloads/d.gd"
+const A_SNGL = "res://game/autoloads/a.gd"
+const G_SNGL = "res://game/autoloads/g.gd"
 # FIRST INSTALL ------------------------------------------------------------------------------------
-const GI := 0
-const TL := 1
-const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/"
-const TRANSITION_LAYER_ADDON :=\
+const GI = 0
+const TL = 1
+const GUI_ADDON_FOLDER = "res://addons/popochiu/engine/objects/gui/"
+const TRANSITION_LAYER_ADDON =\
 "res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn"
 # ENGINE -------------------------------------------------------------------------------------------
-const POPOCHIU_SCENE := "res://addons/popochiu/engine/popochiu.tscn"
-const AUDIO_MANAGER :=\
+const POPOCHIU_SCENE = "res://addons/popochiu/engine/popochiu.tscn"
+const AUDIO_MANAGER =\
 "res://addons/popochiu/engine/audio_manager/audio_manager.tscn"
-const CURSOR_TYPE :=\
+const CURSOR_TYPE =\
 preload("res://addons/popochiu/engine/cursor/cursor.gd").Type
-const DATA := "res://game//popochiu_data.cfg"
-const ROOM_CHILDREN := ["props", "hotspots", "walkable_areas", "regions"]
-const VALID_TYPES := [
+const DATA = "res://game//popochiu_data.cfg"
+const ROOM_CHILDREN = ["props", "hotspots", "walkable_areas", "regions"]
+const VALID_TYPES = [
 	TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING,
 	TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY,
 	TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY,
 	TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY
 ]
-const PROPS_IGNORE := [
+const PROPS_IGNORE = [
 	"description",
 	"baseline",
 	"clickable",
@@ -96,7 +97,7 @@ const PROPS_IGNORE := [
 	"_double_click_delay",
 	"_has_double_click",
 ]
-const HOTSPOTS_IGNORE := [
+const HOTSPOTS_IGNORE = [
 	"description",
 	"baseline",
 	"clickable",
@@ -107,18 +108,18 @@ const HOTSPOTS_IGNORE := [
 	"_double_click_delay",
 	"_has_double_click",
 ]
-const WALKABLE_AREAS_IGNORE := [
+const WALKABLE_AREAS_IGNORE = [
 	"description",
 	"tint"
 ]
-const REGIONS_IGNORE := [
+const REGIONS_IGNORE = [
 	"description",
 	"tint",
 	"scaling",
 	"scale_top",
 	"scale_bottom"
 ]
-const SNGL_TEMPLATE := "@tool\n" +\
+const SNGL_TEMPLATE = "@tool\n" +\
 "extends \"%s\"\n\n" +\
 "# classes ----\n" +\
 "# ---- classes\n" +\
@@ -129,7 +130,7 @@ const SNGL_TEMPLATE := "@tool\n" +\
 "# functions ----\n" +\
 "# ---- functions\n" +\
 "\n"
-const SNGL_SETUP := {
+const SNGL_SETUP = {
 	R_SNGL : {
 		interface = IROOM,
 		section = "rooms",
@@ -167,39 +168,39 @@ const SNGL_SETUP := {
 		prefix = "D",
 	}
 }
-const A_TEMPLATE := "@tool\n" +\
+const A_TEMPLATE = "@tool\n" +\
 "extends \"%s\"\n\n" +\
 "# cues ----\n" +\
 "# ---- cues\n" +\
 "\n"
-const AUDIO_CUE_SOUND :=\
+const AUDIO_CUE_SOUND =\
 "res://addons/popochiu/engine/audio_manager/audio_cue_sound.gd"
-const AUDIO_CUE_MUSIC :=\
+const AUDIO_CUE_MUSIC =\
 "res://addons/popochiu/engine/audio_manager/audio_cue_music.gd"
-const VAR_AUDIO_CUE_SOUND := "var %s: AudioCueSound = load(\"%s\")\n"
-const VAR_AUDIO_CUE_MUSIC := "var %s: AudioCueMusic = load(\"%s\")\n"
+const VAR_AUDIO_CUE_SOUND = "var %s: AudioCueSound = load(\"%s\")\n"
+const VAR_AUDIO_CUE_MUSIC = "var %s: AudioCueMusic = load(\"%s\")\n"
 # GODOT PROJECT SETTINGS ---------------------------------------------------------------------------
-const DISPLAY_WIDTH := "display/window/size/viewport_width"
-const DISPLAY_HEIGHT := "display/window/size/viewport_height"
-const MAIN_SCENE := "application/run/main_scene"
-const TEST_WIDTH := "display/window/size/window_width_override"
-const TEST_HEIGHT := "display/window/size/window_height_override"
-const STRETCH_MODE := "display/window/stretch/mode"
-const STRETCH_ASPECT := "display/window/stretch/aspect"
+const DISPLAY_WIDTH = "display/window/size/viewport_width"
+const DISPLAY_HEIGHT = "display/window/size/viewport_height"
+const MAIN_SCENE = "application/run/main_scene"
+const TEST_WIDTH = "display/window/size/window_width_override"
+const TEST_HEIGHT = "display/window/size/window_height_override"
+const STRETCH_MODE = "display/window/stretch/mode"
+const STRETCH_ASPECT = "display/window/stretch/aspect"
 # GUI TEMPLATES ------------------------------------------------------------------------------------
-const GUI_CUSTOM := "custom"
-const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
-const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
+const GUI_CUSTOM = "custom"
+const GUI_CUSTOM_SCENE = GUI_ADDON_FOLDER + "popochiu_gui.tscn"
+const GUI_CUSTOM_TEMPLATE = GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
 # GAME ---------------------------------------------------------------------------------------------
-const GAME_PATH := "res://game/"
+const GAME_PATH = "res://game/"
 const ROOMS_PATH = GAME_PATH + "rooms/"
 const CHARACTERS_PATH = GAME_PATH + "characters/"
 const INVENTORY_ITEMS_PATH = GAME_PATH + "inventory_items/"
 const DIALOGS_PATH = GAME_PATH + "dialogs/"
-const GUI_GAME_FOLDER := GAME_PATH + "graphic_interface/"
-const GUI_GAME_SCENE := GUI_GAME_FOLDER + "graphic_interface.tscn"
-const GUI_COMMANDS := GUI_GAME_FOLDER + "commands.gd"
-const TRANSITION_LAYER := GAME_PATH + "transition_layer/transition_layer.tscn"
+const GUI_GAME_FOLDER = GAME_PATH + "gui/"
+const GUI_GAME_SCENE = GUI_GAME_FOLDER + "gui.tscn"
+const GUI_COMMANDS = GUI_GAME_FOLDER + "gui_commands.gd"
+const TRANSITION_LAYER = GAME_PATH + "transition_layer/transition_layer.tscn"
 
 
 #region Public #####################################################################################

@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" load_steps=22 format=3 uid="uid://d0ny3mket72mf"]
 
 [ext_resource type="Texture2D" uid="uid://bl3ecai6lvat1" path="res://addons/popochiu/engine/cursor/sprites/cursor.png" id="1_qk45r"]
-[ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/images/simple_click_cursor.png" id="2_05hav"]
+[ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/images/simple_click_cursor.png" id="2_05hav"]
 
 [sub_resource type="AtlasTexture" id="10"]
 atlas = ExtResource("1_qk45r")

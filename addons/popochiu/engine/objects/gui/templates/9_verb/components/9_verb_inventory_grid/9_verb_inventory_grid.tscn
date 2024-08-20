@@ -1,0 +1,132 @@
+[gd_scene load_steps=18 format=3 uid="uid://djan6vy0xq8dq"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_7ovtr"]
+[ext_resource type="PackedScene" uid="uid://b4juyi6em7wja" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_inventory_grid/9_verb_inventory_slot.tscn" id="2_goalc"]
+[ext_resource type="Texture2D" uid="uid://k5k85xjvtqwc" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_inventory_grid/images/9verb_inventory_up.png" id="2_i17ns"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_inventory_grid/9_verb_inventory_grid.gd" id="2_vgmo0"]
+[ext_resource type="Texture2D" uid="uid://co5fkuv4jgfbc" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_inventory_grid/images/9verb_inventory_down.png" id="3_uqfpl"]
+[ext_resource type="Texture2D" uid="uid://dcl6wrqgsdqa1" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/images/9verb_ico_settings.png" id="5_npkld"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xjfw"]
+atlas = ExtResource("2_i17ns")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mq4sk"]
+atlas = ExtResource("2_i17ns")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2rabq"]
+atlas = ExtResource("2_i17ns")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hw2h8"]
+atlas = ExtResource("2_i17ns")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tx0je"]
+atlas = ExtResource("5_npkld")
+region = Rect2(0, 0, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4olg0"]
+atlas = ExtResource("5_npkld")
+region = Rect2(32, 0, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xswvt"]
+atlas = ExtResource("5_npkld")
+region = Rect2(16, 0, 16, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6237a"]
+atlas = ExtResource("3_uqfpl")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_obc06"]
+atlas = ExtResource("3_uqfpl")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dt380"]
+atlas = ExtResource("3_uqfpl")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jgd5d"]
+atlas = ExtResource("3_uqfpl")
+region = Rect2(48, 0, 16, 16)
+
+[node name="9VerbInventoryGrid" type="HBoxContainer"]
+custom_minimum_size = Vector2(191, 49)
+offset_right = 191.0
+offset_bottom = 49.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+theme = ExtResource("1_7ovtr")
+theme_override_constants/separation = 1
+script = ExtResource("2_vgmo0")
+slot_scene = ExtResource("2_goalc")
+h_separation = 1
+v_separation = 1
+
+[node name="ScrollButtons" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="UpContainer" type="PanelContainer" parent="ScrollButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Up" type="TextureButton" parent="ScrollButtons/UpContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 3
+texture_normal = SubResource("AtlasTexture_5xjfw")
+texture_pressed = SubResource("AtlasTexture_mq4sk")
+texture_hover = SubResource("AtlasTexture_2rabq")
+texture_disabled = SubResource("AtlasTexture_hw2h8")
+stretch_mode = 3
+
+[node name="SettingsContainer" type="PanelContainer" parent="ScrollButtons"]
+layout_mode = 2
+
+[node name="Settings" type="TextureButton" parent="ScrollButtons/SettingsContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(24, 15)
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_tx0je")
+texture_pressed = SubResource("AtlasTexture_4olg0")
+texture_hover = SubResource("AtlasTexture_xswvt")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="DownContainer" type="PanelContainer" parent="ScrollButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Down" type="TextureButton" parent="ScrollButtons/DownContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 3
+texture_normal = SubResource("AtlasTexture_6237a")
+texture_pressed = SubResource("AtlasTexture_obc06")
+texture_hover = SubResource("AtlasTexture_dt380")
+texture_disabled = SubResource("AtlasTexture_jgd5d")
+stretch_mode = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+custom_minimum_size = Vector2(99, 49)
+layout_mode = 2
+size_flags_horizontal = 3
+scroll_vertical_custom_step = 27.0
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
+
+[node name="Box" type="GridContainer" parent="ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 1
+theme_override_constants/v_separation = 1
+columns = 4

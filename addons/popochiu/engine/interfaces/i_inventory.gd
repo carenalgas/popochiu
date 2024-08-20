@@ -174,9 +174,14 @@ func is_full() -> bool:
 	and E.settings.inventory_limit == items.size()
 
 
+## Deselects the [member active] item.
+func deselect_active() -> void:
+	active = null
+
+
 #endregion
 
-#region Private ####################################################################################
+#region SetGet #####################################################################################
 func set_active(value: PopochiuInventoryItem) -> void:
 	if is_instance_valid(active):
 		active.unselected.emit()

@@ -7,7 +7,7 @@ signal move_folders_pressed
 @onready var tab_main: VBoxContainer = %Main
 @onready var tab_room: VBoxContainer = %Room
 @onready var tab_audio: VBoxContainer = %Audio
-@onready var tab_ui: VBoxContainer = %UI
+@onready var tab_gui: VBoxContainer = %GUI
 # ---- FOOTER --------------------------------------------------------------------------------------
 @onready var version: Label = %Version
 @onready var btn_setup: Button = %BtnSetup
@@ -22,6 +22,9 @@ func _ready() -> void:
 	
 	# Set the Main tab selected by default
 	tab_container.current_tab = 0
+	
+	# Hide the GUI tab while we decide how it will work based on devs feedback
+	tab_container.set_tab_hidden(tab_gui.get_index(), true)
 	
 	# Connect to childrens' signals
 	tab_container.tab_changed.connect(_on_tab_changed)
@@ -44,14 +47,16 @@ func scene_changed(scene_root: Node) -> void:
 	if not is_instance_valid(tab_room): return
 	tab_room.scene_changed(scene_root)
 	
-	if not is_instance_valid(tab_ui): return
-	tab_ui.on_scene_changed(scene_root)
+	# TODO: Uncomment these lines when working on the GUI tab again
+	#if not is_instance_valid(tab_gui): return
+	#tab_gui.on_scene_changed(scene_root)
 	
 	if (
 		not scene_root
 		or (
 			not scene_root is PopochiuRoom
-			and not scene_root.scene_file_path == PopochiuResources.GUI_GAME_SCENE
+			# TODO: Uncomment this line when working on the GUI tab again
+			#and not scene_root.scene_file_path == PopochiuResources.GUI_GAME_SCENE
 		)
 	):
 		# Open the Popochiu Main tab if the opened scene in the Editor2D is not a PopochiuRoom nor
@@ -81,8 +86,8 @@ func _on_tab_changed(tab: int) -> void:
 	if tab == tab_main.get_index():
 		tab_main.check_data()
 	
-	if tab == tab_ui.get_index():
-		tab_ui.open_gui_scene()
+	if tab == tab_gui.get_index():
+		tab_gui.open_gui_scene()
 
 
 func _check_node(node: Node) -> void:
