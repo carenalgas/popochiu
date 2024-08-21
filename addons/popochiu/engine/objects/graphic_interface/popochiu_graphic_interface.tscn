@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://k35rpa45ngms"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/popochiu_graphic_interface.gd" id="1"]
-[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_lylgs"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_lylgs"]
 
 [node name="GraphicInterface" type="Control"]
 layout_mode = 3

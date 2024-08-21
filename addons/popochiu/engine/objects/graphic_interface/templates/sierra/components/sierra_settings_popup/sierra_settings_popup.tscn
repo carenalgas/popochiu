@@ -1,9 +1,9 @@
 [gd_scene load_steps=6 format=3 uid="uid://c24vj4s0u08jr"]
 
-[ext_resource type="Theme" uid="uid://csr0n32rthycw" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/resources/sierra_theme.tres" id="1_jexgm"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_mo7nx"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_settings_popup/sierra_settings_popup.gd" id="2_3iqg8"]
-[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/close.png" id="3_65lvt"]
-[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/close_highlight.png" id="4_38rye"]
+[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/close.png" id="3_65lvt"]
+[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/close_highlight.png" id="4_38rye"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_se5fd"]
 bg_color = Color(0, 0, 0, 0.247059)
@@ -14,7 +14,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_jexgm")
+theme = ExtResource("1_mo7nx")
 theme_override_styles/panel = SubResource("StyleBoxFlat_se5fd")
 script = ExtResource("2_3iqg8")
 script_name = &"SierraSettingsPopup"

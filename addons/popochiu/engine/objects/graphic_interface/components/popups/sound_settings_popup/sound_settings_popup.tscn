@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://dwxm2p1iyhpx6"]
 
-[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_rwmoe"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_rwmoe"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/sound_settings_popup/sound_settings_popup.gd" id="2_qt85i"]
-[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/close.png" id="3_knqsp"]
-[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/close_highlight.png" id="4_v7y6x"]
+[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/close.png" id="3_knqsp"]
+[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/close_highlight.png" id="4_v7y6x"]
 [ext_resource type="PackedScene" uid="uid://drx0r8w00ivck" path="res://addons/popochiu/engine/objects/graphic_interface/components/sound_volumes/sound_volumes.tscn" id="5_lh576"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_roir4"]

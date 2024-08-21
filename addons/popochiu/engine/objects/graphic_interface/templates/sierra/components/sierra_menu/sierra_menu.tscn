@@ -1,20 +1,17 @@
-[gd_scene load_steps=37 format=3 uid="uid://bhx2hkpkjs7dk"]
+[gd_scene load_steps=34 format=3 uid="uid://bhx2hkpkjs7dk"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_menu/sierra_menu.gd" id="1_8uwkl"]
-[ext_resource type="Theme" uid="uid://csr0n32rthycw" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/resources/sierra_theme.tres" id="1_tkpbh"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_ocp4m"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_menu/sierra_commands_container.gd" id="2_3ic0i"]
 [ext_resource type="Texture2D" uid="uid://cnxdologw7ax8" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_walk.png" id="2_eg6ow"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_command_button/sierra_command_button.gd" id="3_lg2l4"]
 [ext_resource type="Texture2D" uid="uid://57nl6xfjetoe" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_look.png" id="4_sthn3"]
 [ext_resource type="Texture2D" uid="uid://mbfkdny6pub7" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_interact.png" id="5_3vslp"]
 [ext_resource type="Texture2D" uid="uid://b5vpolfm4o5f4" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_talk.png" id="6_0y8dr"]
-[ext_resource type="Texture2D" uid="uid://cqfu38l1h5v8j" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/separator.png" id="7_6jcwd"]
 [ext_resource type="Texture2D" uid="uid://binqewyag102g" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_inventory.png" id="8_uijy7"]
 [ext_resource type="Texture2D" uid="uid://d3hyq5v4c2seb" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_settings.png" id="9_g1qod"]
 [ext_resource type="Texture2D" uid="uid://djve4vu1lpi34" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_help.png" id="10_bvuyo"]
 [ext_resource type="Texture2D" uid="uid://c1gik8lkdekx4" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_quit.png" id="11_marqj"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6wfxk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_csu2p"]
 atlas = ExtResource("2_eg6ow")
@@ -64,11 +61,6 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("6_0y8dr")
 region = Rect2(0, 32, 32, 32)
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_ykyyc"]
-texture = ExtResource("7_6jcwd")
-axis_stretch_horizontal = 1
-axis_stretch_vertical = 1
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_uvguw"]
 atlas = ExtResource("8_uijy7")
 region = Rect2(0, 0, 32, 32)
@@ -105,26 +97,35 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("11_marqj")
 region = Rect2(0, 32, 32, 32)
 
-[node name="SierraTopMenu" type="PanelContainer" groups=["popochiu_gui_component"]]
+[node name="SierraMenu" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_ocp4m")
+script = ExtResource("1_8uwkl")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 32.0
 grow_horizontal = 2
-theme = ExtResource("1_tkpbh")
-theme_override_styles/panel = SubResource("StyleBoxFlat_6wfxk")
-script = ExtResource("1_8uwkl")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="SierraCommandsContainer" type="HBoxContainer" parent="HBoxContainer"]
+[node name="SierraCommandsContainer" type="HBoxContainer" parent="PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 script = ExtResource("2_3ic0i")
 
-[node name="Walk" type="TextureButton" parent="HBoxContainer/SierraCommandsContainer"]
+[node name="Walk" type="TextureButton" parent="PanelContainer/HBoxContainer/SierraCommandsContainer"]
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -133,7 +134,7 @@ texture_pressed = SubResource("AtlasTexture_ylk7h")
 texture_hover = SubResource("AtlasTexture_ao1oe")
 script = ExtResource("3_lg2l4")
 
-[node name="Look" type="TextureButton" parent="HBoxContainer/SierraCommandsContainer"]
+[node name="Look" type="TextureButton" parent="PanelContainer/HBoxContainer/SierraCommandsContainer"]
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -143,7 +144,7 @@ texture_hover = SubResource("AtlasTexture_msotb")
 script = ExtResource("3_lg2l4")
 command = 1
 
-[node name="Interact" type="TextureButton" parent="HBoxContainer/SierraCommandsContainer"]
+[node name="Interact" type="TextureButton" parent="PanelContainer/HBoxContainer/SierraCommandsContainer"]
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -153,7 +154,7 @@ texture_hover = SubResource("AtlasTexture_ddbjm")
 script = ExtResource("3_lg2l4")
 command = 2
 
-[node name="Talk" type="TextureButton" parent="HBoxContainer/SierraCommandsContainer"]
+[node name="Talk" type="TextureButton" parent="PanelContainer/HBoxContainer/SierraCommandsContainer"]
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -163,13 +164,12 @@ texture_hover = SubResource("AtlasTexture_m2m36")
 script = ExtResource("3_lg2l4")
 command = 3
 
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxTexture_ykyyc")
 
-[node name="Inventory" type="TextureButton" parent="HBoxContainer"]
+[node name="Inventory" type="TextureButton" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
@@ -177,7 +177,7 @@ texture_normal = SubResource("AtlasTexture_uvguw")
 texture_pressed = SubResource("AtlasTexture_mdjye")
 texture_hover = SubResource("AtlasTexture_odwa6")
 
-[node name="Settings" type="TextureButton" parent="HBoxContainer"]
+[node name="Settings" type="TextureButton" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
@@ -185,14 +185,14 @@ texture_normal = SubResource("AtlasTexture_wy7fm")
 texture_pressed = SubResource("AtlasTexture_eccvv")
 texture_hover = SubResource("AtlasTexture_0ahol")
 
-[node name="Help" type="TextureButton" parent="HBoxContainer"]
+[node name="Help" type="TextureButton" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 visible = false
 texture_filter = 1
 layout_mode = 2
 texture_normal = ExtResource("10_bvuyo")
 
-[node name="Quit" type="TextureButton" parent="HBoxContainer"]
+[node name="Quit" type="TextureButton" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
 visible = false
 texture_filter = 1

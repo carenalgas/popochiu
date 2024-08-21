@@ -1,7 +1,7 @@
 [gd_scene load_steps=33 format=3 uid="uid://cwvuu8g0ih3i8"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/simple_click_gui.gd" id="1_268ni"]
-[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_uf1ey"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_uf1ey"]
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="2_6qu0l"]
 [ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.tscn" id="2_v42aw"]
 [ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/images/simple_click_cursor.png" id="3_718yk"]
@@ -243,41 +243,29 @@ layout_mode = 1
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
 offset_top = -19.0
-offset_right = 0.0
 offset_bottom = -4.0
-grow_horizontal = 2
 grow_vertical = 0
-
-[node name="SystemText" parent="." instance=ExtResource("4_o82xq")]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -120.0
-offset_top = -12.0
-offset_right = 120.0
-offset_bottom = 12.0
 
 [node name="DialogMenu" parent="." instance=ExtResource("5_ayg0j")]
 visible = false
 layout_mode = 1
 
 [node name="InventoryBar" parent="." instance=ExtResource("6_ovwnh")]
-layout_mode = 0
-offset_left = 4.0
-offset_right = 40.0
+layout_mode = 1
 
 [node name="SettingsBar" parent="." instance=ExtResource("7_mtpwc")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
-anchor_right = 1.0
+anchor_bottom = 0.0
 offset_left = -126.0
-offset_right = -4.0
+offset_right = -126.0
 grow_horizontal = 0
+grow_vertical = 1
+
+[node name="SystemText" parent="." instance=ExtResource("4_o82xq")]
+layout_mode = 1
 
 [node name="Popups" type="Control" parent="."]
 layout_mode = 1

@@ -1,5 +1,5 @@
 class_name PopochiuDialogMenu
-extends Container
+extends Control
 @warning_ignore("return_value_discarded")
 @warning_ignore("unused_signal")
 
@@ -20,6 +20,7 @@ signal shown
 
 var current_options := []
 
+@onready var panel_container: PanelContainer = $PanelContainer
 @onready var dialog_options_container: VBoxContainer = %DialogOptionsContainer
 
 
@@ -28,8 +29,8 @@ func _ready() -> void:
 	for child in dialog_options_container.get_children():
 		child.queue_free()
 	
-	custom_minimum_size = Vector2.ZERO
-	(get_theme_stylebox("panel") as StyleBoxFlat).bg_color = menu_background_color
+	panel_container.custom_minimum_size = Vector2.ZERO
+	(panel_container.get_theme_stylebox("panel") as StyleBoxFlat).bg_color = menu_background_color
 	
 	# Connect to own signals
 	gui_input.connect(_clicked)
@@ -106,10 +107,12 @@ func _create_options(options := [], autoshow := false) -> void:
 		options_height += opt.size.y
 		visible_options += 1
 	
-	options_height += dialog_options_container.get_theme_constant("separation") * (visible_options - 1)
+	options_height += (
+		dialog_options_container.get_theme_constant("separation") * (visible_options - 1)
+	)
 	
-	size.y = min(options_height, max_height)
-	position.y = E.height - size.y
+	panel_container.size.y = min(options_height, max_height)
+	panel_container.position.y = E.height - size.y
 
 
 func remove_options(_dialog: PopochiuDialog = null) -> void:

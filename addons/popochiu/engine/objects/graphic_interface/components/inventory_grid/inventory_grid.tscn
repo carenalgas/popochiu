@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://cn2b5v8k1lseo"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/inventory_grid.gd" id="1_0y5i1"]
-[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_kaq1v"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_kaq1v"]
 [ext_resource type="Texture2D" uid="uid://dfa511cxg31g5" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/sprites/inventory_grid_up_button.png" id="2_6y3so"]
 [ext_resource type="PackedScene" uid="uid://db6csk6i4f3un" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/inventory_grid_slot.tscn" id="3_32xup"]
 [ext_resource type="Texture2D" uid="uid://s4phlorab5ds" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/sprites/inventory_grid_down_button.png" id="3_yoinj"]

@@ -23,41 +23,43 @@ func _ready() -> void:
 	E.current_command = NineVerbCommands.Commands.WALK_TO
 	
 	set_process(follows_cursor)
-	autowrap_mode = TextServer.AUTOWRAP_OFF if follows_cursor else TextServer.AUTOWRAP_WORD_SMART
+	label.autowrap_mode = (
+		TextServer.AUTOWRAP_OFF if follows_cursor else TextServer.AUTOWRAP_WORD_SMART
+	)
 	
 	_show_text()
 	E.ready.connect(set.bind("_can_change_size", true))
 
 
 func _process(delta: float) -> void:
-	position = get_viewport().get_mouse_position()
+	label.position = get_viewport().get_mouse_position()
 	
 	if E.settings.scale_gui:
-		position /= E.scale
+		label.position /= E.scale
 	
-	position -= size / 2.0
-	position.y -= Cursor.get_cursor_height() / 2
+	label.position -= label.size / 2.0
+	label.position.y -= Cursor.get_cursor_height() / 2
 	
 	# Check viewport limits
-	if position.x < 0.0:
-		position.x = 0.0
-	elif position.x + size.x > _gui_width:
-		position.x = _gui_width - size.x
+	if label.position.x < 0.0:
+		label.position.x = 0.0
+	elif label.position.x + label.size.x > _gui_width:
+		label.position.x = _gui_width - label.size.x
 	
-	if position.y < 0.0:
-		position.y = 0.0
-	elif position.y + size.y > _gui_height:
-		position.y = _gui_height - size.y
+	if label.position.y < 0.0:
+		label.position.y = 0.0
+	elif label.position.y + label.size.y > _gui_height:
+		label.position.y = _gui_height - label.size.y
 
 
 #endregion
 
 #region Private ####################################################################################
 func _show_text(txt := "") -> void:
-	text = ""
+	label.text = ""
 	
 	if follows_cursor and _can_change_size:
-		size = Vector2.ZERO
+		label.size = Vector2.ZERO
 	
 	if txt.is_empty():
 		if (
@@ -73,7 +75,7 @@ func _show_text(txt := "") -> void:
 		super(txt)
 	
 	if follows_cursor and _can_change_size:
-		size += Vector2.ONE * (Cursor.get_cursor_height() / 2)
+		label.size += Vector2.ONE * (Cursor.get_cursor_height() / 2)
 
 
 #endregion

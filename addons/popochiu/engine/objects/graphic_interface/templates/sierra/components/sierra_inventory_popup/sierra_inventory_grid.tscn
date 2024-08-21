@@ -1,6 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://26dqxcqhmj44"]
+[gd_scene load_steps=14 format=3 uid="uid://26dqxcqhmj44"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/inventory_grid.gd" id="1_3bsof"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_8acwo"]
 [ext_resource type="PackedScene" uid="uid://yw6qpn52gnp5" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_inventory_popup/sierra_inventory_slot/sierra_inventory_slot.tscn" id="2_l732n"]
 [ext_resource type="Texture2D" uid="uid://cjairw6sepult" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_inventory_popup/sprites/btn_up.png" id="3_f4xq7"]
 [ext_resource type="Texture2D" uid="uid://bctpmd8wh2ket" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_inventory_popup/sprites/btn_down.png" id="4_ptth4"]
@@ -43,6 +44,7 @@ offset_bottom = 64.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 0
+theme = ExtResource("1_8acwo")
 script = ExtResource("1_3bsof")
 slot_scene = ExtResource("2_l732n")
 columns = 5

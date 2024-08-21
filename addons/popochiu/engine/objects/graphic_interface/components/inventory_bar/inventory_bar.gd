@@ -7,15 +7,16 @@ var is_disabled := false
 
 var _is_hidden := true
 
+@onready var panel_container: PanelContainer = $PanelContainer
 @onready var box: Container = find_child("Box")
-@onready var _tween: Tween = null
-@onready var _hidden_y := position.y - (size.y - 4)
+@onready var tween: Tween = null
+@onready var hidden_y := position.y - (size.y - 4)
 
 
 #region Godot ######################################################################################
 func _ready():
 	if not always_visible:
-		position.y = _hidden_y
+		panel_container.position.y = hidden_y
 	
 	# Connect to singletons signals
 	G.blocked.connect(_on_graphic_interface_blocked)
@@ -37,10 +38,13 @@ func _ready():
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
-		var rect := get_rect()
+		var rect := panel_container.get_rect()
 		
 		if E.settings.scale_gui:
-			rect = Rect2(get_rect().position * E.scale, get_rect().size * E.scale)
+			rect = Rect2(
+				panel_container.get_rect().position * E.scale,
+				panel_container.get_rect().size * E.scale
+			)
 		
 		if _is_hidden and rect.has_point(get_global_mouse_position()):
 			_open()
@@ -54,14 +58,14 @@ func _input(event: InputEvent) -> void:
 #region Private ####################################################################################
 func _open() -> void:
 	if always_visible: return
-	if not is_disabled and position.y != _hidden_y: return
+	if not is_disabled and position.y != hidden_y: return
 	
-	if is_instance_valid(_tween) and _tween.is_running():
-		_tween.kill()
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
 	
-	_tween = create_tween()
-	_tween.tween_property(self, "position:y", 0.0, 0.5)\
-	.from(_hidden_y if not is_disabled else position.y)\
+	tween = create_tween()
+	tween.tween_property(panel_container, "position:y", 0.0, 0.5)\
+	.from(hidden_y if not is_disabled else position.y)\
 	.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	
 	_is_hidden = false
@@ -69,16 +73,15 @@ func _open() -> void:
 
 func _close() -> void:
 	if always_visible: return
-	
 	await get_tree().process_frame
 	
-	if is_instance_valid(_tween) and _tween.is_running():
-		_tween.kill()
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
 	
-	_tween = create_tween()
-	_tween.tween_property(
-		self, "position:y",
-		_hidden_y if not is_disabled else _hidden_y - 3.5,
+	tween = create_tween()
+	tween.tween_property(
+		panel_container, "position:y",
+		hidden_y if not is_disabled else hidden_y - 3.5,
 		0.2
 	).from(0.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 	
@@ -86,7 +89,7 @@ func _close() -> void:
 
 
 func _on_tween_finished() -> void:
-	_is_hidden = position.y == _hidden_y
+	_is_hidden = position.y == hidden_y
 
 
 func _change_cursor(item: PopochiuInventoryItem) -> void:
@@ -153,7 +156,6 @@ func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 
 func _replace_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
 	item.replace_by(new_item)
-	
 	await get_tree().process_frame
 	
 	I.item_replace_done.emit()
@@ -161,18 +163,14 @@ func _replace_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem)
 
 func _show_and_hide(time := 1.0) -> void:
 	set_process_input(false)
-	
 	_open()
-	
-	await _tween.finished
+	await tween.finished
 	await E.wait(time)
 	
 	_close()
-	
-	await _tween.finished
+	await tween.finished
 	
 	set_process_input(true)
-	
 	I.inventory_shown.emit()
 
 

@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("1_bvg81")
-title = "2-Click Context-sensitive"
+title = "Simple Click"
 description = "- [b]Left click[/b] to interact.
 - [b]Right click[/b] to examine.
 - [b]Inventory bar[/b] on top-left corner (by default).

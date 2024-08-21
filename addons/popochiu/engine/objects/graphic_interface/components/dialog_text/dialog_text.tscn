@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://cg18h3icrip1r"]
 
-[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/popochiu_theme.tres" id="1_kxlqu"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_kxlqu"]
 [ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_njktv"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.gd" id="2"]
 [ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_continue.png" id="3"]

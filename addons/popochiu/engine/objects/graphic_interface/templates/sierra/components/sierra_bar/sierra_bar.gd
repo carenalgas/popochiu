@@ -1,4 +1,4 @@
-extends PanelContainer
+extends Control
 
 @export var score := 0
 @export var max_score := 100

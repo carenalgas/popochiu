@@ -1,4 +1,4 @@
-extends RichTextLabel
+extends Control
 ## Show a text in the form of GUI. Can be used to show game (or narrator)
 ## messages.
 
@@ -10,10 +10,12 @@ const DFLT_SIZE := "dflt_size"
 # during a _ready() execution
 var _can_change_size := false
 
+@onready var label: RichTextLabel = $Label
+
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	set_meta(DFLT_SIZE, size)
+	set_meta(DFLT_SIZE, label.size)
 	
 	# Connect to singletons signals
 	G.system_text_shown.connect(_show_text)
@@ -23,7 +25,7 @@ func _ready() -> void:
 
 
 func _draw() -> void:
-	position = get_parent().size / 2.0 - size / 2.0
+	label.position = get_parent().size / 2.0 - size / 2.0
 
 
 func _input(event: InputEvent) -> void:
@@ -46,11 +48,11 @@ func appear() -> void:
 func close() -> void:
 	set_process_input(false)
 	
-	clear()
-	text = ""
+	label.clear()
+	label.text = ""
 	
 	if _can_change_size:
-		size = get_meta(DFLT_SIZE)
+		label.size = get_meta(DFLT_SIZE)
 	
 	hide()
 	G.system_text_hidden.emit()
@@ -60,9 +62,9 @@ func close() -> void:
 
 #region Private ####################################################################################
 func _show_text(msg := "") -> void:
-	clear()
-	text = ""
-	size = get_meta(DFLT_SIZE)
+	label.clear()
+	label.text = ""
+	label.size = get_meta(DFLT_SIZE)
 	
 	# ==== Calculate the width of the node =========================================================
 	var rt := RichTextLabel.new()
@@ -79,7 +81,7 @@ func _show_text(msg := "") -> void:
 	rt.free()
 	# ========================================================= Calculate the width of the node ====
 	
-	append_text("[center]%s[/center]" % msg)
+	label.append_text("[center]%s[/center]" % msg)
 	
 	if msg:
 		appear()

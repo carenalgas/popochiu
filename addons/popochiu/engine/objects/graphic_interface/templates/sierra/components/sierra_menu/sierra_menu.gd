@@ -1,5 +1,6 @@
-extends PanelContainer
+extends Control
 
+@onready var panel_container: PanelContainer = $PanelContainer
 @onready var inventory = %Inventory
 @onready var settings = %Settings
 @onready var help = %Help
@@ -21,14 +22,15 @@ func _input(event: InputEvent) -> void:
 	if G.is_blocked: return
 	
 	if event is InputEventMouseMotion:
-		var rect := get_rect()
+		var rect := panel_container.get_rect()
 		
 		if E.settings.scale_gui:
 			rect = Rect2(
-				get_rect().position * E.scale,
+				panel_container.get_rect().position * E.scale,
 				(Vector2(
-					get_rect().size.x,
-					get_rect().size.y if visible else get_rect().size.y / 2.0
+					panel_container.get_rect().size.x,
+					panel_container.get_rect().size.y if visible
+					else panel_container.get_rect().size.y / 2.0
 				)) * E.scale
 			)
 		
@@ -36,13 +38,11 @@ func _input(event: InputEvent) -> void:
 			# Show the top menu
 			if not I.active:
 				Cursor.show_cursor("gui")
-			
 			show()
 		elif visible and not rect.has_point(get_global_mouse_position()):
 			# Hide the top menu
 			if not I.active:
 				Cursor.show_cursor(E.get_current_command_name().to_snake_case())
-			
 			hide()
 
 

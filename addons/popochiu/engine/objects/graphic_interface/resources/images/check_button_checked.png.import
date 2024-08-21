@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmxrewai8t2lm"
-path="res://.godot/imported/close.png-af349c9aca2ba5861147cc16b0e0bac2.ctex"
+uid="uid://pl1ch71kfj72"
+path="res://.godot/imported/check_button_checked.png-32f40da933235c0b10eaa4bafd4fbe6a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/close.png"
-dest_files=["res://.godot/imported/close.png-af349c9aca2ba5861147cc16b0e0bac2.ctex"]
+source_file="res://addons/popochiu/engine/objects/graphic_interface/resources/images/check_button_checked.png"
+dest_files=["res://.godot/imported/check_button_checked.png-32f40da933235c0b10eaa4bafd4fbe6a.ctex"]
 
 [params]
 

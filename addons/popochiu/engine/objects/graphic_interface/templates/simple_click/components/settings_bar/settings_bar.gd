@@ -15,20 +15,19 @@ var _can_hide := true
 var _is_hidden := true
 var _is_mouse_hover := false
 
-@onready var _tween: Tween = null
-@onready var _box: BoxContainer = find_child("Box")
-@onready var _btn_dialog_speed: ToolbarButton = find_child("BtnDialogSpeed")
-@onready var _btn_power: ToolbarButton = find_child("BtnQuit")
-@onready var _hide_y := position.y - (size.y - 4)
+@onready var panel_container: PanelContainer = $PanelContainer
+@onready var tween: Tween = null
+@onready var box: BoxContainer = find_child("Box")
+@onready var hidden_y := position.y - (size.y - 4)
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
 	if not always_visible:
-		position.y = _hide_y
+		panel_container.position.y = hidden_y
 	
 	# Connect to child signals
-	for b in _box.get_children():
+	for b in box.get_children():
 		(b as TextureButton).mouse_entered.connect(_disable_hide)
 		(b as TextureButton).mouse_exited.connect(_enable_hide)
 	
@@ -51,7 +50,10 @@ func _input(event: InputEvent) -> void:
 	var rect := get_rect()
 	
 	if E.settings.scale_gui:
-		rect = Rect2(get_rect().position * E.scale, get_rect().size * E.scale)
+		rect = Rect2(
+			panel_container.get_rect().position * E.scale,
+			panel_container.get_rect().size * E.scale
+		)
 	
 	if rect.has_point(get_global_mouse_position()):
 		_is_mouse_hover = true
@@ -84,16 +86,15 @@ func is_open() -> bool:
 #region Private ####################################################################################
 func _open() -> void:
 	if always_visible: return
-	if not is_disabled and position.y != _hide_y: return
+	if not is_disabled and position.y != hidden_y: return
 	
-	if is_instance_valid(_tween) and _tween.is_running():
-		_tween.kill()
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
 	
-	_tween = create_tween()
-	_tween.tween_property(self, "position:y", 0.0, 0.5)\
-	.from(_hide_y if not is_disabled else position.y)\
-	.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
-	
+	tween = create_tween().set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
+	tween.tween_property(panel_container, "position:y", 0.0, 0.5).from(
+		hidden_y if not is_disabled else position.y
+	)
 	_is_hidden = false
 
 
@@ -104,13 +105,13 @@ func _close() -> void:
 	
 	if not _can_hide: return
 	
-	if is_instance_valid(_tween) and _tween.is_running():
-		_tween.kill()
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
 	
-	_tween = create_tween()
-	_tween.tween_property(self, "position:y", _hide_y if not is_disabled else _hide_y - 3.5, 0.2)\
-	.from(0.0).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-	
+	tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
+	tween.tween_property(
+		panel_container, "position:y", hidden_y if not is_disabled else hidden_y - 3.5, 0.2
+	).from(0.0)
 	_is_hidden = true
 
 

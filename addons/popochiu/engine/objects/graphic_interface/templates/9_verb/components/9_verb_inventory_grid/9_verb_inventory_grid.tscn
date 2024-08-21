@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://djan6vy0xq8dq"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/inventory_grid.gd" id="1_0wmc7"]
-[ext_resource type="Theme" uid="uid://6vk2wej0sape" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/resources/9_verb_theme.tres" id="1_pyfwu"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_7ovtr"]
 [ext_resource type="PackedScene" uid="uid://b4juyi6em7wja" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_inventory_grid/9_verb_inventory_slot.tscn" id="2_goalc"]
 [ext_resource type="Texture2D" uid="uid://k5k85xjvtqwc" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_inventory_grid/sprites/9verb_inventory_up.png" id="2_i17ns"]
 [ext_resource type="Texture2D" uid="uid://co5fkuv4jgfbc" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_inventory_grid/sprites/9verb_inventory_down.png" id="3_uqfpl"]
@@ -45,7 +45,7 @@ offset_bottom = 49.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 0
-theme = ExtResource("1_pyfwu")
+theme = ExtResource("1_7ovtr")
 script = ExtResource("1_0wmc7")
 slot_scene = ExtResource("2_goalc")
 h_separation = 1
@@ -77,7 +77,7 @@ texture_disabled = SubResource("AtlasTexture_jgd5d")
 stretch_mode = 3
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
-custom_minimum_size = Vector2(103, 51)
+custom_minimum_size = Vector2(99, 49)
 layout_mode = 2
 size_flags_horizontal = 3
 scroll_vertical_custom_step = 27.0

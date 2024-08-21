@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dukr75slqli45"
-path="res://.godot/imported/check_button_unchecked.png-dba6c92351c8f844f3056f0ee8b9f7ec.ctex"
+uid="uid://p32i25numi5e"
+path="res://.godot/imported/close_highlight.png-d9a82896a8d6b25187490b3682b268e2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/graphic_interface/resources/sprites/check_button_unchecked.png"
-dest_files=["res://.godot/imported/check_button_unchecked.png-dba6c92351c8f844f3056f0ee8b9f7ec.ctex"]
+source_file="res://addons/popochiu/engine/objects/graphic_interface/resources/images/close_highlight.png"
+dest_files=["res://.godot/imported/close_highlight.png-d9a82896a8d6b25187490b3682b268e2.ctex"]
 
 [params]
 
