@@ -1,3 +1,4 @@
+@tool
 extends PopochiuPopup
 
 @onready var text_speed: HSlider = %TextSpeed

@@ -49,7 +49,20 @@ region = Rect2(0, 32, 32, 32)
 atlas = ExtResource("9_ur807")
 region = Rect2(0, 32, 32, 32)
 
-[node name="SierraInventoryPopup" type="PanelContainer" groups=["popochiu_gui_popup"]]
+[node name="SierraInventoryPopup" type="Control" groups=["popochiu_gui_popup"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_ok1rg")
+script = ExtResource("2_xj17e")
+script_name = &"SierraInventoryPopup"
+title = "Inventory"
+
+[node name="Overlay" type="PanelContainer" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -57,21 +70,19 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_ok1rg")
 theme_override_styles/panel = SubResource("StyleBoxFlat_roir4")
-script = ExtResource("2_xj17e")
-script_name = &"SierraInventoryPopup"
 
-[node name="PopupPanel" type="PanelContainer" parent="."]
+[node name="PopupPanel" type="PanelContainer" parent="Overlay"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PopupPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PopupPanel"]
 layout_mode = 2
 
-[node name="HeaderContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
+[node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="PopupPanel/VBoxContainer/HeaderContainer"]
+[node name="Title" type="Label" parent="Overlay/PopupPanel/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -79,7 +90,7 @@ text = "Inventory"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Close" type="TextureButton" parent="PopupPanel/VBoxContainer/HeaderContainer"]
+[node name="Close" type="TextureButton" parent="Overlay/PopupPanel/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
@@ -88,18 +99,18 @@ texture_normal = ExtResource("3_7aa5u")
 texture_pressed = ExtResource("4_vd0bg")
 texture_hover = ExtResource("4_vd0bg")
 
-[node name="SierraInventoryGrid" parent="PopupPanel/VBoxContainer" instance=ExtResource("5_i15hx")]
+[node name="SierraInventoryGrid" parent="Overlay/PopupPanel/VBoxContainer" instance=ExtResource("5_i15hx")]
 layout_mode = 2
 
-[node name="FooterContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
+[node name="FooterContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 10
 
-[node name="CommandsContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer/FooterContainer"]
+[node name="CommandsContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Interact" type="TextureButton" parent="PopupPanel/VBoxContainer/FooterContainer/CommandsContainer"]
+[node name="Interact" type="TextureButton" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer/CommandsContainer"]
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -108,7 +119,7 @@ texture_normal = SubResource("AtlasTexture_t6f3x")
 texture_pressed = SubResource("AtlasTexture_2tl6r")
 texture_hover = SubResource("AtlasTexture_u6es1")
 
-[node name="Look" type="TextureButton" parent="PopupPanel/VBoxContainer/FooterContainer/CommandsContainer"]
+[node name="Look" type="TextureButton" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer/CommandsContainer"]
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -117,7 +128,7 @@ texture_normal = SubResource("AtlasTexture_3r3in")
 texture_pressed = SubResource("AtlasTexture_2idn6")
 texture_hover = SubResource("AtlasTexture_mndsc")
 
-[node name="Talk" type="TextureButton" parent="PopupPanel/VBoxContainer/FooterContainer/CommandsContainer"]
+[node name="Talk" type="TextureButton" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer/CommandsContainer"]
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -126,19 +137,19 @@ texture_normal = SubResource("AtlasTexture_hb12v")
 texture_pressed = SubResource("AtlasTexture_b4bqk")
 texture_hover = SubResource("AtlasTexture_w2dlm")
 
-[node name="Ok" type="Button" parent="PopupPanel/VBoxContainer/FooterContainer"]
+[node name="Ok" type="Button" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 text = "ok"
 
-[node name="Cancel" type="Button" parent="PopupPanel/VBoxContainer/FooterContainer"]
+[node name="Cancel" type="Button" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 size_flags_vertical = 4
 text = "close"
 
-[connection signal="pressed" from="PopupPanel/VBoxContainer/FooterContainer/CommandsContainer/Interact" to="." method="_on_interact_pressed"]
-[connection signal="pressed" from="PopupPanel/VBoxContainer/FooterContainer/CommandsContainer/Look" to="." method="_on_look_pressed"]
-[connection signal="pressed" from="PopupPanel/VBoxContainer/FooterContainer/CommandsContainer/Talk" to="." method="_on_talk_pressed"]
+[connection signal="pressed" from="Overlay/PopupPanel/VBoxContainer/FooterContainer/CommandsContainer/Interact" to="Overlay" method="_on_interact_pressed"]
+[connection signal="pressed" from="Overlay/PopupPanel/VBoxContainer/FooterContainer/CommandsContainer/Look" to="Overlay" method="_on_look_pressed"]
+[connection signal="pressed" from="Overlay/PopupPanel/VBoxContainer/FooterContainer/CommandsContainer/Talk" to="Overlay" method="_on_talk_pressed"]

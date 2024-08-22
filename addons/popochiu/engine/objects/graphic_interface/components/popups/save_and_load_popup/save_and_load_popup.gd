@@ -1,3 +1,4 @@
+@tool
 extends PopochiuPopup
 
 signal slot_selected

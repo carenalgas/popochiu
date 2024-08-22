@@ -7,7 +7,20 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bh5os"]
 
-[node name="SierraTextPopup" type="PanelContainer" groups=["popochiu_gui_popup"]]
+[node name="SierraTextPopup" type="Control" groups=["popochiu_gui_popup"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_7sq5d")
+script = ExtResource("2_nmcxa")
+script_name = &"SierraTextPopup"
+title = "Text options"
+
+[node name="Overlay" type="PanelContainer" parent="."]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,22 +28,20 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_7sq5d")
 theme_override_styles/panel = SubResource("StyleBoxEmpty_bh5os")
-script = ExtResource("2_nmcxa")
-script_name = &"SierraTextPopup"
 
-[node name="PopupPanel" type="PanelContainer" parent="."]
+[node name="PopupPanel" type="PanelContainer" parent="Overlay"]
 custom_minimum_size = Vector2(140, 140)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PopupPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PopupPanel"]
 layout_mode = 2
 
-[node name="HeaderContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
+[node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="PopupPanel/VBoxContainer/HeaderContainer"]
+[node name="Title" type="Label" parent="Overlay/PopupPanel/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -38,7 +49,7 @@ text = "Text options"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Close" type="TextureButton" parent="PopupPanel/VBoxContainer/HeaderContainer"]
+[node name="Close" type="TextureButton" parent="Overlay/PopupPanel/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
 visible = false
 texture_filter = 1
@@ -48,17 +59,17 @@ texture_normal = ExtResource("3_rckox")
 texture_pressed = ExtResource("4_gfs8i")
 texture_hover = ExtResource("4_gfs8i")
 
-[node name="BodyContainer" type="VBoxContainer" parent="PopupPanel/VBoxContainer"]
+[node name="BodyContainer" type="VBoxContainer" parent="Overlay/PopupPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="TextSpeedContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer/BodyContainer"]
+[node name="TextSpeedContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PopupPanel/VBoxContainer/BodyContainer/TextSpeedContainer"]
+[node name="Label" type="Label" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer/TextSpeedContainer"]
 layout_mode = 2
 text = "Text speed"
 
-[node name="TextSpeed" type="HSlider" parent="PopupPanel/VBoxContainer/BodyContainer/TextSpeedContainer"]
+[node name="TextSpeed" type="HSlider" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer/TextSpeedContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
@@ -67,15 +78,15 @@ size_flags_vertical = 8
 max_value = 0.1
 step = 0.01
 
-[node name="DialogStyleContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer/BodyContainer"]
+[node name="DialogStyleContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PopupPanel/VBoxContainer/BodyContainer/DialogStyleContainer"]
+[node name="Label" type="Label" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer/DialogStyleContainer"]
 layout_mode = 2
 text = "Style"
 horizontal_alignment = 1
 
-[node name="DialogStyle" type="OptionButton" parent="PopupPanel/VBoxContainer/BodyContainer/DialogStyleContainer"]
+[node name="DialogStyle" type="OptionButton" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer/DialogStyleContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
@@ -88,33 +99,33 @@ popup/item_1/id = 1
 popup/item_2/text = "Caption"
 popup/item_2/id = 2
 
-[node name="ContinueModeContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer/BodyContainer"]
+[node name="ContinueModeContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="PopupPanel/VBoxContainer/BodyContainer/ContinueModeContainer"]
+[node name="Label" type="Label" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer/ContinueModeContainer"]
 layout_mode = 2
 text = "Auto-continue"
 horizontal_alignment = 1
 
-[node name="ContinueMode" type="CheckBox" parent="PopupPanel/VBoxContainer/BodyContainer/ContinueModeContainer"]
+[node name="ContinueMode" type="CheckBox" parent="Overlay/PopupPanel/VBoxContainer/BodyContainer/ContinueModeContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 10
 icon_alignment = 2
 
-[node name="FooterContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
+[node name="FooterContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 10
 alignment = 1
 
-[node name="Ok" type="Button" parent="PopupPanel/VBoxContainer/FooterContainer"]
+[node name="Ok" type="Button" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 text = "ok"
 
-[node name="Cancel" type="Button" parent="PopupPanel/VBoxContainer/FooterContainer"]
+[node name="Cancel" type="Button" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Back"

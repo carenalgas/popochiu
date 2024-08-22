@@ -1,3 +1,4 @@
+@tool
 extends PopochiuPopup
 
 const DIALOG_LINE := preload(

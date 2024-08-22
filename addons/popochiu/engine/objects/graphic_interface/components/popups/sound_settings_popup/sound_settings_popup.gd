@@ -1,3 +1,4 @@
+@tool
 extends PopochiuPopup
 
 @onready var sound_volumes: GridContainer = %SoundVolumes

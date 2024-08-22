@@ -1,3 +1,4 @@
+@tool
 extends PopochiuPopup
 
 var _command_when_opened: int = -1

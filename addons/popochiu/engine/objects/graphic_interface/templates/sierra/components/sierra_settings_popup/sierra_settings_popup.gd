@@ -1,3 +1,4 @@
+@tool
 extends PopochiuPopup
 
 signal option_selected(option_name)

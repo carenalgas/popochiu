@@ -25,31 +25,42 @@ VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_pm06l")
 VScrollBar/styles/scroll = SubResource("StyleBoxFlat_gr6a3")
 VScrollBar/styles/scroll_focus = SubResource("StyleBoxFlat_gr6a3")
 
-[node name="HistoryPopup" type="PanelContainer" groups=["popochiu_gui_popup"]]
+[node name="HistoryPopup" type="Control" groups=["popochiu_gui_popup"]]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_ktant")
-theme_override_styles/panel = SubResource("StyleBoxFlat_roir4")
 script = ExtResource("2_bdgcw")
 dialog_line = ExtResource("3_8deqt")
 interaction_line = ExtResource("4_ndekf")
+script_name = &"HistoryPopup"
+title = "History"
 
-[node name="PopupPanel" type="PanelContainer" parent="."]
+[node name="Overlay" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_roir4")
+
+[node name="PopupPanel" type="PanelContainer" parent="Overlay"]
 custom_minimum_size = Vector2(256, 144)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PopupPanel"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PopupPanel"]
 layout_mode = 2
 
-[node name="HeaderContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
+[node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer"]
 layout_mode = 2
 
-[node name="Title" type="Label" parent="PopupPanel/VBoxContainer/HeaderContainer"]
+[node name="Title" type="Label" parent="Overlay/PopupPanel/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -57,7 +68,7 @@ text = "History"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Close" type="TextureButton" parent="PopupPanel/VBoxContainer/HeaderContainer"]
+[node name="Close" type="TextureButton" parent="Overlay/PopupPanel/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
@@ -66,7 +77,7 @@ texture_normal = ExtResource("3_6f0nr")
 texture_pressed = ExtResource("4_e8jii")
 texture_hover = ExtResource("4_e8jii")
 
-[node name="Empty" type="Label" parent="PopupPanel/VBoxContainer"]
+[node name="Empty" type="Label" parent="Overlay/PopupPanel/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
@@ -74,30 +85,30 @@ text = "Nothing to show yet"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LinesScroll" type="ScrollContainer" parent="PopupPanel/VBoxContainer"]
+[node name="LinesScroll" type="ScrollContainer" parent="Overlay/PopupPanel/VBoxContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
 theme = SubResource("Theme_cqgnt")
 
-[node name="LinesList" type="VBoxContainer" parent="PopupPanel/VBoxContainer/LinesScroll"]
+[node name="LinesList" type="VBoxContainer" parent="Overlay/PopupPanel/VBoxContainer/LinesScroll"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="FooterContainer" type="HBoxContainer" parent="PopupPanel/VBoxContainer"]
+[node name="FooterContainer" type="HBoxContainer" parent="Overlay/PopupPanel/VBoxContainer"]
 visible = false
 layout_mode = 2
 size_flags_vertical = 10
 alignment = 1
 
-[node name="Ok" type="Button" parent="PopupPanel/VBoxContainer/FooterContainer"]
+[node name="Ok" type="Button" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "ok"
 
-[node name="Cancel" type="Button" parent="PopupPanel/VBoxContainer/FooterContainer"]
+[node name="Cancel" type="Button" parent="Overlay/PopupPanel/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "cancel"

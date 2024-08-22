@@ -1,4 +1,5 @@
-extends "../popochiu_popup.gd"
+@tool
+extends PopochiuPopup
 
 
 #region Virtual ####################################################################################

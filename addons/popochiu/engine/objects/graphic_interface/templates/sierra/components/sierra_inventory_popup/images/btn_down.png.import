@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bctpmd8wh2ket"
-path="res://.godot/imported/btn_down.png-5b2bbec8eb1dd3ca55c87af63b01e606.ctex"
+path="res://.godot/imported/btn_down.png-ce252f85882a9cf7709a49a805c864ae.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_inventory_popup/sprites/btn_down.png"
-dest_files=["res://.godot/imported/btn_down.png-5b2bbec8eb1dd3ca55c87af63b01e606.ctex"]
+source_file="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_inventory_popup/images/btn_down.png"
+dest_files=["res://.godot/imported/btn_down.png-ce252f85882a9cf7709a49a805c864ae.ctex"]
 
 [params]
 

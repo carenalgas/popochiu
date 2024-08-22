@@ -1,6 +1,6 @@
 @tool
 class_name PopochiuPopup
-extends PanelContainer
+extends Control
 ## The base popup node used by Popochiu GUIs.
 
 @export var closes_by_clicking_out := true
@@ -66,17 +66,16 @@ func open() -> void:
 	
 	G.block()
 	Cursor.show_cursor("gui", true)
-	
-	(E.gui as PopochiuGraphicInterface).popups_stack.append(self)
+	E.gui.popups_stack.append(self)
 	
 	show()
 
 
 ## Closes the popup unlocking interactions with the graphic interface.
 func close() -> void:
-	(E.gui as PopochiuGraphicInterface).popups_stack.erase(self)
+	E.gui.popups_stack.erase(self)
 	
-	if (E.gui as PopochiuGraphicInterface).popups_stack.is_empty():
+	if E.gui.popups_stack.is_empty():
 		G.unblock()
 		Cursor.unblock()
 	
@@ -87,14 +86,12 @@ func close() -> void:
 ## Called when the OK button is pressed. It closes the popup afterwards.
 func on_ok_pressed() -> void:
 	_on_ok()
-	
 	close()
 
 
 ## Called when the CANCEL button is pressed. It closes the popup afterwards.
 func on_cancel_pressed() -> void:
 	_on_cancel()
-	
 	close()
 
 
@@ -102,7 +99,6 @@ func on_cancel_pressed() -> void:
 ## afterwards.
 func on_close_pressed() -> void:
 	_on_cancel()
-	
 	close()
 
 
