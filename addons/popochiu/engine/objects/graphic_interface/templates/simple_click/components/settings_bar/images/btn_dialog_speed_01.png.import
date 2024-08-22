@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bg1txcy1ofatq"
-path="res://.godot/imported/btn_dialog_history.png-9aead40c805b43fddf748d233e2bc892.ctex"
+uid="uid://bkwo41gqhl5ic"
+path="res://.godot/imported/btn_dialog_speed_01.png-6664e08bb7e4fa77051789bd25b9dd2d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_dialog_history.png"
-dest_files=["res://.godot/imported/btn_dialog_history.png-9aead40c805b43fddf748d233e2bc892.ctex"]
+source_file="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/images/btn_dialog_speed_01.png"
+dest_files=["res://.godot/imported/btn_dialog_speed_01.png-6664e08bb7e4fa77051789bd25b9dd2d.ctex"]
 
 [params]
 

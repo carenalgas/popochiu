@@ -3,7 +3,7 @@
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_5somw"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/9_verb_gui.gd" id="2_6nea2"]
 [ext_resource type="Texture2D" uid="uid://d0fwvj88bhggm" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/images/9verb_cursor.png" id="3_fpt6m"]
-[ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.tscn" id="4_w78uo"]
+[ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_line.tscn" id="4_w78uo"]
 [ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/components/system_text/system_text.tscn" id="5_ygb3y"]
 [ext_resource type="PackedScene" uid="uid://cuokybjvunmhq" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_panel/9_verb_panel.tscn" id="6_tiq5g"]
 [ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn" id="7_ypv20"]
@@ -92,7 +92,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="9VerbGI" type="Control"]
+[node name="9VerbGUI" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -108,13 +108,11 @@ texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_xtf0b")
 animation = &"active"
 
-[node name="DialogText" parent="." instance=ExtResource("4_w78uo")]
+[node name="DialogLine" parent="." instance=ExtResource("4_w78uo")]
 layout_mode = 1
 
 [node name="9VerbPanel" parent="." instance=ExtResource("6_tiq5g")]
 layout_mode = 1
-offset_top = -51.0
-offset_right = 0.0
 
 [node name="DialogMenu" parent="." instance=ExtResource("7_ypv20")]
 visible = false

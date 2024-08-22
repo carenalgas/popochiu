@@ -6,8 +6,8 @@ enum DialogStyle {
 	ABOVE_CHARACTER,
 	PORTRAIT,
 	CAPTION,
-	PORTRAIT_ABOVE_CHARACTER,
-	BUBBLE_ABOVE_CHARACTER,
+	#PORTRAIT_ABOVE_CHARACTER, # TODO: Create a GUI node to make this option available
+	#BUBBLE_ABOVE_CHARACTER, # TODO: Create a GUI node to make this option available
 }
 
 # Thanks to @drbloop for providing the bases of the new approach for moving the popochiu settings to

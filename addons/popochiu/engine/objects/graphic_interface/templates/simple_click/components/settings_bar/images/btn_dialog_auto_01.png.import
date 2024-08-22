@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://h156lkhxk5tl"
-path="res://.godot/imported/dialog_continue.png-b88ef09ddb328dfc3e5edb03c02d5a87.ctex"
+uid="uid://brnf51r7xuec4"
+path="res://.godot/imported/btn_dialog_auto_01.png-26ef9a62308677838d97f0ae079a5ee1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_continue.png"
-dest_files=["res://.godot/imported/dialog_continue.png-b88ef09ddb328dfc3e5edb03c02d5a87.ctex"]
+source_file="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/images/btn_dialog_auto_01.png"
+dest_files=["res://.godot/imported/btn_dialog_auto_01.png-26ef9a62308677838d97f0ae079a5ee1.ctex"]
 
 [params]
 

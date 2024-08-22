@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=13 format=3 uid="uid://dpequqav4rjaf"]
+[gd_resource type="Theme" load_steps=15 format=3 uid="uid://dpequqav4rjaf"]
 
 [ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_sgqra"]
 [ext_resource type="Texture2D" uid="uid://pl1ch71kfj72" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/check_button_checked.png" id="2_ldprq"]
@@ -6,34 +6,31 @@
 [ext_resource type="Texture2D" uid="uid://cqxqfxobqltga" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/grabber.png" id="4_4x0ix"]
 [ext_resource type="Texture2D" uid="uid://d1ywqbehmtuv" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/down_arrow.png" id="5_jwcnu"]
 
-[sub_resource type="StyleBoxFlat" id="8"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.180392, 0.172549, 0.607843, 1)
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.482353, 0.482353, 0.482353, 1)
-corner_detail = 4
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jar7r"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0.74902)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jts3x"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d2wsf"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0.74902)
+
 [sub_resource type="StyleBoxFlat" id="7"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.180392, 0.172549, 0.607843, 1)
-draw_center = false
-border_width_left = 1
-border_width_top = 1
-border_width_right = 1
-border_width_bottom = 1
-border_color = Color(0.439216, 0.427451, 0.921569, 1)
-corner_detail = 4
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0.74902)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3mrlf"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0.74902)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pr0tq"]
 bg_color = Color(0.698039, 0.698039, 0.698039, 1)
@@ -50,17 +47,18 @@ bg_color = Color(0, 0, 0, 0.498039)
 [resource]
 default_font = ExtResource("1_sgqra")
 default_font_size = 16
-Button/colors/font_color = Color(0.698039, 0.698039, 0.698039, 1)
-Button/colors/font_disabled_color = Color(0.482353, 0.482353, 0.482353, 1)
-Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_color = Color(0.482353, 0.482353, 0.482353, 1)
+Button/colors/font_disabled_color = Color(0.290196, 0.290196, 0.290196, 1)
+Button/colors/font_focus_color = Color(0.482353, 0.482353, 0.482353, 1)
+Button/colors/font_hover_color = Color(0.698039, 0.698039, 0.698039, 1)
 Button/colors/font_hover_pressed_color = Color(0.929412, 0.945098, 0.443137, 1)
-Button/colors/font_pressed_color = Color(0.929412, 0.945098, 0.443137, 1)
+Button/colors/font_pressed_color = Color(1, 1, 1, 1)
 Button/fonts/font = ExtResource("1_sgqra")
-Button/styles/disabled = SubResource("8")
+Button/styles/disabled = SubResource("StyleBoxFlat_jar7r")
 Button/styles/focus = SubResource("StyleBoxEmpty_jts3x")
-Button/styles/hover = SubResource("7")
+Button/styles/hover = SubResource("StyleBoxFlat_d2wsf")
 Button/styles/normal = SubResource("7")
-Button/styles/pressed = SubResource("7")
+Button/styles/pressed = SubResource("StyleBoxFlat_3mrlf")
 CheckButton/icons/checked = ExtResource("2_ldprq")
 CheckButton/icons/unchecked = ExtResource("3_3rprc")
 HSlider/icons/grabber = ExtResource("4_4x0ix")

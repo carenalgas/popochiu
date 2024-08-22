@@ -3,8 +3,8 @@
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/inventory_grid.gd" id="1_0wmc7"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_7ovtr"]
 [ext_resource type="PackedScene" uid="uid://b4juyi6em7wja" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_inventory_grid/9_verb_inventory_slot.tscn" id="2_goalc"]
-[ext_resource type="Texture2D" uid="uid://k5k85xjvtqwc" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_inventory_grid/sprites/9verb_inventory_up.png" id="2_i17ns"]
-[ext_resource type="Texture2D" uid="uid://co5fkuv4jgfbc" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_inventory_grid/sprites/9verb_inventory_down.png" id="3_uqfpl"]
+[ext_resource type="Texture2D" uid="uid://k5k85xjvtqwc" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_inventory_grid/images/9verb_inventory_up.png" id="2_i17ns"]
+[ext_resource type="Texture2D" uid="uid://co5fkuv4jgfbc" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_inventory_grid/images/9verb_inventory_down.png" id="3_uqfpl"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5xjfw"]
 atlas = ExtResource("2_i17ns")
@@ -46,6 +46,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 0
 theme = ExtResource("1_7ovtr")
+theme_override_constants/separation = 0
 script = ExtResource("1_0wmc7")
 slot_scene = ExtResource("2_goalc")
 h_separation = 1

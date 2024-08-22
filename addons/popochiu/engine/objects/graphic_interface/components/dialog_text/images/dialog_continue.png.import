@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bexxkrmqdiemq"
-path="res://.godot/imported/btn_save.png-96ee5eb3d57c4002a93c91b685afe40d.ctex"
+uid="uid://h156lkhxk5tl"
+path="res://.godot/imported/dialog_continue.png-7bba6e5824c5651e708b7d2fef161470.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/sprites/btn_save.png"
-dest_files=["res://.godot/imported/btn_save.png-96ee5eb3d57c4002a93c91b685afe40d.ctex"]
+source_file="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/images/dialog_continue.png"
+dest_files=["res://.godot/imported/dialog_continue.png-7bba6e5824c5651e708b7d2fef161470.ctex"]
 
 [params]
 

@@ -1,9 +1,8 @@
 extends RichTextLabel
-# Show dialogue texts char by char using a RichTextLabel.
-# An invisibla Label is used to calculate the width of the RichTextLabel node.
-# ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓
-# warning-ignore-all:unused_signal
-# warning-ignore-all:return_value_discarded
+class_name PopochiuDialogText
+## Show dialogue texts char by char using a [RichTextLabel].
+## 
+## An invisibla [Label] is used to calculate the width of the [RichTextLabel] node.
 
 signal animation_finished
 signal text_show_started
@@ -23,9 +22,9 @@ var _dialog_pos := Vector2.ZERO
 var _x_limit := 0.0
 var _y_limit := 0.0
 
-@onready var _tween: Tween = null
-@onready var _continue_icon: TextureProgressBar = $ContinueIcon
-@onready var _continue_icon_tween: Tween = null
+@onready var tween: Tween = null
+@onready var continue_icon: TextureProgressBar = $ContinueIcon
+@onready var continue_icon_tween: Tween = null
 
 
 #region Godot ######################################################################################
@@ -41,7 +40,7 @@ func _ready() -> void:
 	_x_limit = E.width / (E.scale.x if E.settings.scale_gui else 1.0)
 	_y_limit = E.height / (E.scale.y if E.settings.scale_gui else 1.0)
 	
-	_continue_icon.hide()
+	continue_icon.hide()
 	
 	# Connect to singletons events
 	E.text_speed_changed.connect(change_speed)
@@ -137,7 +136,7 @@ func play_text(props: Dictionary) -> void:
 	# ========================================================== Calculate the size of the node ====
 	
 	match E.current_dialog_style:
-		0:
+		PopochiuConfig.DialogStyle.ABOVE_CHARACTER:
 			# Define size and position (before calculating overflow)
 			size = _size
 			position = props.position - size / 2.0
@@ -152,7 +151,7 @@ func play_text(props: Dictionary) -> void:
 				position.y = limit_margin
 			elif position.y + size.y > _y_limit:
 				position.y = _y_limit - limit_margin - size.y
-		2:
+		PopochiuConfig.DialogStyle.CAPTION:
 			# Define size and position (before calculating overflow)
 			size.y = _size.y
 			position.y = (
@@ -163,7 +162,7 @@ func play_text(props: Dictionary) -> void:
 	push_color(props.color)
 	
 	match E.current_dialog_style:
-		0:
+		PopochiuConfig.DialogStyle.ABOVE_CHARACTER:
 			var center := floor(position.x + (size.x / 2))
 			if center == props.position.x:
 				append_text("[center]%s[/center]" % msg)
@@ -171,25 +170,23 @@ func play_text(props: Dictionary) -> void:
 				append_text("[right]%s[/right]" % msg)
 			else:
 				append_text(msg)
-		1:
+		PopochiuConfig.DialogStyle.PORTRAIT:
 			append_text(msg)
-		2:
-			text = "[center][color=%s]%s[/color][/center]" % [
-				props.color.to_html(), msg
-			]
+		PopochiuConfig.DialogStyle.CAPTION:
+			text = "[center][color=%s]%s[/color][/center]" % [props.color.to_html(), msg]
 	
 	if _secs_per_character > 0.0:
 		# The text will appear with an animation
-		if is_instance_valid(_tween) and _tween.is_running():
-			_tween.kill()
+		if is_instance_valid(tween) and tween.is_running():
+			tween.kill()
 		
-		_tween = create_tween()
-		_tween.tween_property(
+		tween = create_tween()
+		tween.tween_property(
 			self, "visible_ratio",
 			1,
 			_secs_per_character * get_total_character_count()
 		).from(0.0)
-		_tween.finished.connect(_wait_input)
+		tween.finished.connect(_wait_input)
 	else:
 		_wait_input()
 	
@@ -204,8 +201,8 @@ func stop() ->void:
 		_notify_completion()
 	else:
 		# Skip tweens
-		if is_instance_valid(_tween) and _tween.is_running():
-			_tween.kill()
+		if is_instance_valid(tween) and tween.is_running():
+			tween.kill()
 		
 		visible_ratio = 1.0
 		
@@ -219,18 +216,18 @@ func disappear() -> void:
 	modulate.a = 0.0
 	_is_waiting_input = false
 	
-	if is_instance_valid(_tween) and _tween.is_running():
-		_tween.kill()
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
 	
 	clear()
 	text = ""
 	
-	_continue_icon.hide()
-	_continue_icon.modulate.a = 1.0
+	continue_icon.hide()
+	continue_icon.modulate.a = 1.0
 	
-	if is_instance_valid(_continue_icon_tween)\
-	and _continue_icon_tween.is_running():
-		_continue_icon_tween.kill()
+	if is_instance_valid(continue_icon_tween)\
+	and continue_icon_tween.is_running():
+		continue_icon_tween.kill()
 	
 	size = get_meta(DFLT_SIZE)
 	
@@ -266,8 +263,8 @@ func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
 func _wait_input() -> void:
 	_is_waiting_input = true
 	
-	if is_instance_valid(_tween) and _tween.finished.is_connected(_wait_input):
-		_tween.finished.disconnect(_wait_input)
+	if is_instance_valid(tween) and tween.finished.is_connected(_wait_input):
+		tween.finished.disconnect(_wait_input)
 	
 	if E.auto_continue_after >= 0.0:
 		_auto_continue = true
@@ -285,16 +282,16 @@ func _notify_completion() -> void:
 
 
 func _show_icon() -> void:
-	if is_instance_valid(_continue_icon_tween)\
-	and _continue_icon_tween.is_running():
-		_continue_icon_tween.kill()
+	if is_instance_valid(continue_icon_tween)\
+	and continue_icon_tween.is_running():
+		continue_icon_tween.kill()
 	
-	_continue_icon_tween = create_tween()
-#	_continue_icon.position.x = size.x
+	continue_icon_tween = create_tween()
+#	continue_icon.position.x = size.x
 	
 	if not E.settings.auto_continue_text:
 		# For manual continuation: make the continue icon jump
-		_continue_icon.value = 100.0
+		continue_icon.value = 100.0
 		
 		var from_pos := 0.0
 		var to_pos := 0.0
@@ -304,34 +301,34 @@ func _show_icon() -> void:
 				from_pos = size.y / 2.0 - 1.0
 				to_pos = size.y / 2.0 + 3.0
 			1, 2:
-				to_pos = size.y - _continue_icon.size.y + 2.0
-				from_pos = size.y - _continue_icon.size.y - 1.0
+				to_pos = size.y - continue_icon.size.y + 2.0
+				from_pos = size.y - continue_icon.size.y - 1.0
 		
-		_continue_icon_tween.tween_property(
-			_continue_icon, "position:y", to_pos, 0.8
+		continue_icon_tween.tween_property(
+			continue_icon, "position:y", to_pos, 0.8
 		).from(from_pos).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
-		_continue_icon_tween.set_loops()
+		continue_icon_tween.set_loops()
 	else:
 		# For automatic continuation: Make the icon appear like a progress bar
 		# the time players wil have to read befor auto-continuing
-		_continue_icon.value = 0.0
+		continue_icon.value = 0.0
 		
 		match E.current_dialog_style:
 			0:
-				_continue_icon.position.y = size.y / 2.0
+				continue_icon.position.y = size.y / 2.0
 		
-		_continue_icon_tween.tween_property(
-			_continue_icon, "value",
+		continue_icon_tween.tween_property(
+			continue_icon, "value",
 			100.0, 3.0,
 		).from_current().set_ease(Tween.EASE_OUT)
-		_continue_icon_tween.finished.connect(_continue)
+		continue_icon_tween.finished.connect(_continue)
 	
-	_continue_icon_tween.pause()
+	continue_icon_tween.pause()
 	
 	await get_tree().create_timer(0.2).timeout
 
-	_continue_icon_tween.play()
-	_continue_icon.show()
+	continue_icon_tween.play()
+	continue_icon.show()
 
 
 func _continue(forced_continue := false) -> void:

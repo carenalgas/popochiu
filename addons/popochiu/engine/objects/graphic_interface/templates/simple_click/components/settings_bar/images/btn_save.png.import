@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://s4phlorab5ds"
-path="res://.godot/imported/inventory_grid_down_button.png-44398d9028a863c1d9c9a1a5181113f9.ctex"
+uid="uid://bexxkrmqdiemq"
+path="res://.godot/imported/btn_save.png-aedde278da8cf9d354eb32f9fc50910b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/graphic_interface/components/inventory_grid/sprites/inventory_grid_down_button.png"
-dest_files=["res://.godot/imported/inventory_grid_down_button.png-44398d9028a863c1d9c9a1a5181113f9.ctex"]
+source_file="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/components/settings_bar/images/btn_save.png"
+dest_files=["res://.godot/imported/btn_save.png-aedde278da8cf9d354eb32f9fc50910b.ctex"]
 
 [params]
 

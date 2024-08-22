@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/simple_click_gui.gd" id="1_268ni"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_uf1ey"]
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="2_6qu0l"]
-[ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_text.tscn" id="2_v42aw"]
+[ext_resource type="PackedScene" uid="uid://cg18h3icrip1r" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_line.tscn" id="2_v42aw"]
 [ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/graphic_interface/templates/simple_click/images/simple_click_cursor.png" id="3_718yk"]
 [ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/components/system_text/system_text.tscn" id="4_o82xq"]
 [ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn" id="5_ayg0j"]
@@ -220,7 +220,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="SimpleClickGI" type="Control"]
+[node name="SimpleClickGUI" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -236,7 +236,7 @@ texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_1bbe3")
 animation = &"gui"
 
-[node name="DialogText" parent="." instance=ExtResource("2_v42aw")]
+[node name="DialogLine" parent="." instance=ExtResource("2_v42aw")]
 layout_mode = 1
 
 [node name="HoverText" parent="." instance=ExtResource("2_6qu0l")]

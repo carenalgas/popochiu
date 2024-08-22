@@ -5,6 +5,7 @@ extends PanelContainer
 @onready var right_avatar: TextureRect = $HBoxContainer/RightAvatar
 
 
+#region Godot ######################################################################################
 func _ready() -> void:
 	# Connect to child signals
 	portrait_text.text_show_started.connect(show)
@@ -16,6 +17,9 @@ func _ready() -> void:
 	hide()
 
 
+#endregion
+
+#region Private ####################################################################################
 func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 	if not portrait_text.visible: return
 	
@@ -30,3 +34,6 @@ func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 		left_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
 	else:
 		right_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
+
+
+#endregion
