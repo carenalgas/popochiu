@@ -149,6 +149,9 @@
 
     --system-font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     --monospace-font-family: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, Courier, monospace;
+
+    /* Mermaid diagrams background color */
+    --mermaid-background-color: #fcfcfc;
 }
 
 /* Dark theme colors */
@@ -275,6 +278,9 @@
         --btn-neutral-background-color: #404040;
         --btn-neutral-hover-background-color: #505050;
         --footer-color: #aaa;
+
+        /* Mermaid diagrams background color */
+        --mermaid-background-color: #fcfcfc;
     }
 }
 
@@ -1766,4 +1772,11 @@ p + .classref-constant {
         font-size: 14px;
         padding: 3px 5px;
     }
+}
+
+/* Force Mermaid diagrams background color */
+div.mermaid {
+    background-color: var(--mermaid-background-color);
+    padding: 4px;
+    margin: 16px 0;
 }
