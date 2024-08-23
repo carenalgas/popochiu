@@ -27,68 +27,79 @@
  /* Default (light) theme colors */
  :root {
     color-scheme: light dark;
-    --body-color: #404040;
-    --content-wrap-background-color: #efefef;
-    --content-background-color: #fcfcfc;
+    /* Base Popochiu color palette */
+    --popochiu-blue: hsl(240, 67%, 58%);
+    --popochiu-yellow: hsl(60, 90%, 51%);
+    --popochiu-magenta: hsl(300, 74%, 62%);
+    --popochiu-cyan: hsl(180, 87%, 63%);
+
+
+    /* Style variables */
+    --body-color: hsl(0, 0%, 25%);
+    --content-wrap-background-color: hsl(0, 0%, 94%);
+    --content-background-color: hsl(0, 0%, 99%);
     --logo-opacity: 1.0;
 
-    --navbar-background-color: #333f67;
-    --navbar-background-color-hover: #29355c;
-    --navbar-background-color-active: #212d51;
-    --navbar-current-background-color: #212d51;
-    --navbar-current-background-color-hover: #182343;
-    --navbar-current-background-color-active: #131e3b;
-    --navbar-category-active-color: rgba(255 115 129 / 10%);
-    --navbar-current-color: #f1f9ff;
-    --navbar-level-1-color: #c3e3ff;
-    --navbar-level-2-color: #b8d6f0;
-    --navbar-level-3-color: #a3c4e1;
-    --navbar-expand-base-color: #81a3c2;
-    --navbar-expand-hover-color: #c3e3ff;
-    --navbar-expand-active-color: #f1f9ff;
-    --navbar-dimmed-color: #a3c4e1;
-    --navbar-heading-color: #ff7381;
-    --navbar-scrollbar-color: #d45a66;
-    --navbar-scrollbar-hover-color: #b14550;
-    --navbar-scrollbar-active-color: #72383e;
-    --navbar-scrollbar-background: #131e2b;
+    /* Popochiu color palette and derivatives starts here */
+    --navbar-background-color: hsl(240, 34%, 30%);
+    --navbar-background-color-hover: hsl(240, 38%, 26%);
+    --navbar-background-color-active: hsl(240, 42%, 22%);
+    --navbar-current-background-color: hsl(240, 42%, 22%);
+    --navbar-current-background-color-hover: hsl(240, 47%, 18%);
+    --navbar-current-background-color-active: hsl(240, 51%, 15%);
+    --navbar-category-active-color: hsla(300, 100%, 73%, 0.1);
+    --navbar-current-color: hsl(180, 100%, 97%);
+    --navbar-level-1-color: hsl(180, 100%, 88%);
+    --navbar-level-2-color: hsl(180, 65%, 83%);
+    --navbar-level-3-color: hsl(180, 51%, 76%);
+    --navbar-expand-base-color: hsl(180, 35%, 63%);
+    --navbar-expand-hover-color: hsl(180, 100%, 88%);
+    --navbar-expand-active-color: hsl(180, 100%, 97%);
+    --navbar-dimmed-color: hsl(180, 51%, 76%);
+    --navbar-heading-color: hsl(300, 100%, 73%);
+    --navbar-scrollbar-color: hsl(300, 59%, 59%);
+    --navbar-scrollbar-hover-color: hsl(300, 44%, 48%);
+    --navbar-scrollbar-active-color: hsl(300, 34%, 33%);
+    --navbar-scrollbar-background: hsl(60, 39%, 12%);
 
-    --link-color: #2980b9;
-    --link-color-hover: #3091d1;
-    --link-color-active: #105078;
-    --link-color-visited: #9b59b6;
+    --link-color: hsl(180, 85%, 30%);
+    --link-color-hover: hsl(180, 64%, 50%);
+    --link-color-active: hsl(180, 75%, 25%);
+    --link-color-visited: hsl(60, 59%, 33%);
+
     --class-reference-icon: url("data:image/svg+xml;base64,PHN2ZyBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjIiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtNS4wMjkgMWMtLjk5OS0uMDExLTIuMDA5LjMxMi0zLjAyOSAxdjdjMi4wMTctMS4zNTMgNC4wMTctMS4zMTQgNiAwIDEuOTgzLTEuMzE0IDMuOTgzLTEuMzUzIDYgMHYtN2MtMS4wMi0uNjg4LTIuMDMtMS4wMTEtMy4wMjktMS0uNjYyLjAwNy0xLjMxOC4xNzMtMS45NzEuNDYzdjQuNTM3aC0xdi00Yy0uOTgyLS42NDUtMS45NzEtLjk4OS0yLjk3MS0xem0tNS4wMjkgOXY2aDJjMS42NDYgMCAzLTEuMzU0IDMtM3MtMS4zNTQtMy0zLTN6bTUgM2MwIDEuNjQ2IDEuMzU0IDMgMyAzczMtMS4zNTQgMy0zLTEuMzU0LTMtMy0zLTMgMS4zNTQtMyAzem02IDBjMCAxLjY0NiAxLjM1NCAzIDMgM2gxdi0yaC0xYy0uNTQ5IDAtMS0uNDUxLTEtMXMuNDUxLTEgMS0xaDF2LTJoLTFjLTEuNjQ2IDAtMyAxLjM1NC0zIDN6bS05LTFjLjU0OSAwIDEgLjQ1MSAxIDFzLS40NTEgMS0xIDF6bTYgMGMuNTQ5IDAgMSAuNDUxIDEgMXMtLjQ1MSAxLTEgMS0xLS40NTEtMS0xIC40NTEtMSAxLTF6IiBmaWxsPSIjNDE0MTQxIiBmaWxsLW9wYWNpdHk9Ii41OSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+Cg==");
     --external-reference-icon: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEyIiB3aWR0aD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMjk4MGI5Ij48cGF0aCBkPSJtNy41IDcuMXYzLjRoLTZ2LTZoMy40Ii8+PHBhdGggZD0ibTUuNzY1IDFoNS4yMzV2NS4zOWwtMS41NzMgMS41NDctMS4zMS0xLjMxLTIuNzI0IDIuNzIzLTIuNjktMi42ODggMi44MS0yLjgwOC0xLjMxMy0xLjMxeiIvPjwvZz48L3N2Zz4K");
 
-    --hr-color: #e1e4e5;
-    --table-row-odd-background-color: #f3f6f6;
-    --code-background-color: #e9eae5;
-    --code-border-color: #e1e4e5;
-    --code-literal-color: #c03e41;
-    --input-background-color: #fcfcfc;
-    --input-focus-border-color: #5f8cff;
+    --hr-color: hsl(180, 7%, 89%);
+    --table-row-odd-background-color: hsl(180, 14%, 96%);
+    --code-background-color: hsl(60, 11%, 91%);
+    --code-border-color: hsl(180, 7%, 89%);
+    --code-literal-color: hsl(300, 51%, 50%);
+    --input-background-color: hsl(0, 0%, 99%);
+    --input-focus-border-color: hsl(240, 100%, 69%);
 
-    --tabs-background-color: #e1e4e5;
-    --tabs-selected-color: #a2a9ae;
-    --code-tabs-background-color: #e3ecd1;
-    --code-tabs-selected-color: #8a9378;
+    --tabs-background-color: hsl(180, 7%, 89%);
+    --tabs-selected-color: hsl(180, 7%, 66%);
+    --code-tabs-background-color: hsl(60, 42%, 87%);
+    --code-tabs-selected-color: hsl(60, 11%, 52%);
 
-    --classref-primary-color: #252525;
-    --classref-secondary-color: #616770;
-    --classref-setget-color: #56585b;
+    --classref-primary-color: hsl(0, 0%, 15%);
+    --classref-secondary-color: hsl(240, 7%, 41%);
+    --classref-setget-color: hsl(240, 3%, 35%);
 
-    --search-input-background-color: #e6eef3; /* derived from --input-background-color */
-    --search-match-color: #2c6b96; /* derived from --link-color */
-    --search-match-background-color: #e3f2fd; /* derived from --link-color */
-    --search-active-color: #efefef;
-    --search-credits-background-color: #333f67; /* derived from --navbar-background-color */
-    --search-credits-color: #b3b3b3; /* derived from --footer-color */
-    --search-credits-link-color: #4392c5; /* derived from --link-color */
+    --search-input-background-color: hsl(180, 35%, 93%); /* derived from --input-background-color */
+    --search-match-color: hsl(180, 55%, 38%); /* derived from --link-color */
+    --search-match-background-color: hsl(180, 87%, 94%); /* derived from --link-color */
+    --search-active-color: hsl(0, 0%, 94%);
+    --search-credits-background-color: hsl(240, 34%, 30%); /* derived from --navbar-background-color */
+    --search-credits-color: hsl(0, 0%, 70%); /* derived from --footer-color */
+    --search-credits-link-color: hsl(180, 53%, 52%); /* derived from --link-color */
 
-    --search-odd-color: rgb(133 160 253 / 24%);
-    --search-even-color: rgb(202 209 239 / 30%);
-    --search-highlighted-color: rgb(255 205 0 / 25%);
-    --search-context-color: #6c6e72;
+    --search-odd-color: hsla(240, 97%, 76%, 0.24);
+    --search-even-color: hsla(240, 54%, 86%, 0.3);
+    --search-highlighted-color: hsla(60, 100%, 50%, 0.25);
+    --search-context-color: hsl(240, 3%, 44%);
+    /* Popochiu color palette and derivatives ends here */
 
     --highlight-background-color: #f5ffe1;
     --highlight-background-emph-color: #dbe6c3;
@@ -152,74 +163,80 @@
 
     /* Mermaid diagrams background color */
     --mermaid-background-color: #fcfcfc;
-}
+
+    /* SVG shadow color */
+    --image-shadow-color: hsla(0, 0%, 0%, 0.3);
+ }
 
 /* Dark theme colors */
 @media (prefers-color-scheme: dark) {
     :root {
         --body-color: rgba(255, 255, 255, 0.85);
-        --content-wrap-background-color: #202326;
-        --content-background-color: #2e3236;
+        --content-wrap-background-color: hsl(240, 8%, 12%);
+        --content-background-color: hsl(240, 12%, 16%);
         /* Decrease the logo opacity when using the dark theme to be less distracting */
         --logo-opacity: 0.85;
 
-        --navbar-background-color: #25282b;
-        --navbar-background-color-hover: #333639;
-        --navbar-background-color-active: #111417;
-        --navbar-current-background-color: #333639;
-        --navbar-current-background-color-hover: #44474a;
-        --navbar-current-background-color-active: #222528;
-        --navbar-category-active-color: rgba(238 115 129 / 10%);
-        --navbar-current-color: #fefefe;
-        --navbar-level-1-color: #ddd;
-        --navbar-level-2-color: #ccc;
-        --navbar-level-3-color: #bbb;
-        --navbar-expand-base-color: #80848e;
-        --navbar-expand-hover-color: #ccc;
-        --navbar-expand-active-color: #ddd;
-        --navbar-dimmed-color: #bbb;
-        --navbar-heading-color: #ee7381;
-        --navbar-scrollbar-color: #be5460;
-        --navbar-scrollbar-hover-color: #963e48;
-        --navbar-scrollbar-active-color: #5f3034;
-        --navbar-scrollbar-background: #1c1e21;
+        /* Popochiu color palette and derivatives starts here */
+        --navbar-background-color: hsl(240, 18%, 18%);
+        --navbar-background-color-hover: hsl(240, 18%, 21%);
+        --navbar-background-color-active: hsl(240, 21%, 18%);
+        --navbar-current-background-color: hsl(240, 18%, 21%);
+        --navbar-current-background-color-hover: hsl(240, 24%, 28%);
+        --navbar-current-background-color-active: hsl(240, 18%, 32%);
+        --navbar-category-active-color: hsla(300, 78%, 69%, 0.1);
+        --navbar-current-color: hsl(60, 90%, 51%);
+        --navbar-level-1-color: hsl(60, 80%, 80%);
+        --navbar-level-2-color: hsl(60, 50%, 85%);
+        --navbar-level-3-color: hsl(60, 20%, 90%);
+        --navbar-expand-base-color: hsl(240, 6%, 53%);
+        --navbar-expand-hover-color: hsl(0, 0%, 80%);
+        --navbar-expand-active-color: hsl(0, 0%, 87%);
+        --navbar-dimmed-color: hsl(0, 0%, 73%);
+        --navbar-heading-color: hsl(300, 78%, 69%);
+        --navbar-scrollbar-color: hsl(300, 45%, 54%);
+        --navbar-scrollbar-hover-color: hsl(300, 42%, 42%);
+        --navbar-scrollbar-active-color: hsl(300, 33%, 28%);
+        --navbar-scrollbar-background: hsl(240, 8%, 12%);
 
-        --link-color: #8cf;
-        --link-color-hover: #9df;
-        --link-color-active: #6ad;
-        --link-color-visited: #cb99f6;
+        --link-color: hsl(180, 100%, 77%);
+        --link-color-hover: hsl(180, 100%, 80%);
+        --link-color-active: hsl(180, 64%, 63%);
+        --link-color-visited: hsl(300, 84%, 78%);
+
         --class-reference-icon: url("data:image/svg+xml;base64,PHN2ZyBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGZpbGwtcnVsZT0iZXZlbm9kZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjIiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtNS4wMjkgMWMtLjk5OS0uMDExLTIuMDA5LjMxMi0zLjAyOSAxdjdjMi4wMTctMS4zNTMgNC4wMTctMS4zMTQgNiAwIDEuOTgzLTEuMzE0IDMuOTgzLTEuMzUzIDYgMHYtN2MtMS4wMi0uNjg4LTIuMDMtMS4wMTEtMy4wMjktMS0uNjYyLjAwNy0xLjMxOC4xNzMtMS45NzEuNDYzdjQuNTM3aC0xdi00Yy0uOTgyLS42NDUtMS45NzEtLjk4OS0yLjk3MS0xem0tNS4wMjkgOXY2aDJjMS42NDYgMCAzLTEuMzU0IDMtM3MtMS4zNTQtMy0zLTN6bTUgM2MwIDEuNjQ2IDEuMzU0IDMgMyAzczMtMS4zNTQgMy0zLTEuMzU0LTMtMy0zLTMgMS4zNTQtMyAzem02IDBjMCAxLjY0NiAxLjM1NCAzIDMgM2gxdi0yaC0xYy0uNTQ5IDAtMS0uNDUxLTEtMXMuNDUxLTEgMS0xaDF2LTJoLTFjLTEuNjQ2IDAtMyAxLjM1NC0zIDN6bS05LTFjLjU0OSAwIDEgLjQ1MSAxIDFzLS40NTEgMS0xIDF6bTYgMGMuNTQ5IDAgMSAuNDUxIDEgMXMtLjQ1MSAxLTEgMS0xLS40NTEtMS0xIC40NTEtMSAxLTF6IiBmaWxsPSIjYmZiZmJmIiBmaWxsLW9wYWNpdHk9Ii41OSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PC9zdmc+Cg==");
         --external-reference-icon: url("data:image/svg+xml;base64,PHN2ZyBoZWlnaHQ9IjEyIiB3aWR0aD0iMTIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjOGNmIj48cGF0aCBkPSJtNy41IDcuMXYzLjRoLTZ2LTZoMy40Ii8+PHBhdGggZD0ibTUuNzY1IDFoNS4yMzV2NS4zOWwtMS41NzMgMS41NDctMS4zMS0xLjMxLTIuNzI0IDIuNzIzLTIuNjktMi42ODggMi44MS0yLjgwOC0xLjMxMy0xLjMxeiIvPjwvZz48L3N2Zz4K");
 
-        --hr-color: #555;
-        --table-row-odd-background-color: #3b3e41;
-        --code-background-color: #22252d;
-        --code-border-color: #505356;
-        --code-literal-color: #d68f8f;
-        --input-background-color: #333537;
-        --input-focus-border-color: #5f8cff;
+        --hr-color: hsl(0, 0%, 33%);
+        --table-row-odd-background-color: hsl(240, 5%, 24%);
+        --code-background-color: hsl(240, 14%, 15%);
+        --code-border-color: hsl(240, 4%, 33%);
+        --code-literal-color: hsl(0, 46%, 70%);
+        --input-background-color: hsl(240, 4%, 21%);
+        --input-focus-border-color: hsl(240, 100%, 69%);
 
-        --tabs-background-color: #434649;
-        --tabs-selected-color: #a2a9ae;
-        --code-tabs-background-color: #353c4c;
-        --code-tabs-selected-color: #5a657e;
+        --tabs-background-color: hsl(240, 4%, 27%);
+        --tabs-selected-color: hsl(180, 7%, 66%);
+        --code-tabs-background-color: hsl(240, 18%, 25%);
+        --code-tabs-selected-color: hsl(240, 17%, 42%);
 
-        --classref-primary-color: #e8e8e8;
-        --classref-secondary-color: #929598;
-        --classref-setget-color: #9e9fa0;
+        --classref-primary-color: hsl(0, 0%, 91%);
+        --classref-secondary-color: hsl(240, 3%, 58%);
+        --classref-setget-color: hsl(240, 1%, 62%);
 
-        --search-input-background-color: #43464a; /* derived from --input-background-color */
-        --search-match-color: #52b4ff; /* derived from --link-color */
-        --search-match-background-color: #414c56; /* derived from --link-color */
-        --search-active-color: #202326;
-        --search-credits-background-color: #202123; /* derived from --navbar-background-color */
-        --search-credits-color: #6b6b6b; /* derived from --footer-color */
-        --search-credits-link-color: #628fb1; /* derived from --link-color */
+        --search-input-background-color: hsl(240, 5%, 28%); /* derived from --input-background-color */
+        --search-match-color: hsl(180, 100%, 66%); /* derived from --link-color */
+        --search-match-background-color: hsl(180, 14%, 30%); /* derived from --link-color */
+        --search-active-color: hsl(240, 9%, 14%);
+        --search-credits-background-color: hsl(240, 4%, 13%); /* derived from --navbar-background-color */
+        --search-credits-color: hsl(0, 0%, 42%); /* derived from --footer-color */
+        --search-credits-link-color: hsl(180, 34%, 54%); /* derived from --link-color */
 
-        --search-odd-color: #202326;
-        --search-even-color: #25282b;
-        --search-highlighted-color: rgb(255 205 0 / 16%);
-        --search-context-color: #aaa;
+        --search-odd-color: hsl(240, 9%, 14%);
+        --search-even-color: hsl(240, 8%, 16%);
+        --search-highlighted-color: rgb(240 205 0 / 16%);
+        --search-context-color: hsl(0, 0%, 67%);
+        /* Popochiu color palette and derivatives ends here */
 
         /* Colors taken from the Godot script editor with the Adaptive theme */
         --highlight-background-color: #202531;
@@ -281,6 +298,9 @@
 
         /* Mermaid diagrams background color */
         --mermaid-background-color: #fcfcfc;
+
+        /* SVG shadow color */
+        --image-shadow-color: hsla(0, 0%, 0%, 0.4);
     }
 }
 
@@ -1300,7 +1320,7 @@ p + .classref-constant {
     /* Fixed size to prevent reflows and support hiDPI displays */
     /* A 5 pixel margin is added on each side. The logo itself displays at 200×200 at 100% scaling. */
     width: 270px;
-    height: 70px;
+    height: 74px;
 }
 
 .wy-side-nav-search {
@@ -1779,4 +1799,8 @@ div.mermaid {
     background-color: var(--mermaid-background-color);
     padding: 4px;
     margin: 16px 0;
+}
+
+img.shadow {
+    filter: drop-shadow(0 0 5px var(--image-shadow-color));
 }

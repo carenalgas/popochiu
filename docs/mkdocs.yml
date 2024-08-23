@@ -6,7 +6,10 @@ repo_url: https://github.com/carenalgas/popochiu/
 edit_uri: edit/develop/docs/src/
 docs_dir: src
 site_dir: dist
-theme: readthedocs
+theme:
+  name: readthedocs
+  titles_only: true
+  logo: assets/images/_other/theme/logo.svg
 extra_css:
   - assets/css/custom.css
   - https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css
@@ -24,6 +27,7 @@ extra_javascript:
 markdown_extensions:
   - admonition
   - fontawesome_markdown
+  - attr_list
 plugins:
   - search
   - mkdocs-nav-weight
