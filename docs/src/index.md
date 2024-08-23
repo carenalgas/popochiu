@@ -2,7 +2,7 @@
 weight: 0
 ---
 
-![Popochiu - An adventure games plugin for Godot](./assets/images/_other/theme/home_banner.svg){: .shadows }
+![Popochiu - An adventure games plugin for Godot](./assets/images/_other/theme/home_banner.svg)
 
 ---
 

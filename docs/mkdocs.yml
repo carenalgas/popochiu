@@ -6,6 +6,7 @@ repo_url: https://github.com/carenalgas/popochiu/
 edit_uri: edit/develop/docs/src/
 docs_dir: src
 site_dir: dist
+site_favicon: assets/images/_other/theme/favicon.ico
 theme:
   name: readthedocs
   titles_only: true
