@@ -85,7 +85,7 @@ All the provided interfaces thou, share some common elements:
 
 * The **DialogText** is the element that will show what the characters say in the game. This node has its scene, that provides a configurable set of variations, like "above the head" text, to text panel, with or without a character portrait, to caption text displayed at a fixed position.
 * The **DialogMenu** is the panel on which you select the dialog lines. This can be changed to an icon bar (as in "Sam & Max Hit the Road") or any other stuff, but it's pretty common in its basic form (scrollable list of phrases).
-* The **Popups**: conveniently grouped under their own control parent, are those windows for saving and loading the game, configuring settings, and showing messages to the user.
+* The **Popups**: conveniently grouped under their control parent, are those windows for saving and loading the game, configuring settings, and showing messages to the user.
 
 Other elements are specific to this interface, like the **InventoryBar** and **SettingsBar**, that appear on top of the screen when hovered with the cursor.
 
