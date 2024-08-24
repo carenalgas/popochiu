@@ -22,6 +22,8 @@ const INTERACTION_LINE := preload(
 func _ready() -> void:
 	super()
 	
+	if Engine.is_editor_hint(): return
+	
 	# Connect to singletons signals
 	G.history_opened.connect(open)
 	

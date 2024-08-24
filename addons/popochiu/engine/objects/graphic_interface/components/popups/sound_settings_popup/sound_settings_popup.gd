@@ -8,6 +8,8 @@ extends PopochiuPopup
 func _ready() -> void:
 	super()
 	
+	if Engine.is_editor_hint(): return
+	
 	# Connect to singletons signals
 	G.sound_settings_requested.connect(open)
 

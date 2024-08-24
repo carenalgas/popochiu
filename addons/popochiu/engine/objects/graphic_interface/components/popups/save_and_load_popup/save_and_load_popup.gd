@@ -18,6 +18,8 @@ var _slot := 0
 func _ready() -> void:
 	super()
 	
+	if Engine.is_editor_hint(): return
+	
 	btn_ok.disabled = true
 	
 	# Connect to singletons signals

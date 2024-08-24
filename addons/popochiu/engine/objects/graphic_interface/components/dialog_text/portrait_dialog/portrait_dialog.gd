@@ -1,4 +1,4 @@
-extends PanelContainer
+extends Control
 
 @onready var portrait_text: RichTextLabel = %PortraitText
 @onready var left_avatar: TextureRect = $HBoxContainer/LeftAvatar
