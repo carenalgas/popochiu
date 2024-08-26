@@ -1,3 +1,7 @@
 FROM minidocks/mkdocs:latest
 
-RUN pip install mkdocs-nav-weight
+RUN pip install mkdocs-nav-weight mkdocs-mermaid2-plugin fontawesome-markdown
+
+# Patch fontawesome_markdown to support Python Markdown > 3.4
+# TODO: Remove this when the upstream package is updated
+COPY ./patches/fontawesome_markdown /usr/lib/python3.12/site-packages/fontawesome_markdown
