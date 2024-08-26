@@ -10,6 +10,8 @@ extends PopochiuPopup
 func _ready() -> void:
 	super()
 	
+	if Engine.is_editor_hint(): return
+	
 	text_speed.value = 0.1 - E.text_speed
 	dialog_style.selected = E.settings.dialog_style
 	continue_mode.button_pressed = E.settings.auto_continue_text

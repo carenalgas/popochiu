@@ -7,7 +7,7 @@ signal move_folders_pressed
 @onready var tab_main: VBoxContainer = %Main
 @onready var tab_room: VBoxContainer = %Room
 @onready var tab_audio: VBoxContainer = %Audio
-@onready var tab_ui: VBoxContainer = %UI
+@onready var tab_gui: VBoxContainer = %GUI
 # ---- FOOTER --------------------------------------------------------------------------------------
 @onready var version: Label = %Version
 @onready var btn_setup: Button = %BtnSetup
@@ -44,8 +44,8 @@ func scene_changed(scene_root: Node) -> void:
 	if not is_instance_valid(tab_room): return
 	tab_room.scene_changed(scene_root)
 	
-	if not is_instance_valid(tab_ui): return
-	tab_ui.on_scene_changed(scene_root)
+	if not is_instance_valid(tab_gui): return
+	tab_gui.on_scene_changed(scene_root)
 	
 	if (
 		not scene_root
@@ -81,8 +81,8 @@ func _on_tab_changed(tab: int) -> void:
 	if tab == tab_main.get_index():
 		tab_main.check_data()
 	
-	if tab == tab_ui.get_index():
-		tab_ui.open_gui_scene()
+	if tab == tab_gui.get_index():
+		tab_gui.open_gui_scene()
 
 
 func _check_node(node: Node) -> void:

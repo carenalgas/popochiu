@@ -1,8 +1,8 @@
 [gd_scene load_steps=8 format=3 uid="uid://4etgd0rwjgct"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/tab_ui/tab_ui.gd" id="1_xmvtx"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/tab_gui/tab_gui.gd" id="1_xmvtx"]
 [ext_resource type="PackedScene" uid="uid://b55ialbvpilxv" path="res://addons/popochiu/editor/main_dock/popochiu_group/popochiu_group.tscn" id="2_uc7il"]
-[ext_resource type="PackedScene" uid="uid://bu77q250wow5g" path="res://addons/popochiu/editor/main_dock/tab_ui/create_popup_window/create_popup_window.tscn" id="3_3a7ix"]
+[ext_resource type="PackedScene" uid="uid://bu77q250wow5g" path="res://addons/popochiu/editor/main_dock/tab_gui/create_popup_window/create_popup_window.tscn" id="3_3a7ix"]
 
 [sub_resource type="Image" id="Image_j7yy0"]
 data = {

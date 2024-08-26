@@ -1,4 +1,4 @@
-extends PanelContainer
+extends Control
 
 const ToolbarButton := preload(
 	PopochiuResources.GUI_TEMPLATES_FOLDER +
@@ -17,8 +17,8 @@ var _is_mouse_hover := false
 
 @onready var panel_container: PanelContainer = $PanelContainer
 @onready var tween: Tween = null
-@onready var box: BoxContainer = find_child("Box")
-@onready var hidden_y := position.y - (size.y - 4)
+@onready var box: BoxContainer = %Box
+@onready var hidden_y := panel_container.position.y - (panel_container.size.y - 4)
 
 
 #region Godot ######################################################################################
@@ -41,7 +41,7 @@ func _ready() -> void:
 	
 	set_process_input(not always_visible)
 	
-	size.x = $Box.size.x
+	panel_container.size.x = box.size.x
 
 
 func _input(event: InputEvent) -> void:
@@ -86,14 +86,14 @@ func is_open() -> bool:
 #region Private ####################################################################################
 func _open() -> void:
 	if always_visible: return
-	if not is_disabled and position.y != hidden_y: return
+	if not is_disabled and panel_container.position.y != hidden_y: return
 	
 	if is_instance_valid(tween) and tween.is_running():
 		tween.kill()
 	
 	tween = create_tween().set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT)
 	tween.tween_property(panel_container, "position:y", 0.0, 0.5).from(
-		hidden_y if not is_disabled else position.y
+		hidden_y if not is_disabled else panel_container.position.y
 	)
 	_is_hidden = false
 

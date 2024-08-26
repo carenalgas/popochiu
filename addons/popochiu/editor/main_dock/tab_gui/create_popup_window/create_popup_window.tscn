@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bu77q250wow5g"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/tab_ui/create_popup_window/create_popup_window.gd" id="1_4ujlk"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/tab_gui/create_popup_window/create_popup_window.gd" id="1_4ujlk"]
 
 [node name="CreatePopupWindow" type="AcceptDialog"]
 title = "Create Popup"

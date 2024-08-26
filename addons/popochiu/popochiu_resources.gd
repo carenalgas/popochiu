@@ -196,9 +196,9 @@ const ROOMS_PATH = GAME_PATH + "rooms/"
 const CHARACTERS_PATH = GAME_PATH + "characters/"
 const INVENTORY_ITEMS_PATH = GAME_PATH + "inventory_items/"
 const DIALOGS_PATH = GAME_PATH + "dialogs/"
-const GUI_GAME_FOLDER := GAME_PATH + "graphic_interface/"
-const GUI_GAME_SCENE := GUI_GAME_FOLDER + "graphic_interface.tscn"
-const GUI_COMMANDS := GUI_GAME_FOLDER + "commands.gd"
+const GUI_GAME_FOLDER := GAME_PATH + "gui/"
+const GUI_GAME_SCENE := GUI_GAME_FOLDER + "gui.tscn"
+const GUI_COMMANDS := GUI_GAME_FOLDER + "gui_commands.gd"
 const TRANSITION_LAYER := GAME_PATH + "transition_layer/transition_layer.tscn"
 
 

@@ -1,8 +1,9 @@
-[gd_scene load_steps=22 format=3 uid="uid://bd0fika4hyhvw"]
+[gd_scene load_steps=23 format=3 uid="uid://bd0fika4hyhvw"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_5somw"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/9_verb_gui.gd" id="2_6nea2"]
 [ext_resource type="Texture2D" uid="uid://d0fwvj88bhggm" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/images/9verb_cursor.png" id="3_fpt6m"]
+[ext_resource type="PackedScene" uid="uid://bn7o13nv11ka1" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_overhead/dialog_overhead.tscn" id="5_gejku"]
 [ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/graphic_interface/components/system_text/system_text.tscn" id="5_ygb3y"]
 [ext_resource type="PackedScene" uid="uid://cuokybjvunmhq" path="res://addons/popochiu/engine/objects/graphic_interface/templates/9_verb/components/9_verb_panel/9_verb_panel.tscn" id="6_tiq5g"]
 [ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn" id="7_ypv20"]
@@ -110,6 +111,9 @@ animation = &"active"
 [node name="9VerbPanel" parent="." instance=ExtResource("6_tiq5g")]
 layout_mode = 1
 
+[node name="DialogOverhead" parent="." instance=ExtResource("5_gejku")]
+layout_mode = 1
+
 [node name="DialogMenu" parent="." instance=ExtResource("7_ypv20")]
 visible = false
 layout_mode = 1
@@ -136,10 +140,6 @@ follows_cursor = true
 
 [node name="SystemText" parent="." instance=ExtResource("5_ygb3y")]
 layout_mode = 1
-offset_left = 39.0
-offset_top = -10.0
-offset_right = -39.0
-offset_bottom = 10.0
 
 [node name="Popups" type="Control" parent="."]
 layout_mode = 1

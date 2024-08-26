@@ -78,8 +78,9 @@ static func copy_gui_template(
 	
 	on_progress.call(100, "All in place. Thanks for your patience.")
 	PopochiuUtils.print_normal("[wave]Selected GUI template successfully applied[/wave]")
-	
 	await _wait()
+	await PopochiuEditorHelper.filesystem_scanned()
+	
 	on_complete.call()
 
 
@@ -241,6 +242,7 @@ static func _remove_components(dir_path: String) -> void:
 	EditorInterface.get_resource_filesystem().scan()
 
 
+## Makes a copy of a GUI component's script.
 static func _copy_script(
 	source_file_path: String, _target_folder: String, target_file_path: String
 ) -> void:
@@ -317,8 +319,8 @@ static func _copy_scripts(
 	script_file.close()
 
 
-## Updates the script of the created **res://game/graphic_interface/graphic_interface.tscn** file so
-## it uses the one created in `_copy_scripts(...)`.
+## Updates the script of the created [b]res://game/gui/gui.tscn[/b] file so it uses the one created
+## in [method _copy_scripts].
 static func _update_scene_script(script_path: String) -> int:
 	# Update the script of the GUI -----------------------------------------------------------------
 	var scene := (load(
@@ -327,7 +329,7 @@ static func _update_scene_script(script_path: String) -> int:
 	scene.set_script(load(script_path))
 	
 	# Set the name of the root node
-	scene.name = "GraphicInterface"
+	scene.name = "GUI"
 	
 	var packed_scene: PackedScene = PackedScene.new()
 	packed_scene.pack(scene)
@@ -337,7 +339,7 @@ static func _update_scene_script(script_path: String) -> int:
 
 
 static func _wait(max := 1.0) -> void:
-	await EditorInterface.get_base_control().get_tree().create_timer(randf_range(0.5, max)).timeout
+	await PopochiuEditorHelper.secs_passed(randf_range(0.5, max))
 
 
 #endregion

@@ -14,6 +14,8 @@ signal option_selected(option_name)
 func _ready() -> void:
 	super()
 	
+	if Engine.is_editor_hint(): return
+	
 	# Connect to childrens' signals
 	save.pressed.connect(_on_option_pressed.bind("save"))
 	load.pressed.connect(_on_option_pressed.bind("load"))

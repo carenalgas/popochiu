@@ -1,15 +1,16 @@
-extends Control
+extends PopochiuDialogText
 
-@onready var dialog_text: RichTextLabel = %PortraitText
-@onready var left_avatar: TextureRect = $HBoxContainer/LeftAvatar
-@onready var right_avatar: TextureRect = $HBoxContainer/RightAvatar
+@onready var left_avatar: TextureRect = %LeftAvatar
+@onready var right_avatar: TextureRect = %RightAvatar
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
+	super()
+	
 	# Connect to child signals
-	dialog_text.text_show_started.connect(show)
-	dialog_text.text_show_finished.connect(hide)
+	text_show_started.connect(show)
+	text_show_finished.connect(hide)
 	
 	# Connect to singletons signals
 	C.character_spoke.connect(_update_avatar)
@@ -21,7 +22,7 @@ func _ready() -> void:
 
 #region Private ####################################################################################
 func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
-	if not dialog_text.visible: return
+	if not rich_text_label.visible: return
 	
 	left_avatar.texture = null
 	right_avatar.texture = null

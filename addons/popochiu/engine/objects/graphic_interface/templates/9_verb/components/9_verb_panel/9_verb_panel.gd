@@ -1,6 +1,6 @@
 extends Control
 
-@onready var hover_text_centered: RichTextLabel = %HoverTextCentered
+@onready var hover_text_centered: Control = %HoverTextCentered
 @onready var commands_container: GridContainer = %CommandsContainer
 
 

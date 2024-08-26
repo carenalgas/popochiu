@@ -8,13 +8,14 @@
 bg_color = Color(0, 0, 0, 1)
 draw_center = false
 
-[node name="PortraitDialog" type="Control"]
+[node name="DialogPortrait" type="Control" groups=["popochiu_gui_component"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_ejue5")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
@@ -33,6 +34,7 @@ layout_mode = 2
 theme_override_constants/separation = 4
 
 [node name="LeftAvatar" type="TextureRect" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 2
@@ -54,7 +56,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/normal_font = ExtResource("2_wag1c")
 bbcode_enabled = true
-text = "[wave]Hi my popochiu!!![/wave]"
+text = "A [shake]portrait[/shake] dialog text."
 scroll_active = false
 meta_underlined = false
 
@@ -76,6 +78,7 @@ fill_mode = 2
 texture_progress = ExtResource("4_lqu2o")
 
 [node name="RightAvatar" type="TextureRect" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 2

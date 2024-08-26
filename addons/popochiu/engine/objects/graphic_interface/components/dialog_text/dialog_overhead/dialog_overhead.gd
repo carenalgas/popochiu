@@ -1,15 +1,6 @@
 extends PopochiuDialogText
 
 
-#region Godot ######################################################################################
-func _ready() -> void:
-	super()
-	
-	continue_icon.hide()
-
-
-#endregion
-
 #region Virtual ####################################################################################
 func _modify_size(msg: String, target_position: Vector2) -> void:
 	var _size := await _calculate_size(msg)

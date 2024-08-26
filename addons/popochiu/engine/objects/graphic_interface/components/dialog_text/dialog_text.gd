@@ -30,8 +30,8 @@ var _y_limit := 0.0
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	set_meta(DFLT_SIZE, size)
-	set_meta(DFLT_POSITION, position)
+	set_meta(DFLT_SIZE, rich_text_label.size)
+	set_meta(DFLT_POSITION, rich_text_label.position)
 	
 	# Set the default values
 	rich_text_label.clear()
@@ -44,6 +44,8 @@ func _ready() -> void:
 	# Connect to singletons events
 	E.text_speed_changed.connect(change_speed)
 	C.character_spoke.connect(_show_dialogue)
+	
+	continue_icon.hide()
 
 
 func _input(event: InputEvent) -> void:

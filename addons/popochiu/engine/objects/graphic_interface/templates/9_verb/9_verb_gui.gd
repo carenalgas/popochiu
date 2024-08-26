@@ -13,7 +13,7 @@ var _return_to_walk_to := false
 ## Used to access the [b]9VerbSettingsPopup[/b] node.
 @onready var settings_popup: PopochiuPopup = $"Popups/9VerbSettingsPopup"
 ## Used to access the [b]9VerbQuitPopup[/b] node.
-@onready var quit_popup: PanelContainer = %"9VerbQuitPopup"
+@onready var quit_popup: PopochiuPopup = %"9VerbQuitPopup"
 
 
 #region Godot ######################################################################################

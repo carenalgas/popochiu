@@ -142,7 +142,7 @@ func _ready() -> void:
 		gui = load(path).instantiate()
 	else:
 		gui = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
-		gui.name = "GraphicInterface"
+		gui.name = "GUI"
 	
 	# Load the commands for the game
 	commands = load(PopochiuResources.GUI_COMMANDS).new()

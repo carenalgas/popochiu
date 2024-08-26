@@ -15,6 +15,8 @@ signal classic_sentence_toggled(pressed: bool)
 func _ready() -> void:
 	super()
 	
+	if Engine.is_editor_hint(): return
+	
 	# Connect to child signals
 	save.pressed.connect(_on_save_pressed)
 	load.pressed.connect(_on_load_pressed)

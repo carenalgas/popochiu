@@ -4,18 +4,18 @@
 [ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_hkh5x"]
 [ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/images/ico_continue.png" id="3_etbl2"]
 
-[node name="CaptionDialog" type="Control" groups=["popochiu_gui_component"]]
+[node name="DialogCaption" type="Control" groups=["popochiu_gui_component"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("1_17s2p")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="."]
 unique_name_in_owner = true
-visible = false
 clip_contents = false
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
@@ -35,7 +35,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/normal_font = ExtResource("1_hkh5x")
 bbcode_enabled = true
-text = "[center]Hi my friend[/center]"
+text = "[center]A [shake]caption[/shake] dialog text[/center]"
 fit_content = true
 scroll_active = false
 meta_underlined = false

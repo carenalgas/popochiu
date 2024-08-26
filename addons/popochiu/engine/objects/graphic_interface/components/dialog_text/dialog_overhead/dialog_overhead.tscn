@@ -4,7 +4,7 @@
 [ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_qd7on"]
 [ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/images/ico_continue.png" id="3_67j10"]
 
-[node name="OverheadDialog" type="Control" groups=["popochiu_gui_component"]]
+[node name="DialogOverhead" type="Control" groups=["popochiu_gui_component"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,7 +19,7 @@ unique_name_in_owner = true
 clip_contents = false
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 0
-offset_right = 89.0
+offset_right = 156.0
 offset_bottom = 16.0
 size_flags_horizontal = 0
 mouse_filter = 2
@@ -27,7 +27,7 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 theme_override_fonts/normal_font = ExtResource("1_qd7on")
 bbcode_enabled = true
-text = "A [shake]dialog text[/shake]"
+text = "An [shake]overhead[/shake] dialog text"
 fit_content = true
 scroll_active = false
 meta_underlined = false

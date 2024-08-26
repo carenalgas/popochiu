@@ -49,16 +49,19 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme = ExtResource("1_457q0")
 script = ExtResource("2_hk0vm")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 texture_filter = 1
+layout_mode = 0
 offset_right = 122.0
 offset_bottom = 24.0
 theme = ExtResource("1_457q0")
 
 [node name="Box" type="HBoxContainer" parent="PanelContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 alignment = 2

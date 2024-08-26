@@ -1,9 +1,10 @@
-[gd_scene load_steps=22 format=3 uid="uid://6ucg5xkcreh5"]
+[gd_scene load_steps=23 format=3 uid="uid://6ucg5xkcreh5"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_3jlpr"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/sierra_gui.gd" id="1_40nsv"]
 [ext_resource type="PackedScene" uid="uid://cv2o5p3gp1fgx" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_bar/sierra_bar.tscn" id="4_hjdb7"]
 [ext_resource type="PackedScene" uid="uid://bhx2hkpkjs7dk" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_menu/sierra_menu.tscn" id="5_ffq7i"]
+[ext_resource type="PackedScene" uid="uid://33wmak2jumqm" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_portrait/dialog_portrait.tscn" id="5_nehoj"]
 [ext_resource type="Texture2D" uid="uid://dwn416xagjwtd" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/sierra_cursor.png" id="13_udys2"]
 [ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn" id="14_3gq4k"]
 [ext_resource type="PackedScene" uid="uid://dc7crw22yevoo" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/components/sierra_inventory_popup/sierra_inventory_popup.tscn" id="15_2hyjp"]
@@ -119,6 +120,9 @@ animation = &"gui"
 offset = Vector2(16, 16)
 
 [node name="SierraBar" parent="." instance=ExtResource("4_hjdb7")]
+layout_mode = 1
+
+[node name="DialogPortrait" parent="." instance=ExtResource("5_nehoj")]
 layout_mode = 1
 
 [node name="SierraMenu" parent="." instance=ExtResource("5_ffq7i")]
