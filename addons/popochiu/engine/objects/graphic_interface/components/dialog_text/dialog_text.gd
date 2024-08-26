@@ -14,6 +14,9 @@ const DFLT_POSITION := "dflt_position"
 @export var wrap_width := 200.0
 @export var limit_margin := 4.0
 
+var tween: Tween = null
+var continue_icon_tween: Tween = null
+
 var _secs_per_character := 1.0
 var _is_waiting_input := false
 var _auto_continue := false
@@ -21,10 +24,8 @@ var _dialog_pos := Vector2.ZERO
 var _x_limit := 0.0
 var _y_limit := 0.0
 
-@onready var rich_text_label: RichTextLabel = $RichTextLabel
-@onready var tween: Tween = null
-@onready var continue_icon: TextureProgressBar = $ContinueIcon
-@onready var continue_icon_tween: Tween = null
+@onready var rich_text_label: RichTextLabel = %RichTextLabel
+@onready var continue_icon: TextureProgressBar = %ContinueIcon
 
 
 #region Godot ######################################################################################
@@ -40,8 +41,6 @@ func _ready() -> void:
 	_x_limit = E.width / (E.scale.x if E.settings.scale_gui else 1.0)
 	_y_limit = E.height / (E.scale.y if E.settings.scale_gui else 1.0)
 	
-	continue_icon.hide()
-	
 	# Connect to singletons events
 	E.text_speed_changed.connect(change_speed)
 	C.character_spoke.connect(_show_dialogue)
@@ -50,16 +49,22 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if (
 		not PopochiuUtils.get_click_or_touch_index(event) in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]
-		or rich_text_label.modulate.a == 0.0
+		or modulate.a == 0.0
 	):
 		return
 	
 	accept_event()
-	
 	if rich_text_label.visible_ratio == 1.0:
 		disappear()
 	else:
 		stop()
+
+
+#endregion
+
+#region Virtual ####################################################################################
+func _modify_size(_msg: String, _target_position: Vector2) -> void:
+	pass
 
 
 #endregion
@@ -70,9 +75,93 @@ func play_text(props: Dictionary) -> void:
 	_is_waiting_input = false
 	_dialog_pos = props.position
 	
-	# ==== Calculate the size of the node ==========================================================
-	# Create a RichTextLabel to calculate the resulting size of this node once
-	# the whole text is shown
+	# Call the virtual method that modifies the size of the RichTextLabel in case the dialog style
+	# requires it.
+	_modify_size(msg, props.position)
+	
+	rich_text_label.push_color(props.color)
+	
+	# Assign the text and align mode
+	_append_text(msg, props)
+	
+	if _secs_per_character > 0.0:
+		# The text will appear with an animation
+		if is_instance_valid(tween) and tween.is_running():
+			tween.kill()
+		
+		tween = create_tween()
+		tween.tween_property(
+			self, "visible_ratio",
+			1,
+			_secs_per_character * rich_text_label.get_total_character_count()
+		).from(0.0)
+		tween.finished.connect(_wait_input)
+	else:
+		_wait_input()
+	
+	modulate.a = 1.0
+
+
+func stop() ->void:
+	if modulate.a == 0.0:
+		return
+
+	if _is_waiting_input:
+		_notify_completion()
+	else:
+		# Skip tweens
+		if is_instance_valid(tween) and tween.is_running():
+			tween.kill()
+		
+		rich_text_label.visible_ratio = 1.0
+		_wait_input()
+
+
+func disappear() -> void:
+	if modulate.a == 0.0: return
+	
+	_auto_continue = false
+	modulate.a = 0.0
+	_is_waiting_input = false
+	
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
+	
+	rich_text_label.clear()
+	rich_text_label.text = ""
+	rich_text_label.size = get_meta(DFLT_SIZE)
+	
+	set_process_input(false)
+	text_show_finished.emit()
+	G.dialog_line_finished.emit()
+
+
+func change_speed() -> void:
+	_secs_per_character = E.text_speed
+
+
+#endregion
+
+#region Private ####################################################################################
+func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
+	if not visible: return
+	
+	play_text({
+		text = msg,
+		color = chr.text_color,
+		position = PopochiuUtils.get_screen_coords_for(chr, chr.dialog_pos).floor() / (
+			E.scale if E.settings.scale_gui else Vector2.ONE
+		),
+	})
+	
+	G.dialog_line_started.emit()
+	
+	set_process_input(true)
+	text_show_started.emit()
+
+
+## Creates a RichTextLabel to calculate the resulting size of this node once the whole text is shown.
+func _calculate_size(msg: String) -> Vector2:
 	var rt := RichTextLabel.new()
 	rt.add_theme_font_override("normal_font", get_theme_font("normal_font"))
 	rt.bbcode_enabled = true
@@ -85,11 +174,7 @@ func play_text(props: Dictionary) -> void:
 	var lbl := Label.new()
 	lbl.add_theme_font_override("normal_font", get_theme_font("normal_font"))
 	
-	match E.current_dialog_style:
-		0:
-			lbl.size.y = get_meta(DFLT_SIZE).y
-		_:
-			lbl.size = get_meta(DFLT_SIZE)
+	_set_default_label_size(lbl)
 	
 	lbl.text = rt.get_parsed_text()
 	rich_text_label.add_child(lbl)
@@ -122,132 +207,16 @@ func play_text(props: Dictionary) -> void:
 	
 	lbl.free()
 	rt.free()
-	# ========================================================== Calculate the size of the node ====
 	
-	match E.current_dialog_style:
-		PopochiuConfig.DialogStyle.ABOVE_CHARACTER:
-			# Define size and position (before calculating overflow)
-			rich_text_label.size = _size
-			rich_text_label.position = props.position - size / 2.0
-			rich_text_label.position.y -= size.y / 2.0
-			
-			# Calculate overflow and reposition
-			if rich_text_label.position.x < 0.0:
-				rich_text_label.position.x = limit_margin
-			elif rich_text_label.position.x + rich_text_label.size.x > _x_limit:
-				rich_text_label.position.x = _x_limit - limit_margin - rich_text_label.size.x
-			if rich_text_label.position.y < 0.0:
-				rich_text_label.position.y = limit_margin
-			elif rich_text_label.position.y + rich_text_label.size.y > _y_limit:
-				rich_text_label.position.y = _y_limit - limit_margin - rich_text_label.size.y
-		PopochiuConfig.DialogStyle.CAPTION:
-			# Define size and position (before calculating overflow)
-			rich_text_label.size.y = _size.y
-			rich_text_label.position.y = (
-				get_meta(DFLT_POSITION).y - (_size.y - get_meta(DFLT_SIZE).y)
-			)
-	
-	# Assign text and align mode
-	rich_text_label.push_color(props.color)
-	
-	match E.current_dialog_style:
-		PopochiuConfig.DialogStyle.ABOVE_CHARACTER:
-			var center := floor(position.x + (size.x / 2))
-			if center == props.position.x:
-				rich_text_label.append_text("[center]%s[/center]" % msg)
-			elif center < props.position.x:
-				rich_text_label.append_text("[right]%s[/right]" % msg)
-			else:
-				rich_text_label.append_text(msg)
-		PopochiuConfig.DialogStyle.PORTRAIT:
-			rich_text_label.append_text(msg)
-		PopochiuConfig.DialogStyle.CAPTION:
-			rich_text_label.text = "[center][color=%s]%s[/color][/center]" % [
-				props.color.to_html(), msg
-			]
-	
-	if _secs_per_character > 0.0:
-		# The text will appear with an animation
-		if is_instance_valid(tween) and tween.is_running():
-			tween.kill()
-		
-		tween = create_tween()
-		tween.tween_property(
-			self, "visible_ratio",
-			1,
-			_secs_per_character * rich_text_label.get_total_character_count()
-		).from(0.0)
-		tween.finished.connect(_wait_input)
-	else:
-		_wait_input()
-	
-	rich_text_label.modulate.a = 1.0
+	return _size
 
 
-func stop() ->void:
-	if rich_text_label.modulate.a == 0.0:
-		return
-
-	if _is_waiting_input:
-		_notify_completion()
-	else:
-		# Skip tweens
-		if is_instance_valid(tween) and tween.is_running():
-			tween.kill()
-		
-		rich_text_label.visible_ratio = 1.0
-		_wait_input()
+func _set_default_label_size(lbl: Label) -> void:
+	lbl.size = get_meta(DFLT_SIZE)
 
 
-func disappear() -> void:
-	if rich_text_label.modulate.a == 0.0: return
-	
-	_auto_continue = false
-	rich_text_label.modulate.a = 0.0
-	_is_waiting_input = false
-	
-	if is_instance_valid(tween) and tween.is_running():
-		tween.kill()
-	
-	rich_text_label.clear()
-	rich_text_label.text = ""
-	
-	continue_icon.hide()
-	continue_icon.modulate.a = 1.0
-	
-	if is_instance_valid(continue_icon_tween)\
-	and continue_icon_tween.is_running():
-		continue_icon_tween.kill()
-	
-	rich_text_label.size = get_meta(DFLT_SIZE)
-	
-	set_process_input(false)
-	text_show_finished.emit()
-	G.dialog_line_finished.emit()
-
-
-func change_speed() -> void:
-	_secs_per_character = E.text_speed
-
-
-#endregion
-
-#region Private ####################################################################################
-func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
-	if not visible: return
-	
-	play_text({
-		text = msg,
-		color = chr.text_color,
-		position = PopochiuUtils.get_screen_coords_for(chr, chr.dialog_pos).floor() / (
-			E.scale if E.settings.scale_gui else Vector2.ONE
-		),
-	})
-	
-	G.dialog_line_started.emit()
-	
-	set_process_input(true)
-	text_show_started.emit()
+func _append_text(msg: String, _props: Dictionary) -> void:
+	rich_text_label.append_text(msg)
 
 
 func _wait_input() -> void:
@@ -266,46 +235,24 @@ func _wait_input() -> void:
 		_show_icon()
 
 
-func _notify_completion() -> void:
-	disappear()
-	animation_finished.emit()
-
-
 func _show_icon() -> void:
-	if is_instance_valid(continue_icon_tween)\
-	and continue_icon_tween.is_running():
+	if is_instance_valid(continue_icon_tween) and continue_icon_tween.is_running():
 		continue_icon_tween.kill()
 	
 	continue_icon_tween = create_tween()
-#	continue_icon.position.x = size.x
 	
 	if not E.settings.auto_continue_text:
-		# For manual continuation: make the continue icon jump
+		# For manual continuation: make the icon jump
 		continue_icon.value = 100.0
-		
-		var from_pos := 0.0
-		var to_pos := 0.0
-		
-		match E.current_dialog_style:
-			0:
-				from_pos = size.y / 2.0 - 1.0
-				to_pos = size.y / 2.0 + 3.0
-			1, 2:
-				to_pos = size.y - continue_icon.size.y + 2.0
-				from_pos = size.y - continue_icon.size.y - 1.0
-		
 		continue_icon_tween.tween_property(
-			continue_icon, "position:y", to_pos, 0.8
-		).from(from_pos).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+			continue_icon, "position:y", _get_icon_to_position(), 0.8
+		).from(_get_icon_from_position()).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 		continue_icon_tween.set_loops()
 	else:
-		# For automatic continuation: Make the icon appear like a progress bar
-		# the time players wil have to read befor auto-continuing
+		# For automatic continuation: Make the icon appear as a progress bar indicating the time
+		# players have to read before auto-continuing.
 		continue_icon.value = 0.0
-		
-		match E.current_dialog_style:
-			0:
-				continue_icon.position.y = size.y / 2.0
+		continue_icon.position.y = size.y / 2.0
 		
 		continue_icon_tween.tween_property(
 			continue_icon, "value",
@@ -314,11 +261,23 @@ func _show_icon() -> void:
 		continue_icon_tween.finished.connect(_continue)
 	
 	continue_icon_tween.pause()
-	
 	await get_tree().create_timer(0.2).timeout
 
 	continue_icon_tween.play()
 	continue_icon.show()
+
+
+func _get_icon_from_position() -> float:
+	return size.y - continue_icon.size.y + 2.0
+
+
+func _get_icon_to_position() -> float:
+	return size.y - continue_icon.size.y - 1.0
+
+
+func _notify_completion() -> void:
+	disappear()
+	animation_finished.emit()
 
 
 func _continue(forced_continue := false) -> void:

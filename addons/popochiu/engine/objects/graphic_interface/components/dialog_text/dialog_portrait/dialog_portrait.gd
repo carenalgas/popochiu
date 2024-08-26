@@ -1,6 +1,6 @@
 extends Control
 
-@onready var portrait_text: RichTextLabel = %PortraitText
+@onready var dialog_text: RichTextLabel = %PortraitText
 @onready var left_avatar: TextureRect = $HBoxContainer/LeftAvatar
 @onready var right_avatar: TextureRect = $HBoxContainer/RightAvatar
 
@@ -8,8 +8,8 @@ extends Control
 #region Godot ######################################################################################
 func _ready() -> void:
 	# Connect to child signals
-	portrait_text.text_show_started.connect(show)
-	portrait_text.text_show_finished.connect(hide)
+	dialog_text.text_show_started.connect(show)
+	dialog_text.text_show_finished.connect(hide)
 	
 	# Connect to singletons signals
 	C.character_spoke.connect(_update_avatar)
@@ -21,7 +21,7 @@ func _ready() -> void:
 
 #region Private ####################################################################################
 func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
-	if not portrait_text.visible: return
+	if not dialog_text.visible: return
 	
 	left_avatar.texture = null
 	right_avatar.texture = null
