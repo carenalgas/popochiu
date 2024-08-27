@@ -273,6 +273,7 @@ func _load_templates() -> void:
 		button.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 		button.expand_icon = true
 		button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		
 		gui_templates.add_child(button)
 

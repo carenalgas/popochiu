@@ -93,7 +93,7 @@ func play_text(props: Dictionary) -> void:
 		
 		tween = create_tween()
 		tween.tween_property(
-			self, "visible_ratio",
+			rich_text_label, "visible_ratio",
 			1,
 			_secs_per_character * rich_text_label.get_total_character_count()
 		).from(0.0)

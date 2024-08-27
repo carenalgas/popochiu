@@ -8,17 +8,21 @@ const ToolbarButton := preload(
 @export var used_in_game := true
 @export var always_visible := false
 @export var hide_when_gui_is_blocked := false
+## Defines the height in pixels of the zone where moving the mouse in the top of the screen will
+## make the bar to show. Note: This value will be affected by the Experimental Scale GUI checkbox
+## in Project Settings > Popochiu > GUI.
+@export var input_zone_height := 4
 
 var is_disabled := false
+var tween: Tween = null
 
 var _can_hide := true
 var _is_hidden := true
 var _is_mouse_hover := false
 
 @onready var panel_container: PanelContainer = $PanelContainer
-@onready var tween: Tween = null
 @onready var box: BoxContainer = %Box
-@onready var hidden_y := panel_container.position.y - (panel_container.size.y - 4)
+@onready var hidden_y := panel_container.position.y - panel_container.size.y
 
 
 #region Godot ######################################################################################
@@ -47,8 +51,8 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if not event is InputEventMouseMotion: return
 	
-	var rect := get_rect()
-	
+	var rect := panel_container.get_rect()
+	rect.size += Vector2(0.0, input_zone_height)
 	if E.settings.scale_gui:
 		rect = Rect2(
 			panel_container.get_rect().position * E.scale,
