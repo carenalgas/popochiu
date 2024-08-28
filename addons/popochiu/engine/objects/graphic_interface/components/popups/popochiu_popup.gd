@@ -21,7 +21,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	
 	# Connect to own signals
-	gui_input.connect(_check_click)
+	$Overlay.gui_input.connect(_check_click)
 	
 	# Connect to child signals
 	btn_ok.pressed.connect(on_ok_pressed)

@@ -30,11 +30,11 @@ var _y_limit := 0.0
 
 #region Godot ######################################################################################
 func _ready() -> void:
+	# Set the default values
+	rich_text_label.text = ""
+	
 	set_meta(DFLT_SIZE, rich_text_label.size)
 	set_meta(DFLT_POSITION, rich_text_label.position)
-	
-	# Set the default values
-	rich_text_label.clear()
 	
 	modulate.a = 0.0
 	_secs_per_character = E.text_speed
@@ -64,13 +64,6 @@ func _input(event: InputEvent) -> void:
 
 #endregion
 
-#region Virtual ####################################################################################
-func _modify_size(_msg: String, _target_position: Vector2) -> void:
-	pass
-
-
-#endregion
-
 #region Public #####################################################################################
 func play_text(props: Dictionary) -> void:
 	var msg: String = E.get_text(props.text)
@@ -79,7 +72,7 @@ func play_text(props: Dictionary) -> void:
 	
 	# Call the virtual method that modifies the size of the RichTextLabel in case the dialog style
 	# requires it.
-	_modify_size(msg, props.position)
+	await _modify_size(msg, props.position)
 	
 	rich_text_label.push_color(props.color)
 	
@@ -133,6 +126,12 @@ func disappear() -> void:
 	rich_text_label.text = ""
 	rich_text_label.size = get_meta(DFLT_SIZE)
 	
+	continue_icon.hide()
+	continue_icon.modulate.a = 1.0
+	
+	if is_instance_valid(continue_icon_tween) and continue_icon_tween.is_running():
+		continue_icon_tween.kill()
+	
 	set_process_input(false)
 	text_show_finished.emit()
 	G.dialog_line_finished.emit()
@@ -160,6 +159,10 @@ func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
 	
 	set_process_input(true)
 	text_show_started.emit()
+
+
+func _modify_size(_msg: String, _target_position: Vector2) -> void:
+	await get_tree().process_frame
 
 
 ## Creates a RichTextLabel to calculate the resulting size of this node once the whole text is shown.
@@ -198,9 +201,6 @@ func _calculate_size(msg: String) -> Vector2:
 		await get_tree().process_frame
 		
 		_size = rt.size
-	elif _size.x < get_meta(DFLT_SIZE).x:
-		# This node will have the minimum width
-		_size.x = get_meta(DFLT_SIZE).x
 	else:
 		# This node will have the width of the text
 		_size.y = get_meta(DFLT_SIZE).y
@@ -270,11 +270,11 @@ func _show_icon() -> void:
 
 
 func _get_icon_from_position() -> float:
-	return size.y - continue_icon.size.y + 2.0
+	return rich_text_label.size.y - continue_icon.size.y + 2.0
 
 
 func _get_icon_to_position() -> float:
-	return size.y - continue_icon.size.y - 1.0
+	return rich_text_label.size.y - continue_icon.size.y - 1.0
 
 
 func _notify_completion() -> void:
