@@ -1,12 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://33wmak2jumqm"]
+[gd_scene load_steps=7 format=3 uid="uid://33wmak2jumqm"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/dialog_portrait/dialog_portrait.gd" id="1_ejue5"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_x1xka"]
 [ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="2_wag1c"]
 [ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/graphic_interface/components/dialog_text/images/ico_continue.png" id="4_lqu2o"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cff0b"]
-bg_color = Color(0, 0, 0, 1)
-draw_center = false
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8fbbc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0rhyn"]
+content_margin_left = 4.0
+content_margin_top = 0.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0.498039)
 
 [node name="DialogPortrait" type="Control" groups=["popochiu_gui_component"]]
 layout_mode = 3
@@ -16,6 +22,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("1_x1xka")
 script = ExtResource("1_ejue5")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
@@ -27,13 +34,17 @@ anchor_bottom = 1.0
 offset_top = -48.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_cff0b")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_8fbbc")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="LeftAvatar" type="TextureRect" parent="PanelContainer/HBoxContainer"]
+[node name="LeftAvatarContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="LeftAvatar" type="TextureRect" parent="PanelContainer/HBoxContainer/LeftAvatarContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(48, 48)
@@ -44,6 +55,7 @@ stretch_mode = 3
 [node name="TextContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_0rhyn")
 
 [node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/HBoxContainer/TextContainer"]
 unique_name_in_owner = true
@@ -77,7 +89,11 @@ value = 100.0
 fill_mode = 2
 texture_progress = ExtResource("4_lqu2o")
 
-[node name="RightAvatar" type="TextureRect" parent="PanelContainer/HBoxContainer"]
+[node name="RightAvatarContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RightAvatar" type="TextureRect" parent="PanelContainer/HBoxContainer/RightAvatarContainer"]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(48, 48)

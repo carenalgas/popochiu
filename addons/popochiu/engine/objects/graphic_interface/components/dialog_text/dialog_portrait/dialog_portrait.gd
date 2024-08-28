@@ -1,6 +1,8 @@
 extends PopochiuDialogText
 
+@onready var left_avatar_container: PanelContainer = %LeftAvatarContainer
 @onready var left_avatar: TextureRect = %LeftAvatar
+@onready var right_avatar_container: PanelContainer = %RightAvatarContainer
 @onready var right_avatar: TextureRect = %RightAvatar
 
 
@@ -19,7 +21,9 @@ func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 	if not rich_text_label.visible:
 		return
 	
+	left_avatar_container.modulate.a = 0.0
 	left_avatar.texture = null
+	right_avatar_container.modulate.a = 0.0
 	right_avatar.texture = null
 	
 	var char_pos: Vector2 = PopochiuUtils.get_screen_coords_for(chr).floor() / (
@@ -27,8 +31,10 @@ func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 	)
 	
 	if char_pos.x <= E.half_width:
+		left_avatar_container.modulate.a = 1.0
 		left_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
 	else:
+		right_avatar_container.modulate.a = 1.0
 		right_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
 
 
