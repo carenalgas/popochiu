@@ -1,5 +1,10 @@
 extends Control
 
+## Defines the height in pixels of the zone where moving the mouse in the top of the screen will
+## make the bar to show. Note: This value will be affected by the Experimental Scale GUI checkbox
+## in Project Settings > Popochiu > GUI.
+@export var input_zone_height := 4
+
 @onready var panel_container: PanelContainer = $PanelContainer
 @onready var inventory = %Inventory
 @onready var settings = %Settings
@@ -23,6 +28,9 @@ func _input(event: InputEvent) -> void:
 	
 	if event is InputEventMouseMotion:
 		var rect := panel_container.get_rect()
+		
+		if not visible:
+			rect.size.y = input_zone_height
 		
 		if E.settings.scale_gui:
 			rect = Rect2(

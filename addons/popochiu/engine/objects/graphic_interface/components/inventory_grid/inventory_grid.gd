@@ -33,9 +33,9 @@ func _ready():
 		_update_box()
 		return
 	
-	scroll_container.mouse_filter = Control.MOUSE_FILTER_PASS\
-	if scroll_with_mouse_wheel\
-	else Control.MOUSE_FILTER_IGNORE
+	scroll_container.mouse_filter = (
+		Control.MOUSE_FILTER_PASS if scroll_with_mouse_wheel else Control.MOUSE_FILTER_IGNORE
+	)
 	
 	_update_box()
 	_calculate_rows_and_scroll()

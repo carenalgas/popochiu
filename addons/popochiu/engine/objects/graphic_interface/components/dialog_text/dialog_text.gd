@@ -124,7 +124,7 @@ func disappear() -> void:
 	
 	rich_text_label.clear()
 	rich_text_label.text = ""
-	rich_text_label.size = get_meta(DFLT_SIZE)
+	_set_default_size()
 	
 	continue_icon.hide()
 	continue_icon.modulate.a = 1.0
@@ -285,6 +285,10 @@ func _notify_completion() -> void:
 func _continue(forced_continue := false) -> void:
 	if E.settings.auto_continue_text or forced_continue:
 		disappear()
+
+
+func _set_default_size() -> void:
+	rich_text_label.size = get_meta(DFLT_SIZE)
 
 
 #endregion

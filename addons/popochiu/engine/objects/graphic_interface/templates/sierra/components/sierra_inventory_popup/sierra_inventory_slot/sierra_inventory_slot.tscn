@@ -8,7 +8,7 @@ border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.439216, 0.427451, 0.921569, 1)
+border_color = Color(0.482353, 0.482353, 0.482353, 1)
 
 [node name="SierraInventorySlot" type="PanelContainer"]
 custom_minimum_size = Vector2(24, 24)

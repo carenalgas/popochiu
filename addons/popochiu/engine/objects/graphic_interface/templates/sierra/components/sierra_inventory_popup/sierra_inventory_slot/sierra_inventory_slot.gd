@@ -1,5 +1,8 @@
 extends PanelContainer
 
+@export var hover_color := Color("ffffff")
+@export var selected_color := Color("edf171")
+
 var _is_selected := false
 
 @onready var _style_box_flat: StyleBoxFlat = get_theme_stylebox("panel").duplicate()
@@ -29,11 +32,11 @@ func get_content_height() -> float:
 
 #region Private ####################################################################################
 func _on_mouse_entered() -> void:
-	_style_box_flat.border_color = Color("edf171")
+	_style_box_flat.border_color = hover_color
 
 
 func _on_mouse_exited() -> void:
-	_style_box_flat.border_color = _dflt_border_color if not _is_selected else Color.BLACK
+	_style_box_flat.border_color = _dflt_border_color if not _is_selected else selected_color
 
 
 func _on_item_assigned(node: Node) -> void:
@@ -61,7 +64,7 @@ func _on_item_removed(node: Node) -> void:
 
 
 func _on_item_selected(item: PopochiuInventoryItem) -> void:
-	_style_box_flat.border_color = Color.BLACK
+	_style_box_flat.border_color = selected_color
 	_is_selected = true
 
 

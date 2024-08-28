@@ -8,21 +8,16 @@ extends PopochiuDialogText
 func _ready() -> void:
 	super()
 	
-	# Connect to child signals
-	text_show_started.connect(show)
-	text_show_finished.connect(hide)
-	
 	# Connect to singletons signals
 	C.character_spoke.connect(_update_avatar)
-	
-	hide()
 
 
 #endregion
 
 #region Private ####################################################################################
 func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
-	if not rich_text_label.visible: return
+	if not rich_text_label.visible:
+		return
 	
 	left_avatar.texture = null
 	right_avatar.texture = null
@@ -35,6 +30,10 @@ func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 		left_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
 	else:
 		right_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
+
+
+func _set_default_size() -> void:
+	pass
 
 
 #endregion

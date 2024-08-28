@@ -3,6 +3,21 @@ extends PopochiuPopup
 
 var _command_when_opened: int = -1
 
+@onready var interact: TextureButton = %Interact
+@onready var look: TextureButton = %Look
+@onready var talk: TextureButton = %Talk
+
+
+#region Godot ######################################################################################
+func _ready() -> void:
+	super()
+	
+	interact.pressed.connect(_on_interact_pressed)
+	look.pressed.connect(_on_look_pressed)
+	talk.pressed.connect(_on_talk_pressed)
+
+
+#endregion
 
 #region Virtual ####################################################################################
 func _open() -> void:

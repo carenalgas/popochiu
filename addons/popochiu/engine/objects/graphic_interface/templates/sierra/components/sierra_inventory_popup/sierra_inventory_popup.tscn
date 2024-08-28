@@ -108,6 +108,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Interact" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer/CommandsContainer"]
+unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -117,6 +118,7 @@ texture_pressed = SubResource("AtlasTexture_2tl6r")
 texture_hover = SubResource("AtlasTexture_u6es1")
 
 [node name="Look" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer/CommandsContainer"]
+unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -126,6 +128,7 @@ texture_pressed = SubResource("AtlasTexture_2idn6")
 texture_hover = SubResource("AtlasTexture_mndsc")
 
 [node name="Talk" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer/CommandsContainer"]
+unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 toggle_mode = true
@@ -146,7 +149,3 @@ layout_mode = 2
 size_flags_horizontal = 10
 size_flags_vertical = 4
 text = "close"
-
-[connection signal="pressed" from="Overlay/PanelContainer/VBoxContainer/FooterContainer/CommandsContainer/Interact" to="Overlay" method="_on_interact_pressed"]
-[connection signal="pressed" from="Overlay/PanelContainer/VBoxContainer/FooterContainer/CommandsContainer/Look" to="Overlay" method="_on_look_pressed"]
-[connection signal="pressed" from="Overlay/PanelContainer/VBoxContainer/FooterContainer/CommandsContainer/Talk" to="Overlay" method="_on_talk_pressed"]
