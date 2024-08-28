@@ -10,12 +10,12 @@ const DFLT_SIZE := "dflt_size"
 # during a _ready() execution
 var _can_change_size := false
 
-@onready var label: RichTextLabel = $Label
+@onready var rich_text_label: RichTextLabel = %RichTextLabel
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	set_meta(DFLT_SIZE, label.size)
+	set_meta(DFLT_SIZE, rich_text_label.size)
 	
 	# Connect to singletons signals
 	G.system_text_shown.connect(_show_text)
@@ -25,7 +25,7 @@ func _ready() -> void:
 
 
 func _draw() -> void:
-	label.position = get_parent().size / 2.0 - size / 2.0
+	rich_text_label.position = get_parent().size / 2.0 - (rich_text_label.size / 2.0)
 
 
 func _input(event: InputEvent) -> void:
@@ -48,11 +48,11 @@ func appear() -> void:
 func close() -> void:
 	set_process_input(false)
 	
-	label.clear()
-	label.text = ""
+	rich_text_label.clear()
+	rich_text_label.text = ""
 	
 	if _can_change_size:
-		label.size = get_meta(DFLT_SIZE)
+		rich_text_label.size = get_meta(DFLT_SIZE)
 	
 	hide()
 	G.system_text_hidden.emit()
@@ -62,26 +62,10 @@ func close() -> void:
 
 #region Private ####################################################################################
 func _show_text(msg := "") -> void:
-	label.clear()
-	label.text = ""
-	label.size = get_meta(DFLT_SIZE)
-	
-	# ==== Calculate the width of the node =========================================================
-	var rt := RichTextLabel.new()
-	var lbl := Label.new()
-	rt.append_text(msg)
-	lbl.text = rt.text
-	add_child(lbl)
-	
-	var lbl_size := lbl.size
-	if lbl_size.x > get_meta(DFLT_SIZE).x:
-		lbl_size.x = get_meta(DFLT_SIZE).x - 16.0
-	
-	lbl.free()
-	rt.free()
-	# ========================================================= Calculate the width of the node ====
-	
-	label.append_text("[center]%s[/center]" % msg)
+	rich_text_label.clear()
+	rich_text_label.text = ""
+	rich_text_label.size = get_meta(DFLT_SIZE)
+	rich_text_label.append_text("[center]%s[/center]" % msg)
 	
 	if msg:
 		appear()

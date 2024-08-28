@@ -29,7 +29,8 @@ mouse_filter = 2
 theme = ExtResource("1_7ydn8")
 script = ExtResource("2")
 
-[node name="Label" type="RichTextLabel" parent="."]
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5

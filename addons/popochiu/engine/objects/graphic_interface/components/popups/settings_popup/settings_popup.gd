@@ -1,3 +1,4 @@
+@tool
 extends "../popochiu_popup.gd"
 
 signal quit_pressed
