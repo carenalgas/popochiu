@@ -1,6 +1,7 @@
 extends Control
 
 @export var always_visible := false
+@export var hide_when_gui_is_blocked := false
 
 var is_disabled := false
 
@@ -94,18 +95,23 @@ func _change_cursor(item: PopochiuInventoryItem) -> void:
 
 func _on_graphic_interface_blocked() -> void:
 	set_process_input(false)
+	
+	if hide_when_gui_is_blocked:
+		hide()
 
 
 func _on_graphic_interface_unblocked() -> void:
 	set_process_input(true)
+	
+	if hide_when_gui_is_blocked:
+		show()
 
 
 func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 	box.add_child(item)
 	
-	if E.settings.scale_gui:
-		item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
-		item.custom_minimum_size.y = box.size.y
+	item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+	item.custom_minimum_size.y = box.size.y
 	
 	item.selected.connect(_change_cursor)
 	

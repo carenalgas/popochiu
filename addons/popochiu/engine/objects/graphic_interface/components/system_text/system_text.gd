@@ -6,6 +6,10 @@ signal shown
 
 const DFLT_SIZE := "dflt_size"
 
+# Used to fix a warning shown by Godot related to the anchors of the node and changing its size
+# during a _ready() execution
+var _can_change_size := false
+
 
 #region Godot ######################################################################################
 func _ready() -> void:
@@ -13,10 +17,8 @@ func _ready() -> void:
 	
 	# Connect to singletons signals
 	G.system_text_shown.connect(_show_text)
+	E.ready.connect(set.bind("_can_change_size", true))
 	
-	# This await fixes a warning shown by Godot related to the anchors of the node and changing its
-	# size during _ready execution
-	await RenderingServer.frame_post_draw
 	close()
 
 
@@ -28,8 +30,7 @@ func _input(event: InputEvent) -> void:
 	if not PopochiuUtils.is_click_or_touch_pressed(event) or not visible:
 		return
 	
-	get_viewport().set_input_as_handled()
-	
+	accept_event()
 	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
 		close()
 
@@ -47,7 +48,9 @@ func close() -> void:
 	
 	clear()
 	text = ""
-	size = get_meta(DFLT_SIZE)
+	
+	if _can_change_size:
+		size = get_meta(DFLT_SIZE)
 	
 	hide()
 	G.system_text_hidden.emit()

@@ -9,6 +9,11 @@ docs-up:
 docs-down:
 	docker compose down
 
+docs-restart: docs-down docs-up
+
+docs-rebuild:
+	docker compose build --no-cache
+
 docs-deploy: docs-extract
 	rm -rf ./dist && git restore dist
 	docker compose run \

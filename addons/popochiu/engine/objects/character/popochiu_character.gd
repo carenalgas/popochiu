@@ -51,12 +51,12 @@ signal grab_done
 @export var flips_when: FlipsWhen = FlipsWhen.NONE
 ## Array of [Dictionary] where each element has
 ## [code]{ emotion: String, variations: Array[PopochiuAudioCue] }[/code].
-## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a 
+## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
 ## specific emotion.
 @export var voices := [] : set = set_voices
 ## Whether the character should follow the player-controlled character (PC) when it moves through
 ## the room.
-@export var follow_player := false
+@export var follow_player := false : set = set_follow_player
 ## The offset between the player-controlled character (PC) and this character when it follows the
 ## former one.
 @export var follow_player_offset := Vector2(20,0)
@@ -74,6 +74,9 @@ signal grab_done
 @export var ignore_walkable_areas := false
 ## Whether the character will move only when the frame changes on its animation.
 @export var anti_glide_animation: bool = false
+## Used by the GUI to calculate where to render the dialogue lines said by the character when it
+## speaks.
+@export var dialog_pos: Vector2
 # This category is used by the Aseprite Importer in order to allow the creation of a section in the
 # Inspector for the character.
 @export_category("Aseprite")
@@ -100,9 +103,6 @@ var default_scale := Vector2.ONE
 
 var _looking_dir: int = Looking.DOWN
 
-## A to the [b]$DialogPos[/b] child. Used by the GUI to calculate where to render the dialogue lines
-## said by the character when it speaks.
-@onready var dialog_pos: Marker2D = $DialogPos
 
 
 #region Godot ######################################################################################
@@ -122,6 +122,8 @@ func _ready():
 		if not child is Sprite2D:
 			continue
 		child.frame_changed.connect(_update_position)
+	
+	move_ended.connect(_on_move_ended)
 
 
 func _get_property_list():
@@ -162,6 +164,10 @@ func _play_talk() -> void:
 ## [i]Virtual[/i].
 func _play_grab() -> void:
 	play_animation('grab')
+
+
+func _on_move_ended() -> void:
+	pass
 
 
 #endregion
@@ -227,16 +233,16 @@ func walk(target_pos: Vector2) -> void:
 	
 	if E.cutscene_skipped:
 		is_moving = false
-		E.main_camera.follow_smoothing_enabled = false
+		E.camera.follow_smoothing_enabled = false
 		
 		await get_tree().process_frame
 		
 		position = target_pos
-		E.main_camera.position = target_pos
+		E.camera.position = target_pos
 		
 		await get_tree().process_frame
 		
-		E.main_camera.follow_smoothing_enabled = true
+		E.camera.follow_smoothing_enabled = true
 		
 		return
 	
@@ -465,20 +471,16 @@ func grab() -> void:
 	idle()
 
 
-## Calls [method PopochiuClickable.hide_helpers] and then hides the `$DialogPos` child.
+## Calls [method PopochiuClickable.hide_helpers].
 func hide_helpers() -> void:
 	super()
-	
-	if is_instance_valid(dialog_pos):
-		dialog_pos.hide()
+	# TODO: add visibility logic for dialog_pos gizmo
 
 
-## Calls [method PopochiuClickable.show_helpers] and then shows the `$DialogPos` child.
+## Calls [method PopochiuClickable.show_helpers].
 func show_helpers() -> void:
 	super()
-	
-	if is_instance_valid(dialog_pos):
-		dialog_pos.show()
+	# TODO: add visibility logic for dialog_pos gizmo
 
 
 ## Makes the character walk to [param pos].[br][br]
@@ -489,7 +491,7 @@ func queue_walk_to(pos: Vector2) -> Callable:
 
 ## Makes the character walk to [param pos].
 func walk_to(pos: Vector2) -> void:
-	await walk(E.current_room.to_global(pos))
+	await walk(R.current.to_global(pos))
 
 
 ## Makes the character walk to the last clicked [PopochiuClickable], which is stored in
@@ -540,7 +542,7 @@ func queue_walk_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
 ## relative to the target position.
 func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
-	await _walk_to_node(E.current_room.get_prop(id), offset)
+	await _walk_to_node(R.current.get_prop(id), offset)
 
 
 ## Makes the character teleport (disappear at one location and instantly appear at another) to the 
@@ -555,7 +557,7 @@ func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 ## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to 
 ## [param id]. You can set an [param offset] relative to the target position.
 func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(E.current_room.get_prop(id), offset)
+	await _teleport_to_node(R.current.get_prop(id), offset)
 
 
 ## Makes the character walk to the [PopochiuHotspot] (in the current room) which
@@ -570,7 +572,7 @@ func queue_walk_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
 ## relative to the target position.
 func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
-	await _walk_to_node(E.current_room.get_hotspot(id), offset)
+	await _walk_to_node(R.current.get_hotspot(id), offset)
 
 
 ## Makes the character teleport (disappear at one location and instantly appear at another) to the 
@@ -585,7 +587,7 @@ func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 ## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to 
 ## [param id]. You can set an [param offset] relative to the target position.
 func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(E.current_room.get_hotspot(id), offset)
+	await _teleport_to_node(R.current.get_hotspot(id), offset)
 
 
 ## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
@@ -598,7 +600,7 @@ func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 ## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
 ## equal to [param id]. You can set an [param offset] relative to the target position.
 func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
-	await _walk_to_node(E.current_room.get_marker(id), offset)
+	await _walk_to_node(R.current.get_marker(id), offset)
 
 
 ## Makes the character teleport (disappear at one location and instantly appear at another) to the 
@@ -613,7 +615,7 @@ func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 ## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an 
 ## [param offset] relative to the target position.
 func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(E.current_room.get_marker(id), offset)
+	await _teleport_to_node(R.current.get_marker(id), offset)
 
 
 ## Sets [member emotion] to [param new_emotion] when in a [method Popochiu.queue].
@@ -784,10 +786,10 @@ func get_avatar_for_emotion(emo := "") -> Texture:
 	return texture
 
 
-## Returns the [code]y[/code] value of the [b]$DialogPos[/b] [Marker2D] (the node that defines the
-## position of the dialog lines said by the character when it talks).
+## Returns the [code]y[/code] value of the dialog_pos [Vector2] that defines the
+## position of the dialog lines said by the character when it talks.
 func get_dialog_pos() -> float:
-	return $DialogPos.position.y
+	return dialog_pos.y
 
 
 #endregion
@@ -807,6 +809,13 @@ func set_voices(value: Array) -> void:
 		elif not value[idx].variations.is_empty():
 			if value[idx].variations[-1] == null:
 				value[idx].variations[-1] = AudioCueSound.new()
+
+
+func set_follow_player(value: bool) -> void:
+	follow_player = value
+	
+	if not Engine.is_editor_hint():
+		set_process(follow_player)
 
 
 func set_avatars(value: Array) -> void:
@@ -899,7 +908,7 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 
 
 func _update_position():
-	E.current_room.update_characters_position(self)
+	R.current.update_characters_position(self)
 
 
 #endregion

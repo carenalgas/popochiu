@@ -4,27 +4,22 @@ extends PanelContainer
 # TODO: review coding standards for those constants
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 const LOCAL_OBJ_CONFIG = preload("res://addons/popochiu/editor/config/local_obj_config.gd")
-## TODO: this can be specialized, even if for a two buttons... ?
+# TODO: this can be specialized, even if for a two buttons... ?
 const AnimationTagRow =\
 preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd")
 
-
 var scene: Node
 var target_node: Node
-var main_dock: Panel
 var file_system: EditorFileSystem
 
-
-# External logic
+# ---- External logic
 var _animation_tag_row_scene: PackedScene =\
-preload('res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.tscn')
+preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.tscn")
 var _aseprite = preload("../aseprite_controller.gd").new() ## TODO: should be absolute?
-
-# References for children scripts
+# ---- References for children scripts
 var _root_node: Node
 var _options: Dictionary
-
-# Importer parameters variables
+# ---- Importer parameters variables
 var _source: String = ""
 var _tags_cache: Array = []
 var _file_dialog_aseprite: FileDialog
@@ -34,7 +29,7 @@ var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready():
 	_set_elements_styles()
 	
@@ -47,7 +42,7 @@ func _ready():
 	if result == RESULT_CODE.SUCCESS:
 		_show_importer()
 	else:
-		printerr(RESULT_CODE.get_error_message(result))
+		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 		_show_warning()
 	
 	# Load inspector dock configuration from node
@@ -60,7 +55,9 @@ func _ready():
 		_set_options_visible(cfg.get("op_exp"))
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _check_aseprite() -> int:
 	if not _aseprite.check_command_path():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
@@ -94,14 +91,14 @@ func _load_config(cfg):
 		_set_source(cfg.source)
 
 	_output_folder = cfg.get("o_folder", "")
-	get_node('%OutFolderButton').text = (
+	get_node("%OutFolderButton").text = (
 		_output_folder if _output_folder != "" else _out_folder_default
 	)
-	get_node('%OutFileName').text = cfg.get("o_name", "")
-	get_node('%VisibleLayersCheckButton').set_pressed_no_signal(
+	get_node("%OutFileName").text = cfg.get("o_name", "")
+	get_node("%VisibleLayersCheckButton").set_pressed_no_signal(
 		cfg.get("only_visible_layers", false)
 	)
-	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(
+	get_node("%WipeOldAnimationsCheckButton").set_pressed_no_signal(
 		cfg.get("wipe_old_anims", false)
 	)
 
@@ -115,11 +112,11 @@ func _save_config():
 	var cfg := {
 		"source": _source,
 		"tags": _tags_cache,
-		"op_exp": get_node('%Options').visible,
+		"op_exp": get_node("%Options").visible,
 		"o_folder": _output_folder,
-		"o_name": get_node('%OutFileName').text,
-		"only_visible_layers": get_node('%VisibleLayersCheckButton').is_pressed(),
-		"wipe_old_anims": get_node('%WipeOldAnimationsCheckButton').is_pressed(),
+		"o_name": get_node("%OutFileName").text,
+		"only_visible_layers": get_node("%VisibleLayersCheckButton").is_pressed(),
+		"wipe_old_anims": get_node("%WipeOldAnimationsCheckButton").is_pressed(),
 	}
 
 	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
@@ -135,20 +132,20 @@ func _load_default_config():
 	_empty_tags_container()
 
 	# Reset inspector fields
-	get_node('%SourceButton').text = "[empty]"
-	get_node('%SourceButton').tooltip_text = ""
-	get_node('%OutFolderButton').text = "[empty]"
-	get_node('%OutFileName').clear()
-	get_node('%VisibleLayersCheckButton').set_pressed_no_signal(false)
-	get_node('%WipeOldAnimationsCheckButton').set_pressed_no_signal(
+	get_node("%SourceButton").text = "[empty]"
+	get_node("%SourceButton").tooltip_text = ""
+	get_node("%OutFolderButton").text = "[empty]"
+	get_node("%OutFileName").clear()
+	get_node("%VisibleLayersCheckButton").set_pressed_no_signal(false)
+	get_node("%WipeOldAnimationsCheckButton").set_pressed_no_signal(
 		PopochiuConfig.is_default_wipe_old_anims_enabled()
 	)
 
 
 func _set_source(source):
 	_source = source
-	get_node('%SourceButton').text = _source
-	get_node('%SourceButton').tooltip_text = _source
+	get_node("%SourceButton").text = _source
+	get_node("%SourceButton").tooltip_text = _source
 
 
 func _on_source_pressed():
@@ -187,9 +184,9 @@ func _on_import_pressed():
 		"output_folder": (
 			_output_folder if _output_folder != "" else _root_node.scene_file_path.get_base_dir()
 		),
-		"output_filename": get_node('%OutFileName').text,
-		"only_visible_layers": get_node('%VisibleLayersCheckButton').is_pressed(),
-		"wipe_old_animations": get_node('%WipeOldAnimationsCheckButton').is_pressed(),
+		"output_filename": get_node("%OutFileName").text,
+		"only_visible_layers": get_node("%VisibleLayersCheckButton").is_pressed(),
+		"wipe_old_animations": get_node("%WipeOldAnimationsCheckButton").is_pressed(),
 	}
 	
 	_save_config()
@@ -241,7 +238,7 @@ func _populate_tags(tags: Array):
 			continue
 		
 		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
-		get_node('%Tags').add_child(tag_row)
+		get_node("%Tags").add_child(tag_row)
 		tag_row.init(t)
 		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
 		_customize_tag_ui(tag_row)
@@ -256,8 +253,8 @@ func _customize_tag_ui(tagrow: AnimationTagRow):
 
 func _empty_tags_container():
 	# Clean the inspector tags container empty
-	for tl in get_node('%Tags').get_children():
-		get_node('%Tags').remove_child(tl)
+	for tl in get_node("%Tags").get_children():
+		get_node("%Tags").remove_child(tl)
 		tl.queue_free()
 
 
@@ -272,9 +269,9 @@ func _merge_with_cache(tags: Array) -> Array:
 		tags_cache_index[t.tag_name] = t
 	
 	for i in tags.size():
-		result.push_back( \
-			tags_cache_index[tags[i].tag_name] \
-			if tags_cache_index.has(tags[i].tag_name) \
+		result.push_back(
+			tags_cache_index[tags[i].tag_name]
+			if tags_cache_index.has(tags[i].tag_name)
 			else tags[i]
 		)
 
@@ -283,7 +280,7 @@ func _merge_with_cache(tags: Array) -> Array:
 
 func _get_tags_from_ui() -> Array:
 	var tags_list = []
-	for tag_row in get_node('%Tags').get_children():
+	for tag_row in get_node("%Tags").get_children():
 		var tag_row_cfg = tag_row.get_cfg()
 		if tag_row_cfg.tag_name == "":
 			continue
@@ -294,14 +291,14 @@ func _get_tags_from_ui() -> Array:
 func _get_tags_from_source() -> Array:
 	var tags_found = _list_tags(ProjectSettings.globalize_path(_source))
 	if typeof(tags_found) == TYPE_INT:
-		printerr(RESULT_CODE.get_error_message(tags_found))
+		PopochiuUtils.print_error(RESULT_CODE.get_error_message(tags_found))
 		return []
 	var tags_list = []
 	for t in tags_found:
 		if t == "":
 			continue
 		tags_list.push_back({
-			"tag_name": t
+			tag_name = t
 		})
 	return tags_list
 
@@ -309,25 +306,24 @@ func _get_tags_from_source() -> Array:
 func _show_message(
 	message: String, title: String = "", object: Object = null, method := ""
 ):
-	var _warning_dialog = AcceptDialog.new()
+	var warning_dialog = AcceptDialog.new()
 	
 	if title != "":
-		_warning_dialog.title = title
+		warning_dialog.title = title
 	
-	_warning_dialog.dialog_text = message
-	_warning_dialog.popup_window = true
+	warning_dialog.dialog_text = message
+	warning_dialog.popup_window = true
 	
-	var callback := Callable(_warning_dialog, "queue_free")
+	var callback := Callable(warning_dialog, "queue_free")
 	
 	if is_instance_valid(object) and not method.is_empty():
 		callback = func():
 			object.call(method)
 	
-	_warning_dialog.confirmed.connect(callback)
-	_warning_dialog.close_requested.connect(callback)
+	warning_dialog.confirmed.connect(callback)
+	warning_dialog.close_requested.connect(callback)
 	
-	main_dock.add_child(_warning_dialog)
-	_warning_dialog.popup_centered()
+	PopochiuEditorHelper.show_dialog(warning_dialog)
 
 
 func _show_confirmation(message: String, title: String = ""):
@@ -347,8 +343,8 @@ func _on_options_title_toggled(button_pressed):
 
 
 func _set_options_visible(is_visible):
-	get_node('%Options').visible = is_visible
-	get_node('%OptionsTitle').icon = (
+	get_node("%Options").visible = is_visible
+	get_node("%OptionsTitle").icon = (
 		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
 		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
 	)
@@ -373,7 +369,7 @@ func _create_output_folder_selection():
 
 func _on_output_folder_selected(path):
 	_output_folder = path
-	get_node('%OutFolderButton').text = (
+	get_node("%OutFolderButton").text = (
 		_output_folder if _output_folder != "" else _out_folder_default
 	)
 	_output_folder_dialog.queue_free()
@@ -385,32 +381,35 @@ func _set_elements_styles():
 	var section_color = get_theme_color("prop_section", "Editor")
 	var section_style = StyleBoxFlat.new()
 	section_style.set_bg_color(section_color)
-	get_node('%TagsTitleBar').set('theme_override_styles/panel', section_style)
-	get_node('%OptionsTitleBar').set('theme_override_styles/panel', section_style)
+	get_node("%TagsTitleBar").set("theme_override_styles/panel", section_style)
+	get_node("%OptionsTitleBar").set("theme_override_styles/panel", section_style)
 
 	# Set style of warning panel
-	get_node('%WarningPanel').add_theme_stylebox_override(
-		'panel',
-		get_node('%WarningPanel').get_theme_stylebox("sub_inspector_bg11", "Editor")
+	get_node("%WarningPanel").add_theme_stylebox_override(
+		"panel",
+		get_node("%WarningPanel").get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
-	get_node('%WarningLabel').add_theme_color_override('font_color', Color('c46c71'))
+	get_node("%WarningLabel").add_theme_color_override("font_color", Color("c46c71"))
 
 
 func _show_info():
-	get_node('%Info').visible = true
-	get_node('%Warning').visible = false
-	get_node('%Importer').visible = false
+	get_node("%Info").visible = true
+	get_node("%Warning").visible = false
+	get_node("%Importer").visible = false
 
 
 func _show_warning():
-	get_node('%Info').visible = false
-	get_node('%Warning').visible = true
-	get_node('%Importer').visible = false
+	get_node("%Info").visible = false
+	get_node("%Warning").visible = true
+	get_node("%Importer").visible = false
 	
 
 func _show_importer():
-	get_node('%Info').visible = false
-	get_node('%Warning').visible = false
-	get_node('%Importer').visible = true
+	get_node("%Info").visible = false
+	get_node("%Warning").visible = false
+	get_node("%Importer").visible = true
 
-## TODO: Introduce layer selection list, more or less as tags
+# TODO: Introduce layer selection list, more or less as tags
+
+
+#endregion

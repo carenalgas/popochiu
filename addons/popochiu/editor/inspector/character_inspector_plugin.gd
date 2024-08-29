@@ -22,12 +22,12 @@ func _parse_begin(object: Object) -> void:
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	
 	panel.add_theme_stylebox_override(
-		'panel',
+		"panel",
 		panel.get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
-	button.add_theme_color_override('font_color', Color('c46c71'))
-	button.add_theme_color_override('font_color_hover', Color('c46c71'))
-	button.add_theme_color_override('font_color_pressed', Color('c46c71'))
+	button.add_theme_color_override("font_color", Color("c46c71"))
+	button.add_theme_color_override("font_color_hover", Color("c46c71"))
+	button.add_theme_color_override("font_color_pressed", Color("c46c71"))
 	
 	button.pressed.connect(
 		_open_scene.bind((object as PopochiuCharacter).scene_file_path),
@@ -52,7 +52,7 @@ func _parse_property(
 	# NOTE: We could add this as an option of the plugin settings. So devs can add extra properties
 	# 		if needed.
 	if object and object.get_parent() is Node2D and not path in [
-		'position', 'visible', 'modulate', 'self_modulate', 'light_mask'
+		"position", "visible", "modulate", "self_modulate", "light_mask"
 	]:
 		return true
 	
@@ -63,7 +63,7 @@ func _parse_property(
 
 #region Private ####################################################################################
 func _open_scene(path: String) -> void:
-	EditorInterface.set_main_screen_editor('2D')
+	EditorInterface.set_main_screen_editor("2D")
 	EditorInterface.open_scene_from_path(path)
 
 

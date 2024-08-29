@@ -30,6 +30,7 @@ func _ready() -> void:
 	settings_popup.classic_sentence_toggled.connect(_on_classic_sentence_toggled)
 	settings_popup.quit_pressed.connect(_on_quit_pressed)
 	
+	
 	# Connect to singletons signals
 	E.ready.connect(_on_popochiu_ready)
 
@@ -93,14 +94,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 		$"9VerbPanel".highlight_command(clickable.suggested_command)
 	
 	if I.active:
-		G.show_hover_text(
-			"%s %s %s %s" % [
-				E.get_current_command_name(),
-				I.active.description,
-				"to" if E.current_command == NineVerbCommands.Commands.GIVE else "in",
-				clickable.description
-			]
-		)
+		_show_command_on(I.active.description, clickable.description)
 	else:
 		G.show_hover_text(clickable.description)
 
@@ -115,8 +109,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	Cursor.show_cursor()
 	
 	if I.active:
-		_show_use_on(I.active)
-		
+		_show_command_on(I.active.description)
 		return
 	
 	G.show_hover_text()
@@ -134,15 +127,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 	Cursor.show_cursor()
 	
 	if I.active:
-		if E.current_command == NineVerbCommands.Commands.USE and I.active != inventory_item:
-			# Show a hover text in the form: Use xxx in yyy
-			G.show_hover_text(
-				"%s %s in %s" % [
-					E.get_current_command_name(),
-					I.active.description,
-					inventory_item.description
-				]
-			)
+		_show_command_on(I.active.description, inventory_item.description)
 	else:
 		G.show_hover_text(inventory_item.description)
 
@@ -158,7 +143,7 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 	Cursor.show_cursor()
 	
 	if I.active:
-		G.show_hover_text("Use %s in" % I.active.description)
+		_show_command_on(I.active.description)
 		return
 	
 	G.show_hover_text()
@@ -199,7 +184,21 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 		E.current_command = NineVerbCommands.Commands.WALK_TO
 		G.show_hover_text()
 	else:
-		_show_use_on(item)
+		_show_command_on(item.description)
+
+
+## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
+## component.
+func _on_game_saved() -> void:
+	G.show_system_text("Game saved")
+
+
+## Called when a game is loaded. [param loaded_game] has the loaded data. By default, it shows
+## [code]Game loaded[/code] in the SystemText component.
+func _on_game_loaded(loaded_game: Dictionary) -> void:
+	await G.show_system_text("Game loaded")
+	
+	super(loaded_game)
 
 
 #endregion
@@ -229,8 +228,14 @@ func _on_quit_pressed() -> void:
 	quit_popup.open()
 
 
-func _show_use_on(item: PopochiuInventoryItem) -> void:
-	G.show_hover_text("%s %s in" % [E.get_current_command_name(), item.description])
-
+func _show_command_on(item_1_name: String, item_2_name: String = "") -> void:
+	var preposition = "on"
+	if E.current_command == NineVerbCommands.Commands.GIVE:
+		preposition = "to"
+	G.show_hover_text("%s %s %s %s" % [
+		E.get_current_command_name(), 
+		item_1_name, 
+		preposition,
+		item_2_name])
 
 #endregion

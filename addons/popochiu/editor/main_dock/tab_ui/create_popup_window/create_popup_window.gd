@@ -82,7 +82,8 @@ func _create_popup() -> void:
 	EditorInterface.save_scene()
 	
 	# Open the scene of the created popup for edition ----------------------------------------------
-	EditorInterface.get_resource_filesystem().scan()
+	await PopochiuEditorHelper.filesystem_scanned()
+	
 	EditorInterface.select_file(scene_path)
 	EditorInterface.open_scene_from_path(scene_path)
 

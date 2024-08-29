@@ -104,14 +104,16 @@ func _update_box() -> void:
 	box.add_theme_constant_override("h_separation", h_separation)
 	box.add_theme_constant_override("v_separation", v_separation)
 	
+	# Fix: remove the child immediately (instead of calling queue_free()), and do not await for
+	# a process frame cause it can cause an issue when adding items marked as "Start with it".
 	for child in box.get_children():
-		child.queue_free()
-	
-	await RenderingServer.frame_post_draw
+		child.free()
 	
 	for idx in number_of_slots:
 		var slot := (SLOT if not slot_scene else slot_scene).instantiate()
 		box.add_child(slot)
+		
+		slot.name = EMPTY_SLOT
 		slot_size = slot.size.y
 	
 	scroll_container.custom_minimum_size = Vector2(
@@ -158,13 +160,12 @@ func _add_item(item: PopochiuInventoryItem, _animate := true) -> void:
 	slot.name = "[%s]" % item.script_name
 	slot.add_child(item)
 	
-	if E.settings.scale_gui:
-		item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
-		
-		if slot.has_method("get_content_height"):
-			item.custom_minimum_size.y = slot.get_content_height()
-		else:
-			item.custom_minimum_size.y = slot.size.y
+	item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+	
+	if slot.has_method("get_content_height"):
+		item.custom_minimum_size.y = slot.get_content_height()
+	else:
+		item.custom_minimum_size.y = slot.size.y
 	
 	box.set_meta(item.script_name, slot)
 	
@@ -182,9 +183,7 @@ func _remove_item(item: PopochiuInventoryItem, _animate := true) -> void:
 	item.selected.disconnect(_change_cursor)
 	
 	box.get_meta(item.script_name).remove_child(item)
-	box.get_meta(item.script_name).queue_free()
-	box.add_child(SLOT.instantiate())
-	box.get_child(-1).name = EMPTY_SLOT
+	box.get_meta(item.script_name).name = EMPTY_SLOT
 	
 	_check_scroll_buttons()
 	

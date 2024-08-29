@@ -34,9 +34,9 @@ func _input(event: InputEvent) -> void:
 			# active.
 			if not $SierraMenu.visible and not E.hovered\
 			 and E.current_command != SierraCommands.Commands.WALK:
-				get_viewport().set_input_as_handled()
+				accept_event()
 		MOUSE_BUTTON_RIGHT:
-			get_viewport().set_input_as_handled()
+			accept_event()
 			
 			E.current_command = posmod(
 				E.current_command + 1, SierraCommands.Commands.size()
@@ -113,6 +113,20 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	else:
 		Cursor.remove_secondary_cursor_texture()
 		Cursor.show_cursor()
+
+
+## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
+## component.
+func _on_game_saved() -> void:
+	G.show_system_text("Game saved")
+
+
+## Called when a game is loaded. [param loaded_game] has the loaded data. By default, it shows
+## [code]Game loaded[/code] in the SystemText component.
+func _on_game_loaded(loaded_game: Dictionary) -> void:
+	await G.show_system_text("Game loaded")
+	
+	super(loaded_game)
 
 
 ## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.

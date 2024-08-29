@@ -24,8 +24,8 @@ func _ready():
 	# Connect to singleton signals
 	G.blocked.connect(_on_blocked)
 	G.unblocked.connect(_on_unblocked)
-	G.hidden.connect(_on_hidden)
-	G.shown.connect(_on_shown)
+	G.hidden.connect(on_hidden)
+	G.shown.connect(on_shown)
 	G.system_text_shown.connect(_on_system_text_shown)
 	G.system_text_hidden.connect(_on_system_text_hidden)
 	G.mouse_entered_clickable.connect(_on_mouse_entered_clickable)
@@ -38,6 +38,8 @@ func _ready():
 	G.dialog_options_shown.connect(_on_dialog_options_shown)
 	D.dialog_finished.connect(_on_dialog_finished)
 	I.item_selected.connect(_on_inventory_item_selected)
+	E.game_saved.connect(_on_game_saved)
+	E.game_loaded.connect(_on_game_loaded)
 	
 	if E.settings.is_pixel_art_game:
 		# Apply this filter so the font doesn't blur
@@ -139,6 +141,18 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	pass
 
 
+## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
+## component.
+func _on_game_saved() -> void:
+	pass
+
+
+## Called when a game is loaded. [param loaded_game] has the loaded data. By default, this emits
+## the [signal G.load_feedback_finished] signal.
+func _on_game_loaded(loaded_game: Dictionary) -> void:
+	G.load_feedback_finished.emit()
+
+
 ## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
 func _get_cursor_name() -> String:
 	return ""
@@ -162,6 +176,16 @@ func get_component(component_name: String) -> Control:
 ## Returns the name of the cursor texture to show. [code]"normal"[/code] is returned by default.
 func get_cursor_name() -> String:
 	return "normal" if _get_cursor_name().is_empty() else _get_cursor_name()
+
+
+func on_hidden() -> void:
+	hide()
+	_on_hidden()
+
+
+func on_shown() -> void:
+	show()
+	_on_shown()
 
 
 #endregion

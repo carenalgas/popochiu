@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://dl6pj0tylid8w"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_rtecw"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_inventory_item/create_inventory_item.gd" id="2_3sytb"]
+
+[node name="CreateInventoryItemConfirmation" instance=ExtResource("1_rtecw")]
+script = ExtResource("2_3sytb")
+title = "Create PopochiuInventoryItem"
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Item name:"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
+text = "Use a descriptive name in PascalCase (e.g. Scythe, WorkOrder, DeckOfCards)."

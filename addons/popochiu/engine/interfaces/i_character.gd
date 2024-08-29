@@ -25,13 +25,13 @@ signal character_spoke(character: PopochiuCharacter, message: String)
 
 ## Access to the [PopochiuCharacter] that is the current Player-controlled Character (PC).
 var player: PopochiuCharacter : set = set_player
-## Array with all the [PopochiuCharacter]s that already appeared in the game.
-var characters := []
 ## Access to the [PopochiuCharacter] that is owning the camera.
 var camera_owner: PopochiuCharacter
 ## Stores data about the state of each [PopochiuCharacter] in the game. The key of each entry is the
 ## [member PopochiuCharacter.script_name] of the character.
 var characters_states := {}
+
+var _characters := {}
 
 
 #region Public #####################################################################################
@@ -98,58 +98,64 @@ func queue_change_camera_owner(c: PopochiuCharacter) -> Callable:
 ## (present in that script as a variable for code autocompletion) in runtime.
 func get_runtime_character(script_name: String) -> PopochiuCharacter:
 	var character: PopochiuCharacter = null
-
-	for c in characters:
-		if c.script_name.to_lower() == script_name.to_lower():
-			character = c
-			break
-
-	if not character:
+	
+	if _characters.has(script_name):
+		character = _characters[script_name]
+	else:
 		PopochiuUtils.print_error("Character %s is not in the room" % script_name)
-
+	
 	return character
 
 
 ## Returns [code]true[/code] if [param script_name] is equal to [code]player[/code] or exist in
 ## [member characters].
 func is_valid_character(script_name: String) -> bool:
-	var result := false
-	var sn := script_name.to_lower()
+	var is_valid := false
 	
-	if sn == "player":
-		result = true
+	if script_name.to_lower() == "player":
+		is_valid = true
 	else:
-		for c in characters:
-			if c.script_name.to_lower() == sn:
-				result = true
-				break
+		is_valid = _characters.has(script_name)
 	
-	return result
+	return is_valid
 
 
 ## Gets a [PopochiuCharacter] identified with [param script_name]. If the instance doesn't exist in
 ## [member characters], then one is created, added to the array, and returned.
 func get_character(script_name: String) -> PopochiuCharacter:
+	var character: PopochiuCharacter = null
+	
+	if script_name.is_empty():
+		return character
+	
 	if (
 		script_name.to_lower() == "player"
 		or (is_instance_valid(player) and player.script_name.to_lower() == script_name)
 	):
-		return player
-	
-	for c in characters:
-		if c.script_name.to_lower() == script_name.to_lower():
-			return c
-	
-	# If the character doesn't existis, try to instantiate it from the list of
-	# characters (Resource) in PopochiuData.cfg
-	var new_character: PopochiuCharacter = E.get_character_instance(script_name)
-	if new_character:
-		characters.append(new_character)
-		set(new_character.script_name, new_character)
+		character = player
+	elif _characters.has(script_name):
+		character = _characters[script_name]
+	else:
+		# If the character doesn't existis, try to instantiate it from the list of characters (Resource)
+		# in popochiu_data.cfg
+		character = get_instance(script_name)
 		
-		return new_character
+		if character:
+			_characters[character.script_name] = character
+			set(character.script_name, character)
+	
+	return character
 
-	return null
+
+## Gets the instance of the [PopochiuCharacter] identified with [param script_name].
+func get_instance(script_name: String) -> PopochiuCharacter:
+	var tres_path: String = PopochiuResources.get_data_value("characters", script_name, "")
+	
+	if not tres_path:
+		PopochiuUtils.print_error("Character [b]%s[/b] doesn't exist in the project" % script_name)
+		return null
+	
+	return load(load(tres_path).scene).instantiate()
 
 
 #endregion

@@ -17,7 +17,7 @@ extends Resource
 ## for audio cues set in a loop (where [member loop] is [code]true[/code]).
 @export var can_play_simultaneous := true
 ## The pitch value (in semitones) to use when playing the audio file.
-@export var pitch := 1.0
+@export var pitch := 0.0
 ## The volume to use when playing the audio file.
 @export var volume := 0.0
 ## The range of values to use for randomly changing the pitch of the audio file when played.
@@ -156,16 +156,9 @@ func set_loop(value: bool) -> void:
 		'AudioStreamOggVorbis', 'AudioStreamMP3':
 			audio.loop = value
 		'AudioStreamWAV':
-			if (audio as AudioStreamWAV).get_loop_end() == 0 && value:
-				PopochiuUtils.print_warning(
-					"[b]%s[/b]" % resource_name +\
-					" does not have the correct metadata to loop, please check" +\
-					" AudioStreamWAV documentation"
-				)
-			else:
-				(audio as AudioStreamWAV).loop_mode =\
-				AudioStreamWAV.LOOP_FORWARD if value\
-				else AudioStreamWAV.LOOP_DISABLED
+			(audio as AudioStreamWAV).loop_mode = (
+				AudioStreamWAV.LOOP_FORWARD if value else AudioStreamWAV.LOOP_DISABLED
+			)
 	
 	notify_property_list_changed()
 

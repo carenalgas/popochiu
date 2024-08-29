@@ -4,6 +4,9 @@ extends PopochiuHoverText
 
 var _gui_width := 0.0
 var _gui_height := 0.0
+# Used to fix a warning shown by Godot related to the anchors of the node and changing its size
+# during a _ready() execution
+var _can_change_size := false
 
 
 #region Godot ######################################################################################
@@ -22,10 +25,8 @@ func _ready() -> void:
 	set_process(follows_cursor)
 	autowrap_mode = TextServer.AUTOWRAP_OFF if follows_cursor else TextServer.AUTOWRAP_WORD_SMART
 	
-	# This await fixes a warning shown by Godot related to the anchors of the node and changing its
-	# size during _ready execution
-	await RenderingServer.frame_post_draw
 	_show_text()
+	E.ready.connect(set.bind("_can_change_size", true))
 
 
 func _process(delta: float) -> void:
@@ -55,7 +56,7 @@ func _process(delta: float) -> void:
 func _show_text(txt := "") -> void:
 	text = ""
 	
-	if follows_cursor:
+	if follows_cursor and _can_change_size:
 		size = Vector2.ZERO
 	
 	if txt.is_empty():
@@ -71,7 +72,7 @@ func _show_text(txt := "") -> void:
 	elif I.active:
 		super(txt)
 	
-	if follows_cursor:
+	if follows_cursor and _can_change_size:
 		size += Vector2.ONE * (Cursor.get_cursor_height() / 2)
 
 

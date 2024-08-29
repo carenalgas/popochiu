@@ -12,6 +12,8 @@ func _ready():
 	settings.pressed.connect(_on_settings_pressed)
 	help.pressed.connect(_on_help_pressed)
 	quit.pressed.connect(_on_quit_pressed)
+	
+	hide()
 
 
 func _input(event: InputEvent) -> void:

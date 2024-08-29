@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cju64rmwue0hb"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_vwqi7"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_marker/create_marker.gd" id="2_0x1s8"]
+
+[node name="CreateMarkerConfirmation" instance=ExtResource("1_vwqi7")]
+script = ExtResource("2_0x1s8")
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Marker name:"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
+text = "Use a descriptive name in PascalCase (e.g. Left, SouthEast)."

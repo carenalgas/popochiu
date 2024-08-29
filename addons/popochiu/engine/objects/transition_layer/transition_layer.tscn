@@ -318,3 +318,14 @@ visible = false
 position = Vector2(160, -90)
 scale = Vector2(10, 10)
 texture = ExtResource("2")
+
+[node name="InputBlockerLayer" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="InputBlocker" type="Control" parent="InputBlockerLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

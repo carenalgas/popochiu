@@ -78,6 +78,11 @@ func _play_grab() -> void:
 	super()
 
 
+# Called when the character stops moving
+func _on_move_ended() -> void:
+	pass
+
+
 #endregion
 
 #region Public #####################################################################################

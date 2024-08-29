@@ -12,8 +12,8 @@ config_version=5
 
 config/name="popochiu 2.0"
 config/description="Make 2D point n' click games with a smooth workflow (like in Adventure Game Studio or PowerQuest)."
-config/tags=PackedStringArray("4.2.x")
-config/features=PackedStringArray("4.2")
+config/tags=PackedStringArray("4.2.x", "4.3")
+config/features=PackedStringArray("4.3")
 config/icon="res://icon_v2.png"
 config/windows_native_icon="res://popochiu_v2.ico"
 
@@ -36,10 +36,11 @@ window/size/viewport_height=180
 window/size/window_width_override=1280
 window/size/window_height_override=720
 window/stretch/mode="canvas_items"
+window/vsync/vsync_mode=0
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/popochiu/plugin.cfg")
+enabled=PackedStringArray("res://addons/popochiu/editor/gizmos/plugin.cfg", "res://addons/popochiu/plugin.cfg")
 
 [fc]
 
@@ -60,6 +61,11 @@ popochiu-interact={
 popochiu-look={
 "deadzone": 0.5,
 "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":2,"canceled":false,"pressed":false,"double_click":false,"script":null)
+]
+}
+popochiu-skip={
+"deadzone": 0.5,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194305,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
 

@@ -1,8 +1,7 @@
 @tool
 extends VBoxContainer
 
-const COMPONENTS_PATH :=\
-"res://addons/popochiu/engine/objects/graphic_interface/components/"
+const COMPONENTS_PATH := "res://addons/popochiu/engine/objects/graphic_interface/components/"
 
 var _opened_scene: Control = null
 var _components_basedir := []
@@ -10,18 +9,19 @@ var _script_path := PopochiuResources.GUI_GAME_SCENE.replace(".tscn", ".gd")
 var _commands_path := PopochiuResources.GUI_GAME_SCENE.replace(
 	"graphic_interface.tscn", "commands.gd"
 )
-var _gui_templates_helper :=\
-preload("res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd")
+var _gui_templates_helper := preload(
+	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
+)
 
 @onready var template_name: Label = %TemplateName
 @onready var btn_script: Button = %BtnScript
 @onready var btn_commands: Button = %BtnCommands
 
 
-#region Godot ------------------------------------------------------------------
+#region Godot ######################################################################################
 func _ready() -> void:
-	btn_script.icon = get_theme_icon('Script', 'EditorIcons')
-	btn_commands.icon = get_theme_icon('Script', 'EditorIcons')
+	btn_script.icon = get_theme_icon("Script", "EditorIcons")
+	btn_commands.icon = get_theme_icon("Script", "EditorIcons")
 	
 	# Connect to child signals
 	btn_script.pressed.connect(_on_script_pressed)
@@ -31,7 +31,7 @@ func _ready() -> void:
 
 #endregion
 
-#region Public -----------------------------------------------------------------
+#region Public #####################################################################################
 ## Called when the selected scene in the Editor 2D changes.
 ## This checks if that scene is a PopochiuGraphicInterface to list its components
 ## and create the corresponding buttons to add/remove such components.
@@ -43,7 +43,6 @@ func on_scene_changed(gui_node: Node) -> void:
 		get_parent().current_tab = get_index()
 		
 		_clear_elements()
-		
 		await get_tree().process_frame
 		
 		_read_dir(COMPONENTS_PATH)
@@ -73,29 +72,28 @@ func on_scene_changed(gui_node: Node) -> void:
 
 ## Opens the graphic interface scene of the game.
 func open_gui_scene() -> void:
-	if is_instance_valid(_opened_scene)\
-	and _opened_scene is PopochiuGraphicInterface:
+	if is_instance_valid(_opened_scene) and _opened_scene is PopochiuGraphicInterface:
 		return
 	
 	var path := PopochiuResources.GUI_GAME_SCENE
 	
 	EditorInterface.select_file(path)
-	EditorInterface.set_main_screen_editor('2D')
+	EditorInterface.set_main_screen_editor("2D")
 	EditorInterface.open_scene_from_path(path)
 
 
 #endregion
 
-#region Private ----------------------------------------------------------------
+#region Private ####################################################################################
 func _on_script_pressed() -> void:
 	EditorInterface.select_file(_script_path)
-	EditorInterface.set_main_screen_editor('Script')
+	EditorInterface.set_main_screen_editor("Script")
 	EditorInterface.edit_script(load(_script_path))
 
 
 func _on_commands_pressed() -> void:
 	EditorInterface.select_file(_commands_path)
-	EditorInterface.set_main_screen_editor('Script')
+	EditorInterface.set_main_screen_editor("Script")
 	EditorInterface.edit_script(load(_commands_path))
 
 
@@ -114,18 +112,20 @@ func _clear_elements() -> void:
 func _read_dir(path: String) -> void:
 	var dir = DirAccess.open(path)
 	
-	if dir:
-		dir.list_dir_begin()
+	if not dir:
+		return
+	
+	dir.list_dir_begin()
+	var element_name = dir.get_next()
+	
+	while element_name != "":
+		if dir.current_is_dir():
+			if element_name == "popups":
+				_read_dir(COMPONENTS_PATH + element_name + "/")
+			else:
+				_components_basedir.append(path + element_name)
 		
-		var element_name = dir.get_next()
-		while element_name != "":
-			if dir.current_is_dir():
-				if element_name == "popups":
-					_read_dir(COMPONENTS_PATH + element_name + "/")
-				else:
-					_components_basedir.append(path + element_name)
-			
-			element_name = dir.get_next()
+		element_name = dir.get_next()
 
 
 ## Create the buttons in the tab for GUI components and popups.
@@ -139,7 +139,7 @@ func _create_buttons() -> void:
 		btn.set_meta("path", component_path)
 		btn.pressed.connect(_add_component.bind(btn))
 		
-		if component_path.find("popups") >= 0:
+		if "popups" in component_path:
 			%PopupsGroup.add(btn)
 		else:
 			%BaseComponentsGroup.add(btn)
@@ -168,18 +168,14 @@ func _update_groups_titles() -> void:
 		if btn.disabled:
 			disabled_count += 1
 	
-	%BaseComponentsGroup.set_title_count(
-		disabled_count, %BaseComponentsGroup.get_elements().size()
-	)
+	%BaseComponentsGroup.set_title_count(disabled_count, %BaseComponentsGroup.get_elements().size())
 	
 	disabled_count = 0
 	for btn in %PopupsGroup.get_elements():
 		if btn.disabled:
 			disabled_count += 1
 	
-	%PopupsGroup.set_title_count(
-		disabled_count, %PopupsGroup.get_elements().size()
-	)
+	%PopupsGroup.set_title_count(disabled_count, %PopupsGroup.get_elements().size())
 
 
 ## Create a copy of the selected component (scenes, resources, scripts) in the
@@ -187,7 +183,7 @@ func _update_groups_titles() -> void:
 func _add_component(btn: Button) -> void:
 	btn.disabled = true
 	
-	var is_popup: bool = btn.get_meta("path").find("popups") >= 0
+	var is_popup: bool = "popups" in btn.get_meta("path")
 	var scene_path := "%s/%s.tscn" % [
 		btn.get_meta("path"),
 		btn.name + "_popup" if is_popup else btn.name
@@ -213,7 +209,7 @@ func _add_component(btn: Button) -> void:
 			popups_group.anchors_preset = PRESET_FULL_RECT
 			popups_group.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		
-		_opened_scene.get_node('Popups').add_child(instance)
+		_opened_scene.get_node("Popups").add_child(instance)
 	else:
 		_opened_scene.add_child(instance)
 	

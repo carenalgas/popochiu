@@ -62,8 +62,10 @@ func walk_to() -> void:
 	
 	await C.player.move_ended
 	
-	if E.clicked and E.clicked.get("suggested_command")\
-	and E.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
+	if (
+		E.clicked and E.clicked.get("suggested_command")
+		and E.clicked.last_click_button == MOUSE_BUTTON_RIGHT
+	):
 		E.current_command = E.clicked.suggested_command
 		E.clicked.handle_command(MOUSE_BUTTON_LEFT)
 
@@ -110,22 +112,20 @@ func pull() -> void:
 ## Called when [code]E.current_command == Commands.GIVE[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func give() -> void:
-	await C.player.say("What?")
-
-
-## Called when [code]E.current_command == Commands.TALK_TO[/code] and
-## [code]E.command_fallback()[/code] is triggered.
-func talk_to() -> void:
-	await C.player.say("Emmmm...")
+	await _give_or_use(give_item_to)
 
 
 ## Called when [code]E.current_command == Commands.USE[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func use() -> void:
+	await _give_or_use(use_item_on)
+
+
+func _give_or_use(callback: Callable) -> void:
 	if I.active and E.clicked:
-		use_item_on(I.active, E.clicked)
+		callback.call(I.active, E.clicked)
 	elif I.active and I.clicked and I.active != I.clicked:
-		use_item_on(I.active, I.clicked)
+		callback.call(I.active, I.clicked)
 	elif I.clicked:
 		match I.clicked.last_click_button:
 			MOUSE_BUTTON_LEFT:
@@ -140,13 +140,23 @@ func use() -> void:
 				
 				I.clicked.handle_command(MOUSE_BUTTON_LEFT)
 				# ----------------------------------------------------------------------------------
-	else:
+	else:	
 		await C.player.say("What?")
+
+
+## Called when [code]E.current_command == Commands.TALK_TO[/code] and
+## [code]E.command_fallback()[/code] is triggered.
+func talk_to() -> void:
+	await C.player.say("Emmmm...")
 
 
 func use_item_on(_item: PopochiuInventoryItem, _target: Node) -> void:
 	I.active = null
 	await C.player.say("I don't want to do that")
 
+
+func give_item_to(_item: PopochiuInventoryItem, _target: Node) -> void:
+	I.active = null
+	await C.player.say("I don't want to do that")
 
 #endregion

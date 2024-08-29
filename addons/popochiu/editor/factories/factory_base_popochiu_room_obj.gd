@@ -1,26 +1,44 @@
-extends 'res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd'
+class_name PopochiuRoomObjFactory
+extends "res://addons/popochiu/editor/factories/factory_base_popochiu_obj.gd"
 
-const CHILD_VISIBLE_IN_ROOM_META = '_popochiu_obj_factory_child_visible_in_room_'
-const TabRoom := preload("res://addons/popochiu/editor/main_dock/tab_room.gd")
-
-var _room_tab: VBoxContainer = null
+const CHILD_VISIBLE_IN_ROOM_META = "_popochiu_obj_factory_child_visible_in_room_"
 
 # The following variable is setup by the sub-class constructor to
 # define the holder node for the new room object (Props, Hotspots, etc)
-var _obj_room_group := ''
+var _obj_room_group := ""
 # The following variables are setup by the _setup_room method
 var _room: Node2D = null
-var _room_path := ''
-var _room_dir := ''
+var _room_path := ""
+var _room_dir := ""
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-func _init(main_dock: Panel) -> void:
-	super(main_dock)
-	_room_tab = _main_dock.get_opened_room_tab()
+#region Public #####################################################################################
+func get_group() -> String:
+	return _obj_room_group
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+func create_from(node: Node, room: PopochiuRoom) -> int:
+	_setup_room(room)
+	_setup_name(node.name)
+	
+	var param := _get_param(node)
+	param.room = room
+	param.obj_name = node.name
+	param.is_visible = node.visible
+	param.should_setup_room_and_name = false
+	param.should_add_to_room = false
+	param.should_create_script = !FileAccess.file_exists(_path_script)
+	
+	return call("create", param)
+
+
+func get_new_instance() -> PopochiuRoomObjFactory:
+	return new()
+
+
+#endregion
+
+#region Private ####################################################################################
 func _setup_room(room: PopochiuRoom) -> void:
 	_room = room
 	_room_path = _room.scene_file_path
@@ -56,3 +74,25 @@ func _add_resource_to_room() -> void:
 
 	# Save the room scene (it's open in the editor)
 	EditorInterface.save_scene()
+
+
+func _get_param(_node: Node) -> PopochiuRoomObjFactoryParam:
+	return PopochiuRoomObjFactoryParam.new()
+
+
+#endregion
+
+#region Subclass ###################################################################################
+class PopochiuRoomObjFactoryParam extends RefCounted:
+	var obj_name: String
+	var room: PopochiuRoom
+	var is_visible := true
+	var should_setup_room_and_name := true
+	var should_create_script := true
+	var should_add_to_room := true
+	## Property used to store the vectors stored in the [member CollisionPolygon2D.polygon] for
+	## [PopochiuProp], [PopochiuHotspot], and [PopochiuRegion].
+	var interaction_polygon := PackedVector2Array()
+
+
+#endregion
