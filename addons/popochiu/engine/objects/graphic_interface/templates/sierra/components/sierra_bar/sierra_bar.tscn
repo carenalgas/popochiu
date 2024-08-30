@@ -21,10 +21,10 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 15.0
 grow_horizontal = 2
-theme = ExtResource("1_26r7d")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="LblGameName" type="Label" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
@@ -34,6 +34,7 @@ text = "Sierra GUI"
 [node name="HoverText" parent="PanelContainer/HBoxContainer" instance=ExtResource("1_tlpex")]
 layout_mode = 2
 size_flags_horizontal = 3
+theme = null
 
 [node name="LblScore" type="Label" parent="PanelContainer/HBoxContainer"]
 unique_name_in_owner = true
