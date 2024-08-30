@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cuokybjvunmhq"]
+[gd_scene load_steps=11 format=3 uid="uid://cuokybjvunmhq"]
 
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.tscn" id="1_8t0fs"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_o0fnb"]
@@ -11,6 +11,8 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b57cn"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mksfu"]
+
 [node name="9VerbPanel" type="Control" groups=["popochiu_gui_component"]]
 layout_mode = 3
 anchors_preset = 15
@@ -19,6 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("1_o0fnb")
 script = ExtResource("2_55o6l")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
@@ -31,7 +34,6 @@ offset_top = -64.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 2
-theme = ExtResource("1_o0fnb")
 theme_override_styles/panel = SubResource("StyleBoxEmpty_b57cn")
 metadata/_edit_group_ = true
 
@@ -44,23 +46,25 @@ alignment = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+theme = null
 script = ExtResource("2_qt1af")
 follows_cursor = false
 
 [node name="Verbs&InventoryContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_mksfu")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer"]
 layout_mode = 2
 size_flags_vertical = 8
-theme_override_constants/separation = 0
+theme_override_constants/separation = 1
 
 [node name="CommandsContainer" type="GridContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/h_separation = 0
-theme_override_constants/v_separation = 0
+theme_override_constants/h_separation = 1
+theme_override_constants/v_separation = 1
 columns = 3
 script = ExtResource("3_q8l3d")
 
@@ -68,7 +72,6 @@ script = ExtResource("3_q8l3d")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Open"
@@ -79,7 +82,6 @@ command = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Pick Up"
@@ -90,7 +92,6 @@ command = 2
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Push"
@@ -101,7 +102,6 @@ command = 3
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Close"
@@ -112,7 +112,6 @@ command = 4
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Look At"
@@ -123,7 +122,6 @@ command = 5
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Pull"
@@ -134,7 +132,6 @@ command = 6
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Give"
@@ -145,7 +142,6 @@ command = 7
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Talk To"
@@ -156,7 +152,6 @@ command = 8
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_font_sizes/font_size = 15
 toggle_mode = true
 button_group = ExtResource("4_6lnif")
 text = "Use"
@@ -166,3 +161,4 @@ command = 9
 [node name="9VerbInventoryGrid" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer" instance=ExtResource("6_r1cmu")]
 layout_mode = 2
 size_flags_horizontal = 1
+theme = null

@@ -46,7 +46,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 mouse_filter = 0
 theme = ExtResource("1_7ovtr")
-theme_override_constants/separation = 0
+theme_override_constants/separation = 1
 script = ExtResource("1_0wmc7")
 slot_scene = ExtResource("2_goalc")
 h_separation = 1
@@ -55,9 +55,13 @@ v_separation = 1
 [node name="ScrollButtons" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
-theme_override_constants/separation = 0
+theme_override_constants/separation = 1
 
-[node name="Up" type="TextureButton" parent="ScrollButtons"]
+[node name="UpContainer" type="PanelContainer" parent="ScrollButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Up" type="TextureButton" parent="ScrollButtons/UpContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 3
@@ -67,7 +71,11 @@ texture_hover = SubResource("AtlasTexture_2rabq")
 texture_disabled = SubResource("AtlasTexture_hw2h8")
 stretch_mode = 3
 
-[node name="Down" type="TextureButton" parent="ScrollButtons"]
+[node name="DownContainer" type="PanelContainer" parent="ScrollButtons"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Down" type="TextureButton" parent="ScrollButtons/DownContainer"]
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 3
