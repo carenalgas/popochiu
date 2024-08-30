@@ -62,7 +62,6 @@ anchor_right = 1.0
 offset_left = -122.0
 offset_bottom = 24.0
 grow_horizontal = 0
-theme = ExtResource("1_457q0")
 
 [node name="Box" type="HBoxContainer" parent="PanelContainer"]
 unique_name_in_owner = true
