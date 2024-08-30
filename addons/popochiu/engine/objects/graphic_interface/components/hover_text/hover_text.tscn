@@ -1,6 +1,5 @@
-[gd_scene load_steps=4 format=3 uid="uid://esorelppu4hw"]
+[gd_scene load_steps=3 format=3 uid="uid://esorelppu4hw"]
 
-[ext_resource type="FontFile" uid="uid://dixh1egf7k2fb" path="res://addons/popochiu/engine/objects/graphic_interface/fonts/monkeyisland_1991.ttf" id="1_k4y5q"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_s7kd8"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/hover_text/hover_text.gd" id="2_r2ckj"]
 
@@ -22,8 +21,6 @@ anchor_right = 1.0
 offset_bottom = 12.0
 grow_horizontal = 2
 mouse_filter = 2
-theme = ExtResource("1_s7kd8")
-theme_override_fonts/normal_font = ExtResource("1_k4y5q")
 bbcode_enabled = true
 text = "[center]text for hovered objects[/center]"
 fit_content = true
