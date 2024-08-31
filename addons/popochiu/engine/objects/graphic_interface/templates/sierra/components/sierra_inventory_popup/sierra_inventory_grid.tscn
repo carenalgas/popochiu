@@ -76,6 +76,7 @@ layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="Up" type="TextureButton" parent="ScrollButtons"]
+unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 2
@@ -86,6 +87,7 @@ texture_disabled = SubResource("AtlasTexture_d48vi")
 stretch_mode = 3
 
 [node name="Down" type="TextureButton" parent="ScrollButtons"]
+unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 10

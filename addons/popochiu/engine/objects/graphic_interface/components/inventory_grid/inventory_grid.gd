@@ -22,8 +22,8 @@ var slot_size: float = 0.0
 @onready var scroll_container: ScrollContainer = $ScrollContainer
 @onready var box: GridContainer = %Box
 @onready var scroll_buttons: VBoxContainer = $ScrollButtons
-@onready var up: TextureButton = $ScrollButtons/UpContainer/Up
-@onready var down: TextureButton = $ScrollButtons/DownContainer/Down
+@onready var up: TextureButton = %Up
+@onready var down: TextureButton = %Down
 @onready var gap_size: int = box.get_theme_constant("v_separation")
 
 

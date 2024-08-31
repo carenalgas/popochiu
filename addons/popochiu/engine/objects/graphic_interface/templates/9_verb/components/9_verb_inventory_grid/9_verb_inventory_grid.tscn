@@ -62,6 +62,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Up" type="TextureButton" parent="ScrollButtons/UpContainer"]
+unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 3
@@ -76,6 +77,7 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="Down" type="TextureButton" parent="ScrollButtons/DownContainer"]
+unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 3
