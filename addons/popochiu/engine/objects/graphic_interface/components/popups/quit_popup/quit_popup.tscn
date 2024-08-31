@@ -1,10 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://bnjo044fkdcq7"]
+[gd_scene load_steps=7 format=3 uid="uid://bnjo044fkdcq7"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_3nwvu"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/quit_popup/quit_popup.gd" id="2_nkwwk"]
 [ext_resource type="StyleBox" uid="uid://dbajakvkltfaj" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/popochiu_popup_panel_container.tres" id="3_828u5"]
 [ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/close.png" id="3_r2fp8"]
 [ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/close_highlight.png" id="4_mra7q"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3xqux"]
+bg_color = Color(1, 1, 1, 0.501961)
 
 [node name="QuitPopup" type="Control" groups=["popochiu_gui_popup"]]
 layout_mode = 3
@@ -25,6 +28,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3xqux")
 
 [node name="PanelContainer" type="PanelContainer" parent="Overlay"]
 custom_minimum_size = Vector2(256, 0)
@@ -72,9 +76,10 @@ alignment = 1
 [node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "ok"
+text = "OK"
 
 [node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "cancel"
+text = "Cancel
+"

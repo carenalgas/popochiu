@@ -181,7 +181,7 @@ theme_override_styles/disabled = SubResource("StyleBoxEmpty_3xhdb")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_vkbfs")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_lha4x")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_ba8hg")
-text = "ok"
+text = "OK"
 
 [node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
@@ -193,4 +193,4 @@ theme_override_styles/disabled = SubResource("StyleBoxEmpty_7a16g")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_g5f4c")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_7d0vl")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_dpu0r")
-text = "close"
+text = "Back"

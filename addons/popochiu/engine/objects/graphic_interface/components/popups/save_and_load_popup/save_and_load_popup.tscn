@@ -89,9 +89,9 @@ alignment = 1
 [node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "ok"
+text = "OK"
 
 [node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "cancel"
+text = "Cancel"
