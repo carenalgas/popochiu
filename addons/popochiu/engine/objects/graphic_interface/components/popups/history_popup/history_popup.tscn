@@ -8,8 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://2mnjw3qsi8hc" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/history_popup/components/interaction_line.tscn" id="4_ndekf"]
 [ext_resource type="StyleBox" uid="uid://dbajakvkltfaj" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/popochiu_popup_panel_container.tres" id="5_odsj4"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_roir4"]
-bg_color = Color(0, 0, 0, 0.498039)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xipc1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pm06l"]
 bg_color = Color(1, 1, 1, 1)
@@ -47,7 +46,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_roir4")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_xipc1")
 
 [node name="PanelContainer" type="PanelContainer" parent="Overlay"]
 custom_minimum_size = Vector2(256, 144)

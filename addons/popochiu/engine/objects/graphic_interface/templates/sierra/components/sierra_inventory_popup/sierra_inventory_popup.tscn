@@ -10,8 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://57nl6xfjetoe" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_look.png" id="8_m3ulb"]
 [ext_resource type="Texture2D" uid="uid://b5vpolfm4o5f4" path="res://addons/popochiu/engine/objects/graphic_interface/templates/sierra/images/btn_talk.png" id="9_ur807"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3727u"]
-bg_color = Color(1, 1, 1, 0.498039)
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0yihc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d512i"]
 content_margin_left = 0.0
@@ -99,7 +98,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_3727u")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_0yihc")
 
 [node name="PanelContainer" type="PanelContainer" parent="Overlay"]
 layout_mode = 2

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dwxm2p1iyhpx6"]
+[gd_scene load_steps=8 format=3 uid="uid://dwxm2p1iyhpx6"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/graphic_interface/resources/base_gui_theme.tres" id="1_rwmoe"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/sound_settings_popup/sound_settings_popup.gd" id="2_qt85i"]
@@ -6,6 +6,8 @@
 [ext_resource type="StyleBox" uid="uid://dbajakvkltfaj" path="res://addons/popochiu/engine/objects/graphic_interface/components/popups/popochiu_popup_panel_container.tres" id="3_nqnfj"]
 [ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/graphic_interface/resources/images/close_highlight.png" id="4_v7y6x"]
 [ext_resource type="PackedScene" uid="uid://drx0r8w00ivck" path="res://addons/popochiu/engine/objects/graphic_interface/components/sound_volumes/sound_volumes.tscn" id="5_lh576"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6mo8y"]
 
 [node name="SoundSettingsPopup" type="Control" groups=["popochiu_gui_popup"]]
 layout_mode = 3
@@ -26,6 +28,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_6mo8y")
 
 [node name="PanelContainer" type="PanelContainer" parent="Overlay"]
 layout_mode = 2
