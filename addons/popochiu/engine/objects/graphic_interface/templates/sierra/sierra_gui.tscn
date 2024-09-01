@@ -120,12 +120,14 @@ animation = &"gui"
 offset = Vector2(16, 16)
 
 [node name="SierraBar" parent="." instance=ExtResource("4_hjdb7")]
-layout_mode = 1
-
-[node name="DialogPortrait" parent="." instance=ExtResource("5_nehoj")]
+unique_name_in_owner = true
 layout_mode = 1
 
 [node name="SierraMenu" parent="." instance=ExtResource("5_ffq7i")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="DialogPortrait" parent="." instance=ExtResource("5_nehoj")]
 layout_mode = 1
 
 [node name="DialogMenu" parent="." instance=ExtResource("14_3gq4k")]

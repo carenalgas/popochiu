@@ -21,6 +21,7 @@ func _ready() -> void:
 	
 	# Connect to child signals
 	%SierraSettingsPopup.option_selected.connect(_on_settings_option_selected)
+	%SierraMenu.visibility_changed.connect(_on_menu_visibility_changed)
 
 
 func _input(event: InputEvent) -> void:
@@ -149,6 +150,13 @@ func _on_settings_option_selected(option_name: String) -> void:
 			%SaveAndLoadPopup.open_load()
 		"quit":
 			%QuitPopup.open()
+
+
+func _on_menu_visibility_changed():
+	if %SierraMenu.visible:
+		%SierraBar.hide()
+	else:
+		%SierraBar.show()
 
 
 #endregion
