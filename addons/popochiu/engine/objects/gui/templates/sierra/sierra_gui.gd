@@ -33,15 +33,16 @@ func _input(event: InputEvent) -> void:
 			# the player from moving to the clicked position since the Sierra
 			# GUI allows characters to move only when the WALK command is
 			# active.
-			if not $SierraMenu.visible and not E.hovered\
-			 and E.current_command != SierraCommands.Commands.WALK:
+			if (
+				not $SierraMenu.visible
+				and not E.hovered
+				and E.current_command != SierraCommands.Commands.WALK
+			):
 				accept_event()
 		MOUSE_BUTTON_RIGHT:
 			accept_event()
 			
-			E.current_command = posmod(
-				E.current_command + 1, SierraCommands.Commands.size()
-			)
+			E.current_command = posmod(E.current_command + 1, SierraCommands.Commands.size())
 
 
 #endregion

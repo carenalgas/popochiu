@@ -179,7 +179,7 @@ static func copy_components(source_scene_path: String, is_gui_game_scene := fals
 		
 		# --- Make a copy of the original file -----------------------------------------------------
 		if source_file_path.get_extension() == "gd":
-			_copy_script(source_file_path, target_folder, dependency_data.target_path)
+			_copy_component_script(source_file_path, dependency_data.target_path)
 		else:
 			_copy_file(source_file_path, target_folder, dependency_data.target_path)
 	
@@ -244,8 +244,8 @@ static func _remove_components(dir_path: String) -> void:
 
 
 ## Makes a copy of a GUI component's script.
-static func _copy_script(
-	source_file_path: String, _target_folder: String, target_file_path: String
+static func _copy_component_script(
+	source_file_path: String, target_file_path: String
 ) -> void:
 	# Make a copy of the original script -----------------------------------------------------------
 	var source_file := FileAccess.open(source_file_path, FileAccess.READ)
@@ -253,7 +253,7 @@ static func _copy_script(
 	source_file.close()
 	
 	if "class_name " in source_code:
-		source_code = source_code.replace("class_name Popochiu", "class_name ")
+		source_code = source_code.replace("class_name Popochiu", "class_name GUI")
 	
 	var file_write := FileAccess.open(target_file_path, FileAccess.WRITE)
 	file_write.store_string(source_code)

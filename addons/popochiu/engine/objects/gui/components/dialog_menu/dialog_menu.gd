@@ -9,7 +9,6 @@ signal shown
 ## Max height of the menu in pixels. If visible options make the menu to exceed this value, it will
 ## enable a vertical scroll bar.
 @export var max_height := 49
-@export var menu_background_color: Color = Color.BLACK
 @export_category("Option buttons")
 @export var normal_font_color: Color = Color("706deb")
 @export var normal_used_font_color: Color = Color("2e2c9b")
@@ -30,7 +29,6 @@ func _ready() -> void:
 		child.queue_free()
 	
 	panel_container.custom_minimum_size = Vector2.ZERO
-	(panel_container.get_theme_stylebox("panel") as StyleBoxFlat).bg_color = menu_background_color
 	
 	# Connect to own signals
 	gui_input.connect(_clicked)
