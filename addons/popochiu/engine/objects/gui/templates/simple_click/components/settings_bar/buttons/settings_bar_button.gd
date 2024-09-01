@@ -1,3 +1,4 @@
+class_name PopochiuSettingsBarButton
 extends TextureButton
 
 @export var description := "" : get = get_description

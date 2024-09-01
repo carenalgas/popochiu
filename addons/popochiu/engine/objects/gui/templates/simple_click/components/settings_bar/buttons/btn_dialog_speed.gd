@@ -1,5 +1,5 @@
 @tool
-extends "settings_bar_button.gd"
+extends PopochiuSettingsBarButton
 
 const TextSpeedOption = preload(
 	PopochiuResources.GUI_TEMPLATES_FOLDER

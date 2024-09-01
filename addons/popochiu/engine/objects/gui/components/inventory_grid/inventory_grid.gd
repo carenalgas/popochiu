@@ -2,10 +2,11 @@
 class_name PopochiuInventoryGrid
 extends HBoxContainer
 
-const SLOT := preload("inventory_grid_slot.tscn")
 const EMPTY_SLOT := "[Empty Slot]00"
 
-@export var slot_scene: PackedScene = null : set = set_slot_scene
+@export var slot_scene: PackedScene = preload(
+	"res://addons/popochiu/engine/objects/gui/components/inventory_grid/inventory_grid_slot.tscn"
+) : set = set_slot_scene
 @export var columns := 4 : set = set_columns
 @export var visible_rows := 2 : set = set_visible_rows
 @export var number_of_slots := 16 : set = set_number_of_slots
@@ -110,7 +111,7 @@ func _update_box() -> void:
 		child.free()
 	
 	for idx in number_of_slots:
-		var slot := (SLOT if not slot_scene else slot_scene).instantiate()
+		var slot := slot_scene.instantiate()
 		box.add_child(slot)
 		
 		slot.name = EMPTY_SLOT

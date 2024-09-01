@@ -1,4 +1,4 @@
-extends "settings_bar_button.gd"
+extends PopochiuSettingsBarButton
 
 @export var btn_states := [] # (Array, Texture2D)
 @export var states_descriptions := ["manual", "auto"]

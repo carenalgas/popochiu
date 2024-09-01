@@ -253,7 +253,7 @@ static func _copy_script(
 	source_file.close()
 	
 	if "class_name " in source_code:
-		source_code = source_code.replace("class_name ", "class_name Custom")
+		source_code = source_code.replace("class_name Popochiu", "class_name ")
 	
 	var file_write := FileAccess.open(target_file_path, FileAccess.WRITE)
 	file_write.store_string(source_code)
