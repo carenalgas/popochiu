@@ -64,7 +64,7 @@ var is_pixel_perfect := false
 var dialog_style := 0
 ## Setting intended for development of the plugin. It makes the game to use the original files of
 ## the selected template to make testing changes on it easier. This is a workaround while we find
-## how to make the scenes moved to [code]res://game/graphic_interface[/code] inherit from the
+## how to make the scenes moved to [code]res://game/gui[/code] inherit from the
 ## source ones.
 var dev_use_addon_template := false
 

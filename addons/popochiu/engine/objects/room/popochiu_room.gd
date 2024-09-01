@@ -103,8 +103,8 @@ func _ready():
 	set_physics_process(false)
 	
 	# Connect to singletons signals
-	G.blocked.connect(_on_graphic_interface_blocked)
-	G.unblocked.connect(_on_graphic_interface_unblocked)
+	G.blocked.connect(_on_gui_blocked)
+	G.unblocked.connect(_on_gui_unblocked)
 	
 	R.room_readied(self)
 
@@ -448,11 +448,11 @@ func set_is_current(value: bool) -> void:
 #endregion
 
 #region Private ####################################################################################
-func _on_graphic_interface_blocked() -> void:
+func _on_gui_blocked() -> void:
 	set_process_unhandled_input(false)
 
 
-func _on_graphic_interface_unblocked() -> void:
+func _on_gui_unblocked() -> void:
 	set_process_unhandled_input(true)
 
 

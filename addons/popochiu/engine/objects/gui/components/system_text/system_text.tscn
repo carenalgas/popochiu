@@ -1,0 +1,43 @@
+[gd_scene load_steps=4 format=3 uid="uid://bdgs3xsbq3gdd"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_7ydn8"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/system_text/system_text.gd" id="2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4eue6"]
+content_margin_left = 8.0
+content_margin_top = 6.0
+content_margin_right = 8.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 0.705882)
+corner_detail = 4
+anti_aliasing = false
+
+[node name="SystemText" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_7ydn8")
+script = ExtResource("2")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 33.0
+offset_top = -9.0
+offset_right = -33.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_4eue6")
+bbcode_enabled = true
+text = "[center]Text from the game itself[/center]"
+fit_content = true
+scroll_active = false

@@ -43,8 +43,8 @@ const MAIN_TYPES := [
 const ROOM_TYPES := [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
 const DOCUMENTATION := "https://carenalgas.github.io/popochiu/"
 const CFG := "res://addons/popochiu/plugin.cfg"
-const GUI_SCRIPT_TEMPLATES_FOLDER := "res://addons/popochiu/engine/templates/graphic_interface/"
-const GUI_TEMPLATES_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/templates/"
+const GUI_SCRIPT_TEMPLATES_FOLDER := "res://addons/popochiu/engine/templates/gui/"
+const GUI_TEMPLATES_FOLDER := "res://addons/popochiu/engine/objects/gui/templates/"
 # SINGLETONS ---------------------------------------------------------------------------------------
 const GLOBALS_SNGL := "res://game/popochiu_globals.gd"
 const UTILS_SNGL := "res://addons/popochiu/engine/others/popochiu_utils.gd"
@@ -65,7 +65,7 @@ const G_SNGL := "res://game/autoloads/g.gd"
 # FIRST INSTALL ------------------------------------------------------------------------------------
 const GI := 0
 const TL := 1
-const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/"
+const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/gui/"
 const TRANSITION_LAYER_ADDON :=\
 "res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn"
 # ENGINE -------------------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ const STRETCH_MODE := "display/window/stretch/mode"
 const STRETCH_ASPECT := "display/window/stretch/aspect"
 # GUI TEMPLATES ------------------------------------------------------------------------------------
 const GUI_CUSTOM := "custom"
-const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
+const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_gui.tscn"
 const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
 # GAME ---------------------------------------------------------------------------------------------
 const GAME_PATH := "res://game/"

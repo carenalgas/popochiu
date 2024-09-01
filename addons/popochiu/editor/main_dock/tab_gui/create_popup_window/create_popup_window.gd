@@ -2,10 +2,10 @@
 extends AcceptDialog
 
 const POPOCHIU_POPUP_SCENE :=\
-"res://addons/popochiu/engine/objects/graphic_interface/components/popups/popochiu_popup.tscn"
+"res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup.tscn"
 const POPOCHIU_POPUP_SCRIPT :=\
-"res://addons/popochiu/engine/templates/graphic_interface/popup_template.gd"
-const POPUPS_FOLDER := "res://game/graphic_interface/popups/%s/"
+"res://addons/popochiu/engine/templates/gui/popup_template.gd"
+const POPUPS_FOLDER := "res://game/gui/popups/%s/"
 
 var _popup_id := ""
 var _scene_path := POPUPS_FOLDER + "%s.tscn"
@@ -75,10 +75,10 @@ func _create_popup() -> void:
 	
 	# Add the popup to the Popups node in the graphic interface scene ------------------------------
 	var popup_node: PopochiuPopup = load(scene_path).instantiate()
-	var graphic_interface_node := EditorInterface.get_edited_scene_root()
+	var gui_node := EditorInterface.get_edited_scene_root()
 	
-	graphic_interface_node.get_node("Popups").add_child(popup_node)
-	popup_node.owner = graphic_interface_node
+	gui_node.get_node("Popups").add_child(popup_node)
+	popup_node.owner = gui_node
 	EditorInterface.save_scene()
 	
 	# Open the scene of the created popup for edition ----------------------------------------------

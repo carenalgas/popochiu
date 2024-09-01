@@ -188,7 +188,7 @@ func _rename_folders_to_snake_case(path: String) -> bool:
 	)
 
 
-## Copies the 2-click Context-sensitive GUI to [code]res://game/graphic_interface/[/code] if there
+## Copies the 2-click Context-sensitive GUI to [code]res://game/gui/[/code] if there
 ## is no GUI template selected.
 func _select_gui_template() -> Completion:
 	if PopochiuResources.get_data_value("ui", "template", "").is_empty():
@@ -422,7 +422,7 @@ func _map_voices(emotion_dic: Dictionary, voices: Array) -> Dictionary:
 	return new_emotion_dic
 
 
-## Replace calls to old methods ignoring the [code]res://game/graphic_interface/[/code] folder:
+## Replace calls to old methods ignoring the [code]res://game/gui/[/code] folder:
 ## - [code]R.get_point[/code] by [code]R.get_marker[/code].
 ## - [code]G.display[/code] to [code]G.show_system_text[/code].
 ## - Methods with [code]_now[/code] suffix.
@@ -443,7 +443,7 @@ func _replace_deprecated_method_calls() -> Completion:
 		# TODO: Include the following replacement. But for this one, the change should only be done
 		# in scripts which have the default method implementation.
 		#{from = "func _on_item_used(item", to = "func _on_item_used(_item"},
-	], ["graphic_interface"]) else Completion.IGNORED
+	], ["gui"]) else Completion.IGNORED
 
 
 #endregion

@@ -1,0 +1,80 @@
+[gd_scene load_steps=8 format=3 uid="uid://dwxm2p1iyhpx6"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_rwmoe"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/popups/sound_settings_popup/sound_settings_popup.gd" id="2_qt85i"]
+[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/gui/resources/images/close.png" id="3_knqsp"]
+[ext_resource type="StyleBox" uid="uid://dbajakvkltfaj" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container.tres" id="3_nqnfj"]
+[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight.png" id="4_v7y6x"]
+[ext_resource type="PackedScene" uid="uid://drx0r8w00ivck" path="res://addons/popochiu/engine/objects/gui/components/sound_volumes/sound_volumes.tscn" id="5_lh576"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6mo8y"]
+
+[node name="SoundSettingsPopup" type="Control" groups=["popochiu_gui_popup"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_rwmoe")
+script = ExtResource("2_qt85i")
+script_name = &"SoundSettingsPopup"
+title = "Sound Settings"
+
+[node name="Overlay" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_6mo8y")
+
+[node name="PanelContainer" type="PanelContainer" parent="Overlay"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = ExtResource("3_nqnfj")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer"]
+layout_mode = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Sound Settings"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Close" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("3_knqsp")
+texture_pressed = ExtResource("4_v7y6x")
+texture_hover = ExtResource("4_v7y6x")
+
+[node name="SoundVolumes" parent="Overlay/PanelContainer/VBoxContainer" instance=ExtResource("5_lh576")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FooterContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 1
+
+[node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "ok"
+
+[node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "cancel"

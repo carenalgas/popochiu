@@ -214,8 +214,8 @@ func _show_gui_warning() -> void:
 	_setup_inner_dialog(
 		warning_dialog,
 		"GUI template warning",
-		"The GUI scene (graphic_interface) is currently opened in the Editor.\n\nIn order to change\
- the GUI template please close that scene first."
+		"The GUI scene (gui.tscn) is currently opened in the Editor.\n\n" +\
+		"In order to change the GUI template please close that scene first."
 	)
 	
 	add_child(warning_dialog)
@@ -228,7 +228,7 @@ func _show_template_change_confirmation() -> void:
 		confirmation_dialog,
 		"Confirm GUI template change",
 		"You changed the GUI template, making this will override any changes you made to the files\
- in res://game/graphic_interface/.\n\nAre you sure you want to make the change?"
+ in res://game/gui/.\n\nAre you sure you want to make the change?"
 	)
 	
 	confirmation_dialog.confirmed.connect(

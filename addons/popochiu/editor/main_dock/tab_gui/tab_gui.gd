@@ -1,13 +1,13 @@
 @tool
 extends VBoxContainer
 
-const COMPONENTS_PATH := "res://addons/popochiu/engine/objects/graphic_interface/components/"
+const COMPONENTS_PATH := "res://addons/popochiu/engine/objects/gui/components/"
 
 var _opened_scene: Control = null
 var _components_basedir := []
 var _script_path := PopochiuResources.GUI_GAME_SCENE.replace(".tscn", ".gd")
 var _commands_path := PopochiuResources.GUI_GAME_SCENE.replace(
-	"graphic_interface.tscn", "commands.gd"
+	"gui.tscn", "gui_commands.gd"
 )
 var _gui_templates_helper := preload(
 	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"

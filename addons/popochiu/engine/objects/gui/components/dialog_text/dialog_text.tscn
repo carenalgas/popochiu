@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://cymfte4xe3tnw"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_mrmwc"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_text.gd" id="2_adpg7"]
+[ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/images/ico_continue.png" id="3_fqlmr"]
+
+[node name="DialogText" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_mrmwc")
+script = ExtResource("2_adpg7")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_right = 74.0
+offset_bottom = 12.0
+text = "Dialog text"
+fit_content = true
+
+[node name="ContinueIcon" type="TextureProgressBar" parent="RichTextLabel"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 0
+value = 100.0
+fill_mode = 2
+texture_progress = ExtResource("3_fqlmr")
