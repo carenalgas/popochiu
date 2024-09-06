@@ -57,6 +57,8 @@ static var defaults := {
 	TEXT_SPEED: 0.1,
 	AUTO_CONTINUE_TEXT: false,
 	USE_TRANSLATIONS: false,
+	GIBBERISH_SPOKEN_TEXT: false,
+	GIBBERISH_DIALOG_OPTIONS: false,
 	DIALOG_STYLE: DialogStyle.ABOVE_CHARACTER,
 	INVENTORY_LIMIT: 0,
 	INVENTORY_ITEMS_ON_START: [],
@@ -94,8 +96,8 @@ static func initialize_project_settings():
 		# TODO: Add other options: Portrait Above Character, Bubble Above Character
 		"Above Character,Portrait,Caption"
 	)
-	_initialize_project_setting(GIBBERISH_SPOKEN_TEXT, false, TYPE_BOOL)
-	_initialize_project_setting(GIBBERISH_DIALOG_OPTIONS, false, TYPE_BOOL)
+	_initialize_project_setting(GIBBERISH_SPOKEN_TEXT, TYPE_BOOL)
+	_initialize_project_setting(GIBBERISH_DIALOG_OPTIONS, TYPE_BOOL)
 	
 	# ---- Inventory -------------------------------------------------------------------------------
 	_initialize_project_setting(INVENTORY_LIMIT, TYPE_INT)
@@ -164,11 +166,14 @@ static func is_use_translations() -> bool:
 static func get_dialog_style() -> int:
 	return _get_project_setting(DIALOG_STYLE)
 
+
 static func should_talk_gibberish() -> bool:
-	return _get_project_setting(GIBBERISH_SPOKEN_TEXT, false)
+	return _get_project_setting(GIBBERISH_SPOKEN_TEXT)
+
 
 static func should_dialog_options_be_gibberish() -> bool:
-	return _get_project_setting(GIBBERISH_DIALOG_OPTIONS, false)
+	return _get_project_setting(GIBBERISH_DIALOG_OPTIONS)
+
 
 # ---- Inventory -----------------------------------------------------------------------------------
 static func get_inventory_limit() -> int:
