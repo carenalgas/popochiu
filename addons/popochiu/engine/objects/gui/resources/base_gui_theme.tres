@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=15 format=3 uid="uid://dpequqav4rjaf"]
+[gd_resource type="Theme" load_steps=20 format=3 uid="uid://dpequqav4rjaf"]
 
 [ext_resource type="Texture2D" uid="uid://pl1ch71kfj72" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_checked.png" id="2_ldprq"]
 [ext_resource type="Texture2D" uid="uid://dukr75slqli45" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_unchecked.png" id="3_3rprc"]
@@ -36,6 +36,16 @@ content_margin_right = 2.0
 content_margin_bottom = 0.0
 bg_color = Color(0, 0, 0, 0.705882)
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_aa7jm"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tv3kj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0prrl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3tq14"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l3jvo"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pr0tq"]
 bg_color = Color(0.698039, 0.698039, 0.698039, 1)
 
@@ -64,6 +74,11 @@ Button/styles/normal = SubResource("7")
 Button/styles/pressed = SubResource("StyleBoxFlat_3mrlf")
 CheckButton/icons/checked = ExtResource("2_ldprq")
 CheckButton/icons/unchecked = ExtResource("3_3rprc")
+CheckButton/styles/disabled = SubResource("StyleBoxEmpty_aa7jm")
+CheckButton/styles/hover = SubResource("StyleBoxEmpty_tv3kj")
+CheckButton/styles/hover_pressed = SubResource("StyleBoxEmpty_0prrl")
+CheckButton/styles/normal = SubResource("StyleBoxEmpty_3tq14")
+CheckButton/styles/pressed = SubResource("StyleBoxEmpty_l3jvo")
 HSlider/icons/grabber = ExtResource("4_4x0ix")
 HSlider/icons/grabber_highlight = ExtResource("4_4x0ix")
 HSlider/styles/grabber_area = SubResource("StyleBoxFlat_pr0tq")

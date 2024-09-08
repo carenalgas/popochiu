@@ -162,7 +162,7 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
-[node name="SierraTextPopup" parent="Popups" instance=ExtResource("20_anvsw")]
+[node name="TextSettingsPopup" parent="Popups" instance=ExtResource("20_anvsw")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1

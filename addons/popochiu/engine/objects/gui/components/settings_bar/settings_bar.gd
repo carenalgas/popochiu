@@ -1,6 +1,8 @@
 class_name PopochiuSettingsBar
 extends Control
 
+signal option_selected(option_name: String)
+
 @export var used_in_game := true
 @export var always_visible := false
 @export var hide_when_gui_is_blocked := false
@@ -27,9 +29,10 @@ func _ready() -> void:
 		panel_container.position.y = hidden_y
 	
 	# Connect to child signals
-	for b in box.get_children():
-		(b as TextureButton).mouse_entered.connect(_disable_hide)
-		(b as TextureButton).mouse_exited.connect(_enable_hide)
+	for button: TextureButton in box.get_children():
+		button.mouse_entered.connect(_disable_hide)
+		button.mouse_exited.connect(_enable_hide)
+		button.pressed.connect(_on_button_clicked.bind(button))
 	
 	# Connect to singletons signals
 	if hide_when_gui_is_blocked:
@@ -131,6 +134,10 @@ func _on_gui_blocked() -> void:
 func _on_gui_unblocked() -> void:
 	set_process_input(true)
 	show()
+
+
+func _on_button_clicked(button: TextureButton) -> void:
+	option_selected.emit(button.script_name)
 
 
 #endregion

@@ -20,7 +20,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_5015x"]
 
-[node name="TextPopup" type="Control" groups=["popochiu_gui_popup"]]
+[node name="TextSettingsPopup" type="Control" groups=["popochiu_gui_popup"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

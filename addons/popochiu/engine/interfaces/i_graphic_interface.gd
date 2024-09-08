@@ -55,21 +55,6 @@ signal popup_requested(script_name: StringName)
 # NOTE: Maybe add some signals for clicking objects and items
 #signal clicked_clickable(clickable: PopochiuClickable)
 #signal clicked_inventory_item(inventory_item: PopochiuInventoryItem)
-# TODO: deprecate this
-## Emitted when [method show_history] is called in order to open the History popup.
-signal history_opened
-## Emitted to open the popup to save the game. You can specify the name of the saved game with
-# TODO: deprecate this
-## [param slot_text].
-signal save_requested(slot_text: String)
-# TODO: deprecate this
-## Emitted to open the popup to load the game.
-signal load_requested
-# TODO: deprecate this
-## Emitted to open the popup that allows to change the volume of the audio buses in the game.
-signal sound_settings_requested
-## Emitted to open the popup that allows to change the typing speed and autoadvance in dialogues.
-signal text_settings_requested
 ## Emitted when the dialog options of the running [PopochiuDialog] are shown.
 signal dialog_options_shown
 ## Emitted when a game is loaded and the GUI has shown (or not shown) a notification to the player.
@@ -168,32 +153,6 @@ func queue_show_interface() -> Callable:
 	return func(): show_interface()
 
 
-## Emits [signal history_opened] to open the History popup.
-func show_history() -> void:
-	history_opened.emit()
-
-
-## Emits [signal save_requested] to open the Save popup. [param slot_text] will be used as the
-## name of the saved game.
-func show_save(slot_text := "") -> void:
-	save_requested.emit(slot_text)
-
-
-## Emits [signal load_requested] to open the Load popup.
-func show_load() -> void:
-	load_requested.emit()
-
-
-## Emits [signal sound_settings_requested] to open the popup that allows changing the volume of the
-## audio buses in the game.
-func show_sound_settings() -> void:
-	sound_settings_requested.emit()
-
-## Emits [signal texts_settings_requested] to open the popup that allows changing the text speed
-## and toggle the dialogue auto advancement
-func show_text_settings() -> void:
-	text_settings_requested.emit()
-	
 ## Returns the name of the cursor texture to show.
 func get_cursor_name() -> String:
 	if not is_instance_valid(gui): return ""

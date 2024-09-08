@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bexxkrmqdiemq"
-path="res://.godot/imported/btn_save.png-cf4863cca937ccafa3aa4cd35b783639.ctex"
+path="res://.godot/imported/btn_save.png-885612922cd34c7a3774c5fde51c9c48.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/images/btn_save.png"
-dest_files=["res://.godot/imported/btn_save.png-cf4863cca937ccafa3aa4cd35b783639.ctex"]
+source_file="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_save.png"
+dest_files=["res://.godot/imported/btn_save.png-885612922cd34c7a3774c5fde51c9c48.ctex"]
 
 [params]
 

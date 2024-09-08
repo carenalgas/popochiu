@@ -7,16 +7,8 @@ extends TextureButton
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	pressed.connect(_on_pressed)
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
-
-
-#endregion
-
-#region Virtual ####################################################################################
-func _on_pressed() -> void:
-	pass
 
 
 #endregion

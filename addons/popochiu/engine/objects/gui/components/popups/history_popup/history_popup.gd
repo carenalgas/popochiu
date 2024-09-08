@@ -15,9 +15,6 @@ func _ready() -> void:
 	
 	if Engine.is_editor_hint(): return
 	
-	# Connect to singletons signals
-	G.history_opened.connect(open)
-	
 	for c in lines_list.get_children():
 		(c as Control).queue_free()
 

@@ -9,10 +9,3 @@ func _ready() -> void:
 
 
 #endregion
-
-#region Virtual ####################################################################################
-func _on_pressed() -> void:
-	G.popup_requested.emit("QuitPopup")
-
-
-#endregion
