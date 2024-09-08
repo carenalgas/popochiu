@@ -21,6 +21,8 @@ const SKIP_CUTSCENE_TIME = "popochiu/gui/skip_cutscene_time"
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
 const AUTO_CONTINUE_TEXT = "popochiu/dialogs/auto_continue_text"
 const USE_TRANSLATIONS = "popochiu/dialogs/use_translations"
+const GIBBERISH_SPOKEN_TEXT = 'popochiu/dialogs/gibberish_spoken_text'
+const GIBBERISH_DIALOG_OPTIONS = 'popochiu/dialogs/gibberish_dialog_options'
 const DIALOG_STYLE = "popochiu/dialogs/dialog_style"
 
 # ---- Inventory -----------------------------------------------------------------------------------
@@ -55,6 +57,8 @@ static var defaults := {
 	TEXT_SPEED: 0.1,
 	AUTO_CONTINUE_TEXT: false,
 	USE_TRANSLATIONS: false,
+	GIBBERISH_SPOKEN_TEXT: false,
+	GIBBERISH_DIALOG_OPTIONS: false,
 	DIALOG_STYLE: DialogStyle.ABOVE_CHARACTER,
 	INVENTORY_LIMIT: 0,
 	INVENTORY_ITEMS_ON_START: [],
@@ -92,6 +96,8 @@ static func initialize_project_settings():
 		# TODO: Add other options: Portrait Above Character, Bubble Above Character
 		"Above Character,Portrait,Caption"
 	)
+	_initialize_project_setting(GIBBERISH_SPOKEN_TEXT, TYPE_BOOL)
+	_initialize_project_setting(GIBBERISH_DIALOG_OPTIONS, TYPE_BOOL)
 	
 	# ---- Inventory -------------------------------------------------------------------------------
 	_initialize_project_setting(INVENTORY_LIMIT, TYPE_INT)
@@ -112,7 +118,7 @@ static func initialize_project_settings():
 	# ---- Pixel game ------------------------------------------------------------------------------
 	_initialize_project_setting(PIXEL_ART_TEXTURES, TYPE_BOOL)
 	_initialize_project_setting(PIXEL_PERFECT, TYPE_BOOL)
-	
+
 	# ---- Audio -----------------------------------------------------------------------------------
 	_initialize_project_setting(PREFIX_CHARACTER, TYPE_STRING)
 	_initialize_project_setting(MUSIC_PREFIXES, TYPE_STRING)
@@ -159,6 +165,14 @@ static func is_use_translations() -> bool:
 
 static func get_dialog_style() -> int:
 	return _get_project_setting(DIALOG_STYLE)
+
+
+static func should_talk_gibberish() -> bool:
+	return _get_project_setting(GIBBERISH_SPOKEN_TEXT)
+
+
+static func should_dialog_options_be_gibberish() -> bool:
+	return _get_project_setting(GIBBERISH_DIALOG_OPTIONS)
 
 
 # ---- Inventory -----------------------------------------------------------------------------------
