@@ -60,21 +60,26 @@ Fixing this is as simple as selecting the **Sprite2D** node in the character sce
 
     In the case of floating characters (ghosts, fairies, anti-gravity-powered mad scientists, etc), you should leave some vertical space between the scene's center and your character. Try to envision the scene line as the "floor" and decide how high above the floor the character should float.
 
-The last thing to do is to position the place where the dialog text will be shown for the talking character. Popochiu can be customized to show dialog lines in many different positions or fashions, but its default is to show the dialogue lines somewhere above the character's head. Since the engine doesn't know how high your sprite is (see "Under the hood" note below), that's for you to decide.
+The last thing to do is to position the place where the dialog text will be shown for the talking character. Popochiu can be customized to show dialog lines in many different positions or fashions.  
+The GUI template we selected shows the dialog lines as a caption at the bottom of the screen, but other ones show the dialogue lines somewhere above the character's head. We are going to see how to position the text for those interfaces that use the _over head_ dialogues style.
 
-Just select the **DialogPos** node in the scene tree (_11_). A small cross will be highlighted in the scene's origin. Drag it somewhere above the character's head (or wherever makes sense to you).
+Since the engine doesn't know how high your sprite is (see "Under the hood" note below), that's for you to decide.
+
+For this, select the character's rood node in the scene tree, and you will see a small purple square at the scene's origin. Drag it somewhere above the character's head (or wherever makes sense to you). As you see the square is labeled and connects to the element it refers to.
+
+If you see no square, make sure the **Dialogue Position Gizmo** is visible by checking the state of the button in the toolbar (_11_).
 
 ![Correct Character's text position](../../assets/images/getting-started/game_stub-character-10-set_dialog_position.png "Position the dialogue where it's more convenient")
 
-This may require a bit of experimentation, but for now, this will do.
+Finding the best positioning for the "voice" of each character may require a bit of trial and error, but for now, this will do.
 
 !!! info "Under the hood"
-    You may be wondering how exactly the text is positioned in relation to the **DialogPos** node. Here is an explanation of how Popochiu decides how your text is rendered.
+    You may be wondering how exactly the text is positioned in relation to the **Dialog Position** gizmo. Here is an explanation of how Popochiu decides how your text is rendered.
 
-    1. The baseline of the text will always match the vertical position of **DialogPos**, so the text will be rendered vertically **right above** that point.
-    2. The dialog line length is calculated and the text is centered on the horizontal position of **DialogPos**, so the text will be rendered horizontally **around** that point.
+    1. The baseline of the text will always match the vertical position identified by the gizmo, so the text will be rendered vertically **right above** that point.
+    2. The dialog line length is calculated and the text is centered on the horizontal position of gizmo, so the text will be rendered horizontally **around** that point.
     3. If the text spans multiple lines, Popochiu will expand it **towards the top**, so that it doesn't cover your character (this means if you want your text under the character for some reason, multiple lines will cover your character).
-    4. If the character is near the window or screen border, the text will be repositioned so that it will be entirely visible, so you don't have to worry about it becoming unreadable. This is true both for horizontal and vertical coordinates.
+    4. If the character is near the window or screen border, the text will be repositioned so that it will be entirely visible, so you don't have to worry about it becoming unreadable. This is true both for horizontal and vertical coordinates. Of course, long texts may overlap the character sprint in that case, but it's for good.
 
 ### Add another character
 

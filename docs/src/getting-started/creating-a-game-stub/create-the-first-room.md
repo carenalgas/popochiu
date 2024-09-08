@@ -81,9 +81,9 @@ In the Room tab of Popochiu dock, click the **Create walkable area** button (_16
 
 In the popup window, just name your new walkable area "_Floor_" (or whatever you find descriptive enough). Click **OK** and a new element will be added to the scene.
 
-![A new walkable area in the scene tree](../../assets/images/getting-started/game_stub-room-8-wa_scene_tree.png "Select the Perimeter node to edit the area shape")
+![A new walkable area in the scene tree](../../assets/images/getting-started/game_stub-room-8-wa_scene_tree.png "Click the Edit Polygon button to edit the area shape")
 
-Selecting the **Perimeter** node in the scene tree (_17_) to highlight a squared polygon in the center of the scene. Now you have to adjust the vertices of that polygon (_18_) to whatever makes sense.
+Click the **Edit Polygon** button in the toolbar (_17_) to highlight a squared polygon in the center of the scene. Now you have to adjust the vertices of that polygon (_18_) to whatever makes sense.
 
 !!! tip
     To adjust the polygon, just click and drag the vertice handles around.  
@@ -91,12 +91,14 @@ Selecting the **Perimeter** node in the scene tree (_17_) to highlight a squared
 
 When you have adjusted your walkable area, it should look something like this:
 
-![The polygon for the floor is over](../../assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click 'Bake NavigationPolygon' to complete the walkable area")
+![The polygon for the floor is over](../../assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click "Edit Polygon" again to complete the walkable area")
+
+Click the **Edit Polygon** button again (_19_)to stop editing the perimeter of the floor.
 
 Save the project and run your game. Your character should now be able to move around the room, without leaving the area you defined.
 
 !!! note
-    If you aren't new to Godot, you may think we forgot to mention the **Bake** NavigationPolygon** button in the toolbar (_19_). That's not the case, Popochiu bakes the polygon for you.
+    If you aren't new to Godot, you may think we forgot to mention the **Bake NavigationPolygon** button in the toolbar (_19_). That's not the case, Popochiu bakes the polygon for you.
 
 !!! tip
     You usually don't want your walkable area to cover the entire floor that you painted, or your character will be able to stand on the very border of it, too near the wall, creating a terrible effect.  
@@ -139,8 +141,8 @@ Let's draw a shape around the window on the wall:
 
 No need to be too precise or polished, rough edges won't be perceivable while playing your game. You just need to avoid, if possible, overlapping with other hotspots (see "_Baseline_" below, to understand how polygon overlapping works).
 
-Another important property of the hotspot is the "_Walk to point", which is the coordinates that the character will reach when you click over the hotspot.  
-You can set these coordinates interactively by clicking and dragging the "_Walk To point_" gizmo wherever you want in the room. You will see that the property with the same name in the inspector will update to reflect the coordinates.
+Another important property of the hotspot is the "_Walk to point_", which is the coordinates that the character will reach when you click over the hotspot.  
+You can set these coordinates interactively by clicking and dragging the **Walk To point** gizmo wherever you want in the room. You will see that the property with the same name in the inspector will update to reflect the coordinates.
 
 For our example room, we'll set the following coordinates for the `Window` hotspot:
 
@@ -156,7 +158,7 @@ The last property that you want to set is the _Baseline_. The baseline is simply
 
     That's not the case at all. If you don't set your baseline the right way, the polygon-delimited area of the hotspot may remain clickable even when the character is in front of it; or the other way around, a hotspot that should always be in front of the scene, may be covered by your character, making it unreachable. So, **always** set your baseline.
 
-Our window is in the back of the room and the main character has no way to be placed behind it, so just click the baseline gizmo handler (the square in the middle of the line) and drag it at the very top so that the baseline is "as high as the scene" (or more). The character has no way to walk so high.  
+Our window is in the back of the room and the main character has no way to be placed behind it, so just click the **Baseline** gizmo handler (the square in the middle of the line) and drag it at the very top so that the baseline is "as high as the scene" (or more). The character has no way to walk so high.  
 
 !!! info
     You can set the baseline even to negative values. This is what Popochiu automatically does when you name your prop `Background` or `bg`, to make sure your background is always at the very back of the scene. Keep this in mind too, if you change the baseline of other elements programmatically (via a script).

@@ -28,4 +28,8 @@ Save the script and run the game. Pick the toy car up, select it from the invent
 
 You should see the dialog happen, and the car is removed from your inventory.
 
-**Congratulations! You've got to the end of this introductory guide!**
+Well, our game is done, right? It seems like we addressed everything: locations, characters, dialogues, interactions with the environment and the use of inventory items.
+
+But one last bit is missing and it's the way the player interacts with all of this: the GUI.
+
+Let's take a glance at how to customize one of the already available Popochiu game interfaces.
