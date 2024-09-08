@@ -1,19 +1,16 @@
-[gd_scene load_steps=33 format=3 uid="uid://0cqerawlxb3o"]
+[gd_scene load_steps=30 format=3 uid="uid://0cqerawlxb3o"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_457q0"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/settings_bar.gd" id="2_hk0vm"]
-[ext_resource type="Texture2D" uid="uid://bexxkrmqdiemq" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/images/btn_save.png" id="3_b0ddg"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/buttons/btn_save.gd" id="4_q3d3e"]
-[ext_resource type="Texture2D" uid="uid://bns33w6nl2qkb" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/images/btn_load.png" id="5_8xdf1"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/buttons/btn_load.gd" id="6_dfxoh"]
-[ext_resource type="Texture2D" uid="uid://cyvd8h2ouw8rg" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/images/btn_audio.png" id="11_id5s2"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/buttons/btn_text_settings.gd" id="12_16l58"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/buttons/btn_sound_settings.gd" id="12_jqlr0"]
-[ext_resource type="Texture2D" uid="uid://hjol4hvanbt5" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/images/btn_text.png" id="12_y7pwl"]
-[ext_resource type="Texture2D" uid="uid://bg1txcy1ofatq" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/images/btn_dialog_history.png" id="16_7j34k"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/buttons/btn_dialog_history.gd" id="17_i76cd"]
-[ext_resource type="Texture2D" uid="uid://cxpcw7xvcjcfy" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/images/btn_quit.png" id="18_64yvb"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/settings_bar/buttons/btn_quit.gd" id="19_5u3hw"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/settings_bar.gd" id="2_hk0vm"]
+[ext_resource type="Texture2D" uid="uid://bexxkrmqdiemq" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_save.png" id="3_b0ddg"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/settings_bar_button.gd" id="4_lqi16"]
+[ext_resource type="Texture2D" uid="uid://bns33w6nl2qkb" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_load.png" id="5_8xdf1"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/btn_load.gd" id="6_dfxoh"]
+[ext_resource type="Texture2D" uid="uid://cyvd8h2ouw8rg" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_audio.png" id="11_id5s2"]
+[ext_resource type="Texture2D" uid="uid://hjol4hvanbt5" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_text.png" id="12_y7pwl"]
+[ext_resource type="Texture2D" uid="uid://bg1txcy1ofatq" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_dialog_history.png" id="16_7j34k"]
+[ext_resource type="Texture2D" uid="uid://cxpcw7xvcjcfy" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_quit.png" id="18_64yvb"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/btn_quit.gd" id="19_5u3hw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mnuax"]
 atlas = ExtResource("3_b0ddg")
@@ -120,9 +117,9 @@ layout_mode = 2
 texture_normal = SubResource("AtlasTexture_mnuax")
 texture_pressed = SubResource("AtlasTexture_gcwc6")
 texture_hover = SubResource("AtlasTexture_yci17")
-script = ExtResource("4_q3d3e")
+script = ExtResource("4_lqi16")
 description = "Save game"
-script_name = "SaveGame"
+script_name = "save"
 
 [node name="BtnLoad" type="TextureButton" parent="PanelContainer/Box"]
 visible = false
@@ -132,32 +129,34 @@ texture_pressed = SubResource("AtlasTexture_c5e8t")
 texture_hover = SubResource("AtlasTexture_dtnbp")
 script = ExtResource("6_dfxoh")
 description = "Load game"
-script_name = "LoadGame"
+script_name = "load"
 
 [node name="BtnTextSettings" type="TextureButton" parent="PanelContainer/Box"]
 layout_mode = 2
 texture_normal = SubResource("AtlasTexture_2vddc")
 texture_pressed = SubResource("AtlasTexture_38kcs")
 texture_hover = SubResource("AtlasTexture_ckg43")
-script = ExtResource("12_16l58")
+script = ExtResource("4_lqi16")
+description = "Text settings"
+script_name = "text_settings"
 
 [node name="BtnSoundSettings" type="TextureButton" parent="PanelContainer/Box"]
 layout_mode = 2
 texture_normal = SubResource("AtlasTexture_unaqu")
 texture_pressed = SubResource("AtlasTexture_i8n60")
 texture_hover = SubResource("AtlasTexture_kl1ek")
-script = ExtResource("12_jqlr0")
+script = ExtResource("4_lqi16")
 description = "Sound settings"
-script_name = "SoundSettings"
+script_name = "sound_settings"
 
-[node name="BtnDialogHistory" type="TextureButton" parent="PanelContainer/Box"]
+[node name="BtnHistory" type="TextureButton" parent="PanelContainer/Box"]
 layout_mode = 2
 texture_normal = SubResource("AtlasTexture_vqe4x")
 texture_pressed = SubResource("AtlasTexture_h0y2i")
 texture_hover = SubResource("AtlasTexture_myrqy")
-script = ExtResource("17_i76cd")
+script = ExtResource("4_lqi16")
 description = "History"
-script_name = "History"
+script_name = "history"
 
 [node name="BtnQuit" type="TextureButton" parent="PanelContainer/Box"]
 layout_mode = 2
@@ -166,4 +165,4 @@ texture_pressed = SubResource("AtlasTexture_blkpg")
 texture_hover = SubResource("AtlasTexture_834us")
 script = ExtResource("19_5u3hw")
 description = "Quit"
-script_name = "Quit"
+script_name = "quit"

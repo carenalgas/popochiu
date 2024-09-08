@@ -21,9 +21,6 @@ func _ready() -> void:
 	dialog_style.item_selected.connect(_on_dialog_style_selected)
 	continue_mode.toggled.connect(_on_continue_mode_toggled)
 
-	# Connect to singletons signals
-	G.text_settings_requested.connect(open)
-
 
 #endregion
 

@@ -1,7 +1,7 @@
 @tool
 extends PopochiuPopup
 
-signal quit_pressed
+signal option_selected(option_name: String)
 signal classic_sentence_toggled(pressed: bool)
 
 @onready var classic_sentence: CheckButton = %ClassicSentence
@@ -18,10 +18,10 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	
 	# Connect to child signals
-	save.pressed.connect(_on_save_pressed)
-	load.pressed.connect(_on_load_pressed)
-	history.pressed.connect(_on_history_pressed)
-	quit.pressed.connect(_on_quit_pressed)
+	save.pressed.connect(option_selected.emit.bind("save"))
+	load.pressed.connect(option_selected.emit.bind("load"))
+	history.pressed.connect(option_selected.emit.bind("history"))
+	quit.pressed.connect(option_selected.emit.bind("quit"))
 	classic_sentence.toggled.connect(_on_classic_sentence_toggled)
 	
 	# Connect to autoloads signals
@@ -36,22 +36,6 @@ func _ready() -> void:
 #endregion
 
 #region Private ####################################################################################
-func _on_save_pressed() -> void:
-	G.show_save()
-
-
-func _on_load_pressed() -> void:
-	G.show_load()
-
-
-func _on_history_pressed() -> void:
-	G.show_history()
-
-
-func _on_quit_pressed() -> void:
-	quit_pressed.emit()
-
-
 func _on_classic_sentence_toggled(button_pressed: bool) -> void:
 	classic_sentence_toggled.emit(button_pressed)
 

@@ -13,10 +13,3 @@ func _ready() -> void:
 
 
 #endregion
-
-#region Virtual ####################################################################################
-func _on_pressed() -> void:
-	G.show_load()
-
-
-#endregion

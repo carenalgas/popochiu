@@ -12,8 +12,14 @@ signal settings_requested
 # Used to go back to the WALK_TO command when hovering an inventory item without a verb selected
 var _return_to_walk_to := false
 
+## Used to access the [b]9VerbPanel[/b] component (the one at the bottom containing the verbs,
+## the inventory, and the button to open the [b]9VerbSettingsPopup[/b].
+@onready var _9_verb_panel: Control = %"9VerbPanel"
+@onready var hover_text_cursor: Control = %HoverTextCursor
 ## Used to access the [b]9VerbSettingsPopup[/b] node.
-@onready var settings_popup: PopochiuPopup = $"Popups/9VerbSettingsPopup"
+@onready var settings_popup: PopochiuPopup = %"9VerbSettingsPopup"
+@onready var save_and_load_popup: Control = %SaveAndLoadPopup
+@onready var history_popup: Control = %HistoryPopup
 ## Used to access the [b]9VerbQuitPopup[/b] node.
 @onready var quit_popup: PopochiuPopup = %"9VerbQuitPopup"
 
@@ -32,7 +38,7 @@ func _ready() -> void:
 	
 	# Connect to childs signals
 	settings_popup.classic_sentence_toggled.connect(_on_classic_sentence_toggled)
-	settings_popup.quit_pressed.connect(_on_quit_pressed)
+	settings_popup.option_selected.connect(_on_settings_option_selected)
 	
 	
 	# Connect to singletons signals
@@ -53,7 +59,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_blocked(props := { blocking = true }) -> void:
 	E.current_command = -1
 	G.show_hover_text()
-	$"9VerbPanel".hide()
+	_9_verb_panel.hide()
 	
 	set_process_unhandled_input(false)
 
@@ -70,10 +76,10 @@ func _on_unblocked() -> void:
 	
 	E.current_command = NineVerbCommands.Commands.WALK_TO
 	G.show_hover_text()
-	$"9VerbPanel".show()
+	_9_verb_panel.show()
 	
 	# Make all commands to look as no pressed
-	$"9VerbPanel".unpress_commands()
+	_9_verb_panel.unpress_commands()
 	
 	set_process_unhandled_input(true)
 
@@ -95,7 +101,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if G.is_blocked: return
 	
 	if clickable.get("suggested_command"):
-		$"9VerbPanel".highlight_command(clickable.suggested_command)
+		_9_verb_panel.highlight_command(clickable.suggested_command)
 	
 	if I.active:
 		_show_command_on(I.active.description, clickable.description)
@@ -109,7 +115,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	if G.is_blocked: return
 	
 	if clickable.get("suggested_command"):
-		$"9VerbPanel".highlight_command(clickable.suggested_command, false)
+		_9_verb_panel.highlight_command(clickable.suggested_command, false)
 	Cursor.show_cursor()
 	
 	if I.active:
@@ -127,7 +133,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 		_return_to_walk_to = true
 		E.current_command = NineVerbCommands.Commands.USE
 	
-	$"9VerbPanel".highlight_command(NineVerbCommands.Commands.LOOK_AT)
+	_9_verb_panel.highlight_command(NineVerbCommands.Commands.LOOK_AT)
 	Cursor.show_cursor()
 	
 	if I.active:
@@ -143,7 +149,7 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 		E.current_command = NineVerbCommands.Commands.WALK_TO
 		_return_to_walk_to = false
 	
-	$"9VerbPanel".highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
+	_9_verb_panel.highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
 	Cursor.show_cursor()
 	
 	if I.active:
@@ -224,22 +230,29 @@ func _on_player_started_walk(
 
 
 func _on_classic_sentence_toggled(button_pressed: bool) -> void:
-	%HoverTextCursor.visible = not button_pressed
-	$"9VerbPanel".hover_text_centered.visible = button_pressed
+	hover_text_cursor.visible = not button_pressed
+	_9_verb_panel.hover_text_centered.visible = button_pressed
 
 
-func _on_quit_pressed() -> void:
-	quit_popup.open()
+func _on_settings_option_selected(option_name: String) -> void:
+	match option_name:
+		"save":
+			save_and_load_popup.open_save()
+		"load":
+			save_and_load_popup.open_load()
+		"history":
+			history_popup.open()
+		"quit":
+			quit_popup.open()
 
 
-func _show_command_on(item_1_name: String, item_2_name: String = "") -> void:
+func _show_command_on(item_1_name: String, item_2_name := "") -> void:
 	var preposition = "on"
 	if E.current_command == NineVerbCommands.Commands.GIVE:
 		preposition = "to"
 	G.show_hover_text("%s %s %s %s" % [
-		E.get_current_command_name(), 
-		item_1_name, 
-		preposition,
-		item_2_name])
+		E.get_current_command_name(), item_1_name, preposition, item_2_name
+	])
+
 
 #endregion

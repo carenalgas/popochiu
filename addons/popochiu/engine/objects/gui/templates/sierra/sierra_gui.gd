@@ -7,6 +7,15 @@ extends PopochiuGraphicInterface
 ## top of the screen. The inventory can be opened with a button in the top bar, same for the
 ## settings.
 
+@onready var sierra_bar: Control = %SierraBar
+@onready var sierra_menu: Control = %SierraMenu
+@onready var sierra_inventory_popup: Control = %SierraInventoryPopup
+@onready var sierra_settings_popup: Control = %SierraSettingsPopup
+@onready var sierra_sound_popup: PopochiuPopup = %SierraSoundPopup
+@onready var text_settings_popup: Control = %TextSettingsPopup
+@onready var save_and_load_popup: Control = %SaveAndLoadPopup
+@onready var quit_popup: Control = %QuitPopup
+
 
 #region Godot ######################################################################################
 func _ready() -> void:
@@ -20,8 +29,8 @@ func _ready() -> void:
 	E.current_command = SierraCommands.Commands.WALK
 	
 	# Connect to child signals
-	%SierraSettingsPopup.option_selected.connect(_on_settings_option_selected)
-	%SierraMenu.visibility_changed.connect(_on_menu_visibility_changed)
+	sierra_settings_popup.option_selected.connect(_on_settings_option_selected)
+	sierra_menu.visibility_changed.connect(_on_menu_visibility_changed)
 
 
 func _input(event: InputEvent) -> void:
@@ -34,7 +43,7 @@ func _input(event: InputEvent) -> void:
 			# GUI allows characters to move only when the WALK command is
 			# active.
 			if (
-				not $SierraMenu.visible
+				not sierra_menu.visible
 				and not E.hovered
 				and E.current_command != SierraCommands.Commands.WALK
 			):
@@ -70,9 +79,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if not I.active:
 		G.show_hover_text(clickable.description)
 	else:
-		G.show_hover_text(
-			'Use %s with %s' % [I.active.description, clickable.description]
-		)
+		G.show_hover_text("Use %s with %s" % [I.active.description, clickable.description])
 
 
 ## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component.
@@ -146,22 +153,22 @@ func _get_cursor_name() -> String:
 func _on_settings_option_selected(option_name: String) -> void:
 	match option_name:
 		"sound":
-			%SierraSoundPopup.open()
+			sierra_sound_popup.open()
 		"text":
-			%SierraTextPopup.open()
+			text_settings_popup.open()
 		"save":
-			%SaveAndLoadPopup.open_save()
+			save_and_load_popup.open_save()
 		"load":
-			%SaveAndLoadPopup.open_load()
+			save_and_load_popup.open_load()
 		"quit":
-			%QuitPopup.open()
+			quit_popup.open()
 
 
 func _on_menu_visibility_changed():
-	if %SierraMenu.visible:
-		%SierraBar.hide()
+	if sierra_menu.visible:
+		sierra_bar.hide()
 	else:
-		%SierraBar.show()
+		sierra_bar.show()
 
 
 #endregion

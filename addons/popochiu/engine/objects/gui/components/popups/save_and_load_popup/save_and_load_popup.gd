@@ -22,10 +22,6 @@ func _ready() -> void:
 	
 	btn_ok.disabled = true
 	
-	# Connect to singletons signals
-	G.save_requested.connect(_show_save)
-	G.load_requested.connect(_show_load)
-	
 	var saves: Dictionary = E.get_saves_descriptions()
 	
 	for btn: Button in slots.get_children():
