@@ -300,6 +300,12 @@ func handle_command(button_idx: int) -> void:
 	await call(prefix % suffix)
 
 
+## Deselects this item if it is the current [member PopochiuIInventory.active] item.
+func deselect() -> void:
+	if I.active and I.active == self:
+		I.active = null
+
+
 #endregion
 
 #region SetGet #####################################################################################

@@ -370,8 +370,12 @@ func _toggle_input() -> void:
 
 
 func _translate() -> void:
-	if Engine.is_editor_hint() or not is_inside_tree()\
-	or not E.settings.use_translations: return
+	if (
+		Engine.is_editor_hint()
+		or not is_inside_tree()
+		or not E.settings.use_translations
+	):
+		return
 	
 	description = E.get_text("%s-%s" % [get_tree().current_scene.name, _description_code])
 

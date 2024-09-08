@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=3 uid="uid://dhsfl8ot4j5fj"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu.gd" id="1_3dp72"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_cvsnu"]
+[ext_resource type="PackedScene" uid="uid://dcta4urojglil" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu_option/dialog_menu_option.tscn" id="3_0jfsm"]
+
+[node name="DialogMenu" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_cvsnu")
+script = ExtResource("1_3dp72")
+option_scene = ExtResource("3_0jfsm")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(0, 53)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -53.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="PanelContainer"]
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="DialogOptionsContainer" type="VBoxContainer" parent="PanelContainer/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+theme_override_constants/separation = 1

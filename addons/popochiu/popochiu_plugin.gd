@@ -13,7 +13,6 @@ const POPOCHIU_CANVAS_EDITOR_MENU = preload(
 
 var dock: Panel
 
-#var EditorInterface := get_editor_interface()
 var _editor_file_system := EditorInterface.get_resource_filesystem()
 var _is_first_install := false
 var _input_actions := preload("res://addons/popochiu/engine/others/input_actions.gd")

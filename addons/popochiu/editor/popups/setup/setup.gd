@@ -11,7 +11,7 @@ enum GameTypes {
 }
 
 const SCALE_MESSAGE =\
-"[center]▶ Base size = 320x180 | [b]scale = ( %.2f, %.2f )[/b] ◀[/center]\n\
+"[center]▶ Base size = 356x200 | [b]scale = ( %.2f, %.2f )[/b] ◀[/center]\n\
 By default the GUI will match your native game resolution. You can change this with the\
  [code]Project Settings > Popochiu > GUI > Experimental Scale Gui[/code] checkbox."
 const COPY_ALPHA = 0.1
@@ -34,7 +34,7 @@ var _es := EditorInterface.get_editor_settings()
 @onready var test_height: SpinBox = %TestHeight
 @onready var game_type: OptionButton = %GameType
 # ---- GUI templates section -----------------------------------------------------------------------
-@onready var gui_templates: GridContainer = %GUITemplates
+@onready var gui_templates: HBoxContainer = %GUITemplates
 @onready var gui_templates_title: Label = %GUITemplatesTitle
 @onready var gui_templates_description: Label = %GUITemplatesDescription
 @onready var template_description_container: PanelContainer = %TemplateDescriptionContainer
@@ -167,7 +167,7 @@ func _update_scale(_value: float) -> void:
 
 
 func _get_scale_message() -> String:
-	var scale := Vector2(game_width.value, game_height.value) / Vector2(320.0, 180.0)
+	var scale := Vector2(game_width.value, game_height.value) / PopochiuResources.RETRO_RESOLUTION
 	return SCALE_MESSAGE % [scale.x, scale.y]
 
 
@@ -206,7 +206,7 @@ func _select_config_template() -> void:
 			_on_gui_template_selected(btn)
 	
 	if not _selected_template:
-		_on_gui_template_selected(gui_templates.get_child(0))
+		_on_gui_template_selected(gui_templates.get_child(3))
 
 
 func _show_gui_warning() -> void:
@@ -214,8 +214,8 @@ func _show_gui_warning() -> void:
 	_setup_inner_dialog(
 		warning_dialog,
 		"GUI template warning",
-		"The GUI scene (graphic_interface) is currently opened in the Editor.\n\nIn order to change\
- the GUI template please close that scene first."
+		"The GUI scene (gui.tscn) is currently opened in the Editor.\n\n" +\
+		"In order to change the GUI template please close that scene first."
 	)
 	
 	add_child(warning_dialog)
@@ -228,7 +228,7 @@ func _show_template_change_confirmation() -> void:
 		confirmation_dialog,
 		"Confirm GUI template change",
 		"You changed the GUI template, making this will override any changes you made to the files\
- in res://game/graphic_interface/.\n\nAre you sure you want to make the change?"
+ in res://game/gui/.\n\nAre you sure you want to make the change?"
 	)
 	
 	confirmation_dialog.confirmed.connect(
@@ -273,6 +273,7 @@ func _load_templates() -> void:
 		button.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 		button.expand_icon = true
 		button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		
 		gui_templates.add_child(button)
 

@@ -68,6 +68,8 @@ signal load_requested
 # TODO: deprecate this
 ## Emitted to open the popup that allows to change the volume of the audio buses in the game.
 signal sound_settings_requested
+## Emitted to open the popup that allows to change the typing speed and autoadvance in dialogues.
+signal text_settings_requested
 ## Emitted when the dialog options of the running [PopochiuDialog] are shown.
 signal dialog_options_shown
 ## Emitted when a game is loaded and the GUI has shown (or not shown) a notification to the player.
@@ -187,7 +189,11 @@ func show_load() -> void:
 func show_sound_settings() -> void:
 	sound_settings_requested.emit()
 
-
+## Emits [signal texts_settings_requested] to open the popup that allows changing the text speed
+## and toggle the dialogue auto advancement
+func show_text_settings() -> void:
+	text_settings_requested.emit()
+	
 ## Returns the name of the cursor texture to show.
 func get_cursor_name() -> String:
 	if not is_instance_valid(gui): return ""

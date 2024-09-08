@@ -1,0 +1,177 @@
+[gd_scene load_steps=11 format=3 uid="uid://cuokybjvunmhq"]
+
+[ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/gui/components/hover_text/hover_text.tscn" id="1_8t0fs"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_o0fnb"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_panel/9_verb_panel.gd" id="2_55o6l"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_hover_text/9_verb_hover_text.gd" id="2_qt1af"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_commands_container.gd" id="3_q8l3d"]
+[ext_resource type="ButtonGroup" uid="uid://y1thfsxxjowe" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/resources/9_verb_button_group.tres" id="4_6lnif"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_command_button.gd" id="5_bpewk"]
+[ext_resource type="PackedScene" uid="uid://djan6vy0xq8dq" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_inventory_grid/9_verb_inventory_grid.tscn" id="6_r1cmu"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b57cn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mksfu"]
+
+[node name="9VerbPanel" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_o0fnb")
+script = ExtResource("2_55o6l")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -64.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_b57cn")
+metadata/_edit_group_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 2
+
+[node name="HoverTextCentered" parent="PanelContainer/VBoxContainer" instance=ExtResource("1_8t0fs")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme = null
+script = ExtResource("2_qt1af")
+follows_cursor = false
+
+[node name="Verbs&InventoryContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_mksfu")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 1
+
+[node name="CommandsContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 1
+script = ExtResource("3_q8l3d")
+
+[node name="Row1" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Open" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Open"
+script = ExtResource("5_bpewk")
+command = 1
+
+[node name="PickUp" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Pick Up"
+script = ExtResource("5_bpewk")
+command = 2
+
+[node name="Push" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Push"
+script = ExtResource("5_bpewk")
+command = 3
+
+[node name="Row2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Close" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Close"
+script = ExtResource("5_bpewk")
+command = 4
+
+[node name="LookAt" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Look At"
+script = ExtResource("5_bpewk")
+command = 5
+
+[node name="Pull" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Pull"
+script = ExtResource("5_bpewk")
+command = 6
+
+[node name="Row3" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+theme_override_constants/separation = 1
+
+[node name="Give" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Give"
+script = ExtResource("5_bpewk")
+command = 7
+
+[node name="TalkTo" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Talk To"
+script = ExtResource("5_bpewk")
+command = 8
+
+[node name="Use" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+toggle_mode = true
+button_group = ExtResource("4_6lnif")
+text = "Use"
+script = ExtResource("5_bpewk")
+command = 9
+
+[node name="9VerbInventoryGrid" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer" instance=ExtResource("6_r1cmu")]
+layout_mode = 2
+size_flags_horizontal = 1
+theme = null

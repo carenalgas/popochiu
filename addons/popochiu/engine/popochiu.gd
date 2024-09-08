@@ -95,7 +95,7 @@ var auto_continue_after := -1.0
 ## The current dialog style used by the game. When this property changes, the
 ## [signal dialog_style_changed] signal is emitted.
 var current_dialog_style := settings.dialog_style : set = set_dialog_style
-## The scale value of the game. Defined by the native game resolution compared with (320, 180),
+## The scale value of the game. Defined by the native game resolution compared with (356, 200),
 ## which is the default game resolution defined by Popochiu.
 var scale := Vector2.ONE
 ## A reference to the current commands script.
@@ -142,7 +142,7 @@ func _ready() -> void:
 		gui = load(path).instantiate()
 	else:
 		gui = load(PopochiuResources.GUI_GAME_SCENE).instantiate()
-		gui.name = "GraphicInterface"
+		gui.name = "GUI"
 	
 	# Load the commands for the game
 	commands = load(PopochiuResources.GUI_COMMANDS).new()
@@ -151,8 +151,7 @@ func _ready() -> void:
 	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
 	
 	# Calculate the scale that could be applied
-	# FIXME We should not assume 320x180 as the default viewport size
-	scale = Vector2(width, height) / Vector2(320.0, 180.0)
+	scale = Vector2(width, height) / PopochiuResources.RETRO_RESOLUTION
 	
 	# Add the AudioManager, the Graphic Interface, and the Transitions Layer to the tree
 	$GraphicInterfaceLayer.add_child(gui)

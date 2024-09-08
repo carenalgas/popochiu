@@ -18,14 +18,14 @@ const STEPS = [
 ]
 const RESET_CHILDREN_OWNER = "reset_children_owner"
 const GAME_INVENTORY_BAR_PATH =\
-"res://game/graphic_interface/components/inventory_bar/inventory_bar.tscn"
+"res://game/gui/components/inventory_bar/inventory_bar.tscn"
 const GAME_SETTINGS_BAR_PATH =\
-"res://game/graphic_interface/components/settings_bar/settings_bar.tscn"
-const GAME_DIALOG_MENU_PATH = "res://game/graphic_interface/components/dialog_menu/dialog_menu.tscn"
+"res://game/gui/components/settings_bar/settings_bar.tscn"
+const GAME_DIALOG_MENU_PATH = "res://game/gui/components/dialog_menu/dialog_menu.tscn"
 const GAME_DIALOG_MENU_OPTION_PATH =\
-"res://game/graphic_interface/components/dialog_menu/dialog_menu_option/"
+"res://game/gui/components/dialog_menu/dialog_menu_option/"
 const ADDON_DIALOG_MENU_PATH =\
-"res://addons/popochiu/engine/objects/graphic_interface/components/dialog_menu/dialog_menu.tscn"
+"res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu.tscn"
 const TextSpeedOption = preload(
 	PopochiuResources.GUI_TEMPLATES_FOLDER
 	+ "simple_click/components/settings_bar/resources/text_speed_option.gd"
@@ -467,7 +467,7 @@ func _update_dialog_menu() -> Completion:
 	
 	# Delete the old [dialog_menu_option.tscn] file
 	done = DirAccess.remove_absolute(
-		"res://game/graphic_interface/components/dialog_menu/dialog_menu_option.tscn"
+		"res://game/gui/components/dialog_menu/dialog_menu_option.tscn"
 	)
 	if done != OK:
 		PopochiuUtils.print_error(
@@ -509,7 +509,7 @@ func _update_simple_click_settings_bar() -> Completion:
 			PopochiuResources.GUI_TEMPLATES_FOLDER.path_join(
 				"simple_click/components/settings_bar/sprites/"
 			),
-			"res://game/graphic_interface/components/settings_bar/sprites/"
+			"res://game/gui/components/settings_bar/sprites/"
 		))
 		
 		speed_options.append(option)

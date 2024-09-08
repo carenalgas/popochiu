@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://bu77q250wow5g"]
+
+[ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/tab_gui/create_popup_window/create_popup_window.gd" id="1_4ujlk"]
+
+[node name="CreatePopupWindow" type="AcceptDialog"]
+title = "Create Popup"
+size = Vector2i(640, 256)
+popup_window = true
+max_size = Vector2i(1280, 720)
+ok_button_text = "Create"
+script = ExtResource("1_4ujlk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 632.0
+offset_bottom = 207.0
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Give a title to your popup."
+
+[node name="TitleEdit" type="LineEdit" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+expand_to_text_length = true
+context_menu_enabled = false
+clear_button_enabled = true
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="Info" type="RichTextLabel" parent="VBoxContainer/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+bbcode_enabled = true
+text = "This will create the following files:
+[code]res://popochiu/graphic_interface/popups/%s/%s.tscn
+res://popochiu/graphic_interface/popups/%s/%s.gd[/code]"
+fit_content = true
