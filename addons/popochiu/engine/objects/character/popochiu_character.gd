@@ -103,6 +103,8 @@ var default_scale := Vector2.ONE
 
 var _looking_dir: int = Looking.DOWN
 
+@onready var _animated_sprite: AnimatedSprite2D = ($Sprite2D as AnimatedSprite2D) if $Sprite2D.get_class() == "AnimatedSprite2D" else null
+
 
 
 #region Godot ######################################################################################
@@ -640,15 +642,19 @@ func queue_play_animation(
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.
 func play_animation(animation_label: String, animation_fallback := 'idle'):
-	if not has_node("AnimationPlayer"):
-		PopochiuUtils.print_error(
-			"Can't play character animation. Required AnimationPlayer not found in character %s" %
-			[script_name]
-		)
-		return
-	
-	if $AnimationPlayer.get_animation_list().is_empty():
-		return
+	if _animated_sprite:
+		if _animated_sprite.sprite_frames.get_animation_names().is_empty():
+			return
+	else:
+		if not has_node("AnimationPlayer"):
+			PopochiuUtils.print_error(
+				"Can't play character animation. Required AnimationPlayer not found in character %s" %
+				[script_name]
+			)
+			return
+		
+		if $AnimationPlayer.get_animation_list().is_empty():
+			return
 
 	# Search for a valid animation corresponding to animation_label
 	var animation = _get_valid_oriented_animation(animation_label)
@@ -661,10 +667,15 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
  Requested: %s - Fallback: %s" % [script_name, animation_label, animation_fallback]
 		)
 		return
+
 	# Play the animation in the best available orientation
-	$AnimationPlayer.play(animation)
 	# If the playing is blocking, wait for the animation to finish
-	await $AnimationPlayer.animation_finished
+	if _animated_sprite:
+		_animated_sprite.play(animation)
+		await _animated_sprite.animation_finished
+	else:
+		$AnimationPlayer.play(animation)
+		await $AnimationPlayer.animation_finished
 	
 	# Go back to idle state
 	_play_idle()
@@ -680,23 +691,43 @@ func queue_stop_animation():
 ## Makes the animation that is currently playing to stop. Works only if it is looping and is not an
 ## idle animation. The animation stops when the current loop finishes.
 func stop_animation():
-	# If the animation is not looping or is an idle one, do nothing
-	if  (
-		$AnimationPlayer.get_animation($AnimationPlayer.current_animation) == Animation.LOOP_NONE or
-		$AnimationPlayer.current_animation == 'idle' or
-		$AnimationPlayer.current_animation.begins_with('idle_')
-	):
-		return
+	if _animated_sprite:
+		if (
+			not _animated_sprite.sprite_frames.get_animation_loop(_animated_sprite.animation) or
+			_animated_sprite.animation == 'idle' or
+			_animated_sprite.animation.begins_with('idle_')
+		):
+			return
+		pass
+	else:
+		# If the animation is not looping or is an idle one, do nothing
+		if  (
+			$AnimationPlayer.get_animation($AnimationPlayer.current_animation) == Animation.LOOP_NONE or
+			$AnimationPlayer.current_animation == 'idle' or
+			$AnimationPlayer.current_animation.begins_with('idle_')
+		):
+			return
 	
 	# Save the loop mode, wait for the anim to be over as designed, then restore the mode
-	var animation = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
-	var animation_loop_mode = animation.loop_mode
-	animation.loop_mode = Animation.LOOP_NONE
-	
-	await $AnimationPlayer.animation_finished
-	
-	_play_idle()
-	animation.loop_mode = animation_loop_mode
+	if _animated_sprite:
+		var anim_name: StringName = _animated_sprite.animation
+		var sprite_frames: SpriteFrames = _animated_sprite.sprite_frames
+		var anim_loop: bool = sprite_frames.get_animation_loop(anim_name)
+		sprite_frames.set_animation_loop(anim_name, false)
+		
+		await _animated_sprite.animation_finished
+		
+		_play_idle()
+		sprite_frames.set_animation_loop(anim_name, anim_loop)
+	else:
+		var animation: AnimationMixer = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
+		var animation_loop_mode = animation.loop_mode
+		animation.loop_mode = Animation.LOOP_NONE
+		
+		await $AnimationPlayer.animation_finished
+		
+		_play_idle()
+		animation.loop_mode = animation_loop_mode
 
 
 ## Immediately stops the animation that is currently playing by changing to the idle animation.
@@ -719,7 +750,7 @@ func queue_pause_animation():
 
 ## Pauses the animation that is currently playing.
 func pause_animation():
-	$AnimationPlayer.pause()
+	_animated_sprite.pause() if _animated_sprite else $AnimationPlayer.pause()
 
 
 ## Resumes the current animation (that was previously paused).[br][br]
@@ -730,7 +761,7 @@ func queue_resume_animation():
 
 ## Resumes the current animation (that was previously paused).
 func resume_animation():
-	$AnimationPlayer.play()
+	_animated_sprite.play() if _animated_sprite else $AnimationPlayer.play()
 
 
 ## Makes the character look in the direction of [param destination]. The result is one of the values
@@ -921,11 +952,16 @@ func _get_valid_oriented_animation(animation_label):
 	# Scan the AnimationPlayer and return the first that matches.
 	for suffix in suffixes:
 		var animation = "%s%s" % [animation_label, suffix]
-		if $AnimationPlayer.has_animation(animation):
+		if _has_animation(animation):
 			return animation
 	
 	return null
 
+func _has_animation(anim_name: String) -> bool:
+	if _animated_sprite:
+		return _animated_sprite.sprite_frames.has_animation(anim_name)
+	else:
+		return $AnimationPlayer.has_animation(anim_name)
 
 func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 	if not is_instance_valid(node):
