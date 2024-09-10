@@ -41,7 +41,7 @@ static func execute_string(text: String) -> void:
 	elif ":" in text:
 		await _trigger_dialog_line(text)
 	else:
-		await E.get_tree().process_frame
+		await G.show_system_text(text)
 	
 	E.auto_continue_after = -1.0
 
