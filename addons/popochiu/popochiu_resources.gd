@@ -43,8 +43,9 @@ const MAIN_TYPES = [
 const ROOM_TYPES = [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
 const DOCUMENTATION = "https://carenalgas.github.io/popochiu/"
 const CFG = "res://addons/popochiu/plugin.cfg"
+const GUI_ADDON_FOLDER = "res://addons/popochiu/engine/objects/gui/"
+const GUI_TEMPLATES_FOLDER = GUI_ADDON_FOLDER + "templates/"
 const GUI_SCRIPT_TEMPLATES_FOLDER = "res://addons/popochiu/engine/templates/gui/"
-const GUI_TEMPLATES_FOLDER = "res://addons/popochiu/engine/objects/gui/templates/"
 const RETRO_RESOLUTION = Vector2(356.0, 200.0)
 # SINGLETONS ---------------------------------------------------------------------------------------
 const GLOBALS_SNGL = "res://game/popochiu_globals.gd"
@@ -66,7 +67,6 @@ const G_SNGL = "res://game/autoloads/g.gd"
 # FIRST INSTALL ------------------------------------------------------------------------------------
 const GI = 0
 const TL = 1
-const GUI_ADDON_FOLDER = "res://addons/popochiu/engine/objects/gui/"
 const TRANSITION_LAYER_ADDON =\
 "res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn"
 # ENGINE -------------------------------------------------------------------------------------------

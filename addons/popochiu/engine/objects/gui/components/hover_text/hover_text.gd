@@ -3,7 +3,7 @@ class_name PopochiuHoverText
 
 @export var hide_during_dialogs := false
 
-@onready var label: RichTextLabel = $Label
+@onready var label: RichTextLabel = $RichTextLabel
 
 
 #region Godot ######################################################################################

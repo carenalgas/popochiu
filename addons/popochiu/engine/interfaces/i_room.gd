@@ -200,7 +200,12 @@ func room_readied(room: PopochiuRoom) -> void:
 		# Calling this will make the camera be set to its default values and will store the state of
 		# the main room (the last parameter will prevent Popochiu from changing the scene to the
 		# same that is already loaded)
-		goto_room(room.script_name, false, true, true)
+		# TODO: We should have an option in Popochiu Settings which allows devs to turn on the scene
+		# transition effect even when they are opened from the Editor (by pressing F5, F6 or using
+		# the buttons to play a scene. This option will be linked to the second parameter of the
+		# goto_room function, and we'll have to make sure the transition layer starts visible in
+		# those cases (as if it were coming from another room).
+		await goto_room(room.script_name, false, true, true)
 	
 	# Make the camera be ready for the room
 	current.setup_camera()

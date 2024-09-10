@@ -27,8 +27,7 @@ const GAME_DIALOG_MENU_OPTION_PATH =\
 const ADDON_DIALOG_MENU_PATH =\
 "res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu.tscn"
 const TextSpeedOption = preload(
-	PopochiuResources.GUI_TEMPLATES_FOLDER
-	+ "simple_click/components/settings_bar/resources/text_speed_option.gd"
+	PopochiuResources.GUI_ADDON_FOLDER + "components/settings_bar/resources/text_speed_option.gd"
 )
 
 var _gui_templates_helper := preload(
