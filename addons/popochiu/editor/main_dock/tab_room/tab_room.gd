@@ -389,6 +389,9 @@ func _on_child_removed(node: Node, type_id: int) -> void:
 
 
 func _check_undoredo_history() -> void:
+	if not opened_room or not is_instance_valid(opened_room):
+		return
+	
 	var walkable_areas: Array = opened_room.call(
 		_types[PopochiuResources.Types.WALKABLE_AREA].method
 	)

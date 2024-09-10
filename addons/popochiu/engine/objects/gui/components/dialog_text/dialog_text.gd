@@ -26,6 +26,7 @@ var _y_limit := 0.0
 
 @onready var rich_text_label: RichTextLabel = %RichTextLabel
 @onready var continue_icon: TextureProgressBar = %ContinueIcon
+@onready var continue_icon_size := continue_icon.texture_progress.get_size()
 
 
 #region Godot ######################################################################################
