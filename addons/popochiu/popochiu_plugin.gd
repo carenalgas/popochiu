@@ -190,6 +190,8 @@ func _on_dock_ready() -> void:
 	
 	if EditorInterface.get_edited_scene_root():
 		dock.scene_changed(EditorInterface.get_edited_scene_root())
+	else:
+		dock.check_open_scenes()
 	
 	PopochiuResources.update_autoloads(true)
 	_editor_file_system.scan_sources()
