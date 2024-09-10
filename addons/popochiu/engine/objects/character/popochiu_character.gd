@@ -103,7 +103,7 @@ var default_scale := Vector2.ONE
 
 var _looking_dir: int = Looking.DOWN
 
-@onready var _animated_sprite: AnimatedSprite2D = ($Sprite2D as AnimatedSprite2D) if $Sprite2D.get_class() == "AnimatedSprite2D" else null
+@onready var _animated_sprite: AnimatedSprite2D = $Sprite2D if $Sprite2D is AnimatedSprite2D else null
 
 
 
@@ -120,10 +120,8 @@ func _ready():
 	else:
 		set_process(follow_player)
 	
-	for child in get_children():
-		if not child is Sprite2D:
-			continue
-		child.frame_changed.connect(_update_position)
+	for sprite_child in get_children().filter(func(child): return child is Sprite2D or child is AnimatedSprite2D):
+		sprite_child.frame_changed.connect(_update_position)
 	
 	move_ended.connect(_on_move_ended)
 
