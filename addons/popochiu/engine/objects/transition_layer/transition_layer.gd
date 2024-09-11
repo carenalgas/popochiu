@@ -20,9 +20,10 @@ enum {
 
 #region Godot ######################################################################################
 func _ready() -> void:
+	# Connect to childrens' signals
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
 	
-	if E.settings.scale_gui:
+	if E.scale != Vector2.ONE:
 		$Transitions.scale = E.scale
 	
 	$InputBlockerLayer.hide()
