@@ -146,7 +146,9 @@ func save_characters() -> void:
 			visible = pc.visible,
 			modulate = pc.modulate.to_html(),
 			self_modulate = pc.self_modulate.to_html(),
-			light_mask = pc.light_mask
+			light_mask = pc.light_mask,
+			baseline = pc.baseline,
+			walk_to_point = pc.walk_to_point,
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)
 		}

@@ -24,8 +24,11 @@ func _parse_begin(object: Object):
 	_target_node = object
 
 
-func _parse_property(object, type, name, hint_type, hint_string, usage_flags, wide):
-	if name != 'popochiu_placeholder': return false
+func _parse_property(object, type, name, hint_type, hint_string, usage_flags, wide) -> bool:
+	if object.get_class() == "EditorDebuggerRemoteObject":
+		return false
+	if name != 'popochiu_placeholder':
+		return false
 	# Instanciate and configure the dock
 	var dock = INSPECTOR_DOCK.instantiate()
 	# Load the specific script in the dock

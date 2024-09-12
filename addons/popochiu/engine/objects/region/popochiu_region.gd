@@ -133,7 +133,7 @@ func _check_scaling(
 		
 	if scaling:
 		_update_scaling_region(area)
-		R.current.update_character_scale(area)
+		area.update_scale()
 
 
 func _update_scaling_region(chr: PopochiuCharacter) -> void:

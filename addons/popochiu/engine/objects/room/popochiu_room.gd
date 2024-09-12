@@ -276,48 +276,10 @@ func clean_characters() -> void:
 		c.queue_free()
 
 
-## Updates the scale of [param chr] depending on the properties of the scaling region where it is
-## located.
-func update_character_scale(chr: PopochiuCharacter):
-	if chr.on_scaling_region:
-		var polygon_range = (
-			chr.on_scaling_region["polygon_bottom_y"] - chr.on_scaling_region["polygon_top_y"]
-			)
-		var scale_range = (
-			chr.on_scaling_region["scale_bottom"] - chr.on_scaling_region["scale_top"]
-			)
-
-		var position_from_the_top_of_region = (
-			chr.position.y-chr.on_scaling_region["polygon_top_y"]
-			)
-
-		var scale_for_position = (
-			chr.on_scaling_region["scale_top"]+(
-				scale_range/polygon_range*position_from_the_top_of_region
-		)
-		)
-		chr.scale.x = [
-			[scale_for_position, chr.on_scaling_region["scale_min"]].max(), 
-			chr.on_scaling_region["scale_max"]
-		].min()
-		chr.scale.y = [
-			[scale_for_position, chr.on_scaling_region["scale_min"]].max(), 
-			chr.on_scaling_region["scale_max"]
-		].min()
-		chr.walk_speed = chr.default_walk_speed/chr.default_scale.x*scale_for_position
-	else:
-		chr.scale = chr.default_scale
-		chr.walk_speed = chr.default_walk_speed
-
-
 ## Updates the position of [param character] in the room, and then updates its scale.
 func update_characters_position(character: PopochiuCharacter):
-	character.position = (
-		character.position_stored 
-		if character.position_stored 
-		else character.position
-		)
-	update_character_scale(character)
+	character.update_position()
+	character.update_scale()
 
 
 ## Returns the [Marker2D] which [member Node.name] matches [param marker_name].
@@ -477,7 +439,7 @@ func _move_along_path(distance: float, moving_character_data: Dictionary):
 				moving_character_data.character.position_stored = next_position
 			else:
 				moving_character_data.character.position = next_position
-				update_character_scale(moving_character_data.character)
+				moving_character_data.character.update_scale()
 			return
 
 		distance -= distance_between_points
@@ -485,7 +447,7 @@ func _move_along_path(distance: float, moving_character_data: Dictionary):
 		moving_character_data.path.remove_at(0)
 
 	moving_character_data.character.position = last_point
-	update_character_scale(moving_character_data.character)
+	moving_character_data.character.update_scale()
 	_clear_navigation_path(moving_character_data.character)
 
 

@@ -49,8 +49,6 @@ func _ready() -> void:
 	for c in get_children():
 		if c.get('position') is Vector2:
 			c.position.y -= baseline * c.scale.y
-		elif c.get('position') is Vector2:
-			c.position.y -= baseline * c.scale.y
 
 	walk_to_point.y -= baseline * scale.y
 	position.y += baseline * scale.y

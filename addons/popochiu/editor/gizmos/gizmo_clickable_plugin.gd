@@ -44,6 +44,9 @@ func _enter_tree() -> void:
 #region Virtual ####################################################################################
 
 func _edit(object: Object) -> void:
+	if object.get_class() == "EditorDebuggerRemoteObject":
+		return
+	
 	_target_node = object
 	_active_gizmos.clear()
 
