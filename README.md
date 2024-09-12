@@ -2,11 +2,11 @@
 
 [![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.2.1-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
-![cover](https://github.com/carenalgas/popochiu/wiki/images/popochiu_2_hero-en.png "Popochiu")
+![Cover image](home_banner.png "Popochiu")
 
-A Godot plugin to make point n' click games the easy way with a workflow similar to [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
+A Godot plugin to make point n' click games inspired by [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
 
-### 🌎👉🏽 [Lee la versión en Español](./LEEME.md) 👈🏽🌎
+> 🌎👉🏽 [Lee la versión en Español](./LEEME.md) 👈🏽🌎
 
 ---
 
@@ -16,17 +16,38 @@ A Godot plugin to make point n' click games the easy way with a workflow similar
 
 ▶️ Follow the [tutorials](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8) (English subs.) to learn how to use the plugin.
 
+## About
+
+This tool consists of two parts: the engine (Popochiu) and the editor plugin that helps with the creation of game elements (nodes and resources) that make use of the engine. It is inspired by well established graphics adventure games creation tools like Adventure Game Studio and PowerQuest (a Unity plugin by PowerHoof). It organizes the games in Rooms, the scenes where Characters can move and interact with Props and Hotspots. It also provides Inventory and Dialogue management systems.
+
+## Features
+
+### Engine
+
+* Seamless support for retro-style, pixel-art or high resolution 2D games
+* Characters management, with the support of different emotions during dialogues
+* Tunable text speed and auto-advance
+* Rooms full with interactive props, hotspots, local characters, multiple walkable areas, reactive regions and position markers
+* Inventory management for your main character
+* Scripting-based dialogs, enabling complex cutscenes and interactions
+* Game sessions saving and loading
+* Actions history management
+* Multiple out-of-the-box graphics interfaces with the freedom to create custom ones
+* Command-based GUI framework
+* Easy background music and sound effects management
+* 100% pure Godot code and elements, no lock-in
 
 
-# About
+### Editor
 
-This tool consists of two parts: the core (Popochiu) and the dock that helps with the creation of the Nodes that make use of that core. It is inspired in how graphic adventure games are created in Adventure Game Studio and Power Hoof's Unity plugin: PowerQuest. This is, using Rooms as the scenes where Characters can move and interact with Props and Hotspots, and providing an Inventory system and Dialog trees.
+* Popochiu Dock for easy access to all game elements
+* Intuitive, modern GDScript-based scripting API, with autocomplete features
+* Visual creation of all the game elements, with a convenient dock to keep your work organized
+* Dialog trees management and 
+* Audio management for background music and sound effects
+* Customizable transition between rooms
 
-![features](https://github.com/carenalgas/popochiu/wiki/images/popochiu_list_of_features-en.png "Features")
-
-
-
-# Installation
+## Installation
 
 **Popochiu works on Godot 3.3.x to 3.5.x**. **And now in Godot 4 too!!!**
 

@@ -2,7 +2,7 @@
 
 [![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.2.1-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
-![cover](https://github.com/carenalgas/popochiu/wiki/images/popochiu_2_hero-es.png "Popochiu")
+![cover](home_banner.png "Popochiu")
 
 Un plugin para Godot que permite crear juegos de aventura gráfica fácilmente con un flujo de trabajo como el de [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) y [PowerQuest](https://powerhoof.itch.io/powerquest).
 
