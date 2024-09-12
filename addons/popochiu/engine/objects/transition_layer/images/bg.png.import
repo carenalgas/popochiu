@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://idhocibii42k"
-path="res://.godot/imported/fade.png-f3e70ee0a80e252e2ce3d527265a7bc6.ctex"
+path="res://.godot/imported/bg.png-6dcbcf5b25ba42e2bc7afa216489dc53.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/popochiu/engine/objects/transition_layer/fade.png"
-dest_files=["res://.godot/imported/fade.png-f3e70ee0a80e252e2ce3d527265a7bc6.ctex"]
+source_file="res://addons/popochiu/engine/objects/transition_layer/images/bg.png"
+dest_files=["res://.godot/imported/bg.png-6dcbcf5b25ba42e2bc7afa216489dc53.ctex"]
 
 [params]
 

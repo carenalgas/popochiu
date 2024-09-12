@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://b1pvo43ed3eey"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/transition_layer/transition_layer.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://idhocibii42k" path="res://addons/popochiu/engine/objects/transition_layer/fade.png" id="2"]
+[ext_resource type="Texture2D" uid="uid://idhocibii42k" path="res://addons/popochiu/engine/objects/transition_layer/images/bg.png" id="2"]
 
 [sub_resource type="Animation" id="5"]
 length = 0.001
@@ -81,7 +81,7 @@ tracks/6/interp = 1
 tracks/6/loop_wrap = true
 tracks/6/keys = {
 "handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(160, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(178, -0.0005, 0, 0.0005, 0),
 "times": PackedFloat32Array(0)
 }
 tracks/7/type = "bezier"
@@ -92,7 +92,7 @@ tracks/7/interp = 1
 tracks/7/loop_wrap = true
 tracks/7/keys = {
 "handle_modes": PackedInt32Array(0),
-"points": PackedFloat32Array(-90, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(-100, -0.0005, 0, 0.0005, 0),
 "times": PackedFloat32Array(0)
 }
 
@@ -223,7 +223,7 @@ tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(160, -0.25, 0, 0.25, 0, 160, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(178, -0.25, 0, 0.25, 0, 178, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0, 1)
 }
 tracks/1/type = "bezier"
@@ -234,7 +234,7 @@ tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(-90, -0.25, 0, 0.25, 0, 90, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(-100, -0.25, 0, 0.25, 0, 100, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0, 1)
 }
 tracks/2/type = "value"
@@ -260,7 +260,7 @@ tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(160, -0.25, 0, 0.25, 0, 160, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(178, -0.25, 0, 0.25, 0, 178, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0, 1)
 }
 tracks/1/type = "bezier"
@@ -271,7 +271,7 @@ tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "handle_modes": PackedInt32Array(0, 0),
-"points": PackedFloat32Array(90, -0.25, 0, 0.25, 0, 270, -0.25, 0, 0.25, 0),
+"points": PackedFloat32Array(100, -0.25, 0, 0.25, 0, 300, -0.25, 0, 0.25, 0),
 "times": PackedFloat32Array(0, 1)
 }
 tracks/2/type = "value"
@@ -309,14 +309,12 @@ libraries = {
 [node name="Fade" type="Sprite2D" parent="Transitions"]
 visible = false
 modulate = Color(1, 1, 1, 0)
-position = Vector2(160, 90)
-scale = Vector2(10, 10)
+position = Vector2(178, 100)
 texture = ExtResource("2")
 
 [node name="Pass" type="Sprite2D" parent="Transitions"]
 visible = false
-position = Vector2(160, -90)
-scale = Vector2(10, 10)
+position = Vector2(178, -100)
 texture = ExtResource("2")
 
 [node name="InputBlockerLayer" type="CanvasLayer" parent="."]
