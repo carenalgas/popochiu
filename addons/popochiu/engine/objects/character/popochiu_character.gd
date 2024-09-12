@@ -792,6 +792,47 @@ func get_dialog_pos() -> float:
 	return dialog_pos.y
 
 
+func update_position() -> void:
+	position = (
+		position_stored 
+		if position_stored 
+		else position
+	)
+
+
+## Updates the scale depending on the properties of the scaling region where it is located.
+func update_scale():
+	if on_scaling_region:
+		var polygon_range = (
+			on_scaling_region["polygon_bottom_y"] - on_scaling_region["polygon_top_y"]
+			)
+		var scale_range = (
+			on_scaling_region["scale_bottom"] - on_scaling_region["scale_top"]
+			)
+
+		var position_from_the_top_of_region = (
+			position.y-on_scaling_region["polygon_top_y"]
+			)
+
+		var scale_for_position = (
+			on_scaling_region["scale_top"]+(
+				scale_range/polygon_range*position_from_the_top_of_region
+		)
+		)
+		scale.x = [
+			[scale_for_position, on_scaling_region["scale_min"]].max(), 
+			on_scaling_region["scale_max"]
+		].min()
+		scale.y = [
+			[scale_for_position, on_scaling_region["scale_min"]].max(), 
+			on_scaling_region["scale_max"]
+		].min()
+		walk_speed = default_walk_speed/default_scale.x*scale_for_position
+	else:
+		scale = default_scale
+		walk_speed = default_walk_speed
+
+
 #endregion
 
 #region SetGet #####################################################################################

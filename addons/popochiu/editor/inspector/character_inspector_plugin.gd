@@ -9,6 +9,9 @@ func _can_handle(object: Object) -> bool:
 
 
 func _parse_begin(object: Object) -> void:
+	if object.get_class() == "EditorDebuggerRemoteObject":
+		return
+	
 	if not object.get_parent() is Node2D: return
 	
 	var panel := PanelContainer.new()
@@ -49,10 +52,19 @@ func _parse_property(
 	usage,
 	wide: bool
 ) -> bool:
+	if object.get_class() == "EditorDebuggerRemoteObject":
+		return false
+	
 	# NOTE: We could add this as an option of the plugin settings. So devs can add extra properties
 	# 		if needed.
 	if object and object.get_parent() is Node2D and not path in [
-		"position", "visible", "modulate", "self_modulate", "light_mask"
+		"baseline",
+		"walk_to_point",
+		"position",
+		"visible",
+		"modulate",
+		"self_modulate",
+		"light_mask",
 	]:
 		return true
 	
