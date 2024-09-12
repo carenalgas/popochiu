@@ -309,7 +309,7 @@ libraries = {
 [node name="Fade" type="Sprite2D" parent="Transitions"]
 visible = false
 modulate = Color(1, 1, 1, 0)
-position = Vector2(160, 90)
+position = Vector2(178, 100)
 texture = ExtResource("2")
 
 [node name="Pass" type="Sprite2D" parent="Transitions"]
