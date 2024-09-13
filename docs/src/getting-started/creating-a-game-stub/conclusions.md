@@ -16,6 +16,7 @@ We know how to:
 * **Add interactions** to our locations, both via **hotspots** and actual **props**
 * Collect and get rid of stuff in **the inventory**
 * We can create interesting, dynamic **dialogues**
+* Select and theme the **user interface** for your game
 
 These are the basics of every adventure game and an inch of what Popochiu can do for you.  
 We hope that this appetizer was enough to understand if Popochiu is the game engine that you need for your project, and that you are enticed to learn more!
