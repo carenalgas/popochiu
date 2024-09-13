@@ -1,6 +1,6 @@
 # Popochiu
 
-[![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.2.1-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
+[![Godot v4.3](https://img.shields.io/badge/Godot-4.3-blue)](https://godotengine.org/download/archive/4.3-stable/) [![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.2.2-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
 ![Imagen de portada](home_banner.png "Popochiu")
 
@@ -18,7 +18,7 @@ Un plugin de Godot para crear juegos point n' click inspirado por [Adventure Gam
 
 ## Acerca de
 
-Esta herramienta consta de dos partes: el motor (Popochiu) y el plugin del editor que ayuda con la creación de elementos del juego (nodos y recursos) que utilizan el motor. Está inspirado en herramientas bien establecidas para la creación de juegos de aventuras gráficas, como Adventure Game Studio y PowerQuest (un plugin para Unity de PowerHoof). Organiza los juegos en Habitaciones, las escenas donde los Personajes pueden moverse e interactuar con Objetos y Puntos de Interés. También proporciona sistemas de gestión de Inventario y Diálogos.
+Esta herramienta consta de dos partes: el motor (Popochiu) y el plugin del editor que ayuda con la creación de elementos del juego (nodos y recursos) que utilizan dicho motor. Está inspirado en herramientas bien establecidas para la creación de juegos de aventura gráfica, como Adventure Game Studio y PowerQuest (un plugin para Unity de PowerHoof). Popochiu organiza los juegos en Habitaciones, las escenas donde los Personajes pueden moverse e interactuar con Objetos y Puntos de Interés. También proporciona sistemas de gestión de Inventario y Diálogos.
 
 ## Características
 
@@ -29,31 +29,31 @@ Esta herramienta consta de dos partes: el motor (Popochiu) y el plugin del edito
 * Velocidad de texto ajustable y avance automático
 * Habitaciones llenas de objetos interactivos, puntos de interés, personajes locales, múltiples áreas transitables, regiones reactivas y marcadores de posición
 * Gestión de inventario para tu personaje principal
-* Diálogos basados en scripts, permitiendo escenas complejas y múltiples interacciones
+* Diálogos basados en scripts, que permitien escenas complejas y múltiples interacciones
 * Guardado y carga de sesiones de juego
 * Gestión del historial de acciones
 * Transiciones personalizables entre habitaciones
-* Múltiples interfaces gráficas predefinidas con libertad para crear personalizadas
-* Marco GUI basado en comandos
+* Múltiples interfaces gráficas predefinidas con libertad para crear una personalizada
+* GUI basada en comandos
 * Gestión sencilla de música de fondo y efectos de sonido
-* Código y elementos 100% puros de Godot, sin bloqueos
+* Código y elementos 100% de Godot, sin bloqueos
 
 ### Editor
 
-* Dock de Popochiu para fácil acceso a todos los elementos del juego
-* API moderna e intuitiva basada en GDScript, con funciones de autocompletar
+* Panel de Popochiu para acceder fácilmente a todos los elementos del juego
+* API moderna e intuitiva basada en GDScript, con funciones de autocompletado
 * Creación visual de todos los elementos del juego, con gizmos personalizados para propiedades especiales
 * Gestión de árboles de diálogo
 * Gestión de audio para música de fondo y efectos de sonido
-* Importación de Habitaciones y Personajes desde archivos fuente de Aseprite con estructura completa
+* Importación de Habitaciones y Personajes, desde archivos fuente de [Aseprite](https://www.aseprite.org/), con toda su estructura
 
-Y mucho más por venir. Popochiu está en desarrollo activo y tenemos una hoja de ruta bien mantenida de lanzamientos.
+Y vendrán muchas cosas más. Popochiu está en desarrollo activo y tenemos un hoja de ruta de lanzamientos bien mantenida.
 
 ## Tabla de compatibilidad
 
-Popochiu es compatible con Godot 4 y Godot 3, pero solo la versión para Godot 4 está en desarrollo activo, y la versión estable más reciente de Popochiu requiere Godot 4.3.
+Popochiu es compatible con Godot 4 y Godot 3, pero sólo la versión para Godot 4 está en desarrollo activo, y la versión estable más reciente de Popochiu requiere Godot 4.3.
 
-Por favor, revisa esta tabla para saber qué versión descargar, dependiendo de la versión de Godot que quieras usar:
+Por favor, revisa esta tabla para saber qué versión descargar dependiendo de la versión de Godot que quieras usar:
 
 | Versión requerida de Godot | Lanzamiento de Popochiu |
 |---|---|
@@ -66,8 +66,8 @@ Por favor, revisa esta tabla para saber qué versión descargar, dependiendo de 
 1. Descarga la versión correcta para tu versión de Godot.
 2. Extrae el archivo y copia la carpeta `addons` en la carpeta de tu proyecto.
 3. Abre tu proyecto de Godot y habilita el plugin de Popochiu: `Proyecto > Configuración del Proyecto` y selecciona la pestaña `Plugins` en la parte superior.
-4. Reinicia Godot `Proyecto > Recargar Proyecto Actual`.
-5. Verás el dock de Popochiu en el área del editor a la derecha. ¡Eso es todo!
+4. Popochiu te dirá que reiniciará el motor.
+5. Verás el panel de Popochiu en el área inferior derecha del editor. ¡Eso es todo!
 
 ## Documentación
 
@@ -76,7 +76,7 @@ Por favor, revisa esta tabla para saber qué versión descargar, dependiendo de 
 
 ## Tutoriales
 
-Tutoriales en video están disponibles para la versión anterior:
+Los tutoriales están disponibles para la versión 1.x de Popochiu:
 
 [![tutoriales](https://github.com/carenalgas/popochiu/wiki/images/popochiu_tutorials_button-en.png "Tutorial en Video")](https://www.youtube.com/playlist?list=PLH0IOYEunrBDz6h4G3vujEmQUZs8vLjz8)
 
@@ -94,6 +94,7 @@ Puedes seguir los tutoriales (con subtítulos en inglés) [en esta lista](https:
 
 * [Gustavo the Shy Ghost](https://lexibobble.itch.io/gustavo-the-shy-ghost-project) - Inglés.
 * [Detective Paws](https://benjatk.itch.io/detective-paws) - Inglés.
+* [The Sunnyside Motel in Huttsville Arkansas](https://fgaha56.itch.io/the-sunnyside-motel-in-huttsville-arkansas) - Inglés.
 * [Zappin' da Mubis](https://carenalga.itch.io/zappin-da-mubis) - Inglés.
 * [Reality-On-The-Norm: Ghost of Reality's Past](https://edmundito.itch.io/ron-ghost) (contraseña: `popochiu`) - Inglés.
 * [Breakout (demo)](https://rockyrococo.itch.io/breakout-demo) - Inglés.
@@ -110,5 +111,5 @@ Ahora es mantenido por [Carenalga](https://carenalga.itch.io) y [StickGrinder](h
 
 :heart::heart::heart: Agradecimientos especiales a :heart::heart::heart:
 
-* [Edmundito](https://github.com/edmundito), [Whyschuck](https://github.com/Whyshchuck), y **Matthew** por su contribución mensual a nuestro [Ko-fi](https://ko-fi.com/carenalga)
+* [Edmundito](https://github.com/edmundito), [Whyschuck](https://github.com/Whyshchuck), y **Turquoise** por su contribución mensual a nuestro [Ko-fi](https://ko-fi.com/carenalga)
 * [Illiterate Code Games](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), [@JuannFerrari](https://github.com/JuannFerrari), [Whyschuck](https://github.com/Whyshchuck) por sus valiosas contribuciones

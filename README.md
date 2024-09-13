@@ -1,6 +1,6 @@
 # Popochiu
 
-[![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.2.1-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
+[![Godot v4.3](https://img.shields.io/badge/Godot-4.3-blue)](https://godotengine.org/download/archive/4.3-stable/) [![Godot v4.2.x](https://img.shields.io/badge/Godot-4.2.x-blue)](https://godotengine.org/download/archive/4.2.2-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
 ![Cover image](home_banner.png "Popochiu")
 
@@ -45,7 +45,7 @@ This tool consists of two parts: the engine (Popochiu) and the editor plugin tha
 * Visual creation of all the game elements, with custom gizmos for special properties
 * Dialog trees management
 * Audio management for background music and sound effects
-* Import Rooms and Character from Aseprite source files with full structure
+* Import Rooms and Character from [Aseprite](https://www.aseprite.org/) source files with full structure
 
 And much more to come. Popochiu is in active development and we have a well maintained releases roadmap.
 
@@ -66,8 +66,8 @@ Please review this table to know which version to download, depending on the ver
 1. Download the correct release for your Godot version.
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings` then select the `Plugins` tab on top.
-4. Restart Godot `Project > Reload Current Project`.
-5. You'll see the Popochiu dock in the right editor area. That's all!
+4. Popochiu will show you a popup indicating it will restart the engine.
+5. You'll see the Popochiu dock in the right-bottom editor area. That's all!
 
 ## Documentation
 
@@ -94,6 +94,7 @@ You can follow the tutorials (English subs) [in this list](https://www.youtube.c
 
 * [Gustavo the Shy Ghost](https://lexibobble.itch.io/gustavo-the-shy-ghost-project) - English.
 * [Detective Paws](https://benjatk.itch.io/detective-paws) - English.
+* [The Sunnyside Motel in Huttsville Arkansas](https://fgaha56.itch.io/the-sunnyside-motel-in-huttsville-arkansas) - English.
 * [Zappin' da Mubis](https://carenalga.itch.io/zappin-da-mubis) - English.
 * [Reality-On-The-Norm: Ghost of Reality's Past](https://edmundito.itch.io/ron-ghost) (password: `popochiu`) - English.
 * [Breakout (demo)](https://rockyrococo.itch.io/breakout-demo) - English.
@@ -110,5 +111,5 @@ It is now maintained by [Carenalga](https://carenalga.itch.io) and [StickGrinder
 
 :heart::heart::heart: Special thanks to :heart::heart::heart:
 
-* [Edmundito](https://github.com/edmundito), [Whyschuck](https://github.com/Whyshchuck), and **Matthew** for their monthly contribution to our [Ko-fi](https://ko-fi.com/carenalga)
+* [Edmundito](https://github.com/edmundito), [Whyschuck](https://github.com/Whyshchuck), and **Turquoise** for their monthly contribution to our [Ko-fi](https://ko-fi.com/carenalga)
 * [Illiterate Code Games](https://illiteratecodegames.itch.io)), [@vonagam](https://github.com/vonagam), [@JuannFerrari](https://github.com/JuannFerrari), [Whyschuck](https://github.com/Whyshchuck) for the many valuable contributions
