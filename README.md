@@ -4,7 +4,7 @@
 
 ![Cover image](home_banner.png "Popochiu")
 
-A Godot plugin to make point n' click games inspired by [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
+A Godot plugin to make point n' click games, inspired by [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest).
 
 > 🌎👉🏽 [Lee la versión en Español](./LEEME.md) 👈🏽🌎
 
