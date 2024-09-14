@@ -13,8 +13,8 @@ config_version=5
 config/name="popochiu 2.0"
 config/description="Make 2D point n' click games with a smooth workflow (like in Adventure Game Studio or PowerQuest)."
 config/features=PackedStringArray("4.3")
-config/icon="res://icon_v2.png"
-config/windows_native_icon="res://popochiu_v2.ico"
+config/icon="res://icon.svg"
+config/windows_native_icon="res://popochiu.ico"
 
 [autoload]
 
