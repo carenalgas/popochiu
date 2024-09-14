@@ -15,8 +15,17 @@ extends Node2D
 @export var has_player := true
 ## If [code]true[/code] the whole GUI will be hidden when the room is loaded. Useful for cutscenes,
 ## splash screens and when showing game menus or popups.
-@export var hide_gi := false
+@export var hide_gui := false
+@export_category("Room size")
+## Defines the room's width. If this exceeds from the project's viewport width, this value is used
+## to calculate the camera limits, ensuring it follows the player as they move within the room.
+@export var width: int = 0
+## Defines the room's height. If this exceeds from the project's viewport height, this value is used
+## to calculate the camera limits, ensuring it follows the player as they move within the room.
+@export var height: int = 0
+## @deprecated
 @export_category("Camera limits")
+## @deprecated
 ## If this different from [constant INF], the value will define the left limit of the camera
 ## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
 ## background (size) of the room is 448x180, the left limit of the camera should be -64 (this is the
@@ -24,6 +33,7 @@ extends Node2D
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_left := INF
+## @deprecated
 ## If this different from [constant INF], the value will define the right limit of the camera
 ## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
 ## background (size) of the room is 448x180, the right limit of the camera should be 384 (320 + 64
@@ -31,11 +41,13 @@ extends Node2D
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_right := INF
+## @deprecated
 ## If this different from [constant INF], the value will define the top limit of the camera
 ## relative to the native game resolution.
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_top := INF
+## @deprecated
 ## If this different from [constant INF], the value will define the bottom limit of the camera
 ## relative to the native game resolution.
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
@@ -68,6 +80,11 @@ func _enter_tree() -> void:
 		$Props.y_sort_enabled = false
 		$Characters.y_sort_enabled = false
 		
+		if width == 0:
+			width = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
+		if height == 0:
+			height = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
+		
 		return
 	else:
 		y_sort_enabled = true
@@ -86,10 +103,10 @@ func _ready():
 	set_physics_process(false)
 	
 	# Connect to singletons signals
-	G.blocked.connect(_on_graphic_interface_blocked)
-	G.unblocked.connect(_on_graphic_interface_unblocked)
+	G.blocked.connect(_on_gui_blocked)
+	G.unblocked.connect(_on_gui_unblocked)
 	
-	E.room_readied(self)
+	R.room_readied(self)
 
 
 func _get_property_list() -> Array[Dictionary]:
@@ -114,27 +131,30 @@ func _physics_process(delta):
 
 
 func _unhandled_input(event: InputEvent):
-	if not has_player: return
+	if (
+		not PopochiuUtils.get_click_or_touch_index(event) in [
+			MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT
+		]
+		or (not event is InputEventScreenTouch and E.hovered)
+	):
+		return
 	
+	# Fix #224 Item should be removed only if the click was done anywhere in the room when the
+	# cursor is not hovering another object
 	if I.active:
-		if event.is_action_released("popochiu-look")\
-		or event.is_action_pressed("popochiu-interact"):
-			# Wait so PopochiuClickable can handle the interaction
-			await get_tree().create_timer(0.1).timeout
-			
-			I.set_active_item()
+		# Wait so PopochiuClickable can handle the interaction
+		await get_tree().create_timer(0.1).timeout
+		
+		I.set_active_item()
 		return
 	
-	if PopochiuUtils.get_click_or_touch_index(event) != MOUSE_BUTTON_LEFT:
-		return
-	
-	if not event is InputEventScreenTouch and E.hovered:
-		return
-	
-	if is_instance_valid(C.player) and C.player.can_move:
+	if has_player and is_instance_valid(C.player) and C.player.can_move:
 		# Set this property to null in order to cancel any running interaction with a
 		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...))
 		E.clicked = null
+		
+		if C.player.is_moving:
+			C.player.move_ended.emit()
 		
 		C.player.walk(get_local_mouse_position())
 
@@ -229,14 +249,14 @@ func has_character(character_name: String) -> bool:
 
 ## Called by Popochiu when loading the room to assign its camera limits to the player camera.
 func setup_camera() -> void:
-	if limit_left != INF:
-		E.main_camera.limit_left = limit_left
-	if limit_right != INF:
-		E.main_camera.limit_right = limit_right
-	if limit_top != INF:
-		E.main_camera.limit_top = limit_top
-	if limit_bottom != INF:
-		E.main_camera.limit_bottom = limit_bottom
+	if width > 0 and width > E.width:
+		var h_diff: int = (E.width - width) / 2
+		E.camera.limit_left = h_diff
+		E.camera.limit_right = E.width - h_diff
+	if height > 0 and height > E.height:
+		var v_diff: int = (E.height - height) / 2
+		E.camera.limit_top = -v_diff
+		E.camera.limit_bottom = E.height - v_diff
 
 
 ## Remove all children from the [b]$Characters[/b] node, storing the children of each node to later
@@ -256,48 +276,10 @@ func clean_characters() -> void:
 		c.queue_free()
 
 
-## Updates the scale of [param chr] depending on the properties of the scaling region where it is
-## located.
-func update_character_scale(chr: PopochiuCharacter):
-	if chr.on_scaling_region:
-		var polygon_range = (
-			chr.on_scaling_region["polygon_bottom_y"] - chr.on_scaling_region["polygon_top_y"]
-			)
-		var scale_range = (
-			chr.on_scaling_region["scale_bottom"] - chr.on_scaling_region["scale_top"]
-			)
-
-		var position_from_the_top_of_region = (
-			chr.position.y-chr.on_scaling_region["polygon_top_y"]
-			)
-
-		var scale_for_position = (
-			chr.on_scaling_region["scale_top"]+(
-				scale_range/polygon_range*position_from_the_top_of_region
-		)
-		)
-		chr.scale.x = [
-			[scale_for_position, chr.on_scaling_region["scale_min"]].max(), 
-			chr.on_scaling_region["scale_max"]
-		].min()
-		chr.scale.y = [
-			[scale_for_position, chr.on_scaling_region["scale_min"]].max(), 
-			chr.on_scaling_region["scale_max"]
-		].min()
-		chr.walk_speed = chr.default_walk_speed/chr.default_scale.x*scale_for_position
-	else:
-		chr.scale = chr.default_scale
-		chr.walk_speed = chr.default_walk_speed
-
-
 ## Updates the position of [param character] in the room, and then updates its scale.
 func update_characters_position(character: PopochiuCharacter):
-	character.position = (
-		character.position_stored 
-		if character.position_stored 
-		else character.position
-		)
-	update_character_scale(character)
+	character.update_position()
+	character.update_scale()
 
 
 ## Returns the [Marker2D] which [member Node.name] matches [param marker_name].
@@ -428,11 +410,11 @@ func set_is_current(value: bool) -> void:
 #endregion
 
 #region Private ####################################################################################
-func _on_graphic_interface_blocked() -> void:
+func _on_gui_blocked() -> void:
 	set_process_unhandled_input(false)
 
 
-func _on_graphic_interface_unblocked() -> void:
+func _on_gui_unblocked() -> void:
 	set_process_unhandled_input(true)
 
 
@@ -457,7 +439,7 @@ func _move_along_path(distance: float, moving_character_data: Dictionary):
 				moving_character_data.character.position_stored = next_position
 			else:
 				moving_character_data.character.position = next_position
-				update_character_scale(moving_character_data.character)
+				moving_character_data.character.update_scale()
 			return
 
 		distance -= distance_between_points
@@ -465,7 +447,7 @@ func _move_along_path(distance: float, moving_character_data: Dictionary):
 		moving_character_data.path.remove_at(0)
 
 	moving_character_data.character.position = last_point
-	update_character_scale(moving_character_data.character)
+	moving_character_data.character.update_scale()
 	_clear_navigation_path(moving_character_data.character)
 
 
@@ -493,11 +475,11 @@ func _update_navigation_path(
 		
 		# TODO: Use NavigationAgent2D target_location and get_next_location() to
 		#		maybe improve characters movement with obstacles avoidance?
-#		NavigationServer2D.agent_set_map(character.agent.get_rid(), _nav_path.map_rid)
-#		character.agent.target_location = end_position
-#		_path = character.agent.get_nav_path()
-#		set_physics_process(true)
-#		return
+		#NavigationServer2D.agent_set_map(character.agent.get_rid(), _nav_path.map_rid)
+		#character.agent.target_location = end_position
+		#_path = character.agent.get_nav_path()
+		#set_physics_process(true)
+		#return
 	
 	if moving_character_data.path.is_empty():
 		return
@@ -508,8 +490,8 @@ func _update_navigation_path(
 
 
 func _clear_navigation_path(character: PopochiuCharacter) -> void:
-	# INFO: fixes "function signature missmatch in Web export" error thrown when
-	# clearing an empty Array.
+	# INFO: fixes "function signature missmatch in Web export" error thrown when clearing an empty
+	# Array
 	if not _moving_characters.has(character.get_instance_id()):
 		return
 	

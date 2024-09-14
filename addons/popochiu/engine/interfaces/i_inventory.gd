@@ -72,7 +72,7 @@ var items := []
 var items_states := {}
 # ------------------------------------------------------------ Used for saving/loading the game ----
 
-var _item_instances := []
+var _item_instances := {}
 
 
 #region Public #####################################################################################
@@ -82,12 +82,11 @@ func clean_inventory(in_bg := false) -> void:
 	items.clear()
 	
 	for instance in _item_instances:
-		var pii: PopochiuInventoryItem = instance
+		var pii: PopochiuInventoryItem = _item_instances[instance]
 		
 		if not pii.in_inventory: continue
 		if not in_bg: await pii.discard()
 		
-		item_discarded.emit(pii)
 		pii.remove(!in_bg)
 
 
@@ -127,21 +126,32 @@ func queue_hide_inventory(use_anim := true) -> Callable:
 ## This method is used by [b]res://game/autoloads/i.gd[/b] to load the instace of each item
 ## (present in that script as a variable for code autocompletion) in runtime.
 func get_item_instance(item_name: String) -> PopochiuInventoryItem:
-	for ii in _item_instances:
-		var ii_name: String = ii.script_name
-		if ii_name.to_lower() == item_name.to_lower():
-			return ii as PopochiuInventoryItem
+	var item: PopochiuInventoryItem = null
 	
-	# If the item is not in the list of items, then instantiate it based checked
-	# the list of items (Resource) in Popochiu
-	var new_intentory_item: PopochiuInventoryItem =\
-	E.get_inventory_item_instance(item_name)
+	if _item_instances.has(item_name):
+		item = _item_instances[item_name]
+	else:
+		# If the item is not in the list of items, then try to instantiate it
+		item = get_instance(item_name)
+		
+		if item:
+			_item_instances[item.script_name] = item
+			set(item.script_name, item)
 	
-	if new_intentory_item:
-		_item_instances.append(new_intentory_item)
-		return new_intentory_item
+	return item
+
+
+## Gets the instance of the [PopochiuInventoryItem] identified with [param script_name].
+func get_instance(script_name: String) -> PopochiuInventoryItem:
+	var tres_path: String = PopochiuResources.get_data_value("inventory_items", script_name, "")
 	
-	return null
+	if not tres_path:
+		PopochiuUtils.print_error(
+			"Inventory item [b]%s[/b] doesn't exist in the project" % script_name
+		)
+		return null
+	
+	return load(load(tres_path).scene).instantiate()
 
 
 ## Sets the cursor to use the texture of [param item].
@@ -164,9 +174,14 @@ func is_full() -> bool:
 	and E.settings.inventory_limit == items.size()
 
 
+## Deselects the [member active] item.
+func deselect_active() -> void:
+	active = null
+
+
 #endregion
 
-#region Private ####################################################################################
+#region SetGet #####################################################################################
 func set_active(value: PopochiuInventoryItem) -> void:
 	if is_instance_valid(active):
 		active.unselected.emit()

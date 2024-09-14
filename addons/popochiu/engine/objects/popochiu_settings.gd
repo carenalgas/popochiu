@@ -11,7 +11,7 @@ var skip_cutscene_time := 0.0
 var text_speeds := [0.1, 0.01, 0.0]
 ## @deprecated
 ## The index of the default text speed value in [member text_speeds].
-var default_text_speed_idx := 0
+var default_text_speed := 0
 ## The speed at which characters are displayed when a character speaks and the text is being
 ## animated
 var text_speed := 0.0
@@ -40,7 +40,7 @@ var inventory_always_visible := false
 var toolbar_always_visible := false
 ## The color the screen changes to it plays a transition (e.g. move between rooms, skip a cutscene).
 var fade_color: Color
-## Whether the GUI should scale to match the native game resolution. The default GUI has a 320x180
+## Whether the GUI should scale to match the native game resolution. The default GUI has a 356x200
 ## resolution.
 var scale_gui := false
 ## @deprecated
@@ -64,7 +64,7 @@ var is_pixel_perfect := false
 var dialog_style := 0
 ## Setting intended for development of the plugin. It makes the game to use the original files of
 ## the selected template to make testing changes on it easier. This is a workaround while we find
-## how to make the scenes moved to [code]res://game/graphic_interface[/code] inherit from the
+## how to make the scenes moved to [code]res://game/gui[/code] inherit from the
 ## source ones.
 var dev_use_addon_template := false
 

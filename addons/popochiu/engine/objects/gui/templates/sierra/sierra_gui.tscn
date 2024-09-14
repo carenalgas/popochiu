@@ -1,0 +1,178 @@
+[gd_scene load_steps=23 format=3 uid="uid://6ucg5xkcreh5"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_3jlpr"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/sierra/sierra_gui.gd" id="1_40nsv"]
+[ext_resource type="PackedScene" uid="uid://cv2o5p3gp1fgx" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_bar/sierra_bar.tscn" id="4_hjdb7"]
+[ext_resource type="PackedScene" uid="uid://bhx2hkpkjs7dk" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_menu/sierra_menu.tscn" id="5_ffq7i"]
+[ext_resource type="PackedScene" uid="uid://33wmak2jumqm" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_portrait/dialog_portrait.tscn" id="5_nehoj"]
+[ext_resource type="Texture2D" uid="uid://dwn416xagjwtd" path="res://addons/popochiu/engine/objects/gui/templates/sierra/images/sierra_cursor.png" id="13_udys2"]
+[ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu.tscn" id="14_3gq4k"]
+[ext_resource type="PackedScene" uid="uid://dc7crw22yevoo" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_inventory_popup/sierra_inventory_popup.tscn" id="15_2hyjp"]
+[ext_resource type="PackedScene" uid="uid://c24vj4s0u08jr" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_settings_popup/sierra_settings_popup.tscn" id="18_sv4ik"]
+[ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/gui/components/system_text/system_text.tscn" id="18_x7swu"]
+[ext_resource type="PackedScene" uid="uid://mh7ymcslp4xv" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sound_popup/sierra_sound_popup.tscn" id="19_3kc82"]
+[ext_resource type="PackedScene" uid="uid://de68lx1xqv7fb" path="res://addons/popochiu/engine/objects/gui/components/popups/text_settings_popup/text_settings_popup.tscn" id="20_anvsw"]
+[ext_resource type="PackedScene" uid="uid://cndputybyj57n" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup/save_and_load_popup.tscn" id="21_1xmwq"]
+[ext_resource type="PackedScene" uid="uid://bnjo044fkdcq7" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup/quit_popup.tscn" id="24_50bps"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vyqmk"]
+atlas = ExtResource("13_udys2")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xo8dr"]
+atlas = ExtResource("13_udys2")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yxgj0"]
+atlas = ExtResource("13_udys2")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p3f06"]
+atlas = ExtResource("13_udys2")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cvutg"]
+atlas = ExtResource("13_udys2")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hlutb"]
+atlas = ExtResource("13_udys2")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e0opo"]
+atlas = ExtResource("13_udys2")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_eo6w8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vyqmk")
+}],
+"loop": true,
+"name": &"gui",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xo8dr")
+}],
+"loop": true,
+"name": &"interact",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yxgj0")
+}],
+"loop": true,
+"name": &"look",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p3f06")
+}],
+"loop": true,
+"name": &"normal",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cvutg")
+}],
+"loop": true,
+"name": &"talk",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hlutb")
+}],
+"loop": true,
+"name": &"wait",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e0opo")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[node name="SierraGUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_3jlpr")
+script = ExtResource("1_40nsv")
+
+[node name="Cursor" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_eo6w8")
+animation = &"gui"
+offset = Vector2(16, 16)
+
+[node name="SierraBar" parent="." instance=ExtResource("4_hjdb7")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="SierraMenu" parent="." instance=ExtResource("5_ffq7i")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="DialogPortrait" parent="." instance=ExtResource("5_nehoj")]
+layout_mode = 1
+
+[node name="DialogMenu" parent="." instance=ExtResource("14_3gq4k")]
+visible = false
+layout_mode = 1
+
+[node name="SystemText" parent="." instance=ExtResource("18_x7swu")]
+z_index = 1
+layout_mode = 1
+
+[node name="Popups" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SierraInventoryPopup" parent="Popups" instance=ExtResource("15_2hyjp")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="SierraSettingsPopup" parent="Popups" instance=ExtResource("18_sv4ik")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="SierraSoundPopup" parent="Popups" instance=ExtResource("19_3kc82")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="TextSettingsPopup" parent="Popups" instance=ExtResource("20_anvsw")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="SaveAndLoadPopup" parent="Popups" instance=ExtResource("21_1xmwq")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+
+[node name="QuitPopup" parent="Popups" instance=ExtResource("24_50bps")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1

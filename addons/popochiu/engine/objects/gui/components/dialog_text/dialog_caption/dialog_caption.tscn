@@ -1,0 +1,58 @@
+[gd_scene load_steps=4 format=3 uid="uid://bpl3qjbxonfpb"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_caption/dialog_caption.gd" id="1_17s2p"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_xoamn"]
+[ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/images/ico_continue.png" id="3_etbl2"]
+
+[node name="DialogCaption" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_xoamn")
+script = ExtResource("1_17s2p")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+clip_contents = false
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = -20.0
+offset_right = -20.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+bbcode_enabled = true
+text = "[center]A [shake]caption[/shake] dialog text[/center]"
+fit_content = true
+scroll_active = false
+meta_underlined = false
+
+[node name="ContinueIcon" type="TextureProgressBar" parent="RichTextLabel"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -16.0
+offset_right = 16.0
+grow_horizontal = 0
+grow_vertical = 0
+value = 100.0
+fill_mode = 2
+texture_progress = ExtResource("3_etbl2")

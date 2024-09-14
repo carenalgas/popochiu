@@ -55,17 +55,10 @@ signal popup_requested(script_name: StringName)
 # NOTE: Maybe add some signals for clicking objects and items
 #signal clicked_clickable(clickable: PopochiuClickable)
 #signal clicked_inventory_item(inventory_item: PopochiuInventoryItem)
-## Emitted when [method show_history] is called in order to open the History popup.
-signal history_opened # TODO: deprecate this
-## Emitted to open the popup to save the game. You can specify the name of the saved game with
-## [param slot_text].
-signal save_requested(slot_text: String) # TODO: deprecate this
-## Emitted to open the popup to load the game.
-signal load_requested # TODO: deprecate this
-## Emitted to open the popup that allows to change the volume of the audio buses in the game.
-signal sound_settings_requested # TODO: deprecate this
 ## Emitted when the dialog options of the running [PopochiuDialog] are shown.
 signal dialog_options_shown
+## Emitted when a game is loaded and the GUI has shown (or not shown) a notification to the player.
+signal load_feedback_finished
 
 ## Whether the GUI is blocked or not.
 var is_blocked := false
@@ -94,10 +87,10 @@ func show_system_text(msg: String) -> void:
 	
 	if E.cutscene_skipped:
 		await get_tree().process_frame
+		
 		return
 	
 	system_text_shown.emit(E.get_text(msg))
-	
 	await system_text_hidden
 	
 	if not E.playing_queue and gui.popups_stack.is_empty():
@@ -158,28 +151,6 @@ func show_interface() -> void:
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_show_interface() -> Callable:
 	return func(): show_interface()
-
-
-## Emits [signal history_opened] to open the History popup.
-func show_history() -> void:
-	history_opened.emit()
-
-
-## Emits [signal save_requested] to open the Save popup. [param slot_text] will be used as the
-## name of the saved game.
-func show_save(slot_text := "") -> void:
-	save_requested.emit(slot_text)
-
-
-## Emits [signal load_requested] to open the Load popup.
-func show_load() -> void:
-	load_requested.emit()
-
-
-## Emits [signal sound_settings_requested] to open the popup that allows changing the volume of the
-## audio buses in the game.
-func show_sound_settings() -> void:
-	sound_settings_requested.emit()
 
 
 ## Returns the name of the cursor texture to show.

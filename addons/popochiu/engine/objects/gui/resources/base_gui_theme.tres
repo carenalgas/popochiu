@@ -1,0 +1,88 @@
+[gd_resource type="Theme" load_steps=20 format=3 uid="uid://dpequqav4rjaf"]
+
+[ext_resource type="Texture2D" uid="uid://pl1ch71kfj72" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_checked.png" id="2_ldprq"]
+[ext_resource type="Texture2D" uid="uid://dukr75slqli45" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_unchecked.png" id="3_3rprc"]
+[ext_resource type="Texture2D" uid="uid://cqxqfxobqltga" path="res://addons/popochiu/engine/objects/gui/resources/images/grabber.png" id="4_4x0ix"]
+[ext_resource type="Texture2D" uid="uid://d1ywqbehmtuv" path="res://addons/popochiu/engine/objects/gui/resources/images/down_arrow.png" id="5_jwcnu"]
+[ext_resource type="FontFile" uid="uid://dm6h44ck2nm2b" path="res://addons/popochiu/engine/objects/gui/fonts/minecraftia-regular.ttf" id="6_gx6k1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jar7r"]
+content_margin_left = 2.0
+content_margin_top = 0.0
+content_margin_right = 2.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.705882)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_jts3x"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d2wsf"]
+content_margin_left = 2.0
+content_margin_top = 0.0
+content_margin_right = 2.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.705882)
+
+[sub_resource type="StyleBoxFlat" id="7"]
+content_margin_left = 2.0
+content_margin_top = 0.0
+content_margin_right = 2.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.705882)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3mrlf"]
+content_margin_left = 2.0
+content_margin_top = 0.0
+content_margin_right = 2.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.705882)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_aa7jm"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_tv3kj"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0prrl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3tq14"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l3jvo"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pr0tq"]
+bg_color = Color(0.698039, 0.698039, 0.698039, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mp7ca"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_1vxxo"]
+thickness = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8gde"]
+bg_color = Color(0, 0, 0, 0.705882)
+
+[resource]
+default_font = ExtResource("6_gx6k1")
+default_font_size = 8
+Button/colors/font_color = Color(1, 1, 1, 1)
+Button/colors/font_disabled_color = Color(0.482353, 0.482353, 0.482353, 1)
+Button/colors/font_focus_color = Color(0.305882, 0.305882, 0.862745, 1)
+Button/colors/font_hover_color = Color(0.952941, 0.952941, 0.0627451, 1)
+Button/colors/font_hover_pressed_color = Color(0.901961, 0.337255, 0.901961, 1)
+Button/colors/font_pressed_color = Color(0.305882, 0.952941, 0.952941, 1)
+Button/styles/disabled = SubResource("StyleBoxFlat_jar7r")
+Button/styles/focus = SubResource("StyleBoxEmpty_jts3x")
+Button/styles/hover = SubResource("StyleBoxFlat_d2wsf")
+Button/styles/normal = SubResource("7")
+Button/styles/pressed = SubResource("StyleBoxFlat_3mrlf")
+CheckButton/icons/checked = ExtResource("2_ldprq")
+CheckButton/icons/unchecked = ExtResource("3_3rprc")
+CheckButton/styles/disabled = SubResource("StyleBoxEmpty_aa7jm")
+CheckButton/styles/hover = SubResource("StyleBoxEmpty_tv3kj")
+CheckButton/styles/hover_pressed = SubResource("StyleBoxEmpty_0prrl")
+CheckButton/styles/normal = SubResource("StyleBoxEmpty_3tq14")
+CheckButton/styles/pressed = SubResource("StyleBoxEmpty_l3jvo")
+HSlider/icons/grabber = ExtResource("4_4x0ix")
+HSlider/icons/grabber_highlight = ExtResource("4_4x0ix")
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_pr0tq")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_mp7ca")
+HSlider/styles/slider = SubResource("StyleBoxLine_1vxxo")
+OptionButton/icons/arrow = ExtResource("5_jwcnu")
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_d8gde")

@@ -1,23 +1,30 @@
 @tool
-extends AcceptDialog
+extends Control
 
-signal gui_selected(gui_name: String, on_complete: Callable)
 signal template_copy_completed
+signal size_calculated
 
-const SCALE_MESSAGE :=\
-"[center]▶ Base size = 320x180 | [b]scale = ( %.2f, %.2f )[/b] ◀[/center]\n" +\
-"By default the GUI will scale to match your game size. " +\
-"You can change this in [img]%s[/img] [b]Settings[/b] with the" +\
-" [code]Scale Gui[/code] checkbox."
-const COPY_ALPHA := .1
-const GUITemplateButton := preload(
+enum GameTypes {
+	CUSTOM,
+	HD,
+	RETRO_PIXEL,
+}
+
+const SCALE_MESSAGE =\
+"[center]▶ Base size = 356x200 | [b]scale = ( %.2f, %.2f )[/b] ◀[/center]\n\
+By default the GUI will match your native game resolution. You can change this with the\
+ [code]Project Settings > Popochiu > GUI > Experimental Scale Gui[/code] checkbox."
+const COPY_ALPHA = 0.1
+const GUITemplateButton = preload(
 	"res://addons/popochiu/editor/popups/setup/gui_template_button.gd"
 )
-
-var es: EditorSettings = null
+const PopochiuGuiTemplatesHelper = preload(
+	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
+)
 
 var _selected_template: GUITemplateButton
 var _is_closing := false
+var _es := EditorInterface.get_editor_settings()
 
 @onready var welcome: RichTextLabel = %Welcome
 @onready var game_width: SpinBox = %GameWidth
@@ -26,8 +33,8 @@ var _is_closing := false
 @onready var test_width: SpinBox = %TestWidth
 @onready var test_height: SpinBox = %TestHeight
 @onready var game_type: OptionButton = %GameType
-# GUI templates section
-@onready var gui_templates: GridContainer = %GUITemplates
+# ---- GUI templates section -----------------------------------------------------------------------
+@onready var gui_templates: HBoxContainer = %GUITemplates
 @onready var gui_templates_title: Label = %GUITemplatesTitle
 @onready var gui_templates_description: Label = %GUITemplatesDescription
 @onready var template_description_container: PanelContainer = %TemplateDescriptionContainer
@@ -41,11 +48,6 @@ var _is_closing := false
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	# Connect to own signals
-	confirmed.connect(_on_close)
-	close_requested.connect(_on_close)
-	about_to_popup.connect(_on_about_to_popup)
-	
 	# Connect to child signals
 	game_width.value_changed.connect(_update_scale)
 	game_height.value_changed.connect(_update_scale)
@@ -54,107 +56,12 @@ func _ready() -> void:
 	# Set default state
 	template_description_container.hide()
 	template_description.text = ""
-	
-	hide()
 
 
 #endregion
 
 #region Public #####################################################################################
-func appear(show_welcome := false) -> void:
-	_is_closing = false
-	_selected_template = null
-	btn_change_template.hide()
-	copy_process_container.hide()
-	
-	scale_message.modulate = Color(
-		"#000" if es.get_setting("interface/theme/preset").find("Light3D") > -1 else "#fff"
-	)
-	scale_message.modulate.a = 0.8
-	
-	copy_process_panel.add_theme_stylebox_override(
-		"panel", get_theme_stylebox("panel", "PopupPanel")
-	)
-
-	if not show_welcome:
-		welcome.text =\
-		"[center][shake][b]POPOCHIU \\( u )3(u)/[/b][/shake][/center]"
-		btn_change_template.disabled = true
-		btn_change_template.show()
-	
-	# ---- Set initial values for fields ---------------------------------------
-	game_width.value = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
-	game_height.value = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
-	test_width.value = ProjectSettings.get_setting(PopochiuResources.TEST_WIDTH)
-	test_height.value = ProjectSettings.get_setting(PopochiuResources.TEST_HEIGHT)
-	scale_message.text = _get_scale_message()
-	
-	game_type.selected = 0
-	
-	if ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE) == "canvas_items":
-		match ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT):
-			"expand":
-				game_type.selected = 1
-			"keep":
-				game_type.selected = 2
-	
-	# Load the list of templates
-	await _load_templates()
-	
-	_select_config_template()
-	
-	if show_welcome:
-		# Make Pixel the default game type checked during first run
-		game_type.selected = 2
-	
-	popup_centered(min_size)
-	
-	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
-		_show_gui_warning()
-		
-		for btn: Button in gui_templates.get_children():
-			btn.disabled = true
-		
-		template_description_container.hide()
-	
-	await get_tree().process_frame
-	reset_size()
-	
-	await get_tree().process_frame
-	move_to_center()
-
-
-#endregion
-
-#region Private ####################################################################################
-func _on_close() -> void:
-	if _is_closing:
-		return
-	
-	_is_closing = true
-	
-	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, int(game_width.value))
-	ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, int(game_height.value))
-	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, int(test_width.value))
-	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, int(test_height.value))
-	
-	match game_type.selected:
-		1:
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
-			
-			PopochiuConfig.set_pixel_art_textures(false)
-		2:
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
-			
-			PopochiuConfig.set_pixel_art_textures(true)
-	
-	if PopochiuResources.get_data_value("setup", "done", false) == false:
-		_copy_template(true)
-
-
-func _on_about_to_popup() -> void:
+func on_about_to_popup() -> void:
 	welcome.add_theme_font_override("bold_font", get_theme_font("bold", "EditorFonts"))
 	scale_message.add_theme_font_override("normal_font", get_theme_font("main", "EditorFonts"))
 	scale_message.add_theme_font_override("bold_font", get_theme_font("bold", "EditorFonts"))
@@ -166,19 +73,102 @@ func _on_about_to_popup() -> void:
 	template_description.add_theme_font_override("bold_font", get_theme_font("bold", "EditorFonts"))
 
 
+func on_close() -> void:
+	if _is_closing:
+		return
+	
+	_is_closing = true
+	
+	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, int(game_width.value))
+	ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, int(game_height.value))
+	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, int(test_width.value))
+	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, int(test_height.value))
+	
+	match game_type.selected:
+		GameTypes.HD:
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
+			
+			PopochiuConfig.set_pixel_art_textures(false)
+		GameTypes.RETRO_PIXEL:
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
+			
+			PopochiuConfig.set_pixel_art_textures(true)
+	
+	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
+		PopochiuResources.set_data_value("setup", "done", true)
+		await _copy_template(true)
+	
+	get_parent().queue_free()
+
+
+func define_content(show_welcome := false) -> void:
+	_is_closing = false
+	_selected_template = null
+	btn_change_template.hide()
+	copy_process_container.hide()
+	
+	scale_message.modulate = Color(
+		"#000" if "Light3D" in _es.get_setting("interface/theme/preset") else "#fff"
+	)
+	scale_message.modulate.a = 0.8
+	
+	copy_process_panel.add_theme_stylebox_override(
+		"panel", get_theme_stylebox("panel", "PopupPanel")
+	)
+
+	if not show_welcome:
+		welcome.text = "[center][b]POPOCHIU [shake]\\( u )3(u)/[/shake][/b][/center]"
+		btn_change_template.disabled = true
+		btn_change_template.show()
+	
+	# ---- Set initial values for fields ---------------------------------------
+	game_width.value = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
+	game_height.value = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
+	test_width.value = ProjectSettings.get_setting(PopochiuResources.TEST_WIDTH)
+	test_height.value = ProjectSettings.get_setting(PopochiuResources.TEST_HEIGHT)
+	scale_message.text = _get_scale_message()
+	
+	game_type.selected = GameTypes.CUSTOM
+	
+	if ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE) == "canvas_items":
+		match ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT):
+			"expand":
+				game_type.selected = GameTypes.HD
+			"keep":
+				game_type.selected = GameTypes.RETRO_PIXEL
+	
+	# Load the list of templates
+	await _load_templates()
+	
+	_select_config_template()
+	
+	if show_welcome:
+		# Make Pixel the default game type checked during first run
+		game_type.selected = GameTypes.RETRO_PIXEL
+	
+	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
+		_show_gui_warning()
+		
+		for btn: Button in gui_templates.get_children():
+			btn.disabled = true
+		
+		template_description_container.hide()
+	
+	_update_size()
+
+
+#endregion
+
+#region Private ####################################################################################
 func _update_scale(_value: float) -> void:
 	scale_message.text = _get_scale_message()
 
 
 func _get_scale_message() -> String:
-	var scale :=\
-	Vector2(game_width.value, game_height.value) / Vector2(320.0, 180.0)
-	return SCALE_MESSAGE % [
-		scale.x, scale.y,
-		"res://addons/popochiu/editor/popups/setup/godot_tools_%s.png" %\
-		("light" if es.get_setting("interface/theme/preset").find("Light") > -1\
-		else "dark"),
-	]
+	var scale := Vector2(game_width.value, game_height.value) / PopochiuResources.RETRO_RESOLUTION
+	return SCALE_MESSAGE % [scale.x, scale.y]
 
 
 func _on_gui_template_selected(button: GUITemplateButton) -> void:
@@ -197,6 +187,8 @@ func _on_gui_template_selected(button: GUITemplateButton) -> void:
 		btn_change_template.disabled = (
 			_selected_template.name == PopochiuResources.get_data_value("ui", "template", "")
 		)
+	
+	_update_size()
 
 
 func _select_config_template() -> void:
@@ -214,13 +206,7 @@ func _select_config_template() -> void:
 			_on_gui_template_selected(btn)
 	
 	if not _selected_template:
-		_on_gui_template_selected(gui_templates.get_child(0))
-
-
-func _update_imports() -> void:
-	# TODO: Browse file system for .import files for images and update them to
-	# match the current Game type selection
-	pass
+		_on_gui_template_selected(gui_templates.get_child(3))
 
 
 func _show_gui_warning() -> void:
@@ -228,8 +214,8 @@ func _show_gui_warning() -> void:
 	_setup_inner_dialog(
 		warning_dialog,
 		"GUI template warning",
-		"The GUI scene (graphic_interface) is currently opened in the Editor.\n\nIn order to change\
- the GUI template please close that scene first."
+		"The GUI scene (gui.tscn) is currently opened in the Editor.\n\n" +\
+		"In order to change the GUI template please close that scene first."
 	)
 	
 	add_child(warning_dialog)
@@ -242,7 +228,7 @@ func _show_template_change_confirmation() -> void:
 		confirmation_dialog,
 		"Confirm GUI template change",
 		"You changed the GUI template, making this will override any changes you made to the files\
- in res://game/graphic_interface/.\n\nAre you sure you want to make the change?"
+ in res://game/gui/.\n\nAre you sure you want to make the change?"
 	)
 	
 	confirmation_dialog.confirmed.connect(
@@ -264,10 +250,10 @@ func _setup_inner_dialog(dialog: Window, ttl: String, txt: String) -> void:
 
 func _load_templates() -> void:
 	for idx in range(1, gui_templates.get_child_count()):
-		gui_templates.get_child(idx).queue_free()
+		gui_templates.get_child(idx).free()
 	
 	# This is better than awating for SceneTree.process_frame
-	await RenderingServer.frame_post_draw
+	await get_tree().process_frame
 	
 	for dir_name: String in DirAccess.get_directories_at(PopochiuResources.GUI_TEMPLATES_FOLDER):
 		var template_info: PopochiuGUIInfo = load(PopochiuResources.GUI_TEMPLATES_FOLDER.path_join(
@@ -287,27 +273,28 @@ func _load_templates() -> void:
 		button.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
 		button.expand_icon = true
 		button.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		
 		gui_templates.add_child(button)
 
 
 func _copy_template(is_first_copy := false) -> void:
-	get_ok_button().disabled = true
+	get_parent().get_ok_button().disabled = true
 	
 	$PanelContainer/VBoxContainer.modulate.a = COPY_ALPHA
 	copy_process_label.text = ""
 	copy_process_bar.value = 0
 	
-	gui_selected.emit(_selected_template.name, _template_copy_progressed, _template_copy_completed)
+	PopochiuGuiTemplatesHelper.copy_gui_template(
+		_selected_template.name, _template_copy_progressed, _template_copy_completed
+	)
 	
 	copy_process_container.show()
 	
 	# if true, make the popup visible so devs can see the copy process feedback
 	if is_first_copy:
-		show()
+		get_parent().visible = true
 		await template_copy_completed
-		
-		hide()
 
 
 func _template_copy_progressed(value: int, message: String) -> void:
@@ -316,12 +303,20 @@ func _template_copy_progressed(value: int, message: String) -> void:
 
 
 func _template_copy_completed() -> void:
-	get_ok_button().disabled = false
+	get_parent().get_ok_button().disabled = false
 	btn_change_template.disabled = true
 	$PanelContainer/VBoxContainer.modulate.a = 1
 	
 	copy_process_container.hide()
 	template_copy_completed.emit()
+
+
+func _update_size() -> void:
+	# Wait for the popup content to be rendered in order to get its size
+	await get_tree().create_timer(0.05).timeout
+	
+	custom_minimum_size = get_child(0).size
+	size_calculated.emit()
 
 
 #endregion

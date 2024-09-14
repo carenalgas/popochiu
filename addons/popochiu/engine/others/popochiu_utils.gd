@@ -6,8 +6,8 @@ extends Node
 #region Public #####################################################################################
 ## Used by the GUI to get the position of [param node] in the scene transformed to the space of the
 ## [CanvasLayer] where it is is rendered.
-static func get_screen_coords_for(node: Node) -> Vector2:
-	return node.get_viewport().canvas_transform * node.get_global_position()
+static func get_screen_coords_for(node: Node, offset: Vector2 = Vector2.ZERO) -> Vector2:
+	return node.get_viewport().canvas_transform * (node.get_global_position() + offset)
 
 
 ## Gets a random index from [param array].
@@ -48,13 +48,17 @@ static func print_normal(msg: String) -> void:
 
 ## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
 static func is_click_or_touch(event: InputEvent) -> bool:
-	if (
-		(event is InputEventMouseButton and not event.double_click)
-		or (event is InputEventScreenTouch and not event.double_tap)
-	):
-		return (event is InputEventMouseButton or event is InputEventScreenTouch)
+	return (event is InputEventMouseButton or event is InputEventScreenTouch)
 
-	return false
+
+## Checks if [param event] is an [InputEventMouseButton] with [member InputEventMouseButton.double_click]
+## as [code]true[/code], or an [InputEventScreenTouch] with [member InputEventScreenTouch.double_tap].
+## as [code]true[/code].
+static func is_double_click_or_double_tap(event: InputEvent) -> bool:
+	return (
+		(event is InputEventMouseButton and event.double_click)
+		or (event is InputEventScreenTouch and not event.double_tap)
+	)
 
 
 ## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event and if
@@ -78,6 +82,20 @@ static func get_click_or_touch_index(event: InputEvent) -> int:
 			index = event.index
 	
 	return index
+
+
+## For each element in [param array] calls [param callback] passing the element as a parameter. If
+## any of the calls returns [code]true[/code], then this function returns [code]true[/code],
+## otherwise [code]false[/code] is returned.[br][br]
+## This is an alternate version for [method Array.any] that doesn't stops execution even when one
+## of the results is [code]true[/code].
+static func any_exhaustive(array: Array, callback: Callable) -> bool:
+	var any_updated := false
+	for element in array:
+		var updated: bool = callback.call(element)
+		if updated:
+			any_updated = true
+	return any_updated
 
 
 #endregion

@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://esorelppu4hw"]
+
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_s7kd8"]
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/hover_text/hover_text.gd" id="2_r2ckj"]
+
+[node name="HoverText" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_s7kd8")
+script = ExtResource("2_r2ckj")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 12.0
+grow_horizontal = 2
+mouse_filter = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+bbcode_enabled = true
+text = "[center]text for hovered objects[/center]"
+fit_content = true
+scroll_active = false

@@ -2,11 +2,17 @@
 weight: 0
 ---
 
-![Popochiu itch.io](./assets/images/_other/home_cover.png)
+![Popochiu - An adventure games plugin for Godot](./assets/images/_other/theme/home_banner.svg)
 
-**Popochiu is a Godot addon that allows you to create point-and-click adventure games.**
+---
 
-It's inspired by [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest) Unity plugin.
+**Popochiu is the most developer-friendly addon for the creation of point-and-click adventure games in Godot.**
+
+Inspired by [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest) Unity plugin, it brings a bunch of innovations to the table.
+
+**Popochiu's mission is to be the more developer-oriented and productive tool for the creation of point-and-click adventure games on free and open-Source technologies.**
+
+---
 
 ## Features
 

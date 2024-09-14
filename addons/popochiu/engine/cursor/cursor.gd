@@ -31,8 +31,6 @@ func _ready():
 	
 	# Connect to autoload signals
 	E.ready.connect(show_cursor)
-	G.blocked.connect(_on_gui_blocked)
-	G.unblocked.connect(_on_gui_unblocked)
 
 
 func _process(delta):
@@ -160,19 +158,6 @@ func get_cursor_height() -> int:
 		height = secondary_cursor.texture.get_height()
 	
 	return height
-
-
-#endregion
-
-#region Private ####################################################################################
-func _on_gui_blocked() -> void:
-	show_cursor("wait")
-	is_blocked = true
-
-
-func _on_gui_unblocked() -> void:
-	is_blocked = false
-	show_cursor(G.get_cursor_name())
 
 
 #endregion

@@ -1,0 +1,106 @@
+[gd_scene load_steps=6 format=3 uid="uid://33wmak2jumqm"]
+
+[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_portrait/dialog_portrait.gd" id="1_ejue5"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_x1xka"]
+[ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/images/ico_continue.png" id="4_lqu2o"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8fbbc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mjjs7"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0.705882)
+
+[node name="DialogPortrait" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_x1xka")
+script = ExtResource("1_ejue5")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -48.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_8fbbc")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 2
+
+[node name="LeftAvatarContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LeftAvatar" type="TextureRect" parent="PanelContainer/HBoxContainer/LeftAvatarContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+stretch_mode = 3
+
+[node name="TextContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_mjjs7")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/HBoxContainer/TextContainer"]
+unique_name_in_owner = true
+clip_contents = false
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+bbcode_enabled = true
+text = "A [shake]portrait[/shake] dialog text."
+scroll_active = false
+meta_underlined = false
+
+[node name="ContinueIcon" type="TextureProgressBar" parent="PanelContainer/HBoxContainer/TextContainer/RichTextLabel"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_top = -16.0
+grow_horizontal = 0
+grow_vertical = 0
+mouse_filter = 2
+value = 100.0
+fill_mode = 2
+texture_progress = ExtResource("4_lqu2o")
+
+[node name="RightAvatarContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+
+[node name="RightAvatar" type="TextureRect" parent="PanelContainer/HBoxContainer/RightAvatarContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+stretch_mode = 3

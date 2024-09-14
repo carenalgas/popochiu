@@ -49,8 +49,6 @@ func _ready() -> void:
 	for c in get_children():
 		if c.get('position') is Vector2:
 			c.position.y -= baseline * c.scale.y
-		elif c.get('position') is Vector2:
-			c.position.y -= baseline * c.scale.y
 
 	walk_to_point.y -= baseline * scale.y
 	position.y += baseline * scale.y
@@ -103,21 +101,28 @@ func change_frame(new_frame: int) -> void:
 #region SetGet #####################################################################################
 func set_texture(value: Texture2D) -> void:
 	texture = value
+	if not has_node("Sprite2D"): return
+	
 	$Sprite2D.texture = value
 
 
 func set_frames(value: int) -> void:
 	frames = value
+	if not has_node("Sprite2D"): return
+	
 	$Sprite2D.hframes = value
 
 
 func set_v_frames(value: int) -> void:
 	v_frames = value
+	if not has_node("Sprite2D"): return
+	
 	$Sprite2D.vframes = value
 
 
 func set_current_frame(value: int) -> void:
 	current_frame = value
+	if not has_node("Sprite2D"): return
 	
 	if current_frame >= $Sprite2D.hframes:
 		current_frame = $Sprite2D.hframes - 1

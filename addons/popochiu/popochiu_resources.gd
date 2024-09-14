@@ -1,5 +1,5 @@
-extends Node
 class_name PopochiuResources
+extends Node
 
 enum Types {
 	ROOM,
@@ -27,98 +27,99 @@ enum CursorType {
 	USE,
 	WAIT,
 }
+enum AudioTypes {
+	NONE = -1,
+	MUSIC,
+	SOUND_EFFECT,
+	VOICE,
+	UI
+}
 
 # PLUGIN -------------------------------------------------------------------------------------------
-const BASE_DIR := "res://game"
-const MAIN_DOCK_PATH := "res://addons/popochiu/editor/main_dock/popochiu_dock.tscn"
-const MAIN_TYPES := [
+const MAIN_DOCK_PATH = "res://addons/popochiu/editor/main_dock/popochiu_dock.tscn"
+const MAIN_TYPES = [
 	Types.ROOM, Types.CHARACTER, Types.INVENTORY_ITEM, Types.DIALOG
 ]
-const ROOM_TYPES := [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
-const DOCUMENTATION := "https://carenalgas.github.io/popochiu/"
-const CFG := "res://addons/popochiu/plugin.cfg"
-const GUI_SCRIPT_TEMPLATES_FOLDER := "res://addons/popochiu/engine/templates/graphic_interface/"
-const GUI_TEMPLATES_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/templates/"
+const ROOM_TYPES = [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
+const DOCUMENTATION = "https://carenalgas.github.io/popochiu/"
+const CFG = "res://addons/popochiu/plugin.cfg"
+const GUI_ADDON_FOLDER = "res://addons/popochiu/engine/objects/gui/"
+const GUI_TEMPLATES_FOLDER = GUI_ADDON_FOLDER + "templates/"
+const GUI_SCRIPT_TEMPLATES_FOLDER = "res://addons/popochiu/engine/templates/gui/"
+const RETRO_RESOLUTION = Vector2(356.0, 200.0)
 # SINGLETONS ---------------------------------------------------------------------------------------
-const GLOBALS_SNGL := "res://game/popochiu_globals.gd"
-const UTILS_SNGL := "res://addons/popochiu/engine/others/popochiu_utils.gd"
-const CURSOR_SNGL := "res://addons/popochiu/engine/cursor/cursor.tscn"
-const POPOCHIU_SNGL := "res://addons/popochiu/engine/popochiu.tscn"
-const IROOM := "res://addons/popochiu/engine/interfaces/i_room.gd"
-const ICHARACTER := "res://addons/popochiu/engine/interfaces/i_character.gd"
-const IINVENTORY := "res://addons/popochiu/engine/interfaces/i_inventory.gd"
-const IDIALOG := "res://addons/popochiu/engine/interfaces/i_dialog.gd"
-const IGRAPHIC_INTERFACE_SNGL := "res://addons/popochiu/engine/interfaces/i_graphic_interface.gd"
-const IAUDIO := "res://addons/popochiu/engine/interfaces/i_audio.gd"
-const R_SNGL := "res://game/autoloads/r.gd"
-const C_SNGL := "res://game/autoloads/c.gd"
-const I_SNGL := "res://game/autoloads/i.gd"
-const D_SNGL := "res://game/autoloads/d.gd"
-const A_SNGL := "res://game/autoloads/a.gd"
-const G_SNGL := "res://game/autoloads/g.gd"
+const GLOBALS_SNGL = "res://game/popochiu_globals.gd"
+const UTILS_SNGL = "res://addons/popochiu/engine/others/popochiu_utils.gd"
+const CURSOR_SNGL = "res://addons/popochiu/engine/cursor/cursor.tscn"
+const POPOCHIU_SNGL = "res://addons/popochiu/engine/popochiu.tscn"
+const IROOM = "res://addons/popochiu/engine/interfaces/i_room.gd"
+const ICHARACTER = "res://addons/popochiu/engine/interfaces/i_character.gd"
+const IINVENTORY = "res://addons/popochiu/engine/interfaces/i_inventory.gd"
+const IDIALOG = "res://addons/popochiu/engine/interfaces/i_dialog.gd"
+const IGRAPHIC_INTERFACE_SNGL = "res://addons/popochiu/engine/interfaces/i_graphic_interface.gd"
+const IAUDIO = "res://addons/popochiu/engine/interfaces/i_audio.gd"
+const R_SNGL = "res://game/autoloads/r.gd"
+const C_SNGL = "res://game/autoloads/c.gd"
+const I_SNGL = "res://game/autoloads/i.gd"
+const D_SNGL = "res://game/autoloads/d.gd"
+const A_SNGL = "res://game/autoloads/a.gd"
+const G_SNGL = "res://game/autoloads/g.gd"
 # FIRST INSTALL ------------------------------------------------------------------------------------
-const GI := 0
-const TL := 1
-const GUI_ADDON_FOLDER := "res://addons/popochiu/engine/objects/graphic_interface/"
-const GUI_GAME_FOLDER := BASE_DIR + "/graphic_interface/"
-const GUI_GAME_SCENE := GUI_GAME_FOLDER + "graphic_interface.tscn"
-const GUI_COMMANDS := GUI_GAME_FOLDER + "commands.gd"
-const TRANSITION_LAYER_ADDON :=\
+const GI = 0
+const TL = 1
+const TRANSITION_LAYER_ADDON =\
 "res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn"
-const TRANSITION_LAYER_POPOCHIU :=\
-BASE_DIR + "/transition_layer/transition_layer.tscn"
 # ENGINE -------------------------------------------------------------------------------------------
-const POPOCHIU_SCENE := "res://addons/popochiu/engine/popochiu.tscn"
-const AUDIO_MANAGER :=\
+const POPOCHIU_SCENE = "res://addons/popochiu/engine/popochiu.tscn"
+const AUDIO_MANAGER =\
 "res://addons/popochiu/engine/audio_manager/audio_manager.tscn"
-const CURSOR_TYPE :=\
+const CURSOR_TYPE =\
 preload("res://addons/popochiu/engine/cursor/cursor.gd").Type
-const DATA := "res://game//popochiu_data.cfg"
-const ROOM_CHILDS := ["props", "hotspots", "walkable_areas", "regions"]
-const VALID_TYPES := [
+const DATA = "res://game//popochiu_data.cfg"
+const ROOM_CHILDREN = ["props", "hotspots", "walkable_areas", "regions"]
+const VALID_TYPES = [
 	TYPE_BOOL, TYPE_INT, TYPE_FLOAT, TYPE_STRING,
 	TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY,
 	TYPE_PACKED_INT32_ARRAY, TYPE_PACKED_INT64_ARRAY,
 	TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY
 ]
-const PROPS_IGNORE := [
+const PROPS_IGNORE = [
 	"description",
 	"baseline",
 	"clickable",
 	"cursor",
 	"always_on_top",
 	"frames",
+	"v_frames",
 	"link_to_item",
 	"_description_code",
-	"editing_polygon",
 	"last_click_button",
 	"_double_click_delay",
 	"_has_double_click",
 ]
-const HOTSPOTS_IGNORE := [
+const HOTSPOTS_IGNORE = [
 	"description",
 	"baseline",
 	"clickable",
 	"cursor",
 	"always_on_top",
 	"_description_code",
-	"editing_polygon",
 	"last_click_button",
 	"_double_click_delay",
 	"_has_double_click",
 ]
-const WALKABLE_AREAS_IGNORE := [
+const WALKABLE_AREAS_IGNORE = [
 	"description",
 	"tint"
 ]
-const REGIONS_IGNORE := [
+const REGIONS_IGNORE = [
 	"description",
 	"tint",
 	"scaling",
 	"scale_top",
 	"scale_bottom"
 ]
-const SNGL_TEMPLATE := "@tool\n" +\
+const SNGL_TEMPLATE = "@tool\n" +\
 "extends \"%s\"\n\n" +\
 "# classes ----\n" +\
 "# ---- classes\n" +\
@@ -129,14 +130,14 @@ const SNGL_TEMPLATE := "@tool\n" +\
 "# functions ----\n" +\
 "# ---- functions\n" +\
 "\n"
-const SNGL_SETUP := {
+const SNGL_SETUP = {
 	R_SNGL : {
 		interface = IROOM,
 		section = "rooms",
 		"class" = "res://game/rooms/%s/room_%s.gd",
 		"const" = "const PR%s := preload(\"%s\")\n",
 		node = "var %s: PR%s : get = get_%s\n",
-		"func" = "func get_%s() -> PR%s: return super.get_runtime_room(\"%s\")\n",
+		"func" = "func get_%s() -> PR%s: return get_runtime_room(\"%s\")\n",
 		prefix = "R",
 	},
 	C_SNGL : {
@@ -145,7 +146,7 @@ const SNGL_SETUP := {
 		"class" = "res://game/characters/%s/character_%s.gd",
 		"const" = "const PC%s := preload(\"%s\")\n",
 		node = "var %s: PC%s : get = get_%s\n",
-		"func" = "func get_%s() -> PC%s: return super.get_runtime_character(\"%s\")\n",
+		"func" = "func get_%s() -> PC%s: return get_runtime_character(\"%s\")\n",
 		prefix = "C",
 	},
 	I_SNGL : {
@@ -154,7 +155,7 @@ const SNGL_SETUP := {
 		"class" = "res://game/inventory_items/%s/inventory_item_%s.gd",
 		"const" = "const PII%s := preload(\"%s\")\n",
 		node = "var %s: PII%s : get = get_%s\n",
-		"func" = "func get_%s() -> PII%s: return super.get_item_instance(\"%s\")\n",
+		"func" = "func get_%s() -> PII%s: return get_item_instance(\"%s\")\n",
 		prefix = "I",
 	},
 	D_SNGL : {
@@ -163,40 +164,49 @@ const SNGL_SETUP := {
 		"class" = "res://game/dialogs/%s/dialog_%s.gd",
 		"const" = "const PD%s := preload(\"%s\")\n",
 		node = "var %s: PD%s : get = get_%s\n",
-		"func" = "func get_%s() -> PD%s: return E.get_dialog(\"%s\")\n",
+		"func" = "func get_%s() -> PD%s: return get_instance(\"%s\")\n",
 		prefix = "D",
 	}
 }
-const A_TEMPLATE := "@tool\n" +\
+const A_TEMPLATE = "@tool\n" +\
 "extends \"%s\"\n\n" +\
 "# cues ----\n" +\
 "# ---- cues\n" +\
 "\n"
-const AUDIO_CUE_SOUND :=\
+const AUDIO_CUE_SOUND =\
 "res://addons/popochiu/engine/audio_manager/audio_cue_sound.gd"
-const AUDIO_CUE_MUSIC :=\
+const AUDIO_CUE_MUSIC =\
 "res://addons/popochiu/engine/audio_manager/audio_cue_music.gd"
-const VAR_AUDIO_CUE_SOUND := "var %s: AudioCueSound = load(\"%s\")\n"
-const VAR_AUDIO_CUE_MUSIC := "var %s: AudioCueMusic = load(\"%s\")\n"
+const VAR_AUDIO_CUE_SOUND = "var %s: AudioCueSound = load(\"%s\")\n"
+const VAR_AUDIO_CUE_MUSIC = "var %s: AudioCueMusic = load(\"%s\")\n"
 # GODOT PROJECT SETTINGS ---------------------------------------------------------------------------
-const DISPLAY_WIDTH := "display/window/size/viewport_width"
-const DISPLAY_HEIGHT := "display/window/size/viewport_height"
-const MAIN_SCENE := "application/run/main_scene"
-const TEST_WIDTH := "display/window/size/window_width_override"
-const TEST_HEIGHT := "display/window/size/window_height_override"
-const STRETCH_MODE := "display/window/stretch/mode"
-const STRETCH_ASPECT := "display/window/stretch/aspect"
-const IMPORTER_TEXTURE := "popochiu/import/general_import_settings/texture"
+const DISPLAY_WIDTH = "display/window/size/viewport_width"
+const DISPLAY_HEIGHT = "display/window/size/viewport_height"
+const MAIN_SCENE = "application/run/main_scene"
+const TEST_WIDTH = "display/window/size/window_width_override"
+const TEST_HEIGHT = "display/window/size/window_height_override"
+const STRETCH_MODE = "display/window/stretch/mode"
+const STRETCH_ASPECT = "display/window/stretch/aspect"
 # GUI TEMPLATES ------------------------------------------------------------------------------------
-const GUI_CUSTOM := "custom"
-const GUI_CUSTOM_SCENE := GUI_ADDON_FOLDER + "popochiu_graphic_interface.tscn"
-const GUI_CUSTOM_TEMPLATE := GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
+const GUI_CUSTOM = "custom"
+const GUI_CUSTOM_SCENE = GUI_ADDON_FOLDER + "popochiu_gui.tscn"
+const GUI_CUSTOM_TEMPLATE = GUI_SCRIPT_TEMPLATES_FOLDER + "custom_commands_template.gd"
+# GAME ---------------------------------------------------------------------------------------------
+const GAME_PATH = "res://game/"
+const ROOMS_PATH = GAME_PATH + "rooms/"
+const CHARACTERS_PATH = GAME_PATH + "characters/"
+const INVENTORY_ITEMS_PATH = GAME_PATH + "inventory_items/"
+const DIALOGS_PATH = GAME_PATH + "dialogs/"
+const GUI_GAME_FOLDER = GAME_PATH + "gui/"
+const GUI_GAME_SCENE = GUI_GAME_FOLDER + "gui.tscn"
+const GUI_COMMANDS = GUI_GAME_FOLDER + "gui_commands.gd"
+const TRANSITION_LAYER = GAME_PATH + "transition_layer/transition_layer.tscn"
 
 
 #region Public #####################################################################################
 # Verify if the folders (where Popochiu's objects will be) exists
 static func init_file_structure() -> bool:
-	var is_first_install := !DirAccess.dir_exists_absolute(BASE_DIR)
+	var is_first_install := !DirAccess.dir_exists_absolute(GAME_PATH)
 	
 	# Create the folders that does not exist
 	for d in _get_directories().values():
@@ -215,6 +225,12 @@ static func init_file_structure() -> bool:
 		globals_file.close()
 	
 	# ---- Create autoload files -------------------------------------------------------------------
+	create_auto_loads()
+	
+	return is_first_install
+
+
+static func create_auto_loads() -> void:
 	for key in SNGL_SETUP:
 		if not FileAccess.file_exists(key):
 			var file := FileAccess.open(key, FileAccess.WRITE)
@@ -225,11 +241,12 @@ static func init_file_structure() -> bool:
 		var file := FileAccess.open(A_SNGL, FileAccess.WRITE)
 		file.store_string(A_TEMPLATE % IAUDIO)
 		file.close()
-	
-	return is_first_install
 
 
 static func update_autoloads(save := false) -> void:
+	# ---- Create autoload files -------------------------------------------------------------------
+	create_auto_loads()
+	
 	# ---- Update autoload files -------------------------------------------------------------------
 	for id in SNGL_SETUP:
 		if FileAccess.file_exists(id):
@@ -248,7 +265,7 @@ static func update_autoloads(save := false) -> void:
 				if var_name[0].is_valid_int():
 					var_name = var_name.insert(0, sngl_setup.prefix)
 				
-				if code.find("var %s" % var_name) < 0:
+				if not ("var %s" % var_name) in code:
 					var classes_idx := code.find("# ---- classes")
 					var class_path: String = sngl_setup["class"] % [
 						snake_name, snake_name
@@ -315,7 +332,7 @@ static func update_autoloads(save := false) -> void:
 			
 			var var_name := audio_cue.resource_name
 			
-			if code.find("var %s" % var_name) >= 0:
+			if ("var %s" % var_name) in code:
 				continue
 			
 			var cues_idx := code.find("# ---- cues")
@@ -349,14 +366,8 @@ static func remove_autoload_obj(id: String, script_name: String) -> void:
 	var code := s.source_code
 	
 	code = code.replace(sngl_setup["const"] % [script_name, class_path], "")
-	
-	code = code.replace(
-		sngl_setup.node % [script_name, script_name, script_name], ""
-	)
-	
-	code = code.replace(sngl_setup["func"] % [
-		script_name, script_name, script_name
-	], "")
+	code = code.replace(sngl_setup.node % [script_name, script_name, script_name], "")
+	code = code.replace(sngl_setup["func"] % [script_name, script_name, script_name], "")
 	
 	s.source_code = code
 	ResourceSaver.save(s, id)
@@ -383,7 +394,7 @@ static func get_data_cfg() -> ConfigFile:
 	if err == OK:
 		return config
 	
-	PopochiuUtils.print_error("Couldn't load PopochiuData config")
+	PopochiuUtils.print_error("Couldn't load popochiu_data.cfg")
 	return null
 
 
@@ -431,15 +442,24 @@ static func get_section(section: String) -> Array:
 static func store_properties(
 	target: Dictionary, source: Object, ignore_too := []
 ) -> void:
-	var props_to_ignore := ["script_name", "scene"]
+	copy_popochiu_object_properties(target, source, ignore_too)
+	
+	# ---- Call custom function to store extra data ------------------------------------------------
+	if source.has_method("on_save"):
+		target.custom_data = source.on_save()
+		if target.custom_data.is_empty(): target.erase("custom_data")
+
+
+static func copy_popochiu_object_properties(target, source: Object, ignore_too := []) -> void:
+	var properties_to_ignore := ["script_name", "scene"]
 	
 	if not ignore_too.is_empty():
-		props_to_ignore.append_array(ignore_too)
+		properties_to_ignore.append_array(ignore_too)
 	
 	# ---- Store basic type properties -------------------------------------------------------------
 	# prop = {class_name, hint, hint_string, name, type, usage}
 	for prop in source.get_script().get_script_property_list():
-		if prop.name in props_to_ignore: continue
+		if prop.name in properties_to_ignore: continue
 		if not prop.type in VALID_TYPES: continue
 		
 		# Check if the property is a script variable (8192)
@@ -448,11 +468,6 @@ static func store_properties(
 			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
 		):
 			target[prop.name] = source[prop.name]
-	
-	# ---- Call custom function to store extra data ------------------------------------------------
-	if source.has_method("on_save"):
-		target.custom_data = source.on_save()
-		if target.custom_data.is_empty(): target.erase("custom_data")
 
 
 static func has_property(source: Object, property: String) -> bool:
@@ -494,7 +509,10 @@ static func is_setup_done() -> bool:
 
 
 static func is_gui_set() -> bool:
-	return !get_data_value("ui", "template", "").is_empty()
+	return (
+		!get_data_value("ui", "template", "").is_empty()
+		and DirAccess.dir_exists_absolute(GUI_GAME_FOLDER)
+	)
 
 
 #endregion
@@ -508,12 +526,12 @@ static func _create_empty_file(path):
 
 static func _get_directories() -> Dictionary:
 	return {
-		BASE = BASE_DIR,
-		AUTOLOADS = BASE_DIR + "/autoloads",
-		ROOMS = BASE_DIR + "/rooms",
-		CHARACTERS = BASE_DIR + "/characters",
-		INVENTORY_ITEMS = BASE_DIR + "/inventory_items",
-		DIALOGS = BASE_DIR + "/dialogs",
+		BASE = GAME_PATH,
+		AUTOLOADS = GAME_PATH + "/autoloads/",
+		ROOMS = ROOMS_PATH,
+		CHARACTERS = CHARACTERS_PATH,
+		INVENTORY_ITEMS = INVENTORY_ITEMS_PATH,
+		DIALOGS = DIALOGS_PATH,
 	}
 
 

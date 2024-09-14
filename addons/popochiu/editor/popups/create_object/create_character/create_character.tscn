@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://q0mx8fu63d03"]
+
+[ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_dtng2"]
+[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_character/create_character.gd" id="2_8yo43"]
+
+[node name="CreateCharacterConfirmation" instance=ExtResource("1_dtng2")]
+script = ExtResource("2_8yo43")
+
+[node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
+text = "Character name:"
+
+[node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
+text = "Use a descriptive name in PascalCase (e.g. Glottis, MannyCalavera, HectorLeMans)."
+
+[node name="SetAsPCPanel" type="PanelContainer" parent="PanelContainer/VBoxContainer" index="4"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/SetAsPCPanel" index="0"]
+layout_mode = 2
+
+[node name="RtlIsPC" type="RichTextLabel" parent="PanelContainer/VBoxContainer/SetAsPCPanel/HBoxContainer" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+bbcode_enabled = true
+text = "You don't have a Player-controlled Character ([b]PC[/b]) yet. Do you want this character to become the [b]PC[/b]?
+
+[i]You can change this later in the context menu for each character or by code during runtime.[/i]"
+fit_content = true
+scroll_active = false
+
+[node name="BtnIsPC" type="CheckBox" parent="PanelContainer/VBoxContainer/SetAsPCPanel/HBoxContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2

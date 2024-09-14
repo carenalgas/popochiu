@@ -20,24 +20,25 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
-[node name="Setup" type="AcceptDialog"]
-gui_embed_subwindows = true
-title = "Setup"
-initial_position = 2
-size = Vector2i(560, 608)
-popup_window = true
+[node name="Setup" type="Control"]
+custom_minimum_size = Vector2(560, 608)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 560.0
+offset_bottom = 608.0
 script = ExtResource("1_vjboj")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 552.0
-offset_bottom = 559.0
+custom_minimum_size = Vector2(560, 608)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 607.0
+grow_horizontal = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 5
+theme_override_constants/separation = 12
 
 [node name="Welcome" type="RichTextLabel" parent="PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -183,7 +184,6 @@ unique_name_in_owner = true
 layout_mode = 2
 item_count = 3
 popup/item_0/text = "Custom"
-popup/item_0/id = 0
 popup/item_1/text = "2D"
 popup/item_1/id = 1
 popup/item_2/text = "Pixel"
@@ -222,14 +222,13 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_ntnwv")
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="GUITemplates" type="GridContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer"]
+[node name="GUITemplates" type="HBoxContainer" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/h_separation = 4
-theme_override_constants/v_separation = 4
-columns = 4
+alignment = 1
 
 [node name="Custom" type="Button" parent="PanelContainer/VBoxContainer/GUITemplatesPanel/GUITemplatesContainer/PanelContainer/VBoxContainer/GUITemplates"]
+visible = false
 texture_filter = 1
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2

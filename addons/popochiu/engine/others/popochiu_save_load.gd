@@ -6,10 +6,10 @@ extends Resource
 ## https://github.com/GDQuest/godot-demos-2022/tree/main/save-game
 
 # TODO: This could be in PopochiuSettings for devs to change the path
-const SAVE_GAME_PATH := 'user://save_%d.json'
+const SAVE_GAME_PATH := "user://save_%d.json"
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#region Public #####################################################################################
 func count_saves() -> int:
 	var saves := 0
 	
@@ -27,9 +27,11 @@ func get_saves_descriptions() -> Dictionary:
 		if FileAccess.file_exists(SAVE_GAME_PATH % i):
 			var opened := FileAccess.open(SAVE_GAME_PATH % i, FileAccess.READ)
 			if not opened:
-				printerr(\
-				'[Popochiu] Could not open the file %s. Error code: %s'\
-				% [SAVE_GAME_PATH % i, opened.get_open_error()])
+				PopochiuUtils.print_error(
+					"Could not open the file %s. Error code: %s" % [
+						SAVE_GAME_PATH % i, opened.get_open_error()
+					]
+				)
 				return {}
 
 			var content := opened.get_as_text()
@@ -47,18 +49,20 @@ func get_saves_descriptions() -> Dictionary:
 	return saves
 
 
-func save_game(slot := 1, description := '') -> bool:
+func save_game(slot := 1, description := "") -> bool:
 	var opened := FileAccess.open(SAVE_GAME_PATH % slot, FileAccess.WRITE)
 	if not opened:
-		printerr(\
-		'[Popochiu] Could not open the file %s. Error code: %s'\
-		% [SAVE_GAME_PATH % slot, opened.get_open_error()])
+		PopochiuUtils.print_error(
+			"Could not open the file %s. Error code: %s" % [
+				SAVE_GAME_PATH % slot, opened.get_open_error()
+			]
+		)
 		return false
 	
 	var data := {
 		description = description,
 		player = {
-			room = E.current_room.script_name,
+			room = R.current.script_name,
 			inventory = I.items,
 		},
 		rooms = {}, # Stores the state of each PopochiuRoomData
@@ -75,11 +79,11 @@ func save_game(slot := 1, description := '') -> bool:
 			y = C.player.global_position.y
 		}
 	
-	# Go over each Popochiu type to save its current state ---------------------
-	for type in ['rooms', 'characters', 'inventory_items', 'dialogs']:
+	# Go over each Popochiu type to save its current state -----------------------------------------
+	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
 		_store_data(type, data)
 	
-	# Save PopochiuGlobals.gd (Globals) ----------------------------------------
+	# Save PopochiuGlobals.gd (Globals) ------------------------------------------------------------
 	# prop = {class_name, hint, hint_string, name, type, usage}
 	for prop in Globals.get_script().get_script_property_list():
 		if not prop.type in PopochiuResources.VALID_TYPES: continue
@@ -91,12 +95,12 @@ func save_game(slot := 1, description := '') -> bool:
 		):
 			data.globals[prop.name] = Globals[prop.name]
 	
-	if Globals.has_method('on_save'):
+	if Globals.has_method("on_save"):
 		data.globals.custom_data = Globals.on_save()
 	
-	if data.globals.is_empty(): data.erase('globals')
+	if data.globals.is_empty(): data.erase("globals")
 	
-	# Write the JSON -----------------------------------------------------------
+	# Write the JSON -------------------------------------------------------------------------------
 	var json_string := JSON.stringify(data)
 	opened.store_string(json_string)
 	opened.close()
@@ -107,9 +111,11 @@ func save_game(slot := 1, description := '') -> bool:
 func load_game(slot := 1) -> Dictionary:
 	var opened := FileAccess.open(SAVE_GAME_PATH % slot, FileAccess.READ)
 	if not opened:
-		printerr(\
-		'[Popochiu] Could not open the file %s. Error code: %s'\
-		% [SAVE_GAME_PATH % slot, opened.get_open_error()])
+		PopochiuUtils.print_error(
+			"Could not open the file %s. Error code: %s" % [
+				SAVE_GAME_PATH % slot, opened.get_open_error()
+			]
+		)
 		return {}
 
 	var content := opened.get_as_text()
@@ -124,25 +130,27 @@ func load_game(slot := 1) -> Dictionary:
 		I.get_item_instance(item).add(false)
 	
 	# Load main object states
-	for type in ['rooms', 'characters', 'inventory_items', 'dialogs']:
+	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
 		if loaded_data.has(type):
 			_load_state(type, loaded_data)
 	
 	# Load globals
-	if loaded_data.has('globals'):
+	if loaded_data.has("globals"):
 		for prop in loaded_data.globals:
 			if typeof(Globals.get(prop)) == TYPE_NIL: continue
 			
 			Globals[prop] = loaded_data.globals[prop]
 		
-		if loaded_data.globals.has('custom_data')\
-		and Globals.has_method('on_load'):
+		if loaded_data.globals.has("custom_data")\
+		and Globals.has_method("on_load"):
 			Globals.on_load(loaded_data.globals.custom_data)
 
 	return loaded_data
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _store_data(type: String, save: Dictionary) -> void:
 	for path in PopochiuResources.get_section(type):
 		# load the ___State.tres file
@@ -153,14 +161,14 @@ func _store_data(type: String, save: Dictionary) -> void:
 		PopochiuResources.store_properties(save[type][data.script_name], data)
 		
 		match type:
-			'rooms':
-				data.save_childs_states()
+			"rooms":
+				data.save_children_states()
 				
-				for category in PopochiuResources.ROOM_CHILDS:
+				for category in PopochiuResources.ROOM_CHILDREN:
 					save[type][data.script_name][category] = data[category]
 				
-				save[type][data.script_name]['characters'] = data.characters
-			'dialogs':
+				save[type][data.script_name]["characters"] = data.characters
+			"dialogs":
 				save[type][data.script_name].options = {}
 				
 				for opt in (data as PopochiuDialog).options:
@@ -168,7 +176,7 @@ func _store_data(type: String, save: Dictionary) -> void:
 					PopochiuResources.store_properties(
 						save[type][data.script_name].options[opt.id],
 						opt,
-						['id', 'always_on']
+						["id", "always_on"]
 					)
 		
 		if save[type][data.script_name].is_empty():
@@ -180,27 +188,27 @@ func _store_data(type: String, save: Dictionary) -> void:
 
 func _load_state(type: String, loaded_game: Dictionary) -> void:
 	for id in loaded_game[type]:
-		var state := load(PopochiuResources.get_data_value(type, id, ''))
+		var state := load(PopochiuResources.get_data_value(type, id, ""))
 		
 		for p in loaded_game[type][id]:
-			if p == 'custom_data': continue
-			if type == 'dialogs' and p == 'options': continue
+			if p == "custom_data": continue
+			if type == "dialogs" and p == "options": continue
 			
 			state[p] = loaded_game[type][id][p]
 		
 		match type:
-			'rooms':
-				E.rooms_states[id] = state
-			'characters':
+			"rooms":
+				R.rooms_states[id] = state
+			"characters":
 				C.characters_states[id] = state
-			'inventory_items':
+			"inventory_items":
 				I.items_states[id] = state
-			'dialogs':
+			"dialogs":
 				D.trees[id] = state
 				_load_dialog_options(state, loaded_game[type][id].options)
 		
-		if loaded_game[type][id].has('custom_data')\
-		and state.has_method('on_load'):
+		if loaded_game[type][id].has("custom_data")\
+		and state.has_method("on_load"):
 			state.on_load(loaded_game[type][id].custom_data)
 
 
@@ -211,7 +219,10 @@ func _load_dialog_options(
 		if not loaded_options.has(opt.id): continue
 		
 		for prop in opt.get_script().get_script_property_list():
-			if prop.name == 'always_on': continue
+			if prop.name == "always_on": continue
 			
 			if loaded_options[opt.id].has(prop.name):
 				opt[prop.name] = loaded_options[opt.id][prop.name]
+
+
+#endregion

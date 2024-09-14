@@ -10,14 +10,14 @@ extends Area2D
 ## handle scaling.
 
 ## Used to allow devs to define the cursor type for the clickable.
-const CURSOR := preload('res://addons/popochiu/engine/cursor/cursor.gd')
+const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 
 ## The identifier of the object used in scripts.
-@export var script_name := ''
+@export var script_name := ""
 ## The text shown to players when the cursor hovers the object.
-@export var description := ''
+@export var description := ""
 ## Whether the object will listen to interactions.
-@export var clickable := true
+@export var clickable := true : set = set_clickable
 ## The [code]y[/code] position of the baseline relative to the center of the object.
 @export var baseline := 0 : set = set_baseline
 ## The [Vector2] position where characters will move when aproaching the object.
@@ -43,9 +43,6 @@ var times_double_clicked := 0
 var times_right_clicked := 0
 ## The number of times this object has been middle-clicked.
 var times_middle_clicked := 0
-## Used by the editor to know if the [b]InteractionPolygon[/b] child its being edited in Godot's
-## 2D Canvas Editor.
-var editing_polygon := false
 # NOTE: Don't know if this will make sense, or if this object should emit a signal about the click
 # 		(command execution).
 ## Stores the last [enum MouseButton] pressed on this object.
@@ -61,39 +58,44 @@ var _has_double_click: bool = false
 
 #region Godot ######################################################################################
 func _ready():
-	add_to_group('PopochiuClickable')
+	add_to_group("PopochiuClickable")
 	
 	if Engine.is_editor_hint():
 		hide_helpers()
 		
+		# Add interaction polygon to the proper group
+		if (get_node_or_null("InteractionPolygon") != null):
+			get_node("InteractionPolygon").add_to_group(
+				PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+			)
+
 		# Ignore assigning the polygon when:
 		if (
 			get_node_or_null("InteractionPolygon") == null # there is no InteractionPolygon node
 			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
-			or self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+			or self is PopochiuCharacter # avoid resetting the polygon for characters (see issue #158))
 		):
 			return
-		
+
 		if interaction_polygon.is_empty():
-			interaction_polygon = get_node('InteractionPolygon').polygon
-			interaction_polygon_position = get_node('InteractionPolygon').position
+			interaction_polygon = get_node("InteractionPolygon").polygon
+			interaction_polygon_position = get_node("InteractionPolygon").position
 		else:
-			get_node('InteractionPolygon').polygon = interaction_polygon
-			get_node('InteractionPolygon').position = interaction_polygon_position
-		
-		return
-	else:
-		$BaselineHelper.free()
-		$WalkToHelper.free()
-		
-		# Update the node's polygon when:
-		if (
-			get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
-			and not self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
-		):
 			get_node("InteractionPolygon").polygon = interaction_polygon
 			get_node("InteractionPolygon").position = interaction_polygon_position
-	
+		
+		# If we are in the editor, we're done
+		return
+
+	# When the game is running...
+	# Update the node's polygon when:
+	if (
+		get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
+		and not self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+	):
+		get_node("InteractionPolygon").polygon = interaction_polygon
+		get_node("InteractionPolygon").position = interaction_polygon_position
+
 	visibility_changed.connect(_toggle_input)
 	
 	# Ignore this object if it is a temporary one (its name has *)
@@ -110,20 +112,10 @@ func _ready():
 	_translate()
 
 
-func _process(delta):
-	if Engine.is_editor_hint():
-		if walk_to_point != get_node('WalkToHelper').position:
-			walk_to_point = get_node('WalkToHelper').position
-			
-			notify_property_list_changed()
-		elif baseline != get_node('BaselineHelper').position.y:
-			baseline = get_node('BaselineHelper').position.y
-			
-			notify_property_list_changed()
-		
-		if editing_polygon:
-			interaction_polygon = get_node('InteractionPolygon').polygon
-			interaction_polygon_position = get_node('InteractionPolygon').position
+func _notification(event: int) -> void:
+	if event == NOTIFICATION_EDITOR_PRE_SAVE:
+		interaction_polygon = get_node("InteractionPolygon").polygon
+		interaction_polygon_position = get_node("InteractionPolygon").position
 
 
 #endregion
@@ -171,9 +163,8 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 ## Used by the plugin to hide the visual helpers that show the [member baseline] and
 ## [member walk_to_point] in the 2D Canvas Editor when this node is unselected in the Scene panel.
 func hide_helpers() -> void:
-	$BaselineHelper.hide()
-	$WalkToHelper.hide()
-	
+	# TODO: visibility logic for gizmos
+
 	if get_node_or_null("InteractionPolygon"):
 		$InteractionPolygon.hide()
 
@@ -182,9 +173,8 @@ func hide_helpers() -> void:
 ## [member walk_to_point] of the object in the 2D Canvas Editor when the is selected in the
 ## Scene panel.
 func show_helpers() -> void:
-	$BaselineHelper.show()
-	$WalkToHelper.show()
-	
+	# TODO: visibility logic for gizmos
+
 	if get_node_or_null("InteractionPolygon"):
 		$InteractionPolygon.show()
 
@@ -237,28 +227,28 @@ func get_walk_to_point() -> Vector2:
 
 ## Called when the object is left clicked.
 func on_click() -> void:
-	_on_click()
+	await _on_click()
 
 
 ## Called when the object is double clicked.
 func on_double_click() -> void:
 	_reset_double_click()
-	_on_double_click()
+	await _on_double_click()
 
 
 ## Called when the object is right clicked.
 func on_right_click() -> void:
-	_on_right_click()
+	await _on_right_click()
 
 
 ## Called when the object is middle clicked.
 func on_middle_click() -> void:
-	_on_middle_click()
+	await _on_middle_click()
 
 
 ## Called when an [param item] is used on this object.
 func on_item_used(item: PopochiuInventoryItem) -> void:
-	_on_item_used(item)
+	await _on_item_used(item)
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
@@ -294,18 +284,17 @@ func handle_command(button_idx: int) -> void:
 #endregion
 
 #region SetGet #####################################################################################
+func set_clickable(value: bool) -> void:
+	clickable = value
+	input_pickable = clickable
+
+
 func set_baseline(value: int) -> void:
 	baseline = value
-	
-	if Engine.is_editor_hint() and get_node_or_null('BaselineHelper'):
-		get_node('BaselineHelper').position = Vector2.DOWN * value
 
 
 func set_walk_to_point(value: Vector2) -> void:
 	walk_to_point = value
-	
-	if Engine.is_editor_hint() and get_node_or_null('WalkToHelper'):
-		get_node('WalkToHelper').position = value
 
 
 func set_room(value: Node2D) -> void:
@@ -337,7 +326,8 @@ func _on_mouse_exited() -> void:
 
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
-	if not E.hovered or E.hovered != self: return
+	if G.is_blocked or not E.hovered or E.hovered != self:
+		return
 	
 	if _is_double_click_or_tap(event):
 		times_double_clicked += 1
@@ -357,19 +347,21 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	match event_index:
 		MOUSE_BUTTON_LEFT:
 			if I.active:
-				on_item_used(I.active)
+				await on_item_used(I.active)
 			else:
-				handle_command(event_index)
+				await handle_command(event_index)
 				times_clicked += 1
 		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
 			if I.active: return
 			
-			handle_command(event_index)
+			await handle_command(event_index)
 			
 			if event_index == MOUSE_BUTTON_RIGHT:
 				times_right_clicked += 1
 			elif event_index == MOUSE_BUTTON_MIDDLE:
 				times_middle_clicked += 1
+	
+	E.clicked = null
 
 
 func _toggle_input() -> void:
@@ -378,12 +370,14 @@ func _toggle_input() -> void:
 
 
 func _translate() -> void:
-	if Engine.is_editor_hint() or not is_inside_tree()\
-	or not E.settings.use_translations: return
+	if (
+		Engine.is_editor_hint()
+		or not is_inside_tree()
+		or not E.settings.use_translations
+	):
+		return
 	
-	description = E.get_text(
-		'%s-%s' % [get_tree().current_scene.name, _description_code]
-	)
+	description = E.get_text("%s-%s" % [get_tree().current_scene.name, _description_code])
 
 
 # ---- @anthonyirwin82 -----------------------------------------------------------------------------

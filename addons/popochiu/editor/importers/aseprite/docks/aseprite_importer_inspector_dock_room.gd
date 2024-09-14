@@ -5,7 +5,7 @@ var _animation_creator = preload(\
 "res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ GODOT ░░░░
+#region Godot ######################################################################################
 func _ready():
 	# Instantiate animation creator
 	_animation_creator.init(_aseprite, file_system)
@@ -13,7 +13,9 @@ func _ready():
 	super()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 func _on_import_pressed():
 	# Set everything up
 	# This will populate _root_node and _options class variables
@@ -30,7 +32,7 @@ func _on_import_pressed():
 			
 		# Always convert to PascalCase as a standard
 		# TODO: check Godot 4 standards, I can't find info
-		var prop_name = tag.tag_name.to_pascal_case()
+		var prop_name: String = tag.tag_name.to_pascal_case()
 		
 		# In case the prop is there, use the one we already have
 		var prop = props_container.get_node_or_null(prop_name)
@@ -70,7 +72,7 @@ func _on_import_pressed():
 	_importing = false
 
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
-		printerr(RESULT_CODE.get_error_message(result))
+		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
 		await get_tree().create_timer(0.1).timeout
@@ -88,8 +90,14 @@ func _customize_tag_ui(tag_row: AnimationTagRow):
 
 
 func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = true):
-	var factory = PopochiuPropFactory.new(main_dock)
-	if factory.create(name, _root_node, is_clickable, is_visible) != ResultCodes.SUCCESS:
+	var factory = PopochiuPropFactory.new()
+	var param := PopochiuPropFactory.PopochiuPropFactoryParam.new()
+	param.obj_name = name
+	param.room = _root_node
+	param.is_interactive = is_clickable
+	param.is_visible = is_visible
+	
+	if factory.create(param) != ResultCodes.SUCCESS:
 		return
 
 	return factory.get_obj_scene()
@@ -98,9 +106,12 @@ func _save_prop(prop: PopochiuProp):
 	var packed_scene: PackedScene = PackedScene.new()
 	packed_scene.pack(prop)
 	if ResourceSaver.save(packed_scene, prop.scene_file_path) != OK:
-		push_error(
-			"[Popochiu] Couldn't save animations for prop %s at %s" %
+		PopochiuUtils.print_error(
+			"Couldn't save animations for prop %s at %s" %
 			[prop.name, prop.scene_file_path]
 		)
 		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
 	return ResultCodes.SUCCESS
+
+
+#endregion

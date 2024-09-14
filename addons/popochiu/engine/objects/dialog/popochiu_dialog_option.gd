@@ -8,7 +8,7 @@ extends Resource
 ## The text to show on screen for the option.
 @export var text := ""
 ## The icon to show on screen for the option.
-@export var icon: Texture = null
+#@export var icon: Texture = null
 ## Whether this option is visible.
 @export var visible := true
 ## Whether this option is disabled. If [code]true[/code], the option won´t be rendered.
