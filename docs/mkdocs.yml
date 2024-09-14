@@ -27,9 +27,7 @@ extra_javascript:
   - assets/js/custom.js
 markdown_extensions:
   - admonition
-  - fontawesome_markdown
   - attr_list
 plugins:
   - search
   - mkdocs-nav-weight
-  - mermaid2
