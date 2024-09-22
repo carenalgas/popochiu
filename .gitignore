@@ -35,7 +35,7 @@ docs/src/**/scripting-reference/*.md
 !docs/src/**/scripting-reference/index.md
 docs/dist/*
 docs/dist/**/*
-!docs/dist/.gitkeep
+!docs/dist/.nojekyll
 Collector*.gd
 ReferenceCollectorCLI*.gd
 reference.json
