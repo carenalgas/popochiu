@@ -65,7 +65,7 @@ The GUI template we selected shows the dialog lines as a caption at the bottom o
 
 Since the engine doesn't know how high your sprite is (see "Under the hood" note below), that's for you to decide.
 
-For this, select the character's rood node in the scene tree, and you will see a small purple square at the scene's origin. Drag it somewhere above the character's head (or wherever makes sense to you). As you see the square is labeled and connects to the element it refers to.
+For this, select the character's root node in the scene tree, and you will see a small purple square at the scene's origin. Drag it somewhere above the character's head (or wherever makes sense to you). As you see the square is labeled and connects to the element it refers to.
 
 If you see no square, make sure the **Dialogue Position Gizmo** is visible by checking the state of the button in the toolbar (_11_).
 
