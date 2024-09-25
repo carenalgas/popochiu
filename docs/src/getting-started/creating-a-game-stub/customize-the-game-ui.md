@@ -22,7 +22,7 @@ But what differentiates your experience as a player beyond the game content, is 
 For this last chapter of our _Getting Started_ guide, we are going to explain the basic concepts and anatomy of a Popochiu game's interface and show you how to customize the appearance of one of the predefined GUIs.
 
 !!! note
-	As we noted back in the [Game Setup](/getting-started/game-setup) chapter, Popochiu provides different GUIs you can use in your game, and more will be added in the future.  
+	As we noted back in the [Game Setup](/popochiu/getting-started/game-setup) chapter, Popochiu provides different GUIs you can use in your game, and more will be added in the future.  
 	The concepts we'll explore in the upcoming paragraphs apply to every current and future GUIs, but - per the considerations above - applying them to different GUIs may be non-straightforward and require a bit of fiddling and understanding. Be ready to roll your sleeves and don't forget to [ask for help in our community](getting-started/getting-help).
 
 

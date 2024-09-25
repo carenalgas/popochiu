@@ -186,7 +186,7 @@ Clicking on the hotspot, the character will move to the point we defined and fac
 ### Script your first interaction
 
 If you ran the game, you may have seen that, while the character moves towards the window, a message is printed on top of the scene: `Can't INTERACT with it`.  
-That's because we didn't define what should happen when we interact with the window. Remember, in [the GUI we selected](/getting-started/creating-a-game-stub/game-setup#select-game-gui), clicking on an object will trigger an interaction while right-clicking on an object will trigger an examination.
+That's because we didn't define what should happen when we interact with the window. Remember, in [the GUI we selected](/popochiu/getting-started/creating-a-game-stub/game-setup#select-game-gui), clicking on an object will trigger an interaction while right-clicking on an object will trigger an examination.
 
 We are now going to script our first interaction, using Godot **GDScript** language and the very convenient [engine API](/the-engine-handbook/scriting-overview) that Popochiu provides to make our life easier.
 
