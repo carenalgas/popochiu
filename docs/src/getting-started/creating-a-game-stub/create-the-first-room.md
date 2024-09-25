@@ -65,7 +65,7 @@ If you did everything right, you should see your main character standing in the 
     For those who work with [Aseprite](https://www.aseprite.org/), Popochiu also provides a powerful automated importer that will make creating rooms and characters a breeze and will enable a fast iterative development workflow.
 
     * Learn more about [animations](/how-to-develop-a-game/playing-animations).
-    * Learn more about the [Aseprite importers](/the-editor-handbook/importers)
+    * Learn more about the [Aseprite importers](/popochiu/the-editor-handbook/importers)
 
 ### Add a Walkable Area
 
