@@ -64,7 +64,7 @@ Save the project and run the game. Now if you click on the toy car on the floor,
 !!! note
     See how the last two lines of the `_on_click()` function are not `await`-ed? The reason is that those functions are just changing the state of the game, without triggering animations, or dialogs.
 
-    To learn if a function must be awaited, the best option is to check in the [API reference](/the-engine-handbook/scripting-reference) section. As a rule of thumb, if the function "is not making something happen on the screen as it was in a movie" (animating, moving stuff around, printing text... everything that needs time to be seen), then it probably doesn't need to be awaited.
+    To learn if a function must be awaited, the best option is to check in the [API reference](/popochiu/the-engine-handbook/scripting-reference) section. As a rule of thumb, if the function "is not making something happen on the screen as it was in a movie" (animating, moving stuff around, printing text... everything that needs time to be seen), then it probably doesn't need to be awaited.
 
 !!! note
     The default Popochiu GUI Templates have different inventory icon sizes. Images will be scaled to fit into the inventory slot. As a general rule it's better to scale a larger image down to a smaller one to avoid having unwanted artifacts in the image.

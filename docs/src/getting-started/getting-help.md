@@ -73,7 +73,7 @@ Again, [head to the project's issue tracker](https://github.com/carenalgas/popoc
 
 !!! note
     **Contributing is not all about pushing code!**
-    Also consider reading our [Contribution Guidelines](/contributing-to-popochiu), to learn all the ways you can help the project thrive.
+    Also consider reading our [Contribution Guidelines](/popochiu/contributing-to-popochiu), to learn all the ways you can help the project thrive.
 
 ## Godot community and docs
 
