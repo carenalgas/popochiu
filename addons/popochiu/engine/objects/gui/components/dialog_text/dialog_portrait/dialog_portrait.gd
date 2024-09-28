@@ -33,9 +33,11 @@ func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 	if char_pos.x <= E.half_width:
 		left_avatar_container.modulate.a = 1.0
 		left_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
+		left_avatar.flip_h = chr._looking_dir == PopochiuCharacter.Looking.LEFT
 	else:
 		right_avatar_container.modulate.a = 1.0
 		right_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
+		right_avatar.flip_h = chr._looking_dir == PopochiuCharacter.Looking.LEFT
 
 
 func _set_default_size() -> void:
