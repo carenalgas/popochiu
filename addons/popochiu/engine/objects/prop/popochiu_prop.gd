@@ -124,10 +124,10 @@ func set_current_frame(value: int) -> void:
 	current_frame = value
 	if not has_node("Sprite2D"): return
 	
-	if current_frame >= $Sprite2D.hframes:
-		current_frame = $Sprite2D.hframes - 1
+	var sprite := $Sprite2D as Sprite2D
+	current_frame = abs(current_frame % (sprite.hframes * sprite.vframes))
 	
-	$Sprite2D.frame = current_frame
+	sprite.frame = current_frame
 
 
 #endregion
