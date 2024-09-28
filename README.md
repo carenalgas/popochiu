@@ -57,7 +57,7 @@ Please review this table to know which version to download, depending on the ver
 
 | Required Godot version | Popochiu Release |
 |---|---|
-| 4.3 and above | [Popochiu 2.0](https://github.com/carenalgas/popochiu/releases/download/v2.0/popochiu-v2.0.0.zip) |
+| 4.3 and above | [Popochiu 2.0.0](https://github.com/carenalgas/popochiu/releases/download/v2.0.0/popochiu-v2.0.0.zip) |
 | 3.5 to 3.6 | [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip) |
 | 3.3 to 3.4.5 | [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip) |
 
