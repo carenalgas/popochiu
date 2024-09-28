@@ -5,6 +5,11 @@ extends PopochiuDialogText
 @onready var right_avatar_container: PanelContainer = %RightAvatarContainer
 @onready var right_avatar: TextureRect = %RightAvatar
 
+const _LOOKING_LEFT_DIRS := [
+		PopochiuCharacter.Looking.LEFT,
+		PopochiuCharacter.Looking.UP_LEFT,
+		PopochiuCharacter.Looking.DOWN_LEFT,
+		]
 
 #region Godot ######################################################################################
 func _ready() -> void:
@@ -30,14 +35,16 @@ func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 		E.scale if E.settings.scale_gui else Vector2.ONE
 	)
 	
+	var flip_h := _LOOKING_LEFT_DIRS.has(chr._looking_dir)
+	
 	if char_pos.x <= E.half_width:
 		left_avatar_container.modulate.a = 1.0
 		left_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
-		left_avatar.flip_h = chr._looking_dir == PopochiuCharacter.Looking.LEFT
+		left_avatar.flip_h = flip_h
 	else:
 		right_avatar_container.modulate.a = 1.0
 		right_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
-		right_avatar.flip_h = chr._looking_dir == PopochiuCharacter.Looking.LEFT
+		right_avatar.flip_h = flip_h
 
 
 func _set_default_size() -> void:
