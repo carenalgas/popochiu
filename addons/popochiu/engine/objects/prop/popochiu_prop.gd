@@ -28,13 +28,16 @@ signal linked_item_discarded(item: PopochiuInventoryItem)
 @export var v_frames := 1 : set = set_v_frames
 ## The current frame to use as the texture of this node. Modifying this will change the value of the
 ## [member Sprite2D.frame] property in the [b]$Sprite2D[/b] child. Trying to assign a value lesser
-## than 0 will make this property to be 0, and trying to assign a value higher than the number of
-## total frames will make this property to be [code](frames + v_frames) - 1[/code].
+## than 0 will roll over the value to the maximum frame ([code]frames * v_frames - 1[/code]) or
+## setting the value greater than the number of frames will roll over the value to 0.
 @export var current_frame := 0: set = set_current_frame
 ## Links the prop to a [PopochiuInventoryItem] by its [member PopochiuInventoryItem.script_name].
 ## This will make the prop disappear from the room, depending on whether or not said inventory item
 ## is inside the inventory.
 @export var link_to_item := ''
+
+## Total frames available the texture image has. [code](frames * vframes)[/code]
+var total_frames: get = get_total_frames
 
 @onready var _sprite: Sprite2D = $Sprite2D
 
@@ -125,9 +128,13 @@ func set_current_frame(value: int) -> void:
 	if not has_node("Sprite2D"): return
 	
 	var sprite := $Sprite2D as Sprite2D
-	current_frame = abs(current_frame % (sprite.hframes * sprite.vframes))
+	current_frame = (total_frames + current_frame) % total_frames
 	
 	sprite.frame = current_frame
+	
+	
+func get_total_frames() -> int:
+	return frames * v_frames
 
 
 #endregion
@@ -150,6 +157,5 @@ func _on_item_discarded(item: PopochiuInventoryItem) -> void:
 		
 		_on_linked_item_discarded()
 		linked_item_discarded.emit(self)
-
 
 #endregion
