@@ -78,6 +78,8 @@ jobs:
           pygments
           pymdown-extensions
           fontawesome-markdown
+      - name: Find fontawesome-markdown package location
+        run: pip show fontawesome-markdown
       - name: Patch fontawesome-markdown to support Markdown 3.4+
         run: cp -f ./docs/patches/fontawesome_markdown/*.py /usr/lib/python${{ env.PYTHON_VERSION }}/site-packages/fontawesome_markdown
       - name: Build DocsExtractor Docker image
