@@ -1,13 +1,12 @@
 name: Publish updated documentation
 
 on:
-  pull_request:
-  # push:
-  #   tags:
-  #     - "v*.*.*"
-  #     - "v*.*.*-alpha*"
-  #     - "v*.*.*-beta*"
-  #     - "v*.*.*-rc*"
+  push:
+    tags:
+      - "v*.*.*"
+      - "v*.*.*-alpha*"
+      - "v*.*.*-beta*"
+      - "v*.*.*-rc*"
 
 env:
   PYTHON_VERSION: 3.12
