@@ -84,9 +84,11 @@ jobs:
       - name: Extract code reference documentation from Godot source
         run: > 
           docker run
-          -t ${{ env.GDE_TAG }}
+          --rm
           -v ${{ github.workspace }}:/project
           -v ${{ github.workspace }}/docs/src/the-engine-handbook/scripting-reference:/output
+          ${{ env.GDE_TAG }}
+          .
           -o /output
           -d addons/popochiu/engine
       - name: Deploy to production
