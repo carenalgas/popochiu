@@ -82,7 +82,13 @@ jobs:
         working-directory: ./docs
         run: docker build -f Dockerfile.DocsExtractor -t ${{ env.GDE_TAG }} .
       - name: Extract code reference documentation from Godot source
-        run: docker run -t ${{ env.GDE_TAG }} -v ${{ github.workspace }}:/project -v ${{ github.workspace }}/docs/src/the-engine-handbook/scripting-reference:/output
+        run: > 
+          docker run
+          -t ${{ env.GDE_TAG }}
+          -v ${{ github.workspace }}:/project
+          -v ${{ github.workspace }}/docs/src/the-engine-handbook/scripting-reference:/output
+          -o /output
+          -d addons/popochiu/engine
       - name: Deploy to production
         working-directory: ./docs
         run: mkdocs gh-deploy --force --clean --verbose
