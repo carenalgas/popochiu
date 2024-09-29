@@ -1,12 +1,17 @@
 name: Publish updated documentation
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
-      - "v*.*.*-alpha*"
-      - "v*.*.*-beta*"
-      - "v*.*.*-rc*"
+  workflow_dispatch
+  # push:
+  #   tags:
+  #     - "v*.*.*"
+  #     - "v*.*.*-alpha*"
+  #     - "v*.*.*-beta*"
+  #     - "v*.*.*-rc*"
+
+env:
+  PYTHON_VERSION: 3.12
+  GDE_TAG: godot-docs-extractor
 
 jobs:
   deploy-gh-pages:
@@ -18,7 +23,7 @@ jobs:
       - name: Install Python environment
         uses: actions/setup-python@v2
         with:
-          python-version: 3.11
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install MkDocs and dependencies
         run: >
           pip install
@@ -67,10 +72,19 @@ jobs:
           mkdocs-cinder
           mkdocs-kpn
           mkdocs-material
+          mkdocs-mermaid2-plugin
           neoteroi-mkdocs
           markdown-include
           pygments
           pymdown-extensions
+          fontawesome-markdown
+      - name: Patch fontawesome-markdown to support Markdown 3.4+
+        run: cp -f ./docs/patches/fontawesome_markdown/*.py /usr/lib/python${{ env.PYTHON_VERSION }}/site-packages/fontawesome_markdown
+      - name: Build DocsExtractor Docker image
+        working-directory: ./docs
+        run: docker build -f Dockerfile.DocsExtractor -t ${{ env.GDE_TAG }} .
+      - name: Extract code reference documentation from Godot source
+        run: docker run -i -t ${{ env.GDE_TAG }} -v ${{ github.workspace }}:/project -v ${{ github.workspace }}/docs/src/the-engine-handbook/scripting-reference:/output
       - name: Deploy to production
         working-directory: ./docs
         run: mkdocs gh-deploy --force --clean --verbose
