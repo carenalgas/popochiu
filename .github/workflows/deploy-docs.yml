@@ -88,7 +88,7 @@ jobs:
           -v ${{ github.workspace }}:/project
           -v ${{ github.workspace }}/docs/src/the-engine-handbook/scripting-reference:/output
           ${{ env.GDE_TAG }}
-          .
+          /project
           -o /output
           -d addons/popochiu/engine
       - name: Deploy to production
