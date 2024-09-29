@@ -73,15 +73,11 @@ jobs:
           mkdocs-kpn
           mkdocs-material
           mkdocs-mermaid2-plugin
+          fontawesome-in-markdown
           neoteroi-mkdocs
           markdown-include
           pygments
           pymdown-extensions
-          fontawesome-markdown
-      - name: Find fontawesome-markdown package location and save it in an environment variable
-        run: echo ::set-env name=FONTAWESOME_MARKDOWN_PATH::$(pip show fontawesome-markdown | grep Location | cut -d ' ' -f 2)
-      - name: Patch fontawesome-markdown to support Markdown 3.4+
-        run: cp -f ./docs/patches/fontawesome_markdown/*.py ${{ env.FONTAWESOME_MARKDOWN_PATH }}/fontawesome_markdown/
       - name: Build DocsExtractor Docker image
         working-directory: ./docs
         run: docker build -f Dockerfile.DocsExtractor -t ${{ env.GDE_TAG }} .
