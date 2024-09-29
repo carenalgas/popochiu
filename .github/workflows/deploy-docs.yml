@@ -1,7 +1,7 @@
 name: Publish updated documentation
 
 on:
-  workflow_dispatch
+  pull_request:
   # push:
   #   tags:
   #     - "v*.*.*"
