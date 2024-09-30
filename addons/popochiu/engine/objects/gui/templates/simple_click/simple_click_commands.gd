@@ -21,7 +21,7 @@ func fallback() -> void:
 	if is_instance_valid(I.clicked):
 		if I.clicked.last_click_button == MOUSE_BUTTON_LEFT:
 			await click_inventory_item()
-		elif E.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
+		elif I.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
 			await right_click_inventory_item()
 		else:
 			await RenderingServer.frame_post_draw
