@@ -28,6 +28,7 @@ popochiu
 popochiu/**
 game
 game/**
+*.import
 
 # Documentation ignores
 docs/src/**/*.import

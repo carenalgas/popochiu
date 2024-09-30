@@ -1,1 +1,0 @@
-from .main import FontAwesomeInlineProcessor, FontAwesomeExtension, FontAwesomeException, makeExtension # NOQA
