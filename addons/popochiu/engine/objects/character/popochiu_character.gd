@@ -450,55 +450,78 @@ func say(dialog: String, emo := "") -> void:
 	idle()
 
 
-## Says a random string from the [param say_array] PackedStringArray, calling the say function with
-## a randomly chosen element of the [param say_array]. The function also prevents the same string 
+## Says a random string from the [param dialog_array] PackedStringArray, calling the say function with
+## a randomly chosen element of the [param dialog_array]. The function also prevents the same string 
 ## from being said twice in a row. This is useful if you want to say different things each time the 
 ## player interacts with something in the game.
+## You can optionally pass [param emo_array] PackedStringArray if you are using emotions. The array 
+## should have the elements the same as the [param dialog_array] with the emo value instead of the 
+## dialog text.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_say_random(say_array: PackedStringArray) -> Callable:
-	return func (): await say_random(say_array)
+func queue_say_random(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['']) -> Callable:
+	return func (): await say_random(dialog_array, emo_array)
 
 
-## Says a random string from the [param say_array] PackedStringArray, calling the say function with
-## a randomly chosen element of the [param say_array]. The function also prevents the same string 
+## Says a random string from the [param dialog_array] PackedStringArray, calling the say function with
+## a randomly chosen element of the [param dialog_array]. The function also prevents the same string 
 ## from being said twice in a row. This is useful if you want to say different things each time the 
 ## player interacts with something in the game.
-func say_random(say_array: PackedStringArray) -> void:
-	var say_value: int = randi_range(0, say_array.size() -1)
-	# Make sure the say_value has not been said previously
+## You can optionally pass [param emo_array] PackedStringArray if you are using emotions. The array 
+## should have the elements the same as the [param dialog_array] with the emo value instead of the 
+## dialog text.
+func say_random(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['']) -> void:
+	var say_value: int = randi_range(0, dialog_array.size() -1)
 	while (say_value == _last_random_say_value):
-		say_value = randi_range(0, say_array.size() -1)
+		say_value = randi_range(0, dialog_array.size() -1)
+
+	# If the user is not using the emo feature build array with blank strings to match the size of
+	# dialog_array
+	while (emo_array.size() != dialog_array.size()):
+		emo_array.append('')
 
 	_last_random_say_value = say_value
-	say(say_array[say_value])
+	say(dialog_array[say_value], emo_array[say_value])
 
 
-## Says the next string from the [param say_array] PackedStringArray, calling the say function with
-## first element of the [param say_array]. The function will remove the first element of the array
+## Says the next string from the [param dialog_array] PackedStringArray, calling the say function with
+## first element of the [param dialog_array]. The function will remove the first element of the array
 ## each time it is called until there is only one element left. The last element of the array
 ## should be what you want to say when all the other array elements have been said.
 ## This is useful if you want to say different things each time the player interacts with something 
 ## in the game and then have a final default which is said each time once all the other options are
 ## said.
+## You can optionally pass [param emo_array] PackedStringArray if you are using emotions. The array 
+## should have the elements the same as the [param dialog_array] with the emo value instead of the 
+## dialog text.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_say_next(say_array: PackedStringArray) -> Callable:
-	return func (): await say_next(say_array)
+func queue_say_next(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['']) -> Callable:
+	return func (): await say_next(dialog_array, emo_array)
 
 
-## Says the next string from the [param say_array] PackedStringArray, calling the say function with
-## first element of the [param say_array]. The function will remove the first element of the array
+## Says the next string from the [param dialog_array] PackedStringArray, calling the say function with
+## first element of the [param dialog_array]. The function will remove the first element of the array
 ## each time it is called until there is only one element left. The last element of the array
 ## should be what you want to say when all the other array elements have been said.
 ## This is useful if you want to say different things each time the player interacts with something 
 ## in the game and then have a final default which is said each time once all the other options are
 ## said.
-func say_next(say_array: PackedStringArray) -> void:
-	var say_text: String = say_array[0]
-	if (say_array.size() > 1):
+## You can optionally pass [param emo_array] PackedStringArray if you are using emotions. The array 
+## should have the elements the same as the [param dialog_array] with the emo value instead of the 
+## dialog text.
+func say_next(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['']) -> void:
+	var dialog_text: String = dialog_array[0]
+	var emo_string: String = emo_array[0]
+
+	if (dialog_array.size() > 1):
 		# Arrays are passed by reference so this is removing value from the array passed to the function
-		say_array.remove_at(0)
+		dialog_array.remove_at(0)
 	
-	say(say_text)
+	# if user is not using emo feature then it will only have 1 element in the array with blank string
+	if (emo_array.size() > 1):
+	# Arrays are passed by reference so this is removing value from the array passed to the function
+		emo_array.remove_at(0)
+	
+	say(dialog_text, emo_string)
 
 
 ## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
