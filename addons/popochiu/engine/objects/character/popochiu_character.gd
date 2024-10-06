@@ -102,7 +102,8 @@ var default_walk_speed := 0
 var default_scale := Vector2.ONE
 
 var _looking_dir: int = Looking.DOWN
-
+# Used to prevent the random_say function saying the same dialog twice in a row.
+var _last_random_say_value: int = -1
 
 
 #region Godot ######################################################################################
@@ -447,6 +448,57 @@ func say(dialog: String, emo := "") -> void:
 	
 	emotion = ''
 	idle()
+
+
+## Says a random string from the [param say_array] PackedStringArray, calling the say function with
+## a randomly chosen element of the [param say_array]. The function also prevents the same string 
+## from being said twice in a row. This is useful if you want to say different things each time the 
+## player interacts with something in the game.
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_say_random(say_array: PackedStringArray) -> Callable:
+	return func (): await say_random(say_array)
+
+
+## Says a random string from the [param say_array] PackedStringArray, calling the say function with
+## a randomly chosen element of the [param say_array]. The function also prevents the same string 
+## from being said twice in a row. This is useful if you want to say different things each time the 
+## player interacts with something in the game.
+func say_random(say_array: PackedStringArray) -> void:
+	var say_value: int = randi_range(0, say_array.size() -1)
+	# Make sure the say_value has not been said previously
+	while (say_value == _last_random_say_value):
+		say_value = randi_range(0, say_array.size() -1)
+
+	_last_random_say_value = say_value
+	say(say_array[say_value])
+
+
+## Says the next string from the [param say_array] PackedStringArray, calling the say function with
+## first element of the [param say_array]. The function will remove the first element of the array
+## each time it is called until there is only one element left. The last element of the array
+## should be what you want to say when all the other array elements have been said.
+## This is useful if you want to say different things each time the player interacts with something 
+## in the game and then have a final default which is said each time once all the other options are
+## said.
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_say_next(say_array: PackedStringArray) -> Callable:
+	return func (): await say_next(say_array)
+
+
+## Says the next string from the [param say_array] PackedStringArray, calling the say function with
+## first element of the [param say_array]. The function will remove the first element of the array
+## each time it is called until there is only one element left. The last element of the array
+## should be what you want to say when all the other array elements have been said.
+## This is useful if you want to say different things each time the player interacts with something 
+## in the game and then have a final default which is said each time once all the other options are
+## said.
+func say_next(say_array: PackedStringArray) -> void:
+	var say_text: String = say_array[0]
+	if (say_array.size() > 1):
+		# Arrays are passed by reference so this is removing value from the array passed to the function
+		say_array.remove_at(0)
+	
+	say(say_text)
 
 
 ## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
