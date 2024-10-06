@@ -102,7 +102,7 @@ var default_walk_speed := 0
 var default_scale := Vector2.ONE
 
 var _looking_dir: int = Looking.DOWN
-# Used to prevent the random_say function saying the same dialog twice in a row.
+# Used to prevent the say_random function saying the same dialog twice in a row.
 var _last_random_say_value: int = -1
 
 
