@@ -512,6 +512,11 @@ func say_next(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['
 	var dialog_text: String = dialog_array[0]
 	var emo_string: String = emo_array[0]
 
+	# if the user has defined their own emo_array make sure the size matches the dialog_array
+	if (emo_array.size() > 1 and dialog_array.size() > 1):
+		while (emo_array.size() != dialog_array.size()):
+			emo_array.append('')
+
 	if (dialog_array.size() > 1):
 		# Arrays are passed by reference so this is removing value from the array passed to the function
 		dialog_array.remove_at(0)
