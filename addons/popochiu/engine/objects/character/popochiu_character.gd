@@ -409,24 +409,67 @@ func face_clicked() -> void:
 		await face_right()
 
 
+## Checks if the [param dialog_emotion] string has emotion and dialog elements in it. The function 
+## splits the [param dialog_emotion] string into 2 array elements if it has a | (pipe) character. 
+## The string format should be 'emotion|dialog string text'
+## The returned array has element 0 as the dialog string, element 1 is the emotion
+## This also strips non-printable characters from the start and end of the strings it returns.
+## 'emotion|dialog text string' and 'emotion | dialog text string' will be returned the same.
+func _return_dialog_emotion_array(dialog_emotion: String) -> PackedStringArray:
+	var dialog_emotion_array: PackedStringArray = ['','']
+	var pipe_count: int = dialog_emotion.count('|', 0, 0)
+
+	if pipe_count == 0:
+		# no pipe so string is dialog only
+		dialog_emotion_array[0] = dialog_emotion.strip_edges()
+	else:
+		if pipe_count == 1:
+			# Only contains 1 | character so split the string into arrays without further checks needed
+			dialog_emotion_array[0] = dialog_emotion.get_slice('|', 1).strip_edges()
+			dialog_emotion_array[1] = dialog_emotion.get_slice('|', 0).strip_edges()
+		else:
+			# emotion
+			var emotion := dialog_emotion.get_slice('|', 0)
+			dialog_emotion_array[1] = emotion.strip_edges()
+			
+			# dialog
+			# erase the emotion string text and pipe character
+			dialog_emotion_array[0] = dialog_emotion.erase(0, emotion.length() + 1).strip_edges()
+	
+	return dialog_emotion_array
+
+
 ## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
-## [param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
-## [AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
-## characters return to its idle state.[br][br]
+## [param dialog] line to show on screen. If an [AudioCue] is defined for the emotion, it is played. 
+## Once the talk animation finishes, the characters return to its idle state.[br][br]
+## You can define emotions at the start of a dialog string followed by a | (pipe) character.
+## Emotion Dialog String example: 'emotion|dialog text you want to say'
+## [Obsolete/Deprecated] You can optionally specify the emotion to use with [param emo].
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_say(dialog: String, emo := "") -> Callable:
 	return func (): await say(dialog, emo)
 
 
 ## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
-## [param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
-## [AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
-## characters return to its idle state.
+## [param dialog] line to show on screen. If an [AudioCue] is defined for the emotion, it is played. 
+## Once the talk animation finishes, the characters return to its idle state.[br][br]
+## You can define emotions at the start of a dialog string followed by a | (pipe) character.
+## Emotion Dialog String example: 'emotion|dialog text you want to say'
+## [Obsolete/Deprecated] You can optionally specify the emotion to use with [param emo].
 func say(dialog: String, emo := "") -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
 	
+	# splits dialog string into 2 array elements if it has a | character 'emotion|dialog string text'
+	# array element 0 is the dialog string, array element 1 is the emotion
+	var dialog_emotion_array: PackedStringArray = _return_dialog_emotion_array(dialog)
+	dialog = dialog_emotion_array[0]
+	
+	# only set emo value if the array element is not empty/blank ''
+	if not dialog_emotion_array[1].is_empty():
+		emo = dialog_emotion_array[1]
+
 	if not emo.is_empty():
 		emotion = emo
 	
@@ -454,33 +497,28 @@ func say(dialog: String, emo := "") -> void:
 ## a randomly chosen element of the [param dialog_array]. The function also prevents the same string 
 ## from being said twice in a row. This is useful if you want to say different things each time the 
 ## player interacts with something in the game.
-## You can optionally pass [param emo_array] PackedStringArray if you are using emotions. The array 
-## should have the elements the same as the [param dialog_array] with the emo value instead of the 
-## dialog text.
+## You can define emotions at the start of a dialog string followed by a | (pipe) character.
+## Emotion Dialog String example: 'emotion|dialog text you want to say'
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_say_random(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['']) -> Callable:
-	return func (): await say_random(dialog_array, emo_array)
+func queue_say_random(dialog_array: PackedStringArray) -> Callable:
+	return func (): await say_random(dialog_array)
 
 
 ## Says a random string from the [param dialog_array] PackedStringArray, calling the say function with
 ## a randomly chosen element of the [param dialog_array]. The function also prevents the same string 
 ## from being said twice in a row. This is useful if you want to say different things each time the 
 ## player interacts with something in the game.
-## You can optionally pass [param emo_array] PackedStringArray if you are using emotions. The array 
-## should have the elements the same as the [param dialog_array] with the emo value instead of the 
-## dialog text.
-func say_random(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['']) -> void:
+## You can define emotions at the start of a dialog string followed by a | (pipe) character.
+## Emotion Dialog String example: 'emotion|dialog text you want to say'
+func say_random(dialog_array: PackedStringArray) -> void:
 	var say_value: int = randi_range(0, dialog_array.size() -1)
+	
+	# make sure new say value has not been used previously
 	while (say_value == _last_random_say_value):
 		say_value = randi_range(0, dialog_array.size() -1)
 
-	# If the user is not using the emo feature build array with blank strings to match the size of
-	# dialog_array
-	while (emo_array.size() != dialog_array.size()):
-		emo_array.append('')
-
 	_last_random_say_value = say_value
-	say(dialog_array[say_value], emo_array[say_value])
+	say(dialog_array[say_value])
 
 
 ## Says the next string from the [param dialog_array] PackedStringArray, calling the say function with
@@ -490,12 +528,11 @@ func say_random(dialog_array: PackedStringArray, emo_array: PackedStringArray = 
 ## This is useful if you want to say different things each time the player interacts with something 
 ## in the game and then have a final default which is said each time once all the other options are
 ## said.
-## You can optionally pass [param emo_array] PackedStringArray if you are using emotions. The array 
-## should have the elements the same as the [param dialog_array] with the emo value instead of the 
-## dialog text.
+## You can define emotions at the start of a dialog string followed by a | (pipe) character.
+## Emotion Dialog String example: 'emotion|dialog text you want to say'
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_say_next(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['']) -> Callable:
-	return func (): await say_next(dialog_array, emo_array)
+func queue_say_next(dialog_array: PackedStringArray) -> Callable:
+	return func (): await say_next(dialog_array)
 
 
 ## Says the next string from the [param dialog_array] PackedStringArray, calling the say function with
@@ -505,28 +542,16 @@ func queue_say_next(dialog_array: PackedStringArray, emo_array: PackedStringArra
 ## This is useful if you want to say different things each time the player interacts with something 
 ## in the game and then have a final default which is said each time once all the other options are
 ## said.
-## You can optionally pass [param emo_array] PackedStringArray if you are using emotions. The array 
-## should have the elements the same as the [param dialog_array] with the emo value instead of the 
-## dialog text.
-func say_next(dialog_array: PackedStringArray, emo_array: PackedStringArray = ['']) -> void:
+## You can define emotions at the start of a dialog string followed by a | (pipe) character.
+## Emotion Dialog String example: 'emotion|dialog text you want to say'
+func say_next(dialog_array: PackedStringArray) -> void:
 	var dialog_text: String = dialog_array[0]
-	var emo_string: String = emo_array[0]
-
-	# if the user has defined their own emo_array make sure the size matches the dialog_array
-	if (emo_array.size() > 1 and dialog_array.size() > 1):
-		while (emo_array.size() != dialog_array.size()):
-			emo_array.append('')
 
 	if (dialog_array.size() > 1):
 		# Arrays are passed by reference so this is removing value from the array passed to the function
 		dialog_array.remove_at(0)
 	
-	# if user is not using emo feature then it will only have 1 element in the array with blank string
-	if (emo_array.size() > 1):
-	# Arrays are passed by reference so this is removing value from the array passed to the function
-		emo_array.remove_at(0)
-	
-	say(dialog_text, emo_string)
+	say(dialog_text)
 
 
 ## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
