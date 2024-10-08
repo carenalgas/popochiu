@@ -4,7 +4,7 @@ weight: 4025
 
 ## How to change rooms
 
-You can change a room by using ```E.goto_room('RoomName')```. The room names can be easily found in the Main tab of the Popochiu Dock under the rooms section.
+You can change a room by using ```E.goto_room('RoomName')``` or ```R.current_room = R.RoomName```. The room names can be easily found in the Main tab of the Popochiu Dock under the rooms section.
 
 In this example I have a hotspot called 'RoomTwoExit' and switching to a room called 'RoomTwo' in real life you would use more meaningful and descriptive names:
 ```
