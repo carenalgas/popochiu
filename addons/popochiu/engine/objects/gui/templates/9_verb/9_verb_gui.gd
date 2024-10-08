@@ -17,11 +17,11 @@ var _return_to_walk_to := false
 @onready var _9_verb_panel: Control = %"9VerbPanel"
 @onready var hover_text_cursor: Control = %HoverTextCursor
 ## Used to access the [b]9VerbSettingsPopup[/b] node.
-@onready var settings_popup: PopochiuPopup = %"9VerbSettingsPopup"
+@onready var settings_popup: Control = %"9VerbSettingsPopup"
 @onready var save_and_load_popup: Control = %SaveAndLoadPopup
 @onready var history_popup: Control = %HistoryPopup
 ## Used to access the [b]9VerbQuitPopup[/b] node.
-@onready var quit_popup: PopochiuPopup = %"9VerbQuitPopup"
+@onready var quit_popup: Control = %"9VerbQuitPopup"
 
 
 #region Godot ######################################################################################
