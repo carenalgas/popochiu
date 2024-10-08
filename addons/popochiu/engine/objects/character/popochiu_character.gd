@@ -518,7 +518,7 @@ func say_random(dialog_array: PackedStringArray) -> void:
 		say_value = randi_range(0, dialog_array.size() -1)
 
 	_last_random_say_value = say_value
-	say(dialog_array[say_value])
+	await say(dialog_array[say_value])
 
 
 ## Says the next string from the [param dialog_array] PackedStringArray, calling the say function with
@@ -551,7 +551,7 @@ func say_next(dialog_array: PackedStringArray) -> void:
 		# Arrays are passed by reference so this is removing value from the array passed to the function
 		dialog_array.remove_at(0)
 	
-	say(dialog_text)
+	await say(dialog_text)
 
 
 ## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
