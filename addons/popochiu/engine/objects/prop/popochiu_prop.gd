@@ -176,11 +176,14 @@ func is_animation_playing() -> bool:
 	return $AnimationPlayer.is_playing()
 
 
+## Will return the string name of the currently assigned animation key name on the Popochiu Prop
+## AnimationPlayer
 func get_assigned_animation() -> String:
 	if not has_node("AnimationPlayer"): return ''
 	return $AnimationPlayer.assigned_animation
 
-
+## Will set the animation key name for the currently assigned animation on the Popochiu Prop
+## AnimationPlayer
 func set_assigned_animation(name: StringName) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.assigned_animation = name
