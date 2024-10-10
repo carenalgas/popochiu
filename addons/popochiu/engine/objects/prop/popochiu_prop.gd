@@ -140,17 +140,34 @@ func get_total_frames() -> int:
 #endregion
 
 #region AnimationPlayer ############################################################################
-## Will play the Popochiu Prop Animation Player [param animation_name] animation on the Popochiu 
-## Prop if the [prop animation_name] exists.
-func play_animation(animation_name: String) -> void:
+## Will play the Popochiu Prop Animation Player [param name] animation on the Popochiu 
+## Prop if the [prop name] animation exists.
+## Optionally you can use other AnimationPlayer options, see Godot AnimationPlayer documentation for
+## more details.
+func play_animation(name: StringName = &"", custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false) -> void:
 	if not has_node("AnimationPlayer"): return
-	$AnimationPlayer.play(animation_name)
+	$AnimationPlayer.play(name, custom_blend, custom_speed, from_end)
+
+## Will Play the Popochiu Prop Animation Player [param name] animation backwards on the Popochiu
+## Prop if the [prop name] animation exits.
+## This method is a shorthand for play_animation() with custom_speed = -1.0 and from_end = true
+func play_animation_backwards(name: StringName = &"", custom_blend: float = -1) -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.play_backwards(name, custom_blend)
 
 
 ## Will stop the animation that is currently playing on the Popochiu Prop.
-func stop_animation() -> void:
+## The animation position is reset to 0 and the custom_speed is reset to 1.0
+func stop_animation(keep_state: bool = false) -> void:
 	if not has_node("AnimationPlayer"): return
-	$AnimationPlayer.stop()
+	$AnimationPlayer.stop(keep_state)
+
+
+## Will pause the animation that is currently playing on the Popochiu Prop.
+## If play_animation() is run without parameters it will resume from the paused animation frame.
+func pause_animation() -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.pause()
 
 
 #endregion
