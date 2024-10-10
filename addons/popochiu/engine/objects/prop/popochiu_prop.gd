@@ -139,6 +139,22 @@ func get_total_frames() -> int:
 
 #endregion
 
+#region AnimationPlayer ############################################################################
+## Will play the Popochiu Prop Animation Player [param animation_name] animation on the Popochiu 
+## Prop if the [prop animation_name] exists.
+func play_animation(animation_name: String) -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.play(animation_name)
+
+
+## Will stop the animation that is currently playing on the Popochiu Prop.
+func stop_animation() -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.stop()
+
+
+#endregion
+
 #region Private ####################################################################################
 func _on_item_added(item: PopochiuInventoryItem, _animate: bool) -> void:
 	if item.script_name == link_to_item:
