@@ -189,6 +189,13 @@ func set_assigned_animation(name: StringName) -> void:
 	$AnimationPlayer.assigned_animation = name
 
 
+## Will return the current Popochiu Prop animation position in seconds.
+## returns -1.0 if there is an error.
+func  get_current_animation_position() -> float:
+	if not has_node("AnimationPlayer"): return -1.0
+	return $AnimationPlayer.current_animation_position
+
+
 #endregion
 
 #region Private ####################################################################################
