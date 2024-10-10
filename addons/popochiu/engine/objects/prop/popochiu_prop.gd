@@ -139,6 +139,65 @@ func get_total_frames() -> int:
 
 #endregion
 
+#region AnimationPlayer ############################################################################
+## Will play the Popochiu Prop Animation Player [param name] animation on the Popochiu 
+## Prop if the [prop name] animation exists.
+## Optionally you can use other AnimationPlayer options, see Godot AnimationPlayer documentation for
+## more details.
+func play_animation(name: StringName = &"", custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false) -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.play(name, custom_blend, custom_speed, from_end)
+
+## Will Play the Popochiu Prop Animation Player [param name] animation backwards on the Popochiu
+## Prop if the [prop name] animation exits.
+## This method is a shorthand for play_animation() with custom_speed = -1.0 and from_end = true
+func play_animation_backwards(name: StringName = &"", custom_blend: float = -1) -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.play_backwards(name, custom_blend)
+
+
+## Will stop the animation that is currently playing on the Popochiu Prop.
+## The animation position is reset to 0 and the custom_speed is reset to 1.0
+func stop_animation(keep_state: bool = false) -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.stop(keep_state)
+
+
+## Will pause the animation that is currently playing on the Popochiu Prop.
+## If play_animation() is run without parameters it will resume from the paused animation frame.
+func pause_animation() -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.pause()
+
+
+## Will return true if an animation is playing, otherwise it will return false.
+func is_animation_playing() -> bool:
+	if not has_node("AnimationPlayer"): return false
+	return $AnimationPlayer.is_playing()
+
+
+## Will return the string name of the currently assigned animation key name on the Popochiu Prop
+## AnimationPlayer
+func get_assigned_animation() -> String:
+	if not has_node("AnimationPlayer"): return ''
+	return $AnimationPlayer.assigned_animation
+
+## Will set the animation key name for the currently assigned animation on the Popochiu Prop
+## AnimationPlayer
+func set_assigned_animation(name: StringName) -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.assigned_animation = name
+
+
+## Will return the current Popochiu Prop animation position in seconds.
+## returns -1.0 if there is an error.
+func get_current_animation_position() -> float:
+	if not has_node("AnimationPlayer"): return -1.0
+	return $AnimationPlayer.current_animation_position
+
+
+#endregion
+
 #region Private ####################################################################################
 func _on_item_added(item: PopochiuInventoryItem, _animate: bool) -> void:
 	if item.script_name == link_to_item:
