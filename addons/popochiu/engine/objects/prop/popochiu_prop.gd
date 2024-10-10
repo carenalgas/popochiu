@@ -176,6 +176,16 @@ func is_animation_playing() -> bool:
 	return $AnimationPlayer.is_playing()
 
 
+func get_assigned_animation() -> String:
+	if not has_node("AnimationPlayer"): return ''
+	return $AnimationPlayer.assigned_animation
+
+
+func set_assigned_animation(name: StringName) -> void:
+	if not has_node("AnimationPlayer"): return
+	$AnimationPlayer.assigned_animation = name
+
+
 #endregion
 
 #region Private ####################################################################################
