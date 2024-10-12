@@ -15,10 +15,8 @@ func _on_click() -> void:
 
 # Allows the player to double click hot spot to change rooms without walking to the hotspot
 func _on_double_click() -> void:
-    await C.player.teleport_to_hotspot("RoomTwoExit")
-
-    # Calling _on_click will run all the code in the _on_click() function so no code is duplicated
-    _on_click()
+    # Just change room
+    E.goto_room('RoomTwo')
 ```
 
 In the 'RoomOne' room script you can do the following to position the player on entry of that room:
