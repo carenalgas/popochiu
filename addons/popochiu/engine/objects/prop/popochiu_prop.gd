@@ -157,7 +157,8 @@ func play_animation_backwards(name: StringName = &"", custom_blend: float = -1) 
 
 
 ## Will stop the animation that is currently playing on the Popochiu Prop.
-## The animation position is reset to 0 and the custom_speed is reset to 1.0
+## The animation position is reset to 0 and the custom_speed is reset to 1.0.
+## Set [param keep_state] to true to avoid the animation to be updated visually.
 func stop_animation(keep_state: bool = false) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.stop(keep_state)
