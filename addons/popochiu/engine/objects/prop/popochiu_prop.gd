@@ -144,9 +144,27 @@ func get_total_frames() -> int:
 ## Prop if the [prop name] animation exists.
 ## Optionally you can use other AnimationPlayer options, see Godot AnimationPlayer documentation for
 ## more details.
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_play_animation(name: StringName = &"", custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false) -> Callable:
+	return func (): await play_animation(name, custom_blend, custom_speed, from_end)
+
+
+## Will play the Popochiu Prop Animation Player [param name] animation on the Popochiu 
+## Prop if the [prop name] animation exists.
+## Optionally you can use other AnimationPlayer options, see Godot AnimationPlayer documentation for
+## more details.
 func play_animation(name: StringName = &"", custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.play(name, custom_blend, custom_speed, from_end)
+
+
+## Will Play the Popochiu Prop Animation Player [param name] animation backwards on the Popochiu
+## Prop if the [prop name] animation exits.
+## This method is a shorthand for play_animation() with custom_speed = -1.0 and from_end = true
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_play_animation_backwards(name: StringName = &"", custom_blend: float = -1) -> Callable:
+	return func (): await play_animation_backwards(name, custom_blend)
+
 
 ## Will Play the Popochiu Prop Animation Player [param name] animation backwards on the Popochiu
 ## Prop if the [prop name] animation exits.
@@ -159,9 +177,23 @@ func play_animation_backwards(name: StringName = &"", custom_blend: float = -1) 
 ## Will stop the animation that is currently playing on the Popochiu Prop.
 ## The animation position is reset to 0 and the custom_speed is reset to 1.0.
 ## Set [param keep_state] to true to avoid the animation to be updated visually.
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_stop_animation(keep_state: bool = false) -> Callable:
+	return func (): await stop_animation(keep_state)
+
+
+## Will stop the animation that is currently playing on the Popochiu Prop.
+## The animation position is reset to 0 and the custom_speed is reset to 1.0.
+## Set [param keep_state] to true to avoid the animation to be updated visually.
 func stop_animation(keep_state: bool = false) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.stop(keep_state)
+
+## Will pause the animation that is currently playing on the Popochiu Prop.
+## If queue_play_animation() is run without parameters it will resume from the paused animation frame.
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_pause_animation() -> Callable:
+	return func (): await pause_animation()
 
 
 ## Will pause the animation that is currently playing on the Popochiu Prop.
