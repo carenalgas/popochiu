@@ -213,7 +213,7 @@ func pause_animation() -> void:
 	$AnimationPlayer.pause()
 
 
-## Will return true if an animation is playing, otherwise it will return false.
+## Return [code]true[/code] if an animation is playing, otherwise it will return [code]false[/code].
 func is_animation_playing() -> bool:
 	if not has_node("AnimationPlayer"): return false
 	return $AnimationPlayer.is_playing()
