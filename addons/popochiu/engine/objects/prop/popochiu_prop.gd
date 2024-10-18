@@ -145,7 +145,12 @@ func get_total_frames() -> int:
 ## Optionally you can use other AnimationPlayer options, see Godot AnimationPlayer documentation for
 ## more details.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_play_animation(name: StringName = &"", custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false) -> Callable:
+func queue_play_animation(
+	name: StringName = &"",
+	custom_blend: float = -1,
+	custom_speed: float = 1.0,
+	from_end: bool = false
+) -> Callable:
 	return func (): await play_animation(name, custom_blend, custom_speed, from_end)
 
 
