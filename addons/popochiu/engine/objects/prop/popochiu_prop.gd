@@ -175,9 +175,10 @@ func queue_play_animation_backwards(name: StringName = &"", custom_blend: float 
 	return func (): await play_animation_backwards(name, custom_blend)
 
 
-## Will Play the Popochiu Prop Animation Player [param name] animation backwards on the Popochiu
-## Prop if the [prop name] animation exits.
-## This method is a shorthand for play_animation() with custom_speed = -1.0 and from_end = true
+## Will play the [param name] animation in reverse if it exists in this prop's [AnimationPlayer]
+## node.
+## This method is a shorthand for [method play_animation] with [code]custom_speed = -1.0[/code]
+## and [code]from_end = true[/code].
 func play_animation_backwards(name: StringName = &"", custom_blend: float = -1) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.play_backwards(name, custom_blend)
