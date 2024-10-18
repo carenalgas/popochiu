@@ -140,10 +140,9 @@ func get_total_frames() -> int:
 #endregion
 
 #region AnimationPlayer ############################################################################
-## Will play the Popochiu Prop Animation Player [param name] animation on the Popochiu 
-## Prop if the [prop name] animation exists.
-## Optionally you can use other AnimationPlayer options, see Godot AnimationPlayer documentation for
-## more details.
+## Will play the [param name] animation if it exists in this prop's [AnimationPlayer] node.
+## Optionally you can use the other [method AnimationPlayer.play] parameters (see Godot's
+## documentation for more details).
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation(
 	name: StringName = &"",
