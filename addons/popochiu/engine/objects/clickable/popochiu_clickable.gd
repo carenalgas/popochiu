@@ -350,8 +350,6 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 		MOUSE_BUTTON_LEFT:
 			if I.active:
 				await on_item_used(I.active)
-				# after item has been used return to normal state
-				I.active = null
 			else:
 				await handle_command(event_index)
 				times_clicked += 1

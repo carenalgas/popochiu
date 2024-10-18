@@ -354,8 +354,6 @@ func _on_gui_input(event: InputEvent) -> void:
 		MOUSE_BUTTON_LEFT:
 			if I.active:
 				await on_item_used(I.active)
-				# after item has been used return to normal state
-				I.active = null
 			else:
 				if DisplayServer.is_touchscreen_available():
 					G.mouse_entered_inventory_item.emit(self)
