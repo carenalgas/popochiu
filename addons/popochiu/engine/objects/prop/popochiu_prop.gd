@@ -200,8 +200,8 @@ func stop_animation(keep_state: bool = false) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.stop(keep_state)
 
-## Will pause the animation that is currently playing on the Popochiu Prop.
-## Call play_animation() without any parameter to resume the animation from the paused animation frame.
+## Will pause the animation that is currently playing.
+## Call [method play_animation] without any parameters to resume the animation.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_pause_animation() -> Callable:
 	return func (): await pause_animation()
