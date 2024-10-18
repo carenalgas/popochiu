@@ -224,8 +224,7 @@ func get_assigned_animation() -> String:
 	if not has_node("AnimationPlayer"): return ''
 	return $AnimationPlayer.assigned_animation
 
-## Will set the animation key name for the currently assigned animation on the Popochiu Prop
-## AnimationPlayer
+## Sets the animation key name for the currently assigned animation in the [AnimationPlayer] node.
 func set_assigned_animation(name: StringName) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.assigned_animation = name
