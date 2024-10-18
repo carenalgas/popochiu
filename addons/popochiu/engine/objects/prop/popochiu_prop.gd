@@ -158,7 +158,12 @@ func queue_play_animation(
 ## Prop if the [prop name] animation exists.
 ## Optionally you can use other AnimationPlayer options, see Godot AnimationPlayer documentation for
 ## more details.
-func play_animation(name: StringName = &"", custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false) -> void:
+func play_animation(
+	name: StringName = &"",
+	custom_blend: float = -1,
+	custom_speed: float = 1.0,
+	from_end: bool = false
+) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.play(name, custom_blend, custom_speed, from_end)
 
