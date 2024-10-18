@@ -218,8 +218,7 @@ func is_animation_playing() -> bool:
 	return $AnimationPlayer.is_playing()
 
 
-## Will return the string name of the currently assigned animation key name on the Popochiu Prop
-## AnimationPlayer
+## Returns the string name of the currently assigned animation in the [AnimationPlayer] node.
 func get_assigned_animation() -> String:
 	if not has_node("AnimationPlayer"): return ''
 	return $AnimationPlayer.assigned_animation
