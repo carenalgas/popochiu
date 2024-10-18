@@ -153,10 +153,9 @@ func queue_play_animation(
 	return func (): await play_animation(name, custom_blend, custom_speed, from_end)
 
 
-## Will play the Popochiu Prop Animation Player [param name] animation on the Popochiu 
-## Prop if the [prop name] animation exists.
-## Optionally you can use other AnimationPlayer options, see Godot AnimationPlayer documentation for
-## more details.
+## Will play the [param name] animation if it exists in this prop's [AnimationPlayer] node.
+## Optionally you can use the other [method AnimationPlayer.play] parameters (see Godot's
+## documentation for more details).
 func play_animation(
 	name: StringName = &"",
 	custom_blend: float = -1,
