@@ -249,6 +249,8 @@ func on_middle_click() -> void:
 ## Called when an [param item] is used on this object.
 func on_item_used(item: PopochiuInventoryItem) -> void:
 	await _on_item_used(item)
+	# after item has been used return to normal state
+	I.active = null
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
