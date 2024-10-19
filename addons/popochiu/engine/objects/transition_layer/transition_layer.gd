@@ -26,8 +26,16 @@ func _ready() -> void:
 	if E.scale != Vector2.ONE:
 		$Transitions.scale = E.scale
 	
-	$InputBlockerLayer.hide()
-
+	# Make sure the transition layer is ready
+	# if it has to be visible in the first room
+	if E.settings.show_tl_in_first_room:
+		$Transitions/Fade.show()
+		$Transitions/Fade.modulate = E.settings.fade_color
+		$InputBlockerLayer.show()
+	else:
+		$Transitions/Fade.hide()
+		$Transitions/Fade.modulate.a = 0.0
+		$InputBlockerLayer.hide()
 
 #endregion
 

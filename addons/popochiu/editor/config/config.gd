@@ -16,6 +16,7 @@ enum DialogStyle {
 const SCALE_GUI = "popochiu/gui/experimental_scale_gui"
 const FADE_COLOR = "popochiu/gui/fade_color"
 const SKIP_CUTSCENE_TIME = "popochiu/gui/skip_cutscene_time"
+const TL_FIRST_ROOM = "popochiu/gui/show_transition_layer_in_first_room"
 
 # ---- Dialogs -------------------------------------------------------------------------------------
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
@@ -54,6 +55,7 @@ static var defaults := {
 	SCALE_GUI: false,
 	FADE_COLOR: Color.BLACK,
 	SKIP_CUTSCENE_TIME: 0.2,
+	TL_FIRST_ROOM: false,
 	TEXT_SPEED: 0.1,
 	AUTO_CONTINUE_TEXT: false,
 	USE_TRANSLATIONS: false,
@@ -84,6 +86,7 @@ static func initialize_project_settings():
 	_initialize_project_setting(SCALE_GUI, TYPE_BOOL)
 	_initialize_project_setting(FADE_COLOR, TYPE_COLOR)
 	_initialize_project_setting(SKIP_CUTSCENE_TIME, TYPE_FLOAT)
+	_initialize_project_setting(TL_FIRST_ROOM, TYPE_BOOL)
 	
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	_initialize_project_setting(TEXT_SPEED, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
@@ -148,6 +151,9 @@ static func get_fade_color() -> Color:
 
 static func get_skip_cutscene_time() -> float:
 	return _get_project_setting(SKIP_CUTSCENE_TIME)
+
+static func should_show_tl_in_first_room() -> bool:
+	return _get_project_setting(TL_FIRST_ROOM)
 
 
 # ---- Dialogs -------------------------------------------------------------------------------------
