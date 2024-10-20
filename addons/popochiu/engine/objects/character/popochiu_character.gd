@@ -391,16 +391,16 @@ func queue_face_clicked() -> Callable:
 ## Makes the character face in the direction of the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked].
 func face_clicked() -> void:
-	if E.clicked.global_position < global_position:
+	if E.clicked.get_look_at_point().x < global_position.x:
 		if has_node('Sprite2D'):
 			$Sprite2D.flip_h = flips_when == FlipsWhen.LOOKING_LEFT
-		
-		await face_left()
-	else:
+	elif E.clicked.get_look_at_point().x > global_position.x:
 		if has_node('Sprite2D'):
 			$Sprite2D.flip_h = flips_when == FlipsWhen.LOOKING_RIGHT
-		
-		await face_right()
+	else:
+		$Sprite2D.flip_h = false
+
+	await face_direction(E.clicked.get_look_at_point())
 
 
 ## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
@@ -891,7 +891,7 @@ func _get_vo_cue(emotion := '') -> String:
 func _get_valid_oriented_animation(animation_label):
 	var suffixes = []
 	# Based on the character facing direction, define a set of
-	# animation suffixes in èreference order.
+	# animation suffixes in reference order.
 	# Notice how we seek for opposite directions for left and
 	# right. Flipping is done in other functions. We just define
 	# a preference order for animations when available.
