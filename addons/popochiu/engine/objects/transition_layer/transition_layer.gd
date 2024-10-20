@@ -55,10 +55,8 @@ func play_transition(type := FADE_IN, duration := 1.0) -> void:
 			await $AnimationPlayer.animation_finished
 			_hide()
 		FADE_IN:
-			print("Fading in")
 			$AnimationPlayer.play("fade")
 		FADE_OUT:
-			print("Fading out")
 			$AnimationPlayer.play_backwards("fade")
 			await $AnimationPlayer.animation_finished
 			_hide()
