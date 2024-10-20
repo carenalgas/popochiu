@@ -29,6 +29,9 @@ func _draw() -> void:
 
 
 func _input(event: InputEvent) -> void:
+	if event.is_action_released("popochiu-skip"):
+		close.call_deferred()
+	
 	if not PopochiuUtils.is_click_or_touch_pressed(event) or not visible:
 		return
 	
@@ -62,6 +65,10 @@ func close() -> void:
 
 #region Private ####################################################################################
 func _show_text(msg := "") -> void:
+	if E.cutscene_skipped:
+		close.call_deferred()
+		return
+	
 	rich_text_label.clear()
 	rich_text_label.text = ""
 	rich_text_label.size = get_meta(DFLT_SIZE)

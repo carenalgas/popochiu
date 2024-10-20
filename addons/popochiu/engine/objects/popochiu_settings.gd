@@ -5,6 +5,8 @@ extends Resource
 
 ## The time, in seconds, that will take the game to skip a cutscene.
 var skip_cutscene_time := 0.0
+## A flag telling if the transition layer should be shown when the game starts.
+var show_tl_in_first_room := false
 ## @deprecated
 ## The text speed options that will be available in the game. In the ContextSensitive GUI you can
 ## loop between them usin the text speed button in the SettingsBar.
@@ -75,6 +77,7 @@ func _init() -> void:
 	scale_gui = PopochiuConfig.is_scale_gui()
 	fade_color = PopochiuConfig.get_fade_color()
 	skip_cutscene_time = PopochiuConfig.get_skip_cutscene_time()
+	show_tl_in_first_room = PopochiuConfig.should_show_tl_in_first_room()
 	
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	text_speed = PopochiuConfig.get_text_speed()
