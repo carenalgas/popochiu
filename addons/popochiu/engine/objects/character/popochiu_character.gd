@@ -732,11 +732,7 @@ func resume_animation():
 ## defined by [enum Looking].
 func face_direction(destination: Vector2):
 	# Get the vector from the origin to the destination.
-	var vectX = destination.x - position.x
-	var vectY = destination.y - position.y
-	# Determine the angle of the movement vector.
-	var rad = atan2(vectY, vectX)
-	var angle = rad_to_deg(rad)
+	var angle = rad_to_deg((destination - position).angle())
 	# Tolerance in degrees, to avoid U D L R are only
 	# achieved on precise angles such as 0 90 180 deg.
 	var t = 22.5
@@ -754,14 +750,14 @@ func face_direction(destination: Vector2):
 		_looking_dir = Looking.DOWN
 	elif angle >= (90 + t) and angle < (180 - t):
 		_looking_dir = Looking.DOWN_LEFT
-	elif angle >= (180 - t) or angle <= -(180 -t ):
+	elif angle >= (180 - t) or angle < -(180 - t):
 		_looking_dir = Looking.LEFT
-	elif angle <= -(0 + t) and angle > -(90 - t):
-		_looking_dir = Looking.UP_RIGHT
-	elif angle <= -(90 - t) and angle > -(90 + t):
-		_looking_dir = Looking.UP
-	elif angle <= -(90 + t) and angle > -(180 - t):
+	elif angle >= -(180 - t) and angle < -(90 + t):
 		_looking_dir = Looking.UP_LEFT
+	elif angle >= -(90 + t) and angle < -(90 - t):
+		_looking_dir = Looking.UP
+	elif angle >= -(90 - t) and angle < -(0 + t):
+		_looking_dir = Looking.UP_RIGHT
 
 
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.
