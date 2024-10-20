@@ -1,5 +1,5 @@
 class_name PopochiuTransitionLayer
-extends Node2D
+extends Control
 ## Used to play different transition animations when moving between rooms, skipping a cutscene,
 ## and so on.
 
@@ -23,57 +23,60 @@ func _ready() -> void:
 	# Connect to childrens' signals
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
 	
-	if E.scale != Vector2.ONE:
-		$Transitions.scale = E.scale
-	
+	for c in $Transitions.get_children():
+		(c as ColorRect).modulate = E.settings.fade_color
+
 	# Make sure the transition layer is ready
 	# if it has to be visible in the first room
-	if E.settings.show_tl_in_first_room:
+	if E.settings.show_tl_in_first_room and Engine.get_process_frames() == 0:
 		$Transitions/Fade.show()
 		$Transitions/Fade.modulate = E.settings.fade_color
-		$InputBlockerLayer.show()
+		_show()
 	else:
-		$Transitions/Fade.hide()
-		$Transitions/Fade.modulate.a = 0.0
-		$InputBlockerLayer.hide()
+		$AnimationPlayer.play("RESET")
+		await get_tree().process_frame
+		_hide()
 
 #endregion
 
 #region Public #####################################################################################
 func play_transition(type := FADE_IN, duration := 1.0) -> void:
-	$InputBlockerLayer.show()
-	G.hide_interface()
+	_show()
 	
 	# ---- Play RESET in order to fix #168 ---------------------------------------------------------
 	$AnimationPlayer.play("RESET")
 	await get_tree().process_frame
 	# --------------------------------------------------------- Play RESET in order to fix #168 ----
 	
-	for c in $Transitions.get_children():
-		(c as Sprite2D).modulate = E.settings.fade_color
-	
 	$AnimationPlayer.speed_scale = 1.0 / duration
 	
 	match type:
 		FADE_IN_OUT:
-			$AnimationPlayer.play("fade_in")
+			$AnimationPlayer.play("fade")
 			await $AnimationPlayer.animation_finished
-			
-			$AnimationPlayer.play("fade_out")
+			$AnimationPlayer.play_backwards("fade")
+			await $AnimationPlayer.animation_finished
+			_hide()
 		FADE_IN:
-			$AnimationPlayer.play("fade_in")
+			print("Fading in")
+			$AnimationPlayer.play("fade")
 		FADE_OUT:
-			$AnimationPlayer.play("fade_out")
-		PASS_DOWN_IN_OUT:
-			$AnimationPlayer.play("pass_down_in")
+			print("Fading out")
+			$AnimationPlayer.play_backwards("fade")
 			await $AnimationPlayer.animation_finished
-			
-			$AnimationPlayer.play("pass_down_out")
+			_hide()
+		PASS_DOWN_IN_OUT:
+			$AnimationPlayer.play("pass")
+			await $AnimationPlayer.animation_finished
+			$AnimationPlayer.play_backwards("pass")
+			await $AnimationPlayer.animation_finished
+			_hide()
 		PASS_DOWN_IN:
-			$AnimationPlayer.play("pass_down_in")
+			$AnimationPlayer.play("pass")
 		PASS_DOWN_OUT:
-			$AnimationPlayer.play("pass_down_out")
-
+			$AnimationPlayer.play_backwards("pass")
+			await $AnimationPlayer.animation_finished
+			_hide()
 
 #endregion
 
@@ -81,11 +84,18 @@ func play_transition(type := FADE_IN, duration := 1.0) -> void:
 func _transition_finished(anim_name := "") -> void:
 	if anim_name == "RESET":
 		return
-	
-	$InputBlockerLayer.hide()
-	G.show_interface()
-	
+
 	transition_finished.emit(anim_name)
+
+
+func _show() -> void:
+	show()
+	G.hide_interface()
+
+
+func _hide() -> void:
+	hide()
+	G.show_interface()
 
 
 #endregion
