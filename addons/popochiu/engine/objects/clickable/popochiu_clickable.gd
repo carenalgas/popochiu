@@ -20,8 +20,10 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 @export var clickable := true : set = set_clickable
 ## The [code]y[/code] position of the baseline relative to the center of the object.
 @export var baseline := 0 : set = set_baseline
-## The [Vector2] position where characters will move when aproaching the object.
+## The [Vector2] position where characters will move when approaching the object.
 @export var walk_to_point := Vector2.ZERO : set = set_walk_to_point
+## The [Vector2] position where characters will turn looking at the object.
+@export var look_at_point := Vector2.ZERO : set = set_look_at_point
 ## The cursor to use when the mouse hovers the object.
 @export var cursor: CURSOR.Type = CURSOR.Type.NONE
 ## Whether the object will be rendered always above other objects in the room.
@@ -160,21 +162,16 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Used by the plugin to hide the visual helpers that show the [member baseline] and
-## [member walk_to_point] in the 2D Canvas Editor when this node is unselected in the Scene panel.
+## Used by the plugin to hide the visual helpers that show the interaction polygon
+## in the 2D Canvas Editor when this node is unselected in the Scene panel.
 func hide_helpers() -> void:
-	# TODO: visibility logic for gizmos
-
 	if get_node_or_null("InteractionPolygon"):
 		$InteractionPolygon.hide()
 
 
-## Used by the plugin to make visible the visual helpers that show the [member baseline] and
-## [member walk_to_point] of the object in the 2D Canvas Editor when the is selected in the
-## Scene panel.
+## Used by the plugin to make visible the visual helpers that show the interaction polygon
+## in the 2D Canvas Editor when this node is unselected in the Scene panel.
 func show_helpers() -> void:
-	# TODO: visibility logic for gizmos
-
 	if get_node_or_null("InteractionPolygon"):
 		$InteractionPolygon.show()
 
@@ -223,6 +220,15 @@ func get_walk_to_point() -> Vector2:
 	elif is_inside_tree():
 		return to_global(walk_to_point)
 	return walk_to_point
+
+
+## Returns the global position of [member look_at_point].
+func get_look_at_point() -> Vector2:
+	if Engine.is_editor_hint():
+		return look_at_point
+	elif is_inside_tree():
+		return to_global(look_at_point)
+	return look_at_point
 
 
 ## Called when the object is left clicked.
@@ -298,6 +304,8 @@ func set_baseline(value: int) -> void:
 func set_walk_to_point(value: Vector2) -> void:
 	walk_to_point = value
 
+func set_look_at_point(value: Vector2) -> void:
+	look_at_point = value
 
 func set_room(value: Node2D) -> void:
 	room = value

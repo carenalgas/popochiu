@@ -60,6 +60,7 @@ func _parse_property(
 	if object and object.get_parent() is Node2D and not path in [
 		"baseline",
 		"walk_to_point",
+		"look_at_point",
 		"position",
 		"visible",
 		"modulate",

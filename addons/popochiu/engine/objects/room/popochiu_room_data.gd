@@ -149,6 +149,7 @@ func save_characters() -> void:
 			light_mask = pc.light_mask,
 			baseline = pc.baseline,
 			walk_to_point = pc.walk_to_point,
+			look_at_point = pc.look_at_point,
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)
 		}
