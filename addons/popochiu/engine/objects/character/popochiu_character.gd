@@ -233,16 +233,11 @@ func walk(target_pos: Vector2) -> void:
 	
 	if E.cutscene_skipped:
 		is_moving = false
-		E.camera.follow_smoothing_enabled = false
-		
 		await get_tree().process_frame
 		
 		position = target_pos
 		E.camera.position = target_pos
-		
 		await get_tree().process_frame
-		
-		E.camera.follow_smoothing_enabled = true
 		
 		return
 	
@@ -689,7 +684,7 @@ func stop_animation():
 		return
 	
 	# Save the loop mode, wait for the anim to be over as designed, then restore the mode
-	var animation = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
+	var animation: AnimationMixer = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
 	var animation_loop_mode = animation.loop_mode
 	animation.loop_mode = Animation.LOOP_NONE
 	
