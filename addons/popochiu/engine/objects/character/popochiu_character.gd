@@ -386,12 +386,14 @@ func queue_face_clicked() -> Callable:
 ## Makes the character face in the direction of the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked].
 func face_clicked() -> void:
+	var global_lap = to_global(E.clicked.look_at_point)
+
 	_flip_left_right(
-		E.clicked.get_look_at_point().x < global_position.x,
-		E.clicked.get_look_at_point().x > global_position.x
+		global_lap.x < global_position.x,
+		global_lap.x > global_position.x
 	)
 
-	await face_direction(E.clicked.get_look_at_point())
+	await face_direction(global_lap)
 
 
 ## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
@@ -933,7 +935,7 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 func _update_position():
 	R.current.update_characters_position(self)
 
-# Flips sprites depending on user prefereces: requires two boolean conditions 
+# Flips sprites depending on user prefereces: requires two boolean conditions
 # as arguments for flipping left [param left_cond] or right [param right_cond]
 func _flip_left_right(left_cond: bool, right_cond: bool) -> void:
 	if has_node('Sprite2D'):
