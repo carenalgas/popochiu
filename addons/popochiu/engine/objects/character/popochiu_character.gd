@@ -53,17 +53,17 @@ signal grab_done
 ## [code]{ emotion: String, variations: Array[PopochiuAudioCue] }[/code].
 ## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
 ## specific emotion.
-@export var voices := [] : set = set_voices
+@export var voices := []: set = set_voices
 ## Whether the character should follow the player-controlled character (PC) when it moves through
 ## the room.
-@export var follow_player := false : set = set_follow_player
+@export var follow_player := false: set = set_follow_player
 ## The offset between the player-controlled character (PC) and this character when it follows the
 ## former one.
-@export var follow_player_offset := Vector2(20,0)
+@export var follow_player_offset := Vector2(20, 0)
 ## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
 ## You can use this to define which [Texture] to use as avatar for the character when it speaks
 ## using a specific emotion.
-@export var avatars := [] : set = set_avatars
+@export var avatars := []: set = set_avatars
 ## The speed at which the character will move in pixels per frame.
 @export var walk_speed := 200.0
 ## Whether the character can or not move.
@@ -92,7 +92,7 @@ var anim_suffix := ''
 var is_moving := false
 ## The current emotion used by the character.
 var emotion := ''
-## 
+##
 var on_scaling_region: Dictionary = {}
 ## Stores the default walk speed defined in [member walk_speed]. Used by [PopochiuRoom] when scaling
 ## the character if it is inside a [PopochiuRegion] that modifies the scale.
@@ -104,25 +104,24 @@ var default_scale := Vector2.ONE
 var _looking_dir: int = Looking.DOWN
 
 
-
 #region Godot ######################################################################################
 func _ready():
 	super()
-	
+
 	default_walk_speed = walk_speed
 	default_scale = Vector2(scale)
-	
+
 	if Engine.is_editor_hint():
 		hide_helpers()
 		set_process(true)
 	else:
 		set_process(follow_player)
-	
+
 	for child in get_children():
 		if not child is Sprite2D:
 			continue
 		child.frame_changed.connect(_update_position)
-	
+
 	move_ended.connect(_on_move_ended)
 
 
@@ -150,7 +149,7 @@ func _play_walk(target_pos: Vector2) -> void:
 	# Set the default parameters for play_animation()
 	var animation_label = 'walk'
 	var animation_fallback = 'idle'
-	
+
 	play_animation(animation_label, animation_fallback)
 
 
@@ -179,9 +178,9 @@ func _on_move_ended() -> void:
 ## value.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_idle() -> Callable:
-	return func (): await idle()
-	
-	
+	return func(): await idle()
+
+
 ## Puts the character in the idle state by playing its idle animation, then waits for
 ## [code]0.2[/code] seconds.
 ## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
@@ -191,16 +190,14 @@ func idle() -> void:
 		await get_tree().process_frame
 		return
 
-	if has_node('Sprite2D'):
-		match flips_when:
-			FlipsWhen.LOOKING_LEFT:
-				$Sprite2D.flip_h = _looking_dir == Looking.LEFT
-			FlipsWhen.LOOKING_RIGHT:
-				$Sprite2D.flip_h = _looking_dir == Looking.RIGHT
-	
+	_flip_left_right(
+		_looking_dir in [Looking.LEFT, Looking.DOWN_LEFT, Looking.UP_LEFT],
+		_looking_dir in [Looking.RIGHT, Looking.DOWN_RIGHT, Looking.UP_RIGHT]
+	)
+
 	# Call the virtual that plays the idle animation
 	_play_idle()
-	
+
 	await get_tree().create_timer(0.2).timeout
 
 
@@ -209,7 +206,7 @@ func idle() -> void:
 ## value.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk(target_pos: Vector2) -> Callable:
-	return func (): await walk(target_pos)
+	return func(): await walk(target_pos)
 
 
 ## Makes the character move to [param target_pos] and plays its walk animation.
@@ -224,30 +221,28 @@ func walk(target_pos: Vector2) -> void:
 	# The ROOM will take care of moving the character
 	# and face her in the correct direction from here
 
-	if has_node('Sprite2D'):
-		match flips_when:
-			FlipsWhen.LOOKING_LEFT:
-				$Sprite2D.flip_h = target_pos.x < position.x
-			FlipsWhen.LOOKING_RIGHT:
-				$Sprite2D.flip_h = target_pos.x > position.x
-	
+	_flip_left_right(
+		target_pos.x < position.x,
+		target_pos.x > position.x
+	)
+
 	if E.cutscene_skipped:
 		is_moving = false
 		await get_tree().process_frame
-		
+
 		position = target_pos
 		E.camera.position = target_pos
 		await get_tree().process_frame
-		
+
 		return
-	
+
 	# Call the virtual that plays the walk animation
 	_play_walk(target_pos)
-	
+
 	# Trigger the signal for the room to start moving the character
 	started_walk_to.emit(self, position, target_pos)
 	await move_ended
-	
+
 	is_moving = false
 
 func take_turn(target_pos: Vector2):
@@ -257,15 +252,15 @@ func take_turn(target_pos: Vector2):
 ## Makes the character stop moving and emits [signal stopped_walk].[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop_walking() -> Callable:
-	return func (): await stop_walking()
+	return func(): await stop_walking()
 
 
 ## Makes the character stop moving and emits [signal stopped_walk].
 func stop_walking() -> void:
 	is_moving = false
-	
+
 	stopped_walk.emit()
-	
+
 	await get_tree().process_frame
 
 
@@ -273,7 +268,7 @@ func stop_walking() -> void:
 ## [method idle] finishes.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_up() -> Callable:
-	return func (): await face_up()
+	return func(): await face_up()
 
 
 ## Makes the character to look up by setting [member _looking_dir] to [constant UP] and waits until
@@ -287,7 +282,7 @@ func face_up() -> void:
 ## and waits until [method idle] finishes.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_up_right() -> Callable:
-	return func (): await face_up_right()
+	return func(): await face_up_right()
 
 
 ## Makes the character to look up and right by setting [member _looking_dir] to [constant UP_RIGHT]
@@ -301,7 +296,7 @@ func face_up_right() -> void:
 ## until [method idle] finishes.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_right() -> Callable:
-	return func (): await face_right()
+	return func(): await face_right()
 
 
 ## Makes the character to look right by setting [member _looking_dir] to [constant RIGHT] and waits
@@ -315,7 +310,7 @@ func face_right() -> void:
 ## [constant DOWN_RIGHT] and waits until [method idle] finishes.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_down_right() -> Callable:
-	return func (): await face_down_right()
+	return func(): await face_down_right()
 
 
 ## Makes the character to look down and right by setting [member _looking_dir] to
@@ -329,7 +324,7 @@ func face_down_right() -> void:
 ## until [method idle] finishes.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_down() -> Callable:
-	return func (): await face_down()
+	return func(): await face_down()
 
 
 ## Makes the character to look down by setting [member _looking_dir] to [constant DOWN] and waits
@@ -343,7 +338,7 @@ func face_down() -> void:
 ## [constant DOWN_LEFT] and waits until [method idle] finishes.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_down_left() -> Callable:
-	return func (): await face_down_left()
+	return func(): await face_down_left()
 
 
 ## Makes the character to look down and left by setting [member _looking_dir] to
@@ -357,7 +352,7 @@ func face_down_left() -> void:
 ## until [method idle] finishes.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_left() -> Callable:
-	return func (): await face_left()
+	return func(): await face_left()
 
 
 ## Makes the character to look left by setting [member _looking_dir] to [constant LEFT] and waits
@@ -371,7 +366,7 @@ func face_left() -> void:
 ## and waits until [method idle] finishes.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_up_left() -> Callable:
-	return func (): await face_up_left()
+	return func(): await face_up_left()
 
 
 ## Makes the character to look up and left by setting [member _looking_dir] to [constant UP_LEFT]
@@ -385,20 +380,16 @@ func face_up_left() -> void:
 ## stored in [member Popochiu.clicked].[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_clicked() -> Callable:
-	return func (): await face_clicked()
+	return func(): await face_clicked()
 
 
 ## Makes the character face in the direction of the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked].
 func face_clicked() -> void:
-	if E.clicked.get_look_at_point().x < global_position.x:
-		if has_node('Sprite2D'):
-			$Sprite2D.flip_h = flips_when == FlipsWhen.LOOKING_LEFT
-	elif E.clicked.get_look_at_point().x > global_position.x:
-		if has_node('Sprite2D'):
-			$Sprite2D.flip_h = flips_when == FlipsWhen.LOOKING_RIGHT
-	else:
-		$Sprite2D.flip_h = false
+	_flip_left_right(
+		E.clicked.get_look_at_point().x < global_position.x,
+		E.clicked.get_look_at_point().x > global_position.x
+	)
 
 	await face_direction(E.clicked.get_look_at_point())
 
@@ -409,7 +400,7 @@ func face_clicked() -> void:
 ## characters return to its idle state.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_say(dialog: String, emo := "") -> Callable:
-	return func (): await say(dialog, emo)
+	return func(): await say(dialog, emo)
 
 
 ## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
@@ -420,26 +411,26 @@ func say(dialog: String, emo := "") -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
-	
+
 	if not emo.is_empty():
 		emotion = emo
-	
+
 	# Call the virtual that plays the talk animation
 	_play_talk()
-	
+
 	var vo_name := _get_vo_cue(emotion)
 	if not vo_name.is_empty() and A.get(vo_name):
 		A[vo_name].play(false, global_position)
-	
+
 	C.character_spoke.emit(self, dialog)
-	
+
 	await G.dialog_line_finished
-	
+
 	# Stop the voice if it is still playing (feature #202)
 	# Fix: Check if the vo_name is valid in order to stop it
 	if not vo_name.is_empty() and A[vo_name].is_playing():
 		A[vo_name].stop(0.3)
-	
+
 	emotion = ''
 	idle()
 
@@ -448,7 +439,7 @@ func say(dialog: String, emo := "") -> void:
 ## [method idle].[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_grab() -> Callable:
-	return func (): await grab()
+	return func(): await grab()
 
 
 ## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
@@ -457,12 +448,12 @@ func grab() -> void:
 	if E.cutscene_skipped:
 		await get_tree().process_frame
 		return
-	
+
 	# Call the virtual that plays the grab animation
 	_play_grab()
-	
+
 	await grab_done
-	
+
 	idle()
 
 
@@ -493,16 +484,16 @@ func walk_to(pos: Vector2) -> void:
 ## [member Popochiu.clicked]. You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
-	return func (): await walk_to_clicked(offset)
+	return func(): await walk_to_clicked(offset)
 
 
 ## Makes the character walk (NON-BLOCKING) to the last clicked [PopochiuClickable], which is stored
 ## in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	var clicked_id: String = E.clicked.script_name
-	
+
 	await _walk_to_node(E.clicked, offset)
-	
+
 	# Check if the action was cancelled
 	if not E.clicked or clicked_id != E.clicked.script_name:
 		await E.await_stopped
@@ -512,9 +503,9 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 ## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
 	G.block()
-	
+
 	await _walk_to_node(E.clicked, offset)
-	
+
 	G.unblock()
 
 
@@ -522,7 +513,7 @@ func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
 ## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_clicked_blocking(offset := Vector2.ZERO) -> Callable:
-	return func (): await walk_to_clicked_blocking(offset)
+	return func(): await walk_to_clicked_blocking(offset)
 
 
 ## Makes the character walk to the [PopochiuProp] (in the current room) which
@@ -540,16 +531,16 @@ func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(R.current.get_prop(id), offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the 
-## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to 
+## Makes the character teleport (disappear at one location and instantly appear at another) to the
+## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
 ## [param id]. You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_prop(id, offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the 
-## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to 
+## Makes the character teleport (disappear at one location and instantly appear at another) to the
+## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
 ## [param id]. You can set an [param offset] relative to the target position.
 func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
 	await _teleport_to_node(R.current.get_prop(id), offset)
@@ -570,16 +561,16 @@ func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(R.current.get_hotspot(id), offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the 
-## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to 
+## Makes the character teleport (disappear at one location and instantly appear at another) to the
+## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
 ## [param id]. You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_hotspot(id, offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the 
-## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to 
+## Makes the character teleport (disappear at one location and instantly appear at another) to the
+## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
 ## [param id]. You can set an [param offset] relative to the target position.
 func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 	await _teleport_to_node(R.current.get_hotspot(id), offset)
@@ -598,16 +589,16 @@ func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(R.current.get_marker(id), offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the 
-## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an 
+## Makes the character teleport (disappear at one location and instantly appear at another) to the
+## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
 ## [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_marker(id, offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the 
-## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an 
+## Makes the character teleport (disappear at one location and instantly appear at another) to the
+## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
 ## [param offset] relative to the target position.
 func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
 	await _teleport_to_node(R.current.get_marker(id), offset)
@@ -641,7 +632,7 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 			[script_name]
 		)
 		return
-	
+
 	if $AnimationPlayer.get_animation_list().is_empty():
 		return
 
@@ -653,14 +644,14 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 	if animation == null: # Again!
 		PopochiuUtils.print_error(
 			"Neither the requested nor the fallback animation could be found for character %s.\
- Requested: %s - Fallback: %s" % [script_name, animation_label, animation_fallback]
+ Requested:%s - Fallback: %s" % [script_name, animation_label, animation_fallback]
 		)
 		return
 	# Play the animation in the best available orientation
 	$AnimationPlayer.play(animation)
 	# If the playing is blocking, wait for the animation to finish
 	await $AnimationPlayer.animation_finished
-	
+
 	# Go back to idle state
 	_play_idle()
 
@@ -676,20 +667,20 @@ func queue_stop_animation():
 ## idle animation. The animation stops when the current loop finishes.
 func stop_animation():
 	# If the animation is not looping or is an idle one, do nothing
-	if  (
+	if (
 		$AnimationPlayer.get_animation($AnimationPlayer.current_animation) == Animation.LOOP_NONE or
 		$AnimationPlayer.current_animation == 'idle' or
 		$AnimationPlayer.current_animation.begins_with('idle_')
 	):
 		return
-	
+
 	# Save the loop mode, wait for the anim to be over as designed, then restore the mode
 	var animation: AnimationMixer = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
 	var animation_loop_mode = animation.loop_mode
 	animation.loop_mode = Animation.LOOP_NONE
-	
+
 	await $AnimationPlayer.animation_finished
-	
+
 	_play_idle()
 	animation.loop_mode = animation_loop_mode
 
@@ -765,7 +756,7 @@ func face_direction(destination: Vector2):
 ## [code]""[/code] emotion, that one is returned by default.
 func get_avatar_for_emotion(emo := "") -> Texture:
 	var texture: Texture = null
-	
+
 	while not texture and not avatars.is_empty():
 		for dic in avatars:
 			if dic.emotion == "":
@@ -773,7 +764,7 @@ func get_avatar_for_emotion(emo := "") -> Texture:
 			elif dic.emotion == emo:
 				texture = dic.avatar
 				break
-	
+
 	return texture
 
 
@@ -785,8 +776,8 @@ func get_dialog_pos() -> float:
 
 func update_position() -> void:
 	position = (
-		position_stored 
-		if position_stored 
+		position_stored
+		if position_stored
 		else position
 	)
 
@@ -802,23 +793,23 @@ func update_scale():
 			)
 
 		var position_from_the_top_of_region = (
-			position.y-on_scaling_region["polygon_top_y"]
+			position.y - on_scaling_region["polygon_top_y"]
 			)
 
 		var scale_for_position = (
-			on_scaling_region["scale_top"]+(
-				scale_range/polygon_range*position_from_the_top_of_region
+			on_scaling_region["scale_top"] + (
+				scale_range / polygon_range * position_from_the_top_of_region
 		)
 		)
 		scale.x = [
-			[scale_for_position, on_scaling_region["scale_min"]].max(), 
+			[scale_for_position, on_scaling_region["scale_min"]].max(),
 			on_scaling_region["scale_max"]
 		].min()
 		scale.y = [
-			[scale_for_position, on_scaling_region["scale_min"]].max(), 
+			[scale_for_position, on_scaling_region["scale_min"]].max(),
 			on_scaling_region["scale_max"]
 		].min()
-		walk_speed = default_walk_speed/default_scale.x*scale_for_position
+		walk_speed = default_walk_speed / default_scale.x * scale_for_position
 	else:
 		scale = default_scale
 		walk_speed = default_walk_speed
@@ -829,11 +820,11 @@ func update_scale():
 #region SetGet #####################################################################################
 func set_voices(value: Array) -> void:
 	voices = value
-	
+
 	for idx in value.size():
 		if not value[idx]:
 			var arr: Array[AudioCueSound] = []
-			
+
 			voices[idx] = {
 				emotion = '',
 				variations = arr
@@ -845,14 +836,14 @@ func set_voices(value: Array) -> void:
 
 func set_follow_player(value: bool) -> void:
 	follow_player = value
-	
+
 	if not Engine.is_editor_hint():
 		set_process(follow_player)
 
 
 func set_avatars(value: Array) -> void:
 	avatars = value
-	
+
 	for idx in value.size():
 		if not value[idx]:
 			avatars[idx] = {
@@ -873,17 +864,17 @@ func _get_vo_cue(emotion := '') -> String:
 	for v in voices:
 		if v.emotion.to_lower() == emotion.to_lower():
 			var cue_name := ""
-			
+
 			if not v.variations.is_empty():
 				if not v.has('not_played') or v.not_played.is_empty():
 					v['not_played'] = range(v.variations.size())
-				
+
 				var idx: int = (v['not_played'] as Array).pop_at(
 					PopochiuUtils.get_random_array_idx(v['not_played'])
 				)
-				
+
 				cue_name = v.variations[idx].resource_name
-			
+
 			return cue_name
 	return ''
 
@@ -914,7 +905,7 @@ func _get_valid_oriented_animation(animation_label):
 		var animation = "%s%s" % [animation_label, suffix]
 		if $AnimationPlayer.has_animation(animation):
 			return animation
-	
+
 	return null
 
 
@@ -922,7 +913,7 @@ func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
-	
+
 	await walk(
 		node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
 	)
@@ -933,7 +924,7 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 	if not is_instance_valid(node):
 		await get_tree().process_frame
 		return
-	
+
 	position = node.to_global(
 		node.walk_to_point if node is PopochiuClickable else Vector2.ZERO
 	) + offset
@@ -941,6 +932,17 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 
 func _update_position():
 	R.current.update_characters_position(self)
+
+# Flips sprites depending on user prefereces: requires two boolean conditions 
+# as arguments for flipping left [param left_cond] or right [param right_cond]
+func _flip_left_right(left_cond: bool, right_cond: bool) -> void:
+	if has_node('Sprite2D'):
+		$Sprite2D.flip_h = false
+		match flips_when:
+			FlipsWhen.LOOKING_LEFT:
+				$Sprite2D.flip_h = left_cond
+			FlipsWhen.LOOKING_RIGHT:
+				$Sprite2D.flip_h = right_cond
 
 
 #endregion
