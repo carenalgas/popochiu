@@ -172,7 +172,7 @@ func goto_room(
 	if ignore_change:
 		return
 	
-	var rp: String = PopochiuResources.get_data_value("rooms", script_name, null)
+	var rp: String = PopochiuResources.get_data_value("rooms", script_name, "")
 	if rp.is_empty():
 		PopochiuUtils.print_error(
 			"Can't go to room [b]%s[/b] because it doesn't exist" % script_name
