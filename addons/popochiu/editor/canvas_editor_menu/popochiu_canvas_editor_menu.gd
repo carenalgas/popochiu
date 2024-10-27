@@ -146,7 +146,9 @@ func _on_selection_changed() -> void:
 	# in the scene tree)
 	if EditorInterface.get_selection().get_selected_nodes().size() == 1:
 		var selected_node = EditorInterface.get_selection().get_selected_nodes()[0]
-		if PopochiuEditorHelper.is_popochiu_obj_polygon(selected_node):
+		if not is_instance_valid(selected_node):
+			_active_popochiu_object = null
+		elif PopochiuEditorHelper.is_popochiu_obj_polygon(selected_node):
 			_active_popochiu_object = selected_node.get_parent()
 		elif PopochiuEditorHelper.is_popochiu_room_object(selected_node):
 			var polygon = PopochiuEditorHelper.get_first_child_by_group(
