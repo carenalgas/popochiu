@@ -386,7 +386,7 @@ func queue_face_clicked() -> Callable:
 ## Makes the character face in the direction of the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked].
 func face_clicked() -> void:
-	var global_lap = to_global(E.clicked.look_at_point)
+	var global_lap = E.clicked.to_global(E.clicked.look_at_point)
 
 	_flip_left_right(
 		global_lap.x < global_position.x,
