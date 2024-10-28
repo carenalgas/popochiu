@@ -148,11 +148,13 @@ func _on_selection_changed() -> void:
 		var selected_node = EditorInterface.get_selection().get_selected_nodes()[0]
 		if PopochiuEditorHelper.is_popochiu_obj_polygon(selected_node):
 			_active_popochiu_object = selected_node.get_parent()
-		elif PopochiuEditorHelper.is_popochiu_room_object(selected_node) and is_instance_valid(_active_popochiu_object):
-			var polygon = PopochiuEditorHelper.get_first_child_by_group(
-				_active_popochiu_object,
-				PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
-			)
+		elif PopochiuEditorHelper.is_popochiu_room_object(selected_node):
+			var polygon = null
+			if is_instance_valid(_active_popochiu_object):
+				polygon = PopochiuEditorHelper.get_first_child_by_group(
+					_active_popochiu_object,
+					PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+				)
 			if (polygon != null):
 				polygon.hide()
 			btn_interaction_polygon.set_pressed_no_signal(false)
