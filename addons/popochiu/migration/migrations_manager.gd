@@ -34,9 +34,6 @@ static func do_migrations() -> void:
 		).new()
 		
 		if not migration.is_migration_needed():
-			PopochiuMigrationHelper.update_user_migration_version(
-				PopochiuMigrationHelper.get_user_migration_version() + 1
-			)
 			continue
 		
 		migrations_to_execute.append(migration)

@@ -22,7 +22,7 @@ func _ready() -> void:
 	# Connect to child signals
 	btn_baseline.pressed.connect(_toggle_baseline_visibility)
 	btn_walk_to_point.pressed.connect(_toggle_walk_to_point_visibility)
-	#btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
+	btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
 	btn_dialog_pos.pressed.connect(_toggle_dialog_pos_visibility)
 	btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
 
@@ -40,6 +40,13 @@ func _toggle_walk_to_point_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
 		PopochiuGizmoClickablePlugin.WALK_TO_POINT,
 		btn_walk_to_point.button_pressed
+	)
+
+
+func _toggle_look_at_point_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoClickablePlugin.LOOK_AT_POINT,
+		btn_look_at_point.button_pressed
 	)
 
 
@@ -142,10 +149,12 @@ func _on_selection_changed() -> void:
 		if PopochiuEditorHelper.is_popochiu_obj_polygon(selected_node):
 			_active_popochiu_object = selected_node.get_parent()
 		elif PopochiuEditorHelper.is_popochiu_room_object(selected_node):
-			var polygon = PopochiuEditorHelper.get_first_child_by_group(
-				_active_popochiu_object,
-				PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
-			)
+			var polygon = null
+			if is_instance_valid(_active_popochiu_object):
+				polygon = PopochiuEditorHelper.get_first_child_by_group(
+					_active_popochiu_object,
+					PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+				)
 			if (polygon != null):
 				polygon.hide()
 			btn_interaction_polygon.set_pressed_no_signal(false)
@@ -257,6 +266,7 @@ func _set_buttons_visibility() -> void:
 	hide()
 	btn_baseline.hide()
 	btn_walk_to_point.hide()
+	btn_look_at_point.hide()
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
 
@@ -289,6 +299,7 @@ func _set_buttons_visibility() -> void:
 		if _active_popochiu_object is PopochiuClickable:
 			btn_baseline.show()
 			btn_walk_to_point.show()
+			btn_look_at_point.show()
 
 	# If we are in a Character scene, show polygon and dialogpos gizmo button
 	elif PopochiuEditorHelper.is_character(EditorInterface.get_edited_scene_root()):
@@ -299,5 +310,5 @@ func _set_buttons_visibility() -> void:
 func _reset_buttons_state() -> void:
 	btn_baseline.set_pressed_no_signal(true)
 	btn_walk_to_point.set_pressed_no_signal(true)
-	#btn_look_at_point.set_pressed_no_signal(true)
+	btn_look_at_point.set_pressed_no_signal(true)
 	btn_dialog_pos.set_pressed_no_signal(true)

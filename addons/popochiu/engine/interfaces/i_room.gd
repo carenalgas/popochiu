@@ -237,6 +237,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.light_mask = chr_dic.light_mask
 		chr.baseline = chr_dic.baseline
 		chr.walk_to_point = chr_dic.walk_to_point
+		chr.look_at_point = chr_dic.look_at_point
 		
 		current.add_character(chr)
 	

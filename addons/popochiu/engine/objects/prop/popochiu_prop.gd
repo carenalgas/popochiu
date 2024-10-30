@@ -54,6 +54,7 @@ func _ready() -> void:
 			c.position.y -= baseline * c.scale.y
 
 	walk_to_point.y -= baseline * scale.y
+	look_at_point.y -= baseline * scale.y
 	position.y += baseline * scale.y
 
 	if always_on_top:
