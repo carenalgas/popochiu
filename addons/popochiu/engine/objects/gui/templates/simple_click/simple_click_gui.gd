@@ -44,6 +44,10 @@ func _on_unblocked() -> void:
 	if I.active:
 		Cursor.hide_main_cursor()
 		Cursor.show_secondary_cursor()
+	elif E.hovered:
+		# Fixes #315 by showing the right cursor when it is over a PopochiuClickable after closing
+		# the SystemText component
+		Cursor.show_cursor(Cursor.get_type_name(E.hovered.cursor))
 	else:
 		Cursor.show_cursor(get_cursor_name())
 
@@ -72,11 +76,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if G.is_blocked: return
 	
 	if not (I.active or is_showing_dialog_line):
-		if clickable.get("cursor"):
-			Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
-		else:
-			Cursor.show_cursor("active")
-	
+		Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
 	if not I.active:
 		G.show_hover_text(clickable.description)
 	else:
@@ -102,11 +102,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 	if G.is_blocked: return
 	
 	if not I.active:
-		if inventory_item.get("cursor"):
-			Cursor.show_cursor(Cursor.get_type_name(inventory_item.cursor))
-		else:
-			Cursor.show_cursor("active")
-		
+		Cursor.show_cursor(Cursor.get_type_name(inventory_item.cursor))
 		G.show_hover_text(inventory_item.description)
 	elif I.active != inventory_item:
 		G.show_hover_text(
