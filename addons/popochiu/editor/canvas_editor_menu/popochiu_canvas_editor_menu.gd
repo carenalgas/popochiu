@@ -129,7 +129,10 @@ func _on_selection_changed() -> void:
 			for node in _active_popochiu_object.get_children():
 				if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
 					node.hide()
-				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
+				# This "if" solves "!p_node->is_inside_tree()" internal Godot error
+				# The line inside is the logic we need to make this block work
+				if EditorInterface.get_edited_scene_root() == _active_popochiu_object:
+					EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
 		# Reset the clickable reference and hide the toolbar
 		# (restart from a blank state)
 		_active_popochiu_object = null
