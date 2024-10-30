@@ -260,6 +260,11 @@ func room_readied(room: PopochiuRoom) -> void:
 				"get_" + type.trim_suffix("s"),
 				[(script_name as String).to_pascal_case()]
 			)
+			
+			if not is_instance_valid(node):
+				# Fix #320 by ignoring the object if it doesn't exist inside the Room
+				continue
+			
 			var node_dic: Dictionary =\
 			rooms_states[room.script_name][type][script_name]
 			

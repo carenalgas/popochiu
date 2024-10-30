@@ -1,4 +1,4 @@
-@icon('res://addons/popochiu/icons/room.png')
+@icon("res://addons/popochiu/icons/room.png")
 class_name PopochiuRoomData
 extends Resource
 ## This class is used to store information when saving and loading the game. It also ensures that
@@ -8,9 +8,9 @@ extends Resource
 ## [PopochiuRegion]s, and [PopochiuCharacter]s in a [PopochiuRoom].
 
 ## The identifier of the object used in scripts.
-@export var script_name := ''
+@export var script_name := ""
 ## The path to the scene file to be used when adding the character to the game during runtime.
-@export_file("*.tscn") var scene := ''
+@export_file("*.tscn") var scene := ""
 ## Whether the room was already visited by the player.
 @export var visited := false
 ## Whether this is the first time the player visits the room.
@@ -65,12 +65,12 @@ func on_load(data: Dictionary) -> void:
 func save_children_states() -> void:
 	if R.current and R.current.state == self:
 		for t in PopochiuResources.ROOM_CHILDREN:
-			for node in R.current.call('get_' + t):
+			for node in R.current.call("get_" + t):
 				if node is PopochiuProp and not node.clickable: continue
 				
 				_save_object_state(
 					node,
-					PopochiuResources['%s_IGNORE' % (t as String).to_upper()],
+					PopochiuResources["%s_IGNORE" % (t as String).to_upper()],
 					get(t)
 				)
 		
@@ -80,11 +80,17 @@ func save_children_states() -> void:
 		return
 	
 	var base_dir := resource_path.get_base_dir()
+	var dependencies_paths: Array = Array(ResourceLoader.get_dependencies(
+		resource_path.replace(".tres", ".tscn")
+	)).map(
+		func (dependency: String) -> String:
+			return dependency.get_slice("::", 2)
+	)
 	
 	for t in PopochiuResources.ROOM_CHILDREN:
 		if (get(t) as Dictionary).is_empty():
-			var category := (t as String).replace(' ', '')
-			var objs_path := '%s/%s' % [base_dir, category]
+			var category := (t as String).replace(" ", "")
+			var objs_path := "%s/%s" % [base_dir, category]
 			
 			var dir := DirAccess.open(objs_path)
 			
@@ -97,16 +103,24 @@ func save_children_states() -> void:
 			
 			var folder_name := dir.get_next()
 			
-			while folder_name != '':
+			while folder_name != "":
 				if dir.current_is_dir():
-					
-					var script_path := '%s/%s/%s_%s.gd' % [
+					# ---- Fix #320 ----------------------------------------------------------------
+					# Ignore objects that are not part of the dependencies of the room. This is the
+					# scenario where an object from the room was removed from the tree but not from
+					# the file system
+					var scene_path := "%s/%s/%s_%s.tscn" % [
 						objs_path,
 						folder_name,
-						category.trim_suffix('s'),
+						category.trim_suffix("s"),
 						folder_name,
 					]
+					if not scene_path in dependencies_paths:
+						folder_name = dir.get_next()
+						continue
+					# ---------------------------------------------------------------- Fix #320 ----
 					
+					var script_path := scene_path.replace("tscn", "gd")
 					if not FileAccess.file_exists(script_path):
 						folder_name = dir.get_next()
 						continue
@@ -116,7 +130,7 @@ func save_children_states() -> void:
 					
 					_save_object_state(
 						node,
-						PopochiuResources['%s_IGNORE' % (t as String).to_upper()],
+						PopochiuResources["%s_IGNORE" % (t as String).to_upper()],
 						get(t)
 					)
 					
