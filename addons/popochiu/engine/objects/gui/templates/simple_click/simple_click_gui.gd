@@ -61,6 +61,10 @@ func _on_system_text_hidden() -> void:
 	if I.active:
 		Cursor.hide_main_cursor()
 		Cursor.show_secondary_cursor()
+	elif E.hovered:
+		# Fixes #315 by showing the right cursor when it is over a PopochiuClickable after closing
+		# the SystemText component
+		Cursor.show_cursor(Cursor.get_type_name(E.hovered.cursor))
 	else:
 		Cursor.show_cursor()
 
