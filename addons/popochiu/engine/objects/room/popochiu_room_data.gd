@@ -2,7 +2,7 @@
 class_name PopochiuRoomData
 extends Resource
 ## This class is used to store information when saving and loading the game. It also ensures that
-## the data remains throughout the game"s execution.
+## the data remains throughout the game's execution.
 ##
 ## It also has data of the [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s,
 ## [PopochiuRegion]s, and [PopochiuCharacter]s in a [PopochiuRoom].
@@ -176,7 +176,7 @@ func _save_object_state(node: Node2D, ignore: Array, target: Dictionary) -> void
 	var state := {}
 	PopochiuResources.store_properties(state, node, ignore)
 	
-	# Add the PopochiuProp state to the room"s props
+	# Add the PopochiuProp state to the room's props
 	target[node.script_name] = state
 
 
