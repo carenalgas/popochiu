@@ -118,8 +118,7 @@ func _on_selection_changed() -> void:
 		return
 
 	# If we have no selection in the tree (the user clicked on an
-	# empty area or pressed ESC), we pop all the buttons up and
-	# leave the toolbar hidden.
+	# empty area or pressed ESC), we hide the toolbar.
 	if EditorInterface.get_selection().get_selected_nodes().is_empty():
 		if _active_popochiu_object != null:
 			# TODO: this is not a helper function, because we want to get
@@ -137,7 +136,9 @@ func _on_selection_changed() -> void:
 		# (restart from a blank state)
 		_active_popochiu_object = null
 		hide()
-		_reset_buttons_state()
+		# NOTE: Here we used to pop all the buttons up, by invoking _reset_buttons_state() but
+		# this is undesireable, since it overrides the user's visibility choices for the session.
+		# Leaving this comment here for future reference.
 		return
 
 	# We identify which PopochiuClickable we are working on in the editor.
