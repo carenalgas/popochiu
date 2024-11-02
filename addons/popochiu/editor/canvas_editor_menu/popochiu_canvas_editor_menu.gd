@@ -109,6 +109,11 @@ func _on_gizmo_settings_changed() -> void:
 
 
 func _on_selection_changed() -> void:
+	# Always reset the walkable areas visibility depending on the user preferences
+	# Doing this immediately so, if this function exits early, the visibility is conditioned
+	# by the editor settings (partially fixes #325).
+	_set_walkable_areas_visibility()
+
 	# Make sure this function works only if the user is editing a
 	# supported scene
 	if not PopochiuEditorHelper.is_popochiu_object(
@@ -139,6 +144,12 @@ func _on_selection_changed() -> void:
 		# NOTE: Here we used to pop all the buttons up, by invoking _reset_buttons_state() but
 		# this is undesireable, since it overrides the user's visibility choices for the session.
 		# Leaving this comment here for future reference.
+
+		# Reset the walkable areas visibility depending on the user preferences
+		# Doing here because clicking on an empty area would hide the walkable areas
+		# ignoring the editor settings (fixes #325)
+		_set_walkable_areas_visibility()
+
 		return
 
 	# We identify which PopochiuClickable we are working on in the editor.
@@ -179,8 +190,11 @@ func _on_selection_changed() -> void:
 				EditorInterface.get_selection().remove_node.call_deferred(node)
 				btn_interaction_polygon.set_pressed_no_signal(false)
 
-	# Always reset the walkable areas visibility depending on the user preferences
+	# Reset the walkable areas visibility depending on the user preferences
+	# Doing this also at the end because the state can be reset by one of the steps
+	# above.
 	_set_walkable_areas_visibility()
+
 	# Always reset the button visibility depending on the state of the internal variables	
 	_set_buttons_visibility()
 
