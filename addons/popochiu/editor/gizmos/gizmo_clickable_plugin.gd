@@ -5,7 +5,7 @@ extends EditorPlugin
 # TODO: move these out of the plugin and into Popochiu (enums) or PopochiuClickable
 enum {
 	WALK_TO_POINT,
-	#LOOK_AT_POINT, # TODO: enable this when the look_at_point logic is implemented
+	LOOK_AT_POINT,
 	BASELINE,
 	DIALOG_POS
 }
@@ -30,8 +30,7 @@ func _enter_tree() -> void:
 	# Initialization of the plugin goes here.
 	_undo = get_undo_redo()
 	_gizmos.insert(WALK_TO_POINT, _init_popochiu_gizmo(WALK_TO_POINT))
-	# TODO: enable this when the look_at_point logic is implemented
-	# _gizmos.insert(LOOK_AT_POINT, _init_popochiu_gizmo(LOOK_AT_POINT))
+	_gizmos.insert(LOOK_AT_POINT, _init_popochiu_gizmo(LOOK_AT_POINT))
 	_gizmos.insert(BASELINE, _init_popochiu_gizmo(BASELINE))
 	_gizmos.insert(DIALOG_POS, _init_popochiu_gizmo(DIALOG_POS))
 
@@ -44,7 +43,7 @@ func _enter_tree() -> void:
 #region Virtual ####################################################################################
 
 func _edit(object: Object) -> void:
-	if object.get_class() == "EditorDebuggerRemoteObject":
+	if object == null or object.get_class() == "EditorDebuggerRemoteObject":
 		return
 	
 	_target_node = object
@@ -54,8 +53,7 @@ func _edit(object: Object) -> void:
 		_active_gizmos.append(_gizmos[DIALOG_POS])
 	elif EditorInterface.get_edited_scene_root() is PopochiuRoom:
 		_active_gizmos.append(_gizmos[WALK_TO_POINT])
-		# TODO: enable this when the look_at_point logic is implemented
-		#_active_gizmos.append(_gizmos[LOOK_AT_POINT])
+		_active_gizmos.append(_gizmos[LOOK_AT_POINT])
 		_active_gizmos.append(_gizmos[BASELINE])
 
 	for gizmo in _active_gizmos:
@@ -121,14 +119,13 @@ func _on_gizmo_settings_changed() -> void:
 					default_font,
 					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				)
-			# TODO: enable this when the look_at_point logic is implemented
-			# LOOK_AT_POINT:
-				# gizmo.set_theme(
-				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
-				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-				# 	default_font,
-				# 	PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-				# )
+			LOOK_AT_POINT:
+				gizmo.set_theme(
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+					default_font,
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				)
 			BASELINE:
 				gizmo.set_theme(
 					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
@@ -178,15 +175,14 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 				default_font,
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
-		# TODO: enable this when the look_at_point logic is implemented
-		# LOOK_AT_POINT:
-		# 	gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
-		# 	gizmo.set_theme(
-		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
-		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-		# 		default_font,
-		# 		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-		# 	)
+		LOOK_AT_POINT:
+			gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
+			gizmo.set_theme(
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				default_font,
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+			)
 		BASELINE:
 			gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VPOS)
 			gizmo.set_theme(

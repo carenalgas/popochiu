@@ -22,7 +22,7 @@ func _ready() -> void:
 	# Connect to child signals
 	btn_baseline.pressed.connect(_toggle_baseline_visibility)
 	btn_walk_to_point.pressed.connect(_toggle_walk_to_point_visibility)
-	#btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
+	btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
 	btn_dialog_pos.pressed.connect(_toggle_dialog_pos_visibility)
 	btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
 
@@ -40,6 +40,13 @@ func _toggle_walk_to_point_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
 		PopochiuGizmoClickablePlugin.WALK_TO_POINT,
 		btn_walk_to_point.button_pressed
+	)
+
+
+func _toggle_look_at_point_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoClickablePlugin.LOOK_AT_POINT,
+		btn_look_at_point.button_pressed
 	)
 
 
@@ -102,6 +109,11 @@ func _on_gizmo_settings_changed() -> void:
 
 
 func _on_selection_changed() -> void:
+	# Always reset the walkable areas visibility depending on the user preferences
+	# Doing this immediately so, if this function exits early, the visibility is conditioned
+	# by the editor settings (partially fixes #325).
+	_set_walkable_areas_visibility()
+
 	# Make sure this function works only if the user is editing a
 	# supported scene
 	if not PopochiuEditorHelper.is_popochiu_object(
@@ -111,8 +123,7 @@ func _on_selection_changed() -> void:
 		return
 
 	# If we have no selection in the tree (the user clicked on an
-	# empty area or pressed ESC), we pop all the buttons up and
-	# leave the toolbar hidden.
+	# empty area or pressed ESC), we hide the toolbar.
 	if EditorInterface.get_selection().get_selected_nodes().is_empty():
 		if _active_popochiu_object != null:
 			# TODO: this is not a helper function, because we want to get
@@ -122,12 +133,23 @@ func _on_selection_changed() -> void:
 			for node in _active_popochiu_object.get_children():
 				if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
 					node.hide()
-				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
+				# This "if" solves "!p_node->is_inside_tree()" internal Godot error
+				# The line inside is the logic we need to make this block work
+				if EditorInterface.get_edited_scene_root() == _active_popochiu_object:
+					EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
 		# Reset the clickable reference and hide the toolbar
 		# (restart from a blank state)
 		_active_popochiu_object = null
 		hide()
-		_reset_buttons_state()
+		# NOTE: Here we used to pop all the buttons up, by invoking _reset_buttons_state() but
+		# this is undesireable, since it overrides the user's visibility choices for the session.
+		# Leaving this comment here for future reference.
+
+		# Reset the walkable areas visibility depending on the user preferences
+		# Doing here because clicking on an empty area would hide the walkable areas
+		# ignoring the editor settings (fixes #325)
+		_set_walkable_areas_visibility()
+
 		return
 
 	# We identify which PopochiuClickable we are working on in the editor.
@@ -142,10 +164,12 @@ func _on_selection_changed() -> void:
 		if PopochiuEditorHelper.is_popochiu_obj_polygon(selected_node):
 			_active_popochiu_object = selected_node.get_parent()
 		elif PopochiuEditorHelper.is_popochiu_room_object(selected_node):
-			var polygon = PopochiuEditorHelper.get_first_child_by_group(
-				_active_popochiu_object,
-				PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
-			)
+			var polygon = null
+			if is_instance_valid(_active_popochiu_object):
+				polygon = PopochiuEditorHelper.get_first_child_by_group(
+					_active_popochiu_object,
+					PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+				)
 			if (polygon != null):
 				polygon.hide()
 			btn_interaction_polygon.set_pressed_no_signal(false)
@@ -166,8 +190,11 @@ func _on_selection_changed() -> void:
 				EditorInterface.get_selection().remove_node.call_deferred(node)
 				btn_interaction_polygon.set_pressed_no_signal(false)
 
-	# Always reset the walkable areas visibility depending on the user preferences
+	# Reset the walkable areas visibility depending on the user preferences
+	# Doing this also at the end because the state can be reset by one of the steps
+	# above.
 	_set_walkable_areas_visibility()
+
 	# Always reset the button visibility depending on the state of the internal variables	
 	_set_buttons_visibility()
 
@@ -257,6 +284,7 @@ func _set_buttons_visibility() -> void:
 	hide()
 	btn_baseline.hide()
 	btn_walk_to_point.hide()
+	btn_look_at_point.hide()
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
 
@@ -289,6 +317,7 @@ func _set_buttons_visibility() -> void:
 		if _active_popochiu_object is PopochiuClickable:
 			btn_baseline.show()
 			btn_walk_to_point.show()
+			btn_look_at_point.show()
 
 	# If we are in a Character scene, show polygon and dialogpos gizmo button
 	elif PopochiuEditorHelper.is_character(EditorInterface.get_edited_scene_root()):
@@ -299,5 +328,5 @@ func _set_buttons_visibility() -> void:
 func _reset_buttons_state() -> void:
 	btn_baseline.set_pressed_no_signal(true)
 	btn_walk_to_point.set_pressed_no_signal(true)
-	#btn_look_at_point.set_pressed_no_signal(true)
+	btn_look_at_point.set_pressed_no_signal(true)
 	btn_dialog_pos.set_pressed_no_signal(true)

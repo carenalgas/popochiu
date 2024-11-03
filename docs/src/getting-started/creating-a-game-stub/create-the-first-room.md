@@ -64,8 +64,8 @@ If you did everything right, you should see your main character standing in the 
 
     For those who work with [Aseprite](https://www.aseprite.org/), Popochiu also provides a powerful automated importer that will make creating rooms and characters a breeze and will enable a fast iterative development workflow.
 
-    * Learn more about [animations](/how-to-develop-a-game/playing-animations).
-    * Learn more about the [Aseprite importers](/the-editor-handbook/importers)
+    * Learn more about [animations](../../../how-to-develop-a-game/playing-animations).
+    * Learn more about the [Aseprite importers](../../../the-editor-handbook/importers)
 
 ### Add a Walkable Area
 
@@ -186,9 +186,9 @@ Clicking on the hotspot, the character will move to the point we defined and fac
 ### Script your first interaction
 
 If you ran the game, you may have seen that, while the character moves towards the window, a message is printed on top of the scene: `Can't INTERACT with it`.  
-That's because we didn't define what should happen when we interact with the window. Remember, in [the GUI we selected](/getting-started/creating-a-game-stub/game-setup#select-game-gui), clicking on an object will trigger an interaction while right-clicking on an object will trigger an examination.
+That's because we didn't define what should happen when we interact with the window. Remember, in [the GUI we selected](../../../getting-started/creating-a-game-stub/game-setup#select-game-gui), clicking on an object will trigger an interaction while right-clicking on an object will trigger an examination.
 
-We are now going to script our first interaction, using Godot **GDScript** language and the very convenient [engine API](/the-engine-handbook/scriting-overview) that Popochiu provides to make our life easier.
+We are now going to script our first interaction, using Godot **GDScript** language and the very convenient [engine API](../../../the-engine-handbook/scripting-overview) that Popochiu provides to make our life easier.
 
 !!! info "Help! I'm not a developer!"
     "API" stands for "Application Programming Interface" and in our context, it's the set of objects and functions that makes it very easy to implement all those behaviors common to most adventure games (like making a character talk, or adding an item to the inventory), without knowing the ins and outs of the underlying Godot game engine.

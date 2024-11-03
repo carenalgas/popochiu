@@ -20,6 +20,7 @@ vertical_alignment = 1
 
 [node name="BtnBaseline" type="Button" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 tooltip_text = "Baseline"
 theme_type_variation = &"FlatButton"
@@ -29,6 +30,7 @@ icon = ExtResource("2_w3cau")
 
 [node name="BtnWalkToPoint" type="Button" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 tooltip_text = "Walk-To Point"
 theme_type_variation = &"FlatButton"
@@ -38,7 +40,6 @@ icon = ExtResource("3_ifql1")
 
 [node name="BtnLookAtPoint" type="Button" parent="."]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 tooltip_text = "Look-At Point"
 theme_type_variation = &"FlatButton"
@@ -48,7 +49,6 @@ icon = ExtResource("4_bge33")
 
 [node name="BtnDialogPos" type="Button" parent="."]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 tooltip_text = "Dialog Position"
 theme_type_variation = &"FlatButton"

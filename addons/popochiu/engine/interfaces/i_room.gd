@@ -145,7 +145,8 @@ func goto_room(
 	G.block()
 	
 	_use_transition_on_room_change = use_transition
-	if use_transition:
+	# Never fade the TL in, if we are entering the first room at game start
+	if use_transition and Engine.get_process_frames() > 0:
 		E.tl.play_transition(E.tl.FADE_IN)
 		await E.tl.transition_finished
 	
@@ -171,7 +172,7 @@ func goto_room(
 	if ignore_change:
 		return
 	
-	var rp: String = PopochiuResources.get_data_value("rooms", script_name, null)
+	var rp: String = PopochiuResources.get_data_value("rooms", script_name, "")
 	if rp.is_empty():
 		PopochiuUtils.print_error(
 			"Can't go to room [b]%s[/b] because it doesn't exist" % script_name
@@ -196,16 +197,12 @@ func room_readied(room: PopochiuRoom) -> void:
 	if Engine.get_process_frames() == 0:
 		await get_tree().process_frame
 		E.in_room = true
-		
+
 		# Calling this will make the camera be set to its default values and will store the state of
 		# the main room (the last parameter will prevent Popochiu from changing the scene to the
-		# same that is already loaded)
-		# TODO: We should have an option in Popochiu Settings which allows devs to turn on the scene
-		# transition effect even when they are opened from the Editor (by pressing F5, F6 or using
-		# the buttons to play a scene. This option will be linked to the second parameter of the
-		# goto_room function, and we'll have to make sure the transition layer starts visible in
-		# those cases (as if it were coming from another room).
-		await goto_room(room.script_name, false, true, true)
+		# same that is already loaded).
+		# Also, use the transition layer to fade in the room, if the setting is enabled.
+		await goto_room(room.script_name, E.settings.show_tl_in_first_room, true, true)
 	
 	# Make the camera be ready for the room
 	current.setup_camera()
@@ -240,6 +237,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.light_mask = chr_dic.light_mask
 		chr.baseline = chr_dic.baseline
 		chr.walk_to_point = chr_dic.walk_to_point
+		chr.look_at_point = chr_dic.look_at_point
 		
 		current.add_character(chr)
 	
@@ -262,6 +260,11 @@ func room_readied(room: PopochiuRoom) -> void:
 				"get_" + type.trim_suffix("s"),
 				[(script_name as String).to_pascal_case()]
 			)
+			
+			if not is_instance_valid(node):
+				# Fix #320 by ignoring the object if it doesn't exist inside the Room
+				continue
+			
 			var node_dic: Dictionary =\
 			rooms_states[room.script_name][type][script_name]
 			

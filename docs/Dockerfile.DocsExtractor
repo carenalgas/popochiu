@@ -20,6 +20,7 @@ RUN addgroup --system --gid ${DOCKER_USER_GID} ${DOCKER_USER} \
     # Install system-wide dependencies
     && apt-get update && apt-get install -y --no-install-recommends unzip wget zip libfontconfig1 \
     && rm -rf /var/lib/apt/lists/* \
+    && pip install setuptools \
     # Install Godot from CDN
     && wget -q https://downloads.tuxfamily.org/godotengine/${GODOT_VERSION}${GODOT_SUBDIR}/Godot_v${GODOT_VERSION}-${GODOT_RELEASE_NAME}_${GODOT_PLATFORM}.zip \
     && mkdir /home/${DOCKER_USER}/.cache \

@@ -31,6 +31,10 @@ static func define_player() -> void:
 ## Evals [param text] to know if it is a wait inside a dialog or if it is a [PopochiuCharacter]
 ## saying something. This is used when calling [method E.queue].
 static func execute_string(text: String) -> void:
+	if E.cutscene_skipped:
+		await E.get_tree().process_frame
+		return
+	
 	var regex = RegEx.new()
 	regex.compile(r'^\.+$')
 	var result = regex.search(text)
@@ -41,7 +45,7 @@ static func execute_string(text: String) -> void:
 	elif ":" in text:
 		await _trigger_dialog_line(text)
 	else:
-		await E.get_tree().process_frame
+		await G.show_system_text(text)
 	
 	E.auto_continue_after = -1.0
 

@@ -67,7 +67,7 @@ var playing_queue := false
 ## Reference to the [PopochiuGraphicInterface].
 var gui: PopochiuGraphicInterface = null
 ## Reference to the [PopochiuTransitionLayer].
-var tl: Node2D = null
+var tl: Control = null
 ## The current class used as the game commands
 var cutscene_skipped := false
 ## @deprecated

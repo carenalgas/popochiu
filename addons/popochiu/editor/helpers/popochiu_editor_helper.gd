@@ -164,6 +164,12 @@ static func show_dialog(dialog: Window, min_size := Vector2i.ZERO) -> void:
 
 
 # Type-checking functions
+static func is_popochiu_clickable(node: Node) -> bool:
+	return node is PopochiuCharacter \
+	or node is PopochiuProp \
+	or node is PopochiuHotspot
+
+
 static func is_popochiu_object(node: Node) -> bool:
 	return node is PopochiuRoom \
 	or is_popochiu_room_object(node)

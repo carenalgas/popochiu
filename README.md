@@ -47,7 +47,7 @@ This tool consists of two parts: the engine (Popochiu) and the editor plugin tha
 * Audio management for background music and sound effects
 * Import Rooms and Character from [Aseprite](https://www.aseprite.org/) source files with full structure
 
-And much more to come. Popochiu is in active development and we have a well maintained releases roadmap.
+And much more to come. Popochiu is in active development and we have a well maintained [releases roadmap](https://github.com/orgs/carenalgas/projects/1/views/1).
 
 ## Compatibility chart
 
@@ -57,7 +57,7 @@ Please review this table to know which version to download, depending on the ver
 
 | Required Godot version | Popochiu Release |
 |---|---|
-| 4.3 and above | [Popochiu 2.0](https://github.com/carenalgas/popochiu/releases/download/v2.0/popochiu-v2.0.0.zip) |
+| 4.3 and above | [Popochiu 2.0.0](https://github.com/carenalgas/popochiu/releases/download/v2.0.0/popochiu-v2.0.0.zip) |
 | 3.5 to 3.6 | [Popochiu 1.10.1](https://github.com/carenalgas/popochiu/releases/download/v1.10.1/popochiu-v1.10.1.zip) |
 | 3.3 to 3.4.5 | [Popochiu 1.8.7](https://github.com/carenalgas/popochiu/releases/download/v1.8.7/popochiu-v1.8.7.zip) |
 

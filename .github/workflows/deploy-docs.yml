@@ -8,6 +8,10 @@ on:
       - "v*.*.*-beta*"
       - "v*.*.*-rc*"
 
+env:
+  PYTHON_VERSION: 3.12
+  GDE_TAG: godot-docs-extractor
+
 jobs:
   deploy-gh-pages:
     runs-on: ubuntu-latest
@@ -18,7 +22,7 @@ jobs:
       - name: Install Python environment
         uses: actions/setup-python@v2
         with:
-          python-version: 3.11
+          python-version: ${{ env.PYTHON_VERSION }}
       - name: Install MkDocs and dependencies
         run: >
           pip install
@@ -67,10 +71,25 @@ jobs:
           mkdocs-cinder
           mkdocs-kpn
           mkdocs-material
+          mkdocs-mermaid2-plugin
+          fontawesome-in-markdown
           neoteroi-mkdocs
           markdown-include
           pygments
           pymdown-extensions
+      - name: Build DocsExtractor Docker image
+        working-directory: ./docs
+        run: docker build -f Dockerfile.DocsExtractor -t ${{ env.GDE_TAG }} .
+      - name: Extract code reference documentation from Godot source
+        run: > 
+          docker run
+          --rm
+          -v ${{ github.workspace }}:/project
+          -v ${{ github.workspace }}/docs/src/the-engine-handbook/scripting-reference:/output
+          ${{ env.GDE_TAG }}
+          /project
+          -o /output
+          -d addons/popochiu/engine
       - name: Deploy to production
         working-directory: ./docs
         run: mkdocs gh-deploy --force --clean --verbose
