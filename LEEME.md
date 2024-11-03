@@ -47,7 +47,7 @@ Esta herramienta consta de dos partes: el motor (Popochiu) y el plugin del edito
 * Gestión de audio para música de fondo y efectos de sonido
 * Importación de Habitaciones y Personajes, desde archivos fuente de [Aseprite](https://www.aseprite.org/), con toda su estructura
 
-Y vendrán muchas cosas más. Popochiu está en desarrollo activo y tenemos un hoja de ruta de lanzamientos bien mantenida.
+Y vendrán muchas cosas más. Popochiu está en desarrollo activo y tenemos un hoja de [ruta de lanzamientos](https://github.com/orgs/carenalgas/projects/1/views/1) bien mantenida.
 
 ## Tabla de compatibilidad
 

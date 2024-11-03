@@ -47,7 +47,7 @@ This tool consists of two parts: the engine (Popochiu) and the editor plugin tha
 * Audio management for background music and sound effects
 * Import Rooms and Character from [Aseprite](https://www.aseprite.org/) source files with full structure
 
-And much more to come. Popochiu is in active development and we have a well maintained [releases roadmap](https://github.com/carenalgas/popochiu/milestones).
+And much more to come. Popochiu is in active development and we have a well maintained [releases roadmap](https://github.com/orgs/carenalgas/projects/1/views/1).
 
 ## Compatibility chart
 
