@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="The Carenalgas Community" />
+      <link rel="shortcut icon" href="../../assets/images/_other/theme/favicon.ico" />
+    <title>Aseprite Importers - Popochiu Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/css/custom.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Aseprite Importers";
+        var mkdocs_page_input_path = "the-editor-handbook/importers.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../..">
+          <img src="../../assets/images/_other/theme/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/installing-popochiu/">Installing popochiu</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Creating a game stub</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/introduction/">Introduction</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/game-setup/">Game setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/create-characters/">Create characters</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/create-the-first-room/">Create the first room</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/add-an-inventory-item/">Add an inventory item</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/script-your-first-dialogue/">Script your first dialogue</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/use-inventory-items/">Use inventory items</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/customize-the-game-ui/">Customize the Game UI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../getting-started/creating-a-game-stub/conclusions/">Conclusions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/example-resources/">Example resources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-started/getting-help/">Getting help</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The editor handbook</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../editor-settings/">Editor settings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../interface-overview/">Interface overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../popochiu-dock/">Popochiu dock</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../toolbar-buttons/">Toolbar buttons</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="./">Aseprite Importers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The engine handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../the-engine-handbook/scripting-overview/">Scripting overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Scripting reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/9_verb_commands_container.gd/">9 verb commands container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/9_verb_panel.gd/">9 verb panel.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/PopochiuCharacterData/">PopochiuCharacterData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/PopochiuDialogOption/">PopochiuDialogOption</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/PopochiuGUIInfo/">PopochiuGUIInfo</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/PopochiuHoverText/">PopochiuHoverText</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/PopochiuInventoryItemData/">PopochiuInventoryItemData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/PopochiuMainCamera/">PopochiuMainCamera</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/PopochiuSettingsBarButton/">PopochiuSettingsBarButton</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/PopochiuUtils/">PopochiuUtils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/audio_cue_container.gd/">Audio cue container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/empty_script_template.gd/">Empty script template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/importer_defaults.gd/">Importer defaults.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/input_actions.gd/">Input actions.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/sierra_bar.gd/">Sierra bar.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/sierra_commands_container.gd/">Sierra commands container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../the-engine-handbook/scripting-reference/text_speed_option.gd/">Text speed option.gd</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How to develop a game</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/kickstarting-a-project/">Kickstarting a project</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/creating-rooms/">Creating rooms</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/changing-rooms/">Changing rooms</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/creating-characters/">Creating characters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/scripting-interactions/">Scripting interactions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/writing-dialogues/">Writing dialogues</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/managing-the-inventory/">Managing the inventory</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/playing-animations/">Playing animations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/adding-sound/">Adding sound</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Advanced techniques</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../how-to-develop-a-game/advanced-techniques/localization/">Localization</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../how-to-develop-a-game/advanced-techniques/guis/">Guis</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../how-to-develop-a-game/advanced-techniques/advanced-animations/">Advanced animations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../how-to-develop-a-game/advanced-techniques/character-scaling/">Character Scaling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../how-to-develop-a-game/advanced-techniques/character-anti-glide-feature/">Character Anti-Glide Feature</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../how-to-develop-a-game/advanced-techniques/game-state-saving-and-loading/">Game state saving and loading</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../how-to-develop-a-game/advanced-techniques/extending-customizing-popochiu/">Extending customizing popochiu</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../how-to-develop-a-game/advanced-techniques/change-text-to-gibberish/">Change text to gibberish</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing to popochiu</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/project-overview/">Project overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/toolchain-and-dependencies/">Toolchain and dependencies</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/project-management/">Project management</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/coding-standards/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/getting-help/">Getting help</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">Popochiu Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">The editor handbook</li>
+      <li class="breadcrumb-item active">Aseprite Importers</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carenalgas/popochiu/edit/develop/docs/src/the-editor-handbook/importers.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="aseprite-importers">Aseprite Importers</h1>
+<p>These tools enable a smooth workflow for the creation of graphical elements in the game.<br />
+The main goal is to integrate with Aseprite in a way that promotes quick iterations, starting from a visual draft and evolving game scripting and graphics together as things take shape.</p>
+<p>Importers are available for <a href="./PopochiuCharacter.md">Characters</a> and <a href="./PopochiuRoom.md">Rooms</a>, allowing an almost one-click creation of the complete room structure.</p>
+<p>Next releases will introduce an Importer for <a href="./PopochiuInventoryItem.md">Inventory items</a> too.</p>
+<h2 id="basics">Basics</h2>
+<p>The plugin works by reading <a href="https://www.aseprite.org/docs/tags/">tags</a> from a properly organized Aseprite source file and using that information to populate the target Popochiu Object in a single pass.</p>
+<p>The result of the process differs depending on the target object type:</p>
+<ul>
+<li>For <strong>Characters</strong>, every tag represents a specific animation (ex. the talk animation), and when applicable, the animation direction (ex. up, down, left or right). So in a typical project of medium size, there will be specific tags for <em>talk up</em>, <em>talk down</em>, <em>walk left</em>, <em>walk right</em>, and so on, plus very specific tags for special cutscene animations (<em>eat multifolded pizza</em>, <em>brush alien dog hair</em>, <em>jump across cakes chasm</em>, etc).</li>
+<li>For <strong>Rooms</strong>, every tag represents a <a href="./PopochiuProp.md">Prop</a> and for each tag, a new prop with its own animation is created and populated by the appropriate animation (or sprite). Background and foreground elements are props, of course, and it will be possible to configure each prop visibility and clickability at import.</li>
+</ul>
+<p>Despite having slightly different outputs, the structure of a Character's or Room's Aseprite source file is basically the same.<br />
+Let's see examples for both.</p>
+<h2 id="aseprite-file-organization">Aseprite file organization</h2>
+<p>Please take a look at the following image:</p>
+<p><img alt="Character Aseprite source file example" src="../../assets/images/editor-handbook/aseprite_importer-source_file_example-character.png" title="Aseprite source file example - Character" /></p>
+<p>First notable thing is, a single file contains all animations for the character, identified by tags (<em>marker 1</em>). Each tag will be used to create a single animation, named after the tag, for the Character.</p>
+<div class="admonition info">
+<p class="admonition-title">Under the hood</p>
+<p>Popochiu Characters already embed a Sprite2D and an AnimationPlayer. The whole spritesheet is assigned as texture to the Sprite2D and every tag becomes a configured animation in the AnimationPlayer - even the single-sprite ones. They are then accessible by specific methods on the Character, as explained below.</p>
+</div>
+<p>Your file can also be organized in layers (<em>marker 2</em>). Layer names are completely up to you and you may create as many as you like. The importer has an option to import only visible layers, that's useful if you have reference or background layers that you don't want to be part of your sprite.</p>
+<p>Layers are particularly useful in Rooms source files, because without them, isolating props tend to become pretty messy. Take a look at the following example.</p>
+<p><img alt="Room Aseprite source file example" src="../../assets/images/editor-handbook/aseprite_importer-source_file_example-room-1.png" title="Aseprite source file example - Room" /></p>
+<p>To keep different props apart, the image is organized in layers (<em>marker 1</em>). In the specific case, layer names and tag names match, but you can of course have situations where more than one layer is necessary to render a specific tag (it's pretty common really); a typical example is the background: in the example above, we could have decided to have the trees on the background prop. The resulting Aseprite file would have looked like this then:</p>
+<p><img alt="Room Aseprite source file example - Joined layers" src="../../assets/images/editor-handbook/aseprite_importer-source_file_example-room-3.png" title="Aseprite source file example - Multi-layer background" /></p>
+<p>Notice how the <em>Tree</em> tag disappeared and the <em>Tree layer</em> is now present with the <em>Background</em> one in the <em>Background</em> tag.</p>
+<p>On the other hand, you can have tags with many frames on the same layer. This is the most common case because you often wants your props to be animated, like in the case of our crackling bonefire (see <em>marker 2</em> in the image above):</p>
+<p><img alt="Room Aseprite source file example - Multi frame animation" src="../../assets/images/editor-handbook/aseprite_importer-source_file_example-room-2.png" title="Aseprite source file example - Multi-frame animation" /></p>
+<p>Here we have an isolated fire, composed by 4 frames, all grouped by the proper tag.</p>
+<p>Basically all combinations of layers and frames are allowed: what you see in a specific animation if you play the tag in Aseprite, will be imported as is in the Prop.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Observant readers will have noticed that the first frame has no tag and of course, despite including all "props", it's not animated. Indeed it is there just as a reference frame for the artist to paint "in place". You may have as many untagged frames as you wont in your Room source files: they will be ignored by the importer and will never land into your Popochiu project. This makes things very convenient when composing the scene.</p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Under the hood</p>
+<p>As for Popochiu Characters, every Prop comes with a bundled Sprite2D and a dedicated AnimationPlayer. Each tag will be extracted as a spritesheet and imported as a single animation. <strong>Yes</strong>, this may seem overkill but this setup common to Props and Characters allows for easier maintenance and is there to support more functions in the future.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Even more observant readers will also have realized at this point, that by how things work, each prop sprite will be the size of the whole scene. That's right, but don't be horrified. This approach has a lot of advantages at the sole cost of asking a swift third-millenium game engine to render some more transparent pixels. What we gain is automatic placing of the visual in the scene at import time, and a common rect origin for each prop that will keep baselines and other coordinates consistent among them in the same scene.</p>
+</div>
+<p>Back to the tags: you can name them whatever you want, but to get the most out of this functionality, stick to the following conventions:</p>
+<h3 id="case-style">Case style</h3>
+<p>You can use <code>snake_case</code> or  <code>PascalCase</code> to name your tags, as you prefer. They will be converted to <code>snake_case</code> anyway before creating animations. Since this can change in the future, <strong>we strongly advise not to rely on case sensitivity to differentiate between animations</strong>!<br />
+Be explicit.</p>
+<h3 id="reserved-animation-names">Reserved animation names</h3>
+<p>The engine will automatically recognize the following reserved names and use them properly: <code>idle</code>, <code>walk</code>, <code>talk</code>, <code>grab</code>. All of them take for granted the character is facing right and it will be flipped to the left and used for up and down directions too, unless you don't provide...</p>
+<h3 id="directional-suffixes">Directional suffixes</h3>
+<p>The engine supports directional suffixes for eight possible directions (up, up-left, left, down-left, down, etc). The complete list of suffixes is <code>_u</code>, <code>_ur</code>, <code>_r</code>, <code>_dr</code>, <code>_d</code>, <code>_dl</code>, <code>_l</code>, <code>_ul</code>. Every animation you want to create (not just the reserved ones) can be made direction-aware by creating it with the right suffixes.  </p>
+<p>For example, to create a walk animation that supports the four main directions, you create <code>walk_u</code>, <code>walk_d</code>, <code>walk_r</code> and <code>walk_l</code>. If you don't create <code>walk_l</code>, <code>walk_r</code> will be automatically flipped.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As mentioned the importer will convert every animation name to <code>snake_case</code>. This means that the following tags are all equivalent: <code>talk_u</code>, <code>Talk_u</code>, <code>talkU</code>, <code>TalkU</code>.<br />
+The good: you can use the style you prefer and directions will be still recognized. The bad: if you have <code>Talk_u</code> and <code>TalkU</code> and they mean different things, you're out of luck. <code>Talk_u</code> and <code>Talku</code> works though.</p>
+</div>
+<h3 id="single-animation-file">Single-animation file</h3>
+<p>If a file contains no tags, it will be imported as a single animation named <code>default</code>.</p>
+<h3 id="multiple-source-files">Multiple source files</h3>
+<p>If you are in the need, you may want to separate your character animations over different source files. This is feasible, but keeping everything in a single file is the best option to speed up development by a great amount.<br />
+The plugin allows you to set a single source file at a time, so if you have multiple sources, you have to constantly switch between source files, losing your preferences in the process. In addition, you have to trade the ability to reset all animations off for an incremental import (see below).</p>
+<h2 id="importer-settings">Importer settings</h2>
+<p>The Aseprite Importer exposes its configuration under the <strong>Popochiu -&gt; Import</strong> sections in both the <strong>Editor Settings</strong> and the <strong>Project Settings</strong>.</p>
+<h3 id="editor-settings">Editor Settings</h3>
+<p>Editor Settings contain those configurations that may change between team members' local development environment, like the Aseprite command path, and/or that are valid across different projects.</p>
+<p><img alt="Editor Settings" src="../../assets/images/editor-handbook/aseprite_importer-settings-es.png" title="Editor Settings" /></p>
+<ul>
+<li><strong>Enable Aseprite Importer</strong>: Allows the user to enable or disable the importer in their editor. Useful to avoid cluttering the inspector or getting errors for those who don't use Aseprite or don't have it available in a specific environment.<blockquote>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This option is only available starting from Popochiu 2.0. In Popochiu 1.0 the importer can't be disabled.</p>
+</div>
+</blockquote>
+</li>
+<li><strong>Command Path</strong>: This is the single most important setting to make the plugin work. On Windows, this field <strong>must</strong> contain the full path to Aseprite executable (having the command in <code>PATH</code> won't work due to some Godot limitations on command execution under Windows). In *nix systems (Linux and MacOS), you can choose to provide the Aseprite command (if in <code>PATH</code>) or the full path, as you prefer.<br />
+Anyway, the plugin will check for the correct execution of the command before initializing itself. If something goes wrong, the output panel will give useful information to fix the problem.</li>
+<li><strong>Remove JSON file</strong> When Aseprite is invoked by the importing procedure, it generates a JSON file with metadata that is necessary to complete the job, alongside the spritesheet PNG file. This file is then useless and can be safely erased, most of all if you are versioning your code (you are, aren't you?!). If for some reason you want to keep the output file, just unflag this setting.</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In Popochiu 1.x for Godot 3, all these settings are found under "Project Settings" (see below).</p>
+</div>
+<h3 id="project-settings">Project Settings</h3>
+<p>Among the Project Settings you'll find those you may want to share with your team, and that mostly impact the importing workflow, setting defaults shared by every instance of the plugin.</p>
+<p><img alt="Project Settings" src="../../assets/images/editor-handbook/aseprite_importer-settings-ps.png" title="Project Settings" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since Godot 4, Project Settings have an "Advanced Settings" filter. Plugins can't declare their settings as <em>basic</em>, so please make sure you have the upper left toggle <em>activated</em> or you won't see Popochiu's settings section.</p>
+</div>
+<ul>
+<li><strong>Import Animation by Default</strong>: When a source file is scanned, a list of the contained tags is populated. For each element in the list, you can choose if you want it imported or not. This is useful if you have half-baked animations or reference tags of some sort. When this setting is flagged, all new animations in the list will be automatically flagged as "to be imported". When this setting is off, they will be flagged as "not to be imported".</li>
+<li><strong>Loop Animation by Default</strong>: When a source file is scanned, a list of the contained tags is populated. For each element in the list, you can choose if you want that animation to loop or if it has to be run a single time. Animations like talk or walk are usually looping, but animations specific for cutscenes or special cases may be single runs. When this setting is flagged, all new animations in the list will be automatically flagged as "looping". When this setting is off, they will be flagged as "non-looping".</li>
+<li><strong>New Props Visible by Default</strong>: When a <em>Room</em> source file is scanned, a list of the contained tags is populated. For each element in the list, which will be imported as a Prop, you can choose if you want the new prop to be created visible, or invisible (useful for props that have to be shown only at certain conditions). When this setting is flagged, all elements in the list will be automatically flagged as "visible". When this setting is off, they will be flagged as "hidden".</li>
+<li><strong>New Props Clickable by Default</strong>: When a <em>Room</em> source file is scanned, a list of the contained tags is populated. For each element in the list, which will be imported as a Prop, you can choose if you want the new prop to be interactive, or non-interactive. When this setting is flagged, all elements in the list will be automatically flagged as "interactive". When this setting is off, they will be flagged as "non-interactive".</li>
+<li><strong>Wipe old Animations</strong>: This is the default value for the option with the same name that appears in the importer interface (see below for more information). Set this as you prefer so you don't have to do it all the times, depending on your workflow.</li>
+</ul>
+<h2 id="importer-interface">Importer interface</h2>
+<p>The importer will show a slighlty different interface depending on the target Popochiu Object.</p>
+<p>The following sections show examples for both Characters and Rooms, highlighting the small differences.</p>
+<h3 id="opening-the-importer">Opening the Importer</h3>
+<p>The Character importer tool is visible in the inspector, when you select a <a href="./PopochiuCharacter.md">PopochiuCharacter</a> object, opening the related scene.</p>
+<p><img alt="Character Aseprite importer" src="../../assets/images/editor-handbook/aseprite_importer-activate_importer-character.png" title="Character Aseprite importer" /></p>
+<p>You will not see the importer when you select a character instance in a specific room. To see the importer, you must open the character scene and select its root node.</p>
+<p>Likewise, a Room importer is shown in the Room inspector, when you select the root node of an open Room scene.</p>
+<p><img alt="Room Aseprite importer" src="../../assets/images/editor-handbook/aseprite_importer-activate_importer-room.png" title="Room Aseprite importer" /></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If any error occurs when the plugin starts (for example if there are problems with the Aseprite command or missing dependencies in the scene tree), a warning will be visualized in place of the plugin. Head to the Output Panel to learn how to fix the error.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you select a proper target node and no "Aseprite" section is shown in the inspector, maybe the functionality is disabled. Chech that <code>Popochiu -&gt; Importer -&gt; Enable Aseprite Importer</code> option is flagged in the <strong>Editor Settings</strong>.</p>
+</div>
+<h3 id="using-the-importer">Using the Importer</h3>
+<p>When you select a <a href="./PopochiuCharacter.md">PopochiuCharacter</a> node, you should see this interface in the node inspector, right after the script variables section:</p>
+<p><img alt="Character Aseprite Importer interface" src="../../assets/images/editor-handbook/aseprite_importer-importer_interface-character.png" title="Character Aseprite importer interface" /></p>
+<p>Use <strong>Aseprite file</strong> field (<em>1</em>) to select the source file. When you do this, the plugin automatically scans the file and lists every tag found (<em>2</em>) (or none if the file is a single animation with no tags).</p>
+<p>For each tag that is found and listed, two flags are available (<em>3</em>): <strong>Import this animation</strong> and <strong>Set the animation as looping</strong>. Deactivating them can prevent a specific animation to be imported or set the animation as a single-run.</p>
+<p>For <a href="./PopochiuRoom.md">PopochiuRoom</a> node, the interface is only slightly different, showing two more flags for each tag (<em>1</em> below):</p>
+<p><img alt="Room Aseprite Importer interface" src="../../assets/images/editor-handbook/aseprite_importer-importer_interface-room-diff.png" title="Room Aseprite importer interface differences" /></p>
+<p><strong>This prop will be visible</strong> and <strong>This prop will be clickable</strong> flags will make the imported prop visible and interactive, respectively.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Visibility and clickability can both be set at a later stage via script or interface, but these settings allow a one-time setting for frequent, iterative reimporting.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Visibility and Import flags are not to be confused. You may want to import an invisible prop that will be made visible during the course of the game (think two props for an open and a closed door, that you want to switch based on player's actions).</p>
+</div>
+<p>The <strong>Rescan</strong> button at the top allows you to refresh the tags list if you make any changes. It will be your quick-iteration best friend. Rescanning the tags will <strong>not</strong> overwrite the preferences you already selected for each tag. It will anyway update the frame count references for each animation, get rid of tags that are no more available, and add new ones.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You <strong>must</strong> rescan your source file before reimporting it, if you change the frame count for already available animations, or your imported animations will miss some frames or be all messed-up.</p>
+</div>
+<p>In the <strong>Options</strong> dropdown (<em>4</em>), you can set some parameters for the importer:</p>
+<ul>
+<li><strong>Output Folder</strong>: This refers to the folder in which the <em>TextureAtlas</em> PNG file will be created. If unset, it defaults to the same folder as the scene (in case of a Room Prop, each atlas will be put into the related prop's folder). This helps in case you want to enforce a specific file structure.</li>
+<li><strong>Output File Name</strong>: If empty, this will default to the Aseprite original source file name. Should you want to select a different file name for your atlas, specify it here.</li>
+<li><strong>Only visible layers</strong>: This flag allows you to ignore hidden layers. Useful if you have reference layers or backgrounds that you don't want to appear in your sprite.<blockquote>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Remember to hide reference layers before saving the source file!</p>
+</div>
+</blockquote>
+</li>
+<li><strong>Wipe old animations</strong>: When flagged, all the animations already imported for a Character will be wiped before re-importing them.<br />
+  You typically want to keep this setting flagged when you are iterating over a character's graphics and you want to make sure that if you move or rename animations, every possible leftover is removed and the final result is always coherent with the source file, 1-on-1.<br />
+  You typically want to unflag this when you are working with multiple source files for a single character, and you want to import animation from a file without getting rid of the animations you have already imported before.
+  Beware that animations with the same name will <strong>always</strong> be overwritten. If you keep this setting unflagged and you have leftover animations saved for a character you will need to remove them by hand.</li>
+</ul>
+<p>All these preferences are automatically saved with the target <a href="./PopochiuCharacter.md">PopochiuCharacter</a> or <a href="./PopochiuRoom.md">PopochiuRoom</a> node, so they are persisted between sessions, and different for each single element.<br />
+If for some reason you want to completely reset an Importer anew, just use the <strong>Reset preferences</strong> button at the very bottom (confirmation required).</p>
+<h3 id="importing-animations">Importing animations</h3>
+<p>Finally, if everything is set up correctly, you can hit the <strong>Import</strong> button. The importer will do its magic (beware: very large files with hundreds to thousands of frames will take a while to load, manly due to Aseprite exporting them).<br />
+When the procedure is over a popup message will report the status and processed tags count.</p>
+<ul>
+<li><strong>For Characters</strong>, you will find all your animations in the <a href="https://docs.godotengine.org/en/3.6/classes/class_animationplayer.html">AnimationPlayer</a> of your character.<br />
+All reserved animations (<code>idle</code>, <code>walk</code>, <code>talk</code>, <code>grab</code>) will automagically be available in your game and used by the engine.<br />
+You can use <code>play_animation()</code> method to play any other animation by passing its name (without directional suffixes) as a parameter.</li>
+<li><strong>For Rooms</strong>, you will see a set of props have been created automatically and populated with the correct sprites. If you have animated props (like the fire in this page's example), starting the scene in the player will show the animation running. You can check the animation is correctly looping, if that's the case.<br />
+Note that existing props with the same name will have their animations seamlessly updated by the procedure, preserving any other properties or configuration they may have.<br />
+The Room importer is not yet tracing colliders automatically, but each Prop has an embedded polygon. To edit it, select the Prop in the room tree (or in the Popochiu panel room tab) and click the <em>Interaction Polygon</em> button in the toolbar.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../toolbar-buttons/" class="btn btn-neutral float-left" title="Toolbar buttons"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../../the-engine-handbook/scripting-overview/" class="btn btn-neutral float-right" title="Scripting overview">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright (c) 2024 - The Carenalgas Community</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carenalgas/popochiu/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../toolbar-buttons/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../../the-engine-handbook/scripting-overview/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+      <script src="../../assets/js/gdscript.min.js"></script>
+      <script src="../../assets/js/custom.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

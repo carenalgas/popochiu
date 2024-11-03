@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="The Carenalgas Community" />
+      <link rel="shortcut icon" href="../../../assets/images/_other/theme/favicon.ico" />
+    <title>Game setup - Popochiu Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/css/custom.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Game setup";
+        var mkdocs_page_input_path = "getting-started/creating-a-game-stub/game-setup.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../..">
+          <img src="../../../assets/images/_other/theme/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../installing-popochiu/">Installing popochiu</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Creating a game stub</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../introduction/">Introduction</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="./">Game setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../create-characters/">Create characters</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../create-the-first-room/">Create the first room</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../add-an-inventory-item/">Add an inventory item</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../script-your-first-dialogue/">Script your first dialogue</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../use-inventory-items/">Use inventory items</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../customize-the-game-ui/">Customize the Game UI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../conclusions/">Conclusions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../example-resources/">Example resources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting-help/">Getting help</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The editor handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/editor-settings/">Editor settings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/interface-overview/">Interface overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/popochiu-dock/">Popochiu dock</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/toolbar-buttons/">Toolbar buttons</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/importers/">Aseprite Importers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The engine handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-engine-handbook/scripting-overview/">Scripting overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Scripting reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/9_verb_commands_container.gd/">9 verb commands container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/9_verb_panel.gd/">9 verb panel.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuCharacterData/">PopochiuCharacterData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuDialogOption/">PopochiuDialogOption</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuGUIInfo/">PopochiuGUIInfo</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuHoverText/">PopochiuHoverText</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuInventoryItemData/">PopochiuInventoryItemData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuMainCamera/">PopochiuMainCamera</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuSettingsBarButton/">PopochiuSettingsBarButton</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuUtils/">PopochiuUtils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/audio_cue_container.gd/">Audio cue container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/empty_script_template.gd/">Empty script template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/importer_defaults.gd/">Importer defaults.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/input_actions.gd/">Input actions.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_bar.gd/">Sierra bar.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_commands_container.gd/">Sierra commands container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/text_speed_option.gd/">Text speed option.gd</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How to develop a game</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/kickstarting-a-project/">Kickstarting a project</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/creating-rooms/">Creating rooms</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/changing-rooms/">Changing rooms</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/creating-characters/">Creating characters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/scripting-interactions/">Scripting interactions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/writing-dialogues/">Writing dialogues</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/managing-the-inventory/">Managing the inventory</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/playing-animations/">Playing animations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/adding-sound/">Adding sound</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Advanced techniques</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/localization/">Localization</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/guis/">Guis</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/advanced-animations/">Advanced animations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/character-scaling/">Character Scaling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/character-anti-glide-feature/">Character Anti-Glide Feature</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/game-state-saving-and-loading/">Game state saving and loading</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/extending-customizing-popochiu/">Extending customizing popochiu</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/change-text-to-gibberish/">Change text to gibberish</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing to popochiu</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/project-overview/">Project overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/toolchain-and-dependencies/">Toolchain and dependencies</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/project-management/">Project management</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/coding-standards/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/getting-help/">Getting help</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">Popochiu Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Getting started</li>
+          <li class="breadcrumb-item">Creating a game stub</li>
+      <li class="breadcrumb-item active">Game setup</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carenalgas/popochiu/edit/develop/docs/src/getting-started/creating-a-game-stub/game-setup.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h2 id="game-setup">Game setup</h2>
+<p>When you first start your project, you are greeted with the <strong>Setup</strong> popup, where you can define the base parameters of your game.</p>
+<p><img alt="Setup Popup" src="../../../assets/images/getting-started/game_stub-setup_popup.png" title="Popochiu's Setup popup window" /></p>
+<p>Using this window will take care of configuring Godot project with a coherent preset of parameters so that your game looks good in all situations.<br />
+Also, it will preconfigure the Game User Interface (GUI) of your choice, so that you don't have to.</p>
+<h3 id="set-game-resolution">Set game resolution</h3>
+<p>The <strong>Native game resolution</strong> (<em>1</em>) is the actual resolution of your assets (i.e. background). This resolution will be scaled up or down to match the actual display resolution (see below). Usually, you want to set this to the size of a full-game background that fills the entire "screen".</p>
+<p>For example, if you plan to create a retro-vibes pixel-art adventure game like the early ones by Sierra or LucasArts, you may want to keep this resolution down to <code>320x200</code>, which was the native resolution of VGA displays back then.<br />
+If you want to create a high-res game like the modern Deponia series, with beautifully painted art, you may want to bring this up to <code>1920x1080</code>, which is a modern Full-HD display resolution.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you plan to develop a pixel-art game for widescreen displays, these are common resolutions that can work on a modern PC:</p>
+<ul>
+<li><code>320x180</code>: vertically very small, good to emulate pioneering 80s games like Sierra's <em>King's Quest</em> or similar.</li>
+<li><code>356x200</code>: more vertical space, this is a "widescreen" version of the 320x200 that games like <em>The Secret of Monkey Island</em> or <em>King's Quest V</em> had on an IBM PC or Amiga, back then.</li>
+<li><code>384x216</code>: there were no games back then featuring this resolution, but it can be used if you want to have a bit more vertical space for higher sprites or to accommodate a bulky interface like the 9-verbs one, without ruining the <em>retro-vibe</em>.</li>
+</ul>
+</div>
+<p>Some prefer not to play adventure games in full-screen so, once you've set the native resolution for your game, you may use the <strong>Playing window resolution</strong> (<em>2</em>) values to set the size your game will have when played in windowed mode. For low-res games, you want to provide a larger window than the native resolution, or on most modern displays, it will be very tiny.  </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The provided default is a good fit for most Full-HD displays, and the player will be able to resize the window anyway. Probably it's worth adjusting the window size only if you know your game will be played in specific contexts.</p>
+</div>
+<p>Finally, the <strong>Game type</strong> (<em>3</em>) select box will set a bunch of project settings that are better kept coherent, from sprite importing to scaling algorithms, etc. The options are:</p>
+<ul>
+<li><strong>Custom</strong>: This does nothing, leaving all the settings to the developer.
+<strong>2D</strong>: Choose this for high-res games, that may benefit from anti-aliasing when scaled up or down.
+<strong>Pixel</strong>: Choose this for low-res and pixel-art games, so that your graphics remain crisp when scaled up or down.</li>
+</ul>
+<div class="admonition info">
+<p class="admonition-title">Under the hood</p>
+<p>For the more technical readers, what the <strong>Game type</strong> options do is preconfigure the <strong>Stretch mode</strong> to <code>canvas_item</code> and <strong>Stretch aspect</strong> to <code>keep</code> for you. The <code>Pixel</code> mode also sets textures using the <code>Nearest</code> filter, so that no anti-alias or blurring happens when the game is scaled.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Nowadays there are so many different display aspect ratios, that making assumptions about how your game will be played is futile. Nonetheless, the vast majority of devices out there (mobile or PCs) have displays close enough to <code>16:9</code> that you will probably end up keeping this ratio into consideration. That's the reason why Popochiu default values are set to <code>320x180</code>: it is an old-style resolution, with the aspect ratio of a modern display.</p>
+</div>
+<h3 id="select-game-gui">Select game GUI</h3>
+<p>Since version 2.0, Popochiu comes with a preset of different GUI templates, and in the next version, it will provide a set of features to create your own custom one.<br />
+Preset GUI templates will contain all the assets and logic thay you need to mimic some of the most common game interfaces of the Adventure genre.</p>
+<p>In the <strong>GUI Template</strong> (<em>4</em>) section of the Setup popup, you can click on a GUI icon to select which template to apply:</p>
+<ul>
+<li><strong>9 Verbs</strong>: inspired by the original SCUMM interface, first seen in <em>Maniac Mansion</em>, but getting its final form with <em>Monkey Island 2: LeChuck's Revenge</em>, and used by many games up to the recent <em>Thimbleweed Park</em>.</li>
+<li><strong>Sierra</strong>: inspired by the early 90s SCI interface, common to <em>King's Quest</em> and <em>Space Quest</em> series. It took many forms, always specific to Sierra games. Very useful for projects that want to bring back that historical interaction patterns.</li>
+<li><strong>SimpleClick</strong>: the most basic and straightforward interface for an Adventure Game, common to many modern titles like <em>Deponia</em> - left-click to walk and interact, right-click to examine. This version is influenced by early PowerHoof productions.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>You can change your mind and apply a different template later during the development of your game, but doing this will <strong>replace</strong> your GUI (and all the custom logic or graphics) with a new template.</p>
+<p>Also, keep in mind that some GUIs will take up space on the screen (like the 9 Verbs one), so please, consider this when designing your backgrounds.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can go back and review your game setup choices at any moment, by clicking the "Setup" button at the bottom of the <a href="#TODO">Popochiu Main Dock</a>.</p>
+<p><img alt="Setup button" src="../../../assets/images/getting-started/game_stub-setup_dock_button.png" title="Reopen the Setup window anytime from the main dock" /></p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../introduction/" class="btn btn-neutral float-left" title="Introduction"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../create-characters/" class="btn btn-neutral float-right" title="Create characters">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright (c) 2024 - The Carenalgas Community</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carenalgas/popochiu/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../introduction/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../create-characters/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+      <script src="../../../assets/js/gdscript.min.js"></script>
+      <script src="../../../assets/js/custom.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
