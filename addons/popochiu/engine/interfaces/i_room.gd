@@ -111,6 +111,11 @@ func get_runtime_room(script_name: String) -> PopochiuRoom:
 
 ## Gets the instance of the [PopochiuRoom] identified with [param script_name].
 func get_instance(script_name: String) -> PopochiuRoom:
+	# Fix #328 by returning the instance of the current room if it matches the instance that the
+	# plugin is looking for
+	if is_instance_valid(current) and current.script_name == script_name:
+		return current
+	
 	var tres_path: String = PopochiuResources.get_data_value("rooms", script_name, "")
 	
 	if not tres_path:
