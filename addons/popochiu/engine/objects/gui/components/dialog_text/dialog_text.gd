@@ -78,7 +78,10 @@ func play_text(props: Dictionary) -> void:
 	rich_text_label.push_color(props.color)
 	
 	# Assign the text and align mode
-	_append_text(msg, props)
+	if PopochiuConfig.should_talk_gibberish():
+		_append_text(D.create_gibberish(msg), props)
+	else:
+		_append_text(msg, props)
 	
 	if _secs_per_character > 0.0:
 		# The text will appear with an animation
