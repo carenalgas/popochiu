@@ -103,6 +103,8 @@ var default_scale := Vector2.ONE
 
 var _looking_dir: int = Looking.DOWN
 
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+
 
 #region Godot ######################################################################################
 func _ready():
@@ -635,7 +637,7 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 		)
 		return
 
-	if $AnimationPlayer.get_animation_list().is_empty():
+	if animation_player.get_animation_list().is_empty():
 		return
 
 	# Search for a valid animation corresponding to animation_label
@@ -650,9 +652,9 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 		)
 		return
 	# Play the animation in the best available orientation
-	$AnimationPlayer.play(animation)
+	animation_player.play(animation)
 	# If the playing is blocking, wait for the animation to finish
-	await $AnimationPlayer.animation_finished
+	await animation_player.animation_finished
 
 	# Go back to idle state
 	_play_idle()
@@ -670,18 +672,19 @@ func queue_stop_animation():
 func stop_animation():
 	# If the animation is not looping or is an idle one, do nothing
 	if (
-		$AnimationPlayer.get_animation($AnimationPlayer.current_animation) == Animation.LOOP_NONE or
-		$AnimationPlayer.current_animation == 'idle' or
-		$AnimationPlayer.current_animation.begins_with('idle_')
+		animation_player.get_animation(
+			animation_player.current_animation
+		).loop_mode == Animation.LOOP_NONE
+		or animation_player.current_animation == 'idle'
+		or animation_player.current_animation.begins_with('idle_')
 	):
 		return
 
 	# Save the loop mode, wait for the anim to be over as designed, then restore the mode
-	var animation: AnimationMixer = $AnimationPlayer.get_animation($AnimationPlayer.current_animation)
-	var animation_loop_mode = animation.loop_mode
+	var animation: Animation = animation_player.get_animation(animation_player.current_animation)
+	var animation_loop_mode := animation.loop_mode
 	animation.loop_mode = Animation.LOOP_NONE
-
-	await $AnimationPlayer.animation_finished
+	await animation_player.animation_finished
 
 	_play_idle()
 	animation.loop_mode = animation_loop_mode
@@ -707,7 +710,7 @@ func queue_pause_animation():
 
 ## Pauses the animation that is currently playing.
 func pause_animation():
-	$AnimationPlayer.pause()
+	animation_player.pause()
 
 
 ## Resumes the current animation (that was previously paused).[br][br]
@@ -718,7 +721,7 @@ func queue_resume_animation():
 
 ## Resumes the current animation (that was previously paused).
 func resume_animation():
-	$AnimationPlayer.play()
+	animation_player.play()
 
 
 ## Makes the character look in the direction of [param destination]. The result is one of the values
@@ -905,7 +908,7 @@ func _get_valid_oriented_animation(animation_label):
 	# Scan the AnimationPlayer and return the first that matches.
 	for suffix in suffixes:
 		var animation = "%s%s" % [animation_label, suffix]
-		if $AnimationPlayer.has_animation(animation):
+		if animation_player.has_animation(animation):
 			return animation
 
 	return null
