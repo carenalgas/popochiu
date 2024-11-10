@@ -101,7 +101,13 @@ var default_walk_speed := 0
 ## [PopochiuRegion] that modifies the scale.
 var default_scale := Vector2.ONE
 
+# Holds the direction the character is looking at. Initialized to DOWN.
 var _looking_dir: int = Looking.DOWN
+# Holds a suffixes fallback list for the animations to play. Initialized to the suffixes corresponding
+# to the DOWN direction.
+var _animation_suffixes: Array = ['_d', '_l', '_r', '']
+# Holds the last PopochiuClickable that the character reached.
+var _last_reached_clickable: PopochiuClickable = null
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
@@ -216,6 +222,7 @@ func queue_walk(target_pos: Vector2) -> Callable:
 ## value.
 func walk(target_pos: Vector2) -> void:
 	is_moving = true
+	_last_reached_clickable = null
 	_looking_dir = Looking.LEFT if target_pos.x < position.x else Looking.RIGHT
 
 	# Make the char face in the correct direction
@@ -496,12 +503,17 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	var clicked_id: String = E.clicked.script_name
 
+	if E.clicked == _last_reached_clickable:
+		await get_tree().process_frame
+		return
+
 	await _walk_to_node(E.clicked, offset)
+	_last_reached_clickable = E.clicked
 
 	# Check if the action was cancelled
 	if not E.clicked or clicked_id != E.clicked.script_name:
 		await E.await_stopped
-
+	
 
 ## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
@@ -731,29 +743,68 @@ func face_direction(destination: Vector2):
 	var angle = rad_to_deg((destination - position).angle())
 	# Tolerance in degrees, to avoid U D L R are only
 	# achieved on precise angles such as 0 90 180 deg.
-	var t = 22.5
+	var t_8dir = 22.5
+	var t_4dir = 45
 	# Determine the direction the character is facing.
 	# Remember: Y coordinates have opposite sign in Godot.
 	# this means that negative angles are up movements.
 	# Set the direction using the _looking property.
 	# We cannot use the face_* functions because they
 	# set the state as IDLE.
-	if angle >= -(0 + t) and angle < (0 + t):
+
+	# Based on the character facing direction, define a set of
+	# animation suffixes in reference order.
+	# Notice how we seek for opposite directions for left and
+	# right. Flipping is done in other functions. We just define
+	# a preference order for animations when available.
+
+	if angle >= -(0 + t_8dir) and angle < (0 + t_8dir):
 		_looking_dir = Looking.RIGHT
-	elif angle >= (0 + t) and angle < (90 - t):
+		_animation_suffixes = ['_r', '_l']
+
+	elif angle >= (0 + t_8dir) and angle < (90 - t_8dir):
 		_looking_dir = Looking.DOWN_RIGHT
-	elif angle >= (90 - t) and angle < (90 + t):
+		if angle >= (0 + t_4dir) and angle < (90 + t_4dir):
+			_animation_suffixes = ['_dr', '_r', '_dl', '_l']
+		else:
+			_animation_suffixes = ['_dr', '_dl', '_d']
+
+	elif angle >= (90 - t_8dir) and angle < (90 + t_8dir):
 		_looking_dir = Looking.DOWN
-	elif angle >= (90 + t) and angle < (180 - t):
+		_animation_suffixes = ['_d', '_l', '_r']
+
+	elif angle >= (90 + t_8dir) and angle < (180 - t_8dir):
 		_looking_dir = Looking.DOWN_LEFT
-	elif angle >= (180 - t) or angle < -(180 - t):
+		if angle >= (180 - t_4dir) or angle < -(180 - t_4dir):
+			_animation_suffixes = ['_dl', '_l', '_dr', '_r']
+		else:
+			_animation_suffixes = ['_dl', '_dr', '_d']
+
+	elif angle >= (180 - t_8dir) or angle < -(180 - t_8dir):
 		_looking_dir = Looking.LEFT
-	elif angle >= -(180 - t) and angle < -(90 + t):
+		_animation_suffixes = ['_l', '_r']
+
+	elif angle >= -(180 - t_8dir) and angle < -(90 + t_8dir):
 		_looking_dir = Looking.UP_LEFT
-	elif angle >= -(90 + t) and angle < -(90 - t):
+		if angle >= (180 - t_4dir) or angle < -(180 - t_4dir):
+			_animation_suffixes = ['_ul', '_l', '_ur', '_r']
+		else:
+			_animation_suffixes = ['_ul', '_ur', '_u']
+
+	elif angle >= -(90 + t_8dir) and angle < -(90 - t_8dir):
 		_looking_dir = Looking.UP
-	elif angle >= -(90 - t) and angle < -(0 + t):
+		_animation_suffixes = ['_u', '_l', '_r']
+
+	elif angle >= -(90 - t_8dir) and angle < -(0 + t_8dir):
 		_looking_dir = Looking.UP_RIGHT
+		if angle >= (0 + t_4dir) and angle < (90 + t_4dir):
+			_animation_suffixes = ['_ur', '_r', '_ul', '_l']
+		else:
+			_animation_suffixes = ['_ur', '_ul', '_u']
+
+	# Add an empty suffix to support the most
+	# basic animation case  (ex. just "walk").
+	_animation_suffixes = _animation_suffixes + ['']
 
 
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.
@@ -885,28 +936,10 @@ func _get_vo_cue(emotion := '') -> String:
 
 
 func _get_valid_oriented_animation(animation_label):
-	var suffixes = []
-	# Based on the character facing direction, define a set of
-	# animation suffixes in reference order.
-	# Notice how we seek for opposite directions for left and
-	# right. Flipping is done in other functions. We just define
-	# a preference order for animations when available.
-	match _looking_dir:
-		Looking.DOWN_LEFT: suffixes = ['_dl', '_l', '_dr', '_r']
-		Looking.UP_LEFT: suffixes = ['_ul', '_l', '_ur', '_r']
-		Looking.LEFT: suffixes = ['_l', '_r']
-		Looking.UP_RIGHT: suffixes = ['_ur', '_r', '_ul', '_l']
-		Looking.DOWN_RIGHT: suffixes = ['_dr', '_r', '_dl', '_l']
-		Looking.RIGHT: suffixes = ['_r', '_l']
-		Looking.DOWN: suffixes = ['_d', '_l', '_r']
-		Looking.UP: suffixes = ['_u', '_l', '_r']
-	# Add an empty suffix to support the most
-	# basic animation case  (ex. just "walk").
-	suffixes = suffixes + ['']
 	# The list of prefixes is in order of preference
 	# Eg. walk_dl, walk_l, walk
 	# Scan the AnimationPlayer and return the first that matches.
-	for suffix in suffixes:
+	for suffix in _animation_suffixes:
 		var animation = "%s%s" % [animation_label, suffix]
 		if animation_player.has_animation(animation):
 			return animation
