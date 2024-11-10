@@ -101,8 +101,13 @@ var default_walk_speed := 0
 ## [PopochiuRegion] that modifies the scale.
 var default_scale := Vector2.ONE
 
+# Holds the direction the character is looking at. Initialized to DOWN.
 var _looking_dir: int = Looking.DOWN
+# Holds a suffixes fallback list for the animations to play. Initialized to the suffixes corresponding
+# to the DOWN direction.
 var _animation_suffixes: Array = ['_d', '_l', '_r', '']
+# Holds the last PopochiuClickable that the character reached.
+var _last_reached_clickable: PopochiuClickable = null
 
 
 #region Godot ######################################################################################
@@ -215,6 +220,7 @@ func queue_walk(target_pos: Vector2) -> Callable:
 ## value.
 func walk(target_pos: Vector2) -> void:
 	is_moving = true
+	_last_reached_clickable = null
 	_looking_dir = Looking.LEFT if target_pos.x < position.x else Looking.RIGHT
 
 	# Make the char face in the correct direction
@@ -495,12 +501,17 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	var clicked_id: String = E.clicked.script_name
 
+	if E.clicked == _last_reached_clickable:
+		await get_tree().process_frame
+		return
+
 	await _walk_to_node(E.clicked, offset)
+	_last_reached_clickable = E.clicked
 
 	# Check if the action was cancelled
 	if not E.clicked or clicked_id != E.clicked.script_name:
 		await E.await_stopped
-
+	
 
 ## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
