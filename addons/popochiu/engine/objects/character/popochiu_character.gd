@@ -513,7 +513,7 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	# Check if the action was cancelled
 	if not E.clicked or clicked_id != E.clicked.script_name:
 		await E.await_stopped
-	
+
 
 ## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
@@ -740,11 +740,11 @@ func resume_animation():
 ## defined by [enum Looking].
 func face_direction(destination: Vector2):
 	# Get the vector from the origin to the destination.
-	var angle = rad_to_deg((destination - position).angle())
+
+	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
 	# Tolerance in degrees, to avoid U D L R are only
 	# achieved on precise angles such as 0 90 180 deg.
-	var t_8dir = 22.5
-	var t_4dir = 45
+
 	# Determine the direction the character is facing.
 	# Remember: Y coordinates have opposite sign in Godot.
 	# this means that negative angles are up movements.
@@ -758,49 +758,69 @@ func face_direction(destination: Vector2):
 	# right. Flipping is done in other functions. We just define
 	# a preference order for animations when available.
 
-	if angle >= -(0 + t_8dir) and angle < (0 + t_8dir):
-		_looking_dir = Looking.RIGHT
-		_animation_suffixes = ['_r', '_l']
 
-	elif angle >= (0 + t_8dir) and angle < (90 - t_8dir):
-		_looking_dir = Looking.DOWN_RIGHT
-		if angle >= (0 + t_4dir) and angle < (90 + t_4dir):
-			_animation_suffixes = ['_dr', '_r', '_dl', '_l']
+	if angle < 180:
+		if angle < 90:
+			if angle < 45:
+				if angle < 22.5:
+					_animation_suffixes = ['_r', '_dr', '_l', '_dl', '_d']
+					_looking_dir = Looking.RIGHT
+				else:
+					_animation_suffixes = ['_dr', '_r', '_dl', '_l', '_d']
+					_looking_dir = Looking.DOWN_RIGHT
+			else:
+				if angle < 67.5:
+					_animation_suffixes = ['_dr', '_d', '_dl', '_r', '_l']
+					_looking_dir = Looking.DOWN_RIGHT
+				else:
+					_animation_suffixes = ['_d', '_dr', '_dl', '_r', '_l']
+					_looking_dir = Looking.DOWN
 		else:
-			_animation_suffixes = ['_dr', '_dl', '_d']
-
-	elif angle >= (90 - t_8dir) and angle < (90 + t_8dir):
-		_looking_dir = Looking.DOWN
-		_animation_suffixes = ['_d', '_l', '_r']
-
-	elif angle >= (90 + t_8dir) and angle < (180 - t_8dir):
-		_looking_dir = Looking.DOWN_LEFT
-		if angle >= (180 - t_4dir) or angle < -(180 - t_4dir):
-			_animation_suffixes = ['_dl', '_l', '_dr', '_r']
+			if angle < 135:
+				if angle < 112.5:
+					_animation_suffixes = ['_d', '_dl', '_dr', '_l', '_r']
+					_looking_dir = Looking.DOWN
+				else:
+					_animation_suffixes = ['_dl', '_d', '_dr', '_l', '_r']
+					_looking_dir = Looking.DOWN_LEFT
+			else:
+				if angle < 157.5:
+					_animation_suffixes = ['_dl', '_l', '_dr', '_r', '_d']
+					_looking_dir = Looking.DOWN_LEFT
+				else:
+					_animation_suffixes = ['_l', '_dl', '_r', '_dr', '_d']
+					_looking_dir = Looking.LEFT
+	else:
+		if angle < 270:
+			if angle < 225:
+				if angle < 202.5:
+					_animation_suffixes = ['_l', '_ul', '_r', '_ur', '_u']
+					_looking_dir = Looking.LEFT
+				else:
+					_animation_suffixes = ['_ul', '_l', '_ur', '_r', '_u']
+					_looking_dir = Looking.UP_LEFT
+			else:
+				if angle < 247.5:
+					_animation_suffixes = ['_ul', '_ur', '_u', '_l', '_r']
+					_looking_dir = Looking.UP_LEFT
+				else:
+					_animation_suffixes = ['_u', '_ul', '_ur', '_l', '_r']
+					_looking_dir = Looking.UP
 		else:
-			_animation_suffixes = ['_dl', '_dr', '_d']
-
-	elif angle >= (180 - t_8dir) or angle < -(180 - t_8dir):
-		_looking_dir = Looking.LEFT
-		_animation_suffixes = ['_l', '_r']
-
-	elif angle >= -(180 - t_8dir) and angle < -(90 + t_8dir):
-		_looking_dir = Looking.UP_LEFT
-		if angle >= (180 - t_4dir) or angle < -(180 - t_4dir):
-			_animation_suffixes = ['_ul', '_l', '_ur', '_r']
-		else:
-			_animation_suffixes = ['_ul', '_ur', '_u']
-
-	elif angle >= -(90 + t_8dir) and angle < -(90 - t_8dir):
-		_looking_dir = Looking.UP
-		_animation_suffixes = ['_u', '_l', '_r']
-
-	elif angle >= -(90 - t_8dir) and angle < -(0 + t_8dir):
-		_looking_dir = Looking.UP_RIGHT
-		if angle >= (0 + t_4dir) and angle < (90 + t_4dir):
-			_animation_suffixes = ['_ur', '_r', '_ul', '_l']
-		else:
-			_animation_suffixes = ['_ur', '_ul', '_u']
+			if angle < 315:
+				if angle < 292.5:
+					_animation_suffixes = ['_u', '_ur', '_ul', '_r', '_l']
+					_looking_dir = Looking.UP
+				else:
+					_animation_suffixes = ['_ur', '_ul', '_u', '_r', '_l']
+					_looking_dir = Looking.UP_RIGHT
+			else:
+				if angle < 337.5:
+					_animation_suffixes = ['_ur', '_r', '_ul', '_l', '_u']
+					_looking_dir = Looking.UP_RIGHT
+				else:
+					_animation_suffixes = ['_r', '_ur', '_l', '_ul', '_u']
+					_looking_dir = Looking.RIGHT
 
 	# Add an empty suffix to support the most
 	# basic animation case  (ex. just "walk").
