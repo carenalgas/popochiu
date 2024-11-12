@@ -283,7 +283,7 @@ func queue_face_up() -> Callable:
 ## Makes the character to look up by setting [member _looking_dir] to [constant UP] and waits until
 ## [method idle] finishes.
 func face_up() -> void:
-	_looking_dir = Looking.UP
+	face_direction(position + Vector2(0, -10))
 	await idle()
 
 
@@ -297,7 +297,7 @@ func queue_face_up_right() -> Callable:
 ## Makes the character to look up and right by setting [member _looking_dir] to [constant UP_RIGHT]
 ## and waits until [method idle] finishes.
 func face_up_right() -> void:
-	_looking_dir = Looking.UP_RIGHT
+	face_direction(position + Vector2(10, -10))
 	await idle()
 
 
@@ -311,7 +311,7 @@ func queue_face_right() -> Callable:
 ## Makes the character to look right by setting [member _looking_dir] to [constant RIGHT] and waits
 ## until [method idle] finishes.
 func face_right() -> void:
-	_looking_dir = Looking.RIGHT
+	face_direction(position + Vector2(10, 0))
 	await idle()
 
 
@@ -325,7 +325,7 @@ func queue_face_down_right() -> Callable:
 ## Makes the character to look down and right by setting [member _looking_dir] to
 ## [constant DOWN_RIGHT] and waits until [method idle] finishes.
 func face_down_right() -> void:
-	_looking_dir = Looking.DOWN_RIGHT
+	face_direction(position + Vector2(10, 10))
 	await idle()
 
 
@@ -339,7 +339,7 @@ func queue_face_down() -> Callable:
 ## Makes the character to look down by setting [member _looking_dir] to [constant DOWN] and waits
 ## until [method idle] finishes.
 func face_down() -> void:
-	_looking_dir = Looking.DOWN
+	face_direction(position + Vector2(0, 10))
 	await idle()
 
 
@@ -353,7 +353,7 @@ func queue_face_down_left() -> Callable:
 ## Makes the character to look down and left by setting [member _looking_dir] to
 ## [constant DOWN_LEFT] and waits until [method idle] finishes.
 func face_down_left() -> void:
-	_looking_dir = Looking.DOWN_LEFT
+	face_direction(position + Vector2(-10, 10))
 	await idle()
 
 
@@ -367,7 +367,7 @@ func queue_face_left() -> Callable:
 ## Makes the character to look left by setting [member _looking_dir] to [constant LEFT] and waits
 ## until [method idle] finishes.
 func face_left() -> void:
-	_looking_dir = Looking.LEFT
+	face_direction(position + Vector2(-10, 0))
 	await idle()
 
 
@@ -381,7 +381,7 @@ func queue_face_up_left() -> Callable:
 ## Makes the character to look up and left by setting [member _looking_dir] to [constant UP_LEFT]
 ## and waits until [method idle] finishes.
 func face_up_left() -> void:
-	_looking_dir = Looking.UP_LEFT
+	face_direction(position + Vector2(-10, -10))
 	await idle()
 
 
