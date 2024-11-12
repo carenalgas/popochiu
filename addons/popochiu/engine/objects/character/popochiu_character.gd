@@ -283,7 +283,7 @@ func queue_face_up() -> Callable:
 ## Makes the character to look up by setting [member _looking_dir] to [constant UP] and waits until
 ## [method idle] finishes.
 func face_up() -> void:
-	_looking_dir = Looking.UP
+	face_direction(position + Vector2.UP)
 	await idle()
 
 
@@ -297,7 +297,7 @@ func queue_face_up_right() -> Callable:
 ## Makes the character to look up and right by setting [member _looking_dir] to [constant UP_RIGHT]
 ## and waits until [method idle] finishes.
 func face_up_right() -> void:
-	_looking_dir = Looking.UP_RIGHT
+	face_direction(position + Vector2.UP + Vector2.RIGHT)
 	await idle()
 
 
@@ -311,7 +311,7 @@ func queue_face_right() -> Callable:
 ## Makes the character to look right by setting [member _looking_dir] to [constant RIGHT] and waits
 ## until [method idle] finishes.
 func face_right() -> void:
-	_looking_dir = Looking.RIGHT
+	face_direction(position + Vector2.RIGHT)
 	await idle()
 
 
@@ -325,7 +325,7 @@ func queue_face_down_right() -> Callable:
 ## Makes the character to look down and right by setting [member _looking_dir] to
 ## [constant DOWN_RIGHT] and waits until [method idle] finishes.
 func face_down_right() -> void:
-	_looking_dir = Looking.DOWN_RIGHT
+	face_direction(position + Vector2.DOWN + Vector2.RIGHT)
 	await idle()
 
 
@@ -339,7 +339,7 @@ func queue_face_down() -> Callable:
 ## Makes the character to look down by setting [member _looking_dir] to [constant DOWN] and waits
 ## until [method idle] finishes.
 func face_down() -> void:
-	_looking_dir = Looking.DOWN
+	face_direction(position + Vector2.DOWN)
 	await idle()
 
 
@@ -353,7 +353,7 @@ func queue_face_down_left() -> Callable:
 ## Makes the character to look down and left by setting [member _looking_dir] to
 ## [constant DOWN_LEFT] and waits until [method idle] finishes.
 func face_down_left() -> void:
-	_looking_dir = Looking.DOWN_LEFT
+	face_direction(position + Vector2.DOWN + Vector2.LEFT)
 	await idle()
 
 
@@ -367,7 +367,7 @@ func queue_face_left() -> Callable:
 ## Makes the character to look left by setting [member _looking_dir] to [constant LEFT] and waits
 ## until [method idle] finishes.
 func face_left() -> void:
-	_looking_dir = Looking.LEFT
+	face_direction(position + Vector2.LEFT)
 	await idle()
 
 
@@ -381,7 +381,7 @@ func queue_face_up_left() -> Callable:
 ## Makes the character to look up and left by setting [member _looking_dir] to [constant UP_LEFT]
 ## and waits until [method idle] finishes.
 func face_up_left() -> void:
-	_looking_dir = Looking.UP_LEFT
+	face_direction(position + Vector2.UP + Vector2.LEFT)
 	await idle()
 
 
@@ -513,7 +513,7 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	# Check if the action was cancelled
 	if not E.clicked or clicked_id != E.clicked.script_name:
 		await E.await_stopped
-	
+
 
 ## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
@@ -740,11 +740,11 @@ func resume_animation():
 ## defined by [enum Looking].
 func face_direction(destination: Vector2):
 	# Get the vector from the origin to the destination.
-	var angle = rad_to_deg((destination - position).angle())
+
+	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
 	# Tolerance in degrees, to avoid U D L R are only
 	# achieved on precise angles such as 0 90 180 deg.
-	var t_8dir = 22.5
-	var t_4dir = 45
+
 	# Determine the direction the character is facing.
 	# Remember: Y coordinates have opposite sign in Godot.
 	# this means that negative angles are up movements.
@@ -758,49 +758,54 @@ func face_direction(destination: Vector2):
 	# right. Flipping is done in other functions. We just define
 	# a preference order for animations when available.
 
-	if angle >= -(0 + t_8dir) and angle < (0 + t_8dir):
+	if angle < 22.5:
+		_animation_suffixes = ['_r', '_l', '_dr', '_dl', '_d']
 		_looking_dir = Looking.RIGHT
-		_animation_suffixes = ['_r', '_l']
-
-	elif angle >= (0 + t_8dir) and angle < (90 - t_8dir):
+	elif angle < 45:
+		_animation_suffixes = ['_dr', '_dl', '_r' , '_l', '_d']
 		_looking_dir = Looking.DOWN_RIGHT
-		if angle >= (0 + t_4dir) and angle < (90 + t_4dir):
-			_animation_suffixes = ['_dr', '_r', '_dl', '_l']
-		else:
-			_animation_suffixes = ['_dr', '_dl', '_d']
-
-	elif angle >= (90 - t_8dir) and angle < (90 + t_8dir):
+	elif angle < 67.5:
+		_animation_suffixes = ['_dr', '_dl', '_d' , '_r', '_l']
+		_looking_dir = Looking.DOWN_RIGHT
+	elif angle < 90:
+		_animation_suffixes = ['_d', '_dr', '_dl', '_r', '_l']
 		_looking_dir = Looking.DOWN
-		_animation_suffixes = ['_d', '_l', '_r']
-
-	elif angle >= (90 + t_8dir) and angle < (180 - t_8dir):
+	elif angle < 112.5:
+		_animation_suffixes = ['_d', '_dl', '_dr', '_l', '_r']
+		_looking_dir = Looking.DOWN
+	elif angle < 135:
+		_animation_suffixes = ['_dl', '_dr', '_d', '_l', '_r']
 		_looking_dir = Looking.DOWN_LEFT
-		if angle >= (180 - t_4dir) or angle < -(180 - t_4dir):
-			_animation_suffixes = ['_dl', '_l', '_dr', '_r']
-		else:
-			_animation_suffixes = ['_dl', '_dr', '_d']
-
-	elif angle >= (180 - t_8dir) or angle < -(180 - t_8dir):
+	elif angle < 157.5:
+		_animation_suffixes = ['_dl', '_dr', '_l', '_r', '_d']
+		_looking_dir = Looking.DOWN_LEFT
+	elif angle < 180:
+		_animation_suffixes = ['_l', '_r', '_dl', '_dr', '_d']
 		_looking_dir = Looking.LEFT
-		_animation_suffixes = ['_l', '_r']
-
-	elif angle >= -(180 - t_8dir) and angle < -(90 + t_8dir):
+	elif angle < 202.5:
+		_animation_suffixes = ['_l', '_r', '_ul', '_ur', '_u']
+		_looking_dir = Looking.LEFT
+	elif angle < 225:
+		_animation_suffixes = ['_ul', '_ur', '_l', '_r', '_u']
 		_looking_dir = Looking.UP_LEFT
-		if angle >= (180 - t_4dir) or angle < -(180 - t_4dir):
-			_animation_suffixes = ['_ul', '_l', '_ur', '_r']
-		else:
-			_animation_suffixes = ['_ul', '_ur', '_u']
-
-	elif angle >= -(90 + t_8dir) and angle < -(90 - t_8dir):
+	elif angle < 247.5:
+		_animation_suffixes = ['_ul', '_ur', '_u', '_l', '_r']
+		_looking_dir = Looking.UP_LEFT
+	elif angle < 270:
+		_animation_suffixes = ['_u', '_ul', '_ur', '_l', '_r']
 		_looking_dir = Looking.UP
-		_animation_suffixes = ['_u', '_l', '_r']
-
-	elif angle >= -(90 - t_8dir) and angle < -(0 + t_8dir):
+	elif angle < 292.5:
+		_animation_suffixes = ['_u', '_ur', '_ul', '_r', '_l']
+		_looking_dir = Looking.UP
+	elif angle < 315:
+		_animation_suffixes = ['_ur', '_ul', '_u', '_r', '_l']
 		_looking_dir = Looking.UP_RIGHT
-		if angle >= (0 + t_4dir) and angle < (90 + t_4dir):
-			_animation_suffixes = ['_ur', '_r', '_ul', '_l']
-		else:
-			_animation_suffixes = ['_ur', '_ul', '_u']
+	elif angle < 337.5:
+		_animation_suffixes = ['_ur', '_ul', '_r', '_l', '_u']
+		_looking_dir = Looking.UP_RIGHT
+	else:
+		_animation_suffixes = ['_r', '_l', '_ur', '_ul', '_u']
+		_looking_dir = Looking.RIGHT
 
 	# Add an empty suffix to support the most
 	# basic animation case  (ex. just "walk").
