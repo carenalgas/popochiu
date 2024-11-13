@@ -108,6 +108,14 @@ var _looking_dir: int = Looking.DOWN
 var _animation_suffixes: Array = ['_d', '_l', '_r', '']
 # Holds the last PopochiuClickable that the character reached.
 var _last_reached_clickable: PopochiuClickable = null
+# Caches the last direction the character faced to avoid unnecessary recalculation
+var _last_direction_faced: int = -1
+# Caches the last animation played
+var _last_animation_requested: String = "animation_not_set"
+# Caches the last animation played
+var _last_animation_played: String = "animation_not_set"
+# Caches the direction of the last animation
+var _last_animation_direction: int = -1
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
@@ -254,8 +262,9 @@ func walk(target_pos: Vector2) -> void:
 
 	is_moving = false
 
-func take_turn(target_pos: Vector2):
-	face_direction(target_pos)
+## Used by the navigation system to move the character
+func navigation_system_move_character(target_pos: Vector2):
+	#face_direction(target_pos)
 	_play_walk(target_pos)
 
 ## Makes the character stop moving and emits [signal stopped_walk].[br][br]
@@ -642,29 +651,34 @@ func queue_play_animation(
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.
 func play_animation(animation_label: String, animation_fallback := 'idle'):
-	if not has_node("AnimationPlayer"):
-		PopochiuUtils.print_error(
-			"Can't play character animation. Required AnimationPlayer not found in character %s" %
-			[script_name]
-		)
-		return
+	if ! ((animation_label == _last_animation_requested) and (_looking_dir == _last_animation_direction)):
+		if not has_node("AnimationPlayer"):
+			PopochiuUtils.print_error(
+				"Can't play character animation. Required AnimationPlayer not found in character %s" %
+				[script_name]
+			)
+			return
 
-	if animation_player.get_animation_list().is_empty():
-		return
+		if animation_player.get_animation_list().is_empty():
+			return
 
-	# Search for a valid animation corresponding to animation_label
-	var animation = _get_valid_oriented_animation(animation_label)
-	# If is not present, do the same for the the fallback animation.
-	if animation == null: animation = _get_valid_oriented_animation(animation_fallback)
-	# In neither are available, exit and throw an error to check for the presence of the animations.
-	if animation == null: # Again!
-		PopochiuUtils.print_error(
-			"Neither the requested nor the fallback animation could be found for character %s.\
- Requested:%s - Fallback: %s" % [script_name, animation_label, animation_fallback]
-		)
-		return
+		# Search for a valid animation corresponding to animation_label
+		var animation = _get_valid_oriented_animation(animation_label)
+		# If is not present, do the same for the the fallback animation.
+		if animation == null: animation = _get_valid_oriented_animation(animation_fallback)
+		# In neither are available, exit and throw an error to check for the presence of the animations.
+		if animation == null: # Again!
+			PopochiuUtils.print_error(
+				"Neither the requested nor the fallback animation could be found for character %s.\
+	 Requested:%s - Fallback: %s" % [script_name, animation_label, animation_fallback]
+			)
+			return
+		# Cache the running animation to speed up subsequent frames
+		_last_animation_played = animation
+		_last_animation_direction = _looking_dir
+		_last_animation_requested = animation_label
 	# Play the animation in the best available orientation
-	animation_player.play(animation)
+	animation_player.play(_last_animation_played)
 	# If the playing is blocking, wait for the animation to finish
 	await animation_player.animation_finished
 
@@ -742,6 +756,10 @@ func face_direction(destination: Vector2):
 	# Get the vector from the origin to the destination.
 
 	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
+	var direction_faced = int(angle/45)
+	if direction_faced == _last_direction_faced:
+		return
+	_last_direction_faced = direction_faced
 	# Tolerance in degrees, to avoid U D L R are only
 	# achieved on precise angles such as 0 90 180 deg.
 

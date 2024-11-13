@@ -4,7 +4,7 @@ class_name PopochiuRoom
 extends Node2D
 ## Each scene of the game. Is composed by Props, Hotspots, Regions, Markers, Walkable areas, and
 ## Characters.
-## 
+##
 ## Characters can move through it in the spaces defined by walkable areas, interact with its props
 ## and hotspots, react to its regions, and move to its markers.
 
@@ -79,12 +79,12 @@ func _enter_tree() -> void:
 		y_sort_enabled = false
 		$Props.y_sort_enabled = false
 		$Characters.y_sort_enabled = false
-		
+
 		if width == 0:
 			width = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
 		if height == 0:
 			height = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
-		
+
 		return
 	else:
 		y_sort_enabled = true
@@ -94,14 +94,14 @@ func _enter_tree() -> void:
 
 func _ready():
 	if Engine.is_editor_hint(): return
-	
+
 	if not get_tree().get_nodes_in_group("walkable_areas").is_empty():
 		_nav_path = get_tree().get_nodes_in_group("walkable_areas")[0]
 		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
-	
+
 	set_process_unhandled_input(false)
 	set_physics_process(false)
-	
+
 	# Connect to singletons signals
 	PopochiuUtils.g.blocked.connect(_on_gui_blocked)
 	PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
@@ -138,7 +138,7 @@ func _unhandled_input(event: InputEvent):
 		or (not event is InputEventScreenTouch and PopochiuUtils.e.hovered)
 	):
 		return
-	
+
 	# Fix #224 Item should be removed only if the click was done anywhere in the room when the
 	# cursor is not hovering another object
 	if PopochiuUtils.i.active:
@@ -185,16 +185,16 @@ func _on_room_exited() -> void:
 ## By default, characters are only removed (not deleted) to keep their instances in memory.
 func exit_room() -> void:
 	set_physics_process(false)
-	
+
 	for c in $Characters.get_children():
 		c.position_stored = null
-		
+
 		for character_child: Node in c.get_children():
 			if character_child.owner != c:
 				character_child.queue_free()
-		
+
 		$Characters.remove_child(c)
-	
+
 	_on_room_exited()
 
 
@@ -210,13 +210,13 @@ func add_character(chr: PopochiuCharacter) -> void:
 		# Add child nodes (defined in the Scene tree of the room) to the instance of the character
 		for child: Node in _characters_children[chr.script_name]:
 			chr.add_child(child)
-	
+
 	#warning-ignore:return_value_discarded
 	chr.started_walk_to.connect(_update_navigation_path)
 	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
-	
+
 	update_characters_position(chr)
-	
+
 	if chr.follow_player:
 		PopochiuUtils.c.player.started_walk_to.connect(_follow_player.bind(chr))
 	
@@ -238,12 +238,12 @@ func hide_props() -> void:
 ## [param character_name], is inside the [b]$Characters[/b] node.
 func has_character(character_name: String) -> bool:
 	var result := false
-	
+
 	for c in $Characters.get_children():
 		if (c as PopochiuCharacter).script_name == character_name:
 			result = true
 			break
-	
+
 	return result
 
 
@@ -269,7 +269,7 @@ func clean_characters() -> void:
 		
 		for character_child: Node in c.get_children():
 			if not character_child.owner == self: continue
-			
+
 			c.remove_child(character_child)
 			_characters_children[c.script_name].append(character_child)
 		
@@ -376,11 +376,11 @@ func get_active_walkable_area_name() -> String:
 ## Returns all the [PopochiuCharacter]s in the room.
 func get_characters() -> Array:
 	var characters := []
-	
+
 	for c in $Characters.get_children():
 		if c is PopochiuCharacter:
 			characters.append(c)
-	
+
 	return characters
 
 
@@ -418,22 +418,23 @@ func _on_gui_unblocked() -> void:
 	set_process_unhandled_input(true)
 
 
-func _move_along_path(distance: float, moving_character_data: Dictionary):
-	var last_point: Vector2 =( 
-		moving_character_data.character.position_stored 
-		if moving_character_data.character.position_stored 
+func _move_along_path(distance_to_move: float, moving_character_data: Dictionary):
+	var last_character_position: Vector2 =(
+		moving_character_data.character.position_stored
+		if moving_character_data.character.position_stored
 		else moving_character_data.character.position
 		)
 
 	while moving_character_data.path.size():
-		var distance_between_points = last_point.distance_to(
+		var distance_to_next_navigation_point = last_character_position.distance_to(
 			moving_character_data.path[0]
 		)
-		
-		if distance <= distance_between_points:
-			moving_character_data.character.take_turn(moving_character_data.path[0])
-			var next_position = last_point.lerp(
-					moving_character_data.path[0], distance / distance_between_points
+
+		# Haven't reached the next navigation point yet
+		if distance_to_move <= distance_to_next_navigation_point:
+			moving_character_data.character.navigation_system_move_character(moving_character_data.path[0])
+			var next_position = last_character_position.lerp(
+					moving_character_data.path[0], distance_to_move / distance_to_next_navigation_point
 				)
 			if moving_character_data.character.anti_glide_animation:
 				moving_character_data.character.position_stored = next_position
@@ -442,11 +443,15 @@ func _move_along_path(distance: float, moving_character_data: Dictionary):
 				moving_character_data.character.update_scale()
 			return
 
-		distance -= distance_between_points
-		last_point = moving_character_data.path[0]
+		# We're at the next navigation point
+		distance_to_move -= distance_to_next_navigation_point
+		last_character_position = moving_character_data.path[0]
+		if moving_character_data.path.size() > 1:
+			moving_character_data.character.face_direction(moving_character_data.path[1])
 		moving_character_data.path.remove_at(0)
 
-	moving_character_data.character.position = last_point
+
+	moving_character_data.character.position = last_character_position
 	moving_character_data.character.update_scale()
 	_clear_navigation_path(moving_character_data.character)
 
@@ -457,11 +462,11 @@ func _update_navigation_path(
 	if not _nav_path:
 		PopochiuUtils.print_error("No walkable areas in this room")
 		return
-	
+
 	_moving_characters[character.get_instance_id()] = {}
 	var moving_character_data: Dictionary = _moving_characters[character.get_instance_id()]
 	moving_character_data.character = character
-	
+
 	# TODO: Use a Dictionary so more than one character can move around at the
 	# same time. Or maybe each character should handle its own movement? (;￢＿￢)
 	if character.ignore_walkable_areas:
@@ -472,7 +477,7 @@ func _update_navigation_path(
 		moving_character_data.path = NavigationServer2D.map_get_path(
 			_nav_path.map_rid, start_position, end_position, true
 		)
-		
+
 		# TODO: Use NavigationAgent2D target_location and get_next_location() to
 		#		maybe improve characters movement with obstacles avoidance?
 		#NavigationServer2D.agent_set_map(character.agent.get_rid(), _nav_path.map_rid)
@@ -480,12 +485,13 @@ func _update_navigation_path(
 		#_path = character.agent.get_nav_path()
 		#set_physics_process(true)
 		#return
-	
+
 	if moving_character_data.path.is_empty():
 		return
-	
+
+	character.face_direction(moving_character_data.path[1])
 	moving_character_data.path.remove_at(0)
-	
+
 	set_physics_process(true)
 
 
@@ -494,7 +500,7 @@ func _clear_navigation_path(character: PopochiuCharacter) -> void:
 	# Array
 	if not _moving_characters.has(character.get_instance_id()):
 		return
-	
+
 	_moving_characters.erase(character.get_instance_id())
 	character.idle()
 	character.move_ended.emit()
