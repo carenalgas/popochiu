@@ -241,8 +241,26 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
 		chr.light_mask = chr_dic.light_mask
 		chr.baseline = chr_dic.baseline
-		chr.walk_to_point = chr_dic.walk_to_point
-		chr.look_at_point = chr_dic.look_at_point
+		
+		# ---- fix #343 by checking the type of the stored value in the chr_dic Dictionary ---------
+		if chr_dic.has("walk_to_point_x"):
+			chr.walk_to_point = Vector2(chr_dic.walk_to_point_x, chr_dic.walk_to_point_y)
+		elif chr_dic.has("walk_to_point"):
+			if chr_dic.walk_to_point is String:
+				var walk_split := (chr_dic.walk_to_point as String).split_floats(",")
+				chr.walk_to_point = Vector2(walk_split[0], walk_split[1])
+			else:
+				chr.walk_to_point = chr_dic.walk_to_point
+		
+		if chr_dic.has("look_at_point_x"):
+			chr.look_at_point = Vector2(chr_dic.look_at_point_x, chr_dic.look_at_point_y)
+		elif chr_dic.has("look_at_point"):
+			if chr_dic.look_at_point is String:
+				var look_split := (chr_dic.look_at_point as String).split_floats(",")
+				chr.look_at_point = Vector2(look_split[0], look_split[1])
+			else:
+				chr.look_at_point = chr_dic.look_at_point
+		# ---------------------------------------------------------------------------- fix #343 ----
 		
 		current.add_character(chr)
 	

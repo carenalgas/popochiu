@@ -162,8 +162,11 @@ func save_characters() -> void:
 			self_modulate = pc.self_modulate.to_html(),
 			light_mask = pc.light_mask,
 			baseline = pc.baseline,
-			walk_to_point = pc.walk_to_point,
-			look_at_point = pc.look_at_point,
+			# Store this values using built-in types
+			walk_to_point_x = pc.walk_to_point.x,
+			walk_to_point_y = pc.walk_to_point.y,
+			look_at_point_x = pc.look_at_point.x,
+			look_at_point_y = pc.look_at_point.y,
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)
 		}
