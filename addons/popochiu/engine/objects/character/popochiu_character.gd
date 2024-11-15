@@ -109,11 +109,11 @@ var _animation_suffixes: Array = ['_d', '_l', '_r', '']
 # Holds the last PopochiuClickable that the character reached.
 var _last_reached_clickable: PopochiuClickable = null
 # Caches the last direction the character faced to avoid unnecessary recalculation
-var _last_direction_faced: int = -1
+var _last_looking_dir: int = -1
 # Caches the last animation played
-var _last_animation_requested: String = "animation_not_set"
+var _last_animation_requested: String = "null"
 # Caches the last animation played
-var _last_animation_played: String = "animation_not_set"
+var _last_animation_played: String = "null"
 # Caches the direction of the last animation
 var _last_animation_direction: int = -1
 
@@ -651,7 +651,7 @@ func queue_play_animation(
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.
 func play_animation(animation_label: String, animation_fallback := 'idle'):
-	if ! ((animation_label == _last_animation_requested) and (_looking_dir == _last_animation_direction)):
+	if (animation_label != _last_animation_requested) or (_looking_dir != _last_animation_direction):
 		if not has_node("AnimationPlayer"):
 			PopochiuUtils.print_error(
 				"Can't play character animation. Required AnimationPlayer not found in character %s" %
@@ -757,9 +757,9 @@ func face_direction(destination: Vector2):
 
 	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
 	var direction_faced = int(angle/45)
-	if direction_faced == _last_direction_faced:
+	if direction_faced == _last_looking_dir:
 		return
-	_last_direction_faced = direction_faced
+	_last_looking_dir = direction_faced
 	# Tolerance in degrees, to avoid U D L R are only
 	# achieved on precise angles such as 0 90 180 deg.
 
