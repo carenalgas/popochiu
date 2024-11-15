@@ -198,6 +198,10 @@ func room_readied(room: PopochiuRoom) -> void:
 	if not is_instance_valid(current):
 		current = room
 	
+	# Apply a room script_name if it hasn't been explicitly set for the room
+	if room.script_name == "":
+		room.script_name = room.state.script_name
+
 	# When running from the Editor the first time, use goto_room
 	if Engine.get_process_frames() == 0:
 		await get_tree().process_frame
