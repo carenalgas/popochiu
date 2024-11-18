@@ -130,9 +130,12 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 		_open()
 		await get_tree().create_timer(2.0).timeout
 		
-		_close()
-		await get_tree().create_timer(0.5).timeout
-		
+		# The mouse not being on the inventory can close the inventory prior to the 2 seconds
+		# expiring. This check fixes this. Bug 350.
+		if _is_hidden == false:
+			_close()
+			await get_tree().create_timer(0.5).timeout
+
 		set_process_input(true)
 	else:
 		await get_tree().process_frame
