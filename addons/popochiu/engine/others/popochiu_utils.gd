@@ -98,4 +98,22 @@ static func any_exhaustive(array: Array, callback: Callable) -> bool:
 	return any_updated
 
 
+## Returns a [Vector2] with the values of [param source]. If it is a [String], it will be unpacked
+## using a regular expression. If it is a [Dictionary], it's [code]x[/code] and [code]y[/code] keys
+## will be used. If it is a [Vector2], it will be returned as is. Otherwise [constant Vector2.ZERO]
+## is returned.
+static func unpack_vector_2(source) -> Vector2:
+	if source is String:
+		var regex = RegEx.new()
+		regex.compile(r'(Vector2\(|\()\s*(?<x>-?\d+)\s*,\s*(?<y>-?\d+)\s*\)')
+		var result := regex.search(source)
+		if result:
+			return Vector2(float(result.get_string("x")), float(result.get_string("y")))
+	elif source is Dictionary:
+		return Vector2(source.x, source.y)
+	elif source is Vector2:
+		return source
+	return Vector2.ZERO
+
+
 #endregion

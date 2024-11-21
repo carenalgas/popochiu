@@ -150,23 +150,25 @@ func save_children_states() -> void:
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
 func save_characters() -> void:
-	for c in R.current.get_characters():
-		var pc: PopochiuCharacter = c
-		
-		characters[pc.script_name] = {
-			x = pc.position.x,
-			y = pc.position.y,
-			facing = pc._looking_dir,
-			visible = pc.visible,
-			modulate = pc.modulate.to_html(),
-			self_modulate = pc.self_modulate.to_html(),
-			light_mask = pc.light_mask,
-			baseline = pc.baseline,
+	for character: PopochiuCharacter in R.current.get_characters():
+		characters[character.script_name] = {
+			x = character.position.x,
+			y = character.position.y,
+			facing = character._looking_dir,
+			visible = character.visible,
+			modulate = character.modulate.to_html(),
+			self_modulate = character.self_modulate.to_html(),
+			light_mask = character.light_mask,
+			baseline = character.baseline,
 			# Store this values using built-in types
-			walk_to_point_x = pc.walk_to_point.x,
-			walk_to_point_y = pc.walk_to_point.y,
-			look_at_point_x = pc.look_at_point.x,
-			look_at_point_y = pc.look_at_point.y,
+			walk_to_point = {
+				x = character.walk_to_point.x,
+				y = character.walk_to_point.y,
+			},
+			look_at_point = {
+				x = character.look_at_point.x,
+				y = character.look_at_point.y,
+			},
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)
 		}
