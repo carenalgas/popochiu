@@ -5,18 +5,22 @@ extends Control
 
 signal transition_finished(transition_name: String)
 
+## Available transition types.
 enum {
+	## Fades in and out.
 	FADE_IN_OUT,
+	## Fades in.
 	FADE_IN,
+	## Fades out.
 	FADE_OUT,
+	## Passes down and up.
 	PASS_DOWN_IN_OUT,
+	## Passes down.
 	PASS_DOWN_IN,
+	## Passes up.
 	PASS_DOWN_OUT,
 }
 
-@onready var n := {
-	fade = find_child("Fade")
-}
 
 #region Godot ######################################################################################
 func _ready() -> void:
@@ -32,11 +36,18 @@ func _ready() -> void:
 	else:
 		$AnimationPlayer.play("RESET")
 		await get_tree().process_frame
+		
 		_hide()
+
 
 #endregion
 
 #region Public #####################################################################################
+## Plays a transition with the animation identified by [param type] and that lasts [param duration]
+## (in seconds). The transition can be one of the following:
+## [enum PopochiuTransitionLayer.FADE_IN_OUT], [enum PopochiuTransitionLayer.FADE_IN],
+## [enum PopochiuTransitionLayer.FADE_OUT], [enum PopochiuTransitionLayer.PASS_DOWN_IN_OUT],
+## [enum PopochiuTransitionLayer.PASS_DOWN_IN], [enum PopochiuTransitionLayer.PASS_DOWN_OUT].
 func play_transition(type := FADE_IN, duration := 1.0) -> void:
 	_show()
 	
@@ -72,6 +83,19 @@ func play_transition(type := FADE_IN, duration := 1.0) -> void:
 			$AnimationPlayer.play_backwards("pass")
 			await $AnimationPlayer.animation_finished
 			_hide()
+
+
+## Shows the curtain without playing any transition.
+func show_curtain() -> void:
+	$Curtain.modulate = E.settings.fade_color
+	$Curtain.show()
+	_show()
+
+
+## Hides the transition layer.
+func hide_curtain() -> void:
+	_hide()
+
 
 #endregion
 
