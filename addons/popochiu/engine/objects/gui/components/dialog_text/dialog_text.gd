@@ -71,17 +71,16 @@ func play_text(props: Dictionary) -> void:
 	_is_waiting_input = false
 	_dialog_pos = props.position
 	
+	if PopochiuConfig.should_talk_gibberish():
+		msg = D.create_gibberish(msg)
+	
 	# Call the virtual method that modifies the size of the RichTextLabel in case the dialog style
 	# requires it.
 	await _modify_size(msg, props.position)
 	
-	rich_text_label.push_color(props.color)
-	
 	# Assign the text and align mode
-	if PopochiuConfig.should_talk_gibberish():
-		_append_text(D.create_gibberish(msg), props)
-	else:
-		_append_text(msg, props)
+	msg = "[color=%s]%s[/color]" % [props.color.to_html(), msg]
+	_append_text(msg, props)
 	
 	if _secs_per_character > 0.0:
 		# The text will appear with an animation
