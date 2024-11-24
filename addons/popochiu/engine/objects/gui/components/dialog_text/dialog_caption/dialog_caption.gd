@@ -2,7 +2,7 @@ extends PopochiuDialogText
 
 
 #region Private ####################################################################################
-func _modify_size(msg: String, target_position: Vector2) -> void:
+func _modify_size(msg: String, _target_position: Vector2) -> void:
 	var _size := await _calculate_size(msg)
 	
 	# Define size and position (before calculating overflow)

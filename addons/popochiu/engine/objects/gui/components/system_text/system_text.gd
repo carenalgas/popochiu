@@ -2,8 +2,6 @@ extends Control
 ## Show a text in the form of GUI. Can be used to show game (or narrator)
 ## messages.
 
-signal shown
-
 const DFLT_SIZE := "dflt_size"
 
 # Used to fix a warning shown by Godot related to the anchors of the node and changing its size
