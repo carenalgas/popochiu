@@ -41,8 +41,6 @@ func _on_audio_manager_ready() -> void:
 	
 	# Build sound settings UI
 	for bus_idx in range(AudioServer.get_bus_count()):
-		var volume_row := VBoxContainer.new()
-		
 		var bus_name = AudioServer.get_bus_name(bus_idx)
 		
 		# Create the label for the slider
