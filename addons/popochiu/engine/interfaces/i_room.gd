@@ -241,8 +241,12 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
 		chr.light_mask = chr_dic.light_mask
 		chr.baseline = chr_dic.baseline
-		chr.walk_to_point = chr_dic.walk_to_point
-		chr.look_at_point = chr_dic.look_at_point
+		
+		if chr_dic.has("walk_to_point"):
+			chr.walk_to_point = PopochiuUtils.unpack_vector_2(chr_dic.walk_to_point)
+		
+		if chr_dic.has("look_at_point"):
+			chr.look_at_point = PopochiuUtils.unpack_vector_2(chr_dic.look_at_point)
 		
 		current.add_character(chr)
 	

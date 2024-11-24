@@ -56,8 +56,7 @@ static func execute_string(text: String) -> void:
 static func _trigger_dialog_line(text: String) -> void:
 	var regex = RegEx.new()
 	regex.compile(r'^%s%s%s$' % [char_pattern, emo_or_time_pattern, line_pattern])
-	var result = regex.search(text)
-	
+	var result := regex.search(text)
 	var character_name := result.get_string("character")
 	var emotion := result.get_string("emotion")
 	var change_time := result.get_string("time")
