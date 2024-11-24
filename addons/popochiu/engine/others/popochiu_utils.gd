@@ -103,14 +103,14 @@ static func any_exhaustive(array: Array, callback: Callable) -> bool:
 ## will be used. If it is a [Vector2], it will be returned as is. Otherwise [constant Vector2.ZERO]
 ## is returned.
 static func unpack_vector_2(source) -> Vector2:
-	if source is String:
+	if source is Dictionary:
+		return Vector2(source.x, source.y)
+	elif source is String:
 		var regex = RegEx.new()
 		regex.compile(r'(Vector2\(|\()\s*(?<x>-?\d+)\s*,\s*(?<y>-?\d+)\s*\)')
 		var result := regex.search(source)
 		if result:
 			return Vector2(float(result.get_string("x")), float(result.get_string("y")))
-	elif source is Dictionary:
-		return Vector2(source.x, source.y)
 	elif source is Vector2:
 		return source
 	return Vector2.ZERO
