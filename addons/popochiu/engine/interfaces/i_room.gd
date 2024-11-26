@@ -154,6 +154,8 @@ func goto_room(
 	if use_transition and Engine.get_process_frames() > 0:
 		E.tl.play_transition(E.tl.FADE_IN)
 		await E.tl.transition_finished
+	elif Engine.get_process_frames() > 0:
+		E.tl.show_curtain()
 	
 	# Prevent the GUI from showing info coming from the previous room
 	G.show_hover_text()
@@ -241,8 +243,12 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
 		chr.light_mask = chr_dic.light_mask
 		chr.baseline = chr_dic.baseline
-		chr.walk_to_point = chr_dic.walk_to_point
-		chr.look_at_point = chr_dic.look_at_point
+		
+		if chr_dic.has("walk_to_point"):
+			chr.walk_to_point = PopochiuUtils.unpack_vector_2(chr_dic.walk_to_point)
+		
+		if chr_dic.has("look_at_point"):
+			chr.look_at_point = PopochiuUtils.unpack_vector_2(chr_dic.look_at_point)
 		
 		current.add_character(chr)
 	
@@ -295,6 +301,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		
 		await E.wait(0.3)
 	else:
+		E.tl.hide_curtain()
 		await get_tree().process_frame
 	
 	if not current.hide_gui:
