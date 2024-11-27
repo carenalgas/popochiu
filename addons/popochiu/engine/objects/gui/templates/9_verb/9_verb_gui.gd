@@ -58,7 +58,7 @@ func _unhandled_input(event: InputEvent) -> void:
 ## commands, hides the bottom panel and makes the GUI to stop processing unhandled input.
 func _on_blocked(props := { blocking = true }) -> void:
 	PopochiuUtils.e.current_command = -1
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 	_9_verb_panel.hide()
 	
 	set_process_unhandled_input(false)
@@ -71,11 +71,11 @@ func _on_unblocked() -> void:
 	if PopochiuUtils.d.current_dialog:
 		await get_tree().process_frame
 		
-		G.block()
+		PopochiuUtils.g.block()
 		return
 	
 	PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 	_9_verb_panel.show()
 	
 	# Make all commands to look as no pressed
@@ -98,7 +98,7 @@ func _on_system_text_hidden() -> void:
 ## [member PopochiuClickable.description] in the [HoverText] component and shows the
 ## [code]"active"[/code] cursor.
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
 	if clickable.get("suggested_command"):
 		_9_verb_panel.highlight_command(clickable.suggested_command)
@@ -106,13 +106,13 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.i.active:
 		_show_command_on(PopochiuUtils.i.active.description, clickable.description)
 	else:
-		G.show_hover_text(clickable.description)
+		PopochiuUtils.g.show_hover_text(clickable.description)
 
 
 ## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component and
 ## shows the [code]"normal"[/code] cursor.
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
 	if clickable.get("suggested_command"):
 		_9_verb_panel.highlight_command(clickable.suggested_command, false)
@@ -122,7 +122,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 		_show_command_on(PopochiuUtils.i.active.description)
 		return
 	
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 
 
 ## Called when the mouse enters (hovers) [param inventory_item]. It displays a text with the
@@ -139,7 +139,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 	if PopochiuUtils.i.active:
 		_show_command_on(PopochiuUtils.i.active.description, inventory_item.description)
 	else:
-		G.show_hover_text(inventory_item.description)
+		PopochiuUtils.g.show_hover_text(inventory_item.description)
 
 
 ## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component and
@@ -156,7 +156,7 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 		_show_command_on(PopochiuUtils.i.active.description)
 		return
 	
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 
 
 ## Called when a dialogue line starts. It shows the [code]"wait"[/code] cursor.
@@ -192,7 +192,7 @@ func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if not item:
 		PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
-		G.show_hover_text()
+		PopochiuUtils.g.show_hover_text()
 	else:
 		_show_command_on(item.description)
 
@@ -200,13 +200,13 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
 ## component.
 func _on_game_saved() -> void:
-	G.show_system_text("Game saved")
+	PopochiuUtils.g.show_system_text("Game saved")
 
 
 ## Called when a game is loaded. [param loaded_game] has the loaded data. By default, it shows
 ## [code]Game loaded[/code] in the SystemText component.
 func _on_game_loaded(loaded_game: Dictionary) -> void:
-	await G.show_system_text("Game loaded")
+	await PopochiuUtils.g.show_system_text("Game loaded")
 	
 	super(loaded_game)
 
@@ -250,7 +250,7 @@ func _show_command_on(item_1_name: String, item_2_name := "") -> void:
 	var preposition = "on"
 	if PopochiuUtils.e.current_command == NineVerbCommands.Commands.GIVE:
 		preposition = "to"
-	G.show_hover_text("%s %s %s %s" % [
+	PopochiuUtils.g.show_hover_text("%s %s %s %s" % [
 		PopochiuUtils.e.get_current_command_name(), item_1_name, preposition, item_2_name
 	])
 

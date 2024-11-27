@@ -114,7 +114,7 @@ func add(animate := true) -> void:
 		return
 	
 	if not in_inventory:
-		G.block()
+		PopochiuUtils.g.block()
 
 		PopochiuUtils.i.items.append(script_name)
 		
@@ -123,7 +123,7 @@ func add(animate := true) -> void:
 		
 		await PopochiuUtils.i.item_add_done
 
-		G.unblock(true)
+		PopochiuUtils.g.unblock(true)
 
 		return
 	
@@ -182,7 +182,7 @@ func remove(animate := false) -> void:
 	
 	await PopochiuUtils.i.item_remove_done
 	
-	G.unblock()
+	PopochiuUtils.g.unblock()
 
 
 ## Replaces this inventory item by [param new_item]. Useful when combining items.[br][br]
@@ -224,7 +224,7 @@ func replace(new_item: PopochiuInventoryItem) -> void:
 	
 	# NOTE: Inventory items should not be in charge of handling the GUI unblock. This should be
 	# 		done by the GUI itself.
-	G.unblock()
+	PopochiuUtils.g.unblock()
 
 
 # NOTE: Maybe this is not necessary since we can have the same with [method queue_remove].
@@ -330,11 +330,11 @@ func get_description() -> String:
 #region Private ####################################################################################
 func _toggle_description(is_hover: bool) -> void:
 	if is_hover:
-		G.mouse_entered_inventory_item.emit(self)
+		PopochiuUtils.g.mouse_entered_inventory_item.emit(self)
 	else:
 		last_click_button = -1
 		
-		G.mouse_exited_inventory_item.emit(self)
+		PopochiuUtils.g.mouse_exited_inventory_item.emit(self)
 
 
 func _on_gui_input(event: InputEvent) -> void: 
@@ -356,7 +356,7 @@ func _on_gui_input(event: InputEvent) -> void:
 				await on_item_used(PopochiuUtils.i.active)
 			else:
 				if DisplayServer.is_touchscreen_available():
-					G.mouse_entered_inventory_item.emit(self)
+					PopochiuUtils.g.mouse_entered_inventory_item.emit(self)
 				
 				await handle_command(event_index)
 		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:

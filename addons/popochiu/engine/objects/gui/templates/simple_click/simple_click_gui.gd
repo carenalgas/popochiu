@@ -55,7 +55,7 @@ func _on_unblocked() -> void:
 ## Called when a text is shown in the [SystemText] component. This erases the text in the
 ## [HoverText] component and shows the [code]"wait"[/code] cursor.
 func _on_system_text_shown(msg: String) -> void:
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 	Cursor.show_cursor("wait", true)
 
 
@@ -73,14 +73,14 @@ func _on_system_text_hidden() -> void:
 ## and displays a message with the [member PopochiuClickable.description] on the [HoverText]
 ## component.
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
 	if not (PopochiuUtils.i.active or is_showing_dialog_line):
 		Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
 	if not PopochiuUtils.i.active:
-		G.show_hover_text(clickable.description)
+		PopochiuUtils.g.show_hover_text(clickable.description)
 	else:
-		G.show_hover_text(
+		PopochiuUtils.g.show_hover_text(
 			'Use %s with %s' % [PopochiuUtils.i.active.description, clickable.description]
 		)
 
@@ -88,7 +88,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 ## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component and
 ## shows the default cursor texture if there is no [PopochiuInventoryItem] active.
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 	
 	if PopochiuUtils.i.active or is_showing_dialog_line: return
 	
@@ -99,25 +99,25 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 ## cursor and displays a message with the [member PopochiuInventoryItem.description] on the
 ## [HoverText] component.
 func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
 	if not PopochiuUtils.i.active:
 		Cursor.show_cursor(Cursor.get_type_name(inventory_item.cursor))
-		G.show_hover_text(inventory_item.description)
+		PopochiuUtils.g.show_hover_text(inventory_item.description)
 	elif PopochiuUtils.i.active != inventory_item:
-		G.show_hover_text(
+		PopochiuUtils.g.show_hover_text(
 			'Use %s with %s' % [PopochiuUtils.i.active.description, inventory_item.description]
 		)
 	else:
-		G.show_hover_text(inventory_item.description)
+		PopochiuUtils.g.show_hover_text(inventory_item.description)
 
 
 ## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component
 ## and shows the default cursor texture if there is no [PopochiuInventoryItem] active.
 func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 	
 	if PopochiuUtils.i.active or $SettingsBar.is_open(): return
 	
@@ -148,7 +148,7 @@ func _on_dialog_line_finished() -> void:
 ## [HoverText] component.
 func _on_dialog_started(dialog: PopochiuDialog) -> void:
 	Cursor.show_cursor("gui")
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 
 
 ## Called when the running [PopochiuDialog] shows its options on screen. It shows the
@@ -178,13 +178,13 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
 ## component.
 func _on_game_saved() -> void:
-	G.show_system_text("Game saved")
+	PopochiuUtils.g.show_system_text("Game saved")
 
 
 ## Called when a game is loaded. [param loaded_game] has the loaded data. By default, it shows
 ## [code]Game loaded[/code] in the SystemText component.
 func _on_game_loaded(loaded_game: Dictionary) -> void:
-	await G.show_system_text("Game loaded")
+	await PopochiuUtils.g.show_system_text("Game loaded")
 	
 	super(loaded_game)
 

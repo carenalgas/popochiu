@@ -36,8 +36,8 @@ func _ready() -> void:
 	
 	# Connect to singletons signals
 	if hide_when_gui_is_blocked:
-		G.blocked.connect(_on_gui_blocked)
-		G.unblocked.connect(_on_gui_unblocked)
+		PopochiuUtils.g.blocked.connect(_on_gui_blocked)
+		PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
 	
 	if not used_in_game:
 		hide()
@@ -66,7 +66,7 @@ func _input(event: InputEvent) -> void:
 		
 		if PopochiuUtils.d.current_dialog:
 			Cursor.show_cursor("gui")
-		elif G.gui.is_showing_dialog_line:
+		elif PopochiuUtils.g.gui.is_showing_dialog_line:
 			Cursor.show_cursor("wait")
 		else:
 			Cursor.show_cursor("normal")

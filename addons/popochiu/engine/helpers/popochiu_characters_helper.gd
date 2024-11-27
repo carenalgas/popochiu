@@ -45,7 +45,7 @@ static func execute_string(text: String) -> void:
 	elif ":" in text:
 		await _trigger_dialog_line(text)
 	else:
-		await G.show_system_text(text)
+		await PopochiuUtils.g.show_system_text(text)
 	
 	PopochiuUtils.e.auto_continue_after = -1.0
 

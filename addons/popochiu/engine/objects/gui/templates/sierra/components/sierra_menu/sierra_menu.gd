@@ -23,7 +23,7 @@ func _ready():
 
 
 func _input(event: InputEvent) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
 	if event is InputEventMouseMotion:
 		var rect := panel_container.get_rect()
@@ -58,12 +58,12 @@ func _input(event: InputEvent) -> void:
 #region Private ####################################################################################
 func _on_inventory_pressed() -> void:
 	hide()
-	G.popup_requested.emit("SierraInventoryPopup")
+	PopochiuUtils.g.popup_requested.emit("SierraInventoryPopup")
 
 
 func _on_settings_pressed() -> void:
 	hide()
-	G.popup_requested.emit("SierraSettingsPopup")
+	PopochiuUtils.g.popup_requested.emit("SierraSettingsPopup")
 
 
 func _on_help_pressed() -> void:
@@ -72,7 +72,7 @@ func _on_help_pressed() -> void:
 
 
 func _on_quit_pressed() -> void:
-	G.popup_requested.emit("QuitPopup")
+	PopochiuUtils.g.popup_requested.emit("QuitPopup")
 
 
 #endregion

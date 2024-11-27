@@ -80,7 +80,7 @@ func show_inline_dialog(options: Array) -> PopochiuDialogOption:
 		PopochiuUtils.d.option_selected.connect(current_dialog._on_option_selected)
 	else:
 		active = false
-		G.unblock()
+		PopochiuUtils.g.unblock()
 	
 	return pdo
 

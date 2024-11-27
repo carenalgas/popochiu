@@ -30,22 +30,22 @@ func fallback() -> void:
 ## Called when players click (LMB) a [PopochiuClickable].
 func click_clickable() -> void:
 	if PopochiuUtils.i.active:
-		await G.show_system_text("Can't USE %s with %s" % [
+		await PopochiuUtils.g.show_system_text("Can't USE %s with %s" % [
 			PopochiuUtils.i.active.description, PopochiuUtils.e.clicked.description
 		])
 	else:
-		await G.show_system_text("Can't INTERACT with it")
+		await PopochiuUtils.g.show_system_text("Can't INTERACT with it")
 
 
 ## Called when players right click (RMB) a [PopochiuClickable].
 func right_click_clickable() -> void:
-	await G.show_system_text("Can't EXAMINE it")
+	await PopochiuUtils.g.show_system_text("Can't EXAMINE it")
 
 
 ## Called when players click (LMB) a [PopochiuInvenoryItem].
 func click_inventory_item() -> void:
 	if PopochiuUtils.i.active and PopochiuUtils.i.active != PopochiuUtils.i.clicked:
-		await G.show_system_text("Can't USE %s with %s" % [
+		await PopochiuUtils.g.show_system_text("Can't USE %s with %s" % [
 			PopochiuUtils.i.active.description, PopochiuUtils.i.clicked.description
 		])
 	else:
@@ -54,7 +54,7 @@ func click_inventory_item() -> void:
 
 ## Called when players right click (RMB) a [PopochiuInvenoryItem].
 func right_click_inventory_item() -> void:
-	await G.show_system_text('Nothing to see in this item')
+	await PopochiuUtils.g.show_system_text('Nothing to see in this item')
 
 
 #endregion

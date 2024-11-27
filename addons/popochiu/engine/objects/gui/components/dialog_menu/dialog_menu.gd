@@ -127,15 +127,15 @@ func remove_options(_dialog: PopochiuDialog = null) -> void:
 
 
 func show_options() -> void:
-	G.block()
-	G.dialog_options_shown.emit()
+	PopochiuUtils.g.block()
+	PopochiuUtils.g.dialog_options_shown.emit()
 	
 	show()
 	shown.emit()
 
 
 func _on_option_clicked(opt: PopochiuDialogOption) -> void:
-	G.unblock()
+	PopochiuUtils.g.unblock()
 	
 	hide()
 	PopochiuUtils.d.option_selected.emit(opt)

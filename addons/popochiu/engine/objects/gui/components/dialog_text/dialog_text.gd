@@ -141,7 +141,7 @@ func disappear() -> void:
 	
 	set_process_input(false)
 	text_show_finished.emit()
-	G.dialog_line_finished.emit()
+	PopochiuUtils.g.dialog_line_finished.emit()
 
 
 func change_speed() -> void:
@@ -162,7 +162,7 @@ func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
 		),
 	})
 	
-	G.dialog_line_started.emit()
+	PopochiuUtils.g.dialog_line_started.emit()
 	
 	set_process_input(true)
 	text_show_started.emit()

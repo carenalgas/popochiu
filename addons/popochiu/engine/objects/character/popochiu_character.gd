@@ -435,7 +435,7 @@ func say(dialog: String, emo := "") -> void:
 
 	PopochiuUtils.c.character_spoke.emit(self, dialog)
 
-	await G.dialog_line_finished
+	await PopochiuUtils.g.dialog_line_finished
 
 	# Stop the voice if it is still playing (feature #202)
 	# Fix: Check if the vo_name is valid in order to stop it
@@ -518,11 +518,11 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 ## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
-	G.block()
+	PopochiuUtils.g.block()
 
 	await _walk_to_node(PopochiuUtils.e.clicked, offset)
 
-	G.unblock()
+	PopochiuUtils.g.unblock()
 
 
 ## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is

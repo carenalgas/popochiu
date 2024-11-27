@@ -103,8 +103,8 @@ func _ready():
 	set_physics_process(false)
 	
 	# Connect to singletons signals
-	G.blocked.connect(_on_gui_blocked)
-	G.unblocked.connect(_on_gui_unblocked)
+	PopochiuUtils.g.blocked.connect(_on_gui_blocked)
+	PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
 	
 	PopochiuUtils.r.room_readied(self)
 

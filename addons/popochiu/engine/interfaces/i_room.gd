@@ -154,7 +154,7 @@ func goto_room(
 	if not PopochiuUtils.e.in_room: return
 	
 	PopochiuUtils.e.in_room = false
-	G.block()
+	PopochiuUtils.g.block()
 	
 	_use_transition_on_room_change = use_transition
 	# Never fade the TL in, if we are entering the first room at game start
@@ -165,7 +165,7 @@ func goto_room(
 		PopochiuUtils.e.tl.show_curtain()
 	
 	# Prevent the GUI from showing info coming from the previous room
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 	Cursor.show_cursor()
 	
 	if is_instance_valid(PopochiuUtils.c.player) and Engine.get_process_frames() > 0:
@@ -312,16 +312,16 @@ func room_readied(room: PopochiuRoom) -> void:
 		await get_tree().process_frame
 	
 	if not current.hide_gui:
-		G.unblock()
+		PopochiuUtils.g.unblock()
 	
 	if PopochiuUtils.e.hovered:
-		G.mouse_entered_clickable.emit(PopochiuUtils.e.hovered)
+		PopochiuUtils.g.mouse_entered_clickable.emit(PopochiuUtils.e.hovered)
 	
 	PopochiuUtils.e.in_room = true
 	
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.e.game_loaded.emit(PopochiuUtils.e.loaded_game)
-		await G.load_feedback_finished
+		await PopochiuUtils.g.load_feedback_finished
 		
 		PopochiuUtils.e.loaded_game = {}
 	

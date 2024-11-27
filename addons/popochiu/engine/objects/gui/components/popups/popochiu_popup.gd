@@ -29,7 +29,7 @@ func _ready() -> void:
 	btn_close.pressed.connect(on_cancel_pressed)
 	
 	# Connect to singleton signals
-	G.popup_requested.connect(_on_popup_requested)
+	PopochiuUtils.g.popup_requested.connect(_on_popup_requested)
 	
 	close()
 
@@ -64,7 +64,7 @@ func _on_cancel() -> void:
 func open() -> void:
 	_open()
 	
-	G.block()
+	PopochiuUtils.g.block()
 	Cursor.show_cursor("gui", true)
 	# Never open a popup on top of another
 	if not PopochiuUtils.e.gui.popups_stack.is_empty():
@@ -80,7 +80,7 @@ func close() -> void:
 	hide()
 	
 	if PopochiuUtils.e.gui.popups_stack.is_empty():
-		G.unblock()
+		PopochiuUtils.g.unblock()
 		Cursor.unblock()
 	else:
 		# Idempotent call, no need to check the mode

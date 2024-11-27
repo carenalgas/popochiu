@@ -132,7 +132,7 @@ func set_options(value: Array[PopochiuDialogOption]) -> void:
 
 #region Private ####################################################################################
 func _start() -> void:
-	G.block()
+	PopochiuUtils.g.block()
 	PopochiuUtils.d.dialog_started.emit(self)
 	
 	await _on_start()
@@ -141,7 +141,7 @@ func _start() -> void:
 	
 	await PopochiuUtils.d.dialog_finished
 	
-	G.unblock()
+	PopochiuUtils.g.unblock()
 	PopochiuUtils.d.option_selected.disconnect(_on_option_selected)
 
 

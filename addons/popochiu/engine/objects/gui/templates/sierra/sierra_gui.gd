@@ -34,7 +34,7 @@ func _ready() -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
 	match PopochiuUtils.get_click_or_touch_index(event):
 		MOUSE_BUTTON_LEFT:
@@ -76,21 +76,21 @@ func _on_unblocked() -> void:
 ## Called when the mouse enters (hovers) [param clickable]. It displays a text with the
 ## [member PopochiuClickable.description] in the [HoverText] component.
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
 	if not PopochiuUtils.i.active:
-		G.show_hover_text(clickable.description)
+		PopochiuUtils.g.show_hover_text(clickable.description)
 	else:
-		G.show_hover_text(
+		PopochiuUtils.g.show_hover_text(
 			"Use %s with %s" % [PopochiuUtils.i.active.description, clickable.description]
 		)
 
 
 ## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component.
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
-	if G.is_blocked: return
+	if PopochiuUtils.g.is_blocked: return
 	
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 
 
 ## Called when a dialogue line starts. It shows the [code]"wait"[/code] cursor.
@@ -135,13 +135,13 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
 ## component.
 func _on_game_saved() -> void:
-	G.show_system_text("Game saved")
+	PopochiuUtils.g.show_system_text("Game saved")
 
 
 ## Called when a game is loaded. [param loaded_game] has the loaded data. By default, it shows
 ## [code]Game loaded[/code] in the SystemText component.
 func _on_game_loaded(loaded_game: Dictionary) -> void:
-	await G.show_system_text("Game loaded")
+	await PopochiuUtils.g.show_system_text("Game loaded")
 	
 	super(loaded_game)
 

@@ -109,12 +109,12 @@ func _transition_finished(anim_name := "") -> void:
 
 func _show() -> void:
 	show()
-	G.hide_interface()
+	PopochiuUtils.g.hide_interface()
 
 
 func _hide() -> void:
 	hide()
-	G.show_interface()
+	PopochiuUtils.g.show_interface()
 
 
 #endregion

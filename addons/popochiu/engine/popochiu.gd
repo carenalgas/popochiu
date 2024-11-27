@@ -183,7 +183,7 @@ func _ready() -> void:
 	PopochiuUtils.c.character_spoke.connect(_on_character_spoke)
 	
 	# Assign property values to singletons and other global classes
-	G.gui = gui
+	PopochiuUtils.g.gui = gui
 
 
 func _input(event: InputEvent) -> void:
@@ -237,7 +237,7 @@ func queue(instructions: Array, show_gui := true) -> void:
 	
 	playing_queue = true
 	
-	G.block()
+	PopochiuUtils.g.block()
 	
 	for idx in instructions.size():
 		var instruction = instructions[idx]
@@ -248,7 +248,7 @@ func queue(instructions: Array, show_gui := true) -> void:
 			await PopochiuCharactersHelper.execute_string(instruction as String)
 	
 	if show_gui:
-		G.unblock()
+		PopochiuUtils.g.unblock()
 	
 	if camera.is_shaking:
 		camera.stop_shake()
@@ -518,7 +518,7 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 	
 	if not _hovered_queue.is_empty() and is_instance_valid(_hovered_queue[-1]):
 		var clickable: PopochiuClickable = _hovered_queue[-1]
-		G.mouse_entered_clickable.emit(clickable)
+		PopochiuUtils.g.mouse_entered_clickable.emit(clickable)
 		return false
 	
 	return true
@@ -599,7 +599,7 @@ func set_hovered(value: PopochiuClickable) -> void:
 	hovered = value
 	
 	if not hovered:
-		G.show_hover_text()
+		PopochiuUtils.g.show_hover_text()
 
 
 func get_hovered() -> PopochiuClickable:

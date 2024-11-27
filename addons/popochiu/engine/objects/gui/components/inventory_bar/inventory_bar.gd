@@ -23,8 +23,8 @@ func _ready():
 		panel_container.position.y = hidden_y
 	
 	# Connect to singletons signals
-	G.blocked.connect(_on_gui_blocked)
-	G.unblocked.connect(_on_gui_unblocked)
+	PopochiuUtils.g.blocked.connect(_on_gui_blocked)
+	PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
 	PopochiuUtils.i.item_added.connect(_add_item)
 	PopochiuUtils.i.item_removed.connect(_remove_item)
 	PopochiuUtils.i.item_replaced.connect(_replace_item)
@@ -149,7 +149,7 @@ func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 	
 	if not always_visible:
 		Cursor.show_cursor()
-		G.show_hover_text()
+		PopochiuUtils.g.show_hover_text()
 		
 		if animate:
 			_close()

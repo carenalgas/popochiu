@@ -297,18 +297,18 @@ func _on_mouse_entered() -> void:
 
 	PopochiuUtils.e.add_hovered(self)
 
-	G.mouse_entered_clickable.emit(self)
+	PopochiuUtils.g.mouse_entered_clickable.emit(self)
 
 
 func _on_mouse_exited() -> void:
 	last_click_button = -1
 
 	if PopochiuUtils.e.remove_hovered(self):
-		G.mouse_exited_clickable.emit(self)
+		PopochiuUtils.g.mouse_exited_clickable.emit(self)
 
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
-	if G.is_blocked or not PopochiuUtils.e.hovered or PopochiuUtils.e.hovered != self:
+	if PopochiuUtils.g.is_blocked or not PopochiuUtils.e.hovered or PopochiuUtils.e.hovered != self:
 		return
 
 	if _is_double_click_or_tap(event):

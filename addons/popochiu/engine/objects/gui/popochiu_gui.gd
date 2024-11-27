@@ -22,20 +22,20 @@ func _ready():
 		_components_map[node.name] = node
 	
 	# Connect to singleton signals
-	G.blocked.connect(_on_blocked)
-	G.unblocked.connect(_on_unblocked)
-	G.hidden.connect(on_hidden)
-	G.shown.connect(on_shown)
-	G.system_text_shown.connect(_on_system_text_shown)
-	G.system_text_hidden.connect(_on_system_text_hidden)
-	G.mouse_entered_clickable.connect(_on_mouse_entered_clickable)
-	G.mouse_exited_clickable.connect(_on_mouse_exited_clickable)
-	G.mouse_entered_inventory_item.connect(_on_mouse_entered_inventory_item)
-	G.mouse_exited_inventory_item.connect(_on_mouse_exited_inventory_item)
-	G.dialog_line_started.connect(_on_dialog_line_started)
-	G.dialog_line_finished.connect(_on_dialog_line_finished)
+	PopochiuUtils.g.blocked.connect(_on_blocked)
+	PopochiuUtils.g.unblocked.connect(_on_unblocked)
+	PopochiuUtils.g.hidden.connect(on_hidden)
+	PopochiuUtils.g.shown.connect(on_shown)
+	PopochiuUtils.g.system_text_shown.connect(_on_system_text_shown)
+	PopochiuUtils.g.system_text_hidden.connect(_on_system_text_hidden)
+	PopochiuUtils.g.mouse_entered_clickable.connect(_on_mouse_entered_clickable)
+	PopochiuUtils.g.mouse_exited_clickable.connect(_on_mouse_exited_clickable)
+	PopochiuUtils.g.mouse_entered_inventory_item.connect(_on_mouse_entered_inventory_item)
+	PopochiuUtils.g.mouse_exited_inventory_item.connect(_on_mouse_exited_inventory_item)
+	PopochiuUtils.g.dialog_line_started.connect(_on_dialog_line_started)
+	PopochiuUtils.g.dialog_line_finished.connect(_on_dialog_line_finished)
 	PopochiuUtils.d.dialog_started.connect(_on_dialog_started)
-	G.dialog_options_shown.connect(_on_dialog_options_shown)
+	PopochiuUtils.g.dialog_options_shown.connect(_on_dialog_options_shown)
 	PopochiuUtils.d.dialog_finished.connect(_on_dialog_finished)
 	PopochiuUtils.i.item_selected.connect(_on_inventory_item_selected)
 	PopochiuUtils.e.game_saved.connect(_on_game_saved)
@@ -150,7 +150,7 @@ func _on_game_saved() -> void:
 ## Called when a game is loaded. [param loaded_game] has the loaded data. By default, this emits
 ## the [signal G.load_feedback_finished] signal.
 func _on_game_loaded(loaded_game: Dictionary) -> void:
-	G.load_feedback_finished.emit()
+	PopochiuUtils.g.load_feedback_finished.emit()
 
 
 ## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
