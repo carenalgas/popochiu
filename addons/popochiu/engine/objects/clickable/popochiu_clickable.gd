@@ -109,7 +109,7 @@ func _ready():
 		input_event.connect(_on_input_event)
 
 		# Connect to singleton signals
-		E.language_changed.connect(_translate)
+		PopochiuUtils.e.language_changed.connect(_translate)
 
 	_translate()
 
@@ -210,7 +210,7 @@ func get_description() -> String:
 		if description.is_empty():
 			description = name
 		return description
-	return E.get_text(description)
+	return PopochiuUtils.e.get_text(description)
 
 
 ## Called when the object is left clicked.
@@ -245,7 +245,7 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 ## which can be [enum MouseButton].MOUSE_BUTTON_LEFT, [enum MouseButton].MOUSE_BUTTON_RIGHT or
 ## [enum MouseButton].MOUSE_BUTTON_MIDDLE.
 func handle_command(button_idx: int) -> void:
-	var command: String = E.get_current_command_name().to_snake_case()
+	var command: String = PopochiuUtils.e.get_current_command_name().to_snake_case()
 	var prefix := "on_%s"
 	var suffix := "click"
 
@@ -261,7 +261,7 @@ func handle_command(button_idx: int) -> void:
 		if has_method(prefix % command_method):
 			suffix = command_method
 
-	E.add_history({
+	PopochiuUtils.e.add_history({
 		action = suffix if command.is_empty() else command,
 		target = description
 	})
@@ -288,13 +288,14 @@ func set_room(value: Node2D) -> void:
 
 #region Private ####################################################################################
 func _on_mouse_entered() -> void:
-	if E.hovered and is_instance_valid(E.hovered) and (
-		E.hovered.get_parent() == self or get_index() < E.hovered.get_index()
+	if PopochiuUtils.e.hovered and is_instance_valid(PopochiuUtils.e.hovered) and (
+		PopochiuUtils.e.hovered.get_parent() == self
+		or get_index() < PopochiuUtils.e.hovered.get_index()
 	):
-		E.add_hovered(self, true)
+		PopochiuUtils.e.add_hovered(self, true)
 		return
 
-	E.add_hovered(self)
+	PopochiuUtils.e.add_hovered(self)
 
 	G.mouse_entered_clickable.emit(self)
 
@@ -302,17 +303,17 @@ func _on_mouse_entered() -> void:
 func _on_mouse_exited() -> void:
 	last_click_button = -1
 
-	if E.remove_hovered(self):
+	if PopochiuUtils.e.remove_hovered(self):
 		G.mouse_exited_clickable.emit(self)
 
 
 func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
-	if G.is_blocked or not E.hovered or E.hovered != self:
+	if G.is_blocked or not PopochiuUtils.e.hovered or PopochiuUtils.e.hovered != self:
 		return
 
 	if _is_double_click_or_tap(event):
 		times_double_clicked += 1
-		E.clicked = self
+		PopochiuUtils.e.clicked = self
 		on_double_click()
 
 		return
@@ -320,7 +321,7 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	if not await _is_click_or_touch_pressed(event): return
 
 	var event_index := PopochiuUtils.get_click_or_touch_index(event)
-	E.clicked = self
+	PopochiuUtils.e.clicked = self
 	last_click_button = event_index
 
 	get_viewport().set_input_as_handled()
@@ -342,7 +343,7 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 			elif event_index == MOUSE_BUTTON_MIDDLE:
 				times_middle_clicked += 1
 
-	E.clicked = null
+	PopochiuUtils.e.clicked = null
 
 
 func _toggle_input() -> void:
@@ -354,11 +355,11 @@ func _translate() -> void:
 	if (
 		Engine.is_editor_hint()
 		or not is_inside_tree()
-		or not E.settings.use_translations
+		or not PopochiuUtils.e.settings.use_translations
 	):
 		return
 
-	description = E.get_text("%s-%s" % [get_tree().current_scene.name, _description_code])
+	description = PopochiuUtils.e.get_text("%s-%s" % [get_tree().current_scene.name, _description_code])
 
 
 # ---- @anthonyirwin82 -----------------------------------------------------------------------------
@@ -373,7 +374,7 @@ func _is_click_or_touch(event: InputEvent) -> bool:
 		or (event is InputEventScreenTouch and not event.double_tap)
 	):
 		# This delay is need to prevent a single click being detected before double click
-		await E.wait(_double_click_delay)
+		await PopochiuUtils.e.wait(_double_click_delay)
 
 		if not _has_double_click:
 			return (event is InputEventMouseButton or event is InputEventScreenTouch)
@@ -410,7 +411,7 @@ func _is_double_click_or_tap(event: InputEvent) -> bool:
 # Resets the double click status to false by default
 func _reset_double_click(double_click: bool = false) -> void:
 	# this delay is needed to prevent single click being detected after double click event
-	await E.wait(_double_click_delay)
+	await PopochiuUtils.e.wait(_double_click_delay)
 	_has_double_click = double_click
 # ----------------------------------------------------------------------------- @anthonyirwin82 ----
 

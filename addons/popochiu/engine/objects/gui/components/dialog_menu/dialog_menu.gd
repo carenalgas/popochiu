@@ -110,7 +110,7 @@ func _create_options(options := [], autoshow := false) -> void:
 	)
 	
 	panel_container.size.y = min(options_height, max_height)
-	panel_container.position.y = E.height - panel_container.size.y
+	panel_container.position.y = PopochiuUtils.e.height - panel_container.size.y
 
 
 func remove_options(_dialog: PopochiuDialog = null) -> void:

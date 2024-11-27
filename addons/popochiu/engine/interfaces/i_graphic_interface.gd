@@ -86,18 +86,18 @@ func _ready():
 func show_system_text(msg: String) -> void:
 	# NOTE: Not sure if this logic should happen here. Perhaps it could trigger a signal to which
 	# the in-game graphic interface connects, allowing it to handle the logic.
-	if not E.playing_queue and gui.popups_stack.is_empty():
+	if not PopochiuUtils.e.playing_queue and gui.popups_stack.is_empty():
 		block()
 	
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		
 		return
 	
-	system_text_shown.emit(E.get_text(msg))
+	system_text_shown.emit(PopochiuUtils.e.get_text(msg))
 	await system_text_hidden
 	
-	if not E.playing_queue and gui.popups_stack.is_empty():
+	if not PopochiuUtils.e.playing_queue and gui.popups_stack.is_empty():
 		unblock()
 
 

@@ -17,10 +17,10 @@ enum Commands { ## Defines the commands of the GUI.
 func _init() -> void:
 	super()
 	
-	E.register_command(Commands.WALK, "Walk", walk)
-	E.register_command(Commands.LOOK, "Look", look)
-	E.register_command(Commands.INTERACT, "Interact", interact)
-	E.register_command(Commands.TALK, "Talk", talk)
+	PopochiuUtils.e.register_command(Commands.WALK, "Walk", walk)
+	PopochiuUtils.e.register_command(Commands.LOOK, "Look", look)
+	PopochiuUtils.e.register_command(Commands.INTERACT, "Interact", interact)
+	PopochiuUtils.e.register_command(Commands.TALK, "Talk", talk)
 
 
 #endregion
@@ -42,8 +42,7 @@ func fallback() -> void:
 ## is triggered.[br]
 ## By default makes the character walk to the clicked [PopochiuClickable].
 func walk() -> void:
-#	E.get_node("/root/C").walk_to_clicked()
-	if E.clicked:
+	if PopochiuUtils.e.clicked:
 		C.walk_to_clicked()
 
 
@@ -61,10 +60,10 @@ func interact() -> void:
 		G.show_system_text("%s can't use %s with %s" % [
 			C.player.description, I.active.description, I.clicked.description
 		])
-	elif I.active and E.clicked:
+	elif I.active and PopochiuUtils.e.clicked:
 		# Item used on a PopochiuClickable
 		G.show_system_text("%s can't use %s with %s" % [
-			C.player.description, I.active.description, E.clicked.description
+			C.player.description, I.active.description, PopochiuUtils.e.clicked.description
 		])
 	elif I.clicked:
 		# Item selected in inventory

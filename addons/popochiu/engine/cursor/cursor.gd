@@ -1,3 +1,4 @@
+class_name PopochiuCursor
 extends CanvasLayer
 
 # TODO: Deprecate this? I'll leave it here while we merge the refactor for the
@@ -26,11 +27,15 @@ var is_blocked := false
 
 
 #region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"Cursor", self)
+
+
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_HIDDEN)
 	
 	# Connect to autoload signals
-	E.ready.connect(show_cursor)
+	PopochiuUtils.e.ready.connect(show_cursor)
 
 
 func _process(delta):
@@ -51,13 +56,13 @@ func _process(delta):
 	
 	if main_cursor.position.x < 1.0:
 		main_cursor.position.x = 1.0
-	elif main_cursor.position.x > E.width - 2.0:
-		main_cursor.position.x = E.width - 2.0
+	elif main_cursor.position.x > PopochiuUtils.e.width - 2.0:
+		main_cursor.position.x = PopochiuUtils.e.width - 2.0
 	
 	if main_cursor.position.y < 1.0:
 		main_cursor.position.y = 1.0
-	elif main_cursor.position.y > E.height - 2.0:
-		main_cursor.position.y = E.height - 2.0
+	elif main_cursor.position.y > PopochiuUtils.e.height - 2.0:
+		main_cursor.position.y = PopochiuUtils.e.height - 2.0
 
 
 #endregion
@@ -83,7 +88,7 @@ func set_secondary_cursor_texture(texture: Texture2D, ignore_block := false) -> 
 	
 	secondary_cursor.texture = texture
 	
-	if E.settings.scale_gui:
+	if PopochiuUtils.e.settings.scale_gui:
 		# Scale the cursor based the relation of the texture size compared to the main cursor
 		# texture size
 		secondary_cursor.scale = Vector2.ONE * ceil(
@@ -96,8 +101,8 @@ func set_secondary_cursor_texture(texture: Texture2D, ignore_block := false) -> 
 func remove_secondary_cursor_texture() -> void:
 	secondary_cursor.texture = null
 	
-	if E.settings.scale_gui:
-		secondary_cursor.scale = E.scale
+	if PopochiuUtils.e.settings.scale_gui:
+		secondary_cursor.scale = PopochiuUtils.e.scale
 	
 	secondary_cursor.hide()
 

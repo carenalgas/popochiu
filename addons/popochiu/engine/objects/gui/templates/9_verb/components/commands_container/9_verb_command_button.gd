@@ -12,7 +12,7 @@ func _ready() -> void:
 
 #region Private ####################################################################################
 func _on_pressed() -> void:
-	E.current_command = command
+	PopochiuUtils.e.current_command = command
 	G.show_hover_text()
 
 

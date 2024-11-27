@@ -52,10 +52,10 @@ func _input(event: InputEvent) -> void:
 	
 	var rect := panel_container.get_rect()
 	rect.size += Vector2(0.0, input_zone_height)
-	if E.settings.scale_gui:
+	if PopochiuUtils.e.settings.scale_gui:
 		rect = Rect2(
-			panel_container.get_rect().position * E.scale,
-			panel_container.get_rect().size * E.scale
+			panel_container.get_rect().position * PopochiuUtils.e.scale,
+			panel_container.get_rect().size * PopochiuUtils.e.scale
 		)
 	
 	if rect.has_point(get_global_mouse_position()):

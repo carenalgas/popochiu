@@ -27,10 +27,10 @@ func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 	right_avatar.texture = null
 	
 	var char_pos: Vector2 = PopochiuUtils.get_screen_coords_for(chr).floor() / (
-		E.scale if E.settings.scale_gui else Vector2.ONE
+		PopochiuUtils.e.scale if PopochiuUtils.e.settings.scale_gui else Vector2.ONE
 	)
 	
-	if char_pos.x <= E.half_width:
+	if char_pos.x <= PopochiuUtils.e.half_width:
 		left_avatar_container.modulate.a = 1.0
 		left_avatar.texture = chr.get_avatar_for_emotion(chr.emotion)
 	else:

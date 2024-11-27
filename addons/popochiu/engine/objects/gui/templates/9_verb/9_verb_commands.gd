@@ -24,16 +24,16 @@ enum Commands { ## Defines the commands of the GUI.
 func _init() -> void:
 	super()
 	
-	E.register_command(Commands.WALK_TO, "Walk to", walk_to)
-	E.register_command(Commands.OPEN, "Open", open)
-	E.register_command(Commands.PICK_UP, "Pick up", pick_up)
-	E.register_command(Commands.PUSH, "Push", push)
-	E.register_command(Commands.CLOSE, "Close", close)
-	E.register_command(Commands.LOOK_AT, "Look at", look_at)
-	E.register_command(Commands.PULL, "Pull", pull)
-	E.register_command(Commands.GIVE, "Give", give)
-	E.register_command(Commands.TALK_TO, "Talk to", talk_to)
-	E.register_command(Commands.USE, "Use", use)
+	PopochiuUtils.e.register_command(Commands.WALK_TO, "Walk to", walk_to)
+	PopochiuUtils.e.register_command(Commands.OPEN, "Open", open)
+	PopochiuUtils.e.register_command(Commands.PICK_UP, "Pick up", pick_up)
+	PopochiuUtils.e.register_command(Commands.PUSH, "Push", push)
+	PopochiuUtils.e.register_command(Commands.CLOSE, "Close", close)
+	PopochiuUtils.e.register_command(Commands.LOOK_AT, "Look at", look_at)
+	PopochiuUtils.e.register_command(Commands.PULL, "Pull", pull)
+	PopochiuUtils.e.register_command(Commands.GIVE, "Give", give)
+	PopochiuUtils.e.register_command(Commands.TALK_TO, "Talk to", talk_to)
+	PopochiuUtils.e.register_command(Commands.USE, "Use", use)
 
 
 #endregion
@@ -53,7 +53,6 @@ func fallback() -> void:
 ## [code]E.command_fallback()[/code] is triggered.[br][br]
 ## By default makes the character walk to the clicked [code]PopochiuClickable[/code].
 func walk_to() -> void:
-#	E.get_node("/root/C").walk_to_clicked()
 	if I.active:
 		I.active = null
 		return
@@ -63,11 +62,11 @@ func walk_to() -> void:
 	await C.player.move_ended
 	
 	if (
-		E.clicked and E.clicked.get("suggested_command")
-		and E.clicked.last_click_button == MOUSE_BUTTON_RIGHT
+		PopochiuUtils.e.clicked and PopochiuUtils.e.clicked.get("suggested_command")
+		and PopochiuUtils.e.clicked.last_click_button == MOUSE_BUTTON_RIGHT
 	):
-		E.current_command = E.clicked.suggested_command
-		E.clicked.handle_command(MOUSE_BUTTON_LEFT)
+		PopochiuUtils.e.current_command = PopochiuUtils.e.clicked.suggested_command
+		PopochiuUtils.e.clicked.handle_command(MOUSE_BUTTON_LEFT)
 
 
 ## Called when [code]E.current_command == Commands.OPEN[/code] and [code]E.command_fallback()[/code]
@@ -97,7 +96,7 @@ func close() -> void:
 ## Called when [code]E.current_command == Commands.LOOK_AT[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func look_at() -> void:
-	if E.clicked:
+	if PopochiuUtils.e.clicked:
 		await C.player.face_clicked()
 	
 	await C.player.say("I have nothing to say about that")
@@ -122,8 +121,8 @@ func use() -> void:
 
 
 func _give_or_use(callback: Callable) -> void:
-	if I.active and E.clicked:
-		callback.call(I.active, E.clicked)
+	if I.active and PopochiuUtils.e.clicked:
+		callback.call(I.active, PopochiuUtils.e.clicked)
 	elif I.active and I.clicked and I.active != I.clicked:
 		callback.call(I.active, I.clicked)
 	elif I.clicked:
@@ -133,7 +132,7 @@ func _give_or_use(callback: Callable) -> void:
 			MOUSE_BUTTON_RIGHT:
 				# TODO: I'm not sure this is the right way to do this. Maybe GUIs should capture
 				# 		click inputs on clickables and inventory items. ----------------------------
-				E.current_command = (
+				PopochiuUtils.e.current_command = (
 					I.clicked.suggested_command if I.clicked.get("suggested_command")
 					else Commands.LOOK_AT
 				)

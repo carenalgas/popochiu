@@ -84,13 +84,13 @@ func queue_face_clicked() -> Callable:
 
 ## Makes the camera follow [param c].
 func change_camera_owner(c: PopochiuCharacter) -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		camera_owner = c
-		await E.get_tree().process_frame
+		await PopochiuUtils.e.get_tree().process_frame
 		return
 	
 	camera_owner = c
-	await E.get_tree().process_frame
+	await PopochiuUtils.e.get_tree().process_frame
 
 
 ## Makes the camera follow [param c].[br][br]

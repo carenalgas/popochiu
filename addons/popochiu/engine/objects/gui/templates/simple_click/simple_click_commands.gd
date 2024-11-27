@@ -10,10 +10,10 @@ extends PopochiuCommands
 #region Public #####################################################################################
 ## Called by [Popochiu] when a command doesn't have an associated method.
 func fallback() -> void:
-	if is_instance_valid(E.clicked):
-		if E.clicked.last_click_button == MOUSE_BUTTON_LEFT:
+	if is_instance_valid(PopochiuUtils.e.clicked):
+		if PopochiuUtils.e.clicked.last_click_button == MOUSE_BUTTON_LEFT:
 			await click_clickable()
-		elif E.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
+		elif PopochiuUtils.e.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
 			await right_click_clickable()
 		else:
 			await RenderingServer.frame_post_draw
@@ -31,7 +31,7 @@ func fallback() -> void:
 func click_clickable() -> void:
 	if I.active:
 		await G.show_system_text(
-			"Can't USE %s with %s" % [I.active.description, E.clicked.description]
+			"Can't USE %s with %s" % [I.active.description, PopochiuUtils.e.clicked.description]
 		)
 	else:
 		await G.show_system_text("Can't INTERACT with it")

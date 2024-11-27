@@ -31,8 +31,8 @@ static func define_player() -> void:
 ## Evals [param text] to know if it is a wait inside a dialog or if it is a [PopochiuCharacter]
 ## saying something. This is used when calling [method E.queue].
 static func execute_string(text: String) -> void:
-	if E.cutscene_skipped:
-		await E.get_tree().process_frame
+	if PopochiuUtils.e.cutscene_skipped:
+		await PopochiuUtils.e.get_tree().process_frame
 		return
 	
 	var regex = RegEx.new()
@@ -41,13 +41,13 @@ static func execute_string(text: String) -> void:
 	
 	if result:
 		# A shortcut to wait X seconds
-		await E.wait(0.25 * pow(2, result.get_string(0).count(".") - 1))
+		await PopochiuUtils.e.wait(0.25 * pow(2, result.get_string(0).count(".") - 1))
 	elif ":" in text:
 		await _trigger_dialog_line(text)
 	else:
 		await G.show_system_text(text)
 	
-	E.auto_continue_after = -1.0
+	PopochiuUtils.e.auto_continue_after = -1.0
 
 
 #endregion
@@ -67,14 +67,14 @@ static func _trigger_dialog_line(text: String) -> void:
 	if not character:
 		PopochiuUtils.print_warning("Character %s not found to play dialog line." % character_name)
 		
-		await E.get_tree().process_frame
+		await PopochiuUtils.e.get_tree().process_frame
 		return
 	
 	if emotion:
 		character.emotion = emotion
 	
 	if change_time:
-		E.auto_continue_after = float(change_time)
+		PopochiuUtils.e.auto_continue_after = float(change_time)
 	
 	await character.say(dialogue_line)
 

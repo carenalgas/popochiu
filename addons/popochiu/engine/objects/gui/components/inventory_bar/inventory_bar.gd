@@ -45,10 +45,10 @@ func _input(event: InputEvent) -> void:
 	
 	var rect := panel_container.get_rect()
 	rect.size += Vector2(0.0, input_zone_height)
-	if E.settings.scale_gui:
+	if PopochiuUtils.e.settings.scale_gui:
 		rect = Rect2(
-			panel_container.get_rect().position * E.scale,
-			panel_container.get_rect().size * E.scale
+			panel_container.get_rect().position * PopochiuUtils.e.scale,
+			panel_container.get_rect().size * PopochiuUtils.e.scale
 		)
 	
 	if _is_hidden and rect.has_point(get_global_mouse_position()):
@@ -171,7 +171,7 @@ func _show_and_hide(time := 1.0) -> void:
 	set_process_input(false)
 	_open()
 	await tween.finished
-	await E.wait(time)
+	await PopochiuUtils.e.wait(time)
 	
 	_close()
 	await tween.finished

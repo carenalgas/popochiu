@@ -17,7 +17,7 @@ func _ready() -> void:
 	
 	# Connect to singletons signals
 	G.system_text_shown.connect(_show_text)
-	E.ready.connect(set.bind("_can_change_size", true))
+	PopochiuUtils.e.ready.connect(set.bind("_can_change_size", true))
 	
 	close()
 
@@ -63,7 +63,7 @@ func close() -> void:
 
 #region Private ####################################################################################
 func _show_text(msg := "") -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		close.call_deferred()
 		return
 	

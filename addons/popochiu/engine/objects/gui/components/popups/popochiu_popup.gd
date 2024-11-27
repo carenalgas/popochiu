@@ -67,24 +67,24 @@ func open() -> void:
 	G.block()
 	Cursor.show_cursor("gui", true)
 	# Never open a popup on top of another
-	if not E.gui.popups_stack.is_empty():
-		E.gui.popups_stack.back().hide()
-	E.gui.popups_stack.append(self)
+	if not PopochiuUtils.e.gui.popups_stack.is_empty():
+		PopochiuUtils.e.gui.popups_stack.back().hide()
+	PopochiuUtils.e.gui.popups_stack.append(self)
 	
 	show()
 
 
 ## Closes the popup unlocking interactions with the graphic interface.
 func close() -> void:
-	E.gui.popups_stack.erase(self)
+	PopochiuUtils.e.gui.popups_stack.erase(self)
 	hide()
 	
-	if E.gui.popups_stack.is_empty():
+	if PopochiuUtils.e.gui.popups_stack.is_empty():
 		G.unblock()
 		Cursor.unblock()
 	else:
 		# Idempotent call, no need to check the mode
-		E.gui.popups_stack.back().show()
+		PopochiuUtils.e.gui.popups_stack.back().show()
 	
 	_close()
 

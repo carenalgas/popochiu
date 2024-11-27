@@ -8,7 +8,7 @@ extends PopochiuAudioCue
 ## Plays this audio cue. It can fade for [param fade_duration] seconds, and you can change the track
 ## starting position in seconds with [param music_position].
 func play(fade_duration := 0.0, music_position := 0.0) -> void:
-	E.am.play_music_cue(resource_name, fade_duration, music_position)
+	PopochiuUtils.e.am.play_music_cue(resource_name, fade_duration, music_position)
 
 
 ## Plays this audio cue. It can fade for [param fade_duration] seconds, and you can change the track
@@ -17,7 +17,7 @@ func play(fade_duration := 0.0, music_position := 0.0) -> void:
 func queue_play(fade_duration := 0.0, music_position := 0.0) -> Callable:
 	return func ():
 		await play(fade_duration, music_position)
-		await E.get_tree().process_frame
+		await PopochiuUtils.e.get_tree().process_frame
 
 
 #endregion

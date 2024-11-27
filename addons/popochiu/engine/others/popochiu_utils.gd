@@ -17,6 +17,9 @@ static var a: PopochiuIAudio = null:
 	get = get_iaudio
 static var g: PopochiuIGraphicInterface = null:
 	get = get_igraphic_interface
+static var cursor: PopochiuCursor = null:
+	get = get_popochiu_cursor
+
 
 
 #region Public #####################################################################################
@@ -196,6 +199,15 @@ func get_igraphic_interface() -> PopochiuIGraphicInterface:
 		else:
 			g = PopochiuIGraphicInterface.new()
 	return g
+
+
+func get_popochiu_cursor() -> PopochiuCursor:
+	if not is_instance_valid(cursor):
+		if Engine.get_singleton(&"Cursor"):
+			cursor = Engine.get_singleton(&"Cursor")
+		else:
+			cursor = PopochiuCursor.new()
+	return cursor
 
 
 #endregion

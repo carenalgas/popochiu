@@ -194,7 +194,7 @@ func queue_idle() -> Callable:
 ## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
 ## value.
 func idle() -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		return
 
@@ -235,12 +235,12 @@ func walk(target_pos: Vector2) -> void:
 		target_pos.x > position.x
 	)
 
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		is_moving = false
 		await get_tree().process_frame
 
 		position = target_pos
-		E.camera.position = target_pos
+		PopochiuUtils.e.camera.position = target_pos
 		await get_tree().process_frame
 
 		return
@@ -395,7 +395,7 @@ func queue_face_clicked() -> Callable:
 ## Makes the character face in the direction of the last clicked [PopochiuClickable], which is
 ## stored in [member Popochiu.clicked].
 func face_clicked() -> void:
-	var global_lap = E.clicked.to_global(E.clicked.look_at_point)
+	var global_lap = PopochiuUtils.e.clicked.to_global(PopochiuUtils.e.clicked.look_at_point)
 
 	_flip_left_right(
 		global_lap.x < global_position.x,
@@ -419,7 +419,7 @@ func queue_say(dialog: String, emo := "") -> Callable:
 ## [AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
 ## characters return to its idle state.
 func say(dialog: String, emo := "") -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		return
 
@@ -456,7 +456,7 @@ func queue_grab() -> Callable:
 ## Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
 ## [method idle].
 func grab() -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		return
 
@@ -501,18 +501,18 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 ## Makes the character walk (NON-BLOCKING) to the last clicked [PopochiuClickable], which is stored
 ## in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
-	var clicked_id: String = E.clicked.script_name
+	var clicked_id: String = PopochiuUtils.e.clicked.script_name
 
-	if E.clicked == _last_reached_clickable:
+	if PopochiuUtils.e.clicked == _last_reached_clickable:
 		await get_tree().process_frame
 		return
 
-	await _walk_to_node(E.clicked, offset)
-	_last_reached_clickable = E.clicked
+	await _walk_to_node(PopochiuUtils.e.clicked, offset)
+	_last_reached_clickable = PopochiuUtils.e.clicked
 
 	# Check if the action was cancelled
-	if not E.clicked or clicked_id != E.clicked.script_name:
-		await E.await_stopped
+	if not PopochiuUtils.e.clicked or clicked_id != PopochiuUtils.e.clicked.script_name:
+		await PopochiuUtils.e.await_stopped
 
 
 ## Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
@@ -520,7 +520,7 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
 	G.block()
 
-	await _walk_to_node(E.clicked, offset)
+	await _walk_to_node(PopochiuUtils.e.clicked, offset)
 
 	G.unblock()
 
@@ -918,7 +918,7 @@ func set_avatars(value: Array) -> void:
 #region Private ####################################################################################
 func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree(): return
-	description = E.get_text(_description_code)
+	description = PopochiuUtils.e.get_text(_description_code)
 
 
 func _get_vo_cue(emotion := '') -> String:

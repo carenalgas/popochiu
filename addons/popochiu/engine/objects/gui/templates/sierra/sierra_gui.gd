@@ -26,7 +26,7 @@ func _ready() -> void:
 	
 	$Cursor.hide()
 	
-	E.current_command = SierraCommands.Commands.WALK
+	PopochiuUtils.e.current_command = SierraCommands.Commands.WALK
 	
 	# Connect to child signals
 	sierra_settings_popup.option_selected.connect(_on_settings_option_selected)
@@ -44,8 +44,8 @@ func _input(event: InputEvent) -> void:
 			# active.
 			if (
 				not sierra_menu.visible
-				and not E.hovered
-				and E.current_command != SierraCommands.Commands.WALK
+				and not PopochiuUtils.e.hovered
+				and PopochiuUtils.e.current_command != SierraCommands.Commands.WALK
 			):
 				accept_event()
 		MOUSE_BUTTON_RIGHT:
@@ -53,9 +53,9 @@ func _input(event: InputEvent) -> void:
 			
 			if I.active:
 				I.active = null
-				E.current_command = SierraCommands.Commands.WALK
+				PopochiuUtils.e.current_command = SierraCommands.Commands.WALK
 			else:
-				E.current_command = posmod(E.current_command + 1, SierraCommands.Commands.size())
+				PopochiuUtils.e.current_command = posmod(PopochiuUtils.e.current_command + 1, SierraCommands.Commands.size())
 
 
 #endregion
@@ -113,7 +113,7 @@ func _on_dialog_options_shown() -> void:
 
 ## Called when a [PopochiuDialog] finishes. It shows the cursor of the last active command.
 func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor(E.get_current_command_name().to_snake_case())
+	Cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
 
 
 ## Called when the active [PopochiuInventoryItem] changes. If there is one, it hides the main cursor
@@ -144,7 +144,7 @@ func _on_game_loaded(loaded_game: Dictionary) -> void:
 
 ## Called by [b]cursor.gd[/b] to get the name of the cursor texture to show.
 func _get_cursor_name() -> String:
-	return E.get_current_command_name().to_snake_case()
+	return PopochiuUtils.e.get_current_command_name().to_snake_case()
 
 
 #endregion

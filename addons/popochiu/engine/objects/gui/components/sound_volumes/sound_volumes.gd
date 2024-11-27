@@ -9,7 +9,7 @@ var dflt_volumes := {}
 #region Godot ######################################################################################
 func _ready() -> void:
 	# Connect to AudioManager ready signal
-	E.am.ready.connect(_on_audio_manager_ready)
+	PopochiuUtils.e.am.ready.connect(_on_audio_manager_ready)
 
 
 #endregion
@@ -21,7 +21,7 @@ func update_sliders() -> void:
 		
 		var bus_name: String = slider.get_meta("bus_name")
 		
-		slider.value = E.am.volume_settings[bus_name]
+		slider.value = PopochiuUtils.e.am.volume_settings[bus_name]
 		dflt_volumes[bus_name] = slider.value
 
 
@@ -30,14 +30,14 @@ func restore_last_volumes() -> void:
 		if not slider.has_meta("bus_name"): continue
 		
 		var bus_name: String = slider.get_meta("bus_name")
-		E.am.set_bus_volume_db(bus_name, dflt_volumes[bus_name])
+		PopochiuUtils.e.am.set_bus_volume_db(bus_name, dflt_volumes[bus_name])
 
 
 #endregion
 
 #region Private ####################################################################################
 func _on_audio_manager_ready() -> void:
-	E.am.load_sound_settings()
+	PopochiuUtils.e.am.load_sound_settings()
 	
 	# Build sound settings UI
 	for bus_idx in range(AudioServer.get_bus_count()):
@@ -53,7 +53,7 @@ func _on_audio_manager_ready() -> void:
 		var slider = HSlider.new()
 		slider.min_value = MIN_VOLUME
 		slider.max_value = 0
-		slider.value = E.am.volume_settings[bus_name]
+		slider.value = PopochiuUtils.e.am.volume_settings[bus_name]
 		slider.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		slider.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -64,7 +64,7 @@ func _on_audio_manager_ready() -> void:
 		
 		slider.value_changed.connect((
 			func (value: float, bus_name: String):
-				E.am.set_bus_volume_db(
+				PopochiuUtils.e.am.set_bus_volume_db(
 					bus_name,
 					value if value > MIN_VOLUME else MUTE_VOLUME
 				)

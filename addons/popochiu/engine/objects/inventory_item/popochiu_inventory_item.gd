@@ -278,7 +278,7 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 ## which can be [enum MouseButton].MOUSE_BUTTON_LEFT, [enum MouseButton].MOUSE_BUTTON_RIGHT or
 ## [enum MouseButton].MOUSE_BUTTON_MIDDLE.
 func handle_command(button_idx: int) -> void:
-	var command: String = E.get_current_command_name().to_snake_case()
+	var command: String = PopochiuUtils.e.get_current_command_name().to_snake_case()
 	var suffix := "click"
 	var prefix := "on_%s"
 	
@@ -294,7 +294,7 @@ func handle_command(button_idx: int) -> void:
 		if has_method(prefix % command_method):
 			suffix = command_method
 	
-	E.add_history({
+	PopochiuUtils.e.add_history({
 		action = suffix if command.is_empty() else command,
 		target = description
 	})
@@ -322,7 +322,7 @@ func get_description() -> String:
 		if description.is_empty():
 			description = name
 		return description
-	return E.get_text(description)
+	return PopochiuUtils.e.get_text(description)
 
 
 #endregion
@@ -344,8 +344,8 @@ func _on_gui_input(event: InputEvent) -> void:
 	
 	# Fix #224 Clean E.clicked when an inventory item is clicked to ensure that the event is not
 	# mishandled by the GUI
-	if E.clicked:
-		E.clicked = null
+	if PopochiuUtils.e.clicked:
+		PopochiuUtils.e.clicked = null
 	
 	I.clicked = self
 	last_click_button = event_index

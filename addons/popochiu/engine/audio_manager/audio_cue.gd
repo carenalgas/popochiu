@@ -41,9 +41,9 @@ func fade(
 	duration := 1.0, wait_to_end := false, from := -80.0, to := INF, position_2d := Vector2.ZERO
 ) -> void:
 	if wait_to_end:
-		await E.am.play_fade_cue(resource_name, duration, from, to, position_2d, true)
+		await PopochiuUtils.e.am.play_fade_cue(resource_name, duration, from, to, position_2d, true)
 	else:
-		E.am.play_fade_cue(resource_name, duration, from, to, position_2d)
+		PopochiuUtils.e.am.play_fade_cue(resource_name, duration, from, to, position_2d)
 
 
 ## Plays this audio cue with a fade that lasts [param duration] seconds. If [param wait_to_end] is
@@ -60,12 +60,12 @@ func queue_fade(
 			await fade(duration, wait_to_end, from, to, position_2d)
 		else:
 			fade(duration, wait_to_end, from, to, position_2d)
-			await E.get_tree().process_frame
+			await PopochiuUtils.e.get_tree().process_frame
 
 
 ## Stops the audio cue, with an optional fade effect lasting [param fade_duration] seconds.
 func stop(fade_duration := 0.0) -> void:
-	E.am.stop(resource_name, fade_duration)
+	PopochiuUtils.e.am.stop(resource_name, fade_duration)
 
 
 ## Stops the audio cue, with an optional fade effect lasting [param fade_duration] seconds.[br][br]
@@ -73,21 +73,21 @@ func stop(fade_duration := 0.0) -> void:
 func queue_stop(fade_duration := 0.0) -> Callable:
 	return func ():
 		stop(fade_duration)
-		await E.get_tree().process_frame
+		await PopochiuUtils.e.get_tree().process_frame
 
 
 ## Changes the [member AudioStreamPlayer.pitch_scale] of the [AudioStreamPlayer] playing the audio
 ## file associated with this audio cue to [param pitch]. If the audio was played with a 2D position,
 ## then [member AudioStreamPlayer2D.pitch_scale] will be affected.
 func change_stream_pitch(pitch := 0.0) -> void:
-	E.am.change_cue_pitch(resource_name, pitch)
+	PopochiuUtils.e.am.change_cue_pitch(resource_name, pitch)
 
 
 ## Changes the [member AudioStreamPlayer.volume_db] of the [AudioStreamPlayer] playing the audio
 ## file associated with this audio cue to [param volume]. If the audio was played with a 2D
 ## position, then [member AudioStreamPlayer2D.volume_db] will be affected.
 func change_stream_volume(volume := 0.0) -> void:
-	E.am.change_cue_volume(resource_name, volume)
+	PopochiuUtils.e.am.change_cue_volume(resource_name, volume)
 
 
 ## Returns the value of [member AudioStreamPlayer.pitch_scale] to be applied to the
@@ -104,7 +104,7 @@ func get_pitch_scale() -> float:
 
 ## Returns the playback position of this audio cue.
 func get_cue_playback_position() -> float:
-	return E.am.get_cue_playback_position(resource_name)
+	return PopochiuUtils.e.am.get_cue_playback_position(resource_name)
 
 
 ## Maps [param values] to the properties of this audio cue. This is used by TabAudio when changing

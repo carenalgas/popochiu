@@ -32,14 +32,14 @@ func _input(event: InputEvent) -> void:
 		if not visible:
 			rect.size.y = input_zone_height
 		
-		if E.settings.scale_gui:
+		if PopochiuUtils.e.settings.scale_gui:
 			rect = Rect2(
-				panel_container.get_rect().position * E.scale,
+				panel_container.get_rect().position * PopochiuUtils.e.scale,
 				(Vector2(
 					panel_container.get_rect().size.x,
 					panel_container.get_rect().size.y if visible
 					else panel_container.get_rect().size.y / 2.0
-				)) * E.scale
+				)) * PopochiuUtils.e.scale
 			)
 		
 		if not visible and rect.has_point(get_global_mouse_position()):
@@ -50,7 +50,7 @@ func _input(event: InputEvent) -> void:
 		elif visible and not rect.has_point(get_global_mouse_position()):
 			# Hide the top menu
 			if not I.active:
-				Cursor.show_cursor(E.get_current_command_name().to_snake_case())
+				Cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
 			hide()
 
 

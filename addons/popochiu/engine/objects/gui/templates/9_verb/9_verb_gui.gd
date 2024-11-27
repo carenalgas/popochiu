@@ -42,7 +42,7 @@ func _ready() -> void:
 	
 	
 	# Connect to singletons signals
-	E.ready.connect(_on_popochiu_ready)
+	PopochiuUtils.e.ready.connect(_on_popochiu_ready)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -57,7 +57,7 @@ func _unhandled_input(event: InputEvent) -> void:
 ## Called when the GUI is blocked. Makes the [member E.current_command] to be none of the available
 ## commands, hides the bottom panel and makes the GUI to stop processing unhandled input.
 func _on_blocked(props := { blocking = true }) -> void:
-	E.current_command = -1
+	PopochiuUtils.e.current_command = -1
 	G.show_hover_text()
 	_9_verb_panel.hide()
 	
@@ -74,7 +74,7 @@ func _on_unblocked() -> void:
 		G.block()
 		return
 	
-	E.current_command = NineVerbCommands.Commands.WALK_TO
+	PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
 	G.show_hover_text()
 	_9_verb_panel.show()
 	
@@ -129,9 +129,9 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 ## [member PopochiuInventoryItem.description] in the [HoverText] component and shows the
 ## [code]"active"[/code] cursor.
 func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
-	if E.current_command == NineVerbCommands.Commands.WALK_TO:
+	if PopochiuUtils.e.current_command == NineVerbCommands.Commands.WALK_TO:
 		_return_to_walk_to = true
-		E.current_command = NineVerbCommands.Commands.USE
+		PopochiuUtils.e.current_command = NineVerbCommands.Commands.USE
 	
 	_9_verb_panel.highlight_command(NineVerbCommands.Commands.LOOK_AT)
 	Cursor.show_cursor()
@@ -146,7 +146,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 ## shows the [code]"normal"[/code] cursor.
 func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	if not I.active and _return_to_walk_to:
-		E.current_command = NineVerbCommands.Commands.WALK_TO
+		PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
 		_return_to_walk_to = false
 	
 	_9_verb_panel.highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
@@ -191,7 +191,7 @@ func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 ## will only occur when the current command is [constant NineVerbCommands.USE].
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if not item:
-		E.current_command = NineVerbCommands.Commands.WALK_TO
+		PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
 		G.show_hover_text()
 	else:
 		_show_command_on(item.description)
@@ -248,10 +248,10 @@ func _on_settings_option_selected(option_name: String) -> void:
 
 func _show_command_on(item_1_name: String, item_2_name := "") -> void:
 	var preposition = "on"
-	if E.current_command == NineVerbCommands.Commands.GIVE:
+	if PopochiuUtils.e.current_command == NineVerbCommands.Commands.GIVE:
 		preposition = "to"
 	G.show_hover_text("%s %s %s %s" % [
-		E.get_current_command_name(), item_1_name, preposition, item_2_name
+		PopochiuUtils.e.get_current_command_name(), item_1_name, preposition, item_2_name
 	])
 
 

@@ -44,10 +44,10 @@ func _on_unblocked() -> void:
 	if I.active:
 		Cursor.hide_main_cursor()
 		Cursor.show_secondary_cursor()
-	elif E.hovered:
+	elif PopochiuUtils.e.hovered:
 		# Fixes #315 by showing the right cursor when it is over a PopochiuClickable after closing
 		# the SystemText component
-		Cursor.show_cursor(Cursor.get_type_name(E.hovered.cursor))
+		Cursor.show_cursor(Cursor.get_type_name(PopochiuUtils.e.hovered.cursor))
 	else:
 		Cursor.show_cursor(get_cursor_name())
 
@@ -138,8 +138,8 @@ func _on_dialog_line_finished() -> void:
 	
 	if D.current_dialog:
 		Cursor.show_cursor("gui")
-	elif E.hovered:
-		Cursor.show_cursor(Cursor.get_type_name(E.hovered.cursor))
+	elif PopochiuUtils.e.hovered:
+		Cursor.show_cursor(Cursor.get_type_name(PopochiuUtils.e.hovered.cursor))
 	else:
 		Cursor.show_cursor("normal")
 

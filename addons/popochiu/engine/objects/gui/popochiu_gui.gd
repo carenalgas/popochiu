@@ -38,16 +38,16 @@ func _ready():
 	G.dialog_options_shown.connect(_on_dialog_options_shown)
 	D.dialog_finished.connect(_on_dialog_finished)
 	I.item_selected.connect(_on_inventory_item_selected)
-	E.game_saved.connect(_on_game_saved)
-	E.game_loaded.connect(_on_game_loaded)
+	PopochiuUtils.e.game_saved.connect(_on_game_saved)
+	PopochiuUtils.e.game_loaded.connect(_on_game_loaded)
 	
-	if E.settings.is_pixel_art_game:
+	if PopochiuUtils.e.settings.is_pixel_art_game:
 		# Apply this filter so the font doesn't blur
 		texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	
-	if E.settings.scale_gui:
-		size = get_viewport_rect().size / E.scale
-		scale = E.scale
+	if PopochiuUtils.e.settings.scale_gui:
+		size = get_viewport_rect().size / PopochiuUtils.e.scale
+		scale = PopochiuUtils.e.scale
 		
 		# Adjust nodes with a "text" property that is a String in order to try to prevent glitches
 		# when rendering its font
