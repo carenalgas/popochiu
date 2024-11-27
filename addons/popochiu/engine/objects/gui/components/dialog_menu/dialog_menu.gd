@@ -34,9 +34,9 @@ func _ready() -> void:
 	gui_input.connect(_clicked)
 	
 	# Connect to autoloads signals
-	D.dialog_options_requested.connect(_create_options.bind(true))
-	D.inline_dialog_requested.connect(_create_inline_options)
-	D.dialog_finished.connect(remove_options)
+	PopochiuUtils.d.dialog_options_requested.connect(_create_options.bind(true))
+	PopochiuUtils.d.inline_dialog_requested.connect(_create_inline_options)
+	PopochiuUtils.d.dialog_finished.connect(remove_options)
 	
 	hide()
 
@@ -138,7 +138,7 @@ func _on_option_clicked(opt: PopochiuDialogOption) -> void:
 	G.unblock()
 	
 	hide()
-	D.option_selected.emit(opt)
+	PopochiuUtils.d.option_selected.emit(opt)
 
 
 #endregion

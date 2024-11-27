@@ -204,7 +204,7 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 			"inventory_items":
 				PopochiuUtils.i.items_states[id] = state
 			"dialogs":
-				D.trees[id] = state
+				PopochiuUtils.d.trees[id] = state
 				_load_dialog_options(state, loaded_game[type][id].options)
 		
 		if loaded_game[type][id].has("custom_data")\

@@ -70,14 +70,14 @@ func show_inline_dialog(options: Array) -> PopochiuDialogOption:
 	active = true
 	
 	if current_dialog:
-		D.option_selected.disconnect(current_dialog._on_option_selected)
+		PopochiuUtils.d.option_selected.disconnect(current_dialog._on_option_selected)
 	
 	inline_dialog_requested.emit(options)
 	
 	var pdo: PopochiuDialogOption = await option_selected
 	
 	if current_dialog:
-		D.option_selected.connect(current_dialog._on_option_selected)
+		PopochiuUtils.d.option_selected.connect(current_dialog._on_option_selected)
 	else:
 		active = false
 		G.unblock()
@@ -94,28 +94,32 @@ func finish_dialog() -> void:
 func say_selected() -> void:
 	await PopochiuUtils.c.player.say(selected_option.text)
 
+
 ## Transforms any text to gibberish preserving bbcode tags
 func create_gibberish(input_string: String) -> String:
-	var output_text: String = ""
-	var bbcode: bool = false
-	var letters = ['a','e','i','o','u','y','b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z']
+	var output_text := ""
+	var bbcode := false
+	var letters := [
+		"a","e","i","o","u",
+		"y","b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","z"
+	]
 	for chr in input_string:
-		if(chr == '['):
+		if(chr == "["):
 			bbcode = true
-		elif(chr == ']'):
+		elif(chr == "]"):
 			output_text += chr
 			bbcode = false
 			continue
 		
 		if (!bbcode):
-			if (chr != ' '):
+			if (chr != " "):
 					output_text += letters[randi_range(0,letters.size()-1)]
 			else:
-				output_text += ' ' 
+				output_text += " " 
 		else:
 			output_text += chr
-			
 	return output_text
+
 
 ## @deprecated
 ## Now it is [method get_instance].

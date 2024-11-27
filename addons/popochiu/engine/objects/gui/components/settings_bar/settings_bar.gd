@@ -64,7 +64,7 @@ func _input(event: InputEvent) -> void:
 	elif _is_mouse_hover:
 		_is_mouse_hover = false
 		
-		if D.current_dialog:
+		if PopochiuUtils.d.current_dialog:
 			Cursor.show_cursor("gui")
 		elif G.gui.is_showing_dialog_line:
 			Cursor.show_cursor("wait")

@@ -68,7 +68,7 @@ func _on_blocked(props := { blocking = true }) -> void:
 ## [constant NineVerbCommands.WALK_TO], shows the bottom panel and makes the GUI to start processing
 ## unhandled input.
 func _on_unblocked() -> void:
-	if D.current_dialog:
+	if PopochiuUtils.d.current_dialog:
 		await get_tree().process_frame
 		
 		G.block()
@@ -167,7 +167,7 @@ func _on_dialog_line_started() -> void:
 ## Called when a dialogue line finishes. It shows the [code]"gui"[/code] cursor if there is an
 ## active [PopochiuDialog], otherwise it shows the [code]"normal"[/code] cursor.
 func _on_dialog_line_finished() -> void:
-	Cursor.show_cursor("gui" if D.current_dialog else "normal")
+	Cursor.show_cursor("gui" if PopochiuUtils.d.current_dialog else "normal")
 
 
 ## Called when a [PopochiuDialog] starts. It shows the [code]"gui"[/code] cursor.

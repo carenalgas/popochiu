@@ -23,7 +23,6 @@ func _ready():
 
 
 func _input(event: InputEvent) -> void:
-	# TODO: This was `if D.current_dialog:`. Check if everything works as expected
 	if G.is_blocked: return
 	
 	if event is InputEventMouseMotion:

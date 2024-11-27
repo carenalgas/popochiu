@@ -92,7 +92,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	
 	if PopochiuUtils.i.active or is_showing_dialog_line: return
 	
-	Cursor.show_cursor("gui" if D.current_dialog else "normal")
+	Cursor.show_cursor("gui" if PopochiuUtils.d.current_dialog else "normal")
 
 
 ## Called when the mouse enters (hovers) [param inventory_item]. It changes the texture of the
@@ -136,7 +136,7 @@ func _on_dialog_line_started() -> void:
 func _on_dialog_line_finished() -> void:
 	is_showing_dialog_line = false
 	
-	if D.current_dialog:
+	if PopochiuUtils.d.current_dialog:
 		Cursor.show_cursor("gui")
 	elif PopochiuUtils.e.hovered:
 		Cursor.show_cursor(Cursor.get_type_name(PopochiuUtils.e.hovered.cursor))

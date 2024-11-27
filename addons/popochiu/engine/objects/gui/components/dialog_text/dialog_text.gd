@@ -76,7 +76,7 @@ func play_text(props: Dictionary) -> void:
 	_dialog_pos = props.position
 	
 	if PopochiuConfig.should_talk_gibberish():
-		msg = D.create_gibberish(msg)
+		msg = PopochiuUtils.d.create_gibberish(msg)
 	
 	# Call the virtual method that modifies the size of the RichTextLabel in case the dialog style
 	# requires it.

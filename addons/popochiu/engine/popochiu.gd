@@ -359,7 +359,7 @@ func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
 ## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuIDialog.get_instance].
 func get_dialog(script_name: String) -> PopochiuDialog:
-	return D.get_instance(script_name)
+	return PopochiuUtils.d.get_instance(script_name)
 
 
 ## Adds an action, represented by [param data], to the [member history] of actions. 
@@ -482,8 +482,8 @@ func save_game(slot := 1, description := "") -> void:
 func load_game(slot := 1) -> void:
 	PopochiuUtils.i.clean_inventory(true)
 	
-	if D.current_dialog:
-		D.current_dialog.stop()
+	if PopochiuUtils.d.current_dialog:
+		PopochiuUtils.d.current_dialog.stop()
 	
 	loaded_game = _saveload.load_game(slot)
 	
