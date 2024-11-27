@@ -11,7 +11,7 @@ func _on_start() -> void:
 #	await C.player.say("Hi")
 #	await C.Popsy.say("Oh! Hi...")
 	# (!) It MUST always use an await
-	await E.get_tree().process_frame
+	await PopochiuUtils.e.get_tree().process_frame
 
 
 func _option_selected(opt: PopochiuDialogOption) -> void:
