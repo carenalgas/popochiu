@@ -60,16 +60,16 @@ func _input(event: InputEvent) -> void:
 	
 	if rect.has_point(get_global_mouse_position()):
 		_is_mouse_hover = true
-		Cursor.show_cursor("gui")
+		PopochiuUtils.cursor.show_cursor("gui")
 	elif _is_mouse_hover:
 		_is_mouse_hover = false
 		
 		if PopochiuUtils.d.current_dialog:
-			Cursor.show_cursor("gui")
+			PopochiuUtils.cursor.show_cursor("gui")
 		elif PopochiuUtils.g.gui.is_showing_dialog_line:
-			Cursor.show_cursor("wait")
+			PopochiuUtils.cursor.show_cursor("wait")
 		else:
-			Cursor.show_cursor("normal")
+			PopochiuUtils.cursor.show_cursor("normal")
 	
 	if _is_hidden and rect.has_point(get_global_mouse_position()):
 		_open()

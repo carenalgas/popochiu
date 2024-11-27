@@ -175,7 +175,7 @@ func _ready() -> void:
 			ii.add(false)
 	
 	if settings.scale_gui:
-		Cursor.scale_cursor(scale)
+		PopochiuUtils.cursor.scale_cursor(scale)
 	
 	PopochiuUtils.r.store_states()
 	
@@ -629,7 +629,7 @@ func set_dialog_style(value: int) -> void:
 #region Private ####################################################################################
 func _set_in_room(value: bool) -> void:
 	in_room = value
-	Cursor.toggle_visibility(in_room)
+	PopochiuUtils.cursor.toggle_visibility(in_room)
 
 
 func _queueable(node: Object, method: String, params := [], signal_name := "") -> void:

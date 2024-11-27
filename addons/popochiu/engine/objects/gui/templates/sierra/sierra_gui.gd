@@ -21,8 +21,8 @@ extends PopochiuGraphicInterface
 func _ready() -> void:
 	super()
 	
-	Cursor.replace_frames($Cursor)
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.replace_frames($Cursor)
+	PopochiuUtils.cursor.show_cursor()
 	
 	$Cursor.hide()
 	
@@ -95,29 +95,29 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 
 ## Called when a dialogue line starts. It shows the [code]"wait"[/code] cursor.
 func _on_dialog_line_started() -> void:
-	Cursor.hide()
+	PopochiuUtils.cursor.hide()
 
 
 ## Called when a dialogue line finishes. It shows the [code]"normal"[/code] cursor.
 func _on_dialog_line_finished() -> void:
-	Cursor.show()
+	PopochiuUtils.cursor.show()
 
 
 ## Called when a [PopochiuDialog] starts. It shows the [code]"gui"[/code] cursor.
 func _on_dialog_started(_dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor("gui")
+	PopochiuUtils.cursor.show_cursor("gui")
 
 
 ## Called when the running [PopochiuDialog] shows its options on screen. It shows the
 ## [code]"gui"[/code] cursor.
 func _on_dialog_options_shown() -> void:
-	Cursor.unblock()
-	Cursor.show_cursor("gui")
+	PopochiuUtils.cursor.unblock()
+	PopochiuUtils.cursor.show_cursor("gui")
 
 
 ## Called when a [PopochiuDialog] finishes. It shows the cursor of the last active command.
 func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
+	PopochiuUtils.cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
 
 
 ## Called when the active [PopochiuInventoryItem] changes. If there is one, it hides the main cursor
@@ -125,11 +125,11 @@ func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
 ## default cursor.
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if is_instance_valid(item):
-		Cursor.set_secondary_cursor_texture(item.texture, true)
-		Cursor.hide_main_cursor()
+		PopochiuUtils.cursor.set_secondary_cursor_texture(item.texture, true)
+		PopochiuUtils.cursor.hide_main_cursor()
 	else:
-		Cursor.remove_secondary_cursor_texture()
-		Cursor.show_cursor()
+		PopochiuUtils.cursor.remove_secondary_cursor_texture()
+		PopochiuUtils.cursor.show_cursor()
 
 
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText

@@ -166,7 +166,7 @@ func goto_room(
 	
 	# Prevent the GUI from showing info coming from the previous room
 	PopochiuUtils.g.show_hover_text()
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.show_cursor()
 	
 	if is_instance_valid(PopochiuUtils.c.player) and Engine.get_process_frames() > 0:
 		PopochiuUtils.c.player.last_room = current.script_name

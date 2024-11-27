@@ -38,7 +38,7 @@ func _process(delta: float) -> void:
 		label.position /= PopochiuUtils.e.scale
 	
 	label.position -= label.size / 2.0
-	label.position.y -= Cursor.get_cursor_height() / 2
+	label.position.y -= PopochiuUtils.cursor.get_cursor_height() / 2
 	
 	# Check viewport limits
 	if label.position.x < 0.0:
@@ -78,7 +78,7 @@ func _show_text(txt := "") -> void:
 		super(txt)
 	
 	if follows_cursor and _can_change_size:
-		label.size += Vector2.ONE * (Cursor.get_cursor_height() / 2)
+		label.size += Vector2.ONE * (PopochiuUtils.cursor.get_cursor_height() / 2)
 		# Adding 2.0 fixes a visual bug that was showing the first character of the text cutted
 		label.size.x += 2.0
 

@@ -65,7 +65,7 @@ func open() -> void:
 	_open()
 	
 	PopochiuUtils.g.block()
-	Cursor.show_cursor("gui", true)
+	PopochiuUtils.cursor.show_cursor("gui", true)
 	# Never open a popup on top of another
 	if not PopochiuUtils.e.gui.popups_stack.is_empty():
 		PopochiuUtils.e.gui.popups_stack.back().hide()
@@ -81,7 +81,7 @@ func close() -> void:
 	
 	if PopochiuUtils.e.gui.popups_stack.is_empty():
 		PopochiuUtils.g.unblock()
-		Cursor.unblock()
+		PopochiuUtils.cursor.unblock()
 	else:
 		# Idempotent call, no need to check the mode
 		PopochiuUtils.e.gui.popups_stack.back().show()

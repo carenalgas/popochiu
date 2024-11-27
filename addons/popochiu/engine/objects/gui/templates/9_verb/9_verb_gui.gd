@@ -28,8 +28,8 @@ var _return_to_walk_to := false
 func _ready() -> void:
 	super()
 	
-	Cursor.replace_frames($Cursor)
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.replace_frames($Cursor)
+	PopochiuUtils.cursor.show_cursor()
 	
 	$Cursor.hide()
 	
@@ -86,12 +86,12 @@ func _on_unblocked() -> void:
 
 ## Called when [method G.show_system_text] is executed. Shows the [code]"wait"[/code] cursor.
 func _on_system_text_shown(_msg: String) -> void:
-	Cursor.show_cursor("wait")
+	PopochiuUtils.cursor.show_cursor("wait")
 
 
 ## Called when [method G.show_system_text] is executed. Shows the [code]"normal"[/code] cursor.
 func _on_system_text_hidden() -> void:
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.show_cursor()
 
 
 ## Called when the mouse enters (hovers) [param clickable]. It displays a text with the
@@ -116,7 +116,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	
 	if clickable.get("suggested_command"):
 		_9_verb_panel.highlight_command(clickable.suggested_command, false)
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.show_cursor()
 	
 	if PopochiuUtils.i.active:
 		_show_command_on(PopochiuUtils.i.active.description)
@@ -134,7 +134,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 		PopochiuUtils.e.current_command = NineVerbCommands.Commands.USE
 	
 	_9_verb_panel.highlight_command(NineVerbCommands.Commands.LOOK_AT)
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.show_cursor()
 	
 	if PopochiuUtils.i.active:
 		_show_command_on(PopochiuUtils.i.active.description, inventory_item.description)
@@ -142,15 +142,15 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 		PopochiuUtils.g.show_hover_text(inventory_item.description)
 
 
-## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component and
-## shows the [code]"normal"[/code] cursor.
+## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component
+## and shows the [code]"normal"[/code] cursor.
 func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	if not PopochiuUtils.i.active and _return_to_walk_to:
 		PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
 		_return_to_walk_to = false
 	
 	_9_verb_panel.highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.show_cursor()
 	
 	if PopochiuUtils.i.active:
 		_show_command_on(PopochiuUtils.i.active.description)
@@ -161,30 +161,30 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 
 ## Called when a dialogue line starts. It shows the [code]"wait"[/code] cursor.
 func _on_dialog_line_started() -> void:
-	Cursor.show_cursor("wait")
+	PopochiuUtils.cursor.show_cursor("wait")
 
 
 ## Called when a dialogue line finishes. It shows the [code]"gui"[/code] cursor if there is an
 ## active [PopochiuDialog], otherwise it shows the [code]"normal"[/code] cursor.
 func _on_dialog_line_finished() -> void:
-	Cursor.show_cursor("gui" if PopochiuUtils.d.current_dialog else "normal")
+	PopochiuUtils.cursor.show_cursor("gui" if PopochiuUtils.d.current_dialog else "normal")
 
 
 ## Called when a [PopochiuDialog] starts. It shows the [code]"gui"[/code] cursor.
 func _on_dialog_started(_dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor("gui")
+	PopochiuUtils.cursor.show_cursor("gui")
 
 
 ## Called when the running [PopochiuDialog] shows its options on screen. It shows the
 ## [code]"gui"[/code] cursor.
 func _on_dialog_options_shown() -> void:
-	Cursor.unblock()
-	Cursor.show_cursor("gui")
+	PopochiuUtils.cursor.unblock()
+	PopochiuUtils.cursor.show_cursor("gui")
 
 
 ## Called when a [PopochiuDialog] finishes. It shows the [code]"normal"[/code] cursor.
 func _on_dialog_finished(_dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.show_cursor()
 
 
 ## Called when [param item] is selected in the inventory (i.e. by clicking it). For this GUI, this

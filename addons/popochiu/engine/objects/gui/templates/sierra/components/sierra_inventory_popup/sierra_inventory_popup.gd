@@ -30,13 +30,13 @@ func _open() -> void:
 
 func _close() -> void:
 	if PopochiuUtils.i.active:
-		Cursor.set_secondary_cursor_texture(PopochiuUtils.i.active.texture)
-		Cursor.hide_main_cursor()
+		PopochiuUtils.cursor.set_secondary_cursor_texture(PopochiuUtils.i.active.texture)
+		PopochiuUtils.cursor.hide_main_cursor()
 	else:
 		if PopochiuUtils.e.current_command == -1:
 			PopochiuUtils.e.current_command = _command_when_opened
 		
-		Cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
+		PopochiuUtils.cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
 
 
 #endregion
@@ -61,7 +61,7 @@ func _select_command(command: int) -> void:
 	PopochiuUtils.e.current_command = command
 	
 	# Force changing the cursor passing `true` as second parameter
-	Cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case(), true)
+	PopochiuUtils.cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case(), true)
 
 
 #endregion

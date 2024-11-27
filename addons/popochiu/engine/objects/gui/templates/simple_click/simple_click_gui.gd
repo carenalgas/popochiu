@@ -22,8 +22,8 @@ func _ready() -> void:
 	settings_bar.option_selected.connect(_on_settings_option_selected)
 	
 	# Connect to autoloads' signals
-	Cursor.replace_frames($Cursor)
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.replace_frames($Cursor)
+	PopochiuUtils.cursor.show_cursor()
 	
 	$Cursor.hide()
 
@@ -33,40 +33,42 @@ func _ready() -> void:
 #region Virtual ####################################################################################
 ## Called when the GUI is blocked and not intended to handle input events.
 func _on_blocked(props := { blocking = true }) -> void:
-	Cursor.show_cursor("wait")
-	Cursor.is_blocked = true
+	PopochiuUtils.cursor.show_cursor("wait")
+	PopochiuUtils.cursor.is_blocked = true
 
 
 ## Called when the GUI is unblocked and can handle input events again.
 func _on_unblocked() -> void:
-	Cursor.is_blocked = false
+	PopochiuUtils.cursor.is_blocked = false
 	
 	if PopochiuUtils.i.active:
-		Cursor.hide_main_cursor()
-		Cursor.show_secondary_cursor()
+		PopochiuUtils.cursor.hide_main_cursor()
+		PopochiuUtils.cursor.show_secondary_cursor()
 	elif PopochiuUtils.e.hovered:
 		# Fixes #315 by showing the right cursor when it is over a PopochiuClickable after closing
 		# the SystemText component
-		Cursor.show_cursor(Cursor.get_type_name(PopochiuUtils.e.hovered.cursor))
+		PopochiuUtils.cursor.show_cursor(
+			PopochiuUtils.cursor.get_type_name(PopochiuUtils.e.hovered.cursor)
+		)
 	else:
-		Cursor.show_cursor(get_cursor_name())
+		PopochiuUtils.cursor.show_cursor(get_cursor_name())
 
 
 ## Called when a text is shown in the [SystemText] component. This erases the text in the
 ## [HoverText] component and shows the [code]"wait"[/code] cursor.
 func _on_system_text_shown(msg: String) -> void:
 	PopochiuUtils.g.show_hover_text()
-	Cursor.show_cursor("wait", true)
+	PopochiuUtils.cursor.show_cursor("wait", true)
 
 
 ## Called when the [SystemText] component hides. If an [PopochiuInventoryItem] is active, the cursor
 ## takes its texture, otherwise it takes its default one.
 func _on_system_text_hidden() -> void:
 	if PopochiuUtils.i.active:
-		Cursor.hide_main_cursor()
-		Cursor.show_secondary_cursor()
+		PopochiuUtils.cursor.hide_main_cursor()
+		PopochiuUtils.cursor.show_secondary_cursor()
 	else:
-		Cursor.show_cursor()
+		PopochiuUtils.cursor.show_cursor()
 
 
 ## Called when the mouse enters (hovers) [param clickable]. It changes the texture of the cursor
@@ -76,7 +78,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
 	if not (PopochiuUtils.i.active or is_showing_dialog_line):
-		Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
+		PopochiuUtils.cursor.show_cursor(PopochiuUtils.cursor.get_type_name(clickable.cursor))
 	if not PopochiuUtils.i.active:
 		PopochiuUtils.g.show_hover_text(clickable.description)
 	else:
@@ -92,7 +94,7 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	
 	if PopochiuUtils.i.active or is_showing_dialog_line: return
 	
-	Cursor.show_cursor("gui" if PopochiuUtils.d.current_dialog else "normal")
+	PopochiuUtils.cursor.show_cursor("gui" if PopochiuUtils.d.current_dialog else "normal")
 
 
 ## Called when the mouse enters (hovers) [param inventory_item]. It changes the texture of the
@@ -102,7 +104,7 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 	if PopochiuUtils.g.is_blocked: return
 	
 	if not PopochiuUtils.i.active:
-		Cursor.show_cursor(Cursor.get_type_name(inventory_item.cursor))
+		PopochiuUtils.cursor.show_cursor(PopochiuUtils.cursor.get_type_name(inventory_item.cursor))
 		PopochiuUtils.g.show_hover_text(inventory_item.description)
 	elif PopochiuUtils.i.active != inventory_item:
 		PopochiuUtils.g.show_hover_text(
@@ -121,14 +123,14 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 	
 	if PopochiuUtils.i.active or $SettingsBar.is_open(): return
 	
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.show_cursor()
 
 
 ## Called when a dialog line starts. It shows the [code]"wait"[/code] cursor.
 func _on_dialog_line_started() -> void:
 	is_showing_dialog_line = true
 	
-	Cursor.show_cursor("wait")
+	PopochiuUtils.cursor.show_cursor("wait")
 
 
 ## Called when a dialog line finishes. It shows the [code]"normal"[/code] cursor if there is no
@@ -137,30 +139,32 @@ func _on_dialog_line_finished() -> void:
 	is_showing_dialog_line = false
 	
 	if PopochiuUtils.d.current_dialog:
-		Cursor.show_cursor("gui")
+		PopochiuUtils.cursor.show_cursor("gui")
 	elif PopochiuUtils.e.hovered:
-		Cursor.show_cursor(Cursor.get_type_name(PopochiuUtils.e.hovered.cursor))
+		PopochiuUtils.cursor.show_cursor(
+			PopochiuUtils.cursor.get_type_name(PopochiuUtils.e.hovered.cursor)
+		)
 	else:
-		Cursor.show_cursor("normal")
+		PopochiuUtils.cursor.show_cursor("normal")
 
 
 ## Called when a [PopochiuDialog] starts. It shows the [code]"use"[/code] cursor and clears the
 ## [HoverText] component.
 func _on_dialog_started(dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor("gui")
+	PopochiuUtils.cursor.show_cursor("gui")
 	PopochiuUtils.g.show_hover_text()
 
 
 ## Called when the running [PopochiuDialog] shows its options on screen. It shows the
 ## [code]"gui"[/code] cursor.
 func _on_dialog_options_shown() -> void:
-	Cursor.unblock()
-	Cursor.show_cursor("gui")
+	PopochiuUtils.cursor.unblock()
+	PopochiuUtils.cursor.show_cursor("gui")
 
 
 ## Called when a [PopochiuDialog] finishes. It shows the default cursor.
 func _on_dialog_finished(dialog: PopochiuDialog) -> void:
-	Cursor.show_cursor()
+	PopochiuUtils.cursor.show_cursor()
 
 
 ## Called when the active [PopochiuInventoryItem] changes. If there is one, it hides the main cursor
@@ -168,11 +172,11 @@ func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 ## default cursor.
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if is_instance_valid(item):
-		Cursor.set_secondary_cursor_texture(item.texture)
-		Cursor.hide_main_cursor()
+		PopochiuUtils.cursor.set_secondary_cursor_texture(item.texture)
+		PopochiuUtils.cursor.hide_main_cursor()
 	else:
-		Cursor.remove_secondary_cursor_texture()
-		Cursor.show_cursor()
+		PopochiuUtils.cursor.remove_secondary_cursor_texture()
+		PopochiuUtils.cursor.show_cursor()
 
 
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText

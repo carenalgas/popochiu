@@ -14,7 +14,7 @@ func _on_command_selected() -> void:
 		(b as TextureButton).set_pressed_no_signal(false)
 	
 	(get_child(PopochiuUtils.e.current_command) as TextureButton).set_pressed_no_signal(true)
-	Cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
+	PopochiuUtils.cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
 
 
 #endregion
