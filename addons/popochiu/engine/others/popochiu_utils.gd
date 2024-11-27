@@ -138,7 +138,7 @@ static func unpack_vector_2(source) -> Vector2:
 #endregion
 
 #region SetGet #####################################################################################
-func get_popochiu() -> Popochiu:
+static func get_popochiu() -> Popochiu:
 	if not is_instance_valid(e):
 		if Engine.get_singleton(&"P"):
 			e = Engine.get_singleton(&"P")
@@ -147,7 +147,7 @@ func get_popochiu() -> Popochiu:
 	return e
 
 
-func get_iroom() -> PopochiuIRoom:
+static func get_iroom() -> PopochiuIRoom:
 	if not is_instance_valid(r):
 		if Engine.get_singleton(&"R"):
 			r = Engine.get_singleton(&"R")
@@ -156,7 +156,7 @@ func get_iroom() -> PopochiuIRoom:
 	return r
 
 
-func get_icharacter() -> PopochiuICharacter:
+static func get_icharacter() -> PopochiuICharacter:
 	if not is_instance_valid(c):
 		if Engine.get_singleton(&"C"):
 			c = Engine.get_singleton(&"C")
@@ -165,7 +165,7 @@ func get_icharacter() -> PopochiuICharacter:
 	return c
 
 
-func get_iinventory() -> PopochiuIInventory:
+static func get_iinventory() -> PopochiuIInventory:
 	if not is_instance_valid(i):
 		if Engine.get_singleton(&"I"):
 			i = Engine.get_singleton(&"I")
@@ -174,7 +174,7 @@ func get_iinventory() -> PopochiuIInventory:
 	return i
 
 
-func get_idialog() -> PopochiuIDialog:
+static func get_idialog() -> PopochiuIDialog:
 	if not is_instance_valid(d):
 		if Engine.get_singleton(&"D"):
 			d = Engine.get_singleton(&"D")
@@ -183,7 +183,7 @@ func get_idialog() -> PopochiuIDialog:
 	return d
 
 
-func get_iaudio() -> PopochiuIAudio:
+static func get_iaudio() -> PopochiuIAudio:
 	if not is_instance_valid(a):
 		if Engine.get_singleton(&"A"):
 			a = Engine.get_singleton(&"A")
@@ -192,7 +192,7 @@ func get_iaudio() -> PopochiuIAudio:
 	return a
 
 
-func get_igraphic_interface() -> PopochiuIGraphicInterface:
+static func get_igraphic_interface() -> PopochiuIGraphicInterface:
 	if not is_instance_valid(g):
 		if Engine.get_singleton(&"G"):
 			g = Engine.get_singleton(&"G")
@@ -201,7 +201,7 @@ func get_igraphic_interface() -> PopochiuIGraphicInterface:
 	return g
 
 
-func get_popochiu_cursor() -> PopochiuCursor:
+static func get_popochiu_cursor() -> PopochiuCursor:
 	if not is_instance_valid(cursor):
 		if Engine.get_singleton(&"Cursor"):
 			cursor = Engine.get_singleton(&"Cursor")
