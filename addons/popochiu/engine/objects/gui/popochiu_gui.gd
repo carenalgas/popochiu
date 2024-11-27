@@ -37,7 +37,7 @@ func _ready():
 	D.dialog_started.connect(_on_dialog_started)
 	G.dialog_options_shown.connect(_on_dialog_options_shown)
 	D.dialog_finished.connect(_on_dialog_finished)
-	I.item_selected.connect(_on_inventory_item_selected)
+	PopochiuUtils.i.item_selected.connect(_on_inventory_item_selected)
 	PopochiuUtils.e.game_saved.connect(_on_game_saved)
 	PopochiuUtils.e.game_loaded.connect(_on_game_loaded)
 	

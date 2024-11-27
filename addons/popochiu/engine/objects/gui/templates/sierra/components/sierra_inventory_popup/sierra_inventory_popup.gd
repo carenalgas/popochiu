@@ -29,8 +29,8 @@ func _open() -> void:
 
 
 func _close() -> void:
-	if I.active:
-		Cursor.set_secondary_cursor_texture(I.active.texture)
+	if PopochiuUtils.i.active:
+		Cursor.set_secondary_cursor_texture(PopochiuUtils.i.active.texture)
 		Cursor.hide_main_cursor()
 	else:
 		if PopochiuUtils.e.current_command == -1:
@@ -55,8 +55,8 @@ func _on_talk_pressed() -> void:
 
 
 func _select_command(command: int) -> void:
-	if is_instance_valid(I.active):
-		I.active = null
+	if is_instance_valid(PopochiuUtils.i.active):
+		PopochiuUtils.i.active = null
 	
 	PopochiuUtils.e.current_command = command
 	

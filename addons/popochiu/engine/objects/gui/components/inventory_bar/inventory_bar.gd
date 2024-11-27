@@ -25,11 +25,11 @@ func _ready():
 	# Connect to singletons signals
 	G.blocked.connect(_on_gui_blocked)
 	G.unblocked.connect(_on_gui_unblocked)
-	I.item_added.connect(_add_item)
-	I.item_removed.connect(_remove_item)
-	I.item_replaced.connect(_replace_item)
-	I.inventory_show_requested.connect(_show_and_hide)
-	I.inventory_hide_requested.connect(_close)
+	PopochiuUtils.i.item_added.connect(_add_item)
+	PopochiuUtils.i.item_removed.connect(_remove_item)
+	PopochiuUtils.i.item_replaced.connect(_replace_item)
+	PopochiuUtils.i.inventory_show_requested.connect(_show_and_hide)
+	PopochiuUtils.i.inventory_hide_requested.connect(_close)
 	
 	# Check if there are already items in the inventory (set manually in the scene)
 	for ii in box.get_children():
@@ -97,7 +97,7 @@ func _on_tween_finished() -> void:
 
 
 func _change_cursor(item: PopochiuInventoryItem) -> void:
-	I.set_active_item(item)
+	PopochiuUtils.i.set_active_item(item)
 
 
 func _on_gui_blocked() -> void:
@@ -140,7 +140,7 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 	else:
 		await get_tree().process_frame
 	
-	I.item_add_done.emit(item)
+	PopochiuUtils.i.item_add_done.emit(item)
 
 
 func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
@@ -157,14 +157,14 @@ func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 	
 	await get_tree().process_frame
 	
-	I.item_remove_done.emit(item)
+	PopochiuUtils.i.item_remove_done.emit(item)
 
 
 func _replace_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
 	item.replace_by(new_item)
 	await get_tree().process_frame
 	
-	I.item_replace_done.emit()
+	PopochiuUtils.i.item_replace_done.emit()
 
 
 func _show_and_hide(time := 1.0) -> void:
@@ -177,7 +177,7 @@ func _show_and_hide(time := 1.0) -> void:
 	await tween.finished
 	
 	set_process_input(true)
-	I.inventory_shown.emit()
+	PopochiuUtils.i.inventory_shown.emit()
 
 
 #endregion

@@ -169,7 +169,7 @@ func _ready() -> void:
 	await get_tree().process_frame
 	
 	for key in settings.items_on_start:
-		var ii: PopochiuInventoryItem = I.get_item_instance(key)
+		var ii: PopochiuInventoryItem = PopochiuUtils.i.get_item_instance(key)
 		
 		if is_instance_valid(ii):
 			ii.add(false)
@@ -353,7 +353,7 @@ func get_character_instance(script_name: String) -> PopochiuCharacter:
 ## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuIInventory.get_instance].
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	return I.get_instance(script_name)
+	return PopochiuUtils.i.get_instance(script_name)
 
 
 ## @deprecated
@@ -480,7 +480,7 @@ func save_game(slot := 1, description := "") -> void:
 
 ## Loads the game in the given [param slot].
 func load_game(slot := 1) -> void:
-	I.clean_inventory(true)
+	PopochiuUtils.i.clean_inventory(true)
 	
 	if D.current_dialog:
 		D.current_dialog.stop()

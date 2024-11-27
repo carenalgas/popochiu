@@ -53,8 +53,8 @@ func fallback() -> void:
 ## [code]E.command_fallback()[/code] is triggered.[br][br]
 ## By default makes the character walk to the clicked [code]PopochiuClickable[/code].
 func walk_to() -> void:
-	if I.active:
-		I.active = null
+	if PopochiuUtils.i.active:
+		PopochiuUtils.i.active = null
 		return
 	
 	PopochiuUtils.c.player.walk_to_clicked()
@@ -121,23 +121,28 @@ func use() -> void:
 
 
 func _give_or_use(callback: Callable) -> void:
-	if I.active and PopochiuUtils.e.clicked:
-		callback.call(I.active, PopochiuUtils.e.clicked)
-	elif I.active and I.clicked and I.active != I.clicked:
-		callback.call(I.active, I.clicked)
-	elif I.clicked:
-		match I.clicked.last_click_button:
+	if PopochiuUtils.i.active and PopochiuUtils.e.clicked:
+		callback.call(PopochiuUtils.i.active, PopochiuUtils.e.clicked)
+	elif (
+		PopochiuUtils.i.active
+		and PopochiuUtils.i.clicked
+		and PopochiuUtils.i.active != PopochiuUtils.i.clicked
+	):
+		callback.call(PopochiuUtils.i.active, PopochiuUtils.i.clicked)
+	elif PopochiuUtils.i.clicked:
+		match PopochiuUtils.i.clicked.last_click_button:
 			MOUSE_BUTTON_LEFT:
-				I.clicked.set_active(true)
+				PopochiuUtils.i.clicked.set_active(true)
 			MOUSE_BUTTON_RIGHT:
 				# TODO: I'm not sure this is the right way to do this. Maybe GUIs should capture
 				# 		click inputs on clickables and inventory items. ----------------------------
 				PopochiuUtils.e.current_command = (
-					I.clicked.suggested_command if I.clicked.get("suggested_command")
+					PopochiuUtils.i.clicked.suggested_command
+					if PopochiuUtils.i.clicked.get("suggested_command")
 					else Commands.LOOK_AT
 				)
 				
-				I.clicked.handle_command(MOUSE_BUTTON_LEFT)
+				PopochiuUtils.i.clicked.handle_command(MOUSE_BUTTON_LEFT)
 				# ----------------------------------------------------------------------------------
 	else:	
 		await PopochiuUtils.c.player.say("What?")
@@ -150,12 +155,12 @@ func talk_to() -> void:
 
 
 func use_item_on(_item: PopochiuInventoryItem, _target: Node) -> void:
-	I.active = null
+	PopochiuUtils.i.active = null
 	await PopochiuUtils.c.player.say("I don't want to do that")
 
 
 func give_item_to(_item: PopochiuInventoryItem, _target: Node) -> void:
-	I.active = null
+	PopochiuUtils.i.active = null
 	await PopochiuUtils.c.player.say("I don't want to do that")
 
 #endregion

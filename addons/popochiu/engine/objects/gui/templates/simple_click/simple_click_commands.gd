@@ -18,10 +18,10 @@ func fallback() -> void:
 		else:
 			await RenderingServer.frame_post_draw
 	
-	if is_instance_valid(I.clicked):
-		if I.clicked.last_click_button == MOUSE_BUTTON_LEFT:
+	if is_instance_valid(PopochiuUtils.i.clicked):
+		if PopochiuUtils.i.clicked.last_click_button == MOUSE_BUTTON_LEFT:
 			await click_inventory_item()
-		elif I.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
+		elif PopochiuUtils.i.clicked.last_click_button == MOUSE_BUTTON_RIGHT:
 			await right_click_inventory_item()
 		else:
 			await RenderingServer.frame_post_draw
@@ -29,10 +29,10 @@ func fallback() -> void:
 
 ## Called when players click (LMB) a [PopochiuClickable].
 func click_clickable() -> void:
-	if I.active:
-		await G.show_system_text(
-			"Can't USE %s with %s" % [I.active.description, PopochiuUtils.e.clicked.description]
-		)
+	if PopochiuUtils.i.active:
+		await G.show_system_text("Can't USE %s with %s" % [
+			PopochiuUtils.i.active.description, PopochiuUtils.e.clicked.description
+		])
 	else:
 		await G.show_system_text("Can't INTERACT with it")
 
@@ -44,12 +44,12 @@ func right_click_clickable() -> void:
 
 ## Called when players click (LMB) a [PopochiuInvenoryItem].
 func click_inventory_item() -> void:
-	if I.active and I.active != I.clicked:
-		await G.show_system_text(
-			"Can't USE %s with %s" % [I.active.description, I.clicked.description]
-		)
+	if PopochiuUtils.i.active and PopochiuUtils.i.active != PopochiuUtils.i.clicked:
+		await G.show_system_text("Can't USE %s with %s" % [
+			PopochiuUtils.i.active.description, PopochiuUtils.i.clicked.description
+		])
 	else:
-		I.clicked.set_active()
+		PopochiuUtils.i.clicked.set_active()
 
 
 ## Called when players right click (RMB) a [PopochiuInvenoryItem].

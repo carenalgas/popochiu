@@ -51,11 +51,13 @@ func _input(event: InputEvent) -> void:
 		MOUSE_BUTTON_RIGHT:
 			accept_event()
 			
-			if I.active:
-				I.active = null
+			if PopochiuUtils.i.active:
+				PopochiuUtils.i.active = null
 				PopochiuUtils.e.current_command = SierraCommands.Commands.WALK
 			else:
-				PopochiuUtils.e.current_command = posmod(PopochiuUtils.e.current_command + 1, SierraCommands.Commands.size())
+				PopochiuUtils.e.current_command = posmod(
+					PopochiuUtils.e.current_command + 1, SierraCommands.Commands.size()
+				)
 
 
 #endregion
@@ -76,10 +78,12 @@ func _on_unblocked() -> void:
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if G.is_blocked: return
 	
-	if not I.active:
+	if not PopochiuUtils.i.active:
 		G.show_hover_text(clickable.description)
 	else:
-		G.show_hover_text("Use %s with %s" % [I.active.description, clickable.description])
+		G.show_hover_text(
+			"Use %s with %s" % [PopochiuUtils.i.active.description, clickable.description]
+		)
 
 
 ## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component.

@@ -41,7 +41,7 @@ func _on_blocked(props := { blocking = true }) -> void:
 func _on_unblocked() -> void:
 	Cursor.is_blocked = false
 	
-	if I.active:
+	if PopochiuUtils.i.active:
 		Cursor.hide_main_cursor()
 		Cursor.show_secondary_cursor()
 	elif PopochiuUtils.e.hovered:
@@ -62,7 +62,7 @@ func _on_system_text_shown(msg: String) -> void:
 ## Called when the [SystemText] component hides. If an [PopochiuInventoryItem] is active, the cursor
 ## takes its texture, otherwise it takes its default one.
 func _on_system_text_hidden() -> void:
-	if I.active:
+	if PopochiuUtils.i.active:
 		Cursor.hide_main_cursor()
 		Cursor.show_secondary_cursor()
 	else:
@@ -75,13 +75,13 @@ func _on_system_text_hidden() -> void:
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if G.is_blocked: return
 	
-	if not (I.active or is_showing_dialog_line):
+	if not (PopochiuUtils.i.active or is_showing_dialog_line):
 		Cursor.show_cursor(Cursor.get_type_name(clickable.cursor))
-	if not I.active:
+	if not PopochiuUtils.i.active:
 		G.show_hover_text(clickable.description)
 	else:
 		G.show_hover_text(
-			'Use %s with %s' % [I.active.description, clickable.description]
+			'Use %s with %s' % [PopochiuUtils.i.active.description, clickable.description]
 		)
 
 
@@ -90,7 +90,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	G.show_hover_text()
 	
-	if I.active or is_showing_dialog_line: return
+	if PopochiuUtils.i.active or is_showing_dialog_line: return
 	
 	Cursor.show_cursor("gui" if D.current_dialog else "normal")
 
@@ -101,12 +101,12 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	if G.is_blocked: return
 	
-	if not I.active:
+	if not PopochiuUtils.i.active:
 		Cursor.show_cursor(Cursor.get_type_name(inventory_item.cursor))
 		G.show_hover_text(inventory_item.description)
-	elif I.active != inventory_item:
+	elif PopochiuUtils.i.active != inventory_item:
 		G.show_hover_text(
-			'Use %s with %s' % [I.active.description, inventory_item.description]
+			'Use %s with %s' % [PopochiuUtils.i.active.description, inventory_item.description]
 		)
 	else:
 		G.show_hover_text(inventory_item.description)
@@ -119,7 +119,7 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 	
 	G.show_hover_text()
 	
-	if I.active or $SettingsBar.is_open(): return
+	if PopochiuUtils.i.active or $SettingsBar.is_open(): return
 	
 	Cursor.show_cursor()
 

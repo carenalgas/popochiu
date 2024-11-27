@@ -44,12 +44,12 @@ func _input(event: InputEvent) -> void:
 		
 		if not visible and rect.has_point(get_global_mouse_position()):
 			# Show the top menu
-			if not I.active:
+			if not PopochiuUtils.i.active:
 				Cursor.show_cursor("gui")
 			show()
 		elif visible and not rect.has_point(get_global_mouse_position()):
 			# Hide the top menu
-			if not I.active:
+			if not PopochiuUtils.i.active:
 				Cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
 			hide()
 

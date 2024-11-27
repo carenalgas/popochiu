@@ -66,12 +66,15 @@ func _show_text(txt := "") -> void:
 			PopochiuUtils.e.current_command == NineVerbCommands.Commands.WALK_TO
 			and is_instance_valid(PopochiuUtils.e.get_hovered())
 		):
-			super("%s %s" % [PopochiuUtils.e.get_current_command_name(), PopochiuUtils.e.get_hovered().description])
+			super("%s %s" % [
+				PopochiuUtils.e.get_current_command_name(),
+				PopochiuUtils.e.get_hovered().description
+			])
 		elif PopochiuUtils.e.current_command != NineVerbCommands.Commands.WALK_TO:
 			super(PopochiuUtils.e.get_current_command_name())
-	elif not txt.is_empty() and not I.active:
+	elif not txt.is_empty() and not PopochiuUtils.i.active:
 		super("%s %s" % [PopochiuUtils.e.get_current_command_name(), txt])
-	elif I.active:
+	elif PopochiuUtils.i.active:
 		super(txt)
 	
 	if follows_cursor and _can_change_size:

@@ -103,8 +103,8 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if clickable.get("suggested_command"):
 		_9_verb_panel.highlight_command(clickable.suggested_command)
 	
-	if I.active:
-		_show_command_on(I.active.description, clickable.description)
+	if PopochiuUtils.i.active:
+		_show_command_on(PopochiuUtils.i.active.description, clickable.description)
 	else:
 		G.show_hover_text(clickable.description)
 
@@ -118,8 +118,8 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 		_9_verb_panel.highlight_command(clickable.suggested_command, false)
 	Cursor.show_cursor()
 	
-	if I.active:
-		_show_command_on(I.active.description)
+	if PopochiuUtils.i.active:
+		_show_command_on(PopochiuUtils.i.active.description)
 		return
 	
 	G.show_hover_text()
@@ -136,8 +136,8 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 	_9_verb_panel.highlight_command(NineVerbCommands.Commands.LOOK_AT)
 	Cursor.show_cursor()
 	
-	if I.active:
-		_show_command_on(I.active.description, inventory_item.description)
+	if PopochiuUtils.i.active:
+		_show_command_on(PopochiuUtils.i.active.description, inventory_item.description)
 	else:
 		G.show_hover_text(inventory_item.description)
 
@@ -145,15 +145,15 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 ## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component and
 ## shows the [code]"normal"[/code] cursor.
 func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
-	if not I.active and _return_to_walk_to:
+	if not PopochiuUtils.i.active and _return_to_walk_to:
 		PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
 		_return_to_walk_to = false
 	
 	_9_verb_panel.highlight_command(NineVerbCommands.Commands.LOOK_AT, false)
 	Cursor.show_cursor()
 	
-	if I.active:
-		_show_command_on(I.active.description)
+	if PopochiuUtils.i.active:
+		_show_command_on(PopochiuUtils.i.active.description)
 		return
 	
 	G.show_hover_text()

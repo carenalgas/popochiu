@@ -141,11 +141,11 @@ func _unhandled_input(event: InputEvent):
 	
 	# Fix #224 Item should be removed only if the click was done anywhere in the room when the
 	# cursor is not hovering another object
-	if I.active:
+	if PopochiuUtils.i.active:
 		# Wait so PopochiuClickable can handle the interaction
 		await get_tree().create_timer(0.1).timeout
 		
-		I.set_active_item()
+		PopochiuUtils.i.set_active_item()
 		return
 	
 	if has_player and is_instance_valid(PopochiuUtils.c.player) and PopochiuUtils.c.player.can_move:

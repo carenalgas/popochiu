@@ -63,7 +63,7 @@ func save_game(slot := 1, description := "") -> bool:
 		description = description,
 		player = {
 			room = PopochiuUtils.r.current.script_name,
-			inventory = I.items,
+			inventory = PopochiuUtils.i.items,
 		},
 		rooms = {}, # Stores the state of each PopochiuRoomData
 		characters = {}, # Stores the state of each PopochiuCharacterData
@@ -127,7 +127,7 @@ func load_game(slot := 1) -> Dictionary:
 	
 	# Load inventory items
 	for item in loaded_data.player.inventory:
-		I.get_item_instance(item).add(false)
+		PopochiuUtils.i.get_item_instance(item).add(false)
 	
 	# Load main object states
 	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
@@ -202,7 +202,7 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 			"characters":
 				PopochiuUtils.c.characters_states[id] = state
 			"inventory_items":
-				I.items_states[id] = state
+				PopochiuUtils.i.items_states[id] = state
 			"dialogs":
 				D.trees[id] = state
 				_load_dialog_options(state, loaded_game[type][id].options)
