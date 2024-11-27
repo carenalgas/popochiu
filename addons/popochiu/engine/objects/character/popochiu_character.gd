@@ -431,7 +431,7 @@ func say(dialog: String, emo := "") -> void:
 
 	var vo_name := _get_vo_cue(emotion)
 	if not vo_name.is_empty() and PopochiuUtils.a.get(vo_name):
-		A[vo_name].play(false, global_position)
+		PopochiuUtils.a[vo_name].play(false, global_position)
 
 	PopochiuUtils.c.character_spoke.emit(self, dialog)
 
@@ -439,8 +439,8 @@ func say(dialog: String, emo := "") -> void:
 
 	# Stop the voice if it is still playing (feature #202)
 	# Fix: Check if the vo_name is valid in order to stop it
-	if not vo_name.is_empty() and A[vo_name].is_playing():
-		A[vo_name].stop(0.3)
+	if not vo_name.is_empty() and PopochiuUtils.a[vo_name].is_playing():
+		PopochiuUtils.a[vo_name].stop(0.3)
 
 	emotion = ''
 	idle()
