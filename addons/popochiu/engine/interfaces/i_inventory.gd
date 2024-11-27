@@ -75,6 +75,13 @@ var items_states := {}
 var _item_instances := {}
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"I", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Removes all the items that are currently in the inventory. If [param in_bg] is [code]true[/code],
 ## then the items are removed without calling [method PopochiuInventoryItem.discard] for each item.

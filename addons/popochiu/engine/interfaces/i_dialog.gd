@@ -56,6 +56,13 @@ var selected_option: PopochiuDialogOption = null
 var prev_dialog: PopochiuDialog = null
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"D", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Displays a list of [param options], similar to a branching dialog, and returns the selected
 ## [PopochiuDialogOption].

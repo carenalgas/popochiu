@@ -69,6 +69,10 @@ var gui: PopochiuGraphicInterface
 
 
 #region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"G", self)
+
+
 func _ready():
 	template = PopochiuResources.get_data_value("ui", "template", "")
 

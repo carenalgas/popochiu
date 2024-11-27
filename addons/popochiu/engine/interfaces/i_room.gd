@@ -30,6 +30,13 @@ var _room_instances := {}
 var _use_transition_on_room_change := true
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"R", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Retrieves the [PopochiuProp] with a [member PopochiuClickable.script_name] matching
 ## [param prop_name].

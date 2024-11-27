@@ -34,6 +34,13 @@ var characters_states := {}
 var _characters := {}
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"C", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Makes the Player-controlled Character (PC) move (NON-BLOCKING) to the
 ## [member PopochiuClickable.walk_to_point] position of the last clicked [PopochiuClickable] (i.e. a

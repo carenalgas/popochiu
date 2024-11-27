@@ -22,6 +22,13 @@ extends Node
 var twelfth_root_of_two := pow(2, (1.0 / 12))
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"A", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Transforms [param pitch] to a value that can be used to modify the
 ## [member AudioStreamPlayer.pitch_scale] or [member AudioStreamPlayer2D.pitch_scale].

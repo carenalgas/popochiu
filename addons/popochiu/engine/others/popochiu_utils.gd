@@ -3,6 +3,22 @@ class_name PopochiuUtils
 extends Node
 ## Utility functions for Popochiu.
 
+static var e: Popochiu = null:
+	get = get_popochiu
+static var r: PopochiuIRoom = null:
+	get = get_iroom
+static var c: PopochiuICharacter = null:
+	get = get_icharacter
+static var i: PopochiuIInventory = null:
+	get = get_iinventory
+static var d: PopochiuIDialog = null:
+	get = get_idialog
+static var a: PopochiuIAudio = null:
+	get = get_iaudio
+static var g: PopochiuIGraphicInterface = null:
+	get = get_igraphic_interface
+
+
 #region Public #####################################################################################
 ## Used by the GUI to get the position of [param node] in the scene transformed to the space of the
 ## [CanvasLayer] where it is is rendered.
@@ -114,6 +130,72 @@ static func unpack_vector_2(source) -> Vector2:
 	elif source is Vector2:
 		return source
 	return Vector2.ZERO
+
+
+#endregion
+
+#region SetGet #####################################################################################
+func get_popochiu() -> Popochiu:
+	if not is_instance_valid(e):
+		if Engine.get_singleton(&"P"):
+			e = Engine.get_singleton(&"P")
+		else:
+			e = Popochiu.new()
+	return e
+
+
+func get_iroom() -> PopochiuIRoom:
+	if not is_instance_valid(r):
+		if Engine.get_singleton(&"R"):
+			r = Engine.get_singleton(&"R")
+		else:
+			r = PopochiuIRoom.new()
+	return r
+
+
+func get_icharacter() -> PopochiuICharacter:
+	if not is_instance_valid(c):
+		if Engine.get_singleton(&"C"):
+			c = Engine.get_singleton(&"C")
+		else:
+			c = PopochiuICharacter.new()
+	return c
+
+
+func get_iinventory() -> PopochiuIInventory:
+	if not is_instance_valid(i):
+		if Engine.get_singleton(&"I"):
+			i = Engine.get_singleton(&"I")
+		else:
+			i = PopochiuIInventory.new()
+	return i
+
+
+func get_idialog() -> PopochiuIDialog:
+	if not is_instance_valid(d):
+		if Engine.get_singleton(&"D"):
+			d = Engine.get_singleton(&"D")
+		else:
+			d = PopochiuIDialog.new()
+	return d
+
+
+func get_iaudio() -> PopochiuIAudio:
+	if not is_instance_valid(a):
+		if Engine.get_singleton(&"A"):
+			a = Engine.get_singleton(&"A")
+		else:
+			a = PopochiuIAudio.new()
+	return a
+
+
+func get_igraphic_interface() -> PopochiuIGraphicInterface:
+	if not is_instance_valid(g):
+		if Engine.get_singleton(&"G"):
+			g = Engine.get_singleton(&"G")
+		else:
+			g = PopochiuIGraphicInterface.new()
+	return g
 
 
 #endregion

@@ -123,6 +123,10 @@ var _saveload: Resource = null
 
 
 #region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"P", self)
+
+
 func _ready() -> void:
 	set_process_input(false)
 	_saveload = load(SAVELOAD_PATH).new()
@@ -551,8 +555,8 @@ func register_command_without_id(command_name: String, fallback: Callable) -> in
 func command_fallback() -> void:
 	var fallback: Callable = commands_map[-1].fallback
 	
-	if commands_map.has(E.current_command):
-		fallback = commands_map[E.current_command].fallback
+	if commands_map.has(current_command):
+		fallback = commands_map[current_command].fallback
 	
 	await fallback.call()
 
