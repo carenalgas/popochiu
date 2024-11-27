@@ -72,11 +72,11 @@ func save_game(slot := 1, description := "") -> bool:
 		globals = {}, # Stores the state of Globals
 	}
 	
-	if C.player:
-		data.player.id = C.player.script_name
+	if PopochiuUtils.c.player:
+		data.player.id = PopochiuUtils.c.player.script_name
 		data.player.position = {
-			x = C.player.global_position.x,
-			y = C.player.global_position.y
+			x = PopochiuUtils.c.player.global_position.x,
+			y = PopochiuUtils.c.player.global_position.y
 		}
 	
 	# Go over each Popochiu type to save its current state -----------------------------------------
@@ -200,7 +200,7 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 			"rooms":
 				PopochiuUtils.r.rooms_states[id] = state
 			"characters":
-				C.characters_states[id] = state
+				PopochiuUtils.c.characters_states[id] = state
 			"inventory_items":
 				I.items_states[id] = state
 			"dialogs":

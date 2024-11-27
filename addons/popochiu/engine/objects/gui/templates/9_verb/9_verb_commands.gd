@@ -57,9 +57,9 @@ func walk_to() -> void:
 		I.active = null
 		return
 	
-	C.player.walk_to_clicked()
+	PopochiuUtils.c.player.walk_to_clicked()
 	
-	await C.player.move_ended
+	await PopochiuUtils.c.player.move_ended
 	
 	if (
 		PopochiuUtils.e.clicked and PopochiuUtils.e.clicked.get("suggested_command")
@@ -72,40 +72,40 @@ func walk_to() -> void:
 ## Called when [code]E.current_command == Commands.OPEN[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func open() -> void:
-	await C.player.say("Can't open that")
+	await PopochiuUtils.c.player.say("Can't open that")
 
 
 ## Called when [code]E.current_command == Commands.PICK_UP[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func pick_up() -> void:
-	await C.player.say("Not picking that up")
+	await PopochiuUtils.c.player.say("Not picking that up")
 
 
 ## Called when [code]E.current_command == Commands.PUSH[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func push() -> void:
-	await C.player.say("I don't want to push that")
+	await PopochiuUtils.c.player.say("I don't want to push that")
 
 
 ## Called when [code]E.current_command == Commands.CLOSE[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func close() -> void:
-	await C.player.say("Can't close that")
+	await PopochiuUtils.c.player.say("Can't close that")
 
 
 ## Called when [code]E.current_command == Commands.LOOK_AT[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func look_at() -> void:
 	if PopochiuUtils.e.clicked:
-		await C.player.face_clicked()
+		await PopochiuUtils.c.player.face_clicked()
 	
-	await C.player.say("I have nothing to say about that")
+	await PopochiuUtils.c.player.say("I have nothing to say about that")
 
 
 ## Called when [code]E.current_command == Commands.PULL[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func pull() -> void:
-	await C.player.say("I don't want to pull that")
+	await PopochiuUtils.c.player.say("I don't want to pull that")
 
 
 ## Called when [code]E.current_command == Commands.GIVE[/code] and [code]E.command_fallback()[/code]
@@ -140,22 +140,22 @@ func _give_or_use(callback: Callable) -> void:
 				I.clicked.handle_command(MOUSE_BUTTON_LEFT)
 				# ----------------------------------------------------------------------------------
 	else:	
-		await C.player.say("What?")
+		await PopochiuUtils.c.player.say("What?")
 
 
 ## Called when [code]E.current_command == Commands.TALK_TO[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func talk_to() -> void:
-	await C.player.say("Emmmm...")
+	await PopochiuUtils.c.player.say("Emmmm...")
 
 
 func use_item_on(_item: PopochiuInventoryItem, _target: Node) -> void:
 	I.active = null
-	await C.player.say("I don't want to do that")
+	await PopochiuUtils.c.player.say("I don't want to do that")
 
 
 func give_item_to(_item: PopochiuInventoryItem, _target: Node) -> void:
 	I.active = null
-	await C.player.say("I don't want to do that")
+	await PopochiuUtils.c.player.say("I don't want to do that")
 
 #endregion

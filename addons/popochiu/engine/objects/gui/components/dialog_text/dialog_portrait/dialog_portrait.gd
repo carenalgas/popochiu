@@ -11,7 +11,7 @@ func _ready() -> void:
 	super()
 	
 	# Connect to singletons signals
-	C.character_spoke.connect(_update_avatar)
+	PopochiuUtils.c.character_spoke.connect(_update_avatar)
 
 
 #endregion

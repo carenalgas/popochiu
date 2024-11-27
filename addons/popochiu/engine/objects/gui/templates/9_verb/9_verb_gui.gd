@@ -48,7 +48,7 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	# Make the PC move to the clicked point on RIGHT CLICK
 	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_RIGHT:
-		C.player.walk(PopochiuUtils.r.current.get_local_mouse_position())
+		PopochiuUtils.c.player.walk(PopochiuUtils.r.current.get_local_mouse_position())
 
 
 #endregion
@@ -215,8 +215,8 @@ func _on_game_loaded(loaded_game: Dictionary) -> void:
 
 #region Private ####################################################################################
 func _on_popochiu_ready() -> void:
-	if is_instance_valid(C.player):
-		C.player.started_walk_to.connect(_on_player_started_walk)
+	if is_instance_valid(PopochiuUtils.c.player):
+		PopochiuUtils.c.player.started_walk_to.connect(_on_player_started_walk)
 
 
 func _on_settings_requested() -> void:

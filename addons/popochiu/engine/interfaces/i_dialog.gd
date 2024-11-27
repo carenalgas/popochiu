@@ -92,7 +92,7 @@ func finish_dialog() -> void:
 
 ## Makes the Player-controlled Character (PC) to say the selected option in a branching dialog.
 func say_selected() -> void:
-	await C.player.say(selected_option.text)
+	await PopochiuUtils.c.player.say(selected_option.text)
 
 ## Transforms any text to gibberish preserving bbcode tags
 func create_gibberish(input_string: String) -> String:

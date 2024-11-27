@@ -433,7 +433,7 @@ func say(dialog: String, emo := "") -> void:
 	if not vo_name.is_empty() and A.get(vo_name):
 		A[vo_name].play(false, global_position)
 
-	C.character_spoke.emit(self, dialog)
+	PopochiuUtils.c.character_spoke.emit(self, dialog)
 
 	await G.dialog_line_finished
 

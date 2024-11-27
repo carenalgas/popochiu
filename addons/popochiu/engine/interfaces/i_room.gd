@@ -168,8 +168,8 @@ func goto_room(
 	G.show_hover_text()
 	Cursor.show_cursor()
 	
-	if is_instance_valid(C.player) and Engine.get_process_frames() > 0:
-		C.player.last_room = current.script_name
+	if is_instance_valid(PopochiuUtils.c.player) and Engine.get_process_frames() > 0:
+		PopochiuUtils.c.player.last_room = current.script_name
 	
 	# Store the room state
 	if store_state:
@@ -223,7 +223,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	# Update the core state
 	if PopochiuUtils.e.loaded_game:
-		C.player = C.get_character(PopochiuUtils.e.loaded_game.player.id)
+		PopochiuUtils.c.player = PopochiuUtils.c.get_character(PopochiuUtils.e.loaded_game.player.id)
 	else:
 		current.state.visited = true
 		current.state.visited_times += 1
@@ -239,7 +239,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	# Load the state of characters in the room
 	for chr_script_name: String in rooms_states[room.script_name]["characters"]:
 		var chr_dic: Dictionary = rooms_states[room.script_name]["characters"][chr_script_name]
-		var chr: PopochiuCharacter = C.get_character(chr_script_name)
+		var chr: PopochiuCharacter = PopochiuUtils.c.get_character(chr_script_name)
 		
 		if not chr: continue
 		
@@ -263,13 +263,13 @@ func room_readied(room: PopochiuRoom) -> void:
 	# add the PopochiuCharacter to the room
 	if (
 		current.has_player
-		and is_instance_valid(C.player)
-		and not current.has_character(C.player.script_name)
+		and is_instance_valid(PopochiuUtils.c.player)
+		and not current.has_character(PopochiuUtils.c.player.script_name)
 	):
-		current.add_character(C.player)
+		current.add_character(PopochiuUtils.c.player)
 		# Place the PC in the middle of the room
-		C.player.position = Vector2(PopochiuUtils.e.width, PopochiuUtils.e.height) / 2.0
-		await C.player.idle()
+		PopochiuUtils.c.player.position = Vector2(PopochiuUtils.e.width, PopochiuUtils.e.height) / 2.0
+		await PopochiuUtils.c.player.idle()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDREN:
@@ -297,7 +297,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	await current._on_room_entered()
 	
 	if PopochiuUtils.e.loaded_game:
-		C.player.global_position = Vector2(
+		PopochiuUtils.c.player.global_position = Vector2(
 			PopochiuUtils.e.loaded_game.player.position.x,
 			PopochiuUtils.e.loaded_game.player.position.y
 		)

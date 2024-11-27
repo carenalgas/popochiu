@@ -48,7 +48,7 @@ func _ready() -> void:
 	
 	# Connect to singletons events
 	PopochiuUtils.e.text_speed_changed.connect(change_speed)
-	C.character_spoke.connect(_show_dialogue)
+	PopochiuUtils.c.character_spoke.connect(_show_dialogue)
 	
 	continue_icon.hide()
 

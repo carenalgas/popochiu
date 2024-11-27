@@ -148,15 +148,15 @@ func _unhandled_input(event: InputEvent):
 		I.set_active_item()
 		return
 	
-	if has_player and is_instance_valid(C.player) and C.player.can_move:
+	if has_player and is_instance_valid(PopochiuUtils.c.player) and PopochiuUtils.c.player.can_move:
 		# Set this property to null in order to cancel any running interaction with a
 		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...))
 		PopochiuUtils.e.clicked = null
 		
-		if C.player.is_moving:
-			C.player.move_ended.emit()
+		if PopochiuUtils.c.player.is_moving:
+			PopochiuUtils.c.player.move_ended.emit()
 		
-		C.player.walk(get_local_mouse_position())
+		PopochiuUtils.c.player.walk(get_local_mouse_position())
 
 
 #endregion
@@ -218,7 +218,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 	update_characters_position(chr)
 	
 	if chr.follow_player:
-		C.player.started_walk_to.connect(_follow_player.bind(chr))
+		PopochiuUtils.c.player.started_walk_to.connect(_follow_player.bind(chr))
 	
 	chr.idle()
 

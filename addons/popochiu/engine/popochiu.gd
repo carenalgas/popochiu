@@ -180,7 +180,7 @@ func _ready() -> void:
 	PopochiuUtils.r.store_states()
 	
 	# Connect to autoloads' signals
-	C.character_spoke.connect(_on_character_spoke)
+	PopochiuUtils.c.character_spoke.connect(_on_character_spoke)
 	
 	# Assign property values to singletons and other global classes
 	G.gui = gui
@@ -347,7 +347,7 @@ func get_text(msg: String) -> String:
 ## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuICharacter.get_instance].
 func get_character_instance(script_name: String) -> PopochiuCharacter:
-	return C.get_instance(script_name)
+	return PopochiuUtils.c.get_instance(script_name)
 
 
 ## @deprecated

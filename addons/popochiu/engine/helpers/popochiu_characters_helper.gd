@@ -15,17 +15,17 @@ static var emo_or_time_pattern := r'(%s%s|%s%s)?' % [
 #region Public #####################################################################################
 ## Defines the [PopochiuCharacter] that will be controlled by players.
 static func define_player() -> void:
-	var pc := C.get_character(PopochiuResources.get_data_value("setup", "pc", ""))
+	var pc := PopochiuUtils.c.get_character(PopochiuResources.get_data_value("setup", "pc", ""))
 	
 	# If there is no explicitly configured Player-controlled Character (PC), select the first
 	# PopochiuCharacter on the list of characters to be the default PC
 	if not pc:
 		var characters := PopochiuResources.get_section_keys("characters")
 		if not characters.is_empty():
-			pc = C.get_character(characters[0])
+			pc = PopochiuUtils.c.get_character(characters[0])
 	
 	if pc:
-		C.player = pc
+		PopochiuUtils.c.player = pc
 
 
 ## Evals [param text] to know if it is a wait inside a dialog or if it is a [PopochiuCharacter]
@@ -62,7 +62,7 @@ static func _trigger_dialog_line(text: String) -> void:
 	var change_time := result.get_string("time")
 	var dialogue_line := result.get_string("line")
 	
-	var character := C.get_character(character_name)
+	var character := PopochiuUtils.c.get_character(character_name)
 	
 	if not character:
 		PopochiuUtils.print_warning("Character %s not found to play dialog line." % character_name)
