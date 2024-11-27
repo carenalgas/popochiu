@@ -5,10 +5,10 @@ signal option_selected(option_name: String)
 signal classic_sentence_toggled(pressed: bool)
 
 @onready var classic_sentence: CheckButton = %ClassicSentence
-@onready var save: Button = %Save
-@onready var load: Button = %Load
-@onready var history: Button = %History
-@onready var quit: Button = %Quit
+@onready var save_btn: Button = %Save
+@onready var load_btn: Button = %Load
+@onready var history_btn: Button = %History
+@onready var quit_btn: Button = %Quit
 
 
 #region Godot ######################################################################################
@@ -18,10 +18,10 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	
 	# Connect to child signals
-	save.pressed.connect(option_selected.emit.bind("save"))
-	load.pressed.connect(option_selected.emit.bind("load"))
-	history.pressed.connect(option_selected.emit.bind("history"))
-	quit.pressed.connect(option_selected.emit.bind("quit"))
+	save_btn.pressed.connect(option_selected.emit.bind("save"))
+	load_btn.pressed.connect(option_selected.emit.bind("load"))
+	history_btn.pressed.connect(option_selected.emit.bind("history"))
+	quit_btn.pressed.connect(option_selected.emit.bind("quit"))
 	classic_sentence.toggled.connect(_on_classic_sentence_toggled)
 	
 	# Connect to autoloads signals
@@ -30,7 +30,7 @@ func _ready() -> void:
 	PopochiuUtils.e.game_load_started.connect(close)
 	
 	if OS.has_feature("web"):
-		quit.hide()
+		quit_btn.hide()
 
 
 #endregion

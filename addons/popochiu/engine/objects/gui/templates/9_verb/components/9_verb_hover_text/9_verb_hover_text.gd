@@ -31,7 +31,7 @@ func _ready() -> void:
 	PopochiuUtils.e.ready.connect(set.bind("_can_change_size", true))
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	label.position = get_viewport().get_mouse_position()
 	
 	if PopochiuUtils.e.settings.scale_gui:

@@ -21,6 +21,7 @@ func highlight_command(command: int, highlighted := true) -> void:
 	var btn: BaseButton = find_child(PopochiuUtils.e.get_command_name(command).to_pascal_case())
 	
 	if btn:
+		@warning_ignore("standalone_ternary")
 		btn.grab_focus() if highlighted else btn.release_focus()
 
 

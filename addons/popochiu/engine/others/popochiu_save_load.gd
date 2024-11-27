@@ -85,7 +85,7 @@ func save_game(slot := 1, description := "") -> bool:
 	
 	# Save PopochiuGlobals.gd (Globals) ------------------------------------------------------------
 	# prop = {class_name, hint, hint_string, name, type, usage}
-	for prop in Globals.get_script().get_script_property_list():
+	for prop in PopochiuUtils.globals.get_script().get_script_property_list():
 		if not prop.type in PopochiuResources.VALID_TYPES: continue
 		
 		# Check if the property is a script variable (8192)
@@ -93,10 +93,10 @@ func save_game(slot := 1, description := "") -> bool:
 		if prop.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or prop.usage == (
 			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
 		):
-			data.globals[prop.name] = Globals[prop.name]
+			data.globals[prop.name] = PopochiuUtils.globals[prop.name]
 	
-	if Globals.has_method("on_save"):
-		data.globals.custom_data = Globals.on_save()
+	if PopochiuUtils.globals.has_method("on_save"):
+		data.globals.custom_data = PopochiuUtils.globals.on_save()
 	
 	if data.globals.is_empty(): data.erase("globals")
 	
@@ -137,13 +137,13 @@ func load_game(slot := 1) -> Dictionary:
 	# Load globals
 	if loaded_data.has("globals"):
 		for prop in loaded_data.globals:
-			if typeof(Globals.get(prop)) == TYPE_NIL: continue
+			if typeof(PopochiuUtils.globals.get(prop)) == TYPE_NIL: continue
 			
-			Globals[prop] = loaded_data.globals[prop]
+			PopochiuUtils.globals[prop] = loaded_data.globals[prop]
 		
 		if loaded_data.globals.has("custom_data")\
-		and Globals.has_method("on_load"):
-			Globals.on_load(loaded_data.globals.custom_data)
+		and PopochiuUtils.globals.has_method("on_load"):
+			PopochiuUtils.globals.on_load(loaded_data.globals.custom_data)
 
 	return loaded_data
 

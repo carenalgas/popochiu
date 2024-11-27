@@ -41,10 +41,9 @@ func _on_audio_manager_ready() -> void:
 	
 	# Build sound settings UI
 	for bus_idx in range(AudioServer.get_bus_count()):
-		var bus_name = AudioServer.get_bus_name(bus_idx)
-		
+		var bus_name := AudioServer.get_bus_name(bus_idx)
 		# Create the label for the slider
-		var label = Label.new()
+		var label := Label.new()
 		label.text = bus_name
 		
 		$ChannelsContainer.add_child(label)
@@ -63,9 +62,10 @@ func _on_audio_manager_ready() -> void:
 		$SlidersContainer.add_child(slider)
 		
 		slider.value_changed.connect((
-			func (value: float, bus_name: String):
+			func (value: float, bus_name_param: String):
+				@warning_ignore("standalone_ternary")
 				PopochiuUtils.e.am.set_bus_volume_db(
-					bus_name,
+					bus_name_param,
 					value if value > MIN_VOLUME else MUTE_VOLUME
 				)
 		).bind(bus_name))

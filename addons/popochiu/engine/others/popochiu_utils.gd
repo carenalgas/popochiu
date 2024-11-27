@@ -19,7 +19,8 @@ static var g: PopochiuIGraphicInterface = null:
 	get = get_igraphic_interface
 static var cursor: PopochiuCursor = null:
 	get = get_popochiu_cursor
-
+static var globals: Node = null:
+	get = get_popochiu_globals
 
 
 #region Public #####################################################################################
@@ -208,6 +209,12 @@ static func get_popochiu_cursor() -> PopochiuCursor:
 		else:
 			cursor = PopochiuCursor.new()
 	return cursor
+
+
+static func get_popochiu_globals() -> Node:
+	if not is_instance_valid(globals):
+		globals = e.get_node("/root/Globals")
+	return globals
 
 
 #endregion
