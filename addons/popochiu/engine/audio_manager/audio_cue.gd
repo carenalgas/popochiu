@@ -94,7 +94,7 @@ func change_stream_volume(volume := 0.0) -> void:
 ## [AudioStreamPlayer] playing the audio file associated with this audio cue. If the audio was
 ## played with a 2D position, then [member AudioStreamPlayer2D.volume_db] will be affected.
 func get_pitch_scale() -> float:
-	var p := A.semitone_to_pitch(pitch)
+	var p := PopochiuUtils.a.semitone_to_pitch(pitch)
 	
 	if rnd_pitch != Vector2.ZERO:
 		p = _get_rnd_pitch()
@@ -141,7 +141,7 @@ func get_values() -> Dictionary:
 
 ## Returns [code]true[/code] if playing.
 func is_playing() -> bool:
-	return A.is_playing_cue(resource_name)
+	return PopochiuUtils.a.is_playing_cue(resource_name)
 
 
 #endregion
@@ -168,7 +168,7 @@ func set_loop(value: bool) -> void:
 #region Private ####################################################################################
 func _get_rnd_pitch() -> float:
 	randomize()
-	return A.semitone_to_pitch(pitch + randf_range(rnd_pitch.x, rnd_pitch.y))
+	return PopochiuUtils.a.semitone_to_pitch(pitch + randf_range(rnd_pitch.x, rnd_pitch.y))
 
 
 func _get_rnd_volume() -> float:
