@@ -62,7 +62,7 @@ func save_game(slot := 1, description := "") -> bool:
 	var data := {
 		description = description,
 		player = {
-			room = R.current.script_name,
+			room = PopochiuUtils.r.current.script_name,
 			inventory = I.items,
 		},
 		rooms = {}, # Stores the state of each PopochiuRoomData
@@ -198,7 +198,7 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 		
 		match type:
 			"rooms":
-				R.rooms_states[id] = state
+				PopochiuUtils.r.rooms_states[id] = state
 			"characters":
 				C.characters_states[id] = state
 			"inventory_items":

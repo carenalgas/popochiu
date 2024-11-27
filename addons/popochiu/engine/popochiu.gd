@@ -177,7 +177,7 @@ func _ready() -> void:
 	if settings.scale_gui:
 		Cursor.scale_cursor(scale)
 	
-	R.store_states()
+	PopochiuUtils.r.store_states()
 	
 	# Connect to autoloads' signals
 	C.character_spoke.connect(_on_character_spoke)
@@ -280,13 +280,13 @@ func cutscene(instructions: Array) -> void:
 func goto_room(
 	script_name := "", use_transition := true, store_state := true, ignore_change := false
 ) -> void:
-	R.goto_room(script_name, use_transition, store_state, ignore_change)
+	PopochiuUtils.r.goto_room(script_name, use_transition, store_state, ignore_change)
 
 
 ## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuIRoom.room_readied].
 func room_readied(room: PopochiuRoom) -> void:
-	R.room_readied(room)
+	PopochiuUtils.r.room_readied(room)
 
 
 ## @deprecated
@@ -490,7 +490,7 @@ func load_game(slot := 1) -> void:
 	if loaded_game.is_empty(): return
 	
 	game_load_started.emit()
-	R.goto_room(
+	PopochiuUtils.r.goto_room(
 		loaded_game.player.room,
 		true,
 		false # Do not store the state of the current room

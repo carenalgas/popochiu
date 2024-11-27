@@ -106,7 +106,7 @@ func _ready():
 	G.blocked.connect(_on_gui_blocked)
 	G.unblocked.connect(_on_gui_unblocked)
 	
-	R.room_readied(self)
+	PopochiuUtils.r.room_readied(self)
 
 
 func _get_property_list() -> Array[Dictionary]:

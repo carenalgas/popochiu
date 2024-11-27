@@ -488,7 +488,7 @@ func queue_walk_to(pos: Vector2) -> Callable:
 
 ## Makes the character walk to [param pos].
 func walk_to(pos: Vector2) -> void:
-	await walk(R.current.to_global(pos))
+	await walk(PopochiuUtils.r.current.to_global(pos))
 
 
 ## Makes the character walk to the last clicked [PopochiuClickable], which is stored in
@@ -544,7 +544,7 @@ func queue_walk_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
 ## relative to the target position.
 func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
-	await _walk_to_node(R.current.get_prop(id), offset)
+	await _walk_to_node(PopochiuUtils.r.current.get_prop(id), offset)
 
 
 ## Makes the character teleport (disappear at one location and instantly appear at another) to the
@@ -559,7 +559,7 @@ func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 ## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
 ## [param id]. You can set an [param offset] relative to the target position.
 func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(R.current.get_prop(id), offset)
+	await _teleport_to_node(PopochiuUtils.r.current.get_prop(id), offset)
 
 
 ## Makes the character walk to the [PopochiuHotspot] (in the current room) which
@@ -574,7 +574,7 @@ func queue_walk_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
 ## relative to the target position.
 func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
-	await _walk_to_node(R.current.get_hotspot(id), offset)
+	await _walk_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
 
 
 ## Makes the character teleport (disappear at one location and instantly appear at another) to the
@@ -589,7 +589,7 @@ func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 ## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
 ## [param id]. You can set an [param offset] relative to the target position.
 func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(R.current.get_hotspot(id), offset)
+	await _teleport_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
 
 
 ## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
@@ -602,7 +602,7 @@ func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 ## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
 ## equal to [param id]. You can set an [param offset] relative to the target position.
 func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
-	await _walk_to_node(R.current.get_marker(id), offset)
+	await _walk_to_node(PopochiuUtils.r.current.get_marker(id), offset)
 
 
 ## Makes the character teleport (disappear at one location and instantly appear at another) to the
@@ -617,7 +617,7 @@ func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 ## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
 ## [param offset] relative to the target position.
 func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(R.current.get_marker(id), offset)
+	await _teleport_to_node(PopochiuUtils.r.current.get_marker(id), offset)
 
 
 ## Sets [member emotion] to [param new_emotion] when in a [method Popochiu.queue].
@@ -974,7 +974,7 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 
 
 func _update_position():
-	R.current.update_characters_position(self)
+	PopochiuUtils.r.current.update_characters_position(self)
 
 # Flips sprites depending on user prefereces: requires two boolean conditions
 # as arguments for flipping left [param left_cond] or right [param right_cond]
