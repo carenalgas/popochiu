@@ -79,7 +79,6 @@ func play_text(props: Dictionary) -> void:
 	await _modify_size(msg, props.position)
 	
 	# Assign the text and align mode
-	msg = "[color=%s]%s[/color]" % [props.color.to_html(), msg]
 	_append_text(msg, props)
 	
 	if _secs_per_character > 0.0:
