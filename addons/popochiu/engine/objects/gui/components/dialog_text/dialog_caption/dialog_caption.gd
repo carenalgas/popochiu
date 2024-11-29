@@ -21,7 +21,7 @@ func _append_text(msg: String, props: Dictionary) -> void:
 	rich_text_label.text = msg
 	var number_of_lines_of_text := rich_text_label.get_line_count()
 	if number_of_lines_of_text > 1:
-		var current_line_number = 0
+		var current_line_number := 0
 		for current_character in range(0, rich_text_label.text.length()):
 
 			var ThisChar = rich_text_label.text[current_character]
