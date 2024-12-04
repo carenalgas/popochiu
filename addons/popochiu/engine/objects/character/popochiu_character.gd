@@ -687,7 +687,7 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 		if animation == null: # Again!
 			PopochiuUtils.print_error(
 				"Neither the requested nor the fallback animation could be found for character %s.\
-	 Requested:%s - Fallback: %s" % [script_name, animation_label, animation_fallback]
+				Requested:%s - Fallback: %s" % [script_name, animation_label, animation_fallback]
 			)
 			return
 		# Cache the running animation to speed up subsequent frames
