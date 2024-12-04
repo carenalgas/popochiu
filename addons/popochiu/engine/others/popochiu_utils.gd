@@ -141,8 +141,8 @@ static func unpack_vector_2(source) -> Vector2:
 #region SetGet #####################################################################################
 static func get_popochiu() -> Popochiu:
 	if not is_instance_valid(e):
-		if Engine.get_singleton(&"P"):
-			e = Engine.get_singleton(&"P")
+		if Engine.get_singleton(&"E"):
+			e = Engine.get_singleton(&"E")
 		else:
 			e = Popochiu.new()
 	return e
