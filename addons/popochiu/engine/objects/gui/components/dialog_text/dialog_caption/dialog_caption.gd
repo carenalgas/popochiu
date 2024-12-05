@@ -2,7 +2,7 @@ extends PopochiuDialogText
 
 
 #region Private ####################################################################################
-func _modify_size(msg: String, target_position: Vector2) -> void:
+func _modify_size(msg: String, _target_position: Vector2) -> void:
 	var _size := await _calculate_size(msg)
 
 	# Define size and position (before calculating overflow)
@@ -12,31 +12,32 @@ func _modify_size(msg: String, target_position: Vector2) -> void:
 	rich_text_label.position.y = get_meta(DFLT_POSITION).y - (_size.y - get_meta(DFLT_SIZE).y)
 
 
+func _append_text(msg: String, props: Dictionary) -> void:
+	msg = _correct_line_breaks(msg)
+	rich_text_label.text = "[center][color=%s]%s[/color][/center]" % [props.color.to_html(), msg]
+
+
 ## Appends text for the dialog caption
 ## Ensures that where a printing a word would see it wrap to the next line that the newline
 ## is forced into the text. Without this the tween in dialog_text.gd would print part of the word
-## until it runs out of space, then erase the part word and put it onto the next line which looks
+## until it runs out of space, then erase the part word and rewrite it on the next line which looks
 ## messy.
-func _append_text(msg: String, props: Dictionary) -> void:
+func _correct_line_breaks(msg: String) -> String:
 	rich_text_label.text = msg
 	var number_of_lines_of_text := rich_text_label.get_line_count()
 	if number_of_lines_of_text > 1:
 		var current_line_number := 0
 		for current_character in range(0, rich_text_label.text.length()):
-
-			var ThisChar = rich_text_label.text[current_character]
-			var ThisLine = rich_text_label.get_character_line(current_character)
 			if rich_text_label.get_character_line(current_character) > current_line_number:
 				current_line_number += 1
 				if rich_text_label.text[current_character-1] == " ":
 					rich_text_label.text[current_character-1] = "\n"
 				elif rich_text_label.text[current_character-1] != "\n":
-					rich_text_label.text = rich_text_label.text.left(current_character) + "\n" + rich_text_label.text.right(-current_character)
+					rich_text_label.text = rich_text_label.text.left(current_character) +\
+					"\n" + rich_text_label.text.right(-current_character)
 
 				if current_line_number == number_of_lines_of_text - 1:
 					break
-
-	msg = rich_text_label.text
-	rich_text_label.text = "[center][color=%s]%s[/color][/center]" % [props.color.to_html(), msg]
+	return rich_text_label.text
 
 #endregion
