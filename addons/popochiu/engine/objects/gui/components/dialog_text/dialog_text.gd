@@ -73,13 +73,18 @@ func play_text(props: Dictionary) -> void:
 	
 	if PopochiuConfig.should_talk_gibberish():
 		msg = D.create_gibberish(msg)
-	
+
 	# Call the virtual method that modifies the size of the RichTextLabel in case the dialog style
 	# requires it.
 	await _modify_size(msg, props.position)
 	
+	rich_text_label.push_color(props.color)
+	
 	# Assign the text and align mode
-	_append_text(msg, props)
+	if PopochiuConfig.should_talk_gibberish():
+		_append_text(D.create_gibberish(msg), props)
+	else:
+		_append_text(msg, props)
 	
 	if _secs_per_character > 0.0:
 		# The text will appear with an animation
@@ -168,46 +173,37 @@ func _modify_size(_msg: String, _target_position: Vector2) -> void:
 
 
 ## Creates a RichTextLabel to calculate the resulting size of this node once the whole text is shown.
+## Uses a RichTextLabel to provide the "get_parsed_text" function, and a label within it to work out
+## the minimum size. Calculating the size from just the RichTextLabel does not work.
 func _calculate_size(msg: String) -> Vector2:
 	var rt := RichTextLabel.new()
 	rt.add_theme_font_override("normal_font", get_theme_font("normal_font"))
 	rt.bbcode_enabled = true
 	rt.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	rt.text = msg
-	rt.size = get_meta(DFLT_SIZE)
 	rich_text_label.add_child(rt)
 	
 	# Create a Label to check if the text exceeds the wrap_width
 	var lbl := Label.new()
 	lbl.add_theme_font_override("normal_font", get_theme_font("normal_font"))
 	
-	_set_default_label_size(lbl)
-	
 	lbl.text = rt.get_parsed_text()
+	lbl.size = lbl.get_minimum_size()
 	rich_text_label.add_child(lbl)
-	
-	rt.clear()
-	rt.text = ""
-	
-	await get_tree().process_frame
 	
 	var _size := lbl.size
 	
 	if _size.x > wrap_width:
-		# This node will have the width of the wrap_width
+		# This node will have the width of the wrap_width.
+		# The size.y value will calculate automatically.
 		_size.x = wrap_width
 		rt.fit_content = true
 		rt.size.x = _size.x
 		rt.text = msg
-		
-		await get_tree().process_frame
-		
+
+		# Size is recalculated after the frame changes
+		await get_tree().process_frame 
 		_size = rt.size
-	else:
-		# This node will have the width of the text
-		_size.y = get_meta(DFLT_SIZE).y
-	
-	var characters_count := lbl.get_total_character_count()
 	
 	lbl.free()
 	rt.free()
