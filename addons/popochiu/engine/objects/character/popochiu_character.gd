@@ -791,8 +791,6 @@ func face_direction(destination: Vector2):
 	_animation_suffixes = _valid_animation_suffixes[_looking_angle] + ['']
 	# The 16 directions used for animation suffixes are simplified to 8 general directions
 	_looking_dir = int(angle / 45) % 8
-	if _looking_dir == _last_looking_dir:
-		return
 	_last_looking_dir = _looking_dir
 
 
