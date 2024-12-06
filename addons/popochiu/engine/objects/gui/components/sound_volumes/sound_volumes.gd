@@ -45,7 +45,6 @@ func _on_audio_manager_ready() -> void:
 		# Create the label for the slider
 		var label := Label.new()
 		label.text = bus_name
-		
 		$ChannelsContainer.add_child(label)
 		
 		# Create the node that will allow players to modify buses volumes
@@ -58,17 +57,17 @@ func _on_audio_manager_ready() -> void:
 		slider.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		slider.custom_minimum_size.x = 120.0
 		slider.set_meta("bus_name", bus_name)
-		
+		slider.value_changed.connect(_on_volume_slider_changed.bind(bus_name))
 		$SlidersContainer.add_child(slider)
-		
-		slider.value_changed.connect((
-			func (value: float, bus_name_param: String):
-				@warning_ignore("standalone_ternary")
-				PopochiuUtils.e.am.set_bus_volume_db(
-					bus_name_param,
-					value if value > MIN_VOLUME else MUTE_VOLUME
-				)
-		).bind(bus_name))
+
+
+# Called when a volume slider changes. It will update the volume of the [param bus_name_param] bus
+# to [param value]. If the volume is set below or equal to the minimum volume, it will mute the bus.
+func _on_volume_slider_changed(value: float, bus_name_param: String) -> void:
+	if value > MIN_VOLUME:
+		PopochiuUtils.e.am.set_bus_volume_db(bus_name_param, value)
+	else:
+		PopochiuUtils.e.am.set_bus_volume_db(bus_name_param, MUTE_VOLUME)
 
 
 #endregion
