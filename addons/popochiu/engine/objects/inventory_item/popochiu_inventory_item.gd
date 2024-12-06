@@ -107,23 +107,23 @@ func queue_add(animate := true) -> Callable:
 ##     await I.Key.add()
 ## [/codeblock]
 func add(animate := true) -> void:
-	if I.is_full():
+	if PopochiuUtils.i.is_full():
 		PopochiuUtils.print_error("Couldn't add %s. Inventory is full." % script_name)
 		
 		await get_tree().process_frame
 		return
 	
 	if not in_inventory:
-		G.block()
+		PopochiuUtils.g.block()
 
-		I.items.append(script_name)
+		PopochiuUtils.i.items.append(script_name)
 		
-		I.item_added.emit(self, animate)
+		PopochiuUtils.i.item_added.emit(self, animate)
 		in_inventory = true
 		
-		await I.item_add_done
+		await PopochiuUtils.i.item_add_done
 
-		G.unblock(true)
+		PopochiuUtils.g.unblock(true)
 
 		return
 	
@@ -144,7 +144,7 @@ func queue_add_as_active(animate := true) -> Callable:
 func add_as_active(animate := true) -> void:
 	await add(animate)
 	
-	I.set_active_item(self)
+	PopochiuUtils.i.set_active_item(self)
 
 
 ## Removes the item from the inventory (its instance will be kept in memory). Pass [param animate]
@@ -175,14 +175,14 @@ func queue_remove(animate := false) -> Callable:
 func remove(animate := false) -> void:
 	in_inventory = false
 	
-	I.items.erase(script_name)
-	I.set_active_item(null)
+	PopochiuUtils.i.items.erase(script_name)
+	PopochiuUtils.i.set_active_item(null)
 	# TODO: Maybe this signal should be triggered once the await has finished
-	I.item_removed.emit(self, animate)
+	PopochiuUtils.i.item_removed.emit(self, animate)
 	
-	await I.item_remove_done
+	await PopochiuUtils.i.item_remove_done
 	
-	G.unblock()
+	PopochiuUtils.g.unblock()
 
 
 ## Replaces this inventory item by [param new_item]. Useful when combining items.[br][br]
@@ -213,18 +213,18 @@ func queue_replace(new_item: PopochiuInventoryItem) -> Callable:
 func replace(new_item: PopochiuInventoryItem) -> void:
 	in_inventory = false
 	
-	I.items.erase(script_name)
-	I.set_active_item(null)
-	I.items.append(new_item.script_name)
+	PopochiuUtils.i.items.erase(script_name)
+	PopochiuUtils.i.set_active_item(null)
+	PopochiuUtils.i.items.append(new_item.script_name)
 	new_item.in_inventory = true
 	
-	I.item_replaced.emit(self, new_item)
+	PopochiuUtils.i.item_replaced.emit(self, new_item)
 	
-	await I.item_replace_done
+	await PopochiuUtils.i.item_replace_done
 	
 	# NOTE: Inventory items should not be in charge of handling the GUI unblock. This should be
 	# 		done by the GUI itself.
-	G.unblock()
+	PopochiuUtils.g.unblock()
 
 
 # NOTE: Maybe this is not necessary since we can have the same with [method queue_remove].
@@ -241,8 +241,8 @@ func queue_discard(animate := false) -> Callable:
 func discard(animate := false) -> void:
 	_on_discard()
 	
-	I.items.erase(script_name)
-	I.item_discarded.emit(self)
+	PopochiuUtils.i.items.erase(script_name)
+	PopochiuUtils.i.item_discarded.emit(self)
 	
 	await remove(animate)
 
@@ -271,14 +271,14 @@ func on_middle_click() -> void:
 func on_item_used(item: PopochiuInventoryItem) -> void:
 	await _on_item_used(item)
 	# after item has been used return to normal state
-	I.active = null
+	PopochiuUtils.i.active = null
 
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
 ## which can be [enum MouseButton].MOUSE_BUTTON_LEFT, [enum MouseButton].MOUSE_BUTTON_RIGHT or
 ## [enum MouseButton].MOUSE_BUTTON_MIDDLE.
 func handle_command(button_idx: int) -> void:
-	var command: String = E.get_current_command_name().to_snake_case()
+	var command: String = PopochiuUtils.e.get_current_command_name().to_snake_case()
 	var suffix := "click"
 	var prefix := "on_%s"
 	
@@ -294,7 +294,7 @@ func handle_command(button_idx: int) -> void:
 		if has_method(prefix % command_method):
 			suffix = command_method
 	
-	E.add_history({
+	PopochiuUtils.e.add_history({
 		action = suffix if command.is_empty() else command,
 		target = description
 	})
@@ -304,8 +304,8 @@ func handle_command(button_idx: int) -> void:
 
 ## Deselects this item if it is the current [member PopochiuIInventory.active] item.
 func deselect() -> void:
-	if I.active and I.active == self:
-		I.active = null
+	if PopochiuUtils.i.active and PopochiuUtils.i.active == self:
+		PopochiuUtils.i.active = null
 
 
 #endregion
@@ -322,7 +322,7 @@ func get_description() -> String:
 		if description.is_empty():
 			description = name
 		return description
-	return E.get_text(description)
+	return PopochiuUtils.e.get_text(description)
 
 
 #endregion
@@ -330,11 +330,11 @@ func get_description() -> String:
 #region Private ####################################################################################
 func _toggle_description(is_hover: bool) -> void:
 	if is_hover:
-		G.mouse_entered_inventory_item.emit(self)
+		PopochiuUtils.g.mouse_entered_inventory_item.emit(self)
 	else:
 		last_click_button = -1
 		
-		G.mouse_exited_inventory_item.emit(self)
+		PopochiuUtils.g.mouse_exited_inventory_item.emit(self)
 
 
 func _on_gui_input(event: InputEvent) -> void: 
@@ -344,26 +344,26 @@ func _on_gui_input(event: InputEvent) -> void:
 	
 	# Fix #224 Clean E.clicked when an inventory item is clicked to ensure that the event is not
 	# mishandled by the GUI
-	if E.clicked:
-		E.clicked = null
+	if PopochiuUtils.e.clicked:
+		PopochiuUtils.e.clicked = null
 	
-	I.clicked = self
+	PopochiuUtils.i.clicked = self
 	last_click_button = event_index
 	
 	match event_index:
 		MOUSE_BUTTON_LEFT:
-			if I.active:
-				await on_item_used(I.active)
+			if PopochiuUtils.i.active:
+				await on_item_used(PopochiuUtils.i.active)
 			else:
 				if DisplayServer.is_touchscreen_available():
-					G.mouse_entered_inventory_item.emit(self)
+					PopochiuUtils.g.mouse_entered_inventory_item.emit(self)
 				
 				await handle_command(event_index)
 		MOUSE_BUTTON_RIGHT, MOUSE_BUTTON_MIDDLE:
-			if not I.active:
+			if not PopochiuUtils.i.active:
 				await handle_command(event_index)
 	
-	I.clicked = null
+	PopochiuUtils.i.clicked = null
 
 
 #endregion

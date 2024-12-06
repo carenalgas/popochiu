@@ -26,11 +26,11 @@ enum {
 func _ready() -> void:
 	# Connect to childrens' signals
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
-	$Curtain.modulate = E.settings.fade_color
+	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
 
 	# Make sure the transition layer is ready
 	# if it has to be visible in the first room
-	if E.settings.show_tl_in_first_room and Engine.get_process_frames() == 0:
+	if PopochiuUtils.e.settings.show_tl_in_first_room and Engine.get_process_frames() == 0:
 		$Curtain.show()
 		_show()
 	else:
@@ -87,7 +87,7 @@ func play_transition(type := FADE_IN, duration := 1.0) -> void:
 
 ## Shows the curtain without playing any transition.
 func show_curtain() -> void:
-	$Curtain.modulate = E.settings.fade_color
+	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
 	$Curtain.show()
 	_show()
 
@@ -109,12 +109,12 @@ func _transition_finished(anim_name := "") -> void:
 
 func _show() -> void:
 	show()
-	G.hide_interface()
+	PopochiuUtils.g.hide_interface()
 
 
 func _hide() -> void:
 	hide()
-	G.show_interface()
+	PopochiuUtils.g.show_interface()
 
 
 #endregion

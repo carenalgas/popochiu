@@ -103,10 +103,10 @@ func _ready():
 	set_physics_process(false)
 	
 	# Connect to singletons signals
-	G.blocked.connect(_on_gui_blocked)
-	G.unblocked.connect(_on_gui_unblocked)
+	PopochiuUtils.g.blocked.connect(_on_gui_blocked)
+	PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
 	
-	R.room_readied(self)
+	PopochiuUtils.r.room_readied(self)
 
 
 func _get_property_list() -> Array[Dictionary]:
@@ -135,28 +135,28 @@ func _unhandled_input(event: InputEvent):
 		not PopochiuUtils.get_click_or_touch_index(event) in [
 			MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT
 		]
-		or (not event is InputEventScreenTouch and E.hovered)
+		or (not event is InputEventScreenTouch and PopochiuUtils.e.hovered)
 	):
 		return
 	
 	# Fix #224 Item should be removed only if the click was done anywhere in the room when the
 	# cursor is not hovering another object
-	if I.active:
+	if PopochiuUtils.i.active:
 		# Wait so PopochiuClickable can handle the interaction
 		await get_tree().create_timer(0.1).timeout
 		
-		I.set_active_item()
+		PopochiuUtils.i.set_active_item()
 		return
 	
-	if has_player and is_instance_valid(C.player) and C.player.can_move:
+	if has_player and is_instance_valid(PopochiuUtils.c.player) and PopochiuUtils.c.player.can_move:
 		# Set this property to null in order to cancel any running interaction with a
 		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...))
-		E.clicked = null
+		PopochiuUtils.e.clicked = null
 		
-		if C.player.is_moving:
-			C.player.move_ended.emit()
+		if PopochiuUtils.c.player.is_moving:
+			PopochiuUtils.c.player.move_ended.emit()
 		
-		C.player.walk(get_local_mouse_position())
+		PopochiuUtils.c.player.walk(get_local_mouse_position())
 
 
 #endregion
@@ -218,7 +218,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 	update_characters_position(chr)
 	
 	if chr.follow_player:
-		C.player.started_walk_to.connect(_follow_player.bind(chr))
+		PopochiuUtils.c.player.started_walk_to.connect(_follow_player.bind(chr))
 	
 	chr.idle()
 
@@ -249,14 +249,14 @@ func has_character(character_name: String) -> bool:
 
 ## Called by Popochiu when loading the room to assign its camera limits to the player camera.
 func setup_camera() -> void:
-	if width > 0 and width > E.width:
-		var h_diff: int = (E.width - width) / 2
-		E.camera.limit_left = h_diff
-		E.camera.limit_right = E.width - h_diff
-	if height > 0 and height > E.height:
-		var v_diff: int = (E.height - height) / 2
-		E.camera.limit_top = -v_diff
-		E.camera.limit_bottom = E.height - v_diff
+	if width > 0 and width > PopochiuUtils.e.width:
+		var h_diff: int = (PopochiuUtils.e.width - width) / 2
+		PopochiuUtils.e.camera.limit_left = h_diff
+		PopochiuUtils.e.camera.limit_right = PopochiuUtils.e.width - h_diff
+	if height > 0 and height > PopochiuUtils.e.height:
+		var v_diff: int = (PopochiuUtils.e.height - height) / 2
+		PopochiuUtils.e.camera.limit_top = -v_diff
+		PopochiuUtils.e.camera.limit_bottom = PopochiuUtils.e.height - v_diff
 
 
 ## Remove all children from the [b]$Characters[/b] node, storing the children of each node to later

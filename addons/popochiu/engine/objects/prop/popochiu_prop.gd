@@ -61,11 +61,11 @@ func _ready() -> void:
 		z_index += 1
 	
 	if link_to_item:
-		I.item_added.connect(_on_item_added)
-		I.item_removed.connect(_on_item_removed)
-		I.item_discarded.connect(_on_item_discarded)
+		PopochiuUtils.i.item_added.connect(_on_item_added)
+		PopochiuUtils.i.item_removed.connect(_on_item_removed)
+		PopochiuUtils.i.item_discarded.connect(_on_item_discarded)
 		
-		if I.is_item_in_inventory(link_to_item):
+		if PopochiuUtils.i.is_item_in_inventory(link_to_item):
 			disable()
 
 

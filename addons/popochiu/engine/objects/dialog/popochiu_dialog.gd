@@ -49,11 +49,11 @@ func queue_start() -> Callable:
 
 ## Starts this dialog, then [method _on_start] is called.
 func start() -> void:
-	if D.current_dialog == self:
+	if PopochiuUtils.d.current_dialog == self:
 		return
 	
 	# Start this dialog
-	D.current_dialog = self
+	PopochiuUtils.d.current_dialog = self
 	await _start()
 
 
@@ -65,7 +65,7 @@ func queue_stop() -> Callable:
 
 ## Stops the dialog (which makes the menu with the options to disappear).
 func stop() -> void:
-	D.finish_dialog()
+	PopochiuUtils.d.finish_dialog()
 
 
 ## Enables each [PopochiuDialogOption] which [member PopochiuDialogOption.id] matches each of the
@@ -132,32 +132,32 @@ func set_options(value: Array[PopochiuDialogOption]) -> void:
 
 #region Private ####################################################################################
 func _start() -> void:
-	G.block()
-	D.dialog_started.emit(self)
+	PopochiuUtils.g.block()
+	PopochiuUtils.d.dialog_started.emit(self)
 	
 	await _on_start()
 	
 	_show_options()
 	
-	await D.dialog_finished
+	await PopochiuUtils.d.dialog_finished
 	
-	G.unblock()
-	D.option_selected.disconnect(_on_option_selected)
+	PopochiuUtils.g.unblock()
+	PopochiuUtils.d.option_selected.disconnect(_on_option_selected)
 
 
 func _show_options() -> void:
-	if not D.active: return
+	if not PopochiuUtils.d.active: return
 	
-	D.dialog_options_requested.emit(options)
+	PopochiuUtils.d.dialog_options_requested.emit(options)
 	
-	if not D.option_selected.is_connected(_on_option_selected):
-		D.option_selected.connect(_on_option_selected)
+	if not PopochiuUtils.d.option_selected.is_connected(_on_option_selected):
+		PopochiuUtils.d.option_selected.connect(_on_option_selected)
 
 
 func _on_option_selected(opt: PopochiuDialogOption) -> void:
 	opt.used = true
 	opt.used_times += 1
-	D.selected_option = opt
+	PopochiuUtils.d.selected_option = opt
 	
 	_option_selected(opt)
 
