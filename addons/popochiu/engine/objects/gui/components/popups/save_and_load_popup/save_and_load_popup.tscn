@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=3 uid="uid://cndputybyj57n"]
+[gd_scene load_steps=8 format=3 uid="uid://c7ehvcne5j4vq"]
 
-[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_llqb8"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup/save_and_load_popup.gd" id="2_m1ot6"]
-[ext_resource type="StyleBox" uid="uid://dbajakvkltfaj" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container.tres" id="3_inruf"]
-[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/gui/resources/images/close.png" id="3_n4oyj"]
-[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight.png" id="4_jqolx"]
+[ext_resource type="Theme" uid="uid://cydtfw4boehaf" path="res://game/gui/resources/gui_theme.tres" id="1_75y11"]
+[ext_resource type="Script" path="res://game/gui/components/popups/save_and_load_popup/save_and_load_popup_custom.gd" id="2_pqr4b"]
+[ext_resource type="StyleBox" uid="uid://caypssh8te5n" path="res://game/gui/components/popups/popochiu_popup_panel_container.tres" id="3_30jnn"]
+[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/gui/resources/images/close.png" id="4_qsvch"]
+[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight.png" id="5_r5kvn"]
+[ext_resource type="Texture2D" uid="uid://b3ywmj6fb8wy2" path="res://addons/popochiu/icons/new_save.png" id="6_aqre2"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yg86r"]
 
@@ -15,8 +16,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_llqb8")
-script = ExtResource("2_m1ot6")
+theme = ExtResource("1_75y11")
+script = ExtResource("2_pqr4b")
 script_name = &"SaveAndLoadPopup"
 
 [node name="Overlay" type="PanelContainer" parent="."]
@@ -33,7 +34,7 @@ custom_minimum_size = Vector2(192, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_styles/panel = ExtResource("3_inruf")
+theme_override_styles/panel = ExtResource("3_30jnn")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer"]
 layout_mode = 2
@@ -54,35 +55,67 @@ unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 4
-texture_normal = ExtResource("3_n4oyj")
-texture_pressed = ExtResource("4_jqolx")
-texture_hover = ExtResource("4_jqolx")
+texture_normal = ExtResource("4_qsvch")
+texture_pressed = ExtResource("5_r5kvn")
+texture_hover = ExtResource("5_r5kvn")
 
-[node name="Slots" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+[node name="Slots" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 1
 
-[node name="BtnSlot1" type="Button" parent="Overlay/PanelContainer/VBoxContainer/Slots"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/Slots"]
 layout_mode = 2
-toggle_mode = true
-text = "slot 1"
 
-[node name="BtnSlot2" type="Button" parent="Overlay/PanelContainer/VBoxContainer/Slots"]
+[node name="BtnSlot" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer"]
 layout_mode = 2
 toggle_mode = true
-text = "slot 2"
+texture_normal = ExtResource("6_aqre2")
 
-[node name="BtnSlot3" type="Button" parent="Overlay/PanelContainer/VBoxContainer/Slots"]
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer"]
 layout_mode = 2
-toggle_mode = true
-text = "slot 3"
+text = "Empty Slot"
+horizontal_alignment = 1
 
-[node name="BtnSlot4" type="Button" parent="Overlay/PanelContainer/VBoxContainer/Slots"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/Slots"]
+layout_mode = 2
+
+[node name="BtnSlot" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer2"]
 layout_mode = 2
 toggle_mode = true
-text = "slot 4"
+texture_normal = ExtResource("6_aqre2")
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer2"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/Slots"]
+layout_mode = 2
+
+[node name="BtnSlot" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer3"]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("6_aqre2")
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer3"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/Slots"]
+layout_mode = 2
+
+[node name="BtnSlot" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer4"]
+layout_mode = 2
+toggle_mode = true
+texture_normal = ExtResource("6_aqre2")
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer4"]
+layout_mode = 2
+text = "Empty Slot"
+horizontal_alignment = 1
 
 [node name="FooterContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
 layout_mode = 2
