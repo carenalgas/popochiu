@@ -13,7 +13,7 @@ func _ready() -> void:
 #region Public #####################################################################################
 func on_toggled(is_pressed: bool) -> void:
 	if is_pressed:
-		E.current_command = command
+		PopochiuUtils.e.current_command = command
 
 
 #endregion

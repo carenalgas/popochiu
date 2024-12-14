@@ -12,9 +12,9 @@ func _ready() -> void:
 	
 	if Engine.is_editor_hint(): return
 	
-	text_speed.value = 0.1 - E.text_speed
-	dialog_style.selected = E.settings.dialog_style
-	continue_mode.button_pressed = E.settings.auto_continue_text
+	text_speed.value = 0.1 - PopochiuUtils.e.text_speed
+	dialog_style.selected = PopochiuUtils.e.settings.dialog_style
+	continue_mode.button_pressed = PopochiuUtils.e.settings.auto_continue_text
 	
 	# Connect to child signals
 	text_speed.value_changed.connect(_on_text_speed_changed)
@@ -26,15 +26,15 @@ func _ready() -> void:
 
 #region Private ####################################################################################
 func _on_text_speed_changed(value: float) -> void:
-	E.text_speed = 0.1 - value
+	PopochiuUtils.e.text_speed = 0.1 - value
 
 
 func _on_dialog_style_selected(idx: int) -> void:
-	E.current_dialog_style = dialog_style.get_item_id(idx)
+	PopochiuUtils.e.current_dialog_style = dialog_style.get_item_id(idx)
 
 
 func _on_continue_mode_toggled(toggled_on: bool) -> void:
-	E.settings.auto_continue_text = toggled_on
+	PopochiuUtils.e.settings.auto_continue_text = toggled_on
 
 
 #endregion

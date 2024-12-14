@@ -5,7 +5,7 @@ extends RefCounted
 
 #region Godot ######################################################################################
 func _init() -> void:
-	E.register_command(-1, "", fallback)
+	PopochiuUtils.e.register_command(-1, "", fallback)
 
 
 #endregion

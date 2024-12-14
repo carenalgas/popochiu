@@ -42,8 +42,6 @@ func _init():
 
 
 func _enter_tree() -> void:
-	if _is_first_install: return
-	
 	# Good morning, starshine. The Earth says hello.
 	prints(ES)
 	prints(EN)
@@ -102,20 +100,6 @@ func _exit_tree() -> void:
 #region Virtual ####################################################################################
 func _enable_plugin() -> void:
 	_create_input_actions()
-	
-	if _is_first_install:
-		# Show the window that asks devs to reload the project
-		var ad := AcceptDialog.new()
-		ad.title = "Popochiu"
-		ad.dialog_text =\
-		"[ ES ] Se reiniciará Godot para completar la instalación.\n" +\
-		"[ EN ] Godot will restart to complete the installation."
-		ad.confirmed.connect(EditorInterface.restart_editor.bind(false))
-		ad.close_requested.connect(EditorInterface.restart_editor.bind(false))
-		
-		EditorInterface.get_base_control().add_child(ad)
-		ad.popup_centered()
-
 	EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", true)
 
 

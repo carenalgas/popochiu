@@ -149,11 +149,11 @@ func _create_script_from_template() -> int:
 		"%s_state_template" % _type_label,
 		"%s_%s_state" % [_type_label, _snake_name]
 	)
-
 	new_code = new_code.replace(
 		"Data = null",
 		'Data = load("%s.tres")' % _path_base
 	)
+	new_code = new_code.replace("PopochiuUtils.e", "E")
 
 	_script = load(EMPTY_SCRIPT).duplicate()
 	_script.source_code = new_code

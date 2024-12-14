@@ -27,11 +27,14 @@ func _process(delta: float) -> void:
 		
 		if _shake_timer <= 0.0:
 			stop_shake()
-	elif is_instance_valid(C.camera_owner) and C.camera_owner.is_inside_tree():
+	elif (
+		is_instance_valid(PopochiuUtils.c.camera_owner)
+		and PopochiuUtils.c.camera_owner.is_inside_tree()
+	):
 		position = (
-			C.camera_owner.position_stored
-			if C.camera_owner.position_stored
-			else C.camera_owner.position
+			PopochiuUtils.c.camera_owner.position_stored
+			if PopochiuUtils.c.camera_owner.position_stored
+			else PopochiuUtils.c.camera_owner.position
 		)
 
 

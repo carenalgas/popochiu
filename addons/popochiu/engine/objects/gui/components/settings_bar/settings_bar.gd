@@ -36,8 +36,8 @@ func _ready() -> void:
 	
 	# Connect to singletons signals
 	if hide_when_gui_is_blocked:
-		G.blocked.connect(_on_gui_blocked)
-		G.unblocked.connect(_on_gui_unblocked)
+		PopochiuUtils.g.blocked.connect(_on_gui_blocked)
+		PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
 	
 	if not used_in_game:
 		hide()
@@ -52,24 +52,24 @@ func _input(event: InputEvent) -> void:
 	
 	var rect := panel_container.get_rect()
 	rect.size += Vector2(0.0, input_zone_height)
-	if E.settings.scale_gui:
+	if PopochiuUtils.e.settings.scale_gui:
 		rect = Rect2(
-			panel_container.get_rect().position * E.scale,
-			panel_container.get_rect().size * E.scale
+			panel_container.get_rect().position * PopochiuUtils.e.scale,
+			panel_container.get_rect().size * PopochiuUtils.e.scale
 		)
 	
 	if rect.has_point(get_global_mouse_position()):
 		_is_mouse_hover = true
-		Cursor.show_cursor("gui")
+		PopochiuUtils.cursor.show_cursor("gui")
 	elif _is_mouse_hover:
 		_is_mouse_hover = false
 		
-		if D.current_dialog:
-			Cursor.show_cursor("gui")
-		elif G.gui.is_showing_dialog_line:
-			Cursor.show_cursor("wait")
+		if PopochiuUtils.d.current_dialog:
+			PopochiuUtils.cursor.show_cursor("gui")
+		elif PopochiuUtils.g.gui.is_showing_dialog_line:
+			PopochiuUtils.cursor.show_cursor("wait")
 		else:
-			Cursor.show_cursor("normal")
+			PopochiuUtils.cursor.show_cursor("normal")
 	
 	if _is_hidden and rect.has_point(get_global_mouse_position()):
 		_open()

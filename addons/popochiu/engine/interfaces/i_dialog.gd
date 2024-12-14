@@ -56,6 +56,13 @@ var selected_option: PopochiuDialogOption = null
 var prev_dialog: PopochiuDialog = null
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"D", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Displays a list of [param options], similar to a branching dialog, and returns the selected
 ## [PopochiuDialogOption].
@@ -63,17 +70,17 @@ func show_inline_dialog(options: Array) -> PopochiuDialogOption:
 	active = true
 	
 	if current_dialog:
-		D.option_selected.disconnect(current_dialog._on_option_selected)
+		PopochiuUtils.d.option_selected.disconnect(current_dialog._on_option_selected)
 	
 	inline_dialog_requested.emit(options)
 	
 	var pdo: PopochiuDialogOption = await option_selected
 	
 	if current_dialog:
-		D.option_selected.connect(current_dialog._on_option_selected)
+		PopochiuUtils.d.option_selected.connect(current_dialog._on_option_selected)
 	else:
 		active = false
-		G.unblock()
+		PopochiuUtils.g.unblock()
 	
 	return pdo
 
@@ -85,30 +92,34 @@ func finish_dialog() -> void:
 
 ## Makes the Player-controlled Character (PC) to say the selected option in a branching dialog.
 func say_selected() -> void:
-	await C.player.say(selected_option.text)
+	await PopochiuUtils.c.player.say(selected_option.text)
+
 
 ## Transforms any text to gibberish preserving bbcode tags
 func create_gibberish(input_string: String) -> String:
-	var output_text: String = ""
-	var bbcode: bool = false
-	var letters = ['a','e','i','o','u','y','b','c','d','f','g','h','j','k','l','m','n','p','q','r','s','t','v','w','x','z']
+	var output_text := ""
+	var bbcode := false
+	var letters := [
+		"a","e","i","o","u",
+		"y","b","c","d","f","g","h","j","k","l","m","n","p","q","r","s","t","v","w","x","z"
+	]
 	for chr in input_string:
-		if(chr == '['):
+		if(chr == "["):
 			bbcode = true
-		elif(chr == ']'):
+		elif(chr == "]"):
 			output_text += chr
 			bbcode = false
 			continue
 		
 		if (!bbcode):
-			if (chr != ' '):
+			if (chr != " "):
 					output_text += letters[randi_range(0,letters.size()-1)]
 			else:
-				output_text += ' ' 
+				output_text += " " 
 		else:
 			output_text += chr
-			
 	return output_text
+
 
 ## @deprecated
 ## Now it is [method get_instance].

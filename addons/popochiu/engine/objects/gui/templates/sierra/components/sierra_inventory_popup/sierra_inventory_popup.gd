@@ -21,22 +21,22 @@ func _ready() -> void:
 
 #region Virtual ####################################################################################
 func _open() -> void:
-	_command_when_opened = E.current_command
-	E.current_command = -1
+	_command_when_opened = PopochiuUtils.e.current_command
+	PopochiuUtils.e.current_command = -1
 	
 	for button: TextureButton in %CommandsContainer.get_children():
 		button.set_pressed_no_signal(false)
 
 
 func _close() -> void:
-	if I.active:
-		Cursor.set_secondary_cursor_texture(I.active.texture)
-		Cursor.hide_main_cursor()
+	if PopochiuUtils.i.active:
+		PopochiuUtils.cursor.set_secondary_cursor_texture(PopochiuUtils.i.active.texture)
+		PopochiuUtils.cursor.hide_main_cursor()
 	else:
-		if E.current_command == -1:
-			E.current_command = _command_when_opened
+		if PopochiuUtils.e.current_command == -1:
+			PopochiuUtils.e.current_command = _command_when_opened
 		
-		Cursor.show_cursor(E.get_current_command_name().to_snake_case())
+		PopochiuUtils.cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case())
 
 
 #endregion
@@ -55,13 +55,13 @@ func _on_talk_pressed() -> void:
 
 
 func _select_command(command: int) -> void:
-	if is_instance_valid(I.active):
-		I.active = null
+	if is_instance_valid(PopochiuUtils.i.active):
+		PopochiuUtils.i.active = null
 	
-	E.current_command = command
+	PopochiuUtils.e.current_command = command
 	
 	# Force changing the cursor passing `true` as second parameter
-	Cursor.show_cursor(E.get_current_command_name().to_snake_case(), true)
+	PopochiuUtils.cursor.show_cursor(PopochiuUtils.e.get_current_command_name().to_snake_case(), true)
 
 
 #endregion

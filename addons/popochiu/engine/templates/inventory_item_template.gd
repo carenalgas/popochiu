@@ -9,25 +9,25 @@ var state: Data = null
 # When the item is clicked in the inventory
 func _on_click() -> void:
 	# Replace the call to E.command_fallback() to implement your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 
 
 # When the item is right clicked in the inventory
 func _on_right_click() -> void:
 	# Replace the call to E.command_fallback() to implement your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 
 
 # When the item is middle clicked in the inventory
 func _on_middle_click() -> void:
 	# Replace the call to E.command_fallback() to implement your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 
 
 # When the item is clicked and there is another inventory item selected
 func _on_item_used(_item: PopochiuInventoryItem) -> void:
 	# Replace the call to E.command_fallback() to implement your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 	# For example, you can make the player character say something when the Key item is used in this
 	# item. Note that you have to change the name of the `_item` parameter to `item`.
 #	if item == I.Key:

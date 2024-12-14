@@ -11,9 +11,9 @@ func _ready() -> void:
 	label.text = ""
 	
 	# Connect to autoloads' signals
-	G.hover_text_shown.connect(_show_text)
-	G.dialog_line_started.connect(_on_dialog_line_started)
-	G.dialog_line_finished.connect(_on_dialog_line_finished)
+	PopochiuUtils.g.hover_text_shown.connect(_show_text)
+	PopochiuUtils.g.dialog_line_started.connect(_on_dialog_line_started)
+	PopochiuUtils.g.dialog_line_finished.connect(_on_dialog_line_finished)
 
 
 #endregion

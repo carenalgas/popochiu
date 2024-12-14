@@ -30,6 +30,13 @@ var _room_instances := {}
 var _use_transition_on_room_change := true
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"R", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Retrieves the [PopochiuProp] with a [member PopochiuClickable.script_name] matching
 ## [param prop_name].
@@ -144,25 +151,25 @@ func goto_room(
 	store_state := true,
 	ignore_change := false
 ) -> void:
-	if not E.in_room: return
+	if not PopochiuUtils.e.in_room: return
 	
-	E.in_room = false
-	G.block()
+	PopochiuUtils.e.in_room = false
+	PopochiuUtils.g.block()
 	
 	_use_transition_on_room_change = use_transition
 	# Never fade the TL in, if we are entering the first room at game start
 	if use_transition and Engine.get_process_frames() > 0:
-		E.tl.play_transition(E.tl.FADE_IN)
-		await E.tl.transition_finished
+		PopochiuUtils.e.tl.play_transition(PopochiuUtils.e.tl.FADE_IN)
+		await PopochiuUtils.e.tl.transition_finished
 	elif Engine.get_process_frames() > 0:
-		E.tl.show_curtain()
+		PopochiuUtils.e.tl.show_curtain()
 	
 	# Prevent the GUI from showing info coming from the previous room
-	G.show_hover_text()
-	Cursor.show_cursor()
+	PopochiuUtils.g.show_hover_text()
+	PopochiuUtils.cursor.show_cursor()
 	
-	if is_instance_valid(C.player) and Engine.get_process_frames() > 0:
-		C.player.last_room = current.script_name
+	if is_instance_valid(PopochiuUtils.c.player) and Engine.get_process_frames() > 0:
+		PopochiuUtils.c.player.last_room = current.script_name
 	
 	# Store the room state
 	if store_state:
@@ -174,7 +181,7 @@ func goto_room(
 		current.exit_room()
 	
 	# Reset camera config
-	E.camera.restore_default_limits()
+	PopochiuUtils.e.camera.restore_default_limits()
 	
 	if ignore_change:
 		return
@@ -191,8 +198,8 @@ func goto_room(
 	
 	clear_instances()
 	
-	E.clear_hovered()
-	E.get_tree().change_scene_to_file(load(rp).scene)
+	PopochiuUtils.e.clear_hovered()
+	PopochiuUtils.e.get_tree().change_scene_to_file(load(rp).scene)
 
 
 ## Called once the loaded [param room] is "ready" ([method Node._ready]).
@@ -203,20 +210,20 @@ func room_readied(room: PopochiuRoom) -> void:
 	# When running from the Editor the first time, use goto_room
 	if Engine.get_process_frames() == 0:
 		await get_tree().process_frame
-		E.in_room = true
+		PopochiuUtils.e.in_room = true
 
 		# Calling this will make the camera be set to its default values and will store the state of
 		# the main room (the last parameter will prevent Popochiu from changing the scene to the
 		# same that is already loaded).
 		# Also, use the transition layer to fade in the room, if the setting is enabled.
-		await goto_room(room.script_name, E.settings.show_tl_in_first_room, true, true)
+		await goto_room(room.script_name, PopochiuUtils.e.settings.show_tl_in_first_room, true, true)
 	
 	# Make the camera be ready for the room
 	current.setup_camera()
 	
 	# Update the core state
-	if E.loaded_game:
-		C.player = C.get_character(E.loaded_game.player.id)
+	if PopochiuUtils.e.loaded_game:
+		PopochiuUtils.c.player = PopochiuUtils.c.get_character(PopochiuUtils.e.loaded_game.player.id)
 	else:
 		current.state.visited = true
 		current.state.visited_times += 1
@@ -232,7 +239,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	# Load the state of characters in the room
 	for chr_script_name: String in rooms_states[room.script_name]["characters"]:
 		var chr_dic: Dictionary = rooms_states[room.script_name]["characters"][chr_script_name]
-		var chr: PopochiuCharacter = C.get_character(chr_script_name)
+		var chr: PopochiuCharacter = PopochiuUtils.c.get_character(chr_script_name)
 		
 		if not chr: continue
 		
@@ -256,13 +263,13 @@ func room_readied(room: PopochiuRoom) -> void:
 	# add the PopochiuCharacter to the room
 	if (
 		current.has_player
-		and is_instance_valid(C.player)
-		and not current.has_character(C.player.script_name)
+		and is_instance_valid(PopochiuUtils.c.player)
+		and not current.has_character(PopochiuUtils.c.player.script_name)
 	):
-		current.add_character(C.player)
+		current.add_character(PopochiuUtils.c.player)
 		# Place the PC in the middle of the room
-		C.player.position = Vector2(E.width, E.height) / 2.0
-		await C.player.idle()
+		PopochiuUtils.c.player.position = Vector2(PopochiuUtils.e.width, PopochiuUtils.e.height) / 2.0
+		await PopochiuUtils.c.player.idle()
 	
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDREN:
@@ -289,34 +296,34 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	await current._on_room_entered()
 	
-	if E.loaded_game:
-		C.player.global_position = Vector2(
-			E.loaded_game.player.position.x,
-			E.loaded_game.player.position.y
+	if PopochiuUtils.e.loaded_game:
+		PopochiuUtils.c.player.global_position = Vector2(
+			PopochiuUtils.e.loaded_game.player.position.x,
+			PopochiuUtils.e.loaded_game.player.position.y
 		)
 	
 	if _use_transition_on_room_change:
-		E.tl.play_transition(E.tl.FADE_OUT)
-		await E.tl.transition_finished
+		PopochiuUtils.e.tl.play_transition(PopochiuUtils.e.tl.FADE_OUT)
+		await PopochiuUtils.e.tl.transition_finished
 		
-		await E.wait(0.3)
+		await PopochiuUtils.e.wait(0.3)
 	else:
-		E.tl.hide_curtain()
+		PopochiuUtils.e.tl.hide_curtain()
 		await get_tree().process_frame
 	
 	if not current.hide_gui:
-		G.unblock()
+		PopochiuUtils.g.unblock()
 	
-	if E.hovered:
-		G.mouse_entered_clickable.emit(E.hovered)
+	if PopochiuUtils.e.hovered:
+		PopochiuUtils.g.mouse_entered_clickable.emit(PopochiuUtils.e.hovered)
 	
-	E.in_room = true
+	PopochiuUtils.e.in_room = true
 	
-	if E.loaded_game:
-		E.game_loaded.emit(E.loaded_game)
-		await G.load_feedback_finished
+	if PopochiuUtils.e.loaded_game:
+		PopochiuUtils.e.game_loaded.emit(PopochiuUtils.e.loaded_game)
+		await PopochiuUtils.g.load_feedback_finished
 		
-		E.loaded_game = {}
+		PopochiuUtils.e.loaded_game = {}
 	
 	# This enables the room to listen input events
 	current.is_current = true

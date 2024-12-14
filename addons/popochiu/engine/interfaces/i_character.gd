@@ -34,6 +34,13 @@ var characters_states := {}
 var _characters := {}
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"C", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Makes the Player-controlled Character (PC) move (NON-BLOCKING) to the
 ## [member PopochiuClickable.walk_to_point] position of the last clicked [PopochiuClickable] (i.e. a
@@ -77,13 +84,13 @@ func queue_face_clicked() -> Callable:
 
 ## Makes the camera follow [param c].
 func change_camera_owner(c: PopochiuCharacter) -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		camera_owner = c
-		await E.get_tree().process_frame
+		await PopochiuUtils.e.get_tree().process_frame
 		return
 	
 	camera_owner = c
-	await E.get_tree().process_frame
+	await PopochiuUtils.e.get_tree().process_frame
 
 
 ## Makes the camera follow [param c].[br][br]

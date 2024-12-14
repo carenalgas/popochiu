@@ -22,11 +22,11 @@ func get_description() -> String:
 
 #region Private ####################################################################################
 func _on_mouse_entered() -> void:
-	G.show_hover_text(self.description)
+	PopochiuUtils.g.show_hover_text(self.description)
 
 
 func _on_mouse_exited() -> void:
-	G.show_hover_text()
+	PopochiuUtils.g.show_hover_text()
 
 
 #endregion

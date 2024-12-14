@@ -123,6 +123,10 @@ var _saveload: Resource = null
 
 
 #region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"E", self)
+
+
 func _ready() -> void:
 	set_process_input(false)
 	_saveload = load(SAVELOAD_PATH).new()
@@ -165,21 +169,21 @@ func _ready() -> void:
 	await get_tree().process_frame
 	
 	for key in settings.items_on_start:
-		var ii: PopochiuInventoryItem = I.get_item_instance(key)
+		var ii: PopochiuInventoryItem = PopochiuUtils.i.get_item_instance(key)
 		
 		if is_instance_valid(ii):
 			ii.add(false)
 	
 	if settings.scale_gui:
-		Cursor.scale_cursor(scale)
+		PopochiuUtils.cursor.scale_cursor(scale)
 	
-	R.store_states()
+	PopochiuUtils.r.store_states()
 	
 	# Connect to autoloads' signals
-	C.character_spoke.connect(_on_character_spoke)
+	PopochiuUtils.c.character_spoke.connect(_on_character_spoke)
 	
 	# Assign property values to singletons and other global classes
-	G.gui = gui
+	PopochiuUtils.g.gui = gui
 
 
 func _input(event: InputEvent) -> void:
@@ -233,7 +237,7 @@ func queue(instructions: Array, show_gui := true) -> void:
 	
 	playing_queue = true
 	
-	G.block()
+	PopochiuUtils.g.block()
 	
 	for idx in instructions.size():
 		var instruction = instructions[idx]
@@ -244,7 +248,7 @@ func queue(instructions: Array, show_gui := true) -> void:
 			await PopochiuCharactersHelper.execute_string(instruction as String)
 	
 	if show_gui:
-		G.unblock()
+		PopochiuUtils.g.unblock()
 	
 	if camera.is_shaking:
 		camera.stop_shake()
@@ -276,13 +280,13 @@ func cutscene(instructions: Array) -> void:
 func goto_room(
 	script_name := "", use_transition := true, store_state := true, ignore_change := false
 ) -> void:
-	R.goto_room(script_name, use_transition, store_state, ignore_change)
+	PopochiuUtils.r.goto_room(script_name, use_transition, store_state, ignore_change)
 
 
 ## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuIRoom.room_readied].
 func room_readied(room: PopochiuRoom) -> void:
-	R.room_readied(room)
+	PopochiuUtils.r.room_readied(room)
 
 
 ## @deprecated
@@ -343,19 +347,19 @@ func get_text(msg: String) -> String:
 ## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuICharacter.get_instance].
 func get_character_instance(script_name: String) -> PopochiuCharacter:
-	return C.get_instance(script_name)
+	return PopochiuUtils.c.get_instance(script_name)
 
 
 ## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuIInventory.get_instance].
 func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	return I.get_instance(script_name)
+	return PopochiuUtils.i.get_instance(script_name)
 
 
 ## @deprecated
 ## [b]Deprecated[/b]. Now this is done by [method PopochiuIDialog.get_instance].
 func get_dialog(script_name: String) -> PopochiuDialog:
-	return D.get_instance(script_name)
+	return PopochiuUtils.d.get_instance(script_name)
 
 
 ## Adds an action, represented by [param data], to the [member history] of actions. 
@@ -476,17 +480,17 @@ func save_game(slot := 1, description := "") -> void:
 
 ## Loads the game in the given [param slot].
 func load_game(slot := 1) -> void:
-	I.clean_inventory(true)
+	PopochiuUtils.i.clean_inventory(true)
 	
-	if D.current_dialog:
-		D.current_dialog.stop()
+	if PopochiuUtils.d.current_dialog:
+		PopochiuUtils.d.current_dialog.stop()
 	
 	loaded_game = _saveload.load_game(slot)
 	
 	if loaded_game.is_empty(): return
 	
 	game_load_started.emit()
-	R.goto_room(
+	PopochiuUtils.r.goto_room(
 		loaded_game.player.room,
 		true,
 		false # Do not store the state of the current room
@@ -514,7 +518,7 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 	
 	if not _hovered_queue.is_empty() and is_instance_valid(_hovered_queue[-1]):
 		var clickable: PopochiuClickable = _hovered_queue[-1]
-		G.mouse_entered_clickable.emit(clickable)
+		PopochiuUtils.g.mouse_entered_clickable.emit(clickable)
 		return false
 	
 	return true
@@ -551,8 +555,8 @@ func register_command_without_id(command_name: String, fallback: Callable) -> in
 func command_fallback() -> void:
 	var fallback: Callable = commands_map[-1].fallback
 	
-	if commands_map.has(E.current_command):
-		fallback = commands_map[E.current_command].fallback
+	if commands_map.has(current_command):
+		fallback = commands_map[current_command].fallback
 	
 	await fallback.call()
 
@@ -595,7 +599,7 @@ func set_hovered(value: PopochiuClickable) -> void:
 	hovered = value
 	
 	if not hovered:
-		G.show_hover_text()
+		PopochiuUtils.g.show_hover_text()
 
 
 func get_hovered() -> PopochiuClickable:
@@ -625,7 +629,7 @@ func set_dialog_style(value: int) -> void:
 #region Private ####################################################################################
 func _set_in_room(value: bool) -> void:
 	in_room = value
-	Cursor.toggle_visibility(in_room)
+	PopochiuUtils.cursor.toggle_visibility(in_room)
 
 
 func _queueable(node: Object, method: String, params := [], signal_name := "") -> void:

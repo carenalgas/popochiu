@@ -16,7 +16,7 @@ func _ready():
 
 #region Private ####################################################################################
 func _on_settings_pressed() -> void:
-	G.gui.settings_requested.emit()
+	PopochiuUtils.g.gui.settings_requested.emit()
 
 
 #endregion
