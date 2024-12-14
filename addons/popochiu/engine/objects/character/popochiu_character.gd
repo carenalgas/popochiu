@@ -250,8 +250,6 @@ func walk(target_pos: Vector2) -> void:
 	is_moving = true
 	_last_reached_clickable = null
 
-	# Make the char face in the correct direction
-	face_direction(target_pos)
 	# The ROOM will take care of moving the character
 	# and face her in the correct direction from here
 
