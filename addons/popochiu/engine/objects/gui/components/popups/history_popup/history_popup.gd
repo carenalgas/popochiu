@@ -23,14 +23,14 @@ func _ready() -> void:
 
 #region Virtual ####################################################################################
 func _open() -> void:
-	if E.history.is_empty():
+	if PopochiuUtils.e.history.is_empty():
 		empty.show()
 		lines_scroll.hide()
 	else:
 		empty.hide()
 		lines_scroll.show()
 	
-	for data in E.history:
+	for data in PopochiuUtils.e.history:
 		var lbl: RichTextLabel
 		
 		if data.has("character"):
