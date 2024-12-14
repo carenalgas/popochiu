@@ -102,7 +102,7 @@ func _show_save(slot_text := "") -> void:
 	for btn_loop in slots.get_children():
 		var btn: TextureButton = btn_loop.get_node("BtnSlot")
 		btn.disabled = false
-	
+		_update_screenshots(btn_loop)
 	open()
 
 
@@ -114,31 +114,35 @@ func _show_load() -> void:
 	for btn_loop in slots.get_children():
 		var btn: TextureButton = btn_loop.get_node("BtnSlot")
 		btn.disabled = !(btn as TextureButton).get_meta("has_save")
-		var save_screenshot_name := SAVE_SCREENSHOT_PATH % (btn_loop.get_index() + 1)
-		#var save_screenshot_name := SAVE_SCREENSHOT_PATH % 1
-		if FileAccess.file_exists(save_screenshot_name):
-			var screenshot_opened := FileAccess.open(save_screenshot_name, FileAccess.READ)
-			if not screenshot_opened:
-				PopochiuUtils.print_error(
-					"Could not open the file %s. Error code: %s" % [
-						save_screenshot_name, screenshot_opened.get_open_error()
-					]
-				)
-				continue
-			var file:FileAccess = FileAccess.open(save_screenshot_name, FileAccess.READ)
-			if FileAccess.get_open_error() != OK:
-				print(str("Could not load screenshot image : ",save_screenshot_name))
-				continue			
-			var img_buffer = file.get_buffer(file.get_length())
-			var savegame_img = Image.new()
-			var load_error := savegame_img.load_png_from_buffer(img_buffer)
-			if load_error != OK:
-				print(str("Error loading image : ",save_screenshot_name," with error: ",load_error))
-				return			
-			var savegame_texture = ImageTexture.create_from_image(savegame_img)
-			btn_loop.get_node("BtnSlot").texture_normal = savegame_texture
+		_update_screenshots(btn_loop)
+
 	open()
 
+
+func _update_screenshots(btn_loop) -> void:
+	var save_screenshot_name := SAVE_SCREENSHOT_PATH % (btn_loop.get_index() + 1)
+	if FileAccess.file_exists(save_screenshot_name):
+		var screenshot_opened := FileAccess.open(save_screenshot_name, FileAccess.READ)
+		if not screenshot_opened:
+			PopochiuUtils.print_error(
+				"Could not open the file %s. Error code: %s" % [
+					save_screenshot_name, screenshot_opened.get_open_error()
+				]
+			)
+			return
+		var file:FileAccess = FileAccess.open(save_screenshot_name, FileAccess.READ)
+		if FileAccess.get_open_error() != OK:
+			print(str("Could not load screenshot image : ",save_screenshot_name))
+			return
+		var img_buffer = file.get_buffer(file.get_length())
+		var savegame_img = Image.new()
+		var load_error := savegame_img.load_png_from_buffer(img_buffer)
+		if load_error != OK:
+			print(str("Error loading image : ",save_screenshot_name," with error: ",load_error))
+			return			
+		var savegame_texture = ImageTexture.create_from_image(savegame_img)
+		btn_loop.get_node("BtnSlot").texture_normal = savegame_texture
+	
 
 func _select_slot(btn: TextureButton) -> void:
 	if _slot_name:
