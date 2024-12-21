@@ -33,7 +33,6 @@ func get_saves_descriptions() -> Dictionary:
 					]
 				)
 				return {}
-
 			var content := opened.get_as_text()
 			opened.close()
 			
@@ -45,7 +44,7 @@ func get_saves_descriptions() -> Dictionary:
 			var loaded_data: Dictionary = test_json_conv.data
 			
 			saves[i] = loaded_data.description
-	
+
 	return saves
 
 
@@ -58,6 +57,12 @@ func save_game(slot := 1, description := "") -> bool:
 			]
 		)
 		return false
+
+	# Take save game screenshot
+	var capture := E.get_viewport().get_texture().get_image()
+	capture.resize(100, 65, Image.INTERPOLATE_LANCZOS)
+	var save_filename := "user://screenshot_%s.png" %slot
+	var result := capture.save_png(save_filename) 
 	
 	var data := {
 		description = description,

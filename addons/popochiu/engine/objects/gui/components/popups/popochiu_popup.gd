@@ -86,6 +86,8 @@ func close() -> void:
 		# Idempotent call, no need to check the mode
 		PopochiuUtils.e.gui.popups_stack.back().show()
 	
+	# Sleep for 1 frame so the save popup is not visible in the save screenshot
+	await E.get_tree().process_frame
 	_close()
 
 
