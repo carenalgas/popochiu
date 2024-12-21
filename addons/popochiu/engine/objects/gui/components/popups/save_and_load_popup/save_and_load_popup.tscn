@@ -1,11 +1,11 @@
 [gd_scene load_steps=8 format=3 uid="uid://c7ehvcne5j4vq"]
 
-[ext_resource type="Theme" uid="uid://cydtfw4boehaf" path="res://game/gui/resources/gui_theme.tres" id="1_75y11"]
+[ext_resource type="Theme" uid="uid://rg3ulk68vghu" path="res://game/gui/resources/gui_theme.tres" id="1_75y11"]
 [ext_resource type="Script" path="res://game/gui/components/popups/save_and_load_popup/save_and_load_popup_custom.gd" id="2_pqr4b"]
-[ext_resource type="StyleBox" uid="uid://caypssh8te5n" path="res://game/gui/components/popups/popochiu_popup_panel_container.tres" id="3_30jnn"]
+[ext_resource type="StyleBox" uid="uid://bqnp8jblfcqe" path="res://game/gui/components/popups/popochiu_popup_panel_container.tres" id="3_30jnn"]
 [ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/gui/resources/images/close.png" id="4_qsvch"]
 [ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight.png" id="5_r5kvn"]
-[ext_resource type="Texture2D" uid="uid://b3ywmj6fb8wy2" path="res://addons/popochiu/icons/new_save.png" id="6_aqre2"]
+[ext_resource type="Texture2D" uid="uid://c2uf3fq2o5o4y" path="res://addons/popochiu/icons/empty_slot.png" id="6_md14g"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yg86r"]
 
@@ -71,7 +71,7 @@ layout_mode = 2
 [node name="BtnSlot" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("6_aqre2")
+texture_normal = ExtResource("6_md14g")
 
 [node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer"]
 layout_mode = 2
@@ -84,7 +84,7 @@ layout_mode = 2
 [node name="BtnSlot" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer2"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("6_aqre2")
+texture_normal = ExtResource("6_md14g")
 
 [node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer2"]
 layout_mode = 2
@@ -97,7 +97,7 @@ layout_mode = 2
 [node name="BtnSlot" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer3"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("6_aqre2")
+texture_normal = ExtResource("6_md14g")
 
 [node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer3"]
 layout_mode = 2
@@ -110,7 +110,7 @@ layout_mode = 2
 [node name="BtnSlot" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer4"]
 layout_mode = 2
 toggle_mode = true
-texture_normal = ExtResource("6_aqre2")
+texture_normal = ExtResource("6_md14g")
 
 [node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/Slots/VBoxContainer4"]
 layout_mode = 2

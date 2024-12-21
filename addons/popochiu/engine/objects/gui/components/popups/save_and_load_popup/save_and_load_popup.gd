@@ -102,7 +102,8 @@ func _show_save(slot_text := "") -> void:
 	for btn_loop in slots.get_children():
 		var btn: TextureButton = btn_loop.get_node("BtnSlot")
 		btn.disabled = false
-		_update_screenshots(btn_loop)
+		var screenshot_expected = (btn as TextureButton).get_meta("has_save")
+		_update_screenshot(btn_loop, screenshot_expected)
 	open()
 
 
@@ -114,34 +115,61 @@ func _show_load() -> void:
 	for btn_loop in slots.get_children():
 		var btn: TextureButton = btn_loop.get_node("BtnSlot")
 		btn.disabled = !(btn as TextureButton).get_meta("has_save")
-		_update_screenshots(btn_loop)
+		_update_screenshot(btn_loop, !btn.disabled)
 
 	open()
 
 
-func _update_screenshots(btn_loop) -> void:
-	var save_screenshot_name := SAVE_SCREENSHOT_PATH % (btn_loop.get_index() + 1)
-	if FileAccess.file_exists(save_screenshot_name):
-		var screenshot_opened := FileAccess.open(save_screenshot_name, FileAccess.READ)
-		if not screenshot_opened:
-			PopochiuUtils.print_error(
-				"Could not open the file %s. Error code: %s" % [
-					save_screenshot_name, screenshot_opened.get_open_error()
-				]
-			)
+## Validate if the file you want to open exists and can be read from
+func _file_can_be_opened(filename) -> bool:
+	if ! FileAccess.file_exists(filename):
+		return false
+	var file_opened := FileAccess.open(filename, FileAccess.READ)
+	if not file_opened:
+		PopochiuUtils.print_error(
+			"Could not open the file %s. Error code: %s" % [
+				filename, file_opened.get_open_error()
+			]
+		)
+		return false
+	return true
+
+
+## Update the screenshot slot in the load/save screen with the relevant
+## screenshot if possible
+func _update_screenshot(btn_loop, screenshot_expected) -> void:
+	var save_screenshot_name:String
+	if screenshot_expected == false:
+		save_screenshot_name = "res://addons/popochiu/icons/empty_slot.png"
+		
+		if not _file_can_be_opened(save_screenshot_name):
 			return
-		var file:FileAccess = FileAccess.open(save_screenshot_name, FileAccess.READ)
-		if FileAccess.get_open_error() != OK:
-			print(str("Could not load screenshot image : ",save_screenshot_name))
-			return
-		var img_buffer = file.get_buffer(file.get_length())
-		var savegame_img = Image.new()
-		var load_error := savegame_img.load_png_from_buffer(img_buffer)
-		if load_error != OK:
-			print(str("Error loading image : ",save_screenshot_name," with error: ",load_error))
-			return			
-		var savegame_texture = ImageTexture.create_from_image(savegame_img)
-		btn_loop.get_node("BtnSlot").texture_normal = savegame_texture
+	else:
+		save_screenshot_name = SAVE_SCREENSHOT_PATH % (btn_loop.get_index() + 1)
+		
+		if not _file_can_be_opened(save_screenshot_name):
+			save_screenshot_name = "res://addons/popochiu/icons/missing_image.png"
+			if not _file_can_be_opened(save_screenshot_name):
+				return
+
+	var savegame_texture := _get_image_from_file(save_screenshot_name)
+	btn_loop.get_node("BtnSlot").texture_normal = savegame_texture
+
+
+## Return the screenshot content from a save game image file
+func _get_image_from_file(filename) -> ImageTexture:
+	var file:FileAccess = FileAccess.open(filename, FileAccess.READ)
+	if FileAccess.get_open_error() != OK:
+		print(str("Could not load screenshot image : ",filename))
+		return null
+	var img_buffer = file.get_buffer(file.get_length())
+	var savegame_img = Image.new()
+	var load_error := savegame_img.load_png_from_buffer(img_buffer)
+	if load_error != OK:
+		print(str("Error loading image : ",filename," with error: ",load_error))
+		return null
+	var savegame_texture = ImageTexture.create_from_image(savegame_img)
+	return savegame_texture
 	
 
 func _select_slot(btn: TextureButton) -> void:
