@@ -69,9 +69,6 @@ func _on_ok() -> void:
 		_prev_text = _current_slot.text
 		_current_slot.set_meta("has_save", true)
 	
-	close()
-
-
 #endregion
 
 #region Public #####################################################################################
