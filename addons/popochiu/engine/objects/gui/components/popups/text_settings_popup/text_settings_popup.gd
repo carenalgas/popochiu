@@ -37,4 +37,8 @@ func _on_continue_mode_toggled(toggled_on: bool) -> void:
 	PopochiuUtils.e.settings.auto_continue_text = toggled_on
 
 
+func _on_cancel() -> void:
+	# Unpause gameplay
+	get_tree().paused = false
+
 #endregion

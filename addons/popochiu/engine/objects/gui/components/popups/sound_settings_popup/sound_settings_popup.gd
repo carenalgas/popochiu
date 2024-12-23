@@ -11,6 +11,12 @@ func _open() -> void:
 
 func _on_cancel() -> void:
 	sound_volumes.restore_last_volumes()
+	# Unpause gameplay
+	get_tree().paused = false
 
+
+func _on_ok() -> void:
+	# Unpause gameplay
+	get_tree().paused = false
 
 #endregion
