@@ -8,7 +8,7 @@ extends Node
 ## Some things you can do with it:
 ## - Change to another room.
 ## - Access the main camera and some game settings.
-## - Run commands sequentialy (even in a form that makes the skippable).
+## - Run commands sequentially (even in a form that makes the skippable).
 ## - Use some utility methods (such as making a function of yours able to be in a run queue).
 ## 
 ## Examples
@@ -216,7 +216,7 @@ func wait(time := 1.0) -> void:
 	await get_tree().create_timer(time).timeout
 
 
-# TODO: Stop or break a queue in excecution
+# TODO: Stop or break a queue in execution
 #func break_queue() -> void:
 #	pass
 

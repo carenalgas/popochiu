@@ -22,7 +22,7 @@ func _ready() -> void:
 #region Virtual ####################################################################################
 func _get_location() -> String:
 	# Structure of path: "res://game/rooms/room_name/props/prop_name/"
-	# path splitted: [res:, popochiu, rooms, room_name, props, prop_name]
+	# path split: [res:, popochiu, rooms, room_name, props, prop_name]
 	return "Room%s" % (path.split("/", false)[3]).to_pascal_case()
 
 

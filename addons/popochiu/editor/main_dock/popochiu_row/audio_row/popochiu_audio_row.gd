@@ -40,7 +40,7 @@ func _ready() -> void:
 	play_btn.icon = get_theme_icon("MainPlay", "EditorIcons")
 	stop_btn.icon = get_theme_icon("Stop", "EditorIcons")
 	
-	# Connect to childrens' signals
+	# Connect to children's signals
 	play_btn.pressed.connect(play)
 	stop_btn.pressed.connect(stop)
 	

@@ -18,7 +18,7 @@ extends PopochiuGraphicInterface
 func _ready() -> void:
 	super()
 	
-	# Connect to childrens' signals
+	# Connect to children's signals
 	settings_bar.option_selected.connect(_on_settings_option_selected)
 	
 	# Connect to autoloads' signals

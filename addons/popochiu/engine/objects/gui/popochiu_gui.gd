@@ -116,12 +116,12 @@ func _on_dialog_line_started() -> void:
 
 
 ## Called when a dialog line said by a [PopochiuCharacter] finishes (this is after players click the
-## screen anywhere to make the dialog line dissapear).
+## screen anywhere to make the dialog line disappear).
 func _on_dialog_line_finished() -> void:
 	pass
 
 
-## Called when [param dialog] starts (this is afet calling [method PopochiuDialog.start]).
+## Called when [param dialog] starts (this is after calling [method PopochiuDialog.start]).
 func _on_dialog_started(dialog: PopochiuDialog) -> void:
 	pass
 

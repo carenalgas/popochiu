@@ -2,7 +2,7 @@ class_name SierraGUI
 extends PopochiuGraphicInterface
 ## Defines the behavior of the Sierra GUI.
 ##
-## In this GUI players interact with objects based on the ative command, which can be changed with
+## In this GUI players interact with objects based on the active command, which can be changed with
 ## right click or by using the buttons in the top bar that appears when the cursor moves to the
 ## top of the screen. The inventory can be opened with a button in the top bar, same for the
 ## settings.

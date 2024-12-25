@@ -123,7 +123,7 @@ func clear_and_bake(navpoly: NavigationPolygon) -> void:
 	NavigationServer2D.bake_from_source_geometry_data(
 		navpoly, NavigationMeshSourceGeometryData2D.new()
 	)
-	# Restore the NagivationRegion2D position
+	# Restore the NavigationRegion2D position
 	get_node("Perimeter").position = interaction_polygon_position
 
 

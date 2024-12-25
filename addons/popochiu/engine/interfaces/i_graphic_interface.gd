@@ -7,7 +7,7 @@ extends Node
 ##
 ## Some things you can do with it:[br][br]
 ## 
-## [b]•[/b] Show messages in the middle of the sceen (like a narrator or a game message).[br]
+## [b]•[/b] Show messages in the middle of the screen (like a narrator or a game message).[br]
 ## [b]•[/b] Show info about hovered objects in the game.[br]
 ## [b]•[/b] Show, hide, block or unblock the GUI.[br][br]
 ## 

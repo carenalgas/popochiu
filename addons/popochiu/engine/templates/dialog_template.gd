@@ -4,7 +4,7 @@ extends PopochiuDialog
 
 #region Virtual ####################################################################################
 func _on_start() -> void:
-	# One can put here something to excecute before showing the dialog options.
+	# One can put here something to execute before showing the dialog options.
 	# E.g. Make the PC to look at the character which it will talk to, walk to
 	# it, and say something (or make the character say something):
 #	await C.player.face_clicked()
@@ -18,7 +18,7 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 	# You can make the player character say the selected option with:
 #	await D.say_selected()
 	
-	# Use match to check which option was selected and excecute something for
+	# Use match to check which option was selected and execute something for
 	# each one
 	match opt.id:
 		_:

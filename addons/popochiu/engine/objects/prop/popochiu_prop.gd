@@ -12,10 +12,10 @@ extends PopochiuClickable
 ## points of the [b]$InteractionPolygon[/b] child.
 
 ## Emitted when the [param item] linked to this object (by [member link_to_item]) is removed from
-## the inventory. This may happen when the inventory item dissapears forever from the game.
+## the inventory. This may happen when the inventory item disappears forever from the game.
 signal linked_item_removed(item: PopochiuInventoryItem)
 ## Emitted when the [param item] linked to this object (by [member link_to_item]) is discarded from
-## the inventory. This may happen when the inventory item dissapears forever from the game.
+## the inventory. This may happen when the inventory item disappears forever from the game.
 signal linked_item_discarded(item: PopochiuInventoryItem)
 
 ## The image to use as the [member Sprite2D.texture] of the [b]$Sprite2D[/b] child.

@@ -26,7 +26,7 @@ func _ready() -> void:
 	# Hide the GUI tab while we decide how it will work based on devs feedback
 	tab_container.set_tab_hidden(tab_gui.get_index(), true)
 	
-	# Connect to childrens' signals
+	# Connect to children's signals
 	tab_container.tab_changed.connect(_on_tab_changed)
 	btn_setup.pressed.connect(open_setup)
 	btn_docs.pressed.connect(OS.shell_open.bind(PopochiuResources.DOCUMENTATION))

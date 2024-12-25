@@ -17,7 +17,7 @@ func _ready() -> void:
 	
 	super()
 	
-	# Connect to childrens' signals
+	# Connect to children's signals
 	interaction_checkbox.toggled.connect(_interaction_toggled)
 
 

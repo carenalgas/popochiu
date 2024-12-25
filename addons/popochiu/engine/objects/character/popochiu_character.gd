@@ -84,7 +84,7 @@ signal grab_done
 ## The stored position of the character. Used when [member anti_glide_animation] is
 ## [code]true[/code].
 var position_stored = null
-## Stores the [member PopochiuRoom.script_name] of the preiously visited [PopochiuRoom].
+## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
 var last_room := ''
 ## The suffix text to add to animation names.
 var anim_suffix := ''
@@ -182,7 +182,7 @@ func _on_move_ended() -> void:
 #region Public #####################################################################################
 ## Puts the character in the idle state by playing its idle animation, then waits for
 ## [code]0.2[/code] seconds.
-## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+## If the character has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
 ## value.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_idle() -> Callable:
@@ -191,7 +191,7 @@ func queue_idle() -> Callable:
 
 ## Puts the character in the idle state by playing its idle animation, then waits for
 ## [code]0.2[/code] seconds.
-## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+## If the character has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
 ## value.
 func idle() -> void:
 	if PopochiuUtils.e.cutscene_skipped:
@@ -210,7 +210,7 @@ func idle() -> void:
 
 
 ## Makes the character move to [param target_pos] and plays its walk animation.
-## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+## If the character has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
 ## value.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk(target_pos: Vector2) -> Callable:
@@ -218,7 +218,7 @@ func queue_walk(target_pos: Vector2) -> Callable:
 
 
 ## Makes the character move to [param target_pos] and plays its walk animation.
-## If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+## If the character has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
 ## value.
 func walk(target_pos: Vector2) -> void:
 	is_moving = true
@@ -976,7 +976,7 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 func _update_position():
 	PopochiuUtils.r.current.update_characters_position(self)
 
-# Flips sprites depending on user prefereces: requires two boolean conditions
+# Flips sprites depending on user preferences: requires two boolean conditions
 # as arguments for flipping left [param left_cond] or right [param right_cond]
 func _flip_left_right(left_cond: bool, right_cond: bool) -> void:
 	if has_node('Sprite2D'):
