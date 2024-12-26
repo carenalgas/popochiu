@@ -113,7 +113,7 @@ Let's change the function like this:
 
 ```gdscript
 func _option_selected(opt: PopochiuDialogOption) -> void:
-	# Use match to check which option was selected and excecute something for
+	# Use match to check which option was selected and execute something for
 	# each one
 	match opt.id:
 		"MessyRoom":

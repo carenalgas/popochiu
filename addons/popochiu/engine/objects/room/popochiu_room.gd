@@ -68,9 +68,9 @@ var _nav_path: PopochiuWalkableArea = null
 #     path: PackedVector2Array
 # }
 var _moving_characters := {}
-# Stores the childrens defined in the Editor"s Scene tree for each character inside $Characters to
+# Stores the children defined in the Editor"s Scene tree for each character inside $Characters to
 # add them to the corresponding PopochiuCharacter instance when the room is loaded in runtime.
-var _characters_childs := {}
+var _characters_children := {}
 
 
 #region Godot ######################################################################################
@@ -199,16 +199,16 @@ func exit_room() -> void:
 
 
 ## Adds the instance (in memory) of [param chr] to the [b]$Characters[/b] node and connects to its
-## [signal PopochiuCharacter.started_walk_to] and [signal PopochiuCharacter.stoped_walk] signals.
+## [signal PopochiuCharacter.started_walk_to] and [signal PopochiuCharacter.stopped_walk] signals.
 ## It also adds to it any children of the character in the Editor"s Scene tree. The [b]idle[/b]
 ## animation is triggered.
 func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
 	
-	# Fix #191 by checking if the character had childs defined in the Room's Scene (Editor)
-	if _characters_childs.has(chr.script_name):
+	# Fix #191 by checking if the character had children defined in the Room's Scene (Editor)
+	if _characters_children.has(chr.script_name):
 		# Add child nodes (defined in the Scene tree of the room) to the instance of the character
-		for child: Node in _characters_childs[chr.script_name]:
+		for child: Node in _characters_children[chr.script_name]:
 			chr.add_child(child)
 	
 	#warning-ignore:return_value_discarded
@@ -265,13 +265,13 @@ func clean_characters() -> void:
 	for c in $Characters.get_children():
 		if not c is PopochiuCharacter: continue
 		
-		_characters_childs[c.script_name] = []
+		_characters_children[c.script_name] = []
 		
 		for character_child: Node in c.get_children():
 			if not character_child.owner == self: continue
 			
 			c.remove_child(character_child)
-			_characters_childs[c.script_name].append(character_child)
+			_characters_children[c.script_name].append(character_child)
 		
 		c.queue_free()
 
@@ -490,7 +490,7 @@ func _update_navigation_path(
 
 
 func _clear_navigation_path(character: PopochiuCharacter) -> void:
-	# INFO: fixes "function signature missmatch in Web export" error thrown when clearing an empty
+	# INFO: fixes "function signature mismatch in Web export" error thrown when clearing an empty
 	# Array
 	if not _moving_characters.has(character.get_instance_id()):
 		return

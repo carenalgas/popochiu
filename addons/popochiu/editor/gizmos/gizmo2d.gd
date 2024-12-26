@@ -10,7 +10,7 @@ enum {
 }
 
 # Public vars
-# Convienence accessors
+# Convenience accessors
 var target_node: Node2D:
 	set = set_target_node,
 	get = get_target_node
@@ -197,7 +197,7 @@ func draw(viewport: Control, coord: Variant) -> void:
 	if coord is int:
 		coord = Vector2(coord, coord)
 
-	# Caculate the GLOBAL coordinates of the center of the square handle
+	# Calculate the GLOBAL coordinates of the center of the square handle
 	# This only takes into account the node offset discarding its transform basis
 	# (representing rotation, skew and scale) then it applies the viewport transform
 	# to take into account the zoom level
@@ -241,7 +241,7 @@ func draw(viewport: Control, coord: Variant) -> void:
 func drag_to(pos: Vector2):
 	# Distance between the mouse position and the gizmo center
 	var d = _grab_center_pos - _grab_mouse_pos
-	# Gizmo center postion in global coordinates
+	# Gizmo center position in global coordinates
 	var current_gizmo_pos = pos + d
 	# Distance between gizmo center position in 2D world node coordinates and
 	# node position	ignoring its transform basis (representing rotation, skew and scale)

@@ -44,7 +44,7 @@ signal item_remove_done(item: PopochiuInventoryItem)
 ## Emitted when [param item] is replaced in the inventory by [param new_item]. Useful for handling
 ## inventory item combinations.
 signal item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem)
-## Emitten when an item replacement has finished.
+## Emitted when an item replacement has finished.
 signal item_replace_done
 ## Emitted when the [param item] has finished leaving the inventory (i.e. when the GUI animation
 ## is complete).

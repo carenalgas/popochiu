@@ -154,7 +154,7 @@ func stop(cue_name: String, fade_duration := 0.0) -> void:
 				)
 			else:
 				stream_player.stop()
-				# Always emit the signal since it won't be emited if the audio
+				# Always emit the signal since it won't be emitted if the audio
 				# file haven't reach the end yet
 				stream_player.finished.emit()
 		else:

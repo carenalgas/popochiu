@@ -3,7 +3,7 @@ class_name PopochiuClickable
 extends Area2D
 ## Handles an Area2D that reacts to mouse events.
 ##
-## Is the base clase for [PopochiuProp], [PopochiuHotspot] and [PopochiuCharacter].
+## Is the base class for [PopochiuProp], [PopochiuHotspot] and [PopochiuCharacter].
 ## It has a property to determine when the object should render in front or back to other, another
 ## property that can be used to define the position to which characters will move to when moving
 ## to the item, and tow [CollisionPolygon2D] which are used to handle players interaction and
@@ -50,9 +50,9 @@ var times_middle_clicked := 0
 ## Stores the last [enum MouseButton] pressed on this object.
 var last_click_button := -1
 
-# Used for setting the double click delay. Windows default is 500 miliseconds.
+# Used for setting the double click delay. Windows default is 500 milliseconds.
 var _double_click_delay: float = 0.2
-# Used for tracking if a double click has occured.
+# Used for tracking if a double click has occurred.
 var _has_double_click: bool = false
 
 @onready var _description_code := description
@@ -93,7 +93,7 @@ func _ready():
 	# Update the node's polygon when:
 	if (
 		get_node_or_null("InteractionPolygon") # there is an InteractionPolygon node
-		and not self is PopochiuCharacter # avoids reseting the polygon (see issue #158)
+		and not self is PopochiuCharacter # avoids resetting the polygon (see issue #158)
 	):
 		get_node("InteractionPolygon").polygon = interaction_polygon
 		get_node("InteractionPolygon").position = interaction_polygon_position

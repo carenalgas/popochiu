@@ -15,7 +15,7 @@ static func copy_gui_template(
 		DirAccess.dir_exists_absolute(PopochiuResources.GUI_GAME_FOLDER)
 		and template_name == PopochiuResources.get_data_value("ui", "template", "")
 	):
-		PopochiuUtils.print_normal("No changes in GUI tempalte.")
+		PopochiuUtils.print_normal("No changes in GUI template.")
 		
 		on_complete.call()
 		return

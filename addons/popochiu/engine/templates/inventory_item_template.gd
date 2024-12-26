@@ -34,14 +34,14 @@ func _on_item_used(_item: PopochiuInventoryItem) -> void:
 #		await C.player.say("I cannot combine them")
 
 
-# Actions to excecute after the item is added to the Inventory
+# Actions to execute after the item is added to the Inventory
 func _on_added_to_inventory() -> void:
 	# Replace the call to super() to implement your code. This only
 	# makes the default behavior to happen.
 	super()
 
 
-# Actions to excecute when the item is discarded from the Inventory
+# Actions to execute when the item is discarded from the Inventory
 func _on_discard() -> void:
 	# Replace the call to super() to implement your code. This only
 	# makes the default behavior to happen.

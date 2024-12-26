@@ -1,7 +1,7 @@
 @tool
 extends PopochiuHotspot
 # You can use E.queue([]) to trigger a sequence of events.
-# Use await E.queue([]) if you want to pause the excecution of
+# Use await E.queue([]) if you want to pause the execution of
 # the function until the sequence of events finishes.
 
 

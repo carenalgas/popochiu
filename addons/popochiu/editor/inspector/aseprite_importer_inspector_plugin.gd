@@ -29,7 +29,7 @@ func _parse_property(object, type, name, hint_type, hint_string, usage_flags, wi
 		return false
 	if name != 'popochiu_placeholder':
 		return false
-	# Instanciate and configure the dock
+	# Instantiate and configure the dock
 	var dock = INSPECTOR_DOCK.instantiate()
 	# Load the specific script in the dock
 	if object is PopochiuCharacter:

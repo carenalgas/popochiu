@@ -79,7 +79,7 @@ func _show_text(txt := "") -> void:
 	
 	if follows_cursor and _can_change_size:
 		label.size += Vector2.ONE * (PopochiuUtils.cursor.get_cursor_height() / 2)
-		# Adding 2.0 fixes a visual bug that was showing the first character of the text cutted
+		# Adding 2.0 fixes a visual bug that was showing the first character of the text cut
 		label.size.x += 2.0
 
 

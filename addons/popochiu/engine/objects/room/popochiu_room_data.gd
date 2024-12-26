@@ -60,7 +60,7 @@ func on_load(data: Dictionary) -> void:
 	_on_load(data)
 
 
-## Stores the data of each of the childrens inside [b]$WalkableAreas[/b], [b]$Props[/b],
+## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
 func save_children_states() -> void:
 	if PopochiuUtils.r.current and PopochiuUtils.r.current.state == self:

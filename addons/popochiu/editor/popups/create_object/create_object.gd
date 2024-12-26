@@ -23,7 +23,7 @@ var _dflt_size := Vector2.ZERO
 func _ready() -> void:
 	_info_text = _info_folder + _info_files
 	
-	# Connect to childrens' signals
+	# Connect to children's signals
 	input.text_changed.connect(_update_name)
 	
 	error_container.hide()

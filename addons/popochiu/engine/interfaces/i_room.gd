@@ -14,7 +14,7 @@ extends Node
 ## Examples:
 ## [codeblock]
 ## R.get_prop("Scissors").modulate.a = 1.0 # Get Scissors prop and make it visible
-## R.Outside.state.is_rainning # Access the is_rainning property in the Outside room
+## R.Outside.state.is_raining # Access the is_raining property in the Outside room
 ## [/codeblock]
 
 ## Provides access to the current [PopochiuRoom].
@@ -100,7 +100,7 @@ func get_markers() -> Array:
 
 ## Returns the instance of the [PopochiuRoom] identified with [param script_name]. If the room
 ## doesn't exists, then [code]null[/code] is returned.[br][br]
-## This method is used by [b]res://game/autoloads/r.gd[/b] to load the instace of each room (present
+## This method is used by [b]res://game/autoloads/r.gd[/b] to load the instance of each room (present
 ## in that script as a variable for code autocompletion) in runtime.
 func get_runtime_room(script_name: String) -> PopochiuRoom:
 	var room: PopochiuRoom = null
@@ -132,7 +132,7 @@ func get_instance(script_name: String) -> PopochiuRoom:
 	return load(load(tres_path).scene).instantiate()
 
 
-## Clears all the [PopochiuRoom] instances to free memory and orphan childs.
+## Clears all the [PopochiuRoom] instances to free memory and orphan children.
 func clear_instances() -> void:
 	for r in _room_instances:
 		(_room_instances[r] as PopochiuRoom).free()

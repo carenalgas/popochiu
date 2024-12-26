@@ -2,10 +2,10 @@ class_name NineVerbGUI
 extends PopochiuGraphicInterface
 ## Defines the behavior of the 9 Verbs GUI.
 ##
-## In this GUI players interact with objects based on the ative command, which can be changed by
+## In this GUI players interact with objects based on the active command, which can be changed by
 ## clicking one of the nine buttons in the bottom panel. The inventory is always visible in the
 ## bottom right corner of the screen, and the settings popup can be opened using the button in the
-## top right corner of the sceen.
+## top right corner of the screen.
 
 signal settings_requested
 
@@ -36,7 +36,7 @@ func _ready() -> void:
 	# Connect to own signals
 	settings_requested.connect(_on_settings_requested)
 	
-	# Connect to childs signals
+	# Connect to children's signals
 	settings_popup.classic_sentence_toggled.connect(_on_classic_sentence_toggled)
 	settings_popup.option_selected.connect(_on_settings_option_selected)
 	

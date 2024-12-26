@@ -32,7 +32,7 @@ func _ready() -> void:
 	# Connect to signals and create the options for the menu
 	super()
 	
-	# Connect to childrens' signals
+	# Connect to children's signals
 	btn_open.pressed.connect(_open)
 	btn_script.pressed.connect(_open_script)
 	btn_state.pressed.connect(_edit_state)
