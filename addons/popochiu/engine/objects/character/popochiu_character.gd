@@ -100,26 +100,25 @@ var default_walk_speed := 0
 ## Stores the default scale. Used by [PopochiuRoom] when scaling the character if it is inside a
 ## [PopochiuRegion] that modifies the scale.
 var default_scale := Vector2.ONE
-
-# Holds the direction the character is looking at. Initialized to DOWN.
+# Holds the direction the character is looking at.
+# Initialized to DOWN.
 var _looking_dir: int = Looking.DOWN
-# Holds a suffixes fallback list for the animations to play. Initialized to the suffixes corresponding
-# to the DOWN direction.
-var _animation_suffixes: Array = ['_d', '_l', '_r', '']
+# Holds a suffixes fallback list for the animations to play.
+# Initialized to the suffixes corresponding to the DOWN direction.
+var _animation_suffixes: Array = ['_d', '_dr', '_dl', '_r', '_l', '']
 # Holds the last PopochiuClickable that the character reached.
 var _last_reached_clickable: PopochiuClickable = null
-# Caches the last direction the character faced to avoid unnecessary recalculation
-var _last_looking_dir: int = -1
-# Caches the last animation played
-var _last_animation_requested: String = "null"
-# Caches the last animation played
-var _last_animation_played: String = "null"
-# Caches the direction of the last animation
-var _last_animation_direction: int = -1
+# Holds the animation that's currently selected in the character's AnimationPlayer.
+var _current_animation: String = "null"
+# Holds the last animation category requested for the character (idle, walk, talk, grab, ...).
+var _last_requested_animation_label: String = "null"
+# Holds the direction the character was looking at when the current animation was requested.
+var _last_requested_animation_dir: int = -1
 
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
-# Array of the animation suffixes to prefer based on the angle the character is facing
+# Array of the animation suffixes to search for
+# based on the angle the character is facing.
 var _valid_animation_suffixes = [
 ['_r', '_l', '_dr', '_dl', '_d'], #    0 - 22.5 degrees
 ['_dr', '_dl', '_r' , '_l', '_d'], #  22.5 - 45 degrees
@@ -277,9 +276,13 @@ func walk(target_pos: Vector2) -> void:
 
 	is_moving = false
 
-## Used by the navigation system to move the character
-func navigation_system_move_character(target_pos: Vector2):
-	#face_direction(target_pos)
+
+func turn_towards(target_pos: Vector2) -> void:
+	_flip_left_right(
+		target_pos.x < position.x,
+		target_pos.x > position.x
+	)
+	face_direction(target_pos)
 	_play_walk(target_pos)
 
 ## Makes the character stop moving and emits [signal stopped_walk].[br][br]
@@ -666,7 +669,7 @@ func queue_play_animation(
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.
 func play_animation(animation_label: String, animation_fallback := 'idle'):
-	if (animation_label != _last_animation_requested) or (_looking_dir != _last_animation_direction):
+	if (animation_label != _last_requested_animation_label) or (_looking_dir != _last_requested_animation_dir):
 		if not has_node("AnimationPlayer"):
 			PopochiuUtils.print_error(
 				"Can't play character animation. Required AnimationPlayer not found in character %s" %
@@ -678,22 +681,21 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 			return
 
 		# Search for a valid animation corresponding to animation_label
-		var animation = _get_valid_oriented_animation(animation_label)
+		_current_animation = _get_valid_oriented_animation(animation_label)
 		# If is not present, do the same for the the fallback animation.
-		if animation == null: animation = _get_valid_oriented_animation(animation_fallback)
+		if _current_animation == null: _current_animation = _get_valid_oriented_animation(animation_fallback)
 		# In neither are available, exit and throw an error to check for the presence of the animations.
-		if animation == null: # Again!
+		if _current_animation == null: # Again!
 			PopochiuUtils.print_error(
 				"Neither the requested nor the fallback animation could be found for character %s.\
 				Requested:%s - Fallback: %s" % [script_name, animation_label, animation_fallback]
 			)
 			return
-		# Cache the running animation to speed up subsequent frames
-		_last_animation_played = animation
-		_last_animation_direction = _looking_dir
-		_last_animation_requested = animation_label
+		# Cache the the _current_animation context to avoid re-searching for it.
+		_last_requested_animation_label = animation_label
+		_last_requested_animation_dir = _looking_dir
 	# Play the animation in the best available orientation
-	animation_player.play(_last_animation_played)
+	animation_player.play(_current_animation)
 	# If the playing is blocking, wait for the animation to finish
 	await animation_player.animation_finished
 
@@ -770,7 +772,7 @@ func resume_animation():
 func face_direction(destination: Vector2):
 	# Determine the direction the character is facing.
 	# Remember: Y coordinates have opposite sign in Godot.
-	# this means that negative angles are up movements.
+	# This means that negative angles are up movements.
 	# Set the direction using the _looking property.
 	# We cannot use the face_* functions because they
 	# set the state as IDLE.
@@ -780,17 +782,15 @@ func face_direction(destination: Vector2):
 	# Notice how we seek for opposite directions for left and
 	# right. Flipping is done in other functions. We just define
 	# a preference order for animations when available.
-#
+
 	# Get the vector from the origin to the destination.
 	var angle = wrapf(rad_to_deg((destination - position).angle()) , 0, 360)
-	# The angle calculation uses 16 angles rather than 8 for greater accuracy in choosing the facing
-	# direction animation preference.
+	# The angle calculation uses 16 angles rather than 8 for greater accuracy
+	# in choosing the facing direction fallback animations.
 	var _looking_angle := int(angle / 22.5) % 16
 	_animation_suffixes = _valid_animation_suffixes[_looking_angle] + ['']
 	# The 16 directions used for animation suffixes are simplified to 8 general directions
 	_looking_dir = int(angle / 45) % 8
-	_last_looking_dir = _looking_dir
-
 
 
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.

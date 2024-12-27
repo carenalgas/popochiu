@@ -438,9 +438,10 @@ func _move_along_path(distance_to_move: float, moving_character_data: Dictionary
 			moving_character_data.path[0]
 		)
 
-		# Haven't reached the next navigation point yet
+		# The character haven't reached the next navigation point so we update
+		# its position along the line between the last and the next navigation point
 		if distance_to_move <= distance_to_next_navigation_point:
-			moving_character_data.character.navigation_system_move_character(moving_character_data.path[0])
+			moving_character_data.character.turn_towards(moving_character_data.path[0])
 			var next_position = last_character_position.lerp(
 					moving_character_data.path[0], distance_to_move / distance_to_next_navigation_point
 				)
@@ -448,14 +449,17 @@ func _move_along_path(distance_to_move: float, moving_character_data: Dictionary
 				moving_character_data.character.position_stored = next_position
 			else:
 				moving_character_data.character.position = next_position
-				moving_character_data.character.update_scale()
+			# Scale the character depending on the new position
+			moving_character_data.character.update_scale()
+			# We are still walking towards the next navigation point
+			# so we don't need to update the path information
 			return
 
-		# We're at the next navigation point
+		# We reached the next navigation point
+		# Remove the last navigation point from the path
+		# and recalculate the distance to the next one
 		distance_to_move -= distance_to_next_navigation_point
 		last_character_position = moving_character_data.path[0]
-		if moving_character_data.path.size() > 1:
-			moving_character_data.character.face_direction(moving_character_data.path[1])
 		moving_character_data.path.remove_at(0)
 
 
