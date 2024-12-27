@@ -788,6 +788,9 @@ func face_direction(destination: Vector2):
 	# The angle calculation uses 16 angles rather than 8 for greater accuracy
 	# in choosing the facing direction fallback animations.
 	var _looking_angle := int(angle / 22.5) % 16
+	# Selecting the animation suffixes for the current facing direction.
+	# Note that we add a fallback empty string to the list, in case the only
+	# available animation is the base one ('walk', 'talk', etc).
 	_animation_suffixes = _valid_animation_suffixes[_looking_angle] + ['']
 	# The 16 directions used for animation suffixes are simplified to 8 general directions
 	_looking_dir = int(angle / 45) % 8
