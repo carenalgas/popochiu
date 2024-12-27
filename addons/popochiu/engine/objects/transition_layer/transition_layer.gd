@@ -27,6 +27,8 @@ func _ready() -> void:
 	# Connect to childrens' signals
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
 	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
+	# Allow fades for save/load while gameplay is paused
+	process_mode = PROCESS_MODE_ALWAYS
 
 	# Make sure the transition layer is ready
 	# if it has to be visible in the first room

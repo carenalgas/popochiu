@@ -29,6 +29,8 @@ var is_blocked := false
 #region Godot ######################################################################################
 func _init() -> void:
 	Engine.register_singleton(&"Cursor", self)
+	# Allow cursor processing during gameplay pause
+	process_mode = PROCESS_MODE_ALWAYS
 
 
 func _ready():

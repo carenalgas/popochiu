@@ -31,6 +31,8 @@ func _ready() -> void:
 	# Connect to singleton signals
 	PopochiuUtils.g.popup_requested.connect(_on_popup_requested)
 	
+	# Don't pause popup processing during gameplay pause
+	process_mode = PROCESS_MODE_ALWAYS
 	close()
 
 
@@ -72,6 +74,8 @@ func open() -> void:
 	PopochiuUtils.e.gui.popups_stack.append(self)
 	
 	show()
+	# Pause gameplay when a popup appears
+	get_tree().paused = true
 
 
 ## Closes the popup unlocking interactions with the graphic interface.
