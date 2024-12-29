@@ -43,7 +43,7 @@ func create(param: PopochiuHotspotFactoryParam) -> int:
 	new_obj.cursor = PopochiuResources.CURSOR_TYPE.ACTIVE
 	new_obj.interaction_polygon = param.interaction_polygon
 
-	# Save the hostspot scene (.tscn) and put it into _scene class property
+	# Save the hotspot scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------

@@ -22,7 +22,7 @@ func _ready() -> void:
 	
 	btn_ok.disabled = true
 	
-	var saves: Dictionary = E.get_saves_descriptions()
+	var saves: Dictionary = PopochiuUtils.e.get_saves_descriptions()
 	
 	for btn: Button in slots.get_children():
 		btn.set_meta("has_save", false)
@@ -57,9 +57,9 @@ func _close() -> void:
 	slot_selected.emit()
 	
 	if _slot_name:
-		E.save_game(_slot, _slot_name)
+		PopochiuUtils.e.save_game(_slot, _slot_name)
 	else:
-		E.load_game(_slot)
+		PopochiuUtils.e.load_game(_slot)
 
 
 func _on_ok() -> void:
@@ -69,9 +69,6 @@ func _on_ok() -> void:
 		_prev_text = _current_slot.text
 		_current_slot.set_meta("has_save", true)
 	
-	close()
-
-
 #endregion
 
 #region Public #####################################################################################

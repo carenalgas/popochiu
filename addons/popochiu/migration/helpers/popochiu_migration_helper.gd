@@ -33,7 +33,7 @@ static func get_game_path() -> String:
 ## Returns the user project migration version from the "res://game/popochiu_data.cfg" file.
 ## If the Popochiu Migration Version is greater than the user project migration version
 ## then a migration needs to be done.
-## If -1 gets returned then an error has occured.
+## If -1 gets returned then an error has occurred.
 static func get_user_migration_version() -> int:
 	# popochiu_data.cfg config file could not be loaded, return error
 	if PopochiuResources.get_data_cfg() == null:
@@ -140,7 +140,7 @@ static func get_absolute_file_paths_for_file_extensions(
 	return file_paths
 
 
-## Looks in the text of each file in [param file_paths] for coincidencies of [param from], and
+## Looks in the text of each file in [param file_paths] for coincidences of [param from], and
 ## replace them by [param to]. If any replacement was done, returns [code]true[/code].
 static func replace_text_in_files(from: String, to: String, file_paths: Array) -> bool:
 	return PopochiuUtils.any_exhaustive(

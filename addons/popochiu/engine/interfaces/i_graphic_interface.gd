@@ -7,7 +7,7 @@ extends Node
 ##
 ## Some things you can do with it:[br][br]
 ## 
-## [b]•[/b] Show messages in the middle of the sceen (like a narrator or a game message).[br]
+## [b]•[/b] Show messages in the middle of the screen (like a narrator or a game message).[br]
 ## [b]•[/b] Show info about hovered objects in the game.[br]
 ## [b]•[/b] Show, hide, block or unblock the GUI.[br][br]
 ## 
@@ -69,6 +69,10 @@ var gui: PopochiuGraphicInterface
 
 
 #region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"G", self)
+
+
 func _ready():
 	template = PopochiuResources.get_data_value("ui", "template", "")
 
@@ -82,18 +86,18 @@ func _ready():
 func show_system_text(msg: String) -> void:
 	# NOTE: Not sure if this logic should happen here. Perhaps it could trigger a signal to which
 	# the in-game graphic interface connects, allowing it to handle the logic.
-	if not E.playing_queue and gui.popups_stack.is_empty():
+	if not PopochiuUtils.e.playing_queue and gui.popups_stack.is_empty():
 		block()
 	
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		
 		return
 	
-	system_text_shown.emit(E.get_text(msg))
+	system_text_shown.emit(PopochiuUtils.e.get_text(msg))
 	await system_text_hidden
 	
-	if not E.playing_queue and gui.popups_stack.is_empty():
+	if not PopochiuUtils.e.playing_queue and gui.popups_stack.is_empty():
 		unblock()
 
 

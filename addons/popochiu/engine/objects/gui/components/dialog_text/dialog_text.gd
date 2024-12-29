@@ -38,13 +38,17 @@ func _ready() -> void:
 	set_meta(DFLT_POSITION, rich_text_label.position)
 	
 	modulate.a = 0.0
-	_secs_per_character = E.text_speed
-	_x_limit = E.width / (E.scale.x if E.settings.scale_gui else 1.0)
-	_y_limit = E.height / (E.scale.y if E.settings.scale_gui else 1.0)
+	_secs_per_character = PopochiuUtils.e.text_speed
+	_x_limit = PopochiuUtils.e.width / (
+		PopochiuUtils.e.scale.x if PopochiuUtils.e.settings.scale_gui else 1.0
+	)
+	_y_limit = PopochiuUtils.e.height / (
+		PopochiuUtils.e.scale.y if PopochiuUtils.e.settings.scale_gui else 1.0
+	)
 	
 	# Connect to singletons events
-	E.text_speed_changed.connect(change_speed)
-	C.character_spoke.connect(_show_dialogue)
+	PopochiuUtils.e.text_speed_changed.connect(change_speed)
+	PopochiuUtils.c.character_spoke.connect(_show_dialogue)
 	
 	continue_icon.hide()
 
@@ -67,17 +71,19 @@ func _input(event: InputEvent) -> void:
 
 #region Public #####################################################################################
 func play_text(props: Dictionary) -> void:
-	var msg: String = E.get_text(props.text)
+	var msg: String = PopochiuUtils.e.get_text(props.text)
 	_is_waiting_input = false
 	_dialog_pos = props.position
+	
+	if PopochiuConfig.should_talk_gibberish():
+		msg = PopochiuUtils.d.create_gibberish(msg)
 	
 	# Call the virtual method that modifies the size of the RichTextLabel in case the dialog style
 	# requires it.
 	await _modify_size(msg, props.position)
 	
-	rich_text_label.push_color(props.color)
-	
 	# Assign the text and align mode
+	msg = "[color=%s]%s[/color]" % [props.color.to_html(), msg]
 	_append_text(msg, props)
 	
 	if _secs_per_character > 0.0:
@@ -135,11 +141,11 @@ func disappear() -> void:
 	
 	set_process_input(false)
 	text_show_finished.emit()
-	G.dialog_line_finished.emit()
+	PopochiuUtils.g.dialog_line_finished.emit()
 
 
 func change_speed() -> void:
-	_secs_per_character = E.text_speed
+	_secs_per_character = PopochiuUtils.e.text_speed
 
 
 #endregion
@@ -152,11 +158,11 @@ func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
 		text = msg,
 		color = chr.text_color,
 		position = PopochiuUtils.get_screen_coords_for(chr, chr.dialog_pos).floor() / (
-			E.scale if E.settings.scale_gui else Vector2.ONE
+			PopochiuUtils.e.scale if PopochiuUtils.e.settings.scale_gui else Vector2.ONE
 		),
 	})
 	
-	G.dialog_line_started.emit()
+	PopochiuUtils.g.dialog_line_started.emit()
 	
 	set_process_input(true)
 	text_show_started.emit()
@@ -228,9 +234,9 @@ func _wait_input() -> void:
 	if is_instance_valid(tween) and tween.finished.is_connected(_wait_input):
 		tween.finished.disconnect(_wait_input)
 	
-	if E.auto_continue_after >= 0.0:
+	if PopochiuUtils.e.auto_continue_after >= 0.0:
 		_auto_continue = true
-		await get_tree().create_timer(E.auto_continue_after + 0.2).timeout
+		await get_tree().create_timer(PopochiuUtils.e.auto_continue_after + 0.2).timeout
 		
 		if _auto_continue:
 			_continue(true)
@@ -244,7 +250,7 @@ func _show_icon() -> void:
 	
 	continue_icon_tween = create_tween()
 	
-	if not E.settings.auto_continue_text:
+	if not PopochiuUtils.e.settings.auto_continue_text:
 		# For manual continuation: make the icon jump
 		continue_icon.value = 100.0
 		continue_icon_tween.tween_property(
@@ -284,7 +290,7 @@ func _notify_completion() -> void:
 
 
 func _continue(forced_continue := false) -> void:
-	if E.settings.auto_continue_text or forced_continue:
+	if PopochiuUtils.e.settings.auto_continue_text or forced_continue:
 		disappear()
 
 

@@ -60,12 +60,12 @@ func on_load(data: Dictionary) -> void:
 	_on_load(data)
 
 
-## Stores the data of each of the childrens inside [b]$WalkableAreas[/b], [b]$Props[/b],
+## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
 func save_children_states() -> void:
-	if R.current and R.current.state == self:
+	if PopochiuUtils.r.current and PopochiuUtils.r.current.state == self:
 		for t in PopochiuResources.ROOM_CHILDREN:
-			for node in R.current.call("get_" + t):
+			for node in PopochiuUtils.r.current.call("get_" + t):
 				if node is PopochiuProp and not node.clickable: continue
 				
 				_save_object_state(
@@ -150,20 +150,25 @@ func save_children_states() -> void:
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
 func save_characters() -> void:
-	for c in R.current.get_characters():
-		var pc: PopochiuCharacter = c
-		
-		characters[pc.script_name] = {
-			x = pc.position.x,
-			y = pc.position.y,
-			facing = pc._looking_dir,
-			visible = pc.visible,
-			modulate = pc.modulate.to_html(),
-			self_modulate = pc.self_modulate.to_html(),
-			light_mask = pc.light_mask,
-			baseline = pc.baseline,
-			walk_to_point = pc.walk_to_point,
-			look_at_point = pc.look_at_point,
+	for character: PopochiuCharacter in PopochiuUtils.r.current.get_characters():
+		characters[character.script_name] = {
+			x = character.position.x,
+			y = character.position.y,
+			facing = character._looking_dir,
+			visible = character.visible,
+			modulate = character.modulate.to_html(),
+			self_modulate = character.self_modulate.to_html(),
+			light_mask = character.light_mask,
+			baseline = character.baseline,
+			# Store this values using built-in types
+			walk_to_point = {
+				x = character.walk_to_point.x,
+				y = character.walk_to_point.y,
+			},
+			look_at_point = {
+				x = character.look_at_point.x,
+				y = character.look_at_point.y,
+			},
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)
 		}

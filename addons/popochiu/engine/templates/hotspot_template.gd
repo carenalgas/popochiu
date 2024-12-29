@@ -1,7 +1,7 @@
 @tool
 extends PopochiuHotspot
 # You can use E.queue([]) to trigger a sequence of events.
-# Use await E.queue([]) if you want to pause the excecution of
+# Use await E.queue([]) if you want to pause the execution of
 # the function until the sequence of events finishes.
 
 
@@ -9,7 +9,7 @@ extends PopochiuHotspot
 # When the node is clicked
 func _on_click() -> void:
 	# Replace the call to E.command_fallback() with your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 	# For example, you can make the player character walk to this hotspot, gaze at it, and then say
 	# something:
 #	await C.player.walk_to_clicked()
@@ -19,7 +19,7 @@ func _on_click() -> void:
 
 func _on_double_click() -> void:
 	# Replace the call to E.command_fallback() with your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 	# For example, you could make the player instantly goto another room on an exit hotspot instead
 	# of waiting for the player to walk there.
 #	await R.current = R.NewRoom
@@ -28,7 +28,7 @@ func _on_double_click() -> void:
 # When the node is right clicked
 func _on_right_click() -> void:
 	# Replace the call to E.command_fallback() with your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 	# For example, you can make the player character gaze at this hotspot and then say something:
 #	await C.player.face_clicked()
 #	await C.player.say("A window")
@@ -37,13 +37,13 @@ func _on_right_click() -> void:
 # When the node is middle clicked
 func _on_middle_click() -> void:
 	# Replace the call to E.command_fallback() to implement your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 
 
 # When the node is clicked and there is an inventory item selected
 func _on_item_used(_item: PopochiuInventoryItem) -> void:
 	# Replace the call to E.command_fallback() to implement your code.
-	E.command_fallback()
+	PopochiuUtils.e.command_fallback()
 	# For example, you can make the player character say something when the Key item is used in this
 	# hotspot. Note that you have to change the name of the `_item` parameter to `item`.
 #	if item == I.Key:

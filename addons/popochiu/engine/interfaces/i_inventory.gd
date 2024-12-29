@@ -44,7 +44,7 @@ signal item_remove_done(item: PopochiuInventoryItem)
 ## Emitted when [param item] is replaced in the inventory by [param new_item]. Useful for handling
 ## inventory item combinations.
 signal item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem)
-## Emitten when an item replacement has finished.
+## Emitted when an item replacement has finished.
 signal item_replace_done
 ## Emitted when the [param item] has finished leaving the inventory (i.e. when the GUI animation
 ## is complete).
@@ -75,6 +75,13 @@ var items_states := {}
 var _item_instances := {}
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"I", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Removes all the items that are currently in the inventory. If [param in_bg] is [code]true[/code],
 ## then the items are removed without calling [method PopochiuInventoryItem.discard] for each item.
@@ -92,7 +99,7 @@ func clean_inventory(in_bg := false) -> void:
 
 ## Displays the inventory for a duration of [param time] seconds.
 func show_inventory(time := 1.0) -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		return
 	
@@ -170,8 +177,10 @@ func is_item_in_inventory(item_name: String) -> bool:
 
 ## Checks whether the inventory has reached its limit.
 func is_full() -> bool:
-	return E.settings.inventory_limit > 0\
-	and E.settings.inventory_limit == items.size()
+	return (
+		PopochiuUtils.e.settings.inventory_limit > 0
+		and PopochiuUtils.e.settings.inventory_limit == items.size()
+	)
 
 
 ## Deselects the [member active] item.

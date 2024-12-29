@@ -25,8 +25,8 @@ func _ready() -> void:
 	
 	# Connect to autoloads signals
 	# Fix #219: Close the popup whenever a slot is selected for saving or loading
-	E.game_saved.connect(close)
-	E.game_load_started.connect(close)
+	PopochiuUtils.e.game_saved.connect(close)
+	PopochiuUtils.e.game_load_started.connect(close)
 	
 	if OS.has_feature("web"):
 		quit.hide()

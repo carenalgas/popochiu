@@ -288,13 +288,13 @@ func _on_add_character_pressed() -> void:
 		
 		idx += 1
 	
-	if not characters_menu.id_pressed.is_connected(_on_character_seleced):
-		characters_menu.id_pressed.connect(_on_character_seleced)
+	if not characters_menu.id_pressed.is_connected(_on_character_selected):
+		characters_menu.id_pressed.connect(_on_character_selected)
 
 
 # Adds the clicked character in the "+ Add character to room" menu to the
 # current room
-func _on_character_seleced(id: int) -> void:
+func _on_character_selected(id: int) -> void:
 	var characters_menu := _btn_add_character.get_popup()
 	var char_name := characters_menu.get_item_text(
 		characters_menu.get_item_index(id)
@@ -311,7 +311,7 @@ func _on_character_seleced(id: int) -> void:
 
 
 ## Called when a [param child] is added to the room's tree without using the Popochiu dock.
-## [param type_id] can be used to clasify the object (prop, hotspot, etc.).
+## [param type_id] can be used to classify the object (prop, hotspot, etc.).
 func _create_row_in_dock(type_id: int, child: Node) -> PopochiuRoomObjectRow:
 	var row: PopochiuRoomObjectRow = null
 	

@@ -2,8 +2,6 @@ extends Control
 ## Show a text in the form of GUI. Can be used to show game (or narrator)
 ## messages.
 
-signal shown
-
 const DFLT_SIZE := "dflt_size"
 
 # Used to fix a warning shown by Godot related to the anchors of the node and changing its size
@@ -18,8 +16,8 @@ func _ready() -> void:
 	set_meta(DFLT_SIZE, rich_text_label.size)
 	
 	# Connect to singletons signals
-	G.system_text_shown.connect(_show_text)
-	E.ready.connect(set.bind("_can_change_size", true))
+	PopochiuUtils.g.system_text_shown.connect(_show_text)
+	PopochiuUtils.e.ready.connect(set.bind("_can_change_size", true))
 	
 	close()
 
@@ -58,14 +56,14 @@ func close() -> void:
 		rich_text_label.size = get_meta(DFLT_SIZE)
 	
 	hide()
-	G.system_text_hidden.emit()
+	PopochiuUtils.g.system_text_hidden.emit()
 
 
 #endregion
 
 #region Private ####################################################################################
 func _show_text(msg := "") -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		close.call_deferred()
 		return
 	

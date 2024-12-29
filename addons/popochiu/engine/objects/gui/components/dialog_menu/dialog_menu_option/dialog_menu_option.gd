@@ -32,19 +32,11 @@ func _ready() -> void:
 
 #endregion
 
-#region Virtual ####################################################################################
-
-#endregion
-
-#region Public #####################################################################################
-
-#endregion
-
 #region SetGet #####################################################################################
 func set_dialog_option(value: PopochiuDialogOption) -> void:
 	option = value
 	if PopochiuConfig.should_dialog_options_be_gibberish():
-		text = D.create_gibberish(option.text)
+		text = PopochiuUtils.d.create_gibberish(option.text)
 	else:
 		text = option.text 
 	

@@ -9,7 +9,7 @@ var skip_cutscene_time := 0.0
 var show_tl_in_first_room := false
 ## @deprecated
 ## The text speed options that will be available in the game. In the ContextSensitive GUI you can
-## loop between them usin the text speed button in the SettingsBar.
+## loop between them using the text speed button in the SettingsBar.
 var text_speeds := [0.1, 0.01, 0.0]
 ## @deprecated
 ## The index of the default text speed value in [member text_speeds].
@@ -57,7 +57,7 @@ var is_pixel_art_game := false
 var is_pixel_perfect := false
 ## The style to use in dialog lines:[br][br]
 ## - [b]Above Character[/b]. Makes the text appear in top of each character. You can define
-## the position of if using the [b]DialoPos[/b] node in the character's scene.[br]
+## the position of if using the [b]DialogPos[/b] node in the character's scene.[br]
 ## - [b]Portrait[/b]. Texts will appear in a panel located in the center of the game window
 ## accompanied by the avatar of the character who is speaking. You can define an avatar for each
 ## emotion with the [member PopochiuCharacter.avatars] property.[br]

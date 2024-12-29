@@ -34,6 +34,13 @@ var characters_states := {}
 var _characters := {}
 
 
+#region Godot ######################################################################################
+func _init() -> void:
+	Engine.register_singleton(&"C", self)
+
+
+#endregion
+
 #region Public #####################################################################################
 ## Makes the Player-controlled Character (PC) move (NON-BLOCKING) to the
 ## [member PopochiuClickable.walk_to_point] position of the last clicked [PopochiuClickable] (i.e. a
@@ -77,13 +84,13 @@ func queue_face_clicked() -> Callable:
 
 ## Makes the camera follow [param c].
 func change_camera_owner(c: PopochiuCharacter) -> void:
-	if E.cutscene_skipped:
+	if PopochiuUtils.e.cutscene_skipped:
 		camera_owner = c
-		await E.get_tree().process_frame
+		await PopochiuUtils.e.get_tree().process_frame
 		return
 	
 	camera_owner = c
-	await E.get_tree().process_frame
+	await PopochiuUtils.e.get_tree().process_frame
 
 
 ## Makes the camera follow [param c].[br][br]
@@ -94,7 +101,7 @@ func queue_change_camera_owner(c: PopochiuCharacter) -> Callable:
 
 ## Returns the instance of the [PopochiuCharacter] identified with [param script_name]. If the
 ## character doesn't exists, then [code]null[/code] is returned.[br][br]
-## This method is used by [b]res://game/autoloads/c.gd[/b] to load the instace of each character
+## This method is used by [b]res://game/autoloads/c.gd[/b] to load the instance of each character
 ## (present in that script as a variable for code autocompletion) in runtime.
 func get_runtime_character(script_name: String) -> PopochiuCharacter:
 	var character: PopochiuCharacter = null
@@ -136,7 +143,7 @@ func get_character(script_name: String) -> PopochiuCharacter:
 	elif _characters.has(script_name):
 		character = _characters[script_name]
 	else:
-		# If the character doesn't existis, try to instantiate it from the list of characters (Resource)
+		# If the character doesn't exist, try to instantiate it from the list of characters (Resource)
 		# in popochiu_data.cfg
 		character = get_instance(script_name)
 		

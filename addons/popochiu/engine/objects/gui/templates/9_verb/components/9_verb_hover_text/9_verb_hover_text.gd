@@ -13,14 +13,14 @@ var _can_change_size := false
 func _ready() -> void:
 	super()
 	
-	_gui_width = E.width
-	_gui_height = E.height
+	_gui_width = PopochiuUtils.e.width
+	_gui_height = PopochiuUtils.e.height
 	
-	if E.settings.scale_gui:
-		_gui_width /= E.scale.x
-		_gui_height /= E.scale.y
+	if PopochiuUtils.e.settings.scale_gui:
+		_gui_width /= PopochiuUtils.e.scale.x
+		_gui_height /= PopochiuUtils.e.scale.y
 	
-	E.current_command = NineVerbCommands.Commands.WALK_TO
+	PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
 	
 	set_process(follows_cursor)
 	label.autowrap_mode = (
@@ -28,17 +28,17 @@ func _ready() -> void:
 	)
 	
 	_show_text()
-	E.ready.connect(set.bind("_can_change_size", true))
+	PopochiuUtils.e.ready.connect(set.bind("_can_change_size", true))
 
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	label.position = get_viewport().get_mouse_position()
 	
-	if E.settings.scale_gui:
-		label.position /= E.scale
+	if PopochiuUtils.e.settings.scale_gui:
+		label.position /= PopochiuUtils.e.scale
 	
 	label.position -= label.size / 2.0
-	label.position.y -= Cursor.get_cursor_height() / 2
+	label.position.y -= PopochiuUtils.cursor.get_cursor_height() / 2
 	
 	# Check viewport limits
 	if label.position.x < 0.0:
@@ -63,20 +63,23 @@ func _show_text(txt := "") -> void:
 	
 	if txt.is_empty():
 		if (
-			E.current_command == NineVerbCommands.Commands.WALK_TO
-			and is_instance_valid(E.get_hovered())
+			PopochiuUtils.e.current_command == NineVerbCommands.Commands.WALK_TO
+			and is_instance_valid(PopochiuUtils.e.get_hovered())
 		):
-			super("%s %s" % [E.get_current_command_name(), E.get_hovered().description])
-		elif E.current_command != NineVerbCommands.Commands.WALK_TO:
-			super(E.get_current_command_name())
-	elif not txt.is_empty() and not I.active:
-		super("%s %s" % [E.get_current_command_name(), txt])
-	elif I.active:
+			super("%s %s" % [
+				PopochiuUtils.e.get_current_command_name(),
+				PopochiuUtils.e.get_hovered().description
+			])
+		elif PopochiuUtils.e.current_command != NineVerbCommands.Commands.WALK_TO:
+			super(PopochiuUtils.e.get_current_command_name())
+	elif not txt.is_empty() and not PopochiuUtils.i.active:
+		super("%s %s" % [PopochiuUtils.e.get_current_command_name(), txt])
+	elif PopochiuUtils.i.active:
 		super(txt)
 	
 	if follows_cursor and _can_change_size:
-		label.size += Vector2.ONE * (Cursor.get_cursor_height() / 2)
-		# Adding 2.0 fixes a visual bug that was showing the first character of the text cutted
+		label.size += Vector2.ONE * (PopochiuUtils.cursor.get_cursor_height() / 2)
+		# Adding 2.0 fixes a visual bug that was showing the first character of the text cut
 		label.size.x += 2.0
 
 

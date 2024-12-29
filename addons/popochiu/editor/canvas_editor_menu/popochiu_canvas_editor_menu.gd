@@ -142,7 +142,7 @@ func _on_selection_changed() -> void:
 		_active_popochiu_object = null
 		hide()
 		# NOTE: Here we used to pop all the buttons up, by invoking _reset_buttons_state() but
-		# this is undesireable, since it overrides the user's visibility choices for the session.
+		# this is undesirable, since it overrides the user's visibility choices for the session.
 		# Leaving this comment here for future reference.
 
 		# Reset the walkable areas visibility depending on the user preferences
@@ -179,7 +179,7 @@ func _on_selection_changed() -> void:
 
 	# Case 2:
 	# We have more than one node selected. This can happen because the user selected
-	# more than one node explicitely (holding shift, or ctrl), or because the user selected
+	# more than one node explicitly (holding shift, or ctrl), or because the user selected
 	# one node in the scene while editing the polygon.
 	# In this case, since the polygon was selected programmatically and it's not in the scene
 	# tree, Godot will NOT remove it from selection and we need to do it by hand.
@@ -223,7 +223,7 @@ func _set_walkable_areas_visibility() -> void:
 
 
 ## Sets all the buttons color so that they are the same as the gizmos
-## or make them theme-standard if the use so prefer (see editor settigs)
+## or make them theme-standard if the use so prefer (see editor settings)
 func _set_toolbar_buttons_color() -> void:
 	if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_COLOR_TOOLBAR_BUTTONS):
 		# Reset button colors

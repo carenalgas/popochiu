@@ -61,12 +61,12 @@ func _on_dialog_line_started() -> void:
 
 
 # Called when a dialog line finishes (this is after players click the screen
-# anywhere to make the dialog line dissapear).
+# anywhere to make the dialog line disappear).
 func _on_dialog_line_finished() -> void:
 	super()
 
 
-# Called when a `dialog` starts (afet calling `PopochiuDialog.start()`).
+# Called when a `dialog` starts (after calling `PopochiuDialog.start()`).
 func _on_dialog_started(dialog: PopochiuDialog) -> void:
 	super(dialog)
 

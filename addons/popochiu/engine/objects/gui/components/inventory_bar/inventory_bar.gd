@@ -23,13 +23,13 @@ func _ready():
 		panel_container.position.y = hidden_y
 	
 	# Connect to singletons signals
-	G.blocked.connect(_on_gui_blocked)
-	G.unblocked.connect(_on_gui_unblocked)
-	I.item_added.connect(_add_item)
-	I.item_removed.connect(_remove_item)
-	I.item_replaced.connect(_replace_item)
-	I.inventory_show_requested.connect(_show_and_hide)
-	I.inventory_hide_requested.connect(_close)
+	PopochiuUtils.g.blocked.connect(_on_gui_blocked)
+	PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
+	PopochiuUtils.i.item_added.connect(_add_item)
+	PopochiuUtils.i.item_removed.connect(_remove_item)
+	PopochiuUtils.i.item_replaced.connect(_replace_item)
+	PopochiuUtils.i.inventory_show_requested.connect(_show_and_hide)
+	PopochiuUtils.i.inventory_hide_requested.connect(_close)
 	
 	# Check if there are already items in the inventory (set manually in the scene)
 	for ii in box.get_children():
@@ -45,10 +45,10 @@ func _input(event: InputEvent) -> void:
 	
 	var rect := panel_container.get_rect()
 	rect.size += Vector2(0.0, input_zone_height)
-	if E.settings.scale_gui:
+	if PopochiuUtils.e.settings.scale_gui:
 		rect = Rect2(
-			panel_container.get_rect().position * E.scale,
-			panel_container.get_rect().size * E.scale
+			panel_container.get_rect().position * PopochiuUtils.e.scale,
+			panel_container.get_rect().size * PopochiuUtils.e.scale
 		)
 	
 	if _is_hidden and rect.has_point(get_global_mouse_position()):
@@ -97,7 +97,7 @@ func _on_tween_finished() -> void:
 
 
 func _change_cursor(item: PopochiuInventoryItem) -> void:
-	I.set_active_item(item)
+	PopochiuUtils.i.set_active_item(item)
 
 
 func _on_gui_blocked() -> void:
@@ -130,14 +130,17 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 		_open()
 		await get_tree().create_timer(2.0).timeout
 		
-		_close()
-		await get_tree().create_timer(0.5).timeout
-		
+		# The mouse not being on the inventory can close the inventory prior to the 2 seconds
+		# expiring. This check fixes this. Bug 350.
+		if not _is_hidden:
+			_close()
+			await get_tree().create_timer(0.5).timeout
+
 		set_process_input(true)
 	else:
 		await get_tree().process_frame
 	
-	I.item_add_done.emit(item)
+	PopochiuUtils.i.item_add_done.emit(item)
 
 
 func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
@@ -145,8 +148,8 @@ func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 	box.remove_child(item)
 	
 	if not always_visible:
-		Cursor.show_cursor()
-		G.show_hover_text()
+		PopochiuUtils.cursor.show_cursor()
+		PopochiuUtils.g.show_hover_text()
 		
 		if animate:
 			_close()
@@ -154,27 +157,27 @@ func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 	
 	await get_tree().process_frame
 	
-	I.item_remove_done.emit(item)
+	PopochiuUtils.i.item_remove_done.emit(item)
 
 
 func _replace_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
 	item.replace_by(new_item)
 	await get_tree().process_frame
 	
-	I.item_replace_done.emit()
+	PopochiuUtils.i.item_replace_done.emit()
 
 
 func _show_and_hide(time := 1.0) -> void:
 	set_process_input(false)
 	_open()
 	await tween.finished
-	await E.wait(time)
+	await PopochiuUtils.e.wait(time)
 	
 	_close()
 	await tween.finished
 	
 	set_process_input(true)
-	I.inventory_shown.emit()
+	PopochiuUtils.i.inventory_shown.emit()
 
 
 #endregion

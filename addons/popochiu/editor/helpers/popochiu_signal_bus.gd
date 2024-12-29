@@ -1,5 +1,5 @@
 extends RefCounted
-## Helper Editor class to emit and connect to signals accross different components in the plugin
+## Helper Editor class to emit and connect to signals across different components in the plugin
 
 signal main_scene_changed(scene_path: String)
 signal pc_changed(script_name: String)

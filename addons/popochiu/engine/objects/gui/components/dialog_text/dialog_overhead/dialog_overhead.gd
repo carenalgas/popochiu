@@ -27,13 +27,13 @@ func _set_default_label_size(lbl: Label) -> void:
 
 
 func _append_text(msg: String, props: Dictionary) -> void:
-	var center: float = floor(position.x + (rich_text_label.size.x / 2))
+	var center: float = floor(rich_text_label.position.x + (rich_text_label.size.x / 2))
 	if center == props.position.x:
-		rich_text_label.append_text("[center]%s[/center]" % msg)
+		rich_text_label.text = "[center]%s[/center]" % msg
 	elif center < props.position.x:
-		rich_text_label.append_text("[right]%s[/right]" % msg)
+		rich_text_label.text = "[right]%s[/right]" % msg
 	else:
-		rich_text_label.append_text(msg)
+		rich_text_label.text = msg
 
 
 func _get_icon_from_position() -> float:

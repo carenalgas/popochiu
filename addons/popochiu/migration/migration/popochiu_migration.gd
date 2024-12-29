@@ -65,7 +65,7 @@ func is_migration_needed() -> bool:
 
 ## A helper function to display an error message in the [b]Output[/b] if there is an error doing 
 ## the migration, or a message if it is successful. This updates the [code]popochiu_data.cfg[/code]
-## file to have a new migration version if successful. [param migration] is an instansiated
+## file to have a new migration version if successful. [param migration] is an instantiated
 ## [PopochiuMigration] from [code]res://addons/popochiu/migration/migrations/*.gd[/code].
 ## [param version] is an integer for the migration version being run. This is intended to be called
 ## [DoMigration].

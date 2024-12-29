@@ -62,8 +62,8 @@ func save_game(slot := 1, description := "") -> bool:
 	var data := {
 		description = description,
 		player = {
-			room = R.current.script_name,
-			inventory = I.items,
+			room = PopochiuUtils.r.current.script_name,
+			inventory = PopochiuUtils.i.items,
 		},
 		rooms = {}, # Stores the state of each PopochiuRoomData
 		characters = {}, # Stores the state of each PopochiuCharacterData
@@ -72,11 +72,11 @@ func save_game(slot := 1, description := "") -> bool:
 		globals = {}, # Stores the state of Globals
 	}
 	
-	if C.player:
-		data.player.id = C.player.script_name
+	if PopochiuUtils.c.player:
+		data.player.id = PopochiuUtils.c.player.script_name
 		data.player.position = {
-			x = C.player.global_position.x,
-			y = C.player.global_position.y
+			x = PopochiuUtils.c.player.global_position.x,
+			y = PopochiuUtils.c.player.global_position.y
 		}
 	
 	# Go over each Popochiu type to save its current state -----------------------------------------
@@ -85,7 +85,7 @@ func save_game(slot := 1, description := "") -> bool:
 	
 	# Save PopochiuGlobals.gd (Globals) ------------------------------------------------------------
 	# prop = {class_name, hint, hint_string, name, type, usage}
-	for prop in Globals.get_script().get_script_property_list():
+	for prop in PopochiuUtils.globals.get_script().get_script_property_list():
 		if not prop.type in PopochiuResources.VALID_TYPES: continue
 		
 		# Check if the property is a script variable (8192)
@@ -93,10 +93,10 @@ func save_game(slot := 1, description := "") -> bool:
 		if prop.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or prop.usage == (
 			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
 		):
-			data.globals[prop.name] = Globals[prop.name]
+			data.globals[prop.name] = PopochiuUtils.globals[prop.name]
 	
-	if Globals.has_method("on_save"):
-		data.globals.custom_data = Globals.on_save()
+	if PopochiuUtils.globals.has_method("on_save"):
+		data.globals.custom_data = PopochiuUtils.globals.on_save()
 	
 	if data.globals.is_empty(): data.erase("globals")
 	
@@ -127,7 +127,7 @@ func load_game(slot := 1) -> Dictionary:
 	
 	# Load inventory items
 	for item in loaded_data.player.inventory:
-		I.get_item_instance(item).add(false)
+		PopochiuUtils.i.get_item_instance(item).add(false)
 	
 	# Load main object states
 	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
@@ -137,13 +137,13 @@ func load_game(slot := 1) -> Dictionary:
 	# Load globals
 	if loaded_data.has("globals"):
 		for prop in loaded_data.globals:
-			if typeof(Globals.get(prop)) == TYPE_NIL: continue
+			if typeof(PopochiuUtils.globals.get(prop)) == TYPE_NIL: continue
 			
-			Globals[prop] = loaded_data.globals[prop]
+			PopochiuUtils.globals[prop] = loaded_data.globals[prop]
 		
 		if loaded_data.globals.has("custom_data")\
-		and Globals.has_method("on_load"):
-			Globals.on_load(loaded_data.globals.custom_data)
+		and PopochiuUtils.globals.has_method("on_load"):
+			PopochiuUtils.globals.on_load(loaded_data.globals.custom_data)
 
 	return loaded_data
 
@@ -198,13 +198,13 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 		
 		match type:
 			"rooms":
-				R.rooms_states[id] = state
+				PopochiuUtils.r.rooms_states[id] = state
 			"characters":
-				C.characters_states[id] = state
+				PopochiuUtils.c.characters_states[id] = state
 			"inventory_items":
-				I.items_states[id] = state
+				PopochiuUtils.i.items_states[id] = state
 			"dialogs":
-				D.trees[id] = state
+				PopochiuUtils.d.trees[id] = state
 				_load_dialog_options(state, loaded_game[type][id].options)
 		
 		if loaded_game[type][id].has("custom_data")\

@@ -27,11 +27,14 @@ func _process(delta: float) -> void:
 		
 		if _shake_timer <= 0.0:
 			stop_shake()
-	elif is_instance_valid(C.camera_owner) and C.camera_owner.is_inside_tree():
+	elif (
+		is_instance_valid(PopochiuUtils.c.camera_owner)
+		and PopochiuUtils.c.camera_owner.is_inside_tree()
+	):
 		position = (
-			C.camera_owner.position_stored
-			if C.camera_owner.position_stored
-			else C.camera_owner.position
+			PopochiuUtils.c.camera_owner.position_stored
+			if PopochiuUtils.c.camera_owner.position_stored
+			else PopochiuUtils.c.camera_owner.position
 		)
 
 
@@ -66,14 +69,14 @@ func shake(strength := 1.0, duration := 1.0) -> void:
 
 
 ## Makes the camera shake with [param strength] during [param duration] seconds without blocking
-## excecution (that means it runs in the background). This method is intended to be used inside a
+## execution (that means it runs in the background). This method is intended to be used inside a
 ## [method queue] of instructions.
 func queue_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
 	return func (): await shake_bg(strength, duration)
 
 
 ## Makes the camera shake with [param strength] during [param duration] seconds without blocking
-## excecution (that means it runs in the background).
+## execution (that means it runs in the background).
 func shake_bg(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration

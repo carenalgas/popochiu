@@ -55,10 +55,10 @@ func _ready() -> void:
 	$PopochiuFilter.groups = _groups
 	_btn_scan_files.icon = get_theme_icon("Search", "EditorIcons")
 	
-	# Connect to childrens signals
+	# Connect to children's signals
 	_btn_scan_files.pressed.connect(search_audio_files)
 	
-	# Connect to helpers signals
+	# Connect to helpers' signals
 	PopochiuEditorHelper.signal_bus.audio_cues_deleted.connect(delete_rows)
 
 

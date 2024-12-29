@@ -5,38 +5,49 @@ extends Control
 
 signal transition_finished(transition_name: String)
 
+## Available transition types.
 enum {
+	## Fades in and out.
 	FADE_IN_OUT,
+	## Fades in.
 	FADE_IN,
+	## Fades out.
 	FADE_OUT,
+	## Passes down and up.
 	PASS_DOWN_IN_OUT,
+	## Passes down.
 	PASS_DOWN_IN,
+	## Passes up.
 	PASS_DOWN_OUT,
 }
 
-@onready var n := {
-	fade = find_child("Fade")
-}
 
 #region Godot ######################################################################################
 func _ready() -> void:
 	# Connect to childrens' signals
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
-	$Curtain.modulate = E.settings.fade_color
+	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
 
 	# Make sure the transition layer is ready
 	# if it has to be visible in the first room
-	if E.settings.show_tl_in_first_room and Engine.get_process_frames() == 0:
+	if PopochiuUtils.e.settings.show_tl_in_first_room and Engine.get_process_frames() == 0:
 		$Curtain.show()
 		_show()
 	else:
 		$AnimationPlayer.play("RESET")
 		await get_tree().process_frame
+		
 		_hide()
+
 
 #endregion
 
 #region Public #####################################################################################
+## Plays a transition with the animation identified by [param type] and that lasts [param duration]
+## (in seconds). The transition can be one of the following:
+## [enum PopochiuTransitionLayer.FADE_IN_OUT], [enum PopochiuTransitionLayer.FADE_IN],
+## [enum PopochiuTransitionLayer.FADE_OUT], [enum PopochiuTransitionLayer.PASS_DOWN_IN_OUT],
+## [enum PopochiuTransitionLayer.PASS_DOWN_IN], [enum PopochiuTransitionLayer.PASS_DOWN_OUT].
 func play_transition(type := FADE_IN, duration := 1.0) -> void:
 	_show()
 	
@@ -73,6 +84,19 @@ func play_transition(type := FADE_IN, duration := 1.0) -> void:
 			await $AnimationPlayer.animation_finished
 			_hide()
 
+
+## Shows the curtain without playing any transition.
+func show_curtain() -> void:
+	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
+	$Curtain.show()
+	_show()
+
+
+## Hides the transition layer.
+func hide_curtain() -> void:
+	_hide()
+
+
 #endregion
 
 #region Private ####################################################################################
@@ -85,12 +109,12 @@ func _transition_finished(anim_name := "") -> void:
 
 func _show() -> void:
 	show()
-	G.hide_interface()
+	PopochiuUtils.g.hide_interface()
 
 
 func _hide() -> void:
 	hide()
-	G.show_interface()
+	PopochiuUtils.g.show_interface()
 
 
 #endregion

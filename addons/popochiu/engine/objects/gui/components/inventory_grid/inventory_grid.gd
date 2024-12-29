@@ -46,9 +46,9 @@ func _ready():
 	scroll_container.get_v_scroll_bar().value_changed.connect(_on_scroll)
 	
 	# Connect to singletons signals
-	I.item_added.connect(_add_item)
-	I.item_removed.connect(_remove_item)
-	I.item_replaced.connect(_replace_item)
+	PopochiuUtils.i.item_added.connect(_add_item)
+	PopochiuUtils.i.item_removed.connect(_remove_item)
+	PopochiuUtils.i.item_replaced.connect(_replace_item)
 	
 	_check_scroll_buttons()
 
@@ -139,7 +139,7 @@ func _check_starting_items() -> void:
 		if (slot.get_child_count() > 0
 		and slot.get_child(0) is PopochiuInventoryItem
 		):
-			I.items.append(slot.get_child(0).script_name)
+			PopochiuUtils.i.items.append(slot.get_child(0).script_name)
 			slot.name = slot.get_child(0).script_name
 		else:
 			slot.name = EMPTY_SLOT
@@ -156,7 +156,7 @@ func _on_down_pressed() -> void:
 
 
 func _add_item(item: PopochiuInventoryItem, _animate := true) -> void:
-	var slot := box.get_child(I.items.size() - 1)
+	var slot := box.get_child(PopochiuUtils.i.items.size() - 1)
 	slot.name = "[%s]" % item.script_name
 	slot.add_child(item)
 	
@@ -176,7 +176,7 @@ func _add_item(item: PopochiuInventoryItem, _animate := true) -> void:
 	# inherit from
 	await get_tree().process_frame
 	
-	I.item_add_done.emit(item)
+	PopochiuUtils.i.item_add_done.emit(item)
 
 
 func _remove_item(item: PopochiuInventoryItem, _animate := true) -> void:
@@ -189,7 +189,7 @@ func _remove_item(item: PopochiuInventoryItem, _animate := true) -> void:
 	
 	await get_tree().process_frame
 	
-	I.item_remove_done.emit(item)
+	PopochiuUtils.i.item_remove_done.emit(item)
 
 
 func _replace_item(
@@ -203,11 +203,11 @@ func _replace_item(
 	
 	await get_tree().process_frame
 	
-	I.item_replace_done.emit()
+	PopochiuUtils.i.item_replace_done.emit()
 
 
 func _change_cursor(item: PopochiuInventoryItem) -> void:
-	I.set_active_item(item)
+	PopochiuUtils.i.set_active_item(item)
 
 
 ## Checks if the UP and DOWN buttons should be enabled
@@ -215,7 +215,7 @@ func _check_scroll_buttons() -> void:
 	up.disabled = scroll_container.scroll_vertical == 0
 	down.disabled = (
 		scroll_container.scroll_vertical >= max_scroll
-		or not (I.items.size() > box.columns * visible_rows)
+		or not (PopochiuUtils.i.items.size() > box.columns * visible_rows)
 	)
 
 

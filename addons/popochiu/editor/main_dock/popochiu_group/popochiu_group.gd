@@ -177,8 +177,8 @@ func _update_child_count() -> void:
 	if custom_title_count: return
 	
 	if is_instance_valid(lbl_title):
-		var childs := list.get_child_count()
-		lbl_title.text = title + (" (%d)" % childs) if childs > 1 else title
+		var children := list.get_child_count()
+		lbl_title.text = title + (" (%d)" % children) if children > 1 else title
 
 
 func _order_list(node: Node) -> void:

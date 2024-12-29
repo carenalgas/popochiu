@@ -20,7 +20,7 @@ func _ready() -> void:
 	# Connect to own signals
 	about_to_popup.connect(_on_about_to_popup)
 	
-	# Connect to childs signals
+	# Connect to children's signals
 	title_edit.text_changed.connect(_on_title_changed)
 	get_ok_button().pressed.connect(_create_popup)
 	

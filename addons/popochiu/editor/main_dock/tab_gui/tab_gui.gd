@@ -147,7 +147,7 @@ func _create_buttons() -> void:
 		set_meta(component_name, btn)
 
 
-## Looks for GUI components and popups in the childs of `node`.
+## Looks for GUI components and popups in the children of `node`.
 func _find_components(node: Control) -> void:
 	var components := (
 		node.get_tree().get_nodes_in_group("popochiu_gui_component") +

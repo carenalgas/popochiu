@@ -17,10 +17,10 @@ enum Commands { ## Defines the commands of the GUI.
 func _init() -> void:
 	super()
 	
-	E.register_command(Commands.WALK, "Walk", walk)
-	E.register_command(Commands.LOOK, "Look", look)
-	E.register_command(Commands.INTERACT, "Interact", interact)
-	E.register_command(Commands.TALK, "Talk", talk)
+	PopochiuUtils.e.register_command(Commands.WALK, "Walk", walk)
+	PopochiuUtils.e.register_command(Commands.LOOK, "Look", look)
+	PopochiuUtils.e.register_command(Commands.INTERACT, "Interact", interact)
+	PopochiuUtils.e.register_command(Commands.TALK, "Talk", talk)
 
 
 #endregion
@@ -42,42 +42,52 @@ func fallback() -> void:
 ## is triggered.[br]
 ## By default makes the character walk to the clicked [PopochiuClickable].
 func walk() -> void:
-#	E.get_node("/root/C").walk_to_clicked()
-	if E.clicked:
-		C.walk_to_clicked()
+	if PopochiuUtils.e.clicked:
+		PopochiuUtils.c.walk_to_clicked()
 
 
 ## Called when [code]E.current_command == Commands.LOOK[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func look() -> void:
-	G.show_system_text("%s has nothing to say about that object" % C.player.description)
+	PopochiuUtils.g.show_system_text(
+		"%s has nothing to say about that object" % PopochiuUtils.c.player.description
+	)
 
 
 ## Called when [code]E.current_command == Commands.INTERACT[/code] and
 ## [code]E.command_fallback()[/code] is triggered.
 func interact() -> void:
-	if (I.active and I.clicked) and I.active != I.clicked:
+	if (
+		(PopochiuUtils.i.active and PopochiuUtils.i.clicked)
+		and PopochiuUtils.i.active != PopochiuUtils.i.clicked
+	):
 		# Item used on another item
-		G.show_system_text("%s can't use %s with %s" % [
-			C.player.description, I.active.description, I.clicked.description
+		PopochiuUtils.g.show_system_text("%s can't use %s with %s" % [
+			PopochiuUtils.c.player.description,
+			PopochiuUtils.i.active.description,
+			PopochiuUtils.i.clicked.description
 		])
-	elif I.active and E.clicked:
+	elif PopochiuUtils.i.active and PopochiuUtils.e.clicked:
 		# Item used on a PopochiuClickable
-		G.show_system_text("%s can't use %s with %s" % [
-			C.player.description, I.active.description, E.clicked.description
+		PopochiuUtils.g.show_system_text("%s can't use %s with %s" % [
+			PopochiuUtils.c.player.description,
+			PopochiuUtils.i.active.description,
+			PopochiuUtils.e.clicked.description
 		])
-	elif I.clicked:
+	elif PopochiuUtils.i.clicked:
 		# Item selected in inventory
-		I.clicked.set_active()
+		PopochiuUtils.i.clicked.set_active()
 	else:
 		# PopochiuClickable clicked
-		G.show_system_text("%s doesn't want to do anything with that object" % C.player.description)
+		PopochiuUtils.g.show_system_text(
+			"%s doesn't want to do anything with that object" % PopochiuUtils.c.player.description
+		)
 
 
 ## Called when [code]E.current_command == Commands.TALK[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func talk() -> void:
-	G.show_system_text("%s can't talk with that" % C.player.description)
+	PopochiuUtils.g.show_system_text("%s can't talk with that" % PopochiuUtils.c.player.description)
 
 
 #endregion
