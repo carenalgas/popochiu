@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="The Carenalgas Community" />
+      <link rel="shortcut icon" href="../../../assets/images/_other/theme/favicon.ico" />
+    <title>PopochiuCharacter - Popochiu Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/css/custom.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "PopochiuCharacter";
+        var mkdocs_page_input_path = "the-engine-handbook/scripting-reference/PopochiuCharacter.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../..">
+          <img src="../../../assets/images/_other/theme/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installing-popochiu/">Installing popochiu</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Creating a game stub</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/introduction/">Introduction</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/game-setup/">Game setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/create-characters/">Create characters</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/create-the-first-room/">Create the first room</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/add-an-inventory-item/">Add an inventory item</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/script-your-first-dialogue/">Script your first dialogue</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/use-inventory-items/">Use inventory items</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/customize-the-game-ui/">Customize the Game UI</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../getting-started/creating-a-game-stub/conclusions/">Conclusions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/example-resources/">Example resources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/getting-help/">Getting help</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The editor handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/editor-settings/">Editor settings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/interface-overview/">Interface overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/popochiu-dock/">Popochiu dock</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/toolbar-buttons/">Toolbar buttons</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/importers/">Aseprite Importers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The engine handbook</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../scripting-overview/">Scripting overview</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Scripting reference</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../9_verb_command_button.gd/">9 verb command button.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../9_verb_commands_container.gd/">9 verb commands container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../9_verb_commands_template.gd/">9 verb commands template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../9_verb_hover_text.gd/">9 verb hover text.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../9_verb_inventory_grid.gd/">9 verb inventory grid.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../9_verb_panel.gd/">9 verb panel.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../AudioCueMusic/">AudioCueMusic</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../AudioCueSound/">AudioCueSound</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../NineVerbCommands/">NineVerbCommands</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuAudioCue/">PopochiuAudioCue</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuAudioManager/">PopochiuAudioManager</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">PopochiuCharacter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuCharacterData/">PopochiuCharacterData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuCommands/">PopochiuCommands</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuDialog/">PopochiuDialog</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuDialogMenuOption/">PopochiuDialogMenuOption</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuDialogOption/">PopochiuDialogOption</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuDialogText/">PopochiuDialogText</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuGUIInfo/">PopochiuGUIInfo</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuHotspot/">PopochiuHotspot</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuHoverText/">PopochiuHoverText</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuIAudio/">PopochiuIAudio</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuICharacter/">PopochiuICharacter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuIDialog/">PopochiuIDialog</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuIInventory/">PopochiuIInventory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuInventoryGrid/">PopochiuInventoryGrid</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuInventoryItem/">PopochiuInventoryItem</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuInventoryItemData/">PopochiuInventoryItemData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuMainCamera/">PopochiuMainCamera</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuPopup/">PopochiuPopup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuProp/">PopochiuProp</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuRoomData/">PopochiuRoomData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuSaveLoad/">PopochiuSaveLoad</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuSettings/">PopochiuSettings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuSettingsBarButton/">PopochiuSettingsBarButton</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuTransitionLayer/">PopochiuTransitionLayer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../PopochiuUtils/">PopochiuUtils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../SierraCommands/">SierraCommands</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../SimpleClickCommands/">SimpleClickCommands</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../audio_cue_container.gd/">Audio cue container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../btn_load.gd/">Btn load.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../btn_quit.gd/">Btn quit.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../character_state_template.gd/">Character state template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../character_template.gd/">Character template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../confirmation_popup.gd/">Confirmation popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../cursor.gd/">Cursor.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../custom_commands_template.gd/">Custom commands template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dialog_caption.gd/">Dialog caption.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dialog_overhead.gd/">Dialog overhead.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dialog_portrait.gd/">Dialog portrait.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dialog_template.gd/">Dialog template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dialog_text.gd/">Dialog text.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../empty_script_template.gd/">Empty script template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../history_popup.gd/">History popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../hotspot_template.gd/">Hotspot template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../importer_defaults.gd/">Importer defaults.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../input_actions.gd/">Input actions.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../inventory_bar.gd/">Inventory bar.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../inventory_item_state_template.gd/">Inventory item state template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../inventory_item_template.gd/">Inventory item template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../prop_template.gd/">Prop template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../quit_popup.gd/">Quit popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../room_state_template.gd/">Room state template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sierra_bar.gd/">Sierra bar.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sierra_command_button.gd/">Sierra command button.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sierra_commands_container.gd/">Sierra commands container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sierra_commands_template.gd/">Sierra commands template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sierra_inventory_slot.gd/">Sierra inventory slot.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sierra_menu.gd/">Sierra menu.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sierra_settings_popup.gd/">Sierra settings popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../simple_click_commands_template.gd/">Simple click commands template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sound_settings_popup.gd/">Sound settings popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../sound_volumes.gd/">Sound volumes.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../system_text.gd/">System text.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../text_settings_popup.gd/">Text settings popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../text_speed_option.gd/">Text speed option.gd</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How to develop a game</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/kickstarting-a-project/">Kickstarting a project</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/creating-rooms/">Creating rooms</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/changing-rooms/">Changing rooms</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/creating-characters/">Creating characters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/scripting-interactions/">Scripting interactions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/writing-dialogues/">Writing dialogues</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/managing-the-inventory/">Managing the inventory</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/playing-animations/">Playing animations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/adding-sound/">Adding sound</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Advanced techniques</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/localization/">Localization</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/guis/">Guis</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/advanced-animations/">Advanced animations</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/character-scaling/">Character Scaling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/character-anti-glide-feature/">Character Anti-Glide Feature</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/game-state-saving-and-loading/">Game state saving and loading</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/extending-customizing-popochiu/">Extending customizing popochiu</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../how-to-develop-a-game/advanced-techniques/change-text-to-gibberish/">Change text to gibberish</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing to popochiu</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/project-overview/">Project overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/toolchain-and-dependencies/">Toolchain and dependencies</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/project-management/">Project management</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/coding-standards/">Coding standards</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/getting-help/">Getting help</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">Popochiu Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">The engine handbook</li>
+          <li class="breadcrumb-item">Scripting reference</li>
+      <li class="breadcrumb-item active">PopochiuCharacter</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carenalgas/popochiu/edit/develop/docs/src/the-engine-handbook/scripting-reference/PopochiuCharacter.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <!-- Auto-generated from JSON by GDScript docs maker. Do not edit this document directly. -->
+
+<h1 id="popochiucharacter">PopochiuCharacter</h1>
+<p><strong>Extends:</strong> <a href="../PopochiuClickable">PopochiuClickable</a></p>
+<h2 id="description">Description</h2>
+<h2 id="constants-descriptions">Constants Descriptions</h2>
+<h3 id="flipswhen">FlipsWhen</h3>
+<pre><code class="language-gdscript">enum FlipsWhen{NONE = 0, LOOKING_RIGHT = 1, LOOKING_LEFT = 2}
+</code></pre>
+<p>Determines when to flip the [b]$Sprite2D[/b] child.</p>
+<h3 id="looking">Looking</h3>
+<pre><code class="language-gdscript">enum Looking{UP = 0, UP_RIGHT = 1, RIGHT = 2, DOWN_RIGHT = 3, DOWN = 4, DOWN_LEFT = 5, LEFT = 6, UP_LEFT = 7}
+</code></pre>
+<p>Determines the direction the character is facing</p>
+<h2 id="property-descriptions">Property Descriptions</h2>
+<h3 id="text_color">text_color</h3>
+<pre><code class="language-gdscript">@export var text_color: Color = &quot;(1, 1, 1, 1)&quot;
+</code></pre>
+<p>The [Color] in which the dialogue lines of the character are rendered.</p>
+<h3 id="flips_when">flips_when</h3>
+<pre><code class="language-gdscript">@export var flips_when: PopochiuCharacter.FlipsWhen = 0
+</code></pre>
+<p>Depending on its value, the [b]$Sprite2D[/b] child will be flipped horizontally depending on
+which way the character is facing. If the value is [constant NONE], then the
+[b]$Sprite2D[/b] child won't be flipped.</p>
+<h3 id="voices">voices</h3>
+<pre><code class="language-gdscript">@export var voices: Array
+</code></pre>
+<ul>
+<li><strong>Setter</strong>: <code>@voices_setter</code></li>
+</ul>
+<p>Array of [Dictionary] where each element has
+[code]{ emotion: String, variations: Array<a href="PopochiuAudioCue">PopochiuAudioCue</a> }[/code].
+You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
+specific emotion.</p>
+<h3 id="follow_player">follow_player</h3>
+<pre><code class="language-gdscript">@export var follow_player: bool = false
+</code></pre>
+<ul>
+<li><strong>Setter</strong>: <code>@follow_player_setter</code></li>
+</ul>
+<p>Whether the character should follow the player-controlled character (PC) when it moves through
+the room.</p>
+<h3 id="follow_player_offset">follow_player_offset</h3>
+<pre><code class="language-gdscript">@export var follow_player_offset: Vector2 = &quot;(20, 0)&quot;
+</code></pre>
+<p>The offset between the player-controlled character (PC) and this character when it follows the
+former one.</p>
+<h3 id="avatars">avatars</h3>
+<pre><code class="language-gdscript">@export var avatars: Array
+</code></pre>
+<ul>
+<li><strong>Setter</strong>: <code>@avatars_setter</code></li>
+</ul>
+<p>Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
+You can use this to define which [Texture] to use as avatar for the character when it speaks
+using a specific emotion.</p>
+<h3 id="walk_speed">walk_speed</h3>
+<pre><code class="language-gdscript">@export var walk_speed: float = 200
+</code></pre>
+<p>The speed at which the character will move in pixels per frame.</p>
+<h3 id="can_move">can_move</h3>
+<pre><code class="language-gdscript">@export var can_move: bool = true
+</code></pre>
+<p>Whether the character can or not move.</p>
+<h3 id="ignore_walkable_areas">ignore_walkable_areas</h3>
+<pre><code class="language-gdscript">@export var ignore_walkable_areas: bool = false
+</code></pre>
+<p>Whether the character ignores or not walkable areas. If [code]true[/code], the character will
+move to any point in the room clicked by players without taking into account the walkable areas
+in it.</p>
+<h3 id="anti_glide_animation">anti_glide_animation</h3>
+<pre><code class="language-gdscript">@export var anti_glide_animation: bool = false
+</code></pre>
+<p>Whether the character will move only when the frame changes on its animation.</p>
+<h3 id="dialog_pos">dialog_pos</h3>
+<pre><code class="language-gdscript">@export var dialog_pos: Vector2
+</code></pre>
+<p>Used by the GUI to calculate where to render the dialogue lines said by the character when it
+speaks.</p>
+<h3 id="position_stored">position_stored</h3>
+<pre><code class="language-gdscript">var position_stored = null
+</code></pre>
+<p>The stored position of the character. Used when [member anti_glide_animation] is
+[code]true[/code].</p>
+<h3 id="last_room">last_room</h3>
+<pre><code class="language-gdscript">var last_room: String = &quot;&quot;
+</code></pre>
+<p>Stores the [member PopochiuRoom.script_name] of the preiously visited [PopochiuRoom].</p>
+<h3 id="anim_suffix">anim_suffix</h3>
+<pre><code class="language-gdscript">var anim_suffix: String = &quot;&quot;
+</code></pre>
+<p>The suffix text to add to animation names.</p>
+<h3 id="is_moving">is_moving</h3>
+<pre><code class="language-gdscript">var is_moving: bool = false
+</code></pre>
+<p>Whether the character is or not moving through the room.</p>
+<h3 id="emotion">emotion</h3>
+<pre><code class="language-gdscript">var emotion: String = &quot;&quot;
+</code></pre>
+<p>The current emotion used by the character.</p>
+<h3 id="on_scaling_region">on_scaling_region</h3>
+<pre><code class="language-gdscript">var on_scaling_region: Dictionary
+</code></pre>
+<h3 id="default_walk_speed">default_walk_speed</h3>
+<pre><code class="language-gdscript">var default_walk_speed: int = 0
+</code></pre>
+<p>Stores the default walk speed defined in [member walk_speed]. Used by [PopochiuRoom] when scaling
+the character if it is inside a [PopochiuRegion] that modifies the scale.</p>
+<h3 id="default_scale">default_scale</h3>
+<pre><code class="language-gdscript">var default_scale: Vector2 = &quot;(1, 1)&quot;
+</code></pre>
+<p>Stores the default scale. Used by [PopochiuRoom] when scaling the character if it is inside a
+[PopochiuRegion] that modifies the scale.</p>
+<h2 id="method-descriptions">Method Descriptions</h2>
+<h3 id="queue_idle">queue_idle</h3>
+<pre><code class="language-gdscript">func queue_idle() -&gt; Callable
+</code></pre>
+<p>Puts the character in the idle state by playing its idle animation, then waits for
+[code]0.2[/code] seconds.
+If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+value.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="idle">idle</h3>
+<pre><code class="language-gdscript">func idle() -&gt; void
+</code></pre>
+<p>Puts the character in the idle state by playing its idle animation, then waits for
+[code]0.2[/code] seconds.
+If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+value.</p>
+<h3 id="queue_walk">queue_walk</h3>
+<pre><code class="language-gdscript">func queue_walk(target_pos: Vector2) -&gt; Callable
+</code></pre>
+<p>Makes the character move to [param target_pos] and plays its walk animation.
+If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+value.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="walk">walk</h3>
+<pre><code class="language-gdscript">func walk(target_pos: Vector2) -&gt; void
+</code></pre>
+<p>Makes the character move to [param target_pos] and plays its walk animation.
+If the characer has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
+value.</p>
+<h3 id="take_turn">take_turn</h3>
+<pre><code class="language-gdscript">func take_turn(target_pos: Vector2)
+</code></pre>
+<h3 id="queue_stop_walking">queue_stop_walking</h3>
+<pre><code class="language-gdscript">func queue_stop_walking() -&gt; Callable
+</code></pre>
+<p>Makes the character stop moving and emits [signal stopped_walk].[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="stop_walking">stop_walking</h3>
+<pre><code class="language-gdscript">func stop_walking() -&gt; void
+</code></pre>
+<p>Makes the character stop moving and emits [signal stopped_walk].</p>
+<h3 id="queue_face_up">queue_face_up</h3>
+<pre><code class="language-gdscript">func queue_face_up() -&gt; Callable
+</code></pre>
+<p>Makes the character to look up by setting [member _looking_dir] to [constant UP] and waits until
+[method idle] finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_up">face_up</h3>
+<pre><code class="language-gdscript">func face_up() -&gt; void
+</code></pre>
+<p>Makes the character to look up by setting [member _looking_dir] to [constant UP] and waits until
+[method idle] finishes.</p>
+<h3 id="queue_face_up_right">queue_face_up_right</h3>
+<pre><code class="language-gdscript">func queue_face_up_right() -&gt; Callable
+</code></pre>
+<p>Makes the character to look up and right by setting [member _looking_dir] to [constant UP_RIGHT]
+and waits until [method idle] finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_up_right">face_up_right</h3>
+<pre><code class="language-gdscript">func face_up_right() -&gt; void
+</code></pre>
+<p>Makes the character to look up and right by setting [member _looking_dir] to [constant UP_RIGHT]
+and waits until [method idle] finishes.</p>
+<h3 id="queue_face_right">queue_face_right</h3>
+<pre><code class="language-gdscript">func queue_face_right() -&gt; Callable
+</code></pre>
+<p>Makes the character to look right by setting [member _looking_dir] to [constant RIGHT] and waits
+until [method idle] finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_right">face_right</h3>
+<pre><code class="language-gdscript">func face_right() -&gt; void
+</code></pre>
+<p>Makes the character to look right by setting [member _looking_dir] to [constant RIGHT] and waits
+until [method idle] finishes.</p>
+<h3 id="queue_face_down_right">queue_face_down_right</h3>
+<pre><code class="language-gdscript">func queue_face_down_right() -&gt; Callable
+</code></pre>
+<p>Makes the character to look down and right by setting [member _looking_dir] to
+[constant DOWN_RIGHT] and waits until [method idle] finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_down_right">face_down_right</h3>
+<pre><code class="language-gdscript">func face_down_right() -&gt; void
+</code></pre>
+<p>Makes the character to look down and right by setting [member _looking_dir] to
+[constant DOWN_RIGHT] and waits until [method idle] finishes.</p>
+<h3 id="queue_face_down">queue_face_down</h3>
+<pre><code class="language-gdscript">func queue_face_down() -&gt; Callable
+</code></pre>
+<p>Makes the character to look down by setting [member _looking_dir] to [constant DOWN] and waits
+until [method idle] finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_down">face_down</h3>
+<pre><code class="language-gdscript">func face_down() -&gt; void
+</code></pre>
+<p>Makes the character to look down by setting [member _looking_dir] to [constant DOWN] and waits
+until [method idle] finishes.</p>
+<h3 id="queue_face_down_left">queue_face_down_left</h3>
+<pre><code class="language-gdscript">func queue_face_down_left() -&gt; Callable
+</code></pre>
+<p>Makes the character to look down and left by setting [member _looking_dir] to
+[constant DOWN_LEFT] and waits until [method idle] finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_down_left">face_down_left</h3>
+<pre><code class="language-gdscript">func face_down_left() -&gt; void
+</code></pre>
+<p>Makes the character to look down and left by setting [member _looking_dir] to
+[constant DOWN_LEFT] and waits until [method idle] finishes.</p>
+<h3 id="queue_face_left">queue_face_left</h3>
+<pre><code class="language-gdscript">func queue_face_left() -&gt; Callable
+</code></pre>
+<p>Makes the character to look left by setting [member _looking_dir] to [constant LEFT] and waits
+until [method idle] finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_left">face_left</h3>
+<pre><code class="language-gdscript">func face_left() -&gt; void
+</code></pre>
+<p>Makes the character to look left by setting [member _looking_dir] to [constant LEFT] and waits
+until [method idle] finishes.</p>
+<h3 id="queue_face_up_left">queue_face_up_left</h3>
+<pre><code class="language-gdscript">func queue_face_up_left() -&gt; Callable
+</code></pre>
+<p>Makes the character to look up and left by setting [member _looking_dir] to [constant UP_LEFT]
+and waits until [method idle] finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_up_left">face_up_left</h3>
+<pre><code class="language-gdscript">func face_up_left() -&gt; void
+</code></pre>
+<p>Makes the character to look up and left by setting [member _looking_dir] to [constant UP_LEFT]
+and waits until [method idle] finishes.</p>
+<h3 id="queue_face_clicked">queue_face_clicked</h3>
+<pre><code class="language-gdscript">func queue_face_clicked() -&gt; Callable
+</code></pre>
+<p>Makes the character face in the direction of the last clicked [PopochiuClickable], which is
+stored in [member Popochiu.clicked].[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="face_clicked">face_clicked</h3>
+<pre><code class="language-gdscript">func face_clicked() -&gt; void
+</code></pre>
+<p>Makes the character face in the direction of the last clicked [PopochiuClickable], which is
+stored in [member Popochiu.clicked].</p>
+<h3 id="queue_say">queue_say</h3>
+<pre><code class="language-gdscript">func queue_say(dialog: String, emo: String = &quot;&quot;) -&gt; Callable
+</code></pre>
+<p>Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
+[param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
+[AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
+characters return to its idle state.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="say">say</h3>
+<pre><code class="language-gdscript">func say(dialog: String, emo: String = &quot;&quot;) -&gt; void
+</code></pre>
+<p>Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
+[param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
+[AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
+characters return to its idle state.</p>
+<h3 id="queue_grab">queue_grab</h3>
+<pre><code class="language-gdscript">func queue_grab() -&gt; Callable
+</code></pre>
+<p>Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
+[method idle].[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="grab">grab</h3>
+<pre><code class="language-gdscript">func grab() -&gt; void
+</code></pre>
+<p>Calls [method _play_grab] and waits until the [signal grab_done] is emitted, then goes back to
+[method idle].</p>
+<h3 id="hide_helpers">hide_helpers</h3>
+<pre><code class="language-gdscript">func hide_helpers() -&gt; void
+</code></pre>
+<p>Calls [method PopochiuClickable.hide_helpers].</p>
+<h3 id="show_helpers">show_helpers</h3>
+<pre><code class="language-gdscript">func show_helpers() -&gt; void
+</code></pre>
+<p>Calls [method PopochiuClickable.show_helpers].</p>
+<h3 id="queue_walk_to">queue_walk_to</h3>
+<pre><code class="language-gdscript">func queue_walk_to(pos: Vector2) -&gt; Callable
+</code></pre>
+<p>Makes the character walk to [param pos].[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="walk_to">walk_to</h3>
+<pre><code class="language-gdscript">func walk_to(pos: Vector2) -&gt; void
+</code></pre>
+<p>Makes the character walk to [param pos].</p>
+<h3 id="queue_walk_to_clicked">queue_walk_to_clicked</h3>
+<pre><code class="language-gdscript">func queue_walk_to_clicked(offset: Vector2 = &quot;(0, 0)&quot;) -&gt; Callable
+</code></pre>
+<p>Makes the character walk to the last clicked [PopochiuClickable], which is stored in
+[member Popochiu.clicked]. You can set an [param offset] relative to the target position.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="walk_to_clicked">walk_to_clicked</h3>
+<pre><code class="language-gdscript">func walk_to_clicked(offset: Vector2 = &quot;(0, 0)&quot;) -&gt; void
+</code></pre>
+<p>Makes the character walk (NON-BLOCKING) to the last clicked [PopochiuClickable], which is stored
+in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.</p>
+<h3 id="walk_to_clicked_blocking">walk_to_clicked_blocking</h3>
+<pre><code class="language-gdscript">func walk_to_clicked_blocking(offset: Vector2 = &quot;(0, 0)&quot;) -&gt; void
+</code></pre>
+<p>Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
+stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.</p>
+<h3 id="queue_walk_to_clicked_blocking">queue_walk_to_clicked_blocking</h3>
+<pre><code class="language-gdscript">func queue_walk_to_clicked_blocking(offset: Vector2 = &quot;(0, 0)&quot;) -&gt; Callable
+</code></pre>
+<p>Makes the character walk (BLOCKING the GUI) to the last clicked [PopochiuClickable], which is
+stored in [member Popochiu.clicked]. You can set an [param offset] relative to the target position.
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="queue_walk_to_prop">queue_walk_to_prop</h3>
+<pre><code class="language-gdscript">func queue_walk_to_prop(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; Callable
+</code></pre>
+<p>Makes the character walk to the <a href="PopochiuProp">PopochiuProp</a> (in the current room) which
+[member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
+relative to the target position.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="walk_to_prop">walk_to_prop</h3>
+<pre><code class="language-gdscript">func walk_to_prop(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; void
+</code></pre>
+<p>Makes the character walk to the <a href="PopochiuProp">PopochiuProp</a> (in the current room) which
+[member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
+relative to the target position.</p>
+<h3 id="queue_teleport_to_prop">queue_teleport_to_prop</h3>
+<pre><code class="language-gdscript">func queue_teleport_to_prop(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; Callable
+</code></pre>
+<p>Makes the character teleport (disappear at one location and instantly appear at another) to the
+<a href="PopochiuProp">PopochiuProp</a> is equal to
+[param id]. You can set an [param offset] relative to the target position.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="teleport_to_prop">teleport_to_prop</h3>
+<pre><code class="language-gdscript">func teleport_to_prop(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; void
+</code></pre>
+<p>Makes the character teleport (disappear at one location and instantly appear at another) to the
+<a href="PopochiuProp">PopochiuProp</a> is equal to
+[param id]. You can set an [param offset] relative to the target position.</p>
+<h3 id="queue_walk_to_hotspot">queue_walk_to_hotspot</h3>
+<pre><code class="language-gdscript">func queue_walk_to_hotspot(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; Callable
+</code></pre>
+<p>Makes the character walk to the <a href="PopochiuHotspot">PopochiuHotspot</a> (in the current room) which
+[member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
+relative to the target position.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="walk_to_hotspot">walk_to_hotspot</h3>
+<pre><code class="language-gdscript">func walk_to_hotspot(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; void
+</code></pre>
+<p>Makes the character walk to the <a href="PopochiuHotspot">PopochiuHotspot</a> (in the current room) which
+[member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
+relative to the target position.</p>
+<h3 id="queue_teleport_to_hotspot">queue_teleport_to_hotspot</h3>
+<pre><code class="language-gdscript">func queue_teleport_to_hotspot(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; Callable
+</code></pre>
+<p>Makes the character teleport (disappear at one location and instantly appear at another) to the
+<a href="PopochiuHotspot">PopochiuHotspot</a> is equal to
+[param id]. You can set an [param offset] relative to the target position.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="teleport_to_hotspot">teleport_to_hotspot</h3>
+<pre><code class="language-gdscript">func teleport_to_hotspot(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; void
+</code></pre>
+<p>Makes the character teleport (disappear at one location and instantly appear at another) to the
+<a href="PopochiuHotspot">PopochiuHotspot</a> is equal to
+[param id]. You can set an [param offset] relative to the target position.</p>
+<h3 id="queue_walk_to_marker">queue_walk_to_marker</h3>
+<pre><code class="language-gdscript">func queue_walk_to_marker(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; Callable
+</code></pre>
+<p>Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
+equal to [param id]. You can set an [param offset] relative to the target position.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="walk_to_marker">walk_to_marker</h3>
+<pre><code class="language-gdscript">func walk_to_marker(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; void
+</code></pre>
+<p>Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
+equal to [param id]. You can set an [param offset] relative to the target position.</p>
+<h3 id="queue_teleport_to_marker">queue_teleport_to_marker</h3>
+<pre><code class="language-gdscript">func queue_teleport_to_marker(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; Callable
+</code></pre>
+<p>Makes the character teleport (disappear at one location and instantly appear at another) to the
+[Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
+[param offset] relative to the target position.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="teleport_to_marker">teleport_to_marker</h3>
+<pre><code class="language-gdscript">func teleport_to_marker(id: String, offset: Vector2 = &quot;(0, 0)&quot;) -&gt; void
+</code></pre>
+<p>Makes the character teleport (disappear at one location and instantly appear at another) to the
+[Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
+[param offset] relative to the target position.</p>
+<h3 id="queue_set_emotion">queue_set_emotion</h3>
+<pre><code class="language-gdscript">func queue_set_emotion(new_emotion: String) -&gt; Callable
+</code></pre>
+<p>Sets [member emotion] to [param new_emotion] when in a [method Popochiu.queue].</p>
+<h3 id="queue_ignore_walkable_areas">queue_ignore_walkable_areas</h3>
+<pre><code class="language-gdscript">func queue_ignore_walkable_areas(new_value: bool) -&gt; Callable
+</code></pre>
+<p>Sets [member ignore_walkable_areas] to [param new_value] when in a [method Popochiu.queue].</p>
+<h3 id="queue_play_animation">queue_play_animation</h3>
+<pre><code class="language-gdscript">func queue_play_animation(animation_label: String, animation_fallback: String = &quot;idle&quot;, blocking: bool = false) -&gt; Callable
+</code></pre>
+<p>Plays the [param animation_label] animation. You can specify a fallback animation to play with
+[param animation_fallback] in case the former one doesn't exists.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="play_animation">play_animation</h3>
+<pre><code class="language-gdscript">func play_animation(animation_label: String, animation_fallback: String = &quot;idle&quot;)
+</code></pre>
+<p>Plays the [param animation_label] animation. You can specify a fallback animation to play with
+[param animation_fallback] in case the former one doesn't exists.</p>
+<h3 id="queue_stop_animation">queue_stop_animation</h3>
+<pre><code class="language-gdscript">func queue_stop_animation()
+</code></pre>
+<p>Makes the animation that is currently playing to stop. Works only if it is looping and is not an
+idle animation. The animation stops when the current loop finishes.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="stop_animation">stop_animation</h3>
+<pre><code class="language-gdscript">func stop_animation()
+</code></pre>
+<p>Makes the animation that is currently playing to stop. Works only if it is looping and is not an
+idle animation. The animation stops when the current loop finishes.</p>
+<h3 id="queue_halt_animation">queue_halt_animation</h3>
+<pre><code class="language-gdscript">func queue_halt_animation()
+</code></pre>
+<p>Immediately stops the animation that is currently playing by changing to the idle animation.
+[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="halt_animation">halt_animation</h3>
+<pre><code class="language-gdscript">func halt_animation()
+</code></pre>
+<p>Immediately stops the animation that is currently playing by changing to the idle animation.</p>
+<h3 id="queue_pause_animation">queue_pause_animation</h3>
+<pre><code class="language-gdscript">func queue_pause_animation()
+</code></pre>
+<p>Pauses the animation that is currently playing.[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="pause_animation">pause_animation</h3>
+<pre><code class="language-gdscript">func pause_animation()
+</code></pre>
+<p>Pauses the animation that is currently playing.</p>
+<h3 id="queue_resume_animation">queue_resume_animation</h3>
+<pre><code class="language-gdscript">func queue_resume_animation()
+</code></pre>
+<p>Resumes the current animation (that was previously paused).[br][br]
+[i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]</p>
+<h3 id="resume_animation">resume_animation</h3>
+<pre><code class="language-gdscript">func resume_animation()
+</code></pre>
+<p>Resumes the current animation (that was previously paused).</p>
+<h3 id="face_direction">face_direction</h3>
+<pre><code class="language-gdscript">func face_direction(destination: Vector2)
+</code></pre>
+<p>Makes the character look in the direction of [param destination]. The result is one of the values
+defined by [enum Looking].</p>
+<h3 id="get_avatar_for_emotion">get_avatar_for_emotion</h3>
+<pre><code class="language-gdscript">func get_avatar_for_emotion(emo: String = &quot;&quot;) -&gt; Texture
+</code></pre>
+<p>Returns the [Texture] of the avatar defined for the [param emo] emotion.
+Returns [code]null[/code] if no avatar is found. If there is an avatar defined for the
+[code]""[/code] emotion, that one is returned by default.</p>
+<h3 id="get_dialog_pos">get_dialog_pos</h3>
+<pre><code class="language-gdscript">func get_dialog_pos() -&gt; float
+</code></pre>
+<p>Returns the [code]y[/code] value of the dialog_pos [Vector2] that defines the
+position of the dialog lines said by the character when it talks.</p>
+<h3 id="update_position">update_position</h3>
+<pre><code class="language-gdscript">func update_position() -&gt; void
+</code></pre>
+<h3 id="update_scale">update_scale</h3>
+<pre><code class="language-gdscript">func update_scale()
+</code></pre>
+<p>Updates the scale depending on the properties of the scaling region where it is located.</p>
+<h3 id="set_voices">set_voices</h3>
+<pre><code class="language-gdscript">func set_voices(value: Array) -&gt; void
+</code></pre>
+<h3 id="set_follow_player">set_follow_player</h3>
+<pre><code class="language-gdscript">func set_follow_player(value: bool) -&gt; void
+</code></pre>
+<h3 id="set_avatars">set_avatars</h3>
+<pre><code class="language-gdscript">func set_avatars(value: Array) -&gt; void
+</code></pre>
+<h2 id="signals">Signals</h2>
+<ul>
+<li>signal started_walk_to(character, start, end): Emitted when a [param character] starts moving from [param start] to [param end]. [PopochiuRoom]
+connects to this signal in order to make characters move inside them from one point to another.</li>
+<li>signal stopped_walk(): Emitted when the character is forced to stop while walking.</li>
+<li>signal move_ended(): Emitted when the character reaches the ending position when moving from one point to another.</li>
+<li>signal grab_done(): Emitted when the animation to grab things has finished.</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../PopochiuAudioManager/" class="btn btn-neutral float-left" title="PopochiuAudioManager"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../PopochiuCharacterData/" class="btn btn-neutral float-right" title="PopochiuCharacterData">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright (c) 2024 - The Carenalgas Community</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carenalgas/popochiu/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../PopochiuAudioManager/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../PopochiuCharacterData/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+      <script src="../../../assets/js/gdscript.min.js"></script>
+      <script src="../../../assets/js/custom.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
