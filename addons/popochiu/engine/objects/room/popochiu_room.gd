@@ -144,11 +144,7 @@ func _unhandled_input(event: InputEvent):
 	if PopochiuUtils.i.active:
 		# Wait so PopochiuClickable can handle the interaction
 		await get_tree().create_timer(0.1).timeout
-<<<<<<< HEAD
-		
-=======
 
->>>>>>> db01285 (issue_340 Rebased to fix merge conflict and removed redundant face_direction call)
 		PopochiuUtils.i.set_active_item()
 		return
 	
@@ -223,11 +219,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 
 	if chr.follow_player:
 		PopochiuUtils.c.player.started_walk_to.connect(_follow_player.bind(chr))
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> db01285 (issue_340 Rebased to fix merge conflict and removed redundant face_direction call)
 	chr.idle()
 
 
