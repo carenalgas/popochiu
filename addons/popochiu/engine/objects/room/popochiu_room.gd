@@ -493,7 +493,11 @@ func _update_navigation_path(
 	if moving_character_data.path.is_empty():
 		return
 
+	# If the path is not empty it has at least two points: the start and the end
+	# so we can safely say index 1 is available.
+	# The character should face the direction of the next point in the path, then...
 	character.face_direction(moving_character_data.path[1])
+	# ... we remove the first point of the path since it is the character's current position
 	moving_character_data.path.remove_at(0)
 
 	set_physics_process(true)
