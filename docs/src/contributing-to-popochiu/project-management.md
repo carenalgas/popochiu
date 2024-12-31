@@ -6,6 +6,14 @@ weight: 7030
 
 TODO
 
+### Project board organizations
+
+TODO
+
+### How to submit issues
+
+TODO
+
 ## Code reviews
 
 TODO

@@ -2,14 +2,14 @@
 weight: 7005
 ---
 
-# title
+# Introduction
 
 The purpose of this page is to provide contributors with an overview of Popochiu's history, the project's vision, and best practices for engaging with the maintainers. Understanding these elements ensures that contributions align with the project's architecture and long-term goals.
 
 Like every project, Popochiu benefits from open communication and thoughtful discussions before submitting issues or pull requests, to grow organically and remain maintainable on the long run.
 
 !!! info "Too much talk! I'm a person of action!"
-    If you don't want to digest too much _whys_ and want to jump to the _hows_, please read the [Contributions Q&As](#contributions-q&as) section.
+    If you don't want to digest too much _whys_ and want to jump to the _hows_, please read the [Contribution Q&As](qna) page.
 
     **Warning**: We take no responsibility for frustration, anger, or bitter disappointment if you skip the FAQs and your PRs get rejected!
 
@@ -70,32 +70,12 @@ Here are some of the many ways you can make a positive impact on Popochiu; even 
 * **Expand the demo game**: Popochiu [comes with a demo game](https://github.com/carenalgas/popochiu-sample-game) to help users explore the plugin before diving into their own projects. It’s small and simple. Why not extend it with more implemented use cases? It’s a great way to help others learn and experiment.
 * **Spread the word**: Host game jams, write guides, create video tutorials, or document your Popochiu-based project on your blog. Sharing your experience with the plugin and creating meaningful content can inspire others and bring new developers - and potential contributors - into the Popochiu community.
 
-## Useful knowledge
+## Useful Knowledge
 
-1. Popochiu is built with Godot, so please take the time to learn the basics of this game engine and it's GDScript 2 language before opening a PR. Extensive knowledge is great of course, but you can contribute even if you're new to this world. In that case, make sure you read the above paragraphs! It's even more important.
-2. Specifically, knowing how to use Control nodes and wire them with signals is very useful both when coding custom game UIs and to extend the editor plugin. We strongly recommend you learn about this stuff.
-3. Understanding the architecture of the plugin and the engine in broad lines help a lot making sense of its code. Please, review the [Project Overview](project-overview) section for a primer.
-4. If you want to contribute structural or big things, knowledge about design patterns and clean code is a great plus. We can't recommend reading [Game Programming Patterns](http://gameprogrammingpatterns.com/) free online book by Robert Nystrom more! Also, understanding [SOLID principles](https://en.wikipedia.org/wiki/SOLID) makes a huge difference.
-5. Not all is code: the plugin extends the Godot Editor interface in a variety of ways, exposing custom UI. Skills in interaction or UI design, as well as user/developer experience is invaluable to make Popochiu easy to use to everyone.
-6. Last but not least, taking the time to read this whole section of the docs is **very** appreciated.
+1. Popochiu is built with Godot, so it’s essential to [learn the basics of the engine](https://docs.godotengine.org/en/latest/) and its [GDScript language](https://docs.godotengine.org/en/latest/tutorials/scripting/gdscript/index.html) before opening a PR. While extensive knowledge is a bonus, you can still contribute even if you’re new to this world—just make sure to review the previous sections carefully. It’s even more important in that case!  
+2. Specifically, familiarity with **Control nodes** and how to connect them using signals is incredibly helpful, both for coding custom game UIs and extending the editor plugin. We highly recommend taking the time to learn these concepts.  
+3. A broad understanding of the plugin and engine architecture will make navigating the code much easier. Be sure to check out the [Project Overview](project-overview) section for a primer.  
+4. For those contributing structural or large-scale features, knowledge of **design patterns** and **clean code principles** is a huge advantage. We strongly encourage reading Robert Nystrom’s free online book, [Game Programming Patterns](http://gameprogrammingpatterns.com/). Familiarity with the [SOLID principles](https://en.wikipedia.org/wiki/SOLID) is also highly valuable.  
+5. Not everything is about code! The plugin extends the Godot Editor with custom UIs, so skills in **interaction design**, **UI design**, or **user/developer experience** can significantly improve Popochiu’s usability for everyone.  
+6. Finally, taking the time to read this entire section of the documentation is **highly** appreciated. It makes everything easier for everyone involved.  
 
-## Contribution Q&As
-
-**Q:** Is there any guideline for opening a PR?
-**A:** Yes! Please read the [Coding Standards](coding-standards) section for all the relevant information about that.
-
-**Q:** I'm working with an unstable/unsupported version of Godot and I have worked around some errors. Should I open a PR?
-**A:** It depends. If you are using a development or otherwise unstable version of Godot other than a release candidate, then **no**, we will close the PR without even looking at it. The reason is we already spent time addressing bugs that were due to Godot, not Popochiu and that solved themselves once Godot reached a more stable status.  
-If you're testing a release-candidate, we can be interested in reviewing the PR, but you'll have to test it against the next stable release when it's available before it gets merged. Also, the solution should always work on the officially supported Godot version, if it differs from the most recent one.
-
-**Q:** Yeah, but since I saw a bug using a newer version, can I at least open an issue so that we don't forget to check it later down the road?
-**A:** **We don't accept bugs related to unsupported versions of Godot**, and close them without review. Period.
-
-**Q:** Creating my game with Popochiu I developed a customization and I think it can be useful to everyone. What should I do?
-**A:** Customizations are great, but making them accessible to the broad public may require more work than just committing the code you have at hand. The best course of action is to [review the project board](https://github.com/orgs/carenalgas/projects/1/views/1) and see if what you did is already tracked, requested or in progress. If not, you can open a feature request, with your detailed use case, mentioning that you are willing to take it over. We can discuss implementation details and if you really want to contribute a working solution, you'll be more than welcome.
-
-**Q:** I think Popochiu must be significantly improved in a specific area and I have the solution. Should I open a PR?
-**A:** The above: open an issue, describe your findings and allow us to understand the context and make sure you also did, before sending your code over. If we agree that there is room for improvement and we have a shared understanding of the course of action, we'll be more then happy to receive your help.
-
-**Q:** My Issue/PR has been closed and I don't agree with the maintainers' decision. What should I do now?
-**A:** First of all, we never close a discussion without providing an explanation. Should this happen (probably by mistake), your can still comment on the discussion. If you think we didn't get the point, let's go on discussing this.
