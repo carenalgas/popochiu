@@ -8,7 +8,7 @@ The purpose of this page is to provide contributors with an overview of Popochiu
 
 Like every project, Popochiu benefits from open communication and thoughtful discussions before submitting issues or pull requests, to grow organically and remain maintainable on the long run.
 
-!!! info "Too mush talk! I'm a person of action!"
+!!! info "Too much talk! I'm a person of action!"
     If you don't want to digest too much _whys_ and want to jump to the _hows_, please read the [Contributions Q&As](#contributions-q&as) section.
 
     **Warning**: We take no responsibility for frustration, anger, or bitter disappointment if you skip the FAQs and your PRs get rejected!
@@ -19,7 +19,7 @@ Popochiu is maintained by two people, with the support of a community of contrib
 
 The following contains some detailed and essential information on how to contribute. It might feel a bit prescriptive - we’re already telling you what to do and what not to do before you’ve even started - but there’s a good reason for this.
 
-The maintainers of this project have full-time jobs, which, unfortunately, don’t involve Popochiu. While both are entrepreneurs in the video game (@carenalga) and software development (@stickgrinder) industries - fields that are somewhat related to Popochiu - they maintain this project in their free time. This includes not only creating new features, improving existing ones, and keeping up with Godot’s updates but also engaging with the community and reviewing contributions from others.
+The maintainers of this project have full-time jobs, which, unfortunately, don’t involve Popochiu. While both are entrepreneurs in the video game (@mapedorr) and software development (@stickgrinder) industries - fields that are somewhat related to Popochiu - they maintain this project in their free time. This includes not only creating new features, improving existing ones, and keeping up with Godot’s updates but also engaging with the community and reviewing contributions from others.
 
 We want to ensure that your PRs don’t sit idle for months, and while we prefer not to reject contributions, maintaining a focused and coherent project sometimes requires saying "no". This is how we avoid turning Popochiu into an overly complicated and unmanageable tool.
 
@@ -41,7 +41,7 @@ By discussing your idea, we can provide a broader perspective and suggest a cour
 
 As Joel Spolsky aptly noted in his classic post [Things You Should Never Do, Part 1](https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/), **_“It’s harder to read code than to write it.”_** Understanding *what* code does is challenging enough, but grasping *why* it was written that way can be even harder.
 
-When exploring Popochiu’s code for the first time, you might find it difficult to navigate and feel that many things were done “wrong.” Rest assured, however, that the architecture reflects careful reasoning, analysis, and - of course - a bit of personal taste. This applies to core as well as contributed code.
+When exploring Popochiu’s code for the first time, you might find it difficult to navigate and feel that many things were done “wrong”. Rest assured, however, that the architecture reflects careful reasoning, analysis, and - of course - a bit of personal taste. This applies to core as well as contributed code.
 
 Is it perfect? Certainly not. Popochiu began as a solo project on Godot 3.5, and over time, some original decisions have shown their limits. Godot itself evolves, offering new possibilities that outshine older approaches. While some choices hold up well, others are due for improvement.
 
@@ -86,13 +86,13 @@ Here are some of the many ways you can make a positive impact on Popochiu; even 
 
 **Q:** I'm working with an unstable/unsupported version of Godot and I have worked around some errors. Should I open a PR?
 **A:** It depends. If you are using a development or otherwise unstable version of Godot other than a release candidate, then **no**, we will close the PR without even looking at it. The reason is we already spent time addressing bugs that were due to Godot, not Popochiu and that solved themselves once Godot reached a more stable status.  
-If you're testing a release-candidate, we can be interested in reviewing the PR, but you'll have to test it against the next stable release when it's available before it gets merged. Also, the solution should always work on the officialy supported Godot version, if different form the most recent one.
+If you're testing a release-candidate, we can be interested in reviewing the PR, but you'll have to test it against the next stable release when it's available before it gets merged. Also, the solution should always work on the officially supported Godot version, if it differs from the most recent one.
 
 **Q:** Yeah, but since I saw a bug using a newer version, can I at least open an issue so that we don't forget to check it later down the road?
-**A:** **We don't accept bugs related to unsupported version of Godot** anc close them without review. Period.
+**A:** **We don't accept bugs related to unsupported versions of Godot**, and close them without review. Period.
 
 **Q:** Creating my game with Popochiu I developed a customization and I think it can be useful to everyone. What should I do?
-**A:** Customizations are great, but making them accessible to the broad public may require more work then just committing the code you have at hand. The best course of action is to [review the project board](https://github.com/orgs/carenalgas/projects/1/views/1) and see if what you did is already tracked, requested or in progress. If not, you can open a feature request, with your detailed use case, mentioning that you are willing to take it over. We can discuss implementation details and if you really want to contribute a working solution, you'll be more than welcome.
+**A:** Customizations are great, but making them accessible to the broad public may require more work than just committing the code you have at hand. The best course of action is to [review the project board](https://github.com/orgs/carenalgas/projects/1/views/1) and see if what you did is already tracked, requested or in progress. If not, you can open a feature request, with your detailed use case, mentioning that you are willing to take it over. We can discuss implementation details and if you really want to contribute a working solution, you'll be more than welcome.
 
 **Q:** I think Popochiu must be significantly improved in a specific area and I have the solution. Should I open a PR?
 **A:** The above: open an issue, describe your findings and allow us to understand the context and make sure you also did, before sending your code over. If we agree that there is room for improvement and we have a shared understanding of the course of action, we'll be more then happy to receive your help.
