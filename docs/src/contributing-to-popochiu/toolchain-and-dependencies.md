@@ -2,125 +2,119 @@
 weight: 7020
 ---
 
+# Toolchain and dependecies
+
 ## Plugin and Engine
 
-The development of the Engine and Plugin requires only the Godot game engine.
+Developing the Engine and Plugin requires only the Godot game engine.
 
-We strive to keep Popochiu compatible with the latest stable version of Godot, so you are encouraged to use the most recent stable version to contribute to the plugin.
+We strive to keep Popochiu compatible with the latest stable version of Godot, so contributors are encouraged to use the most recent stable version when working on the plugin.
 
-You may want to test Popochiu on non-stable versions, but please ensure your contribution process happens on a stable, supported version, or we won't be able to test and approve your code.
+While testing Popochiu on non-stable versions is allowed, all contributions must be made using a stable, supported version. Contributions based on non-stable versions cannot be tested or approved.
 
-The only exception to this is for RC (_release candidates_), but please see [the related answers on the Q&A page](../qna/) for additional details.
+The only exception is for RC (_release candidates_), but please refer to [the related answers on the Q&A page](../qna/) for details.
 
 ## DevOps Automation
 
-Popochiu relies on GitHub Actions and Workflows to automate releases and publishing this docs.
+Popochiu relies on GitHub Actions and Workflows to automate releases and publish documentation.
 
-There is no need for specific tools for that, but you can find the related stuff in the `.github/workflows` directory.
-
-!!! note
-    Contributors are probably not supposed to do any change to automation, but should your change require some specific build step, feel free to propose it.
-
-The _Dockerfiles_ for the docs can be found in the `docs` folder. There are two of them:
-
-1. `Dockerfile.DocsExtractor` defines the image to run a script originally written by GDQuest crew to extract Documentation Comments to Markdown files. That's what we use to publish the [Scripting Reference](../the-engine-handbook/scripting-reference/index).
-2. `Dockerfile.MkDocs` defines the MkDocs image that is run locally to preview changes to the documentation (see below)
+No specific tools are needed to interact with these workflows, but all automation-related files are located in the `.github/workflows` directory.
 
 !!! note
-    Contributions to improve and optimize the capabilities of the extractor or the documentation site are welcome, as long as they follow the contributions guidelines. Please see [Contributing Documentation](../contributing-documentation) section.
+    Contributors are generally not expected to modify automation scripts. However, if your changes require specific build steps, feel free to propose them.
+
+Dockerfiles for documentation are located in the `docs` directory:
+
+1. **`Dockerfile.DocsExtractor`**: Defines the image used to run a script (originally by the GDQuest team) that extracts documentation comments into Markdown files. This is used to publish the [Scripting Reference](../the-engine-handbook/scripting-reference/index).
+2. **`Dockerfile.MkDocs`**: Defines the MkDocs image used to preview changes to the documentation locally (see below).
+
+!!! note
+    Contributions that improve or optimize the extractor or documentation site are welcome, as long as they follow the contribution guidelines. See the [Contributing Documentation](../contributing-documentation) section for more information.
 
 ## Documentation
 
-Popochiu Documentation is written in [Markdown](https://www.markdownguide.org) and rendered by [MkDocs](https://www.mkdocs.org).
+Popochiu's documentation is written in [Markdown](https://www.markdownguide.org) and rendered using [MkDocs](https://www.mkdocs.org).
 
-The only dependencies needed to build the docs are:
+The only tools needed to build the documentation are:
 
-* Docker
-* Docker Compose
-* GNU Make
+- Docker
+- Docker Compose
+- GNU Make
 
-By using these tools we can create an encapsulated, platform-agnostic and production-parity local development environment for documentation, that's fully portable and doesn't require contributors to install any complex dependencies, leaving the host system clean and free from possible conflicts.
+These tools provide an encapsulated, platform-agnostic, and production-ready local development environment. This approach avoids requiring contributors to install complex dependencies, keeping their systems clean and free from conflicts.
 
-We hereby provide summary instructions to setup the necessary packages on each supported OS.
+Below are summary instructions for setting up the required packages on supported operating systems.
 
-### Running the documentation locally
+### Running the Documentation Locally
 
-Docker is available natively on any GNU/Linux distribution, but Windows and MacOSX are supported by Docker Desktop or other means.
+Docker is available natively on GNU/Linux distributions, while Windows and macOS are supported via Docker Desktop or alternative solutions.
 
 #### GNU/Linux
 
-This quick guide provides direct information for Ubuntu, Arch and derivatives of both distros.
-If you use a different distro, odds are good that you know what you're doing, so please Google your sources.
+This guide provides specific instructions for Ubuntu and Arch Linux. If you're using another distribution, refer to its official documentation.
 
-Please refer to the documentation of you distribution to learn how to install Docker and Docker Compose:
+- **Docker Installation:**
+  - [Ubuntu and derivatives](https://docs.docker.com/engine/install/ubuntu/)
+  - [Arch and derivatives](https://wiki.archlinux.org/title/Docker#Installation)
 
-* [Ubuntu and derivatives](https://docs.docker.com/engine/install/ubuntu/)
-* [Arch and derivatives](https://wiki.archlinux.org/title/Docker#Installation)
+- **Docker Compose:** Ensure the Compose plugin is installed alongside Docker.
 
-Please remember to install Docker as well as the Compose plugin.
+- **GNU Make Installation:**
+  - Ubuntu: `sudo apt install build-essential`
+  - Arch: `sudo pacman -Sy base-devel`
 
-Make is provided by the `build-essential` metapackage on Ubuntu and derivatives, while on Arch and derivatives you can install `base-devel`:
-
-* **Ubuntu**: `sudo apt install build-essential`
-* **Arch**: `sudo pacman -Sy base-devel`
-
-That's it. You can jump to the [Run the documentation](#run-the-documentation) section to learn how to preview your changes locally.
+Once everything is set up, proceed to the [Run the Documentation](#run-the-documentation) section to preview your changes.
 
 #### MS Windows
 
-You can install all the necessary packages natively on Windows or use a WSL environment (see next paragraph). If you prefer to stay on native Windows, please read on.
+On Windows, you can either install the required tools natively or use WSL (Windows Subsystem for Linux).
 
-> **TIP**: We strongly suggest you run make from a bash or similar Shell like the one provided by _Git Bash_. Should you use WSL2, your distro shell will be compatible out of the box. If you run make natively on PowerShell, YMMV.
+!!! tip
+    Running `make` is easier from a bash-like shell (e.g., Git Bash). If you use WSL2, your distribution shell is compatible by default. PowerShell may work, but behavior can vary.
 
 ##### Method 1: Native Toolchain
 
-Please [follow the official documentation](https://docs.docker.com/desktop/install/windows-install/) to install Docker Desktop on Windows.
-
-The Compose plugin is automatically available on Windows when you install Docker Desktop.
-
-About Make, there are different ways to install it:
-
-1. Use the Chocolatey package: `choco install make` (**preferred option**, requires [Chocolately Package Manager to be installed](https://chocolatey.org/install) first)
-2. Direct download of [Make for Windows](https://gnuwin32.sourceforge.net/packages/make.htm)
-3. Use [GnuWin32](http://gnuwin32.sourceforge.net/install.html) (particularly suitable for older Windows versions (2000/XP/2003/Vista/7/2008 with msvcrt.dll)
+1. Install Docker Desktop following the [official documentation](https://docs.docker.com/desktop/install/windows-install/).
+2. The Compose plugin is included with Docker Desktop.
+3. Install Make using one of the following methods:
+   - **Chocolatey**: `choco install make` (**preferred**)
+   - Direct download: [Make for Windows](https://gnuwin32.sourceforge.net/packages/make.htm)
+   - **GnuWin32**: [GnuWin32 installer](http://gnuwin32.sourceforge.net/install.html)
 
 ##### Method 2: WSL2
 
-Another way to run the docs locally is to activate [Windows Subsystem for Linux (WSL/WSL2)](https://learn.microsoft.com/en-us/windows/wsl/install-win10), and chose one of the available distros (Ubuntu being a very sane choice).
+Enable [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install-win10) and choose a distribution (Ubuntu is recommended). Once configured, follow the GNU/Linux instructions above.
 
-Should you go down this route, once you have WSL configured with an Ubuntu or Arch instance, please follow the instructions for GNU/Linux.
+#### MacOS
 
-Once you're done, read the [Run the docs](#run-the-docs) section to learn how to preview your changes locally.
+Follow the [official Docker Desktop installation guide](https://docs.docker.com/desktop/install/mac-install/). The Compose plugin is included by default.
 
-#### MacOSX
+To install GNU Make:
+- **Homebrew**: `brew install make` (**preferred**)
+- **XCode**: `xcode-select --install` (agree to the license in the popup).
 
-Please [follow the official documentation](https://docs.docker.com/desktop/install/mac-install/) to install Docker Desktop on MacOSX.
+Once installed, proceed to the next section to preview your changes.
 
-The Compose plugin is automatically available on Mac when you install Docker Desktop.
+### Run the Documentation
 
-About Make, there are different ways to install it:
+To preview the documentation, navigate to the `docs` directory in the repository and run:
 
-* Use Homebrew package manager: `brew install make`  (**preferred option**, requires [Homebrew Package Manager to be installed](https://brew.sh/#install) first)
-* Run XCode: `xcode-select --install` (confirm installation in the popup window and agree to the ToS)
+```bash
+make docs-up
+```
 
-Once you're done, read on to learn how to preview your changes locally.
+This command starts a Docker container and binds port 286 to the MkDocs instance. Open [http://localhost:286](http://localhost:286) in your browser to view the documentation live.
 
-### Run the documentation
+To stop the container, run:
 
-To run the documentation, just enter the `docs` directory in the project's repository and issue this command:
+```bash
+make docs-down
+```
 
-> `make docs-up`
-
-This will start the Docker container, and will bind port 286 of the host to the running instance of MkDocs in the container. To view the docs live in your browser, just visit [http://localhost:286](http://localhost:286).
-
-To stop the container service, just issue
-
-> `make docs-down`
-
-The documentation supports live reloading, so your browser will automatically update when you save a file you're working on, or when you create a new file or folder.
+The documentation supports live reloading, so any changes you save will automatically update in your browser.
 
 ### Closing notes
 
-Please, read the [Contributing documentation](../contributing-documentation) section before pushing changes to Popochiu Documentation.
+Before pushing changes to the documentation, please read the [Contributing Documentation](../contributing-documentation) section.
 
-Instructions on how to publish the documentation to the official site are available to maintainers in the dedicated [README.md](https://github.com/carenalgas/popochiu/blob/develop/docs/README.md) file.
+For maintainers, instructions for publishing the documentation to the official site are available in the dedicated [README.md](https://github.com/carenalgas/popochiu/blob/develop/docs/README.md) file.
