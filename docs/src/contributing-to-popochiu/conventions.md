@@ -133,7 +133,19 @@ We’re quite permissive when it comes to Python code, as it’s only used for s
 
 To ensure your code aligns with PEP 8, you can rely on one of the many available linters such as **[Black](https://black.readthedocs.io/en/stable/)**, **[Flake8](https://flake8.pycqa.org/en/latest/)** or **[Pylint](https://pylint.pycqa.org/en/latest/)** - or any other one you prefer.
 
-### Code comments
+### Markdown Code
+
+The Popochiu documentation is entirely written in Markdown, with several syntax extensions to support advanced functionality such as Mermaid diagrams, code highlighting, admonition blocks, definition lists, and more. These extensions are provided as Python modules included in the documentation Docker image.
+
+For Markdown files, we adhere to [GitHub's Markdown style guide](https://github.com/style-guides/Markdown).
+
+If you are using Visual Studio Code, we recommend installing the following extensions to ensure your Markdown code is properly reviewed during editing:
+
+- [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint): Linting for Markdown files to ensure adherence to standards.
+- [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one): Provides shortcuts, table of contents generation, and other helpful features for Markdown editing.
+- [Mermaid Markdown Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=bpruitt-goddard.mermaid-markdown-syntax-highlighting): Adds syntax highlighting support for Mermaid diagrams in Markdown files.
+
+## Code comments
 
 Commenting the code, whether it’s part of the plugin or the engine, is strongly encouraged. Detailed, multi-line comments that explain the reasoning behind a function’s implementation are highly appreciated, as they enhance maintainability and readability for future contributors. Comments not only help maintainers understand your code but also make it easier for other contributors to navigate the codebase.
 
@@ -189,7 +201,7 @@ All comments, even single-line ones, should start with a capital letter and end 
     Character.visible = false
 ```
 
-#### Code documentation comments
+### Code documentation comments
 
 When adding a **public** or **virtual** method to any of the Engine classes, it is **mandatory** to include documentation comments following the [GDScript documentation comments format](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_documentation_comments.html#gdscript-documentation-comments). These comments ensure that the method is properly documented for both inline consumption within Godot and the code reference exported to the documentation website.
 
@@ -197,7 +209,7 @@ Remember, [you can use _BBCode_ formatting and reference other code elements](ht
 
 The preferred format for public methods is as follows:
 
-##### Classes and inner classes
+#### Classes and inner classes
 
 ```gdcript
 ## A brief description of the class's role and functionality.
@@ -216,7 +228,7 @@ The `@tutorial`, `@experimental`, and `@deprecated` tags are optional. They can 
 ## @deprecated: Use [Class OtherClass] instead.
 ```
 
-##### Fuctions and methods
+#### Fuctions and methods
 
 ```gdcript
 ## A brief description of the function, its purpose, what it
@@ -236,7 +248,7 @@ The `@tutorial`, `@experimental`, and `@deprecated` tags are optional. They can 
 
 The `Usage` section is optional but **strongly encouraged** for all non-trivial functions. Including it significantly improves the quality and clarity of Popochiu's public API.
 
-##### Enums, Enum values, Signals, Constants and Variables
+#### Enums, Enum values, Signals, Constants and Variables
 
 The preferred format for all these elements is:
 
@@ -305,34 +317,101 @@ func _my_private_function(arg1: Type) -> Type:
 
 Writing private code documentation using the same structure as public documentation but with single-hash comments (`#`) helps explain to other contributors how to use functions within the plugin space effectively.
 
-#### Admonitions
+### Admonitions
 
-TODO
+You can use `TODO:`, `FIXME:`, `IMPROVE:`, or `NOTE:` annotations in your comments when needed. Here's a quick guide to when each should be used:
+
+| **Admonition** | **When to use it** |
+| --- | --- |
+| `TODO` | Use this when you know some out-of-scope work needs to be done. It's especially helpful if you also include a brief explanation or reasoning to guide future development. |
+| `FIXME` | Use this when committing code with known issues or temporary fixes. **Only allowed in draft PRs.** |
+| `IMPROVE` | Use this when you recognize that your code could be improved but don't yet know how, or when you know how to improve it but it’s out of scope for the current implementation. |
+| `NOTE` | Use this to leave important information for yourself or other contributors. It's ideal for clarifying false code smells, explaining impacts or reasoning behind the code, or highlighting any other critical details that **should** be understood before touching the code. |
 
 ## Error handling
 
-TODO
-
-## Branch naming and workflow
+We have no conventions for the error handling yet. This section is therefore maked as:
 
 TODO
 
-## Commit format
+## Workflow
 
-TODO
+### Branching model and naming
 
-## Pull Requests
+The project maintainers follow a branching model inspired by [git-flow](https://www.gitkraken.com/learn/git/git-flow).
 
-### Format
+The following key branches are vital to the project's workflow:
 
-### Permissions
+- **`main`**: Used for releases. Work done on `develop` is merged into `main` and tagged with a version number in the `vX.Y.Z` format.
+- **`develop`**: The integration branch (even though no automated tests are currently available). All work should be branched off from and merged back into this branch.
+- **`release/<version>`**: These branches are no longer in use and remain for historical reference. Currently, only the 2.0 major version is supported, with a "roll-forward" strategy applied to address any issues in new releases.
+- **`gh-pages`**: Contains the documentation you are reading now. This branch is managed by the release automation system and should never be modified manually.
 
-TODO
+Maintainers work directly on the main repository by branching from `develop` using the following naming conventions:
+
+- **`feature/<issue_number>-easy-to-read-name`**: For developing new features, improvements, or planned work.
+- **`fix/<issue_number>-easy-to-read-name`**: For bug fixes, whether urgent or not.
+- **`docs/<issue_number>-easy-to-read-name`**: For documentation updates, when done in isolation (documentation for new functions must accompany the related code in the same PR).
+
+Including the issue number in the branch name makes it easy to trace the branch back to its context.
+
+### Contributor Workflow
+
+Contributors working on their own forks are not required to follow this branching model. They can choose to:
+
+- Commit directly to their `develop` branch and open a PR targeting our `develop` branch.
+- Create a branch using their preferred naming convention and open a PR targeting our `develop` branch.
+
+While following the same naming conventions is not mandatory, it is encouraged to maintain a clean and organized repository.
+
+### Commit format
+
+Commit messages **must** follow this format:
+
+`refs #<issue_number>: Clear commit message, explaning why - not what.`
+
+This format allows seamless navigation between commits and issues in the GitHub interface. While GitHub supports other keywords besides refs, we stick to it consistently to avoid confusion or misinterpretation.
+
+Commit messages must:
+
+* Start with a capital letter and end with a full stop.
+* Provide informative content explaining why the change was made, not what (since the "what" is visible in the code).
+
+**Good**:
+
+```{.text .code-example-good}
+refs #123: Made the function to flip the character's sprite public.
+```
+
+**Very Good**:
+
+```{.text .code-example-good}
+refs #123: Function to flip the character is now public to simulate the "Confused John Travolta" meme.
+```
+
+**Bad**:
+
+```{.text .code-example-bad}
+refs #123: changes to the character flip function
+```
+
+### Pull Requests
+
+Pull requests titles must follow [the same format as commit messages](#commit-format).
+
+For large PRs with extensive changes, please use the description field to provide an overview, helping reviewers understand the context and purpose of your work.
+
+!!! warning "Important"
+    Always [check the `Allow edits by maintainers` flag](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork#enabling-repository-maintainer-permissions-on-existing-pull-requests) when opening a PR. This option allows maintainers to pull and push changes directly to your PR branch on your fork. It makes collaboration smoother, especially for complex or extensive changes.
 
 ## Testing
 
-TODO
+Popochiu currently lacks automated test coverage, so no conventions have been established yet. This section will be updated as soon as testing practices are introduced.
 
 ## Dependencies
 
-TODO
+Godot does not yet have a mature dependency manager to handle composition and interdependencies between addons. As a result, our approach for Popochiu is to implement every feature as an internal feature.
+
+A good example is the Aseprite Importer, which was inspired by (and partially based on) the excellent [Godot Aseprite Wizard](https://github.com/viniciusgerevini/godot-aseprite-wizard) by [Vinicius Gerevini](https://github.com/viniciusgerevini). However, the feature was rewritten and fully integrated into Popochiu to simplify distribution and avoid external dependencies.
+
+For this reason, contributions that rely on third-party addons will not be accepted.
