@@ -13,7 +13,7 @@ As is standard for Godot addons, the actual code is located in the `addons` fold
 
 Below is the directory structure of the main [Popochiu repository](https://github.com/carenalgas/popochiu):  
 
-```
+```text
 <Project Root>
 ├── .github                                 <-- Holds GitHub-related stuff, such as issue templates
 |                                               and workflows actions.
@@ -40,7 +40,7 @@ Below is the directory structure of the main [Popochiu repository](https://githu
 
 In the root directory, you’ll also find the following notable files:
 
-```
+```text
 home_banner.png  
 icon.svg  
 LEEME.md  
@@ -57,7 +57,7 @@ You’ll also find the project’s `.gitignore` file. It’s fairly standard, ex
 
 We won’t delve too deeply into the plugin's content here (refer to the [Project Overview](../project-overview) section for more details), but the `addons` folder is organized as follows:
 
-```
+```text
 /addons/popochiu
 |
 ├── editor                                  <-- Contains `@tool` scripts that extend Godot's editor
@@ -116,21 +116,196 @@ We won’t delve too deeply into the plugin's content here (refer to the [Projec
 
 If your contribution adds new elements to the engine or plugin, please ensure they are placed in their appropriate locations.
 
-TODO
-
 ## Coding standards
 
-TODO
+### GDScript code
 
-## Code documentation
+Popochiu adheres to the [official GDScript style guide](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html) for both code and [file and folder naming conventions](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html).
 
-TODO
+To ensure your code complies with these guidelines, you can use the [GDScript Toolkit](https://github.com/Scony/godot-gdscript-toolkit) by [Pawel Lampe](https://github.com/Scony).
 
-### Code blocks comments
+As of now, no automatic linting is available as a pre-commit hook or during PR submission. Please verify that your code is compliant before submitting your PRs.
 
-TODO
+### Python code
 
-### Comments labels
+Some scripts and automation, mostly related to the documentation, are written in Python.  
+We’re quite permissive when it comes to Python code, as it’s only used for secondary scripts and automation tasks, and the amount of code involved is minimal. However, when in doubt, it’s always a good idea to adhere to the [PEP 8 style guide](https://peps.python.org/pep-0008/), which is the widely accepted standard for Python code.
+
+To ensure your code aligns with PEP 8, you can rely on one of the many available linters such as **[Black](https://black.readthedocs.io/en/stable/)**, **[Flake8](https://flake8.pycqa.org/en/latest/)** or **[Pylint](https://pylint.pycqa.org/en/latest/)** - or any other one you prefer.
+
+### Code comments
+
+Commenting the code, whether it’s part of the plugin or the engine, is strongly encouraged. Detailed, multi-line comments that explain the reasoning behind a function’s implementation are highly appreciated, as they enhance maintainability and readability for future contributors. Comments not only help maintainers understand your code but also make it easier for other contributors to navigate the codebase.
+
+**Good**:
+
+```{.gdscript .code-example-good}
+    # If the path is not empty it has at least two points: the start and the end
+    # so we can safely say index 1 is available.
+    # The character should face the direction of the next point in the path, then...
+    character.face_direction(moving_character_data.path[1])
+    # ... we remove the first point of the path since it is the character's current position.
+    moving_character_data.path.remove_at(0)
+```
+
+**Bad**:
+
+```{.gdscript .code-example-bad}
+    # Face the character to the next point in path
+    character.face_direction(moving_character_data.path[1])
+    moving_character_data.path.remove_at(0)
+```
+
+Comments should focus on explaining why the code is written a certain way, rather than what it does (which should already be clear from the code itself). Including references to specific issues in the format `#<issue_number>~` is valid and encouraged, as it provides helpful context to readers.
+
+**Good**:
+
+```{.gdscript .code-example-good}
+    # Fixes #322 (Hidden Character are still visible in a room after hiding it).
+    # This was expected to be done in function ... but we're doing it here because ...
+    Character.visible = false
+```
+
+**Bad**:
+
+```{.gdscript .code-example-bad}
+    # Fixes a bug that makes a hidden character still visible in a room.
+    Character.visible = false
+```
+
+All comments, even single-line ones, should start with a capital letter and end with a period. Whenever possible, use single-line comments placed above the relevant code rather than at the end of a line, as this improves clarity and readability.
+
+**Good**:
+
+```{.gdscript .code-example-good}
+    # The character is now visible.
+    Character.visible = false
+```
+
+**Bad**:
+
+```{.gdscript .code-example-bad}
+    # the character is now visible
+    Character.visible = false
+```
+
+#### Code documentation comments
+
+When adding a **public** or **virtual** method to any of the Engine classes, it is **mandatory** to include documentation comments following the [GDScript documentation comments format](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_documentation_comments.html#gdscript-documentation-comments). These comments ensure that the method is properly documented for both inline consumption within Godot and the code reference exported to the documentation website.
+
+Remember, [you can use _BBCode_ formatting and reference other code elements](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_documentation_comments.html#bbcode-and-class-reference).
+
+The preferred format for public methods is as follows:
+
+##### Classes and inner classes
+
+```gdcript
+## A brief description of the class's role and functionality.
+##
+## The description of the script / class, its purpose, what
+## it can do, and any further detail.
+##
+## @tutorial:             https://example.com/tutorial_1
+## @experimental
+## @deprecated
+```
+
+The `@tutorial`, `@experimental`, and `@deprecated` tags are optional. They can all contain descriptions, such as:
+
+```gdscript
+## @deprecated: Use [Class OtherClass] instead.
+```
+
+##### Fuctions and methods
+
+```gdcript
+## A brief description of the function, its purpose, what it
+## does, and how it relates with other functions (if relevant).
+##
+## Explain function arguments and return value.
+##
+## Usage:
+## [codeblock]
+## ...
+##     # Do this in that context
+##     my_var = my_function(param, other_param)
+##     my_var.some_method()
+## ...
+## [/codeblock]
+```
+
+The `Usage` section is optional but **strongly encouraged** for all non-trivial functions. Including it significantly improves the quality and clarity of Popochiu's public API.
+
+##### Enums, Enum values, Signals, Constants and Variables
+
+The preferred format for all these elements is:
+
+```gdscript
+## Purpose of the constant
+## ... uses that constant to ...
+const MY_CONSTANT = "Value"
+
+## Purpose, context and scope of the enum
+enum MyEnum {
+    ## Meaning of this value
+    VALUE_1,
+    ## Meaning of this value
+    VALUE_2,
+    ## Meaning of this value
+    VALUE_3,
+}
+
+## Emitted when ...
+## Arguments contain ...
+## ... connects to this signal in order to ....
+signal my_signal(arg1: Type, arg2: Type)
+
+## Holds ...
+## Defaults to ... (value and meaning)
+## Set this to ... for ... and to ... for ...
+@export var my_public_var: Type = Class.VALUE
+```
+
+Although Godot allows end-of-line comments for these elements, Popochiu adheres to the "above the line" format:
+
+**Good**:
+
+```{.gdscript .code-example-good}
+## Documentation comment
+var my_public_var: Type
+```
+
+**Bad**:
+
+```{.gdscript .code-example-bad}
+var my_public_var: Type ## Documentation comment
+```
+
+For private methods or classes within the Plugin, writing proper comments in the aforementioned format is encouraged but not required. In these cases, however, **comments should not start with the double hash** (`##`). This distinction is crucial, as only public methods relevant to game developers using Popochiu should appear in the exported code reference. This ensures that the documentation focuses exclusively on scripting functions that assist developers in creating their projects.
+
+```{.gdscript .code-example-good}
+# A brief description of this private function, its purpose, what
+# it does, and how it relates with other functions (if relevant).
+#
+# Explain function arguments and return value.
+func _my_private_function(arg1: Type) -> Type:
+    # ...
+```
+
+**Bad**:
+
+```{.gdscript .code-example-bad}
+## A brief description of this private function, its purpose, what
+## it does, and how it relates with other functions (if relevant).
+##
+## Explain function arguments and return value.
+func _my_private_function(arg1: Type) -> Type:
+    # ...
+```
+
+Writing private code documentation using the same structure as public documentation but with single-hash comments (`#`) helps explain to other contributors how to use functions within the plugin space effectively.
+
+#### Admonitions
 
 TODO
 
