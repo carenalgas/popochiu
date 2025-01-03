@@ -4,12 +4,16 @@ weight: 7050
 
 ## How to contact maintainers
 
-TODO
+Popochiu is maintained by:
 
-## Channels
+* **Mateo Robayo Rodríguez** (GitHub: `[@mapedorr](https://github.com/mapedorr)`, Discord: `@carenalga`)
+* **Paolo Pustorino** (GitHub: `[@stickgrinder](https://github.com/stickgrinder)`, Discord: `@stickgrinder`)
 
-TODO
+You can contact the maintainers by:
 
-## Other policies
+* Mentioning them in an issue or a PR on GitHub
+* Reaching out on the [Carenalgas Discord server](https://discord.gg/WCnW2yAN), preferably in the `#troubleshooting` or `#contributions` channels
 
-TODO
+We can publicly discuss contributions on these channels so that the community can get involved.
+
+For specific issues, contacting us on Discord is the quickest and most reliable option.
