@@ -141,6 +141,10 @@
     --admonition-danger-color: #404040;
     --admonition-danger-title-background-color: #e9a499;
     --admonition-danger-title-color: #fff;
+    --admonition-success-background-color: #ddfadb;
+    --admonition-success-color: #404040;
+    --admonition-success-title-background-color: #27bc1a;
+    --admonition-success-title-color: #fff;
     --admonition-tip-background-color: #dbfaf4;
     --admonition-tip-color: #404040;
     --admonition-tip-title-background-color: #1abc9c;
@@ -279,6 +283,10 @@
         --admonition-danger-color: #fcc;
         --admonition-danger-title-background-color: #633;
         --admonition-danger-title-color: #fcc;
+        --admonition-success-background-color: #2c3828;
+        --admonition-success-color: #e7ffdd;
+        --admonition-success-title-background-color: #436633;
+        --admonition-success-title-color: #e7ffdd;
         --admonition-tip-background-color: #28382d;
         --admonition-tip-color: #dfd;
         --admonition-tip-title-background-color: #336648;
@@ -1693,13 +1701,14 @@ p + .classref-constant {
 }
 
 /* Allows to add a green or red bar to code blocks for "good"/"bad" code examples. */
-.code-example-good div.highlight {
-    border-left-color: var(--code-example-good-color);
-    border-left-width: 8px;
+code.hljs {
+    border-left: 8px solid var(--code-border-color);
 }
-.code-example-bad div.highlight {
+.code-example-good code {
+    border-left-color: var(--code-example-good-color);
+}
+.code-example-bad code {
     border-left-color: var(--code-example-bad-color);
-    border-left-width: 8px;
 }
 
 /* Togglable sidebar sections. */
