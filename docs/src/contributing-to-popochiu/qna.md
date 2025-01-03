@@ -43,7 +43,7 @@ We’ve previously addressed bugs caused by unstable versions of Godot that reso
 : Please do not. Such issues will be closed and labeled as `wontfix`. We cannot accept bug reports for unsupported Godot versions. No exceptions.
 
 **OK, so how do I know what's the officially supported versions of Godot for Popochiu?**
-: We strive to keep Popochiu compatible with the latest stable version of Godot.Check the [Compatibility Chart](https://github.com/carenalgas/popochiu?tab=readme-ov-file#compatibility-chart) for precise information.
+: We strive to keep Popochiu compatible with the latest stable version of Godot. Check the [Compatibility Chart](https://github.com/carenalgas/popochiu?tab=readme-ov-file#compatibility-chart) for precise information.
 
 **How do you handle conflicts or disagreements on contributions?**
 : Like many other FOSS projects, Popochiu follows a [benevolent dictatorship](https://en.wikipedia.org/wiki/Benevolent_dictatorship) model, with [@mapedorr](https://github.com/mapedorr) as the _benevolent dictator_, ultimately having the final say in any controversy. While maintainers are responsible for making every final decisions, we strive to consider all perspectives and ask for evidence before resolving conflicts.
