@@ -121,7 +121,7 @@ func set_title(value: String) -> void:
 #endregion
 
 #region Private ####################################################################################
-## Checks if the overlay area of the popup was clicked in order to close it.
+# Checks if the overlay area of the popup was clicked in order to close it.
 func _check_click(event: InputEvent) -> void:
 	if (
 		PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT
