@@ -89,7 +89,6 @@ func _input(event: InputEvent) -> void:
 #region Private ####################################################################################
 func _on_settings_pressed() -> void:
 	PopochiuUtils.g.popup_requested.emit("SimpleClickSettings")
-	#PopochiuUtils.g.gui.settings_requested.emit()
 
 
 func _open() -> void:

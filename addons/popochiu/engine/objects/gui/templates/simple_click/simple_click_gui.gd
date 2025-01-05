@@ -6,8 +6,6 @@ extends PopochiuGraphicInterface
 ## inventory bar is in the top left corner of the screen, and the settings bar is in the top right
 ## corner of the screen.
 
-signal settings_requested
-
 @onready var settings_bar: Control = %SettingsBar
 @onready var save_and_load_popup: Control = %SaveAndLoadPopup
 @onready var text_settings_popup: Control = %TextSettingsPopup

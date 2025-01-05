@@ -1,11 +1,50 @@
-[gd_scene load_steps=3 format=3 uid="uid://bmpxoiebdf67g"]
+[gd_scene load_steps=17 format=3 uid="uid://bmpxoiebdf67g"]
 
 [ext_resource type="PackedScene" uid="uid://c51xplyeuk787" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup.tscn" id="1_l0ff4"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/simple_click_settings_popup.gd" id="2_y4ddu"]
+[ext_resource type="Texture2D" uid="uid://bexxkrmqdiemq" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_save.png" id="3_iyxhd"]
+[ext_resource type="PackedScene" uid="uid://drx0r8w00ivck" path="res://addons/popochiu/engine/objects/gui/components/sound_volumes/sound_volumes.tscn" id="3_w0ss4"]
+[ext_resource type="Texture2D" uid="uid://bns33w6nl2qkb" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_load.png" id="4_cxw13"]
+[ext_resource type="Texture2D" uid="uid://bg1txcy1ofatq" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_dialog_history.png" id="5_8pumv"]
+[ext_resource type="Texture2D" uid="uid://cxpcw7xvcjcfy" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_quit.png" id="6_o5sh3"]
+[ext_resource type="Texture2D" uid="uid://cyvd8h2ouw8rg" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_audio.png" id="7_p3unk"]
+[ext_resource type="Texture2D" uid="uid://hjol4hvanbt5" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_text.png" id="8_hh105"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n1wdd"]
+atlas = ExtResource("3_iyxhd")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2g267"]
+atlas = ExtResource("4_cxw13")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wplse"]
+atlas = ExtResource("5_8pumv")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p5j1e"]
+atlas = ExtResource("6_o5sh3")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ktudv"]
+atlas = ExtResource("7_p3unk")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ocfjj"]
+atlas = ExtResource("8_hh105")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1jlhx"]
+atlas = ExtResource("8_hh105")
+region = Rect2(0, 0, 16, 16)
 
 [node name="SimpleClickSettingsPopup" instance=ExtResource("1_l0ff4")]
+texture_filter = 1
 script = ExtResource("2_y4ddu")
 script_name = &"SimpleClickSettings"
+
+[node name="Overlay" parent="." index="0"]
+self_modulate = Color(1, 1, 1, 0)
 
 [node name="HeaderContainer" parent="Overlay/PanelContainer/VBoxContainer" index="0"]
 visible = false
@@ -13,34 +52,114 @@ visible = false
 [node name="BodyContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer" index="1"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer" index="0"]
+[node name="LeftContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer" index="0"]
 layout_mode = 2
 
-[node name="Save" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/VBoxContainer" index="0"]
+[node name="Save" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer" index="0"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Save"
+icon = SubResource("AtlasTexture_n1wdd")
+alignment = 0
 
-[node name="Load" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/VBoxContainer" index="1"]
+[node name="Load" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer" index="1"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Load"
+icon = SubResource("AtlasTexture_2g267")
+alignment = 0
 
-[node name="History" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/VBoxContainer" index="2"]
+[node name="History" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer" index="2"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "History"
+icon = SubResource("AtlasTexture_wplse")
+alignment = 0
 
-[node name="Quit" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/VBoxContainer" index="3"]
+[node name="Quit" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer" index="3"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Quit game"
+size_flags_vertical = 10
+text = "Quit"
+icon = SubResource("AtlasTexture_p5j1e")
+alignment = 0
 
 [node name="VSeparator" type="VSeparator" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer" index="1"]
 layout_mode = 2
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer" index="2"]
+[node name="RightContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer" index="2"]
 layout_mode = 2
+
+[node name="VolumeContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer" index="0"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer" index="0"]
+layout_mode = 2
+text = "Volume"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer" index="1"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer/HBoxContainer" index="0"]
+layout_mode = 2
+size_flags_vertical = 4
+texture = SubResource("AtlasTexture_ktudv")
+
+[node name="SoundVolumes" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer/HBoxContainer" index="1" instance=ExtResource("3_w0ss4")]
+layout_mode = 2
+
+[node name="ContinueContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer" index="1"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer" index="0"]
+layout_mode = 2
+text = "Continue Mode"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer" index="1"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer/HBoxContainer" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_ocfjj")
+
+[node name="ContinueMode" type="OptionButton" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer/HBoxContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+item_count = 2
+popup/item_0/text = "Auto"
+popup/item_1/text = "Manual"
+popup/item_1/id = 1
+
+[node name="DialogueSpeedContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer" index="2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer" index="0"]
+layout_mode = 2
+text = "Dialogue Speed"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer" index="1"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer/HBoxContainer" index="0"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_1jlhx")
+
+[node name="TextSpeed" type="HSlider" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer/HBoxContainer" index="1"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 0.1
+step = 0.01
+
+[node name="TextSpeedLabel" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer/HBoxContainer" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+text = "0x"
+vertical_alignment = 2
 
 [node name="FooterContainer" parent="Overlay/PanelContainer/VBoxContainer" index="2"]
 visible = false

@@ -16,7 +16,7 @@ func _ready() -> void:
 	dialog_style.selected = PopochiuUtils.e.settings.dialog_style
 	continue_mode.button_pressed = PopochiuUtils.e.settings.auto_continue_text
 	
-	# Connect to child signals
+	# Connect to children signals
 	text_speed.value_changed.connect(_on_text_speed_changed)
 	dialog_style.item_selected.connect(_on_dialog_style_selected)
 	continue_mode.toggled.connect(_on_continue_mode_toggled)

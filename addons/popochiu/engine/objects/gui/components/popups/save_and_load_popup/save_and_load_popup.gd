@@ -6,6 +6,13 @@ signal slot_selected
 const SELECTION_COLOR := Color("edf171")
 const OVERWRITE_COLOR := Color("c46c71")
 
+## The [code]script_name[/code] used to open the Save popup when the
+## [signal PopochiuIGraphicInterface.popup_requested] signal is triggered.
+@export var save_popup_script_name := &"SavePopup"
+## The [code]script_name[/code] used to open the Load popup when the
+## [signal PopochiuIGraphicInterface.popup_requested] signal is triggered.
+@export var load_popup_script_name := &"LoadPopup"
+
 var _current_slot: Button = null
 var _slot_name := ""
 var _prev_text := ""
@@ -68,7 +75,8 @@ func _on_ok() -> void:
 	if _slot_name:
 		_prev_text = _current_slot.text
 		_current_slot.set_meta("has_save", true)
-	
+
+
 #endregion
 
 #region Public #####################################################################################
@@ -83,6 +91,15 @@ func open_load() -> void:
 #endregion
 
 #region Private ####################################################################################
+func _on_popup_requested(popup_script_name: StringName) -> void:
+	if popup_script_name == save_popup_script_name:
+		_show_save()
+	elif popup_script_name == load_popup_script_name:
+		_show_load()
+	else:
+		super(popup_script_name)
+
+
 func _show_save(slot_text := "") -> void:
 	lbl_title.text = "Choose a slot to save the game"
 	_slot_name = slot_text
