@@ -4,7 +4,7 @@ weight: 1040
 
 ## Tutorials
 
-* [Creating a game stub](../../../getting-started/creating-a-game-stub/introduction): This step-by-step tutorial will guide you to learn the very basics of Popochiu, providing a lot of explanations along the way.
+* [Creating a game stub](../../getting-started/creating-a-game-stub/introduction): This step-by-step tutorial will guide you to learn the very basics of Popochiu, providing a lot of explanations along the way.
 
 ## Video Tutorials
 
