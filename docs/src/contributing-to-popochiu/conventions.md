@@ -1,5 +1,5 @@
 ---
-weight: 7040
+weight: 7030
 ---
 
 # Conventions
@@ -506,7 +506,7 @@ Pull requests titles must follow [the same format as commit messages](#commit-fo
 For large PRs with extensive changes, please use the description field to provide an overview, helping reviewers understand the context and purpose of your work.
 
 !!! warning "Important"
-    Always [check the `Allow edits by maintainers` flag](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork#enabling-repository-maintainer-permissions-on-existing-pull-requests) when opening a PR. This option allows maintainers to pull and push changes directly to your PR branch on your fork. It makes collaboration smoother, especially for complex or extensive changes.
+    Always [check the "Allow edits by maintainers" flag](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/allowing-changes-to-a-pull-request-branch-created-from-a-fork#enabling-repository-maintainer-permissions-on-existing-pull-requests) when opening a PR. This option allows maintainers to pull and push changes directly to your PR branch on your fork. It makes collaboration smoother, especially for complex or extensive changes.
 
 ## Testing
 

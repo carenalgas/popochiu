@@ -1,5 +1,5 @@
 ---
-weight: 7005
+weight: 7010
 ---
 
 # Introduction
@@ -9,9 +9,9 @@ The purpose of this page is to provide contributors with an overview of Popochiu
 Like every project, Popochiu benefits from open communication and thoughtful discussions before submitting issues or pull requests, to grow organically and remain maintainable on the long run.
 
 !!! info "Too much talk! I'm a person of action!"
-    If you don't want to digest too much _whys_ and want to jump to the _hows_, please read the [Contribution Q&As](qna) page.
+    If you don't want to digest too much _whys_ and want to jump to the _hows_, please read the [Contribution Q&As](../qna) page.
 
-    **Warning**: We take no responsibility for frustration, anger, or bitter disappointment if you skip the FAQs and your PRs get rejected!
+    **Warning**: We take no responsibility for frustration, anger, or bitter disappointment if you skip reading important informations and your PRs get rejected!
 
 ## Who, why, when
 
@@ -78,4 +78,3 @@ Here are some of the many ways you can make a positive impact on Popochiu; even 
 4. For those contributing structural or large-scale features, knowledge of **design patterns** and **clean code principles** is a huge advantage. We strongly encourage reading Robert Nystrom’s free online book, [Game Programming Patterns](http://gameprogrammingpatterns.com/). Familiarity with the [SOLID principles](https://en.wikipedia.org/wiki/SOLID) is also highly valuable.  
 5. Not everything is about code! The plugin extends the Godot Editor with custom UIs, so skills in **interaction design**, **UI design**, or **user/developer experience** can significantly improve Popochiu’s usability for everyone.  
 6. Finally, taking the time to read this entire section of the documentation is **highly** appreciated. It makes everything easier for everyone involved.  
-
