@@ -6,7 +6,6 @@ extends PopochiuGraphicInterface
 ## inventory bar is in the top left corner of the screen, and the settings bar is in the top right
 ## corner of the screen.
 
-@onready var settings_bar: Control = %SettingsBar
 @onready var save_and_load_popup: Control = %SaveAndLoadPopup
 @onready var text_settings_popup: Control = %TextSettingsPopup
 @onready var sound_settings_popup: Control = %SoundSettingsPopup
@@ -17,9 +16,6 @@ extends PopochiuGraphicInterface
 #region Godot ######################################################################################
 func _ready() -> void:
 	super()
-	
-	# Connect to children's signals
-	settings_bar.option_selected.connect(_on_settings_option_selected)
 	
 	# Connect to autoloads' signals
 	PopochiuUtils.cursor.replace_frames($Cursor)

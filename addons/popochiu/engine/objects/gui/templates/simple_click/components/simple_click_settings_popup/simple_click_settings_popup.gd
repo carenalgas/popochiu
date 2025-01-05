@@ -20,6 +20,8 @@ func _ready() -> void:
 	text_speed.value = 0.1 - PopochiuUtils.e.text_speed
 	continue_mode.selected = 0 if PopochiuUtils.e.settings.auto_continue_text else 1
 	text_speed_label.text = "%.2fx" % PopochiuUtils.e.text_speed
+	continue_mode.get_popup().canvas_item_default_texture_filter =\
+	Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
 	
 	# Connect to children signals
 	save.pressed.connect(_on_save_pressed)
