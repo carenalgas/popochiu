@@ -90,6 +90,7 @@ Enable [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install-win10) and c
 Follow the [official Docker Desktop installation guide](https://docs.docker.com/desktop/install/mac-install/). The Compose plugin is included by default.
 
 To install GNU Make:
+
 - **Homebrew**: `brew install make` (**preferred**)
 - **XCode**: `xcode-select --install` (agree to the license in the popup).
 
