@@ -1,41 +1,58 @@
-[gd_scene load_steps=17 format=3 uid="uid://bmpxoiebdf67g"]
+[gd_scene load_steps=19 format=3 uid="uid://bmpxoiebdf67g"]
 
 [ext_resource type="PackedScene" uid="uid://c51xplyeuk787" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup.tscn" id="1_l0ff4"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/simple_click_settings_popup.gd" id="2_y4ddu"]
-[ext_resource type="Texture2D" uid="uid://bexxkrmqdiemq" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_save.png" id="3_iyxhd"]
+[ext_resource type="Texture2D" uid="uid://0b0qq0lccphh" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/images/simple_click_settings_popup_icons.png" id="3_fhu7w"]
 [ext_resource type="PackedScene" uid="uid://drx0r8w00ivck" path="res://addons/popochiu/engine/objects/gui/components/sound_volumes/sound_volumes.tscn" id="3_w0ss4"]
-[ext_resource type="Texture2D" uid="uid://bns33w6nl2qkb" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_load.png" id="4_cxw13"]
-[ext_resource type="Texture2D" uid="uid://bg1txcy1ofatq" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_dialog_history.png" id="5_8pumv"]
-[ext_resource type="Texture2D" uid="uid://cxpcw7xvcjcfy" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_quit.png" id="6_o5sh3"]
-[ext_resource type="Texture2D" uid="uid://cyvd8h2ouw8rg" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_audio.png" id="7_p3unk"]
-[ext_resource type="Texture2D" uid="uid://hjol4hvanbt5" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_text.png" id="8_hh105"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1wdd"]
-atlas = ExtResource("3_iyxhd")
+atlas = ExtResource("3_fhu7w")
 region = Rect2(0, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2g267"]
-atlas = ExtResource("4_cxw13")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_bumy5"]
+load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_wplse"]
-atlas = ExtResource("5_8pumv")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqqii"]
+atlas = SubResource("CompressedTexture2D_bumy5")
+region = Rect2(16, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_p5j1e"]
-atlas = ExtResource("6_o5sh3")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wu5so"]
+load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ktudv"]
-atlas = ExtResource("7_p3unk")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4k08"]
+atlas = SubResource("CompressedTexture2D_wu5so")
+region = Rect2(32, 0, 16, 16)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_ocfjj"]
-atlas = ExtResource("8_hh105")
-region = Rect2(0, 0, 16, 16)
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_j70qy"]
+load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c6y2c"]
+atlas = SubResource("CompressedTexture2D_j70qy")
+region = Rect2(48, 0, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rtktt"]
+load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_454o7"]
+atlas = SubResource("CompressedTexture2D_rtktt")
+region = Rect2(64, 0, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_potjd"]
+load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gnvye"]
+atlas = SubResource("CompressedTexture2D_potjd")
+region = Rect2(80, 0, 16, 16)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kie24"]
+load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_468g2"]
+atlas = SubResource("CompressedTexture2D_kie24")
+region = Rect2(96, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1jlhx"]
-atlas = ExtResource("8_hh105")
+atlas = SubResource("AtlasTexture_468g2")
 region = Rect2(0, 0, 16, 16)
 
 [node name="SimpleClickSettingsPopup" instance=ExtResource("1_l0ff4")]
@@ -66,14 +83,14 @@ alignment = 0
 unique_name_in_owner = true
 layout_mode = 2
 text = "Load"
-icon = SubResource("AtlasTexture_2g267")
+icon = SubResource("AtlasTexture_wqqii")
 alignment = 0
 
 [node name="History" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer" index="2"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "History"
-icon = SubResource("AtlasTexture_wplse")
+icon = SubResource("AtlasTexture_a4k08")
 alignment = 0
 
 [node name="Quit" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer" index="3"]
@@ -81,7 +98,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 10
 text = "Quit"
-icon = SubResource("AtlasTexture_p5j1e")
+icon = SubResource("AtlasTexture_c6y2c")
 alignment = 0
 
 [node name="VSeparator" type="VSeparator" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer" index="1"]
@@ -103,10 +120,12 @@ layout_mode = 2
 [node name="Icon" type="TextureRect" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer/HBoxContainer" index="0"]
 layout_mode = 2
 size_flags_vertical = 4
-texture = SubResource("AtlasTexture_ktudv")
+texture = SubResource("AtlasTexture_454o7")
 
 [node name="SoundVolumes" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer/HBoxContainer" index="1" instance=ExtResource("3_w0ss4")]
 layout_mode = 2
+show_master_only = true
+show_labels = false
 
 [node name="ContinueContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer" index="1"]
 layout_mode = 2
@@ -120,7 +139,7 @@ layout_mode = 2
 
 [node name="Icon" type="TextureRect" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer/HBoxContainer" index="0"]
 layout_mode = 2
-texture = SubResource("AtlasTexture_ocfjj")
+texture = SubResource("AtlasTexture_gnvye")
 
 [node name="ContinueMode" type="OptionButton" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer/HBoxContainer" index="1"]
 unique_name_in_owner = true

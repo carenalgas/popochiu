@@ -3,6 +3,11 @@ extends GridContainer
 const MIN_VOLUME := -30
 const MUTE_VOLUME := -70
 
+## Determines whether only the Master bus is displayed.
+@export var show_master_only := false
+## Specifies whether labels are displayed in front of each volume slider.
+@export var show_labels := true
+
 var dflt_volumes := {}
 
 
@@ -42,10 +47,15 @@ func _on_audio_manager_ready() -> void:
 	# Build sound settings UI
 	for bus_idx in range(AudioServer.get_bus_count()):
 		var bus_name := AudioServer.get_bus_name(bus_idx)
-		# Create the label for the slider
-		var label := Label.new()
-		label.text = bus_name
-		$ChannelsContainer.add_child(label)
+		
+		if show_master_only and bus_idx > 0:
+			continue
+		
+		if show_labels:
+			# Create the label for the slider
+			var label := Label.new()
+			label.text = bus_name
+			$ChannelsContainer.add_child(label)
 		
 		# Create the node that will allow players to modify buses volumes
 		var slider = HSlider.new()
