@@ -1,9 +1,10 @@
-[gd_scene load_steps=19 format=3 uid="uid://bmpxoiebdf67g"]
+[gd_scene load_steps=20 format=3 uid="uid://bmpxoiebdf67g"]
 
 [ext_resource type="PackedScene" uid="uid://c51xplyeuk787" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup.tscn" id="1_l0ff4"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/simple_click_settings_popup.gd" id="2_y4ddu"]
 [ext_resource type="Texture2D" uid="uid://0b0qq0lccphh" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/images/simple_click_settings_popup_icons.png" id="3_fhu7w"]
 [ext_resource type="PackedScene" uid="uid://drx0r8w00ivck" path="res://addons/popochiu/engine/objects/gui/components/sound_volumes/sound_volumes.tscn" id="3_w0ss4"]
+[ext_resource type="PackedScene" uid="uid://clhnbnew4ydpc" path="res://addons/popochiu/engine/objects/gui/components/dialogue_advancement/dialogue_advancement.tscn" id="5_chydt"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_n1wdd"]
 atlas = ExtResource("3_fhu7w")
@@ -132,7 +133,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer" index="0"]
 layout_mode = 2
-text = "Continue Mode"
+text = "Dialogue Advancement"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer" index="1"]
 layout_mode = 2
@@ -141,14 +142,9 @@ layout_mode = 2
 layout_mode = 2
 texture = SubResource("AtlasTexture_gnvye")
 
-[node name="ContinueMode" type="OptionButton" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer/HBoxContainer" index="1"]
-unique_name_in_owner = true
+[node name="DialogueAdvancement" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer/HBoxContainer" index="1" instance=ExtResource("5_chydt")]
 layout_mode = 2
 size_flags_horizontal = 3
-item_count = 2
-popup/item_0/text = "Auto"
-popup/item_1/text = "Manual"
-popup/item_1/id = 1
 
 [node name="DialogueSpeedContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer" index="2"]
 layout_mode = 2
