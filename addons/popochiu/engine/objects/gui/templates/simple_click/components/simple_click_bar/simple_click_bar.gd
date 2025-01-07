@@ -26,6 +26,8 @@ func _ready():
 	
 	# Connect to children signals
 	settings_btn.pressed.connect(_on_settings_pressed)
+	settings_btn.mouse_entered.connect(_on_settings_mouse_entered)
+	settings_btn.mouse_exited.connect(_on_settings_mouse_exited)
 	
 	# Connect to singletons signals
 	PopochiuUtils.i.item_added.connect(_add_item)
@@ -47,6 +49,7 @@ func _ready():
 
 func _input(event: InputEvent) -> void:
 	if not event is InputEventMouseMotion: return
+	if settings_btn.is_hovered(): return
 	
 	var rect := panel_container.get_rect()
 	rect.size += Vector2(0.0, input_zone_height)
@@ -89,6 +92,29 @@ func _input(event: InputEvent) -> void:
 #region Private ####################################################################################
 func _on_settings_pressed() -> void:
 	PopochiuUtils.g.popup_requested.emit("SimpleClickSettings")
+
+
+func _on_settings_mouse_entered() -> void:
+	if PopochiuUtils.i.active:
+		PopochiuUtils.cursor.show_main_cursor()
+		PopochiuUtils.cursor.hide_secondary_cursor()
+	
+	PopochiuUtils.cursor.show_cursor("gui")
+
+
+func _on_settings_mouse_exited() -> void:
+	if PopochiuUtils.g.is_blocked: return
+	
+	if PopochiuUtils.d.current_dialog:
+		PopochiuUtils.cursor.show_cursor("gui")
+	elif PopochiuUtils.g.gui.is_showing_dialog_line:
+		PopochiuUtils.cursor.show_cursor("wait")
+	else:
+		PopochiuUtils.cursor.show_cursor("normal")
+	
+	if PopochiuUtils.i.active:
+		PopochiuUtils.cursor.hide_main_cursor()
+		PopochiuUtils.cursor.show_secondary_cursor()
 
 
 func _open() -> void:
