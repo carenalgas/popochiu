@@ -59,6 +59,7 @@ func _enter_tree() -> void:
 		"res://addons/popochiu/editor/inspector/character_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/aseprite_importer_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd",
+		"res://addons/popochiu/editor/inspector/prop_inspector_plugin.gd",
 	]:
 		var eip: EditorInspectorPlugin = load(path).new()
 		_inspector_plugins.append(eip)
