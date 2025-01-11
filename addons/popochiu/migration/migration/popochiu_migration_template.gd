@@ -11,7 +11,6 @@ const STEPS = [
 ]
 
 
-
 #region Virtual ####################################################################################
 ## This is code specific for this migration. This should return [code]true[/code] if the migration
 ## is successful. This is called from [method do_migration] which checks to make sure the migration
@@ -35,5 +34,6 @@ func _is_reload_required() -> bool:
 #region Private ####################################################################################
 #func _step1() -> Completion:
 	#return Completion.DONE
+
 
 #endregion
