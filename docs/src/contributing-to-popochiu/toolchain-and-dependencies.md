@@ -14,7 +14,9 @@ While testing Popochiu on non-stable versions is allowed, all contributions must
 
 The only exception is for RC (_release candidates_), but please refer to [the related answers on the Q&A page](../qna/) for details.
 
-## DevOps Automation
+---
+
+## DevOps automation
 
 Popochiu relies on GitHub Actions and Workflows to automate releases and publish documentation.
 
@@ -31,6 +33,8 @@ Dockerfiles for documentation are located in the `docs` directory:
 !!! note
     Contributions that improve or optimize the extractor or documentation site are welcome, as long as they follow the contribution guidelines. See the [Contributing Documentation](../contributing-documentation) section for more information.
 
+---
+
 ## Documentation
 
 Popochiu's documentation is written in [Markdown](https://www.markdownguide.org) and rendered using [MkDocs](https://www.mkdocs.org).
@@ -45,7 +49,7 @@ These tools provide an encapsulated, platform-agnostic, and production-ready loc
 
 Below are summary instructions for setting up the required packages on supported operating systems.
 
-### Running the Documentation Locally
+### Running the documentation locally
 
 Docker is available natively on GNU/Linux distributions, while Windows and macOS are supported via Docker Desktop or alternative solutions.
 
@@ -53,17 +57,19 @@ Docker is available natively on GNU/Linux distributions, while Windows and macOS
 
 This guide provides specific instructions for Ubuntu and Arch Linux. If you're using another distribution, refer to its official documentation.
 
-- **Docker Installation:**
+- **Docker installation:**
   - [Ubuntu and derivatives](https://docs.docker.com/engine/install/ubuntu/)
   - [Arch and derivatives](https://wiki.archlinux.org/title/Docker#Installation)
 
 - **Docker Compose:** Ensure the Compose plugin is installed alongside Docker.
 
-- **GNU Make Installation:**
+- **GNU Make installation:**
   - Ubuntu: `sudo apt install build-essential`
   - Arch: `sudo pacman -Sy base-devel`
 
 Once everything is set up, proceed to the [Run the Documentation](#run-the-documentation) section to preview your changes.
+
+---
 
 #### MS Windows
 
@@ -84,6 +90,8 @@ On Windows, you can either install the required tools natively or use WSL (Windo
 ##### Method 2: WSL2
 
 Enable [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install-win10) and choose a distribution (Ubuntu is recommended). Once configured, follow the GNU/Linux instructions above.
+
+---
 
 #### MacOS
 
@@ -113,6 +121,8 @@ make docs-down
 ```
 
 The documentation supports live reloading, so any changes you save will automatically update in your browser.
+
+---
 
 ### Closing notes
 

@@ -1,24 +1,20 @@
 ---
-weight: 7050
+weight: 7720
 ---
 
-# Project management
-
-We want Popochiu to be a high-quality FOSS project, much like Godot. We believe that alongside useful features and comprehensive documentation, a transparent and well-structured project management approach is essential to ensure its success.
-
-By adopting a consistent workflow, doing our best to share our goals, and ensuring transparency in our processes, we aim to benefit both adopters and contributors. Adopters can better assess if Popochiu meets their needs, while contributors can engage with the project in an organized and productive manner.
-
-## Issue Tracking
+# Issue Tracking
 
 All development activities for Popochiu are [tracked on GitHub Projects](https://github.com/orgs/carenalgas/projects/1).
 
 We’ve organized issues and PRs into various views, created templates for different issue types, and shifted from a milestone-based approach to a _release train_ model. While we can’t guarantee perfectly regular releases, we aim to ship updates at least every other month, ensuring a steady flow of bug fixes, polish, and new features.
 
-### Project Board Organization
+---
+
+## Project Board Organization
 
 Our _pull_ system works perfectly with the release train model, which is why our main project backlog is managed through a set of Kanban-style boards and views. We can decide to add or remove some views,  but certain ones are here to stay. Let's review them:
 
-#### Backlog
+### Backlog
 
 The **Backlog** board is the most important: it contains all the tasks we plan to work on.  
 Each column represents the current **status** of an issue:
@@ -38,15 +34,17 @@ In addition, we categorize issues into four **lanes** based on their type and pr
 We use these categories to achieve two goals: ensuring a healthy mix of bug fixes, polish, and new features; helping users understand how we prioritize issues in the project’s vision.  
 On one side, indeed, it’s easy for urgent bug fixes and shiny new features to overshadow the importance of maintenance and refinement. On the other side, users are entitled to decide whether to wait for a feature to be implemented in Popochiu or create their own custom solution for their games.
 
-#### Next Release
+### Next Release
 
 This table lists the issues we consider candidates for the next release. We can't be sure everything will be finished on time, but the main goal of this list is to keep everyone in the loop about what to expect in the near future.
 
-#### Release board
+### Release board
 
 This is a convenient view on what's ready to be released. When we publish a new version, we can check all the "Done" work and change its status to "Released". This makes it easier to write release notes and announcements without forgetting some contributions.
 
-### How to submit issues
+---
+
+## How to submit issues
 
 When opening an issue, please select the appropriate template based on the type of issue you’re reporting:
 
@@ -82,44 +80,4 @@ When opening an issue, please:
 6. **Bring other community members in the loop**
    Remember, the issue tracker is a shared space for the community. Feel free to point the issue out on discord and invite other members to join the discussion. Evidence and feedback are gold to make sensible decisions about the future of the plugin.
 
-## Code reviews
-
-Code reviews are handled by the project maintainers (who have permission to merge to develop), based on their availability and familiarity with the topic. You can assign your PR to @mapedorr, @stickgrinder, or both, and we’ll make sure to review it as soon as possible.
-
-If we request changes, we’ll do our best to make the process smooth. For smaller adjustments, we’ll provide code suggestions you can easily accept (if you agree with them). For more structural issues, we’ll add explanations or questions to open a discussion. In rare cases, we might make direct commits to your fork (which is why we ask you to check the "Allow edits from maintainers" flag when opening a PR).
-
-This last option is only used if we hit a roadblock during a complex exchange and it’s faster to address the issue directly. The goal is always to collaborate, not to override your work.
-
-!!! tip "Reviewing code is both rewarding and instructive!"
-      We encourage the community and other contributors to share their feedback during code reviews.
-
-      If you have trustworthy buddies in the community, feel free to involve them in the review process. This not only enhances the quality of the final result but also helps others learn more about the inner workings of Popochiu.  
-      Similarly, don’t hesitate to comment on others’ PRs if you have something meaningful to add or questions to ask. Engaging in this way is indeed a fantastic way to contribute!
-
-Reviews are typically handled within a few days, but since we work in our free time, they can stay untouched for a bit more. Don't worry and feel free to poke us by mentioning us in a comment. It's appreciated, should we forget to check your work out!
-
-Depending on how long a review takes, we can ask you to rebase your code on develop, if the branches diverge to the point they can't be merged automatically.
-
-!!! warning
-      In these cases, **never** solve the issue by merging develop back on your branch: **always rebase**!
-
-To speed up complex reviews, we suggest opening a draft PR while you're working on an issue and explicitly asking for feedback on your work in progress. This has multiple benefits: it helps us catch potential issues early before you’ve completed all the work (less frustration), prevents the need to review large PRs all at once (less cognitive load), and reduces downtime between finishing your changes and having them merged into develop (less waiting from your side).
-
-Last important points:
-
-- Please, make sure you have tested your implementation before asking for review.
-- Remember: code reviews are all about improving the code and the solution's architecture, never about personal criticism.
-
-## Definition of Done
-
-A task, issue or contribution is considered _done_ when:
-
-1. All knwon edge cases, regressions or limitations are addressed  - or documented if unresolvable.
-2. The code follows naming conventions and project standards.
-3. The solution has been tested locally and works as intended.
-4. Documentation changes and additions are included in the PR.
-5. Necessary migrations, if any, are included in the PR.
-6. There is no leftover commented-out code, print statements, or temporary work artifacts.
-7. Non-trivial code portions include meaningful comments explaining its purpose and reasoning.
-
-Use this as a checklist before stating that your contribution is complete.
+---
