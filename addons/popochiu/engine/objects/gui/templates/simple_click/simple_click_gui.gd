@@ -6,10 +6,6 @@ extends PopochiuGraphicInterface
 ## inventory bar is in the top left corner of the screen, and the settings bar is in the top right
 ## corner of the screen.
 
-@onready var save_and_load_popup: Control = %SaveAndLoadPopup
-@onready var history_popup: Control = %HistoryPopup
-@onready var quit_popup: Control = %QuitPopup
-
 
 #region Godot ######################################################################################
 func _ready() -> void:
