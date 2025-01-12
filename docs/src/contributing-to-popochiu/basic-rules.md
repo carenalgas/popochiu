@@ -13,6 +13,8 @@ Like every project, Popochiu benefits from open communication and thoughtful dis
 
     **Warning**: We take no responsibility for frustration, anger, or bitter disappointment if you skip reading important informations and your PRs get rejected!
 
+---
+
 ## Who, why, when
 
 Popochiu is maintained by two people, with the support of a community of contributors. If you’re reading this, you’re probably interested in joining the amazing group of individuals who volunteer their time to make this plugin even better.
@@ -24,6 +26,8 @@ The maintainers of this project have full-time jobs, which, unfortunately, don�
 We want to ensure that your PRs don’t sit idle for months, and while we prefer not to reject contributions, maintaining a focused and coherent project sometimes requires saying "no". This is how we avoid turning Popochiu into an overly complicated and unmanageable tool.
 
 This section aims to help you understand how you can contribute effectively, making the process smoother for everyone involved. Together, we can continue to make Popochiu great!
+
+---
 
 ## Contribution basics
 
@@ -57,6 +61,8 @@ Adventure games are so simple that they used to captivate us on an [80286 with 6
 
 Extensive comments, meaningful variable and function names, adherence to coding standards... all essential ingredients to the success of our project.
 
+---
+
 ## Areas of Contribution
 
 When you think about "open source contribution", writing code is probably the first thing that comes to mind. But like any software project, code is just the tip of the iceberg!
@@ -69,6 +75,8 @@ Here are some of the many ways you can make a positive impact on Popochiu; even 
 * **Create assets**: Are you a designer, musician, or visual artist? Consider contributing template game assets to help others get started. Animation skeletons, sound effects, background music, GUI layouts - your creativity could inspire and assist countless developers.
 * **Expand the demo game**: Popochiu [comes with a demo game](https://github.com/carenalgas/popochiu-sample-game) to help users explore the plugin before diving into their own projects. It’s small and simple. Why not extend it with more implemented use cases? It’s a great way to help others learn and experiment.
 * **Spread the word**: Host game jams, write guides, create video tutorials, or document your Popochiu-based project on your blog. Sharing your experience with the plugin and creating meaningful content can inspire others and bring new developers - and potential contributors - into the Popochiu community.
+
+---
 
 ## Useful Knowledge
 
