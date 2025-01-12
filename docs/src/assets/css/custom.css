@@ -77,6 +77,7 @@
     --code-literal-color: hsl(300, 51%, 50%);
     --input-background-color: hsl(0, 0%, 99%);
     --input-focus-border-color: hsl(240, 100%, 69%);
+    --blockquote-border-color: hsl(180, 7%, 89%);
 
     --tabs-background-color: hsl(180, 7%, 89%);
     --tabs-selected-color: hsl(180, 7%, 66%);
@@ -166,7 +167,7 @@
     --monospace-font-family: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, Courier, monospace;
 
     /* Mermaid diagrams background color */
-    --mermaid-background-color: #fcfcfc;
+    --mermaid-background-color: #ffffff;
 
     /* SVG shadow color */
     --image-shadow-color: hsla(0, 0%, 0%, 0.3);
@@ -218,6 +219,7 @@
         --code-literal-color: hsl(0, 46%, 70%);
         --input-background-color: hsl(240, 4%, 21%);
         --input-focus-border-color: hsl(240, 100%, 69%);
+        --blockquote-border-color: hsl(240, 4%, 33%);
 
         --tabs-background-color: hsl(240, 4%, 27%);
         --tabs-selected-color: hsl(180, 7%, 66%);
@@ -305,7 +307,7 @@
         --footer-color: #aaa;
 
         /* Mermaid diagrams background color */
-        --mermaid-background-color: #fcfcfc;
+        --mermaid-background-color: transparent;
 
         /* SVG shadow color */
         --image-shadow-color: hsla(0, 0%, 0%, 0.4);
@@ -1650,6 +1652,13 @@ p + .classref-constant {
     color: var(--body-color);
     font-weight: 600;
     padding: 0 3px;
+}
+
+/* Give a left border to blockquotes */
+.rst-content blockquote {
+    border-left: 4px solid var(--blockquote-border-color);
+    padding-left: 20px;
+    margin-left: 0;
 }
 
 /* Allows the scrollbar to be shown in the sidebar */
