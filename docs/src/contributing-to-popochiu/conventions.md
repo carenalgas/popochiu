@@ -137,11 +137,11 @@ To ensure your code aligns with PEP 8, you can rely on one of the many available
 
 The Popochiu documentation is entirely written in Markdown, with several syntax extensions to support advanced functionality such as Mermaid diagrams, code highlighting, admonition blocks, definition lists, and more. These extensions are provided as Python modules included in the documentation Docker image.
 
-For Markdown files, we adhere to [GitHub's Markdown style guide](https://github.com/style-guides/Markdown).
+For Markdown files, we adhere to [CommonMark](https://spec.commonmark.org/0.31.2/) specification, augmented by the extensions provided by [GitHub Flavored Markdown](https://github.github.com/gfm/).
 
 If you are using Visual Studio Code, we recommend installing the following extensions to ensure your Markdown code is properly reviewed during editing:
 
-- [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint): Linting for Markdown files to ensure adherence to standards.
+- [markdownlint](https://marketplace.visualstudio.com/items?itemName=DavidAnson.vscode-markdownlint): Linting for Markdown files to ensure adherence to both adopted specifications (specifically [this ruleset](https://github.com/DavidAnson/markdownlint?tab=readme-ov-file#rules--aliases)).
 - [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one): Provides shortcuts, table of contents generation, and other helpful features for Markdown editing.
 - [Mermaid Markdown Syntax Highlighting](https://marketplace.visualstudio.com/items?itemName=bpruitt-goddard.mermaid-markdown-syntax-highlighting): Adds syntax highlighting support for Mermaid diagrams in Markdown files.
 

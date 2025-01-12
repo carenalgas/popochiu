@@ -90,6 +90,21 @@ MkDocs use front-matter to add metadata to pages. We use it to sort the pages or
 
 Trailing whitespace is allowed only to add a newline (`<br>`) tag in a paragraph. No whitespace characters on empty lines. All files must end with a newline.
 
+### Markdown styleguide
+
+To maintain consistency and clarity in our documentation, please adhere to the following style conventions:
+
+- Use double asterisks for **bold text** (e.g., `**bold**`).
+- Use underscores for _italic text_ (e.g., `_italic_`, not `*italic*`).
+- When referring to numbered markers in screenshots, follow the format `(_<marker_number>_)` (e.g., `(_1_)`, `(_2_)`, `(_32_)`).
+- Always link **Godot classes and nodes** to the [official documentation](https://docs.godotengine.org/). For example: [Sprite2D](https://docs.godotengine.org/en/stable/classes/class_sprite2d.html).
+- Write class names, functions, variables, file paths, and file names using inline code blocks (e.g., `path/to/file.gd`, `PopochiuCharacter`, `say()`).
+- Node names in a scene should always be written in **bold** (e.g., **WalkableAreas**) and, when appropriate, can also be links - always in bold.
+- For template code snippets that contain variable elements, enclose the variable part in `<` and `>` markers (e.g., `Popochiu<CharacterName>`). Use the appropriate naming convention for the context (e.g., PascalCase, snake_case, etc).
+- Code examples should always be placed in fenced code blocks, specifying the language for syntax highlighting when possible.
+- Monospaced text should be placed in fenced code blocks with the `text` or `plaintext` language specified to neutralize the syntax highlighter.
+- Emphasis (`_`) can be used freely and is generally preferred over quotation marks for titles or proper names (e.g., `_Day of the Tentacle_` rather than "Day of the Tentacle"), though this is not a strict rule.
+
 ### Markdown extensions
 
 The documentation uses several Markdown extensions for enhanced functionality. Find an overview below:
