@@ -53,7 +53,7 @@ By collaborating and discussing upfront, you can ensure your contribution is imp
 
 We strive to build upon design patterns and best practices, keeping the code clean and readable at all times.
 
-Adventure games are so simple that they used to captivate us on a 286: running one on modern hardware - even a portable console or a phone - is a breeze. This allows us to focus on the performance that really matters: **how efficiently people can read, write, and maintain Popochiu's code**. By prioritizing clarity and maintainability, we make the codebase more stable and predictable for everyone.
+Adventure games are so simple that they used to captivate us on an [80286 with 640kb of base RAM](https://youtu.be/eesSmqsfXGU?si=5q4zU-s-8b8z1AL6): running one on modern hardware - even a portable console or a phone - is a breeze. This allows us to focus on the performance that really matters: **how efficiently people can read, write, and maintain Popochiu's code**. By prioritizing clarity and maintainability, we make the codebase more stable and predictable for everyone.
 
 Extensive comments, meaningful variable and function names, adherence to coding standards... all essential ingredients to the success of our project.
 
