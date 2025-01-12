@@ -6,8 +6,8 @@ weight: 7080
 
 Popochiu is maintained by:
 
-* **Mateo Robayo Rodríguez** (GitHub: `[@mapedorr](https://github.com/mapedorr)`, Discord: `@carenalga`)
-* **Paolo Pustorino** (GitHub: `[@stickgrinder](https://github.com/stickgrinder)`, Discord: `@stickgrinder`)
+* **Mateo Robayo Rodríguez** (GitHub: [@mapedorr](https://github.com/mapedorr), Discord: `@carenalga`)
+* **Paolo Pustorino** (GitHub: [@stickgrinder](https://github.com/stickgrinder), Discord: `@stickgrinder`)
 
 You can contact the maintainers by:
 
