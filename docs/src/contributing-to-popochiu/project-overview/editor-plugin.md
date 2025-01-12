@@ -30,7 +30,7 @@ Located in the `editor/main_dock` folder, it contains:
 - `popochiu_dock.gd`: The script handling the dock's logic.
 - `popochiu_filter.gd`: A script for filtering dock items, essential for large games with many items. (_3_)
 
-The folder also contains the Main Dock's building blocks: tabs (_2_) dedicated to specific elements and their components: groups (_4_) and rows (_5_) and (6)_. Specifically:
+The folder also contains the Main Dock's building blocks: tabs (_2_) dedicated to specific elements and their components: groups (_4_) and rows (_5_) and (_6_). Specifically:
 
 - `main_tab`: Interface and logic for listing game elements such as characters, rooms, dialogues, inventory items, etc.
 - `room_tab`: Interface and logic for listing room-specific elements like props, hotspots, markers, walkable areas, etc.
