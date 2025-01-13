@@ -20,8 +20,8 @@ The engine is also divided into several subsystems, many of which provide an API
 
 ## Popochiu Engine
 
-> **Position**: `engine/popochiu.gd`
-> **Singleton**: `E`
+> **Position**: `engine/popochiu.gd`  
+> **Singleton**: `E`  
 > **Engine instance**: `PopochiuUtils.e`
 
 This is the main hub that provides control over the game’s flow and manages its initialization and runtime.  
@@ -38,8 +38,8 @@ It can be accessed via the `E` singleton in game scripts or through `PopochiuUti
 
 ## Audio Manager
 
-> **Position**: `engine/audio_manager` provides the bulk of the logic, while `engine/interfaces/i_audio.gd` exposes an API to control it.
-> **Singleton**: `A` (instance of `PopochiuIAudio`)
+> **Position**: `engine/audio_manager` provides the bulk of the logic, while `engine/interfaces/i_audio.gd` exposes an API to control it.  
+> **Singleton**: `A` (instance of `PopochiuIAudio`)  
 > **Engine instance**: `PopochiuUtils.a`
 
 It handles playing audio using `PopochiuAudioCue` objects.
