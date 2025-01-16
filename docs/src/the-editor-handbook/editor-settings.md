@@ -1,5 +1,5 @@
 ---
-weight: 2010
+weight: 3010
 ---
 
 TODO: how to reach the editor settings and set them up

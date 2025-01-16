@@ -1,5 +1,5 @@
 ---
-weight: 4020
+weight: 2020
 ---
 
 ## Creating rooms

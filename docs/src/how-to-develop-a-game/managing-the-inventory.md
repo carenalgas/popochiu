@@ -1,5 +1,5 @@
 ---
-weight: 4060
+weight: 2060
 ---
 
 ## Managing inventory

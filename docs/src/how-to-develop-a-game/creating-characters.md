@@ -1,5 +1,5 @@
 ---
-weight: 4030
+weight: 2030
 ---
 
 ## Creating characters

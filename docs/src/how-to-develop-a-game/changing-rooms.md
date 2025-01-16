@@ -1,5 +1,5 @@
 ---
-weight: 4025
+weight: 2025
 ---
 
 ## How to change rooms
