@@ -29,7 +29,9 @@ markdown_extensions:
   - admonition
   - attr_list
   - fontawesome_in_markdown
+  - def_list
 plugins:
   - search
   - mkdocs-nav-weight
-  - mermaid2
+  - mermaid2:
+      version: 11.4.1
