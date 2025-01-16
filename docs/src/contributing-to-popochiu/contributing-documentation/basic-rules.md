@@ -4,7 +4,7 @@ weight: 7710
 
 # Basics
 
-Contributing to Popochiu's documentation is as important as contributing to the codebase itself. An accessible, clear, well-maintained and up-to-date documentation eenables game makers can make the most out of the project. If you are not so much into code (or even if you are) you can give back to the project by helping us with this vital aspect of Popochiu.
+Contributing to Popochiu's documentation is as important as contributing to the codebase itself. An accessible, clear, well-maintained and up-to-date documentation enables game makers to make the most of the project. If you are not so much into code (or even if you are) you can give back to the project by helping us with this vital aspect of Popochiu.
 
 The documentation maintainer is **@stickgrinder**.
 
@@ -25,7 +25,7 @@ To contribute to the documentation, the first essential step is to make sure you
 For instructions on setting up the local preview environment, refer to the specific [Run the documentation locally](../../toolchain-and-dependencies#run-the-documentation-locally) section.
 
 !!! note
-    If you're not familiar with Docker and have never installed it before, this step may seem like a bit of a pain, but trust us: it's a _do once and forget_ process and it will make everything easier.
+    If you're not familiar with Docker and have never installed it before, this step may seem like a bit of a pain, but trust us: it's a _do once and forget_ process, and it will make everything easier.
 
 ---
 
@@ -36,13 +36,14 @@ Documentation contributions are critical whenever:
 1. A **new feature** is developed.
 2. The **public interface** of an existing feature is modified, including GUI changes in the plugin or public methods in the engine.
 
-The rule of thumb is that, if you add or change something that game developers will have to know, than you have to document it!
+The rule of thumb is that, if you add or change something that game developers will have to know, then you have to document it!
 
 !!! tip "Documenting the Engine API"
     Documenting Engine API elements like functions, signals, and variables is often as simple as adding a well formatted and complete [documentation comment](../../conventions/comments) to your public code. Of course, from time to time, it may require some more work, like updating an existing guide or tutorial.
 
 !!! tip "Updating visual assets"
-    When the editor interface changes or get some new feature, screenshots or other visuals may need to be updated.  
+    When the editor interface changes or get some new feature, screenshots or other visuals may need to be updated.
+    
     Taking consistent screenshots is a tough job: we recommend using the **Popochiu Sample Game**. Clone the repo and update the `addons/popochiu` folder with your changes.
 
     Remember to annotate the screenshots if it adds to clarity and readability of your explanation. If possible use Godot dark theme and red annotations for consistency.
@@ -53,10 +54,10 @@ The rule of thumb is that, if you add or change something that game developers w
 
 Before you start writing, it's important to understand what type of documentation you’re contributing to. Popochiu’s documentation broadly follows the categories defined by the [Diátaxis framework](https://diataxis.fr/), by which content fall into one of four types (each with a specific _user's main goal_ in brackets):
 
-- **Tutorials**: Step-by-step guides that show how stuff work (**learning**)
-- **How-to Guides**: Focused, task-oriented instructions to achieve a certain goal . think recipes (**achieving a goal**).  
-- **Explanations**: Conceptual overviews and background information (main goal: **understanding**)
-- **Reference**: Well-organized list of techical details and descriptions (main goal: **finding information**)
+- **Tutorials**: Step-by-step guides that show how stuff work. (Main goal: **learning**)
+- **How-to Guides**: Focused, task-oriented instructions designed to achieve a specific goal—think of them as recipes. (Main goal: **achieving a goal**)
+- **Explanations**: Conceptual overviews and background information. (Main goal: **understanding**)
+- **Reference**: Well-organized list of techical details and descriptions. (Main goal: **finding information**)
 
 ### Documentation Sections and Content Types
 
@@ -71,7 +72,7 @@ Each section in Popochiu's documentation aligns with a type from the Diátaxis f
 | Advanced Techniques      | Tutorials, How-To        | Offers in-depth guides and practical examples for getting the most out of Popochiu (and beyond).                          |
 | Contributing to Popochiu | Explanations, References | Provides all the information contributors need to get involved in Popochiu development.                                    |
 
-If you add new stuff, make sure you put in in the right place. If in doubt, reach out for **@stickgrinder**.
+If you add new stuff, make sure you put it in the right place. If in doubt, reach out for **@stickgrinder**.
 
 ---
 

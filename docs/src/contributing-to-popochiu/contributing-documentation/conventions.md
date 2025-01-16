@@ -99,12 +99,12 @@ I :fa-heart: coffee in large :fa-mug-hot:
 
 ### Definition lists
 
-Another way to avoid HTML in source code, this extension allows the creation of `<dl>` tags from simpler markdown:
+Another way to avoid HTML in source code. This extension allows the creation of `<dl>` tags from simpler markdown:
 
 ```markdown
 **This is a term or question**
 : This is it's definition or answer.  
-Multiple lines are supported (notice the double space in the line above, to create a newline character)
+Multiple lines are supported (notice the double space at the end of the line above to create a newline character)
 
 **Can I do more?**
 : Sure, you are supposed to!
@@ -169,7 +169,7 @@ In certain cases, the file name may differ from the page title for simplicity, a
 
 Images that appear in the documentation pages must be placed in the `docs/src/assets/images` folder, keeping them into a subfolder named as the main category they belong.
 
-Each file (prefer PNG over JPG when possible), must be named accordin to this format: `subsection_name-sorting_number-brief_description.png`.
+Each file (prefer PNG over JPG when possible), must be named according to this format: `subsection_name-sorting_number-brief_description.png`.
 
 This will ensure that we have them all grouped in a file browser, and we can always track them back to the section they belong to.
 
