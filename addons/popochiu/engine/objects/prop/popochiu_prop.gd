@@ -1,5 +1,5 @@
 @tool
-@icon('res://addons/popochiu/icons/prop.png')
+@icon("res://addons/popochiu/icons/prop.png")
 class_name PopochiuProp
 extends PopochiuClickable
 ## Visual elements in the Room that can have interaction (i.e. the background, the foreground, a
@@ -34,7 +34,7 @@ signal linked_item_discarded(item: PopochiuInventoryItem)
 ## Links the prop to a [PopochiuInventoryItem] by its [member PopochiuInventoryItem.script_name].
 ## This will make the prop disappear from the room, depending on whether or not said inventory item
 ## is inside the inventory.
-@export var link_to_item := ''
+@export var link_to_item := ""
 
 ## Total frames available the texture image has. [code](frames * vframes)[/code]
 var total_frames: get = get_total_frames
@@ -45,12 +45,12 @@ var total_frames: get = get_total_frames
 #region Godot ######################################################################################
 func _ready() -> void:
 	super()
-	add_to_group('props')
+	add_to_group("props")
 	
 	if Engine.is_editor_hint(): return
 	
 	for c in get_children():
-		if c.get('position') is Vector2:
+		if c.get("position") is Vector2:
 			c.position.y -= baseline * c.scale.y
 
 	walk_to_point.y -= baseline * scale.y
@@ -225,7 +225,7 @@ func is_animation_playing() -> bool:
 
 ## Returns the string name of the currently assigned animation in the [AnimationPlayer] node.
 func get_assigned_animation() -> String:
-	if not has_node("AnimationPlayer"): return ''
+	if not has_node("AnimationPlayer"): return ""
 	return $AnimationPlayer.assigned_animation
 
 ## Sets the animation key name for the currently assigned animation in the [AnimationPlayer] node.
