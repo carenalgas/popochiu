@@ -1,5 +1,5 @@
 ---
-weight: 4540
+weight: 3040
 ---
 
 ## Saving and loading the game state

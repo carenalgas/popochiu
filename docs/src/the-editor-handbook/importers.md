@@ -1,5 +1,5 @@
 ---
-weight: 2050
+weight: 5050
 ---
 
 # Aseprite Importers

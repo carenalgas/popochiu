@@ -1,5 +1,5 @@
 ---
-weight: 1560
+weight: 2060
 ---
 
 ## Use inventory items

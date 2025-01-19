@@ -1,5 +1,5 @@
 ---
-weight: 7710
+weight: 9710
 ---
 
 # Basics
@@ -66,10 +66,10 @@ Each section in Popochiu's documentation aligns with a type from the Diátaxis f
 | **Section**              | **Content types**        | **Purpose**                                                                                                               |
 |--------------------------|--------------------------|---------------------------------------------------------------------------------------------------------------------------|
 | Getting Started          | Tutorials, Explanations  | Provides the basics for installing Popochiu, taking first steps, and joining the community.                               |
+| How to Develop a Game    | Tutorials, How-To        | Guides users through setting up their first game, learning by doing, and building confidence to explore advanced features. |
+| Advanced Topics          | Tutorials, How-To        | Offers in-depth guides and practical examples for getting the most out of Popochiu (and beyond).                          |
 | The Editor Handbook      | References, Tutorials    | Showcases the functionality of the Popochiu plugin, explains how it works, and serves as a go-to guide for its use.       |
 | The Engine Handbook      | References, Explanations | Explains the plugin's architecture and provides a comprehensive API reference for game developers.                        |
-| How to Develop a Game    | Tutorials, How-To        | Guides users through setting up their first game, learning by doing, and building confidence to explore advanced features. |
-| Advanced Techniques      | Tutorials, How-To        | Offers in-depth guides and practical examples for getting the most out of Popochiu (and beyond).                          |
 | Contributing to Popochiu | Explanations, References | Provides all the information contributors need to get involved in Popochiu development.                                    |
 
 If you add new stuff, make sure you put it in the right place. If in doubt, reach out for **@stickgrinder**.

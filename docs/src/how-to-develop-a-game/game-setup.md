@@ -1,5 +1,5 @@
 ---
-weight: 1520
+weight: 2020
 ---
 
 ## Game setup

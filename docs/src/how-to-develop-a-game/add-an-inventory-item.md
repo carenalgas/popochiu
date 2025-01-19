@@ -1,5 +1,5 @@
 ---
-weight: 1550
+weight: 2050
 ---
 
 ## Add an inventory item
