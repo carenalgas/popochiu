@@ -35,3 +35,17 @@ plugins:
   - mkdocs-nav-weight
   - mermaid2:
       version: 11.4.1
+  - redirects:
+      redirect_maps:
+        # #383: The section on creating a game stub was promoted
+        #       as the "How to develop a game" section.
+        'getting-started/creating-a-game-stub/add-an-inventory-item.md' : 'how-to-develop-a-game/add-an-inventory-item.md'
+        'getting-started/creating-a-game-stub/conclusions.md' : 'how-to-develop-a-game/conclusions.md'
+        'getting-started/creating-a-game-stub/create-characters.md' : 'how-to-develop-a-game/create-characters.md'
+        'getting-started/creating-a-game-stub/create-the-first-room.md' : 'how-to-develop-a-game/create-the-first-room.md'
+        'getting-started/creating-a-game-stub/customize-the-game-ui.md' : 'how-to-develop-a-game/customize-the-game-ui.md'
+        'getting-started/creating-a-game-stub/game-setup.md' : 'how-to-develop-a-game/game-setup.md'
+        'getting-started/creating-a-game-stub/index.md' : 'how-to-develop-a-game/index.md'
+        'getting-started/creating-a-game-stub/introduction.md' : 'how-to-develop-a-game/introduction.md'
+        'getting-started/creating-a-game-stub/script-your-first-dialogue.md' : 'how-to-develop-a-game/script-your-first-dialogue.md'
+        'getting-started/creating-a-game-stub/use-inventory-items.md' : 'how-to-develop-a-game/use-inventory-items.md'
