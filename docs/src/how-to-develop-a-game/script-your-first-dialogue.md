@@ -6,7 +6,7 @@ weight: 1560
 
 The last very common case we want to cover with this introductory guide is the interaction with another character.
 
-If you followed this tutorial from the start, [you should have created two characters](../../../getting-started/creating-a-game-stub/create-characters#add-another-character). Popochiu adds our main character to the room for us when the game starts, so we don't need to do it manually. On the other hand, as we are the directors of our own game, it leaves us to place non-player characters where they belong.
+If you followed this tutorial from the start, [you should have created two characters](../create-characters#add-another-character). Popochiu adds our main character to the room for us when the game starts, so we don't need to do it manually. On the other hand, as we are the directors of our own game, it leaves us to place non-player characters where they belong.
 
 We will then add Popsy (or whatever you named your secondary character) to our sole room, and script some interactions.
 
