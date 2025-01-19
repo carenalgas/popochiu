@@ -1,5 +1,5 @@
 ---
-weight: 1540
+weight: 2040
 ---
 
 ## Create the first room

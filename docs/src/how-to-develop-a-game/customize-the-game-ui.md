@@ -1,5 +1,5 @@
 ---
-weight: 1570
+weight: 2070
 title: Customize the Game UI
 ---
 

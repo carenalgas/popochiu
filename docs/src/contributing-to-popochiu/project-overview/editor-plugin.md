@@ -1,5 +1,5 @@
 ---
-weight: 7520
+weight: 9520
 ---
 
 # Editor Plugin

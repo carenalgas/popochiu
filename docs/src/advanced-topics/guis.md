@@ -1,6 +1,8 @@
 ---
-weight: 4520
+weight: 3020
 ---
+
+# Game UI
 
 ## Theming your GUI
 
