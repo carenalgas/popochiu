@@ -73,9 +73,6 @@ func _is_reload_required() -> bool:
 
 #region Private ####################################################################################
 func _remove_non_used_components() -> Completion:
-	#var gui_scene := (ResourceLoader.load(
-		#PopochiuResources.GUI_GAME_SCENE, "", ResourceLoader.CACHE_MODE_IGNORE
-	#) as PackedScene).instantiate()
 	var nodes_to_remove: Array[Control] = []
 	for node_name: String in [
 		"InventoryBar", "SettingsBar", "TextSettingsPopup", "SoundSettingsPopup"
@@ -107,10 +104,7 @@ func _add_new_components() -> Completion:
 	_gui_scene.get_node("Popups").move_child(component_scene, 0)
 	
 	# Save the GUI scene with all the changes made by this and previous steps
-	var gui_packed_scene := PackedScene.new()
-	gui_packed_scene.pack(_gui_scene)
-	ResourceSaver.save(gui_packed_scene, PopochiuResources.GUI_GAME_SCENE)
-	
+	PopochiuEditorHelper.pack_scene(_gui_scene, PopochiuResources.GUI_GAME_SCENE)
 	return Completion.DONE
 
 
@@ -120,15 +114,6 @@ func _update_save_and_load_popup() -> Completion:
 		ADDON_SAVE_AND_LOAD_POPUP_SCRIPT,
 		GAME_SAVE_AND_LOAD_POPUP_SCRIPT
 	)
-	
-	## Update the values of the new properties in the SaveAndLoadPopup so the Save and Load popups
-	## can be opened from the new settings popup
-	#var gui_popup: Control = _gui_scene.get_node("Popups").find_child("SaveAndLoadPopup")
-	#var addon_popup: SaveAndLoadPopup = (
-		#load(ADDON_SAVE_AND_LOAD_POPUP_SCENE) as PackedScene
-	#).instantiate()
-	#gui_popup.save_popup_script_name = addon_popup.save_popup_script_name
-	#gui_popup.load_popup_script_name = addon_popup.load_popup_script_name
 	
 	return Completion.DONE
 
