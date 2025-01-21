@@ -6,21 +6,30 @@ extends PopochiuMigration
 const VERSION = 4
 const DESCRIPTION = "short description of migration goes here"
 const STEPS = [
-	"Remove InventoryBar, SettingsBar, TextSettingsPopup, SoundSettingsPopup, and SaveAndLoadPopup",
-	"Add SimpleClickBar, SimpleClickSettingsPopup, and SaveAndLoadPopup (updated).",
+	"Remove InventoryBar, SettingsBar, TextSettingsPopup and SoundSettingsPopup",
+	"Add SimpleClickBar and SimpleClickSettingsPopup.",
+	"Update SaveAndLoadPopup."
 ]
-const ADDON_SIMPLE_CLICK_BAR = (
+const ADDON_SIMPLE_CLICK_BAR_SCENE = (
 	PopochiuResources.GUI_TEMPLATES_FOLDER +
 	"simple_click/components/simple_click_bar/simple_click_bar.tscn"
 )
-const ADDON_SIMPLE_CLICK_POPUP = (
+const ADDON_SIMPLE_CLICK_POPUP_SCENE = (
 	PopochiuResources.GUI_TEMPLATES_FOLDER +
 	"simple_click/components/simple_click_settings_popup/simple_click_settings_popup.tscn"
 )
-const ADDON_SAVE_AND_LOAD_POPUP = (
+const ADDON_SAVE_AND_LOAD_POPUP_SCENE = (
 	PopochiuResources.GUI_ADDON_FOLDER +
 	"components/popups/save_and_load_popup/save_and_load_popup.tscn"
 )
+const ADDON_SAVE_AND_LOAD_POPUP_SCRIPT = (
+	PopochiuResources.GUI_ADDON_FOLDER +
+	"components/popups/save_and_load_popup/save_and_load_popup.gd"
+)
+const GAME_SAVE_AND_LOAD_POPUP_SCRIPT = (
+	"res://game/gui/components/popups/save_and_load_popup/save_and_load_popup.gd"
+)
+const SaveAndLoadPopup = preload(ADDON_SAVE_AND_LOAD_POPUP_SCRIPT)
 
 var _gui_templates_helper := preload(
 	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
@@ -51,12 +60,13 @@ func _do_migration() -> bool:
 			# Include the function names for each step here
 			_remove_non_used_components,
 			_add_new_components,
+			_update_save_and_load_popup
 		]
 	)
 
 
 func _is_reload_required() -> bool:
-	return false
+	return true
 
 
 #endregion
@@ -68,7 +78,7 @@ func _remove_non_used_components() -> Completion:
 	#) as PackedScene).instantiate()
 	var nodes_to_remove: Array[Control] = []
 	for node_name: String in [
-		"InventoryBar", "SettingsBar", "TextSettingsPopup", "SoundSettingsPopup", "SaveAndLoadPopup"
+		"InventoryBar", "SettingsBar", "TextSettingsPopup", "SoundSettingsPopup"
 	]:
 		var node: Node = _gui_scene.find_child(node_name)
 		if is_instance_valid(node) and node is Control:
@@ -83,29 +93,42 @@ func _remove_non_used_components() -> Completion:
 
 func _add_new_components() -> Completion:
 	# Copy the SimpleClickBar component to the game's GUI
-	var component_path := await _gui_templates_helper.copy_component(ADDON_SIMPLE_CLICK_BAR)
+	var component_path := await _gui_templates_helper.copy_component(ADDON_SIMPLE_CLICK_BAR_SCENE)
 	var component_scene: Control = (load(component_path) as PackedScene).instantiate()
 	_gui_scene.add_child(component_scene)
 	component_scene.owner = _gui_scene
 	_gui_scene.move_child(component_scene, 1)
 	
 	# Copy the SimpleClickPopup component to the game's GUI
-	component_path = await _gui_templates_helper.copy_component(ADDON_SIMPLE_CLICK_POPUP)
+	component_path = await _gui_templates_helper.copy_component(ADDON_SIMPLE_CLICK_POPUP_SCENE)
 	component_scene = (load(component_path) as PackedScene).instantiate()
 	_gui_scene.get_node("Popups").add_child(component_scene)
 	component_scene.owner = _gui_scene
 	_gui_scene.get_node("Popups").move_child(component_scene, 0)
 	
-	# Copy the SaveAndLoadPopup component to the game's GUI
-	component_path = await _gui_templates_helper.copy_component(ADDON_SAVE_AND_LOAD_POPUP)
-	component_scene = (load(component_path) as PackedScene).instantiate()
-	_gui_scene.get_node("Popups").add_child(component_scene)
-	component_scene.owner = _gui_scene
-	_gui_scene.get_node("Popups").move_child(component_scene, 1)
-	
+	# Save the GUI scene with all the changes made by this and previous steps
 	var gui_packed_scene := PackedScene.new()
 	gui_packed_scene.pack(_gui_scene)
 	ResourceSaver.save(gui_packed_scene, PopochiuResources.GUI_GAME_SCENE)
+	
+	return Completion.DONE
+
+
+func _update_save_and_load_popup() -> Completion:
+	# Update the save_and_load_popup.gd in the game's gui folder
+	DirAccess.rename_absolute(
+		ADDON_SAVE_AND_LOAD_POPUP_SCRIPT,
+		GAME_SAVE_AND_LOAD_POPUP_SCRIPT
+	)
+	
+	## Update the values of the new properties in the SaveAndLoadPopup so the Save and Load popups
+	## can be opened from the new settings popup
+	#var gui_popup: Control = _gui_scene.get_node("Popups").find_child("SaveAndLoadPopup")
+	#var addon_popup: SaveAndLoadPopup = (
+		#load(ADDON_SAVE_AND_LOAD_POPUP_SCENE) as PackedScene
+	#).instantiate()
+	#gui_popup.save_popup_script_name = addon_popup.save_popup_script_name
+	#gui_popup.load_popup_script_name = addon_popup.load_popup_script_name
 	
 	return Completion.DONE
 
