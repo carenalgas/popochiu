@@ -216,8 +216,10 @@ func add_character(chr: PopochiuCharacter) -> void:
 	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
 
 	update_characters_position(chr)
-
-	if chr.follow_player:
+	
+	# Fix #385: Ignore character following if the follower is the same as the player-controlled
+	# character.
+	if chr.follow_player and chr != PopochiuUtils.c.player:
 		PopochiuUtils.c.player.started_walk_to.connect(_follow_player.bind(chr))
 
 	chr.idle()
@@ -520,7 +522,7 @@ func _follow_player(
 	end_position: Vector2,
 	follower: PopochiuCharacter
 ):
-	var follower_end_position
+	var follower_end_position := Vector2.ZERO
 	if end_position.x > follower.position.x:
 		follower_end_position = end_position - follower.follow_player_offset
 	else:
