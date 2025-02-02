@@ -683,9 +683,10 @@ func play_animation(animation_label: String, animation_fallback := 'idle'):
 		# Search for a valid animation corresponding to animation_label
 		_current_animation = _get_valid_oriented_animation(animation_label)
 		# If is not present, do the same for the the fallback animation.
-		if _current_animation == "null": _current_animation = _get_valid_oriented_animation(animation_fallback)
+		if _current_animation.is_empty():
+			_current_animation = _get_valid_oriented_animation(animation_fallback)
 		# In neither are available, exit and throw an error to check for the presence of the animations.
-		if _current_animation == "null": # Again!
+		if _current_animation.is_empty(): # Again!
 			PopochiuUtils.print_error(
 				"Neither the requested nor the fallback animation could be found for character %s.\
 				Requested:%s - Fallback: %s" % [script_name, animation_label, animation_fallback]
@@ -933,7 +934,7 @@ func _get_valid_oriented_animation(animation_label):
 		if animation_player.has_animation(animation):
 			return animation
 
-	return "null"
+	return ""
 
 
 func _walk_to_node(node: Node2D, offset: Vector2) -> void:
