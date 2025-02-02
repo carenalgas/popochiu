@@ -43,6 +43,9 @@ signal move_ended
 ## Emitted when the animation to grab things has finished.
 signal grab_done
 
+## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
+const EMPTY_STRING = ""
+
 ## The [Color] in which the dialogue lines of the character are rendered.
 @export var text_color := Color.WHITE
 ## Depending on its value, the [b]$Sprite2D[/b] child will be flipped horizontally depending on
@@ -85,13 +88,13 @@ signal grab_done
 ## [code]true[/code].
 var position_stored = null
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
-var last_room := ''
+var last_room := EMPTY_STRING
 ## The suffix text to add to animation names.
-var anim_suffix := ''
+var anim_suffix := EMPTY_STRING
 ## Whether the character is or not moving through the room.
 var is_moving := false
 ## The current emotion used by the character.
-var emotion := ''
+var emotion := EMPTY_STRING
 ##
 var on_scaling_region: Dictionary = {}
 ## Stores the default walk speed defined in [member walk_speed]. Used by [PopochiuRoom] when scaling
@@ -105,7 +108,7 @@ var default_scale := Vector2.ONE
 var _looking_dir: int = Looking.DOWN
 # Holds a suffixes fallback list for the animations to play.
 # Initialized to the suffixes corresponding to the DOWN direction.
-var _animation_suffixes: Array = ['_d', '_dr', '_dl', '_r', '_l', '']
+var _animation_suffixes: Array = ['_d', '_dr', '_dl', '_r', '_l', EMPTY_STRING]
 # Holds the last PopochiuClickable that the character reached.
 var _last_reached_clickable: PopochiuClickable = null
 # Holds the animation that's currently selected in the character's AnimationPlayer.
@@ -437,7 +440,7 @@ func face_clicked() -> void:
 ## [AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
 ## characters return to its idle state.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_say(dialog: String, emo := "") -> Callable:
+func queue_say(dialog: String, emo := EMPTY_STRING) -> Callable:
 	return func(): await say(dialog, emo)
 
 
@@ -445,7 +448,7 @@ func queue_say(dialog: String, emo := "") -> Callable:
 ## [param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
 ## [AudioCue] is defined for the emotion, it is played. Once the talk animation finishes, the
 ## characters return to its idle state.
-func say(dialog: String, emo := "") -> void:
+func say(dialog: String, emo := EMPTY_STRING) -> void:
 	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -469,7 +472,7 @@ func say(dialog: String, emo := "") -> void:
 	if not vo_name.is_empty() and PopochiuUtils.a[vo_name].is_playing():
 		PopochiuUtils.a[vo_name].stop(0.3)
 
-	emotion = ''
+	emotion = EMPTY_STRING
 	idle()
 
 
@@ -792,7 +795,7 @@ func face_direction(destination: Vector2):
 	# Selecting the animation suffixes for the current facing direction.
 	# Note that we add a fallback empty string to the list, in case the only
 	# available animation is the base one ('walk', 'talk', etc).
-	_animation_suffixes = _valid_animation_suffixes[_looking_angle] + ['']
+	_animation_suffixes = _valid_animation_suffixes[_looking_angle] + [EMPTY_STRING]
 	# The 16 directions used for animation suffixes are simplified to 8 general directions
 	_looking_dir = int(angle / 45) % 8
 
@@ -800,12 +803,12 @@ func face_direction(destination: Vector2):
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.
 ## Returns [code]null[/code] if no avatar is found. If there is an avatar defined for the
 ## [code]""[/code] emotion, that one is returned by default.
-func get_avatar_for_emotion(emo := "") -> Texture:
+func get_avatar_for_emotion(emo := EMPTY_STRING) -> Texture:
 	var texture: Texture = null
 
 	while not texture and not avatars.is_empty():
 		for dic in avatars:
-			if dic.emotion == "":
+			if dic.emotion.is_empty():
 				texture = dic.avatar
 			elif dic.emotion == emo:
 				texture = dic.avatar
@@ -872,7 +875,7 @@ func set_voices(value: Array) -> void:
 			var arr: Array[AudioCueSound] = []
 
 			voices[idx] = {
-				emotion = '',
+				emotion = EMPTY_STRING,
 				variations = arr
 			}
 		elif not value[idx].variations.is_empty():
@@ -893,7 +896,7 @@ func set_avatars(value: Array) -> void:
 	for idx in value.size():
 		if not value[idx]:
 			avatars[idx] = {
-				emotion = '',
+				emotion = EMPTY_STRING,
 				avatar = Texture.new(),
 			}
 
@@ -906,10 +909,10 @@ func _translate() -> void:
 	description = PopochiuUtils.e.get_text(_description_code)
 
 
-func _get_vo_cue(emotion := '') -> String:
+func _get_vo_cue(emotion := EMPTY_STRING) -> String:
 	for v in voices:
 		if v.emotion.to_lower() == emotion.to_lower():
-			var cue_name := ""
+			var cue_name := EMPTY_STRING
 
 			if not v.variations.is_empty():
 				if not v.has('not_played') or v.not_played.is_empty():
@@ -922,7 +925,7 @@ func _get_vo_cue(emotion := '') -> String:
 				cue_name = v.variations[idx].resource_name
 
 			return cue_name
-	return ''
+	return EMPTY_STRING
 
 
 func _get_valid_oriented_animation(animation_label):
@@ -934,7 +937,7 @@ func _get_valid_oriented_animation(animation_label):
 		if animation_player.has_animation(animation):
 			return animation
 
-	return ""
+	return EMPTY_STRING
 
 
 func _walk_to_node(node: Node2D, offset: Vector2) -> void:
