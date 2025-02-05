@@ -272,16 +272,13 @@ visible = false
 layout_mode = 1
 
 [node name="SaveAndLoadPopup" parent="Popups" instance=ExtResource("9_ueme0")]
-unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
 [node name="HistoryPopup" parent="Popups" instance=ExtResource("8_207hf")]
-unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
 [node name="QuitPopup" parent="Popups" instance=ExtResource("14_m3nqq")]
-unique_name_in_owner = true
 visible = false
 layout_mode = 1

@@ -22,11 +22,11 @@ func _ready() -> void:
 #region Private ####################################################################################
 func _update_labels() -> void:
 	if input_button.button_pressed:
-		manual.modulate.a = 0.5
-		auto.modulate.a = 1.0
+		manual.modulate.a = PopochiuGraphicInterface.UNSELECTED_ALPHA
+		auto.modulate.a = PopochiuGraphicInterface.SELECTED_ALPHA
 	else:
-		manual.modulate.a = 1.0
-		auto.modulate.a = 0.5
+		manual.modulate.a = PopochiuGraphicInterface.SELECTED_ALPHA
+		auto.modulate.a = PopochiuGraphicInterface.UNSELECTED_ALPHA
 
 
 func _on_toggled(toggled_on: bool) -> void:

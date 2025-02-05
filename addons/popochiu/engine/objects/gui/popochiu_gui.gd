@@ -5,6 +5,11 @@ extends Control
 ## You can extend this class to create your own GUI, or use one of the built-in templates for:
 ## 2-click context-sensitive, 9 verbs and Sierra style.
 
+## The alpha value ([code]modulate.a[/code]) to set to GUI components when they are not selected.
+const UNSELECTED_ALPHA = 0.5
+## The alpha value ([code]modulate.a[/code]) to set to GUI components when they are selected.
+const SELECTED_ALPHA = 1.0
+
 ## Stack of opened popups.
 var popups_stack := []
 ## Whether a dialog line is being displayed.

@@ -1,6 +1,11 @@
 @tool
 extends PopochiuPopup
 
+## The base speed at which the text is rendered.
+const BASE_SPEED = 0.1
+## The format to use when displaying the text speed.
+const TWO_DECIMAL_SPEED_FORMAT = "%.2fx"
+
 @onready var save: Button = %Save
 @onready var load: Button = %Load
 @onready var history: Button = %History
@@ -16,8 +21,8 @@ func _ready() -> void:
 	if Engine.is_editor_hint(): return
 	
 	# Set default values
-	text_speed.value = 0.1 - PopochiuUtils.e.text_speed
-	text_speed_label.text = "%.2fx" % PopochiuUtils.e.text_speed
+	text_speed.value = BASE_SPEED - PopochiuUtils.e.text_speed
+	text_speed_label.text = TWO_DECIMAL_SPEED_FORMAT % PopochiuUtils.e.text_speed
 	
 	# Connect to children signals
 	save.pressed.connect(_on_save_pressed)
@@ -47,8 +52,8 @@ func _on_quit_pressed() -> void:
 
 
 func _on_text_speed_changed(value: float) -> void:
-	PopochiuUtils.e.text_speed = 0.1 - value
-	text_speed_label.text = "%.2fx" % PopochiuUtils.e.text_speed
+	PopochiuUtils.e.text_speed = BASE_SPEED - value
+	text_speed_label.text = TWO_DECIMAL_SPEED_FORMAT % PopochiuUtils.e.text_speed
 
 
 #endregion

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bmpxoiebdf67g"]
+[gd_scene load_steps=14 format=3 uid="uid://bmpxoiebdf67g"]
 
 [ext_resource type="PackedScene" uid="uid://c51xplyeuk787" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup.tscn" id="1_l0ff4"]
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/simple_click_settings_popup.gd" id="2_y4ddu"]
@@ -10,46 +10,28 @@
 atlas = ExtResource("3_fhu7w")
 region = Rect2(0, 0, 16, 16)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_bumy5"]
-load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_wqqii"]
-atlas = SubResource("CompressedTexture2D_bumy5")
+atlas = ExtResource("3_fhu7w")
 region = Rect2(16, 0, 16, 16)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_wu5so"]
-load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_a4k08"]
-atlas = SubResource("CompressedTexture2D_wu5so")
+atlas = ExtResource("3_fhu7w")
 region = Rect2(32, 0, 16, 16)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_j70qy"]
-load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_c6y2c"]
-atlas = SubResource("CompressedTexture2D_j70qy")
+atlas = ExtResource("3_fhu7w")
 region = Rect2(48, 0, 16, 16)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rtktt"]
-load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_454o7"]
-atlas = SubResource("CompressedTexture2D_rtktt")
+atlas = ExtResource("3_fhu7w")
 region = Rect2(64, 0, 16, 16)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_potjd"]
-load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_gnvye"]
-atlas = SubResource("CompressedTexture2D_potjd")
+atlas = ExtResource("3_fhu7w")
 region = Rect2(80, 0, 16, 16)
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_kie24"]
-load_path = "res://.godot/imported/simple_click_settings_popup_icons.png-4de2845c30a327fd59e4914b3d9bfaa1.ctex"
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_468g2"]
-atlas = SubResource("CompressedTexture2D_kie24")
+atlas = ExtResource("3_fhu7w")
 region = Rect2(96, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1jlhx"]

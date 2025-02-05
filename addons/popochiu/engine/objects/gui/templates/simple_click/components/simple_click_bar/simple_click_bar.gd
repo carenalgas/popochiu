@@ -41,7 +41,6 @@ func _ready():
 	# Check if there are already items in the inventory (set manually in the scene)
 	for ii in box.get_children():
 		ii.in_inventory = ii is PopochiuInventoryItem
-			#ii.selected.connect(_change_cursor)
 	
 	set_process_input(not always_visible)
 
