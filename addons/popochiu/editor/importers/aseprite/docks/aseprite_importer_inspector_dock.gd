@@ -52,6 +52,7 @@ func _ready():
 		_set_options_visible(true)
 	else:
 		_load_config(cfg)
+		_set_tags_visible(cfg.get("tags_exp"))
 		_set_options_visible(cfg.get("op_exp"))
 
 
@@ -102,6 +103,7 @@ func _load_config(cfg):
 		cfg.get("wipe_old_anims", false)
 	)
 
+	_set_tags_visible(cfg.get("tags_exp", false))
 	_set_options_visible(cfg.get("op_exp", false))
 	_populate_tags(cfg.get("tags", []))
 
@@ -112,6 +114,7 @@ func _save_config():
 	var cfg := {
 		"source": _source,
 		"tags": _tags_cache,
+		"tags_exp": get_node("%Tags").visible,
 		"op_exp": get_node("%Options").visible,
 		"o_folder": _output_folder,
 		"o_name": get_node("%OutFileName").text,
@@ -349,6 +352,17 @@ func _set_options_visible(is_visible):
 		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
 	)
 
+func _on_tags_title_toggled(button_pressed: bool) -> void:
+	_set_tags_visible(button_pressed)
+	_save_config()
+
+
+func _set_tags_visible(is_visible: bool) -> void:
+	get_node("%Tags").visible = is_visible
+	get_node("%TagsTitle").icon = (
+		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
+		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
+	)
 
 func _on_out_folder_pressed():
 	_output_folder_dialog = _create_output_folder_selection()
