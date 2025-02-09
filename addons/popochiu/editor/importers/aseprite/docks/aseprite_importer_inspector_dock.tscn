@@ -58,6 +58,7 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wwoxk")
 
 [node name="TagsTitle" type="Button" parent="Margin/Importer/TagsTitleBar"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_pressed_color = Color(0.8, 0.807843, 0.827451, 1)
 toggle_mode = true
@@ -214,7 +215,7 @@ Can be enabled in Editor Settings."
 
 [connection signal="pressed" from="Margin/Importer/Source/SourceButton" to="." method="_on_source_pressed"]
 [connection signal="pressed" from="Margin/Importer/Source/RescanButton" to="." method="_on_rescan_pressed"]
-[connection signal="toggled" from="Margin/Importer/TagsTitleBar/TagsTitle" to="." method="_on_options_title_toggled"]
+[connection signal="toggled" from="Margin/Importer/TagsTitleBar/TagsTitle" to="." method="_on_tags_title_toggled"]
 [connection signal="toggled" from="Margin/Importer/OptionsTitleBar/OptionsTitle" to="." method="_on_options_title_toggled"]
 [connection signal="pressed" from="Margin/Importer/Options/OutFolder/OutFolderButton" to="." method="_on_out_folder_pressed"]
 [connection signal="focus_exited" from="Margin/Importer/Options/OutFile/OutFileName" to="." method="_save_config"]
