@@ -352,12 +352,12 @@ func _set_options_visible(is_visible):
 		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
 	)
 
-func _on_tags_title_toggled(button_pressed):
+func _on_tags_title_toggled(button_pressed: bool) -> void:
 	_set_tags_visible(button_pressed)
 	_save_config()
 
 
-func _set_tags_visible(is_visible):
+func _set_tags_visible(is_visible: bool) -> void:
 	get_node("%Tags").visible = is_visible
 	get_node("%TagsTitle").icon = (
 		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
