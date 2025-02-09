@@ -77,6 +77,7 @@
     --code-literal-color: hsl(300, 51%, 50%);
     --input-background-color: hsl(0, 0%, 99%);
     --input-focus-border-color: hsl(240, 100%, 69%);
+    --blockquote-border-color: hsl(180, 7%, 89%);
 
     --tabs-background-color: hsl(180, 7%, 89%);
     --tabs-selected-color: hsl(180, 7%, 66%);
@@ -141,6 +142,10 @@
     --admonition-danger-color: #404040;
     --admonition-danger-title-background-color: #e9a499;
     --admonition-danger-title-color: #fff;
+    --admonition-success-background-color: #ddfadb;
+    --admonition-success-color: #404040;
+    --admonition-success-title-background-color: #27bc1a;
+    --admonition-success-title-color: #fff;
     --admonition-tip-background-color: #dbfaf4;
     --admonition-tip-color: #404040;
     --admonition-tip-title-background-color: #1abc9c;
@@ -162,7 +167,7 @@
     --monospace-font-family: "JetBrains Mono", SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New, Courier, monospace;
 
     /* Mermaid diagrams background color */
-    --mermaid-background-color: #fcfcfc;
+    --mermaid-background-color: #ffffff;
 
     /* SVG shadow color */
     --image-shadow-color: hsla(0, 0%, 0%, 0.3);
@@ -214,6 +219,7 @@
         --code-literal-color: hsl(0, 46%, 70%);
         --input-background-color: hsl(240, 4%, 21%);
         --input-focus-border-color: hsl(240, 100%, 69%);
+        --blockquote-border-color: hsl(240, 4%, 33%);
 
         --tabs-background-color: hsl(240, 4%, 27%);
         --tabs-selected-color: hsl(180, 7%, 66%);
@@ -279,6 +285,10 @@
         --admonition-danger-color: #fcc;
         --admonition-danger-title-background-color: #633;
         --admonition-danger-title-color: #fcc;
+        --admonition-success-background-color: #2c3828;
+        --admonition-success-color: #e7ffdd;
+        --admonition-success-title-background-color: #436633;
+        --admonition-success-title-color: #e7ffdd;
         --admonition-tip-background-color: #28382d;
         --admonition-tip-color: #dfd;
         --admonition-tip-title-background-color: #336648;
@@ -297,7 +307,7 @@
         --footer-color: #aaa;
 
         /* Mermaid diagrams background color */
-        --mermaid-background-color: #fcfcfc;
+        --mermaid-background-color: transparent;
 
         /* SVG shadow color */
         --image-shadow-color: hsla(0, 0%, 0%, 0.4);
@@ -1644,6 +1654,13 @@ p + .classref-constant {
     padding: 0 3px;
 }
 
+/* Give a left border to blockquotes */
+.rst-content blockquote {
+    border-left: 4px solid var(--blockquote-border-color);
+    padding-left: 20px;
+    margin-left: 0;
+}
+
 /* Allows the scrollbar to be shown in the sidebar */
 @media only screen and (min-width: 769px) {
     .wy-side-scroll {
@@ -1693,13 +1710,14 @@ p + .classref-constant {
 }
 
 /* Allows to add a green or red bar to code blocks for "good"/"bad" code examples. */
-.code-example-good div.highlight {
-    border-left-color: var(--code-example-good-color);
-    border-left-width: 8px;
+code.hljs {
+    border-left: 8px solid var(--code-border-color);
 }
-.code-example-bad div.highlight {
+.code-example-good code {
+    border-left-color: var(--code-example-good-color);
+}
+.code-example-bad code {
     border-left-color: var(--code-example-bad-color);
-    border-left-width: 8px;
 }
 
 /* Togglable sidebar sections. */
