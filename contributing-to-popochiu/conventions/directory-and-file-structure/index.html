@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="The Carenalgas Community" />
+      <link rel="shortcut icon" href="../../../assets/images/_other/theme/favicon.ico" />
+    <title>Directory and file structure - Popochiu Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/css/custom.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Directory and file structure";
+        var mkdocs_page_input_path = "contributing-to-popochiu/conventions/directory-and-file-structure.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../..">
+          <img src="../../../assets/images/_other/theme/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installing-popochiu/">Installing popochiu</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/example-resources/">Example resources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/getting-help/">Getting help</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How to develop a game</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/game-setup/">Game setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/create-characters/">Create characters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/create-the-first-room/">Create the first room</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/add-an-inventory-item/">Add an inventory item</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/script-your-first-dialogue/">Script your first dialogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/use-inventory-items/">Use inventory items</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/customize-the-game-ui/">Customize the Game UI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../how-to-develop-a-game/conclusions/">Conclusions</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/localization/">Localization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/guis/">Game UI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/advanced-animations/">Advanced animations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/character-scaling/">Character Scaling</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/character-anti-glide-feature/">Character Anti-Glide Feature</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/game-state-saving-and-loading/">Game state saving and loading</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/extending-customizing-popochiu/">Extending customizing popochiu</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/change-text-to-gibberish/">Change text to gibberish</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The editor handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/editor-settings/">Editor settings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/interface-overview/">Interface overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/popochiu-dock/">Popochiu dock</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/toolbar-buttons/">Toolbar buttons</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/importers/">Aseprite Importers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The engine handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Scripting reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/9_verb_command_button.gd/">9 verb command button.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/9_verb_commands_container.gd/">9 verb commands container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/9_verb_commands_template.gd/">9 verb commands template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/9_verb_hover_text.gd/">9 verb hover text.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/9_verb_inventory_grid.gd/">9 verb inventory grid.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/9_verb_panel.gd/">9 verb panel.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/AudioCueMusic/">AudioCueMusic</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/AudioCueSound/">AudioCueSound</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/NineVerbCommands/">NineVerbCommands</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuAudioCue/">PopochiuAudioCue</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuAudioManager/">PopochiuAudioManager</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuCharacter/">PopochiuCharacter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuCharacterData/">PopochiuCharacterData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuCommands/">PopochiuCommands</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuDialog/">PopochiuDialog</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuDialogMenuOption/">PopochiuDialogMenuOption</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuDialogOption/">PopochiuDialogOption</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuDialogText/">PopochiuDialogText</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuGUIInfo/">PopochiuGUIInfo</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuHotspot/">PopochiuHotspot</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuHoverText/">PopochiuHoverText</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuIAudio/">PopochiuIAudio</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuICharacter/">PopochiuICharacter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuIDialog/">PopochiuIDialog</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuIInventory/">PopochiuIInventory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuInventoryGrid/">PopochiuInventoryGrid</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuInventoryItem/">PopochiuInventoryItem</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuInventoryItemData/">PopochiuInventoryItemData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuMainCamera/">PopochiuMainCamera</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuPopup/">PopochiuPopup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuProp/">PopochiuProp</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuRoomData/">PopochiuRoomData</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuSaveLoad/">PopochiuSaveLoad</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuSettings/">PopochiuSettings</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuSettingsBarButton/">PopochiuSettingsBarButton</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuTransitionLayer/">PopochiuTransitionLayer</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/PopochiuUtils/">PopochiuUtils</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/SierraCommands/">SierraCommands</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/SimpleClickCommands/">SimpleClickCommands</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/audio_cue_container.gd/">Audio cue container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/btn_load.gd/">Btn load.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/btn_quit.gd/">Btn quit.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/character_state_template.gd/">Character state template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/character_template.gd/">Character template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/confirmation_popup.gd/">Confirmation popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/cursor.gd/">Cursor.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/custom_commands_template.gd/">Custom commands template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/dialog_caption.gd/">Dialog caption.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/dialog_overhead.gd/">Dialog overhead.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/dialog_portrait.gd/">Dialog portrait.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/dialog_template.gd/">Dialog template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/dialog_text.gd/">Dialog text.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/empty_script_template.gd/">Empty script template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/history_popup.gd/">History popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/hotspot_template.gd/">Hotspot template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/importer_defaults.gd/">Importer defaults.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/input_actions.gd/">Input actions.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/inventory_bar.gd/">Inventory bar.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/inventory_item_state_template.gd/">Inventory item state template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/inventory_item_template.gd/">Inventory item template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/prop_template.gd/">Prop template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/quit_popup.gd/">Quit popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/room_state_template.gd/">Room state template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_bar.gd/">Sierra bar.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_command_button.gd/">Sierra command button.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_commands_container.gd/">Sierra commands container.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_commands_template.gd/">Sierra commands template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_inventory_slot.gd/">Sierra inventory slot.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_menu.gd/">Sierra menu.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sierra_settings_popup.gd/">Sierra settings popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/simple_click_commands_template.gd/">Simple click commands template.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sound_settings_popup.gd/">Sound settings popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/sound_volumes.gd/">Sound volumes.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/system_text.gd/">System text.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/text_settings_popup.gd/">Text settings popup.gd</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/text_speed_option.gd/">Text speed option.gd</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-engine-handbook/scripting-overview/">Scripting overview</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing to popochiu</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../basic-rules/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../toolchain-and-dependencies/">Toolchain and dependecies</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Conventions</a>
+    <ul class="current">
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Directory and file structure</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../coding-standards/">Coding standards</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../comments/">Comments</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../naming-conventions/">Naming conventions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../code-versioning/">Code versioning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../error-handling/">Error handling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../dependencies/">Dependencies</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Project overview</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../project-overview/popochiu-subsystems/">Popochiu Subsystems</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project-overview/editor-plugin/">Editor Plugin</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project-overview/game-engine/">Game Engine</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Project management</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../project-management/why/">Why we care</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project-management/issue-tracking/">Issue Tracking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project-management/code-reviews/">Code reviews</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../project-management/definition-of-done/">Definition of Done</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Contributing documentation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../contributing-documentation/basic-rules/">Basics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../contributing-documentation/conventions/">Conventions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../qna/">Contribution Q&amp;A</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../get-in-touch/">Get in touch</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">Popochiu Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Contributing to popochiu</li>
+          <li class="breadcrumb-item">Conventions</li>
+      <li class="breadcrumb-item active">Directory and file structure</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carenalgas/popochiu/edit/develop/docs/src/contributing-to-popochiu/conventions/directory-and-file-structure.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="directory-and-file-structure">Directory and file structure</h1>
+<h2 id="repositorys-root-folder">Repository's root folder</h2>
+<p>The project repository contains everything needed to develop, document, and release the plugin.<br />
+As is standard for Godot addons, the actual code is located in the <code>addons</code> folder. Additional directories in the project root are used for documentation, automation, and a Godot project, which is automatically created in the <code>game</code> folder as soon as the plugin is enabled.</p>
+<p>Below is the directory structure of the main <a href="https://github.com/carenalgas/popochiu">Popochiu repository</a>:  </p>
+<pre><code class="language-text">&lt;Project Root&gt;
+├── .github                                 &lt;-- Holds GitHub-related stuff, such as issue templates
+|                                               and workflows actions.
+|
+├── addons
+│   └── popochiu                            &lt;-- The Popochiu Plugin and Engine reside here.
+|                                               This is the part distributed in releases.
+|
+├── builds                                  &lt;-- Used by release automation; should remain empty.
+|
+├── docs                                    &lt;-- Contains the source for the documentation you are reading.
+│   ├── dist                                &lt;------ Used by release automation; you can ignore this.
+│   ├── scripts                             &lt;------ Holds scripts related to release automation.
+│   └── src                                 &lt;------ The main documentation source folder,
+|       |                                           organized into subdirectories for each section.
+│       ├── assets                          &lt;---------- A special folder for public assets like
+|       |                                                images, CSS files, and other resources.
+|       └── &lt; ... content folders ... &gt;
+├── game                                    &lt;-- Automatically created when the plugin is enabled;
+|                                               contains a functional Popochiu game. Not versioned.
+└── release-notes                           &lt;-- Contains text files with release notes, used during
+                                                the release process.
+</code></pre>
+<p>In the root directory, you’ll also find the following notable files:</p>
+<pre><code class="language-text">home_banner.png  
+icon.svg  
+LEEME.md  
+LICENSE  
+popochiu.ico  
+README.md  
+</code></pre>
+<p>These files are related to the project's README (available in Spanish as well) and general branding. Additionally, there’s the <code>project.godot</code> file, which is distributed with the plugin but generally should not be included in PRs unless under very specific circumstances.</p>
+<p>You’ll also find the project’s <code>.gitignore</code> file. It’s fairly standard, excluding Godot-generated import files, common editor junk, and some files generated by release automations. It’s a good idea to review it and understand what’s excluded from the project before moving forward.</p>
+<h2 id="popochiu-addon-folder">Popochiu Addon folder</h2>
+<p>We won’t delve too deeply into the plugin's content here (refer to the <a href="../project-overview">Project Overview</a> section for more details), but the <code>addons</code> folder is organized as follows:</p>
+<pre><code class="language-text">/addons/popochiu
+|
+├── editor                                  &lt;-- Contains `@tool` scripts that extend Godot's editor
+|   |                                           functionality, adding Popochiu docks, panels, gizmos, etc.
+|   |
+│   ├── canvas_editor_menu                  &lt;------ Logic for adding buttons to the scene toolbar.
+│   ├── config                              &lt;------ Logic and defaults for project and editor settings.
+│   ├── factories                           &lt;------ Factory classes for creating Popochiu objects
+|   |                                               (rooms, characters, dialogues, props, etc.).
+│   ├── gizmos                              &lt;------ Custom gizmos for Popochiu objects, used in scene
+|   |                                               preview to interactively set their properties.
+│   ├── helpers                             &lt;------ Classes with commonly used static methods.
+│   ├── importers                           &lt;------ Asset importers for various formats.
+│   ├── inspector                           &lt;------ Extensions and customizations for the inspectors of
+|   |                                               Popochiu objects.
+│   ├── main_dock                           &lt;------ Implementation of Popochiu's main dock (entry point
+|   |                                               for all game elements).
+│   └── popups                              &lt;------ Editor popups for tasks like running migrations,
+|                                                   object creation, progress bars, project setup, etc.
+|
+|
+├── engine                                  &lt;-- Contains the game engine — the core that actually runs your game.
+|   |                                           Subfolder names are mostly self-explanatory and represent
+|   |                                           various engine subsystems (see &quot;Project Overview&quot; section).
+│   ├── audio_manager
+│   ├── cursor
+│   │   └── sprites
+│   ├── helpers                             &lt;------ Contains helper functions useful in both game scripts
+|   |                                               and core engine code.
+|   |
+│   ├── interfaces                          &lt;------ Provides code for Singleton accessors (A, C, E, etc.).
+|   |
+│   ├── objects
+│   │   ├── character
+│   │   ├── clickable
+│   │   ├── dialog
+│   │   ├── gui
+│   │   ├── hotspot
+│   │   ├── inventory_item
+│   │   ├── prop
+│   │   ├── region
+│   │   ├── room
+│   │   ├── transition_layer
+│   │   └── walkable_area
+│   ├── others                              &lt;------ Contains miscellaneous engine logic.
+│   └── templates                           &lt;------ Game UI templates (e.g., 9-Verbs, SimpleClick, Icon-Bar).
+│       └── gui
+├── icons
+├── migration                               &lt;------ Handles the logic for upgrading users' projects to new
+|   |                                               Popochiu versions as they are released.
+│   ├── helpers
+│   ├── migration
+│   └── migrations
+└── palette
+</code></pre>
+<p>If your contribution adds new elements to the engine or plugin, please ensure they are placed in their appropriate locations.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../toolchain-and-dependencies/" class="btn btn-neutral float-left" title="Toolchain and dependecies"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../coding-standards/" class="btn btn-neutral float-right" title="Coding standards">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright (c) 2024 - The Carenalgas Community</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carenalgas/popochiu/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../../toolchain-and-dependencies/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../coding-standards/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+      <script src="../../../assets/js/gdscript.min.js"></script>
+      <script src="../../../assets/js/custom.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
