@@ -6,22 +6,12 @@ extends PopochiuGraphicInterface
 ## inventory bar is in the top left corner of the screen, and the settings bar is in the top right
 ## corner of the screen.
 
-@onready var settings_bar: Control = %SettingsBar
-@onready var save_and_load_popup: Control = %SaveAndLoadPopup
-@onready var text_settings_popup: Control = %TextSettingsPopup
-@onready var sound_settings_popup: Control = %SoundSettingsPopup
-@onready var history_popup: Control = %HistoryPopup
-@onready var quit_popup: Control = %QuitPopup
-
 
 #region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	
-	# Connect to children's signals
-	settings_bar.option_selected.connect(_on_settings_option_selected)
-	
-	# Connect to autoloads' signals
+	# Connect to Global classes signals
 	PopochiuUtils.cursor.replace_frames($Cursor)
 	PopochiuUtils.cursor.show_cursor()
 	
@@ -121,7 +111,7 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 	
 	PopochiuUtils.g.show_hover_text()
 	
-	if PopochiuUtils.i.active or $SettingsBar.is_open(): return
+	if PopochiuUtils.i.active: return
 	
 	PopochiuUtils.cursor.show_cursor()
 
@@ -191,22 +181,6 @@ func _on_game_loaded(loaded_game: Dictionary) -> void:
 	await PopochiuUtils.g.show_system_text("Game loaded")
 	
 	super(loaded_game)
-
-
-func _on_settings_option_selected(option_script_name: String) -> void:
-	match option_script_name:
-		"save":
-			save_and_load_popup.open_save()
-		"load":
-			save_and_load_popup.open_load()
-		"text_settings":
-			text_settings_popup.open()
-		"sound_settings":
-			sound_settings_popup.open()
-		"history":
-			history_popup.open()
-		"quit":
-			quit_popup.open()
 
 
 #endregion

@@ -1,18 +1,16 @@
-[gd_scene load_steps=35 format=3 uid="uid://cwvuu8g0ih3i8"]
+[gd_scene load_steps=33 format=3 uid="uid://cwvuu8g0ih3i8"]
 
 [ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/simple_click_gui.gd" id="1_268ni"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_uf1ey"]
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/gui/components/hover_text/hover_text.tscn" id="2_6qu0l"]
 [ext_resource type="Texture2D" uid="uid://bocign602kxhh" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/images/simple_click_cursor.png" id="3_718yk"]
+[ext_resource type="PackedScene" uid="uid://dqlw4tn2oe6d7" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_bar/simple_click_bar.tscn" id="4_ci14x"]
 [ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/gui/components/system_text/system_text.tscn" id="4_o82xq"]
 [ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu.tscn" id="5_ayg0j"]
 [ext_resource type="PackedScene" uid="uid://bpl3qjbxonfpb" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_caption/dialog_caption.tscn" id="5_t54kn"]
-[ext_resource type="PackedScene" uid="uid://ciar5j7qm85bc" path="res://addons/popochiu/engine/objects/gui/components/inventory_bar/inventory_bar.tscn" id="6_ovwnh"]
-[ext_resource type="PackedScene" uid="uid://0cqerawlxb3o" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/settings_bar.tscn" id="7_mtpwc"]
 [ext_resource type="PackedScene" uid="uid://dfrsiyyqncspo" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/history_popup.tscn" id="8_207hf"]
+[ext_resource type="PackedScene" uid="uid://bmpxoiebdf67g" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/simple_click_settings_popup.tscn" id="9_dc0es"]
 [ext_resource type="PackedScene" uid="uid://cndputybyj57n" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup/save_and_load_popup.tscn" id="9_ueme0"]
-[ext_resource type="PackedScene" uid="uid://dwxm2p1iyhpx6" path="res://addons/popochiu/engine/objects/gui/components/popups/sound_settings_popup/sound_settings_popup.tscn" id="10_csjib"]
-[ext_resource type="PackedScene" uid="uid://de68lx1xqv7fb" path="res://addons/popochiu/engine/objects/gui/components/popups/text_settings_popup/text_settings_popup.tscn" id="13_dn3wu"]
 [ext_resource type="PackedScene" uid="uid://bnjo044fkdcq7" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup/quit_popup.tscn" id="14_m3nqq"]
 
 [sub_resource type="AtlasTexture" id="10"]
@@ -238,6 +236,9 @@ texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_1bbe3")
 animation = &"wait"
 
+[node name="SimpleClickBar" parent="." instance=ExtResource("4_ci14x")]
+layout_mode = 1
+
 [node name="HoverText" parent="." instance=ExtResource("2_6qu0l")]
 layout_mode = 1
 anchors_preset = 12
@@ -254,13 +255,6 @@ layout_mode = 1
 visible = false
 layout_mode = 1
 
-[node name="InventoryBar" parent="." instance=ExtResource("6_ovwnh")]
-layout_mode = 1
-
-[node name="SettingsBar" parent="." instance=ExtResource("7_mtpwc")]
-unique_name_in_owner = true
-layout_mode = 1
-
 [node name="SystemText" parent="." instance=ExtResource("4_o82xq")]
 layout_mode = 1
 
@@ -273,27 +267,18 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="SimpleClickSettingsPopup" parent="Popups" instance=ExtResource("9_dc0es")]
+visible = false
+layout_mode = 1
+
 [node name="SaveAndLoadPopup" parent="Popups" instance=ExtResource("9_ueme0")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-
-[node name="TextSettingsPopup" parent="Popups" instance=ExtResource("13_dn3wu")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-
-[node name="SoundSettingsPopup" parent="Popups" instance=ExtResource("10_csjib")]
-unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
 [node name="HistoryPopup" parent="Popups" instance=ExtResource("8_207hf")]
-unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
 [node name="QuitPopup" parent="Popups" instance=ExtResource("14_m3nqq")]
-unique_name_in_owner = true
 visible = false
 layout_mode = 1
