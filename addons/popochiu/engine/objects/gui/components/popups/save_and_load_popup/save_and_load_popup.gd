@@ -59,7 +59,10 @@ func _open() -> void:
 
 
 func _close() -> void:
-	if not _slot: return
+	if not _slot: 
+		# Unpause gameplay
+		get_tree().paused = false
+		return
 	
 	slot_selected.emit()
 	

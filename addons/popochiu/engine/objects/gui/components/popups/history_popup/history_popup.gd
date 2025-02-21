@@ -52,6 +52,8 @@ func _open() -> void:
 func _close() -> void:
 	for c in lines_list.get_children():
 		(c as Control).queue_free()
+	# Unpause gameplay
+	get_tree().paused = false
 
 
 #endregion
