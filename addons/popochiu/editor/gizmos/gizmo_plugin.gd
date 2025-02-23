@@ -1,5 +1,5 @@
 @tool
-class_name PopochiuGizmoClickablePlugin
+class_name PopochiuGizmoPlugin
 extends EditorPlugin
 
 # TODO: move these out of the plugin and into Popochiu (enums) or PopochiuClickable
@@ -178,6 +178,8 @@ func _set_gizmo_properties(gizmo: Gizmo2D, gizmo_id: int) -> void:
 
 	# Special overrides for PopochiuMarker gizmos
 	if gizmo_id == MARKER_POS:
+		# Always show the marker's name
+		gizmo.show_target_name = true
 		# Always show the marker's position
 		gizmo.show_position = true
 		# Never show the connector, 'cause the marker center is in 0,0
