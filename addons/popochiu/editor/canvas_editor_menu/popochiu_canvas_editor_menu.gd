@@ -202,6 +202,12 @@ func _on_selection_changed() -> void:
 ## Handles the editor config that allows the WAs polygons to be always visible,
 ## not only during editing.
 func _set_walkable_areas_visibility() -> void:
+	# Avoid errors when the editor has no scene open
+	if EditorInterface.get_edited_scene_root() == null:
+		return
+
+	# get_all_children returns an empty array if the node has no children
+	# so we can safely iterate over it without checking for null
 	for child in PopochiuEditorHelper.get_all_children(
 		EditorInterface.get_edited_scene_root().find_child("WalkableAreas")
 	):
