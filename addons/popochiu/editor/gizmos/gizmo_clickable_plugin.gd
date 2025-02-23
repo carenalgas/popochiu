@@ -19,6 +19,10 @@ var _gizmos: Array
 var _active_gizmos: Array
 var _grabbed_gizmo: Gizmo2D
 
+# Appearance
+var _color_settings: Dictionary = {}
+var _font: Font
+
 
 #region Godot ######################################################################################
 
@@ -27,6 +31,9 @@ func _enter_tree() -> void:
 	# e.g. popochiu_ready
 	PopochiuEditorConfig.initialize_editor_settings()
 	PopochiuConfig.initialize_project_settings()
+
+	# Read theme settings
+	_init_theme_settings()
 
 	# Initialization of the plugin goes here.
 	_undo = get_undo_redo()
@@ -37,6 +44,7 @@ func _enter_tree() -> void:
 	_gizmos.insert(DIALOG_POS, _init_popochiu_gizmo(DIALOG_POS))
 	# Initialize gizmo for PopochiuMarker objects
 	_gizmos.insert(MARKER_POS, _init_popochiu_gizmo(MARKER_POS))
+
 	# Connect signals to update gizmos when editor settings or visibility change
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(_on_gizmo_visibility_changed)
@@ -45,7 +53,6 @@ func _enter_tree() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-
 func _edit(object: Object) -> void:
 	# If the object is null or a remote object, this plugin should not kick in
 	if object == null or object.get_class() == "EditorDebuggerRemoteObject":
@@ -119,59 +126,82 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 #endregion
 
 #region Private ####################################################################################
+func _init_theme_settings() -> void:
+	# read color settings (done every time to allow for runtime changes)
+	_color_settings = {
+		WALK_TO_POINT: PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR,
+		LOOK_AT_POINT: PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR,
+		BASELINE: PopochiuEditorConfig.GIZMOS_BASELINE_COLOR,
+		DIALOG_POS: PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR,
+		MARKER_POS: PopochiuEditorConfig.GIZMOS_MARKER_POINT_COLOR
+	}
+	# set default font from editor
+	_font = EditorInterface.get_editor_theme().default_font
+
+
+func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
+	var gizmo: Gizmo2D
+
+	match gizmo_id:
+		WALK_TO_POINT:
+			gizmo = Gizmo2D.new(_target_node, "walk_to_point", "Walk To Point", Gizmo2D.GIZMO_POS)
+		LOOK_AT_POINT:
+			gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
+		BASELINE:
+			gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VPOS)
+		DIALOG_POS:
+			gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_POS)
+		MARKER_POS:
+			# No label for markers, 'cause their gizmos only show their position (coords)
+			gizmo = Gizmo2D.new(_target_node, "marker_point", "", Gizmo2D.GIZMO_POS)
+
+	_set_gizmo_theme(gizmo, gizmo_id)
+	_set_gizmo_properties(gizmo, gizmo_id)
+	return gizmo
+
+
+func _set_gizmo_theme(gizmo: Gizmo2D, gizmo_id: int) -> void:
+	gizmo.set_theme(
+		PopochiuEditorConfig.get_editor_setting(_color_settings[gizmo_id]),
+		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+		_font,
+		PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+	)
+
+
+func _set_gizmo_properties(gizmo: Gizmo2D, gizmo_id: int) -> void:
+	# These defaults work well for all PopochiuClickable gizmos
+	gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
+	gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
+	gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
+	gizmo.show_position = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_POSITION)
+
+	# Special overrides for PopochiuMarker gizmos
+	if gizmo_id == MARKER_POS:
+		# Always show the marker's position
+		gizmo.show_position = true
+		# Never show the connector, 'cause the marker center is in 0,0
+		# and the gizmo is updating a special property, not the node's position
+		gizmo.show_connector = false
+
 
 func _on_property_changed(_property: String):
+	# Update gizmos that are currently visible on the scene
+	# to reflect the new property value
 	update_overlays()
 
 
 func _on_gizmo_settings_changed() -> void:
-	var gizmo_id = 0
-	var default_font = EditorInterface.get_editor_theme().default_font
+	# Update theme settings
+	_init_theme_settings()
 
-	for gizmo in _gizmos:
-		match gizmo_id:
-			WALK_TO_POINT:
-				gizmo.set_theme(
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-					default_font,
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-				)
-			LOOK_AT_POINT:
-				gizmo.set_theme(
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-					default_font,
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-				)
-			BASELINE:
-				gizmo.set_theme(
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-					default_font,
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-				)
-			DIALOG_POS:
-				gizmo.set_theme(
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR),
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-					default_font,
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-				)
-			MARKER_POS:
-				gizmo.set_theme(
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_MARKER_POINT_COLOR),
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-					default_font,
-					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-				)
-
-		# Force hiding connectors for MARKER_POS gizmo
-		gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS) && gizmo_id != MARKER_POS
-		gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
-		gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
-		gizmo_id += 1
+	# Update gizmos appearance based on the new settings
+	for gizmo_id in _gizmos.size():
+		_set_gizmo_theme(_gizmos[gizmo_id], gizmo_id)
+		_set_gizmo_properties(_gizmos[gizmo_id], gizmo_id)
 	
+	# Update gizmos that are currently visible on the scene
+	# to reflect the new settings
 	update_overlays()
 
 
@@ -180,72 +210,13 @@ func _on_gizmo_visibility_changed(gizmo_id:int, visibility:bool):
 		_gizmos[gizmo_id].visible = visibility
 		update_overlays()
 
+
 func _update_properties():
 	if _grabbed_gizmo and _grabbed_gizmo.target_property:
 		_target_node.set(
 			_grabbed_gizmo.target_property,
 			_grabbed_gizmo.get_position()
 		)
-
-
-func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
-	var gizmo: Gizmo2D
-	var default_font = EditorInterface.get_editor_theme().default_font
-
-	match gizmo_id:
-		WALK_TO_POINT:
-			gizmo = Gizmo2D.new(_target_node, "walk_to_point", "Walk To Point", Gizmo2D.GIZMO_POS)
-			gizmo.set_theme(
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_WALK_TO_POINT_COLOR),
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-				default_font,
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-			)
-			gizmo.show_position = false
-		LOOK_AT_POINT:
-			gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
-			gizmo.set_theme(
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR),
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-				default_font,
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-			)
-			gizmo.show_position = false
-		BASELINE:
-			gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VPOS)
-			gizmo.set_theme(
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_BASELINE_COLOR),
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-				default_font,
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-			)
-			gizmo.show_position = false
-		DIALOG_POS:
-			gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_POS)
-			gizmo.set_theme(
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR),
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-				default_font,
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-			)
-			gizmo.show_position = false
-		MARKER_POS:
-			# Marker gizmos label should show only its position, so let it be empty
-			gizmo = Gizmo2D.new(_target_node, "marker_point", "", Gizmo2D.GIZMO_POS)
-			gizmo.set_theme(
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_MARKER_POINT_COLOR),
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
-				default_font,
-				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
-			)
-			gizmo.show_position = true
-	
-	# Force hiding connectors for MARKER_POS gizmo
-	gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS) && gizmo_id != MARKER_POS
-	gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
-	gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
-	
-	return gizmo
 
 
 func _try_grab_gizmo(event: InputEventMouseButton) -> bool:
