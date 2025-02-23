@@ -1,6 +1,6 @@
 @tool
 class_name PopochiuMarker
-extends Node
+extends Node2D
 ## Exposes a Vector2 representing a position on the stage of a Room.
 ##
 ## It solves the same purpose as the [code]Marker2D[/code] node, but it is

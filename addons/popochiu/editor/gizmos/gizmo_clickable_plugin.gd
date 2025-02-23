@@ -7,7 +7,8 @@ enum {
 	WALK_TO_POINT,
 	LOOK_AT_POINT,
 	BASELINE,
-	DIALOG_POS
+	DIALOG_POS,
+	MARKER_POS
 }
 
 # Private vars
@@ -29,11 +30,14 @@ func _enter_tree() -> void:
 
 	# Initialization of the plugin goes here.
 	_undo = get_undo_redo()
+	# Initialize gizmos for PopochiuClickable objects
 	_gizmos.insert(WALK_TO_POINT, _init_popochiu_gizmo(WALK_TO_POINT))
 	_gizmos.insert(LOOK_AT_POINT, _init_popochiu_gizmo(LOOK_AT_POINT))
 	_gizmos.insert(BASELINE, _init_popochiu_gizmo(BASELINE))
 	_gizmos.insert(DIALOG_POS, _init_popochiu_gizmo(DIALOG_POS))
-
+	# Initialize gizmo for PopochiuMarker objects
+	_gizmos.insert(MARKER_POS, _init_popochiu_gizmo(MARKER_POS))
+	# Connect signals to update gizmos when editor settings or visibility change
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(_on_gizmo_visibility_changed)
 
@@ -43,18 +47,31 @@ func _enter_tree() -> void:
 #region Virtual ####################################################################################
 
 func _edit(object: Object) -> void:
+	# If the object is null or a remote object, this plugin should not kick in
 	if object == null or object.get_class() == "EditorDebuggerRemoteObject":
 		return
-	
+	# If the user isn't editing a Room or Character scene, no gizmos should be shown
+	if not (
+		EditorInterface.get_edited_scene_root() is PopochiuCharacter or
+		EditorInterface.get_edited_scene_root() is PopochiuRoom
+	):
+		return
+
+	# Set the target node (the selected object in the scene tree)
+	# and clear the active gizmos list, we'll then add the appropriate ones
 	_target_node = object
 	_active_gizmos.clear()
 
+	# Add the appropriate gizmos for the selected object
 	if EditorInterface.get_edited_scene_root() is PopochiuCharacter:
 		_active_gizmos.append(_gizmos[DIALOG_POS])
 	elif EditorInterface.get_edited_scene_root() is PopochiuRoom:
-		_active_gizmos.append(_gizmos[WALK_TO_POINT])
-		_active_gizmos.append(_gizmos[LOOK_AT_POINT])
-		_active_gizmos.append(_gizmos[BASELINE])
+		if object is PopochiuClickable:
+			_active_gizmos.append(_gizmos[WALK_TO_POINT])
+			_active_gizmos.append(_gizmos[LOOK_AT_POINT])
+			_active_gizmos.append(_gizmos[BASELINE])
+		elif object is PopochiuMarker:
+			_active_gizmos.append(_gizmos[MARKER_POS])
 
 	for gizmo in _active_gizmos:
 		gizmo.set_target_node(_target_node)
@@ -70,7 +87,8 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 
 func _handles(object: Object) -> bool:
-	return object is PopochiuClickable
+	return object is PopochiuClickable \
+		or object is PopochiuMarker
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
@@ -102,7 +120,7 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 
 #region Private ####################################################################################
 
-func _on_property_changed(property: String):
+func _on_property_changed(_property: String):
 	update_overlays()
 
 
@@ -140,10 +158,18 @@ func _on_gizmo_settings_changed() -> void:
 					default_font,
 					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				)
+			MARKER_POS:
+				gizmo.set_theme(
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_MARKER_POINT_COLOR),
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+					default_font,
+					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+				)
 
 		gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
-		gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
 		gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
+		# Force show_outlines to false for MARKER_POS gizmo
+		gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE) && gizmo_id != MARKER_POS
 		gizmo_id += 1
 	
 	update_overlays()
@@ -199,6 +225,20 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 				default_font,
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
+		MARKER_POS:
+			gizmo = Gizmo2D.new(_target_node, "marker_point", "Marker Point", Gizmo2D.GIZMO_POS)
+			gizmo.set_theme(
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_MARKER_POINT_COLOR),
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
+				default_font,
+				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
+			)
+	
+	gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
+	gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
+	# Force show_outlines to false for MARKER_POS gizmo
+	gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE) && gizmo_id != MARKER_POS
+	
 	return gizmo
 
 
