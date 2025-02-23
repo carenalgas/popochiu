@@ -38,28 +38,28 @@ func _ready() -> void:
 #region Private ####################################################################################
 func _toggle_walk_to_point_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.WALK_TO_POINT,
+		PopochiuGizmoPlugin.WALK_TO_POINT,
 		btn_walk_to_point.button_pressed
 	)
 
 
 func _toggle_look_at_point_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.LOOK_AT_POINT,
+		PopochiuGizmoPlugin.LOOK_AT_POINT,
 		btn_look_at_point.button_pressed
 	)
 
 
 func _toggle_baseline_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.BASELINE,
+		PopochiuGizmoPlugin.BASELINE,
 		btn_baseline.button_pressed
 	)
 
 
 func _toggle_dialog_pos_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.DIALOG_POS,
+		PopochiuGizmoPlugin.DIALOG_POS,
 		btn_dialog_pos.button_pressed
 	)
 
