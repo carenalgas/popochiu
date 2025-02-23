@@ -166,10 +166,10 @@ func _on_gizmo_settings_changed() -> void:
 					PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 				)
 
-		gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
+		# Force hiding connectors for MARKER_POS gizmo
+		gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS) && gizmo_id != MARKER_POS
 		gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
-		# Force show_outlines to false for MARKER_POS gizmo
-		gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE) && gizmo_id != MARKER_POS
+		gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
 		gizmo_id += 1
 	
 	update_overlays()
@@ -201,6 +201,7 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 				default_font,
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
+			gizmo.show_position = false
 		LOOK_AT_POINT:
 			gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
 			gizmo.set_theme(
@@ -209,6 +210,7 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 				default_font,
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
+			gizmo.show_position = false
 		BASELINE:
 			gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VPOS)
 			gizmo.set_theme(
@@ -217,6 +219,7 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 				default_font,
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
+			gizmo.show_position = false
 		DIALOG_POS:
 			gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_POS)
 			gizmo.set_theme(
@@ -225,19 +228,22 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 				default_font,
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
+			gizmo.show_position = false
 		MARKER_POS:
-			gizmo = Gizmo2D.new(_target_node, "marker_point", "Marker Point", Gizmo2D.GIZMO_POS)
+			# Marker gizmos label should show only its position, so let it be empty
+			gizmo = Gizmo2D.new(_target_node, "marker_point", "", Gizmo2D.GIZMO_POS)
 			gizmo.set_theme(
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_MARKER_POINT_COLOR),
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
 				default_font,
 				PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
 			)
+			gizmo.show_position = true
 	
-	gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
+	# Force hiding connectors for MARKER_POS gizmo
+	gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS) && gizmo_id != MARKER_POS
 	gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
-	# Force show_outlines to false for MARKER_POS gizmo
-	gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE) && gizmo_id != MARKER_POS
+	gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
 	
 	return gizmo
 
