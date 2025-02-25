@@ -62,12 +62,12 @@ func get_walkable_area(walkable_area_name: String) -> PopochiuWalkableArea:
 	return current.get_walkable_area(walkable_area_name)
 
 
-## Retrieves the [Marker2D] with a [member Node.name] matching [param marker_name].
-func get_marker(marker_name: String) -> Marker2D:
+## Retrieves the [PopochiuMarker] with a [member Node.name] matching [param marker_name].
+func get_marker(marker_name: String) -> PopochiuMarker:
 	return current.get_marker(marker_name)
 
 
-## Retrieves the [b]global position[/b] of the [Marker2D] with a [member Node.name] matching
+## Retrieves the [b]global position[/b] of the [PopochiuMarker] with a [member Node.name] matching
 ## [param marker_name].
 func get_marker_position(marker_name: String) -> Vector2:
 	return current.get_marker_position(marker_name)
@@ -93,7 +93,7 @@ func get_walkable_areas() -> Array:
 	return get_tree().get_nodes_in_group("walkable_areas")
 
 
-## Returns all the [Marker2D]s in the room.
+## Returns all the [PopochiuMarker]s in the room.
 func get_markers() -> Array:
 	return current.get_markers()
 
