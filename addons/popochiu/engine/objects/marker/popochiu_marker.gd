@@ -10,4 +10,4 @@ extends Node2D
 ## The identifier of the object used in scripts.
 @export var script_name := ""
 ## The [Vector2] position that the marker represents.
-@export var marker_point := Vector2.ZERO
+@export var coordinates := Vector2.ZERO

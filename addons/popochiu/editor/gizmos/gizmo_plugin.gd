@@ -133,7 +133,7 @@ func _init_theme_settings() -> void:
 		LOOK_AT_POINT: PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR,
 		BASELINE: PopochiuEditorConfig.GIZMOS_BASELINE_COLOR,
 		DIALOG_POS: PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR,
-		MARKER_POS: PopochiuEditorConfig.GIZMOS_MARKER_POINT_COLOR
+		MARKER_POS: PopochiuEditorConfig.GIZMOS_MARKER_POS_COLOR
 	}
 	# set default font from editor
 	_font = EditorInterface.get_editor_theme().default_font
@@ -153,7 +153,7 @@ func _init_popochiu_gizmo(gizmo_id: int) -> Gizmo2D:
 			gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_POS)
 		MARKER_POS:
 			# No label for markers, 'cause their gizmos only show their position (coords)
-			gizmo = Gizmo2D.new(_target_node, "marker_point", "", Gizmo2D.GIZMO_POS)
+			gizmo = Gizmo2D.new(_target_node, "coordinates", "", Gizmo2D.GIZMO_POS)
 
 	_set_gizmo_theme(gizmo, gizmo_id)
 	_set_gizmo_properties(gizmo, gizmo_id)
