@@ -1,4 +1,5 @@
 @tool
+@icon('res://addons/popochiu/icons/marker.png')
 class_name PopochiuMarker
 extends Node2D
 ## Exposes a Vector2 representing a position on the stage of a Room.
