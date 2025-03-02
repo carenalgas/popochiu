@@ -285,8 +285,8 @@ func update_characters_position(character: PopochiuCharacter):
 
 
 ## Returns the [Marker2D] which [member Node.name] matches [param marker_name].
-func get_marker(marker_name: String) -> Marker2D:
-	var marker: Marker2D = get_node_or_null("Markers/" + marker_name)
+func get_marker(marker_name: String) -> PopochiuMarker:
+	var marker: PopochiuMarker = get_node_or_null("Markers/" + marker_name)
 	if marker:
 		return marker
 	PopochiuUtils.print_error("Marker %s not found" % marker_name)
@@ -297,7 +297,7 @@ func get_marker(marker_name: String) -> Marker2D:
 ## [param marker_name].
 func get_marker_position(marker_name: String) -> Vector2:
 	var marker := get_marker(marker_name)
-	return marker.global_position if marker != null else Vector2.ZERO
+	return marker.coordinates if marker != null else Vector2.ZERO
 
 
 ## Returns the [PopochiuProp] which [member PopochiuClickable.script_name] matches

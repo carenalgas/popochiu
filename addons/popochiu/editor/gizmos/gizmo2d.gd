@@ -23,6 +23,7 @@ var position:
 var show_connector: bool = true # Show gizmo-to-node connectors
 var show_outlines: bool = true
 var show_target_name: bool = true # Show target node name
+var show_position: bool = true # Show gizmo position in the label
 var visible: bool = true # Gizmo visibility
 
 # Private vars
@@ -34,6 +35,7 @@ var _target_property: String
 var _size: Vector2 # Gizmo width and height
 var _color: Color # Gizmo color
 var _label: String # A label to be painted near the Gizmo
+var _label_shown: String # The label that is actually shown (may include position)
 var _font: Font # Label font
 var _font_size: int # Label font size
 # State
@@ -111,7 +113,7 @@ func _draw_outlines(viewport: Control):
 	viewport.draw_string_outline(
 		_font,
 		_handle.position + Vector2(0, _size.y + 2 + _font.get_ascent(_font_size)),
-		_label, HORIZONTAL_ALIGNMENT_CENTER,
+		_label_shown, HORIZONTAL_ALIGNMENT_CENTER,
 		- 1,
 		_font_size,
 		6,
@@ -131,6 +133,21 @@ func _draw_outlines(viewport: Control):
 		)
 
 func _draw_gizmo(viewport: Control):
+
+	# Add gizmo position to the label, if it's set
+	if show_position:
+		var pos_str = ""
+		var pos = _target_node.get(_target_property)
+		match _type:
+			GIZMO_POS:
+				pos_str = "(%d, %d)" % [pos.x, pos.y]
+			GIZMO_HPOS:
+				pos_str = "(%d)" % [pos]
+			GIZMO_VPOS:
+				pos_str = "(%d)" % [pos]
+		_label_shown = ("%s %s" % [_label, pos_str]).strip_edges()
+	else:
+		_label_shown = _label
 
 	# Draw the handle (on top of the line, if it's present)
 	viewport.draw_rect(
@@ -154,11 +171,11 @@ func _draw_gizmo(viewport: Control):
 		)
 
 	# Draw the label, if it's set and non empty
-	if _label:
+	if _label_shown:
 		viewport.draw_string(
 			_font,
 			_handle.position + Vector2(0, _size.y + 2 + _font.get_ascent(_font_size)),
-			_label, HORIZONTAL_ALIGNMENT_CENTER,
+			_label_shown, HORIZONTAL_ALIGNMENT_CENTER,
 			- 1,
 			_font_size,
 			_current_color

@@ -7,7 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://jbdlyvx4gumd" path="res://addons/popochiu/icons/hotspot.png" id="4_6mx6c"]
 [ext_resource type="Texture2D" uid="uid://dvh13sj4uj4b2" path="res://addons/popochiu/icons/walkable_area.png" id="5_j6ot2"]
 [ext_resource type="Texture2D" uid="uid://cosxi1ulfp7rg" path="res://addons/popochiu/icons/region.png" id="6_2h2fq"]
-[ext_resource type="Texture2D" uid="uid://btdsnflrn3j6o" path="res://addons/popochiu/icons/point.png" id="7_8ygji"]
+[ext_resource type="Texture2D" uid="uid://btdsnflrn3j6o" path="res://addons/popochiu/icons/marker.png" id="7_8ygji"]
 [ext_resource type="Texture2D" uid="uid://mir6j58lju3l" path="res://addons/popochiu/icons/character.png" id="9_4yetu"]
 
 [sub_resource type="Image" id="Image_xqhe0"]

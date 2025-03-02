@@ -38,28 +38,28 @@ func _ready() -> void:
 #region Private ####################################################################################
 func _toggle_walk_to_point_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.WALK_TO_POINT,
+		PopochiuGizmoPlugin.WALK_TO_POINT,
 		btn_walk_to_point.button_pressed
 	)
 
 
 func _toggle_look_at_point_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.LOOK_AT_POINT,
+		PopochiuGizmoPlugin.LOOK_AT_POINT,
 		btn_look_at_point.button_pressed
 	)
 
 
 func _toggle_baseline_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.BASELINE,
+		PopochiuGizmoPlugin.BASELINE,
 		btn_baseline.button_pressed
 	)
 
 
 func _toggle_dialog_pos_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.DIALOG_POS,
+		PopochiuGizmoPlugin.DIALOG_POS,
 		btn_dialog_pos.button_pressed
 	)
 
@@ -202,6 +202,12 @@ func _on_selection_changed() -> void:
 ## Handles the editor config that allows the WAs polygons to be always visible,
 ## not only during editing.
 func _set_walkable_areas_visibility() -> void:
+	# Avoid errors when the editor has no scene open
+	if EditorInterface.get_edited_scene_root() == null:
+		return
+
+	# get_all_children returns an empty array if the node has no children
+	# so we can safely iterate over it without checking for null
 	for child in PopochiuEditorHelper.get_all_children(
 		EditorInterface.get_edited_scene_root().find_child("WalkableAreas")
 	):

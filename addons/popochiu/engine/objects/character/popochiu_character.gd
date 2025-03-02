@@ -946,7 +946,7 @@ func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 		return
 
 	await walk(
-		node.to_global(node.walk_to_point if node is PopochiuClickable else Vector2.ZERO) + offset
+		_get_node_walk_position(node) + offset
 	)
 
 
@@ -956,9 +956,20 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 		await get_tree().process_frame
 		return
 
-	position = node.to_global(
-		node.walk_to_point if node is PopochiuClickable else Vector2.ZERO
-	) + offset
+	position = _get_node_walk_position(node) + offset
+
+
+# Calculate the walk-to position of a target node
+func _get_node_walk_position(node: Node2D) -> Vector2:
+	if not is_instance_valid(node):
+		return Vector2.ZERO
+
+	if node is PopochiuClickable:
+		return node.to_global(node.walk_to_point)
+	if node is PopochiuMarker:
+		return node.to_global(node.coordinates)
+
+	return Vector2.ZERO
 
 
 func _update_position():

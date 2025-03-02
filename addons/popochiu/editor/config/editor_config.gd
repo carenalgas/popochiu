@@ -15,11 +15,13 @@ const GIZMOS_BASELINE_COLOR = "popochiu/gizmos/baseline_color"
 const GIZMOS_WALK_TO_POINT_COLOR = "popochiu/gizmos/walk_to_point_color"
 const GIZMOS_LOOK_AT_POINT_COLOR = "popochiu/gizmos/look_at_point_color"
 const GIZMOS_DIALOG_POS_COLOR = "popochiu/gizmos/dialog_position_color"
+const GIZMOS_MARKER_POS_COLOR = "popochiu/gizmos/marker_position_color"
 const GIZMOS_COLOR_TOOLBAR_BUTTONS = "popochiu/gizmos/apply_colors_to_toolbar_buttons"
 const GIZMOS_HANDLER_SIZE = "popochiu/gizmos/handler_size"
 const GIZMOS_SHOW_CONNECTORS = "popochiu/gizmos/show_connectors"
 const GIZMOS_SHOW_OUTLINE = "popochiu/gizmos/show_handler_outline"
 const GIZMOS_SHOW_NODE_NAME = "popochiu/gizmos/show_node_name"
+const GIZMOS_SHOW_POSITION = "popochiu/gizmos/show_position"
 const GIZMOS_ALWAYS_SHOW_WA = "popochiu/gizmos/always_show_walkable_areas"
 
 # Settings default values
@@ -28,15 +30,17 @@ static var defaults := {
 	ASEPRITE_COMMAND_PATH: _default_aseprite_command(),
 	ASEPRITE_REMOVE_JSON_FILE: true,
 	GIZMOS_FONT_SIZE: _default_font_size(),
-	GIZMOS_BASELINE_COLOR: Color.CYAN,
+	GIZMOS_BASELINE_COLOR: Color.ORANGE,
 	GIZMOS_WALK_TO_POINT_COLOR: Color.GREEN,
 	GIZMOS_LOOK_AT_POINT_COLOR: Color.RED,
 	GIZMOS_DIALOG_POS_COLOR: Color.MAGENTA,
+	GIZMOS_MARKER_POS_COLOR: Color.CYAN,
 	GIZMOS_COLOR_TOOLBAR_BUTTONS: true,
 	GIZMOS_HANDLER_SIZE: 32,
 	GIZMOS_SHOW_CONNECTORS: true,
 	GIZMOS_SHOW_OUTLINE: true,
 	GIZMOS_SHOW_NODE_NAME: true,
+	GIZMOS_SHOW_POSITION: true,
 	GIZMOS_ALWAYS_SHOW_WA: false,
 }
 
@@ -56,12 +60,14 @@ static func initialize_editor_settings():
 	_initialize_editor_setting(GIZMOS_WALK_TO_POINT_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_LOOK_AT_POINT_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_DIALOG_POS_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_MARKER_POS_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_COLOR_TOOLBAR_BUTTONS, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_HANDLER_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
 	_initialize_editor_setting(GIZMOS_FONT_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
 	_initialize_editor_setting(GIZMOS_SHOW_CONNECTORS, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_SHOW_OUTLINE, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_SHOW_NODE_NAME, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_SHOW_POSITION, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_WA, TYPE_BOOL)
 
 
