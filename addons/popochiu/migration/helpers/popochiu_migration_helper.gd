@@ -13,7 +13,11 @@ static var old_settings_file := PopochiuResources.GAME_PATH.path_join("popochiu_
 
 #region Public #####################################################################################
 static func get_migrations_count() -> int:
-	return DirAccess.get_files_at(MIGRATIONS_PATH).size()
+	# Returns the number of migration files in the migrations folder filtering the file name so
+	# it only returns files that start with "popochiu_migration_" and end with ".gd"
+	return Array(DirAccess.get_files_at(MIGRATIONS_PATH)).filter(
+		func (file_name: String) -> bool: return file_name.begins_with("popochiu_migration_") and file_name.ends_with(".gd")
+	).size()
 
 
 ## Returns the game folder path. If this returns [member POPOCHIU_PATH], then the project is from
