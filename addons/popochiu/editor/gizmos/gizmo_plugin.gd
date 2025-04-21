@@ -55,29 +55,42 @@ func _edit(object: Object) -> void:
     # If the object is null or a remote object, this plugin should not kick in
     if object == null or object.get_class() == "EditorDebuggerRemoteObject":
         return
-        
+
     # If the user isn't editing a Room or Character scene, no gizmos should be shown
     var edited_root = EditorInterface.get_edited_scene_root()
     if not (edited_root is PopochiuCharacter or edited_root is PopochiuRoom):
         return
 
-    # Try to handle with appropriate manager
-    var handled_by_clickable = _clickable_manager.handle_object(object, edited_root)
-    var handled_by_marker = _marker_manager.handle_object(object, edited_root)
-    
-    # If any manager is handling this object, connect to inspector signal
-    if handled_by_clickable or handled_by_marker:
+    # Track if any managers are handling objects
+    var has_handled_objects = false
+
+    # If we're in a room, scan for all markers
+    if edited_root is PopochiuRoom:
+        has_handled_objects = _marker_manager.handle_object(edited_root, edited_root) or has_handled_objects
+
+    # Let the clickable manager handle the object if applicable
+    has_handled_objects = _clickable_manager.handle_object(object, edited_root) or has_handled_objects
+
+    # Check if an individual marker is selected
+    if object is PopochiuMarker:
+        has_handled_objects = _marker_manager.handle_object(object, edited_root) or has_handled_objects
+
+    # If any manager is handling objects, connect to inspector signal
+    if has_handled_objects:
         if not EditorInterface.get_inspector().property_edited.is_connected(_on_property_changed):
             EditorInterface.get_inspector().property_edited.connect(_on_property_changed)
-    
+
     update_overlays()
+
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
     _clickable_manager.draw_gizmos(viewport_control)
     _marker_manager.draw_gizmos(viewport_control)
 
+
 func _handles(object: Object) -> bool:
-    return object is PopochiuClickable or object is PopochiuMarker
+    var edited_root = EditorInterface.get_edited_scene_root()
+    return (edited_root is PopochiuCharacter or edited_root is PopochiuRoom)
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:
@@ -125,10 +138,12 @@ func _init_theme_settings() -> void:
     # Set default font from editor
     _font = EditorInterface.get_editor_theme().default_font
 
+
 func _on_property_changed(_property: String):
     # Update gizmos that are currently visible on the scene
     # to reflect the new property value
     update_overlays()
+
 
 func _on_gizmo_settings_changed() -> void:
     # Update theme settings
@@ -140,6 +155,7 @@ func _on_gizmo_settings_changed() -> void:
     
     # Update gizmos in the viewport
     update_overlays()
+
 
 func _on_gizmo_visibility_changed(gizmo_id: int, visibility: bool):
     # The visibility enum values match between plugin and clickable manager

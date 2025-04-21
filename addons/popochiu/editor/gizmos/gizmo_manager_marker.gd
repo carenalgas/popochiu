@@ -2,121 +2,145 @@
 class_name GizmoManagerMarker
 extends RefCounted
 
-enum {
-    MARKER_POS
-}
-
 # Configurations
 var _color_settings: Dictionary = {}
 var _font: Font
+var _show_all_markers: bool = true  # Flag to control multiple marker visibility
 
 # State
-var _target_node: Node2D
+var _current_room: PopochiuRoom  # Reference to the current room
 var _undo: EditorUndoRedoManager
-var _gizmos: Array[Gizmo2D] = []
-var _active_gizmos: Array[Gizmo2D] = []
-var _grabbed_gizmo: Gizmo2D
+var _marker_gizmos: Dictionary = {}  # Dictionary of marker nodes to their gizmos
+var _grabbed_gizmo: Gizmo2D  # Currently grabbed gizmo
+var _grabbed_marker: PopochiuMarker  # Currently grabbed marker node
+var _gizmos_visible: bool = true  # Global visibility state
+
 
 func _init(undo_manager: EditorUndoRedoManager):
     _undo = undo_manager
-    _gizmos.resize(1)
+
 
 func initialize_gizmos(font: Font, color_settings: Dictionary) -> void:
     _font = font
     _color_settings = color_settings
-    
-    # Initialize marker gizmo
-    _gizmos[MARKER_POS] = _init_gizmo(MARKER_POS)
+    _marker_gizmos.clear()
 
-func _init_gizmo(gizmo_id: int) -> Gizmo2D:
-    var gizmo: Gizmo2D
-    
-    # No label for markers, 'cause their gizmos only show their position (coords)
-    gizmo = Gizmo2D.new(_target_node, "coordinates", "", Gizmo2D.GIZMO_POS)
-    
-    _set_gizmo_theme(gizmo, gizmo_id)
-    _set_gizmo_properties(gizmo)
+
+func _create_marker_gizmo(marker: PopochiuMarker) -> Gizmo2D:
+    # Create a gizmo for a specific marker
+    var gizmo = Gizmo2D.new(marker, "coordinates", "", Gizmo2D.GIZMO_POS)
+    _configure_gizmo(gizmo)
     return gizmo
 
-func _set_gizmo_theme(gizmo: Gizmo2D, gizmo_id: int) -> void:
+
+func _configure_gizmo(gizmo: Gizmo2D) -> void:
+    # Apply theme settings
     gizmo.set_theme(
-        PopochiuEditorConfig.get_editor_setting(_color_settings[gizmo_id]),
+        PopochiuEditorConfig.get_editor_setting(_color_settings[PopochiuGizmoPlugin.MARKER_POS]),
         PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_HANDLER_SIZE),
         _font,
         PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_FONT_SIZE)
     )
 
-func _set_gizmo_properties(gizmo: Gizmo2D) -> void:
-    # Base properties from config
-    gizmo.show_connector = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_CONNECTORS)
+    # Apply properties
     gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
-    
-    # Always show the marker's name
-    gizmo.show_target_name = true
-    # Always show the marker's position
-    gizmo.show_position = true
-    # Never show the connector, cause the marker center is in 0,0
-    gizmo.show_connector = false
+    gizmo.show_target_name = true  # Always show the marker's name
+    gizmo.show_position = true     # Always show the marker's position
+    gizmo.show_connector = false   # Never show the connector for markers
+    gizmo.visible = _gizmos_visible # Set visibility based on global state
+
+    # Additional marker-specific settings could be added here
+
 
 func handle_object(object: Object, edited_root: Node) -> bool:
-    if not object is PopochiuMarker:
-        _active_gizmos.clear()
-        return false
-    
-    _target_node = object
-    _active_gizmos.clear()
-    
-    # Add marker gizmo if we're in a room
-    if edited_root is PopochiuRoom:
-        _active_gizmos.append(_gizmos[MARKER_POS])
-    
-    for gizmo in _active_gizmos:
-        gizmo.set_target_node(_target_node)
-    
-    return _active_gizmos.size() > 0
+    # Single marker handling: used when a marker is directly selected
+    if object is PopochiuMarker:
+        # Store this marker node for solo display
+        _marker_gizmos.clear()
+        _marker_gizmos[object] = _create_marker_gizmo(object)
+        return true
+
+    # Room handling: find all markers in the scene
+    if edited_root is PopochiuRoom and _show_all_markers:
+        _current_room = edited_root
+        _scan_for_markers(edited_root)
+        return _marker_gizmos.size() > 0
+
+    # If we get here, clear the gizmos and return false
+    _marker_gizmos.clear()
+    return false
+
+
+func _scan_for_markers(room: PopochiuRoom) -> void:
+    # Clear existing gizmos
+    _marker_gizmos.clear()
+
+    # Find the Markers node
+    var markers_node = _find_markers_container(room)
+    if not markers_node:
+        return
+
+    # Find all marker nodes under Markers
+    for child in markers_node.get_children():
+        if child is PopochiuMarker:
+            _marker_gizmos[child] = _create_marker_gizmo(child)
+
+
+func _find_markers_container(root: Node) -> Node:
+    # Find the "Markers" node in the scene
+    for child in root.get_children():
+        if child.name == "Markers":
+            return child
+    return null
+
 
 func draw_gizmos(viewport_control: Control) -> void:
-    for gizmo in _active_gizmos:
-        gizmo.draw(viewport_control, _target_node.get(gizmo.target_property))
+    # Draw all marker gizmos
+    for marker in _marker_gizmos:
+        var gizmo = _marker_gizmos[marker]
+        if gizmo.visible:
+            gizmo.draw(viewport_control, marker.get(gizmo.target_property))
+
 
 func try_grab_gizmo(event: InputEventMouseButton) -> bool:
-    if not _target_node or _active_gizmos.is_empty():
-        return false
-        
-    # Check if the mouse click happened on a gizmo
-    for i in range(_active_gizmos.size() - 1, -1, -1):
-        if not _active_gizmos[i].has_point(event.position):
-            continue
-        _grabbed_gizmo = _active_gizmos[i]
-        break
-
-    # If user clicked on no gizmos, ignore the event
-    if not _grabbed_gizmo:
+    if _marker_gizmos.is_empty():
         return false
 
-    # Hold the gizmo with the mouse
-    _grabbed_gizmo.grab(event.position)
-    _undo.create_action("Move marker gizmo")
-    _undo.add_undo_property(
-        _grabbed_gizmo.target_node,
-        _grabbed_gizmo.target_property,
-        _grabbed_gizmo.target_node.get(_grabbed_gizmo.target_property)
-    )
-    return true
+    # Check if the mouse click happened on any marker gizmo
+    for marker in _marker_gizmos:
+        var gizmo = _marker_gizmos[marker]
+        if gizmo.visible and gizmo.has_point(event.position):
+            _grabbed_gizmo = gizmo
+            _grabbed_marker = marker
+
+            # Hold the gizmo with the mouse
+            _grabbed_gizmo.grab(event.position)
+            _undo.create_action("Move marker gizmo")
+            _undo.add_undo_property(
+                marker,
+                _grabbed_gizmo.target_property,
+                marker.get(_grabbed_gizmo.target_property)
+            )
+            return true
+
+    return false
+
 
 func release_gizmo() -> bool:
     if not _grabbed_gizmo:
         return false
-        
+
     _grabbed_gizmo.release()
     _undo.add_do_property(
-        _grabbed_gizmo.target_node,
+        _grabbed_marker,
         _grabbed_gizmo.target_property,
-        _grabbed_gizmo.target_node.get(_grabbed_gizmo.target_property)
+        _grabbed_marker.get(_grabbed_gizmo.target_property)
     )
     _undo.commit_action()
     _grabbed_gizmo = null
+    _grabbed_marker = null
     return true
+
 
 func drag_gizmo(event: InputEventMouseMotion) -> bool:
     if not _grabbed_gizmo:
@@ -127,32 +151,47 @@ func drag_gizmo(event: InputEventMouseMotion) -> bool:
     _update_properties()
     return true
 
+
 func cancel_dragging() -> bool:
     if not _grabbed_gizmo:
         return false
-    
+
     # Cancel the action
     _grabbed_gizmo.cancel()
     _undo.commit_action()
-    _undo.get_history_undo_redo(_undo.get_object_history_id(_grabbed_gizmo.target_node)).undo()
+    _undo.get_history_undo_redo(_undo.get_object_history_id(_grabbed_marker)).undo()
     _grabbed_gizmo = null
+    _grabbed_marker = null
     return true
+
 
 func has_active_gizmo() -> bool:
     return _grabbed_gizmo != null
 
+
 func update_gizmo_settings() -> void:
-    for gizmo_id in _gizmos.size():
-        _set_gizmo_theme(_gizmos[gizmo_id], gizmo_id)
-        _set_gizmo_properties(_gizmos[gizmo_id])
+    # Update all existing gizmos
+    for marker in _marker_gizmos:
+        _configure_gizmo(_marker_gizmos[marker])
+
 
 func set_gizmo_visibility(gizmo_id: int, visible: bool) -> void:
-    if gizmo_id < _gizmos.size():
-        _gizmos[gizmo_id].visible = visible
+    # Set visibility for all marker gizmos
+    _gizmos_visible = visible
+
+    for marker in _marker_gizmos:
+        _marker_gizmos[marker].visible = visible
+
 
 func _update_properties() -> void:
-    if _grabbed_gizmo and _grabbed_gizmo.target_property:
-        _target_node.set(
+    if _grabbed_gizmo and _grabbed_marker:
+        _grabbed_marker.set(
             _grabbed_gizmo.target_property,
             _grabbed_gizmo.get_position()
         )
+
+
+func refresh_markers() -> void:
+    # Refresh markers when scene changes
+    if _current_room:
+        _scan_for_markers(_current_room)
