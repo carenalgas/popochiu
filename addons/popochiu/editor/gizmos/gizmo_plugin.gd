@@ -71,10 +71,6 @@ func _edit(object: Object) -> void:
     # Let the clickable manager handle the object if applicable
     has_handled_objects = _clickable_manager.handle_object(object, edited_root) or has_handled_objects
 
-    # Check if an individual marker is selected
-    if object is PopochiuMarker:
-        has_handled_objects = _marker_manager.handle_object(object, edited_root) or has_handled_objects
-
     # If any manager is handling objects, connect to inspector signal
     if has_handled_objects:
         if not EditorInterface.get_inspector().property_edited.is_connected(_on_property_changed):
@@ -90,7 +86,10 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 func _handles(object: Object) -> bool:
     var edited_root = EditorInterface.get_edited_scene_root()
-    return (edited_root is PopochiuCharacter or edited_root is PopochiuRoom)
+    return \
+        edited_root is PopochiuCharacter or \
+        edited_root is PopochiuRoom or \
+        edited_root is PopochiuCharacter
 
 
 func _forward_canvas_gui_input(event: InputEvent) -> bool:

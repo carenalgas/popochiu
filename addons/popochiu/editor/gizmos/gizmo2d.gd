@@ -114,7 +114,7 @@ func _draw_outlines(viewport: Control):
 		_font,
 		_handle.position + Vector2(0, _size.y + 2 + _font.get_ascent(_font_size)),
 		_label_shown, HORIZONTAL_ALIGNMENT_CENTER,
-		- 1,
+		-1,
 		_font_size,
 		6,
 		Color.BLACK
@@ -176,7 +176,7 @@ func _draw_gizmo(viewport: Control):
 			_font,
 			_handle.position + Vector2(0, _size.y + 2 + _font.get_ascent(_font_size)),
 			_label_shown, HORIZONTAL_ALIGNMENT_CENTER,
-			- 1,
+			-1,
 			_font_size,
 			_current_color
 		)
@@ -187,7 +187,7 @@ func _draw_gizmo(viewport: Control):
 			_handle.position + Vector2(0, -_font.get_descent(_font_size)),
 			_target_node.name,
 			HORIZONTAL_ALIGNMENT_CENTER,
-			- 1,
+			-1,
 			_font_size,
 			_current_color
 		)

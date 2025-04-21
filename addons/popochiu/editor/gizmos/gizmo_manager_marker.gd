@@ -5,7 +5,6 @@ extends RefCounted
 # Configurations
 var _color_settings: Dictionary = {}
 var _font: Font
-var _show_all_markers: bool = true  # Flag to control multiple marker visibility
 
 # State
 var _current_room: PopochiuRoom  # Reference to the current room
@@ -53,21 +52,14 @@ func _configure_gizmo(gizmo: Gizmo2D) -> void:
 
 
 func handle_object(object: Object, edited_root: Node) -> bool:
-    # Single marker handling: used when a marker is directly selected
-    if object is PopochiuMarker:
-        # Store this marker node for solo display
-        _marker_gizmos.clear()
-        _marker_gizmos[object] = _create_marker_gizmo(object)
-        return true
-
-    # Room handling: find all markers in the scene
-    if edited_root is PopochiuRoom and _show_all_markers:
+    # Find all markers in the scene
+    if edited_root is PopochiuRoom:
         _current_room = edited_root
         _scan_for_markers(edited_root)
         return _marker_gizmos.size() > 0
 
-    # If we get here, clear the gizmos and return false
-    _marker_gizmos.clear()
+    # If we're not in a room, reset the status and return false
+    _current_room = null
     return false
 
 
@@ -76,12 +68,12 @@ func _scan_for_markers(room: PopochiuRoom) -> void:
     _marker_gizmos.clear()
 
     # Find the Markers node
-    var markers_node = _find_markers_container(room)
-    if not markers_node:
+    var markers_container = _find_markers_container(room)
+    if not markers_container:
         return
 
     # Find all marker nodes under Markers
-    for child in markers_node.get_children():
+    for child in markers_container.get_children():
         if child is PopochiuMarker:
             _marker_gizmos[child] = _create_marker_gizmo(child)
 
