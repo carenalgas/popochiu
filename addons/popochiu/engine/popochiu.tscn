@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://rda8wggldt5o"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/popochiu_main_camera.gd" id="2_hac1i"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/popochiu.gd" id="3"]
+[ext_resource type="Script" uid="uid://camm3xuqplm4f" path="res://addons/popochiu/engine/objects/popochiu_main_camera.gd" id="2_hac1i"]
+[ext_resource type="Script" uid="uid://cro28c0v56f4b" path="res://addons/popochiu/engine/popochiu.gd" id="3"]
 
 [node name="Popochiu" type="Node"]
 script = ExtResource("3")

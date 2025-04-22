@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cwtpncpx24dm7"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/character/popochiu_character.gd" id="1_2xmr4"]
+[ext_resource type="Script" uid="uid://tm1nwuvn5r67" path="res://addons/popochiu/engine/objects/character/popochiu_character.gd" id="1_2xmr4"]
 
 [node name="Character" type="Area2D"]
 script = ExtResource("1_2xmr4")

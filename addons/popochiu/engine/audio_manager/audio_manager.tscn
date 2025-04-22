@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ciufytcstpkcr"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/audio_manager/audio_manager.gd" id="1_3dbpw"]
+[ext_resource type="Script" uid="uid://bhdg6t8kgptjg" path="res://addons/popochiu/engine/audio_manager/audio_manager.gd" id="1_3dbpw"]
 
 [node name="AudioManager" type="Node"]
 script = ExtResource("1_3dbpw")

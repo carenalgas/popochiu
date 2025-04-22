@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="PopochiuGUIInfo" load_steps=3 format=3 uid="uid://ecktw1j2mpea"]
 
 [ext_resource type="Texture2D" uid="uid://brnmaiifdxwm" path="res://addons/popochiu/icons/ico_9verb.png" id="1_4efef"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/others/popochiu_gui_info.gd" id="1_pkhv6"]
+[ext_resource type="Script" uid="uid://dx8nbjp33mba4" path="res://addons/popochiu/engine/others/popochiu_gui_info.gd" id="1_pkhv6"]
 
 [resource]
 script = ExtResource("1_pkhv6")

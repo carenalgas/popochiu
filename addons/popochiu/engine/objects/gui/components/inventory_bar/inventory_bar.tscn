@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://ciar5j7qm85bc"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/inventory_bar/inventory_bar.gd" id="1"]
+[ext_resource type="Script" uid="uid://dlt175muir7yq" path="res://addons/popochiu/engine/objects/gui/components/inventory_bar/inventory_bar.gd" id="1"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_aynoo"]
 
 [node name="InventoryBar" type="Control" groups=["popochiu_gui_component"]]

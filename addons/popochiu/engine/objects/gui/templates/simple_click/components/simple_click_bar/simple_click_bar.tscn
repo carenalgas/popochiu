@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://dqlw4tn2oe6d7"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_bar/simple_click_bar.gd" id="1_0tdpv"]
+[ext_resource type="Script" uid="uid://bb3qgcngq2xs7" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_bar/simple_click_bar.gd" id="1_0tdpv"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_tnnrn"]
 [ext_resource type="Texture2D" uid="uid://md62x2moalng" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_bar/images/simple_click_settings_button.png" id="2_nw3cn"]
 

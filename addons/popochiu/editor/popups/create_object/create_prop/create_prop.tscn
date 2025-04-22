@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cpqg77rjfaa0l"]
 
 [ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_l6xki"]
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_prop/create_prop.gd" id="2_c5stu"]
+[ext_resource type="Script" uid="uid://c1lm3vfu2f2gc" path="res://addons/popochiu/editor/popups/create_object/create_prop/create_prop.gd" id="2_c5stu"]
 
 [node name="CreatePropConfirmation" instance=ExtResource("1_l6xki")]
 size_flags_horizontal = 3

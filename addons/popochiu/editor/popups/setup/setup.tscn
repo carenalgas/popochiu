@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://c3r8juwutb1gr"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_vjboj"]
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/setup/gui_template_button.gd" id="3_jf6nd"]
+[ext_resource type="Script" uid="uid://ypii8yk55td2" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_vjboj"]
+[ext_resource type="Script" uid="uid://b65jvk4ceikt6" path="res://addons/popochiu/editor/popups/setup/gui_template_button.gd" id="3_jf6nd"]
 [ext_resource type="Texture2D" uid="uid://c00kw8v34vtsb" path="res://addons/popochiu/icons/ico_custom.png" id="5_joicf"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ntnwv"]
