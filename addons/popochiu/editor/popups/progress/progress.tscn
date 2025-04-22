@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://2smr378ligwp"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/progress/progress.gd" id="1_hl3vb"]
+[ext_resource type="Script" uid="uid://b0abe2jptbfjd" path="res://addons/popochiu/editor/popups/progress/progress.gd" id="1_hl3vb"]
 
 [node name="ProgressDialog" type="Control"]
 layout_mode = 3

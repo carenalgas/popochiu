@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://do1k681xt48cm"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/prop/popochiu_prop.gd" id="1"]
+[ext_resource type="Script" uid="uid://ms1o7xaqb1g2" path="res://addons/popochiu/engine/objects/prop/popochiu_prop.gd" id="1"]
 
 [node name="Prop" type="Area2D"]
 script = ExtResource("1")

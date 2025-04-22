@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://wd748u1vdybq"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/canvas_editor_menu/popochiu_canvas_editor_menu.gd" id="1_vs7c6"]
+[ext_resource type="Script" uid="uid://bjpgtct41bl2i" path="res://addons/popochiu/editor/canvas_editor_menu/popochiu_canvas_editor_menu.gd" id="1_vs7c6"]
 [ext_resource type="Texture2D" uid="uid://b3sku5v1n23ni" path="res://addons/popochiu/icons/btn_baseline.svg" id="2_w3cau"]
 [ext_resource type="Texture2D" uid="uid://dmt2epjmlpv56" path="res://addons/popochiu/icons/btn_walk_to_point.svg" id="3_ifql1"]
 [ext_resource type="Texture2D" uid="uid://skjlvpct7ah7" path="res://addons/popochiu/icons/btn_look_at_point.svg" id="4_bge33"]

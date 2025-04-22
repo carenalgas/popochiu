@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://33wmak2jumqm"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_portrait/dialog_portrait.gd" id="1_ejue5"]
+[ext_resource type="Script" uid="uid://bv77wllsgc5ht" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_portrait/dialog_portrait.gd" id="1_ejue5"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_x1xka"]
 [ext_resource type="Texture2D" uid="uid://h156lkhxk5tl" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/images/ico_continue.png" id="4_lqu2o"]
 

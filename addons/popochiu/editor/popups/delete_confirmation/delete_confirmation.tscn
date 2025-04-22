@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bcb865akap0mt"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/delete_confirmation/delete_confirmation.gd" id="1_j7hpd"]
+[ext_resource type="Script" uid="uid://ts73fv6mqvum" path="res://addons/popochiu/editor/popups/delete_confirmation/delete_confirmation.gd" id="1_j7hpd"]
 
 [node name="DeleteConfirmation" type="Control"]
 layout_mode = 3

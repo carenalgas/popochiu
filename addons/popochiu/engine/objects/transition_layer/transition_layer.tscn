@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://b1pvo43ed3eey"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/transition_layer/transition_layer.gd" id="1"]
+[ext_resource type="Script" uid="uid://pxyudtyvd2gl" path="res://addons/popochiu/engine/objects/transition_layer/transition_layer.gd" id="1"]
 
 [sub_resource type="Animation" id="5"]
 length = 0.001
@@ -109,9 +109,9 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_vskw8"]
 _data = {
-"RESET": SubResource("5"),
-"fade": SubResource("1"),
-"pass": SubResource("3")
+&"RESET": SubResource("5"),
+&"fade": SubResource("1"),
+&"pass": SubResource("3")
 }
 
 [node name="TransitionLayer" type="Control"]

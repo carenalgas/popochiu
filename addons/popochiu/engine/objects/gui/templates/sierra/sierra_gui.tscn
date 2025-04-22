@@ -1,7 +1,7 @@
 [gd_scene load_steps=23 format=3 uid="uid://6ucg5xkcreh5"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_3jlpr"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/sierra/sierra_gui.gd" id="1_40nsv"]
+[ext_resource type="Script" uid="uid://byhjwrxhgl1e5" path="res://addons/popochiu/engine/objects/gui/templates/sierra/sierra_gui.gd" id="1_40nsv"]
 [ext_resource type="PackedScene" uid="uid://cv2o5p3gp1fgx" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_bar/sierra_bar.tscn" id="4_hjdb7"]
 [ext_resource type="PackedScene" uid="uid://bhx2hkpkjs7dk" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_menu/sierra_menu.tscn" id="5_ffq7i"]
 [ext_resource type="PackedScene" uid="uid://33wmak2jumqm" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_portrait/dialog_portrait.tscn" id="5_nehoj"]

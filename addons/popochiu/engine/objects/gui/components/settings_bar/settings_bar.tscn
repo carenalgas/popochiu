@@ -1,16 +1,16 @@
 [gd_scene load_steps=30 format=3 uid="uid://0cqerawlxb3o"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_457q0"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/settings_bar.gd" id="2_hk0vm"]
+[ext_resource type="Script" uid="uid://ciix4mqo30hb6" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/settings_bar.gd" id="2_hk0vm"]
 [ext_resource type="Texture2D" uid="uid://bexxkrmqdiemq" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_save.png" id="3_b0ddg"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/settings_bar_button.gd" id="4_lqi16"]
+[ext_resource type="Script" uid="uid://cyjpqa3h57x5n" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/settings_bar_button.gd" id="4_lqi16"]
 [ext_resource type="Texture2D" uid="uid://bns33w6nl2qkb" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_load.png" id="5_8xdf1"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/btn_load.gd" id="6_dfxoh"]
+[ext_resource type="Script" uid="uid://sasjwh4oypq4" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/btn_load.gd" id="6_dfxoh"]
 [ext_resource type="Texture2D" uid="uid://cyvd8h2ouw8rg" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_audio.png" id="11_id5s2"]
 [ext_resource type="Texture2D" uid="uid://hjol4hvanbt5" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_text.png" id="12_y7pwl"]
 [ext_resource type="Texture2D" uid="uid://bg1txcy1ofatq" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_dialog_history.png" id="16_7j34k"]
 [ext_resource type="Texture2D" uid="uid://cxpcw7xvcjcfy" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/images/btn_quit.png" id="18_64yvb"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/btn_quit.gd" id="19_5u3hw"]
+[ext_resource type="Script" uid="uid://wsnilpnfcqyh" path="res://addons/popochiu/engine/objects/gui/components/settings_bar/buttons/btn_quit.gd" id="19_5u3hw"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mnuax"]
 atlas = ExtResource("3_b0ddg")

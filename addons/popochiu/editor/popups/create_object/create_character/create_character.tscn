@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://q0mx8fu63d03"]
 
 [ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_dtng2"]
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_character/create_character.gd" id="2_8yo43"]
+[ext_resource type="Script" uid="uid://bwr1ocg4pqd3" path="res://addons/popochiu/editor/popups/create_object/create_character/create_character.gd" id="2_8yo43"]
 
 [node name="CreateCharacterConfirmation" instance=ExtResource("1_dtng2")]
 script = ExtResource("2_8yo43")
