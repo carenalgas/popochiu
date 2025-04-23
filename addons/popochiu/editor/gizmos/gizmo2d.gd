@@ -4,9 +4,10 @@ extends RefCounted
 
 # Gizmo types
 enum {
-	GIZMO_POS, # square marker that represents (x,y) coordinates
-	GIZMO_HPOS, # vertical line that represents a horizontal coordinate
-	GIZMO_VPOS # horizontal line that represents a vertical coordinate
+	GIZMO_OFFSET, # square marker that represents (x,y) coordinates of a property offset
+	GIZMO_HOFFSET, # vertical line that represents a horizontal coordinate of a property
+	GIZMO_VOFFSET, # horizontal line that represents a vertical coordinate of a property
+	GIZMO_POS # square marker that directly manipulates node position
 }
 
 # Public vars
@@ -139,11 +140,11 @@ func _draw_gizmo(viewport: Control):
 		var pos_str = ""
 		var pos = _target_node.get(_target_property)
 		match _type:
-			GIZMO_POS:
+			GIZMO_OFFSET, GIZMO_POS:
 				pos_str = "(%d, %d)" % [pos.x, pos.y]
-			GIZMO_HPOS:
+			GIZMO_HOFFSET:
 				pos_str = "(%d)" % [pos]
-			GIZMO_VPOS:
+			GIZMO_VOFFSET:
 				pos_str = "(%d)" % [pos]
 		_label_shown = ("%s %s" % [_label, pos_str]).strip_edges()
 	else:
@@ -202,7 +203,10 @@ func _can_draw():
 
 func draw(viewport: Control, coord: Variant) -> void:
 	# Handmade coordinates type overloading
-	if not (coord is Vector2 or coord is int):
+	if not (
+			(coord is Vector2 and (_type == GIZMO_OFFSET or _type == GIZMO_POS)) or
+			(coord is int and (_type == GIZMO_HOFFSET or _type == GIZMO_VOFFSET))
+		):
 		return
 	# Check if the gizmo can be drawn
 	if not _can_draw():
@@ -218,7 +222,14 @@ func draw(viewport: Control, coord: Variant) -> void:
 	# This only takes into account the node offset discarding its transform basis
 	# (representing rotation, skew and scale) then it applies the viewport transform
 	# to take into account the zoom level
-	var center = _target_node.get_viewport_transform() * (_target_node.get_global_transform().origin + Vector2(coord))
+	var center: Vector2
+	
+	if _type == GIZMO_POS:
+		# For direct node position manipulation, coord IS the global position
+		center = _target_node.get_viewport_transform() * Vector2(coord)
+	else:
+		# For property offsets, add coord to the node's position
+		center = _target_node.get_viewport_transform() * (_target_node.get_global_transform().origin + Vector2(coord))
 
 	# Set handle color
 	_current_color = _color
@@ -228,7 +239,7 @@ func draw(viewport: Control, coord: Variant) -> void:
 
 	# Draw an horizontal or vertical line if the gizmo is one-dimensional
 	match _type:
-		GIZMO_VPOS:
+		GIZMO_VOFFSET:
 			var viewport_width = EditorInterface.get_editor_viewport_2d().size.x
 			center.x = viewport_width / 2
 			viewport.draw_line(
@@ -237,7 +248,7 @@ func draw(viewport: Control, coord: Variant) -> void:
 				_current_color,
 				2
 			)
-		GIZMO_HPOS:
+		GIZMO_HOFFSET:
 			var viewport_height = EditorInterface.get_editor_viewport_2d().size.y
 			center.y = viewport_height / 2
 			viewport.draw_line(
@@ -260,9 +271,14 @@ func drag_to(pos: Vector2):
 	var d = _grab_center_pos - _grab_mouse_pos
 	# Gizmo center position in global coordinates
 	var current_gizmo_pos = pos + d
-	# Distance between gizmo center position in 2D world node coordinates and
-	# node position	ignoring its transform basis (representing rotation, skew and scale)
-	_current_position = _target_node.get_viewport_transform().affine_inverse() * current_gizmo_pos - (target_node.get_global_transform().origin)
+
+	if _type == GIZMO_POS:
+		# For direct node position, just transform to local coordinates
+		_current_position = _target_node.get_viewport_transform().affine_inverse() * current_gizmo_pos
+	else:
+		# For property offsets, calculate distance between gizmo center position in 2D world node coordinates and
+    	# node position, ignoring its transform basis (which holds rotation, skew and scale)
+		_current_position = _target_node.get_viewport_transform().affine_inverse() * current_gizmo_pos - (target_node.get_global_transform().origin)
 
 func release():
 	_is_grabbed = false
@@ -280,11 +296,11 @@ func has_point(pos: Vector2):
 
 func get_position():
 	match _type:
-		GIZMO_POS:
+		GIZMO_OFFSET, GIZMO_POS:
 			return _current_position
-		GIZMO_HPOS:
+		GIZMO_HOFFSET:
 			return _current_position.x
-		GIZMO_VPOS:
+		GIZMO_VOFFSET:
 			return _current_position.y
 
 

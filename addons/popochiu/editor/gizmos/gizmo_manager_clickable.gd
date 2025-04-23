@@ -35,13 +35,13 @@ func _init_gizmo(gizmo_id: int) -> Gizmo2D:
     
     match gizmo_id:
         PopochiuGizmoPlugin.WALK_TO_POINT:
-            gizmo = Gizmo2D.new(_target_node, "walk_to_point", "Walk To Point", Gizmo2D.GIZMO_POS)
+            gizmo = Gizmo2D.new(_target_node, "walk_to_point", "Walk To Point", Gizmo2D.GIZMO_OFFSET)
         PopochiuGizmoPlugin.LOOK_AT_POINT:
-            gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_POS)
+            gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_OFFSET)
         PopochiuGizmoPlugin.BASELINE:
-            gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VPOS)
+            gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VOFFSET)
         PopochiuGizmoPlugin.DIALOG_POS:
-            gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_POS)
+            gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_OFFSET)
     
     _set_gizmo_theme(gizmo, gizmo_id)
     _set_gizmo_properties(gizmo)
