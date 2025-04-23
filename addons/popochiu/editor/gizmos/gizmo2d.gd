@@ -4,10 +4,17 @@ extends RefCounted
 
 # Gizmo types
 enum {
-	GIZMO_OFFSET, # square marker that represents (x,y) coordinates of a property offset
-	GIZMO_HOFFSET, # vertical line that represents a horizontal coordinate of a property
-	GIZMO_VOFFSET, # horizontal line that represents a vertical coordinate of a property
-	GIZMO_POS # square marker that directly manipulates node position
+	GIZMO_OFFSET, # Square marker that represents (x,y) coordinates of a property offset
+	GIZMO_HOFFSET, # Vertical line that represents a horizontal coordinate of a property
+	GIZMO_VOFFSET, # Horizontal line that represents a vertical coordinate of a property
+	GIZMO_POS # Square marker that directly manipulates node position
+}
+
+# Visibility modes
+enum {
+	VISIBILITY_MODE_DEFAULT, # Visible only if node is visible (default)
+	VISIBILITY_MODE_FORCE_SHOW, # Always visible regardless of node visibility
+	VISIBILITY_MODE_FORCE_HIDE # Always hidden regardless of node visibility
 }
 
 # Public vars
@@ -46,6 +53,7 @@ var _current_color: Color
 var _is_grabbed: bool = false # Gizmo is moving
 var _grab_center_pos: Vector2 # Starting center position when grabbing
 var _grab_mouse_pos: Vector2 # Starting mouse position when grabbing
+var _visibility_mode: int # How visibility is determined
 
 
 #region Virtual ####################################################################################
@@ -55,11 +63,13 @@ func _init(
 	property: String,
 	label: String,
 	type: int,
+	visibility_mode: int = VISIBILITY_MODE_DEFAULT
 ):
 	_target_node = node
 	_target_property = property
 	_type = type
 	_label = label
+	_visibility_mode = visibility_mode
 
 	set_theme(
 		Color.AQUA,
@@ -194,7 +204,14 @@ func _draw_gizmo(viewport: Control):
 		)
 
 func _can_draw():
-	return (visible and _target_node != null and _target_node.is_visible_in_tree())
+	match _visibility_mode:
+		VISIBILITY_MODE_DEFAULT:
+			return (visible and _target_node != null and _target_node.is_visible_in_tree())
+		VISIBILITY_MODE_FORCE_SHOW:
+			return (visible and _target_node != null)
+		VISIBILITY_MODE_FORCE_HIDE:
+			return false
+	return false
 
 
 #endregion

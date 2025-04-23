@@ -26,8 +26,8 @@ func initialize_gizmos(font: Font, color_settings: Dictionary) -> void:
 
 
 func _create_marker_gizmo(marker: PopochiuMarker) -> Gizmo2D:
-    # Create a gizmo for a specific marker
-    var gizmo = Gizmo2D.new(marker, "position", "", Gizmo2D.GIZMO_POS)
+    # Create a gizmo for a specific marker with forced visibility
+    var gizmo = Gizmo2D.new(marker, "position", "", Gizmo2D.GIZMO_POS, Gizmo2D.VISIBILITY_MODE_FORCE_SHOW)
     _configure_gizmo(gizmo)
     return gizmo
 
