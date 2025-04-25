@@ -11,7 +11,7 @@ var _current_room: PopochiuRoom  # Reference to the current room
 var _undo: EditorUndoRedoManager
 var _marker_gizmos: Dictionary = {}  # Dictionary of marker nodes to their gizmos
 var _grabbed_gizmo: Gizmo2D  # Currently grabbed gizmo
-var _grabbed_marker: PopochiuMarker  # Currently grabbed marker node
+var _grabbed_marker: Marker2D  # Currently grabbed marker node
 var _gizmos_visible: bool = true  # Global visibility state
 
 
@@ -25,7 +25,7 @@ func initialize_gizmos(font: Font, color_settings: Dictionary) -> void:
     _marker_gizmos.clear()
 
 
-func _create_marker_gizmo(marker: PopochiuMarker) -> Gizmo2D:
+func _create_marker_gizmo(marker: Marker2D) -> Gizmo2D:
     # Create a gizmo for a specific marker with forced visibility
     var gizmo = Gizmo2D.new(marker, "position", "", Gizmo2D.GIZMO_POS, Gizmo2D.VISIBILITY_MODE_FORCE_SHOW)
     _configure_gizmo(gizmo)
@@ -74,7 +74,7 @@ func _scan_for_markers(room: PopochiuRoom) -> void:
 
     # Find all marker nodes under Markers
     for child in markers_container.get_children():
-        if child is PopochiuMarker:
+        if child is Marker2D:
             _marker_gizmos[child] = _create_marker_gizmo(child)
 
 
