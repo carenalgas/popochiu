@@ -57,8 +57,10 @@ func _edit(object: Object) -> void:
         return
 
     # If the user isn't editing a Room or Character scene, no gizmos should be shown
-    var edited_root = EditorInterface.get_edited_scene_root()
-    if not (edited_root is PopochiuCharacter or edited_root is PopochiuRoom):
+    if not (
+        PopochiuEditorHelper.is_editing_room() or
+        PopochiuEditorHelper.is_editing_character()
+    ):
         # Clear all gizmos when not in a relevant scene
         _marker_manager.reset()
         _clickable_manager.reset()
@@ -66,6 +68,7 @@ func _edit(object: Object) -> void:
 
     # Track if any managers are handling objects
     var has_handled_objects = false
+    var edited_root = EditorInterface.get_edited_scene_root()
 
     # Always call the marker manager with the edited root
     # This ensures markers are shown in rooms and cleared in other scenes
@@ -83,6 +86,13 @@ func _edit(object: Object) -> void:
 
 
 func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
+    # Only draw gizmos in Room or Character scenes.
+    # This is necessary to aviod errors when opening scenes that are not rooms or characters,
+    # coming from a room with markers! Godot calls this method still once before loading the
+    # new scene but it finds no markers to attach to.
+    if not (PopochiuEditorHelper.is_editing_room() or PopochiuEditorHelper.is_editing_character()):
+        return
+
     _clickable_manager.draw_gizmos(viewport_control)
     _marker_manager.draw_gizmos(viewport_control)
 
