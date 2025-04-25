@@ -59,16 +59,19 @@ func _edit(object: Object) -> void:
     # If the user isn't editing a Room or Character scene, no gizmos should be shown
     var edited_root = EditorInterface.get_edited_scene_root()
     if not (edited_root is PopochiuCharacter or edited_root is PopochiuRoom):
+        # Clear all gizmos when not in a relevant scene
+        _marker_manager.reset()
+        _clickable_manager.reset()
         return
 
     # Track if any managers are handling objects
     var has_handled_objects = false
 
-    # If we're in a room, scan for all markers
-    if edited_root is PopochiuRoom:
-        has_handled_objects = _marker_manager.handle_object(edited_root, edited_root) or has_handled_objects
+    # Always call the marker manager with the edited root
+    # This ensures markers are shown in rooms and cleared in other scenes
+    has_handled_objects = _marker_manager.handle_object(edited_root, edited_root) or has_handled_objects
 
-    # Let the clickable manager handle the object if applicable
+    # Handle clickables with the currently selected object
     has_handled_objects = _clickable_manager.handle_object(object, edited_root) or has_handled_objects
 
     # If any manager is handling objects, connect to inspector signal

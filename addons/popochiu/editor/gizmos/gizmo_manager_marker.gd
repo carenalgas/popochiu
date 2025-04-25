@@ -52,15 +52,15 @@ func _configure_gizmo(gizmo: Gizmo2D) -> void:
 
 
 func handle_object(object: Object, edited_root: Node) -> bool:
-    # Find all markers in the scene
-    if edited_root is PopochiuRoom:
-        _current_room = edited_root
-        _scan_for_markers(edited_root)
-        return _marker_gizmos.size() > 0
+    # If we're not in a room, reset and return false
+    if not edited_root is PopochiuRoom:
+        reset()
+        return false
 
-    # If we're not in a room, reset the status and return false
-    _current_room = null
-    return false
+    # Find all markers in the scene
+    _current_room = edited_root
+    _scan_for_markers(edited_root)
+    return _marker_gizmos.size() > 0
 
 
 func _scan_for_markers(room: PopochiuRoom) -> void:
@@ -161,14 +161,14 @@ func has_active_gizmo() -> bool:
     return _grabbed_gizmo != null
 
 
+# Update all existing gizmos
 func update_gizmo_settings() -> void:
-    # Update all existing gizmos
     for marker in _marker_gizmos:
         _configure_gizmo(_marker_gizmos[marker])
 
 
+# Set visibility for all marker gizmos
 func set_gizmo_visibility(gizmo_id: int, visible: bool) -> void:
-    # Set visibility for all marker gizmos
     _gizmos_visible = visible
 
     for marker in _marker_gizmos:
@@ -183,7 +183,16 @@ func _update_properties() -> void:
         )
 
 
+# Refresh markers when scene changes
 func refresh_markers() -> void:
-    # Refresh markers when scene changes
     if _current_room:
         _scan_for_markers(_current_room)
+
+
+# Clear all marker gizmos and reset internal state.
+# Called when changing scenes or explicitly resetting the manager.
+func reset() -> void:
+    _marker_gizmos.clear()
+    _current_room = null
+    _grabbed_gizmo = null
+    _grabbed_marker = null

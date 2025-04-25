@@ -66,7 +66,7 @@ func _set_gizmo_properties(gizmo: Gizmo2D) -> void:
 
 func handle_object(object: Object, edited_root: Node) -> bool:
     if not object is PopochiuClickable:
-        _active_gizmos.clear()
+        reset()
         return false
 
     _target_node = object
@@ -175,3 +175,11 @@ func _update_properties() -> void:
             _grabbed_gizmo.target_property,
             _grabbed_gizmo.get_position()
         )
+
+
+# Clear all active gizmos and reset internal state.
+# Called when changing scenes or explicitly resetting the manager.
+func reset() -> void:
+    _active_gizmos.clear()
+    _target_node = null
+    _grabbed_gizmo = null
