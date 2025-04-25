@@ -29,6 +29,9 @@ func create(param: PopochiuRoomObjFactoryParam) -> int:
 	var new_obj: Marker2D = Marker2D.new()
 	new_obj.name = _pascal_name
 
+	# Make the node invisible (we have custom gizmos for Marker2D in rooms)
+	new_obj.visible = false
+
 	# Save the marker scene (.tscn) and put it into _scene class property
 	result_code = _save_obj_scene(new_obj)
 	if result_code != ResultCodes.SUCCESS: return result_code
