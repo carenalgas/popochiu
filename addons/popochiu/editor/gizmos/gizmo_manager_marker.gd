@@ -89,6 +89,12 @@ func _find_markers_container(root: Node) -> Node:
 func draw_gizmos(viewport_control: Control) -> void:
     # Draw all marker gizmos
     for marker in _marker_gizmos:
+        # Check if the marker is available.
+        # This avoids errors when the user opens another scene, coming from a room
+        # with markers.
+        if not is_instance_valid(marker) or not marker.is_inside_tree():
+            continue
+        # Draw the gizmo
         var gizmo = _marker_gizmos[marker]
         if gizmo.visible:
             gizmo.draw(viewport_control, marker.get(gizmo.target_property))
