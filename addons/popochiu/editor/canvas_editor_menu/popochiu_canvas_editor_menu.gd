@@ -314,25 +314,34 @@ func _set_buttons_visibility() -> void:
 	if not (
 		PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object)
 		or PopochiuEditorHelper.is_editing_room()
+		or PopochiuEditorHelper.is_editing_character()
 	):
 		return
 
 	# Now we know we have to show the toolbar
 	show()
 
-	# Every Popochiu Object always shows the polygon editing button when edited
-	# unless we are in a room scene and selected a character
+	# Every Popochiu clickable always shows the polygon editing button when selected
+	# in a room scene. Same when the scene is a character scene.
 	if (
-		PopochiuEditorHelper.is_editing_room()
-		and (
-			PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object)
-			and not PopochiuEditorHelper.is_character(_active_popochiu_object)
+		(
+			PopochiuEditorHelper.is_editing_room()
+			and PopochiuEditorHelper.is_popochiu_clickable(_active_popochiu_object)
 		)
+		or PopochiuEditorHelper.is_editing_character()
 	):
 		btn_interaction_polygon.show()
-	
+
+	# Only exception is: we are in a room scene and selected a character.
+	# In this case, we don't want to show the polygon editing button.
+	if (
+		PopochiuEditorHelper.is_editing_room()
+		and PopochiuEditorHelper.is_character(_active_popochiu_object)
+	):
+		btn_interaction_polygon.hide()
+
 	# If the selected node in the editor is actually a popochiu object polygon
-	# We don't have to show the other buttons, only the polygon editing toggle
+	# We don't have to show the other buttons, only the polygon editing toggle.
 	if PopochiuEditorHelper.is_popochiu_obj_polygon(
 		EditorInterface.get_selection().get_selected_nodes()[0]
 	):
