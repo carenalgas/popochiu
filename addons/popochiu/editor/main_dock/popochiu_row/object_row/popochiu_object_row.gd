@@ -165,6 +165,12 @@ func _deferred_open() -> void:
 		EditorInterface.set_main_screen_editor("2D")
 		EditorInterface.open_scene_from_path(path)
 
+		# Select the scene root node automatically
+		# to make inspector, gizmos and toolbar available
+		# for the opened object scene
+		if EditorInterface.get_edited_scene_root():
+			EditorInterface.get_selection().clear()
+			EditorInterface.get_selection().add_node(EditorInterface.get_edited_scene_root())
 
 func _open_script() -> void:
 	var script_path := path
