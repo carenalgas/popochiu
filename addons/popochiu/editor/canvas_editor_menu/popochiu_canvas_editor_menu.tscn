@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://skjlvpct7ah7" path="res://addons/popochiu/icons/btn_look_at_point.svg" id="4_bge33"]
 [ext_resource type="Texture2D" uid="uid://cekffh7bsuanp" path="res://addons/popochiu/icons/btn_dialog_position.svg" id="5_803mj"]
 [ext_resource type="Texture2D" uid="uid://cyun4rylrtrvm" path="res://addons/popochiu/icons/btn_interaction_polygon.svg" id="6_6oxl8"]
-[ext_resource type="Texture2D" uid="uid://cv2dw2chvbvuv" path="res://addons/popochiu/icons/btn_markers.svg" id="6_yea6f"]
+[ext_resource type="Texture2D" uid="uid://d11mg7ftbxvl0" path="res://addons/popochiu/icons/btn_markers.svg" id="6_yea6f"]
 
 [node name="PopochiuCanvasEditorMenu" type="HBoxContainer"]
 visible = false
@@ -24,10 +24,6 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Room Markers"
 theme_type_variation = &"FlatButton"
-theme_override_colors/icon_normal_color = Color(0.427451, 0.945098, 1, 1)
-theme_override_colors/icon_pressed_color = Color(0.344, 0.7544, 0.8, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("6_yea6f")
@@ -37,10 +33,6 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Baseline"
 theme_type_variation = &"FlatButton"
-theme_override_colors/icon_normal_color = Color(1, 0.462745, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.8, 0.370196, 0, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("2_w3cau")
@@ -50,10 +42,6 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Walk-To Point"
 theme_type_variation = &"FlatButton"
-theme_override_colors/icon_normal_color = Color(0, 1, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0, 0.8, 0, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("3_ifql1")
@@ -63,10 +51,6 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Look-At Point"
 theme_type_variation = &"FlatButton"
-theme_override_colors/icon_normal_color = Color(1, 0, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.8, 0, 0, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("4_bge33")
@@ -76,10 +60,6 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Dialog Position"
 theme_type_variation = &"FlatButton"
-theme_override_colors/icon_normal_color = Color(1, 0, 1, 1)
-theme_override_colors/icon_pressed_color = Color(0.8, 0, 0.8, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("5_803mj")
@@ -89,9 +69,5 @@ unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Interaction Polygon"
 theme_type_variation = &"FlatButton"
-theme_override_colors/icon_normal_color = Color(1, 0, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.8, 0, 0, 1)
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 toggle_mode = true
 icon = ExtResource("6_6oxl8")
