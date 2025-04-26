@@ -145,21 +145,6 @@ func _draw_outlines(viewport: Control):
 
 func _draw_gizmo(viewport: Control):
 
-	# Add gizmo position to the label, if it's set
-	if show_position:
-		var pos_str = ""
-		var pos = _target_node.get(_target_property)
-		match _type:
-			GIZMO_OFFSET, GIZMO_POS:
-				pos_str = "(%d, %d)" % [pos.x, pos.y]
-			GIZMO_HOFFSET:
-				pos_str = "(%d)" % [pos]
-			GIZMO_VOFFSET:
-				pos_str = "(%d)" % [pos]
-		_label_shown = ("%s %s" % [_label, pos_str]).strip_edges()
-	else:
-		_label_shown = _label
-
 	# Draw the handle (on top of the line, if it's present)
 	viewport.draw_rect(
 		_handle,
@@ -213,6 +198,21 @@ func _can_draw():
 			return false
 	return false
 
+func _update_label_shown() -> void:
+	if show_position and _target_node != null and _target_property:
+		var pos_str = ""
+		var pos = _target_node.get(_target_property)
+		match _type:
+			GIZMO_OFFSET, GIZMO_POS:
+				pos_str = "(%d, %d)" % [pos.x, pos.y]
+			GIZMO_HOFFSET:
+				pos_str = "(%d)" % [pos]
+			GIZMO_VOFFSET:
+				pos_str = "(%d)" % [pos]
+		_label_shown = ("%s %s" % [_label, pos_str]).strip_edges()
+	else:
+		_label_shown = _label
+
 
 #endregion
 
@@ -228,6 +228,9 @@ func draw(viewport: Control, coord: Variant) -> void:
 	# Check if the gizmo can be drawn
 	if not _can_draw():
 		return
+	
+	# Update label text before any drawing occurs
+	_update_label_shown()
 	
 	# Coordinates normalization (to vector) for horizontal or vertical gizmos
 	# Both axis are set to the same value, then ignore one or the other
@@ -278,9 +281,11 @@ func draw(viewport: Control, coord: Variant) -> void:
 	# Initialize the handle in the right position
 	_handle = Rect2(center - _size / 2, _size)
 
+	# Draw outlines first to ensure they're included in the render
 	if show_outlines:
 		_draw_outlines(viewport)
 
+	# Then draw the gizmo itself
 	_draw_gizmo(viewport)
 
 func drag_to(pos: Vector2):
