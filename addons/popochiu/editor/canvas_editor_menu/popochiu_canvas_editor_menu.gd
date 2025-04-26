@@ -326,7 +326,7 @@ func _set_buttons_visibility() -> void:
 	if (
 		(
 			PopochiuEditorHelper.is_editing_room()
-			and PopochiuEditorHelper.is_popochiu_clickable(_active_popochiu_object)
+			and PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object)
 		)
 		or PopochiuEditorHelper.is_editing_character()
 	):
