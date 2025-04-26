@@ -101,7 +101,7 @@ func _ready() -> void:
 	btn_resource.icon = get_theme_icon("Object", "EditorIcons")
 	btn_resource_script.icon = get_theme_icon("GDScript", "EditorIcons")
 	
-	room_name.pressed.connect(_select_file)
+	room_name.pressed.connect(_edit_root_node)
 	btn_script.pressed.connect(_open_script)
 	btn_resource.pressed.connect(_edit_resource)
 	btn_resource_script.pressed.connect(_open_resource_script)
@@ -236,8 +236,18 @@ func _select_in_tree(por: PopochiuRoomObjectRow) -> void:
 	_last_selected = por
 
 
+func _edit_root_node() -> void:
+	_select_file()
+	_select_root_node()
+
+
 func _select_file() -> void:
 	EditorInterface.select_file(opened_room.scene_file_path)
+
+
+func _select_root_node() -> void:
+	EditorInterface.get_selection().clear()
+	EditorInterface.get_selection().add_node(EditorInterface.get_edited_scene_root())
 
 
 func _open_script() -> void:
