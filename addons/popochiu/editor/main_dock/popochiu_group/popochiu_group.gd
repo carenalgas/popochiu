@@ -97,7 +97,7 @@ func remove_by_name(node_name: String) -> void:
 		var node: HBoxContainer = list.get_node(node_name)
 		
 		list.remove_child(node)
-		node.free()
+		node.queue_free()
 
 
 func add_header_button(btn: Button) -> void:
