@@ -14,22 +14,15 @@ var _active_gizmos: Array[Gizmo2D] = []
 var _grabbed_gizmo: Gizmo2D
 
 
+#region Godot ######################################################################################
 func _init(undo_manager: EditorUndoRedoManager):
     _undo = undo_manager
     _gizmos.resize(4)
 
 
-func initialize_gizmos(font: Font, color_settings: Dictionary) -> void:
-    _font = font
-    _color_settings = color_settings
-    
-    # Initialize gizmos for PopochiuClickable objects
-    _gizmos[PopochiuGizmoPlugin.WALK_TO_POINT] = _init_gizmo(PopochiuGizmoPlugin.WALK_TO_POINT)
-    _gizmos[PopochiuGizmoPlugin.LOOK_AT_POINT] = _init_gizmo(PopochiuGizmoPlugin.LOOK_AT_POINT)
-    _gizmos[PopochiuGizmoPlugin.BASELINE] = _init_gizmo(PopochiuGizmoPlugin.BASELINE)
-    _gizmos[PopochiuGizmoPlugin.DIALOG_POS] = _init_gizmo(PopochiuGizmoPlugin.DIALOG_POS)
+#endregion
 
-
+#region Private #####################################################################################
 func _init_gizmo(gizmo_id: int) -> Gizmo2D:
     var gizmo: Gizmo2D
     
@@ -62,6 +55,28 @@ func _set_gizmo_properties(gizmo: Gizmo2D) -> void:
     gizmo.show_target_name = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_NODE_NAME)
     gizmo.show_outlines = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_OUTLINE)
     gizmo.show_position = PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_SHOW_POSITION)
+
+
+func _update_properties() -> void:
+    if _grabbed_gizmo and _grabbed_gizmo.target_property:
+        _target_node.set(
+            _grabbed_gizmo.target_property,
+            _grabbed_gizmo.get_position()
+        )
+
+
+#endregion
+
+#region Public #####################################################################################
+func initialize_gizmos(font: Font, color_settings: Dictionary) -> void:
+    _font = font
+    _color_settings = color_settings
+
+    # Initialize gizmos for PopochiuClickable objects
+    _gizmos[PopochiuGizmoPlugin.WALK_TO_POINT] = _init_gizmo(PopochiuGizmoPlugin.WALK_TO_POINT)
+    _gizmos[PopochiuGizmoPlugin.LOOK_AT_POINT] = _init_gizmo(PopochiuGizmoPlugin.LOOK_AT_POINT)
+    _gizmos[PopochiuGizmoPlugin.BASELINE] = _init_gizmo(PopochiuGizmoPlugin.BASELINE)
+    _gizmos[PopochiuGizmoPlugin.DIALOG_POS] = _init_gizmo(PopochiuGizmoPlugin.DIALOG_POS)
 
 
 func handle_object(object: Object, edited_root: Node) -> bool:
@@ -169,17 +184,12 @@ func set_gizmo_visibility(gizmo_id: int, visible: bool) -> void:
         _gizmos[gizmo_id].visible = visible
 
 
-func _update_properties() -> void:
-    if _grabbed_gizmo and _grabbed_gizmo.target_property:
-        _target_node.set(
-            _grabbed_gizmo.target_property,
-            _grabbed_gizmo.get_position()
-        )
-
-
 # Clear all active gizmos and reset internal state.
 # Called when changing scenes or explicitly resetting the manager.
 func reset() -> void:
     _active_gizmos.clear()
     _target_node = null
     _grabbed_gizmo = null
+
+
+#endregion

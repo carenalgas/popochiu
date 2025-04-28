@@ -15,16 +15,14 @@ var _grabbed_marker: Marker2D  # Currently grabbed marker node
 var _gizmos_visible: bool = true  # Global visibility state
 
 
+#region Godot ######################################################################################
 func _init(undo_manager: EditorUndoRedoManager):
     _undo = undo_manager
 
 
-func initialize_gizmos(font: Font, color_settings: Dictionary) -> void:
-    _font = font
-    _color_settings = color_settings
-    _marker_gizmos.clear()
+#endregion
 
-
+#region Private #####################################################################################
 func _create_marker_gizmo(marker: Marker2D) -> Gizmo2D:
     # Create a gizmo for a specific marker with forced visibility
     var gizmo = Gizmo2D.new(marker, "position", "", Gizmo2D.GIZMO_POS, Gizmo2D.VISIBILITY_MODE_FORCE_SHOW)
@@ -51,18 +49,6 @@ func _configure_gizmo(gizmo: Gizmo2D) -> void:
     # Additional marker-specific settings could be added here
 
 
-func handle_object(object: Object, edited_root: Node) -> bool:
-    # If we're not in a room, reset and return false
-    if not edited_root is PopochiuRoom:
-        reset()
-        return false
-
-    # Find all markers in the scene
-    _current_room = edited_root
-    _scan_for_markers(edited_root)
-    return _marker_gizmos.size() > 0
-
-
 func _scan_for_markers(room: PopochiuRoom) -> void:
     # Clear existing gizmos
     _marker_gizmos.clear()
@@ -84,6 +70,34 @@ func _find_markers_container(root: Node) -> Node:
         if child.name == "Markers":
             return child
     return null
+
+func _update_properties() -> void:
+    if _grabbed_gizmo and _grabbed_marker:
+        _grabbed_marker.set(
+            _grabbed_gizmo.target_property,
+            _grabbed_gizmo.get_position()
+        )
+
+
+#endregion
+
+#region Public #####################################################################################
+func initialize_gizmos(font: Font, color_settings: Dictionary) -> void:
+    _font = font
+    _color_settings = color_settings
+    _marker_gizmos.clear()
+
+
+func handle_object(object: Object, edited_root: Node) -> bool:
+    # If we're not in a room, reset and return false
+    if not edited_root is PopochiuRoom:
+        reset()
+        return false
+
+    # Find all markers in the scene
+    _current_room = edited_root
+    _scan_for_markers(edited_root)
+    return _marker_gizmos.size() > 0
 
 
 func draw_gizmos(viewport_control: Control) -> void:
@@ -181,14 +195,6 @@ func set_gizmo_visibility(gizmo_id: int, visible: bool) -> void:
         _marker_gizmos[marker].visible = visible
 
 
-func _update_properties() -> void:
-    if _grabbed_gizmo and _grabbed_marker:
-        _grabbed_marker.set(
-            _grabbed_gizmo.target_property,
-            _grabbed_gizmo.get_position()
-        )
-
-
 # Refresh markers when scene changes
 func refresh_markers() -> void:
     if _current_room:
@@ -202,3 +208,6 @@ func reset() -> void:
     _current_room = null
     _grabbed_gizmo = null
     _grabbed_marker = null
+
+
+#endregion
