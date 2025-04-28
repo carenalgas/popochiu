@@ -4,9 +4,17 @@ extends RefCounted
 
 # Gizmo types
 enum {
-	GIZMO_POS, # square marker that represents (x,y) coordinates
-	GIZMO_HPOS, # vertical line that represents a horizontal coordinate
-	GIZMO_VPOS # horizontal line that represents a vertical coordinate
+	GIZMO_OFFSET, # Square marker that represents (x,y) coordinates of a property offset
+	GIZMO_HOFFSET, # Vertical line that represents a horizontal coordinate of a property
+	GIZMO_VOFFSET, # Horizontal line that represents a vertical coordinate of a property
+	GIZMO_POS # Square marker that directly manipulates node position
+}
+
+# Visibility modes
+enum {
+	VISIBILITY_MODE_DEFAULT, # Visible only if node is visible (default)
+	VISIBILITY_MODE_FORCE_SHOW, # Always visible regardless of node visibility
+	VISIBILITY_MODE_FORCE_HIDE # Always hidden regardless of node visibility
 }
 
 # Public vars
@@ -23,6 +31,7 @@ var position:
 var show_connector: bool = true # Show gizmo-to-node connectors
 var show_outlines: bool = true
 var show_target_name: bool = true # Show target node name
+var show_position: bool = true # Show gizmo position in the label
 var visible: bool = true # Gizmo visibility
 
 # Private vars
@@ -34,6 +43,7 @@ var _target_property: String
 var _size: Vector2 # Gizmo width and height
 var _color: Color # Gizmo color
 var _label: String # A label to be painted near the Gizmo
+var _label_shown: String # The label that is actually shown (may include position)
 var _font: Font # Label font
 var _font_size: int # Label font size
 # State
@@ -43,6 +53,7 @@ var _current_color: Color
 var _is_grabbed: bool = false # Gizmo is moving
 var _grab_center_pos: Vector2 # Starting center position when grabbing
 var _grab_mouse_pos: Vector2 # Starting mouse position when grabbing
+var _visibility_mode: int # How visibility is determined
 
 
 #region Virtual ####################################################################################
@@ -52,11 +63,13 @@ func _init(
 	property: String,
 	label: String,
 	type: int,
+	visibility_mode: int = VISIBILITY_MODE_DEFAULT
 ):
 	_target_node = node
 	_target_property = property
 	_type = type
 	_label = label
+	_visibility_mode = visibility_mode
 
 	set_theme(
 		Color.AQUA,
@@ -111,8 +124,8 @@ func _draw_outlines(viewport: Control):
 	viewport.draw_string_outline(
 		_font,
 		_handle.position + Vector2(0, _size.y + 2 + _font.get_ascent(_font_size)),
-		_label, HORIZONTAL_ALIGNMENT_CENTER,
-		- 1,
+		_label_shown, HORIZONTAL_ALIGNMENT_CENTER,
+		-1,
 		_font_size,
 		6,
 		Color.BLACK
@@ -154,12 +167,12 @@ func _draw_gizmo(viewport: Control):
 		)
 
 	# Draw the label, if it's set and non empty
-	if _label:
+	if _label_shown:
 		viewport.draw_string(
 			_font,
 			_handle.position + Vector2(0, _size.y + 2 + _font.get_ascent(_font_size)),
-			_label, HORIZONTAL_ALIGNMENT_CENTER,
-			- 1,
+			_label_shown, HORIZONTAL_ALIGNMENT_CENTER,
+			-1,
 			_font_size,
 			_current_color
 		)
@@ -170,13 +183,35 @@ func _draw_gizmo(viewport: Control):
 			_handle.position + Vector2(0, -_font.get_descent(_font_size)),
 			_target_node.name,
 			HORIZONTAL_ALIGNMENT_CENTER,
-			- 1,
+			-1,
 			_font_size,
 			_current_color
 		)
 
 func _can_draw():
-	return (visible and _target_node != null and _target_node.is_visible_in_tree())
+	match _visibility_mode:
+		VISIBILITY_MODE_DEFAULT:
+			return (visible and _target_node != null and _target_node.is_visible_in_tree())
+		VISIBILITY_MODE_FORCE_SHOW:
+			return (visible and _target_node != null)
+		VISIBILITY_MODE_FORCE_HIDE:
+			return false
+	return false
+
+func _update_label_shown() -> void:
+	if show_position and _target_node != null and _target_property:
+		var pos_str = ""
+		var pos = _target_node.get(_target_property)
+		match _type:
+			GIZMO_OFFSET, GIZMO_POS:
+				pos_str = "(%d, %d)" % [pos.x, pos.y]
+			GIZMO_HOFFSET:
+				pos_str = "(%d)" % [pos]
+			GIZMO_VOFFSET:
+				pos_str = "(%d)" % [pos]
+		_label_shown = ("%s %s" % [_label, pos_str]).strip_edges()
+	else:
+		_label_shown = _label
 
 
 #endregion
@@ -185,11 +220,17 @@ func _can_draw():
 
 func draw(viewport: Control, coord: Variant) -> void:
 	# Handmade coordinates type overloading
-	if not (coord is Vector2 or coord is int):
+	if not (
+			(coord is Vector2 and (_type == GIZMO_OFFSET or _type == GIZMO_POS)) or
+			(coord is int and (_type == GIZMO_HOFFSET or _type == GIZMO_VOFFSET))
+		):
 		return
 	# Check if the gizmo can be drawn
 	if not _can_draw():
 		return
+	
+	# Update label text before any drawing occurs
+	_update_label_shown()
 	
 	# Coordinates normalization (to vector) for horizontal or vertical gizmos
 	# Both axis are set to the same value, then ignore one or the other
@@ -201,7 +242,14 @@ func draw(viewport: Control, coord: Variant) -> void:
 	# This only takes into account the node offset discarding its transform basis
 	# (representing rotation, skew and scale) then it applies the viewport transform
 	# to take into account the zoom level
-	var center = _target_node.get_viewport_transform() * (_target_node.get_global_transform().origin + Vector2(coord))
+	var center: Vector2
+	
+	if _type == GIZMO_POS:
+		# For direct node position manipulation, coord IS the global position
+		center = _target_node.get_viewport_transform() * Vector2(coord)
+	else:
+		# For property offsets, add coord to the node's position
+		center = _target_node.get_viewport_transform() * (_target_node.get_global_transform().origin + Vector2(coord))
 
 	# Set handle color
 	_current_color = _color
@@ -211,7 +259,7 @@ func draw(viewport: Control, coord: Variant) -> void:
 
 	# Draw an horizontal or vertical line if the gizmo is one-dimensional
 	match _type:
-		GIZMO_VPOS:
+		GIZMO_VOFFSET:
 			var viewport_width = EditorInterface.get_editor_viewport_2d().size.x
 			center.x = viewport_width / 2
 			viewport.draw_line(
@@ -220,7 +268,7 @@ func draw(viewport: Control, coord: Variant) -> void:
 				_current_color,
 				2
 			)
-		GIZMO_HPOS:
+		GIZMO_HOFFSET:
 			var viewport_height = EditorInterface.get_editor_viewport_2d().size.y
 			center.y = viewport_height / 2
 			viewport.draw_line(
@@ -233,9 +281,11 @@ func draw(viewport: Control, coord: Variant) -> void:
 	# Initialize the handle in the right position
 	_handle = Rect2(center - _size / 2, _size)
 
+	# Draw outlines first to ensure they're included in the render
 	if show_outlines:
 		_draw_outlines(viewport)
 
+	# Then draw the gizmo itself
 	_draw_gizmo(viewport)
 
 func drag_to(pos: Vector2):
@@ -243,9 +293,14 @@ func drag_to(pos: Vector2):
 	var d = _grab_center_pos - _grab_mouse_pos
 	# Gizmo center position in global coordinates
 	var current_gizmo_pos = pos + d
-	# Distance between gizmo center position in 2D world node coordinates and
-	# node position	ignoring its transform basis (representing rotation, skew and scale)
-	_current_position = _target_node.get_viewport_transform().affine_inverse() * current_gizmo_pos - (target_node.get_global_transform().origin)
+
+	if _type == GIZMO_POS:
+		# For direct node position, just transform to local coordinates
+		_current_position = _target_node.get_viewport_transform().affine_inverse() * current_gizmo_pos
+	else:
+		# For property offsets, calculate distance between gizmo center position in 2D world node coordinates and
+    	# node position, ignoring its transform basis (which holds rotation, skew and scale)
+		_current_position = _target_node.get_viewport_transform().affine_inverse() * current_gizmo_pos - (target_node.get_global_transform().origin)
 
 func release():
 	_is_grabbed = false
@@ -263,11 +318,11 @@ func has_point(pos: Vector2):
 
 func get_position():
 	match _type:
-		GIZMO_POS:
+		GIZMO_OFFSET, GIZMO_POS:
 			return _current_position
-		GIZMO_HPOS:
+		GIZMO_HOFFSET:
 			return _current_position.x
-		GIZMO_VPOS:
+		GIZMO_VOFFSET:
 			return _current_position.y
 
 

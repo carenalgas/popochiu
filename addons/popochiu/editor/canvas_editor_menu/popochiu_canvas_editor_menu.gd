@@ -6,6 +6,7 @@ extends HBoxContainer
 var _active_popochiu_object: Node = null
 var _shown_helpers := []
 
+@onready var btn_markers: Button = %BtnMarkers
 @onready var btn_baseline: Button = %BtnBaseline
 @onready var btn_walk_to_point: Button = %BtnWalkToPoint
 @onready var btn_look_at_point: Button = %BtnLookAtPoint
@@ -20,6 +21,7 @@ func _ready() -> void:
 	_reset_buttons_state()
 
 	# Connect to child signals
+	btn_markers.pressed.connect(_toggle_markers_visibility)
 	btn_baseline.pressed.connect(_toggle_baseline_visibility)
 	btn_walk_to_point.pressed.connect(_toggle_walk_to_point_visibility)
 	btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
@@ -36,30 +38,37 @@ func _ready() -> void:
 #endregion
 
 #region Private ####################################################################################
+func _toggle_markers_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.MARKER_POS,
+		btn_markers.button_pressed
+	)
+
+
+func _toggle_baseline_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.BASELINE,
+		btn_baseline.button_pressed
+	)
+
+
 func _toggle_walk_to_point_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.WALK_TO_POINT,
+		PopochiuGizmoPlugin.WALK_TO_POINT,
 		btn_walk_to_point.button_pressed
 	)
 
 
 func _toggle_look_at_point_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.LOOK_AT_POINT,
+		PopochiuGizmoPlugin.LOOK_AT_POINT,
 		btn_look_at_point.button_pressed
-	)
-
-
-func _toggle_baseline_visibility() -> void:
-	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.BASELINE,
-		btn_baseline.button_pressed
 	)
 
 
 func _toggle_dialog_pos_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoClickablePlugin.DIALOG_POS,
+		PopochiuGizmoPlugin.DIALOG_POS,
 		btn_dialog_pos.button_pressed
 	)
 
@@ -202,6 +211,12 @@ func _on_selection_changed() -> void:
 ## Handles the editor config that allows the WAs polygons to be always visible,
 ## not only during editing.
 func _set_walkable_areas_visibility() -> void:
+	# Avoid errors when the editor has no scene open
+	if EditorInterface.get_edited_scene_root() == null:
+		return
+
+	# get_all_children returns an empty array if the node has no children
+	# so we can safely iterate over it without checking for null
 	for child in PopochiuEditorHelper.get_all_children(
 		EditorInterface.get_edited_scene_root().find_child("WalkableAreas")
 	):
@@ -227,6 +242,7 @@ func _set_walkable_areas_visibility() -> void:
 func _set_toolbar_buttons_color() -> void:
 	if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_COLOR_TOOLBAR_BUTTONS):
 		# Reset button colors
+		_reset_toolbar_button_color(btn_markers)
 		_reset_toolbar_button_color(btn_baseline)
 		_reset_toolbar_button_color(btn_walk_to_point)
 		_reset_toolbar_button_color(btn_look_at_point)
@@ -235,6 +251,11 @@ func _set_toolbar_buttons_color() -> void:
 		# Done
 		return
 
+	_set_toolbar_button_color(
+		btn_markers,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_MARKER_POS_COLOR)
+	)
 	_set_toolbar_button_color(
 		btn_baseline,
 		PopochiuEditorConfig.get_editor_setting(
@@ -282,37 +303,56 @@ func _reset_toolbar_button_color(btn) -> void:
 func _set_buttons_visibility() -> void:
 	# Let's assume the buttons are all hidden...
 	hide()
+	btn_markers.hide()
 	btn_baseline.hide()
 	btn_walk_to_point.hide()
 	btn_look_at_point.hide()
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
 
-	# If we are not editing a Popochiu object, nothing to do
-	if not PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object):
+	# If we are not in a room and we are not editing a Popochiu object, nothing to do
+	if not (
+		PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object)
+		or PopochiuEditorHelper.is_editing_room()
+		or PopochiuEditorHelper.is_editing_character()
+	):
 		return
 
 	# Now we know we have to show the toolbar
 	show()
 
-	# Every Popochiu Object always shows the polygon editing button when edited
-	# unless we are in a room scene and selected a character
-	if not (
-		PopochiuEditorHelper.is_character(_active_popochiu_object)
-		and PopochiuEditorHelper.is_editing_room()
+	# Every Popochiu clickable always shows the polygon editing button when selected
+	# in a room scene. Same when the scene is a character scene.
+	if (
+		(
+			PopochiuEditorHelper.is_editing_room()
+			and PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object)
+		)
+		or PopochiuEditorHelper.is_editing_character()
 	):
 		btn_interaction_polygon.show()
-	
+
+	# Only exception is: we are in a room scene and selected a character.
+	# In this case, we don't want to show the polygon editing button.
+	if (
+		PopochiuEditorHelper.is_editing_room()
+		and PopochiuEditorHelper.is_character(_active_popochiu_object)
+	):
+		btn_interaction_polygon.hide()
+
 	# If the selected node in the editor is actually a popochiu object polygon
-	# We don't have to show the other buttons, only the polygon editing toggle
+	# We don't have to show the other buttons, only the polygon editing toggle.
 	if PopochiuEditorHelper.is_popochiu_obj_polygon(
 		EditorInterface.get_selection().get_selected_nodes()[0]
 	):
 		return
 
-	# If we are in a room scene, we may have selected a room object of sort, so check
-	# for the various types and hide the ones we don't need
-	if PopochiuEditorHelper.is_room(EditorInterface.get_edited_scene_root()):
+	# If we are in a room scene...
+	if PopochiuEditorHelper.is_editing_room():
+		# We always show the markers button
+		btn_markers.show()
+		# also, we may have selected a room object of sort, so check
+		# for the various types and hide the ones we don't need.
 		# If we are editing a clickable object, let's show gizmos buttons too
 		if _active_popochiu_object is PopochiuClickable:
 			btn_baseline.show()
@@ -320,12 +360,13 @@ func _set_buttons_visibility() -> void:
 			btn_look_at_point.show()
 
 	# If we are in a Character scene, show polygon and dialogpos gizmo button
-	elif PopochiuEditorHelper.is_character(EditorInterface.get_edited_scene_root()):
+	elif PopochiuEditorHelper.is_editing_character():
 		btn_dialog_pos.show()
 
 
 # Make all buttons pop-up
 func _reset_buttons_state() -> void:
+	btn_markers.set_pressed_no_signal(true)
 	btn_baseline.set_pressed_no_signal(true)
 	btn_walk_to_point.set_pressed_no_signal(true)
 	btn_look_at_point.set_pressed_no_signal(true)
