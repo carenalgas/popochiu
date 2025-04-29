@@ -73,7 +73,7 @@ func _enter_tree() -> void:
 	dock.focus_mode = Control.FOCUS_ALL
 	dock.ready.connect(_on_dock_ready)
 	
-	add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
+	add_control_to_dock(DOCK_SLOT_LEFT_UL, dock)
 	
 	# ---- Add Popochiu's menus for the Canvas Editor ----------------------------------------------
 	add_control_to_container(

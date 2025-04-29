@@ -148,16 +148,28 @@ func _add_object_to_core() -> void:
 
 ## Selects the main file of the object in the FileSystem and opens it so that it can be edited.
 func _open() -> void:
+	# Defer the scene opening to ensure current operations complete first.
+	# Ugly but necessary to avoid errors (see _deferred_open comments).
+	call_deferred("_deferred_open")
+	select()
+
+# Deferring this call removes an error that happens in Godot 4.4:
+# 'ERROR: editor/editor_data.cpp:1216 - Condition "!p_node->is_inside_tree()" is true.'
+func _deferred_open() -> void:
 	EditorInterface.select_file(path)
 	
 	if ".tres" in path:
 		EditorInterface.edit_resource(load(path))
 	else:
+		# Change to 2D view and open the scene
 		EditorInterface.set_main_screen_editor("2D")
 		EditorInterface.open_scene_from_path(path)
-	
-	select()
 
+		# Select the scene root node automatically
+		# to make inspector, gizmos and toolbar available
+		# for the opened object scene
+		if EditorInterface.get_edited_scene_root():
+			PopochiuEditorHelper.select_node(EditorInterface.get_edited_scene_root())
 
 func _open_script() -> void:
 	var script_path := path
