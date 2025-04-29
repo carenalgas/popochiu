@@ -169,8 +169,7 @@ func _deferred_open() -> void:
 		# to make inspector, gizmos and toolbar available
 		# for the opened object scene
 		if EditorInterface.get_edited_scene_root():
-			EditorInterface.get_selection().clear()
-			EditorInterface.get_selection().add_node(EditorInterface.get_edited_scene_root())
+			PopochiuEditorHelper.select_node(EditorInterface.get_edited_scene_root())
 
 func _open_script() -> void:
 	var script_path := path

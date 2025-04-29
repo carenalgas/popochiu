@@ -246,8 +246,7 @@ func _select_file() -> void:
 
 
 func _select_root_node() -> void:
-	EditorInterface.get_selection().clear()
-	EditorInterface.get_selection().add_node(EditorInterface.get_edited_scene_root())
+	PopochiuEditorHelper.select_node(EditorInterface.get_edited_scene_root())
 
 
 func _open_script() -> void:
