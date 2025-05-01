@@ -38,13 +38,19 @@ func _update_dock_visibility() -> void:
     # If the dock is currently in the tree, remove it first
     if _dock and _dock.is_inside_tree():
         remove_control_from_docks(_dock)
-    
+
+    # If the scene root is null or invalid, nothing to do
+    if not (
+        EditorInterface.get_edited_scene_root()
+        or PopochiuEditorHelper.is_editing_room()
+        or PopochiuEditorHelper.is_editing_character()
+    ):
+        return
+
     if PopochiuEditorHelper.is_editing_room():
         # Configure for room
         _dock.set_script(load(INSPECTOR_DOCK_ROOM))
-    # IMPROVE: this call has to be changed to is_editing_character() as soon as
-    # #393 is merged
-    elif PopochiuEditorHelper.is_character(EditorInterface.get_edited_scene_root()):
+    elif PopochiuEditorHelper.is_editing_character():
         # Configure for character
         _dock.set_script(load(INSPECTOR_DOCK_CHARACTER))
 
