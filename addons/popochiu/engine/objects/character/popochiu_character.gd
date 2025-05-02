@@ -96,7 +96,7 @@ var is_moving := false
 ## The current emotion used by the character.
 var emotion := EMPTY_STRING
 ##
-var on_scaling_region: Dictionary = {}
+var scaling_region: Dictionary = {}
 ## Stores the default walk speed defined in [member walk_speed]. Used by [PopochiuRoom] when scaling
 ## the character if it is inside a [PopochiuRegion] that modifies the scale.
 var default_walk_speed := 0
@@ -834,20 +834,20 @@ func update_position() -> void:
 
 ## Updates the scale depending on the properties of the scaling region where it is located.
 func update_scale():
-	if on_scaling_region:
+	if scaling_region:
 		var polygon_range: float = (
-			on_scaling_region.polygon_bottom_y - on_scaling_region.polygon_top_y
+			scaling_region.polygon_bottom_y - scaling_region.polygon_top_y
 		)
-		var scale_range: float = on_scaling_region.scale_bottom - on_scaling_region.scale_top
-		var position_from_the_top_of_region: float = position.y - on_scaling_region.polygon_top_y
-		var scale_for_position: float = on_scaling_region.scale_top + (
+		var scale_range: float = scaling_region.scale_bottom - scaling_region.scale_top
+		var position_from_the_top_of_region: float = position.y - scaling_region.polygon_top_y
+		var scale_for_position: float = scaling_region.scale_top + (
 				scale_range / polygon_range * position_from_the_top_of_region
 		)
 		scale.x = [
-			[scale_for_position, on_scaling_region.scale_min].max(), on_scaling_region.scale_max
+			[scale_for_position, scaling_region.scale_min].max(), scaling_region.scale_max
 		].min()
 		scale.y = [
-			[scale_for_position, on_scaling_region.scale_min].max(), on_scaling_region.scale_max
+			[scale_for_position, scaling_region.scale_min].max(), scaling_region.scale_max
 		].min()
 		walk_speed = default_walk_speed / default_scale.x * scale_for_position
 	else:

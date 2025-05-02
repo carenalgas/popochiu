@@ -125,7 +125,7 @@ func _check_area(area: Area2D, entered: bool) -> void:
 func _check_scaling(
 	area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool
 ):
-	if not (
+	if not is_instance_valid(area) or not (
 		area is PopochiuCharacter
 		and area.get("scaling_polygon")
 		and area_shape_index == area.get("scaling_polygon").get_index()
@@ -136,26 +136,17 @@ func _check_scaling(
 	# Track character entry/exit across all shapes
 	if entered:
 		_active_characters[character.script_name] = area
-	else:
-		# Only remove if character is not in any other shape
-		var overlapping := get_overlapping_areas()
-		var still_inside := false
-		for overlapping_area in overlapping:
-			if overlapping_area == character:
-				still_inside = true
-				break
-		
-		if not still_inside:
-			_active_characters.erase(character.script_name)
-			_clear_scaling_region(character)
-			return
+	elif not character in get_overlapping_areas():
+		_active_characters.erase(character.script_name)
+		_remove_character_scaling_region(character)
+		return
 	
 	if scaling and _active_characters.has(character.script_name):
-		_update_scaling_region(character)
+		_update_character_scaling_region(character)
 		character.update_scale()
 
 
-func _update_scaling_region(chr: PopochiuCharacter) -> void:
+func _update_character_scaling_region(chr: PopochiuCharacter) -> void:
 	var polygon_y_array := []
 	for x: Vector2 in interaction_polygon_node.get_polygon():
 		polygon_y_array.append(x.y)
@@ -174,7 +165,7 @@ func _update_scaling_region(chr: PopochiuCharacter) -> void:
 	position_ratio = clamp(position_ratio, 0.0, 1.0)
 	var target_scale := lerp(scale_top, scale_bottom, position_ratio)
 	
-	chr.on_scaling_region = {
+	chr.scaling_region = {
 		region_description = self.description,
 		scale_top = self.scale_top,
 		scale_bottom = self.scale_bottom,
@@ -186,9 +177,9 @@ func _update_scaling_region(chr: PopochiuCharacter) -> void:
 	}
 
 
-func _clear_scaling_region(chr: PopochiuCharacter) -> void:
-	if chr.on_scaling_region and chr.on_scaling_region.region_description == self.description:
-		chr.on_scaling_region = {}
+func _remove_character_scaling_region(chr: PopochiuCharacter) -> void:
+	if chr.scaling_region and chr.scaling_region.region_description == self.description:
+		chr.scaling_region = {}
 		_last_char_pos = Vector2.ZERO
 		_active_characters.erase(chr.script_name)
 
