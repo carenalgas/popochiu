@@ -96,7 +96,7 @@ var is_moving := false
 ## The current emotion used by the character.
 var emotion := EMPTY_STRING
 ##
-var on_scaling_region: Dictionary = {}
+var scaling_region: Dictionary = {}
 ## Stores the default walk speed defined in [member walk_speed]. Used by [PopochiuRoom] when scaling
 ## the character if it is inside a [PopochiuRegion] that modifies the scale.
 var default_walk_speed := 0
@@ -117,11 +117,7 @@ var _current_animation: String = "null"
 var _last_requested_animation_label: String = "null"
 # Holds the direction the character was looking at when the current animation was requested.
 var _last_requested_animation_dir: int = -1
-
-@onready var animation_player: AnimationPlayer = $AnimationPlayer
-
-# Array of the animation suffixes to search for
-# based on the angle the character is facing.
+# Array of the animation suffixes to search for based on the angle the character is facing.
 var _valid_animation_suffixes = [
 ['_r', '_l', '_dr', '_dl', '_d'], #    0 - 22.5 degrees
 ['_dr', '_dl', '_r' , '_l', '_d'], #  22.5 - 45 degrees
@@ -139,6 +135,11 @@ var _valid_animation_suffixes = [
 ['_ur', '_ul', '_u', '_r', '_l'], # 292.5 - 315 degrees
 ['_ur', '_ul', '_r', '_l', '_u'], # 315 - 337.5 degrees
 ['_r', '_l', '_ur', '_ul', '_u']] # 337.5 - 360 degrees
+
+@onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
+@onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+
 
 #region Godot ######################################################################################
 func _ready():
@@ -833,30 +834,20 @@ func update_position() -> void:
 
 ## Updates the scale depending on the properties of the scaling region where it is located.
 func update_scale():
-	if on_scaling_region:
-		var polygon_range = (
-			on_scaling_region["polygon_bottom_y"] - on_scaling_region["polygon_top_y"]
-			)
-		var scale_range = (
-			on_scaling_region["scale_bottom"] - on_scaling_region["scale_top"]
-			)
-
-		var position_from_the_top_of_region = (
-			position.y - on_scaling_region["polygon_top_y"]
-			)
-
-		var scale_for_position = (
-			on_scaling_region["scale_top"] + (
+	if scaling_region:
+		var polygon_range: float = (
+			scaling_region.polygon_bottom_y - scaling_region.polygon_top_y
+		)
+		var scale_range: float = scaling_region.scale_bottom - scaling_region.scale_top
+		var position_from_the_top_of_region: float = position.y - scaling_region.polygon_top_y
+		var scale_for_position: float = scaling_region.scale_top + (
 				scale_range / polygon_range * position_from_the_top_of_region
 		)
-		)
 		scale.x = [
-			[scale_for_position, on_scaling_region["scale_min"]].max(),
-			on_scaling_region["scale_max"]
+			[scale_for_position, scaling_region.scale_min].max(), scaling_region.scale_max
 		].min()
 		scale.y = [
-			[scale_for_position, on_scaling_region["scale_min"]].max(),
-			on_scaling_region["scale_max"]
+			[scale_for_position, scaling_region.scale_min].max(), scaling_region.scale_max
 		].min()
 		walk_speed = default_walk_speed / default_scale.x * scale_for_position
 	else:
