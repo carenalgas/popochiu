@@ -5,16 +5,6 @@ var _animation_creator = preload(\
 "res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
 
 
-#region Godot ######################################################################################
-func _ready():
-	# Instantiate animation creator
-	_animation_creator.init(_aseprite, file_system)
-
-	super()
-
-
-#endregion
-
 #region Private ####################################################################################
 func _on_import_pressed():
 	# Set everything up
@@ -112,6 +102,16 @@ func _save_prop(prop: PopochiuProp):
 		)
 		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
 	return ResultCodes.SUCCESS
+
+
+#endregion
+
+#region Public ######################################################################################
+func init():
+	# Instantiate animation creator
+	_animation_creator.init(_aseprite, file_system)
+
+	super()
 
 
 #endregion

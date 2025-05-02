@@ -7,12 +7,12 @@ const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd
 
 var _anim_tag_state: Dictionary = {}
 
-@onready var tag_name_label = $HBoxContainer/TagName
-@onready var import_toggle = $Panel/HBoxContainer/Import
-@onready var loops_toggle = $Panel/HBoxContainer/Loops
-@onready var separator = $Panel/HBoxContainer/Separator
-@onready var visible_toggle = $Panel/HBoxContainer/Visible
-@onready var clickable_toggle = $Panel/HBoxContainer/Clickable
+var tag_name_label: Control
+var import_toggle: Control
+var loops_toggle: Control
+var separator: Control
+var visible_toggle: Control
+var clickable_toggle: Control
 
 
 #region Godot ######################################################################################
@@ -29,6 +29,25 @@ func _ready():
 
 #region Public #####################################################################################
 func init(tag_cfg: Dictionary):
+	# Manually initialize node references if not already done
+	# Used to be @onready var but it doesn't work because the
+	# container gets repopulated without the script being reloaded.
+	tag_name_label = $HBoxContainer/TagName
+	import_toggle = $Panel/HBoxContainer/Import
+	loops_toggle = $Panel/HBoxContainer/Loops
+	separator = $Panel/HBoxContainer/Separator
+	visible_toggle = $Panel/HBoxContainer/Visible
+	clickable_toggle = $Panel/HBoxContainer/Clickable
+	
+	# Set icons manually too:
+	# 1. Common toggles icons
+	import_toggle.icon = get_theme_icon('Load', 'EditorIcons')
+	loops_toggle.icon = get_theme_icon('Loop', 'EditorIcons')
+	# 2. Room-related toggles icons
+	visible_toggle.icon = get_theme_icon('GuiVisibilityVisible', 'EditorIcons')
+	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
+	
+	# Continue with initialization
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == "":
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_UNNAMED_TAG_DETECTED))
 		return false
