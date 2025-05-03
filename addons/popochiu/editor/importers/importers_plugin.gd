@@ -14,6 +14,7 @@ var _current_scene_path: String = ""
 var _popup_active = false
 
 
+#region Godot ######################################################################################
 func _enter_tree() -> void:
 	# Create the dock but don't add it yet
 	_dock = INSPECTOR_DOCK.instantiate()
@@ -51,6 +52,27 @@ func _exit_tree() -> void:
 		_dock.queue_free()
 
 
+#endregion
+
+#region Private ######################################################################################
+func _on_scene_changed(scene_root: Node) -> void:
+	_current_scene_path = scene_root.scene_file_path if scene_root else ""
+	_update_dock_visibility()
+
+	# Check if we need to restart the timer
+	# TODO: Remove this workaround when
+	# https://github.com/godotengine/godot/issues/97427
+	# gets fixed
+	if _no_valid_scene_open():
+		# Restart the timer if the editor only has an empty scene
+		# opened.
+		_scene_check_timer.start()
+	else:
+		# We are in a valid scene, so we can stop the timer
+		if not _scene_check_timer.is_stopped():
+			_scene_check_timer.stop()
+
+
 # Workaround for # https://github.com/godotengine/godot/issues/97427
 # Check we're in the bug trigger condition when:
 # 1. Current scene is empty AND
@@ -78,24 +100,6 @@ func _check_for_scene_change() -> void:
 			# Stop the timer and process the scene change
 			_scene_check_timer.stop()
 			_on_scene_changed(root)
-
-
-func _on_scene_changed(scene_root: Node) -> void:
-	_current_scene_path = scene_root.scene_file_path if scene_root else ""
-	_update_dock_visibility()
-
-	# Check if we need to restart the timer
-	# TODO: Remove this workaround when
-	# https://github.com/godotengine/godot/issues/97427
-	# gets fixed
-	if _no_valid_scene_open():
-		# Restart the timer if the editor only has an empty scene
-		# opened.
-		_scene_check_timer.start()
-	else:
-		# We are in a valid scene, so we can stop the timer
-		if not _scene_check_timer.is_stopped():
-			_scene_check_timer.stop()
 
 
 func _update_dock_visibility() -> void:
@@ -129,3 +133,6 @@ func _update_dock_visibility() -> void:
 	
 	# Add to docks (not already there)
 	add_control_to_dock(DOCK_SLOT_RIGHT_BL, _dock)
+
+
+#endregion
