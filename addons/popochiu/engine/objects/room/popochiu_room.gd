@@ -109,15 +109,6 @@ func _ready():
 	PopochiuUtils.r.room_readied(self)
 
 
-func _get_property_list() -> Array[Dictionary]:
-	return [
-		{
-			name = "popochiu_placeholder",
-			type = TYPE_NIL,
-		}
-	]
-
-
 func _physics_process(delta):
 	if _moving_characters.is_empty(): return
 
