@@ -175,6 +175,12 @@ func is_item_in_inventory(item_name: String) -> bool:
 	return is_instance_valid(i) and i.in_inventory
 
 
+## Verifies if the item identified as [param item_name] has ever been collected.
+func has_item_been_collected(item_name: String) -> bool:
+	var i: PopochiuInventoryItem = get_item_instance(item_name)
+	return is_instance_valid(i) and i.ever_collected
+
+
 ## Checks whether the inventory has reached its limit.
 func is_full() -> bool:
 	return (
