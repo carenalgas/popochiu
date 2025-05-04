@@ -48,11 +48,13 @@ static func decode(string: String):
 	return config
 
 
-static func load_config(node:Node):
+static func load_config(node:Node) -> Dictionary:
 	# Check if node is not null to avoid showing error messages in Output when inspecting nodes in
 	# the Debugger
 	if node and node.has_meta(LOCAL_OBJ_CONFIG_META_NAME):
 		return node.get_meta(LOCAL_OBJ_CONFIG_META_NAME)
+
+	return {}
 
 
 static func save_config(node:Node, cfg:Dictionary):

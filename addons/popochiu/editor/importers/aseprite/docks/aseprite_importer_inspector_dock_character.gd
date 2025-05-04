@@ -6,8 +6,9 @@ var _animation_creator = preload(
 	"res://addons/popochiu/editor/importers/aseprite/animation_creator.gd"
 ).new()
 
-#region Godot ######################################################################################
-func _ready():
+
+#region Public ######################################################################################
+func init():
 	if not target_node.has_node("AnimationPlayer"):
 		PopochiuUtils.print_error(
 			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
@@ -23,6 +24,7 @@ func _ready():
 
 
 #endregion
+
 
 #region Private ####################################################################################
 func _on_import_pressed():
@@ -53,3 +55,4 @@ func _customize_tag_ui(tag_row: AnimationTagRow):
 
 
 #endregion
+

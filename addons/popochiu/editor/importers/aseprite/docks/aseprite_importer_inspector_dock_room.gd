@@ -5,8 +5,9 @@ var _animation_creator = preload(\
 "res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
 
 
-#region Godot ######################################################################################
-func _ready():
+
+#region Public ######################################################################################
+func init():
 	# Instantiate animation creator
 	_animation_creator.init(_aseprite, file_system)
 
@@ -14,6 +15,7 @@ func _ready():
 
 
 #endregion
+
 
 #region Private ####################################################################################
 func _on_import_pressed():

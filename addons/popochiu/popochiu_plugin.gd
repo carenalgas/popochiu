@@ -57,7 +57,6 @@ func _enter_tree() -> void:
 	# ---- Load Popochiu's Inspector plugins -------------------------------------------------------
 	for path in [
 		"res://addons/popochiu/editor/inspector/character_inspector_plugin.gd",
-		"res://addons/popochiu/editor/inspector/aseprite_importer_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/prop_inspector_plugin.gd",
 	]:
@@ -102,6 +101,7 @@ func _exit_tree() -> void:
 func _enable_plugin() -> void:
 	_create_input_actions()
 	EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", true)
+	EditorInterface.set_plugin_enabled("popochiu/editor/importers", true)
 
 
 func _disable_plugin() -> void:
@@ -116,6 +116,7 @@ func _disable_plugin() -> void:
 	remove_autoload_singleton("A")
 	_remove_input_actions()
 	EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", false)
+	EditorInterface.set_plugin_enabled("popochiu/editor/importers", false)
 	remove_control_from_docks(dock)
 
 
@@ -187,6 +188,9 @@ func _on_dock_ready() -> void:
 	
 	if not EditorInterface.is_plugin_enabled("popochiu/editor/gizmos"):
 		EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", true)
+
+	if not EditorInterface.is_plugin_enabled("popochiu/editor/importers"):
+		EditorInterface.set_plugin_enabled("popochiu/editor/importers", true)
 
 
 #endregion

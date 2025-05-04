@@ -162,15 +162,6 @@ func _ready():
 	move_ended.connect(_on_move_ended)
 
 
-func _get_property_list():
-	return [
-		{
-			name = "popochiu_placeholder",
-			type = TYPE_NIL,
-		}
-	]
-
-
 #endregion
 
 #region Virtual ####################################################################################
