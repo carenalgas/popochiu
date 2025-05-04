@@ -46,8 +46,8 @@ func init():
 		_show_warning()
 	
 	# Load inspector dock configuration from node
-	var cfg = LOCAL_OBJ_CONFIG.load_config(target_node)
-	if cfg == null:
+	var cfg := LOCAL_OBJ_CONFIG.load_config(target_node)
+	if cfg.is_empty():
 		_load_default_config()
 		_set_options_visible(true)
 	else:
@@ -285,7 +285,7 @@ func _merge_with_cache(tags: Array) -> Array:
 func _get_tags_from_ui() -> Array:
 	var tags_list = []
 	for tag_row in get_node("%Tags").get_children():
-		var tag_row_cfg = tag_row.get_cfg()
+		var tag_row_cfg: Dictionary = tag_row.get_cfg()
 		if tag_row_cfg.tag_name == "":
 			continue
 		tags_list.push_back(tag_row_cfg)
