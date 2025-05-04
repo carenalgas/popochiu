@@ -29,6 +29,36 @@ var _output_folder := ""
 var _out_folder_default := "[Same as scene]"
 
 
+#region Public ######################################################################################
+func init():
+	_set_elements_styles()
+	
+	if not PopochiuEditorConfig.aseprite_importer_enabled():
+		_show_info()
+		return
+	
+	# Check access to Aseprite executable
+	var result := _check_aseprite()
+	if result == RESULT_CODE.SUCCESS:
+		_show_importer()
+	else:
+		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
+		_show_warning()
+	
+	# Load inspector dock configuration from node
+	var cfg = LOCAL_OBJ_CONFIG.load_config(target_node)
+	if cfg == null:
+		_load_default_config()
+		_set_options_visible(true)
+	else:
+		_load_config(cfg)
+		_set_tags_visible(cfg.get("tags_exp"))
+		_set_options_visible(cfg.get("op_exp"))
+
+
+#endregion
+
+
 #region Private ####################################################################################
 func _check_aseprite() -> int:
 	if not _aseprite.check_command_path():
@@ -395,35 +425,6 @@ func _show_importer():
 	get_node("%Importer").visible = true
 
 # TODO: Introduce layer selection list, more or less as tags
-
-
-#endregion
-
-#region Public ######################################################################################
-func init():
-	_set_elements_styles()
-	
-	if not PopochiuEditorConfig.aseprite_importer_enabled():
-		_show_info()
-		return
-	
-	# Check access to Aseprite executable
-	var result := _check_aseprite()
-	if result == RESULT_CODE.SUCCESS:
-		_show_importer()
-	else:
-		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
-		_show_warning()
-	
-	# Load inspector dock configuration from node
-	var cfg = LOCAL_OBJ_CONFIG.load_config(target_node)
-	if cfg == null:
-		_load_default_config()
-		_set_options_visible(true)
-	else:
-		_load_config(cfg)
-		_set_tags_visible(cfg.get("tags_exp"))
-		_set_options_visible(cfg.get("op_exp"))
 
 
 #endregion
