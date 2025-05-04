@@ -408,7 +408,7 @@ func init():
 		return
 	
 	# Check access to Aseprite executable
-	var result = _check_aseprite()
+	var result := _check_aseprite()
 	if result == RESULT_CODE.SUCCESS:
 		_show_importer()
 	else:

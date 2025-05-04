@@ -10,8 +10,8 @@ const INSPECTOR_DOCK_ROOM := DOCKS_PATH + "aseprite_importer_inspector_dock_room
 var _dock: Control = null
 var _target_node: Node = null
 var _scene_check_timer: Timer
-var _current_scene_path: String = ""
-var _popup_active = false
+var _current_scene_path := ""
+var _popup_active := false
 
 
 #region Godot ######################################################################################
@@ -91,15 +91,16 @@ func _no_valid_scene_open() -> bool:
 # https://github.com/godotengine/godot/issues/97427
 # gets fixed
 func _check_for_scene_change() -> void:
-	var root = EditorInterface.get_edited_scene_root()
-	if root:
-		var scene_path = root.scene_file_path
-		# Check if this is a new scene with a path
-		if scene_path != _current_scene_path and not scene_path.is_empty():
-			_current_scene_path = scene_path
-			# Stop the timer and process the scene change
-			_scene_check_timer.stop()
-			_on_scene_changed(root)
+	var root := EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(root):
+		return
+	var scene_path := root.scene_file_path
+	# Check if this is a new scene with a path
+	if scene_path != _current_scene_path and not scene_path.is_empty():
+		_current_scene_path = scene_path
+		# Stop the timer and process the scene change
+		_scene_check_timer.stop()
+		_on_scene_changed(root)
 
 
 func _update_dock_visibility() -> void:
@@ -114,8 +115,8 @@ func _update_dock_visibility() -> void:
 		return
 	
 	# Choose the right script based on node type
-	var target_node = EditorInterface.get_edited_scene_root()
-	var script_path = ""
+	var target_node := EditorInterface.get_edited_scene_root()
+	var script_path := ""
 	
 	if PopochiuEditorHelper.is_editing_room():
 		script_path = INSPECTOR_DOCK_ROOM
@@ -123,8 +124,9 @@ func _update_dock_visibility() -> void:
 		script_path = INSPECTOR_DOCK_CHARACTER
 	
 	# Only change the script if needed (avoid unnecessary reloads)
-	if _dock.get_script() != load(script_path):
-		_dock.set_script(load(script_path))
+	var loaded_script := load(script_path)
+	if _dock.get_script() != loaded_script:
+		_dock.set_script(loaded_script)
 	
 	# Initialize the dock with the new target
 	_dock.target_node = target_node
