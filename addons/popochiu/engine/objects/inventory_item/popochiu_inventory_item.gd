@@ -25,6 +25,8 @@ signal unselected
 
 ## Whether this item is actually inside the inventory GUI.
 var in_inventory := false : set = set_in_inventory
+## Whether this item has ever been in the inventory. Once true, it stays true.
+var ever_collected := false : set = set_ever_collected
 ## Stores the last [enum MouseButton] pressed on this object.
 var last_click_button := -1 # NOTE Don't know if this will make sense, or if it this object should
 # emit a signal about the click (command execution)
@@ -120,6 +122,7 @@ func add(animate := true) -> void:
 		
 		PopochiuUtils.i.item_added.emit(self, animate)
 		in_inventory = true
+		ever_collected = true
 		
 		await PopochiuUtils.i.item_add_done
 
@@ -315,6 +318,14 @@ func set_in_inventory(value: bool) -> void:
 	in_inventory = value
 	
 	if in_inventory: _on_added_to_inventory()
+
+
+func set_ever_collected(value: bool) -> void:
+	# Once true, ever_collected can never be false again
+	if ever_collected:
+		return
+	
+	ever_collected = value
 
 
 func get_description() -> String:
