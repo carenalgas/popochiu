@@ -65,7 +65,10 @@ func _ready() -> void:
 		PopochiuUtils.i.item_removed.connect(_on_item_removed)
 		PopochiuUtils.i.item_discarded.connect(_on_item_discarded)
 		
-		if PopochiuUtils.i.is_item_in_inventory(link_to_item):
+		if (
+			PopochiuUtils.i.is_item_in_inventory(link_to_item) or
+			PopochiuUtils.i.has_item_been_collected(link_to_item)
+		):
 			disable()
 
 
