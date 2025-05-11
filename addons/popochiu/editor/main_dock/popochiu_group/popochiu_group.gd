@@ -12,6 +12,7 @@ const PopochiuRow := preload("res://addons/popochiu/editor/main_dock/popochiu_ro
 @export var color: Color = Color("999999") : set = set_color
 @export var title := "Group" : set = set_title
 @export var can_create := true
+@export var can_import := false
 @export var create_text := ""
 @export var target_list: NodePath = ""
 @export var custom_title_count := false
@@ -24,29 +25,42 @@ var _external_list: VBoxContainer = null
 @onready var lbl_title: Label = %Title
 @onready var body: Container = %Body
 @onready var btn_create: Button = %BtnCreate
+@onready var btn_import: Button = %BtnImport
 @onready var list: VBoxContainer = %List
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
-	# Establecer estado inicial
+	# Set initial state
 	add_theme_stylebox_override("panel", get_theme_stylebox("panel").duplicate())
 	(get_theme_stylebox("panel") as StyleBoxFlat).border_color = color
 	
 	if is_instance_valid(icon):
 		trt_icon.texture = icon
 	
+	# Title the group
 	lbl_title.text = title
+
+	# Set the + icon on the create button
 	btn_create.icon = get_theme_icon("Add", "EditorIcons")
 	btn_create.text = create_text
+
+	# Set the icon on the import button
+	btn_import.icon = get_theme_icon("ArrowDown", "EditorIcons")
+
+	# Set the list status (open if there is at least one element)
 	self.is_open = list.get_child_count() > 0
 	
 	if not can_create:
 		btn_create.hide()
 	
+	if not can_import:
+		btn_import.hide()
+
 	header.gui_input.connect(_on_input)
 	list.resized.connect(_update_child_count)
 	btn_create.pressed.connect(emit_signal.bind("create_clicked"))
+	btn_import.pressed.connect(emit_signal.bind("import_clicked"))
 	
 	if target_list:
 		_external_list = get_node(target_list) as VBoxContainer
@@ -58,8 +72,8 @@ func _ready() -> void:
 #region Public #####################################################################################
 func clear_list() -> void:
 	for c in list.get_children():
-		# Fix #216: Delete the row immediately so that it does not interfere with the creation of
-		# other rows that may have the same name as it
+		# Fix #216: Delete the row immediately so that it does not interfere
+		# with the creation of other rows with the same name
 		c.free()
 
 
