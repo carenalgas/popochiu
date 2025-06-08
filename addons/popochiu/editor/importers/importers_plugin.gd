@@ -2,11 +2,11 @@
 extends EditorPlugin
 
 const DOCKS_PATH := "res://addons/popochiu/editor/importers/aseprite/docks/"
-const INSPECTOR_DOCK = preload(DOCKS_PATH + "aseprite_importer_inspector_dock.tscn")
+const INSPECTOR_DOCK = preload(DOCKS_PATH + "aseprite_importer_dock.tscn")
 const CONFIG_SCRIPT = preload("res://addons/popochiu/editor/config/config.gd")
-const INSPECTOR_DOCK_CHARACTER := DOCKS_PATH + "aseprite_importer_inspector_dock_character.gd"
-const INSPECTOR_DOCK_ROOM := DOCKS_PATH + "aseprite_importer_inspector_dock_room.gd"
-const INSPECTOR_DOCK_INVENTORY := DOCKS_PATH + "aseprite_importer_inspector_dock_inventory.gd"
+const INSPECTOR_DOCK_CHARACTER := DOCKS_PATH + "aseprite_importer_dock_character.gd"
+const INSPECTOR_DOCK_ROOM := DOCKS_PATH + "aseprite_importer_dock_room.gd"
+const INSPECTOR_DOCK_INVENTORY := DOCKS_PATH + "aseprite_importer_dock_inventory.gd"
 
 ## Available importer types and their configurations.
 enum ImporterType {

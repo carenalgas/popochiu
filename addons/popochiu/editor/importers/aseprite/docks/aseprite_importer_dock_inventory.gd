@@ -1,5 +1,5 @@
 @tool
-extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock.gd"
+extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_dock.gd"
 
 ## Aseprite importer dock for Inventory Items.
 ## Allows importing multiple inventory items from a single Aseprite file.
