@@ -15,18 +15,6 @@ var visible_toggle: Control
 var clickable_toggle: Control
 
 
-#region Godot ######################################################################################
-func _ready():
-	# Common toggle icons
-	import_toggle.icon = get_theme_icon('Load', 'EditorIcons')
-	loops_toggle.icon = get_theme_icon('Loop', 'EditorIcons')
-	# Room-related toggle icons
-	visible_toggle.icon = get_theme_icon('GuiVisibilityVisible', 'EditorIcons')
-	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
-
-
-#endregion
-
 #region Public #####################################################################################
 func init(tag_cfg: Dictionary):
 	# Manually initialize node references if not already done

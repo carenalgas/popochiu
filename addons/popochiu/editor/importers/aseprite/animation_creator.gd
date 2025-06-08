@@ -18,7 +18,7 @@ var _options: Dictionary
 
 # Class-logic vars
 var _spritesheet_metadata = {}
-var _target_sprite: Sprite2D
+var _target_sprite: CanvasItem
 var _output: Dictionary
 
 
@@ -29,10 +29,15 @@ func init(aseprite: RefCounted, editor_file_system: EditorFileSystem = null):
 
 
 ## Public interfaces, dedicated to specific popochiu objects
-func create_character_animations(character: Node, player: AnimationPlayer, options: Dictionary):
+func create_character_animations(character: Node, options: Dictionary):
 	# Chores
 	_target_node = character
-	_player = player
+	_player = character.get_node("AnimationPlayer")
+	if _player == null:
+		PopochiuUtils.print_error(
+			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
+		)
+		return
 	_options = options
 
 	# Duly check everything is valid and cleanup animations
@@ -61,8 +66,12 @@ func create_character_animations(character: Node, player: AnimationPlayer, optio
 func create_prop_animations(prop: Node, aseprite_tag: String, options: Dictionary):
 	# Chores
 	_target_node = prop
-	# TODO: if the prop has no AnimationPlayer, add one!
 	_player = prop.get_node("AnimationPlayer")
+	if _player == null:
+		PopochiuUtils.print_error(
+			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
+		)
+		return
 	_options = options
 
 	var prop_animation_name = aseprite_tag.to_snake_case()
@@ -89,6 +98,43 @@ func create_prop_animations(prop: Node, aseprite_tag: String, options: Dictionar
 
 	# Sorry, mom...
 	_player.autoplay = prop.name.to_snake_case()
+
+	return result
+
+
+func create_inventory_item_animations(inventory_item: Node, aseprite_tag: String, options: Dictionary):
+	# Chores
+	_target_node = inventory_item
+	_player = inventory_item.get_node("AnimationPlayer")
+	if _player == null:
+		PopochiuUtils.print_error(
+			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
+		)
+		return
+	_options = options
+
+	# Duly check everything is valid and cleanup animations
+	var result = _perform_common_checks()
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	# Create the spritesheet
+	result = await _create_spritesheet_from_tag(aseprite_tag)
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	# Load tags information
+	result = await _load_spritesheet_metadata(aseprite_tag)
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	# Set the texture in the TextureRect and configure
+	# the animations in the AnimationPlayer
+	_setup_texture()
+	result = _configure_animations()
+
+	# Set autoplay for inventory items to match the created animation name
+	_player.autoplay = aseprite_tag.to_snake_case()
 
 	return result
 
@@ -233,7 +279,14 @@ func _add_animation_frames(anim_name: String, frames: Array, direction = 'forwar
 	# for each tag, so that you can have each prop with its own animation (PnC)
 	var animation = _player.get_animation(animation_name)
 	_create_meta_tracks(animation)
-	var frame_track = _get_property_track_path("frame")
+	
+	# Use different property track based on node type
+	var frame_track: String
+	if _target_sprite is Sprite2D:
+		frame_track = _get_property_track_path("frame")
+	elif _target_sprite is TextureRect:
+		frame_track = _get_property_track_path("texture:region")
+	
 	var frame_track_index = _create_track(_target_sprite, animation, frame_track)
 
 	if direction == 'reverse':
@@ -301,51 +354,86 @@ func _remove_properties_from_path(path: NodePath) -> NodePath:
 	return string_path as NodePath
 
 
+func _get_frame_key(frame: Dictionary):
+	# For TextureRect, we need to handle frame changes differently
+	if _target_sprite is Sprite2D:
+		# For Sprite2D, use the existing frame index calculation
+		return _calculate_frame_index(_target_sprite, frame)
+	elif _target_sprite is TextureRect:
+		# For TextureRect, we'll use the texture_rect property to crop the frame
+		var frame_width = _target_sprite.get_meta("frame_width", frame.sourceSize.w)
+		var frame_height = _target_sprite.get_meta("frame_height", frame.sourceSize.h)
+		return Rect2(frame.frame.x, frame.frame.y, frame_width, frame_height)
+
+
+func _calculate_frame_index(sprite: Node, frame: Dictionary) -> int:
+	# This method is only used for Sprite2D nodes
+	if sprite is Sprite2D:
+		var column = floor(frame.frame.x * sprite.hframes / sprite.texture.get_width())
+		var row = floor(frame.frame.y * sprite.vframes / sprite.texture.get_height())
+		return (row * sprite.hframes) + column
+
+	# For TextureRect, this shouldn't be called, but return 0 as fallback
+	return 0
+
+
 # ---- SPRITE NODE LOGIC ---------------------------------------------------------------------------
-## What follow is logic specifically gathered for Sprite elements. TextureRect should 
-## be treated in a different way (see texture_rect_animation_creator.gd file in
-## original Aseprite Wizard plugin by Vinicius Gerevini)
+## What follow is logic specifically gathered for Sprite elements. TextureRect is
+## handled differently as it doesn't have hframes/vframes properties.
 func _setup_texture():
-	# Load texture in target sprite (ignoring cache and forcing a refres)
-	var texture = ResourceLoader.load(
+	# Load texture in target sprite (ignoring cache and forcing a refresh)
+	var base_texture = ResourceLoader.load(
 		_spritesheet_metadata.sprite_sheet, 'Image', ResourceLoader.CACHE_MODE_IGNORE
 	)
-	texture.take_over_path(_spritesheet_metadata.sprite_sheet)
-	_target_sprite.texture = texture
+	base_texture.take_over_path(_spritesheet_metadata.sprite_sheet)
 
 	if _spritesheet_metadata.frames.is_empty():
 		return
 
-	_target_sprite.hframes = (
-		_spritesheet_metadata.meta.size.w / _spritesheet_metadata.frames[0].sourceSize.w
-	)
-	_target_sprite.vframes = (
-		_spritesheet_metadata.meta.size.h / _spritesheet_metadata.frames[0].sourceSize.h
-	)
+	# Handle Sprite2D nodes (characters and props)
+	if _target_sprite is Sprite2D:
+		_target_sprite.texture = base_texture
+		_target_sprite.hframes = (
+			_spritesheet_metadata.meta.size.w / _spritesheet_metadata.frames[0].sourceSize.w
+		)
+		_target_sprite.vframes = (
+			_spritesheet_metadata.meta.size.h / _spritesheet_metadata.frames[0].sourceSize.h
+		)
+	# Handle TextureRect nodes (inventory items)
+	elif _target_sprite is TextureRect:
+		# Create an AtlasTexture for TextureRect to support region animation
+		var atlas_texture = AtlasTexture.new()
+		atlas_texture.atlas = base_texture
+		# Set initial region to first frame
+		var first_frame = _spritesheet_metadata.frames[0]
+		atlas_texture.region = Rect2(
+			first_frame.frame.x, 
+			first_frame.frame.y, 
+			first_frame.sourceSize.w, 
+			first_frame.sourceSize.h
+		)
+		_target_sprite.texture = atlas_texture
+		
+		# Store frame dimensions for later use in animations
+		_target_sprite.set_meta("frame_width", first_frame.sourceSize.w)
+		_target_sprite.set_meta("frame_height", first_frame.sourceSize.h)
 
 
 func _create_meta_tracks(animation: Animation):
-	var hframes_track = _get_property_track_path("hframes")
-	var hframes_track_index = _create_track(_target_sprite, animation, hframes_track)
-	animation.track_insert_key(hframes_track_index, 0, _target_sprite.hframes)
+	# Only create hframes/vframes tracks for Sprite2D nodes
+	if _target_sprite is Sprite2D:
+		var hframes_track = _get_property_track_path("hframes")
+		var hframes_track_index = _create_track(_target_sprite, animation, hframes_track)
+		animation.track_insert_key(hframes_track_index, 0, _target_sprite.hframes)
 
-	var vframes_track = _get_property_track_path("vframes")
-	var vframes_track_index = _create_track(_target_sprite, animation, vframes_track)
-	animation.track_insert_key(vframes_track_index, 0, _target_sprite.vframes)
+		var vframes_track = _get_property_track_path("vframes")
+		var vframes_track_index = _create_track(_target_sprite, animation, vframes_track)
+		animation.track_insert_key(vframes_track_index, 0, _target_sprite.vframes)
 
+	# Common visible track for both Sprite2D and TextureRect
 	var visible_track = _get_property_track_path("visible")
 	var visible_track_index = _create_track(_target_sprite, animation, visible_track)
 	animation.track_insert_key(visible_track_index, 0, true)
-
-	
-func _get_frame_key(frame: Dictionary):
-	return _calculate_frame_index(_target_sprite,frame)
-
-
-func _calculate_frame_index(sprite: Node, frame: Dictionary) -> int:
-	var column = floor(frame.frame.x * sprite.hframes / sprite.texture.get_width())
-	var row = floor(frame.frame.y * sprite.vframes / sprite.texture.get_height())
-	return (row * sprite.hframes) + column
 
 
 func _perform_common_checks():
@@ -377,9 +465,15 @@ func _perform_common_checks():
 
 
 func _find_sprite_in_target() -> Node:
-	if not _target_node.has_node("Sprite2D"):
-		return null
-	return _target_node.get_node("Sprite2D")
+	# Check for Sprite2D first (used by characters and props)
+	if _target_node.has_node("Sprite2D"):
+		return _target_node.get_node("Sprite2D")
+	
+	# Check if target node itself is a TextureRect (used by inventory items)
+	if _target_node is TextureRect:
+		return _target_node
+	
+	return null
 
 
 func _remove_animations_from_player(player: AnimationPlayer):

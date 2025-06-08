@@ -6,9 +6,17 @@ const INSPECTOR_DOCK = preload(DOCKS_PATH + "aseprite_importer_inspector_dock.ts
 const CONFIG_SCRIPT = preload("res://addons/popochiu/editor/config/config.gd")
 const INSPECTOR_DOCK_CHARACTER := DOCKS_PATH + "aseprite_importer_inspector_dock_character.gd"
 const INSPECTOR_DOCK_ROOM := DOCKS_PATH + "aseprite_importer_inspector_dock_room.gd"
+const INSPECTOR_DOCK_INVENTORY := DOCKS_PATH + "aseprite_importer_inspector_dock_inventory.gd"
 
-var _dock: Control = null
-var _target_node: Node = null
+## Available importer types and their configurations.
+enum ImporterType {
+	CHARACTER,
+	ROOM,
+	INVENTORY
+}
+
+var _tab_container: TabContainer = null
+var _dock_tabs: Dictionary = {}
 var _scene_check_timer: Timer
 var _current_scene_path := ""
 var _popup_active := false
@@ -16,9 +24,12 @@ var _popup_active := false
 
 #region Godot ######################################################################################
 func _enter_tree() -> void:
-	# Create the dock but don't add it yet
-	_dock = INSPECTOR_DOCK.instantiate()
-	_dock.name = "Importers"
+	# Create the main tab container dock
+	_tab_container = TabContainer.new()
+	_tab_container.name = "Importers"
+	
+	# Create all importer tabs
+	_create_importer_tabs()
 
 	# Connect to scene change signals
 	scene_changed.connect(_on_scene_changed)
@@ -35,7 +46,7 @@ func _enter_tree() -> void:
 	if _no_valid_scene_open():
 		_scene_check_timer.start()
 
-	# Add the dock to the editor, only if needed
+	# Update dock visibility based on current scene
 	_update_dock_visibility()
 
 
@@ -45,11 +56,13 @@ func _exit_tree() -> void:
 		_scene_check_timer.stop()
 		_scene_check_timer.queue_free()
 
-	# Remove the dock and free resources
-	if _dock:
-		if _dock.is_inside_tree():
-			remove_control_from_docks(_dock)
-		_dock.queue_free()
+	# Clean up dock tabs
+	_cleanup_dock_tabs()
+
+	# Remove the main dock if it exists
+	if _tab_container and _tab_container.is_inside_tree():
+		remove_control_from_docks(_tab_container)
+		_tab_container.queue_free()
 
 
 #endregion
@@ -64,8 +77,7 @@ func _on_scene_changed(scene_root: Node) -> void:
 	# https://github.com/godotengine/godot/issues/97427
 	# gets fixed
 	if _no_valid_scene_open():
-		# Restart the timer if the editor only has an empty scene
-		# opened.
+		# Restart the timer if the editor only has an empty scene opened.
 		_scene_check_timer.start()
 	else:
 		# We are in a valid scene, so we can stop the timer
@@ -73,7 +85,102 @@ func _on_scene_changed(scene_root: Node) -> void:
 			_scene_check_timer.stop()
 
 
-# Workaround for # https://github.com/godotengine/godot/issues/97427
+## Creates all importer tabs and stores them in the _dock_tabs dictionary.
+func _create_importer_tabs() -> void:
+	# Create Character tab
+	_dock_tabs[ImporterType.CHARACTER] = _create_importer_tab(ImporterType.CHARACTER, "Character", INSPECTOR_DOCK_CHARACTER)
+
+	# Create Room tab
+	_dock_tabs[ImporterType.ROOM] = _create_importer_tab(ImporterType.ROOM, "Room", INSPECTOR_DOCK_ROOM)
+
+	# Create Inventory tab
+	_dock_tabs[ImporterType.INVENTORY] = _create_importer_tab(ImporterType.INVENTORY, "Inventory", INSPECTOR_DOCK_INVENTORY)
+
+
+## Creates a single importer tab with the specified configuration.
+func _create_importer_tab(type: ImporterType, tab_name: String, script_path: String) -> Control:
+	var tab := INSPECTOR_DOCK.instantiate()
+	tab.name = tab_name
+	tab.set_script(load(script_path))
+	
+	# Initialize common properties
+	tab.file_system = EditorInterface.get_resource_filesystem()
+	
+	_tab_container.add_child(tab)
+	return tab
+
+
+## Updates dock visibility and tab states based on the current scene.
+func _update_dock_visibility() -> void:
+	# Add dock if not already present
+	if _tab_container and not _tab_container.is_inside_tree():
+		add_control_to_dock(DOCK_SLOT_RIGHT_BL, _tab_container)
+	
+	# Update tab visibility and initialization
+	_update_tab_states()
+
+
+## Updates the visibility and initialization of individual tabs.
+func _update_tab_states() -> void:
+	var target_node := EditorInterface.get_edited_scene_root()
+	var active_tab_set := false
+	
+	# Update Character tab
+	_update_tab_for_type(ImporterType.CHARACTER, PopochiuEditorHelper.is_editing_character(), target_node)
+	
+	# Update Room tab
+	_update_tab_for_type(ImporterType.ROOM, PopochiuEditorHelper.is_editing_room(), target_node)
+	
+	# Update Inventory tab (always visible and available)
+	_update_tab_for_type(ImporterType.INVENTORY, true, null)
+	
+	# Set appropriate active tab
+	_set_appropriate_active_tab()
+
+
+## Updates a specific tab's visibility and initialization.
+func _update_tab_for_type(type: ImporterType, should_show: bool, target_node: Node) -> void:
+	if not _dock_tabs.has(type):
+		return
+		
+	var importer: Control = _dock_tabs[type]
+	var tab_index := importer.get_index()
+	
+	# Hide/show the tab in the TabContainer
+	_tab_container.set_tab_hidden(tab_index, not should_show)
+	
+	if should_show and target_node and type != ImporterType.INVENTORY:
+		# Initialize tab with target node (except inventory which doesn't need a target)
+		importer.target_node = target_node
+		importer.init()
+	elif should_show and type == ImporterType.INVENTORY:
+		# Initialize inventory tab (doesn't need a target node)
+		importer.init()
+
+
+## Sets the appropriate active tab based on current scene context.
+func _set_appropriate_active_tab() -> void:
+	var character_tab_index:int = _dock_tabs[ImporterType.CHARACTER].get_index()
+	var room_tab_index:int = _dock_tabs[ImporterType.ROOM].get_index()
+	var inventory_tab_index:int = _dock_tabs[ImporterType.INVENTORY].get_index()
+	
+	if PopochiuEditorHelper.is_editing_character() and not _tab_container.is_tab_hidden(character_tab_index):
+		_tab_container.current_tab = character_tab_index
+	elif PopochiuEditorHelper.is_editing_room() and not _tab_container.is_tab_hidden(room_tab_index):
+		_tab_container.current_tab = room_tab_index
+	elif not _tab_container.is_tab_hidden(inventory_tab_index):
+		_tab_container.current_tab = inventory_tab_index
+
+
+## Cleans up all dock tabs and their resources.
+func _cleanup_dock_tabs() -> void:
+	for tab in _dock_tabs.values():
+		if is_instance_valid(tab):
+			tab.queue_free()
+	_dock_tabs.clear()
+
+
+# Workaround for https://github.com/godotengine/godot/issues/97427
 # Check we're in the bug trigger condition when:
 # 1. Current scene is empty AND
 # 2. It's the only open scene
@@ -83,7 +190,7 @@ func _no_valid_scene_open() -> bool:
 			EditorInterface.get_edited_scene_root() == null
 			or EditorInterface.get_edited_scene_root().scene_file_path.is_empty()
 		)
-		and EditorInterface.get_open_scenes().size() <=1
+		and EditorInterface.get_open_scenes().size() <= 1
 	)
 
 
@@ -101,40 +208,6 @@ func _check_for_scene_change() -> void:
 		# Stop the timer and process the scene change
 		_scene_check_timer.stop()
 		_on_scene_changed(root)
-
-
-func _update_dock_visibility() -> void:
-	if _dock and _dock.is_inside_tree():
-		remove_control_from_docks(_dock)
-
-	# First check if we should show the dock at all
-	if not (
-		PopochiuEditorHelper.is_editing_room()
-		or PopochiuEditorHelper.is_editing_character()
-	):
-		return
-	
-	# Choose the right script based on node type
-	var target_node := EditorInterface.get_edited_scene_root()
-	var script_path := ""
-	
-	if PopochiuEditorHelper.is_editing_room():
-		script_path = INSPECTOR_DOCK_ROOM
-	elif PopochiuEditorHelper.is_editing_character():
-		script_path = INSPECTOR_DOCK_CHARACTER
-	
-	# Only change the script if needed (avoid unnecessary reloads)
-	var loaded_script := load(script_path)
-	if _dock.get_script() != loaded_script:
-		_dock.set_script(loaded_script)
-	
-	# Initialize the dock with the new target
-	_dock.target_node = target_node
-	_dock.file_system = EditorInterface.get_resource_filesystem()
-	_dock.init()
-	
-	# Add to docks (not already there)
-	add_control_to_dock(DOCK_SLOT_RIGHT_BL, _dock)
 
 
 #endregion

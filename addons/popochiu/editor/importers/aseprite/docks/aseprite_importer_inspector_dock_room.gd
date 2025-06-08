@@ -52,8 +52,6 @@ func _on_import_pressed():
 		
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
-		# TODO: check if animation player exists in prop, if not add it
-		#       same for Sprite2D even if it should be there...
 		
 		# Make the output folder match the prop's folder
 		_options.output_folder = prop.scene_file_path.get_base_dir()

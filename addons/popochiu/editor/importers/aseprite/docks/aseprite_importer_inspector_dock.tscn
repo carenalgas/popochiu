@@ -26,7 +26,6 @@ theme_override_constants/margin_bottom = 2
 
 [node name="Importer" type="VBoxContainer" parent="Margin"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 
 [node name="Source" type="HBoxContainer" parent="Margin/Importer"]
@@ -64,7 +63,39 @@ theme_override_colors/font_pressed_color = Color(0.8, 0.807843, 0.827451, 1)
 toggle_mode = true
 text = "Animation tags"
 
-[node name="Tags" type="VBoxContainer" parent="Margin/Importer"]
+[node name="TagsScrollContainer" type="ScrollContainer" parent="Margin/Importer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Margin/Importer/TagsScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TagsInfo" type="Panel" parent="Margin/Importer/TagsScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(222, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
+
+[node name="InfoLabel" type="Label" parent="Margin/Importer/TagsScrollContainer/VBoxContainer/TagsInfo"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "To import animations, select a properly tagged Aseprite source file."
+autowrap_mode = 3
+
+[node name="Tags" type="VBoxContainer" parent="Margin/Importer/TagsScrollContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -82,6 +113,7 @@ text = "Options"
 
 [node name="Options" type="VBoxContainer" parent="Margin/Importer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="OutFolder" type="HBoxContainer" parent="Margin/Importer/Options"]
@@ -188,30 +220,6 @@ theme_override_colors/font_color = Color(0.768627, 0.423529, 0.443137, 1)
 text = "Error loading Aseprite Importer!
 Check Output panel for details."
 horizontal_alignment = 1
-
-[node name="Info" type="VBoxContainer" parent="Margin"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Margin/Info"]
-layout_mode = 2
-
-[node name="InfoPanel" type="Panel" parent="Margin/Info/HBoxContainer"]
-custom_minimum_size = Vector2(222, 50)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
-
-[node name="InfoLabel" type="Label" parent="Margin/Info/HBoxContainer/InfoPanel"]
-custom_minimum_size = Vector2(0, 42)
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-size_flags_horizontal = 3
-size_flags_vertical = 6
-text = "Aseprite Importer disabled.
-Can be enabled in Editor Settings."
 
 [connection signal="pressed" from="Margin/Importer/Source/SourceButton" to="." method="_on_source_pressed"]
 [connection signal="pressed" from="Margin/Importer/Source/RescanButton" to="." method="_on_rescan_pressed"]

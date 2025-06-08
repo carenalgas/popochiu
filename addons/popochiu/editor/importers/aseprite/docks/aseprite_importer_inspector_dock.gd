@@ -8,7 +8,6 @@ const LOCAL_OBJ_CONFIG = preload("res://addons/popochiu/editor/config/local_obj_
 const AnimationTagRow =\
 preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd")
 
-var scene: Node
 var target_node: Node
 var file_system: EditorFileSystem
 
@@ -31,12 +30,10 @@ var _out_folder_default := "[Same as scene]"
 
 #region Public ######################################################################################
 func init():
+	# Initialize styles and UI elements visibility
 	_set_elements_styles()
-	
-	if not PopochiuEditorConfig.aseprite_importer_enabled():
-		_show_info()
-		return
-	
+	_set_tags_visible(false)
+
 	# Check access to Aseprite executable
 	var result := _check_aseprite()
 	if result == RESULT_CODE.SUCCESS:
@@ -44,8 +41,9 @@ func init():
 	else:
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 		_show_warning()
-	
+
 	# Load inspector dock configuration from node
+	# or from the game resources, if the node is null.
 	var cfg := LOCAL_OBJ_CONFIG.load_config(target_node)
 	if cfg.is_empty():
 		_load_default_config()
@@ -161,6 +159,7 @@ func _on_aseprite_file_selected(path):
 	_populate_tags(_get_tags_from_source())
 	_save_config()
 	_file_dialog_aseprite.queue_free()
+	_set_tags_visible(true)
 
 
 func _on_rescan_pressed():
@@ -168,6 +167,7 @@ func _on_rescan_pressed():
 		_merge_with_cache(_get_tags_from_source())\
 	)
 	_save_config()
+	_set_tags_visible(true)
 
 
 func _on_import_pressed():
@@ -176,6 +176,12 @@ func _on_import_pressed():
 	
 	_importing = true
 	_root_node = get_tree().get_edited_scene_root()
+
+	if _output_folder == "":
+		_output_folder = (
+			PopochiuResources.INVENTORY_ITEMS_PATH if _root_node == null
+			else _root_node.scene_file_path.get_base_dir()
+		)
 	
 	if _source == "":
 		_show_message("Aseprite file not selected")
@@ -185,14 +191,12 @@ func _on_import_pressed():
 	_options = {
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
-		"output_folder": (
-			_output_folder if _output_folder != "" else _root_node.scene_file_path.get_base_dir()
-		),
+		"output_folder": _output_folder,
 		"output_filename": get_node("%OutFileName").text,
 		"only_visible_layers": get_node("%VisibleLayersCheckButton").is_pressed(),
 		"wipe_old_animations": get_node("%WipeOldAnimationsCheckButton").is_pressed(),
 	}
-	
+
 	_save_config()
 
 
@@ -204,10 +208,10 @@ func _on_reset_pressed():
 
 
 func _reset_prefs_metadata():
-	if target_node.has_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME):
-		target_node.remove_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME)
-		_load_default_config()
-		notify_property_list_changed()
+	LOCAL_OBJ_CONFIG.remove_config(target_node)
+	_load_default_config()
+	notify_property_list_changed()
+	_set_tags_visible(false)
 
 
 func _open_source_dialog():
@@ -359,7 +363,10 @@ func _on_tags_title_toggled(button_pressed: bool) -> void:
 
 
 func _set_tags_visible(is_visible: bool) -> void:
-	get_node("%Tags").visible = is_visible
+	# If the tags container is empty, we show an info box
+	get_node("%TagsInfo").visible = (get_node("%Tags").get_child_count() == 0)
+
+	get_node("%TagsScrollContainer").visible = is_visible
 	get_node("%TagsTitle").icon = (
 		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
 		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
@@ -407,20 +414,12 @@ func _set_elements_styles():
 	get_node("%WarningLabel").add_theme_color_override("font_color", Color("c46c71"))
 
 
-func _show_info():
-	get_node("%Info").visible = true
-	get_node("%Warning").visible = false
-	get_node("%Importer").visible = false
-
-
 func _show_warning():
-	get_node("%Info").visible = false
 	get_node("%Warning").visible = true
 	get_node("%Importer").visible = false
 	
 
 func _show_importer():
-	get_node("%Info").visible = false
 	get_node("%Warning").visible = false
 	get_node("%Importer").visible = true
 
