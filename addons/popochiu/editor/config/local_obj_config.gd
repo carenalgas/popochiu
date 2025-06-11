@@ -8,7 +8,7 @@ const SEPARATOR = "|="
 
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#region Public ####################################################################################
 static func encode(object: Dictionary):
 	var text = "%s\n" % LOCAL_OBJ_CONFIG_MARKER
 
@@ -76,7 +76,10 @@ static func remove_config(node:Node) -> void:
 		return _remove_config_from_popochiu_resources()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+
+#region Private ####################################################################################
 static func _load_config_from_meta(node:Node) -> Dictionary:
 	# Check if node is not null to avoid showing error messages
 	# in Output when inspecting nodes in the Debugger
@@ -117,3 +120,6 @@ static func _decode_base64(string: String):
 
 static func _is_valid_config(cfg) -> bool:
 	return cfg != null and cfg.begins_with(LOCAL_OBJ_CONFIG_MARKER)
+
+
+#endregion
