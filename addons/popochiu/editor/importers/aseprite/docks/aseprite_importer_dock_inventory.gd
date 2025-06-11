@@ -104,16 +104,11 @@ func _create_inventory_item(name: String) -> PopochiuInventoryItem:
 ## Check if an inventory item with the given name already exists and load it.
 ## Returns the loaded inventory item scene or null if it doesn't exist.
 func _get_existing_inventory_item(item_name: String) -> PopochiuInventoryItem:
-	var item_path := PopochiuResources.INVENTORY_ITEMS_PATH.path_join(
-		"%s/inventory_item_%s.tscn" % [item_name.to_snake_case(), item_name.to_snake_case()]
-	)
-	
-	if not FileAccess.file_exists(item_path):
+	var item_res_path: String = PopochiuResources.get_data_value("inventory_items", item_name.to_snake_case(), null)
+	if not item_res_path:
 		return null
-	
-	var packed_scene: PackedScene = load(item_path)
-	if not packed_scene:
-		return null
+
+	var packed_scene: PackedScene = load(load(item_res_path).scene)
 	
 	var inventory_item = packed_scene.instantiate()
 	if not inventory_item is PopochiuInventoryItem:
