@@ -364,9 +364,9 @@ func _on_tags_title_toggled(button_pressed: bool) -> void:
 
 func _set_tags_visible(is_visible: bool) -> void:
 	# If the tags container is empty, we show an info box
-	get_node("%TagsInfo").visible = (get_node("%Tags").get_child_count() == 0)
+	%TagsInfo.visible = %Tags.get_child_count() == 0
 
-	get_node("%TagsScrollContainer").visible = is_visible
+	%TagsScrollContainer.visible = is_visible
 	get_node("%TagsTitle").icon = (
 		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
 		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)

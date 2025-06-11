@@ -114,7 +114,7 @@ func create_inventory_item_animations(inventory_item: Node, aseprite_tag: String
 	_options = options
 
 	# Duly check everything is valid and cleanup animations
-	var result = _perform_common_checks()
+	var result: RESULT_CODE = _perform_common_checks()
 	if result != RESULT_CODE.SUCCESS:
 		return result
 
@@ -354,7 +354,7 @@ func _remove_properties_from_path(path: NodePath) -> NodePath:
 	return string_path as NodePath
 
 
-func _get_frame_key(frame: Dictionary):
+func _get_frame_key(frame: Dictionary) -> Variant:
 	# For TextureRect, we need to handle frame changes differently
 	if _target_sprite is Sprite2D:
 		# For Sprite2D, use the existing frame index calculation
@@ -369,8 +369,8 @@ func _get_frame_key(frame: Dictionary):
 func _calculate_frame_index(sprite: Node, frame: Dictionary) -> int:
 	# This method is only used for Sprite2D nodes
 	if sprite is Sprite2D:
-		var column = floor(frame.frame.x * sprite.hframes / sprite.texture.get_width())
-		var row = floor(frame.frame.y * sprite.vframes / sprite.texture.get_height())
+		var column := floor(frame.frame.x * sprite.hframes / sprite.texture.get_width())
+		var row := floor(frame.frame.y * sprite.vframes / sprite.texture.get_height())
 		return (row * sprite.hframes) + column
 
 	# For TextureRect, this shouldn't be called, but return 0 as fallback
@@ -402,7 +402,7 @@ func _setup_texture():
 	# Handle TextureRect nodes (inventory items)
 	elif _target_sprite is TextureRect:
 		# Create an AtlasTexture for TextureRect to support region animation
-		var atlas_texture = AtlasTexture.new()
+		var atlas_texture := AtlasTexture.new()
 		atlas_texture.atlas = base_texture
 		# Set initial region to first frame
 		var first_frame = _spritesheet_metadata.frames[0]
