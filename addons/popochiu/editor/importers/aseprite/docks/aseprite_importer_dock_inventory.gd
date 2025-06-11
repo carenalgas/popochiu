@@ -6,7 +6,7 @@ extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer
 ## Each Aseprite tag becomes a separate inventory item with its animation.
 
 var _animation_creator = preload(
-	"res://addons/popochiu/editor/importers/aseprite/animation_creator.gd"
+	"res://addons/popochiu/editor/importers/aseprite/animation_creator_texture_rect.gd"
 ).new()
 
 
@@ -58,10 +58,11 @@ func _on_import_pressed():
 		_options.output_folder = item.scene_file_path.get_base_dir()
 		
 		# Import a single tag animation
-		result = await _animation_creator.create_inventory_item_animations(
+		result = await _animation_creator.create_tag_animations(
 			item,
 			item.get_meta("ANIM_NAME"),
-			_options
+			_options,
+			_animation_creator.AutoplayMode.TAG_NAME
 		)
 	
 	# Save all created items
@@ -104,8 +105,8 @@ func _create_inventory_item(name: String) -> PopochiuInventoryItem:
 ## Check if an inventory item with the given name already exists and load it.
 ## Returns the loaded inventory item scene or null if it doesn't exist.
 func _get_existing_inventory_item(item_name: String) -> PopochiuInventoryItem:
-	var item_res_path: String = PopochiuResources.get_data_value("inventory_items", item_name.to_snake_case(), null)
-	if not item_res_path:
+	var item_res_path: String = PopochiuResources.get_data_value("inventory_items", item_name.to_snake_case(), "")
+	if item_res_path == "":
 		return null
 
 	var packed_scene: PackedScene = load(load(item_res_path).scene)

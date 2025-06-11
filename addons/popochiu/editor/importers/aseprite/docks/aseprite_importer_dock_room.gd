@@ -2,7 +2,7 @@
 extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_dock.gd"
 
 var _animation_creator = preload(\
-"res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
+"res://addons/popochiu/editor/importers/aseprite/animation_creator_sprite2d.gd").new()
 
 
 
@@ -57,10 +57,11 @@ func _on_import_pressed():
 		_options.output_folder = prop.scene_file_path.get_base_dir()
 		
 		# Import a single tag animation
-		result = await _animation_creator.create_prop_animations(
+		result = await _animation_creator.create_tag_animations(
 			prop,
 			prop.get_meta("ANIM_NAME"),
-			_options
+			_options,
+			_animation_creator.AutoplayMode.TAG_NAME
 		)
 	
 	for prop in props_container.get_children():

@@ -2,7 +2,7 @@
 extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_dock.gd"
 
 var _animation_creator = preload(
-	"res://addons/popochiu/editor/importers/aseprite/animation_creator.gd"
+	"res://addons/popochiu/editor/importers/aseprite/animation_creator_sprite2d.gd"
 ).new()
 
 
@@ -23,7 +23,7 @@ func _on_import_pressed():
 	# This will populate _root_node and _options class variables
 	super()
 	
-	var result = await _animation_creator.create_character_animations(
+	var result = await _animation_creator.create_all_animations(
 		target_node, _options
 	)
 	_importing = false
