@@ -17,6 +17,7 @@ enum {
 	ERR_INVALID_ASEPRITE_SPRITESHEET,
 	ERR_NO_ANIMATION_PLAYER_FOUND,
 	ERR_NO_SPRITE_FOUND,
+	ERR_INVALID_SPRITE_NODE,
 	ERR_UNNAMED_TAG_DETECTED,
 	ERR_TAGS_OPTIONS_ARRAY_EMPTY,
 	## Popochiu Object factories errors
@@ -53,6 +54,8 @@ static func get_error_message(code: int):
 			return "No AnimationPlayer found in target node"
 		ERR_NO_SPRITE_FOUND:
 			return "No sprite found in target node"
+		ERR_INVALID_SPRITE_NODE:
+			return "Specified node is not a valid recipient for animation data (supported nodes: Sprite2D, TextureRect)"
 		ERR_UNNAMED_TAG_DETECTED:
 			return "Unnamed tag detected"
 		ERR_TAGS_OPTIONS_ARRAY_EMPTY:

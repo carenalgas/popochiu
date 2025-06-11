@@ -17,19 +17,19 @@ var _player: AnimationPlayer
 var _options: Dictionary
 
 # Class-logic vars
-var _spritesheet_metadata = {}
+var _spritesheet_metadata: Dictionary = {}
 var _target_sprite: CanvasItem
 var _output: Dictionary
 
 
 #region Public #####################################################################################
-func init(aseprite: RefCounted, editor_file_system: EditorFileSystem = null):
+func init(aseprite: RefCounted, editor_file_system: EditorFileSystem = null) -> void:
 	_file_system = editor_file_system
 	_aseprite = aseprite
 
 
 ## Public interfaces, dedicated to specific popochiu objects
-func create_character_animations(character: Node, options: Dictionary):
+func create_character_animations(character: Node, options: Dictionary) -> int:
 	# Chores
 	_target_node = character
 	_player = character.get_node("AnimationPlayer")
@@ -37,7 +37,7 @@ func create_character_animations(character: Node, options: Dictionary):
 		PopochiuUtils.print_error(
 			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
 		)
-		return
+		return RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND
 	_options = options
 
 	# Duly check everything is valid and cleanup animations
@@ -63,7 +63,7 @@ func create_character_animations(character: Node, options: Dictionary):
 	return result
 
 
-func create_prop_animations(prop: Node, aseprite_tag: String, options: Dictionary):
+func create_prop_animations(prop: Node, aseprite_tag: String, options: Dictionary) -> int:
 	# Chores
 	_target_node = prop
 	_player = prop.get_node("AnimationPlayer")
@@ -71,13 +71,13 @@ func create_prop_animations(prop: Node, aseprite_tag: String, options: Dictionar
 		PopochiuUtils.print_error(
 			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
 		)
-		return
+		return RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND
 	_options = options
 
-	var prop_animation_name = aseprite_tag.to_snake_case()
+	var prop_animation_name := aseprite_tag.to_snake_case()
 
 	# Duly check everything is valid and cleanup animations
-	var result = _perform_common_checks()
+	var result := _perform_common_checks()
 	if result != RESULT_CODE.SUCCESS:
 		return result
 
@@ -102,7 +102,7 @@ func create_prop_animations(prop: Node, aseprite_tag: String, options: Dictionar
 	return result
 
 
-func create_inventory_item_animations(inventory_item: Node, aseprite_tag: String, options: Dictionary):
+func create_inventory_item_animations(inventory_item: Node, aseprite_tag: String, options: Dictionary) -> int:
 	# Chores
 	_target_node = inventory_item
 	_player = inventory_item.get_node("AnimationPlayer")
@@ -110,11 +110,11 @@ func create_inventory_item_animations(inventory_item: Node, aseprite_tag: String
 		PopochiuUtils.print_error(
 			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
 		)
-		return
+		return RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND
 	_options = options
 
 	# Duly check everything is valid and cleanup animations
-	var result: RESULT_CODE = _perform_common_checks()
+	var result := _perform_common_checks()
 	if result != RESULT_CODE.SUCCESS:
 		return result
 
@@ -143,7 +143,7 @@ func create_inventory_item_animations(inventory_item: Node, aseprite_tag: String
 
 #region Private ####################################################################################
 ## This function creates a spritesheet with the whole file content
-func _create_spritesheet_from_file():
+func _create_spritesheet_from_file() -> int:
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
 	_output = _aseprite.export_file(_options.source, _options.output_folder, _options)
 	if _output.is_empty():
@@ -153,7 +153,7 @@ func _create_spritesheet_from_file():
 
 ## This function creates a spritesheet with the frames of a specific tag
 ## WARNING: it's case sensitive
-func _create_spritesheet_from_tag(selected_tag: String):
+func _create_spritesheet_from_tag(selected_tag: String) -> int:
 	## TODO: See _aseprite.export_layer() when the time comes to add layers selection
 	_output = _aseprite.export_tag(_options.source, selected_tag, _options.output_folder, _options)
 	if _output.is_empty():
@@ -161,7 +161,7 @@ func _create_spritesheet_from_tag(selected_tag: String):
 	return RESULT_CODE.SUCCESS
 
 
-func _load_spritesheet_metadata(selected_tag: String = ""):
+func _load_spritesheet_metadata(selected_tag: String = "") -> int:
 	_spritesheet_metadata = {
 		tags = {},
 		frames = {},
@@ -235,7 +235,7 @@ func _load_spritesheet_metadata(selected_tag: String = ""):
 	return RESULT_CODE.SUCCESS
 
 
-func _configure_animations():
+func _configure_animations() -> int:
 	if not _player.has_animation_library(_DEFAULT_AL):
 		_player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
 
@@ -254,7 +254,7 @@ func _configure_animations():
 		return _add_animation_frames("default", _spritesheet_metadata.frames)
 
 
-func _add_animation_frames(anim_name: String, frames: Array, direction = 'forward'):
+func _add_animation_frames(anim_name: String, frames: Array, direction = 'forward') -> int:
 	# TODO: ATM there is no way to assign a walk/talk/grab/idle animation
 	# with a different name than the standard ones. The engine is searching for
 	# lowercase names in the AnimationPlayer, thus we are forcing snake_case
@@ -317,7 +317,7 @@ func _add_animation_frames(anim_name: String, frames: Array, direction = 'forwar
 
 
 ## TODO: insert validate tokens in animation name
-func _create_track(target_sprite: Node, animation: Animation, track: String):
+func _create_track(target_sprite: Node, animation: Animation, track: String) -> int:
 	var track_index = animation.find_track(track, Animation.TYPE_VALUE)
 
 	if track_index != -1:
@@ -338,7 +338,7 @@ func _get_property_track_path(prop: String) -> String:
 	return "%s:%s" % [node_path, prop]
 
 
-func _scan_filesystem():
+func _scan_filesystem() -> void:
 	_file_system.scan()
 	await _file_system.filesystem_changed
 
@@ -364,6 +364,11 @@ func _get_frame_key(frame: Dictionary) -> Variant:
 		var frame_width = _target_sprite.get_meta("frame_width", frame.sourceSize.w)
 		var frame_height = _target_sprite.get_meta("frame_height", frame.sourceSize.h)
 		return Rect2(frame.frame.x, frame.frame.y, frame_width, frame_height)
+	else:
+		PopochiuUtils.print_error(
+			RESULT_CODE.get_error_message(RESULT_CODE.ERR_INVALID_SPRITE_NODE)
+		)
+		return RESULT_CODE.ERR_INVALID_SPRITE_NODE
 
 
 func _calculate_frame_index(sprite: Node, frame: Dictionary) -> int:
@@ -380,7 +385,7 @@ func _calculate_frame_index(sprite: Node, frame: Dictionary) -> int:
 # ---- SPRITE NODE LOGIC ---------------------------------------------------------------------------
 ## What follow is logic specifically gathered for Sprite elements. TextureRect is
 ## handled differently as it doesn't have hframes/vframes properties.
-func _setup_texture():
+func _setup_texture() -> void:
 	# Load texture in target sprite (ignoring cache and forcing a refresh)
 	var base_texture = ResourceLoader.load(
 		_spritesheet_metadata.sprite_sheet, 'Image', ResourceLoader.CACHE_MODE_IGNORE
@@ -405,7 +410,7 @@ func _setup_texture():
 		var atlas_texture := AtlasTexture.new()
 		atlas_texture.atlas = base_texture
 		# Set initial region to first frame
-		var first_frame = _spritesheet_metadata.frames[0]
+		var first_frame: Dictionary = _spritesheet_metadata.frames[0]
 		atlas_texture.region = Rect2(
 			first_frame.frame.x, 
 			first_frame.frame.y, 
@@ -419,24 +424,24 @@ func _setup_texture():
 		_target_sprite.set_meta("frame_height", first_frame.sourceSize.h)
 
 
-func _create_meta_tracks(animation: Animation):
+func _create_meta_tracks(animation: Animation) -> void:
 	# Only create hframes/vframes tracks for Sprite2D nodes
 	if _target_sprite is Sprite2D:
-		var hframes_track = _get_property_track_path("hframes")
-		var hframes_track_index = _create_track(_target_sprite, animation, hframes_track)
+		var hframes_track: String = _get_property_track_path("hframes")
+		var hframes_track_index: int = _create_track(_target_sprite, animation, hframes_track)
 		animation.track_insert_key(hframes_track_index, 0, _target_sprite.hframes)
 
-		var vframes_track = _get_property_track_path("vframes")
-		var vframes_track_index = _create_track(_target_sprite, animation, vframes_track)
+		var vframes_track: String = _get_property_track_path("vframes")
+		var vframes_track_index: int = _create_track(_target_sprite, animation, vframes_track)
 		animation.track_insert_key(vframes_track_index, 0, _target_sprite.vframes)
 
 	# Common visible track for both Sprite2D and TextureRect
-	var visible_track = _get_property_track_path("visible")
-	var visible_track_index = _create_track(_target_sprite, animation, visible_track)
+	var visible_track: String = _get_property_track_path("visible")
+	var visible_track_index: int = _create_track(_target_sprite, animation, visible_track)
 	animation.track_insert_key(visible_track_index, 0, true)
 
 
-func _perform_common_checks():
+func _perform_common_checks() -> int:
 	# Checks
 	if not _aseprite.check_command_path():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
@@ -476,7 +481,7 @@ func _find_sprite_in_target() -> Node:
 	return null
 
 
-func _remove_animations_from_player(player: AnimationPlayer):
+func _remove_animations_from_player(player: AnimationPlayer) -> void:
 	if player.has_animation_library(_DEFAULT_AL):
 		player.remove_animation_library(_DEFAULT_AL)
 
