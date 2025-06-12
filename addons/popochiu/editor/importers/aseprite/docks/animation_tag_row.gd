@@ -36,7 +36,7 @@ func init(tag_cfg: Dictionary):
 	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
 	
 	# Continue with initialization
-	if tag_cfg.tag_name == null or tag_cfg.tag_name == "":
+	if tag_cfg.tag_name == null or tag_cfg.tag_name == PopochiuEditorHelper.EMPTY_STRING:
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_UNNAMED_TAG_DETECTED))
 		return false
 	
@@ -71,7 +71,7 @@ func _setup_scene():
 
 func _load_default_tag_state() -> Dictionary:
 	return {
-		"tag_name": "",
+		"tag_name": PopochiuEditorHelper.EMPTY_STRING,
 		"import": PopochiuConfig.is_default_animation_import_enabled(),
 		"loops": PopochiuConfig.is_default_animation_loop_enabled(),
 		"prop_visible": PopochiuConfig.is_default_animation_prop_visible(),

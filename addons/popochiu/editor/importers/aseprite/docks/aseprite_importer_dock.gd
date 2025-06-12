@@ -19,12 +19,12 @@ var _aseprite = preload("../aseprite_controller.gd").new() ## TODO: should be ab
 var _root_node: Node
 var _options: Dictionary
 # ---- Importer parameters variables
-var _source: String = ""
+var _source: String = PopochiuEditorHelper.EMPTY_STRING
 var _tags_cache: Array = []
 var _file_dialog_aseprite: FileDialog
 var _output_folder_dialog: FileDialog
 var _importing := false
-var _output_folder := ""
+var _output_folder := PopochiuEditorHelper.EMPTY_STRING
 var _out_folder_default := "[Same as scene]"
 
 
@@ -90,15 +90,15 @@ func _load_config(cfg):
 	if cfg.has("source"):
 		_set_source(cfg.source)
 
-	_output_folder = cfg.get("o_folder", "")
-	get_node("%OutFolderButton").text = (
-		_output_folder if _output_folder != "" else _out_folder_default
+	_output_folder = cfg.get("o_folder", PopochiuEditorHelper.EMPTY_STRING)
+	%OutFolderButton.text = (
+		_output_folder if _output_folder != PopochiuEditorHelper.EMPTY_STRING else _out_folder_default
 	)
-	get_node("%OutFileName").text = cfg.get("o_name", "")
-	get_node("%VisibleLayersCheckButton").set_pressed_no_signal(
+	%OutFileName.text = cfg.get("o_name", PopochiuEditorHelper.EMPTY_STRING)
+	%VisibleLayersCheckButton.set_pressed_no_signal(
 		cfg.get("only_visible_layers", false)
 	)
-	get_node("%WipeOldAnimationsCheckButton").set_pressed_no_signal(
+	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
 		cfg.get("wipe_old_anims", false)
 	)
 
@@ -113,12 +113,12 @@ func _save_config():
 	var cfg := {
 		"source": _source,
 		"tags": _tags_cache,
-		"tags_exp": get_node("%Tags").visible,
-		"op_exp": get_node("%Options").visible,
+		"tags_exp": %Tags.visible,
+		"op_exp": %Options.visible,
 		"o_folder": _output_folder,
-		"o_name": get_node("%OutFileName").text,
-		"only_visible_layers": get_node("%VisibleLayersCheckButton").is_pressed(),
-		"wipe_old_anims": get_node("%WipeOldAnimationsCheckButton").is_pressed(),
+		"o_name": %OutFileName.text,
+		"only_visible_layers": %VisibleLayersCheckButton.is_pressed(),
+		"wipe_old_anims": %WipeOldAnimationsCheckButton.is_pressed(),
 	}
 
 	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
@@ -126,28 +126,28 @@ func _save_config():
 
 func _load_default_config():
 	# Reset variables
-	_source = ""
+	_source = PopochiuEditorHelper.EMPTY_STRING
 	_tags_cache = []
-	_output_folder = ""
+	_output_folder = PopochiuEditorHelper.EMPTY_STRING
 
 	# Empty tags list
 	_empty_tags_container()
 
 	# Reset inspector fields
-	get_node("%SourceButton").text = "[empty]"
-	get_node("%SourceButton").tooltip_text = ""
-	get_node("%OutFolderButton").text = "[empty]"
-	get_node("%OutFileName").clear()
-	get_node("%VisibleLayersCheckButton").set_pressed_no_signal(false)
-	get_node("%WipeOldAnimationsCheckButton").set_pressed_no_signal(
+	%SourceButton.text = "[empty]"
+	%SourceButton.tooltip_text = PopochiuEditorHelper.EMPTY_STRING
+	%OutFolderButton.text = "[empty]"
+	%OutFileName.clear()
+	%VisibleLayersCheckButton.set_pressed_no_signal(false)
+	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
 		PopochiuConfig.is_default_wipe_old_anims_enabled()
 	)
 
 
 func _set_source(source):
 	_source = source
-	get_node("%SourceButton").text = _source
-	get_node("%SourceButton").tooltip_text = _source
+	%SourceButton.text = _source
+	%SourceButton.tooltip_text = _source
 
 
 func _on_source_pressed():
@@ -177,13 +177,13 @@ func _on_import_pressed():
 	_importing = true
 	_root_node = get_tree().get_edited_scene_root()
 
-	if _output_folder == "":
+	if _output_folder == PopochiuEditorHelper.EMPTY_STRING:
 		_output_folder = (
 			PopochiuResources.INVENTORY_ITEMS_PATH if _root_node == null
 			else _root_node.scene_file_path.get_base_dir()
 		)
 	
-	if _source == "":
+	if _source == PopochiuEditorHelper.EMPTY_STRING:
 		_show_message("Aseprite file not selected")
 		_importing = false
 		return
@@ -192,9 +192,9 @@ func _on_import_pressed():
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
 		"output_folder": _output_folder,
-		"output_filename": get_node("%OutFileName").text,
-		"only_visible_layers": get_node("%VisibleLayersCheckButton").is_pressed(),
-		"wipe_old_animations": get_node("%WipeOldAnimationsCheckButton").is_pressed(),
+		"output_filename": %OutFileName.text,
+		"only_visible_layers": %VisibleLayersCheckButton.is_pressed(),
+		"wipe_old_animations": %WipeOldAnimationsCheckButton.is_pressed(),
 	}
 
 	_save_config()
@@ -217,7 +217,7 @@ func _reset_prefs_metadata():
 func _open_source_dialog():
 	_file_dialog_aseprite = _create_aseprite_file_selection()
 	get_parent().add_child(_file_dialog_aseprite)
-	if _source != "":
+	if _source != PopochiuEditorHelper.EMPTY_STRING:
 		_file_dialog_aseprite.set_current_dir(
 			ProjectSettings.globalize_path(
 				_source.get_base_dir()
@@ -242,11 +242,11 @@ func _populate_tags(tags: Array):
 
 	# Add each tag found
 	for t in tags:
-		if t.tag_name == "":
+		if t.tag_name == PopochiuEditorHelper.EMPTY_STRING:
 			continue
 		
 		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
-		get_node("%Tags").add_child(tag_row)
+		%Tags.add_child(tag_row)
 		tag_row.init(t)
 		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
 		_customize_tag_ui(tag_row)
@@ -261,8 +261,8 @@ func _customize_tag_ui(tagrow: AnimationTagRow):
 
 func _empty_tags_container():
 	# Clean the inspector tags container empty
-	for tl in get_node("%Tags").get_children():
-		get_node("%Tags").remove_child(tl)
+	for tl in %Tags.get_children():
+		%Tags.remove_child(tl)
 		tl.queue_free()
 
 
@@ -288,9 +288,9 @@ func _merge_with_cache(tags: Array) -> Array:
 
 func _get_tags_from_ui() -> Array:
 	var tags_list = []
-	for tag_row in get_node("%Tags").get_children():
+	for tag_row in %Tags.get_children():
 		var tag_row_cfg: Dictionary = tag_row.get_cfg()
-		if tag_row_cfg.tag_name == "":
+		if tag_row_cfg.tag_name == PopochiuEditorHelper.EMPTY_STRING:
 			continue
 		tags_list.push_back(tag_row_cfg)
 	return tags_list
@@ -303,7 +303,7 @@ func _get_tags_from_source() -> Array:
 		return []
 	var tags_list = []
 	for t in tags_found:
-		if t == "":
+		if t == PopochiuEditorHelper.EMPTY_STRING:
 			continue
 		tags_list.push_back({
 			tag_name = t
@@ -312,11 +312,11 @@ func _get_tags_from_source() -> Array:
 
 
 func _show_message(
-	message: String, title: String = "", object: Object = null, method := ""
+	message: String, title: String = PopochiuEditorHelper.EMPTY_STRING, object: Object = null, method := PopochiuEditorHelper.EMPTY_STRING
 ):
 	var warning_dialog = AcceptDialog.new()
 	
-	if title != "":
+	if title != PopochiuEditorHelper.EMPTY_STRING:
 		warning_dialog.title = title
 	
 	warning_dialog.dialog_text = message
@@ -334,10 +334,10 @@ func _show_message(
 	PopochiuEditorHelper.show_dialog(warning_dialog)
 
 
-func _show_confirmation(message: String, title: String = ""):
+func _show_confirmation(message: String, title: String = PopochiuEditorHelper.EMPTY_STRING):
 	var _confirmation_dialog = ConfirmationDialog.new()
 	get_parent().add_child(_confirmation_dialog)
-	if title != "":
+	if title != PopochiuEditorHelper.EMPTY_STRING:
 		_confirmation_dialog.title = title
 	_confirmation_dialog.dialog_text = message
 	_confirmation_dialog.popup_centered()
@@ -351,8 +351,8 @@ func _on_options_title_toggled(button_pressed):
 
 
 func _set_options_visible(is_visible):
-	get_node("%Options").visible = is_visible
-	get_node("%OptionsTitle").icon = (
+	%Options.visible = is_visible
+	%OptionsTitle.icon = (
 		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
 		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
 	)
@@ -367,7 +367,7 @@ func _set_tags_visible(is_visible: bool) -> void:
 	%TagsInfo.visible = %Tags.get_child_count() == 0
 
 	%TagsScrollContainer.visible = is_visible
-	get_node("%TagsTitle").icon = (
+	%TagsTitle.icon = (
 		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
 		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
 	)
@@ -391,8 +391,8 @@ func _create_output_folder_selection():
 
 func _on_output_folder_selected(path):
 	_output_folder = path
-	get_node("%OutFolderButton").text = (
-		_output_folder if _output_folder != "" else _out_folder_default
+	%OutFolderButton.text = (
+		_output_folder if _output_folder != PopochiuEditorHelper.EMPTY_STRING else _out_folder_default
 	)
 	_output_folder_dialog.queue_free()
 	_save_config()
@@ -403,25 +403,25 @@ func _set_elements_styles():
 	var section_color = get_theme_color("prop_section", "Editor")
 	var section_style = StyleBoxFlat.new()
 	section_style.set_bg_color(section_color)
-	get_node("%TagsTitleBar").set("theme_override_styles/panel", section_style)
-	get_node("%OptionsTitleBar").set("theme_override_styles/panel", section_style)
+	%TagsTitleBar.set("theme_override_styles/panel", section_style)
+	%OptionsTitleBar.set("theme_override_styles/panel", section_style)
 
 	# Set style of warning panel
-	get_node("%WarningPanel").add_theme_stylebox_override(
+	%WarningPanel.add_theme_stylebox_override(
 		"panel",
-		get_node("%WarningPanel").get_theme_stylebox("sub_inspector_bg11", "Editor")
+		%WarningPanel.get_theme_stylebox("sub_inspector_bg11", "Editor")
 	)
-	get_node("%WarningLabel").add_theme_color_override("font_color", Color("c46c71"))
+	%WarningLabel.add_theme_color_override("font_color", Color("c46c71"))
 
 
 func _show_warning():
-	get_node("%Warning").visible = true
-	get_node("%Importer").visible = false
+	%Warning.visible = true
+	%Importer.visible = false
 	
 
 func _show_importer():
-	get_node("%Warning").visible = false
-	get_node("%Importer").visible = true
+	%Warning.visible = false
+	%Importer.visible = true
 
 # TODO: Introduce layer selection list, more or less as tags
 

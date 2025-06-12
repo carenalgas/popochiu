@@ -7,7 +7,7 @@ extends RefCounted
 ## from Aseprite files for different node types.
 
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
-const _DEFAULT_AL = "" # Empty string equals default "Global" animation library
+const _DEFAULT_AL = PopochiuEditorHelper.EMPTY_STRING # Empty string equals default "Global" animation library
 
 ## Autoplay configuration for animations.
 enum AutoplayMode {
@@ -40,7 +40,7 @@ func init(aseprite: RefCounted, editor_file_system: EditorFileSystem = null) -> 
 
 ## Create animations from all tags in the Aseprite file.
 func create_all_animations(target_node: Node, options: Dictionary, autoplay_mode: AutoplayMode = AutoplayMode.NONE) -> int:
-	return await _create_animations(target_node, options, "", autoplay_mode)
+	return await _create_animations(target_node, options, PopochiuEditorHelper.EMPTY_STRING, autoplay_mode)
 
 
 ## Create animations from a specific Aseprite tag.
@@ -53,7 +53,7 @@ func create_tag_animations(target_node: Node, aseprite_tag: String, options: Dic
 
 #region Protected #################################################################################
 ## Main animation creation logic that handles both full-file and tag-based imports.
-func _create_animations(target_node: Node, options: Dictionary, tag: String = "", autoplay_mode: AutoplayMode = AutoplayMode.NONE) -> int:
+func _create_animations(target_node: Node, options: Dictionary, tag: String = PopochiuEditorHelper.EMPTY_STRING, autoplay_mode: AutoplayMode = AutoplayMode.NONE) -> int:
 	var result := _setup_common(target_node, options)
 	if result != RESULT_CODE.SUCCESS:
 		return result
@@ -88,8 +88,8 @@ func _create_animations(target_node: Node, options: Dictionary, tag: String = ""
 
 
 ## Configure autoplay based on the specified mode and context.
-func _setup_autoplay(autoplay_mode: AutoplayMode, tag: String = "") -> void:
-	_player.autoplay = ""  # Reset autoplay to default
+func _setup_autoplay(autoplay_mode: AutoplayMode, tag: String = PopochiuEditorHelper.EMPTY_STRING) -> void:
+	_player.autoplay = PopochiuEditorHelper.EMPTY_STRING  # Reset autoplay to default
 	match autoplay_mode:
 		AutoplayMode.NONE:
 			pass
@@ -139,7 +139,7 @@ func _setup_texture() -> void:
 ## Get the appropriate property track path. Must be implemented by subclasses.
 func _get_frame_property_track() -> String:
 	assert(false, "_get_frame_property_track must be implemented by subclasses")
-	return ""
+	return PopochiuEditorHelper.EMPTY_STRING
 
 
 ## Get the frame key for animation. Must be implemented by subclasses.
@@ -173,7 +173,7 @@ func _create_spritesheet_from_tag(selected_tag: String) -> int:
 	return RESULT_CODE.SUCCESS
 
 
-func _load_spritesheet_metadata(selected_tag: String = "") -> int:
+func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPTY_STRING) -> int:
 	_spritesheet_metadata = {
 		tags = {},
 		frames = {},

@@ -18,7 +18,7 @@ enum ImporterType {
 var _tab_container: TabContainer = null
 var _dock_tabs: Dictionary = {}
 var _scene_check_timer: Timer
-var _current_scene_path := ""
+var _current_scene_path := PopochiuEditorHelper.EMPTY_STRING
 var _popup_active := false
 
 
@@ -69,7 +69,7 @@ func _exit_tree() -> void:
 
 #region Private ######################################################################################
 func _on_scene_changed(scene_root: Node) -> void:
-	_current_scene_path = scene_root.scene_file_path if scene_root else ""
+	_current_scene_path = scene_root.scene_file_path if scene_root else PopochiuEditorHelper.EMPTY_STRING
 	_update_dock_visibility()
 
 	# Check if we need to restart the timer

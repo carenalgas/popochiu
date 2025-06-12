@@ -37,6 +37,8 @@ const CreateObject = preload(CREATE_OBJECT_FOLDER + "create_object.gd")
 const MigrationsPanel = preload(
 	"res://addons/popochiu/editor/popups/migrations_panel/migrations_panel.gd"
 )
+# ---- Utilities -------------------------------------------------------------------------------
+const EMPTY_STRING := ""
 
 static var signal_bus := PopochiuSignalBus.new()
 static var ei := EditorInterface
