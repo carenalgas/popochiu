@@ -1,8 +1,8 @@
 @tool
-extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_inspector_dock.gd"
+extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_dock.gd"
 
 var _animation_creator = preload(\
-"res://addons/popochiu/editor/importers/aseprite/animation_creator.gd").new()
+"res://addons/popochiu/editor/importers/aseprite/animation_creator_sprite2d.gd").new()
 
 
 
@@ -52,17 +52,16 @@ func _on_import_pressed():
 		
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
-		# TODO: check if animation player exists in prop, if not add it
-		#       same for Sprite2D even if it should be there...
 		
 		# Make the output folder match the prop's folder
 		_options.output_folder = prop.scene_file_path.get_base_dir()
 		
 		# Import a single tag animation
-		result = await _animation_creator.create_prop_animations(
+		result = await _animation_creator.create_tag_animations(
 			prop,
 			prop.get_meta("ANIM_NAME"),
-			_options
+			_options,
+			_animation_creator.AutoplayMode.TAG_NAME
 		)
 	
 	for prop in props_container.get_children():

@@ -6,8 +6,11 @@ func _export_begin(features: PackedStringArray, is_debug: bool, path: String, fl
 	var file := FileAccess.open(PopochiuResources.DATA, FileAccess.READ)
 	if file:
 		add_file(PopochiuResources.DATA, file.get_buffer(file.get_length()), false)
-	
 	file.close()
+
+	# Clean global importer configurations from PopochiuResources
+	LOCAL_OBJ_CONFIG.remove_config(null)
+	PopochiuUtils.print_normal("Aseprite Importer: Removed inventory importer configurations from PopochiuResources")
 
 # Logic for Aseprite Importer
 # This code removes importer's metadata from nodes before exporting them
@@ -46,9 +49,9 @@ func _export_file(path: String, type: String, features: PackedStringArray) -> vo
 	root_node.free()
 
 
-func _remove_meta(node:Node, path: String) -> bool:
+func _remove_meta(node: Node, path: String) -> bool:
 	if node.has_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME):
-		node.remove_meta(LOCAL_OBJ_CONFIG.LOCAL_OBJ_CONFIG_META_NAME)
+		LOCAL_OBJ_CONFIG.remove_config(node)
 		PopochiuUtils.print_normal("Aseprite Importer: Removed metadata from scene %s" % path)
 		
 		return true

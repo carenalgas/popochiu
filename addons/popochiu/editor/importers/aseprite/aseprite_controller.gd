@@ -4,10 +4,10 @@ extends RefCounted
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func export_file(file_name: String, output_folder: String, options: Dictionary) -> Dictionary:
-	var exception_pattern = options.get('exception_pattern', "")
+	var exception_pattern = options.get('exception_pattern', PopochiuEditorHelper.EMPTY_STRING)
 	var only_visible_layers = options.get('only_visible_layers', false)
 	var output_name = (
-		file_name if options.get('output_filename') == ""
+		file_name if options.get('output_filename') == PopochiuEditorHelper.EMPTY_STRING
 		else options.get('output_filename', file_name)
 	)
 	var basename = _get_file_basename(output_name)
@@ -37,7 +37,7 @@ func export_file(file_name: String, output_folder: String, options: Dictionary) 
 
 
 func export_layers(file_name: String, output_folder: String, options: Dictionary) -> Array:
-	var exception_pattern = options.get('exception_pattern', "")
+	var exception_pattern = options.get('exception_pattern', PopochiuEditorHelper.EMPTY_STRING)
 	var only_visible_layers = options.get('only_visible_layers', false)
 	var basename = _get_file_basename(file_name)
 	var layers = list_layers(file_name, only_visible_layers)
@@ -46,14 +46,14 @@ func export_layers(file_name: String, output_folder: String, options: Dictionary
 	var output = []
 
 	for layer in layers:
-		if layer != "" and (not exception_regex or exception_regex.search(layer) == null):
+		if layer != PopochiuEditorHelper.EMPTY_STRING and (not exception_regex or exception_regex.search(layer) == null):
 			output.push_back(export_layer(file_name, layer, output_folder, options))
 
 	return output
 
 
 func export_layer(file_name: String, layer_name: String, output_folder: String, options: Dictionary) -> Dictionary:
-	var output_prefix = options.get('output_filename', "").strip_edges()
+	var output_prefix = options.get('output_filename', PopochiuEditorHelper.EMPTY_STRING).strip_edges()
 	var output_dir = output_folder.replace("res://", "./").strip_edges()
 	var data_file = "%s/%s%s.json" % [output_dir, output_prefix, layer_name]
 	var sprite_sheet = "%s/%s%s.png" % [output_dir, output_prefix, layer_name]
@@ -79,7 +79,7 @@ func export_layer(file_name: String, layer_name: String, output_folder: String, 
 # IMPROVE: See if we can extract JSON data limited to the single tag
 # (so we don't have to reckon offset framerange)
 func export_tag(file_name: String, tag_name: String, output_folder: String, options: Dictionary) -> Dictionary:
-	var output_prefix = options.get('output_filename', "").strip_edges()
+	var output_prefix = options.get('output_filename', PopochiuEditorHelper.EMPTY_STRING).strip_edges()
 	var output_dir = output_folder.replace("res://", "./").strip_edges()
 	var data_file = "%s/%s%s.json" % [output_dir, output_prefix, tag_name]
 	var sprite_sheet = "%s/%s%s.png" % [output_dir, output_prefix, tag_name]
@@ -239,7 +239,7 @@ func _get_file_basename(file_path: String) -> String:
 
 
 func _compile_regex(pattern):
-	if pattern == "":
+	if pattern == PopochiuEditorHelper.EMPTY_STRING:
 		return
 
 	var rgx = RegEx.new()
