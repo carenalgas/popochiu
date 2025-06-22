@@ -73,7 +73,7 @@ func _load_default_tag_state() -> Dictionary:
 	return {
 		"tag_name": PopochiuEditorHelper.EMPTY_STRING,
 		"import": PopochiuConfig.is_default_animation_import_enabled(),
-		"loops": PopochiuConfig.is_default_animation_loop_enabled(),
+		"loops": false,
 		"prop_visible": PopochiuConfig.is_default_animation_prop_visible(),
 		"prop_clickable": PopochiuConfig.is_default_animation_prop_clickable(),
 	}

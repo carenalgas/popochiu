@@ -63,6 +63,24 @@ func init():
 #endregion
 
 
+#region Protected ##################################################################################
+## Returns the default loop behavior for animations based on the object type.
+## This method should be overridden by child classes to provide type-specific defaults.
+func _get_default_loop_behavior() -> bool:
+	# Base implementation returns false (no looping by default)
+	return false
+
+
+## This method can be overridden by child classes to customize the tag UI,
+## such as enabling additional buttons or similar.
+func _customize_tag_ui(tagrow: AnimationTagRow):
+	## This can be implemented by child classes if necessary
+	pass
+
+
+#endregion
+
+
 #region Private ####################################################################################
 func _check_aseprite() -> int:
 	if not _aseprite.check_command_path():
@@ -162,18 +180,12 @@ func _on_source_pressed():
 
 func _on_aseprite_file_selected(path):
 	_set_source(ProjectSettings.localize_path(path))
-	_populate_tags(_get_tags_from_source())
-	_save_config()
+	_scan_source()
 	_file_dialog_aseprite.queue_free()
-	_set_tags_visible(true)
 
 
 func _on_rescan_pressed():
-	_populate_tags(\
-		_merge_with_cache(_get_tags_from_source())\
-	)
-	_save_config()
-	_set_tags_visible(true)
+	_scan_source()
 
 
 func _on_import_pressed():
@@ -242,6 +254,14 @@ func _create_aseprite_file_selection():
 	return file_dialog
 
 
+func _scan_source():
+	_populate_tags(
+		_merge_with_cache(_get_tags_from_source())\
+	)
+	_save_config()
+	_set_tags_visible(true)
+
+
 func _populate_tags(tags: Array):
 	## reset tags container
 	_empty_tags_container()
@@ -258,11 +278,6 @@ func _populate_tags(tags: Array):
 		_customize_tag_ui(tag_row)
 		# Invoke customization hook implementable in child classes		
 	_update_tags_cache()
-
-
-func _customize_tag_ui(tagrow: AnimationTagRow):
-	## This can be implemented by child classes if necessary
-	pass
 
 
 func _empty_tags_container():
@@ -283,11 +298,13 @@ func _merge_with_cache(tags: Array) -> Array:
 		tags_cache_index[t.tag_name] = t
 	
 	for i in tags.size():
-		result.push_back(
-			tags_cache_index[tags[i].tag_name]
-			if tags_cache_index.has(tags[i].tag_name)
-			else tags[i]
-		)
+		if tags_cache_index.has(tags[i].tag_name):
+			# Use cached version (preserves user settings)
+			result.push_back(tags_cache_index[tags[i].tag_name])
+		else:
+			# New tag: set default loop behavior based on object type
+			tags[i].loops = _get_default_loop_behavior()
+			result.push_back(tags[i])
 
 	return result
 

@@ -40,4 +40,9 @@ func _customize_tag_ui(tag_row: AnimationTagRow):
 	pass
 
 
+## Returns true for characters as they typically use looping animations.
+func _get_default_loop_behavior() -> bool:
+	return true
+
+
 #endregion
