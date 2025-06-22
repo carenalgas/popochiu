@@ -30,6 +30,12 @@ var _out_folder_default := "[Same as scene]"
 
 #region Public ######################################################################################
 func init():
+	# Connect to theme changes to update styles if the user
+	# sets a different theme for the editor.
+	# Doing it once becase we have more docks initialized.
+	if not is_connected("theme_changed", _on_theme_changed):
+		theme_changed.connect(_on_theme_changed)
+
 	# Initialize styles and UI elements visibility
 	_set_elements_styles()
 	_set_tags_visible(false)
@@ -346,7 +352,7 @@ func _show_confirmation(message: String, title: String = PopochiuEditorHelper.EM
 
 
 func _on_options_title_toggled(button_pressed):
-	_set_options_visible(button_pressed)
+	_set_options_visible(!button_pressed)
 	_save_config()
 
 
@@ -358,7 +364,7 @@ func _set_options_visible(is_visible):
 	)
 
 func _on_tags_title_toggled(button_pressed: bool) -> void:
-	_set_tags_visible(button_pressed)
+	_set_tags_visible(!button_pressed)
 	_save_config()
 
 
@@ -380,6 +386,12 @@ func _on_out_folder_pressed():
 	_output_folder_dialog.popup_centered_ratio()
 
 
+# Called when the editor theme changes to update UI styling.
+func _on_theme_changed():
+	# Defer the style update to ensure theme cache is fully updated.
+	call_deferred("_set_elements_styles")
+
+
 func _create_output_folder_selection():
 	var file_dialog = FileDialog.new()
 	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
@@ -399,19 +411,36 @@ func _on_output_folder_selected(path):
 
 
 func _set_elements_styles():
-	# Set sections title colors according to current theme
-	var section_color = get_theme_color("prop_section", "Editor")
-	var section_style = StyleBoxFlat.new()
-	section_style.set_bg_color(section_color)
-	%TagsTitleBar.set("theme_override_styles/panel", section_style)
-	%OptionsTitleBar.set("theme_override_styles/panel", section_style)
+	# Use the editor's section stylebox and remove borders to maintain theme consistency
+	var section_style = get_theme_stylebox("normal", "Button").duplicate()
+	section_style.set_border_width_all(0)
+	section_style.set_content_margin_all(0)
+
+	%TagsTitleBar.add_theme_stylebox_override("panel", section_style)
+	%OptionsTitleBar.add_theme_stylebox_override("panel", section_style)
 
 	# Set style of warning panel
-	%WarningPanel.add_theme_stylebox_override(
-		"panel",
-		%WarningPanel.get_theme_stylebox("sub_inspector_bg11", "Editor")
-	)
-	%WarningLabel.add_theme_color_override("font_color", Color("c46c71"))
+	%WarningLabel.add_theme_color_override("font_color", get_theme_color("error_color", "Editor"))
+
+	# Style the title buttons with proper theme colors
+	var normal_color = get_theme_color("font_color", "Label")
+	var hover_color = get_theme_color("font_hover_color", "Button")
+	var pressed_color = get_theme_color("font_pressed_color", "Button")
+
+	# Apply colors to both title buttons
+	for button in [%TagsTitle, %OptionsTitle]:
+		button.add_theme_color_override("font_color", normal_color)
+		button.add_theme_color_override("font_hover_color", hover_color)
+		button.add_theme_color_override("font_pressed_color", pressed_color)
+		button.add_theme_color_override("font_focus_color", pressed_color)
+
+		# Ensure button background is transparent
+		var button_style = StyleBoxEmpty.new()
+		button.add_theme_stylebox_override("normal", button_style)
+		button.add_theme_stylebox_override("hover", button_style)
+		button.add_theme_stylebox_override("pressed", button_style)
+		button.add_theme_stylebox_override("focus", button_style)
+
 
 
 func _show_warning():
