@@ -13,6 +13,10 @@ func init():
 
 	super()
 
+## Returns false for room props (no autoplay by default).
+func _get_default_autoplay_behavior() -> bool:
+	return false
+
 
 #endregion
 

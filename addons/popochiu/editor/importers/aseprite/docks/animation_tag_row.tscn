@@ -88,7 +88,17 @@ toggle_mode = true
 icon = SubResource("ImageTexture_c80ss")
 flat = true
 
+[node name="Autoplays" type="Button" parent="Panel/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+tooltip_text = "Set animation as autoplaying"
+toggle_mode = true
+icon = SubResource("ImageTexture_c80ss")
+flat = true
+
 [connection signal="toggled" from="Panel/HBoxContainer/Visible" to="." method="_on_visible_toggled"]
 [connection signal="toggled" from="Panel/HBoxContainer/Clickable" to="." method="_on_clickable_toggled"]
 [connection signal="toggled" from="Panel/HBoxContainer/Import" to="." method="_on_import_toggled"]
 [connection signal="toggled" from="Panel/HBoxContainer/Loops" to="." method="_on_loops_toggled"]
+[connection signal="toggled" from="Panel/HBoxContainer/Autoplays" to="." method="_on_autoplays_toggled"]

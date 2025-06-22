@@ -18,6 +18,10 @@ func init():
 
 	super()
 
+## Returns true for inventory items (autoplay by default).
+func _get_default_autoplay_behavior() -> bool:
+	return true
+
 
 #endregion
 

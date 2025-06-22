@@ -10,6 +10,7 @@ var _anim_tag_state: Dictionary = {}
 var tag_name_label: Control
 var import_toggle: Control
 var loops_toggle: Control
+var autoplays_toggle: Control
 var separator: Control
 var visible_toggle: Control
 var clickable_toggle: Control
@@ -23,6 +24,7 @@ func init(tag_cfg: Dictionary):
 	tag_name_label = $HBoxContainer/TagName
 	import_toggle = $Panel/HBoxContainer/Import
 	loops_toggle = $Panel/HBoxContainer/Loops
+	autoplays_toggle = $Panel/HBoxContainer/Autoplays
 	separator = $Panel/HBoxContainer/Separator
 	visible_toggle = $Panel/HBoxContainer/Visible
 	clickable_toggle = $Panel/HBoxContainer/Clickable
@@ -31,6 +33,7 @@ func init(tag_cfg: Dictionary):
 	# 1. Common toggles icons
 	import_toggle.icon = get_theme_icon('Load', 'EditorIcons')
 	loops_toggle.icon = get_theme_icon('Loop', 'EditorIcons')
+	autoplays_toggle.icon = get_theme_icon('AutoPlay', 'EditorIcons')
 	# 2. Room-related toggles icons
 	visible_toggle.icon = get_theme_icon('GuiVisibilityVisible', 'EditorIcons')
 	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
@@ -61,11 +64,12 @@ func get_cfg() -> Dictionary:
 
 #region Private ####################################################################################
 func _setup_scene():
-	import_toggle.button_pressed = _anim_tag_state.import
-	loops_toggle.button_pressed = _anim_tag_state.loops
 	tag_name_label.text = _anim_tag_state.tag_name
-	visible_toggle.button_pressed = _anim_tag_state.prop_visible
-	clickable_toggle.button_pressed = _anim_tag_state.prop_clickable
+	import_toggle.set_pressed_no_signal(_anim_tag_state.import)
+	loops_toggle.set_pressed_no_signal(_anim_tag_state.loops)
+	autoplays_toggle.set_pressed_no_signal(_anim_tag_state.autoplays)
+	visible_toggle.set_pressed_no_signal(_anim_tag_state.prop_visible)
+	clickable_toggle.set_pressed_no_signal(_anim_tag_state.prop_clickable)
 	emit_signal("tag_state_changed")
 
 
@@ -74,6 +78,7 @@ func _load_default_tag_state() -> Dictionary:
 		"tag_name": PopochiuEditorHelper.EMPTY_STRING,
 		"import": PopochiuConfig.is_default_animation_import_enabled(),
 		"loops": false,
+		"autoplays": false,
 		"prop_visible": PopochiuConfig.is_default_animation_prop_visible(),
 		"prop_clickable": PopochiuConfig.is_default_animation_prop_clickable(),
 	}
@@ -86,6 +91,11 @@ func _on_import_toggled(button_pressed):
 
 func _on_loops_toggled(button_pressed):
 	_anim_tag_state.loops = button_pressed
+	emit_signal("tag_state_changed")
+
+
+func _on_autoplays_toggled(button_pressed):
+	_anim_tag_state.autoplay = button_pressed
 	emit_signal("tag_state_changed")
 
 

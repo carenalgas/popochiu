@@ -13,6 +13,10 @@ func init():
 
 	super()
 
+## Returns false for characters (no autoplay by default).
+func _get_default_autoplay_behavior() -> bool:
+	return false
+
 
 #endregion
 
@@ -36,13 +40,31 @@ func _on_import_pressed():
 
 
 func _customize_tag_ui(tag_row: AnimationTagRow):
-	# Nothing special has to be done for Character tags
-	pass
-
+	# Connect the autoplay toggle for exclusive selection logic.
+	tag_row.autoplays_toggle.pressed.connect(
+		func():
+			_on_autoplay_toggle_pressed(tag_row)
+	)
 
 ## Returns true for characters as they typically use looping animations.
 func _get_default_loop_behavior() -> bool:
 	return true
+
+
+# Exclusive autoplay logic for character animations.
+func _on_autoplay_toggle_pressed(selected_row: AnimationTagRow):
+	var toggle_on = selected_row.autoplays_toggle.button_pressed
+
+	# Turn off all other autoplay toggles.
+	for row in %Tags.get_children():
+		if row != selected_row:
+			row.autoplays_toggle.set_pressed_no_signal(false)
+
+	# Turn on the selected toggle, if it was off.
+	selected_row.autoplays_toggle.set_pressed_no_signal(toggle_on)
+
+	# Save config after change.
+	_save_config()
 
 
 #endregion

@@ -70,6 +70,12 @@ func _get_default_loop_behavior() -> bool:
 	# Base implementation returns false (no looping by default)
 	return false
 
+## Returns the default autoplay behavior for animations based on the object type.
+## This method should be overridden by child classes to provide type-specific defaults.
+func _get_default_autoplay_behavior() -> bool:
+	# Base implementation returns false (no autoplay by default)
+	return false
+
 
 ## This method can be overridden by child classes to customize the tag UI,
 ## such as enabling additional buttons or similar.
@@ -302,8 +308,9 @@ func _merge_with_cache(tags: Array) -> Array:
 			# Use cached version (preserves user settings)
 			result.push_back(tags_cache_index[tags[i].tag_name])
 		else:
-			# New tag: set default loop behavior based on object type
+			# New tag: set default loop and autoplay behavior based on object type
 			tags[i].loops = _get_default_loop_behavior()
+			tags[i].autoplays = _get_default_autoplay_behavior()
 			result.push_back(tags[i])
 
 	return result
