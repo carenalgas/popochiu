@@ -51,6 +51,11 @@ func show_prop_buttons():
 	separator.visible = true
 	visible_toggle.visible =  true
 	clickable_toggle.visible = true
+	autoplays_toggle.visible = true
+
+func show_inventory_item_buttons():
+	separator.visible = true
+	autoplays_toggle.visible = true
 
 
 #endregion
@@ -95,7 +100,7 @@ func _on_loops_toggled(button_pressed):
 
 
 func _on_autoplays_toggled(button_pressed):
-	_anim_tag_state.autoplay = button_pressed
+	_anim_tag_state.autoplays = button_pressed
 	emit_signal("tag_state_changed")
 
 

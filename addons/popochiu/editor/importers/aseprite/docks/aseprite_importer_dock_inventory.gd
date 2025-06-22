@@ -52,6 +52,8 @@ func _on_import_pressed():
 				result = RESULT_CODE.ERR_CANT_CREATE_OBJ_FOLDER
 		
 		inventory_item.set_meta("ANIM_NAME", tag.tag_name)
+		inventory_item.set_meta("ANIM_AUTOPLAY", tag.autoplays)
+
 		created_items.append(inventory_item)
 	
 	# Import animations for each created item
@@ -65,10 +67,16 @@ func _on_import_pressed():
 		result = await _animation_creator.create_tag_animations(
 			item,
 			item.get_meta("ANIM_NAME"),
-			_options,
-			_animation_creator.AutoplayMode.TAG_NAME
+			_options
 		)
-	
+
+		if item.get_meta("ANIM_AUTOPLAY", false):
+			# If the item has autoplay enabled, set it up
+			_animation_creator.setup_autoplay(item.get_meta("ANIM_NAME"))
+		else:
+			# Otherwise, ensure autoplay animation is unset
+			_animation_creator.setup_autoplay(PopochiuEditorHelper.EMPTY_STRING)
+
 	# Save all created items
 	for item in created_items:
 		if not item.has_meta("ANIM_NAME"): 
@@ -92,8 +100,8 @@ func _on_import_pressed():
 
 ## Customize the tag UI for inventory items.
 func _customize_tag_ui(tag_row: AnimationTagRow):
-	# Inventory items don't need prop-specific buttons
-	pass
+	# Show inventory-item-related buttons if we are importing inventory items
+	tag_row.show_inventory_item_buttons()
 
 
 ## Create a new inventory item with the specified name.

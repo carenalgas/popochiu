@@ -53,6 +53,7 @@ func _on_import_pressed():
 			prop.visible = tag.prop_visible
 
 		prop.set_meta("ANIM_NAME", tag.tag_name)
+		prop.set_meta("ANIM_AUTOPLAY", tag.autoplays)
 		
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
@@ -64,10 +65,16 @@ func _on_import_pressed():
 		result = await _animation_creator.create_tag_animations(
 			prop,
 			prop.get_meta("ANIM_NAME"),
-			_options,
-			_animation_creator.AutoplayMode.TAG_NAME
+			_options
 		)
-	
+
+		if prop.get_meta("ANIM_AUTOPLAY", false):
+			# If the item has autoplay enabled, set it up
+			_animation_creator.setup_autoplay(prop.get_meta("ANIM_NAME"))
+		else:
+			# Otherwise, ensure autoplay animation is unset
+			_animation_creator.setup_autoplay(PopochiuEditorHelper.EMPTY_STRING)
+
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
 		# Save the prop
