@@ -441,6 +441,8 @@ func _set_elements_styles():
 		button.add_theme_stylebox_override("pressed", button_style)
 		button.add_theme_stylebox_override("focus", button_style)
 
+	%Import.set_button_icon(get_theme_icon("MoveDown", "EditorIcons"))
+	%Reset.set_button_icon(get_theme_icon("Clear", "EditorIcons"))
 
 
 func _show_warning():
