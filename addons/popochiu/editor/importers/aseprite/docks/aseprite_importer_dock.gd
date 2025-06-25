@@ -20,13 +20,10 @@ var _root_node: Node
 var _options: Dictionary
 # ---- Importer parameters variables
 var _source: String = PopochiuEditorHelper.EMPTY_STRING
-var _tags_cache: Array = []
-var _file_dialog_aseprite: FileDialog
-var _output_folder_dialog: FileDialog
-var _importing := false
 var _output_folder := PopochiuEditorHelper.EMPTY_STRING
-var _out_folder_default := "[Same as scene]"
-
+var _file_dialog_aseprite: FileDialog
+var _tags_cache: Array = []
+var _importing := false
 
 #region Public ######################################################################################
 func init():
@@ -53,11 +50,9 @@ func init():
 	var cfg := LOCAL_OBJ_CONFIG.load_config(target_node)
 	if cfg.is_empty():
 		_load_default_config()
-		_set_options_visible(true)
 	else:
 		_load_config(cfg)
 		_set_tags_visible(cfg.get("tags_exp"))
-		_set_options_visible(cfg.get("op_exp"))
 
 
 #endregion
@@ -120,11 +115,6 @@ func _load_config(cfg):
 	if cfg.has("source"):
 		_set_source(cfg.source)
 
-	_output_folder = cfg.get("o_folder", PopochiuEditorHelper.EMPTY_STRING)
-	%OutFolderButton.text = (
-		_output_folder if _output_folder != PopochiuEditorHelper.EMPTY_STRING else _out_folder_default
-	)
-	%OutFileName.text = cfg.get("o_name", PopochiuEditorHelper.EMPTY_STRING)
 	%VisibleLayersCheckButton.set_pressed_no_signal(
 		cfg.get("only_visible_layers", false)
 	)
@@ -133,7 +123,6 @@ func _load_config(cfg):
 	)
 
 	_set_tags_visible(cfg.get("tags_exp", false))
-	_set_options_visible(cfg.get("op_exp", false))
 	_populate_tags(cfg.get("tags", []))
 
 
@@ -144,9 +133,6 @@ func _save_config():
 		"source": _source,
 		"tags": _tags_cache,
 		"tags_exp": %Tags.visible,
-		"op_exp": %Options.visible,
-		"o_folder": _output_folder,
-		"o_name": %OutFileName.text,
 		"only_visible_layers": %VisibleLayersCheckButton.is_pressed(),
 		"wipe_old_anims": %WipeOldAnimationsCheckButton.is_pressed(),
 	}
@@ -166,8 +152,6 @@ func _load_default_config():
 	# Reset inspector fields
 	%SourceButton.text = "[empty]"
 	%SourceButton.tooltip_text = PopochiuEditorHelper.EMPTY_STRING
-	%OutFolderButton.text = "[empty]"
-	%OutFileName.clear()
 	%VisibleLayersCheckButton.set_pressed_no_signal(false)
 	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
 		PopochiuConfig.is_default_wipe_old_anims_enabled()
@@ -201,11 +185,10 @@ func _on_import_pressed():
 	_importing = true
 	_root_node = get_tree().get_edited_scene_root()
 
-	if _output_folder == PopochiuEditorHelper.EMPTY_STRING:
-		_output_folder = (
-			PopochiuResources.INVENTORY_ITEMS_PATH if _root_node == null
-			else _root_node.scene_file_path.get_base_dir()
-		)
+	_output_folder = (
+		PopochiuResources.INVENTORY_ITEMS_PATH if _root_node == null
+		else _root_node.scene_file_path.get_base_dir()
+	)
 	
 	if _source == PopochiuEditorHelper.EMPTY_STRING:
 		_show_message("Aseprite file not selected")
@@ -216,7 +199,6 @@ func _on_import_pressed():
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
 		"output_folder": _output_folder,
-		"output_filename": %OutFileName.text,
 		"only_visible_layers": %VisibleLayersCheckButton.is_pressed(),
 		"wipe_old_animations": %WipeOldAnimationsCheckButton.is_pressed(),
 	}
@@ -375,18 +357,6 @@ func _show_confirmation(message: String, title: String = PopochiuEditorHelper.EM
 	return _confirmation_dialog
 
 
-func _on_options_title_toggled(button_pressed):
-	_set_options_visible(!button_pressed)
-	_save_config()
-
-
-func _set_options_visible(is_visible):
-	%Options.visible = is_visible
-	%OptionsTitle.icon = (
-		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
-		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
-	)
-
 func _on_tags_title_toggled(button_pressed: bool) -> void:
 	_set_tags_visible(!button_pressed)
 	_save_config()
@@ -395,43 +365,17 @@ func _on_tags_title_toggled(button_pressed: bool) -> void:
 func _set_tags_visible(is_visible: bool) -> void:
 	# If the tags container is empty, we show an info box
 	%TagsInfo.visible = %Tags.get_child_count() == 0
-
 	%TagsScrollContainer.visible = is_visible
 	%TagsTitle.icon = (
 		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
 		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
 	)
 
-func _on_out_folder_pressed():
-	_output_folder_dialog = _create_output_folder_selection()
-	get_parent().add_child(_output_folder_dialog)
-	if _output_folder != _out_folder_default:
-		_output_folder_dialog.current_dir = _output_folder
-	_output_folder_dialog.popup_centered_ratio()
-
 
 # Called when the editor theme changes to update UI styling.
 func _on_theme_changed():
 	# Defer the style update to ensure theme cache is fully updated.
 	call_deferred("_set_elements_styles")
-
-
-func _create_output_folder_selection():
-	var file_dialog = FileDialog.new()
-	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_DIR
-	file_dialog.access = FileDialog.ACCESS_RESOURCES
-	file_dialog.title = "Select destination folder"
-	file_dialog.connect("dir_selected", Callable(self, "_on_output_folder_selected"))
-	return file_dialog
-
-
-func _on_output_folder_selected(path):
-	_output_folder = path
-	%OutFolderButton.text = (
-		_output_folder if _output_folder != PopochiuEditorHelper.EMPTY_STRING else _out_folder_default
-	)
-	_output_folder_dialog.queue_free()
-	_save_config()
 
 
 func _set_elements_styles():
@@ -441,7 +385,7 @@ func _set_elements_styles():
 	section_style.set_content_margin_all(0)
 
 	%TagsTitleBar.add_theme_stylebox_override("panel", section_style)
-	%OptionsTitleBar.add_theme_stylebox_override("panel", section_style)
+	%OptionsContainer.add_theme_stylebox_override("panel", section_style)
 
 	# Set style of warning panel
 	%WarningLabel.add_theme_color_override("font_color", get_theme_color("error_color", "Editor"))
@@ -452,7 +396,7 @@ func _set_elements_styles():
 	var pressed_color = get_theme_color("font_pressed_color", "Button")
 
 	# Apply colors to both title buttons
-	for button in [%TagsTitle, %OptionsTitle]:
+	for button in [%TagsTitle]:
 		button.add_theme_color_override("font_color", normal_color)
 		button.add_theme_color_override("font_hover_color", hover_color)
 		button.add_theme_color_override("font_pressed_color", pressed_color)
