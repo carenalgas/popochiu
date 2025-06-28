@@ -23,12 +23,12 @@ func init(tag_cfg: Dictionary):
 	# Used to be @onready var but it doesn't work because the
 	# container gets repopulated without the script being reloaded.
 	tag_name_label = $HBoxContainer/TagName
-	import_toggle = $Panel/HBoxContainer/Import
-	loops_toggle = $Panel/HBoxContainer/Loops
-	autoplays_toggle = $Panel/HBoxContainer/Autoplays
-	separator = $Panel/HBoxContainer/Separator
-	visible_toggle = $Panel/HBoxContainer/Visible
-	clickable_toggle = $Panel/HBoxContainer/Clickable
+	import_toggle = $HBoxContainer/Panel/HBoxContainer/Import
+	loops_toggle = $HBoxContainer/Panel/HBoxContainer/Loops
+	autoplays_toggle = $HBoxContainer/Panel/HBoxContainer/Autoplays
+	separator = $HBoxContainer/Panel/HBoxContainer/Separator
+	visible_toggle = $HBoxContainer/Panel/HBoxContainer/Visible
+	clickable_toggle = $HBoxContainer/Panel/HBoxContainer/Clickable
 	
 	# Set icons manually too:
 	# 1. Common toggles icons
