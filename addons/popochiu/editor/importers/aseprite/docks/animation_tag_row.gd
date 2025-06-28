@@ -3,6 +3,7 @@ extends HBoxContainer
 
 signal tag_state_changed
 signal tag_selected(tag_name)
+signal request_delete_anim(tag_name)
 
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 
@@ -15,7 +16,7 @@ var autoplays_toggle: Control
 var separator: Control
 var visible_toggle: Control
 var clickable_toggle: Control
-
+var delete_anim_button: Control
 
 #region Public #####################################################################################
 func init(tag_cfg: Dictionary):
@@ -29,6 +30,7 @@ func init(tag_cfg: Dictionary):
 	separator = $HBoxContainer/Panel/HBoxContainer/Separator
 	visible_toggle = $HBoxContainer/Panel/HBoxContainer/Visible
 	clickable_toggle = $HBoxContainer/Panel/HBoxContainer/Clickable
+	delete_anim_button = $HBoxContainer/DeleteAnim
 	
 	# Set icons manually too:
 	# 1. Common toggles icons
@@ -38,11 +40,17 @@ func init(tag_cfg: Dictionary):
 	# 2. Room-related toggles icons
 	visible_toggle.icon = get_theme_icon('GuiVisibilityVisible', 'EditorIcons')
 	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
+	# 3. Delete animation icon
+	delete_anim_button.icon = get_theme_icon('Remove', 'EditorIcons')
 	
 	# Connect tag name button pressed signal if not already connected
 	if not tag_name_label.is_connected("pressed", Callable(self, "_on_tag_name_pressed")):
 		tag_name_label.connect("pressed", Callable(self, "_on_tag_name_pressed"))
-	
+
+	# Connect delete button pressed signal if not already connectes
+	if not delete_anim_button.is_connected("pressed", Callable(self, "_on_delete_anim_pressed")):
+		delete_anim_button.connect("pressed", Callable(self, "_on_delete_anim_pressed"))
+
 	# Continue with initialization
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == PopochiuEditorHelper.EMPTY_STRING:
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_UNNAMED_TAG_DETECTED))
@@ -118,9 +126,14 @@ func _on_clickable_toggled(button_pressed):
 	emit_signal("tag_state_changed")
 
 
-# New method to handle button press
 func _on_tag_name_pressed():
+	# Parent will handle the delete request, passing the tag name.
 	emit_signal("tag_selected", _anim_tag_state.tag_name)
+
+
+func _on_delete_anim_pressed():
+	# Parent will handle the delete request, passing the tag name.
+	emit_signal("request_delete_anim", _anim_tag_state.tag_name)
 
 
 #endregion

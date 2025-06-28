@@ -144,14 +144,9 @@ func _save_inventory_item(item: PopochiuInventoryItem) -> int:
 	return ResultCodes.SUCCESS
 
 
-#endregion
-
-#region Protected ##################################################################################
-## Selects the animation in the inventory item's AnimationPlayer.
-## This involves opening the inventory item scene and then selecting the AnimationPlayer.
-func _select_animation(tag_name: String) -> void:
+func _get_scene_path_for_tag(tag_name: String) -> String:
 	if not tag_name:
-		return
+		return PopochiuEditorHelper.EMPTY_STRING
 	
 	# For inventory items, we need to find the scene path from the resource
 	var item_name = tag_name.to_pascal_case()
@@ -163,16 +158,29 @@ func _select_animation(tag_name: String) -> void:
 
 	if item_resource_path.is_empty():
 		PopochiuUtils.print_warning("No inventory item resource found for '%s'" % item_name)
-		return
+		return PopochiuEditorHelper.EMPTY_STRING
 
 	# Load the inventory item resource to get the scene path
 	var item_resource = load(item_resource_path)
 	if not item_resource:
 		PopochiuUtils.print_warning("Failed to load inventory item resource for '%s'" % item_name)
-		return
+		return PopochiuEditorHelper.EMPTY_STRING
 
-	# Open the inventory item scene
-	var scene_path = item_resource.scene
+	return item_resource.scene
+
+
+#endregion
+
+#region Protected ##################################################################################
+## Selects the animation in the inventory item's AnimationPlayer.
+## This involves opening the inventory item scene and then selecting the AnimationPlayer.
+func _select_animation(tag_name: String) -> void:
+	var item_name = tag_name.to_pascal_case()
+	var scene_path = _get_scene_path_for_tag(tag_name)
+	if scene_path.is_empty():
+		PopochiuUtils.print_warning("No scene path found for inventory item '%s'" % item_name)
+		return
+	
 	EditorInterface.open_scene_from_path(scene_path)
 
 	# Wait a frame to ensure the scene is fully loaded
@@ -186,8 +194,36 @@ func _select_animation(tag_name: String) -> void:
 
 	# Find the AnimationPlayer in the inventory item scene
 	var animation_player = item_scene_root.get_node_or_null("AnimationPlayer")
+	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_SELECT)
 
-	_set_animation_in_player(tag_name, animation_player)
 
+## Removes the animation for the given tag from the inventory item's AnimationPlayer.
+func _delete_animation_for_tag(tag_name: String) -> void:
+	var item_name = tag_name.to_pascal_case()
+	var scene_path = _get_scene_path_for_tag(tag_name)
+	if scene_path.is_empty():
+		PopochiuUtils.print_warning("No scene path found for inventory item '%s'" % item_name)
+		return
+
+	# Load the scene without opening it in the editor
+	var packed_scene = load(scene_path)
+	if not packed_scene:
+		PopochiuUtils.print_warning("Failed to load scene for inventory item '%s'" % item_name)
+		return
+	
+	# Instance the scene to work with it in memory
+	var item_scene_root = packed_scene.instantiate()
+	if not is_instance_valid(item_scene_root):
+		PopochiuUtils.print_warning("Failed to instantiate scene for inventory item '%s'" % item_name)
+		return
+
+	# Find the AnimationPlayer in the inventory item scene
+	var animation_player = item_scene_root.get_node_or_null("AnimationPlayer")
+	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_DELETE)
+
+	PopochiuEditorHelper.pack_scene(item_scene_root)
+
+	# Clean up the instance
+	item_scene_root.queue_free()
 
 #endregion

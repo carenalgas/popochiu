@@ -8,6 +8,11 @@ const LOCAL_OBJ_CONFIG = preload("res://addons/popochiu/editor/config/local_obj_
 const AnimationTagRow =\
 preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd")
 
+enum {
+	HANDLE_ANIM_SELECT,
+	HANDLE_ANIM_DELETE,
+}
+
 var target_node: Node
 var file_system: EditorFileSystem
 
@@ -59,30 +64,37 @@ func init():
 
 
 #region Protected ##################################################################################
-## Returns the default loop behavior for animations based on the object type.
-## This method should be overridden by child classes to provide type-specific defaults.
+# Returns the default loop behavior for animations based on the object type.
+# This method should be overridden by child classes to provide type-specific defaults.
 func _get_default_loop_behavior() -> bool:
 	# Base implementation returns false (no looping by default)
 	return false
 
-## Returns the default autoplay behavior for animations based on the object type.
-## This method should be overridden by child classes to provide type-specific defaults.
+# Returns the default autoplay behavior for animations based on the object type.
+# This method should be overridden by child classes to provide type-specific defaults.
 func _get_default_autoplay_behavior() -> bool:
 	# Base implementation returns false (no autoplay by default)
 	return false
 
 
-## This method can be overridden by child classes to customize the tag UI,
-## such as enabling additional buttons or similar.
+# This method can be overridden by child classes to customize the tag UI,
+# such as enabling additional buttons or similar.
 func _customize_tag_ui(tagrow: AnimationTagRow):
 	## This can be implemented by child classes if necessary
 	pass
 
-## Selects an animation in the AnimationPlayer of a target node.
-## Should be overridden by child classes to provide type-specific behavior.
+# Selects an animation in the AnimationPlayer of a target node.
+# Should be overridden by child classes to provide type-specific behavior.
 func _select_animation(tag_name: String) -> void:
 	# Base implementation, to be overridden by child classes
 	pass
+
+# Deletes an animation from the AnimationPlayer of a target node.
+# Should be overridden by child classes to provide type-specific behavior.
+func _delete_animation_for_tag(tag_name: String) -> void:
+	# Base implementation, to be overridden by child classes
+	pass
+
 
 #endregion
 
@@ -218,6 +230,17 @@ func _on_reset_pressed():
 	_confirmation_dialog.get_ok_button().connect("pressed", Callable(self, "_reset_prefs_metadata"))
 
 
+func _on_request_delete_anim(tag_name: String) -> void:
+	var delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
+	
+	delete_dialog.title = "Remove animation for tag %s?" % tag_name
+	delete_dialog.message = "This will [b]NOT[/b] remove [b]%s[/b] prop or inventory item, but only the %s animation!" % [tag_name, tag_name.to_snake_case()]
+	delete_dialog.ask = "Remove the animation for tag [b]%s[/b]?" % tag_name
+	delete_dialog.on_confirmed = _delete_animation_for_tag.bind(tag_name)
+	
+	PopochiuEditorHelper.show_delete_confirmation(delete_dialog)
+
+
 func _reset_prefs_metadata():
 	LOCAL_OBJ_CONFIG.remove_config(target_node)
 	_load_default_config()
@@ -269,6 +292,7 @@ func _populate_tags(tags: Array):
 		tag_row.init(t)
 		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
 		tag_row.connect("tag_selected", Callable(self, "_on_tag_selected"))
+		tag_row.connect("request_delete_anim", Callable(self, "_on_request_delete_anim"))
 		_customize_tag_ui(tag_row)
 		# Invoke customization hook implementable in child classes		
 	_update_tags_cache()
@@ -434,7 +458,7 @@ func _show_importer():
 	%Importer.visible = true
 
 
-func _set_animation_in_player(tag_name: String, animation_player: AnimationPlayer):
+func _handle_animation_in_player(tag_name: String, animation_player: AnimationPlayer, action: int = HANDLE_ANIM_SELECT):
 	if tag_name.is_empty():
 		PopochiuUtils.print_warning("No tag name provided for selection.")
 		return
@@ -450,12 +474,23 @@ func _set_animation_in_player(tag_name: String, animation_player: AnimationPlaye
 	# Find the animation by tag name (converting to snake_case as that's how animations are named)
 	var animation_name = tag_name.to_snake_case()
 	if animation_player.has_animation(animation_name):
-		# Set the animation as the current one in the AnimationPlayer
-		animation_player.assigned_animation = animation_name
+		match action:
+			HANDLE_ANIM_SELECT:
+				# Set the animation as the current one in the AnimationPlayer
+				animation_player.assigned_animation = animation_name
+			HANDLE_ANIM_DELETE:
+				# If the action is to delete, we first need to find which library contains this animation
+				var library_name = animation_player.find_animation_library(
+					animation_player.get_animation(animation_name)
+				)
+				# Get the library and remove the animation from it
+				var library = animation_player.get_animation_library(library_name)
+				if library:
+					library.remove_animation(animation_name)
+			_:
+				PopochiuUtils.print_warning("Unknown action for animation handling: %s." % action)
 	else:
 		PopochiuUtils.print_warning("No animation named '%s' found in character's AnimationPlayer." % animation_name)
 
+
 # TODO: Introduce layer selection list, more or less as tags
-
-
-#endregion

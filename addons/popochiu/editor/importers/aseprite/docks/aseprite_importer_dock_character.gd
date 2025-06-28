@@ -62,9 +62,19 @@ func _select_animation(tag_name: String) -> void:
 		return
 
 	# Character scenes already have the AnimationPlayer as a direct child
-	var animation_player = target_node.get_node_or_null("AnimationPlayer")
+	var animation_player: AnimationPlayer = target_node.get_node_or_null("AnimationPlayer")
 
-	_set_animation_in_player(tag_name, animation_player)
+	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_SELECT)
 
+
+## Removes the animation for the given tag from the character's AnimationPlayer.
+func _delete_animation_for_tag(tag_name: String) -> void:
+	if not is_instance_valid(target_node) or tag_name.is_empty():
+		return
+
+	# Character scenes already have the AnimationPlayer as a direct child
+	var animation_player: AnimationPlayer = target_node.get_node_or_null("AnimationPlayer")
+
+	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_DELETE)
 
 #endregion
