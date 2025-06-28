@@ -78,6 +78,11 @@ func _customize_tag_ui(tagrow: AnimationTagRow):
 	## This can be implemented by child classes if necessary
 	pass
 
+## Selects an animation in the AnimationPlayer of a target node.
+## Should be overridden by child classes to provide type-specific behavior.
+func _select_animation(tag_name: String) -> void:
+	# Base implementation, to be overridden by child classes
+	pass
 
 #endregion
 
@@ -263,9 +268,15 @@ func _populate_tags(tags: Array):
 		%Tags.add_child(tag_row)
 		tag_row.init(t)
 		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
+		tag_row.connect("tag_selected", Callable(self, "_on_tag_selected"))
 		_customize_tag_ui(tag_row)
 		# Invoke customization hook implementable in child classes		
 	_update_tags_cache()
+
+
+func _on_tag_selected(tag_name: String) -> void:
+	# Call the strategy-specific implementation
+	_select_animation(tag_name)
 
 
 func _empty_tags_container():

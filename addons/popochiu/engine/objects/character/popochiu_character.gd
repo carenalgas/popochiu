@@ -944,7 +944,14 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 
 
 func _update_position():
-	PopochiuUtils.r.current.update_characters_position(self)
+	# This avoids errors when an animation is selected by the Aseprite importer interface
+	# because _update_position() is bound to the "frame_changed" signal, which is triggered
+	# even in the editor when the animation is assigned in the player.
+	# Not guarding this with is_editor_hint() because we may still want to see animations
+	# while in the editor, in other contexts.
+	# See issue #403.
+	if is_instance_valid(PopochiuUtils.r.current):
+		PopochiuUtils.r.current.update_characters_position(self)
 
 # Flips sprites depending on user preferences: requires two boolean conditions
 # as arguments for flipping left [param left_cond] or right [param right_cond]

@@ -53,3 +53,30 @@ func _on_autoplay_toggle_pressed(selected_row: AnimationTagRow):
 
 
 #endregion
+
+
+#region Protected ##################################################################################
+## Selects the animation in the character's AnimationPlayer.
+func _select_animation(tag_name: String) -> void:
+	if not is_instance_valid(target_node) or not tag_name:
+		return
+	
+	# Character scenes already have the AnimationPlayer as a direct child
+	var animation_player = target_node.get_node_or_null("AnimationPlayer")
+	if not is_instance_valid(animation_player):
+		PopochiuUtils.print_warning("No AnimationPlayer found in character node")
+		return
+	
+	# Select the AnimationPlayer node in the editor
+	EditorInterface.get_selection().clear()
+	EditorInterface.get_selection().add_node(animation_player)
+	
+	# Find the animation by tag name (converting to snake_case as that's how animations are named)
+	var animation_name = tag_name.to_snake_case()
+	if animation_player.has_animation(animation_name):
+		# Set the animation as the current one in the AnimationPlayer
+		animation_player.assigned_animation = animation_name
+	else:
+		PopochiuUtils.print_warning("No animation named '%s' found in character's AnimationPlayer" % animation_name)
+
+#endregion

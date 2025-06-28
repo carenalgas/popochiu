@@ -2,6 +2,7 @@
 extends HBoxContainer
 
 signal tag_state_changed
+signal tag_selected(tag_name)
 
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 
@@ -37,6 +38,10 @@ func init(tag_cfg: Dictionary):
 	# 2. Room-related toggles icons
 	visible_toggle.icon = get_theme_icon('GuiVisibilityVisible', 'EditorIcons')
 	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
+	
+	# Connect tag name button pressed signal if not already connected
+	if not tag_name_label.is_connected("pressed", Callable(self, "_on_tag_name_pressed")):
+		tag_name_label.connect("pressed", Callable(self, "_on_tag_name_pressed"))
 	
 	# Continue with initialization
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == PopochiuEditorHelper.EMPTY_STRING:
@@ -111,6 +116,11 @@ func _on_visible_toggled(button_pressed):
 func _on_clickable_toggled(button_pressed):
 	_anim_tag_state.prop_clickable = button_pressed
 	emit_signal("tag_state_changed")
+
+
+# New method to handle button press
+func _on_tag_name_pressed():
+	emit_signal("tag_selected", _anim_tag_state.tag_name)
 
 
 #endregion
