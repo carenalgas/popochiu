@@ -433,6 +433,28 @@ func _show_importer():
 	%Warning.visible = false
 	%Importer.visible = true
 
+
+func _set_animation_in_player(tag_name: String, animation_player: AnimationPlayer):
+	if tag_name.is_empty():
+		PopochiuUtils.print_warning("No tag name provided for selection.")
+		return
+
+	if not is_instance_valid(animation_player):
+		PopochiuUtils.print_warning("No AnimationPlayer found in character node.")
+		return
+
+	# Select the AnimationPlayer node in the editor
+	EditorInterface.get_selection().clear()
+	EditorInterface.get_selection().add_node(animation_player)
+
+	# Find the animation by tag name (converting to snake_case as that's how animations are named)
+	var animation_name = tag_name.to_snake_case()
+	if animation_player.has_animation(animation_name):
+		# Set the animation as the current one in the AnimationPlayer
+		animation_player.assigned_animation = animation_name
+	else:
+		PopochiuUtils.print_warning("No animation named '%s' found in character's AnimationPlayer." % animation_name)
+
 # TODO: Introduce layer selection list, more or less as tags
 
 

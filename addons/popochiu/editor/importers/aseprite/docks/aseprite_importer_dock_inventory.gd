@@ -160,46 +160,34 @@ func _select_animation(tag_name: String) -> void:
 		item_name,
 		PopochiuEditorHelper.EMPTY_STRING
 	)
-	
+
 	if item_resource_path.is_empty():
 		PopochiuUtils.print_warning("No inventory item resource found for '%s'" % item_name)
 		return
-	
+
 	# Load the inventory item resource to get the scene path
 	var item_resource = load(item_resource_path)
 	if not item_resource:
 		PopochiuUtils.print_warning("Failed to load inventory item resource for '%s'" % item_name)
 		return
-	
+
 	# Open the inventory item scene
 	var scene_path = item_resource.scene
 	EditorInterface.open_scene_from_path(scene_path)
-	
+
 	# Wait a frame to ensure the scene is fully loaded
 	await PopochiuEditorHelper.frame_processed()
-	
+
 	# Get the current scene root (should be the inventory item now)
 	var item_scene_root = EditorInterface.get_edited_scene_root()
 	if not is_instance_valid(item_scene_root):
 		PopochiuUtils.print_warning("Failed to get edited scene root for inventory item '%s'" % item_name)
 		return
-	
+
 	# Find the AnimationPlayer in the inventory item scene
 	var animation_player = item_scene_root.get_node_or_null("AnimationPlayer")
-	if not is_instance_valid(animation_player):
-		PopochiuUtils.print_warning("No AnimationPlayer found in inventory item '%s'" % item_name)
-		return
-	
-	# Select the AnimationPlayer node in the editor
-	EditorInterface.get_selection().clear()
-	EditorInterface.get_selection().add_node(animation_player)
-	
-	# Find the animation by tag name (converting to snake_case as that's how animations are named)
-	var animation_name = tag_name.to_snake_case()
-	if animation_player.has_animation(animation_name):
-		# Set the animation as the current one in the AnimationPlayer
-		animation_player.assigned_animation = animation_name
-	else:
-		PopochiuUtils.print_warning("No animation named '%s' found in inventory item's AnimationPlayer" % animation_name)
+
+	_set_animation_in_player(tag_name, animation_player)
+
 
 #endregion

@@ -135,55 +135,43 @@ func _save_prop(prop: PopochiuProp):
 func _select_animation(tag_name: String) -> void:
 	if not is_instance_valid(target_node) or not tag_name:
 		return
-	
+
 	# In a room, props are in the "Props" node
 	var props_container = target_node.get_node_or_null("Props")
 	if not is_instance_valid(props_container):
-		PopochiuUtils.print_warning("No Props container found in room node")
+		PopochiuUtils.print_warning("No Props container found in room. Are you sure this is a valid room?")
 		return
-	
+
 	# Find the prop with the matching name (converted to PascalCase)
 	var prop_name = tag_name.to_pascal_case()
 	var prop = props_container.get_node_or_null(prop_name)
-	
+
 	if not is_instance_valid(prop):
-		PopochiuUtils.print_warning("No prop named '%s' found in room" % prop_name)
+		PopochiuUtils.print_warning("No prop named '%s' found in room. Did you import this animation?" % prop_name)
 		return
-	
+
 	# Get the prop's scene file path
 	var prop_scene_path = prop.scene_file_path
 	if prop_scene_path.is_empty():
-		PopochiuUtils.print_warning("Prop '%s' does not have a scene file path" % prop_name)
+		PopochiuUtils.print_warning("Prop '%s' does not have a scene file path. The prop may be corrupted, try to reimport it." % prop_name)
 		return
-	
+
 	# Open the prop's scene
 	EditorInterface.open_scene_from_path(prop_scene_path)
-	
+
 	# Wait a frame to ensure the scene is fully loaded
 	await PopochiuEditorHelper.frame_processed()
-	
+
 	# Get the current scene root (should be the prop now)
 	var prop_scene_root = EditorInterface.get_edited_scene_root()
 	if not is_instance_valid(prop_scene_root):
-		PopochiuUtils.print_warning("Failed to get edited scene root for prop '%s'" % prop_name)
+		PopochiuUtils.print_warning("Failed to get edited scene root for prop '%s'. The prop may be corrupted, try to reimport it." % prop_name)
 		return
-	
+
 	# Find the AnimationPlayer in the prop scene
 	var animation_player = prop_scene_root.get_node_or_null("AnimationPlayer")
-	if not is_instance_valid(animation_player):
-		PopochiuUtils.print_warning("No AnimationPlayer found in prop '%s'" % prop_name)
-		return
-	
-	# Select the AnimationPlayer node in the editor
-	EditorInterface.get_selection().clear()
-	EditorInterface.get_selection().add_node(animation_player)
-	
-	# Find the animation by tag name (converting to snake_case as that's how animations are named)
-	var animation_name = tag_name.to_snake_case()
-	if animation_player.has_animation(animation_name):
-		# Set the animation as the current one in the AnimationPlayer
-		animation_player.assigned_animation = animation_name
-	else:
-		PopochiuUtils.print_warning("No animation named '%s' found in prop's AnimationPlayer" % animation_name)
+
+	_set_animation_in_player(tag_name, animation_player)
+
 
 #endregion
