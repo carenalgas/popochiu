@@ -54,7 +54,7 @@ func init():
 
 	# Connect signals
 	%FilterField.text_changed.connect(_on_filter_text_changed)
-
+	%ImportBulk.toggled.connect(_on_import_bulk_toggled)
 
 	# Load inspector dock configuration from node
 	# or from the game resources, if the node is null.
@@ -182,6 +182,9 @@ func _save_config():
 	}
 
 	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
+	
+	# Update bulk toggles to reflect the collective state of individual tags
+	_update_bulk_toggles_state()
 
 
 func _load_default_config():
@@ -251,10 +254,10 @@ func _on_import_pressed():
 
 
 func _on_reset_pressed():
-	var _confirmation_dialog = _show_confirmation(\
+	var confirmation_dialog = _show_confirmation(\
 		"This will reset the importer preferences. " + \
 		"This cannot be undone! Are you sure?", "Confirmation required!")
-	_confirmation_dialog.get_ok_button().connect("pressed", Callable(self, "_reset_prefs_metadata"))
+	confirmation_dialog.get_ok_button().connect("pressed", Callable(self, "_reset_prefs_metadata"))
 
 
 func _on_request_delete_anim(tag_name: String) -> void:
@@ -322,7 +325,9 @@ func _populate_tags(tags: Array):
 		tag_row.connect("request_delete_anim", Callable(self, "_on_request_delete_anim"))
 		_customize_tag_ui(tag_row)
 		# Invoke customization hook implementable in child classes		
+	
 	_update_tags_cache()
+	_update_bulk_toggles_state() # Update bulk toggles after populating tags
 
 
 func _on_tag_selected(tag_name: String) -> void:
@@ -505,4 +510,89 @@ func _handle_animation_in_player(tag_name: String, animation_player: AnimationPl
 		PopochiuUtils.print_warning("No animation named '%s' found in character's AnimationPlayer." % animation_name)
 
 
-# TODO: Introduce layer selection list, more or less as tags
+## Called after populating tags or when their state changes.
+## Updates the state of bulk action buttons based on individual tag states.
+func _update_bulk_toggles_state() -> void:
+	# Handle ImportBulk toggle state
+	if %Tags.get_child_count() == 0:
+		return
+		
+	var all_import := true
+	var none_import := true
+	
+	# Check all tags to determine the collective state
+	for tag_row in %Tags.get_children():
+		var cfg: Dictionary = tag_row.get_cfg()
+		if cfg.import:
+			none_import = false
+		else:
+			all_import = false
+	
+	# Set the toggle state based on the collective state
+	if all_import:
+		# All tags are set to import
+		%ImportBulk.set_pressed_no_signal(true)
+		%ImportBulk.set_meta("is_dirty", false)
+		%ImportBulk.remove_theme_color_override("icon_normal_color")
+	elif none_import:
+		# No tags are set to import
+		%ImportBulk.set_pressed_no_signal(false)
+		%ImportBulk.set_meta("is_dirty", false)
+		%ImportBulk.remove_theme_color_override("icon_normal_color")
+	else:
+		# Mixed state - mark as "dirty"
+		%ImportBulk.set_pressed_no_signal(false)
+		%ImportBulk.set_meta("is_dirty", true)
+		%ImportBulk.add_theme_color_override(
+			"icon_normal_color",
+			get_theme_color("disabled_font_color", "Editor")
+		)
+
+
+## Handles the ImportBulk toggle button press.
+## If the current state is mixed ("dirty"), shows a confirmation dialog.
+## Otherwise, toggles all visible tag rows to match the new bulk toggle state.
+func _on_import_bulk_toggled(button_pressed: bool) -> void:
+	# If all tags are in a consistent state, simply toggle them all
+	if not %ImportBulk.has_meta("is_dirty") or not %ImportBulk.get_meta("is_dirty"):
+		_set_all_tag_import_states(button_pressed)
+		return
+	
+	# If in a mixed state ("dirty"), show confirmation dialog
+	var confirmation_dialog = _show_confirmation(
+		"This will reset all import toggles to their default state.\n" +
+		"Your individual tag preferences will be lost. Are you sure?",
+		"Confirmation required!"
+	)
+	
+	confirmation_dialog.get_ok_button().connect(
+		"pressed",
+		Callable(self, "_reset_import_preferences")
+	)
+	
+	# Reset the toggle to off state since we need confirmation
+	%ImportBulk.set_pressed_no_signal(false)
+
+
+## Sets all visible tag rows' import state to the specified value.
+func _set_all_tag_import_states(import_state: bool) -> void:
+	for tag_row in %Tags.get_children():
+		var toggle = tag_row.import_toggle
+		toggle.set_pressed_no_signal(import_state)
+		
+		# Update the underlying data
+		var cfg: Dictionary = tag_row.get_cfg()
+		cfg.import = import_state
+	
+	# Update the bulk toggle to reflect the new state
+	%ImportBulk.set_pressed_no_signal(import_state)
+	%ImportBulk.set_meta("is_dirty", false)
+	%ImportBulk.remove_theme_color_override("icon_normal_color")
+
+	_save_config()
+
+
+## Resets all tag import preferences to the default state from config.
+func _reset_import_preferences() -> void:
+	_set_all_tag_import_states(PopochiuConfig.is_default_animation_import_enabled())
+	_save_config()
