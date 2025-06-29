@@ -104,6 +104,12 @@ func _customize_tag_ui(tag_row: AnimationTagRow):
 	tag_row.show_inventory_item_buttons()
 
 
+func _customize_filter_ui():
+	# Show props-related buttons in the main bar if we are in a room
+	%FilterSeparator.visible = true
+	%AutoplaysBulk.visible = true
+
+
 ## Create a new inventory item with the specified name.
 func _create_inventory_item(name: String) -> PopochiuInventoryItem:
 	var factory = PopochiuInventoryItemFactory.new()

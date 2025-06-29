@@ -37,9 +37,11 @@ func init():
 	# Doing it once becase we have more docks initialized.
 	if not is_connected("theme_changed", _on_theme_changed):
 		theme_changed.connect(_on_theme_changed)
-
+	
 	# Initialize styles and UI elements visibility
 	_set_elements_styles()
+	_customize_filter_ui()
+
 	_set_tags_visible(false)
 
 	# Check access to Aseprite executable
@@ -49,6 +51,10 @@ func init():
 	else:
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 		_show_warning()
+
+	# Connect signals
+	%FilterField.text_changed.connect(_on_filter_text_changed)
+
 
 	# Load inspector dock configuration from node
 	# or from the game resources, if the node is null.
@@ -83,6 +89,12 @@ func _customize_tag_ui(tagrow: AnimationTagRow):
 	## This can be implemented by child classes if necessary
 	pass
 
+# This method can be overridden by child classes to customize the filter bar UI,
+# such as enabling additional buttons or similar.
+func _customize_filter_ui():
+	## This can be implemented by child classes if necessary
+	pass
+
 # Selects an animation in the AnimationPlayer of a target node.
 # Should be overridden by child classes to provide type-specific behavior.
 func _select_animation(tag_name: String) -> void:
@@ -108,6 +120,21 @@ func _check_aseprite() -> int:
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
 	
 	return RESULT_CODE.SUCCESS	
+
+
+## Filters the tag list based on the search text in the FilterField.
+## Tags whose names contain the search string (case-insensitive, ignoring spaces) will be shown.
+func _on_filter_text_changed(new_text: String) -> void:
+	var filter_text := new_text.strip_edges().to_lower().replace(" ", "")
+	
+	for tag_row in %Tags.get_children():
+		if filter_text.is_empty():
+			# Show all tags when filter is empty
+			tag_row.visible = true
+		else:
+			# Compare with tag name (removing spaces, case insensitive)
+			var tag_name: String = tag_row.get_cfg().tag_name.to_lower().replace(" ", "")
+			tag_row.visible = tag_name.contains(filter_text)
 
 
 func _list_tags(file: String):
@@ -225,7 +252,7 @@ func _on_import_pressed():
 
 func _on_reset_pressed():
 	var _confirmation_dialog = _show_confirmation(\
-		"This will reset the importer preferences." + \
+		"This will reset the importer preferences. " + \
 		"This cannot be undone! Are you sure?", "Confirmation required!")
 	_confirmation_dialog.get_ok_button().connect("pressed", Callable(self, "_reset_prefs_metadata"))
 
@@ -392,19 +419,11 @@ func _show_confirmation(message: String, title: String = PopochiuEditorHelper.EM
 	return _confirmation_dialog
 
 
-func _on_tags_title_toggled(button_pressed: bool) -> void:
-	_set_tags_visible(!button_pressed)
-	_save_config()
-
-
 func _set_tags_visible(is_visible: bool) -> void:
 	# If the tags container is empty, we show an info box
 	%TagsInfo.visible = %Tags.get_child_count() == 0
+	%FilterBulkBtnContainer.visible = is_visible && %Tags.get_child_count() > 0
 	%TagsScrollContainer.visible = is_visible
-	%TagsTitle.icon = (
-		PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.EXPANDED) if is_visible
-		else PopochiuEditorConfig.get_icon(PopochiuEditorConfig.Icons.COLLAPSED)
-	)
 
 
 # Called when the editor theme changes to update UI styling.
@@ -419,7 +438,7 @@ func _set_elements_styles():
 	section_style.set_border_width_all(0)
 	section_style.set_content_margin_all(0)
 
-	%TagsTitleBar.add_theme_stylebox_override("panel", section_style)
+	%FilterBulkBtnContainer.add_theme_stylebox_override("panel", section_style)
 	%OptionsContainer.add_theme_stylebox_override("panel", section_style)
 
 	# Set style of warning panel
@@ -430,23 +449,16 @@ func _set_elements_styles():
 	var hover_color = get_theme_color("font_hover_color", "Button")
 	var pressed_color = get_theme_color("font_pressed_color", "Button")
 
-	# Apply colors to both title buttons
-	for button in [%TagsTitle]:
-		button.add_theme_color_override("font_color", normal_color)
-		button.add_theme_color_override("font_hover_color", hover_color)
-		button.add_theme_color_override("font_pressed_color", pressed_color)
-		button.add_theme_color_override("font_focus_color", pressed_color)
-
-		# Ensure button background is transparent
-		var button_style = StyleBoxEmpty.new()
-		button.add_theme_stylebox_override("normal", button_style)
-		button.add_theme_stylebox_override("hover", button_style)
-		button.add_theme_stylebox_override("pressed", button_style)
-		button.add_theme_stylebox_override("focus", button_style)
-
 	%Import.set_button_icon(get_theme_icon("MoveDown", "EditorIcons"))
 	%Reset.set_button_icon(get_theme_icon("Clear", "EditorIcons"))
 
+	# Set filter bar icons
+	%ImportBulk.set_button_icon(get_theme_icon('Load', 'EditorIcons'))
+	%LoopsBulk.set_button_icon(get_theme_icon('Loop', 'EditorIcons'))
+	%AutoplaysBulk.set_button_icon(get_theme_icon('AutoPlay', 'EditorIcons'))
+	# 2. Room-related toggles icons
+	%VisibleBulk.set_button_icon(get_theme_icon('GuiVisibilityVisible', 'EditorIcons'))
+	%ClickableBulk.set_button_icon(get_theme_icon('ToolSelect', 'EditorIcons'))
 
 func _show_warning():
 	%Warning.visible = true

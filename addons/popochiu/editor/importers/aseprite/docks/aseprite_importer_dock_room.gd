@@ -101,6 +101,14 @@ func _customize_tag_ui(tag_row: AnimationTagRow):
 	tag_row.show_prop_buttons()
 
 
+func _customize_filter_ui():
+	# Show props-related buttons in the main bar if we are in a room
+	%FilterSeparator.visible = true
+	%VisibleBulk.visible = true
+	%ClickableBulk.visible = true
+	%AutoplaysBulk.visible = true
+
+
 func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = true):
 	var factory = PopochiuPropFactory.new()
 	var param := PopochiuPropFactory.PopochiuPropFactoryParam.new()
