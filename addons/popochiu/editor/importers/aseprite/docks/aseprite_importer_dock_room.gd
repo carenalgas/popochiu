@@ -22,7 +22,7 @@ func _get_default_autoplay_behavior() -> bool:
 
 
 #region Private ####################################################################################
-func _on_import_pressed():
+func _on_import_pressed() -> void:
 	# Set everything up
 	# This will populate _root_node and _options class variables
 	super()
@@ -96,12 +96,12 @@ func _on_import_pressed():
 		)
 
 
-func _customize_tag_ui(tag_row: AnimationTagRow):
+func _customize_tag_ui(tag_row: AnimationTagRow) -> void:
 	# Show props-related buttons if we are in a room
 	tag_row.show_prop_buttons()
 
 
-func _customize_filter_ui():
+func _customize_filter_ui() -> void:
 	# Show props-related buttons in the main bar if we are in a room
 	%FilterSeparator.visible = true
 	%VisibleBulk.visible = true
@@ -122,7 +122,7 @@ func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = tr
 
 	return factory.get_obj_scene()
 
-func _save_prop(prop: PopochiuProp):
+func _save_prop(prop: PopochiuProp) -> int:
 	var packed_scene: PackedScene = PackedScene.new()
 	packed_scene.pack(prop)
 	if ResourceSaver.save(packed_scene, prop.scene_file_path) != OK:

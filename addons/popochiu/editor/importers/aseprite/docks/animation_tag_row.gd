@@ -60,13 +60,13 @@ func init(tag_cfg: Dictionary):
 	_anim_tag_state.merge(tag_cfg, true)
 	_setup_scene()
 
-func show_prop_buttons():
+func show_prop_buttons() -> void:
 	separator.visible = true
 	visible_toggle.visible =  true
 	clickable_toggle.visible = true
 	autoplays_toggle.visible = true
 
-func show_inventory_item_buttons():
+func show_inventory_item_buttons() -> void:
 	separator.visible = true
 	autoplays_toggle.visible = true
 
@@ -81,7 +81,7 @@ func get_cfg() -> Dictionary:
 #endregion
 
 #region Private ####################################################################################
-func _setup_scene():
+func _setup_scene() -> void:
 	tag_name_label.text = _anim_tag_state.tag_name
 	import_toggle.set_pressed_no_signal(_anim_tag_state.import)
 	loops_toggle.set_pressed_no_signal(_anim_tag_state.loops)
@@ -102,36 +102,36 @@ func _load_default_tag_state() -> Dictionary:
 	}
 
 
-func _on_import_toggled(button_pressed):
+func _on_import_toggled(button_pressed) -> void:
 	_anim_tag_state.import = button_pressed
 	emit_signal("tag_state_changed")
 
 
-func _on_loops_toggled(button_pressed):
+func _on_loops_toggled(button_pressed) -> void:
 	_anim_tag_state.loops = button_pressed
 	emit_signal("tag_state_changed")
 
 
-func _on_autoplays_toggled(button_pressed):
+func _on_autoplays_toggled(button_pressed) -> void:
 	_anim_tag_state.autoplays = button_pressed
 	emit_signal("tag_state_changed")
 
 
-func _on_visible_toggled(button_pressed):
+func _on_visible_toggled(button_pressed) -> void:
 	_anim_tag_state.prop_visible = button_pressed
 	emit_signal("tag_state_changed")
 
-func _on_clickable_toggled(button_pressed):
+func _on_clickable_toggled(button_pressed) -> void:
 	_anim_tag_state.prop_clickable = button_pressed
 	emit_signal("tag_state_changed")
 
 
-func _on_tag_name_pressed():
+func _on_tag_name_pressed() -> void:
 	# Parent will handle the delete request, passing the tag name.
 	emit_signal("tag_selected", _anim_tag_state.tag_name)
 
 
-func _on_delete_anim_pressed():
+func _on_delete_anim_pressed() -> void:
 	# Parent will handle the delete request, passing the tag name.
 	emit_signal("request_delete_anim", _anim_tag_state.tag_name)
 

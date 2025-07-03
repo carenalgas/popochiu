@@ -171,17 +171,7 @@ func _delete_animation_for_tag(tag_name: String) -> void:
 #endregion
 
 
-#region Private ####################################################################################
-func _check_aseprite() -> int:
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-	
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	
-	return RESULT_CODE.SUCCESS	
-
-
+#region Signals Handlers ####################################################################################
 # Filters the tag list based on the search text in the FilterField.
 # Tags whose names contain the search string (case-insensitive, ignoring spaces) will be shown.
 func _on_filter_text_changed(new_text: String) -> void:
@@ -197,95 +187,21 @@ func _on_filter_text_changed(new_text: String) -> void:
 			tag_row.visible = tag_name.contains(filter_text)
 
 
-func _list_tags(file: String):
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	return _aseprite.list_tags(file)
-
-
-# TODO: Currently unused. keeping this as reference
-# to populate a checkable list of layers
-func _list_layers(file: String, only_visibles = false):
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	return _aseprite.list_layers(file, only_visibles)
-
-
-func _load_config(cfg):
-	if cfg.has("source"):
-		_set_source(cfg.source)
-
-	%VisibleLayersCheckButton.set_pressed_no_signal(
-		cfg.get("only_visible_layers", false)
-	)
-	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
-		cfg.get("wipe_old_anims", false)
-	)
-
-	_set_tags_visible(cfg.get("tags_exp", false))
-	_populate_tags(cfg.get("tags", []))
-
-
-func _save_config():
-	_update_tags_cache()
-
-	var cfg := {
-		"source": _source,
-		"tags": _tags_cache,
-		"tags_exp": %Tags.visible,
-		"only_visible_layers": %VisibleLayersCheckButton.is_pressed(),
-		"wipe_old_anims": %WipeOldAnimationsCheckButton.is_pressed(),
-	}
-
-	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
-
-	# Update bulk toggles to reflect the collective state of individual tags
-	_update_all_bulk_toggles_state()
-
-
-func _load_default_config():
-	# Reset variables
-	_source = PopochiuEditorHelper.EMPTY_STRING
-	_tags_cache = []
-	_output_folder = PopochiuEditorHelper.EMPTY_STRING
-
-	# Empty tags list
-	_empty_tags_container()
-
-	# Reset inspector fields
-	%SourceButton.text = "[empty]"
-	%SourceButton.tooltip_text = PopochiuEditorHelper.EMPTY_STRING
-	%VisibleLayersCheckButton.set_pressed_no_signal(false)
-	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
-		PopochiuConfig.is_default_wipe_old_anims_enabled()
-	)
-
-
-func _set_source(source):
-	_source = source
-	%SourceButton.text = _source
-	%SourceButton.tooltip_text = _source
-
-
-func _on_source_pressed():
+func _on_source_pressed() -> void:
 	_open_source_dialog()
 
 
-func _on_aseprite_file_selected(path):
+func _on_aseprite_file_selected(path) -> void:
 	_set_source(ProjectSettings.localize_path(path))
 	_scan_source()
 	_file_dialog_aseprite.queue_free()
 
 
-func _on_rescan_pressed():
+func _on_rescan_pressed() -> void:
 	_scan_source()
 
 
-func _on_import_pressed():
+func _on_import_pressed() -> void:
 	if _importing:
 		return
 	
@@ -313,7 +229,7 @@ func _on_import_pressed():
 	_save_config()
 
 
-func _on_reset_pressed():
+func _on_reset_pressed() -> void:
 	var confirmation_dialog = _show_confirmation(\
 		"This will reset the importer preferences. " + \
 		"This cannot be undone! Are you sure?", "Confirmation required!")
@@ -331,14 +247,148 @@ func _on_request_delete_anim(tag_name: String) -> void:
 	PopochiuEditorHelper.show_delete_confirmation(delete_dialog)
 
 
-func _reset_prefs_metadata():
+# Called when project settings that affect default values have changed.
+func _on_project_settings_changed() -> void:
+	_update_default_toggle_values()
+	
+	# Only update UI if it's already populated
+	if %Tags.get_child_count() > 0:
+		_update_all_bulk_toggles_state()
+
+
+# Called when the editor theme changes to update UI styling.
+func _on_theme_changed() -> void:
+	# Defer the style update to ensure theme cache is fully updated.
+	call_deferred("_set_elements_styles")
+
+
+# Generic handler for any bulk toggle button press.
+# Determines the action based on whether the toggle is in a clean or "dirty" state.
+func _on_bulk_toggle_toggled(bulk_toggle_name: String, button_pressed: bool) -> void:
+	var bulk_toggle = get_node("%" + bulk_toggle_name)
+	
+	# If all tags are in a consistent state, simply toggle them all
+	if not bulk_toggle.has_meta("is_dirty") or not bulk_toggle.get_meta("is_dirty"):
+		_set_all_row_toggle_states(bulk_toggle_name, button_pressed)
+		return
+	
+	# If in a mixed state ("dirty"), show confirmation dialog
+	var confirmation_dialog = _show_confirmation(
+		"This will reset all " + bulk_toggle_name.replace("Bulk", "").to_lower() + " toggles to their default state.\n" +
+		"Your individual tag preferences will be lost. Are you sure?",
+		"Confirmation required!"
+	)
+	
+	confirmation_dialog.get_ok_button().connect(
+		"pressed",
+		Callable(self, "_reset_toggle_preferences").bind(bulk_toggle_name)
+	)
+	
+	# Reset the toggle to off state since we need confirmation
+	bulk_toggle.set_pressed_no_signal(false)
+
+
+func _on_tag_selected(tag_name: String) -> void:
+	# Call the strategy-specific implementation
+	_select_animation(tag_name)
+
+
+#endregion
+
+
+#region Private ####################################################################################
+func _check_aseprite() -> int:
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	
+	return RESULT_CODE.SUCCESS	
+
+
+func _list_tags(file: String):
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	return _aseprite.list_tags(file)
+
+
+# TODO: Currently unused. keeping this as reference
+# to populate a checkable list of layers
+func _list_layers(file: String, only_visibles = false):
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	return _aseprite.list_layers(file, only_visibles)
+
+
+func _load_config(cfg) -> void:
+	if cfg.has("source"):
+		_set_source(cfg.source)
+
+	%VisibleLayersCheckButton.set_pressed_no_signal(
+		cfg.get("only_visible_layers", false)
+	)
+	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
+		cfg.get("wipe_old_anims", false)
+	)
+
+	_set_tags_visible(cfg.get("tags_exp", false))
+	_populate_tags(cfg.get("tags", []))
+
+
+func _save_config() -> void:
+	_update_tags_cache()
+
+	var cfg := {
+		"source": _source,
+		"tags": _tags_cache,
+		"tags_exp": %Tags.visible,
+		"only_visible_layers": %VisibleLayersCheckButton.is_pressed(),
+		"wipe_old_anims": %WipeOldAnimationsCheckButton.is_pressed(),
+	}
+
+	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
+
+	# Update bulk toggles to reflect the collective state of individual tags
+	_update_all_bulk_toggles_state()
+
+
+func _load_default_config() -> void:
+	# Reset variables
+	_source = PopochiuEditorHelper.EMPTY_STRING
+	_tags_cache = []
+	_output_folder = PopochiuEditorHelper.EMPTY_STRING
+
+	# Empty tags list
+	_empty_tags_container()
+
+	# Reset inspector fields
+	%SourceButton.text = "[empty]"
+	%SourceButton.tooltip_text = PopochiuEditorHelper.EMPTY_STRING
+	%VisibleLayersCheckButton.set_pressed_no_signal(false)
+	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
+		PopochiuConfig.is_default_wipe_old_anims_enabled()
+	)
+
+
+func _set_source(source) -> void:
+	_source = source
+	%SourceButton.text = _source
+	%SourceButton.tooltip_text = _source
+
+
+func _reset_prefs_metadata() -> void:
 	LOCAL_OBJ_CONFIG.remove_config(target_node)
 	_load_default_config()
 	notify_property_list_changed()
 	_set_tags_visible(false)
 
 
-func _open_source_dialog():
+func _open_source_dialog() -> void:
 	_file_dialog_aseprite = _create_aseprite_file_selection()
 	get_parent().add_child(_file_dialog_aseprite)
 	if _source != PopochiuEditorHelper.EMPTY_STRING:
@@ -350,7 +400,7 @@ func _open_source_dialog():
 	_file_dialog_aseprite.popup_centered_ratio()
 
 
-func _create_aseprite_file_selection():
+func _create_aseprite_file_selection() -> FileDialog:
 	var file_dialog = FileDialog.new()
 	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
@@ -360,15 +410,15 @@ func _create_aseprite_file_selection():
 	return file_dialog
 
 
-func _scan_source():
+func _scan_source() -> void:
 	_populate_tags(
-		_merge_with_cache(_get_tags_from_source())\
+		_merge_with_cache(_get_tags_from_source())
 	)
 	_save_config()
 	_set_tags_visible(true)
 
 
-func _populate_tags(tags: Array):
+func _populate_tags(tags: Array) -> void:
 	## reset tags container
 	_empty_tags_container()
 
@@ -390,19 +440,14 @@ func _populate_tags(tags: Array):
 	_update_bulk_toggles_state() # Update bulk toggles after populating tags
 
 
-func _on_tag_selected(tag_name: String) -> void:
-	# Call the strategy-specific implementation
-	_select_animation(tag_name)
-
-
-func _empty_tags_container():
+func _empty_tags_container() -> void:
 	# Clean the inspector tags container empty
 	for tl in %Tags.get_children():
 		%Tags.remove_child(tl)
 		tl.queue_free()
 
 
-func _update_tags_cache():
+func _update_tags_cache() -> void:
 	_tags_cache = _get_tags_from_ui()
 
 
@@ -452,7 +497,7 @@ func _get_tags_from_source() -> Array:
 
 func _show_message(
 	message: String, title: String = PopochiuEditorHelper.EMPTY_STRING, object: Object = null, method := PopochiuEditorHelper.EMPTY_STRING
-):
+) -> void:
 	var warning_dialog = AcceptDialog.new()
 	
 	if title != PopochiuEditorHelper.EMPTY_STRING:
@@ -473,7 +518,7 @@ func _show_message(
 	PopochiuEditorHelper.show_dialog(warning_dialog)
 
 
-func _show_confirmation(message: String, title: String = PopochiuEditorHelper.EMPTY_STRING):
+func _show_confirmation(message: String, title: String = PopochiuEditorHelper.EMPTY_STRING) -> ConfirmationDialog:
 	var _confirmation_dialog = ConfirmationDialog.new()
 	get_parent().add_child(_confirmation_dialog)
 	if title != PopochiuEditorHelper.EMPTY_STRING:
@@ -491,13 +536,7 @@ func _set_tags_visible(is_visible: bool) -> void:
 	%TagsScrollContainer.visible = is_visible
 
 
-# Called when the editor theme changes to update UI styling.
-func _on_theme_changed():
-	# Defer the style update to ensure theme cache is fully updated.
-	call_deferred("_set_elements_styles")
-
-
-func _set_elements_styles():
+func _set_elements_styles() -> void:
 	# Use the editor's section stylebox and remove borders to maintain theme consistency
 	var section_style = get_theme_stylebox("normal", "Button").duplicate()
 	section_style.set_border_width_all(0)
@@ -525,17 +564,17 @@ func _set_elements_styles():
 	%VisibleBulk.set_button_icon(get_theme_icon('GuiVisibilityVisible', 'EditorIcons'))
 	%ClickableBulk.set_button_icon(get_theme_icon('ToolSelect', 'EditorIcons'))
 
-func _show_warning():
+func _show_warning() -> void:
 	%Warning.visible = true
 	%Importer.visible = false
 	
 
-func _show_importer():
+func _show_importer() -> void:
 	%Warning.visible = false
 	%Importer.visible = true
 
 
-func _handle_animation_in_player(tag_name: String, animation_player: AnimationPlayer, action: int = HANDLE_ANIM_SELECT):
+func _handle_animation_in_player(tag_name: String, animation_player: AnimationPlayer, action: int = HANDLE_ANIM_SELECT) -> void:
 	if tag_name.is_empty():
 		PopochiuUtils.print_warning("No tag name provided for selection.")
 		return
@@ -618,32 +657,6 @@ func _update_all_bulk_toggles_state() -> void:
 	for bulk_toggle_name in _bulk_toggle_configs.keys():
 		if get_node_or_null("%" + bulk_toggle_name):
 			_update_bulk_toggle_state(bulk_toggle_name)
-
-
-# Generic handler for any bulk toggle button press.
-# Determines the action based on whether the toggle is in a clean or "dirty" state.
-func _on_bulk_toggle_toggled(bulk_toggle_name: String, button_pressed: bool) -> void:
-	var bulk_toggle = get_node("%" + bulk_toggle_name)
-	
-	# If all tags are in a consistent state, simply toggle them all
-	if not bulk_toggle.has_meta("is_dirty") or not bulk_toggle.get_meta("is_dirty"):
-		_set_all_row_toggle_states(bulk_toggle_name, button_pressed)
-		return
-	
-	# If in a mixed state ("dirty"), show confirmation dialog
-	var confirmation_dialog = _show_confirmation(
-		"This will reset all " + bulk_toggle_name.replace("Bulk", "").to_lower() + " toggles to their default state.\n" +
-		"Your individual tag preferences will be lost. Are you sure?",
-		"Confirmation required!"
-	)
-	
-	confirmation_dialog.get_ok_button().connect(
-		"pressed",
-		Callable(self, "_reset_toggle_preferences").bind(bulk_toggle_name)
-	)
-	
-	# Reset the toggle to off state since we need confirmation
-	bulk_toggle.set_pressed_no_signal(false)
 
 
 # Sets the visual state and metadata for a bulk toggle button.
@@ -736,12 +749,3 @@ func _update_default_toggle_values() -> void:
 	_bulk_toggle_configs["ImportBulk"]["default_value"] = PopochiuConfig.is_default_animation_import_enabled()
 	_bulk_toggle_configs["VisibleBulk"]["default_value"] = PopochiuConfig.is_default_animation_prop_visible()
 	_bulk_toggle_configs["ClickableBulk"]["default_value"] = PopochiuConfig.is_default_animation_prop_clickable()
-
-
-# Called when project settings that affect default values have changed.
-func _on_project_settings_changed() -> void:
-	_update_default_toggle_values()
-	
-	# Only update UI if it's already populated
-	if %Tags.get_child_count() > 0:
-		_update_all_bulk_toggles_state()
