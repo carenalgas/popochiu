@@ -273,7 +273,6 @@ horizontal_alignment = 1
 [connection signal="pressed" from="Margin/Importer/Source/SourceButton" to="." method="_on_source_pressed"]
 [connection signal="pressed" from="Margin/Importer/Source/RescanButton" to="." method="_on_rescan_pressed"]
 [connection signal="text_changed" from="Margin/Importer/FilterBulkBtnContainer/HBoxContainer/FilterField" to="." method="_on_filter_text_changed"]
-[connection signal="toggled" from="Margin/Importer/FilterBulkBtnContainer/HBoxContainer/ImportBulk" to="." method="_on_import_bulk_toggled"]
 [connection signal="pressed" from="Margin/Importer/OptionsContainer/Options/VisibleLayers/VisibleLayersCheckButton" to="." method="_save_config"]
 [connection signal="pressed" from="Margin/Importer/OptionsContainer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton" to="." method="_save_config"]
 [connection signal="pressed" from="Margin/Importer/ButtonsBox/Reset" to="." method="_on_reset_pressed"]

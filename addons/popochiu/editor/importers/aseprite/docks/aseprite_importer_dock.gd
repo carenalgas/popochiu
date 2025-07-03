@@ -30,13 +30,71 @@ var _file_dialog_aseprite: FileDialog
 var _tags_cache: Array = []
 var _importing := false
 
+# A mapping of bulk toggle buttons to their corresponding row properties
+var _bulk_toggle_configs = {
+	"ImportBulk": {
+		"row_property": "import",
+		"row_toggle": "import_toggle",
+		"default_value": false
+	},
+	"LoopsBulk": {
+		"row_property": "loops",
+		"row_toggle": "loops_toggle",
+		"default_value": false
+	},
+	"AutoplaysBulk": {
+		"row_property": "autoplays",
+		"row_toggle": "autoplays_toggle",
+		"default_value": false
+	},
+	"VisibleBulk": {
+		"row_property": "prop_visible",
+		"row_toggle": "visible_toggle",
+		"default_value": false
+	},
+	"ClickableBulk": {
+		"row_property": "prop_clickable",
+		"row_toggle": "clickable_toggle",
+		"default_value": false
+	}
+}
+
 #region Public ######################################################################################
 func init():
+	# Connect signals
+
 	# Connect to theme changes to update styles if the user
 	# sets a different theme for the editor.
-	# Doing it once becase we have more docks initialized.
 	if not is_connected("theme_changed", _on_theme_changed):
 		theme_changed.connect(_on_theme_changed)
+
+	# Update default values if the project settings change
+	if not ProjectSettings.is_connected("settings_changed", _on_project_settings_changed):
+		ProjectSettings.settings_changed.connect(_on_project_settings_changed)
+
+	# Apply filter if the user type into the filter field
+	%FilterField.text_changed.connect(_on_filter_text_changed)
+
+	# Connect each visible bulk toggle button to the generic handler
+	# which will perform common behaviors
+	for bulk_toggle_name in _bulk_toggle_configs.keys():
+		var bulk_toggle = get_node_or_null("%" + bulk_toggle_name)
+		if not bulk_toggle or not bulk_toggle.visible:
+			continue
+		
+		# Disconnect all existing connections to the "toggled" signal to prevent duplicates
+		for connection in bulk_toggle.get_signal_connection_list("toggled"):
+			bulk_toggle.disconnect("toggled", connection.callable)
+		
+		# Use a lambda to capture the bulk toggle name for the handler
+		bulk_toggle.toggled.connect(
+			func(pressed): _on_bulk_toggle_toggled(bulk_toggle_name, pressed)
+		)
+
+	# Other initialization stuff
+
+	# Update default values for bulk toggles
+	_update_default_toggle_values()
 	
 	# Initialize styles and UI elements visibility
 	_set_elements_styles()
@@ -51,10 +109,6 @@ func init():
 	else:
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 		_show_warning()
-
-	# Connect signals
-	%FilterField.text_changed.connect(_on_filter_text_changed)
-	%ImportBulk.toggled.connect(_on_import_bulk_toggled)
 
 	# Load inspector dock configuration from node
 	# or from the game resources, if the node is null.
@@ -85,13 +139,13 @@ func _get_default_autoplay_behavior() -> bool:
 
 # This method can be overridden by child classes to customize the tag UI,
 # such as enabling additional buttons or similar.
-func _customize_tag_ui(tagrow: AnimationTagRow):
+func _customize_tag_ui(tagrow: AnimationTagRow) -> void:
 	## This can be implemented by child classes if necessary
 	pass
 
 # This method can be overridden by child classes to customize the filter bar UI,
 # such as enabling additional buttons or similar.
-func _customize_filter_ui():
+func _customize_filter_ui() -> void:
 	## This can be implemented by child classes if necessary
 	pass
 
@@ -122,8 +176,8 @@ func _check_aseprite() -> int:
 	return RESULT_CODE.SUCCESS	
 
 
-## Filters the tag list based on the search text in the FilterField.
-## Tags whose names contain the search string (case-insensitive, ignoring spaces) will be shown.
+# Filters the tag list based on the search text in the FilterField.
+# Tags whose names contain the search string (case-insensitive, ignoring spaces) will be shown.
 func _on_filter_text_changed(new_text: String) -> void:
 	var filter_text := new_text.strip_edges().to_lower().replace(" ", "")
 	
@@ -145,8 +199,8 @@ func _list_tags(file: String):
 	return _aseprite.list_tags(file)
 
 
-## TODO: Currently unused. keeping this as reference
-## to populate a checkable list of layers
+# TODO: Currently unused. keeping this as reference
+# to populate a checkable list of layers
 func _list_layers(file: String, only_visibles = false):
 	if not _aseprite.check_command_path():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
@@ -172,7 +226,7 @@ func _load_config(cfg):
 
 func _save_config():
 	_update_tags_cache()
-	
+
 	var cfg := {
 		"source": _source,
 		"tags": _tags_cache,
@@ -182,9 +236,9 @@ func _save_config():
 	}
 
 	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
-	
+
 	# Update bulk toggles to reflect the collective state of individual tags
-	_update_bulk_toggles_state()
+	_update_all_bulk_toggles_state()
 
 
 func _load_default_config():
@@ -510,8 +564,8 @@ func _handle_animation_in_player(tag_name: String, animation_player: AnimationPl
 		PopochiuUtils.print_warning("No animation named '%s' found in character's AnimationPlayer." % animation_name)
 
 
-## Called after populating tags or when their state changes.
-## Updates the state of bulk action buttons based on individual tag states.
+# Called after populating tags or when their state changes.
+# Updates the state of bulk action buttons based on individual tag states.
 func _update_bulk_toggles_state() -> void:
 	# Handle ImportBulk toggle state
 	if %Tags.get_child_count() == 0:
@@ -549,50 +603,132 @@ func _update_bulk_toggles_state() -> void:
 		)
 
 
-## Handles the ImportBulk toggle button press.
-## If the current state is mixed ("dirty"), shows a confirmation dialog.
-## Otherwise, toggles all visible tag rows to match the new bulk toggle state.
-func _on_import_bulk_toggled(button_pressed: bool) -> void:
+# Updates the state of all visible bulk toggle buttons based on individual tag states.
+func _update_all_bulk_toggles_state() -> void:	
+	if %Tags.get_child_count() == 0:
+		return
+		
+	# Update each bulk toggle that's visible in the UI
+	for bulk_toggle_name in _bulk_toggle_configs.keys():
+		if get_node_or_null("%" + bulk_toggle_name):
+			_update_bulk_toggle_state(bulk_toggle_name)
+
+
+# Generic handler for any bulk toggle button press.
+# Determines the action based on whether the toggle is in a clean or "dirty" state.
+func _on_bulk_toggle_toggled(bulk_toggle_name: String, button_pressed: bool) -> void:
+	var bulk_toggle = get_node("%" + bulk_toggle_name)
+	
 	# If all tags are in a consistent state, simply toggle them all
-	if not %ImportBulk.has_meta("is_dirty") or not %ImportBulk.get_meta("is_dirty"):
-		_set_all_tag_import_states(button_pressed)
+	if not bulk_toggle.has_meta("is_dirty") or not bulk_toggle.get_meta("is_dirty"):
+		_set_all_row_toggle_states(bulk_toggle_name, button_pressed)
 		return
 	
 	# If in a mixed state ("dirty"), show confirmation dialog
 	var confirmation_dialog = _show_confirmation(
-		"This will reset all import toggles to their default state.\n" +
+		"This will reset all " + bulk_toggle_name.replace("Bulk", "").to_lower() + " toggles to their default state.\n" +
 		"Your individual tag preferences will be lost. Are you sure?",
 		"Confirmation required!"
 	)
 	
 	confirmation_dialog.get_ok_button().connect(
 		"pressed",
-		Callable(self, "_reset_import_preferences")
+		Callable(self, "_reset_toggle_preferences").bind(bulk_toggle_name)
 	)
 	
 	# Reset the toggle to off state since we need confirmation
-	%ImportBulk.set_pressed_no_signal(false)
+	bulk_toggle.set_pressed_no_signal(false)
 
 
-## Sets all visible tag rows' import state to the specified value.
-func _set_all_tag_import_states(import_state: bool) -> void:
-	for tag_row in %Tags.get_children():
-		var toggle = tag_row.import_toggle
-		toggle.set_pressed_no_signal(import_state)
+# Sets the visual state and metadata for a bulk toggle button.
+func _set_bulk_toggle_visual_state(bulk_toggle_name: String, is_pressed: bool, is_dirty: bool) -> void:
+	var bulk_toggle = get_node("%" + bulk_toggle_name)
+	if not bulk_toggle:
+		return
+	
+	bulk_toggle.set_pressed_no_signal(is_pressed)
+	bulk_toggle.set_meta("is_dirty", is_dirty)
+	
+	if is_dirty:
+		bulk_toggle.add_theme_color_override(
+			"icon_normal_color",
+			get_theme_color("disabled_font_color", "Editor")
+		)
+	else:
+		bulk_toggle.remove_theme_color_override("icon_normal_color")
+
+
+# Updates a specific bulk toggle button's state based on individual tag states.
+func _update_bulk_toggle_state(bulk_toggle_name: String) -> void:
+	var bulk_toggle = get_node("%" + bulk_toggle_name)
+	if not bulk_toggle:
+		return
 		
-		# Update the underlying data
+	var config = _bulk_toggle_configs[bulk_toggle_name]
+	var all_on := true
+	var all_off := true
+	
+	# Check all visible tag rows to determine the collective state
+	for tag_row in %Tags.get_children():
 		var cfg: Dictionary = tag_row.get_cfg()
-		cfg.import = import_state
+		if cfg.get(config.row_property):
+			all_off = false
+		else:
+			all_on = false
+	
+	# Set the toggle state based on the collective state
+	if all_on:
+		_set_bulk_toggle_visual_state(bulk_toggle_name, true, false)
+	elif all_off:
+		_set_bulk_toggle_visual_state(bulk_toggle_name, false, false)
+	else:
+		# Mixed state - mark as "dirty"
+		_set_bulk_toggle_visual_state(bulk_toggle_name, false, true)
+
+
+# Sets all tag rows' toggle state for a specific property.
+func _set_all_row_toggle_states(bulk_toggle_name: String, toggle_state: bool) -> void:
+	var config = _bulk_toggle_configs[bulk_toggle_name]
+	
+	for tag_row in %Tags.get_children():
+		var toggle = tag_row.get(config.row_toggle)
+		if toggle:
+			toggle.set_pressed_no_signal(toggle_state)
+	
+			# Update the underlying data
+			var cfg: Dictionary = tag_row.get_cfg()
+			cfg[config.row_property] = toggle_state
 	
 	# Update the bulk toggle to reflect the new state
-	%ImportBulk.set_pressed_no_signal(import_state)
-	%ImportBulk.set_meta("is_dirty", false)
-	%ImportBulk.remove_theme_color_override("icon_normal_color")
+	_set_bulk_toggle_visual_state(bulk_toggle_name, toggle_state, false)
 
 	_save_config()
 
 
-## Resets all tag import preferences to the default state from config.
-func _reset_import_preferences() -> void:
-	_set_all_tag_import_states(PopochiuConfig.is_default_animation_import_enabled())
-	_save_config()
+# Resets toggle preferences for a specific property to default values.
+func _reset_toggle_preferences(bulk_toggle_name: String) -> void:
+	var config = _bulk_toggle_configs[bulk_toggle_name]
+	var default_value: bool = config.get("default_value", false)
+		
+	_set_all_row_toggle_states(bulk_toggle_name, default_value)
+
+
+# Updates the default values for all bulk toggles from their respective sources.
+func _update_default_toggle_values() -> void:
+	# assign local values
+	_bulk_toggle_configs["LoopsBulk"]["default_value"] = _get_default_loop_behavior()
+	_bulk_toggle_configs["AutoplaysBulk"]["default_value"] = _get_default_autoplay_behavior()
+	
+	# Assign general configuration defaults
+	_bulk_toggle_configs["ImportBulk"]["default_value"] = PopochiuConfig.is_default_animation_import_enabled()
+	_bulk_toggle_configs["VisibleBulk"]["default_value"] = PopochiuConfig.is_default_animation_prop_visible()
+	_bulk_toggle_configs["ClickableBulk"]["default_value"] = PopochiuConfig.is_default_animation_prop_clickable()
+
+
+# Called when project settings that affect default values have changed.
+func _on_project_settings_changed() -> void:
+	_update_default_toggle_values()
+	
+	# Only update UI if it's already populated
+	if %Tags.get_child_count() > 0:
+		_update_all_bulk_toggles_state()
