@@ -13,6 +13,12 @@ enum {
 	HANDLE_ANIM_DELETE,
 }
 
+enum BulkActionStatus {
+	ON,
+	OFF,
+	DIRTY
+}
+
 var target_node: Node
 var file_system: EditorFileSystem
 
@@ -641,21 +647,27 @@ func _on_bulk_toggle_toggled(bulk_toggle_name: String, button_pressed: bool) -> 
 
 
 # Sets the visual state and metadata for a bulk toggle button.
-func _set_bulk_toggle_visual_state(bulk_toggle_name: String, is_pressed: bool, is_dirty: bool) -> void:
+func _set_bulk_toggle_visual_state(bulk_toggle_name: String, status: BulkActionStatus) -> void:
 	var bulk_toggle = get_node("%" + bulk_toggle_name)
 	if not bulk_toggle:
 		return
 	
-	bulk_toggle.set_pressed_no_signal(is_pressed)
-	bulk_toggle.set_meta("is_dirty", is_dirty)
-	
-	if is_dirty:
-		bulk_toggle.add_theme_color_override(
-			"icon_normal_color",
-			get_theme_color("disabled_font_color", "Editor")
-		)
-	else:
-		bulk_toggle.remove_theme_color_override("icon_normal_color")
+	match status:
+		BulkActionStatus.ON:
+			bulk_toggle.set_pressed_no_signal(true)
+			bulk_toggle.set_meta("is_dirty", false)
+			bulk_toggle.remove_theme_color_override("icon_normal_color")
+		BulkActionStatus.OFF:
+			bulk_toggle.set_pressed_no_signal(false)
+			bulk_toggle.set_meta("is_dirty", false)
+			bulk_toggle.remove_theme_color_override("icon_normal_color")
+		BulkActionStatus.DIRTY:
+			bulk_toggle.set_pressed_no_signal(false)
+			bulk_toggle.set_meta("is_dirty", true)
+			bulk_toggle.add_theme_color_override(
+				"icon_normal_color",
+				get_theme_color("disabled_font_color", "Editor")
+			)
 
 
 # Updates a specific bulk toggle button's state based on individual tag states.
@@ -663,27 +675,27 @@ func _update_bulk_toggle_state(bulk_toggle_name: String) -> void:
 	var bulk_toggle = get_node("%" + bulk_toggle_name)
 	if not bulk_toggle:
 		return
-		
+
 	var config = _bulk_toggle_configs[bulk_toggle_name]
-	var all_on := true
-	var all_off := true
-	
+	var status: BulkActionStatus
+	var first_iteration := true
+
 	# Check all visible tag rows to determine the collective state
 	for tag_row in %Tags.get_children():
 		var cfg: Dictionary = tag_row.get_cfg()
-		if cfg.get(config.row_property):
-			all_off = false
-		else:
-			all_on = false
-	
-	# Set the toggle state based on the collective state
-	if all_on:
-		_set_bulk_toggle_visual_state(bulk_toggle_name, true, false)
-	elif all_off:
-		_set_bulk_toggle_visual_state(bulk_toggle_name, false, false)
-	else:
-		# Mixed state - mark as "dirty"
-		_set_bulk_toggle_visual_state(bulk_toggle_name, false, true)
+		var current_row_status = BulkActionStatus.ON if cfg.get(config.row_property) else BulkActionStatus.OFF
+
+		if first_iteration:
+			# Set initial status from first row
+			status = current_row_status
+			first_iteration = false
+		elif status != current_row_status:
+			# Mixed state detected, exit early
+			status = BulkActionStatus.DIRTY
+			break
+
+	# Set the toggle state based on the determined status
+	_set_bulk_toggle_visual_state(bulk_toggle_name, status)
 
 
 # Sets all tag rows' toggle state for a specific property.
@@ -700,7 +712,8 @@ func _set_all_row_toggle_states(bulk_toggle_name: String, toggle_state: bool) ->
 			cfg[config.row_property] = toggle_state
 	
 	# Update the bulk toggle to reflect the new state
-	_set_bulk_toggle_visual_state(bulk_toggle_name, toggle_state, false)
+	var status = BulkActionStatus.ON if toggle_state else BulkActionStatus.OFF
+	_set_bulk_toggle_visual_state(bulk_toggle_name, status)
 
 	_save_config()
 
