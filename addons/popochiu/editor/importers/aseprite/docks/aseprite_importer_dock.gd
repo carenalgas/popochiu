@@ -79,7 +79,8 @@ func init():
 		ProjectSettings.settings_changed.connect(_on_project_settings_changed)
 
 	# Apply filter if the user type into the filter field
-	%FilterField.text_changed.connect(_on_filter_text_changed)
+	if not %FilterField.is_connected("text_changed", _on_filter_text_changed):
+		%FilterField.text_changed.connect(_on_filter_text_changed)
 
 	# Connect each visible bulk toggle button to the generic handler
 	# which will perform common behaviors
