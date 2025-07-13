@@ -370,7 +370,9 @@ func _load_default_config() -> void:
 	# Reset inspector fields
 	%SourceButton.text = "[empty]"
 	%SourceButton.tooltip_text = PopochiuEditorHelper.EMPTY_STRING
-	%VisibleLayersCheckButton.set_pressed_no_signal(false)
+	%VisibleLayersCheckButton.set_pressed_no_signal(
+		PopochiuConfig.is_default_only_visible_layers()
+	)
 	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
 		PopochiuConfig.is_default_wipe_old_anims_enabled()
 	)
