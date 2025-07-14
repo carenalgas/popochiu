@@ -1,58 +1,55 @@
 # GitHub Copilot Repository Instructions for Popochiu
 
-Popochiu is a Godot addon that helps developers create classic point-and-click adventure games. It is composed of two main components:
+Popochiu is a Godot addon for building classic point-and-click adventure games. It is organized into two main components:
 
-## Editor Plugin (`editor/`)
+## Architecture Overview
 
-This component extends the Godot Editor with a full suite of tools and interfaces to build, organize, and maintain all elements of a graphic adventure.
+- **Editor Plugin (`addons/popochiu/editor/`)**: Extends the Godot Editor with tools for managing game assets (characters, rooms, inventory, audio, etc.), custom inspector views, asset importers, migration logic, and UI popups. All editor-side scripts/classes must be named with the `Popochiu` prefix and use tabs for indentation.
+- **Game Engine (`addons/popochiu/engine/`)**: Contains runtime logic, base classes for game entities, audio/cursor managers, and high-level APIs. All engine scripts/classes must also use the `Popochiu` prefix and tabs for indentation.
 
-- `main_dock/`: The central UI that lists and manages characters, rooms, inventory items, audio cues, and more.
-- `canvas_editor_menu/`: Adds buttons to the Scene Preview toolbar for enabling Popochiu’s interactive gizmos.
-- `inspector/`: Customizes how Popochiu objects appear in the Godot Inspector to hide or expose relevant properties.
-- `popups/`: Provides modal dialogs for creating and managing game objects and settings.
-- `migration/`: Implements version migrations to update existing projects when upgrading Popochiu.
-- `gizmos/`: Adds in-editor visual handlers (walk-to points, baselines, etc.) for interactive scene editing.
-- `importers/`: Allows importing of assets (e.g., Aseprite animations) and auto-generating rooms and characters.
-- `factories/`: Builds game object instances (characters, props, rooms) from engine templates.
-- `config/`: Exposes and reads project/editor settings related to Popochiu.
-- `helpers/`: Shared utility functions and classes used across the plugin.
+Scripts in `game/` are for actual game logic and may access engine singletons directly (e.g., `E`, `C`, `D`). Scripts in `editor/` and `engine/` must use `PopochiuUtils` for singleton access, mapping each singleton to a lowercase variable (e.g., `PopochiuUtils.r.get_prop("PropName")`).
 
-## Game Engine (`engine/`)
+## Developer Workflows
 
-This is the runtime layer that is bundled with the game and handles all core logic and reusable functionality.
+- **Building/Exporting**: Use the Godot Editor's export functionality. The file `addons/popochiu/popochiu_export_plugin.gd` customizes export behavior.
+- **Testing**: No standard test framework is present; manual testing via the Godot Editor is typical. Debug using Godot's built-in debugger whenever possible (not available during Editor Plugin development).
+- **Migration**: Version migrations are handled in `addons/popochiu/editor/migration/`. Update logic here when introducing changes to Popochiu objects that require an update in the `game` folder to work properly.
+- **Graphical Assets Importing**: Use importers in `addons/popochiu/editor/importers/` for assets like Aseprite animations.
 
-- `popochiu.gd`: The main controller that initializes the engine, routes input, and manages the game's lifecycle.
-- `audio_manager/`: Manages music and sound effects playback, including positional and non-positional audio.
-- `cursor/`: Handles the runtime mouse pointer (not to be confused with the GUI Cursor component).
-- `objects/`: Base classes for game entities like characters, rooms, props, hotspots, inventory items, and more.
-- `interfaces/`: High-level APIs (via singletons) for accessing and manipulating game objects from scripts.
-- `templates/`: Script templates used by the Editor Plugin to generate new game objects and GUI components.
+## Project-Specific Conventions
 
-Note: scripts in the `game/` folder are meant for actual game logic and may access engine singletons like `E`, `C`, `D`, etc. Scripts in `editor/` and `engine/` must **not** use those directly, but must use `PopochiuUtils` instead.
- Just map each singleton to a lowercase variable name, under `PopochiuUtils`, like this:
+- **Class Naming**: All classes in `editor/` and `engine/` must start with `Popochiu`.
+- **Indentation**: Always use tabs, never use spaces.
+- **File Naming**: Use `snake_case` matching the class name.
+- **Commenting**:
+  - In `engine/`: Use `##` for documentation comments on public/virtual methods, classes, constants, enums, signals, and exported variables. Use `#` for internal/private comments.
+  - In `editor/`: Use `#` for all comments, never `##`.
+  - Comments should explain *why* code is written a certain way, not just what it does.
+  - Place comments above the referenced code.
+  - **Singleton Access**: Only game scripts access engine singletons directly. Editor/engine scripts must use `PopochiuUtils`.
 
-```gdscript
-# Inside game scripts
-R.get_prop("PropName")
+## Integration Points
 
-# Inside engine or editor scripts
-PopochiuUtils.r.get_prop("PropName")
-```
+- **External Dependencies**: Asset importers may depend on external formats (e.g., Aseprite). No other major external dependencies are present.
+- **Cross-Component Communication**: Use interfaces in `addons/popochiu/engine/interfaces/` for high-level API access.
 
-## Coding standards
+## Key Files & Directories
 
-When generating code, please follow these guidelines:
+- `addons/popochiu/editor/main_dock/`: Main UI for managing game elements.
+- `addons/popochiu/editor/importers/`: Asset importers.
+- `addons/popochiu/editor/migration/`: Migration logic.
+- `addons/popochiu/engine/popochiu.gd`: Main engine controller.
+- `addons/popochiu/engine/objects/`: Base classes for game entities.
+- `addons/popochiu/engine/interfaces/`: APIs for game object access.
+- `addons/popochiu/engine/templates/`: Script templates for new objects.
 
-- **Always** follow the official Godot GDScript style guide.
-- Use **tabs**, NOT spaces, for indentation.
-- Do **not** leave trailing whitespace at the end of lines or on empty lines.
-- File names should use `snake_case` and reflect the class they define.
-- All classes in the `engine/` and `editor/` folders must be explicitly named and start with `Popochiu`, due to the lack of namespaces in GDScript.
+## Example Patterns
 
-## Commenting rules
-
-- Only in the `engine/` folder, always use `##` for documentation comments on **public or virtual** methods, classes, constants, enums, signals, and exported variables. These should include a description, details, and usage examples when relevant.
-- Use `#` for internal comments in **private methods or classes**, and in every comment in the `editor` folder, never starting comments with `##` to prevent them from appearing in the API documentation.
-- Comments should always explain *why* the code is written a certain way, not just what it does (which should already be clear from the code).
-- Place comments above the code they reference, not at the end of a line.
-- All comments must start with a capital letter and end with a period.
+- **Accessing a prop in game scripts**:
+  ```gdscript
+  R.get_prop("PropName")
+  ```
+- **Accessing a prop in engine/editor scripts**:
+  ```gdscript
+  PopochiuUtils.r.get_prop("PropName")
+  ```
