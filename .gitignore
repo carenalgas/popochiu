@@ -23,6 +23,11 @@ Thumbs.db
 # Other local stuff
 .vscode
 
+# Ignore everything in addons except popochiu and its content
+addons/*
+!addons/popochiu/
+!addons/popochiu/**
+
 # Project-specific ignores
 popochiu
 popochiu/**
@@ -40,5 +45,3 @@ docs/dist/**/*
 Collector*.gd
 ReferenceCollectorCLI*.gd
 reference.json
-
-!addons/*
