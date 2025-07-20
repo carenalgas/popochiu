@@ -108,7 +108,7 @@ icon = SubResource("ImageTexture_c80ss")
 flat = true
 
 [connection signal="pressed" from="HBoxContainer/TagName" to="." method="_on_tag_name_pressed"]
-[connection signal="pressed" from="HBoxContainer/DeleteAnim" to="." method="_on_tag_name_pressed"]
+[connection signal="pressed" from="HBoxContainer/DeleteAnim" to="." method="_on_delete_anim_pressed"]
 [connection signal="toggled" from="HBoxContainer/Panel/HBoxContainer/Visible" to="." method="_on_visible_toggled"]
 [connection signal="toggled" from="HBoxContainer/Panel/HBoxContainer/Clickable" to="." method="_on_clickable_toggled"]
 [connection signal="toggled" from="HBoxContainer/Panel/HBoxContainer/Autoplays" to="." method="_on_autoplays_toggled"]

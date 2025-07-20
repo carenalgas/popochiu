@@ -4,9 +4,9 @@ weight: 5050
 
 # Aseprite Importers
 
-TNotice how the _Tree_ tag disappeared and the _Tree layer_ is now present with the _Background_ one in the _Background_ tag.
+Notice how the _Tree_ tag disappeared and the _Tree layer_ is now present with the _Background_ one in the _Background_ tag.
 
-On the other hand, you can have tags with many frames on the same layer. This is the most common case because you often want your props to be animated, like in the case of our crackling bonfire (see _marker 2_ in the image above):e tools enable a smooth workflow for creating graphical elements in the game.  
+On the other hand, you can have tags with many frames on the same layer. This is the most common case because you often want your props to be animated, like in the case of our crackling bonfire (see _marker 2_ in the image above). These tools enable a smooth workflow for creating graphical elements in the game.  
 The main goal is to integrate with Aseprite in a way that promotes quick iterations, starting from a visual draft and evolving game scripting and graphics together as things take shape.
 
 Importers are available for [Characters](./PopochiuCharacter.md), [Rooms](./PopochiuRoom.md), and [Inventory items](./PopochiuInventoryItem.md), allowing almost one-click creation of the complete set of graphical assets representing the game world.
