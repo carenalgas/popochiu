@@ -35,6 +35,37 @@ Dockerfiles for documentation are located in the `docs` directory:
 
 ---
 
+## Generative AI
+
+### AI-aided coding
+
+We welcomes and encourages the use of Generative AI tools—including GitHub Copilot, Claude Code, Codeium, and similar solutions—throughout the development and documentation process.
+
+The project's repository provides a dedicated [Copilot instructions file](https://docs.github.com/en/copilot/how-tos/custom-instructions) to help guide compatible AI agents in producing code and content that aligns with our standards. 
+
+Among other things, contributors are invited to leverage these technologies to:
+
+* Write, polish, or refactor code.
+* Analyze requirements and identify edge cases.
+* Draft issues or documentation.
+
+While these tools can greatly accelerate and enhance your workflow, it remains the contributor’s responsibility to ensure the final result meets our quality expectations and fully complies with our [Definition of Done](../project-management/definition-of-done).  
+Generative AI is a powerful ally, not a replacement for thoughtful review and accountability. We embrace these advancements wholeheartedly, but expect all contributors to use them responsibly and with care.
+
+### Documentation
+
+We encourage the use of LLMs to structure, draft, review, spellcheck and generally polish the documentation (the very same you are reading now).
+
+Again, be judicious and conscious, verify the accuracy of the information, and maintain full control over your work.
+
+### Other assets
+
+At this time, we do not allow the contribution of AI-generated creative/artistic assets like graphics or audio.
+
+The ethical, legal, and legitimacy concerns raised regarding the training methods of these tools are still too unresolved for us to include them in our toolchain lightheartedly.
+
+---
+
 ## Documentation
 
 Popochiu's documentation is written in [Markdown](https://www.markdownguide.org) and rendered using [MkDocs](https://www.mkdocs.org).

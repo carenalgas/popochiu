@@ -19,6 +19,9 @@ weight: 9070
 **Are there any coding standards or best practices specific to Popochiu?**
 : [Yes](../conventions).
 
+**Am I allowed to use AI for my contributions?**
+: Yes, but with responsibility. Read [this](../toolchain-and-dependencies/#generative-ai) first.
+
 **How do I know if a feature I want to add is already planned or under development?**
 : Look at the [project board](https://github.com/orgs/carenalgas/projects/1/views/1), particularly the `Ready` and `In Progress` columns.
 
