@@ -52,13 +52,13 @@ Among other things, contributors are invited to leverage these technologies to:
 While these tools can greatly accelerate and enhance your workflow, it remains the contributor’s responsibility to ensure the final result meets our quality expectations and fully complies with our [Definition of Done](../project-management/definition-of-done).  
 Generative AI is a powerful ally, not a replacement for thoughtful review and accountability. We embrace these advancements wholeheartedly, but expect all contributors to use them responsibly and with care.
 
-### Documentation
+### AI-aided cocumentation
 
 We encourage the use of LLMs to structure, draft, review, spellcheck and generally polish the documentation (the very same you are reading now).
 
 Again, be judicious and conscious, verify the accuracy of the information, and maintain full control over your work.
 
-### Other assets
+### AI for other assets
 
 At this time, we do not allow the contribution of AI-generated creative/artistic assets like graphics or audio.
 
