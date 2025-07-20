@@ -39,7 +39,7 @@ Dockerfiles for documentation are located in the `docs` directory:
 
 ### AI-aided coding
 
-We welcomes and encourages the use of Generative AI tools—including GitHub Copilot, Claude Code, Codeium, and similar solutions—throughout the development and documentation process.
+We welcome and encourage the use of Generative AI tools—including GitHub Copilot, Claude Code, Codeium, and similar solutions—throughout the development and documentation process.
 
 The project's repository provides a dedicated [Copilot instructions file](https://docs.github.com/en/copilot/how-tos/custom-instructions) to help guide compatible AI agents in producing code and content that aligns with our standards. 
 
