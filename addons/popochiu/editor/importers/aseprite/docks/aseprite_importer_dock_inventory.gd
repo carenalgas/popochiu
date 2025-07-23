@@ -18,6 +18,10 @@ func init():
 
 	super()
 
+## Returns true for inventory items (autoplay by default).
+func _get_default_autoplay_behavior() -> bool:
+	return true
+
 
 #endregion
 
@@ -48,6 +52,8 @@ func _on_import_pressed():
 				result = RESULT_CODE.ERR_CANT_CREATE_OBJ_FOLDER
 		
 		inventory_item.set_meta("ANIM_NAME", tag.tag_name)
+		inventory_item.set_meta("ANIM_AUTOPLAY", tag.autoplays)
+
 		created_items.append(inventory_item)
 	
 	# Import animations for each created item
@@ -61,10 +67,16 @@ func _on_import_pressed():
 		result = await _animation_creator.create_tag_animations(
 			item,
 			item.get_meta("ANIM_NAME"),
-			_options,
-			_animation_creator.AutoplayMode.TAG_NAME
+			_options
 		)
-	
+
+		if item.get_meta("ANIM_AUTOPLAY", false):
+			# If the item has autoplay enabled, set it up
+			_animation_creator.setup_autoplay(item.get_meta("ANIM_NAME"))
+		else:
+			# Otherwise, ensure autoplay animation is unset
+			_animation_creator.setup_autoplay(PopochiuEditorHelper.EMPTY_STRING)
+
 	# Save all created items
 	for item in created_items:
 		if not item.has_meta("ANIM_NAME"): 
@@ -88,8 +100,14 @@ func _on_import_pressed():
 
 ## Customize the tag UI for inventory items.
 func _customize_tag_ui(tag_row: AnimationTagRow):
-	# Inventory items don't need prop-specific buttons
-	pass
+	# Show inventory-item-related buttons if we are importing inventory items
+	tag_row.show_inventory_item_buttons()
+
+
+func _customize_filter_ui():
+	# Show props-related buttons in the main bar if we are in a room
+	%FilterSeparator.visible = true
+	%AutoplaysBulk.visible = true
 
 
 ## Create a new inventory item with the specified name.
@@ -131,5 +149,87 @@ func _save_inventory_item(item: PopochiuInventoryItem) -> int:
 		return ResultCodes.ERR_CANT_SAVE_OBJ_SCENE
 	return ResultCodes.SUCCESS
 
+
+func _get_scene_path_for_tag(tag_name: String) -> String:
+	if not tag_name:
+		return PopochiuEditorHelper.EMPTY_STRING
+	
+	# For inventory items, we need to find the scene path from the resource
+	var item_name = tag_name.to_pascal_case()
+	var item_resource_path = PopochiuResources.get_data_value(
+		"inventory_items",
+		item_name,
+		PopochiuEditorHelper.EMPTY_STRING
+	)
+
+	if item_resource_path.is_empty():
+		PopochiuUtils.print_warning("No inventory item resource found for '%s'" % item_name)
+		return PopochiuEditorHelper.EMPTY_STRING
+
+	# Load the inventory item resource to get the scene path
+	var item_resource = load(item_resource_path)
+	if not item_resource:
+		PopochiuUtils.print_warning("Failed to load inventory item resource for '%s'" % item_name)
+		return PopochiuEditorHelper.EMPTY_STRING
+
+	return item_resource.scene
+
+
+#endregion
+
+#region Protected ##################################################################################
+## Selects the animation in the inventory item's AnimationPlayer.
+## This involves opening the inventory item scene and then selecting the AnimationPlayer.
+func _select_animation(tag_name: String) -> void:
+	var item_name = tag_name.to_pascal_case()
+	var scene_path = _get_scene_path_for_tag(tag_name)
+	if scene_path.is_empty():
+		PopochiuUtils.print_warning("No scene path found for inventory item '%s'" % item_name)
+		return
+	
+	EditorInterface.open_scene_from_path(scene_path)
+
+	# Wait a frame to ensure the scene is fully loaded
+	await PopochiuEditorHelper.frame_processed()
+
+	# Get the current scene root (should be the inventory item now)
+	var item_scene_root = EditorInterface.get_edited_scene_root()
+	if not is_instance_valid(item_scene_root):
+		PopochiuUtils.print_warning("Failed to get edited scene root for inventory item '%s'" % item_name)
+		return
+
+	# Find the AnimationPlayer in the inventory item scene
+	var animation_player = item_scene_root.get_node_or_null("AnimationPlayer")
+	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_SELECT)
+
+
+## Removes the animation for the given tag from the inventory item's AnimationPlayer.
+func _delete_animation_for_tag(tag_name: String) -> void:
+	var item_name = tag_name.to_pascal_case()
+	var scene_path = _get_scene_path_for_tag(tag_name)
+	if scene_path.is_empty():
+		PopochiuUtils.print_warning("No scene path found for inventory item '%s'" % item_name)
+		return
+
+	# Load the scene without opening it in the editor
+	var packed_scene = load(scene_path)
+	if not packed_scene:
+		PopochiuUtils.print_warning("Failed to load scene for inventory item '%s'" % item_name)
+		return
+	
+	# Instance the scene to work with it in memory
+	var item_scene_root = packed_scene.instantiate()
+	if not is_instance_valid(item_scene_root):
+		PopochiuUtils.print_warning("Failed to instantiate scene for inventory item '%s'" % item_name)
+		return
+
+	# Find the AnimationPlayer in the inventory item scene
+	var animation_player = item_scene_root.get_node_or_null("AnimationPlayer")
+	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_DELETE)
+
+	PopochiuEditorHelper.pack_scene(item_scene_root)
+
+	# Clean up the instance
+	item_scene_root.queue_free()
 
 #endregion

@@ -32,9 +32,9 @@ const INVENTORY_ITEMS_ON_START = "popochiu/inventory/items_on_start"
 
 # ---- Aseprite Importing --------------------------------------------------------------------------
 const ASEPRITE_IMPORT_ANIMATION = "popochiu/aseprite_import/import_animation_by_default"
-const ASEPRITE_LOOP_ANIMATION = "popochiu/aseprite_import/loop_animation_by_default"
 const ASEPRITE_PROPS_VISIBLE = "popochiu/aseprite_import/new_props_visible_by_default"
 const ASEPRITE_PROPS_CLICKABLE = "popochiu/aseprite_import/new_props_clickable_by_default"
+const ASEPRITE_ONLY_VISIBLE_LAYERS = "popochiu/aseprite_import/only_visible_layers"
 const ASEPRITE_WIPE_OLD_ANIMATIONS = "popochiu/aseprite_import/wipe_old_animations"
 
 # ---- Pixel game ----------------------------------------------------------------------------------
@@ -65,9 +65,9 @@ static var defaults := {
 	INVENTORY_LIMIT: 0,
 	INVENTORY_ITEMS_ON_START: [],
 	ASEPRITE_IMPORT_ANIMATION: true,
-	ASEPRITE_LOOP_ANIMATION: true,
 	ASEPRITE_PROPS_VISIBLE: true,
 	ASEPRITE_PROPS_CLICKABLE: true,
+	ASEPRITE_ONLY_VISIBLE_LAYERS: true,
 	ASEPRITE_WIPE_OLD_ANIMATIONS: true,
 	PIXEL_ART_TEXTURES: false,
 	PIXEL_PERFECT: false,
@@ -113,9 +113,9 @@ static func initialize_project_settings():
 	
 	# ---- Aseprite Importing ----------------------------------------------------------------------
 	_initialize_project_setting(ASEPRITE_IMPORT_ANIMATION, TYPE_BOOL)
-	_initialize_project_setting(ASEPRITE_LOOP_ANIMATION, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_PROPS_VISIBLE, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_PROPS_CLICKABLE, TYPE_BOOL)
+	_initialize_project_setting(ASEPRITE_ONLY_VISIBLE_LAYERS, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS, TYPE_BOOL)
 	
 	# ---- Pixel game ------------------------------------------------------------------------------
@@ -199,10 +199,6 @@ static func is_default_animation_import_enabled() -> bool:
 	return _get_project_setting(ASEPRITE_IMPORT_ANIMATION)
 
 
-static func is_default_animation_loop_enabled() -> bool:
-	return _get_project_setting(ASEPRITE_LOOP_ANIMATION)
-
-
 static func is_default_animation_prop_visible() -> bool:
 	return _get_project_setting(ASEPRITE_PROPS_VISIBLE)
 
@@ -210,6 +206,8 @@ static func is_default_animation_prop_visible() -> bool:
 static func is_default_animation_prop_clickable() -> bool:
 	return _get_project_setting(ASEPRITE_PROPS_CLICKABLE)
 
+static func is_default_only_visible_layers() -> bool:
+	return _get_project_setting(ASEPRITE_ONLY_VISIBLE_LAYERS)
 
 static func is_default_wipe_old_anims_enabled() -> bool:
 	return _get_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS)

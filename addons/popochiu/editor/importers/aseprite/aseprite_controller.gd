@@ -169,7 +169,7 @@ func test_command():
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _add_ignore_layer_arguments(file_name: String, arguments: Array, exception_pattern: String):
+func _add_ignore_layer_arguments(file_name: String, arguments: Array, exception_pattern: String) -> void:
 	var layers = _get_exception_layers(file_name, exception_pattern)
 	if not layers.is_empty():
 		for l in layers:
@@ -177,7 +177,7 @@ func _add_ignore_layer_arguments(file_name: String, arguments: Array, exception_
 			arguments.push_front('--ignore-layer')
 
 
-func _add_sheet_type_arguments(arguments: Array, options : Dictionary):
+func _add_sheet_type_arguments(arguments: Array, options : Dictionary) -> void:
 	var column_count : int = options.get("column_count", 0)
 	if column_count > 0:
 		arguments.push_back("--merge-duplicates") # Yes, this is undocumented
@@ -226,7 +226,7 @@ func _export_command_common_arguments(source_name: String, data_path: String, sp
 	]
 
 
-func _execute(arguments, output):
+func _execute(arguments, output) -> int:
 	return OS.execute(_get_aseprite_command(), arguments, output, true, true)
 
 

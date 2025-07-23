@@ -9,13 +9,6 @@ extends RefCounted
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 const _DEFAULT_AL = PopochiuEditorHelper.EMPTY_STRING # Empty string equals default "Global" animation library
 
-## Autoplay configuration for animations.
-enum AutoplayMode {
-	NONE,            ## No autoplay
-	FIRST_ANIMATION, ## Play the first animation found
-	TAG_NAME         ## Play animation matching the tag name (for tag-based imports)
-}
-
 # Vars configured on initialization
 var _file_system: EditorFileSystem
 var _aseprite: RefCounted
@@ -39,13 +32,20 @@ func init(aseprite: RefCounted, editor_file_system: EditorFileSystem = null) -> 
 
 
 ## Create animations from all tags in the Aseprite file.
-func create_all_animations(target_node: Node, options: Dictionary, autoplay_mode: AutoplayMode = AutoplayMode.NONE) -> int:
-	return await _create_animations(target_node, options, PopochiuEditorHelper.EMPTY_STRING, autoplay_mode)
+func create_all_animations(target_node: Node, options: Dictionary) -> int:
+	return await _create_animations(target_node, options, PopochiuEditorHelper.EMPTY_STRING)
 
 
 ## Create animations from a specific Aseprite tag.
-func create_tag_animations(target_node: Node, aseprite_tag: String, options: Dictionary, autoplay_mode: AutoplayMode = AutoplayMode.NONE) -> int:
-	return await _create_animations(target_node, options, aseprite_tag, autoplay_mode)
+func create_tag_animations(target_node: Node, aseprite_tag: String, options: Dictionary) -> int:
+	return await _create_animations(target_node, options, aseprite_tag)
+
+
+## Configure autoplay based on the specified mode and context.
+func setup_autoplay(animation: String = PopochiuEditorHelper.EMPTY_STRING) -> void:
+	_player.autoplay = PopochiuEditorHelper.EMPTY_STRING  # Reset autoplay to default
+	if not animation.is_empty():
+		_player.autoplay = animation.to_snake_case()
 
 
 #endregion
@@ -53,7 +53,7 @@ func create_tag_animations(target_node: Node, aseprite_tag: String, options: Dic
 
 #region Protected #################################################################################
 ## Main animation creation logic that handles both full-file and tag-based imports.
-func _create_animations(target_node: Node, options: Dictionary, tag: String = PopochiuEditorHelper.EMPTY_STRING, autoplay_mode: AutoplayMode = AutoplayMode.NONE) -> int:
+func _create_animations(target_node: Node, options: Dictionary, tag: String = PopochiuEditorHelper.EMPTY_STRING) -> int:
 	var result := _setup_common(target_node, options)
 	if result != RESULT_CODE.SUCCESS:
 		return result
@@ -81,29 +81,7 @@ func _create_animations(target_node: Node, options: Dictionary, tag: String = Po
 	_setup_texture()
 	result = _configure_animations()
 	
-	# Configure autoplay based on the specified mode
-	_setup_autoplay(autoplay_mode, tag)
-
 	return result
-
-
-## Configure autoplay based on the specified mode and context.
-func _setup_autoplay(autoplay_mode: AutoplayMode, tag: String = PopochiuEditorHelper.EMPTY_STRING) -> void:
-	_player.autoplay = PopochiuEditorHelper.EMPTY_STRING  # Reset autoplay to default
-	match autoplay_mode:
-		AutoplayMode.NONE:
-			pass
-		AutoplayMode.FIRST_ANIMATION:
-			# Get the first animation from the library
-			var library := _player.get_animation_library(_DEFAULT_AL)
-			if library and library.get_animation_list().size() > 0:
-				_player.autoplay = library.get_animation_list()[0]
-		AutoplayMode.TAG_NAME:
-			# Use the tag name (converted to snake_case) as autoplay
-            # or leave it empty if no tag is specified
-			if not tag.is_empty():
-				_player.autoplay = tag.to_snake_case()
-
 
 
 ## Common setup for all animation creators.

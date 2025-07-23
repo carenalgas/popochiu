@@ -13,6 +13,10 @@ func init():
 
 	super()
 
+## Returns false for characters (no autoplay by default).
+func _get_default_autoplay_behavior() -> bool:
+	return false
+
 
 #endregion
 
@@ -36,8 +40,41 @@ func _on_import_pressed():
 
 
 func _customize_tag_ui(tag_row: AnimationTagRow):
-	# Nothing special has to be done for Character tags
 	pass
 
+## Returns true for characters as they typically use looping animations.
+func _get_default_loop_behavior() -> bool:
+	return true
+
+
+# Exclusive autoplay logic for character animations.
+func _on_autoplay_toggle_pressed(selected_row: AnimationTagRow):
+	pass
+
+
+#endregion
+
+
+#region Protected ##################################################################################
+## Selects the animation in the character's AnimationPlayer.
+func _select_animation(tag_name: String) -> void:
+	if not is_instance_valid(target_node) or not tag_name:
+		return
+
+	# Character scenes already have the AnimationPlayer as a direct child
+	var animation_player: AnimationPlayer = target_node.get_node_or_null("AnimationPlayer")
+
+	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_SELECT)
+
+
+## Removes the animation for the given tag from the character's AnimationPlayer.
+func _delete_animation_for_tag(tag_name: String) -> void:
+	if not is_instance_valid(target_node) or tag_name.is_empty():
+		return
+
+	# Character scenes already have the AnimationPlayer as a direct child
+	var animation_player: AnimationPlayer = target_node.get_node_or_null("AnimationPlayer")
+
+	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_DELETE)
 
 #endregion
