@@ -71,15 +71,15 @@ func init():
 
 	# Connect to theme changes to update styles if the user
 	# sets a different theme for the editor.
-	if not is_connected("theme_changed", _on_theme_changed):
+	if not theme_changed.is_connected(_on_theme_changed):
 		theme_changed.connect(_on_theme_changed)
 
 	# Update default values if the project settings change
-	if not ProjectSettings.is_connected("settings_changed", _on_project_settings_changed):
+	if not ProjectSettings.settings_changed.is_connected(_on_project_settings_changed):
 		ProjectSettings.settings_changed.connect(_on_project_settings_changed)
 
 	# Apply filter if the user type into the filter field
-	if not %FilterField.is_connected("text_changed", _on_filter_text_changed):
+	if not %FilterField.text_changed.is_connected(_on_filter_text_changed):
 		%FilterField.text_changed.connect(_on_filter_text_changed)
 
 	# Connect each visible bulk toggle button to the generic handler
@@ -91,7 +91,7 @@ func init():
 		
 		# Disconnect all existing connections to the "toggled" signal to prevent duplicates
 		for connection in bulk_toggle.get_signal_connection_list("toggled"):
-			bulk_toggle.disconnect("toggled", connection.callable)
+			bulk_toggle.toggled.disconnect(connection.callable)
 		
 		# Use a lambda to capture the bulk toggle name for the handler
 		bulk_toggle.toggled.connect(
@@ -234,7 +234,7 @@ func _on_reset_pressed() -> void:
 	var confirmation_dialog = _show_confirmation(\
 		"This will reset the importer preferences. " + \
 		"This cannot be undone! Are you sure?", "Confirmation required!")
-	confirmation_dialog.get_ok_button().connect("pressed", Callable(self, "_reset_prefs_metadata"))
+	confirmation_dialog.get_ok_button().pressed.connect(_reset_prefs_metadata)
 
 
 func _on_request_delete_anim(tag_name: String) -> void:
@@ -280,9 +280,8 @@ func _on_bulk_toggle_toggled(bulk_toggle_name: String, button_pressed: bool) -> 
 		"Confirmation required!"
 	)
 	
-	confirmation_dialog.get_ok_button().connect(
-		"pressed",
-		Callable(self, "_reset_toggle_preferences").bind(bulk_toggle_name)
+	confirmation_dialog.get_ok_button().pressed.connect(
+		_reset_toggle_preferences.bind(bulk_toggle_name)
 	)
 	
 	# Reset the toggle to off state since we need confirmation
@@ -408,7 +407,7 @@ func _create_aseprite_file_selection() -> FileDialog:
 	file_dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.title = "Select Aseprite animation file"
-	file_dialog.connect("file_selected", Callable(self, "_on_aseprite_file_selected"))
+	file_dialog.file_selected.connect(_on_aseprite_file_selected)
 	file_dialog.set_filters(PackedStringArray(["*.ase","*.aseprite"]))
 	return file_dialog
 
@@ -433,9 +432,9 @@ func _populate_tags(tags: Array) -> void:
 		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
 		%Tags.add_child(tag_row)
 		tag_row.init(t)
-		tag_row.connect("tag_state_changed", Callable(self, "_save_config"))
-		tag_row.connect("tag_selected", Callable(self, "_on_tag_selected"))
-		tag_row.connect("request_delete_anim", Callable(self, "_on_request_delete_anim"))
+		tag_row.tag_state_changed.connect(_save_config)
+		tag_row.tag_selected.connect(_on_tag_selected)
+		tag_row.request_delete_anim.connect(_on_request_delete_anim)
 		_customize_tag_ui(tag_row)
 		# Invoke customization hook implementable in child classes		
 	
@@ -528,7 +527,7 @@ func _show_confirmation(message: String, title: String = PopochiuEditorHelper.EM
 		_confirmation_dialog.title = title
 	_confirmation_dialog.dialog_text = message
 	_confirmation_dialog.popup_centered()
-	_confirmation_dialog.connect("close_requested", Callable(_confirmation_dialog, "queue_free"))
+	_confirmation_dialog.close_requested.connect(_confirmation_dialog.queue_free)
 	return _confirmation_dialog
 
 

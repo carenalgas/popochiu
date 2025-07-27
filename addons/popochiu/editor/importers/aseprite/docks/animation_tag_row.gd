@@ -44,12 +44,12 @@ func init(tag_cfg: Dictionary):
 	delete_anim_button.icon = get_theme_icon('Remove', 'EditorIcons')
 	
 	# Connect tag name button pressed signal if not already connected
-	if not tag_name_label.is_connected("pressed", Callable(self, "_on_tag_name_pressed")):
-		tag_name_label.connect("pressed", Callable(self, "_on_tag_name_pressed"))
+	if not tag_name_label.pressed.is_connected(_on_tag_name_pressed):
+		tag_name_label.pressed.connect(_on_tag_name_pressed)
 
 	# Connect delete button pressed signal if not already connectes
-	if not delete_anim_button.is_connected("pressed", Callable(self, "_on_delete_anim_pressed")):
-		delete_anim_button.connect("pressed", Callable(self, "_on_delete_anim_pressed"))
+	if not delete_anim_button.pressed.is_connected(_on_delete_anim_pressed):
+		delete_anim_button.pressed.connect(_on_delete_anim_pressed)
 
 	# Continue with initialization
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == PopochiuEditorHelper.EMPTY_STRING:
