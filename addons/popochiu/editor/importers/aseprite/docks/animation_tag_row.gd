@@ -102,26 +102,27 @@ func _load_default_tag_state() -> Dictionary:
 	}
 
 
-func _on_import_toggled(button_pressed) -> void:
+func _on_import_toggled(button_pressed:bool) -> void:
 	_anim_tag_state.import = button_pressed
 	emit_signal("tag_state_changed")
 
 
-func _on_loops_toggled(button_pressed) -> void:
+func _on_loops_toggled(button_pressed:bool) -> void:
 	_anim_tag_state.loops = button_pressed
 	emit_signal("tag_state_changed")
 
 
-func _on_autoplays_toggled(button_pressed) -> void:
+func _on_autoplays_toggled(button_pressed:bool) -> void:
 	_anim_tag_state.autoplays = button_pressed
 	emit_signal("tag_state_changed")
 
 
-func _on_visible_toggled(button_pressed) -> void:
+func _on_visible_toggled(button_pressed:bool) -> void:
 	_anim_tag_state.prop_visible = button_pressed
 	emit_signal("tag_state_changed")
 
-func _on_clickable_toggled(button_pressed) -> void:
+
+func _on_clickable_toggled(button_pressed:bool) -> void:
 	_anim_tag_state.prop_clickable = button_pressed
 	emit_signal("tag_state_changed")
 
