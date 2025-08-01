@@ -327,7 +327,7 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	get_viewport().set_input_as_handled()
 
 	match event_index:
-		MOUSE_BUTTON_LEFT:
+		MOUSE_BUTTON_LEFT,0:
 			if PopochiuUtils.i.active:
 				await on_item_used(PopochiuUtils.i.active)
 			else:
