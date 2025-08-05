@@ -62,13 +62,7 @@ extends Node2D
 var is_current := false : set = set_is_current
 
 var _nav_path: PopochiuWalkableArea = null
-# It contains the information of the characters moving around the room. Each entry has the form:
-# PopochiuCharacter.ID: int = {
-#     character: PopochiuCharacter,
-#     path: PackedVector2Array
-# }
-var _moving_characters := {}
-# Stores the children defined in the Editor"s Scene tree for each character inside $Characters to
+# Stores the children defined in the Editor's Scene tree for each character inside $Characters to
 # add them to the corresponding PopochiuCharacter instance when the room is loaded in runtime.
 var _characters_children := {}
 
@@ -100,25 +94,12 @@ func _ready():
 		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
 
 	set_process_unhandled_input(false)
-	set_physics_process(false)
 
 	# Connect to singletons signals
 	PopochiuUtils.g.blocked.connect(_on_gui_blocked)
 	PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
 	
 	PopochiuUtils.r.room_readied(self)
-
-
-func _physics_process(delta):
-	if _moving_characters.is_empty(): return
-
-	for character_id in _moving_characters:
-		var moving_character_data: Dictionary = _moving_characters[character_id]
-		var walk_distance = (
-			moving_character_data.character as PopochiuCharacter
-		).walk_speed * delta
-
-		_move_along_path(walk_distance, moving_character_data)
 
 
 func _unhandled_input(event: InputEvent):
@@ -175,10 +156,8 @@ func _on_room_exited() -> void:
 ## Called by Popochiu before moving the Player-controlled Character (PC) to another room.
 ## By default, characters are only removed (not deleted) to keep their instances in memory.
 func exit_room() -> void:
-	set_physics_process(false)
-
 	for c in $Characters.get_children():
-		c.position_stored = null
+		c.reset_stored_position()
 
 		for character_child: Node in c.get_children():
 			if character_child.owner != c:
@@ -189,9 +168,8 @@ func exit_room() -> void:
 	_on_room_exited()
 
 
-## Adds the instance (in memory) of [param chr] to the [b]$Characters[/b] node and connects to its
-## [signal PopochiuCharacter.started_walk_to] and [signal PopochiuCharacter.stopped_walk] signals.
-## It also adds to it any children of the character in the Editor"s Scene tree. The [b]idle[/b]
+## Adds the instance (in memory) of [param chr] to the [b]$Characters[/b] node.
+## It also adds to it any children of the character in the Editor's Scene tree. The [b]idle[/b]
 ## animation is triggered.
 func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
@@ -202,16 +180,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 		for child: Node in _characters_children[chr.script_name]:
 			chr.add_child(child)
 
-	#warning-ignore:return_value_discarded
-	chr.started_walk_to.connect(_update_navigation_path)
-	chr.stopped_walk.connect(_clear_navigation_path.bind(chr))
-
 	update_characters_position(chr)
-	
-	# Fix #385: Ignore character following if the follower is the same as the player-controlled
-	# character.
-	if chr.follow_player and chr != PopochiuUtils.c.player:
-		PopochiuUtils.c.player.started_walk_to.connect(_follow_player.bind(chr))
 
 	chr.idle()
 
@@ -392,6 +361,24 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 		PopochiuUtils.print_error("Can't set %s as active walkable area" % walkable_area_name)
 
 
+## Returns the navigation path from start to end position using the active walkable area.
+## Returns empty array if no walkable area is set.
+func get_navigation_path(start_position: Vector2, end_position: Vector2, ignore_walkable_areas: bool = false) -> PackedVector2Array:
+	if ignore_walkable_areas:
+		# Direct path for characters that ignore walkable areas
+		return PackedVector2Array([start_position, end_position])
+	
+	if not _nav_path:
+		PopochiuUtils.print_error("No walkable areas in this room")
+		return PackedVector2Array()
+	
+	# Delegate pathfinding to the active walkable area
+	return NavigationServer2D.map_get_path(_nav_path.map_rid, start_position, end_position, true)
+
+
+#endregion
+
+
 #endregion
 
 #region SetGet #####################################################################################
@@ -409,116 +396,6 @@ func _on_gui_blocked() -> void:
 
 func _on_gui_unblocked() -> void:
 	set_process_unhandled_input(true)
-
-
-func _move_along_path(distance_to_move: float, moving_character_data: Dictionary):
-	var last_character_position: Vector2 =(
-		moving_character_data.character.position_stored
-		if moving_character_data.character.position_stored
-		else moving_character_data.character.position
-		)
-
-	while moving_character_data.path.size():
-		var distance_to_next_navigation_point = last_character_position.distance_to(
-			moving_character_data.path[0]
-		)
-
-		# The character haven't reached the next navigation point so we update
-		# its position along the line between the last and the next navigation point
-		if distance_to_move <= distance_to_next_navigation_point:
-			moving_character_data.character.turn_towards(moving_character_data.path[0])
-			var next_position = last_character_position.lerp(
-					moving_character_data.path[0], distance_to_move / distance_to_next_navigation_point
-				)
-			if moving_character_data.character.anti_glide_animation:
-				moving_character_data.character.position_stored = next_position
-			else:
-				moving_character_data.character.position = next_position
-			# Scale the character depending on the new position
-			moving_character_data.character.update_scale()
-			# We are still walking towards the next navigation point
-			# so we don't need to update the path information
-			return
-
-		# We reached the next navigation point
-		# Remove the last navigation point from the path
-		# and recalculate the distance to the next one
-		distance_to_move -= distance_to_next_navigation_point
-		last_character_position = moving_character_data.path[0]
-		moving_character_data.path.remove_at(0)
-
-
-	moving_character_data.character.position = last_character_position
-	moving_character_data.character.update_scale()
-	_clear_navigation_path(moving_character_data.character)
-
-
-func _update_navigation_path(
-	character: PopochiuCharacter, start_position: Vector2, end_position: Vector2
-):
-	if not _nav_path:
-		PopochiuUtils.print_error("No walkable areas in this room")
-		return
-
-	_moving_characters[character.get_instance_id()] = {}
-	var moving_character_data: Dictionary = _moving_characters[character.get_instance_id()]
-	moving_character_data.character = character
-
-	# TODO: Use a Dictionary so more than one character can move around at the
-	# same time. Or maybe each character should handle its own movement? (;￢＿￢)
-	if character.ignore_walkable_areas:
-		# if the character can ignore WAs, just move over a straight line
-		moving_character_data.path = PackedVector2Array([start_position, end_position])
-	else:
-		# if the character is forced into WAs, delegate pathfinding to the active WA
-		moving_character_data.path = NavigationServer2D.map_get_path(
-			_nav_path.map_rid, start_position, end_position, true
-		)
-
-		# TODO: Use NavigationAgent2D target_location and get_next_location() to
-		#		maybe improve characters movement with obstacles avoidance?
-		#NavigationServer2D.agent_set_map(character.agent.get_rid(), _nav_path.map_rid)
-		#character.agent.target_location = end_position
-		#_path = character.agent.get_nav_path()
-		#set_physics_process(true)
-		#return
-
-	if moving_character_data.path.is_empty():
-		return
-
-	# If the path is not empty it has at least two points: the start and the end
-	# so we can safely say index 1 is available.
-	# The character should face the direction of the next point in the path, then...
-	character.face_direction(moving_character_data.path[1])
-	# ... we remove the first point of the path since it is the character's current position
-	moving_character_data.path.remove_at(0)
-
-	set_physics_process(true)
-
-
-func _clear_navigation_path(character: PopochiuCharacter) -> void:
-	# INFO: fixes "function signature mismatch in Web export" error thrown when clearing an empty
-	# Array
-	if not _moving_characters.has(character.get_instance_id()):
-		return
-
-	_moving_characters.erase(character.get_instance_id())
-	character.idle()
-	character.move_ended.emit()
-
-
-func _follow_player(
-	character: PopochiuCharacter,
-	start_position: Vector2,
-	end_position: Vector2,
-	follower: PopochiuCharacter
-):
-	var follower_end_position := Vector2.ZERO
-	if end_position.x > follower.position.x:
-		follower_end_position = end_position - follower.follow_player_offset
-	else:
-		follower_end_position = end_position + follower.follow_player_offset
-	follower.walk_to(follower_end_position)
 
 
 #endregion

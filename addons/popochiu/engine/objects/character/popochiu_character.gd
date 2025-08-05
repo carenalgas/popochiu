@@ -33,8 +33,8 @@ enum Looking {
 	## The character is facing right [code](x, 0)[/code].
 }
 
-## Emitted when a [param character] starts moving from [param start] to [param end]. [PopochiuRoom]
-## connects to this signal in order to make characters move inside them from one point to another.
+## Emitted when a [param character] starts moving from [param start] to [param end]. 
+## The character connects to this signal internally to handle its own movement.
 signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector2)
 ## Emitted when the character is forced to stop while walking.
 signal stopped_walk
@@ -86,7 +86,7 @@ const EMPTY_STRING = ""
 
 ## The stored position of the character. Used when [member anti_glide_animation] is
 ## [code]true[/code].
-var position_stored = null
+var _position_stored = null
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
 var last_room := EMPTY_STRING
 ## The suffix text to add to animation names.
@@ -135,6 +135,8 @@ var _valid_animation_suffixes = [
 ['_ur', '_ul', '_u', '_r', '_l'], # 292.5 - 315 degrees
 ['_ur', '_ul', '_r', '_l', '_u'], # 315 - 337.5 degrees
 ['_r', '_l', '_ur', '_ul', '_u']] # 337.5 - 360 degrees
+# Navigation path for this character's current movement
+var _navigation_path := PackedVector2Array()
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -160,6 +162,33 @@ func _ready():
 		child.frame_changed.connect(_update_position)
 
 	move_ended.connect(_on_move_ended)
+
+	# The code that follows is only executed when the game is running
+	if Engine.is_editor_hint():
+		return
+
+	# Connect to own movement signals to handle navigation internally
+	if not started_walk_to.is_connected(_update_navigation_path):
+		started_walk_to.connect(_update_navigation_path)
+	if not stopped_walk.is_connected(_clear_navigation_path):
+		stopped_walk.connect(_clear_navigation_path)
+
+	# Setup following behavior if enabled
+	if (
+		follow_player
+		and not PopochiuUtils.c.player.started_walk_to.is_connected(_follow_player)
+		# Fix #385: Ignore character following if the follower is the same as
+		# the player-controlled character.
+		and self != PopochiuUtils.c.player
+	):
+		PopochiuUtils.c.player.started_walk_to.connect(_follow_player)
+
+
+func _physics_process(delta):
+	if _navigation_path.is_empty(): return
+	
+	var walk_distance = walk_speed * delta
+	_move_along_path(walk_distance)
 
 
 #endregion
@@ -244,9 +273,6 @@ func walk(target_pos: Vector2) -> void:
 	is_moving = true
 	_last_reached_clickable = null
 
-	# The ROOM will take care of moving the character
-	# and face her in the correct direction from here
-
 	_flip_left_right(
 		target_pos.x < position.x,
 		target_pos.x > position.x
@@ -265,7 +291,7 @@ func walk(target_pos: Vector2) -> void:
 	# Call the virtual that plays the walk animation
 	_play_walk(target_pos)
 
-	# Trigger the signal for the room to start moving the character
+	# Trigger the signal to start moving the character
 	started_walk_to.emit(self, position, target_pos)
 	await move_ended
 
@@ -815,13 +841,20 @@ func get_dialog_pos() -> float:
 	return dialog_pos.y
 
 
-func update_position() -> void:
-	position = (
-		position_stored
-		if position_stored
-		else position
-	)
+## Returns either the stored_position of the character,
+## or its current transformer position, if that's not available
+func get_stored_position() -> Vector2:
+	return _position_stored if _position_stored else position
 
+
+## Forces the transformer position to match the stored one, if available
+func update_position() -> void:
+	position = get_stored_position()
+
+
+## Resets the stored position. Called when exiting rooms to clean character state.
+func reset_stored_position() -> void:
+	_position_stored = null
 
 ## Updates the scale depending on the properties of the scaling region where it is located.
 func update_scale():
@@ -963,6 +996,82 @@ func _flip_left_right(left_cond: bool, right_cond: bool) -> void:
 				$Sprite2D.flip_h = left_cond
 			FlipsWhen.LOOKING_RIGHT:
 				$Sprite2D.flip_h = right_cond
+
+
+func _move_along_path(distance_to_move: float):
+	var last_character_position: Vector2 = get_stored_position()
+
+	while _navigation_path.size():
+		var distance_to_next_navigation_point = last_character_position.distance_to(
+			_navigation_path[0]
+		)
+
+		# The character haven't reached the next navigation point so we update
+		# its position along the line between the last and the next navigation point
+		if distance_to_move <= distance_to_next_navigation_point:
+			turn_towards(_navigation_path[0])
+			var next_position = last_character_position.lerp(
+				_navigation_path[0], distance_to_move / distance_to_next_navigation_point
+			)
+			if anti_glide_animation:
+				_position_stored = next_position
+			else:
+				position = next_position
+			# Scale the character depending on the new position
+			update_scale()
+			# We are still walking towards the next navigation point
+			# so we don't need to update the path information
+			return
+
+		# We reached the next navigation point
+		# Remove the last navigation point from the path
+		# and recalculate the distance to the next one
+		distance_to_move -= distance_to_next_navigation_point
+		last_character_position = _navigation_path[0]
+		_navigation_path.remove_at(0)
+
+	position = last_character_position
+	update_scale()
+	_clear_navigation_path()
+
+
+func _update_navigation_path(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
+	# Get the current room
+	var current_room = PopochiuUtils.r.current
+	if not current_room:
+		PopochiuUtils.print_error("No current room found for character navigation")
+		return
+
+	# Get navigation path from room
+	_navigation_path = current_room.get_navigation_path(start_position, end_position, ignore_walkable_areas)
+
+	if _navigation_path.is_empty():
+		return
+
+	# If the path is not empty it has at least two points: the start and the end
+	# so we can safely say index 1 is available.
+	# The character should face the direction of the next point in the path, then...
+	face_direction(_navigation_path[1])
+	# ... we remove the first point of the path since it is the character's current position
+	_navigation_path.remove_at(0)
+
+	set_physics_process(true)
+
+
+func _clear_navigation_path() -> void:
+	_navigation_path.clear()
+	set_physics_process(false)
+	idle()
+	move_ended.emit()
+
+
+func _follow_player(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
+	var follower_end_position := Vector2.ZERO
+	if end_position.x > position.x:
+		follower_end_position = end_position - follow_player_offset
+	else:
+		follower_end_position = end_position + follow_player_offset
+	walk_to(follower_end_position)
 
 
 #endregion
