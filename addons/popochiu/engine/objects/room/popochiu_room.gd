@@ -157,7 +157,7 @@ func _on_room_exited() -> void:
 ## By default, characters are only removed (not deleted) to keep their instances in memory.
 func exit_room() -> void:
 	for c in $Characters.get_children():
-		c.reset_stored_position()
+		c.reset_buffered_position()
 
 		for character_child: Node in c.get_children():
 			if character_child.owner != c:

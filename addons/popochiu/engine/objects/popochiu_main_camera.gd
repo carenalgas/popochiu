@@ -31,7 +31,7 @@ func _process(delta: float) -> void:
 		is_instance_valid(PopochiuUtils.c.camera_owner)
 		and PopochiuUtils.c.camera_owner.is_inside_tree()
 	):
-		position = PopochiuUtils.c.camera_owner.get_stored_position()
+		position = PopochiuUtils.c.camera_owner.get_buffered_position()
 
 #endregion
 

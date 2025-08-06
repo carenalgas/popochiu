@@ -86,7 +86,7 @@ const EMPTY_STRING = ""
 
 ## The stored position of the character. Used when [member anti_glide_animation] is
 ## [code]true[/code].
-var _position_stored = null
+var _buffered_position = null
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
 var last_room := EMPTY_STRING
 ## The suffix text to add to animation names.
@@ -841,20 +841,20 @@ func get_dialog_pos() -> float:
 	return dialog_pos.y
 
 
-## Returns either the stored_position of the character,
+## Returns either the _buffered_position of the character,
 ## or its current transformer position, if that's not available
-func get_stored_position() -> Vector2:
-	return _position_stored if _position_stored else position
+func get_buffered_position() -> Vector2:
+	return _buffered_position if _buffered_position else position
 
 
-## Forces the transformer position to match the stored one, if available
+## Forces the transformer position to match the buffered one, if available.
 func update_position() -> void:
-	position = get_stored_position()
+	position = get_buffered_position()
 
 
-## Resets the stored position. Called when exiting rooms to clean character state.
-func reset_stored_position() -> void:
-	_position_stored = null
+## Resets the buffered position. Called when exiting rooms to clean character state.
+func reset_buffered_position() -> void:
+	_buffered_position = null
 
 ## Updates the scale depending on the properties of the scaling region where it is located.
 func update_scale():
@@ -998,23 +998,30 @@ func _flip_left_right(left_cond: bool, right_cond: bool) -> void:
 				$Sprite2D.flip_h = right_cond
 
 
-func _move_along_path(distance_to_move: float):
-	var last_character_position: Vector2 = get_stored_position()
+# Character navigation system.
+#
+# Moves the character along the navigation path, which is a list of Vector2 points.
+# The character will walk towards the next point in the path until it reaches it,
+# then it will continue to the next point until the path is empty.
+func _move_along_path(walk_distance: float):
+	var last_character_position: Vector2 = get_buffered_position()
 
 	while _navigation_path.size():
-		var distance_to_next_navigation_point = last_character_position.distance_to(
-			_navigation_path[0]
+		var next_waypoint: Vector2 = _navigation_path[0]
+
+		var distance_to_next_waypoint = last_character_position.distance_to(
+			next_waypoint
 		)
 
 		# The character haven't reached the next navigation point so we update
 		# its position along the line between the last and the next navigation point
-		if distance_to_move <= distance_to_next_navigation_point:
-			turn_towards(_navigation_path[0])
+		if walk_distance <= distance_to_next_waypoint:
+			turn_towards(next_waypoint)
 			var next_position = last_character_position.lerp(
-				_navigation_path[0], distance_to_move / distance_to_next_navigation_point
+				next_waypoint, walk_distance / distance_to_next_waypoint
 			)
 			if anti_glide_animation:
-				_position_stored = next_position
+				_buffered_position = next_position
 			else:
 				position = next_position
 			# Scale the character depending on the new position
@@ -1026,8 +1033,8 @@ func _move_along_path(distance_to_move: float):
 		# We reached the next navigation point
 		# Remove the last navigation point from the path
 		# and recalculate the distance to the next one
-		distance_to_move -= distance_to_next_navigation_point
-		last_character_position = _navigation_path[0]
+		walk_distance -= distance_to_next_waypoint
+		last_character_position = next_waypoint
 		_navigation_path.remove_at(0)
 
 	position = last_character_position
@@ -1035,6 +1042,11 @@ func _move_along_path(distance_to_move: float):
 	_clear_navigation_path()
 
 
+# Character navigation system.
+#
+# Updates the navigation path for the character based on the start and end positions.
+# The path is calculated by the room which has control over it's walkable areas and
+# obstacles.
 func _update_navigation_path(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
 	# Get the current room
 	var current_room = PopochiuUtils.r.current
@@ -1048,16 +1060,20 @@ func _update_navigation_path(character: PopochiuCharacter, start_position: Vecto
 	if _navigation_path.is_empty():
 		return
 
-	# If the path is not empty it has at least two points: the start and the end
-	# so we can safely say index 1 is available.
-	# The character should face the direction of the next point in the path, then...
-	face_direction(_navigation_path[1])
-	# ... we remove the first point of the path since it is the character's current position
+	# If the path is not empty it has at least two points: the start and the end.
+	# Let's remove the first point of the path since it is the character's current position.
 	_navigation_path.remove_at(0)
 
+	# Now the _navigation_path will at least have another point at index 0.
+	# Starting the physics processing will make _physics_process()
+	# move the character along the path.
 	set_physics_process(true)
 
 
+# Character navigation system.
+#
+# Clears the navigation path and stops the physics process.
+# This is called when the character reaches the end of the path or when it is interrupted.
 func _clear_navigation_path() -> void:
 	_navigation_path.clear()
 	set_physics_process(false)
@@ -1065,6 +1081,12 @@ func _clear_navigation_path() -> void:
 	move_ended.emit()
 
 
+# TODO: Improve the following logic to allow following characters other than the player,
+#       and introduce some delay for a better representation of the following action.
+#
+# Makes the character follow the player by walking to a position that is offset from the player's
+# position. The offset is defined by [member follow_player_offset]. The character will walk to
+# the position that is offset from the player's position, and will continue to follow the player.
 func _follow_player(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
 	var follower_end_position := Vector2.ZERO
 	if end_position.x > position.x:
