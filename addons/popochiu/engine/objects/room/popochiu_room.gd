@@ -89,9 +89,8 @@ func _enter_tree() -> void:
 func _ready():
 	if Engine.is_editor_hint(): return
 
-	if not get_tree().get_nodes_in_group("walkable_areas").is_empty():
-		_nav_path = get_tree().get_nodes_in_group("walkable_areas")[0]
-		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
+	# Setup navigation obstacles after walkable areas are initialized
+	_setup_navigation_obstacles.call_deferred()
 
 	set_process_unhandled_input(false)
 
@@ -379,15 +378,13 @@ func get_navigation_path(start_position: Vector2, end_position: Vector2, ignore_
 #endregion
 
 
-#endregion
-
 #region SetGet #####################################################################################
 func set_is_current(value: bool) -> void:
 	is_current = value
 	set_process_unhandled_input(is_current)
 
-
 #endregion
+ 
 
 #region Private ####################################################################################
 func _on_gui_blocked() -> void:
@@ -396,6 +393,59 @@ func _on_gui_blocked() -> void:
 
 func _on_gui_unblocked() -> void:
 	set_process_unhandled_input(true)
+
+
+## Sets up navigation obstacles for all walkable areas based on props in the room.
+## This method collects all valid navigation obstacles from props and distributes them
+## to each walkable area, then triggers a rebake of the navigation meshes.
+func _setup_navigation_obstacles() -> void:
+	print("_setup_navigation_obstacles called")
+	var walkable_areas = get_walkable_areas()
+	if walkable_areas.is_empty():
+		print("No walkable areas found")
+		return
+	
+	_clear_navigation_obstacles()
+	
+	# Collect all valid navigation obstacles from props
+	var prop_obstacles = _collect_prop_obstacles()
+	print("Collected %d obstacles from props" % prop_obstacles.size())
+	
+	# Apply obstacles to each walkable area
+	for walkable_area in walkable_areas:
+		if walkable_area and walkable_area is PopochiuWalkableArea:
+			await walkable_area.setup_prop_obstacles(prop_obstacles)
+
+	if not walkable_areas.is_empty():
+		_nav_path = walkable_areas[0]
+		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
+		print("Navigation map activated")
+
+	await get_tree().physics_frame
+
+## Clears all prop-generated navigation obstacles from walkable areas.
+## This restores all walkable areas to their original state without prop obstacles.
+func _clear_navigation_obstacles() -> void:
+	for walkable_area in get_walkable_areas():
+		if walkable_area and walkable_area is PopochiuWalkableArea:
+			walkable_area.clear_prop_obstacles()
+
+
+## Collects all valid navigation obstacles from props in the room.
+## Returns an array of NavigationObstacle2D nodes that have valid polygons.
+func _collect_prop_obstacles() -> Array[NavigationObstacle2D]:
+	var obstacles: Array[NavigationObstacle2D] = []
+	
+	for prop in get_props():
+		if not prop or not prop is PopochiuProp:
+			continue
+
+		var obstacle = prop.get_navigation_obstacle()
+		if obstacle:
+			obstacles.append(obstacle)
+			print("Obstacle collected for prop: %s" % prop.name)
+	
+	return obstacles
 
 
 #endregion

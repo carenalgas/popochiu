@@ -103,6 +103,20 @@ func change_frame(new_frame: int) -> void:
 	await get_tree().process_frame
 
 
+## Returns the NavigationObstacle2D if it has a defined polygon, null otherwise.
+## This method checks if the obstacle has at least 3 vertices to form a valid polygon.
+func get_navigation_obstacle() -> NavigationObstacle2D:
+	var obstacle = get_node_or_null("ObstaclePolygon")
+	if not obstacle or not obstacle is NavigationObstacle2D:
+		return null
+	
+	# Check if obstacle has vertices defined (minimum 3 for a valid polygon)
+	if obstacle.vertices.size() < 3:
+		return null
+	
+	return obstacle
+
+
 #endregion
 
 #region SetGet #####################################################################################
