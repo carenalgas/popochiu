@@ -1013,7 +1013,7 @@ func _move_along_path(walk_distance: float):
 			next_waypoint
 		)
 
-		# The character haven't reached the next navigation point so we update
+		# The character hasn't reached the next navigation point so we update
 		# its position along the line between the last and the next navigation point
 		if walk_distance <= distance_to_next_waypoint:
 			turn_towards(next_waypoint)
