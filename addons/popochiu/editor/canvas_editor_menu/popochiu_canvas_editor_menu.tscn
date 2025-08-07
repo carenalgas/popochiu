@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://wd748u1vdybq"]
+[gd_scene load_steps=9 format=3 uid="uid://wd748u1vdybq"]
 
 [ext_resource type="Script" uid="uid://bjpgtct41bl2i" path="res://addons/popochiu/editor/canvas_editor_menu/popochiu_canvas_editor_menu.gd" id="1_vs7c6"]
 [ext_resource type="Texture2D" uid="uid://b3sku5v1n23ni" path="res://addons/popochiu/icons/btn_baseline.svg" id="2_w3cau"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://cekffh7bsuanp" path="res://addons/popochiu/icons/btn_dialog_position.svg" id="5_803mj"]
 [ext_resource type="Texture2D" uid="uid://cyun4rylrtrvm" path="res://addons/popochiu/icons/btn_interaction_polygon.svg" id="6_6oxl8"]
 [ext_resource type="Texture2D" uid="uid://d11mg7ftbxvl0" path="res://addons/popochiu/icons/btn_markers.svg" id="6_yea6f"]
+[ext_resource type="Texture2D" uid="uid://dfstqtc5nlapr" path="res://addons/popochiu/icons/btn_obstacle_polygon.svg" id="8_8v2pw"]
 
 [node name="PopochiuCanvasEditorMenu" type="HBoxContainer"]
 visible = false
@@ -57,6 +58,7 @@ icon = ExtResource("4_bge33")
 
 [node name="BtnDialogPos" type="Button" parent="."]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 tooltip_text = "Dialog Position"
 theme_type_variation = &"FlatButton"
@@ -71,3 +73,11 @@ tooltip_text = "Interaction Polygon"
 theme_type_variation = &"FlatButton"
 toggle_mode = true
 icon = ExtResource("6_6oxl8")
+
+[node name="BtnObstaclePolygon" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Obstacle Polygon"
+theme_type_variation = &"FlatButton"
+toggle_mode = true
+icon = ExtResource("8_8v2pw")

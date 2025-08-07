@@ -12,6 +12,7 @@ var _shown_helpers := []
 @onready var btn_look_at_point: Button = %BtnLookAtPoint
 @onready var btn_dialog_pos: Button = %BtnDialogPos
 @onready var btn_interaction_polygon: Button = %BtnInteractionPolygon
+@onready var btn_obstacle_polygon: Button = %BtnObstaclePolygon
 
 
 #region Godot ######################################################################################
@@ -27,6 +28,7 @@ func _ready() -> void:
 	btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
 	btn_dialog_pos.pressed.connect(_toggle_dialog_pos_visibility)
 	btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
+	btn_obstacle_polygon.pressed.connect(_select_obstacle_polygon)
 
 	# Connect to singleton signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
@@ -74,11 +76,6 @@ func _toggle_dialog_pos_visibility() -> void:
 
 
 func _select_interaction_polygon() -> void:
-	# Since we are going to select the interaction polygon node
-	# inside the node, let's hide the gizmos buttons
-	btn_walk_to_point.hide()
-	btn_baseline.hide()
-
 	# If we are editing the polygon, go back and select the parent node
 	# then stop execution.
 	var selected_node := EditorInterface.get_selection().get_selected_nodes()[0]
@@ -109,6 +106,36 @@ func _select_interaction_polygon() -> void:
 	EditorInterface.get_selection().clear()
 	EditorInterface.get_selection().add_node(obj_polygon)
 	obj_polygon.show()
+
+
+func _select_obstacle_polygon() -> void:
+	# If we are editing the polygon, go back and select the parent node
+	# then stop execution.
+	var selected_node := EditorInterface.get_selection().get_selected_nodes()[0]
+	if PopochiuEditorHelper.is_popochiu_obstacle_polygon(
+		selected_node
+	):
+		EditorInterface.get_selection().add_node(selected_node.get_parent())
+		_on_selection_changed()
+		return
+
+	# If we are editing a popochiu object holding an obstacle polygon, let's move on.
+
+	# This variable will hold the reference to the polygon we need to edit.
+	var obstacle_polygon: NavigationObstacle2D = null
+
+	# Let's find the node holding the polygon
+	# Since different Popochiu Objects have different polygons (NavigationRegion2D
+	# for Walkable Areas, InteractionPolygon2D for props, etc...) we tagged them
+	# by a special metadata
+	obstacle_polygon = selected_node.get_node_or_null("ObstaclePolygon")
+
+	if obstacle_polygon == null:
+		return
+
+	EditorInterface.get_selection().clear()
+	EditorInterface.get_selection().add_node(obstacle_polygon)
+	obstacle_polygon.show()
 
 
 func _on_gizmo_settings_changed() -> void:
@@ -173,12 +200,17 @@ func _on_selection_changed() -> void:
 		if PopochiuEditorHelper.is_popochiu_obj_polygon(selected_node):
 			_active_popochiu_object = selected_node.get_parent()
 		elif PopochiuEditorHelper.is_popochiu_room_object(selected_node):
+			# Manage object polygons
 			var polygon = null
 			if is_instance_valid(_active_popochiu_object):
+				# Maybe it's an interaction polygon?
 				polygon = PopochiuEditorHelper.get_first_child_by_group(
 					_active_popochiu_object,
 					PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
 				)
+				if (polygon == null):
+					# Or maybe it's an obstacle polygon.
+					polygon = _active_popochiu_object.get_node_or_null("ObstaclePolygon")
 			if (polygon != null):
 				polygon.hide()
 			btn_interaction_polygon.set_pressed_no_signal(false)
@@ -198,6 +230,10 @@ func _on_selection_changed() -> void:
 				node.hide()
 				EditorInterface.get_selection().remove_node.call_deferred(node)
 				btn_interaction_polygon.set_pressed_no_signal(false)
+			if PopochiuEditorHelper.is_popochiu_obstacle_polygon(node):
+				node.hide()
+				EditorInterface.get_selection().remove_node.call_deferred(node)
+				btn_obstacle_polygon.set_pressed_no_signal(false)
 
 	# Reset the walkable areas visibility depending on the user preferences
 	# Doing this also at the end because the state can be reset by one of the steps
@@ -248,6 +284,7 @@ func _set_toolbar_buttons_color() -> void:
 		_reset_toolbar_button_color(btn_look_at_point)
 		_reset_toolbar_button_color(btn_dialog_pos)
 		_reset_toolbar_button_color(btn_interaction_polygon)
+		_reset_toolbar_button_color(btn_obstacle_polygon)
 		# Done
 		return
 
@@ -280,7 +317,10 @@ func _set_toolbar_buttons_color() -> void:
 		btn_interaction_polygon,
 		Color.RED # no config for this at the moment
 	)
-
+	_set_toolbar_button_color(
+		btn_obstacle_polygon,
+		Color.DARK_ORANGE # no config for this at the moment
+	)
 
 ## Internal helper to reduce code duplication
 func _set_toolbar_button_color(btn, color) -> void:
@@ -309,6 +349,7 @@ func _set_buttons_visibility() -> void:
 	btn_look_at_point.hide()
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
+	btn_obstacle_polygon.hide()
 
 	# If we are not in a room and we are not editing a Popochiu object, nothing to do
 	if not (
@@ -321,7 +362,7 @@ func _set_buttons_visibility() -> void:
 	# Now we know we have to show the toolbar
 	show()
 
-	# Every Popochiu clickable always shows the polygon editing button when selected
+	# Every Popochiu clickable always shows the polygons editing buttons when selected
 	# in a room scene. Same when the scene is a character scene.
 	if (
 		(
@@ -340,11 +381,22 @@ func _set_buttons_visibility() -> void:
 	):
 		btn_interaction_polygon.hide()
 
-	# If the selected node in the editor is actually a popochiu object polygon
-	# We don't have to show the other buttons, only the polygon editing toggle.
+	# If the selected node in the editor is a popochiu interaction polygon we
+	# hide the obstacle polygon button, and leave only the interaction polygon one.
 	if PopochiuEditorHelper.is_popochiu_obj_polygon(
 		EditorInterface.get_selection().get_selected_nodes()[0]
 	):
+		btn_interaction_polygon.show()
+		btn_obstacle_polygon.hide()
+		return
+	
+	# Viceversa if the selected node is an obstacle polygon, we just show
+	# the obstacle polygon button.
+	if PopochiuEditorHelper.is_popochiu_obstacle_polygon(
+		EditorInterface.get_selection().get_selected_nodes()[0]
+	):
+		btn_interaction_polygon.hide()
+		btn_obstacle_polygon.show()
 		return
 
 	# If we are in a room scene...
@@ -353,13 +405,16 @@ func _set_buttons_visibility() -> void:
 		btn_markers.show()
 		# also, we may have selected a room object of sort, so check
 		# for the various types and hide the ones we don't need.
-		# If we are editing a clickable object, let's show gizmos buttons too
+		# If we are editing a clickable object, let's show gizmos buttons too.
 		if _active_popochiu_object is PopochiuClickable:
 			btn_baseline.show()
 			btn_walk_to_point.show()
 			btn_look_at_point.show()
+		# Props may be obstacles on the navigation area.
+		if _active_popochiu_object is PopochiuProp:
+			btn_obstacle_polygon.show()
 
-	# If we are in a Character scene, show polygon and dialogpos gizmo button
+	# If we are in a Character scene, show polygon and dialogpos gizmo button.
 	elif PopochiuEditorHelper.is_editing_character():
 		btn_dialog_pos.show()
 
