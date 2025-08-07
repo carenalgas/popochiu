@@ -357,7 +357,7 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 	if active_walkable_area != null:
 		_nav_path = active_walkable_area
 	else:
-		PopochiuUtils.print_error("Can't set %s as active walkable area" % walkable_area_name)
+		PopochiuUtils.print_error("No walkable area named %s is available for activation" % walkable_area_name)
 
 
 ## Returns the navigation path from start to end position using the active walkable area.
@@ -368,7 +368,6 @@ func get_navigation_path(start_position: Vector2, end_position: Vector2, ignore_
 		return PackedVector2Array([start_position, end_position])
 	
 	if not _nav_path:
-		PopochiuUtils.print_error("No walkable areas in this room")
 		return PackedVector2Array()
 	
 	# Delegate pathfinding to the active walkable area
@@ -399,15 +398,12 @@ func _on_gui_unblocked() -> void:
 ## This method collects all valid navigation obstacles from props and distributes them
 ## to each walkable area, then triggers a rebake of the navigation meshes.
 func _setup_navigation_obstacles() -> void:
-	print("_setup_navigation_obstacles called")
 	var walkable_areas = get_walkable_areas()
 	if walkable_areas.is_empty():
-		print("No walkable areas found")
 		return
 	
 	# Collect all valid navigation obstacles from props
 	var prop_obstacles = _collect_prop_obstacles()
-	print("Collected %d obstacles from props" % prop_obstacles.size())
 	
 	# Apply obstacles to each walkable area
 	for walkable_area in walkable_areas:
@@ -417,7 +413,6 @@ func _setup_navigation_obstacles() -> void:
 	if not walkable_areas.is_empty():
 		_nav_path = walkable_areas[0]
 		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
-		print("Navigation map activated")
 
 	await get_tree().physics_frame
 
@@ -434,7 +429,6 @@ func _collect_prop_obstacles() -> Array[NavigationObstacle2D]:
 		var obstacle = prop.get_navigation_obstacle()
 		if obstacle:
 			obstacles.append(obstacle)
-			print("Obstacle collected for prop: %s" % prop.name)
 
 	return obstacles
 

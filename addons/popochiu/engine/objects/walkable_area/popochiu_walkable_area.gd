@@ -63,7 +63,6 @@ func _ready() -> void:
 		)
 
 		# Get the reference to the navigation polygon
-		var navpoly: NavigationPolygon = _perimeter.navigation_polygon
 		if interaction_polygon.is_empty():
 			_save_navigation_polygon()
 		else:

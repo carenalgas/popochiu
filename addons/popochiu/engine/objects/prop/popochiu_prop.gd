@@ -35,11 +35,18 @@ signal linked_item_discarded(item: PopochiuInventoryItem)
 ## This will make the prop disappear from the room, depending on whether or not said inventory item
 ## is inside the inventory.
 @export var link_to_item := ""
-
+## Stores the outlines to assign to the [b]ObstaclePolygon/Vertices[/b] child during
+## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
+@export var obstacle_polygon := []
+## Stores the position to assign to the [b]ObstaclePolygon/Vertices[/b] child during
+## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
+@export var obstacle_polygon_position := Vector2.ZERO
 ## Total frames available the texture image has. [code](frames * vframes)[/code]
 var total_frames: get = get_total_frames
 
 @onready var _sprite: Sprite2D = $Sprite2D
+@onready var _navigation_obstacle: NavigationObstacle2D = get_node_or_null("ObstaclePolygon")
+
 
 
 #region Godot ######################################################################################
@@ -47,8 +54,30 @@ func _ready() -> void:
 	super()
 	add_to_group("props")
 	
-	if Engine.is_editor_hint(): return
-	
+	if Engine.is_editor_hint():
+		# Ignore assigning the vertices when:
+		if (
+			_navigation_obstacle == null # there is no ObstaclePolygon node
+			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
+		):
+			return
+
+		if obstacle_polygon.is_empty():
+			obstacle_polygon = _navigation_obstacle.vertices
+			obstacle_polygon_position = _navigation_obstacle.position
+		else:
+			_navigation_obstacle.vertices = obstacle_polygon
+			_navigation_obstacle.position = obstacle_polygon_position
+
+		# If we are in the editor, we're done
+		return
+
+	# When the game is running...
+	# Update the node's obstacle polygon when there is one:
+	if _navigation_obstacle != null:
+		_navigation_obstacle.vertices = obstacle_polygon
+		_navigation_obstacle.position = obstacle_polygon_position
+
 	for c in get_children():
 		if c.get("position") is Vector2:
 			c.position.y -= baseline * c.scale.y
@@ -71,6 +100,14 @@ func _ready() -> void:
 		):
 			disable()
 
+
+func _notification(event: int) -> void:
+	if _navigation_obstacle == null:
+		return
+
+	if event == NOTIFICATION_EDITOR_PRE_SAVE:
+		obstacle_polygon = _navigation_obstacle.vertices
+		obstacle_polygon_position = _navigation_obstacle.position
 
 #endregion
 
@@ -106,15 +143,14 @@ func change_frame(new_frame: int) -> void:
 ## Returns the NavigationObstacle2D if it has a defined polygon, null otherwise.
 ## This method checks if the obstacle has at least 3 vertices to form a valid polygon.
 func get_navigation_obstacle() -> NavigationObstacle2D:
-	var obstacle = get_node_or_null("ObstaclePolygon")
-	if not obstacle or not obstacle is NavigationObstacle2D:
+	if not _navigation_obstacle or not _navigation_obstacle is NavigationObstacle2D:
 		return null
 	
 	# Check if obstacle has vertices defined (minimum 3 for a valid polygon)
-	if obstacle.vertices.size() < 3:
+	if _navigation_obstacle.vertices.size() < 3:
 		return null
-	
-	return obstacle
+
+	return _navigation_obstacle
 
 
 #endregion
