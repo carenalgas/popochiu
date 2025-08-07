@@ -34,7 +34,9 @@ var map_rid: RID
 ## child.
 var region_rid: RID
 
+# Reference to the perimeter NavigationRegion2D, saved for internal use
 @onready var _perimeter = get_node_or_null("Perimeter")
+
 
 #region Godot ######################################################################################
 func _ready() -> void:
@@ -94,7 +96,7 @@ func _exit_tree():
 
 #endregion
 
-#region Public #####################################################################################
+#region Private #####################################################################################
 # Maps the outlines in [param perimeter] to the [member interaction_polygon] property and also
 # stores its position in [member interaction_polygon_position].
 func _save_navigation_polygon() -> void:
@@ -111,16 +113,23 @@ func _save_navigation_polygon() -> void:
 	interaction_polygon_position = _perimeter.position
 
 
-# Populates [param navpoly] with all the outlines and bakes it back.
+# Populates the Walkable Area's navigation polygon
+# with all the outlines of the saved polygon and bakes it back.
 func _load_navigation_polygon() -> void:
 	# Take the reference to the navigation polygon
-	var navpoly: NavigationPolygon = _perimeter.navigation_polygon
-	if not navpoly:
+	if not _perimeter.navigation_polygon:
 		return
+
+	# Create a fresh navigation polygon
+	var navpoly = NavigationPolygon.new()
+	navpoly.agent_radius = 0.0
 	
-	navpoly.clear_outlines()
+	# Add the original outlines
 	for outline in interaction_polygon:
 		navpoly.add_outline(outline)
+	
+	# Assign the polygon to the perimeter first - this establishes the relationship
+	_perimeter.navigation_polygon = navpoly
 
 	# Restore the NavigationRegion2D position
 	_perimeter.position = interaction_polygon_position
@@ -143,28 +152,8 @@ func _bake_navigation(source_geometry: NavigationMeshSourceGeometryData2D = null
 	NavigationServer2D.map_force_update(map_rid)
 
 
-
-## Clears all prop-generated navigation obstacles and restores the original walkable area state.
-func clear_prop_obstacles() -> void:
-	if not _perimeter or not _perimeter is NavigationRegion2D:
-		return
-
-	# Create a fresh navigation polygon
-	var navpoly = NavigationPolygon.new()
-	navpoly.agent_radius = 0.0
-	
-	# Add the original outlines
-	for outline in interaction_polygon:
-		navpoly.add_outline(outline)
-	
-	# Assign the polygon to the perimeter first - this establishes the relationship
-	_perimeter.navigation_polygon = navpoly
-
-	_bake_navigation()
-
-	# Restore position
-	_perimeter.position = interaction_polygon_position
-
+#region Public ####################################################################################
+## Collects all the [NavigationObstacle2D]s in the scene and returns them.
 
 ## Sets up navigation obstacles using projected obstructions.
 ## This is the preferred method for carving out areas in a NavigationPolygon.
@@ -211,7 +200,4 @@ func _set_enabled(value: bool) -> void:
 	notify_property_list_changed()
 
 
-#endregion
-
-#region Private ####################################################################################
 #endregion

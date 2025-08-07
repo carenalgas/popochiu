@@ -59,7 +59,7 @@ extends Node2D
 
 ## Whether this is the room in which players are. When [code]true[/code], the room starts processing
 ## unhandled inputs.
-var is_current := false : set = set_is_current
+var is_current := false: set = set_is_current
 
 var _nav_path: PopochiuWalkableArea = null
 # Stores the children defined in the Editor's Scene tree for each character inside $Characters to
@@ -216,7 +216,7 @@ func setup_camera() -> void:
 		PopochiuUtils.e.camera.limit_right = PopochiuUtils.e.width - h_diff
 	if height > 0 and height > PopochiuUtils.e.height:
 		var v_diff: int = (PopochiuUtils.e.height - height) / 2
-		PopochiuUtils.e.camera.limit_top = -v_diff
+		PopochiuUtils.e.camera.limit_top = - v_diff
 		PopochiuUtils.e.camera.limit_bottom = PopochiuUtils.e.height - v_diff
 
 
@@ -405,8 +405,6 @@ func _setup_navigation_obstacles() -> void:
 		print("No walkable areas found")
 		return
 	
-	_clear_navigation_obstacles()
-	
 	# Collect all valid navigation obstacles from props
 	var prop_obstacles = _collect_prop_obstacles()
 	print("Collected %d obstacles from props" % prop_obstacles.size())
@@ -423,13 +421,6 @@ func _setup_navigation_obstacles() -> void:
 
 	await get_tree().physics_frame
 
-## Clears all prop-generated navigation obstacles from walkable areas.
-## This restores all walkable areas to their original state without prop obstacles.
-func _clear_navigation_obstacles() -> void:
-	for walkable_area in get_walkable_areas():
-		if walkable_area and walkable_area is PopochiuWalkableArea:
-			walkable_area.clear_prop_obstacles()
-
 
 ## Collects all valid navigation obstacles from props in the room.
 ## Returns an array of NavigationObstacle2D nodes that have valid polygons.
@@ -444,7 +435,7 @@ func _collect_prop_obstacles() -> Array[NavigationObstacle2D]:
 		if obstacle:
 			obstacles.append(obstacle)
 			print("Obstacle collected for prop: %s" % prop.name)
-	
+
 	return obstacles
 
 
