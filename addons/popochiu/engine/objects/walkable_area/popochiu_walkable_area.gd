@@ -196,6 +196,15 @@ func setup_prop_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 #region SetGet #####################################################################################
 func _set_enabled(value: bool) -> void:
 	enabled = value
+
+	# If the game is running (not in editor), update the navigation region's enabled status
+	if not Engine.is_editor_hint() and is_inside_tree() and _perimeter:
+		_perimeter.enabled = value
+
+		# Additionally, you might want to update the NavigationServer directly
+		if region_rid.is_valid():
+			NavigationServer2D.region_set_enabled(region_rid, value)
+	
 	notify_property_list_changed()
 
 

@@ -407,11 +407,16 @@ func _setup_navigation_obstacles() -> void:
 	
 	# Apply obstacles to each walkable area
 	for walkable_area in walkable_areas:
-		if walkable_area and walkable_area is PopochiuWalkableArea:
+		if walkable_area and walkable_area is PopochiuWalkableArea and walkable_area.enabled:
 			await walkable_area.setup_prop_obstacles(prop_obstacles)
 
-	if not walkable_areas.is_empty():
-		_nav_path = walkable_areas[0]
+	# Only use enabled walkable areas as active
+	var enabled_walkable_areas = walkable_areas.filter(func(wa): return wa.enabled)
+	if not enabled_walkable_areas.is_empty():
+		# TODO: this magic index smells badly.
+		# We should maybe select the walkable area that's marked as "active" by the room?
+		# Or we should merge nav paths of multiple walkable areas together?
+		_nav_path = enabled_walkable_areas[0]
 		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
 
 	await get_tree().physics_frame
