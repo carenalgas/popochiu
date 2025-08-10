@@ -11,7 +11,7 @@ extends Node2D
 ## Can be used to show the name of the area to players.
 @export var description := ''
 ## Whether the area is or not enabled.
-@export var enabled := true : set = _set_enabled
+@export var enabled := true: set = _set_enabled
 ## Stores the outlines to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
 ## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := []
@@ -79,14 +79,19 @@ func _ready() -> void:
 		map_rid,
 		_perimeter.navigation_polygon.cell_size if _perimeter.navigation_polygon else 1.0
 	)
-	NavigationServer2D.region_set_map(region_rid, map_rid)
-	NavigationServer2D.map_set_active(map_rid, false)
 
-	# Load and bake navigation
+	# Assign the region to the server map for this region.
+	NavigationServer2D.region_set_map(region_rid, map_rid)
+
+	# We don't activate the area here. Delegating this to the room
+	# will avoid errors for non-ready areas in the server.
+
+	# Load and bake navigation.
 	_load_navigation_polygon()
 	_bake_navigation()
 	
-	# Now sync the enabled state that might have been set during scene loading
+	# Now sync the enabled state of this walkable area
+	# that might have been set during scene loading.
 	_sync_enabled_state_to_navigation_server()
 
 
@@ -169,7 +174,8 @@ func _bake_navigation(source_geometry: NavigationMeshSourceGeometryData2D = null
 	# Make sure the region is up to date and linked to the map
 	NavigationServer2D.region_set_navigation_polygon(region_rid, _perimeter.navigation_polygon)
 	# Force navigation update using the existing map relationship
-	NavigationServer2D.map_force_update(map_rid)
+	if NavigationServer2D.map_is_active(map_rid):
+		NavigationServer2D.map_force_update(map_rid)
 
 
 #region Public ####################################################################################
@@ -246,5 +252,6 @@ func _sync_enabled_state_to_navigation_server() -> void:
 		
 	_perimeter.enabled = enabled
 	NavigationServer2D.region_set_enabled(region_rid, enabled)
-	NavigationServer2D.map_force_update(map_rid)
+	if NavigationServer2D.map_is_active(map_rid):
+		NavigationServer2D.map_force_update(map_rid)
 #endregion

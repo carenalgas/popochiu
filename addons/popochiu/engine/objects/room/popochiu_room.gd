@@ -374,16 +374,26 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 	if not next.enabled:
 		PopochiuUtils.print_error("Walkable area %s is disabled and cannot be activated" % walkable_area_name)
 		return
+	
+	# Important: wait for the next physics frame before trying to activate the map.
+	# This gives the NavigationServer time to fully register the map.
+	#await get_tree().physics_frame
 
 	# Deactivate previous map to ensure only one nav map is active at any time.
 	if _nav_path and _nav_path.map_rid.is_valid():
 		NavigationServer2D.map_set_active(_nav_path.map_rid, false)
 
+	# Set the new active area.
 	_nav_path = next
 
-	# Activate only the selected area's map. This constrains pathfinding to this area.
-	if _nav_path.map_rid.is_valid():
-		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
+	# Activate the newly selected area's map. This constrains pathfinding to this area.
+	NavigationServer2D.map_set_active(_nav_path.map_rid, true)
+
+	# Important: wait for the next physics frame before trying to activate the map.
+	# This gives the NavigationServer time to fully register the map.
+	await get_tree().physics_frame
+
+	if _nav_path.map_rid.is_valid() and NavigationServer2D.map_is_active(_nav_path.map_rid):
 		NavigationServer2D.map_force_update(_nav_path.map_rid)
 
 
