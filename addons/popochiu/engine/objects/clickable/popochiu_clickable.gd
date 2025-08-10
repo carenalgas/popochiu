@@ -35,6 +35,11 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 ## by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
 
+## Emitted when the clickable starts moving.
+signal movement_started
+## Emitted when the clickable finishes moving or is repositioned.
+signal movement_ended
+
 ## The [PopochiuRoom] to which the object belongs.
 var room: Node2D = null: set = set_room
 ## The number of times this object has been left-clicked.
@@ -49,11 +54,15 @@ var times_middle_clicked := 0
 # 		(command execution).
 ## Stores the last [enum MouseButton] pressed on this object.
 var last_click_button := -1
+## Whether the clickable is currently moving via the move_to function.
+var is_moving := false
 
 # Used for setting the double click delay. Windows default is 500 milliseconds.
 var _double_click_delay: float = 0.2
 # Used for tracking if a double click has occurred.
 var _has_double_click: bool = false
+# Current active tween for movement
+var _movement_tween: Tween = null
 
 @onready var _description_code := description
 
@@ -156,6 +165,12 @@ func _on_middle_click() -> void:
 ## Called when the node is clicked and there is an inventory item selected.
 ## [i]Virtual[/i].
 func _on_item_used(item: PopochiuInventoryItem) -> void:
+	pass
+
+
+## Called after movement to sync internal position state.
+## [i]Virtual[/i].
+func _on_position_changed() -> void:
 	pass
 
 
@@ -269,6 +284,134 @@ func handle_command(button_idx: int) -> void:
 	await call(prefix % suffix)
 
 
+## Moves the clickable to the specified position using tweening.
+## Ignores walkable areas and doesn't affect animation states.
+func move_to(
+	pos: Vector2,
+	speed: float = 100.0,
+	transition_type: Tween.TransitionType = Tween.TRANS_LINEAR,
+	ease_type: Tween.EaseType = Tween.EASE_IN_OUT
+) -> void:
+	# Ignore if already moving
+	if is_moving:
+		return
+	
+	# Cancel any existing movement tween
+	if _movement_tween and _movement_tween.is_valid():
+		_movement_tween.kill()
+		_movement_tween = null
+	
+	# Create new tween
+	_movement_tween = create_tween()
+	_movement_tween.set_trans(transition_type)
+	_movement_tween.set_ease(ease_type)
+	_movement_tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	_movement_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+	
+	# Calculate duration based on speed and distance
+	var distance = position.distance_to(pos)
+	var duration = distance / speed if speed > 0.0 else 0.0
+	
+	# Start movement
+	is_moving = true
+	movement_started.emit()
+	
+	# Create the tween animation
+	_movement_tween.tween_property(self, "position", pos, duration)
+
+	# Await for the movement to me completed
+	await _movement_tween.finished
+
+	# After the movement is completed
+	is_moving = false
+	
+	# Sync internal position state
+	_on_position_changed()
+
+	_movement_tween = null
+	movement_ended.emit()
+
+
+## Makes the clickable teleport (disappear at one location and instantly appear at another) to a
+## specific absolute position (in the current room) specified by [param pos] ([Vector2]).
+## You can set an [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_position(pos: Vector2, offset := Vector2.ZERO) -> Callable:
+	return func(): teleport_to_position(pos, offset)
+
+
+## Makes the clickable teleport (disappear at one location and instantly appear at another) to a
+## specific absolute position (in the current room) specified by [param pos] ([Vector2]).
+## You can set an [param offset] relative to the target position.[br][br]
+func teleport_to_position(pos: Vector2, offset: Vector2 = Vector2.ZERO) -> void:
+	# Ignore if already moving
+	if is_moving:
+		return
+	
+	# Cancel any active movement
+	if _movement_tween and _movement_tween.is_valid():
+		_movement_tween.kill()
+		_movement_tween = null
+	
+	# Update position immediately
+	position = pos + offset
+
+	# Sync internal position state
+	_on_position_changed()
+	
+	# Notify that movement has ended
+	movement_ended.emit()
+
+
+## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
+## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
+## [param id]. You can set an [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): teleport_to_prop(id, offset)
+
+
+## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
+## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
+## [param id]. You can set an [param offset] relative to the target position.
+func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
+	# Ignore if already moving
+	if is_moving:
+		return
+	
+	_teleport_to_node(PopochiuUtils.r.current.get_prop(id), offset)
+
+
+## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
+## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
+## [param id]. You can set an [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_hotspot(id, offset)
+
+
+## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
+## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
+## [param id]. You can set an [param offset] relative to the target position.
+func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
+	await _teleport_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
+
+
+## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
+## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
+## [param offset] relative to the target position.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_marker(id, offset)
+
+
+## Makes the character teleport (disappear at one location and instantly appear at another) to the
+## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
+## [param offset] relative to the target position.
+func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
+	await _teleport_to_node(PopochiuUtils.r.current.get_marker(id), offset)
+
+
 #endregion
 
 
@@ -344,6 +487,31 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 				times_middle_clicked += 1
 
 	PopochiuUtils.e.clicked = null
+
+
+# Instantly move the clickable to the node position
+func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
+	# Ignore if already moving
+	if is_moving:
+		return
+
+	if not is_instance_valid(node):
+		return
+
+	# Cancel any active movement
+	if _movement_tween and _movement_tween.is_valid():
+		_movement_tween.kill()
+		_movement_tween = null
+
+	position = node.to_global(
+		node.walk_to_point if node is PopochiuClickable else Vector2.ZERO
+	) + offset
+
+	# Sync internal position state
+	_on_position_changed()
+	
+	# Notify that movement has ended
+	movement_ended.emit()
 
 
 func _toggle_input() -> void:

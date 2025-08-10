@@ -139,7 +139,7 @@ func _unhandled_input(event: InputEvent):
 		PopochiuUtils.e.clicked = null
 		
 		if PopochiuUtils.c.player.is_moving:
-			PopochiuUtils.c.player.move_ended.emit()
+			PopochiuUtils.c.player.movement_ended.emit()
 		
 		PopochiuUtils.c.player.walk(get_local_mouse_position())
 

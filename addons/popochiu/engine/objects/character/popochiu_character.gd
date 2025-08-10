@@ -38,8 +38,6 @@ enum Looking {
 signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector2)
 ## Emitted when the character is forced to stop while walking.
 signal stopped_walk
-## Emitted when the character reaches the ending position when moving from one point to another.
-signal move_ended
 ## Emitted when the animation to grab things has finished.
 signal grab_done
 
@@ -91,8 +89,6 @@ var _buffered_position = null
 var last_room := EMPTY_STRING
 ## The suffix text to add to animation names.
 var anim_suffix := EMPTY_STRING
-## Whether the character is or not moving through the room.
-var is_moving := false
 ## The current emotion used by the character.
 var emotion := EMPTY_STRING
 ##
@@ -161,7 +157,7 @@ func _ready():
 			continue
 		child.frame_changed.connect(_update_position)
 
-	move_ended.connect(_on_move_ended)
+	movement_ended.connect(_on_move_ended)
 
 	# The code that follows is only executed when the game is running
 	if Engine.is_editor_hint():
@@ -224,6 +220,11 @@ func _play_grab() -> void:
 
 func _on_move_ended() -> void:
 	pass
+
+
+## Called after movement to sync the character's buffered position state.
+func _on_position_changed() -> void:
+	_sync_buffered_position()
 
 
 #endregion
@@ -293,7 +294,7 @@ func walk(target_pos: Vector2) -> void:
 
 	# Trigger the signal to start moving the character
 	started_walk_to.emit(self, position, target_pos)
-	await move_ended
+	await movement_ended
 
 	is_moving = false
 
@@ -595,21 +596,6 @@ func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(PopochiuUtils.r.current.get_prop(id), offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.[br][br]
-## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
-	return func(): await teleport_to_prop(id, offset)
-
-
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.
-func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(PopochiuUtils.r.current.get_prop(id), offset)
-
-
 ## Makes the character walk to the [PopochiuHotspot] (in the current room) which
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
 ## relative to the target position.[br][br]
@@ -625,21 +611,6 @@ func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.[br][br]
-## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
-	return func(): await teleport_to_hotspot(id, offset)
-
-
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.
-func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
-
-
 ## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
 ## equal to [param id]. You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
@@ -651,21 +622,6 @@ func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 ## equal to [param id]. You can set an [param offset] relative to the target position.
 func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(PopochiuUtils.r.current.get_marker(id), offset)
-
-
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
-## [param offset] relative to the target position.[br][br]
-## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
-	return func(): await teleport_to_marker(id, offset)
-
-
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
-## [param offset] relative to the target position.
-func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(PopochiuUtils.r.current.get_marker(id), offset)
 
 
 ## Sets [member emotion] to [param new_emotion] when in a [method Popochiu.queue].
@@ -856,6 +812,12 @@ func update_position() -> void:
 func reset_buffered_position() -> void:
 	_buffered_position = null
 
+
+## Syncs the buffered position with the current position to avoid conflicts with walking.
+func _sync_buffered_position() -> void:
+	_buffered_position = position
+
+
 ## Updates the scale depending on the properties of the scaling region where it is located.
 func update_scale():
 	if scaling_region:
@@ -965,17 +927,6 @@ func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 	)
 
 
-# Instantly move to the node position
-func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
-	if not is_instance_valid(node):
-		await get_tree().process_frame
-		return
-
-	position = node.to_global(
-		node.walk_to_point if node is PopochiuClickable else Vector2.ZERO
-	) + offset
-
-
 func _update_position():
 	# This avoids errors when an animation is selected by the Aseprite importer interface
 	# because _update_position() is bound to the "frame_changed" signal, which is triggered
@@ -1078,7 +1029,7 @@ func _clear_navigation_path() -> void:
 	_navigation_path.clear()
 	set_physics_process(false)
 	idle()
-	move_ended.emit()
+	movement_ended.emit()
 
 
 # TODO: Improve the following logic to allow following characters other than the player,
