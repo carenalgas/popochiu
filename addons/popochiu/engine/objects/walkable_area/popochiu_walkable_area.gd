@@ -89,7 +89,7 @@ func _ready() -> void:
 	# Load and bake navigation.
 	_load_navigation_polygon()
 	_bake_navigation()
-	
+
 	# Now sync the enabled state of this walkable area
 	# that might have been set during scene loading.
 	_sync_enabled_state_to_navigation_server()
@@ -105,7 +105,7 @@ func _notification(event: int) -> void:
 
 func _exit_tree():
 	if Engine.is_editor_hint(): return
-	
+
 	# Deactivate and free our dedicated map to avoid leaking and to not affect other rooms.
 	if map_rid.is_valid():
 		NavigationServer2D.map_set_active(map_rid, false)
@@ -122,7 +122,7 @@ func _save_navigation_polygon() -> void:
 	var navpoly: NavigationPolygon = _perimeter.navigation_polygon
 	if not navpoly or not is_instance_valid(navpoly):
 		return
-	
+
 	interaction_polygon.clear()
 	# Save all the NavigationPolygon outlines in the local variable
 	for idx in range(0, navpoly.get_outline_count()):
@@ -141,11 +141,11 @@ func _load_navigation_polygon() -> void:
 	# Create a fresh navigation polygon
 	var navpoly = NavigationPolygon.new()
 	navpoly.agent_radius = 0.0
-	
+
 	# Add the original outlines
 	for outline in interaction_polygon:
 		navpoly.add_outline(outline)
-	
+
 	# Assign the polygon to the perimeter first - this establishes the relationship
 	_perimeter.navigation_polygon = navpoly
 
@@ -157,11 +157,11 @@ func _bake_navigation(source_geometry: NavigationMeshSourceGeometryData2D = null
 	# This is a convenience method to bake the navigation polygon
 	if not _perimeter or not _perimeter is NavigationRegion2D:
 		return
-	
+
 	# If no source geometry is specified, use an empty one.
 	if not source_geometry:
 		source_geometry = NavigationMeshSourceGeometryData2D.new()
-	
+
 	# Now use the perimeter's navigation polygon for baking
 	NavigationServer2D.bake_from_source_geometry_data(_perimeter.navigation_polygon, source_geometry)
 
@@ -196,11 +196,11 @@ func setup_prop_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 	for obstacle in obstacles:
 		if not obstacle or obstacle.vertices.size() < 3:
 			continue
-			
+
 		var obstacle_parent = obstacle.get_parent()
 		if not obstacle_parent or not obstacle_parent.visible:
 			continue
-		
+
 		# Convert obstacle vertices to global space, then to perimeter's local space
 		var local_vertices = PackedVector2Array()
 		for vertex in obstacle.vertices:
@@ -214,7 +214,7 @@ func setup_prop_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 
 		# Add as projected obstruction (true means carving)
 		source_geometry.add_projected_obstruction(local_vertices, true)
-	
+
 	_bake_navigation(source_geometry)
 
 	# Wait a frame to ensure navigation is properly updated
@@ -227,7 +227,7 @@ func setup_prop_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 func _set_enabled(value: bool) -> void:
 	# Always store the value first
 	enabled = value
-	
+
 	# Editor: allow changing and saving the property, but never touch the NavigationServer.
 	if Engine.is_editor_hint():
 		emit_signal("enabled_changed", enabled)
@@ -252,9 +252,11 @@ func _set_enabled(value: bool) -> void:
 func _sync_enabled_state_to_navigation_server() -> void:
 	if not _perimeter or not region_rid.is_valid() or not map_rid.is_valid():
 		return
-		
+
 	_perimeter.enabled = enabled
 	NavigationServer2D.region_set_enabled(region_rid, enabled)
 	if NavigationServer2D.map_is_active(map_rid):
 		NavigationServer2D.map_force_update(map_rid)
+
+
 #endregion
