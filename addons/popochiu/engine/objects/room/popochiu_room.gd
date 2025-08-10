@@ -113,6 +113,9 @@ func _ready():
 			# Bind the area instance so we know which one changed.
 			wa.enabled_changed.connect(_on_walkable_area_enabled_changed.bind(wa))
 
+	# Connect to props movement_ended signals to trigger navigation rebaking when they move
+	_connect_props_changes_signals.call_deferred()
+
 	PopochiuUtils.r.room_readied(self)
 
 func _unhandled_input(event: InputEvent):
@@ -411,6 +414,13 @@ func get_navigation_path(start_position: Vector2, end_position: Vector2, ignore_
 	return NavigationServer2D.map_get_path(_nav_path.map_rid, start_position, end_position, true)
 
 
+## Manually triggers navigation obstacle rebaking for all walkable areas.
+## Useful when props are moved or added/removed at runtime, or when you need to force
+## a navigation mesh update. The rebaking happens in the next frame to avoid performance issues.
+func update_navigation_obstacles() -> void:
+	_setup_navigation_obstacles.call_deferred()
+
+
 #endregion
 
 
@@ -431,9 +441,9 @@ func _on_gui_unblocked() -> void:
 	set_process_unhandled_input(true)
 
 
-## Sets up navigation obstacles for all walkable areas based on props in the room.
-## This method collects all valid navigation obstacles from props and distributes them
-## to each walkable area, then triggers a rebake of the navigation meshes.
+# Sets up navigation obstacles for all walkable areas based on props in the room.
+# This method collects all valid navigation obstacles from props and distributes them
+# to each walkable area, then triggers a rebake of the navigation meshes.
 func _setup_navigation_obstacles() -> void:
 	var walkable_areas = get_walkable_areas()
 	if walkable_areas.is_empty():
@@ -471,8 +481,8 @@ func _ensure_active_walkable_area() -> void:
 	set_active_walkable_area(enabled_walkable_areas[0].name)
 
 
-## Collects all valid navigation obstacles from props in the room.
-## Returns an array of NavigationObstacle2D nodes that have valid polygons.
+# Collects all valid navigation obstacles from props in the room.
+# Returns an array of NavigationObstacle2D nodes that have valid polygons.
 func _collect_prop_obstacles() -> Array[NavigationObstacle2D]:
 	var obstacles: Array[NavigationObstacle2D] = []
 	
@@ -501,6 +511,43 @@ func _on_walkable_area_enabled_changed(enabled: bool, area: PopochiuWalkableArea
 	# If nothing is active and an area just became enabled, activate it.
 	elif _nav_path == null and enabled:
 		set_active_walkable_area(area.name)
+
+
+# Connects to all props' movement_ended and visibility_changed signals to trigger navigation rebaking.
+func _connect_props_changes_signals() -> void:
+	for prop in get_props():
+		if not prop:
+			continue
+
+		# Connect to movement_ended signal
+		if (
+			prop.has_signal("movement_ended")
+			and not prop.movement_ended.is_connected(_on_prop_moved)
+		):
+			prop.movement_ended.connect(_on_prop_moved.bind(prop))
+			
+		# Connect to visibility_changed signal
+		if (
+			prop.has_signal("visibility_changed")
+			and not prop.visibility_changed.is_connected(_on_prop_visibility_changed)
+		):
+			prop.visibility_changed.connect(_on_prop_visibility_changed.bind(prop))
+
+
+# Called when a prop moves via move_to or teleport functions.
+# Triggers navigation obstacle rebaking since the prop's collision shape has moved.
+func _on_prop_moved(prop: PopochiuClickable) -> void:
+	# Only rebake navigation if the prop has navigation obstacles
+	if prop and prop.get_node_or_null("ObstaclePolygon"):
+		_setup_navigation_obstacles.call_deferred()
+
+
+# Called when a prop's visibility changes.
+# Triggers navigation obstacle rebaking since invisible props should not block pathfinding.
+func _on_prop_visibility_changed(prop: PopochiuClickable) -> void:
+	# Only rebake navigation if the prop has navigation obstacles
+	if prop and prop.get_node_or_null("ObstaclePolygon"):
+		_setup_navigation_obstacles.call_deferred()
 
 
 #endregion
