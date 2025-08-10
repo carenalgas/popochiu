@@ -206,6 +206,9 @@ func setup_prop_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 		for vertex in obstacle.vertices:
 			# First convert to global space
 			var global_pos = obstacle_parent.to_global(vertex)
+			# Adjust the global position to account for the baseline because
+			# the engine is currently using y-sorting and not z-index.
+			global_pos.y -= obstacle_parent.baseline * scale.y
 			# Then convert to perimeter's local space
 			local_vertices.append(_perimeter.to_local(global_pos))
 
