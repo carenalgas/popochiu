@@ -111,9 +111,9 @@ func _unhandled_input(event: InputEvent):
 		return
 
 	# Fix #224 Item should be removed only if the click was done anywhere in the room when the
-	# cursor is not hovering another object
+	# cursor is not hovering another object.
 	if PopochiuUtils.i.active:
-		# Wait so PopochiuClickable can handle the interaction
+		# Wait so PopochiuClickable can handle the interaction.
 		await get_tree().create_timer(0.1).timeout
 
 		PopochiuUtils.i.set_active_item()
@@ -121,7 +121,7 @@ func _unhandled_input(event: InputEvent):
 	
 	if has_player and is_instance_valid(PopochiuUtils.c.player) and PopochiuUtils.c.player.can_move:
 		# Set this property to null in order to cancel any running interaction with a
-		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...))
+		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...)).
 		PopochiuUtils.e.clicked = null
 		
 		if PopochiuUtils.c.player.is_moving:
@@ -173,9 +173,9 @@ func exit_room() -> void:
 func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
 	
-	# Fix #191 by checking if the character had children defined in the Room's Scene (Editor)
+	# Fix #191 by checking if the character had children defined in the Room's Scene (Editor).
 	if _characters_children.has(chr.script_name):
-		# Add child nodes (defined in the Scene tree of the room) to the instance of the character
+		# Add child nodes (defined in the Scene tree of the room) to the instance of the character.
 		for child: Node in _characters_children[chr.script_name]:
 			chr.add_child(child)
 
@@ -353,24 +353,37 @@ func get_characters_count() -> int:
 ## Sets as active the [PopochiuWalkableArea] which [member Node.name] matches
 ## [param walkable_area_name].
 func set_active_walkable_area(walkable_area_name: String) -> void:
-	var active_walkable_area = $WalkableAreas.get_node(walkable_area_name)
-	if active_walkable_area != null:
-		_nav_path = active_walkable_area
-	else:
+	var next: PopochiuWalkableArea = $WalkableAreas.get_node_or_null(walkable_area_name)
+	if next == null:
 		PopochiuUtils.print_error("No walkable area named %s is available for activation" % walkable_area_name)
+		return
+	if not next.enabled:
+		PopochiuUtils.print_error("Walkable area %s is disabled and cannot be activated" % walkable_area_name)
+		return
+
+	# Deactivate previous map to ensure only one nav map is active at any time.
+	if _nav_path and _nav_path.map_rid.is_valid():
+		NavigationServer2D.map_set_active(_nav_path.map_rid, false)
+
+	_nav_path = next
+
+	# Activate only the selected area's map. This constrains pathfinding to this area.
+	if _nav_path.map_rid.is_valid():
+		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
+		NavigationServer2D.map_force_update(_nav_path.map_rid)
 
 
 ## Returns the navigation path from start to end position using the active walkable area.
 ## Returns empty array if no walkable area is set.
 func get_navigation_path(start_position: Vector2, end_position: Vector2, ignore_walkable_areas: bool = false) -> PackedVector2Array:
 	if ignore_walkable_areas:
-		# Direct path for characters that ignore walkable areas
+		# Direct path for characters that ignore walkable areas.
 		return PackedVector2Array([start_position, end_position])
 	
 	if not _nav_path:
 		return PackedVector2Array()
 	
-	# Delegate pathfinding to the active walkable area
+	# Delegate pathfinding to the active walkable area.
 	return NavigationServer2D.map_get_path(_nav_path.map_rid, start_position, end_position, true)
 
 
