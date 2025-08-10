@@ -284,8 +284,28 @@ func handle_command(button_idx: int) -> void:
 	await call(prefix % suffix)
 
 
-## Moves the clickable to the specified position using tweening.
-## Ignores walkable areas and doesn't affect animation states.
+## Smoothly moves the clickable to a specific absolute position (in the current room)
+## specified by [param pos] ([Vector2]).
+## Movement [param speed] can be set (in pixels per second), as well as [param transition_type]
+## and [param ease_type] to control the tweening (see [Tween] enums).
+## [b]NOTE[/b]: If called on a [PopochiuCharacter], the movement ignores walkable areas
+## and doesn't affect animation states.
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_move_to(
+	pos: Vector2,
+	speed: float = 100.0,
+	transition_type: Tween.TransitionType = Tween.TRANS_LINEAR,
+	ease_type: Tween.EaseType = Tween.EASE_IN_OUT
+) -> Callable:
+	return func(): await move_to(pos, speed, transition_type, ease_type)
+
+
+## Smoothly moves the clickable to a specific absolute position (in the current room)
+## specified by [param pos] ([Vector2]).
+## Movement [param speed] can be set (in pixels per second), as well as [param transition_type]
+## and [param ease_type] to control the tweening (see [Tween] enums).
+## [b]NOTE[/b]: If called on a [PopochiuCharacter], the movement ignores walkable areas
+## and doesn't affect animation states.
 func move_to(
 	pos: Vector2,
 	speed: float = 100.0,
@@ -294,6 +314,7 @@ func move_to(
 ) -> void:
 	# Ignore if already moving
 	if is_moving:
+		await get_tree().process_frame
 		return
 	
 	# Cancel any existing movement tween
@@ -337,7 +358,7 @@ func move_to(
 ## You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_position(pos: Vector2, offset := Vector2.ZERO) -> Callable:
-	return func(): teleport_to_position(pos, offset)
+	return func(): await teleport_to_position(pos, offset)
 
 
 ## Makes the clickable teleport (disappear at one location and instantly appear at another) to a
@@ -368,18 +389,14 @@ func teleport_to_position(pos: Vector2, offset: Vector2 = Vector2.ZERO) -> void:
 ## [param id]. You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
-	return func(): teleport_to_prop(id, offset)
+	return func(): await teleport_to_prop(id, offset)
 
 
 ## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
 ## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
 ## [param id]. You can set an [param offset] relative to the target position.
 func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
-	# Ignore if already moving
-	if is_moving:
-		return
-	
-	_teleport_to_node(PopochiuUtils.r.current.get_prop(id), offset)
+	await _teleport_to_node(PopochiuUtils.r.current.get_prop(id), offset)
 
 
 ## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
@@ -491,11 +508,9 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 
 # Instantly move the clickable to the node position
 func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
-	# Ignore if already moving
-	if is_moving:
-		return
-
-	if not is_instance_valid(node):
+	# Ignore if already moving or the node is not valid
+	if is_moving or not is_instance_valid(node):
+		await get_tree().process_frame
 		return
 
 	# Cancel any active movement
