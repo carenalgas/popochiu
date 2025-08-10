@@ -89,17 +89,31 @@ func _enter_tree() -> void:
 func _ready():
 	if Engine.is_editor_hint(): return
 
-	# Setup navigation obstacles after walkable areas are initialized
+	# Bake obstacles in every and each walkable area, after all of them are initialized.
 	_setup_navigation_obstacles.call_deferred()
+
+	# Ensure exactly one area is active at startup. The first enabled area is activated.
+	# Devs that want to control which area is active, should invoke set_active_walkable_area()
+	# in _on_room_entered().
+	_ensure_active_walkable_area.call_deferred()
 
 	set_process_unhandled_input(false)
 
 	# Connect to singletons signals
 	PopochiuUtils.g.blocked.connect(_on_gui_blocked)
 	PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
-	
-	PopochiuUtils.r.room_readied(self)
 
+	# Connect to runtime enable/disable walkable areas signals.
+	for wa: PopochiuWalkableArea in get_walkable_areas():
+		if (
+			wa
+			and wa.has_signal("enabled_changed")
+			and not wa.enabled_changed.is_connected(_on_walkable_area_enabled_changed)
+		):
+			# Bind the area instance so we know which one changed.
+			wa.enabled_changed.connect(_on_walkable_area_enabled_changed.bind(wa))
+
+	PopochiuUtils.r.room_readied(self)
 
 func _unhandled_input(event: InputEvent):
 	if (
@@ -415,24 +429,36 @@ func _setup_navigation_obstacles() -> void:
 	if walkable_areas.is_empty():
 		return
 	
-	# Collect all valid navigation obstacles from props
+	# Collect all valid navigation obstacles from props.
 	var prop_obstacles = _collect_prop_obstacles()
 	
-	# Apply obstacles to each walkable area
+	# Apply obstacles to each enabled walkable area.
 	for walkable_area in walkable_areas:
 		if walkable_area and walkable_area is PopochiuWalkableArea and walkable_area.enabled:
 			await walkable_area.setup_prop_obstacles(prop_obstacles)
 
-	# Only use enabled walkable areas as active
-	var enabled_walkable_areas = walkable_areas.filter(func(wa): return wa.enabled)
-	if not enabled_walkable_areas.is_empty():
-		# TODO: this magic index smells badly.
-		# We should maybe select the walkable area that's marked as "active" by the room?
-		# Or we should merge nav paths of multiple walkable areas together?
-		_nav_path = enabled_walkable_areas[0]
-		NavigationServer2D.map_set_active(_nav_path.map_rid, true)
-
+	# Important: do not activate/switch areas here. This function only bakes obstacles.
 	await get_tree().physics_frame
+
+# Ensures one walkable area is active when the room gets readied.
+# Keeps the current active area if it is still enabled, otherwise it picks the first
+# enabled one (scene-tree order).
+# Delegates most of the logic to set_active_walkable_area().
+func _ensure_active_walkable_area() -> void:
+	# If we already have a valid, enabled active area (i.e. from a savegame), keep it.
+	if _nav_path and _nav_path.enabled:
+		return
+
+	# Otherwise, search for all the enabled areas in the room.
+	var enabled_walkable_areas = get_walkable_areas().filter(func(wa): return wa.enabled)
+	if enabled_walkable_areas.is_empty():
+		# No enabled areas: deactivate any previously active map and clear.
+		if _nav_path and _nav_path.map_rid.is_valid():
+			NavigationServer2D.map_set_active(_nav_path.map_rid, false)
+		_nav_path = null
+
+	# Finally, take the first enabled walkable area and activate it.
+	set_active_walkable_area(enabled_walkable_areas[0].name)
 
 
 ## Collects all valid navigation obstacles from props in the room.
@@ -449,6 +475,22 @@ func _collect_prop_obstacles() -> Array[NavigationObstacle2D]:
 			obstacles.append(obstacle)
 
 	return obstacles
+
+
+# React when a walkable area's enabled flag changes at runtime.
+func _on_walkable_area_enabled_changed(enabled: bool, area: PopochiuWalkableArea) -> void:
+	# If the active area was disabled, switch to another enabled one (if any).
+	if area == _nav_path and not enabled:
+		if _nav_path.map_rid.is_valid():
+			NavigationServer2D.map_set_active(_nav_path.map_rid, false)
+		var fallback := get_walkable_areas().filter(func(wa): return wa.enabled)
+		if not fallback.is_empty():
+			set_active_walkable_area(fallback[0].name)
+		else:
+			_nav_path = null
+	# If nothing is active and an area just became enabled, activate it.
+	elif _nav_path == null and enabled:
+		set_active_walkable_area(area.name)
 
 
 #endregion

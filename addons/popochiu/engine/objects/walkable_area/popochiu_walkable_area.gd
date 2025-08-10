@@ -34,6 +34,9 @@ var map_rid: RID
 ## child.
 var region_rid: RID
 
+## Emitted when the enabled flag changes so the room can react (e.g. switch active map).
+signal enabled_changed(value: bool)
+
 # Reference to the perimeter NavigationRegion2D, saved for internal use
 @onready var _perimeter = get_node_or_null("Perimeter")
 
@@ -46,12 +49,9 @@ func _ready() -> void:
 		print("No perimeter found in the walkable area. Please add a NavigationRegion2D child named 'Perimeter'.")
 		return
 
-	# Map the necessary resources
-	map_rid = NavigationServer2D.get_maps()[0]
 	region_rid = (_perimeter as NavigationRegion2D).get_region_rid()
-	NavigationServer2D.region_set_map(region_rid, map_rid)
 
-	# We are in the editor so let's address what's needed to edit the perimenter polygon
+	# Editor setup...
 	if Engine.is_editor_hint():
 		# Ignore assigning the polygon when editing it in the .tscn file of the object directly
 		if not get_parent() is Node2D:
@@ -72,11 +72,22 @@ func _ready() -> void:
 		# If we are in the editor, we're done
 		return
 
-	# When the game is running...
-	# Bake the perimeter polygon in the navigation server
-	# Take the reference to the navigation polygon
+	# Runtime: create navigation setup
+	map_rid = NavigationServer2D.map_create()
+	# Ensure polygon and map use the same cell_size to avoid errors.
+	NavigationServer2D.map_set_cell_size(
+		map_rid,
+		_perimeter.navigation_polygon.cell_size if _perimeter.navigation_polygon else 1.0
+	)
+	NavigationServer2D.region_set_map(region_rid, map_rid)
+	NavigationServer2D.map_set_active(map_rid, false)
+
+	# Load and bake navigation
 	_load_navigation_polygon()
 	_bake_navigation()
+	
+	# Now sync the enabled state that might have been set during scene loading
+	_sync_enabled_state_to_navigation_server()
 
 
 func _notification(event: int) -> void:
@@ -90,7 +101,10 @@ func _notification(event: int) -> void:
 func _exit_tree():
 	if Engine.is_editor_hint(): return
 	
-	NavigationServer2D.map_set_active(map_rid, false)
+	# Deactivate and free our dedicated map to avoid leaking and to not affect other rooms.
+	if map_rid.is_valid():
+		NavigationServer2D.map_set_active(map_rid, false)
+		NavigationServer2D.free_rid(map_rid)
 
 
 #endregion
@@ -145,6 +159,13 @@ func _bake_navigation(source_geometry: NavigationMeshSourceGeometryData2D = null
 	
 	# Now use the perimeter's navigation polygon for baking
 	NavigationServer2D.bake_from_source_geometry_data(_perimeter.navigation_polygon, source_geometry)
+
+	# Guard against editor mode or invalid map RID
+	# This ensures we don't try to update the navigation server in the editor or if the map
+	# is not valid (e.g. when the scene is not running).
+	if Engine.is_editor_hint() or not map_rid.is_valid():
+		return
+
 	# Make sure the region is up to date and linked to the map
 	NavigationServer2D.region_set_navigation_polygon(region_rid, _perimeter.navigation_polygon)
 	# Force navigation update using the existing map relationship
@@ -195,17 +216,35 @@ func setup_prop_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 
 #region SetGet #####################################################################################
 func _set_enabled(value: bool) -> void:
+	# Always store the value first
 	enabled = value
-
-	# If the game is running (not in editor), update the navigation region's enabled status
-	if not Engine.is_editor_hint() and is_inside_tree() and _perimeter:
-		_perimeter.enabled = value
-
-		# Additionally, you might want to update the NavigationServer directly
-		if region_rid.is_valid():
-			NavigationServer2D.region_set_enabled(region_rid, value)
 	
+	# Editor: allow changing and saving the property, but never touch the NavigationServer.
+	if Engine.is_editor_hint():
+		emit_signal("enabled_changed", enabled)
+		notify_property_list_changed()
+		return
+
+	# Runtime: if not ready yet, defer the NavigationServer update to _ready().
+	# This handles the case where the exported property is set during scene loading.
+	if not is_inside_tree() or not _perimeter or not region_rid.is_valid() or not map_rid.is_valid():
+		# Don't emit signal yet - _ready() will handle the actual NavigationServer sync
+		notify_property_list_changed()
+		return
+
+	# Runtime and ready: apply to NavigationServer immediately
+	_sync_enabled_state_to_navigation_server()
+	emit_signal("enabled_changed", enabled)
 	notify_property_list_changed()
 
 
+# Synchronizes the enabled property with the NavigationServer
+# Why: separates the property logic from NavigationServer updates for cleaner flow
+func _sync_enabled_state_to_navigation_server() -> void:
+	if not _perimeter or not region_rid.is_valid() or not map_rid.is_valid():
+		return
+		
+	_perimeter.enabled = enabled
+	NavigationServer2D.region_set_enabled(region_rid, enabled)
+	NavigationServer2D.map_force_update(map_rid)
 #endregion
