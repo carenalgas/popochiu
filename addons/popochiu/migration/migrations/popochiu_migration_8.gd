@@ -7,8 +7,7 @@ const DESCRIPTION = "Add NavigationObstacle2D nodes to all props and update sign
 const STEPS = [
 	"Add ObstaclePolygon child nodes to existing props",
 	"Update move_ended signal references to movement_ended in game scripts",
-	#"Update _on_move_ended() hooks to _on_movement_ended() in character scripts",
-	#"Add missing movement hook methods to all clickable scripts",
+	"Add missing movement hook methods to all clickable scripts",
 ]
 
 
@@ -22,8 +21,7 @@ func _do_migration() -> bool:
 		[
 			_add_obstacle_polygons_to_props,
 			_update_signal_references_in_game_scripts,
-			#_update_character_hook_methods,
-			#_add_missing_movement_hooks
+			_add_missing_movement_hooks
 		]
 	)
 
@@ -31,8 +29,6 @@ func _do_migration() -> bool:
 #endregion
 
 #region Private ####################################################################################
-
-################ NODES IN PROPS
 
 ## Add NavigationObstacle2D nodes to all props that don't already have one.
 func _add_obstacle_polygons_to_props() -> Completion:
@@ -56,22 +52,15 @@ func _add_obstacle_polygons_to_props() -> Completion:
 	
 	while room_name != "":
 		if rooms_dir.current_is_dir():
-			PopochiuUtils.print_normal("Migration %d: Processing room: %s" % [VERSION, room_name])
 			var props_path := rooms_path + room_name + "/props/"
 			
 			if DirAccess.dir_exists_absolute(props_path):
 				# Process props in this room
 				if _process_props_in_room(props_path):
 					any_prop_updated = true
-			else:
-				PopochiuUtils.print_normal("Migration %d: No props folder in room: %s" % [VERSION, room_name])
 		room_name = rooms_dir.get_next()
 
-	PopochiuUtils.print_normal("Migration %d: Obstacle polygon addition completed." % [VERSION])
-	if any_prop_updated:
-		PopochiuUtils.print_normal("Migration %d: Some props were updated." % [VERSION])
-	else:
-		PopochiuUtils.print_normal("Migration %d: No props were updated." % [VERSION])
+	PopochiuUtils.print_normal("Migration %d: Obstacle polygon addition completed. %s props were updated" % [VERSION, "Some" if any_prop_updated else "No"])
 	_reload_needed = any_prop_updated
 	return Completion.DONE if any_prop_updated else Completion.IGNORED
 
@@ -149,15 +138,10 @@ func _update_prop_by_path(scene_path: String) -> bool:
 	return true
 
 
-##############################################
-
-##### SIGNALS IN GAME SCRIPTS ##########################################################
-
-
 ## Update all game scripts to replace move_ended signal references with movement_ended.
 func _update_signal_references_in_game_scripts() -> Completion:
 	var game_path := PopochiuResources.GAME_PATH
-	PopochiuUtils.print_normal("Migration %d: Udated reference to old signals." % [VERSION])
+	PopochiuUtils.print_normal("Migration %d: Updating reference to old signals." % [VERSION])
 	
 	if not DirAccess.dir_exists_absolute(game_path):
 		PopochiuUtils.print_error("Migration %d: Game directory does not exist: %s" % [VERSION, game_path])
@@ -167,21 +151,17 @@ func _update_signal_references_in_game_scripts() -> Completion:
 	
 	# Get all .gd files in the game folder recursively
 	var script_files := _get_all_gd_files(game_path)
-	PopochiuUtils.print_normal("Migration %d: Found %d .gd files to process" % [VERSION, script_files.size()])
 	
 	for script_path in script_files:
-		PopochiuUtils.print_normal("Migration %d: Processing script: %s" % [VERSION, script_path])
 		if _update_signal_references_in_file(script_path):
 			any_script_updated = true
 	
-	PopochiuUtils.print_normal("Migration %d: Signal references update completed. Any scripts updated: %s" % [VERSION, any_script_updated])
+	PopochiuUtils.print_normal("Migration %d: Signal references update completed. %s script updated: %s" % [VERSION, "Some" if any_script_updated else "No"])
 	return Completion.DONE if any_script_updated else Completion.IGNORED
 
 
 ## Recursively get all .gd files in a directory.
 func _get_all_gd_files(directory_path: String) -> Array[String]:
-	PopochiuUtils.print_normal("Migration %d: Scanning directory: %s" % [VERSION, directory_path])
-	
 	var gd_files: Array[String] = []
 	var dir := DirAccess.open(directory_path)
 	if dir == null:
@@ -197,14 +177,12 @@ func _get_all_gd_files(directory_path: String) -> Array[String]:
 		if dir.current_is_dir():
 			# Skip hidden directories and .import directories
 			if not file_name.begins_with("."):
-				PopochiuUtils.print_normal("Migration %d: Entering subdirectory: %s" % [VERSION, file_name])
 				gd_files.append_array(_get_all_gd_files(full_path))
 		elif file_name.ends_with(".gd"):
 			gd_files.append(full_path)
 		
 		file_name = dir.get_next()
 	
-	PopochiuUtils.print_normal("Migration %d: Found %d .gd files in %s" % [VERSION, gd_files.size(), directory_path])
 	return gd_files
 
 
@@ -279,7 +257,6 @@ func _update_signal_references_in_file(script_path: String) -> bool:
 		
 		var matches := regex.search_all(updated_content)
 		if matches.size() > 0:
-			PopochiuUtils.print_normal("Migration %d: Found %d matches for pattern '%s' in script '%s'" % [VERSION, matches.size(), pattern, script_path])
 			any_changes = true
 			
 			if replacement is Callable:
@@ -288,148 +265,32 @@ func _update_signal_references_in_file(script_path: String) -> bool:
 					var old_text := match.get_string()
 					var new_text: String = replacement.call(match)
 					updated_content = updated_content.replace(old_text, new_text)
-					PopochiuUtils.print_normal("Migration %d: Replaced '%s' with '%s'" % [VERSION, old_text, new_text])
 			else:
 				# Handle simple string replacements
 				updated_content = regex.sub(updated_content, replacement, true)
-				PopochiuUtils.print_normal("Migration %d: Applied replacement '%s' for pattern '%s'" % [VERSION, replacement, pattern])
-		else:
-			PopochiuUtils.print_normal("Migration %d: No matches found for pattern '%s' in script '%s'" % [VERSION, pattern, script_path])
 	
 	# If no changes were made, return false
 	if not any_changes:
-		PopochiuUtils.print_normal("Migration %d: No changes needed for script '%s'" % [VERSION, script_path])
-		return false
-	
-	# Write the updated content back to the file
-	file = FileAccess.open(script_path, FileAccess.WRITE)
-	if file == null:
-		PopochiuUtils.print_error("Migration %d: Could not write to script file: %s" % [VERSION, script_path])
-		return false
-	
-	file.store_string(updated_content)
-	file.close()
-	
-	PopochiuUtils.print_normal("Migration %d: Successfully updated script '%s'" % [VERSION, script_path])
-	return true
-
-
-#####################################################
-
-###### HOOKS METHODS ################################
-
-## Update character scripts to rename _on_move_ended() hooks to _on_movement_ended().
-func _update_character_hook_methods() -> Completion:
-	var characters_path := PopochiuResources.CHARACTERS_PATH
-	if not DirAccess.dir_exists_absolute(characters_path):
-		return Completion.IGNORED
-	
-	var any_character_updated := false
-	
-	# Get all character scripts
-	var character_scripts := _get_character_scripts(characters_path)
-	
-	for script_path in character_scripts:
-		if _update_hook_methods_in_file(script_path):
-			any_character_updated = true
-	
-	return Completion.DONE if any_character_updated else Completion.IGNORED
-
-
-## Get all character script files.
-func _get_character_scripts(characters_path: String) -> Array[String]:
-	var character_scripts: Array[String] = []
-	var dir := DirAccess.open(characters_path)
-	if dir == null:
-		return character_scripts
-	
-	dir.list_dir_begin()
-	var character_name := dir.get_next()
-	
-	while character_name != "":
-		if dir.current_is_dir():
-			var character_script_path := characters_path + character_name + "/" + character_name + ".gd"
-			if FileAccess.file_exists(character_script_path):
-				character_scripts.append(character_script_path)
-		
-		character_name = dir.get_next()
-	
-	return character_scripts
-
-
-## Update hook method names in a character script file.
-func _update_hook_methods_in_file(script_path: String) -> bool:
-	# Read the file content
-	var file := FileAccess.open(script_path, FileAccess.READ)
-	if file == null:
-		PopochiuUtils.print_error(
-			"Migration %d: Could not read character script '%s'" % [VERSION, script_path]
-		)
-		return false
-	
-	var original_content := file.get_as_text()
-	file.close()
-	
-	# Skip files that don't contain _on_move_ended
-	if not original_content.contains("_on_move_ended"):
-		return false
-	
-	# Pattern to replace hook method declarations and calls
-	var patterns_to_replace := [
-		# Method declarations
-		r"func\s+_on_move_ended\s*\(",
-		# Method calls
-		r"\._on_move_ended\s*\(",
-		# Super calls
-		r"super\._on_move_ended\s*\("
-	]
-	
-	var replacements := [
-		"func _on_movement_ended(",
-		"._on_movement_ended(",
-		"super._on_movement_ended("
-	]
-	
-	var updated_content := original_content
-	var any_changes := false
-	
-	# Apply pattern replacements
-	for i in range(patterns_to_replace.size()):
-		var pattern: String = patterns_to_replace[i]
-		var replacement: String = replacements[i]
-		
-		var regex := RegEx.new()
-		regex.compile(pattern)
-		
-		var matches := regex.search_all(updated_content)
-		if matches.size() > 0:
-			any_changes = true
-			updated_content = regex.sub(updated_content, replacement, true)
-	
-	# If no changes were made, return false
-	if not any_changes:
+		PopochiuUtils.print_warning("Migration %d: No changes needed for script '%s'" % [VERSION, script_path])
 		return false
 	
 	# Write the updated content back to the file
 	file = FileAccess.open(script_path, FileAccess.WRITE)
 	if file == null:
 		PopochiuUtils.print_error(
-			"Migration %d: Could not write to character script '%s'" % [VERSION, script_path]
+			"Migration %d: Could not write to file '%s'" % [VERSION, script_path]
 		)
 		return false
 	
 	file.store_string(updated_content)
 	file.close()
-	
-	PopochiuUtils.print_normal(
-		"Migration %d: updated hook methods in character script '%s'" % [VERSION, script_path]
-	)
 	
 	return true
 
 
 ## Add missing movement hook methods to all clickable scripts (characters, props, hotspots).
 func _add_missing_movement_hooks() -> Completion:
+	PopochiuUtils.print_normal("Migration %d: Adding movement hooks to scripts" % [VERSION])
 	var any_script_updated := false
 	
 	# Process all types of clickable scripts
@@ -457,74 +318,17 @@ func _add_missing_movement_hooks() -> Completion:
 		var get_scripts_func: Callable = collection.get_scripts
 		
 		if not DirAccess.dir_exists_absolute(path):
+			PopochiuUtils.print_warning("Migration %d: Path does not exist: %s" % [VERSION, path])
 			continue
 			
 		var scripts := get_scripts_func.call(path)
+
 		for script_path in scripts:
 			if _add_missing_hooks_to_file(script_path, type):
 				any_script_updated = true
 	
+	PopochiuUtils.print_normal("Migration %d: Movement hooks addition completed. %s scripts updated." % [VERSION, "Some" if any_script_updated else "No"])
 	return Completion.DONE if any_script_updated else Completion.IGNORED
-
-
-## Get all prop script files from all rooms.
-func _get_prop_scripts(base_path: String) -> Array[String]:
-	var prop_scripts: Array[String] = []
-	var rooms_dir := DirAccess.open(base_path)
-	if rooms_dir == null:
-		return prop_scripts
-	
-	rooms_dir.list_dir_begin()
-	var room_name := rooms_dir.get_next()
-	
-	while room_name != "":
-		if rooms_dir.current_is_dir():
-			var props_path := base_path + room_name + "/props/"
-			if DirAccess.dir_exists_absolute(props_path):
-				var props_dir := DirAccess.open(props_path)
-				if props_dir != null:
-					props_dir.list_dir_begin()
-					var prop_name := props_dir.get_next()
-					
-					while prop_name != "":
-						if props_dir.current_is_dir():
-							var prop_script_path := props_path + prop_name + "/" + prop_name + ".gd"
-							if FileAccess.file_exists(prop_script_path):
-								prop_scripts.append(prop_script_path)
-						prop_name = props_dir.get_next()
-		room_name = rooms_dir.get_next()
-	
-	return prop_scripts
-
-
-## Get all hotspot script files from all rooms.
-func _get_hotspot_scripts(base_path: String) -> Array[String]:
-	var hotspot_scripts: Array[String] = []
-	var rooms_dir := DirAccess.open(base_path)
-	if rooms_dir == null:
-		return hotspot_scripts
-	
-	rooms_dir.list_dir_begin()
-	var room_name := rooms_dir.get_next()
-	
-	while room_name != "":
-		if rooms_dir.current_is_dir():
-			var hotspots_path := base_path + room_name + "/hotspots/"
-			if DirAccess.dir_exists_absolute(hotspots_path):
-				var hotspots_dir := DirAccess.open(hotspots_path)
-				if hotspots_dir != null:
-					hotspots_dir.list_dir_begin()
-					var hotspot_name := hotspots_dir.get_next()
-					
-					while hotspot_name != "":
-						if hotspots_dir.current_is_dir():
-							var hotspot_script_path := hotspots_path + hotspot_name + "/" + hotspot_name + ".gd"
-							if FileAccess.file_exists(hotspot_script_path):
-								hotspot_scripts.append(hotspot_script_path)
-						hotspot_name = hotspots_dir.get_next()
-		room_name = rooms_dir.get_next()
-	
-	return hotspot_scripts
 
 
 ## Add missing movement hook methods to a single script file.
@@ -546,6 +350,7 @@ func _add_missing_hooks_to_file(script_path: String, clickable_type: String) -> 
 	
 	# If both methods exist, nothing to do
 	if has_movement_started and has_movement_ended:
+		PopochiuUtils.print_warning("Migration %d: Script already has both movement hooks, skipping" % [VERSION])
 		return false
 	
 	var updated_content := original_content
@@ -567,7 +372,8 @@ func _add_missing_hooks_to_file(script_path: String, clickable_type: String) -> 
 		})
 	
 	# Find the best insertion point (before #endregion or at the end)
-	var insertion_point := updated_content.rfind("#endregion")
+	var insertion_point := updated_content.rfind("#endregion\n\n#region Public")
+	
 	if insertion_point == -1:
 		# If no #endregion found, add at the end
 		insertion_point = updated_content.length()
@@ -575,7 +381,7 @@ func _add_missing_hooks_to_file(script_path: String, clickable_type: String) -> 
 	# Add the missing methods
 	var methods_text := ""
 	for method in methods_to_add:
-		methods_text += "\n\n" + method.comment + "\n" + method.code
+		methods_text += "\n" + method.comment + "\n" + method.code
 	
 	# Insert the methods
 	if insertion_point < updated_content.length():
@@ -596,11 +402,95 @@ func _add_missing_hooks_to_file(script_path: String, clickable_type: String) -> 
 	file.store_string(updated_content)
 	file.close()
 	
-	PopochiuUtils.print_normal(
-		"Migration %d: added missing movement hooks to %s script '%s'" % [VERSION, clickable_type, script_path]
-	)
-	
 	return true
+
+
+## Get all character script files.
+func _get_character_scripts(characters_path: String) -> Array[String]:
+	var character_scripts: Array[String] = []
+	var dir := DirAccess.open(characters_path)
+	if dir == null:
+		PopochiuUtils.print_error("Migration %d: Could not open characters directory: %s" % [VERSION, characters_path])
+		return character_scripts
+	
+	dir.list_dir_begin()
+	var character_name := dir.get_next()
+	
+	while character_name != "":
+		if dir.current_is_dir():
+			var character_script_path := characters_path + character_name + "/" + "character_" + character_name + ".gd"
+			if FileAccess.file_exists(character_script_path):
+				character_scripts.append(character_script_path)
+			else:
+				PopochiuUtils.print_warning("Migration %d: Character script not found: %s" % [VERSION, character_script_path])
+		
+		character_name = dir.get_next()
+	
+	return character_scripts
+    
+
+## Get all prop script files from all rooms.
+func _get_prop_scripts(base_path: String) -> Array[String]:
+	var prop_scripts: Array[String] = []
+	var rooms_dir := DirAccess.open(base_path)
+	if rooms_dir == null:
+		PopochiuUtils.print_error("Migration %d: Could not open rooms directory: %s" % [VERSION, base_path])
+		return prop_scripts
+	
+	rooms_dir.list_dir_begin()
+	var room_name := rooms_dir.get_next()
+	
+	while room_name != "":
+		if rooms_dir.current_is_dir():
+			var props_path := base_path + room_name + "/props/"
+			if DirAccess.dir_exists_absolute(props_path):
+				var props_dir := DirAccess.open(props_path)
+				if props_dir != null:
+					props_dir.list_dir_begin()
+					var prop_name := props_dir.get_next()
+					
+					while prop_name != "":
+						if props_dir.current_is_dir():
+							var prop_script_path := props_path + prop_name + "/" + "prop_" + prop_name + ".gd"
+							if FileAccess.file_exists(prop_script_path):
+								prop_scripts.append(prop_script_path)
+							else:
+								PopochiuUtils.print_warning("Migration %d: Prop script not found: %s" % [VERSION, prop_script_path])
+						prop_name = props_dir.get_next()
+		room_name = rooms_dir.get_next()
+	
+	return prop_scripts
+
+
+## Get all hotspot script files from all rooms.
+func _get_hotspot_scripts(base_path: String) -> Array[String]:
+	var hotspot_scripts: Array[String] = []
+	var rooms_dir := DirAccess.open(base_path)
+	if rooms_dir == null:
+		PopochiuUtils.print_error("Migration %d: Could not open rooms directory: %s" % [VERSION, base_path])
+		return hotspot_scripts
+	
+	rooms_dir.list_dir_begin()
+	var room_name := rooms_dir.get_next()
+	
+	while room_name != "":
+		if rooms_dir.current_is_dir():
+			var hotspots_path := base_path + room_name + "/hotspots/"
+			if DirAccess.dir_exists_absolute(hotspots_path):
+				var hotspots_dir := DirAccess.open(hotspots_path)
+				if hotspots_dir != null:
+					hotspots_dir.list_dir_begin()
+					var hotspot_name := hotspots_dir.get_next()
+					
+					while hotspot_name != "":
+						if hotspots_dir.current_is_dir():
+							var hotspot_script_path := hotspots_path + hotspot_name + "/" + "hotspot_" + hotspot_name + ".gd"
+							if FileAccess.file_exists(hotspot_script_path):
+								hotspot_scripts.append(hotspot_script_path)
+						hotspot_name = hotspots_dir.get_next()
+		room_name = rooms_dir.get_next()
+	
+	return hotspot_scripts
 
 
 #endregion
