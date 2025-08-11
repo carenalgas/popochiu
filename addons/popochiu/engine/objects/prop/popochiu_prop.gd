@@ -54,6 +54,11 @@ func _ready() -> void:
 	super()
 	add_to_group("props")
 	
+	# Connect movement signals to virtual methods
+	if not Engine.is_editor_hint():
+		movement_started.connect(_on_movement_started)
+		movement_ended.connect(_on_movement_ended)
+	
 	if Engine.is_editor_hint():
 		# Ignore assigning the vertices when:
 		if (
@@ -121,6 +126,18 @@ func _on_linked_item_removed() -> void:
 ## Called when the [PopochiuInventoryItem] linked to this prop is discarded from the inventory.
 ## [i]Virtual[/i].
 func _on_linked_item_discarded() -> void:
+	pass
+
+
+## Called when the prop starts moving.
+## [i]Virtual[/i].
+func _on_movement_started() -> void:
+	pass
+
+
+## Called when the prop stops moving.
+## [i]Virtual[/i].
+func _on_movement_ended() -> void:
 	pass
 
 

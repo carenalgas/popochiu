@@ -50,6 +50,16 @@ func _on_item_used(_item: PopochiuInventoryItem) -> void:
 #		await C.player.say("No can do")
 
 
+# Called when the hotspot starts moving
+func _on_movement_started() -> void:
+	pass
+
+
+# Called when the hotspot stops moving
+func _on_movement_ended() -> void:
+	pass
+
+
 #endregion
 
 #region Public #####################################################################################

@@ -157,7 +157,10 @@ func _ready():
 			continue
 		child.frame_changed.connect(_update_position)
 
-	movement_ended.connect(_on_move_ended)
+	# Connect movement signals to virtual methods
+	if not Engine.is_editor_hint():
+		movement_started.connect(_on_movement_started)
+		movement_ended.connect(_on_movement_ended)
 
 	# The code that follows is only executed when the game is running
 	if Engine.is_editor_hint():
@@ -218,7 +221,11 @@ func _play_grab() -> void:
 	play_animation('grab')
 
 
-func _on_move_ended() -> void:
+func _on_movement_started() -> void:
+	pass
+
+
+func _on_movement_ended() -> void:
 	pass
 
 

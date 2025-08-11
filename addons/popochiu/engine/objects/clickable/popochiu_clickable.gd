@@ -174,6 +174,18 @@ func _on_position_changed() -> void:
 	pass
 
 
+## Called when the clickable starts moving.
+## [i]Virtual[/i].
+func _on_movement_started() -> void:
+	pass
+
+
+## Called when the clickable stops moving.
+## [i]Virtual[/i].
+func _on_movement_ended() -> void:
+	pass
+
+
 #endregion
 
 #region Public #####################################################################################
