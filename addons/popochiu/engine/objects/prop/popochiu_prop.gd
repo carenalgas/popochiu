@@ -17,6 +17,8 @@ signal linked_item_removed(item: PopochiuInventoryItem)
 ## Emitted when the [param item] linked to this object (by [member link_to_item]) is discarded from
 ## the inventory. This may happen when the inventory item disappears forever from the game.
 signal linked_item_discarded(item: PopochiuInventoryItem)
+## Emitted when the obstacle flag state is changed.
+signal obstacle_state_changed(prop: PopochiuProp)
 
 ## The image to use as the [member Sprite2D.texture] of the [b]$Sprite2D[/b] child.
 @export var texture: Texture2D : set = set_texture
@@ -35,6 +37,10 @@ signal linked_item_discarded(item: PopochiuInventoryItem)
 ## This will make the prop disappear from the room, depending on whether or not said inventory item
 ## is inside the inventory.
 @export var link_to_item := ""
+## When true, this prop will be considered an obstacle and its obstacle polygon (if available)
+## will be carved from all [PopochiuWalkableAreas] it intersects in the room.
+## Set this to false to ignore its encoumbrance during pathfinding.
+@export var obstacle: bool = false : set = set_obstacle
 ## Stores the outlines to assign to the [b]ObstaclePolygon/Vertices[/b] child during
 ## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var obstacle_polygon := []
@@ -206,6 +212,11 @@ func set_current_frame(value: int) -> void:
 	
 func get_total_frames() -> int:
 	return frames * v_frames
+
+
+func set_obstacle(value: bool) -> void:
+	obstacle = value
+	obstacle_state_changed.emit()
 
 
 #endregion

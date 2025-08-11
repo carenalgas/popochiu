@@ -198,7 +198,7 @@ func setup_prop_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 			continue
 
 		var obstacle_parent = obstacle.get_parent()
-		if not obstacle_parent or not obstacle_parent.visible:
+		if not obstacle_parent or not obstacle_parent.visible or not obstacle_parent.obstacle:
 			continue
 
 		# Convert obstacle vertices to global space, then to perimeter's local space

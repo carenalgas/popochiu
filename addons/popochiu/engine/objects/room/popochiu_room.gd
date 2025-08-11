@@ -533,6 +533,12 @@ func _connect_props_changes_signals() -> void:
 		):
 			prop.visibility_changed.connect(_on_prop_visibility_changed.bind(prop))
 
+		# Connect to obstacle_state_changed signal
+		if (
+			prop.has_signal("obstacle_state_changed")
+			and not prop.obstacle_state_changed.is_connected(_on_prop_obstacle_state_changed)
+		):
+			prop.obstacle_state_changed.connect(_on_prop_obstacle_state_changed.bind(prop))
 
 # Called when a prop moves via move_to or teleport functions.
 # Triggers navigation obstacle rebaking since the prop's collision shape has moved.
@@ -545,6 +551,14 @@ func _on_prop_moved(prop: PopochiuClickable) -> void:
 # Called when a prop's visibility changes.
 # Triggers navigation obstacle rebaking since invisible props should not block pathfinding.
 func _on_prop_visibility_changed(prop: PopochiuClickable) -> void:
+	# Only rebake navigation if the prop has navigation obstacles
+	if prop and prop.get_node_or_null("ObstaclePolygon"):
+		_setup_navigation_obstacles.call_deferred()
+
+
+# Called when a prop's obstacle state changes.
+# Triggers navigation obstacle rebaking since the prop is or is no more considered an obstacle.
+func _on_prop_obstacle_state_changed(prop: PopochiuClickable) -> void:
 	# Only rebake navigation if the prop has navigation obstacles
 	if prop and prop.get_node_or_null("ObstaclePolygon"):
 		_setup_navigation_obstacles.call_deferred()
