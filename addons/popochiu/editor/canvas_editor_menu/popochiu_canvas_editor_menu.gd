@@ -179,6 +179,7 @@ func _select_obstacle_polygon() -> void:
 func _on_gizmo_settings_changed() -> void:
 	# Pretty self explanatory
 	_set_walkable_areas_visibility()
+	_set_props_polygons_visibility()
 	_set_toolbar_buttons_color()
 
 
@@ -204,6 +205,7 @@ func _on_selection_changed() -> void:
 	# Doing this immediately so, if this function exits early, the visibility is conditioned
 	# by the editor settings (partially fixes #325).
 	_set_walkable_areas_visibility()
+	_set_props_polygons_visibility()
 
 	# Make sure this function works only if the user is editing a
 	# supported scene
@@ -240,7 +242,7 @@ func _on_selection_changed() -> void:
 		# Doing here because clicking on an empty area would hide the walkable areas
 		# ignoring the editor settings (fixes #325)
 		_set_walkable_areas_visibility()
-
+		_set_props_polygons_visibility()
 		return
 
 	# We identify which PopochiuClickable we are working on in the editor.
@@ -294,6 +296,7 @@ func _on_selection_changed() -> void:
 	# Doing this also at the end because the state can be reset by one of the steps
 	# above.
 	_set_walkable_areas_visibility()
+	_set_props_polygons_visibility()
 
 	# Always reset the button visibility depending on the state of the internal variables	
 	_set_buttons_visibility()
@@ -326,6 +329,56 @@ func _set_walkable_areas_visibility() -> void:
 			continue
 		# OK, we know we must hide this polygon now!
 		child.hide()
+
+
+## Handles the editor config that allows the props polygons to be always visible,
+## not only during editing.
+func _set_props_polygons_visibility() -> void:
+	# Avoid errors when the editor has no scene open
+	if EditorInterface.get_edited_scene_root() == null:
+		return
+
+	# get_all_children returns an empty array if the node has no children
+	# so we can safely iterate over it without checking for null
+	for child in PopochiuEditorHelper.get_all_children(
+		EditorInterface.get_edited_scene_root().find_child("Props")
+	):
+		# Skip if not a prop
+		if not PopochiuEditorHelper.is_prop(child):
+			continue
+		
+		# Handle interaction polygon
+		var interaction_polygon = PopochiuEditorHelper.get_first_child_by_group(
+			child,
+			PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+		)
+		if interaction_polygon != null:
+			# Should we show all interaction polygons? Show and continue
+			if PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_INT_POLY
+			):
+				interaction_polygon.show()
+			# If we are editing the polygon, make sure it stays visible!
+			elif interaction_polygon in EditorInterface.get_selection().get_selected_nodes():
+				interaction_polygon.show()
+			# OK, we know we must hide this polygon now!
+			else:
+				interaction_polygon.hide()
+		
+		# Handle obstacle polygon
+		var obstacle_polygon = child.get_node_or_null("ObstaclePolygon")
+		if obstacle_polygon != null:
+			# Should we show all obstacle polygons? Show and continue
+			if PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_OBS_POLY
+			):
+				obstacle_polygon.show()
+			# If we are editing the polygon, make sure it stays visible!
+			elif obstacle_polygon in EditorInterface.get_selection().get_selected_nodes():
+				obstacle_polygon.show()
+			# OK, we know we must hide this polygon now!
+			else:
+				obstacle_polygon.hide()
 
 
 ## Sets all the buttons color so that they are the same as the gizmos
