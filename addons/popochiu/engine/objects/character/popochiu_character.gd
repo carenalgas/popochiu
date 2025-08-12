@@ -69,10 +69,12 @@ const EMPTY_STRING = ""
 @export var walk_speed := 200.0
 ## Whether the character can or not move.
 @export var can_move := true
-## Whether the character ignores or not walkable areas. If [code]true[/code], the character will
-## move to any point in the room clicked by players without taking into account the walkable areas
-## in it.
+## Whether the character ignores or not walkable areas. If [code]true[/code], the character will move
+## to any point in the room clicked by players without taking into account the walkable areas in it.
 @export var ignore_walkable_areas := false
+## Whether the character ignores or not obstacles in walkable areas. If [code]true[/code], the character will
+## move within a walkable area, ignoring obstacle polygons that might block the path.
+@export var ignore_obstacles := false
 ## Whether the character will move only when the frame changes on its animation.
 @export var anti_glide_animation: bool = false
 ## Used by the GUI to calculate where to render the dialogue lines said by the character when it
@@ -115,11 +117,11 @@ var _last_requested_animation_label: String = "null"
 var _last_requested_animation_dir: int = -1
 # Array of the animation suffixes to search for based on the angle the character is facing.
 var _valid_animation_suffixes = [
-['_r', '_l', '_dr', '_dl', '_d'], #    0 - 22.5 degrees
-['_dr', '_dl', '_r' , '_l', '_d'], #  22.5 - 45 degrees
-['_dr', '_dl', '_d' , '_r', '_l'], #  45 - 67.5 degrees
-['_d', '_dr', '_dl', '_r', '_l'], #   67.5 - 90 degrees
-['_d', '_dl', '_dr', '_l', '_r'], #  90 - 112.5 degrees
+['_r', '_l', '_dr', '_dl', '_d'], # 0 - 22.5 degrees
+['_dr', '_dl', '_r', '_l', '_d'], # 22.5 - 45 degrees
+['_dr', '_dl', '_d', '_r', '_l'], # 45 - 67.5 degrees
+['_d', '_dr', '_dl', '_r', '_l'], # 67.5 - 90 degrees
+['_d', '_dl', '_dr', '_l', '_r'], # 90 - 112.5 degrees
 ['_dl', '_dr', '_d', '_l', '_r'], # 112.5 - 135 degrees
 ['_dl', '_dr', '_l', '_r', '_d'], # 135 - 157.5 degrees
 ['_l', '_r', '_dl', '_dr', '_d'], # 157.5 - 180 degrees
@@ -141,7 +143,7 @@ var _navigation_path := PackedVector2Array()
 
 #region Godot ######################################################################################
 func _ready():
-	super()
+	super ()
 
 	default_walk_speed = walk_speed
 	default_scale = Vector2(scale)
@@ -526,13 +528,13 @@ func grab() -> void:
 
 ## Calls [method PopochiuClickable.hide_helpers].
 func hide_helpers() -> void:
-	super()
+	super ()
 	# TODO: add visibility logic for dialog_pos gizmo
 
 
 ## Calls [method PopochiuClickable.show_helpers].
 func show_helpers() -> void:
-	super()
+	super ()
 	# TODO: add visibility logic for dialog_pos gizmo
 
 
@@ -761,15 +763,13 @@ func face_direction(destination: Vector2):
 	# Set the direction using the _looking property.
 	# We cannot use the face_* functions because they
 	# set the state as IDLE.
-
 	# Based on the character facing direction, define a set of
 	# animation suffixes in reference order.
 	# Notice how we seek for opposite directions for left and
 	# right. Flipping is done in other functions. We just define
 	# a preference order for animations when available.
-
 	# Get the vector from the origin to the destination.
-	var angle = wrapf(rad_to_deg((destination - position).angle()) , 0, 360)
+	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
 	# The angle calculation uses 16 angles rather than 8 for greater accuracy
 	# in choosing the facing direction fallback animations.
 	var _looking_angle := int(angle / 22.5) % 16
@@ -1012,8 +1012,13 @@ func _update_navigation_path(character: PopochiuCharacter, start_position: Vecto
 		PopochiuUtils.print_error("No current room found for character navigation")
 		return
 
-	# Get navigation path from room
-	_navigation_path = current_room.get_navigation_path(start_position, end_position, ignore_walkable_areas)
+	# Get navigation path from room, passing both flags
+	_navigation_path = current_room.get_navigation_path(
+		start_position,
+		end_position,
+		ignore_walkable_areas,
+		ignore_obstacles # Pass the new flag
+	)
 
 	if _navigation_path.is_empty():
 		return

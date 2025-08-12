@@ -33,6 +33,12 @@ var map_rid: RID
 ## Used to assign a map in the [NavigationServer2D] to the region RID of the [b]$Perimeter[/b]
 ## child.
 var region_rid: RID
+## Property used by [PopochiuRoom]s to activate the map of this area in the [NavigationServer2D]
+## for characters ignoring obstacles.
+var map_rid_no_obstacles: RID
+## Used to assign a map in the [NavigationServer2D] to the region RID of the [b]$Perimeter[/b]
+## child, for characters ignoring obstacles.
+var region_rid_no_obstacles: RID
 
 ## Emitted when the enabled flag changes so the room can react (e.g. switch active map).
 signal enabled_changed(value: bool)
@@ -49,7 +55,11 @@ func _ready() -> void:
 		print("No perimeter found in the walkable area. Please add a NavigationRegion2D child named 'Perimeter'.")
 		return
 
+	# Assign the _perimeter as the main region for navigation.
 	region_rid = (_perimeter as NavigationRegion2D).get_region_rid()
+	# Create a separate region for navigation without obstacles.
+	# We will bake it later down this function.
+	region_rid_no_obstacles = NavigationServer2D.region_create()
 
 	# Editor setup...
 	if Engine.is_editor_hint():
@@ -74,21 +84,28 @@ func _ready() -> void:
 
 	# Runtime: create navigation setup
 	map_rid = NavigationServer2D.map_create()
+	# For characters that ignore obstacles, create a separate map
+	map_rid_no_obstacles = NavigationServer2D.map_create()
+
 	# Ensure polygon and map use the same cell_size to avoid errors.
-	NavigationServer2D.map_set_cell_size(
-		map_rid,
-		_perimeter.navigation_polygon.cell_size if _perimeter.navigation_polygon else 1.0
-	)
+	var cell_size = _perimeter.navigation_polygon.cell_size if _perimeter.navigation_polygon else 1.0
+	NavigationServer2D.map_set_cell_size(map_rid, cell_size)
+	NavigationServer2D.map_set_cell_size(map_rid_no_obstacles, cell_size)
 
 	# Assign the region to the server map for this region.
 	NavigationServer2D.region_set_map(region_rid, map_rid)
+	# Do the same for the no-obstacles region.
+	NavigationServer2D.region_set_map(region_rid_no_obstacles, map_rid_no_obstacles)
 
 	# We don't activate the area here. Delegating this to the room
 	# will avoid errors for non-ready areas in the server.
 
 	# Load and bake navigation.
 	_load_navigation_polygon()
+
+	# Bake both navigation meshes
 	_bake_navigation()
+	_bake_navigation_no_obstacles()
 
 	# Now sync the enabled state of this walkable area
 	# that might have been set during scene loading.
@@ -110,6 +127,9 @@ func _exit_tree():
 	if map_rid.is_valid():
 		NavigationServer2D.map_set_active(map_rid, false)
 		NavigationServer2D.free_rid(map_rid)
+	if map_rid_no_obstacles.is_valid():
+		NavigationServer2D.map_set_active(map_rid_no_obstacles, false)
+		NavigationServer2D.free_rid(map_rid_no_obstacles)
 
 
 #endregion
@@ -176,6 +196,38 @@ func _bake_navigation(source_geometry: NavigationMeshSourceGeometryData2D = null
 	# Force navigation update using the existing map relationship
 	if NavigationServer2D.map_is_active(map_rid):
 		NavigationServer2D.map_force_update(map_rid)
+
+
+# Add this function to bake only the clean navigation
+func _bake_navigation_no_obstacles() -> void:
+	if Engine.is_editor_hint() or not map_rid_no_obstacles.is_valid():
+		return
+
+	if not interaction_polygon or interaction_polygon.is_empty():
+		return
+
+	# Create a clean navigation polygon without obstacles
+	var clean_navpoly = NavigationPolygon.new()
+	clean_navpoly.agent_radius = 0.0
+	clean_navpoly.cell_size = _perimeter.navigation_polygon.cell_size if _perimeter.navigation_polygon else 1.0
+
+	# Add the original outlines
+	for outline in interaction_polygon:
+		clean_navpoly.add_outline(outline)
+
+	# Bake the clean navigation polygon
+	NavigationServer2D.bake_from_source_geometry_data(clean_navpoly, NavigationMeshSourceGeometryData2D.new())
+
+	# Set up the region with the clean navigation polygon
+	NavigationServer2D.region_set_navigation_polygon(region_rid_no_obstacles, clean_navpoly)
+	NavigationServer2D.region_set_transform(region_rid_no_obstacles, global_transform)
+
+	# Ensure the region is enabled
+	NavigationServer2D.region_set_enabled(region_rid_no_obstacles, enabled)
+
+	# Force update the navigation map without obstacles
+	if NavigationServer2D.map_is_active(map_rid_no_obstacles):
+		NavigationServer2D.map_force_update(map_rid_no_obstacles)
 
 
 #region Public ####################################################################################
@@ -255,8 +307,12 @@ func _sync_enabled_state_to_navigation_server() -> void:
 
 	_perimeter.enabled = enabled
 	NavigationServer2D.region_set_enabled(region_rid, enabled)
+	NavigationServer2D.region_set_enabled(region_rid_no_obstacles, enabled)
+
 	if NavigationServer2D.map_is_active(map_rid):
 		NavigationServer2D.map_force_update(map_rid)
+	if NavigationServer2D.map_is_active(map_rid_no_obstacles):
+		NavigationServer2D.map_force_update(map_rid_no_obstacles)
 
 
 #endregion

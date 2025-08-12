@@ -382,15 +382,18 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 	# This gives the NavigationServer time to fully register the map.
 	#await get_tree().physics_frame
 
-	# Deactivate previous map to ensure only one nav map is active at any time.
+	# Deactivate previous maps to ensure only one set is active at any time.
 	if _nav_path and _nav_path.map_rid.is_valid():
 		NavigationServer2D.map_set_active(_nav_path.map_rid, false)
+	if _nav_path and _nav_path.map_rid_no_obstacles.is_valid():
+		NavigationServer2D.map_set_active(_nav_path.map_rid_no_obstacles, false)
 
 	# Set the new active area.
 	_nav_path = next
 
-	# Activate the newly selected area's map. This constrains pathfinding to this area.
+	# Activate the newly selected area's maps
 	NavigationServer2D.map_set_active(_nav_path.map_rid, true)
+	NavigationServer2D.map_set_active(_nav_path.map_rid_no_obstacles, true)
 
 	# Important: wait for the next physics frame before trying to activate the map.
 	# This gives the NavigationServer time to fully register the map.
@@ -402,7 +405,11 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 
 ## Returns the navigation path from start to end position using the active walkable area.
 ## Returns empty array if no walkable area is set.
-func get_navigation_path(start_position: Vector2, end_position: Vector2, ignore_walkable_areas: bool = false) -> PackedVector2Array:
+func get_navigation_path(
+	start_position: Vector2, end_position: Vector2,
+	ignore_walkable_areas: bool = false,
+	ignore_obstacles: bool = false
+) -> PackedVector2Array:
 	if ignore_walkable_areas:
 		# Direct path for characters that ignore walkable areas.
 		return PackedVector2Array([start_position, end_position])
@@ -410,8 +417,11 @@ func get_navigation_path(start_position: Vector2, end_position: Vector2, ignore_
 	if not _nav_path:
 		return PackedVector2Array()
 	
-	# Delegate pathfinding to the active walkable area.
-	return NavigationServer2D.map_get_path(_nav_path.map_rid, start_position, end_position, true)
+	# Use the map without obstacles if requested
+	var map_to_use = _nav_path.map_rid_no_obstacles if ignore_obstacles else _nav_path.map_rid
+	
+	# Delegate pathfinding to the appropriate map
+	return NavigationServer2D.map_get_path(map_to_use, start_position, end_position, true)
 
 
 ## Manually triggers navigation obstacle rebaking for all walkable areas.
