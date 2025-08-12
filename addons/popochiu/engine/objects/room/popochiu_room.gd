@@ -114,7 +114,7 @@ func _ready():
 			wa.enabled_changed.connect(_on_walkable_area_enabled_changed.bind(wa))
 
 	# Connect to props movement_ended signals to trigger navigation rebaking when they move
-	_connect_props_changes_signals.call_deferred()
+	_connect_object_changes_signals.call_deferred()
 
 	PopochiuUtils.r.room_readied(self)
 
@@ -179,6 +179,9 @@ func exit_room() -> void:
 			if character_child.owner != c:
 				character_child.queue_free()
 
+		# Disconnect character signals before removing
+		_disconnect_character_signals(c)
+		
 		$Characters.remove_child(c)
 
 	_on_room_exited()
@@ -198,12 +201,24 @@ func add_character(chr: PopochiuCharacter) -> void:
 
 	update_characters_position(chr)
 
+	# Connect character signals for navigation updates
+	_connect_character_signals(chr)
+	
+	# Update navigation obstacles since a new character was added
+	update_navigation_obstacles()
+
 	chr.idle()
 
 
 ## Removes [param chr] the [b]$Characters[/b] node without destroying it.
 func remove_character(chr: PopochiuCharacter) -> void:
+	# Disconnect character signals before removing
+	_disconnect_character_signals(chr)
+	
 	$Characters.remove_child(chr)
+	
+	# Update navigation obstacles since a character was removed
+	update_navigation_obstacles()
 
 
 ## Hides all its [PopochiuProp]s.
@@ -459,8 +474,8 @@ func _setup_navigation_obstacles() -> void:
 	if walkable_areas.is_empty():
 		return
 	
-	# Collect all valid navigation obstacles from props.
-	var prop_obstacles = _collect_prop_obstacles()
+	# Collect all valid navigation obstacles from props and characters.
+	var prop_obstacles = _collect_all_obstacles()
 	
 	# Apply obstacles to each enabled walkable area.
 	for walkable_area in walkable_areas:
@@ -491,16 +506,31 @@ func _ensure_active_walkable_area() -> void:
 	set_active_walkable_area(enabled_walkable_areas[0].name)
 
 
-# Collects all valid navigation obstacles from props in the room.
+# Collects all valid navigation obstacles from props and characters in the room.
 # Returns an array of NavigationObstacle2D nodes that have valid polygons.
-func _collect_prop_obstacles() -> Array[NavigationObstacle2D]:
+# Explicitly excludes the player character from obstacles.
+func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 	var obstacles: Array[NavigationObstacle2D] = []
 	
+	# Collect obstacles from props
 	for prop in get_props():
 		if not prop or not prop is PopochiuProp:
 			continue
 
 		var obstacle = prop.get_navigation_obstacle()
+		if obstacle:
+			obstacles.append(obstacle)
+	
+	# Collect obstacles from characters (excluding the player character)
+	for character in get_characters():
+		if not character or not character is PopochiuCharacter:
+			continue
+		
+		# Skip the player character to avoid them blocking their own movement
+		if PopochiuUtils.c.player and character == PopochiuUtils.c.player:
+			continue
+		
+		var obstacle = character.get_navigation_obstacle()
 		if obstacle:
 			obstacles.append(obstacle)
 
@@ -523,8 +553,9 @@ func _on_walkable_area_enabled_changed(enabled: bool, area: PopochiuWalkableArea
 		set_active_walkable_area(area.name)
 
 
-# Connects to all props' movement_ended and visibility_changed signals to trigger navigation rebaking.
-func _connect_props_changes_signals() -> void:
+# Connects to all props' and characters' movement_ended and visibility_changed signals to trigger navigation rebaking.
+func _connect_object_changes_signals() -> void:
+	# Connect to props signals
 	for prop in get_props():
 		if not prop:
 			continue
@@ -536,11 +567,8 @@ func _connect_props_changes_signals() -> void:
 		):
 			prop.movement_ended.connect(_on_prop_moved.bind(prop))
 			
-		# Connect to visibility_changed signal
-		if (
-			prop.has_signal("visibility_changed")
-			and not prop.visibility_changed.is_connected(_on_prop_visibility_changed)
-		):
+		# Connect to visibility_changed signal (built-in Node2D signal)
+		if not prop.visibility_changed.is_connected(_on_prop_visibility_changed):
 			prop.visibility_changed.connect(_on_prop_visibility_changed.bind(prop))
 
 		# Connect to obstacle_state_changed signal
@@ -549,6 +577,10 @@ func _connect_props_changes_signals() -> void:
 			and not prop.obstacle_state_changed.is_connected(_on_prop_obstacle_state_changed)
 		):
 			prop.obstacle_state_changed.connect(_on_prop_obstacle_state_changed.bind(prop))
+	
+	# Connect to characters signals
+	for character in get_characters():
+		_connect_character_signals(character)
 
 # Called when a prop moves via move_to or teleport functions.
 # Triggers navigation obstacle rebaking since the prop's collision shape has moved.
@@ -572,6 +604,78 @@ func _on_prop_obstacle_state_changed(prop: PopochiuClickable) -> void:
 	# Only rebake navigation if the prop has navigation obstacles
 	if prop and prop.get_node_or_null("ObstaclePolygon"):
 		_setup_navigation_obstacles.call_deferred()
+
+
+# Called when a character moves via walk or teleport functions.
+# Triggers navigation obstacle rebaking since the character's collision shape has moved.
+func _on_character_moved(character: PopochiuCharacter) -> void:
+	# Only rebake navigation if the character has navigation obstacles
+	if character and character.get_node_or_null("ObstaclePolygon"):
+		_setup_navigation_obstacles.call_deferred()
+
+
+# Called when a character's visibility changes.
+# Triggers navigation obstacle rebaking since invisible characters should not block pathfinding.
+func _on_character_visibility_changed(character: PopochiuCharacter) -> void:
+	# Only rebake navigation if the character has navigation obstacles
+	if character and character.get_node_or_null("ObstaclePolygon"):
+		_setup_navigation_obstacles.call_deferred()
+
+
+# Called when a character's obstacle state changes.
+# Triggers navigation obstacle rebaking since the character is or is no more considered an obstacle.
+func _on_character_obstacle_state_changed(character: PopochiuCharacter) -> void:
+	# Only rebake navigation if the character has navigation obstacles
+	if character and character.get_node_or_null("ObstaclePolygon"):
+		_setup_navigation_obstacles.call_deferred()
+
+
+# Helper function to connect a single character's signals for navigation updates.
+func _connect_character_signals(character: PopochiuCharacter) -> void:
+	if not character:
+		return
+
+	# Connect to movement_ended signal
+	if (
+		character.has_signal("movement_ended")
+		and not character.movement_ended.is_connected(_on_character_moved)
+	):
+		character.movement_ended.connect(_on_character_moved.bind(character))
+		
+	# Connect to visibility_changed signal (built-in Node2D signal)
+	if not character.visibility_changed.is_connected(_on_character_visibility_changed):
+		character.visibility_changed.connect(_on_character_visibility_changed.bind(character))
+
+	# Connect to obstacle_state_changed signal
+	if (
+		character.has_signal("obstacle_state_changed")
+		and not character.obstacle_state_changed.is_connected(_on_character_obstacle_state_changed)
+	):
+		character.obstacle_state_changed.connect(_on_character_obstacle_state_changed.bind(character))
+
+
+# Helper function to disconnect a single character's signals.
+func _disconnect_character_signals(character: PopochiuCharacter) -> void:
+	if not character:
+		return
+
+	# Disconnect movement_ended signal
+	if (
+		character.has_signal("movement_ended")
+		and character.movement_ended.is_connected(_on_character_moved)
+	):
+		character.movement_ended.disconnect(_on_character_moved)
+		
+	# Disconnect visibility_changed signal
+	if character.visibility_changed.is_connected(_on_character_visibility_changed):
+		character.visibility_changed.disconnect(_on_character_visibility_changed)
+
+	# Disconnect obstacle_state_changed signal
+	if (
+		character.has_signal("obstacle_state_changed")
+		and character.obstacle_state_changed.is_connected(_on_character_obstacle_state_changed)
+	):
+		character.obstacle_state_changed.disconnect(_on_character_obstacle_state_changed)
 
 
 #endregion

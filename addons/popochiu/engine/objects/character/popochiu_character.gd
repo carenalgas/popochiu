@@ -40,6 +40,8 @@ signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector
 signal stopped_walk
 ## Emitted when the animation to grab things has finished.
 signal grab_done
+## Emitted when the obstacle flag state is changed.
+signal obstacle_state_changed(character: PopochiuCharacter)
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
 const EMPTY_STRING = ""
@@ -77,6 +79,10 @@ const EMPTY_STRING = ""
 @export var ignore_obstacles := false
 ## Whether the character will move only when the frame changes on its animation.
 @export var anti_glide_animation: bool = false
+## When true, this character will be considered an obstacle and its obstacle polygon (if available)
+## will be carved from all [PopochiuWalkableAreas] it intersects in the room.
+## Set this to false to ignore its encumbrance during pathfinding.
+@export var obstacle: bool = false : set = set_obstacle
 ## Used by the GUI to calculate where to render the dialogue lines said by the character when it
 ## speaks.
 @export var dialog_pos: Vector2
@@ -239,6 +245,23 @@ func _on_position_changed() -> void:
 #endregion
 
 #region Public #####################################################################################
+## Returns the NavigationObstacle2D if it has a defined polygon and the character is set as obstacle, null otherwise.
+## This method checks if the obstacle has at least 3 vertices to form a valid polygon.
+func get_navigation_obstacle() -> NavigationObstacle2D:
+	if not obstacle:
+		return null
+	
+	var navigation_obstacle: NavigationObstacle2D = get_node_or_null("ObstaclePolygon")
+	if not navigation_obstacle or not navigation_obstacle is NavigationObstacle2D:
+		return null
+	
+	# Check if obstacle has vertices defined (minimum 3 for a valid polygon)
+	if navigation_obstacle.vertices.size() < 3:
+		return null
+
+	return navigation_obstacle
+
+
 ## Puts the character in the idle state by playing its idle animation, then waits for
 ## [code]0.2[/code] seconds.
 ## If the character has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
@@ -883,6 +906,11 @@ func set_avatars(value: Array) -> void:
 				emotion = EMPTY_STRING,
 				avatar = Texture.new(),
 			}
+
+
+func set_obstacle(value: bool) -> void:
+	obstacle = value
+	obstacle_state_changed.emit()
 
 
 #endregion
