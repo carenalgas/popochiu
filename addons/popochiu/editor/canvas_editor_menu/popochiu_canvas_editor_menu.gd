@@ -6,6 +6,10 @@ extends HBoxContainer
 var _active_popochiu_object: Node = null
 var _shown_helpers := []
 
+# Add these variables to track polygon edit mode
+var _editing_polygon := false
+var _polygon_being_edited: Node = null
+
 @onready var btn_markers: Button = %BtnMarkers
 @onready var btn_baseline: Button = %BtnBaseline
 @onready var btn_walk_to_point: Button = %BtnWalkToPoint
@@ -76,6 +80,13 @@ func _toggle_dialog_pos_visibility() -> void:
 
 
 func _select_interaction_polygon() -> void:
+	# Toggle polygon edit mode off if already editing
+	if _editing_polygon && _polygon_being_edited != null:
+		_editing_polygon = false
+		_polygon_being_edited = null
+		btn_interaction_polygon.set_pressed_no_signal(false)
+		return
+		
 	# If we are editing the polygon, go back and select the parent node
 	# then stop execution.
 	var selected_node := EditorInterface.get_selection().get_selected_nodes()[0]
@@ -107,8 +118,20 @@ func _select_interaction_polygon() -> void:
 	EditorInterface.get_selection().add_node(obj_polygon)
 	obj_polygon.show()
 
+	# Enable edit mode
+	_editing_polygon = true
+	_polygon_being_edited = obj_polygon
+	btn_interaction_polygon.set_pressed_no_signal(true)
+
 
 func _select_obstacle_polygon() -> void:
+	# Toggle polygon edit mode off if already editing
+	if _editing_polygon && _polygon_being_edited != null:
+		_editing_polygon = false
+		_polygon_being_edited = null
+		btn_obstacle_polygon.set_pressed_no_signal(false)
+		return
+		
 	# If we are editing the polygon, go back and select the parent node
 	# then stop execution.
 	var selected_node := EditorInterface.get_selection().get_selected_nodes()[0]
@@ -137,6 +160,11 @@ func _select_obstacle_polygon() -> void:
 	EditorInterface.get_selection().add_node(obstacle_polygon)
 	obstacle_polygon.show()
 
+	# Enable edit mode
+	_editing_polygon = true
+	_polygon_being_edited = obstacle_polygon
+	btn_obstacle_polygon.set_pressed_no_signal(true)
+
 
 func _on_gizmo_settings_changed() -> void:
 	# Pretty self explanatory
@@ -145,6 +173,16 @@ func _on_gizmo_settings_changed() -> void:
 
 
 func _on_selection_changed() -> void:
+	# If we're in polygon edit mode and selection changed, force reselect the polygon
+	if _editing_polygon && _polygon_being_edited != null:
+		var selected_nodes = EditorInterface.get_selection().get_selected_nodes()
+		if selected_nodes.is_empty() || !(_polygon_being_edited in selected_nodes):
+			# Force reselect the polygon we're editing
+			EditorInterface.get_selection().clear()
+			EditorInterface.get_selection().add_node(_polygon_being_edited)
+			_polygon_being_edited.show() # Ensure polygon remains visible
+			return
+
 	# Always reset the walkable areas visibility depending on the user preferences
 	# Doing this immediately so, if this function exits early, the visibility is conditioned
 	# by the editor settings (partially fixes #325).
@@ -389,7 +427,7 @@ func _set_buttons_visibility() -> void:
 		btn_interaction_polygon.show()
 		btn_obstacle_polygon.hide()
 		return
-	
+
 	# Viceversa if the selected node is an obstacle polygon, we just show
 	# the obstacle polygon button.
 	if PopochiuEditorHelper.is_popochiu_obstacle_polygon(
