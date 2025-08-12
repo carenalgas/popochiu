@@ -179,7 +179,7 @@ func _select_obstacle_polygon() -> void:
 func _on_gizmo_settings_changed() -> void:
 	# Pretty self explanatory
 	_set_walkable_areas_visibility()
-	_set_props_polygons_visibility()
+	_set_room_clickable_polygons_visibility()
 	_set_toolbar_buttons_color()
 
 
@@ -198,6 +198,7 @@ func _on_selection_changed() -> void:
 			elif PopochiuEditorHelper.is_popochiu_obstacle_polygon(_polygon_being_edited):
 				btn_obstacle_polygon.set_pressed_no_signal(true)
 			_set_walkable_areas_visibility()
+			_set_room_clickable_polygons_visibility()
 			_set_buttons_visibility()
 			return
 
@@ -205,7 +206,7 @@ func _on_selection_changed() -> void:
 	# Doing this immediately so, if this function exits early, the visibility is conditioned
 	# by the editor settings (partially fixes #325).
 	_set_walkable_areas_visibility()
-	_set_props_polygons_visibility()
+	_set_room_clickable_polygons_visibility()
 
 	# Make sure this function works only if the user is editing a
 	# supported scene
@@ -242,7 +243,7 @@ func _on_selection_changed() -> void:
 		# Doing here because clicking on an empty area would hide the walkable areas
 		# ignoring the editor settings (fixes #325)
 		_set_walkable_areas_visibility()
-		_set_props_polygons_visibility()
+		_set_room_clickable_polygons_visibility()
 		return
 
 	# We identify which PopochiuClickable we are working on in the editor.
@@ -296,7 +297,7 @@ func _on_selection_changed() -> void:
 	# Doing this also at the end because the state can be reset by one of the steps
 	# above.
 	_set_walkable_areas_visibility()
-	_set_props_polygons_visibility()
+	_set_room_clickable_polygons_visibility()
 
 	# Always reset the button visibility depending on the state of the internal variables	
 	_set_buttons_visibility()
@@ -331,54 +332,76 @@ func _set_walkable_areas_visibility() -> void:
 		child.hide()
 
 
-## Handles the editor config that allows the props polygons to be always visible,
-## not only during editing.
-func _set_props_polygons_visibility() -> void:
+# Handles the editor config that allows the room clickable polygons to be always visible,
+# not only during editing. This includes props, characters, and hotspots.
+func _set_room_clickable_polygons_visibility() -> void:
 	# Avoid errors when the editor has no scene open
 	if EditorInterface.get_edited_scene_root() == null:
 		return
 
-	# get_all_children returns an empty array if the node has no children
-	# so we can safely iterate over it without checking for null
-	for child in PopochiuEditorHelper.get_all_children(
-		EditorInterface.get_edited_scene_root().find_child("Props")
-	):
-		# Skip if not a prop
-		if not PopochiuEditorHelper.is_prop(child):
-			continue
-		
-		# Handle interaction polygon
-		var interaction_polygon = PopochiuEditorHelper.get_first_child_by_group(
-			child,
-			PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+	var root := EditorInterface.get_edited_scene_root()
+
+	# Handle character scene first (when editing a character directly)
+	if PopochiuEditorHelper.is_editing_character():
+		if PopochiuEditorHelper.is_character(root):
+			_set_visibility_for_clickable_polygons(root)
+			return
+
+	# Handle room scene (when editing a room)
+	# If we are not editing a room, we don't need to do anything.
+	# Also, we prevent errors for accessing to nonexistent nodes.
+	if not PopochiuEditorHelper.is_editing_room():
+		return
+
+	# Handle Props
+	for child in root.find_child("Props").get_children():
+		if PopochiuEditorHelper.is_prop(child):
+			_set_visibility_for_clickable_polygons(child)
+
+	# Handle Characters
+	for child in root.find_child("Characters").get_children():
+		if PopochiuEditorHelper.is_character(child):
+			_set_visibility_for_clickable_polygons(child)
+
+	# Handle Hotspots
+	for child in root.find_child("Hotspots").get_children():
+		if PopochiuEditorHelper.is_hotspot(child):
+			_set_visibility_for_clickable_polygons(child)
+
+
+## Helper function to handle polygon visibility for both interaction and obstacle polygons
+func _set_visibility_for_clickable_polygons(obj: Node) -> void:
+	# Handle interaction polygon
+	var interaction_polygon = PopochiuEditorHelper.get_first_child_by_group(
+		obj,
+		PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+	)
+	if interaction_polygon != null:
+		_set_polygon_visibility(
+			interaction_polygon,
+			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_INT_POLY
 		)
-		if interaction_polygon != null:
-			# Should we show all interaction polygons? Show and continue
-			if PopochiuEditorConfig.get_editor_setting(
-				PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_INT_POLY
-			):
-				interaction_polygon.show()
-			# If we are editing the polygon, make sure it stays visible!
-			elif interaction_polygon in EditorInterface.get_selection().get_selected_nodes():
-				interaction_polygon.show()
-			# OK, we know we must hide this polygon now!
-			else:
-				interaction_polygon.hide()
-		
-		# Handle obstacle polygon
-		var obstacle_polygon = child.get_node_or_null("ObstaclePolygon")
-		if obstacle_polygon != null:
-			# Should we show all obstacle polygons? Show and continue
-			if PopochiuEditorConfig.get_editor_setting(
-				PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_OBS_POLY
-			):
-				obstacle_polygon.show()
-			# If we are editing the polygon, make sure it stays visible!
-			elif obstacle_polygon in EditorInterface.get_selection().get_selected_nodes():
-				obstacle_polygon.show()
-			# OK, we know we must hide this polygon now!
-			else:
-				obstacle_polygon.hide()
+	
+	# Handle obstacle polygon
+	var obstacle_polygon = obj.get_node_or_null("ObstaclePolygon")
+	if obstacle_polygon != null:
+		_set_polygon_visibility(
+			obstacle_polygon,
+			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_OBS_POLY
+		)
+
+
+## Helper function to set polygon visibility based on editor settings and selection
+func _set_polygon_visibility(polygon: Node, always_show_setting: String) -> void:
+	# Should we show all polygons of this type? Show and continue
+	if PopochiuEditorConfig.get_editor_setting(always_show_setting):
+		polygon.show()
+	# If we are editing the polygon, make sure it stays visible!
+	elif polygon in EditorInterface.get_selection().get_selected_nodes():
+		polygon.show()
+	# OK, we know we must hide this polygon now!
+	else:
+		polygon.hide()
 
 
 ## Sets all the buttons color so that they are the same as the gizmos
@@ -534,9 +557,10 @@ func _set_buttons_visibility() -> void:
 		if _active_popochiu_object is PopochiuProp:
 			btn_obstacle_polygon.show()
 
-	# If we are in a Character scene, show polygon and dialogpos gizmo button.
+	# If we are in a Character scene, show polygon, obstacle polygon and dialogpos gizmo button.
 	elif PopochiuEditorHelper.is_editing_character():
 		btn_dialog_pos.show()
+		btn_obstacle_polygon.show()
 
 
 # Make all buttons pop-up
