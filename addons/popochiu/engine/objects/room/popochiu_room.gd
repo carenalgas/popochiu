@@ -475,12 +475,12 @@ func _setup_navigation_obstacles() -> void:
 		return
 	
 	# Collect all valid navigation obstacles from props and characters.
-	var prop_obstacles = _collect_all_obstacles()
+	var obstacles = _collect_all_obstacles()
 	
 	# Apply obstacles to each enabled walkable area.
 	for walkable_area in walkable_areas:
 		if walkable_area and walkable_area is PopochiuWalkableArea and walkable_area.enabled:
-			await walkable_area.setup_prop_obstacles(prop_obstacles)
+			await walkable_area.setup_obstacles(obstacles)
 
 	# Important: do not activate/switch areas here. This function only bakes obstacles.
 	await get_tree().physics_frame
@@ -527,7 +527,7 @@ func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 			continue
 		
 		# Skip temporary editor-placed characters
-		if character.has_meta("POPOCHIU_TEMPORARY_OBJECT") and character.get_meta("POPOCHIU_TEMPORARY_OBJECT"):
+		if character.has_meta("EDITOR_TMP_COPY_OF"):
 			continue
 		
 		# Skip the player character to avoid them blocking their own movement
@@ -566,7 +566,7 @@ func _connect_object_changes_signals() -> void:
 	
 	# Connect to characters signals
 	for character in get_characters():
-		if character.has_meta('POPOCHIU_TEMPORARY_OBJECT') and character.get_meta('POPOCHIU_TEMPORARY_OBJECT'):
+		if character.has_meta('EDITOR_TMP_COPY_OF'):
 			continue
 		_connect_obstacle_obj_signals(character)
 
@@ -612,6 +612,13 @@ func _connect_obstacle_obj_signals(obj: PopochiuClickable) -> void:
 	):
 		obj.obstacle_state_changed.connect(_on_obstacle_obj_state_changed.bind(obj))
 
+	# For characters only, rebake the navigation when the player character changes
+	if (
+		obj.has_signal("became_player")
+		and not obj.became_player.is_connected(_on_obstacle_obj_state_changed)
+	):
+		obj.became_player.connect(_on_obstacle_obj_state_changed.bind(obj))
+
 
 # Helper function to disconnect a single character's signals.
 func _disconnect_obstacle_obj_signals(obj: PopochiuClickable) -> void:
@@ -646,5 +653,11 @@ func _disconnect_obstacle_obj_signals(obj: PopochiuClickable) -> void:
 	):
 		obj.obstacle_state_changed.disconnect(_on_obstacle_obj_state_changed)
 
+	# For characters only, rebake the navigation when the player character changes
+	if (
+		obj.has_signal("became_player")
+		and not obj.became_player.is_connected(_on_obstacle_obj_state_changed)
+	):
+		obj.became_player.disconnect(_on_obstacle_obj_state_changed.bind(obj))
 
 #endregion

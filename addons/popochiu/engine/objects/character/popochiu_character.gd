@@ -42,6 +42,9 @@ signal stopped_walk
 signal grab_done
 ## Emitted when the obstacle flag state is changed.
 signal obstacle_state_changed(character: PopochiuCharacter)
+## Emitted when the character became the player character
+signal became_player
+
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
 const EMPTY_STRING = ""

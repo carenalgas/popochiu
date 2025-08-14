@@ -115,7 +115,7 @@ func _ready():
 	visibility_changed.connect(_toggle_input)
 
 	# Ignore this object if it is a temporary one (its name has *)
-	if clickable and not "*" in name:
+	if clickable and not has_meta("EDITOR_TMP_COPY_OF"):
 		# Connect to own signals
 		mouse_entered.connect(_on_mouse_entered)
 		mouse_exited.connect(_on_mouse_exited)

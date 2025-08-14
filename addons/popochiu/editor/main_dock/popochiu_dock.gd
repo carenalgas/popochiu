@@ -107,7 +107,7 @@ func _check_node(node: Node) -> void:
 		# The node is a PopochiuCharacter in a room
 		node.set_name.call_deferred("Character%s *" % node.script_name)
 		# Mark this as a temporary editor-placed character
-		node.set_meta("POPOCHIU_TEMPORARY_OBJECT", true)
+		node.set_meta("EDITOR_TMP_COPY_OF", node.script_name)
 
 
 func _on_editor_selection_changed() -> void:

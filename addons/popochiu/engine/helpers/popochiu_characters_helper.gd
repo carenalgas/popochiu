@@ -37,9 +37,17 @@ static func is_player_character(character: PopochiuCharacter) -> bool:
 		return true
 
 	# Configuration check: use the setup data to identify the player character
+	# when the game runs and the player reference is not set yet.
+	# Makes things work in initialization functions, etc.
 	var pc = PopochiuResources.get_data_value("setup", "pc", "")
 	if not pc.is_empty() and character.script_name == pc:
-		return true
+		# This is tricky! Here we can't just return true:
+		return (
+			# if there is no player character set, then returns true
+			not PopochiuUtils.c.player
+			# or the player is set and it's actually the configured one
+			or pc == PopochiuUtils.c.player.name
+		)
 
 	# If we can't definitively identify the player character, return false
 	return false

@@ -235,7 +235,7 @@ func _bake_navigation_no_obstacles() -> void:
 
 ## Sets up navigation obstacles using projected obstructions.
 ## This is the preferred method for carving out areas in a NavigationPolygon.
-func setup_prop_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
+func setup_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 	if not _perimeter or not _perimeter is NavigationRegion2D:
 		return
 

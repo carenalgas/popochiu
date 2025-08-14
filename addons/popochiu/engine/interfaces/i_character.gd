@@ -171,6 +171,7 @@ func get_instance(script_name: String) -> PopochiuCharacter:
 func set_player(value: PopochiuCharacter) -> void:
 	player = value
 	camera_owner = value
+	value.became_player.emit()
 
 
 #endregion
