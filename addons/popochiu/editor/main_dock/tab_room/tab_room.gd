@@ -312,6 +312,9 @@ func _on_character_selected(id: int) -> void:
 		"res://game/characters/%s/character_%s.tscn".replace("%s", char_name.to_snake_case())
 	) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	
+	# Mark this as a temporary editor-placed character
+	instance.set_meta("POPOCHIU_TEMPORARY_OBJECT", true)
+	
 	opened_room.get_node("Characters").add_child(instance)
 	instance.owner = opened_room
 

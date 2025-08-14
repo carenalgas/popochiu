@@ -508,7 +508,7 @@ func _ensure_active_walkable_area() -> void:
 
 # Collects all valid navigation obstacles from props and characters in the room.
 # Returns an array of NavigationObstacle2D nodes that have valid polygons.
-# Explicitly excludes the player character from obstacles.
+# Excludes temporary editor-placed characters and the player character.
 func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 	var obstacles: Array[NavigationObstacle2D] = []
 	
@@ -521,9 +521,13 @@ func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 		if obstacle:
 			obstacles.append(obstacle)
 	
-	# Collect obstacles from characters (excluding the player character)
+	# Collect obstacles from characters (excluding temporary editor instances and player character)
 	for character in get_characters():
 		if not character or not character is PopochiuCharacter:
+			continue
+		
+		# Skip temporary editor-placed characters
+		if character.has_meta("POPOCHIU_TEMPORARY_OBJECT") and character.get_meta("POPOCHIU_TEMPORARY_OBJECT"):
 			continue
 		
 		# Skip the player character to avoid them blocking their own movement
@@ -562,6 +566,8 @@ func _connect_object_changes_signals() -> void:
 	
 	# Connect to characters signals
 	for character in get_characters():
+		if character.has_meta('POPOCHIU_TEMPORARY_OBJECT') and character.get_meta('POPOCHIU_TEMPORARY_OBJECT'):
+			continue
 		_connect_obstacle_obj_signals(character)
 
 

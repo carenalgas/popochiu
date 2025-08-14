@@ -251,6 +251,9 @@ func get_navigation_obstacle() -> NavigationObstacle2D:
 	if not obstacle:
 		return null
 
+	if is_moving:
+		return null
+
 	var navigation_obstacle: NavigationObstacle2D = get_node_or_null("ObstaclePolygon")
 	if not navigation_obstacle or not navigation_obstacle is NavigationObstacle2D:
 		return null
@@ -304,6 +307,7 @@ func queue_walk(target_pos: Vector2) -> Callable:
 ## value.
 func walk(target_pos: Vector2) -> void:
 	is_moving = true
+	movement_started.emit()
 	_last_reached_clickable = null
 
 	_flip_left_right(
@@ -329,6 +333,7 @@ func walk(target_pos: Vector2) -> void:
 	await movement_ended
 
 	is_moving = false
+	stopped_walk.emit()
 
 
 func turn_towards(target_pos: Vector2) -> void:
