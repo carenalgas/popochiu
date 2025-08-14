@@ -32,22 +32,15 @@ static func define_player() -> void:
 ## This works both at design-time (before PopochiuUtils.c.player is set) and runtime.
 ## Returns true only if we can definitively identify the character as the player.
 static func is_player_character(character: PopochiuCharacter) -> bool:
-	# Runtime check: if the player reference is set, use it
-	if PopochiuUtils.c.player and character == PopochiuUtils.c.player:
-		return true
+	# If the player reference is not set (yet), use the game configuration
+	# to identify the player character.
+	if not PopochiuUtils.c.player:
+		var pc = PopochiuResources.get_data_value("setup", "pc", "")
+		return (not pc.is_empty() and character.script_name == pc)
 
-	# Configuration check: use the setup data to identify the player character
-	# when the game runs and the player reference is not set yet.
-	# Makes things work in initialization functions, etc.
-	var pc = PopochiuResources.get_data_value("setup", "pc", "")
-	if not pc.is_empty() and character.script_name == pc:
-		# This is tricky! Here we can't just return true:
-		return (
-			# if there is no player character set, then returns true
-			not PopochiuUtils.c.player
-			# or the player is set and it's actually the configured one
-			or pc == PopochiuUtils.c.player.name
-		)
+	# If the player reference is set, check if the character is the player.
+	if character == PopochiuUtils.c.player:
+		return true
 
 	# If we can't definitively identify the player character, return false
 	return false
