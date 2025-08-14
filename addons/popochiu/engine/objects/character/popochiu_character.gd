@@ -82,7 +82,7 @@ const EMPTY_STRING = ""
 ## When true, this character will be considered an obstacle and its obstacle polygon (if available)
 ## will be carved from all [PopochiuWalkableAreas] it intersects in the room.
 ## Set this to false to ignore its encumbrance during pathfinding.
-@export var obstacle: bool = false : set = set_obstacle
+@export var obstacle: bool = false: set = set_obstacle
 ## Used by the GUI to calculate where to render the dialogue lines said by the character when it
 ## speaks.
 @export var dialog_pos: Vector2
@@ -193,7 +193,7 @@ func _ready():
 
 func _physics_process(delta):
 	if _navigation_path.is_empty(): return
-	
+
 	var walk_distance = walk_speed * delta
 	_move_along_path(walk_distance)
 
@@ -250,11 +250,11 @@ func _on_position_changed() -> void:
 func get_navigation_obstacle() -> NavigationObstacle2D:
 	if not obstacle:
 		return null
-	
+
 	var navigation_obstacle: NavigationObstacle2D = get_node_or_null("ObstaclePolygon")
 	if not navigation_obstacle or not navigation_obstacle is NavigationObstacle2D:
 		return null
-	
+
 	# Check if obstacle has vertices defined (minimum 3 for a valid polygon)
 	if navigation_obstacle.vertices.size() < 3:
 		return null

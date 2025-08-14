@@ -180,8 +180,8 @@ func exit_room() -> void:
 				character_child.queue_free()
 
 		# Disconnect character signals before removing
-		_disconnect_character_signals(c)
-		
+		_disconnect_obstacle_obj_signals(c)
+
 		$Characters.remove_child(c)
 
 	_on_room_exited()
@@ -202,7 +202,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 	update_characters_position(chr)
 
 	# Connect character signals for navigation updates
-	_connect_character_signals(chr)
+	_connect_obstacle_obj_signals(chr)
 	
 	# Update navigation obstacles since a new character was added
 	update_navigation_obstacles()
@@ -213,7 +213,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 ## Removes [param chr] the [b]$Characters[/b] node without destroying it.
 func remove_character(chr: PopochiuCharacter) -> void:
 	# Disconnect character signals before removing
-	_disconnect_character_signals(chr)
+	_disconnect_obstacle_obj_signals(chr)
 	
 	$Characters.remove_child(chr)
 	
@@ -527,7 +527,8 @@ func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 			continue
 		
 		# Skip the player character to avoid them blocking their own movement
-		if PopochiuUtils.c.player and character == PopochiuUtils.c.player:
+		# Use PopochiuCharactersHelper to identify the player character reliably
+		if PopochiuCharactersHelper.is_player_character(character):
 			continue
 		
 		var obstacle = character.get_navigation_obstacle()
@@ -557,125 +558,87 @@ func _on_walkable_area_enabled_changed(enabled: bool, area: PopochiuWalkableArea
 func _connect_object_changes_signals() -> void:
 	# Connect to props signals
 	for prop in get_props():
-		if not prop:
-			continue
-
-		# Connect to movement_ended signal
-		if (
-			prop.has_signal("movement_ended")
-			and not prop.movement_ended.is_connected(_on_prop_moved)
-		):
-			prop.movement_ended.connect(_on_prop_moved.bind(prop))
-			
-		# Connect to visibility_changed signal (built-in Node2D signal)
-		if not prop.visibility_changed.is_connected(_on_prop_visibility_changed):
-			prop.visibility_changed.connect(_on_prop_visibility_changed.bind(prop))
-
-		# Connect to obstacle_state_changed signal
-		if (
-			prop.has_signal("obstacle_state_changed")
-			and not prop.obstacle_state_changed.is_connected(_on_prop_obstacle_state_changed)
-		):
-			prop.obstacle_state_changed.connect(_on_prop_obstacle_state_changed.bind(prop))
+		_connect_obstacle_obj_signals(prop)
 	
 	# Connect to characters signals
 	for character in get_characters():
-		_connect_character_signals(character)
+		_connect_obstacle_obj_signals(character)
 
-# Called when a prop moves via move_to or teleport functions.
+
+# Called when an obstacle changes state because of movement or visibility change.
 # Triggers navigation obstacle rebaking since the prop's collision shape has moved.
-func _on_prop_moved(prop: PopochiuClickable) -> void:
+func _on_obstacle_obj_state_changed(obj: PopochiuClickable) -> void:
 	# Only rebake navigation if the prop has navigation obstacles
-	if prop and prop.get_node_or_null("ObstaclePolygon"):
+	if obj.get_node_or_null("ObstaclePolygon"):
 		_setup_navigation_obstacles.call_deferred()
 
 
-# Called when a prop's visibility changes.
-# Triggers navigation obstacle rebaking since invisible props should not block pathfinding.
-func _on_prop_visibility_changed(prop: PopochiuClickable) -> void:
-	# Only rebake navigation if the prop has navigation obstacles
-	if prop and prop.get_node_or_null("ObstaclePolygon"):
-		_setup_navigation_obstacles.call_deferred()
-
-
-# Called when a prop's obstacle state changes.
-# Triggers navigation obstacle rebaking since the prop is or is no more considered an obstacle.
-func _on_prop_obstacle_state_changed(prop: PopochiuClickable) -> void:
-	# Only rebake navigation if the prop has navigation obstacles
-	if prop and prop.get_node_or_null("ObstaclePolygon"):
-		_setup_navigation_obstacles.call_deferred()
-
-
-# Called when a character moves via walk or teleport functions.
-# Triggers navigation obstacle rebaking since the character's collision shape has moved.
-func _on_character_moved(character: PopochiuCharacter) -> void:
-	# Only rebake navigation if the character has navigation obstacles
-	if character and character.get_node_or_null("ObstaclePolygon"):
-		_setup_navigation_obstacles.call_deferred()
-
-
-# Called when a character's visibility changes.
-# Triggers navigation obstacle rebaking since invisible characters should not block pathfinding.
-func _on_character_visibility_changed(character: PopochiuCharacter) -> void:
-	# Only rebake navigation if the character has navigation obstacles
-	if character and character.get_node_or_null("ObstaclePolygon"):
-		_setup_navigation_obstacles.call_deferred()
-
-
-# Called when a character's obstacle state changes.
-# Triggers navigation obstacle rebaking since the character is or is no more considered an obstacle.
-func _on_character_obstacle_state_changed(character: PopochiuCharacter) -> void:
-	# Only rebake navigation if the character has navigation obstacles
-	if character and character.get_node_or_null("ObstaclePolygon"):
-		_setup_navigation_obstacles.call_deferred()
-
-
-# Helper function to connect a single character's signals for navigation updates.
-func _connect_character_signals(character: PopochiuCharacter) -> void:
-	if not character:
+# Helper function to connect a single prop's signals for navigation updates.
+func _connect_obstacle_obj_signals(obj: PopochiuClickable) -> void:
+	if not obj:
 		return
+
+	if not obj is PopochiuProp and not obj is PopochiuCharacter:
+		return
+
+	# Connect to movement_started signal
+	if (
+		obj.has_signal("movement_started")
+		and not obj.movement_started.is_connected(_on_obstacle_obj_state_changed)
+	):
+		obj.movement_started.connect(_on_obstacle_obj_state_changed.bind(obj))
 
 	# Connect to movement_ended signal
 	if (
-		character.has_signal("movement_ended")
-		and not character.movement_ended.is_connected(_on_character_moved)
+		obj.has_signal("movement_ended")
+		and not obj.movement_ended.is_connected(_on_obstacle_obj_state_changed)
 	):
-		character.movement_ended.connect(_on_character_moved.bind(character))
-		
+		obj.movement_ended.connect(_on_obstacle_obj_state_changed.bind(obj))
+
 	# Connect to visibility_changed signal (built-in Node2D signal)
-	if not character.visibility_changed.is_connected(_on_character_visibility_changed):
-		character.visibility_changed.connect(_on_character_visibility_changed.bind(character))
+	if not obj.visibility_changed.is_connected(_on_obstacle_obj_state_changed):
+		obj.visibility_changed.connect(_on_obstacle_obj_state_changed.bind(obj))
 
 	# Connect to obstacle_state_changed signal
 	if (
-		character.has_signal("obstacle_state_changed")
-		and not character.obstacle_state_changed.is_connected(_on_character_obstacle_state_changed)
+		obj.has_signal("obstacle_state_changed")
+		and not obj.obstacle_state_changed.is_connected(_on_obstacle_obj_state_changed)
 	):
-		character.obstacle_state_changed.connect(_on_character_obstacle_state_changed.bind(character))
+		obj.obstacle_state_changed.connect(_on_obstacle_obj_state_changed.bind(obj))
 
 
 # Helper function to disconnect a single character's signals.
-func _disconnect_character_signals(character: PopochiuCharacter) -> void:
-	if not character:
+func _disconnect_obstacle_obj_signals(obj: PopochiuClickable) -> void:
+	if not obj:
 		return
+
+	if not obj is PopochiuProp and not obj is PopochiuCharacter:
+		return
+
+	# Disconnect movement_started signal
+	if (
+		obj.has_signal("movement_started")
+		and obj.movement_started.is_connected(_on_obstacle_obj_state_changed)
+	):
+		obj.movement_started.disconnect(_on_obstacle_obj_state_changed)
 
 	# Disconnect movement_ended signal
 	if (
-		character.has_signal("movement_ended")
-		and character.movement_ended.is_connected(_on_character_moved)
+		obj.has_signal("movement_ended")
+		and obj.movement_ended.is_connected(_on_obstacle_obj_state_changed)
 	):
-		character.movement_ended.disconnect(_on_character_moved)
-		
+		obj.movement_ended.disconnect(_on_obstacle_obj_state_changed)
+
 	# Disconnect visibility_changed signal
-	if character.visibility_changed.is_connected(_on_character_visibility_changed):
-		character.visibility_changed.disconnect(_on_character_visibility_changed)
+	if obj.visibility_changed.is_connected(_on_obstacle_obj_state_changed):
+		obj.visibility_changed.disconnect(_on_obstacle_obj_state_changed)
 
 	# Disconnect obstacle_state_changed signal
 	if (
-		character.has_signal("obstacle_state_changed")
-		and character.obstacle_state_changed.is_connected(_on_character_obstacle_state_changed)
+		obj.has_signal("obstacle_state_changed")
+		and obj.obstacle_state_changed.is_connected(_on_obstacle_obj_state_changed)
 	):
-		character.obstacle_state_changed.disconnect(_on_character_obstacle_state_changed)
+		obj.obstacle_state_changed.disconnect(_on_obstacle_obj_state_changed)
 
 
 #endregion
