@@ -116,6 +116,10 @@ func _ready():
 	# Connect to props movement_ended signals to trigger navigation rebaking when they move
 	_connect_object_changes_signals.call_deferred()
 
+	# Connect to player changed signal to rebake navigation when player character changes
+	if not PopochiuUtils.c.player_changed.is_connected(_on_player_changed):
+		PopochiuUtils.c.player_changed.connect(_on_player_changed)
+
 	PopochiuUtils.r.room_readied(self)
 
 func _unhandled_input(event: InputEvent):
@@ -135,15 +139,15 @@ func _unhandled_input(event: InputEvent):
 
 		PopochiuUtils.i.set_active_item()
 		return
-	
+
 	if has_player and is_instance_valid(PopochiuUtils.c.player) and PopochiuUtils.c.player.can_move:
 		# Set this property to null in order to cancel any running interaction with a
 		# PopochiuClickable (check PopochiuCharacter.walk_to_clicked(...)).
 		PopochiuUtils.e.clicked = null
-		
+
 		if PopochiuUtils.c.player.is_moving:
 			PopochiuUtils.c.player.movement_ended.emit()
-		
+
 		PopochiuUtils.c.player.walk(get_local_mouse_position())
 
 
@@ -192,7 +196,7 @@ func exit_room() -> void:
 ## animation is triggered.
 func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
-	
+
 	# Fix #191 by checking if the character had children defined in the Room's Scene (Editor).
 	if _characters_children.has(chr.script_name):
 		# Add child nodes (defined in the Scene tree of the room) to the instance of the character.
@@ -203,7 +207,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 
 	# Connect character signals for navigation updates
 	_connect_obstacle_obj_signals(chr)
-	
+
 	# Update navigation obstacles since a new character was added
 	update_navigation_obstacles()
 
@@ -214,9 +218,9 @@ func add_character(chr: PopochiuCharacter) -> void:
 func remove_character(chr: PopochiuCharacter) -> void:
 	# Disconnect character signals before removing
 	_disconnect_obstacle_obj_signals(chr)
-	
+
 	$Characters.remove_child(chr)
-	
+
 	# Update navigation obstacles since a character was removed
 	update_navigation_obstacles()
 
@@ -257,15 +261,15 @@ func setup_camera() -> void:
 func clean_characters() -> void:
 	for c in $Characters.get_children():
 		if not c is PopochiuCharacter: continue
-		
+
 		_characters_children[c.script_name] = []
-		
+
 		for character_child: Node in c.get_children():
 			if not character_child.owner == self: continue
 
 			c.remove_child(character_child)
 			_characters_children[c.script_name].append(character_child)
-		
+
 		c.queue_free()
 
 
@@ -392,7 +396,7 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 	if not next.enabled:
 		PopochiuUtils.print_error("Walkable area %s is disabled and cannot be activated" % walkable_area_name)
 		return
-	
+
 	# Important: wait for the next physics frame before trying to activate the map.
 	# This gives the NavigationServer time to fully register the map.
 	#await get_tree().physics_frame
@@ -428,13 +432,13 @@ func get_navigation_path(
 	if ignore_walkable_areas:
 		# Direct path for characters that ignore walkable areas.
 		return PackedVector2Array([start_position, end_position])
-	
+
 	if not _nav_path:
 		return PackedVector2Array()
-	
+
 	# Use the map without obstacles if requested
 	var map_to_use = _nav_path.map_rid_no_obstacles if ignore_obstacles else _nav_path.map_rid
-	
+
 	# Delegate pathfinding to the appropriate map
 	return NavigationServer2D.map_get_path(map_to_use, start_position, end_position, true)
 
@@ -473,10 +477,10 @@ func _setup_navigation_obstacles() -> void:
 	var walkable_areas = get_walkable_areas()
 	if walkable_areas.is_empty():
 		return
-	
+
 	# Collect all valid navigation obstacles from props and characters.
 	var obstacles = _collect_all_obstacles()
-	
+
 	# Apply obstacles to each enabled walkable area.
 	for walkable_area in walkable_areas:
 		if walkable_area and walkable_area is PopochiuWalkableArea and walkable_area.enabled:
@@ -511,7 +515,7 @@ func _ensure_active_walkable_area() -> void:
 # Excludes temporary editor-placed characters and the player character.
 func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 	var obstacles: Array[NavigationObstacle2D] = []
-	
+
 	# Collect obstacles from props
 	for prop in get_props():
 		if not prop or not prop is PopochiuProp:
@@ -520,21 +524,21 @@ func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 		var obstacle = prop.get_navigation_obstacle()
 		if obstacle:
 			obstacles.append(obstacle)
-	
+
 	# Collect obstacles from characters (excluding temporary editor instances and player character)
 	for character in get_characters():
 		if not character or not character is PopochiuCharacter:
 			continue
-		
+
 		# Skip temporary editor-placed characters
 		if character.has_meta("EDITOR_TMP_COPY_OF"):
 			continue
-		
+
 		# Skip the player character to avoid them blocking their own movement
 		# Use PopochiuCharactersHelper to identify the player character reliably
 		if PopochiuCharactersHelper.is_player_character(character):
 			continue
-		
+
 		var obstacle = character.get_navigation_obstacle()
 		if obstacle:
 			obstacles.append(obstacle)
@@ -563,7 +567,7 @@ func _connect_object_changes_signals() -> void:
 	# Connect to props signals
 	for prop in get_props():
 		_connect_obstacle_obj_signals(prop)
-	
+
 	# Connect to characters signals
 	for character in get_characters():
 		if character.has_meta('EDITOR_TMP_COPY_OF'):
@@ -577,6 +581,13 @@ func _on_obstacle_obj_state_changed(obj: PopochiuClickable) -> void:
 	# Only rebake navigation if the prop has navigation obstacles
 	if obj.get_node_or_null("ObstaclePolygon"):
 		_setup_navigation_obstacles.call_deferred()
+
+
+# Called when the player character changes.
+# Triggers navigation obstacle rebaking since player character obstacles need to be updated.
+func _on_player_changed(old_player: PopochiuCharacter, new_player: PopochiuCharacter) -> void:
+	# Rebake navigation obstacles when player changes to handle character obstacles properly
+	_setup_navigation_obstacles.call_deferred()
 
 
 # Helper function to connect a single prop's signals for navigation updates.
@@ -612,13 +623,6 @@ func _connect_obstacle_obj_signals(obj: PopochiuClickable) -> void:
 	):
 		obj.obstacle_state_changed.connect(_on_obstacle_obj_state_changed.bind(obj))
 
-	# For characters only, rebake the navigation when the player character changes
-	if (
-		obj.has_signal("became_player")
-		and not obj.became_player.is_connected(_on_obstacle_obj_state_changed)
-	):
-		obj.became_player.connect(_on_obstacle_obj_state_changed.bind(obj))
-
 
 # Helper function to disconnect a single character's signals.
 func _disconnect_obstacle_obj_signals(obj: PopochiuClickable) -> void:
@@ -653,11 +657,5 @@ func _disconnect_obstacle_obj_signals(obj: PopochiuClickable) -> void:
 	):
 		obj.obstacle_state_changed.disconnect(_on_obstacle_obj_state_changed)
 
-	# For characters only, rebake the navigation when the player character changes
-	if (
-		obj.has_signal("became_player")
-		and not obj.became_player.is_connected(_on_obstacle_obj_state_changed)
-	):
-		obj.became_player.disconnect(_on_obstacle_obj_state_changed.bind(obj))
 
 #endregion

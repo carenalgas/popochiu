@@ -42,8 +42,6 @@ signal stopped_walk
 signal grab_done
 ## Emitted when the obstacle flag state is changed.
 signal obstacle_state_changed(character: PopochiuCharacter)
-## Emitted when the character became the player character
-signal became_player
 
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
@@ -192,6 +190,18 @@ func _ready():
 		and self != PopochiuUtils.c.player
 	):
 		PopochiuUtils.c.player.started_walk_to.connect(_follow_player)
+
+	# We need to initialize the interaction for the player character.
+	# Changes will be handled by the player_changed signal handler.
+	input_pickable = (
+		not PopochiuCharactersHelper.is_player_character(self)
+		and clickable
+		and visible
+	)
+
+	# Connect to player changed signal to update clickability
+	if not PopochiuUtils.c.player_changed.is_connected(_on_player_changed):
+		PopochiuUtils.c.player_changed.connect(_on_player_changed)
 
 
 func _physics_process(delta):
@@ -927,6 +937,12 @@ func set_obstacle(value: bool) -> void:
 func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree(): return
 	description = PopochiuUtils.e.get_text(_description_code)
+
+
+## Called when the player character changes to update clickability
+func _on_player_changed(old_player: PopochiuCharacter, new_player: PopochiuCharacter) -> void:
+	new_player.input_pickable = false
+	old_player.input_pickable = old_player.clickable && old_player.visible
 
 
 func _get_vo_cue(emotion := EMPTY_STRING) -> String:

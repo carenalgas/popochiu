@@ -333,27 +333,27 @@ func move_to(
 	if is_moving:
 		await get_tree().process_frame
 		return
-	
+
 	# Cancel any existing movement tween
 	if _movement_tween and _movement_tween.is_valid():
 		_movement_tween.kill()
 		_movement_tween = null
-	
+
 	# Create new tween
 	_movement_tween = create_tween()
 	_movement_tween.set_trans(transition_type)
 	_movement_tween.set_ease(ease_type)
 	_movement_tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
 	_movement_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
-	
+
 	# Calculate duration based on speed and distance
 	var distance = position.distance_to(pos)
 	var duration = distance / speed if speed > 0.0 else 0.0
-	
+
 	# Start movement
 	is_moving = true
 	movement_started.emit()
-	
+
 	# Create the tween animation
 	_movement_tween.tween_property(self, "position", pos, duration)
 
@@ -362,7 +362,7 @@ func move_to(
 
 	# After the movement is completed
 	is_moving = false
-	
+
 	# Sync internal position state
 	_on_position_changed()
 
@@ -385,18 +385,18 @@ func teleport_to_position(pos: Vector2, offset: Vector2 = Vector2.ZERO) -> void:
 	# Ignore if already moving
 	if is_moving:
 		return
-	
+
 	# Cancel any active movement
 	if _movement_tween and _movement_tween.is_valid():
 		_movement_tween.kill()
 		_movement_tween = null
-	
+
 	# Update position immediately
 	position = pos + offset
 
 	# Sync internal position state
 	_on_position_changed()
-	
+
 	# Notify that movement has ended
 	movement_ended.emit()
 
@@ -541,7 +541,7 @@ func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
 
 	# Sync internal position state
 	_on_position_changed()
-	
+
 	# Notify that movement has ended
 	movement_ended.emit()
 
