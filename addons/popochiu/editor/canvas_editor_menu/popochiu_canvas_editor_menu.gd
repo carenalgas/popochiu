@@ -389,9 +389,9 @@ func _set_visibility_for_clickable_polygons(obj: Node) -> void:
 			interaction_polygon,
 			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_INT_POLY
 		)
-	
+
 	# Handle obstacle polygon
-	var obstacle_polygon: ObstaclePolygon2D = obj.get_node_or_null("ObstaclePolygon")
+	var obstacle_polygon: NavigationObstacle2D = obj.get_node_or_null("ObstaclePolygon")
 	if obstacle_polygon != null:
 		_set_polygon_visibility(
 			obstacle_polygon,

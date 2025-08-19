@@ -136,6 +136,93 @@ func _exit_tree():
 
 #endregion
 
+#region Public ####################################################################################
+## Collects all the [NavigationObstacle2D]s in the scene and returns them.
+
+## Sets up navigation obstacles using projected obstructions.
+## This is the preferred method for carving out areas in a NavigationPolygon.
+func setup_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
+	if not _perimeter or not _perimeter is NavigationRegion2D:
+		return
+
+	_load_navigation_polygon()
+
+	# Create source geometry data for baking
+	var source_geometry := NavigationMeshSourceGeometryData2D.new()
+
+	# Now add each obstacle as a projected obstruction
+	for obstacle: NavigationObstacle2D in obstacles:
+		if not obstacle or obstacle.vertices.size() < 3:
+			continue
+
+		var obstacle_parent: Node2D = obstacle.get_parent()
+		if not obstacle_parent or not obstacle_parent.visible or not obstacle_parent.obstacle:
+			continue
+
+		# Convert obstacle vertices to global space, then to perimeter's local space
+		var local_vertices := PackedVector2Array()
+		for vertex: Vector2 in obstacle.vertices:
+			# First convert to global space
+			var global_pos: Vector2 = obstacle_parent.to_global(vertex)
+			# Adjust the global position to account for the baseline because
+			# the engine is currently using y-sorting and not z-index.
+			global_pos.y -= obstacle_parent.baseline * scale.y
+			# Then convert to perimeter's local space
+			local_vertices.append(_perimeter.to_local(global_pos))
+
+		# Add as projected obstruction (true means carving)
+		source_geometry.add_projected_obstruction(local_vertices, true)
+
+	_bake_navigation(source_geometry)
+
+	# Wait a frame to ensure navigation is properly updated
+	await get_tree().process_frame
+
+
+#endregion
+
+#region SetGet #####################################################################################
+func _set_enabled(value: bool) -> void:
+	# Always store the value first
+	enabled = value
+
+	# Editor: allow changing and saving the property, but never touch the NavigationServer.
+	if Engine.is_editor_hint():
+		emit_signal("enabled_changed", enabled)
+		notify_property_list_changed()
+		return
+
+	# Runtime: if not ready yet, defer the NavigationServer update to _ready().
+	# This handles the case where the exported property is set during scene loading.
+	if not is_inside_tree() or not _perimeter or not region_rid.is_valid() or not map_rid.is_valid():
+		# Don't emit signal yet - _ready() will handle the actual NavigationServer sync
+		notify_property_list_changed()
+		return
+
+	# Runtime and ready: apply to NavigationServer immediately
+	_sync_enabled_state_to_navigation_server()
+	emit_signal("enabled_changed", enabled)
+	notify_property_list_changed()
+
+
+# Synchronizes the enabled property with the NavigationServer
+# Why: separates the property logic from NavigationServer updates for cleaner flow
+func _sync_enabled_state_to_navigation_server() -> void:
+	if not _perimeter or not region_rid.is_valid() or not map_rid.is_valid():
+		return
+
+	_perimeter.enabled = enabled
+	NavigationServer2D.region_set_enabled(region_rid, enabled)
+	NavigationServer2D.region_set_enabled(region_rid_no_obstacles, enabled)
+
+	if NavigationServer2D.map_is_active(map_rid):
+		NavigationServer2D.map_force_update(map_rid)
+	if NavigationServer2D.map_is_active(map_rid_no_obstacles):
+		NavigationServer2D.map_force_update(map_rid_no_obstacles)
+
+
+#endregion
+
 #region Private #####################################################################################
 # Maps the outlines in [param perimeter] to the [member interaction_polygon] property and also
 # stores its position in [member interaction_polygon_position].
@@ -228,91 +315,6 @@ func _bake_navigation_no_obstacles() -> void:
 	NavigationServer2D.region_set_enabled(region_rid_no_obstacles, enabled)
 
 	# Force update the navigation map without obstacles
-	if NavigationServer2D.map_is_active(map_rid_no_obstacles):
-		NavigationServer2D.map_force_update(map_rid_no_obstacles)
-
-
-#region Public ####################################################################################
-## Collects all the [NavigationObstacle2D]s in the scene and returns them.
-
-## Sets up navigation obstacles using projected obstructions.
-## This is the preferred method for carving out areas in a NavigationPolygon.
-func setup_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
-	if not _perimeter or not _perimeter is NavigationRegion2D:
-		return
-
-	_load_navigation_polygon()
-
-	# Create source geometry data for baking
-	var source_geometry := NavigationMeshSourceGeometryData2D.new()
-
-	# Now add each obstacle as a projected obstruction
-	for obstacle: NavigationObstacle2D in obstacles:
-		if not obstacle or obstacle.vertices.size() < 3:
-			continue
-
-		var obstacle_parent: Node2D = obstacle.get_parent()
-		if not obstacle_parent or not obstacle_parent.visible or not obstacle_parent.obstacle:
-			continue
-
-		# Convert obstacle vertices to global space, then to perimeter's local space
-		var local_vertices := PackedVector2Array()
-		for vertex: Vector2 in obstacle.vertices:
-			# First convert to global space
-			var global_pos: Vector2 = obstacle_parent.to_global(vertex)
-			# Adjust the global position to account for the baseline because
-			# the engine is currently using y-sorting and not z-index.
-			global_pos.y -= obstacle_parent.baseline * scale.y
-			# Then convert to perimeter's local space
-			local_vertices.append(_perimeter.to_local(global_pos))
-
-		# Add as projected obstruction (true means carving)
-		source_geometry.add_projected_obstruction(local_vertices, true)
-
-	_bake_navigation(source_geometry)
-
-	# Wait a frame to ensure navigation is properly updated
-	await get_tree().process_frame
-
-
-#endregion
-
-#region SetGet #####################################################################################
-func _set_enabled(value: bool) -> void:
-	# Always store the value first
-	enabled = value
-
-	# Editor: allow changing and saving the property, but never touch the NavigationServer.
-	if Engine.is_editor_hint():
-		emit_signal("enabled_changed", enabled)
-		notify_property_list_changed()
-		return
-
-	# Runtime: if not ready yet, defer the NavigationServer update to _ready().
-	# This handles the case where the exported property is set during scene loading.
-	if not is_inside_tree() or not _perimeter or not region_rid.is_valid() or not map_rid.is_valid():
-		# Don't emit signal yet - _ready() will handle the actual NavigationServer sync
-		notify_property_list_changed()
-		return
-
-	# Runtime and ready: apply to NavigationServer immediately
-	_sync_enabled_state_to_navigation_server()
-	emit_signal("enabled_changed", enabled)
-	notify_property_list_changed()
-
-
-# Synchronizes the enabled property with the NavigationServer
-# Why: separates the property logic from NavigationServer updates for cleaner flow
-func _sync_enabled_state_to_navigation_server() -> void:
-	if not _perimeter or not region_rid.is_valid() or not map_rid.is_valid():
-		return
-
-	_perimeter.enabled = enabled
-	NavigationServer2D.region_set_enabled(region_rid, enabled)
-	NavigationServer2D.region_set_enabled(region_rid_no_obstacles, enabled)
-
-	if NavigationServer2D.map_is_active(map_rid):
-		NavigationServer2D.map_force_update(map_rid)
 	if NavigationServer2D.map_is_active(map_rid_no_obstacles):
 		NavigationServer2D.map_force_update(map_rid_no_obstacles)
 
