@@ -52,7 +52,9 @@ func _ready() -> void:
 	add_to_group('walkable_areas')
 
 	if not _perimeter:
-		print("No perimeter found in the walkable area. Please add a NavigationRegion2D child named 'Perimeter'.")
+		PopochiuUtils.print_warning(
+			"Corrupted Walkable Area: no perimeter found. Add a NavigationRegion2D child named 'Perimeter', or create a new Walkable Area."
+		)
 		return
 
 	# Assign the _perimeter as the main region for navigation.
@@ -163,7 +165,7 @@ func _load_navigation_polygon() -> void:
 	navpoly.agent_radius = 0.0
 
 	# Add the original outlines
-	for outline in interaction_polygon:
+	for outline: PackedVector2Array in interaction_polygon:
 		navpoly.add_outline(outline)
 
 	# Assign the polygon to the perimeter first - this establishes the relationship

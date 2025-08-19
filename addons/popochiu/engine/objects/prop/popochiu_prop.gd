@@ -59,12 +59,7 @@ var total_frames: get = get_total_frames
 func _ready() -> void:
 	super()
 	add_to_group("props")
-	
-	# Connect movement signals to virtual methods
-	if not Engine.is_editor_hint():
-		movement_started.connect(_on_movement_started)
-		movement_ended.connect(_on_movement_ended)
-	
+
 	if Engine.is_editor_hint():
 		# Ignore assigning the vertices when:
 		if (
@@ -89,6 +84,8 @@ func _ready() -> void:
 		_navigation_obstacle.vertices = obstacle_polygon
 		_navigation_obstacle.position = obstacle_polygon_position
 
+	# Adjust the position and scaling of the prop
+	# since we use the Y position as a sort of Z index.
 	for c in get_children():
 		if c.get("position") is Vector2:
 			c.position.y -= baseline * c.scale.y
@@ -97,14 +94,21 @@ func _ready() -> void:
 	look_at_point.y -= baseline * scale.y
 	position.y += baseline * scale.y
 
+	# If an object is always on top, then
+	# use the proper z-index.
 	if always_on_top:
 		z_index += 1
-	
+
+	# Connect movement signals
+	movement_started.connect(_on_movement_started)
+	movement_ended.connect(_on_movement_ended)
+
+	# Connect signals of the linked item, if any
 	if link_to_item:
 		PopochiuUtils.i.item_added.connect(_on_item_added)
 		PopochiuUtils.i.item_removed.connect(_on_item_removed)
 		PopochiuUtils.i.item_discarded.connect(_on_item_discarded)
-		
+
 		if (
 			PopochiuUtils.i.is_item_in_inventory(link_to_item) or
 			PopochiuUtils.i.has_item_been_collected(link_to_item)
@@ -168,7 +172,7 @@ func change_frame(new_frame: int) -> void:
 func get_navigation_obstacle() -> NavigationObstacle2D:
 	if not _navigation_obstacle or not _navigation_obstacle is NavigationObstacle2D:
 		return null
-	
+
 	# Check if obstacle has vertices defined (minimum 3 for a valid polygon)
 	if _navigation_obstacle.vertices.size() < 3:
 		return null
@@ -182,34 +186,34 @@ func get_navigation_obstacle() -> NavigationObstacle2D:
 func set_texture(value: Texture2D) -> void:
 	texture = value
 	if not has_node("Sprite2D"): return
-	
+
 	$Sprite2D.texture = value
 
 
 func set_frames(value: int) -> void:
 	frames = value
 	if not has_node("Sprite2D"): return
-	
+
 	$Sprite2D.hframes = value
 
 
 func set_v_frames(value: int) -> void:
 	v_frames = value
 	if not has_node("Sprite2D"): return
-	
+
 	$Sprite2D.vframes = value
 
 
 func set_current_frame(value: int) -> void:
 	current_frame = value
 	if not has_node("Sprite2D"): return
-	
+
 	var sprite := $Sprite2D as Sprite2D
 	current_frame = (total_frames + current_frame) % total_frames
-	
+
 	sprite.frame = current_frame
-	
-	
+
+
 func get_total_frames() -> int:
 	return frames * v_frames
 
@@ -339,7 +343,7 @@ func _on_item_removed(item: PopochiuInventoryItem, _animate: bool) -> void:
 func _on_item_discarded(item: PopochiuInventoryItem) -> void:
 	if item.script_name == link_to_item:
 		enable()
-		
+
 		_on_linked_item_discarded()
 		linked_item_discarded.emit(self)
 

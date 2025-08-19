@@ -7,7 +7,7 @@ var _active_popochiu_object: Node = null
 var _shown_helpers := []
 
 # Add these variables to track polygon edit mode
-var _editing_polygon := false
+var _is_editing_polygon := false
 var _polygon_being_edited: Node = null
 
 @onready var btn_markers: Button = %BtnMarkers
@@ -40,6 +40,7 @@ func _ready() -> void:
 
 	_set_toolbar_buttons_color()
 	hide()
+
 
 #endregion
 
@@ -80,30 +81,15 @@ func _toggle_dialog_pos_visibility() -> void:
 
 
 func _select_interaction_polygon() -> void:
-	# Toggle polygon edit mode off if already editing
-	if _editing_polygon && _polygon_being_edited != null:
-		# When exiting edit mode, reselect parent and update toolbar
-		var parent_node = _polygon_being_edited.get_parent()
-		_editing_polygon = false
-		_polygon_being_edited = null
-		btn_interaction_polygon.set_pressed_no_signal(false)
-		EditorInterface.get_selection().clear()
-		EditorInterface.get_selection().add_node(parent_node)
-		_on_selection_changed()
+	# If we are editing the polygon, exit editing mode and
+	# select the parent node back.
+	if _is_editing_polygon && _polygon_being_edited != null:
+		_exit_editing_mode()
 		return
 
-	# If we are editing the polygon, go back and select the parent node
-	# then stop execution.
-	var selected_node := EditorInterface.get_selection().get_selected_nodes()[0]
-	if PopochiuEditorHelper.is_popochiu_obj_polygon(
-		selected_node
-	):
-		EditorInterface.get_selection().add_node(selected_node.get_parent())
-		_on_selection_changed()
-		return
-
-	# If we are editing a popochiu object holding a polygon, let's move on.
-
+	# We are editing a popochiu object holding a polygon, so let's move on
+	# and enter interaction / navigation editing mode.
+ 
 	# This variable will hold the reference to the polygon we need to edit.
 	var obj_polygon: Node2D = null
 
@@ -124,36 +110,23 @@ func _select_interaction_polygon() -> void:
 	obj_polygon.show()
 
 	# Enable edit mode
-	_editing_polygon = true
+	_is_editing_polygon = true
 	_polygon_being_edited = obj_polygon
 	btn_interaction_polygon.set_pressed_no_signal(true)
 
 
 func _select_obstacle_polygon() -> void:
-	# Toggle polygon edit mode off if already editing
-	if _editing_polygon && _polygon_being_edited != null:
-		# When exiting edit mode, reselect parent and update toolbar
-		var parent_node = _polygon_being_edited.get_parent()
-		_editing_polygon = false
-		_polygon_being_edited = null
-		btn_obstacle_polygon.set_pressed_no_signal(false)
-		EditorInterface.get_selection().clear()
-		EditorInterface.get_selection().add_node(parent_node)
-		_on_selection_changed()
+	# If we are editing the polygon, exit editing mode and
+	# select the parent node back.
+	if _is_editing_polygon && _polygon_being_edited != null:
+		_exit_editing_mode()
 		return
 
-	# If we are editing the polygon, go back and select the parent node
-	# then stop execution.
+	# We are editing a popochiu object holding a polygon, so let's move on
+	# and enter obstacle editing mode.
+
+	# Let's store a reference to the clickable being edited
 	var selected_node := EditorInterface.get_selection().get_selected_nodes()[0]
-	if PopochiuEditorHelper.is_popochiu_obstacle_polygon(
-		selected_node
-	):
-		EditorInterface.get_selection().add_node(selected_node.get_parent())
-		_on_selection_changed()
-		return
-
-	# If we are editing a popochiu object holding an obstacle polygon, let's move on.
-
 	# This variable will hold the reference to the polygon we need to edit.
 	var obstacle_polygon: NavigationObstacle2D = null
 
@@ -171,9 +144,38 @@ func _select_obstacle_polygon() -> void:
 	obstacle_polygon.show()
 
 	# Enable edit mode
-	_editing_polygon = true
+	_is_editing_polygon = true
 	_polygon_being_edited = obstacle_polygon
 	btn_obstacle_polygon.set_pressed_no_signal(true)
+
+
+# This function is used to exit editing mode. It's called by the toolbar buttons
+# polygons selector handlers when we are editing a polygon.
+#
+# NOTE: To keep the naming meaningful and avoid a mess with arguments (like, passing the button
+# which makes little sense), it inspects the type of polygon to identify the
+# button to pop. This requires a bit of maintenance, but the whole polygon thing does
+# so...
+func _exit_editing_mode() -> void:
+	# Pop the right button on the toolbar, depending
+	# on the type of the polygon being edited.
+	if PopochiuEditorHelper.is_popochiu_obj_polygon(_polygon_being_edited):
+		btn_interaction_polygon.set_pressed_no_signal(false)
+	elif PopochiuEditorHelper.is_popochiu_obstacle_polygon(_polygon_being_edited):
+		btn_obstacle_polygon.set_pressed_no_signal(false)
+
+	# Clear selection
+	EditorInterface.get_selection().clear()
+	EditorInterface.get_selection().add_node(
+		_polygon_being_edited.get_parent()
+	)
+
+	# Reset editing mode flags
+	_is_editing_polygon = false
+	_polygon_being_edited = null
+
+	# Refresh the editor interface
+	_on_selection_changed()
 
 
 func _on_gizmo_settings_changed() -> void:
@@ -183,9 +185,15 @@ func _on_gizmo_settings_changed() -> void:
 	_set_toolbar_buttons_color()
 
 
+# This overly complex function refreshes the whole interface after a sub-node (interaction
+# or navigation polygon) of a clickable or walkable area has been selected/deselected.
+#
+# TODO: This function is here until we have a polygon gizmo that we can use to populate
+# our transition polygons, something that would considerably simplify the code of this
+# canvas menu plugin and of all and every clickable in the game!
 func _on_selection_changed() -> void:
 	# Only force polygon reselection if edit mode is active
-	if _editing_polygon && _polygon_being_edited != null:
+	if _is_editing_polygon && _polygon_being_edited != null:
 		var selected_nodes = EditorInterface.get_selection().get_selected_nodes()
 		if selected_nodes.is_empty() || !(_polygon_being_edited in selected_nodes):
 			EditorInterface.get_selection().clear()
@@ -303,8 +311,8 @@ func _on_selection_changed() -> void:
 	_set_buttons_visibility()
 
 
-## Handles the editor config that allows the WAs polygons to be always visible,
-## not only during editing.
+# Handles the editor config that allows the WAs polygons to be always visible,
+# not only during editing.
 func _set_walkable_areas_visibility() -> void:
 	# Avoid errors when the editor has no scene open
 	if EditorInterface.get_edited_scene_root() == null:
@@ -369,7 +377,7 @@ func _set_room_clickable_polygons_visibility() -> void:
 			_set_visibility_for_clickable_polygons(child)
 
 
-## Helper function to handle polygon visibility for both interaction and obstacle polygons
+# Helper function to handle polygon visibility for both interaction and obstacle polygons
 func _set_visibility_for_clickable_polygons(obj: Node) -> void:
 	# Handle interaction polygon
 	var interaction_polygon = PopochiuEditorHelper.get_first_child_by_group(
@@ -391,7 +399,7 @@ func _set_visibility_for_clickable_polygons(obj: Node) -> void:
 		)
 
 
-## Helper function to set polygon visibility based on editor settings and selection
+# Helper function to set polygon visibility based on editor settings and selection
 func _set_polygon_visibility(polygon: Node, always_show_setting: String) -> void:
 	# Should we show all polygons of this type? Show and continue
 	if PopochiuEditorConfig.get_editor_setting(always_show_setting):
@@ -404,8 +412,8 @@ func _set_polygon_visibility(polygon: Node, always_show_setting: String) -> void
 		polygon.hide()
 
 
-## Sets all the buttons color so that they are the same as the gizmos
-## or make them theme-standard if the use so prefer (see editor settings)
+# Sets all the buttons color so that they are the same as the gizmos
+# or make them theme-standard if the use so prefer (see editor settings)
 func _set_toolbar_buttons_color() -> void:
 	if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_COLOR_TOOLBAR_BUTTONS):
 		# Reset button colors
@@ -453,7 +461,7 @@ func _set_toolbar_buttons_color() -> void:
 		Color.DARK_ORANGE # no config for this at the moment
 	)
 
-## Internal helper to reduce code duplication
+# Internal helper to reduce code duplication
 func _set_toolbar_button_color(btn, color) -> void:
 	btn.add_theme_color_override("icon_normal_color", color)
 	btn.add_theme_color_override("icon_hover_color", color.lightened(1.0))
@@ -462,7 +470,7 @@ func _set_toolbar_button_color(btn, color) -> void:
 	btn.add_theme_color_override("icon_hover_pressed_color", color.lightened(1.0))
 
 
-## Internal helper to reduce code duplication
+# Internal helper to reduce code duplication
 func _reset_toolbar_button_color(btn) -> void:
 	btn.remove_theme_color_override("icon_normal_color")
 	btn.remove_theme_color_override("icon_hover_color")
@@ -483,7 +491,7 @@ func _set_buttons_visibility() -> void:
 	btn_obstacle_polygon.hide()
 
 	# If we're in polygon edit mode, only show the relevant button
-	if _editing_polygon && _polygon_being_edited != null:
+	if _is_editing_polygon && _polygon_being_edited != null:
 		show()
 		if PopochiuEditorHelper.is_popochiu_obj_polygon(_polygon_being_edited):
 			btn_interaction_polygon.show()
@@ -570,3 +578,6 @@ func _reset_buttons_state() -> void:
 	btn_walk_to_point.set_pressed_no_signal(true)
 	btn_look_at_point.set_pressed_no_signal(true)
 	btn_dialog_pos.set_pressed_no_signal(true)
+
+
+#endregion
