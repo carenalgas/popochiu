@@ -521,8 +521,11 @@ func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 		if not prop or not prop is PopochiuProp:
 			continue
 
-		var obstacle = prop.get_navigation_obstacle()
+		var obstacle: NavigationObstacle2D = prop.get_navigation_obstacle()
 		if obstacle:
+			# Adjust the global position to account for the baseline because
+			# props are currently using y-sorting and not z-index.
+			obstacle.position.y -= prop.baseline * scale.y
 			obstacles.append(obstacle)
 
 	# Collect obstacles from characters (excluding temporary editor instances and player character)

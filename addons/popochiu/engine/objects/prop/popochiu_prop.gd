@@ -86,9 +86,9 @@ func _ready() -> void:
 
 	# Adjust the position and scaling of the prop
 	# since we use the Y position as a sort of Z index.
-	for c in get_children():
-		if c.get("position") is Vector2:
-			c.position.y -= baseline * c.scale.y
+	for child: Node in get_children():
+		if child.get("position") is Vector2:
+			child.position.y -= baseline * child.scale.y
 
 	walk_to_point.y -= baseline * scale.y
 	look_at_point.y -= baseline * scale.y
