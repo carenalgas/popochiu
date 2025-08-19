@@ -23,6 +23,8 @@ const GIZMOS_SHOW_OUTLINE = "popochiu/gizmos/show_handler_outline"
 const GIZMOS_SHOW_NODE_NAME = "popochiu/gizmos/show_node_name"
 const GIZMOS_SHOW_POSITION = "popochiu/gizmos/show_position"
 const GIZMOS_ALWAYS_SHOW_WA = "popochiu/gizmos/always_show_walkable_areas"
+const GIZMOS_ALWAYS_SHOW_INT_POLY = "popochiu/gizmos/always_show_interaction_polygons"
+const GIZMOS_ALWAYS_SHOW_OBS_POLY = "popochiu/gizmos/always_show_obstacle_polygons"
 
 # Settings default values
 static var defaults := {
@@ -42,6 +44,8 @@ static var defaults := {
 	GIZMOS_SHOW_NODE_NAME: true,
 	GIZMOS_SHOW_POSITION: true,
 	GIZMOS_ALWAYS_SHOW_WA: false,
+	GIZMOS_ALWAYS_SHOW_INT_POLY: false,
+	GIZMOS_ALWAYS_SHOW_OBS_POLY: false,
 }
 
 static var editor_settings: EditorSettings
@@ -69,6 +73,8 @@ static func initialize_editor_settings():
 	_initialize_editor_setting(GIZMOS_SHOW_NODE_NAME, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_SHOW_POSITION, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_WA, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_INT_POLY, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_OBS_POLY, TYPE_BOOL)
 
 
 static func get_icon(icon: Icons) -> Texture2D:

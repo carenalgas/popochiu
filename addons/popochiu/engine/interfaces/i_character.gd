@@ -22,6 +22,8 @@ extends Node
 
 ## Emitted when [param character] says [param message].
 signal character_spoke(character: PopochiuCharacter, message: String)
+## Emitted when the player character changes from [param old_player] to [param new_player].
+signal player_changed(old_player: PopochiuCharacter, new_player: PopochiuCharacter)
 
 ## Access to the [PopochiuCharacter] that is the current Player-controlled Character (PC).
 var player: PopochiuCharacter : set = set_player
@@ -169,8 +171,12 @@ func get_instance(script_name: String) -> PopochiuCharacter:
 
 #region SetGet #####################################################################################
 func set_player(value: PopochiuCharacter) -> void:
+	var old_player = player
 	player = value
 	camera_owner = value
+	
+	# Emit the player changed signal so characters can update their clickability
+	player_changed.emit(old_player, value)
 
 
 #endregion

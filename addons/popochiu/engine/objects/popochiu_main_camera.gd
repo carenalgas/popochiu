@@ -31,12 +31,7 @@ func _process(delta: float) -> void:
 		is_instance_valid(PopochiuUtils.c.camera_owner)
 		and PopochiuUtils.c.camera_owner.is_inside_tree()
 	):
-		position = (
-			PopochiuUtils.c.camera_owner.position_stored
-			if PopochiuUtils.c.camera_owner.position_stored
-			else PopochiuUtils.c.camera_owner.position
-		)
-
+		position = PopochiuUtils.c.camera_owner.get_buffered_position()
 
 #endregion
 
@@ -44,7 +39,7 @@ func _process(delta: float) -> void:
 ## Changes the main camera's offset by [param offset] pixels. This method is intended to be used
 ## inside a [method queue] of instructions.
 func queue_change_offset(offset := Vector2.ZERO) -> Callable:
-	return func (): await change_offset(offset)
+	return func(): await change_offset(offset)
 
 
 ## Changes the main camera's offset by [param offset] pixels. Useful when zooming the camera.
@@ -56,7 +51,7 @@ func change_offset(offset := Vector2.ZERO) -> void:
 ## Makes the camera shake with [param strength] during [param duration] seconds. This method is
 ## intended to be used inside a [method queue] of instructions.
 func queue_shake(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await shake(strength, duration)
+	return func(): await shake(strength, duration)
 
 
 ## Makes the camera shake with [param strength] during [param duration] seconds.
@@ -72,7 +67,7 @@ func shake(strength := 1.0, duration := 1.0) -> void:
 ## execution (that means it runs in the background). This method is intended to be used inside a
 ## [method queue] of instructions.
 func queue_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
-	return func (): await shake_bg(strength, duration)
+	return func(): await shake_bg(strength, duration)
 
 
 ## Makes the camera shake with [param strength] during [param duration] seconds without blocking
@@ -90,7 +85,7 @@ func shake_bg(strength := 1.0, duration := 1.0) -> void:
 ## [param duration] seconds. This method is intended to be used inside a [method queue] of
 ## instructions.
 func queue_change_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
-	return func (): await change_zoom(target, duration)
+	return func(): await change_zoom(target, duration)
 
 
 ## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code] the camera
@@ -99,7 +94,7 @@ func queue_change_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
 func change_zoom(target := Vector2.ONE, duration := 1.0) -> void:
 	if is_instance_valid(tween) and tween.is_running():
 		tween.kill()
-	
+
 	tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	tween.tween_property(self, "zoom", target, duration).from_current()
 	await tween.finished

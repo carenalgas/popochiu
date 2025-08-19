@@ -59,7 +59,7 @@ func walk_to() -> void:
 	
 	PopochiuUtils.c.player.walk_to_clicked()
 	
-	await PopochiuUtils.c.player.move_ended
+	await PopochiuUtils.c.player.movement_ended
 	
 	if (
 		PopochiuUtils.e.clicked and PopochiuUtils.e.clicked.get("suggested_command")

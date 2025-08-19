@@ -213,8 +213,12 @@ static func is_marker(node: Node) -> bool:
 	return node is Marker2D
 
 
-static func is_popochiu_obj_polygon(node: Node):
+static func is_popochiu_obj_polygon(node: Node) -> bool:
 	return node.is_in_group(POPOCHIU_OBJECT_POLYGON_GROUP)
+
+
+static func is_popochiu_obstacle_polygon(node: Node) -> bool:
+	return node is NavigationObstacle2D
 
 
 # Context-checking functions
