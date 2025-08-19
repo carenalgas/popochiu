@@ -137,8 +137,6 @@ func _exit_tree():
 #endregion
 
 #region Public ####################################################################################
-## Collects all the [NavigationObstacle2D]s in the scene and returns them.
-
 ## Sets up navigation obstacles using projected obstructions.
 ## This is the preferred method for carving out areas in a NavigationPolygon.
 func setup_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
@@ -259,6 +257,8 @@ func _load_navigation_polygon() -> void:
 	_perimeter.position = interaction_polygon_position
 
 
+# This function bakes the navigation polygon from this walkable area, taking into
+# account all obstacles that have been set up by the room.
 func _bake_navigation(source_geometry: NavigationMeshSourceGeometryData2D = null) -> void:
 	# This is a convenience method to bake the navigation polygon
 	if not _perimeter or not _perimeter is NavigationRegion2D:
@@ -284,7 +284,8 @@ func _bake_navigation(source_geometry: NavigationMeshSourceGeometryData2D = null
 		NavigationServer2D.map_force_update(map_rid)
 
 
-# Add this function to bake only the clean navigation
+# This function bakes a no-obstacle version of the navigation area so that it can be used
+# for pathfinding by the characters with ignore_obstacles property flagged.
 func _bake_navigation_no_obstacles() -> void:
 	if Engine.is_editor_hint() or not map_rid_no_obstacles.is_valid():
 		return
