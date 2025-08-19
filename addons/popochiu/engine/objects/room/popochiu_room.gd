@@ -542,7 +542,7 @@ func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 		if PopochiuCharactersHelper.is_player_character(character):
 			continue
 
-		var obstacle = character.get_navigation_obstacle()
+		var obstacle: NavigationObstacle2D = character.get_navigation_obstacle()
 		if obstacle:
 			obstacles.append(obstacle)
 
@@ -568,11 +568,11 @@ func _on_walkable_area_enabled_changed(enabled: bool, area: PopochiuWalkableArea
 # Connects to all props' and characters' movement_ended and visibility_changed signals to trigger navigation rebaking.
 func _connect_object_changes_signals() -> void:
 	# Connect to props signals
-	for prop in get_props():
+	for prop: PopochiuProp in get_props():
 		_connect_obstacle_obj_signals(prop)
 
 	# Connect to characters signals
-	for character in get_characters():
+	for character: PopochiuCharacter in get_characters():
 		if character.has_meta('EDITOR_TMP_COPY_OF'):
 			continue
 		_connect_obstacle_obj_signals(character)

@@ -150,7 +150,7 @@ func _update_signal_references_in_game_scripts() -> Completion:
 	var any_script_updated := false
 	
 	# Get all .gd files in the game folder recursively
-	var script_files := _get_all_gd_files(game_path)
+	var script_files := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(PopochiuResources.GAME_PATH, ["gd"])
 	
 	for script_path in script_files:
 		if _update_signal_references_in_file(script_path):
@@ -158,32 +158,6 @@ func _update_signal_references_in_game_scripts() -> Completion:
 	
 	PopochiuUtils.print_normal("Migration %d: Signal references update completed. %s script updated: %s" % [VERSION, "Some" if any_script_updated else "No"])
 	return Completion.DONE if any_script_updated else Completion.IGNORED
-
-
-## Recursively get all .gd files in a directory.
-func _get_all_gd_files(directory_path: String) -> Array[String]:
-	var gd_files: Array[String] = []
-	var dir := DirAccess.open(directory_path)
-	if dir == null:
-		PopochiuUtils.print_error("Migration %d: Could not open directory: %s" % [VERSION, directory_path])
-		return gd_files
-	
-	dir.list_dir_begin()
-	var file_name := dir.get_next()
-	
-	while file_name != "":
-		var full_path := directory_path + "/" + file_name
-		
-		if dir.current_is_dir():
-			# Skip hidden directories and .import directories
-			if not file_name.begins_with("."):
-				gd_files.append_array(_get_all_gd_files(full_path))
-		elif file_name.ends_with(".gd"):
-			gd_files.append(full_path)
-		
-		file_name = dir.get_next()
-	
-	return gd_files
 
 
 ## Update signal references in a single script file.
@@ -431,66 +405,45 @@ func _get_character_scripts(characters_path: String) -> Array[String]:
 
 ## Get all prop script files from all rooms.
 func _get_prop_scripts(base_path: String) -> Array[String]:
-	var prop_scripts: Array[String] = []
-	var rooms_dir := DirAccess.open(base_path)
-	if rooms_dir == null:
-		PopochiuUtils.print_error("Migration %d: Could not open rooms directory: %s" % [VERSION, base_path])
-		return prop_scripts
-	
-	rooms_dir.list_dir_begin()
-	var room_name := rooms_dir.get_next()
-	
-	while room_name != "":
-		if rooms_dir.current_is_dir():
-			var props_path := base_path + room_name + "/props/"
-			if DirAccess.dir_exists_absolute(props_path):
-				var props_dir := DirAccess.open(props_path)
-				if props_dir != null:
-					props_dir.list_dir_begin()
-					var prop_name := props_dir.get_next()
-					
-					while prop_name != "":
-						if props_dir.current_is_dir():
-							var prop_script_path := props_path + prop_name + "/" + "prop_" + prop_name + ".gd"
-							if FileAccess.file_exists(prop_script_path):
-								prop_scripts.append(prop_script_path)
-							else:
-								PopochiuUtils.print_warning("Migration %d: Prop script not found: %s" % [VERSION, prop_script_path])
-						prop_name = props_dir.get_next()
-		room_name = rooms_dir.get_next()
-	
-	return prop_scripts
+	return _get_room_scripts(base_path, "props", "prop")
 
 
 ## Get all hotspot script files from all rooms.
 func _get_hotspot_scripts(base_path: String) -> Array[String]:
-	var hotspot_scripts: Array[String] = []
+	return _get_room_scripts(base_path, "hotspots", "hotspot")
+
+
+## Get all scripts of a specific type from room subfolders.
+func _get_room_scripts(base_path: String, subfolder: String, script_prefix: String) -> Array[String]:
+	var scripts: Array[String] = []
 	var rooms_dir := DirAccess.open(base_path)
 	if rooms_dir == null:
 		PopochiuUtils.print_error("Migration %d: Could not open rooms directory: %s" % [VERSION, base_path])
-		return hotspot_scripts
+		return scripts
 	
 	rooms_dir.list_dir_begin()
 	var room_name := rooms_dir.get_next()
 	
 	while room_name != "":
 		if rooms_dir.current_is_dir():
-			var hotspots_path := base_path + room_name + "/hotspots/"
-			if DirAccess.dir_exists_absolute(hotspots_path):
-				var hotspots_dir := DirAccess.open(hotspots_path)
-				if hotspots_dir != null:
-					hotspots_dir.list_dir_begin()
-					var hotspot_name := hotspots_dir.get_next()
+			var folder_path := base_path + room_name + "/" + subfolder + "/"
+			if DirAccess.dir_exists_absolute(folder_path):
+				var folder_dir := DirAccess.open(folder_path)
+				if folder_dir != null:
+					folder_dir.list_dir_begin()
+					var item_name := folder_dir.get_next()
 					
-					while hotspot_name != "":
-						if hotspots_dir.current_is_dir():
-							var hotspot_script_path := hotspots_path + hotspot_name + "/" + "hotspot_" + hotspot_name + ".gd"
-							if FileAccess.file_exists(hotspot_script_path):
-								hotspot_scripts.append(hotspot_script_path)
-						hotspot_name = hotspots_dir.get_next()
+					while item_name != "":
+						if folder_dir.current_is_dir():
+							var script_path := folder_path + item_name + "/" + script_prefix + "_" + item_name + ".gd"
+							if FileAccess.file_exists(script_path):
+								scripts.append(script_path)
+							else:
+								PopochiuUtils.print_warning("Migration %d: %s script not found: %s" % [VERSION, script_prefix.capitalize(), script_path])
+						item_name = folder_dir.get_next()
 		room_name = rooms_dir.get_next()
 	
-	return hotspot_scripts
+	return scripts
 
 
 #endregion

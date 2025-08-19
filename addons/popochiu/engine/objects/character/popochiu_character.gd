@@ -91,9 +91,6 @@ const EMPTY_STRING = ""
 # Inspector for the character.
 @export_category("Aseprite")
 
-## The stored position of the character. Used when [member anti_glide_animation] is
-## [code]true[/code].
-var _buffered_position = null
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
 var last_room := EMPTY_STRING
 ## The suffix text to add to animation names.
@@ -108,6 +105,7 @@ var default_walk_speed := 0
 ## Stores the default scale. Used by [PopochiuRoom] when scaling the character if it is inside a
 ## [PopochiuRegion] that modifies the scale.
 var default_scale := Vector2.ONE
+
 # Holds the direction the character is looking at.
 # Initialized to DOWN.
 var _looking_dir: int = Looking.DOWN
@@ -142,6 +140,8 @@ var _valid_animation_suffixes = [
 ['_r', '_l', '_ur', '_ul', '_u']] # 337.5 - 360 degrees
 # Navigation path for this character's current movement
 var _navigation_path := PackedVector2Array()
+# The stored position of the character. Used when anti_glide_animation is true.
+var _buffered_position = null
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -150,7 +150,7 @@ var _navigation_path := PackedVector2Array()
 
 #region Godot ######################################################################################
 func _ready():
-	super ()
+	super()
 
 	default_walk_speed = walk_speed
 	default_scale = Vector2(scale)
@@ -158,28 +158,31 @@ func _ready():
 	if Engine.is_editor_hint():
 		hide_helpers()
 		set_process(true)
-	else:
-		set_process(follow_player)
+		return
 
+	# Runtime execution code starts here
+
+	# Connect the logic for anti-glide animations.
+	# The handler function will know what to do, based on configuration.
 	for child in get_children():
 		if not child is Sprite2D:
 			continue
 		child.frame_changed.connect(_update_position)
 
 	# Connect movement signals to virtual methods
-	if not Engine.is_editor_hint():
-		movement_started.connect(_on_movement_started)
-		movement_ended.connect(_on_movement_ended)
-
-	# The code that follows is only executed when the game is running
-	if Engine.is_editor_hint():
-		return
+	movement_started.connect(_on_movement_started)
+	movement_ended.connect(_on_movement_ended)
 
 	# Connect to own movement signals to handle navigation internally
 	if not started_walk_to.is_connected(_update_navigation_path):
 		started_walk_to.connect(_update_navigation_path)
 	if not stopped_walk.is_connected(_clear_navigation_path):
 		stopped_walk.connect(_clear_navigation_path)
+
+	# Prevent frame-by-frame processing for this character.
+	# This flag is set when activating the walking function, or by characters
+	# following the player (see below).
+	set_process(false)
 
 	# Setup following behavior if enabled
 	if (
@@ -190,6 +193,9 @@ func _ready():
 		and self != PopochiuUtils.c.player
 	):
 		PopochiuUtils.c.player.started_walk_to.connect(_follow_player)
+		# This character is following a player, so it must move without
+		# explicitly invoking walk or move functions.
+		set_process(true)
 
 	# We need to initialize the interaction for the player character.
 	# Changes will be handled by the player_changed signal handler.
@@ -204,10 +210,10 @@ func _ready():
 		PopochiuUtils.c.player_changed.connect(_on_player_changed)
 
 
-func _physics_process(delta):
+func _physics_process(delta: float) -> void:
 	if _navigation_path.is_empty(): return
 
-	var walk_distance = walk_speed * delta
+	var walk_distance: float = walk_speed * delta
 	_move_along_path(walk_distance)
 
 
