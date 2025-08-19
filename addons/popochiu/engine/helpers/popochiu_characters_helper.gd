@@ -35,7 +35,7 @@ static func is_player_character(character: PopochiuCharacter) -> bool:
 	# If the player reference is not set (yet), use the game configuration
 	# to identify the player character.
 	if not PopochiuUtils.c.player:
-		var pc = PopochiuResources.get_data_value("setup", "pc", "")
+		var pc: String = PopochiuResources.get_data_value("setup", "pc", "")
 		return (not pc.is_empty() and character.script_name == pc)
 
 	# If the player reference is set, check if the character is the player.
