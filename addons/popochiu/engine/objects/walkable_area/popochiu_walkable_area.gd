@@ -44,7 +44,7 @@ var region_rid_no_obstacles: RID
 signal enabled_changed(value: bool)
 
 # Reference to the perimeter NavigationRegion2D, saved for internal use
-@onready var _perimeter = get_node_or_null("Perimeter")
+@onready var _perimeter: NavigationRegion2D = get_node_or_null("Perimeter")
 
 
 #region Godot ######################################################################################
@@ -88,7 +88,7 @@ func _ready() -> void:
 	map_rid_no_obstacles = NavigationServer2D.map_create()
 
 	# Ensure polygon and map use the same cell_size to avoid errors.
-	var cell_size = _perimeter.navigation_polygon.cell_size if _perimeter.navigation_polygon else 1.0
+	var cell_size: float = _perimeter.navigation_polygon.cell_size if _perimeter.navigation_polygon else 1.0
 	NavigationServer2D.map_set_cell_size(map_rid, cell_size)
 	NavigationServer2D.map_set_cell_size(map_rid_no_obstacles, cell_size)
 
@@ -159,7 +159,7 @@ func _load_navigation_polygon() -> void:
 		return
 
 	# Create a fresh navigation polygon
-	var navpoly = NavigationPolygon.new()
+	var navpoly := NavigationPolygon.new()
 	navpoly.agent_radius = 0.0
 
 	# Add the original outlines
@@ -207,12 +207,12 @@ func _bake_navigation_no_obstacles() -> void:
 		return
 
 	# Create a clean navigation polygon without obstacles
-	var clean_navpoly = NavigationPolygon.new()
+	var clean_navpoly := NavigationPolygon.new()
 	clean_navpoly.agent_radius = 0.0
 	clean_navpoly.cell_size = _perimeter.navigation_polygon.cell_size if _perimeter.navigation_polygon else 1.0
 
 	# Add the original outlines
-	for outline in interaction_polygon:
+	for outline: PackedVector2Array in interaction_polygon:
 		clean_navpoly.add_outline(outline)
 
 	# Bake the clean navigation polygon
@@ -242,22 +242,22 @@ func setup_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 	_load_navigation_polygon()
 
 	# Create source geometry data for baking
-	var source_geometry = NavigationMeshSourceGeometryData2D.new()
+	var source_geometry := NavigationMeshSourceGeometryData2D.new()
 
 	# Now add each obstacle as a projected obstruction
-	for obstacle in obstacles:
+	for obstacle: NavigationObstacle2D in obstacles:
 		if not obstacle or obstacle.vertices.size() < 3:
 			continue
 
-		var obstacle_parent = obstacle.get_parent()
+		var obstacle_parent: Node2D = obstacle.get_parent()
 		if not obstacle_parent or not obstacle_parent.visible or not obstacle_parent.obstacle:
 			continue
 
 		# Convert obstacle vertices to global space, then to perimeter's local space
-		var local_vertices = PackedVector2Array()
-		for vertex in obstacle.vertices:
+		var local_vertices := PackedVector2Array()
+		for vertex: Vector2 in obstacle.vertices:
 			# First convert to global space
-			var global_pos = obstacle_parent.to_global(vertex)
+			var global_pos: Vector2 = obstacle_parent.to_global(vertex)
 			# Adjust the global position to account for the baseline because
 			# the engine is currently using y-sorting and not z-index.
 			global_pos.y -= obstacle_parent.baseline * scale.y

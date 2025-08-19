@@ -266,7 +266,7 @@ func _on_selection_changed() -> void:
 					_active_popochiu_object,
 					PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
 				)
-				if (polygon == null):
+				if polygon == null:
 					# Or maybe it's an obstacle polygon.
 					polygon = _active_popochiu_object.get_node_or_null("ObstaclePolygon")
 			if (polygon != null):
@@ -354,17 +354,17 @@ func _set_room_clickable_polygons_visibility() -> void:
 		return
 
 	# Handle Props
-	for child in root.find_child("Props").get_children():
+	for child: Node in root.find_child("Props").get_children():
 		if PopochiuEditorHelper.is_prop(child):
 			_set_visibility_for_clickable_polygons(child)
 
 	# Handle Characters
-	for child in root.find_child("Characters").get_children():
+	for child: Node in root.find_child("Characters").get_children():
 		if PopochiuEditorHelper.is_character(child):
 			_set_visibility_for_clickable_polygons(child)
 
 	# Handle Hotspots
-	for child in root.find_child("Hotspots").get_children():
+	for child: Node in root.find_child("Hotspots").get_children():
 		if PopochiuEditorHelper.is_hotspot(child):
 			_set_visibility_for_clickable_polygons(child)
 
@@ -383,7 +383,7 @@ func _set_visibility_for_clickable_polygons(obj: Node) -> void:
 		)
 	
 	# Handle obstacle polygon
-	var obstacle_polygon = obj.get_node_or_null("ObstaclePolygon")
+	var obstacle_polygon: ObstaclePolygon2D = obj.get_node_or_null("ObstaclePolygon")
 	if obstacle_polygon != null:
 		_set_polygon_visibility(
 			obstacle_polygon,

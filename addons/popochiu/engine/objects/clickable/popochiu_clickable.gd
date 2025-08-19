@@ -347,8 +347,8 @@ func move_to(
 	_movement_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
 
 	# Calculate duration based on speed and distance
-	var distance = position.distance_to(pos)
-	var duration = distance / speed if speed > 0.0 else 0.0
+	var distance: float = position.distance_to(pos)
+	var duration: float = distance / speed if speed > 0.0 else 0.0
 
 	# Start movement
 	is_moving = true
