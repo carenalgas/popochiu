@@ -88,9 +88,7 @@ func _create_obj_folder() -> int:
 
 
 func _create_state_resource() -> int:
-	var state_template: Script = load(
-		BASE_STATE_TEMPLATE % _type_label
-	).duplicate()
+	var state_template: Script = load(BASE_STATE_TEMPLATE % _type_label).duplicate()
 
 	if ResourceSaver.save(state_template, _path_state) != OK:
 		PopochiuUtils.print_error(
@@ -131,9 +129,7 @@ func _copy_script_template() -> int:
 
 ## Create the script for the object based on the template of its type.
 func _create_script_from_template() -> int:
-	var script_template_file = FileAccess.open(
-		BASE_SCRIPT_TEMPLATE % _type_label, FileAccess.READ
-	)
+	var script_template_file = FileAccess.open(BASE_SCRIPT_TEMPLATE % _type_label, FileAccess.READ)
 	
 	if script_template_file == null:
 		PopochiuUtils.print_error(
@@ -158,7 +154,7 @@ func _create_script_from_template() -> int:
 	_script = load(EMPTY_SCRIPT).duplicate()
 	_script.source_code = new_code
 
-	if ResourceSaver.save( _script, _path_script) != OK:
+	if ResourceSaver.save(_script, _path_script) != OK:
 		PopochiuUtils.print_error(
 			"Could not create %s script: %s" %
 			[_type_label, _path_script]
@@ -205,8 +201,8 @@ func _load_obj_base_scene() -> Node:
 		load(BASE_SCENE_PATH % [_type_label, _type_label]) as PackedScene
 	).instantiate(PackedScene.GEN_EDIT_STATE_MAIN_INHERITED)
 
-	# 	The script is assigned first so that other properties will not be
-	# 	overwritten by that assignment.
+	# The script is assigned first so that other properties will not be overwritten by that
+	# assignment.
 	if _script != null:
 		obj.set_script(load(_path_script))
 	
@@ -215,6 +211,8 @@ func _load_obj_base_scene() -> Node:
 
 func _add_resource_to_popochiu() -> void:
 	# Add the created obj to Popochiu's correct list
+	# NOTE: We could avoid this since we already have the script_name and the resource_path (we could
+	# store them in private variables if needed.
 	var resource := ResourceLoader.load(_path_resource)
 	if PopochiuResources.set_data_value(
 		_type_target,
@@ -228,6 +226,8 @@ func _add_resource_to_popochiu() -> void:
 		return
 
 	# Add the object to the proper singleton
+	# NOTE: We could improve this by ONLY updating the autoloads for the specific type of the created
+	# object (instead of trying to update everything each time)
 	PopochiuResources.update_autoloads(true)
 
 	# Update the related list in the dock
