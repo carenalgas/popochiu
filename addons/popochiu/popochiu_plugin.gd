@@ -184,8 +184,8 @@ func _on_dock_ready() -> void:
 	_editor_file_system.scan_sources()
 	dock.fill_data()
 	
-	#if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
-		#PopochiuEditorHelper.show_setup(true)
+	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
+		PopochiuEditorHelper.show_setup(true)
 	
 	if not EditorInterface.is_plugin_enabled("popochiu/editor/gizmos"):
 		EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", true)

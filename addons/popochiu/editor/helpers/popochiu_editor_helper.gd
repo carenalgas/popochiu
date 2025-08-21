@@ -49,7 +49,6 @@ static var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("
 static var _setup_dialog_instance: ConfirmationDialog = null
 
 
-
 #region Public #####################################################################################
 static func select_node(node: Node) -> void:
 	ei.get_selection().clear()
