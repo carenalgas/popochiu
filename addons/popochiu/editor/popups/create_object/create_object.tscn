@@ -40,6 +40,7 @@ draw_control_chars = true
 
 [node name="ErrorContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="ErrorIcon" type="TextureRect" parent="PanelContainer/VBoxContainer/ErrorContainer"]

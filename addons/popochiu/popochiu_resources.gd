@@ -231,7 +231,7 @@ static func init_file_structure() -> bool:
 
 
 static func create_auto_loads() -> void:
-	for key in SNGL_SETUP:
+	for key: String in SNGL_SETUP:
 		if not FileAccess.file_exists(key):
 			var file := FileAccess.open(key, FileAccess.WRITE)
 			file.store_string(SNGL_TEMPLATE % SNGL_SETUP[key].interface)
@@ -244,11 +244,8 @@ static func create_auto_loads() -> void:
 
 
 static func update_autoloads(save := false) -> void:
-	# ---- Create autoload files -------------------------------------------------------------------
-	create_auto_loads()
-	
 	# ---- Update autoload files -------------------------------------------------------------------
-	for id in SNGL_SETUP:
+	for id: String in SNGL_SETUP:
 		if FileAccess.file_exists(id):
 			var s: Script = load(id)
 			var code := s.source_code
@@ -292,12 +289,11 @@ static func update_autoloads(save := false) -> void:
 			
 			if modified:
 				s.source_code = code
-				
-				if save: ResourceSaver.save(s, id)
+				if save:
+					ResourceSaver.save(s, id)
 	
 	# ---- Populate the A singleton ----------------------------------------------------------------
-	if not get_data_cfg().has_section("audio")\
-	or not FileAccess.file_exists(A_SNGL):
+	if not get_data_cfg().has_section("audio") or not FileAccess.file_exists(A_SNGL):
 		return
 	
 	# [mx_cues, sfx_cues, vo_cues, ui_cues]
@@ -351,7 +347,8 @@ static func update_autoloads(save := false) -> void:
 	if modified:
 		s.source_code = code
 		
-		if save: ResourceSaver.save(s, A_SNGL)
+		if save:
+			ResourceSaver.save(s, A_SNGL)
 	
 	# Save the script changes in the AudioCues
 	for cue in old_audio_cues:

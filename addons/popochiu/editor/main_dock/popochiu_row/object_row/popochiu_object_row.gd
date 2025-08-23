@@ -221,7 +221,7 @@ func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
 	return files
 
 
-func _remove_from_core() -> void:
+func _remove_from_core(should_save_and_delete := true) -> void:
 	# Check if the files should be deleted in the file system
 	if _delete_dialog.check_box.button_pressed:
 		_delete_from_file_system()
@@ -234,8 +234,12 @@ func _remove_from_core() -> void:
 		queue_free()
 		return
 	
-	EditorInterface.save_scene()
-	queue_free()
+	# Fix #438: Do not save and free the row always. When this function is called from the
+	# popochiu_room_object_row script, saving the scene is handled there, and deleting the row
+	# is not needed.
+	if should_save_and_delete:
+		EditorInterface.save_scene()
+		queue_free()
 
 
 ## Remove this object's directory (subfolders included) from the file system.

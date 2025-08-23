@@ -78,7 +78,7 @@ func _play() -> void:
 	EditorInterface.play_custom_scene(path)
 
 
-func _remove_from_core() -> void:
+func _remove_from_core(should_save_and_delete := true) -> void:
 	# Delete the object from Popochiu
 	PopochiuResources.remove_autoload_obj(PopochiuResources.R_SNGL, name)
 	PopochiuResources.erase_data_value("rooms", str(name))

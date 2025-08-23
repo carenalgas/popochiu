@@ -21,21 +21,22 @@ func create(obj_name: String, set_as_main := false) -> int:
 
 	# Create the folder
 	result_code = _create_obj_folder()
-	if result_code != ResultCodes.SUCCESS: return result_code
+	if result_code != ResultCodes.SUCCESS:
+		return result_code
 	
-	# Create the state Resource and a script
-	# so devs can add extra properties to that state
+	# Create the state Resource and a script so devs can add extra properties to that state
 	result_code = _create_state_resource()
-	if result_code != ResultCodes.SUCCESS: return result_code
+	if result_code != ResultCodes.SUCCESS:
+		return result_code
 		
 	# Create the script populating the template with the right references
 	result_code = _create_script_from_template()
-	if result_code != ResultCodes.SUCCESS: return result_code
-
+	if result_code != ResultCodes.SUCCESS:
+		return result_code
+	
 	# ---- LOCAL CODE ------------------------------------------------------------------------------
 	# Create the instance
 	var new_obj: PopochiuRoom = _load_obj_base_scene()
-	
 	new_obj.name = "Room" + _pascal_name
 	new_obj.script_name = _pascal_name
 	new_obj.width = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
@@ -44,15 +45,15 @@ func create(obj_name: String, set_as_main := false) -> int:
 	
 	# Save the scene (.tscn)
 	result_code = _save_obj_scene(new_obj)
-	if result_code != ResultCodes.SUCCESS: return result_code
+	if result_code != ResultCodes.SUCCESS:
+		return result_code
 
 	# Add the object to Popochiu dock list, plus open it in the editor
 	_add_resource_to_popochiu()
 	
 	# ---- LOCAL CODE ------------------------------------------------------------------------------
 	# Set as main room
-	# Changed _set_as_main_check.pressed to _set_as_main_check.button_pressed
-	# in order to fix #56
+	# Changed _set_as_main_check.pressed to _set_as_main_check.button_pressed in order to fix #56
 	if set_as_main:
 		PopochiuEditorHelper.signal_bus.main_scene_changed.emit(_scene.scene_file_path)
 	# ---- END OF LOCAL CODE -----------------------------------------------------------------------

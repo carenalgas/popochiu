@@ -98,9 +98,7 @@ func on_close() -> void:
 	
 	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
 		PopochiuResources.set_data_value("setup", "done", true)
-		await _copy_template(true)
-	
-	get_parent().queue_free()
+		await _copy_template()
 
 
 func define_content(show_welcome := false) -> void:
@@ -278,23 +276,17 @@ func _load_templates() -> void:
 		gui_templates.add_child(button)
 
 
-func _copy_template(is_first_copy := false) -> void:
+func _copy_template() -> void:
 	get_parent().get_ok_button().disabled = true
 	
 	$PanelContainer/VBoxContainer.modulate.a = COPY_ALPHA
 	copy_process_label.text = ""
 	copy_process_bar.value = 0
 	
-	PopochiuGuiTemplatesHelper.copy_gui_template(
+	copy_process_container.show()
+	await PopochiuGuiTemplatesHelper.copy_gui_template(
 		_selected_template.name, _template_copy_progressed, _template_copy_completed
 	)
-	
-	copy_process_container.show()
-	
-	# if true, make the popup visible so devs can see the copy process feedback
-	if is_first_copy:
-		get_parent().visible = true
-		await template_copy_completed
 
 
 func _template_copy_progressed(value: int, message: String) -> void:
