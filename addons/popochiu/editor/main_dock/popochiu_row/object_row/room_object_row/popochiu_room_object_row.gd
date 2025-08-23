@@ -47,7 +47,7 @@ func _remove_from_core(should_save_and_delete := true) -> void:
 				room_child_to_free = opened_room.get_walkable_area(str(name))
 	
 	# Continue with the deletion flow without saving the scene and deleting the row (that's the
-	# reasin why the parent function is called with [false]).
+	# reason why the parent function is called with [false]).
 	super(false)
 	
 	# Fix #196: Remove the Node from the Room tree once the folder of the object has been deleted
