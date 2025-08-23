@@ -137,6 +137,9 @@ static func show_setup(is_welcome := false) -> void:
 		func () -> void:
 			await content.on_close()
 			
+			# The assignment must be done here, since doing it when the ConfirmationDialog is
+			# instantiated causes the engine to crash after trying to create Popochiu objects following
+			# the installation process.
 			_setup_dialog_instance = dialog
 			dialog.hide()
 	)

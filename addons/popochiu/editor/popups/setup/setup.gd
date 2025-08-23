@@ -98,7 +98,7 @@ func on_close() -> void:
 	
 	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
 		PopochiuResources.set_data_value("setup", "done", true)
-		await _copy_template(true)
+		await _copy_template()
 
 
 func define_content(show_welcome := false) -> void:
@@ -276,7 +276,7 @@ func _load_templates() -> void:
 		gui_templates.add_child(button)
 
 
-func _copy_template(is_first_copy := false) -> void:
+func _copy_template() -> void:
 	get_parent().get_ok_button().disabled = true
 	
 	$PanelContainer/VBoxContainer.modulate.a = COPY_ALPHA
