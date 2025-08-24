@@ -10,9 +10,6 @@ title = "Create PopochiuRoom"
 [node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
 text = "Room name:"
 
-[node name="ErrorFeedback" parent="PanelContainer/VBoxContainer" index="1"]
-text = "A room name is mandatory!"
-
 [node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
 text = "Use a descriptive name in PascalCase (e.g. Garage or CasinoInterior)."
 

@@ -60,6 +60,16 @@ func _on_linked_item_discarded() -> void:
 	pass
 
 
+# Called when the prop starts moving
+func _on_movement_started() -> void:
+	pass
+
+
+# Called when the prop stops moving
+func _on_movement_ended() -> void:
+	pass
+
+
 #endregion
 
 #region Public #####################################################################################

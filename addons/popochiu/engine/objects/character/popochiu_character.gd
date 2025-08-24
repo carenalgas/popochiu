@@ -33,15 +33,16 @@ enum Looking {
 	## The character is facing right [code](x, 0)[/code].
 }
 
-## Emitted when a [param character] starts moving from [param start] to [param end]. [PopochiuRoom]
-## connects to this signal in order to make characters move inside them from one point to another.
+## Emitted when a [param character] starts moving from [param start] to [param end]. 
+## The character connects to this signal internally to handle its own movement.
 signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector2)
 ## Emitted when the character is forced to stop while walking.
 signal stopped_walk
-## Emitted when the character reaches the ending position when moving from one point to another.
-signal move_ended
 ## Emitted when the animation to grab things has finished.
 signal grab_done
+## Emitted when the obstacle flag state is changed.
+signal obstacle_state_changed(character: PopochiuCharacter)
+
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
 const EMPTY_STRING = ""
@@ -71,12 +72,18 @@ const EMPTY_STRING = ""
 @export var walk_speed := 200.0
 ## Whether the character can or not move.
 @export var can_move := true
-## Whether the character ignores or not walkable areas. If [code]true[/code], the character will
-## move to any point in the room clicked by players without taking into account the walkable areas
-## in it.
+## Whether the character ignores or not walkable areas. If [code]true[/code], the character will move
+## to any point in the room clicked by players without taking into account the walkable areas in it.
 @export var ignore_walkable_areas := false
+## Whether the character ignores or not obstacles in walkable areas. If [code]true[/code], the character will
+## move within a walkable area, ignoring obstacle polygons that might block the path.
+@export var ignore_obstacles := false
 ## Whether the character will move only when the frame changes on its animation.
 @export var anti_glide_animation: bool = false
+## When true, this character will be considered an obstacle and its obstacle polygon (if available)
+## will be carved from all [PopochiuWalkableAreas] it intersects in the room.
+## Set this to false to ignore its encumbrance during pathfinding.
+@export var obstacle: bool = false: set = set_obstacle
 ## Used by the GUI to calculate where to render the dialogue lines said by the character when it
 ## speaks.
 @export var dialog_pos: Vector2
@@ -84,15 +91,10 @@ const EMPTY_STRING = ""
 # Inspector for the character.
 @export_category("Aseprite")
 
-## The stored position of the character. Used when [member anti_glide_animation] is
-## [code]true[/code].
-var position_stored = null
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
 var last_room := EMPTY_STRING
 ## The suffix text to add to animation names.
 var anim_suffix := EMPTY_STRING
-## Whether the character is or not moving through the room.
-var is_moving := false
 ## The current emotion used by the character.
 var emotion := EMPTY_STRING
 ##
@@ -103,6 +105,7 @@ var default_walk_speed := 0
 ## Stores the default scale. Used by [PopochiuRoom] when scaling the character if it is inside a
 ## [PopochiuRegion] that modifies the scale.
 var default_scale := Vector2.ONE
+
 # Holds the direction the character is looking at.
 # Initialized to DOWN.
 var _looking_dir: int = Looking.DOWN
@@ -119,11 +122,11 @@ var _last_requested_animation_label: String = "null"
 var _last_requested_animation_dir: int = -1
 # Array of the animation suffixes to search for based on the angle the character is facing.
 var _valid_animation_suffixes = [
-['_r', '_l', '_dr', '_dl', '_d'], #    0 - 22.5 degrees
-['_dr', '_dl', '_r' , '_l', '_d'], #  22.5 - 45 degrees
-['_dr', '_dl', '_d' , '_r', '_l'], #  45 - 67.5 degrees
-['_d', '_dr', '_dl', '_r', '_l'], #   67.5 - 90 degrees
-['_d', '_dl', '_dr', '_l', '_r'], #  90 - 112.5 degrees
+['_r', '_l', '_dr', '_dl', '_d'], # 0 - 22.5 degrees
+['_dr', '_dl', '_r', '_l', '_d'], # 22.5 - 45 degrees
+['_dr', '_dl', '_d', '_r', '_l'], # 45 - 67.5 degrees
+['_d', '_dr', '_dl', '_r', '_l'], # 67.5 - 90 degrees
+['_d', '_dl', '_dr', '_l', '_r'], # 90 - 112.5 degrees
 ['_dl', '_dr', '_d', '_l', '_r'], # 112.5 - 135 degrees
 ['_dl', '_dr', '_l', '_r', '_d'], # 135 - 157.5 degrees
 ['_l', '_r', '_dl', '_dr', '_d'], # 157.5 - 180 degrees
@@ -135,6 +138,10 @@ var _valid_animation_suffixes = [
 ['_ur', '_ul', '_u', '_r', '_l'], # 292.5 - 315 degrees
 ['_ur', '_ul', '_r', '_l', '_u'], # 315 - 337.5 degrees
 ['_r', '_l', '_ur', '_ul', '_u']] # 337.5 - 360 degrees
+# Navigation path for this character's current movement
+var _navigation_path := PackedVector2Array()
+# The stored position of the character. Used when anti_glide_animation is true.
+var _buffered_position = null
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -151,15 +158,63 @@ func _ready():
 	if Engine.is_editor_hint():
 		hide_helpers()
 		set_process(true)
-	else:
-		set_process(follow_player)
+		return
 
+	# Runtime execution code starts here
+
+	# Connect the logic for anti-glide animations.
+	# The handler function will know what to do, based on configuration.
 	for child in get_children():
 		if not child is Sprite2D:
 			continue
 		child.frame_changed.connect(_update_position)
 
-	move_ended.connect(_on_move_ended)
+	# Connect movement signals to virtual methods
+	movement_started.connect(_on_movement_started)
+	movement_ended.connect(_on_movement_ended)
+
+	# Connect to own movement signals to handle navigation internally
+	if not started_walk_to.is_connected(_update_navigation_path):
+		started_walk_to.connect(_update_navigation_path)
+	if not stopped_walk.is_connected(_clear_navigation_path):
+		stopped_walk.connect(_clear_navigation_path)
+
+	# Prevent frame-by-frame processing for this character.
+	# This flag is set when activating the walking function, or by characters
+	# following the player (see below).
+	set_process(false)
+
+	# Setup following behavior if enabled
+	if (
+		follow_player
+		and not PopochiuUtils.c.player.started_walk_to.is_connected(_follow_player)
+		# Fix #385: Ignore character following if the follower is the same as
+		# the player-controlled character.
+		and self != PopochiuUtils.c.player
+	):
+		PopochiuUtils.c.player.started_walk_to.connect(_follow_player)
+		# This character is following a player, so it must move without
+		# explicitly invoking walk or move functions.
+		set_process(true)
+
+	# We need to initialize the interaction for the player character.
+	# Changes will be handled by the player_changed signal handler.
+	input_pickable = (
+		not PopochiuCharactersHelper.is_player_character(self)
+		and clickable
+		and visible
+	)
+
+	# Connect to player changed signal to update clickability
+	if not PopochiuUtils.c.player_changed.is_connected(_on_player_changed):
+		PopochiuUtils.c.player_changed.connect(_on_player_changed)
+
+
+func _physics_process(delta: float) -> void:
+	if _navigation_path.is_empty(): return
+
+	var walk_distance: float = walk_speed * delta
+	_move_along_path(walk_distance)
 
 
 #endregion
@@ -193,13 +248,42 @@ func _play_grab() -> void:
 	play_animation('grab')
 
 
-func _on_move_ended() -> void:
+func _on_movement_started() -> void:
 	pass
+
+
+func _on_movement_ended() -> void:
+	pass
+
+
+## Called after movement to sync the character's buffered position state.
+func _on_position_changed() -> void:
+	_sync_buffered_position()
 
 
 #endregion
 
 #region Public #####################################################################################
+## Returns the NavigationObstacle2D if it has a defined polygon and the character is set as obstacle, null otherwise.
+## This method checks if the obstacle has at least 3 vertices to form a valid polygon.
+func get_navigation_obstacle() -> NavigationObstacle2D:
+	if not obstacle:
+		return null
+
+	if is_moving:
+		return null
+
+	var navigation_obstacle: NavigationObstacle2D = get_node_or_null("ObstaclePolygon")
+	if not navigation_obstacle or not navigation_obstacle is NavigationObstacle2D:
+		return null
+
+	# Check if obstacle has vertices defined (minimum 3 for a valid polygon)
+	if navigation_obstacle.vertices.size() < 3:
+		return null
+
+	return navigation_obstacle
+
+
 ## Puts the character in the idle state by playing its idle animation, then waits for
 ## [code]0.2[/code] seconds.
 ## If the character has a [b]$Sprite2D[/b] child, it makes it flip based on the [member flips_when]
@@ -242,10 +326,8 @@ func queue_walk(target_pos: Vector2) -> Callable:
 ## value.
 func walk(target_pos: Vector2) -> void:
 	is_moving = true
+	movement_started.emit()
 	_last_reached_clickable = null
-
-	# The ROOM will take care of moving the character
-	# and face her in the correct direction from here
 
 	_flip_left_right(
 		target_pos.x < position.x,
@@ -265,11 +347,12 @@ func walk(target_pos: Vector2) -> void:
 	# Call the virtual that plays the walk animation
 	_play_walk(target_pos)
 
-	# Trigger the signal for the room to start moving the character
+	# Trigger the signal to start moving the character
 	started_walk_to.emit(self, position, target_pos)
-	await move_ended
+	await movement_ended
 
 	is_moving = false
+	stopped_walk.emit()
 
 
 func turn_towards(target_pos: Vector2) -> void:
@@ -492,13 +575,13 @@ func grab() -> void:
 
 ## Calls [method PopochiuClickable.hide_helpers].
 func hide_helpers() -> void:
-	super()
+	super ()
 	# TODO: add visibility logic for dialog_pos gizmo
 
 
 ## Calls [method PopochiuClickable.show_helpers].
 func show_helpers() -> void:
-	super()
+	super ()
 	# TODO: add visibility logic for dialog_pos gizmo
 
 
@@ -569,21 +652,6 @@ func walk_to_prop(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(PopochiuUtils.r.current.get_prop(id), offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.[br][br]
-## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
-	return func(): await teleport_to_prop(id, offset)
-
-
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.
-func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(PopochiuUtils.r.current.get_prop(id), offset)
-
-
 ## Makes the character walk to the [PopochiuHotspot] (in the current room) which
 ## [member PopochiuClickable.script_name] is equal to [param id]. You can set an [param offset]
 ## relative to the target position.[br][br]
@@ -599,21 +667,6 @@ func walk_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.[br][br]
-## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
-	return func(): await teleport_to_hotspot(id, offset)
-
-
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.
-func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
-
-
 ## Makes the character walk to the [Marker2D] (in the current room) which [member Node.name] is
 ## equal to [param id]. You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
@@ -625,21 +678,6 @@ func queue_walk_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 ## equal to [param id]. You can set an [param offset] relative to the target position.
 func walk_to_marker(id: String, offset := Vector2.ZERO) -> void:
 	await _walk_to_node(PopochiuUtils.r.current.get_marker(id), offset)
-
-
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
-## [param offset] relative to the target position.[br][br]
-## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
-	return func(): await teleport_to_marker(id, offset)
-
-
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
-## [param offset] relative to the target position.
-func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
-	await _teleport_to_node(PopochiuUtils.r.current.get_marker(id), offset)
 
 
 ## Sets [member emotion] to [param new_emotion] when in a [method Popochiu.queue].
@@ -772,15 +810,13 @@ func face_direction(destination: Vector2):
 	# Set the direction using the _looking property.
 	# We cannot use the face_* functions because they
 	# set the state as IDLE.
-
 	# Based on the character facing direction, define a set of
 	# animation suffixes in reference order.
 	# Notice how we seek for opposite directions for left and
 	# right. Flipping is done in other functions. We just define
 	# a preference order for animations when available.
-
 	# Get the vector from the origin to the destination.
-	var angle = wrapf(rad_to_deg((destination - position).angle()) , 0, 360)
+	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
 	# The angle calculation uses 16 angles rather than 8 for greater accuracy
 	# in choosing the facing direction fallback animations.
 	var _looking_angle := int(angle / 22.5) % 16
@@ -815,12 +851,25 @@ func get_dialog_pos() -> float:
 	return dialog_pos.y
 
 
+## Returns either the _buffered_position of the character,
+## or its current transformer position, if that's not available
+func get_buffered_position() -> Vector2:
+	return _buffered_position if _buffered_position else position
+
+
+## Forces the transformer position to match the buffered one, if available.
 func update_position() -> void:
-	position = (
-		position_stored
-		if position_stored
-		else position
-	)
+	position = get_buffered_position()
+
+
+## Resets the buffered position. Called when exiting rooms to clean character state.
+func reset_buffered_position() -> void:
+	_buffered_position = null
+
+
+## Syncs the buffered position with the current position to avoid conflicts with walking.
+func _sync_buffered_position() -> void:
+	_buffered_position = position
 
 
 ## Updates the scale depending on the properties of the scaling region where it is located.
@@ -883,12 +932,23 @@ func set_avatars(value: Array) -> void:
 			}
 
 
+func set_obstacle(value: bool) -> void:
+	obstacle = value
+	obstacle_state_changed.emit()
+
+
 #endregion
 
 #region Private ####################################################################################
 func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree(): return
 	description = PopochiuUtils.e.get_text(_description_code)
+
+
+## Called when the player character changes to update clickability
+func _on_player_changed(old_player: PopochiuCharacter, new_player: PopochiuCharacter) -> void:
+	new_player.input_pickable = false
+	old_player.input_pickable = old_player.clickable && old_player.visible
 
 
 func _get_vo_cue(emotion := EMPTY_STRING) -> String:
@@ -932,17 +992,6 @@ func _walk_to_node(node: Node2D, offset: Vector2) -> void:
 	)
 
 
-# Instantly move to the node position
-func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
-	if not is_instance_valid(node):
-		await get_tree().process_frame
-		return
-
-	position = node.to_global(
-		node.walk_to_point if node is PopochiuClickable else Vector2.ZERO
-	) + offset
-
-
 func _update_position():
 	# This avoids errors when an animation is selected by the Aseprite importer interface
 	# because _update_position() is bound to the "frame_changed" signal, which is triggered
@@ -963,6 +1012,109 @@ func _flip_left_right(left_cond: bool, right_cond: bool) -> void:
 				$Sprite2D.flip_h = left_cond
 			FlipsWhen.LOOKING_RIGHT:
 				$Sprite2D.flip_h = right_cond
+
+
+# Character navigation system.
+#
+# Moves the character along the navigation path, which is a list of Vector2 points.
+# The character will walk towards the next point in the path until it reaches it,
+# then it will continue to the next point until the path is empty.
+func _move_along_path(walk_distance: float):
+	var last_character_position: Vector2 = get_buffered_position()
+
+	while _navigation_path.size():
+		var next_waypoint: Vector2 = _navigation_path[0]
+
+		var distance_to_next_waypoint = last_character_position.distance_to(
+			next_waypoint
+		)
+
+		# The character hasn't reached the next navigation point so we update
+		# its position along the line between the last and the next navigation point
+		if walk_distance <= distance_to_next_waypoint:
+			turn_towards(next_waypoint)
+			var next_position = last_character_position.lerp(
+				next_waypoint, walk_distance / distance_to_next_waypoint
+			)
+			if anti_glide_animation:
+				_buffered_position = next_position
+			else:
+				position = next_position
+			# Scale the character depending on the new position
+			update_scale()
+			# We are still walking towards the next navigation point
+			# so we don't need to update the path information
+			return
+
+		# We reached the next navigation point
+		# Remove the last navigation point from the path
+		# and recalculate the distance to the next one
+		walk_distance -= distance_to_next_waypoint
+		last_character_position = next_waypoint
+		_navigation_path.remove_at(0)
+
+	position = last_character_position
+	update_scale()
+	_clear_navigation_path()
+
+
+# Character navigation system.
+#
+# Updates the navigation path for the character based on the start and end positions.
+# The path is calculated by the room which has control over it's walkable areas and
+# obstacles.
+func _update_navigation_path(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
+	# Get the current room
+	var current_room = PopochiuUtils.r.current
+	if not current_room:
+		PopochiuUtils.print_error("No current room found for character navigation")
+		return
+
+	# Get navigation path from room, passing both flags
+	_navigation_path = current_room.get_navigation_path(
+		start_position,
+		end_position,
+		ignore_walkable_areas,
+		ignore_obstacles # Pass the new flag
+	)
+
+	if _navigation_path.is_empty():
+		return
+
+	# If the path is not empty it has at least two points: the start and the end.
+	# Let's remove the first point of the path since it is the character's current position.
+	_navigation_path.remove_at(0)
+
+	# Now the _navigation_path will at least have another point at index 0.
+	# Starting the physics processing will make _physics_process()
+	# move the character along the path.
+	set_physics_process(true)
+
+
+# Character navigation system.
+#
+# Clears the navigation path and stops the physics process.
+# This is called when the character reaches the end of the path or when it is interrupted.
+func _clear_navigation_path() -> void:
+	_navigation_path.clear()
+	set_physics_process(false)
+	idle()
+	movement_ended.emit()
+
+
+# TODO: Improve the following logic to allow following characters other than the player,
+#       and introduce some delay for a better representation of the following action.
+#
+# Makes the character follow the player by walking to a position that is offset from the player's
+# position. The offset is defined by [member follow_player_offset]. The character will walk to
+# the position that is offset from the player's position, and will continue to follow the player.
+func _follow_player(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
+	var follower_end_position := Vector2.ZERO
+	if end_position.x > position.x:
+		follower_end_position = end_position - follow_player_offset
+	else:
+		follower_end_position = end_position + follow_player_offset
+	walk_to(follower_end_position)
 
 
 #endregion

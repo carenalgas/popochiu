@@ -46,6 +46,7 @@ static var undo_redo: EditorUndoRedoManager = null
 static var dock: Panel = null
 
 static var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
+static var _setup_dialog_instance: ConfirmationDialog = null
 
 
 #region Public #####################################################################################
@@ -122,11 +123,26 @@ static func show_creation_popup(scene: PackedScene, min_size := Vector2i(640, 18
 
 
 static func show_setup(is_welcome := false) -> void:
+	if is_instance_valid(_setup_dialog_instance):
+		await show_dialog(_setup_dialog_instance)
+		
+		return
+	
 	var dialog := ConfirmationDialog.new()
 	var content := SETUP_SCENE.instantiate()
 	
 	dialog.title = "Setup"
-	dialog.confirmed.connect(content.on_close)
+	dialog.dialog_hide_on_ok = false
+	dialog.confirmed.connect(
+		func () -> void:
+			await content.on_close()
+			
+			# The assignment must be done here, since doing it when the ConfirmationDialog is
+			# instantiated causes the engine to crash after trying to create Popochiu objects following
+			# the installation process.
+			_setup_dialog_instance = dialog
+			dialog.hide()
+	)
 	dialog.close_requested.connect(content.on_close)
 	dialog.about_to_popup.connect(content.on_about_to_popup)
 	
@@ -213,8 +229,12 @@ static func is_marker(node: Node) -> bool:
 	return node is Marker2D
 
 
-static func is_popochiu_obj_polygon(node: Node):
+static func is_popochiu_obj_polygon(node: Node) -> bool:
 	return node.is_in_group(POPOCHIU_OBJECT_POLYGON_GROUP)
+
+
+static func is_popochiu_obstacle_polygon(node: Node) -> bool:
+	return node is NavigationObstacle2D
 
 
 # Context-checking functions

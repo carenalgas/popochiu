@@ -28,6 +28,24 @@ static func define_player() -> void:
 		PopochiuUtils.c.player = pc
 
 
+## Determines if a character is the player character.
+## This works both at design-time (before PopochiuUtils.c.player is set) and runtime.
+## Returns true only if we can definitively identify the character as the player.
+static func is_player_character(character: PopochiuCharacter) -> bool:
+	# If the player reference is not set (yet), use the game configuration
+	# to identify the player character.
+	if not PopochiuUtils.c.player:
+		var pc: String = PopochiuResources.get_data_value("setup", "pc", "")
+		return (not pc.is_empty() and character.script_name == pc)
+
+	# If the player reference is set, check if the character is the player.
+	if character == PopochiuUtils.c.player:
+		return true
+
+	# If we can't definitively identify the player character, return false
+	return false
+
+
 ## Evals [param text] to know if it is a wait inside a dialog or if it is a [PopochiuCharacter]
 ## saying something. This is used when calling [method E.queue].
 static func execute_string(text: String) -> void:

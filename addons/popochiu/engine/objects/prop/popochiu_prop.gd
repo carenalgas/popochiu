@@ -17,6 +17,8 @@ signal linked_item_removed(item: PopochiuInventoryItem)
 ## Emitted when the [param item] linked to this object (by [member link_to_item]) is discarded from
 ## the inventory. This may happen when the inventory item disappears forever from the game.
 signal linked_item_discarded(item: PopochiuInventoryItem)
+## Emitted when the obstacle flag state is changed.
+signal obstacle_state_changed(prop: PopochiuProp)
 
 ## The image to use as the [member Sprite2D.texture] of the [b]$Sprite2D[/b] child.
 @export var texture: Texture2D : set = set_texture
@@ -35,42 +37,92 @@ signal linked_item_discarded(item: PopochiuInventoryItem)
 ## This will make the prop disappear from the room, depending on whether or not said inventory item
 ## is inside the inventory.
 @export var link_to_item := ""
-
+## When true, this prop will be considered an obstacle and its obstacle polygon (if available)
+## will be carved from all [PopochiuWalkableAreas] it intersects in the room.
+## Set this to false to ignore its encoumbrance during pathfinding.
+@export var obstacle: bool = false : set = set_obstacle
+## Stores the outlines to assign to the [b]ObstaclePolygon/Vertices[/b] child during
+## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
+@export var obstacle_polygon := []
+## Stores the position to assign to the [b]ObstaclePolygon/Vertices[/b] child during
+## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
+@export var obstacle_polygon_position := Vector2.ZERO
 ## Total frames available the texture image has. [code](frames * vframes)[/code]
 var total_frames: get = get_total_frames
 
 @onready var _sprite: Sprite2D = $Sprite2D
+@onready var _navigation_obstacle: NavigationObstacle2D = get_node_or_null("ObstaclePolygon")
+
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
 	super()
 	add_to_group("props")
-	
-	if Engine.is_editor_hint(): return
-	
-	for c in get_children():
-		if c.get("position") is Vector2:
-			c.position.y -= baseline * c.scale.y
+
+	if Engine.is_editor_hint():
+		# Ignore assigning the vertices when:
+		if (
+			_navigation_obstacle == null # there is no ObstaclePolygon node
+			or not get_parent() is Node2D # editing it in the .tscn file of the object directly
+		):
+			return
+
+		if obstacle_polygon.is_empty():
+			obstacle_polygon = _navigation_obstacle.vertices
+			obstacle_polygon_position = _navigation_obstacle.position
+		else:
+			_navigation_obstacle.vertices = obstacle_polygon
+			_navigation_obstacle.position = obstacle_polygon_position
+
+		# If we are in the editor, we're done
+		return
+
+	# When the game is running...
+	# Update the node's obstacle polygon when there is one:
+	if _navigation_obstacle != null:
+		_navigation_obstacle.vertices = obstacle_polygon
+		_navigation_obstacle.position = obstacle_polygon_position
+
+	# Adjust the position and scaling of the prop
+	# since we use the Y position as a sort of Z index.
+	for child: Node in get_children():
+		if child.get("position") is Vector2:
+			child.position.y -= baseline * child.scale.y
 
 	walk_to_point.y -= baseline * scale.y
 	look_at_point.y -= baseline * scale.y
 	position.y += baseline * scale.y
 
+	# If an object is always on top, then
+	# use the proper z-index.
 	if always_on_top:
 		z_index += 1
-	
+
+	# Connect movement signals
+	movement_started.connect(_on_movement_started)
+	movement_ended.connect(_on_movement_ended)
+
+	# Connect signals of the linked item, if any
 	if link_to_item:
 		PopochiuUtils.i.item_added.connect(_on_item_added)
 		PopochiuUtils.i.item_removed.connect(_on_item_removed)
 		PopochiuUtils.i.item_discarded.connect(_on_item_discarded)
-		
+
 		if (
 			PopochiuUtils.i.is_item_in_inventory(link_to_item) or
 			PopochiuUtils.i.has_item_been_collected(link_to_item)
 		):
 			disable()
 
+
+func _notification(event: int) -> void:
+	if _navigation_obstacle == null:
+		return
+
+	if event == NOTIFICATION_EDITOR_PRE_SAVE:
+		obstacle_polygon = _navigation_obstacle.vertices
+		obstacle_polygon_position = _navigation_obstacle.position
 
 #endregion
 
@@ -84,6 +136,18 @@ func _on_linked_item_removed() -> void:
 ## Called when the [PopochiuInventoryItem] linked to this prop is discarded from the inventory.
 ## [i]Virtual[/i].
 func _on_linked_item_discarded() -> void:
+	pass
+
+
+## Called when the prop starts moving.
+## [i]Virtual[/i].
+func _on_movement_started() -> void:
+	pass
+
+
+## Called when the prop stops moving.
+## [i]Virtual[/i].
+func _on_movement_ended() -> void:
 	pass
 
 
@@ -103,42 +167,60 @@ func change_frame(new_frame: int) -> void:
 	await get_tree().process_frame
 
 
+## Returns the NavigationObstacle2D if it has a defined polygon, null otherwise.
+## This method checks if the obstacle has at least 3 vertices to form a valid polygon.
+func get_navigation_obstacle() -> NavigationObstacle2D:
+	if not _navigation_obstacle or not _navigation_obstacle is NavigationObstacle2D:
+		return null
+
+	# Check if obstacle has vertices defined (minimum 3 for a valid polygon)
+	if _navigation_obstacle.vertices.size() < 3:
+		return null
+
+	return _navigation_obstacle
+
+
 #endregion
 
 #region SetGet #####################################################################################
 func set_texture(value: Texture2D) -> void:
 	texture = value
 	if not has_node("Sprite2D"): return
-	
+
 	$Sprite2D.texture = value
 
 
 func set_frames(value: int) -> void:
 	frames = value
 	if not has_node("Sprite2D"): return
-	
+
 	$Sprite2D.hframes = value
 
 
 func set_v_frames(value: int) -> void:
 	v_frames = value
 	if not has_node("Sprite2D"): return
-	
+
 	$Sprite2D.vframes = value
 
 
 func set_current_frame(value: int) -> void:
 	current_frame = value
 	if not has_node("Sprite2D"): return
-	
+
 	var sprite := $Sprite2D as Sprite2D
 	current_frame = (total_frames + current_frame) % total_frames
-	
+
 	sprite.frame = current_frame
-	
-	
+
+
 func get_total_frames() -> int:
 	return frames * v_frames
+
+
+func set_obstacle(value: bool) -> void:
+	obstacle = value
+	obstacle_state_changed.emit()
 
 
 #endregion
@@ -261,7 +343,7 @@ func _on_item_removed(item: PopochiuInventoryItem, _animate: bool) -> void:
 func _on_item_discarded(item: PopochiuInventoryItem) -> void:
 	if item.script_name == link_to_item:
 		enable()
-		
+
 		_on_linked_item_discarded()
 		linked_item_discarded.emit(self)
 

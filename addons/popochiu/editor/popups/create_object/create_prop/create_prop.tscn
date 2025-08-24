@@ -25,8 +25,5 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ErrorFeedback" parent="PanelContainer/VBoxContainer" index="2"]
-text = "Prop name is mandatory!"
-
 [node name="Guide" parent="PanelContainer/VBoxContainer" index="4"]
 text = "Use a descriptive name in PascalCase (e.g. Bucket or WineBottle)."

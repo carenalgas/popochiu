@@ -77,7 +77,9 @@ func search_audio_files() -> void:
 
 
 func open_setup() -> void:
-	PopochiuEditorHelper.show_setup()
+	PopochiuEditorHelper.show_setup(
+		not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set()
+	)
 
 
 ## If there are no other opened scenes in the Editor, this function connects to
@@ -106,6 +108,8 @@ func _check_node(node: Node) -> void:
 	if node is PopochiuCharacter and node.get_parent() is Node2D:
 		# The node is a PopochiuCharacter in a room
 		node.set_name.call_deferred("Character%s *" % node.script_name)
+		# Mark this as a temporary editor-placed character
+		node.set_meta("EDITOR_TMP_COPY_OF", node.script_name)
 
 
 func _on_editor_selection_changed() -> void:

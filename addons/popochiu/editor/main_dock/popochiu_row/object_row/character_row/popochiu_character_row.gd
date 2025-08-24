@@ -67,7 +67,7 @@ func _menu_item_pressed(id: int) -> void:
 			super(id)
 
 
-func _remove_from_core() -> void:
+func _remove_from_core(should_save_and_delete := true) -> void:
 	# Delete the object from Popochiu
 	PopochiuResources.remove_autoload_obj(PopochiuResources.C_SNGL, name)
 	PopochiuResources.erase_data_value("characters", str(name))

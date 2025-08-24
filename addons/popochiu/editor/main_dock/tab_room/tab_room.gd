@@ -314,7 +314,7 @@ func _on_character_selected(id: int) -> void:
 	
 	opened_room.get_node("Characters").add_child(instance)
 	instance.owner = opened_room
-	
+
 	EditorInterface.save_scene()
 	PopochiuEditorHelper.select_node(instance)
 

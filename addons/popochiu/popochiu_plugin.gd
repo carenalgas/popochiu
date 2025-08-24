@@ -179,6 +179,7 @@ func _on_dock_ready() -> void:
 	else:
 		dock.check_open_scenes()
 	
+	PopochiuResources.create_auto_loads()
 	PopochiuResources.update_autoloads(true)
 	_editor_file_system.scan_sources()
 	dock.fill_data()
