@@ -19,7 +19,7 @@ resource_name = "TransparentPanel"
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_glykx"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vh03r"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4duov"]
 content_margin_left = 6.0
 content_margin_top = 6.0
 content_margin_right = 6.0
@@ -30,6 +30,17 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vh03r"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 1)
 corner_radius_top_left = 12
 corner_radius_top_right = 12
 corner_radius_bottom_right = 12
@@ -47,17 +58,6 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tey4j"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wnhjl"]
 content_margin_left = 6.0
 content_margin_top = 6.0
 content_margin_right = 6.0
@@ -86,10 +86,7 @@ expand_margin_bottom = 8.0
 [sub_resource type="ButtonGroup" id="ButtonGroup_4duov"]
 resource_name = "GameGUIBtnGroup"
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4duov"]
-resource_local_to_scene = true
-resource_name = "FlatPanel"
-bg_color = Color(0, 0, 0, 1)
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_wnhjl"]
 
 [sub_resource type="Image" id="Image_hkb6o"]
 data = {
@@ -100,7 +97,7 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_ylyh3"]
+[sub_resource type="ImageTexture" id="ImageTexture_hkb6o"]
 image = SubResource("Image_hkb6o")
 
 [node name="Control" type="Control"]
@@ -112,7 +109,8 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_umrmm")
 
-[node name="Container" type="PanelContainer" parent="."]
+[node name="WizardContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(520, 600)
 layout_mode = 1
 anchors_preset = 15
@@ -121,64 +119,63 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Rows" type="VBoxContainer" parent="Container"]
+[node name="Rows" type="VBoxContainer" parent="WizardContainer"]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="WizardSteps" type="TabContainer" parent="Container/Rows"]
+[node name="WizardSteps" type="TabContainer" parent="WizardContainer/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
-current_tab = 1
+current_tab = 0
 tabs_visible = false
 
-[node name="StepType" type="PanelContainer" parent="Container/Rows/WizardSteps"]
-visible = false
+[node name="StepType" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_vh03r")
 metadata/_tab_index = 0
 
-[node name="Rows" type="VBoxContainer" parent="Container/Rows/WizardSteps/StepType"]
+[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepType"]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="SpacerTop" type="Panel" parent="Container/Rows/WizardSteps/StepType/Rows"]
+[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="ContainerLogo" type="CenterContainer" parent="Container/Rows/WizardSteps/StepType/Rows"]
+[node name="ContainerLogo" type="CenterContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="Container/Rows/WizardSteps/StepType/Rows/ContainerLogo"]
+[node name="TextureRect" type="TextureRect" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ContainerLogo"]
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 texture = ExtResource("1_g14ci")
 expand_mode = 5
 
-[node name="Spacer" type="Panel" parent="Container/Rows/WizardSteps/StepType/Rows"]
+[node name="Spacer" type="HSeparator" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
+theme_override_styles/separator = SubResource("StyleBoxEmpty_glykx")
 
-[node name="LblCTAType" type="Label" parent="Container/Rows/WizardSteps/StepType/Rows"]
+[node name="LblCTAType" type="Label" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "What kind of game do you want to make?"
 horizontal_alignment = 1
 justification_flags = 160
 
-[node name="ButtonGroup" type="MarginContainer" parent="Container/Rows/WizardSteps/StepType/Rows"]
+[node name="ButtonGroup" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_constants/margin_left = 80
 theme_override_constants/margin_right = 80
 
-[node name="Columns" type="HBoxContainer" parent="Container/Rows/WizardSteps/StepType/Rows/ButtonGroup"]
+[node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup"]
 layout_mode = 2
 theme_override_constants/separation = 48
 
-[node name="BtnTypeRetro" type="Button" parent="Container/Rows/WizardSteps/StepType/Rows/ButtonGroup/Columns"]
+[node name="BtnTypeRetro" type="Button" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup/Columns"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -187,10 +184,10 @@ theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_constants/h_separation = 4
-theme_override_styles/focus = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/hover = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_tey4j")
-theme_override_styles/normal = SubResource("StyleBoxFlat_wnhjl")
+theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_2ulnk")
 text = "Retro / Pixel Art"
@@ -199,7 +196,7 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 
-[node name="BtnTypeModern" type="Button" parent="Container/Rows/WizardSteps/StepType/Rows/ButtonGroup/Columns"]
+[node name="BtnTypeModern" type="Button" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup/Columns"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -207,10 +204,10 @@ theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/hover = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_tey4j")
-theme_override_styles/normal = SubResource("StyleBoxFlat_wnhjl")
+theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_2ulnk")
 text = "Modern / Hi-Res"
@@ -219,103 +216,99 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 
-[node name="SpacerBottom" type="Panel" parent="Container/Rows/WizardSteps/StepType/Rows"]
-custom_minimum_size = Vector2(0, 1)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
-
-[node name="StepRes" type="PanelContainer" parent="Container/Rows/WizardSteps"]
+[node name="StepRes" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps"]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 metadata/_tab_index = 1
 
-[node name="Rows" type="VBoxContainer" parent="Container/Rows/WizardSteps/StepRes"]
+[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepRes"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SpacerTop" type="Panel" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="LblCTARes" type="Label" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="LblCTARes" type="Label" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Choose your game resolution *"
 horizontal_alignment = 1
 justification_flags = 160
 
-[node name="OptResRetroContainer" type="MarginContainer" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="OptResRetroContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/margin_left = 64
 theme_override_constants/margin_right = 64
 
-[node name="OptResRetro" type="OptionButton" parent="Container/Rows/WizardSteps/StepRes/Rows/OptResRetroContainer"]
+[node name="OptResRetro" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptResRetroContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 8
 popup/item_0/text = "Neo-Retro"
-popup/item_0/id = 0
+popup/item_0/id = 101
 popup/item_0/separator = true
 popup/item_1/text = "16:9 (384x216)"
-popup/item_1/id = 5
+popup/item_1/id = 1
 popup/item_2/text = "VGA"
-popup/item_2/id = 1
+popup/item_2/id = 102
 popup/item_2/separator = true
 popup/item_3/text = "4:3 (320x200)"
-popup/item_3/id = 6
+popup/item_3/id = 2
 popup/item_4/text = "16:9 (356x200)"
-popup/item_4/id = 2
+popup/item_4/id = 3
 popup/item_5/text = "EGA/CGA"
-popup/item_5/id = 3
+popup/item_5/id = 103
 popup/item_5/separator = true
-popup/item_6/text = "4:3 (320x180)"
-popup/item_6/id = 7
-popup/item_7/text = "16:9 (356x180)"
-popup/item_7/id = 4
+popup/item_6/text = "4:3 (240x180)"
+popup/item_6/id = 4
+popup/item_7/text = "16:9 (320x180)"
+popup/item_7/id = 5
 
-[node name="OptResModernContainer" type="MarginContainer" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="OptResModernContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 64
 theme_override_constants/margin_right = 64
 
-[node name="OptResModern" type="OptionButton" parent="Container/Rows/WizardSteps/StepRes/Rows/OptResModernContainer"]
+[node name="OptResModern" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptResModernContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 5
 popup/item_0/text = "4K (2160p)"
-popup/item_0/id = 0
+popup/item_0/id = 6
 popup/item_1/text = "Quad-HD (1440p)"
-popup/item_1/id = 5
+popup/item_1/id = 7
 popup/item_2/text = "Full-HD (1080p)"
-popup/item_2/id = 1
+popup/item_2/id = 8
 popup/item_3/text = "HR-Ready (720p)"
-popup/item_3/id = 6
+popup/item_3/id = 9
 popup/item_4/text = "Retro HD (1024x768)"
-popup/item_4/id = 2
+popup/item_4/id = 10
 
-[node name="Spacer" type="Panel" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="Spacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="LblCTAPreviewScale" type="Label" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="LblCTAPreviewScale" type="Label" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Chose preview window size *"
+text = "Choose preview window size *"
 horizontal_alignment = 1
 justification_flags = 160
 
-[node name="OptPreviewScaleContainer" type="MarginContainer" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="OptPreviewScaleContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/margin_left = 64
 theme_override_constants/margin_right = 64
 
-[node name="OptPreviewScale" type="OptionButton" parent="Container/Rows/WizardSteps/StepRes/Rows/OptPreviewScaleContainer"]
+[node name="OptPreviewScale" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptPreviewScaleContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 4
@@ -328,34 +321,34 @@ popup/item_2/id = 1
 popup/item_3/text = "Quadruple (4x)"
 popup/item_3/id = 0
 
-[node name="TallSpacer" type="Panel" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="TallSpacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="TooltipBox" type="MarginContainer" parent="Container/Rows/WizardSteps/StepRes/Rows"]
+[node name="TooltipBox" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="TooltipRes" type="PanelContainer" parent="Container/Rows/WizardSteps/StepRes/Rows/TooltipBox"]
+[node name="TooltipRes" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
 
-[node name="Columns" type="HBoxContainer" parent="Container/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes"]
+[node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 32
 
-[node name="TextureRect" type="TextureRect" parent="Container/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes/Columns"]
+[node name="TextureRect" type="TextureRect" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes/Columns"]
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("5_4duov")
 expand_mode = 2
 
-[node name="TooltipResText" type="RichTextLabel" parent="Container/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes/Columns"]
+[node name="TooltipResText" type="RichTextLabel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes/Columns"]
 unique_name_in_owner = true
 clip_contents = false
 custom_minimum_size = Vector2(280, 0)
@@ -377,22 +370,22 @@ shortcut_keys_enabled = false
 vertical_alignment = 1
 justification_flags = 0
 
-[node name="StepGUI" type="PanelContainer" parent="Container/Rows/WizardSteps"]
+[node name="StepGUI" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps"]
 visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 metadata/_tab_index = 2
 
-[node name="Rows" type="VBoxContainer" parent="Container/Rows/WizardSteps/StepGUI"]
+[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI"]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="SpacerTop" type="Panel" parent="Container/Rows/WizardSteps/StepGUI/Rows"]
+[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="LblCTAUI" type="Label" parent="Container/Rows/WizardSteps/StepGUI/Rows"]
+[node name="LblCTAUI" type="Label" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -400,17 +393,17 @@ text = "Choose the UI for your game"
 horizontal_alignment = 1
 justification_flags = 0
 
-[node name="ButtonGroup" type="MarginContainer" parent="Container/Rows/WizardSteps/StepGUI/Rows"]
+[node name="ButtonGroup" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_constants/margin_left = 80
 theme_override_constants/margin_right = 80
 
-[node name="Columns" type="HBoxContainer" parent="Container/Rows/WizardSteps/StepGUI/Rows/ButtonGroup"]
+[node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup"]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="BtnNineVerbs" type="Button" parent="Container/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
+[node name="BtnNineVerbs" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
 unique_name_in_owner = true
 editor_description = "[b]SCUMM-inspired nine verbs and inventory icons panel interface.[/b]
 
@@ -421,10 +414,10 @@ theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/hover = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_tey4j")
-theme_override_styles/normal = SubResource("StyleBoxFlat_wnhjl")
+theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_4duov")
 text = "9-Verbs"
@@ -433,7 +426,7 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 
-[node name="BtnActionBar" type="Button" parent="Container/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
+[node name="BtnActionBar" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
 unique_name_in_owner = true
 editor_description = "[b]Sierra SCI-inspired top-bar with action cycling, overlay inventory and portrait dialogues.[/b]
 
@@ -444,10 +437,10 @@ theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/hover = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_tey4j")
-theme_override_styles/normal = SubResource("StyleBoxFlat_wnhjl")
+theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_4duov")
 text = "Action Bar"
@@ -456,7 +449,7 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 
-[node name="BtnSimpleClick" type="Button" parent="Container/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
+[node name="BtnSimpleClick" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
 unique_name_in_owner = true
 editor_description = "[b]Uncluttered interface with left and right click interactions and foldable inventory in a top bar.[/b]
 
@@ -467,10 +460,10 @@ theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/hover = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_tey4j")
-theme_override_styles/normal = SubResource("StyleBoxFlat_wnhjl")
+theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
+theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_4duov")
 text = "Simple Click
@@ -480,24 +473,24 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 
-[node name="TallSpacer" type="Panel" parent="Container/Rows/WizardSteps/StepGUI/Rows"]
+[node name="TallSpacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="TooltipBox" type="MarginContainer" parent="Container/Rows/WizardSteps/StepGUI/Rows"]
+[node name="TooltipBox" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 
-[node name="TooltipGUI" type="PanelContainer" parent="Container/Rows/WizardSteps/StepGUI/Rows/TooltipBox"]
+[node name="TooltipGUI" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/TooltipBox"]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
 
-[node name="TooltipGUIText" type="RichTextLabel" parent="Container/Rows/WizardSteps/StepGUI/Rows/TooltipBox/TooltipGUI"]
+[node name="TooltipGUIText" type="RichTextLabel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/TooltipBox/TooltipGUI"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
@@ -519,38 +512,34 @@ justification_flags = 0
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
 
-[node name="HorizontalRuler" type="MarginContainer" parent="Container/Rows"]
+[node name="NavSeparator" type="HSeparator" parent="WizardContainer/Rows"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
+theme_override_styles/separator = SubResource("StyleBoxLine_wnhjl")
 
-[node name="DivLine" type="Panel" parent="Container/Rows/HorizontalRuler"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(420, 1)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_4duov")
-
-[node name="NavBtnColumns" type="HBoxContainer" parent="Container/Rows"]
+[node name="NavBtnColumns" type="HBoxContainer" parent="WizardContainer/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="FillerPrev" type="Panel" parent="Container/Rows/NavBtnColumns"]
+[node name="FillerPrev" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 
-[node name="BtnPrev" type="Button" parent="Container/Rows/NavBtnColumns"]
+[node name="BtnPrev" type="Button" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 10
 text = "BACK"
-icon = SubResource("ImageTexture_ylyh3")
+icon = SubResource("ImageTexture_hkb6o")
 
-[node name="LabelStep" type="Label" parent="Container/Rows/NavBtnColumns"]
+[node name="LabelStep" type="Label" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -559,28 +548,342 @@ horizontal_alignment = 1
 vertical_alignment = 1
 justification_flags = 0
 
-[node name="BtnNext" type="Button" parent="Container/Rows/NavBtnColumns"]
+[node name="BtnNext" type="Button" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 2
 text = "NEXT"
-icon = SubResource("ImageTexture_ylyh3")
+icon = SubResource("ImageTexture_hkb6o")
 icon_alignment = 2
 
-[node name="FillerNext" type="Panel" parent="Container/Rows/NavBtnColumns"]
+[node name="FillerNext" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 
-[node name="BtnCustom" type="LinkButton" parent="Container/Rows"]
+[node name="BtnCustom" type="LinkButton" parent="WizardContainer/Rows"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_colors/font_hover_color = Color(0.3, 0.3, 0.3, 1)
 text = "No thanks, I need custom settings"
 
-[node name="SpacerBottom" type="Panel" parent="Container/Rows"]
+[node name="SpacerBottom" type="Panel" parent="WizardContainer/Rows"]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
+
+[node name="CustomContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(520, 600)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CustomContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ContainerLogo" type="CenterContainer" parent="CustomContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="CustomContainer/VBoxContainer/ContainerLogo"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+texture = ExtResource("1_g14ci")
+expand_mode = 5
+
+[node name="TypeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Type" type="Label" parent="CustomContainer/VBoxContainer/TypeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "This will set stretch mode and default import presets for you.
+
+- Custom will set no stretch and leave the 
+- Pixel Art will set: \"2D\" stretch mode;  set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D Pixel.
+2D: Stretch mode set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D.
+"
+mouse_filter = 0
+text = "Game type"
+
+[node name="OptGameType" type="OptionButton" parent="CustomContainer/VBoxContainer/TypeContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(176, 0)
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "Custom"
+popup/item_0/id = 0
+popup/item_1/text = "Pixel Art"
+popup/item_1/id = 2
+popup/item_2/text = "High Resolution"
+popup/item_2/id = 1
+
+[node name="TooltipBox" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="TooltipType" type="PanelContainer" parent="CustomContainer/VBoxContainer/TooltipBox"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
+
+[node name="Columns" type="HBoxContainer" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TextureRect" type="TextureRect" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType/Columns"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("5_4duov")
+expand_mode = 2
+
+[node name="TooltipTypeText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType/Columns"]
+unique_name_in_owner = true
+clip_contents = false
+layout_mode = 2
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
+theme_override_font_sizes/normal_font_size = 13
+theme_override_font_sizes/bold_font_size = 13
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+bbcode_enabled = true
+text = "[ul]
+[b]Custom[/b]: You edit your project's settings.
+[b]Pixel Art[/b]: Keeps aspect ratio, crisp sprites.
+[b]High Res[/b]: Keeps aspect ratio, anti-aliased sprites.
+"
+fit_content = true
+scroll_active = false
+autowrap_mode = 2
+shortcut_keys_enabled = false
+vertical_alignment = 1
+justification_flags = 0
+
+[node name="ResolutionSeparator" type="HSeparator" parent="CustomContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 24)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="SizeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="CustomResLabel" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+tooltip_text = "The width and height of the game's window. Changing this will update display/window/size/width and display/window/size/height."
+mouse_filter = 0
+text = "Game resolution"
+
+[node name="VBoxContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer"]
+layout_mode = 2
+
+[node name="WidthContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CustomWidth" type="SpinBox" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/WidthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 64.0
+max_value = 1440.0
+value = 356.0
+rounded = true
+allow_greater = true
+
+[node name="LblWidth" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/WidthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Width"
+
+[node name="HeightContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CustomHeight" type="SpinBox" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/HeightContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 64.0
+max_value = 2160.0
+value = 200.0
+rounded = true
+allow_greater = true
+
+[node name="LblHeight" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/HeightContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Height"
+
+[node name="RatioContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OptKeepRatio" type="OptionButton" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/RatioContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(67, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 3
+popup/item_0/text = "16:9"
+popup/item_0/id = 0
+popup/item_1/text = "4:3"
+popup/item_1/id = 1
+popup/item_2/text = "Free"
+popup/item_2/id = 2
+
+[node name="LblRatio" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/RatioContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Ratio"
+
+[node name="PreviewContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="TestSize" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+tooltip_text = "The width and height of the game's test window. Changing this will update display/window/size/test_width and display/window/size/test_height."
+mouse_filter = 0
+text = "Preview window size"
+
+[node name="VBoxContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer"]
+layout_mode = 2
+
+[node name="WidthContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PreviewWidth" type="SpinBox" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/WidthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1440.0
+value = 712.0
+rounded = true
+allow_greater = true
+
+[node name="LblPreviewWidth" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/WidthContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Width"
+
+[node name="HeightContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PreviewHeight" type="SpinBox" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/HeightContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1440.0
+value = 400.0
+rounded = true
+allow_greater = true
+
+[node name="LblPreviewHeight" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/HeightContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "Height"
+
+[node name="RatioContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="KeepRatio" type="Panel" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/RatioContainer"]
+custom_minimum_size = Vector2(67, 30)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
+
+[node name="WarningSeparator" type="HSeparator" parent="CustomContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 24)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_wnhjl")
+
+[node name="TooltipBox2" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="TooltipNoGUI" type="PanelContainer" parent="CustomContainer/VBoxContainer/TooltipBox2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
+
+[node name="TooltipNoGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
+theme_override_font_sizes/normal_font_size = 13
+theme_override_font_sizes/bold_font_size = 13
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+bbcode_enabled = true
+text = "[b]Going custom requires you create the game UI from scratch.[/b]
+Only recommended if you have solid Godot experience.
+"
+fit_content = true
+scroll_active = false
+autowrap_mode = 2
+shortcut_keys_enabled = false
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 0
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="SpacerBottom" type="Panel" parent="CustomContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 1)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
+
+[node name="BtnWizard" type="LinkButton" parent="CustomContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_colors/font_hover_color = Color(0.3, 0.3, 0.3, 1)
+text = "Now I'm scared! Bring the wizard back!"

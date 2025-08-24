@@ -1,17 +1,81 @@
 @tool
 extends Control
 
+signal template_copy_completed
 signal size_calculated
+
+enum GameType {
+	MODERN,
+	RETRO
+}
+
+enum GameResolutionScale {
+	HALF,
+	FULL,
+	DOUBLE,
+	QUAD
+}
+
+enum GameResolution {
+	RETRO_NEO_RETRO,
+	RETRO_VGA_4_3,
+	RETRO_VGA_16_9,
+	RETRO_CEGA_4_3,
+	RETRO_CEGA_16_9,
+	MODERN_4K,
+	MODERN_QHD,
+	MODERN_FHD,
+	MODERN_HDR,
+	MODERN_RETRO,
+}
+
+enum CustomResRatio {
+	RATIO_16_9,
+	RATIO_4_3,
+	RATIO_FREE
+}
+
+
+# Used to control the direction of ratio adjustment
+# in custom resolution settings.
+enum {
+	WIDTH_CHANGED,
+	HEIGHT_CHANGED
+}
+
+
+const PopochiuGuiTemplatesHelper = preload(
+	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
+)
+
+
+# ---- Game configuration section ----------------------------------------------
+var _game_type: GameType
+var _game_resolution: Vector2i
+var _game_window_resolution: Vector2i
+var _game_gui: String
+
+var _is_closing := false
+var _es := EditorInterface.get_editor_settings()
+
 
 # ---- General items -----------------------------------------------------------
 @onready var wizard_steps: TabContainer = %WizardSteps
+# -------- Main Areas Containers -----------------------------------------------
+@onready var wizard_container: PanelContainer = %WizardContainer
+@onready var custom_container: PanelContainer = %CustomContainer
+# -------- Separators ----------------------------------------------------------
+@onready var nav_separator: HSeparator = %NavSeparator
+@onready var resolution_separator: HSeparator = %ResolutionSeparator
+@onready var warning_separator: HSeparator = %WarningSeparator
+# -------- Navigation Area -----------------------------------------------------
 @onready var btn_prev: Button = %BtnPrev
 @onready var btn_next: Button = %BtnNext
 @onready var btn_custom: LinkButton = %BtnCustom
+@onready var btn_wizard: LinkButton = %BtnWizard
 @onready var filler_prev: Panel = %FillerPrev
 @onready var filler_next: Panel = %FillerNext
 @onready var lbl_step: Label = %LabelStep
-@onready var div_line: Panel = %DivLine
 # ---- Items that need styling -------------------------------------------------
 @onready var lbl_cta_type: Label = %LblCTAType
 @onready var lbl_cta_res: Label = %LblCTARes
@@ -35,6 +99,21 @@ signal size_calculated
 @onready var btn_gui_simpleclick: Button = %BtnSimpleClick
 @onready var tooltip_gui: PanelContainer = %TooltipGUI
 @onready var tooltip_gui_text: RichTextLabel = %TooltipGUIText
+# ---- Custom section ----------------------------------------------------------
+@onready var opt_game_type: OptionButton = %OptGameType
+@onready var custom_width: SpinBox = %CustomWidth
+@onready var custom_height: SpinBox = %CustomHeight
+@onready var preview_width: SpinBox = %PreviewWidth
+@onready var preview_height: SpinBox = %PreviewHeight
+@onready var opt_keep_ratio: OptionButton = %OptKeepRatio
+# -------- Underfield Labels ---------------------------------------------------
+@onready var lbl_width: Label = %LblWidth
+@onready var lbl_height: Label = %LblHeight
+@onready var lbl_ratio: Label = %LblRatio
+@onready var lbl_preview_width: Label = %LblPreviewWidth
+@onready var lbl_preview_height: Label = %LblPreviewHeight
+
+#region Godot #################################################################
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -43,12 +122,17 @@ func _ready() -> void:
 	_style_navigation_buttons()
 	_style_tooltips()
 	_style_selection_buttons()
-	_style_divider_line()
+	_style_separators()
+	_style_underfield_labels()
 
 	# Connect navigation buttons
 	btn_prev.pressed.connect(_on_prev_pressed)
 	btn_next.pressed.connect(_on_next_pressed)
-	
+
+	# Connect mode switch buttons
+	btn_custom.pressed.connect(_on_btn_custom_pressed)
+	btn_wizard.pressed.connect(_on_btn_wizard_pressed)
+
 	# Connect visibility signals to automatically manage fillers
 	btn_prev.visibility_changed.connect(_on_prev_visibility_changed)
 	btn_next.visibility_changed.connect(_on_next_visibility_changed)
@@ -58,48 +142,25 @@ func _ready() -> void:
 	btn_gui_actionbar.pressed.connect(_on_gui_selected.bind(btn_gui_actionbar))
 	btn_gui_simpleclick.pressed.connect(_on_gui_selected.bind(btn_gui_simpleclick))
 	
-	# Initialize step label
-	_update_navigation()
-
-
-func _on_prev_pressed():
-	if wizard_steps.current_tab > 0:
-		wizard_steps.current_tab -= 1
-		_update_navigation()
-
-
-func _on_next_pressed():
-	if wizard_steps.current_tab < wizard_steps.get_tab_count() - 1:
-		wizard_steps.current_tab += 1
-		_update_navigation()
-
-
-func _on_prev_visibility_changed():
-	# When prev button visibility changes, toggle the filler visibility inversely
-	filler_prev.visible = not btn_prev.visible
-
-
-func _on_next_visibility_changed():
-	# When next button visibility changes, toggle the filler visibility inversely
-	filler_next.visible = not btn_next.visible
-
-
-func _update_navigation():
-	# Update step label
-	var current_step = wizard_steps.current_tab + 1
-	var total_steps = wizard_steps.get_tab_count() - 1
-	lbl_step.text = "Step %d / %d" % [current_step, total_steps]
+	# Connect game type buttons to update resolution options visibility
+	btn_gametype_retro.pressed.connect(_update_resolution_options)
+	btn_gametype_modern.pressed.connect(_update_resolution_options)
 	
-	# Control button visibility (fillers will be handled automatically by signals)
-	btn_prev.visible = wizard_steps.current_tab > 0
-	btn_next.visible = wizard_steps.current_tab < wizard_steps.get_tab_count() - 1
+	# Connect custom resolution SpinBox signals for aspect ratio management
+	custom_width.value_changed.connect(_on_custom_width_changed)
+	custom_height.value_changed.connect(_on_custom_height_changed)
+	preview_width.value_changed.connect(_on_preview_width_changed)
+	preview_height.value_changed.connect(_on_preview_height_changed)
+	
+	# Initialize step label
+	_on_btn_wizard_pressed()
+	_update_navigation()
+	_update_resolution_options()
 
 
-func _on_gui_selected(btn: Button):
-	tooltip_gui_text.text = btn.editor_description
-	tooltip_gui.show()
+#endregion
 
-
+#region Public ################################################################
 # Invoked right before the pupup opens.
 # We are using this to apply styling and colors to the setup window elements.
 # Doing it before popping up ensures that if the user changes editor theme,
@@ -107,106 +168,6 @@ func _on_gui_selected(btn: Button):
 func on_about_to_popup() -> void:
 	pass
 
-
-func _style_divider_line() -> void:
-	# This will hold the various stylebox while we go through the elements.
-	var existing_style: StyleBox
-	
-	# Apply color to the division line
-	existing_style = div_line.get_theme_stylebox("panel")
-	if existing_style is StyleBoxFlat:
-		existing_style.bg_color = get_theme_color("highlight_color", "Editor")
-
-
-
-func _style_tooltips() -> void:
-	# This will hold the various stylebox while we go through the elements.
-	var existing_style: StyleBox
-
-	# Make sure the tooltips have the correct background and font size.
-	# Get the existing stylebox and modify its background color
-	existing_style = tooltip_gui.get_theme_stylebox("panel")
-	if existing_style is StyleBoxFlat:
-		existing_style.bg_color = get_theme_color("dark_color_1", "Editor")
-
-	# Make the tooltip text font smaller than the editor base font
-	var smaller_font_size = int(get_theme_font_size("main_size", "EditorFonts") * 0.85)
-	# Apply the smaller size to the resolution and GUI tooltips
-	for tooltip in [tooltip_res_text, tooltip_gui_text]:
-		tooltip.add_theme_font_size_override("normal_font_size", smaller_font_size)
-		tooltip.add_theme_font_size_override("bold_font_size", smaller_font_size)
-		tooltip.add_theme_font_size_override("italic_font_size", smaller_font_size)
-		tooltip.add_theme_font_size_override("bold_italics_font_size", smaller_font_size)
-		tooltip.add_theme_font_size_override("mono_font_size", smaller_font_size)
-
-
-func _style_selection_buttons() -> void:
-	# This will hold the various stylebox while we go through the elements.
-	var existing_style: StyleBox
-
-	# Style all buttons
-	existing_style = btn_gametype_modern.get_theme_stylebox("normal")
-	if not existing_style is StyleBoxFlat:
-		return
-
-	var btn_base_style = existing_style.duplicate(true) as StyleBoxFlat
-	
-	# Set corner radius for both background and border
-	btn_base_style.corner_radius_top_left = 12
-	btn_base_style.corner_radius_top_right = 12
-	btn_base_style.corner_radius_bottom_left = 12
-	btn_base_style.corner_radius_bottom_right = 12
-
-	# Or add content margin to the StyleBox for overall padding
-	btn_base_style.content_margin_left = 6
-	btn_base_style.content_margin_right = 6
-	btn_base_style.content_margin_top = 6
-	btn_base_style.content_margin_bottom = 6
-
-	btn_base_style.corner_detail = 8
-	
-	var btn_bg_color: Color = get_theme_color("highlight_color", "Editor")
-
-	var btn_normal_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
-	btn_normal_style.bg_color = btn_bg_color.darkened(0.5)
-
-	var btn_hover_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
-	btn_hover_style.bg_color = btn_bg_color
-
-	var btn_pressed_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
-	btn_pressed_style.bg_color = btn_bg_color.darkened(0.25)
-
-	# Create focus style (this is what creates the selection border)
-	var btn_focus_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
-	btn_focus_style.bg_color = btn_bg_color.darkened(0.5)
-	btn_focus_style.border_color = get_theme_color("selection_color", "Editor")
-	btn_focus_style.set_border_width_all(2)
-
-	for button in [btn_gametype_retro, btn_gametype_modern, btn_gui_nineverbs, btn_gui_actionbar, btn_gui_simpleclick]:
-		# Normal state
-		button.add_theme_stylebox_override("normal", btn_normal_style)	
-		# Hover state
-		button.add_theme_stylebox_override("hover", btn_hover_style)
-		# Pressed/selected state
-		button.add_theme_stylebox_override("pressed", btn_pressed_style)
-		# Focus state (selection border)
-		button.add_theme_stylebox_override("focus", btn_focus_style)
-		# Set color overrides
-		button.add_theme_color_override("font_color", get_theme_color("accent_color", "Editor").lightened(0.7))
-		button.add_theme_color_override("icon_normal_color", get_theme_color("accent_color", "Editor").lightened(0.7))
-		button.add_theme_color_override("font_pressed_color", Color.WHITE)
-		button.add_theme_color_override("icon_pressed_color", Color.WHITE)
-
-
-func _style_navigation_buttons() -> void:
-	# Assign icons to navigation buttons
-	btn_prev.icon = get_theme_icon("PagePrevious", "EditorIcons")
-	btn_next.icon = get_theme_icon("PageNext", "EditorIcons")
-
-	var accent_color: Color = get_theme_color("accent_color", "Editor")
-	btn_custom.add_theme_color_override("font_color", accent_color)
-	btn_custom.add_theme_color_override("font_hover_color", accent_color.lightened(0.3))
-	btn_custom.add_theme_color_override("font_pressed_color", accent_color.lightened(0.6))
 
 
 func on_close() -> void:
@@ -295,9 +256,314 @@ func define_content(show_welcome := false) -> void:
 	_update_size()
 
 
+#endregion
+
+#region Private ###################################################################################
+# Updates the container size to fit the content.
 func _update_size() -> void:
 	# Wait for the popup content to be rendered in order to get its size
 	await get_tree().create_timer(0.05).timeout
 	
 	custom_minimum_size = get_child(0).size
 	size_calculated.emit()
+
+
+# Update navigation buttons and step label.
+func _update_navigation():
+	# Update step label
+	var current_step = wizard_steps.current_tab + 1
+	var total_steps = wizard_steps.get_tab_count()
+	lbl_step.text = "Step %d / %d" % [current_step, total_steps]
+	
+	# Control button visibility (fillers will be handled automatically by signals)
+	btn_prev.visible = wizard_steps.current_tab > 0
+	btn_next.visible = wizard_steps.current_tab < wizard_steps.get_tab_count() - 1
+
+
+
+
+# Set game resolution based on user's preferences
+func _set_game_resolution() -> void:
+	# Reset game resolution
+	_game_resolution = Vector2i.ZERO
+	
+	# We need to know which game type is selected,
+	# so we can use the right option button.
+	if not _game_type:
+		return
+
+	match _game_type:
+		GameType.RETRO:
+			match opt_res_retro.selected:
+				GameResolution.RETRO_NEO_RETRO:
+					_game_resolution = Vector2(384, 216)
+				GameResolution.RETRO_VGA_4_3:
+					_game_resolution = Vector2(320, 200)
+				GameResolution.RETRO_VGA_16_9:
+					_game_resolution = Vector2(356, 200)
+				GameResolution.RETRO_CEGA_4_3:
+					_game_resolution = Vector2(240, 180)
+				GameResolution.RETRO_CEGA_16_9:
+					_game_resolution = Vector2(320, 180)
+		GameType.MODERN:
+			match opt_res_modern.selected:
+				GameResolution.MODERN_4K:
+					_game_resolution = Vector2(3840, 2160)
+				GameResolution.MODERN_QHD:
+					_game_resolution = Vector2(2560, 1440)
+				GameResolution.MODERN_FHD:
+					_game_resolution = Vector2(1920, 1080)
+				GameResolution.MODERN_HDR:
+					_game_resolution = Vector2(1280, 720)
+				GameResolution.MODERN_RETRO:
+					_game_resolution = Vector2(1024, 768)
+
+
+func _set_game_window_resolution() -> void:
+	# Let's start from the 1x case
+	var resolution_scale: float = 1.0
+
+	# Map the proper scale to selection
+	match opt_res_preview_scale.selected:
+		GameResolutionScale.HALF:
+			resolution_scale = 0.5
+		GameResolutionScale.DOUBLE:
+			resolution_scale = 2.0
+		GameResolutionScale.QUAD:
+			resolution_scale = 4.0
+
+	# set_game_window_resolution (make it int!)
+	_game_window_resolution = _game_resolution * resolution_scale
+
+
+func _get_custom_resolution_ratio() -> float:
+	match opt_keep_ratio.selected:
+		CustomResRatio.RATIO_16_9:
+			return 16.0 / 9.0
+		CustomResRatio.RATIO_4_3:
+			return 4.0 / 3.0
+
+	return 0.0  # Free ratio (default), no need to enforce anything
+
+
+
+
+#endregion
+
+#region Private / Styling #########################################################################
+func _style_separators() -> void:
+	# This will hold the various stylebox while we go through the elements.
+	var separators_stylebox: StyleBoxLine = StyleBoxLine.new()
+	
+	separators_stylebox.color = get_theme_color("highlight_color", "Editor")
+	# Apply color to the division line
+	for separator in [nav_separator, resolution_separator, warning_separator]:
+		separator.add_theme_stylebox_override("separator", separators_stylebox)
+	
+
+func _style_underfield_labels() -> void:
+	for label in [lbl_width, lbl_height, lbl_ratio, lbl_preview_width, lbl_preview_height]:
+		label.add_theme_font_size_override("font_size", int(get_theme_font_size("main_size", "EditorFonts") * 0.85))
+
+
+func _style_tooltips() -> void:
+	# This will hold the various stylebox while we go through the elements.
+	var existing_style: StyleBox
+
+	# Make sure the tooltips have the correct background and font size.
+	# Get the existing stylebox and modify its background color
+	existing_style = tooltip_gui.get_theme_stylebox("panel")
+	if existing_style is StyleBoxFlat:
+		existing_style.bg_color = get_theme_color("dark_color_1", "Editor")
+
+	# Make the tooltip text font smaller than the editor base font
+	var smaller_font_size = int(get_theme_font_size("main_size", "EditorFonts") * 0.85)
+	# Apply the smaller size to the resolution and GUI tooltips
+	for tooltip in [tooltip_res_text, tooltip_gui_text]:
+		tooltip.add_theme_font_size_override("normal_font_size", smaller_font_size)
+		tooltip.add_theme_font_size_override("bold_font_size", smaller_font_size)
+		tooltip.add_theme_font_size_override("italic_font_size", smaller_font_size)
+		tooltip.add_theme_font_size_override("bold_italics_font_size", smaller_font_size)
+		tooltip.add_theme_font_size_override("mono_font_size", smaller_font_size)
+
+
+func _style_selection_buttons() -> void:
+	# This will hold the various stylebox while we go through the elements.
+	var existing_style: StyleBox
+
+	# Style all buttons
+	existing_style = btn_gametype_modern.get_theme_stylebox("normal")
+	if not existing_style is StyleBoxFlat:
+		return
+
+	var btn_base_style = existing_style.duplicate(true) as StyleBoxFlat
+	
+	# Set corner radius for both background and border
+	btn_base_style.corner_radius_top_left = 12
+	btn_base_style.corner_radius_top_right = 12
+	btn_base_style.corner_radius_bottom_left = 12
+	btn_base_style.corner_radius_bottom_right = 12
+
+	# Or add content margin to the StyleBox for overall padding
+	btn_base_style.content_margin_left = 6
+	btn_base_style.content_margin_right = 6
+	btn_base_style.content_margin_top = 6
+	btn_base_style.content_margin_bottom = 6
+
+	btn_base_style.corner_detail = 8
+	
+	var btn_bg_color: Color = get_theme_color("highlight_color", "Editor")
+
+	var btn_normal_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
+	btn_normal_style.bg_color = btn_bg_color.darkened(0.5)
+
+	var btn_hover_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
+	btn_hover_style.bg_color = btn_bg_color
+
+	var btn_pressed_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
+	btn_pressed_style.bg_color = btn_bg_color.darkened(0.25)
+
+	# Create focus style (this is what creates the selection border)
+	var btn_focus_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
+	btn_focus_style.bg_color = btn_bg_color.darkened(0.5)
+	btn_focus_style.border_color = get_theme_color("selection_color", "Editor")
+	btn_focus_style.set_border_width_all(2)
+
+	for button in [btn_gametype_retro, btn_gametype_modern, btn_gui_nineverbs, btn_gui_actionbar, btn_gui_simpleclick]:
+		# Normal state
+		button.add_theme_stylebox_override("normal", btn_normal_style)	
+		# Hover state
+		button.add_theme_stylebox_override("hover", btn_hover_style)
+		# Pressed/selected state
+		button.add_theme_stylebox_override("pressed", btn_pressed_style)
+		# Focus state (selection border)
+		button.add_theme_stylebox_override("focus", btn_focus_style)
+		# Set color overrides
+		button.add_theme_color_override("font_color", get_theme_color("accent_color", "Editor").lightened(0.7))
+		button.add_theme_color_override("icon_normal_color", get_theme_color("accent_color", "Editor").lightened(0.7))
+		button.add_theme_color_override("font_pressed_color", Color.WHITE)
+		button.add_theme_color_override("icon_pressed_color", Color.WHITE)
+
+
+func _style_navigation_buttons() -> void:
+	# Assign icons to navigation buttons
+	btn_prev.icon = get_theme_icon("PagePrevious", "EditorIcons")
+	btn_next.icon = get_theme_icon("PageNext", "EditorIcons")
+
+	var accent_color: Color = get_theme_color("accent_color", "Editor")
+	for button in [btn_custom, btn_wizard]:
+		button.add_theme_color_override("font_color", accent_color)
+		button.add_theme_color_override("font_hover_color", accent_color.lightened(0.3))
+		button.add_theme_color_override("font_pressed_color", accent_color.lightened(0.6))
+
+
+
+#endregion
+
+
+#region Signals handlers ######################################################
+func _on_prev_pressed():
+	if wizard_steps.current_tab > 0:
+		wizard_steps.current_tab -= 1
+		_update_navigation()
+
+
+func _on_next_pressed():
+	if wizard_steps.current_tab < wizard_steps.get_tab_count() - 1:
+		wizard_steps.current_tab += 1
+		_update_navigation()
+
+
+func _on_btn_custom_pressed():
+	wizard_container.hide()
+	custom_container.show()
+
+
+func _on_btn_wizard_pressed():
+	custom_container.hide()
+	wizard_container.show()
+
+
+func _on_prev_visibility_changed():
+	# When prev button visibility changes, toggle the filler visibility inversely
+	filler_prev.visible = not btn_prev.visible
+
+
+func _on_next_visibility_changed():
+	# When next button visibility changes, toggle the filler visibility inversely
+	filler_next.visible = not btn_next.visible
+
+
+func _on_gui_selected(btn: Button):
+	tooltip_gui_text.text = btn.editor_description
+	tooltip_gui.show()
+
+
+func _on_custom_width_changed(new_value: float):
+	_update_aspect_ratio_sibling(custom_width, custom_height, new_value, WIDTH_CHANGED)
+
+
+func _on_custom_height_changed(new_value: float):
+	_update_aspect_ratio_sibling(custom_height, custom_width, new_value, HEIGHT_CHANGED)
+
+
+func _on_preview_width_changed(new_value: float):
+	_update_aspect_ratio_sibling(preview_width, preview_height, new_value, WIDTH_CHANGED)
+
+
+func _on_preview_height_changed(new_value: float):
+	_update_aspect_ratio_sibling(preview_height, preview_width, new_value, HEIGHT_CHANGED)
+
+
+# Generic function to update the sibling SpinBox maintaining aspect ratio
+func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int):
+	var ratio = _get_custom_resolution_ratio()
+	if ratio == 0.0:
+		return  # Free ratio, no enforcement
+	
+	# Determine the appropriate signal handler based on which SpinBox we're updating
+	var target_signal_handler: Callable
+	if target_spinbox == custom_width:
+		target_signal_handler = _on_custom_width_changed
+	elif target_spinbox == custom_height:
+		target_signal_handler = _on_custom_height_changed
+	elif target_spinbox == preview_width:
+		target_signal_handler = _on_preview_width_changed
+	elif target_spinbox == preview_height:
+		target_signal_handler = _on_preview_height_changed
+	else:
+		return  # Unknown SpinBox, shouldn't happen
+	
+	# Temporarily disconnect the target signal to avoid infinite loops
+	target_spinbox.value_changed.disconnect(target_signal_handler)
+	
+	# Calculate and set the new value (keeping it as integer)
+	var calculated_value: float
+	match source_dimension:
+		WIDTH_CHANGED:
+			calculated_value = new_value / ratio  # Width changed, calculate height
+		HEIGHT_CHANGED:
+			calculated_value = new_value * ratio  # Height changed, calculate width
+	
+	target_spinbox.value = int(round(calculated_value))
+	
+	# Reconnect the signal
+	target_spinbox.value_changed.connect(target_signal_handler)
+
+
+func _update_resolution_options():
+	# Show the next button only if we selected a game type
+	btn_next.hide()
+	# Check which game type button is pressed (they are mutually exclusive)
+	if btn_gametype_retro.button_pressed:
+		opt_res_retro_cont.show()
+		opt_res_modern_cont.hide()
+		btn_next.show()
+	elif btn_gametype_modern.button_pressed:
+		opt_res_retro_cont.hide()
+		opt_res_modern_cont.show()
+		btn_next.show()
+
+
+
+#endregion

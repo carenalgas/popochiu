@@ -133,18 +133,18 @@ static func show_setup(is_welcome := false) -> void:
 	
 	dialog.title = "Setup"
 	dialog.dialog_hide_on_ok = false
-	dialog.confirmed.connect(
-		func () -> void:
-			await content.on_close()
+	# dialog.confirmed.connect(
+	# 	func () -> void:
+	# 		await content.on_close()
 			
-			# The assignment must be done here, since doing it when the ConfirmationDialog is
-			# instantiated causes the engine to crash after trying to create Popochiu objects following
-			# the installation process.
-			_setup_dialog_instance = dialog
-			dialog.hide()
-	)
-	dialog.close_requested.connect(content.on_close)
-	dialog.about_to_popup.connect(content.on_about_to_popup)
+	# 		# The assignment must be done here, since doing it when the ConfirmationDialog is
+	# 		# instantiated causes the engine to crash after trying to create Popochiu objects following
+	# 		# the installation process.
+	# 		_setup_dialog_instance = dialog
+	# 		dialog.hide()
+	# )
+	# dialog.close_requested.connect(content.on_close)
+	# dialog.about_to_popup.connect(content.on_about_to_popup)
 	
 	dialog.add_child(content)
 	dock.add_child.call_deferred(dialog)
