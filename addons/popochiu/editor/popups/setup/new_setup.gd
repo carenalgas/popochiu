@@ -112,6 +112,9 @@ var _es := EditorInterface.get_editor_settings()
 @onready var lbl_ratio: Label = %LblRatio
 @onready var lbl_preview_width: Label = %LblPreviewWidth
 @onready var lbl_preview_height: Label = %LblPreviewHeight
+# ---- ButtonGroups -------------------------------------------------------------
+@onready var game_type_button_group: ButtonGroup = btn_gametype_retro.button_group
+@onready var gui_button_group: ButtonGroup = btn_gui_nineverbs.button_group
 
 #region Godot #################################################################
 
@@ -145,6 +148,23 @@ func _ready() -> void:
 	# Connect game type buttons to update resolution options visibility
 	btn_gametype_retro.pressed.connect(_update_resolution_options)
 	btn_gametype_modern.pressed.connect(_update_resolution_options)
+	
+	# Connect validation signals for Step 1 (Game Type)
+	btn_gametype_retro.pressed.connect(_update_navigation)
+	btn_gametype_modern.pressed.connect(_update_navigation)
+	
+	# Connect validation signals for Step 2 (Resolution)
+	opt_res_retro.item_selected.connect(_on_resolution_option_changed)
+	opt_res_modern.item_selected.connect(_on_resolution_option_changed)
+	opt_res_preview_scale.item_selected.connect(_on_resolution_option_changed)
+	
+	# Connect validation signals for Step 3 (GUI)
+	btn_gui_nineverbs.pressed.connect(_update_navigation)
+	btn_gui_actionbar.pressed.connect(_update_navigation)
+	btn_gui_simpleclick.pressed.connect(_update_navigation)
+	
+	# Connect tab change signal to trigger validation when switching tabs
+	wizard_steps.tab_changed.connect(_on_wizard_tab_changed)
 	
 	# Connect custom resolution SpinBox signals for aspect ratio management
 	custom_width.value_changed.connect(_on_custom_width_changed)
@@ -277,7 +297,53 @@ func _update_navigation():
 	
 	# Control button visibility (fillers will be handled automatically by signals)
 	btn_prev.visible = wizard_steps.current_tab > 0
-	btn_next.visible = wizard_steps.current_tab < wizard_steps.get_tab_count() - 1
+	
+	# For the next button, check if we're not on the last step AND the current step is valid
+	if wizard_steps.current_tab < wizard_steps.get_tab_count() - 1:
+		btn_next.visible = _validate_current_step()
+	else:
+		btn_next.visible = false
+
+
+# Validate the current step based on the active tab
+func _validate_current_step() -> bool:
+	match wizard_steps.current_tab:
+		0:  # Step Type
+			return _validate_step_type()
+		1:  # Step Resolution
+			return _validate_step_resolution()
+		2:  # Step GUI
+			return _validate_step_gui()
+		_:
+			return false
+
+
+# Validate Step 1: Game Type selection
+func _validate_step_type() -> bool:
+	# Check if any button in the game type button group is pressed
+	return game_type_button_group.get_pressed_button() != null
+
+
+# Validate Step 2: Resolution selection
+func _validate_step_resolution() -> bool:
+	# Must have the preview scale selected
+	if opt_res_preview_scale.selected == -1:
+		return false
+	
+	# Must have the appropriate resolution option selected based on game type
+	if btn_gametype_retro.button_pressed:
+		return opt_res_retro.selected != -1
+	elif btn_gametype_modern.button_pressed:
+		return opt_res_modern.selected != -1
+	else:
+		# No game type selected (shouldn't happen if step 1 validation worked)
+		return false
+
+
+# Validate Step 3: GUI selection
+func _validate_step_gui() -> bool:
+	# Check if any button in the GUI button group is pressed
+	return gui_button_group.get_pressed_button() != null
 
 
 
@@ -474,6 +540,16 @@ func _on_next_pressed():
 		_update_navigation()
 
 
+func _on_wizard_tab_changed(tab: int):
+	# When tab changes, update navigation to trigger validation for the new tab
+	_update_navigation()
+
+
+func _on_resolution_option_changed(index: int):
+	# When any resolution option changes, trigger validation
+	_update_navigation()
+
+
 func _on_btn_custom_pressed():
 	wizard_container.hide()
 	custom_container.show()
@@ -552,18 +628,28 @@ func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinB
 
 
 func _update_resolution_options():
-	# Show the next button only if we selected a game type
-	btn_next.hide()
 	# Check which game type button is pressed (they are mutually exclusive)
 	if btn_gametype_retro.button_pressed:
 		opt_res_retro_cont.show()
 		opt_res_modern_cont.hide()
-		btn_next.show()
 	elif btn_gametype_modern.button_pressed:
 		opt_res_retro_cont.hide()
 		opt_res_modern_cont.show()
-		btn_next.show()
+	else:
+		# No game type selected, hide both containers
+		opt_res_retro_cont.hide()
+		opt_res_modern_cont.hide()
+	
+	# Trigger navigation update to handle next button visibility via validation
+	_update_navigation()
 
+
+# NEXT THINGS TO DO:
+# - [x] Make sure the aspect ratio in the custom resolution options work as intended (I saw some glitches)
+# - [ ] Decide how the Create button should behave (we may want it to disappear or be disabled when the wizard is not complete)
+# - [ ] Think about the relation between custom and wizard: should they reset each other? Should they mimic each other's changes?
+# - [ ] Introduce actual logic
+# - [ ] Change the icons to something that makes more sense, especially the GUI ones
 
 
 #endregion

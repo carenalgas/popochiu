@@ -97,7 +97,7 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_hkb6o"]
+[sub_resource type="ImageTexture" id="ImageTexture_54j7f"]
 image = SubResource("Image_hkb6o")
 
 [node name="Control" type="Control"]
@@ -537,7 +537,7 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 10
 text = "BACK"
-icon = SubResource("ImageTexture_hkb6o")
+icon = SubResource("ImageTexture_54j7f")
 
 [node name="LabelStep" type="Label" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
@@ -550,15 +550,15 @@ justification_flags = 0
 
 [node name="BtnNext" type="Button" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 text = "NEXT"
-icon = SubResource("ImageTexture_hkb6o")
+icon = SubResource("ImageTexture_54j7f")
 icon_alignment = 2
 
 [node name="FillerNext" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
@@ -579,6 +579,7 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
 [node name="CustomContainer" type="PanelContainer" parent="."]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(520, 600)
 layout_mode = 1
 anchors_preset = 15
@@ -681,6 +682,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(420, 24)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_styles/separator = SubResource("StyleBoxLine_wnhjl")
 
 [node name="SizeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 0)
@@ -717,6 +719,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_font_sizes/font_size = 13
 text = "Width"
 
 [node name="HeightContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer"]
@@ -738,6 +741,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_font_sizes/font_size = 13
 text = "Height"
 
 [node name="RatioContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer"]
@@ -763,6 +767,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_font_sizes/font_size = 13
 text = "Ratio"
 
 [node name="PreviewContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
@@ -799,6 +804,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_font_sizes/font_size = 13
 text = "Width"
 
 [node name="HeightContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer"]
@@ -819,6 +825,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
+theme_override_font_sizes/font_size = 13
 text = "Height"
 
 [node name="RatioContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer"]
