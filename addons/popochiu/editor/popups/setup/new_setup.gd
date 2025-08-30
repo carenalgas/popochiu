@@ -4,16 +4,21 @@ extends Control
 signal template_copy_completed
 signal size_calculated
 
+enum SetupMode {
+	WIZARD,
+	CUSTOM,
+}
+
 enum GameType {
 	MODERN,
-	RETRO
+	RETRO,
 }
 
 enum GameResolutionScale {
 	HALF,
 	FULL,
 	DOUBLE,
-	QUAD
+	QUAD,
 }
 
 enum GameResolution {
@@ -32,7 +37,7 @@ enum GameResolution {
 enum CustomResRatio {
 	RATIO_16_9,
 	RATIO_4_3,
-	RATIO_FREE
+	RATIO_FREE,
 }
 
 
@@ -115,6 +120,9 @@ var _es := EditorInterface.get_editor_settings()
 # ---- ButtonGroups -------------------------------------------------------------
 @onready var game_type_button_group: ButtonGroup = btn_gametype_retro.button_group
 @onready var gui_button_group: ButtonGroup = btn_gui_nineverbs.button_group
+
+# ---- Dialog reference --------------------------------------------------------
+var _dialog_ok_button: Button = null
 
 #region Godot #################################################################
 
@@ -220,32 +228,18 @@ func on_close() -> void:
 	# get_parent().queue_free()
 	return
 
-func define_content(show_welcome := false) -> void:
-	# _is_closing = false
-	# _selected_template = null
-	# btn_change_template.hide()
-	# copy_process_container.hide()
+func define_content(setup_mode: SetupMode = SetupMode.WIZARD) -> void:
+	# Get reference to the dialog's OK button if we're inside a ConfirmationDialog
+	var parent = get_parent()
+	if parent is ConfirmationDialog:
+		_dialog_ok_button = parent.get_ok_button()
+		# Initialize the OK button state
+		_update_dialog_ok_button()
 	
-	# scale_message.modulate = Color(
-	# 	"#000" if "Light3D" in _es.get_setting("interface/theme/preset") else "#fff"
-	# )
-	# scale_message.modulate.a = 0.8
-	
-	# copy_process_panel.add_theme_stylebox_override(
-	# 	"panel", get_theme_stylebox("panel", "PopupPanel")
-	# )
+	_is_closing = false
 
-	# if not show_welcome:
-	# 	welcome.text = "[center][b]POPOCHIU [shake]\\( u )3(u)/[/shake][/b][/center]"
-	# 	btn_change_template.disabled = true
-	# 	btn_change_template.show()
-	
-	# # ---- Set initial values for fields ---------------------------------------
-	# game_width.value = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
-	# game_height.value = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
-	# test_width.value = ProjectSettings.get_setting(PopochiuResources.TEST_WIDTH)
-	# test_height.value = ProjectSettings.get_setting(PopochiuResources.TEST_HEIGHT)
-	# scale_message.text = _get_scale_message()
+	# Set initial values for fields
+
 	
 	# game_type.selected = GameTypes.CUSTOM
 	
@@ -303,6 +297,9 @@ func _update_navigation():
 		btn_next.visible = _validate_current_step()
 	else:
 		btn_next.visible = false
+	
+	# Update the dialog's OK button state based on complete wizard validation
+	_update_dialog_ok_button()
 
 
 # Validate the current step based on the active tab
@@ -344,6 +341,17 @@ func _validate_step_resolution() -> bool:
 func _validate_step_gui() -> bool:
 	# Check if any button in the GUI button group is pressed
 	return gui_button_group.get_pressed_button() != null
+
+
+# Validate if the entire wizard is complete (all steps valid)
+func _validate_wizard_complete() -> bool:
+	return _validate_step_type() and _validate_step_resolution() and _validate_step_gui()
+
+
+# Update the confirmation dialog's OK button state
+func _update_dialog_ok_button() -> void:
+	if _dialog_ok_button != null:
+		_dialog_ok_button.disabled = not _validate_wizard_complete()
 
 
 
@@ -646,7 +654,7 @@ func _update_resolution_options():
 
 # NEXT THINGS TO DO:
 # - [x] Make sure the aspect ratio in the custom resolution options work as intended (I saw some glitches)
-# - [ ] Decide how the Create button should behave (we may want it to disappear or be disabled when the wizard is not complete)
+# - [x] Decide how the Create button should behave (we may want it to disappear or be disabled when the wizard is not complete)
 # - [ ] Think about the relation between custom and wizard: should they reset each other? Should they mimic each other's changes?
 # - [ ] Introduce actual logic
 # - [ ] Change the icons to something that makes more sense, especially the GUI ones
