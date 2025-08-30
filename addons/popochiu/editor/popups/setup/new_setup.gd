@@ -55,6 +55,7 @@ const PopochiuGuiTemplatesHelper = preload(
 
 
 # ---- Game configuration section ----------------------------------------------
+var _current_mode: SetupMode = SetupMode.WIZARD
 var _game_type: GameType
 var _game_resolution: Vector2i
 var _game_window_resolution: Vector2i
@@ -147,39 +148,46 @@ func _ready() -> void:
 	# Connect visibility signals to automatically manage fillers
 	btn_prev.visibility_changed.connect(_on_prev_visibility_changed)
 	btn_next.visibility_changed.connect(_on_next_visibility_changed)
-	
+
 	# Connect GUI selection buttons
 	btn_gui_nineverbs.pressed.connect(_on_gui_selected.bind(btn_gui_nineverbs))
 	btn_gui_actionbar.pressed.connect(_on_gui_selected.bind(btn_gui_actionbar))
 	btn_gui_simpleclick.pressed.connect(_on_gui_selected.bind(btn_gui_simpleclick))
-	
+
 	# Connect game type buttons to update resolution options visibility
 	btn_gametype_retro.pressed.connect(_update_resolution_options)
 	btn_gametype_modern.pressed.connect(_update_resolution_options)
-	
+
 	# Connect validation signals for Step 1 (Game Type)
 	btn_gametype_retro.pressed.connect(_update_navigation)
 	btn_gametype_modern.pressed.connect(_update_navigation)
-	
+
 	# Connect validation signals for Step 2 (Resolution)
 	opt_res_retro.item_selected.connect(_on_resolution_option_changed)
 	opt_res_modern.item_selected.connect(_on_resolution_option_changed)
 	opt_res_preview_scale.item_selected.connect(_on_resolution_option_changed)
-	
+
 	# Connect validation signals for Step 3 (GUI)
 	btn_gui_nineverbs.pressed.connect(_update_navigation)
 	btn_gui_actionbar.pressed.connect(_update_navigation)
 	btn_gui_simpleclick.pressed.connect(_update_navigation)
-	
+
 	# Connect tab change signal to trigger validation when switching tabs
 	wizard_steps.tab_changed.connect(_on_wizard_tab_changed)
-	
+
 	# Connect custom resolution SpinBox signals for aspect ratio management
 	custom_width.value_changed.connect(_on_custom_width_changed)
 	custom_height.value_changed.connect(_on_custom_height_changed)
 	preview_width.value_changed.connect(_on_preview_width_changed)
 	preview_height.value_changed.connect(_on_preview_height_changed)
-	
+
+	# Connect custom mode validation signals
+	opt_game_type.item_selected.connect(_on_custom_field_changed)
+	custom_width.value_changed.connect(_on_custom_field_changed.bind(0))
+	custom_height.value_changed.connect(_on_custom_field_changed.bind(0))
+	preview_width.value_changed.connect(_on_custom_field_changed.bind(0))
+	preview_height.value_changed.connect(_on_custom_field_changed.bind(0))
+
 	# Initialize step label
 	_on_btn_wizard_pressed()
 	_update_navigation()
@@ -201,30 +209,30 @@ func on_about_to_popup() -> void:
 func on_close() -> void:
 	# if _is_closing:
 	# 	return
-	
+
 	# _is_closing = true
-	
+
 	# ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, int(game_width.value))
 	# ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, int(game_height.value))
 	# ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, int(test_width.value))
 	# ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, int(test_height.value))
-	
+
 	# match game_type.selected:
 	# 	GameTypes.HD:
 	# 		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
 	# 		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
-			
+
 	# 		PopochiuConfig.set_pixel_art_textures(false)
 	# 	GameTypes.RETRO_PIXEL:
 	# 		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
 	# 		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
-			
+
 	# 		PopochiuConfig.set_pixel_art_textures(true)
-	
+
 	# if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
 	# 	PopochiuResources.set_data_value("setup", "done", true)
 	# 	await _copy_template(true)
-	
+
 	# get_parent().queue_free()
 	return
 
@@ -235,38 +243,38 @@ func define_content(setup_mode: SetupMode = SetupMode.WIZARD) -> void:
 		_dialog_ok_button = parent.get_ok_button()
 		# Initialize the OK button state
 		_update_dialog_ok_button()
-	
+
 	_is_closing = false
 
 	# Set initial values for fields
 
-	
+
 	# game_type.selected = GameTypes.CUSTOM
-	
+
 	# if ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE) == "canvas_items":
 	# 	match ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT):
 	# 		"expand":
 	# 			game_type.selected = GameTypes.HD
 	# 		"keep":
 	# 			game_type.selected = GameTypes.RETRO_PIXEL
-	
+
 	# # Load the list of templates
 	# await _load_templates()
-	
+
 	# _select_config_template()
-	
+
 	# if show_welcome:
 	# 	# Make Pixel the default game type checked during first run
 	# 	game_type.selected = GameTypes.RETRO_PIXEL
-	
+
 	# if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
 	# 	_show_gui_warning()
-		
+
 	# 	for btn: Button in gui_templates.get_children():
 	# 		btn.disabled = true
-		
+
 	# 	template_description_container.hide()
-	
+
 	_update_size()
 
 
@@ -277,7 +285,7 @@ func define_content(setup_mode: SetupMode = SetupMode.WIZARD) -> void:
 func _update_size() -> void:
 	# Wait for the popup content to be rendered in order to get its size
 	await get_tree().create_timer(0.05).timeout
-	
+
 	custom_minimum_size = get_child(0).size
 	size_calculated.emit()
 
@@ -288,16 +296,16 @@ func _update_navigation():
 	var current_step = wizard_steps.current_tab + 1
 	var total_steps = wizard_steps.get_tab_count()
 	lbl_step.text = "Step %d / %d" % [current_step, total_steps]
-	
+
 	# Control button visibility (fillers will be handled automatically by signals)
 	btn_prev.visible = wizard_steps.current_tab > 0
-	
+
 	# For the next button, check if we're not on the last step AND the current step is valid
 	if wizard_steps.current_tab < wizard_steps.get_tab_count() - 1:
 		btn_next.visible = _validate_current_step()
 	else:
 		btn_next.visible = false
-	
+
 	# Update the dialog's OK button state based on complete wizard validation
 	_update_dialog_ok_button()
 
@@ -311,8 +319,8 @@ func _validate_current_step() -> bool:
 			return _validate_step_resolution()
 		2:  # Step GUI
 			return _validate_step_gui()
-		_:
-			return false
+
+	return false
 
 
 # Validate Step 1: Game Type selection
@@ -326,7 +334,7 @@ func _validate_step_resolution() -> bool:
 	# Must have the preview scale selected
 	if opt_res_preview_scale.selected == -1:
 		return false
-	
+
 	# Must have the appropriate resolution option selected based on game type
 	if btn_gametype_retro.button_pressed:
 		return opt_res_retro.selected != -1
@@ -348,10 +356,34 @@ func _validate_wizard_complete() -> bool:
 	return _validate_step_type() and _validate_step_resolution() and _validate_step_gui()
 
 
+# Validate custom mode fields
+func _validate_custom_complete() -> bool:
+	# Check if game type option is selected (not -1)
+	if opt_game_type.selected == -1:
+		return false
+
+	# Check if game resolution fields have valid values (> 0)
+	if custom_width.value <= 0 or custom_height.value <= 0:
+		return false
+
+	# Check if preview window size fields have valid values (> 0)
+	if preview_width.value <= 0 or preview_height.value <= 0:
+		return false
+
+	return true
+
+
 # Update the confirmation dialog's OK button state
 func _update_dialog_ok_button() -> void:
 	if _dialog_ok_button != null:
-		_dialog_ok_button.disabled = not _validate_wizard_complete()
+		var is_valid: bool = false
+		match _current_mode:
+			SetupMode.WIZARD:
+				is_valid = _validate_wizard_complete()
+			SetupMode.CUSTOM:
+				is_valid = _validate_custom_complete()
+
+		_dialog_ok_button.disabled = not is_valid
 
 
 
@@ -360,7 +392,7 @@ func _update_dialog_ok_button() -> void:
 func _set_game_resolution() -> void:
 	# Reset game resolution
 	_game_resolution = Vector2i.ZERO
-	
+
 	# We need to know which game type is selected,
 	# so we can use the right option button.
 	if not _game_type:
@@ -428,12 +460,12 @@ func _get_custom_resolution_ratio() -> float:
 func _style_separators() -> void:
 	# This will hold the various stylebox while we go through the elements.
 	var separators_stylebox: StyleBoxLine = StyleBoxLine.new()
-	
+
 	separators_stylebox.color = get_theme_color("highlight_color", "Editor")
 	# Apply color to the division line
 	for separator in [nav_separator, resolution_separator, warning_separator]:
 		separator.add_theme_stylebox_override("separator", separators_stylebox)
-	
+
 
 func _style_underfield_labels() -> void:
 	for label in [lbl_width, lbl_height, lbl_ratio, lbl_preview_width, lbl_preview_height]:
@@ -471,7 +503,7 @@ func _style_selection_buttons() -> void:
 		return
 
 	var btn_base_style = existing_style.duplicate(true) as StyleBoxFlat
-	
+
 	# Set corner radius for both background and border
 	btn_base_style.corner_radius_top_left = 12
 	btn_base_style.corner_radius_top_right = 12
@@ -485,7 +517,7 @@ func _style_selection_buttons() -> void:
 	btn_base_style.content_margin_bottom = 6
 
 	btn_base_style.corner_detail = 8
-	
+
 	var btn_bg_color: Color = get_theme_color("highlight_color", "Editor")
 
 	var btn_normal_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
@@ -558,14 +590,25 @@ func _on_resolution_option_changed(index: int):
 	_update_navigation()
 
 
+func _on_custom_field_changed(value = null):
+	# When any custom field changes, trigger validation (only affects custom mode)
+	_update_dialog_ok_button()
+
+
 func _on_btn_custom_pressed():
+	_current_mode = SetupMode.CUSTOM
 	wizard_container.hide()
 	custom_container.show()
+	# Update dialog button state for custom mode
+	_update_dialog_ok_button()
 
 
 func _on_btn_wizard_pressed():
+	_current_mode = SetupMode.WIZARD
 	custom_container.hide()
 	wizard_container.show()
+	# Update dialog button state for wizard mode
+	_update_dialog_ok_button()
 
 
 func _on_prev_visibility_changed():
@@ -604,7 +647,7 @@ func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinB
 	var ratio = _get_custom_resolution_ratio()
 	if ratio == 0.0:
 		return  # Free ratio, no enforcement
-	
+
 	# Determine the appropriate signal handler based on which SpinBox we're updating
 	var target_signal_handler: Callable
 	if target_spinbox == custom_width:
@@ -617,10 +660,10 @@ func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinB
 		target_signal_handler = _on_preview_height_changed
 	else:
 		return  # Unknown SpinBox, shouldn't happen
-	
+
 	# Temporarily disconnect the target signal to avoid infinite loops
 	target_spinbox.value_changed.disconnect(target_signal_handler)
-	
+
 	# Calculate and set the new value (keeping it as integer)
 	var calculated_value: float
 	match source_dimension:
@@ -628,9 +671,9 @@ func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinB
 			calculated_value = new_value / ratio  # Width changed, calculate height
 		HEIGHT_CHANGED:
 			calculated_value = new_value * ratio  # Height changed, calculate width
-	
+
 	target_spinbox.value = int(round(calculated_value))
-	
+
 	# Reconnect the signal
 	target_spinbox.value_changed.connect(target_signal_handler)
 
@@ -647,7 +690,7 @@ func _update_resolution_options():
 		# No game type selected, hide both containers
 		opt_res_retro_cont.hide()
 		opt_res_modern_cont.hide()
-	
+
 	# Trigger navigation update to handle next button visibility via validation
 	_update_navigation()
 
@@ -655,7 +698,7 @@ func _update_resolution_options():
 # NEXT THINGS TO DO:
 # - [x] Make sure the aspect ratio in the custom resolution options work as intended (I saw some glitches)
 # - [x] Decide how the Create button should behave (we may want it to disappear or be disabled when the wizard is not complete)
-# - [ ] Think about the relation between custom and wizard: should they reset each other? Should they mimic each other's changes?
+# - [x] Think about the relation between custom and wizard: should they reset each other? Should they mimic each other's changes?
 # - [ ] Introduce actual logic
 # - [ ] Change the icons to something that makes more sense, especially the GUI ones
 
