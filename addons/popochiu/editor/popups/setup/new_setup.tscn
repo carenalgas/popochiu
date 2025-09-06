@@ -97,7 +97,7 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_54j7f"]
+[sub_resource type="ImageTexture" id="ImageTexture_ylyh3"]
 image = SubResource("Image_hkb6o")
 
 [node name="Control" type="Control"]
@@ -240,6 +240,7 @@ justification_flags = 160
 
 [node name="OptResRetroContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 64
 theme_override_constants/margin_right = 64
@@ -537,7 +538,7 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 10
 text = "BACK"
-icon = SubResource("ImageTexture_54j7f")
+icon = SubResource("ImageTexture_ylyh3")
 
 [node name="LabelStep" type="Label" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
@@ -554,7 +555,7 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 text = "NEXT"
-icon = SubResource("ImageTexture_54j7f")
+icon = SubResource("ImageTexture_ylyh3")
 icon_alignment = 2
 
 [node name="FillerNext" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
@@ -606,10 +607,11 @@ expand_mode = 5
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
+theme_override_constants/separation = 24
 
 [node name="Type" type="Label" parent="CustomContainer/VBoxContainer/TypeContainer"]
+custom_minimum_size = Vector2(149, 0)
 layout_mode = 2
-size_flags_horizontal = 3
 tooltip_text = "This will set stretch mode and default import presets for you.
 
 - Custom will set no stretch and leave the 
@@ -623,6 +625,7 @@ text = "Game type"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(176, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 item_count = 3
 popup/item_0/text = "Custom"
 popup/item_0/id = 0
@@ -676,6 +679,114 @@ autowrap_mode = 2
 shortcut_keys_enabled = false
 vertical_alignment = 1
 justification_flags = 0
+
+[node name="GUIContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 24
+
+[node name="GameUI" type="Label" parent="CustomContainer/VBoxContainer/GUIContainer"]
+custom_minimum_size = Vector2(149, 0)
+layout_mode = 2
+tooltip_text = "This will set stretch mode and default import presets for you.
+
+- Custom will set no stretch and leave the 
+- Pixel Art will set: \"2D\" stretch mode;  set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D Pixel.
+2D: Stretch mode set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D.
+"
+mouse_filter = 0
+text = "Game UI"
+
+[node name="OptGameUI" type="OptionButton" parent="CustomContainer/VBoxContainer/GUIContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(176, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+selected = 0
+item_count = 9
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "Low Resolution"
+popup/item_1/id = 9991
+popup/item_1/separator = true
+popup/item_2/text = "Simple Click"
+popup/item_2/id = 11
+popup/item_3/text = "Action Bar"
+popup/item_3/id = 12
+popup/item_4/text = "Nine Verbs"
+popup/item_4/id = 13
+popup/item_5/text = "High Resolution"
+popup/item_5/id = 9992
+popup/item_5/separator = true
+popup/item_6/text = "Simple Click"
+popup/item_6/id = 21
+popup/item_7/text = "Action Bar"
+popup/item_7/id = 22
+popup/item_8/text = "Nine Verbs"
+popup/item_8/id = 23
+
+[node name="TooltipBox2" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="TooltipNoGUI" type="PanelContainer" parent="CustomContainer/VBoxContainer/TooltipBox2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(400, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
+
+[node name="TooltipNoGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
+theme_override_font_sizes/normal_font_size = 13
+theme_override_font_sizes/bold_font_size = 13
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+bbcode_enabled = true
+text = "[b]This requires you create the game UI from scratch.[/b]
+Only recommended if you have solid Godot experience."
+fit_content = true
+scroll_active = false
+autowrap_mode = 2
+shortcut_keys_enabled = false
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 0
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
+
+[node name="TooltipCustomGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(200, 40)
+layout_mode = 2
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
+theme_override_font_sizes/normal_font_size = 13
+theme_override_font_sizes/bold_font_size = 13
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+bbcode_enabled = true
+text = "[b]Built-in GUI are designed for a set of standard resolutions.[/b]
+ You may have to tweak them to suite your custom settings
+"
+fit_content = true
+scroll_active = false
+autowrap_mode = 2
+shortcut_keys_enabled = false
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 0
+deselect_on_focus_loss_enabled = false
+drag_and_drop_selection_enabled = false
 
 [node name="ResolutionSeparator" type="HSeparator" parent="CustomContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -837,49 +948,6 @@ custom_minimum_size = Vector2(67, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
-
-[node name="WarningSeparator" type="HSeparator" parent="CustomContainer/VBoxContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(420, 24)
-layout_mode = 2
-size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_wnhjl")
-
-[node name="TooltipBox2" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-
-[node name="TooltipNoGUI" type="PanelContainer" parent="CustomContainer/VBoxContainer/TooltipBox2"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(400, 0)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
-
-[node name="TooltipNoGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(200, 40)
-layout_mode = 2
-theme_override_font_sizes/bold_italics_font_size = 13
-theme_override_font_sizes/mono_font_size = 13
-theme_override_font_sizes/normal_font_size = 13
-theme_override_font_sizes/bold_font_size = 13
-theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
-bbcode_enabled = true
-text = "[b]Going custom requires you create the game UI from scratch.[/b]
-Only recommended if you have solid Godot experience.
-"
-fit_content = true
-scroll_active = false
-autowrap_mode = 2
-shortcut_keys_enabled = false
-horizontal_alignment = 1
-vertical_alignment = 1
-justification_flags = 0
-deselect_on_focus_loss_enabled = false
-drag_and_drop_selection_enabled = false
 
 [node name="SpacerBottom" type="Panel" parent="CustomContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 1)

@@ -73,7 +73,6 @@ var _es := EditorInterface.get_editor_settings()
 # -------- Separators ----------------------------------------------------------
 @onready var nav_separator: HSeparator = %NavSeparator
 @onready var resolution_separator: HSeparator = %ResolutionSeparator
-@onready var warning_separator: HSeparator = %WarningSeparator
 # -------- Navigation Area -----------------------------------------------------
 @onready var btn_prev: Button = %BtnPrev
 @onready var btn_next: Button = %BtnNext
@@ -106,6 +105,9 @@ var _es := EditorInterface.get_editor_settings()
 @onready var tooltip_gui: PanelContainer = %TooltipGUI
 @onready var tooltip_gui_text: RichTextLabel = %TooltipGUIText
 # ---- Custom section ----------------------------------------------------------
+@onready var opt_game_ui: OptionButton = %OptGameUI
+@onready var tooltip_no_gui_text: RichTextLabel = %TooltipNoGUIText
+@onready var tooltip_custom_gui_text: RichTextLabel = %TooltipCustomGUIText
 @onready var opt_game_type: OptionButton = %OptGameType
 @onready var custom_width: SpinBox = %CustomWidth
 @onready var custom_height: SpinBox = %CustomHeight
@@ -188,10 +190,14 @@ func _ready() -> void:
 	preview_width.value_changed.connect(_on_custom_field_changed.bind(0))
 	preview_height.value_changed.connect(_on_custom_field_changed.bind(0))
 
+	# Connect custom GUI select signal
+	opt_game_ui.item_selected.connect(_on_custom_game_ui_changed)
+
 	# Initialize step label
 	_on_btn_wizard_pressed()
 	_update_navigation()
 	_update_resolution_options()
+	_update_custom_gui_tooltip()
 
 
 #endregion
@@ -244,6 +250,9 @@ func define_content(setup_mode: SetupMode = SetupMode.WIZARD) -> void:
 		# Initialize the OK button state
 		_update_dialog_ok_button()
 
+	# Ensure correct tooltip is shown for custom GUI select
+	_update_custom_gui_tooltip()
+
 	_is_closing = false
 
 	# Set initial values for fields
@@ -288,6 +297,20 @@ func _update_size() -> void:
 
 	custom_minimum_size = get_child(0).size
 	size_calculated.emit()
+
+
+# Updates tooltip visibility for custom GUI select
+func _update_custom_gui_tooltip() -> void:
+	if opt_game_ui.selected == 0:
+		tooltip_no_gui_text.show()
+		tooltip_custom_gui_text.hide()
+	else:
+		tooltip_no_gui_text.hide()
+		tooltip_custom_gui_text.show()
+
+# Signal handler for custom GUI select
+func _on_custom_game_ui_changed(index: int) -> void:
+	_update_custom_gui_tooltip()
 
 
 # Update navigation buttons and step label.
@@ -463,7 +486,7 @@ func _style_separators() -> void:
 
 	separators_stylebox.color = get_theme_color("highlight_color", "Editor")
 	# Apply color to the division line
-	for separator in [nav_separator, resolution_separator, warning_separator]:
+	for separator in [nav_separator, resolution_separator]:
 		separator.add_theme_stylebox_override("separator", separators_stylebox)
 
 
