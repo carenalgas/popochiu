@@ -1,13 +1,10 @@
-[gd_scene load_steps=22 format=3 uid="uid://5g3dk8ky51g5"]
+[gd_scene load_steps=23 format=3 uid="uid://5g3dk8ky51g5"]
 
 [ext_resource type="Texture2D" uid="uid://b31n8y436g5bg" path="res://addons/popochiu/icons/logo-dark.svg" id="1_g14ci"]
 [ext_resource type="Script" uid="uid://ccsu88s0qt43b" path="res://addons/popochiu/editor/popups/setup/new_setup.gd" id="1_umrmm"]
 [ext_resource type="Texture2D" uid="uid://610j7sx6fd72" path="res://addons/popochiu/icons/btn_setup_gametype_retro.svg" id="2_glykx"]
 [ext_resource type="Texture2D" uid="uid://c17wxfdjujo1j" path="res://addons/popochiu/icons/btn_setup_gametype_modern.svg" id="3_umrmm"]
 [ext_resource type="Texture2D" uid="uid://cl6uvtrkjmgyb" path="res://addons/popochiu/icons/icon_setup_hint.svg" id="5_4duov"]
-[ext_resource type="Texture2D" uid="uid://b8npdr2hnbf1h" path="res://addons/popochiu/icons/btn_setup_gui_9verbs.svg" id="6_4duov"]
-[ext_resource type="Texture2D" uid="uid://bt3bqfem8qhle" path="res://addons/popochiu/icons/btn_setup_gui_actionbar.svg" id="7_vh03r"]
-[ext_resource type="Texture2D" uid="uid://4kgp2a65o7a0" path="res://addons/popochiu/icons/btn_setup_gui_simpleclick.svg" id="8_kmjpw"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4duov"]
 resource_local_to_scene = true
@@ -18,6 +15,70 @@ resource_local_to_scene = true
 resource_name = "TransparentPanel"
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_glykx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wnhjl"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hkb6o"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ylyh3"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tu147"]
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_2ulnk"]
+resource_name = "GameTypeBtnGroup"
+allow_unpress = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glykx"]
+bg_color = Color(0.147, 0.168, 0.203, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 8.0
+expand_margin_top = 8.0
+expand_margin_right = 8.0
+expand_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4duov"]
 content_margin_left = 6.0
@@ -68,27 +129,12 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_2ulnk"]
-resource_name = "GameTypeBtnGroup"
-allow_unpress = true
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glykx"]
-bg_color = Color(0.147, 0.168, 0.203, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-expand_margin_left = 8.0
-expand_margin_top = 8.0
-expand_margin_right = 8.0
-expand_margin_bottom = 8.0
-
 [sub_resource type="ButtonGroup" id="ButtonGroup_4duov"]
 resource_name = "GameGUIBtnGroup"
 
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_wnhjl"]
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_dy057"]
 
-[sub_resource type="Image" id="Image_hkb6o"]
+[sub_resource type="Image" id="Image_6tar8"]
 data = {
 "data": PackedByteArray(255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 231, 255, 90, 90, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 90, 90, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 42, 255, 90, 90, 0, 255, 94, 94, 0, 255, 91, 91, 42, 255, 93, 93, 233, 255, 92, 92, 232, 255, 93, 93, 41, 255, 90, 90, 0, 255, 94, 94, 0, 255, 91, 91, 42, 255, 93, 93, 233, 255, 92, 92, 232, 255, 92, 92, 0, 255, 92, 92, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 93, 93, 44, 255, 91, 91, 0, 255, 91, 91, 42, 255, 91, 91, 42, 255, 93, 93, 0, 255, 91, 91, 45, 255, 93, 93, 44, 255, 91, 91, 0, 255, 91, 91, 42, 255, 91, 91, 42, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 92, 92, 235, 255, 92, 92, 234, 255, 89, 89, 43, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 92, 92, 235, 255, 92, 92, 234, 255, 89, 89, 43, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 91, 91, 59, 255, 92, 92, 61, 255, 92, 92, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 91, 91, 59, 255, 92, 92, 61, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0),
 "format": "RGBA8",
@@ -97,8 +143,8 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_ylyh3"]
-image = SubResource("Image_hkb6o")
+[sub_resource type="ImageTexture" id="ImageTexture_jyhaw"]
+image = SubResource("Image_6tar8")
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -127,10 +173,11 @@ theme_override_constants/separation = 32
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
-current_tab = 0
+current_tab = 1
 tabs_visible = false
 
 [node name="StepType" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps"]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_vh03r")
 metadata/_tab_index = 0
@@ -184,10 +231,10 @@ theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_constants/h_separation = 4
-theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
-theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
+theme_override_styles/focus = SubResource("StyleBoxFlat_wnhjl")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hkb6o")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ylyh3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tu147")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_2ulnk")
 text = "Retro / Pixel Art"
@@ -204,10 +251,10 @@ theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
-theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
+theme_override_styles/focus = SubResource("StyleBoxFlat_wnhjl")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hkb6o")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ylyh3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_tu147")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_2ulnk")
 text = "Modern / Hi-Res"
@@ -217,7 +264,6 @@ vertical_icon_alignment = 0
 expand_icon = true
 
 [node name="StepRes" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps"]
-visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 metadata/_tab_index = 1
@@ -379,7 +425,7 @@ metadata/_tab_index = 2
 
 [node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI"]
 layout_mode = 2
-theme_override_constants/separation = 32
+theme_override_constants/separation = 24
 
 [node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
 custom_minimum_size = Vector2(0, 1)
@@ -400,15 +446,17 @@ layout_mode = 2
 theme_override_constants/margin_left = 80
 theme_override_constants/margin_right = 80
 
-[node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup"]
-layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="BtnNineVerbs" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
+[node name="BtnGrid" type="GridContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup"]
 unique_name_in_owner = true
-editor_description = "[b]SCUMM-inspired nine verbs and inventory icons panel interface.[/b]
+custom_minimum_size = Vector2(0, 204)
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 3
 
-Similar to the ones in \"Day of the Tentacle\", \"Simon the Sorcerer\", or \"Thimbleweed Park\"."
+[node name="BtnGUIType" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/BtnGrid"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
@@ -421,63 +469,10 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
 theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_4duov")
-text = "9-Verbs"
-icon = ExtResource("6_4duov")
+text = "GUI-TYPE"
 icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
-
-[node name="BtnActionBar" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
-unique_name_in_owner = true
-editor_description = "[b]Sierra SCI-inspired top-bar with action cycling, overlay inventory and portrait dialogues.[/b]
-
-Similar to the ones in \"King's Quest V\", \"Space Quest IV\", or \"Quest for Glory\"."
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
-theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_4duov")
-text = "Action Bar"
-icon = ExtResource("7_vh03r")
-icon_alignment = 1
-vertical_icon_alignment = 0
-expand_icon = true
-
-[node name="BtnSimpleClick" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/Columns"]
-unique_name_in_owner = true
-editor_description = "[b]Uncluttered interface with left and right click interactions and foldable inventory in a top bar.[/b]
-
-Similar to the ones in \"Beneath a Steel Sky\", \"Deponia\" and a lot of recent indie productions."
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
-theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_4duov")
-text = "Simple Click
-"
-icon = ExtResource("8_kmjpw")
-icon_alignment = 1
-vertical_icon_alignment = 0
-expand_icon = true
-
-[node name="TallSpacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
-custom_minimum_size = Vector2(0, 24)
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
 [node name="TooltipBox" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
 layout_mode = 2
@@ -486,7 +481,6 @@ size_flags_vertical = 3
 
 [node name="TooltipGUI" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/TooltipBox"]
 unique_name_in_owner = true
-visible = false
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
@@ -519,7 +513,7 @@ custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
-theme_override_styles/separator = SubResource("StyleBoxLine_wnhjl")
+theme_override_styles/separator = SubResource("StyleBoxLine_dy057")
 
 [node name="NavBtnColumns" type="HBoxContainer" parent="WizardContainer/Rows"]
 unique_name_in_owner = true
@@ -528,23 +522,23 @@ theme_override_constants/separation = 32
 
 [node name="FillerPrev" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 10
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 
 [node name="BtnPrev" type="Button" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 size_flags_horizontal = 10
 text = "BACK"
-icon = SubResource("ImageTexture_ylyh3")
+icon = SubResource("ImageTexture_jyhaw")
 
 [node name="LabelStep" type="Label" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Step 1 / 3"
+text = "Step 2 / 3"
 horizontal_alignment = 1
 vertical_alignment = 1
 justification_flags = 0
@@ -555,7 +549,7 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 text = "NEXT"
-icon = SubResource("ImageTexture_ylyh3")
+icon = SubResource("ImageTexture_jyhaw")
 icon_alignment = 2
 
 [node name="FillerNext" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
@@ -704,27 +698,21 @@ custom_minimum_size = Vector2(176, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 0
-item_count = 9
+item_count = 6
 popup/item_0/text = "None"
 popup/item_0/id = 0
 popup/item_1/text = "Low Resolution"
-popup/item_1/id = 9991
+popup/item_1/id = -1
 popup/item_1/separator = true
 popup/item_2/text = "Simple Click"
-popup/item_2/id = 11
+popup/item_2/id = 2
 popup/item_3/text = "Action Bar"
-popup/item_3/id = 12
-popup/item_4/text = "Nine Verbs"
-popup/item_4/id = 13
+popup/item_3/id = 3
+popup/item_4/text = "9-Verbs"
+popup/item_4/id = 4
 popup/item_5/text = "High Resolution"
-popup/item_5/id = 9992
+popup/item_5/id = -1
 popup/item_5/separator = true
-popup/item_6/text = "Simple Click"
-popup/item_6/id = 21
-popup/item_7/text = "Action Bar"
-popup/item_7/id = 22
-popup/item_8/text = "Nine Verbs"
-popup/item_8/id = 23
 
 [node name="TooltipBox2" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
 layout_mode = 2
@@ -793,7 +781,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(420, 24)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_wnhjl")
+theme_override_styles/separator = SubResource("StyleBoxLine_dy057")
 
 [node name="SizeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 0)
