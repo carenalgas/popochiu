@@ -1,0 +1,216 @@
+[gd_scene load_steps=16 format=3 uid="uid://bu27pbvh3qwb0"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_high_res_gui_theme.tres" id="1_am2ud"]
+[ext_resource type="Script" uid="uid://b52frot6qya47" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/simple_click_settings_popup.gd" id="2_dhu1w"]
+[ext_resource type="StyleBox" uid="uid://dbajakvkltfaj" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container.tres" id="3_5mdlk"]
+[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/gui/resources/images/close.png" id="4_sssig"]
+[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight.png" id="5_7pvra"]
+[ext_resource type="Texture2D" uid="uid://fqvwn6h78sg0" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_settings_popup/images/simple_click_settings_popup_icons.png" id="6_dhu1w"]
+[ext_resource type="PackedScene" uid="uid://drx0r8w00ivck" path="res://addons/popochiu/engine/objects/gui/components/sound_volumes/sound_volumes.tscn" id="7_8ujdh"]
+[ext_resource type="PackedScene" uid="uid://clhnbnew4ydpc" path="res://addons/popochiu/engine/objects/gui/components/dialogue_advancement/dialogue_advancement.tscn" id="8_f4k5f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n1wdd"]
+atlas = ExtResource("6_dhu1w")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqqii"]
+atlas = ExtResource("6_dhu1w")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4k08"]
+atlas = ExtResource("6_dhu1w")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c6y2c"]
+atlas = ExtResource("6_dhu1w")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_454o7"]
+atlas = ExtResource("6_dhu1w")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gnvye"]
+atlas = ExtResource("6_dhu1w")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1jlhx"]
+atlas = ExtResource("6_dhu1w")
+region = Rect2(192, 0, 32, 32)
+
+[node name="SimpleClickHighResSettingsPopup" type="Control" groups=["popochiu_gui_popup"]]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_am2ud")
+script = ExtResource("2_dhu1w")
+script_name = &"SimpleClickSettings"
+
+[node name="Overlay" type="PanelContainer" parent="."]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Overlay"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = ExtResource("3_5mdlk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer"]
+layout_mode = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Title"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Close" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("4_sssig")
+texture_pressed = ExtResource("5_7pvra")
+texture_hover = ExtResource("5_7pvra")
+
+[node name="BodyContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LeftContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer"]
+layout_mode = 2
+
+[node name="Save" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save"
+icon = SubResource("AtlasTexture_n1wdd")
+alignment = 0
+
+[node name="Load" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Load"
+icon = SubResource("AtlasTexture_wqqii")
+alignment = 0
+
+[node name="History" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "History"
+icon = SubResource("AtlasTexture_a4k08")
+alignment = 0
+
+[node name="Quit" type="Button" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/LeftContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 10
+text = "Quit"
+icon = SubResource("AtlasTexture_c6y2c")
+alignment = 0
+
+[node name="VSeparator" type="VSeparator" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer"]
+layout_mode = 2
+
+[node name="RightContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer"]
+layout_mode = 2
+
+[node name="VolumeContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer"]
+layout_mode = 2
+text = "Volume"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+texture = SubResource("AtlasTexture_454o7")
+
+[node name="SoundVolumes" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/VolumeContainer/HBoxContainer" instance=ExtResource("7_8ujdh")]
+layout_mode = 2
+show_master_only = true
+show_labels = false
+
+[node name="ContinueContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer"]
+layout_mode = 2
+text = "Dialogue Advancement"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer/HBoxContainer"]
+layout_mode = 2
+texture = SubResource("AtlasTexture_gnvye")
+
+[node name="DialogueAdvancement" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/ContinueContainer/HBoxContainer" instance=ExtResource("8_f4k5f")]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("1_am2ud")
+
+[node name="DialogueSpeedContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer"]
+layout_mode = 2
+text = "Dialogue Speed"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer"]
+layout_mode = 2
+
+[node name="Icon" type="TextureRect" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = SubResource("AtlasTexture_1jlhx")
+
+[node name="TextSpeed" type="HSlider" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer/HBoxContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 0.1
+step = 0.01
+
+[node name="TextSpeedLabel" type="Label" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+text = "0x"
+vertical_alignment = 2
+
+[node name="FooterContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 1
+
+[node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "ok"
+
+[node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "cancel"

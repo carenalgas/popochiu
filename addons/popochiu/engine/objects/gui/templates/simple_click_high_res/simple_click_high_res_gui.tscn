@@ -1,0 +1,264 @@
+[gd_scene load_steps=31 format=3 uid="uid://ddxdiyo0lvgkp"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_high_res_gui_theme.tres" id="1_jxtvu"]
+[ext_resource type="Script" uid="uid://blpkp4ajtmsxa" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/simple_click_gui.gd" id="2_luohg"]
+[ext_resource type="Texture2D" uid="uid://cl8swcsqi22qt" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/images/simple_click_cursor.png" id="3_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://c2hd63hqy3fqd" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_bar/simple_click_high_res_bar.tscn" id="4_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://bvdyamd6jb0yh" path="res://addons/popochiu/engine/objects/gui/components/hover_text_high_res/hover_text_high_res.tscn" id="5_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://c0igkpb3nl4yw" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_overhead_high_res/dialog_overhead_high_res.tscn" id="6_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu.tscn" id="7_gk7ao"]
+[ext_resource type="PackedScene" uid="uid://hruey0faemfj" path="res://addons/popochiu/engine/objects/gui/components/system_text_high_res/system_text_high_res.tscn" id="8_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://bu27pbvh3qwb0" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_settings_popup/simple_click_high_res_settings_popup.tscn" id="9_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://cndputybyj57n" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup/save_and_load_popup.tscn" id="10_kf2lr"]
+[ext_resource type="PackedScene" uid="uid://dfrsiyyqncspo" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/history_popup.tscn" id="11_03sej"]
+[ext_resource type="PackedScene" uid="uid://bnjo044fkdcq7" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup/quit_popup.tscn" id="12_flbte"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_luohg"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jxfmc"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_et85p"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(1024, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sr3it"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a06sx"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(512, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gk7ao"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nvv4w"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e1270"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kf2lr"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(576, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03sej"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(640, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flbte"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b0jhb"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p5cud"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(704, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sq3rr"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(768, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ngrdr"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(832, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sbb6p"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(960, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fj1lr"]
+atlas = ExtResource("3_jxtvu")
+region = Rect2(896, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1bbe3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_luohg")
+}],
+"loop": true,
+"name": &"active",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jxfmc")
+}],
+"loop": true,
+"name": &"down",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_et85p")
+}],
+"loop": true,
+"name": &"gui",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sr3it")
+}],
+"loop": true,
+"name": &"left",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a06sx")
+}],
+"loop": false,
+"name": &"look",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gk7ao")
+}],
+"loop": false,
+"name": &"none",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nvv4w")
+}],
+"loop": false,
+"name": &"normal",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e1270")
+}],
+"loop": true,
+"name": &"right",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kf2lr")
+}],
+"loop": false,
+"name": &"search",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_03sej")
+}],
+"loop": false,
+"name": &"talk",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flbte")
+}],
+"loop": true,
+"name": &"up",
+"speed": 4.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_b0jhb")
+}],
+"loop": false,
+"name": &"use",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p5cud")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sq3rr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ngrdr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sbb6p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fj1lr")
+}],
+"loop": true,
+"name": &"wait",
+"speed": 5.0
+}]
+
+[node name="SimpleClickHighResGUI" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_jxtvu")
+script = ExtResource("2_luohg")
+
+[node name="Cursor" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_1bbe3")
+animation = &"active"
+centered = false
+
+[node name="SimpleClickHighResBar" parent="." instance=ExtResource("4_jxtvu")]
+layout_mode = 1
+
+[node name="HoverTextHighRes" parent="." instance=ExtResource("5_jxtvu")]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+offset_top = -35.0
+grow_vertical = 0
+hide_during_dialogs = true
+
+[node name="DialogOverheadHighRes" parent="." instance=ExtResource("6_jxtvu")]
+layout_mode = 1
+
+[node name="DialogMenu" parent="." instance=ExtResource("7_gk7ao")]
+visible = false
+layout_mode = 1
+
+[node name="SystemTextHighRes" parent="." instance=ExtResource("8_jxtvu")]
+layout_mode = 1
+
+[node name="Popups" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SimpleClickHighResSettingsPopup" parent="Popups" instance=ExtResource("9_jxtvu")]
+visible = false
+layout_mode = 1
+
+[node name="SaveAndLoadPopup" parent="Popups" instance=ExtResource("10_kf2lr")]
+visible = false
+layout_mode = 1
+
+[node name="HistoryPopup" parent="Popups" instance=ExtResource("11_03sej")]
+visible = false
+layout_mode = 1
+
+[node name="QuitPopup" parent="Popups" instance=ExtResource("12_flbte")]
+visible = false
+layout_mode = 1

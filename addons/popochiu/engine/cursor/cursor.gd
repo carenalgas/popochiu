@@ -131,6 +131,7 @@ func get_position() -> Vector2:
 
 func replace_frames(new_node: AnimatedSprite2D) -> void:
 	main_cursor.sprite_frames = new_node.sprite_frames
+	main_cursor.centered = new_node.centered
 	main_cursor.offset = new_node.offset
 
 
