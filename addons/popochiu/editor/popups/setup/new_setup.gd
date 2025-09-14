@@ -52,6 +52,7 @@ const PopochiuGuiTemplatesHelper = preload(
 	"res://addons/popochiu/editor/helpers/popochiu_gui_templates_helper.gd"
 )
 const PopochiuResources = preload("res://addons/popochiu/popochiu_resources.gd")
+const PopochiuConfig = preload("res://addons/popochiu/editor/config/config.gd")
 
 
 # ---- Game configuration section ----------------------------------------------
@@ -136,7 +137,6 @@ var _dialog_ok_button: Button = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-
 	# Select the first tab
 	wizard_steps.set_current_tab(0)
 
@@ -214,36 +214,36 @@ func on_about_to_popup() -> void:
 	pass
 
 
-
 func on_close() -> void:
-	# if _is_closing:
-	# 	return
+	if _is_closing:
+		return
 
-	# _is_closing = true
+	_is_closing = true
 
-	# ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, int(game_width.value))
-	# ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, int(game_height.value))
-	# ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, int(test_width.value))
-	# ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, int(test_height.value))
+	# Calculate resolution values based on current mode
+	var resolution_values = _get_values_for_current_mode()
 
-	# match game_type.selected:
-	# 	GameTypes.HD:
-	# 		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
-	# 		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
+	# Set project settings for game and window resolution
+	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, resolution_values.game_width)
+	ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, resolution_values.game_height)
+	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, resolution_values.test_width)
+	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, resolution_values.test_height)
 
-	# 		PopochiuConfig.set_pixel_art_textures(false)
-	# 	GameTypes.RETRO_PIXEL:
-	# 		ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
-	# 		ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
+	# Configure stretch mode and pixel art settings based on game type
+	match resolution_values.game_type_config:
+		GameType.MODERN:
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
+			PopochiuConfig.set_pixel_art_textures(false)
+		GameType.RETRO:
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
+			PopochiuConfig.set_pixel_art_textures(true)
 
-	# 		PopochiuConfig.set_pixel_art_textures(true)
-
-	# if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
-	# 	PopochiuResources.set_data_value("setup", "done", true)
-	# 	await _copy_template(true)
-
-	# get_parent().queue_free()
-	return
+	# Copy GUI template and mark setup as done if this is the first setup
+	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
+		PopochiuResources.set_data_value("setup", "done", true)
+		await _copy_template(resolution_values.gui_template_name)
 
 func define_content(setup_mode: SetupMode = SetupMode.WIZARD) -> void:
 	# Get reference to the dialog's OK button if we're inside a ConfirmationDialog
@@ -343,11 +343,11 @@ func _update_navigation():
 # Validate the current step based on the active tab
 func _validate_current_step() -> bool:
 	match wizard_steps.current_tab:
-		0:  # Step Type
+		0: # Step Type
 			return _validate_step_type()
-		1:  # Step Resolution
+		1: # Step Resolution
 			return _validate_step_resolution()
-		2:  # Step GUI
+		2: # Step GUI
 			return _validate_step_gui()
 
 	return false
@@ -416,8 +416,6 @@ func _update_dialog_ok_button() -> void:
 		_dialog_ok_button.disabled = not is_valid
 
 
-
-
 # Set game resolution based on user's preferences
 func _set_game_resolution() -> void:
 	# Reset game resolution
@@ -479,9 +477,121 @@ func _get_custom_resolution_ratio() -> float:
 		CustomResRatio.RATIO_4_3:
 			return 4.0 / 3.0
 
-	return 0.0  # Free ratio (default), no need to enforce anything
+	return 0.0 # Free ratio (default), no need to enforce anything
 
 
+#endregion
+
+#region Private / Setup Logic ####################################################################
+
+## Extract appropriate values based on current mode (wizard vs custom)
+func _get_values_for_current_mode() -> Dictionary:
+	var result = {
+		"game_width": 0,
+		"game_height": 0,
+		"test_width": 0,
+		"test_height": 0,
+		"game_type_config": GameType.MODERN,
+		"gui_template_name": ""
+	}
+
+	match _current_mode:
+		SetupMode.WIZARD:
+			# Calculate resolution values from wizard selections
+			_set_game_resolution()
+			_set_game_window_resolution()
+
+			result.game_width = _game_resolution.x
+			result.game_height = _game_resolution.y
+			result.test_width = _game_window_resolution.x
+			result.test_height = _game_window_resolution.y
+			result.game_type_config = _game_type
+			result.gui_template_name = _extract_template_name_from_path(_game_gui)
+
+		SetupMode.CUSTOM:
+			result.game_width = int(custom_width.value)
+			result.game_height = int(custom_height.value)
+			result.test_width = int(preview_width.value)
+			result.test_height = int(preview_height.value)
+
+			# Map custom game type selection to GameType enum
+			# Custom OptionButton: 0="Custom", 1="High Resolution", 2="Pixel Art"
+			match opt_game_type.selected:
+				0: # Custom - default to Modern
+					result.game_type_config = GameType.MODERN
+				1: # High Resolution
+					result.game_type_config = GameType.MODERN
+				2: # Pixel Art
+					result.game_type_config = GameType.RETRO
+				_: # Fallback
+					result.game_type_config = GameType.MODERN
+
+			# Extract GUI template from custom selection
+			if opt_game_ui.selected > 0: # Skip "None" option
+				var template_meta = opt_game_ui.get_item_metadata(opt_game_ui.selected)
+				if template_meta:
+					result.gui_template_name = _extract_template_name_from_template_meta(template_meta)
+
+	return result
+
+
+## Extract template name from the stored GUI path in wizard mode
+func _extract_template_name_from_path(gui_path: String) -> String:
+	if gui_path.is_empty():
+		return ""
+
+	# Extract template name from path like "res://addons/popochiu/engine/templates/gui/simple_click/"
+	var path_parts = gui_path.split("/")
+	for i in range(path_parts.size() - 1, -1, -1):
+		if not path_parts[i].is_empty():
+			return path_parts[i].to_pascal_case()
+
+	return ""
+
+
+## Extract template name from template metadata in custom mode  
+func _extract_template_name_from_template_meta(template_meta) -> String:
+	# template_meta should be the template data dictionary with the path
+	if template_meta and template_meta.has("path"):
+		return _extract_template_name_from_path(template_meta.path)
+
+	return ""
+
+
+## Copy the selected GUI template using the existing helper
+func _copy_template(template_name: String) -> void:
+	if template_name.is_empty():
+		# No template selected, skip copying
+		return
+
+	# TODO: Add progress bar UI for template copying
+	# - Disable OK button during copying
+	# - Show progress container with label and progress bar
+	# - Update progress during copying
+	# - Hide progress and re-enable OK button when done
+
+	# For now, copy template without progress UI
+	await PopochiuGuiTemplatesHelper.copy_gui_template(
+		template_name,
+		_template_copy_progressed,
+		_template_copy_completed
+	)
+
+
+## Called during template copying to update progress (placeholder for future UI)
+func _template_copy_progressed(value: int, message: String) -> void:
+	# TODO: Update progress bar UI
+	# copy_process_label.text = message
+	# copy_process_bar.value = value
+	pass
+
+
+## Called when template copying is completed (placeholder for future UI)
+func _template_copy_completed() -> void:
+	# TODO: Hide progress UI and re-enable controls
+	# get_parent().get_ok_button().disabled = false
+	# copy_process_container.hide()
+	template_copy_completed.emit()
 
 
 #endregion
@@ -550,24 +660,24 @@ func _style_selection_buttons() -> void:
 
 	var btn_bg_color: Color = get_theme_color("highlight_color", "Editor")
 
-	var btn_normal_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
+	var btn_normal_style: StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
 	btn_normal_style.bg_color = btn_bg_color.darkened(0.5)
 
-	var btn_hover_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
+	var btn_hover_style: StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
 	btn_hover_style.bg_color = btn_bg_color
 
-	var btn_pressed_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
+	var btn_pressed_style: StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
 	btn_pressed_style.bg_color = btn_bg_color.darkened(0.25)
 
 	# Create focus style (this is what creates the selection border)
-	var btn_focus_style:StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
+	var btn_focus_style: StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
 	btn_focus_style.bg_color = btn_bg_color.darkened(0.5)
 	btn_focus_style.border_color = get_theme_color("selection_color", "Editor")
 	btn_focus_style.set_border_width_all(2)
 
 	for button in [btn_gametype_retro, btn_gametype_modern, btn_gui_type_template]:
 		# Normal state
-		button.add_theme_stylebox_override("normal", btn_normal_style)	
+		button.add_theme_stylebox_override("normal", btn_normal_style)
 		# Hover state
 		button.add_theme_stylebox_override("hover", btn_hover_style)
 		# Pressed/selected state
@@ -591,7 +701,6 @@ func _style_navigation_buttons() -> void:
 		button.add_theme_color_override("font_color", accent_color)
 		button.add_theme_color_override("font_hover_color", accent_color.lightened(0.3))
 		button.add_theme_color_override("font_pressed_color", accent_color.lightened(0.6))
-
 
 
 #endregion
@@ -686,7 +795,7 @@ func _on_preview_height_changed(new_value: float):
 func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int):
 	var ratio = _get_custom_resolution_ratio()
 	if ratio == 0.0:
-		return  # Free ratio, no enforcement
+		return # Free ratio, no enforcement
 
 	# Determine the appropriate signal handler based on which SpinBox we're updating
 	var target_signal_handler: Callable
@@ -699,7 +808,7 @@ func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinB
 	elif target_spinbox == preview_height:
 		target_signal_handler = _on_preview_height_changed
 	else:
-		return  # Unknown SpinBox, shouldn't happen
+		return # Unknown SpinBox, shouldn't happen
 
 	# Temporarily disconnect the target signal to avoid infinite loops
 	target_spinbox.value_changed.disconnect(target_signal_handler)
@@ -708,9 +817,9 @@ func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinB
 	var calculated_value: float
 	match source_dimension:
 		WIDTH_CHANGED:
-			calculated_value = new_value / ratio  # Width changed, calculate height
+			calculated_value = new_value / ratio # Width changed, calculate height
 		HEIGHT_CHANGED:
-			calculated_value = new_value * ratio  # Height changed, calculate width
+			calculated_value = new_value * ratio # Height changed, calculate width
 
 	target_spinbox.value = int(round(calculated_value))
 
