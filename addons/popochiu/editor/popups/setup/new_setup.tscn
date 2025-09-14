@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://5g3dk8ky51g5"]
+[gd_scene load_steps=19 format=3 uid="uid://5g3dk8ky51g5"]
 
 [ext_resource type="Texture2D" uid="uid://b31n8y436g5bg" path="res://addons/popochiu/icons/logo-dark.svg" id="1_g14ci"]
 [ext_resource type="Script" uid="uid://ccsu88s0qt43b" path="res://addons/popochiu/editor/popups/setup/new_setup.gd" id="1_umrmm"]
@@ -16,7 +16,7 @@ resource_name = "TransparentPanel"
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_glykx"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wnhjl"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_umrmm"]
 content_margin_left = 6.0
 content_margin_top = 6.0
 content_margin_right = 6.0
@@ -32,7 +32,7 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hkb6o"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m1rxn"]
 content_margin_left = 6.0
 content_margin_top = 6.0
 content_margin_right = 6.0
@@ -43,7 +43,7 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ylyh3"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vnmx8"]
 content_margin_left = 6.0
 content_margin_top = 6.0
 content_margin_right = 6.0
@@ -54,7 +54,7 @@ corner_radius_top_right = 12
 corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tu147"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4duov"]
 content_margin_left = 6.0
 content_margin_top = 6.0
 content_margin_right = 6.0
@@ -70,7 +70,7 @@ resource_name = "GameTypeBtnGroup"
 allow_unpress = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glykx"]
-bg_color = Color(0.147, 0.168, 0.203, 1)
+bg_color = Color(0, 0, 0, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -80,61 +80,12 @@ expand_margin_top = 8.0
 expand_margin_right = 8.0
 expand_margin_bottom = 8.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4duov"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vh03r"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kmjpw"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tey4j"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
 [sub_resource type="ButtonGroup" id="ButtonGroup_4duov"]
 resource_name = "GameGUIBtnGroup"
 
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_dy057"]
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_vh03r"]
 
-[sub_resource type="Image" id="Image_6tar8"]
+[sub_resource type="Image" id="Image_kmjpw"]
 data = {
 "data": PackedByteArray(255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 231, 255, 90, 90, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 90, 90, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 42, 255, 90, 90, 0, 255, 94, 94, 0, 255, 91, 91, 42, 255, 93, 93, 233, 255, 92, 92, 232, 255, 93, 93, 41, 255, 90, 90, 0, 255, 94, 94, 0, 255, 91, 91, 42, 255, 93, 93, 233, 255, 92, 92, 232, 255, 92, 92, 0, 255, 92, 92, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 93, 93, 44, 255, 91, 91, 0, 255, 91, 91, 42, 255, 91, 91, 42, 255, 93, 93, 0, 255, 91, 91, 45, 255, 93, 93, 44, 255, 91, 91, 0, 255, 91, 91, 42, 255, 91, 91, 42, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 92, 92, 235, 255, 92, 92, 234, 255, 89, 89, 43, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 92, 92, 235, 255, 92, 92, 234, 255, 89, 89, 43, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 91, 91, 59, 255, 92, 92, 61, 255, 92, 92, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 91, 91, 59, 255, 92, 92, 61, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0),
 "format": "RGBA8",
@@ -143,8 +94,8 @@ data = {
 "width": 16
 }
 
-[sub_resource type="ImageTexture" id="ImageTexture_jyhaw"]
-image = SubResource("Image_6tar8")
+[sub_resource type="ImageTexture" id="ImageTexture_tey4j"]
+image = SubResource("Image_kmjpw")
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -157,6 +108,7 @@ script = ExtResource("1_umrmm")
 
 [node name="WizardContainer" type="PanelContainer" parent="."]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(520, 600)
 layout_mode = 1
 anchors_preset = 15
@@ -231,10 +183,10 @@ theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
 theme_override_constants/h_separation = 4
-theme_override_styles/focus = SubResource("StyleBoxFlat_wnhjl")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hkb6o")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_ylyh3")
-theme_override_styles/normal = SubResource("StyleBoxFlat_tu147")
+theme_override_styles/focus = SubResource("StyleBoxFlat_umrmm")
+theme_override_styles/hover = SubResource("StyleBoxFlat_m1rxn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vnmx8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_4duov")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_2ulnk")
 text = "Retro / Pixel Art"
@@ -251,10 +203,10 @@ theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_wnhjl")
-theme_override_styles/hover = SubResource("StyleBoxFlat_hkb6o")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_ylyh3")
-theme_override_styles/normal = SubResource("StyleBoxFlat_tu147")
+theme_override_styles/focus = SubResource("StyleBoxFlat_umrmm")
+theme_override_styles/hover = SubResource("StyleBoxFlat_m1rxn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vnmx8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_4duov")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_2ulnk")
 text = "Modern / Hi-Res"
@@ -463,10 +415,10 @@ theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_4duov")
-theme_override_styles/hover = SubResource("StyleBoxFlat_vh03r")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_kmjpw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_tey4j")
+theme_override_styles/focus = SubResource("StyleBoxFlat_umrmm")
+theme_override_styles/hover = SubResource("StyleBoxFlat_m1rxn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_vnmx8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_4duov")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_4duov")
 text = "GUI-TYPE"
@@ -513,7 +465,7 @@ custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
-theme_override_styles/separator = SubResource("StyleBoxLine_dy057")
+theme_override_styles/separator = SubResource("StyleBoxLine_vh03r")
 
 [node name="NavBtnColumns" type="HBoxContainer" parent="WizardContainer/Rows"]
 unique_name_in_owner = true
@@ -532,7 +484,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 text = "BACK"
-icon = SubResource("ImageTexture_jyhaw")
+icon = SubResource("ImageTexture_tey4j")
 
 [node name="LabelStep" type="Label" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
@@ -549,7 +501,7 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 text = "NEXT"
-icon = SubResource("ImageTexture_jyhaw")
+icon = SubResource("ImageTexture_tey4j")
 icon_alignment = 2
 
 [node name="FillerNext" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
@@ -698,7 +650,7 @@ custom_minimum_size = Vector2(176, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 0
-item_count = 6
+item_count = 5
 popup/item_0/text = "None"
 popup/item_0/id = 0
 popup/item_1/text = "Low Resolution"
@@ -710,9 +662,6 @@ popup/item_3/text = "Action Bar"
 popup/item_3/id = 3
 popup/item_4/text = "9-Verbs"
 popup/item_4/id = 4
-popup/item_5/text = "High Resolution"
-popup/item_5/id = -1
-popup/item_5/separator = true
 
 [node name="TooltipBox2" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
 layout_mode = 2
@@ -781,7 +730,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(420, 24)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_dy057")
+theme_override_styles/separator = SubResource("StyleBoxLine_vh03r")
 
 [node name="SizeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 0)
@@ -950,3 +899,96 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 theme_override_colors/font_pressed_color = Color(0.6, 0.6, 0.6, 1)
 theme_override_colors/font_hover_color = Color(0.3, 0.3, 0.3, 1)
 text = "Now I'm scared! Bring the wizard back!"
+
+[node name="CopyProcessContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -140.0
+offset_top = -210.0
+offset_right = 140.0
+offset_bottom = 210.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
+
+[node name="MarginContainer" type="MarginContainer" parent="CopyProcessContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CopyProcessContainer/MarginContainer"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="CopyProcessTooltipBox" type="MarginContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
+
+[node name="TooltipRes" type="PanelContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox"]
+custom_minimum_size = Vector2(400, 50)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
+
+[node name="Columns" type="HBoxContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipRes"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 32
+
+[node name="TextureRect" type="TextureRect" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipRes/Columns"]
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("5_4duov")
+expand_mode = 2
+
+[node name="TooltipResText" type="RichTextLabel" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipRes/Columns"]
+clip_contents = false
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
+theme_override_font_sizes/normal_font_size = 13
+theme_override_font_sizes/bold_font_size = 13
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+bbcode_enabled = true
+text = "[b]Hang tight![/b]
+Popochius are setting up your adventure!"
+fit_content = true
+scroll_active = false
+autowrap_mode = 2
+shortcut_keys_enabled = false
+horizontal_alignment = 1
+vertical_alignment = 1
+justification_flags = 0
+
+[node name="Spacer" type="Panel" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
+
+[node name="CopyProcessBar" type="ProgressBar" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+value = 50.0
+
+[node name="CopyProcessLabel" type="Label" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "This will set stretch mode and default import presets for you.
+
+- Custom will set no stretch and leave the 
+- Pixel Art will set: \"2D\" stretch mode;  set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D Pixel.
+2D: Stretch mode set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D.
+"
+mouse_filter = 0
+text = "Setting up Game UI..."
+horizontal_alignment = 1
+justification_flags = 0

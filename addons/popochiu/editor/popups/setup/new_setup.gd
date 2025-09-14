@@ -60,7 +60,6 @@ var _current_mode: SetupMode = SetupMode.WIZARD
 var _game_type: GameType
 var _game_resolution: Vector2i
 var _game_window_resolution: Vector2i
-var _game_gui: String
 
 # Dictionary to store GUI templates by target resolution
 var _templates_by_res = {
@@ -129,7 +128,10 @@ var _es := EditorInterface.get_editor_settings()
 # ---- ButtonGroups -------------------------------------------------------------
 @onready var game_type_button_group: ButtonGroup = btn_gametype_retro.button_group
 @onready var gui_button_group: ButtonGroup = btn_gui_type_template.button_group
-
+# ---- CopyProcess Elements -----------------------------------------------------
+@onready var copy_process_container: PanelContainer = %CopyProcessContainer
+@onready var copy_process_label: Label = %CopyProcessLabel
+@onready var copy_process_bar: ProgressBar = %CopyProcessBar
 # ---- Dialog reference --------------------------------------------------------
 var _dialog_ok_button: Button = null
 
@@ -146,6 +148,7 @@ func _ready() -> void:
 	_style_selection_buttons()
 	_style_separators()
 	_style_underfield_labels()
+	_style_progress_container()
 
 	# Connect navigation buttons
 	btn_prev.pressed.connect(_on_prev_pressed)
@@ -506,7 +509,10 @@ func _get_values_for_current_mode() -> Dictionary:
 			result.test_width = _game_window_resolution.x
 			result.test_height = _game_window_resolution.y
 			result.game_type_config = _game_type
-			result.gui_template_name = _extract_template_name_from_path(_game_gui)
+
+			# Get template data from selected wizard button
+			var template_data = _get_selected_wizard_template()
+			result.gui_template_name = _extract_template_name_from_data(template_data)
 
 		SetupMode.CUSTOM:
 			result.game_width = int(custom_width.value)
@@ -528,14 +534,28 @@ func _get_values_for_current_mode() -> Dictionary:
 
 			# Extract GUI template from custom selection
 			if opt_game_ui.selected > 0: # Skip "None" option
-				var template_meta = opt_game_ui.get_item_metadata(opt_game_ui.selected)
-				if template_meta:
-					result.gui_template_name = _extract_template_name_from_template_meta(template_meta)
+				var template_data = opt_game_ui.get_item_metadata(opt_game_ui.selected)
+				result.gui_template_name = _extract_template_name_from_data(template_data)
 
 	return result
 
 
-## Extract template name from the stored GUI path in wizard mode
+# Get the selected template data from wizard mode buttons
+func _get_selected_wizard_template():
+	var pressed_btn = gui_button_group.get_pressed_button()
+	return pressed_btn.get_meta("template_data") if pressed_btn else null
+
+
+# Extract template name from template data (works for both wizard and custom modes)
+func _extract_template_name_from_data(template_data) -> String:
+	# template_data should be the template dictionary with the path
+	if template_data and template_data.has("path"):
+		return _extract_template_name_from_path(template_data.path)
+	
+	return ""
+
+
+# Extract template name from the stored GUI path
 func _extract_template_name_from_path(gui_path: String) -> String:
 	if gui_path.is_empty():
 		return ""
@@ -547,30 +567,16 @@ func _extract_template_name_from_path(gui_path: String) -> String:
 			return path_parts[i].to_pascal_case()
 
 	return ""
-
-
-## Extract template name from template metadata in custom mode  
-func _extract_template_name_from_template_meta(template_meta) -> String:
-	# template_meta should be the template data dictionary with the path
-	if template_meta and template_meta.has("path"):
-		return _extract_template_name_from_path(template_meta.path)
-
-	return ""
-
-
 ## Copy the selected GUI template using the existing helper
 func _copy_template(template_name: String) -> void:
 	if template_name.is_empty():
 		# No template selected, skip copying
 		return
 
-	# TODO: Add progress bar UI for template copying
-	# - Disable OK button during copying
-	# - Show progress container with label and progress bar
-	# - Update progress during copying
-	# - Hide progress and re-enable OK button when done
+	# Show progress UI and disable controls
+	_show_copy_progress()
 
-	# For now, copy template without progress UI
+	# Copy template with progress callbacks
 	await PopochiuGuiTemplatesHelper.copy_gui_template(
 		template_name,
 		_template_copy_progressed,
@@ -578,19 +584,47 @@ func _copy_template(template_name: String) -> void:
 	)
 
 
-## Called during template copying to update progress (placeholder for future UI)
+## Show progress container and hide main UI during template copying
+func _show_copy_progress() -> void:
+	# Hide main containers
+	wizard_container.hide()
+	custom_container.hide()
+	
+	# Show progress container
+	copy_process_container.show()
+	
+	# Initialize progress bar
+	copy_process_bar.value = 0
+	copy_process_label.text = "Preparing to copy GUI template..."
+	
+	# Disable dialog OK button during copying
+	if _dialog_ok_button:
+		_dialog_ok_button.disabled = true
+
+
+## Called during template copying to update progress
 func _template_copy_progressed(value: int, message: String) -> void:
-	# TODO: Update progress bar UI
-	# copy_process_label.text = message
-	# copy_process_bar.value = value
-	pass
+	copy_process_label.text = message
+	copy_process_bar.value = value
 
 
-## Called when template copying is completed (placeholder for future UI)
+## Called when template copying is completed
 func _template_copy_completed() -> void:
-	# TODO: Hide progress UI and re-enable controls
-	# get_parent().get_ok_button().disabled = false
-	# copy_process_container.hide()
+	# Hide progress UI
+	copy_process_container.hide()
+	
+	# Show the appropriate main container based on current mode
+	match _current_mode:
+		SetupMode.WIZARD:
+			wizard_container.show()
+		SetupMode.CUSTOM:
+			custom_container.show()
+	
+	# Re-enable dialog OK button
+	if _dialog_ok_button:
+		_dialog_ok_button.disabled = false
+	
+	# Emit completion signal
 	template_copy_completed.emit()
 
 
@@ -703,6 +737,18 @@ func _style_navigation_buttons() -> void:
 		button.add_theme_color_override("font_pressed_color", accent_color.lightened(0.6))
 
 
+func _style_progress_container() -> void:
+	# Apply consistent theming to progress container elements
+	var base_font_size = get_theme_font_size("main_size", "EditorFonts")
+	
+	# Style the progress label
+	copy_process_label.add_theme_font_size_override("font_size", base_font_size)
+	copy_process_label.add_theme_color_override("font_color", get_theme_color("font_color", "Editor"))
+	
+	# Style the progress bar
+	copy_process_bar.add_theme_color_override("font_color", get_theme_color("font_color", "Editor"))
+
+
 #endregion
 
 
@@ -767,9 +813,6 @@ func _on_gui_selected(btn: Button):
 		# Update tooltip with template description
 		tooltip_gui_text.text = template_info.description
 		tooltip_gui.show()
-
-		# Store selected GUI path
-		_game_gui = btn.get_meta("template_path")
 
 	# Update navigation buttons
 	_update_navigation()
@@ -930,9 +973,9 @@ func _populate_gui_buttons() -> void:
 		template_button.icon = template.icon
 
 		# Store template data in the button for later access
-		template_button.set_meta("template_path", template.path)
+		template_button.set_meta("template_data", template)  # Store full template dictionary
 		template_button.set_meta("template_button", true)
-		template_button.set_meta("template_info", template.info_resource)
+		template_button.set_meta("template_info", template.info_resource)  # Keep for tooltip compatibility
 		template_button.button_group = gui_button_group
 		template_button.pressed.connect(_on_gui_selected.bind(template_button))
 
