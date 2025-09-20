@@ -67,6 +67,10 @@ var _templates_by_res = {
 	PopochiuGUIInfo.GUITargetRes.HIGH_RESOLUTION: []
 }
 
+# Template tracking for change detection
+var _current_template_name: String = ""
+var _selected_template_name: String = ""
+
 var _is_closing := false
 var _es := EditorInterface.get_editor_settings()
 
@@ -188,10 +192,10 @@ func _ready() -> void:
 
 	# Connect custom mode validation signals
 	opt_game_type.item_selected.connect(_on_custom_field_changed)
-	custom_width.value_changed.connect(_on_custom_field_changed.bind(0))
-	custom_height.value_changed.connect(_on_custom_field_changed.bind(0))
-	preview_width.value_changed.connect(_on_custom_field_changed.bind(0))
-	preview_height.value_changed.connect(_on_custom_field_changed.bind(0))
+	custom_width.value_changed.connect(_on_custom_field_changed)
+	custom_height.value_changed.connect(_on_custom_field_changed)
+	preview_width.value_changed.connect(_on_custom_field_changed)
+	preview_height.value_changed.connect(_on_custom_field_changed)
 
 	# Connect custom GUI select signal
 	opt_game_ui.item_selected.connect(_on_custom_game_ui_changed)
@@ -223,6 +227,9 @@ func on_close() -> void:
 
 	_is_closing = true
 
+	# Save the current mode for next time
+	PopochiuResources.set_data_value("setup", "last_mode", _current_mode)
+
 	# Calculate resolution values based on current mode
 	var resolution_values = _get_values_for_current_mode()
 
@@ -248,51 +255,44 @@ func on_close() -> void:
 		PopochiuResources.set_data_value("setup", "done", true)
 		await _copy_template(resolution_values.gui_template_name)
 
-func define_content(setup_mode: SetupMode = SetupMode.WIZARD) -> void:
+func define_content() -> void:
 	# Get reference to the dialog's OK button if we're inside a ConfirmationDialog
 	var parent = get_parent()
 	if parent is ConfirmationDialog:
 		_dialog_ok_button = parent.get_ok_button()
+		# Update button label based on setup state
+		_dialog_ok_button.text = "Update" if PopochiuResources.is_setup_done() else "Create"
 		# Initialize the OK button state
 		_update_dialog_ok_button()
+
+	_is_closing = false
+
+	# Get current template for change detection
+	_current_template_name = PopochiuResources.get_data_value("ui", "template", "")
+
+	# Restore last used mode if setup was done before, otherwise default to wizard
+	_current_mode = PopochiuResources.get_data_value("setup", "last_mode", SetupMode.WIZARD)
+
+	# Populate fields with current project settings
+	_populate_from_current_settings()
+
+	# Show appropriate container and update UI
+	match _current_mode:
+		SetupMode.WIZARD:
+			_on_btn_wizard_pressed()
+		SetupMode.CUSTOM:
+			_on_btn_custom_pressed()
 
 	# Ensure correct tooltip is shown for custom GUI select
 	_update_custom_gui_tooltip()
 
-	_is_closing = false
-
-	# Set initial values for fields
-
-
-	# game_type.selected = GameTypes.CUSTOM
-
-	# if ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE) == "canvas_items":
-	# 	match ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT):
-	# 		"expand":
-	# 			game_type.selected = GameTypes.HD
-	# 		"keep":
-	# 			game_type.selected = GameTypes.RETRO_PIXEL
-
-	# # Load the list of templates
-	# await _load_templates()
-
-	# _select_config_template()
-
-	# if show_welcome:
-	# 	# Make Pixel the default game type checked during first run
-	# 	game_type.selected = GameTypes.RETRO_PIXEL
-
-	# if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
-	# 	_show_gui_warning()
-
-	# 	for btn: Button in gui_templates.get_children():
-	# 		btn.disabled = true
-
-	# 	template_description_container.hide()
+	# Check for GUI scene open warning
+	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
+		_show_gui_warning()
 
 	_update_size()
 
-	# Update GUI buttons if needed
+	# Update GUI buttons if needed (after templates are loaded)
 	if game_type_button_group.get_pressed_button() != null:
 		_populate_gui_buttons()
 
@@ -300,6 +300,146 @@ func define_content(setup_mode: SetupMode = SetupMode.WIZARD) -> void:
 #endregion
 
 #region Private ###################################################################################
+## Populate fields with current project settings
+func _populate_from_current_settings() -> void:
+	# Get current project settings
+	var game_width = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH, 356)
+	var game_height = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT, 200)
+	var test_width = ProjectSettings.get_setting(PopochiuResources.TEST_WIDTH, 1280)
+	var test_height = ProjectSettings.get_setting(PopochiuResources.TEST_HEIGHT, 720)
+
+	# Populate custom fields
+	custom_width.value = game_width
+	custom_height.value = game_height
+	preview_width.value = test_width
+	preview_height.value = test_height
+
+	# Determine game type from stretch settings
+	var stretch_mode = ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE, "disabled")
+	var stretch_aspect = ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT, "ignore")
+	var is_pixel_art = PopochiuConfig.is_pixel_art_textures()
+
+	# Set custom game type
+	if stretch_mode == "canvas_items":
+		if stretch_aspect == "keep" or is_pixel_art:
+			opt_game_type.selected = 2  # Pixel Art
+		else:
+			opt_game_type.selected = 1  # High Resolution
+	else:
+		opt_game_type.selected = 0  # Custom
+
+	# Set wizard selections based on current settings
+	_set_wizard_from_current_settings(Vector2i(game_width, game_height), Vector2i(test_width, test_height), is_pixel_art)
+
+
+## Set wizard selections from current project settings
+func _set_wizard_from_current_settings(game_res: Vector2i, test_res: Vector2i, is_pixel: bool) -> void:
+	# Determine game type
+	if is_pixel:
+		btn_gametype_retro.button_pressed = true
+		_game_type = GameType.RETRO
+	else:
+		btn_gametype_modern.button_pressed = true
+		_game_type = GameType.MODERN
+
+	# Find matching resolution
+	_find_and_set_resolution_options(game_res, is_pixel)
+
+	# Calculate and set preview scale
+	if game_res.x > 0 and game_res.y > 0:
+		var scale_x = float(test_res.x) / float(game_res.x)
+		var scale_y = float(test_res.y) / float(game_res.y)
+		var scale = min(scale_x, scale_y)
+
+		if abs(scale - 0.5) < 0.1:
+			opt_res_preview_scale.selected = GameResolutionScale.HALF
+		elif abs(scale - 2.0) < 0.1:
+			opt_res_preview_scale.selected = GameResolutionScale.DOUBLE
+		elif abs(scale - 4.0) < 0.1:
+			opt_res_preview_scale.selected = GameResolutionScale.QUAD
+		else:
+			opt_res_preview_scale.selected = GameResolutionScale.FULL
+
+
+## Find and set the closest resolution option
+func _find_and_set_resolution_options(game_res: Vector2i, is_pixel: bool) -> void:
+	if is_pixel:
+		# Try to find matching retro resolution
+		if game_res == Vector2i(384, 216):
+			opt_res_retro.selected = GameResolution.RETRO_NEO_RETRO
+		elif game_res == Vector2i(320, 200):
+			opt_res_retro.selected = GameResolution.RETRO_VGA_4_3
+		elif game_res == Vector2i(356, 200):
+			opt_res_retro.selected = GameResolution.RETRO_VGA_16_9
+		elif game_res == Vector2i(240, 180):
+			opt_res_retro.selected = GameResolution.RETRO_CEGA_4_3
+		elif game_res == Vector2i(320, 180):
+			opt_res_retro.selected = GameResolution.RETRO_CEGA_16_9
+		else:
+			opt_res_retro.selected = GameResolution.RETRO_VGA_16_9  # Default
+	else:
+		# Try to find matching modern resolution
+		if game_res == Vector2i(3840, 2160):
+			opt_res_modern.selected = GameResolution.MODERN_4K
+		elif game_res == Vector2i(2560, 1440):
+			opt_res_modern.selected = GameResolution.MODERN_QHD
+		elif game_res == Vector2i(1920, 1080):
+			opt_res_modern.selected = GameResolution.MODERN_FHD
+		elif game_res == Vector2i(1280, 720):
+			opt_res_modern.selected = GameResolution.MODERN_HDR
+		elif game_res == Vector2i(1024, 768):
+			opt_res_modern.selected = GameResolution.MODERN_RETRO
+		else:
+			opt_res_modern.selected = GameResolution.MODERN_FHD  # Default
+
+
+## Select current template in both wizard and custom modes
+func _select_current_template() -> void:
+	if _current_template_name.is_empty():
+		return
+
+	# Select in wizard mode - find matching button
+	for child in gui_grid.get_children():
+		if child.has_meta("template_data"):
+			var template_data = child.get_meta("template_data")
+			var template_name = _extract_template_name_from_data(template_data)
+			if template_name == _current_template_name:
+				child.button_pressed = true
+				_on_gui_selected(child)
+				break
+
+	# Select in custom mode dropdown
+	for i in range(opt_game_ui.item_count):
+		var metadata = opt_game_ui.get_item_metadata(i)
+		if metadata:
+			var template_name = _extract_template_name_from_data(metadata)
+			if template_name == _current_template_name:
+				opt_game_ui.selected = i
+				_update_custom_gui_tooltip()
+				break
+
+
+## Show warning when GUI scene is open
+func _show_gui_warning() -> void:
+	var warning_dialog := AcceptDialog.new()
+	warning_dialog.title = "GUI template warning"
+	warning_dialog.dialog_text = "The GUI scene (gui.tscn) is currently opened in the Editor.\n\n" + \
+		"In order to change the GUI template please close that scene first."
+	warning_dialog.dialog_autowrap = true
+	warning_dialog.min_size.x = size.x - 64
+
+	# Disable template selection in both modes
+	for child in gui_grid.get_children():
+		if child.has_meta("template_button"):
+			child.disabled = true
+
+	opt_game_ui.disabled = true
+
+	add_child(warning_dialog)
+	warning_dialog.popup_centered()
+	warning_dialog.tree_exited.connect(func(): warning_dialog.queue_free())
+
+
 # Updates the container size to fit the content.
 func _update_size() -> void:
 	# Wait for the popup content to be rendered in order to get its size
@@ -617,6 +757,7 @@ func _template_copy_completed() -> void:
 	match _current_mode:
 		SetupMode.WIZARD:
 			wizard_container.show()
+			wizard_steps.current_tab = 0
 		SetupMode.CUSTOM:
 			custom_container.show()
 	

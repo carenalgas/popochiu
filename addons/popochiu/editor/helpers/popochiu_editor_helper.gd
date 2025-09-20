@@ -122,7 +122,7 @@ static func show_creation_popup(scene: PackedScene, min_size := Vector2i(640, 18
 	dialog.register_text_enter(content.input)
 
 
-static func show_setup(is_welcome := false) -> void:
+static func show_setup() -> void:
 	if is_instance_valid(_setup_dialog_instance):
 		await show_dialog(_setup_dialog_instance)
 
@@ -150,7 +150,7 @@ static func show_setup(is_welcome := false) -> void:
 	dock.add_child.call_deferred(dialog)
 	await dialog.ready
 
-	content.define_content(is_welcome)
+	content.define_content()
 	content.size_calculated.connect(
 		func () -> void:
 			dialog.reset_size()
