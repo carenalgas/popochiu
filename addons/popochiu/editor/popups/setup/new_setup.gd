@@ -191,6 +191,12 @@ func _ready() -> void:
 	custom_height.value_changed.connect(_on_custom_height_changed)
 	preview_width.value_changed.connect(_on_preview_width_changed)
 	preview_height.value_changed.connect(_on_preview_height_changed)
+	
+	# Also connect to focus_exited to catch manual text input changes
+	custom_width.get_line_edit().focus_exited.connect(func(): _on_custom_width_changed(custom_width.value))
+	custom_height.get_line_edit().focus_exited.connect(func(): _on_custom_height_changed(custom_height.value))
+	preview_width.get_line_edit().focus_exited.connect(func(): _on_preview_width_changed(preview_width.value))
+	preview_height.get_line_edit().focus_exited.connect(func(): _on_preview_height_changed(preview_height.value))
 
 	# Connect custom mode validation signals
 	opt_game_type.item_selected.connect(_on_custom_field_changed)
@@ -201,6 +207,9 @@ func _ready() -> void:
 
 	# Connect custom GUI select signal
 	opt_game_ui.item_selected.connect(_on_custom_game_ui_changed)
+
+	# Connect custom ratio change signal
+	opt_keep_ratio.item_selected.connect(_on_custom_ratio_changed)
 
 	# Initialize step label
 	_on_btn_wizard_pressed()
@@ -1371,6 +1380,15 @@ func _on_preview_width_changed(new_value: float) -> void:
 
 func _on_preview_height_changed(new_value: float) -> void:
 	_update_aspect_ratio_sibling(preview_height, preview_width, new_value, HEIGHT_CHANGED)
+
+
+func _on_custom_ratio_changed(index: int) -> void:
+	# Check the index
+	if index < 2:  # Not free ratio
+		# Recalculate game resolution width based on height
+		_update_aspect_ratio_sibling(custom_height, custom_width, custom_height.value, HEIGHT_CHANGED)
+		# Recalculate preview resolution width based on height
+		_update_aspect_ratio_sibling(preview_height, preview_width, preview_height.value, HEIGHT_CHANGED)
 
 
 # Handle game type selection
