@@ -225,6 +225,16 @@ func on_about_to_popup() -> void:
 	_template_change_confirmed = false
 	_copy_in_progress = false
 
+	# Set the text of the confirmation dialog depending on the setup state.
+	# Get reference to the dialog's OK button if we're inside a ConfirmationDialog.
+	var parent = get_parent()
+	if parent is ConfirmationDialog:
+		_dialog_ok_button = parent.get_ok_button()
+		# Update button label based on setup state.
+		_dialog_ok_button.text = "Update" if PopochiuResources.is_setup_done() else "Create"
+		# Initialize the OK button state.
+		_update_dialog_ok_button()
+
 
 func on_close() -> void:
 	if _is_closing:
@@ -263,15 +273,6 @@ func on_close() -> void:
 
 
 func define_content() -> void:
-	# Get reference to the dialog's OK button if we're inside a ConfirmationDialog
-	var parent = get_parent()
-	if parent is ConfirmationDialog:
-		_dialog_ok_button = parent.get_ok_button()
-		# Update button label based on setup state
-		_dialog_ok_button.text = "Update" if PopochiuResources.is_setup_done() else "Create"
-		# Initialize the OK button state
-		_update_dialog_ok_button()
-
 	# Get current template for change detection
 	_current_template_name = PopochiuResources.get_data_value("ui", "template", "")
 	_selected_template_name = _current_template_name
@@ -350,8 +351,9 @@ func _restore_from_settings() -> void:
 	else:
 		opt_game_type.selected = 0 # Custom
 
-	# Set wizard selections based on current settings
-	_populate_wizard_from_settings(Vector2i(game_width, game_height), Vector2i(test_width, test_height), is_pixel_art)
+	# Set wizard selections based on current settings (only for existing games)
+	if PopochiuResources.is_setup_done():
+		_populate_wizard_from_settings(Vector2i(game_width, game_height), Vector2i(test_width, test_height), is_pixel_art)
 
 
 # Set wizard selections from current project settings
@@ -363,6 +365,9 @@ func _populate_wizard_from_settings(game_res: Vector2i, test_res: Vector2i, is_p
 	else:
 		btn_gametype_modern.button_pressed = true
 		_game_type = GameType.MODERN
+
+	# Update resolution options to show the correct dropdown
+	_update_resolution_options()
 
 	# Find matching resolution
 	_find_and_set_resolution_options(game_res, is_pixel)
@@ -1249,8 +1254,9 @@ func _on_custom_game_ui_changed(index: int) -> void:
 		_show_gui_warning()
 		return
 
-	# Show confirmation for template change
-	_show_template_change_confirmation(new_template_name)
+	# Show confirmation for template change only if there's an existing GUI to override
+	if PopochiuResources.is_setup_done():
+		_show_template_change_confirmation(new_template_name)
 
 	_update_custom_gui_tooltip()
 
@@ -1324,8 +1330,9 @@ func _on_wizard_gui_selected(btn: Button) -> void:
 		_show_gui_warning()
 		return
 
-	# Show confirmation for template change
-	_show_template_change_confirmation(new_template_name)
+	# Show confirmation for template change only if there's an existing GUI to override
+	if PopochiuResources.is_setup_done():
+		_show_template_change_confirmation(new_template_name)
 
 	# Update tooltip
 	_update_wizard_gui_tooltip()
