@@ -517,6 +517,7 @@ func _get_button_template_name(button: Button) -> String:
 	var template_data = button.get_meta("template_data", null)
 	if template_data:
 		return _get_template_name_from_data(template_data)
+
 	return ""
 
 
@@ -590,7 +591,7 @@ func _on_custom_game_ui_changed(index: int) -> void:
 
 
 # Update navigation buttons and step label.
-func _update_navigation():
+func _update_navigation() -> void:
 	# Update step label
 	var current_step = wizard_steps.current_tab + 1
 	var total_steps = wizard_steps.get_tab_count()
@@ -806,16 +807,16 @@ func _get_values_for_current_mode() -> Dictionary:
 
 
 # Get the selected template data from wizard mode buttons
-func _get_selected_wizard_template():
+func _get_selected_wizard_template() -> Dictionary:
 	var pressed_btn = gui_button_group.get_pressed_button()
-	return pressed_btn.get_meta("template_data") if pressed_btn else null
+	return pressed_btn.get_meta("template_data") if pressed_btn else {}
 
 
 # Get the selected template data from custom mode dropdown
-func _get_selected_custom_template():
+func _get_selected_custom_template() -> Dictionary:
 	if opt_game_ui.selected > 0: # Skip "None" option
 		return opt_game_ui.get_item_metadata(opt_game_ui.selected)
-	return null
+	return {}
 
 
 # Extract template name from template data (works for both wizard and custom modes)
@@ -1050,34 +1051,34 @@ func _style_progress_container() -> void:
 
 
 #region Signals handlers ######################################################
-func _on_prev_pressed():
+func _on_prev_pressed() -> void:
 	if wizard_steps.current_tab > 0:
 		wizard_steps.current_tab -= 1
 		_update_navigation()
 
 
-func _on_next_pressed():
+func _on_next_pressed() -> void:
 	if wizard_steps.current_tab < wizard_steps.get_tab_count() - 1:
 		wizard_steps.current_tab += 1
 		_update_navigation()
 
 
-func _on_wizard_tab_changed(tab: int):
+func _on_wizard_tab_changed(tab: int) -> void:
 	# When tab changes, update navigation to trigger validation for the new tab
 	_update_navigation()
 
 
-func _on_resolution_option_changed(index: int):
+func _on_resolution_option_changed(index: int) -> void:
 	# When any resolution option changes, trigger validation
 	_update_navigation()
 
 
-func _on_custom_field_changed(value = null):
+func _on_custom_field_changed(value = null) -> void:
 	# When any custom field changes, trigger validation (only affects custom mode)
 	_update_dialog_ok_button()
 
 
-func _on_btn_custom_pressed():
+func _on_btn_custom_pressed() -> void:
 	_current_mode = SetupMode.CUSTOM
 	wizard_container.hide()
 	custom_container.show()
@@ -1085,7 +1086,7 @@ func _on_btn_custom_pressed():
 	_update_dialog_ok_button()
 
 
-func _on_btn_wizard_pressed():
+func _on_btn_wizard_pressed() -> void:
 	_current_mode = SetupMode.WIZARD
 	custom_container.hide()
 	wizard_container.show()
@@ -1093,17 +1094,17 @@ func _on_btn_wizard_pressed():
 	_update_dialog_ok_button()
 
 
-func _on_prev_visibility_changed():
+func _on_prev_visibility_changed() -> void:
 	# When prev button visibility changes, toggle the filler visibility inversely
 	filler_prev.visible = not btn_prev.visible
 
 
-func _on_next_visibility_changed():
+func _on_next_visibility_changed() -> void:
 	# When next button visibility changes, toggle the filler visibility inversely
 	filler_next.visible = not btn_next.visible
 
 
-func _on_wizard_gui_selected(btn: Button):
+func _on_wizard_gui_selected(btn: Button) -> void:
 	# Get template name from button
 	var new_template_name = _get_button_template_name(btn)
 
@@ -1129,24 +1130,24 @@ func _on_wizard_gui_selected(btn: Button):
 	_update_navigation()
 
 
-func _on_custom_width_changed(new_value: float):
+func _on_custom_width_changed(new_value: float) -> void:
 	_update_aspect_ratio_sibling(custom_width, custom_height, new_value, WIDTH_CHANGED)
 
 
-func _on_custom_height_changed(new_value: float):
+func _on_custom_height_changed(new_value: float) -> void:
 	_update_aspect_ratio_sibling(custom_height, custom_width, new_value, HEIGHT_CHANGED)
 
 
-func _on_preview_width_changed(new_value: float):
+func _on_preview_width_changed(new_value: float) -> void:
 	_update_aspect_ratio_sibling(preview_width, preview_height, new_value, WIDTH_CHANGED)
 
 
-func _on_preview_height_changed(new_value: float):
+func _on_preview_height_changed(new_value: float) -> void:
 	_update_aspect_ratio_sibling(preview_height, preview_width, new_value, HEIGHT_CHANGED)
 
 
 # Generic function to update the sibling SpinBox maintaining aspect ratio
-func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int):
+func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int) -> void:
 	var ratio = _get_custom_resolution_ratio()
 	if ratio == 0.0:
 		return # Free ratio, no enforcement
@@ -1181,7 +1182,7 @@ func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinB
 	target_spinbox.value_changed.connect(target_signal_handler)
 
 
-func _update_resolution_options():
+func _update_resolution_options() -> void:
 	# Check which game type button is pressed (they are mutually exclusive)
 	if btn_gametype_retro.button_pressed:
 		opt_res_retro_cont.show()
