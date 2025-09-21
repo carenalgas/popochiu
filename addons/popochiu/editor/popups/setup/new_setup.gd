@@ -290,6 +290,16 @@ func define_content() -> void:
 		SetupMode.CUSTOM:
 			_on_btn_custom_pressed()
 
+	# Games that have been already setup in wizard mode need this
+	# to properly set buttons status when the popup gets open by the user.
+	if PopochiuResources.is_setup_done() and _current_mode == SetupMode.WIZARD:
+		# Ensure wizard starts at step 0 and navigation is properly updated.
+		wizard_steps.current_tab = 0
+		_update_navigation()
+		# Disable Update button until user completes the wizard
+		if _dialog_ok_button:
+			_dialog_ok_button.disabled = true
+
 	# Ensure correct tooltip is shown for custom GUI select
 	_update_custom_gui_tooltip()
 
@@ -299,9 +309,14 @@ func define_content() -> void:
 
 	_update_size()
 
-	# Update GUI buttons if needed (after templates are loaded)
-	if game_type_button_group.get_pressed_button() != null:
+	# Ensure both wizard and custom GUI elements are populated with templates
+	# For existing games, always populate wizard buttons; for new games, only if game type is selected
+	if game_type_button_group.get_pressed_button() != null or PopochiuResources.is_setup_done():
 		_populate_wizard_gui_buttons()
+	_populate_custom_gui_dropdown()
+
+	# Select the current template in both wizard and custom modes
+	_select_current_template()
 
 
 #endregion
