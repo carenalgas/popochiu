@@ -71,6 +71,7 @@ var _templates_by_res = {
 var _current_template_name: String = ""
 var _selected_template_name: String = ""
 var _template_change_confirmed: bool = false
+var _copy_in_progress: bool = false
 
 var _is_closing := false
 var _es := EditorInterface.get_editor_settings()
@@ -226,6 +227,9 @@ func on_close() -> void:
 	if _is_closing:
 		return
 
+	# Clean up any open confirmation dialogs
+	_cleanup_pending_dialogs()
+
 	_is_closing = true
 
 	# Save the current mode for next time
@@ -278,6 +282,7 @@ func define_content() -> void:
 	_current_template_name = PopochiuResources.get_data_value("ui", "template", "")
 	_selected_template_name = _current_template_name
 	_template_change_confirmed = false
+	_copy_in_progress = false
 
 	# Restore last used mode if setup was done before, otherwise default to wizard
 	_current_mode = PopochiuResources.get_data_value("setup", "last_mode", SetupMode.WIZARD)
@@ -331,11 +336,11 @@ func _populate_from_current_settings() -> void:
 	# Set custom game type
 	if stretch_mode == "canvas_items":
 		if stretch_aspect == "keep" or is_pixel_art:
-			opt_game_type.selected = 2  # Pixel Art
+			opt_game_type.selected = 2 # Pixel Art
 		else:
-			opt_game_type.selected = 1  # High Resolution
+			opt_game_type.selected = 1 # High Resolution
 	else:
-		opt_game_type.selected = 0  # Custom
+		opt_game_type.selected = 0 # Custom
 
 	# Set wizard selections based on current settings
 	_set_wizard_from_current_settings(Vector2i(game_width, game_height), Vector2i(test_width, test_height), is_pixel_art)
@@ -385,7 +390,7 @@ func _find_and_set_resolution_options(game_res: Vector2i, is_pixel: bool) -> voi
 		elif game_res == Vector2i(320, 180):
 			opt_res_retro.selected = GameResolution.RETRO_CEGA_16_9
 		else:
-			opt_res_retro.selected = GameResolution.RETRO_VGA_16_9  # Default
+			opt_res_retro.selected = GameResolution.RETRO_VGA_16_9 # Default
 	else:
 		# Try to find matching modern resolution
 		if game_res == Vector2i(3840, 2160):
@@ -399,7 +404,7 @@ func _find_and_set_resolution_options(game_res: Vector2i, is_pixel: bool) -> voi
 		elif game_res == Vector2i(1024, 768):
 			opt_res_modern.selected = GameResolution.MODERN_RETRO
 		else:
-			opt_res_modern.selected = GameResolution.MODERN_FHD  # Default
+			opt_res_modern.selected = GameResolution.MODERN_FHD # Default
 
 
 ## Select current template in both wizard and custom modes
@@ -407,25 +412,21 @@ func _select_current_template() -> void:
 	if _current_template_name.is_empty():
 		return
 
-	# Select in wizard mode - find matching button
-	for child in gui_grid.get_children():
-		if child.has_meta("template_data"):
-			var template_data = child.get_meta("template_data")
-			var template_name = _extract_template_name_from_data(template_data)
-			if template_name == _current_template_name:
-				child.button_pressed = true
-				_on_gui_selected(child)
-				break
+	# Use the helper to set UI selection
+	_set_template_selected_in_ui(_current_template_name)
 
-	# Select in custom mode dropdown
-	for i in range(opt_game_ui.item_count):
-		var metadata = opt_game_ui.get_item_metadata(i)
-		if metadata:
-			var template_name = _extract_template_name_from_data(metadata)
-			if template_name == _current_template_name:
-				opt_game_ui.selected = i
-				_update_custom_gui_tooltip()
-				break
+	# Trigger tooltip updates manually since we used set_pressed_no_signal
+	_update_custom_gui_tooltip()
+
+	# TODO: we should restore this logic maybe in a single function here...
+	# Update wizard tooltip if a button is selected
+	for child in gui_grid.get_children():
+		if child.has_meta("template_button") and child.button_pressed:
+			var template_info = child.get_meta("template_info") as PopochiuGUIInfo
+			if template_info:
+				tooltip_gui_text.text = template_info.description
+				tooltip_gui.show()
+			break
 
 
 ## Show warning when GUI scene is open
@@ -461,32 +462,67 @@ func _show_template_change_confirmation(new_template_name: String) -> void:
 		func():
 			_template_change_confirmed = true
 			_selected_template_name = new_template_name
-			confirmation_dialog.queue_free()
+			_cleanup_confirmation_dialog(confirmation_dialog)
 	)
-	
+
 	confirmation_dialog.canceled.connect(
 		func():
 			# Revert UI selections to current template
 			_revert_template_selection()
-			confirmation_dialog.queue_free()
+			_cleanup_confirmation_dialog(confirmation_dialog)
+	)
+
+	# Also handle if dialog is closed via X button or Escape
+	confirmation_dialog.close_requested.connect(
+		func():
+			_revert_template_selection()
+			_cleanup_confirmation_dialog(confirmation_dialog)
 	)
 
 	add_child(confirmation_dialog)
 	confirmation_dialog.popup_centered()
 
 
+## Clean up confirmation dialog and its signals
+func _cleanup_confirmation_dialog(dialog: ConfirmationDialog) -> void:
+	# Since we're using lambda functions, we can't easily disconnect them
+	# Just remove from tree and queue for deletion - the signals will be cleaned up automatically
+	if dialog.get_parent():
+		dialog.get_parent().remove_child(dialog)
+	dialog.queue_free()
+
+
+## Clean up any pending confirmation dialogs when main dialog closes
+func _cleanup_pending_dialogs() -> void:
+	# Reset copy state to prevent issues if closing during copy
+	_copy_in_progress = false
+
+	# Find and clean up any confirmation dialogs that might still be open
+	for child in get_children():
+		if child is ConfirmationDialog or child is AcceptDialog:
+			child.hide()
+			if child.get_parent():
+				child.get_parent().remove_child(child)
+			child.queue_free()
+
+
 ## Revert UI template selection to current template
 func _revert_template_selection() -> void:
-	# Revert wizard GUI buttons
+	_set_template_selected_in_ui(_current_template_name)
+
+
+## Set template selection in both wizard and custom UI modes
+func _set_template_selected_in_ui(template_name: String) -> void:
+	# Set wizard GUI buttons
 	for child in gui_grid.get_children():
 		if child.has_meta("template_button"):
 			var button_template_name = _extract_template_name_from_button(child)
-			child.set_pressed_no_signal(button_template_name == _current_template_name)
-	
-	# Revert custom dropdown
+			child.set_pressed_no_signal(button_template_name == template_name)
+
+	# Set custom dropdown
 	for i in range(opt_game_ui.item_count):
 		var dropdown_template_name = _extract_template_name_from_dropdown_index(i)
-		if dropdown_template_name == _current_template_name:
+		if dropdown_template_name == template_name:
 			opt_game_ui.selected = i
 			break
 
@@ -502,14 +538,14 @@ func _extract_template_name_from_button(button: Button) -> String:
 
 ## Extract template name from dropdown index
 func _extract_template_name_from_dropdown_index(index: int) -> String:
-	if index == 0:  # "No GUI" option
+	if index == 0: # "No GUI" option
 		return ""
-	
+
 	# Get template data from item metadata
 	var template_data = opt_game_ui.get_item_metadata(index)
 	if template_data:
 		return _extract_template_name_from_data(template_data)
-	
+
 	return ""
 
 
@@ -535,22 +571,22 @@ func _update_custom_gui_tooltip() -> void:
 func _on_custom_game_ui_changed(index: int) -> void:
 	# Get template name from dropdown selection
 	var new_template_name = _extract_template_name_from_dropdown_index(index)
-	
+
 	# Check if this is actually a change
 	if new_template_name == _current_template_name:
 		_update_custom_gui_tooltip()
 		return
-	
+
 	# Check if GUI scene is open
 	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
 		# Revert selection and show warning
 		_revert_template_selection()
 		_show_gui_warning()
 		return
-	
+
 	# Show confirmation for template change
 	_show_template_change_confirmation(new_template_name)
-	
+
 	_update_custom_gui_tooltip()
 
 
@@ -782,7 +818,7 @@ func _extract_template_name_from_data(template_data) -> String:
 	# template_data should be the template dictionary with the path
 	if template_data and template_data.has("path"):
 		return _extract_template_name_from_path(template_data.path)
-	
+
 	return ""
 
 
@@ -800,9 +836,11 @@ func _extract_template_name_from_path(gui_path: String) -> String:
 	return ""
 ## Copy the selected GUI template using the existing helper
 func _copy_template(template_name: String) -> void:
-	if template_name.is_empty():
-		# No template selected, skip copying
+	if template_name.is_empty() or _copy_in_progress:
+		# No template selected or copy already in progress, skip copying
 		return
+
+	_copy_in_progress = true
 
 	# Show progress UI and disable controls
 	_show_copy_progress()
@@ -820,14 +858,14 @@ func _show_copy_progress() -> void:
 	# Hide main containers
 	wizard_container.hide()
 	custom_container.hide()
-	
+
 	# Show progress container
 	copy_process_container.show()
-	
+
 	# Initialize progress bar
 	copy_process_bar.value = 0
 	copy_process_label.text = "Preparing to copy GUI template..."
-	
+
 	# Disable dialog OK button during copying
 	if _dialog_ok_button:
 		_dialog_ok_button.disabled = true
@@ -841,13 +879,16 @@ func _template_copy_progressed(value: int, message: String) -> void:
 
 ## Called when template copying is completed
 func _template_copy_completed() -> void:
+	# Clear copy in progress flag
+	_copy_in_progress = false
+
 	# Update stored template name and current tracking
 	PopochiuResources.set_data_value("ui", "template", _selected_template_name)
 	_current_template_name = _selected_template_name
-	
+
 	# Hide progress UI
 	copy_process_container.hide()
-	
+
 	# Show the appropriate main container based on current mode
 	match _current_mode:
 		SetupMode.WIZARD:
@@ -855,11 +896,11 @@ func _template_copy_completed() -> void:
 			wizard_steps.current_tab = 0
 		SetupMode.CUSTOM:
 			custom_container.show()
-	
+
 	# Re-enable dialog OK button
 	if _dialog_ok_button:
 		_dialog_ok_button.disabled = false
-	
+
 	# Emit completion signal
 	template_copy_completed.emit()
 
@@ -976,11 +1017,11 @@ func _style_navigation_buttons() -> void:
 func _style_progress_container() -> void:
 	# Apply consistent theming to progress container elements
 	var base_font_size = get_theme_font_size("main_size", "EditorFonts")
-	
+
 	# Style the progress label
 	copy_process_label.add_theme_font_size_override("font_size", base_font_size)
 	copy_process_label.add_theme_color_override("font_color", get_theme_color("font_color", "Editor"))
-	
+
 	# Style the progress bar
 	copy_process_bar.add_theme_color_override("font_color", get_theme_color("font_color", "Editor"))
 
@@ -1045,11 +1086,11 @@ func _on_next_visibility_changed():
 func _on_gui_selected(btn: Button):
 	# Get template name from button
 	var new_template_name = _extract_template_name_from_button(btn)
-	
+
 	# Check if this is actually a change
 	if new_template_name == _current_template_name:
 		return
-	
+
 	# Check if GUI scene is open
 	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
 		# Revert selection and show warning
@@ -1057,10 +1098,10 @@ func _on_gui_selected(btn: Button):
 		_revert_template_selection()
 		_show_gui_warning()
 		return
-	
+
 	# Show confirmation for template change
 	_show_template_change_confirmation(new_template_name)
-	
+
 	# Get template info from button metadata for tooltip
 	var template_info = btn.get_meta("template_info") as PopochiuGUIInfo
 	if template_info:
@@ -1201,6 +1242,9 @@ func _populate_gui_buttons() -> void:
 	# Clear existing dynamic buttons (except the template)
 	for child in gui_grid.get_children():
 		if child != btn_gui_type_template and child.get_meta("template_button", false):
+			# Disconnect the signal before freeing to prevent potential issues
+			if child.pressed.is_connected(_on_gui_selected):
+				child.pressed.disconnect(_on_gui_selected)
 			child.queue_free()
 
 	# Don't populate if no game type is selected yet
@@ -1227,9 +1271,9 @@ func _populate_gui_buttons() -> void:
 		template_button.icon = template.icon
 
 		# Store template data in the button for later access
-		template_button.set_meta("template_data", template)  # Store full template dictionary
+		template_button.set_meta("template_data", template) # Store full template dictionary
 		template_button.set_meta("template_button", true)
-		template_button.set_meta("template_info", template.info_resource)  # Keep for tooltip compatibility
+		template_button.set_meta("template_info", template.info_resource) # Keep for tooltip compatibility
 		template_button.button_group = gui_button_group
 		template_button.pressed.connect(_on_gui_selected.bind(template_button))
 
