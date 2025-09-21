@@ -235,6 +235,9 @@ func on_about_to_popup() -> void:
 		# Initialize the OK button state.
 		_update_dialog_ok_button()
 
+	# Should be ok, but for good measure, we are going to select the correct template
+	_set_template_selected_in_ui(_current_template_name)
+
 
 func on_close() -> void:
 	if _is_closing:
@@ -270,6 +273,9 @@ func on_close() -> void:
 
 	# Handle GUI template copying based on setup state and user choices
 	await _handle_gui_template_copying(resolution_values.gui_template_name)
+
+	# Make sure to syncronize buttons and dropdown
+	_set_template_selected_in_ui(_current_template_name)
 
 
 func define_content() -> void:
