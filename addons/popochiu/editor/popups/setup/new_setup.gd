@@ -1241,9 +1241,14 @@ func _style_progress_container() -> void:
 func _on_custom_game_ui_changed(index: int) -> void:
 	# Get template name from dropdown selection
 	var new_template_name = _get_dropdown_template_name(index)
+	
+	# Always update the selected template name to track current UI state
+	_selected_template_name = new_template_name
 
-	# Check if this is actually a change
+	# Check if this is actually a change from the original
 	if new_template_name == _current_template_name:
+		# User reverted back to original - reset confirmation flag
+		_template_change_confirmed = false
 		_update_custom_gui_tooltip()
 		return
 
@@ -1317,9 +1322,14 @@ func _on_next_visibility_changed() -> void:
 func _on_wizard_gui_selected(btn: Button) -> void:
 	# Get template name from button
 	var new_template_name = _get_button_template_name(btn)
+	
+	# Always update the selected template name to track current UI state
+	_selected_template_name = new_template_name
 
-	# Check if this is actually a change
+	# Check if this is actually a change from the original
 	if new_template_name == _current_template_name:
+		# User reverted back to original - reset confirmation flag
+		_template_change_confirmed = false
 		return
 
 	# Check if GUI scene is open
