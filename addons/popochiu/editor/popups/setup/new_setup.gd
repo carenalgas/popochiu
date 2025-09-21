@@ -567,28 +567,6 @@ func _update_wizard_gui_tooltip() -> void:
 	# No button selected, hide tooltip
 	tooltip_gui.hide()
 
-# Signal handler for custom GUI select
-func _on_custom_game_ui_changed(index: int) -> void:
-	# Get template name from dropdown selection
-	var new_template_name = _get_dropdown_template_name(index)
-
-	# Check if this is actually a change
-	if new_template_name == _current_template_name:
-		_update_custom_gui_tooltip()
-		return
-
-	# Check if GUI scene is open
-	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
-		# Revert selection and show warning
-		_revert_template_selection()
-		_show_gui_warning()
-		return
-
-	# Show confirmation for template change
-	_show_template_change_confirmation(new_template_name)
-
-	_update_custom_gui_tooltip()
-
 
 # Update navigation buttons and step label.
 func _update_navigation() -> void:
@@ -610,67 +588,57 @@ func _update_navigation() -> void:
 	_update_dialog_ok_button()
 
 
-# Validate the current step based on the active tab
-func _validate_wizard_current_step() -> bool:
-	match wizard_steps.current_tab:
-		0: # Step Type
-			return _validate_wizard_step_type()
-		1: # Step Resolution
-			return _validate_wizard_step_resolution()
-		2: # Step GUI
-			return _validate_wizard_step_gui()
+# Generic function to update the sibling SpinBox maintaining aspect ratio
+func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int) -> void:
+	var ratio = _get_custom_resolution_ratio()
+	if ratio == 0.0:
+		return # Free ratio, no enforcement
 
-	return false
-
-
-# Validate Step 1: Game Type selection
-func _validate_wizard_step_type() -> bool:
-	# Check if any button in the game type button group is pressed
-	return game_type_button_group.get_pressed_button() != null
-
-
-# Validate Step 2: Resolution selection
-func _validate_wizard_step_resolution() -> bool:
-	# Must have the preview scale selected
-	if opt_res_preview_scale.selected == -1:
-		return false
-
-	# Must have the appropriate resolution option selected based on game type
-	if btn_gametype_retro.button_pressed:
-		return opt_res_retro.selected != -1
-	elif btn_gametype_modern.button_pressed:
-		return opt_res_modern.selected != -1
+	# Determine the appropriate signal handler based on which SpinBox we're updating
+	var target_signal_handler: Callable
+	if target_spinbox == custom_width:
+		target_signal_handler = _on_custom_width_changed
+	elif target_spinbox == custom_height:
+		target_signal_handler = _on_custom_height_changed
+	elif target_spinbox == preview_width:
+		target_signal_handler = _on_preview_width_changed
+	elif target_spinbox == preview_height:
+		target_signal_handler = _on_preview_height_changed
 	else:
-		# No game type selected (shouldn't happen if step 1 validation worked)
-		return false
+		return # Unknown SpinBox, shouldn't happen
+
+	# Temporarily disconnect the target signal to avoid infinite loops
+	target_spinbox.value_changed.disconnect(target_signal_handler)
+
+	# Calculate and set the new value (keeping it as integer)
+	var calculated_value: float
+	match source_dimension:
+		WIDTH_CHANGED:
+			calculated_value = new_value / ratio # Width changed, calculate height
+		HEIGHT_CHANGED:
+			calculated_value = new_value * ratio # Height changed, calculate width
+
+	target_spinbox.value = int(round(calculated_value))
+
+	# Reconnect the signal
+	target_spinbox.value_changed.connect(target_signal_handler)
 
 
-# Validate Step 3: GUI selection
-func _validate_wizard_step_gui() -> bool:
-	# Check if any button in the GUI button group is pressed
-	return gui_button_group.get_pressed_button() != null
+func _update_resolution_options() -> void:
+	# Check which game type button is pressed (they are mutually exclusive)
+	if btn_gametype_retro.button_pressed:
+		opt_res_retro_cont.show()
+		opt_res_modern_cont.hide()
+	elif btn_gametype_modern.button_pressed:
+		opt_res_retro_cont.hide()
+		opt_res_modern_cont.show()
+	else:
+		# No game type selected, hide both containers
+		opt_res_retro_cont.hide()
+		opt_res_modern_cont.hide()
 
-
-# Validate if the entire wizard is complete (all steps valid)
-func _validate_wizard_complete() -> bool:
-	return _validate_wizard_step_type() and _validate_wizard_step_resolution() and _validate_wizard_step_gui()
-
-
-# Validate custom mode fields
-func _validate_custom_complete() -> bool:
-	# Check if game type option is selected (not -1)
-	if opt_game_type.selected == -1:
-		return false
-
-	# Check if game resolution fields have valid values (> 0)
-	if custom_width.value <= 0 or custom_height.value <= 0:
-		return false
-
-	# Check if preview window size fields have valid values (> 0)
-	if preview_width.value <= 0 or preview_height.value <= 0:
-		return false
-
-	return true
+	# Trigger navigation update to handle next button visibility via validation
+	_update_navigation()
 
 
 # Update the confirmation dialog's OK button state
@@ -748,6 +716,137 @@ func _get_custom_resolution_ratio() -> float:
 			return 4.0 / 3.0
 
 	return 0.0 # Free ratio (default), no need to enforce anything
+
+
+# Load all GUI templates from the filesystem
+func _load_templates() -> void:
+	# Clear existing template data
+	_templates_by_res[PopochiuGUIInfo.GUITargetRes.LOW_RESOLUTION].clear()
+	_templates_by_res[PopochiuGUIInfo.GUITargetRes.HIGH_RESOLUTION].clear()
+
+	# Get template directory
+	var template_dir = PopochiuResources.GUI_TEMPLATES_FOLDER
+
+	# Get all directories inside the template folder
+	var dir = DirAccess.open(template_dir)
+	if not dir:
+		printerr("[Popochiu] Could not open GUI templates directory: %s" % template_dir)
+		return
+
+	dir.list_dir_begin()
+	var dir_name = dir.get_next()
+
+	# For each directory, look for template info resource
+	while dir_name != "":
+		if dir.current_is_dir() and not dir_name.begins_with("."):
+			var info_path = "%s/%s/%s_gui_info.tres" % [template_dir, dir_name, dir_name]
+
+			if FileAccess.file_exists(info_path):
+				var template_info = load(info_path)
+
+				if template_info is PopochiuGUIInfo:
+					# Store the template in the appropriate category
+					var target_res = template_info.target_resolution
+					var template_data = {
+						"path": "%s/%s" % [template_dir, dir_name],
+						"title": template_info.title,
+						"description": template_info.description,
+						"icon": template_info.icon,
+						"target_resolution": target_res,
+						"info_resource": template_info
+					}
+
+					_templates_by_res[target_res].append(template_data)
+
+		dir_name = dir.get_next()
+
+	dir.list_dir_end()
+
+	# Update the GUI dropdown in custom mode
+	_populate_custom_gui_dropdown()
+
+
+# Populate GUI buttons based on selected game type
+func _populate_wizard_gui_buttons() -> void:
+	# Hide the template button
+	btn_gui_type_template.visible = false
+
+	# Hide the GUI tooltip since we are repopulating
+	# the buttons grid and none will be selected
+	tooltip_gui.hide()
+
+	# Clear existing dynamic buttons (except the template)
+	for child in gui_grid.get_children():
+		if child != btn_gui_type_template and child.get_meta("template_button", false):
+			# Disconnect the signal before freeing to prevent potential issues
+			if child.pressed.is_connected(_on_wizard_gui_selected):
+				child.pressed.disconnect(_on_wizard_gui_selected)
+			child.queue_free()
+
+	# Don't populate if no game type is selected yet
+	if game_type_button_group.get_pressed_button() == null:
+		return
+
+	# Get the template list based on game type
+	var templates_list = []
+	if _game_type == GameType.RETRO:
+		templates_list = _templates_by_res[PopochiuGUIInfo.GUITargetRes.LOW_RESOLUTION]
+	else:
+		templates_list = _templates_by_res[PopochiuGUIInfo.GUITargetRes.HIGH_RESOLUTION]
+
+	# If no templates found for this resolution
+	if templates_list.is_empty():
+		printerr("[Popochiu] No GUI templates found for selected game type")
+		return
+
+	# Create a button for each template
+	for template in templates_list:
+		var template_button = btn_gui_type_template.duplicate()
+		template_button.visible = true
+		template_button.text = template.title
+		template_button.icon = template.icon
+
+		# Store template data in the button for later access
+		template_button.set_meta("template_data", template) # Store full template dictionary
+		template_button.set_meta("template_button", true)
+		template_button.set_meta("template_info", template.info_resource) # Keep for tooltip compatibility
+		template_button.button_group = gui_button_group
+		template_button.pressed.connect(_on_wizard_gui_selected.bind(template_button))
+
+		# Note: Styling is automatically inherited from btn_gui_type_template
+		# Add to grid
+		gui_grid.add_child(template_button)
+
+
+# Populate the GUI dropdown in custom mode
+func _populate_custom_gui_dropdown() -> void:
+	# Clear existing items except "None"
+	while opt_game_ui.item_count > 1:
+		opt_game_ui.remove_item(1)
+
+	# Iterate through each resolution category
+	for resolution_key in _templates_by_res.keys():
+		var templates_list = _templates_by_res[resolution_key]
+
+		# Skip empty categories
+		if templates_list.is_empty():
+			continue
+
+		# Convert enum name to readable format (e.g., "LOW_RESOLUTION" -> "Low Resolution")
+		var enum_name = PopochiuGUIInfo.GUITargetRes.keys()[resolution_key]
+		var readable_name = enum_name.replace("_", " ").capitalize()
+
+		# Add separator with readable name
+		opt_game_ui.add_separator(readable_name)
+
+		# Add templates for this resolution category
+		for template in templates_list:
+			opt_game_ui.add_item(template.title)
+			var idx = opt_game_ui.item_count - 1
+			opt_game_ui.set_item_metadata(idx, template)
+
+	# Select "None" by default
+	opt_game_ui.selected = 0
 
 
 #endregion
@@ -928,6 +1027,72 @@ func _template_copy_completed() -> void:
 
 #endregion
 
+#region Private / Validation logic ################################################################
+# Validate the current step based on the active tab
+func _validate_wizard_current_step() -> bool:
+	match wizard_steps.current_tab:
+		0: # Step Type
+			return _validate_wizard_step_type()
+		1: # Step Resolution
+			return _validate_wizard_step_resolution()
+		2: # Step GUI
+			return _validate_wizard_step_gui()
+
+	return false
+
+
+# Validate Step 1: Game Type selection
+func _validate_wizard_step_type() -> bool:
+	# Check if any button in the game type button group is pressed
+	return game_type_button_group.get_pressed_button() != null
+
+
+# Validate Step 2: Resolution selection
+func _validate_wizard_step_resolution() -> bool:
+	# Must have the preview scale selected
+	if opt_res_preview_scale.selected == -1:
+		return false
+
+	# Must have the appropriate resolution option selected based on game type
+	if btn_gametype_retro.button_pressed:
+		return opt_res_retro.selected != -1
+	elif btn_gametype_modern.button_pressed:
+		return opt_res_modern.selected != -1
+	else:
+		# No game type selected (shouldn't happen if step 1 validation worked)
+		return false
+
+
+# Validate Step 3: GUI selection
+func _validate_wizard_step_gui() -> bool:
+	# Check if any button in the GUI button group is pressed
+	return gui_button_group.get_pressed_button() != null
+
+
+# Validate if the entire wizard is complete (all steps valid)
+func _validate_wizard_complete() -> bool:
+	return _validate_wizard_step_type() and _validate_wizard_step_resolution() and _validate_wizard_step_gui()
+
+
+# Validate custom mode fields
+func _validate_custom_complete() -> bool:
+	# Check if game type option is selected (not -1)
+	if opt_game_type.selected == -1:
+		return false
+
+	# Check if game resolution fields have valid values (> 0)
+	if custom_width.value <= 0 or custom_height.value <= 0:
+		return false
+
+	# Check if preview window size fields have valid values (> 0)
+	if preview_width.value <= 0 or preview_height.value <= 0:
+		return false
+
+	return true
+
+
+#endregion
+
 #region Private / Styling #########################################################################
 func _style_separators() -> void:
 	# This will hold the various stylebox while we go through the elements.
@@ -1051,6 +1216,30 @@ func _style_progress_container() -> void:
 
 
 #region Signals handlers ######################################################
+
+
+func _on_custom_game_ui_changed(index: int) -> void:
+	# Get template name from dropdown selection
+	var new_template_name = _get_dropdown_template_name(index)
+
+	# Check if this is actually a change
+	if new_template_name == _current_template_name:
+		_update_custom_gui_tooltip()
+		return
+
+	# Check if GUI scene is open
+	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
+		# Revert selection and show warning
+		_revert_template_selection()
+		_show_gui_warning()
+		return
+
+	# Show confirmation for template change
+	_show_template_change_confirmation(new_template_name)
+
+	_update_custom_gui_tooltip()
+
+
 func _on_prev_pressed() -> void:
 	if wizard_steps.current_tab > 0:
 		wizard_steps.current_tab -= 1
@@ -1144,190 +1333,6 @@ func _on_preview_width_changed(new_value: float) -> void:
 
 func _on_preview_height_changed(new_value: float) -> void:
 	_update_aspect_ratio_sibling(preview_height, preview_width, new_value, HEIGHT_CHANGED)
-
-
-# Generic function to update the sibling SpinBox maintaining aspect ratio
-func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int) -> void:
-	var ratio = _get_custom_resolution_ratio()
-	if ratio == 0.0:
-		return # Free ratio, no enforcement
-
-	# Determine the appropriate signal handler based on which SpinBox we're updating
-	var target_signal_handler: Callable
-	if target_spinbox == custom_width:
-		target_signal_handler = _on_custom_width_changed
-	elif target_spinbox == custom_height:
-		target_signal_handler = _on_custom_height_changed
-	elif target_spinbox == preview_width:
-		target_signal_handler = _on_preview_width_changed
-	elif target_spinbox == preview_height:
-		target_signal_handler = _on_preview_height_changed
-	else:
-		return # Unknown SpinBox, shouldn't happen
-
-	# Temporarily disconnect the target signal to avoid infinite loops
-	target_spinbox.value_changed.disconnect(target_signal_handler)
-
-	# Calculate and set the new value (keeping it as integer)
-	var calculated_value: float
-	match source_dimension:
-		WIDTH_CHANGED:
-			calculated_value = new_value / ratio # Width changed, calculate height
-		HEIGHT_CHANGED:
-			calculated_value = new_value * ratio # Height changed, calculate width
-
-	target_spinbox.value = int(round(calculated_value))
-
-	# Reconnect the signal
-	target_spinbox.value_changed.connect(target_signal_handler)
-
-
-func _update_resolution_options() -> void:
-	# Check which game type button is pressed (they are mutually exclusive)
-	if btn_gametype_retro.button_pressed:
-		opt_res_retro_cont.show()
-		opt_res_modern_cont.hide()
-	elif btn_gametype_modern.button_pressed:
-		opt_res_retro_cont.hide()
-		opt_res_modern_cont.show()
-	else:
-		# No game type selected, hide both containers
-		opt_res_retro_cont.hide()
-		opt_res_modern_cont.hide()
-
-	# Trigger navigation update to handle next button visibility via validation
-	_update_navigation()
-
-
-# Load all GUI templates from the filesystem
-func _load_templates() -> void:
-	# Clear existing template data
-	_templates_by_res[PopochiuGUIInfo.GUITargetRes.LOW_RESOLUTION].clear()
-	_templates_by_res[PopochiuGUIInfo.GUITargetRes.HIGH_RESOLUTION].clear()
-
-	# Get template directory
-	var template_dir = PopochiuResources.GUI_TEMPLATES_FOLDER
-
-	# Get all directories inside the template folder
-	var dir = DirAccess.open(template_dir)
-	if not dir:
-		printerr("[Popochiu] Could not open GUI templates directory: %s" % template_dir)
-		return
-
-	dir.list_dir_begin()
-	var dir_name = dir.get_next()
-
-	# For each directory, look for template info resource
-	while dir_name != "":
-		if dir.current_is_dir() and not dir_name.begins_with("."):
-			var info_path = "%s/%s/%s_gui_info.tres" % [template_dir, dir_name, dir_name]
-
-			if FileAccess.file_exists(info_path):
-				var template_info = load(info_path)
-
-				if template_info is PopochiuGUIInfo:
-					# Store the template in the appropriate category
-					var target_res = template_info.target_resolution
-					var template_data = {
-						"path": "%s/%s" % [template_dir, dir_name],
-						"title": template_info.title,
-						"description": template_info.description,
-						"icon": template_info.icon,
-						"target_resolution": target_res,
-						"info_resource": template_info
-					}
-
-					_templates_by_res[target_res].append(template_data)
-
-		dir_name = dir.get_next()
-
-	dir.list_dir_end()
-
-	# Update the GUI dropdown in custom mode
-	_populate_custom_gui_dropdown()
-
-
-# Populate GUI buttons based on selected game type
-func _populate_wizard_gui_buttons() -> void:
-	# Hide the template button
-	btn_gui_type_template.visible = false
-
-	# Hide the GUI tooltip since we are repopulating
-	# the buttons grid and none will be selected
-	tooltip_gui.hide()
-
-	# Clear existing dynamic buttons (except the template)
-	for child in gui_grid.get_children():
-		if child != btn_gui_type_template and child.get_meta("template_button", false):
-			# Disconnect the signal before freeing to prevent potential issues
-			if child.pressed.is_connected(_on_wizard_gui_selected):
-				child.pressed.disconnect(_on_wizard_gui_selected)
-			child.queue_free()
-
-	# Don't populate if no game type is selected yet
-	if game_type_button_group.get_pressed_button() == null:
-		return
-
-	# Get the template list based on game type
-	var templates_list = []
-	if _game_type == GameType.RETRO:
-		templates_list = _templates_by_res[PopochiuGUIInfo.GUITargetRes.LOW_RESOLUTION]
-	else:
-		templates_list = _templates_by_res[PopochiuGUIInfo.GUITargetRes.HIGH_RESOLUTION]
-
-	# If no templates found for this resolution
-	if templates_list.is_empty():
-		printerr("[Popochiu] No GUI templates found for selected game type")
-		return
-
-	# Create a button for each template
-	for template in templates_list:
-		var template_button = btn_gui_type_template.duplicate()
-		template_button.visible = true
-		template_button.text = template.title
-		template_button.icon = template.icon
-
-		# Store template data in the button for later access
-		template_button.set_meta("template_data", template) # Store full template dictionary
-		template_button.set_meta("template_button", true)
-		template_button.set_meta("template_info", template.info_resource) # Keep for tooltip compatibility
-		template_button.button_group = gui_button_group
-		template_button.pressed.connect(_on_wizard_gui_selected.bind(template_button))
-
-		# Note: Styling is automatically inherited from btn_gui_type_template
-		# Add to grid
-		gui_grid.add_child(template_button)
-
-
-# Populate the GUI dropdown in custom mode
-func _populate_custom_gui_dropdown() -> void:
-	# Clear existing items except "None"
-	while opt_game_ui.item_count > 1:
-		opt_game_ui.remove_item(1)
-
-	# Iterate through each resolution category
-	for resolution_key in _templates_by_res.keys():
-		var templates_list = _templates_by_res[resolution_key]
-
-		# Skip empty categories
-		if templates_list.is_empty():
-			continue
-
-		# Convert enum name to readable format (e.g., "LOW_RESOLUTION" -> "Low Resolution")
-		var enum_name = PopochiuGUIInfo.GUITargetRes.keys()[resolution_key]
-		var readable_name = enum_name.replace("_", " ").capitalize()
-
-		# Add separator with readable name
-		opt_game_ui.add_separator(readable_name)
-
-		# Add templates for this resolution category
-		for template in templates_list:
-			opt_game_ui.add_item(template.title)
-			var idx = opt_game_ui.item_count - 1
-			opt_game_ui.set_item_metadata(idx, template)
-
-	# Select "None" by default
-	opt_game_ui.selected = 0
 
 
 # Handle game type selection
