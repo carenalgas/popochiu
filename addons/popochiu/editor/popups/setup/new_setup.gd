@@ -70,6 +70,7 @@ var _templates_by_res = {
 # Template tracking for change detection
 var _current_template_name: String = ""
 var _selected_template_name: String = ""
+var _template_change_confirmed: bool = false
 
 var _is_closing := false
 var _es := EditorInterface.get_editor_settings()
@@ -239,6 +240,8 @@ func on_close() -> void:
 	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, resolution_values.test_width)
 	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, resolution_values.test_height)
 
+	_selected_template_name = resolution_values.gui_template_name
+
 	# Configure stretch mode and pixel art settings based on game type
 	match resolution_values.game_type_config:
 		GameType.MODERN:
@@ -250,10 +253,14 @@ func on_close() -> void:
 			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
 			PopochiuConfig.set_pixel_art_textures(true)
 
+	# TODO: refactor so that's simpler to read
 	# Copy GUI template and mark setup as done if this is the first setup
 	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
 		PopochiuResources.set_data_value("setup", "done", true)
-		await _copy_template(resolution_values.gui_template_name)
+		await _copy_template(_selected_template_name)
+	# Only copy GUI template if the user confirmed a template change after first setup
+	elif _selected_template_name != _current_template_name and _template_change_confirmed:
+		await _copy_template(_selected_template_name)
 
 func define_content() -> void:
 	# Get reference to the dialog's OK button if we're inside a ConfirmationDialog
@@ -269,6 +276,8 @@ func define_content() -> void:
 
 	# Get current template for change detection
 	_current_template_name = PopochiuResources.get_data_value("ui", "template", "")
+	_selected_template_name = _current_template_name
+	_template_change_confirmed = false
 
 	# Restore last used mode if setup was done before, otherwise default to wizard
 	_current_mode = PopochiuResources.get_data_value("setup", "last_mode", SetupMode.WIZARD)
@@ -437,7 +446,71 @@ func _show_gui_warning() -> void:
 
 	add_child(warning_dialog)
 	warning_dialog.popup_centered()
-	warning_dialog.tree_exited.connect(func(): warning_dialog.queue_free())
+	warning_dialog.tree_exited.connect(warning_dialog.queue_free)
+
+
+## Show confirmation dialog for template changes
+func _show_template_change_confirmation(new_template_name: String) -> void:
+	var confirmation_dialog := ConfirmationDialog.new()
+	confirmation_dialog.title = "Confirm GUI template change"
+	confirmation_dialog.dialog_text = "You changed the GUI template, making this will override any changes you made to the files in res://game/gui/.\n\nAre you sure you want to make the change?"
+	confirmation_dialog.dialog_autowrap = true
+	confirmation_dialog.min_size.x = size.x - 64
+
+	confirmation_dialog.confirmed.connect(
+		func():
+			_template_change_confirmed = true
+			_selected_template_name = new_template_name
+			confirmation_dialog.queue_free()
+	)
+	
+	confirmation_dialog.canceled.connect(
+		func():
+			# Revert UI selections to current template
+			_revert_template_selection()
+			confirmation_dialog.queue_free()
+	)
+
+	add_child(confirmation_dialog)
+	confirmation_dialog.popup_centered()
+
+
+## Revert UI template selection to current template
+func _revert_template_selection() -> void:
+	# Revert wizard GUI buttons
+	for child in gui_grid.get_children():
+		if child.has_meta("template_button"):
+			var button_template_name = _extract_template_name_from_button(child)
+			child.set_pressed_no_signal(button_template_name == _current_template_name)
+	
+	# Revert custom dropdown
+	for i in range(opt_game_ui.item_count):
+		var dropdown_template_name = _extract_template_name_from_dropdown_index(i)
+		if dropdown_template_name == _current_template_name:
+			opt_game_ui.selected = i
+			break
+
+
+## Extract template name from GUI button
+func _extract_template_name_from_button(button: Button) -> String:
+	# Get template data from button metadata
+	var template_data = button.get_meta("template_data", null)
+	if template_data:
+		return _extract_template_name_from_data(template_data)
+	return ""
+
+
+## Extract template name from dropdown index
+func _extract_template_name_from_dropdown_index(index: int) -> String:
+	if index == 0:  # "No GUI" option
+		return ""
+	
+	# Get template data from item metadata
+	var template_data = opt_game_ui.get_item_metadata(index)
+	if template_data:
+		return _extract_template_name_from_data(template_data)
+	
+	return ""
 
 
 # Updates the container size to fit the content.
@@ -460,6 +533,24 @@ func _update_custom_gui_tooltip() -> void:
 
 # Signal handler for custom GUI select
 func _on_custom_game_ui_changed(index: int) -> void:
+	# Get template name from dropdown selection
+	var new_template_name = _extract_template_name_from_dropdown_index(index)
+	
+	# Check if this is actually a change
+	if new_template_name == _current_template_name:
+		_update_custom_gui_tooltip()
+		return
+	
+	# Check if GUI scene is open
+	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
+		# Revert selection and show warning
+		_revert_template_selection()
+		_show_gui_warning()
+		return
+	
+	# Show confirmation for template change
+	_show_template_change_confirmation(new_template_name)
+	
 	_update_custom_gui_tooltip()
 
 
@@ -750,6 +841,10 @@ func _template_copy_progressed(value: int, message: String) -> void:
 
 ## Called when template copying is completed
 func _template_copy_completed() -> void:
+	# Update stored template name and current tracking
+	PopochiuResources.set_data_value("ui", "template", _selected_template_name)
+	_current_template_name = _selected_template_name
+	
 	# Hide progress UI
 	copy_process_container.hide()
 	
@@ -948,7 +1043,25 @@ func _on_next_visibility_changed():
 
 
 func _on_gui_selected(btn: Button):
-	# Get template info from button metadata
+	# Get template name from button
+	var new_template_name = _extract_template_name_from_button(btn)
+	
+	# Check if this is actually a change
+	if new_template_name == _current_template_name:
+		return
+	
+	# Check if GUI scene is open
+	if PopochiuResources.GUI_GAME_SCENE in EditorInterface.get_open_scenes():
+		# Revert selection and show warning
+		btn.set_pressed_no_signal(false)
+		_revert_template_selection()
+		_show_gui_warning()
+		return
+	
+	# Show confirmation for template change
+	_show_template_change_confirmation(new_template_name)
+	
+	# Get template info from button metadata for tooltip
 	var template_info = btn.get_meta("template_info") as PopochiuGUIInfo
 	if template_info:
 		# Update tooltip with template description
