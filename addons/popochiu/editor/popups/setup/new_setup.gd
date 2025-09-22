@@ -364,11 +364,11 @@ func _restore_from_settings() -> void:
 	# Set custom game type
 	if stretch_mode == "canvas_items":
 		if stretch_aspect == "keep" or is_pixel_art:
-			opt_game_type.selected = 2 # Pixel Art
+			opt_game_type.selected = 1 # Pixel Art (index 1 in dropdown)
 		else:
-			opt_game_type.selected = 1 # High Resolution
+			opt_game_type.selected = 2 # High Resolution (index 2 in dropdown)
 	else:
-		opt_game_type.selected = 0 # Custom
+		opt_game_type.selected = 0 # Custom (index 0 in dropdown)
 
 	# Set wizard selections based on current settings (only for existing games)
 	if PopochiuResources.is_setup_done():
@@ -926,14 +926,14 @@ func _get_values_for_current_mode() -> Dictionary:
 			result.test_height = int(preview_height.value)
 
 			# Map custom game type selection to GameType enum
-			# Custom OptionButton: 0="Custom", 1="High Resolution", 2="Pixel Art"
+			# Custom OptionButton: 0="Custom", 1="Pixel Art", 2="High Resolution"
 			match opt_game_type.selected:
 				0: # Custom - default to Modern
 					result.game_type_config = GameType.MODERN
-				1: # High Resolution
-					result.game_type_config = GameType.MODERN
-				2: # Pixel Art
+				1: # Pixel Art
 					result.game_type_config = GameType.RETRO
+				2: # High Resolution
+					result.game_type_config = GameType.MODERN
 				_: # Fallback
 					result.game_type_config = GameType.MODERN
 
