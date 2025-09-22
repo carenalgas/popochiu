@@ -66,7 +66,7 @@ var _game_resolution: Vector2i
 var _game_window_resolution: Vector2i
 
 # Dictionary to store GUI templates by target resolution
-var _templates_by_res = {
+var _templates_by_res: Dictionary = {
 	PopochiuGUIInfo.GUITargetRes.LOW_RESOLUTION: [],
 	PopochiuGUIInfo.GUITargetRes.HIGH_RESOLUTION: []
 }
@@ -77,8 +77,8 @@ var _selected_template_name: String = ""
 var _template_change_confirmed: bool = false
 var _copy_in_progress: bool = false
 
-var _is_closing := false
-var _es := EditorInterface.get_editor_settings()
+var _is_closing: bool = false
+var _es: EditorSettings = EditorInterface.get_editor_settings()
 
 
 # ---- General items -----------------------------------------------------------
@@ -240,7 +240,7 @@ func on_about_to_popup() -> void:
 
 	# Set the text of the confirmation dialog depending on the setup state.
 	# Get reference to the dialog's OK button if we're inside a ConfirmationDialog.
-	var parent = get_parent()
+	var parent: Node = get_parent()
 	if parent is ConfirmationDialog:
 		_dialog_ok_button = parent.get_ok_button()
 		# Update button label based on setup state.
@@ -265,7 +265,7 @@ func on_close() -> void:
 	PopochiuResources.set_data_value("setup", "last_mode", _current_mode)
 
 	# Calculate resolution values based on current mode
-	var resolution_values = _get_values_for_current_mode()
+	var resolution_values: Dictionary = _get_values_for_current_mode()
 
 	# Set project settings for game and window resolution
 	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, resolution_values.game_width)
@@ -345,10 +345,10 @@ func define_content() -> void:
 # Populate fields with current project settings
 func _restore_from_settings() -> void:
 	# Get current project settings
-	var game_width = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH, 356)
-	var game_height = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT, 200)
-	var test_width = ProjectSettings.get_setting(PopochiuResources.TEST_WIDTH, 1280)
-	var test_height = ProjectSettings.get_setting(PopochiuResources.TEST_HEIGHT, 720)
+	var game_width: int = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH, 356)
+	var game_height: int = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT, 200)
+	var test_width: int = ProjectSettings.get_setting(PopochiuResources.TEST_WIDTH, 1280)
+	var test_height: int = ProjectSettings.get_setting(PopochiuResources.TEST_HEIGHT, 720)
 
 	# Populate custom fields
 	custom_width.value = game_width
@@ -357,9 +357,9 @@ func _restore_from_settings() -> void:
 	preview_height.value = test_height
 
 	# Determine game type from stretch settings
-	var stretch_mode = ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE, "disabled")
-	var stretch_aspect = ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT, "ignore")
-	var is_pixel_art = PopochiuConfig.is_pixel_art_textures()
+	var stretch_mode: String = ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE, "disabled")
+	var stretch_aspect: String = ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT, "ignore")
+	var is_pixel_art: bool = PopochiuConfig.is_pixel_art_textures()
 
 	# Set custom game type
 	if stretch_mode == "canvas_items":
@@ -393,9 +393,9 @@ func _populate_wizard_from_settings(game_res: Vector2i, test_res: Vector2i, is_p
 
 	# Calculate and set preview scale
 	if game_res.x > 0 and game_res.y > 0:
-		var scale_x = float(test_res.x) / float(game_res.x)
-		var scale_y = float(test_res.y) / float(game_res.y)
-		var scale = min(scale_x, scale_y)
+		var scale_x: float = float(test_res.x) / float(game_res.x)
+		var scale_y: float = float(test_res.y) / float(game_res.y)
+		var scale: float = min(scale_x, scale_y)
 
 		if abs(scale - 0.5) < 0.1:
 			opt_res_preview_scale.selected = GameResolutionScale.HALF
@@ -454,7 +454,7 @@ func _select_current_template() -> void:
 
 # Show warning when GUI scene is open
 func _show_gui_warning() -> void:
-	var warning_dialog := AcceptDialog.new()
+	var warning_dialog: AcceptDialog = AcceptDialog.new()
 	warning_dialog.title = "GUI template warning"
 	warning_dialog.dialog_text = "The GUI scene (gui.tscn) is currently opened in the Editor.\n\n" + \
 		"In order to change the GUI template please close that scene first."
@@ -475,7 +475,7 @@ func _show_gui_warning() -> void:
 
 # Show confirmation dialog for template changes
 func _show_template_change_confirmation(new_template_name: String) -> void:
-	var confirmation_dialog := ConfirmationDialog.new()
+	var confirmation_dialog: ConfirmationDialog = ConfirmationDialog.new()
 	confirmation_dialog.title = "Confirm GUI template change"
 	confirmation_dialog.dialog_text = "Changing your GUI template will override any changes you made to the files in res://game/gui/.\nAlso, your game scripts may need to be updated.\n\nAre you sure you want to make the change?"
 	confirmation_dialog.dialog_autowrap = true
@@ -539,12 +539,12 @@ func _set_template_selected_in_ui(template_name: String) -> void:
 	# Set wizard GUI buttons
 	for child in gui_grid.get_children():
 		if child.has_meta("template_button"):
-			var button_template_name = _get_button_template_name(child)
+			var button_template_name: String = _get_button_template_name(child)
 			child.set_pressed_no_signal(button_template_name == template_name)
 
 	# Set custom dropdown
 	for i in range(opt_game_ui.item_count):
-		var dropdown_template_name = _get_dropdown_template_name(i)
+		var dropdown_template_name: String = _get_dropdown_template_name(i)
 		if dropdown_template_name == template_name:
 			opt_game_ui.selected = i
 			break
@@ -553,7 +553,7 @@ func _set_template_selected_in_ui(template_name: String) -> void:
 # Extract template name from GUI button
 func _get_button_template_name(button: Button) -> String:
 	# Get template data from button metadata
-	var template_data = button.get_meta("template_data", null)
+	var template_data: Dictionary = button.get_meta("template_data", null)
 	if template_data:
 		return _get_template_name_from_data(template_data)
 
@@ -566,7 +566,7 @@ func _get_dropdown_template_name(index: int) -> String:
 		return ""
 
 	# Get template data from item metadata
-	var template_data = opt_game_ui.get_item_metadata(index)
+	var template_data := opt_game_ui.get_item_metadata(index)
 	if template_data:
 		return _get_template_name_from_data(template_data)
 
@@ -597,7 +597,7 @@ func _update_wizard_gui_tooltip() -> void:
 	# Find the currently pressed button and update tooltip
 	for child in gui_grid.get_children():
 		if child.has_meta("template_button") and child.button_pressed:
-			var template_info = child.get_meta("template_info") as PopochiuGUIInfo
+			var template_info: PopochiuGUIInfo = child.get_meta("template_info")
 			if template_info:
 				tooltip_gui_text.text = template_info.description
 				tooltip_gui.show()
@@ -610,8 +610,8 @@ func _update_wizard_gui_tooltip() -> void:
 # Update navigation buttons and step label.
 func _update_navigation() -> void:
 	# Update step label
-	var current_step = wizard_steps.current_tab + 1
-	var total_steps = wizard_steps.get_tab_count()
+	var current_step: int = wizard_steps.current_tab + 1
+	var total_steps: int = wizard_steps.get_tab_count()
 	lbl_step.text = "Step %d / %d" % [current_step, total_steps]
 
 	# Control button visibility (fillers will be handled automatically by signals)
@@ -629,7 +629,7 @@ func _update_navigation() -> void:
 
 # Generic function to update the sibling SpinBox maintaining aspect ratio
 func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int) -> void:
-	var ratio = _get_custom_resolution_ratio()
+	var ratio: float = _get_custom_resolution_ratio()
 	if ratio == 0.0:
 		return # Free ratio, no enforcement
 
@@ -764,29 +764,29 @@ func _load_templates() -> void:
 	_templates_by_res[PopochiuGUIInfo.GUITargetRes.HIGH_RESOLUTION].clear()
 
 	# Get template directory
-	var template_dir = PopochiuResources.GUI_TEMPLATES_FOLDER
+	var template_dir: String = PopochiuResources.GUI_TEMPLATES_FOLDER
 
 	# Get all directories inside the template folder
-	var dir = DirAccess.open(template_dir)
+	var dir: DirAccess = DirAccess.open(template_dir)
 	if not dir:
 		printerr("[Popochiu] Could not open GUI templates directory: %s" % template_dir)
 		return
 
 	dir.list_dir_begin()
-	var dir_name = dir.get_next()
+	var dir_name: String = dir.get_next()
 
 	# For each directory, look for template info resource
 	while dir_name != "":
 		if dir.current_is_dir() and not dir_name.begins_with("."):
-			var info_path = "%s/%s/%s_gui_info.tres" % [template_dir, dir_name, dir_name]
+			var info_path: String = "%s/%s/%s_gui_info.tres" % [template_dir, dir_name, dir_name]
 
 			if FileAccess.file_exists(info_path):
-				var template_info = load(info_path)
+				var template_info: PopochiuGUIInfo = load(info_path)
 
 				if template_info is PopochiuGUIInfo:
 					# Store the template in the appropriate category
-					var target_res = template_info.target_resolution
-					var template_data = {
+					var target_res: PopochiuGUIInfo.GUITargetRes = template_info.target_resolution
+					var template_data: Dictionary = {
 						"path": "%s/%s" % [template_dir, dir_name],
 						"title": template_info.title,
 						"description": template_info.description,
@@ -827,7 +827,7 @@ func _populate_wizard_gui_buttons() -> void:
 		return
 
 	# Get the template list based on game type
-	var templates_list = []
+	var templates_list: Array = []
 	if _game_type == GameType.RETRO:
 		templates_list = _templates_by_res[PopochiuGUIInfo.GUITargetRes.LOW_RESOLUTION]
 	else:
@@ -840,7 +840,7 @@ func _populate_wizard_gui_buttons() -> void:
 
 	# Create a button for each template
 	for template in templates_list:
-		var template_button = btn_gui_type_template.duplicate()
+		var template_button: Button = btn_gui_type_template.duplicate()
 		template_button.visible = true
 		template_button.text = template.title
 		template_button.icon = template.icon
@@ -865,15 +865,15 @@ func _populate_custom_gui_dropdown() -> void:
 
 	# Iterate through each resolution category
 	for resolution_key in _templates_by_res.keys():
-		var templates_list = _templates_by_res[resolution_key]
+		var templates_list: Array = _templates_by_res[resolution_key]
 
 		# Skip empty categories
 		if templates_list.is_empty():
 			continue
 
 		# Convert enum name to readable format (e.g., "LOW_RESOLUTION" -> "Low Resolution")
-		var enum_name = PopochiuGUIInfo.GUITargetRes.keys()[resolution_key]
-		var readable_name = enum_name.replace("_", " ").capitalize()
+		var enum_name: String = PopochiuGUIInfo.GUITargetRes.keys()[resolution_key]
+		var readable_name: String = enum_name.replace("_", " ").capitalize()
 
 		# Add separator with readable name
 		opt_game_ui.add_separator(readable_name)
@@ -881,7 +881,7 @@ func _populate_custom_gui_dropdown() -> void:
 		# Add templates for this resolution category
 		for template in templates_list:
 			opt_game_ui.add_item(template.title)
-			var idx = opt_game_ui.item_count - 1
+			var idx: int = opt_game_ui.item_count - 1
 			opt_game_ui.set_item_metadata(idx, template)
 
 	# Select "None" by default
@@ -894,7 +894,7 @@ func _populate_custom_gui_dropdown() -> void:
 
 # Extract appropriate values based on current mode (wizard vs custom)
 func _get_values_for_current_mode() -> Dictionary:
-	var result = {
+	var result: Dictionary = {
 		"game_width": 0,
 		"game_height": 0,
 		"test_width": 0,
@@ -916,7 +916,7 @@ func _get_values_for_current_mode() -> Dictionary:
 			result.game_type_config = _game_type
 
 			# Get template data from selected wizard button
-			var template_data = _get_selected_wizard_template()
+			var template_data: Dictionary = _get_selected_wizard_template()
 			result.gui_template_name = _get_template_name_from_data(template_data)
 
 		SetupMode.CUSTOM:
@@ -938,7 +938,7 @@ func _get_values_for_current_mode() -> Dictionary:
 					result.game_type_config = GameType.MODERN
 
 			# Get template data from selected custom dropdown
-			var template_data = _get_selected_custom_template()
+			var template_data: Dictionary = _get_selected_custom_template()
 			result.gui_template_name = _get_template_name_from_data(template_data)
 
 	return result
@@ -946,7 +946,7 @@ func _get_values_for_current_mode() -> Dictionary:
 
 # Get the selected template data from wizard mode buttons
 func _get_selected_wizard_template() -> Dictionary:
-	var pressed_btn = gui_button_group.get_pressed_button()
+	var pressed_btn: Button = gui_button_group.get_pressed_button()
 	return pressed_btn.get_meta("template_data") if pressed_btn else {}
 
 
@@ -972,7 +972,7 @@ func _get_template_name_from_path(gui_path: String) -> String:
 		return ""
 
 	# Extract template name from path like "res://addons/popochiu/engine/templates/gui/simple_click/"
-	var path_parts = gui_path.split("/")
+	var path_parts: Array = gui_path.split("/")
 	for i in range(path_parts.size() - 1, -1, -1):
 		if not path_parts[i].is_empty():
 			return path_parts[i].to_pascal_case()
@@ -1209,7 +1209,7 @@ func _style_selection_buttons() -> void:
 	if not existing_style is StyleBoxFlat:
 		return
 
-	var btn_base_style = existing_style.duplicate(true) as StyleBoxFlat
+	var btn_base_style: StyleBoxFlat = existing_style.duplicate(true) as StyleBoxFlat
 
 	# Set corner radius for both background and border
 	btn_base_style.corner_radius_top_left = 12
@@ -1272,7 +1272,7 @@ func _style_navigation_buttons() -> void:
 
 func _style_progress_container() -> void:
 	# Apply consistent theming to progress container elements
-	var base_font_size = get_theme_font_size("main_size", "EditorFonts")
+	var base_font_size: int = get_theme_font_size("main_size", "EditorFonts")
 
 	# Style the progress label
 	copy_process_label.add_theme_font_size_override("font_size", base_font_size)
@@ -1290,7 +1290,7 @@ func _style_progress_container() -> void:
 
 func _on_custom_game_ui_changed(index: int) -> void:
 	# Get template name from dropdown selection
-	var new_template_name = _get_dropdown_template_name(index)
+	var new_template_name: String = _get_dropdown_template_name(index)
 	
 	# Always update the selected template name to track current UI state
 	_selected_template_name = new_template_name
@@ -1371,7 +1371,7 @@ func _on_next_visibility_changed() -> void:
 
 func _on_wizard_gui_selected(btn: Button) -> void:
 	# Get template name from button
-	var new_template_name = _get_button_template_name(btn)
+	var new_template_name: String = _get_button_template_name(btn)
 	
 	# Always update the selected template name to track current UI state
 	_selected_template_name = new_template_name
