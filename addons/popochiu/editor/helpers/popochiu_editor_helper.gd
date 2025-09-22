@@ -23,7 +23,7 @@ const DELETE_CONFIRMATION_SCENE = preload(
 	POPUPS_FOLDER + "delete_confirmation/delete_confirmation.tscn"
 )
 const PROGRESS_DIALOG_SCENE = preload(POPUPS_FOLDER + "progress/progress.tscn")
-const SETUP_SCENE = preload("res://addons/popochiu/editor/popups/setup/new_setup.tscn")
+const SETUP_SCENE = preload("res://addons/popochiu/editor/popups/setup/setup.tscn")
 # ---- Identifiers ---------------------------------------------------------------------------------
 const POPOCHIU_OBJECT_POLYGON_GROUP = "popochiu_object_polygon"
 const MIGRATIONS_PANEL_SCENE = preload(
