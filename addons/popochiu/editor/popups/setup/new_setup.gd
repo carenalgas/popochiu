@@ -22,16 +22,20 @@ enum GameResolutionScale {
 }
 
 enum GameResolution {
-	RETRO_NEO_RETRO,
-	RETRO_VGA_4_3,
-	RETRO_VGA_16_9,
-	RETRO_CEGA_4_3,
-	RETRO_CEGA_16_9,
-	MODERN_4K,
-	MODERN_QHD,
-	MODERN_FHD,
-	MODERN_HDR,
-	MODERN_RETRO,
+	# --- Separator = 0 ---
+	RETRO_NEO_RETRO = 1,
+	# --- Separator = 2 ---
+	RETRO_VGA_4_3 = 3,
+	RETRO_VGA_16_9 = 4,
+	# --- Separator = 5 ---
+	RETRO_CEGA_4_3 = 6,
+	RETRO_CEGA_16_9 = 7,
+	# --- Modern / Hi-Res has no separatos ---
+	MODERN_4K = 8,
+	MODERN_QHD = 9,
+	MODERN_FHD = 10,
+	MODERN_HDR = 11,
+	MODERN_RETRO = 12,
 }
 
 enum CustomResRatio {
@@ -701,7 +705,7 @@ func _set_wizard_game_resolution() -> void:
 
 	match _game_type:
 		GameType.RETRO:
-			match opt_res_retro.get_selected_id():
+			match opt_res_retro.selected:
 				GameResolution.RETRO_NEO_RETRO:
 					_game_resolution = Vector2(384, 216)
 				GameResolution.RETRO_VGA_4_3:
@@ -713,7 +717,7 @@ func _set_wizard_game_resolution() -> void:
 				GameResolution.RETRO_CEGA_16_9:
 					_game_resolution = Vector2(320, 180)
 		GameType.MODERN:
-			match opt_res_modern.get_selected_id():
+			match opt_res_modern.selected:
 				GameResolution.MODERN_4K:
 					_game_resolution = Vector2(3840, 2160)
 				GameResolution.MODERN_QHD:
@@ -987,6 +991,10 @@ func _handle_gui_template_copying(template_name: String) -> void:
 	# Subsequent setups: only copy if user confirmed a template change
 	if _selected_template_name != _current_template_name and _template_change_confirmed:
 		await _copy_template(_selected_template_name)
+	else:
+		# No template change: show fake settings update progress
+		# to make sure the user receives proper feedback
+		await _fake_settings_update_progress()
 
 
 # Copy the selected GUI template using the existing helper
@@ -1006,6 +1014,33 @@ func _copy_template(template_name: String) -> void:
 		_template_copy_progressed,
 		_template_copy_completed
 	)
+
+
+# This function fakes progress for settings update when no template copying is needed.
+# Yes, it's silly but it gives the user a clear feedback about what changed pressing "Update".
+func _fake_settings_update_progress() -> void:
+	if _copy_in_progress:
+		return
+		
+	_copy_in_progress = true
+	
+	# Reuse existing progress UI
+	_show_copy_progress()
+	
+	# Step 1: Update game settings
+	_template_copy_progressed(33, "Updating game settings...")
+	await get_tree().create_timer(1.0).timeout
+	
+	# Step 2: Apply resolution changes
+	_template_copy_progressed(66, "Applying resolution changes...")
+	await get_tree().create_timer(1.0).timeout
+	
+	# Step 3: Complete
+	_template_copy_progressed(100, "Configuration complete!")
+	await get_tree().create_timer(1.0).timeout
+	
+	# Finish using existing completion logic
+	_template_copy_completed()
 
 
 # Show progress container and hide main UI during template copying
