@@ -70,7 +70,7 @@ resource_name = "GameTypeBtnGroup"
 allow_unpress = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glykx"]
-bg_color = Color(0.147, 0.168, 0.203, 1)
+bg_color = Color(0, 0, 0, 1)
 corner_radius_top_left = 8
 corner_radius_top_right = 8
 corner_radius_bottom_right = 8
@@ -286,7 +286,7 @@ popup/item_2/id = 7
 popup/item_3/text = "HR-Ready (720p)"
 popup/item_3/id = 8
 popup/item_4/text = "Retro HD (1024x768)"
-popup/item_4/id = 10
+popup/item_4/id = 9
 
 [node name="Spacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
 custom_minimum_size = Vector2(0, 16)
