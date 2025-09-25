@@ -243,10 +243,22 @@ func is_enabled() -> bool:
 	return self.visible and self.clickable and self.input_pickable
 
 
+## Make this node clickable.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_enable_clickable() -> Callable:
+	return func(): await enable_clickable()
+
+
 ## Enables the clickable property and makes the object input pickable.
 func enable_clickable() -> void:
 	clickable = true
 	input_pickable = true
+
+
+## Make this node non clickable.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_disable_clickable() -> Callable:
+	return func(): await disable_clickable()
 
 
 ## Disables the clickable property and makes the object not input pickable.
