@@ -216,7 +216,8 @@ func queue_disable() -> Callable:
 
 ## Hides this Node.
 func disable() -> void:
-	self.visible = false
+	visible = false
+	clickable = false
 
 	await get_tree().process_frame
 
@@ -229,9 +230,40 @@ func queue_enable() -> Callable:
 
 ## Shows this Node.
 func enable() -> void:
-	self.visible = true
+	visible = true
+	clickable = true
 
 	await get_tree().process_frame
+
+
+## Returns whether this object is currently enabled (visible, clickable and - for good measure
+## - input pickable).
+func is_enabled() -> bool:
+	return visible and clickable and input_pickable
+
+
+## Make this node clickable.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_enable_clickable() -> Callable:
+	return func(): await enable_clickable()
+
+
+## Enables the clickable property and makes the object input pickable.
+func enable_clickable() -> void:
+	clickable = true
+	input_pickable = true
+
+
+## Make this node non clickable.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_disable_clickable() -> Callable:
+	return func(): await disable_clickable()
+
+
+## Disables the clickable property and makes the object not input pickable.
+func disable_clickable() -> void:
+	clickable = false
+	input_pickable = false
 
 
 ## Returns the [member description] of the node using [method Object.tr] if
