@@ -216,9 +216,8 @@ func queue_disable() -> Callable:
 
 ## Hides this Node.
 func disable() -> void:
-	self.visible = false
-	self.clickable = false
-	self.input_pickable = false
+	visible = false
+	clickable = false
 
 	await get_tree().process_frame
 
@@ -231,16 +230,16 @@ func queue_enable() -> Callable:
 
 ## Shows this Node.
 func enable() -> void:
-	self.visible = true
-	self.clickable = true
-	self.input_pickable = true
+	visible = true
+	clickable = true
 
 	await get_tree().process_frame
 
 
-## Returns whether this object is currently enabled (visible, clickable and input pickable).
+## Returns whether this object is currently enabled (visible, clickable and - for good measure
+## - input pickable).
 func is_enabled() -> bool:
-	return self.visible and self.clickable and self.input_pickable
+	return visible and clickable and input_pickable
 
 
 ## Make this node clickable.[br][br]
