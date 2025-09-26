@@ -105,10 +105,28 @@ var default_walk_speed := 0
 ## Stores the default scale. Used by [PopochiuRoom] when scaling the character if it is inside a
 ## [PopochiuRegion] that modifies the scale.
 var default_scale := Vector2.ONE
+## The position the character is walking towards. Returns [code]Vector2.ZERO[/code] if not moving.
+## This represents the final destination of the current navigation path.
+var target_position: Vector2: get = get_target_position
+## Whether the character is currently talking (during [method say] execution).
+## Returns [code]true[/code] from the moment [method say] is called until the dialog line finishes.
+var is_talking: bool: get = get_is_talking
+## Whether the character is currently playing an animation (other than walk, talk, or idle).
+## Returns [code]true[/code] if the character is playing any animation that is not a walk, talk,
+## or idle animation variant.
+var is_animating: bool: get = get_is_animating
+## Whether the character is visible in the current room.
+## Returns [code]true[/code] only if the character is visible and belongs to the current active room.
+var is_visible_in_room: bool: get = get_is_visible_in_room
+## Returns the current animation being played. Read-only access to [member _current_animation].
+## This property cannot be set from outside the character implementation.
+var current_animation: String: get = get_current_animation
 
 # Holds the direction the character is looking at.
 # Initialized to DOWN.
 var _looking_dir: int = Looking.DOWN
+# Tracks whether the character is currently talking (during say() method execution)
+var _is_talking := false
 # Holds a suffixes fallback list for the animations to play.
 # Initialized to the suffixes corresponding to the DOWN direction.
 var _animation_suffixes: Array = ['_d', '_dr', '_dl', '_r', '_l', EMPTY_STRING]
@@ -528,6 +546,8 @@ func say(dialog: String, emo := EMPTY_STRING) -> void:
 		await get_tree().process_frame
 		return
 
+	_is_talking = true
+	
 	if not emo.is_empty():
 		emotion = emo
 
@@ -548,6 +568,7 @@ func say(dialog: String, emo := EMPTY_STRING) -> void:
 		PopochiuUtils.a[vo_name].stop(0.3)
 
 	emotion = EMPTY_STRING
+	_is_talking = false
 	idle()
 
 
@@ -935,6 +956,41 @@ func set_avatars(value: Array) -> void:
 func set_obstacle(value: bool) -> void:
 	obstacle = value
 	obstacle_state_changed.emit()
+
+
+## Getter function. Returns the final destination position from the navigation path, or Vector2(-1, -1) if not moving
+func get_target_position() -> Vector2:
+	if _navigation_path.is_empty() or not is_moving:
+		return -1 * Vector2.ONE
+	return _navigation_path[-1] # Last point in the path
+
+
+## Getter function. Returns whether the character is currently in the middle of saying a dialog line
+func get_is_talking() -> bool:
+	return _is_talking
+
+
+## Getter function. Returns whether the character is playing a custom animation (excludes walk, talk, and idle variants)
+func get_is_animating() -> bool:
+	if not animation_player or _current_animation == "null":
+		return false
+	# Check if current animation is NOT walk, talk, or idle variants
+	var anim_name = _current_animation.to_lower()
+	return not (
+		anim_name.begins_with("walk") or
+		anim_name.begins_with("talk") or
+		anim_name.begins_with("idle")
+	)
+
+
+## Getter function. Returns whether the character is both visible and belongs to the currently active room
+func get_is_visible_in_room() -> bool:
+	return visible and room != null and room == PopochiuUtils.r.current
+
+
+# Getter function. Returns the name of the currently playing animation
+func get_current_animation() -> String:
+	return _current_animation
 
 
 #endregion
