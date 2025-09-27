@@ -31,6 +31,9 @@ var ever_collected := false : set = set_ever_collected
 var last_click_button := -1 # NOTE Don't know if this will make sense, or if it this object should
 # emit a signal about the click (command execution)
 
+# Dictionary storing command usage counts {command_id (Commands): count (int)}
+var _command_usage_count := {}
+
 
 #region Godot ######################################################################################
 func _ready():
@@ -304,11 +307,33 @@ func handle_command(button_idx: int) -> void:
 	
 	await call(prefix % suffix)
 
+	# Track command usage
+	_increment_command_count(PopochiuUtils.e.current_command)
+
 
 ## Deselects this item if it is the current [member PopochiuIInventory.active] item.
 func deselect() -> void:
 	if PopochiuUtils.i.active and PopochiuUtils.i.active == self:
 		PopochiuUtils.i.active = null
+
+
+## Returns [code]true[/code] if the [param command] has ever been invoked on this object.
+## This function is typically used in a command handler to provide different behaviors
+## depending on whether the command has been used before or not.
+func ever_invoked(command: int) -> bool:
+	return _command_usage_count.has(command) and _command_usage_count[command] > 0
+
+
+## Returns [code]true[/code] if this is the first time the [param command] is being invoked on this object.
+## This function is typically used in a command handler to provide different behaviors
+## depending on whether the command has been used before or not.
+func first_invoked(command: int) -> bool:
+	return not ever_invoked(command)
+
+
+## Returns the number of times the [param command] has been invoked on this object.
+func count_invoked(command: int) -> int:
+	return _command_usage_count.get(command, 0)
 
 
 #endregion
@@ -339,6 +364,13 @@ func get_description() -> String:
 #endregion
 
 #region Private ####################################################################################
+# Increments the usage count for the specified command
+func _increment_command_count(command_id: int) -> void:
+	if not _command_usage_count.has(command_id):
+		_command_usage_count[command_id] = 0
+	_command_usage_count[command_id] += 1
+
+
 func _toggle_description(is_hover: bool) -> void:
 	if is_hover:
 		PopochiuUtils.g.mouse_entered_inventory_item.emit(self)
