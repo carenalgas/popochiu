@@ -3,8 +3,8 @@
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_q2ioi"]
 [ext_resource type="Script" uid="uid://bsxq0pn10d230" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup/save_and_load_popup.gd" id="2_3uyov"]
 [ext_resource type="StyleBox" uid="uid://bwanhyu2llpeg" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container_high_res.tres" id="3_ftcta"]
-[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/gui/resources/images/close.png" id="4_ju568"]
-[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight.png" id="5_f7dw4"]
+[ext_resource type="Texture2D" uid="uid://bomk4702jmqo7" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.png" id="4_q2ioi"]
+[ext_resource type="Texture2D" uid="uid://88vc0bigdbnu" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.png" id="5_ftcta"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yg86r"]
 
@@ -29,7 +29,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_yg86r")
 
 [node name="PanelContainer" type="PanelContainer" parent="Overlay"]
-custom_minimum_size = Vector2(192, 0)
+custom_minimum_size = Vector2(768, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
@@ -37,6 +37,7 @@ theme_override_styles/panel = ExtResource("3_ftcta")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer"]
 layout_mode = 2
+theme_override_constants/separation = 32
 
 [node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
 layout_mode = 2
@@ -54,9 +55,9 @@ unique_name_in_owner = true
 texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 4
-texture_normal = ExtResource("4_ju568")
-texture_pressed = ExtResource("5_f7dw4")
-texture_hover = ExtResource("5_f7dw4")
+texture_normal = ExtResource("4_q2ioi")
+texture_pressed = ExtResource("5_ftcta")
+texture_hover = ExtResource("5_ftcta")
 
 [node name="Slots" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
 unique_name_in_owner = true

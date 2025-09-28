@@ -10,8 +10,8 @@
 [ext_resource type="PackedScene" uid="uid://hruey0faemfj" path="res://addons/popochiu/engine/objects/gui/components/system_text_high_res/system_text_high_res.tscn" id="8_jxtvu"]
 [ext_resource type="PackedScene" uid="uid://bu27pbvh3qwb0" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_settings_popup_high_res/simple_click_settings_popup_high_res.tscn" id="9_jxtvu"]
 [ext_resource type="PackedScene" uid="uid://27jplvohunat" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup_high_res/save_and_load_popup_high_res.tscn" id="10_jxtvu"]
-[ext_resource type="PackedScene" uid="uid://dfrsiyyqncspo" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/history_popup.tscn" id="11_03sej"]
-[ext_resource type="PackedScene" uid="uid://bnjo044fkdcq7" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup/quit_popup.tscn" id="12_flbte"]
+[ext_resource type="PackedScene" uid="uid://cgrq6i3a8uc0y" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup_high_res/history_popup_high_res.tscn" id="11_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://60e6w0fb7wo0" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup_high_res/quit_popup_high_res.tscn" id="12_jxtvu"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_luohg"]
 atlas = ExtResource("3_jxtvu")
@@ -255,10 +255,10 @@ layout_mode = 1
 visible = false
 layout_mode = 1
 
-[node name="HistoryPopup" parent="Popups" instance=ExtResource("11_03sej")]
+[node name="HistoryPopupHighRes" parent="Popups" instance=ExtResource("11_jxtvu")]
 visible = false
 layout_mode = 1
 
-[node name="QuitPopup" parent="Popups" instance=ExtResource("12_flbte")]
+[node name="QuitPopupHighRes" parent="Popups" instance=ExtResource("12_jxtvu")]
 visible = false
 layout_mode = 1
