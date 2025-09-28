@@ -1038,9 +1038,6 @@ func _get_valid_animation_name(value: String, fallback: String) -> String:
 	if value.is_empty():
 		return fallback
 	
-	# Converting to snake_case to match the naming convention in the animation player.
-	# This allows users to input names in various formats, such as camelCase or PascalCase
-	# matching the tags shown in the importer.
 	return value
 
 
