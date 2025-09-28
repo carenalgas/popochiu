@@ -94,11 +94,11 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## speaks.
 @export var dialog_pos: Vector2
 ## The root name for idle animations. Directional suffixes will be added automatically.
-@export var idle_animation := STANDARD_IDLE_ANIMATION: set = set_idle_animation
+@export var idle_animation: String = STANDARD_IDLE_ANIMATION: set = set_idle_animation
 ## The root name for walk animations. Directional suffixes will be added automatically.
-@export var walk_animation := STANDARD_WALK_ANIMATION: set = set_walk_animation
+@export var walk_animation: String = STANDARD_WALK_ANIMATION: set = set_walk_animation
 ## The root name for talk animations. Directional suffixes will be added automatically.
-@export var talk_animation := STANDARD_TALK_ANIMATION: set = set_talk_animation
+@export var talk_animation: String = STANDARD_TALK_ANIMATION: set = set_talk_animation
 
 
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
