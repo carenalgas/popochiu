@@ -139,6 +139,11 @@ var _last_requested_animation_label: String = "null"
 # Holds the direction the character was looking at when the current animation was requested.
 var _last_requested_animation_dir: int = -1
 # Array of the animation suffixes to search for based on the 8 directions the character can face.
+# NOTE: Based on the character facing direction, we look for a set of animation suffixes
+# in reference order. Notice the lookup table always contains opposite directions for
+# left and right. That's because of flipping: the left animation can be flipped for right movement
+# and viceversa. We just define a preference order for animations when available.
+# Remember: Y coordinates have opposite sign in Godot, so negative angles are up movements.
 var _valid_animation_suffixes = [
 ['_r', '_l', '_dr', '_dl', '_d'], # RIGHT (-22.5 - 22.5 degrees)
 ['_dr', '_dl', '_r', '_l', '_d'], # DOWN_RIGHT (22.5 - 67.5 degrees)
@@ -818,17 +823,10 @@ func resume_animation():
 ## defined by [enum Looking].
 func face_direction(destination: Vector2):
 	# Determine the direction the character is facing.
-	# Remember: Y coordinates have opposite sign in Godot.
-	# This means that negative angles are up movements.
-	# Set the direction using the _looking property.
-	# We cannot use the face_* functions because they
-	# set the state as IDLE.
-	# Based on the character facing direction, define a set of
-	# animation suffixes in reference order.
-	# Notice how we seek for opposite directions for left and
-	# right. Flipping is done in other functions. We just define
-	# a preference order for animations when available.
-	# Get the vector from the origin to the destination.
+	# We cannot use the face_* functions because they reset the state to IDLE.
+	
+	# Get the angle of the vector from the origin to the destination as a number between
+	# 0 and 360 degrees (Vector2.angle() returns the angle in radians between -PI and PI).
 	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
 	# Calculate the looking direction using 8 directions centered on cardinal/diagonal directions
 	# We add 22.5° offset so sectors are centered (e.g., -22.5° to +22.5° = RIGHT)
