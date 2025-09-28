@@ -46,6 +46,12 @@ signal obstacle_state_changed(character: PopochiuCharacter)
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
 const EMPTY_STRING = ""
+## Standard idle animation name.
+const STANDARD_IDLE_ANIMATION = "idle"
+## Standard walk animation name.
+const STANDARD_WALK_ANIMATION = "walk"
+## Standard talk animation name.
+const STANDARD_TALK_ANIMATION = "talk"
 
 ## The [Color] in which the dialogue lines of the character are rendered.
 @export var text_color := Color.WHITE
@@ -87,9 +93,13 @@ const EMPTY_STRING = ""
 ## Used by the GUI to calculate where to render the dialogue lines said by the character when it
 ## speaks.
 @export var dialog_pos: Vector2
-# This category is used by the Aseprite Importer in order to allow the creation of a section in the
-# Inspector for the character.
-@export_category("Aseprite")
+## The root name for idle animations. Directional suffixes will be added automatically.
+@export var idle_animation := STANDARD_IDLE_ANIMATION: set = set_idle_animation
+## The root name for walk animations. Directional suffixes will be added automatically.
+@export var walk_animation := STANDARD_WALK_ANIMATION: set = set_walk_animation
+## The root name for talk animations. Directional suffixes will be added automatically.
+@export var talk_animation := STANDARD_TALK_ANIMATION: set = set_talk_animation
+
 
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
 var last_room := EMPTY_STRING
@@ -238,15 +248,15 @@ func _physics_process(delta: float) -> void:
 ## Use it to play the idle animation of the character.
 ## [i]Virtual[/i].
 func _play_idle() -> void:
-	play_animation('idle')
+	play_animation(idle_animation)
 
 
 ## Use it to play the walk animation of the character.
 ## [i]Virtual[/i].
 func _play_walk(target_pos: Vector2) -> void:
 	# Set the default parameters for play_animation()
-	var animation_label = 'walk'
-	var animation_fallback = 'idle'
+	var animation_label = walk_animation
+	var animation_fallback = idle_animation
 
 	play_animation(animation_label, animation_fallback)
 
@@ -254,7 +264,7 @@ func _play_walk(target_pos: Vector2) -> void:
 ## Use it to play the talk animation of the character.
 ## [i]Virtual[/i].
 func _play_talk() -> void:
-	play_animation('talk')
+	play_animation(talk_animation)
 
 
 ## Use it to play the grab animation of the character.
@@ -708,18 +718,36 @@ func queue_ignore_walkable_areas(new_value: bool) -> Callable:
 	return func(): ignore_walkable_areas = new_value
 
 
+## Sets [member idle_animation] to [param new_name] when in a [method Popochiu.queue].
+func queue_set_idle_animation(new_name: String) -> Callable:
+	return func(): idle_animation = new_name
+
+
+## Sets [member walk_animation] to [param new_name] when in a [method Popochiu.queue].
+func queue_set_walk_animation(new_name: String) -> Callable:
+	return func(): walk_animation = new_name
+
+
+## Sets [member talk_animation] to [param new_name] when in a [method Popochiu.queue].
+func queue_set_talk_animation(new_name: String) -> Callable:
+	return func(): talk_animation = new_name
+
+
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation(
-	animation_label: String, animation_fallback := 'idle', blocking := false
+	animation_label: String, animation_fallback := "", blocking := false
 ) -> Callable:
 	return func(): await play_animation(animation_label, animation_fallback)
 
 
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.
-func play_animation(animation_label: String, animation_fallback := 'idle'):
+func play_animation(animation_label: String, animation_fallback := ""):
+	# Use idle_animation as default fallback if none provided
+	if animation_fallback.is_empty():
+		animation_fallback = idle_animation
 	if (animation_label != _last_requested_animation_label) or (_looking_dir != _last_requested_animation_dir):
 		if not has_node("AnimationPlayer"):
 			PopochiuUtils.print_error(
@@ -770,8 +798,8 @@ func stop_animation():
 		animation_player.get_animation(
 			animation_player.current_animation
 		).loop_mode == Animation.LOOP_NONE
-		or animation_player.current_animation == 'idle'
-		or animation_player.current_animation.begins_with('idle_')
+		or animation_player.current_animation == idle_animation
+		or animation_player.current_animation.begins_with(idle_animation + '_')
 	):
 		return
 
@@ -946,6 +974,18 @@ func set_obstacle(value: bool) -> void:
 	obstacle_state_changed.emit()
 
 
+func set_idle_animation(value: String) -> void:
+	idle_animation = _get_valid_animation_name(value, STANDARD_IDLE_ANIMATION)
+
+
+func set_walk_animation(value: String) -> void:
+	walk_animation = _get_valid_animation_name(value, STANDARD_WALK_ANIMATION)
+
+
+func set_talk_animation(value: String) -> void:
+	talk_animation = _get_valid_animation_name(value, STANDARD_TALK_ANIMATION)
+
+
 ## Getter function. Returns the final destination position from the navigation path, or Vector2(-1, -1) if not moving
 func get_target_position() -> Vector2:
 	if _navigation_path.is_empty() or not is_moving:
@@ -965,9 +1005,9 @@ func get_is_animating() -> bool:
 	# Check if current animation is NOT walk, talk, or idle variants
 	var anim_name = _current_animation.to_lower()
 	return not (
-		anim_name.begins_with("walk") or
-		anim_name.begins_with("talk") or
-		anim_name.begins_with("idle")
+		anim_name.begins_with(walk_animation) or
+		anim_name.begins_with(talk_animation) or
+		anim_name.begins_with(idle_animation)
 	)
 
 
@@ -987,6 +1027,21 @@ func get_current_animation() -> String:
 func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree(): return
 	description = PopochiuUtils.e.get_text(_description_code)
+
+
+# Validates an animation name and returns either the validated name or a fallback
+func _get_valid_animation_name(value: String, fallback: String) -> String:
+	# Clear animation cache to force re-evaluation
+	_last_requested_animation_label = "null"
+
+	# If the value is empty, return the fallback
+	if value.is_empty():
+		return fallback
+	
+	# Converting to snake_case to match the naming convention in the animation player.
+	# This allows users to input names in various formats, such as camelCase or PascalCase
+	# matching the tags shown in the importer.
+	return value
 
 
 ## Called when the player character changes to update clickability
@@ -1015,6 +1070,26 @@ func _get_vo_cue(emotion := EMPTY_STRING) -> String:
 
 
 func _get_valid_oriented_animation(animation_label):
+	# Try the original animation name first
+	var animation_result = _try_animation_with_suffixes(animation_label)
+	if not animation_result.is_empty():
+		return animation_result
+
+	# Before trying the snake_case version, check if it's already in snake_case
+	if animation_label == animation_label.to_snake_case():
+		return EMPTY_STRING
+
+	# Original name not found, try snake_case version (in case it was imported,
+	# since the importer forces snake_case)
+	animation_result = _try_animation_with_suffixes(animation_label.to_snake_case())
+	if not animation_result.is_empty():
+		return animation_result
+	
+	return EMPTY_STRING
+
+
+# Helper function to try an animation label with all directional suffixes
+func _try_animation_with_suffixes(animation_label: String) -> String:
 	# The list of prefixes is in order of preference
 	# Eg. walk_dl, walk_l, walk
 	# Scan the AnimationPlayer and return the first that matches.
