@@ -14,9 +14,15 @@ enum DialogStyle {
 # Godot's ProjectSettings instead of using a Resource file.
 # ---- GUI -----------------------------------------------------------------------------------------
 const SCALE_GUI = "popochiu/gui/experimental_scale_gui"
-const FADE_COLOR = "popochiu/gui/fade_color"
-const SKIP_CUTSCENE_TIME = "popochiu/gui/skip_cutscene_time"
-const TL_FIRST_ROOM = "popochiu/gui/show_transition_layer_in_first_room"
+const TL_FADE_COLOR = "popochiu/gui/transition_layer/fade_color"
+const TL_DEFAULT_ROOM_TRANSITION = "popochiu/gui/transition_layer/default_room_transition"
+const TL_ROOM_TRANSITION_MODE_ENTER = "popochiu/gui/transition_layer/room_transition_mode_enter"
+const TL_ROOM_TRANSITION_MODE_LEAVE = "popochiu/gui/transition_layer/room_transition_mode_leave"
+const TL_ROOM_TRANSITION_DURATION = "popochiu/gui/transition_layer/room_transition_duration"
+const TL_DEFAULT_CUTSCENE_TRANSITION = "popochiu/gui/transition_layer/default_cutscene_transition"
+const TL_CUTSCENE_TRANSITION_MODE = "popochiu/gui/transition_layer/cutscene_transition_mode"
+const TL_SKIP_CUTSCENE_TIME = "popochiu/gui/transition_layer/skip_cutscene_time"
+const TL_IN_FIRST_ROOM = "popochiu/gui/transition_layer/show_transition_layer_in_first_room"
 
 # ---- Dialogs -------------------------------------------------------------------------------------
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
@@ -53,9 +59,15 @@ const DEV_USE_ADDON_TEMPLATE = "popochiu/dev/use_addon_template"
 
 static var defaults := {
 	SCALE_GUI: false,
-	FADE_COLOR: Color.BLACK,
-	SKIP_CUTSCENE_TIME: 0.2,
-	TL_FIRST_ROOM: false,
+	TL_FADE_COLOR: Color.BLACK,
+	TL_SKIP_CUTSCENE_TIME: 0.2,
+	TL_IN_FIRST_ROOM: false,
+	TL_DEFAULT_ROOM_TRANSITION: "fade",
+	TL_ROOM_TRANSITION_MODE_ENTER: PopochiuTransitionLayer.PLAY_MODE.IN,
+	TL_ROOM_TRANSITION_MODE_LEAVE: PopochiuTransitionLayer.PLAY_MODE.OUT,
+	TL_ROOM_TRANSITION_DURATION: 1.0,
+	TL_DEFAULT_CUTSCENE_TRANSITION: "fade",
+	TL_CUTSCENE_TRANSITION_MODE: PopochiuTransitionLayer.PLAY_MODE.IN_OUT,
 	TEXT_SPEED: 0.1,
 	AUTO_CONTINUE_TEXT: false,
 	USE_TRANSLATIONS: false,
@@ -84,9 +96,19 @@ static var defaults := {
 static func initialize_project_settings():
 	# ---- GUI -------------------------------------------------------------------------------------
 	_initialize_project_setting(SCALE_GUI, TYPE_BOOL)
-	_initialize_project_setting(FADE_COLOR, TYPE_COLOR)
-	_initialize_project_setting(SKIP_CUTSCENE_TIME, TYPE_FLOAT)
-	_initialize_project_setting(TL_FIRST_ROOM, TYPE_BOOL)
+	# Transition Layer
+	var tl: PopochiuTransitionLayer = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
+	var transition_hint: String = ",".join(tl.get_all_transitions_list())
+	_initialize_project_setting(TL_FADE_COLOR, TYPE_COLOR)
+	_initialize_project_setting(TL_SKIP_CUTSCENE_TIME, TYPE_FLOAT)
+	_initialize_project_setting(TL_IN_FIRST_ROOM, TYPE_BOOL)
+	_initialize_project_setting(TL_DEFAULT_ROOM_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
+	_initialize_project_setting(TL_ROOM_TRANSITION_MODE_ENTER, TYPE_INT, PROPERTY_HINT_ENUM, _get_enum_hint(PopochiuTransitionLayer.PLAY_MODE))
+	_initialize_project_setting(TL_ROOM_TRANSITION_MODE_LEAVE, TYPE_INT, PROPERTY_HINT_ENUM, _get_enum_hint(PopochiuTransitionLayer.PLAY_MODE))
+	_initialize_project_setting(TL_ROOM_TRANSITION_DURATION, TYPE_FLOAT)
+	_initialize_project_setting(TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
+	_initialize_project_setting(TL_CUTSCENE_TRANSITION_MODE, TYPE_INT, PROPERTY_HINT_ENUM, _get_enum_hint(PopochiuTransitionLayer.PLAY_MODE))
+	tl.queue_free()
 	
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	_initialize_project_setting(TEXT_SPEED, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
@@ -146,14 +168,15 @@ static func is_scale_gui() -> bool:
 
 
 static func get_fade_color() -> Color:
-	return _get_project_setting(FADE_COLOR)
+	return _get_project_setting(TL_FADE_COLOR)
 
 
 static func get_skip_cutscene_time() -> float:
-	return _get_project_setting(SKIP_CUTSCENE_TIME)
+	return _get_project_setting(TL_SKIP_CUTSCENE_TIME)
+
 
 static func should_show_tl_in_first_room() -> bool:
-	return _get_project_setting(TL_FIRST_ROOM)
+	return _get_project_setting(TL_IN_FIRST_ROOM)
 
 
 # ---- Dialogs -------------------------------------------------------------------------------------
@@ -284,6 +307,16 @@ static func _create_setting(
 static func _get_project_setting(key: String):
 	var p = ProjectSettings.get_setting(key)
 	return p if p != null else defaults[key]
+
+
+# Build a hint string according to the keys of an enum.
+# You can pass a function [param f] to control how the enum keys are converted to strings.
+static func _get_enum_hint(e, f: Callable = Callable()) -> String:
+	if f.is_null():
+		f = func(s: String):
+			return s.capitalize()
+
+	return ",".join(e.keys().map(f))
 
 
 #endregion
