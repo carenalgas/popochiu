@@ -1,15 +1,15 @@
 [gd_scene load_steps=31 format=3 uid="uid://ddxdiyo0lvgkp"]
 
-[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_high_res_gui_theme.tres" id="1_jxtvu"]
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_jxtvu"]
 [ext_resource type="Script" uid="uid://blpkp4ajtmsxa" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/simple_click_gui.gd" id="2_luohg"]
 [ext_resource type="Texture2D" uid="uid://cl8swcsqi22qt" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/images/simple_click_cursor.png" id="3_jxtvu"]
-[ext_resource type="PackedScene" uid="uid://c2hd63hqy3fqd" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_bar/simple_click_high_res_bar.tscn" id="4_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://c2hd63hqy3fqd" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_bar_high_res/simple_click_bar_high_res.tscn" id="4_jxtvu"]
 [ext_resource type="PackedScene" uid="uid://bvdyamd6jb0yh" path="res://addons/popochiu/engine/objects/gui/components/hover_text_high_res/hover_text_high_res.tscn" id="5_jxtvu"]
 [ext_resource type="PackedScene" uid="uid://c0igkpb3nl4yw" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_overhead_high_res/dialog_overhead_high_res.tscn" id="6_jxtvu"]
-[ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu.tscn" id="7_gk7ao"]
+[ext_resource type="PackedScene" uid="uid://uh0x1asdqaqv" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu_high_res/dialog_menu_high_res.tscn" id="7_jxtvu"]
 [ext_resource type="PackedScene" uid="uid://hruey0faemfj" path="res://addons/popochiu/engine/objects/gui/components/system_text_high_res/system_text_high_res.tscn" id="8_jxtvu"]
-[ext_resource type="PackedScene" uid="uid://bu27pbvh3qwb0" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_settings_popup/simple_click_high_res_settings_popup.tscn" id="9_jxtvu"]
-[ext_resource type="PackedScene" uid="uid://cndputybyj57n" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup/save_and_load_popup.tscn" id="10_kf2lr"]
+[ext_resource type="PackedScene" uid="uid://bu27pbvh3qwb0" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_settings_popup_high_res/simple_click_settings_popup_high_res.tscn" id="9_jxtvu"]
+[ext_resource type="PackedScene" uid="uid://27jplvohunat" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup_high_res/save_and_load_popup_high_res.tscn" id="10_jxtvu"]
 [ext_resource type="PackedScene" uid="uid://dfrsiyyqncspo" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/history_popup.tscn" id="11_03sej"]
 [ext_resource type="PackedScene" uid="uid://bnjo044fkdcq7" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup/quit_popup.tscn" id="12_flbte"]
 
@@ -217,7 +217,7 @@ sprite_frames = SubResource("SpriteFrames_1bbe3")
 animation = &"active"
 centered = false
 
-[node name="SimpleClickHighResBar" parent="." instance=ExtResource("4_jxtvu")]
+[node name="SimpleClickBarHighRes" parent="." instance=ExtResource("4_jxtvu")]
 layout_mode = 1
 
 [node name="HoverTextHighRes" parent="." instance=ExtResource("5_jxtvu")]
@@ -231,7 +231,7 @@ hide_during_dialogs = true
 [node name="DialogOverheadHighRes" parent="." instance=ExtResource("6_jxtvu")]
 layout_mode = 1
 
-[node name="DialogMenu" parent="." instance=ExtResource("7_gk7ao")]
+[node name="DialogMenuHighRes" parent="." instance=ExtResource("7_jxtvu")]
 visible = false
 layout_mode = 1
 
@@ -247,11 +247,11 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SimpleClickHighResSettingsPopup" parent="Popups" instance=ExtResource("9_jxtvu")]
+[node name="SimpleClickSettingsPopupHighRes" parent="Popups" instance=ExtResource("9_jxtvu")]
 visible = false
 layout_mode = 1
 
-[node name="SaveAndLoadPopup" parent="Popups" instance=ExtResource("10_kf2lr")]
+[node name="SaveAndLoadPopupHighRes" parent="Popups" instance=ExtResource("10_jxtvu")]
 visible = false
 layout_mode = 1
 

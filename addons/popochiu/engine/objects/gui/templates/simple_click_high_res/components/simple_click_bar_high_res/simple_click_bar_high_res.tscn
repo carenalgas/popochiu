@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://c2hd63hqy3fqd"]
 
-[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_high_res_gui_theme.tres" id="1_io13s"]
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_io13s"]
 [ext_resource type="Script" uid="uid://bb3qgcngq2xs7" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_bar/simple_click_bar.gd" id="2_pj1ip"]
-[ext_resource type="Texture2D" uid="uid://banh62vrarbjn" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_bar/images/simple_click_settings_button.png" id="3_io13s"]
+[ext_resource type="Texture2D" uid="uid://banh62vrarbjn" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_bar_high_res/images/simple_click_settings_button.png" id="3_io13s"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lxom0"]
 atlas = ExtResource("3_io13s")
@@ -16,7 +16,7 @@ region = Rect2(0, 40, 40, 40)
 atlas = ExtResource("3_io13s")
 region = Rect2(0, 40, 40, 40)
 
-[node name="SimpleClickHighResBar" type="Control" groups=["popochiu_gui_component"]]
+[node name="SimpleClickBarHighRes" type="Control" groups=["popochiu_gui_component"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
