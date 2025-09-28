@@ -189,7 +189,11 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("popochiu-skip"):
 		cutscene_skipped = true
-		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.skip_cutscene_time)
+		tl.play_transition(
+			PopochiuUtils.e.settings.TL_DEFAULT_CUTSCENE_TRANSITION,
+			settings.skip_cutscene_time,
+			PopochiuUtils.e.settings.TL_CUTSCENE_TRANSITION_MODE
+			)
 		await tl.transition_finished
 
 
@@ -269,7 +273,11 @@ func cutscene(instructions: Array) -> void:
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		tl.play_transition(tl.PASS_DOWN_OUT, settings.skip_cutscene_time)
+		tl.play_transition(
+			PopochiuUtils.e.settings.TL_DEFAULT_CUTSCENE_TRANSITION,
+			settings.skip_cutscene_time,
+			PopochiuUtils.e.settings.TL_CUTSCENE_TRANSITION_MODE
+		)
 		await tl.transition_finished
 	
 	cutscene_skipped = false
@@ -441,16 +449,17 @@ func queueable(node: Object, method: String, params := [], signal_name := "") ->
 
 
 ## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
-## seconds. Available type values can be found in [member TransitionLayer.Types]. This method is
-## intended to be used inside a [method queue] of instructions.
-func queue_play_transition(type: int, duration: float) -> Callable:
-	return func (): await play_transition(type, duration)
+## seconds with the specified [param mode]. Available type values can be found in
+## [member TransitionLayer.Types]. This method is intended to be used inside a [method queue] of
+## instructions.
+func queue_play_transition(name: String, duration: float, mode: int) -> Callable:
+	return func (): await play_transition(name, duration, mode)
 
 
 ## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
 ## seconds. Available type values can be found in [member TransitionLayer.Types].
-func play_transition(type: int, duration: float) -> void:
-	tl.play_transition(type, duration)
+func play_transition(name: String, duration: float, mode: int) -> void:
+	tl.play_transition(name, duration, mode)
 	
 	await tl.transition_finished
 
