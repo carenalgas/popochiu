@@ -200,8 +200,10 @@ const DIALOGS_PATH = GAME_PATH + "dialogs/"
 const GUI_GAME_FOLDER = GAME_PATH + "gui/"
 const GUI_GAME_SCENE = GUI_GAME_FOLDER + "gui.tscn"
 const GUI_COMMANDS = GUI_GAME_FOLDER + "gui_commands.gd"
-const TRANSITION_LAYER = GAME_PATH + "transition_layer/transition_layer.tscn"
-
+const TRANSITION_LAYER_PATH = GAME_PATH + "transition_layer/"
+const TRANSITION_LAYER_MASKS = TRANSITION_LAYER_PATH + "images/"
+const TRANSITION_LAYER_SCENE = TRANSITION_LAYER_PATH + "transition_layer.tscn"
+const TRANSITION_LAYER_CUSTOM_ANIMLIB = "User"
 
 #region Public #####################################################################################
 # Verify if the folders (where Popochiu's objects will be) exists
