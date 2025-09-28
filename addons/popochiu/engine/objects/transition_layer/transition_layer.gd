@@ -1,3 +1,4 @@
+@tool
 class_name PopochiuTransitionLayer
 extends Control
 ## Used to play different transition animations when moving between rooms, skipping a cutscene,
@@ -5,20 +6,10 @@ extends Control
 
 signal transition_finished(transition_name: String)
 
-## Available transition types.
-enum {
-	## Fades in and out.
-	FADE_IN_OUT,
-	## Fades in.
-	FADE_IN,
-	## Fades out.
-	FADE_OUT,
-	## Passes down and up.
-	PASS_DOWN_IN_OUT,
-	## Passes down.
-	PASS_DOWN_IN,
-	## Passes up.
-	PASS_DOWN_OUT,
+enum PLAY_MODE {
+	IN,
+	OUT,
+	IN_OUT
 }
 
 
@@ -28,6 +19,9 @@ func _ready() -> void:
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
 	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
 
+	# Pass the curtain size to the shader
+	$Curtain.material.set_shader_parameter("curtain_size", $Curtain.size)
+
 	# Make sure the transition layer is ready
 	# if it has to be visible in the first room
 	if PopochiuUtils.e.settings.show_tl_in_first_room and Engine.get_process_frames() == 0:
@@ -36,53 +30,49 @@ func _ready() -> void:
 	else:
 		$AnimationPlayer.play("RESET")
 		await get_tree().process_frame
-		
+
 		_hide()
 
 
 #endregion
 
 #region Public #####################################################################################
-## Plays a transition with the animation identified by [param type] and that lasts [param duration]
-## (in seconds). The transition can be one of the following:
-## [enum PopochiuTransitionLayer.FADE_IN_OUT], [enum PopochiuTransitionLayer.FADE_IN],
-## [enum PopochiuTransitionLayer.FADE_OUT], [enum PopochiuTransitionLayer.PASS_DOWN_IN_OUT],
-## [enum PopochiuTransitionLayer.PASS_DOWN_IN], [enum PopochiuTransitionLayer.PASS_DOWN_OUT].
-func play_transition(type := FADE_IN, duration := 1.0) -> void:
+## Plays a transition with the animation identified by [param name], that lasts [param duration]
+## (in seconds), with the specified [param mode].
+## TODO: TL document
+func play_transition(name: String = "fade", duration: float = 1.0, mode: int = PLAY_MODE.IN) -> void:
+	# Check if the animation exists
+	if $AnimationPlayer.get_animation(name) == null:
+		PopochiuUtils.print_error("Can't find animation %s" % name)
+		return
+
 	_show()
-	
+
 	# ---- Play RESET in order to fix #168 ---------------------------------------------------------
 	$AnimationPlayer.play("RESET")
 	await get_tree().process_frame
 	# --------------------------------------------------------- Play RESET in order to fix #168 ----
-	
-	$AnimationPlayer.speed_scale = 1.0 / duration
-	
-	match type:
-		FADE_IN_OUT:
-			$AnimationPlayer.play("fade")
+
+	$AnimationPlayer.speed_scale = 1.0 / duration if duration != 0.0 else 0.0;
+
+	match mode:
+		PLAY_MODE.IN_OUT:
+			$AnimationPlayer.play(name)
 			await $AnimationPlayer.animation_finished
-			$AnimationPlayer.play_backwards("fade")
-			await $AnimationPlayer.animation_finished
-			_hide()
-		FADE_IN:
-			$AnimationPlayer.play("fade")
-		FADE_OUT:
-			$AnimationPlayer.play_backwards("fade")
+			$AnimationPlayer.play_backwards(name)
 			await $AnimationPlayer.animation_finished
 			_hide()
-		PASS_DOWN_IN_OUT:
-			$AnimationPlayer.play("pass")
-			await $AnimationPlayer.animation_finished
-			$AnimationPlayer.play_backwards("pass")
-			await $AnimationPlayer.animation_finished
-			_hide()
-		PASS_DOWN_IN:
-			$AnimationPlayer.play("pass")
-		PASS_DOWN_OUT:
-			$AnimationPlayer.play_backwards("pass")
+		PLAY_MODE.IN:
+			$AnimationPlayer.play(name)
+		PLAY_MODE.OUT:
+			$AnimationPlayer.play_backwards(name)
 			await $AnimationPlayer.animation_finished
 			_hide()
+		_:
+			var result_code = ResultCodes.ERR_ANIMATION_PLAY_MODE_UNKNOWN
+			PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % mode)
+
+	$AnimationPlayer.speed_scale = 1.0
 
 
 ## Shows the curtain without playing any transition.
@@ -95,6 +85,186 @@ func show_curtain() -> void:
 ## Hides the transition layer.
 func hide_curtain() -> void:
 	_hide()
+
+
+## Return the custom animation library or null
+func get_custom_library() -> AnimationLibrary:
+	var tl_anim_lib: AnimationLibrary = $AnimationPlayer.get_animation_library(PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB)
+
+	if not tl_anim_lib:
+		var result = ResultCodes.ERR_ANIMATION_LIBRARY_NOT_FOUND
+		#PopochiuUtils.print_error(ResultCodes.get_error_message(result) + " (%s)" % PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB)
+
+	return tl_anim_lib
+
+
+func has_custom_library() -> bool:
+	return true if get_custom_library() else false
+
+
+func get_custom_transition(anim_name: String) -> Animation:
+	var tl_anim_lib = get_custom_library()
+
+	if not tl_anim_lib:
+		return null
+
+	var tl_anim = tl_anim_lib.get_animation(anim_name)
+
+	if not tl_anim:
+		var result_code = ResultCodes.ERR_ANIMATION_NOT_FOUND
+		#PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % anim_name)
+
+	return tl_anim
+
+
+func has_custom_transition(anim_name: String) -> bool:
+	return true if get_custom_transition(anim_name) else false
+
+
+func get_custom_transitions_list() -> PackedStringArray:
+	var anim_list = get_custom_library().get_animation_list()
+	return _hide_animations(anim_list)
+
+
+func get_predefined_transitions_list() -> PackedStringArray:
+	var anim_list = $AnimationPlayer.get_animation_library("").get_animation_list()
+	return _hide_animations(anim_list)
+
+
+func get_all_transitions_list() -> PackedStringArray:
+	var anim_list = $AnimationPlayer.get_animation_list()
+	return _hide_animations(anim_list)
+
+
+func copy_image(texture_path: String) -> int:
+	var result_code
+	print("start copy")
+	# Ensure the source file exists
+	if not FileAccess.file_exists(texture_path):
+		return ResultCodes.FAILURE
+
+	print("file exist")
+	var file_name = texture_path.get_file()
+
+	# Ensure the destination directory exists
+	var game_tl_image_dir = DirAccess.open(PopochiuResources.TRANSITION_LAYER_PATH)
+
+	print("dest dir")
+	#if not game_tl_image_dir:
+	await game_tl_image_dir.make_dir(PopochiuResources.TRANSITION_LAYER_MASKS)
+
+	# Copy the image file: overwrite by default
+	result_code = game_tl_image_dir.copy(texture_path, PopochiuResources.TRANSITION_LAYER_MASKS + file_name)
+	await PopochiuEditorHelper.filesystem_scanned()
+
+	print(result_code)
+	return ResultCodes.SUCCESS if result_code == OK else ResultCodes.FAILURE
+
+
+## Create a basic custom transition
+func create_basic_custom_transition(texture_path: String, cutoff: float, smoothing: float, duration: float, visibility_track = false, modulate_track = false, color: Color = PopochiuUtils.e.settings.fade_color) -> Animation:
+	# Create basic transition
+	var new_anim: Animation = Animation.new()
+	var track_index
+	# Visibility (might not be necessary)
+	if visibility_track:
+		track_index = new_anim.add_track(Animation.TYPE_VALUE)
+		new_anim.track_set_path(track_index, "Curtain:visible")
+		new_anim.track_insert_key(track_index, 0.0, true)
+		new_anim.track_insert_key(track_index, duration, true)
+	# Modulate (might not be necessary)
+	if modulate_track:
+		track_index = new_anim.add_track(Animation.TYPE_VALUE)
+		new_anim.track_set_path(track_index, "Curtain:modulate")
+		new_anim.track_insert_key(track_index, 0.0, color)
+		new_anim.track_insert_key(track_index, duration, color)
+	# Texture
+	# Copy image
+	if await copy_image(texture_path) != ResultCodes.SUCCESS:
+		return null
+	# Load resource
+	var game_tl_texture = PopochiuResources.TRANSITION_LAYER_MASKS.path_join(texture_path.get_file())
+	var mask: Resource = ResourceLoader.load(game_tl_texture)
+	track_index = new_anim.add_track(Animation.TYPE_VALUE)
+	new_anim.track_set_path(track_index, "Curtain:material:shader_parameter/mask")
+	new_anim.track_insert_key(track_index, 0.0, mask)
+	new_anim.track_insert_key(track_index, duration, mask) # load texture
+	# Cutoff
+	track_index = new_anim.add_track(Animation.TYPE_VALUE)
+	new_anim.track_set_path(track_index, "Curtain:material:shader_parameter/cutoff")
+	new_anim.track_set_interpolation_type(track_index, Animation.InterpolationType.INTERPOLATION_LINEAR)
+	new_anim.track_insert_key(track_index, 0.0, 0.0)
+	new_anim.track_insert_key(track_index, duration, cutoff)
+	# Smoothing window
+	track_index = new_anim.add_track(Animation.TYPE_VALUE)
+	new_anim.track_set_path(track_index, "Curtain:material:shader_parameter/smoothing_window")
+	new_anim.track_set_interpolation_type(track_index, Animation.InterpolationType.INTERPOLATION_LINEAR)
+	new_anim.track_insert_key(track_index, 0.0, 0.0)
+	new_anim.track_insert_key(track_index, duration, smoothing)
+	# Duration
+	new_anim.length = duration
+
+	return new_anim
+
+
+## Create an animation resource and add that as a custom transition to the User animation library
+func add_custom_transition(anim: Animation, anim_name: String, overwrite: bool = false) -> int:
+	var result_code = ResultCodes.SUCCESS
+	var tl_anim_lib = get_custom_library()
+
+	# Check if the animation player has the User animation library and, if not, create it
+	if not tl_anim_lib:
+		print("add anim lib")
+		tl_anim_lib = AnimationLibrary.new()
+		$AnimationPlayer.add_animation_library(
+			PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB,
+			tl_anim_lib
+		)
+
+	# Check for animation name collisions
+	if tl_anim_lib.has_animation(anim_name) and not overwrite:
+		result_code = ResultCodes.ERR_ANIMATION_ALREADY_EXISTS
+		#PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % anim_name)
+	else:
+		print("add anim to lib")
+		tl_anim_lib.add_animation(anim_name, anim)
+
+	return result_code
+
+
+## Remove a custom transition from the User animation library
+func remove_custom_transition(anim_name: String, remove_resource: bool = false) -> void:
+	var tl_anim_lib: AnimationLibrary = get_custom_library()
+
+	if not tl_anim_lib:
+		return
+
+	tl_anim_lib.remove_animation(anim_name)
+
+
+## Check if an animation name is valid according to is_valid_animation_name() in
+## godot/scene/resources/animation_library.cpp
+static func is_valid_name(anim_name: String) -> bool:
+	var r = RegEx.create_from_string(r'[/:,[]')
+	return not (anim_name == "" or r.search(anim_name))
+
+
+static func get_simple_name(anim_name: String) -> String:
+	var prefix = PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB.path_join("/")
+
+	if anim_name.begins_with(prefix):
+		return anim_name.split("/")[1].to_snake_case()
+
+	return anim_name.to_snake_case()
+
+
+static func get_custom_name(anim_name: String) -> String:
+	var prefix = PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB.path_join("/")
+
+	if anim_name.begins_with(prefix):
+		return prefix + anim_name.split("/")[1].to_snake_case()
+
+	return prefix + anim_name.to_snake_case()
 
 
 #endregion
@@ -116,5 +286,14 @@ func _hide() -> void:
 	hide()
 	PopochiuUtils.g.show_interface()
 
+
+## Hide RESET and other unwanted animations
+func _hide_animations(anim_list: PackedStringArray) -> PackedStringArray:
+	var i = anim_list.find("RESET")
+
+	if i >= 0:
+		anim_list.remove_at(i)
+
+	return anim_list
 
 #endregion
