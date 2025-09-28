@@ -138,24 +138,16 @@ var _current_animation: String = "null"
 var _last_requested_animation_label: String = "null"
 # Holds the direction the character was looking at when the current animation was requested.
 var _last_requested_animation_dir: int = -1
-# Array of the animation suffixes to search for based on the angle the character is facing.
+# Array of the animation suffixes to search for based on the 8 directions the character can face.
 var _valid_animation_suffixes = [
-['_r', '_l', '_dr', '_dl', '_d'], # 0 - 22.5 degrees
-['_dr', '_dl', '_r', '_l', '_d'], # 22.5 - 45 degrees
-['_dr', '_dl', '_d', '_r', '_l'], # 45 - 67.5 degrees
-['_d', '_dr', '_dl', '_r', '_l'], # 67.5 - 90 degrees
-['_d', '_dl', '_dr', '_l', '_r'], # 90 - 112.5 degrees
-['_dl', '_dr', '_d', '_l', '_r'], # 112.5 - 135 degrees
-['_dl', '_dr', '_l', '_r', '_d'], # 135 - 157.5 degrees
-['_l', '_r', '_dl', '_dr', '_d'], # 157.5 - 180 degrees
-['_l', '_r', '_ul', '_ur', '_u'], # 180 - 202.5 degrees
-['_ul', '_ur', '_l', '_r', '_u'], # 202.5 - 225 degrees
-['_ul', '_ur', '_u', '_l', '_r'], # 225 - 247.5 degrees
-['_u', '_ul', '_ur', '_l', '_r'], # 247.5 - 270 degrees
-['_u', '_ur', '_ul', '_r', '_l'], # 270 - 292.5 degrees
-['_ur', '_ul', '_u', '_r', '_l'], # 292.5 - 315 degrees
-['_ur', '_ul', '_r', '_l', '_u'], # 315 - 337.5 degrees
-['_r', '_l', '_ur', '_ul', '_u']] # 337.5 - 360 degrees
+['_r', '_l', '_dr', '_dl', '_d'], # RIGHT (-22.5 - 22.5 degrees)
+['_dr', '_dl', '_r', '_l', '_d'], # DOWN_RIGHT (22.5 - 67.5 degrees)
+['_d', '_dr', '_dl', '_r', '_l'], # DOWN (67.5 - 112.5 degrees)
+['_dl', '_dr', '_l', '_r', '_d'], # DOWN_LEFT (112.5 - 157.5 degrees)
+['_l', '_r', '_dl', '_dr', '_d'], # LEFT (157.5 - 202.5 degrees)
+['_ul', '_ur', '_l', '_r', '_u'], # UP_LEFT (202.5 - 247.5 degrees)
+['_u', '_ul', '_ur', '_l', '_r'], # UP (247.5 - 292.5 degrees)
+['_ur', '_ul', '_r', '_l', '_u']] # UP_RIGHT (292.5 - 337.5 degrees)
 # Navigation path for this character's current movement
 var _navigation_path := PackedVector2Array()
 # The stored position of the character. Used when anti_glide_animation is true.
@@ -838,15 +830,13 @@ func face_direction(destination: Vector2):
 	# a preference order for animations when available.
 	# Get the vector from the origin to the destination.
 	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
-	# The angle calculation uses 16 angles rather than 8 for greater accuracy
-	# in choosing the facing direction fallback animations.
-	var _looking_angle := int(angle / 22.5) % 16
-	# Selecting the animation suffixes for the current facing direction.
+	# Calculate the looking direction using 8 directions centered on cardinal/diagonal directions
+	# We add 22.5° offset so sectors are centered (e.g., -22.5° to +22.5° = RIGHT)
+	_looking_dir = int((angle + 22.5) / 45) % 8
+	# Set the animation suffixes for the current facing direction.
 	# Note that we add a fallback empty string to the list, in case the only
 	# available animation is the base one ('walk', 'talk', etc).
-	_animation_suffixes = _valid_animation_suffixes[_looking_angle] + [EMPTY_STRING]
-	# The 16 directions used for animation suffixes are simplified to 8 general directions
-	_looking_dir = int(angle / 45) % 8
+	_animation_suffixes = _valid_animation_suffixes[_looking_dir] + [EMPTY_STRING]
 
 
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.
