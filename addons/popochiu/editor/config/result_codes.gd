@@ -27,6 +27,11 @@ enum {
 	ERR_CANT_CREATE_OBJ_SCRIPT,
 	ERR_CANT_SAVE_OBJ_SCENE,
 	ERR_CANT_SAVE_OBJ_RESOURCE,
+	## TransitionLayer errors
+	ERR_ANIMATION_LIBRARY_NOT_FOUND,
+	ERR_ANIMATION_NOT_FOUND,
+	ERR_ANIMATION_ALREADY_EXISTS,
+	ERR_ANIMATION_PLAY_MODE_UNKNOWN,
 }
 
 
@@ -73,6 +78,14 @@ static func get_error_message(code: int):
 			return "Can't create new Popochiu object's scene (.tscn)"
 		ERR_CANT_SAVE_OBJ_RESOURCE:
 			return "Can't create new Popochiu object's resource (.tres)"
+		ERR_ANIMATION_NOT_FOUND:
+			return "Animation not found in target node"
+		ERR_ANIMATION_ALREADY_EXISTS:
+			return "Animation name collision in target node"
+		ERR_ANIMATION_LIBRARY_NOT_FOUND:
+			return "AnimationLibrary not found in target node"
+		ERR_ANIMATION_PLAY_MODE_UNKNOWN:
+			return "Animation play mode unknown"
 		# Generic error message
 		_:
 			return "Import failed with code %d" % code
