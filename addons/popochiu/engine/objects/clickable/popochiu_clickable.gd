@@ -522,8 +522,7 @@ func set_room(value: Node2D) -> void:
 #region Private ####################################################################################
 # Increments the usage count for the specified command
 func _increment_command_count(command_id: int) -> void:
-	if not _command_usage_count.has(command_id):
-		_command_usage_count[command_id] = 0
+	_command_usage_count.get_or_add(command_id, 0)
 	_command_usage_count[command_id] += 1
 
 
