@@ -34,6 +34,7 @@ C.player.walk_to_marker("EnterPos") # plays the `pajama_walk` animation
 C.player.play_animation("jump") # searches for `pajama_jump` but falls back to `jump` and plays it
 
 C.player.animation_prefix = "" # go back to normal animations
+C.player.reset_animation_prefix() # same as above
 ```
 
 Of course, Popochiu maintains the same directional animation logic if directional prefixed animations are available.

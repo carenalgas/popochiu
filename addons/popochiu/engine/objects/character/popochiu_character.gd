@@ -939,6 +939,12 @@ func update_scale():
 		walk_speed = default_walk_speed
 
 
+## Resets the animation prefix.
+## Same as assigning an empty string to the prefix.
+func reset_animation_prefix() -> void:
+	animation_prefix = PopochiuEditorHelper.EMPTY_STRING
+
+
 #endregion
 
 #region SetGet #####################################################################################
