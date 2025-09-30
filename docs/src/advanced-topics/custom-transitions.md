@@ -15,7 +15,7 @@ If you need a fade-in and a corresponding fade-out kind of transition, we recomm
 
 ### General Procedure
 
-- Open the Transition Layer scene.
+- Open the Transition Layer scene and make sure it's visible.
 - Click on the Animation Player node.
 - Click on *Animation -> Manage Animations*
 - If you don't have a custom library, we recommend creating one so that you can easily save your custom transitions in bulk in a resource for backup. Click on *New Library* and enter the name for your custom library.
@@ -25,9 +25,12 @@ If you need a fade-in and a corresponding fade-out kind of transition, we recomm
 - Scroll down to the *Material* section in the inspector so that you can see the shader parameters.
 - Next to every shader parameter you should see a key-shaped icon. Clicking on that adds a property track to the animation you opened earlier in the Animation Panel.
 - Every time you add a property track to an animation, you'll be asked if you want to add that property to the `RESET` track. It's advisable to do that.
-- You need to set an initial and a final value for the property based on what you want to achieve. The two most common properties you'll find yourself using are:
+- You need to set an initial and, if needed, a final value for the property based on what you want to achieve. The two most common shader parameters you'll find yourself using using in property tracks are:
   - Mask: this selects the texture.
   - Cutoff: this manages a transparency threshold and should most likely have an initial and final value to be interpolated over time.
+- Additionally, for testing purposes, you can add the following Curtain properties:
+  - Visible: set the initial and final value to true.
+  - Modulate: set the initial and final value to the desired color.
 
 ### An Example
 
@@ -55,7 +58,12 @@ To achieve our goal let's duplicate the animation and rename it to `horizontal_p
 
 Now we can hit *Play* and see what happens. You should see horizontal brush strokes hiding the scene, proceeding in a zig-zag pattern from the top left corner to the bottom right corner.
 
-Caveat: one common pitfall in testing animations is that toggling property tracks on and off does not reset the value of the property. To make sure the value is properly reset, you can either play the `RESET` track or manually reset the values in the inspector.
+### Common Pitfalls
+
+While testing animations in the editor:
+
+- Toggling a property track on and off does not reset the value of that property. To make sure the value is properly reset, you can either play the `RESET` track or manually reset the value in the inspector.
+- If you press the play button and you can't see anything happening, make sure the Transition Layer scene and the Curtain node have their visibility toggled on in the scene tree.
 
 ## The Transition Layer Shader in Detail
 
