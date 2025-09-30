@@ -178,7 +178,7 @@ var _buffered_position = null
 
 #region Godot ######################################################################################
 func _ready():
-	super ()
+	super()
 
 	default_walk_speed = walk_speed
 	default_scale = Vector2(scale)
