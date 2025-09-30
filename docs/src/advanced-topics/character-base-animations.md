@@ -43,6 +43,10 @@ character.say("Hello!", "happy")
 
 The animation names you set in the inspector are automatically used by these methods.
 
+!!! info "Outfit changes"
+    These variables are meant to instruct the engine about which animation to use for the three basic managed states. Although they can be used to change the outfit or appearance of a character, additional animations should have managed by hand.
+
+    For the purpose of applying costumes, outfits, or other state-changes that apply to **every** animation, see the dedicated [Animation Prefix](../character-animation-prefix) guide.
 
 ## About directions and naming conventions
 
@@ -73,7 +77,7 @@ To change animation names dynamically during cutscenes use the queue methods:
 
 ```gdscript
 await E.queue([
-    C.player.queue_say("Let's relax for five seconds!")
+    C.player.queue_say("Let me relax for a moment"),
     C.player.queue_set_idle_animation("relaxed"),
     E.queue_wait(5.0),
     C.player.queue_set_idle_animation("idle"),  # Reset to default

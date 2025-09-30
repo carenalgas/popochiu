@@ -99,6 +99,9 @@ const STANDARD_TALK_ANIMATION = "talk"
 @export var walk_animation: String = STANDARD_WALK_ANIMATION: set = set_walk_animation
 ## The root name for talk animations. Directional suffixes will be added automatically.
 @export var talk_animation: String = STANDARD_TALK_ANIMATION: set = set_talk_animation
+## Animation prefix for outfit changes (e.g., "pajama", "armor"). When set, the engine will search
+## for prefixed animations like "pajama_walk_r" before falling back to basic "walk_r" animations.
+@export var animation_prefix: String = "": set = set_animation_prefix
 
 
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
@@ -733,6 +736,11 @@ func queue_set_talk_animation(new_name: String) -> Callable:
 	return func(): talk_animation = new_name
 
 
+## Sets [member animation_prefix] to [param new_prefix] when in a [method Popochiu.queue].
+func queue_set_animation_prefix(new_prefix: String) -> Callable:
+	return func(): animation_prefix = new_prefix
+
+
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
@@ -852,7 +860,6 @@ func resume_animation():
 func face_direction(destination: Vector2):
 	# Determine the direction the character is facing.
 	# We cannot use the face_* functions because they reset the state to IDLE.
-	
 	# Get the angle of the vector from the origin to the destination as a number between
 	# 0 and 360 degrees (Vector2.angle() returns the angle in radians between -PI and PI).
 	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
@@ -932,6 +939,12 @@ func update_scale():
 		walk_speed = default_walk_speed
 
 
+## Resets the animation prefix.
+## Same as assigning an empty string to the prefix.
+func reset_animation_prefix() -> void:
+	animation_prefix = PopochiuEditorHelper.EMPTY_STRING
+
+
 #endregion
 
 #region SetGet #####################################################################################
@@ -984,6 +997,12 @@ func set_walk_animation(value: String) -> void:
 
 func set_talk_animation(value: String) -> void:
 	talk_animation = _get_valid_animation_name(value, STANDARD_TALK_ANIMATION)
+
+
+func set_animation_prefix(value: String) -> void:
+	animation_prefix = value.strip_edges()
+	# Clear animation cache to force re-evaluation with new prefix
+	_last_requested_animation_label = "null"
 
 
 ## Getter function. Returns the final destination position from the navigation path, or Vector2(-1, -1) if not moving
@@ -1067,22 +1086,61 @@ func _get_vo_cue(emotion := EMPTY_STRING) -> String:
 
 
 func _get_valid_oriented_animation(animation_label):
-	# Try the original animation name first
-	var animation_result = _try_animation_with_suffixes(animation_label)
-	if not animation_result.is_empty():
-		return animation_result
-
-	# Before trying the snake_case version, check if it's already in snake_case
-	if animation_label == animation_label.to_snake_case():
-		return EMPTY_STRING
-
-	# Original name not found, try snake_case version (in case it was imported,
-	# since the importer forces snake_case)
-	animation_result = _try_animation_with_suffixes(animation_label.to_snake_case())
-	if not animation_result.is_empty():
-		return animation_result
+	# Generate prioritized list of animation names to try
+	var prioritized_names = _get_prioritized_animation_names(animation_label)
+	
+	# Try each animation name in priority order
+	for animation_name in prioritized_names:
+		var animation_result = _try_animation_with_suffixes(animation_name)
+		if not animation_result.is_empty():
+			return animation_result
 	
 	return EMPTY_STRING
+
+
+# Generate prioritized list of animation names to try (in order of preference)
+func _get_prioritized_animation_names(animation_label: String) -> Array[String]:
+	var prioritized_names: Array[String] = []
+	
+	# 1. First priority: Prefixed animations (if prefix is set)
+	if not animation_prefix.is_empty():
+		prioritized_names.append_array(_get_prefixed_animation_names(animation_prefix, animation_label))
+
+	# 2. Second priority: Original animation name as provided
+	prioritized_names.append(animation_label)
+
+	# 3. Third priority: Snake_case version (if different from original)
+	if animation_label.to_snake_case() != animation_label:
+		prioritized_names.append(animation_label.to_snake_case())
+
+	return prioritized_names
+
+
+# Generate prefixed animation names based on prefix format
+func _get_prefixed_animation_names(prefix: String, animation_name: String) -> Array[String]:
+	var prefixed_names: Array[String] = []
+
+	# 1. Direct concatenation:
+	#	- "Pajama" + "walk" = "Pajamawalk"
+	#	- "Pajama" + "Walk" = "PajamaWalk"
+	#	- "pajama_" + "Walk" = "pajama_Walk"
+	#   - etc.
+	prefixed_names.append(prefix + animation_name)
+
+	# 2. PascalCase concatenation:
+	#	- "Pajama" + "walk" = "PajamaWalk"
+	#	- "Pajama" + "Walk" = "PajamaWalk"
+	#	- "pajama_" + "Walk" = "PajamaWalk"
+	prefixed_names.append(prefix.to_pascal_case() + animation_name.capitalize())
+	
+	# 3. snake_case concatenation:
+	#	- "Pajama" + "walk" = "pajama_walk"
+	#	- "Pajama" + "Walk" = "pajama_walk"
+	#	- "pajama_" + "Walk" = "pajama_walk"
+	#   - etc.
+	prefixed_names.append(prefix.to_snake_case() + "_" + animation_name.to_lower())
+
+	return prefixed_names
 
 
 # Helper function to try an animation label with all directional suffixes
