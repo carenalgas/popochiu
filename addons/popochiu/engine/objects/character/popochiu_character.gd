@@ -95,8 +95,9 @@ const STANDARD_TALK_ANIMATION = "talk"
 @export var dialog_pos: Vector2
 ## Offset from the character's dialog_pos. Added to the normal dialog position.
 var dialog_pos_offset: Vector2 = Vector2.ZERO: set = set_dialog_pos_offset
-## Absolute world coordinates for dialog position. Overrides dialog_pos entirely when not null.
-var dialog_pos_override: Vector2: set = set_dialog_pos_override
+## Absolute world coordinates for dialog position. Overrides dialog_pos entirely when not set.
+## By convention `Vector2.INF` means "unset" (instead of using Vector2.ZERO which is a valid position).
+var dialog_pos_override: Vector2 = Vector2.INF: set = set_dialog_pos_override
 ## The root name for idle animations. Directional suffixes will be added automatically.
 @export var idle_animation: String = STANDARD_IDLE_ANIMATION: set = set_idle_animation
 ## The root name for walk animations. Directional suffixes will be added automatically.
@@ -909,10 +910,11 @@ func get_actual_dialog_pos() -> Vector2:
 	if _is_dialog_pos_locked:
 		# Convert locked global position back to local coordinates
 		return to_local(_locked_dialog_pos)
-	
-	if dialog_pos_override != Vector2.ZERO:
+    
+	if dialog_pos_override != Vector2.INF:
 		return dialog_pos_override
-	
+
+	# If override is unset (Vector2.INF), return base pos + offset
 	return dialog_pos + dialog_pos_offset
 
 
@@ -923,14 +925,14 @@ func reset_dialog_pos_offset() -> void:
 
 ## Resets the dialog position override to Vector2.ZERO (disabled).
 func reset_dialog_pos_override() -> void:
-	dialog_pos_override = Vector2.ZERO # TODO: this should be nullable, as ZERO is a perfectly valid position
+	dialog_pos_override = Vector2.INF
 
 
 ## Locks the dialog position at the current calculated global position.
 func lock_dialog_pos() -> void:
-	# Calculate current position without using locked state
+	# Calculate current position without using locked state. Respect INF as "unset".
 	var current_pos: Vector2
-	if dialog_pos_override != Vector2.ZERO:
+	if dialog_pos_override != Vector2.INF:
 		current_pos = dialog_pos_override
 	else:
 		current_pos = dialog_pos + dialog_pos_offset
@@ -1083,10 +1085,10 @@ func set_dialog_pos_override(value: Vector2) -> void:
 	dialog_pos_override = value
 
 
-## Getter function. Returns the final destination position from the navigation path, or Vector2(-1, -1) if not moving
+## Getter function. Returns the final destination position from the navigation path, or Vector2.INF if not moving
 func get_target_position() -> Vector2:
 	if _navigation_path.is_empty() or not is_moving:
-		return -1 * Vector2.ONE
+		return Vector2.INF
 	return _navigation_path[-1] # Last point in the path
 
 
