@@ -75,9 +75,17 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 	$AnimationPlayer.speed_scale = 1.0
 
 
-## Shows the curtain without playing any transition.
-func show_curtain() -> void:
-	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
+## Shows the curtain with the specified [param color] without playing any transition.
+## if [param name] is not specified, the curtain will be shown with the default color from project
+## settings.
+func show_curtain(color = null) -> void:
+	if color != null and color is not Color:
+		PopochiuUtils.print_error("Invalid Curtain color.")
+		return
+
+	$Curtain.modulate = color
+	if $Curtain.modulate == null:
+		$Curtain.modulate = PopochiuUtils.e.settings.fade_color
 	$Curtain.show()
 	_show()
 
@@ -134,6 +142,17 @@ func get_predefined_transitions_list() -> PackedStringArray:
 func get_all_transitions_list() -> PackedStringArray:
 	var anim_list = $AnimationPlayer.get_animation_list()
 	return _hide_animations(anim_list)
+
+
+## Check if the transition specified by [param anim_name] has an enabled track that overrides the
+## default Curtain color.
+func has_color_override(anim_name: String) -> bool:
+	var anim = get_custom_transition(anim_name)
+	var idx = anim.find_track("Curtain:modulate", Animation.TrackType.TYPE_VALUE)
+
+	if idx != -1 and anim.track_is_enabled(idx):
+		return true
+	return false
 
 
 func copy_image(texture_path: String) -> int:
@@ -193,12 +212,14 @@ func create_basic_custom_transition(texture_path: String, cutoff: float, smoothi
 	track_index = new_anim.add_track(Animation.TYPE_VALUE)
 	new_anim.track_set_path(track_index, "Curtain:material:shader_parameter/cutoff")
 	new_anim.track_set_interpolation_type(track_index, Animation.InterpolationType.INTERPOLATION_LINEAR)
+	new_anim.value_track_set_update_mode(track_index, Animation.UpdateMode.UPDATE_CONTINUOUS)
 	new_anim.track_insert_key(track_index, 0.0, 0.0)
 	new_anim.track_insert_key(track_index, duration, cutoff)
 	# Smoothing window
 	track_index = new_anim.add_track(Animation.TYPE_VALUE)
 	new_anim.track_set_path(track_index, "Curtain:material:shader_parameter/smoothing_window")
 	new_anim.track_set_interpolation_type(track_index, Animation.InterpolationType.INTERPOLATION_LINEAR)
+	new_anim.value_track_set_update_mode(track_index, Animation.UpdateMode.UPDATE_CONTINUOUS)
 	new_anim.track_insert_key(track_index, 0.0, 0.0)
 	new_anim.track_insert_key(track_index, duration, smoothing)
 	# Duration
