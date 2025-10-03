@@ -46,6 +46,12 @@ signal obstacle_state_changed(character: PopochiuCharacter)
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
 const EMPTY_STRING = ""
+## Standard idle animation name.
+const STANDARD_IDLE_ANIMATION = "idle"
+## Standard walk animation name.
+const STANDARD_WALK_ANIMATION = "walk"
+## Standard talk animation name.
+const STANDARD_TALK_ANIMATION = "talk"
 
 ## The [Color] in which the dialogue lines of the character are rendered.
 @export var text_color := Color.WHITE
@@ -87,9 +93,16 @@ const EMPTY_STRING = ""
 ## Used by the GUI to calculate where to render the dialogue lines said by the character when it
 ## speaks.
 @export var dialog_pos: Vector2
-# This category is used by the Aseprite Importer in order to allow the creation of a section in the
-# Inspector for the character.
-@export_category("Aseprite")
+## The root name for idle animations. Directional suffixes will be added automatically.
+@export var idle_animation: String = STANDARD_IDLE_ANIMATION: set = set_idle_animation
+## The root name for walk animations. Directional suffixes will be added automatically.
+@export var walk_animation: String = STANDARD_WALK_ANIMATION: set = set_walk_animation
+## The root name for talk animations. Directional suffixes will be added automatically.
+@export var talk_animation: String = STANDARD_TALK_ANIMATION: set = set_talk_animation
+## Animation prefix for outfit changes (e.g., "pajama", "armor"). When set, the engine will search
+## for prefixed animations like "pajama_walk_r" before falling back to basic "walk_r" animations.
+@export var animation_prefix: String = "": set = set_animation_prefix
+
 
 ## Stores the [member PopochiuRoom.script_name] of the previously visited [PopochiuRoom].
 var last_room := EMPTY_STRING
@@ -105,10 +118,28 @@ var default_walk_speed := 0
 ## Stores the default scale. Used by [PopochiuRoom] when scaling the character if it is inside a
 ## [PopochiuRegion] that modifies the scale.
 var default_scale := Vector2.ONE
+## The position the character is walking towards. Returns [code]Vector2.ZERO[/code] if not moving.
+## This represents the final destination of the current navigation path.
+var target_position: Vector2: get = get_target_position
+## Whether the character is currently talking (during [method say] execution).
+## Returns [code]true[/code] from the moment [method say] is called until the dialog line finishes.
+var is_talking: bool: get = get_is_talking
+## Whether the character is currently playing an animation (other than walk, talk, or idle).
+## Returns [code]true[/code] if the character is playing any animation that is not a walk, talk,
+## or idle animation variant.
+var is_animating: bool: get = get_is_animating
+## Whether the character is visible in the current room.
+## Returns [code]true[/code] only if the character is visible and belongs to the current active room.
+var is_visible_in_room: bool: get = get_is_visible_in_room
+## Returns the current animation being played. Read-only access to [member _current_animation].
+## This property cannot be set from outside the character implementation.
+var current_animation: String: get = get_current_animation
 
 # Holds the direction the character is looking at.
 # Initialized to DOWN.
 var _looking_dir: int = Looking.DOWN
+# Tracks whether the character is currently talking (during say() method execution)
+var _is_talking := false
 # Holds a suffixes fallback list for the animations to play.
 # Initialized to the suffixes corresponding to the DOWN direction.
 var _animation_suffixes: Array = ['_d', '_dr', '_dl', '_r', '_l', EMPTY_STRING]
@@ -120,24 +151,21 @@ var _current_animation: String = "null"
 var _last_requested_animation_label: String = "null"
 # Holds the direction the character was looking at when the current animation was requested.
 var _last_requested_animation_dir: int = -1
-# Array of the animation suffixes to search for based on the angle the character is facing.
+# Array of the animation suffixes to search for based on the 8 directions the character can face.
+# NOTE: Based on the character facing direction, we look for a set of animation suffixes
+# in reference order. Notice the lookup table always contains opposite directions for
+# left and right. That's because of flipping: the left animation can be flipped for right movement
+# and viceversa. We just define a preference order for animations when available.
+# Remember: Y coordinates have opposite sign in Godot, so negative angles are up movements.
 var _valid_animation_suffixes = [
-['_r', '_l', '_dr', '_dl', '_d'], # 0 - 22.5 degrees
-['_dr', '_dl', '_r', '_l', '_d'], # 22.5 - 45 degrees
-['_dr', '_dl', '_d', '_r', '_l'], # 45 - 67.5 degrees
-['_d', '_dr', '_dl', '_r', '_l'], # 67.5 - 90 degrees
-['_d', '_dl', '_dr', '_l', '_r'], # 90 - 112.5 degrees
-['_dl', '_dr', '_d', '_l', '_r'], # 112.5 - 135 degrees
-['_dl', '_dr', '_l', '_r', '_d'], # 135 - 157.5 degrees
-['_l', '_r', '_dl', '_dr', '_d'], # 157.5 - 180 degrees
-['_l', '_r', '_ul', '_ur', '_u'], # 180 - 202.5 degrees
-['_ul', '_ur', '_l', '_r', '_u'], # 202.5 - 225 degrees
-['_ul', '_ur', '_u', '_l', '_r'], # 225 - 247.5 degrees
-['_u', '_ul', '_ur', '_l', '_r'], # 247.5 - 270 degrees
-['_u', '_ur', '_ul', '_r', '_l'], # 270 - 292.5 degrees
-['_ur', '_ul', '_u', '_r', '_l'], # 292.5 - 315 degrees
-['_ur', '_ul', '_r', '_l', '_u'], # 315 - 337.5 degrees
-['_r', '_l', '_ur', '_ul', '_u']] # 337.5 - 360 degrees
+['_r', '_l', '_dr', '_dl', '_d'], # RIGHT (-22.5 - 22.5 degrees)
+['_dr', '_dl', '_r', '_l', '_d'], # DOWN_RIGHT (22.5 - 67.5 degrees)
+['_d', '_dr', '_dl', '_r', '_l'], # DOWN (67.5 - 112.5 degrees)
+['_dl', '_dr', '_l', '_r', '_d'], # DOWN_LEFT (112.5 - 157.5 degrees)
+['_l', '_r', '_dl', '_dr', '_d'], # LEFT (157.5 - 202.5 degrees)
+['_ul', '_ur', '_l', '_r', '_u'], # UP_LEFT (202.5 - 247.5 degrees)
+['_u', '_ul', '_ur', '_l', '_r'], # UP (247.5 - 292.5 degrees)
+['_ur', '_ul', '_r', '_l', '_u']] # UP_RIGHT (292.5 - 337.5 degrees)
 # Navigation path for this character's current movement
 var _navigation_path := PackedVector2Array()
 # The stored position of the character. Used when anti_glide_animation is true.
@@ -223,15 +251,15 @@ func _physics_process(delta: float) -> void:
 ## Use it to play the idle animation of the character.
 ## [i]Virtual[/i].
 func _play_idle() -> void:
-	play_animation('idle')
+	play_animation(idle_animation)
 
 
 ## Use it to play the walk animation of the character.
 ## [i]Virtual[/i].
 func _play_walk(target_pos: Vector2) -> void:
 	# Set the default parameters for play_animation()
-	var animation_label = 'walk'
-	var animation_fallback = 'idle'
+	var animation_label = walk_animation
+	var animation_fallback = idle_animation
 
 	play_animation(animation_label, animation_fallback)
 
@@ -239,7 +267,7 @@ func _play_walk(target_pos: Vector2) -> void:
 ## Use it to play the talk animation of the character.
 ## [i]Virtual[/i].
 func _play_talk() -> void:
-	play_animation('talk')
+	play_animation(talk_animation)
 
 
 ## Use it to play the grab animation of the character.
@@ -528,6 +556,8 @@ func say(dialog: String, emo := EMPTY_STRING) -> void:
 		await get_tree().process_frame
 		return
 
+	_is_talking = true
+	
 	if not emo.is_empty():
 		emotion = emo
 
@@ -548,6 +578,7 @@ func say(dialog: String, emo := EMPTY_STRING) -> void:
 		PopochiuUtils.a[vo_name].stop(0.3)
 
 	emotion = EMPTY_STRING
+	_is_talking = false
 	idle()
 
 
@@ -690,18 +721,41 @@ func queue_ignore_walkable_areas(new_value: bool) -> Callable:
 	return func(): ignore_walkable_areas = new_value
 
 
+## Sets [member idle_animation] to [param new_name] when in a [method Popochiu.queue].
+func queue_set_idle_animation(new_name: String) -> Callable:
+	return func(): idle_animation = new_name
+
+
+## Sets [member walk_animation] to [param new_name] when in a [method Popochiu.queue].
+func queue_set_walk_animation(new_name: String) -> Callable:
+	return func(): walk_animation = new_name
+
+
+## Sets [member talk_animation] to [param new_name] when in a [method Popochiu.queue].
+func queue_set_talk_animation(new_name: String) -> Callable:
+	return func(): talk_animation = new_name
+
+
+## Sets [member animation_prefix] to [param new_prefix] when in a [method Popochiu.queue].
+func queue_set_animation_prefix(new_prefix: String) -> Callable:
+	return func(): animation_prefix = new_prefix
+
+
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation(
-	animation_label: String, animation_fallback := 'idle', blocking := false
+	animation_label: String, animation_fallback := "", blocking := false
 ) -> Callable:
 	return func(): await play_animation(animation_label, animation_fallback)
 
 
 ## Plays the [param animation_label] animation. You can specify a fallback animation to play with
 ## [param animation_fallback] in case the former one doesn't exists.
-func play_animation(animation_label: String, animation_fallback := 'idle'):
+func play_animation(animation_label: String, animation_fallback := ""):
+	# Use idle_animation as default fallback if none provided
+	if animation_fallback.is_empty():
+		animation_fallback = idle_animation
 	if (animation_label != _last_requested_animation_label) or (_looking_dir != _last_requested_animation_dir):
 		if not has_node("AnimationPlayer"):
 			PopochiuUtils.print_error(
@@ -752,8 +806,8 @@ func stop_animation():
 		animation_player.get_animation(
 			animation_player.current_animation
 		).loop_mode == Animation.LOOP_NONE
-		or animation_player.current_animation == 'idle'
-		or animation_player.current_animation.begins_with('idle_')
+		or animation_player.current_animation == idle_animation
+		or animation_player.current_animation.begins_with(idle_animation + '_')
 	):
 		return
 
@@ -805,27 +859,17 @@ func resume_animation():
 ## defined by [enum Looking].
 func face_direction(destination: Vector2):
 	# Determine the direction the character is facing.
-	# Remember: Y coordinates have opposite sign in Godot.
-	# This means that negative angles are up movements.
-	# Set the direction using the _looking property.
-	# We cannot use the face_* functions because they
-	# set the state as IDLE.
-	# Based on the character facing direction, define a set of
-	# animation suffixes in reference order.
-	# Notice how we seek for opposite directions for left and
-	# right. Flipping is done in other functions. We just define
-	# a preference order for animations when available.
-	# Get the vector from the origin to the destination.
+	# We cannot use the face_* functions because they reset the state to IDLE.
+	# Get the angle of the vector from the origin to the destination as a number between
+	# 0 and 360 degrees (Vector2.angle() returns the angle in radians between -PI and PI).
 	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
-	# The angle calculation uses 16 angles rather than 8 for greater accuracy
-	# in choosing the facing direction fallback animations.
-	var _looking_angle := int(angle / 22.5) % 16
-	# Selecting the animation suffixes for the current facing direction.
+	# Calculate the looking direction using 8 directions centered on cardinal/diagonal directions
+	# We add 22.5° offset so sectors are centered (e.g., -22.5° to +22.5° = RIGHT)
+	_looking_dir = int((angle + 22.5) / 45) % 8
+	# Set the animation suffixes for the current facing direction.
 	# Note that we add a fallback empty string to the list, in case the only
 	# available animation is the base one ('walk', 'talk', etc).
-	_animation_suffixes = _valid_animation_suffixes[_looking_angle] + [EMPTY_STRING]
-	# The 16 directions used for animation suffixes are simplified to 8 general directions
-	_looking_dir = int(angle / 45) % 8
+	_animation_suffixes = _valid_animation_suffixes[_looking_dir] + [EMPTY_STRING]
 
 
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.
@@ -895,6 +939,12 @@ func update_scale():
 		walk_speed = default_walk_speed
 
 
+## Resets the animation prefix.
+## Same as assigning an empty string to the prefix.
+func reset_animation_prefix() -> void:
+	animation_prefix = PopochiuEditorHelper.EMPTY_STRING
+
+
 #endregion
 
 #region SetGet #####################################################################################
@@ -937,12 +987,77 @@ func set_obstacle(value: bool) -> void:
 	obstacle_state_changed.emit()
 
 
+func set_idle_animation(value: String) -> void:
+	idle_animation = _get_valid_animation_name(value, STANDARD_IDLE_ANIMATION)
+
+
+func set_walk_animation(value: String) -> void:
+	walk_animation = _get_valid_animation_name(value, STANDARD_WALK_ANIMATION)
+
+
+func set_talk_animation(value: String) -> void:
+	talk_animation = _get_valid_animation_name(value, STANDARD_TALK_ANIMATION)
+
+
+func set_animation_prefix(value: String) -> void:
+	animation_prefix = value.strip_edges()
+	# Clear animation cache to force re-evaluation with new prefix
+	_last_requested_animation_label = "null"
+
+
+## Getter function. Returns the final destination position from the navigation path, or Vector2(-1, -1) if not moving
+func get_target_position() -> Vector2:
+	if _navigation_path.is_empty() or not is_moving:
+		return -1 * Vector2.ONE
+	return _navigation_path[-1] # Last point in the path
+
+
+## Getter function. Returns whether the character is currently in the middle of saying a dialog line
+func get_is_talking() -> bool:
+	return _is_talking
+
+
+## Getter function. Returns whether the character is playing a custom animation (excludes walk, talk, and idle variants)
+func get_is_animating() -> bool:
+	if not animation_player or _current_animation == "null":
+		return false
+	# Check if current animation is NOT walk, talk, or idle variants
+	var anim_name = _current_animation.to_lower()
+	return not (
+		anim_name.begins_with(walk_animation) or
+		anim_name.begins_with(talk_animation) or
+		anim_name.begins_with(idle_animation)
+	)
+
+
+## Getter function. Returns whether the character is both visible and belongs to the currently active room
+func get_is_visible_in_room() -> bool:
+	return visible and room != null and room == PopochiuUtils.r.current
+
+
+# Getter function. Returns the name of the currently playing animation
+func get_current_animation() -> String:
+	return _current_animation
+
+
 #endregion
 
 #region Private ####################################################################################
 func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree(): return
 	description = PopochiuUtils.e.get_text(_description_code)
+
+
+# Validates an animation name and returns either the validated name or a fallback
+func _get_valid_animation_name(value: String, fallback: String) -> String:
+	# Clear animation cache to force re-evaluation
+	_last_requested_animation_label = "null"
+
+	# If the value is empty, return the fallback
+	if value.is_empty():
+		return fallback
+	
+	return value
 
 
 ## Called when the player character changes to update clickability
@@ -971,6 +1086,65 @@ func _get_vo_cue(emotion := EMPTY_STRING) -> String:
 
 
 func _get_valid_oriented_animation(animation_label):
+	# Generate prioritized list of animation names to try
+	var prioritized_names = _get_prioritized_animation_names(animation_label)
+	
+	# Try each animation name in priority order
+	for animation_name in prioritized_names:
+		var animation_result = _try_animation_with_suffixes(animation_name)
+		if not animation_result.is_empty():
+			return animation_result
+	
+	return EMPTY_STRING
+
+
+# Generate prioritized list of animation names to try (in order of preference)
+func _get_prioritized_animation_names(animation_label: String) -> Array[String]:
+	var prioritized_names: Array[String] = []
+	
+	# 1. First priority: Prefixed animations (if prefix is set)
+	if not animation_prefix.is_empty():
+		prioritized_names.append_array(_get_prefixed_animation_names(animation_prefix, animation_label))
+
+	# 2. Second priority: Original animation name as provided
+	prioritized_names.append(animation_label)
+
+	# 3. Third priority: Snake_case version (if different from original)
+	if animation_label.to_snake_case() != animation_label:
+		prioritized_names.append(animation_label.to_snake_case())
+
+	return prioritized_names
+
+
+# Generate prefixed animation names based on prefix format
+func _get_prefixed_animation_names(prefix: String, animation_name: String) -> Array[String]:
+	var prefixed_names: Array[String] = []
+
+	# 1. Direct concatenation:
+	#	- "Pajama" + "walk" = "Pajamawalk"
+	#	- "Pajama" + "Walk" = "PajamaWalk"
+	#	- "pajama_" + "Walk" = "pajama_Walk"
+	#   - etc.
+	prefixed_names.append(prefix + animation_name)
+
+	# 2. PascalCase concatenation:
+	#	- "Pajama" + "walk" = "PajamaWalk"
+	#	- "Pajama" + "Walk" = "PajamaWalk"
+	#	- "pajama_" + "Walk" = "PajamaWalk"
+	prefixed_names.append(prefix.to_pascal_case() + animation_name.capitalize())
+	
+	# 3. snake_case concatenation:
+	#	- "Pajama" + "walk" = "pajama_walk"
+	#	- "Pajama" + "Walk" = "pajama_walk"
+	#	- "pajama_" + "Walk" = "pajama_walk"
+	#   - etc.
+	prefixed_names.append(prefix.to_snake_case() + "_" + animation_name.to_lower())
+
+	return prefixed_names
+
+
+# Helper function to try an animation label with all directional suffixes
+func _try_animation_with_suffixes(animation_label: String) -> String:
 	# The list of prefixes is in order of preference
 	# Eg. walk_dl, walk_l, walk
 	# Scan the AnimationPlayer and return the first that matches.

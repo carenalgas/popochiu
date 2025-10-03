@@ -62,6 +62,8 @@ var last_click_button := -1
 ## Whether the clickable is currently moving via the move_to function.
 var is_moving := false
 
+# Dictionary storing command usage counts {command_id: count}
+var _command_usage_count := {}
 # Used for setting the double click delay. Windows default is 500 milliseconds.
 var _double_click_delay: float = 0.2
 # Used for tracking if a double click has occurred.
@@ -216,7 +218,8 @@ func queue_disable() -> Callable:
 
 ## Hides this Node.
 func disable() -> void:
-	self.visible = false
+	visible = false
+	clickable = false
 
 	await get_tree().process_frame
 
@@ -229,9 +232,40 @@ func queue_enable() -> Callable:
 
 ## Shows this Node.
 func enable() -> void:
-	self.visible = true
+	visible = true
+	clickable = true
 
 	await get_tree().process_frame
+
+
+## Returns whether this object is currently enabled (visible, clickable and - for good measure
+## - input pickable).
+func is_enabled() -> bool:
+	return visible and clickable and input_pickable
+
+
+## Make this node clickable.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_enable_clickable() -> Callable:
+	return func(): await enable_clickable()
+
+
+## Enables the clickable property and makes the object input pickable.
+func enable_clickable() -> void:
+	clickable = true
+	input_pickable = true
+
+
+## Make this node non clickable.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_disable_clickable() -> Callable:
+	return func(): await disable_clickable()
+
+
+## Disables the clickable property and makes the object not input pickable.
+func disable_clickable() -> void:
+	clickable = false
+	input_pickable = false
 
 
 ## Returns the [member description] of the node using [method Object.tr] if
@@ -299,6 +333,9 @@ func handle_command(button_idx: int) -> void:
 	})
 
 	await call(prefix % suffix)
+
+	# Track command usage
+	_increment_command_count(PopochiuUtils.e.current_command)
 
 
 ## Smoothly moves the clickable to a specific absolute position (in the current room)
@@ -446,6 +483,25 @@ func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
 	await _teleport_to_node(PopochiuUtils.r.current.get_marker(id), offset)
 
 
+## Returns [code]true[/code] if the [param command] has ever been invoked on this object.
+## This function is typically used in a command handler to provide different behaviors
+## depending on whether the command has been used before or not.
+func ever_invoked(command: int) -> bool:
+	return _command_usage_count.has(command) and _command_usage_count[command] > 0
+
+
+## Returns [code]true[/code] if this is the first time the [param command] is being invoked on this object.
+## This function is typically used in a command handler to provide different behaviors
+## depending on whether the command has been used before or not.
+func first_invoked(command: int) -> bool:
+	return not ever_invoked(command)
+
+
+## Returns the number of times the [param command] has been invoked on this object.
+func count_invoked(command: int) -> int:
+	return _command_usage_count.get(command, 0)
+
+
 #endregion
 
 
@@ -464,6 +520,12 @@ func set_room(value: Node2D) -> void:
 #endregion
 
 #region Private ####################################################################################
+# Increments the usage count for the specified command
+func _increment_command_count(command_id: int) -> void:
+	_command_usage_count.get_or_add(command_id, 0)
+	_command_usage_count[command_id] += 1
+
+
 func _on_mouse_entered() -> void:
 	if PopochiuUtils.e.hovered and is_instance_valid(PopochiuUtils.e.hovered) and (
 		PopochiuUtils.e.hovered.get_parent() == self

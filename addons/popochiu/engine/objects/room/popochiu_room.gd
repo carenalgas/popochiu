@@ -53,9 +53,7 @@ extends Node2D
 ## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_bottom := INF
-# This category is used by the Aseprite Importer in order to allow the creation of a section in the
-# Inspector for it.
-@export_category("Aseprite")
+
 
 ## Whether this is the room in which players are. When [code]true[/code], the room starts processing
 ## unhandled inputs.
