@@ -53,7 +53,6 @@ vertical_alignment = 1
 
 [node name="Close" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
-texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 4
 texture_normal = ExtResource("4_nno71")

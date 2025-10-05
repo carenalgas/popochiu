@@ -45,7 +45,6 @@ atlas = ExtResource("6_dhu1w")
 region = Rect2(192, 0, 32, 32)
 
 [node name="SimpleClickSettingsPopupHighRes" type="Control" groups=["popochiu_gui_popup"]]
-texture_filter = 1
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -92,7 +91,6 @@ vertical_alignment = 1
 
 [node name="Close" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
-texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 4
 texture_normal = ExtResource("4_sssig")
@@ -210,7 +208,6 @@ layout_mode = 2
 
 [node name="TextSpeed" type="HSlider" parent="Overlay/PanelContainer/VBoxContainer/BodyContainer/RightContainer/DialogueSpeedContainer/HBoxContainer2"]
 unique_name_in_owner = true
-texture_filter = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4

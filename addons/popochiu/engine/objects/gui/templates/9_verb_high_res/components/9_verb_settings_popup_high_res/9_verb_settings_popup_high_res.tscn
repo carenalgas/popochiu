@@ -1,11 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://crla6to4mm0p7"]
+[gd_scene load_steps=8 format=3 uid="uid://3udebycuu6qp"]
 
-[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_iqhqs"]
-[ext_resource type="Script" uid="uid://ce1puevp24jw7" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/settings_popup/9_verb_settings_popup.gd" id="2_fpv5p"]
-[ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/gui/resources/images/close.png" id="3_4d6ih"]
-[ext_resource type="StyleBox" uid="uid://dbajakvkltfaj" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container.tres" id="3_biwat"]
-[ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight.png" id="4_duspy"]
-[ext_resource type="PackedScene" uid="uid://drx0r8w00ivck" path="res://addons/popochiu/engine/objects/gui/components/sound_volumes/sound_volumes.tscn" id="5_k2hr6"]
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_jajwc"]
+[ext_resource type="Script" uid="uid://ce1puevp24jw7" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_settings_popup/9_verb_settings_popup.gd" id="2_sldql"]
+[ext_resource type="StyleBox" uid="uid://bwanhyu2llpeg" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container_high_res.tres" id="3_cyxdx"]
+[ext_resource type="Texture2D" uid="uid://bomk4702jmqo7" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.png" id="4_63rff"]
+[ext_resource type="Texture2D" uid="uid://88vc0bigdbnu" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.png" id="5_dy0q6"]
+[ext_resource type="PackedScene" uid="uid://cei3ewrijkiq0" path="res://addons/popochiu/engine/objects/gui/components/sound_volumes_high_res/sound_volumes_high_res.tscn" id="6_jajwc"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_4bri7"]
 
@@ -16,8 +16,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_iqhqs")
-script = ExtResource("2_fpv5p")
+theme = ExtResource("1_jajwc")
+script = ExtResource("2_sldql")
 script_name = &"9VerbSettingsPopup"
 title = "Settings"
 
@@ -31,14 +31,14 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4bri7")
 
 [node name="PanelContainer" type="PanelContainer" parent="Overlay"]
-custom_minimum_size = Vector2(264, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_styles/panel = ExtResource("3_biwat")
+theme_override_styles/panel = ExtResource("3_cyxdx")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer"]
 layout_mode = 2
+theme_override_constants/separation = 32
 
 [node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
 layout_mode = 2
@@ -53,25 +53,25 @@ vertical_alignment = 1
 
 [node name="Close" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
 unique_name_in_owner = true
-texture_filter = 1
 layout_mode = 2
 size_flags_vertical = 4
-texture_normal = ExtResource("3_4d6ih")
-texture_pressed = ExtResource("4_duspy")
-texture_hover = ExtResource("4_duspy")
+texture_normal = ExtResource("4_63rff")
+texture_pressed = ExtResource("5_dy0q6")
+texture_hover = ExtResource("5_dy0q6")
 
 [node name="OptionsContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/separation = 32
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer"]
 layout_mode = 2
+theme_override_constants/separation = 32
 
-[node name="SoundVolumes" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer/VBoxContainer" instance=ExtResource("5_k2hr6")]
+[node name="SoundVolumesHighRes" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer/VBoxContainer" instance=ExtResource("6_jajwc")]
 layout_mode = 2
 
 [node name="ClassicSentence" type="CheckButton" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer/VBoxContainer"]
 unique_name_in_owner = true
-texture_filter = 1
 layout_mode = 2
 tooltip_text = "Show hover text centered"
 text = "Classic sentence"
@@ -80,30 +80,36 @@ text = "Classic sentence"
 unique_name_in_owner = true
 custom_minimum_size = Vector2(96, 0)
 layout_mode = 2
+theme_override_constants/separation = 12
 
 [node name="Save" type="Button" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "Save"
 
 [node name="Load" type="Button" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "Load"
 
 [node name="History" type="Button" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer/Buttons"]
 unique_name_in_owner = true
 visible = false
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "History"
 
 [node name="Quit" type="Button" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "Quit game"
 
 [node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/OptionsContainer/Buttons"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 text = "Resume game"
 

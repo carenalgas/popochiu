@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://57pxdsat7ucc"]
+[gd_scene load_steps=11 format=3 uid="uid://57pxdsat7ucc"]
 
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_xc4x6"]
 [ext_resource type="Script" uid="uid://b3hjsi3u2psyc" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_panel/9_verb_panel.gd" id="2_42nld"]
 [ext_resource type="PackedScene" uid="uid://bvdyamd6jb0yh" path="res://addons/popochiu/engine/objects/gui/components/hover_text_high_res/hover_text_high_res.tscn" id="3_12i0v"]
+[ext_resource type="Script" uid="uid://lb88p0uyo82c" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_hover_text/9_verb_hover_text.gd" id="4_247ev"]
 [ext_resource type="Script" uid="uid://c5nmtcja3c5sp" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_commands_container.gd" id="5_g8ui5"]
 [ext_resource type="ButtonGroup" uid="uid://y1thfsxxjowe" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/resources/9_verb_button_group.tres" id="6_lhiws"]
 [ext_resource type="Script" uid="uid://i1y36osdqw12" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_command_button.gd" id="7_16jef"]
@@ -43,8 +44,11 @@ alignment = 2
 
 [node name="HoverTextCentered" parent="PanelContainer/VBoxContainer" instance=ExtResource("3_12i0v")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_vertical = 3
+script = ExtResource("4_247ev")
+follows_cursor = false
 
 [node name="Verbs&InventoryContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2

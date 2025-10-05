@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://h03a1sbv2kn1"]
+
+[ext_resource type="PackedScene" uid="uid://60e6w0fb7wo0" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup_high_res/quit_popup_high_res.tscn" id="1_xunfc"]
+
+[node name="9VerbQuitPopupHighRes" instance=ExtResource("1_xunfc")]

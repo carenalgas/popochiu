@@ -184,7 +184,6 @@ theme = ExtResource("1_5f0sx")
 script = ExtResource("2_jxtvu")
 
 [node name="Cursor" type="AnimatedSprite2D" parent="."]
-texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_1bbe3")
 animation = &"active"
 centered = false
