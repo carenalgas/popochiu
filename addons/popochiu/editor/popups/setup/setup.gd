@@ -80,6 +80,10 @@ var _copy_in_progress: bool = false
 var _is_closing: bool = false
 var _es: EditorSettings = EditorInterface.get_editor_settings()
 
+# Internal reference to the dialog's OK button.
+# used to enable/disable it based on validation and change
+# its text based on setup state.
+var _dialog_ok_button: Button = null
 
 # ---- General items -----------------------------------------------------------
 @onready var wizard_steps: TabContainer = %WizardSteps
@@ -142,8 +146,7 @@ var _es: EditorSettings = EditorInterface.get_editor_settings()
 @onready var copy_process_container: PanelContainer = %CopyProcessContainer
 @onready var copy_process_label: Label = %CopyProcessLabel
 @onready var copy_process_bar: ProgressBar = %CopyProcessBar
-# ---- Dialog reference --------------------------------------------------------
-var _dialog_ok_button: Button = null
+
 
 #region Godot #################################################################
 
@@ -1284,10 +1287,7 @@ func _style_progress_container() -> void:
 
 #endregion
 
-
 #region Signals handlers ######################################################
-
-
 func _on_custom_game_ui_changed(index: int) -> void:
 	# Get template name from dropdown selection
 	var new_template_name: String = _get_dropdown_template_name(index)
@@ -1328,17 +1328,17 @@ func _on_next_pressed() -> void:
 		_update_navigation()
 
 
-func _on_wizard_tab_changed(tab: int) -> void:
+func _on_wizard_tab_changed(_tab: int) -> void:
 	# When tab changes, update navigation to trigger validation for the new tab
 	_update_navigation()
 
 
-func _on_resolution_option_changed(index: int) -> void:
+func _on_resolution_option_changed(_index: int) -> void:
 	# When any resolution option changes, trigger validation
 	_update_navigation()
 
 
-func _on_custom_field_changed(value = null) -> void:
+func _on_custom_field_changed(_value = null) -> void:
 	# When any custom field changes, trigger validation (only affects custom mode)
 	_update_dialog_ok_button()
 
