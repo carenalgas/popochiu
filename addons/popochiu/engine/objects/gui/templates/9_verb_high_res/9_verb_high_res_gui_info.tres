@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="PopochiuGUIInfo" load_steps=3 format=3 uid="uid://cdl3s004512dx"]
 
-[ext_resource type="Texture2D" uid="uid://brnmaiifdxwm" path="res://addons/popochiu/icons/ico_9verb.png" id="1_wg3lu"]
+[ext_resource type="Texture2D" uid="uid://ijdc4mtl0br3" path="res://addons/popochiu/icons/ico_9_verb_high_res.png" id="1_jx7rp"]
 [ext_resource type="Script" uid="uid://dx8nbjp33mba4" path="res://addons/popochiu/engine/others/popochiu_gui_info.gd" id="2_subcu"]
 
 [resource]
@@ -12,4 +12,4 @@ description = "- Uses the 9 Verbs (commands) of LucasArts games: [b]Open[/b], [b
 - [b]Settings popup[/b] that opens with a button in the top-right corner.
 
 Like in games such as Day of the Tentacle, Thimbleweed Park, The Secret of Monkey Island."
-icon = ExtResource("1_wg3lu")
+icon = ExtResource("1_jx7rp")
