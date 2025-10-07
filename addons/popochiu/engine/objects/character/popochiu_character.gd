@@ -94,10 +94,10 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## speaks.
 @export var dialog_pos: Vector2
 ## Offset from the character's dialog_pos. Added to the normal dialog position.
-var dialog_pos_offset: Vector2 = Vector2.ZERO: set = set_dialog_pos_offset
+var dialog_pos_offset: Vector2 = Vector2.ZERO
 ## Absolute world coordinates for dialog position. Overrides dialog_pos entirely when not set.
 ## By convention `Vector2.INF` means "unset" (instead of using Vector2.ZERO which is a valid position).
-var dialog_pos_override: Vector2 = Vector2.INF: set = set_dialog_pos_override
+var dialog_pos_override: Vector2 = Vector2.INF
 ## The root name for idle animations. Directional suffixes will be added automatically.
 @export var idle_animation: String = STANDARD_IDLE_ANIMATION: set = set_idle_animation
 ## The root name for walk animations. Directional suffixes will be added automatically.
@@ -1075,14 +1075,6 @@ func set_animation_prefix(value: String) -> void:
 	animation_prefix = value.strip_edges()
 	# Clear animation cache to force re-evaluation with new prefix
 	_last_requested_animation_label = "null"
-
-
-func set_dialog_pos_offset(value: Vector2) -> void:
-	dialog_pos_offset = value
-
-
-func set_dialog_pos_override(value: Vector2) -> void:
-	dialog_pos_override = value
 
 
 ## Getter function. Returns the final destination position from the navigation path, or Vector2.INF if not moving
