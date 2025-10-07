@@ -93,6 +93,11 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## Used by the GUI to calculate where to render the dialogue lines said by the character when it
 ## speaks.
 @export var dialog_pos: Vector2
+## Offset from the character's dialog_pos. Added to the normal dialog position.
+var dialog_pos_offset: Vector2 = Vector2.ZERO
+## Absolute world coordinates for dialog position. Overrides dialog_pos entirely when not set.
+## By convention `Vector2.INF` means "unset" (instead of using Vector2.ZERO which is a valid position).
+var dialog_pos_override: Vector2 = Vector2.INF
 ## The root name for idle animations. Directional suffixes will be added automatically.
 @export var idle_animation: String = STANDARD_IDLE_ANIMATION: set = set_idle_animation
 ## The root name for walk animations. Directional suffixes will be added automatically.
@@ -170,6 +175,10 @@ var _valid_animation_suffixes = [
 var _navigation_path := PackedVector2Array()
 # The stored position of the character. Used when anti_glide_animation is true.
 var _buffered_position = null
+# Whether the dialog position is locked to a specific screen position.
+var _is_dialog_pos_locked: bool = false
+# The locked dialog position in global coordinates.
+var _locked_dialog_pos: Vector2
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -895,6 +904,69 @@ func get_dialog_pos() -> float:
 	return dialog_pos.y
 
 
+## Returns the actual dialog position considering offset, override, and locked state.
+## Always returns position relative to the character.
+func get_actual_dialog_pos() -> Vector2:
+	if _is_dialog_pos_locked:
+		# Convert locked global position back to local coordinates
+		return to_local(_locked_dialog_pos)
+    
+	if dialog_pos_override != Vector2.INF:
+		return dialog_pos_override
+
+	# If override is unset (Vector2.INF), return base pos + offset
+	return dialog_pos + dialog_pos_offset
+
+
+## Resets the dialog position offset to Vector2.ZERO.
+func reset_dialog_pos_offset() -> void:
+	dialog_pos_offset = Vector2.ZERO
+
+
+## Resets the dialog position override to Vector2.ZERO (disabled).
+func reset_dialog_pos_override() -> void:
+	dialog_pos_override = Vector2.INF
+
+
+## Locks the dialog position at the current calculated global position.
+func lock_dialog_pos() -> void:
+	# Calculate current position without using locked state. Respect INF as "unset".
+	var current_pos: Vector2
+	if dialog_pos_override != Vector2.INF:
+		current_pos = dialog_pos_override
+	else:
+		current_pos = dialog_pos + dialog_pos_offset
+	
+	# Store as global coordinates
+	_locked_dialog_pos = to_global(current_pos)
+	_is_dialog_pos_locked = true
+
+
+## Unlocks the dialog position, returning to normal positioning behavior.
+func unlock_dialog_pos() -> void:
+	_is_dialog_pos_locked = false
+
+
+## Queue version: Resets the dialog position offset to Vector2.ZERO.
+func queue_reset_dialog_pos_offset() -> Callable:
+	return func(): reset_dialog_pos_offset()
+
+
+## Queue version: Resets the dialog position override to Vector2.ZERO.
+func queue_reset_dialog_pos_override() -> Callable:
+	return func(): reset_dialog_pos_override()
+
+
+## Queue version: Locks the dialog position at the current calculated screen position.
+func queue_lock_dialog_pos() -> Callable:
+	return func(): lock_dialog_pos()
+
+
+## Queue version: Unlocks the dialog position.
+func queue_unlock_dialog_pos() -> Callable:
+	return func(): unlock_dialog_pos()
+
+
 ## Returns either the _buffered_position of the character,
 ## or its current transformer position, if that's not available
 func get_buffered_position() -> Vector2:
@@ -1005,10 +1077,10 @@ func set_animation_prefix(value: String) -> void:
 	_last_requested_animation_label = "null"
 
 
-## Getter function. Returns the final destination position from the navigation path, or Vector2(-1, -1) if not moving
+## Getter function. Returns the final destination position from the navigation path, or Vector2.INF if not moving
 func get_target_position() -> Vector2:
 	if _navigation_path.is_empty() or not is_moving:
-		return -1 * Vector2.ONE
+		return Vector2.INF
 	return _navigation_path[-1] # Last point in the path
 
 

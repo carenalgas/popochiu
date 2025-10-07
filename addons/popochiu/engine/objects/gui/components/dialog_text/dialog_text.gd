@@ -157,7 +157,7 @@ func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
 	play_text({
 		text = msg,
 		color = chr.text_color,
-		position = PopochiuUtils.get_screen_coords_for(chr, chr.dialog_pos).floor() / (
+		position = PopochiuUtils.get_screen_coords_for(chr, chr.get_actual_dialog_pos()).floor() / (
 			PopochiuUtils.e.scale if PopochiuUtils.e.settings.scale_gui else Vector2.ONE
 		),
 	})
