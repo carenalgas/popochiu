@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b3sku5v1n23ni"
-path="res://.godot/imported/btn_baseline.svg-fb297583e303b0e5253746eada654b32.ctex"
+uid="uid://dfstqtc5nlapr"
+path="res://.godot/imported/btn_obstacle_polygon.svg-4b3039bb9a9d9a2bb7bad75424c1ec12.ctex"
 metadata={
 "has_editor_variant": true,
 "vram_texture": false
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://addons/popochiu/icons/btn_baseline.svg"
-dest_files=["res://.godot/imported/btn_baseline.svg-fb297583e303b0e5253746eada654b32.ctex"]
+source_file="res://addons/popochiu/icons/btn_obstacle_polygon.svg"
+dest_files=["res://.godot/imported/btn_obstacle_polygon.svg-4b3039bb9a9d9a2bb7bad75424c1ec12.ctex"]
 
 [params]
 

@@ -77,9 +77,7 @@ func search_audio_files() -> void:
 
 
 func open_setup() -> void:
-	PopochiuEditorHelper.show_setup(
-		not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set()
-	)
+	PopochiuEditorHelper.show_setup()
 
 
 ## If there are no other opened scenes in the Editor, this function connects to
