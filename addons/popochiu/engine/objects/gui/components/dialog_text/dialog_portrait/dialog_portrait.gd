@@ -45,17 +45,17 @@ func _update_avatar(chr: PopochiuCharacter, _msg := '') -> void:
 	)
 
 	var flip_h: bool = (
-		flips_when == FlipsWhen.LOOKING_LEFT and chr.is_facing(
+		flips_when == FlipsWhen.LOOKING_LEFT and chr.is_facing_any([
 			PopochiuCharacter.Looking.LEFT,
 			PopochiuCharacter.Looking.UP_LEFT,
 			PopochiuCharacter.Looking.DOWN_LEFT
-		)
+		])
 	) or (
-		flips_when == FlipsWhen.LOOKING_RIGHT and chr.is_facing(
+		flips_when == FlipsWhen.LOOKING_RIGHT and chr.is_facing_any([
 			PopochiuCharacter.Looking.RIGHT,
 			PopochiuCharacter.Looking.UP_RIGHT,
 			PopochiuCharacter.Looking.DOWN_RIGHT
-		)
+		])
 	)
 	
 	if char_pos.x <= PopochiuUtils.e.half_width:

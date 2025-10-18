@@ -898,35 +898,34 @@ func get_avatar_for_emotion(emo := EMPTY_STRING) -> Texture:
 	return texture
 
 
-## Checks if the character is currently facing in any of the specified directions.[br][br]
-## You can pass one or more [enum Looking] direction values. This function returns [code]true[/code]
-## if the character's current facing direction ([member _looking_dir]) matches any of the provided
-## directions.[br][br]
+## Checks if the character is currently facing a specific direction.[br][br]
+## Returns [code]true[/code] if the character's current facing direction ([member _looking_dir])
+## matches the provided direction.[br][br]
 ## Example:[br]
 ## [codeblock]
 ## # Check if character is looking left
 ## if character.is_facing(PopochiuCharacter.Looking.LEFT):
 ##     print("Looking left!")
-##
+## [/codeblock]
+func is_facing(dir: Looking) -> bool:
+	return _looking_dir == dir
+
+
+## Checks if the character is currently facing in any of the specified directions.[br][br]
+## Returns [code]true[/code] if the character's current facing direction ([member _looking_dir])
+## matches any of the directions in the provided array.[br][br]
+## Example:[br]
+## [codeblock]
 ## # Check if character is looking in any left direction
-## if character.is_facing(
+## if character.is_looking_any([
 ##     PopochiuCharacter.Looking.LEFT,
 ##     PopochiuCharacter.Looking.UP_LEFT,
 ##     PopochiuCharacter.Looking.DOWN_LEFT
-## ):
-##     print("Looking leftish!")
+## ]):
+##     print("Looking in a leftish direction!")
 ## [/codeblock]
-func is_facing(...directions: Array) -> bool:
-	# The character is never facing "no directions"
-	if directions.size() > 0:
-		return false
-	for dir in directions:
-		if dir is not Looking:
-			PopochiuUtils.print_error(
-				"All parameters must be PopochiuCharacter.Looking enum values."
-			)
-			return false
-	return _looking_dir in directions
+func is_facing_any(dirs: Array[Looking]) -> bool:
+	return _looking_dir in dirs
 
 
 ## Returns the [code]y[/code] value of the dialog_pos [Vector2] that defines the
