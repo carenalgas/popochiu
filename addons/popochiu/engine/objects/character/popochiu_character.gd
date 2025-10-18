@@ -921,7 +921,7 @@ func is_facing(...directions: Array) -> bool:
 	if directions.size() > 0:
 		return false
 	for dir in directions:
-		if not dir is Looking:
+		if dir is not Looking:
 			PopochiuUtils.print_error(
 				"All parameters must be PopochiuCharacter.Looking enum values."
 			)
