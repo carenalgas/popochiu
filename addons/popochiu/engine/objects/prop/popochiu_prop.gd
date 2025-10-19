@@ -186,43 +186,49 @@ func get_navigation_obstacle() -> NavigationObstacle2D:
 
 
 ## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
-## specified [param duration] in seconds.[br][br]
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the prop
+## will be enabled when the fade completes (since alpha > 0).[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_fade_in(duration: float) -> Callable:
-	return func(): await fade_in(duration)
+func queue_fade_in(duration: float, set_enablement: bool = false) -> Callable:
+	return func(): await fade_in(duration, set_enablement)
 
 
 ## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
-## specified [param duration] in seconds.
-func fade_in(duration: float) -> void:
-	await fade_to(1.0, duration)
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the prop
+## will be enabled when the fade completes (since alpha > 0).
+func fade_in(duration: float, set_enablement: bool = false) -> void:
+	await fade_to(1.0, duration, set_enablement)
 
 
 ## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
-## specified [param duration] in seconds.[br][br]
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the prop
+## will be disabled when the fade completes (since alpha = 0).[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_fade_out(duration: float) -> Callable:
-	return func(): await fade_out(duration)
+func queue_fade_out(duration: float, set_enablement: bool = false) -> Callable:
+	return func(): await fade_out(duration, set_enablement)
 
 
 ## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
-## specified [param duration] in seconds.
-func fade_out(duration: float) -> void:
-	await fade_to(0.0, duration)
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the prop
+## will be disabled when the fade completes (since alpha = 0).
+func fade_out(duration: float, set_enablement: bool = false) -> void:
+	await fade_to(0.0, duration, set_enablement)
 
 
 ## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
 ## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
-## [code]0.0[/code] and [code]1.0[/code].[br][br]
+## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the prop
+## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_fade_to(target_alpha: float, duration: float) -> Callable:
-	return func(): await fade_to(target_alpha, duration)
+func queue_fade_to(target_alpha: float, duration: float, set_enablement: bool = false) -> Callable:
+	return func(): await fade_to(target_alpha, duration, set_enablement)
 
 
 ## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
 ## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
-## [code]0.0[/code] and [code]1.0[/code].
-func fade_to(target_alpha: float, duration: float) -> void:
+## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the prop
+## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.
+func fade_to(target_alpha: float, duration: float, set_enablement: bool = false) -> void:
 	# Clamp target_alpha to valid range
 	target_alpha = clampf(target_alpha, 0.0, 1.0)
 
@@ -234,8 +240,22 @@ func fade_to(target_alpha: float, duration: float) -> void:
 	_alpha_tween = create_tween()
 	_alpha_tween.tween_property(self, "alpha", target_alpha, duration)
 
+	# If the object has to fade in, make it visible
+	# or the transition will not happen
+	if target_alpha > 0:
+		show()
+
 	# Wait for the tween to complete
 	await _alpha_tween.finished
+
+	# Manage the enablement if necessary
+	if not set_enablement:
+		return
+	
+	if target_alpha == 0.0:
+		disable()
+	else:
+		enable()
 
 
 #endregion
