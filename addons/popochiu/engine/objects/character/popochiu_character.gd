@@ -546,6 +546,30 @@ func face_clicked() -> void:
 
 	await face_direction(global_lap)
 
+## Makes the character face the opposite direction from where they are currently facing.[br][br]
+## This is useful when you want to turn the character around without knowing their current
+## direction. Calling this function twice will make the character face the original direction
+## again.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_face_away() -> Callable:
+	return func(): await face_away()
+
+
+## Makes the character face the opposite direction from where they are currently facing.[br][br]
+## This is useful when you want to turn the character around without knowing their current
+## direction. Calling this function twice will make the character face the original direction
+## again.[br][br]
+## The function uses simple math on the [enum Looking] enum values: since the enum goes from 0 to 7
+## in a circular pattern, adding 4 (modulo 8) gives the opposite direction:
+## [code]RIGHT (0) ↔ LEFT (4), DOWN_RIGHT (1) ↔ UP_LEFT (5), etc.[/code]
+func face_away() -> void:
+	# Calculate opposite direction: add 4 and wrap around using modulo 8
+	_looking_dir = (_looking_dir + 4) % 8
+	# Update animation suffixes for the new direction
+	_animation_suffixes = _valid_animation_suffixes[_looking_dir] + [EMPTY_STRING]
+	# Wait for the idle animation to play with the new direction
+	await idle()
+
 
 ## Calls [method _play_talk] and emits [signal character_spoke] sending itself as parameter, and the
 ## [param dialog] line to show on screen. You can specify the emotion to use with [param emo]. If an
@@ -566,7 +590,7 @@ func say(dialog: String, emo := EMPTY_STRING) -> void:
 		return
 
 	_is_talking = true
-	
+
 	if not emo.is_empty():
 		emotion = emo
 
@@ -940,7 +964,7 @@ func get_actual_dialog_pos() -> Vector2:
 	if _is_dialog_pos_locked:
 		# Convert locked global position back to local coordinates
 		return to_local(_locked_dialog_pos)
-    
+
 	if dialog_pos_override != Vector2.INF:
 		return dialog_pos_override
 
@@ -966,7 +990,7 @@ func lock_dialog_pos() -> void:
 		current_pos = dialog_pos_override
 	else:
 		current_pos = dialog_pos + dialog_pos_offset
-	
+
 	# Store as global coordinates
 	_locked_dialog_pos = to_global(current_pos)
 	_is_dialog_pos_locked = true
@@ -1158,7 +1182,7 @@ func _get_valid_animation_name(value: String, fallback: String) -> String:
 	# If the value is empty, return the fallback
 	if value.is_empty():
 		return fallback
-	
+
 	return value
 
 
@@ -1190,20 +1214,20 @@ func _get_vo_cue(emotion := EMPTY_STRING) -> String:
 func _get_valid_oriented_animation(animation_label):
 	# Generate prioritized list of animation names to try
 	var prioritized_names = _get_prioritized_animation_names(animation_label)
-	
+
 	# Try each animation name in priority order
 	for animation_name in prioritized_names:
 		var animation_result = _try_animation_with_suffixes(animation_name)
 		if not animation_result.is_empty():
 			return animation_result
-	
+
 	return EMPTY_STRING
 
 
 # Generate prioritized list of animation names to try (in order of preference)
 func _get_prioritized_animation_names(animation_label: String) -> Array[String]:
 	var prioritized_names: Array[String] = []
-	
+
 	# 1. First priority: Prefixed animations (if prefix is set)
 	if not animation_prefix.is_empty():
 		prioritized_names.append_array(_get_prefixed_animation_names(animation_prefix, animation_label))
@@ -1234,7 +1258,7 @@ func _get_prefixed_animation_names(prefix: String, animation_name: String) -> Ar
 	#	- "Pajama" + "Walk" = "PajamaWalk"
 	#	- "pajama_" + "Walk" = "PajamaWalk"
 	prefixed_names.append(prefix.to_pascal_case() + animation_name.capitalize())
-	
+
 	# 3. snake_case concatenation:
 	#	- "Pajama" + "walk" = "pajama_walk"
 	#	- "Pajama" + "Walk" = "pajama_walk"
