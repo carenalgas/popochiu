@@ -13,3 +13,4 @@ description = "- Uses the 9 Verbs (commands) of LucasArts games: [b]Open[/b], [b
 
 Like in games such as Day of the Tentacle, Thimbleweed Park, The Secret of Monkey Island."
 icon = ExtResource("1_jx7rp")
+target_resolution = 1

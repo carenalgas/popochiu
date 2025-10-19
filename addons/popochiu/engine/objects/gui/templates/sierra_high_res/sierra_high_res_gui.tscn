@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_rtj5u"]
 [ext_resource type="Script" uid="uid://bcmg4g3bv1n4q" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/sierra_high_res_gui.gd" id="2_h2ksh"]
-[ext_resource type="Texture2D" uid="uid://dwn416xagjwtd" path="res://addons/popochiu/engine/objects/gui/templates/sierra/images/sierra_cursor.png" id="3_kx5pq"]
+[ext_resource type="Texture2D" uid="uid://bqpfieneho5bk" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/action_bar_high_res_cursor.png" id="3_rtj5u"]
 [ext_resource type="PackedScene" uid="uid://ceogb1x5ohb0q" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/components/sierra_bar_high_res/sierra_bar_high_res.tscn" id="4_rtj5u"]
 [ext_resource type="PackedScene" uid="uid://vdlu8j5socik" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/components/sierra_menu_high_res/sierra_menu_high_res.tscn" id="5_rtj5u"]
 [ext_resource type="PackedScene" uid="uid://bv2uv3sj50a46" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_portrait_high_res/dialog_portrait_high_res.tscn" id="6_rtj5u"]
@@ -15,39 +15,39 @@
 [ext_resource type="PackedScene" uid="uid://27jplvohunat" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup_high_res/save_and_load_popup_high_res.tscn" id="13_rtj5u"]
 [ext_resource type="PackedScene" uid="uid://60e6w0fb7wo0" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup_high_res/quit_popup_high_res.tscn" id="14_h2ksh"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_vyqmk"]
-atlas = ExtResource("3_kx5pq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_h2ksh"]
+atlas = ExtResource("3_rtj5u")
 region = Rect2(128, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_xo8dr"]
-atlas = ExtResource("3_kx5pq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_kiw4b"]
+atlas = ExtResource("3_rtj5u")
 region = Rect2(64, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yxgj0"]
-atlas = ExtResource("3_kx5pq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_jtd1s"]
+atlas = ExtResource("3_rtj5u")
 region = Rect2(32, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_p3f06"]
-atlas = ExtResource("3_kx5pq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_sbx2n"]
+atlas = ExtResource("3_rtj5u")
 region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_cvutg"]
-atlas = ExtResource("3_kx5pq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_l0r38"]
+atlas = ExtResource("3_rtj5u")
 region = Rect2(96, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hlutb"]
-atlas = ExtResource("3_kx5pq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_eeph2"]
+atlas = ExtResource("3_rtj5u")
 region = Rect2(160, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_e0opo"]
-atlas = ExtResource("3_kx5pq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvp8x"]
+atlas = ExtResource("3_rtj5u")
 region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_eo6w8"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_vyqmk")
+"texture": SubResource("AtlasTexture_h2ksh")
 }],
 "loop": true,
 "name": &"gui",
@@ -55,7 +55,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_xo8dr")
+"texture": SubResource("AtlasTexture_kiw4b")
 }],
 "loop": true,
 "name": &"interact",
@@ -63,7 +63,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yxgj0")
+"texture": SubResource("AtlasTexture_jtd1s")
 }],
 "loop": true,
 "name": &"look",
@@ -71,7 +71,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_p3f06")
+"texture": SubResource("AtlasTexture_sbx2n")
 }],
 "loop": true,
 "name": &"normal",
@@ -79,7 +79,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_cvutg")
+"texture": SubResource("AtlasTexture_l0r38")
 }],
 "loop": true,
 "name": &"talk",
@@ -87,7 +87,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_hlutb")
+"texture": SubResource("AtlasTexture_eeph2")
 }],
 "loop": true,
 "name": &"wait",
@@ -95,7 +95,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_e0opo")
+"texture": SubResource("AtlasTexture_rvp8x")
 }],
 "loop": true,
 "name": &"walk",
@@ -116,7 +116,7 @@ script = ExtResource("2_h2ksh")
 [node name="Cursor" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_eo6w8")
-animation = &"gui"
+animation = &"walk"
 offset = Vector2(16, 16)
 
 [node name="SierraBar" parent="." instance=ExtResource("4_rtj5u")]

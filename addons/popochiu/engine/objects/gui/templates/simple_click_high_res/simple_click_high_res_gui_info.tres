@@ -13,3 +13,4 @@ description = "- [b]Left click[/b] to interact.
 
 Like in games such as Beneath A Steel Sky, Broken Sword, Samorost, Machinarium."
 icon = ExtResource("1_sb1tw")
+target_resolution = 1

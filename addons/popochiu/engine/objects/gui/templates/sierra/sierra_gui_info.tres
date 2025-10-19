@@ -10,4 +10,3 @@ description = "[b]Sierra SCI-inspired top-bar with action cycling, overlay inven
 
 Similar to the ones in \"King's Quest V\", \"Space Quest IV\", or \"Quest for Glory\"."
 icon = ExtResource("1_g4r4d")
-target_resolution = 0
