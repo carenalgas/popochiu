@@ -21,13 +21,13 @@ signal linked_item_discarded(item: PopochiuInventoryItem)
 signal obstacle_state_changed(prop: PopochiuProp)
 
 ## The image to use as the [member Sprite2D.texture] of the [b]$Sprite2D[/b] child.
-@export var texture: Texture2D : set = set_texture
+@export var texture: Texture2D: set = set_texture
 ## The number of horizontal frames this node's texture image has. Modifying this will change the
 ## value of the [member Sprite2D.hframes] property in the [b]$Sprite2D[/b] child.
-@export var frames := 1 : set = set_frames
+@export var frames := 1: set = set_frames
 ## The number of vertical frames this node's texture image has. Modifying this will change the
 ## value of the [member Sprite2D.vframes] property in the [b]$Sprite2D[/b] child.
-@export var v_frames := 1 : set = set_v_frames
+@export var v_frames := 1: set = set_v_frames
 ## The current frame to use as the texture of this node. Modifying this will change the value of the
 ## [member Sprite2D.frame] property in the [b]$Sprite2D[/b] child. Trying to assign a value lesser
 ## than 0 will roll over the value to the maximum frame ([code]frames * v_frames - 1[/code]) or
@@ -40,19 +40,24 @@ signal obstacle_state_changed(prop: PopochiuProp)
 ## When true, this prop will be considered an obstacle and its obstacle polygon (if available)
 ## will be carved from all [PopochiuWalkableAreas] it intersects in the room.
 ## Set this to false to ignore its encoumbrance during pathfinding.
-@export var obstacle: bool = false : set = set_obstacle
+@export var obstacle: bool = false: set = set_obstacle
 ## Stores the outlines to assign to the [b]ObstaclePolygon/Vertices[/b] child during
 ## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var obstacle_polygon := []
 ## Stores the position to assign to the [b]ObstaclePolygon/Vertices[/b] child during
 ## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var obstacle_polygon_position := Vector2.ZERO
+## Opacity of the prop. Range: [code]0.0[/code] (fully transparent) to [code]1.0[/code] (fully opaque).
+## Setting this value will modulate the alpha channel of the [b]$Sprite2D[/b] child.
+@export_range(0.0, 1.0) var alpha: float = 1.0: set = set_alpha
 ## Total frames available the texture image has. [code](frames * vframes)[/code]
 var total_frames: get = get_total_frames
 
+# Tween used for alpha fade operations.
+var _alpha_tween: Tween = null
+
 @onready var _sprite: Sprite2D = $Sprite2D
 @onready var _navigation_obstacle: NavigationObstacle2D = get_node_or_null("ObstaclePolygon")
-
 
 
 #region Godot ######################################################################################
@@ -158,7 +163,7 @@ func _on_movement_ended() -> void:
 ## [b]$Sprite2D[/b] child.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_frame(new_frame: int) -> Callable:
-	return func (): await change_frame(new_frame)
+	return func(): await change_frame(new_frame)
 
 ## Changes the value of the [member Sprite2D.frame] property to [param new_frame] in the
 ## [b]$Sprite2D[/b] child.
@@ -180,9 +185,69 @@ func get_navigation_obstacle() -> NavigationObstacle2D:
 	return _navigation_obstacle
 
 
+## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
+## specified [param duration] in seconds.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_fade_in(duration: float) -> Callable:
+	return func(): await fade_in(duration)
+
+
+## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
+## specified [param duration] in seconds.
+func fade_in(duration: float) -> void:
+	await fade_to(1.0, duration)
+
+
+## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
+## specified [param duration] in seconds.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_fade_out(duration: float) -> Callable:
+	return func(): await fade_out(duration)
+
+
+## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
+## specified [param duration] in seconds.
+func fade_out(duration: float) -> void:
+	await fade_to(0.0, duration)
+
+
+## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
+## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
+## [code]0.0[/code] and [code]1.0[/code].[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_fade_to(target_alpha: float, duration: float) -> Callable:
+	return func(): await fade_to(target_alpha, duration)
+
+
+## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
+## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
+## [code]0.0[/code] and [code]1.0[/code].
+func fade_to(target_alpha: float, duration: float) -> void:
+	# Clamp target_alpha to valid range
+	target_alpha = clampf(target_alpha, 0.0, 1.0)
+
+	# Cancel any existing tween to avoid conflicts
+	if _alpha_tween and _alpha_tween.is_valid():
+		_alpha_tween.kill()
+
+	# Create new tween for the fade operation
+	_alpha_tween = create_tween()
+	_alpha_tween.tween_property(self, "alpha", target_alpha, duration)
+
+	# Wait for the tween to complete
+	await _alpha_tween.finished
+
+
 #endregion
 
 #region SetGet #####################################################################################
+func set_alpha(value: float) -> void:
+	alpha = clampf(value, 0.0, 1.0)
+	# Modulate the Sprite2D's alpha to control visibility
+	if _sprite:
+		_sprite.modulate.a = alpha
+
+
 func set_texture(value: Texture2D) -> void:
 	texture = value
 	if not has_node("Sprite2D"): return
@@ -236,7 +301,7 @@ func queue_play_animation(
 	custom_speed: float = 1.0,
 	from_end: bool = false
 ) -> Callable:
-	return func (): await play_animation(name, custom_blend, custom_speed, from_end)
+	return func(): await play_animation(name, custom_blend, custom_speed, from_end)
 
 
 ## Will play the [param name] animation if it exists in this prop's [AnimationPlayer] node.
@@ -258,7 +323,7 @@ func play_animation(
 ## and [code]from_end = true[/code].
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation_backwards(name: StringName = &"", custom_blend: float = -1) -> Callable:
-	return func (): await play_animation_backwards(name, custom_blend)
+	return func(): await play_animation_backwards(name, custom_blend)
 
 
 ## Will play the [param name] animation in reverse if it exists in this prop's [AnimationPlayer]
@@ -276,7 +341,7 @@ func play_animation_backwards(name: StringName = &"", custom_blend: float = -1) 
 ## updated visually.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop_animation(keep_state: bool = false) -> Callable:
-	return func (): await stop_animation(keep_state)
+	return func(): await stop_animation(keep_state)
 
 
 ## Will stop the animation that is currently playing.
@@ -291,7 +356,7 @@ func stop_animation(keep_state: bool = false) -> void:
 ## Call [method play_animation] without any parameters to resume the animation.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_pause_animation() -> Callable:
-	return func (): await pause_animation()
+	return func(): await pause_animation()
 
 
 ## Will pause the animation that is currently playing on the Popochiu Prop.
