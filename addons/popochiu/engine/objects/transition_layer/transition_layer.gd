@@ -38,15 +38,31 @@ func _ready() -> void:
 
 #region Public #####################################################################################
 ## Plays a transition with the animation identified by [param name], that lasts [param duration]
-## (in seconds), with the specified [param mode].
-## TODO: TL document
-func play_transition(name: String = "fade", duration: float = 1.0, mode: int = PLAY_MODE.IN) -> void:
+## (in seconds), with the specified [param mode] showing the Curtain with the specified
+## [param color].
+## The Curtain color follows this precedence rule (from highest to lowest):
+##	 - color specified from code;
+##	 - color specified in the modulate track of the animation (if enabled);
+##	 - color specified in project settings.
+func play_transition(name: String = "fade", duration: float = 1.0, mode: int = PLAY_MODE.IN, color = null) -> void:
+	var anim = $AnimationPlayer.get_animation(name)
+	var reenable_color_track = false
+
 	# Check if the animation exists
-	if $AnimationPlayer.get_animation(name) == null:
+	if anim == null:
 		PopochiuUtils.print_error("Can't find animation %s" % name)
 		return
 
-	_show()
+	# Override Curtain color
+	if color != null:
+		if color is not Color:
+			PopochiuUtils.print_error("Invalid Curtain color.")
+			return
+		if has_color_override_track(name):
+			reenable_color_track = true
+			anim.track_set_enabled("Curtain:modulate", false)
+
+	show_curtain(color)
 
 	# ---- Play RESET in order to fix #168 ---------------------------------------------------------
 	$AnimationPlayer.play("RESET")
@@ -72,7 +88,11 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 			var result_code = ResultCodes.ERR_ANIMATION_PLAY_MODE_UNKNOWN
 			PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % mode)
 
+	# Restore overridden values
 	$AnimationPlayer.speed_scale = 1.0
+	if reenable_color_track:
+		anim.track_set_enabled("Curtain:modulate", true)
+	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
 
 
 ## Shows the curtain with the specified [param color] without playing any transition.
@@ -83,9 +103,11 @@ func show_curtain(color = null) -> void:
 		PopochiuUtils.print_error("Invalid Curtain color.")
 		return
 
-	$Curtain.modulate = color
-	if $Curtain.modulate == null:
+	if color == null:
 		$Curtain.modulate = PopochiuUtils.e.settings.fade_color
+	else:
+		$Curtain.modulate = color
+
 	$Curtain.show()
 	_show()
 
@@ -146,13 +168,23 @@ func get_all_transitions_list() -> PackedStringArray:
 
 ## Check if the transition specified by [param anim_name] has an enabled track that overrides the
 ## default Curtain color.
-func has_color_override(anim_name: String) -> bool:
+func has_color_override_track(anim_name: String) -> bool:
 	var anim = get_custom_transition(anim_name)
 	var idx = anim.find_track("Curtain:modulate", Animation.TrackType.TYPE_VALUE)
 
 	if idx != -1 and anim.track_is_enabled(idx):
 		return true
 	return false
+
+
+## Toggle a track specified by [param track_name] of an animation specified by [param anim_name]
+## on or off based on [param value].
+func toggle_track(anim_name: String, track_name: String, value: bool) -> void:
+	var anim = get_custom_transition(anim_name)
+	var idx = anim.find_track(track_name, Animation.TrackType.TYPE_VALUE)
+
+	if idx != -1:
+		anim.track_set_enabled(idx, value)
 
 
 func copy_image(texture_path: String) -> int:
