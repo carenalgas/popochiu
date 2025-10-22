@@ -228,7 +228,13 @@ func queue_fade_to(target_alpha: float, duration: float, set_enablement: bool = 
 ## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
 ## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the prop
 ## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.
-func fade_to(target_alpha: float, duration: float, set_enablement: bool = false) -> void:
+func fade_to(
+	target_alpha: float,
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> void:
 	# Clamp target_alpha to valid range
 	target_alpha = clampf(target_alpha, 0.0, 1.0)
 
@@ -238,6 +244,8 @@ func fade_to(target_alpha: float, duration: float, set_enablement: bool = false)
 
 	# Create new tween for the fade operation
 	_alpha_tween = create_tween()
+	_alpha_tween.set_trans(trans)
+	_alpha_tween.set_ease(ease)
 	_alpha_tween.tween_property(self, "alpha", target_alpha, duration)
 
 	# If the object has to fade in, make it visible
