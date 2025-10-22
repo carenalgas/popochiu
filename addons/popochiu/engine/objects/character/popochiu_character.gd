@@ -895,38 +895,68 @@ func resume_animation():
 
 ## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
 ## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
-## will be enabled when the fade completes (since alpha > 0).[br][br]
+## will be enabled when the fade completes (since alpha > 0).
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_fade_in(duration: float, set_enablement: bool = false) -> Callable:
-	return func(): await fade_in(duration, set_enablement)
+func queue_fade_in(
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> Callable:
+	return func(): await fade_in(duration, set_enablement, trans, ease)
 
 
 ## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
 ## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
 ## will be enabled when the fade completes (since alpha > 0).
-func fade_in(duration: float, set_enablement: bool = false) -> void:
-	await fade_to(1.0, duration, set_enablement)
-
-
-## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
-## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
-## will be disabled when the fade completes (since alpha = 0).[br][br]
-## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_fade_out(duration: float, set_enablement: bool = false) -> Callable:
-	return func(): await fade_out(duration, set_enablement)
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
+func fade_in(
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> void:
+	await fade_to(1.0, duration, set_enablement, trans, ease)
 
 
 ## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
 ## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
 ## will be disabled when the fade completes (since alpha = 0).
-func fade_out(duration: float, set_enablement: bool = false) -> void:
-	await fade_to(0.0, duration, set_enablement)
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_fade_out(
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> Callable:
+	return func(): await fade_out(duration, set_enablement, trans, ease)
+
+
+## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
+## will be disabled when the fade completes (since alpha = 0).
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
+func fade_out(
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> void:
+	await fade_to(0.0, duration, set_enablement, trans, ease)
 
 
 ## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
 ## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
 ## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the character
-## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.[br][br]
+## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_fade_to(target_alpha: float, duration: float, set_enablement: bool = false) -> Callable:
 	return func(): await fade_to(target_alpha, duration, set_enablement)
@@ -936,6 +966,8 @@ func queue_fade_to(target_alpha: float, duration: float, set_enablement: bool = 
 ## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
 ## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the character
 ## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
 func fade_to(
 	target_alpha: float,
 	duration: float,
