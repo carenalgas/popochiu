@@ -139,6 +139,9 @@ var is_visible_in_room: bool: get = get_is_visible_in_room
 ## Returns the current animation being played. Read-only access to [member _current_animation].
 ## This property cannot be set from outside the character implementation.
 var current_animation: String: get = get_current_animation
+## Opacity of the character. Range: [code]0.0[/code] (fully transparent) to [code]1.0[/code] (fully opaque).
+## Setting this value will modulate the alpha channel of the [b]$Sprite2D[/b] child.
+@export_range(0.0, 1.0) var alpha: float = 1.0: set = set_alpha
 
 # Holds the direction the character is looking at.
 # Initialized to DOWN.
@@ -179,6 +182,8 @@ var _buffered_position = null
 var _is_dialog_pos_locked: bool = false
 # The locked dialog position in global coordinates.
 var _locked_dialog_pos: Vector2
+# Tween used for alpha fade operations.
+var _alpha_tween: Tween = null
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -639,13 +644,13 @@ func grab() -> void:
 
 ## Calls [method PopochiuClickable.hide_helpers].
 func hide_helpers() -> void:
-	super ()
+	super()
 	# TODO: add visibility logic for dialog_pos gizmo
 
 
 ## Calls [method PopochiuClickable.show_helpers].
 func show_helpers() -> void:
-	super ()
+	super()
 	# TODO: add visibility logic for dialog_pos gizmo
 
 
@@ -888,6 +893,119 @@ func resume_animation():
 	animation_player.play()
 
 
+## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
+## will be enabled when the fade completes (since alpha > 0).
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_fade_in(
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> Callable:
+	return func(): await fade_in(duration, set_enablement, trans, ease)
+
+
+## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
+## will be enabled when the fade completes (since alpha > 0).
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
+func fade_in(
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> void:
+	await fade_to(1.0, duration, set_enablement, trans, ease)
+
+
+## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
+## will be disabled when the fade completes (since alpha = 0).
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_fade_out(
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> Callable:
+	return func(): await fade_out(duration, set_enablement, trans, ease)
+
+
+## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
+## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the character
+## will be disabled when the fade completes (since alpha = 0).
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
+func fade_out(
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> void:
+	await fade_to(0.0, duration, set_enablement, trans, ease)
+
+
+## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
+## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
+## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the character
+## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_fade_to(target_alpha: float, duration: float, set_enablement: bool = false) -> Callable:
+	return func(): await fade_to(target_alpha, duration, set_enablement)
+
+
+## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
+## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
+## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the character
+## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.
+## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
+## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
+func fade_to(
+	target_alpha: float,
+	duration: float,
+	set_enablement: bool = false,
+	trans := Tween.TransitionType.TRANS_LINEAR,
+	ease := Tween.EaseType.EASE_IN_OUT
+) -> void:
+	# Clamp target_alpha to valid range
+	target_alpha = clampf(target_alpha, 0.0, 1.0)
+
+	# Cancel any existing tween to avoid conflicts
+	if _alpha_tween and _alpha_tween.is_valid():
+		_alpha_tween.kill()
+
+	# Create new tween for the fade operation
+	_alpha_tween = create_tween()
+	_alpha_tween.set_trans(trans)
+	_alpha_tween.set_ease(ease)
+	_alpha_tween.tween_property(self, "alpha", target_alpha, duration)
+
+	# If the object has to fade in, make it visible
+	# or the transition will not happen
+	if target_alpha > 0:
+		show()
+
+	# Wait for the tween to complete
+	await _alpha_tween.finished
+
+	# Manage the enablement if necessary
+	if not set_enablement:
+		return
+	
+	if target_alpha == 0.0:
+		disable()
+	else:
+		enable()
+
+
 ## Makes the character look in the direction of [param destination]. The result is one of the values
 ## defined by [enum Looking].
 func face_direction(destination: Vector2):
@@ -1051,7 +1169,7 @@ func update_scale():
 		var scale_range: float = scaling_region.scale_bottom - scaling_region.scale_top
 		var position_from_the_top_of_region: float = position.y - scaling_region.polygon_top_y
 		var scale_for_position: float = scaling_region.scale_top + (
-				scale_range / polygon_range * position_from_the_top_of_region
+			scale_range / polygon_range * position_from_the_top_of_region
 		)
 		scale.x = [
 			[scale_for_position, scaling_region.scale_min].max(), scaling_region.scale_max
@@ -1074,6 +1192,13 @@ func reset_animation_prefix() -> void:
 #endregion
 
 #region SetGet #####################################################################################
+func set_alpha(value: float) -> void:
+	alpha = clampf(value, 0.0, 1.0)
+	# Modulate the Sprite2D's alpha to control visibility
+	if has_node("Sprite2D"):
+		$Sprite2D.modulate.a = alpha
+
+
 func set_voices(value: Array) -> void:
 	voices = value
 
