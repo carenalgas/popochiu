@@ -165,7 +165,7 @@ func goto_room(
 		PopochiuUtils.e.tl.play_transition(
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION),
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_DURATION),
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_ENTER)
+			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_LEAVE)
 		)
 		await PopochiuUtils.e.tl.transition_finished
 	elif Engine.get_process_frames() > 0:
@@ -363,7 +363,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		PopochiuUtils.e.tl.play_transition(
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION),
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_DURATION),
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_LEAVE)
+			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_ENTER)
 		)
 		await PopochiuUtils.e.tl.transition_finished
 		
