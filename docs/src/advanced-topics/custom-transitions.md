@@ -19,22 +19,38 @@ If you need a fade-in and a corresponding fade-out kind of transition, we recomm
 ### General Procedure
 
 - Open the Transition Layer scene and make sure everything is visible.
-![Transition Layer visibility](../assets/images/how-to-develop-a-game/adv_tech_tl_visibility.png)
+
+    ![Transition Layer visibility](../assets/images/how-to-develop-a-game/adv_tech_tl_visibility.png)
+
 - Click on the *Animation* tab in the Bottom Panel at the bottom of the screen.
-![Animation tab](../assets/images/how-to-develop-a-game/adv_tech_tl_animaton_panel.png)
+
+    ![Animation tab](../assets/images/how-to-develop-a-game/adv_tech_tl_animaton_panel.png)
+
 - Click on *Animation -> Manage Animations* in the Animation Bottom Panel.
-![Manage animations](../assets/images/how-to-develop-a-game/adv_tech_tl_manage_animations.png)
+
+    ![Manage animations](../assets/images/how-to-develop-a-game/adv_tech_tl_manage_animations.png)
+
 - If you don't have a custom library, we recommend creating one so that you can easily save your custom transitions in bulk in a resource for backup. Click on *New Library* and enter the name for your custom library.
-![New animation library](../assets/images/how-to-develop-a-game/adv_tech_tl_library.png)
-![New library name](../assets/images/how-to-develop-a-game/adv_tech_tl_library_name.png)
+
+    ![New animation library](../assets/images/how-to-develop-a-game/adv_tech_tl_library.png)
+
+    ![New library name](../assets/images/how-to-develop-a-game/adv_tech_tl_library_name.png)
+
 - Now click on the **+** (plus) icon to add a new animation name to your library.
-![New animation](../assets/images/how-to-develop-a-game/adv_tech_tl_llibrary_user.png)
-![New animation name](../assets/images/how-to-develop-a-game/adv_tech_tl_animation_name.png)
+
+    ![New animation](../assets/images/how-to-develop-a-game/adv_tech_tl_llibrary_user.png)
+
+    ![New animation name](../assets/images/how-to-develop-a-game/adv_tech_tl_animation_name.png)
+
 - Go back to the *Animation Panel*. Now you should see the animation you've just created in the animation list. Select it.
-![New library](../assets/images/how-to-develop-a-game/adv_tech_tl_select_animation.png)
+
+    ![New library](../assets/images/how-to-develop-a-game/adv_tech_tl_select_animation.png)
+
 - You need to populate the animation tracks. To do so, click on the Curtain node in the Transition Layer scene.
 - Scroll down to the *Material* section in the inspector, click on *Material* (3) and on *ShaderMaterial* (4), so that you can see the shader parameters. Next to every shader parameter you should see a key-shaped button (if you don't see it, click on the *Animation* tab in the bottom panel).
-![Material](../assets/images/how-to-develop-a-game/adv_tech_tl_material.png)
+
+    ![Material](../assets/images/how-to-develop-a-game/adv_tech_tl_material.png)
+
 - Clicking on that key button adds a property track to the animation you opened earlier in the Animation Panel.
 - Every time you add a property track to an animation, you'll be asked if you want to add that property to the `RESET` track. It's advisable to do that.
 - You need to set an initial and, if needed, a final value for the property based on what you want to achieve. The two most common shader parameters you'll find yourself using in property tracks are:
@@ -44,7 +60,7 @@ If you need a fade-in and a corresponding fade-out kind of transition, we recomm
   - *Visible*: set the initial and final value to `true` (7).
   - *Modulate*: set the initial and final value to the desired color (8).
 
-![Generic transition](../assets/images/how-to-develop-a-game/adv_tech_tl_generic_animation.png)
+    ![Generic transition](../assets/images/how-to-develop-a-game/adv_tech_tl_generic_animation.png)
 
 ### An Example
 
@@ -57,17 +73,20 @@ Let's add a new animation named `horizontal_paint_brush_wipe_in` with a duration
 Now we are going to add the necessary property tracks to the animation. To do that, we need to key the following shader parameters:
 
 - *Cutoff*: let's add an initial value equal to the minimum possible value. Then we duplicate the key, move it to the final time and set it to the maximum possible value. Make sure the *Update Mode* is set to *Continuous*.
-![Cutoff initial value](../assets/images/how-to-develop-a-game/adv_tech_tl_cutoff_start.png)
-![Cutoff final value](../assets/images/how-to-develop-a-game/adv_tech_tl_cutoff_end.png)
+
+    ![Cutoff initial value](../assets/images/how-to-develop-a-game/adv_tech_tl_cutoff_start.png)
+    ![Cutoff final value](../assets/images/how-to-develop-a-game/adv_tech_tl_cutoff_end.png)
+
 - *Mask*: let's add an initial value by selecting the desired texture. The final value is not necessary unless you plan to play the animation in reverse.
-![New library](../assets/images/how-to-develop-a-game/adv_tech_tl_mask.png)
+
+    ![New library](../assets/images/how-to-develop-a-game/adv_tech_tl_mask.png)
 
 And, for testing purposes, we add the following Curtain properties:
 
 - *Visible*: set the initial and final value to `true`.
 - *Modulate*: set the initial and final value to the desired color.
 
-![Wipe-in animation](../assets/images/how-to-develop-a-game/adv_tech_tl_wipe_in.png)
+    ![Wipe-in animation](../assets/images/how-to-develop-a-game/adv_tech_tl_wipe_in.png)
 
 Now we can hit *Play* and see what happens. You should see horizontal brush strokes revealing the scene, proceeding in a zig-zag pattern from the top left corner to the bottom right corner.
 
@@ -80,7 +99,7 @@ Then:
 - add the *Invert Color* property track to it and set the initial value to `true`.
 - Invert the initial and final *Cutoff* values.
 
-![Wipe-out animation](../assets/images/how-to-develop-a-game/adv_tech_tl_wipe_out.png)
+    ![Wipe-out animation](../assets/images/how-to-develop-a-game/adv_tech_tl_wipe_out.png)
 
 Now we can hit *Play* and see what happens. You should see horizontal brush strokes hiding the scene, proceeding in a zig-zag pattern from the top left corner to the bottom right corner.
 
