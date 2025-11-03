@@ -25,12 +25,10 @@ func _ready() -> void:
 	# Make sure the transition layer is ready
 	# if it has to be visible in the first room
 	if PopochiuUtils.e.settings.show_tl_in_first_room and Engine.get_process_frames() == 0:
-		$Curtain.show()
-		_show()
+		show_curtain()
 	else:
 		$AnimationPlayer.play("RESET")
 		await get_tree().process_frame
-
 		_hide()
 
 
@@ -44,25 +42,13 @@ func _ready() -> void:
 ##	 - color specified from code;
 ##	 - color specified in the modulate track of the animation (if enabled);
 ##	 - color specified in project settings.
-func play_transition(name: String = "fade", duration: float = 1.0, mode: int = PLAY_MODE.IN, color = null) -> void:
-	var anim = $AnimationPlayer.get_animation(name)
+func play_transition(name: String = "fade", duration: float = 1.0, mode: int = PLAY_MODE.IN, color: Color = PopochiuUtils.e.settings.fade_color) -> void:
+	var anim = get_transition(name)
 	var reenable_color_track = false
 
 	# Check if the animation exists
 	if anim == null:
-		PopochiuUtils.print_error("Can't find animation %s" % name)
 		return
-
-	# Override Curtain color
-	if color != null:
-		if color is not Color:
-			PopochiuUtils.print_error("Invalid Curtain color.")
-			return
-		if has_color_override_track(name):
-			reenable_color_track = true
-			anim.track_set_enabled("Curtain:modulate", false)
-
-	show_curtain(color)
 
 	# ---- Play RESET in order to fix #168 ---------------------------------------------------------
 	$AnimationPlayer.play("RESET")
@@ -70,6 +56,16 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 	# --------------------------------------------------------- Play RESET in order to fix #168 ----
 
 	$AnimationPlayer.speed_scale = 1.0 / duration if duration != 0.0 else 0.0;
+
+	# Override Curtain color
+	# Watch out: the RESET animation will set the Curtain:modulate property if a such a track is
+	# present
+	if color != PopochiuUtils.e.settings.fade_color:
+		if has_color_override_track(name):
+			reenable_color_track = true
+			toggle_track(name, "Curtain:modulate", false)
+
+	show_curtain(color)
 
 	match mode:
 		PLAY_MODE.IN_OUT:
@@ -80,6 +76,8 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 			_hide()
 		PLAY_MODE.IN:
 			$AnimationPlayer.play(name)
+			await $AnimationPlayer.animation_finished
+			_hide()
 		PLAY_MODE.OUT:
 			$AnimationPlayer.play_backwards(name)
 			await $AnimationPlayer.animation_finished
@@ -91,23 +89,15 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 	# Restore overridden values
 	$AnimationPlayer.speed_scale = 1.0
 	if reenable_color_track:
-		anim.track_set_enabled("Curtain:modulate", true)
+		toggle_track(name, "Curtain:modulate", true)
 	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
 
 
 ## Shows the curtain with the specified [param color] without playing any transition.
 ## if [param name] is not specified, the curtain will be shown with the default color from project
-## settings.
-func show_curtain(color = null) -> void:
-	if color != null and color is not Color:
-		PopochiuUtils.print_error("Invalid Curtain color.")
-		return
-
-	if color == null:
-		$Curtain.modulate = PopochiuUtils.e.settings.fade_color
-	else:
-		$Curtain.modulate = color
-
+## settings. Beware that this color can be subsequently overridden by animation tracks or by code.
+func show_curtain(color: Color = PopochiuUtils.e.settings.fade_color) -> void:
+	$Curtain.modulate = color
 	$Curtain.show()
 	_show()
 
@@ -115,6 +105,17 @@ func show_curtain(color = null) -> void:
 ## Hides the transition layer.
 func hide_curtain() -> void:
 	_hide()
+
+
+## Return the animation specified by [param anim_name]
+func get_transition(anim_name: String) -> Animation:
+	var anim = $AnimationPlayer.get_animation(anim_name)
+
+	if anim == null:
+		var result_code = ResultCodes.ERR_ANIMATION_NOT_FOUND
+		PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % anim_name)
+
+	return anim
 
 
 ## Return the custom animation library or null
@@ -151,16 +152,19 @@ func has_custom_transition(anim_name: String) -> bool:
 	return true if get_custom_transition(anim_name) else false
 
 
+## Return a list of all custom transition names
 func get_custom_transitions_list() -> PackedStringArray:
 	var anim_list = get_custom_library().get_animation_list()
 	return _hide_animations(anim_list)
 
 
+## Return a list of predefined transition names
 func get_predefined_transitions_list() -> PackedStringArray:
 	var anim_list = $AnimationPlayer.get_animation_library("").get_animation_list()
 	return _hide_animations(anim_list)
 
 
+## Return a list of all transition names
 func get_all_transitions_list() -> PackedStringArray:
 	var anim_list = $AnimationPlayer.get_animation_list()
 	return _hide_animations(anim_list)
@@ -169,18 +173,16 @@ func get_all_transitions_list() -> PackedStringArray:
 ## Check if the transition specified by [param anim_name] has an enabled track that overrides the
 ## default Curtain color.
 func has_color_override_track(anim_name: String) -> bool:
-	var anim = get_custom_transition(anim_name)
+	var anim = get_transition(anim_name)
 	var idx = anim.find_track("Curtain:modulate", Animation.TrackType.TYPE_VALUE)
 
-	if idx != -1 and anim.track_is_enabled(idx):
-		return true
-	return false
+	return idx != -1 and anim.track_is_enabled(idx)
 
 
 ## Toggle a track specified by [param track_name] of an animation specified by [param anim_name]
 ## on or off based on [param value].
 func toggle_track(anim_name: String, track_name: String, value: bool) -> void:
-	var anim = get_custom_transition(anim_name)
+	var anim = get_transition(anim_name)
 	var idx = anim.find_track(track_name, Animation.TrackType.TYPE_VALUE)
 
 	if idx != -1:
