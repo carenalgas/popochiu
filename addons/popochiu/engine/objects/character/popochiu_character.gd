@@ -1131,7 +1131,6 @@ func queue_reset_dialog_pos_offset() -> Callable:
 func queue_reset_dialog_pos_override() -> Callable:
 	return func(): reset_dialog_pos_override()
 
-
 ## Queue version: Locks the dialog position at the current calculated screen position.
 func queue_lock_dialog_pos() -> Callable:
 	return func(): lock_dialog_pos()
@@ -1285,6 +1284,7 @@ func get_is_visible_in_room() -> bool:
 func get_current_animation() -> String:
 	return _current_animation
 
+## Makes this character start facing the specified character. Defaults to the player.
 func start_facing_character(character: PopochiuCharacter) -> void:
 
 	if self == PopochiuUtils.c.player:
@@ -1299,25 +1299,22 @@ func start_facing_character(character: PopochiuCharacter) -> void:
 	
 	_face_character()
 
-	
 	if not Engine.is_editor_hint():
 		set_process(true)
 
+## Makes this character stop facing another character.
 func stop_facing_character() -> void:
 	follow_character = null
 	
 	if not Engine.is_editor_hint():
 		set_process(false)
-	
-func start_following_character(character: PopochiuCharacter) -> void:
 
-	if self == PopochiuUtils.c.player:
-		# TODO: We might want to have the player follow another character in a cutscene,
-		# but this will have distinct behavior
-		return
+## Makes this character start following the specified character. Defaults to the player
+func start_following_character(character: PopochiuCharacter) -> void:
 	
 	if character == null:
 		character = PopochiuUtils.c.player
+	
 	follow_character = character
 	
 	character.started_walk_to.connect(_follow_character)
@@ -1327,7 +1324,7 @@ func start_following_character(character: PopochiuCharacter) -> void:
 	if not Engine.is_editor_hint():
 		set_process(true)
 
-	
+## Makes this character stop following another character
 func stop_following_character() -> void:
 	follow_character.started_walk_to.disconnect(_follow_character)
 	follow_character = null
@@ -1581,6 +1578,7 @@ func _follow_character(character: PopochiuCharacter, start_position: Vector2, en
 		follower_end_position = end_position + follow_character_offset
 
 	walk_to(follower_end_position)
+
 
 # Makes the character face left or right, depending on where the target character is
 func _face_character() -> void:
