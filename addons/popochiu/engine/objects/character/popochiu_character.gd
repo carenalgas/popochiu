@@ -66,10 +66,9 @@ const STANDARD_TALK_ANIMATION = "talk"
 @export var voices := []: set = set_voices
 ## Whether the character should follow the player-controlled character (PC) when it moves through
 ## the room.
-@export var follow_player := false: set = set_follow_player
-## The offset between the player-controlled character (PC) and this character when it follows the
-## former one.
-@export var follow_player_offset := Vector2(20, 0)
+@export var follow_character : PopochiuCharacter = null
+## The offset between the character being followed and this character when it follows the former one
+@export var follow_character_offset := Vector2(20, 0)
 ## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
 ## You can use this to define which [Texture] to use as avatar for the character when it speaks
 ## using a specific emotion.
@@ -228,14 +227,14 @@ func _ready():
 
 	# Setup following behavior if enabled
 	if (
-		follow_player
-		and not PopochiuUtils.c.player.started_walk_to.is_connected(_follow_player)
+		follow_character
+		and not follow_character.started_walk_to.is_connected(_follow_character)
 		# Fix #385: Ignore character following if the follower is the same as
 		# the player-controlled character.
 		and self != PopochiuUtils.c.player
 	):
-		PopochiuUtils.c.player.started_walk_to.connect(_follow_player)
-		# This character is following a player, so it must move without
+		follow_character.started_walk_to.connect(_follow_character)
+		# This character is following another character, so it must move without
 		# explicitly invoking walk or move functions.
 		set_process(true)
 
@@ -251,14 +250,17 @@ func _ready():
 	if not PopochiuUtils.c.player_changed.is_connected(_on_player_changed):
 		PopochiuUtils.c.player_changed.connect(_on_player_changed)
 
-
 func _physics_process(delta: float) -> void:
 	if _navigation_path.is_empty(): return
 
 	var walk_distance: float = walk_speed * delta
 	_move_along_path(walk_distance)
 
-
+func _process(delta: float) -> void:
+	# ALWAYS face the character being followed
+	if follow_character:
+		_face_character()
+		
 #endregion
 
 #region Virtual ####################################################################################
@@ -1023,6 +1025,7 @@ func face_direction(destination: Vector2):
 	_animation_suffixes = _valid_animation_suffixes[_looking_dir] + [EMPTY_STRING]
 
 
+
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.
 ## Returns [code]null[/code] if no avatar is found. If there is an avatar defined for the
 ## [code]""[/code] emotion, that one is returned by default.
@@ -1128,7 +1131,6 @@ func queue_reset_dialog_pos_offset() -> Callable:
 func queue_reset_dialog_pos_override() -> Callable:
 	return func(): reset_dialog_pos_override()
 
-
 ## Queue version: Locks the dialog position at the current calculated screen position.
 func queue_lock_dialog_pos() -> Callable:
 	return func(): lock_dialog_pos()
@@ -1214,14 +1216,6 @@ func set_voices(value: Array) -> void:
 			if value[idx].variations[-1] == null:
 				value[idx].variations[-1] = AudioCueSound.new()
 
-
-func set_follow_player(value: bool) -> void:
-	follow_player = value
-
-	if not Engine.is_editor_hint():
-		set_process(follow_player)
-
-
 func set_avatars(value: Array) -> void:
 	avatars = value
 
@@ -1290,6 +1284,53 @@ func get_is_visible_in_room() -> bool:
 func get_current_animation() -> String:
 	return _current_animation
 
+## Makes this character start facing the specified character. Defaults to the player.
+func start_facing_character(character: PopochiuCharacter) -> void:
+
+	if self == PopochiuUtils.c.player:
+		# TODO: We might want to have the player follow another character in a cutscene,
+		# but this will have distinct behavior
+		return
+	
+	if character == null:
+		character = PopochiuUtils.c.player
+		
+	follow_character = character
+	
+	_face_character()
+
+	if not Engine.is_editor_hint():
+		set_process(true)
+
+## Makes this character stop facing another character.
+func stop_facing_character() -> void:
+	follow_character = null
+	
+	if not Engine.is_editor_hint():
+		set_process(false)
+
+## Makes this character start following the specified character. Defaults to the player
+func start_following_character(character: PopochiuCharacter) -> void:
+	
+	if character == null:
+		character = PopochiuUtils.c.player
+	
+	follow_character = character
+	
+	character.started_walk_to.connect(_follow_character)
+
+	_follow_character(character, Vector2.ZERO, character.position)
+
+	if not Engine.is_editor_hint():
+		set_process(true)
+
+## Makes this character stop following another character
+func stop_following_character() -> void:
+	follow_character.started_walk_to.disconnect(_follow_character)
+	follow_character = null
+		
+	if not Engine.is_editor_hint():
+		set_process(false)
 
 #endregion
 
@@ -1526,20 +1567,24 @@ func _clear_navigation_path() -> void:
 	idle()
 	movement_ended.emit()
 
-
-# TODO: Improve the following logic to allow following characters other than the player,
-#       and introduce some delay for a better representation of the following action.
-#
 # Makes the character follow the player by walking to a position that is offset from the player's
 # position. The offset is defined by [member follow_player_offset]. The character will walk to
 # the position that is offset from the player's position, and will continue to follow the player.
-func _follow_player(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
+func _follow_character(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
 	var follower_end_position := Vector2.ZERO
 	if end_position.x > position.x:
-		follower_end_position = end_position - follow_player_offset
+		follower_end_position = end_position - follow_character_offset
 	else:
-		follower_end_position = end_position + follow_player_offset
+		follower_end_position = end_position + follow_character_offset
+
 	walk_to(follower_end_position)
 
 
+# Makes the character face left or right, depending on where the target character is
+func _face_character() -> void:
+	if follow_character.position.x > position.x:
+		face_right()
+	else:
+		face_left()
+	
 #endregion
