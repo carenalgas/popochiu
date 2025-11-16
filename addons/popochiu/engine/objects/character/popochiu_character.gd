@@ -76,6 +76,14 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## lower/in front, negative values place them higher/behind.
 ## Example: [code]Vector2(20, -5)[/code] = "Stay 20px to the side, 5px higher (slightly behind in perspective)"
 @export var follow_character_offset := Vector2(20, -5)
+## The minimum distance the followed character must be from this character before following starts.
+## This creates a "rubber band" effect where the follower doesn't move on every step of the leader.
+## [member follow_character_threshold.x] defines the horizontal trigger distance.
+## [member follow_character_threshold.y] defines the vertical trigger distance.
+## The follower will start moving when the leader exceeds the threshold on [b]either[/b] axis.
+## Example: [code]Vector2(35, 10)[/code] = "Start following if leader is >35px away horizontally OR >10px away vertically"
+## Set to [code]Vector2.ZERO[/code] to make the follower move on every step (no threshold).
+@export var follow_character_threshold := Vector2(35, 10)
 ## The character that this character should continuously face.
 ## Set this in the inspector to have the character automatically face another character at runtime.
 @export var face_character : PopochiuCharacter = null
@@ -238,6 +246,16 @@ func _ready():
 	# This flag is set when activating the walking function, or by characters
 	# following or facing other characters.
 	set_process(false)
+
+	# Validate follow_character configuration
+	if follow_character:
+		# Warn if threshold is smaller than offset (can cause jitter)
+		if (abs(follow_character_threshold.x) > 0 and abs(follow_character_threshold.x) < abs(follow_character_offset.x)) or \
+		   (abs(follow_character_threshold.y) > 0 and abs(follow_character_threshold.y) < abs(follow_character_offset.y)):
+			PopochiuUtils.print_warning(
+				"Character '%s': follow_character_threshold (%s) should be >= follow_character_offset (%s) to avoid jitter" %
+				[script_name, follow_character_threshold, follow_character_offset]
+			)
 
 	# Setup following behavior if enabled in inspector
 	if follow_character and self != PopochiuUtils.c.player:
@@ -1615,7 +1633,20 @@ func _clear_navigation_path() -> void:
 # The X component of the offset determines which side the follower stays on (based on the leader's
 # movement direction), while the Y component is always applied in the same direction
 # (positive = lower/behind, negative = higher/in front).
+# The follower only starts moving if the leader exceeds [member follow_character_threshold] distance.
 func _follow_character(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
+	# Check if the leader's CURRENT position is far enough to trigger following
+	# We check current position, not destination, for more natural behavior
+	var distance_to_leader := character.position - position
+
+	# Only follow if leader exceeds threshold on either axis (OR logic)
+	# This creates the "rubber band" effect where small movements are ignored
+	if follow_character_threshold.length_squared() > 0:
+		if abs(distance_to_leader.x) <= abs(follow_character_threshold.x) and \
+		   abs(distance_to_leader.y) <= abs(follow_character_threshold.y):
+			# Leader is within threshold, don't follow
+			return
+
 	# Calculate the leader's movement direction
 	var movement_direction := (end_position - start_position).normalized()
 
