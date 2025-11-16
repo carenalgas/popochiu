@@ -28,7 +28,7 @@ func _do_migration() -> bool:
 
 func _update_function_name_in_scripts() -> Completion:
 	return Completion.DONE if PopochiuMigrationHelper.replace_in_scripts([
-		{from = "follow_player()", to = "follow_character(C.player)"}
+		{from = "follow_player()", to = "start_following_character(C.player)"}
 		], ["gui"]) else Completion.IGNORED
 
 #endregion
