@@ -33,6 +33,7 @@ enum Looking {
 	## The character is facing right [code](x, 0)[/code].
 }
 
+
 ## Emitted when a [param character] starts moving from [param start] to [param end]. 
 ## The character connects to this signal internally to handle its own movement.
 signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector2)
@@ -52,6 +53,7 @@ const STANDARD_IDLE_ANIMATION = "idle"
 const STANDARD_WALK_ANIMATION = "walk"
 ## Standard talk animation name.
 const STANDARD_TALK_ANIMATION = "talk"
+
 
 ## The [Color] in which the dialogue lines of the character are rendered.
 @export var text_color := Color.WHITE
@@ -250,17 +252,20 @@ func _ready():
 	if not PopochiuUtils.c.player_changed.is_connected(_on_player_changed):
 		PopochiuUtils.c.player_changed.connect(_on_player_changed)
 
+
 func _physics_process(delta: float) -> void:
 	if _navigation_path.is_empty(): return
 
 	var walk_distance: float = walk_speed * delta
 	_move_along_path(walk_distance)
 
+
 func _process(delta: float) -> void:
 	# ALWAYS face the character being followed
 	if follow_character:
 		_face_character()
-		
+
+
 #endregion
 
 #region Virtual ####################################################################################
@@ -407,6 +412,7 @@ func turn_towards(target_pos: Vector2) -> void:
 	face_direction(target_pos)
 	_play_walk(target_pos)
 
+
 ## Makes the character stop moving and emits [signal stopped_walk].[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop_walking() -> Callable:
@@ -552,6 +558,7 @@ func face_clicked() -> void:
 	)
 
 	await face_direction(global_lap)
+
 
 ## Makes the character face the opposite direction from where they are currently facing.[br][br]
 ## This is useful when you want to turn the character around without knowing their current
@@ -1001,7 +1008,7 @@ func fade_to(
 	# Manage the enablement if necessary
 	if not set_enablement:
 		return
-	
+
 	if target_alpha == 0.0:
 		disable()
 	else:
@@ -1216,6 +1223,7 @@ func set_voices(value: Array) -> void:
 			if value[idx].variations[-1] == null:
 				value[idx].variations[-1] = AudioCueSound.new()
 
+
 func set_avatars(value: Array) -> void:
 	avatars = value
 
@@ -1284,6 +1292,7 @@ func get_is_visible_in_room() -> bool:
 func get_current_animation() -> String:
 	return _current_animation
 
+
 ## Makes this character start facing the specified character. Defaults to the player.
 func start_facing_character(character: PopochiuCharacter) -> void:
 
@@ -1291,32 +1300,34 @@ func start_facing_character(character: PopochiuCharacter) -> void:
 		# TODO: We might want to have the player follow another character in a cutscene,
 		# but this will have distinct behavior
 		return
-	
+
 	if character == null:
 		character = PopochiuUtils.c.player
-		
+
 	follow_character = character
-	
+
 	_face_character()
 
 	if not Engine.is_editor_hint():
 		set_process(true)
 
+
 ## Makes this character stop facing another character.
 func stop_facing_character() -> void:
 	follow_character = null
-	
+
 	if not Engine.is_editor_hint():
 		set_process(false)
 
+
 ## Makes this character start following the specified character. Defaults to the player
 func start_following_character(character: PopochiuCharacter) -> void:
-	
+
 	if character == null:
 		character = PopochiuUtils.c.player
-	
+
 	follow_character = character
-	
+
 	character.started_walk_to.connect(_follow_character)
 
 	_follow_character(character, Vector2.ZERO, character.position)
@@ -1324,13 +1335,15 @@ func start_following_character(character: PopochiuCharacter) -> void:
 	if not Engine.is_editor_hint():
 		set_process(true)
 
+
 ## Makes this character stop following another character
 func stop_following_character() -> void:
 	follow_character.started_walk_to.disconnect(_follow_character)
 	follow_character = null
-		
+
 	if not Engine.is_editor_hint():
 		set_process(false)
+
 
 #endregion
 
@@ -1468,6 +1481,7 @@ func _update_position():
 	if is_instance_valid(PopochiuUtils.r.current):
 		PopochiuUtils.r.current.update_characters_position(self)
 
+
 # Flips sprites depending on user preferences: requires two boolean conditions
 # as arguments for flipping left [param left_cond] or right [param right_cond]
 func _flip_left_right(left_cond: bool, right_cond: bool) -> void:
@@ -1567,6 +1581,7 @@ func _clear_navigation_path() -> void:
 	idle()
 	movement_ended.emit()
 
+
 # Makes the character follow the player by walking to a position that is offset from the player's
 # position. The offset is defined by [member follow_player_offset]. The character will walk to
 # the position that is offset from the player's position, and will continue to follow the player.
@@ -1586,5 +1601,6 @@ func _face_character() -> void:
 		face_right()
 	else:
 		face_left()
-	
+
+
 #endregion
