@@ -66,11 +66,14 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
 ## specific emotion.
 @export var voices := []: set = set_voices
-## Whether the character should follow the player-controlled character (PC) when it moves through
-## the room.
+## The character that this character should follow when it moves through the room.
+## Set this in the inspector to have the character automatically follow another character at runtime.
 @export var follow_character : PopochiuCharacter = null
-## The offset between the character being followed and this character when it follows the former one
+## The offset between the character being followed and this character when it follows the former one.
 @export var follow_character_offset := Vector2(20, 0)
+## The character that this character should continuously face.
+## Set this in the inspector to have the character automatically face another character at runtime.
+@export var face_character : PopochiuCharacter = null
 ## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
 ## You can use this to define which [Texture] to use as avatar for the character when it speaks
 ## using a specific emotion.
@@ -185,6 +188,10 @@ var _is_dialog_pos_locked: bool = false
 var _locked_dialog_pos: Vector2
 # Tween used for alpha fade operations.
 var _alpha_tween: Tween = null
+# The character currently being followed at runtime (independent from exported follow_character).
+var _current_followed_character: PopochiuCharacter = null
+# The character currently being faced at runtime (independent from exported face_character).
+var _current_faced_character: PopochiuCharacter = null
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -224,21 +231,16 @@ func _ready():
 
 	# Prevent frame-by-frame processing for this character.
 	# This flag is set when activating the walking function, or by characters
-	# following the player (see below).
+	# following or facing other characters.
 	set_process(false)
 
-	# Setup following behavior if enabled
-	if (
-		follow_character
-		and not follow_character.started_walk_to.is_connected(_follow_character)
-		# Fix #385: Ignore character following if the follower is the same as
-		# the player-controlled character.
-		and self != PopochiuUtils.c.player
-	):
-		follow_character.started_walk_to.connect(_follow_character)
-		# This character is following another character, so it must move without
-		# explicitly invoking walk or move functions.
-		set_process(true)
+	# Setup following behavior if enabled in inspector
+	if follow_character and self != PopochiuUtils.c.player:
+		start_following_character(follow_character)
+
+	# Setup facing behavior if enabled in inspector
+	if face_character and self != PopochiuUtils.c.player:
+		start_facing_character(face_character)
 
 	# We need to initialize the interaction for the player character.
 	# Changes will be handled by the player_changed signal handler.
@@ -261,9 +263,13 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(delta: float) -> void:
-	# ALWAYS face the character being followed
-	if follow_character:
-		_face_character()
+	# Following takes precedence over facing
+	if _current_followed_character:
+		return
+
+	# Continuously face the target character
+	if _current_faced_character:
+		_face_character(_current_faced_character)
 
 
 #endregion
@@ -1022,7 +1028,7 @@ func face_direction(destination: Vector2):
 	# We cannot use the face_* functions because they reset the state to IDLE.
 	# Get the angle of the vector from the origin to the destination as a number between
 	# 0 and 360 degrees (Vector2.angle() returns the angle in radians between -PI and PI).
-	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
+	var angle = wrapf(rad_to_deg((destination - global_position).angle()), 0, 360)
 	# Calculate the looking direction using 8 directions centered on cardinal/diagonal directions
 	# We add 22.5° offset so sectors are centered (e.g., -22.5° to +22.5° = RIGHT)
 	_looking_dir = int((angle + 22.5) / 45) % 8
@@ -1030,7 +1036,6 @@ func face_direction(destination: Vector2):
 	# Note that we add a fallback empty string to the list, in case the only
 	# available animation is the base one ('walk', 'talk', etc).
 	_animation_suffixes = _valid_animation_suffixes[_looking_dir] + [EMPTY_STRING]
-
 
 
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.
@@ -1294,54 +1299,64 @@ func get_current_animation() -> String:
 
 
 ## Makes this character start facing the specified character. Defaults to the player.
-func start_facing_character(character: PopochiuCharacter) -> void:
-
-	if self == PopochiuUtils.c.player:
-		# TODO: We might want to have the player follow another character in a cutscene,
-		# but this will have distinct behavior
+func start_facing_character(character: PopochiuCharacter = null) -> void:
+	# Prevent self-facing
+	if character == self:
 		return
 
+	# Determine which character to face
 	if character == null:
-		character = PopochiuUtils.c.player
+		if face_character:
+			_current_faced_character = face_character
+		else:
+			_current_faced_character = PopochiuUtils.c.player
+	else:
+		_current_faced_character = character
 
-	follow_character = character
+	# Immediately face the target character
+	_face_character(_current_faced_character)
 
-	_face_character()
-
+	# Enable continuous facing in _process()
 	if not Engine.is_editor_hint():
 		set_process(true)
 
 
 ## Makes this character stop facing another character.
 func stop_facing_character() -> void:
-	follow_character = null
+	_current_faced_character = null
 
-	if not Engine.is_editor_hint():
+	# Disable _process() only if not following or facing anyone
+	if not _current_followed_character and not Engine.is_editor_hint():
 		set_process(false)
 
 
-## Makes this character start following the specified character. Defaults to the player
-func start_following_character(character: PopochiuCharacter) -> void:
-
+## Makes this character start following the specified character. Defaults to the player.
+func start_following_character(character: PopochiuCharacter = null) -> void:
+	# Determine which character to follow
 	if character == null:
-		character = PopochiuUtils.c.player
+		if follow_character:
+			_current_followed_character = follow_character
+		else:
+			_current_followed_character = PopochiuUtils.c.player
+	else:
+		_current_followed_character = character
 
-	follow_character = character
+	# Connect to the followed character's movement signal
+	_current_followed_character.started_walk_to.connect(_follow_character)
 
-	character.started_walk_to.connect(_follow_character)
-
-	_follow_character(character, Vector2.ZERO, character.position)
-
-	if not Engine.is_editor_hint():
-		set_process(true)
+	# Move to initial offset position
+	_follow_character(_current_followed_character, Vector2.ZERO, _current_followed_character.position)
 
 
-## Makes this character stop following another character
+## Makes this character stop following another character.
 func stop_following_character() -> void:
-	follow_character.started_walk_to.disconnect(_follow_character)
-	follow_character = null
+	if _current_followed_character:
+		_current_followed_character.started_walk_to.disconnect(_follow_character)
 
-	if not Engine.is_editor_hint():
+	_current_followed_character = null
+
+	# Disable _process() only if not following or facing anyone
+	if not _current_faced_character and not Engine.is_editor_hint():
 		set_process(false)
 
 
@@ -1537,6 +1552,14 @@ func _move_along_path(walk_distance: float):
 	update_scale()
 	_clear_navigation_path()
 
+	# Apply facing behavior after movement completes.
+	# This handles the case where a character is both following one character
+	# and facing another (e.g., bodyguard following the player but always facing threats).
+	# Without this, the character would only face during continuous updates in _process(),
+	# missing the final snap-to-target immediately after reaching the destination.
+	if _current_faced_character:
+		_face_character(_current_faced_character)
+
 
 # Character navigation system.
 #
@@ -1582,9 +1605,10 @@ func _clear_navigation_path() -> void:
 	movement_ended.emit()
 
 
-# Makes the character follow the player by walking to a position that is offset from the player's
-# position. The offset is defined by [member follow_player_offset]. The character will walk to
-# the position that is offset from the player's position, and will continue to follow the player.
+# Makes the character follow another character by walking to a position that is offset from the
+# followed character's position. The offset is defined by [member follow_character_offset].
+# The character will walk to the position that is offset from the followed character's position,
+# and will continue to follow the character.
 func _follow_character(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
 	var follower_end_position := Vector2.ZERO
 	if end_position.x > position.x:
@@ -1595,12 +1619,12 @@ func _follow_character(character: PopochiuCharacter, start_position: Vector2, en
 	walk_to(follower_end_position)
 
 
-# Makes the character face left or right, depending on where the target character is
-func _face_character() -> void:
-	if follow_character.position.x > position.x:
-		face_right()
-	else:
-		face_left()
+# Makes the character face another character by updating the facing direction.
+# Called during continuous facing updates and after movement completion.
+func _face_character(character: PopochiuCharacter) -> void:
+	# face_direction expects global coordinates
+	face_direction(character.global_position)
+	await idle()
 
 
 #endregion
