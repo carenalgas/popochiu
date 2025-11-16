@@ -69,8 +69,13 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## The character that this character should follow when it moves through the room.
 ## Set this in the inspector to have the character automatically follow another character at runtime.
 @export var follow_character : PopochiuCharacter = null
-## The offset between the character being followed and this character when it follows the former one.
-@export var follow_character_offset := Vector2(20, 0)
+## The positional offset from the followed character where this character will walk to when following.
+## [member follow_character_offset.x] defines the lateral (side-to-side) distance. The follower will
+## stay to the left or right of the leader based on their relative positions.
+## [member follow_character_offset.y] defines the vertical offset. Positive values place the follower
+## lower/in front, negative values place them higher/behind.
+## Example: [code]Vector2(20, -5)[/code] = "Stay 20px to the side, 5px higher (slightly behind in perspective)"
+@export var follow_character_offset := Vector2(20, -5)
 ## The character that this character should continuously face.
 ## Set this in the inspector to have the character automatically face another character at runtime.
 @export var face_character : PopochiuCharacter = null
@@ -1607,16 +1612,33 @@ func _clear_navigation_path() -> void:
 
 # Makes the character follow another character by walking to a position that is offset from the
 # followed character's position. The offset is defined by [member follow_character_offset].
-# The character will walk to the position that is offset from the followed character's position,
-# and will continue to follow the character.
+# The X component of the offset determines which side the follower stays on (based on the leader's
+# movement direction), while the Y component is always applied in the same direction
+# (positive = lower/behind, negative = higher/in front).
 func _follow_character(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
-	var follower_end_position := Vector2.ZERO
-	if end_position.x > position.x:
-		follower_end_position = end_position - follow_character_offset
-	else:
-		follower_end_position = end_position + follow_character_offset
+	# Calculate the leader's movement direction
+	var movement_direction := (end_position - start_position).normalized()
 
-	walk_to(follower_end_position)
+	# If there's no movement (start == end), use current relative position as fallback
+	if movement_direction.length_squared() < 0.01:
+		movement_direction = (end_position - position).normalized()
+
+	# Determine which side to position the follower based on leader's movement direction
+	# If moving right (positive X), follower stays on the left (negative offset)
+	# If moving left (negative X), follower stays on the right (positive offset)
+	var lateral_direction := Vector2.LEFT if movement_direction.x > 0 else Vector2.RIGHT
+	var lateral_offset := lateral_direction * follow_character_offset.x
+
+	# Always apply Y offset in the same direction (don't flip with lateral movement)
+	# In Godot, positive Y is down, so positive offset.y = lower/behind in perspective
+	var vertical_offset := Vector2.DOWN * follow_character_offset.y
+
+	# Calculate final follower position in global coordinates
+	var follower_end_position := end_position + lateral_offset + vertical_offset
+
+	# Use walk() directly since end_position is already in global coordinates
+	# Using walk_to() would ignore walkable areas boudaries
+	walk(follower_end_position)
 
 
 # Makes the character face another character by updating the facing direction.
