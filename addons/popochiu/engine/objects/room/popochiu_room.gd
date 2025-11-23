@@ -503,6 +503,8 @@ func _ensure_active_walkable_area() -> void:
 		if _nav_path and _nav_path.map_rid.is_valid():
 			NavigationServer2D.map_set_active(_nav_path.map_rid, false)
 		_nav_path = null
+		# Fix #459: Don't try to activate walkable areas if none are enabled.
+		return
 
 	# Finally, take the first enabled walkable area and activate it.
 	set_active_walkable_area(enabled_walkable_areas[0].name)
