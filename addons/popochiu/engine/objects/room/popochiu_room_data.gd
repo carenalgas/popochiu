@@ -120,13 +120,24 @@ func save_children_states() -> void:
 						continue
 					# ---------------------------------------------------------------- Fix #320 ----
 					
-					var script_path := scene_path.replace("tscn", "gd")
-					if not FileAccess.file_exists(script_path):
+					var packed_scene: PackedScene = load(scene_path)
+					if not packed_scene or not packed_scene is PackedScene:
 						folder_name = dir.get_next()
 						continue
 					
-					var node: Node2D = load(script_path).new()
-					node.script_name = folder_name.to_pascal_case()
+					# Instantiate the full scene so exported data (like walkable polygons) is already baked.
+					# Loading only the script left interaction_polygon empty, so the first time we entered
+					# a room the stored state overwrote its walkable areas with blank data. Grabbing the
+					# packed scene preserves those serialized outlines until the room can save itself.
+					var node: Node = packed_scene.instantiate()
+					if not node or not node is Node2D:
+						if node:
+							node.free()
+						folder_name = dir.get_next()
+						continue
+					
+					if node.script_name.is_empty():
+						node.script_name = folder_name.to_pascal_case()
 					
 					_save_object_state(
 						node,
