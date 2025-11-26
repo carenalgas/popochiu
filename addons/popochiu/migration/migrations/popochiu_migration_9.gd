@@ -90,34 +90,8 @@ func _update_character_by_path(scene_path: String) -> bool:
 			char_instance.queue_free()
 			return false
 
-		# Get the player character resource path from the characters section
-		var player_resource_path: String = PopochiuResources.get_data_value("characters", player_name, "")
-
-		if player_resource_path.is_empty():
-			PopochiuUtils.print_warning(
-				"Migration %d: Could not find player character resource '%s' in popochiu_data.cfg" %
-				[VERSION, player_name]
-			)
-			char_instance.queue_free()
-			return false
-
-		# Convert the resource path to scene path
-		# Resource: "res://game/characters/dan_arrow/character_dan_arrow.tres"
-		# Scene: "res://game/characters/dan_arrow/character_dan_arrow.tscn"
-		var player_scene_path := player_resource_path.replace(".tres", ".tscn")
-
-		# Load the player character scene
-		var player_packed_scene: PackedScene = load(player_scene_path)
-		if not player_packed_scene:
-			PopochiuUtils.print_error(
-				"Migration %d: Could not load player character scene: %s" %
-				[VERSION, player_scene_path]
-			)
-			char_instance.queue_free()
-			return false
-
-		# Set follow_character to the player character scene
-		char_instance.follow_character = player_packed_scene
+		# Set follow_character to the player character's script_name
+		char_instance.follow_character = player_name
 		needs_update = true
 
 		PopochiuUtils.print_normal(

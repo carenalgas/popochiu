@@ -66,9 +66,10 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
 ## specific emotion.
 @export var voices := []: set = set_voices
-## The character that this character should follow when it moves through the room.
-## Set this in the inspector to have the character automatically follow another character at runtime.
-@export var follow_character : PopochiuCharacter = null
+## The [member PopochiuCharacter.script_name] of the character that this character should follow
+## when it moves through the room. Set this in the inspector to have the character automatically
+## follow another character at runtime.
+@export var follow_character := ""
 ## The positional offset from the followed character where this character will walk to when following.
 ## [member follow_character_offset.x] defines the lateral (side-to-side) distance. The follower will
 ## stay to the left or right of the leader based on their relative positions.
@@ -84,9 +85,10 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## Example: [code]Vector2(35, 10)[/code] = "Start following if leader is >35px away horizontally OR >10px away vertically"
 ## Set to [code]Vector2.ZERO[/code] to make the follower move on every step (no threshold).
 @export var follow_character_threshold := Vector2(35, 10)
-## The character that this character should continuously face.
-## Set this in the inspector to have the character automatically face another character at runtime.
-@export var face_character : PopochiuCharacter = null
+## The [member PopochiuCharacter.script_name] of the character that this character should
+## continuously face. Set this in the inspector to have the character automatically face another
+## character at runtime.
+@export var face_character := ""
 ## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
 ## You can use this to define which [Texture] to use as avatar for the character when it speaks
 ## using a specific emotion.
@@ -248,7 +250,7 @@ func _ready():
 	set_process(false)
 
 	# Validate follow_character configuration
-	if follow_character:
+	if not follow_character.is_empty():
 		# Warn if threshold is smaller than offset (can cause jitter)
 		if (abs(follow_character_threshold.x) > 0 and abs(follow_character_threshold.x) < abs(follow_character_offset.x)) or \
 		   (abs(follow_character_threshold.y) > 0 and abs(follow_character_threshold.y) < abs(follow_character_offset.y)):
@@ -258,12 +260,12 @@ func _ready():
 			)
 
 	# Setup following behavior if enabled in inspector
-	if follow_character and self != PopochiuUtils.c.player:
-		start_following_character(follow_character)
+	if not follow_character.is_empty() and self != PopochiuUtils.c.player:
+		start_following_character()
 
 	# Setup facing behavior if enabled in inspector
-	if face_character and self != PopochiuUtils.c.player:
-		start_facing_character(face_character)
+	if not face_character.is_empty() and self != PopochiuUtils.c.player:
+		start_facing_character()
 
 	# We need to initialize the interaction for the player character.
 	# Changes will be handled by the player_changed signal handler.
@@ -1321,20 +1323,18 @@ func get_current_animation() -> String:
 	return _current_animation
 
 
-## Makes this character start facing the specified character. Defaults to the player.
-func start_facing_character(character: PopochiuCharacter = null) -> void:
-	# Prevent self-facing
-	if character == self:
+## Makes this character start facing the specified character. If [param character] is not provided,
+## the character defined in [member face_character] will be used. If that is also empty, the player
+## character will be used. [param character] can be a [PopochiuCharacter] instance or a [String]
+## with the character's [member script_name].
+func start_facing_character(character: Variant = null) -> void:
+	var target_character := _resolve_character(character, face_character)
+
+	# Prevent self-facing or invalid target
+	if target_character == self or target_character == null:
 		return
 
-	# Determine which character to face
-	if character == null:
-		if face_character:
-			_current_faced_character = face_character
-		else:
-			_current_faced_character = PopochiuUtils.c.player
-	else:
-		_current_faced_character = character
+	_current_faced_character = target_character
 
 	# Immediately face the target character
 	_face_character(_current_faced_character)
@@ -1353,16 +1353,18 @@ func stop_facing_character() -> void:
 		set_process(false)
 
 
-## Makes this character start following the specified character. Defaults to the player.
-func start_following_character(character: PopochiuCharacter = null) -> void:
-	# Determine which character to follow
-	if character == null:
-		if follow_character:
-			_current_followed_character = follow_character
-		else:
-			_current_followed_character = PopochiuUtils.c.player
-	else:
-		_current_followed_character = character
+## Makes this character start following the specified character. If [param character] is not
+## provided, the character defined in [member follow_character] will be used. If that is also empty,
+## the player character will be used. [param character] can be a [PopochiuCharacter] instance or a
+## [String] with the character's [member script_name].
+func start_following_character(character: Variant = null) -> void:
+	var target_character := _resolve_character(character, follow_character)
+
+	# Prevent self-following or invalid target
+	if target_character == self or target_character == null:
+		return
+
+	_current_followed_character = target_character
 
 	# Connect to the followed character's movement signal
 	_current_followed_character.started_walk_to.connect(_follow_character)
@@ -1386,6 +1388,20 @@ func stop_following_character() -> void:
 #endregion
 
 #region Private ####################################################################################
+# Resolves a character parameter to a PopochiuCharacter instance.
+# [param character] can be a PopochiuCharacter, a String (script_name), or null.
+# [param fallback_script_name] is used when [param character] is null or empty.
+# Returns the player character if both are empty/null.
+func _resolve_character(character: Variant, fallback_script_name: String) -> PopochiuCharacter:
+	if character is PopochiuCharacter:
+		return character
+	if character is String and not (character as String).is_empty():
+		return PopochiuUtils.c.get_character(character)
+	if not fallback_script_name.is_empty():
+		return PopochiuUtils.c.get_character(fallback_script_name)
+	return PopochiuUtils.c.player
+
+
 func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree(): return
 	description = PopochiuUtils.e.get_text(_description_code)
