@@ -2,7 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bn7o13nv11ka1" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_overhead/dialog_overhead.tscn" id="1_o23gj"]
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="2_1bktk"]
-[ext_resource type="Texture2D" uid="uid://dyu50ujtj4j3m" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/images/ico_continue_high_res.png" id="3_1bktk"]
+[ext_resource type="Texture2D" uid="uid://bcwof1u6ctt8v" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/images/ico_continue_high_res.svg" id="3_1bktk"]
 
 [node name="DialogOverheadHighRes" instance=ExtResource("1_o23gj")]
 theme = ExtResource("2_1bktk")
@@ -15,6 +15,7 @@ offset_right = 800.0
 offset_bottom = 28.0
 
 [node name="ContinueIcon" parent="RichTextLabel" index="1"]
+texture_filter = 0
 offset_right = 42.0
 offset_bottom = 50.0
 texture_progress = ExtResource("3_1bktk")

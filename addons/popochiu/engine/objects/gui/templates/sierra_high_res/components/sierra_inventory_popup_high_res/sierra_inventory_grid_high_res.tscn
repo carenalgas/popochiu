@@ -3,23 +3,23 @@
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_5a7yr"]
 [ext_resource type="Script" uid="uid://cdgpfm2rrpdds" path="res://addons/popochiu/engine/objects/gui/components/inventory_grid/inventory_grid.gd" id="2_ugp5q"]
 [ext_resource type="PackedScene" uid="uid://4px2p7ocqph3" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/components/sierra_inventory_popup_high_res/sierra_inventory_slot_high_res/sierra_inventory_slot_high_res.tscn" id="3_5a7yr"]
-[ext_resource type="Texture2D" uid="uid://dlvj0ctf2ud1v" path="res://addons/popochiu/engine/objects/gui/resources/images/btn_up_high_res.png" id="4_27l5k"]
-[ext_resource type="Texture2D" uid="uid://c0e3w2vf6q4t8" path="res://addons/popochiu/engine/objects/gui/resources/images/btn_down_high_res.png" id="5_5a7yr"]
+[ext_resource type="Texture2D" uid="uid://b51ovma88hm0d" path="res://addons/popochiu/engine/objects/gui/resources/images/btn_up_high_res.svg" id="4_5a7yr"]
+[ext_resource type="Texture2D" uid="uid://dcu5ub7t0qbyu" path="res://addons/popochiu/engine/objects/gui/resources/images/btn_down_high_res.svg" id="5_5a7yr"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5xjfw"]
-atlas = ExtResource("4_27l5k")
+atlas = ExtResource("4_5a7yr")
 region = Rect2(0, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mq4sk"]
-atlas = ExtResource("4_27l5k")
+atlas = ExtResource("4_5a7yr")
 region = Rect2(128, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_2rabq"]
-atlas = ExtResource("4_27l5k")
+atlas = ExtResource("4_5a7yr")
 region = Rect2(64, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_hw2h8"]
-atlas = ExtResource("4_27l5k")
+atlas = ExtResource("4_5a7yr")
 region = Rect2(192, 0, 64, 64)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6237a"]

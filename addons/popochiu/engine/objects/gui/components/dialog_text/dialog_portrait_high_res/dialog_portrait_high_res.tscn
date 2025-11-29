@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_n84lh"]
 [ext_resource type="Script" uid="uid://bv77wllsgc5ht" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_portrait/dialog_portrait.gd" id="2_la241"]
-[ext_resource type="Texture2D" uid="uid://dyu50ujtj4j3m" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/images/ico_continue_high_res.png" id="3_n84lh"]
+[ext_resource type="Texture2D" uid="uid://bcwof1u6ctt8v" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/images/ico_continue_high_res.svg" id="3_n84lh"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_8fbbc"]
 
@@ -82,7 +82,6 @@ meta_underlined = false
 
 [node name="ContinueIcon" type="TextureProgressBar" parent="PanelContainer/MarginContainer/HBoxContainer/TextContainer/RichTextLabel"]
 unique_name_in_owner = true
-texture_filter = 1
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0

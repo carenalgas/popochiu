@@ -6,9 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://88vc0bigdbnu" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.png" id="4_p7bdt"]
 [ext_resource type="PackedScene" uid="uid://bog4i3sdck4n" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/components/sierra_inventory_popup_high_res/sierra_inventory_grid_high_res.tscn" id="5_s3yhq"]
 [ext_resource type="ButtonGroup" uid="uid://dyskyd66yevlj" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_inventory_popup/sierra_inventory_button_group.tres" id="6_h60af"]
-[ext_resource type="Texture2D" uid="uid://bncdfimof15sn" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_interact.png" id="7_s3yhq"]
-[ext_resource type="Texture2D" uid="uid://c4kd8sphjxisr" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_look.png" id="8_s3yhq"]
-[ext_resource type="Texture2D" uid="uid://di3gdc1l44k2r" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_talk.png" id="9_a5pgp"]
+[ext_resource type="Texture2D" uid="uid://dq1i0kltkr8nf" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_interact.svg" id="7_s3yhq"]
+[ext_resource type="Texture2D" uid="uid://cjtycaxrm2v3g" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_look.svg" id="8_a5pgp"]
+[ext_resource type="Texture2D" uid="uid://dc3n1pom0d00p" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_talk.svg" id="9_p7bdt"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0yihc"]
 
@@ -18,50 +18,50 @@ content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 bg_color = Color(0, 0, 0, 0.705882)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 expand_margin_left = 4.0
 expand_margin_top = 4.0
 expand_margin_right = 4.0
 expand_margin_bottom = 4.0
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_t6f3x"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_w2s1j"]
 atlas = ExtResource("7_s3yhq")
 region = Rect2(0, 0, 98, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2tl6r"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_8v1yl"]
 atlas = ExtResource("7_s3yhq")
 region = Rect2(0, 96, 98, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_u6es1"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_hihp1"]
 atlas = ExtResource("7_s3yhq")
 region = Rect2(0, 96, 98, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_3r3in"]
-atlas = ExtResource("8_s3yhq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_xsx8m"]
+atlas = ExtResource("8_a5pgp")
 region = Rect2(0, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2idn6"]
-atlas = ExtResource("8_s3yhq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_b7r60"]
+atlas = ExtResource("8_a5pgp")
 region = Rect2(0, 96, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_mndsc"]
-atlas = ExtResource("8_s3yhq")
+[sub_resource type="AtlasTexture" id="AtlasTexture_3xiwy"]
+atlas = ExtResource("8_a5pgp")
 region = Rect2(0, 96, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_hb12v"]
-atlas = ExtResource("9_a5pgp")
-region = Rect2(0, 0, 102, 96)
+[sub_resource type="AtlasTexture" id="AtlasTexture_pwy2t"]
+atlas = ExtResource("9_p7bdt")
+region = Rect2(0, 0, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_b4bqk"]
-atlas = ExtResource("9_a5pgp")
-region = Rect2(0, 96, 102, 96)
+[sub_resource type="AtlasTexture" id="AtlasTexture_2sopn"]
+atlas = ExtResource("9_p7bdt")
+region = Rect2(0, 96, 96, 96)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_w2dlm"]
-atlas = ExtResource("9_a5pgp")
-region = Rect2(0, 96, 102, 96)
+[sub_resource type="AtlasTexture" id="AtlasTexture_nw2l1"]
+atlas = ExtResource("9_p7bdt")
+region = Rect2(0, 96, 96, 96)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ba8hg"]
 
@@ -162,9 +162,9 @@ texture_filter = 1
 layout_mode = 2
 toggle_mode = true
 button_group = ExtResource("6_h60af")
-texture_normal = SubResource("AtlasTexture_t6f3x")
-texture_pressed = SubResource("AtlasTexture_2tl6r")
-texture_hover = SubResource("AtlasTexture_u6es1")
+texture_normal = SubResource("AtlasTexture_w2s1j")
+texture_pressed = SubResource("AtlasTexture_8v1yl")
+texture_hover = SubResource("AtlasTexture_hihp1")
 
 [node name="Look" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/CommandsContainer"]
 unique_name_in_owner = true
@@ -172,9 +172,9 @@ texture_filter = 1
 layout_mode = 2
 toggle_mode = true
 button_group = ExtResource("6_h60af")
-texture_normal = SubResource("AtlasTexture_3r3in")
-texture_pressed = SubResource("AtlasTexture_2idn6")
-texture_hover = SubResource("AtlasTexture_mndsc")
+texture_normal = SubResource("AtlasTexture_xsx8m")
+texture_pressed = SubResource("AtlasTexture_b7r60")
+texture_hover = SubResource("AtlasTexture_3xiwy")
 
 [node name="Talk" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/CommandsContainer"]
 unique_name_in_owner = true
@@ -182,9 +182,9 @@ texture_filter = 1
 layout_mode = 2
 toggle_mode = true
 button_group = ExtResource("6_h60af")
-texture_normal = SubResource("AtlasTexture_hb12v")
-texture_pressed = SubResource("AtlasTexture_b4bqk")
-texture_hover = SubResource("AtlasTexture_w2dlm")
+texture_normal = SubResource("AtlasTexture_pwy2t")
+texture_pressed = SubResource("AtlasTexture_2sopn")
+texture_hover = SubResource("AtlasTexture_nw2l1")
 
 [node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
