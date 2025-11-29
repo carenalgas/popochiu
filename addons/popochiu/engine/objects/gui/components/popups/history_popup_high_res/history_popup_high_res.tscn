@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://b6dm3xvvr7dvi" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/components/dialog_line.tscn" id="3_kitve"]
 [ext_resource type="PackedScene" uid="uid://2mnjw3qsi8hc" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/components/interaction_line.tscn" id="4_ckqj2"]
 [ext_resource type="StyleBox" uid="uid://bwanhyu2llpeg" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container_high_res.tres" id="5_dtsrc"]
-[ext_resource type="Texture2D" uid="uid://bomk4702jmqo7" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.png" id="6_0crwm"]
-[ext_resource type="Texture2D" uid="uid://88vc0bigdbnu" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.png" id="7_dtsrc"]
+[ext_resource type="Texture2D" uid="uid://crfvalg8jyuni" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.svg" id="6_0crwm"]
+[ext_resource type="Texture2D" uid="uid://ccjfdeebj3yx3" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.svg" id="7_dtsrc"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xipc1"]
 

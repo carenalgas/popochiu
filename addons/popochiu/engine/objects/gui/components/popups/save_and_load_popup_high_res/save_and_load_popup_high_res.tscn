@@ -3,8 +3,8 @@
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_q2ioi"]
 [ext_resource type="Script" uid="uid://bsxq0pn10d230" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup/save_and_load_popup.gd" id="2_3uyov"]
 [ext_resource type="StyleBox" uid="uid://bwanhyu2llpeg" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container_high_res.tres" id="3_ftcta"]
-[ext_resource type="Texture2D" uid="uid://bomk4702jmqo7" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.png" id="4_q2ioi"]
-[ext_resource type="Texture2D" uid="uid://88vc0bigdbnu" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.png" id="5_ftcta"]
+[ext_resource type="Texture2D" uid="uid://crfvalg8jyuni" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.svg" id="4_q2ioi"]
+[ext_resource type="Texture2D" uid="uid://ccjfdeebj3yx3" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.svg" id="5_ftcta"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yg86r"]
 

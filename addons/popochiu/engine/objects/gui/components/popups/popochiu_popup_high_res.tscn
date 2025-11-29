@@ -3,8 +3,8 @@
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_36l0k"]
 [ext_resource type="Script" uid="uid://ixvmsi5t8qx6" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup.gd" id="2_dcoif"]
 [ext_resource type="StyleBox" uid="uid://bwanhyu2llpeg" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container_high_res.tres" id="3_dcoif"]
-[ext_resource type="Texture2D" uid="uid://bomk4702jmqo7" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.png" id="4_36l0k"]
-[ext_resource type="Texture2D" uid="uid://88vc0bigdbnu" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.png" id="5_dcoif"]
+[ext_resource type="Texture2D" uid="uid://crfvalg8jyuni" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.svg" id="4_36l0k"]
+[ext_resource type="Texture2D" uid="uid://ccjfdeebj3yx3" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.svg" id="5_dcoif"]
 
 [node name="PopochiuPopup" type="Control" groups=["popochiu_gui_popup"]]
 layout_mode = 3
