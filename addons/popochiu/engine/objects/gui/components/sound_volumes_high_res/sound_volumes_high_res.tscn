@@ -12,11 +12,11 @@ script = ExtResource("2_fu0rr")
 
 [node name="ChannelsContainer" type="VBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 32
 alignment = 1
 
 [node name="SlidersContainer" type="VBoxContainer" parent="."]
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 32

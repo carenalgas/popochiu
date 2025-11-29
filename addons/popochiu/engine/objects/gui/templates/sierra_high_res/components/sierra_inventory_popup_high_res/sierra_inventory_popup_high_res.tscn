@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://bu0t53x33xolm"]
+[gd_scene load_steps=21 format=3 uid="uid://bu0t53x33xolm"]
 
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_s3yhq"]
 [ext_resource type="Script" uid="uid://cg0ikp0rt6t05" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_inventory_popup/sierra_inventory_popup.gd" id="2_wsm41"]
@@ -62,26 +62,6 @@ region = Rect2(0, 96, 96, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_nw2l1"]
 atlas = ExtResource("9_p7bdt")
 region = Rect2(0, 96, 96, 96)
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ba8hg"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_lha4x"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vkbfs"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3xhdb"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_rqb31"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dpu0r"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7d0vl"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_g5f4c"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7a16g"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ksnpe"]
 
 [node name="SierraInventoryPopupHighRes" type="Control" groups=["popochiu_gui_popup"]]
 layout_mode = 3
@@ -186,26 +166,23 @@ texture_normal = SubResource("AtlasTexture_pwy2t")
 texture_pressed = SubResource("AtlasTexture_2sopn")
 texture_hover = SubResource("AtlasTexture_nw2l1")
 
-[node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer"]
-unique_name_in_owner = true
+[node name="ButtonsContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer"]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 5
-theme_override_styles/normal = SubResource("StyleBoxEmpty_ba8hg")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_lha4x")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_vkbfs")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_3xhdb")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_rqb31")
+size_flags_horizontal = 10
+theme_override_constants/separation = 32
+
+[node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/ButtonsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
 text = "OK"
 
-[node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer"]
+[node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/ButtonsContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 5
-theme_override_styles/normal = SubResource("StyleBoxEmpty_dpu0r")
-theme_override_styles/pressed = SubResource("StyleBoxEmpty_7d0vl")
-theme_override_styles/hover = SubResource("StyleBoxEmpty_g5f4c")
-theme_override_styles/disabled = SubResource("StyleBoxEmpty_7a16g")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_ksnpe")
+size_flags_horizontal = 8
+size_flags_vertical = 8
 text = "Back"

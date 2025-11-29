@@ -77,5 +77,6 @@ text = "OK"
 
 [node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 text = "Back"

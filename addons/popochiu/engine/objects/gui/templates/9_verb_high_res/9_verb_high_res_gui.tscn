@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_vh6r4"]
 [ext_resource type="Script" uid="uid://dl4q2jo1dcyuu" path="res://addons/popochiu/engine/objects/gui/templates/9_verb_high_res/9_verb_high_res_gui.gd" id="2_vh6r4"]
-[ext_resource type="Texture2D" uid="uid://dy0g7xxf2trrk" path="res://addons/popochiu/engine/objects/gui/templates/9_verb_high_res/images/9_verb_high_res_cursor.png" id="3_ifaax"]
+[ext_resource type="Texture2D" uid="uid://bhcjgr77x7vhe" path="res://addons/popochiu/engine/objects/gui/templates/9_verb_high_res/images/9_verb_high_res_cursor.svg" id="3_b1g0v"]
 [ext_resource type="PackedScene" uid="uid://57pxdsat7ucc" path="res://addons/popochiu/engine/objects/gui/templates/9_verb_high_res/components/9_verb_panel_high_res/9_verb_panel_high_res.tscn" id="4_ifaax"]
 [ext_resource type="PackedScene" uid="uid://c0igkpb3nl4yw" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_overhead_high_res/dialog_overhead_high_res.tscn" id="5_vh6r4"]
 [ext_resource type="PackedScene" uid="uid://uh0x1asdqaqv" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu_high_res/dialog_menu_high_res.tscn" id="6_b1g0v"]
@@ -14,54 +14,54 @@
 [ext_resource type="PackedScene" uid="uid://cgrq6i3a8uc0y" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup_high_res/history_popup_high_res.tscn" id="11_vh6r4"]
 [ext_resource type="PackedScene" uid="uid://h03a1sbv2kn1" path="res://addons/popochiu/engine/objects/gui/templates/9_verb_high_res/components/9_verb_quit_popup_high_res/9_verb_quit_popup_high_res.tscn" id="12_ifaax"]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_lgei6"]
+atlas = ExtResource("3_b1g0v")
+region = Rect2(54, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bp74k"]
+atlas = ExtResource("3_b1g0v")
+region = Rect2(108, 0, 54, 54)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g2u41"]
+atlas = ExtResource("3_b1g0v")
+region = Rect2(162, 0, 54, 54)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_vh6r4"]
-atlas = ExtResource("3_ifaax")
-region = Rect2(32, 0, 32, 32)
+atlas = ExtResource("3_b1g0v")
+region = Rect2(216, 0, 54, 54)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_b1g0v"]
-atlas = ExtResource("3_ifaax")
-region = Rect2(64, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_lgei6"]
-atlas = ExtResource("3_ifaax")
-region = Rect2(96, 0, 32, 32)
+atlas = ExtResource("3_b1g0v")
+region = Rect2(0, 0, 54, 54)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_r74qr"]
-atlas = ExtResource("3_ifaax")
-region = Rect2(128, 0, 32, 32)
+atlas = ExtResource("3_b1g0v")
+region = Rect2(270, 0, 54, 54)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_kln67"]
-atlas = ExtResource("3_ifaax")
-region = Rect2(0, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_s4bhq"]
-atlas = ExtResource("3_ifaax")
-region = Rect2(160, 0, 32, 32)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_nb1xq"]
-atlas = ExtResource("3_ifaax")
-region = Rect2(192, 0, 32, 32)
+atlas = ExtResource("3_b1g0v")
+region = Rect2(324, 0, 54, 54)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_xtf0b"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_vh6r4")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_b1g0v")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_lgei6")
 }, {
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_bp74k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g2u41")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g2u41")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bp74k")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_lgei6")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_b1g0v")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_vh6r4")
 }],
 "loop": true,
 "name": &"active",
@@ -69,7 +69,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_r74qr")
+"texture": SubResource("AtlasTexture_vh6r4")
 }],
 "loop": true,
 "name": &"gui",
@@ -77,7 +77,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_kln67")
+"texture": SubResource("AtlasTexture_b1g0v")
 }],
 "loop": true,
 "name": &"normal",
@@ -85,7 +85,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_s4bhq")
+"texture": SubResource("AtlasTexture_r74qr")
 }],
 "loop": true,
 "name": &"wait",
@@ -93,7 +93,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_nb1xq")
+"texture": SubResource("AtlasTexture_kln67")
 }],
 "loop": true,
 "name": &"walk_to",
@@ -113,7 +113,7 @@ script = ExtResource("2_vh6r4")
 
 [node name="Cursor" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_xtf0b")
-animation = &"active"
+animation = &"walk_to"
 
 [node name="9VerbPanel" parent="." instance=ExtResource("4_ifaax")]
 unique_name_in_owner = true

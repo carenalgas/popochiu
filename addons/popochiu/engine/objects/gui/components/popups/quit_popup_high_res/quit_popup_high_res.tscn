@@ -60,6 +60,7 @@ texture_pressed = ExtResource("5_45ubw")
 texture_hover = ExtResource("5_45ubw")
 
 [node name="Question" type="Label" parent="Overlay/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(960, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Are you sure you want to quit?"
@@ -75,11 +76,13 @@ alignment = 1
 
 [node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 text = "OK"
 
 [node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
 layout_mode = 2
 text = "Cancel
 "
