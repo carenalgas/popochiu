@@ -1403,6 +1403,10 @@ func start_following_character(character: Variant = null) -> void:
 	if not _current_followed_character.movement_ended.is_connected(_on_leader_stopped):
 		_current_followed_character.movement_ended.connect(_on_leader_stopped)
 
+	# Connect to walk start to handle mid-movement destination changes (e.g., leader changes direction).
+	if not _current_followed_character.started_walk_to.is_connected(_on_leader_started_walk):
+		_current_followed_character.started_walk_to.connect(_on_leader_started_walk)
+
 	# NOTE: We intentionally do NOT call _check_and_follow_leader() here.
 	# The follower should only react to the leader's MOVEMENT, not their static position.
 	# This prevents the follower from moving when the scene loads and the leader is stationary.
@@ -1416,6 +1420,8 @@ func stop_following_character() -> void:
 			_current_followed_character.position_updated.disconnect(_on_leader_position_updated)
 		if _current_followed_character.movement_ended.is_connected(_on_leader_stopped):
 			_current_followed_character.movement_ended.disconnect(_on_leader_stopped)
+		if _current_followed_character.started_walk_to.is_connected(_on_leader_started_walk):
+			_current_followed_character.started_walk_to.disconnect(_on_leader_started_walk)
 
 	_current_followed_character = null
 
@@ -1702,6 +1708,24 @@ func _on_leader_position_updated(leader: PopochiuCharacter, leader_pos: Vector2)
 	if is_moving:
 		return
 
+	_check_and_follow_leader()
+
+
+# Called when the leader starts a new walk (including direction changes).
+# This handles mid-movement destination updates so the follower doesn't walk past the leader.
+func _on_leader_started_walk(leader: PopochiuCharacter, start: Vector2, end: Vector2) -> void:
+	# Only react if we're actually following someone.
+	if not _current_followed_character:
+		return
+
+	# If follower is NOT moving, use normal threshold-based logic.
+	if not is_moving:
+		_check_and_follow_leader()
+		return
+
+	# Follower IS moving - stop and re-evaluate threshold.
+	# This handles cases where leader changes direction and crosses follower's path.
+	await stop_walking()
 	_check_and_follow_leader()
 
 
