@@ -1766,6 +1766,19 @@ func _check_and_follow_leader() -> void:
 			# Leader is within threshold, don't move.
 			return
 
+	# If leader is moving, check if following would put us ahead of them.
+	# This prevents the follower from overtaking the leader when they reverse direction.
+	var leader_destination := _current_followed_character.target_position
+	if leader_destination != Vector2.INF:
+		# Check X axis: if leader is right of us but heading left of us, wait.
+		if (leader_pos.x > position.x and leader_destination.x < position.x) or \
+		   (leader_pos.x < position.x and leader_destination.x > position.x):
+			return
+		# Check Y axis: if leader is below us but heading above us, wait.
+		if (leader_pos.y > position.y and leader_destination.y < position.y) or \
+		   (leader_pos.y < position.y and leader_destination.y > position.y):
+			return
+
 	# Leader is far enough (or threshold is zero) - calculate follow position.
 	_update_follow_target(leader_pos)
 
