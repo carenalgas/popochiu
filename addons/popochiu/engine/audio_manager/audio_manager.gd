@@ -279,6 +279,11 @@ func _play(
 	
 	player.bus = cue.bus
 	player.play(from_position)
+
+	if player.stream.get_class() == 'AudioStreamWAV': 
+		player.stream.loop_mode = (
+			AudioStreamWAV.LOOP_FORWARD if cue.loop else AudioStreamWAV.LOOP_DISABLED
+		)
 	
 	if not player.finished.is_connected(_on_audio_stream_player_finished):
 		player.finished.connect(_on_audio_stream_player_finished.bind(player, cue_name, 0))
