@@ -42,7 +42,9 @@ func _add_animation_players_to_inventory_items() -> Completion:
 	
 	while file_name != "":
 		if dir.current_is_dir():
-			var item_scene_path: String = PopochiuResources.get_data_value("inventory_items", file_name.to_snake_case(), null)
+			var item_scene_path: String = PopochiuResources.get_data_value(
+				"inventory_items", file_name.to_pascal_case(), ""
+			).replace(".tres", ".tscn")
 			if item_scene_path != null and FileAccess.file_exists(item_scene_path):
 				# Process one item at a time to avoid memory issues
 				if _update_inventory_item_by_path(item_scene_path):

@@ -110,11 +110,7 @@ func _add_new_components() -> Completion:
 
 func _update_save_and_load_popup() -> Completion:
 	# Update the save_and_load_popup.gd in the game's gui folder
-	DirAccess.rename_absolute(
-		ADDON_SAVE_AND_LOAD_POPUP_SCRIPT,
-		GAME_SAVE_AND_LOAD_POPUP_SCRIPT
-	)
-	
+	DirAccess.copy_absolute(ADDON_SAVE_AND_LOAD_POPUP_SCRIPT, GAME_SAVE_AND_LOAD_POPUP_SCRIPT)
 	return Completion.DONE
 
 
