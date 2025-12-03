@@ -1,6 +1,6 @@
 [gd_scene load_steps=27 format=3 uid="uid://b1pvo43ed3eey"]
 
-[ext_resource type="Script" uid="uid://pxyudtyvd2gl" path="res://addons/popochiu/engine/objects/transition_layer/transition_layer.gd" id="1"]
+[ext_resource type="Script" uid="uid://8b7nsehqvamg" path="res://addons/popochiu/engine/objects/transition_layer/popochiu_transition_layer.gd" id="1"]
 [ext_resource type="Shader" uid="uid://cwb0kli6t86g0" path="res://addons/popochiu/engine/shaders/transition_layer.gdshader" id="2_uakjn"]
 
 [sub_resource type="Animation" id="Animation_eqewg"]
@@ -726,7 +726,7 @@ shader_parameter/centered = true
 shader_parameter/stretch_mode = 0
 shader_parameter/windowbox = false
 shader_parameter/repeat = false
-shader_parameter/curtain_size = Vector2(320, 180)
+shader_parameter/curtain_size = Vector2(384, 216)
 
 [node name="TransitionLayer" type="Control"]
 visible = false
@@ -752,3 +752,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[connection signal="animation_libraries_updated" from="AnimationPlayer" to="." method="_on_animation_player_animation_libraries_updated"]
+[connection signal="animation_list_changed" from="AnimationPlayer" to="." method="_on_animation_player_animation_list_changed"]

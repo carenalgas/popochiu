@@ -17,6 +17,8 @@ enum PLAY_MODE {
 func _ready() -> void:
 	# Connect to childrens' signals
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
+	#$AnimationPlayer.animation_libraries_updated.connect(PopochiuConfig.reload_transitions())
+	#$AnimationPlayer.animation_list_changed.connect(PopochiuConfig.reload_transitions())
 	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
 
 	# Pass the curtain size to the shader
@@ -352,3 +354,11 @@ func _hide_animations(anim_list: PackedStringArray) -> PackedStringArray:
 	return anim_list
 
 #endregion
+
+
+func _on_animation_player_animation_list_changed() -> void:
+	PopochiuConfig.reload_transitions()
+
+
+func _on_animation_player_animation_libraries_updated() -> void:
+	PopochiuConfig.reload_transitions()
