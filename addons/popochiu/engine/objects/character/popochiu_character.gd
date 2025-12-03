@@ -1396,32 +1396,32 @@ func start_following_character(character: Variant = null) -> void:
 	_current_followed_character = target_character
 
 	# Connect to position updates for real-time following.
-	if not _current_followed_character.position_updated.is_connected(_on_leader_position_updated):
-		_current_followed_character.position_updated.connect(_on_leader_position_updated)
+	if not _current_followed_character.position_updated.is_connected(_on_followed_character_position_updated):
+		_current_followed_character.position_updated.connect(_on_followed_character_position_updated)
 
 	# Connect to movement end to snap to final position.
-	if not _current_followed_character.movement_ended.is_connected(_on_leader_stopped):
-		_current_followed_character.movement_ended.connect(_on_leader_stopped)
+	if not _current_followed_character.movement_ended.is_connected(_on_followed_character_stopped):
+		_current_followed_character.movement_ended.connect(_on_followed_character_stopped)
 
-	# Connect to walk start to handle mid-movement destination changes (e.g., leader changes direction).
-	if not _current_followed_character.started_walk_to.is_connected(_on_leader_started_walk):
-		_current_followed_character.started_walk_to.connect(_on_leader_started_walk)
+	# Connect to walk start to handle mid-movement destination changes (e.g., followed character changes direction).
+	if not _current_followed_character.started_walk_to.is_connected(_on_followed_character_started_walk):
+		_current_followed_character.started_walk_to.connect(_on_followed_character_started_walk)
 
-	# NOTE: We intentionally do NOT call _check_and_follow_leader() here.
-	# The follower should only react to the leader's MOVEMENT, not their static position.
-	# This prevents the follower from moving when the scene loads and the leader is stationary.
+	# NOTE: We intentionally do NOT call _check_and_follow_character() here.
+	# The follower should only react to the followed character's MOVEMENT, not their static position.
+	# This prevents the follower from moving when the scene loads and the followed character is stationary.
 
 
 ## Makes this character stop following another character.
 func stop_following_character() -> void:
 	if _current_followed_character:
 		# Safely disconnect signals.
-		if _current_followed_character.position_updated.is_connected(_on_leader_position_updated):
-			_current_followed_character.position_updated.disconnect(_on_leader_position_updated)
-		if _current_followed_character.movement_ended.is_connected(_on_leader_stopped):
-			_current_followed_character.movement_ended.disconnect(_on_leader_stopped)
-		if _current_followed_character.started_walk_to.is_connected(_on_leader_started_walk):
-			_current_followed_character.started_walk_to.disconnect(_on_leader_started_walk)
+		if _current_followed_character.position_updated.is_connected(_on_followed_character_position_updated):
+			_current_followed_character.position_updated.disconnect(_on_followed_character_position_updated)
+		if _current_followed_character.movement_ended.is_connected(_on_followed_character_stopped):
+			_current_followed_character.movement_ended.disconnect(_on_followed_character_stopped)
+		if _current_followed_character.started_walk_to.is_connected(_on_followed_character_started_walk):
+			_current_followed_character.started_walk_to.disconnect(_on_followed_character_started_walk)
 
 	_current_followed_character = null
 
@@ -1700,52 +1700,52 @@ func _clear_navigation_path() -> void:
 	_last_emitted_position = Vector2.INF
 
 
-# Called every time the leader's position updates during movement.
+# Called every time the followed character's position updates during movement.
 # Only triggers follow movement if threshold is exceeded and follower is not already moving.
-func _on_leader_position_updated(leader: PopochiuCharacter, leader_pos: Vector2) -> void:
+func _on_followed_character_position_updated(followed_character: PopochiuCharacter, followed_character_pos: Vector2) -> void:
 	# Early exit: don't interrupt current movement.
 	# This prevents jitter from constant re-targeting while follower is already moving.
 	if is_moving:
 		return
 
-	_check_and_follow_leader()
+	_check_and_follow_character()
 
 
-# Called when the leader starts a new walk (including direction changes).
-# This handles mid-movement destination updates so the follower doesn't walk past the leader.
-func _on_leader_started_walk(leader: PopochiuCharacter, start: Vector2, end: Vector2) -> void:
+# Called when the followed character starts a new walk (including direction changes).
+# This handles mid-movement destination updates so the follower doesn't walk past the followed character.
+func _on_followed_character_started_walk(followed_character: PopochiuCharacter, start: Vector2, end: Vector2) -> void:
 	# Only react if we're actually following someone.
 	if not _current_followed_character:
 		return
 
 	# If follower is NOT moving, use normal threshold-based logic.
 	if not is_moving:
-		_check_and_follow_leader()
+		_check_and_follow_character()
 		return
 
 	# Follower IS moving - stop and re-evaluate threshold.
-	# This handles cases where leader changes direction and crosses follower's path.
+	# This handles cases where followed character changes direction and crosses follower's path.
 	await stop_walking()
-	_check_and_follow_leader()
+	_check_and_follow_character()
 
 
-# Called when the leader stops moving.
+# Called when the followed character stops moving.
 # Ensures follower snaps to final offset position.
-func _on_leader_stopped() -> void:
+func _on_followed_character_stopped() -> void:
 	# Only react if we're actually following someone.
 	if not _current_followed_character:
 		return
 
-	# Wait a frame to ensure leader's final position is settled.
+	# Wait a frame to ensure followed character's final position is settled.
 	await get_tree().process_frame
 
 	# Final position snap.
-	_check_and_follow_leader()
+	_check_and_follow_character()
 
 
 # Core logic: checks distance threshold and initiates following if needed.
 # This is the single source of truth for follow behavior.
-func _check_and_follow_leader() -> void:
+func _check_and_follow_character() -> void:
 	if not _current_followed_character:
 		return
 
@@ -1753,60 +1753,60 @@ func _check_and_follow_leader() -> void:
 	if is_moving:
 		return
 
-	var leader_pos := _current_followed_character.position
+	var followed_character_pos := _current_followed_character.position
 
-	# Threshold check: only move if leader is far enough away.
+	# Threshold check: only move if followed character is far enough away.
 	# Skip expensive distance calculation if threshold is zero (always follow).
 	if follow_character_threshold.length_squared() > 0:
-		var distance_to_leader := leader_pos - position
+		var distance_to_followed_character := followed_character_pos - position
 		# Use OR logic: trigger if threshold exceeded on EITHER axis.
 		# This creates rubber-band effect.
-		if abs(distance_to_leader.x) <= abs(follow_character_threshold.x) and \
-		   abs(distance_to_leader.y) <= abs(follow_character_threshold.y):
-			# Leader is within threshold, don't move.
+		if abs(distance_to_followed_character.x) <= abs(follow_character_threshold.x) and \
+		   abs(distance_to_followed_character.y) <= abs(follow_character_threshold.y):
+			# Followed character is within threshold, don't move.
 			return
 
-	# If leader is moving, check if following would put us ahead of them.
-	# This prevents the follower from overtaking the leader when they reverse direction.
-	var leader_destination := _current_followed_character.target_position
-	if leader_destination != Vector2.INF:
-		# Check X axis: if leader is right of us but heading left of us, wait.
-		if (leader_pos.x > position.x and leader_destination.x < position.x) or \
-		   (leader_pos.x < position.x and leader_destination.x > position.x):
+	# If followed character is moving, check if following would put us ahead of them.
+	# This prevents the follower from overtaking the followed character when they reverse direction.
+	var followed_character_destination := _current_followed_character.target_position
+	if followed_character_destination != Vector2.INF:
+		# Check X axis: if followed character is right of us but heading left of us, wait.
+		if (followed_character_pos.x > position.x and followed_character_destination.x < position.x) or \
+		   (followed_character_pos.x < position.x and followed_character_destination.x > position.x):
 			return
-		# Check Y axis: if leader is below us but heading above us, wait.
-		if (leader_pos.y > position.y and leader_destination.y < position.y) or \
-		   (leader_pos.y < position.y and leader_destination.y > position.y):
+		# Check Y axis: if followed character is below us but heading above us, wait.
+		if (followed_character_pos.y > position.y and followed_character_destination.y < position.y) or \
+		   (followed_character_pos.y < position.y and followed_character_destination.y > position.y):
 			return
 
-	# Leader is far enough (or threshold is zero) - calculate follow position.
-	_update_follow_target(leader_pos)
+	# Followed character is far enough (or threshold is zero) - calculate follow position.
+	_update_follow_target(followed_character_pos)
 
 
-# Calculates the target follow position based on leader's position and movement direction.
+# Calculates the target follow position based on followed character's position and movement direction.
 # Initiates walk to that position.
-func _update_follow_target(leader_pos: Vector2) -> void:
+func _update_follow_target(followed_character_pos: Vector2) -> void:
 	if not _current_followed_character:
 		return
 
-	# Determine leader's movement direction and the base position to walk towards.
-	var leader_destination := _current_followed_character.target_position
+	# Determine followed character's movement direction and the base position to walk towards.
+	var followed_character_destination := _current_followed_character.target_position
 	var target_base_pos: Vector2
 	var movement_direction: Vector2
 
-	# If leader is moving, use their destination as the base position for offset calculation.
-	# This ensures the follower walks to where the leader is GOING, not where they ARE.
-	if leader_destination != Vector2.INF:
-		target_base_pos = leader_destination
-		movement_direction = (leader_destination - leader_pos).normalized()
+	# If followed character is moving, use their destination as the base position for offset calculation.
+	# This ensures the follower walks to where the followed character is GOING, not where they ARE.
+	if followed_character_destination != Vector2.INF:
+		target_base_pos = followed_character_destination
+		movement_direction = (followed_character_destination - followed_character_pos).normalized()
 	else:
-		# Leader is stationary, use their current position.
-		target_base_pos = leader_pos
-		movement_direction = (leader_pos - position).normalized()
+		# Followed character is stationary, use their current position.
+		target_base_pos = followed_character_pos
+		movement_direction = (followed_character_pos - position).normalized()
 
-	# Handle edge case: no meaningful direction (leader on top of follower).
+	# Handle edge case: no meaningful direction (followed character on top of follower).
 	if movement_direction.length_squared() < 0.01:
-		# Default to leader facing down.
+		# Default to followed character facing down.
 		movement_direction = Vector2.DOWN
 
 	# Calculate lateral offset based on movement direction.
