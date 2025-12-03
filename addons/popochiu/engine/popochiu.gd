@@ -152,7 +152,7 @@ func _ready() -> void:
 	commands = load(PopochiuResources.GUI_COMMANDS).new()
 	
 	# Instantiate the Transitions Layer node
-	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
+	tl = load(PopochiuResources.TRANSITION_LAYER_SCENE).instantiate()
 	
 	# Calculate the scale that could be applied
 	scale = Vector2(width, height) / PopochiuResources.RETRO_RESOLUTION

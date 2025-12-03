@@ -64,16 +64,17 @@ const I_SNGL = "res://game/autoloads/i.gd"
 const D_SNGL = "res://game/autoloads/d.gd"
 const A_SNGL = "res://game/autoloads/a.gd"
 const G_SNGL = "res://game/autoloads/g.gd"
+const TL_SNGL = "res://game/autoloads/tl.gd"
 # FIRST INSTALL ------------------------------------------------------------------------------------
 const GI = 0
 const TL = 1
-const TRANSITION_LAYER_ADDON =\
-"res://addons/popochiu/engine/objects/transition_layer/transition_layer.tscn"
+const TRANSITION_LAYER_ADDON = "res://addons/popochiu/engine/objects/transition_layer/popochiu_transition_layer.tscn"
+
 # ENGINE -------------------------------------------------------------------------------------------
 const POPOCHIU_SCENE = "res://addons/popochiu/engine/popochiu.tscn"
-const AUDIO_MANAGER =\
+const AUDIO_MANAGER = \
 "res://addons/popochiu/engine/audio_manager/audio_manager.tscn"
-const CURSOR_TYPE =\
+const CURSOR_TYPE = \
 preload("res://addons/popochiu/engine/cursor/cursor.gd").Type
 const DATA = "res://game//popochiu_data.cfg"
 const ROOM_CHILDREN = ["props", "hotspots", "walkable_areas", "regions"]
@@ -201,7 +202,7 @@ const GUI_GAME_FOLDER = GAME_PATH + "gui/"
 const GUI_GAME_SCENE = GUI_GAME_FOLDER + "gui.tscn"
 const GUI_COMMANDS = GUI_GAME_FOLDER + "gui_commands.gd"
 const TRANSITION_LAYER_PATH = GAME_PATH + "transition_layer/"
-const TRANSITION_LAYER_MASKS = TRANSITION_LAYER_PATH + "images/"
+const TRANSITION_LAYER_MASKS = TRANSITION_LAYER_PATH + "textures/"
 const TRANSITION_LAYER_SCENE = TRANSITION_LAYER_PATH + "transition_layer.tscn"
 const TRANSITION_LAYER_CUSTOM_ANIMLIB = "User"
 
@@ -214,7 +215,14 @@ static func init_file_structure() -> bool:
 	for d in _get_directories().values():
 		if not DirAccess.dir_exists_absolute(d):
 			DirAccess.make_dir_recursive_absolute(d)
-	
+
+	# Copy the transition layer scene
+	if is_first_install:
+		var obj = load(TRANSITION_LAYER_ADDON) as PackedScene
+
+		if ResourceSaver.save(obj, TRANSITION_LAYER_SCENE) != OK:
+			PopochiuUtils.print_error("Couldn't copy the transition layer.")
+
 	# ---- Create config files ---------------------------------------------------------------------
 	# Create .cfg file
 	if not FileAccess.file_exists(DATA):
@@ -531,6 +539,8 @@ static func _get_directories() -> Dictionary:
 		CHARACTERS = CHARACTERS_PATH,
 		INVENTORY_ITEMS = INVENTORY_ITEMS_PATH,
 		DIALOGS = DIALOGS_PATH,
+		TRANSITION_LAYER = TRANSITION_LAYER_PATH,
+		TRANSITION_LAYER_TEXTURES = TRANSITION_LAYER_MASKS,
 	}
 
 
