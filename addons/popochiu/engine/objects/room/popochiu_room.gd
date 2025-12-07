@@ -472,6 +472,11 @@ func _on_gui_unblocked() -> void:
 # This method collects all valid navigation obstacles from props and distributes them
 # to each walkable area, then triggers a rebake of the navigation meshes.
 func _setup_navigation_obstacles() -> void:
+	# #433 Guard check: this method is called deferred, so the room may have been removed from
+	# the tree by the time it runs (e.g., when characters are removed during room transitions).
+	if not is_inside_tree():
+		return
+	
 	var walkable_areas = get_walkable_areas()
 	if walkable_areas.is_empty():
 		return

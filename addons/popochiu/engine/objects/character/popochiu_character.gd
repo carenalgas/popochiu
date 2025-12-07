@@ -72,6 +72,10 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## The [member PopochiuCharacter.script_name] of the character that this character should follow
 ## when it moves through the room. Set this in the inspector to have the character automatically
 ## follow another character at runtime.
+@export var face_character := ""
+## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
+## You can use this to define which [Texture] to use as avatar for the character when it speaks
+## using a specific emotion.
 @export var follow_character := ""
 ## The positional offset from the followed character where this character will walk to when following.
 ## [member follow_character_offset.x] defines the lateral (side-to-side) distance. The follower will
@@ -88,13 +92,14 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## Example: [code]Vector2(35, 10)[/code] = "Start following if leader is >35px away horizontally OR >10px away vertically"
 ## Set to [code]Vector2.ZERO[/code] to make the follower move on every step (no threshold).
 @export var follow_character_threshold := Vector2(35, 10)
+## When [code]true[/code], this character will be automatically transferred to the target room when
+## the followed character changes rooms. The follower will appear at the followed character's
+## position plus [member follow_character_offset]. Chain-following is supported: if A follows B
+## and B follows C, and C changes room, both A and B will transfer.
+@export var follow_character_outside_room := false
 ## The [member PopochiuCharacter.script_name] of the character that this character should
 ## continuously face. Set this in the inspector to have the character automatically face another
 ## character at runtime.
-@export var face_character := ""
-## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
-## You can use this to define which [Texture] to use as avatar for the character when it speaks
-## using a specific emotion.
 @export var avatars := []: set = set_avatars
 ## The speed at which the character will move in pixels per frame.
 @export var walk_speed := 200.0

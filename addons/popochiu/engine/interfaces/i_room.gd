@@ -28,6 +28,9 @@ var rooms_states := {}
 
 var _room_instances := {}
 var _use_transition_on_room_change := true
+# Stores characters that should be transferred to the target room when following across rooms.
+# Each entry is a dictionary: { character: PopochiuCharacter, followed_script_name: String, offset: Vector2 }
+var _pending_cross_room_followers := []
 
 
 #region Godot ######################################################################################
@@ -171,6 +174,11 @@ func goto_room(
 	if is_instance_valid(PopochiuUtils.c.player) and Engine.get_process_frames() > 0:
 		PopochiuUtils.c.player.last_room = current.script_name
 	
+	# Collect characters that should follow across rooms before saving state.
+	# This must happen before save_children_states() so followers are excluded from source room.
+	if Engine.get_process_frames() > 0:
+		_collect_cross_room_followers()
+	
 	# Store the room state
 	if store_state:
 		rooms_states[current.script_name] = current.state
@@ -296,6 +304,10 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	await current._on_room_entered()
 	
+	# Add characters that followed across rooms AFTER _on_room_entered() so the followed
+	# character (e.g., player) is already at their final position set by the room script.
+	_add_cross_room_followers()
+	
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.c.player.global_position = Vector2(
 			PopochiuUtils.e.loaded_game.player.position.x,
@@ -349,6 +361,136 @@ func set_current(value: PopochiuRoom) -> void:
 		goto_room(value.script_name)
 	else:
 		current = value
+
+
+#endregion
+
+
+#region Private ####################################################################################
+# Collects characters that should follow across rooms.
+# Iterates through characters in the current room and identifies those with follow_character_outside_room
+# enabled and a valid _current_followed_character. Builds chain recursively and orders result
+# so followed characters come before their followers.
+func _collect_cross_room_followers() -> void:
+	_pending_cross_room_followers.clear()
+	
+	if not is_instance_valid(current):
+		return
+	
+	# Get all characters currently in the room
+	var characters_in_room := current.get_characters()
+	if characters_in_room.is_empty():
+		return
+	
+	# Build a map of who follows whom for chain detection
+	var follower_map := {}  # followed_script_name -> Array of followers
+	for chr: PopochiuCharacter in characters_in_room:
+		if (
+			chr.follow_character_outside_room
+			and is_instance_valid(chr._current_followed_character)
+			and chr != PopochiuUtils.c.player  # Player character doesn't auto-follow
+		):
+			var followed_name: String = chr._current_followed_character.script_name
+			if not follower_map.has(followed_name):
+				follower_map[followed_name] = []
+			follower_map[followed_name].append(chr)
+	
+	if follower_map.is_empty():
+		return
+	
+	# Find the root of the follow chain (the character being followed who isn't following anyone
+	# with follow_character_outside_room, or is the player)
+	var roots: Array[String] = []
+	for followed_name: String in follower_map:
+		var followed_chr: PopochiuCharacter = PopochiuUtils.c.get_character(followed_name)
+		if not is_instance_valid(followed_chr):
+			continue
+		# A root is a character who is followed but either:
+		# - Is the player
+		# - Doesn't have follow_character_outside_room enabled
+		# - Isn't following anyone in the room
+		var is_root: bool = (
+			followed_chr == PopochiuUtils.c.player
+			or not followed_chr.follow_character_outside_room
+			or not is_instance_valid(followed_chr._current_followed_character)
+		)
+		if is_root:
+			roots.append(followed_name)
+	
+	# Process chains starting from roots, adding followers in order (followed first, then followers)
+	var processed := {}
+	for root_name in roots:
+		_collect_followers_recursive(root_name, follower_map, processed)
+	
+	# Remove collected followers from the current room so they won't be saved in source room state
+	for entry in _pending_cross_room_followers:
+		var follower: PopochiuCharacter = entry.character
+		if current.has_character(follower.script_name):
+			current.remove_character(follower)
+
+
+# Recursively collects followers in the correct order (followed characters before their followers).
+func _collect_followers_recursive(
+	followed_name: String,
+	follower_map: Dictionary,
+	processed: Dictionary
+) -> void:
+	if not follower_map.has(followed_name):
+		return
+	
+	for follower: PopochiuCharacter in follower_map[followed_name]:
+		if processed.has(follower.script_name):
+			continue
+		
+		processed[follower.script_name] = true
+		
+		# Store the follower info
+		_pending_cross_room_followers.append({
+			"character": follower,
+			"followed_script_name": followed_name,
+			"offset": follower.follow_character_offset
+		})
+		
+		# Recursively process anyone following this follower
+		_collect_followers_recursive(follower.script_name, follower_map, processed)
+
+
+# Adds characters that followed across rooms to the current room.
+# Positions them relative to their followed character and re-establishes the follow link.
+func _add_cross_room_followers() -> void:
+	if _pending_cross_room_followers.is_empty():
+		return
+	
+	for entry in _pending_cross_room_followers:
+		var follower: PopochiuCharacter = entry.character
+		var followed_name: String = entry.followed_script_name
+		var offset: Vector2 = entry.offset
+		
+		# Get the followed character (should already be in the room)
+		var followed := PopochiuUtils.c.get_character(followed_name)
+		if not is_instance_valid(followed):
+			PopochiuUtils.print_warning(
+				"Cross-room follower '%s' could not find followed character '%s'" %
+				[follower.script_name, followed_name]
+			)
+			continue
+		
+		# Add the follower to the room first
+		if not current.has_character(follower.script_name):
+			current.add_character(follower)
+		
+		# Position the follower relative to the followed character AFTER add_character(),
+		# because add_character() calls update_position() which would overwrite with the
+		# stale _buffered_position from the previous room.
+		var target_position: Vector2 = followed.position + offset
+		follower.position = target_position
+		# Sync the buffered position so it doesn't jump back when movement starts
+		follower._sync_buffered_position()
+		
+		# Re-establish the follow link
+		follower.start_following_character(followed)
+	
+	_pending_cross_room_followers.clear()
 
 
 #endregion
