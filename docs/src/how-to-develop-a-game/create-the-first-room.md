@@ -342,7 +342,7 @@ Since the baseline is in the middle of the prop, it is already correctly positio
 
     This will render the prop non-interactive. The **Clickable** property can also be set on or off in a script, nice when the nature of the prop depends on your game's status.
 
-    **Remember to turn on this property** to follow up with this tutorial!
+    Make sure this property **is set to On** to follow the rest of this tutorial!
 
 Eventually, we want to enable our main character to pick up the toy car and add it to the inventory. For that though, we need some more elements, so we'll get back to that later.  
 For the moment, we'll just script a simple "examine" interaction, but we'll seize the opportunity to learn something new.
