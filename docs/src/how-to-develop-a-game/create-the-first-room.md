@@ -51,7 +51,7 @@ Click OK and your prop will be created. You should see it in the scene tree, und
 
 ![New prop inspector](../../assets/images/getting-started/game_stub-room-6-prop_inspector.png "We can now set the background for the scene")
 
-Now you can see the Prop has a **Texture** parameter. By this time you should be able to figure out what to do. Save the downloaded background sprite in the `game/rooms/house/props/background/` folder, then drag it from Godot Editor file manager to the field in the inspector.  
+Now you can see the Prop has a **Texture** parameter (_15_). By this time you should be able to figure out what to do: Save the downloaded background sprite in the `game/rooms/house/props/background/` folder, then drag it from Godot Editor file manager to the field in the inspector.  
 Your scene should now show the background image.
 
 At this point you have a main character and a main scene defined. These are the minimum steps needed to run a Popochiu game. Treat yourself after all this effort, by hitting the **Run** button at the top right of the editor and seeing your game in action.
@@ -93,7 +93,7 @@ When you have adjusted your walkable area, it should look something like this:
 
 ![The polygon for the floor is over](../../assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click "Edit Polygon" again to complete the walkable area")
 
-Click the **Edit Polygon** button again (_19_)to stop editing the perimeter of the floor.
+Click the **Edit Polygon** button again (_19_) to stop editing the perimeter of the floor.
 
 Save the project and run your game. Your character should now be able to move around the room, without leaving the area you defined.
 
@@ -142,7 +142,7 @@ Let's draw a shape around the window on the wall:
 No need to be too precise or polished, rough edges won't be perceivable while playing your game. You just need to avoid, if possible, overlapping with other hotspots (see "_Baseline_" below, to understand how polygon overlapping works).
 
 Another important property of the hotspot is the "_Walk to point_", which is the coordinates that the character will reach when you click over the hotspot.  
-You can set these coordinates interactively by clicking and dragging the **Walk To point** gizmo wherever you want in the room. You will see that the property with the same name in the inspector will update to reflect the coordinates.
+You can set these coordinates interactively by clicking and dragging the **Walk To Point** gizmo wherever you want in the room. You will see that the property with the same name in the inspector will update to reflect the coordinates.
 
 For our example room, we'll set the following coordinates for the `Window` hotspot:
 
@@ -263,7 +263,7 @@ This comes in very handy for those games that have more player-controlled charac
 ```
 
 Here we are literally waiting for some time to pass. `E` is the object representing the game engine (Popochiu!) and we are asking it to wait for half a second.
-After that, we use the `for`` GDScript keyword to repeat the same code three times.
+After that, we use the `for` GDScript keyword to repeat the same code three times.
 
 !!! info
     This is not a feature of Popochiu, it is standard Godot language. All Popochiu objects and functions are standard Godot functions.  
