@@ -212,8 +212,21 @@ func add_character(chr: PopochiuCharacter) -> void:
 	chr.idle()
 
 
-## Removes [param chr] the [b]$Characters[/b] node without destroying it.
+## Removes [param chr] from the [b]$Characters[/b] node without destroying it.
+## [br][br]
+## [b]Note:[/b] This removal persists across room transitions. A removed character will not be restored
+## when returning to the room. If you want the character to reappear on subsequent visits, either
+## use [method add_character] in the room's [method PopochiuRoom._on_room_entered] callback
+## or hide the character instead ([code]character.visible = false[/code]).
 func remove_character(chr: PopochiuCharacter) -> void:
+	# Only remove if the character is actually a child of this room's $Characters node
+	if chr.get_parent() != $Characters:
+		PopochiuUtils.print_warning(
+			"Attempted to remove character '%s' from room '%s', but it's not a child of this room." %
+			[chr.script_name, script_name]
+		)
+		return
+	
 	# Disconnect character signals before removing
 	_disconnect_obstacle_obj_signals(chr)
 

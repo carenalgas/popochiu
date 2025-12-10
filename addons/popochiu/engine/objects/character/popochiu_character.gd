@@ -1708,6 +1708,10 @@ func _clear_navigation_path() -> void:
 # Called every time the followed character's position updates during movement.
 # Only triggers follow movement if threshold is exceeded and follower is not already moving.
 func _on_followed_character_position_updated(followed_character: PopochiuCharacter, followed_character_pos: Vector2) -> void:
+	# Safety check: if we're not in the tree, we can't process movement
+	if not is_inside_tree():
+		return
+	
 	# Early exit: don't interrupt current movement.
 	# This prevents jitter from constant re-targeting while follower is already moving.
 	if is_moving:
@@ -1721,6 +1725,10 @@ func _on_followed_character_position_updated(followed_character: PopochiuCharact
 func _on_followed_character_started_walk(followed_character: PopochiuCharacter, start: Vector2, end: Vector2) -> void:
 	# Only react if we're actually following someone.
 	if not _current_followed_character:
+		return
+	
+	# Safety check: if we're not in the tree, we can't process movement
+	if not is_inside_tree():
 		return
 
 	# If follower is NOT moving, use normal threshold-based logic.
@@ -1739,6 +1747,10 @@ func _on_followed_character_started_walk(followed_character: PopochiuCharacter, 
 func _on_followed_character_stopped() -> void:
 	# Only react if we're actually following someone.
 	if not _current_followed_character:
+		return
+	
+	# Safety check: if we're not in the tree, we can't process movement
+	if not is_inside_tree():
 		return
 
 	# Wait a frame to ensure followed character's final position is settled.

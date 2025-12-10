@@ -251,6 +251,13 @@ func room_readied(room: PopochiuRoom) -> void:
 		
 		if not chr: continue
 		
+		# If character is already in another room's tree, remove it first
+		# This can happen when the same character instance is saved in multiple rooms
+		if chr.is_inside_tree():
+			var parent = chr.get_parent()
+			if parent:
+				parent.remove_child(chr)
+
 		chr.position = Vector2(chr_dic.x, chr_dic.y)
 		chr._looking_dir = chr_dic.facing
 		chr.visible = chr_dic.visible
@@ -477,6 +484,17 @@ func _add_cross_room_followers() -> void:
 		
 		# Add the follower to the room first
 		if not current.has_character(follower.script_name):
+			# If follower is in another room's tree, remove it first
+			if follower.is_inside_tree():
+				var parent = follower.get_parent()
+				if parent:
+					parent.remove_child(follower)
+
+			current.add_character(follower)
+		else:
+			# Character with same name exists, but check if it's actually this instance
+			if follower.is_inside_tree() and follower.get_parent() == current.get_node("Characters"):
+				current.remove_character(follower)
 			current.add_character(follower)
 		
 		# Position the follower relative to the followed character AFTER add_character(),
