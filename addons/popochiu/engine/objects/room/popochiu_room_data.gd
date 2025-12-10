@@ -62,9 +62,18 @@ func on_load(data: Dictionary) -> void:
 
 ## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
+## [br][br]
+## This method clears and rebuilds the state dictionaries from scratch, ensuring they accurately
+## reflect only the objects currently present in the room. Objects that were removed from the
+## room's scene tree (e.g., via [method PopochiuRoom.remove_character]) will not be restored when
+## returning to the room.
 func save_children_states() -> void:
 	if PopochiuUtils.r.current and PopochiuUtils.r.current.state == self:
 		for t in PopochiuResources.ROOM_CHILDREN:
+			# Clear the dictionary to remove entries for objects no longer in the room
+			# Fixes issue #466
+			get(t).clear()
+			
 			for node in PopochiuUtils.r.current.call("get_" + t):
 				if node is PopochiuProp and not node.clickable: continue
 				
@@ -160,7 +169,16 @@ func save_children_states() -> void:
 ##     self_modulate = PopochiuCharacter.self_modulate
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
+## [br][br]
+## This method clears and rebuilds the [member characters] dictionary from scratch, ensuring it
+## accurately reflects only the characters currently present in the room's [b]$Characters[/b] node.
+## Characters that were removed via [method PopochiuRoom.remove_character] will not be restored
+## when returning to the room.
 func save_characters() -> void:
+	# Clear the dictionary to remove entries for characters no longer in the room
+	# Fixes issue #466
+	characters.clear()
+	
 	for character: PopochiuCharacter in PopochiuUtils.r.current.get_characters():
 		characters[character.script_name] = {
 			x = character.position.x,
@@ -179,6 +197,17 @@ func save_characters() -> void:
 			look_at_point = {
 				x = character.look_at_point.x,
 				y = character.look_at_point.y,
+			},
+			face_character = character.face_character,
+			follow_character = character.follow_character,
+			follow_character_outside_room = character.follow_character_outside_room,
+			follow_character_offset = {
+				x = character.follow_character_offset.x,
+				y = character.follow_character_offset.y,
+			},
+			follow_character_threshold = {
+				x = character.follow_character_threshold.x,
+				y = character.follow_character_threshold.y,
 			},
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)
