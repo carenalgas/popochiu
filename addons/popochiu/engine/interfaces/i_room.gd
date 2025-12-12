@@ -508,6 +508,22 @@ func _add_cross_room_followers() -> void:
 			)
 			continue
 		
+		###############################################
+		# TODO: The following if/else block should is a hacky way
+		# to ensure that the follower is properly added to the room
+		# without causing issues with existing instances.
+		#
+		# The problem is there should NEVER be existing instances
+		# of the follower in the room at this point, because
+		# they were removed in _collect_cross_room_followers().
+		# However, in some cases (e.g., when the same character
+		# is present in multiple rooms), the instance may still
+		# exist in the room, causing issues.
+		#
+		# Before merging this code, investigate why this situation
+		# occurs and find a cleaner solution.
+		###############################################
+
 		# Add the follower to the room first
 		if not current.has_character(follower.script_name):
 			# If follower is in another room's tree, remove it first
