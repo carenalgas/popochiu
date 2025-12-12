@@ -287,18 +287,26 @@ func room_readied(room: PopochiuRoom) -> void:
 		
 		# Restore face_character link after character is added to the room
 		if chr_dic.has("face_character") and chr_dic.face_character:
-			var faced_chr := PopochiuUtils.c.get_character(chr_dic.face_character)
-			if is_instance_valid(faced_chr) and faced_chr.is_inside_tree():
-				chr.start_facing_character(faced_chr)
+			chr.face_character = chr_dic.face_character
 		
 		# Restore follow link after character is added to the room
 		# This must happen after add_character() so the character is in the tree
 		if chr_dic.has("follow_character") and chr_dic.follow_character:
-			var followed_chr := PopochiuUtils.c.get_character(chr_dic.follow_character)
-			if is_instance_valid(followed_chr) and followed_chr.is_inside_tree():
-				chr.start_following_character(followed_chr)
+			chr.follow_character = chr_dic.follow_character
 
 		current.add_character(chr)
+
+		# Restore face link after character is added to the room
+		if not chr.face_character.is_empty():
+			var faced_chr = PopochiuUtils.c.get_character(chr.face_character)
+			if is_instance_valid(faced_chr) and faced_chr.is_inside_tree():
+				chr.start_facing_character(faced_chr)
+
+		# Restore follow link after character is added to the room
+		if not chr.follow_character.is_empty():
+			var followed_chr = PopochiuUtils.c.get_character(chr.follow_character)
+			if is_instance_valid(followed_chr) and followed_chr.is_inside_tree():
+				chr.start_following_character(followed_chr)
 
 	# If the room must have the player character but it is not part of its $Characters node, then
 	# add the PopochiuCharacter to the room
@@ -508,35 +516,8 @@ func _add_cross_room_followers() -> void:
 			)
 			continue
 		
-		###############################################
-		# TODO: The following if/else block should is a hacky way
-		# to ensure that the follower is properly added to the room
-		# without causing issues with existing instances.
-		#
-		# The problem is there should NEVER be existing instances
-		# of the follower in the room at this point, because
-		# they were removed in _collect_cross_room_followers().
-		# However, in some cases (e.g., when the same character
-		# is present in multiple rooms), the instance may still
-		# exist in the room, causing issues.
-		#
-		# Before merging this code, investigate why this situation
-		# occurs and find a cleaner solution.
-		###############################################
-
 		# Add the follower to the room first
 		if not current.has_character(follower.script_name):
-			# If follower is in another room's tree, remove it first
-			if follower.is_inside_tree():
-				var parent = follower.get_parent()
-				if parent:
-					parent.remove_child(follower)
-
-			current.add_character(follower)
-		else:
-			# Character with same name exists, but check if it's actually this instance
-			if follower.is_inside_tree() and follower.get_parent() == current.get_node("Characters"):
-				current.remove_character(follower)
 			current.add_character(follower)
 		
 		# Stop any ongoing movement before repositioning

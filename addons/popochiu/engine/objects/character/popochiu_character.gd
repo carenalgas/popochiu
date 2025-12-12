@@ -1359,6 +1359,9 @@ func start_facing_character(character: Variant = null) -> void:
 	if target_character == self or target_character == null:
 		return
 
+	# Save the script_name in the property for serialization
+	face_character = target_character.script_name
+
 	_current_faced_character = target_character
 
 	# Immediately face the target character
@@ -1372,6 +1375,9 @@ func start_facing_character(character: Variant = null) -> void:
 ## Makes this character stop facing another character.
 func stop_facing_character() -> void:
 	_current_faced_character = null
+
+	# Clear the property for serialization
+	face_character = ""
 
 	# Disable _process() only if not following or facing anyone
 	if not _current_followed_character and not Engine.is_editor_hint():
@@ -1397,6 +1403,9 @@ func start_following_character(character: Variant = null) -> void:
 	# Prevent self-following or invalid target
 	if target_character == self or target_character == null:
 		return
+
+	# Save the script_name in the property for serialization
+	follow_character = target_character.script_name
 
 	_current_followed_character = target_character
 
@@ -1429,6 +1438,8 @@ func stop_following_character() -> void:
 			_current_followed_character.started_walk_to.disconnect(_on_followed_character_started_walk)
 
 	_current_followed_character = null
+	# Clear the property for serialization
+	follow_character = ""
 
 	# Disable _process() only if not following or facing anyone
 	if not _current_faced_character and not Engine.is_editor_hint():
