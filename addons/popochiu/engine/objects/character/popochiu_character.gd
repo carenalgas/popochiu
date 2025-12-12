@@ -1359,6 +1359,10 @@ func start_facing_character(character: Variant = null) -> void:
 	if target_character == self or target_character == null:
 		return
 
+	# Ensure both characters are in the scene tree
+	if not is_inside_tree() or not target_character.is_inside_tree():
+		return
+
 	# Save the script_name in the property for serialization
 	face_character = target_character.script_name
 
@@ -1402,6 +1406,10 @@ func start_following_character(character: Variant = null) -> void:
 
 	# Prevent self-following or invalid target
 	if target_character == self or target_character == null:
+		return
+
+	# Ensure both characters are in the scene tree
+	if not is_inside_tree() or not target_character.is_inside_tree():
 		return
 
 	# Save the script_name in the property for serialization
@@ -1857,6 +1865,12 @@ func _update_follow_target(followed_character_pos: Vector2) -> void:
 # Makes the character face another character by updating the facing direction.
 # Called during continuous facing updates and after movement completion.
 func _face_character(character: PopochiuCharacter) -> void:
+	# Guard against facing targets that aren't in the same active tree/room
+	if not is_inside_tree() or not character or not character.is_inside_tree():
+		return
+	if character.room != room:
+		return
+
 	# face_direction expects global coordinates
 	face_direction(character.global_position)
 	await idle()
