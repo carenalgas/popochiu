@@ -198,6 +198,11 @@ func save_characters() -> void:
 				x = character.look_at_point.x,
 				y = character.look_at_point.y,
 			},
+			dialog_pos = {
+				x = character.dialog_pos.x,
+				y = character.dialog_pos.y,
+			},
+			# Store facing and following settings
 			face_character = character.face_character,
 			follow_character = character.follow_character,
 			follow_character_outside_room = character.follow_character_outside_room,

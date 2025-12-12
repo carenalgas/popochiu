@@ -271,9 +271,35 @@ func room_readied(room: PopochiuRoom) -> void:
 		
 		if chr_dic.has("look_at_point"):
 			chr.look_at_point = PopochiuUtils.unpack_vector_2(chr_dic.look_at_point)
+
+		if chr_dic.has("dialog_pos"):
+			chr.dialog_pos = PopochiuUtils.unpack_vector_2(chr_dic.dialog_pos)
+
+		# Restore follow-related properties
+		if chr_dic.has("follow_character_outside_room"):
+			chr.follow_character_outside_room = chr_dic.follow_character_outside_room
 		
+		if chr_dic.has("follow_character_offset"):
+			chr.follow_character_offset = PopochiuUtils.unpack_vector_2(chr_dic.follow_character_offset)
+		
+		if chr_dic.has("follow_character_threshold"):
+			chr.follow_character_threshold = PopochiuUtils.unpack_vector_2(chr_dic.follow_character_threshold)
+		
+		# Restore face_character link after character is added to the room
+		if chr_dic.has("face_character") and chr_dic.face_character:
+			var faced_chr := PopochiuUtils.c.get_character(chr_dic.face_character)
+			if is_instance_valid(faced_chr) and faced_chr.is_inside_tree():
+				chr.start_facing_character(faced_chr)
+		
+		# Restore follow link after character is added to the room
+		# This must happen after add_character() so the character is in the tree
+		if chr_dic.has("follow_character") and chr_dic.follow_character:
+			var followed_chr := PopochiuUtils.c.get_character(chr_dic.follow_character)
+			if is_instance_valid(followed_chr) and followed_chr.is_inside_tree():
+				chr.start_following_character(followed_chr)
+
 		current.add_character(chr)
-	
+
 	# If the room must have the player character but it is not part of its $Characters node, then
 	# add the PopochiuCharacter to the room
 	if (
