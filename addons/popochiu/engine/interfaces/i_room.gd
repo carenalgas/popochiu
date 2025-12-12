@@ -523,6 +523,9 @@ func _add_cross_room_followers() -> void:
 				current.remove_character(follower)
 			current.add_character(follower)
 		
+		# Stop any ongoing movement before repositioning
+		follower.stop_walking()
+		
 		# Position the follower relative to the followed character AFTER add_character(),
 		# because add_character() calls update_position() which would overwrite with the
 		# stale _buffered_position from the previous room.
