@@ -206,7 +206,8 @@ func _ready():
 	# Connect the logic for anti-glide animations.
 	# The handler function will know what to do, based on configuration.
 	for child in get_children():
-		if not child is Sprite2D:
+		# Check for signal instead of node type to make resilient to change.
+		if not child.has_signal("frame_changed"):
 			continue
 		child.frame_changed.connect(_update_position)
 
