@@ -13,8 +13,29 @@ extends Resource
 ## The array of [PopochiuDialogOption] to show on screen when the dialog is running.
 @export var options: Array[PopochiuDialogOption] = [] : set = set_options
 
+var _has_done_init := false
+
 
 #region Virtual ####################################################################################
+## Called when the dialog is first accessed (before it starts).
+## [b]Return an array of PopochiuDialogOptions created with [method create_option][/b].
+##
+## To mix creating options from code and inspector, add your options to [param existing_options]:
+## [codeblock]
+## existing_options.append_array([
+##     create_option("Joke1", {
+##       text = "What do you call a magic dog?",
+##     }),
+## ])
+## return existing_options
+## [/codeblock]
+##
+## Overriding this function is optional. You can configure your dialog using the Inspector.
+## [i]Virtual[/i].
+func _on_build_options(existing_options: Array[PopochiuDialogOption]) -> Array[PopochiuDialogOption]:
+	return existing_options
+
+
 ## Called when the dialog starts.
 ## [b]You must use [code]await[/code] inside this method for the dialog to work properly.[/b]
 ##
@@ -28,6 +49,11 @@ func _on_start() -> void:
 ## [member PopochiuDialogOption.id] to identify which option was selected.[br]
 ## Implement this to add custom behavior (such as change the animation of a character, play a sound,
 ## etc.) or to update the game state when a dialog option is selected.
+##
+## Instead of overriding this function, you can write functions for each option using their
+## [snake_case](https://docs.godotengine.org/en/stable/classes/class_string.html#class-string-method-to-snake-case)
+## name (option id BYE2 will call [code]_on_option_bye_2[/code]).
+## [i]Virtual[/i].
 func _option_selected(opt: PopochiuDialogOption) -> void:
 	pass
 
@@ -51,6 +77,32 @@ func _on_load(_data: Dictionary) -> void:
 #endregion
 
 #region Public #####################################################################################
+## Call this from within [method _on_build_options] to populate your dialog options (instead
+## of using the Inspector).
+##
+## Optionally use [param config] to create the list of options in one block:
+## [codeblock]
+## return [
+##     create_option("OfferHelp", {
+##             text = "What can I do for you?",
+##         }),
+##     create_option("Bye", {
+##             text = "Going get you some food, hold on.",
+##             visible = false,
+##         }),
+## ]
+## [/codeblock]
+func create_option(id: String, config: Dictionary = {}) -> PopochiuDialogOption:
+	var opt = PopochiuDialogOption.new()
+	opt.set_id(id)
+	if not config.is_empty():
+		opt.configure(config)
+		if opt.text.is_empty():
+			# User made a typo or forgot essential element in their construction dictionary.
+			PopochiuUtils.print_error("%s's PopochiuDialogOption '%s' needs text for it to appear in a conversation: create_option('%s', { text = 'Hello.' })" % [self.script_name, id, id])
+	return opt
+
+
 ## Starts this dialog, then calls [method _on_start].
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
@@ -145,6 +197,22 @@ func set_options(value: Array[PopochiuDialogOption]) -> void:
 #endregion
 
 #region Private ####################################################################################
+
+## Called by PopochiuIDialog before returning the list of options for a dialogue.
+## NOTE: This funciton is for internal engine use only and is not supposed to
+## be used in game scripts.
+func build_options():
+	if _has_done_init:
+		return
+	_has_done_init = true
+
+	# Use assign() to avoid type errors if user doesn't have type hints or uses
+	# options + [] in _on_build_options.
+	var typed_opts: Array[PopochiuDialogOption] = []
+	typed_opts.assign(_on_build_options(options))
+	options = typed_opts
+
+
 func _start() -> void:
 	PopochiuUtils.g.block()
 	PopochiuUtils.d.dialog_started.emit(self)
@@ -174,6 +242,12 @@ func _on_option_selected(opt: PopochiuDialogOption) -> void:
 	PopochiuUtils.d.selected_option = opt
 	
 	_option_selected(opt)
+
+	# Convert option so function names match Godot coding guidelines.
+	var fn = "_on_option_" + opt.id.to_snake_case()
+	if has_method(fn):
+		await call(fn, opt)
+		_show_options()
 
 
 #endregion

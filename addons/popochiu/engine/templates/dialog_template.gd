@@ -28,8 +28,14 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 			# By default close the dialog. Options won't show after calling
 			# stop()
 			stop()
-	
+
 	_show_options()
+	# Or remove this _option_selected function entirely and instead define
+	# functions named after your options. 
+	# For example with options "Option1", "DogJoke", "Surprise":
+	#   func _on_option_option_1(opt): called when user picks "Option1"
+	#   func _on_option_dog_joke(opt): called when user picks "DogJoke"
+	#   func _on_option_surprise(opt): called when user picks "Surprise"
 
 
 # Return a Dictionary of custom data to save for this PopochiuDialog.
