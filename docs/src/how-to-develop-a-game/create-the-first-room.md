@@ -13,7 +13,7 @@ To create our first room, just click the **Create room** button in Popochiu's ma
 ![Create Room button](../../assets/images/getting-started/game_stub-room-1-create_button.png "Press the button to create a new room")
 
 A popup will appear, very similar to the one to create a new character. This time, an additional checkbox is available.
-This allows us to set the newly created room as the main scene of the Godot project. Check it out so we don't have to do it later. This scene will also be the only room in this game stub.
+This allows us to set the newly created room as the main scene of the Godot project. Check it out so we don't have to do it later. (If you forget, you can set it from the three dots menu next to a room.) This scene will also be the only room in this game stub.
 
 ![Create Room popup](../../assets/images/getting-started/game_stub-room-2-creation_popup.png "Name the room and select it as the project's main scene")
 
