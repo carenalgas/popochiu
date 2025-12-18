@@ -87,7 +87,7 @@ Click the **Edit Polygon** button in the toolbar (_17_) to highlight a squared p
 
 !!! tip
     To adjust the polygon, just click and drag the vertice handles around.  
-    It's quite intuitive, but you can add vertices to the polygon by clicking anywhere along a segment.
+    It's quite intuitive, but you can add vertices to the polygon by clicking anywhere along a segment. If it's not working, make sure your pointer is in [Select mode](https://docs.godotengine.org/en/stable/tutorials/2d/introduction_to_2d.html#main-toolbar) (press Q).
 
 When you have adjusted your walkable area, it should look something like this:
 
