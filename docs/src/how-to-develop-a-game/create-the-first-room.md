@@ -176,12 +176,7 @@ With the hotspot properly configured, we can now run a quick test. Start your ga
 
 ![The hotspot interaction](../../assets/images/getting-started/game_stub-room-13-hs_interaction.png "We can now interact with the hotspot")
 
-Clicking on the hotspot, the character will move to the point we defined and face the window.
-
-!!! info "Under the hood"
-    Remember that we set our character so that its origin is between its feet. When your character moves toward a point, Popochiu will make sure the origin of the character matches the destination point's coordinates.
-
-    What if the destination coordinates lie outside of the walkable area? In this case, Popochiu will trace the path toward the coordinates but will stop the movement as soon as the character reaches the walkable area's borders. Despite this being a safe scenario, placing a _Walk-to point_ inside the walkable polygon always gives the best results, making the movement predictable. Keep this in mind.
+Clicking on the hotspot, you'll get a message that you can't yet interact with it.
 
 ### Script your first interaction
 
@@ -241,6 +236,12 @@ Save the script (`ctrl/cmd + s`) and run your game.
 Now when you click the window, the character will walk to it, turn around three times like it is looking around for something, then face the window and say a phrase.
 
 **Yay!** You reached an important milestone! Now your game feels more alive, isn't it?
+
+!!! info "Under the hood"
+    Remember that we set our character so that its origin is between its feet. When your character moves toward a point, Popochiu will make sure the origin of the character matches the destination point's coordinates.
+
+    What if the destination coordinates lie outside of the walkable area? In this case, Popochiu will trace the path toward the coordinates but will stop the movement as soon as the character reaches the walkable area's borders. Despite this being a safe scenario, placing a _Walk-to point_ inside the walkable polygon always gives the best results, making the movement predictable. Keep this in mind.
+
 
 Let's see what happened, breaking the function down to pieces. Ignore for a moment the `await` keyword.
 
