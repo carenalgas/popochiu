@@ -297,6 +297,9 @@ func _on_right_click() -> void:
 
 By this time, you should be able to figure out what will happen by yourself. Run the game and see your masterpiece in action.
 
+!!! info
+    These two functions used `C.player.face_clicked()` to make the player turn to face the hotspot. Popochiu uses the "Look At Point" position that you set on the hotspot to determine where in the room to face, just like it uses the "Walk To Point" to determine where in the room to walk.
+
 ### Add a prop
 
 We already encountered props, when we [added our background](#intbkmk-props-explanation) to the game's first room. It's now time for a bit more information.
