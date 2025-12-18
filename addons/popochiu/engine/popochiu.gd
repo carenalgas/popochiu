@@ -418,7 +418,7 @@ func add_history(data: Dictionary) -> void:
 ## # queue pauses until the "clicked" signal is emitted in the %PopupButton
 ## # ---- In some prop ----
 ## func on_click() -> void:
-##     E.run([
+##     E.queue([
 ##         "Player: Ok. This is the last queueable example.",
 ##         "Player: Promise!",
 ##         E.queueable(%PopupButton, "_show_button", [], "clicked"),
