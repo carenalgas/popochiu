@@ -21,6 +21,8 @@ static var cursor: PopochiuCursor = null:
 	get = get_popochiu_cursor
 static var globals: Node = null:
 	get = get_popochiu_globals
+static var tl: PopochiuTransitionLayer = null:
+	get = get_popochiu_transition_layer
 
 
 #region Public #####################################################################################
@@ -216,5 +218,12 @@ static func get_popochiu_globals() -> Node:
 		globals = e.get_node("/root/Globals")
 	return globals
 
+static func get_popochiu_transition_layer() -> PopochiuTransitionLayer:
+	if not is_instance_valid(tl):
+		if Engine.get_singleton(&"TL"):
+			tl = Engine.get_singleton(&"TL")
+		else:
+			tl = PopochiuTransitionLayer.new()
+	return tl
 
 #endregion

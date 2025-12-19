@@ -64,7 +64,7 @@ const I_SNGL = "res://game/autoloads/i.gd"
 const D_SNGL = "res://game/autoloads/d.gd"
 const A_SNGL = "res://game/autoloads/a.gd"
 const G_SNGL = "res://game/autoloads/g.gd"
-const TL_SNGL = "res://game/autoloads/tl.gd"
+const TL_SNGL= TRANSITION_LAYER_PATH + "transition_layer.gd"
 # FIRST INSTALL ------------------------------------------------------------------------------------
 const GI = 0
 const TL = 1
@@ -222,6 +222,21 @@ static func init_file_structure() -> bool:
 
 		if ResourceSaver.save(obj, TRANSITION_LAYER_SCENE) != OK:
 			PopochiuUtils.print_error("Couldn't copy the transition layer.")
+		
+		if not FileAccess.file_exists(TL_SNGL):
+			var tl_file = FileAccess.open(TL_SNGL, FileAccess.WRITE)
+			tl_file.store_string("extends PopochiuTransitionLayer")
+			tl_file.close()
+
+		# Assign the transition layer script
+		obj = (load(TRANSITION_LAYER_SCENE) as PackedScene).instantiate()
+		obj.set_script(load(TL_SNGL))
+		var packed_scene := PackedScene.new()
+		packed_scene.pack(obj)
+
+		if ResourceSaver.save(packed_scene, TRANSITION_LAYER_SCENE)!= OK:
+			PopochiuUtils.print_error("Couldn't assign the transition layer script.")
+
 
 	# ---- Create config files ---------------------------------------------------------------------
 	# Create .cfg file

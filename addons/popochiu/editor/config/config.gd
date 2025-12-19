@@ -95,19 +95,17 @@ static var defaults := {
 #region Public #####################################################################################
 static func reload_transitions():
 	# Transition Layer
-	var tl: PopochiuTransitionLayer = load(PopochiuResources.TRANSITION_LAYER_SCENE).instantiate()
-	var transition_hint: String = ",".join(tl.get_all_transitions_list())
+	var transition_hint: String = ",".join(PopochiuUtils.tl.get_all_transitions_list())
 
 	_initialize_project_setting(TL_DEFAULT_ROOM_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
 	_initialize_project_setting(TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
-	tl.queue_free()
+
 
 static func initialize_project_settings():
 	# ---- GUI -------------------------------------------------------------------------------------
 	_initialize_project_setting(SCALE_GUI, TYPE_BOOL)
 	# Transition Layer
-	var tl: PopochiuTransitionLayer = load(PopochiuResources.TRANSITION_LAYER_SCENE).instantiate()
-	var transition_hint: String = ",".join(tl.get_all_transitions_list())
+	var transition_hint: String = ",".join(PopochiuUtils.tl.get_all_transitions_list())
 	print(transition_hint)
 	_initialize_project_setting(TL_FADE_COLOR, TYPE_COLOR)
 	_initialize_project_setting(TL_SKIP_CUTSCENE_TIME, TYPE_FLOAT)
@@ -118,7 +116,7 @@ static func initialize_project_settings():
 	_initialize_project_setting(TL_ROOM_TRANSITION_DURATION, TYPE_FLOAT)
 	_initialize_project_setting(TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
 	_initialize_project_setting(TL_CUTSCENE_TRANSITION_MODE, TYPE_INT, PROPERTY_HINT_ENUM, _get_enum_hint(PopochiuTransitionLayer.PLAY_MODE))
-	tl.queue_free()
+
 	
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	_initialize_project_setting(TEXT_SPEED, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
