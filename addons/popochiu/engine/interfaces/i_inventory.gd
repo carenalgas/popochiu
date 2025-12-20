@@ -18,10 +18,10 @@ extends Node
 ## # Add the Key item to the inventory and make it the selected one.
 ## I.Key.add_as_active()
 ##
-## # Remove the Card item from the inventory. Inside an E.run([])
+## # Remove the Card item from the inventory.
 ## I.Card.remove()
 ##
-## # Add the ToyCar item after some dialog lines
+## # Add the ToyCar item after some dialog lines.
 ## E.queue([
 ##     "Player: Oh, is the toy car I need",
 ##     I.ToyCar.queue_add(),
