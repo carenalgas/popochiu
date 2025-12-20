@@ -28,6 +28,8 @@ func _ready() -> void:
 	
 	error_container.hide()
 
+	input.call_deferred("grab_focus")
+
 
 #endregion
 
