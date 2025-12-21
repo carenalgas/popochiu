@@ -127,12 +127,9 @@ func save_children_states() -> void:
 					if not scene_path in dependencies_paths:
 						folder_name = dir.get_next()
 						continue
-					# ---------------------------------------------------------------- Fix #320 ----
+					# ----------------------------------------------------------End of fix #320 ----
 					
 					var packed_scene: PackedScene = load(scene_path)
-					if not packed_scene or not packed_scene is PackedScene:
-						folder_name = dir.get_next()
-						continue
 					
 					# Instantiate the full scene so exported data (like walkable polygons) is already baked.
 					# Loading only the script left interaction_polygon empty, so the first time we entered
