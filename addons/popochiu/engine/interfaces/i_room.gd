@@ -254,7 +254,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		# If character is already in another room's tree, remove it first
 		# This can happen when the same character instance is saved in multiple rooms
 		if chr.is_inside_tree():
-			var parent = chr.get_parent()
+			var parent := chr.get_parent()
 			if parent:
 				parent.remove_child(chr)
 
@@ -298,13 +298,13 @@ func room_readied(room: PopochiuRoom) -> void:
 
 		# Restore face link after character is added to the room
 		if not chr.face_character.is_empty():
-			var faced_chr = PopochiuUtils.c.get_character(chr.face_character)
+			var faced_chr := PopochiuUtils.c.get_character(chr.face_character)
 			if is_instance_valid(faced_chr) and faced_chr.is_inside_tree():
 				chr.start_facing_character(faced_chr)
 
 		# Restore follow link after character is added to the room
 		if not chr.follow_character.is_empty():
-			var followed_chr = PopochiuUtils.c.get_character(chr.follow_character)
+			var followed_chr := PopochiuUtils.c.get_character(chr.follow_character)
 			if is_instance_valid(followed_chr) and followed_chr.is_inside_tree():
 				chr.start_following_character(followed_chr)
 
@@ -502,7 +502,7 @@ func _add_cross_room_followers() -> void:
 	if _pending_cross_room_followers.is_empty():
 		return
 	
-	for entry in _pending_cross_room_followers:
+	for entry: Dictionary in _pending_cross_room_followers:
 		var follower: PopochiuCharacter = entry.character
 		var followed_name: String = entry.followed_script_name
 		var offset: Vector2 = entry.offset

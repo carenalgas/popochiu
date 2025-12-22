@@ -217,7 +217,7 @@ func add_character(chr: PopochiuCharacter) -> void:
 ## [b]Note:[/b] This removal persists across room transitions. A removed character will not be restored
 ## when returning to the room. If you want the character to reappear on subsequent visits, either
 ## use [method add_character] in the room's [method PopochiuRoom._on_room_entered] callback
-## or hide the character instead ([code]character.visible = false[/code]).
+## or hide the character instead ([code]character.disable()[/code]).
 func remove_character(chr: PopochiuCharacter) -> void:
 	# Only remove if the character is actually a child of this room's $Characters node
 	if chr.get_parent() != $Characters:
