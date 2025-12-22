@@ -69,16 +69,13 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
 ## specific emotion.
 @export var voices := []: set = set_voices
-## The [member PopochiuCharacter.script_name] of the character that this character should follow
-## when it moves through the room. Set this in the inspector to have the character automatically
-## follow another character at runtime.
-@export var face_character := ""
-## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
-## You can use this to define which [Texture] to use as avatar for the character when it speaks
-## using a specific emotion.
 ## The [member PopochiuCharacter.script_name] of the character that this character should
 ## continuously face. Set this in the inspector to have the character automatically face another
 ## character at runtime.
+@export var face_character := ""
+## The [member PopochiuCharacter.script_name] of the character that this character should follow
+## when it moves through the room. Set this in the inspector to have the character automatically
+## follow another character at runtime.
 @export var follow_character := ""
 ## The positional offset from the followed character where this character will walk to when following.
 ## [member follow_character_offset.x] defines the lateral (side-to-side) distance. The follower will
