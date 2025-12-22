@@ -13,7 +13,7 @@ To create our first room, just click the **Create room** button in Popochiu's ma
 ![Create Room button](../../assets/images/getting-started/game_stub-room-1-create_button.png "Press the button to create a new room")
 
 A popup will appear, very similar to the one to create a new character. This time, an additional checkbox is available.
-This allows us to set the newly created room as the main scene of the Godot project. Check it out so we don't have to do it later. This scene will also be the only room in this game stub.
+This allows us to set the newly created room as the main scene of the Godot project. Check it out so we don't have to do it later. (If you forget, you can set it from the three dots menu next to a room.) This scene will also be the only room in this game stub.
 
 ![Create Room popup](../../assets/images/getting-started/game_stub-room-2-creation_popup.png "Name the room and select it as the project's main scene")
 
@@ -51,7 +51,7 @@ Click OK and your prop will be created. You should see it in the scene tree, und
 
 ![New prop inspector](../../assets/images/getting-started/game_stub-room-6-prop_inspector.png "We can now set the background for the scene")
 
-Now you can see the Prop has a **Texture** parameter. By this time you should be able to figure out what to do. Save the downloaded background sprite in the `game/rooms/house/props/background/` folder, then drag it from Godot Editor file manager to the field in the inspector.  
+Now you can see the Prop has a **Texture** parameter (_15_). By this time you should be able to figure out what to do: Save the downloaded background sprite in the `game/rooms/house/props/background/` folder, then drag it from Godot Editor file manager to the field in the inspector.  
 Your scene should now show the background image.
 
 At this point you have a main character and a main scene defined. These are the minimum steps needed to run a Popochiu game. Treat yourself after all this effort, by hitting the **Run** button at the top right of the editor and seeing your game in action.
@@ -87,13 +87,13 @@ Click the **Edit Polygon** button in the toolbar (_17_) to highlight a squared p
 
 !!! tip
     To adjust the polygon, just click and drag the vertice handles around.  
-    It's quite intuitive, but you can add vertices to the polygon by clicking anywhere along a segment.
+    It's quite intuitive, but you can add vertices to the polygon by clicking anywhere along a segment. If it's not working, make sure your pointer is in [Select mode](https://docs.godotengine.org/en/stable/tutorials/2d/introduction_to_2d.html#main-toolbar) (press Q).
 
 When you have adjusted your walkable area, it should look something like this:
 
 ![The polygon for the floor is over](../../assets/images/getting-started/game_stub-room-9-wa_bake_polygon.png "Click "Edit Polygon" again to complete the walkable area")
 
-Click the **Edit Polygon** button again (_19_)to stop editing the perimeter of the floor.
+Click the **Edit Polygon** button again (_19_) to stop editing the perimeter of the floor.
 
 Save the project and run your game. Your character should now be able to move around the room, without leaving the area you defined.
 
@@ -142,7 +142,7 @@ Let's draw a shape around the window on the wall:
 No need to be too precise or polished, rough edges won't be perceivable while playing your game. You just need to avoid, if possible, overlapping with other hotspots (see "_Baseline_" below, to understand how polygon overlapping works).
 
 Another important property of the hotspot is the "_Walk to point_", which is the coordinates that the character will reach when you click over the hotspot.  
-You can set these coordinates interactively by clicking and dragging the **Walk To point** gizmo wherever you want in the room. You will see that the property with the same name in the inspector will update to reflect the coordinates.
+You can set these coordinates interactively by clicking and dragging the **Walk To Point** gizmo wherever you want in the room. You will see that the property with the same name in the inspector will update to reflect the coordinates.
 
 For our example room, we'll set the following coordinates for the `Window` hotspot:
 
@@ -176,12 +176,7 @@ With the hotspot properly configured, we can now run a quick test. Start your ga
 
 ![The hotspot interaction](../../assets/images/getting-started/game_stub-room-13-hs_interaction.png "We can now interact with the hotspot")
 
-Clicking on the hotspot, the character will move to the point we defined and face the window.
-
-!!! info "Under the hood"
-    Remember that we set our character so that its origin is between its feet. When your character moves toward a point, Popochiu will make sure the origin of the character matches the destination point's coordinates.
-
-    What if the destination coordinates lie outside of the walkable area? In this case, Popochiu will trace the path toward the coordinates but will stop the movement as soon as the character reaches the walkable area's borders. Despite this being a safe scenario, placing a _Walk-to point_ inside the walkable polygon always gives the best results, making the movement predictable. Keep this in mind.
+Clicking on the hotspot, you'll get a message that you can't yet interact with it.
 
 ### Script your first interaction
 
@@ -242,6 +237,12 @@ Now when you click the window, the character will walk to it, turn around three 
 
 **Yay!** You reached an important milestone! Now your game feels more alive, isn't it?
 
+!!! info "Under the hood"
+    Remember that we set our character so that its origin is between its feet. When your character moves toward a point, Popochiu will make sure the origin of the character matches the destination point's coordinates.
+
+    What if the destination coordinates lie outside of the walkable area? In this case, Popochiu will trace the path toward the coordinates but will stop the movement as soon as the character reaches the walkable area's borders. Despite this being a safe scenario, placing a _Walk-to point_ inside the walkable polygon always gives the best results, making the movement predictable. Keep this in mind.
+
+
 Let's see what happened, breaking the function down to pieces. Ignore for a moment the `await` keyword.
 
 ```gdscript
@@ -263,7 +264,7 @@ This comes in very handy for those games that have more player-controlled charac
 ```
 
 Here we are literally waiting for some time to pass. `E` is the object representing the game engine (Popochiu!) and we are asking it to wait for half a second.
-After that, we use the `for`` GDScript keyword to repeat the same code three times.
+After that, we use the `for` GDScript keyword to repeat the same code three times.
 
 !!! info
     This is not a feature of Popochiu, it is standard Godot language. All Popochiu objects and functions are standard Godot functions.  
@@ -295,6 +296,9 @@ func _on_right_click() -> void:
 ```
 
 By this time, you should be able to figure out what will happen by yourself. Run the game and see your masterpiece in action.
+
+!!! info
+    These two functions used `C.player.face_clicked()` to make the player turn to face the hotspot. Popochiu uses the "Look At Point" position that you set on the hotspot to determine where in the room to face, just like it uses the "Walk To Point" to determine where in the room to walk.
 
 ### Add a prop
 
@@ -342,7 +346,7 @@ Since the baseline is in the middle of the prop, it is already correctly positio
 
     This will render the prop non-interactive. The **Clickable** property can also be set on or off in a script, nice when the nature of the prop depends on your game's status.
 
-    **Remember to turn on this property** to follow up with this tutorial!
+    Make sure this property **is set to On** to follow the rest of this tutorial!
 
 Eventually, we want to enable our main character to pick up the toy car and add it to the inventory. For that though, we need some more elements, so we'll get back to that later.  
 For the moment, we'll just script a simple "examine" interaction, but we'll seize the opportunity to learn something new.
