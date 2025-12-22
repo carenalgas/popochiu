@@ -76,6 +76,9 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
 ## You can use this to define which [Texture] to use as avatar for the character when it speaks
 ## using a specific emotion.
+## The [member PopochiuCharacter.script_name] of the character that this character should
+## continuously face. Set this in the inspector to have the character automatically face another
+## character at runtime.
 @export var follow_character := ""
 ## The positional offset from the followed character where this character will walk to when following.
 ## [member follow_character_offset.x] defines the lateral (side-to-side) distance. The follower will
@@ -97,9 +100,9 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## position plus [member follow_character_offset]. Chain-following is supported: if A follows B
 ## and B follows C, and C changes room, both A and B will transfer.
 @export var follow_character_outside_room := false
-## The [member PopochiuCharacter.script_name] of the character that this character should
-## continuously face. Set this in the inspector to have the character automatically face another
-## character at runtime.
+## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
+## You can use this to define which [Texture] to use as avatar for the character when it speaks
+## using a specific emotion.
 @export var avatars := []: set = set_avatars
 ## The speed at which the character will move in pixels per frame.
 @export var walk_speed := 200.0
