@@ -363,7 +363,7 @@ func _on_movement_ended() -> void:
 
 ## Called after movement to sync the character's buffered position state.
 func _on_position_changed() -> void:
-	_sync_buffered_position()
+	sync_buffered_position()
 
 
 #endregion
@@ -1220,7 +1220,7 @@ func reset_buffered_position() -> void:
 
 
 ## Syncs the buffered position with the current position to avoid conflicts with walking.
-func _sync_buffered_position() -> void:
+func sync_buffered_position() -> void:
 	_buffered_position = position
 
 

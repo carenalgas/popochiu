@@ -529,7 +529,7 @@ func _add_cross_room_followers() -> void:
 		var target_position: Vector2 = followed.position + offset
 		follower.position = target_position
 		# Sync the buffered position so it doesn't jump back when movement starts
-		follower._sync_buffered_position()
+		follower.sync_buffered_position()
 		
 		# Re-establish the follow link
 		follower.start_following_character(followed)
