@@ -279,6 +279,17 @@ func _play(
 	
 	player.bus = cue.bus
 	player.play(from_position)
+
+	
+	# This is a workaround for a Godot 4.5 bug
+	# See https://github.com/godotengine/godot/commit/ccfbdf2bb2f109ba83533a45ef48dd0b219fc872 and https://github.com/godotengine/godot/commit/ccfbdf2bb2f109ba83533a45ef48dd0b219fc872 
+	# Fixes #463 Audio cues looping inappropriately in Godot 4.5
+	#
+	# TODO: remove this as soon as it becomes irrelevant
+	if player.stream.get_class() == 'AudioStreamWAV': 
+		player.stream.loop_mode = (
+			AudioStreamWAV.LOOP_FORWARD if cue.loop else AudioStreamWAV.LOOP_DISABLED
+		)
 	
 	if not player.finished.is_connected(_on_audio_stream_player_finished):
 		player.finished.connect(_on_audio_stream_player_finished.bind(player, cue_name, 0))
