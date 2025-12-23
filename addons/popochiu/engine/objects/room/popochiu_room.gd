@@ -212,8 +212,21 @@ func add_character(chr: PopochiuCharacter) -> void:
 	chr.idle()
 
 
-## Removes [param chr] the [b]$Characters[/b] node without destroying it.
+## Removes [param chr] from the [b]$Characters[/b] node without destroying it.
+## [br][br]
+## [b]Note:[/b] This removal persists across room transitions. A removed character will not be restored
+## when returning to the room. If you want the character to reappear on subsequent visits, either
+## use [method add_character] in the room's [method PopochiuRoom._on_room_entered] callback
+## or hide the character instead ([code]character.disable()[/code]).
 func remove_character(chr: PopochiuCharacter) -> void:
+	# Only remove if the character is actually a child of this room's $Characters node
+	if chr.get_parent() != $Characters:
+		PopochiuUtils.print_warning(
+			"Attempted to remove character '%s' from room '%s', but it's not a child of this room." %
+			[chr.script_name, script_name]
+		)
+		return
+	
 	# Disconnect character signals before removing
 	_disconnect_obstacle_obj_signals(chr)
 
@@ -472,6 +485,11 @@ func _on_gui_unblocked() -> void:
 # This method collects all valid navigation obstacles from props and distributes them
 # to each walkable area, then triggers a rebake of the navigation meshes.
 func _setup_navigation_obstacles() -> void:
+	# #433 Guard check: this method is called deferred, so the room may have been removed from
+	# the tree by the time it runs (e.g., when characters are removed during room transitions).
+	if not is_inside_tree():
+		return
+	
 	var walkable_areas = get_walkable_areas()
 	if walkable_areas.is_empty():
 		return
@@ -503,6 +521,8 @@ func _ensure_active_walkable_area() -> void:
 		if _nav_path and _nav_path.map_rid.is_valid():
 			NavigationServer2D.map_set_active(_nav_path.map_rid, false)
 		_nav_path = null
+		# Fix #459: Don't try to activate walkable areas if none are enabled.
+		return
 
 	# Finally, take the first enabled walkable area and activate it.
 	set_active_walkable_area(enabled_walkable_areas[0].name)

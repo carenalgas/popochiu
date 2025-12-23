@@ -55,6 +55,21 @@ func _parse_property(
 	if object.get_class() == "EditorDebuggerRemoteObject":
 		return false
 	
+	# Add custom dropdown for follow_character and face_character properties
+	if object is PopochiuCharacter and path in ["follow_character", "face_character"]:
+		var ep := EditorProperty.new()
+		var ob := OptionButton.new()
+		
+		_update_characters_list(ob, object, path)
+		
+		ob.item_selected.connect(_update_character_property.bind(ob, object, path))
+		ob.pressed.connect(_update_characters_list.bind(ob, object, path))
+		
+		ep.add_child(ob)
+		add_property_editor(path, ep)
+		
+		return true
+	
 	# NOTE: We could add this as an option of the plugin settings. So devs can add extra properties
 	# 		if needed.
 	if object and object.get_parent() is Node2D and not path in [
@@ -78,6 +93,29 @@ func _parse_property(
 func _open_scene(path: String) -> void:
 	EditorInterface.set_main_screen_editor("2D")
 	EditorInterface.open_scene_from_path(path)
+
+
+func _update_characters_list(ob: OptionButton, character: PopochiuCharacter, path: String) -> void:
+	ob.clear()
+	var characters := PopochiuResources.get_section_keys("characters")
+	var keys_ids_map := {}
+	
+	characters.sort()
+	ob.add_item("")
+	for key: String in characters:
+		# Exclude the character itself from the list
+		if key == character.script_name:
+			continue
+		keys_ids_map[key] = ob.item_count
+		ob.add_item(key)
+	
+	var current_value: String = character.get(path)
+	if keys_ids_map.has(current_value):
+		ob.selected = ob.get_item_index(keys_ids_map[current_value])
+
+
+func _update_character_property(idx: int, ob: OptionButton, character: PopochiuCharacter, path: String) -> void:
+	character.set(path, ob.get_item_text(idx))
 
 
 #endregion

@@ -62,9 +62,18 @@ func on_load(data: Dictionary) -> void:
 
 ## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
+## [br][br]
+## This method clears and rebuilds the state dictionaries from scratch, ensuring they accurately
+## reflect only the objects currently present in the room. Objects that were removed from the
+## room's scene tree (e.g., via [method PopochiuRoom.remove_character]) will not be restored when
+## returning to the room.
 func save_children_states() -> void:
 	if PopochiuUtils.r.current and PopochiuUtils.r.current.state == self:
 		for t in PopochiuResources.ROOM_CHILDREN:
+			# Clear the dictionary to remove entries for objects no longer in the room
+			# Fixes issue #466
+			get(t).clear()
+			
 			for node in PopochiuUtils.r.current.call("get_" + t):
 				if node is PopochiuProp and not node.clickable: continue
 				
@@ -118,15 +127,23 @@ func save_children_states() -> void:
 					if not scene_path in dependencies_paths:
 						folder_name = dir.get_next()
 						continue
-					# ---------------------------------------------------------------- Fix #320 ----
+					# ----------------------------------------------------------End of fix #320 ----
 					
-					var script_path := scene_path.replace("tscn", "gd")
-					if not FileAccess.file_exists(script_path):
+					var packed_scene: PackedScene = load(scene_path)
+					
+					# Instantiate the full scene so exported data (like walkable polygons) is already baked.
+					# Loading only the script left interaction_polygon empty, so the first time we entered
+					# a room the stored state overwrote its walkable areas with blank data. Grabbing the
+					# packed scene preserves those serialized outlines until the room can save itself.
+					var node: Node = packed_scene.instantiate()
+					if not node or not node is Node2D:
+						if node:
+							node.free()
 						folder_name = dir.get_next()
 						continue
 					
-					var node: Node2D = load(script_path).new()
-					node.script_name = folder_name.to_pascal_case()
+					if node.script_name.is_empty():
+						node.script_name = folder_name.to_pascal_case()
 					
 					_save_object_state(
 						node,
@@ -149,7 +166,16 @@ func save_children_states() -> void:
 ##     self_modulate = PopochiuCharacter.self_modulate
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
+## [br][br]
+## This method clears and rebuilds the [member characters] dictionary from scratch, ensuring it
+## accurately reflects only the characters currently present in the room's [b]$Characters[/b] node.
+## Characters that were removed via [method PopochiuRoom.remove_character] will not be restored
+## when returning to the room.
 func save_characters() -> void:
+	# Clear the dictionary to remove entries for characters no longer in the room
+	# Fixes issue #466
+	characters.clear()
+	
 	for character: PopochiuCharacter in PopochiuUtils.r.current.get_characters():
 		characters[character.script_name] = {
 			x = character.position.x,
@@ -168,6 +194,22 @@ func save_characters() -> void:
 			look_at_point = {
 				x = character.look_at_point.x,
 				y = character.look_at_point.y,
+			},
+			dialog_pos = {
+				x = character.dialog_pos.x,
+				y = character.dialog_pos.y,
+			},
+			# Store facing and following settings
+			face_character = character.face_character,
+			follow_character = character.follow_character,
+			follow_character_outside_room = character.follow_character_outside_room,
+			follow_character_offset = {
+				x = character.follow_character_offset.x,
+				y = character.follow_character_offset.y,
+			},
+			follow_character_threshold = {
+				x = character.follow_character_threshold.x,
+				y = character.follow_character_threshold.y,
 			},
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)

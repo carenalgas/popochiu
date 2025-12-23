@@ -33,6 +33,7 @@ enum Looking {
 	## The character is facing right [code](x, 0)[/code].
 }
 
+
 ## Emitted when a [param character] starts moving from [param start] to [param end]. 
 ## The character connects to this signal internally to handle its own movement.
 signal started_walk_to(character: PopochiuCharacter, start: Vector2, end: Vector2)
@@ -42,6 +43,9 @@ signal stopped_walk
 signal grab_done
 ## Emitted when the obstacle flag state is changed.
 signal obstacle_state_changed(character: PopochiuCharacter)
+## Emitted during movement when the character's position changes.
+## Only emitted while the character is moving and the position has actually changed from the last emission.
+signal position_updated(character: PopochiuCharacter, current_position: Vector2)
 
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
@@ -52,6 +56,7 @@ const STANDARD_IDLE_ANIMATION = "idle"
 const STANDARD_WALK_ANIMATION = "walk"
 ## Standard talk animation name.
 const STANDARD_TALK_ANIMATION = "talk"
+
 
 ## The [Color] in which the dialogue lines of the character are rendered.
 @export var text_color := Color.WHITE
@@ -64,11 +69,34 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## You can use this to define which [PopochiuAudioCue]s to play when the character speaks using a
 ## specific emotion.
 @export var voices := []: set = set_voices
-## Whether the character should follow the player-controlled character (PC) when it moves through
-## the room.
-@export var follow_character : PopochiuCharacter = null
-## The offset between the character being followed and this character when it follows the former one
-@export var follow_character_offset := Vector2(20, 0)
+## The [member PopochiuCharacter.script_name] of the character that this character should
+## continuously face. Set this in the inspector to have the character automatically face another
+## character at runtime.
+@export var face_character := ""
+## The [member PopochiuCharacter.script_name] of the character that this character should follow
+## when it moves through the room. Set this in the inspector to have the character automatically
+## follow another character at runtime.
+@export var follow_character := ""
+## The positional offset from the followed character where this character will walk to when following.
+## [member follow_character_offset.x] defines the lateral (side-to-side) distance. The follower will
+## stay to the left or right of the leader based on their relative positions.
+## [member follow_character_offset.y] defines the vertical offset. Positive values place the follower
+## lower/in front, negative values place them higher/behind.
+## Example: [code]Vector2(20, -5)[/code] = "Stay 20px to the side, 5px higher (slightly behind in perspective)"
+@export var follow_character_offset := Vector2(20, -5)
+## The minimum distance the followed character must be from this character before following starts.
+## This creates a "rubber band" effect where the follower doesn't move on every step of the leader.
+## [member follow_character_threshold.x] defines the horizontal trigger distance.
+## [member follow_character_threshold.y] defines the vertical trigger distance.
+## The follower will start moving when the leader exceeds the threshold on [b]either[/b] axis.
+## Example: [code]Vector2(35, 10)[/code] = "Start following if leader is >35px away horizontally OR >10px away vertically"
+## Set to [code]Vector2.ZERO[/code] to make the follower move on every step (no threshold).
+@export var follow_character_threshold := Vector2(35, 10)
+## When [code]true[/code], this character will be automatically transferred to the target room when
+## the followed character changes rooms. The follower will appear at the followed character's
+## position plus [member follow_character_offset]. Chain-following is supported: if A follows B
+## and B follows C, and C changes room, both A and B will transfer.
+@export var follow_character_outside_room := false
 ## Array of [Dictionary] where each element has [code]{ emotion: String, avatar: Texture }[/code].
 ## You can use this to define which [Texture] to use as avatar for the character when it speaks
 ## using a specific emotion.
@@ -183,6 +211,13 @@ var _is_dialog_pos_locked: bool = false
 var _locked_dialog_pos: Vector2
 # Tween used for alpha fade operations.
 var _alpha_tween: Tween = null
+# The character currently being followed at runtime (independent from exported follow_character).
+var _current_followed_character: PopochiuCharacter = null
+# The character currently being faced at runtime (independent from exported face_character).
+var _current_faced_character: PopochiuCharacter = null
+# Tracks the last position where position_updated signal was emitted.
+# Used to throttle signal emissions and only emit when position actually changes.
+var _last_emitted_position: Vector2 = Vector2.INF
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -225,21 +260,26 @@ func _ready():
 
 	# Prevent frame-by-frame processing for this character.
 	# This flag is set when activating the walking function, or by characters
-	# following the player (see below).
+	# following or facing other characters.
 	set_process(false)
 
-	# Setup following behavior if enabled
-	if (
-		follow_character
-		and not follow_character.started_walk_to.is_connected(_follow_character)
-		# Fix #385: Ignore character following if the follower is the same as
-		# the player-controlled character.
-		and self != PopochiuUtils.c.player
-	):
-		follow_character.started_walk_to.connect(_follow_character)
-		# This character is following another character, so it must move without
-		# explicitly invoking walk or move functions.
-		set_process(true)
+	# Validate follow_character configuration
+	if not follow_character.is_empty():
+		# Warn if threshold is smaller than offset (can cause jitter)
+		if (abs(follow_character_threshold.x) > 0 and abs(follow_character_threshold.x) < abs(follow_character_offset.x)) or \
+		   (abs(follow_character_threshold.y) > 0 and abs(follow_character_threshold.y) < abs(follow_character_offset.y)):
+			PopochiuUtils.print_warning(
+				"Character '%s': follow_character_threshold (%s) should be >= follow_character_offset (%s) to avoid jitter" %
+				[script_name, follow_character_threshold, follow_character_offset]
+			)
+
+	# Setup following behavior if enabled in inspector
+	if not follow_character.is_empty() and self != PopochiuUtils.c.player:
+		start_following_character()
+
+	# Setup facing behavior if enabled in inspector
+	if not face_character.is_empty() and self != PopochiuUtils.c.player:
+		start_facing_character()
 
 	# We need to initialize the interaction for the player character.
 	# Changes will be handled by the player_changed signal handler.
@@ -253,17 +293,32 @@ func _ready():
 	if not PopochiuUtils.c.player_changed.is_connected(_on_player_changed):
 		PopochiuUtils.c.player_changed.connect(_on_player_changed)
 
+
 func _physics_process(delta: float) -> void:
 	if _navigation_path.is_empty(): return
 
 	var walk_distance: float = walk_speed * delta
 	_move_along_path(walk_distance)
 
+
 func _process(delta: float) -> void:
-	# ALWAYS face the character being followed
-	if follow_character:
-		_face_character()
-		
+	# Following takes precedence over facing
+	if _current_followed_character:
+		return
+
+	# Continuously face the target character
+	if _current_faced_character:
+		_face_character(_current_faced_character)
+
+
+func _exit_tree() -> void:
+	# Safety cleanup: disconnect all follow/face signals to prevent memory leaks.
+	if _current_followed_character:
+		stop_following_character()
+	if _current_faced_character:
+		stop_facing_character()
+
+
 #endregion
 
 #region Virtual ####################################################################################
@@ -295,17 +350,23 @@ func _play_grab() -> void:
 	play_animation('grab')
 
 
+## Use this method to add custom behavior when movement begins,
+## such as playing sound effects or updating UI elements.
+## [i]Virtual[/i].
 func _on_movement_started() -> void:
 	pass
 
 
+## Use this method to add custom behavior when movement ends,
+## such as triggering events or updating game state.
+## [i]Virtual[/i].
 func _on_movement_ended() -> void:
 	pass
 
 
 ## Called after movement to sync the character's buffered position state.
 func _on_position_changed() -> void:
-	_sync_buffered_position()
+	sync_buffered_position()
 
 
 #endregion
@@ -409,6 +470,7 @@ func turn_towards(target_pos: Vector2) -> void:
 	)
 	face_direction(target_pos)
 	_play_walk(target_pos)
+
 
 ## Makes the character stop moving and emits [signal stopped_walk].[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
@@ -555,6 +617,7 @@ func face_clicked() -> void:
 	)
 
 	await face_direction(global_lap)
+
 
 ## Makes the character face the opposite direction from where they are currently facing.[br][br]
 ## This is useful when you want to turn the character around without knowing their current
@@ -1004,7 +1067,7 @@ func fade_to(
 	# Manage the enablement if necessary
 	if not set_enablement:
 		return
-	
+
 	if target_alpha == 0.0:
 		disable()
 	else:
@@ -1018,7 +1081,7 @@ func face_direction(destination: Vector2):
 	# We cannot use the face_* functions because they reset the state to IDLE.
 	# Get the angle of the vector from the origin to the destination as a number between
 	# 0 and 360 degrees (Vector2.angle() returns the angle in radians between -PI and PI).
-	var angle = wrapf(rad_to_deg((destination - position).angle()), 0, 360)
+	var angle = wrapf(rad_to_deg((destination - global_position).angle()), 0, 360)
 	# Calculate the looking direction using 8 directions centered on cardinal/diagonal directions
 	# We add 22.5° offset so sectors are centered (e.g., -22.5° to +22.5° = RIGHT)
 	_looking_dir = int((angle + 22.5) / 45) % 8
@@ -1026,7 +1089,6 @@ func face_direction(destination: Vector2):
 	# Note that we add a fallback empty string to the list, in case the only
 	# available animation is the base one ('walk', 'talk', etc).
 	_animation_suffixes = _valid_animation_suffixes[_looking_dir] + [EMPTY_STRING]
-
 
 
 ## Returns the [Texture] of the avatar defined for the [param emo] emotion.
@@ -1161,7 +1223,7 @@ func reset_buffered_position() -> void:
 
 
 ## Syncs the buffered position with the current position to avoid conflicts with walking.
-func _sync_buffered_position() -> void:
+func sync_buffered_position() -> void:
 	_buffered_position = position
 
 
@@ -1218,6 +1280,7 @@ func set_voices(value: Array) -> void:
 		elif not value[idx].variations.is_empty():
 			if value[idx].variations[-1] == null:
 				value[idx].variations[-1] = AudioCueSound.new()
+
 
 func set_avatars(value: Array) -> void:
 	avatars = value
@@ -1287,57 +1350,130 @@ func get_is_visible_in_room() -> bool:
 func get_current_animation() -> String:
 	return _current_animation
 
-## Makes this character start facing the specified character. Defaults to the player.
-func start_facing_character(character: PopochiuCharacter) -> void:
 
-	if self == PopochiuUtils.c.player:
-		# TODO: We might want to have the player follow another character in a cutscene,
-		# but this will have distinct behavior
+## Makes this character start facing the specified character. If [param character] is not provided,
+## the character defined in [member face_character] will be used. If that is also empty, the player
+## character will be used. [param character] can be a [PopochiuCharacter] instance or a [String]
+## with the character's [member script_name].
+func start_facing_character(character: Variant = null) -> void:
+	var target_character := _resolve_character(character, face_character)
+
+	# Prevent self-facing or invalid target
+	if target_character == self or target_character == null:
 		return
-	
-	if character == null:
-		character = PopochiuUtils.c.player
-		
-	follow_character = character
-	
-	_face_character()
 
+	# Ensure both characters are in the scene tree
+	if not is_inside_tree() or not target_character.is_inside_tree():
+		return
+
+	# Save the script_name in the property for serialization
+	face_character = target_character.script_name
+
+	_current_faced_character = target_character
+
+	# Immediately face the target character
+	_face_character(_current_faced_character)
+
+	# Enable continuous facing in _process()
 	if not Engine.is_editor_hint():
 		set_process(true)
+
 
 ## Makes this character stop facing another character.
 func stop_facing_character() -> void:
-	follow_character = null
-	
-	if not Engine.is_editor_hint():
+	_current_faced_character = null
+
+	# Clear the property for serialization
+	face_character = ""
+
+	# Disable _process() only if not following or facing anyone
+	if not _current_followed_character and not Engine.is_editor_hint():
 		set_process(false)
 
-## Makes this character start following the specified character. Defaults to the player
-func start_following_character(character: PopochiuCharacter) -> void:
-	
-	if character == null:
-		character = PopochiuUtils.c.player
-	
-	follow_character = character
-	
-	character.started_walk_to.connect(_follow_character)
 
-	_follow_character(character, Vector2.ZERO, character.position)
+## Makes this character start following the specified character. The follower will continuously
+## monitor the leader's position and start moving when the leader exceeds the threshold distance
+## (see [member follow_character_threshold]). The follower will walk to a position offset from
+## the leader as defined by [member follow_character_offset].
+##
+## If [param character] is not provided, the character defined in [member follow_character] will
+## be used. If that is also empty, the player character will be used.
+## [param character] can be a [PopochiuCharacter] instance or a [String] with the character's
+## [member script_name].
+##
+## The follower will only start a new walk when not already moving, preventing jitter from
+## constant re-targeting.
 
-	if not Engine.is_editor_hint():
-		set_process(true)
+func start_following_character(character: Variant = null) -> void:
+	var target_character := _resolve_character(character, follow_character)
 
-## Makes this character stop following another character
+	# Prevent self-following or invalid target
+	if target_character == self or target_character == null:
+		return
+
+	# Ensure both characters are in the scene tree
+	if not is_inside_tree() or not target_character.is_inside_tree():
+		return
+
+	# Save the script_name in the property for serialization
+	follow_character = target_character.script_name
+
+	_current_followed_character = target_character
+
+	# Connect to position updates for real-time following.
+	if not _current_followed_character.position_updated.is_connected(_on_followed_character_position_updated):
+		_current_followed_character.position_updated.connect(_on_followed_character_position_updated)
+
+	# Connect to movement end to snap to final position.
+	if not _current_followed_character.movement_ended.is_connected(_on_followed_character_stopped):
+		_current_followed_character.movement_ended.connect(_on_followed_character_stopped)
+
+	# Connect to walk start to handle mid-movement destination changes (e.g., followed character changes direction).
+	if not _current_followed_character.started_walk_to.is_connected(_on_followed_character_started_walk):
+		_current_followed_character.started_walk_to.connect(_on_followed_character_started_walk)
+
+	# NOTE: We intentionally do NOT call _check_and_follow_character() here.
+	# The follower should only react to the followed character's MOVEMENT, not their static position.
+	# This prevents the follower from moving when the scene loads and the followed character is stationary.
+
+
+## Makes this character stop following another character.
 func stop_following_character() -> void:
-	follow_character.started_walk_to.disconnect(_follow_character)
-	follow_character = null
-		
-	if not Engine.is_editor_hint():
+	if _current_followed_character:
+		# Safely disconnect signals.
+		if _current_followed_character.position_updated.is_connected(_on_followed_character_position_updated):
+			_current_followed_character.position_updated.disconnect(_on_followed_character_position_updated)
+		if _current_followed_character.movement_ended.is_connected(_on_followed_character_stopped):
+			_current_followed_character.movement_ended.disconnect(_on_followed_character_stopped)
+		if _current_followed_character.started_walk_to.is_connected(_on_followed_character_started_walk):
+			_current_followed_character.started_walk_to.disconnect(_on_followed_character_started_walk)
+
+	_current_followed_character = null
+	# Clear the property for serialization
+	follow_character = ""
+
+	# Disable _process() only if not following or facing anyone
+	if not _current_faced_character and not Engine.is_editor_hint():
 		set_process(false)
+
 
 #endregion
 
 #region Private ####################################################################################
+# Resolves a character parameter to a PopochiuCharacter instance.
+# [param character] can be a PopochiuCharacter, a String (script_name), or null.
+# [param fallback_script_name] is used when [param character] is null or empty.
+# Returns the player character if both are empty/null.
+func _resolve_character(character: Variant, fallback_script_name: String) -> PopochiuCharacter:
+	if character is PopochiuCharacter:
+		return character
+	if character is String and not (character as String).is_empty():
+		return PopochiuUtils.c.get_character(character)
+	if not fallback_script_name.is_empty():
+		return PopochiuUtils.c.get_character(fallback_script_name)
+	return PopochiuUtils.c.player
+
+
 func _translate() -> void:
 	if Engine.is_editor_hint() or not is_inside_tree(): return
 	description = PopochiuUtils.e.get_text(_description_code)
@@ -1471,6 +1607,7 @@ func _update_position():
 	if is_instance_valid(PopochiuUtils.r.current):
 		PopochiuUtils.r.current.update_characters_position(self)
 
+
 # Flips sprites depending on user preferences: requires two boolean conditions
 # as arguments for flipping left [param left_cond] or right [param right_cond]
 func _flip_left_right(left_cond: bool, right_cond: bool) -> void:
@@ -1511,6 +1648,14 @@ func _move_along_path(walk_distance: float):
 				position = next_position
 			# Scale the character depending on the new position
 			update_scale()
+
+			# Emit position update only if position actually changed (>1px threshold)
+			# This throttles emissions to avoid per-frame signal overhead when position is stable.
+			var current_pos := get_buffered_position()
+			if current_pos.distance_squared_to(_last_emitted_position) > 1.0: # 1px threshold
+				_last_emitted_position = current_pos
+				position_updated.emit(self, current_pos)
+
 			# We are still walking towards the next navigation point
 			# so we don't need to update the path information
 			return
@@ -1525,6 +1670,14 @@ func _move_along_path(walk_distance: float):
 	position = last_character_position
 	update_scale()
 	_clear_navigation_path()
+
+	# Apply facing behavior after movement completes.
+	# This handles the case where a character is both following one character
+	# and facing another (e.g., bodyguard following the player but always facing threats).
+	# Without this, the character would only face during continuous updates in _process(),
+	# missing the final snap-to-target immediately after reaching the destination.
+	if _current_faced_character:
+		_face_character(_current_faced_character)
 
 
 # Character navigation system.
@@ -1570,24 +1723,160 @@ func _clear_navigation_path() -> void:
 	idle()
 	movement_ended.emit()
 
-# Makes the character follow the player by walking to a position that is offset from the player's
-# position. The offset is defined by [member follow_player_offset]. The character will walk to
-# the position that is offset from the player's position, and will continue to follow the player.
-func _follow_character(character: PopochiuCharacter, start_position: Vector2, end_position: Vector2):
-	var follower_end_position := Vector2.ZERO
-	if end_position.x > position.x:
-		follower_end_position = end_position - follow_character_offset
-	else:
-		follower_end_position = end_position + follow_character_offset
-
-	walk_to(follower_end_position)
+	# Reset position tracker so next movement starts fresh.
+	_last_emitted_position = Vector2.INF
 
 
-# Makes the character face left or right, depending on where the target character is
-func _face_character() -> void:
-	if follow_character.position.x > position.x:
-		face_right()
-	else:
-		face_left()
+# Called every time the followed character's position updates during movement.
+# Only triggers follow movement if threshold is exceeded and follower is not already moving.
+func _on_followed_character_position_updated(followed_character: PopochiuCharacter, followed_character_pos: Vector2) -> void:
+	# Safety check: if we're not in the tree, we can't process movement
+	if not is_inside_tree():
+		return
 	
+	# Early exit: don't interrupt current movement.
+	# This prevents jitter from constant re-targeting while follower is already moving.
+	if is_moving:
+		return
+
+	_check_and_follow_character()
+
+
+# Called when the followed character starts a new walk (including direction changes).
+# This handles mid-movement destination updates so the follower doesn't walk past the followed character.
+func _on_followed_character_started_walk(followed_character: PopochiuCharacter, start: Vector2, end: Vector2) -> void:
+	# Only react if we're actually following someone.
+	if not _current_followed_character:
+		return
+	
+	# Safety check: if we're not in the tree, we can't process movement
+	if not is_inside_tree():
+		return
+
+	# If follower is NOT moving, use normal threshold-based logic.
+	if not is_moving:
+		_check_and_follow_character()
+		return
+
+	# Follower IS moving - stop and re-evaluate threshold.
+	# This handles cases where followed character changes direction and crosses follower's path.
+	await stop_walking()
+	_check_and_follow_character()
+
+
+# Called when the followed character stops moving.
+# Ensures follower snaps to final offset position.
+func _on_followed_character_stopped() -> void:
+	# Only react if we're actually following someone.
+	if not _current_followed_character:
+		return
+	
+	# Safety check: if we're not in the tree, we can't process movement
+	if not is_inside_tree():
+		return
+
+	# Wait a frame to ensure followed character's final position is settled.
+	await get_tree().process_frame
+
+	# Final position snap.
+	_check_and_follow_character()
+
+
+# Core logic: checks distance threshold and initiates following if needed.
+# This is the single source of truth for follow behavior.
+func _check_and_follow_character() -> void:
+	if not _current_followed_character:
+		return
+
+	# Early exit: already moving, avoid re-targeting.
+	if is_moving:
+		return
+
+	var followed_character_pos := _current_followed_character.position
+
+	# Threshold check: only move if followed character is far enough away.
+	# Skip expensive distance calculation if threshold is zero (always follow).
+	if follow_character_threshold.length_squared() > 0:
+		var distance_to_followed_character := followed_character_pos - position
+		# Use OR logic: trigger if threshold exceeded on EITHER axis.
+		# This creates rubber-band effect.
+		if abs(distance_to_followed_character.x) <= abs(follow_character_threshold.x) and \
+		   abs(distance_to_followed_character.y) <= abs(follow_character_threshold.y):
+			# Followed character is within threshold, don't move.
+			return
+
+	# If followed character is moving, check if following would put us ahead of them.
+	# This prevents the follower from overtaking the followed character when they reverse direction.
+	var followed_character_destination := _current_followed_character.target_position
+	if followed_character_destination != Vector2.INF:
+		# Check X axis: if followed character is right of us but heading left of us, wait.
+		if (followed_character_pos.x > position.x and followed_character_destination.x < position.x) or \
+		   (followed_character_pos.x < position.x and followed_character_destination.x > position.x):
+			return
+		# Check Y axis: if followed character is below us but heading above us, wait.
+		if (followed_character_pos.y > position.y and followed_character_destination.y < position.y) or \
+		   (followed_character_pos.y < position.y and followed_character_destination.y > position.y):
+			return
+
+	# Followed character is far enough (or threshold is zero) - calculate follow position.
+	_update_follow_target(followed_character_pos)
+
+
+# Calculates the target follow position based on followed character's position and movement direction.
+# Initiates walk to that position.
+func _update_follow_target(followed_character_pos: Vector2) -> void:
+	if not _current_followed_character:
+		return
+
+	# Determine followed character's movement direction and the base position to walk towards.
+	var followed_character_destination := _current_followed_character.target_position
+	var target_base_pos: Vector2
+	var movement_direction: Vector2
+
+	# If followed character is moving, use their destination as the base position for offset calculation.
+	# This ensures the follower walks to where the followed character is GOING, not where they ARE.
+	if followed_character_destination != Vector2.INF:
+		target_base_pos = followed_character_destination
+		movement_direction = (followed_character_destination - followed_character_pos).normalized()
+	else:
+		# Followed character is stationary, use their current position.
+		target_base_pos = followed_character_pos
+		movement_direction = (followed_character_pos - position).normalized()
+
+	# Handle edge case: no meaningful direction (followed character on top of follower).
+	if movement_direction.length_squared() < 0.01:
+		# Default to followed character facing down.
+		movement_direction = Vector2.DOWN
+
+	# Calculate lateral offset based on movement direction.
+	# If moving right, follower stays on left (negative X offset).
+	# If moving left, follower stays on right (positive X offset).
+	var lateral_direction := Vector2.LEFT if movement_direction.x > 0 else Vector2.RIGHT
+	var lateral_offset := lateral_direction * follow_character_offset.x
+
+	# Vertical offset (same direction regardless of lateral movement).
+	var vertical_offset := Vector2.DOWN * follow_character_offset.y
+
+	# Calculate final target position in global coordinates.
+	var target_pos := target_base_pos + lateral_offset + vertical_offset
+
+	# Initiate movement.
+	# Using walk() directly since target_pos is already in global coordinates.
+	walk(target_pos)
+
+
+# Makes the character face another character by updating the facing direction.
+# Called during continuous facing updates and after movement completion.
+func _face_character(character: PopochiuCharacter) -> void:
+	# Guard against facing targets that aren't in the same active tree/room
+	if not is_inside_tree() or not character or not character.is_inside_tree():
+		return
+	if character.room != room:
+		return
+
+	# face_direction expects global coordinates
+	face_direction(character.global_position)
+	await idle()
+
+
 #endregion
