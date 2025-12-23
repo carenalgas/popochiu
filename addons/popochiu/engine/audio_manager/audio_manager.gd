@@ -286,7 +286,6 @@ func _play(
 	# Fixes #463 Audio cues looping inappropriately in Godot 4.5
 	#
 	# TODO: remove this as soon as it becomes irrelevant
-	
 	if player.stream.get_class() == 'AudioStreamWAV': 
 		player.stream.loop_mode = (
 			AudioStreamWAV.LOOP_FORWARD if cue.loop else AudioStreamWAV.LOOP_DISABLED
