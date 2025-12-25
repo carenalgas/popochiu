@@ -33,7 +33,7 @@ func _do_migration() -> bool:
 ## Add NavigationObstacle2D nodes to all props that don't already have one.
 func _add_obstacle_polygons_to_props() -> Completion:
 	var rooms_path := PopochiuResources.ROOMS_PATH
-	PopochiuUtils.print_normal("Migration %d: Adding obstacle polygon to all props.")
+	PopochiuUtils.print_normal("Migration %d: Adding obstacle polygon to all props." % [VERSION])
 	
 	if not DirAccess.dir_exists_absolute(rooms_path):
 		PopochiuUtils.print_error("Migration %d: Rooms directory does not exist: %s" % [VERSION, rooms_path])
@@ -156,7 +156,7 @@ func _update_signal_references_in_game_scripts() -> Completion:
 		if _update_signal_references_in_file(script_path):
 			any_script_updated = true
 	
-	PopochiuUtils.print_normal("Migration %d: Signal references update completed. %s script updated: %s" % [VERSION, "Some" if any_script_updated else "No"])
+	PopochiuUtils.print_normal("Migration %d: Signal references update completed. %s scripts updated." % [VERSION, "Some" if any_script_updated else "No"])
 	return Completion.DONE if any_script_updated else Completion.IGNORED
 
 

@@ -4,7 +4,7 @@ extends PopochiuMigration
 
 # Update constant values to be correct for your migration
 const VERSION = 4
-const DESCRIPTION = "short description of migration goes here"
+const DESCRIPTION = "Upgrade gui elements"
 const STEPS = [
 	"Remove InventoryBar, SettingsBar, TextSettingsPopup and SoundSettingsPopup",
 	"Add SimpleClickBar and SimpleClickSettingsPopup.",

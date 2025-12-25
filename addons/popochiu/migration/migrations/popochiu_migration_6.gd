@@ -42,10 +42,12 @@ func _add_animation_players_to_inventory_items() -> Completion:
 	
 	while file_name != "":
 		if dir.current_is_dir():
-			var item_scene_path: String = PopochiuResources.get_data_value("inventory_items", file_name.to_snake_case(), null)
-			if item_scene_path != null and FileAccess.file_exists(item_scene_path):
+			var item_path = PopochiuResources.get_data_value("inventory_items", file_name.to_pascal_case(), null)
+			if item_path == null or not FileAccess.file_exists(item_path):
+				item_path = PopochiuResources.get_data_value("inventory_items", file_name.to_snake_case(), null)
+			if item_path != null and FileAccess.file_exists(item_path):
 				# Process one item at a time to avoid memory issues
-				if _update_inventory_item_by_path(item_scene_path):
+				if _update_inventory_item_by_path(item_path):
 					any_item_updated = true
 		file_name = dir.get_next()
 
@@ -54,13 +56,20 @@ func _add_animation_players_to_inventory_items() -> Completion:
 
 
 ## Update a single inventory item by loading it from its scene path.
-func _update_inventory_item_by_path(scene_path: String) -> bool:
-	var packed_scene: PackedScene = load(scene_path)
+func _update_inventory_item_by_path(item_data_path: String) -> bool:
+	var item_data = load(item_data_path)
+	if not item_data:
+		return false
+
+	var packed_scene = item_data as PackedScene
+	if item_data is PopochiuInventoryItemData:
+		packed_scene = item_data.scene
+
 	if not packed_scene:
 		return false
 	
 	var item_instance = packed_scene.instantiate()
-	if not item_instance is PopochiuInventoryItem:
+	if item_instance is not PopochiuInventoryItem:
 		item_instance.queue_free()
 		return false
 	
