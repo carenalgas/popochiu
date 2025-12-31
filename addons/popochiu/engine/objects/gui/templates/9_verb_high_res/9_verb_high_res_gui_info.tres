@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="PopochiuGUIInfo" load_steps=3 format=3 uid="uid://cdl3s004512dx"]
 
-[ext_resource type="Texture2D" uid="uid://ijdc4mtl0br3" path="res://addons/popochiu/icons/ico_9_verb_high_res.png" id="1_jx7rp"]
+[ext_resource type="Texture2D" uid="uid://b8npdr2hnbf1h" path="res://addons/popochiu/icons/btn_setup_gui_9verbs.svg" id="1_jx7rp"]
 [ext_resource type="Script" uid="uid://dx8nbjp33mba4" path="res://addons/popochiu/engine/others/popochiu_gui_info.gd" id="2_subcu"]
 
 [resource]

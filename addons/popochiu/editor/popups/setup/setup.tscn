@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://5g3dk8ky51g5"]
+[gd_scene load_steps=12 format=3 uid="uid://5g3dk8ky51g5"]
 
 [ext_resource type="Script" uid="uid://ccsu88s0qt43b" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_htti4"]
 [ext_resource type="Texture2D" uid="uid://b31n8y436g5bg" path="res://addons/popochiu/icons/logo-dark.svg" id="2_ba3yh"]
@@ -16,88 +16,16 @@ resource_name = "TransparentPanel"
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_glykx"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_htti4"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ba3yh"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_057xv"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m7o8l"]
-content_margin_left = 6.0
-content_margin_top = 6.0
-content_margin_right = 6.0
-content_margin_bottom = 6.0
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 12
-corner_radius_top_right = 12
-corner_radius_bottom_right = 12
-corner_radius_bottom_left = 12
-
 [sub_resource type="ButtonGroup" id="ButtonGroup_2ulnk"]
 resource_name = "GameTypeBtnGroup"
 allow_unpress = true
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glykx"]
-bg_color = Color(0, 0, 0, 1)
-corner_radius_top_left = 8
-corner_radius_top_right = 8
-corner_radius_bottom_right = 8
-corner_radius_bottom_left = 8
-expand_margin_left = 8.0
-expand_margin_top = 8.0
-expand_margin_right = 8.0
-expand_margin_bottom = 8.0
-
 [sub_resource type="ButtonGroup" id="ButtonGroup_4duov"]
 resource_name = "GameGUIBtnGroup"
 
-[sub_resource type="StyleBoxLine" id="StyleBoxLine_l7fcy"]
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_htti4"]
 
-[sub_resource type="Image" id="Image_yt83a"]
-data = {
-"data": PackedByteArray(255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 92, 92, 127, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 231, 255, 90, 90, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 90, 90, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 42, 255, 90, 90, 0, 255, 94, 94, 0, 255, 91, 91, 42, 255, 93, 93, 233, 255, 92, 92, 232, 255, 93, 93, 41, 255, 90, 90, 0, 255, 94, 94, 0, 255, 91, 91, 42, 255, 93, 93, 233, 255, 92, 92, 232, 255, 92, 92, 0, 255, 92, 92, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 93, 93, 44, 255, 91, 91, 0, 255, 91, 91, 42, 255, 91, 91, 42, 255, 93, 93, 0, 255, 91, 91, 45, 255, 93, 93, 44, 255, 91, 91, 0, 255, 91, 91, 42, 255, 91, 91, 42, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 92, 92, 235, 255, 92, 92, 234, 255, 89, 89, 43, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 45, 255, 92, 92, 235, 255, 92, 92, 234, 255, 89, 89, 43, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 91, 91, 0, 255, 92, 92, 0, 255, 92, 92, 0, 255, 92, 92, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 91, 91, 59, 255, 92, 92, 61, 255, 92, 92, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 91, 91, 59, 255, 92, 92, 61, 255, 92, 92, 0, 255, 92, 92, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0, 255, 93, 93, 0),
-"format": "RGBA8",
-"height": 16,
-"mipmaps": false,
-"width": 16
-}
-
-[sub_resource type="ImageTexture" id="ImageTexture_w2dph"]
-image = SubResource("Image_yt83a")
-
-[node name="Control" type="Control"]
+[node name="Setup" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -176,15 +104,6 @@ theme_override_constants/separation = 48
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_constants/h_separation = 4
-theme_override_styles/focus = SubResource("StyleBoxFlat_htti4")
-theme_override_styles/hover = SubResource("StyleBoxFlat_ba3yh")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_057xv")
-theme_override_styles/normal = SubResource("StyleBoxFlat_m7o8l")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_2ulnk")
 text = "Retro / Pixel Art"
@@ -197,14 +116,6 @@ expand_icon = true
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_htti4")
-theme_override_styles/hover = SubResource("StyleBoxFlat_ba3yh")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_057xv")
-theme_override_styles/normal = SubResource("StyleBoxFlat_m7o8l")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_2ulnk")
 text = "Modern / Hi-Res"
@@ -333,7 +244,6 @@ size_flags_vertical = 0
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
 
 [node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes"]
 layout_mode = 2
@@ -351,14 +261,14 @@ unique_name_in_owner = true
 clip_contents = false
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
-theme_override_font_sizes/bold_italics_font_size = 13
-theme_override_font_sizes/mono_font_size = 13
 theme_override_font_sizes/normal_font_size = 13
 theme_override_font_sizes/bold_font_size = 13
-theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
 bbcode_enabled = true
 text = "(*) You can update these settings if you change your mind later!"
 fit_content = true
@@ -410,14 +320,6 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/icon_pressed_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_normal_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
-theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
-theme_override_styles/focus = SubResource("StyleBoxFlat_htti4")
-theme_override_styles/hover = SubResource("StyleBoxFlat_ba3yh")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_057xv")
-theme_override_styles/normal = SubResource("StyleBoxFlat_m7o8l")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_4duov")
 text = "GUI-TYPE"
@@ -434,20 +336,19 @@ size_flags_vertical = 3
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
 
 [node name="TooltipGUIText" type="RichTextLabel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/TooltipBox/TooltipGUI"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
-theme_override_font_sizes/bold_italics_font_size = 13
-theme_override_font_sizes/mono_font_size = 13
 theme_override_font_sizes/normal_font_size = 13
 theme_override_font_sizes/bold_font_size = 13
-theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
 bbcode_enabled = true
 text = "This label will hold a description for the selected GUI."
 fit_content = true
@@ -464,7 +365,7 @@ custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
-theme_override_styles/separator = SubResource("StyleBoxLine_l7fcy")
+theme_override_styles/separator = SubResource("StyleBoxLine_htti4")
 
 [node name="NavBtnColumns" type="HBoxContainer" parent="WizardContainer/Rows"]
 unique_name_in_owner = true
@@ -483,7 +384,6 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 10
 text = "BACK"
-icon = SubResource("ImageTexture_w2dph")
 
 [node name="LabelStep" type="Label" parent="WizardContainer/Rows/NavBtnColumns"]
 unique_name_in_owner = true
@@ -500,7 +400,6 @@ visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 text = "NEXT"
-icon = SubResource("ImageTexture_w2dph")
 icon_alignment = 2
 
 [node name="FillerNext" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
@@ -513,9 +412,6 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_colors/font_pressed_color = Color(0.6, 0.6, 0.6, 1)
-theme_override_colors/font_hover_color = Color(0.3, 0.3, 0.3, 1)
 text = "No thanks, I need custom settings"
 
 [node name="SpacerBottom" type="Panel" parent="WizardContainer/Rows"]
@@ -588,7 +484,6 @@ size_flags_vertical = 0
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
 
 [node name="Columns" type="HBoxContainer" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType"]
 layout_mode = 2
@@ -604,14 +499,14 @@ expand_mode = 2
 unique_name_in_owner = true
 clip_contents = false
 layout_mode = 2
-theme_override_font_sizes/bold_italics_font_size = 13
-theme_override_font_sizes/mono_font_size = 13
 theme_override_font_sizes/normal_font_size = 13
 theme_override_font_sizes/bold_font_size = 13
-theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
 bbcode_enabled = true
 text = "[ul]
 [b]Custom[/b]: You edit your project's settings.
@@ -649,18 +544,27 @@ custom_minimum_size = Vector2(176, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 selected = 0
-item_count = 5
+item_count = 9
 popup/item_0/text = "None"
 popup/item_0/id = 0
 popup/item_1/text = "Low Resolution"
 popup/item_1/id = -1
 popup/item_1/separator = true
-popup/item_2/text = "Simple Click"
+popup/item_2/text = "9-Verbs"
 popup/item_2/id = 2
 popup/item_3/text = "Action Bar"
 popup/item_3/id = 3
-popup/item_4/text = "9-Verbs"
+popup/item_4/text = "Simple Click"
 popup/item_4/id = 4
+popup/item_5/text = "High Resolution"
+popup/item_5/id = -1
+popup/item_5/separator = true
+popup/item_6/text = "9 Verb (High-res)"
+popup/item_6/id = 6
+popup/item_7/text = "Action Bar (High-res)"
+popup/item_7/id = 7
+popup/item_8/text = "Simple Click (High-res)"
+popup/item_8/id = 8
 
 [node name="TooltipBox2" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
 layout_mode = 2
@@ -670,20 +574,19 @@ size_flags_horizontal = 4
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
 
 [node name="TooltipNoGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
-theme_override_font_sizes/bold_italics_font_size = 13
-theme_override_font_sizes/mono_font_size = 13
 theme_override_font_sizes/normal_font_size = 13
 theme_override_font_sizes/bold_font_size = 13
-theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
 bbcode_enabled = true
 text = "[b]This requires you create the game UI from scratch.[/b]
 Only recommended if you have solid Godot experience."
@@ -702,14 +605,14 @@ unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
-theme_override_font_sizes/bold_italics_font_size = 13
-theme_override_font_sizes/mono_font_size = 13
 theme_override_font_sizes/normal_font_size = 13
 theme_override_font_sizes/bold_font_size = 13
-theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
 bbcode_enabled = true
 text = "[b]Built-in GUI are designed for a set of standard resolutions.[/b]
  You may have to tweak them to suite your custom settings
@@ -729,7 +632,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(420, 24)
 layout_mode = 2
 size_flags_horizontal = 4
-theme_override_styles/separator = SubResource("StyleBoxLine_l7fcy")
+theme_override_styles/separator = SubResource("StyleBoxLine_htti4")
 
 [node name="SizeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
 custom_minimum_size = Vector2(420, 0)
@@ -928,34 +831,34 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="TooltipRes" type="PanelContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox"]
+[node name="TooltipProcess" type="PanelContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_glykx")
 
-[node name="Columns" type="HBoxContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipRes"]
+[node name="Columns" type="HBoxContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess"]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 32
 
-[node name="TextureRect" type="TextureRect" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipRes/Columns"]
+[node name="TextureRect" type="TextureRect" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess/Columns"]
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("5_l7fcy")
 expand_mode = 2
 
-[node name="TooltipResText" type="RichTextLabel" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipRes/Columns"]
+[node name="TooltipResText" type="RichTextLabel" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess/Columns"]
 clip_contents = false
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
-theme_override_font_sizes/bold_italics_font_size = 13
-theme_override_font_sizes/mono_font_size = 13
 theme_override_font_sizes/normal_font_size = 13
 theme_override_font_sizes/bold_font_size = 13
-theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_font_sizes/bold_italics_font_size = 13
+theme_override_font_sizes/mono_font_size = 13
 theme_override_styles/normal = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/background = SubResource("StyleBoxEmpty_4duov")
+theme_override_styles/fill = SubResource("StyleBoxEmpty_4duov")
 bbcode_enabled = true
 text = "[b]Hang tight![/b]
 Popochius are setting up your adventure!"
@@ -976,7 +879,6 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
-theme_override_colors/font_color = Color(0, 0, 0, 1)
 value = 50.0
 
 [node name="CopyProcessLabel" type="Label" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
@@ -989,8 +891,6 @@ tooltip_text = "This will set stretch mode and default import presets for you.
 2D: Stretch mode set to 2D and stretch aspect set to keep. Texture2D import preset set to: 2D.
 "
 mouse_filter = 0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 16
 text = "Setting up Game UI..."
 horizontal_alignment = 1
 justification_flags = 0
