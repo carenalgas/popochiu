@@ -184,15 +184,16 @@ func _ready() -> void:
 	
 	# Assign property values to singletons and other global classes
 	PopochiuUtils.g.gui = gui
+	PopochiuUtils.t.tl = tl
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("popochiu-skip"):
 		cutscene_skipped = true
 		tl.play_transition(
-			PopochiuUtils.e.settings.TL_DEFAULT_CUTSCENE_TRANSITION,
+			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_CUTSCENE_TRANSITION),
 			settings.skip_cutscene_time,
-			PopochiuUtils.e.settings.TL_CUTSCENE_TRANSITION_MODE
+			PopochiuConfig._get_project_setting(PopochiuConfig.TL_CUTSCENE_TRANSITION_MODE)
 			)
 		await tl.transition_finished
 
@@ -274,9 +275,9 @@ func cutscene(instructions: Array) -> void:
 	
 	if cutscene_skipped:
 		tl.play_transition(
-			PopochiuUtils.e.settings.TL_DEFAULT_CUTSCENE_TRANSITION,
+			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_CUTSCENE_TRANSITION),
 			settings.skip_cutscene_time,
-			PopochiuUtils.e.settings.TL_CUTSCENE_TRANSITION_MODE
+			PopochiuConfig._get_project_setting(PopochiuConfig.TL_CUTSCENE_TRANSITION_MODE)
 		)
 		await tl.transition_finished
 	

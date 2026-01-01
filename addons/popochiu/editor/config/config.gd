@@ -95,7 +95,7 @@ static var defaults := {
 #region Public #####################################################################################
 static func reload_transitions():
 	# Transition Layer
-	var transition_hint: String = ",".join(PopochiuUtils.tl.get_all_transitions_list())
+	var transition_hint: String = _get_transitions_hint()
 
 	_initialize_project_setting(TL_DEFAULT_ROOM_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
 	_initialize_project_setting(TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
@@ -105,8 +105,7 @@ static func initialize_project_settings():
 	# ---- GUI -------------------------------------------------------------------------------------
 	_initialize_project_setting(SCALE_GUI, TYPE_BOOL)
 	# Transition Layer
-	var transition_hint: String = ",".join(PopochiuUtils.tl.get_all_transitions_list())
-	print(transition_hint)
+	var transition_hint: String = _get_transitions_hint()
 	_initialize_project_setting(TL_FADE_COLOR, TYPE_COLOR)
 	_initialize_project_setting(TL_SKIP_CUTSCENE_TIME, TYPE_FLOAT)
 	_initialize_project_setting(TL_IN_FIRST_ROOM, TYPE_BOOL)
@@ -325,6 +324,23 @@ static func _get_enum_hint(e, f: Callable = Callable()) -> String:
 			return s.capitalize()
 
 	return ",".join(e.keys().map(f))
+
+
+# Gets the list of available transitions, with graceful fallback.
+# Uses a scene-based approach to avoid singleton timing issues during editor startup.
+static func _get_transitions_hint() -> String:
+	# Try game-folder scene first, fallback to addon scene
+	var scene_path = PopochiuResources.TRANSITION_LAYER_SCENE if ResourceLoader.exists(PopochiuResources.TRANSITION_LAYER_SCENE) else PopochiuResources.TL_BASE_SCENE
+	
+	if ResourceLoader.exists(scene_path):
+		var tl = load(scene_path).instantiate()
+		if tl:
+			var transitions = tl.get_all_transitions_list()
+			tl.queue_free()
+			return ",".join(transitions)
+	
+	# Last resort fallback: return the default transition
+	return defaults[TL_DEFAULT_ROOM_TRANSITION]
 
 
 #endregion

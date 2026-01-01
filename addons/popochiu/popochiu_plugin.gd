@@ -39,13 +39,17 @@ func _init():
 	add_autoload_singleton("D", PopochiuResources.D_SNGL)
 	add_autoload_singleton("A", PopochiuResources.A_SNGL)
 	add_autoload_singleton("G", PopochiuResources.IGRAPHIC_INTERFACE_SNGL)
-	add_autoload_singleton("TL", PopochiuResources.TL_SNGL)
+	add_autoload_singleton("T", PopochiuResources.ITRANSITION_LAYER_SNGL)
 
 
 func _enter_tree() -> void:
 	# Good morning, starshine. The Earth says hello.
-	prints(ES)
-	prints(EN)
+	# Check system language and print the appropriate message
+	var locale := OS.get_locale()
+	if locale.begins_with("es"):
+		prints(ES)
+	else:
+		prints(EN)
 	print_rich("[wave]%s[/wave]" % SYMBOL)
 	
 	# ---- Assign values to the utility script for the Editor side of the plugin -------------------

@@ -162,14 +162,13 @@ func goto_room(
 	_use_transition_on_room_change = use_transition
 	# Never fade the TL in, if we are entering the first room at game start
 	if use_transition and Engine.get_process_frames() > 0:
-		PopochiuUtils.e.tl.play_transition(
+		await PopochiuUtils.t.play_transition(
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION),
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_DURATION),
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_LEAVE)
 		)
-		await PopochiuUtils.e.tl.transition_finished
 	elif Engine.get_process_frames() > 0:
-		PopochiuUtils.e.tl.show_curtain()
+		PopochiuUtils.t.show_curtain()
 	
 	# Prevent the GUI from showing info coming from the previous room
 	PopochiuUtils.g.show_hover_text()
@@ -360,16 +359,15 @@ func room_readied(room: PopochiuRoom) -> void:
 		)
 	
 	if _use_transition_on_room_change:
-		PopochiuUtils.e.tl.play_transition(
+		await PopochiuUtils.t.play_transition(
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION),
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_DURATION),
 			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_ENTER)
 		)
-		await PopochiuUtils.e.tl.transition_finished
 		
 		await PopochiuUtils.e.wait(0.3)
 	else:
-		PopochiuUtils.e.tl.hide_curtain()
+		PopochiuUtils.t.hide_curtain()
 		await get_tree().process_frame
 	
 	if not current.hide_gui:

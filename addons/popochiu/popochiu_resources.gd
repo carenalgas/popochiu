@@ -43,6 +43,8 @@ const MAIN_TYPES = [
 const ROOM_TYPES = [Types.PROP, Types.HOTSPOT, Types.REGION, Types.MARKER, Types.WALKABLE_AREA]
 const DOCUMENTATION = "https://carenalgas.github.io/popochiu/"
 const CFG = "res://addons/popochiu/plugin.cfg"
+const TL_ADDON_FOLDER = "res://addons/popochiu/engine/objects/transition_layer/"
+const TL_BASE_SCENE = TL_ADDON_FOLDER + "popochiu_transition_layer.tscn"
 const GUI_ADDON_FOLDER = "res://addons/popochiu/engine/objects/gui/"
 const GUI_TEMPLATES_FOLDER = GUI_ADDON_FOLDER + "templates/"
 const GUI_SCRIPT_TEMPLATES_FOLDER = "res://addons/popochiu/engine/templates/gui/"
@@ -57,6 +59,7 @@ const ICHARACTER = "res://addons/popochiu/engine/interfaces/i_character.gd"
 const IINVENTORY = "res://addons/popochiu/engine/interfaces/i_inventory.gd"
 const IDIALOG = "res://addons/popochiu/engine/interfaces/i_dialog.gd"
 const IGRAPHIC_INTERFACE_SNGL = "res://addons/popochiu/engine/interfaces/i_graphic_interface.gd"
+const ITRANSITION_LAYER_SNGL = "res://addons/popochiu/engine/interfaces/i_transition_layer.gd"
 const IAUDIO = "res://addons/popochiu/engine/interfaces/i_audio.gd"
 const R_SNGL = "res://game/autoloads/r.gd"
 const C_SNGL = "res://game/autoloads/c.gd"
@@ -64,11 +67,9 @@ const I_SNGL = "res://game/autoloads/i.gd"
 const D_SNGL = "res://game/autoloads/d.gd"
 const A_SNGL = "res://game/autoloads/a.gd"
 const G_SNGL = "res://game/autoloads/g.gd"
-const TL_SNGL= TRANSITION_LAYER_PATH + "transition_layer.gd"
 # FIRST INSTALL ------------------------------------------------------------------------------------
 const GI = 0
 const TL = 1
-const TRANSITION_LAYER_ADDON = "res://addons/popochiu/engine/objects/transition_layer/popochiu_transition_layer.tscn"
 
 # ENGINE -------------------------------------------------------------------------------------------
 const POPOCHIU_SCENE = "res://addons/popochiu/engine/popochiu.tscn"
@@ -204,7 +205,9 @@ const GUI_COMMANDS = GUI_GAME_FOLDER + "gui_commands.gd"
 const TRANSITION_LAYER_PATH = GAME_PATH + "transition_layer/"
 const TRANSITION_LAYER_MASKS = TRANSITION_LAYER_PATH + "textures/"
 const TRANSITION_LAYER_SCENE = TRANSITION_LAYER_PATH + "transition_layer.tscn"
+const TRANSITION_LAYER_SCRIPT = TRANSITION_LAYER_PATH + "transition_layer.gd"
 const TRANSITION_LAYER_CUSTOM_ANIMLIB = "User"
+
 
 #region Public #####################################################################################
 # Verify if the folders (where Popochiu's objects will be) exists
@@ -218,19 +221,19 @@ static func init_file_structure() -> bool:
 
 	# Copy the transition layer scene
 	if is_first_install:
-		var obj = load(TRANSITION_LAYER_ADDON) as PackedScene
+		var obj = load(TL_BASE_SCENE) as PackedScene
 
 		if ResourceSaver.save(obj, TRANSITION_LAYER_SCENE) != OK:
 			PopochiuUtils.print_error("Couldn't copy the transition layer.")
 		
-		if not FileAccess.file_exists(TL_SNGL):
-			var tl_file = FileAccess.open(TL_SNGL, FileAccess.WRITE)
-			tl_file.store_string("extends PopochiuTransitionLayer")
+		if not FileAccess.file_exists(TRANSITION_LAYER_SCRIPT):
+			var tl_file = FileAccess.open(TRANSITION_LAYER_SCRIPT, FileAccess.WRITE)
+			tl_file.store_string("@tool\nextends PopochiuTransitionLayer")
 			tl_file.close()
 
 		# Assign the transition layer script
 		obj = (load(TRANSITION_LAYER_SCENE) as PackedScene).instantiate()
-		obj.set_script(load(TL_SNGL))
+		obj.set_script(load(TRANSITION_LAYER_SCRIPT))
 		var packed_scene := PackedScene.new()
 		packed_scene.pack(obj)
 
