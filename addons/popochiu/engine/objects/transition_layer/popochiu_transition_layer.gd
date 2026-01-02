@@ -217,7 +217,15 @@ func copy_image(texture_path: String) -> int:
 
 
 ## Create a basic custom transition
-func create_basic_custom_transition(texture_path: String, cutoff: float, smoothing: float, duration: float, visibility_track = false, modulate_track = false, color: Color = PopochiuUtils.e.settings.tl_fade_color) -> Animation:
+func create_basic_custom_transition(
+	texture_path: String,
+	cutoff: float,
+	smoothing: float,
+	duration: float,
+	visibility_track = false,
+	modulate_track = false,
+	color: Color = PopochiuUtils.e.settings.tl_fade_color
+) -> Animation:
 	# Create basic transition
 	var new_anim: Animation = Animation.new()
 	var track_index

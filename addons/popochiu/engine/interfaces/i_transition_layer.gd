@@ -136,6 +136,31 @@ func has_color_override_track(anim_name: String) -> bool:
 	return tl.has_color_override_track(anim_name)
 
 
+## Returns [code]true[/code] if the custom animation library exists.
+func has_custom_library() -> bool:
+	if not _is_tl_ready():
+		return false
+	
+	return tl.has_custom_library()
+
+
+## Returns [code]true[/code] if a custom transition with [param anim_name] exists.
+func has_custom_transition(anim_name: String) -> bool:
+	if not _is_tl_ready():
+		return false
+	
+	return tl.has_custom_transition(anim_name)
+
+
+## Returns the custom transition animation specified by [param anim_name], or [code]null[/code]
+## if not found.
+func get_custom_transition(anim_name: String) -> Animation:
+	if not _is_tl_ready():
+		return null
+	
+	return tl.get_custom_transition(anim_name)
+
+
 #endregion
 
 #region Private ####################################################################################
