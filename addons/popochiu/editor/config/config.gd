@@ -14,6 +14,7 @@ enum DialogStyle {
 # Godot's ProjectSettings instead of using a Resource file.
 # ---- GUI -----------------------------------------------------------------------------------------
 const SCALE_GUI = "popochiu/gui/experimental_scale_gui"
+# ---- GUI / Transition Layer ----------------------------------------------------------------------
 const TL_FADE_COLOR = "popochiu/gui/transition_layer/fade_color"
 const TL_DEFAULT_ROOM_TRANSITION = "popochiu/gui/transition_layer/default_room_transition"
 const TL_ROOM_TRANSITION_MODE_ENTER = "popochiu/gui/transition_layer/room_transition_mode_enter"
@@ -174,16 +175,41 @@ static func is_scale_gui() -> bool:
 	return _get_project_setting(SCALE_GUI)
 
 
-static func get_fade_color() -> Color:
+# ---- GUI / Transition Layer ----------------------------------------------------------------------
+static func get_tl_fade_color() -> Color:
 	return _get_project_setting(TL_FADE_COLOR)
 
 
-static func get_skip_cutscene_time() -> float:
+static func get_tl_skip_cutscene_time() -> float:
 	return _get_project_setting(TL_SKIP_CUTSCENE_TIME)
 
 
 static func should_show_tl_in_first_room() -> bool:
 	return _get_project_setting(TL_IN_FIRST_ROOM)
+
+
+static func get_tl_default_room_transition() -> String:
+	return _get_project_setting(TL_DEFAULT_ROOM_TRANSITION)
+
+
+static func get_tl_room_transition_mode_enter() -> int:
+	return _get_project_setting(TL_ROOM_TRANSITION_MODE_ENTER)
+
+
+static func get_tl_room_transition_mode_leave() -> int:
+	return _get_project_setting(TL_ROOM_TRANSITION_MODE_LEAVE)
+
+
+static func get_tl_room_transition_duration() -> float:
+	return _get_project_setting(TL_ROOM_TRANSITION_DURATION)
+
+
+static func get_tl_default_cutscene_transition() -> String:
+	return _get_project_setting(TL_DEFAULT_CUTSCENE_TRANSITION)
+
+
+static func get_tl_cutscene_transition_mode() -> int:
+	return _get_project_setting(TL_CUTSCENE_TRANSITION_MODE)
 
 
 # ---- Dialogs -------------------------------------------------------------------------------------

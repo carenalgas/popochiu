@@ -19,7 +19,7 @@ func _ready() -> void:
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
 	#$AnimationPlayer.animation_libraries_updated.connect(PopochiuConfig.reload_transitions())
 	#$AnimationPlayer.animation_list_changed.connect(PopochiuConfig.reload_transitions())
-	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
+	$Curtain.modulate = PopochiuUtils.e.settings.tl_fade_color
 
 	# Pass the curtain size to the shader
 	$Curtain.material.set_shader_parameter("curtain_size", $Curtain.size)
@@ -44,7 +44,7 @@ func _ready() -> void:
 ##	 - color specified from code;
 ##	 - color specified in the modulate track of the animation (if enabled);
 ##	 - color specified in project settings.
-func play_transition(name: String = "fade", duration: float = 1.0, mode: int = PLAY_MODE.IN, color: Color = PopochiuUtils.e.settings.fade_color) -> void:
+func play_transition(name: String = "fade", duration: float = 1.0, mode: int = PLAY_MODE.IN_OUT, color: Color = PopochiuUtils.e.settings.tl_fade_color) -> void:
 	var anim = get_transition(name)
 	var reenable_color_track = false
 
@@ -62,7 +62,7 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 	# Override Curtain color
 	# Watch out: the RESET animation will set the Curtain:modulate property if a such a track is
 	# present
-	if color != PopochiuUtils.e.settings.fade_color:
+	if color != PopochiuUtils.e.settings.tl_fade_color:
 		if has_color_override_track(name):
 			reenable_color_track = true
 			toggle_track(name, "Curtain:modulate", false)
@@ -92,13 +92,13 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 	$AnimationPlayer.speed_scale = 1.0
 	if reenable_color_track:
 		toggle_track(name, "Curtain:modulate", true)
-	$Curtain.modulate = PopochiuUtils.e.settings.fade_color
+	$Curtain.modulate = PopochiuUtils.e.settings.tl_fade_color
 
 
 ## Shows the curtain with the specified [param color] without playing any transition.
 ## if [param name] is not specified, the curtain will be shown with the default color from project
 ## settings. Beware that this color can be subsequently overridden by animation tracks or by code.
-func show_curtain(color: Color = PopochiuUtils.e.settings.fade_color) -> void:
+func show_curtain(color: Color = PopochiuUtils.e.settings.tl_fade_color) -> void:
 	$Curtain.modulate = color
 	$Curtain.show()
 	_show()
@@ -217,7 +217,7 @@ func copy_image(texture_path: String) -> int:
 
 
 ## Create a basic custom transition
-func create_basic_custom_transition(texture_path: String, cutoff: float, smoothing: float, duration: float, visibility_track = false, modulate_track = false, color: Color = PopochiuUtils.e.settings.fade_color) -> Animation:
+func create_basic_custom_transition(texture_path: String, cutoff: float, smoothing: float, duration: float, visibility_track = false, modulate_track = false, color: Color = PopochiuUtils.e.settings.tl_fade_color) -> Animation:
 	# Create basic transition
 	var new_anim: Animation = Animation.new()
 	var track_index

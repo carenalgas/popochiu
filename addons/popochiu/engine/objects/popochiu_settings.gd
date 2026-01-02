@@ -3,10 +3,6 @@ class_name PopochiuSettings
 extends Resource
 ## Defines properties as settings for the game.
 
-## The time, in seconds, that will take the game to skip a cutscene.
-var skip_cutscene_time := 0.0
-## A flag telling if the transition layer should be shown when the game starts.
-var show_tl_in_first_room := false
 ## @deprecated
 ## The text speed options that will be available in the game. In the ContextSensitive GUI you can
 ## loop between them using the text speed button in the SettingsBar.
@@ -40,8 +36,20 @@ var inventory_always_visible := false
 ## Whether the toolbar (SettingsBar) will be always visible, or players will have to do something to
 ## make it appear. [b]This is specific to the ContextSensitive GUI[/b].
 var toolbar_always_visible := false
-## The color the screen changes to it plays a transition (e.g. move between rooms, skip a cutscene).
-var fade_color: Color
+## The color the screen changes to when a transition is played (e.g. move between rooms, skip a cutscene).
+var tl_fade_color: Color
+## The time, in seconds, that will take the game to skip a cutscene.
+var tl_skip_cutscene_time := 0.0
+## The transition animation that will be used when skipping a cutscene.
+var tl_cutscene_transition := ""
+## Cutscene transition mode (in, out, in_out).
+var tl_cutscene_transition_mode := 0
+## The transition animation that will be used when moving between rooms.
+var tl_room_transition := ""
+## The duration, in seconds, of the transition animation when moving between rooms.
+var tl_room_transition_duration := 0.0
+## A flag telling if the transition layer should be shown when the game starts.
+var show_tl_in_first_room := false
 ## Whether the GUI should scale to match the native game resolution. The default GUI has a 356x200
 ## resolution.
 var scale_gui := false
@@ -75,8 +83,12 @@ var dev_use_addon_template := false
 func _init() -> void:
 	# ---- GUI -------------------------------------------------------------------------------------
 	scale_gui = PopochiuConfig.is_scale_gui()
-	fade_color = PopochiuConfig.get_fade_color()
-	skip_cutscene_time = PopochiuConfig.get_skip_cutscene_time()
+	tl_fade_color = PopochiuConfig.get_tl_fade_color()
+	tl_skip_cutscene_time = PopochiuConfig.get_tl_skip_cutscene_time()
+	tl_cutscene_transition = PopochiuConfig.get_tl_default_cutscene_transition()
+	tl_cutscene_transition_mode = PopochiuConfig.get_tl_cutscene_transition_mode()
+	tl_room_transition = PopochiuConfig.get_tl_default_room_transition()
+	tl_room_transition_duration = PopochiuConfig.get_tl_room_transition_duration()
 	show_tl_in_first_room = PopochiuConfig.should_show_tl_in_first_room()
 	
 	# ---- Dialogs ---------------------------------------------------------------------------------

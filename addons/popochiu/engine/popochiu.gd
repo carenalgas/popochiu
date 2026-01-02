@@ -191,9 +191,9 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_released("popochiu-skip"):
 		cutscene_skipped = true
 		tl.play_transition(
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_CUTSCENE_TRANSITION),
-			settings.skip_cutscene_time,
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_CUTSCENE_TRANSITION_MODE)
+			settings.tl_cutscene_transition,
+			settings.tl_skip_cutscene_time,
+			settings.tl_cutscene_transition_mode
 			)
 		await tl.transition_finished
 
@@ -275,9 +275,9 @@ func cutscene(instructions: Array) -> void:
 	
 	if cutscene_skipped:
 		tl.play_transition(
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_CUTSCENE_TRANSITION),
-			settings.skip_cutscene_time,
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_CUTSCENE_TRANSITION_MODE)
+			settings.tl_cutscene_transition,
+			settings.tl_skip_cutscene_time,
+			settings.tl_cutscene_transition_mode
 		)
 		await tl.transition_finished
 	
