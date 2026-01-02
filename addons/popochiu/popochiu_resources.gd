@@ -77,6 +77,8 @@ const AUDIO_MANAGER = \
 "res://addons/popochiu/engine/audio_manager/audio_manager.tscn"
 const CURSOR_TYPE = \
 preload("res://addons/popochiu/engine/cursor/cursor.gd").Type
+const TL_PLAY_MODE = \
+preload("res://addons/popochiu/engine/objects/transition_layer/popochiu_transition_layer.gd").PLAY_MODE
 const DATA = "res://game//popochiu_data.cfg"
 const ROOM_CHILDREN = ["props", "hotspots", "walkable_areas", "regions"]
 const VALID_TYPES = [
