@@ -22,20 +22,20 @@ enum GameResolutionScale {
 }
 
 enum GameResolution {
-	# --- Separator = 0 ---
-	RETRO_NEO_RETRO = 1,
-	# --- Separator = 2 ---
-	RETRO_VGA_4_3 = 3,
-	RETRO_VGA_16_9 = 4,
-	# --- Separator = 5 ---
-	RETRO_CEGA_4_3 = 6,
-	RETRO_CEGA_16_9 = 7,
+	# --- Separator = 991 ---
+	RETRO_NEO_RETRO = 0,
+	# --- Separator = 992 ---
+	RETRO_VGA_4_3 = 1,
+	RETRO_VGA_16_9 = 2,
+	# --- Separator = 993 ---
+	RETRO_CEGA_4_3 = 3,
+	RETRO_CEGA_16_9 = 4,
 	# --- Modern / Hi-Res has no separatos ---
-	MODERN_4K = 8,
-	MODERN_QHD = 9,
-	MODERN_FHD = 10,
-	MODERN_HDR = 11,
-	MODERN_RETRO = 12,
+	MODERN_4K = 5,
+	MODERN_QHD = 6,
+	MODERN_FHD = 7,
+	MODERN_HDR = 8,
+	MODERN_RETRO = 9,
 }
 
 enum CustomResRatio {
@@ -119,8 +119,8 @@ var _dialog_ok_button: Button = null
 @onready var tooltip_res: PanelContainer = %TooltipRes
 @onready var tooltip_res_text: RichTextLabel = %TooltipResText
 # ---- GUI selection step --------------------------------------------------------------------------
-@onready var gui_grid: GridContainer = %BtnGrid
-@onready var btn_gui_type_template: Button = %BtnGUIType
+@onready var gui_grid: GridContainer = %GUIGrid
+@onready var btn_gui_type_template: Button = %BtnGUITypeTemplate
 @onready var tooltip_gui: PanelContainer = %TooltipGUI
 @onready var tooltip_gui_text: RichTextLabel = %TooltipGUIText
 # ---- Custom section ------------------------------------------------------------------------------
@@ -318,7 +318,6 @@ func define_content() -> void:
 	_current_template_name = PopochiuResources.get_data_value("ui", "template", "")
 	_selected_template_name = _current_template_name
 
-
 	# Restore last used mode if setup was done before, otherwise default to wizard
 	_current_mode = PopochiuResources.get_data_value("setup", "last_mode", SetupMode.WIZARD)
 
@@ -437,34 +436,40 @@ func _populate_wizard_from_settings(game_res: Vector2i, test_res: Vector2i, is_p
 
 # Find and set the closest resolution option
 func _find_and_set_resolution_options(game_res: Vector2i, is_pixel: bool) -> void:
+	var target_id: GameResolution = GameResolution.RETRO_NEO_RETRO
+	
 	if is_pixel:
 		# Try to find matching retro resolution
-		if game_res == Vector2i(384, 216):
-			opt_res_retro.selected = GameResolution.RETRO_NEO_RETRO
-		elif game_res == Vector2i(320, 200):
-			opt_res_retro.selected = GameResolution.RETRO_VGA_4_3
-		elif game_res == Vector2i(356, 200):
-			opt_res_retro.selected = GameResolution.RETRO_VGA_16_9
-		elif game_res == Vector2i(240, 180):
-			opt_res_retro.selected = GameResolution.RETRO_CEGA_4_3
-		elif game_res == Vector2i(320, 180):
-			opt_res_retro.selected = GameResolution.RETRO_CEGA_16_9
-		else:
-			opt_res_retro.selected = GameResolution.RETRO_VGA_16_9 # Default
+		match game_res:
+			Vector2i(384, 216):
+				target_id = GameResolution.RETRO_NEO_RETRO
+			Vector2i(320, 200):
+				target_id = GameResolution.RETRO_VGA_4_3
+			Vector2i(356, 200):
+				target_id = GameResolution.RETRO_VGA_16_9
+			Vector2i(240, 180):
+				target_id = GameResolution.RETRO_CEGA_4_3
+			Vector2i(320, 180):
+				target_id = GameResolution.RETRO_CEGA_16_9
+			_:
+				target_id = GameResolution.RETRO_VGA_16_9 # Default for Low-res
+		opt_res_retro.selected = opt_res_retro.get_item_index(target_id)
 	else:
 		# Try to find matching modern resolution
-		if game_res == Vector2i(3840, 2160):
-			opt_res_modern.selected = GameResolution.MODERN_4K
-		elif game_res == Vector2i(2560, 1440):
-			opt_res_modern.selected = GameResolution.MODERN_QHD
-		elif game_res == Vector2i(1920, 1080):
-			opt_res_modern.selected = GameResolution.MODERN_FHD
-		elif game_res == Vector2i(1280, 720):
-			opt_res_modern.selected = GameResolution.MODERN_HDR
-		elif game_res == Vector2i(1024, 768):
-			opt_res_modern.selected = GameResolution.MODERN_RETRO
-		else:
-			opt_res_modern.selected = GameResolution.MODERN_FHD # Default
+		match game_res:
+			Vector2i(3840, 2160):
+				target_id = GameResolution.MODERN_4K
+			Vector2i(2560, 1440):
+				target_id = GameResolution.MODERN_QHD
+			Vector2i(1920, 1080):
+				target_id = GameResolution.MODERN_FHD
+			Vector2i(1280, 720):
+				target_id = GameResolution.MODERN_HDR
+			Vector2i(1024, 768):
+				target_id = GameResolution.MODERN_RETRO
+			_:
+				target_id = GameResolution.MODERN_FHD # Default for High-res
+		opt_res_modern.selected = opt_res_modern.get_item_index(target_id)
 
 
 # Select current template in both wizard and custom modes
@@ -752,6 +757,8 @@ func _set_wizard_game_resolution() -> void:
 					_game_resolution = Vector2(240, 180)
 				GameResolution.RETRO_CEGA_16_9:
 					_game_resolution = Vector2(320, 180)
+				_:
+					_game_resolution = Vector2(356, 200)
 		GameType.MODERN:
 			match opt_res_modern.selected:
 				GameResolution.MODERN_4K:
@@ -764,6 +771,8 @@ func _set_wizard_game_resolution() -> void:
 					_game_resolution = Vector2(1280, 720)
 				GameResolution.MODERN_RETRO:
 					_game_resolution = Vector2(1024, 768)
+				_:
+					_game_resolution = Vector2(1920, 1080)
 
 
 func _set_wizard_window_resolution() -> void:
@@ -859,8 +868,8 @@ func _populate_wizard_gui_buttons() -> void:
 			child.queue_free()
 
 	# Don't populate if no game type is selected yet
-	if game_type_button_group.get_pressed_button() == null:
-		return
+	#if game_type_button_group.get_pressed_button() == null:
+		#return
 
 	# Get the template list based on game type
 	var templates_list: Array = []
@@ -999,7 +1008,6 @@ func _get_template_name_from_data(template_data) -> String:
 	# template_data should be the template dictionary with the path
 	if template_data and template_data.has("path"):
 		return _get_template_name_from_path(template_data.path)
-
 	return ""
 
 
@@ -1260,7 +1268,7 @@ func _style_selection_buttons() -> void:
 	var btn_focus_style: StyleBoxFlat = _style_btn_corner_and_content_margin("focus")
 	
 	# Set the style for each state of the buttons
-	for button in [btn_type_retro, btn_type_modern, btn_gui_type_template]:
+	for button: Button in ([btn_type_retro, btn_type_modern] + gui_grid.get_children()):
 		# Normal state
 		button.add_theme_stylebox_override("normal", btn_normal_style)
 		# Hover state
@@ -1481,11 +1489,13 @@ func _on_game_type_changed() -> void:
 		# Update resolution options and GUI buttons based on selected game type
 		_update_resolution_options()
 		_populate_wizard_gui_buttons()
+		_select_current_template()
 	elif btn_type_modern.button_pressed:
 		_game_type = GameType.MODERN
 		# Update resolution options and GUI buttons based on selected game type
 		_update_resolution_options()
 		_populate_wizard_gui_buttons()
+		_select_current_template()
 	# If neither button is pressed, don't update anything
 
 

@@ -261,6 +261,7 @@ unique_name_in_owner = true
 clip_contents = false
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/normal_font_size = 13
 theme_override_font_sizes/bold_font_size = 13
 theme_override_font_sizes/bold_italics_font_size = 13
@@ -307,7 +308,7 @@ layout_mode = 2
 theme_override_constants/margin_left = 80
 theme_override_constants/margin_right = 80
 
-[node name="BtnGrid" type="GridContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup"]
+[node name="GUIGrid" type="GridContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 204)
 layout_mode = 2
@@ -315,7 +316,7 @@ theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
 columns = 3
 
-[node name="BtnGUIType" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/BtnGrid"]
+[node name="BtnGUITypeTemplate" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/GUIGrid"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
@@ -341,6 +342,7 @@ layout_mode = 2
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
+theme_override_colors/default_color = Color(1, 1, 1, 1)
 theme_override_font_sizes/normal_font_size = 13
 theme_override_font_sizes/bold_font_size = 13
 theme_override_font_sizes/bold_italics_font_size = 13
@@ -847,7 +849,7 @@ size_flags_horizontal = 4
 texture = ExtResource("5_l7fcy")
 expand_mode = 2
 
-[node name="TooltipResText" type="RichTextLabel" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess/Columns"]
+[node name="TooltipProcessText" type="RichTextLabel" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess/Columns"]
 clip_contents = false
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
