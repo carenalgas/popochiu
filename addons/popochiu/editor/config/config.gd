@@ -63,11 +63,11 @@ static var defaults := {
 	TL_FADE_COLOR: Color.BLACK,
 	TL_SKIP_CUTSCENE_TIME: 0.2,
 	TL_IN_FIRST_ROOM: false,
-	TL_DEFAULT_ROOM_TRANSITION: "fade",
+	TL_DEFAULT_ROOM_TRANSITION: "Fade",
 	TL_ROOM_TRANSITION_MODE_ENTER: PopochiuTransitionLayer.PLAY_MODE.IN,
 	TL_ROOM_TRANSITION_MODE_LEAVE: PopochiuTransitionLayer.PLAY_MODE.OUT,
 	TL_ROOM_TRANSITION_DURATION: 1.0,
-	TL_DEFAULT_CUTSCENE_TRANSITION: "fade",
+	TL_DEFAULT_CUTSCENE_TRANSITION: "Fade",
 	TL_CUTSCENE_TRANSITION_MODE: PopochiuTransitionLayer.PLAY_MODE.IN_OUT,
 	TEXT_SPEED: 0.1,
 	AUTO_CONTINUE_TEXT: false,
@@ -363,10 +363,15 @@ static func _get_transitions_hint() -> String:
 		if tl:
 			var transitions = tl.get_all_transitions_list()
 			tl.queue_free()
-			return ",".join(transitions)
+			# Capitalize transition names for display in project settings
+			# Using a for loop because transitions is a PackedStringArray (no map() method)
+			var capitalized_transitions: Array[String] = []
+			for name in transitions:
+				capitalized_transitions.append(name.capitalize())
+			return ",".join(capitalized_transitions)
 	
-	# Last resort fallback: return the default transition
-	return defaults[TL_DEFAULT_ROOM_TRANSITION]
+	# Last resort fallback: return the default transition (capitalized)
+	return defaults[TL_DEFAULT_ROOM_TRANSITION].capitalize()
 
 
 #endregion
