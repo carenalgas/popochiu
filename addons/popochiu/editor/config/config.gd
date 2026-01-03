@@ -358,20 +358,25 @@ static func _get_transitions_hint() -> String:
 	# Try game-folder scene first, fallback to addon scene
 	var scene_path = PopochiuResources.TRANSITION_LAYER_SCENE if ResourceLoader.exists(PopochiuResources.TRANSITION_LAYER_SCENE) else PopochiuResources.TL_BASE_SCENE
 	
-	if ResourceLoader.exists(scene_path):
-		var tl = load(scene_path).instantiate()
-		if tl:
-			var transitions = tl.get_all_transitions_list()
-			tl.queue_free()
-			# Capitalize transition names for display in project settings
-			# Using a for loop because transitions is a PackedStringArray (no map() method)
-			var capitalized_transitions: Array[String] = []
-			for name in transitions:
-				capitalized_transitions.append(name.capitalize())
-			return ",".join(capitalized_transitions)
+	if not ResourceLoader.exists(scene_path):
+		# Fallback on default transition (capitalized)
+		return defaults[TL_DEFAULT_ROOM_TRANSITION].capitalize()
+
+	var tl = load(scene_path).instantiate()
+	if not tl:
+		# Fallback on default transition (capitalized) - again
+		return defaults[TL_DEFAULT_ROOM_TRANSITION].capitalize()
+
+	var transitions = tl.get_all_transitions_list()
+	tl.queue_free()
+	# Capitalize transition names for display in project settings
+	# Using a for loop because transitions is a PackedStringArray (no map() method)
+	# Split by "/" to handle animation library prefixes (e.g., "User/anim_name")
+	var capitalized_transitions: Array[String] = []
+	for name in transitions:
+		capitalized_transitions.append("/".join(name.split("/").map(func(s): return s.capitalize())))
+	return ",".join(capitalized_transitions)
 	
-	# Last resort fallback: return the default transition (capitalized)
-	return defaults[TL_DEFAULT_ROOM_TRANSITION].capitalize()
 
 
 #endregion

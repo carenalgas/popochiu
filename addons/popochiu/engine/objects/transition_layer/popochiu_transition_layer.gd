@@ -50,12 +50,13 @@ func _ready() -> void:
 ## CamelCase, or snake_case) and normalizes it internally.
 func play_transition(name: String = "fade", duration: float = 1.0, mode: int = PLAY_MODE.IN_OUT, color: Color = PopochiuUtils.e.settings.tl_fade_color) -> void:
 	# Normalize transition name to snake_case for animation lookup
-	var snake_case_name = name.to_snake_case()
-	var anim = get_transition(snake_case_name)
+	# If name contains "/", it's a custom animation with library prefix - use get_custom_name to preserve the correct prefix
+	var anim_lib_name = get_custom_name(name) if "/" in name else get_simple_name(name)
+	var anim = get_transition(anim_lib_name)
 	
 	if anim != null:
 		# Use snake_case version if found
-		name = snake_case_name
+		name = anim_lib_name
 	else:
 		# Fallback: if snake_case version not found, try original name as-is
 		anim = get_transition(name)

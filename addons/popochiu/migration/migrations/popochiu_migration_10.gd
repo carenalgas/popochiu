@@ -7,7 +7,8 @@ const DESCRIPTION = "Create the transition layer folder and files in the game fo
 const STEPS = [
 	"Create transition layer folder structure",
 	"Copy transition layer scene to game folder",
-	"Create transition layer script"
+	"Create transition layer script",
+	"Add User animation library"
 ]
 
 
@@ -26,7 +27,8 @@ func _do_migration() -> bool:
 		[
 			_create_folder_structure,
 			_copy_transition_layer_scene,
-			_create_transition_layer_script
+			_create_transition_layer_script,
+			_add_user_animation_library
 		]
 	)
 
@@ -84,6 +86,36 @@ func _create_transition_layer_script() -> Completion:
 	
 	if ResourceSaver.save(packed_scene, PopochiuResources.TRANSITION_LAYER_SCENE) != OK:
 		PopochiuUtils.print_error("Couldn't assign the transition layer script to the scene.")
+		return Completion.FAILED
+	
+	return Completion.DONE
+
+
+func _add_user_animation_library() -> Completion:
+	# Load the transition layer scene and add the User animation library if it doesn't exist
+	var scene = (load(PopochiuResources.TRANSITION_LAYER_SCENE) as PackedScene).instantiate()
+	if not scene:
+		PopochiuUtils.print_error("Couldn't load the transition layer scene.")
+		return Completion.FAILED
+	
+	var animation_player = scene.get_node("AnimationPlayer")
+	if not animation_player:
+		PopochiuUtils.print_error("Couldn't find AnimationPlayer in the transition layer scene.")
+		return Completion.FAILED
+	
+	# Check if the User library already exists
+	if animation_player.has_animation_library(PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB):
+		return Completion.IGNORED
+	
+	# Add the User animation library
+	animation_player.add_animation_library(PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB, AnimationLibrary.new())
+	
+	# Save the scene
+	var packed_scene := PackedScene.new()
+	packed_scene.pack(scene)
+	
+	if ResourceSaver.save(packed_scene, PopochiuResources.TRANSITION_LAYER_SCENE) != OK:
+		PopochiuUtils.print_error("Couldn't save the transition layer scene with the User library.")
 		return Completion.FAILED
 	
 	return Completion.DONE
