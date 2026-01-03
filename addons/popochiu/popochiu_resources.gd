@@ -445,6 +445,9 @@ static func has_data_value(section: String, key: String) -> bool:
 static func get_data_value(section: String, key: String, default):
 	var config := get_data_cfg()
 	
+	if not config:
+		return default
+
 	if not config.has_section(section):
 		return default
 	
