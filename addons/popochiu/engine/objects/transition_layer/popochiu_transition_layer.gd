@@ -17,8 +17,8 @@ enum PLAY_MODE {
 func _ready() -> void:
 	# Connect to childrens' signals
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
-	#$AnimationPlayer.animation_libraries_updated.connect(PopochiuConfig.reload_transitions())
-	#$AnimationPlayer.animation_list_changed.connect(PopochiuConfig.reload_transitions())
+	$AnimationPlayer.animation_libraries_updated.connect(_on_animation_player_animation_libraries_updated)
+	$AnimationPlayer.animation_list_changed.connect(_on_animation_player_animation_list_changed)
 	$Curtain.modulate = PopochiuUtils.e.settings.tl_fade_color
 
 	# Pass the curtain size to the shader
@@ -142,7 +142,7 @@ func get_custom_library() -> AnimationLibrary:
 
 	if not tl_anim_lib:
 		var result = ResultCodes.ERR_ANIMATION_LIBRARY_NOT_FOUND
-		#PopochiuUtils.print_error(ResultCodes.get_error_message(result) + " (%s)" % PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB)
+		PopochiuUtils.print_error(ResultCodes.get_error_message(result) + " (%s)" % PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB)
 
 	return tl_anim_lib
 
@@ -161,7 +161,7 @@ func get_custom_transition(anim_name: String) -> Animation:
 
 	if not tl_anim:
 		var result_code = ResultCodes.ERR_ANIMATION_NOT_FOUND
-		#PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % anim_name)
+		PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % anim_name)
 
 	return tl_anim
 
@@ -209,18 +209,15 @@ func toggle_track(anim_name: String, track_name: String, value: bool) -> void:
 
 func copy_image(texture_path: String) -> int:
 	var result_code
-	print("start copy")
 	# Ensure the source file exists
 	if not FileAccess.file_exists(texture_path):
 		return ResultCodes.FAILURE
 
-	print("file exist")
 	var file_name = texture_path.get_file()
 
 	# Ensure the destination directory exists
 	var game_tl_image_dir = DirAccess.open(PopochiuResources.TRANSITION_LAYER_PATH)
 
-	print("dest dir")
 	#if not game_tl_image_dir:
 	await game_tl_image_dir.make_dir(PopochiuResources.TRANSITION_LAYER_MASKS)
 
@@ -228,7 +225,6 @@ func copy_image(texture_path: String) -> int:
 	result_code = game_tl_image_dir.copy(texture_path, PopochiuResources.TRANSITION_LAYER_MASKS + file_name)
 	await PopochiuEditorHelper.filesystem_scanned()
 
-	print(result_code)
 	return ResultCodes.SUCCESS if result_code == OK else ResultCodes.FAILURE
 
 
@@ -295,7 +291,6 @@ func add_custom_transition(anim: Animation, anim_name: String, overwrite: bool =
 
 	# Check if the animation player has the User animation library and, if not, create it
 	if not tl_anim_lib:
-		print("add anim lib")
 		tl_anim_lib = AnimationLibrary.new()
 		$AnimationPlayer.add_animation_library(
 			PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB,
@@ -305,9 +300,8 @@ func add_custom_transition(anim: Animation, anim_name: String, overwrite: bool =
 	# Check for animation name collisions
 	if tl_anim_lib.has_animation(anim_name) and not overwrite:
 		result_code = ResultCodes.ERR_ANIMATION_ALREADY_EXISTS
-		#PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % anim_name)
+		PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % anim_name)
 	else:
-		print("add anim to lib")
 		tl_anim_lib.add_animation(anim_name, anim)
 
 	return result_code

@@ -23,8 +23,6 @@ static func decode(string: String):
 	if not _is_valid_config(decoded):
 		return null
 
-	print(decoded)
-
 	var cfg = decoded.split("\n")
 	var config = {}
 	for c in cfg:
