@@ -53,14 +53,14 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 	# If name contains "/", it's a custom animation with library prefix - use get_custom_name to preserve the correct prefix
 	var anim_lib_name = get_custom_name(name) if "/" in name else get_simple_name(name)
 	var anim = get_transition(anim_lib_name)
-	
+
 	if anim != null:
 		# Use snake_case version if found
 		name = anim_lib_name
 	else:
 		# Fallback: if snake_case version not found, try original name as-is
 		anim = get_transition(name)
-	
+
 	var reenable_color_track = false
 
 	# Check if the animation exists

@@ -49,7 +49,7 @@ func play_transition(
 	if not _is_tl_ready():
 		await get_tree().process_frame
 		return
-	
+
 	# Use defaults from config if not specified
 	if anim_name.is_empty():
 		anim_name = PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION)
@@ -59,7 +59,7 @@ func play_transition(
 		mode = PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_ENTER)
 	if color.r < 0:
 		color = PopochiuConfig._get_project_setting(PopochiuConfig.TL_FADE_COLOR)
-	
+
 	tl.play_transition(anim_name, duration, mode, color)
 	await tl.transition_finished
 	transition_finished.emit(anim_name)
@@ -80,10 +80,10 @@ func queue_play_transition(
 func show_curtain(color: Color = Color(-1, -1, -1, -1)) -> void:
 	if not _is_tl_ready():
 		return
-	
+
 	if color.r < 0:
 		color = PopochiuConfig._get_project_setting(PopochiuConfig.TL_FADE_COLOR)
-	
+
 	tl.show_curtain(color)
 
 
@@ -91,7 +91,7 @@ func show_curtain(color: Color = Color(-1, -1, -1, -1)) -> void:
 func hide_curtain() -> void:
 	if not _is_tl_ready():
 		return
-	
+
 	tl.hide_curtain()
 
 
@@ -99,7 +99,7 @@ func hide_curtain() -> void:
 func get_all_transitions_list() -> PackedStringArray:
 	if not _is_tl_ready():
 		return PackedStringArray()
-	
+
 	return tl.get_all_transitions_list()
 
 
@@ -107,7 +107,7 @@ func get_all_transitions_list() -> PackedStringArray:
 func get_predefined_transitions_list() -> PackedStringArray:
 	if not _is_tl_ready():
 		return PackedStringArray()
-	
+
 	return tl.get_predefined_transitions_list()
 
 
@@ -115,7 +115,7 @@ func get_predefined_transitions_list() -> PackedStringArray:
 func get_custom_transitions_list() -> PackedStringArray:
 	if not _is_tl_ready():
 		return PackedStringArray()
-	
+
 	return tl.get_custom_transitions_list()
 
 
@@ -123,7 +123,7 @@ func get_custom_transitions_list() -> PackedStringArray:
 func get_transition(anim_name: String) -> Animation:
 	if not _is_tl_ready():
 		return null
-	
+
 	return tl.get_transition(anim_name)
 
 
@@ -132,7 +132,7 @@ func get_transition(anim_name: String) -> Animation:
 func has_color_override_track(anim_name: String) -> bool:
 	if not _is_tl_ready():
 		return false
-	
+
 	return tl.has_color_override_track(anim_name)
 
 
@@ -140,7 +140,7 @@ func has_color_override_track(anim_name: String) -> bool:
 func has_custom_library() -> bool:
 	if not _is_tl_ready():
 		return false
-	
+
 	return tl.has_custom_library()
 
 
@@ -148,7 +148,7 @@ func has_custom_library() -> bool:
 func has_custom_transition(anim_name: String) -> bool:
 	if not _is_tl_ready():
 		return false
-	
+
 	return tl.has_custom_transition(anim_name)
 
 
@@ -157,7 +157,7 @@ func has_custom_transition(anim_name: String) -> bool:
 func get_custom_transition(anim_name: String) -> Animation:
 	if not _is_tl_ready():
 		return null
-	
+
 	return tl.get_custom_transition(anim_name)
 
 

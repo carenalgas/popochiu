@@ -117,7 +117,7 @@ static func initialize_project_settings():
 	_initialize_project_setting(TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
 	_initialize_project_setting(TL_CUTSCENE_TRANSITION_MODE, TYPE_INT, PROPERTY_HINT_ENUM, _get_enum_hint(PopochiuTransitionLayer.PLAY_MODE))
 
-	
+
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	_initialize_project_setting(TEXT_SPEED, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
 	_initialize_project_setting(AUTO_CONTINUE_TEXT, TYPE_BOOL)
@@ -131,7 +131,7 @@ static func initialize_project_settings():
 	#)
 	_initialize_project_setting(GIBBERISH_SPOKEN_TEXT, TYPE_BOOL)
 	_initialize_project_setting(GIBBERISH_DIALOG_OPTIONS, TYPE_BOOL)
-	
+
 	# ---- Inventory -------------------------------------------------------------------------------
 	_initialize_project_setting(INVENTORY_LIMIT, TYPE_INT)
 	_initialize_project_setting(
@@ -140,14 +140,14 @@ static func initialize_project_settings():
 		PROPERTY_HINT_TYPE_STRING,
 		"%d:" % [TYPE_STRING]
 	)
-	
+
 	# ---- Aseprite Importing ----------------------------------------------------------------------
 	_initialize_project_setting(ASEPRITE_IMPORT_ANIMATION, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_PROPS_VISIBLE, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_PROPS_CLICKABLE, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_ONLY_VISIBLE_LAYERS, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS, TYPE_BOOL)
-	
+
 	# ---- Pixel game ------------------------------------------------------------------------------
 	_initialize_project_setting(PIXEL_ART_TEXTURES, TYPE_BOOL)
 	_initialize_project_setting(PIXEL_PERFECT, TYPE_BOOL)
@@ -158,10 +158,10 @@ static func initialize_project_settings():
 	_initialize_project_setting(SOUND_EFFECT_PREFIXES, TYPE_STRING)
 	_initialize_project_setting(VOICE_PREFIXES, TYPE_STRING)
 	_initialize_project_setting(UI_PREFIXES, TYPE_STRING)
-	
+
 	# ---- DEV -------------------------------------------------------------------------------------
 	_initialize_advanced_project_setting(DEV_USE_ADDON_TEMPLATE, TYPE_BOOL)
-	
+
 	ProjectSettings.save()
 
 
@@ -357,7 +357,7 @@ static func _get_enum_hint(e, f: Callable = Callable()) -> String:
 static func _get_transitions_hint() -> String:
 	# Try game-folder scene first, fallback to addon scene
 	var scene_path = PopochiuResources.TRANSITION_LAYER_SCENE if ResourceLoader.exists(PopochiuResources.TRANSITION_LAYER_SCENE) else PopochiuResources.TL_BASE_SCENE
-	
+
 	if not ResourceLoader.exists(scene_path):
 		# Fallback on default transition (capitalized)
 		return defaults[TL_DEFAULT_ROOM_TRANSITION].capitalize()

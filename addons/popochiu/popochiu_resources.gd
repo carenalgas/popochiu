@@ -215,7 +215,7 @@ const TRANSITION_LAYER_CUSTOM_ANIMLIB = "User"
 # Verify if the folders (where Popochiu's objects will be) exists
 static func init_file_structure() -> bool:
 	var is_first_install := !DirAccess.dir_exists_absolute(GAME_PATH)
-	
+
 	# Create the folders that does not exist
 	for d in _get_directories().values():
 		if not DirAccess.dir_exists_absolute(d):
@@ -227,7 +227,7 @@ static func init_file_structure() -> bool:
 
 		if ResourceSaver.save(obj, TRANSITION_LAYER_SCENE) != OK:
 			PopochiuUtils.print_error("Couldn't copy the transition layer.")
-		
+
 		if not FileAccess.file_exists(TRANSITION_LAYER_SCRIPT):
 			var tl_file = FileAccess.open(TRANSITION_LAYER_SCRIPT, FileAccess.WRITE)
 			tl_file.store_string("@tool\nextends PopochiuTransitionLayer")
@@ -236,12 +236,12 @@ static func init_file_structure() -> bool:
 		# Assign the transition layer script
 		obj = (load(TRANSITION_LAYER_SCENE) as PackedScene).instantiate()
 		obj.set_script(load(TRANSITION_LAYER_SCRIPT))
-		
+
 		# Add the User animation library if it doesn't exist
 		var animation_player = obj.get_node("AnimationPlayer")
 		if animation_player and not animation_player.has_animation_library(TRANSITION_LAYER_CUSTOM_ANIMLIB):
 			animation_player.add_animation_library(TRANSITION_LAYER_CUSTOM_ANIMLIB, AnimationLibrary.new())
-		
+
 		var packed_scene := PackedScene.new()
 		packed_scene.pack(obj)
 
@@ -253,16 +253,16 @@ static func init_file_structure() -> bool:
 	# Create .cfg file
 	if not FileAccess.file_exists(DATA):
 		_create_empty_file(DATA)
-	
+
 	# Create Globals file
 	if not FileAccess.file_exists(GLOBALS_SNGL):
 		var globals_file = FileAccess.open(GLOBALS_SNGL, FileAccess.WRITE)
 		globals_file.store_string("extends Node")
 		globals_file.close()
-	
+
 	# ---- Create autoload files -------------------------------------------------------------------
 	create_auto_loads()
-	
+
 	return is_first_install
 
 
@@ -272,7 +272,7 @@ static func create_auto_loads() -> void:
 			var file := FileAccess.open(key, FileAccess.WRITE)
 			file.store_string(SNGL_TEMPLATE % SNGL_SETUP[key].interface)
 			file.close()
-	
+
 	if not FileAccess.file_exists(A_SNGL):
 		var file := FileAccess.open(A_SNGL, FileAccess.WRITE)
 		file.store_string(A_TEMPLATE % IAUDIO)
@@ -287,88 +287,88 @@ static func update_autoloads(save := false) -> void:
 			var code := s.source_code
 			var modified := false
 			var sngl_setup: Dictionary = SNGL_SETUP[id]
-			
+
 			if not get_data_cfg().has_section(sngl_setup.section):
 				continue
-			
+
 			for key in get_data_cfg().get_section_keys(sngl_setup.section):
 				var var_name: String = key
 				var snake_name := key.to_snake_case()
-					
+
 				if var_name[0].is_valid_int():
 					var_name = var_name.insert(0, sngl_setup.prefix)
-				
+
 				if not ("var %s" % var_name) in code:
 					var classes_idx := code.find("# ---- classes")
 					var class_path: String = sngl_setup["class"] % [
 						snake_name, snake_name
 					]
-					
+
 					code = code.insert(
 						classes_idx,
 						sngl_setup["const"] % [key, class_path]
 					)
-					
+
 					var nodes_idx := code.find("# ---- nodes")
 					code = code.insert(
 						nodes_idx,
 						sngl_setup.node % [var_name, key, key]
 					)
-					
+
 					var functions_idx := code.find("# ---- functions")
 					code = code.insert(
 						functions_idx,
 						sngl_setup["func"] % [key, key, key]
 					)
-					
+
 					modified = true
-			
+
 			if modified:
 				s.source_code = code
 				if save:
 					ResourceSaver.save(s, id)
-	
+
 	# ---- Populate the A singleton ----------------------------------------------------------------
 	if not get_data_cfg().has_section("audio") or not FileAccess.file_exists(A_SNGL):
 		return
-	
+
 	# [mx_cues, sfx_cues, vo_cues, ui_cues]
 	var audio_groups := get_data_cfg().get_section_keys("audio")
 	var s: Script = load(A_SNGL)
 	var code := s.source_code
 	var modified := false
-	
+
 	var old_audio_cues := []
-	
+
 	# Add all the AudioCues as variables
 	for group in audio_groups:
 		for path in get_data_value("audio", group, []):
 			# Check if the AudioCue is of a valid type
 			var audio_cue: Resource = load(path)
 			var script_path: String = audio_cue.get_script().resource_path
-			
+
 			if not script_path in [AUDIO_CUE_MUSIC, AUDIO_CUE_SOUND]:
 				# Backup the properties of the AudioCue
 				var values = audio_cue.get_values()
-				
+
 				if group == "mx_cues":
 					audio_cue.set_script(load(AUDIO_CUE_MUSIC))
 				else:
 					audio_cue.set_script(load(AUDIO_CUE_SOUND))
-				
+
 				# Restore the properties of the AudioCue
 				audio_cue.set_values(values)
 				old_audio_cues.append(audio_cue)
-				
+
 				ResourceSaver.save(audio_cue, path)
-			
+
 			var var_name := audio_cue.resource_name
-			
+
 			if ("var %s" % var_name) in code:
 				continue
-			
+
 			var cues_idx := code.find("# ---- cues")
-			
+
 			if group == "mx_cues":
 				code = code.insert(
 					cues_idx, VAR_AUDIO_CUE_MUSIC % [var_name, path]
@@ -377,15 +377,15 @@ static func update_autoloads(save := false) -> void:
 				code = code.insert(
 					cues_idx, VAR_AUDIO_CUE_SOUND % [var_name, path]
 				)
-			
+
 			modified = true
-	
+
 	if modified:
 		s.source_code = code
-		
+
 		if save:
 			ResourceSaver.save(s, A_SNGL)
-	
+
 	# Save the script changes in the AudioCues
 	for cue in old_audio_cues:
 		ResourceSaver.call_deferred("save", cue.resource_path, cue)
@@ -397,11 +397,11 @@ static func remove_autoload_obj(id: String, script_name: String) -> void:
 	var class_path: String = sngl_setup["class"] % [snake_name, snake_name]
 	var s: Script = load(id)
 	var code := s.source_code
-	
+
 	code = code.replace(sngl_setup["const"] % [script_name, class_path], "")
 	code = code.replace(sngl_setup.node % [script_name, script_name, script_name], "")
 	code = code.replace(sngl_setup["func"] % [script_name, script_name, script_name], "")
-	
+
 	s.source_code = code
 	ResourceSaver.save(s, id)
 
@@ -409,12 +409,12 @@ static func remove_autoload_obj(id: String, script_name: String) -> void:
 static func remove_audio_autoload(type: String, var_name: String, path: String) -> void:
 	var s: Script = load(A_SNGL)
 	var code := s.source_code
-	
+
 	if type == "mx_cues":
 		code = code.replace(VAR_AUDIO_CUE_MUSIC % [var_name, path], "")
 	else:
 		code = code.replace(VAR_AUDIO_CUE_SOUND % [var_name, path], "")
-	
+
 	s.source_code = code
 	ResourceSaver.save(s, A_SNGL)
 
@@ -423,17 +423,17 @@ static func remove_audio_autoload(type: String, var_name: String, path: String) 
 static func get_data_cfg() -> ConfigFile:
 	var config := ConfigFile.new()
 	var err: int = config.load(DATA)
-	
+
 	if err == OK:
 		return config
-	
+
 	PopochiuUtils.print_error("Couldn't load popochiu_data.cfg")
 	return null
 
 
 static func set_data_value(section: String, key: String, value) -> int:
 	var config := get_data_cfg()
-	
+
 	config.set_value(section, key, value)
 	return config.save(DATA)
 
@@ -444,19 +444,19 @@ static func has_data_value(section: String, key: String) -> bool:
 
 static func get_data_value(section: String, key: String, default):
 	var config := get_data_cfg()
-	
+
 	if not config:
 		return default
 
 	if not config.has_section(section):
 		return default
-	
+
 	return config.get_value(section, key, default)
 
 
 static func erase_data_value(section: String, key: String) -> void:
 	var config := get_data_cfg()
-	
+
 	if config.has_section_key(section, key):
 		config.erase_section_key(section, key)
 		config.save(DATA)
@@ -467,11 +467,11 @@ static func erase_data_value(section: String, key: String) -> void:
 static func get_section(section: String) -> Array:
 	var config := get_data_cfg()
 	var resource_paths := []
-	
+
 	if config.has_section(section):
 		for key in config.get_section_keys(section):
 			resource_paths.append(config.get_value(section, key))
-	
+
 	return resource_paths
 
 
@@ -479,7 +479,7 @@ static func store_properties(
 	target: Dictionary, source: Object, ignore_too := []
 ) -> void:
 	copy_popochiu_object_properties(target, source, ignore_too)
-	
+
 	# ---- Call custom function to store extra data ------------------------------------------------
 	if source.has_method("on_save"):
 		target.custom_data = source.on_save()
@@ -488,16 +488,16 @@ static func store_properties(
 
 static func copy_popochiu_object_properties(target, source: Object, ignore_too := []) -> void:
 	var properties_to_ignore := ["script_name", "scene"]
-	
+
 	if not ignore_too.is_empty():
 		properties_to_ignore.append_array(ignore_too)
-	
+
 	# ---- Store basic type properties -------------------------------------------------------------
 	# prop = {class_name, hint, hint_string, name, type, usage}
 	for prop in source.get_script().get_script_property_list():
 		if prop.name in properties_to_ignore: continue
 		if not prop.type in VALID_TYPES: continue
-		
+
 		# Check if the property is a script variable (8192)
 		# or a export variable (8199)
 		if prop.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or prop.usage == (
@@ -510,7 +510,7 @@ static func has_property(source: Object, property: String) -> bool:
 	for prop in source.get_script().get_script_property_list():
 		if prop.name == property:
 			return true
-	
+
 	return false
 
 
@@ -528,10 +528,10 @@ static func get_section_keys(section: String) -> Array:
 static func get_plugin_cfg() -> ConfigFile:
 	var config := ConfigFile.new()
 	var err: int = config.load(CFG)
-	
+
 	if err == OK:
 		return config
-	
+
 	PopochiuUtils.print_error("Couldn't load plugin config.")
 	return null
 
