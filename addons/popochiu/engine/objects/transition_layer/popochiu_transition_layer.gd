@@ -19,6 +19,11 @@ func _ready() -> void:
 	$AnimationPlayer.animation_finished.connect(_transition_finished)
 	$AnimationPlayer.animation_libraries_updated.connect(_on_animation_player_animation_libraries_updated)
 	$AnimationPlayer.animation_list_changed.connect(_on_animation_player_animation_list_changed)
+
+	# Connect to animation_removed signal from all animation libraries
+	# This is done for both predefined and custom libraries
+	_connect_animation_libraries_signals()
+
 	$Curtain.modulate = PopochiuUtils.e.settings.tl_fade_color
 
 	# Pass the curtain size to the shader
@@ -380,3 +385,41 @@ func _on_animation_player_animation_list_changed() -> void:
 
 func _on_animation_player_animation_libraries_updated() -> void:
 	PopochiuConfig.reload_transitions()
+	# Reconnect to animation libraries signals when libraries are updated
+	_connect_animation_libraries_signals()
+
+
+## Connect to animation_removed signal from all animation libraries to handle removal of default transitions
+func _connect_animation_libraries_signals() -> void:
+	for lib_name in $AnimationPlayer.get_animation_library_list():
+		var anim_lib = $AnimationPlayer.get_animation_library(lib_name)
+		if anim_lib and not anim_lib.animation_removed.is_connected(_on_animation_removed):
+			anim_lib.animation_removed.connect(_on_animation_removed.bind(lib_name))
+
+
+## Called when an animation is removed from any animation library
+## Checks if the removed animation is a configured default transition and resets to defaults
+func _on_animation_removed(anim_name: String, lib_name: String) -> void:
+	# Only care about predefined and custom libraries
+	if lib_name != PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB and not lib_name.is_empty():
+		return
+
+	# Build the full animation name (with library prefix if not the default library)
+	var full_anim_name = get_simple_name(anim_name) if lib_name.is_empty() else get_custom_name(anim_name)
+
+	# Check if the removed animation was a configured default for room changes...
+	if full_anim_name.to_snake_case() == PopochiuConfig.get_tl_default_room_transition().to_snake_case():
+		var fallback = PopochiuConfig.defaults[PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION]
+		PopochiuUtils.print_warning(
+			"Removed animation '%s' was set as the default room transition. Falling back to '%s'." % [full_anim_name, fallback]
+		)
+		ProjectSettings.set_setting(PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION, fallback.capitalize())
+		ProjectSettings.save()
+	# ... or for cutscene skips
+	elif full_anim_name.to_snake_case() == PopochiuConfig.get_tl_default_cutscene_transition().to_snake_case():
+		var fallback = PopochiuConfig.defaults[PopochiuConfig.TL_DEFAULT_CUTSCENE_TRANSITION]
+		PopochiuUtils.print_warning(
+			"Removed animation '%s' was set as the default cutscene transition. Falling back to '%s'." % [full_anim_name, fallback]
+		)
+		ProjectSettings.set_setting(PopochiuConfig.TL_DEFAULT_CUTSCENE_TRANSITION, fallback.capitalize())
+		ProjectSettings.save()
