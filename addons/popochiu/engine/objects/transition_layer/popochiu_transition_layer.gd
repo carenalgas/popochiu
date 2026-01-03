@@ -93,11 +93,12 @@ func play_transition(name: String = "fade", duration: float = 1.0, mode: int = P
 		PLAY_MODE.IN:
 			$AnimationPlayer.play(name)
 			await $AnimationPlayer.animation_finished
+			# Revealing the scene: hide TL so GUI and input work.
 			_hide()
 		PLAY_MODE.OUT:
 			$AnimationPlayer.play_backwards(name)
 			await $AnimationPlayer.animation_finished
-			_hide()
+			# Covering the scene: keep TL visible to avoid gritches at room change.
 		_:
 			var result_code = ResultCodes.ERR_ANIMATION_PLAY_MODE_UNKNOWN
 			PopochiuUtils.print_error(ResultCodes.get_error_message(result_code) + " (%s)" % mode)
