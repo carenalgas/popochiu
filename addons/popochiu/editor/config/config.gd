@@ -370,13 +370,13 @@ static func _get_transitions_hint() -> String:
 	var transitions = tl.get_all_transitions_list()
 	tl.queue_free()
 	# Capitalize transition names for display in project settings
-	# Using a for loop because transitions is a PackedStringArray (no map() method)
 	# Split by "/" to handle animation library prefixes (e.g., "User/anim_name")
-	var capitalized_transitions: Array[String] = []
-	for name in transitions:
-		capitalized_transitions.append("/".join(name.split("/").map(func(s): return s.capitalize())))
+	# Convert PackedStringArray to Array to use map()
+	var capitalized_transitions = Array(transitions).map(func(name):
+		var parts = Array(name.split("/")).map(func(s): return s.capitalize())
+		return "/".join(PackedStringArray(parts))
+	)
 	return ",".join(capitalized_transitions)
-	
 
 
 #endregion
