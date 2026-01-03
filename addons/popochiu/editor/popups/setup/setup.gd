@@ -277,40 +277,13 @@ func on_about_to_popup() -> void:
 func on_close() -> void:
 	if _is_closing:
 		return
-
+	_is_closing = true
+	
 	# Clean up any open confirmation dialogs
 	_cleanup_pending_dialogs()
-
-	_is_closing = true
-
+	
 	# Save the current mode for next time
 	PopochiuResources.set_data_value("setup", "last_mode", _current_mode)
-
-	# Calculate resolution values based on current mode
-	var resolution_values: Dictionary = _get_values_for_current_mode()
-
-	# Set project settings for game and window resolution
-	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, resolution_values.game_width)
-	ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, resolution_values.game_height)
-	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, resolution_values.test_width)
-	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, resolution_values.test_height)
-
-	# Configure stretch mode and pixel art settings based on game type
-	match resolution_values.game_type_config:
-		GameType.MODERN:
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
-			PopochiuConfig.set_pixel_art_textures(false)
-		GameType.RETRO:
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
-			PopochiuConfig.set_pixel_art_textures(true)
-
-	# Handle GUI template copying based on setup state and user choices
-	await _handle_gui_template_copying(resolution_values.gui_template_name)
-
-	# Make sure to syncronize buttons and dropdown
-	_set_template_selected_in_ui(_current_template_name)
 
 
 func define_content() -> void:
@@ -358,6 +331,44 @@ func define_content() -> void:
 
 	# Select the current template in both wizard and custom modes
 	_select_current_template()
+
+
+func on_confirm() -> void:
+	if _is_closing:
+		return
+	_is_closing = true
+	
+	# Clean up any open confirmation dialogs
+	_cleanup_pending_dialogs()
+	
+	# Save the current mode for next time
+	PopochiuResources.set_data_value("setup", "last_mode", _current_mode)
+
+	# Calculate resolution values based on current mode
+	var resolution_values: Dictionary = _get_values_for_current_mode()
+
+	# Set project settings for game and window resolution
+	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, resolution_values.game_width)
+	ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, resolution_values.game_height)
+	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, resolution_values.test_width)
+	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, resolution_values.test_height)
+
+	# Configure stretch mode and pixel art settings based on game type
+	match resolution_values.game_type_config:
+		GameType.MODERN:
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
+			PopochiuConfig.set_pixel_art_textures(false)
+		GameType.RETRO:
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
+			PopochiuConfig.set_pixel_art_textures(true)
+
+	# Handle GUI template copying based on setup state and user choices
+	await _handle_gui_template_copying(resolution_values.gui_template_name)
+
+	# Make sure to syncronize buttons and dropdown
+	_set_template_selected_in_ui(_current_template_name)
 
 
 #endregion
@@ -525,6 +536,7 @@ func _show_template_change_confirmation(new_template_name: String) -> void:
 			_template_change_confirmed = true
 			_selected_template_name = new_template_name
 			_cleanup_confirmation_dialog(confirmation_dialog)
+			_update_wizard_gui_tooltip()
 	)
 
 	confirmation_dialog.canceled.connect(
@@ -532,6 +544,7 @@ func _show_template_change_confirmation(new_template_name: String) -> void:
 			# Revert UI selections to current template
 			_revert_template_selection()
 			_cleanup_confirmation_dialog(confirmation_dialog)
+			_update_wizard_gui_tooltip()
 	)
 
 	# Also handle if dialog is closed via X button or Escape
@@ -539,6 +552,7 @@ func _show_template_change_confirmation(new_template_name: String) -> void:
 		func():
 			_revert_template_selection()
 			_cleanup_confirmation_dialog(confirmation_dialog)
+			_update_wizard_gui_tooltip()
 	)
 
 	add_child(confirmation_dialog)
@@ -576,10 +590,12 @@ func _revert_template_selection() -> void:
 # Set template selection in both wizard and custom UI modes
 func _set_template_selected_in_ui(template_name: String) -> void:
 	# Set wizard GUI buttons
-	for child in gui_grid.get_children():
+	for child: Button in gui_grid.get_children():
 		if child.has_meta("template_button"):
 			var button_template_name: String = _get_button_template_name(child)
 			child.set_pressed_no_signal(button_template_name == template_name)
+		if child.has_focus():
+			child.release_focus()
 
 	# Set custom dropdown
 	for i in range(opt_game_ui.item_count):
@@ -868,8 +884,8 @@ func _populate_wizard_gui_buttons() -> void:
 			child.queue_free()
 
 	# Don't populate if no game type is selected yet
-	#if game_type_button_group.get_pressed_button() == null:
-		#return
+	if game_type_button_group.get_pressed_button() == null:
+		return
 
 	# Get the template list based on game type
 	var templates_list: Array = []
@@ -1431,6 +1447,9 @@ func _on_wizard_gui_selected(btn: Button) -> void:
 	if new_template_name == _current_template_name:
 		# User reverted back to original - reset confirmation flag
 		_template_change_confirmed = false
+		
+		# Update tooltip
+		_update_wizard_gui_tooltip()
 		return
 
 	# Check if GUI scene is open

@@ -136,7 +136,7 @@ static func show_setup() -> void:
 	dialog.dialog_hide_on_ok = false
 	dialog.confirmed.connect(
 		func () -> void:
-			await content.on_close()
+			await content.on_confirm()
 			# The assignment must be done here, since doing it when the ConfirmationDialog is
 			# instantiated causes the engine to crash after trying to create Popochiu objects following
 			# the installation process.
