@@ -19,11 +19,11 @@ extends Node
 ## T.hide_curtain()
 ## [/codeblock]
 
-## Re-export PLAY_MODE enum for convenience from [PopochiuTransitionLayer].
-const PLAY_MODE = PopochiuTransitionLayer.PLAY_MODE
-
 ## Emitted when a transition animation finishes.
 signal transition_finished(transition_name: String)
+
+## Re-export PLAY_MODE enum for convenience from [PopochiuTransitionLayer].
+const PLAY_MODE = PopochiuTransitionLayer.PLAY_MODE
 
 ## Provides access to the [PopochiuTransitionLayer] instance managed by the engine.
 var tl: PopochiuTransitionLayer

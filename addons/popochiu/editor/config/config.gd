@@ -98,8 +98,12 @@ static func reload_transitions():
 	# Transition Layer
 	var transition_hint: String = _get_transitions_hint()
 
-	_initialize_project_setting(TL_DEFAULT_ROOM_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
-	_initialize_project_setting(TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
+	_initialize_project_setting(
+		TL_DEFAULT_ROOM_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint
+	)
+	_initialize_project_setting(
+		TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint
+	)
 
 
 static func initialize_project_settings():
@@ -110,12 +114,31 @@ static func initialize_project_settings():
 	_initialize_project_setting(TL_FADE_COLOR, TYPE_COLOR)
 	_initialize_project_setting(TL_SKIP_CUTSCENE_TIME, TYPE_FLOAT)
 	_initialize_project_setting(TL_IN_FIRST_ROOM, TYPE_BOOL)
-	_initialize_project_setting(TL_DEFAULT_ROOM_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
-	_initialize_project_setting(TL_ROOM_TRANSITION_MODE_ENTER, TYPE_INT, PROPERTY_HINT_ENUM, _get_enum_hint(PopochiuTransitionLayer.PLAY_MODE))
-	_initialize_project_setting(TL_ROOM_TRANSITION_MODE_LEAVE, TYPE_INT, PROPERTY_HINT_ENUM, _get_enum_hint(PopochiuTransitionLayer.PLAY_MODE))
+	_initialize_project_setting(
+		TL_DEFAULT_ROOM_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint
+	)
+	_initialize_project_setting(
+		TL_ROOM_TRANSITION_MODE_ENTER,
+		TYPE_INT,
+		PROPERTY_HINT_ENUM,
+		_get_enum_hint(PopochiuTransitionLayer.PLAY_MODE)
+	)
+	_initialize_project_setting(
+		TL_ROOM_TRANSITION_MODE_LEAVE,
+		TYPE_INT,
+		PROPERTY_HINT_ENUM,
+		_get_enum_hint(PopochiuTransitionLayer.PLAY_MODE)
+	)
 	_initialize_project_setting(TL_ROOM_TRANSITION_DURATION, TYPE_FLOAT)
-	_initialize_project_setting(TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint)
-	_initialize_project_setting(TL_CUTSCENE_TRANSITION_MODE, TYPE_INT, PROPERTY_HINT_ENUM, _get_enum_hint(PopochiuTransitionLayer.PLAY_MODE))
+	_initialize_project_setting(
+		TL_DEFAULT_CUTSCENE_TRANSITION, TYPE_STRING, PROPERTY_HINT_ENUM, transition_hint
+	)
+	_initialize_project_setting(
+		TL_CUTSCENE_TRANSITION_MODE,
+		TYPE_INT,
+		PROPERTY_HINT_ENUM,
+		_get_enum_hint(PopochiuTransitionLayer.PLAY_MODE)
+	)
 
 
 	# ---- Dialogs ---------------------------------------------------------------------------------
@@ -356,7 +379,11 @@ static func _get_enum_hint(e, f: Callable = Callable()) -> String:
 # Uses a scene-based approach to avoid singleton timing issues during editor startup.
 static func _get_transitions_hint() -> String:
 	# Try game-folder scene first, fallback to addon scene
-	var scene_path = PopochiuResources.TRANSITION_LAYER_SCENE if ResourceLoader.exists(PopochiuResources.TRANSITION_LAYER_SCENE) else PopochiuResources.TL_BASE_SCENE
+	var scene_path = (
+		PopochiuResources.TRANSITION_LAYER_SCENE
+		if ResourceLoader.exists(PopochiuResources.TRANSITION_LAYER_SCENE)
+		else PopochiuResources.TL_BASE_SCENE
+	)
 
 	if not ResourceLoader.exists(scene_path):
 		# Fallback on default transition (capitalized)
