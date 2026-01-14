@@ -449,18 +449,27 @@ func queueable(node: Object, method: String, params := [], signal_name := "") ->
 	return func (): await _queueable(node, method, params, signal_name)
 
 
-## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
-## seconds with the specified [param mode]. Available type values can be found in
-## [member TransitionLayer.Types]. This method is intended to be used inside a [method queue] of
+## @deprecated
+## [b]Deprecated in 2.1 - Will be removed in 2.2[/b].
+## Plays the transition [param anim_name] animation in the [TransitionLayer] with a [param duration] in
+## seconds with the specified [param mode]. This method is intended to be used inside a [method queue] of
 ## instructions.
-func queue_play_transition(name: String, duration: float, mode: int) -> Callable:
-	return func (): await play_transition(name, duration, mode)
+func queue_play_transition(anim_name: String, duration: float, mode: int) -> Callable:
+	PopochiuUtils.print_warning(
+		"E.queue_play_transition() is deprecated and will be removed in Popochiu 2.2." +
+		" Use T.queue_play_transition() instead."
+	)
+	return func (): await play_transition(anim_name, duration, mode)
 
-
-## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
-## seconds. Available type values can be found in [member TransitionLayer.Types].
-func play_transition(name: String, duration: float, mode: int) -> void:
-	tl.play_transition(name, duration, mode)
+## @deprecated
+## [b]Deprecated in 2.1 - Will be removed in 2.2[/b]. Plays the transition [param anim_name] animation in the [TransitionLayer] with a [param duration] in
+## seconds with the specified [param mode].
+func play_transition(anim_name: String, duration: float, mode: int) -> void:
+	PopochiuUtils.print_warning(
+		"E.play_transition() is deprecated and will be removed in Popochiu 2.2." +
+		" Use T.play_transition() instead."
+	)
+	tl.play_transition(anim_name, duration, mode)
 	
 	await tl.transition_finished
 

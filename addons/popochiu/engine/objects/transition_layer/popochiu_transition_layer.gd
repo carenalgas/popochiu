@@ -44,7 +44,7 @@ func _ready() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Plays a transition with the animation identified by [param name], that lasts [param duration]
+## Plays a transition with the animation identified by [param anim_name], that lasts [param duration]
 ## (in seconds), with the specified [param mode] showing the Curtain with the specified
 ## [param color].
 ## The Curtain color follows this precedence rule (from highest to lowest):
@@ -56,7 +56,7 @@ func _ready() -> void:
 ## display in project settings. The [param name] parameter accepts any format (Title Case,
 ## CamelCase, or snake_case) and normalizes it internally.
 func play_transition(
-	name: String = "fade",
+	anim_name: String = "fade",
 	duration: float = 1.0,
 	mode: int = PLAY_MODE.IN_OUT,
 	color: Color = PopochiuUtils.e.settings.tl_fade_color
@@ -64,15 +64,15 @@ func play_transition(
 	# Normalize transition name to snake_case for animation lookup
 	# If name contains "/", it's a custom animation with library prefix - use get_custom_name to
 	# preserve the correct prefix
-	var anim_lib_name = get_custom_name(name) if "/" in name else get_simple_name(name)
+	var anim_lib_name = get_custom_name(anim_name) if "/" in anim_name else get_simple_name(anim_name)
 	var anim = get_transition(anim_lib_name)
 
 	if anim != null:
 		# Use snake_case version if found
-		name = anim_lib_name
+		anim_name = anim_lib_name
 	else:
 		# Fallback: if snake_case version not found, try original name as-is
-		anim = get_transition(name)
+		anim = get_transition(anim_name)
 
 	# Check if the animation exists
 	if anim == null:
@@ -91,26 +91,26 @@ func play_transition(
 	# Watch out: the RESET animation will set the Curtain:modulate property if a such a track is
 	# present
 	if color != PopochiuUtils.e.settings.tl_fade_color:
-		if has_color_override_track(name):
+		if has_color_override_track(anim_name):
 			reenable_color_track = true
-			toggle_track(name, "Curtain:modulate", false)
+			toggle_track(anim_name, "Curtain:modulate", false)
 
 	show_curtain(color)
 
 	match mode:
 		PLAY_MODE.IN_OUT:
-			$AnimationPlayer.play(name)
+			$AnimationPlayer.play(anim_name)
 			await $AnimationPlayer.animation_finished
-			$AnimationPlayer.play_backwards(name)
+			$AnimationPlayer.play_backwards(anim_name)
 			await $AnimationPlayer.animation_finished
 			_hide()
 		PLAY_MODE.IN:
-			$AnimationPlayer.play(name)
+			$AnimationPlayer.play(anim_name)
 			await $AnimationPlayer.animation_finished
 			# Revealing the scene: hide TL so GUI and input work.
 			_hide()
 		PLAY_MODE.OUT:
-			$AnimationPlayer.play_backwards(name)
+			$AnimationPlayer.play_backwards(anim_name)
 			await $AnimationPlayer.animation_finished
 			# Covering the scene: keep TL visible to avoid gritches at room change.
 		_:
@@ -120,7 +120,7 @@ func play_transition(
 	# Restore overridden values
 	$AnimationPlayer.speed_scale = 1.0
 	if reenable_color_track:
-		toggle_track(name, "Curtain:modulate", true)
+		toggle_track(anim_name, "Curtain:modulate", true)
 	$Curtain.modulate = PopochiuUtils.e.settings.tl_fade_color
 
 
