@@ -43,7 +43,7 @@ var tl_skip_cutscene_time := 0.0
 ## The transition animation that will be used when skipping a cutscene.
 var tl_cutscene_transition := ""
 ## Cutscene transition mode (in, out, in_out).
-var tl_cutscene_transition_mode := 0
+var tl_cutscene_transition_mode := PopochiuTransitionLayer.PLAY_MODE.IN
 ## The transition animation that will be used when moving between rooms.
 var tl_room_transition := ""
 ## The duration, in seconds, of the transition animation when moving between rooms.

@@ -163,9 +163,9 @@ func goto_room(
 	# Never fade the TL in, if we are entering the first room at game start
 	if use_transition and Engine.get_process_frames() > 0:
 		await PopochiuUtils.t.play_transition(
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION),
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_DURATION),
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_LEAVE)
+			PopochiuConfig.get_tl_default_room_transition(),
+			PopochiuConfig.get_tl_room_transition_duration(),
+			PopochiuConfig.get_tl_room_transition_mode_leave()
 		)
 	elif Engine.get_process_frames() > 0:
 		PopochiuUtils.t.show_curtain()
@@ -360,9 +360,9 @@ func room_readied(room: PopochiuRoom) -> void:
 	
 	if _use_transition_on_room_change:
 		await PopochiuUtils.t.play_transition(
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_DEFAULT_ROOM_TRANSITION),
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_DURATION),
-			PopochiuConfig._get_project_setting(PopochiuConfig.TL_ROOM_TRANSITION_MODE_ENTER)
+			PopochiuConfig.get_tl_default_room_transition(),
+			PopochiuConfig.get_tl_room_transition_duration(),
+			PopochiuConfig.get_tl_room_transition_mode_enter()
 		)
 		
 		await PopochiuUtils.e.wait(0.3)
