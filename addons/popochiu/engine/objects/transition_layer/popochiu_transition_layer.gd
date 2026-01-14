@@ -165,10 +165,13 @@ func get_custom_library() -> AnimationLibrary:
 	return tl_anim_lib
 
 
+## Return true if an animation library with custom transition is present.
 func has_custom_library() -> bool:
 	return true if get_custom_library() else false
 
 
+## Return the custom transition specified by [param anim_name].
+## Return null if not found.
 func get_custom_transition(anim_name: String) -> Animation:
 	var tl_anim_lib := get_custom_library()
 
@@ -184,19 +187,20 @@ func get_custom_transition(anim_name: String) -> Animation:
 	return tl_anim
 
 
+## Return true if the custom transition specified by [param anim_name] exists.
 func has_custom_transition(anim_name: String) -> bool:
 	return true if get_custom_transition(anim_name) else false
 
 
 ## Return a list of all custom transition names.
 func get_custom_transitions_list() -> PackedStringArray:
-	var anim_list := get_custom_library().get_animation_list()
+	var anim_list := PackedStringArray(get_custom_library().get_animation_list())
 	return _hide_animations(anim_list)
 
 
 ## Return a list of predefined transition names.
 func get_predefined_transitions_list() -> PackedStringArray:
-	var anim_list = $AnimationPlayer.get_animation_library("").get_animation_list()
+	var anim_list := PackedStringArray($AnimationPlayer.get_animation_library("").get_animation_list())
 	return _hide_animations(anim_list)
 
 
@@ -225,6 +229,8 @@ func toggle_track(anim_name: String, track_name: String, value: bool) -> void:
 		anim.track_set_enabled(idx, value)
 
 
+## Copy an image to the transition layer masks directory.
+## Returns ResultCodes.SUCCESS or ResultCodes.FAILURE.
 func copy_image(texture_path: String) -> int:
 	var result_code: int
 	# Ensure the source file exists
@@ -248,7 +254,13 @@ func copy_image(texture_path: String) -> int:
 	return ResultCodes.SUCCESS if result_code == OK else ResultCodes.FAILURE
 
 
-## Create a basic custom transition
+## Create a basic custom transition and return it as an Animation resource.
+## The transition uses the texture specified by [param texture_path] (path to the image file),
+## with the specified [param cutoff] and [param smoothing] values, lasting [param duration] seconds.
+## If [param visibility_track] is true, a visibility track will be added to the animation.
+## If [param modulate_track] is true, a modulate track will be added to the animation, using the
+## specified [param color].
+## Returns the created Animation resource or null on failure.
 func create_basic_custom_transition(
 	texture_path: String,
 	cutoff: float,
@@ -308,7 +320,9 @@ func create_basic_custom_transition(
 	return new_anim
 
 
-## Create an animation resource and add that as a custom transition to the User animation library
+## Create an animation resource and add that as a custom transition to the User animation library.
+## If [param overwrite] is true, any existing animation with the same name will be overwritten.
+## Returns ResultCodes.SUCCESS or ResultCodes.ERR_ANIMATION_ALREADY_EXISTS.
 func add_custom_transition(anim: Animation, anim_name: String, overwrite: bool = false) -> int:
 	var result_code := ResultCodes.SUCCESS
 	var tl_anim_lib := get_custom_library()
@@ -332,7 +346,7 @@ func add_custom_transition(anim: Animation, anim_name: String, overwrite: bool =
 
 
 ## Remove a custom transition from the User animation library.
-func remove_custom_transition(anim_name: String, remove_resource: bool = false) -> void:
+func remove_custom_transition(anim_name: String) -> void:
 	var tl_anim_lib: AnimationLibrary = get_custom_library()
 
 	if not tl_anim_lib:
@@ -369,24 +383,26 @@ static func get_custom_name(anim_name: String) -> String:
 #endregion
 
 #region Private ####################################################################################
+# Called when an animation finishes playing
 func _transition_finished(anim_name := "") -> void:
 	if anim_name == "RESET":
 		return
 
 	transition_finished.emit(anim_name)
 
-
+# Show interface elements when showing/hiding the transition layer
 func _show() -> void:
 	show()
 	PopochiuUtils.g.hide_interface()
 
 
+# Hide interface elements when hiding the transition layer
 func _hide() -> void:
 	hide()
 	PopochiuUtils.g.show_interface()
 
 
-## Hide RESET and other unwanted animations
+# Hide RESET and other unwanted animations
 func _hide_animations(anim_list: PackedStringArray) -> PackedStringArray:
 	var i = anim_list.find("RESET")
 
@@ -395,20 +411,20 @@ func _hide_animations(anim_list: PackedStringArray) -> PackedStringArray:
 
 	return anim_list
 
-#endregion
 
-
+# Reload transitions when the animation list changes
 func _on_animation_player_animation_list_changed() -> void:
 	PopochiuConfig.reload_transitions()
 
 
+# Reload transitions when the animation libraries are updated
 func _on_animation_player_animation_libraries_updated() -> void:
 	PopochiuConfig.reload_transitions()
 	# Reconnect to animation libraries signals when libraries are updated
 	_connect_animation_libraries_signals()
 
 
-## Connect to animation_removed signal from all animation libraries to handle removal of default transitions
+# Connect to animation_removed signal from all animation libraries to handle removal of default transitions
 func _connect_animation_libraries_signals() -> void:
 	for lib_name in $AnimationPlayer.get_animation_library_list():
 		var anim_lib = $AnimationPlayer.get_animation_library(lib_name)
@@ -416,8 +432,8 @@ func _connect_animation_libraries_signals() -> void:
 			anim_lib.animation_removed.connect(_on_animation_removed.bind(lib_name))
 
 
-## Called when an animation is removed from any animation library
-## Checks if the removed animation is a configured default transition and resets to defaults
+# Called when an animation is removed from any animation library
+# Checks if the removed animation is a configured default transition and resets to defaults
 func _on_animation_removed(anim_name: String, lib_name: String) -> void:
 	# Only care about predefined and custom libraries
 	if lib_name != PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB and not lib_name.is_empty():
@@ -442,3 +458,6 @@ func _on_animation_removed(anim_name: String, lib_name: String) -> void:
 		)
 		ProjectSettings.set_setting(PopochiuConfig.TL_DEFAULT_CUTSCENE_TRANSITION, fallback.capitalize())
 		ProjectSettings.save()
+
+
+#endregion
