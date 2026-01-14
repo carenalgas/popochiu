@@ -239,8 +239,12 @@ static func init_file_structure() -> bool:
 
 		# Add the User animation library if it doesn't exist
 		var animation_player = obj.get_node("AnimationPlayer")
-		if animation_player and not animation_player.has_animation_library(TRANSITION_LAYER_CUSTOM_ANIMLIB):
-			animation_player.add_animation_library(TRANSITION_LAYER_CUSTOM_ANIMLIB, AnimationLibrary.new())
+		if animation_player and not animation_player.has_animation_library(
+			TRANSITION_LAYER_CUSTOM_ANIMLIB
+		):
+			animation_player.add_animation_library(
+				TRANSITION_LAYER_CUSTOM_ANIMLIB, AnimationLibrary.new()
+			)
 
 		var packed_scene := PackedScene.new()
 		packed_scene.pack(obj)
