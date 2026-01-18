@@ -110,7 +110,9 @@ func _add_user_animation_library() -> Completion:
 		return Completion.IGNORED
 
 	# Add the User animation library
-	animation_player.add_animation_library(PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB, AnimationLibrary.new())
+	animation_player.add_animation_library(
+		PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB, AnimationLibrary.new()
+	)
 
 	# Save the scene
 	var packed_scene := PackedScene.new()
