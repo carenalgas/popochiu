@@ -43,7 +43,7 @@ static func do_migrations() -> void:
 		migration.step_completed.connect(migrations_panel.update_steps)
 	
 	if migrations_to_execute.is_empty():
-		migrations_popup.free()
+		migrations_popup.queue_free()
 		return
 	
 	migrations_popup.get_ok_button().text = "Run migrations"
