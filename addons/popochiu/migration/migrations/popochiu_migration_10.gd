@@ -8,7 +8,8 @@ const STEPS = [
 	"Create transition layer folder structure",
 	"Copy transition layer scene to game folder",
 	"Create transition layer script",
-	"Add User animation library"
+	"Add User animation library",
+	"Update E.play_transition() calls to new signature"
 ]
 
 
@@ -28,7 +29,8 @@ func _do_migration() -> bool:
 			_create_folder_structure,
 			_copy_transition_layer_scene,
 			_create_transition_layer_script,
-			_add_user_animation_library
+			_add_user_animation_library,
+			_update_play_transition_calls
 		]
 	)
 
@@ -119,6 +121,29 @@ func _add_user_animation_library() -> Completion:
 		return Completion.FAILED
 
 	return Completion.DONE
+
+
+func _update_play_transition_calls() -> Completion:
+	# Update E.play_transition() calls to the new signature
+	# #156~ Old signature: E.play_transition(mode, duration)
+	# New signature: E.play_transition(animation_name, duration, play_mode)
+	var replacements: Array[Dictionary] = [
+		{
+			pattern = r"E\.play_transition\(PopochiuTransitionLayer\.FADE_IN,\s*([^)]+)\)",
+			to = r'T.play_transition("", $1, PopochiuTransitionLayer.PLAY_MODE.IN)'
+		},
+		{
+			pattern = r"E\.play_transition\(PopochiuTransitionLayer\.FADE_OUT,\s*([^)]+)\)",
+			to = r'T.play_transition("", $1, PopochiuTransitionLayer.PLAY_MODE.OUT)'
+		},
+		{
+			pattern = r"E\.play_transition\(PopochiuTransitionLayer\.FADE_IN_OUT,\s*([^)]+)\)",
+			to = r'T.play_transition("", $1, PopochiuTransitionLayer.PLAY_MODE.IN_OUT)'
+		}
+	]
+	
+	var replaced := PopochiuMigrationHelper.replace_regex_in_scripts(replacements)
+	return Completion.DONE if replaced else Completion.IGNORED
 
 
 #endregion
