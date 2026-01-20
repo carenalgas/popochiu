@@ -152,7 +152,7 @@ func _ready() -> void:
 	commands = load(PopochiuResources.GUI_COMMANDS).new()
 	
 	# Instantiate the Transitions Layer node
-	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
+	tl = load(PopochiuResources.TRANSITION_LAYER_SCENE).instantiate()
 	
 	# Calculate the scale that could be applied
 	scale = Vector2(width, height) / PopochiuResources.RETRO_RESOLUTION
@@ -184,12 +184,17 @@ func _ready() -> void:
 	
 	# Assign property values to singletons and other global classes
 	PopochiuUtils.g.gui = gui
+	PopochiuUtils.t.tl = tl
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("popochiu-skip"):
 		cutscene_skipped = true
-		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.skip_cutscene_time)
+		tl.play_transition(
+			settings.tl_cutscene_transition,
+			settings.tl_skip_cutscene_time,
+			settings.tl_cutscene_transition_mode
+			)
 		await tl.transition_finished
 
 
@@ -269,7 +274,11 @@ func cutscene(instructions: Array) -> void:
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		tl.play_transition(tl.PASS_DOWN_OUT, settings.skip_cutscene_time)
+		tl.play_transition(
+			settings.tl_cutscene_transition,
+			settings.tl_skip_cutscene_time,
+			settings.tl_cutscene_transition_mode
+		)
 		await tl.transition_finished
 	
 	cutscene_skipped = false
@@ -440,17 +449,27 @@ func queueable(node: Object, method: String, params := [], signal_name := "") ->
 	return func (): await _queueable(node, method, params, signal_name)
 
 
-## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
-## seconds. Available type values can be found in [member TransitionLayer.Types]. This method is
-## intended to be used inside a [method queue] of instructions.
-func queue_play_transition(type: int, duration: float) -> Callable:
-	return func (): await play_transition(type, duration)
+## @deprecated
+## [b]Deprecated in 2.1 - Will be removed in 2.2[/b].
+## Plays the transition [param anim_name] animation in the [TransitionLayer] with a [param duration] in
+## seconds with the specified [param mode]. This method is intended to be used inside a [method queue] of
+## instructions.
+func queue_play_transition(anim_name: String, duration: float, mode: int) -> Callable:
+	PopochiuUtils.print_warning(
+		"E.queue_play_transition() is deprecated and will be removed in Popochiu 2.2." +
+		" Use T.queue_play_transition() instead."
+	)
+	return func (): await play_transition(anim_name, duration, mode)
 
-
-## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
-## seconds. Available type values can be found in [member TransitionLayer.Types].
-func play_transition(type: int, duration: float) -> void:
-	tl.play_transition(type, duration)
+## @deprecated
+## [b]Deprecated in 2.1 - Will be removed in 2.2[/b]. Plays the transition [param anim_name] animation in the [TransitionLayer] with a [param duration] in
+## seconds with the specified [param mode].
+func play_transition(anim_name: String, duration: float, mode: int) -> void:
+	PopochiuUtils.print_warning(
+		"E.play_transition() is deprecated and will be removed in Popochiu 2.2." +
+		" Use T.play_transition() instead."
+	)
+	tl.play_transition(anim_name, duration, mode)
 	
 	await tl.transition_finished
 

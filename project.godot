@@ -27,6 +27,7 @@ I="*res://game/autoloads/i.gd"
 D="*res://game/autoloads/d.gd"
 A="*res://game/autoloads/a.gd"
 G="*res://addons/popochiu/engine/interfaces/i_graphic_interface.gd"
+T="*res://addons/popochiu/engine/interfaces/i_transition_layer.gd"
 
 [display]
 

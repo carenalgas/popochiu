@@ -10,6 +10,24 @@ Popochiu adheres to the [official GDScript style guide](https://docs.godotengine
 
 To ensure your code complies with these guidelines, you can use the [GDScript Toolkit](https://github.com/Scony/godot-gdscript-toolkit) by [Pawel Lampe](https://github.com/Scony).
 
+Line length must be kept within 100 columns to make code easily readable in Godot editor by project maintainers.
+
+**Good**:
+
+```{.gdscript .code-example-good}
+await PopochiuUtils.t.play_transition(
+    PopochiuConfig.get_tl_default_room_transition(),
+    PopochiuConfig.get_tl_room_transition_duration(),
+    PopochiuConfig.get_tl_room_transition_mode_enter()
+)
+```
+
+**Bad**:
+
+```{.gdscript .code-example-bad}
+await PopochiuUtils.t.play_transition(PopochiuConfig.get_tl_default_room_transition(), PopochiuConfig.get_tl_room_transition_duration(), PopochiuConfig.get_tl_room_transition_mode_enter())
+```
+
 As of now, no automatic linting is available as a pre-commit hook or during PR submission. Please verify that your code is compliant before submitting your PRs.
 
 ---

@@ -17,6 +17,8 @@ static var a: PopochiuIAudio = null:
 	get = get_iaudio
 static var g: PopochiuIGraphicInterface = null:
 	get = get_igraphic_interface
+static var t: PopochiuITransitionLayer = null:
+	get = get_itransition_layer
 static var cursor: PopochiuCursor = null:
 	get = get_popochiu_cursor
 static var globals: Node = null:
@@ -200,6 +202,15 @@ static func get_igraphic_interface() -> PopochiuIGraphicInterface:
 		else:
 			g = PopochiuIGraphicInterface.new()
 	return g
+
+
+static func get_itransition_layer() -> PopochiuITransitionLayer:
+	if not is_instance_valid(t):
+		if Engine.get_singleton(&"T"):
+			t = Engine.get_singleton(&"T")
+		else:
+			t = PopochiuITransitionLayer.new()
+	return t
 
 
 static func get_popochiu_cursor() -> PopochiuCursor:

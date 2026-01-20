@@ -22,8 +22,6 @@ static func decode(string: String):
 	var decoded = _decode_base64(string)
 	if not _is_valid_config(decoded):
 		return null
-	
-	print(decoded)
 
 	var cfg = decoded.split("\n")
 	var config = {}
@@ -32,7 +30,7 @@ static func decode(string: String):
 		if parts.size() == 2:
 			var key = parts[0].strip_edges()
 			var value = parts[1].strip_edges()
-			
+
 			#Convert bool properties
 			if key in ["only_visible_layers", "wipe_old_anims", "op_exp"]:
 				match value:
@@ -44,7 +42,7 @@ static func decode(string: String):
 						config[key] = false
 			else:
 				config[key] = value
-				
+
 	return config
 
 # Public interface for saving and loading configurations
