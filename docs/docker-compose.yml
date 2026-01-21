@@ -9,14 +9,5 @@ services:
             - com.dnsdock.alias=docs.popochiu.local
         build:
             context: .
-            dockerfile: Dockerfile.MkDocs
+            dockerfile: Dockerfile
         command: serve -a 0.0.0.0:80
-    docs-extractor:
-        volumes:
-            - ..:/project
-            - ./src/the-engine-handbook/scripting-reference:/output
-        profiles:
-            - tools
-        build:
-            context: .
-            dockerfile: Dockerfile.DocsExtractor
