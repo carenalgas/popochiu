@@ -148,7 +148,7 @@ class MarkdownGenerator:
         lines.append("| Type | Name | Default |")
         lines.append("|------|------|---------|")
         
-        for prop in properties:
+        for prop in sorted(properties, key=lambda p: p.name.lower()):
             type_str = self._format_type(prop.type_hint) if prop.type_hint else "Variant"
             name_link = f"[{prop.name}](#{prop.name.lower().replace('_', '-')})"
             default = f"`{prop.default_value}`" if prop.default_value else ""
@@ -163,7 +163,7 @@ class MarkdownGenerator:
         lines.append("| Return Type | Method |")
         lines.append("|-------------|--------|")
         
-        for method in methods:
+        for method in sorted(methods, key=lambda m: m.name.lower()):
             ret_type = self._format_type(method.return_type) if method.return_type else "void"
             
             # Build signature
@@ -197,7 +197,7 @@ class MarkdownGenerator:
         lines = ['<hr class="classref-section-separator">', "", "## Signals"]
         lines.append("")
         
-        for signal in signals:
+        for signal in sorted(signals, key=lambda s: s.name.lower()):
             params = ", ".join(
                 f"{name}: {self._format_type_inline(type_)}" if type_ else name
                 for name, type_ in signal.parameters
@@ -211,7 +211,7 @@ class MarkdownGenerator:
         lines = ['<hr class="classref-section-separator">', "", "## Enumerations"]
         lines.append("")
         
-        for enum in enums:
+        for enum in sorted(enums, key=lambda e: e.name.lower()):
             lines.append(f"- **[{enum.name}](#enum-{enum.name.lower().replace('_', '-')})**")
         
         return "\n".join(lines)
@@ -223,7 +223,7 @@ class MarkdownGenerator:
         lines.append("| Name | Value |")
         lines.append("|------|-------|")
         
-        for const in constants:
+        for const in sorted(constants, key=lambda c: c.name.lower()):
             lines.append(f"| `{const.name}` | `{const.value}` |")
         
         return "\n".join(lines)
@@ -232,7 +232,7 @@ class MarkdownGenerator:
         """Generate the signals detail section."""
         lines = ['<hr class="classref-section-separator">', "", "## Signal Descriptions"]
         
-        for i, signal in enumerate(class_info.signals):
+        for i, signal in enumerate(sorted(class_info.signals, key=lambda s: s.name.lower())):
             if i > 0:
                 lines.append('')
                 lines.append('<hr class="classref-item-separator">')
@@ -254,7 +254,7 @@ class MarkdownGenerator:
         """Generate the enumerations detail section."""
         lines = ['<hr class="classref-section-separator">', "", "## Enumeration Descriptions"]
         
-        for i, enum in enumerate(class_info.enums):
+        for i, enum in enumerate(sorted(class_info.enums, key=lambda e: e.name.lower())):
             if i > 0:
                 lines.append('')
                 lines.append('<hr class="classref-item-separator">')
@@ -294,7 +294,7 @@ class MarkdownGenerator:
         """Generate the constants detail section."""
         lines = ['<hr class="classref-section-separator">', "", "## Constant Descriptions"]
         
-        for i, const in enumerate(class_info.constants):
+        for i, const in enumerate(sorted(class_info.constants, key=lambda c: c.name.lower())):
             if i > 0:
                 lines.append('')
                 lines.append('<hr class="classref-item-separator">')
@@ -317,7 +317,7 @@ class MarkdownGenerator:
         """Generate the property descriptions section."""
         lines = ['<hr class="classref-section-separator">', "", "## Property Descriptions"]
         
-        for i, prop in enumerate(properties):
+        for i, prop in enumerate(sorted(properties, key=lambda p: p.name.lower())):
             if i > 0:
                 lines.append('')
                 lines.append('<hr class="classref-item-separator">')
@@ -359,7 +359,7 @@ class MarkdownGenerator:
         """Generate the method descriptions section."""
         lines = ['<hr class="classref-section-separator">', "", "## Method Descriptions"]
         
-        for i, method in enumerate(methods):
+        for i, method in enumerate(sorted(methods, key=lambda m: m.name.lower())):
             if i > 0:
                 lines.append('')
                 lines.append('<hr class="classref-item-separator">')
