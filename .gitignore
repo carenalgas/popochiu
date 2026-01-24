@@ -45,3 +45,7 @@ docs/dist/**/*
 Collector*.gd
 ReferenceCollectorCLI*.gd
 reference.json
+
+# Python: ignore compiled bytecode cache directories at any depth
+__pycache__/
+**/__pycache__/
