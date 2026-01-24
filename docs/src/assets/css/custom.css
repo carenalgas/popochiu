@@ -763,24 +763,35 @@ footer {
 
 /* Table display tweaks */
 
+/* Override theme_extra.css display:block that breaks table layout */
+.rst-content .section .docutils,
+.rst-content .section table.docutils {
+    display: table;
+    width: 100%;
+}
+
 .rst-content table.docutils,
+.rst-content .section table.docutils,
 .wy-table-bordered-all {
     border: 4px solid var(--code-border-color);
+    border-collapse: collapse;
 }
 
 .wy-table-bordered-all td,
 .wy-table thead th,
 .rst-content table.docutils td,
 .rst-content table.docutils thead th,
-.rst-content table.field-list thead th {
-    border-bottom: 2px solid var(--code-border-color);
-    border-left: 2px solid var(--code-border-color);
-    padding: 4px 16px;
+.rst-content table.field-list thead th,
+.rst-content .section table.docutils td,
+.rst-content .section table.docutils th {
+    border: 1px solid var(--hr-color) !important;
+    padding: 8px 16px;
 }
 
-html.writer-html5 .rst-content table.docutils th {
-    border-bottom: 4px solid var(--code-border-color);
-    border-left: 2px solid var(--code-border-color);
+html.writer-html5 .rst-content table.docutils th,
+html.writer-html5 .rst-content .section table.docutils th {
+    border: 1px solid var(--hr-color) !important;
+    border-bottom: 2px solid var(--hr-color) !important;
     padding: 8px 16px;
     vertical-align: middle;
 }
@@ -1115,13 +1126,14 @@ kbd.compound > .kbd,
 /* Class reference tweaks. */
 
 .classref-section-separator {
-    border-color: var(--navbar-heading-color);
-    border-top-width: 3px;
+    border: none;
+    border-top: 3px solid var(--navbar-heading-color);
     margin: 36px 0;
 }
 
 .classref-item-separator {
-    border-top-width: 2px;
+    border: none;
+    border-top: 2px solid var(--hr-color);
     margin: 26px 0;
 }
 

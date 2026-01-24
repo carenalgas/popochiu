@@ -143,7 +143,7 @@ class MarkdownGenerator:
     
     def _generate_properties_table(self, properties: list[PropertyInfo]) -> str:
         """Generate the properties summary table."""
-        lines = ["## Properties"]
+        lines = ['<hr class="classref-section-separator">', "", "## Properties"]
         lines.append("")
         lines.append("| Type | Name | Default |")
         lines.append("|------|------|---------|")
@@ -158,7 +158,7 @@ class MarkdownGenerator:
     
     def _generate_methods_table(self, methods: list[MethodInfo]) -> str:
         """Generate the methods summary table."""
-        lines = ["## Methods"]
+        lines = ['<hr class="classref-section-separator">', "", "## Methods"]
         lines.append("")
         lines.append("| Return Type | Method |")
         lines.append("|-------------|--------|")
@@ -194,7 +194,7 @@ class MarkdownGenerator:
     
     def _generate_signals_table(self, signals: list[SignalInfo]) -> str:
         """Generate the signals summary table."""
-        lines = ["## Signals"]
+        lines = ['<hr class="classref-section-separator">', "", "## Signals"]
         lines.append("")
         
         for signal in signals:
@@ -208,7 +208,7 @@ class MarkdownGenerator:
     
     def _generate_enums_table(self, enums: list[EnumInfo]) -> str:
         """Generate the enumerations summary table."""
-        lines = ["## Enumerations"]
+        lines = ['<hr class="classref-section-separator">', "", "## Enumerations"]
         lines.append("")
         
         for enum in enums:
@@ -218,7 +218,7 @@ class MarkdownGenerator:
     
     def _generate_constants_table(self, constants: list[ConstantInfo]) -> str:
         """Generate the constants summary table."""
-        lines = ["## Constants"]
+        lines = ['<hr class="classref-section-separator">', "", "## Constants"]
         lines.append("")
         lines.append("| Name | Value |")
         lines.append("|------|-------|")
@@ -230,9 +230,12 @@ class MarkdownGenerator:
     
     def _generate_signals_section(self, class_info: ClassInfo) -> str:
         """Generate the signals detail section."""
-        lines = ["---", "", "## Signal Descriptions"]
+        lines = ['<hr class="classref-section-separator">', "", "## Signal Descriptions"]
         
-        for signal in class_info.signals:
+        for i, signal in enumerate(class_info.signals):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
             lines.append("")
             anchor = f"signal-{signal.name.lower().replace('_', '-')}"
             lines.append(f"### {signal.name} {{#{anchor}}}")
@@ -249,9 +252,12 @@ class MarkdownGenerator:
     
     def _generate_enums_section(self, class_info: ClassInfo) -> str:
         """Generate the enumerations detail section."""
-        lines = ["---", "", "## Enumeration Descriptions"]
+        lines = ['<hr class="classref-section-separator">', "", "## Enumeration Descriptions"]
         
-        for enum in class_info.enums:
+        for i, enum in enumerate(class_info.enums):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
             lines.append("")
             anchor = f"enum-{enum.name.lower().replace('_', '-')}"
             lines.append(f"### enum {enum.name} {{#{anchor}}}")
@@ -286,9 +292,12 @@ class MarkdownGenerator:
     
     def _generate_constants_section(self, class_info: ClassInfo) -> str:
         """Generate the constants detail section."""
-        lines = ["---", "", "## Constant Descriptions"]
+        lines = ['<hr class="classref-section-separator">', "", "## Constant Descriptions"]
         
-        for const in class_info.constants:
+        for i, const in enumerate(class_info.constants):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
             lines.append("")
             lines.append(f"### {const.name}")
             lines.append("")
@@ -306,9 +315,12 @@ class MarkdownGenerator:
     def _generate_properties_section(self, class_info: ClassInfo, 
                                      properties: list[PropertyInfo]) -> str:
         """Generate the property descriptions section."""
-        lines = ["---", "", "## Property Descriptions"]
+        lines = ['<hr class="classref-section-separator">', "", "## Property Descriptions"]
         
-        for prop in properties:
+        for i, prop in enumerate(properties):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
             lines.append("")
             anchor = prop.name.lower().replace("_", "-")
             lines.append(f"### {prop.name} {{#{anchor}}}")
@@ -345,9 +357,12 @@ class MarkdownGenerator:
     def _generate_methods_section(self, class_info: ClassInfo,
                                   methods: list[MethodInfo]) -> str:
         """Generate the method descriptions section."""
-        lines = ["---", "", "## Method Descriptions"]
+        lines = ['<hr class="classref-section-separator">', "", "## Method Descriptions"]
         
-        for method in methods:
+        for i, method in enumerate(methods):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
             lines.append("")
             anchor = method.name.lower().replace("_", "-")
             lines.append(f"### {method.name} {{#{anchor}}}")
