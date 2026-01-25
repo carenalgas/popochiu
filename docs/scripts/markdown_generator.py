@@ -42,12 +42,6 @@ class GeneratorConfig:
 class MarkdownGenerator:
     """Generates Godot-style Markdown documentation from ClassInfo."""
 
-    # Virtual methods from Godot that should always be documented
-    GODOT_VIRTUAL_METHODS = {
-        "_ready", "_process", "_physics_process", "_enter_tree", "_exit_tree",
-        "_input", "_unhandled_input", "_draw", "_notification"
-    }
-
     def __init__(self, config: Optional[GeneratorConfig] = None):
         self.config = config or GeneratorConfig()
         self.converter: Optional[BBCodeConverter] = None
@@ -472,15 +466,14 @@ class MarkdownGenerator:
                 if "include" not in method.annotations:
                     continue
 
-            # Skip private methods unless they're virtual/overrides
-            # (but force-included methods already passed the check above)
+            # Skip private methods unless configured to include them
+            # Exception: Popochiu virtual methods (marked with is_virtual=True) are included
+            # as they're part of the overridable API contract
             if method.name.startswith("_") and "include" not in method.annotations:
                 if not self.config.include_private_methods:
-                    # Include Godot virtual methods and Popochiu virtual methods
-                    if method.name not in self.GODOT_VIRTUAL_METHODS and not method.is_virtual:
-                        # Check if it's a Popochiu virtual method (documented with ## and starts with _)
-                        if not (method.description and method.name.startswith("_")):
-                            continue
+                    # Only include if it's a Popochiu virtual method (documented as *virtual*)
+                    if not method.is_virtual:
+                        continue
 
             result.append(method)
         return result
