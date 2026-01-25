@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends GridContainer
 
 const MIN_VOLUME := -30

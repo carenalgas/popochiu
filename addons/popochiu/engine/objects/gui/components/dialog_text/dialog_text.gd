@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 class_name PopochiuDialogText
 extends Control
 ## Show dialogue texts char by char using a [RichTextLabel].

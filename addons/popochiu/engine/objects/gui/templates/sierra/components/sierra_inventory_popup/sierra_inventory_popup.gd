@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 @tool
 extends PopochiuPopup
 

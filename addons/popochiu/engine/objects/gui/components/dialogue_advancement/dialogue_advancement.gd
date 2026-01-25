@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Control
 
 @onready var input_button: LinkButton = $InputButton

@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 @tool
 class_name PopochiuUtils
 extends Node

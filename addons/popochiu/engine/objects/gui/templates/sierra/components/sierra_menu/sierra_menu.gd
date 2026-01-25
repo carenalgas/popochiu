@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Control
 
 ## Defines the height in pixels of the zone where moving the mouse in the top of the screen will

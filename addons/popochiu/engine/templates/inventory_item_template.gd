@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends PopochiuInventoryItem
 
 const Data := preload('inventory_item_state_template.gd')

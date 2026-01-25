@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 @tool
 extends PopochiuProp
 # You can use E.queue([]) to trigger a sequence of events.

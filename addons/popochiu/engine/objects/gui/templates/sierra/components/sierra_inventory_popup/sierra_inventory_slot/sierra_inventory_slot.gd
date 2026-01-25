@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends PanelContainer
 
 @export var hover_color := Color("ffffff")

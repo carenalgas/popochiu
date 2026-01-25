@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends PopochiuCharacterData
 # Put here variables you want to save and load when saving and loading the game.
 # By default only Godot's basic built-in types are automatically saved and loaded

@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends TextureButton
 
 @export var command: SierraCommands.Commands = 0

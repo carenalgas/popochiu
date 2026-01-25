@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 # This script is empty and is necessary to programmatically
 # create an empty script to hold the <PopochiuObject>_template.gd
 # source file, after the placeholders have been populated.

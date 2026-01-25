@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 @tool
 extends PopochiuHotspot
 # You can use E.queue([]) to trigger a sequence of events.
