@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("2_subcu")
-title = "9 Verb (High-res)"
+title = "9 Verb"
 description = "- Uses the 9 Verbs (commands) of LucasArts games: [b]Open[/b], [b]Pick Up[/b], [b]Push[/b], [b]Close[/b], [b]Look At[/b], [b]Pull[/b], [b]Give[/b], [b]Talk To[/b], [b]Use[/b].
 - [b]Right click[/b] to trigger the suggested command or walk.
 - [b]Inventory grid[/b] on the bottom.

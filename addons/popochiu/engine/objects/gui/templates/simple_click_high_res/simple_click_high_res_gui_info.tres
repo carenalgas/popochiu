@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("2_jg2de")
-title = "Simple Click (High-res)"
+title = "Simple Click"
 description = "- [b]Left click[/b] to interact.
 - [b]Right click[/b] to examine.
 - [b]Inventory bar[/b] on top-left corner (by default).

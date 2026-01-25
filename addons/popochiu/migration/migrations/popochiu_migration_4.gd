@@ -4,7 +4,7 @@ extends PopochiuMigration
 
 # Update constant values to be correct for your migration
 const VERSION = 4
-const DESCRIPTION = "short description of migration goes here"
+const DESCRIPTION = "Update Simple Click GUI template"
 const STEPS = [
 	"Remove InventoryBar, SettingsBar, TextSettingsPopup and SoundSettingsPopup",
 	"Add SimpleClickBar and SimpleClickSettingsPopup.",
@@ -110,6 +110,8 @@ func _add_new_components() -> Completion:
 
 func _update_save_and_load_popup() -> Completion:
 	# Update the save_and_load_popup.gd in the game's gui folder
+	# Fix #475: Prevent removing the save_and_load_popup.gd script from the addons folder, and make
+	# a copy of it instead
 	DirAccess.copy_absolute(ADDON_SAVE_AND_LOAD_POPUP_SCRIPT, GAME_SAVE_AND_LOAD_POPUP_SCRIPT)
 	return Completion.DONE
 

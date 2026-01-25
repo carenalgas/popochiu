@@ -1341,7 +1341,7 @@ func _style_navigation_buttons() -> void:
 func _style_progress_container() -> void:
 	# Apply consistent theming to progress container elements
 	var base_font_size: int = get_theme_font_size("main_size", "EditorFonts")
-	
+
 	# Style the progress label
 	copy_process_label.add_theme_font_size_override("font_size", base_font_size)
 	copy_process_label.add_theme_color_override(

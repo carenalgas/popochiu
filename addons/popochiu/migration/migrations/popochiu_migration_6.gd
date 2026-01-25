@@ -42,6 +42,8 @@ func _add_animation_players_to_inventory_items() -> Completion:
 	
 	while file_name != "":
 		if dir.current_is_dir():
+			# Fix #474: It was trying to use a Resource file instead of a PackedScene. Thanks to
+			# @idbrii for reporting the issue.
 			var item_scene_path: String = PopochiuResources.get_data_value(
 				"inventory_items", file_name.to_pascal_case(), ""
 			).replace(".tres", ".tscn")

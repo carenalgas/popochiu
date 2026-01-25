@@ -5,7 +5,7 @@
 
 [resource]
 script = ExtResource("2_ra6a5")
-title = "Action Bar (High-res)"
+title = "Action Bar"
 description = "[b]Sierra SCI-inspired top-bar with action cycling, overlay inventory and portrait dialogues.[/b]
 
 Similar to the ones in \"King's Quest V\", \"Space Quest IV\", or \"Quest for Glory\"."
