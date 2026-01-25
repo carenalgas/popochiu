@@ -17,11 +17,63 @@ Exporting the Engine API refs is necessary to preview it locally. Also, the expo
 > `make docs-extract`
 
 All of the engine API docs will be exported to markdown format.  
-The exported refereces will be available in `The Engine Handbook > Scripting Reference` section of the documentation.
+The exported references will be available in `The Engine Handbook > Scripting Reference` section of the documentation.
 
 **NOTE**: There is no live-reload for plugin source code. If you change the docblocks in the engine's source files, you will have to manually export local refs again.
 
 **NOTE**: To avoid redundancy, exported API refs are ignored by git, so only the documentation source files and the GDScript source files are versioned.
+
+### Controlling API documentation export
+
+The documentation toolchain supports special annotations to control which classes and members are exported to the API reference. These annotations must be placed in single-hash comments (`#`) **immediately before docblocks** (`##`).
+
+**Available annotations:**
+
+- **`@popochiu-docs-ignore-class`** — Excludes the entire class from documentation. Can be placed anywhere at class level. Members with `@popochiu-docs-include` will still be exported.
+- **`@popochiu-docs-ignore`** — Excludes a specific member (property, method, signal, enum, or constant) from documentation. **Must be on the line immediately before the member's docblock**.
+- **`@popochiu-docs-include`** — Forces inclusion of a member in the documentation, even if it would normally be excluded (e.g., private members starting with `_`, or members in an ignored class). **Must be on the line immediately before the member's docblock**.
+
+**Example usage:**
+
+```gdscript
+# @popochiu-docs-ignore-class
+class_name InternalHelper
+extends Node
+
+# Internal implementation detail. Use single-hash comments.
+var _internal_state: int
+
+## This docblock will be visible in Godot Editor documentation but will NOT
+## be exported to the docs website (because the class is excluded).
+func documented_function() -> Void:
+    return
+
+
+# @popochiu-docs-include
+## Public API method that should be documented despite the class being ignored.
+func sole_important_function() -> String:
+    return "I'm the only important one here! B)"
+```
+
+```gdscript
+class_name MyClass
+extends Node
+
+# @popochiu-docs-ignore
+## This won't appear in the documentation.
+var debug_only_property: bool
+
+## This will appear normally.
+var public_property: String
+
+# @popochiu-docs-include
+## This will be documented even though it's private.
+var _important_private_api: int
+```
+
+**Validation warnings:**
+
+If an annotation is placed without a docblock below it, the extraction process will emit a warning to stderr and return a non-zero exit code. This helps catch annotation mistakes during development.
 
 ## How to manually publish the documentation to production
 

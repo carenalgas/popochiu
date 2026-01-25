@@ -33,7 +33,7 @@ class GeneratorConfig:
     base_url: str = ""
     # Known classes for cross-referencing
     known_classes: set[str] = None
-    
+
     def __post_init__(self):
         if self.known_classes is None:
             self.known_classes = set()
@@ -41,131 +41,139 @@ class GeneratorConfig:
 
 class MarkdownGenerator:
     """Generates Godot-style Markdown documentation from ClassInfo."""
-    
+
     # Virtual methods from Godot that should always be documented
     GODOT_VIRTUAL_METHODS = {
         "_ready", "_process", "_physics_process", "_enter_tree", "_exit_tree",
         "_input", "_unhandled_input", "_draw", "_notification"
     }
-    
+
     def __init__(self, config: Optional[GeneratorConfig] = None):
         self.config = config or GeneratorConfig()
         self.converter: Optional[BBCodeConverter] = None
-    
+        self.current_class: Optional[ClassInfo] = None
+
     def generate(self, class_info: ClassInfo) -> str:
         """Generate Markdown documentation for a class."""
+        self.current_class = class_info
         self.converter = BBCodeConverter(
             class_info.name, 
             self.config.known_classes
         )
-        
+
         sections = []
-        
+
         # Header
         sections.append(self._generate_header(class_info))
-        
+
         # Description
         if class_info.description:
             sections.append(self._generate_description(class_info))
-        
+
         # Table of contents / Summary tables
         sections.append(self._generate_toc(class_info))
-        
+
         # Signals summary and details
-        if class_info.signals:
-            sections.append(self._generate_signals_section(class_info))
-        
+        visible_signals = self._filter_signals(class_info.signals)
+        if visible_signals:
+            sections.append(self._generate_signals_section(class_info, visible_signals))
+
         # Enumerations
-        if class_info.enums:
-            sections.append(self._generate_enums_section(class_info))
-        
+        visible_enums = self._filter_enums(class_info.enums)
+        if visible_enums:
+            sections.append(self._generate_enums_section(class_info, visible_enums))
+
         # Constants
-        if class_info.constants:
-            sections.append(self._generate_constants_section(class_info))
-        
+        visible_constants = self._filter_constants(class_info.constants)
+        if visible_constants:
+            sections.append(self._generate_constants_section(class_info, visible_constants))
+
         # Property descriptions
         visible_props = self._filter_properties(class_info.properties)
         if visible_props:
             sections.append(self._generate_properties_section(class_info, visible_props))
-        
+
         # Method descriptions
         visible_methods = self._filter_methods(class_info.methods)
         if visible_methods:
             sections.append(self._generate_methods_section(class_info, visible_methods))
-        
+
         return "\n\n".join(sections)
-    
+
     def _generate_header(self, class_info: ClassInfo) -> str:
         """Generate the class header section."""
         lines = [f"# {class_info.name}"]
-        
+
         # Inheritance chain
         if class_info.extends:
             lines.append("")
             lines.append(f"**Inherits:** [{class_info.extends}]({class_info.extends}.md)")
-        
+
         return "\n".join(lines)
-    
+
     def _generate_description(self, class_info: ClassInfo) -> str:
         """Generate the description section."""
         lines = ["## Description"]
         lines.append("")
         lines.append(self.converter.convert(class_info.description))
         return "\n".join(lines)
-    
+
     def _generate_toc(self, class_info: ClassInfo) -> str:
         """Generate the table of contents with summary tables."""
         sections = []
-        
+
         # Properties table
         visible_props = self._filter_properties(class_info.properties)
         if visible_props:
             sections.append(self._generate_properties_table(visible_props))
-        
+
         # Methods table
         visible_methods = self._filter_methods(class_info.methods)
         if visible_methods:
             sections.append(self._generate_methods_table(visible_methods))
-        
+
         # Signals table (if any)
-        if class_info.signals:
-            sections.append(self._generate_signals_table(class_info.signals))
-        
+        visible_signals = self._filter_signals(class_info.signals)
+        if visible_signals:
+            sections.append(self._generate_signals_table(visible_signals))
+
         # Enums table (if any)
-        if class_info.enums:
-            sections.append(self._generate_enums_table(class_info.enums))
-        
+        visible_enums = self._filter_enums(class_info.enums)
+        if visible_enums:
+            sections.append(self._generate_enums_table(visible_enums))
+
         # Constants table (if any)
-        if class_info.constants:
-            sections.append(self._generate_constants_table(class_info.constants))
-        
+        visible_constants = self._filter_constants(class_info.constants)
+        if visible_constants:
+            sections.append(self._generate_constants_table(visible_constants))
+
         return "\n\n".join(sections)
-    
+
     def _generate_properties_table(self, properties: list[PropertyInfo]) -> str:
         """Generate the properties summary table."""
         lines = ['<hr class="classref-section-separator">', "", "## Properties"]
         lines.append("")
         lines.append("| Type | Name | Default |")
         lines.append("|------|------|---------|")
-        
+
         for prop in sorted(properties, key=lambda p: p.name.lower()):
             type_str = self._format_type(prop.type_hint) if prop.type_hint else "Variant"
             name_link = f"[{prop.name}](#{prop.name.lower().replace('_', '-')})"
             default = f"`{prop.default_value}`" if prop.default_value else ""
             lines.append(f"| {type_str} | {name_link} | {default} |")
-        
+
         return "\n".join(lines)
-    
+
     def _generate_methods_table(self, methods: list[MethodInfo]) -> str:
         """Generate the methods summary table."""
         lines = ['<hr class="classref-section-separator">', "", "## Methods"]
         lines.append("")
         lines.append("| Return Type | Method |")
         lines.append("|-------------|--------|")
-        
+
         for method in sorted(methods, key=lambda m: m.name.lower()):
             ret_type = self._format_type(method.return_type) if method.return_type else "void"
-            
+
             # Build signature
             params = []
             for p in method.parameters:
@@ -175,64 +183,65 @@ class MarkdownGenerator:
                 if p.default_value:
                     param_str += f" = {p.default_value}"
                 params.append(param_str)
-            
+
             sig = f"[{method.name}](#{method.name.lower().replace('_', '-')})({', '.join(params)})"
-            
+
             # Add qualifiers
             qualifiers = []
             if method.is_virtual:
                 qualifiers.append("*virtual*")
             if method.is_static:
                 qualifiers.append("*static*")
-            
+
             if qualifiers:
                 sig += " " + " ".join(qualifiers)
-            
+
             lines.append(f"| {ret_type} | {sig} |")
-        
+
         return "\n".join(lines)
-    
+
     def _generate_signals_table(self, signals: list[SignalInfo]) -> str:
         """Generate the signals summary table."""
         lines = ['<hr class="classref-section-separator">', "", "## Signals"]
         lines.append("")
-        
+
         for signal in sorted(signals, key=lambda s: s.name.lower()):
             params = ", ".join(
                 f"{name}: {self._format_type_inline(type_)}" if type_ else name
                 for name, type_ in signal.parameters
             )
             lines.append(f"- **[{signal.name}](#signal-{signal.name.lower().replace('_', '-')})**({params})")
-        
+
         return "\n".join(lines)
-    
+
     def _generate_enums_table(self, enums: list[EnumInfo]) -> str:
         """Generate the enumerations summary table."""
         lines = ['<hr class="classref-section-separator">', "", "## Enumerations"]
         lines.append("")
-        
+
         for enum in sorted(enums, key=lambda e: e.name.lower()):
             lines.append(f"- **[{enum.name}](#enum-{enum.name.lower().replace('_', '-')})**")
-        
+
         return "\n".join(lines)
-    
+
     def _generate_constants_table(self, constants: list[ConstantInfo]) -> str:
         """Generate the constants summary table."""
         lines = ['<hr class="classref-section-separator">', "", "## Constants"]
         lines.append("")
         lines.append("| Name | Value |")
         lines.append("|------|-------|")
-        
+
         for const in sorted(constants, key=lambda c: c.name.lower()):
             lines.append(f"| `{const.name}` | `{const.value}` |")
-        
+
         return "\n".join(lines)
-    
-    def _generate_signals_section(self, class_info: ClassInfo) -> str:
+
+    def _generate_signals_section(self, class_info: ClassInfo, 
+                                   signals: list[SignalInfo]) -> str:
         """Generate the signals detail section."""
         lines = ['<hr class="classref-section-separator">', "", "## Signal Descriptions"]
-        
-        for i, signal in enumerate(sorted(class_info.signals, key=lambda s: s.name.lower())):
+
+        for i, signal in enumerate(sorted(signals, key=lambda s: s.name.lower())):
             if i > 0:
                 lines.append('')
                 lines.append('<hr class="classref-item-separator">')
@@ -243,18 +252,19 @@ class MarkdownGenerator:
             lines.append(f"```gdscript")
             lines.append(f"signal {signal.signature}")
             lines.append(f"```")
-            
+
             if signal.description:
                 lines.append("")
                 lines.append(self.converter.convert(signal.description))
-        
+
         return "\n".join(lines)
-    
-    def _generate_enums_section(self, class_info: ClassInfo) -> str:
+
+    def _generate_enums_section(self, class_info: ClassInfo,
+                                enums: list[EnumInfo]) -> str:
         """Generate the enumerations detail section."""
         lines = ['<hr class="classref-section-separator">', "", "## Enumeration Descriptions"]
-        
-        for i, enum in enumerate(sorted(class_info.enums, key=lambda e: e.name.lower())):
+
+        for i, enum in enumerate(sorted(enums, key=lambda e: e.name.lower())):
             if i > 0:
                 lines.append('')
                 lines.append('<hr class="classref-item-separator">')
@@ -262,11 +272,11 @@ class MarkdownGenerator:
             anchor = f"enum-{enum.name.lower().replace('_', '-')}"
             lines.append(f"### enum {enum.name} {{#{anchor}}}")
             lines.append("")
-            
+
             if enum.description:
                 lines.append(self.converter.convert(enum.description))
                 lines.append("")
-            
+
             lines.append("```gdscript")
             lines.append(f"enum {enum.name} {{")
             for val in enum.values:
@@ -277,7 +287,7 @@ class MarkdownGenerator:
                 lines.append(val_str)
             lines.append("}")
             lines.append("```")
-            
+
             # Value descriptions
             has_descriptions = any(v.description for v in enum.values)
             if has_descriptions:
@@ -287,14 +297,15 @@ class MarkdownGenerator:
                         lines.append(f"- **{val.name}** — {self.converter.convert(val.description)}")
                     else:
                         lines.append(f"- **{val.name}**")
-        
+
         return "\n".join(lines)
-    
-    def _generate_constants_section(self, class_info: ClassInfo) -> str:
+
+    def _generate_constants_section(self, class_info: ClassInfo,
+                                    constants: list[ConstantInfo]) -> str:
         """Generate the constants detail section."""
         lines = ['<hr class="classref-section-separator">', "", "## Constant Descriptions"]
-        
-        for i, const in enumerate(sorted(class_info.constants, key=lambda c: c.name.lower())):
+
+        for i, const in enumerate(sorted(constants, key=lambda c: c.name.lower())):
             if i > 0:
                 lines.append('')
                 lines.append('<hr class="classref-item-separator">')
@@ -305,18 +316,18 @@ class MarkdownGenerator:
             type_hint = f": {const.type_hint}" if const.type_hint else ""
             lines.append(f"const {const.name}{type_hint} = {const.value}")
             lines.append("```")
-            
+
             if const.description:
                 lines.append("")
                 lines.append(self.converter.convert(const.description))
-        
+
         return "\n".join(lines)
-    
+
     def _generate_properties_section(self, class_info: ClassInfo, 
                                      properties: list[PropertyInfo]) -> str:
         """Generate the property descriptions section."""
         lines = ['<hr class="classref-section-separator">', "", "## Property Descriptions"]
-        
+
         for i, prop in enumerate(sorted(properties, key=lambda p: p.name.lower())):
             if i > 0:
                 lines.append('')
@@ -325,7 +336,7 @@ class MarkdownGenerator:
             anchor = prop.name.lower().replace("_", "-")
             lines.append(f"### {prop.name} {{#{anchor}}}")
             lines.append("")
-            
+
             # Property signature
             lines.append("```gdscript")
             sig_parts = []
@@ -339,7 +350,7 @@ class MarkdownGenerator:
                 sig_parts.append(f"= {prop.default_value}")
             lines.append(" ".join(sig_parts))
             lines.append("```")
-            
+
             # Getter/Setter info
             if prop.getter or prop.setter:
                 lines.append("")
@@ -347,18 +358,18 @@ class MarkdownGenerator:
                     lines.append(f"- **Getter:** `{prop.getter}`")
                 if prop.setter:
                     lines.append(f"- **Setter:** `{prop.setter}`")
-            
+
             if prop.description:
                 lines.append("")
                 lines.append(self.converter.convert(prop.description))
-        
+
         return "\n".join(lines)
-    
+
     def _generate_methods_section(self, class_info: ClassInfo,
                                   methods: list[MethodInfo]) -> str:
         """Generate the method descriptions section."""
         lines = ['<hr class="classref-section-separator">', "", "## Method Descriptions"]
-        
+
         for i, method in enumerate(sorted(methods, key=lambda m: m.name.lower())):
             if i > 0:
                 lines.append('')
@@ -367,13 +378,13 @@ class MarkdownGenerator:
             anchor = method.name.lower().replace("_", "-")
             lines.append(f"### {method.name} {{#{anchor}}}")
             lines.append("")
-            
+
             # Method signature
             lines.append("```gdscript")
             sig_prefix = ""
             if method.is_static:
                 sig_prefix = "static "
-            
+
             # Parameters
             params = []
             for p in method.parameters:
@@ -383,74 +394,130 @@ class MarkdownGenerator:
                 if p.default_value:
                     param_str += f" = {p.default_value}"
                 params.append(param_str)
-            
+
             params_str = ", ".join(params)
             return_str = f" -> {method.return_type}" if method.return_type else ""
-            
+
             lines.append(f"{sig_prefix}func {method.name}({params_str}){return_str}")
             lines.append("```")
-            
+
             # Qualifiers
             if method.is_virtual:
                 lines.append("")
                 lines.append("*This is a virtual method. Override it in your subclass.*")
-            
+
             if method.description:
                 lines.append("")
                 lines.append(self.converter.convert(method.description))
-        
+
         return "\n".join(lines)
-    
+
+    def _should_include_member(self, member) -> bool:
+        """
+        Check if a member should be included based on annotation priority.
+
+        Priority hierarchy:
+        1. 'include' in annotations → always include
+        2. 'ignore' in annotations → always exclude
+        3. class is_class_ignored and no 'include' → exclude
+        4. Fall back to specific type checks (private names, etc.)
+
+        Returns True if member passes annotation checks, False to exclude.
+        This method only handles annotation-based filtering; type-specific
+        filtering (e.g., private method handling) is done in specialized methods.
+        """
+        # Priority 1: Force include overrides everything
+        if "include" in member.annotations:
+            return True
+
+        # Priority 2: Explicit ignore
+        if "ignore" in member.annotations:
+            return False
+
+        # Priority 3: Class-level ignore (member not force-included)
+        if self.current_class and self.current_class.is_class_ignored:
+            return False
+
+        # No annotation-based exclusion, allow through
+        return True
+
     def _filter_properties(self, properties: list[PropertyInfo]) -> list[PropertyInfo]:
-        """Filter properties based on configuration."""
+        """Filter properties based on configuration and annotations."""
         result = []
         for prop in properties:
-            # Skip private properties unless configured to include them
-            if prop.name.startswith("_") and not self.config.include_private:
+            # Check annotation-based filtering first
+            if not self._should_include_member(prop):
                 continue
+
+            # Skip private properties unless configured to include them
+            # (but force-included properties already passed the check above)
+            if prop.name.startswith("_") and not self.config.include_private:
+                if "include" not in prop.annotations:
+                    continue
+
             result.append(prop)
         return result
-    
+
     def _filter_methods(self, methods: list[MethodInfo]) -> list[MethodInfo]:
-        """Filter methods based on configuration."""
+        """Filter methods based on configuration and annotations."""
         result = []
         for method in methods:
-            # Always skip truly private methods (double underscore)
-            if method.name.startswith("__"):
+            # Check annotation-based filtering first
+            if not self._should_include_member(method):
                 continue
-            
+
+            # Always skip truly private methods (double underscore)
+            # unless force-included
+            if method.name.startswith("__"):
+                if "include" not in method.annotations:
+                    continue
+
             # Skip private methods unless they're virtual/overrides
-            if method.name.startswith("_"):
+            # (but force-included methods already passed the check above)
+            if method.name.startswith("_") and "include" not in method.annotations:
                 if not self.config.include_private_methods:
                     # Include Godot virtual methods and Popochiu virtual methods
                     if method.name not in self.GODOT_VIRTUAL_METHODS and not method.is_virtual:
                         # Check if it's a Popochiu virtual method (documented with ## and starts with _)
                         if not (method.description and method.name.startswith("_")):
                             continue
-            
+
             result.append(method)
         return result
-    
+
+    def _filter_signals(self, signals: list[SignalInfo]) -> list[SignalInfo]:
+        """Filter signals based on annotations."""
+        return [s for s in signals if self._should_include_member(s)]
+
+    def _filter_enums(self, enums: list[EnumInfo]) -> list[EnumInfo]:
+        """Filter enums based on annotations."""
+        return [e for e in enums if self._should_include_member(e)]
+
+    def _filter_constants(self, constants: list[ConstantInfo]) -> list[ConstantInfo]:
+        """Filter constants based on annotations."""
+        return [c for c in constants if self._should_include_member(c)]
+        return result
+
     def _format_type(self, type_hint: str) -> str:
         """Format a type hint with links."""
         if not type_hint:
             return "Variant"
-        
+
         # Handle generic types like Array[String]
         if "[" in type_hint:
             base, inner = type_hint.split("[", 1)
             inner = inner.rstrip("]")
             return f"{self._format_type(base)}[{self._format_type(inner)}]"
-        
+
         # Check if it's a known class
         if type_hint in self.config.known_classes or type_hint in BBCodeConverter.POPOCHIU_CLASSES:
             return f"[{type_hint}]({type_hint}.md)"
-        
+
         if type_hint in BBCodeConverter.GODOT_CLASSES:
             return f"[{type_hint}](https://docs.godotengine.org/en/stable/classes/class_{type_hint.lower()}.html)"
-        
+
         return type_hint
-    
+
     def _format_type_inline(self, type_hint: str) -> str:
         """Format a type hint for inline use (no links in tables)."""
         return type_hint if type_hint else "Variant"
@@ -462,42 +529,92 @@ def generate_class_docs(class_info: ClassInfo, config: Optional[GeneratorConfig]
     return generator.generate(class_info)
 
 
+def _class_has_visible_members(class_info: ClassInfo, config: GeneratorConfig) -> bool:
+    """
+    Check if a class has any visible members after filtering.
+
+    Used to determine if a class should generate output when marked as ignored.
+    """
+    generator = MarkdownGenerator(config)
+    generator.current_class = class_info
+
+    # Check if any members pass the filter
+    if generator._filter_properties(class_info.properties):
+        return True
+    if generator._filter_methods(class_info.methods):
+        return True
+    if generator._filter_signals(class_info.signals):
+        return True
+    if generator._filter_enums(class_info.enums):
+        return True
+    if generator._filter_constants(class_info.constants):
+        return True
+
+    return False
+
+
 def generate_directory_docs(directory: Path, output_dir: Path,
-                           config: Optional[GeneratorConfig] = None) -> list[str]:
+                           config: Optional[GeneratorConfig] = None,
+                           classes: Optional[list[ClassInfo]] = None,
+                           warnings: Optional[list[str]] = None) -> tuple[list[str], list[str]]:
     """
     Generate documentation for all classes in a directory.
-    
-    Returns list of generated file paths.
+
+    Args:
+        directory: Source directory containing GDScript files
+        output_dir: Output directory for generated Markdown files
+        config: Generator configuration
+        classes: Pre-parsed classes (if None, will parse directory)
+        warnings: Pre-collected warnings from parsing (if classes provided)
+
+    Returns:
+        Tuple of (generated_files, warnings)
     """
     # First pass: collect all class names for cross-referencing
-    classes = parse_directory(directory)
-    
+    if classes is None:
+        classes, warnings = parse_directory(directory)
+    if warnings is None:
+        warnings = []
+
     if config is None:
         config = GeneratorConfig()
-    
+
     config.known_classes = {cls.name for cls in classes}
-    
+
     output_dir.mkdir(parents=True, exist_ok=True)
     generated = []
-    
+    skipped = []
+
     for class_info in classes:
+        # Check if class should be skipped entirely
+        if class_info.is_class_ignored:
+            if not _class_has_visible_members(class_info, config):
+                skipped.append(class_info.name)
+                print(f"Skipped: {class_info.name} (excluded by @popochiu-docs-ignore-class)")
+                continue
+
         generator = MarkdownGenerator(config)
         markdown = generator.generate(class_info)
-        
+
         output_file = output_dir / f"{class_info.name}.md"
         output_file.write_text(markdown, encoding="utf-8")
         generated.append(str(output_file))
         print(f"Generated: {output_file}")
-    
+
     # Generate index file only if requested
     if config.generate_index:
-        index_content = _generate_index(classes)
+        # Filter out fully excluded classes from index
+        visible_classes = [
+            cls for cls in classes 
+            if not cls.is_class_ignored or _class_has_visible_members(cls, config)
+        ]
+        index_content = _generate_index(visible_classes)
         index_file = output_dir / "index.md"
         index_file.write_text(index_content, encoding="utf-8")
         generated.append(str(index_file))
         print(f"Generated: {index_file}")
-    
-    return generated
+
+    return generated, warnings
 
 
 def _generate_index(classes: list[ClassInfo]) -> str:
@@ -508,11 +625,11 @@ def _generate_index(classes: list[ClassInfo]) -> str:
     lines.append("")
     lines.append("## Classes")
     lines.append("")
-    
+
     # Sort classes alphabetically
     sorted_classes = sorted(classes, key=lambda c: c.name)
     converter = BBCodeConverter()
-    
+
     for cls in sorted_classes:
         desc = cls.description.split("\n")[0][:100] if cls.description else ""
         if len(cls.description) > 100:
@@ -520,33 +637,41 @@ def _generate_index(classes: list[ClassInfo]) -> str:
         # Convert BBCode in description
         desc = converter.convert(desc)
         lines.append(f"- [{cls.name}]({cls.name}.md) — {desc}")
-    
+
     return "\n".join(lines)
 
 
 if __name__ == "__main__":
     import sys
-    
+
     if len(sys.argv) < 2:
         print("Usage: markdown_generator.py <file_or_directory> [output_directory]")
         sys.exit(1)
-    
+
     input_path = Path(sys.argv[1])
     output_path = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("./docs_output")
-    
+
     if input_path.is_file():
         parser = GDScriptParser()
         class_info = parser.parse_file(input_path)
         if class_info:
             config = GeneratorConfig()
             markdown = generate_class_docs(class_info, config)
-            
+
             output_file = output_path / f"{class_info.name}.md"
             output_path.mkdir(parents=True, exist_ok=True)
             output_file.write_text(markdown, encoding="utf-8")
             print(f"Generated: {output_file}")
+
+        # Print any warnings
+        for warning in parser.get_warnings():
+            print(warning, file=sys.stderr)
     elif input_path.is_dir():
-        generate_directory_docs(input_path, output_path)
+        generated, warnings = generate_directory_docs(input_path, output_path)
+
+        # Print any warnings
+        for warning in warnings:
+            print(warning, file=sys.stderr)
     else:
         print(f"Path not found: {input_path}")
         sys.exit(1)
