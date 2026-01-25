@@ -6,11 +6,11 @@ extends Node
 ## Use it to manipulate Characters. Its script is [b]i_character.gd[/b].[br][br]
 ##
 ## Some things you can do with it:[br][br]
-## [b]•[/b] Access the Player-controlled Character (PC) directly [code]C.player[/code].[br]
-## [b]•[/b] Access any character (with autocompletion based on its name).[br]
-## [b]•[/b] Make characters move or say something.[br][br]
+## - Access the Player-controlled Character (PC) directly [code]C.player[/code].[br]
+## - Access any character (with autocompletion based on its name).[br]
+## - Make characters move or say something.[br][br]
 ##
-## Example:
+## [b]Example:[/b]
 ## [codeblock]
 ## func on_click() -> void:
 ##     await C.walk_to_clicked() # Make the PC move to the clicked object

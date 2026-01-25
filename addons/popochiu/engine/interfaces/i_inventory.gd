@@ -6,9 +6,9 @@ extends Node
 ## Use it to manage the inventory. Its script is [b]i_inventory.gd[/b].[br][br]
 ##
 ## Some things you can do with it:[br][br]
-## [b]•[/b] Add and remove items in the inventory.[br]
-## [b]•[/b] Change the cursor to the appearance of an inventory item.[br]
-## [b]•[/b] Detect when an item has been added or removed.[br][br]
+## -  Add and remove items in the inventory.[br]
+## -  Change the cursor to the appearance of an inventory item.[br]
+## -  Detect when an item has been added or removed.[br][br]
 ##
 ## Examples:
 ## [codeblock]

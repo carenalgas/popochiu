@@ -7,9 +7,9 @@ extends Node
 ## data from other rooms. Its script is [b]i_room.gd[/b].[br][br]
 ##
 ## Some things you can do with it:[br][br]
-## [b]•[/b] Access objects inside the current room.[br]
-## [b]•[/b] Access the state of any room.[br]
-## [b]•[/b] Move to another room.[br][br]
+## -  Access objects inside the current room.[br]
+## -  Access the state of any room.[br]
+## -  Move to another room.[br][br]
 ##
 ## Examples:
 ## [codeblock]

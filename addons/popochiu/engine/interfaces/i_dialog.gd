@@ -7,10 +7,10 @@ extends Node
 ## [b]i_dialog.gd[/b].[br][br]
 ##
 ## Some things you can do with it:[br][br]
-## [b]•[/b] Start a branching dialog.[br]
-## [b]•[/b] Know when a dialog has finished, or an option in the current list of options is
+## -  Start a branching dialog.[br]
+## -  Know when a dialog has finished, or an option in the current list of options is
 ## selected.[br]
-## [b]•[/b] Create a list of options on the fly.[br][br]
+## -  Create a list of options on the fly.[br][br]
 ##
 ## Example:
 ## [codeblock]

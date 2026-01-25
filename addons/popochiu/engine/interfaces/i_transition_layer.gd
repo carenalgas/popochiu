@@ -7,9 +7,9 @@ extends Node
 ##
 ## Some things you can do with it:[br][br]
 ##
-## [b]•[/b] Play transition animations when changing rooms or during cutscenes.[br]
-## [b]•[/b] Show or hide the curtain manually.[br]
-## [b]•[/b] Get available transition animations.[br][br]
+## -  Play transition animations when changing rooms or during cutscenes.[br]
+## -  Show or hide the curtain manually.[br]
+## -  Get available transition animations.[br][br]
 ##
 ## Examples:
 ## [codeblock]
