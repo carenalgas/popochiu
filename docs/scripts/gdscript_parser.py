@@ -44,6 +44,8 @@ class SignalInfo:
     parameters: list[tuple[str, str]]  # (name, type)
     description: str = ""
     annotations: set[str] = field(default_factory=set)
+    deprecated_reason: Optional[str] = None
+    experimental_reason: Optional[str] = None
 
     @property
     def signature(self) -> str:
@@ -63,6 +65,8 @@ class ConstantInfo:
     type_hint: str = ""
     description: str = ""
     annotations: set[str] = field(default_factory=set)
+    deprecated_reason: Optional[str] = None
+    experimental_reason: Optional[str] = None
 
 @dataclass
 class EnumValue:
@@ -79,6 +83,8 @@ class EnumInfo:
     values: list[EnumValue] = field(default_factory=list)
     description: str = ""
     annotations: set[str] = field(default_factory=set)
+    deprecated_reason: Optional[str] = None
+    experimental_reason: Optional[str] = None
 
 
 @dataclass
@@ -93,6 +99,8 @@ class PropertyInfo:
     getter: str = ""
     setter: str = ""
     annotations: set[str] = field(default_factory=set)
+    deprecated_reason: Optional[str] = None
+    experimental_reason: Optional[str] = None
 
 
 @dataclass 
@@ -113,6 +121,8 @@ class MethodInfo:
     is_virtual: bool = False
     is_static: bool = False
     annotations: set[str] = field(default_factory=set)
+    deprecated_reason: Optional[str] = None
+    experimental_reason: Optional[str] = None
 
     @property
     def signature(self) -> str:
@@ -584,11 +594,17 @@ class GDScriptParser:
                 else:
                     parameters.append((param, ""))
 
+        # Extract status tags from description
+        raw_description = "\n".join(self.current_doc_lines).strip()
+        description, deprecated_reason, experimental_reason = self._extract_status_tags(raw_description)
+
         signal_info = SignalInfo(
             name=name,
             parameters=parameters,
-            description="\n".join(self.current_doc_lines).strip(),
+            description=description,
             annotations=self.current_annotations.copy(),
+            deprecated_reason=deprecated_reason,
+            experimental_reason=experimental_reason,
         )
 
         if self.current_class:
@@ -600,12 +616,18 @@ class GDScriptParser:
         type_hint = match.group(2) or ""
         value = match.group(3).strip()
 
+        # Extract status tags from description
+        raw_description = "\n".join(self.current_doc_lines).strip()
+        description, deprecated_reason, experimental_reason = self._extract_status_tags(raw_description)
+
         const_info = ConstantInfo(
             name=name,
             value=value,
             type_hint=type_hint,
-            description="\n".join(self.current_doc_lines).strip(),
+            description=description,
             annotations=self.current_annotations.copy(),
+            deprecated_reason=deprecated_reason,
+            experimental_reason=experimental_reason,
         )
 
         if self.current_class:
@@ -661,16 +683,22 @@ class GDScriptParser:
         if getter_match:
             getter = getter_match.group(1)
 
+        # Extract status tags from description
+        raw_description = "\n".join(self.current_doc_lines).strip()
+        description, deprecated_reason, experimental_reason = self._extract_status_tags(raw_description)
+
         prop_info = PropertyInfo(
             name=name,
             type_hint=type_hint,
             default_value=default_value,
-            description="\n".join(self.current_doc_lines).strip(),
+            description=description,
             is_exported=is_exported,
             export_hint=export_hint,
             getter=getter,
             setter=setter,
             annotations=self.current_annotations.copy(),
+            deprecated_reason=deprecated_reason,
+            experimental_reason=experimental_reason,
         )
 
         if self.current_class:
@@ -712,8 +740,11 @@ class GDScriptParser:
             return_type = return_match.group(1)
 
         # Check if virtual from doc
-        description = "\n".join(self.current_doc_lines).strip()
-        is_virtual = "[i]Virtual[/i]" in description or "_Virtual_" in description
+        raw_description = "\n".join(self.current_doc_lines).strip()
+        is_virtual = "[i]Virtual[/i]" in raw_description or "_Virtual_" in raw_description
+
+        # Extract status tags from description
+        description, deprecated_reason, experimental_reason = self._extract_status_tags(raw_description)
 
         method_info = MethodInfo(
             name=name,
@@ -723,6 +754,8 @@ class GDScriptParser:
             is_virtual=is_virtual,
             is_static=is_static,
             annotations=self.current_annotations.copy(),
+            deprecated_reason=deprecated_reason,
+            experimental_reason=experimental_reason,
         )
 
         if self.current_class:
@@ -790,6 +823,53 @@ class GDScriptParser:
     def get_warnings(self) -> list[str]:
         """Return any warnings generated during parsing."""
         return self.warnings.copy()
+
+    def _extract_status_tags(self, description: str) -> tuple[str, Optional[str], Optional[str]]:
+        """
+        Extract @deprecated and @experimental tags from description text.
+
+        These tags appear inside docblocks (##) as:
+            ## @deprecated Reason text here
+            ## @experimental Reason text here
+
+        Args:
+            description: The raw description text from docblock lines
+
+        Returns:
+            Tuple of (cleaned_description, deprecated_reason, experimental_reason)
+            where reasons are None if tags are not present, or a string (possibly empty)
+            if the tag was found.
+        """
+        if not description:
+            return "", None, None
+
+        deprecated_reason: Optional[str] = None
+        experimental_reason: Optional[str] = None
+        cleaned_lines = []
+
+        for line in description.split("\n"):
+            stripped = line.strip()
+
+            # Check for @deprecated tag
+            if stripped.startswith("@deprecated"):
+                # Extract reason (everything after @deprecated on the same line)
+                reason = stripped[len("@deprecated"):].strip()
+                deprecated_reason = reason  # Can be empty string if no reason provided
+                continue  # Don't include this line in description
+
+            # Check for @experimental tag
+            if stripped.startswith("@experimental"):
+                # Extract reason (everything after @experimental on the same line)
+                reason = stripped[len("@experimental"):].strip()
+                experimental_reason = reason  # Can be empty string if no reason provided
+                continue  # Don't include this line in description
+
+            cleaned_lines.append(line)
+
+        # Rejoin and strip leading/trailing whitespace
+        cleaned_description = "\n".join(cleaned_lines).strip()
+
+        return cleaned_description, deprecated_reason, experimental_reason
 
 
 def parse_directory(directory: Path, recursive: bool = True) -> tuple[list[ClassInfo], list[str]]:

@@ -42,10 +42,66 @@ class GeneratorConfig:
 class MarkdownGenerator:
     """Generates Godot-style Markdown documentation from ClassInfo."""
 
+    # Default messages for status tags when no reason is provided
+    DEFAULT_DEPRECATED_MESSAGE = "This will be removed in future versions."
+    DEFAULT_EXPERIMENTAL_MESSAGE = "This may change or be removed in future versions. Use at your own risk."
+
     def __init__(self, config: Optional[GeneratorConfig] = None):
         self.config = config or GeneratorConfig()
         self.converter: Optional[BBCodeConverter] = None
         self.current_class: Optional[ClassInfo] = None
+
+    def _generate_status_chips(self, member) -> str:
+        """
+        Generate HTML chips for deprecated/experimental status.
+
+        Args:
+            member: A member object with deprecated_reason and experimental_reason attributes
+
+        Returns:
+            HTML string with status chips, or empty string if no status tags
+        """
+        chips = []
+
+        deprecated = getattr(member, 'deprecated_reason', None)
+        experimental = getattr(member, 'experimental_reason', None)
+
+        # If deprecated_reason is not None, the @deprecated tag was found
+        if deprecated is not None:
+            chips.append('<span class="status-chip status-deprecated"><i class="fa-solid fa-ban"></i> deprecated</span>')
+
+        # If experimental_reason is not None, the @experimental tag was found
+        if experimental is not None:
+            chips.append('<span class="status-chip status-experimental"><i class="fa-solid fa-flask"></i> experimental</span>')
+
+        return " ".join(chips)
+
+    def _generate_status_admonitions(self, member) -> str:
+        """
+        Generate MkDocs admonitions for deprecated/experimental status.
+
+        Args:
+            member: A member object with deprecated_reason and experimental_reason attributes
+
+        Returns:
+            Markdown string with admonitions, or empty string if no status tags
+        """
+        admonitions = []
+
+        deprecated = getattr(member, 'deprecated_reason', None)
+        experimental = getattr(member, 'experimental_reason', None)
+
+        # If deprecated_reason is not None, the @deprecated tag was found
+        if deprecated is not None:
+            reason = deprecated if deprecated else self.DEFAULT_DEPRECATED_MESSAGE
+            admonitions.append(f'!!! danger "Deprecated"\n    {reason}')
+
+        # If experimental_reason is not None, the @experimental tag was found
+        if experimental is not None:
+            reason = experimental if experimental else self.DEFAULT_EXPERIMENTAL_MESSAGE
+            admonitions.append(f'!!! warning "Experimental"\n    {reason}')
+
+        return "\n\n".join(admonitions)
 
     def generate(self, class_info: ClassInfo) -> str:
         """Generate Markdown documentation for a class."""
@@ -153,8 +209,10 @@ class MarkdownGenerator:
         for prop in sorted(properties, key=lambda p: p.name.lower()):
             type_str = self._format_type(prop.type_hint) if prop.type_hint else "Variant"
             name_link = f"[{prop.name}](#{prop.name.lower().replace('_', '-')})"
+            chips = self._generate_status_chips(prop)
+            name_cell = f"{name_link} {chips}" if chips else name_link
             default = f"`{prop.default_value}`" if prop.default_value else ""
-            lines.append(f"| {type_str} | {name_link} | {default} |")
+            lines.append(f"| {type_str} | {name_cell} | {default} |")
 
         return "\n".join(lines)
 
@@ -190,6 +248,11 @@ class MarkdownGenerator:
             if qualifiers:
                 sig += " " + " ".join(qualifiers)
 
+            # Add status chips
+            chips = self._generate_status_chips(method)
+            if chips:
+                sig += f" {chips}"
+
             lines.append(f"| {ret_type} | {sig} |")
 
         return "\n".join(lines)
@@ -204,7 +267,9 @@ class MarkdownGenerator:
                 f"{name}: {self._format_type_inline(type_)}" if type_ else name
                 for name, type_ in signal.parameters
             )
-            lines.append(f"- **[{signal.name}](#signal-{signal.name.lower().replace('_', '-')})**({params})")
+            chips = self._generate_status_chips(signal)
+            chip_suffix = f" {chips}" if chips else ""
+            lines.append(f"- **[{signal.name}](#signal-{signal.name.lower().replace('_', '-')})**({params}){chip_suffix}")
 
         return "\n".join(lines)
 
@@ -214,7 +279,9 @@ class MarkdownGenerator:
         lines.append("")
 
         for enum in sorted(enums, key=lambda e: e.name.lower()):
-            lines.append(f"- **[{enum.name}](#enum-{enum.name.lower().replace('_', '-')})**")
+            chips = self._generate_status_chips(enum)
+            chip_suffix = f" {chips}" if chips else ""
+            lines.append(f"- **[{enum.name}](#enum-{enum.name.lower().replace('_', '-')})**{chip_suffix}")
 
         return "\n".join(lines)
 
@@ -226,7 +293,9 @@ class MarkdownGenerator:
         lines.append("|------|-------|")
 
         for const in sorted(constants, key=lambda c: c.name.lower()):
-            lines.append(f"| `{const.name}` | `{const.value}` |")
+            chips = self._generate_status_chips(const)
+            name_cell = f"`{const.name}` {chips}" if chips else f"`{const.name}`"
+            lines.append(f"| {name_cell} | `{const.value}` |")
 
         return "\n".join(lines)
 
@@ -247,6 +316,12 @@ class MarkdownGenerator:
             lines.append(f"signal {signal.signature}")
             lines.append(f"```")
 
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(signal)
+            if admonitions:
+                lines.append("")
+                lines.append(admonitions)
+
             if signal.description:
                 lines.append("")
                 lines.append(self.converter.convert(signal.description))
@@ -266,6 +341,12 @@ class MarkdownGenerator:
             anchor = f"enum-{enum.name.lower().replace('_', '-')}"
             lines.append(f"### enum {enum.name} {{#{anchor}}}")
             lines.append("")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(enum)
+            if admonitions:
+                lines.append(admonitions)
+                lines.append("")
 
             if enum.description:
                 lines.append(self.converter.convert(enum.description))
@@ -294,6 +375,8 @@ class MarkdownGenerator:
 
         return "\n".join(lines)
 
+        return "\n".join(lines)
+
     def _generate_constants_section(self, class_info: ClassInfo,
                                     constants: list[ConstantInfo]) -> str:
         """Generate the constants detail section."""
@@ -310,6 +393,12 @@ class MarkdownGenerator:
             type_hint = f": {const.type_hint}" if const.type_hint else ""
             lines.append(f"const {const.name}{type_hint} = {const.value}")
             lines.append("```")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(const)
+            if admonitions:
+                lines.append("")
+                lines.append(admonitions)
 
             if const.description:
                 lines.append("")
@@ -352,6 +441,12 @@ class MarkdownGenerator:
                     lines.append(f"- **Getter:** `{prop.getter}`")
                 if prop.setter:
                     lines.append(f"- **Setter:** `{prop.setter}`")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(prop)
+            if admonitions:
+                lines.append("")
+                lines.append(admonitions)
 
             if prop.description:
                 lines.append("")
@@ -399,6 +494,12 @@ class MarkdownGenerator:
             if method.is_virtual:
                 lines.append("")
                 lines.append("*This is a virtual method. Override it in your subclass.*")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(method)
+            if admonitions:
+                lines.append("")
+                lines.append(admonitions)
 
             if method.description:
                 lines.append("")

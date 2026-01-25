@@ -1834,3 +1834,31 @@ div.mermaid {
 img.shadow {
     filter: drop-shadow(0 0 5px var(--image-shadow-color));
 }
+/* ============================================================
+   Status chips for deprecated/experimental API members
+   ============================================================ */
+
+.status-chip {
+    display: inline-block;
+    font-size: 75%;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 4px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.status-chip i {
+    margin-right: 4px;
+}
+
+.status-deprecated {
+    background-color: var(--admonition-danger-title-background-color);
+    color: var(--admonition-danger-title-color);
+}
+
+.status-experimental {
+    background-color: var(--admonition-attention-title-background-color);
+    color: var(--admonition-attention-title-color);
+}
