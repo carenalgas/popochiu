@@ -36,6 +36,8 @@ static func copy_gui_template(
 		commands_template_path = PopochiuResources.GUI_SCRIPT_TEMPLATES_FOLDER.path_join(
 			"%s_commands_template.gd" % _template_id
 		)
+		if not FileAccess.file_exists(commands_template_path):
+			commands_template_path = commands_template_path.replace("_high_res", "")
 	
 	var script_path := PopochiuResources.GUI_GAME_SCENE.replace(".tscn", ".gd")
 	
