@@ -2,7 +2,10 @@
 @icon('res://addons/popochiu/icons/dialog.png')
 class_name PopochiuDialog
 extends Resource
-## A class for branching dialogs. The dialog options can be used to trigger events.
+## Represents a branching dialog tree with selectable options.
+##
+## Dialog options can trigger game events, be enabled or disabled at runtime, and track usage
+## history. Override virtual methods to define dialog behavior.
 
 ## The identifier of the object used in scripts.
 @export var script_name := ''
@@ -11,28 +14,40 @@ extends Resource
 
 
 #region Virtual ####################################################################################
-## Called when the dialog starts. [b]You have to use an [code]await[/code] in this method in order
-## to make the dialog to work properly[/b].
+## Called when the dialog starts.
+## [b]You must use [code]await[/code] inside this method for the dialog to work properly.[/b]
+##
+## Implement this to add custom behavior (such as change the animation of a character) or update the
+## game state when the dialog starts.
+##
 ## [i]Virtual[/i].
 func _on_start() -> void:
 	pass
 
 
-## Called when the [param opt] dialog option is clicked. The [member PopochiuDialogOption.id] in
-## [param opt] can be used to check which was the selected option.
+## Called when [param opt] (one of the dialog options) is clicked. Use
+## [member PopochiuDialogOption.id] to identify which option was selected.[br]
+## Implement this to add custom behavior (such as change the animation of a character, play a sound,
+## etc.) or to update the game state when a dialog option is selected.
+##
 ## [i]Virtual[/i].
 func _option_selected(opt: PopochiuDialogOption) -> void:
 	pass
 
 
-## Called when the game is saved.
+## Called when the game is saved.[br]
+## Implement this to save custom data in the game save. The returned [Dictionary] must contain only
+## JSON supported types: [bool], [int], [float], [String].
+##
 ## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
 
-## Called when the game is loaded. The structure of [param data] is the same returned by
-## [method _on_save].
+## Called when the game is loaded.[br]
+## Implement this to load custom data from the game save. The structure of [param data] matches that
+## returned by [method _on_save].
+##
 ## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:
 	pass
@@ -41,13 +56,13 @@ func _on_load(_data: Dictionary) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Starts this dialog, then [method _on_start] is called.[br][br]
+## Starts this dialog, then calls [method _on_start].[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_start() -> Callable:
 	return func (): await start()
 
 
-## Starts this dialog, then [method _on_start] is called.
+## Starts this dialog, then calls [method _on_start].
 func start() -> void:
 	if PopochiuUtils.d.current_dialog == self:
 		return
@@ -57,27 +72,27 @@ func start() -> void:
 	await _start()
 
 
-## Stops the dialog (which makes the menu with the options to disappear).[br][br]
+## Stops the dialog, hiding the options menu.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop() -> Callable:
 	return func (): await stop()
 
 
-## Stops the dialog (which makes the menu with the options to disappear).
+## Stops the dialog, hiding the options menu.
 func stop() -> void:
 	PopochiuUtils.d.finish_dialog()
 
 
-## Enables each [PopochiuDialogOption] which [member PopochiuDialogOption.id] matches each of the
-## values in the [param ids] array.
+## Enables each [PopochiuDialogOption] which [member PopochiuDialogOption.id] appears in the
+## [param ids] array.
 func turn_on_options(ids: Array) -> void:
 	for id in ids:
 		var opt: PopochiuDialogOption = get_option(id)
 		if opt: opt.turn_on()
 
 
-## Disables each [PopochiuDialogOption] which [member PopochiuDialogOption.id] matches each of the
-## values in the [param ids] array.
+## Disables each [PopochiuDialogOption] which [member PopochiuDialogOption.id] appears in the
+## [param ids] array.
 func turn_off_options(ids: Array) -> void:
 	for id in ids:
 		var opt: PopochiuDialogOption = get_option(id)
@@ -85,26 +100,28 @@ func turn_off_options(ids: Array) -> void:
 
 
 ## Disables [b]forever[/b] each [PopochiuDialogOption] which [member PopochiuDialogOption.id]
-## matches each of the values in the [param ids] array.
+## appears in the [param ids] array.
 func turn_off_forever_options(ids: Array) -> void:
 	for id in ids:
 		var opt: PopochiuDialogOption = get_option(id)
 		if opt: opt.turn_off_forever()
 
 
-## Use this to save custom data when saving the game. The returned [Dictionary] must contain only
-## JSON supported types: [bool], [int], [float], [String].
+# @popochiu-docs-ignore
+#
+## Called by the engine before saving the game.
 func on_save() -> Dictionary:
 	return _on_save()
 
 
-## Called when the game is loaded. [param data] will have the same structure you defined for the
-## returned [Dictionary] by [method _on_save].
+# @popochiu-docs-ignore
+#
+## Called by the engine after loading a saved game.
 func on_load(data: Dictionary) -> void:
 	_on_load(data)
 
 
-## Returns the dilog option which [member PopochiuDialogOption.id] matches [param opt_id].
+## Returns the dialog option whose [member PopochiuDialogOption.id] matches [param opt_id].
 func get_option(opt_id: String) -> PopochiuDialogOption:
 	for o in options:
 		if (o as PopochiuDialogOption).id == opt_id:

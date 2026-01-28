@@ -2,11 +2,11 @@
 @icon("res://addons/popochiu/icons/room.png")
 class_name PopochiuRoom
 extends Node2D
-## Each scene of the game. Is composed by Props, Hotspots, Regions, Markers, Walkable areas, and
-## Characters.
+## Represents a location in the game where characters can move and interact with objects.
 ##
-## Characters can move through it in the spaces defined by walkable areas, interact with its props
-## and hotspots, react to its regions, and move to its markers.
+## Rooms contain Props, Hotspots, Regions, Markers, Walkable Areas, and Characters.
+## Characters navigate through walkable areas, interact with props and hotspots,
+## react to regions, and reach markers.
 
 ## The identifier of the object used in scripts.
 @export var script_name := ""
@@ -120,6 +120,7 @@ func _ready():
 
 	PopochiuUtils.r.room_readied(self)
 
+
 func _unhandled_input(event: InputEvent):
 	if (
 		not PopochiuUtils.get_click_or_touch_index(event) in [
@@ -152,18 +153,25 @@ func _unhandled_input(event: InputEvent):
 #endregion
 
 #region Virtual ####################################################################################
-## Called when Popochiu loads the room. At this point the room is in the tree but it is not visible.
+## Called when Popochiu loads the room. At this point the room is in the tree but not visible.[br]
+## Override this to setup the stage before the room is shown to the player (e.g. setting character
+## position and facing direction, active walkable area, props visibility, etc.).[br][br]
+## [i]Virtual[/i].
 func _on_room_entered() -> void:
 	pass
 
 
-## Called when the room-changing transition finishes. At this point the room is visible.
+## Called when the room-changing transition finishes. At this point the room is visible.[br]
+## Override this to start cutscenes, play sounds, etc.[br][br]
+## [i]Virtual[/i].
 func _on_room_transition_finished() -> void:
 	pass
 
 
-## Called before Popochiu unloads the room. At this point the room is in the tree but it is not
-## visible, it is not processing inputs, and has no childrens in the [b]$Characters[/b] node.
+## Called before Popochiu unloads the room. At this point the room is not visible,
+## is not processing inputs, and has no children in the [b]$Characters[/b] node.[br]
+## Override this to cleanup any custom data or states before leaving the room, if needed.[br][br]
+## [i]Virtual[/i].
 func _on_room_exited() -> void:
 	pass
 
@@ -171,7 +179,9 @@ func _on_room_exited() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Called by Popochiu before moving the Player-controlled Character (PC) to another room.
+# @popochiu-docs-ignore
+#
+## Called by the engine before moving the Player-controlled Character (PC) to another room.
 ## By default, characters are only removed (not deleted) to keep their instances in memory.
 func exit_room() -> void:
 	for c in $Characters.get_children():
@@ -189,9 +199,8 @@ func exit_room() -> void:
 	_on_room_exited()
 
 
-## Adds the instance (in memory) of [param chr] to the [b]$Characters[/b] node.
-## It also adds to it any children of the character in the Editor's Scene tree. The [b]idle[/b]
-## animation is triggered.
+## Adds [param chr] character to the room.
+## The [b]idle[/b] animation is played on the newly added character.
 func add_character(chr: PopochiuCharacter) -> void:
 	$Characters.add_child(chr)
 
@@ -212,11 +221,11 @@ func add_character(chr: PopochiuCharacter) -> void:
 	chr.idle()
 
 
-## Removes [param chr] from the [b]$Characters[/b] node without destroying it.
-## [br][br]
-## [b]Note:[/b] This removal persists across room transitions. A removed character will not be restored
-## when returning to the room. If you want the character to reappear on subsequent visits, either
-## use [method add_character] in the room's [method PopochiuRoom._on_room_entered] callback
+## Removes [param chr] character from the room without destroying the instance.
+## [br]
+## This removal persists across room transitions. A removed character [b]will not[/b]
+## be restored when returning to the room. If you want the character to reappear on subsequent
+## visits, either use [method add_character] in the room's [method _on_room_entered] callback
 ## or hide the character instead ([code]character.disable()[/code]).
 func remove_character(chr: PopochiuCharacter) -> void:
 	# Only remove if the character is actually a child of this room's $Characters node
@@ -236,14 +245,14 @@ func remove_character(chr: PopochiuCharacter) -> void:
 	update_navigation_obstacles()
 
 
-## Hides all its [PopochiuProp]s.
+## Hides all [PopochiuProp]s in the room.
 func hide_props() -> void:
 	for prop: PopochiuProp in get_props():
 		prop.hide()
 
 
-## Checks if the [PopochiuCharacter], whose property [member PopochiuCharacter.script_name] matches
-## [param character_name], is inside the [b]$Characters[/b] node.
+## Returns [code]true[/code] if the [PopochiuCharacter], whose [member PopochiuCharacter.script_name] matches
+## [param character_name], is in the room.
 func has_character(character_name: String) -> bool:
 	var result := false
 
@@ -255,6 +264,8 @@ func has_character(character_name: String) -> bool:
 	return result
 
 
+# @popochiu-docs-ignore
+#
 ## Called by Popochiu when loading the room to assign its camera limits to the player camera.
 func setup_camera() -> void:
 	if width > 0 and width > PopochiuUtils.e.width:
@@ -267,8 +278,11 @@ func setup_camera() -> void:
 		PopochiuUtils.e.camera.limit_bottom = PopochiuUtils.e.height - v_diff
 
 
-## Remove all children from the [b]$Characters[/b] node, storing the children of each node to later
-## assign them to the corresponding [PopochiuCharacter] when the room is loaded.
+## Removes all character from the room.[br]
+## This method stores references to each character's child nodes before removal, so these can be
+## properly reassigned to their respective [PopochiuCharacter] objects when the room is reloaded.[br]
+## This method is used internally by the engine when changing rooms and is not intended to be used
+## in game scripts. Use it only if you know what you are doing.
 func clean_characters() -> void:
 	for c in $Characters.get_children():
 		if not c is PopochiuCharacter: continue
@@ -284,6 +298,8 @@ func clean_characters() -> void:
 		c.queue_free()
 
 
+# @popochiu-docs-ignore
+#
 ## Updates the position of [param character] in the room, and then updates its scale.
 func update_characters_position(character: PopochiuCharacter):
 	character.update_position()
@@ -397,8 +413,11 @@ func get_characters_count() -> int:
 	return $Characters.get_child_count()
 
 
-## Sets as active the [PopochiuWalkableArea] which [member Node.name] matches
+## Activates the [PopochiuWalkableArea] which [member Node.name] matches
 ## [param walkable_area_name].
+##
+## Only one walkable area can be active at a time. If the requested area is disabled or not found,
+## an error is printed and no changes are made.
 func set_active_walkable_area(walkable_area_name: String) -> void:
 	var next: PopochiuWalkableArea = $WalkableAreas.get_node_or_null(walkable_area_name)
 	if next == null:
@@ -435,6 +454,9 @@ func set_active_walkable_area(walkable_area_name: String) -> void:
 
 ## Returns the navigation path from start to end position using the active walkable area.
 ## Returns empty array if no walkable area is set.
+##
+## This method is used internally by the engine and is not intended to be used
+## in game scripts. Use it only if you know what you are doing.
 func get_navigation_path(
 	start_position: Vector2, end_position: Vector2,
 	ignore_walkable_areas: bool = false,

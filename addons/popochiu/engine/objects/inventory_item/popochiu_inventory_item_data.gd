@@ -1,8 +1,10 @@
 @icon('res://addons/popochiu/icons/inventory_item.png')
 class_name PopochiuInventoryItemData
 extends Resource
-## This class is used to store information when saving and loading the game. It also ensures that
-## the data remains throughout the game's execution.
+## Stores persistent data for an inventory item across save/load operations.
+##
+## This resource maintains state throughout gameplay and handles serialization when saving and
+## loading the game.
 
 ## The identifier of the object used in scripts.
 @export var script_name := ''
@@ -11,14 +13,17 @@ extends Resource
 
 
 #region Virtual ####################################################################################
-## Called when the game is saved.
+## Called when the game is saved.[br]
+## Implement this to persist custom properties that you added to this resource. Should return
+## a [Dictionary] containing the data to be saved.[br][br]
 ## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
 
-## Called when the game is loaded. The structure of [param data] is the same returned by
-## [method _on_save].
+## Called when the game is loaded. The structure of [param data] matches that returned by
+## [method _on_save].[br]
+## Implement this to restore the custom properties you persisted in [_on_save].[br]
 ## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:
 	pass

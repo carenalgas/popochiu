@@ -1,6 +1,9 @@
 class_name PopochiuMainCamera
 extends Camera2D
-## Takes in charge of the camera used by Popochiu.
+## Manages the main camera used by Popochiu for screen effects like shaking and zooming.
+##
+## This camera follows the player character and can be manipulated to create visual effects
+## during gameplay, such as screen shake for impacts or zoom for dramatic moments.
 
 var is_shaking := false
 
@@ -36,8 +39,8 @@ func _process(delta: float) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Changes the main camera's offset by [param offset] pixels. This method is intended to be used
-## inside a [method queue] of instructions.
+## Changes the main camera's offset by [param offset] pixels. Useful when zooming the camera.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_offset(offset := Vector2.ZERO) -> Callable:
 	return func(): await change_offset(offset)
 
@@ -48,13 +51,13 @@ func change_offset(offset := Vector2.ZERO) -> void:
 	await get_tree().process_frame
 
 
-## Makes the camera shake with [param strength] during [param duration] seconds. This method is
-## intended to be used inside a [method queue] of instructions.
+## Makes the camera shake with [param strength] intensity for [param duration] seconds.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_shake(strength := 1.0, duration := 1.0) -> Callable:
 	return func(): await shake(strength, duration)
 
 
-## Makes the camera shake with [param strength] during [param duration] seconds.
+## Makes the camera shake with [param strength] intensity for [param duration] seconds.
 func shake(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
@@ -63,15 +66,15 @@ func shake(strength := 1.0, duration := 1.0) -> void:
 	await get_tree().create_timer(duration).timeout
 
 
-## Makes the camera shake with [param strength] during [param duration] seconds without blocking
-## execution (that means it runs in the background). This method is intended to be used inside a
-## [method queue] of instructions.
+## Makes the camera shake with [param strength] intensity for [param duration] seconds without
+## blocking execution (runs in the background).[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
 	return func(): await shake_bg(strength, duration)
 
 
-## Makes the camera shake with [param strength] during [param duration] seconds without blocking
-## execution (that means it runs in the background).
+## Makes the camera shake with [param strength] intensity for [param duration] seconds without
+## blocking execution (runs in the background).
 func shake_bg(strength := 1.0, duration := 1.0) -> void:
 	_camera_shake_amount = strength
 	_shake_timer = duration
@@ -80,16 +83,16 @@ func shake_bg(strength := 1.0, duration := 1.0) -> void:
 	await get_tree().process_frame
 
 
-## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code] the camera
-## will [b]zoom out[/b], smaller values will make it [b]zoom in[/b]. The effect will last
-## [param duration] seconds. This method is intended to be used inside a [method queue] of
-## instructions.
+## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code], the
+## camera will [b]zoom out[/b]; smaller values will make it [b]zoom in[/b]. The effect lasts
+## [param duration] seconds.[br][br]
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
 	return func(): await change_zoom(target, duration)
 
 
-## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code] the camera
-## will [b]zoom out[/b], smaller values will make it [b]zoom in[/b]. The effect will last
+## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code], the
+## camera will [b]zoom out[/b]; smaller values will make it [b]zoom in[/b]. The effect lasts
 ## [param duration] seconds.
 func change_zoom(target := Vector2.ONE, duration := 1.0) -> void:
 	if is_instance_valid(tween) and tween.is_running():
@@ -107,7 +110,7 @@ func stop_shake() -> void:
 	_shake_timer = 0.0
 
 
-## Restores the limits of the camera to their default values
+## Restores the camera limits to their default values.
 func restore_default_limits() -> void:
 	limit_left = default_limits.left
 	limit_right = default_limits.right

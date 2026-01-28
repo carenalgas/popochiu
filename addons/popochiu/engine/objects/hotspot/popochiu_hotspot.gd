@@ -25,13 +25,17 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the hotspot starts moving.
+## Called when the hotspot starts moving.[br]
+## Override this to add custom behavior or update the game state.
+##
 ## [i]Virtual[/i].
 func _on_movement_started() -> void:
 	pass
 
 
-## Called when the hotspot stops moving.
+## Called when the hotspot stops moving.[br]
+## Override this to add custom behavior or update the game state.
+##
 ## [i]Virtual[/i].
 func _on_movement_ended() -> void:
 	pass

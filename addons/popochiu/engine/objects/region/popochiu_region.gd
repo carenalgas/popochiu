@@ -2,10 +2,10 @@
 @icon('res://addons/popochiu/icons/region.png')
 class_name PopochiuRegion
 extends Area2D
-## Used to handle events when a character walks inside or outside of it. Can also be used to scale
-## characters while they walk through the region's polygon.
+## Defines areas in a room that trigger events when characters enter or exit.
 ##
-## By default, can be used to apply a tint to characters when they enter or leave the region.
+## Regions can apply visual effects such as tinting characters or scaling them based on vertical
+## position (useful for simulating depth in walkable areas).
 
 ## The identifier of the object used in scripts.
 @export var script_name := ""
@@ -88,13 +88,17 @@ func _notification(event: int) -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when a [param chr] enters this region.
+## Called when [param chr] enters this region.[br]
+## Implement this to add custom behavior or update the game state.
+##
 ## [i]Virtual[/i].
 func _on_character_entered(chr: PopochiuCharacter) -> void:
 	pass
 
 
-## Called when a [param chr] leaves this region.
+## Called when [param chr] exits this region.[br]
+## Implement this to add custom behavior or update the game state.
+##
 ## [i]Virtual[/i].
 func _on_character_exited(chr: PopochiuCharacter) -> void:
 	pass

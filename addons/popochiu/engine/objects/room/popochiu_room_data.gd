@@ -1,11 +1,11 @@
 @icon("res://addons/popochiu/icons/room.png")
 class_name PopochiuRoomData
 extends Resource
-## This class is used to store information when saving and loading the game. It also ensures that
-## the data remains throughout the game's execution.
+## Stores persistent data for [PopochiuRoom] instances during save/load operations.
 ##
-## It also has data of the [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s,
-## [PopochiuRegion]s, and [PopochiuCharacter]s in a [PopochiuRoom].
+## This data persists throughout game execution and is serialized when saving the game.
+## It also stores the state of [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s,
+## [PopochiuRegion]s, and [PopochiuCharacter]s in the room.
 
 ## The identifier of the object used in scripts.
 @export var script_name := ""
@@ -32,14 +32,13 @@ var characters := {}
 
 
 #region Virtual ####################################################################################
-## Called when the game is saved.
+## Called when the game is saved. Return a [Dictionary] with custom data to persist.[br][br]
 ## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
 
-## Called when the game is loaded. The structure of [param data] is the same returned by
-## [method _on_save].
+## Called when the game is loaded. [param data] contains the [Dictionary] from [method _on_save].[br][br]
 ## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:
 	pass

@@ -1,13 +1,11 @@
 @tool
 class_name PopochiuClickable
 extends Area2D
-## Handles an Area2D that reacts to mouse events.
+## Base class for interactive objects that respond to mouse events.
 ##
-## Is the base class for [PopochiuProp], [PopochiuHotspot] and [PopochiuCharacter].
-## It has a property to determine when the object should render in front or back to other, another
-## property that can be used to define the position to which characters will move to when moving
-## to the item, and tow [CollisionPolygon2D] which are used to handle players interaction and
-## handle scaling.
+## This is the parent class for [PopochiuProp], [PopochiuHotspot], and [PopochiuCharacter].
+## It handles click detection, hover states, and provides a baseline system for rendering order.
+## Two [CollisionPolygon2D] nodes are used: one for player interaction and one for scaling.
 
 ## Used to allow devs to define the cursor type for the clickable.
 const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
@@ -16,7 +14,7 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 @export var script_name := ""
 ## The text shown to players when the cursor hovers the object.
 @export var description := ""
-## Whether the object will listen to interactions.
+## Whether the object will react to interactions.
 @export var clickable := true: set = set_clickable
 ## The [code]y[/code] position of the baseline relative to the center of the object.
 @export var baseline := 0
@@ -28,11 +26,11 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 @export var cursor: CURSOR.Type = CURSOR.Type.NONE
 ## Whether the object will be rendered always above other objects in the room.
 @export var always_on_top := false
-## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
-## by [PopochiuRoom] to store the info in its [code].tscn[/code].
+## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime.
+## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := PackedVector2Array()
-## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
-## by [PopochiuRoom] to store the info in its [code].tscn[/code].
+## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime.
+## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
 
 ## Emitted when the clickable starts moving.
@@ -40,7 +38,7 @@ signal movement_started
 ## Emitted when the clickable finishes moving or is repositioned.
 signal movement_ended
 ## @deprecated
-## Former signal fired at movement ending.
+## Former signal emitted at movement ending.
 ## This is here to allow migration from previous version and will be removed soon.
 ## It [b]never[/b] gets emitted.
 signal move_ended
@@ -139,55 +137,63 @@ func _notification(event: int) -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the room this node belongs to has been added to the tree.
+## Called when the room containing this node is set.[br][br]
 ## [i]Virtual[/i].
 func _on_room_set() -> void:
 	pass
 
 
-## Called when the node is clicked.
+## Called when the node is clicked.[br]
+## Override to implement custom click behavior.[br][br]
 ## [i]Virtual[/i].
 func _on_click() -> void:
 	pass
 
 
-## Called when the node is double clicked.
+## Called when the node is double-clicked.[br]
+## Override to implement custom double click behavior.[br][br]
 ## [i]Virtual[/i].
 func _on_double_click() -> void:
 	pass
 
 
-## Called when the node is right clicked.
+## Called when the node is right-clicked.[br]
+## Override to implement custom right click behavior.[br][br]
 ## [i]Virtual[/i].
 func _on_right_click() -> void:
 	pass
 
 
-## Called when the node is middle clicked.
+## Called when the node is middle-clicked.[br]
+## Override to implement custom middle click behavior.[br][br]
 ## [i]Virtual[/i].
 func _on_middle_click() -> void:
 	pass
 
 
-## Called when the node is clicked and there is an inventory item selected.
+## Called when the node is clicked and there is an active inventory item.
+## [param item] is the currently selected (active) inventory item.[br]
+## Override to implement custom behavior when an inventory item is used on this clickable.[br][br]
 ## [i]Virtual[/i].
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
 
-## Called after movement to sync internal position state.
+## Called after the clickable's position changes to synchronize internal state.[br][br]
+## This is intended to be overridden by child classes to update any internal variables.
+## Use it in game scripts only if you know what you're doing.[br][br]
 ## [i]Virtual[/i].
 func _on_position_changed() -> void:
 	pass
 
 
-## Called when the clickable starts moving.
+## Called when the clickable starts moving.[br][br]
 ## [i]Virtual[/i].
 func _on_movement_started() -> void:
 	pass
 
 
-## Called when the clickable stops moving.
+## Called when the clickable stops moving.[br][br]
 ## [i]Virtual[/i].
 func _on_movement_ended() -> void:
 	pass
@@ -210,13 +216,13 @@ func show_helpers() -> void:
 		$InteractionPolygon.show()
 
 
-## Hides this Node.[br][br]
+## Hides and disables this node.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_disable() -> Callable:
 	return func(): await disable()
 
 
-## Hides this Node.
+## Hides and disables this node.
 func disable() -> void:
 	visible = false
 	clickable = false
@@ -224,13 +230,13 @@ func disable() -> void:
 	await get_tree().process_frame
 
 
-## Shows this Node.[br][br]
+## Shows and enables this node.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_enable() -> Callable:
 	return func(): await enable()
 
 
-## Shows this Node.
+## Shows and enables this node.
 func enable() -> void:
 	visible = true
 	clickable = true
@@ -244,7 +250,7 @@ func is_enabled() -> bool:
 	return visible and clickable and input_pickable
 
 
-## Make this node clickable.[br][br]
+## Enables the clickable property and makes the object input pickable.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_enable_clickable() -> Callable:
 	return func(): await enable_clickable()
@@ -256,7 +262,7 @@ func enable_clickable() -> void:
 	input_pickable = true
 
 
-## Make this node non clickable.[br][br]
+## Disables the clickable property and makes the object not input pickable.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_disable_clickable() -> Callable:
 	return func(): await disable_clickable()
@@ -268,9 +274,9 @@ func disable_clickable() -> void:
 	input_pickable = false
 
 
-## Returns the [member description] of the node using [method Object.tr] if
-## [member PopochiuSettings.use_translations] is [code]true[/code]. Otherwise, it returns just the
-## value of [member description].
+## Returns the [member description] of the node using [method Object.tr] if 
+## [member PopochiuSettings.use_translations] is [code]true[/code]. Otherwise,
+## it returns just the value of [member description].
 func get_description() -> String:
 	if Engine.is_editor_hint():
 		if description.is_empty():
@@ -279,28 +285,29 @@ func get_description() -> String:
 	return PopochiuUtils.e.get_text(description)
 
 
-## Called when the object is left clicked.
+## Called by the engine when the object is left clicked.
 func on_click() -> void:
 	await _on_click()
 
 
-## Called when the object is double clicked.
+## Called by the engine when the object is double clicked.
 func on_double_click() -> void:
 	_reset_double_click()
 	await _on_double_click()
 
 
-## Called when the object is right clicked.
+## Called by the engine when the object is right clicked.
 func on_right_click() -> void:
 	await _on_right_click()
 
 
-## Called when the object is middle clicked.
+## Called by the engine when the object is middle clicked.
 func on_middle_click() -> void:
 	await _on_middle_click()
 
 
-## Called when an [param item] is used on this object.
+## Called by the engine when an [param item] is used on this object.
+## Using an items means clicking on the object while an inventory item is active.
 func on_item_used(item: PopochiuInventoryItem) -> void:
 	await _on_item_used(item)
 	# after item has been used return to normal state
@@ -309,7 +316,9 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
 ## which can be [enum MouseButton].MOUSE_BUTTON_LEFT, [enum MouseButton].MOUSE_BUTTON_RIGHT or
-## [enum MouseButton].MOUSE_BUTTON_MIDDLE.
+## [enum MouseButton].MOUSE_BUTTON_MIDDLE.[br]
+## This is a plumbing method called by the engine when the object is clicked,
+## and it's not intended for game scripts. Use it only if you know what you're doing.
 func handle_command(button_idx: int) -> void:
 	var command: String = PopochiuUtils.e.get_current_command_name().to_snake_case()
 	var prefix := "on_%s"
@@ -338,12 +347,11 @@ func handle_command(button_idx: int) -> void:
 	_increment_command_count(PopochiuUtils.e.current_command)
 
 
-## Smoothly moves the clickable to a specific absolute position (in the current room)
-## specified by [param pos] ([Vector2]).
-## Movement [param speed] can be set (in pixels per second), as well as [param transition_type]
-## and [param ease_type] to control the tweening (see [Tween] enums).
-## [b]NOTE[/b]: If called on a [PopochiuCharacter], the movement ignores walkable areas
-## and doesn't affect animation states.
+## Smoothly moves the clickable to [param pos] (absolute)in the current room.
+## [param speed] sets the movement speed in pixels per second. [param transition_type] and
+## [param ease_type] control the tweening behavior.
+## [b]Note:[/b] For [PopochiuCharacter], this ignores walkable areas and doesn't affect
+## animation states.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_move_to(
 	pos: Vector2,
@@ -354,12 +362,11 @@ func queue_move_to(
 	return func(): await move_to(pos, speed, transition_type, ease_type)
 
 
-## Smoothly moves the clickable to a specific absolute position (in the current room)
-## specified by [param pos] ([Vector2]).
-## Movement [param speed] can be set (in pixels per second), as well as [param transition_type]
-## and [param ease_type] to control the tweening (see [Tween] enums).
-## [b]NOTE[/b]: If called on a [PopochiuCharacter], the movement ignores walkable areas
-## and doesn't affect animation states.
+## Smoothly moves the clickable to [param pos] (absolute) in the current room.
+## [param speed] sets the movement speed in pixels per second. [param transition_type] and
+## [param ease_type] control the tweening behavior.
+## [b]Note:[/b] For [PopochiuCharacter], this ignores walkable areas and doesn't affect
+## animation states.
 func move_to(
 	pos: Vector2,
 	speed: float = 100.0,
@@ -407,17 +414,15 @@ func move_to(
 	movement_ended.emit()
 
 
-## Makes the clickable teleport (disappear at one location and instantly appear at another) to a
-## specific absolute position (in the current room) specified by [param pos] ([Vector2]).
+## Instantly teleports the clickable to [param pos] (absolute) in the current room.
 ## You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_position(pos: Vector2, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_position(pos, offset)
 
 
-## Makes the clickable teleport (disappear at one location and instantly appear at another) to a
-## specific absolute position (in the current room) specified by [param pos] ([Vector2]).
-## You can set an [param offset] relative to the target position.[br][br]
+## Instantly teleports the clickable to [param pos] (absolute) in the current room.
+## You can set an [param offset] relative to the target position.
 func teleport_to_position(pos: Vector2, offset: Vector2 = Vector2.ZERO) -> void:
 	# Ignore if already moving
 	if is_moving:
@@ -438,47 +443,41 @@ func teleport_to_position(pos: Vector2, offset: Vector2 = Vector2.ZERO) -> void:
 	movement_ended.emit()
 
 
-## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.[br][br]
+## Instantly teleports the clickable to the [PopochiuProp] with matching [param id].
+## You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_prop(id, offset)
 
 
-## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuProp] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.
+## Instantly teleports the clickable to the [PopochiuProp] with matching [param id].
+## You can set an [param offset] relative to the target position.
 func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
 	await _teleport_to_node(PopochiuUtils.r.current.get_prop(id), offset)
 
 
-## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.[br][br]
+## Instantly teleports the clickable to the [PopochiuHotspot] with matching [param id].
+## You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_hotspot(id, offset)
 
 
-## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
-## [PopochiuHotspot] (in the current room) which [member PopochiuClickable.script_name] is equal to
-## [param id]. You can set an [param offset] relative to the target position.
+## Instantly teleports the clickable to the [PopochiuHotspot] with matching [param id].
+## You can set an [param offset] relative to the target position.
 func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 	await _teleport_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
 
 
-## Makes the clickable teleport (disappear at one location and instantly appear at another) to the
-## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
-## [param offset] relative to the target position.[br][br]
+## Instantly teleports the clickable to the [Marker2D] with matching [param id].
+## You can set an [param offset] relative to the target position.[br][br]
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_marker(id, offset)
 
 
-## Makes the character teleport (disappear at one location and instantly appear at another) to the
-## [Marker2D] (in the current room) which [member Node.name] is equal to [param id]. You can set an
-## [param offset] relative to the target position.
+## Instantly teleports the clickable to the [Marker2D] with matching [param id].
+## You can set an [param offset] relative to the target position.
 func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
 	await _teleport_to_node(PopochiuUtils.r.current.get_marker(id), offset)
 

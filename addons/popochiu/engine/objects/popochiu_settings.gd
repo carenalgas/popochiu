@@ -1,7 +1,10 @@
 @tool
 class_name PopochiuSettings
 extends Resource
-## Defines properties as settings for the game.
+## Stores runtime configuration settings for the game.
+##
+## This resource holds game-wide settings such as text speed, dialog style, inventory limits,
+## and transition layer configuration. Values are loaded from [PopochiuConfig] at initialization.
 
 ## @deprecated
 ## The text speed options that will be available in the game. In the ContextSensitive GUI you can
