@@ -762,7 +762,7 @@ func _set_wizard_game_resolution() -> void:
 
 	match _game_type:
 		GameType.RETRO:
-			match opt_res_retro.selected:
+			match opt_res_retro.get_item_id(opt_res_retro.selected):
 				GameResolution.RETRO_NEO_RETRO:
 					_game_resolution = Vector2(384, 216)
 				GameResolution.RETRO_VGA_4_3:

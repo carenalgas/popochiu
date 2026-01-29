@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://5g3dk8ky51g5"]
+[gd_scene format=3 uid="uid://5g3dk8ky51g5"]
 
 [ext_resource type="Script" uid="uid://ccsu88s0qt43b" path="res://addons/popochiu/editor/popups/setup/setup.gd" id="1_htti4"]
 [ext_resource type="Texture2D" uid="uid://b31n8y436g5bg" path="res://addons/popochiu/icons/logo-dark.svg" id="2_ba3yh"]
@@ -25,7 +25,7 @@ resource_name = "GameGUIBtnGroup"
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_htti4"]
 
-[node name="Setup" type="Control"]
+[node name="Setup" type="Control" unique_id=1129574411]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,8 +33,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_htti4")
+metadata/_edit_vertical_guides_ = [-132.0]
 
-[node name="WizardContainer" type="PanelContainer" parent="."]
+[node name="WizardContainer" type="PanelContainer" parent="." unique_id=1014874095]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(520, 600)
 layout_mode = 1
@@ -44,63 +45,64 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Rows" type="VBoxContainer" parent="WizardContainer"]
+[node name="Rows" type="VBoxContainer" parent="WizardContainer" unique_id=547866189]
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="WizardSteps" type="TabContainer" parent="WizardContainer/Rows"]
+[node name="WizardSteps" type="TabContainer" parent="WizardContainer/Rows" unique_id=122850428]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
-current_tab = 0
+current_tab = 2
 tabs_visible = false
 
-[node name="StepType" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps"]
+[node name="StepType" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps" unique_id=548601569]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_vh03r")
 metadata/_tab_index = 0
 
-[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepType"]
+[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepType" unique_id=56918160]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
+[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepType/Rows" unique_id=946070364]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="ContainerLogo" type="CenterContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
+[node name="ContainerLogo" type="CenterContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows" unique_id=1682825474]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ContainerLogo"]
+[node name="TextureRect" type="TextureRect" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ContainerLogo" unique_id=1518138368]
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 texture = ExtResource("2_ba3yh")
 expand_mode = 5
 
-[node name="Spacer" type="HSeparator" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
+[node name="Spacer" type="HSeparator" parent="WizardContainer/Rows/WizardSteps/StepType/Rows" unique_id=2107316917]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/separator = SubResource("StyleBoxEmpty_glykx")
 
-[node name="LblCTAType" type="Label" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
+[node name="LblCTAType" type="Label" parent="WizardContainer/Rows/WizardSteps/StepType/Rows" unique_id=1507825925]
 unique_name_in_owner = true
 layout_mode = 2
 text = "What kind of game do you want to make?"
 horizontal_alignment = 1
 justification_flags = 160
 
-[node name="ButtonGroup" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows"]
+[node name="ButtonGroup" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows" unique_id=342693757]
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_constants/margin_left = 80
 theme_override_constants/margin_right = 80
 
-[node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup"]
+[node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup" unique_id=1407004376]
 layout_mode = 2
 theme_override_constants/separation = 48
 
-[node name="BtnTypeRetro" type="Button" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup/Columns"]
+[node name="BtnTypeRetro" type="Button" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup/Columns" unique_id=687792552]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -112,7 +114,7 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 
-[node name="BtnTypeModern" type="Button" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup/Columns"]
+[node name="BtnTypeModern" type="Button" parent="WizardContainer/Rows/WizardSteps/StepType/Rows/ButtonGroup/Columns" unique_id=159808955]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -124,36 +126,36 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 
-[node name="StepRes" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps"]
+[node name="StepRes" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps" unique_id=728985745]
 visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 metadata/_tab_index = 1
 
-[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepRes"]
+[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepRes" unique_id=1147284107]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=71604603]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="LblCTARes" type="Label" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="LblCTARes" type="Label" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=1394390605]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Choose your game resolution *"
 horizontal_alignment = 1
 justification_flags = 160
 
-[node name="OptResRetroContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="OptResRetroContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=1619428510]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 64
 theme_override_constants/margin_right = 64
 
-[node name="OptResRetro" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptResRetroContainer"]
+[node name="OptResRetro" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptResRetroContainer" unique_id=779945449]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 8
@@ -177,14 +179,14 @@ popup/item_6/id = 3
 popup/item_7/text = "16:9 (320x180)"
 popup/item_7/id = 4
 
-[node name="OptResModernContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="OptResModernContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=894312589]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 64
 theme_override_constants/margin_right = 64
 
-[node name="OptResModern" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptResModernContainer"]
+[node name="OptResModern" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptResModernContainer" unique_id=1247004234]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 5
@@ -199,25 +201,25 @@ popup/item_3/id = 8
 popup/item_4/text = "Retro HD (1024x768)"
 popup/item_4/id = 9
 
-[node name="Spacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="Spacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=1125053195]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="LblCTAPreviewScale" type="Label" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="LblCTAPreviewScale" type="Label" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=1959431062]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Choose preview window size *"
 horizontal_alignment = 1
 justification_flags = 160
 
-[node name="OptPreviewScaleContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="OptPreviewScaleContainer" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=1063517042]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/margin_left = 64
 theme_override_constants/margin_right = 64
 
-[node name="OptPreviewScale" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptPreviewScaleContainer"]
+[node name="OptPreviewScale" type="OptionButton" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/OptPreviewScaleContainer" unique_id=598908630]
 unique_name_in_owner = true
 layout_mode = 2
 item_count = 4
@@ -230,33 +232,33 @@ popup/item_2/id = 2
 popup/item_3/text = "Quadruple (4x)"
 popup/item_3/id = 3
 
-[node name="TallSpacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="TallSpacer" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=749852940]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="TooltipBox" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows"]
+[node name="TooltipBox" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows" unique_id=435594202]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="TooltipRes" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox"]
+[node name="TooltipRes" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox" unique_id=299724512]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
 
-[node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes"]
+[node name="Columns" type="HBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes" unique_id=533398570]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 32
 
-[node name="TextureRect" type="TextureRect" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes/Columns"]
+[node name="TextureRect" type="TextureRect" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes/Columns" unique_id=1629735932]
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("5_l7fcy")
 expand_mode = 2
 
-[node name="TooltipResText" type="RichTextLabel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes/Columns"]
+[node name="TooltipResText" type="RichTextLabel" parent="WizardContainer/Rows/WizardSteps/StepRes/Rows/TooltipBox/TooltipRes/Columns" unique_id=1537535028]
 unique_name_in_owner = true
 clip_contents = false
 custom_minimum_size = Vector2(280, 0)
@@ -279,22 +281,21 @@ shortcut_keys_enabled = false
 vertical_alignment = 1
 justification_flags = 0
 
-[node name="StepGUI" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps"]
-visible = false
+[node name="StepGUI" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps" unique_id=12807219]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 metadata/_tab_index = 2
 
-[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI"]
+[node name="Rows" type="VBoxContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI" unique_id=320342265]
 layout_mode = 2
 theme_override_constants/separation = 24
 
-[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
+[node name="SpacerTop" type="Panel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows" unique_id=870704167]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="LblCTAUI" type="Label" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
+[node name="LblCTAUI" type="Label" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows" unique_id=1465261992]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -302,13 +303,13 @@ text = "Choose the UI for your game"
 horizontal_alignment = 1
 justification_flags = 0
 
-[node name="ButtonGroup" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
+[node name="ButtonGroup" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows" unique_id=1676468563]
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
 theme_override_constants/margin_left = 80
 theme_override_constants/margin_right = 80
 
-[node name="GUIGrid" type="GridContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup"]
+[node name="GUIGrid" type="GridContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup" unique_id=259469192]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 204)
 layout_mode = 2
@@ -316,7 +317,7 @@ theme_override_constants/h_separation = 12
 theme_override_constants/v_separation = 12
 columns = 3
 
-[node name="BtnGUITypeTemplate" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/GUIGrid"]
+[node name="BtnGUITypeTemplate" type="Button" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/ButtonGroup/GUIGrid" unique_id=248612652]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 96)
 layout_mode = 2
@@ -328,17 +329,17 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 expand_icon = true
 
-[node name="TooltipBox" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows"]
+[node name="TooltipBox" type="MarginContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows" unique_id=695355534]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 
-[node name="TooltipGUI" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/TooltipBox"]
+[node name="TooltipGUI" type="PanelContainer" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/TooltipBox" unique_id=81663942]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
 
-[node name="TooltipGUIText" type="RichTextLabel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/TooltipBox/TooltipGUI"]
+[node name="TooltipGUIText" type="RichTextLabel" parent="WizardContainer/Rows/WizardSteps/StepGUI/Rows/TooltipBox/TooltipGUI" unique_id=2013820439]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 50)
 layout_mode = 2
@@ -361,7 +362,7 @@ justification_flags = 0
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
 
-[node name="NavSeparator" type="HSeparator" parent="WizardContainer/Rows"]
+[node name="NavSeparator" type="HSeparator" parent="WizardContainer/Rows" unique_id=1175818012]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
@@ -369,34 +370,34 @@ size_flags_horizontal = 4
 size_flags_vertical = 10
 theme_override_styles/separator = SubResource("StyleBoxLine_htti4")
 
-[node name="NavBtnColumns" type="HBoxContainer" parent="WizardContainer/Rows"]
+[node name="NavBtnColumns" type="HBoxContainer" parent="WizardContainer/Rows" unique_id=1641384597]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 32
 
-[node name="FillerPrev" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 10
-theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
-
-[node name="BtnPrev" type="Button" parent="WizardContainer/Rows/NavBtnColumns"]
+[node name="FillerPrev" type="Panel" parent="WizardContainer/Rows/NavBtnColumns" unique_id=811032040]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 10
+theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
+
+[node name="BtnPrev" type="Button" parent="WizardContainer/Rows/NavBtnColumns" unique_id=441411144]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 10
 text = "BACK"
 
-[node name="LabelStep" type="Label" parent="WizardContainer/Rows/NavBtnColumns"]
+[node name="LabelStep" type="Label" parent="WizardContainer/Rows/NavBtnColumns" unique_id=573797817]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Step 1 / 3"
+text = "Step 3 / 3"
 horizontal_alignment = 1
 vertical_alignment = 1
 justification_flags = 0
 
-[node name="BtnNext" type="Button" parent="WizardContainer/Rows/NavBtnColumns"]
+[node name="BtnNext" type="Button" parent="WizardContainer/Rows/NavBtnColumns" unique_id=628431694]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -404,24 +405,24 @@ size_flags_horizontal = 2
 text = "NEXT"
 icon_alignment = 2
 
-[node name="FillerNext" type="Panel" parent="WizardContainer/Rows/NavBtnColumns"]
+[node name="FillerNext" type="Panel" parent="WizardContainer/Rows/NavBtnColumns" unique_id=483043610]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 
-[node name="BtnCustom" type="LinkButton" parent="WizardContainer/Rows"]
+[node name="BtnCustom" type="LinkButton" parent="WizardContainer/Rows" unique_id=1343203315]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 text = "No thanks, I need custom settings"
 
-[node name="SpacerBottom" type="Panel" parent="WizardContainer/Rows"]
+[node name="SpacerBottom" type="Panel" parent="WizardContainer/Rows" unique_id=1484706985]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="CustomContainer" type="PanelContainer" parent="."]
+[node name="CustomContainer" type="PanelContainer" parent="." unique_id=1430471320]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(520, 600)
@@ -433,26 +434,26 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CustomContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CustomContainer" unique_id=1335558447]
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="ContainerLogo" type="CenterContainer" parent="CustomContainer/VBoxContainer"]
+[node name="ContainerLogo" type="CenterContainer" parent="CustomContainer/VBoxContainer" unique_id=1519985088]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="CustomContainer/VBoxContainer/ContainerLogo"]
+[node name="TextureRect" type="TextureRect" parent="CustomContainer/VBoxContainer/ContainerLogo" unique_id=1050769171]
 custom_minimum_size = Vector2(160, 0)
 layout_mode = 2
 texture = ExtResource("2_ba3yh")
 expand_mode = 5
 
-[node name="TypeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
+[node name="TypeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer" unique_id=568429233]
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 24
 
-[node name="Type" type="Label" parent="CustomContainer/VBoxContainer/TypeContainer"]
+[node name="Type" type="Label" parent="CustomContainer/VBoxContainer/TypeContainer" unique_id=248152830]
 custom_minimum_size = Vector2(149, 0)
 layout_mode = 2
 tooltip_text = "This will set stretch mode and default import presets for you.
@@ -464,7 +465,7 @@ tooltip_text = "This will set stretch mode and default import presets for you.
 mouse_filter = 0
 text = "Game type"
 
-[node name="OptGameType" type="OptionButton" parent="CustomContainer/VBoxContainer/TypeContainer"]
+[node name="OptGameType" type="OptionButton" parent="CustomContainer/VBoxContainer/TypeContainer" unique_id=123083354]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(176, 0)
 layout_mode = 2
@@ -477,27 +478,27 @@ popup/item_1/id = 2
 popup/item_2/text = "High Resolution"
 popup/item_2/id = 1
 
-[node name="TooltipBox" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
+[node name="TooltipBox" type="MarginContainer" parent="CustomContainer/VBoxContainer" unique_id=282809542]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="TooltipType" type="PanelContainer" parent="CustomContainer/VBoxContainer/TooltipBox"]
+[node name="TooltipType" type="PanelContainer" parent="CustomContainer/VBoxContainer/TooltipBox" unique_id=334704637]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
 
-[node name="Columns" type="HBoxContainer" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType"]
+[node name="Columns" type="HBoxContainer" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType" unique_id=1039182796]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="TextureRect" type="TextureRect" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType/Columns"]
+[node name="TextureRect" type="TextureRect" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType/Columns" unique_id=1544414275]
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("5_l7fcy")
 expand_mode = 2
 
-[node name="TooltipTypeText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType/Columns"]
+[node name="TooltipTypeText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox/TooltipType/Columns" unique_id=503116527]
 unique_name_in_owner = true
 clip_contents = false
 layout_mode = 2
@@ -522,13 +523,13 @@ shortcut_keys_enabled = false
 vertical_alignment = 1
 justification_flags = 0
 
-[node name="GUIContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
+[node name="GUIContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer" unique_id=463305862]
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 24
 
-[node name="GameUI" type="Label" parent="CustomContainer/VBoxContainer/GUIContainer"]
+[node name="GameUI" type="Label" parent="CustomContainer/VBoxContainer/GUIContainer" unique_id=1775980216]
 custom_minimum_size = Vector2(149, 0)
 layout_mode = 2
 tooltip_text = "This will set stretch mode and default import presets for you.
@@ -540,7 +541,7 @@ tooltip_text = "This will set stretch mode and default import presets for you.
 mouse_filter = 0
 text = "Game UI"
 
-[node name="OptGameUI" type="OptionButton" parent="CustomContainer/VBoxContainer/GUIContainer"]
+[node name="OptGameUI" type="OptionButton" parent="CustomContainer/VBoxContainer/GUIContainer" unique_id=1034663204]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(176, 0)
 layout_mode = 2
@@ -561,23 +562,23 @@ popup/item_4/id = 4
 popup/item_5/text = "High Resolution"
 popup/item_5/id = -1
 popup/item_5/separator = true
-popup/item_6/text = "9 Verb (High-res)"
+popup/item_6/text = "9 Verb"
 popup/item_6/id = 6
-popup/item_7/text = "Action Bar (High-res)"
+popup/item_7/text = "Action Bar"
 popup/item_7/id = 7
-popup/item_8/text = "Simple Click (High-res)"
+popup/item_8/text = "Simple Click"
 popup/item_8/id = 8
 
-[node name="TooltipBox2" type="MarginContainer" parent="CustomContainer/VBoxContainer"]
+[node name="TooltipBox2" type="MarginContainer" parent="CustomContainer/VBoxContainer" unique_id=1962612173]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="TooltipNoGUI" type="PanelContainer" parent="CustomContainer/VBoxContainer/TooltipBox2"]
+[node name="TooltipNoGUI" type="PanelContainer" parent="CustomContainer/VBoxContainer/TooltipBox2" unique_id=1801464010]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 
-[node name="TooltipNoGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI"]
+[node name="TooltipNoGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI" unique_id=2097649867]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 40)
 layout_mode = 2
@@ -602,7 +603,7 @@ justification_flags = 0
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
 
-[node name="TooltipCustomGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI"]
+[node name="TooltipCustomGUIText" type="RichTextLabel" parent="CustomContainer/VBoxContainer/TooltipBox2/TooltipNoGUI" unique_id=1531498455]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(200, 40)
@@ -629,19 +630,19 @@ justification_flags = 0
 deselect_on_focus_loss_enabled = false
 drag_and_drop_selection_enabled = false
 
-[node name="ResolutionSeparator" type="HSeparator" parent="CustomContainer/VBoxContainer"]
+[node name="ResolutionSeparator" type="HSeparator" parent="CustomContainer/VBoxContainer" unique_id=20061365]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(420, 24)
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_styles/separator = SubResource("StyleBoxLine_htti4")
 
-[node name="SizeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
+[node name="SizeContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer" unique_id=704459496]
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="CustomResLabel" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer"]
+[node name="CustomResLabel" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer" unique_id=1862920025]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -649,14 +650,14 @@ tooltip_text = "The width and height of the game's window. Changing this will up
 mouse_filter = 0
 text = "Game resolution"
 
-[node name="VBoxContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer"]
+[node name="VBoxContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer" unique_id=1337392750]
 layout_mode = 2
 
-[node name="WidthContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer"]
+[node name="WidthContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer" unique_id=2007338494]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CustomWidth" type="SpinBox" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/WidthContainer"]
+[node name="CustomWidth" type="SpinBox" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/WidthContainer" unique_id=582196876]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -666,7 +667,7 @@ value = 356.0
 rounded = true
 allow_greater = true
 
-[node name="LblWidth" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/WidthContainer"]
+[node name="LblWidth" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/WidthContainer" unique_id=1911106864]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -674,11 +675,11 @@ size_flags_vertical = 0
 theme_override_font_sizes/font_size = 13
 text = "Width"
 
-[node name="HeightContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer"]
+[node name="HeightContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer" unique_id=424523594]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="CustomHeight" type="SpinBox" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/HeightContainer"]
+[node name="CustomHeight" type="SpinBox" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/HeightContainer" unique_id=117725499]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -688,7 +689,7 @@ value = 200.0
 rounded = true
 allow_greater = true
 
-[node name="LblHeight" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/HeightContainer"]
+[node name="LblHeight" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/HeightContainer" unique_id=771572989]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -696,11 +697,11 @@ size_flags_vertical = 0
 theme_override_font_sizes/font_size = 13
 text = "Height"
 
-[node name="RatioContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer"]
+[node name="RatioContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer" unique_id=1206513727]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="OptKeepRatio" type="OptionButton" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/RatioContainer"]
+[node name="OptKeepRatio" type="OptionButton" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/RatioContainer" unique_id=1103691722]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(67, 0)
 layout_mode = 2
@@ -714,7 +715,7 @@ popup/item_1/id = 1
 popup/item_2/text = "Free"
 popup/item_2/id = 2
 
-[node name="LblRatio" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/RatioContainer"]
+[node name="LblRatio" type="Label" parent="CustomContainer/VBoxContainer/SizeContainer/VBoxContainer/RatioContainer" unique_id=119900075]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -722,12 +723,12 @@ size_flags_vertical = 0
 theme_override_font_sizes/font_size = 13
 text = "Ratio"
 
-[node name="PreviewContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer"]
+[node name="PreviewContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer" unique_id=1672755351]
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="TestSize" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer"]
+[node name="TestSize" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer" unique_id=151486662]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
@@ -735,14 +736,14 @@ tooltip_text = "The width and height of the game's test window. Changing this wi
 mouse_filter = 0
 text = "Preview window size"
 
-[node name="VBoxContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer"]
+[node name="VBoxContainer" type="HBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer" unique_id=529131681]
 layout_mode = 2
 
-[node name="WidthContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer"]
+[node name="WidthContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer" unique_id=1140674191]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PreviewWidth" type="SpinBox" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/WidthContainer"]
+[node name="PreviewWidth" type="SpinBox" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/WidthContainer" unique_id=998658458]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -751,7 +752,7 @@ value = 712.0
 rounded = true
 allow_greater = true
 
-[node name="LblPreviewWidth" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/WidthContainer"]
+[node name="LblPreviewWidth" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/WidthContainer" unique_id=1255262974]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -759,11 +760,11 @@ size_flags_vertical = 0
 theme_override_font_sizes/font_size = 13
 text = "Width"
 
-[node name="HeightContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer"]
+[node name="HeightContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer" unique_id=477817660]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="PreviewHeight" type="SpinBox" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/HeightContainer"]
+[node name="PreviewHeight" type="SpinBox" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/HeightContainer" unique_id=1246406166]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -772,7 +773,7 @@ value = 400.0
 rounded = true
 allow_greater = true
 
-[node name="LblPreviewHeight" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/HeightContainer"]
+[node name="LblPreviewHeight" type="Label" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/HeightContainer" unique_id=361349559]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -780,22 +781,22 @@ size_flags_vertical = 0
 theme_override_font_sizes/font_size = 13
 text = "Height"
 
-[node name="RatioContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer"]
+[node name="RatioContainer" type="VBoxContainer" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer" unique_id=1569577626]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="KeepRatio" type="Panel" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/RatioContainer"]
+[node name="KeepRatio" type="Panel" parent="CustomContainer/VBoxContainer/PreviewContainer/VBoxContainer/RatioContainer" unique_id=402946175]
 custom_minimum_size = Vector2(67, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="SpacerBottom" type="Panel" parent="CustomContainer/VBoxContainer"]
+[node name="SpacerBottom" type="Panel" parent="CustomContainer/VBoxContainer" unique_id=1546599676]
 custom_minimum_size = Vector2(0, 1)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="BtnWizard" type="LinkButton" parent="CustomContainer/VBoxContainer"]
+[node name="BtnWizard" type="LinkButton" parent="CustomContainer/VBoxContainer" unique_id=1835970332]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -804,7 +805,7 @@ theme_override_colors/font_pressed_color = Color(0.6, 0.6, 0.6, 1)
 theme_override_colors/font_hover_color = Color(0.3, 0.3, 0.3, 1)
 text = "Now I'm scared! Bring the wizard back!"
 
-[node name="CopyProcessContainer" type="PanelContainer" parent="."]
+[node name="CopyProcessContainer" type="PanelContainer" parent="." unique_id=108820040]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -819,37 +820,37 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_4duov")
 
-[node name="MarginContainer" type="MarginContainer" parent="CopyProcessContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="CopyProcessContainer" unique_id=43962379]
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CopyProcessContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CopyProcessContainer/MarginContainer" unique_id=1618203333]
 custom_minimum_size = Vector2(420, 0)
 layout_mode = 2
 size_flags_vertical = 4
 
-[node name="CopyProcessTooltipBox" type="MarginContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
+[node name="CopyProcessTooltipBox" type="MarginContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer" unique_id=965069899]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="TooltipProcess" type="PanelContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox"]
+[node name="TooltipProcess" type="PanelContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox" unique_id=1022075225]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(400, 50)
 layout_mode = 2
 
-[node name="Columns" type="HBoxContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess"]
+[node name="Columns" type="HBoxContainer" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess" unique_id=1715670302]
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 32
 
-[node name="TextureRect" type="TextureRect" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess/Columns"]
+[node name="TextureRect" type="TextureRect" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess/Columns" unique_id=1176994353]
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("5_l7fcy")
 expand_mode = 2
 
-[node name="TooltipProcessText" type="RichTextLabel" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess/Columns"]
+[node name="TooltipProcessText" type="RichTextLabel" parent="CopyProcessContainer/MarginContainer/VBoxContainer/CopyProcessTooltipBox/TooltipProcess/Columns" unique_id=1715340658]
 clip_contents = false
 custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
@@ -872,18 +873,18 @@ horizontal_alignment = 1
 vertical_alignment = 1
 justification_flags = 0
 
-[node name="Spacer" type="Panel" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
+[node name="Spacer" type="Panel" parent="CopyProcessContainer/MarginContainer/VBoxContainer" unique_id=883345818]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_glykx")
 
-[node name="CopyProcessBar" type="ProgressBar" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
+[node name="CopyProcessBar" type="ProgressBar" parent="CopyProcessContainer/MarginContainer/VBoxContainer" unique_id=1836348260]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 4
 value = 50.0
 
-[node name="CopyProcessLabel" type="Label" parent="CopyProcessContainer/MarginContainer/VBoxContainer"]
+[node name="CopyProcessLabel" type="Label" parent="CopyProcessContainer/MarginContainer/VBoxContainer" unique_id=1730017618]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "This will set stretch mode and default import presets for you.
