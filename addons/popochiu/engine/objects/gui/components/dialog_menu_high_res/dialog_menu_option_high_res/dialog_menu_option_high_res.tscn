@@ -1,0 +1,37 @@
+[gd_scene load_steps=5 format=3 uid="uid://1qrapayowusb"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_bpgqj"]
+[ext_resource type="Script" uid="uid://bmx8d38xtww0y" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu_option/dialog_menu_option.gd" id="2_ddyfo"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_un1pr"]
+content_margin_left = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_we03b"]
+
+[node name="DialogMenuOptionHighRes" type="PanelContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 24.0
+grow_horizontal = 2
+mouse_filter = 2
+theme = ExtResource("1_bpgqj")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_un1pr")
+script = ExtResource("2_ddyfo")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "A [wave]veeeeeeeeeeeeeery[/wave] long line option that should wrap so devs can have long options......"
+fit_content = true
+scroll_active = false
+
+[node name="Handler" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_we03b")
+flat = true
+alignment = 0
+text_overrun_behavior = 4

@@ -1,0 +1,114 @@
+[gd_scene load_steps=12 format=3 uid="uid://cgrq6i3a8uc0y"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_0crwm"]
+[ext_resource type="Script" uid="uid://cur2uxliccb2n" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/history_popup.gd" id="2_0v4pq"]
+[ext_resource type="PackedScene" uid="uid://b6dm3xvvr7dvi" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/components/dialog_line.tscn" id="3_kitve"]
+[ext_resource type="PackedScene" uid="uid://2mnjw3qsi8hc" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/components/interaction_line.tscn" id="4_ckqj2"]
+[ext_resource type="StyleBox" uid="uid://bwanhyu2llpeg" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container_high_res.tres" id="5_dtsrc"]
+[ext_resource type="Texture2D" uid="uid://crfvalg8jyuni" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.svg" id="6_0crwm"]
+[ext_resource type="Texture2D" uid="uid://ccjfdeebj3yx3" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.svg" id="7_dtsrc"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xipc1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pm06l"]
+bg_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gr6a3"]
+bg_color = Color(0.768627, 0.423529, 0.443137, 1)
+border_width_left = 8
+border_color = Color(0.388235, 0.607843, 1, 1)
+
+[sub_resource type="Theme" id="Theme_cqgnt"]
+VScrollBar/styles/grabber = SubResource("StyleBoxFlat_pm06l")
+VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_pm06l")
+VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_pm06l")
+VScrollBar/styles/scroll = SubResource("StyleBoxFlat_gr6a3")
+VScrollBar/styles/scroll_focus = SubResource("StyleBoxFlat_gr6a3")
+
+[node name="HistoryPopupHighRes" type="Control" groups=["popochiu_gui_popup"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_0crwm")
+script = ExtResource("2_0v4pq")
+dialog_line = ExtResource("3_kitve")
+interaction_line = ExtResource("4_ckqj2")
+script_name = &"HistoryPopup"
+title = "History"
+
+[node name="Overlay" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_xipc1")
+
+[node name="PanelContainer" type="PanelContainer" parent="Overlay"]
+custom_minimum_size = Vector2(1024, 576)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = ExtResource("5_dtsrc")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer"]
+layout_mode = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "History"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Close" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("6_0crwm")
+texture_pressed = ExtResource("7_dtsrc")
+texture_hover = ExtResource("7_dtsrc")
+
+[node name="Empty" type="Label" parent="Overlay/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "Nothing to show yet"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LinesScroll" type="ScrollContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+theme = SubResource("Theme_cqgnt")
+
+[node name="LinesList" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/LinesScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="FooterContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_vertical = 10
+alignment = 1
+
+[node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "ok"
+
+[node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "cancel"

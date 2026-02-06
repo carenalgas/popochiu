@@ -1,0 +1,213 @@
+[gd_scene load_steps=35 format=3 uid="uid://vdlu8j5socik"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_o2qey"]
+[ext_resource type="Script" uid="uid://b2884kuq87jk6" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_menu/sierra_menu.gd" id="2_hru1j"]
+[ext_resource type="Script" uid="uid://0v1kx7fnw8g4" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_menu/sierra_commands_container.gd" id="3_rxsks"]
+[ext_resource type="Texture2D" uid="uid://c77bbpcgusj15" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_walk.svg" id="4_7oesn"]
+[ext_resource type="Script" uid="uid://cr1iaudw87l0y" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_command_button/sierra_command_button.gd" id="5_lvqoe"]
+[ext_resource type="Texture2D" uid="uid://cjtycaxrm2v3g" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_look.svg" id="6_3a4u6"]
+[ext_resource type="Texture2D" uid="uid://dq1i0kltkr8nf" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_interact.svg" id="7_3a4u6"]
+[ext_resource type="Texture2D" uid="uid://dc3n1pom0d00p" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_talk.svg" id="8_3a4u6"]
+[ext_resource type="Texture2D" uid="uid://densmih53s4vv" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_inventory.svg" id="9_3a4u6"]
+[ext_resource type="Texture2D" uid="uid://ed2l71epbcck" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_settings.svg" id="10_7oesn"]
+[ext_resource type="Texture2D" uid="uid://djve4vu1lpi34" path="res://addons/popochiu/engine/objects/gui/templates/sierra/images/btn_help.png" id="11_yo0cc"]
+[ext_resource type="Texture2D" uid="uid://c1gik8lkdekx4" path="res://addons/popochiu/engine/objects/gui/templates/sierra/images/btn_quit.png" id="12_pcr04"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_csu2p"]
+atlas = ExtResource("4_7oesn")
+region = Rect2(0, 0, 64, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ylk7h"]
+atlas = ExtResource("4_7oesn")
+region = Rect2(0, 96, 64, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ao1oe"]
+atlas = ExtResource("4_7oesn")
+region = Rect2(0, 96, 64, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_irg4s"]
+atlas = ExtResource("6_3a4u6")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sijr3"]
+atlas = ExtResource("6_3a4u6")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_msotb"]
+atlas = ExtResource("6_3a4u6")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u5ilp"]
+atlas = ExtResource("7_3a4u6")
+region = Rect2(0, 0, 98, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nkumn"]
+atlas = ExtResource("7_3a4u6")
+region = Rect2(0, 96, 98, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ddbjm"]
+atlas = ExtResource("7_3a4u6")
+region = Rect2(0, 96, 98, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r0y6q"]
+atlas = ExtResource("8_3a4u6")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yyrpv"]
+atlas = ExtResource("8_3a4u6")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m2m36"]
+atlas = ExtResource("8_3a4u6")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a3v2b"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uvguw"]
+atlas = ExtResource("9_3a4u6")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mdjye"]
+atlas = ExtResource("9_3a4u6")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_odwa6"]
+atlas = ExtResource("9_3a4u6")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wy7fm"]
+atlas = ExtResource("10_7oesn")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eccvv"]
+atlas = ExtResource("10_7oesn")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ahol"]
+atlas = ExtResource("10_7oesn")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f8jt5"]
+atlas = ExtResource("12_pcr04")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c0o1t"]
+atlas = ExtResource("12_pcr04")
+region = Rect2(0, 24, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hs767"]
+atlas = ExtResource("12_pcr04")
+region = Rect2(0, 24, 24, 24)
+
+[node name="SierraMenuHighRes" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_o2qey")
+script = ExtResource("2_hru1j")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 120.0
+grow_horizontal = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SierraCommandsContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
+script = ExtResource("3_rxsks")
+
+[node name="Walk" type="TextureButton" parent="PanelContainer/MarginContainer/HBoxContainer/SierraCommandsContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_csu2p")
+texture_pressed = SubResource("AtlasTexture_ylk7h")
+texture_hover = SubResource("AtlasTexture_ao1oe")
+script = ExtResource("5_lvqoe")
+
+[node name="Look" type="TextureButton" parent="PanelContainer/MarginContainer/HBoxContainer/SierraCommandsContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_irg4s")
+texture_pressed = SubResource("AtlasTexture_sijr3")
+texture_hover = SubResource("AtlasTexture_msotb")
+script = ExtResource("5_lvqoe")
+command = 1
+
+[node name="Interact" type="TextureButton" parent="PanelContainer/MarginContainer/HBoxContainer/SierraCommandsContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_u5ilp")
+texture_pressed = SubResource("AtlasTexture_nkumn")
+texture_hover = SubResource("AtlasTexture_ddbjm")
+script = ExtResource("5_lvqoe")
+command = 2
+
+[node name="Talk" type="TextureButton" parent="PanelContainer/MarginContainer/HBoxContainer/SierraCommandsContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+toggle_mode = true
+texture_normal = SubResource("AtlasTexture_r0y6q")
+texture_pressed = SubResource("AtlasTexture_yyrpv")
+texture_hover = SubResource("AtlasTexture_m2m36")
+script = ExtResource("5_lvqoe")
+command = 3
+
+[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+texture_filter = 1
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_a3v2b")
+
+[node name="Inventory" type="TextureButton" parent="PanelContainer/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_uvguw")
+texture_pressed = SubResource("AtlasTexture_mdjye")
+texture_hover = SubResource("AtlasTexture_odwa6")
+
+[node name="Settings" type="TextureButton" parent="PanelContainer/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_wy7fm")
+texture_pressed = SubResource("AtlasTexture_eccvv")
+texture_hover = SubResource("AtlasTexture_0ahol")
+
+[node name="Help" type="TextureButton" parent="PanelContainer/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("11_yo0cc")
+
+[node name="Quit" type="TextureButton" parent="PanelContainer/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = SubResource("AtlasTexture_f8jt5")
+texture_pressed = SubResource("AtlasTexture_c0o1t")
+texture_hover = SubResource("AtlasTexture_hs767")

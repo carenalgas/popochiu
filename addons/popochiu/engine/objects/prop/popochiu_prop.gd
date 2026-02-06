@@ -122,10 +122,10 @@ func _ready() -> void:
 
 
 func _notification(event: int) -> void:
-	if _navigation_obstacle == null:
-		return
-
 	if event == NOTIFICATION_EDITOR_PRE_SAVE:
+		if not is_instance_valid(_navigation_obstacle):
+			return
+		
 		obstacle_polygon = _navigation_obstacle.vertices
 		obstacle_polygon_position = _navigation_obstacle.position
 

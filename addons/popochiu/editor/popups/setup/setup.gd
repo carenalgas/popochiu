@@ -22,20 +22,20 @@ enum GameResolutionScale {
 }
 
 enum GameResolution {
-	# --- Separator = 0 ---
-	RETRO_NEO_RETRO = 1,
-	# --- Separator = 2 ---
-	RETRO_VGA_4_3 = 3,
-	RETRO_VGA_16_9 = 4,
-	# --- Separator = 5 ---
-	RETRO_CEGA_4_3 = 6,
-	RETRO_CEGA_16_9 = 7,
+	# --- Separator = 991 ---
+	RETRO_NEO_RETRO = 0,
+	# --- Separator = 992 ---
+	RETRO_VGA_4_3 = 1,
+	RETRO_VGA_16_9 = 2,
+	# --- Separator = 993 ---
+	RETRO_CEGA_4_3 = 3,
+	RETRO_CEGA_16_9 = 4,
 	# --- Modern / Hi-Res has no separatos ---
-	MODERN_4K = 8,
-	MODERN_QHD = 9,
-	MODERN_FHD = 10,
-	MODERN_HDR = 11,
-	MODERN_RETRO = 12,
+	MODERN_4K = 5,
+	MODERN_QHD = 6,
+	MODERN_FHD = 7,
+	MODERN_HDR = 8,
+	MODERN_RETRO = 9,
 }
 
 enum CustomResRatio {
@@ -59,7 +59,7 @@ const PopochiuResources = preload("res://addons/popochiu/popochiu_resources.gd")
 const PopochiuConfig = preload("res://addons/popochiu/editor/config/config.gd")
 
 
-# ---- Game configuration section ----------------------------------------------
+# ---- Game configuration section ------------------------------------------------------------------
 var _current_mode: SetupMode = SetupMode.WIZARD
 var _game_type: GameType
 var _game_resolution: Vector2i
@@ -85,15 +85,15 @@ var _es: EditorSettings = EditorInterface.get_editor_settings()
 # its text based on setup state.
 var _dialog_ok_button: Button = null
 
-# ---- General items -----------------------------------------------------------
+# ---- General items -------------------------------------------------------------------------------
 @onready var wizard_steps: TabContainer = %WizardSteps
-# -------- Main Areas Containers -----------------------------------------------
+# -------- Main Areas Containers -------------------------------------------------------------------
 @onready var wizard_container: PanelContainer = %WizardContainer
 @onready var custom_container: PanelContainer = %CustomContainer
-# -------- Separators ----------------------------------------------------------
+# -------- Separators ------------------------------------------------------------------------------
 @onready var nav_separator: HSeparator = %NavSeparator
 @onready var resolution_separator: HSeparator = %ResolutionSeparator
-# -------- Navigation Area -----------------------------------------------------
+# -------- Navigation Area -------------------------------------------------------------------------
 @onready var btn_prev: Button = %BtnPrev
 @onready var btn_next: Button = %BtnNext
 @onready var btn_custom: LinkButton = %BtnCustom
@@ -101,15 +101,15 @@ var _dialog_ok_button: Button = null
 @onready var filler_prev: Panel = %FillerPrev
 @onready var filler_next: Panel = %FillerNext
 @onready var lbl_step: Label = %LabelStep
-# ---- Items that need styling -------------------------------------------------
+# ---- Items that need styling ---------------------------------------------------------------------
 @onready var lbl_cta_type: Label = %LblCTAType
 @onready var lbl_cta_res: Label = %LblCTARes
 @onready var lbl_cta_preview_scale: Label = %LblCTAPreviewScale
 @onready var lbl_cta_gui: Label = %LblCTAUI
-# ---- Game Type Step ----------------------------------------------------------
-@onready var btn_gametype_retro: Button = %BtnTypeRetro
-@onready var btn_gametype_modern: Button = %BtnTypeModern
-# ---- Resolution Step ---------------------------------------------------------
+# ---- Game Type Step ------------------------------------------------------------------------------
+@onready var btn_type_retro: Button = %BtnTypeRetro
+@onready var btn_type_modern: Button = %BtnTypeModern
+# ---- Resolution Step -----------------------------------------------------------------------------
 @onready var opt_res_retro: OptionButton = %OptResRetro
 @onready var opt_res_modern: OptionButton = %OptResModern
 @onready var opt_res_preview_scale: OptionButton = %OptPreviewScale
@@ -118,13 +118,15 @@ var _dialog_ok_button: Button = null
 @onready var opt_res_preview_scale_cont: MarginContainer = %OptPreviewScaleContainer
 @onready var tooltip_res: PanelContainer = %TooltipRes
 @onready var tooltip_res_text: RichTextLabel = %TooltipResText
-# ---- GUI selection step ------------------------------------------------------
-@onready var gui_grid: GridContainer = %BtnGrid
-@onready var btn_gui_type_template: Button = %BtnGUIType
+# ---- GUI selection step --------------------------------------------------------------------------
+@onready var gui_grid: GridContainer = %GUIGrid
+@onready var btn_gui_type_template: Button = %BtnGUITypeTemplate
 @onready var tooltip_gui: PanelContainer = %TooltipGUI
 @onready var tooltip_gui_text: RichTextLabel = %TooltipGUIText
-# ---- Custom section ----------------------------------------------------------
+# ---- Custom section ------------------------------------------------------------------------------
 @onready var opt_game_ui: OptionButton = %OptGameUI
+@onready var tooltip_type: PanelContainer = %TooltipType
+@onready var tooltip_no_gui: PanelContainer = %TooltipNoGUI
 @onready var tooltip_no_gui_text: RichTextLabel = %TooltipNoGUIText
 @onready var tooltip_custom_gui_text: RichTextLabel = %TooltipCustomGUIText
 @onready var opt_game_type: OptionButton = %OptGameType
@@ -133,36 +135,29 @@ var _dialog_ok_button: Button = null
 @onready var preview_width: SpinBox = %PreviewWidth
 @onready var preview_height: SpinBox = %PreviewHeight
 @onready var opt_keep_ratio: OptionButton = %OptKeepRatio
-# -------- Underfield Labels ---------------------------------------------------
+# -------- Underfield Labels -----------------------------------------------------------------------
 @onready var lbl_width: Label = %LblWidth
 @onready var lbl_height: Label = %LblHeight
 @onready var lbl_ratio: Label = %LblRatio
 @onready var lbl_preview_width: Label = %LblPreviewWidth
 @onready var lbl_preview_height: Label = %LblPreviewHeight
-# ---- ButtonGroups -------------------------------------------------------------
-@onready var game_type_button_group: ButtonGroup = btn_gametype_retro.button_group
+# ---- ButtonGroups --------------------------------------------------------------------------------
+@onready var game_type_button_group: ButtonGroup = btn_type_retro.button_group
 @onready var gui_button_group: ButtonGroup = btn_gui_type_template.button_group
-# ---- CopyProcess Elements -----------------------------------------------------
+# ---- CopyProcess Elements ------------------------------------------------------------------------
 @onready var copy_process_container: PanelContainer = %CopyProcessContainer
+@onready var tooltip_process: PanelContainer = %TooltipProcess
 @onready var copy_process_label: Label = %CopyProcessLabel
 @onready var copy_process_bar: ProgressBar = %CopyProcessBar
 
 
-#region Godot #################################################################
+#region Godot ######################################################################################
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	# Select the first tab
 	wizard_steps.set_current_tab(0)
-
-	# Apply some base styling and properties
-	_style_navigation_buttons()
-	_style_tooltips()
-	_style_selection_buttons()
-	_style_separators()
-	_style_underfield_labels()
-	_style_progress_container()
-
+	
 	# Connect navigation buttons
 	btn_prev.pressed.connect(_on_prev_pressed)
 	btn_next.pressed.connect(_on_next_pressed)
@@ -176,12 +171,12 @@ func _ready() -> void:
 	btn_next.visibility_changed.connect(_on_next_visibility_changed)
 
 	# Connect game type buttons to handle all game type changes
-	btn_gametype_retro.pressed.connect(_on_game_type_changed)
-	btn_gametype_modern.pressed.connect(_on_game_type_changed)
+	btn_type_retro.pressed.connect(_on_game_type_changed)
+	btn_type_modern.pressed.connect(_on_game_type_changed)
 
 	# Connect validation signals for Step 1 (Game Type)
-	btn_gametype_retro.pressed.connect(_update_navigation)
-	btn_gametype_modern.pressed.connect(_update_navigation)
+	btn_type_retro.pressed.connect(_update_navigation)
+	btn_type_modern.pressed.connect(_update_navigation)
 
 	# Connect validation signals for Step 2 (Resolution)
 	opt_res_retro.item_selected.connect(_on_resolution_option_changed)
@@ -200,10 +195,22 @@ func _ready() -> void:
 	preview_height.value_changed.connect(_on_preview_height_changed)
 	
 	# Also connect to focus_exited to catch manual text input changes
-	custom_width.get_line_edit().focus_exited.connect(func(): _on_custom_width_changed(custom_width.value))
-	custom_height.get_line_edit().focus_exited.connect(func(): _on_custom_height_changed(custom_height.value))
-	preview_width.get_line_edit().focus_exited.connect(func(): _on_preview_width_changed(preview_width.value))
-	preview_height.get_line_edit().focus_exited.connect(func(): _on_preview_height_changed(preview_height.value))
+	custom_width.get_line_edit().focus_exited.connect(
+		func():
+			_on_custom_width_changed(custom_width.value)
+	)
+	custom_height.get_line_edit().focus_exited.connect(
+		func():
+			_on_custom_height_changed(custom_height.value)
+	)
+	preview_width.get_line_edit().focus_exited.connect(
+		func():
+			_on_preview_width_changed(preview_width.value)
+	)
+	preview_height.get_line_edit().focus_exited.connect(
+		func():
+			_on_preview_height_changed(preview_height.value)
+	)
 
 	# Connect custom mode validation signals
 	opt_game_type.item_selected.connect(_on_custom_field_changed)
@@ -230,7 +237,7 @@ func _ready() -> void:
 
 #endregion
 
-#region Public ################################################################
+#region Public #####################################################################################
 # Invoked right before the pupup opens.
 # We are using this to apply styling and colors to the setup window elements.
 # Doing it before popping up ensures that if the user changes editor theme,
@@ -240,6 +247,18 @@ func on_about_to_popup() -> void:
 	_is_closing = false
 	_template_change_confirmed = false
 	_copy_in_progress = false
+	
+	# Apply some base styling and properties. This must be done here because being a @tool script,
+	# doing it in the _ready() function results in control styles being modified every time the scene
+	# is opened in the Editor. Until we find an elegant way to determine if the scene is being edited
+	# or is an instance created by pressing the Setup button, styling will be applied before showing
+	# the popup.
+	_style_navigation_buttons()
+	_style_tooltips()
+	_style_selection_buttons()
+	_style_separators()
+	_style_underfield_labels()
+	_style_progress_container()
 
 	# Set the text of the confirmation dialog depending on the setup state.
 	# Get reference to the dialog's OK button if we're inside a ConfirmationDialog.
@@ -258,47 +277,19 @@ func on_about_to_popup() -> void:
 func on_close() -> void:
 	if _is_closing:
 		return
-
+	_is_closing = true
+	
 	# Clean up any open confirmation dialogs
 	_cleanup_pending_dialogs()
-
-	_is_closing = true
-
+	
 	# Save the current mode for next time
 	PopochiuResources.set_data_value("setup", "last_mode", _current_mode)
-
-	# Calculate resolution values based on current mode
-	var resolution_values: Dictionary = _get_values_for_current_mode()
-
-	# Set project settings for game and window resolution
-	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, resolution_values.game_width)
-	ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, resolution_values.game_height)
-	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, resolution_values.test_width)
-	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, resolution_values.test_height)
-
-	# Configure stretch mode and pixel art settings based on game type
-	match resolution_values.game_type_config:
-		GameType.MODERN:
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
-			PopochiuConfig.set_pixel_art_textures(false)
-		GameType.RETRO:
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
-			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
-			PopochiuConfig.set_pixel_art_textures(true)
-
-	# Handle GUI template copying based on setup state and user choices
-	await _handle_gui_template_copying(resolution_values.gui_template_name)
-
-	# Make sure to syncronize buttons and dropdown
-	_set_template_selected_in_ui(_current_template_name)
 
 
 func define_content() -> void:
 	# Get current template for change detection
 	_current_template_name = PopochiuResources.get_data_value("ui", "template", "")
 	_selected_template_name = _current_template_name
-
 
 	# Restore last used mode if setup was done before, otherwise default to wizard
 	_current_mode = PopochiuResources.get_data_value("setup", "last_mode", SetupMode.WIZARD)
@@ -342,9 +333,47 @@ func define_content() -> void:
 	_select_current_template()
 
 
+func on_confirm() -> void:
+	if _is_closing:
+		return
+	_is_closing = true
+	
+	# Clean up any open confirmation dialogs
+	_cleanup_pending_dialogs()
+	
+	# Save the current mode for next time
+	PopochiuResources.set_data_value("setup", "last_mode", _current_mode)
+
+	# Calculate resolution values based on current mode
+	var resolution_values: Dictionary = _get_values_for_current_mode()
+
+	# Set project settings for game and window resolution
+	ProjectSettings.set_setting(PopochiuResources.DISPLAY_WIDTH, resolution_values.game_width)
+	ProjectSettings.set_setting(PopochiuResources.DISPLAY_HEIGHT, resolution_values.game_height)
+	ProjectSettings.set_setting(PopochiuResources.TEST_WIDTH, resolution_values.test_width)
+	ProjectSettings.set_setting(PopochiuResources.TEST_HEIGHT, resolution_values.test_height)
+
+	# Configure stretch mode and pixel art settings based on game type
+	match resolution_values.game_type_config:
+		GameType.MODERN:
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "expand")
+			PopochiuConfig.set_pixel_art_textures(false)
+		GameType.RETRO:
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_MODE, "canvas_items")
+			ProjectSettings.set_setting(PopochiuResources.STRETCH_ASPECT, "keep")
+			PopochiuConfig.set_pixel_art_textures(true)
+
+	# Handle GUI template copying based on setup state and user choices
+	await _handle_gui_template_copying(resolution_values.gui_template_name)
+
+	# Make sure to syncronize buttons and dropdown
+	_set_template_selected_in_ui(_current_template_name)
+
+
 #endregion
 
-#region Private ###################################################################################
+#region Private ####################################################################################
 # Populate fields with current project settings
 func _restore_from_settings() -> void:
 	# Get current project settings
@@ -360,8 +389,12 @@ func _restore_from_settings() -> void:
 	preview_height.value = test_height
 
 	# Determine game type from stretch settings
-	var stretch_mode: String = ProjectSettings.get_setting(PopochiuResources.STRETCH_MODE, "disabled")
-	var stretch_aspect: String = ProjectSettings.get_setting(PopochiuResources.STRETCH_ASPECT, "ignore")
+	var stretch_mode: String = ProjectSettings.get_setting(
+		PopochiuResources.STRETCH_MODE, "disabled"
+	)
+	var stretch_aspect: String = ProjectSettings.get_setting(
+		PopochiuResources.STRETCH_ASPECT, "ignore"
+	)
 	var is_pixel_art: bool = PopochiuConfig.is_pixel_art_textures()
 
 	# Set custom game type
@@ -375,17 +408,19 @@ func _restore_from_settings() -> void:
 
 	# Set wizard selections based on current settings (only for existing games)
 	if PopochiuResources.is_setup_done():
-		_populate_wizard_from_settings(Vector2i(game_width, game_height), Vector2i(test_width, test_height), is_pixel_art)
+		_populate_wizard_from_settings(
+			Vector2i(game_width, game_height), Vector2i(test_width, test_height), is_pixel_art
+		)
 
 
 # Set wizard selections from current project settings
 func _populate_wizard_from_settings(game_res: Vector2i, test_res: Vector2i, is_pixel: bool) -> void:
 	# Determine game type
 	if is_pixel:
-		btn_gametype_retro.button_pressed = true
+		btn_type_retro.button_pressed = true
 		_game_type = GameType.RETRO
 	else:
-		btn_gametype_modern.button_pressed = true
+		btn_type_modern.button_pressed = true
 		_game_type = GameType.MODERN
 
 	# Update resolution options to show the correct dropdown
@@ -412,34 +447,40 @@ func _populate_wizard_from_settings(game_res: Vector2i, test_res: Vector2i, is_p
 
 # Find and set the closest resolution option
 func _find_and_set_resolution_options(game_res: Vector2i, is_pixel: bool) -> void:
+	var target_id: GameResolution = GameResolution.RETRO_NEO_RETRO
+	
 	if is_pixel:
 		# Try to find matching retro resolution
-		if game_res == Vector2i(384, 216):
-			opt_res_retro.selected = GameResolution.RETRO_NEO_RETRO
-		elif game_res == Vector2i(320, 200):
-			opt_res_retro.selected = GameResolution.RETRO_VGA_4_3
-		elif game_res == Vector2i(356, 200):
-			opt_res_retro.selected = GameResolution.RETRO_VGA_16_9
-		elif game_res == Vector2i(240, 180):
-			opt_res_retro.selected = GameResolution.RETRO_CEGA_4_3
-		elif game_res == Vector2i(320, 180):
-			opt_res_retro.selected = GameResolution.RETRO_CEGA_16_9
-		else:
-			opt_res_retro.selected = GameResolution.RETRO_VGA_16_9 # Default
+		match game_res:
+			Vector2i(384, 216):
+				target_id = GameResolution.RETRO_NEO_RETRO
+			Vector2i(320, 200):
+				target_id = GameResolution.RETRO_VGA_4_3
+			Vector2i(356, 200):
+				target_id = GameResolution.RETRO_VGA_16_9
+			Vector2i(240, 180):
+				target_id = GameResolution.RETRO_CEGA_4_3
+			Vector2i(320, 180):
+				target_id = GameResolution.RETRO_CEGA_16_9
+			_:
+				target_id = GameResolution.RETRO_VGA_16_9 # Default for Low-res
+		opt_res_retro.selected = opt_res_retro.get_item_index(target_id)
 	else:
 		# Try to find matching modern resolution
-		if game_res == Vector2i(3840, 2160):
-			opt_res_modern.selected = GameResolution.MODERN_4K
-		elif game_res == Vector2i(2560, 1440):
-			opt_res_modern.selected = GameResolution.MODERN_QHD
-		elif game_res == Vector2i(1920, 1080):
-			opt_res_modern.selected = GameResolution.MODERN_FHD
-		elif game_res == Vector2i(1280, 720):
-			opt_res_modern.selected = GameResolution.MODERN_HDR
-		elif game_res == Vector2i(1024, 768):
-			opt_res_modern.selected = GameResolution.MODERN_RETRO
-		else:
-			opt_res_modern.selected = GameResolution.MODERN_FHD # Default
+		match game_res:
+			Vector2i(3840, 2160):
+				target_id = GameResolution.MODERN_4K
+			Vector2i(2560, 1440):
+				target_id = GameResolution.MODERN_QHD
+			Vector2i(1920, 1080):
+				target_id = GameResolution.MODERN_FHD
+			Vector2i(1280, 720):
+				target_id = GameResolution.MODERN_HDR
+			Vector2i(1024, 768):
+				target_id = GameResolution.MODERN_RETRO
+			_:
+				target_id = GameResolution.MODERN_FHD # Default for High-res
+		opt_res_modern.selected = opt_res_modern.get_item_index(target_id)
 
 
 # Select current template in both wizard and custom modes
@@ -459,8 +500,10 @@ func _select_current_template() -> void:
 func _show_gui_warning() -> void:
 	var warning_dialog: AcceptDialog = AcceptDialog.new()
 	warning_dialog.title = "GUI template warning"
-	warning_dialog.dialog_text = "The GUI scene (gui.tscn) is currently opened in the Editor.\n\n" + \
+	warning_dialog.dialog_text = (
+		"The GUI scene (gui.tscn) is currently opened in the Editor.\n\n" + \
 		"In order to change the GUI template please close that scene first."
+	)
 	warning_dialog.dialog_autowrap = true
 	warning_dialog.min_size.x = size.x - 64
 
@@ -480,7 +523,11 @@ func _show_gui_warning() -> void:
 func _show_template_change_confirmation(new_template_name: String) -> void:
 	var confirmation_dialog: ConfirmationDialog = ConfirmationDialog.new()
 	confirmation_dialog.title = "Confirm GUI template change"
-	confirmation_dialog.dialog_text = "Changing your GUI template will override any changes you made to the files in res://game/gui/.\nAlso, your game scripts may need to be updated.\n\nAre you sure you want to make the change?"
+	confirmation_dialog.dialog_text = (
+		"Changing your GUI template will override any changes you made to the files in"
+		+ " res://game/gui/.\nAlso, your game scripts may need to be updated.\n\nAre you sure you"
+		+ " want to make the change?"
+	)
 	confirmation_dialog.dialog_autowrap = true
 	confirmation_dialog.min_size.x = size.x - 64
 
@@ -489,6 +536,7 @@ func _show_template_change_confirmation(new_template_name: String) -> void:
 			_template_change_confirmed = true
 			_selected_template_name = new_template_name
 			_cleanup_confirmation_dialog(confirmation_dialog)
+			_update_wizard_gui_tooltip()
 	)
 
 	confirmation_dialog.canceled.connect(
@@ -496,6 +544,7 @@ func _show_template_change_confirmation(new_template_name: String) -> void:
 			# Revert UI selections to current template
 			_revert_template_selection()
 			_cleanup_confirmation_dialog(confirmation_dialog)
+			_update_wizard_gui_tooltip()
 	)
 
 	# Also handle if dialog is closed via X button or Escape
@@ -503,6 +552,7 @@ func _show_template_change_confirmation(new_template_name: String) -> void:
 		func():
 			_revert_template_selection()
 			_cleanup_confirmation_dialog(confirmation_dialog)
+			_update_wizard_gui_tooltip()
 	)
 
 	add_child(confirmation_dialog)
@@ -540,10 +590,12 @@ func _revert_template_selection() -> void:
 # Set template selection in both wizard and custom UI modes
 func _set_template_selected_in_ui(template_name: String) -> void:
 	# Set wizard GUI buttons
-	for child in gui_grid.get_children():
+	for child: Button in gui_grid.get_children():
 		if child.has_meta("template_button"):
 			var button_template_name: String = _get_button_template_name(child)
 			child.set_pressed_no_signal(button_template_name == template_name)
+		if child.has_focus():
+			child.release_focus()
 
 	# Set custom dropdown
 	for i in range(opt_game_ui.item_count):
@@ -631,7 +683,9 @@ func _update_navigation() -> void:
 
 
 # Generic function to update the sibling SpinBox maintaining aspect ratio
-func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int) -> void:
+func _update_aspect_ratio_sibling(
+	source_spinbox: SpinBox, target_spinbox: SpinBox, new_value: float, source_dimension: int
+) -> void:
 	var ratio: float = _get_custom_resolution_ratio()
 	if ratio == 0.0:
 		return # Free ratio, no enforcement
@@ -668,10 +722,10 @@ func _update_aspect_ratio_sibling(source_spinbox: SpinBox, target_spinbox: SpinB
 
 func _update_resolution_options() -> void:
 	# Check which game type button is pressed (they are mutually exclusive)
-	if btn_gametype_retro.button_pressed:
+	if btn_type_retro.button_pressed:
 		opt_res_retro_cont.show()
 		opt_res_modern_cont.hide()
-	elif btn_gametype_modern.button_pressed:
+	elif btn_type_modern.button_pressed:
 		opt_res_retro_cont.hide()
 		opt_res_modern_cont.show()
 	else:
@@ -708,7 +762,7 @@ func _set_wizard_game_resolution() -> void:
 
 	match _game_type:
 		GameType.RETRO:
-			match opt_res_retro.selected:
+			match opt_res_retro.get_item_id(opt_res_retro.selected):
 				GameResolution.RETRO_NEO_RETRO:
 					_game_resolution = Vector2(384, 216)
 				GameResolution.RETRO_VGA_4_3:
@@ -719,6 +773,8 @@ func _set_wizard_game_resolution() -> void:
 					_game_resolution = Vector2(240, 180)
 				GameResolution.RETRO_CEGA_16_9:
 					_game_resolution = Vector2(320, 180)
+				_:
+					_game_resolution = Vector2(356, 200)
 		GameType.MODERN:
 			match opt_res_modern.selected:
 				GameResolution.MODERN_4K:
@@ -731,6 +787,8 @@ func _set_wizard_game_resolution() -> void:
 					_game_resolution = Vector2(1280, 720)
 				GameResolution.MODERN_RETRO:
 					_game_resolution = Vector2(1024, 768)
+				_:
+					_game_resolution = Vector2(1920, 1080)
 
 
 func _set_wizard_window_resolution() -> void:
@@ -851,7 +909,8 @@ func _populate_wizard_gui_buttons() -> void:
 		# Store template data in the button for later access
 		template_button.set_meta("template_data", template) # Store full template dictionary
 		template_button.set_meta("template_button", true)
-		template_button.set_meta("template_info", template.info_resource) # Keep for tooltip compatibility
+		# Keep for tooltip compatibility
+		template_button.set_meta("template_info", template.info_resource)
 		template_button.button_group = gui_button_group
 		template_button.pressed.connect(_on_wizard_gui_selected.bind(template_button))
 
@@ -893,7 +952,7 @@ func _populate_custom_gui_dropdown() -> void:
 
 #endregion
 
-#region Private / Setup Logic ####################################################################
+#region Private / Setup Logic ######################################################################
 
 # Extract appropriate values based on current mode (wizard vs custom)
 func _get_values_for_current_mode() -> Dictionary:
@@ -965,7 +1024,6 @@ func _get_template_name_from_data(template_data) -> String:
 	# template_data should be the template dictionary with the path
 	if template_data and template_data.has("path"):
 		return _get_template_name_from_path(template_data.path)
-
 	return ""
 
 
@@ -1100,7 +1158,7 @@ func _template_copy_completed() -> void:
 
 #endregion
 
-#region Private / Validation logic ################################################################
+#region Private / Validation logic #################################################################
 # Validate the current step based on the active tab
 func _validate_wizard_current_step() -> bool:
 	match wizard_steps.current_tab:
@@ -1127,9 +1185,9 @@ func _validate_wizard_step_resolution() -> bool:
 		return false
 
 	# Must have the appropriate resolution option selected based on game type
-	if btn_gametype_retro.button_pressed:
+	if btn_type_retro.button_pressed:
 		return opt_res_retro.selected != -1
-	elif btn_gametype_modern.button_pressed:
+	elif btn_type_modern.button_pressed:
 		return opt_res_modern.selected != -1
 	else:
 		# No game type selected (shouldn't happen if step 1 validation worked)
@@ -1144,7 +1202,11 @@ func _validate_wizard_step_gui() -> bool:
 
 # Validate if the entire wizard is complete (all steps valid)
 func _validate_wizard_complete() -> bool:
-	return _validate_wizard_step_type() and _validate_wizard_step_resolution() and _validate_wizard_step_gui()
+	return (
+		_validate_wizard_step_type()
+		and _validate_wizard_step_resolution()
+		and _validate_wizard_step_gui()
+	)
 
 
 # Validate custom mode fields
@@ -1166,7 +1228,7 @@ func _validate_custom_complete() -> bool:
 
 #endregion
 
-#region Private / Styling #########################################################################
+#region Private / Styling ##########################################################################
 func _style_separators() -> void:
 	# This will hold the various stylebox while we go through the elements.
 	var separators_stylebox: StyleBoxLine = StyleBoxLine.new()
@@ -1179,73 +1241,50 @@ func _style_separators() -> void:
 
 func _style_underfield_labels() -> void:
 	for label in [lbl_width, lbl_height, lbl_ratio, lbl_preview_width, lbl_preview_height]:
-		label.add_theme_font_size_override("font_size", int(get_theme_font_size("main_size", "EditorFonts") * 0.85))
+		label.add_theme_font_size_override(
+			"font_size", int(get_theme_font_size("main_size", "EditorFonts") * 0.85)
+		)
 
 
 func _style_tooltips() -> void:
-	# This will hold the various stylebox while we go through the elements.
-	var existing_style: StyleBox
-
-	# Make sure the tooltips have the correct background and font size.
-	# Get the existing stylebox and modify its background color
-	existing_style = tooltip_gui.get_theme_stylebox("panel")
-	if existing_style is StyleBoxFlat:
-		existing_style.bg_color = get_theme_color("dark_color_1", "Editor")
-
+	var panel_style: StyleBoxFlat = ThemeDB.get_default_theme().get_stylebox(
+		"panel", &"PanelContainer"
+	).duplicate(true)
+	panel_style.set_corner_radius_all(8)
+	panel_style.set_expand_margin_all(8)
+	
+	for tooltip_panel: PanelContainer in [
+		tooltip_type, tooltip_no_gui, tooltip_process, tooltip_res, tooltip_gui
+	]:
+		tooltip_panel.add_theme_stylebox_override(&"panel", panel_style)
+	
 	# Make the tooltip text font smaller than the editor base font
 	var smaller_font_size = int(get_theme_font_size("main_size", "EditorFonts") * 0.85)
+	
 	# Apply the smaller size to the resolution and GUI tooltips
-	for tooltip in [tooltip_res_text, tooltip_gui_text]:
-		tooltip.add_theme_font_size_override("normal_font_size", smaller_font_size)
-		tooltip.add_theme_font_size_override("bold_font_size", smaller_font_size)
-		tooltip.add_theme_font_size_override("italic_font_size", smaller_font_size)
-		tooltip.add_theme_font_size_override("bold_italics_font_size", smaller_font_size)
-		tooltip.add_theme_font_size_override("mono_font_size", smaller_font_size)
+	for tooltip_rtl: RichTextLabel in [tooltip_res_text, tooltip_gui_text]:
+		tooltip_rtl.add_theme_font_size_override("normal_font_size", smaller_font_size)
+		tooltip_rtl.add_theme_font_size_override("bold_font_size", smaller_font_size)
+		tooltip_rtl.add_theme_font_size_override("italic_font_size", smaller_font_size)
+		tooltip_rtl.add_theme_font_size_override("bold_italics_font_size", smaller_font_size)
+		tooltip_rtl.add_theme_font_size_override("mono_font_size", smaller_font_size)
 
 
 func _style_selection_buttons() -> void:
-	# This will hold the various stylebox while we go through the elements.
-	var existing_style: StyleBox
-
-	# Style all buttons
-	existing_style = btn_gametype_modern.get_theme_stylebox("normal")
-	if not existing_style is StyleBoxFlat:
-		return
-
-	var btn_base_style: StyleBoxFlat = existing_style.duplicate(true) as StyleBoxFlat
-
-	# Set corner radius for both background and border
-	btn_base_style.corner_radius_top_left = 12
-	btn_base_style.corner_radius_top_right = 12
-	btn_base_style.corner_radius_bottom_left = 12
-	btn_base_style.corner_radius_bottom_right = 12
-
-	# Or add content margin to the StyleBox for overall padding
-	btn_base_style.content_margin_left = 6
-	btn_base_style.content_margin_right = 6
-	btn_base_style.content_margin_top = 6
-	btn_base_style.content_margin_bottom = 6
-
-	btn_base_style.corner_detail = 8
-
-	var btn_bg_color: Color = get_theme_color("highlight_color", "Editor")
-
-	var btn_normal_style: StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
-	btn_normal_style.bg_color = btn_bg_color.darkened(0.5)
-
-	var btn_hover_style: StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
-	btn_hover_style.bg_color = btn_bg_color
-
-	var btn_pressed_style: StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
-	btn_pressed_style.bg_color = btn_bg_color.darkened(0.25)
-
-	# Create focus style (this is what creates the selection border)
-	var btn_focus_style: StyleBoxFlat = btn_base_style.duplicate(true) as StyleBoxFlat
-	btn_focus_style.bg_color = btn_bg_color.darkened(0.5)
-	btn_focus_style.border_color = get_theme_color("selection_color", "Editor")
-	btn_focus_style.set_border_width_all(2)
-
-	for button in [btn_gametype_retro, btn_gametype_modern, btn_gui_type_template]:
+	# Determine if the editor is using a Light or Dark color
+	var editor_base_color: Color = EditorInterface.get_editor_settings().get_setting(
+		"interface/theme/base_color"
+	)
+	var is_light := editor_base_color.get_luminance() > 0.5
+	
+	# Modify Godot's styles for buttons
+	var btn_normal_style: StyleBoxFlat = _style_btn_corner_and_content_margin("normal")
+	var btn_hover_style: StyleBoxFlat = _style_btn_corner_and_content_margin("hover")
+	var btn_pressed_style: StyleBoxFlat = _style_btn_corner_and_content_margin("pressed")
+	var btn_focus_style: StyleBoxFlat = _style_btn_corner_and_content_margin("focus")
+	
+	# Set the style for each state of the buttons
+	for button: Button in ([btn_type_retro, btn_type_modern] + gui_grid.get_children()):
 		# Normal state
 		button.add_theme_stylebox_override("normal", btn_normal_style)
 		# Hover state
@@ -1254,23 +1293,49 @@ func _style_selection_buttons() -> void:
 		button.add_theme_stylebox_override("pressed", btn_pressed_style)
 		# Focus state (selection border)
 		button.add_theme_stylebox_override("focus", btn_focus_style)
-		# Set color overrides
-		button.add_theme_color_override("font_color", get_theme_color("accent_color", "Editor").lightened(0.7))
-		button.add_theme_color_override("icon_normal_color", get_theme_color("accent_color", "Editor").lightened(0.7))
-		button.add_theme_color_override("font_pressed_color", Color.WHITE)
-		button.add_theme_color_override("icon_pressed_color", Color.WHITE)
+		
+		if is_light:
+			# Set color overrides when the Editor is using a Light theme so the icons are easy to see
+			button.add_theme_color_override(
+				"icon_normal_color", get_theme_color("font_color", "Button")
+			)
+			button.add_theme_color_override(
+				"icon_hover_color", get_theme_color("font_hover_color", "Button")
+			)
+			button.add_theme_color_override(
+				"icon_pressed_color", get_theme_color("font_pressed_color", "Button")
+			)
+			button.add_theme_color_override(
+				"icon_hover_pressed_color", get_theme_color("font_hover_pressed_color", "Button")
+			)
+			button.add_theme_color_override(
+				"icon_focus_color", get_theme_color("font_focus_color", "Button")
+			)
+
+
+func _style_btn_corner_and_content_margin(state_name: String) -> StyleBoxFlat:
+	var style_box_flat: StyleBoxFlat = get_theme_stylebox(state_name, "Button").duplicate(true)
+	
+	# Set corner radius for both background and border
+	style_box_flat.corner_radius_top_left = 12
+	style_box_flat.corner_radius_top_right = 12
+	style_box_flat.corner_radius_bottom_left = 12
+	style_box_flat.corner_radius_bottom_right = 12
+	style_box_flat.corner_detail = 8
+	
+	# Or add content margin to the StyleBox for overall padding
+	style_box_flat.content_margin_left = 6
+	style_box_flat.content_margin_right = 6
+	style_box_flat.content_margin_top = 6
+	style_box_flat.content_margin_bottom = 6
+	
+	return style_box_flat
 
 
 func _style_navigation_buttons() -> void:
 	# Assign icons to navigation buttons
 	btn_prev.icon = get_theme_icon("PagePrevious", "EditorIcons")
 	btn_next.icon = get_theme_icon("PageNext", "EditorIcons")
-
-	var accent_color: Color = get_theme_color("accent_color", "Editor")
-	for button in [btn_custom, btn_wizard]:
-		button.add_theme_color_override("font_color", accent_color)
-		button.add_theme_color_override("font_hover_color", accent_color.lightened(0.3))
-		button.add_theme_color_override("font_pressed_color", accent_color.lightened(0.6))
 
 
 func _style_progress_container() -> void:
@@ -1279,7 +1344,9 @@ func _style_progress_container() -> void:
 
 	# Style the progress label
 	copy_process_label.add_theme_font_size_override("font_size", base_font_size)
-	copy_process_label.add_theme_color_override("font_color", get_theme_color("font_color", "Editor"))
+	copy_process_label.add_theme_color_override(
+		"font_color", get_theme_color("font_color", "Editor")
+	)
 
 	# Style the progress bar
 	copy_process_bar.add_theme_color_override("font_color", get_theme_color("font_color", "Editor"))
@@ -1287,7 +1354,7 @@ func _style_progress_container() -> void:
 
 #endregion
 
-#region Signals handlers ######################################################
+#region Signals handlers ###########################################################################
 func _on_custom_game_ui_changed(index: int) -> void:
 	# Get template name from dropdown selection
 	var new_template_name: String = _get_dropdown_template_name(index)
@@ -1380,6 +1447,9 @@ func _on_wizard_gui_selected(btn: Button) -> void:
 	if new_template_name == _current_template_name:
 		# User reverted back to original - reset confirmation flag
 		_template_change_confirmed = false
+		
+		# Update tooltip
+		_update_wizard_gui_tooltip()
 		return
 
 	# Check if GUI scene is open
@@ -1421,24 +1491,30 @@ func _on_custom_ratio_changed(index: int) -> void:
 	# Check the index
 	if index < 2:  # Not free ratio
 		# Recalculate game resolution width based on height
-		_update_aspect_ratio_sibling(custom_height, custom_width, custom_height.value, HEIGHT_CHANGED)
+		_update_aspect_ratio_sibling(
+			custom_height, custom_width, custom_height.value, HEIGHT_CHANGED
+		)
 		# Recalculate preview resolution width based on height
-		_update_aspect_ratio_sibling(preview_height, preview_width, preview_height.value, HEIGHT_CHANGED)
+		_update_aspect_ratio_sibling(
+			preview_height, preview_width, preview_height.value, HEIGHT_CHANGED
+		)
 
 
 # Handle game type selection
 func _on_game_type_changed() -> void:
 	# Only update if a button is actually pressed
-	if btn_gametype_retro.button_pressed:
+	if btn_type_retro.button_pressed:
 		_game_type = GameType.RETRO
 		# Update resolution options and GUI buttons based on selected game type
 		_update_resolution_options()
 		_populate_wizard_gui_buttons()
-	elif btn_gametype_modern.button_pressed:
+		_select_current_template()
+	elif btn_type_modern.button_pressed:
 		_game_type = GameType.MODERN
 		# Update resolution options and GUI buttons based on selected game type
 		_update_resolution_options()
 		_populate_wizard_gui_buttons()
+		_select_current_template()
 	# If neither button is pressed, don't update anything
 
 

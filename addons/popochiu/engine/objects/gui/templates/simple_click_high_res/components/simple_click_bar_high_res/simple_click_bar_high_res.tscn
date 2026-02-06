@@ -1,0 +1,55 @@
+[gd_scene load_steps=7 format=3 uid="uid://c2hd63hqy3fqd"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_io13s"]
+[ext_resource type="Script" uid="uid://bb3qgcngq2xs7" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_bar/simple_click_bar.gd" id="2_pj1ip"]
+[ext_resource type="Texture2D" uid="uid://6u8n0wg2mkpb" path="res://addons/popochiu/engine/objects/gui/templates/simple_click_high_res/components/simple_click_bar_high_res/images/simple_click_settings_button_high_res.svg" id="3_lewa0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lxom0"]
+atlas = ExtResource("3_lewa0")
+region = Rect2(0, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l51nv"]
+atlas = ExtResource("3_lewa0")
+region = Rect2(0, 40, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3kcf8"]
+atlas = ExtResource("3_lewa0")
+region = Rect2(0, 40, 40, 40)
+
+[node name="SimpleClickBarHighRes" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_io13s")
+script = ExtResource("2_pj1ip")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+self_modulate = Color(1, 1, 1, 0.74902)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 120.0
+grow_horizontal = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="Box" type="HBoxContainer" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="SettingsBtn" type="TextureButton" parent="PanelContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 0)
+layout_mode = 2
+texture_normal = SubResource("AtlasTexture_lxom0")
+texture_pressed = SubResource("AtlasTexture_l51nv")
+texture_hover = SubResource("AtlasTexture_3kcf8")
+stretch_mode = 3

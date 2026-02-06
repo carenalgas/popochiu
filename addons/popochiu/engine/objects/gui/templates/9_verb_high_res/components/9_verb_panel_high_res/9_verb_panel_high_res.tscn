@@ -1,0 +1,187 @@
+[gd_scene load_steps=11 format=3 uid="uid://57pxdsat7ucc"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_xc4x6"]
+[ext_resource type="Script" uid="uid://b3hjsi3u2psyc" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_panel/9_verb_panel.gd" id="2_42nld"]
+[ext_resource type="PackedScene" uid="uid://bvdyamd6jb0yh" path="res://addons/popochiu/engine/objects/gui/components/hover_text_high_res/hover_text_high_res.tscn" id="3_12i0v"]
+[ext_resource type="Script" uid="uid://lb88p0uyo82c" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_hover_text/9_verb_hover_text.gd" id="4_247ev"]
+[ext_resource type="Script" uid="uid://c5nmtcja3c5sp" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_commands_container.gd" id="5_g8ui5"]
+[ext_resource type="ButtonGroup" uid="uid://y1thfsxxjowe" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/resources/9_verb_button_group.tres" id="6_lhiws"]
+[ext_resource type="Script" uid="uid://i1y36osdqw12" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_command_button.gd" id="7_16jef"]
+[ext_resource type="PackedScene" uid="uid://jo37lpb0k53v" path="res://addons/popochiu/engine/objects/gui/templates/9_verb_high_res/components/9_verb_inventory_grid_high_res/9_verb_inventory_grid_high_res.tscn" id="7_xc4x6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b57cn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mksfu"]
+
+[node name="9VerbPanelHighRes" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("1_xc4x6")
+script = ExtResource("2_42nld")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -64.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_b57cn")
+metadata/_edit_group_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 1
+alignment = 2
+
+[node name="HoverTextCentered" parent="PanelContainer/VBoxContainer" instance=ExtResource("3_12i0v")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_vertical = 3
+script = ExtResource("4_247ev")
+follows_cursor = false
+
+[node name="Verbs&InventoryContainer" type="PanelContainer" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_mksfu")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 6
+
+[node name="CommandsContainer" type="VBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 5
+script = ExtResource("5_g8ui5")
+
+[node name="Row1" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="Open" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Open"
+script = ExtResource("7_16jef")
+command = 1
+
+[node name="PickUp" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Pick Up"
+script = ExtResource("7_16jef")
+command = 2
+
+[node name="Push" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row1"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Push"
+script = ExtResource("7_16jef")
+command = 3
+
+[node name="Row2" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+custom_minimum_size = Vector2(0, 15)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="Close" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Close"
+script = ExtResource("7_16jef")
+command = 4
+
+[node name="LookAt" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Look At"
+script = ExtResource("7_16jef")
+command = 5
+
+[node name="Pull" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row2"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Pull"
+script = ExtResource("7_16jef")
+command = 6
+
+[node name="Row3" type="HBoxContainer" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 5
+
+[node name="Give" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Give"
+script = ExtResource("7_16jef")
+command = 7
+
+[node name="TalkTo" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Talk To"
+script = ExtResource("7_16jef")
+command = 8
+
+[node name="Use" type="Button" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer/CommandsContainer/Row3"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 32
+toggle_mode = true
+button_group = ExtResource("6_lhiws")
+text = "Use"
+script = ExtResource("7_16jef")
+command = 9
+
+[node name="9VerbInventoryGridHighRes" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer" instance=ExtResource("7_xc4x6")]
+layout_mode = 2

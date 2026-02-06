@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="PopochiuGUIInfo" load_steps=3 format=3 uid="uid://d2wkjty56oqky"]
+
+[ext_resource type="Texture2D" uid="uid://bt3bqfem8qhle" path="res://addons/popochiu/icons/btn_setup_gui_actionbar.svg" id="1_at2o4"]
+[ext_resource type="Script" uid="uid://dx8nbjp33mba4" path="res://addons/popochiu/engine/others/popochiu_gui_info.gd" id="2_ra6a5"]
+
+[resource]
+script = ExtResource("2_ra6a5")
+title = "Action Bar"
+description = "[b]Sierra SCI-inspired top-bar with action cycling, overlay inventory and portrait dialogues.[/b]
+
+Similar to the ones in \"King's Quest V\", \"Space Quest IV\", or \"Quest for Glory\"."
+icon = ExtResource("1_at2o4")
+target_resolution = 1

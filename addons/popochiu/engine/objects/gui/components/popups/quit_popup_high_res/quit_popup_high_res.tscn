@@ -1,0 +1,88 @@
+[gd_scene load_steps=7 format=3 uid="uid://60e6w0fb7wo0"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_nno71"]
+[ext_resource type="Script" uid="uid://2qgkx1dve6e2" path="res://addons/popochiu/engine/objects/gui/components/popups/quit_popup/quit_popup.gd" id="2_7ao1f"]
+[ext_resource type="StyleBox" uid="uid://bwanhyu2llpeg" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container_high_res.tres" id="3_45ubw"]
+[ext_resource type="Texture2D" uid="uid://crfvalg8jyuni" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.svg" id="4_nno71"]
+[ext_resource type="Texture2D" uid="uid://ccjfdeebj3yx3" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.svg" id="5_45ubw"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_il3mr"]
+
+[node name="QuitPopupHighRes" type="Control" groups=["popochiu_gui_popup"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_nno71")
+script = ExtResource("2_7ao1f")
+script_name = &"QuitPopup"
+title = "Quit game"
+
+[node name="Overlay" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_il3mr")
+
+[node name="PanelContainer" type="PanelContainer" parent="Overlay"]
+custom_minimum_size = Vector2(1024, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = ExtResource("3_45ubw")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Quit game"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Close" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("4_nno71")
+texture_pressed = ExtResource("5_45ubw")
+texture_hover = ExtResource("5_45ubw")
+
+[node name="Question" type="Label" parent="Overlay/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(960, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Are you sure you want to quit?"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="FooterContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+text = "OK"
+
+[node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+text = "Cancel
+"

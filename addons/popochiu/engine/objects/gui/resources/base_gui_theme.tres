@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://pl1ch71kfj72" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_checked.png" id="2_ldprq"]
 [ext_resource type="Texture2D" uid="uid://dukr75slqli45" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_unchecked.png" id="3_3rprc"]
 [ext_resource type="Texture2D" uid="uid://cqxqfxobqltga" path="res://addons/popochiu/engine/objects/gui/resources/images/grabber.png" id="4_4x0ix"]
-[ext_resource type="Texture2D" uid="uid://dqi3gur1h4fk5" path="res://addons/popochiu/engine/objects/gui/resources/images/radio_button.png" id="5_c6xq1"]
+[ext_resource type="Texture2D" uid="uid://bbl1rk1aqbhp" path="res://addons/popochiu/engine/objects/gui/resources/images/radio_button.png" id="5_c6xq1"]
 [ext_resource type="Texture2D" uid="uid://d1ywqbehmtuv" path="res://addons/popochiu/engine/objects/gui/resources/images/down_arrow.png" id="5_jwcnu"]
 [ext_resource type="FontFile" uid="uid://dm6h44ck2nm2b" path="res://addons/popochiu/engine/objects/gui/fonts/minecraftia-regular.ttf" id="6_gx6k1"]
 
