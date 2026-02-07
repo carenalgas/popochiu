@@ -25,16 +25,28 @@ class BBCodeConverter:
 
     # Godot built-in classes for external linking
     GODOT_CLASSES = {
-        "Node", "Node2D", "Node3D", "Control", "Resource", "Object", "RefCounted",
-        "String", "int", "float", "bool", "Array", "Dictionary", "Vector2", "Vector3",
-        "Color", "Rect2", "Transform2D", "Transform3D", "Basis", "AABB", "Plane",
-        "Quaternion", "PackedStringArray", "PackedInt32Array", "PackedInt64Array",
-        "PackedFloat32Array", "PackedFloat64Array", "PackedVector2Array", "PackedVector3Array",
-        "PackedColorArray", "PackedByteArray", "Callable", "Signal", "RID", "NodePath",
-        "StringName", "Texture2D", "Texture", "AudioStream", "AnimationPlayer", "Sprite2D",
-        "CollisionPolygon2D", "NavigationObstacle2D", "Marker2D", "Area2D", "Camera2D",
-        "Tween", "Timer", "CanvasItem", "Viewport", "SceneTree", "Engine", "Input",
-        "InputEvent", "InputEventMouse", "InputEventKey", "InputEventAction",
+        # Variant types (core built-in types)
+        "Variant", "AABB", "Array", "Basis", "bool", "Callable", "Color", "Dictionary",
+        "float", "int", "NodePath", "Object", "PackedByteArray", "PackedColorArray",
+        "PackedFloat32Array", "PackedFloat64Array", "PackedInt32Array", "PackedInt64Array",
+        "PackedStringArray", "PackedVector2Array", "PackedVector3Array", "PackedVector4Array",
+        "Plane", "Projection", "Quaternion", "Rect2", "Rect2i", "RID", "Signal", "String",
+        "StringName", "Transform2D", "Transform3D", "Vector2", "Vector2i", "Vector3",
+        "Vector3i", "Vector4", "Vector4i",
+        # Common Node types
+        "Node", "Node2D", "Node3D", "Control", "Resource", "RefCounted",
+        "CanvasItem", "Viewport", "SceneTree", "Window",
+        # Commonly referenced classes in docs
+        "AnimationPlayer", "AnimatedSprite2D", "Sprite2D", "Sprite3D", "Label", "Button",
+        "CollisionPolygon2D", "CollisionShape2D", "CollisionShape3D",
+        "NavigationObstacle2D", "NavigationRegion2D", "NavigationAgent2D",
+        "Marker2D", "Marker3D", "Area2D", "Area3D", "Camera2D", "Camera3D",
+        "CharacterBody2D", "CharacterBody3D", "RigidBody2D", "RigidBody3D",
+        "StaticBody2D", "StaticBody3D", "PhysicsBody2D", "PhysicsBody3D",
+        "Tween", "Timer", "AudioStreamPlayer", "AudioStreamPlayer2D", "AudioStreamPlayer3D",
+        "Texture2D", "Texture", "AudioStream", "PackedScene", "TileMap", "TileMapLayer",
+        "Engine", "Input", "InputEvent", "InputEventMouse", "InputEventMouseButton",
+        "InputEventMouseMotion", "InputEventKey", "InputEventAction",
     }
 
     def __init__(self, current_class: str = "", known_classes: Optional[set[str]] = None):
