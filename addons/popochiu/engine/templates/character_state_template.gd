@@ -16,7 +16,7 @@ func _on_save() -> Dictionary:
 
 # Called when the game is loaded.
 # This Dictionary should has the same structure you defined for the returned
-# one in on_save().
+# one in _on_save().
 func _on_load(data: Dictionary) -> void:
 	prints(data)
 

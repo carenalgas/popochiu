@@ -36,17 +36,19 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 
 
 ## Called when the game is saved.[br]
-## Implement this to save custom data in the game save. The returned [Dictionary] must contain only
-## JSON supported types: [bool], [int], [float], [String].
+## Implement this to persist custom properties that you added to this resource. Should return
+## a [Dictionary] containing the data to be saved.[br]
+## The returned [Dictionary] must contain only JSON-supported types:
+## [bool], [int], [float], [String].
 ##
 ## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
 
-## Called when the game is loaded.[br]
-## Implement this to load custom data from the game save. The structure of [param data] matches that
-## returned by [method _on_save].
+## Called when the game is loaded. The structure of [param data] matches that returned by
+## [method _on_save].[br]
+## Implement this to restore the custom properties you persisted in [_on_save].
 ##
 ## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:

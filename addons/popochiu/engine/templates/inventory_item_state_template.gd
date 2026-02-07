@@ -10,14 +10,14 @@ extends PopochiuInventoryItemData
 #region Virtual ####################################################################################
 # Use this to save custom data for this PopochiuInventoryItem when saving the game.
 # The Dictionary must contain only JSON supported types: bool, int, float, String.
-func on_save() -> Dictionary:
+func _on_save() -> Dictionary:
 	return {}
 
 
 # Called when the game is loaded.
 # This Dictionary should has the same structure you defined for the returned
-# one in on_save().
-func on_load(data: Dictionary) -> void:
+# one in _on_save().
+func _on_load(data: Dictionary) -> void:
 	prints(data)
 
 
