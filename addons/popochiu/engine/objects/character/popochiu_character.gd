@@ -236,7 +236,6 @@ func _ready():
 	default_scale = Vector2(scale)
 
 	if Engine.is_editor_hint():
-		hide_helpers()
 		set_process(true)
 		return
 
@@ -716,18 +715,6 @@ func grab() -> void:
 	await grab_done
 
 	idle()
-
-
-## Calls [method PopochiuClickable.hide_helpers].
-func hide_helpers() -> void:
-	super()
-	# TODO: add visibility logic for dialog_pos gizmo
-
-
-## Calls [method PopochiuClickable.show_helpers].
-func show_helpers() -> void:
-	super()
-	# TODO: add visibility logic for dialog_pos gizmo
 
 
 ## Makes the character walk to [param pos] in the current room.

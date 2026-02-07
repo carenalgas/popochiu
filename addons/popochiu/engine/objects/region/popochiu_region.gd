@@ -46,8 +46,6 @@ func _ready() -> void:
 	area_shape_exited.connect(_check_scaling.bind(false))
 
 	if Engine.is_editor_hint():
-		hide_helpers()
-
 		# Ignore assigning the polygon when:
 		if (
 			interaction_polygon_node == null # there is no InteractionPolygon node
@@ -186,18 +184,6 @@ func _remove_character_scaling_region(chr: PopochiuCharacter) -> void:
 		chr.scaling_region = {}
 		_last_char_pos = Vector2.ZERO
 		_active_characters.erase(chr.script_name)
-
-
-#endregion
-
-
-#region Public #####################################################################################
-## Used by the plugin to hide the visual helpers that show the [member baseline] and
-## [member walk_to_point] in the 2D Canvas Editor when this node is unselected in the Scene panel.
-func hide_helpers() -> void:
-	# TODO: visibility logic for gizmos
-	if get_node_or_null("InteractionPolygon"):
-		interaction_polygon_node.hide()
 
 
 #endregion

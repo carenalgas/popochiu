@@ -77,8 +77,6 @@ func _ready():
 	add_to_group("PopochiuClickable")
 
 	if Engine.is_editor_hint():
-		hide_helpers()
-
 		# Add interaction polygon to the proper group
 		if (get_node_or_null("InteractionPolygon") != null):
 			get_node("InteractionPolygon").add_to_group(
@@ -212,20 +210,6 @@ func _on_movement_ended() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Used by the plugin to hide the visual helpers that show the interaction polygon
-## in the 2D Canvas Editor when this node is unselected in the Scene panel.
-func hide_helpers() -> void:
-	if get_node_or_null("InteractionPolygon"):
-		$InteractionPolygon.hide()
-
-
-## Used by the plugin to make visible the visual helpers that show the interaction polygon
-## in the 2D Canvas Editor when this node is unselected in the Scene panel.
-func show_helpers() -> void:
-	if get_node_or_null("InteractionPolygon"):
-		$InteractionPolygon.show()
-
-
 ## Hides and disables this node.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
