@@ -135,40 +135,30 @@ func _notification(event: int) -> void:
 
 #region Virtual ####################################################################################
 ## Called when the room containing this node is set.
-##
-## [i]Virtual[/i].
 func _on_room_set() -> void:
 	pass
 
 
 ## Called when the node is clicked.[br]
 ## Override to implement custom click behavior.
-##
-## [i]Virtual[/i].
 func _on_click() -> void:
 	pass
 
 
 ## Called when the node is double-clicked.[br]
 ## Override to implement custom double click behavior.
-##
-## [i]Virtual[/i].
 func _on_double_click() -> void:
 	pass
 
 
 ## Called when the node is right-clicked.[br]
 ## Override to implement custom right click behavior.
-##
-## [i]Virtual[/i].
 func _on_right_click() -> void:
 	pass
 
 
 ## Called when the node is middle-clicked.[br]
 ## Override to implement custom middle click behavior.
-##
-## [i]Virtual[/i].
 func _on_middle_click() -> void:
 	pass
 
@@ -176,8 +166,6 @@ func _on_middle_click() -> void:
 ## Called when the node is clicked and there is an active inventory item.
 ## [param item] is the currently selected (active) inventory item.[br]
 ## Override to implement custom behavior when an inventory item is used on this clickable.
-##
-## [i]Virtual[/i].
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
@@ -186,22 +174,16 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 ##
 ## This is intended to be overridden by child classes to update any internal variables.
 ## Use it in game scripts only if you know what you're doing.
-##
-## [i]Virtual[/i].
 func _on_position_changed() -> void:
 	pass
 
 
 ## Called when the clickable starts moving.
-##
-## [i]Virtual[/i].
 func _on_movement_started() -> void:
 	pass
 
 
 ## Called when the clickable stops moving.
-##
-## [i]Virtual[/i].
 func _on_movement_ended() -> void:
 	pass
 

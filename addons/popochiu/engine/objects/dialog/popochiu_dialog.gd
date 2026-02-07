@@ -19,8 +19,6 @@ extends Resource
 ##
 ## Implement this to add custom behavior (such as change the animation of a character) or update the
 ## game state when the dialog starts.
-##
-## [i]Virtual[/i].
 func _on_start() -> void:
 	pass
 
@@ -29,8 +27,6 @@ func _on_start() -> void:
 ## [member PopochiuDialogOption.id] to identify which option was selected.[br]
 ## Implement this to add custom behavior (such as change the animation of a character, play a sound,
 ## etc.) or to update the game state when a dialog option is selected.
-##
-## [i]Virtual[/i].
 func _option_selected(opt: PopochiuDialogOption) -> void:
 	pass
 
@@ -40,8 +36,6 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
 ## a [Dictionary] containing the data to be saved.[br]
 ## The returned [Dictionary] must contain only JSON-supported types:
 ## [bool], [int], [float], [String].
-##
-## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
@@ -49,8 +43,6 @@ func _on_save() -> Dictionary:
 ## Called when the game is loaded. The structure of [param data] matches that returned by
 ## [method _on_save].[br]
 ## Implement this to restore the custom properties you persisted in [_on_save].
-##
-## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:
 	pass
 

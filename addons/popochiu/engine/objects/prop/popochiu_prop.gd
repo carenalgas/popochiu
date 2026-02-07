@@ -132,8 +132,6 @@ func _notification(event: int) -> void:
 ## Called when the [PopochiuInventoryItem] linked to this prop is removed from the inventory.[br]
 ## Override this to add custom behavior such as enabling the prop again, playing an animation,
 ## or update state variables that control game logic.
-##
-## [i]Virtual[/i].
 func _on_linked_item_removed() -> void:
 	pass
 
@@ -141,8 +139,6 @@ func _on_linked_item_removed() -> void:
 ## Called when the [PopochiuInventoryItem] linked to this prop is discarded from the inventory.[br]
 ## Override this to add custom behavior such as playing an animation or update state variables that
 ## control game logic.
-##
-## [i]Virtual[/i].
 func _on_linked_item_discarded() -> void:
 	pass
 
@@ -153,8 +149,6 @@ func _on_linked_item_discarded() -> void:
 ##
 ## Useful with props that the player can drag around the room, or props that move as part of an
 ## animation sequence in the room's narrative.
-##
-## [i]Virtual[/i].
 func _on_movement_started() -> void:
 	pass
 
@@ -165,8 +159,6 @@ func _on_movement_started() -> void:
 ##
 ## Useful with props that the player can drag around the room, or props that move as part of an
 ## animation sequence in the room's narrative.
-##
-## [i]Virtual[/i].
 func _on_movement_ended() -> void:
 	pass
 

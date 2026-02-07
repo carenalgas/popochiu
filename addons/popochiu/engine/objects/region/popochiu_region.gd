@@ -88,16 +88,12 @@ func _notification(event: int) -> void:
 #region Virtual ####################################################################################
 ## Called when [param chr] enters this region.[br]
 ## Implement this to add custom behavior or update the game state.
-##
-## [i]Virtual[/i].
 func _on_character_entered(chr: PopochiuCharacter) -> void:
 	pass
 
 
 ## Called when [param chr] exits this region.[br]
 ## Implement this to add custom behavior or update the game state.
-##
-## [i]Virtual[/i].
 func _on_character_exited(chr: PopochiuCharacter) -> void:
 	pass
 

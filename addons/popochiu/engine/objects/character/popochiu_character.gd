@@ -328,8 +328,6 @@ func _exit_tree() -> void:
 ## Plays the character's idle animation.[br]
 ## Override to implement custom idle behavior. Call [code]super()[/code] if you want to preserve
 ## the base functionality.
-##
-## [i]Virtual[/i].
 func _play_idle() -> void:
 	play_animation(idle_animation)
 
@@ -337,8 +335,6 @@ func _play_idle() -> void:
 ## Plays the character's walk animation toward [param target_pos].[br]
 ## Override to implement custom walk behavior. Call [code]super()[/code] if you want to preserve
 ## the base functionality.
-##
-## [i]Virtual[/i].
 func _play_walk(target_pos: Vector2) -> void:
 	# Set the default parameters for play_animation()
 	var animation_label = walk_animation
@@ -350,8 +346,6 @@ func _play_walk(target_pos: Vector2) -> void:
 ## Plays the character's talk animation.[br]
 ## Override to implement custom talk behavior. Call [code]super()[/code] if you want to preserve
 ## the base functionality.
-##
-## [i]Virtual[/i].
 func _play_talk() -> void:
 	play_animation(talk_animation)
 
@@ -359,24 +353,18 @@ func _play_talk() -> void:
 ## Plays the character's grab animation.[br]
 ## Override to implement custom grab behavior. Call [code]super()[/code] if you want to preserve
 ## the base functionality.
-##
-## [i]Virtual[/i].
 func _play_grab() -> void:
 	play_animation('grab')
 
 
 ## Called when the character starts moving. Override to add custom behavior such as
 ## playing sound effects or updating UI elements.
-##
-## [i]Virtual[/i].
 func _on_movement_started() -> void:
 	pass
 
 
 ## Called when the character stops moving. Override to add custom behavior such as
 ## triggering events or updating game state.
-##
-## [i]Virtual[/i].
 func _on_movement_ended() -> void:
 	pass
 
@@ -384,8 +372,6 @@ func _on_movement_ended() -> void:
 ## Called after the character's position changes to synchronize the buffered position state.[br]
 ## Override to implement custom behavior when the position changes. Call [code]super()[/code] if
 ## you want to preserve the base functionality.
-##
-## [i]Virtual[/i].
 func _on_position_changed() -> void:
 	sync_buffered_position()
 

@@ -201,6 +201,7 @@ class GDScriptParser:
         self.pending_annotation_type: Optional[str] = None  # Type of unresolved annotation
         self.warnings: list[str] = []  # Accumulated warnings
         self.in_function: bool = False  # Track if we're inside a function body
+        self.current_region: Optional[str] = None  # Track current #region name
 
     def parse_file(self, file_path: Path) -> Optional[ClassInfo]:
         """Parse a GDScript file and extract class documentation."""
@@ -226,6 +227,7 @@ class GDScriptParser:
         self.pending_annotation_line = None
         self.pending_annotation_type = None
         self.warnings = []
+        self.current_region = None
 
         lines = content.split("\n")
 
@@ -338,6 +340,18 @@ class GDScriptParser:
 
             # Track brace depth for multi-line constructs
             self.brace_depth += stripped.count("{") - stripped.count("}")
+
+            # Check for region markers to track virtual methods
+            region_match = self.PATTERNS["region"].match(stripped)
+            if region_match:
+                self.current_region = region_match.group(1)
+                i += 1
+                continue
+            
+            if self.PATTERNS["endregion"].match(stripped):
+                self.current_region = None
+                i += 1
+                continue
 
             # Check for member annotation in single-hash comment (only at class level)
             # Must be on immediate line before a docblock
@@ -739,9 +753,13 @@ class GDScriptParser:
         if return_match:
             return_type = return_match.group(1)
 
-        # Check if virtual from doc
+        # Check if virtual from doc or region
         raw_description = "\n".join(self.current_doc_lines).strip()
-        is_virtual = "[i]Virtual[/i]" in raw_description or "_Virtual_" in raw_description
+        is_virtual = (
+            "[i]Virtual[/i]" in raw_description 
+            or "_Virtual_" in raw_description
+            or (self.current_region and "virtual" in self.current_region.lower())
+        )
 
         # Extract status tags from description
         description, deprecated_reason, experimental_reason = self._extract_status_tags(raw_description)

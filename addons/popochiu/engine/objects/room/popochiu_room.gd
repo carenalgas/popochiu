@@ -160,16 +160,12 @@ func _unhandled_input(event: InputEvent):
 ## Called when Popochiu loads the room. At this point the room is in the tree but not visible.[br]
 ## Override this to setup the stage before the room is shown to the player (e.g. setting character
 ## position and facing direction, active walkable area, props visibility, etc.).
-##
-## [i]Virtual[/i].
 func _on_room_entered() -> void:
 	pass
 
 
 ## Called when the room-changing transition finishes. At this point the room is visible.[br]
 ## Override this to start cutscenes, play sounds, etc.
-##
-## [i]Virtual[/i].
 func _on_room_transition_finished() -> void:
 	pass
 
@@ -177,8 +173,6 @@ func _on_room_transition_finished() -> void:
 ## Called before Popochiu unloads the room. At this point the room is not visible,
 ## is not processing inputs, and has no children in the [b]$Characters[/b] node.[br]
 ## Override this to cleanup any custom data or states before leaving the room, if needed.
-##
-## [i]Virtual[/i].
 func _on_room_exited() -> void:
 	pass
 

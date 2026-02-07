@@ -17,8 +17,6 @@ extends Resource
 ## a [Dictionary] containing the data to be saved.[br]
 ## The returned [Dictionary] must contain only JSON-supported types:
 ## [bool], [int], [float], [String].
-##
-## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
@@ -26,8 +24,6 @@ func _on_save() -> Dictionary:
 ## Called when the game is loaded. The structure of [param data] matches that returned by
 ## [method _on_save].[br]
 ## Implement this to restore the custom properties you persisted in [_on_save].
-##
-## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:
 	pass
 
