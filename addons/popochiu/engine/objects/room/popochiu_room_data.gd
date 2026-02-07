@@ -32,13 +32,15 @@ var characters := {}
 
 
 #region Virtual ####################################################################################
-## Called when the game is saved. Return a [Dictionary] with custom data to persist.[br][br]
+## Called when the game is saved. Return a [Dictionary] with custom data to persist.
+##
 ## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
 
-## Called when the game is loaded. [param data] contains the [Dictionary] from [method _on_save].[br][br]
+## Called when the game is loaded. [param data] contains the [Dictionary] from [method _on_save].
+##
 ## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:
 	pass
@@ -61,7 +63,8 @@ func on_load(data: Dictionary) -> void:
 
 ## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
-## [br][br]
+## 
+##
 ## This method clears and rebuilds the state dictionaries from scratch, ensuring they accurately
 ## reflect only the objects currently present in the room. Objects that were removed from the
 ## room's scene tree (e.g., via [method PopochiuRoom.remove_character]) will not be restored when
@@ -165,7 +168,8 @@ func save_children_states() -> void:
 ##     self_modulate = PopochiuCharacter.self_modulate
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
-## [br][br]
+## 
+##
 ## This method clears and rebuilds the [member characters] dictionary from scratch, ensuring it
 ## accurately reflects only the characters currently present in the room's [b]$Characters[/b] node.
 ## Characters that were removed via [method PopochiuRoom.remove_character] will not be restored

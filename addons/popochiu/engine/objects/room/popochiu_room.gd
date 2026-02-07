@@ -30,7 +30,8 @@ extends Node2D
 ## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
 ## background (size) of the room is 448x180, the left limit of the camera should be -64 (this is the
 ## difference between 320 and 448).
-## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
+## 
+##[i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_left := INF
 ## @deprecated
@@ -38,19 +39,22 @@ extends Node2D
 ## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
 ## background (size) of the room is 448x180, the right limit of the camera should be 384 (320 + 64
 ## (this is the difference between 320 and 448)).
-## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
+## 
+##[i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_right := INF
 ## @deprecated
 ## If this different from [constant INF], the value will define the top limit of the camera
 ## relative to the native game resolution.
-## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
+## 
+##[i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_top := INF
 ## @deprecated
 ## If this different from [constant INF], the value will define the bottom limit of the camera
 ## relative to the native game resolution.
-## [br][br][i]Set this on rooms that are bigger than the native game resolution so the camera will
+## 
+##[i]Set this on rooms that are bigger than the native game resolution so the camera will
 ## follow the character.[/i]
 @export var limit_bottom := INF
 
@@ -155,14 +159,16 @@ func _unhandled_input(event: InputEvent):
 #region Virtual ####################################################################################
 ## Called when Popochiu loads the room. At this point the room is in the tree but not visible.[br]
 ## Override this to setup the stage before the room is shown to the player (e.g. setting character
-## position and facing direction, active walkable area, props visibility, etc.).[br][br]
+## position and facing direction, active walkable area, props visibility, etc.).
+##
 ## [i]Virtual[/i].
 func _on_room_entered() -> void:
 	pass
 
 
 ## Called when the room-changing transition finishes. At this point the room is visible.[br]
-## Override this to start cutscenes, play sounds, etc.[br][br]
+## Override this to start cutscenes, play sounds, etc.
+##
 ## [i]Virtual[/i].
 func _on_room_transition_finished() -> void:
 	pass
@@ -170,7 +176,8 @@ func _on_room_transition_finished() -> void:
 
 ## Called before Popochiu unloads the room. At this point the room is not visible,
 ## is not processing inputs, and has no children in the [b]$Characters[/b] node.[br]
-## Override this to cleanup any custom data or states before leaving the room, if needed.[br][br]
+## Override this to cleanup any custom data or states before leaving the room, if needed.
+##
 ## [i]Virtual[/i].
 func _on_room_exited() -> void:
 	pass

@@ -12,14 +12,16 @@ extends Resource
 
 
 #region Virtual ####################################################################################
-## Called when the game is saved. Must return a [Dictionary] with custom data to persist.[br][br]
+## Called when the game is saved. Must return a [Dictionary] with custom data to persist.
+##
 ## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}
 
 
 ## Called when the game is loaded. [param data] contains the [Dictionary] from [method _on_save].
-## [br][br]
+## 
+##
 ## [i]Virtual[/i].
 func _on_load(_data: Dictionary) -> void:
 	pass

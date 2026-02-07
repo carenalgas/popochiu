@@ -4,7 +4,8 @@ extends Node
 ##
 ## It plays sound effects and music using [AudioStreamPlayer] or [AudioStreamPlayer2D], creating
 ## these nodes at runtime if needed. By default, it has 6 nodes for positional streams and 5 for
-## playing non-positional streams.[br][br]
+## playing non-positional streams.
+##
 ## The [b]PopochiuAudioManager[/b] is loaded as a child of [Popochiu] when the game starts.
 
 ## Used to mark stream players created at runtime that should be [method Node.free] when they are

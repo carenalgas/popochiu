@@ -1,14 +1,15 @@
 class_name PopochiuITransitionLayer
 extends Node
 ## Provides access to the [PopochiuTransitionLayer] via the singleton [b]T[/b]
-## (for example: [code]T.play_transition("fade", 1.0)[/code]).[br][br]
+## (for example: [code]T.play_transition("fade", 1.0)[/code]).
 ##
 ## Use this interface to control screen transitions.
 ##
-## Capabilities include:[br][br]
+## Capabilities include:
+##
 ## - Play transition animations when changing rooms or during cutscenes.[br]
 ## - Show or hide the curtain manually.[br]
-## - Query available transition animations.[br][br]
+## - Query available transition animations.
 ##
 ## [b]Use examples:[/b]
 ## [codeblock]
@@ -71,7 +72,8 @@ func play_transition(
 
 
 ## Plays the transition animation identified by [param anim_name] for [param duration] seconds using
-## the specified [param mode]. If parameters are omitted, project defaults are used.[br][br]
+## the specified [param mode]. If parameters are omitted, project defaults are used.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_transition(
 	anim_name: String = "",

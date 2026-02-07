@@ -15,7 +15,8 @@ extends Resource
 #region Virtual ####################################################################################
 ## Called when the game is saved.[br]
 ## Implement this to persist custom properties that you added to this resource. Should return
-## a [Dictionary] containing the data to be saved.[br][br]
+## a [Dictionary] containing the data to be saved.
+##
 ## [i]Virtual[/i].
 func _on_save() -> Dictionary:
 	return {}

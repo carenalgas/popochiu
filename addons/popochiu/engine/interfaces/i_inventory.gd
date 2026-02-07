@@ -3,12 +3,13 @@ extends Node
 ## Provides access to [PopochiuInventoryItem] instances through the singleton [b]I[/b]
 ## (for example: [code]I.Key.add()[/code]).
 ##
-## Use this interface to manage the game's inventory. Its script is [b]i_inventory.gd[/b].[br][br]
+## Use this interface to manage the game's inventory. Its script is [b]i_inventory.gd[/b].
 ##
-## Capabilities include:[br][br]
+## Capabilities include:
+##
 ## - Add or remove items from the inventory.[br]
 ## - Change the cursor to an inventory item's texture.[br]
-## - Notify the GUI when items are added or removed.[br][br]
+## - Notify the GUI when items are added or removed.
 ##
 ## [b]Use examples:[/b]
 ## [codeblock]
@@ -105,7 +106,8 @@ func show_inventory(time := 1.0) -> void:
 	await self.inventory_shown
 
 
-## Shows the inventory for [param time] seconds.[br][br]
+## Shows the inventory for [param time] seconds.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_show_inventory(time := 1.0) -> Callable:
 	return func (): await show_inventory(time)
@@ -118,14 +120,16 @@ func hide_inventory(use_anim := true) -> void:
 	await get_tree().process_frame
 
 
-## Hides the inventory. If [param use_anim] is [code]true[/code], the GUI may play an animation.[br][br]
+## Hides the inventory. If [param use_anim] is [code]true[/code], the GUI may play an animation.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_hide_inventory(use_anim := true) -> Callable:
 	return func (): await hide_inventory(use_anim)
 
 
 ## Returns the instance of the [PopochiuInventoryItem] identified by [param item_name], or
-## [code]null[/code] if it does not exist.[br][br]
+## [code]null[/code] if it does not exist.
+##
 ## Used by [b]res://game/autoloads/i.gd[/b] to instantiate item variables at runtime for
 ## autocompletion.
 func get_item_instance(item_name: String) -> PopochiuInventoryItem:

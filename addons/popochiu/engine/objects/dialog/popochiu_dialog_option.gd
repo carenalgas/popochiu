@@ -28,7 +28,8 @@ var used_times := 0
 
 
 #region Virtual ####################################################################################
-## Called when this option is selected.[br][br]
+## Called when this option is selected.
+##
 ## [i]Virtual[/i].
 func _on_selected() -> void:
 	pass

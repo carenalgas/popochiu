@@ -3,11 +3,12 @@ extends Node
 ## Provides access to the game's [PopochiuAudioCue]s through the singleton [b]A[/b] (for example:
 ## [code]A.sfx_woosh.play()[/code]).
 ##
-## Use this interface to play sound effects and music.[br][br]
+## Use this interface to play sound effects and music.
 ##
-## Capabilities include:[br][br]
+## Capabilities include:
+##
 ## - Playing sound effects and music.[br]
-## - Convert semitone values to pitch multipliers for audio playback.[br][br]
+## - Convert semitone values to pitch multipliers for audio playback.
 ##
 ## [b]Use examples:[/b]
 ## [codeblock]

@@ -46,42 +46,48 @@ func _ready():
 
 #region Virtual ####################################################################################
 ## Called when the item is clicked in the inventory GUI.[br]
-## Override this to define what happens when the item is clicked.[br][br]
+## Override this to define what happens when the item is clicked.
+##
 ## [i]Virtual[/i].
 func _on_click() -> void:
 	pass
 
 
 ## Called when the item is right-clicked in the inventory GUI.[br]
-## Override this to define what happens when the item is right-clicked.[br][br]
+## Override this to define what happens when the item is right-clicked.
+##
 ## [i]Virtual[/i].
 func _on_right_click() -> void:
 	pass
 
 
 ## Called when the item is middle-clicked in the inventory GUI.[br]
-## Override this to define what happens when the item is middle-clicked.[br][br]
+## Override this to define what happens when the item is middle-clicked.
+##
 ## [i]Virtual[/i].
 func _on_middle_click() -> void:
 	pass
 
 
 ## Called when this item is clicked while another [param item] is selected.[br]
-## Override this to define what happens when this item is used on another item.[br][br]
+## Override this to define what happens when this item is used on another item.
+##
 ## [i]Virtual[/i].
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
 
 ## Called after the item is added to the inventory.[br]
-## Override this to implement custom behavior (e.g. playing a sound).[br][br]
+## Override this to implement custom behavior (e.g. playing a sound).
+##
 ## [i]Virtual[/i].
 func _on_added_to_inventory() -> void:
 	pass
 
 
 ## Called when the item is discarded from the inventory.[br]
-## Override this to implement custom behavior (e.g. playing a sound).[br][br]
+## Override this to implement custom behavior (e.g. playing a sound).
+##
 ## [i]Virtual[/i].
 func _on_discard() -> void:
 	pass
@@ -91,7 +97,8 @@ func _on_discard() -> void:
 
 #region Public #####################################################################################
 ## Adds this item to the inventory. If [param animate] is [code]true[/code], the inventory GUI
-## shows an animation (implementation depends on the GUI).[br][br]
+## shows an animation (implementation depends on the GUI).
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ##
 ## Example:
@@ -143,7 +150,8 @@ func add(animate := true) -> void:
 
 
 ## Adds this item to the inventory and makes it the active item (cursor shows the item's texture).
-## Pass [param animate] as [code]false[/code] to skip the inventory GUI animation.[br][br]
+## Pass [param animate] as [code]false[/code] to skip the inventory GUI animation.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_add_as_active(animate := true) -> Callable:
 	return func (): await add_as_active(animate)
@@ -158,7 +166,8 @@ func add_as_active(animate := true) -> void:
 
 
 ## Removes the item from the inventory (instance is kept in memory). Pass [param animate] as
-## [code]true[/code] to animate the removal in the inventory GUI.[br][br]
+## [code]true[/code] to animate the removal in the inventory GUI.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ##
 ## Example:
@@ -197,7 +206,8 @@ func remove(animate := false) -> void:
 	PopochiuUtils.g.unblock()
 
 
-## Replaces this inventory item with [param new_item]. Useful when combining items.[br][br]
+## Replaces this inventory item with [param new_item]. Useful when combining items.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ##
 ## Example:
@@ -243,7 +253,8 @@ func replace(new_item: PopochiuInventoryItem) -> void:
 
 # NOTE: Maybe this is not necessary since we can have the same with [method queue_remove].
 ## Removes the item from the inventory without destroying the instance. Pass [param animate] as
-## [code]true[/code] to animate the removal in the inventory GUI.[br][br]
+## [code]true[/code] to animate the removal in the inventory GUI.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_discard(animate := false) -> Callable:
 	return func (): await discard(animate)

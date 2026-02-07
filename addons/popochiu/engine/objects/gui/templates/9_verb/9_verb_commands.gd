@@ -50,7 +50,8 @@ func fallback() -> void:
 
 
 ## Called when [code]E.current_command == Commands.WALK_TO[/code] and
-## [code]E.command_fallback()[/code] is triggered.[br][br]
+## [code]E.command_fallback()[/code] is triggered.
+##
 ## By default makes the character walk to the clicked [code]PopochiuClickable[/code].
 func walk_to() -> void:
 	if PopochiuUtils.i.active:

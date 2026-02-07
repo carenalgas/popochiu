@@ -137,35 +137,40 @@ func _notification(event: int) -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the room containing this node is set.[br][br]
+## Called when the room containing this node is set.
+##
 ## [i]Virtual[/i].
 func _on_room_set() -> void:
 	pass
 
 
 ## Called when the node is clicked.[br]
-## Override to implement custom click behavior.[br][br]
+## Override to implement custom click behavior.
+##
 ## [i]Virtual[/i].
 func _on_click() -> void:
 	pass
 
 
 ## Called when the node is double-clicked.[br]
-## Override to implement custom double click behavior.[br][br]
+## Override to implement custom double click behavior.
+##
 ## [i]Virtual[/i].
 func _on_double_click() -> void:
 	pass
 
 
 ## Called when the node is right-clicked.[br]
-## Override to implement custom right click behavior.[br][br]
+## Override to implement custom right click behavior.
+##
 ## [i]Virtual[/i].
 func _on_right_click() -> void:
 	pass
 
 
 ## Called when the node is middle-clicked.[br]
-## Override to implement custom middle click behavior.[br][br]
+## Override to implement custom middle click behavior.
+##
 ## [i]Virtual[/i].
 func _on_middle_click() -> void:
 	pass
@@ -173,27 +178,32 @@ func _on_middle_click() -> void:
 
 ## Called when the node is clicked and there is an active inventory item.
 ## [param item] is the currently selected (active) inventory item.[br]
-## Override to implement custom behavior when an inventory item is used on this clickable.[br][br]
+## Override to implement custom behavior when an inventory item is used on this clickable.
+##
 ## [i]Virtual[/i].
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
 
-## Called after the clickable's position changes to synchronize internal state.[br][br]
+## Called after the clickable's position changes to synchronize internal state.
+##
 ## This is intended to be overridden by child classes to update any internal variables.
-## Use it in game scripts only if you know what you're doing.[br][br]
+## Use it in game scripts only if you know what you're doing.
+##
 ## [i]Virtual[/i].
 func _on_position_changed() -> void:
 	pass
 
 
-## Called when the clickable starts moving.[br][br]
+## Called when the clickable starts moving.
+##
 ## [i]Virtual[/i].
 func _on_movement_started() -> void:
 	pass
 
 
-## Called when the clickable stops moving.[br][br]
+## Called when the clickable stops moving.
+##
 ## [i]Virtual[/i].
 func _on_movement_ended() -> void:
 	pass
@@ -216,7 +226,8 @@ func show_helpers() -> void:
 		$InteractionPolygon.show()
 
 
-## Hides and disables this node.[br][br]
+## Hides and disables this node.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_disable() -> Callable:
 	return func(): await disable()
@@ -230,7 +241,8 @@ func disable() -> void:
 	await get_tree().process_frame
 
 
-## Shows and enables this node.[br][br]
+## Shows and enables this node.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_enable() -> Callable:
 	return func(): await enable()
@@ -250,7 +262,8 @@ func is_enabled() -> bool:
 	return visible and clickable and input_pickable
 
 
-## Enables the clickable property and makes the object input pickable.[br][br]
+## Enables the clickable property and makes the object input pickable.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_enable_clickable() -> Callable:
 	return func(): await enable_clickable()
@@ -262,7 +275,8 @@ func enable_clickable() -> void:
 	input_pickable = true
 
 
-## Disables the clickable property and makes the object not input pickable.[br][br]
+## Disables the clickable property and makes the object not input pickable.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_disable_clickable() -> Callable:
 	return func(): await disable_clickable()
@@ -351,7 +365,8 @@ func handle_command(button_idx: int) -> void:
 ## [param speed] sets the movement speed in pixels per second. [param transition_type] and
 ## [param ease_type] control the tweening behavior.
 ## [b]Note:[/b] For [PopochiuCharacter], this ignores walkable areas and doesn't affect
-## animation states.[br][br]
+## animation states.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_move_to(
 	pos: Vector2,
@@ -415,7 +430,8 @@ func move_to(
 
 
 ## Instantly teleports the clickable to [param pos] (absolute) in the current room.
-## You can set an [param offset] relative to the target position.[br][br]
+## You can set an [param offset] relative to the target position.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_position(pos: Vector2, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_position(pos, offset)
@@ -444,7 +460,8 @@ func teleport_to_position(pos: Vector2, offset: Vector2 = Vector2.ZERO) -> void:
 
 
 ## Instantly teleports the clickable to the [PopochiuProp] with matching [param id].
-## You can set an [param offset] relative to the target position.[br][br]
+## You can set an [param offset] relative to the target position.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_prop(id, offset)
@@ -457,7 +474,8 @@ func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
 
 
 ## Instantly teleports the clickable to the [PopochiuHotspot] with matching [param id].
-## You can set an [param offset] relative to the target position.[br][br]
+## You can set an [param offset] relative to the target position.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_hotspot(id, offset)
@@ -470,7 +488,8 @@ func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
 
 
 ## Instantly teleports the clickable to the [Marker2D] with matching [param id].
-## You can set an [param offset] relative to the target position.[br][br]
+## You can set an [param offset] relative to the target position.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
 	return func(): await teleport_to_marker(id, offset)

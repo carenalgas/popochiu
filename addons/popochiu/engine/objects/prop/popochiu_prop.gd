@@ -174,7 +174,8 @@ func _on_movement_ended() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Changes the prop's [b]$Sprite2D[/b] frame to [param new_frame].[br][br]
+## Changes the prop's [b]$Sprite2D[/b] frame to [param new_frame].
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_frame(new_frame: int) -> Callable:
 	return func(): await change_frame(new_frame)
@@ -199,7 +200,8 @@ func get_navigation_obstacle() -> NavigationObstacle2D:
 
 
 ## Gradually increases alpha to [code]1.0[/code] over [param duration] seconds.
-## If [param set_enablement] is [code]true[/code], enables the prop when complete.[br][br]
+## If [param set_enablement] is [code]true[/code], enables the prop when complete.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_fade_in(
 	duration: float,
@@ -222,7 +224,8 @@ func fade_in(
 
 
 ## Gradually decreases alpha to [code]0.0[/code] over [param duration] seconds.
-## If [param set_enablement] is [code]true[/code], disables the prop when complete.[br][br]
+## If [param set_enablement] is [code]true[/code], disables the prop when complete.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_fade_out(
 	duration: float,
@@ -246,7 +249,8 @@ func fade_out(
 
 ## Gradually transitions alpha to [param target_alpha] (clamped between 0.0 and 1.0) over
 ## [param duration] seconds. If [param set_enablement] is [code]true[/code], enables/disables
-## based on final alpha (0.0 means disabled, anything else means enabled).[br][br]
+## based on final alpha (0.0 means disabled, anything else means enabled).
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_fade_to(target_alpha: float, duration: float, set_enablement: bool = false) -> Callable:
 	return func(): await fade_to(target_alpha, duration, set_enablement)
@@ -349,7 +353,8 @@ func set_obstacle(value: bool) -> void:
 
 #region AnimationPlayer ############################################################################
 ## Plays the [param name] animation if it exists in this prop's [AnimationPlayer] node.
-## Optionally you can use the other [method AnimationPlayer.play] parameters.[br][br]
+## Optionally you can use the other [method AnimationPlayer.play] parameters.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation(
 	name: StringName = &"",
@@ -374,7 +379,8 @@ func play_animation(
 
 ## Plays the [param name] animation in reverse if it exists in this prop's [AnimationPlayer] node.
 ## This is a shorthand for [method play_animation] with [code]custom_speed = -1.0[/code] and
-## [code]from_end = true[/code].[br][br]
+## [code]from_end = true[/code].
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation_backwards(name: StringName = &"", custom_blend: float = -1) -> Callable:
 	return func(): await play_animation_backwards(name, custom_blend)
@@ -390,7 +396,8 @@ func play_animation_backwards(name: StringName = &"", custom_blend: float = -1) 
 
 ## Stops the currently playing animation.
 ## The animation position is reset to [code]0[/code] and [code]custom_speed[/code] is reset to
-## [code]1.0[/code]. Set [param keep_state] to [code]true[/code] to prevent visual updates.[br][br]
+## [code]1.0[/code]. Set [param keep_state] to [code]true[/code] to prevent visual updates.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop_animation(keep_state: bool = false) -> Callable:
 	return func(): await stop_animation(keep_state)
@@ -404,7 +411,8 @@ func stop_animation(keep_state: bool = false) -> void:
 	$AnimationPlayer.stop(keep_state)
 
 ## Pauses the currently playing animation.
-## Call [method play_animation] without parameters to resume.[br][br]
+## Call [method play_animation] without parameters to resume.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_pause_animation() -> Callable:
 	return func(): await pause_animation()

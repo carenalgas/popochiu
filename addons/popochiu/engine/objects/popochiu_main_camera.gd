@@ -39,7 +39,8 @@ func _process(delta: float) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Changes the main camera's offset by [param offset] pixels. Useful when zooming the camera.[br][br]
+## Changes the main camera's offset by [param offset] pixels. Useful when zooming the camera.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_offset(offset := Vector2.ZERO) -> Callable:
 	return func(): await change_offset(offset)
@@ -51,7 +52,8 @@ func change_offset(offset := Vector2.ZERO) -> void:
 	await get_tree().process_frame
 
 
-## Makes the camera shake with [param strength] intensity for [param duration] seconds.[br][br]
+## Makes the camera shake with [param strength] intensity for [param duration] seconds.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_shake(strength := 1.0, duration := 1.0) -> Callable:
 	return func(): await shake(strength, duration)
@@ -67,7 +69,8 @@ func shake(strength := 1.0, duration := 1.0) -> void:
 
 
 ## Makes the camera shake with [param strength] intensity for [param duration] seconds without
-## blocking execution (runs in the background).[br][br]
+## blocking execution (runs in the background).
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
 	return func(): await shake_bg(strength, duration)
@@ -85,7 +88,8 @@ func shake_bg(strength := 1.0, duration := 1.0) -> void:
 
 ## Changes the camera zoom. If [param target] is greater than [code]Vector2(1, 1)[/code], the
 ## camera will [b]zoom out[/b]; smaller values will make it [b]zoom in[/b]. The effect lasts
-## [param duration] seconds.[br][br]
+## [param duration] seconds.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
 	return func(): await change_zoom(target, duration)

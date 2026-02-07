@@ -6,10 +6,11 @@ extends Node
 ## Use this interface to access props, hotspots, regions and walkable areas in the current room,
 ## or to query data from other rooms.
 ##
-## Capabilities include:[br][br]
+## Capabilities include:
+##
 ## - Access objects inside the current room.[br]
 ## - Read or store the state of any room.[br]
-## - Change the current room.[br][br]
+## - Change the current room.
 ##
 ## [b]Use examples:[/b]
 ## [codeblock]
@@ -102,7 +103,8 @@ func get_markers() -> Array:
 
 
 ## Returns the runtime instance of the [PopochiuRoom] identified by [param script_name], or
-## [code]null[/code] if it cannot be found.[br][br]
+## [code]null[/code] if it cannot be found.
+##
 ## Used by [b]res://game/autoloads/r.gd[/b] to instantiate room variables at runtime for
 ## autocompletion.
 func get_runtime_room(script_name: String) -> PopochiuRoom:

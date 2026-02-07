@@ -66,7 +66,8 @@ var max_dialog_options := 0
 var is_pixel_art_game := false
 ## Whether the cursor should move in whole pixels or not.
 var is_pixel_perfect := false
-## The style to use in dialog lines:[br][br]
+## The style to use in dialog lines:
+##
 ## - [b]Above Character[/b]. Makes the text appear in top of each character. You can define
 ## the position of if using the [b]DialogPos[/b] node in the character's scene.[br]
 ## - [b]Portrait[/b]. Texts will appear in a panel located in the center of the game window

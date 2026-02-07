@@ -54,7 +54,8 @@ func _ready() -> void:
 ##	 - color specified from code;
 ##	 - color specified in the modulate track of the animation (if enabled);
 ##	 - color specified in project settings.
-## [br][br]
+## 
+##
 ## [b]Note:[/b] Custom transitions must use [code]snake_case[/code] naming convention for proper
 ## display in project settings. The [param name] parameter accepts any format (Title Case,
 ## CamelCase, or snake_case) and normalizes it internally.

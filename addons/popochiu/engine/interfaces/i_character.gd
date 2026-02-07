@@ -5,11 +5,12 @@ extends Node
 ##
 ## Use this interface to manipulate characters at runtime.
 ##
-## Capabilities include:[br][br]
+## Capabilities include:
+##
 ## - Accessing the Player-controlled Character (PC) directly with [code]C.player[/code].[br]
 ## - Accessing any character by name ([code]C.CharacterName[/code] - autocompletion supported).[br]
 ## - Commanding characters to move, speak, etc.
-## - Change camera ownership.[br][br]
+## - Change camera ownership.
 ##
 ## [b]Use examples:[/b]
 ## [codeblock]
@@ -59,7 +60,8 @@ func walk_to_clicked(offset := Vector2.ZERO) -> void:
 ## Moves the Player-controlled Character (PC) non-blocking to the
 ## [member PopochiuClickable.walk_to_point] of the last clicked [PopochiuClickable] (for example a
 ## [PopochiuProp], [PopochiuHotspot], or another [PopochiuCharacter]) in the room.
-## Provide an optional [param offset] to adjust the final position.[br][br]
+## Provide an optional [param offset] to adjust the final position.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 	return func (): await walk_to_clicked(offset)
@@ -72,7 +74,8 @@ func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
 
 
 ## Similar to [method walk_to_clicked] but blocks the GUI while the PC is moving
-## to prevent player input.[br][br]
+## to prevent player input.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_clicked_blocking(offset := Vector2.ZERO) -> Callable:
 	return func (): await walk_to_clicked_blocking(offset)
@@ -83,7 +86,8 @@ func face_clicked() -> void:
 	await player.face_clicked()
 
 
-## Makes the Player-controlled Character (PC) look at the last clicked [PopochiuClickable].[br][br]
+## Makes the Player-controlled Character (PC) look at the last clicked [PopochiuClickable].
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_clicked() -> Callable:
 	return func (): await face_clicked()
@@ -102,7 +106,8 @@ func change_camera_owner(c: PopochiuCharacter) -> void:
 
 
 ## Changes the camera owner to [param c]. If [PopochiuUtils.e.cutscene_skipped] is true, the camera
-## owner is updated immediately and a frame is yielded to ensure the change takes effect.[br][br]
+## owner is updated immediately and a frame is yielded to ensure the change takes effect.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_camera_owner(c: PopochiuCharacter) -> Callable:
 	return func (): await change_camera_owner(c)

@@ -99,7 +99,8 @@ func show_cursor(anim_name := "normal", ignore_block := false) -> void:
 
 
 ## Sets the secondary cursor texture to [param texture]. If the cursor is blocked the call is ignored, unless
-## [param ignore_block] is [code]true[/code].[br][br]
+## [param ignore_block] is [code]true[/code].
+##
 ## When [member PopochiuUtils.e.settings.scale_gui] (**experimental**) is enabled, the texture is scaled relative to the main cursor height.
 func set_secondary_cursor_texture(texture: Texture2D, ignore_block := false) -> void:
 	if not ignore_block and is_blocked: return

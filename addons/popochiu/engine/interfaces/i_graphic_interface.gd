@@ -5,10 +5,11 @@ extends Node
 ##
 ## Use this interface to manage the GUI.
 ##
-## Capabilities include:[br][br]
+## Capabilities include:
+##
 ## - Showing messages at the center of the screen (narration or system messages).[br]
 ## - Displaying hover info for objects under the cursor.[br]
-## - Showing, hiding, blocking or unblocking the GUI.[br][br]
+## - Showing, hiding, blocking or unblocking the GUI.
 ##
 ## [b]Use examples:[/b]
 ## [codeblock]
@@ -110,7 +111,8 @@ func show_system_text(msg: String) -> void:
 
 
 ## Displays [param msg] in a box centered on-screen (narration/instruction/warning).
-## Temporarily blocks the GUI until the player clicks anywhere to dismiss the message.[br][br]
+## Temporarily blocks the GUI until the player clicks anywhere to dismiss the message.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_show_system_text(msg: String) -> Callable:
 	return func (): await show_system_text(msg)
@@ -128,7 +130,8 @@ func block() -> void:
 	blocked.emit()
 
 
-## Unblocks the in-game GUI.[br][br]
+## Unblocks the in-game GUI.
+##
 ## The [param wait] parameter is used for internal purposes to avoid race conditions
 ## in specific scenarios. Ignore it unless you know what you're doing.
 func unblock(wait := false) -> void:
@@ -147,7 +150,8 @@ func hide_interface() -> void:
 	hidden.emit()
 
 
-## Hides the in-game GUI.[br][br]
+## Hides the in-game GUI.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_hide_interface() -> Callable:
 	return func(): hide_interface()
@@ -157,7 +161,8 @@ func show_interface() -> void:
 	shown.emit()
 
 
-## Shows the in-game GUI.[br][br]
+## Shows the in-game GUI.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_show_interface() -> Callable:
 	return func(): show_interface()

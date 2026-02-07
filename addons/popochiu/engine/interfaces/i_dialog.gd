@@ -6,10 +6,11 @@ extends Node
 ## Use this interface to start and manage branching dialogs and to listen for option selection
 ## events.
 ##
-## Capabilities include:[br][br]
+## Capabilities include:
+##
 ## - Start a branching dialog.[br]
 ## - Detect when a dialog finishes or when an option is selected.[br]
-## - Create and show an inline list of options at runtime.[br][br]
+## - Create and show an inline list of options at runtime.
 ##
 ## [b]Use examples:[/b]
 ## [codeblock]
@@ -98,9 +99,11 @@ func say_selected() -> void:
 	await PopochiuUtils.c.player.say(selected_option.text)
 
 
-## Converts [param input_string] to gibberish while preserving bbcode tags. Returns the transformed [String].[br][br]
+## Converts [param input_string] to gibberish while preserving bbcode tags. Returns the transformed [String].
+##
 ## Main use case:[br]
-##  - mask possible spoilers in pre-release or demo builds[br][br]
+##  - mask possible spoilers in pre-release or demo builds
+##
 ## Other uses:[br]
 ##  - make clear that a character is speaking a language unknown to the player until a translation item is found[br]
 ##  - create humorous effect when the player is confused, drunk or otherwise not fully aware[br]
