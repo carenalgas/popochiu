@@ -1,8 +1,8 @@
 @tool
 extends EditorPlugin
-## Plugin setup.
-## 
-## Some icons that might be useful: godot\editor\editor_themes.cpp
+## Main Popochiu editor plugin that manages singletons, the dock, and Inspector integrations.
+
+# Some icons that might be useful: godot\editor\editor_themes.cpp
 
 const ES := "[es] Estás usando Popochiu, un plugin para crear juegos point n' click"
 const EN := "[en] You're using Popochiu, a plugin for making point n' click games"

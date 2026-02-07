@@ -44,15 +44,15 @@ func _on_unblocked() -> void:
 		PopochiuUtils.cursor.show_cursor(get_cursor_name())
 
 
-## Called when a text is shown in the [SystemText] component. This erases the text in the
-## [HoverText] component and shows the [code]"wait"[/code] cursor.
+## Called when text is shown in the [SystemText] component. Clears the [HoverText] and shows the
+## [code]"wait"[/code] cursor.
 func _on_system_text_shown(msg: String) -> void:
 	PopochiuUtils.g.show_hover_text()
 	PopochiuUtils.cursor.show_cursor("wait", true)
 
 
-## Called when the [SystemText] component hides. If an [PopochiuInventoryItem] is active, the cursor
-## takes its texture, otherwise it takes its default one.
+## Called when the [SystemText] component hides. If a [PopochiuInventoryItem] is active, the cursor
+## takes its texture, otherwise the default cursor is restored.
 func _on_system_text_hidden() -> void:
 	if PopochiuUtils.i.active:
 		PopochiuUtils.cursor.hide_main_cursor()
@@ -61,9 +61,8 @@ func _on_system_text_hidden() -> void:
 		PopochiuUtils.cursor.show_cursor()
 
 
-## Called when the mouse enters (hovers) [param clickable]. It changes the texture of the cursor
-## and displays a message with the [member PopochiuClickable.description] on the [HoverText]
-## component.
+## Called when the mouse enters (hovers) [param clickable]. Changes the cursor texture and
+## displays the [member PopochiuClickable.description] in the [HoverText] component.
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
@@ -77,8 +76,8 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 		)
 
 
-## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component and
-## shows the default cursor texture if there is no [PopochiuInventoryItem] active.
+## Called when the mouse exits [param clickable]. Clears the [HoverText] and restores the default
+## cursor if no [PopochiuInventoryItem] is active.
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	PopochiuUtils.g.show_hover_text()
 	
@@ -87,9 +86,8 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	PopochiuUtils.cursor.show_cursor("gui" if PopochiuUtils.d.current_dialog else "normal")
 
 
-## Called when the mouse enters (hovers) [param inventory_item]. It changes the texture of the
-## cursor and displays a message with the [member PopochiuInventoryItem.description] on the
-## [HoverText] component.
+## Called when the mouse enters (hovers) [param inventory_item]. Changes the cursor texture and
+## displays the [member PopochiuInventoryItem.description] in the [HoverText] component.
 func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
@@ -104,8 +102,8 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 		PopochiuUtils.g.show_hover_text(inventory_item.description)
 
 
-## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component
-## and shows the default cursor texture if there is no [PopochiuInventoryItem] active.
+## Called when the mouse exits [param inventory_item]. Clears the [HoverText] and restores the
+## default cursor if no [PopochiuInventoryItem] is active.
 func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
@@ -123,8 +121,8 @@ func _on_dialog_line_started() -> void:
 	PopochiuUtils.cursor.show_cursor("wait")
 
 
-## Called when a dialog line finishes. It shows the [code]"normal"[/code] cursor if there is no
-## [PopochiuDialog] active, otherwise shows the [code]"use"[/code] cursor.
+## Called when a dialog line finishes. Shows the [code]"normal"[/code] cursor if there is no
+## [PopochiuDialog] active, otherwise shows the [code]"gui"[/code] cursor.
 func _on_dialog_line_finished() -> void:
 	is_showing_dialog_line = false
 	
@@ -138,7 +136,7 @@ func _on_dialog_line_finished() -> void:
 		PopochiuUtils.cursor.show_cursor("normal")
 
 
-## Called when a [PopochiuDialog] starts. It shows the [code]"use"[/code] cursor and clears the
+## Called when a [PopochiuDialog] starts. Shows the [code]"gui"[/code] cursor and clears the
 ## [HoverText] component.
 func _on_dialog_started(dialog: PopochiuDialog) -> void:
 	PopochiuUtils.cursor.show_cursor("gui")
@@ -157,9 +155,8 @@ func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 	PopochiuUtils.cursor.show_cursor()
 
 
-## Called when the active [PopochiuInventoryItem] changes. If there is one, it hides the main cursor
-## to show the one that shows the [member PopochiuInventoryItem.texture], otherwise it shows the
-## default cursor.
+## Called when the active [PopochiuInventoryItem] changes. If there is one, hides the main cursor
+## to display the [member PopochiuInventoryItem.texture], otherwise shows the default cursor.
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	if is_instance_valid(item):
 		PopochiuUtils.cursor.set_secondary_cursor_texture(item.texture)

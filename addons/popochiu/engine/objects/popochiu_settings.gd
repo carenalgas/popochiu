@@ -29,13 +29,11 @@ var use_translations := false
 var items_on_start := []
 ## The max number of items players will be able to put in the inventory.
 var inventory_limit := 0
-## @deprecated
-## [b]NOTE[/b] This option is now a property in the InventoryBar component.
+## @deprecated This option is now a property in the InventoryBar component.
 ## Whether the inventory will be always visible, or players will have to do something to make it
 ## appear. [b]This is specific to the ContextSensitive GUI[/b].
 var inventory_always_visible := false
-## @deprecated
-## [b]NOTE[/b] This option is now a property in the SettingsBar component.
+## @deprecated This option is now a property in the SettingsBar component.
 ## Whether the toolbar (SettingsBar) will be always visible, or players will have to do something to
 ## make it appear. [b]This is specific to the ContextSensitive GUI[/b].
 var toolbar_always_visible := false
@@ -56,7 +54,7 @@ var show_tl_in_first_room := false
 ## Whether the GUI should scale to match the native game resolution. The default GUI has a 356x200
 ## resolution.
 var scale_gui := false
-## @deprecated
+## @deprecated This option is now a property in the DialogOptions component.
 ## The number of dialog options to show before showing a scroll bar to render those that exceed this
 ## limit.
 var max_dialog_options := 0
