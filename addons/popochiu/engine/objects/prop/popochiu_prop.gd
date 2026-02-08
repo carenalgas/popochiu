@@ -1,3 +1,4 @@
+# @popochiu-docs-category room-objects
 @tool
 @icon("res://addons/popochiu/icons/prop.png")
 class_name PopochiuProp

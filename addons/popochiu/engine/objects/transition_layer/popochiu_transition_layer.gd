@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 @tool
 class_name PopochiuTransitionLayer
 extends Control

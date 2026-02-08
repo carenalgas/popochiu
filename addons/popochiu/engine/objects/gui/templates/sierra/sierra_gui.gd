@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name SierraGUI
 extends PopochiuGraphicInterface
 ## Defines the behavior of the Sierra GUI.

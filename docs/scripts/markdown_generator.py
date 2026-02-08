@@ -15,7 +15,7 @@ from gdscript_parser import (
     ClassInfo, SignalInfo, ConstantInfo, EnumInfo, EnumValue,
     PropertyInfo, MethodInfo, ParameterInfo, parse_directory, GDScriptParser
 )
-from bbcode_converter import BBCodeConverter
+from bbcode_converter import BBCodeConverter, get_relative_class_path
 
 
 @dataclass
@@ -33,10 +33,14 @@ class GeneratorConfig:
     base_url: str = ""
     # Known classes for cross-referencing
     known_classes: set[str] = None
+    # Mapping of class name → category slug (for subdirectory organization)
+    class_to_category: dict[str, str] = None
 
     def __post_init__(self):
         if self.known_classes is None:
             self.known_classes = set()
+        if self.class_to_category is None:
+            self.class_to_category = {}
 
 
 class MarkdownGenerator:
@@ -108,7 +112,9 @@ class MarkdownGenerator:
         self.current_class = class_info
         self.converter = BBCodeConverter(
             class_info.name, 
-            self.config.known_classes
+            self.config.known_classes,
+            source_category=class_info.docs_category,
+            class_to_category=self.config.class_to_category,
         )
 
         sections = []
@@ -157,7 +163,18 @@ class MarkdownGenerator:
         # Inheritance chain
         if class_info.extends:
             lines.append("")
-            lines.append(f"**Inherits:** [{class_info.extends}]({class_info.extends}.md)")
+            parent = class_info.extends
+            if parent in BBCodeConverter.GODOT_CLASSES:
+                url = f"https://docs.godotengine.org/en/stable/classes/class_{parent.lower()}.html"
+                lines.append(f"**Inherits:** [{parent}]({url})")
+            elif parent in self.config.known_classes or parent in BBCodeConverter.POPOCHIU_CLASSES:
+                path = get_relative_class_path(
+                    class_info.docs_category, parent,
+                    self.config.class_to_category,
+                )
+                lines.append(f"**Inherits:** [{parent}]({path})")
+            else:
+                lines.append(f"**Inherits:** {parent}")
 
         return "\n".join(lines)
 
@@ -605,7 +622,12 @@ class MarkdownGenerator:
 
         # Check if it's a known class
         if type_hint in self.config.known_classes or type_hint in BBCodeConverter.POPOCHIU_CLASSES:
-            return f"[{type_hint}]({type_hint}.md)"
+            source_cat = self.current_class.docs_category if self.current_class else ""
+            path = get_relative_class_path(
+                source_cat, type_hint,
+                self.config.class_to_category,
+            )
+            return f"[{type_hint}]({path})"
 
         if type_hint in BBCodeConverter.GODOT_CLASSES:
             return f"[{type_hint}](https://docs.godotengine.org/en/stable/classes/class_{type_hint.lower()}.html)"
@@ -647,6 +669,44 @@ def _class_has_visible_members(class_info: ClassInfo, config: GeneratorConfig) -
     return False
 
 
+def _clean_output_dir(output_dir: Path) -> None:
+    """
+    Remove previously generated .md files and empty subdirectories.
+
+    Preserves the root index.md (which is manually maintained) and any
+    .gitkeep files.
+    """
+    # Remove .md files in subdirectories first, then in root (except index.md)
+    for md_file in output_dir.rglob("*.md"):
+        rel = md_file.relative_to(output_dir)
+        # Preserve the root index.md (manually maintained)
+        if rel == Path("index.md"):
+            continue
+        md_file.unlink()
+
+    # Remove empty subdirectories (bottom-up)
+    for dirpath in sorted(output_dir.rglob("*"), reverse=True):
+        if dirpath.is_dir() and not any(dirpath.iterdir()):
+            dirpath.rmdir()
+
+
+def _category_display_name(slug: str) -> str:
+    """Convert a category slug to a human-readable title.
+
+    Example: "game-objects" → "Game Objects"
+    """
+    return slug.replace("-", " ").title()
+
+
+def _generate_category_index(weight: int) -> str:
+    """Generate an index.md for a category subdirectory.
+
+    The index is empty (mkdocs-nav-weight derives the title from the
+    directory name) and only contains frontmatter to control ordering.
+    """
+    return f"---\nweight: {weight}\nempty: true\n---\n"
+
+
 def generate_directory_docs(directory: Path, output_dir: Path,
                            config: Optional[GeneratorConfig] = None,
                            classes: Optional[list[ClassInfo]] = None,
@@ -674,10 +734,18 @@ def generate_directory_docs(directory: Path, output_dir: Path,
         config = GeneratorConfig()
 
     config.known_classes = {cls.name for cls in classes}
+    config.class_to_category = {cls.name: cls.docs_category for cls in classes}
+
+    # Clean up previously generated files before writing new ones
+    if output_dir.exists():
+        _clean_output_dir(output_dir)
 
     output_dir.mkdir(parents=True, exist_ok=True)
     generated = []
     skipped = []
+
+    # Collect classes per category for index generation
+    category_classes: dict[str, list[ClassInfo]] = {}
 
     for class_info in classes:
         # Check if class should be skipped entirely
@@ -690,19 +758,43 @@ def generate_directory_docs(directory: Path, output_dir: Path,
         generator = MarkdownGenerator(config)
         markdown = generator.generate(class_info)
 
-        output_file = output_dir / f"{class_info.name}.md"
+        # Determine output path based on category
+        category = class_info.docs_category
+        if category:
+            cat_dir = output_dir / category
+            cat_dir.mkdir(parents=True, exist_ok=True)
+            output_file = cat_dir / f"{class_info.name}.md"
+        else:
+            output_file = output_dir / f"{class_info.name}.md"
+
         output_file.write_text(markdown, encoding="utf-8")
         generated.append(str(output_file))
         print(f"Generated: {output_file}")
 
-    # Generate index file only if requested
+        # Track classes per category for index generation
+        category_classes.setdefault(category, []).append(class_info)
+
+    # Generate category index files (for subdirectories only)
+    # Use negative weights so categories appear before uncategorized class files
+    # (which have no weight and default to 0 in mkdocs-nav-weight).
+    sorted_categories = sorted(cat for cat in category_classes if cat)
+    num_categories = len(sorted_categories)
+    for idx, cat_slug in enumerate(sorted_categories):
+        weight = -10 * (num_categories - idx)
+        cat_index = _generate_category_index(weight)
+        index_file = output_dir / cat_slug / "index.md"
+        index_file.write_text(cat_index, encoding="utf-8")
+        generated.append(str(index_file))
+        print(f"Generated: {index_file}")
+
+    # Generate root index file only if requested
     if config.generate_index:
         # Filter out fully excluded classes from index
         visible_classes = [
             cls for cls in classes 
             if not cls.is_class_ignored or _class_has_visible_members(cls, config)
         ]
-        index_content = _generate_index(visible_classes)
+        index_content = _generate_index(visible_classes, config.class_to_category)
         index_file = output_dir / "index.md"
         index_file.write_text(index_content, encoding="utf-8")
         generated.append(str(index_file))
@@ -711,26 +803,51 @@ def generate_directory_docs(directory: Path, output_dir: Path,
     return generated, warnings
 
 
-def _generate_index(classes: list[ClassInfo]) -> str:
-    """Generate an index page for all classes."""
+def _generate_index(classes: list[ClassInfo],
+                     class_to_category: Optional[dict[str, str]] = None) -> str:
+    """Generate an index page for all classes, grouped by category."""
+    class_to_category = class_to_category or {}
+    converter = BBCodeConverter()
+
     lines = ["# Scripting Reference"]
     lines.append("")
     lines.append("This section contains the API reference for all Popochiu engine classes.")
     lines.append("")
-    lines.append("## Classes")
-    lines.append("")
 
-    # Sort classes alphabetically
-    sorted_classes = sorted(classes, key=lambda c: c.name)
-    converter = BBCodeConverter()
+    # Group classes by category
+    categorized: dict[str, list[ClassInfo]] = {}
+    for cls in classes:
+        cat = class_to_category.get(cls.name, "")
+        categorized.setdefault(cat, []).append(cls)
 
-    for cls in sorted_classes:
+    # Render uncategorized classes first under "General"
+    uncategorized = sorted(categorized.pop("", []), key=lambda c: c.name)
+    sorted_categories = sorted(categorized.keys())
+
+    if uncategorized and sorted_categories:
+        # Multiple sections: show headings
+        lines.append("## General")
+        lines.append("")
+
+    for cls in uncategorized:
         desc = cls.description.split("\n")[0][:100] if cls.description else ""
         if len(cls.description) > 100:
             desc += "..."
-        # Convert BBCode in description
         desc = converter.convert(desc)
         lines.append(f"- [{cls.name}]({cls.name}.md) — {desc}")
+
+    for cat_slug in sorted_categories:
+        cat_classes = sorted(categorized[cat_slug], key=lambda c: c.name)
+        title = _category_display_name(cat_slug)
+        lines.append("")
+        lines.append(f"## {title}")
+        lines.append("")
+        for cls in cat_classes:
+            desc = cls.description.split("\n")[0][:100] if cls.description else ""
+            if len(cls.description) > 100:
+                desc += "..."
+            desc = converter.convert(desc)
+            lines.append(f"- [{cls.name}]({cat_slug}/{cls.name}.md) — {desc}")
 
     return "\n".join(lines)
 

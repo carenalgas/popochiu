@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name SierraCommands
 extends PopochiuCommands
 ## Defines the commands and fallback methods for the Sierra GUI.

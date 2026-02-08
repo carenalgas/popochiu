@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIAudio
 extends Node
 ## Provides access to the game's [PopochiuAudioCue]s through the singleton [b]A[/b] (for example:

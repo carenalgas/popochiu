@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIInventory
 extends Node
 ## Provides access to [PopochiuInventoryItem] instances through the singleton [b]I[/b]

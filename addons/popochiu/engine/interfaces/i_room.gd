@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIRoom
 extends Node
 ## Provides access to [PopochiuRoom] instances through the singleton [b]R[/b]

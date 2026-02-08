@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects
 @tool
 @icon('res://addons/popochiu/icons/character.png')
 class_name PopochiuCharacter

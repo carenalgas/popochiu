@@ -10,6 +10,40 @@ import re
 from typing import Optional
 
 
+def get_relative_class_path(
+    source_category: str, target_class: str,
+    class_to_category: dict[str, str],
+    anchor: str = "",
+) -> str:
+    """
+    Compute the relative Markdown path from a source category to a target class.
+
+    Args:
+        source_category: Category slug of the class generating the link (or "" for root).
+        target_class: Name of the target class.
+        class_to_category: Mapping of class name → category slug (or "").
+        anchor: Optional anchor fragment (without leading #).
+
+    Returns:
+        A relative path like "ClassName.md", "game-objects/ClassName.md",
+        or "../game-objects/ClassName.md".
+    """
+    target_category = class_to_category.get(target_class, "")
+    suffix = f"#{anchor}" if anchor else ""
+
+    if source_category == target_category:
+        return f"{target_class}.md{suffix}"
+
+    # Build relative path: go up from source, then down to target
+    parts = []
+    if source_category:
+        parts.append("..")
+    if target_category:
+        parts.append(target_category)
+    parts.append(f"{target_class}.md{suffix}")
+    return "/".join(parts)
+
+
 class BBCodeConverter:
     """Converts GDScript BBCode documentation to Markdown."""
 
@@ -49,17 +83,29 @@ class BBCodeConverter:
         "InputEventMouseMotion", "InputEventKey", "InputEventAction",
     }
 
-    def __init__(self, current_class: str = "", known_classes: Optional[set[str]] = None):
+    def __init__(self, current_class: str = "", known_classes: Optional[set[str]] = None,
+                 source_category: str = "", class_to_category: Optional[dict[str, str]] = None):
         """
         Initialize the converter.
 
         Args:
             current_class: The name of the class being documented (for self-references)
             known_classes: Additional known classes for cross-referencing
+            source_category: Category slug of the class being documented (for relative paths)
+            class_to_category: Mapping of class name → category slug for all known classes
         """
         self.current_class = current_class
         self.known_classes = known_classes or set()
         self.all_known_classes = self.POPOCHIU_CLASSES | self.known_classes
+        self.source_category = source_category
+        self.class_to_category = class_to_category or {}
+
+    def _get_class_path(self, target_class: str, anchor: str = "") -> str:
+        """Get the relative path to a Popochiu class, respecting categories."""
+        return get_relative_class_path(
+            self.source_category, target_class,
+            self.class_to_category, anchor,
+        )
 
     def convert(self, text: str) -> str:
         """Convert BBCode text to Markdown."""
@@ -116,7 +162,9 @@ class BBCodeConverter:
             if "." in ref:
                 class_name, prop = ref.split(".", 1)
                 if class_name in self.all_known_classes:
-                    return f"[`{prop}`]({class_name}.md#{prop.lower().replace('_', '-')})"
+                    anchor = prop.lower().replace('_', '-')
+                    path = self._get_class_path(class_name, anchor)
+                    return f"[`{prop}`]({path})"
                 elif class_name in self.GODOT_CLASSES:
                     return f"[`{ref}`](https://docs.godotengine.org/en/stable/classes/class_{class_name.lower()}.html#class-{class_name.lower()}-property-{prop.lower().replace('_', '-')})"
             return f"`{ref}`"
@@ -132,7 +180,9 @@ class BBCodeConverter:
             if "." in ref:
                 class_name, method = ref.split(".", 1)
                 if class_name in self.all_known_classes:
-                    return f"[`{method}()`]({class_name}.md#{method.lower().replace('_', '-')})"
+                    anchor = method.lower().replace('_', '-')
+                    path = self._get_class_path(class_name, anchor)
+                    return f"[`{method}()`]({path})"
                 elif class_name in self.GODOT_CLASSES:
                     return f"[`{method}()`](https://docs.godotengine.org/en/stable/classes/class_{class_name.lower()}.html#class-{class_name.lower()}-method-{method.lower().replace('_', '-')})"
             # Same class reference
@@ -149,7 +199,8 @@ class BBCodeConverter:
             if "." in ref:
                 class_name, signal = ref.split(".", 1)
                 if class_name in self.all_known_classes:
-                    return f"[`{signal}`]({class_name}.md#signals)"
+                    path = self._get_class_path(class_name, "signals")
+                    return f"[`{signal}`]({path})"
             anchor = ref.lower().replace("_", "-")
             return f"[`{ref}`](#signal-{anchor})"
 
@@ -164,7 +215,8 @@ class BBCodeConverter:
             if "." in ref:
                 class_name, const = ref.split(".", 1)
                 if class_name in self.all_known_classes:
-                    return f"[`{const}`]({class_name}.md#constants)"
+                    path = self._get_class_path(class_name, "constants")
+                    return f"[`{const}`]({path})"
             return f"`{ref}`"
 
         return re.sub(r'\[constant\s+([\w.]+)\]', replace_constant, text)
@@ -177,7 +229,9 @@ class BBCodeConverter:
             if "." in ref:
                 class_name, enum = ref.split(".", 1)
                 if class_name in self.all_known_classes:
-                    return f"[`{enum}`]({class_name}.md#enum-{enum.lower().replace('_', '-')})"
+                    anchor = f"enum-{enum.lower().replace('_', '-')}"
+                    path = self._get_class_path(class_name, anchor)
+                    return f"[`{enum}`]({path})"
             anchor = ref.lower().replace("_", "-")
             return f"[`{ref}`](#enum-{anchor})"
 
@@ -222,7 +276,8 @@ class BBCodeConverter:
 
             # Popochiu class reference
             if class_name in self.all_known_classes:
-                return f"[{class_name}]({class_name}.md)"
+                path = self._get_class_path(class_name)
+                return f"[{class_name}]({path})"
 
             # Godot class reference
             if class_name in self.GODOT_CLASSES:
@@ -243,7 +298,9 @@ class BBCodeConverter:
 
 
 def convert_description(text: str, current_class: str = "", 
-                       known_classes: Optional[set[str]] = None) -> str:
+                       known_classes: Optional[set[str]] = None,
+                       source_category: str = "",
+                       class_to_category: Optional[dict[str, str]] = None) -> str:
     """
     Convenience function to convert a description string.
 
@@ -251,11 +308,14 @@ def convert_description(text: str, current_class: str = "",
         text: The BBCode text to convert
         current_class: The current class name for self-references
         known_classes: Set of known class names for cross-referencing
+        source_category: Category slug of the source class
+        class_to_category: Mapping of class name → category slug
 
     Returns:
         Markdown-formatted text
     """
-    converter = BBCodeConverter(current_class, known_classes)
+    converter = BBCodeConverter(current_class, known_classes,
+                                source_category, class_to_category)
     return converter.convert(text)
 
 

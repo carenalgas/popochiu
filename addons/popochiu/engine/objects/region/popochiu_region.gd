@@ -1,3 +1,4 @@
+# @popochiu-docs-category room-objects
 @tool
 @icon('res://addons/popochiu/icons/region.png')
 class_name PopochiuRegion

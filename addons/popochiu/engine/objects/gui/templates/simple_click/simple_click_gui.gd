@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name SimpleClickGUI
 extends PopochiuGraphicInterface
 ## Defines the behavior of the 2-click Context-sensitive GUI.

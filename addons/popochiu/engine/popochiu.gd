@@ -1,3 +1,4 @@
+# @popochiu-docs-category engine
 class_name Popochiu
 extends Node
 ## Popochiu's core engine, responsible for the main game logic and systems.

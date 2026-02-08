@@ -45,6 +45,15 @@ Options:
     -v, --verbose               Enable verbose output
     --dry-run                   Parse files but don't write output
 
+Annotations (place in GDScript source files):
+    @popochiu-docs-ignore-class     Exclude an entire class from docs
+    @popochiu-docs-ignore           Exclude the next documented member
+    @popochiu-docs-include          Force-include a member even if class is ignored
+    @popochiu-docs-category <slug>  Place the class in a subdirectory named <slug>.
+                                    Example: # @popochiu-docs-category game-objects
+                                    Classes with the same slug are grouped together
+                                    and get their own index page.
+
 Examples:
     # Generate docs with defaults (engine classes)
     generate_reference

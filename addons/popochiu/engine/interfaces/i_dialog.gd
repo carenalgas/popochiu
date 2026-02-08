@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIDialog
 extends Node
 ## Provides access to the project's [PopochiuDialog]s via the singleton [b]D[/b] (for example:

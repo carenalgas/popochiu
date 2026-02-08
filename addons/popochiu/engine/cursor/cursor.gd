@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name PopochiuCursor
 extends CanvasLayer
 

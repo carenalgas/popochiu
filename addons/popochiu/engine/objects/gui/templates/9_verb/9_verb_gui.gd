@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name NineVerbGUI
 extends PopochiuGraphicInterface
 ## Defines the behavior of the 9 Verbs GUI.

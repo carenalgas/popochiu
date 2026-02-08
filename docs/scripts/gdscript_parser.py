@@ -151,6 +151,7 @@ class ClassInfo:
     methods: list[MethodInfo] = field(default_factory=list)
     is_tool: bool = False
     is_class_ignored: bool = False
+    docs_category: str = ""
 
 
 class GDScriptParser:
@@ -165,6 +166,7 @@ class GDScriptParser:
         "doc_comment": re.compile(r"^##\s?(.*)$"),
         "single_comment": re.compile(r"^#\s?(.*)$"),
         "annotation": re.compile(r"@popochiu-docs-(ignore-class|ignore|include)"),
+        "category_annotation": re.compile(r"@popochiu-docs-category\s+([\w-]+)"),
         "signal": re.compile(
             r"^signal\s+(\w+)(?:\s*\(([^)]*)\))?"
         ),
@@ -235,6 +237,14 @@ class GDScriptParser:
         is_class_ignored = any(
             "@popochiu-docs-ignore-class" in line for line in lines
         )
+
+        # Check for @popochiu-docs-category anywhere in file
+        docs_category = ""
+        for line in lines:
+            cat_match = self.PATTERNS["category_annotation"].search(line)
+            if cat_match:
+                docs_category = cat_match.group(1)
+                break
 
         # First pass: find class_name and basic info
         class_name = Path(file_path).stem if file_path else "Unknown"
@@ -316,6 +326,7 @@ class GDScriptParser:
             description="\n".join(class_description_lines).strip(),
             is_tool=is_tool,
             is_class_ignored=is_class_ignored,
+            docs_category=docs_category,
         )
 
         # Second pass: parse members

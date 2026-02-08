@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects
 @tool
 class_name PopochiuDialogOption
 extends Resource

@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects
 @tool
 class_name PopochiuAudioCue
 extends Resource

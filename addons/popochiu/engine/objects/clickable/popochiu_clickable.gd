@@ -1,3 +1,4 @@
+# @popochiu-docs-category base-classes
 @tool
 class_name PopochiuClickable
 extends Area2D

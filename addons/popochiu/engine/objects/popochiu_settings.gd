@@ -1,3 +1,4 @@
+# @popochiu-docs-category engine
 @tool
 class_name PopochiuSettings
 extends Resource

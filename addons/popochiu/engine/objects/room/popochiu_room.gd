@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects
 @tool
 @icon("res://addons/popochiu/icons/room.png")
 class_name PopochiuRoom

@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuITransitionLayer
 extends Node
 ## Provides access to the [PopochiuTransitionLayer] via the singleton [b]T[/b]

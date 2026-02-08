@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIGraphicInterface
 extends Node
 ## Provides access to the in-game [PopochiuGraphicInterface] via the singleton [b]G[/b]

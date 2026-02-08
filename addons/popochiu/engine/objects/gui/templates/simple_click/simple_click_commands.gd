@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name SimpleClickCommands
 extends PopochiuCommands
 ## Defines the commands and fallback methods for the 2-click Context-sensitive GUI.

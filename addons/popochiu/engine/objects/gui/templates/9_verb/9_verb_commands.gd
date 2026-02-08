@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name NineVerbCommands
 extends PopochiuCommands
 ## Defines the commands and fallback methods for the 9 Verbs GUI.

@@ -32,10 +32,12 @@ The documentation toolchain supports special annotations to control which classe
 - **`@popochiu-docs-ignore-class`** — Excludes the entire class from documentation. Can be placed anywhere at class level. Members with `@popochiu-docs-include` will still be exported.
 - **`@popochiu-docs-ignore`** — Excludes a specific member (property, method, signal, enum, or constant) from documentation. **Must be on the line immediately before the member's docblock**.
 - **`@popochiu-docs-include`** — Forces inclusion of a member in the documentation, even if it would normally be excluded (e.g., private members starting with `_`, or members in an ignored class). **Must be on the line immediately before the member's docblock**.
+- **`@popochiu-docs-category <slug>`** — Organizes the class into a subdirectory within the scripting reference. Can be placed anywhere at class level. Classes with the same slug are grouped together with their own index page. The slug should use lowercase letters and hyphens (e.g., `game-objects`, `guis`, `audio-system`).
 
 **Example usage:**
 
 ```gdscript
+# @popochiu-docs-category game-objects
 # @popochiu-docs-ignore-class
 class_name InternalHelper
 extends Node
@@ -56,6 +58,7 @@ func sole_important_function() -> String:
 ```
 
 ```gdscript
+# @popochiu-docs-category guis
 class_name MyClass
 extends Node
 

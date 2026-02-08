@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuICharacter
 extends Node
 ## Provides access to the project's [PopochiuCharacter]s via the singleton [b]C[/b] (for example:

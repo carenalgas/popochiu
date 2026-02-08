@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects-data-managers
 @icon('res://addons/popochiu/icons/inventory_item.png')
 class_name PopochiuInventoryItemData
 extends Resource

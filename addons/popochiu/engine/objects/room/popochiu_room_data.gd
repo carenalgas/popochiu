@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects-data-managers
 @icon("res://addons/popochiu/icons/room.png")
 class_name PopochiuRoomData
 extends Resource

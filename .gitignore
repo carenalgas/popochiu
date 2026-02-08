@@ -38,6 +38,7 @@ Thumbs.db
 # Documentation ignores
 docs/src/**/*.import
 docs/src/**/scripting-reference/*.md
+docs/src/**/scripting-reference/**/*.md
 !docs/src/**/scripting-reference/index.md
 docs/dist/*
 docs/dist/**/*

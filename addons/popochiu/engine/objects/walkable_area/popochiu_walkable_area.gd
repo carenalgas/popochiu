@@ -1,3 +1,4 @@
+# @popochiu-docs-category room-objects
 @tool
 @icon('res://addons/popochiu/icons/walkable_area.png')
 class_name PopochiuWalkableArea

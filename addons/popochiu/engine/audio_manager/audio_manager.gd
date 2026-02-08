@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects
 class_name PopochiuAudioManager
 extends Node
 ## Handles playing audio using [PopochiuAudioCue]s.

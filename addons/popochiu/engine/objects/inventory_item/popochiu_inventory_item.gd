@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects
 @icon("res://addons/popochiu/icons/inventory_item.png")
 class_name PopochiuInventoryItem
 extends TextureRect

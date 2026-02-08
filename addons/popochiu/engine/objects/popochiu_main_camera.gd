@@ -1,3 +1,4 @@
+# @popochiu-docs-category engine
 class_name PopochiuMainCamera
 extends Camera2D
 ## Manages the main camera used by Popochiu for screen effects like shaking and zooming.
