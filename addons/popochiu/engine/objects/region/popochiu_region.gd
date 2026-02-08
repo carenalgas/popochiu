@@ -90,13 +90,13 @@ func _notification(event: int) -> void:
 ## Called when [param chr] enters this region.[br]
 ## Implement this to add custom behavior or update the game state.
 func _on_character_entered(chr: PopochiuCharacter) -> void:
-	pass
+	chr.modulate = tint
 
 
 ## Called when [param chr] exits this region.[br]
 ## Implement this to add custom behavior or update the game state.
 func _on_character_exited(chr: PopochiuCharacter) -> void:
-	pass
+	chr.modulate = Color.WHITE
 
 
 #endregion
