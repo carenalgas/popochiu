@@ -98,11 +98,13 @@ class MarkdownGenerator:
         # If deprecated_reason is not None, the @deprecated tag was found
         if deprecated is not None:
             reason = deprecated if deprecated else self.DEFAULT_DEPRECATED_MESSAGE
+            reason = self.converter.convert(reason) if self.converter else reason
             admonitions.append(f'!!! danger "Deprecated"\n    {reason}')
 
         # If experimental_reason is not None, the @experimental tag was found
         if experimental is not None:
             reason = experimental if experimental else self.DEFAULT_EXPERIMENTAL_MESSAGE
+            reason = self.converter.convert(reason) if self.converter else reason
             admonitions.append(f'!!! warning "Experimental"\n    {reason}')
 
         return "\n\n".join(admonitions)
