@@ -50,6 +50,15 @@ These typed properties are generated in the autoload files under `res://game/aut
 !!! info "Under the hood"
     Each autoload (e.g. `res://game/autoloads/c.gd`) extends the corresponding engine interface class (e.g. `PopochiuICharacter`). The generated typed properties use getter functions that fetch the runtime instance by script name. This is why `C.Popsy` gives you a fully typed `PCPopsy` reference with all its methods and properties.
 
+### Primary objects vs. room objects
+
+While it's true that you can access most game elements from their related singleton, it's useful to understand a distinction that Popochiu makes between two categories of objects:
+
+- **Primary objects** (rooms, characters, inventory items, dialogs) exist at the **project level**. They are always accessible through their dedicated singletons (`R`, `C`, `I`, `D`), regardless of which room is currently active, as explained above.
+- **Room objects** (props, hotspots, markers, regions, walkable areas) belong to a **specific room** and only exist while that room is loaded. They can't be reached through a typed singleton property; instead, you look them up through `R` at runtime.
+
+This is why characters and inventory items live directly on `C` and `I` as typed properties, while props and hotspots require a lookup function.
+
 ### Accessing room objects
 
 You can reach props, hotspots, markers, regions and walkable areas in the **current room** through `R`:
@@ -111,46 +120,6 @@ When a player clicks on a prop, Popochiu calls `_on_click()` on that prop's scri
 
 Think of it like directing a play: you don't control the stage machinery. You just write what happens when the curtain rises, when an actor is spoken to, or when a prop is picked up.
 
-### The room lifecycle
-
-Every room has three key moments, each with its own virtual function:
-
-| Function | When it's called | What to do here |
-| :------- | :--------------- | :-------------- |
-| `_on_room_entered()` | The room is loaded and in the tree, but **not visible** yet (the transition hasn't finished). | Set the stage: position characters, set facing directions, toggle prop visibility, choose the active walkable area, start background music. |
-| `_on_room_transition_finished()` | The transition animation has finished and the room is **now visible**. | Start gameplay: trigger intro cutscenes, play sounds, begin timers. |
-| `_on_room_exited()` | The room is about to be unloaded. It's **no longer visible** and characters have been removed. | Clean up: stop music, reset temporary state. |
-
-Here's a concrete example:
-
-```gdscript
-extends PopochiuRoom
-
-func _on_room_entered() -> void:
-    # Set the stage before the player sees anything
-    A.mx_background_theme.play()
-    if state.visited_first_time:
-        C.player.teleport_to_marker("EnterPos")
-    else:
-        C.player.teleport_to_marker("StartingPos")
-        C.player.face_left()
-
-func _on_room_transition_finished() -> void:
-    # The room is now visible: start gameplay
-    if state.visited_first_time:
-        await E.cutscene([
-            "Popsy: Where am I?",
-            "Popsy: This place looks familiar...",
-        ])
-
-func _on_room_exited() -> void:
-    # Clean up before leaving
-    A.mx_background_theme.stop()
-```
-
-!!! note
-    `state.visited_first_time` is a built-in property that Popochiu sets to `true` only on the very first visit to a room. It's part of the [Object state](object-state.md) system.
-
 ### Clickable interactions
 
 Props, hotspots, and characters all inherit from `PopochiuClickable`, which provides a consistent set of virtual functions for player interactions:
@@ -199,6 +168,85 @@ func _on_right_click() -> void:
 
 !!! info
     When you create a prop or hotspot through the Popochiu dock, the editor generates a script with all virtual functions stubbed out and the default `E.command_fallback()` call. You just replace those calls with your own logic.
+
+### Room lifecycle events
+
+Every room has three key moments, each with its own virtual function:
+
+| Function | When it's called | What to do here |
+| :------- | :--------------- | :-------------- |
+| `_on_room_entered()` | The room is loaded and in the tree, but **not visible** yet (the transition hasn't finished). | Set the stage: position characters, set facing directions, toggle prop visibility, choose the active walkable area, start background music. |
+| `_on_room_transition_finished()` | The transition animation has finished and the room is **now visible**. | Start gameplay: trigger intro cutscenes, play sounds, begin timers. |
+| `_on_room_exited()` | The room is about to be unloaded. It's **no longer visible** and characters have been removed. | Clean up: stop music, reset temporary state. |
+
+Here's a concrete example:
+
+```gdscript
+extends PopochiuRoom
+
+func _on_room_entered() -> void:
+    # Set the stage before the player sees anything
+    A.mx_background_theme.play()
+    if state.visited_first_time:
+        C.player.teleport_to_marker("EnterPos")
+    else:
+        C.player.teleport_to_marker("StartingPos")
+        C.player.face_left()
+
+func _on_room_transition_finished() -> void:
+    # The room is now visible: start gameplay
+    if state.visited_first_time:
+        await E.cutscene([
+            "Popsy: Where am I?",
+            "Popsy: This place looks familiar...",
+        ])
+
+func _on_room_exited() -> void:
+    # Clean up before leaving
+    A.mx_background_theme.stop()
+```
+
+!!! note
+    `state.visited_first_time` is a built-in property that Popochiu sets to `true` only on the very first visit to a room. It's part of the [Object state](object-state.md) system.
+
+### Region events
+
+Regions trigger events when characters walk into or out of them:
+
+| Function | Trigger |
+| :------- | :------ |
+| `_on_character_entered(chr)` | A character enters the region |
+| `_on_character_exited(chr)` | A character exits the region |
+
+By default, regions apply a color tint when a character enters and reset it when they exit. You can override this to do something different entirely. For example, a region can trigger a prop to play an open or close animation when the player walks into or out of the region.
+
+```gdscript
+extends PopochiuRegion
+
+# Example: open a sliding door when a character approaches it enters the
+# region, and close it when they leave. The region simply tells the prop
+# to play its animations; the prop is responsible for its own visuals.
+func _on_character_entered(chr: PopochiuCharacter) -> void:
+    R.get_prop("SlidingDoor").play_animation("open")
+
+func _on_character_exited(chr: PopochiuCharacter) -> void:
+    R.get_prop("SlidingDoor").play_animation("close")
+```
+
+If you want to *add* behavior while keeping the region's default tinting, call `super()` from your override. That runs Popochiu's built-in tint logic first, then your custom actions:
+
+```gdscript
+extends PopochiuRegion
+
+# Example: keep the default tinting and also open the door.
+func _on_character_entered(chr: PopochiuCharacter) -> void:
+    super() # Run the default tinting behavior
+    R.get_prop("SlidingDoor").play_animation("open")
+
+func _on_character_exited(chr: PopochiuCharacter) -> void:
+    super() # Run the default tint reset behavior
+    R.get_prop("SlidingDoor").play_animation("close")
+```
 
 ### Inventory item events
 
@@ -253,45 +301,6 @@ func _option_selected(opt: PopochiuDialogOption) -> void:
         "Bye":
             await C.Popsy.say("See you later!")
             D.finish_dialog() # End the dialog when the player says goodbye
-```
-
-### Region events
-
-Regions trigger events when characters walk into or out of them:
-
-| Function | Trigger |
-| :------- | :------ |
-| `_on_character_entered(chr)` | A character enters the region |
-| `_on_character_exited(chr)` | A character exits the region |
-
-By default, regions apply a color tint when a character enters and reset it when they exit. You can override this to do something different entirely. For example, a region can trigger a prop to play an open or close animation when the player walks into or out of the region.
-
-```gdscript
-extends PopochiuRegion
-
-# Example: open a sliding door when a character approaches it enters the
-# region, and close it when they leave. The region simply tells the prop
-# to play its animations; the prop is responsible for its own visuals.
-func _on_character_entered(chr: PopochiuCharacter) -> void:
-    R.get_prop("SlidingDoor").play_animation("open")
-
-func _on_character_exited(chr: PopochiuCharacter) -> void:
-    R.get_prop("SlidingDoor").play_animation("close")
-```
-
-If you want to *add* behavior while keeping the region's default tinting, call `super()` from your override. That runs Popochiu's built-in tint logic first, then your custom actions:
-
-```gdscript
-extends PopochiuRegion
-
-# Example: keep the default tinting and also open the door.
-func _on_character_entered(chr: PopochiuCharacter) -> void:
-    super() # Run the default tinting behavior
-    R.get_prop("SlidingDoor").play_animation("open")
-
-func _on_character_exited(chr: PopochiuCharacter) -> void:
-    super() # Run the default tint reset behavior
-    R.get_prop("SlidingDoor").play_animation("close")
 ```
 
 ### Movement events
