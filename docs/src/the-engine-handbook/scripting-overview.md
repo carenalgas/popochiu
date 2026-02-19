@@ -17,12 +17,12 @@ Here's the mental model:
 
 ```mermaid
 flowchart TD
-    A["fas:fa-recycle<br/><strong>Popochiu runs main loop</strong><br/><i>Starts automatically with your game</i>"] --> B["fas:fa-hand-pointer<br/><strong>Player executes action</strong><br/><i>(e.g., click on door)</i>"]
+    A["fas:fa-recycle<br/><strong>Popochiu runs main loop</strong><br/><i>Starts automatically with your game</i>"] --> B["fas:fa-hand-pointer<br/><strong>Player executes action</strong><br/><i>E.g. clicks on door</i>"]
     B --> C["fas:fa-cogs<br/><strong>The right function is invoked</strong><br/><i>E.g. door._on_click()</i>"]
     C --> D["fas:fa-pencil-alt<br/><strong>You just implement it!</strong><br/><i>Put your code inside door._on_click()</i>"]
     D --> E["<strong>Use Singletons to access game objects</strong><br/>(E, C, R, I, D...)"]
     D --> F["<strong>Objects provide core adventure game features</strong><br/>(Characters, Rooms, ...)"]
-    D --> G["<strong>Godot provides everything else</strong><br/>(scripting, support, ...)"]
+    D --> G["<strong>Godot provides everything else</strong><br/>(scripting, base engine, ...)"]
     
     style D fill:#208050,color:#fff
 ```

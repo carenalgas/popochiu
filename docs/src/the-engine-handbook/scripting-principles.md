@@ -12,8 +12,8 @@ Every Popochiu game has a set of **singletons**: globally available objects that
 
 Here's the full list:
 
-| Singleton | Type | What it gives you access to |
-| :-------: | :--- | :-------------------------- |
+| Singleton | Interface to | What it gives you access to |
+| :-------: | :----------- | :-------------------------- |
 | **E** | Engine | Core engine features: camera, settings, queues, save/load, command registration. |
 | **R** | Rooms | All rooms in your project, plus the current room's props, hotspots, markers, regions, and walkable areas. |
 | **C** | Characters | All characters, including the player-controlled character (`C.player`). |
@@ -29,11 +29,11 @@ Here's the full list:
 
 When Popochiu creates a room, character, or inventory item through the editor, it also generates typed properties on the corresponding singleton. This means you get **full autocomplete** in the script editor.
 
-For example, if your project has a character called "Will" and a room called "LivingRoom":
+For example, if your project has a character called "Popsy" and a room called "LivingRoom":
 
 ```gdscript
 # Access a character by its typed property
-C.Will.say("Hello there!")
+C.Popsy.say("Hello there!")
 
 # Access a room
 R.LivingRoom
@@ -42,13 +42,13 @@ R.LivingRoom
 C.player.walk_to(Vector2(100, 80))
 
 # Access an inventory item
-I.FirstOne.add()
+I.HairDryer.add()
 ```
 
 These typed properties are generated in the autoload files under `res://game/autoloads/`. You don't need to edit those files, as Popochiu keeps them in sync when you create or remove game objects through the dock.
 
 !!! info "Under the hood"
-    Each autoload (e.g. `res://game/autoloads/c.gd`) extends the corresponding engine interface class (e.g. `PopochiuICharacter`). The generated typed properties use getter functions that fetch the runtime instance by script name. This is why `C.Will` gives you a fully typed `PCWill` reference with all its methods and properties.
+    Each autoload (e.g. `res://game/autoloads/c.gd`) extends the corresponding engine interface class (e.g. `PopochiuICharacter`). The generated typed properties use getter functions that fetch the runtime instance by script name. This is why `C.Popsy` gives you a fully typed `PCPopsy` reference with all its methods and properties.
 
 ### Accessing room objects
 
@@ -79,20 +79,23 @@ Here's how singletons look in real game code:
 # Navigate to another room
 R.goto_room("Kitchen")
 
-# Make a character say something
-await C.Will.say("I should check the kitchen.")
-
 # Play background music
-A.mx_lazy_day.play()
+A.mx_kitchen_theme.play()
 
-# Show a system message through the GUI
-G.show_system_text("The door is locked.")
+# Make a character say something
+await C.Popsy.say("I should check the kitchen.")
 
 # Play a screen transition
-await T.play_transition("fade_in", 0.5, T.PLAY_MODE.PLAY)
+await T.play_transition("fade", 3, T.PLAY_MODE.IN_OUT)
+
+# Show a system message through the GUI
+G.show_system_text("After a while...")
+
+# Make a character say something
+await C.Popsy.say("I found nothing!")
 
 # Save the game in slot 1
-E.save_game(1, "Before the big puzzle")
+E.save_game(1, "Mysterious Kitchen")
 ```
 
 !!! tip
@@ -112,15 +115,6 @@ Think of it like directing a play: you don't control the stage machinery. You ju
 
 Every room has three key moments, each with its own virtual function:
 
-```mermaid
-flowchart LR
-    A["_on_room_entered()"] --> B["_on_room_transition_finished()"]
-    B --> C["_on_room_exited()"]
-    style A fill:#2d5a3d,stroke:#4a9,color:#fff
-    style B fill:#2d5a3d,stroke:#4a9,color:#fff
-    style C fill:#5a2d2d,stroke:#a44,color:#fff
-```
-
 | Function | When it's called | What to do here |
 | :------- | :--------------- | :-------------- |
 | `_on_room_entered()` | The room is loaded and in the tree, but **not visible** yet (the transition hasn't finished). | Set the stage: position characters, set facing directions, toggle prop visibility, choose the active walkable area, start background music. |
@@ -133,25 +127,25 @@ Here's a concrete example:
 extends PopochiuRoom
 
 func _on_room_entered() -> void:
-	# Set the stage before the player sees anything
-	A.mx_lazy_day.play()
-	if state.visited_first_time:
-		C.player.teleport_to_marker("EnterPos")
-	else:
-		C.player.teleport_to_marker("StartingPos")
-		C.player.face_left()
+    # Set the stage before the player sees anything
+    A.mx_background_theme.play()
+    if state.visited_first_time:
+        C.player.teleport_to_marker("EnterPos")
+    else:
+        C.player.teleport_to_marker("StartingPos")
+        C.player.face_left()
 
 func _on_room_transition_finished() -> void:
-	# The room is now visible: start gameplay
-	if state.visited_first_time:
-		await E.cutscene([
-			"Will: Where am I?",
-			"Will: This place looks familiar...",
-		])
+    # The room is now visible: start gameplay
+    if state.visited_first_time:
+        await E.cutscene([
+            "Popsy: Where am I?",
+            "Popsy: This place looks familiar...",
+        ])
 
 func _on_room_exited() -> void:
-	# Clean up before leaving
-	A.mx_lazy_day.stop()
+    # Clean up before leaving
+    A.mx_background_theme.stop()
 ```
 
 !!! note
@@ -175,19 +169,19 @@ Here's an example prop script:
 extends PopochiuProp
 
 func _on_click() -> void:
-	await C.player.walk_to_clicked()
-	await C.player.say("It's an old trophy. Dusty but proud.")
+    await C.player.walk_to_clicked()
+    await C.player.say("It's an old trophy. Dusty but proud.")
 
 func _on_right_click() -> void:
-	await C.player.face_clicked()
-	await C.player.say("I don't want to touch it.")
+    await C.player.face_clicked()
+    await C.player.say("I don't want to touch it.")
 
 func _on_item_used(item: PopochiuInventoryItem) -> void:
-	if item == I.Feather:
-		await C.player.say("I dust it off with the feather.")
-		# ...do something with the trophy
-	else:
-		await C.player.say("That won't work.")
+    if item == I.Feather:
+        await C.player.say("I dust it off with the feather.")
+        # ...do something with the trophy
+    else:
+        await C.player.say("That won't work.")
 ```
 
 And a hotspot script that acts as a door:
@@ -196,11 +190,11 @@ And a hotspot script that acts as a door:
 extends PopochiuHotspot
 
 func _on_click() -> void:
-	R.goto_room("Kitchen")
+    R.goto_room("Kitchen")
 
 func _on_right_click() -> void:
-	await C.player.face_clicked()
-	await C.player.say("It leads to the kitchen.")
+    await C.player.face_clicked()
+    await C.player.say("It leads to the kitchen.")
 ```
 
 !!! info
@@ -223,12 +217,12 @@ Inventory items have their own set of virtual functions, since they live in the 
 extends PopochiuInventoryItem
 
 func _on_click() -> void:
-	await C.player.say("It's a shiny key.")
+    await C.player.say("It's a shiny key.")
 
 func _on_item_used(item: PopochiuInventoryItem) -> void:
-	if item == I.Ring:
-		await C.player.say("I thread the ring onto the keychain.")
-		# Combine items, replace, etc.
+    if item == I.Ring:
+        await C.player.say("I thread the ring onto the keychain.")
+        # Combine items, replace, etc.
 ```
 
 ### Dialog events
@@ -244,20 +238,21 @@ Dialog trees have two main virtual functions:
 extends PopochiuDialog
 
 func _on_start() -> void:
-	await C.Will.say("Hey there!")
-	await C.Bartender.say("What can I get you?")
+    await C.Popsy.say("Hey there!")
+    await C.Bartender.say("What can I get you?")
 
 func _option_selected(opt: PopochiuDialogOption) -> void:
-	match opt.id:
-		"AskForBeer":
-			await C.Bartender.say("Coming right up!")
-			turn_off_options(["AskForBeer"])
-		"AskAboutTreasure":
-			await C.Bartender.say("I don't know what you're talking about...")
-			await D.say_selected()  # Shows the dialog text the player chose
-		"Bye":
-			await C.Will.say("See you later!")
-			D.finish_dialog()
+    match opt.id:
+        "AskForBeer":
+            await D.say_selected()  # Speak the same text that's on the dialog option's label
+            await C.Bartender.say("Coming right up!")
+            turn_off_options(["AskForBeer"])
+        "AskAboutTreasure":
+            await C.player.say("Do you know anything about the cursed hidden treasure?")
+            await C.Bartender.say("I don't know what you're talking about...")
+        "Bye":
+            await C.Popsy.say("See you later!")
+            D.finish_dialog() # End the dialog when the player says goodbye
 ```
 
 ### Region events
@@ -269,17 +264,34 @@ Regions trigger events when characters walk into or out of them:
 | `_on_character_entered(chr)` | A character enters the region |
 | `_on_character_exited(chr)` | A character exits the region |
 
-By default, regions apply a color tint when a character enters and reset it when they exit. You can override this:
+By default, regions apply a color tint when a character enters and reset it when they exit. You can override this to do something different entirely. For example, a region can trigger a prop to play an open or close animation when the player walks into or out of the region.
 
 ```gdscript
 extends PopochiuRegion
 
+# Example: open a sliding door when a character approaches it enters the
+# region, and close it when they leave. The region simply tells the prop
+# to play its animations; the prop is responsible for its own visuals.
 func _on_character_entered(chr: PopochiuCharacter) -> void:
-	# Apply a dark tint when entering the shadow
-	chr.modulate = Color(0.4, 0.4, 0.5)
+    R.get_prop("SlidingDoor").play_animation("open")
 
 func _on_character_exited(chr: PopochiuCharacter) -> void:
-	chr.modulate = Color.WHITE
+    R.get_prop("SlidingDoor").play_animation("close")
+```
+
+If you want to *add* behavior while keeping the region's default tinting, call `super()` from your override. That runs Popochiu's built-in tint logic first, then your custom actions:
+
+```gdscript
+extends PopochiuRegion
+
+# Example: keep the default tinting and also open the door.
+func _on_character_entered(chr: PopochiuCharacter) -> void:
+    super() # Run the default tinting behavior
+    R.get_prop("SlidingDoor").play_animation("open")
+
+func _on_character_exited(chr: PopochiuCharacter) -> void:
+    super() # Run the default tint reset behavior
+    R.get_prop("SlidingDoor").play_animation("close")
 ```
 
 ### Movement events
@@ -299,9 +311,9 @@ When a player clicks on a game object, here's what happens behind the scenes:
 
 ```mermaid
 flowchart TD
-    A["Player clicks on a Prop"] --> B{"Is an inventory\nitem active?"}
+    A["Player clicks on a Prop"] --> B{"Is an inventory<br/>item active?"}
     B -- Yes --> C["Call _on_item_used(item)"]
-    B -- No --> D{"Which mouse\nbutton?"}
+    B -- No --> D{"Which mouse<br/>button?"}
     D -- Left --> E["Call _on_click()"]
     D -- Right --> F["Call _on_right_click()"]
     D -- Middle --> G["Call _on_middle_click()"]
@@ -325,20 +337,38 @@ You can add any method to any game object script. These aren't virtual functions
 extends PopochiuRoom
 
 func _on_room_transition_finished() -> void:
-	if _should_trigger_storm():
-		await _play_storm_sequence()
+    if _should_trigger_storm():
+        await _play_storm_sequence()
 
 func _should_trigger_storm() -> bool:
-	return state.visited_times > 2 and not Globals.storm_happened
+    return state.visited_times > 2 and not Globals.storm_happened
 
 func _play_storm_sequence() -> void:
-	await E.cutscene([
-		C.player.queue_say("What's that rumbling?"),
-		E.queue_wait(0.5),
-		C.player.queue_say("Thunder!"),
-	])
-	Globals.storm_happened = true
+    await E.cutscene([
+        C.player.queue_say("What's that rumbling?"),
+        E.queue_wait(0.5),
+        C.player.queue_say("Thunder!"),
+    ])
+    Globals.storm_happened = true
 ```
+
+You can write you helper functions any way you want, but we strongly suggest following these guidelines:
+
+- Use private helper functions (named with a leading underscore) unless you have a specific reason to make them public.
+- Keep helper functions grouped in a clearly marked region (for example `# region Private helpers` / `# endregion`) so they are easy to find, less likely to be confused with virtuals and leverage code folding in Godot editor.
+- Use clear, descriptive names for private helpers and avoid reusing names that collide with virtual functions.
+- When you *do* override a virtual but want to preserve the base behavior, call `super()` inside your implementation.
+
+These are best practices that make scripts easier to read and more reliable.
+
+!!! tip
+    Those of you coming from a background in object-oriented programming might wonder how to mark a function as private in a language that doesn't have built-in support for access modifiers.
+
+    As mentioned, that's achieved by convention: prefix private functions with an underscore (e.g. `_calculate_score()`, `_is_puzzle_solved()`). While those methods can still be called from outside the class, this signals to other developers that these functions are intended for internal use.
+    
+    Popochiu virtuals also start with an underscore (for example `_on_click()`), so yes... both private helpers and engine virtuals use the same underscore.  
+    That's a Godot convention: the leading underscore means "not part of the public API".  
+    `¯\_(ツ)_/¯`
 
 ### The Globals singleton
 
@@ -353,7 +383,7 @@ var total_clues_found := 0
 var difficulty := "normal"
 
 func is_puzzle_complete() -> bool:
-	return total_clues_found >= 5
+    return total_clues_found >= 5
 ```
 
 Then in any game script:
@@ -361,9 +391,9 @@ Then in any game script:
 ```gdscript
 # In a prop script
 func _on_click() -> void:
-	Globals.total_clues_found += 1
-	if Globals.is_puzzle_complete():
-		await C.player.say("I've found all the clues!")
+    Globals.total_clues_found += 1
+    if Globals.is_puzzle_complete():
+        await C.player.say("I've found all the clues!")
 ```
 
 !!! tip
@@ -396,7 +426,7 @@ Here are some signals you'll use most often:
 C.character_spoke.connect(_on_any_character_spoke)
 
 func _on_any_character_spoke(character: PopochiuCharacter, message: String) -> void:
-	print("%s said: %s" % [character.script_name, message])
+    print("%s said: %s" % [character.script_name, message])
 ```
 
 **Inventory signals** (on the `I` singleton):
@@ -406,8 +436,8 @@ func _on_any_character_spoke(character: PopochiuCharacter, message: String) -> v
 I.item_added.connect(_on_item_collected)
 
 func _on_item_collected(item: PopochiuInventoryItem, _animate: bool) -> void:
-	if item == I.GoldenKey:
-		await C.player.say("This could open something important...")
+    if item == I.GoldenKey:
+        await C.player.say("This could open something important...")
 ```
 
 **GUI signals** (on the `G` singleton):
@@ -429,11 +459,11 @@ T.transition_finished.connect(func(name): print("Transition done: " + name))
 
 ```gdscript
 # React when a specific character stops walking
-C.Will.stopped_walk.connect(_on_will_stopped)
+C.Popsy.stopped_walk.connect(_on_popsy_stopped)
 
-func _on_will_stopped() -> void:
-	# Will reached his destination
-	await C.Will.say("I'm here!")
+func _on_popsy_stopped() -> void:
+    # Popsy reached his destination
+    await C.Popsy.say("I'm here!")
 ```
 
 ### Signals vs. virtual functions
