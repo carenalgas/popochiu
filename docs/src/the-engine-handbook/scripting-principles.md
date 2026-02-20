@@ -4,30 +4,59 @@ weight: 7010
 
 # Scripting principles
 
+Popochiu bundles everything you need to build a classic point-and-click adventure: characters, dialogs, inventory items, rooms, props, and the small systems that make them work together. The Popochiu Engine is the runtime that makes the game run: it handles input, rendering, transitions, queued actions, and the high-level features you use through singletons.
+
+Unlike some engines that try to hide code behind visual tools, Popochiu expects you to write the game logic in GDScript: you decide how the story unfolds and how objects react when the player does things. That said, Popochiu provides a facilitated coding approach so you only need the basics of GDScript (and almost nothing about Godot) to make a complete game quickly.
+
+If you know Godot well, great: that knowledge is still valuable for deep customizations, mixing other gameplay styles, or tweaking scene-based behaviours. But it is not required to get a working 2D point-and-click game up and running.
+
 This page covers the three fundamental concepts you need to understand before writing any game logic in Popochiu: **singletons** (how you access game objects), **virtual functions** (where you put your code), and **signals** (how you react to engine events).
 
 ## Accessing game objects through singletons
 
 Every Popochiu game has a set of **singletons**: globally available objects that act as entry points to your game's data. You don't need to look up nodes in the scene tree or wire references manually. Instead, you use short, memorable names to reach anything in your game.
 
-Here's the full list:
+### Primary objects vs. room objects
+
+Before looking at the full list of singletons, it's helpful to understand how Popochiu organizes game objects:
+
+- **Primary objects** (rooms, characters, inventory items, dialogs) exist at the **project level**. They are always accessible through their dedicated singletons (`R`, `C`, `I`, `D`), regardless of which room is currently active. When you create them through the Popochiu dock, they appear as typed properties with full autocomplete.
+- **Room objects** (props, hotspots, markers, regions, walkable areas) belong to a **specific room** and only exist while that room is loaded. They can't be reached through a typed singleton property; instead, you look them up through `R` at runtime using functions like `R.get_prop()`.
+
+This distinction explains why characters and inventory items give you `C.Popsy` or `I.Key`, while props and hotspots require a lookup.
+
+### Singleton reference
+
+Here's the complete list, organized by purpose:
+
+**Accessors** (for game objects):
 
 | Singleton | Interface to | What it gives you access to |
 | :-------: | :----------- | :-------------------------- |
-| **E** | Engine | Core engine features: camera, settings, queues, save/load, command registration. |
 | **R** | Rooms | All rooms in your project, plus the current room's props, hotspots, markers, regions, and walkable areas. |
 | **C** | Characters | All characters, including the player-controlled character (`C.player`). |
 | **I** | Inventory | Inventory items and inventory state (what's collected, what's active). |
 | **D** | Dialogs | Dialog trees and dialog flow control. |
+
+**Systems** (for engine features):
+
+| Singleton | Interface to | What it gives you access to |
+| :-------: | :----------- | :-------------------------- |
+| **E** | Engine | Core engine features: camera, settings, queues, save/load, command registration. |
 | **A** | Audio | Audio cues (music and sound effects). |
 | **G** | Graphic Interface | GUI control: showing text, blocking/unblocking input, hiding/showing the interface. |
 | **T** | Transition Layer | Screen transitions (fade in/out, curtains, custom animations). |
-| **Globals** | Game globals | Your own project-wide variables and methods, defined in `res://game/popochiu_globals.gd`. |
 | **Cursor** | Cursor | Cursor appearance and behavior. |
 
-### Typed access with autocomplete
+**Globals** (for custom game state):
 
-When Popochiu creates a room, character, or inventory item through the editor, it also generates typed properties on the corresponding singleton. This means you get **full autocomplete** in the script editor.
+| Singleton | Interface to | What it gives you access to |
+| :-------: | :----------- | :-------------------------- |
+| **Globals** | Game globals | Your own project-wide variables and methods, defined in `res://game/popochiu_globals.gd`. |
+
+### Accessing primary objects
+
+Because characters, rooms, inventory items, and dialogs are primary objects, Popochiu generates typed properties for them on the corresponding singleton.
 
 For example, if your project has a character called "Popsy" and a room called "LivingRoom":
 
@@ -50,18 +79,11 @@ These typed properties are generated in the autoload files under `res://game/aut
 !!! info "Under the hood"
     Each autoload (e.g. `res://game/autoloads/c.gd`) extends the corresponding engine interface class (e.g. `PopochiuICharacter`). The generated typed properties use getter functions that fetch the runtime instance by script name. This is why `C.Popsy` gives you a fully typed `PCPopsy` reference with all its methods and properties.
 
-### Primary objects vs. room objects
-
-While it's true that you can access most game elements from their related singleton, it's useful to understand a distinction that Popochiu makes between two categories of objects:
-
-- **Primary objects** (rooms, characters, inventory items, dialogs) exist at the **project level**. They are always accessible through their dedicated singletons (`R`, `C`, `I`, `D`), regardless of which room is currently active, as explained above.
-- **Room objects** (props, hotspots, markers, regions, walkable areas) belong to a **specific room** and only exist while that room is loaded. They can't be reached through a typed singleton property; instead, you look them up through `R` at runtime.
-
-This is why characters and inventory items live directly on `C` and `I` as typed properties, while props and hotspots require a lookup function.
+    This also means you get **full autocomplete** in the script editor! Yay!
 
 ### Accessing room objects
 
-You can reach props, hotspots, markers, regions and walkable areas in the **current room** through `R`:
+Room objects only exist when their room is loaded, so you look them up dynamically through `R`:
 
 ```gdscript
 # Get a prop in the current room
@@ -80,7 +102,7 @@ R.get_region("DarkCorner")
 R.get_walkable_area("Floor")
 ```
 
-### A few practical examples
+### Usage examples
 
 Here's how singletons look in real game code:
 
