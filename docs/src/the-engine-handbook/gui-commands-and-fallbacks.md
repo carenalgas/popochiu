@@ -33,6 +33,23 @@ The player selects a command (by clicking a verb button, cycling through cursors
 
 ---
 
+Understanding commands dispatching and fallbacks is crucial in three progressively complex cases:
+
+1. To implement the behavior of a specific action on a specific object (e.g., "Look at" the clock) when you use one of the built-in GUI templates different from Simple Click.
+2. When you want to customize the behavior of the built-in GUI templates (e.g. change what happens when the player clicks "Look at" without a specific handler).
+3. When you want to create your own GUI system from scratch, and it provides for a set of commands the player can choose from.
+
+This section may seem a bit complex at first, but, for these reasons, we encourage you to read through it carefully.
+
+!!! tip
+    If you're eager to work on your game and you plan to use one of the built-in GUI templates, this is a TL;DR of what you need to know:
+
+    - You can add a public method called `on_<command>()` to any clickable object, and it will be called when the player clicks that object with that command active. For example, `on_look_at()` will be called when the player clicks "Look at" on that object. Search for the GUI you're using in the _Scripting Reference_ to see the list of commands it provides.
+    - You just need to implement the `on_<command>()` methods for the commands you want to support. Unimplemented commands will fall back to the character saying a generic per-command response (e.g., "Not picking that up." or "I see nothing special.").
+    - If you want to change these generic responses, edit the `gui_commands.gd` file in your project and override the fallback methods for each command. For example, you can change the "Look at" fallback to say something different when the player is controlling a specific character.
+
+    Feel free to skip to the [next section](../await-and-queue-functions) if this is all you need for now. You can always come back to this page later when you want to customize the behavior of your GUI or create your own.
+
 ## How command dispatch works
 
 When a player clicks on a game object with a command active, Popochiu follows a precise dispatch chain to decide which method to call. Here's the full picture:
@@ -58,12 +75,12 @@ Let's break this down step by step.
 
 ### Step 1: The method name is built from the command
 
-When the active command is "Look at" and the player left-clicks, `handle_command()` converts the command name to snake_case and builds a method name:
+When the active command is "Look at" and the player left-clicks, the engine's `handle_command()` function converts the command name to snake_case and builds a method name:
 
 - Command name: `"Look at"` → snake_case: `"look_at"`
 - Method to look for: `on_look_at`
 
-For right-clicks, the method would be `on_right_look_at`. For middle-clicks, `on_middle_look_at`.
+For right-clicks, the handler method would be `on_right_look_at`. For middle-clicks, `on_middle_look_at`.
 
 ### Step 2: Popochiu checks if the object has the method
 
@@ -93,12 +110,35 @@ The pattern is straightforward:
 | Walk to | `on_walk_to()` | `on_right_walk_to()` |
 | Look at | `on_look_at()` | `on_right_look_at()` |
 | Pick up | `on_pick_up()` | `on_right_pick_up()` |
-| Talk to | `on_talk_to()` | `on_right_talk_to()` |
-| Use | `on_use()` | `on_right_use()` |
+| Talk | `on_talk()` | `on_right_talk()` |
+| Examine | `on_examine()` | `on_right_examine()` |
+| Interact | `on_interact()` | `on_right_interact()` |
 | *(any custom)* | `on_<snake_case>()` | `on_right_<snake_case>()` |
 
+This naming convention is designed to keep your game code well organized and easy to read. This spares you from writing complex conditional logic inside generic click handlers, but this can still be done if you prefer that style.
+
+To test if a command is active inside a generic handler, you can check `E.active_command`:
+
+```gdscript
+func _on_click() -> void:
+    match E.active_command:
+        Commands.LOOK_AT:
+            C.face_clicked()
+            await C.player.say("Wow, that's gorgeous!")
+        Commands.PICK_UP:
+            await C.player.say("Let's borrow this for a moment...")
+            await C.player.walk_to_clicked()
+            await C.player.play_animation("grab")
+            I.Precious.add()
+            R.get_prop("Precious").disable()
+        _:
+            E.command_fallback()  # Call the command's registered fallback
+```
+
+We strongly recommend using the `on_<command>()` pattern for better code organization and maintainability, but the choice is yours.
+
 !!! tip
-    You only need to implement the command methods that make sense for each object. A door might have `on_open()` and `on_look_at()`, but not `on_talk_to()`. Unimplemented commands will fall back to the generic handler.
+    You don't have to implement every command method for each object. Only implement those that make sense. A door might have `on_open()` and `on_look_at()`, but not `on_talk_to()`. Unimplemented commands will fall back to the generic handler.
 
 ---
 
@@ -108,7 +148,13 @@ When a game object doesn't handle a command (either because it doesn't have the 
 
 ### How fallbacks are registered
 
-Each GUI template registers its commands and their fallbacks when it initializes. Here's what the 9 Verbs template does:
+Each GUI template registers its commands and their fallbacks when it initializes, by calling `register_command()`, which takes three arguments:
+
+1. **id**: a numeric identifier (usually from an enum)
+2. **command_name**: the display name (also used to build method names)
+3. **fallback**: a `Callable` to run when no object-specific handler exists
+
+As an example, here's what the 9 Verbs template does:
 
 ```gdscript
 # Inside NineVerbCommands._init()
@@ -118,15 +164,9 @@ E.register_command(Commands.PICK_UP, "Pick up", pick_up)
 # ... and so on for all 10 commands
 ```
 
-Each `register_command()` call takes three arguments:
-
-1. **id**: a numeric identifier (usually from an enum)
-2. **command_name**: the display name (also used to build method names)
-3. **fallback**: a `Callable` to run when no object-specific handler exists
-
 ### What fallbacks do by default
 
-The built-in fallbacks provide generic responses so the game always says *something*:
+The built-in fallbacks provide generic responses so the player always says _something_:
 
 ```gdscript
 # In NineVerbCommands, some default fallbacks:
@@ -140,15 +180,10 @@ func open() -> void:
 	await C.player.say("Can't open that")
 
 func talk_to() -> void:
-	await C.player.say("Emmmm...")
+	await C.player.say("Ehmmm...")
 ```
 
-The `fallback()` method itself is called when no command is active, and by default it triggers `walk_to()`:
-
-```gdscript
-func fallback() -> void:
-	walk_to()
-```
+The `fallback()` method itself is called when no command is active, and by default it triggers `walk_to()`, which makes sense: clicking without a command makes the player walk to the clicked position.
 
 ### The default fallback
 
@@ -179,10 +214,22 @@ Say you want the "Look at" fallback to be more character-specific:
 extends NineVerbCommands
 
 func look_at() -> void:
-	if C.player == C.Will:
-		await C.player.say("I don't see anything interesting.")
+	if C.player == C.Popsy:
+		await C.player.say("Boooring!")
 	else:
 		await C.player.say("Nothing catches my eye.")
+```
+
+Or maybe you want to pick a random response each time the player "Looks at" something without a specific handler:
+
+```gdscript
+func look_at() -> void:
+    var responses := [
+        "I see nothing special.",
+        "Nothing interesting there.",
+        "I have nothing to say about that."
+    ]
+    await C.player.say(responses.pick_random())
 ```
 
 ### Overriding the global fallback
@@ -274,6 +321,10 @@ There's also `E.register_command_without_id()` if you don't want to manage IDs m
 ```gdscript
 var smell_id := E.register_command_without_id("Smell", smell)
 ```
+
+!!! info
+    Registering commands is foundational for custom GUIs. If you plan to build your own GUI, you'll likely want to define a set of commands and their fallbacks to integrate with the engine's dispatch system.
+    Creating a custom GUI is an advanced topic, and it's not covered in this section.
 
 ---
 
