@@ -4,9 +4,17 @@ weight: 7020
 
 # GUI commands and fallbacks
 
-In the previous section you learned that virtual functions like `_on_click()` are the primary way to react to player interactions. But in many classic adventure games, clicking on an object isn't just a click, it's a **command**: "_Look at_ the door", "_Pick up_ the key", "_Talk to_ the bartender".
+In the previous section you learned that virtual functions like `_on_click()` are the primary way to react to player interactions. However, in many classic adventure games the player does more than simply click on an object: they first choose which interaction to perform.
 
-Popochiu's **GUI command system** bridges the gap between the player's chosen verb and your game object's behavior. This page explains how that system works, how commands are dispatched, what happens when an object doesn't know how to handle a command, and how you can customize all of it.
+For example, classic LucasArts interfaces include verbs such as "Look at" (the door), "Pick up" (the key), or "Talk to" (the bartender). Sierra's SCI uses a menu bar with action icons to examine things, interact, talk, and walk around.
+
+Other games experimented with alternative interaction methods, like the "verb coin" in _Curse of Monkey Island_ and _Full Throttle_, or the gem emblem in _Legend of Kyrandia_.
+
+Regardless of the interface, these games share one pattern: the player selects an action before clicking an object. Different actions produce different results.
+
+Popochiu's **GUI command system** bridges the gap between the player's chosen action and your game object's behavior, providing a convenient way to connect your custom GUI to the game scripts.
+
+This page explains how that system works, how commands are dispatched, what happens when an object has no instructions on how to handle a command, and how you can customize all of it.
 
 ## What is a GUI command?
 
@@ -15,7 +23,7 @@ A GUI command is a **verb**: an action the player wants to perform. Different GU
 | GUI Template | Commands | Inspired by |
 | :----------- | :------- | :---------- |
 | **9 Verbs** | Walk to, Open, Pick up, Push, Close, Look at, Pull, Give, Talk to, Use | The Secret of Monkey Island, Thimbleweed Park |
-| **Sierra** | Walk, Look, Interact, Talk | King's Quest VI |
+| **Sierra** | Walk, Look, Interact, Talk | King's Quest VI, Conquest of the Longbow |
 | **Simple Click** | No explicit commands (behavior depends on which mouse button is pressed) | Beneath a Steel Sky, Broken Sword |
 
 The player selects a command (by clicking a verb button, cycling through cursors, etc.), then clicks on a game object. Popochiu takes it from there.
@@ -31,15 +39,15 @@ When a player clicks on a game object with a command active, Popochiu follows a 
 
 ```mermaid
 flowchart TD
-    A["Player clicks on object\n(command active)"] --> B["handle_command()"]
-    B --> C{"Build method name\nfrom command"}
-    C --> D["e.g. command = 'Look at'\n→ method = 'on_look_at'"]
-    D --> E{"Does the object\nhave this method?"}
-    E -- Yes --> F["Call on_look_at()\non the object"]
-    E -- No --> G["Fall back to\n_on_click() / _on_right_click()"]
-    G --> H{"Does _on_click()\ndo something useful?"}
+    A["Player clicks on object<br/>(command active)"] --> B["handle_command()"]
+    B --> C{"Build method name<br/>from command"}
+    C --> D["e.g. command = 'Look at'<br/>→ method = 'on_look_at'"]
+    D --> E{"Does the object<br/>have this method?"}
+    E -- Yes --> F["Call on_look_at()<br/>on the object"]
+    E -- No --> G["Fall back to<br/>_on_click() / _on_right_click()"]
+    G --> H{"Does _on_click()<br/>do something useful?"}
     H -- Yes --> I["Execute it"]
-    H -- "Calls E.command_fallback()" --> J["Call the command's\nregistered fallback"]
+    H -- "Calls E.command_fallback()" --> J["Call the command's<br/>registered fallback"]
 
     style F fill:#2d5a3d,stroke:#4a9,color:#fff
     style I fill:#2d5a3d,stroke:#4a9,color:#fff
@@ -148,9 +156,9 @@ There's also a **global default** fallback, registered with id `-1`. This is the
 
 ```mermaid
 flowchart LR
-    A["E.command_fallback()"] --> B{"Command has\nregistered fallback?"}
-    B -- Yes --> C["Call command-specific\nfallback (e.g. look_at())"]
-    B -- No --> D["Call default\nfallback (id = -1)"]
+    A["E.command_fallback()"] --> B{"Command has<br/>registered fallback?"}
+    B -- Yes --> C["Call command-specific<br/>fallback (e.g. look_at())"]
+    B -- No --> D["Call default<br/>fallback (id = -1)"]
 
     style C fill:#2d5a3d,stroke:#4a9,color:#fff
     style D fill:#5a4a2d,stroke:#a84,color:#fff
