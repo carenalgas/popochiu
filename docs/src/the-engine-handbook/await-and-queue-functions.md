@@ -10,9 +10,11 @@ This page explains both approaches, when to use each, how to create skippable cu
 
 ## Why await matters
 
-Most methods in Popochiu that involve actions visible to the player (walking, talking, animating, transitioning) are **asynchronous**. They start an action and return immediately, while the action plays out over time.
+Godot (as every other game engine) makes many things happen simultaneously. Think about a typical platform or 3D shooter: enemies move independently, projectiles fly through the air, and background music plays continuously. And that's true for Popochiu as well: while your character is walking, the player can click somewhere else to make them walk there instead, or open a menu; background music keeps playing while dialog is on screen or a sound effect is triggered; each character or prop play their own animations independently. That's the whole point of a game engine!
 
-If you call two async methods without `await`, they'll both try to run at the same time:
+Being based on GDScript (Godot's native programming language), methods in Popochiu that involve actions visible to the player (walking, talking, animating, transitioning) are **asynchronous**. They start an action but don't wait for it to complete before giving up control to the next line of code. The action will continue to play out over time.
+
+But this clashes with the sequential nature of adventure game scripting. You want the character to walk to the door, **then** say "It's locked." You write your script to call those methods one after another, but they will all start at the same time and run alongside each other, which is not what you want:
 
 ```gdscript
 # BAD: both actions start simultaneously!
@@ -20,7 +22,7 @@ C.player.walk_to(Vector2(200, 100))
 C.player.say("I'm walking and talking at the same time!")
 ```
 
-Adding `await` makes each action complete before the next one starts:
+That's why you need to use `await` to control the flow of your script. Adding `await` makes each action complete before the next one starts:
 
 ```gdscript
 # GOOD: walk finishes, then the character speaks
@@ -39,7 +41,7 @@ Use `await` whenever a method needs to **complete** before the next line runs. A
 - **Transitions** → always await: `T.play_transition()`
 - **System text** → await if you want to wait for the player to dismiss it: `G.show_system_text()`
 - **Audio** → usually don't await (music plays in the background): `A.mx_theme.play()`
-- **State changes** → no await needed: `Globals.found_clue = true`, `R.get_prop("Door").hide()`
+- **State changes** → no await needed: `Globals.found_clue = true`, `R.get_prop("Door").hide()`, `I.Key.add()`
 
 ### The await pattern in virtual functions
 
@@ -52,39 +54,52 @@ func _on_click() -> void:
 	await C.player.say("Interesting...")
 ```
 
-The engine waits for your entire function to complete before it considers the interaction done and re-enables player input.
+The engine also uses `await`: in fact it waits for your entire function to complete before it considers the interaction done and re-enables player input.
+
+## Triggering background actions by omitting await
+
+Sometimes having multiple things happen at once is exactly what you want. For example, you might have a non player character talking or walking in the background, or playing a specific animation in loop. In those cases, you can simply call the method without `await`:
+
+```gdscript
+# This sets an animation loop on the "TV" prop, without blocking the script
+R.get_prop("TV").play_animation("static_loop")
+```
 
 ---
 
 ## The queue system
 
-Writing many `await` lines works fine for simple sequences, but it can get verbose. The **queue system** lets you express the same sequences more compactly:
+The `await` keyword was introduced in Godot 4.0 / GDScript 2.0, and since Popochiu 2.0, it's the preferred way to control the flow of your scripts. However, it still has some limitations because you can't set cutscenes to be skipped by the player.
+
+Popochiu provides a higher-level method of achieving sequential execution. It comes as a legacy tool from Popochiu 1.x, and allows you to write sequences of actions in a more compact and script-like way, and it also supports skippable cutscenes.
+
+The **queue system** lets you express the same sequences more compactly:
 
 ```gdscript
 # With await (explicit)
-await C.Will.say("Hey!")
+await C.Popsy.say("Hey!")
 await E.wait(0.5)
-await C.Will.say("What's that over there?")
-await C.Will.walk_to(Vector2(300, 120))
-await C.Will.say("Hmm, nothing.")
+await C.Popsy.say("What's that over there?")
+await C.Popsy.walk_to(Vector2(300, 120))
+await C.Popsy.say("Hmm, nothing.")
 
 # With queue (compact)
 E.queue([
-	"Will: Hey!",
+	"Popsy: Hey!",
 	".",
-	"Will: What's that over there?",
-	C.Will.queue_walk_to(Vector2(300, 120)),
-	"Will: Hmm, nothing.",
+	"Popsy: What's that over there?",
+	C.Popsy.queue_walk_to(Vector2(300, 120)),
+	"Popsy: Hmm, nothing.",
 ])
 ```
 
-Both versions do exactly the same thing. The queue version is shorter and reads more like a script.
+Both versions do exactly the same thing. The queue version is shorter and reads more like an acting script.
 
 ### How E.queue() works
 
-`E.queue()` takes an array of **instructions** and executes them one by one. Each instruction must complete before the next one starts. Instructions can be:
+`E.queue()` takes an array of **instructions** and executes them one by one. Each instruction will complete before the next one starts. Instructions can be:
 
-**Callables**: `queue_` method variants that return a `Callable`:
+**Callables**: `queue_` method variants:
 
 ```gdscript
 E.queue([
@@ -95,10 +110,12 @@ E.queue([
 ```
 
 **Strings**: dialog shorthand with special syntax:
-	"Will: Hello there!",              # Character speaks
-	"Will(happy): Great to see you!",  # Character speaks with emotion
-	"Will[3]: I'll wait 3 seconds.",   # Auto-continue after 3 seconds
-	"...",                              # Pause (0.5 seconds)
+```gdscript
+E.queue([
+	"Popsy: Hello there!",              # Character speaks
+	"Popsy(happy): Great to see you!",  # Character speaks with emotion
+	"Popsy[3]: I'll wait 3 seconds.",   # Auto-continue after 3 seconds
+	"...",                              # Pause (1 second)
 	".",                                # Short pause (0.25 seconds)
 	"This is a system message.",        # Plain text → shown as system text
 ])
@@ -123,13 +140,13 @@ You can freely mix both types in the same queue:
 
 ```gdscript
 E.queue([
-	"Will: Let me check the door.",
-	C.Will.queue_walk_to(R.get_marker_position("DoorPos")),
-	C.Will.queue_face_right(),
-	"Will: It's locked!",
+	"Popsy: Let me check the door.",
+	C.Popsy.queue_walk_to(R.get_marker_position("DoorPos")),
+	C.Popsy.queue_face_right(),
+	"Popsy: It's locked!",
 	".",
 	R.get_prop("Door").queue_disable(),
-	"Will: Or maybe it just vanished.",
+	"Popsy: Or maybe it just vanished.",
 ])
 ```
 
@@ -140,8 +157,8 @@ E.queue([
 ```gdscript
 func _on_room_transition_finished() -> void:
 	await E.queue([
-		"Will: Where am I?",
-		"Will: This place is strange...",
+		"Popsy: Where am I?",
+		"Popsy: This place is strange...",
 	])
 	# This runs only after the queue finishes
 	Globals.intro_seen = true
@@ -201,11 +218,11 @@ A **cutscene** is a queue that the player can skip. In Popochiu, `E.cutscene()` 
 ```gdscript
 func _on_room_transition_finished() -> void:
 	await E.cutscene([
-		"Will: I can't believe I'm here.",
-		C.Will.queue_walk_to(Vector2(200, 120)),
+		"Popsy: I can't believe I'm here.",
+		C.Popsy.queue_walk_to(Vector2(200, 120)),
 		"..",
-		"Will: The air feels different.",
-		"Will: Almost... electric.",
+		"Popsy: The air feels different.",
+		"Popsy: Almost... electric.",
 	])
 	# This runs after the cutscene finishes OR is skipped
 ```
@@ -215,19 +232,19 @@ func _on_room_transition_finished() -> void:
 When the player presses ESC during a cutscene:
 
 1. Popochiu sets `E.cutscene_skipped` to `true`
-2. A fast transition plays (configured in `PopochiuSettings`)
+2. A transition plays (configured in `PopochiuSettings`)
 3. All remaining instructions in the queue are still executed, but each one **checks the flag and returns immediately** instead of playing out
 
 This means your game state stays consistent. If a cutscene was supposed to move a character or change a variable, those changes still happen. The player just doesn't see the animations.
 
 ```mermaid
 flowchart TD
-    A["E.cutscene([...])"] --> B["Execute instructions\none by one"]
-    B --> C{"Player pressed\nESC?"}
-    C -- No --> D["Play each instruction\nnormally"]
+    A["E.cutscene([...])"] --> B["Execute instructions<br/>one by one"]
+    B --> C{"Player pressed<br/>ESC?"}
+    C -- No --> D["Play each instruction<br/>normally"]
     C -- Yes --> E["Set cutscene_skipped = true"]
     E --> F["Fast transition"]
-    F --> G["Remaining instructions\nskip instantly"]
+    F --> G["Remaining instructions<br/>skip instantly"]
     G --> H["cutscene_skipped = false"]
     D --> H
     H --> I["Continue after cutscene"]
@@ -235,18 +252,6 @@ flowchart TD
     style E fill:#5a4a2d,stroke:#a84,color:#fff
     style I fill:#2d5a3d,stroke:#4a9,color:#fff
 ```
-
-### Cutscene vs. queue
-
-| | `E.queue()` | `E.cutscene()` |
-| :--- | :---------- | :------------- |
-| Sequential execution | Yes | Yes |
-| Blocks GUI | Yes | Yes |
-| Player can skip | No | Yes (ESC key) |
-| Use for | Essential sequences, puzzle interactions | Intro scenes, story moments, long animations |
-
-!!! tip
-    Use `E.cutscene()` for anything the player might want to skip: intro sequences, travel animations, flashbacks. Use `E.queue()` for important gameplay moments where the player needs to see every step.
 
 ---
 
@@ -266,9 +271,9 @@ Sometimes you need to put your own custom methods inside a queue, such as a came
 ```gdscript
 # Example: play an AnimationPlayer animation inside a queue
 E.queue([
-	"Will: Watch this!",
+	"Popsy: Watch this!",
 	E.queueable($AnimationPlayer, "play", ["magic_trick"], "animation_finished"),
-	"Will: Ta-da!",
+	"Popsy: Ta-daaah!",
 ])
 ```
 
@@ -281,9 +286,9 @@ You can wrap your own methods too:
 ```gdscript
 func _on_room_transition_finished() -> void:
 	await E.queue([
-		"Will: Something strange is happening...",
+		"Popsy: Something strange is happening...",
 		E.queueable(self, "_shake_and_flash", [], "completed"),
-		"Will: What was that?!",
+		"Popsy: What was that?!",
 	])
 
 func _shake_and_flash() -> void:
@@ -297,7 +302,9 @@ func _shake_and_flash() -> void:
 
 ### Custom signal example
 
-If your method triggers something that completes asynchronously through a signal:
+If your method triggers something that completes asynchronously through a specific signal, you need to specify that signal name in `E.queueable()`.
+
+For example, if you have a button that the player needs to click during a queue, you can set it up like this:
 
 ```gdscript
 # A button that the player can click during a queue
@@ -313,71 +320,55 @@ func _on_popup_button_pressed() -> void:
 
 # In the room script:
 E.queue([
-	"Will: I need to press that button.",
+	"Popsy: I need to press that button.",
 	E.queueable(popup_node, "_show_popup", [], "button_clicked"),
-	"Will: Done!",
+	"Popsy: Done!",
 ])
 ```
 
 The queue pauses at the queueable instruction until `button_clicked` is emitted.
 
----
+!!! note "The await_stopped sentinel"
+    The most nerdy developers might want to know about the `E.await_stopped` signal.
 
-## The await_stopped sentinel
+	This is a signal that **is never emitted**. Awaiting it permanently suspends the current instruction chain. This is useful when you want to break out of the normal flow and let new player interactions take over. 
 
-There's one more async tool worth knowing about: the `E.await_stopped` signal.
-
-This is a signal that **is never emitted**. Awaiting it permanently suspends the current instruction chain. This is useful when you want to break out of the normal flow and let new player interactions take over.
-
-```gdscript
-func _on_click() -> void:
-	C.player.walk_to_clicked()
-	await E.await_stopped
-	# This line is never reached: the player can click elsewhere
-	# while the character is walking, starting a new interaction
-```
-
-The main use case is allowing the player to interrupt a walk-to action by clicking somewhere else. You generally won't need this in everyday scripting, but it's good to know it exists.
+	It is used internally by Popochiu to let the player interrupt a walk-to action by clicking somewhere else. You generally won't need this in everyday scripting, but it's good to know it exists.
 
 ---
 
-## Choosing the right approach
+## Wrapping up
 
-Here's a practical guide for deciding between `await`, `E.queue()`, and `E.cutscene()`:
+The pragmatic approach is to **use `await` for most of your game scripts**.
 
-| Situation | Approach |
-| :-------- | :------- |
-| Simple 2-3 step interaction (click → walk → say) | `await` |
-| Longer sequence with dialog (5+ steps) | `E.queue()` |
-| Intro scene or story moment the player should be able to skip | `E.cutscene()` |
-| Sequence that includes custom methods or animations | `E.queue()` with `E.queueable()` |
-| One-off dialog line | `await C.player.say("...")` or a string in `E.queue()` |
-
-A pragmatic approach: **start with `await`**. If the sequence grows long or you find yourself writing many `await` lines in a row, refactor into a queue. If the sequence is non-essential to gameplay, wrap it in a cutscene.
+If you're after writing convenience or readability, refactor into a queue. If you need a skippable cutscene you are bound to wrap the sequence in `E.cutscene()` for now.
 
 ```gdscript
-# Simple interaction: await is fine
+# Usual game scripts, await is the Godot gold standard
 func _on_click() -> void:
 	await C.player.walk_to_clicked()
 	await C.player.say("Nice painting.")
 
-# Longer sequence: queue is cleaner
+# Longer sequence: queue may make them more readable
 func _on_click() -> void:
 	await E.queue([
 		C.player.queue_walk_to_clicked(),
-		"Will: What a beautiful painting.",
+		"Popsy: What a beautiful painting.",
 		".",
-		"Will: The eyes seem to follow me.",
-		"Will: Creepy.",
+		"Popsy: The eyes seem to follow me.",
+		"Popsy: Creepy.",
 	])
 
-# Story moment: cutscene allows skipping
+# Story moment, intros or long repeatable sequences: cutscene allows skipping
 func _on_room_transition_finished() -> void:
 	await E.cutscene([
-		"Will: I remember this place.",
-		C.Will.queue_walk_to(R.get_marker_position("Window")),
-		"Will: The view hasn't changed.",
+		"Popsy: I remember this place.",
+		C.Popsy.queue_walk_to(R.get_marker_position("Window")),
+		"Popsy: The view hasn't changed.",
 		"..",
-		"Will: But everything else has.",
+		"Popsy: But everything else has.",
 	])
 ```
+
+!!! warning
+	The queue system is a legacy tool and we're considering deprecating it in the future, as long as we find a strategy to support skippable cutscenes with `await`. We will ask extensively for feedback before making any decisions, so stick around and let us know if you rely on queues and what features you need from them!
