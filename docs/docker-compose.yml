@@ -11,4 +11,4 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        command: serve -a 0.0.0.0:80
+        command: serve -a 0.0.0.0:80 --livereload
