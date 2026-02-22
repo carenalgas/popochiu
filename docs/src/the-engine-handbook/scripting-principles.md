@@ -403,16 +403,24 @@ These are best practices that make scripts easier to read and more reliable.
 
 ### The Globals singleton
 
-For variables and methods that don't belong to any specific room, character, or item, use `Globals`. This singleton lives at `res://game/popochiu_globals.gd` and is accessible from anywhere:
+Not all game logic belongs to a specific room, character, or item. You often need variables and functions that are accessible from anywhere: story flags, counters, score tracker, or utility checks that multiple scripts rely on.
+
+That's what `Globals` is for. Popochiu creates an empty script at `res://game/popochiu_globals.gd` when you set up a project. It is registered as an autoload, so you can reference it as `Globals` from any game script.
+
+Because the file starts empty, it can feel unclear what you're supposed to put there. The answer is simple: any **project-wide state** (variables and flags) or **shared helper functions** that don't naturally belong to a single object.
+
+Here's an example of how you might set it up:
 
 ```gdscript
 # res://game/popochiu_globals.gd
 extends Node
 
+# Project-wide flags and counters
 var storm_happened := false
 var total_clues_found := 0
 var difficulty := "normal"
 
+# A shared helper function any script can call
 func is_puzzle_complete() -> bool:
     return total_clues_found >= 5
 ```
@@ -427,8 +435,7 @@ func _on_click() -> void:
         await C.player.say("I've found all the clues!")
 ```
 
-!!! tip
-    `Globals` properties are automatically saved and loaded with the game. See [Object state](object-state.md) for details on how persistence works.
+`Globals` properties of safe types (`bool`, `int`, `float`, `String`) are **automatically saved and loaded** with the game. You don't need to write any persistence code for them. For complex types, you can add custom `on_save()` and `on_load()` methods. See [Object state](object-state.md) for details on how persistence works.
 
 ---
 
