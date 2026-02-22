@@ -229,7 +229,7 @@ func _on_room_exited() -> void:
 ```
 
 !!! note
-    `state.visited_first_time` is a built-in property that Popochiu sets to `true` only on the very first visit to a room. It's part of the [Object state](object-state.md) system.
+    `state.visited_first_time` is a built-in property that Popochiu sets to `true` only on the very first visit to a room. It's part of the [Working with Game State](working-with-game-state.md) system.
 
 ### Region events
 
@@ -435,7 +435,7 @@ func _on_click() -> void:
         await C.player.say("I've found all the clues!")
 ```
 
-`Globals` properties of safe types (`bool`, `int`, `float`, `String`) are **automatically saved and loaded** with the game. You don't need to write any persistence code for them. For complex types, you can add custom `on_save()` and `on_load()` methods. See [Object state](object-state.md) for details on how persistence works.
+`Globals` properties of safe types (`bool`, `int`, `float`, `String`) are **automatically saved and loaded** with the game. You don't need to write any persistence code for them. For complex types, you can add custom `on_save()` and `on_load()` methods. See [Working with Game State](working-with-game-state.md) for details on how persistence works.
 
 ---
 
@@ -528,4 +528,4 @@ These three concepts (singletons, virtual functions, and signals) form the found
 2. **Virtual functions** (`_on_click()`, `_on_room_entered()`, etc.) are where you write your game logic in response to player actions.
 3. **Signals** let you react to engine events that happen outside your current object.
 
-With these tools, you can build the vast majority of your game's interactive behavior. The next pages cover more specialized topics: how [GUI commands](gui-commands-and-fallbacks.md) route player intent to your objects, how [await and queues](await-and-queue-functions.md) let you choreograph sequences, and how [object state](object-state.md) keeps track of everything across room changes and save files.
+With these tools, you can build the vast majority of your game's interactive behavior. The next pages cover more specialized topics: how [GUI commands](gui-commands-and-fallbacks.md) route player intent to your objects, how [await and queues](await-and-queue-functions.md) let you choreograph sequences, and how [working with game state](working-with-game-state.md) keeps track of everything across room changes and save files.
