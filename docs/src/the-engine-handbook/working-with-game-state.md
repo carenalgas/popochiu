@@ -2,7 +2,7 @@
 weight: 7040
 ---
 
-# Working with Game State
+# Working with game state
 
 In a point-and-click adventure, the world changes as the player interacts with it: doors get unlocked, items are collected, characters move between rooms, dialog options get exhausted. Popochiu needs to **remember** all of this, even when the player leaves a room and comes back, or saves and loads the game.
 
