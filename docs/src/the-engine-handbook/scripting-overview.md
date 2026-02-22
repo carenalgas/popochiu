@@ -41,6 +41,7 @@ This handbook covers the core concepts you'll use every day when scripting a Pop
 | [GUI commands and fallbacks](gui-commands-and-fallbacks.md) | How the GUI command system works, how commands are dispatched to objects, and how to customize fallback responses. |
 | [Await and queue functions](await-and-queue-functions.md) | How to write sequential game actions using `await`, compact them with `E.queue()`, and create skippable cutscenes. |
 | [Working with game state](working-with-game-state.md) | How Popochiu tracks and persists object data across room changes and save/load cycles. |
+| [Wrapping up](wrapping-up.md) | A closing note and pointers to where to go from here. |
 
 !!! tip
     These articles are **explanations**, not step-by-step tutorials or API references. They help you understand *why* things work the way they do. For the full list of available methods and properties, check the [Scripting Reference](scripting-reference/index.md).
