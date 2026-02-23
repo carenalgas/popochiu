@@ -168,6 +168,8 @@
 
     /* Mermaid diagrams background color */
     --mermaid-background-color: #ffffff;
+    --mermaid-edge-color: #333333;
+    --mermaid-node-border-color: #333333;
 
     /* SVG shadow color */
     --image-shadow-color: hsla(0, 0%, 0%, 0.3);
@@ -308,6 +310,8 @@
 
         /* Mermaid diagrams background color */
         --mermaid-background-color: transparent;
+        --mermaid-edge-color: #cccccc;
+        --mermaid-node-border-color: #888888;
 
         /* SVG shadow color */
         --image-shadow-color: hsla(0, 0%, 0%, 0.4);
@@ -1829,6 +1833,23 @@ div.mermaid {
     background-color: var(--mermaid-background-color);
     padding: 4px;
     margin: 16px 0;
+}
+
+/* Mermaid diagram edge and node border contrast (light and dark theme) */
+div.mermaid .edgePath .path,
+div.mermaid .flowchart-link {
+    stroke: var(--mermaid-edge-color) !important;
+}
+div.mermaid .arrowheadPath,
+div.mermaid marker path {
+    fill: var(--mermaid-edge-color) !important;
+    stroke: var(--mermaid-edge-color) !important;
+}
+div.mermaid .node rect,
+div.mermaid .node polygon,
+div.mermaid .node circle,
+div.mermaid .node ellipse {
+    stroke: var(--mermaid-node-border-color) !important;
 }
 
 img.shadow {
