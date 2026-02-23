@@ -115,6 +115,9 @@ func _on_gui_unblocked() -> void:
 
 
 func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
+	if item.hide_in_inventory:
+		PopochiuUtils.i.item_add_done.emit(item)
+		return
 	box.add_child(item)
 	
 	item.expand_mode = TextureRect.EXPAND_FIT_WIDTH

@@ -21,8 +21,9 @@ signal unselected
 @export var description := "" : get = get_description
 ## The cursor to use when the mouse hovers the object.
 @export var cursor: CURSOR.Type = CURSOR.Type.USE
-
-
+## Whether this item should be hidden in the inventory GUI. This is useful for virtual items that are not meant to be collected but still need to be 
+## (.e.g. a "Permission" virtual item that a Character gives the player and allows them to access certain areas).
+@export var hide_in_inventory := false
 ## Whether this item is actually inside the inventory GUI.
 var in_inventory := false : set = set_in_inventory
 ## Whether this item has ever been in the inventory. Once true, it stays true.

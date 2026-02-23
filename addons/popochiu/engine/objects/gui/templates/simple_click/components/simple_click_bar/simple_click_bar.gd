@@ -155,6 +155,9 @@ func _on_tween_finished() -> void:
 
 
 func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
+	if item.hide_in_inventory:
+		PopochiuUtils.i.item_add_done.emit(item)
+		return
 	box.add_child(item)
 	
 	item.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
