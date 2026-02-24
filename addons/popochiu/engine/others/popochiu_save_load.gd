@@ -193,6 +193,9 @@ func _load_state(type: String, loaded_game: Dictionary) -> void:
 		for p in loaded_game[type][id]:
 			if p == "custom_data": continue
 			if type == "dialogs" and p == "options": continue
+			if state[p] is Array and state[p].is_typed():
+				state[p].assign(loaded_game[type][id][p])
+				continue
 			
 			state[p] = loaded_game[type][id][p]
 		
