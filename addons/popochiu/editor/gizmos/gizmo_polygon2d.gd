@@ -13,7 +13,6 @@ enum PolygonCategory {
 }
 
 # Constants for hit detection
-const VERTEX_HIT_RADIUS := 8.0
 const EDGE_HIT_DISTANCE := 6.0
 const MIN_VERTICES := 3
 
@@ -38,8 +37,7 @@ var _vertices: PackedVector2Array = PackedVector2Array()
 # State
 var _grabbed_vertex_index: int = -1
 var _is_grabbed: bool = false
-var _grab_mouse_pos: Vector2
-var _grab_vertex_pos: Vector2
+var _grab_offset: Vector2  # Distance between vertex center and mouse at grab time
 # Vertex handles in viewport coordinates (cached during draw)
 var _vertex_handles_viewport: PackedVector2Array = PackedVector2Array()
 # Edge midpoints in viewport coordinates (for add-vertex hit testing)
@@ -208,10 +206,15 @@ func draw(viewport: Control) -> void:
 
 
 # Test if a point (in viewport coordinates) hits a vertex handle.
+# Uses rect-based hit testing so corners of the square handle are included.
 # Returns the vertex index, or -1 if no hit.
 func hit_test_vertex(pos: Vector2) -> int:
     for i in range(_vertex_handles_viewport.size()):
-        if pos.distance_to(_vertex_handles_viewport[i]) <= VERTEX_HIT_RADIUS:
+        var handle := Rect2(
+            _vertex_handles_viewport[i] - Vector2(vertex_size, vertex_size),
+            Vector2(vertex_size * 2, vertex_size * 2)
+        )
+        if handle.abs().has_point(pos):
             return i
     return -1
 
@@ -243,44 +246,34 @@ func update_hover(pos: Vector2) -> bool:
     return old_vertex != _hovered_vertex_index or old_edge != _hovered_edge_index
 
 
-# Start dragging a vertex
+# Start dragging a vertex.
+# Stores the offset between the vertex center and the mouse click position
+# so the vertex doesn't jump when the user clicks slightly off-center
+# (same approach as Gizmo2D.grab).
 func grab_vertex(vertex_index: int, mouse_pos: Vector2) -> void:
     _grabbed_vertex_index = vertex_index
     _is_grabbed = true
-    _grab_mouse_pos = mouse_pos
-    # Compute the viewport position of the vertex from the actual local data
-    # instead of the cached _vertex_handles_viewport, which may be stale
-    # (e.g. right after insert_vertex_on_edge).
-    if (
-        vertex_index >= 0
-        and vertex_index < _vertices.size()
-        and is_instance_valid(_source_node)
-        and _source_node.is_inside_tree()
-    ):
-        var xform := _source_node.get_viewport_transform() * _source_node.get_global_transform()
-        _grab_vertex_pos = xform * _vertices[vertex_index]
-    else:
-        _grab_vertex_pos = _grab_mouse_pos
+    # Compute the vertex center in viewport coordinates from actual local data
+    # (the cached _vertex_handles_viewport may be stale after insert_vertex_on_edge)
+    var xform := _source_node.get_viewport_transform() * _source_node.get_global_transform()
+    var vertex_center := xform * _vertices[vertex_index]
+    _grab_offset = vertex_center - mouse_pos
 
 
-# Drag the grabbed vertex to a new mouse position
+# Drag the grabbed vertex to a new mouse position (viewport coordinates).
+# Applies the grab offset so the vertex tracks the mouse without jumping,
+# then inverse-transforms to local node space.
 func drag_vertex_to(mouse_pos: Vector2) -> void:
     if not _is_grabbed or _grabbed_vertex_index < 0:
         return
     if _grabbed_vertex_index >= _vertices.size():
         return
 
-    # Compute offset from grab start
-    var delta := mouse_pos - _grab_mouse_pos
-    var new_viewport_pos := _grab_vertex_pos + delta
-
-    # Inverse transform from viewport to local coordinates
-    var source_transform := _source_node.get_global_transform()
-    var viewport_transform := _source_node.get_viewport_transform()
-    var combined_inverse := (viewport_transform * source_transform).affine_inverse()
-    var new_local_pos := combined_inverse * new_viewport_pos
-
-    _vertices[_grabbed_vertex_index] = new_local_pos
+    var viewport_pos := mouse_pos + _grab_offset
+    var combined_inverse := (
+        _source_node.get_viewport_transform() * _source_node.get_global_transform()
+    ).affine_inverse()
+    _vertices[_grabbed_vertex_index] = combined_inverse * viewport_pos
     _write_vertices()
 
 
