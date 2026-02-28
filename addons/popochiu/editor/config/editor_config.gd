@@ -25,6 +25,11 @@ const GIZMOS_SHOW_POSITION = "popochiu/gizmos/show_position"
 const GIZMOS_ALWAYS_SHOW_WA = "popochiu/gizmos/always_show_walkable_areas"
 const GIZMOS_ALWAYS_SHOW_INT_POLY = "popochiu/gizmos/always_show_interaction_polygons"
 const GIZMOS_ALWAYS_SHOW_OBS_POLY = "popochiu/gizmos/always_show_obstacle_polygons"
+const GIZMOS_INTERACTION_POLYGON_COLOR = "popochiu/gizmos/interaction_polygon_color"
+const GIZMOS_OBSTACLE_POLYGON_COLOR = "popochiu/gizmos/obstacle_polygon_color"
+const GIZMOS_WALKABLE_AREA_POLYGON_COLOR = "popochiu/gizmos/walkable_area_polygon_color"
+const GIZMOS_POLYGON_FILL_ALPHA = "popochiu/gizmos/polygon_fill_alpha"
+const GIZMOS_POLYGON_VERTEX_SIZE = "popochiu/gizmos/polygon_vertex_size"
 
 # Settings default values
 static var defaults := {
@@ -46,6 +51,11 @@ static var defaults := {
 	GIZMOS_ALWAYS_SHOW_WA: false,
 	GIZMOS_ALWAYS_SHOW_INT_POLY: false,
 	GIZMOS_ALWAYS_SHOW_OBS_POLY: false,
+	GIZMOS_INTERACTION_POLYGON_COLOR: Color.YELLOW,
+	GIZMOS_OBSTACLE_POLYGON_COLOR: Color.DARK_ORANGE,
+	GIZMOS_WALKABLE_AREA_POLYGON_COLOR: Color.GREEN,
+	GIZMOS_POLYGON_FILL_ALPHA: 0.15,
+	GIZMOS_POLYGON_VERTEX_SIZE: 6.0,
 }
 
 static var editor_settings: EditorSettings
@@ -75,6 +85,11 @@ static func initialize_editor_settings():
 	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_WA, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_INT_POLY, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_OBS_POLY, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_INTERACTION_POLYGON_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_OBSTACLE_POLYGON_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_WALKABLE_AREA_POLYGON_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_POLYGON_FILL_ALPHA, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,1.0,0.05")
+	_initialize_editor_setting(GIZMOS_POLYGON_VERTEX_SIZE, TYPE_FLOAT, PROPERTY_HINT_RANGE, "2.0,16.0,1.0")
 
 
 static func get_icon(icon: Icons) -> Texture2D:
