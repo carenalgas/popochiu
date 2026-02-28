@@ -248,8 +248,19 @@ func grab_vertex(vertex_index: int, mouse_pos: Vector2) -> void:
     _grabbed_vertex_index = vertex_index
     _is_grabbed = true
     _grab_mouse_pos = mouse_pos
-    if vertex_index >= 0 and vertex_index < _vertex_handles_viewport.size():
-        _grab_vertex_pos = _vertex_handles_viewport[vertex_index]
+    # Compute the viewport position of the vertex from the actual local data
+    # instead of the cached _vertex_handles_viewport, which may be stale
+    # (e.g. right after insert_vertex_on_edge).
+    if (
+        vertex_index >= 0
+        and vertex_index < _vertices.size()
+        and is_instance_valid(_source_node)
+        and _source_node.is_inside_tree()
+    ):
+        var xform := _source_node.get_viewport_transform() * _source_node.get_global_transform()
+        _grab_vertex_pos = xform * _vertices[vertex_index]
+    else:
+        _grab_vertex_pos = _grab_mouse_pos
 
 
 # Drag the grabbed vertex to a new mouse position
