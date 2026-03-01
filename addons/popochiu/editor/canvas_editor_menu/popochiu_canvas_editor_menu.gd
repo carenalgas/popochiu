@@ -187,12 +187,12 @@ func _set_toolbar_buttons_color() -> void:
 	_set_toolbar_button_color(
 		btn_interaction_polygon,
 		PopochiuEditorConfig.get_editor_setting(
-			PopochiuEditorConfig.GIZMOS_INTERACTION_POLYGON_COLOR)
+			PopochiuEditorConfig.GIZMOS_POLY_INTERACTION_COLOR)
 	)
 	_set_toolbar_button_color(
 		btn_obstacle_polygon,
 		PopochiuEditorConfig.get_editor_setting(
-			PopochiuEditorConfig.GIZMOS_OBSTACLE_POLYGON_COLOR)
+			PopochiuEditorConfig.GIZMOS_POLY_OBSTACLE_COLOR)
 	)
 
 # Internal helper to reduce code duplication

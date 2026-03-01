@@ -47,7 +47,7 @@ func _enter_tree() -> void:
     # Setup gizmos in managers
     _clickable_manager.initialize_gizmos(_font, _color_settings)
     _marker_manager.initialize_gizmos(_font, _color_settings)
-    _polygon_manager.initialize_settings()
+    _polygon_manager.initialize_gizmos()
 
 	# Connect signals to update gizmos when editor settings or visibility change
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
@@ -220,7 +220,7 @@ func _on_gizmo_settings_changed() -> void:
     # Update gizmos appearance based on the new settings
     _clickable_manager.initialize_gizmos(_font, _color_settings)
     _marker_manager.initialize_gizmos(_font, _color_settings)
-    _polygon_manager.initialize_settings()
+    _polygon_manager.initialize_gizmos()
     
     # Update gizmos in the viewport
     update_overlays()

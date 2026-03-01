@@ -59,7 +59,7 @@ func create(param: PopochiuWalkableAreaFactoryParam) -> int:
 
 	# Show the WA perimeter, depending on user prefs
 	perimeter.visible = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_WA
+		PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_WA
 	)
 
 	# Save the scene (.tscn) and put it into _scene class property

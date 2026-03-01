@@ -14,7 +14,17 @@ enum PolygonCategory {
 
 # Constants for hit detection
 const EDGE_HIT_DISTANCE := 6.0
+# Under this vertices count deletion won't be allowed
 const MIN_VERTICES := 3
+# Coordinate pairs for the default square polygon used when the source node has
+# no vertices yet. A 32x32 square centered on the node origin, matching the
+# default polygon we use for newly created Popochiu objects.
+const DEFAULT_POLYGON_COORDS := [
+    Vector2(-16, -16),
+    Vector2(16, -16),
+    Vector2(16, 16),
+    Vector2(-16, 16)
+]
 
 # Public vars
 var visible: bool = true
@@ -24,7 +34,9 @@ var category: PolygonCategory = PolygonCategory.INTERACTION
 var fill_color: Color = Color(1.0, 1.0, 0.0, 0.15)
 var outline_color: Color = Color.YELLOW
 var vertex_color: Color = Color.WHITE
-var vertex_size: float = 6.0
+var vertex_size: float = 6.0:
+    set(value):
+        _on_vertex_size_changed(value)
 var outline_width: float = 2.0
 
 # Private vars
@@ -34,18 +46,28 @@ var _source_node: Node2D
 var _outline_index: int = -1
 # Cached polygon vertices in local coordinates
 var _vertices: PackedVector2Array = PackedVector2Array()
+# When true, _read_vertices() will re-read from the source node on next draw
+var _dirty: bool = true
 # State
 var _grabbed_vertex_index: int = -1
 var _is_grabbed: bool = false
 var _grab_offset: Vector2  # Distance between vertex center and mouse at grab time
 # Vertex handles in viewport coordinates (cached during draw)
 var _vertex_handles_viewport: PackedVector2Array = PackedVector2Array()
-# Edge midpoints in viewport coordinates (for add-vertex hit testing)
-var _edge_midpoints_viewport: PackedVector2Array = PackedVector2Array()
+# Vertex handle rectangles in viewport coordinates (cached during draw)
+var _vertex_handle_rects: Array[Rect2] = []
+# Cached combined transforms (updated each draw, reused by drag/grab)
+var _combined_xform: Transform2D
+var _combined_inverse: Transform2D
+# Cached vertex size vectors (updated when vertex_size changes)
+var _vertex_half_size: Vector2 = Vector2(6.0, 6.0)
+var _vertex_full_size: Vector2 = Vector2(12.0, 12.0)
 # The hovered vertex index (-1 if none)
 var _hovered_vertex_index: int = -1
 # The hovered edge index (-1 if none)
 var _hovered_edge_index: int = -1
+# The projected mouse position on the hovered edge (viewport coordinates)
+var _hovered_edge_point: Vector2
 
 
 #region Public #####################################################################################
@@ -58,13 +80,12 @@ func _init(
     _source_node = source_node
     category = polygon_category
     _outline_index = outline_index
+    # Populate the cached Vector2 size helpers before any drawing can occur
+    _update_vertex_size_cache()
+    # Ensure the first draw() call reads fresh data from the source node
+    _dirty = true
+    # Populate the gizmo's appearance based on the current editor settings
     _read_vertices()
-
-
-# Coordinate pairs for the default square polygon used when the source node has
-# no vertices yet. A 32x32 square centered on the node origin, matching the
-# default polygon we use for newly created Popochiu objects.
-const DEFAULT_POLYGON_COORDS := [[-16, -16], [16, -16], [16, 16], [-16, 16]]
 
 
 # Read polygon data from the source node.
@@ -92,9 +113,13 @@ func _read_vertices() -> void:
     # If the source node has no polygon yet, initialise it with the default square
     # and immediately write it back so the node is never left with an empty polygon.
     if _vertices.is_empty():
-        for pair in DEFAULT_POLYGON_COORDS:
-            _vertices.append(Vector2(pair[0], pair[1]))
+        _vertices.append_array(
+            PackedVector2Array(DEFAULT_POLYGON_COORDS)
+        )
         _write_vertices()
+
+    # Data is now in sync with the source node, no re-read needed until next write
+    _dirty = false
 
 
 # Write polygon data back to the source node
@@ -110,6 +135,9 @@ func _write_vertices() -> void:
     elif _source_node is NavigationObstacle2D:
         _source_node.vertices = _vertices
 
+    # Viewport handles and cached transforms are now stale; next draw() must re-read
+    _dirty = true
+
 
 # Get the full polygon data as a PackedVector2Array (for undo/redo snapshots)
 func get_polygon_snapshot() -> PackedVector2Array:
@@ -123,6 +151,12 @@ func restore_polygon_snapshot(snapshot: PackedVector2Array) -> void:
     _write_vertices()
 
 
+# Signal that vertex data may have changed externally (e.g. undo/redo
+# from another gizmo or the inspector). Next draw will re-read.
+func mark_dirty() -> void:
+    _dirty = true
+
+
 # Draw the polygon on the viewport overlay
 func draw(viewport: Control) -> void:
     if not visible:
@@ -130,34 +164,28 @@ func draw(viewport: Control) -> void:
     if not is_instance_valid(_source_node) or not _source_node.is_inside_tree():
         return
 
-    # Re-read vertices to stay in sync
-    _read_vertices()
+    # Only re-read vertices when something has changed
+    if _dirty:
+        _read_vertices()
 
     if _vertices.size() < 2:
         return
 
-    # Compute the transform: local → global → viewport
-    var source_transform := _source_node.get_global_transform()
-    var viewport_transform := _source_node.get_viewport_transform()
-    var combined_transform := viewport_transform * source_transform
+    # Cache the combined transform (reused by grab_vertex / drag_vertex_to)
+    _combined_xform = _source_node.get_viewport_transform() * _source_node.get_global_transform()
+    _combined_inverse = _combined_xform.affine_inverse()
 
-    # Transform all vertices to viewport coordinates
+    # Transform all vertices to viewport coordinates and build handle rects
     _vertex_handles_viewport.clear()
-    _edge_midpoints_viewport.clear()
+    _vertex_handle_rects.clear()
     for vertex in _vertices:
-        _vertex_handles_viewport.append(combined_transform * vertex)
-
-    # Compute edge midpoints for "insert vertex" hit testing
-    for i in range(_vertex_handles_viewport.size()):
-        var next_i := (i + 1) % _vertex_handles_viewport.size()
-        _edge_midpoints_viewport.append(
-            (_vertex_handles_viewport[i] + _vertex_handles_viewport[next_i]) * 0.5
-        )
+        var vp := _combined_xform * vertex
+        _vertex_handles_viewport.append(vp)
+        _vertex_handle_rects.append(Rect2(vp - _vertex_half_size, _vertex_full_size))
 
     # Draw filled polygon (translucent)
     if _vertex_handles_viewport.size() >= 3:
-        var fill := fill_color
-        viewport.draw_colored_polygon(_vertex_handles_viewport, fill)
+        viewport.draw_colored_polygon(_vertex_handles_viewport, fill_color)
 
     # Draw outline edges
     for i in range(_vertex_handles_viewport.size()):
@@ -173,8 +201,8 @@ func draw(viewport: Control) -> void:
             outline_width
         )
 
-    # Draw vertex handles
-    for i in range(_vertex_handles_viewport.size()):
+    # Draw vertex handles from cached rects
+    for i in range(_vertex_handle_rects.size()):
         var v_color := vertex_color
         # Highlight hovered or grabbed vertex
         if i == _grabbed_vertex_index and _is_grabbed:
@@ -182,52 +210,41 @@ func draw(viewport: Control) -> void:
         elif i == _hovered_vertex_index and not _is_grabbed:
             v_color = outline_color.lightened(0.5)
 
-        # Draw outline for vertex handle
-        viewport.draw_rect(
-            Rect2(_vertex_handles_viewport[i] - Vector2(vertex_size, vertex_size),
-                Vector2(vertex_size * 2, vertex_size * 2)),
-            Color.BLACK, false, 2.0
-        )
-        # Draw solid vertex handle
-        viewport.draw_rect(
-            Rect2(_vertex_handles_viewport[i] - Vector2(vertex_size, vertex_size),
-                Vector2(vertex_size * 2, vertex_size * 2)),
-            v_color, true
-        )
+        viewport.draw_rect(_vertex_handle_rects[i], Color.BLACK, false, 2.0)
+        viewport.draw_rect(_vertex_handle_rects[i], v_color, true)
 
-    # If hovering an edge (and not grabbing), draw a preview vertex on the edge
+    # If hovering an edge (and not grabbing), draw a preview vertex at the
+    # projected mouse position on the edge (shows the actual insertion point)
     if _hovered_edge_index >= 0 and not _is_grabbed:
-        var midpoint := _edge_midpoints_viewport[_hovered_edge_index]
+        var preview_half := _vertex_half_size * 0.7
+        var preview_full := _vertex_full_size * 0.7
         viewport.draw_rect(
-            Rect2(midpoint - Vector2(vertex_size * 0.7, vertex_size * 0.7),
-                Vector2(vertex_size * 1.4, vertex_size * 1.4)),
+            Rect2(_hovered_edge_point - preview_half, preview_full),
             outline_color.lightened(0.3), true
         )
 
 
 # Test if a point (in viewport coordinates) hits a vertex handle.
-# Uses rect-based hit testing so corners of the square handle are included.
+# Uses the cached handle rects so corners of the square are included.
 # Returns the vertex index, or -1 if no hit.
 func hit_test_vertex(pos: Vector2) -> int:
-    for i in range(_vertex_handles_viewport.size()):
-        var handle := Rect2(
-            _vertex_handles_viewport[i] - Vector2(vertex_size, vertex_size),
-            Vector2(vertex_size * 2, vertex_size * 2)
-        )
-        if handle.abs().has_point(pos):
+    for i in range(_vertex_handle_rects.size()):
+        if _vertex_handle_rects[i].abs().has_point(pos):
             return i
     return -1
 
 
 # Test if a point (in viewport coordinates) is near an edge.
 # Returns the edge index (the index of the starting vertex), or -1.
+# Also stores the projected point for preview drawing.
 func hit_test_edge(pos: Vector2) -> int:
     for i in range(_vertex_handles_viewport.size()):
         var next_i := (i + 1) % _vertex_handles_viewport.size()
         var a := _vertex_handles_viewport[i]
         var b := _vertex_handles_viewport[next_i]
-        var dist := _point_to_segment_distance(pos, a, b)
-        if dist <= EDGE_HIT_DISTANCE:
+        var projected := _project_point_on_segment(pos, a, b)
+        if pos.distance_to(projected) <= EDGE_HIT_DISTANCE:
+            _hovered_edge_point = projected
             return i
     return -1
 
@@ -243,7 +260,11 @@ func update_hover(pos: Vector2) -> bool:
     else:
         _hovered_edge_index = hit_test_edge(pos)
 
-    return old_vertex != _hovered_vertex_index or old_edge != _hovered_edge_index
+    # Even if the hovered edge didn't change, the projected point may have
+    # moved — request a redraw when hovering an edge so the preview tracks.
+    var edge_changed := old_edge != _hovered_edge_index
+    var vertex_changed := old_vertex != _hovered_vertex_index
+    return vertex_changed or edge_changed or _hovered_edge_index >= 0
 
 
 # Start dragging a vertex.
@@ -254,8 +275,11 @@ func grab_vertex(vertex_index: int, mouse_pos: Vector2) -> void:
     _grabbed_vertex_index = vertex_index
     _is_grabbed = true
     # Compute the vertex center in viewport coordinates from actual local data
-    # (the cached _vertex_handles_viewport may be stale after insert_vertex_on_edge)
-    var xform := _source_node.get_viewport_transform() * _source_node.get_global_transform()
+    # (the cached _vertex_handles_viewport may be stale after insert_vertex_on_edge).
+    # Uses the cached transform when available, falls back to computing it.
+    var xform := _combined_xform if _combined_xform != Transform2D() else (
+        _source_node.get_viewport_transform() * _source_node.get_global_transform()
+    )
     var vertex_center := xform * _vertices[vertex_index]
     _grab_offset = vertex_center - mouse_pos
 
@@ -270,10 +294,7 @@ func drag_vertex_to(mouse_pos: Vector2) -> void:
         return
 
     var viewport_pos := mouse_pos + _grab_offset
-    var combined_inverse := (
-        _source_node.get_viewport_transform() * _source_node.get_global_transform()
-    ).affine_inverse()
-    _vertices[_grabbed_vertex_index] = combined_inverse * viewport_pos
+    _vertices[_grabbed_vertex_index] = _combined_inverse * viewport_pos
     _write_vertices()
 
 
@@ -295,10 +316,7 @@ func insert_vertex_on_edge(edge_index: int, mouse_pos: Vector2) -> int:
         return -1
 
     # Convert mouse position from viewport to local coordinates
-    var source_transform := _source_node.get_global_transform()
-    var viewport_transform := _source_node.get_viewport_transform()
-    var combined_inverse := (viewport_transform * source_transform).affine_inverse()
-    var local_pos := combined_inverse * mouse_pos
+    var local_pos := _combined_inverse * mouse_pos
 
     # Insert after the edge's starting vertex
     var insert_index := edge_index + 1
@@ -338,16 +356,30 @@ func is_valid() -> bool:
 
 #region Private ####################################################################################
 
-# Compute distance from a point to a line segment
-func _point_to_segment_distance(point: Vector2, seg_a: Vector2, seg_b: Vector2) -> float:
+# Project a point onto a line segment, clamped to the segment endpoints.
+# Returns the closest point on the segment.
+func _project_point_on_segment(point: Vector2, seg_a: Vector2, seg_b: Vector2) -> Vector2:
     var ab := seg_b - seg_a
-    var ap := point - seg_a
     var ab_len_sq := ab.length_squared()
     if ab_len_sq < 0.001:
-        return point.distance_to(seg_a)
-    var t := clampf(ap.dot(ab) / ab_len_sq, 0.0, 1.0)
-    var closest := seg_a + ab * t
-    return point.distance_to(closest)
+        return seg_a
+    var t := clampf((point - seg_a).dot(ab) / ab_len_sq, 0.0, 1.0)
+    return seg_a + ab * t
+
+
+# Update the cached vertex size vectors. Called when vertex_size changes.
+func _update_vertex_size_cache() -> void:
+    _vertex_half_size = Vector2(vertex_size, vertex_size)
+    _vertex_full_size = Vector2(vertex_size * 2, vertex_size * 2)
+
+
+# Setter body for vertex_size. Skips the cache update when the value
+# hasn't changed to avoid redundant Vector2 allocations.
+func _on_vertex_size_changed(value: float) -> void:
+    if value == vertex_size:
+        return
+    vertex_size = value
+    _update_vertex_size_cache()
 
 
 #endregion

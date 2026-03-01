@@ -6,8 +6,8 @@ extends RefCounted
 # supporting interaction polygons, obstacle polygons, and walkable area perimeters.
 
 # State
-var _undo: EditorUndoRedoManager
 var _target_node: Node2D
+var _undo: EditorUndoRedoManager
 var _gizmos: Array[GizmoPolygon2D] = []
 var _grabbed_gizmo: GizmoPolygon2D
 var _grabbed_snapshot: PackedVector2Array
@@ -20,7 +20,7 @@ var _visibility: Dictionary = {
 # Appearance settings (read from editor config)
 var _colors: Dictionary = {}
 var _fill_alpha: float = 0.15
-var _vertex_size: float = 6.0
+var _vertex_handler_size: float = 6.0
 
 
 #region Godot ######################################################################################
@@ -31,48 +31,46 @@ func _init(undo_manager: EditorUndoRedoManager) -> void:
 #endregion
 
 #region Private ####################################################################################
-
 # Scan a node for polygon children and create gizmos for them
 func _scan_polygons(node: Node2D) -> void:
 	if node == null or not is_instance_valid(node):
 		return
 
-	# Interaction polygons: children in the popochiu_object_polygon group
-	for child in node.get_children():
-		if child.is_in_group(PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP):
-			if child is CollisionPolygon2D:
-				var gizmo := GizmoPolygon2D.new(
-					child,
-					GizmoPolygon2D.PolygonCategory.INTERACTION
-				)
-				_apply_appearance(gizmo)
-				_gizmos.append(gizmo)
-			elif child is NavigationRegion2D:
-				# Walkable area perimeters: one gizmo per outline
-				var nav_poly: NavigationPolygon = child.navigation_polygon
-				if nav_poly:
-					for i in range(nav_poly.get_outline_count()):
-						var gizmo := GizmoPolygon2D.new(
-							child,
-							GizmoPolygon2D.PolygonCategory.WALKABLE_AREA,
-							i
-						)
-						_apply_appearance(gizmo)
-						_gizmos.append(gizmo)
+	# Interaction polygons: CollisionPolygon2D children in the polygon group.
+	# The false, false arguments restrict the search to direct children only
+	# and do not require nodes to be owned by the scene root.
+	for child in node.find_children("*", "CollisionPolygon2D", false, false):
+		if not child.is_in_group(PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP):
+			continue
+		var gizmo := GizmoPolygon2D.new(child, GizmoPolygon2D.PolygonCategory.INTERACTION)
+		_set_gizmo_theme(gizmo)
+		_gizmos.append(gizmo)
 
-	# Obstacle polygons: NavigationObstacle2D children named "ObstaclePolygon"
-	var obstacle := node.get_node_or_null("ObstaclePolygon")
-	if obstacle is NavigationObstacle2D:
-		var gizmo := GizmoPolygon2D.new(
-			obstacle,
-			GizmoPolygon2D.PolygonCategory.OBSTACLE
-		)
-		_apply_appearance(gizmo)
+	# Walkable area perimeters: NavigationRegion2D children in the polygon group.
+	# One gizmo is created per outline stored in the NavigationPolygon resource.
+	for child in node.find_children("*", "NavigationRegion2D", false, false):
+		if not child.is_in_group(PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP):
+			continue
+		var nav_poly: NavigationPolygon = child.navigation_polygon
+		if not nav_poly:
+			continue
+		for i in range(nav_poly.get_outline_count()):
+			var gizmo := GizmoPolygon2D.new(
+				child, GizmoPolygon2D.PolygonCategory.WALKABLE_AREA, i
+			)
+			_set_gizmo_theme(gizmo)
+			_gizmos.append(gizmo)
+
+	# Obstacle polygons: any NavigationObstacle2D direct child.
+	# No group check needed — obstacle nodes are never shared with other categories.
+	for child in node.find_children("*", "NavigationObstacle2D", false, false):
+		var gizmo := GizmoPolygon2D.new(child, GizmoPolygon2D.PolygonCategory.OBSTACLE)
+		_set_gizmo_theme(gizmo)
 		_gizmos.append(gizmo)
 
 
 # Apply appearance settings to a gizmo based on its category
-func _apply_appearance(gizmo: GizmoPolygon2D) -> void:
+func _set_gizmo_theme(gizmo: GizmoPolygon2D) -> void:
 	var cat := gizmo.category
 	gizmo.visible = _visibility.get(cat, false)
 
@@ -83,7 +81,7 @@ func _apply_appearance(gizmo: GizmoPolygon2D) -> void:
 			)
 		GizmoPolygon2D.PolygonCategory.OBSTACLE:
 			gizmo.outline_color = _colors.get(
-				"obstacle", Color.DARK_ORANGE
+				"obstacle", Color.VIOLET
 			)
 		GizmoPolygon2D.PolygonCategory.WALKABLE_AREA:
 			gizmo.outline_color = _colors.get(
@@ -92,7 +90,7 @@ func _apply_appearance(gizmo: GizmoPolygon2D) -> void:
 
 	gizmo.fill_color = Color(gizmo.outline_color, _fill_alpha)
 	gizmo.vertex_color = Color.WHITE
-	gizmo.vertex_size = _vertex_size
+	gizmo.vertex_size = _vertex_handler_size
 
 
 # After editing a walkable area polygon, rebake the navigation mesh.
@@ -123,28 +121,27 @@ func _deferred_rebake(source: NavigationRegion2D) -> void:
 #endregion
 
 #region Public #####################################################################################
-
 # Initialize or refresh appearance settings from editor config
-func initialize_settings() -> void:
+func initialize_gizmos() -> void:
 	_colors["interaction"] = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_INTERACTION_POLYGON_COLOR
+		PopochiuEditorConfig.GIZMOS_POLY_INTERACTION_COLOR
 	)
 	_colors["obstacle"] = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_OBSTACLE_POLYGON_COLOR
+		PopochiuEditorConfig.GIZMOS_POLY_OBSTACLE_COLOR
 	)
 	_colors["walkable_area"] = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_WALKABLE_AREA_POLYGON_COLOR
+		PopochiuEditorConfig.GIZMOS_POLY_WALKABLE_AREA_COLOR
 	)
 	_fill_alpha = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_POLYGON_FILL_ALPHA
+		PopochiuEditorConfig.GIZMOS_POLY_FILL_ALPHA
 	)
-	_vertex_size = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_POLYGON_VERTEX_SIZE
+	_vertex_handler_size = PopochiuEditorConfig.get_editor_setting(
+		PopochiuEditorConfig.GIZMOS_POLY_VERTEX_HANDLER_SIZE
 	)
 
 	# Re-apply to existing gizmos
 	for gizmo in _gizmos:
-		_apply_appearance(gizmo)
+		_set_gizmo_theme(gizmo)
 
 
 # Handle a newly selected object. Build gizmos for its polygon children.
@@ -226,15 +223,6 @@ func try_grab_gizmo(event: InputEventMouseButton) -> bool:
 	return false
 
 
-# Drag the currently grabbed vertex
-func drag_gizmo(event: InputEventMouseMotion) -> bool:
-	if not _grabbed_gizmo:
-		return false
-
-	_grabbed_gizmo.drag_vertex_to(event.position)
-	return true
-
-
 # Release the currently grabbed vertex
 func release_gizmo() -> bool:
 	if not _grabbed_gizmo:
@@ -261,6 +249,15 @@ func release_gizmo() -> bool:
 
 	_grabbed_gizmo = null
 	_grabbed_snapshot = PackedVector2Array()
+	return true
+
+
+# Drag the currently grabbed vertex
+func drag_gizmo(event: InputEventMouseMotion) -> bool:
+	if not _grabbed_gizmo:
+		return false
+
+	_grabbed_gizmo.drag_vertex_to(event.position)
 	return true
 
 
@@ -364,7 +361,6 @@ func reset() -> void:
 #endregion
 
 #region Undo/Redo Helpers ##########################################################################
-
 # Add undo property for polygon data. Handles the different source node types.
 func _add_undo_polygon_property(gizmo: GizmoPolygon2D, snapshot: PackedVector2Array) -> void:
 	var source := gizmo.get_source_node()
