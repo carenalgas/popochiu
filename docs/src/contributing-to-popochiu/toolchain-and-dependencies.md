@@ -39,9 +39,9 @@ Dockerfiles for documentation are located in the `docs` directory:
 
 ### AI-aided coding
 
-We welcome and encourage the use of Generative AI tools—including GitHub Copilot, Claude Code, Codeium, and similar solutions—throughout the development and documentation process.
+We welcome and encourage the use of Generative AI tools—including GitHub Copilot, Claude Code, Cursor, OpenCode, and similar solutions—throughout the development and documentation process.
 
-The project's repository provides a dedicated [Copilot instructions file](https://docs.github.com/en/copilot/how-tos/custom-instructions) to help guide compatible AI agents in producing code and content that aligns with our standards. 
+The project's repository provides dedicated instructions targeted to compatible AI agents to guide (and guardrail) them in producing code and content that aligns with our standards.
 
 Among other things, contributors are invited to leverage these technologies to:
 
@@ -51,6 +51,16 @@ Among other things, contributors are invited to leverage these technologies to:
 
 While these tools can greatly accelerate and enhance your workflow, it remains the contributor’s responsibility to ensure the final result meets our quality expectations and fully complies with our [Definition of Done](../project-management/definition-of-done).  
 Generative AI is a powerful ally, not a replacement for thoughtful review and accountability. We embrace these advancements wholeheartedly, but expect all contributors to use them responsibly and with care.
+
+In particular, we ask contributors to follow these guidelines when using AI-assisted techniques:
+
+1. **Do NOT use AI agents to do things you would not be able to do by yourself**. AI can be an accelerator, and sometimes an enabler, but it should never be treated as an oracle.
+2. **Review your code before posting it and ensure it respects our contributions guidelines**. While you're at it, make sure you respect them too (workflow, communication, cooperation, and so on).
+3. **Keep code human-readable**. Most of the maintenance is done by humans and many contributors may have no access to (or no will to use) agentic AI. People will always be our target.
+
+These guidelines are important. AI slop is becoming a real problem in the open source ecosystem (see [this](https://daniel.haxx.se/blog/2025/07/14/death-by-a-thousand-slops/), [this](https://dri.es/ai-creates-asymmetric-pressure-on-open-source), and especially [this](https://github.com/orgs/community/discussions/185387)). There is no free lunch: contributing requires effort, care, and ownership. Please respect that.
+
+One last thing: **please do not start ideological, political, or philosophical flamewars about AI** in our community or public channels. It is a tool (an extremely powerful one) but still a young technology, and like any technology, it can do as much harm as good. We support its responsible use. If you do not like it, feel free to ignore it. If you do like it, use it responsibly. Polite, critical, and open discussions on the topic are more than welcome.
 
 ### AI-aided cocumentation
 
