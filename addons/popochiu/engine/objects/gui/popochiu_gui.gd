@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 class_name PopochiuGraphicInterface
 extends Control
 ## Handles the in-game Graphic Interface.

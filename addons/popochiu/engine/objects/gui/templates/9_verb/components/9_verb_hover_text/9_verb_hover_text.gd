@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends PopochiuHoverText
 
 @export var follows_cursor := false

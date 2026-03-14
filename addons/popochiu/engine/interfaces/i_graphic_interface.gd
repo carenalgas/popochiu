@@ -1,70 +1,81 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIGraphicInterface
 extends Node
-## Provides access to the in-game [PopochiuGraphicInterface] (GUI). Access with [b]G[/b] (e.g.
-## [code]G.block()[/code]).[br][br]
+## Provides access to the in-game [PopochiuGraphicInterface] via the singleton [b]G[/b]
+## (for example: [code]G.block()[/code]).
 ##
-## Use it to manage the GUI. Its script is [b]i_graphic_interface.gd[/b].[br][br]
+## Use this interface to manage the GUI.
 ##
-## Some things you can do with it:[br][br]
-## 
-## [b]•[/b] Show messages in the middle of the screen (like a narrator or a game message).[br]
-## [b]•[/b] Show info about hovered objects in the game.[br]
-## [b]•[/b] Show, hide, block or unblock the GUI.[br][br]
-## 
-## Examples:
+## Capabilities include:
+##
+## - Showing messages at the center of the screen (narration or system messages).[br]
+## - Displaying hover info for objects under the cursor.[br]
+## - Showing, hiding, blocking or unblocking the GUI.
+##
+## [b]Use examples:[/b]
 ## [codeblock]
+## # Shows an instructional tooltip
 ## G.show_info('Click this to open the main menu')
+##
+## # Displays a message box in the center of the screen
+## # and wait for the player to dismiss it
 ## G.display('There are no actions set for this object')
+##
+## # Hides the interface (for example during a cutscene
+## # or when showing a full-screen close-up)
 ## G.hide_interface()
+##
+## # Connect a function to a specific GUI event
 ## G.connect('inventory_shown', self, '_play_inventory_sfx')
 ## [/codeblock]
 
-## Emitted when [method block] is called. [PopochiuGraphicInterface] connects to this signal in
-## order to block the GUI.
+## Emitted when [method block] is called; [PopochiuGraphicInterface] (the in-game GUI)
+## listens to this to block input.
 signal blocked
-## Emitted when [method unblock] is called. [PopochiuGraphicInterface] connects to this signal in
-## order to unblock the GUI.
+## Emitted when [method unblock] is called; [PopochiuGraphicInterface] (the in-game GUI)
+## listens to this to resume input.
 signal unblocked
-## Emitted when [method hide_interface] is called. [PopochiuGraphicInterface] connects to this
-## signal in order to hide the GUI.
+## Emitted when [method hide_interface] is called; [PopochiuGraphicInterface] (the in-game GUI)
+## listens to this to hide the GUI.
 signal hidden
-## Emitted when [method show_interface] is called. [PopochiuGraphicInterface] connects to this
-## signal in order to show the GUI.
+## Emitted when [method show_interface] is called; [PopochiuGraphicInterface] (the in-game GUI)
+## listens to this to show the GUI.
 signal shown
-## Emitted when the cursor enters (hover) a [param clickable].
+## Emitted when the cursor enters (hovers) a [param clickable].
 signal mouse_entered_clickable(clickable: PopochiuClickable)
 ## Emitted when the cursor exits a [param clickable].
 signal mouse_exited_clickable(clickable: PopochiuClickable)
-## Emitted when the cursor enters (hover) a [param inventory_item].
+## Emitted when the cursor enters (hovers) an [param inventory_item].
 signal mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem)
-## Emitted when the cursor exits a [param inventory_item].
+## Emitted when the cursor exits an [param inventory_item].
 signal mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem)
-## Emitted when a [PopochiuCharacter] begins to say a dialogue line.
+## Emitted when a [PopochiuCharacter] begins speaking a dialog line.
 signal dialog_line_started
-## Emitted when a [PopochiuCharacter] finishes saying a dialogue line.
+## Emitted when a [PopochiuCharacter] finishes speaking a dialog line.
 signal dialog_line_finished
-## Emitted when [method show_hover_text] so the GUI can show [param message] in the hover text.
-## I.e. when a [PopochiuClickable] is hovered.
+## Emitted when [method show_hover_text] is called so the GUI can display [param message]
+## as a hover text.
 signal hover_text_shown(message: String)
-## Emitted when [method show_system_text] so the GUI can show [param message] as a system text.
+## Emitted when [method show_system_text] is called so the GUI can display [param message]
+## as a system text.
 signal system_text_shown(message: String)
-## Emitted when the system text disappears after a click on the screen.
+## Emitted when the system text is dismissed by a click.
 signal system_text_hidden
-## Emitted when the [PopochiuPopup] identified by [member PopochiuPopup.script_name] is opened.
+## Emitted when a [PopochiuPopup] identified by [member PopochiuPopup.script_name] is requested.
 signal popup_requested(script_name: StringName)
 # NOTE: Maybe add some signals for clicking objects and items
 #signal clicked_clickable(clickable: PopochiuClickable)
 #signal clicked_inventory_item(inventory_item: PopochiuInventoryItem)
-## Emitted when the dialog options of the running [PopochiuDialog] are shown.
+## Emitted when the dialog options for the running [PopochiuDialog] are shown.
 signal dialog_options_shown
-## Emitted when a game is loaded and the GUI has shown (or not shown) a notification to the player.
+## Emitted after a game is loaded and the GUI has finished showing any notification.
 signal load_feedback_finished
 
-## Whether the GUI is blocked or not.
+## Whether the GUI is currently blocked.
 var is_blocked := false
-## Provides access to the identifier of the GUI template used by the game.
+## Identifier of the GUI template used by the game.
 var template := ""
-## Provides access to the [PopochiuGraphicInterface] of  the GUI template used by the game.
+## Reference to the active [PopochiuGraphicInterface] instance for the chosen template.
 var gui: PopochiuGraphicInterface
 
 
@@ -80,9 +91,8 @@ func _ready():
 #endregion
 
 #region Public #####################################################################################
-## Displays [param msg] at the center of the screen, useful for narration, instructions, or warnings
-## to players. Temporarily blocks the GUI until players click anywhere on the game window, causing
-## the text to disappear.
+## Displays [param msg] in a box centered on-screen (narration/instruction/warning).
+## Temporarily blocks the GUI until the player clicks anywhere to dismiss the message.
 func show_system_text(msg: String) -> void:
 	# NOTE: Not sure if this logic should happen here. Perhaps it could trigger a signal to which
 	# the in-game graphic interface connects, allowing it to handle the logic.
@@ -101,29 +111,30 @@ func show_system_text(msg: String) -> void:
 		unblock()
 
 
-## Displays [param msg] at the center of the screen, useful for narration, instructions, or warnings
-## to players. Temporarily blocks the GUI until players click anywhere on the game window, causing
-## the text to disappear.[br][br]
+## Displays [param msg] in a box centered on-screen (narration/instruction/warning).
+## Temporarily blocks the GUI until the player clicks anywhere to dismiss the message.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_show_system_text(msg: String) -> Callable:
 	return func (): await show_system_text(msg)
 
 
-## Displays [param msg] in the game window without blocking interactions. Used to show players the
-## name of objects where the cursor is positioned (i.e., a [PopochiuClickable]). It could also be
-## used to show players what will happen if they use the left click or right click.
+## Shows [param msg] as hover text for the currently hovered object. Does not block interactions.
+## Can be used to inform the player what happens when clicking or right-clicking an object.
 func show_hover_text(msg := '') -> void:
 	hover_text_shown.emit(msg)
 
 
-## Causes the in-game graphic interface (GUI) to be blocked. This prevents players from interacting
-## with the game elements.
+## Blocks the in-game GUI, preventing player interaction.
 func block() -> void:
 	is_blocked = true
 	blocked.emit()
 
 
-## Causes the in-game graphic interface (GUI) to be unblocked.
+## Unblocks the in-game GUI.
+##
+## The [param wait] parameter is used for internal purposes to avoid race conditions
+## in specific scenarios. Ignore it unless you know what you're doing.
 func unblock(wait := false) -> void:
 	is_blocked = false
 	
@@ -135,29 +146,30 @@ func unblock(wait := false) -> void:
 	unblocked.emit()
 
 
-## Makes the in-game graphic interface (GUI) to hide.
+## Hides the in-game GUI.
 func hide_interface() -> void:
 	hidden.emit()
 
 
-## Makes the in-game graphic interface (GUI) to hide.[br][br]
+## Hides the in-game GUI.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_hide_interface() -> Callable:
 	return func(): hide_interface()
 
-
-## Makes the in-game graphic interface (GUI) to show.
+## Shows the in-game GUI.
 func show_interface() -> void:
 	shown.emit()
 
 
-## Makes the in-game graphic interface (GUI) to show.[br][br]
+## Shows the in-game GUI.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_show_interface() -> Callable:
 	return func(): show_interface()
 
 
-## Returns the name of the cursor texture to show.
+## Returns the name of the cursor texture that the GUI requests to show.
 func get_cursor_name() -> String:
 	if not is_instance_valid(gui): return ""
 	

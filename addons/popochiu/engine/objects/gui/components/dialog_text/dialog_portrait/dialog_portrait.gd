@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends PopochiuDialogText
 
 ## Determines when to flip the portrait texture horizontally.

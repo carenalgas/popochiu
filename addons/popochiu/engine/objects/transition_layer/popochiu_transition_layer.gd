@@ -1,9 +1,13 @@
+# @popochiu-docs-category game-user-interface
 @tool
 class_name PopochiuTransitionLayer
 extends Control
-## Used to play different transition animations when moving between rooms, skipping a cutscene,
-## and so on.
+## Handles visual transitions between rooms, cutscenes, and other gameplay moments.
+##
+## Supports many standard transitions (fade, wipe, tunnels, etc) as well as custom ones,
+## with configurable duration and colors.
 
+## Emitted when a transition animation completes.
 signal transition_finished(transition_name: String)
 
 enum PLAY_MODE {
@@ -51,7 +55,8 @@ func _ready() -> void:
 ##	 - color specified from code;
 ##	 - color specified in the modulate track of the animation (if enabled);
 ##	 - color specified in project settings.
-## [br][br]
+## 
+##
 ## [b]Note:[/b] Custom transitions must use [code]snake_case[/code] naming convention for proper
 ## display in project settings. The [param name] parameter accepts any format (Title Case,
 ## CamelCase, or snake_case) and normalizes it internally.
@@ -138,7 +143,7 @@ func hide_curtain() -> void:
 	_hide()
 
 
-## Return the animation specified by [param anim_name].
+## Returns the animation specified by [param anim_name].
 func get_transition(anim_name: String) -> Animation:
 	var anim = $AnimationPlayer.get_animation(anim_name)
 
@@ -149,7 +154,7 @@ func get_transition(anim_name: String) -> Animation:
 	return anim
 
 
-## Return the custom animation library or null.
+## Returns the custom animation library or null.
 func get_custom_library() -> AnimationLibrary:
 	var tl_anim_lib: AnimationLibrary = $AnimationPlayer.get_animation_library(
 		PopochiuResources.TRANSITION_LAYER_CUSTOM_ANIMLIB
@@ -165,13 +170,13 @@ func get_custom_library() -> AnimationLibrary:
 	return tl_anim_lib
 
 
-## Return true if an animation library with custom transition is present.
+## Returns true if an animation library with custom transition is present.
 func has_custom_library() -> bool:
 	return true if get_custom_library() else false
 
 
-## Return the custom transition specified by [param anim_name].
-## Return null if not found.
+## Returns the custom transition specified by [param anim_name].
+## Returns null if not found.
 func get_custom_transition(anim_name: String) -> Animation:
 	var tl_anim_lib := get_custom_library()
 
@@ -187,24 +192,24 @@ func get_custom_transition(anim_name: String) -> Animation:
 	return tl_anim
 
 
-## Return true if the custom transition specified by [param anim_name] exists.
+## Returns true if the custom transition specified by [param anim_name] exists.
 func has_custom_transition(anim_name: String) -> bool:
 	return true if get_custom_transition(anim_name) else false
 
 
-## Return a list of all custom transition names.
+## Returns a list of all custom transition names.
 func get_custom_transitions_list() -> PackedStringArray:
 	var anim_list := PackedStringArray(get_custom_library().get_animation_list())
 	return _hide_animations(anim_list)
 
 
-## Return a list of predefined transition names.
+## Returns a list of predefined transition names.
 func get_predefined_transitions_list() -> PackedStringArray:
 	var anim_list := PackedStringArray($AnimationPlayer.get_animation_library("").get_animation_list())
 	return _hide_animations(anim_list)
 
 
-## Return a list of all transition names.
+## Returns a list of all transition names.
 func get_all_transitions_list() -> PackedStringArray:
 	var anim_list: PackedStringArray = $AnimationPlayer.get_animation_list()
 	return _hide_animations(anim_list)

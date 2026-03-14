@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Control
 class_name PopochiuHoverText
 

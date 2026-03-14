@@ -1,0 +1,890 @@
+#!/usr/bin/env python3
+"""
+Markdown Generator for Popochiu Documentation
+
+Generates Godot-style Markdown documentation from parsed GDScript classes,
+with summary tables, detailed sections, and proper formatting.
+"""
+
+import re
+from pathlib import Path
+from typing import Optional
+from dataclasses import dataclass
+
+from gdscript_parser import (
+    ClassInfo, SignalInfo, ConstantInfo, EnumInfo, EnumValue,
+    PropertyInfo, MethodInfo, ParameterInfo, parse_directory, GDScriptParser
+)
+from bbcode_converter import BBCodeConverter, get_relative_class_path
+
+
+@dataclass
+class GeneratorConfig:
+    """Configuration for the Markdown generator."""
+    # Whether to include private members (starting with _)
+    include_private: bool = False
+    # Whether to include methods starting with _ (except virtual ones like _ready)
+    include_private_methods: bool = False
+    # Whether to generate separate files for each class
+    separate_files: bool = True
+    # Whether to generate an index.md file listing all classes
+    generate_index: bool = False
+    # Base URL for cross-references
+    base_url: str = ""
+    # Known classes for cross-referencing
+    known_classes: set[str] = None
+    # Mapping of class name → category slug (for subdirectory organization)
+    class_to_category: dict[str, str] = None
+
+    def __post_init__(self):
+        if self.known_classes is None:
+            self.known_classes = set()
+        if self.class_to_category is None:
+            self.class_to_category = {}
+
+
+class MarkdownGenerator:
+    """Generates Godot-style Markdown documentation from ClassInfo."""
+
+    # Default messages for status tags when no reason is provided
+    DEFAULT_DEPRECATED_MESSAGE = "This will be removed in future versions."
+    DEFAULT_EXPERIMENTAL_MESSAGE = "This may change or be removed in future versions. Use at your own risk."
+
+    def __init__(self, config: Optional[GeneratorConfig] = None):
+        self.config = config or GeneratorConfig()
+        self.converter: Optional[BBCodeConverter] = None
+        self.current_class: Optional[ClassInfo] = None
+
+    def _generate_status_chips(self, member) -> str:
+        """
+        Generate HTML chips for deprecated/experimental status.
+
+        Args:
+            member: A member object with deprecated_reason and experimental_reason attributes
+
+        Returns:
+            HTML string with status chips, or empty string if no status tags
+        """
+        chips = []
+
+        deprecated = getattr(member, 'deprecated_reason', None)
+        experimental = getattr(member, 'experimental_reason', None)
+
+        # If deprecated_reason is not None, the @deprecated tag was found
+        if deprecated is not None:
+            chips.append('<span class="status-chip status-deprecated"><i class="fa-solid fa-ban"></i> deprecated</span>')
+
+        # If experimental_reason is not None, the @experimental tag was found
+        if experimental is not None:
+            chips.append('<span class="status-chip status-experimental"><i class="fa-solid fa-flask"></i> experimental</span>')
+
+        return " ".join(chips)
+
+    def _generate_status_admonitions(self, member) -> str:
+        """
+        Generate MkDocs admonitions for deprecated/experimental status.
+
+        Args:
+            member: A member object with deprecated_reason and experimental_reason attributes
+
+        Returns:
+            Markdown string with admonitions, or empty string if no status tags
+        """
+        admonitions = []
+
+        deprecated = getattr(member, 'deprecated_reason', None)
+        experimental = getattr(member, 'experimental_reason', None)
+
+        # If deprecated_reason is not None, the @deprecated tag was found
+        if deprecated is not None:
+            reason = deprecated if deprecated else self.DEFAULT_DEPRECATED_MESSAGE
+            reason = self.converter.convert(reason) if self.converter else reason
+            admonitions.append(f'!!! danger "Deprecated"\n    {reason}')
+
+        # If experimental_reason is not None, the @experimental tag was found
+        if experimental is not None:
+            reason = experimental if experimental else self.DEFAULT_EXPERIMENTAL_MESSAGE
+            reason = self.converter.convert(reason) if self.converter else reason
+            admonitions.append(f'!!! warning "Experimental"\n    {reason}')
+
+        return "\n\n".join(admonitions)
+
+    def generate(self, class_info: ClassInfo) -> str:
+        """Generate Markdown documentation for a class."""
+        self.current_class = class_info
+        self.converter = BBCodeConverter(
+            class_info.name, 
+            self.config.known_classes,
+            source_category=class_info.docs_category,
+            class_to_category=self.config.class_to_category,
+        )
+
+        sections = []
+
+        # Header
+        sections.append(self._generate_header(class_info))
+
+        # Description
+        if class_info.description:
+            sections.append(self._generate_description(class_info))
+
+        # Table of contents / Summary tables
+        sections.append(self._generate_toc(class_info))
+
+        # Signals summary and details
+        visible_signals = self._filter_signals(class_info.signals)
+        if visible_signals:
+            sections.append(self._generate_signals_section(class_info, visible_signals))
+
+        # Enumerations
+        visible_enums = self._filter_enums(class_info.enums)
+        if visible_enums:
+            sections.append(self._generate_enums_section(class_info, visible_enums))
+
+        # Constants
+        visible_constants = self._filter_constants(class_info.constants)
+        if visible_constants:
+            sections.append(self._generate_constants_section(class_info, visible_constants))
+
+        # Property descriptions
+        visible_props = self._filter_properties(class_info.properties)
+        if visible_props:
+            sections.append(self._generate_properties_section(class_info, visible_props))
+
+        # Method descriptions
+        visible_methods = self._filter_methods(class_info.methods)
+        if visible_methods:
+            sections.append(self._generate_methods_section(class_info, visible_methods))
+
+        return "\n\n".join(sections)
+
+    def _generate_header(self, class_info: ClassInfo) -> str:
+        """Generate the class header section."""
+        lines = [f"# {class_info.name}"]
+
+        # Inheritance chain
+        if class_info.extends:
+            lines.append("")
+            parent = class_info.extends
+            if parent in BBCodeConverter.GODOT_CLASSES:
+                url = f"https://docs.godotengine.org/en/stable/classes/class_{parent.lower()}.html"
+                lines.append(f"**Inherits:** [{parent}]({url})")
+            elif parent in self.config.known_classes or parent in BBCodeConverter.POPOCHIU_CLASSES:
+                path = get_relative_class_path(
+                    class_info.docs_category, parent,
+                    self.config.class_to_category,
+                )
+                lines.append(f"**Inherits:** [{parent}]({path})")
+            else:
+                lines.append(f"**Inherits:** {parent}")
+
+        return "\n".join(lines)
+
+    def _generate_description(self, class_info: ClassInfo) -> str:
+        """Generate the description section."""
+        lines = ["## Description"]
+        lines.append("")
+        lines.append(self.converter.convert(class_info.description))
+        return "\n".join(lines)
+
+    def _generate_toc(self, class_info: ClassInfo) -> str:
+        """Generate the table of contents with summary tables."""
+        sections = []
+
+        # Properties table
+        visible_props = self._filter_properties(class_info.properties)
+        if visible_props:
+            sections.append(self._generate_properties_table(visible_props))
+
+        # Methods table
+        visible_methods = self._filter_methods(class_info.methods)
+        if visible_methods:
+            sections.append(self._generate_methods_table(visible_methods))
+
+        # Signals table (if any)
+        visible_signals = self._filter_signals(class_info.signals)
+        if visible_signals:
+            sections.append(self._generate_signals_table(visible_signals))
+
+        # Enums table (if any)
+        visible_enums = self._filter_enums(class_info.enums)
+        if visible_enums:
+            sections.append(self._generate_enums_table(visible_enums))
+
+        # Constants table (if any)
+        visible_constants = self._filter_constants(class_info.constants)
+        if visible_constants:
+            sections.append(self._generate_constants_table(visible_constants))
+
+        return "\n\n".join(sections)
+
+    def _generate_properties_table(self, properties: list[PropertyInfo]) -> str:
+        """Generate the properties summary table."""
+        lines = ['<hr class="classref-section-separator">', "", "## Properties"]
+        lines.append("")
+        lines.append("| Type | Name | Default |")
+        lines.append("|------|------|---------|")
+
+        for prop in sorted(properties, key=lambda p: p.name.lower()):
+            type_str = self._format_type(prop.type_hint) if prop.type_hint else "Variant"
+            name_link = f"[{prop.name}](#{prop.name.lower().replace('_', '-')})"
+            chips = self._generate_status_chips(prop)
+            name_cell = f"{name_link} {chips}" if chips else name_link
+            default = f"`{prop.default_value}`" if prop.default_value else ""
+            lines.append(f"| {type_str} | {name_cell} | {default} |")
+
+        return "\n".join(lines)
+
+    def _generate_methods_table(self, methods: list[MethodInfo]) -> str:
+        """Generate the methods summary table."""
+        lines = ['<hr class="classref-section-separator">', "", "## Methods"]
+        lines.append("")
+        lines.append("| Return Type | Method |")
+        lines.append("|-------------|--------|")
+
+        for method in sorted(methods, key=lambda m: m.name.lower()):
+            ret_type = self._format_type(method.return_type) if method.return_type else "void"
+
+            # Build signature
+            params = []
+            for p in method.parameters:
+                param_str = p.name
+                if p.type_hint:
+                    param_str += f": {self._format_type_inline(p.type_hint)}"
+                if p.default_value:
+                    param_str += f" = {p.default_value}"
+                params.append(param_str)
+
+            sig = f"[{method.name}](#{method.name.lower().replace('_', '-')})({', '.join(params)})"
+
+            # Add qualifiers
+            qualifiers = []
+            if method.is_virtual:
+                qualifiers.append("*virtual*")
+            if method.is_static:
+                qualifiers.append("*static*")
+
+            if qualifiers:
+                sig += " " + " ".join(qualifiers)
+
+            # Add status chips
+            chips = self._generate_status_chips(method)
+            if chips:
+                sig += f" {chips}"
+
+            lines.append(f"| {ret_type} | {sig} |")
+
+        return "\n".join(lines)
+
+    def _generate_signals_table(self, signals: list[SignalInfo]) -> str:
+        """Generate the signals summary table."""
+        lines = ['<hr class="classref-section-separator">', "", "## Signals"]
+        lines.append("")
+
+        for signal in sorted(signals, key=lambda s: s.name.lower()):
+            params = ", ".join(
+                f"{name}: {self._format_type_inline(type_)}" if type_ else name
+                for name, type_ in signal.parameters
+            )
+            chips = self._generate_status_chips(signal)
+            chip_suffix = f" {chips}" if chips else ""
+            lines.append(f"- **[{signal.name}](#signal-{signal.name.lower().replace('_', '-')})**({params}){chip_suffix}")
+
+        return "\n".join(lines)
+
+    def _generate_enums_table(self, enums: list[EnumInfo]) -> str:
+        """Generate the enumerations summary table."""
+        lines = ['<hr class="classref-section-separator">', "", "## Enumerations"]
+        lines.append("")
+
+        for enum in sorted(enums, key=lambda e: e.name.lower()):
+            chips = self._generate_status_chips(enum)
+            chip_suffix = f" {chips}" if chips else ""
+            lines.append(f"- **[{enum.name}](#enum-{enum.name.lower().replace('_', '-')})**{chip_suffix}")
+
+        return "\n".join(lines)
+
+    def _generate_constants_table(self, constants: list[ConstantInfo]) -> str:
+        """Generate the constants summary table."""
+        lines = ['<hr class="classref-section-separator">', "", "## Constants"]
+        lines.append("")
+        lines.append("| Name | Value |")
+        lines.append("|------|-------|")
+
+        for const in sorted(constants, key=lambda c: c.name.lower()):
+            chips = self._generate_status_chips(const)
+            name_cell = f"`{const.name}` {chips}" if chips else f"`{const.name}`"
+            lines.append(f"| {name_cell} | `{const.value}` |")
+
+        return "\n".join(lines)
+
+    def _generate_signals_section(self, class_info: ClassInfo, 
+                                   signals: list[SignalInfo]) -> str:
+        """Generate the signals detail section."""
+        lines = ['<hr class="classref-section-separator">', "", "## Signal Descriptions"]
+
+        for i, signal in enumerate(sorted(signals, key=lambda s: s.name.lower())):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
+            lines.append("")
+            anchor = f"signal-{signal.name.lower().replace('_', '-')}"
+            lines.append(f"### {signal.name} {{#{anchor}}}")
+            lines.append("")
+            lines.append(f"```gdscript")
+            lines.append(f"signal {signal.signature}")
+            lines.append(f"```")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(signal)
+            if admonitions:
+                lines.append("")
+                lines.append(admonitions)
+
+            if signal.description:
+                lines.append("")
+                lines.append(self.converter.convert(signal.description))
+
+        return "\n".join(lines)
+
+    def _generate_enums_section(self, class_info: ClassInfo,
+                                enums: list[EnumInfo]) -> str:
+        """Generate the enumerations detail section."""
+        lines = ['<hr class="classref-section-separator">', "", "## Enumeration Descriptions"]
+
+        for i, enum in enumerate(sorted(enums, key=lambda e: e.name.lower())):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
+            lines.append("")
+            anchor = f"enum-{enum.name.lower().replace('_', '-')}"
+            lines.append(f"### enum {enum.name} {{#{anchor}}}")
+            lines.append("")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(enum)
+            if admonitions:
+                lines.append(admonitions)
+                lines.append("")
+
+            if enum.description:
+                lines.append(self.converter.convert(enum.description))
+                lines.append("")
+
+            lines.append("```gdscript")
+            lines.append(f"enum {enum.name} {{")
+            for val in enum.values:
+                val_str = f"    {val.name}"
+                if val.value is not None:
+                    val_str += f" = {val.value}"
+                val_str += ","
+                lines.append(val_str)
+            lines.append("}")
+            lines.append("```")
+
+            # Value descriptions
+            has_descriptions = any(v.description for v in enum.values)
+            if has_descriptions:
+                lines.append("")
+                for val in enum.values:
+                    if val.description:
+                        lines.append(f"- **{val.name}** — {self.converter.convert(val.description)}")
+                    else:
+                        lines.append(f"- **{val.name}**")
+
+        return "\n".join(lines)
+
+        return "\n".join(lines)
+
+    def _generate_constants_section(self, class_info: ClassInfo,
+                                    constants: list[ConstantInfo]) -> str:
+        """Generate the constants detail section."""
+        lines = ['<hr class="classref-section-separator">', "", "## Constant Descriptions"]
+
+        for i, const in enumerate(sorted(constants, key=lambda c: c.name.lower())):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
+            lines.append("")
+            lines.append(f"### {const.name}")
+            lines.append("")
+            lines.append("```gdscript")
+            type_hint = f": {const.type_hint}" if const.type_hint else ""
+            lines.append(f"const {const.name}{type_hint} = {const.value}")
+            lines.append("```")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(const)
+            if admonitions:
+                lines.append("")
+                lines.append(admonitions)
+
+            if const.description:
+                lines.append("")
+                lines.append(self.converter.convert(const.description))
+
+        return "\n".join(lines)
+
+    def _generate_properties_section(self, class_info: ClassInfo, 
+                                     properties: list[PropertyInfo]) -> str:
+        """Generate the property descriptions section."""
+        lines = ['<hr class="classref-section-separator">', "", "## Property Descriptions"]
+
+        for i, prop in enumerate(sorted(properties, key=lambda p: p.name.lower())):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
+            lines.append("")
+            anchor = prop.name.lower().replace("_", "-")
+            lines.append(f"### {prop.name} {{#{anchor}}}")
+            lines.append("")
+
+            # Property signature
+            lines.append("```gdscript")
+            sig_parts = []
+            if prop.export_hint:
+                sig_parts.append(prop.export_hint)
+            sig_parts.append("var")
+            sig_parts.append(prop.name)
+            if prop.type_hint:
+                sig_parts.append(f": {prop.type_hint}")
+            if prop.default_value:
+                sig_parts.append(f"= {prop.default_value}")
+            lines.append(" ".join(sig_parts))
+            lines.append("```")
+
+            # Getter/Setter info
+            if prop.getter or prop.setter:
+                lines.append("")
+                if prop.getter:
+                    lines.append(f"- **Getter:** `{prop.getter}`")
+                if prop.setter:
+                    lines.append(f"- **Setter:** `{prop.setter}`")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(prop)
+            if admonitions:
+                lines.append("")
+                lines.append(admonitions)
+
+            if prop.description:
+                lines.append("")
+                lines.append(self.converter.convert(prop.description))
+
+        return "\n".join(lines)
+
+    def _generate_methods_section(self, class_info: ClassInfo,
+                                  methods: list[MethodInfo]) -> str:
+        """Generate the method descriptions section."""
+        lines = ['<hr class="classref-section-separator">', "", "## Method Descriptions"]
+
+        for i, method in enumerate(sorted(methods, key=lambda m: m.name.lower())):
+            if i > 0:
+                lines.append('')
+                lines.append('<hr class="classref-item-separator">')
+            lines.append("")
+            anchor = method.name.lower().replace("_", "-")
+            lines.append(f"### {method.name} {{#{anchor}}}")
+            lines.append("")
+
+            # Method signature
+            lines.append("```gdscript")
+            sig_prefix = ""
+            if method.is_static:
+                sig_prefix = "static "
+
+            # Parameters
+            params = []
+            for p in method.parameters:
+                param_str = p.name
+                if p.type_hint:
+                    param_str += f": {p.type_hint}"
+                if p.default_value:
+                    param_str += f" = {p.default_value}"
+                params.append(param_str)
+
+            params_str = ", ".join(params)
+            return_str = f" -> {method.return_type}" if method.return_type else ""
+
+            lines.append(f"{sig_prefix}func {method.name}({params_str}){return_str}")
+            lines.append("```")
+
+            # Qualifiers
+            if method.is_virtual:
+                lines.append("")
+                lines.append("*This is a virtual method. Override it in your subclass.*")
+
+            # Add status admonitions
+            admonitions = self._generate_status_admonitions(method)
+            if admonitions:
+                lines.append("")
+                lines.append(admonitions)
+
+            if method.description:
+                lines.append("")
+                lines.append(self.converter.convert(method.description))
+
+        return "\n".join(lines)
+
+    def _should_include_member(self, member) -> bool:
+        """
+        Check if a member should be included based on annotation priority.
+
+        Priority hierarchy:
+        1. 'include' in annotations → always include
+        2. 'ignore' in annotations → always exclude
+        3. class is_class_ignored and no 'include' → exclude
+        4. Fall back to specific type checks (private names, etc.)
+
+        Returns True if member passes annotation checks, False to exclude.
+        This method only handles annotation-based filtering; type-specific
+        filtering (e.g., private method handling) is done in specialized methods.
+        """
+        # Priority 1: Force include overrides everything
+        if "include" in member.annotations:
+            return True
+
+        # Priority 2: Explicit ignore
+        if "ignore" in member.annotations:
+            return False
+
+        # Priority 3: Class-level ignore (member not force-included)
+        if self.current_class and self.current_class.is_class_ignored:
+            return False
+
+        # No annotation-based exclusion, allow through
+        return True
+
+    def _filter_properties(self, properties: list[PropertyInfo]) -> list[PropertyInfo]:
+        """Filter properties based on configuration and annotations."""
+        result = []
+        for prop in properties:
+            # Check annotation-based filtering first
+            if not self._should_include_member(prop):
+                continue
+
+            # Skip private properties unless configured to include them
+            # (but force-included properties already passed the check above)
+            if prop.name.startswith("_") and not self.config.include_private:
+                if "include" not in prop.annotations:
+                    continue
+
+            result.append(prop)
+        return result
+
+    def _filter_methods(self, methods: list[MethodInfo]) -> list[MethodInfo]:
+        """Filter methods based on configuration and annotations."""
+        result = []
+        for method in methods:
+            # Check annotation-based filtering first
+            if not self._should_include_member(method):
+                continue
+
+            # Always skip truly private methods (double underscore)
+            # unless force-included
+            if method.name.startswith("__"):
+                if "include" not in method.annotations:
+                    continue
+
+            # Skip private methods unless configured to include them
+            # Exception: Popochiu virtual methods (marked with is_virtual=True) are included
+            # as they're part of the overridable API contract
+            if method.name.startswith("_") and "include" not in method.annotations:
+                if not self.config.include_private_methods:
+                    # Only include if it's a Popochiu virtual method (documented as *virtual*)
+                    if not method.is_virtual:
+                        continue
+
+            result.append(method)
+        return result
+
+    def _filter_signals(self, signals: list[SignalInfo]) -> list[SignalInfo]:
+        """Filter signals based on annotations."""
+        return [s for s in signals if self._should_include_member(s)]
+
+    def _filter_enums(self, enums: list[EnumInfo]) -> list[EnumInfo]:
+        """Filter enums based on annotations."""
+        return [e for e in enums if self._should_include_member(e)]
+
+    def _filter_constants(self, constants: list[ConstantInfo]) -> list[ConstantInfo]:
+        """Filter constants based on annotations."""
+        return [c for c in constants if self._should_include_member(c)]
+        return result
+
+    def _format_type(self, type_hint: str) -> str:
+        """Format a type hint with links."""
+        if not type_hint:
+            return "Variant"
+
+        # Handle generic types like Array[String]
+        if "[" in type_hint:
+            base, inner = type_hint.split("[", 1)
+            inner = inner.rstrip("]")
+            return f"{self._format_type(base)}[{self._format_type(inner)}]"
+
+        # Check if it's a known class
+        if type_hint in self.config.known_classes or type_hint in BBCodeConverter.POPOCHIU_CLASSES:
+            source_cat = self.current_class.docs_category if self.current_class else ""
+            path = get_relative_class_path(
+                source_cat, type_hint,
+                self.config.class_to_category,
+            )
+            return f"[{type_hint}]({path})"
+
+        if type_hint in BBCodeConverter.GODOT_CLASSES:
+            return f"[{type_hint}](https://docs.godotengine.org/en/stable/classes/class_{type_hint.lower()}.html)"
+
+        return type_hint
+
+    def _format_type_inline(self, type_hint: str) -> str:
+        """Format a type hint for inline use (no links in tables)."""
+        return type_hint if type_hint else "Variant"
+
+
+def generate_class_docs(class_info: ClassInfo, config: Optional[GeneratorConfig] = None) -> str:
+    """Generate Markdown documentation for a single class."""
+    generator = MarkdownGenerator(config)
+    return generator.generate(class_info)
+
+
+def _class_has_visible_members(class_info: ClassInfo, config: GeneratorConfig) -> bool:
+    """
+    Check if a class has any visible members after filtering.
+
+    Used to determine if a class should generate output when marked as ignored.
+    """
+    generator = MarkdownGenerator(config)
+    generator.current_class = class_info
+
+    # Check if any members pass the filter
+    if generator._filter_properties(class_info.properties):
+        return True
+    if generator._filter_methods(class_info.methods):
+        return True
+    if generator._filter_signals(class_info.signals):
+        return True
+    if generator._filter_enums(class_info.enums):
+        return True
+    if generator._filter_constants(class_info.constants):
+        return True
+
+    return False
+
+
+def _clean_output_dir(output_dir: Path) -> None:
+    """
+    Remove previously generated .md files and empty subdirectories.
+
+    Preserves the root index.md (which is manually maintained) and any
+    .gitkeep files.
+    """
+    # Remove .md files in subdirectories first, then in root (except index.md)
+    for md_file in output_dir.rglob("*.md"):
+        rel = md_file.relative_to(output_dir)
+        # Preserve the root index.md (manually maintained)
+        if rel == Path("index.md"):
+            continue
+        md_file.unlink()
+
+    # Remove empty subdirectories (bottom-up)
+    for dirpath in sorted(output_dir.rglob("*"), reverse=True):
+        if dirpath.is_dir() and not any(dirpath.iterdir()):
+            dirpath.rmdir()
+
+
+def _category_display_name(slug: str) -> str:
+    """Convert a category slug to a human-readable title.
+
+    Example: "game-objects" → "Game Objects"
+    """
+    return slug.replace("-", " ").title()
+
+
+def _generate_category_index(weight: int) -> str:
+    """Generate an index.md for a category subdirectory.
+
+    The index is empty (mkdocs-nav-weight derives the title from the
+    directory name) and only contains frontmatter to control ordering.
+    """
+    return f"---\nweight: {weight}\nempty: true\n---\n"
+
+
+def generate_directory_docs(directory: Path, output_dir: Path,
+                           config: Optional[GeneratorConfig] = None,
+                           classes: Optional[list[ClassInfo]] = None,
+                           warnings: Optional[list[str]] = None) -> tuple[list[str], list[str]]:
+    """
+    Generate documentation for all classes in a directory.
+
+    Args:
+        directory: Source directory containing GDScript files
+        output_dir: Output directory for generated Markdown files
+        config: Generator configuration
+        classes: Pre-parsed classes (if None, will parse directory)
+        warnings: Pre-collected warnings from parsing (if classes provided)
+
+    Returns:
+        Tuple of (generated_files, warnings)
+    """
+    # First pass: collect all class names for cross-referencing
+    if classes is None:
+        classes, warnings = parse_directory(directory)
+    if warnings is None:
+        warnings = []
+
+    if config is None:
+        config = GeneratorConfig()
+
+    config.known_classes = {cls.name for cls in classes}
+    config.class_to_category = {cls.name: cls.docs_category for cls in classes}
+
+    # Clean up previously generated files before writing new ones
+    if output_dir.exists():
+        _clean_output_dir(output_dir)
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    generated = []
+    skipped = []
+
+    # Collect classes per category for index generation
+    category_classes: dict[str, list[ClassInfo]] = {}
+
+    for class_info in classes:
+        # Check if class should be skipped entirely
+        if class_info.is_class_ignored:
+            if not _class_has_visible_members(class_info, config):
+                skipped.append(class_info.name)
+                print(f"Skipped: {class_info.name} (excluded by @popochiu-docs-ignore-class)")
+                continue
+
+        generator = MarkdownGenerator(config)
+        markdown = generator.generate(class_info)
+
+        # Determine output path based on category
+        category = class_info.docs_category
+        if category:
+            cat_dir = output_dir / category
+            cat_dir.mkdir(parents=True, exist_ok=True)
+            output_file = cat_dir / f"{class_info.name}.md"
+        else:
+            output_file = output_dir / f"{class_info.name}.md"
+
+        output_file.write_text(markdown, encoding="utf-8")
+        generated.append(str(output_file))
+        print(f"Generated: {output_file}")
+
+        # Track classes per category for index generation
+        category_classes.setdefault(category, []).append(class_info)
+
+    # Generate category index files (for subdirectories only)
+    # Use negative weights so categories appear before uncategorized class files
+    # (which have no weight and default to 0 in mkdocs-nav-weight).
+    sorted_categories = sorted(cat for cat in category_classes if cat)
+    num_categories = len(sorted_categories)
+    for idx, cat_slug in enumerate(sorted_categories):
+        weight = -10 * (num_categories - idx)
+        cat_index = _generate_category_index(weight)
+        index_file = output_dir / cat_slug / "index.md"
+        index_file.write_text(cat_index, encoding="utf-8")
+        generated.append(str(index_file))
+        print(f"Generated: {index_file}")
+
+    # Generate root index file only if requested
+    if config.generate_index:
+        # Filter out fully excluded classes from index
+        visible_classes = [
+            cls for cls in classes 
+            if not cls.is_class_ignored or _class_has_visible_members(cls, config)
+        ]
+        index_content = _generate_index(visible_classes, config.class_to_category)
+        index_file = output_dir / "index.md"
+        index_file.write_text(index_content, encoding="utf-8")
+        generated.append(str(index_file))
+        print(f"Generated: {index_file}")
+
+    return generated, warnings
+
+
+def _generate_index(classes: list[ClassInfo],
+                     class_to_category: Optional[dict[str, str]] = None) -> str:
+    """Generate an index page for all classes, grouped by category."""
+    class_to_category = class_to_category or {}
+    converter = BBCodeConverter()
+
+    lines = ["# Scripting Reference"]
+    lines.append("")
+    lines.append("This section contains the API reference for all Popochiu engine classes.")
+    lines.append("")
+
+    # Group classes by category
+    categorized: dict[str, list[ClassInfo]] = {}
+    for cls in classes:
+        cat = class_to_category.get(cls.name, "")
+        categorized.setdefault(cat, []).append(cls)
+
+    # Render uncategorized classes first under "General"
+    uncategorized = sorted(categorized.pop("", []), key=lambda c: c.name)
+    sorted_categories = sorted(categorized.keys())
+
+    if uncategorized and sorted_categories:
+        # Multiple sections: show headings
+        lines.append("## General")
+        lines.append("")
+
+    for cls in uncategorized:
+        desc = cls.description.split("\n")[0][:100] if cls.description else ""
+        if len(cls.description) > 100:
+            desc += "..."
+        desc = converter.convert(desc)
+        lines.append(f"- [{cls.name}]({cls.name}.md) — {desc}")
+
+    for cat_slug in sorted_categories:
+        cat_classes = sorted(categorized[cat_slug], key=lambda c: c.name)
+        title = _category_display_name(cat_slug)
+        lines.append("")
+        lines.append(f"## {title}")
+        lines.append("")
+        for cls in cat_classes:
+            desc = cls.description.split("\n")[0][:100] if cls.description else ""
+            if len(cls.description) > 100:
+                desc += "..."
+            desc = converter.convert(desc)
+            lines.append(f"- [{cls.name}]({cat_slug}/{cls.name}.md) — {desc}")
+
+    return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) < 2:
+        print("Usage: markdown_generator.py <file_or_directory> [output_directory]")
+        sys.exit(1)
+
+    input_path = Path(sys.argv[1])
+    output_path = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("./docs_output")
+
+    if input_path.is_file():
+        parser = GDScriptParser()
+        class_info = parser.parse_file(input_path)
+        if class_info:
+            config = GeneratorConfig()
+            markdown = generate_class_docs(class_info, config)
+
+            output_file = output_path / f"{class_info.name}.md"
+            output_path.mkdir(parents=True, exist_ok=True)
+            output_file.write_text(markdown, encoding="utf-8")
+            print(f"Generated: {output_file}")
+
+        # Print any warnings
+        for warning in parser.get_warnings():
+            print(warning, file=sys.stderr)
+    elif input_path.is_dir():
+        generated, warnings = generate_directory_docs(input_path, output_path)
+
+        # Print any warnings
+        for warning in warnings:
+            print(warning, file=sys.stderr)
+    else:
+        print(f"Path not found: {input_path}")
+        sys.exit(1)

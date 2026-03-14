@@ -1,15 +1,13 @@
+# @popochiu-docs-category room-objects
 @tool
 @icon("res://addons/popochiu/icons/prop.png")
 class_name PopochiuProp
 extends PopochiuClickable
-## Visual elements in the Room that can have interaction (i.e. the background, the foreground, a
-## table, a cup).
+## A visual and interactive element in a room, such as backgrounds, foregrounds, tables, or cups.
 ##
-## When selecting a Prop in the scene tree (Scene dock), Popochiu will enable three buttons in
-## the Canvas Editor Menu: Baseline, Walk to, and Interaction. This can be used to select the child
-## nodes that allow to modify the position of the [member PopochiuClickable.baseline],
-## the position of the [member PopochiuClickable.walk_to_point], and the position and the polygon
-## points of the [b]$InteractionPolygon[/b] child.
+## Props can be clicked, animated, linked to inventory items, and used as navigation obstacles.
+## When selecting a Prop in the scene tree, Popochiu enables three buttons in the Canvas Editor
+## Menu: Baseline, Walk to, and Interaction for adjusting positioning and interaction polygons.
 
 ## Emitted when the [param item] linked to this object (by [member link_to_item]) is removed from
 ## the inventory. This may happen when the inventory item disappears forever from the game.
@@ -132,26 +130,36 @@ func _notification(event: int) -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the [PopochiuInventoryItem] linked to this prop is removed from the inventory.
-## [i]Virtual[/i].
+## Called when the [PopochiuInventoryItem] linked to this prop is removed from the inventory.[br]
+## Override this to add custom behavior such as enabling the prop again, playing an animation,
+## or update state variables that control game logic.
 func _on_linked_item_removed() -> void:
 	pass
 
 
-## Called when the [PopochiuInventoryItem] linked to this prop is discarded from the inventory.
-## [i]Virtual[/i].
+## Called when the [PopochiuInventoryItem] linked to this prop is discarded from the inventory.[br]
+## Override this to add custom behavior such as playing an animation or update state variables that
+## control game logic.
 func _on_linked_item_discarded() -> void:
 	pass
 
 
-## Called when the prop starts moving.
-## [i]Virtual[/i].
+## Called when the prop starts moving.[br]
+## Override this to add custom behavior such as playing an animation,
+## or speak a dialog line.
+##
+## Useful with props that the player can drag around the room, or props that move as part of an
+## animation sequence in the room's narrative.
 func _on_movement_started() -> void:
 	pass
 
 
-## Called when the prop stops moving.
-## [i]Virtual[/i].
+## Called when the prop stops moving.[br]
+## Override this to add custom behavior such as stopping an animation,
+## starting a cutscene, or speak a dialog line.
+##
+## Useful with props that the player can drag around the room, or props that move as part of an
+## animation sequence in the room's narrative.
 func _on_movement_ended() -> void:
 	pass
 
@@ -159,14 +167,13 @@ func _on_movement_ended() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Changes the value of the [member Sprite2D.frame] property to [param new_frame] in the
-## [b]$Sprite2D[/b] child.[br][br]
+## Changes the prop's [b]$Sprite2D[/b] frame to [param new_frame].
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_frame(new_frame: int) -> Callable:
 	return func(): await change_frame(new_frame)
 
-## Changes the value of the [member Sprite2D.frame] property to [param new_frame] in the
-## [b]$Sprite2D[/b] child.
+## Changes the prop's [b]$Sprite2D[/b] frame to [param new_frame].
 func change_frame(new_frame: int) -> void:
 	self.current_frame = new_frame
 	await get_tree().process_frame
@@ -185,11 +192,9 @@ func get_navigation_obstacle() -> NavigationObstacle2D:
 	return _navigation_obstacle
 
 
-## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
-## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the prop
-## will be enabled when the fade completes (since alpha > 0).
-## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
-## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
+## Gradually increases alpha to [code]1.0[/code] over [param duration] seconds.
+## If [param set_enablement] is [code]true[/code], enables the prop when complete.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_fade_in(
 	duration: float,
@@ -200,11 +205,8 @@ func queue_fade_in(
 	return func(): await fade_in(duration, set_enablement, trans, ease)
 
 
-## Gradually increases the alpha value from its current value to [code]1.0[/code] over the
-## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the prop
-## will be enabled when the fade completes (since alpha > 0).
-## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
-## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
+## Gradually increases alpha to [code]1.0[/code] over [param duration] seconds.
+## If [param set_enablement] is [code]true[/code], enables the prop when complete.
 func fade_in(
 	duration: float,
 	set_enablement: bool = false,
@@ -214,11 +216,9 @@ func fade_in(
 	await fade_to(1.0, duration, set_enablement, trans, ease)
 
 
-## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
-## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the prop
-## will be disabled when the fade completes (since alpha = 0).
-## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
-## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
+## Gradually decreases alpha to [code]0.0[/code] over [param duration] seconds.
+## If [param set_enablement] is [code]true[/code], disables the prop when complete.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_fade_out(
 	duration: float,
@@ -229,11 +229,8 @@ func queue_fade_out(
 	return func(): await fade_out(duration, set_enablement, trans, ease)
 
 
-## Gradually decreases the alpha value from its current value to [code]0.0[/code] over the
-## specified [param duration] in seconds. If [param set_enablement] is [code]true[/code], the prop
-## will be disabled when the fade completes (since alpha = 0).
-## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
-## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
+## Gradually decreases alpha to [code]0.0[/code] over [param duration] seconds.
+## If [param set_enablement] is [code]true[/code], disables the prop when complete.
 func fade_out(
 	duration: float,
 	set_enablement: bool = false,
@@ -243,23 +240,20 @@ func fade_out(
 	await fade_to(0.0, duration, set_enablement, trans, ease)
 
 
-## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
-## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
-## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the prop
-## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.
-## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
-## and [param ease] specifies the easing type (see [enum Tween.EaseType]).[br][br]
+## Gradually transitions alpha to [param target_alpha] (clamped between 0.0 and 1.0) over
+## [param duration] seconds. If [param set_enablement] is [code]true[/code], enables/disables
+## based on final alpha (0.0 means disabled, anything else means enabled).
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_fade_to(target_alpha: float, duration: float, set_enablement: bool = false) -> Callable:
 	return func(): await fade_to(target_alpha, duration, set_enablement)
 
 
-## Gradually transitions the alpha value from its current value to the specified [param target_alpha]
-## over the specified [param duration] in seconds. The [param target_alpha] value is clamped between
-## [code]0.0[/code] and [code]1.0[/code]. If [param set_enablement] is [code]true[/code], the prop
-## will be disabled if the final alpha is 0, or enabled if the final alpha is greater than 0.
-## The [param trans] parameter specifies the transition type (see [enum Tween.TransitionType]),
-## and [param ease] specifies the easing type (see [enum Tween.EaseType]).
+## Gradually transitions alpha to [param target_alpha] (clamped between 0.0 and 1.0) over
+## [param duration] seconds. If [param set_enablement] is [code]true[/code], enables/disables
+## based on final alpha (0.0 means disabled, anything else means enabled).[br]
+## [param trans] and [param ease] define the transition and easing types (see [Tween.TransitionType]
+## and [Tween.EaseType]).
 func fade_to(
 	target_alpha: float,
 	duration: float,
@@ -351,9 +345,9 @@ func set_obstacle(value: bool) -> void:
 #endregion
 
 #region AnimationPlayer ############################################################################
-## Will play the [param name] animation if it exists in this prop's [AnimationPlayer] node.
-## Optionally you can use the other [method AnimationPlayer.play] parameters (see Godot's
-## documentation for more details).
+## Plays the [param name] animation if it exists in this prop's [AnimationPlayer] node.
+## Optionally you can use the other [method AnimationPlayer.play] parameters.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation(
 	name: StringName = &"",
@@ -364,9 +358,8 @@ func queue_play_animation(
 	return func(): await play_animation(name, custom_blend, custom_speed, from_end)
 
 
-## Will play the [param name] animation if it exists in this prop's [AnimationPlayer] node.
-## Optionally you can use the other [method AnimationPlayer.play] parameters (see Godot's
-## documentation for more details).
+## Plays the [param name] animation if it exists in this prop's [AnimationPlayer] node.
+## Optionally you can use the other [method AnimationPlayer.play] parameters.
 func play_animation(
 	name: StringName = &"",
 	custom_blend: float = -1,
@@ -377,57 +370,55 @@ func play_animation(
 	$AnimationPlayer.play(name, custom_blend, custom_speed, from_end)
 
 
-## Will play the [param name] animation in reverse if it exists in this prop's [AnimationPlayer]
-## node.
-## This method is a shorthand for [method play_animation] with [code]custom_speed = -1.0[/code]
-## and [code]from_end = true[/code].
+## Plays the [param name] animation in reverse if it exists in this prop's [AnimationPlayer] node.
+## This is a shorthand for [method play_animation] with [code]custom_speed = -1.0[/code] and
+## [code]from_end = true[/code].
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_play_animation_backwards(name: StringName = &"", custom_blend: float = -1) -> Callable:
 	return func(): await play_animation_backwards(name, custom_blend)
 
 
-## Will play the [param name] animation in reverse if it exists in this prop's [AnimationPlayer]
-## node.
-## This method is a shorthand for [method play_animation] with [code]custom_speed = -1.0[/code]
-## and [code]from_end = true[/code].
+## Plays the [param name] animation in reverse if it exists in this prop's [AnimationPlayer] node.
+## This is a shorthand for [method play_animation] with [code]custom_speed = -1.0[/code] and
+## [code]from_end = true[/code].
 func play_animation_backwards(name: StringName = &"", custom_blend: float = -1) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.play_backwards(name, custom_blend)
 
 
-## Will stop the animation that is currently playing.
-## The animation position is reset to [code]0[/code] and the [code]custom_speed[/code] is reset to
-## [code]1.0[/code]. Set [param keep_state] to [code]true[/code] to avoid the animation to be
-## updated visually.
+## Stops the currently playing animation.
+## The animation position is reset to [code]0[/code] and [code]custom_speed[/code] is reset to
+## [code]1.0[/code]. Set [param keep_state] to [code]true[/code] to prevent visual updates.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop_animation(keep_state: bool = false) -> Callable:
 	return func(): await stop_animation(keep_state)
 
 
-## Will stop the animation that is currently playing.
-## The animation position is reset to [code]0[/code] and the [code]custom_speed[/code] is reset to
-## [code]1.0[/code]. Set [param keep_state] to [code]true[/code] to avoid the animation to be
-## updated visually.
+## Stops the currently playing animation.
+## The animation position is reset to [code]0[/code] and [code]custom_speed[/code] is reset to
+## [code]1.0[/code]. Set [param keep_state] to [code]true[/code] to prevent visual updates.
 func stop_animation(keep_state: bool = false) -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.stop(keep_state)
 
-## Will pause the animation that is currently playing.
-## Call [method play_animation] without any parameters to resume the animation.
+## Pauses the currently playing animation.
+## Call [method play_animation] without parameters to resume.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_pause_animation() -> Callable:
 	return func(): await pause_animation()
 
 
-## Will pause the animation that is currently playing on the Popochiu Prop.
-## Will pause the animation that is currently playing.
-## Call [method play_animation] without any parameters to resume the animation.
+## Pauses the currently playing animation.
+## Call [method play_animation] without parameters to resume.
 func pause_animation() -> void:
 	if not has_node("AnimationPlayer"): return
 	$AnimationPlayer.pause()
 
 
-## Return [code]true[/code] if an animation is playing, otherwise it will return [code]false[/code].
+## Returns [code]true[/code] if an animation is playing, [code]false[/code] otherwise.
 func is_animation_playing() -> bool:
 	if not has_node("AnimationPlayer"): return false
 	return $AnimationPlayer.is_playing()
@@ -444,8 +435,7 @@ func set_assigned_animation(name: StringName) -> void:
 	$AnimationPlayer.assigned_animation = name
 
 
-## Will return the current Popochiu Prop animation position in seconds.
-## returns -1.0 if there is an error.
+## Returns the current animation position in seconds, or [code]-1.0[/code] on error.
 func get_current_animation_position() -> float:
 	if not has_node("AnimationPlayer"): return -1.0
 	return $AnimationPlayer.current_animation_position

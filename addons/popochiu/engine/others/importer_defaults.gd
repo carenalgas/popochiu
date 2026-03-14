@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 const PIXEL_TEXTURES := {
 	"compress/bptc_ldr": 0,
 	"compress/hdr_mode": 0,
