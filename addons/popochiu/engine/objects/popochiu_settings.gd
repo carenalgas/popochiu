@@ -7,13 +7,6 @@ extends Resource
 ## This resource holds game-wide settings such as text speed, dialog style, inventory limits,
 ## and transition layer configuration. Values are loaded from [PopochiuConfig] at initialization.
 
-## @deprecated
-## The text speed options that will be available in the game. In the ContextSensitive GUI you can
-## loop between them using the text speed button in the SettingsBar.
-var text_speeds := [0.1, 0.01, 0.0]
-## @deprecated
-## The index of the default text speed value in [member text_speeds].
-var default_text_speed := 0
 ## The speed at which characters are displayed when a character speaks and the text is being
 ## animated
 var text_speed := 0.0
@@ -30,14 +23,6 @@ var use_translations := false
 var items_on_start := []
 ## The max number of items players will be able to put in the inventory.
 var inventory_limit := 0
-## @deprecated This option is now a property in the InventoryBar component.
-## Whether the inventory will be always visible, or players will have to do something to make it
-## appear. [b]This is specific to the ContextSensitive GUI[/b].
-var inventory_always_visible := false
-## @deprecated This option is now a property in the SettingsBar component.
-## Whether the toolbar (SettingsBar) will be always visible, or players will have to do something to
-## make it appear. [b]This is specific to the ContextSensitive GUI[/b].
-var toolbar_always_visible := false
 ## The color the screen changes to when a transition is played (e.g. move between rooms, skip a cutscene).
 var tl_fade_color: Color
 ## The time, in seconds, that will take the game to skip a cutscene.
@@ -55,10 +40,6 @@ var show_tl_in_first_room := false
 ## Whether the GUI should scale to match the native game resolution. The default GUI has a 356x200
 ## resolution.
 var scale_gui := false
-## @deprecated This option is now a property in the DialogOptions component.
-## The number of dialog options to show before showing a scroll bar to render those that exceed this
-## limit.
-var max_dialog_options := 0
 ## If [code]true[/code], the [member CanvasItem.texture_filter] of [PopochiuClickable]
 ## and [PopochiuInventoryItem] will be set to
 ## [enum CanvasItem.TextureFilter].TEXTURE_FILTER_NEAREST when those objects are created.

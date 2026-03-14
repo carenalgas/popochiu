@@ -38,10 +38,6 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 signal movement_started
 ## Emitted when the clickable finishes moving or is repositioned.
 signal movement_ended
-## @deprecated Kept to allow migration from previous versions. Will be removed soon.
-## Former signal emitted at movement ending.
-## It [b]never[/b] gets emitted.
-signal move_ended
 
 ## The [PopochiuRoom] to which the object belongs.
 var room: Node2D = null: set = set_room

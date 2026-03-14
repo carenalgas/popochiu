@@ -24,40 +24,6 @@ extends Node2D
 ## Defines the room's height. If this exceeds from the project's viewport height, this value is used
 ## to calculate the camera limits, ensuring it follows the player as they move within the room.
 @export var height: int = 0
-## @deprecated
-@export_category("Camera limits")
-## @deprecated
-## If this different from [constant INF], the value will define the left limit of the camera
-## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
-## background (size) of the room is 448x180, the left limit of the camera should be -64 (this is the
-## difference between 320 and 448).
-## 
-##[i]Set this on rooms that are bigger than the native game resolution so the camera will
-## follow the character.[/i]
-@export var limit_left := INF
-## @deprecated
-## If this different from [constant INF], the value will define the right limit of the camera
-## relative to the native game resolution. I.e. if your native game resolution is 320x180, and the
-## background (size) of the room is 448x180, the right limit of the camera should be 384 (320 + 64
-## (this is the difference between 320 and 448)).
-## 
-##[i]Set this on rooms that are bigger than the native game resolution so the camera will
-## follow the character.[/i]
-@export var limit_right := INF
-## @deprecated
-## If this different from [constant INF], the value will define the top limit of the camera
-## relative to the native game resolution.
-## 
-##[i]Set this on rooms that are bigger than the native game resolution so the camera will
-## follow the character.[/i]
-@export var limit_top := INF
-## @deprecated
-## If this different from [constant INF], the value will define the bottom limit of the camera
-## relative to the native game resolution.
-## 
-##[i]Set this on rooms that are bigger than the native game resolution so the camera will
-## follow the character.[/i]
-@export var limit_bottom := INF
 
 
 ## Whether this is the room in which players are. When [code]true[/code], the room starts processing

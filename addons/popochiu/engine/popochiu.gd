@@ -51,8 +51,6 @@ const SAVELOAD_PATH := "res://addons/popochiu/engine/others/popochiu_save_load.g
 #
 ## Prevents room changes while a room is being loaded.
 var in_room := false : set = _set_in_room
-## @deprecated Now this is [member PopochiuIRoom.current].
-var current_room: PopochiuRoom
 ## Stores the last clicked [PopochiuClickable] for global access.
 var clicked: PopochiuClickable = null
 ## Stores the last hovered [PopochiuClickable] for global access.
@@ -68,13 +66,8 @@ var am: PopochiuAudioManager = null
 var playing_queue := false
 ## Reference to the [PopochiuGraphicInterface].
 var gui: PopochiuGraphicInterface = null
-## @deprecated Use [code]T[/code] singleton in game scripts instead.
-## Reference to the [PopochiuTransitionLayer].
-var tl: Control = null
 ## Whether the current cutscene was skipped by the player.
 var cutscene_skipped := false
-## @deprecated Now this is [member PopochiuIRoom.rooms_states].
-var rooms_states := {}
 ## Stores a list of game events (triggered actions and dialog lines). Each event is defined by a
 ## [Dictionary].
 var history := []
@@ -154,14 +147,14 @@ func _ready() -> void:
 	commands = load(PopochiuResources.GUI_COMMANDS).new()
 	
 	# Instantiate the Transitions Layer node
-	tl = load(PopochiuResources.TRANSITION_LAYER_SCENE).instantiate()
+	PopochiuUtils.t.tl = load(PopochiuResources.TRANSITION_LAYER_SCENE).instantiate()
 	
 	# Calculate the scale that could be applied
 	scale = Vector2(width, height) / PopochiuResources.RETRO_RESOLUTION
 	
 	# Add the AudioManager, the Graphic Interface, and the Transitions Layer to the tree
 	$GraphicInterfaceLayer.add_child(gui)
-	$TransitionsLayer.add_child(tl)
+	$TransitionsLayer.add_child(PopochiuUtils.t.tl)
 	add_child(am)
 	
 	# Load the Player-controlled Character (PC)
@@ -186,18 +179,17 @@ func _ready() -> void:
 	
 	# Assign property values to singletons and other global classes
 	PopochiuUtils.g.gui = gui
-	PopochiuUtils.t.tl = tl
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("popochiu-skip"):
 		cutscene_skipped = true
-		tl.play_transition(
+		PopochiuUtils.t.play_transition(
 			settings.tl_cutscene_transition,
 			settings.tl_skip_cutscene_time,
 			settings.tl_cutscene_transition_mode
 			)
-		await tl.transition_finished
+		await PopochiuUtils.t.transition_finished
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -277,87 +269,20 @@ func cutscene(instructions: Array) -> void:
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		tl.play_transition(
+		PopochiuUtils.t.play_transition(
 			settings.tl_cutscene_transition,
 			settings.tl_skip_cutscene_time,
 			settings.tl_cutscene_transition_mode
 		)
-		await tl.transition_finished
+		await PopochiuUtils.t.transition_finished
 	
 	cutscene_skipped = false
-
-
-## @deprecated Now this is done by [method PopochiuIRoom.goto_room].
-func goto_room(
-	script_name := "", use_transition := true, store_state := true, ignore_change := false
-) -> void:
-	PopochiuUtils.r.goto_room(script_name, use_transition, store_state, ignore_change)
-
-
-## @deprecated Now this is done by [method PopochiuIRoom.room_readied].
-func room_readied(room: PopochiuRoom) -> void:
-	PopochiuUtils.r.room_readied(room)
-
-
-## @deprecated Now this is done by [method PopochiuMainCamera.queue_change_offset].
-func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
-	return camera.queue_change_offset(offset)
-
-
-## @deprecated Now this is done by [method PopochiuMainCamera.change_offset].
-func camera_offset(offset := Vector2.ZERO) -> void:
-	camera.change_offset(offset)
-
-
-## @deprecated Now this is done by [method PopochiuMainCamera.queue_shake].
-func queue_camera_shake(strength := 1.0, duration := 1.0) -> Callable:
-	return camera.queue_shake(strength, duration)
-
-
-## @deprecated Now this is done by [method PopochiuMainCamera.shake].
-func camera_shake(strength := 1.0, duration := 1.0) -> void:
-	camera.shake(strength, duration)
-
-
-## @deprecated Now this is done by [method PopochiuMainCamera.queue_shake_bg].
-func queue_camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
-	return camera.queue_shake_bg(strength, duration)
-
-
-## @deprecated Now this is done by [method PopochiuMainCamera.shake_bg].
-func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
-	camera.shake_bg(strength, duration)
-
-
-## @deprecated Now this is done by [method PopochiuMainCamera.queue_change_zoom].
-func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
-	return camera.queue_change_zoom(target, duration)
-
-
-## @deprecated Now this is done by [method PopochiuMainCamera.change_zoom].
-func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
-	camera.change_zoom(target, duration)
 
 
 ## Returns [param msg] translated to the current language if
 ## [member PopochiuSettings.use_translations] is enabled. Otherwise returns [param msg] unchanged.
 func get_text(msg: String) -> String:
 	return tr(msg) if settings.use_translations else msg
-
-
-## @deprecated Now this is done by [method PopochiuICharacter.get_instance].
-func get_character_instance(script_name: String) -> PopochiuCharacter:
-	return PopochiuUtils.c.get_instance(script_name)
-
-
-## @deprecated Now this is done by [method PopochiuIInventory.get_instance].
-func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	return PopochiuUtils.i.get_instance(script_name)
-
-
-## @deprecated Now this is done by [method PopochiuIDialog.get_instance].
-func get_dialog(script_name: String) -> PopochiuDialog:
-	return PopochiuUtils.d.get_instance(script_name)
 
 
 ## Adds an action, represented by [param data], to the [member history].
@@ -457,9 +382,9 @@ func play_transition(anim_name: String, duration: float, mode: int) -> void:
 		"E.play_transition() is deprecated and will be removed in Popochiu 2.2." +
 		" Use T.play_transition() instead."
 	)
-	tl.play_transition(anim_name, duration, mode)
+	PopochiuUtils.t.play_transition(anim_name, duration, mode)
 	
-	await tl.transition_finished
+	await PopochiuUtils.t.transition_finished
 
 
 ## Returns [code]true[/code] if any saved game sessions exist in the game's save folder
