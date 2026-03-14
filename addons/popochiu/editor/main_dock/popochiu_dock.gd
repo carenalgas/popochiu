@@ -26,13 +26,17 @@ func _ready() -> void:
 	# Hide the GUI tab while we decide how it will work based on devs feedback
 	tab_container.set_tab_hidden(tab_gui.get_index(), true)
 	
-	# Connect to children's signals
+	# Connect to children signals
 	tab_container.tab_changed.connect(_on_tab_changed)
 	btn_setup.pressed.connect(open_setup)
 	btn_docs.pressed.connect(OS.shell_open.bind(PopochiuResources.DOCUMENTATION))
 	
 	# Connect to parent signals
 	get_tree().node_added.connect(_check_node)
+	
+	# Connect to global signals
+	PopochiuEditorHelper.signal_bus.scene_changed.connect(scene_changed)
+	PopochiuEditorHelper.signal_bus.scene_closed.connect(scene_closed)
 
 
 #endregion
@@ -62,6 +66,10 @@ func scene_changed(scene_root: Node) -> void:
 		# Open the Popochiu Main tab if the opened scene in the Editor2D is not a PopochiuRoom nor
 		# the GUI scene
 		tab_container.current_tab = 0
+	
+	# Fix #481: Select the root node of the created scene
+	EditorInterface.get_selection().clear()
+	EditorInterface.get_selection().add_node(scene_root)
 
 
 func scene_closed(filepath: String) -> void:

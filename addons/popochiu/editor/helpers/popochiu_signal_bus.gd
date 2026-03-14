@@ -7,3 +7,5 @@ signal audio_cues_deleted(cue_file_paths: Array)
 signal main_object_added(type: int, name_to_add: String)
 signal gizmo_visibility_changed(gizmo: int, visible: bool)
 signal migrations_done
+signal scene_changed(scene_root: Node)
+signal scene_closed(filepath: String)

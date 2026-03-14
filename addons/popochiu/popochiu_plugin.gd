@@ -176,8 +176,8 @@ func _on_dock_ready() -> void:
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues
 	dock.grab_focus()
 	
-	scene_changed.connect(dock.scene_changed)
-	scene_closed.connect(dock.scene_closed)
+	scene_changed.connect(_on_scene_changed)
+	scene_closed.connect(_on_scene_closed)
 	
 	if EditorInterface.get_edited_scene_root():
 		dock.scene_changed(EditorInterface.get_edited_scene_root())
@@ -197,6 +197,14 @@ func _on_dock_ready() -> void:
 
 	if not EditorInterface.is_plugin_enabled("popochiu/editor/importers"):
 		EditorInterface.set_plugin_enabled("popochiu/editor/importers", true)
+
+
+func _on_scene_changed(scene_root: Node) -> void:
+	PopochiuEditorHelper.signal_bus.scene_changed.emit(scene_root)
+
+
+func _on_scene_closed(filepath: String) -> void:
+	PopochiuEditorHelper.signal_bus.scene_closed.emit(filepath)
 
 
 #endregion

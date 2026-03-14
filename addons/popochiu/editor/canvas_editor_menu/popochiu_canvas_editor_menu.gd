@@ -34,9 +34,11 @@ func _ready() -> void:
 	btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
 	btn_obstacle_polygon.pressed.connect(_select_obstacle_polygon)
 
-	# Connect to singleton signals
+	# Connect to global signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
+	PopochiuEditorHelper.signal_bus.scene_changed.connect(_on_scene_changed)
+	PopochiuEditorHelper.signal_bus.scene_closed.connect(_on_scene_closed)
 
 	_set_toolbar_buttons_color()
 	hide()
@@ -44,7 +46,7 @@ func _ready() -> void:
 
 #endregion
 
-#region Private ####################################################################################
+#region Signals ####################################################################################
 func _toggle_markers_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
 		PopochiuGizmoPlugin.MARKER_POS,
@@ -149,42 +151,6 @@ func _select_obstacle_polygon() -> void:
 	btn_obstacle_polygon.set_pressed_no_signal(true)
 
 
-# This function is used to exit editing mode. It's called by the toolbar buttons
-# polygons selector handlers when we are editing a polygon.
-#
-# NOTE: To keep the naming meaningful and avoid a mess with arguments (like, passing the button
-# which makes little sense), it inspects the type of polygon to identify the
-# button to pop. This requires a bit of maintenance, but the whole polygon thing does
-# so...
-func _exit_editing_mode() -> void:
-	# Pop the right button on the toolbar, depending
-	# on the type of the polygon being edited.
-	if PopochiuEditorHelper.is_popochiu_obj_polygon(_polygon_being_edited):
-		btn_interaction_polygon.set_pressed_no_signal(false)
-	elif PopochiuEditorHelper.is_popochiu_obstacle_polygon(_polygon_being_edited):
-		btn_obstacle_polygon.set_pressed_no_signal(false)
-
-	# Clear selection
-	EditorInterface.get_selection().clear()
-	EditorInterface.get_selection().add_node(
-		_polygon_being_edited.get_parent()
-	)
-
-	# Reset editing mode flags
-	_is_editing_polygon = false
-	_polygon_being_edited = null
-
-	# Refresh the editor interface
-	_on_selection_changed()
-
-
-func _on_gizmo_settings_changed() -> void:
-	# Pretty self explanatory
-	_set_walkable_areas_visibility()
-	_set_room_clickable_polygons_visibility()
-	_set_toolbar_buttons_color()
-
-
 # This overly complex function refreshes the whole interface after a sub-node (interaction
 # or navigation polygon) of a clickable or walkable area has been selected/deselected.
 #
@@ -195,6 +161,18 @@ func _on_selection_changed() -> void:
 	# Only force polygon reselection if edit mode is active
 	if _is_editing_polygon && _polygon_being_edited != null:
 		var selected_nodes = EditorInterface.get_selection().get_selected_nodes()
+		
+		# Fix #482: Cancel polygon edition when selecting another node in the Scene dock.
+		if _is_selection_from_scene_tree():
+			var node_to_select: Node = selected_nodes.filter(
+				func (node: Node) -> bool:
+					return node != _polygon_being_edited
+			)[0]
+			_exit_editing_mode()
+			EditorInterface.get_selection().clear()
+			EditorInterface.get_selection().add_node(node_to_select)
+			return
+		
 		if selected_nodes.is_empty() || !(_polygon_being_edited in selected_nodes):
 			EditorInterface.get_selection().clear()
 			EditorInterface.get_selection().add_node(_polygon_being_edited)
@@ -309,6 +287,57 @@ func _on_selection_changed() -> void:
 
 	# Always reset the button visibility depending on the state of the internal variables	
 	_set_buttons_visibility()
+
+
+func _on_gizmo_settings_changed() -> void:
+	# Pretty self explanatory
+	_set_walkable_areas_visibility()
+	_set_room_clickable_polygons_visibility()
+	_set_toolbar_buttons_color()
+
+
+func _on_scene_changed(scene_root: Node) -> void:
+	# Fix #482: Cancel polygon edition when changing to another scene
+	if _is_editing_polygon && _polygon_being_edited != null:
+		_exit_editing_mode()
+		EditorInterface.get_selection().clear()
+
+
+func _on_scene_closed(filepath: String) -> void:
+	# Fix #482: Cancel polygon edition when closing the current scene
+	if _is_editing_polygon && _polygon_being_edited != null:
+		_exit_editing_mode()
+		EditorInterface.get_selection().clear()
+
+
+#endregion
+
+#region Private ####################################################################################
+# This function is used to exit editing mode. It's called by the toolbar buttons
+# polygons selector handlers when we are editing a polygon.
+#
+# NOTE: To keep the naming meaningful and avoid a mess with arguments (like, passing the button
+# which makes little sense), it inspects the type of polygon to identify the
+# button to pop. This requires a bit of maintenance, but the whole polygon thing does
+# so...
+func _exit_editing_mode() -> void:
+	# Pop the right button on the toolbar, depending
+	# on the type of the polygon being edited.
+	if PopochiuEditorHelper.is_popochiu_obj_polygon(_polygon_being_edited):
+		btn_interaction_polygon.set_pressed_no_signal(false)
+	elif PopochiuEditorHelper.is_popochiu_obstacle_polygon(_polygon_being_edited):
+		btn_obstacle_polygon.set_pressed_no_signal(false)
+
+	# Clear selection
+	EditorInterface.get_selection().clear()
+	EditorInterface.get_selection().add_node(_polygon_being_edited.get_parent())
+
+	# Reset editing mode flags
+	_is_editing_polygon = false
+	_polygon_being_edited = null
+
+	# Refresh the editor interface
+	_on_selection_changed()
 
 
 # Handles the editor config that allows the WAs polygons to be always visible,
@@ -578,6 +607,39 @@ func _reset_buttons_state() -> void:
 	btn_walk_to_point.set_pressed_no_signal(true)
 	btn_look_at_point.set_pressed_no_signal(true)
 	btn_dialog_pos.set_pressed_no_signal(true)
+
+
+# Detects if the current selection change originated from the Scene tree dock
+# by checking if the mouse is over the scene tree area
+func _is_selection_from_scene_tree() -> bool:
+	var mouse_pos := get_viewport().get_mouse_position()
+	var scene_tree_dock := _find_scene_tree_dock()
+	
+	if scene_tree_dock:
+		var rect := scene_tree_dock.get_global_rect()
+		return rect.has_point(mouse_pos)
+	
+	# If we can't find the scene tree dock, assume false (don't cancel)
+	return false
+
+
+# Finds the Scene tree dock control in the editor
+func _find_scene_tree_dock() -> Control:
+	var editor_base := EditorInterface.get_base_control()
+	return _search_control_by_name(editor_base, "Scene")
+
+
+# Recursively searches for a control with a specific name
+func _search_control_by_name(node: Node, control_name: String) -> Control:
+	if node is Control and node.name == control_name:
+		return node as Control
+	
+	for child in node.get_children():
+		var result := _search_control_by_name(child, control_name)
+		if result:
+			return result
+	
+	return null
 
 
 #endregion
