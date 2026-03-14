@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Control
 
 @export var always_visible := false

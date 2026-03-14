@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 class_name PopochiuCommands
 extends RefCounted
 ## Defines the commands that can be used by players to interact with the objects in the game.

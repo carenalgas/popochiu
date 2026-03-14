@@ -1,10 +1,12 @@
+# @popochiu-docs-category room-objects
 @tool
 @icon('res://addons/popochiu/icons/walkable_area.png')
 class_name PopochiuWalkableArea
 extends Node2D
-## The areas where characters can move.
+## Defines navigable areas where characters can walk within a room.
 ##
-## The area is defined by a [NavigationRegion2D].
+## The walkable area is delimited by a [NavigationRegion2D] child named [b]Perimeter[/b].
+## Rooms can have multiple walkable areas that can be enabled or disabled at runtime.
 
 ## The identifier of the object used in scripts.
 @export var script_name := ''
@@ -14,7 +16,7 @@ extends Node2D
 @export var enabled := true: set = _set_enabled
 ## Stores the outlines to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
 ## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
-@export var interaction_polygon := []
+@export var interaction_polygon:Array[PackedVector2Array] = []
 ## Stores the position to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
 ## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
@@ -40,7 +42,7 @@ var map_rid_no_obstacles: RID
 ## child, for characters ignoring obstacles.
 var region_rid_no_obstacles: RID
 
-## Emitted when the enabled flag changes so the room can react (e.g. switch active map).
+## Emitted when [member enabled] changes so the room can react (e.g. switch active maps).
 signal enabled_changed(value: bool)
 
 # Reference to the perimeter NavigationRegion2D, saved for internal use
@@ -137,8 +139,14 @@ func _exit_tree():
 #endregion
 
 #region Public ####################################################################################
+# @popochiu-docs-ignore
+#
 ## Sets up navigation obstacles using projected obstructions.
 ## This is the preferred method for carving out areas in a NavigationPolygon.
+##
+## This method is intended to be called by the room when setting up the walkable area, not for
+## game scripts. Use it only if you know what you're doing and understand how [NavigationServer2D]
+## works.
 func setup_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 	if not _perimeter or not _perimeter is NavigationRegion2D:
 		return

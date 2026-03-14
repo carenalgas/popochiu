@@ -1,3 +1,4 @@
+# @popochiu-docs-category room-objects
 @tool
 @icon('res://addons/popochiu/icons/hotspot.png')
 class_name PopochiuHotspot
@@ -25,13 +26,13 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the hotspot starts moving.
-## [i]Virtual[/i].
+## Called when the hotspot starts moving.[br]
+## Override this to add custom behavior or update the game state.
 func _on_movement_started() -> void:
 	pass
 
 
-## Called when the hotspot stops moving.
-## [i]Virtual[/i].
+## Called when the hotspot stops moving.[br]
+## Override this to add custom behavior or update the game state.
 func _on_movement_ended() -> void:
 	pass

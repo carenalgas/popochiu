@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Resource
 
 @export var icon: Texture2D = null

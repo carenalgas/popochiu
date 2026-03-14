@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name SierraGUI
 extends PopochiuGraphicInterface
 ## Defines the behavior of the Sierra GUI.
@@ -63,17 +64,17 @@ func _input(event: InputEvent) -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the GUI is blocked. Makes the GUI to stop processing input.
+## Called when the GUI is blocked. Disables input processing.
 func _on_blocked(props := { blocking = true }) -> void:
 	set_process_input(false)
 
 
-## Called when the GUI is unblocked. Makes the GUI to start processing input.
+## Called when the GUI is unblocked. Re-enables input processing.
 func _on_unblocked() -> void:
 	set_process_input(true)
 
 
-## Called when the mouse enters (hovers) [param clickable]. It displays a text with the
+## Called when the mouse enters (hovers) [param clickable]. Displays the
 ## [member PopochiuClickable.description] in the [HoverText] component.
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
@@ -93,12 +94,12 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	PopochiuUtils.g.show_hover_text()
 
 
-## Called when a dialogue line starts. It shows the [code]"wait"[/code] cursor.
+## Called when a dialogue line starts. Hides the cursor.
 func _on_dialog_line_started() -> void:
 	PopochiuUtils.cursor.hide()
 
 
-## Called when a dialogue line finishes. It shows the [code]"normal"[/code] cursor.
+## Called when a dialogue line finishes. Restores the cursor.
 func _on_dialog_line_finished() -> void:
 	PopochiuUtils.cursor.show()
 

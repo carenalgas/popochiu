@@ -1,11 +1,12 @@
+# @popochiu-docs-category room-objects
 @tool
 @icon('res://addons/popochiu/icons/region.png')
 class_name PopochiuRegion
 extends Area2D
-## Used to handle events when a character walks inside or outside of it. Can also be used to scale
-## characters while they walk through the region's polygon.
+## Defines areas in a room that trigger events when characters enter or exit.
 ##
-## By default, can be used to apply a tint to characters when they enter or leave the region.
+## Regions can apply visual effects such as tinting characters or scaling them based on vertical
+## position (useful for simulating depth in walkable areas).
 
 ## The identifier of the object used in scripts.
 @export var script_name := ""
@@ -46,8 +47,6 @@ func _ready() -> void:
 	area_shape_exited.connect(_check_scaling.bind(false))
 
 	if Engine.is_editor_hint():
-		hide_helpers()
-
 		# Ignore assigning the polygon when:
 		if (
 			interaction_polygon_node == null # there is no InteractionPolygon node
@@ -88,16 +87,16 @@ func _notification(event: int) -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when a [param chr] enters this region.
-## [i]Virtual[/i].
+## Called when [param chr] enters this region.[br]
+## Implement this to add custom behavior or update the game state.
 func _on_character_entered(chr: PopochiuCharacter) -> void:
-	pass
+	chr.modulate = tint
 
 
-## Called when a [param chr] leaves this region.
-## [i]Virtual[/i].
+## Called when [param chr] exits this region.[br]
+## Implement this to add custom behavior or update the game state.
 func _on_character_exited(chr: PopochiuCharacter) -> void:
-	pass
+	chr.modulate = Color.WHITE
 
 
 #endregion
@@ -182,18 +181,6 @@ func _remove_character_scaling_region(chr: PopochiuCharacter) -> void:
 		chr.scaling_region = {}
 		_last_char_pos = Vector2.ZERO
 		_active_characters.erase(chr.script_name)
-
-
-#endregion
-
-
-#region Public #####################################################################################
-## Used by the plugin to hide the visual helpers that show the [member baseline] and
-## [member walk_to_point] in the 2D Canvas Editor when this node is unselected in the Scene panel.
-func hide_helpers() -> void:
-	# TODO: visibility logic for gizmos
-	if get_node_or_null("InteractionPolygon"):
-		interaction_polygon_node.hide()
 
 
 #endregion

@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Control
 
 @onready var hover_text_centered: Control = %HoverTextCentered

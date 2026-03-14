@@ -299,7 +299,7 @@ func drag_to(pos: Vector2):
 		_current_position = _target_node.get_viewport_transform().affine_inverse() * current_gizmo_pos
 	else:
 		# For property offsets, calculate distance between gizmo center position in 2D world node coordinates and
-    	# node position, ignoring its transform basis (which holds rotation, skew and scale)
+		# node position, ignoring its transform basis (which holds rotation, skew and scale)
 		_current_position = _target_node.get_viewport_transform().affine_inverse() * current_gizmo_pos - (target_node.get_global_transform().origin)
 
 func release():

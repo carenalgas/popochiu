@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 const INTERACT := 'popochiu-interact'
 const LOOK := 'popochiu-look'
 const SKIP := 'popochiu-skip'

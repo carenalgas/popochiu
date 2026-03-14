@@ -1,8 +1,11 @@
+# @popochiu-docs-category game-objects-data-managers
 @icon('res://addons/popochiu/icons/inventory_item.png')
 class_name PopochiuInventoryItemData
 extends Resource
-## This class is used to store information when saving and loading the game. It also ensures that
-## the data remains throughout the game's execution.
+## Stores persistent data for an inventory item across save/load operations.
+##
+## This resource maintains state throughout gameplay and handles serialization when saving and
+## loading the game.
 
 ## The identifier of the object used in scripts.
 @export var script_name := ''
@@ -11,15 +14,18 @@ extends Resource
 
 
 #region Virtual ####################################################################################
-## Called when the game is saved.
-## [i]Virtual[/i].
+## Called when the game is saved.[br]
+## Implement this to persist custom properties that you added to this resource. Should return
+## a [Dictionary] containing the data to be saved.[br]
+## The returned [Dictionary] must contain only JSON-supported types:
+## [bool], [int], [float], [String].
 func _on_save() -> Dictionary:
 	return {}
 
 
-## Called when the game is loaded. The structure of [param data] is the same returned by
-## [method _on_save].
-## [i]Virtual[/i].
+## Called when the game is loaded. The structure of [param data] matches that returned by
+## [method _on_save].[br]
+## Implement this to restore the custom properties you persisted in [_on_save].
 func _on_load(_data: Dictionary) -> void:
 	pass
 
@@ -27,14 +33,16 @@ func _on_load(_data: Dictionary) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Use this to store custom data when saving the game. The returned [Dictionary] must contain only
-## JSON supported types: [bool], [int], [float], [String].
+# @popochiu-docs-ignore
+#
+## Called by the engine before saving the game.
 func on_save() -> Dictionary:
 	return _on_save()
 
 
-## Called when the game is loaded. [param data] will have the same structure you defined for the
-## returned [Dictionary] by [method _on_save].
+# @popochiu-docs-ignore
+#
+## Called by the engine after loading a saved game.
 func on_load(data: Dictionary) -> void:
 	_on_load(data)
 

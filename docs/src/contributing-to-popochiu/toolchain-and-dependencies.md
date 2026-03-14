@@ -25,10 +25,7 @@ No specific tools are needed to interact with these workflows, but all automatio
 !!! note
     Contributors are generally not expected to modify automation scripts. However, if your changes require specific build steps, feel free to propose them.
 
-Dockerfiles for documentation are located in the `docs` directory:
-
-1. **`Dockerfile.DocsExtractor`**: Defines the image used to run a script (originally by the GDQuest team) that extracts documentation comments into Markdown files. This is used to publish the [Scripting Reference](../the-engine-handbook/scripting-reference/index).
-2. **`Dockerfile.MkDocs`**: Defines the MkDocs image used to preview changes to the documentation locally (see below).
+The **`Dockerfile`** for the documentation is located in the `docs` directory, and defines the MkDocs image used to preview changes to the documentation locally (see below).
 
 !!! note
     Contributions that improve or optimize the extractor or documentation site are welcome, as long as they follow the contribution guidelines. See the [Contributing Documentation](../contributing-documentation) section for more information.

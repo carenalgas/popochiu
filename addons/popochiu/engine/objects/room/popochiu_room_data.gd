@@ -1,11 +1,12 @@
+# @popochiu-docs-category game-objects-data-managers
 @icon("res://addons/popochiu/icons/room.png")
 class_name PopochiuRoomData
 extends Resource
-## This class is used to store information when saving and loading the game. It also ensures that
-## the data remains throughout the game's execution.
+## Stores persistent data for [PopochiuRoom] instances during save/load operations.
 ##
-## It also has data of the [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s,
-## [PopochiuRegion]s, and [PopochiuCharacter]s in a [PopochiuRoom].
+## This data persists throughout game execution and is serialized when saving the game.
+## It also stores the state of [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s,
+## [PopochiuRegion]s, and [PopochiuCharacter]s in the room.
 
 ## The identifier of the object used in scripts.
 @export var script_name := ""
@@ -32,15 +33,18 @@ var characters := {}
 
 
 #region Virtual ####################################################################################
-## Called when the game is saved.
-## [i]Virtual[/i].
+## Called when the game is saved.[br]
+## Implement this to persist custom properties that you added to this resource. Should return
+## a [Dictionary] containing the data to be saved.[br]
+## The returned [Dictionary] must contain only JSON-supported types:
+## [bool], [int], [float], [String].
 func _on_save() -> Dictionary:
 	return {}
 
 
-## Called when the game is loaded. The structure of [param data] is the same returned by
-## [method _on_save].
-## [i]Virtual[/i].
+## Called when the game is loaded. The structure of [param data] matches that returned by
+## [method _on_save].[br]
+## Implement this to restore the custom properties you persisted in [_on_save].
 func _on_load(_data: Dictionary) -> void:
 	pass
 
@@ -48,21 +52,24 @@ func _on_load(_data: Dictionary) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Use this to store custom data when saving the game. The returned [Dictionary] must contain only
-## JSON supported types: [bool], [int], [float], [String].
+# @popochiu-docs-ignore
+#
+## Called by the engine before saving the game.
 func on_save() -> Dictionary:
 	return _on_save()
 
 
-## Called when the game is loaded. [param data] will have the same structure you defined for the
-## returned [Dictionary] by [method _on_save].
+# @popochiu-docs-ignore
+#
+## Called by the engine after loading a saved game.
 func on_load(data: Dictionary) -> void:
 	_on_load(data)
 
 
 ## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
-## [br][br]
+## 
+##
 ## This method clears and rebuilds the state dictionaries from scratch, ensuring they accurately
 ## reflect only the objects currently present in the room. Objects that were removed from the
 ## room's scene tree (e.g., via [method PopochiuRoom.remove_character]) will not be restored when
@@ -166,7 +173,8 @@ func save_children_states() -> void:
 ##     self_modulate = PopochiuCharacter.self_modulate
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
-## [br][br]
+## 
+##
 ## This method clears and rebuilds the [member characters] dictionary from scratch, ensuring it
 ## accurately reflects only the characters currently present in the room's [b]$Characters[/b] node.
 ## Characters that were removed via [method PopochiuRoom.remove_character] will not be restored

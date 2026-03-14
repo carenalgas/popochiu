@@ -1,20 +1,22 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIRoom
 extends Node
-## Provides access to the [PopochiuRoom]s in the game. Access with [b]R[/b] (e.g.
-## [code]R.House.get_prop("Drawer")[/code]).
+## Provides access to [PopochiuRoom] instances through the singleton [b]R[/b]
+## (for example: [code]R.House.get_prop("Drawer")[/code]).
 ##
-## Use it to access props, hotspots, regions and walkable areas in the current room; or to access to
-## data from other rooms. Its script is [b]i_room.gd[/b].[br][br]
+## Use this interface to access props, hotspots, regions and walkable areas in the current room,
+## or to query data from other rooms.
 ##
-## Some things you can do with it:[br][br]
-## [b]•[/b] Access objects inside the current room.[br]
-## [b]•[/b] Access the state of any room.[br]
-## [b]•[/b] Move to another room.[br][br]
+## Capabilities include:
 ##
-## Examples:
+## - Access objects inside the current room.[br]
+## - Read or store the state of any room.[br]
+## - Change the current room.
+##
+## [b]Use examples:[/b]
 ## [codeblock]
-## R.get_prop("Scissors").modulate.a = 1.0 # Get Scissors prop and make it visible
-## R.Outside.state.is_raining # Access the is_raining property in the Outside room
+## R.get_prop("Scissors").enabled = true # Get Scissors prop and make it visible
+## R.Outside.state.is_raining # Access the is_raining property in the [i]Outside[/i] room
 ## [/codeblock]
 
 ## Provides access to the current [PopochiuRoom].
@@ -101,10 +103,11 @@ func get_markers() -> Array:
 	return current.get_markers()
 
 
-## Returns the instance of the [PopochiuRoom] identified with [param script_name]. If the room
-## doesn't exists, then [code]null[/code] is returned.[br][br]
-## This method is used by [b]res://game/autoloads/r.gd[/b] to load the instance of each room (present
-## in that script as a variable for code autocompletion) in runtime.
+## Returns the runtime instance of the [PopochiuRoom] identified by [param script_name], or
+## [code]null[/code] if it cannot be found.
+##
+## Used by [b]res://game/autoloads/r.gd[/b] to instantiate room variables at runtime for
+## autocompletion.
 func get_runtime_room(script_name: String) -> PopochiuRoom:
 	var room: PopochiuRoom = null
 	
@@ -119,7 +122,8 @@ func get_runtime_room(script_name: String) -> PopochiuRoom:
 	return room
 
 
-## Gets the instance of the [PopochiuRoom] identified with [param script_name].
+## Instantiates and returns the [PopochiuRoom] resource referenced by [param script_name] from
+## project data. Logs an error and returns [code]null[/code] if not found.
 func get_instance(script_name: String) -> PopochiuRoom:
 	# Fix #328 by returning the instance of the current room if it matches the instance that the
 	# plugin is looking for
@@ -143,11 +147,12 @@ func clear_instances() -> void:
 	_room_instances.clear()
 
 
-## Loads the room with [param script_name]. [param use_transition] can be used to trigger a [i]fade
-## out[/i] animation before loading the room, and a [i]fade in[/i] animation once it is ready.
-## If [param store_state] is [code]true[/code] the state of the room will be stored in memory.
-## [param ignore_change] is used internally by Popochiu to know if it's the first time the room is
-## loaded when starting the game.
+## Loads the room identified by [param script_name].
+## [param use_transition] triggers a fade out before loading and a fade in after the room is ready.
+## The actual transition may be different from fading and is defined in project settings.
+## If [param store_state] is [code]true[/code], the current room state will be stored in memory.
+## [param ignore_change] is used internally to skip the scene change (e.g. when initializing in the
+## editor). Don't use it unless you know what you are doing.
 func goto_room(
 	script_name := "",
 	use_transition := true,
@@ -213,7 +218,7 @@ func goto_room(
 	PopochiuUtils.e.get_tree().change_scene_to_file(load(rp).scene)
 
 
-## Called once the loaded [param room] is "ready" ([method Node._ready]).
+## Called when the loaded [param room] is ready ([method Node._ready]).
 func room_readied(room: PopochiuRoom) -> void:
 	if not is_instance_valid(current):
 		current = room
@@ -340,8 +345,9 @@ func room_readied(room: PopochiuRoom) -> void:
 			
 			for property in node_dic:
 				if not PopochiuResources.has_property(node, property): continue
-				
-				node[property] = node_dic[property]
+				if node[property] is Array:
+					node[property].assign(node_dic[property])
+				else: node[property] = node_dic[property]
 	
 	for c in get_tree().get_nodes_in_group("PopochiuClickable"):
 		c.room = current
@@ -392,8 +398,8 @@ func room_readied(room: PopochiuRoom) -> void:
 	current.state.visited_first_time = false
 
 
+## Stores the default states of all rooms defined in project data.
 func store_states() -> void:
-	# Store the default state of rooms in the game
 	for room_tres in PopochiuResources.get_section("rooms"):
 		var res: PopochiuRoomData = load(room_tres)
 		rooms_states[res.script_name] = res
@@ -404,6 +410,7 @@ func store_states() -> void:
 
 #region SetGet #####################################################################################
 func set_current(value: PopochiuRoom) -> void:
+	# Set the current room. If the room is not in the scene tree, load it via [method goto_room].
 	if not value.is_inside_tree():
 		goto_room(value.script_name)
 	else:
