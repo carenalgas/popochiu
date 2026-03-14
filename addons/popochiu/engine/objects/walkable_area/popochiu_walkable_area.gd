@@ -16,7 +16,7 @@ extends Node2D
 @export var enabled := true: set = _set_enabled
 ## Stores the outlines to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
 ## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
-@export var interaction_polygon := []
+@export var interaction_polygon:Array[PackedVector2Array] = []
 ## Stores the position to assign to the [b]NavigationRegion2D/NavigationPolygon[/b] child during
 ## runtime. This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
