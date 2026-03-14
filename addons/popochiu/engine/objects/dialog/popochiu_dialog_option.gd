@@ -65,4 +65,28 @@ func set_id(value: String) -> void:
 	resource_name = id
 
 
+func set_text(v):
+	text = v
+
+
+#func set_icon(v):
+#	icon = v
+
+
+func set_always_on(v):
+	always_on = v
+
+
+#endregion
+
+#region Private ####################################################################################
+
+# Used internally to populate a PopochiuDialogOption.
+func configure(config: Dictionary) -> void:
+	text = config.get("text", text)
+#	icon = config.get("icon", icon)
+	visible = config.get("visible", visible)
+	disabled = config.get("disabled", disabled)
+	always_on = config.get("always_on", always_on)
+
 #endregion
