@@ -12,13 +12,13 @@ Un plugin de Godot para crear aventuras gráficas point-and-click, inspirado en 
 
 🔍 Lee la [documentación](https://carenalgas.github.io/popochiu/) para descubrir todo lo que puedes hacer con el plugin.
 
-❤️ Únete al [Discord de Carenalga](https://discord.gg/Frv8C9Ters) para estar al día de las novedades y lanzamientos.
+❤️ Únete al [Discord de Carenalgas](https://discord.gg/Frv8C9Ters) para estar al día de las novedades y lanzamientos.
 
 ## Acerca de
 
-Popochiu consta de dos partes: el motor de ejecución y el plugin del editor. Juntos te ayudan a crear los nodos y recursos necesarios para desarrollar aventuras gráficas clásicas en Godot.
+Popochiu consta de dos partes: el motor de ejecución y el plugin del editor. El último es el que se encarga de crear los nodos y recursos necesarios para que puedas desarrollar tu aventura gráfica.
 
-Está inspirado en herramientas consolidadas de creación de aventuras gráficas como Adventure Game Studio y PowerQuest, un plugin de Unity creado por Powerhoof. Popochiu organiza los juegos en Habitaciones, donde los Personajes pueden moverse e interactuar con Objetos y Puntos de Interés, e incluye además sistemas integrados de Inventario y Diálogos.
+Está inspirado en herramientas como Adventure Game Studio y PowerQuest (un plugin de Unity creado por Powerhoof). Al igual que en estas, Popochiu organiza los juegos en Habitaciones, donde los Personajes pueden moverse e interactuar con Objetos y Puntos de Interés, e incluye además sistemas integrados de Inventario y Diálogos.
 
 ## Características
 
@@ -53,23 +53,22 @@ Y aún queda mucho más por venir. Popochiu está en desarrollo activo y mantene
 
 La última versión estable pública es **Popochiu 2.1.0**, compatible con **Godot 4.6**.
 
-Usa la tabla siguiente para saber qué versión descargar según tu versión de Godot:
+Usa la siguiente tabla para saber qué versión descargar según tu versión de Godot:
 
 | Versión de Godot requerida | Versión de Popochiu |
 | --- | --- |
 | 4.6 | [Popochiu 2.1.0](https://github.com/carenalgas/popochiu/releases/tag/v2.1.0) |
 | 4.3 | [Popochiu 2.0.3](https://github.com/carenalgas/popochiu/releases/tag/v2.0.3) |
 
-El soporte para Godot 3 está oficialmente discontinuado. Las versiones antiguas siguen disponibles, pero ya no recibirán actualizaciones ni correcciones de errores, por lo que su uso no está recomendado.
+El soporte para Godot 3 está oficialmente discontinuado. Las versiones antiguas siguen disponibles, pero ya no recibirán actualizaciones ni correcciones de errores, por lo que su uso no es recomendado.
 
 ## Instalación
 
 1. Descarga la versión correcta para tu versión de Godot.
 2. Extrae el archivo y copia la carpeta `addons` dentro de la carpeta de tu proyecto.
 3. Abre tu proyecto en Godot y habilita el plugin de Popochiu desde `Proyecto > Configuración del proyecto`, en la pestaña `Plugins`.
-4. Popochiu mostrará un aviso indicando que reiniciará el motor.
-5. Tras reiniciar el motor, verás el asistente de configuración del juego. Sigue los pasos y elige las opciones que mejor se adapten a tu proyecto.
-6. Cuando la configuración termine, verás el panel de Popochiu en la zona inferior derecha del editor. ¡Y ya estaría!
+4. Verás el asistente de configuración del juego. Sigue los pasos y elige las opciones que mejor se adapten a tu proyecto.
+5. Cuando termines con la configuración, verás el panel de Popochiu en la zona superior izquierda del editor. ¡Y ya está!
 
 ## Primeros pasos
 
@@ -110,7 +109,7 @@ Actualmente lo mantienen [Carenalga](https://carenalga.itch.io) y [StickGrinder]
 
 ## Contribuir
 
-Las contribuciones son bienvenidas. Si te apetece colaborar, te recomendamos empezar por la documentación:
+Las contribuciones son bienvenidas. Si quieres hacerlo, te recomendamos empezar por la documentación:
 
 * [Contribuir a Popochiu](https://carenalgas.github.io/popochiu/contributing-to-popochiu/)
 * [Definition of Done](https://carenalgas.github.io/popochiu/project-management/definition-of-done/)
