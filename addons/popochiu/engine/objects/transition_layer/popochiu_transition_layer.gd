@@ -10,6 +10,7 @@ extends Control
 ## Emitted when a transition animation completes.
 signal transition_finished(transition_name: String)
 
+# gdlint:ignore = enum-name 
 enum PLAY_MODE {
 	IN,
 	OUT,
