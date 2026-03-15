@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="The Carenalgas Community" name="author"/>
+<link href="../../assets/images/_other/theme/favicon.ico" rel="shortcut icon"/>
+<title>Scripting principles - Popochiu Documentation</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/css/custom.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "Scripting principles";
+        var mkdocs_page_input_path = "the-engine-handbook/scripting-principles.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a href="../..">
+<img alt="Logo" class="logo" src="../../assets/images/_other/theme/logo.svg"/>
+</a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installing-popochiu/">Installing popochiu</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/example-resources/">Example resources</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/tutorials/">Tutorials</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/getting-help/">Getting help</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">How to develop a game</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/introduction/">Introduction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/game-setup/">Game setup</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/create-characters/">Create characters</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/create-the-first-room/">Create the first room</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/add-an-inventory-item/">Add an inventory item</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/script-your-first-dialogue/">Script your first dialogue</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/use-inventory-items/">Use inventory items</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/customize-the-game-ui/">Customize the Game UI</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/conclusions/">Conclusions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/localization/">Localization</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/guis/">Game UI</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/advanced-animations/">Advanced animations</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-base-animations/">Character Base Animations</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-animation-prefix/">Character Animation Prefix</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-dialog-position-settings/">Character dialog position settings</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-scaling/">Character Scaling</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-anti-glide-feature/">Character Anti-Glide Feature</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/game-state-saving-and-loading/">Game state saving and loading</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/extending-customizing-popochiu/">Extending customizing popochiu</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/change-text-to-gibberish/">Change text to gibberish</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/custom-transitions/">Custom Transitions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">The editor handbook</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/editor-settings/">Editor settings</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/interface-overview/">Interface overview</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/popochiu-dock/">Popochiu dock</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/toolbar-buttons/">Toolbar buttons</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/importers/">Aseprite Importers</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">The engine handbook</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scripting-overview/">Scripting overview</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="./">Scripting principles</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gui-commands-and-fallbacks/">GUI commands and fallbacks</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../await-and-queue-functions/">Await and queue functions</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../working-with-game-state/">Working with game state</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../wrapping-up/">Wrapping up</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Scripting reference</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="#">Base classes</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/base-classes/PopochiuClickable/">PopochiuClickable</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Engine</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/engine/Popochiu/">Popochiu</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/engine/PopochiuMainCamera/">PopochiuMainCamera</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/engine/PopochiuSaveLoad/">PopochiuSaveLoad</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/engine/PopochiuSettings/">PopochiuSettings</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Game objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/AudioCueMusic/">AudioCueMusic</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/AudioCueSound/">AudioCueSound</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuAudioCue/">PopochiuAudioCue</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuAudioManager/">PopochiuAudioManager</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuCharacter/">PopochiuCharacter</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuDialog/">PopochiuDialog</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuDialogOption/">PopochiuDialogOption</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuInventoryItem/">PopochiuInventoryItem</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuRoom/">PopochiuRoom</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Game objects data managers</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects-data-managers/PopochiuCharacterData/">PopochiuCharacterData</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects-data-managers/PopochiuInventoryItemData/">PopochiuInventoryItemData</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects-data-managers/PopochiuRoomData/">PopochiuRoomData</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Game scripts interfaces</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIAudio/">PopochiuIAudio</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuICharacter/">PopochiuICharacter</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIDialog/">PopochiuIDialog</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIGraphicInterface/">PopochiuIGraphicInterface</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIInventory/">PopochiuIInventory</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIRoom/">PopochiuIRoom</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuITransitionLayer/">PopochiuITransitionLayer</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Game user interface</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/NineVerbCommands/">NineVerbCommands</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/NineVerbGUI/">NineVerbGUI</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/PopochiuCursor/">PopochiuCursor</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/PopochiuTransitionLayer/">PopochiuTransitionLayer</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/SierraCommands/">SierraCommands</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/SierraGUI/">SierraGUI</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/SimpleClickCommands/">SimpleClickCommands</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/SimpleClickGUI/">SimpleClickGUI</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Room objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/room-objects/PopochiuHotspot/">PopochiuHotspot</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/room-objects/PopochiuProp/">PopochiuProp</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/room-objects/PopochiuRegion/">PopochiuRegion</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/room-objects/PopochiuWalkableArea/">PopochiuWalkableArea</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../scripting-reference/9_verb_high_res_gui/">9_verb_high_res_gui</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../scripting-reference/sierra_high_res_gui/">sierra_high_res_gui</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../scripting-reference/simple_click_high_res_gui/">simple_click_high_res_gui</a>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contributing to popochiu</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/basic-rules/">Introduction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/toolchain-and-dependencies/">Toolchain and dependecies</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Conventions</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/directory-and-file-structure/">Directory and file structure</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/coding-standards/">Coding standards</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/comments/">Comments</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/naming-conventions/">Naming conventions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/code-versioning/">Code versioning</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/error-handling/">Error handling</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/testing/">Testing</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/dependencies/">Dependencies</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Project overview</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-overview/popochiu-subsystems/">Popochiu Subsystems</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-overview/editor-plugin/">Editor Plugin</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-overview/game-engine/">Game Engine</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Project management</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-management/why/">Why we care</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-management/issue-tracking/">Issue Tracking</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-management/code-reviews/">Code reviews</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-management/definition-of-done/">Definition of Done</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Contributing documentation</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/contributing-documentation/basic-rules/">Basics</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/contributing-documentation/conventions/">Conventions</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/qna/">Contribution Q&amp;A</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/get-in-touch/">Get in touch</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Popochiu Documentation</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">The engine handbook</li>
+<li class="breadcrumb-item active">Scripting principles</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/carenalgas/popochiu/edit/develop/docs/src/the-engine-handbook/scripting-principles.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="scripting-principles">Scripting principles</h1>
+<p>Popochiu bundles everything you need to build a classic point-and-click adventure: characters, dialogs, inventory items, rooms, props, and the small systems that make them work together. The Popochiu Engine is the runtime that makes the game run: it handles input, rendering, transitions, queued actions, and the high-level features you use through singletons.</p>
+<p>Unlike some engines that try to hide code behind visual tools, Popochiu expects you to write the game logic in GDScript: you decide how the story unfolds and how objects react when the player does things. That said, Popochiu provides a facilitated coding approach so you only need the basics of GDScript (and almost nothing about Godot) to make a complete game quickly.</p>
+<p>If you know Godot well, great: that knowledge is still valuable for deep customizations, mixing other gameplay styles, or tweaking scene-based behaviours. But it is not required to get a working 2D point-and-click game up and running.</p>
+<p>This page covers the three fundamental concepts you need to understand before writing any game logic in Popochiu: <strong>singletons</strong> (how you access game objects), <strong>virtual functions</strong> (where you put your code), and <strong>signals</strong> (how you react to engine events).</p>
+<h2 id="accessing-game-objects-through-singletons">Accessing game objects through singletons</h2>
+<p>Every Popochiu game has a set of <strong>singletons</strong>: globally available objects that act as entry points to your game's data. You don't need to look up nodes in the scene tree or wire references manually. Instead, you use short, memorable names to reach anything in your game.</p>
+<h3 id="primary-objects-vs-room-objects">Primary objects vs. room objects</h3>
+<p>Before looking at the full list of singletons, it's helpful to understand how Popochiu organizes game objects:</p>
+<ul>
+<li><strong>Primary objects</strong> (rooms, characters, inventory items, dialogs) exist at the <strong>project level</strong>. They are always accessible through their dedicated singletons (<code>R</code>, <code>C</code>, <code>I</code>, <code>D</code>), regardless of which room is currently active. When you create them through the Popochiu dock, they appear as typed properties with full autocomplete.</li>
+<li><strong>Room objects</strong> (props, hotspots, markers, regions, walkable areas) belong to a <strong>specific room</strong> and only exist while that room is loaded. They can't be reached through a typed singleton property; instead, you look them up through <code>R</code> at runtime using functions like <code>R.get_prop()</code>.</li>
+</ul>
+<p>This distinction explains why characters and inventory items give you <code>C.Popsy</code> or <code>I.Key</code>, while props and hotspots require a lookup.</p>
+<h3 id="singleton-reference">Singleton reference</h3>
+<p>Here's the complete list, organized by purpose:</p>
+<p><strong>Accessors</strong> (for game objects):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Singleton</th>
+<th style="text-align: left;">Interface to</th>
+<th style="text-align: left;">What it gives you access to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>R</strong></td>
+<td style="text-align: left;">Rooms</td>
+<td style="text-align: left;">All rooms in your project, plus the current room's props, hotspots, markers, regions, and walkable areas.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>C</strong></td>
+<td style="text-align: left;">Characters</td>
+<td style="text-align: left;">All characters, including the player-controlled character (<code>C.player</code>).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>I</strong></td>
+<td style="text-align: left;">Inventory</td>
+<td style="text-align: left;">Inventory items and inventory state (what's collected, what's active).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>D</strong></td>
+<td style="text-align: left;">Dialogs</td>
+<td style="text-align: left;">Dialog trees and dialog flow control.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Systems</strong> (for engine features):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Singleton</th>
+<th style="text-align: left;">Interface to</th>
+<th style="text-align: left;">What it gives you access to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>E</strong></td>
+<td style="text-align: left;">Engine</td>
+<td style="text-align: left;">Core engine features: camera, settings, queues, save/load, command registration.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>A</strong></td>
+<td style="text-align: left;">Audio</td>
+<td style="text-align: left;">Audio cues (music and sound effects).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>G</strong></td>
+<td style="text-align: left;">Graphic Interface</td>
+<td style="text-align: left;">GUI control: showing text, blocking/unblocking input, hiding/showing the interface.</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>T</strong></td>
+<td style="text-align: left;">Transition Layer</td>
+<td style="text-align: left;">Screen transitions (fade in/out, curtains, custom animations).</td>
+</tr>
+<tr>
+<td style="text-align: center;"><strong>Cursor</strong></td>
+<td style="text-align: left;">Cursor</td>
+<td style="text-align: left;">Cursor appearance and behavior.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Globals</strong> (for custom game state):</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: center;">Singleton</th>
+<th style="text-align: left;">Interface to</th>
+<th style="text-align: left;">What it gives you access to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: center;"><strong>Globals</strong></td>
+<td style="text-align: left;">Game globals</td>
+<td style="text-align: left;">Your own project-wide variables and methods, defined in <code>res://game/popochiu_globals.gd</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="accessing-primary-objects">Accessing primary objects</h3>
+<p>Because characters, rooms, inventory items, and dialogs are primary objects, Popochiu generates typed properties for them on the corresponding singleton.</p>
+<p>For example, if your project has a character called "Popsy" and a room called "LivingRoom":</p>
+<pre><code class="language-gdscript"># Access a character by its typed property
+C.Popsy.say("Hello there!")
+
+# Access a room
+R.LivingRoom
+
+# Access the player-controlled character (always available)
+C.player.walk_to(Vector2(100, 80))
+
+# Access an inventory item
+I.HairDryer.add()
+</code></pre>
+<p>These typed properties are generated in the autoload files under <code>res://game/autoloads/</code>. You don't need to edit those files, as Popochiu keeps them in sync when you create or remove game objects through the dock.</p>
+<div class="admonition info">
+<p class="admonition-title">Under the hood</p>
+<p>Each autoload (e.g. <code>res://game/autoloads/c.gd</code>) extends the corresponding engine interface class (e.g. <code>PopochiuICharacter</code>). The generated typed properties use getter functions that fetch the runtime instance by script name. This is why <code>C.Popsy</code> gives you a fully typed <code>PCPopsy</code> reference with all its methods and properties.</p>
+<p>This also means you get <strong>full autocomplete</strong> in the script editor! Yay!</p>
+</div>
+<h3 id="accessing-room-objects">Accessing room objects</h3>
+<p>Room objects only exist when their room is loaded, so you look them up dynamically through <code>R</code>:</p>
+<pre><code class="language-gdscript"># Get a prop in the current room
+R.get_prop("ToyCar")
+
+# Get a hotspot
+R.get_hotspot("Door")
+
+# Get a marker position (useful for character placement)
+R.get_marker_position("SpawnPoint")
+
+# Get a region
+R.get_region("DarkCorner")
+
+# Get a walkable area
+R.get_walkable_area("Floor")
+</code></pre>
+<h3 id="usage-examples">Usage examples</h3>
+<p>Here's how singletons look in real game code:</p>
+<pre><code class="language-gdscript"># Navigate to another room
+R.goto_room("Kitchen")
+
+# Play background music
+A.mx_kitchen_theme.play()
+
+# Make a character say something
+await C.Popsy.say("I should check the kitchen.")
+
+# Play a screen transition
+await T.play_transition("fade", 3, T.PLAY_MODE.IN_OUT)
+
+# Show a system message through the GUI
+G.show_system_text("After a while...")
+
+# Make a character say something
+await C.Popsy.say("I found nothing!")
+
+# Save the game in slot 1
+E.save_game(1, "Mysterious Kitchen")
+</code></pre>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You'll notice that some calls use <code>await</code> and some don't. This is an important distinction: <a href="../await-and-queue-functions/">Await and queue functions</a> explains when and why you need <code>await</code>.</p>
+</div>
+<hr/>
+<h2 id="reacting-to-events-with-virtual-functions">Reacting to events with virtual functions</h2>
+<p>Here's the most important thing to understand about scripting in Popochiu: <strong>you don't write game loops</strong>. You don't need <code>_process()</code> or <code>_physics_process()</code> to drive your game logic. Instead, you implement <strong>virtual functions</strong>: methods that Popochiu calls for you at the right moment.</p>
+<p>When a player clicks on a prop, Popochiu calls <code>_on_click()</code> on that prop's script. When a room loads, Popochiu calls <code>_on_room_entered()</code> on the room script. Your job is to fill in those functions with what should happen.</p>
+<p>Think of it like directing a play: you don't control the stage machinery. You just write what happens when the curtain rises, when an actor is spoken to, or when a prop is picked up.</p>
+<h3 id="clickable-interactions">Clickable interactions</h3>
+<p>Props, hotspots, and characters all inherit from <code>PopochiuClickable</code>, which provides a consistent set of virtual functions for player interactions:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>_on_click()</code></td>
+<td style="text-align: left;">Left click</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_double_click()</code></td>
+<td style="text-align: left;">Double click</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_right_click()</code></td>
+<td style="text-align: left;">Right click</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_middle_click()</code></td>
+<td style="text-align: left;">Middle click</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_item_used(item)</code></td>
+<td style="text-align: left;">Click while an inventory item is selected</td>
+</tr>
+</tbody>
+</table>
+<p>Here's an example prop script:</p>
+<pre><code class="language-gdscript">extends PopochiuProp
+
+func _on_click() -&gt; void:
+    await C.player.walk_to_clicked()
+    await C.player.say("It's an old trophy. Dusty but proud.")
+
+func _on_right_click() -&gt; void:
+    await C.player.face_clicked()
+    await C.player.say("I don't want to touch it.")
+
+func _on_item_used(item: PopochiuInventoryItem) -&gt; void:
+    if item == I.Feather:
+        await C.player.say("I dust it off with the feather.")
+        # ...do something with the trophy
+    else:
+        await C.player.say("That won't work.")
+</code></pre>
+<p>And a hotspot script that acts as a door:</p>
+<pre><code class="language-gdscript">extends PopochiuHotspot
+
+func _on_click() -&gt; void:
+    R.goto_room("Kitchen")
+
+func _on_right_click() -&gt; void:
+    await C.player.face_clicked()
+    await C.player.say("It leads to the kitchen.")
+</code></pre>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>When you create a prop or hotspot through the Popochiu dock, the editor generates a script with all virtual functions stubbed out and the default <code>E.command_fallback()</code> call. You just replace those calls with your own logic.</p>
+</div>
+<h3 id="room-lifecycle-events">Room lifecycle events</h3>
+<p>Every room has three key moments, each with its own virtual function:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">When it's called</th>
+<th style="text-align: left;">What to do here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>_on_room_entered()</code></td>
+<td style="text-align: left;">The room is loaded and in the tree, but <strong>not visible</strong> yet (the transition hasn't finished).</td>
+<td style="text-align: left;">Set the stage: position characters, set facing directions, toggle prop visibility, choose the active walkable area, start background music.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_room_transition_finished()</code></td>
+<td style="text-align: left;">The transition animation has finished and the room is <strong>now visible</strong>.</td>
+<td style="text-align: left;">Start gameplay: trigger intro cutscenes, play sounds, begin timers.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_room_exited()</code></td>
+<td style="text-align: left;">The room is about to be unloaded. It's <strong>no longer visible</strong> and characters have been removed.</td>
+<td style="text-align: left;">Clean up: stop music, reset temporary state.</td>
+</tr>
+</tbody>
+</table>
+<p>Here's a concrete example:</p>
+<pre><code class="language-gdscript">extends PopochiuRoom
+
+func _on_room_entered() -&gt; void:
+    # Set the stage before the player sees anything
+    A.mx_background_theme.play()
+    if state.visited_first_time:
+        C.player.teleport_to_marker("EnterPos")
+    else:
+        C.player.teleport_to_marker("StartingPos")
+        C.player.face_left()
+
+func _on_room_transition_finished() -&gt; void:
+    # The room is now visible: start gameplay
+    if state.visited_first_time:
+        await E.cutscene([
+            "Popsy: Where am I?",
+            "Popsy: This place looks familiar...",
+        ])
+
+func _on_room_exited() -&gt; void:
+    # Clean up before leaving
+    A.mx_background_theme.stop()
+</code></pre>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code>state.visited_first_time</code> is a built-in property that Popochiu sets to <code>true</code> only on the very first visit to a room. It's part of the <a href="../working-with-game-state/">Working with Game State</a> system.</p>
+</div>
+<h3 id="region-events">Region events</h3>
+<p>Regions trigger events when characters walk into or out of them:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>_on_character_entered(chr)</code></td>
+<td style="text-align: left;">A character enters the region</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_character_exited(chr)</code></td>
+<td style="text-align: left;">A character exits the region</td>
+</tr>
+</tbody>
+</table>
+<p>By default, regions apply a color tint when a character enters and reset it when they exit. You can override this to do something different entirely. For example, a region can trigger a prop to play an open or close animation when the player walks into or out of the region.</p>
+<pre><code class="language-gdscript">extends PopochiuRegion
+
+# Example: open a sliding door when a character approaches it enters the
+# region, and close it when they leave. The region simply tells the prop
+# to play its animations; the prop is responsible for its own visuals.
+func _on_character_entered(chr: PopochiuCharacter) -&gt; void:
+    R.get_prop("SlidingDoor").play_animation("open")
+
+func _on_character_exited(chr: PopochiuCharacter) -&gt; void:
+    R.get_prop("SlidingDoor").play_animation("close")
+</code></pre>
+<p>If you want to <em>add</em> behavior while keeping the region's default tinting, call <code>super()</code> from your override. That runs Popochiu's built-in tint logic first, then your custom actions:</p>
+<pre><code class="language-gdscript">extends PopochiuRegion
+
+# Example: keep the default tinting and also open the door.
+func _on_character_entered(chr: PopochiuCharacter) -&gt; void:
+    super() # Run the default tinting behavior
+    R.get_prop("SlidingDoor").play_animation("open")
+
+func _on_character_exited(chr: PopochiuCharacter) -&gt; void:
+    super() # Run the default tint reset behavior
+    R.get_prop("SlidingDoor").play_animation("close")
+</code></pre>
+<h3 id="inventory-item-events">Inventory item events</h3>
+<p>Inventory items have their own set of virtual functions, since they live in the inventory bar rather than in a room:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>_on_click()</code></td>
+<td style="text-align: left;">Item clicked in the inventory</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_right_click()</code></td>
+<td style="text-align: left;">Item right-clicked in the inventory</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_middle_click()</code></td>
+<td style="text-align: left;">Item middle-clicked in the inventory</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_item_used(item)</code></td>
+<td style="text-align: left;">Another inventory item used on this one</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_added_to_inventory()</code></td>
+<td style="text-align: left;">After this item is added to the inventory</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_discard()</code></td>
+<td style="text-align: left;">When this item is discarded</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-gdscript">extends PopochiuInventoryItem
+
+func _on_click() -&gt; void:
+    await C.player.say("It's a shiny key.")
+
+func _on_item_used(item: PopochiuInventoryItem) -&gt; void:
+    if item == I.Ring:
+        await C.player.say("I thread the ring onto the keychain.")
+        # Combine items, replace, etc.
+</code></pre>
+<h3 id="dialog-events">Dialog events</h3>
+<p>Dialog trees have two main virtual functions:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>_on_start()</code></td>
+<td style="text-align: left;">When the dialog begins</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_option_selected(opt)</code></td>
+<td style="text-align: left;">When the player picks a dialog option</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-gdscript">extends PopochiuDialog
+
+func _on_start() -&gt; void:
+    await C.Popsy.say("Hey there!")
+    await C.Bartender.say("What can I get you?")
+
+func _option_selected(opt: PopochiuDialogOption) -&gt; void:
+    match opt.id:
+        "AskForBeer":
+            await D.say_selected()  # Speak the same text that's on the dialog option's label
+            await C.Bartender.say("Coming right up!")
+            turn_off_options(["AskForBeer"])
+        "AskAboutTreasure":
+            await C.player.say("Do you know anything about the cursed hidden treasure?")
+            await C.Bartender.say("I don't know what you're talking about...")
+        "Bye":
+            await C.Popsy.say("See you later!")
+            D.finish_dialog() # End the dialog when the player says goodbye
+</code></pre>
+<h3 id="movement-events">Movement events</h3>
+<p>Props, hotspots, and characters also have movement-related virtual functions:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Function</th>
+<th style="text-align: left;">Trigger</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>_on_movement_started()</code></td>
+<td style="text-align: left;">The object starts moving (via <code>move_to()</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>_on_movement_ended()</code></td>
+<td style="text-align: left;">The object finishes moving</td>
+</tr>
+</tbody>
+</table>
+<p>These are useful for triggering side effects when objects move programmatically.</p>
+<h3 id="how-dispatch-works">How dispatch works</h3>
+<p>When a player clicks on a game object, here's what happens behind the scenes:</p>
+<div class="mermaid">flowchart TD
+    A["Player clicks on a Prop"] --&gt; B{"Is an inventory&lt;br/&gt;item active?"}
+    B -- Yes --&gt; C["Call _on_item_used(item)"]
+    B -- No --&gt; D{"Which mouse&lt;br/&gt;button?"}
+    D -- Left --&gt; E["Call _on_click()"]
+    D -- Right --&gt; F["Call _on_right_click()"]
+    D -- Middle --&gt; G["Call _on_middle_click()"]
+    D -- Double --&gt; H["Call _on_double_click()"]
+</div>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This is a simplified view. When a GUI template with commands is active (like the 9-Verb GUI), the dispatch logic is more complex. It maps commands to method names. That's covered in <a href="../gui-commands-and-fallbacks/">GUI commands and fallbacks</a>.</p>
+</div>
+<hr/>
+<h2 id="writing-non-reactive-code">Writing non-reactive code</h2>
+<p>Not everything in your game is a reaction to a player click. Sometimes you need helper functions, utility methods, or logic that runs across multiple objects. There are two good places for this:</p>
+<h3 id="helper-methods-on-game-objects">Helper methods on game objects</h3>
+<p>You can add any method to any game object script. These aren't virtual functions, they're your own helpers:</p>
+<pre><code class="language-gdscript">extends PopochiuRoom
+
+func _on_room_transition_finished() -&gt; void:
+    if _should_trigger_storm():
+        await _play_storm_sequence()
+
+func _should_trigger_storm() -&gt; bool:
+    return state.visited_times &gt; 2 and not Globals.storm_happened
+
+func _play_storm_sequence() -&gt; void:
+    await E.cutscene([
+        C.player.queue_say("What's that rumbling?"),
+        E.queue_wait(0.5),
+        C.player.queue_say("Thunder!"),
+    ])
+    Globals.storm_happened = true
+</code></pre>
+<p>You can write you helper functions any way you want, but we strongly suggest following these guidelines:</p>
+<ul>
+<li>Use private helper functions (named with a leading underscore) unless you have a specific reason to make them public.</li>
+<li>Keep helper functions grouped in a clearly marked region (for example <code># region Private helpers</code> / <code># endregion</code>) so they are easy to find, less likely to be confused with virtuals and leverage code folding in Godot editor.</li>
+<li>Use clear, descriptive names for private helpers and avoid reusing names that collide with virtual functions.</li>
+<li>When you <em>do</em> override a virtual but want to preserve the base behavior, call <code>super()</code> inside your implementation.</li>
+</ul>
+<p>These are best practices that make scripts easier to read and more reliable.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Those of you coming from a background in object-oriented programming might wonder how to mark a function as private in a language that doesn't have built-in support for access modifiers.</p>
+<p>As mentioned, that's achieved by convention: prefix private functions with an underscore (e.g. <code>_calculate_score()</code>, <code>_is_puzzle_solved()</code>). While those methods can still be called from outside the class, this signals to other developers that these functions are intended for internal use.</p>
+<p>Popochiu virtuals also start with an underscore (for example <code>_on_click()</code>), so yes... both private helpers and engine virtuals use the same underscore.<br/>
+That's a Godot convention: the leading underscore means "not part of the public API".<br/>
+<code>¯\_(ツ)_/¯</code></p>
+</div>
+<h3 id="the-globals-singleton">The Globals singleton</h3>
+<p>Not all game logic belongs to a specific room, character, or item. You often need variables and functions that are accessible from anywhere: story flags, counters, score tracker, or utility checks that multiple scripts rely on.</p>
+<p>That's what <code>Globals</code> is for. Popochiu creates an empty script at <code>res://game/popochiu_globals.gd</code> when you set up a project. It is registered as an autoload, so you can reference it as <code>Globals</code> from any game script.</p>
+<p>Because the file starts empty, it can feel unclear what you're supposed to put there. The answer is simple: any <strong>project-wide state</strong> (variables and flags) or <strong>shared helper functions</strong> that don't naturally belong to a single object.</p>
+<p>Here's an example of how you might set it up:</p>
+<pre><code class="language-gdscript"># res://game/popochiu_globals.gd
+extends Node
+
+# Project-wide flags and counters
+var storm_happened := false
+var total_clues_found := 0
+var difficulty := "normal"
+
+# A shared helper function any script can call
+func is_puzzle_complete() -&gt; bool:
+    return total_clues_found &gt;= 5
+</code></pre>
+<p>Then in any game script:</p>
+<pre><code class="language-gdscript"># In a prop script
+func _on_click() -&gt; void:
+    Globals.total_clues_found += 1
+    if Globals.is_puzzle_complete():
+        await C.player.say("I've found all the clues!")
+</code></pre>
+<p><code>Globals</code> properties of safe types (<code>bool</code>, <code>int</code>, <code>float</code>, <code>String</code>) are <strong>automatically saved and loaded</strong> with the game. You don't need to write any persistence code for them. For complex types, you can add custom <code>on_save()</code> and <code>on_load()</code> methods. See <a href="../working-with-game-state/">Working with Game State</a> for details on how persistence works.</p>
+<hr/>
+<h2 id="signals-reacting-to-engine-events">Signals: reacting to engine events</h2>
+<p>Virtual functions let you respond to <strong>player actions</strong> (clicks, item use, room changes). But sometimes you need to react to things that happen inside the engine itself: a character finished talking, an item was added to the inventory, a transition completed.</p>
+<p>That's what <strong>signals</strong> are for.</p>
+<h3 id="when-to-use-signals">When to use signals</h3>
+<p>Use signals when you need to:</p>
+<ul>
+<li>React to something that happens <strong>elsewhere</strong> in the engine (not directly on the current object)</li>
+<li>Coordinate behavior between objects that don't have a parent-child relationship</li>
+<li>Track engine state changes (like the GUI being blocked or unblocked)</li>
+</ul>
+<h3 id="common-signal-patterns">Common signal patterns</h3>
+<p>Here are some signals you'll use most often:</p>
+<p><strong>Character signals</strong> (on the <code>C</code> singleton):</p>
+<pre><code class="language-gdscript"># React when any character finishes speaking
+C.character_spoke.connect(_on_any_character_spoke)
+
+func _on_any_character_spoke(character: PopochiuCharacter, message: String) -&gt; void:
+    print("%s said: %s" % [character.script_name, message])
+</code></pre>
+<p><strong>Inventory signals</strong> (on the <code>I</code> singleton):</p>
+<pre><code class="language-gdscript"># React when an item is added to the inventory
+I.item_added.connect(_on_item_collected)
+
+func _on_item_collected(item: PopochiuInventoryItem, _animate: bool) -&gt; void:
+    if item == I.GoldenKey:
+        await C.player.say("This could open something important...")
+</code></pre>
+<p><strong>GUI signals</strong> (on the <code>G</code> singleton):</p>
+<pre><code class="language-gdscript"># React when the interface is blocked (e.g. during a cutscene)
+G.blocked.connect(func(): print("GUI blocked"))
+G.unblocked.connect(func(): print("GUI unblocked"))
+</code></pre>
+<p><strong>Transition signals</strong> (on the <code>T</code> singleton):</p>
+<pre><code class="language-gdscript"># React when a screen transition finishes
+T.transition_finished.connect(func(name): print("Transition done: " + name))
+</code></pre>
+<p><strong>Individual object signals</strong> (on characters, props, etc.):</p>
+<pre><code class="language-gdscript"># React when a specific character stops walking
+C.Popsy.stopped_walk.connect(_on_popsy_stopped)
+
+func _on_popsy_stopped() -&gt; void:
+    # Popsy reached his destination
+    await C.Popsy.say("I'm here!")
+</code></pre>
+<h3 id="signals-vs-virtual-functions">Signals vs. virtual functions</h3>
+<p>A good rule of thumb:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Use...</th>
+<th style="text-align: left;">When...</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Virtual functions</strong></td>
+<td style="text-align: left;">You're writing behavior for <em>this specific object</em> in response to a player action.</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Signals</strong></td>
+<td style="text-align: left;">You need to react to something that happens on <em>another object</em> or inside the <em>engine</em>.</td>
+</tr>
+</tbody>
+</table>
+<p>For example, if you want a prop to react when the player clicks on it, use <code>_on_click()</code>. But if you want a prop to react when a character reaches a certain position, connect to that character's <code>stopped_walk</code> signal.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>For the complete list of signals available on each class, check the <a href="../scripting-reference/">Scripting Reference</a>. The signals listed here are just the most commonly used ones.</p>
+</div>
+<hr/>
+<h2 id="summary">Summary</h2>
+<p>These three concepts (singletons, virtual functions, and signals) form the foundation of all Popochiu scripting:</p>
+<ol>
+<li><strong>Singletons</strong> (<code>E</code>, <code>R</code>, <code>C</code>, <code>I</code>, <code>D</code>, <code>A</code>, <code>G</code>, <code>T</code>, <code>Globals</code>, <code>Cursor</code>) give you access to everything in your game.</li>
+<li><strong>Virtual functions</strong> (<code>_on_click()</code>, <code>_on_room_entered()</code>, etc.) are where you write your game logic in response to player actions.</li>
+<li><strong>Signals</strong> let you react to engine events that happen outside your current object.</li>
+</ol>
+<p>With these tools, you can build the vast majority of your game's interactive behavior. The next pages cover more specialized topics: how <a href="../gui-commands-and-fallbacks/">GUI commands</a> route player intent to your objects, how <a href="../await-and-queue-functions/">await and queues</a> let you choreograph sequences, and how <a href="../working-with-game-state/">working with game state</a> keeps track of everything across room changes and save files.</p>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../scripting-overview/" title="Scripting overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../gui-commands-and-fallbacks/" title="GUI commands and fallbacks">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright (c) 2024 - The Carenalgas Community</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/carenalgas/popochiu/" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../scripting-overview/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../gui-commands-and-fallbacks/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+<script src="../../assets/js/gdscript.min.js"></script>
+<script src="../../assets/js/custom.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

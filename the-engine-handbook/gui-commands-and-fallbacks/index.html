@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+
+<html class="writer-html5" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="The Carenalgas Community" name="author"/>
+<link href="../../assets/images/_other/theme/favicon.ico" rel="shortcut icon"/>
+<title>GUI commands and fallbacks - Popochiu Documentation</title>
+<link href="../../css/theme.css" rel="stylesheet"/>
+<link href="../../css/theme_extra.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" rel="stylesheet"/>
+<link href="../../assets/css/custom.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<script>
+        // Current page data
+        var mkdocs_page_name = "GUI commands and fallbacks";
+        var mkdocs_page_input_path = "the-engine-handbook/gui-commands-and-fallbacks.md";
+        var mkdocs_page_url = null;
+      </script>
+<!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+<script>hljs.highlightAll();</script>
+</head>
+<body class="wy-body-for-nav" role="document">
+<div class="wy-grid-for-nav">
+<nav class="wy-nav-side stickynav" data-toggle="wy-nav-shift">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search">
+<a href="../..">
+<img alt="Logo" class="logo" src="../../assets/images/_other/theme/logo.svg"/>
+</a><div role="search">
+<form action="../../search.html" class="wy-form" id="rtd-search-form" method="get">
+<input aria-label="Search docs" name="q" placeholder="Search docs" title="Type search term here" type="text"/>
+</form>
+</div>
+</div>
+<div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Getting started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installing-popochiu/">Installing popochiu</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/example-resources/">Example resources</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/tutorials/">Tutorials</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/getting-help/">Getting help</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">How to develop a game</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/introduction/">Introduction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/game-setup/">Game setup</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/create-characters/">Create characters</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/create-the-first-room/">Create the first room</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/add-an-inventory-item/">Add an inventory item</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/script-your-first-dialogue/">Script your first dialogue</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/use-inventory-items/">Use inventory items</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/customize-the-game-ui/">Customize the Game UI</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../how-to-develop-a-game/conclusions/">Conclusions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Advanced topics</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/localization/">Localization</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/guis/">Game UI</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/advanced-animations/">Advanced animations</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-base-animations/">Character Base Animations</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-animation-prefix/">Character Animation Prefix</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-dialog-position-settings/">Character dialog position settings</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-scaling/">Character Scaling</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/character-anti-glide-feature/">Character Anti-Glide Feature</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/game-state-saving-and-loading/">Game state saving and loading</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/extending-customizing-popochiu/">Extending customizing popochiu</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/change-text-to-gibberish/">Change text to gibberish</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../advanced-topics/custom-transitions/">Custom Transitions</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">The editor handbook</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/editor-settings/">Editor settings</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/interface-overview/">Interface overview</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/popochiu-dock/">Popochiu dock</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/toolbar-buttons/">Toolbar buttons</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../the-editor-handbook/importers/">Aseprite Importers</a>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">The engine handbook</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scripting-overview/">Scripting overview</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../scripting-principles/">Scripting principles</a>
+</li>
+<li class="toctree-l1 current"><a class="reference internal current" href="./">GUI commands and fallbacks</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../await-and-queue-functions/">Await and queue functions</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../working-with-game-state/">Working with game state</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../wrapping-up/">Wrapping up</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Scripting reference</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="#">Base classes</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/base-classes/PopochiuClickable/">PopochiuClickable</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Engine</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/engine/Popochiu/">Popochiu</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/engine/PopochiuMainCamera/">PopochiuMainCamera</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/engine/PopochiuSaveLoad/">PopochiuSaveLoad</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/engine/PopochiuSettings/">PopochiuSettings</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Game objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/AudioCueMusic/">AudioCueMusic</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/AudioCueSound/">AudioCueSound</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuAudioCue/">PopochiuAudioCue</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuAudioManager/">PopochiuAudioManager</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuCharacter/">PopochiuCharacter</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuDialog/">PopochiuDialog</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuDialogOption/">PopochiuDialogOption</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuInventoryItem/">PopochiuInventoryItem</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects/PopochiuRoom/">PopochiuRoom</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Game objects data managers</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects-data-managers/PopochiuCharacterData/">PopochiuCharacterData</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects-data-managers/PopochiuInventoryItemData/">PopochiuInventoryItemData</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-objects-data-managers/PopochiuRoomData/">PopochiuRoomData</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Game scripts interfaces</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIAudio/">PopochiuIAudio</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuICharacter/">PopochiuICharacter</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIDialog/">PopochiuIDialog</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIGraphicInterface/">PopochiuIGraphicInterface</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIInventory/">PopochiuIInventory</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuIRoom/">PopochiuIRoom</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-scripts-interfaces/PopochiuITransitionLayer/">PopochiuITransitionLayer</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Game user interface</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/NineVerbCommands/">NineVerbCommands</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/NineVerbGUI/">NineVerbGUI</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/PopochiuCursor/">PopochiuCursor</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/PopochiuTransitionLayer/">PopochiuTransitionLayer</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/SierraCommands/">SierraCommands</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/SierraGUI/">SierraGUI</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/SimpleClickCommands/">SimpleClickCommands</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/game-user-interface/SimpleClickGUI/">SimpleClickGUI</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#">Room objects</a>
+<ul>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/room-objects/PopochiuHotspot/">PopochiuHotspot</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/room-objects/PopochiuProp/">PopochiuProp</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/room-objects/PopochiuRegion/">PopochiuRegion</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../scripting-reference/room-objects/PopochiuWalkableArea/">PopochiuWalkableArea</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../scripting-reference/9_verb_high_res_gui/">9_verb_high_res_gui</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../scripting-reference/sierra_high_res_gui/">sierra_high_res_gui</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../scripting-reference/simple_click_high_res_gui/">simple_click_high_res_gui</a>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Contributing to popochiu</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/basic-rules/">Introduction</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/toolchain-and-dependencies/">Toolchain and dependecies</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Conventions</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/directory-and-file-structure/">Directory and file structure</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/coding-standards/">Coding standards</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/comments/">Comments</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/naming-conventions/">Naming conventions</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/code-versioning/">Code versioning</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/error-handling/">Error handling</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/testing/">Testing</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/conventions/dependencies/">Dependencies</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Project overview</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-overview/popochiu-subsystems/">Popochiu Subsystems</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-overview/editor-plugin/">Editor Plugin</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-overview/game-engine/">Game Engine</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Project management</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-management/why/">Why we care</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-management/issue-tracking/">Issue Tracking</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-management/code-reviews/">Code reviews</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/project-management/definition-of-done/">Definition of Done</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#">Contributing documentation</a>
+<ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/contributing-documentation/basic-rules/">Basics</a>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing-to-popochiu/contributing-documentation/conventions/">Conventions</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/qna/">Contribution Q&amp;A</a>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing-to-popochiu/get-in-touch/">Get in touch</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+<nav aria-label="Mobile navigation menu" class="wy-nav-top" role="navigation">
+<i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+<a href="../..">Popochiu Documentation</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content"><div aria-label="breadcrumbs navigation" role="navigation">
+<ul class="wy-breadcrumbs">
+<li><a aria-label="Docs" class="icon icon-home" href="../.."></a></li>
+<li class="breadcrumb-item">The engine handbook</li>
+<li class="breadcrumb-item active">GUI commands and fallbacks</li>
+<li class="wy-breadcrumbs-aside">
+<a class="icon icon-github" href="https://github.com/carenalgas/popochiu/edit/develop/docs/src/the-engine-handbook/gui-commands-and-fallbacks.md"> Edit on GitHub</a>
+</li>
+</ul>
+<hr/>
+</div>
+<div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+<div class="section" itemprop="articleBody">
+<h1 id="gui-commands-and-fallbacks">GUI commands and fallbacks</h1>
+<p>In the previous section you learned that virtual functions like <code>_on_click()</code> are the primary way to react to player interactions. However, in many classic adventure games the player does more than simply click on an object: they first choose which interaction to perform.</p>
+<p>For example, classic LucasArts interfaces include verbs such as "Look at" (the door), "Pick up" (the key), or "Talk to" (the bartender). Sierra's SCI uses a menu bar with action icons to examine things, interact, talk, and walk around.</p>
+<p>Other games experimented with alternative interaction methods, like the "verb coin" in <em>Curse of Monkey Island</em> and <em>Full Throttle</em>, or the gem emblem in <em>Legend of Kyrandia</em>.</p>
+<p>Regardless of the interface, these games share one pattern: the player selects an action before clicking an object. Different actions produce different results.</p>
+<p>Popochiu's <strong>GUI command system</strong> bridges the gap between the player's chosen action and your game object's behavior, providing a convenient way to connect your custom GUI to the game scripts.</p>
+<p>This page explains how that system works, how commands are dispatched, what happens when an object has no instructions on how to handle a command, and how you can customize all of it.</p>
+<h2 id="what-is-a-gui-command">What is a GUI command?</h2>
+<p>A GUI command is a <strong>verb</strong>: an action the player wants to perform. Different GUI templates offer different sets of verbs:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">GUI Template</th>
+<th style="text-align: left;">Commands</th>
+<th style="text-align: left;">Inspired by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>9 Verbs</strong></td>
+<td style="text-align: left;">Walk to, Open, Pick up, Push, Close, Look at, Pull, Give, Talk to, Use</td>
+<td style="text-align: left;">The Secret of Monkey Island, Thimbleweed Park</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Sierra</strong></td>
+<td style="text-align: left;">Walk, Look, Interact, Talk</td>
+<td style="text-align: left;">King's Quest VI, Conquest of the Longbow</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Simple Click</strong></td>
+<td style="text-align: left;">No explicit commands (behavior depends on which mouse button is pressed)</td>
+<td style="text-align: left;">Beneath a Steel Sky, Broken Sword</td>
+</tr>
+</tbody>
+</table>
+<p>The player selects a command (by clicking a verb button, cycling through cursors, etc.), then clicks on a game object. Popochiu takes it from there.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Simple Click template is an interesting edge case: it has no explicit commands at all. Instead, it uses mouse button detection (left click vs. right click) to decide what to do. Everything flows through its <code>fallback()</code> method.</p>
+</div>
+<hr/>
+<p>Understanding commands dispatching and fallbacks is crucial in three progressively complex cases:</p>
+<ol>
+<li>To implement the behavior of a specific action on a specific object (e.g., "Look at" the clock) when you use one of the built-in GUI templates different from Simple Click.</li>
+<li>When you want to customize the behavior of the built-in GUI templates (e.g. change what happens when the player clicks "Look at" without a specific handler).</li>
+<li>When you want to create your own GUI system from scratch, and it provides for a set of commands the player can choose from.</li>
+</ol>
+<p>This section may seem a bit complex at first, but, for these reasons, we encourage you to read through it carefully.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you're eager to work on your game and you plan to use one of the built-in GUI templates, this is a TL;DR of what you need to know:</p>
+<ul>
+<li>You can add a public method called <code>on_&lt;command&gt;()</code> to any clickable object, and it will be called when the player clicks that object with that command active. For example, <code>on_look_at()</code> will be called when the player clicks "Look at" on that object. Search for the GUI you're using in the <em>Scripting Reference</em> to see the list of commands it provides.</li>
+<li>You just need to implement the <code>on_&lt;command&gt;()</code> methods for the commands you want to support. Unimplemented commands will fall back to the character saying a generic per-command response (e.g., "Not picking that up." or "I see nothing special.").</li>
+<li>If you want to change these generic responses, edit the <code>gui_commands.gd</code> file in your project and override the fallback methods for each command. For example, you can change the "Look at" fallback to say something different when the player is controlling a specific character.</li>
+</ul>
+<p>Feel free to skip to the <a href="../await-and-queue-functions">next section</a> if this is all you need for now. You can always come back to this page later when you want to customize the behavior of your GUI or create your own.</p>
+</div>
+<h2 id="how-command-dispatch-works">How command dispatch works</h2>
+<p>When a player clicks on a game object with a command active, Popochiu follows a precise dispatch chain to decide which method to call. Here's the full picture:</p>
+<div class="mermaid">flowchart TD
+    A["Player clicks on object&lt;br/&gt;(command active)"] --&gt; B["handle_command()"]
+    B --&gt; C{"Build method name&lt;br/&gt;from command"}
+    C --&gt; D["e.g. command = 'Look at'&lt;br/&gt;→ method = 'on_look_at'"]
+    D --&gt; E{"Does the object&lt;br/&gt;have this method?"}
+    E -- Yes --&gt; F["Call on_look_at()&lt;br/&gt;on the object"]
+    E -- No --&gt; G["Fall back to&lt;br/&gt;_on_click() / _on_right_click()"]
+    G --&gt; H{"Does _on_click()&lt;br/&gt;do something useful?"}
+    H -- Yes --&gt; I["Execute it"]
+    H -- "Calls E.command_fallback()" --&gt; J["Call the command's&lt;br/&gt;registered fallback"]
+
+    style F fill:#2d5a3d,stroke:#4a9,color:#fff
+    style I fill:#2d5a3d,stroke:#4a9,color:#fff
+    style J fill:#5a4a2d,stroke:#a84,color:#fff
+</div>
+<p>Let's break this down step by step.</p>
+<h3 id="step-1-the-method-name-is-built-from-the-command">Step 1: The method name is built from the command</h3>
+<p>When the active command is "Look at" and the player left-clicks, the engine's <code>handle_command()</code> function converts the command name to snake_case and builds a method name:</p>
+<ul>
+<li>Command name: <code>"Look at"</code> → snake_case: <code>"look_at"</code></li>
+<li>Method to look for: <code>on_look_at</code></li>
+</ul>
+<p>For right-clicks, the handler method would be <code>on_right_look_at</code>. For middle-clicks, <code>on_middle_look_at</code>.</p>
+<h3 id="step-2-popochiu-checks-if-the-object-has-the-method">Step 2: Popochiu checks if the object has the method</h3>
+<p>If your prop script has a method called <code>on_look_at()</code>, it gets called:</p>
+<pre><code class="language-gdscript">extends PopochiuProp
+
+# This method is called when the player uses "Look at" on this prop
+func on_look_at() -&gt; void:
+    await C.player.face_clicked()
+    await C.player.say("It's an old grandfather clock.")
+</code></pre>
+<h3 id="step-3-if-the-method-doesnt-exist-fall-back">Step 3: If the method doesn't exist, fall back</h3>
+<p>If the object doesn't have <code>on_look_at()</code>, Popochiu falls back to the generic click handler (<code>_on_click()</code> for left clicks, <code>_on_right_click()</code> for right clicks, etc.).</p>
+<p>If that handler calls <code>E.command_fallback()</code>, the system moves to the fallback chain described in the next section.</p>
+<h3 id="the-naming-convention">The naming convention</h3>
+<p>The pattern is straightforward:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Command</th>
+<th style="text-align: left;">Left click method</th>
+<th style="text-align: left;">Right click method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Walk to</td>
+<td style="text-align: left;"><code>on_walk_to()</code></td>
+<td style="text-align: left;"><code>on_right_walk_to()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Look at</td>
+<td style="text-align: left;"><code>on_look_at()</code></td>
+<td style="text-align: left;"><code>on_right_look_at()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Pick up</td>
+<td style="text-align: left;"><code>on_pick_up()</code></td>
+<td style="text-align: left;"><code>on_right_pick_up()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Talk</td>
+<td style="text-align: left;"><code>on_talk()</code></td>
+<td style="text-align: left;"><code>on_right_talk()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Examine</td>
+<td style="text-align: left;"><code>on_examine()</code></td>
+<td style="text-align: left;"><code>on_right_examine()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;">Interact</td>
+<td style="text-align: left;"><code>on_interact()</code></td>
+<td style="text-align: left;"><code>on_right_interact()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><em>(any custom)</em></td>
+<td style="text-align: left;"><code>on_&lt;snake_case&gt;()</code></td>
+<td style="text-align: left;"><code>on_right_&lt;snake_case&gt;()</code></td>
+</tr>
+</tbody>
+</table>
+<p>This naming convention is designed to keep your game code well organized and easy to read. This spares you from writing complex conditional logic inside generic click handlers, but this can still be done if you prefer that style.</p>
+<p>To test if a command is active inside a generic handler, you can check <code>E.active_command</code>:</p>
+<pre><code class="language-gdscript">func _on_click() -&gt; void:
+    match E.active_command:
+        Commands.LOOK_AT:
+            C.face_clicked()
+            await C.player.say("Wow, that's gorgeous!")
+        Commands.PICK_UP:
+            await C.player.say("Let's borrow this for a moment...")
+            await C.player.walk_to_clicked()
+            await C.player.play_animation("grab")
+            I.Precious.add()
+            R.get_prop("Precious").disable()
+        _:
+            E.command_fallback()  # Call the command's registered fallback
+</code></pre>
+<p>We strongly recommend using the <code>on_&lt;command&gt;()</code> pattern for better code organization and maintainability, but the choice is yours.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You don't have to implement every command method for each object. Only implement those that make sense. A door might have <code>on_open()</code> and <code>on_look_at()</code>, but not <code>on_talk_to()</code>. Unimplemented commands will fall back to the generic handler.</p>
+</div>
+<hr/>
+<h2 id="the-fallback-chain">The fallback chain</h2>
+<p>When a game object doesn't handle a command (either because it doesn't have the specific method, or because its <code>_on_click()</code> calls <code>E.command_fallback()</code>), the engine looks up the <strong>fallback</strong> registered for that command.</p>
+<h3 id="how-fallbacks-are-registered">How fallbacks are registered</h3>
+<p>Each GUI template registers its commands and their fallbacks when it initializes, by calling <code>register_command()</code>, which takes three arguments:</p>
+<ol>
+<li><strong>id</strong>: a numeric identifier (usually from an enum)</li>
+<li><strong>command_name</strong>: the display name (also used to build method names)</li>
+<li><strong>fallback</strong>: a <code>Callable</code> to run when no object-specific handler exists</li>
+</ol>
+<p>As an example, here's what the 9 Verbs template does:</p>
+<pre><code class="language-gdscript"># Inside NineVerbCommands._init()
+E.register_command(Commands.WALK_TO, "Walk to", walk_to)
+E.register_command(Commands.LOOK_AT, "Look at", look_at)
+E.register_command(Commands.PICK_UP, "Pick up", pick_up)
+# ... and so on for all 10 commands
+</code></pre>
+<h3 id="what-fallbacks-do-by-default">What fallbacks do by default</h3>
+<p>The built-in fallbacks provide generic responses so the player always says <em>something</em>:</p>
+<pre><code class="language-gdscript"># In NineVerbCommands, some default fallbacks:
+func look_at() -&gt; void:
+    await C.player.say("I have nothing to say about that")
+
+func pick_up() -&gt; void:
+    await C.player.say("Not picking that up")
+
+func open() -&gt; void:
+    await C.player.say("Can't open that")
+
+func talk_to() -&gt; void:
+    await C.player.say("Ehmmm...")
+</code></pre>
+<p>The <code>fallback()</code> method itself is called when no command is active, and by default it triggers <code>walk_to()</code>, which makes sense: clicking without a command makes the player walk to the clicked position.</p>
+<h3 id="the-default-fallback">The default fallback</h3>
+<p>There's also a <strong>global default</strong> fallback, registered with id <code>-1</code>. This is the last resort and it's called when the current command doesn't even have a registered fallback. In the base <code>PopochiuCommands</code> class, it just prints a warning.</p>
+<div class="mermaid">flowchart LR
+    A["E.command_fallback()"] --&gt; B{"Command has&lt;br/&gt;registered fallback?"}
+    B -- Yes --&gt; C["Call command-specific&lt;br/&gt;fallback (e.g. look_at())"]
+    B -- No --&gt; D["Call default&lt;br/&gt;fallback (id = -1)"]
+
+    style C fill:#2d5a3d,stroke:#4a9,color:#fff
+    style D fill:#5a4a2d,stroke:#a84,color:#fff
+</div>
+<hr/>
+<h2 id="customizing-commands-in-your-game">Customizing commands in your game</h2>
+<p>Every Popochiu project includes a file at <code>res://game/gui/gui_commands.gd</code>. This is your <strong>game-level override</strong> for the command system. It extends the template's command class (e.g. <code>NineVerbCommands</code>) and lets you change any fallback.</p>
+<h3 id="overriding-a-fallback">Overriding a fallback</h3>
+<p>Say you want the "Look at" fallback to be more character-specific:</p>
+<pre><code class="language-gdscript"># res://game/gui/gui_commands.gd
+extends NineVerbCommands
+
+func look_at() -&gt; void:
+    if C.player == C.Popsy:
+        await C.player.say("Boooring!")
+    else:
+        await C.player.say("Nothing catches my eye.")
+</code></pre>
+<p>Or maybe you want to pick a random response each time the player "Looks at" something without a specific handler:</p>
+<pre><code class="language-gdscript">func look_at() -&gt; void:
+    var responses := [
+        "I see nothing special.",
+        "Nothing interesting there.",
+        "I have nothing to say about that."
+    ]
+    await C.player.say(responses.pick_random())
+</code></pre>
+<h3 id="overriding-the-global-fallback">Overriding the global fallback</h3>
+<p>The <code>fallback()</code> method is the catch-all. If you want the player to always walk to the clicked object when no specific command handler exists:</p>
+<pre><code class="language-gdscript">func fallback() -&gt; void:
+    C.walk_to_clicked()
+    await C.player.movement_ended
+</code></pre>
+<p>Or if you want a custom animation:</p>
+<pre><code class="language-gdscript">func fallback() -&gt; void:
+    await C.player.say("I can't do that.")
+</code></pre>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you override <code>fallback()</code> without calling <code>super()</code>, you're replacing the entire default behavior. Make sure your implementation handles all the edge cases your GUI template expects.</p>
+</div>
+<h3 id="template-specific-patterns">Template-specific patterns</h3>
+<p>Each GUI template has a different philosophy for how commands work:</p>
+<p><strong>9 Verbs</strong>: Each verb has its own fallback method. Override individual verbs for fine-grained control:</p>
+<pre><code class="language-gdscript">extends NineVerbCommands
+
+func push() -&gt; void:
+    await C.player.say("I'd rather not push that.")
+
+func pull() -&gt; void:
+    await C.player.say("I'd rather not pull that either.")
+</code></pre>
+<p><strong>Sierra</strong>: Four broad commands. Fallbacks tend to use <code>G.show_system_text()</code> instead of character speech:</p>
+<pre><code class="language-gdscript">extends SierraCommands
+
+func look() -&gt; void:
+    G.show_system_text("Nothing remarkable about that.")
+</code></pre>
+<p><strong>Simple Click</strong>: No verb buttons. Override <code>click_clickable()</code>, <code>right_click_clickable()</code>, <code>click_inventory_item()</code>, and <code>right_click_inventory_item()</code>:</p>
+<pre><code class="language-gdscript">extends SimpleClickCommands
+
+func click_clickable() -&gt; void:
+    if I.active:
+        await G.show_system_text("Can't use that here.")
+    else:
+        await G.show_system_text("Nothing happens.")
+
+func right_click_clickable() -&gt; void:
+    await G.show_system_text("You see nothing special.")
+</code></pre>
+<hr/>
+<h2 id="registering-custom-commands">Registering custom commands</h2>
+<p>If the built-in commands aren't enough, you can register your own:</p>
+<pre><code class="language-gdscript"># In gui_commands.gd _init()
+func _init() -&gt; void:
+    super()
+    E.register_command(100, "Smell", smell)
+
+func smell() -&gt; void:
+    await C.player.say("I don't want to smell that.")
+</code></pre>
+<p>Now your game objects can implement <code>on_smell()</code>:</p>
+<pre><code class="language-gdscript"># In a prop script
+func on_smell() -&gt; void:
+    await C.player.say("Mmm, fresh bread!")
+</code></pre>
+<p>There's also <code>E.register_command_without_id()</code> if you don't want to manage IDs manually. It auto-assigns the next available one and returns it:</p>
+<pre><code class="language-gdscript">var smell_id := E.register_command_without_id("Smell", smell)
+</code></pre>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>Registering commands is foundational for custom GUIs. If you plan to build your own GUI, you'll likely want to define a set of commands and their fallbacks to integrate with the engine's dispatch system.
+Creating a custom GUI is an advanced topic, and it's not covered in this section.</p>
+</div>
+<hr/>
+<h2 id="putting-it-all-together">Putting it all together</h2>
+<p>Here's a complete example showing how a prop interacts with the command system in a 9-Verb GUI:</p>
+<pre><code class="language-gdscript">extends PopochiuProp
+
+# Specific command handlers (called by name matching)
+func on_look_at() -&gt; void:
+    await C.player.face_clicked()
+    await C.player.say("It's a rusty old lock.")
+
+func on_pick_up() -&gt; void:
+    await C.player.walk_to_clicked()
+    await C.player.say("It's bolted to the door. I can't take it.")
+
+func on_use() -&gt; void:
+    if I.active == I.Lockpick:
+        await C.player.walk_to_clicked()
+        await C.player.say("Let me try this...")
+        # Unlock the door, etc.
+    else:
+        E.command_fallback()  # "I don't want to do that"
+
+# Generic handlers (called when no command-specific method matches)
+func _on_click() -&gt; void:
+    # Default left-click: walk to the clicked position
+    E.command_fallback()
+
+func _on_right_click() -&gt; void:
+    # Default right-click: look at the object
+    await on_look_at()
+</code></pre>
+<p>The flow for this prop:</p>
+<ol>
+<li>Player selects "Look at" and clicks → <code>on_look_at()</code> runs</li>
+<li>Player selects "Pick up" and clicks → <code>on_pick_up()</code> runs</li>
+<li>Player selects "Push" and clicks → no <code>on_push()</code> method → falls back to <code>_on_click()</code> → calls <code>E.command_fallback()</code> → the template's <code>push()</code> fallback says "I don't want to push that"</li>
+<li>Player selects "Use" with a lockpick active → <code>on_use()</code> runs with custom logic</li>
+</ol>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The <code>gui_commands.gd</code> file generated by Popochiu already contains all the override stubs commented out. Uncomment and modify the ones you need.</p>
+</div>
+</div>
+</div><footer>
+<div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
+<a class="btn btn-neutral float-left" href="../scripting-principles/" title="Scripting principles"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+<a class="btn btn-neutral float-right" href="../await-and-queue-functions/" title="Await and queue functions">Next <span class="icon icon-circle-arrow-right"></span></a>
+</div>
+<hr/>
+<div role="contentinfo">
+<!-- Copyright etc -->
+<p>Copyright (c) 2024 - The Carenalgas Community</p>
+</div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+</div>
+</div>
+</section>
+</div>
+<div aria-label="Versions" class="rst-versions" role="note">
+<span class="rst-current-version" data-toggle="rst-current-version">
+<span>
+<a class="fa fa-github" href="https://github.com/carenalgas/popochiu/" style="color: #fcfcfc"> GitHub</a>
+</span>
+<span><a href="../scripting-principles/" style="color: #fcfcfc">« Previous</a></span>
+<span><a href="../await-and-queue-functions/" style="color: #fcfcfc">Next »</a></span>
+</span>
+</div>
+<script src="../../js/jquery-3.6.0.min.js"></script>
+<script>var base_url = "../..";</script>
+<script src="../../js/theme_extra.js"></script>
+<script src="../../js/theme.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+<script src="../../assets/js/gdscript.min.js"></script>
+<script src="../../assets/js/custom.js"></script>
+<script src="../../search/main.js"></script>
+<script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+<script type="module">import mermaid from "https://unpkg.com/mermaid@11.4.1/dist/mermaid.esm.min.mjs";
+mermaid.initialize({});</script></body>
+</html>

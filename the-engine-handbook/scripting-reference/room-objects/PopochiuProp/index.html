@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="The Carenalgas Community" />
+      <link rel="shortcut icon" href="../../../../assets/images/_other/theme/favicon.ico" />
+    <title>PopochiuProp - Popochiu Documentation</title>
+    <link rel="stylesheet" href="../../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../../assets/css/custom.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "PopochiuProp";
+        var mkdocs_page_input_path = "the-engine-handbook/scripting-reference/room-objects/PopochiuProp.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../../..">
+          <img src="../../../../assets/images/_other/theme/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installing-popochiu/">Installing popochiu</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/example-resources/">Example resources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/getting-help/">Getting help</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How to develop a game</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/game-setup/">Game setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/create-characters/">Create characters</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/create-the-first-room/">Create the first room</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/add-an-inventory-item/">Add an inventory item</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/script-your-first-dialogue/">Script your first dialogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/use-inventory-items/">Use inventory items</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/customize-the-game-ui/">Customize the Game UI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../how-to-develop-a-game/conclusions/">Conclusions</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/localization/">Localization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/guis/">Game UI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/advanced-animations/">Advanced animations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/character-base-animations/">Character Base Animations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/character-animation-prefix/">Character Animation Prefix</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/character-dialog-position-settings/">Character dialog position settings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/character-scaling/">Character Scaling</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/character-anti-glide-feature/">Character Anti-Glide Feature</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/game-state-saving-and-loading/">Game state saving and loading</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/extending-customizing-popochiu/">Extending customizing popochiu</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/change-text-to-gibberish/">Change text to gibberish</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../advanced-topics/custom-transitions/">Custom Transitions</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The editor handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../the-editor-handbook/editor-settings/">Editor settings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../the-editor-handbook/interface-overview/">Interface overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../the-editor-handbook/popochiu-dock/">Popochiu dock</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../the-editor-handbook/toolbar-buttons/">Toolbar buttons</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../the-editor-handbook/importers/">Aseprite Importers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The engine handbook</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../../scripting-overview/">Scripting overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../scripting-principles/">Scripting principles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../gui-commands-and-fallbacks/">GUI commands and fallbacks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../await-and-queue-functions/">Await and queue functions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../working-with-game-state/">Working with game state</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../wrapping-up/">Wrapping up</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Scripting reference</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="#">Base classes</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../base-classes/PopochiuClickable/">PopochiuClickable</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Engine</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../engine/Popochiu/">Popochiu</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../engine/PopochiuMainCamera/">PopochiuMainCamera</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../engine/PopochiuSaveLoad/">PopochiuSaveLoad</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../engine/PopochiuSettings/">PopochiuSettings</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Game objects</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/AudioCueMusic/">AudioCueMusic</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/AudioCueSound/">AudioCueSound</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/PopochiuAudioCue/">PopochiuAudioCue</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/PopochiuAudioManager/">PopochiuAudioManager</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/PopochiuCharacter/">PopochiuCharacter</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/PopochiuDialog/">PopochiuDialog</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/PopochiuDialogOption/">PopochiuDialogOption</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/PopochiuInventoryItem/">PopochiuInventoryItem</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects/PopochiuRoom/">PopochiuRoom</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Game objects data managers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects-data-managers/PopochiuCharacterData/">PopochiuCharacterData</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects-data-managers/PopochiuInventoryItemData/">PopochiuInventoryItemData</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-objects-data-managers/PopochiuRoomData/">PopochiuRoomData</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Game scripts interfaces</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-scripts-interfaces/PopochiuIAudio/">PopochiuIAudio</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-scripts-interfaces/PopochiuICharacter/">PopochiuICharacter</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-scripts-interfaces/PopochiuIDialog/">PopochiuIDialog</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-scripts-interfaces/PopochiuIGraphicInterface/">PopochiuIGraphicInterface</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-scripts-interfaces/PopochiuIInventory/">PopochiuIInventory</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-scripts-interfaces/PopochiuIRoom/">PopochiuIRoom</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-scripts-interfaces/PopochiuITransitionLayer/">PopochiuITransitionLayer</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Game user interface</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-user-interface/NineVerbCommands/">NineVerbCommands</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-user-interface/NineVerbGUI/">NineVerbGUI</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-user-interface/PopochiuCursor/">PopochiuCursor</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-user-interface/PopochiuTransitionLayer/">PopochiuTransitionLayer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-user-interface/SierraCommands/">SierraCommands</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-user-interface/SierraGUI/">SierraGUI</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-user-interface/SimpleClickCommands/">SimpleClickCommands</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../game-user-interface/SimpleClickGUI/">SimpleClickGUI</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">Room objects</a>
+    <ul class="current">
+                <li class="toctree-l3"><a class="reference internal" href="../PopochiuHotspot/">PopochiuHotspot</a>
+                </li>
+                <li class="toctree-l3 current"><a class="reference internal current" href="./">PopochiuProp</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../PopochiuRegion/">PopochiuRegion</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../PopochiuWalkableArea/">PopochiuWalkableArea</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../9_verb_high_res_gui/">9_verb_high_res_gui</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../sierra_high_res_gui/">sierra_high_res_gui</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../simple_click_high_res_gui/">simple_click_high_res_gui</a>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing to popochiu</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../contributing-to-popochiu/basic-rules/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../contributing-to-popochiu/toolchain-and-dependencies/">Toolchain and dependecies</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Conventions</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/conventions/directory-and-file-structure/">Directory and file structure</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/conventions/coding-standards/">Coding standards</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/conventions/comments/">Comments</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/conventions/naming-conventions/">Naming conventions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/conventions/code-versioning/">Code versioning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/conventions/error-handling/">Error handling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/conventions/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/conventions/dependencies/">Dependencies</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Project overview</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/project-overview/popochiu-subsystems/">Popochiu Subsystems</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/project-overview/editor-plugin/">Editor Plugin</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/project-overview/game-engine/">Game Engine</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Project management</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/project-management/why/">Why we care</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/project-management/issue-tracking/">Issue Tracking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/project-management/code-reviews/">Code reviews</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/project-management/definition-of-done/">Definition of Done</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Contributing documentation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/contributing-documentation/basic-rules/">Basics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../../contributing-to-popochiu/contributing-documentation/conventions/">Conventions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../contributing-to-popochiu/qna/">Contribution Q&A</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../../contributing-to-popochiu/get-in-touch/">Get in touch</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../..">Popochiu Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">The engine handbook</li>
+          <li class="breadcrumb-item">Scripting reference</li>
+          <li class="breadcrumb-item">Room objects</li>
+      <li class="breadcrumb-item active">PopochiuProp</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carenalgas/popochiu/edit/develop/docs/src/the-engine-handbook/scripting-reference/room-objects/PopochiuProp.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="popochiuprop">PopochiuProp</h1>
+<p><strong>Inherits:</strong> <a href="../../base-classes/PopochiuClickable/">PopochiuClickable</a></p>
+<h2 id="description">Description</h2>
+<p>A visual and interactive element in a room, such as backgrounds, foregrounds, tables, or cups.</p>
+<p>Props can be clicked, animated, linked to inventory items, and used as navigation obstacles.
+When selecting a Prop in the scene tree, Popochiu enables three buttons in the Canvas Editor
+Menu: Baseline, Walk to, and Interaction for adjusting positioning and interaction polygons.</p>
+<hr class="classref-section-separator">
+
+<h2 id="properties">Properties</h2>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Name</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_float.html">float</a></td>
+<td><a href="#alpha">alpha</a></td>
+<td><code>1.0</code></td>
+</tr>
+<tr>
+<td>Variant</td>
+<td><a href="#current-frame">current_frame</a></td>
+<td><code>0</code></td>
+</tr>
+<tr>
+<td>Variant</td>
+<td><a href="#frames">frames</a></td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td>Variant</td>
+<td><a href="#link-to-item">link_to_item</a></td>
+<td><code>""</code></td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_bool.html">bool</a></td>
+<td><a href="#obstacle">obstacle</a></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>Variant</td>
+<td><a href="#obstacle-polygon">obstacle_polygon</a></td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td>Variant</td>
+<td><a href="#obstacle-polygon-position">obstacle_polygon_position</a></td>
+<td><code>Vector2.ZERO</code></td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_texture2d.html">Texture2D</a></td>
+<td><a href="#texture">texture</a></td>
+<td><code>set_texture</code></td>
+</tr>
+<tr>
+<td>get</td>
+<td><a href="#total-frames">total_frames</a></td>
+<td><code>get_total_frames</code></td>
+</tr>
+<tr>
+<td>Variant</td>
+<td><a href="#v-frames">v_frames</a></td>
+<td><code>1</code></td>
+</tr>
+</tbody>
+</table>
+<hr class="classref-section-separator">
+
+<h2 id="methods">Methods</h2>
+<table>
+<thead>
+<tr>
+<th>Return Type</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><a href="#-on-linked-item-discarded">_on_linked_item_discarded</a>() <em>virtual</em></td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#-on-linked-item-removed">_on_linked_item_removed</a>() <em>virtual</em></td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#-on-movement-ended">_on_movement_ended</a>() <em>virtual</em></td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#-on-movement-started">_on_movement_started</a>() <em>virtual</em></td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#change-frame">change_frame</a>(new_frame: int)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#fade-in">fade_in</a>(duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#fade-out">fade_out</a>(duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#fade-to">fade_to</a>(target_alpha: float, duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT)</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_string.html">String</a></td>
+<td><a href="#get-assigned-animation">get_assigned_animation</a>()</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_float.html">float</a></td>
+<td><a href="#get-current-animation-position">get_current_animation_position</a>()</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_navigationobstacle2d.html">NavigationObstacle2D</a></td>
+<td><a href="#get-navigation-obstacle">get_navigation_obstacle</a>()</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_int.html">int</a></td>
+<td><a href="#get-total-frames">get_total_frames</a>()</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_bool.html">bool</a></td>
+<td><a href="#is-animation-playing">is_animation_playing</a>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#pause-animation">pause_animation</a>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#play-animation">play_animation</a>(name: StringName = &amp;"", custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#play-animation-backwards">play_animation_backwards</a>(name: StringName = &amp;"", custom_blend: float = -1)</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_callable.html">Callable</a></td>
+<td><a href="#queue-change-frame">queue_change_frame</a>(new_frame: int)</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_callable.html">Callable</a></td>
+<td><a href="#queue-fade-in">queue_fade_in</a>(duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT)</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_callable.html">Callable</a></td>
+<td><a href="#queue-fade-out">queue_fade_out</a>(duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT)</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_callable.html">Callable</a></td>
+<td><a href="#queue-fade-to">queue_fade_to</a>(target_alpha: float, duration: float, set_enablement: bool = false)</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_callable.html">Callable</a></td>
+<td><a href="#queue-pause-animation">queue_pause_animation</a>()</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_callable.html">Callable</a></td>
+<td><a href="#queue-play-animation">queue_play_animation</a>(name: StringName = &amp;"", custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false)</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_callable.html">Callable</a></td>
+<td><a href="#queue-play-animation-backwards">queue_play_animation_backwards</a>(name: StringName = &amp;"", custom_blend: float = -1)</td>
+</tr>
+<tr>
+<td><a href="https://docs.godotengine.org/en/stable/classes/class_callable.html">Callable</a></td>
+<td><a href="#queue-stop-animation">queue_stop_animation</a>(keep_state: bool = false)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#set-alpha">set_alpha</a>(value: float)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#set-assigned-animation">set_assigned_animation</a>(name: StringName)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#set-current-frame">set_current_frame</a>(value: int)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#set-frames">set_frames</a>(value: int)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#set-obstacle">set_obstacle</a>(value: bool)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#set-texture">set_texture</a>(value: Texture2D)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#set-v-frames">set_v_frames</a>(value: int)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><a href="#stop-animation">stop_animation</a>(keep_state: bool = false)</td>
+</tr>
+</tbody>
+</table>
+<hr class="classref-section-separator">
+
+<h2 id="signals">Signals</h2>
+<ul>
+<li><strong><a href="#signal-linked-item-discarded">linked_item_discarded</a></strong>(item: PopochiuInventoryItem)</li>
+<li><strong><a href="#signal-linked-item-removed">linked_item_removed</a></strong>(item: PopochiuInventoryItem)</li>
+<li><strong><a href="#signal-obstacle-state-changed">obstacle_state_changed</a></strong>(prop: PopochiuProp)</li>
+</ul>
+<hr class="classref-section-separator">
+
+<h2 id="signal-descriptions">Signal Descriptions</h2>
+<h3 id="signal-linked-item-discarded">linked_item_discarded</h3>
+<pre><code class="language-gdscript">signal linked_item_discarded(item: PopochiuInventoryItem)
+</code></pre>
+<p>Emitted when the <code>item</code> linked to this object (by <code>link_to_item</code>) is discarded from
+the inventory. This may happen when the inventory item disappears forever from the game.</p>
+<hr class="classref-item-separator">
+
+<h3 id="signal-linked-item-removed">linked_item_removed</h3>
+<pre><code class="language-gdscript">signal linked_item_removed(item: PopochiuInventoryItem)
+</code></pre>
+<p>Emitted when the <code>item</code> linked to this object (by <code>link_to_item</code>) is removed from
+the inventory. This may happen when the inventory item disappears forever from the game.</p>
+<hr class="classref-item-separator">
+
+<h3 id="signal-obstacle-state-changed">obstacle_state_changed</h3>
+<pre><code class="language-gdscript">signal obstacle_state_changed(prop: PopochiuProp)
+</code></pre>
+<p>Emitted when the obstacle flag state is changed.</p>
+<hr class="classref-section-separator">
+
+<h2 id="property-descriptions">Property Descriptions</h2>
+<h3 id="alpha">alpha</h3>
+<pre><code class="language-gdscript">@export_range(0.0, 1.0) var alpha : float = 1.0
+</code></pre>
+<ul>
+<li><strong>Setter:</strong> <code>set_alpha</code></li>
+</ul>
+<p>Opacity of the prop. Range: <code>0.0</code> (fully transparent) to <code>1.0</code> (fully opaque).
+Setting this value will modulate the alpha channel of the <strong>$Sprite2D</strong> child.</p>
+<hr class="classref-item-separator">
+
+<h3 id="current-frame">current_frame</h3>
+<pre><code class="language-gdscript">@export var current_frame = 0
+</code></pre>
+<ul>
+<li><strong>Setter:</strong> <code>set_current_frame</code></li>
+</ul>
+<p>The current frame to use as the texture of this node. Modifying this will change the value of the
+<a href="https://docs.godotengine.org/en/stable/classes/class_sprite2d.html#class-sprite2d-property-frame"><code>Sprite2D.frame</code></a> property in the <strong>$Sprite2D</strong> child. Trying to assign a value lesser
+than 0 will roll over the value to the maximum frame (<code>frames * v_frames - 1</code>) or
+setting the value greater than the number of frames will roll over the value to 0.</p>
+<hr class="classref-item-separator">
+
+<h3 id="frames">frames</h3>
+<pre><code class="language-gdscript">@export var frames = 1
+</code></pre>
+<ul>
+<li><strong>Setter:</strong> <code>set_frames</code></li>
+</ul>
+<p>The number of horizontal frames this node's texture image has. Modifying this will change the
+value of the <a href="https://docs.godotengine.org/en/stable/classes/class_sprite2d.html#class-sprite2d-property-hframes"><code>Sprite2D.hframes</code></a> property in the <strong>$Sprite2D</strong> child.</p>
+<hr class="classref-item-separator">
+
+<h3 id="link-to-item">link_to_item</h3>
+<pre><code class="language-gdscript">@export var link_to_item = &quot;&quot;
+</code></pre>
+<p>Links the prop to a <a href="../../game-objects/PopochiuInventoryItem/">PopochiuInventoryItem</a> by its <a href="../../game-objects/PopochiuInventoryItem/#script-name"><code>script_name</code></a>.
+This will make the prop disappear from the room, depending on whether or not said inventory item
+is inside the inventory.</p>
+<hr class="classref-item-separator">
+
+<h3 id="obstacle">obstacle</h3>
+<pre><code class="language-gdscript">@export var obstacle : bool = false
+</code></pre>
+<ul>
+<li><strong>Setter:</strong> <code>set_obstacle</code></li>
+</ul>
+<p>When true, this prop will be considered an obstacle and its obstacle polygon (if available)
+will be carved from all <code>PopochiuWalkableAreas</code> it intersects in the room.
+Set this to false to ignore its encoumbrance during pathfinding.</p>
+<hr class="classref-item-separator">
+
+<h3 id="obstacle-polygon">obstacle_polygon</h3>
+<pre><code class="language-gdscript">@export var obstacle_polygon = []
+</code></pre>
+<p>Stores the outlines to assign to the <strong>ObstaclePolygon/Vertices</strong> child during
+runtime. This is used by <a href="../../game-objects/PopochiuRoom/">PopochiuRoom</a> to store the info in its <code>.tscn</code>.</p>
+<hr class="classref-item-separator">
+
+<h3 id="obstacle-polygon-position">obstacle_polygon_position</h3>
+<pre><code class="language-gdscript">@export var obstacle_polygon_position = Vector2.ZERO
+</code></pre>
+<p>Stores the position to assign to the <strong>ObstaclePolygon/Vertices</strong> child during
+runtime. This is used by <a href="../../game-objects/PopochiuRoom/">PopochiuRoom</a> to store the info in its <code>.tscn</code>.</p>
+<hr class="classref-item-separator">
+
+<h3 id="texture">texture</h3>
+<pre><code class="language-gdscript">@export var texture : Texture2D = set_texture
+</code></pre>
+<ul>
+<li><strong>Setter:</strong> <code>set_texture</code></li>
+</ul>
+<p>The image to use as the <a href="https://docs.godotengine.org/en/stable/classes/class_sprite2d.html#class-sprite2d-property-texture"><code>Sprite2D.texture</code></a> of the <strong>$Sprite2D</strong> child.</p>
+<hr class="classref-item-separator">
+
+<h3 id="total-frames">total_frames</h3>
+<pre><code class="language-gdscript">var total_frames : get = get_total_frames
+</code></pre>
+<ul>
+<li><strong>Getter:</strong> <code>get_total_frames</code></li>
+</ul>
+<p>Total frames available the texture image has. <code>(frames * vframes)</code></p>
+<hr class="classref-item-separator">
+
+<h3 id="v-frames">v_frames</h3>
+<pre><code class="language-gdscript">@export var v_frames = 1
+</code></pre>
+<ul>
+<li><strong>Setter:</strong> <code>set_v_frames</code></li>
+</ul>
+<p>The number of vertical frames this node's texture image has. Modifying this will change the
+value of the <a href="https://docs.godotengine.org/en/stable/classes/class_sprite2d.html#class-sprite2d-property-vframes"><code>Sprite2D.vframes</code></a> property in the <strong>$Sprite2D</strong> child.</p>
+<hr class="classref-section-separator">
+
+<h2 id="method-descriptions">Method Descriptions</h2>
+<h3 id="-on-linked-item-discarded">_on_linked_item_discarded</h3>
+<pre><code class="language-gdscript">func _on_linked_item_discarded() -&gt; void
+</code></pre>
+<p><em>This is a virtual method. Override it in your subclass.</em></p>
+<p>Called when the <a href="../../game-objects/PopochiuInventoryItem/">PopochiuInventoryItem</a> linked to this prop is discarded from the inventory.  </p>
+<p>Override this to add custom behavior such as playing an animation or update state variables that
+control game logic.</p>
+<hr class="classref-item-separator">
+
+<h3 id="-on-linked-item-removed">_on_linked_item_removed</h3>
+<pre><code class="language-gdscript">func _on_linked_item_removed() -&gt; void
+</code></pre>
+<p><em>This is a virtual method. Override it in your subclass.</em></p>
+<p>Called when the <a href="../../game-objects/PopochiuInventoryItem/">PopochiuInventoryItem</a> linked to this prop is removed from the inventory.  </p>
+<p>Override this to add custom behavior such as enabling the prop again, playing an animation,
+or update state variables that control game logic.</p>
+<hr class="classref-item-separator">
+
+<h3 id="-on-movement-ended">_on_movement_ended</h3>
+<pre><code class="language-gdscript">func _on_movement_ended() -&gt; void
+</code></pre>
+<p><em>This is a virtual method. Override it in your subclass.</em></p>
+<p>Called when the prop stops moving.  </p>
+<p>Override this to add custom behavior such as stopping an animation,
+starting a cutscene, or speak a dialog line.</p>
+<p>Useful with props that the player can drag around the room, or props that move as part of an
+animation sequence in the room's narrative.</p>
+<hr class="classref-item-separator">
+
+<h3 id="-on-movement-started">_on_movement_started</h3>
+<pre><code class="language-gdscript">func _on_movement_started() -&gt; void
+</code></pre>
+<p><em>This is a virtual method. Override it in your subclass.</em></p>
+<p>Called when the prop starts moving.  </p>
+<p>Override this to add custom behavior such as playing an animation,
+or speak a dialog line.</p>
+<p>Useful with props that the player can drag around the room, or props that move as part of an
+animation sequence in the room's narrative.</p>
+<hr class="classref-item-separator">
+
+<h3 id="change-frame">change_frame</h3>
+<pre><code class="language-gdscript">func change_frame(new_frame: int) -&gt; void
+</code></pre>
+<p>Changes the prop's <strong>$Sprite2D</strong> frame to <code>new_frame</code>.</p>
+<hr class="classref-item-separator">
+
+<h3 id="fade-in">fade_in</h3>
+<pre><code class="language-gdscript">func fade_in(duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT) -&gt; void
+</code></pre>
+<p>Gradually increases alpha to <code>1.0</code> over <code>duration</code> seconds.
+If <code>set_enablement</code> is <code>true</code>, enables the prop when complete.</p>
+<hr class="classref-item-separator">
+
+<h3 id="fade-out">fade_out</h3>
+<pre><code class="language-gdscript">func fade_out(duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT) -&gt; void
+</code></pre>
+<p>Gradually decreases alpha to <code>0.0</code> over <code>duration</code> seconds.
+If <code>set_enablement</code> is <code>true</code>, disables the prop when complete.</p>
+<hr class="classref-item-separator">
+
+<h3 id="fade-to">fade_to</h3>
+<pre><code class="language-gdscript">func fade_to(target_alpha: float, duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT) -&gt; void
+</code></pre>
+<p>Gradually transitions alpha to <code>target_alpha</code> (clamped between 0.0 and 1.0) over
+<code>duration</code> seconds. If <code>set_enablement</code> is <code>true</code>, enables/disables
+based on final alpha (0.0 means disabled, anything else means enabled).  </p>
+<p><code>trans</code> and <code>ease</code> define the transition and easing types (see [Tween.TransitionType]
+and [Tween.EaseType]).</p>
+<hr class="classref-item-separator">
+
+<h3 id="get-assigned-animation">get_assigned_animation</h3>
+<pre><code class="language-gdscript">func get_assigned_animation() -&gt; String
+</code></pre>
+<p>Returns the string name of the currently assigned animation in the <a href="https://docs.godotengine.org/en/stable/classes/class_animationplayer.html">AnimationPlayer</a> node.</p>
+<hr class="classref-item-separator">
+
+<h3 id="get-current-animation-position">get_current_animation_position</h3>
+<pre><code class="language-gdscript">func get_current_animation_position() -&gt; float
+</code></pre>
+<p>Returns the current animation position in seconds, or <code>-1.0</code> on error.</p>
+<hr class="classref-item-separator">
+
+<h3 id="get-navigation-obstacle">get_navigation_obstacle</h3>
+<pre><code class="language-gdscript">func get_navigation_obstacle() -&gt; NavigationObstacle2D
+</code></pre>
+<p>Returns the NavigationObstacle2D if it has a defined polygon, null otherwise.
+This method checks if the obstacle has at least 3 vertices to form a valid polygon.</p>
+<hr class="classref-item-separator">
+
+<h3 id="get-total-frames">get_total_frames</h3>
+<pre><code class="language-gdscript">func get_total_frames() -&gt; int
+</code></pre>
+<hr class="classref-item-separator">
+
+<h3 id="is-animation-playing">is_animation_playing</h3>
+<pre><code class="language-gdscript">func is_animation_playing() -&gt; bool
+</code></pre>
+<p>Returns <code>true</code> if an animation is playing, <code>false</code> otherwise.</p>
+<hr class="classref-item-separator">
+
+<h3 id="pause-animation">pause_animation</h3>
+<pre><code class="language-gdscript">func pause_animation() -&gt; void
+</code></pre>
+<p>Pauses the currently playing animation.
+Call <a href="#play-animation"><code>play_animation()</code></a> without parameters to resume.</p>
+<hr class="classref-item-separator">
+
+<h3 id="play-animation">play_animation</h3>
+<pre><code class="language-gdscript">func play_animation(name: StringName = &amp;&quot;&quot;, custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false) -&gt; void
+</code></pre>
+<p>Plays the <code>name</code> animation if it exists in this prop's <a href="https://docs.godotengine.org/en/stable/classes/class_animationplayer.html">AnimationPlayer</a> node.
+Optionally you can use the other <a href="https://docs.godotengine.org/en/stable/classes/class_animationplayer.html#class-animationplayer-method-play"><code>play()</code></a> parameters.</p>
+<hr class="classref-item-separator">
+
+<h3 id="play-animation-backwards">play_animation_backwards</h3>
+<pre><code class="language-gdscript">func play_animation_backwards(name: StringName = &amp;&quot;&quot;, custom_blend: float = -1) -&gt; void
+</code></pre>
+<p>Plays the <code>name</code> animation in reverse if it exists in this prop's <a href="https://docs.godotengine.org/en/stable/classes/class_animationplayer.html">AnimationPlayer</a> node.
+This is a shorthand for <a href="#play-animation"><code>play_animation()</code></a> with <code>custom_speed = -1.0</code> and
+<code>from_end = true</code>.</p>
+<hr class="classref-item-separator">
+
+<h3 id="queue-change-frame">queue_change_frame</h3>
+<pre><code class="language-gdscript">func queue_change_frame(new_frame: int) -&gt; Callable
+</code></pre>
+<p>Changes the prop's <strong>$Sprite2D</strong> frame to <code>new_frame</code>.</p>
+<p><em>This method is intended to be used inside a <a href="../../engine/Popochiu/#queue"><code>queue()</code></a> of instructions.</em></p>
+<hr class="classref-item-separator">
+
+<h3 id="queue-fade-in">queue_fade_in</h3>
+<pre><code class="language-gdscript">func queue_fade_in(duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT) -&gt; Callable
+</code></pre>
+<p>Gradually increases alpha to <code>1.0</code> over <code>duration</code> seconds.
+If <code>set_enablement</code> is <code>true</code>, enables the prop when complete.</p>
+<p><em>This method is intended to be used inside a <a href="../../engine/Popochiu/#queue"><code>queue()</code></a> of instructions.</em></p>
+<hr class="classref-item-separator">
+
+<h3 id="queue-fade-out">queue_fade_out</h3>
+<pre><code class="language-gdscript">func queue_fade_out(duration: float, set_enablement: bool = false, trans = Tween.TransitionType.TRANS_LINEAR, ease = Tween.EaseType.EASE_IN_OUT) -&gt; Callable
+</code></pre>
+<p>Gradually decreases alpha to <code>0.0</code> over <code>duration</code> seconds.
+If <code>set_enablement</code> is <code>true</code>, disables the prop when complete.</p>
+<p><em>This method is intended to be used inside a <a href="../../engine/Popochiu/#queue"><code>queue()</code></a> of instructions.</em></p>
+<hr class="classref-item-separator">
+
+<h3 id="queue-fade-to">queue_fade_to</h3>
+<pre><code class="language-gdscript">func queue_fade_to(target_alpha: float, duration: float, set_enablement: bool = false) -&gt; Callable
+</code></pre>
+<p>Gradually transitions alpha to <code>target_alpha</code> (clamped between 0.0 and 1.0) over
+<code>duration</code> seconds. If <code>set_enablement</code> is <code>true</code>, enables/disables
+based on final alpha (0.0 means disabled, anything else means enabled).</p>
+<p><em>This method is intended to be used inside a <a href="../../engine/Popochiu/#queue"><code>queue()</code></a> of instructions.</em></p>
+<hr class="classref-item-separator">
+
+<h3 id="queue-pause-animation">queue_pause_animation</h3>
+<pre><code class="language-gdscript">func queue_pause_animation() -&gt; Callable
+</code></pre>
+<p>Pauses the currently playing animation.
+Call <a href="#play-animation"><code>play_animation()</code></a> without parameters to resume.</p>
+<p><em>This method is intended to be used inside a <a href="../../engine/Popochiu/#queue"><code>queue()</code></a> of instructions.</em></p>
+<hr class="classref-item-separator">
+
+<h3 id="queue-play-animation">queue_play_animation</h3>
+<pre><code class="language-gdscript">func queue_play_animation(name: StringName = &amp;&quot;&quot;, custom_blend: float = -1, custom_speed: float = 1.0, from_end: bool = false) -&gt; Callable
+</code></pre>
+<p>Plays the <code>name</code> animation if it exists in this prop's <a href="https://docs.godotengine.org/en/stable/classes/class_animationplayer.html">AnimationPlayer</a> node.
+Optionally you can use the other <a href="https://docs.godotengine.org/en/stable/classes/class_animationplayer.html#class-animationplayer-method-play"><code>play()</code></a> parameters.</p>
+<p><em>This method is intended to be used inside a <a href="../../engine/Popochiu/#queue"><code>queue()</code></a> of instructions.</em></p>
+<hr class="classref-item-separator">
+
+<h3 id="queue-play-animation-backwards">queue_play_animation_backwards</h3>
+<pre><code class="language-gdscript">func queue_play_animation_backwards(name: StringName = &amp;&quot;&quot;, custom_blend: float = -1) -&gt; Callable
+</code></pre>
+<p>Plays the <code>name</code> animation in reverse if it exists in this prop's <a href="https://docs.godotengine.org/en/stable/classes/class_animationplayer.html">AnimationPlayer</a> node.
+This is a shorthand for <a href="#play-animation"><code>play_animation()</code></a> with <code>custom_speed = -1.0</code> and
+<code>from_end = true</code>.</p>
+<p><em>This method is intended to be used inside a <a href="../../engine/Popochiu/#queue"><code>queue()</code></a> of instructions.</em></p>
+<hr class="classref-item-separator">
+
+<h3 id="queue-stop-animation">queue_stop_animation</h3>
+<pre><code class="language-gdscript">func queue_stop_animation(keep_state: bool = false) -&gt; Callable
+</code></pre>
+<p>Stops the currently playing animation.
+The animation position is reset to <code>0</code> and <code>custom_speed</code> is reset to
+<code>1.0</code>. Set <code>keep_state</code> to <code>true</code> to prevent visual updates.</p>
+<p><em>This method is intended to be used inside a <a href="../../engine/Popochiu/#queue"><code>queue()</code></a> of instructions.</em></p>
+<hr class="classref-item-separator">
+
+<h3 id="set-alpha">set_alpha</h3>
+<pre><code class="language-gdscript">func set_alpha(value: float) -&gt; void
+</code></pre>
+<hr class="classref-item-separator">
+
+<h3 id="set-assigned-animation">set_assigned_animation</h3>
+<pre><code class="language-gdscript">func set_assigned_animation(name: StringName) -&gt; void
+</code></pre>
+<p>Sets the animation key name for the currently assigned animation in the <a href="https://docs.godotengine.org/en/stable/classes/class_animationplayer.html">AnimationPlayer</a> node.</p>
+<hr class="classref-item-separator">
+
+<h3 id="set-current-frame">set_current_frame</h3>
+<pre><code class="language-gdscript">func set_current_frame(value: int) -&gt; void
+</code></pre>
+<hr class="classref-item-separator">
+
+<h3 id="set-frames">set_frames</h3>
+<pre><code class="language-gdscript">func set_frames(value: int) -&gt; void
+</code></pre>
+<hr class="classref-item-separator">
+
+<h3 id="set-obstacle">set_obstacle</h3>
+<pre><code class="language-gdscript">func set_obstacle(value: bool) -&gt; void
+</code></pre>
+<hr class="classref-item-separator">
+
+<h3 id="set-texture">set_texture</h3>
+<pre><code class="language-gdscript">func set_texture(value: Texture2D) -&gt; void
+</code></pre>
+<hr class="classref-item-separator">
+
+<h3 id="set-v-frames">set_v_frames</h3>
+<pre><code class="language-gdscript">func set_v_frames(value: int) -&gt; void
+</code></pre>
+<hr class="classref-item-separator">
+
+<h3 id="stop-animation">stop_animation</h3>
+<pre><code class="language-gdscript">func stop_animation(keep_state: bool = false) -&gt; void
+</code></pre>
+<p>Stops the currently playing animation.
+The animation position is reset to <code>0</code> and <code>custom_speed</code> is reset to
+<code>1.0</code>. Set <code>keep_state</code> to <code>true</code> to prevent visual updates.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../PopochiuHotspot/" class="btn btn-neutral float-left" title="PopochiuHotspot"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../PopochiuRegion/" class="btn btn-neutral float-right" title="PopochiuRegion">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright (c) 2024 - The Carenalgas Community</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carenalgas/popochiu/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../PopochiuHotspot/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../PopochiuRegion/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../../..";</script>
+    <script src="../../../../js/theme_extra.js"></script>
+    <script src="../../../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+      <script src="../../../../assets/js/gdscript.min.js"></script>
+      <script src="../../../../assets/js/custom.js"></script>
+      <script src="../../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
