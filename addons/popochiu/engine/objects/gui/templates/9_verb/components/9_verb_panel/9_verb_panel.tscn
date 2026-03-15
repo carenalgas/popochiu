@@ -2,11 +2,11 @@
 
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/gui/components/hover_text/hover_text.tscn" id="1_8t0fs"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_o0fnb"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_panel/9_verb_panel.gd" id="2_55o6l"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_hover_text/9_verb_hover_text.gd" id="2_qt1af"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_commands_container.gd" id="3_q8l3d"]
+[ext_resource type="Script" uid="uid://b3hjsi3u2psyc" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_panel/9_verb_panel.gd" id="2_55o6l"]
+[ext_resource type="Script" uid="uid://lb88p0uyo82c" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_hover_text/9_verb_hover_text.gd" id="2_qt1af"]
+[ext_resource type="Script" uid="uid://c5nmtcja3c5sp" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_commands_container.gd" id="3_q8l3d"]
 [ext_resource type="ButtonGroup" uid="uid://y1thfsxxjowe" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/resources/9_verb_button_group.tres" id="4_6lnif"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_command_button.gd" id="5_bpewk"]
+[ext_resource type="Script" uid="uid://i1y36osdqw12" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/commands_container/9_verb_command_button.gd" id="5_bpewk"]
 [ext_resource type="PackedScene" uid="uid://djan6vy0xq8dq" path="res://addons/popochiu/engine/objects/gui/templates/9_verb/components/9_verb_inventory_grid/9_verb_inventory_grid.tscn" id="6_r1cmu"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b57cn"]

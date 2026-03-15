@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-objects
 @tool
 class_name PopochiuAudioCue
 extends Resource
@@ -50,7 +51,8 @@ func fade(
 ## set to [code]true[/code], the function will wait for the audio to finish. You can specify the
 ## starting volume with [param from] and the target volume with [param to], as well as the
 ## [param position_2d] of the [AudioStreamPlayer] or [AudioStreamPlayer2D] that will play the audio
-## file.[br][br]
+## file.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_fade(
 	duration := 1.0, wait_to_end := false, from := -80.0, to := INF, position_2d := Vector2.ZERO
@@ -68,7 +70,8 @@ func stop(fade_duration := 0.0) -> void:
 	PopochiuUtils.e.am.stop(resource_name, fade_duration)
 
 
-## Stops the audio cue, with an optional fade effect lasting [param fade_duration] seconds.[br][br]
+## Stops the audio cue, with an optional fade effect lasting [param fade_duration] seconds.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_stop(fade_duration := 0.0) -> Callable:
 	return func ():

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://hfvjxu5map27"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/hotspot/popochiu_hotspot.gd" id="1"]
+[ext_resource type="Script" uid="uid://q8qqjmyk2vvx" path="res://addons/popochiu/engine/objects/hotspot/popochiu_hotspot.gd" id="1"]
 
 [node name="Hotspot" type="Area2D"]
 script = ExtResource("1")

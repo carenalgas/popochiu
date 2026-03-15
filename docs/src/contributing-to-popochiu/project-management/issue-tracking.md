@@ -29,7 +29,7 @@ In addition, we categorize issues into four **lanes** based on their type and pr
 1. **Bugfixing**: These are both urgent and important. They block the correct functioning of the plugin and need immediate attention.
 2. **Polishing**: These issues are less urgent but still important. They’re usually small, low-effort improvements that enhance the quality of life for users and smooth out the tool’s rough edges. They may not be flashy, but they make the plugin _feel_ high quality.
 3. **Maturity**: Features or improvements that require significant effort. Working on these items makes the plugin more capable and feature-rich.
-4. **Nice-to-Have**: These issues have limited impact or are valuable to only a small group of users. While not critical, they can still be worth pursuing—great for contributors who want to stretch their skills without blocking core development.
+4. **Nice-to-Have**: These issues have limited impact or are valuable to only a small group of users. While not critical, they can still be worth pursuing. Great for contributors who want to stretch their skills without blocking core development.
 
 We use these categories to achieve two goals: ensuring a healthy mix of bug fixes, polish, and new features; helping users understand how we prioritize issues in the project’s vision.  
 On one side, indeed, it’s easy for urgent bug fixes and shiny new features to overshadow the importance of maintenance and refinement. On the other side, users are entitled to decide whether to wait for a feature to be implemented in Popochiu or create their own custom solution for their games.
@@ -78,6 +78,6 @@ When opening an issue, please:
    Before opening a new issue, search the issue tracker to ensure your topic hasn’t already been reported. If you find a similar issue, feel free to add your input there instead of creating a duplicate.
 
 6. **Bring other community members in the loop**
-   Remember, the issue tracker is a shared space for the community. Feel free to point the issue out on discord and invite other members to join the discussion. Evidence and feedback are gold to make sensible decisions about the future of the plugin.
+   Remember, the issue tracker is a shared space for the community. Feel free to point the issue out on Discord and invite other members to join the discussion. Evidence and feedback are gold to make sensible decisions about the future of the plugin.
 
 ---

@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://rphyltbm12m4"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd" id="1"]
+[ext_resource type="Script" uid="uid://map2fk78dvfr" path="res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd" id="1"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_77wem"]
 
-[sub_resource type="Image" id="Image_vdhps"]
+[sub_resource type="Image" id="Image_bfixh"]
 data = {
 "data": PackedByteArray(255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 93, 93, 41, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0),
 "format": "RGBA8",
@@ -14,7 +14,7 @@ data = {
 }
 
 [sub_resource type="ImageTexture" id="ImageTexture_c80ss"]
-image = SubResource("Image_vdhps")
+image = SubResource("Image_bfixh")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sd1l8"]
 
@@ -25,17 +25,26 @@ script = ExtResource("1")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="TagName" type="Label" parent="HBoxContainer"]
+[node name="DeleteAnim" type="Button" parent="HBoxContainer"]
 layout_mode = 2
-text = "Tag Name"
+flat = true
+alignment = 0
 
-[node name="Panel" type="Panel" parent="."]
+[node name="TagName" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Tag Name"
+flat = true
+alignment = 0
+
+[node name="Panel" type="Panel" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_77wem")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Panel"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -44,7 +53,7 @@ offset_left = -60.0
 offset_bottom = 20.0
 grow_horizontal = 0
 
-[node name="Visible" type="Button" parent="Panel/HBoxContainer"]
+[node name="Visible" type="Button" parent="HBoxContainer/Panel/HBoxContainer"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
@@ -54,7 +63,7 @@ toggle_mode = true
 icon = SubResource("ImageTexture_c80ss")
 flat = true
 
-[node name="Clickable" type="Button" parent="Panel/HBoxContainer"]
+[node name="Clickable" type="Button" parent="HBoxContainer/Panel/HBoxContainer"]
 visible = false
 layout_mode = 2
 size_flags_horizontal = 4
@@ -64,13 +73,23 @@ toggle_mode = true
 icon = SubResource("ImageTexture_c80ss")
 flat = true
 
-[node name="Separator" type="Panel" parent="Panel/HBoxContainer"]
+[node name="Autoplays" type="Button" parent="HBoxContainer/Panel/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+tooltip_text = "Set animation as autoplaying"
+toggle_mode = true
+icon = SubResource("ImageTexture_c80ss")
+flat = true
+
+[node name="Separator" type="Panel" parent="HBoxContainer/Panel/HBoxContainer"]
 visible = false
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_sd1l8")
 
-[node name="Import" type="Button" parent="Panel/HBoxContainer"]
+[node name="Import" type="Button" parent="HBoxContainer/Panel/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
@@ -79,7 +98,7 @@ toggle_mode = true
 icon = SubResource("ImageTexture_c80ss")
 flat = true
 
-[node name="Loops" type="Button" parent="Panel/HBoxContainer"]
+[node name="Loops" type="Button" parent="HBoxContainer/Panel/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
@@ -88,7 +107,10 @@ toggle_mode = true
 icon = SubResource("ImageTexture_c80ss")
 flat = true
 
-[connection signal="toggled" from="Panel/HBoxContainer/Visible" to="." method="_on_visible_toggled"]
-[connection signal="toggled" from="Panel/HBoxContainer/Clickable" to="." method="_on_clickable_toggled"]
-[connection signal="toggled" from="Panel/HBoxContainer/Import" to="." method="_on_import_toggled"]
-[connection signal="toggled" from="Panel/HBoxContainer/Loops" to="." method="_on_loops_toggled"]
+[connection signal="pressed" from="HBoxContainer/TagName" to="." method="_on_tag_name_pressed"]
+[connection signal="pressed" from="HBoxContainer/DeleteAnim" to="." method="_on_delete_anim_pressed"]
+[connection signal="toggled" from="HBoxContainer/Panel/HBoxContainer/Visible" to="." method="_on_visible_toggled"]
+[connection signal="toggled" from="HBoxContainer/Panel/HBoxContainer/Clickable" to="." method="_on_clickable_toggled"]
+[connection signal="toggled" from="HBoxContainer/Panel/HBoxContainer/Autoplays" to="." method="_on_autoplays_toggled"]
+[connection signal="toggled" from="HBoxContainer/Panel/HBoxContainer/Import" to="." method="_on_import_toggled"]
+[connection signal="toggled" from="HBoxContainer/Panel/HBoxContainer/Loops" to="." method="_on_loops_toggled"]

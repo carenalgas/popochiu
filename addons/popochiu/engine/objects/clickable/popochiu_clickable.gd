@@ -1,13 +1,12 @@
+# @popochiu-docs-category base-classes
 @tool
 class_name PopochiuClickable
 extends Area2D
-## Handles an Area2D that reacts to mouse events.
+## Base class for interactive objects that respond to mouse events.
 ##
-## Is the base class for [PopochiuProp], [PopochiuHotspot] and [PopochiuCharacter].
-## It has a property to determine when the object should render in front or back to other, another
-## property that can be used to define the position to which characters will move to when moving
-## to the item, and tow [CollisionPolygon2D] which are used to handle players interaction and
-## handle scaling.
+## This is the parent class for [PopochiuProp], [PopochiuHotspot], and [PopochiuCharacter].
+## It handles click detection, hover states, and provides a baseline system for rendering order.
+## Two [CollisionPolygon2D] nodes are used: one for player interaction and one for scaling.
 
 ## Used to allow devs to define the cursor type for the clickable.
 const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
@@ -16,7 +15,7 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 @export var script_name := ""
 ## The text shown to players when the cursor hovers the object.
 @export var description := ""
-## Whether the object will listen to interactions.
+## Whether the object will react to interactions.
 @export var clickable := true: set = set_clickable
 ## The [code]y[/code] position of the baseline relative to the center of the object.
 @export var baseline := 0
@@ -28,12 +27,17 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 @export var cursor: CURSOR.Type = CURSOR.Type.NONE
 ## Whether the object will be rendered always above other objects in the room.
 @export var always_on_top := false
-## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
-## by [PopochiuRoom] to store the info in its [code].tscn[/code].
+## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime.
+## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := PackedVector2Array()
-## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
-## by [PopochiuRoom] to store the info in its [code].tscn[/code].
+## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime.
+## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
+
+## Emitted when the clickable starts moving.
+signal movement_started
+## Emitted when the clickable finishes moving or is repositioned.
+signal movement_ended
 
 ## The [PopochiuRoom] to which the object belongs.
 var room: Node2D = null: set = set_room
@@ -49,11 +53,17 @@ var times_middle_clicked := 0
 # 		(command execution).
 ## Stores the last [enum MouseButton] pressed on this object.
 var last_click_button := -1
+## Whether the clickable is currently moving via the move_to function.
+var is_moving := false
 
+# Dictionary storing command usage counts {command_id: count}
+var _command_usage_count := {}
 # Used for setting the double click delay. Windows default is 500 milliseconds.
 var _double_click_delay: float = 0.2
 # Used for tracking if a double click has occurred.
 var _has_double_click: bool = false
+# Current active tween for movement
+var _movement_tween: Tween = null
 
 @onready var _description_code := description
 
@@ -63,8 +73,6 @@ func _ready():
 	add_to_group("PopochiuClickable")
 
 	if Engine.is_editor_hint():
-		hide_helpers()
-
 		# Add interaction polygon to the proper group
 		if (get_node_or_null("InteractionPolygon") != null):
 			get_node("InteractionPolygon").add_to_group(
@@ -101,7 +109,7 @@ func _ready():
 	visibility_changed.connect(_toggle_input)
 
 	# Ignore this object if it is a temporary one (its name has *)
-	if clickable and not "*" in name:
+	if clickable and not has_meta("EDITOR_TMP_COPY_OF"):
 		# Connect to own signals
 		mouse_entered.connect(_on_mouse_entered)
 		mouse_exited.connect(_on_mouse_exited)
@@ -123,88 +131,128 @@ func _notification(event: int) -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the room this node belongs to has been added to the tree.
-## [i]Virtual[/i].
+## Called when the room containing this node is set.
 func _on_room_set() -> void:
 	pass
 
 
-## Called when the node is clicked.
-## [i]Virtual[/i].
+## Called when the node is clicked.[br]
+## Override to implement custom click behavior.
 func _on_click() -> void:
 	pass
 
 
-## Called when the node is double clicked.
-## [i]Virtual[/i].
+## Called when the node is double-clicked.[br]
+## Override to implement custom double click behavior.
 func _on_double_click() -> void:
 	pass
 
 
-## Called when the node is right clicked.
-## [i]Virtual[/i].
+## Called when the node is right-clicked.[br]
+## Override to implement custom right click behavior.
 func _on_right_click() -> void:
 	pass
 
 
-## Called when the node is middle clicked.
-## [i]Virtual[/i].
+## Called when the node is middle-clicked.[br]
+## Override to implement custom middle click behavior.
 func _on_middle_click() -> void:
 	pass
 
 
-## Called when the node is clicked and there is an inventory item selected.
-## [i]Virtual[/i].
+## Called when the node is clicked and there is an active inventory item.
+## [param item] is the currently selected (active) inventory item.[br]
+## Override to implement custom behavior when an inventory item is used on this clickable.
 func _on_item_used(item: PopochiuInventoryItem) -> void:
+	pass
+
+
+## Called after the clickable's position changes to synchronize internal state.
+##
+## This is intended to be overridden by child classes to update any internal variables.
+## Use it in game scripts only if you know what you're doing.
+func _on_position_changed() -> void:
+	pass
+
+
+## Called when the clickable starts moving.
+func _on_movement_started() -> void:
+	pass
+
+
+## Called when the clickable stops moving.
+func _on_movement_ended() -> void:
 	pass
 
 
 #endregion
 
 #region Public #####################################################################################
-## Used by the plugin to hide the visual helpers that show the interaction polygon
-## in the 2D Canvas Editor when this node is unselected in the Scene panel.
-func hide_helpers() -> void:
-	if get_node_or_null("InteractionPolygon"):
-		$InteractionPolygon.hide()
-
-
-## Used by the plugin to make visible the visual helpers that show the interaction polygon
-## in the 2D Canvas Editor when this node is unselected in the Scene panel.
-func show_helpers() -> void:
-	if get_node_or_null("InteractionPolygon"):
-		$InteractionPolygon.show()
-
-
-## Hides this Node.[br][br]
+## Hides and disables this node.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_disable() -> Callable:
 	return func(): await disable()
 
 
-## Hides this Node.
+## Hides and disables this node.
 func disable() -> void:
-	self.visible = false
+	visible = false
+	clickable = false
 
 	await get_tree().process_frame
 
 
-## Shows this Node.[br][br]
+## Shows and enables this node.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_enable() -> Callable:
 	return func(): await enable()
 
 
-## Shows this Node.
+## Shows and enables this node.
 func enable() -> void:
-	self.visible = true
+	visible = true
+	clickable = true
 
 	await get_tree().process_frame
 
 
-## Returns the [member description] of the node using [method Object.tr] if
-## [member PopochiuSettings.use_translations] is [code]true[/code]. Otherwise, it returns just the
-## value of [member description].
+## Returns whether this object is currently enabled (visible, clickable and - for good measure
+## - input pickable).
+func is_enabled() -> bool:
+	return visible and clickable and input_pickable
+
+
+## Enables the clickable property and makes the object input pickable.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_enable_clickable() -> Callable:
+	return func(): await enable_clickable()
+
+
+## Enables the clickable property and makes the object input pickable.
+func enable_clickable() -> void:
+	clickable = true
+	input_pickable = true
+
+
+## Disables the clickable property and makes the object not input pickable.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_disable_clickable() -> Callable:
+	return func(): await disable_clickable()
+
+
+## Disables the clickable property and makes the object not input pickable.
+func disable_clickable() -> void:
+	clickable = false
+	input_pickable = false
+
+
+## Returns the [member description] of the node using [method Object.tr] if 
+## [member PopochiuSettings.use_translations] is [code]true[/code]. Otherwise,
+## it returns just the value of [member description].
 func get_description() -> String:
 	if Engine.is_editor_hint():
 		if description.is_empty():
@@ -213,28 +261,29 @@ func get_description() -> String:
 	return PopochiuUtils.e.get_text(description)
 
 
-## Called when the object is left clicked.
+## Called by the engine when the object is left clicked.
 func on_click() -> void:
 	await _on_click()
 
 
-## Called when the object is double clicked.
+## Called by the engine when the object is double clicked.
 func on_double_click() -> void:
 	_reset_double_click()
 	await _on_double_click()
 
 
-## Called when the object is right clicked.
+## Called by the engine when the object is right clicked.
 func on_right_click() -> void:
 	await _on_right_click()
 
 
-## Called when the object is middle clicked.
+## Called by the engine when the object is middle clicked.
 func on_middle_click() -> void:
 	await _on_middle_click()
 
 
-## Called when an [param item] is used on this object.
+## Called by the engine when an [param item] is used on this object.
+## Using an items means clicking on the object while an inventory item is active.
 func on_item_used(item: PopochiuInventoryItem) -> void:
 	await _on_item_used(item)
 	# after item has been used return to normal state
@@ -243,7 +292,9 @@ func on_item_used(item: PopochiuInventoryItem) -> void:
 
 ## Triggers the proper GUI command for the clicked mouse button identified with [param button_idx],
 ## which can be [enum MouseButton].MOUSE_BUTTON_LEFT, [enum MouseButton].MOUSE_BUTTON_RIGHT or
-## [enum MouseButton].MOUSE_BUTTON_MIDDLE.
+## [enum MouseButton].MOUSE_BUTTON_MIDDLE.[br]
+## This is a plumbing method called by the engine when the object is clicked,
+## and it's not intended for game scripts. Use it only if you know what you're doing.
 func handle_command(button_idx: int) -> void:
 	var command: String = PopochiuUtils.e.get_current_command_name().to_snake_case()
 	var prefix := "on_%s"
@@ -268,6 +319,168 @@ func handle_command(button_idx: int) -> void:
 
 	await call(prefix % suffix)
 
+	# Track command usage
+	_increment_command_count(PopochiuUtils.e.current_command)
+
+
+## Smoothly moves the clickable to [param pos] (absolute)in the current room.
+## [param speed] sets the movement speed in pixels per second. [param transition_type] and
+## [param ease_type] control the tweening behavior.
+## [b]Note:[/b] For [PopochiuCharacter], this ignores walkable areas and doesn't affect
+## animation states.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_move_to(
+	pos: Vector2,
+	speed: float = 100.0,
+	transition_type: Tween.TransitionType = Tween.TRANS_LINEAR,
+	ease_type: Tween.EaseType = Tween.EASE_IN_OUT
+) -> Callable:
+	return func(): await move_to(pos, speed, transition_type, ease_type)
+
+
+## Smoothly moves the clickable to [param pos] (absolute) in the current room.
+## [param speed] sets the movement speed in pixels per second. [param transition_type] and
+## [param ease_type] control the tweening behavior.
+## [b]Note:[/b] For [PopochiuCharacter], this ignores walkable areas and doesn't affect
+## animation states.
+func move_to(
+	pos: Vector2,
+	speed: float = 100.0,
+	transition_type: Tween.TransitionType = Tween.TRANS_LINEAR,
+	ease_type: Tween.EaseType = Tween.EASE_IN_OUT
+) -> void:
+	# Ignore if already moving
+	if is_moving:
+		await get_tree().process_frame
+		return
+
+	# Cancel any existing movement tween
+	if _movement_tween and _movement_tween.is_valid():
+		_movement_tween.kill()
+		_movement_tween = null
+
+	# Create new tween
+	_movement_tween = create_tween()
+	_movement_tween.set_trans(transition_type)
+	_movement_tween.set_ease(ease_type)
+	_movement_tween.set_process_mode(Tween.TWEEN_PROCESS_PHYSICS)
+	_movement_tween.set_pause_mode(Tween.TWEEN_PAUSE_BOUND)
+
+	# Calculate duration based on speed and distance
+	var distance: float = position.distance_to(pos)
+	var duration: float = distance / speed if speed > 0.0 else 0.0
+
+	# Start movement
+	is_moving = true
+	movement_started.emit()
+
+	# Create the tween animation
+	_movement_tween.tween_property(self, "position", pos, duration)
+
+	# Await for the movement to me completed
+	await _movement_tween.finished
+
+	# After the movement is completed
+	is_moving = false
+
+	# Sync internal position state
+	_on_position_changed()
+
+	_movement_tween = null
+	movement_ended.emit()
+
+
+## Instantly teleports the clickable to [param pos] (absolute) in the current room.
+## You can set an [param offset] relative to the target position.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_position(pos: Vector2, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_position(pos, offset)
+
+
+## Instantly teleports the clickable to [param pos] (absolute) in the current room.
+## You can set an [param offset] relative to the target position.
+func teleport_to_position(pos: Vector2, offset: Vector2 = Vector2.ZERO) -> void:
+	# Ignore if already moving
+	if is_moving:
+		return
+
+	# Cancel any active movement
+	if _movement_tween and _movement_tween.is_valid():
+		_movement_tween.kill()
+		_movement_tween = null
+
+	# Update position immediately
+	position = pos + offset
+
+	# Sync internal position state
+	_on_position_changed()
+
+	# Notify that movement has ended
+	movement_ended.emit()
+
+
+## Instantly teleports the clickable to the [PopochiuProp] with matching [param id].
+## You can set an [param offset] relative to the target position.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_prop(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_prop(id, offset)
+
+
+## Instantly teleports the clickable to the [PopochiuProp] with matching [param id].
+## You can set an [param offset] relative to the target position.
+func teleport_to_prop(id: String, offset := Vector2.ZERO) -> void:
+	await _teleport_to_node(PopochiuUtils.r.current.get_prop(id), offset)
+
+
+## Instantly teleports the clickable to the [PopochiuHotspot] with matching [param id].
+## You can set an [param offset] relative to the target position.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_hotspot(id, offset)
+
+
+## Instantly teleports the clickable to the [PopochiuHotspot] with matching [param id].
+## You can set an [param offset] relative to the target position.
+func teleport_to_hotspot(id: String, offset := Vector2.ZERO) -> void:
+	await _teleport_to_node(PopochiuUtils.r.current.get_hotspot(id), offset)
+
+
+## Instantly teleports the clickable to the [Marker2D] with matching [param id].
+## You can set an [param offset] relative to the target position.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_teleport_to_marker(id: String, offset := Vector2.ZERO) -> Callable:
+	return func(): await teleport_to_marker(id, offset)
+
+
+## Instantly teleports the clickable to the [Marker2D] with matching [param id].
+## You can set an [param offset] relative to the target position.
+func teleport_to_marker(id: String, offset := Vector2.ZERO) -> void:
+	await _teleport_to_node(PopochiuUtils.r.current.get_marker(id), offset)
+
+
+## Returns [code]true[/code] if the [param command] has ever been invoked on this object.
+## This function is typically used in a command handler to provide different behaviors
+## depending on whether the command has been used before or not.
+func ever_invoked(command: int) -> bool:
+	return _command_usage_count.has(command) and _command_usage_count[command] > 0
+
+
+## Returns [code]true[/code] if this is the first time the [param command] is being invoked on this object.
+## This function is typically used in a command handler to provide different behaviors
+## depending on whether the command has been used before or not.
+func first_invoked(command: int) -> bool:
+	return not ever_invoked(command)
+
+
+## Returns the number of times the [param command] has been invoked on this object.
+func count_invoked(command: int) -> int:
+	return _command_usage_count.get(command, 0)
+
 
 #endregion
 
@@ -287,6 +500,12 @@ func set_room(value: Node2D) -> void:
 #endregion
 
 #region Private ####################################################################################
+# Increments the usage count for the specified command
+func _increment_command_count(command_id: int) -> void:
+	_command_usage_count.get_or_add(command_id, 0)
+	_command_usage_count[command_id] += 1
+
+
 func _on_mouse_entered() -> void:
 	if PopochiuUtils.e.hovered and is_instance_valid(PopochiuUtils.e.hovered) and (
 		PopochiuUtils.e.hovered.get_parent() == self
@@ -327,7 +546,7 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	get_viewport().set_input_as_handled()
 
 	match event_index:
-		MOUSE_BUTTON_LEFT:
+		MOUSE_BUTTON_LEFT,0:
 			if PopochiuUtils.i.active:
 				await on_item_used(PopochiuUtils.i.active)
 			else:
@@ -344,6 +563,29 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 				times_middle_clicked += 1
 
 	PopochiuUtils.e.clicked = null
+
+
+# Instantly move the clickable to the node position
+func _teleport_to_node(node: Node2D, offset: Vector2) -> void:
+	# Ignore if already moving or the node is not valid
+	if is_moving or not is_instance_valid(node):
+		await get_tree().process_frame
+		return
+
+	# Cancel any active movement
+	if _movement_tween and _movement_tween.is_valid():
+		_movement_tween.kill()
+		_movement_tween = null
+
+	position = node.to_global(
+		node.walk_to_point if node is PopochiuClickable else Vector2.ZERO
+	) + offset
+
+	# Sync internal position state
+	_on_position_changed()
+
+	# Notify that movement has ended
+	movement_ended.emit()
 
 
 func _toggle_input() -> void:

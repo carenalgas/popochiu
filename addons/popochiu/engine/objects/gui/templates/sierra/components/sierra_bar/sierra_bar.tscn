@@ -2,7 +2,7 @@
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_26r7d"]
 [ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/gui/components/hover_text/hover_text.tscn" id="1_tlpex"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_bar/sierra_bar.gd" id="2_u87it"]
+[ext_resource type="Script" uid="uid://exausbcedprx" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_bar/sierra_bar.gd" id="2_u87it"]
 
 [node name="SierraBar" type="Control" groups=["popochiu_gui_component"]]
 layout_mode = 3

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dws64ahd0a1s6"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/migrations_panel/migrations_panel.gd" id="1_brkhu"]
+[ext_resource type="Script" uid="uid://b5xwj825itmgf" path="res://addons/popochiu/editor/popups/migrations_panel/migrations_panel.gd" id="1_brkhu"]
 
 [node name="MigrationsPanel" type="Control"]
 layout_mode = 3

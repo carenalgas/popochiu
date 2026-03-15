@@ -17,6 +17,7 @@ enum {
 	ERR_INVALID_ASEPRITE_SPRITESHEET,
 	ERR_NO_ANIMATION_PLAYER_FOUND,
 	ERR_NO_SPRITE_FOUND,
+	ERR_INVALID_SPRITE_NODE,
 	ERR_UNNAMED_TAG_DETECTED,
 	ERR_TAGS_OPTIONS_ARRAY_EMPTY,
 	## Popochiu Object factories errors
@@ -26,6 +27,11 @@ enum {
 	ERR_CANT_CREATE_OBJ_SCRIPT,
 	ERR_CANT_SAVE_OBJ_SCENE,
 	ERR_CANT_SAVE_OBJ_RESOURCE,
+	## TransitionLayer errors
+	ERR_ANIMATION_LIBRARY_NOT_FOUND,
+	ERR_ANIMATION_NOT_FOUND,
+	ERR_ANIMATION_ALREADY_EXISTS,
+	ERR_ANIMATION_PLAY_MODE_UNKNOWN,
 }
 
 
@@ -53,6 +59,8 @@ static func get_error_message(code: int):
 			return "No AnimationPlayer found in target node"
 		ERR_NO_SPRITE_FOUND:
 			return "No sprite found in target node"
+		ERR_INVALID_SPRITE_NODE:
+			return "Specified node is not a valid recipient for animation data (supported nodes: Sprite2D, TextureRect)"
 		ERR_UNNAMED_TAG_DETECTED:
 			return "Unnamed tag detected"
 		ERR_TAGS_OPTIONS_ARRAY_EMPTY:
@@ -70,6 +78,14 @@ static func get_error_message(code: int):
 			return "Can't create new Popochiu object's scene (.tscn)"
 		ERR_CANT_SAVE_OBJ_RESOURCE:
 			return "Can't create new Popochiu object's resource (.tres)"
+		ERR_ANIMATION_NOT_FOUND:
+			return "Animation not found in target node"
+		ERR_ANIMATION_ALREADY_EXISTS:
+			return "Animation name collision in target node"
+		ERR_ANIMATION_LIBRARY_NOT_FOUND:
+			return "AnimationLibrary not found in target node"
+		ERR_ANIMATION_PLAY_MODE_UNKNOWN:
+			return "Animation play mode unknown"
 		# Generic error message
 		_:
 			return "Import failed with code %d" % code

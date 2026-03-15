@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends "../popochiu_popup.gd"
 
 

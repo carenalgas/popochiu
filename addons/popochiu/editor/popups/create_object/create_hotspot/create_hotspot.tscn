@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7nvdcut38577"]
+[gd_scene format=3 uid="uid://b7nvdcut38577"]
 
 [ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_feyc5"]
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_hotspot/create_hotspot.gd" id="2_hf5i2"]
+[ext_resource type="Script" uid="uid://c52jb8s6v7oql" path="res://addons/popochiu/editor/popups/create_object/create_hotspot/create_hotspot.gd" id="2_hf5i2"]
 
-[node name="CreateHotspotConfirmation" instance=ExtResource("1_feyc5")]
+[node name="CreateHotspotConfirmation" unique_id=1504862508 instance=ExtResource("1_feyc5")]
 script = ExtResource("2_hf5i2")
 title = "Create PopochiuHotspot"
 

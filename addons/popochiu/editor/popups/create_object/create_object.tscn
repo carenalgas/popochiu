@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c1pfl2gwjjot5"]
 
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_object.gd" id="1_ksc3t"]
+[ext_resource type="Script" uid="uid://nbm3qo28mrba" path="res://addons/popochiu/editor/popups/create_object/create_object.gd" id="1_ksc3t"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kdu1t"]
 
@@ -40,6 +40,7 @@ draw_control_chars = true
 
 [node name="ErrorContainer" type="HBoxContainer" parent="PanelContainer/VBoxContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 
 [node name="ErrorIcon" type="TextureRect" parent="PanelContainer/VBoxContainer/ErrorContainer"]

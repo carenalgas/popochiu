@@ -1,18 +1,19 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIDialog
 extends Node
-## Provides access to the [PopochiuDialog]s in the game. Access with [b]D[/b] (e.g.
+## Provides access to the project's [PopochiuDialog]s via the singleton [b]D[/b] (for example:
 ## [code]D.AskAboutLoom.start()[/code]).
 ##
-## Use it to work with branching dialogs and listen to options selection. Its script is
-## [b]i_dialog.gd[/b].[br][br]
+## Use this interface to start and manage branching dialogs and to listen for option selection
+## events.
 ##
-## Some things you can do with it:[br][br]
-## [b]•[/b] Start a branching dialog.[br]
-## [b]•[/b] Know when a dialog has finished, or an option in the current list of options is
-## selected.[br]
-## [b]•[/b] Create a list of options on the fly.[br][br]
+## Capabilities include:
 ##
-## Example:
+## - Start a branching dialog.[br]
+## - Detect when a dialog finishes or when an option is selected.[br]
+## - Create and show an inline list of options at runtime.
+##
+## [b]Use examples:[/b]
 ## [codeblock]
 ## func on_click() -> void:
 ##    # Create a dialog with 3 options
@@ -31,28 +32,31 @@ extends Node
 ##            await C.player.say("Maybe later...")
 ## [/codeblock]
 
-## Emitted when [param dlg] starts.
+
+## Emitted when [param dlg] starts playing.
 signal dialog_started(dlg: PopochiuDialog)
 ## Emitted when an [param opt] is selected in the current dialog.
 signal option_selected(opt: PopochiuDialogOption)
 ## Emitted when [param dlg] finishes.
 signal dialog_finished(dlg: PopochiuDialog)
-## Emitted when the list of available [param options] in the current dialog is requested.
+## Emitted when the list of available [param options] for the current dialog is requested.
 signal dialog_options_requested(options: Array[PopochiuDialogOption])
-## Emitted when an inline dialog is created based on a list of [param options].
+## Emitted when an inline dialog is created. It carries the list of configured [param options].
 signal inline_dialog_requested(options: Array)
 
-## Whether a dialog is playing.
+## Whether a dialog is currently active.
 var active := false
-## Stores data about the state of each [PopochiuDialog] in the game. The key of each entry is the
-## [member PopochiuDialog.script_name] of the dialog.
+## Stores the runtime state of every [PopochiuDialog] in the project.
+## Keys are each dialog's [member PopochiuDialog.script_name].
 var trees := {}
-## Provides access to the dialog that is currently playing.
+## Currently running dialog instance. Setter handles lifecycle (waits for the current dialog
+## to finish) and state saving.[br]
+## Can be [code]null[/code] if no dialog is active.
 var current_dialog: PopochiuDialog = null : set = set_current_dialog
-## Provides access to the currently selected option in the dialog that is currently playing.
+## Currently selected option in the active dialog.
 var selected_option: PopochiuDialogOption = null
-## Provides access to the branching dialog that was played before the current one. I.e. Could be
-## used to return to the previous dialog after exhausting the options in the currently playing one.
+## The previous branch that has been ran in the dialog tree;
+## useful to return after exhausting options.
 var prev_dialog: PopochiuDialog = null
 
 
@@ -64,8 +68,9 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Displays a list of [param options], similar to a branching dialog, and returns the selected
-## [PopochiuDialogOption].
+## Displays an inline list of [PopochiuDialogOption] [param options] and returns the selected one.
+## While the inline dialog is shown, the dialog system is marked active. Restores previous dialog
+## option handling once selection completes.
 func show_inline_dialog(options: Array) -> PopochiuDialogOption:
 	active = true
 	
@@ -85,17 +90,24 @@ func show_inline_dialog(options: Array) -> PopochiuDialogOption:
 	return pdo
 
 
-## Halts the currently playing [PopochiuDialog].
+## Stops the currently running [PopochiuDialog] by emitting [signal dialog_finished].
 func finish_dialog() -> void:
 	dialog_finished.emit(current_dialog)
 
 
-## Makes the Player-controlled Character (PC) to say the selected option in a branching dialog.
+## Makes the Player-controlled Character (PC) speak the text of [member selected_option].
 func say_selected() -> void:
 	await PopochiuUtils.c.player.say(selected_option.text)
 
 
-## Transforms any text to gibberish preserving bbcode tags
+## Converts [param input_string] to gibberish while preserving bbcode tags. Returns the transformed [String].
+##
+## Main use case:[br]
+##  - mask possible spoilers in pre-release or demo builds
+##
+## Other uses:[br]
+##  - make clear that a character is speaking a language unknown to the player until a translation item is found[br]
+##  - create humorous effect when the player is confused, drunk or otherwise not fully aware[br]
 func create_gibberish(input_string: String) -> String:
 	var output_text := ""
 	var bbcode := false
@@ -121,13 +133,9 @@ func create_gibberish(input_string: String) -> String:
 	return output_text
 
 
-## @deprecated
-## Now it is [method get_instance].
-func get_dialog_instance(script_name: String) -> PopochiuDialog:
-	return get_instance(script_name)
-
-
-## Gets the instance of the [PopochiuDialog] identified with [param script_name].
+## Loads and returns the [PopochiuDialog] resource identified by [param script_name] as defined in
+## Instantiates and returns the [PopochiuDialog] resource referenced by [param script_name] from
+## project data. Logs an error and returns [code]null[/code] if not found.
 func get_instance(script_name: String) -> PopochiuDialog:
 	var tres_path: String = PopochiuResources.get_data_value("dialogs", script_name, "")
 
@@ -135,7 +143,9 @@ func get_instance(script_name: String) -> PopochiuDialog:
 		PopochiuUtils.print_error("Dialog [b]%s[/b] doesn't exist in the project" % script_name)
 		return null
 
-	return load(tres_path)
+	var d := load(tres_path)
+	d.build_options()
+	return d
 
 
 #endregion

@@ -13,7 +13,11 @@ static var old_settings_file := PopochiuResources.GAME_PATH.path_join("popochiu_
 
 #region Public #####################################################################################
 static func get_migrations_count() -> int:
-	return DirAccess.get_files_at(MIGRATIONS_PATH).size()
+	# Returns the number of migration files in the migrations folder filtering the file name so
+	# it only returns files that start with "popochiu_migration_" and end with ".gd"
+	return Array(DirAccess.get_files_at(MIGRATIONS_PATH)).filter(
+		func (file_name: String) -> bool: return file_name.begins_with("popochiu_migration_") and file_name.ends_with(".gd")
+	).size()
 
 
 ## Returns the game folder path. If this returns [member POPOCHIU_PATH], then the project is from
@@ -201,6 +205,53 @@ static func replace_in_scripts(
 	var replaced_matches := 0
 	for dic: Dictionary in replacements:
 		replaced_matches += 1 if replace_text_in_files(dic.from, dic.to, scripts_paths) else 0
+	
+	return replaced_matches > 0
+
+
+## Looks in the text of each file in [param file_paths] for regex matches of [param pattern], and
+## replaces them by [param to]. If any replacement was done, returns [code]true[/code].
+static func replace_regex_in_files(pattern: String, to: String, file_paths: Array) -> bool:
+	var regex := RegEx.new()
+	regex.compile(pattern)
+	
+	return PopochiuUtils.any_exhaustive(
+		file_paths,
+		func (file_path: String) -> bool:
+			if not FileAccess.file_exists(file_path):
+				return true
+			
+			var file_read := FileAccess.open(file_path, FileAccess.READ)
+			var text := file_read.get_as_text()
+			file_read.close()
+			
+			var result := regex.sub(text, to, true)
+			if result == text:
+				return false
+			
+			var file_write := FileAccess.open(file_path, FileAccess.WRITE)
+			file_write.store_string(result)
+			file_write.close()
+			return true
+	)
+
+
+## Replaces all regex matches in all scripts of the game with the [param replacements].
+## [param replacements] is an [Array] of [Dictionary] with the keys [code]pattern[/code] (regex)
+## and [code]to[/code] to replace in the scripts. The [param folders_to_ignore] is an [Array] of
+## folder names that should be ignored when searching for scripts.
+static func replace_regex_in_scripts(
+	replacements: Array[Dictionary], folders_to_ignore: Array[String] = []
+) -> bool:
+	var scripts_paths := get_absolute_file_paths_for_file_extensions(
+		PopochiuResources.GAME_PATH, ["gd"], folders_to_ignore
+	)
+	
+	var replaced_matches := 0
+	for dic: Dictionary in replacements:
+		replaced_matches += 1 if replace_regex_in_files(
+			dic.pattern, dic.to, scripts_paths
+		) else 0
 	
 	return replaced_matches > 0
 

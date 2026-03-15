@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://dgxw0s4l2txlw"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_yov3q"]
+
+[node name="9VerbInventorySlotHighRes" type="PanelContainer"]
+custom_minimum_size = Vector2(221, 130)
+offset_right = 40.0
+offset_bottom = 24.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_yov3q")

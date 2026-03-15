@@ -1,0 +1,279 @@
+[gd_scene load_steps=7 format=3 uid="uid://bcanby6n3eahm"]
+
+[sub_resource type="StyleBoxEmpty" id="1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wwoxk"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Image" id="Image_vemq8"]
+data = {
+"data": PackedByteArray(255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 93, 93, 41, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0),
+"format": "RGBA8",
+"height": 16,
+"mipmaps": false,
+"width": 16
+}
+
+[sub_resource type="ImageTexture" id="ImageTexture_dkl0r"]
+image = SubResource("Image_vemq8")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_snao5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctsm1"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(1, 0.364706, 0.364706, 1)
+draw_center = false
+corner_detail = 1
+
+[node name="AsepriteImporterInspectorDock" type="PanelContainer"]
+offset_right = 14.0
+offset_bottom = 14.0
+theme_override_styles/panel = SubResource("1")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="Importer" type="VBoxContainer" parent="Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Source" type="HBoxContainer" parent="Margin/Importer"]
+layout_mode = 2
+tooltip_text = "Location of the Aseprite (*.ase, *.aseprite)  source file."
+
+[node name="Label" type="Label" parent="Margin/Importer/Source"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Aseprite File"
+
+[node name="SourceButton" type="Button" parent="Margin/Importer/Source"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "[empty]"
+clip_text = true
+
+[node name="RescanButton" type="Button" parent="Margin/Importer/Source"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Rescan"
+
+[node name="FilterBulkBtnContainer" type="PanelContainer" parent="Margin/Importer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_wwoxk")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Margin/Importer/FilterBulkBtnContainer"]
+layout_mode = 2
+
+[node name="FilterField" type="LineEdit" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Filter by name..."
+keep_editing_on_text_submit = true
+emoji_menu_enabled = false
+clear_button_enabled = true
+
+[node name="VisibleBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+tooltip_text = "This prop will be visible"
+toggle_mode = true
+icon = SubResource("ImageTexture_dkl0r")
+flat = true
+
+[node name="ClickableBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+tooltip_text = "This prop will be clickable"
+toggle_mode = true
+icon = SubResource("ImageTexture_dkl0r")
+flat = true
+
+[node name="AutoplaysBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+tooltip_text = "Set animation as autoplaying"
+toggle_mode = true
+icon = SubResource("ImageTexture_dkl0r")
+flat = true
+
+[node name="FilterSeparator" type="Panel" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_snao5")
+
+[node name="ImportBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+tooltip_text = "Import this animation"
+toggle_mode = true
+icon = SubResource("ImageTexture_dkl0r")
+flat = true
+
+[node name="LoopsBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+tooltip_text = "Set animation as looping"
+toggle_mode = true
+icon = SubResource("ImageTexture_dkl0r")
+flat = true
+
+[node name="FinalSpacer" type="Panel" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+
+[node name="TagsScrollContainer" type="ScrollContainer" parent="Margin/Importer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 150)
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Margin/Importer/TagsScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="TagsInfo" type="Panel" parent="Margin/Importer/TagsScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(222, 50)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
+
+[node name="InfoLabel" type="Label" parent="Margin/Importer/TagsScrollContainer/VBoxContainer/TagsInfo"]
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+text = "To import animations, select a properly tagged Aseprite source file."
+autowrap_mode = 3
+
+[node name="Tags" type="VBoxContainer" parent="Margin/Importer/TagsScrollContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="OptionsContainer" type="PanelContainer" parent="Margin/Importer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Options" type="VBoxContainer" parent="Margin/Importer/OptionsContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VisibleLayers" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options"]
+layout_mode = 2
+tooltip_text = "If active, layers not visible in the source file won't be included in the final image."
+
+[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/VisibleLayers"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Only visible layers"
+
+[node name="VisibleLayersCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/VisibleLayers"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="WipeOldAnimations" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options"]
+layout_mode = 2
+tooltip_text = "If active, layers not visible in the source file won't be included in the final image."
+
+[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/WipeOldAnimations"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+tooltip_text = "Set this to OFF if you want to add new animations on top of old ones. Anims with same name will be updated."
+mouse_filter = 0
+text = "Wipe old animations"
+
+[node name="WipeOldAnimationsCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/WipeOldAnimations"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
+[node name="ButtonsBox" type="HBoxContainer" parent="Margin/Importer"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="Reset" type="Button" parent="Margin/Importer/ButtonsBox"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Reset all preferences"
+flat = true
+
+[node name="Import" type="Button" parent="Margin/Importer/ButtonsBox"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Import selected animations"
+text = "Import"
+
+[node name="Warning" type="VBoxContainer" parent="Margin"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Margin/Warning"]
+layout_mode = 2
+
+[node name="WarningPanel" type="Panel" parent="Margin/Warning/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(222, 65)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
+
+[node name="WarningLabel" type="Label" parent="Margin/Warning/HBoxContainer/WarningPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 42)
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(0.768627, 0.423529, 0.443137, 1)
+text = "Error loading Aseprite Importer!
+Check Output panel for details."
+horizontal_alignment = 1
+
+[connection signal="pressed" from="Margin/Importer/Source/SourceButton" to="." method="_on_source_pressed"]
+[connection signal="pressed" from="Margin/Importer/Source/RescanButton" to="." method="_on_rescan_pressed"]
+[connection signal="text_changed" from="Margin/Importer/FilterBulkBtnContainer/HBoxContainer/FilterField" to="." method="_on_filter_text_changed"]
+[connection signal="pressed" from="Margin/Importer/OptionsContainer/Options/VisibleLayers/VisibleLayersCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="Margin/Importer/OptionsContainer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="Margin/Importer/ButtonsBox/Reset" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="Margin/Importer/ButtonsBox/Import" to="." method="_on_import_pressed"]

@@ -37,6 +37,8 @@ const CreateObject = preload(CREATE_OBJECT_FOLDER + "create_object.gd")
 const MigrationsPanel = preload(
 	"res://addons/popochiu/editor/popups/migrations_panel/migrations_panel.gd"
 )
+# ---- Utilities -------------------------------------------------------------------------------
+const EMPTY_STRING := ""
 
 static var signal_bus := PopochiuSignalBus.new()
 static var ei := EditorInterface
@@ -44,6 +46,7 @@ static var undo_redo: EditorUndoRedoManager = null
 static var dock: Panel = null
 
 static var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
+static var _setup_dialog_instance: ConfirmationDialog = null
 
 
 #region Public #####################################################################################
@@ -65,48 +68,48 @@ static func show_delete_confirmation(
 ) -> void:
 	var dialog := ConfirmationDialog.new()
 	dialog.title = content.title
-	
+
 	dialog.confirmed.connect(
 		func () -> void:
 			if content.on_confirmed:
 				content.on_confirmed.call()
-			
+
 			dialog.queue_free()
 	)
 	dialog.canceled.connect(
 		func () -> void:
 			if content.on_canceled:
 				content.on_canceled.call()
-			
+
 			dialog.queue_free()
 	)
 	dialog.about_to_popup.connect(content.on_about_to_popup)
 	dialog.add_child(content)
-	
+
 	await show_dialog(dialog, min_size)
 
 
 static func show_progress(min_size := Vector2i(640, 80)) -> Progress:
 	var dialog := AcceptDialog.new()
 	var content: Progress = PROGRESS_DIALOG_SCENE.instantiate()
-	
+
 	dialog.borderless = true
 	dialog.add_child(content)
 	dialog.get_ok_button().hide()
 	await show_dialog(dialog, min_size)
-	
+
 	return content
 
 
 static func show_creation_popup(scene: PackedScene, min_size := Vector2i(640, 180)) -> void:
 	var content: CreateObject = scene.instantiate()
 	var dialog := ConfirmationDialog.new()
-	
+
 	content.content_changed.connect(
 		func () -> void:
 			content.custom_minimum_size = content.get_child(0).size
 			content.size = content.get_child(0).size
-			
+
 			dialog.reset_size()
 			dialog.move_to_center()
 	)
@@ -115,30 +118,45 @@ static func show_creation_popup(scene: PackedScene, min_size := Vector2i(640, 18
 	dialog.about_to_popup.connect(content.on_about_to_popup)
 	dialog.add_child(content)
 	await show_dialog(dialog, min_size)
-	
+
 	dialog.register_text_enter(content.input)
 
 
-static func show_setup(is_welcome := false) -> void:
+static func show_setup() -> void:
+	if is_instance_valid(_setup_dialog_instance):
+		await show_dialog(_setup_dialog_instance)
+
+		return
+
 	var dialog := ConfirmationDialog.new()
 	var content := SETUP_SCENE.instantiate()
-	
-	dialog.title = "Setup"
-	dialog.confirmed.connect(content.on_close)
+
+	dialog.title = "Setup your game"
+	dialog.ok_button_text = "Create"
+	dialog.dialog_hide_on_ok = false
+	dialog.confirmed.connect(
+		func () -> void:
+			await content.on_confirm()
+			# The assignment must be done here, since doing it when the ConfirmationDialog is
+			# instantiated causes the engine to crash after trying to create Popochiu objects following
+			# the installation process.
+			_setup_dialog_instance = dialog
+			_setup_dialog_instance.hide()
+	)
 	dialog.close_requested.connect(content.on_close)
 	dialog.about_to_popup.connect(content.on_about_to_popup)
-	
+
 	dialog.add_child(content)
 	dock.add_child.call_deferred(dialog)
 	await dialog.ready
-	
-	content.define_content(is_welcome)
+
+	content.define_content()
 	content.size_calculated.connect(
 		func () -> void:
 			dialog.reset_size()
 			dialog.move_to_center()
 	)
-	
+
 	await show_dialog(dialog, content.custom_minimum_size)
 
 
@@ -150,7 +168,7 @@ static func show_migrations(
 	content.anchors_preset = Control.PRESET_FULL_RECT
 	dialog.add_child(content)
 	await show_dialog(dialog, min_size)
-	
+
 	return dialog
 
 
@@ -158,7 +176,7 @@ static func show_dialog(dialog: Window, min_size := Vector2i.ZERO) -> void:
 	if not dialog.is_inside_tree():
 		dock.add_child.call_deferred(dialog)
 		await dialog.ready
-	
+
 	dialog.popup_centered(min_size * EditorInterface.get_editor_scale())
 
 
@@ -211,14 +229,23 @@ static func is_marker(node: Node) -> bool:
 	return node is Marker2D
 
 
-static func is_popochiu_obj_polygon(node: Node):
+static func is_popochiu_obj_polygon(node: Node) -> bool:
 	return node.is_in_group(POPOCHIU_OBJECT_POLYGON_GROUP)
+
+
+static func is_popochiu_obstacle_polygon(node: Node) -> bool:
+	return node is NavigationObstacle2D
 
 
 # Context-checking functions
 static func is_editing_room() -> bool:
 	# If the open scene in the editor is a PopochiuRoom, return true
 	return is_room(ei.get_edited_scene_root())
+
+
+static func is_editing_character() -> bool:
+	# If the open scene in the editor is a PopochiuRoom, return true
+	return is_character(ei.get_edited_scene_root())
 
 
 # Quick-access functions
@@ -233,7 +260,7 @@ static func get_first_child_by_group(node: Node, group: StringName) -> Node:
 
 static func get_all_children(node, children := []) -> Array:
 	if node == null:
-		return []
+		return children # empty array
 	children.push_back(node)
 	for child in node.get_children():
 		children = get_all_children(child, children)
@@ -262,10 +289,10 @@ static func filesystem_scanned() -> void:
 static func pack_scene(node: Node, path := "") -> int:
 	var packed_scene := PackedScene.new()
 	packed_scene.pack(node)
-	
+
 	if path.is_empty():
 		path = node.scene_file_path
-	
+
 	return ResourceSaver.save(packed_scene, path)
 
 
@@ -275,12 +302,12 @@ static func remove_recursive(folder_path: String) -> bool:
 		# Delete subfolders and their contents recursively in folder_path
 		for subfolder_path: String in get_absolute_directory_paths_at(folder_path):
 			remove_recursive(subfolder_path)
-		
+
 		# Delete all files in folder_path
 		for file_path: String in get_absolute_file_paths_at(folder_path):
 			if DirAccess.remove_absolute(file_path) != OK:
 				return false
-		
+
 		# Once all files are deleted in folder_path, remove folder_path
 		if DirAccess.remove_absolute(folder_path) != OK:
 			return false
@@ -290,22 +317,22 @@ static func remove_recursive(folder_path: String) -> bool:
 ## Helper function to get the absolute directory paths for all folders under [param folder_path].
 static func get_absolute_directory_paths_at(folder_path: String) -> Array:
 	var dir_array : PackedStringArray = []
-	
+
 	if DirAccess.dir_exists_absolute(folder_path):
 		for folder in DirAccess.get_directories_at(folder_path):
 			dir_array.append(folder_path.path_join(folder))
-	
+
 	return Array(dir_array)
 
 
 ## Helper function to get the absolute file paths for all files under [param folder_path].
 static func get_absolute_file_paths_at(folder_path: String) -> PackedStringArray:
 	var file_array : PackedStringArray = []
-	
+
 	if DirAccess.dir_exists_absolute(folder_path):
 		for file in DirAccess.get_files_at(folder_path): 
 			file_array.append(folder_path.path_join(file))
-	
+
 	return file_array
 
 

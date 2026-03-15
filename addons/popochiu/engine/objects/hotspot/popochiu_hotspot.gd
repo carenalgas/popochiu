@@ -1,3 +1,4 @@
+# @popochiu-docs-category room-objects
 @tool
 @icon('res://addons/popochiu/icons/hotspot.png')
 class_name PopochiuHotspot
@@ -15,6 +16,23 @@ extends PopochiuClickable
 func _ready() -> void:
 	super()
 	add_to_group('hotspots')
+	
+	# Connect movement signals to virtual methods
+	if not Engine.is_editor_hint():
+		movement_started.connect(_on_movement_started)
+		movement_ended.connect(_on_movement_ended)
 
 
 #endregion
+
+#region Virtual ####################################################################################
+## Called when the hotspot starts moving.[br]
+## Override this to add custom behavior or update the game state.
+func _on_movement_started() -> void:
+	pass
+
+
+## Called when the hotspot stops moving.[br]
+## Override this to add custom behavior or update the game state.
+func _on_movement_ended() -> void:
+	pass

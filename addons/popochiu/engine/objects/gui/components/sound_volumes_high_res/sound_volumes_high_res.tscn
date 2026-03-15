@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://cei3ewrijkiq0"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_6f8u4"]
+[ext_resource type="Script" uid="uid://we6jrf2eyij4" path="res://addons/popochiu/engine/objects/gui/components/sound_volumes/sound_volumes.gd" id="2_fu0rr"]
+
+[node name="SoundVolumesHighRes" type="GridContainer" groups=["popochiu_gui_component"]]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_6f8u4")
+columns = 2
+script = ExtResource("2_fu0rr")
+
+[node name="ChannelsContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="SlidersContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16

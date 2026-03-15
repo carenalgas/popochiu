@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Button
 
 @export var command: NineVerbCommands.Commands = NineVerbCommands.Commands.WALK_TO

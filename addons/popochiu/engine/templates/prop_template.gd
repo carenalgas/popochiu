@@ -1,72 +1,91 @@
+# @popochiu-docs-ignore-class
 @tool
 extends PopochiuProp
-# You can use E.queue([]) to trigger a sequence of events.
-# Use await E.queue([]) if you want to pause the execution of
-# the function until the sequence of events finishes.
+# You can use `E.queue([])` in any of the methods in this script to trigger a sequence of events.
+# Use `await E.queue([])` to pause execution until the sequence completes.
 
 
 #region Virtual ####################################################################################
-# When the node is clicked
+# Called when the prop is clicked
 func _on_click() -> void:
-	# Replace the call to E.command_fallback() to implement your code.
+	# Replace the call to E.command_fallback() with your own logic.
 	PopochiuUtils.e.command_fallback()
-	# For example, you can make the player character walk to this prop, gaze at it, and then say
-	# something:
+	# Example: make the player walk to this prop, face it, then say a line:
 #	await C.player.walk_to_clicked()
 #	await C.player.face_clicked()
 #	await C.player.say("Not picking that up!")
 
 
+# Called when the prop is double-clicked
 func _on_double_click() -> void:
 	# Replace the call to E.command_fallback() with your code.
 	PopochiuUtils.e.command_fallback()
 	# For example, you could make the player instantly do something instead of walking there first
 
 
-# When the node is right clicked
+# Called when the prop is right-clicked
 func _on_right_click() -> void:
-	# Replace the call to E.command_fallback() to implement your code.
+	# Replace the call to E.command_fallback() with your own logic.
 	PopochiuUtils.e.command_fallback()
-	# For example, you can make the player character gaze at this prop and then say something:
+	# Example: make the player face this prop and say a line:
 #	await C.player.face_clicked()
 #	await C.player.say("A deck of cards")
 
 
-# When the node is middle clicked
+# When the prop is middle clicked
 func _on_middle_click() -> void:
 	# Replace the call to E.command_fallback() to implement your code.
 	PopochiuUtils.e.command_fallback()
 
 
-# When the node is clicked and there is an inventory item selected
+# Called when the prop is clicked while an inventory item is selected
 func _on_item_used(_item: PopochiuInventoryItem) -> void:
-	# Replace the call to E.command_fallback() to implement your code.
+	# Replace the call to E.command_fallback() with your own logic.
 	PopochiuUtils.e.command_fallback()
-	# For example, you can make the player character say something when the Key item is used in this
-	# prop. Note that you have to change the name of the `_item` parameter to `item`.
-#	if item == I.Key:
-#		await C.player.say("I can't do that")
+	# Example: if the Key is used on this prop, make the player speak.
+#	if _item == I.Key:
+#		await C.player.say("This stuff has no lock!")
 
 
-# When an inventory item linked to this Prop (link_to_item) is removed from
-# the inventory (i.e. when it is used in something that makes use of the object).
+# Called when an inventory item linked to this Prop (`link_to_item`) is removed
+# from the inventory.
 func _on_linked_item_removed() -> void:
 	pass
 
 
-# When an inventory item linked to this Prop (link_to_item) is discarded from
-# the inventory (i.e. when the player throws the object out of the inventory).
+# Called when an inventory item linked to this Prop (`link_to_item`) is discarded
+# from the inventory.
 func _on_linked_item_discarded() -> void:
+	pass
+
+
+# Called when the prop starts moving
+func _on_movement_started() -> void:
+	pass
+
+
+# Called when the prop stops moving
+func _on_movement_ended() -> void:
 	pass
 
 
 #endregion
 
 #region Public #####################################################################################
-# You can add here functions triggered by the GUI commands. For example, if your GUI has a command
-# for look_at, you could have the function:
+# Add functions here that are triggered by GUI commands.
+#
+# If you name the functions following the `on_<command_id>` pattern, they will be automatically
+# called when the corresponding command is triggered in the GUI.
+#
+# For example, if your GUI provides a `look_at` command you could add:
+#
 #func on_look_at() -> void:
-	#pass
+#	pass
+#
+# This function will be called whenever the `look_at` command is triggered in the GUI while this
+# prop is the target.
+# This keeps the code way more tidy and organized with GUIs with many different commands,
+# as opposed to having a single `match` statement in the general-use methods.
 
 
 #endregion

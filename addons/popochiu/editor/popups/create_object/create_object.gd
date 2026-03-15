@@ -28,6 +28,8 @@ func _ready() -> void:
 	
 	error_container.hide()
 
+	input.call_deferred("grab_focus")
+
 
 #endregion
 
@@ -66,7 +68,11 @@ func create() -> void:
 	var created_object := await _create()
 	if not created_object or not is_instance_valid(created_object):
 		return
-	await PopochiuEditorHelper.filesystem_scanned()
+	
+	# Fix #481: Scan the filesystem directly instead of using the PopochiuEditorHelper function
+	# because it was being cancelled due to a script reload.
+	EditorInterface.get_resource_filesystem().scan.call_deferred()
+	await EditorInterface.get_resource_filesystem().filesystem_changed
 	
 	# Open the scene in the editor and select the file in the FileSystem dock ----------------------
 	if created_object is Node:

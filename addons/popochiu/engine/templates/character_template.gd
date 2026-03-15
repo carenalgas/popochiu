@@ -1,8 +1,8 @@
+# @popochiu-docs-ignore-class
 @tool
 extends PopochiuCharacter
-# You can use E.queue([]) to trigger a sequence of events.
-# Use await E.queue([]) if you want to pause the execution of
-# the function until the sequence of events finishes.
+# You can use `E.queue([])` in any of the methods in this script to trigger a sequence of events.
+# Use `await E.queue([])` to pause execution until the sequence completes.
 
 const Data := preload('character_state_template.gd')
 
@@ -10,86 +10,119 @@ var state: Data = null
 
 
 #region Virtual ####################################################################################
-# When the room in which this node is located finishes being added to the tree
+# Called when the room where this character is located has finished being added to the scene tree.
 func _on_room_set() -> void:
 	pass
 
 
-# When the node is clicked
+# Called when the character is clicked
 func _on_click() -> void:
-	# Replace the call to E.command_fallback() to implement your code.
+	# Replace the call to E.command_fallback() with your own logic.
 	PopochiuUtils.e.command_fallback()
-	# For example, you can make the player character walk to this character, gaze at it, and then
-	# say something:
+	# Example: make the player walk to this character, face them, then say a line.
 #	await C.player.walk_to_clicked()
 #	await C.player.face_clicked()
 #	await C.player.say("Hi!")
 
 
+# Called when the character is double-clicked
 func _on_double_click() -> void:
 	# Replace the call to E.command_fallback() with your code.
 	PopochiuUtils.e.command_fallback()
-	# For example, you could make the player instantly do something instead of walking there first
+	# Example: teleport the player to the character.
+#	C.player.teleport_to_character(self)
 
 
-# When the node is right clicked
+# Called when the character is right-clicked
 func _on_right_click() -> void:
-	# Replace the call to E.command_fallback() to implement your code.
+	# Replace the call to E.command_fallback() with your own logic.
 	PopochiuUtils.e.command_fallback()
-	# For example, you can make the player character gaze at this character and then say something:
+	# Example: make the player face the character and describe them.
 #	await C.player.face_clicked()
-#	await C.player.say("Is someone...")
+#	await C.player.say("Mmmh, dude looks rad...")
 
 
-# When the node is middle clicked
+# Called when the character is middle clicked
 func _on_middle_click() -> void:
 	# Replace the call to E.command_fallback() to implement your code.
 	PopochiuUtils.e.command_fallback()
+	# Example: make the player say something without facing the character.
+#	await C.player.say("I don't want to talk to this guy")
 
 
-# When the node is clicked and there is an inventory item selected
+# Called when the character is clicked while an inventory item is selected
 func _on_item_used(_item: PopochiuInventoryItem) -> void:
-	# Replace the call to E.command_fallback() to implement your code.
+	# Replace the call to E.command_fallback() with your own logic.
 	PopochiuUtils.e.command_fallback()
-	# For example, you can make the player character say something when the Key item is used in this
-	# character. Note that you have to change the name of the `_item` parameter to `item`.
-#	if item == I.Key:
-#		await C.player.say("I don't want to give up my key")
+	# Example: if the player uses a Key on this character, make the player say something.
+#	if _item == I.Key:
+#		await C.player.say("I don't want to give my key away!")
 
 
-# Use it to play the idle animation for the character
+# Override this to alter the idle animation or hook custom logic to it. 
+# By default, it plays the "idle" animation from the character's Sprite.
 func _play_idle() -> void:
+	# If you want to preserve the default idle behavior, make sure to keep
+	# the call to `super()` in your override.
 	super()
 
 
-# Use it to play the walk animation for the character
-# target_pos can be used to know the movement direction
+# Override this to alter the walk animation or hook custom logic to it. 
+# `target_pos` can be used to determine the movement direction.
+# By default, it plays the "walk" animation from the character's Sprite.
 func _play_walk(target_pos: Vector2) -> void:
+	# If you want to preserve the default walking behavior, make sure to keep
+	# the call to `super(target_pos)` in your override.
 	super(target_pos)
 
 
-# Use it to play the talk animation for the character
+# Override this to alter the talk animation or hook custom logic to it.
+# By default, it plays the "talk" animation from the character's Sprite.
 func _play_talk() -> void:
+	# If you want to preserve the default talk behavior, make sure to keep
+	# the call to `super()` in your override.
 	super()
 
 
-# Use it to play the grab animation for the character
+# Override this to alter the grab animation or hook custom logic to it.
+# By default, it plays the "grab" animation from the character's Sprite.
 func _play_grab() -> void:
+	# If you want to preserve the default grab behavior, make sure to keep
+	# the call to `super()` in your override.
 	super()
+
+
+# Called when the character starts moving.
+# Implement any logic you want to trigger at the start of movement here.
+# For example, you could play a sound effect or make something happen in the room.
+func _on_movement_started() -> void:
+	pass
 
 
 # Called when the character stops moving
-func _on_move_ended() -> void:
+# Implement any logic you want to trigger at the start of movement here.
+# For example, you could play a sound effect or make something happen in the room.
+func _on_movement_ended() -> void:
 	pass
 
 
 #endregion
 
 #region Public #####################################################################################
-# You can add here functions triggered by the GUI commands. For example, if your GUI has a command
-# for look_at, you could have the function:
+# Add functions here that are triggered by GUI commands.
+#
+# If you name the functions following the `on_<command_id>` pattern, they will be automatically
+# called when the corresponding command is triggered in the GUI.
+#
+# For example, if your GUI provides a `look_at` command you could add:
+#
 #func on_look_at() -> void:
-	#pass
+#	pass
+#
+# This function will be called whenever the `look_at` command is triggered in the GUI while this
+# character is the target.
+# This keeps the code way more tidy and organized with GUIs with many different commands,
+# as opposed to having a single `match` statement in the general-use methods.
 
 
 #endregion

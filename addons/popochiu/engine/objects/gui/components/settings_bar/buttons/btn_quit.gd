@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends PopochiuSettingsBarButton
 
 #region Godot ######################################################################################

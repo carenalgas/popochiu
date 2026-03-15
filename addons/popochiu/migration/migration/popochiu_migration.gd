@@ -32,6 +32,10 @@ func _init() -> void:
 #endregion
 
 #region Virtual ####################################################################################
+func _is_migration_needed() -> bool:
+	return true
+
+
 func _do_migration() -> bool:
 	return false
 
@@ -60,7 +64,9 @@ func get_migration_name() -> String:
 ## Returns [true] if the current Popochiu migration version is newer than the user's migration
 ## version, which means a migration is needed.
 func is_migration_needed() -> bool:
-	return _version > PopochiuMigrationHelper.get_user_migration_version()
+	return (
+		_version > PopochiuMigrationHelper.get_user_migration_version() and _is_migration_needed()
+	)
 
 
 ## A helper function to display an error message in the [b]Output[/b] if there is an error doing 

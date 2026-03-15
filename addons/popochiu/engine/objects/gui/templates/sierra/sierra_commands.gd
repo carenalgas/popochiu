@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name SierraCommands
 extends PopochiuCommands
 ## Defines the commands and fallback methods for the Sierra GUI.
@@ -26,8 +27,7 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Should return the name of this class, or the identifier you want to use in scripts to know the
-## type of the current GUI commands.
+## Returns the identifier for this GUI command set.
 static func get_script_name() -> String:
 	return "SierraCommands"
 
@@ -40,7 +40,7 @@ func fallback() -> void:
 
 ## Called when [code]E.current_command == Commands.WALK[/code] and [code]E.command_fallback()[/code]
 ## is triggered.[br]
-## By default makes the character walk to the clicked [PopochiuClickable].
+## Makes the character walk to the clicked [PopochiuClickable].
 func walk() -> void:
 	if PopochiuUtils.e.clicked:
 		PopochiuUtils.c.walk_to_clicked()

@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dl6pj0tylid8w"]
+[gd_scene format=3 uid="uid://dl6pj0tylid8w"]
 
 [ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_rtecw"]
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_inventory_item/create_inventory_item.gd" id="2_3sytb"]
+[ext_resource type="Script" uid="uid://d0qlmhic6sm3d" path="res://addons/popochiu/editor/popups/create_object/create_inventory_item/create_inventory_item.gd" id="2_3sytb"]
 
-[node name="CreateInventoryItemConfirmation" instance=ExtResource("1_rtecw")]
+[node name="CreateInventoryItemConfirmation" unique_id=1871040477 instance=ExtResource("1_rtecw")]
 script = ExtResource("2_3sytb")
 title = "Create PopochiuInventoryItem"
 

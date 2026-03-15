@@ -1,24 +1,16 @@
-[gd_scene load_steps=8 format=3 uid="uid://bardo4kb80rvg"]
+[gd_scene format=3 uid="uid://bardo4kb80rvg"]
 
 [ext_resource type="PackedScene" uid="uid://bynwdds8o3tcx" path="res://addons/popochiu/editor/main_dock/tab_main/tab_main.tscn" id="2_oxyje"]
-[ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/popochiu_dock.gd" id="7"]
+[ext_resource type="Script" uid="uid://dxyf5fu3xp3x8" path="res://addons/popochiu/editor/main_dock/popochiu_dock.gd" id="7"]
 [ext_resource type="PackedScene" uid="uid://4etgd0rwjgct" path="res://addons/popochiu/editor/main_dock/tab_gui/tab_gui.tscn" id="10_82goo"]
 [ext_resource type="PackedScene" uid="uid://q1bjkxavt2ay" path="res://addons/popochiu/editor/main_dock/tab_room/tab_room.tscn" id="12"]
 [ext_resource type="PackedScene" uid="uid://bpj8jlet25coy" path="res://addons/popochiu/editor/main_dock/tab_audio/tab_audio.tscn" id="13"]
 
-[sub_resource type="Image" id="Image_sgf6r"]
-data = {
-"data": PackedByteArray(255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 94, 94, 127, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 231, 255, 94, 94, 54, 255, 94, 94, 57, 255, 93, 93, 233, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 93, 93, 41, 255, 255, 255, 0, 255, 255, 255, 0, 255, 97, 97, 42, 255, 93, 93, 233, 255, 93, 93, 232, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 44, 255, 255, 255, 0, 255, 97, 97, 42, 255, 97, 97, 42, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 96, 96, 45, 255, 93, 93, 235, 255, 94, 94, 234, 255, 95, 95, 43, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 93, 93, 235, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 233, 255, 95, 95, 59, 255, 96, 96, 61, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 93, 93, 255, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0, 255, 255, 255, 0),
-"format": "RGBA8",
-"height": 16,
-"mipmaps": false,
-"width": 16
-}
+[sub_resource type="DPITexture" id="DPITexture_4merx"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#ff5d5d\" d=\"M2 1v8.586l1.293-1.293a1 1 0 0 1 1.414 0L7 10.587l2.293-2.293a1 1 0 0 1 1.414 0L13 10.586l1-1V6H9V1H2zm8 0v4h4zm-6 9.414-2 2V15h12v-2.586l-.293.293a1 1 0 0 1-1.414 0L10 10.414l-2.293 2.293a1 1 0 0 1-1.414 0L4 10.414z\"/></svg>
+"
 
-[sub_resource type="ImageTexture" id="ImageTexture_32xut"]
-image = SubResource("Image_sgf6r")
-
-[node name="Popochiu" type="Panel"]
+[node name="Popochiu" type="Panel" unique_id=875315221]
 clip_contents = true
 custom_minimum_size = Vector2(340, 0)
 anchors_preset = 15
@@ -28,73 +20,74 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("7")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1621288520]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=684063980]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer"]
+[node name="TabContainer" type="TabContainer" parent="MarginContainer/VBoxContainer" unique_id=713096778]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 current_tab = 0
+tab_3/hidden = true
 
-[node name="Main" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("2_oxyje")]
+[node name="Main" parent="MarginContainer/VBoxContainer/TabContainer" unique_id=190345305 instance=ExtResource("2_oxyje")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Room" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("12")]
+[node name="Room" parent="MarginContainer/VBoxContainer/TabContainer" unique_id=1648493662 instance=ExtResource("12")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 focus_mode = 2
 metadata/_tab_index = 1
 
-[node name="Audio" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("13")]
+[node name="Audio" parent="MarginContainer/VBoxContainer/TabContainer" unique_id=1429483997 instance=ExtResource("13")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 focus_mode = 2
 metadata/_tab_index = 2
 
-[node name="GUI" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("10_82goo")]
+[node name="GUI" parent="MarginContainer/VBoxContainer/TabContainer" unique_id=1769093385 instance=ExtResource("10_82goo")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 metadata/_tab_index = 3
 
-[node name="FooterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="FooterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=169724065]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/FooterPanel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/FooterPanel" unique_id=2025467407]
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 2
 
-[node name="Version" type="Label" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
+[node name="Version" type="Label" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer" unique_id=1666728485]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "v2.0.1"
+text = "v2.1"
 
-[node name="BtnSetup" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
+[node name="BtnSetup" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer" unique_id=1765033783]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Opens wiki in web browser"
 text = "Setup"
-icon = SubResource("ImageTexture_32xut")
+icon = SubResource("DPITexture_4merx")
 
-[node name="BtnDocs" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer"]
+[node name="BtnDocs" type="Button" parent="MarginContainer/VBoxContainer/FooterPanel/HBoxContainer" unique_id=103207771]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Opens wiki in web browser"
 text = "Documentation"
-icon = SubResource("ImageTexture_32xut")
+icon = SubResource("DPITexture_4merx")

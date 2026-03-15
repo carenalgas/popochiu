@@ -1,0 +1,57 @@
+[gd_scene load_steps=6 format=3 uid="uid://clhnbnew4ydpc"]
+
+[ext_resource type="Texture2D" uid="uid://cm5ik18o3ragq" path="res://addons/popochiu/engine/objects/gui/components/dialogue_advancement/images/dialogue_advancement_check_button.png" id="1_pbw0k"]
+[ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_woi6t"]
+[ext_resource type="Script" uid="uid://dokawsao4qvkh" path="res://addons/popochiu/engine/objects/gui/components/dialogue_advancement/dialogue_advancement.gd" id="2_ju60a"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eca4m"]
+atlas = ExtResource("1_pbw0k")
+region = Rect2(26, 0, 26, 13)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ivvq"]
+atlas = ExtResource("1_pbw0k")
+region = Rect2(0, 0, 26, 13)
+
+[node name="DialogueAdvancement" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_woi6t")
+script = ExtResource("2_ju60a")
+
+[node name="InputButton" type="LinkButton" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InputButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Manual" type="Label" parent="InputButton/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Manual"
+
+[node name="ContinueMode" type="CheckButton" parent="InputButton/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_icons/checked = SubResource("AtlasTexture_eca4m")
+theme_override_icons/unchecked = SubResource("AtlasTexture_1ivvq")
+
+[node name="Auto" type="Label" parent="InputButton/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Auto"

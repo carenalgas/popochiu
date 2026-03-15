@@ -1,8 +1,9 @@
-[gd_resource type="Theme" load_steps=20 format=3 uid="uid://dpequqav4rjaf"]
+[gd_resource type="Theme" load_steps=29 format=3 uid="uid://dpequqav4rjaf"]
 
 [ext_resource type="Texture2D" uid="uid://pl1ch71kfj72" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_checked.png" id="2_ldprq"]
 [ext_resource type="Texture2D" uid="uid://dukr75slqli45" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_unchecked.png" id="3_3rprc"]
 [ext_resource type="Texture2D" uid="uid://cqxqfxobqltga" path="res://addons/popochiu/engine/objects/gui/resources/images/grabber.png" id="4_4x0ix"]
+[ext_resource type="Texture2D" uid="uid://bbl1rk1aqbhp" path="res://addons/popochiu/engine/objects/gui/resources/images/radio_button.png" id="5_c6xq1"]
 [ext_resource type="Texture2D" uid="uid://d1ywqbehmtuv" path="res://addons/popochiu/engine/objects/gui/resources/images/down_arrow.png" id="5_jwcnu"]
 [ext_resource type="FontFile" uid="uid://dm6h44ck2nm2b" path="res://addons/popochiu/engine/objects/gui/fonts/minecraftia-regular.ttf" id="6_gx6k1"]
 
@@ -58,6 +59,34 @@ thickness = 4
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8gde"]
 bg_color = Color(0, 0, 0, 0.705882)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_dg7lp"]
+atlas = ExtResource("5_c6xq1")
+region = Rect2(0, 0, 12, 12)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_m15gs"]
+load_path = "res://.godot/imported/radio_button.png-f5f800afce88f7818a95c83aac5f8cc2.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0o3te"]
+atlas = SubResource("CompressedTexture2D_m15gs")
+region = Rect2(12, 0, 12, 12)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_7ex1i"]
+load_path = "res://.godot/imported/radio_button.png-f5f800afce88f7818a95c83aac5f8cc2.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r2o0l"]
+atlas = SubResource("CompressedTexture2D_7ex1i")
+region = Rect2(24, 0, 12, 12)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_siucv"]
+load_path = "res://.godot/imported/radio_button.png-f5f800afce88f7818a95c83aac5f8cc2.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xd4wp"]
+atlas = SubResource("CompressedTexture2D_siucv")
+region = Rect2(36, 0, 12, 12)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_effvh"]
+bg_color = Color(0, 0, 0, 0.705882)
+
 [resource]
 default_font = ExtResource("6_gx6k1")
 default_font_size = 8
@@ -86,3 +115,8 @@ HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_mp7ca")
 HSlider/styles/slider = SubResource("StyleBoxLine_1vxxo")
 OptionButton/icons/arrow = ExtResource("5_jwcnu")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_d8gde")
+PopupMenu/icons/radio_checked = SubResource("AtlasTexture_dg7lp")
+PopupMenu/icons/radio_checked_disabled = SubResource("AtlasTexture_0o3te")
+PopupMenu/icons/radio_unchecked = SubResource("AtlasTexture_r2o0l")
+PopupMenu/icons/radio_unchecked_disabled = SubResource("AtlasTexture_xd4wp")
+PopupMenu/styles/panel = SubResource("StyleBoxFlat_effvh")

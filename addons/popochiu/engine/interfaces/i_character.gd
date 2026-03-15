@@ -1,34 +1,42 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuICharacter
 extends Node
-## Provides access to the [PopochiuCharacter]s in the game. Access with [b]C[/b] (e.g.
+## Provides access to the project's [PopochiuCharacter]s via the singleton [b]C[/b] (for example:
 ## [code]C.player.say("What a wonderful plugin")[/code]).
 ##
-## Use it to manipulate Characters. Its script is [b]i_character.gd[/b].[br][br]
+## Use this interface to manipulate characters at runtime.
 ##
-## Some things you can do with it:[br][br]
-## [b]•[/b] Access the Player-controlled Character (PC) directly [code]C.player[/code].[br]
-## [b]•[/b] Access any character (with autocompletion based on its name).[br]
-## [b]•[/b] Make characters move or say something.[br][br]
+## Capabilities include:
 ##
-## Example:
+## - Accessing the Player-controlled Character (PC) directly with [code]C.player[/code].[br]
+## - Accessing any character by name ([code]C.CharacterName[/code] - autocompletion supported).[br]
+## - Commanding characters to move, speak, etc.
+## - Change camera ownership.
+##
+## [b]Use examples:[/b]
 ## [codeblock]
 ## func on_click() -> void:
 ##     await C.walk_to_clicked() # Make the PC move to the clicked object
 ##     await C.face_clicked() # Make the PC look at the clicked object
 ##     await C.player.say("It's a three-headed monkey!!!") # The PC says something
 ##     await C.Popsy.say("Don't tell me...") # Another character says something
+##     C.GrumpyOldMan.say("Snort! Snarl!") # Make a character speak in background (non blocking)
 ## [/codeblock]
 
 
-## Emitted when [param character] says [param message].
+## Emitted when [param character] speaks [param message].
 signal character_spoke(character: PopochiuCharacter, message: String)
+## Emitted when the player character changes from [param old_player] to [param new_player].
+signal player_changed(old_player: PopochiuCharacter, new_player: PopochiuCharacter)
 
-## Access to the [PopochiuCharacter] that is the current Player-controlled Character (PC).
+## The [PopochiuCharacter] that is the current Player-controlled Character (PC).
+## Setting this variable updates [member camera_owner] and emits [signal player_changed]
+## so other systems can react to the player swap.
 var player: PopochiuCharacter : set = set_player
-## Access to the [PopochiuCharacter] that is owning the camera.
+## The [PopochiuCharacter] that currently owns the camera.
 var camera_owner: PopochiuCharacter
-## Stores data about the state of each [PopochiuCharacter] in the game. The key of each entry is the
-## [member PopochiuCharacter.script_name] of the character.
+## Stores per-character runtime state. Keys are the characters'
+## [member PopochiuCharacter.script_name] values.
 var characters_states := {}
 
 var _characters := {}
@@ -42,31 +50,34 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Makes the Player-controlled Character (PC) move (NON-BLOCKING) to the
-## [member PopochiuClickable.walk_to_point] position of the last clicked [PopochiuClickable] (i.e. a
-## [PopochiuProp], a [PopochiuHotspot], or another [PopochiuCharacter]) in the room. You can set an
-## [param offset] relative to the target position.
+## Moves the Player-controlled Character (PC) non-blocking to the
+## [member PopochiuClickable.walk_to_point] of the last clicked [PopochiuClickable] (for example a
+## [PopochiuProp], [PopochiuHotspot], or another [PopochiuCharacter]) in the room.
+## Provide an optional [param offset] to adjust the final position.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
 	await player.walk_to_clicked(offset)
 
 
-## Makes the Player-controlled Character (PC) move (NON-BLOCKING) to the
-## [member PopochiuClickable.walk_to_point] position of the last clicked [PopochiuClickable] (i.e. a
-## [PopochiuProp], a [PopochiuHotspot], or another [PopochiuCharacter]) in the room. You can set an
-## [param offset] relative to the target position.
+## Moves the Player-controlled Character (PC) non-blocking to the
+## [member PopochiuClickable.walk_to_point] of the last clicked [PopochiuClickable] (for example a
+## [PopochiuProp], [PopochiuHotspot], or another [PopochiuCharacter]) in the room.
+## Provide an optional [param offset] to adjust the final position.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 	return func (): await walk_to_clicked(offset)
 
 
-## Similar to [method walk_to_clicked] but BLOCKING the GUI to prevent players from clicking other
-## objects or any point in the room.
+## Similar to [method walk_to_clicked] but blocks the GUI while the PC is moving
+## to prevent player input.
 func walk_to_clicked_blocking(offset := Vector2.ZERO) -> void:
 	await player.walk_to_clicked_blocking(offset)
 
 
-## Similar to [method walk_to_clicked] but BLOCKING the GUI to prevent players from clicking other
-## objects or any point in the room.
+## Similar to [method walk_to_clicked] but blocks the GUI while the PC is moving
+## to prevent player input.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_walk_to_clicked_blocking(offset := Vector2.ZERO) -> Callable:
 	return func (): await walk_to_clicked_blocking(offset)
 
@@ -76,13 +87,15 @@ func face_clicked() -> void:
 	await player.face_clicked()
 
 
-## Makes the Player-controlled Character (PC) look at the last clicked [PopochiuClickable].[br][br]
+## Makes the Player-controlled Character (PC) look at the last clicked [PopochiuClickable].
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_face_clicked() -> Callable:
 	return func (): await face_clicked()
 
 
-## Makes the camera follow [param c].
+## Changes the camera owner to [param c]. If [PopochiuUtils.e.cutscene_skipped] is true, the camera
+## owner is updated immediately and a frame is yielded to ensure the change takes effect.
 func change_camera_owner(c: PopochiuCharacter) -> void:
 	if PopochiuUtils.e.cutscene_skipped:
 		camera_owner = c
@@ -93,16 +106,17 @@ func change_camera_owner(c: PopochiuCharacter) -> void:
 	await PopochiuUtils.e.get_tree().process_frame
 
 
-## Makes the camera follow [param c].[br][br]
+## Changes the camera owner to [param c]. If [PopochiuUtils.e.cutscene_skipped] is true, the camera
+## owner is updated immediately and a frame is yielded to ensure the change takes effect.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_change_camera_owner(c: PopochiuCharacter) -> Callable:
 	return func (): await change_camera_owner(c)
 
 
-## Returns the instance of the [PopochiuCharacter] identified with [param script_name]. If the
-## character doesn't exists, then [code]null[/code] is returned.[br][br]
-## This method is used by [b]res://game/autoloads/c.gd[/b] to load the instance of each character
-## (present in that script as a variable for code autocompletion) in runtime.
+## Returns the runtime instance of the [PopochiuCharacter] identified by [param script_name], or
+## [code]null[/code] if the character is not present in the current room.[br]
+## This is used by [b]res://game/autoloads/c.gd[/b] to populate character variables at runtime.
 func get_runtime_character(script_name: String) -> PopochiuCharacter:
 	var character: PopochiuCharacter = null
 	
@@ -114,8 +128,8 @@ func get_runtime_character(script_name: String) -> PopochiuCharacter:
 	return character
 
 
-## Returns [code]true[/code] if [param script_name] is equal to [code]player[/code] or exist in
-## [member characters].
+## Returns [code]true[/code] if [param script_name] refers to the current player or exists in
+## the room's character list.
 func is_valid_character(script_name: String) -> bool:
 	var is_valid := false
 	
@@ -127,8 +141,10 @@ func is_valid_character(script_name: String) -> bool:
 	return is_valid
 
 
-## Gets a [PopochiuCharacter] identified with [param script_name]. If the instance doesn't exist in
-## [member characters], then one is created, added to the array, and returned.
+## Returns a [PopochiuCharacter] instance identified by [param script_name]. If the instance
+## does not already exist in [member _characters], it will be instantiated from project data
+## and registered.[br]
+## If the character cannot be found in project data, returns [code]null[/code].
 func get_character(script_name: String) -> PopochiuCharacter:
 	var character: PopochiuCharacter = null
 	
@@ -143,8 +159,8 @@ func get_character(script_name: String) -> PopochiuCharacter:
 	elif _characters.has(script_name):
 		character = _characters[script_name]
 	else:
-		# If the character doesn't exist, try to instantiate it from the list of characters (Resource)
-		# in popochiu_data.cfg
+		# If the character doesn't exist, try to instantiate it from the list of
+		# characters (Resource) in popochiu_data.cfg
 		character = get_instance(script_name)
 		
 		if character:
@@ -154,7 +170,9 @@ func get_character(script_name: String) -> PopochiuCharacter:
 	return character
 
 
-## Gets the instance of the [PopochiuCharacter] identified with [param script_name].
+## Instantiates and returns the [PopochiuCharacter] resource referenced by [param script_name]
+## as defined in the Popochiu project data. If the character does not exist in the project,
+## logs an error and returns [code]null[/code].
 func get_instance(script_name: String) -> PopochiuCharacter:
 	var tres_path: String = PopochiuResources.get_data_value("characters", script_name, "")
 	
@@ -169,8 +187,12 @@ func get_instance(script_name: String) -> PopochiuCharacter:
 
 #region SetGet #####################################################################################
 func set_player(value: PopochiuCharacter) -> void:
+	var old_player = player
 	player = value
 	camera_owner = value
+	
+	# Emit the player changed signal so characters can update their clickability
+	player_changed.emit(old_player, value)
 
 
 #endregion

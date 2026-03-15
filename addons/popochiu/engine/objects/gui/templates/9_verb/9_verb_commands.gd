@@ -1,10 +1,11 @@
+# @popochiu-docs-category game-user-interface
 class_name NineVerbCommands
 extends PopochiuCommands
 ## Defines the commands and fallback methods for the 9 Verbs GUI.
 ##
-## In this GUI, players can use one of four commands to interact with objects: Walk, Open, Pick up,
-## Push, Close, Look at, Pull, Give, Talk to, and Use. This behavior is based on games like The
-## Secret of Monkey Island, Day of the Tentacle and Thimbleweed Park.
+## In this GUI, players can use one of ten commands to interact with objects: Walk to, Open, Pick up,
+## Push, Close, Look at, Pull, Give, Talk to, and Use. This behavior is based on games like
+## The Secret of Monkey Island, Day of the Tentacle, and Thimbleweed Park.
 
 enum Commands { ## Defines the commands of the GUI.
 	WALK_TO, ## Used when players want to make the PC to walk.
@@ -39,6 +40,7 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
+## Returns the identifier for this GUI command set.
 static func get_script_name() -> String:
 	return "NineVerbCommands"
 
@@ -50,8 +52,9 @@ func fallback() -> void:
 
 
 ## Called when [code]E.current_command == Commands.WALK_TO[/code] and
-## [code]E.command_fallback()[/code] is triggered.[br][br]
-## By default makes the character walk to the clicked [code]PopochiuClickable[/code].
+## [code]E.command_fallback()[/code] is triggered.
+##
+## Makes the character walk to the clicked [PopochiuClickable].
 func walk_to() -> void:
 	if PopochiuUtils.i.active:
 		PopochiuUtils.i.active = null
@@ -59,7 +62,7 @@ func walk_to() -> void:
 	
 	PopochiuUtils.c.player.walk_to_clicked()
 	
-	await PopochiuUtils.c.player.move_ended
+	await PopochiuUtils.c.player.movement_ended
 	
 	if (
 		PopochiuUtils.e.clicked and PopochiuUtils.e.clicked.get("suggested_command")
@@ -120,6 +123,11 @@ func use() -> void:
 	await _give_or_use(use_item_on)
 
 
+# @popochiu-docs-ignore
+#
+## Called by either give() or use() to handle both commands with the same logic.
+## The [param callback] is the function to call when the player has selected an item and a target.
+## It can be either [member give_item_to] or [member use_item_on].
 func _give_or_use(callback: Callable) -> void:
 	if PopochiuUtils.i.active and PopochiuUtils.e.clicked:
 		callback.call(PopochiuUtils.i.active, PopochiuUtils.e.clicked)
@@ -154,11 +162,19 @@ func talk_to() -> void:
 	await PopochiuUtils.c.player.say("Emmmm...")
 
 
+# @popochiu-docs-ignore
+#
+## Called by _give_or_use() when the player has selected an item and a target
+## for the "use" command.
 func use_item_on(_item: PopochiuInventoryItem, _target: Node) -> void:
 	PopochiuUtils.i.active = null
 	await PopochiuUtils.c.player.say("I don't want to do that")
 
 
+# @popochiu-docs-ignore
+#
+## Called by _give_or_use() when the player has selected an item and a target
+## for the "give" command.
 func give_item_to(_item: PopochiuInventoryItem, _target: Node) -> void:
 	PopochiuUtils.i.active = null
 	await PopochiuUtils.c.player.say("I don't want to do that")

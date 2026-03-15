@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://c51xplyeuk787"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_4hfpy"]
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup.gd" id="2_yuv82"]
+[ext_resource type="Script" uid="uid://ixvmsi5t8qx6" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup.gd" id="2_yuv82"]
 [ext_resource type="Texture2D" uid="uid://cmxrewai8t2lm" path="res://addons/popochiu/engine/objects/gui/resources/images/close.png" id="3_5rk5h"]
 [ext_resource type="StyleBox" uid="uid://dbajakvkltfaj" path="res://addons/popochiu/engine/objects/gui/components/popups/popochiu_popup_panel_container.tres" id="3_co4j2"]
 [ext_resource type="Texture2D" uid="uid://p32i25numi5e" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight.png" id="4_4odj8"]

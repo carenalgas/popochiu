@@ -8,38 +8,44 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="popochiu 2.0"
 config/description="Make 2D point n' click games with a smooth workflow (like in Adventure Game Studio or PowerQuest)."
-config/features=PackedStringArray("4.3")
+config/features=PackedStringArray("4.6")
 config/icon="res://icon.svg"
 config/windows_native_icon="res://popochiu.ico"
 
 [autoload]
 
-Globals="*res://game/popochiu_globals.gd"
-Cursor="*res://addons/popochiu/engine/cursor/cursor.tscn"
-E="*res://addons/popochiu/engine/popochiu.tscn"
-R="*res://game/autoloads/r.gd"
-C="*res://game/autoloads/c.gd"
-I="*res://game/autoloads/i.gd"
-D="*res://game/autoloads/d.gd"
-A="*res://game/autoloads/a.gd"
-G="*res://addons/popochiu/engine/interfaces/i_graphic_interface.gd"
+Globals="*uid://clvdqdj1ydbx"
+Cursor="*uid://c2pqh7ajiuiy0"
+E="*uid://rda8wggldt5o"
+R="*uid://dvqbxoo1d6oqb"
+C="*uid://dycs4s58gcp5k"
+I="*uid://cct7lwe3t451x"
+D="*uid://d13cbtlhv7wn2"
+A="*uid://02ac7qaouswy"
+G="*uid://blk6nfpfiqrd2"
+T="*uid://30lm6k5s368s"
 
 [display]
 
-window/size/viewport_width=320
-window/size/viewport_height=180
-window/size/window_width_override=1280
-window/size/window_height_override=720
+window/size/viewport_width=1920
+window/size/viewport_height=1080
+window/size/window_width_override=1920
+window/size/window_height_override=1080
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 window/vsync/vsync_mode=0
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/popochiu/editor/gizmos/plugin.cfg", "res://addons/popochiu/plugin.cfg")
+enabled=PackedStringArray("res://addons/popochiu/editor/gizmos/plugin.cfg", "res://addons/popochiu/editor/importers/plugin.cfg", "res://addons/popochiu/plugin.cfg")
 
 [fc]
 
@@ -71,10 +77,6 @@ popochiu-skip={
 [physics]
 
 common/enable_pause_aware_picking=true
-
-[popochiu]
-
-pixel/pixel_art_textures=true
 
 [rendering]
 

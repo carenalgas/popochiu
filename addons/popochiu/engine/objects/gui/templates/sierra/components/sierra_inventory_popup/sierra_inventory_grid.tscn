@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://26dqxcqhmj44"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/gui/components/inventory_grid/inventory_grid.gd" id="1_3bsof"]
+[ext_resource type="Script" uid="uid://cdgpfm2rrpdds" path="res://addons/popochiu/engine/objects/gui/components/inventory_grid/inventory_grid.gd" id="1_3bsof"]
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_8acwo"]
 [ext_resource type="PackedScene" uid="uid://yw6qpn52gnp5" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_inventory_popup/sierra_inventory_slot/sierra_inventory_slot.tscn" id="2_l732n"]
 [ext_resource type="Texture2D" uid="uid://bhhrpk5utqhm7" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_inventory_popup/images/btn_up.png" id="3_f4xq7"]

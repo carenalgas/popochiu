@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name NineVerbGUI
 extends PopochiuGraphicInterface
 ## Defines the behavior of the 9 Verbs GUI.
@@ -54,8 +55,8 @@ func _unhandled_input(event: InputEvent) -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the GUI is blocked. Makes the [member E.current_command] to be none of the available
-## commands, hides the bottom panel and makes the GUI to stop processing unhandled input.
+## Called when the GUI is blocked. Sets [member E.current_command] to none of the available
+## commands, hides the bottom panel, and stops processing unhandled input.
 func _on_blocked(props := { blocking = true }) -> void:
 	PopochiuUtils.e.current_command = -1
 	PopochiuUtils.g.show_hover_text()
@@ -64,9 +65,9 @@ func _on_blocked(props := { blocking = true }) -> void:
 	set_process_unhandled_input(false)
 
 
-## Called when the GUI is unblocked. Makes the [member E.current_command] to be
-## [constant NineVerbCommands.WALK_TO], shows the bottom panel and makes the GUI to start processing
-## unhandled input.
+## Called when the GUI is unblocked. Restores [member E.current_command] to
+## [constant NineVerbCommands.WALK_TO], shows the bottom panel, and re-enables unhandled input
+## processing.
 func _on_unblocked() -> void:
 	if PopochiuUtils.d.current_dialog:
 		await get_tree().process_frame
@@ -89,14 +90,13 @@ func _on_system_text_shown(_msg: String) -> void:
 	PopochiuUtils.cursor.show_cursor("wait")
 
 
-## Called when [method G.show_system_text] is executed. Shows the [code]"normal"[/code] cursor.
+## Called when the system text is hidden. Shows the [code]"normal"[/code] cursor.
 func _on_system_text_hidden() -> void:
 	PopochiuUtils.cursor.show_cursor()
 
 
-## Called when the mouse enters (hovers) [param clickable]. It displays a text with the
-## [member PopochiuClickable.description] in the [HoverText] component and shows the
-## [code]"active"[/code] cursor.
+## Called when the mouse enters (hovers) [param clickable]. Displays the
+## [member PopochiuClickable.description] in the [HoverText] component.
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
@@ -109,8 +109,8 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 		PopochiuUtils.g.show_hover_text(clickable.description)
 
 
-## Called when the mouse exits [param clickable]. Clears the text in the [HoverText] component and
-## shows the [code]"normal"[/code] cursor.
+## Called when the mouse exits [param clickable]. Clears the [HoverText] and shows the
+## [code]"normal"[/code] cursor.
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
@@ -125,9 +125,8 @@ func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	PopochiuUtils.g.show_hover_text()
 
 
-## Called when the mouse enters (hovers) [param inventory_item]. It displays a text with the
-## [member PopochiuInventoryItem.description] in the [HoverText] component and shows the
-## [code]"active"[/code] cursor.
+## Called when the mouse enters (hovers) [param inventory_item]. Displays the
+## [member PopochiuInventoryItem.description] in the [HoverText] component.
 func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	if PopochiuUtils.e.current_command == NineVerbCommands.Commands.WALK_TO:
 		_return_to_walk_to = true
@@ -142,8 +141,8 @@ func _on_mouse_entered_inventory_item(inventory_item: PopochiuInventoryItem) -> 
 		PopochiuUtils.g.show_hover_text(inventory_item.description)
 
 
-## Called when the mouse exits [param inventory_item]. Clears the text in the [HoverText] component
-## and shows the [code]"normal"[/code] cursor.
+## Called when the mouse exits [param inventory_item]. Clears the [HoverText] and shows the
+## [code]"normal"[/code] cursor.
 func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> void:
 	if not PopochiuUtils.i.active and _return_to_walk_to:
 		PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO

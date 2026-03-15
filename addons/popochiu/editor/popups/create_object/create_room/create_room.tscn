@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bsl3blhb8sw5"]
 
 [ext_resource type="PackedScene" uid="uid://c1pfl2gwjjot5" path="res://addons/popochiu/editor/popups/create_object/create_object.tscn" id="1_t4kty"]
-[ext_resource type="Script" path="res://addons/popochiu/editor/popups/create_object/create_room/create_room.gd" id="2_s1x3y"]
+[ext_resource type="Script" uid="uid://c5hc5vwp1iuq4" path="res://addons/popochiu/editor/popups/create_object/create_room/create_room.gd" id="2_s1x3y"]
 
 [node name="CreateRoomConfirmation" instance=ExtResource("1_t4kty")]
 script = ExtResource("2_s1x3y")
@@ -9,9 +9,6 @@ title = "Create PopochiuRoom"
 
 [node name="Label" parent="PanelContainer/VBoxContainer/InputContainer" index="0"]
 text = "Room name:"
-
-[node name="ErrorFeedback" parent="PanelContainer/VBoxContainer" index="1"]
-text = "A room name is mandatory!"
 
 [node name="Guide" parent="PanelContainer/VBoxContainer" index="3"]
 text = "Use a descriptive name in PascalCase (e.g. Garage or CasinoInterior)."

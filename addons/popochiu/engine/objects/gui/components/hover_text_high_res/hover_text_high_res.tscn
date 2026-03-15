@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://bvdyamd6jb0yh"]
+
+[ext_resource type="PackedScene" uid="uid://esorelppu4hw" path="res://addons/popochiu/engine/objects/gui/components/hover_text/hover_text.tscn" id="1_ytaxu"]
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="2_btl7h"]
+
+[node name="HoverTextHighRes" instance=ExtResource("1_ytaxu")]
+theme = ExtResource("2_btl7h")

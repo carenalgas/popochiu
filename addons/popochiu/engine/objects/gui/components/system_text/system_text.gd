@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Control
 ## Show a text in the form of GUI. Can be used to show game (or narrator)
 ## messages.

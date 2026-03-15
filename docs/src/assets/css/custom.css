@@ -168,6 +168,8 @@
 
     /* Mermaid diagrams background color */
     --mermaid-background-color: #ffffff;
+    --mermaid-edge-color: #333333;
+    --mermaid-node-border-color: #333333;
 
     /* SVG shadow color */
     --image-shadow-color: hsla(0, 0%, 0%, 0.3);
@@ -308,6 +310,8 @@
 
         /* Mermaid diagrams background color */
         --mermaid-background-color: transparent;
+        --mermaid-edge-color: #cccccc;
+        --mermaid-node-border-color: #888888;
 
         /* SVG shadow color */
         --image-shadow-color: hsla(0, 0%, 0%, 0.4);
@@ -763,24 +767,35 @@ footer {
 
 /* Table display tweaks */
 
+/* Override theme_extra.css display:block that breaks table layout */
+.rst-content .section .docutils,
+.rst-content .section table.docutils {
+    display: table;
+    width: 100%;
+}
+
 .rst-content table.docutils,
+.rst-content .section table.docutils,
 .wy-table-bordered-all {
     border: 4px solid var(--code-border-color);
+    border-collapse: collapse;
 }
 
 .wy-table-bordered-all td,
 .wy-table thead th,
 .rst-content table.docutils td,
 .rst-content table.docutils thead th,
-.rst-content table.field-list thead th {
-    border-bottom: 2px solid var(--code-border-color);
-    border-left: 2px solid var(--code-border-color);
-    padding: 4px 16px;
+.rst-content table.field-list thead th,
+.rst-content .section table.docutils td,
+.rst-content .section table.docutils th {
+    border: 1px solid var(--hr-color) !important;
+    padding: 8px 16px;
 }
 
-html.writer-html5 .rst-content table.docutils th {
-    border-bottom: 4px solid var(--code-border-color);
-    border-left: 2px solid var(--code-border-color);
+html.writer-html5 .rst-content table.docutils th,
+html.writer-html5 .rst-content .section table.docutils th {
+    border: 1px solid var(--hr-color) !important;
+    border-bottom: 2px solid var(--hr-color) !important;
     padding: 8px 16px;
     vertical-align: middle;
 }
@@ -1115,13 +1130,14 @@ kbd.compound > .kbd,
 /* Class reference tweaks. */
 
 .classref-section-separator {
-    border-color: var(--navbar-heading-color);
-    border-top-width: 3px;
+    border: none;
+    border-top: 3px solid var(--navbar-heading-color);
     margin: 36px 0;
 }
 
 .classref-item-separator {
-    border-top-width: 2px;
+    border: none;
+    border-top: 2px solid var(--hr-color);
     margin: 26px 0;
 }
 
@@ -1819,6 +1835,51 @@ div.mermaid {
     margin: 16px 0;
 }
 
+/* Mermaid diagram edge and node border contrast (light and dark theme) */
+div.mermaid .edgePath .path,
+div.mermaid .flowchart-link {
+    stroke: var(--mermaid-edge-color) !important;
+}
+div.mermaid .arrowheadPath,
+div.mermaid marker path {
+    fill: var(--mermaid-edge-color) !important;
+    stroke: var(--mermaid-edge-color) !important;
+}
+div.mermaid .node rect,
+div.mermaid .node polygon,
+div.mermaid .node circle,
+div.mermaid .node ellipse {
+    stroke: var(--mermaid-node-border-color) !important;
+}
+
 img.shadow {
     filter: drop-shadow(0 0 5px var(--image-shadow-color));
+}
+/* ============================================================
+   Status chips for deprecated/experimental API members
+   ============================================================ */
+
+.status-chip {
+    display: inline-block;
+    font-size: 75%;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 4px;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.status-chip i {
+    margin-right: 4px;
+}
+
+.status-deprecated {
+    background-color: var(--admonition-danger-title-background-color);
+    color: var(--admonition-danger-title-color);
+}
+
+.status-experimental {
+    background-color: var(--admonition-attention-title-background-color);
+    color: var(--admonition-attention-title-color);
 }

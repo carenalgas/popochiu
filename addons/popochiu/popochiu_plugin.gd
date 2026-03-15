@@ -1,8 +1,8 @@
 @tool
 extends EditorPlugin
-## Plugin setup.
-## 
-## Some icons that might be useful: godot\editor\editor_themes.cpp
+## Main Popochiu editor plugin that manages singletons, the dock, and Inspector integrations.
+
+# Some icons that might be useful: godot\editor\editor_themes.cpp
 
 const ES := "[es] Estás usando Popochiu, un plugin para crear juegos point n' click"
 const EN := "[en] You're using Popochiu, a plugin for making point n' click games"
@@ -39,12 +39,17 @@ func _init():
 	add_autoload_singleton("D", PopochiuResources.D_SNGL)
 	add_autoload_singleton("A", PopochiuResources.A_SNGL)
 	add_autoload_singleton("G", PopochiuResources.IGRAPHIC_INTERFACE_SNGL)
+	add_autoload_singleton("T", PopochiuResources.ITRANSITION_LAYER_SNGL)
 
 
 func _enter_tree() -> void:
 	# Good morning, starshine. The Earth says hello.
-	prints(ES)
-	prints(EN)
+	# Check system language and print the appropriate message
+	var locale := OS.get_locale()
+	if locale.begins_with("es"):
+		prints(ES)
+	else:
+		prints(EN)
 	print_rich("[wave]%s[/wave]" % SYMBOL)
 	
 	# ---- Assign values to the utility script for the Editor side of the plugin -------------------
@@ -57,7 +62,6 @@ func _enter_tree() -> void:
 	# ---- Load Popochiu's Inspector plugins -------------------------------------------------------
 	for path in [
 		"res://addons/popochiu/editor/inspector/character_inspector_plugin.gd",
-		"res://addons/popochiu/editor/inspector/aseprite_importer_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/audio_cue_inspector_plugin.gd",
 		"res://addons/popochiu/editor/inspector/prop_inspector_plugin.gd",
 	]:
@@ -73,7 +77,7 @@ func _enter_tree() -> void:
 	dock.focus_mode = Control.FOCUS_ALL
 	dock.ready.connect(_on_dock_ready)
 	
-	add_control_to_dock(DOCK_SLOT_RIGHT_BL, dock)
+	add_control_to_dock(DOCK_SLOT_LEFT_UL, dock)
 	
 	# ---- Add Popochiu's menus for the Canvas Editor ----------------------------------------------
 	add_control_to_container(
@@ -102,6 +106,7 @@ func _exit_tree() -> void:
 func _enable_plugin() -> void:
 	_create_input_actions()
 	EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", true)
+	EditorInterface.set_plugin_enabled("popochiu/editor/importers", true)
 
 
 func _disable_plugin() -> void:
@@ -116,6 +121,7 @@ func _disable_plugin() -> void:
 	remove_autoload_singleton("A")
 	_remove_input_actions()
 	EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", false)
+	EditorInterface.set_plugin_enabled("popochiu/editor/importers", false)
 	remove_control_from_docks(dock)
 
 
@@ -170,23 +176,35 @@ func _on_dock_ready() -> void:
 	# Fill the dock with Rooms, Characters, Inventory items, Dialogs and AudioCues
 	dock.grab_focus()
 	
-	scene_changed.connect(dock.scene_changed)
-	scene_closed.connect(dock.scene_closed)
+	scene_changed.connect(_on_scene_changed)
+	scene_closed.connect(_on_scene_closed)
 	
 	if EditorInterface.get_edited_scene_root():
 		dock.scene_changed(EditorInterface.get_edited_scene_root())
 	else:
 		dock.check_open_scenes()
 	
+	PopochiuResources.create_auto_loads()
 	PopochiuResources.update_autoloads(true)
 	_editor_file_system.scan_sources()
 	dock.fill_data()
 	
 	if not PopochiuResources.is_setup_done() or not PopochiuResources.is_gui_set():
-		PopochiuEditorHelper.show_setup(true)
+		PopochiuEditorHelper.show_setup()
 	
 	if not EditorInterface.is_plugin_enabled("popochiu/editor/gizmos"):
 		EditorInterface.set_plugin_enabled("popochiu/editor/gizmos", true)
+
+	if not EditorInterface.is_plugin_enabled("popochiu/editor/importers"):
+		EditorInterface.set_plugin_enabled("popochiu/editor/importers", true)
+
+
+func _on_scene_changed(scene_root: Node) -> void:
+	PopochiuEditorHelper.signal_bus.scene_changed.emit(scene_root)
+
+
+func _on_scene_closed(filepath: String) -> void:
+	PopochiuEditorHelper.signal_bus.scene_closed.emit(filepath)
 
 
 #endregion

@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 class_name PopochiuDialogMenu
 extends Control
 @warning_ignore("return_value_discarded")

@@ -29,7 +29,7 @@ func _get_location() -> String:
 #endregion
 
 #region Private ####################################################################################
-func _remove_from_core() -> void:
+func _remove_from_core(should_save_and_delete := true) -> void:
 	var room_child_to_free: Node = null
 	
 	if EditorInterface.get_edited_scene_root() is PopochiuRoom:
@@ -46,8 +46,10 @@ func _remove_from_core() -> void:
 			PopochiuResources.Types.WALKABLE_AREA:
 				room_child_to_free = opened_room.get_walkable_area(str(name))
 	
-	# Continue with the deletion flow
-	super()
+	# Continue with the deletion flow without saving the scene or deleting the row (that's why the
+	# parent function is called with [false]), since it is removed automatically when the node is
+	# removed from the tree. Saving the scene should happen after that.
+	super(false)
 	
 	# Fix #196: Remove the Node from the Room tree once the folder of the object has been deleted
 	# from the FileSystem (this applies to Props, Hotspots, Walkable areas and Regions).

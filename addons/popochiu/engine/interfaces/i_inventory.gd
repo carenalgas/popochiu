@@ -1,27 +1,29 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIInventory
 extends Node
-## Provides access to the [PopochiuInventoryItem]s in the game. Access with [b]I[/b] (e.g.,
-## [code]I.Key.add()[/code]).
+## Provides access to [PopochiuInventoryItem] instances through the singleton [b]I[/b]
+## (for example: [code]I.Key.add()[/code]).
 ##
-## Use it to manage the inventory. Its script is [b]i_inventory.gd[/b].[br][br]
+## Use this interface to manage the game's inventory. Its script is [b]i_inventory.gd[/b].
 ##
-## Some things you can do with it:[br][br]
-## [b]•[/b] Add and remove items in the inventory.[br]
-## [b]•[/b] Change the cursor to the appearance of an inventory item.[br]
-## [b]•[/b] Detect when an item has been added or removed.[br][br]
+## Capabilities include:
 ##
-## Examples:
+## - Add or remove items from the inventory.[br]
+## - Change the cursor to an inventory item's texture.[br]
+## - Notify the GUI when items are added or removed.
+##
+## [b]Use examples:[/b]
 ## [codeblock]
 ## # Add the DeckOfCards item to the inventory.
-## I.DeckOfCards.add_now(false)
+## I.DeckOfCards.add()
 ##
 ## # Add the Key item to the inventory and make it the selected one.
 ## I.Key.add_as_active()
 ##
-## # Remove the Card item from the inventory. Inside an E.run([])
+## # Remove the Card item from the inventory.
 ## I.Card.remove()
 ##
-## # Add the ToyCar item after some dialog lines
+## # Add the ToyCar item after some dialog lines.
 ## E.queue([
 ##     "Player: Oh, is the toy car I need",
 ##     I.ToyCar.queue_add(),
@@ -29,35 +31,32 @@ extends Node
 ## ])
 ## [/codeblock]
 
-## Emitted when [param item] is added to the inventory. [param animate] can be utilized by the GUI
-## to display an animation of the item entering the inventory.
+## Emitted when [param item] is added to the inventory. [param animate] may be used by the GUI
+## to animate the item entering the inventory.
 signal item_added(item: PopochiuInventoryItem, animate: bool)
-## Emitted when the [param item] has completed entering the inventory, signifying the end of the GUI
-## animation.
+## Emitted when the [param item] has finished entering the inventory (GUI animation completed).
 signal item_add_done(item: PopochiuInventoryItem)
-## Emitted when [param item] is removed from the inventory. [param animate] can be employed by the
-## GUI to display an animation of the item leaving the inventory.
+## Emitted when [param item] is removed from the inventory. [param animate] may be used by the
+## GUI to animate the item leaving the inventory.
 signal item_removed(item: PopochiuInventoryItem, animate: bool)
-## Emitted when the [param item] has completed leaving the inventory, indicating the end of the GUI
-## animation.
+## Emitted when the [param item] has finished leaving the inventory (GUI animation completed).
 signal item_remove_done(item: PopochiuInventoryItem)
-## Emitted when [param item] is replaced in the inventory by [param new_item]. Useful for handling
-## inventory item combinations.
+## Emitted when [param item] is replaced in the inventory by [param new_item]. Useful for
+## implementing item combinations.
 signal item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem)
 ## Emitted when an item replacement has finished.
 signal item_replace_done
-## Emitted when the [param item] has finished leaving the inventory (i.e. when the GUI animation
-## is complete).
+## Emitted when the [param item] has been discarded (GUI animation finished).
 signal item_discarded(item: PopochiuInventoryItem)
 ## Emitted when [param item] is selected in the inventory.
 signal item_selected(item: PopochiuInventoryItem)
-## Emitted when the inventory is about to be displayed. You can specify the duration it remains
-## visible with [param time] in seconds.
+## Emitted when the inventory is requested to be shown. [param time] sets how long it should remain
+## visible (in seconds).
 signal inventory_show_requested(time: float)
-## Emitted once the animation that displays the inventory has finished.
+## Emitted when the inventory-show animation has finished.
 signal inventory_shown
-## Emitted when you want to hide the inventory. [param use_anim] can be used to determine whether or
-## not to use an animation in the GUI.
+## Emitted when the inventory is requested to hide. [param use_anim] indicates whether the GUI
+## should use an animation.
 signal inventory_hide_requested(use_anim: bool)
 
 ## Provides access to the inventory item that is currently selected.
@@ -67,8 +66,8 @@ var clicked: PopochiuInventoryItem
 # ---- Used for saving/loading the game ------------------------------------------------------------
 ## [Array] containing instances of the currently held [PopochiuInventoryItem]s.
 var items := []
-## Stores data about the state of each [PopochiuInventoryItem] in the game. The key of each entry is
-## the [member PopochiuInventoryItem.script_name] of the item.
+## Stores per-item state data for each [PopochiuInventoryItem] in the project. The key for each
+## entry is the item's [member PopochiuInventoryItem.script_name].
 var items_states := {}
 # ------------------------------------------------------------ Used for saving/loading the game ----
 
@@ -83,8 +82,8 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Removes all the items that are currently in the inventory. If [param in_bg] is [code]true[/code],
-## then the items are removed without calling [method PopochiuInventoryItem.discard] for each item.
+## Removes all items currently in the inventory. If [param in_bg] is [code]true[/code], items are
+## removed in background without calling [method PopochiuInventoryItem.discard].
 func clean_inventory(in_bg := false) -> void:
 	items.clear()
 	
@@ -97,7 +96,7 @@ func clean_inventory(in_bg := false) -> void:
 		pii.remove(!in_bg)
 
 
-## Displays the inventory for a duration of [param time] seconds.
+## Shows the inventory for [param time] seconds.
 func show_inventory(time := 1.0) -> void:
 	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
@@ -108,30 +107,32 @@ func show_inventory(time := 1.0) -> void:
 	await self.inventory_shown
 
 
-## Displays the inventory for a duration of [param time] seconds.[br][br]
+## Shows the inventory for [param time] seconds.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_show_inventory(time := 1.0) -> Callable:
 	return func (): await show_inventory(time)
 
 
-## Hides the inventory. If [param use_anim] is set to [code]true[/code], a GUI animation is applied.
+## Hides the inventory. If [param use_anim] is [code]true[/code], the GUI may play an animation.
 func hide_inventory(use_anim := true) -> void:
 	inventory_hide_requested.emit(use_anim)
 	
 	await get_tree().process_frame
 
 
-## Hides the inventory. If [param use_anim] is set to [code]true[/code], a GUI animation is applied.
-## [br][br]
+## Hides the inventory. If [param use_anim] is [code]true[/code], the GUI may play an animation.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_hide_inventory(use_anim := true) -> Callable:
 	return func (): await hide_inventory(use_anim)
 
 
-## Returns the instance of the [PopochiuInventoryItem] identified with [param item_name]. If the
-## item doesn't exists, then [code]null[/code] is returned.[br][br]
-## This method is used by [b]res://game/autoloads/i.gd[/b] to load the instace of each item
-## (present in that script as a variable for code autocompletion) in runtime.
+## Returns the instance of the [PopochiuInventoryItem] identified by [param item_name], or
+## [code]null[/code] if it does not exist.
+##
+## Used by [b]res://game/autoloads/i.gd[/b] to instantiate item variables at runtime for
+## autocompletion.
 func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	var item: PopochiuInventoryItem = null
 	
@@ -148,7 +149,8 @@ func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	return item
 
 
-## Gets the instance of the [PopochiuInventoryItem] identified with [param script_name].
+## Instantiates and returns the [PopochiuInventoryItem] resource referenced by [param script_name]
+## from project data. Logs an error and returns [code]null[/code] if not found.
 func get_instance(script_name: String) -> PopochiuInventoryItem:
 	var tres_path: String = PopochiuResources.get_data_value("inventory_items", script_name, "")
 	
@@ -169,13 +171,21 @@ func set_active_item(item: PopochiuInventoryItem = null) -> void:
 		active = null
 
 
-## Verifies if the item identified as [param item_name] is in the inventory.
+## Returns [code]true[/code] if the item identified by [param item_name] is currently in the
+## inventory.
 func is_item_in_inventory(item_name: String) -> bool:
 	var i: PopochiuInventoryItem = get_item_instance(item_name)
 	return is_instance_valid(i) and i.in_inventory
 
 
-## Checks whether the inventory has reached its limit.
+## Returns [code]true[/code] if the item identified by [param item_name] has ever been collected.
+func has_item_been_collected(item_name: String) -> bool:
+	var i: PopochiuInventoryItem = get_item_instance(item_name)
+	return is_instance_valid(i) and i.ever_collected
+
+
+## Returns [code]true[/code] if the inventory has reached the inventory limit
+## configured in the project settings.
 func is_full() -> bool:
 	return (
 		PopochiuUtils.e.settings.inventory_limit > 0

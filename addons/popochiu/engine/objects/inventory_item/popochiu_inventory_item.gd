@@ -1,10 +1,11 @@
+# @popochiu-docs-category game-objects
 @icon("res://addons/popochiu/icons/inventory_item.png")
 class_name PopochiuInventoryItem
 extends TextureRect
-## An inventory item.
+## Represents an item that can be collected, stored in the inventory, and used on objects.
 ##
-## Characters can collect these items and use them on things. They can also handle interactions and
-## be used on other objects (i.e. [PopochiuClickable] or other inventory items).
+## Inventory items can handle click interactions and be combined with other items or used on
+## [PopochiuClickable] objects.
 
 ## Used to allow devs to define the cursor type for the clickable.
 const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
@@ -25,9 +26,14 @@ signal unselected
 
 ## Whether this item is actually inside the inventory GUI.
 var in_inventory := false : set = set_in_inventory
+## Whether this item has ever been in the inventory. Once true, it stays true.
+var ever_collected := false : set = set_ever_collected
 ## Stores the last [enum MouseButton] pressed on this object.
 var last_click_button := -1 # NOTE Don't know if this will make sense, or if it this object should
 # emit a signal about the click (command execution)
+
+# Dictionary storing command usage counts {command_id (Commands): count (int)}
+var _command_usage_count := {}
 
 
 #region Godot ######################################################################################
@@ -40,38 +46,38 @@ func _ready():
 #endregion
 
 #region Virtual ####################################################################################
-## Called when the item is clicked in the inventory GUI.
-## [i]Virtual[/i].
+## Called when the item is clicked in the inventory GUI.[br]
+## Override this to define what happens when the item is clicked.
 func _on_click() -> void:
 	pass
 
 
-## Called when the item is right clicked in the inventory GUI.
-## [i]Virtual[/i].
+## Called when the item is right-clicked in the inventory GUI.[br]
+## Override this to define what happens when the item is right-clicked.
 func _on_right_click() -> void:
 	pass
 
 
-## Called when the item is middle clicked in the inventory GUI.
-## [i]Virtual[/i].
+## Called when the item is middle-clicked in the inventory GUI.[br]
+## Override this to define what happens when the item is middle-clicked.
 func _on_middle_click() -> void:
 	pass
 
 
-## When the item is clicked and there is another [param item] currently selected.
-## [i]Virtual[/i].
+## Called when this item is clicked while another [param item] is selected.[br]
+## Override this to define what happens when this item is used on another item.
 func _on_item_used(item: PopochiuInventoryItem) -> void:
 	pass
 
 
-## Called after the item is added to the inventory.
-## [i]Virtual[/i].
+## Called after the item is added to the inventory.[br]
+## Override this to implement custom behavior (e.g. playing a sound).
 func _on_added_to_inventory() -> void:
 	pass
 
 
-## Called when the item is discarded from the inventory.
-## [i]Virtual[/i].
+## Called when the item is discarded from the inventory.[br]
+## Override this to implement custom behavior (e.g. playing a sound).
 func _on_discard() -> void:
 	pass
 
@@ -79,11 +85,12 @@ func _on_discard() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Adds this item to the inventory. If [param animate] is [code]true[/code], the inventory GUI will
-## show an animation as a feedback of this action. It will depend on the implementation of the
-## inventory in the GUI.[br][br]
+## Adds this item to the inventory. If [param animate] is [code]true[/code], the inventory GUI
+## shows an animation (implementation depends on the GUI).
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-## [br][br]Example of how to use it when interacting with a [PopochiuProp]:
+##
+## Example:
 ## [codeblock]
 ## func on_click() -> void:
 ##     E.queue([
@@ -96,10 +103,10 @@ func queue_add(animate := true) -> Callable:
 	return func (): await add(animate)
 
 
-## Adds this item to the inventory. If [param animate] is [code]true[/code], the inventory GUI will
-## show an animation as a feedback of this action. It will depend on the implementation of the
-## inventory in the GUI.
-## [br][br]Example of how to use it when interacting with a [PopochiuProp]:
+## Adds this item to the inventory. If [param animate] is [code]true[/code], the inventory GUI
+## shows an animation (implementation depends on the GUI).
+##
+## Example:
 ## [codeblock]
 ## func on_click() -> void:
 ##     await C.walk_to_clicked()
@@ -120,6 +127,7 @@ func add(animate := true) -> void:
 		
 		PopochiuUtils.i.item_added.emit(self, animate)
 		in_inventory = true
+		ever_collected = true
 		
 		await PopochiuUtils.i.item_add_done
 
@@ -130,27 +138,28 @@ func add(animate := true) -> void:
 	await get_tree().process_frame
 
 
-## Adds this item to the inventory and makes it the current selected item (the cursor will look like
-## the item's texture). Pass [param animate] as [code]false[/code] if you do not want the inventory
-## GUI to animate when the item is added.[br][br]
+## Adds this item to the inventory and makes it the active item (cursor shows the item's texture).
+## Pass [param animate] as [code]false[/code] to skip the inventory GUI animation.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_add_as_active(animate := true) -> Callable:
 	return func (): await add_as_active(animate)
 
 
-## Adds this item to the inventory and makes it the current selected item (the cursor will look like
-## the item's texture). Pass [param animate] as [code]false[/code] if you do not want the inventory
-## GUI to animate when the item is added.
+## Adds this item to the inventory and makes it the active item (cursor shows the item's texture).
+## Pass [param animate] as [code]false[/code] to skip the inventory GUI animation.
 func add_as_active(animate := true) -> void:
 	await add(animate)
 	
 	PopochiuUtils.i.set_active_item(self)
 
 
-## Removes the item from the inventory (its instance will be kept in memory). Pass [param animate]
-## as [code]true[/code] if you want the inventory GUI to animate when the item is removed.[br][br]
+## Removes the item from the inventory (instance is kept in memory). Pass [param animate] as
+## [code]true[/code] to animate the removal in the inventory GUI.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-## [br][br]Example of how to use it when using an item on a [PopochiuProp]:
+##
+## Example:
 ## [codeblock]
 ## func on_item_used(item: PopochiuInventoryItem) -> void:
 ##     if item == I.ToyCar:
@@ -163,9 +172,10 @@ func queue_remove(animate := false) -> Callable:
 	return func (): await remove(animate)
 
 
-## Removes the item from the inventory (its instance will be kept in memory). Pass [param animate]
-## as [code]true[/code] if you want the inventory GUI to animate when the item is removed.
-## [br][br]Example of how to use it when using an item on a [PopochiuProp]:
+## Removes the item from the inventory (instance is kept in memory). Pass [param animate] as
+## [code]true[/code] to animate the removal in the inventory GUI.
+##
+## Example:
 ## [codeblock]
 ## func on_item_used(item: PopochiuInventoryItem) -> void:
 ##     if item == I.ToyCar:
@@ -185,9 +195,11 @@ func remove(animate := false) -> void:
 	PopochiuUtils.g.unblock()
 
 
-## Replaces this inventory item by [param new_item]. Useful when combining items.[br][br]
+## Replaces this inventory item with [param new_item]. Useful when combining items.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-## [br][br]Example of how to use it when combining two inventory items:
+##
+## Example:
 ## [codeblock]
 ## # This is the script of the InventoryItemHook.gd (I.Hook)
 ## func on_item_used(item: PopochiuInventoryItem) -> void:
@@ -201,8 +213,9 @@ func queue_replace(new_item: PopochiuInventoryItem) -> Callable:
 	return func (): await replace(new_item)
 
 
-## Replaces this inventory item by [param new_item]. Useful when combining items.
-## [br][br]Example of how to use it when combining two inventory items:
+## Replaces this inventory item with [param new_item]. Useful when combining items.
+##
+## Example:
 ## [codeblock]
 ## # This is the script of the InventoryItemHook.gd (I.Hook)
 ## func on_item_used(item: PopochiuInventoryItem) -> void:
@@ -228,16 +241,17 @@ func replace(new_item: PopochiuInventoryItem) -> void:
 
 
 # NOTE: Maybe this is not necessary since we can have the same with [method queue_remove].
-## Removes the item from the inventory (its instance will be kept in memory). Pass [param animate]
-## as [code]true[/code] if you want the inventory GUI to animate when the item is removed.[br][br]
+## Removes the item from the inventory without destroying the instance. Pass [param animate] as
+## [code]true[/code] to animate the removal in the inventory GUI.
+##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_discard(animate := false) -> Callable:
 	return func (): await discard(animate)
 
 
 # NOTE: Maybe this is not necessary since we can have the same with [method remove].
-## Removes the item from the inventory (its instance will be kept in memory). Pass [param animate]
-## as [code]true[/code] if you want the inventory GUI to animate when the item is removed.
+## Removes the item from the inventory without destroying the instance. Pass [param animate] as
+## [code]true[/code] to animate the removal in the inventory GUI.
 func discard(animate := false) -> void:
 	_on_discard()
 	
@@ -301,11 +315,33 @@ func handle_command(button_idx: int) -> void:
 	
 	await call(prefix % suffix)
 
+	# Track command usage
+	_increment_command_count(PopochiuUtils.e.current_command)
+
 
 ## Deselects this item if it is the current [member PopochiuIInventory.active] item.
 func deselect() -> void:
 	if PopochiuUtils.i.active and PopochiuUtils.i.active == self:
 		PopochiuUtils.i.active = null
+
+
+## Returns [code]true[/code] if the [param command] has ever been invoked on this object.
+## This function is typically used in a command handler to provide different behaviors
+## depending on whether the command has been used before or not.
+func ever_invoked(command: int) -> bool:
+	return _command_usage_count.has(command) and _command_usage_count[command] > 0
+
+
+## Returns [code]true[/code] if this is the first time the [param command] is being invoked on this object.
+## This function is typically used in a command handler to provide different behaviors
+## depending on whether the command has been used before or not.
+func first_invoked(command: int) -> bool:
+	return not ever_invoked(command)
+
+
+## Returns the number of times the [param command] has been invoked on this object.
+func count_invoked(command: int) -> int:
+	return _command_usage_count.get(command, 0)
 
 
 #endregion
@@ -315,6 +351,14 @@ func set_in_inventory(value: bool) -> void:
 	in_inventory = value
 	
 	if in_inventory: _on_added_to_inventory()
+
+
+func set_ever_collected(value: bool) -> void:
+	# Once true, ever_collected can never be false again
+	if ever_collected:
+		return
+	
+	ever_collected = value
 
 
 func get_description() -> String:
@@ -328,6 +372,12 @@ func get_description() -> String:
 #endregion
 
 #region Private ####################################################################################
+# Increments the usage count for the specified command
+func _increment_command_count(command_id: int) -> void:
+	_command_usage_count.get_or_add(command_id, 0)
+	_command_usage_count[command_id] += 1
+
+
 func _toggle_description(is_hover: bool) -> void:
 	if is_hover:
 		PopochiuUtils.g.mouse_entered_inventory_item.emit(self)

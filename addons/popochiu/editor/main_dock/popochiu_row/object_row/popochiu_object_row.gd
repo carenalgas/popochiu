@@ -148,16 +148,28 @@ func _add_object_to_core() -> void:
 
 ## Selects the main file of the object in the FileSystem and opens it so that it can be edited.
 func _open() -> void:
+	# Defer the scene opening to ensure current operations complete first.
+	# Ugly but necessary to avoid errors (see _deferred_open comments).
+	call_deferred("_deferred_open")
+	select()
+
+# Deferring this call removes an error that happens in Godot 4.4:
+# 'ERROR: editor/editor_data.cpp:1216 - Condition "!p_node->is_inside_tree()" is true.'
+func _deferred_open() -> void:
 	EditorInterface.select_file(path)
 	
 	if ".tres" in path:
 		EditorInterface.edit_resource(load(path))
 	else:
+		# Change to 2D view and open the scene
 		EditorInterface.set_main_screen_editor("2D")
 		EditorInterface.open_scene_from_path(path)
-	
-	select()
 
+		# Select the scene root node automatically
+		# to make inspector, gizmos and toolbar available
+		# for the opened object scene
+		if EditorInterface.get_edited_scene_root():
+			PopochiuEditorHelper.select_node(EditorInterface.get_edited_scene_root())
 
 func _open_script() -> void:
 	var script_path := path
@@ -209,7 +221,7 @@ func _search_audio_files(dir: EditorFileSystemDirectory) -> Array:
 	return files
 
 
-func _remove_from_core() -> void:
+func _remove_from_core(should_save_and_delete := true) -> void:
 	# Check if the files should be deleted in the file system
 	if _delete_dialog.check_box.button_pressed:
 		_delete_from_file_system()
@@ -222,8 +234,12 @@ func _remove_from_core() -> void:
 		queue_free()
 		return
 	
-	EditorInterface.save_scene()
-	queue_free()
+	# Fix #438: Do not save and free the row always. When this function is called from the
+	# popochiu_room_object_row script, saving the scene is handled there, and deleting the row
+	# is not needed.
+	if should_save_and_delete:
+		EditorInterface.save_scene()
+		queue_free()
 
 
 ## Remove this object's directory (subfolders included) from the file system.

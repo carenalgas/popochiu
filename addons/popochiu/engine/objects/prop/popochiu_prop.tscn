@@ -1,17 +1,22 @@
 [gd_scene load_steps=2 format=3 uid="uid://do1k681xt48cm"]
 
-[ext_resource type="Script" path="res://addons/popochiu/engine/objects/prop/popochiu_prop.gd" id="1"]
+[ext_resource type="Script" uid="uid://ms1o7xaqb1g2" path="res://addons/popochiu/engine/objects/prop/popochiu_prop.gd" id="1"]
 
 [node name="Prop" type="Area2D"]
 script = ExtResource("1")
 interaction_polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 [node name="InteractionPolygon" type="CollisionPolygon2D" parent="."]
 visible = false
 modulate = Color(1, 1, 0, 1)
 polygon = PackedVector2Array(-12, -12, 12, -12, 12, 12, -12, 12)
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture_filter = 1
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="ObstaclePolygon" type="NavigationObstacle2D" parent="."]
+visible = false
+affect_navigation_mesh = true
+carve_navigation_mesh = true
