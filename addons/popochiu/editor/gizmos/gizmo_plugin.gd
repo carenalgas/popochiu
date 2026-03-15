@@ -87,7 +87,8 @@ func _edit(object: Object) -> void:
 		_clickable_manager.handle_object(object, edited_root) or has_handled_objects
 	)
 
-    # Handle polygon gizmos for the selected object
+    # Handle polygon gizmos for the selected object (includes passive overlays
+    # for non-selected polygons in the same room)
     has_handled_objects = _polygon_manager.handle_object(object, edited_root) or has_handled_objects
 
     # If any manager is handling objects, connect to inspector signal

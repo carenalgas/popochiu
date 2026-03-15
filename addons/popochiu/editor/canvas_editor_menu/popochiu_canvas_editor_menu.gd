@@ -284,8 +284,18 @@ func _reset_buttons_state() -> void:
 	btn_walk_to_point.set_pressed_no_signal(true)
 	btn_look_at_point.set_pressed_no_signal(true)
 	btn_dialog_pos.set_pressed_no_signal(true)
-	btn_interaction_polygon.set_pressed_no_signal(false)
-	btn_obstacle_polygon.set_pressed_no_signal(false)
+	# Polygon buttons respect the "always show" editor settings so passive
+	# gizmos are visible from start when the user configures them that way.
+	btn_interaction_polygon.set_pressed_no_signal(
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_INT
+		)
+	)
+	btn_obstacle_polygon.set_pressed_no_signal(
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_OBS
+		)
+	)
 
 
 #endregion

@@ -21,6 +21,9 @@ var _visibility: Dictionary = {
 var _colors: Dictionary = {}
 var _fill_alpha: float = 0.15
 var _vertex_handler_size: float = 6.0
+# Alpha multiplier applied to non-interactive (passive) gizmos so they
+# appear dimmed compared to the actively selected polygon.
+var _passive_alpha_factor: float = 0.4
 
 
 #region Godot ######################################################################################
@@ -69,7 +72,9 @@ func _scan_polygons(node: Node2D) -> void:
 		_gizmos.append(gizmo)
 
 
-# Apply appearance settings to a gizmo based on its category
+# Apply appearance settings to a gizmo based on its category.
+# Non-interactive (passive) gizmos are drawn with a reduced alpha so
+# the actively selected polygon stands out visually.
 func _set_gizmo_theme(gizmo: GizmoPolygon2D) -> void:
 	var cat := gizmo.category
 	gizmo.visible = _visibility.get(cat, false)
@@ -88,7 +93,10 @@ func _set_gizmo_theme(gizmo: GizmoPolygon2D) -> void:
 				"walkable_area", Color.GREEN
 			)
 
-	gizmo.fill_color = Color(gizmo.outline_color, _fill_alpha)
+	# Dim passive (non-interactive) gizmos so the selected one stands out
+	var alpha_factor := 1.0 if gizmo.interactive else _passive_alpha_factor
+	gizmo.outline_color = Color(gizmo.outline_color, gizmo.outline_color.a * alpha_factor)
+	gizmo.fill_color = Color(gizmo.outline_color, _fill_alpha * alpha_factor)
 	gizmo.vertex_color = Color.WHITE
 	gizmo.vertex_size = _vertex_handler_size
 
@@ -118,6 +126,18 @@ func _deferred_rebake(source: NavigationRegion2D) -> void:
 		source.bake_navigation_polygon()
 
 
+# Scan every standard container in a room for polygon children.
+# This populates _gizmos with entries for every polygon in the scene so
+# passive (non-selected) polygons can be drawn alongside the active one.
+func _scan_room_containers(room: PopochiuRoom) -> void:
+	for container_name in ["Props", "Hotspots", "Regions", "Characters", "WalkableAreas"]:
+		var container := room.find_child(container_name)
+		if container == null:
+			continue
+		for child in container.get_children():
+			_scan_polygons(child)
+
+
 #endregion
 
 #region Public #####################################################################################
@@ -138,52 +158,76 @@ func initialize_gizmos() -> void:
 	_vertex_handler_size = PopochiuEditorConfig.get_editor_setting(
 		PopochiuEditorConfig.GIZMOS_POLY_VERTEX_HANDLER_SIZE
 	)
+	_passive_alpha_factor = PopochiuEditorConfig.get_editor_setting(
+		PopochiuEditorConfig.GIZMOS_POLY_PASSIVE_ALPHA_FACTOR
+	)
 
 	# Re-apply to existing gizmos
 	for gizmo in _gizmos:
 		_set_gizmo_theme(gizmo)
 
 
-# Handle a newly selected object. Build gizmos for its polygon children.
+# Handle a newly selected object. Build gizmos for every polygon in the scene
+# so that non-selected polygons are visible as passive (read-only) overlays,
+# while the selected node's polygons remain fully interactive.
 func handle_object(object: Object, edited_root: Node) -> bool:
-	# If the object is a WalkableArea, handle it directly
-	if object is PopochiuWalkableArea:
-		_target_node = object
-		_gizmos.clear()
-		_grabbed_gizmo = null
-		_scan_polygons(object)
+	_gizmos.clear()
+	_grabbed_gizmo = null
+	_grabbed_snapshot = PackedVector2Array()
+
+	# When editing a Character scene (not a room), scan only the character root.
+	# All gizmos are interactive since there is only one object.
+	if edited_root is PopochiuCharacter:
+		_target_node = edited_root
+		_scan_polygons(edited_root)
 		return _gizmos.size() > 0
 
-	# If the object is a clickable (Prop, Hotspot, Character, Region), handle it
-	if object is PopochiuClickable or object is PopochiuRegion:
-		_target_node = object
-		_gizmos.clear()
-		_grabbed_gizmo = null
-		_scan_polygons(object)
-		return _gizmos.size() > 0
-
-	# If we are in a room and the user just selected the room root or something else,
-	# scan for walkable area polygons at the room level if visible
+	# Room editing mode — scan every container so all polygons in the room
+	# are visible. The selected object's gizmos become interactive (editable)
+	# while the rest remain passive (read-only).
 	if edited_root is PopochiuRoom:
-		_target_node = null
-		_gizmos.clear()
-		_grabbed_gizmo = null
-		# Scan all walkable areas in the room for their polygons
-		var wa_container := edited_root.find_child("WalkableAreas")
-		if wa_container:
-			for child in wa_container.get_children():
-				if child is PopochiuWalkableArea:
-					_scan_polygons(child)
+		# Determine which node the user explicitly selected
+		if (
+			object is PopochiuWalkableArea
+			or object is PopochiuClickable
+			or object is PopochiuRegion
+		):
+			_target_node = object
+		else:
+			# Room root or an unrelated node — overview mode, no editable polygon
+			_target_node = null
+
+		# Scan all room containers for polygon children
+		_scan_room_containers(edited_root)
+
+		# Set interactivity: only the selected node's gizmos are editable
+		for gizmo in _gizmos:
+			var belongs_to_target := (
+				_target_node != null
+				and is_instance_valid(gizmo.get_source_node())
+				and gizmo.get_source_node().get_parent() == _target_node
+			)
+			gizmo.interactive = belongs_to_target
+			# Re-apply theme so the passive alpha takes effect
+			_set_gizmo_theme(gizmo)
+
 		return _gizmos.size() > 0
 
 	reset()
 	return false
 
 
-# Draw all visible polygon gizmos
+# Draw all visible polygon gizmos.
+# Two-pass rendering: passive (non-interactive) gizmos are drawn first so that
+# the actively selected polygon renders on top and remains clearly visible.
 func draw_gizmos(viewport_control: Control) -> void:
+	# First pass — passive gizmos (behind)
 	for gizmo in _gizmos:
-		if gizmo.visible and gizmo.is_valid():
+		if gizmo.visible and gizmo.is_valid() and not gizmo.interactive:
+			gizmo.draw(viewport_control)
+	# Second pass — interactive gizmos (on top)
+	for gizmo in _gizmos:
+		if gizmo.visible and gizmo.is_valid() and gizmo.interactive:
 			gizmo.draw(viewport_control)
 
 

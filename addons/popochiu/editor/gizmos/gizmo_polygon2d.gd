@@ -28,6 +28,7 @@ const DEFAULT_POLYGON_COORDS := [
 
 # Public vars
 var visible: bool = true
+var interactive: bool = true
 var category: PolygonCategory = PolygonCategory.INTERACTION
 
 # Appearance
@@ -201,6 +202,10 @@ func draw(viewport: Control) -> void:
             outline_width
         )
 
+    # Non-interactive gizmos skip vertex handles and hover previews
+    if not interactive:
+        return
+
     # Draw vertex handles from cached rects
     for i in range(_vertex_handle_rects.size()):
         var v_color := vertex_color
@@ -228,6 +233,8 @@ func draw(viewport: Control) -> void:
 # Uses the cached handle rects so corners of the square are included.
 # Returns the vertex index, or -1 if no hit.
 func hit_test_vertex(pos: Vector2) -> int:
+    if not interactive:
+        return -1
     for i in range(_vertex_handle_rects.size()):
         if _vertex_handle_rects[i].abs().has_point(pos):
             return i
@@ -238,6 +245,8 @@ func hit_test_vertex(pos: Vector2) -> int:
 # Returns the edge index (the index of the starting vertex), or -1.
 # Also stores the projected point for preview drawing.
 func hit_test_edge(pos: Vector2) -> int:
+    if not interactive:
+        return -1
     for i in range(_vertex_handles_viewport.size()):
         var next_i := (i + 1) % _vertex_handles_viewport.size()
         var a := _vertex_handles_viewport[i]
@@ -251,6 +260,8 @@ func hit_test_edge(pos: Vector2) -> int:
 
 # Update hover state based on mouse position. Returns true if any hover state changed.
 func update_hover(pos: Vector2) -> bool:
+    if not interactive:
+        return false
     var old_vertex := _hovered_vertex_index
     var old_edge := _hovered_edge_index
 
