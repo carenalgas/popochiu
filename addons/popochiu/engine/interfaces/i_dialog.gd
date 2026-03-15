@@ -133,11 +133,6 @@ func create_gibberish(input_string: String) -> String:
 	return output_text
 
 
-## @deprecated Use [method get_instance] instead.
-func get_dialog_instance(script_name: String) -> PopochiuDialog:
-	return get_instance(script_name)
-
-
 ## Loads and returns the [PopochiuDialog] resource identified by [param script_name] as defined in
 ## Instantiates and returns the [PopochiuDialog] resource referenced by [param script_name] from
 ## project data. Logs an error and returns [code]null[/code] if not found.
