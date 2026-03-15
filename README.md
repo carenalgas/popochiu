@@ -67,9 +67,8 @@ Support for Godot 3 is officially dropped. Releases are still available for lega
 1. Download the correct release for your Godot version.
 2. Extract it and copy the `addons` folder into your project folder.
 3. Open your Godot project and enable the Popochiu plugin: `Project > Project Settings` then select the `Plugins` tab on top.
-4. Popochiu will show you a popup indicating it will restart the engine.
-5. After restarting the engine, you will see the game setup wizard. Follow the instructions and choose the options that best fit your project.
-6. Once the setup is complete, you will see the Popochiu dock in the bottom-right area of the editor. That's it!
+4. You will see the game setup wizard. Follow the instructions and choose the options that best fit your project.
+6. Once the setup is complete, you will see the Popochiu dock in the top-left area of the editor. That's it!
 
 ## Getting started
 
