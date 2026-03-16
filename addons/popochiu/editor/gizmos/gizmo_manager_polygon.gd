@@ -11,8 +11,17 @@ var _undo: EditorUndoRedoManager
 var _gizmos: Array[GizmoPolygon2D] = []
 var _grabbed_gizmo: GizmoPolygon2D
 var _grabbed_snapshot: PackedVector2Array
-# Visibility per category
-var _visibility: Dictionary = {
+# Whether editing is enabled per category (controlled by toolbar button).
+# When true, the selected object's polygon gizmos are visible AND interactive.
+var _editing_enabled: Dictionary = {
+	GizmoPolygon2D.PolygonCategory.INTERACTION: true,
+	GizmoPolygon2D.PolygonCategory.OBSTACLE: true,
+	GizmoPolygon2D.PolygonCategory.WALKABLE_AREA: true,
+}
+# Whether passive gizmos are always visible per category (from editor settings).
+# Controls visibility of non-selected objects' polygons, and the selected
+# object's polygons when editing is disabled for that category.
+var _always_show: Dictionary = {
 	GizmoPolygon2D.PolygonCategory.INTERACTION: false,
 	GizmoPolygon2D.PolygonCategory.OBSTACLE: false,
 	GizmoPolygon2D.PolygonCategory.WALKABLE_AREA: false,
@@ -77,7 +86,13 @@ func _scan_polygons(node: Node2D) -> void:
 # the actively selected polygon stands out visually.
 func _set_gizmo_theme(gizmo: GizmoPolygon2D) -> void:
 	var cat := gizmo.category
-	gizmo.visible = _visibility.get(cat, false)
+	# Visibility depends on the gizmo's role:
+	# - Interactive gizmos (selected object, editing ON): always visible
+	# - Passive gizmos: visible only when "always show" is enabled
+	if gizmo.interactive:
+		gizmo.visible = true
+	else:
+		gizmo.visible = _always_show.get(cat, false)
 
 	match cat:
 		GizmoPolygon2D.PolygonCategory.INTERACTION:
@@ -161,6 +176,15 @@ func initialize_gizmos() -> void:
 	_passive_alpha_factor = PopochiuEditorConfig.get_editor_setting(
 		PopochiuEditorConfig.GIZMOS_POLY_PASSIVE_ALPHA_FACTOR
 	)
+	_always_show[GizmoPolygon2D.PolygonCategory.INTERACTION] = PopochiuEditorConfig.get_editor_setting(
+		PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_INT
+	)
+	_always_show[GizmoPolygon2D.PolygonCategory.OBSTACLE] = PopochiuEditorConfig.get_editor_setting(
+		PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_OBS
+	)
+	_always_show[GizmoPolygon2D.PolygonCategory.WALKABLE_AREA] = PopochiuEditorConfig.get_editor_setting(
+		PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_WA
+	)
 
 	# Re-apply to existing gizmos
 	for gizmo in _gizmos:
@@ -200,15 +224,19 @@ func handle_object(object: Object, edited_root: Node) -> bool:
 		# Scan all room containers for polygon children
 		_scan_room_containers(edited_root)
 
-		# Set interactivity: only the selected node's gizmos are editable
+		# Set interactivity: only the selected node's gizmos are editable,
+		# and only when the toolbar button for that category is ON.
 		for gizmo in _gizmos:
 			var belongs_to_target := (
 				_target_node != null
 				and is_instance_valid(gizmo.get_source_node())
 				and gizmo.get_source_node().get_parent() == _target_node
 			)
-			gizmo.interactive = belongs_to_target
-			# Re-apply theme so the passive alpha takes effect
+			gizmo.interactive = (
+				belongs_to_target
+				and _editing_enabled.get(gizmo.category, false)
+			)
+			# Re-apply theme so visibility and passive alpha take effect
 			_set_gizmo_theme(gizmo)
 
 		return _gizmos.size() > 0
@@ -386,12 +414,22 @@ func try_delete_hovered_vertex() -> bool:
 	return false
 
 
-# Set visibility for a polygon category
-func set_category_visibility(category: GizmoPolygon2D.PolygonCategory, is_visible: bool) -> void:
-	_visibility[category] = is_visible
+# Toggle editing for a polygon category. When enabled, the selected object's
+# gizmos become visible and interactive. When disabled, they fall back to the
+# "always show" passive visibility from the editor settings.
+func set_category_editing(category: GizmoPolygon2D.PolygonCategory, enabled: bool) -> void:
+	_editing_enabled[category] = enabled
 	for gizmo in _gizmos:
-		if gizmo.category == category:
-			gizmo.visible = is_visible
+		if gizmo.category != category:
+			continue
+		# Only gizmos belonging to the target node can be interactive
+		var belongs_to_target := (
+			_target_node != null
+			and is_instance_valid(gizmo.get_source_node())
+			and gizmo.get_source_node().get_parent() == _target_node
+		)
+		gizmo.interactive = belongs_to_target and enabled
+		_set_gizmo_theme(gizmo)
 
 
 # Clear all gizmos and reset state

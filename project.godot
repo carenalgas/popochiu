@@ -22,14 +22,14 @@ config/windows_native_icon="res://popochiu.ico"
 
 [autoload]
 
-Globals="*uid://clvdqdj1ydbx"
+Globals="*uid://ci8m6vm1sf4gg"
 Cursor="*uid://c2pqh7ajiuiy0"
 E="*uid://rda8wggldt5o"
-R="*uid://dvqbxoo1d6oqb"
-C="*uid://dycs4s58gcp5k"
-I="*uid://cct7lwe3t451x"
-D="*uid://d13cbtlhv7wn2"
-A="*uid://02ac7qaouswy"
+R="*uid://5i34d65tb5x7"
+C="*uid://bmhhv2y4yg2f1"
+I="*uid://dfxlwjrjt4jet"
+D="*uid://gboegjdyur0r"
+A="*uid://cfl2wngoiuxhg"
 G="*uid://blk6nfpfiqrd2"
 T="*uid://30lm6k5s368s"
 

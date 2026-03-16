@@ -17,6 +17,11 @@ var _shown_helpers := []
 
 #region Godot ######################################################################################
 func _ready() -> void:
+	# In Godot 4.6, controls added to CONTAINER_CANVAS_EDITOR_MENU are wrapped
+	# inside a contextual PanelContainer that paints a background stylebox.
+	# We clear that style so this toolbar group stays visually transparent.
+	_set_context_toolbar_transparent()
+
 	# Gizmos are always visible at editor load, so we'll set the buttons down
 	# to sync the status (hardcoded, not very good but enough for now)
 	_reset_buttons_state()
@@ -33,13 +38,21 @@ func _ready() -> void:
 	# Connect to global signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
-	PopochiuEditorHelper.signal_bus.scene_changed.connect(_on_scene_changed)
-	PopochiuEditorHelper.signal_bus.scene_closed.connect(_on_scene_closed)
 
 	_set_toolbar_buttons_color()
 	hide()
 
 
+func _set_context_toolbar_transparent() -> void:
+	var toolbar_hbox := get_parent() as Control
+	if toolbar_hbox == null:
+		return
+
+	var toolbar_panel := toolbar_hbox.get_parent() as PanelContainer
+	if toolbar_panel == null:
+		return
+
+	toolbar_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 #endregion
 
 #region Signals ####################################################################################
