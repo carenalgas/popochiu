@@ -346,7 +346,10 @@ func room_readied(room: PopochiuRoom) -> void:
 			for property in node_dic:
 				if not PopochiuResources.has_property(node, property): continue
 				if node[property] is Array:
-					node[property].assign(node_dic[property])
+					#node[property].assign(node_dic[property])
+				## HACK 
+					if node_dic[property] is PackedVector2Array: node[property].assign(str(node_dic[property]))
+				## 
 				else: node[property] = node_dic[property]
 	
 	for c in get_tree().get_nodes_in_group("PopochiuClickable"):
