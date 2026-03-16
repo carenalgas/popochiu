@@ -157,6 +157,9 @@ func _on_down_pressed() -> void:
 
 
 func _add_item(item: PopochiuInventoryItem, _animate := true) -> void:
+	if item.hide_in_inventory:
+		PopochiuUtils.i.item_add_done.emit(item)
+		return
 	var slot := box.get_child(PopochiuUtils.i.items.size() - 1)
 	slot.name = "[%s]" % item.script_name
 	slot.add_child(item)
