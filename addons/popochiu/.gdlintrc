@@ -1,0 +1,3 @@
+# Ignore warnings that aren't likely to be bugs or don't match Popochiu style.
+disable: [class-definitions-order, class-variable-name, max-public-methods, max-returns, no-elif-return, no-else-return, trailing-whitespace, unused-argument]
+max-line-length: 200

@@ -1519,3 +1519,4 @@ func _on_game_type_changed() -> void:
 
 
 #endregion
+# gdlint:ignore = max-file-lines
