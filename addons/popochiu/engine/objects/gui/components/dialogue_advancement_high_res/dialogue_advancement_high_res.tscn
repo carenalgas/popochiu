@@ -1,0 +1,58 @@
+[gd_scene load_steps=6 format=3 uid="uid://dtgnofu06coub"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_q3lo8"]
+[ext_resource type="Script" uid="uid://dokawsao4qvkh" path="res://addons/popochiu/engine/objects/gui/components/dialogue_advancement/dialogue_advancement.gd" id="2_vx35s"]
+[ext_resource type="Texture2D" uid="uid://xaulx871dakj" path="res://addons/popochiu/engine/objects/gui/components/dialogue_advancement_high_res/images/dialogue_advancement_check_button_high_res.png" id="3_q74y6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eca4m"]
+atlas = ExtResource("3_q74y6")
+region = Rect2(64, 0, 64, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uhcq6"]
+atlas = ExtResource("3_q74y6")
+region = Rect2(0, 0, 64, 32)
+
+[node name="DialogueAdvancementHighRes" type="Control" groups=["popochiu_gui_component"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_q3lo8")
+script = ExtResource("2_vx35s")
+
+[node name="InputButton" type="LinkButton" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+toggle_mode = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="InputButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="Manual" type="Label" parent="InputButton/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Manual"
+
+[node name="ContinueMode" type="CheckButton" parent="InputButton/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 2
+theme_override_icons/checked = SubResource("AtlasTexture_eca4m")
+theme_override_icons/unchecked = SubResource("AtlasTexture_uhcq6")
+
+[node name="Auto" type="Label" parent="InputButton/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Auto"

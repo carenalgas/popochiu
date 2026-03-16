@@ -33,10 +33,13 @@ func _do_migration() -> bool:
 ## Add NavigationObstacle2D nodes to all props that don't already have one.
 func _add_obstacle_polygons_to_props() -> Completion:
 	var rooms_path := PopochiuResources.ROOMS_PATH
-	PopochiuUtils.print_normal("Migration %d: Adding obstacle polygon to all props.")
+	# Thanks to @idbrii for reporting the lack of version here.
+	PopochiuUtils.print_normal("Migration %d: Adding obstacle polygon to all props." % VERSION)
 	
 	if not DirAccess.dir_exists_absolute(rooms_path):
-		PopochiuUtils.print_error("Migration %d: Rooms directory does not exist: %s" % [VERSION, rooms_path])
+		PopochiuUtils.print_error(
+			"Migration %d: Rooms directory does not exist: %s" % [VERSION, rooms_path]
+		)
 		return Completion.IGNORED
 	
 	var any_prop_updated := false
@@ -44,7 +47,9 @@ func _add_obstacle_polygons_to_props() -> Completion:
 	# Iterate through all rooms
 	var rooms_dir := DirAccess.open(rooms_path)
 	if rooms_dir == null:
-		PopochiuUtils.print_error("Migration %d: Could not open rooms directory: %s" % [VERSION, rooms_path])
+		PopochiuUtils.print_error(
+			"Migration %d: Could not open rooms directory: %s" % [VERSION, rooms_path]
+		)
 		return Completion.IGNORED
 	
 	rooms_dir.list_dir_begin()
@@ -60,7 +65,11 @@ func _add_obstacle_polygons_to_props() -> Completion:
 					any_prop_updated = true
 		room_name = rooms_dir.get_next()
 
-	PopochiuUtils.print_normal("Migration %d: Obstacle polygon addition completed. %s props were updated" % [VERSION, "Some" if any_prop_updated else "No"])
+	PopochiuUtils.print_normal(
+		"Migration %d: Obstacle polygon addition completed. %s props were updated" % [
+			VERSION, "Some" if any_prop_updated else "No"
+		]
+	)
 	_reload_needed = any_prop_updated
 	return Completion.DONE if any_prop_updated else Completion.IGNORED
 
@@ -70,7 +79,9 @@ func _process_props_in_room(props_path: String) -> bool:
 	var any_prop_updated := false
 	var props_dir := DirAccess.open(props_path)
 	if props_dir == null:
-		PopochiuUtils.print_error("Migration %d: Could not open props directory: %s" % [VERSION, props_path])
+		PopochiuUtils.print_error(
+			"Migration %d: Could not open props directory: %s" % [VERSION, props_path]
+		)
 		return false
 	
 	props_dir.list_dir_begin()
@@ -86,9 +97,13 @@ func _process_props_in_room(props_path: String) -> bool:
 				if _update_prop_by_path(prop_scene_path):
 					any_prop_updated = true
 			else:
-				PopochiuUtils.print_warning("Migration %d: Prop scene file does not exist: %s" % [VERSION, prop_scene_path])
+				PopochiuUtils.print_warning(
+					"Migration %d: Prop scene file does not exist: %s" % [VERSION, prop_scene_path]
+				)
 		else:
-			PopochiuUtils.print_warning("Migration %d: Skipping file (not directory): %s" % [VERSION, prop_name])
+			PopochiuUtils.print_warning(
+				"Migration %d: Skipping file (not directory): %s" % [VERSION, prop_name]
+			)
 		prop_name = props_dir.get_next()
 	
 	return any_prop_updated
@@ -98,18 +113,26 @@ func _process_props_in_room(props_path: String) -> bool:
 func _update_prop_by_path(scene_path: String) -> bool:
 	var packed_scene: PackedScene = load(scene_path)
 	if not packed_scene:
-		PopochiuUtils.print_error("Migration %d: Could not load packed scene: %s" % [VERSION, scene_path])
+		PopochiuUtils.print_error(
+			"Migration %d: Could not load packed scene: %s" % [VERSION, scene_path]
+		)
 		return false
 	
 	var prop_instance = packed_scene.instantiate()
 	if not prop_instance is PopochiuProp:
-		PopochiuUtils.print_error("Migration %d: Scene is not a PopochiuProp: %s" % [VERSION, scene_path])
+		PopochiuUtils.print_error(
+			"Migration %d: Scene is not a PopochiuProp: %s" % [VERSION, scene_path]
+		)
 		prop_instance.queue_free()
 		return false
 	
 	# Check if the prop already has an ObstaclePolygon node
 	if prop_instance.has_node("ObstaclePolygon"):
-		PopochiuUtils.print_warning("Migration %d: Prop '%s' already has ObstaclePolygon, skipping" % [VERSION, prop_instance.script_name])
+		PopochiuUtils.print_warning(
+			"Migration %d: Prop '%s' already has ObstaclePolygon, skipping" % [
+				VERSION, prop_instance.script_name
+			]
+		)
 		prop_instance.queue_free()
 		return false
 
@@ -131,7 +154,9 @@ func _update_prop_by_path(scene_path: String) -> bool:
 		prop_instance.queue_free()
 		return false
 
-	PopochiuUtils.print_normal("Migration %d: Successfully updated prop '%s'" % [VERSION, prop_instance.script_name])
+	PopochiuUtils.print_normal(
+		"Migration %d: Successfully updated prop '%s'" % [VERSION, prop_instance.script_name]
+	)
 
 	# Clean up the instance
 	prop_instance.queue_free()
@@ -144,19 +169,28 @@ func _update_signal_references_in_game_scripts() -> Completion:
 	PopochiuUtils.print_normal("Migration %d: Updating reference to old signals." % [VERSION])
 	
 	if not DirAccess.dir_exists_absolute(game_path):
-		PopochiuUtils.print_error("Migration %d: Game directory does not exist: %s" % [VERSION, game_path])
+		PopochiuUtils.print_error(
+			"Migration %d: Game directory does not exist: %s" % [VERSION, game_path]
+		)
 		return Completion.IGNORED
 	
 	var any_script_updated := false
 	
 	# Get all .gd files in the game folder recursively
-	var script_files := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(PopochiuResources.GAME_PATH, ["gd"])
+	var script_files := PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
+		PopochiuResources.GAME_PATH, ["gd"]
+	)
 	
 	for script_path in script_files:
 		if _update_signal_references_in_file(script_path):
 			any_script_updated = true
 	
-	PopochiuUtils.print_normal("Migration %d: Signal references update completed. %s script updated: %s" % [VERSION, "Some" if any_script_updated else "No"])
+	# Thanks to @idbrii for reporting the missmatch of parameters.
+	PopochiuUtils.print_normal(
+		"Migration %d: Signal references update completed. %s scripts updated." % [
+			VERSION, "Some" if any_script_updated else "No"
+		]
+	)
 	return Completion.DONE if any_script_updated else Completion.IGNORED
 
 
@@ -175,7 +209,11 @@ func _update_signal_references_in_file(script_path: String) -> bool:
 	
 	# Skip files that don't contain move_ended
 	if not original_content.contains("move_ended"):
-		PopochiuUtils.print_warning("Migration %d: Script '%s' does not contain 'move_ended', skipping" % [VERSION, script_path])
+		PopochiuUtils.print_warning(
+			"Migration %d: Script '%s' does not contain 'move_ended', skipping" % [
+				VERSION, script_path
+			]
+		)
 		return false
 	
 	# Create backup content for safety
@@ -245,7 +283,9 @@ func _update_signal_references_in_file(script_path: String) -> bool:
 	
 	# If no changes were made, return false
 	if not any_changes:
-		PopochiuUtils.print_warning("Migration %d: No changes needed for script '%s'" % [VERSION, script_path])
+		PopochiuUtils.print_warning(
+			"Migration %d: No changes needed for script '%s'" % [VERSION, script_path]
+		)
 		return false
 	
 	# Write the updated content back to the file
@@ -301,7 +341,11 @@ func _add_missing_movement_hooks() -> Completion:
 			if _add_missing_hooks_to_file(script_path, type):
 				any_script_updated = true
 	
-	PopochiuUtils.print_normal("Migration %d: Movement hooks addition completed. %s scripts updated." % [VERSION, "Some" if any_script_updated else "No"])
+	PopochiuUtils.print_normal(
+		"Migration %d: Movement hooks addition completed. %s scripts updated." % [
+			VERSION, "Some" if any_script_updated else "No"
+		]
+	)
 	return Completion.DONE if any_script_updated else Completion.IGNORED
 
 
@@ -324,7 +368,9 @@ func _add_missing_hooks_to_file(script_path: String, clickable_type: String) -> 
 	
 	# If both methods exist, nothing to do
 	if has_movement_started and has_movement_ended:
-		PopochiuUtils.print_warning("Migration %d: Script already has both movement hooks, skipping" % [VERSION])
+		PopochiuUtils.print_warning(
+			"Migration %d: Script already has both movement hooks, skipping" % [VERSION]
+		)
 		return false
 	
 	var updated_content := original_content
@@ -360,7 +406,10 @@ func _add_missing_hooks_to_file(script_path: String, clickable_type: String) -> 
 	# Insert the methods
 	if insertion_point < updated_content.length():
 		# Insert before #endregion
-		updated_content = updated_content.substr(0, insertion_point) + methods_text + "\n\n" + updated_content.substr(insertion_point)
+		updated_content = (
+			updated_content.substr(0, insertion_point)
+			+ methods_text + "\n\n" + updated_content.substr(insertion_point)
+		)
 	else:
 		# Append at end
 		updated_content += methods_text + "\n"
@@ -369,7 +418,9 @@ func _add_missing_hooks_to_file(script_path: String, clickable_type: String) -> 
 	file = FileAccess.open(script_path, FileAccess.WRITE)
 	if file == null:
 		PopochiuUtils.print_error(
-			"Migration %d: Could not write to %s script '%s'" % [VERSION, clickable_type, script_path]
+			"Migration %d: Could not write to %s script '%s'" % [
+				VERSION, clickable_type, script_path
+			]
 		)
 		return false
 	
@@ -384,7 +435,9 @@ func _get_character_scripts(characters_path: String) -> Array[String]:
 	var character_scripts: Array[String] = []
 	var dir := DirAccess.open(characters_path)
 	if dir == null:
-		PopochiuUtils.print_error("Migration %d: Could not open characters directory: %s" % [VERSION, characters_path])
+		PopochiuUtils.print_error(
+			"Migration %d: Could not open characters directory: %s" % [VERSION, characters_path]
+		)
 		return character_scripts
 	
 	dir.list_dir_begin()
@@ -392,16 +445,22 @@ func _get_character_scripts(characters_path: String) -> Array[String]:
 	
 	while character_name != "":
 		if dir.current_is_dir():
-			var character_script_path := characters_path + character_name + "/" + "character_" + character_name + ".gd"
+			var character_script_path := (
+				characters_path + character_name + "/" + "character_" + character_name + ".gd"
+			)
 			if FileAccess.file_exists(character_script_path):
 				character_scripts.append(character_script_path)
 			else:
-				PopochiuUtils.print_warning("Migration %d: Character script not found: %s" % [VERSION, character_script_path])
+				PopochiuUtils.print_warning(
+					"Migration %d: Character script not found: %s" % [
+						VERSION, character_script_path
+					]
+				)
 		
 		character_name = dir.get_next()
 	
 	return character_scripts
-    
+
 
 ## Get all prop script files from all rooms.
 func _get_prop_scripts(base_path: String) -> Array[String]:
@@ -418,7 +477,9 @@ func _get_room_scripts(base_path: String, subfolder: String, script_prefix: Stri
 	var scripts: Array[String] = []
 	var rooms_dir := DirAccess.open(base_path)
 	if rooms_dir == null:
-		PopochiuUtils.print_error("Migration %d: Could not open rooms directory: %s" % [VERSION, base_path])
+		PopochiuUtils.print_error(
+			"Migration %d: Could not open rooms directory: %s" % [VERSION, base_path]
+		)
 		return scripts
 	
 	rooms_dir.list_dir_begin()
@@ -435,11 +496,17 @@ func _get_room_scripts(base_path: String, subfolder: String, script_prefix: Stri
 					
 					while item_name != "":
 						if folder_dir.current_is_dir():
-							var script_path := folder_path + item_name + "/" + script_prefix + "_" + item_name + ".gd"
+							var script_path := (
+								folder_path + item_name + "/" + script_prefix + "_" + item_name + ".gd"
+							)
 							if FileAccess.file_exists(script_path):
 								scripts.append(script_path)
 							else:
-								PopochiuUtils.print_warning("Migration %d: %s script not found: %s" % [VERSION, script_prefix.capitalize(), script_path])
+								PopochiuUtils.print_warning(
+									"Migration %d: %s script not found: %s" % [
+										VERSION, script_prefix.capitalize(), script_path
+									]
+								)
 						item_name = folder_dir.get_next()
 		room_name = rooms_dir.get_next()
 	

@@ -1,20 +1,22 @@
+# @popochiu-docs-category game-scripts-interfaces
 class_name PopochiuIRoom
 extends Node
-## Provides access to the [PopochiuRoom]s in the game. Access with [b]R[/b] (e.g.
-## [code]R.House.get_prop("Drawer")[/code]).
+## Provides access to [PopochiuRoom] instances through the singleton [b]R[/b]
+## (for example: [code]R.House.get_prop("Drawer")[/code]).
 ##
-## Use it to access props, hotspots, regions and walkable areas in the current room; or to access to
-## data from other rooms. Its script is [b]i_room.gd[/b].[br][br]
+## Use this interface to access props, hotspots, regions and walkable areas in the current room,
+## or to query data from other rooms.
 ##
-## Some things you can do with it:[br][br]
-## [b]•[/b] Access objects inside the current room.[br]
-## [b]•[/b] Access the state of any room.[br]
-## [b]•[/b] Move to another room.[br][br]
+## Capabilities include:
 ##
-## Examples:
+## - Access objects inside the current room.[br]
+## - Read or store the state of any room.[br]
+## - Change the current room.
+##
+## [b]Use examples:[/b]
 ## [codeblock]
-## R.get_prop("Scissors").modulate.a = 1.0 # Get Scissors prop and make it visible
-## R.Outside.state.is_raining # Access the is_raining property in the Outside room
+## R.get_prop("Scissors").enabled = true # Get Scissors prop and make it visible
+## R.Outside.state.is_raining # Access the is_raining property in the [i]Outside[/i] room
 ## [/codeblock]
 
 ## Provides access to the current [PopochiuRoom].
@@ -28,6 +30,9 @@ var rooms_states := {}
 
 var _room_instances := {}
 var _use_transition_on_room_change := true
+# Stores characters that should be transferred to the target room when following across rooms.
+# Each entry is a dictionary: { character: PopochiuCharacter, followed_script_name: String, offset: Vector2 }
+var _pending_cross_room_followers := []
 
 
 #region Godot ######################################################################################
@@ -98,10 +103,11 @@ func get_markers() -> Array:
 	return current.get_markers()
 
 
-## Returns the instance of the [PopochiuRoom] identified with [param script_name]. If the room
-## doesn't exists, then [code]null[/code] is returned.[br][br]
-## This method is used by [b]res://game/autoloads/r.gd[/b] to load the instance of each room (present
-## in that script as a variable for code autocompletion) in runtime.
+## Returns the runtime instance of the [PopochiuRoom] identified by [param script_name], or
+## [code]null[/code] if it cannot be found.
+##
+## Used by [b]res://game/autoloads/r.gd[/b] to instantiate room variables at runtime for
+## autocompletion.
 func get_runtime_room(script_name: String) -> PopochiuRoom:
 	var room: PopochiuRoom = null
 	
@@ -116,7 +122,8 @@ func get_runtime_room(script_name: String) -> PopochiuRoom:
 	return room
 
 
-## Gets the instance of the [PopochiuRoom] identified with [param script_name].
+## Instantiates and returns the [PopochiuRoom] resource referenced by [param script_name] from
+## project data. Logs an error and returns [code]null[/code] if not found.
 func get_instance(script_name: String) -> PopochiuRoom:
 	# Fix #328 by returning the instance of the current room if it matches the instance that the
 	# plugin is looking for
@@ -140,11 +147,12 @@ func clear_instances() -> void:
 	_room_instances.clear()
 
 
-## Loads the room with [param script_name]. [param use_transition] can be used to trigger a [i]fade
-## out[/i] animation before loading the room, and a [i]fade in[/i] animation once it is ready.
-## If [param store_state] is [code]true[/code] the state of the room will be stored in memory.
-## [param ignore_change] is used internally by Popochiu to know if it's the first time the room is
-## loaded when starting the game.
+## Loads the room identified by [param script_name].
+## [param use_transition] triggers a fade out before loading and a fade in after the room is ready.
+## The actual transition may be different from fading and is defined in project settings.
+## If [param store_state] is [code]true[/code], the current room state will be stored in memory.
+## [param ignore_change] is used internally to skip the scene change (e.g. when initializing in the
+## editor). Don't use it unless you know what you are doing.
 func goto_room(
 	script_name := "",
 	use_transition := true,
@@ -159,10 +167,13 @@ func goto_room(
 	_use_transition_on_room_change = use_transition
 	# Never fade the TL in, if we are entering the first room at game start
 	if use_transition and Engine.get_process_frames() > 0:
-		PopochiuUtils.e.tl.play_transition(PopochiuUtils.e.tl.FADE_IN)
-		await PopochiuUtils.e.tl.transition_finished
+		await PopochiuUtils.t.play_transition(
+			PopochiuConfig.get_tl_default_room_transition(),
+			PopochiuConfig.get_tl_room_transition_duration(),
+			PopochiuConfig.get_tl_room_transition_mode_leave()
+		)
 	elif Engine.get_process_frames() > 0:
-		PopochiuUtils.e.tl.show_curtain()
+		PopochiuUtils.t.show_curtain()
 	
 	# Prevent the GUI from showing info coming from the previous room
 	PopochiuUtils.g.show_hover_text()
@@ -170,6 +181,11 @@ func goto_room(
 	
 	if is_instance_valid(PopochiuUtils.c.player) and Engine.get_process_frames() > 0:
 		PopochiuUtils.c.player.last_room = current.script_name
+	
+	# Collect characters that should follow across rooms before saving state.
+	# This must happen before save_children_states() so followers are excluded from source room.
+	if Engine.get_process_frames() > 0:
+		_collect_cross_room_followers()
 	
 	# Store the room state
 	if store_state:
@@ -202,7 +218,7 @@ func goto_room(
 	PopochiuUtils.e.get_tree().change_scene_to_file(load(rp).scene)
 
 
-## Called once the loaded [param room] is "ready" ([method Node._ready]).
+## Called when the loaded [param room] is ready ([method Node._ready]).
 func room_readied(room: PopochiuRoom) -> void:
 	if not is_instance_valid(current):
 		current = room
@@ -243,6 +259,13 @@ func room_readied(room: PopochiuRoom) -> void:
 		
 		if not chr: continue
 		
+		# If character is already in another room's tree, remove it first
+		# This can happen when the same character instance is saved in multiple rooms
+		if chr.is_inside_tree():
+			var parent := chr.get_parent()
+			if parent:
+				parent.remove_child(chr)
+
 		chr.position = Vector2(chr_dic.x, chr_dic.y)
 		chr._looking_dir = chr_dic.facing
 		chr.visible = chr_dic.visible
@@ -256,9 +279,43 @@ func room_readied(room: PopochiuRoom) -> void:
 		
 		if chr_dic.has("look_at_point"):
 			chr.look_at_point = PopochiuUtils.unpack_vector_2(chr_dic.look_at_point)
+
+		if chr_dic.has("dialog_pos"):
+			chr.dialog_pos = PopochiuUtils.unpack_vector_2(chr_dic.dialog_pos)
+
+		# Restore follow-related properties
+		if chr_dic.has("follow_character_outside_room"):
+			chr.follow_character_outside_room = chr_dic.follow_character_outside_room
 		
+		if chr_dic.has("follow_character_offset"):
+			chr.follow_character_offset = PopochiuUtils.unpack_vector_2(chr_dic.follow_character_offset)
+		
+		if chr_dic.has("follow_character_threshold"):
+			chr.follow_character_threshold = PopochiuUtils.unpack_vector_2(chr_dic.follow_character_threshold)
+		
+		# Restore face_character link after character is added to the room
+		if chr_dic.has("face_character") and chr_dic.face_character:
+			chr.face_character = chr_dic.face_character
+		
+		# Restore follow link after character is added to the room
+		# This must happen after add_character() so the character is in the tree
+		if chr_dic.has("follow_character") and chr_dic.follow_character:
+			chr.follow_character = chr_dic.follow_character
+
 		current.add_character(chr)
-	
+
+		# Restore face link after character is added to the room
+		if not chr.face_character.is_empty():
+			var faced_chr := PopochiuUtils.c.get_character(chr.face_character)
+			if is_instance_valid(faced_chr) and faced_chr.is_inside_tree():
+				chr.start_facing_character(faced_chr)
+
+		# Restore follow link after character is added to the room
+		if not chr.follow_character.is_empty():
+			var followed_chr := PopochiuUtils.c.get_character(chr.follow_character)
+			if is_instance_valid(followed_chr) and followed_chr.is_inside_tree():
+				chr.start_following_character(followed_chr)
+
 	# If the room must have the player character but it is not part of its $Characters node, then
 	# add the PopochiuCharacter to the room
 	if (
@@ -288,13 +345,18 @@ func room_readied(room: PopochiuRoom) -> void:
 			
 			for property in node_dic:
 				if not PopochiuResources.has_property(node, property): continue
-				
-				node[property] = node_dic[property]
+				if node[property] is Array:
+					node[property].assign(node_dic[property])
+				else: node[property] = node_dic[property]
 	
 	for c in get_tree().get_nodes_in_group("PopochiuClickable"):
 		c.room = current
 	
 	await current._on_room_entered()
+	
+	# Add characters that followed across rooms AFTER _on_room_entered() so the followed
+	# character (e.g., player) is already at their final position set by the room script.
+	_add_cross_room_followers()
 	
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.c.player.global_position = Vector2(
@@ -303,12 +365,15 @@ func room_readied(room: PopochiuRoom) -> void:
 		)
 	
 	if _use_transition_on_room_change:
-		PopochiuUtils.e.tl.play_transition(PopochiuUtils.e.tl.FADE_OUT)
-		await PopochiuUtils.e.tl.transition_finished
+		await PopochiuUtils.t.play_transition(
+			PopochiuConfig.get_tl_default_room_transition(),
+			PopochiuConfig.get_tl_room_transition_duration(),
+			PopochiuConfig.get_tl_room_transition_mode_enter()
+		)
 		
 		await PopochiuUtils.e.wait(0.3)
 	else:
-		PopochiuUtils.e.tl.hide_curtain()
+		PopochiuUtils.t.hide_curtain()
 		await get_tree().process_frame
 	
 	if not current.hide_gui:
@@ -333,8 +398,8 @@ func room_readied(room: PopochiuRoom) -> void:
 	current.state.visited_first_time = false
 
 
+## Stores the default states of all rooms defined in project data.
 func store_states() -> void:
-	# Store the default state of rooms in the game
 	for room_tres in PopochiuResources.get_section("rooms"):
 		var res: PopochiuRoomData = load(room_tres)
 		rooms_states[res.script_name] = res
@@ -345,10 +410,144 @@ func store_states() -> void:
 
 #region SetGet #####################################################################################
 func set_current(value: PopochiuRoom) -> void:
+	# Set the current room. If the room is not in the scene tree, load it via [method goto_room].
 	if not value.is_inside_tree():
 		goto_room(value.script_name)
 	else:
 		current = value
+
+
+#endregion
+
+
+#region Private ####################################################################################
+# Collects characters that should follow across rooms.
+# Iterates through characters in the current room and identifies those with follow_character_outside_room
+# enabled and a valid _current_followed_character. Builds chain recursively and orders result
+# so followed characters come before their followers.
+func _collect_cross_room_followers() -> void:
+	_pending_cross_room_followers.clear()
+	
+	if not is_instance_valid(current):
+		return
+	
+	# Get all characters currently in the room
+	var characters_in_room := current.get_characters()
+	if characters_in_room.is_empty():
+		return
+	
+	# Build a map of who follows whom for chain detection
+	var follower_map := {}  # followed_script_name -> Array of followers
+	for chr: PopochiuCharacter in characters_in_room:
+		if (
+			chr.follow_character_outside_room
+			and is_instance_valid(chr._current_followed_character)
+			and chr != PopochiuUtils.c.player  # Player character doesn't auto-follow
+		):
+			var followed_name: String = chr._current_followed_character.script_name
+			if not follower_map.has(followed_name):
+				follower_map[followed_name] = []
+			follower_map[followed_name].append(chr)
+	
+	if follower_map.is_empty():
+		return
+	
+	# Find the root of the follow chain (the character being followed who isn't following anyone
+	# with follow_character_outside_room, or is the player)
+	var roots: Array[String] = []
+	for followed_name: String in follower_map:
+		var followed_chr: PopochiuCharacter = PopochiuUtils.c.get_character(followed_name)
+		if not is_instance_valid(followed_chr):
+			continue
+		# A root is a character who is followed but either:
+		# - Is the player
+		# - Doesn't have follow_character_outside_room enabled
+		# - Isn't following anyone in the room
+		var is_root: bool = (
+			followed_chr == PopochiuUtils.c.player
+			or not followed_chr.follow_character_outside_room
+			or not is_instance_valid(followed_chr._current_followed_character)
+		)
+		if is_root:
+			roots.append(followed_name)
+	
+	# Process chains starting from roots, adding followers in order (followed first, then followers)
+	var processed := {}
+	for root_name in roots:
+		_collect_followers_recursive(root_name, follower_map, processed)
+	
+	# Remove collected followers from the current room so they won't be saved in source room state
+	for entry in _pending_cross_room_followers:
+		var follower: PopochiuCharacter = entry.character
+		if current.has_character(follower.script_name):
+			current.remove_character(follower)
+
+
+# Recursively collects followers in the correct order (followed characters before their followers).
+func _collect_followers_recursive(
+	followed_name: String,
+	follower_map: Dictionary,
+	processed: Dictionary
+) -> void:
+	if not follower_map.has(followed_name):
+		return
+	
+	for follower: PopochiuCharacter in follower_map[followed_name]:
+		if processed.has(follower.script_name):
+			continue
+		
+		processed[follower.script_name] = true
+		
+		# Store the follower info
+		_pending_cross_room_followers.append({
+			"character": follower,
+			"followed_script_name": followed_name,
+			"offset": follower.follow_character_offset
+		})
+		
+		# Recursively process anyone following this follower
+		_collect_followers_recursive(follower.script_name, follower_map, processed)
+
+
+# Adds characters that followed across rooms to the current room.
+# Positions them relative to their followed character and re-establishes the follow link.
+func _add_cross_room_followers() -> void:
+	if _pending_cross_room_followers.is_empty():
+		return
+	
+	for entry: Dictionary in _pending_cross_room_followers:
+		var follower: PopochiuCharacter = entry.character
+		var followed_name: String = entry.followed_script_name
+		var offset: Vector2 = entry.offset
+		
+		# Get the followed character (should already be in the room)
+		var followed := PopochiuUtils.c.get_character(followed_name)
+		if not is_instance_valid(followed):
+			PopochiuUtils.print_warning(
+				"Cross-room follower '%s' could not find followed character '%s'" %
+				[follower.script_name, followed_name]
+			)
+			continue
+		
+		# Add the follower to the room first
+		if not current.has_character(follower.script_name):
+			current.add_character(follower)
+		
+		# Stop any ongoing movement before repositioning
+		follower.stop_walking()
+		
+		# Position the follower relative to the followed character AFTER add_character(),
+		# because add_character() calls update_position() which would overwrite with the
+		# stale _buffered_position from the previous room.
+		var target_position: Vector2 = followed.position + offset
+		follower.position = target_position
+		# Sync the buffered position so it doesn't jump back when movement starts
+		follower.sync_buffered_position()
+		
+		# Re-establish the follow link
+		follower.start_following_character(followed)
+	
+	_pending_cross_room_followers.clear()
 
 
 #endregion

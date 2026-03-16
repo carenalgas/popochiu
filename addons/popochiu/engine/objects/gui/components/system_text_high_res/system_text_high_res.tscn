@@ -1,0 +1,7 @@
+[gd_scene load_steps=3 format=3 uid="uid://hruey0faemfj"]
+
+[ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/gui/components/system_text/system_text.tscn" id="1_nu1kq"]
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="2_1hynt"]
+
+[node name="SystemTextHighRes" instance=ExtResource("1_nu1kq")]
+theme = ExtResource("2_1hynt")

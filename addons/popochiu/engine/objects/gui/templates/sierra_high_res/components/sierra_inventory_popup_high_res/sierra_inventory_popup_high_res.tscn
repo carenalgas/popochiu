@@ -1,0 +1,188 @@
+[gd_scene load_steps=21 format=3 uid="uid://bu0t53x33xolm"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_s3yhq"]
+[ext_resource type="Script" uid="uid://cg0ikp0rt6t05" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_inventory_popup/sierra_inventory_popup.gd" id="2_wsm41"]
+[ext_resource type="Texture2D" uid="uid://crfvalg8jyuni" path="res://addons/popochiu/engine/objects/gui/resources/images/close_high_res.svg" id="3_s3yhq"]
+[ext_resource type="Texture2D" uid="uid://ccjfdeebj3yx3" path="res://addons/popochiu/engine/objects/gui/resources/images/close_highlight_high_res.svg" id="4_a5pgp"]
+[ext_resource type="PackedScene" uid="uid://bog4i3sdck4n" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/components/sierra_inventory_popup_high_res/sierra_inventory_grid_high_res.tscn" id="5_s3yhq"]
+[ext_resource type="ButtonGroup" uid="uid://dyskyd66yevlj" path="res://addons/popochiu/engine/objects/gui/templates/sierra/components/sierra_inventory_popup/sierra_inventory_button_group.tres" id="6_h60af"]
+[ext_resource type="Texture2D" uid="uid://dq1i0kltkr8nf" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_interact.svg" id="7_s3yhq"]
+[ext_resource type="Texture2D" uid="uid://cjtycaxrm2v3g" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_look.svg" id="8_a5pgp"]
+[ext_resource type="Texture2D" uid="uid://dc3n1pom0d00p" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/images/btn_talk.svg" id="9_p7bdt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0yihc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d512i"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0, 0, 0, 0.705882)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w2s1j"]
+atlas = ExtResource("7_s3yhq")
+region = Rect2(0, 0, 98, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8v1yl"]
+atlas = ExtResource("7_s3yhq")
+region = Rect2(0, 96, 98, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hihp1"]
+atlas = ExtResource("7_s3yhq")
+region = Rect2(0, 96, 98, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xsx8m"]
+atlas = ExtResource("8_a5pgp")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_b7r60"]
+atlas = ExtResource("8_a5pgp")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3xiwy"]
+atlas = ExtResource("8_a5pgp")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pwy2t"]
+atlas = ExtResource("9_p7bdt")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2sopn"]
+atlas = ExtResource("9_p7bdt")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nw2l1"]
+atlas = ExtResource("9_p7bdt")
+region = Rect2(0, 96, 96, 96)
+
+[node name="SierraInventoryPopupHighRes" type="Control" groups=["popochiu_gui_popup"]]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_s3yhq")
+script = ExtResource("2_wsm41")
+script_name = &"SierraInventoryPopup"
+title = "Inventory"
+
+[node name="Overlay" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_0yihc")
+
+[node name="PanelContainer" type="PanelContainer" parent="Overlay"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_d512i")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="HeaderContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Inventory"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Close" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/HeaderContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+size_flags_vertical = 4
+texture_normal = ExtResource("3_s3yhq")
+texture_pressed = ExtResource("4_a5pgp")
+texture_hover = ExtResource("4_a5pgp")
+
+[node name="MarginContainer" type="MarginContainer" parent="Overlay/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SierraInventoryGridHighRes" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer" instance=ExtResource("5_s3yhq")]
+layout_mode = 2
+
+[node name="FooterContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="CommandsContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Interact" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/CommandsContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("6_h60af")
+texture_normal = SubResource("AtlasTexture_w2s1j")
+texture_pressed = SubResource("AtlasTexture_8v1yl")
+texture_hover = SubResource("AtlasTexture_hihp1")
+
+[node name="Look" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/CommandsContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("6_h60af")
+texture_normal = SubResource("AtlasTexture_xsx8m")
+texture_pressed = SubResource("AtlasTexture_b7r60")
+texture_hover = SubResource("AtlasTexture_3xiwy")
+
+[node name="Talk" type="TextureButton" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/CommandsContainer"]
+unique_name_in_owner = true
+texture_filter = 1
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("6_h60af")
+texture_normal = SubResource("AtlasTexture_pwy2t")
+texture_pressed = SubResource("AtlasTexture_2sopn")
+texture_hover = SubResource("AtlasTexture_nw2l1")
+
+[node name="ButtonsContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_constants/separation = 32
+
+[node name="Ok" type="Button" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/ButtonsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "OK"
+
+[node name="Cancel" type="Button" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/FooterContainer/ButtonsContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 64)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+text = "Back"

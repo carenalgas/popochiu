@@ -1,17 +1,18 @@
+# @popochiu-docs-category engine
 class_name Popochiu
 extends Node
-## This is Popochiu's main hub, and is in charge of making the game to work.
-## 
-## Is the shortcut for [b]Popochiu.gd[/b], and can be used (from any script) with [b]E[/b] (E.g.
-## [code]E.camera.shake()[/code]).
-## 
-## Some things you can do with it:
-## - Change to another room.
-## - Access the main camera and some game settings.
-## - Run commands sequentially (even in a form that makes the skippable).
-## - Use some utility methods (such as making a function of yours able to be in a run queue).
-## 
-## Examples
+## Popochiu's core engine, responsible for the main game logic and systems.
+## It is accessible from any game script as [b]E[/b] (e.g. [code]E.camera.shake()[/code]).
+##
+## Provides core functionality for the game engine, plus access to some general-purpose feature:
+## - Accessing the main camera and game settings.
+## - Running sequential (and skippable) instruction queues.
+## - Recording game events in a history log.
+## - Handling game saves and loads.
+## - Registering custom commands for the GUI.
+## - Wrapping custom methods so they can be used inside a [method queue].
+##
+## Use examples:
 ## [codeblock]
 ## # Makes the player-controlled character say "Hi", wait a second, and then say another thing
 ## E.queue([
@@ -19,7 +20,7 @@ extends Node
 ##     "...",
 ##     "Player: I'm the character you can control!!!",
 ## ])
-## # Make the camera shake with a strength of 2.0 during 3.0 seconds
+## # Shake the camera with a strength of 2.0 for 3.0 seconds
 ## E.camera.shake(2.0, 3.0)
 ## [/codeblock]
 
@@ -38,23 +39,22 @@ signal game_loaded(data: Dictionary)
 signal command_selected
 ## Emitted when the dialog style changes in [PopochiuSettings].
 signal dialog_style_changed
-## A signal that is never emitted and serves to stop the execution of instructions by clicking
-## anywhere in a [PopochiuRoom] when a [PopochiuClickable] has already been clicked.
+## Sentinel signal that is never emitted. Awaiting it permanently suspends the current instruction
+## chain, allowing new player interactions to take over (e.g. when the player clicks elsewhere while
+## a character is walking to a [PopochiuClickable]).
 signal await_stopped
 
 ## Path to the script with the class used to save and load game data.
 const SAVELOAD_PATH := "res://addons/popochiu/engine/others/popochiu_save_load.gd"
 
-## Used to prevent going to another room when there is one being loaded.
+# @popochiu-docs-ignore
+#
+## Prevents room changes while a room is being loaded.
 var in_room := false : set = _set_in_room
-## @deprecated
-## [b]Deprecated[/b]. Now this is [member PopochiuIRoom.current].
-var current_room: PopochiuRoom
-## Stores the last clicked [PopochiuClickable] node to ease access to it from any other class.
+## Stores the last clicked [PopochiuClickable] for global access.
 var clicked: PopochiuClickable = null
-## Stores the last hovered [PopochiuClickable] node to ease access to it from any other class.
+## Stores the last hovered [PopochiuClickable] for global access.
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
-## Used to know if a cutscene was skipped.
 ## A reference to [PopochiuSettings]. Can be used to quickly access its members.
 var settings := PopochiuSettings.new()
 ## Reference to the [PopochiuAudioManager].
@@ -66,13 +66,8 @@ var am: PopochiuAudioManager = null
 var playing_queue := false
 ## Reference to the [PopochiuGraphicInterface].
 var gui: PopochiuGraphicInterface = null
-## Reference to the [PopochiuTransitionLayer].
-var tl: Control = null
-## The current class used as the game commands
+## Whether the current cutscene was skipped by the player.
 var cutscene_skipped := false
-## @deprecated
-## [b]Deprecated[/b]. Now this is [member PopochiuIRoom.rooms_states].
-var rooms_states := {}
 ## Stores a list of game events (triggered actions and dialog lines). Each event is defined by a
 ## [Dictionary].
 var history := []
@@ -98,10 +93,10 @@ var current_dialog_style := settings.dialog_style : set = set_dialog_style
 ## The scale value of the game. Defined by the native game resolution compared with (356, 200),
 ## which is the default game resolution defined by Popochiu.
 var scale := Vector2.ONE
-## A reference to the current commands script.
-## (i.e. [NineVerbCommands], [SierraCommands] or [SimpleClickCommands])
+## Reference to the current GUI commands script
+## (e.g. [NineVerbCommands], [SierraCommands], or [SimpleClickCommands]).
 var commands: PopochiuCommands = null
-## Serves as a map to access the fallback methods of the current GUI.
+## Maps command IDs to their names and fallback methods for the current GUI.
 var commands_map := {
 	-1: {
 		"name" = "fallback",
@@ -152,14 +147,14 @@ func _ready() -> void:
 	commands = load(PopochiuResources.GUI_COMMANDS).new()
 	
 	# Instantiate the Transitions Layer node
-	tl = load(PopochiuResources.TRANSITION_LAYER_ADDON).instantiate()
+	PopochiuUtils.t.tl = load(PopochiuResources.TRANSITION_LAYER_SCENE).instantiate()
 	
 	# Calculate the scale that could be applied
 	scale = Vector2(width, height) / PopochiuResources.RETRO_RESOLUTION
 	
 	# Add the AudioManager, the Graphic Interface, and the Transitions Layer to the tree
 	$GraphicInterfaceLayer.add_child(gui)
-	$TransitionsLayer.add_child(tl)
+	$TransitionsLayer.add_child(PopochiuUtils.t.tl)
 	add_child(am)
 	
 	# Load the Player-controlled Character (PC)
@@ -189,8 +184,12 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_released("popochiu-skip"):
 		cutscene_skipped = true
-		tl.play_transition(PopochiuTransitionLayer.PASS_DOWN_IN, settings.skip_cutscene_time)
-		await tl.transition_finished
+		PopochiuUtils.t.play_transition(
+			settings.tl_cutscene_transition,
+			settings.tl_skip_cutscene_time,
+			settings.tl_cutscene_transition_mode
+			)
+		await PopochiuUtils.t.transition_finished
 
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -201,8 +200,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Creates a delay timer that will last [param time] seconds. This method is intended to be used
-## inside a [method queue] of instructions.
+## Creates a delay timer that lasts [param time] seconds.
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 func queue_wait(time := 1.0) -> Callable:
 	return func (): await wait(time)
 
@@ -221,8 +221,8 @@ func wait(time := 1.0) -> void:
 #	pass
 
 
-## Executes an array of [param instructions] one by one. [param show_gui] determines if the
-## Graphic Interface will appear once all instructions have ran.
+## Executes an array of [param instructions] one by one. [param show_gui] determines whether the
+## Graphic Interface reappears once all instructions have run.
 func queue(instructions: Array, show_gui := true) -> void:
 	if instructions.is_empty():
 		await get_tree().process_frame
@@ -269,101 +269,24 @@ func cutscene(instructions: Array) -> void:
 	set_process_input(false)
 	
 	if cutscene_skipped:
-		tl.play_transition(tl.PASS_DOWN_OUT, settings.skip_cutscene_time)
-		await tl.transition_finished
+		PopochiuUtils.t.play_transition(
+			settings.tl_cutscene_transition,
+			settings.tl_skip_cutscene_time,
+			settings.tl_cutscene_transition_mode
+		)
+		await PopochiuUtils.t.transition_finished
 	
 	cutscene_skipped = false
 
 
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuIRoom.goto_room].
-func goto_room(
-	script_name := "", use_transition := true, store_state := true, ignore_change := false
-) -> void:
-	PopochiuUtils.r.goto_room(script_name, use_transition, store_state, ignore_change)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuIRoom.room_readied].
-func room_readied(room: PopochiuRoom) -> void:
-	PopochiuUtils.r.room_readied(room)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_change_offset].
-func queue_camera_offset(offset := Vector2.ZERO) -> Callable:
-	return camera.queue_change_offset(offset)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.change_offset].
-func camera_offset(offset := Vector2.ZERO) -> void:
-	camera.change_offset(offset)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_shake].
-func queue_camera_shake(strength := 1.0, duration := 1.0) -> Callable:
-	return camera.queue_shake(strength, duration)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.shake].
-func camera_shake(strength := 1.0, duration := 1.0) -> void:
-	camera.shake(strength, duration)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_shake_bg].
-func queue_camera_shake_bg(strength := 1.0, duration := 1.0) -> Callable:
-	return camera.queue_shake_bg(strength, duration)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.shake_bg].
-func camera_shake_bg(strength := 1.0, duration := 1.0) -> void:
-	camera.shake_bg(strength, duration)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.queue_change_zoom].
-func queue_camera_zoom(target := Vector2.ONE, duration := 1.0) -> Callable:
-	return camera.queue_change_zoom(target, duration)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.change_zoom].
-func camera_zoom(target := Vector2.ONE, duration := 1.0) -> void:
-	camera.change_zoom(target, duration)
-
-
-## Returns [param msg] translated to the current language if the game is using translations
-## [member PopochiuSettings.use_translations]. Otherwise, the returned [String] will be the same
-## as the one received as a parameter.
+## Returns [param msg] translated to the current language if
+## [member PopochiuSettings.use_translations] is enabled. Otherwise returns [param msg] unchanged.
 func get_text(msg: String) -> String:
 	return tr(msg) if settings.use_translations else msg
 
 
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuICharacter.get_instance].
-func get_character_instance(script_name: String) -> PopochiuCharacter:
-	return PopochiuUtils.c.get_instance(script_name)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuIInventory.get_instance].
-func get_inventory_item_instance(script_name: String) -> PopochiuInventoryItem:
-	return PopochiuUtils.i.get_instance(script_name)
-
-
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuIDialog.get_instance].
-func get_dialog(script_name: String) -> PopochiuDialog:
-	return PopochiuUtils.d.get_instance(script_name)
-
-
-## Adds an action, represented by [param data], to the [member history] of actions. 
-## The structure that [param data] can have may be in the form:
+## Adds an action, represented by [param data], to the [member history].
+## The [param data] dictionary can have one of these forms:
 ## [codeblock]# To store the Look At interaction with the prop ToyCar:
 ## {
 ##     action = "look_at",
@@ -382,10 +305,10 @@ func add_history(data: Dictionary) -> void:
 	history.push_front(data)
 
 
-## Makes a [param method] in [param node] to be able to be used inside an array of instructions for
-## [method queue]. Parameters for [param method] can be passed as an array in [param params].
-## By default the queued method will wait for [code]"completed"[/code], but in can wait for a
-## specific signal given the [param signal_name].
+## Wraps a [param method] on [param node] so it can be used inside an array of instructions for
+## [method queue]. Arguments for [param method] can be passed as an array in [param params].
+## By default the queued method waits for [code]"completed"[/code], but it can wait for a
+## different signal specified by [param signal_name].
 ## Examples:
 ## [codeblock]
 ## # queue() will wait until $AnimationPlayer.animation_finished signal is emitted
@@ -418,7 +341,7 @@ func add_history(data: Dictionary) -> void:
 ## # queue pauses until the "clicked" signal is emitted in the %PopupButton
 ## # ---- In some prop ----
 ## func on_click() -> void:
-##     E.run([
+##     E.queue([
 ##         "Player: Ok. This is the last queueable example.",
 ##         "Player: Promise!",
 ##         E.queueable(%PopupButton, "_show_button", [], "clicked"),
@@ -440,29 +363,38 @@ func queueable(node: Object, method: String, params := [], signal_name := "") ->
 	return func (): await _queueable(node, method, params, signal_name)
 
 
-## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
-## seconds. Available type values can be found in [member TransitionLayer.Types]. This method is
-## intended to be used inside a [method queue] of instructions.
-func queue_play_transition(type: int, duration: float) -> Callable:
-	return func (): await play_transition(type, duration)
+## @deprecated Available in 2.1 - Will be removed in 2.2.
+## Plays the transition [param anim_name] animation in the [TransitionLayer] with a [param duration] in
+## seconds with the specified [param mode]. This method is intended to be used inside a [method queue] of
+## instructions.
+func queue_play_transition(anim_name: String, duration: float, mode: int) -> Callable:
+	PopochiuUtils.print_warning(
+		"E.queue_play_transition() is deprecated and will be removed in Popochiu 2.2." +
+		" Use T.queue_play_transition() instead."
+	)
+	return func (): await play_transition(anim_name, duration, mode)
 
-
-## Plays the transition [param type] animation in the [TransitionLayer] with a [param duration] in
-## seconds. Available type values can be found in [member TransitionLayer.Types].
-func play_transition(type: int, duration: float) -> void:
-	tl.play_transition(type, duration)
+## @deprecated Available in 2.1 - Will be removed in 2.2.
+## Plays the transition [param anim_name] animation in the [TransitionLayer] with a [param duration] in
+## seconds with the specified [param mode].
+func play_transition(anim_name: String, duration: float, mode: int) -> void:
+	PopochiuUtils.print_warning(
+		"E.play_transition() is deprecated and will be removed in Popochiu 2.2." +
+		" Use T.play_transition() instead."
+	)
+	PopochiuUtils.t.play_transition(anim_name, duration, mode)
 	
-	await tl.transition_finished
+	await PopochiuUtils.t.transition_finished
 
 
-## Checks if there are any saved game sessions in the game's folder. By default Godot's
-## [code]user://[/code] (you can open this folder with [b]Project > Open User Data Folder[/b]).
+## Returns [code]true[/code] if any saved game sessions exist in the game's save folder
+## ([code]user://[/code] by default — open via [b]Project > Open User Data Folder[/b]).
 func has_save() -> bool:
 	return !_saveload.get_saves_descriptions().is_empty()
 
 
-## Counts the number of saved game files in the game's folder. By default Godot's
-## [code]user://[/code] (you can open this folder with [b]Project > Open User Data Folder[/b]).
+## Returns the number of saved game files in the game's save folder
+## ([code]user://[/code] by default — open via [b]Project > Open User Data Folder[/b]).
 func saves_count() -> int:
 	return _saveload.count_saves()
 
@@ -496,14 +428,15 @@ func load_game(slot := 1) -> void:
 		false # Do not store the state of the current room
 	)
 
-## @deprecated
-## [b]Deprecated[/b]. Now this is done by [method PopochiuMainCamera.stop_shake].
+## @deprecated Now this is done by [method PopochiuMainCamera.stop_shake].
 func stop_camera_shake() -> void:
 	camera.stop_shake()
 
 
-## Adds the [param node] to the array of hovered PopochiuClickable. If [param prepend] is
-## [code]true[/code], then the [param node] will be added at the beginning of the array.
+# @popochiu-docs-ignore
+#
+## Adds [param node] to the hovered [PopochiuClickable] stack. If [param prepend] is
+## [code]true[/code], the node is inserted at the front.
 func add_hovered(node: PopochiuClickable, prepend := false) -> void:
 	if prepend:
 		_hovered_queue.push_front(node)
@@ -511,8 +444,10 @@ func add_hovered(node: PopochiuClickable, prepend := false) -> void:
 		_hovered_queue.append(node)
 
 
-## Removes a [param node] from the array of hovered PopochiuClickable. Returns [code]true[/code]
-## if, after deletion, the array becomes empty.
+# @popochiu-docs-ignore
+#
+## Removes [param node] from the hovered [PopochiuClickable] stack. Returns [code]true[/code]
+## if the stack is empty after removal.
 func remove_hovered(node: PopochiuClickable) -> bool:
 	_hovered_queue.erase(node)
 	
@@ -524,15 +459,17 @@ func remove_hovered(node: PopochiuClickable) -> bool:
 	return true
 
 
-## Clears the array of hovered PopochiuClickable.
+# @popochiu-docs-ignore
+#
+## Clears the hovered [PopochiuClickable] stack.
 func clear_hovered() -> void:
 	_hovered_queue.clear()
 	self.hovered = null
 
 
 ## Registers a GUI command identified by [param id], with name [param command_name] and a
-## [param fallback] method to be called when the object receiving the interaction doesn't has an
-## implementation for the registered command.
+## [param fallback] method to call when the interacted object has no implementation for the
+## registered command.
 func register_command(id: int, command_name: String, fallback: Callable) -> void:
 	commands_map[id] = {
 		"name" = command_name,
@@ -541,8 +478,8 @@ func register_command(id: int, command_name: String, fallback: Callable) -> void
 
 
 ## Registers a GUI command with just its name in [param command_name] and a [param fallback] method
-## to be called when the object receiving the interaction doesn't has an implementation for the
-## registered command. Returns the [code]id[/code] assigned to the registered command.
+## to call when the interacted object has no implementation for the registered command. Returns the
+## auto-assigned [code]id[/code].
 func register_command_without_id(command_name: String, fallback: Callable) -> int:
 	var id := commands_map.size()
 	register_command(id, command_name, fallback)

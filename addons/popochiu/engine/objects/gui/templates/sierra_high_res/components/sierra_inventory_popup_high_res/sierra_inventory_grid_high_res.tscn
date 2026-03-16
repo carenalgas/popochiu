@@ -1,0 +1,96 @@
+[gd_scene load_steps=14 format=3 uid="uid://bog4i3sdck4n"]
+
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_5a7yr"]
+[ext_resource type="Script" uid="uid://cdgpfm2rrpdds" path="res://addons/popochiu/engine/objects/gui/components/inventory_grid/inventory_grid.gd" id="2_ugp5q"]
+[ext_resource type="PackedScene" uid="uid://4px2p7ocqph3" path="res://addons/popochiu/engine/objects/gui/templates/sierra_high_res/components/sierra_inventory_popup_high_res/sierra_inventory_slot_high_res/sierra_inventory_slot_high_res.tscn" id="3_5a7yr"]
+[ext_resource type="Texture2D" uid="uid://b51ovma88hm0d" path="res://addons/popochiu/engine/objects/gui/resources/images/btn_up_high_res.svg" id="4_5a7yr"]
+[ext_resource type="Texture2D" uid="uid://dcu5ub7t0qbyu" path="res://addons/popochiu/engine/objects/gui/resources/images/btn_down_high_res.svg" id="5_5a7yr"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xjfw"]
+atlas = ExtResource("4_5a7yr")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mq4sk"]
+atlas = ExtResource("4_5a7yr")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2rabq"]
+atlas = ExtResource("4_5a7yr")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hw2h8"]
+atlas = ExtResource("4_5a7yr")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6237a"]
+atlas = ExtResource("5_5a7yr")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_obc06"]
+atlas = ExtResource("5_5a7yr")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dt380"]
+atlas = ExtResource("5_5a7yr")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jgd5d"]
+atlas = ExtResource("5_5a7yr")
+region = Rect2(192, 0, 64, 64)
+
+[node name="SierraInventoryGridHighRes" type="HBoxContainer"]
+offset_right = 158.0
+offset_bottom = 64.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 0
+theme = ExtResource("1_5a7yr")
+script = ExtResource("2_ugp5q")
+slot_scene = ExtResource("3_5a7yr")
+columns = 5
+visible_rows = 3
+number_of_slots = 20
+h_separation = 8
+v_separation = 8
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+custom_minimum_size = Vector2(672, 400)
+layout_mode = 2
+size_flags_horizontal = 3
+scroll_vertical_custom_step = 27.0
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
+
+[node name="Box" type="GridContainer" parent="ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 5
+
+[node name="ScrollButtons" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Up" type="TextureButton" parent="ScrollButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+texture_normal = SubResource("AtlasTexture_5xjfw")
+texture_pressed = SubResource("AtlasTexture_mq4sk")
+texture_hover = SubResource("AtlasTexture_2rabq")
+texture_disabled = SubResource("AtlasTexture_hw2h8")
+stretch_mode = 5
+
+[node name="Down" type="TextureButton" parent="ScrollButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+texture_normal = SubResource("AtlasTexture_6237a")
+texture_pressed = SubResource("AtlasTexture_obc06")
+texture_hover = SubResource("AtlasTexture_dt380")
+texture_disabled = SubResource("AtlasTexture_jgd5d")
+stretch_mode = 5

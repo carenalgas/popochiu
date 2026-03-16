@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 class_name PopochiuCharactersHelper
 extends RefCounted
 ## Helper class to handle things related to [PopochiuCharacters] but that may not be the

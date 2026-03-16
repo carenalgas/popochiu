@@ -27,7 +27,11 @@ func create() -> void:
 	var created_node: Node = await _create()
 	if not created_node or not is_instance_valid(created_node):
 		return
-	await PopochiuEditorHelper.filesystem_scanned()
+	
+	# Fix #481: Scan the filesystem directly instead of using the PopochiuEditorHelper function
+	# because it was being cancelled due to a script reload.
+	EditorInterface.get_resource_filesystem().scan.call_deferred()
+	await EditorInterface.get_resource_filesystem().filesystem_changed
 	
 	# Select the node in the Scene tree and its file in the FileSystem dock ------------------------
 	EditorInterface.edit_node(created_node)

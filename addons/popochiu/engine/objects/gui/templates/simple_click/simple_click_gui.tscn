@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dqlw4tn2oe6d7" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_bar/simple_click_bar.tscn" id="4_ci14x"]
 [ext_resource type="PackedScene" uid="uid://bdgs3xsbq3gdd" path="res://addons/popochiu/engine/objects/gui/components/system_text/system_text.tscn" id="4_o82xq"]
 [ext_resource type="PackedScene" uid="uid://dhsfl8ot4j5fj" path="res://addons/popochiu/engine/objects/gui/components/dialog_menu/dialog_menu.tscn" id="5_ayg0j"]
-[ext_resource type="PackedScene" uid="uid://bpl3qjbxonfpb" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_caption/dialog_caption.tscn" id="5_t54kn"]
+[ext_resource type="PackedScene" uid="uid://bn7o13nv11ka1" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_overhead/dialog_overhead.tscn" id="6_htxor"]
 [ext_resource type="PackedScene" uid="uid://dfrsiyyqncspo" path="res://addons/popochiu/engine/objects/gui/components/popups/history_popup/history_popup.tscn" id="8_207hf"]
 [ext_resource type="PackedScene" uid="uid://bmpxoiebdf67g" path="res://addons/popochiu/engine/objects/gui/templates/simple_click/components/simple_click_settings_popup/simple_click_settings_popup.tscn" id="9_dc0es"]
 [ext_resource type="PackedScene" uid="uid://cndputybyj57n" path="res://addons/popochiu/engine/objects/gui/components/popups/save_and_load_popup/save_and_load_popup.tscn" id="9_ueme0"]
@@ -248,7 +248,7 @@ offset_bottom = -4.0
 grow_vertical = 0
 hide_during_dialogs = true
 
-[node name="DialogCaption" parent="." instance=ExtResource("5_t54kn")]
+[node name="DialogOverhead" parent="." instance=ExtResource("6_htxor")]
 layout_mode = 1
 
 [node name="DialogMenu" parent="." instance=ExtResource("5_ayg0j")]

@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 extends Control
 
 @export var always_visible := false
@@ -5,7 +6,7 @@ extends Control
 ## Defines the height in pixels of the zone where moving the mouse in the top of the screen will
 ## make the bar to show. Note: This value will be affected by the Experimental Scale GUI checkbox
 ## in Project Settings > Popochiu > GUI.
-@export var input_zone_height := 4
+@export var input_zone_height := 0
 
 var is_disabled := false
 var tween: Tween = null
@@ -23,6 +24,9 @@ var _is_mouse_hover := false
 func _ready():
 	if not always_visible:
 		panel_container.position.y = hidden_y
+	
+	if input_zone_height <= 0:
+		input_zone_height = int(panel_container.get_rect().size.y / 2.0)
 	
 	# Connect to children signals
 	settings_btn.pressed.connect(_on_settings_pressed)

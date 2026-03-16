@@ -1,11 +1,12 @@
+# @popochiu-docs-category game-objects-data-managers
 @icon("res://addons/popochiu/icons/room.png")
 class_name PopochiuRoomData
 extends Resource
-## This class is used to store information when saving and loading the game. It also ensures that
-## the data remains throughout the game's execution.
+## Stores persistent data for [PopochiuRoom] instances during save/load operations.
 ##
-## It also has data of the [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s,
-## [PopochiuRegion]s, and [PopochiuCharacter]s in a [PopochiuRoom].
+## This data persists throughout game execution and is serialized when saving the game.
+## It also stores the state of [PopochiuProp]s, [PopochiuHotspot]s, [PopochiuWalkableArea]s,
+## [PopochiuRegion]s, and [PopochiuCharacter]s in the room.
 
 ## The identifier of the object used in scripts.
 @export var script_name := ""
@@ -32,15 +33,18 @@ var characters := {}
 
 
 #region Virtual ####################################################################################
-## Called when the game is saved.
-## [i]Virtual[/i].
+## Called when the game is saved.[br]
+## Implement this to persist custom properties that you added to this resource. Should return
+## a [Dictionary] containing the data to be saved.[br]
+## The returned [Dictionary] must contain only JSON-supported types:
+## [bool], [int], [float], [String].
 func _on_save() -> Dictionary:
 	return {}
 
 
-## Called when the game is loaded. The structure of [param data] is the same returned by
-## [method _on_save].
-## [i]Virtual[/i].
+## Called when the game is loaded. The structure of [param data] matches that returned by
+## [method _on_save].[br]
+## Implement this to restore the custom properties you persisted in [_on_save].
 func _on_load(_data: Dictionary) -> void:
 	pass
 
@@ -48,23 +52,35 @@ func _on_load(_data: Dictionary) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Use this to store custom data when saving the game. The returned [Dictionary] must contain only
-## JSON supported types: [bool], [int], [float], [String].
+# @popochiu-docs-ignore
+#
+## Called by the engine before saving the game.
 func on_save() -> Dictionary:
 	return _on_save()
 
 
-## Called when the game is loaded. [param data] will have the same structure you defined for the
-## returned [Dictionary] by [method _on_save].
+# @popochiu-docs-ignore
+#
+## Called by the engine after loading a saved game.
 func on_load(data: Dictionary) -> void:
 	_on_load(data)
 
 
 ## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
+## 
+##
+## This method clears and rebuilds the state dictionaries from scratch, ensuring they accurately
+## reflect only the objects currently present in the room. Objects that were removed from the
+## room's scene tree (e.g., via [method PopochiuRoom.remove_character]) will not be restored when
+## returning to the room.
 func save_children_states() -> void:
 	if PopochiuUtils.r.current and PopochiuUtils.r.current.state == self:
 		for t in PopochiuResources.ROOM_CHILDREN:
+			# Clear the dictionary to remove entries for objects no longer in the room
+			# Fixes issue #466
+			get(t).clear()
+			
 			for node in PopochiuUtils.r.current.call("get_" + t):
 				if node is PopochiuProp and not node.clickable: continue
 				
@@ -118,15 +134,23 @@ func save_children_states() -> void:
 					if not scene_path in dependencies_paths:
 						folder_name = dir.get_next()
 						continue
-					# ---------------------------------------------------------------- Fix #320 ----
+					# ----------------------------------------------------------End of fix #320 ----
 					
-					var script_path := scene_path.replace("tscn", "gd")
-					if not FileAccess.file_exists(script_path):
+					var packed_scene: PackedScene = load(scene_path)
+					
+					# Instantiate the full scene so exported data (like walkable polygons) is already baked.
+					# Loading only the script left interaction_polygon empty, so the first time we entered
+					# a room the stored state overwrote its walkable areas with blank data. Grabbing the
+					# packed scene preserves those serialized outlines until the room can save itself.
+					var node: Node = packed_scene.instantiate()
+					if not node or not node is Node2D:
+						if node:
+							node.free()
 						folder_name = dir.get_next()
 						continue
 					
-					var node: Node2D = load(script_path).new()
-					node.script_name = folder_name.to_pascal_case()
+					if node.script_name.is_empty():
+						node.script_name = folder_name.to_pascal_case()
 					
 					_save_object_state(
 						node,
@@ -149,7 +173,17 @@ func save_children_states() -> void:
 ##     self_modulate = PopochiuCharacter.self_modulate
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
+## 
+##
+## This method clears and rebuilds the [member characters] dictionary from scratch, ensuring it
+## accurately reflects only the characters currently present in the room's [b]$Characters[/b] node.
+## Characters that were removed via [method PopochiuRoom.remove_character] will not be restored
+## when returning to the room.
 func save_characters() -> void:
+	# Clear the dictionary to remove entries for characters no longer in the room
+	# Fixes issue #466
+	characters.clear()
+	
 	for character: PopochiuCharacter in PopochiuUtils.r.current.get_characters():
 		characters[character.script_name] = {
 			x = character.position.x,
@@ -168,6 +202,22 @@ func save_characters() -> void:
 			look_at_point = {
 				x = character.look_at_point.x,
 				y = character.look_at_point.y,
+			},
+			dialog_pos = {
+				x = character.dialog_pos.x,
+				y = character.dialog_pos.y,
+			},
+			# Store facing and following settings
+			face_character = character.face_character,
+			follow_character = character.follow_character,
+			follow_character_outside_room = character.follow_character_outside_room,
+			follow_character_offset = {
+				x = character.follow_character_offset.x,
+				y = character.follow_character_offset.y,
+			},
+			follow_character_threshold = {
+				x = character.follow_character_threshold.x,
+				y = character.follow_character_threshold.y,
 			},
 			# TODO: Store the state of the current animation (and more data if
 			# necessary)

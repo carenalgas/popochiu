@@ -1,8 +1,9 @@
-# This script is empty and is necessary to programmatically
-# create an empty script to hold the <PopochiuObject>_template.gd
-# source file, after the placeholders have been populated.
+# @popochiu-docs-ignore-class
+# This script is intentionally empty and is required when creating a
+# programmatic template file such as <PopochiuObject>_template.gd after
+# placeholders are populated.
 #
-# It is necessary from Godot 4.1 or an error is raised when the
-# template script is loaded.
+# Godot 4.1+ raises an error if the template script is missing, so keep
+# this file present.
 #
-# Do not erase this script.
+# Do not delete this file.

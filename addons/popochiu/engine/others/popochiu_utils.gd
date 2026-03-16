@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 @tool
 class_name PopochiuUtils
 extends Node
@@ -17,6 +18,8 @@ static var a: PopochiuIAudio = null:
 	get = get_iaudio
 static var g: PopochiuIGraphicInterface = null:
 	get = get_igraphic_interface
+static var t: PopochiuITransitionLayer = null:
+	get = get_itransition_layer
 static var cursor: PopochiuCursor = null:
 	get = get_popochiu_cursor
 static var globals: Node = null:
@@ -106,7 +109,8 @@ static func get_click_or_touch_index(event: InputEvent) -> int:
 
 ## For each element in [param array] calls [param callback] passing the element as a parameter. If
 ## any of the calls returns [code]true[/code], then this function returns [code]true[/code],
-## otherwise [code]false[/code] is returned.[br][br]
+## otherwise [code]false[/code] is returned.
+##
 ## This is an alternate version for [method Array.any] that doesn't stops execution even when one
 ## of the results is [code]true[/code].
 static func any_exhaustive(array: Array, callback: Callable) -> bool:
@@ -200,6 +204,15 @@ static func get_igraphic_interface() -> PopochiuIGraphicInterface:
 		else:
 			g = PopochiuIGraphicInterface.new()
 	return g
+
+
+static func get_itransition_layer() -> PopochiuITransitionLayer:
+	if not is_instance_valid(t):
+		if Engine.get_singleton(&"T"):
+			t = Engine.get_singleton(&"T")
+		else:
+			t = PopochiuITransitionLayer.new()
+	return t
 
 
 static func get_popochiu_cursor() -> PopochiuCursor:

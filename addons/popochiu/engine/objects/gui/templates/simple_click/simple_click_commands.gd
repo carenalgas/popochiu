@@ -1,3 +1,4 @@
+# @popochiu-docs-category game-user-interface
 class_name SimpleClickCommands
 extends PopochiuCommands
 ## Defines the commands and fallback methods for the 2-click Context-sensitive GUI.
@@ -42,7 +43,7 @@ func right_click_clickable() -> void:
 	await PopochiuUtils.g.show_system_text("Can't EXAMINE it")
 
 
-## Called when players click (LMB) a [PopochiuInvenoryItem].
+## Called when players click (left mouse button) a [PopochiuInventoryItem].
 func click_inventory_item() -> void:
 	if PopochiuUtils.i.active and PopochiuUtils.i.active != PopochiuUtils.i.clicked:
 		await PopochiuUtils.g.show_system_text("Can't USE %s with %s" % [
@@ -52,7 +53,7 @@ func click_inventory_item() -> void:
 		PopochiuUtils.i.clicked.set_active()
 
 
-## Called when players right click (RMB) a [PopochiuInvenoryItem].
+## Called when players right click (right mouse button) a [PopochiuInventoryItem].
 func right_click_inventory_item() -> void:
 	await PopochiuUtils.g.show_system_text('Nothing to see in this item')
 

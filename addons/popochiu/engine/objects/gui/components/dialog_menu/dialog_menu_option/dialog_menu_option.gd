@@ -1,3 +1,4 @@
+# @popochiu-docs-ignore-class
 class_name PopochiuDialogMenuOption
 extends PanelContainer
 
