@@ -613,7 +613,7 @@ func _translate() -> void:
 func _is_click_or_touch(event: InputEvent) -> bool:
 	if (
 		(event is InputEventMouseButton and not event.double_click)
-		or (event is InputEventScreenTouch and not event.double_tap)
+		#or (event is InputEventScreenTouch and not event.double_tap)  #HACK to avoid double hits with Touch ! 
 	):
 		# This delay is need to prevent a single click being detected before double click
 		await PopochiuUtils.e.wait(_double_click_delay)
