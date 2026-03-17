@@ -5,6 +5,13 @@ extends RefCounted
 # Aggregates multiple polygon child nodes into a unified editing experience,
 # supporting interaction polygons, obstacle polygons, and walkable area perimeters.
 
+# Enums for passive gizmo scope in room scenes.
+# Defined here since it's used in both the gizmo manager and the plugin toolbar.
+enum PassiveScope {
+	SELECTED_OBJECT,
+	ROOM,
+}
+
 # State
 var _target_node: Node2D
 var _undo: EditorUndoRedoManager
@@ -26,6 +33,10 @@ var _always_show: Dictionary = {
 	GizmoPolygon2D.PolygonCategory.OBSTACLE: false,
 	GizmoPolygon2D.PolygonCategory.WALKABLE_AREA: false,
 }
+# Passive gizmo scope: selected object only, or all room objects.
+var _passive_scope: PassiveScope = PassiveScope.SELECTED_OBJECT
+# Dedicated toggle to show/hide walkable-area passive polygons in the room.
+var _show_walkable_area_passive: bool = true
 # Appearance settings (read from editor config)
 var _colors: Dictionary = {}
 var _fill_alpha: float = 0.15
@@ -92,7 +103,7 @@ func _set_gizmo_theme(gizmo: GizmoPolygon2D) -> void:
 	if gizmo.interactive:
 		gizmo.visible = true
 	else:
-		gizmo.visible = _always_show.get(cat, false)
+		gizmo.visible = _should_show_passive_gizmo(gizmo)
 
 	match cat:
 		GizmoPolygon2D.PolygonCategory.INTERACTION:
@@ -114,6 +125,41 @@ func _set_gizmo_theme(gizmo: GizmoPolygon2D) -> void:
 	gizmo.fill_color = Color(gizmo.outline_color, _fill_alpha * alpha_factor)
 	gizmo.vertex_color = Color.WHITE
 	gizmo.vertex_size = _vertex_handler_size
+
+
+# Helper to determine if a gizmo belongs to the currently selected object.
+func _is_gizmo_from_target(gizmo: GizmoPolygon2D) -> bool:
+	return (
+		_target_node != null
+		and is_instance_valid(gizmo.get_source_node())
+		and gizmo.get_source_node().get_parent() == _target_node
+	)
+
+
+# Helper to determine if a passive gizmo should be visible based on editor settings
+# and the current passive scope (defined by toolbar buttons).
+func _should_show_passive_gizmo(gizmo: GizmoPolygon2D) -> bool:
+	if not _always_show.get(gizmo.category, false):
+		return false
+
+	if (
+		gizmo.category == GizmoPolygon2D.PolygonCategory.WALKABLE_AREA
+		and not _show_walkable_area_passive
+	):
+		return false
+
+	if _passive_scope == PassiveScope.ROOM:
+		return true
+
+	return _is_gizmo_from_target(gizmo)
+
+
+# Update gizmo states based on the currently selected object and editor settings.
+func _refresh_gizmos_state() -> void:
+	for gizmo in _gizmos:
+		var belongs_to_target := _is_gizmo_from_target(gizmo)
+		gizmo.interactive = belongs_to_target and _editing_enabled.get(gizmo.category, false)
+		_set_gizmo_theme(gizmo)
 
 
 # After editing a walkable area polygon, rebake the navigation mesh.
@@ -185,10 +231,10 @@ func initialize_gizmos() -> void:
 	_always_show[GizmoPolygon2D.PolygonCategory.WALKABLE_AREA] = PopochiuEditorConfig.get_editor_setting(
 		PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_WA
 	)
+	_show_walkable_area_passive = _always_show[GizmoPolygon2D.PolygonCategory.WALKABLE_AREA]
 
 	# Re-apply to existing gizmos
-	for gizmo in _gizmos:
-		_set_gizmo_theme(gizmo)
+	_refresh_gizmos_state()
 
 
 # Handle a newly selected object. Build gizmos for every polygon in the scene
@@ -204,6 +250,7 @@ func handle_object(object: Object, edited_root: Node) -> bool:
 	if edited_root is PopochiuCharacter:
 		_target_node = edited_root
 		_scan_polygons(edited_root)
+		_refresh_gizmos_state()
 		return _gizmos.size() > 0
 
 	# Room editing mode — scan every container so all polygons in the room
@@ -223,21 +270,7 @@ func handle_object(object: Object, edited_root: Node) -> bool:
 
 		# Scan all room containers for polygon children
 		_scan_room_containers(edited_root)
-
-		# Set interactivity: only the selected node's gizmos are editable,
-		# and only when the toolbar button for that category is ON.
-		for gizmo in _gizmos:
-			var belongs_to_target := (
-				_target_node != null
-				and is_instance_valid(gizmo.get_source_node())
-				and gizmo.get_source_node().get_parent() == _target_node
-			)
-			gizmo.interactive = (
-				belongs_to_target
-				and _editing_enabled.get(gizmo.category, false)
-			)
-			# Re-apply theme so visibility and passive alpha take effect
-			_set_gizmo_theme(gizmo)
+		_refresh_gizmos_state()
 
 		return _gizmos.size() > 0
 
@@ -419,17 +452,22 @@ func try_delete_hovered_vertex() -> bool:
 # "always show" passive visibility from the editor settings.
 func set_category_editing(category: GizmoPolygon2D.PolygonCategory, enabled: bool) -> void:
 	_editing_enabled[category] = enabled
-	for gizmo in _gizmos:
-		if gizmo.category != category:
-			continue
-		# Only gizmos belonging to the target node can be interactive
-		var belongs_to_target := (
-			_target_node != null
-			and is_instance_valid(gizmo.get_source_node())
-			and gizmo.get_source_node().get_parent() == _target_node
-		)
-		gizmo.interactive = belongs_to_target and enabled
-		_set_gizmo_theme(gizmo)
+	_refresh_gizmos_state()
+
+
+# Set passive polygon scope for room scenes.
+# SELECTED_OBJECT: passive polygons only for the selected object.
+# ROOM: passive polygons for all room objects.
+func set_passive_scope(scope: PassiveScope) -> void:
+	_passive_scope = scope
+	_refresh_gizmos_state()
+
+
+# Toggle passive walkable-area polygons visibility independently from the
+# scope buttons, so users can quickly declutter room overlays.
+func set_walkable_area_passive_visibility(visible: bool) -> void:
+	_show_walkable_area_passive = visible
+	_refresh_gizmos_state()
 
 
 # Clear all gizmos and reset state

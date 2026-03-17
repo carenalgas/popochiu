@@ -13,6 +13,9 @@ var _shown_helpers := []
 @onready var btn_dialog_pos: Button = %BtnDialogPos
 @onready var btn_interaction_polygon: Button = %BtnInteractionPolygon
 @onready var btn_obstacle_polygon: Button = %BtnObstaclePolygon
+@onready var btn_passive_scope_selected: Button = %BtnPassiveScopeSelected
+@onready var btn_passive_scope_room: Button = %BtnPassiveScopeRoom
+@onready var btn_walkable_area_polygon: Button = %BtnWalkableAreaPolygon
 
 
 #region Godot ######################################################################################
@@ -34,10 +37,14 @@ func _ready() -> void:
 	btn_dialog_pos.pressed.connect(_toggle_dialog_pos_visibility)
 	btn_interaction_polygon.pressed.connect(_toggle_interaction_polygon_visibility)
 	btn_obstacle_polygon.pressed.connect(_toggle_obstacle_polygon_visibility)
+	btn_passive_scope_selected.pressed.connect(_toggle_passive_scope_selected)
+	btn_passive_scope_room.pressed.connect(_toggle_passive_scope_room)
+	btn_walkable_area_polygon.pressed.connect(_toggle_walkable_area_polygon_visibility)
 
 	# Connect to global signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
+	_sync_polygon_toolbar_state()
 
 	_set_toolbar_buttons_color()
 	hide()
@@ -53,6 +60,29 @@ func _set_context_toolbar_transparent() -> void:
 		return
 
 	toolbar_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+
+
+func _sync_polygon_toolbar_state() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.INTERACTION_POLYGON,
+		btn_interaction_polygon.button_pressed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.OBSTACLE_POLYGON,
+		btn_obstacle_polygon.button_pressed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.WALKABLE_AREA_POLYGON,
+		btn_walkable_area_polygon.button_pressed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.emit(
+		PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
+		if btn_passive_scope_selected.button_pressed
+		else PopochiuGizmoPlugin.PASSIVE_SCOPE_ROOM
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.emit(
+		btn_walkable_area_polygon.button_pressed
+	)
 #endregion
 
 #region Signals ####################################################################################
@@ -100,10 +130,6 @@ func _toggle_interaction_polygon_visibility() -> void:
 		PopochiuGizmoPlugin.INTERACTION_POLYGON,
 		btn_interaction_polygon.button_pressed
 	)
-	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
-		PopochiuGizmoPlugin.WALKABLE_AREA_POLYGON,
-		btn_interaction_polygon.button_pressed
-	)
 
 
 # Toggle the obstacle polygon gizmo visibility via the signal bus.
@@ -114,6 +140,46 @@ func _toggle_obstacle_polygon_visibility() -> void:
 	)
 
 
+# Toggle the passive scope from "entire room" to "selected object" via the
+# signal bus.
+func _toggle_passive_scope_selected() -> void:
+	if not btn_passive_scope_selected.button_pressed:
+		btn_passive_scope_selected.set_pressed_no_signal(true)
+		return
+
+	btn_passive_scope_room.set_pressed_no_signal(false)
+	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.emit(
+		PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
+	)
+
+
+# Toggle the passive scope from "selected object" to "entire room" via the
+# signal bus.
+func _toggle_passive_scope_room() -> void:
+	if not btn_passive_scope_room.button_pressed:
+		btn_passive_scope_room.set_pressed_no_signal(true)
+		return
+
+	btn_passive_scope_selected.set_pressed_no_signal(false)
+	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.emit(
+		PopochiuGizmoPlugin.PASSIVE_SCOPE_ROOM
+	)
+
+
+# Toggle the walkable area polygon visibility via the signal bus. This is
+# a separate setting from the main visibility settings, since it affects the
+# visibility of passive gizmos that are not directly tied to the selected object.
+func _toggle_walkable_area_polygon_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.WALKABLE_AREA_POLYGON,
+		btn_walkable_area_polygon.button_pressed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.emit(
+		btn_walkable_area_polygon.button_pressed
+	)
+
+
+# When gizmo-related editor settings change, we update the toolbar buttons colors
 func _on_gizmo_settings_changed() -> void:
 	_set_toolbar_buttons_color()
 
@@ -172,6 +238,7 @@ func _set_toolbar_buttons_color() -> void:
 		_reset_toolbar_button_color(btn_dialog_pos)
 		_reset_toolbar_button_color(btn_interaction_polygon)
 		_reset_toolbar_button_color(btn_obstacle_polygon)
+		_reset_toolbar_button_color(btn_walkable_area_polygon)
 		# Done
 		return
 
@@ -207,6 +274,11 @@ func _set_toolbar_buttons_color() -> void:
 		btn_obstacle_polygon,
 		PopochiuEditorConfig.get_editor_setting(
 			PopochiuEditorConfig.GIZMOS_POLY_OBSTACLE_COLOR)
+	)
+	_set_toolbar_button_color(
+		btn_walkable_area_polygon,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_WALKABLE_AREA_COLOR)
 	)
 
 
@@ -256,6 +328,9 @@ func _set_buttons_visibility() -> void:
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
 	btn_obstacle_polygon.hide()
+	btn_passive_scope_selected.hide()
+	btn_passive_scope_room.hide()
+	btn_walkable_area_polygon.hide()
 
 	# If we are not in a room and we are not editing a Popochiu object, nothing to do
 	if not (
@@ -291,6 +366,11 @@ func _set_buttons_visibility() -> void:
 	if PopochiuEditorHelper.is_editing_room():
 		# We always show the markers button
 		btn_markers.show()
+		# Scope controls for passive polygons in room scenes
+		btn_passive_scope_selected.show()
+		btn_passive_scope_room.show()
+		# Walkable-area polygons have their own visibility toggle
+		btn_walkable_area_polygon.show()
 		# If we are editing a clickable object, show gizmos buttons too.
 		if _active_popochiu_object is PopochiuClickable:
 			btn_baseline.show()
@@ -317,6 +397,8 @@ func _reset_buttons_state() -> void:
 	btn_walk_to_point.set_pressed_no_signal(true)
 	btn_look_at_point.set_pressed_no_signal(true)
 	btn_dialog_pos.set_pressed_no_signal(true)
+	btn_passive_scope_selected.set_pressed_no_signal(true)
+	btn_passive_scope_room.set_pressed_no_signal(false)
 	# Polygon buttons respect the "always show" editor settings so passive
 	# gizmos are visible from start when the user configures them that way.
 	btn_interaction_polygon.set_pressed_no_signal(
@@ -327,6 +409,11 @@ func _reset_buttons_state() -> void:
 	btn_obstacle_polygon.set_pressed_no_signal(
 		PopochiuEditorConfig.get_editor_setting(
 			PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_OBS
+		)
+	)
+	btn_walkable_area_polygon.set_pressed_no_signal(
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_WA
 		)
 	)
 

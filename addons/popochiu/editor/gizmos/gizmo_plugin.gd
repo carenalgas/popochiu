@@ -11,7 +11,10 @@ enum {
 	MARKER_POS,
 	INTERACTION_POLYGON,
 	OBSTACLE_POLYGON,
-	WALKABLE_AREA_POLYGON
+	WALKABLE_AREA_POLYGON,
+	PASSIVE_SCOPE_SELECTED,
+	PASSIVE_SCOPE_ROOM,
+	WALKABLE_AREA_PASSIVE
 }
 
 # Private vars
@@ -52,6 +55,10 @@ func _enter_tree() -> void:
 	# Connect signals to update gizmos when editor settings or visibility change
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(_on_gizmo_visibility_changed)
+	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.connect(_on_gizmo_passive_scope_changed)
+	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.connect(
+		_on_gizmo_walkable_passive_visibility_changed
+	)
 
 #endregion
 
@@ -251,6 +258,26 @@ func _on_gizmo_visibility_changed(gizmo_id: int, visibility: bool):
 			GizmoPolygon2D.PolygonCategory.WALKABLE_AREA, visibility
 		)
 	
+	update_overlays()
+
+
+# The passive scope and walkable area passive visibility are handled separately
+# from the main visibility settings, since they affect the visibility of passive
+# gizmos that are not directly tied to the selected object.
+func _on_gizmo_passive_scope_changed(scope: int) -> void:
+	if scope == PASSIVE_SCOPE_ROOM:
+		_polygon_manager.set_passive_scope(GizmoManagerPolygon.PassiveScope.ROOM)
+	else:
+		_polygon_manager.set_passive_scope(GizmoManagerPolygon.PassiveScope.SELECTED_OBJECT)
+
+	update_overlays()
+
+
+# The walkable area passive visibility is a separate setting that controls whether
+# walkable area passive gizmos are shown at all, since they can be very heavy when
+# shown for an entire room.
+func _on_gizmo_walkable_passive_visibility_changed(visible: bool) -> void:
+	_polygon_manager.set_walkable_area_passive_visibility(visible)
 	update_overlays()
 
 #endregion
