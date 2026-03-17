@@ -155,6 +155,9 @@ func _on_selection_changed() -> void:
 
 	# Always reset the button visibility depending on the state of the internal variables
 	_set_buttons_visibility()
+	# Update the interaction polygon button color depending on the selected object
+	# (walkable areas have a different color from clickables and characters)
+	_set_interaction_polygon_button_color()
 
 
 # Sets all the buttons color so that they are the same as the gizmos
@@ -197,16 +200,33 @@ func _set_toolbar_buttons_color() -> void:
 		PopochiuEditorConfig.get_editor_setting(
 			PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR)
 	)
-	_set_toolbar_button_color(
-		btn_interaction_polygon,
-		PopochiuEditorConfig.get_editor_setting(
-			PopochiuEditorConfig.GIZMOS_POLY_INTERACTION_COLOR)
-	)
+	# Treated as a special case because walkable areas polygons have a different color
+	# from clickables and characters
+	_set_interaction_polygon_button_color()
 	_set_toolbar_button_color(
 		btn_obstacle_polygon,
 		PopochiuEditorConfig.get_editor_setting(
 			PopochiuEditorConfig.GIZMOS_POLY_OBSTACLE_COLOR)
 	)
+
+
+
+# Sets the color of the interaction polygon button depending on the selected
+# node (walkable areas have a different color from clickables and characters).
+func _set_interaction_polygon_button_color() -> void:
+	if _active_popochiu_object is PopochiuWalkableArea:
+		_set_toolbar_button_color(
+			btn_interaction_polygon,
+			PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_POLY_WALKABLE_AREA_COLOR)
+		)
+	else:
+		_set_toolbar_button_color(
+			btn_interaction_polygon,
+			PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_POLY_INTERACTION_COLOR)
+		)
+
 
 # Internal helper to reduce code duplication
 func _set_toolbar_button_color(btn, color) -> void:
