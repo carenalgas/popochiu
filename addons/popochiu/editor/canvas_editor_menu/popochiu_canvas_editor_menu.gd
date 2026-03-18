@@ -176,8 +176,14 @@ func _on_gizmo_settings_changed() -> void:
 
 # Refreshes the toolbar after the editor selection changes.
 func _on_selection_changed() -> void:
+	# If we are editing the popochiu_canvas_editor_menu scene in
+	# Godot, the edited scene root is the menu itself.
+	# In that case, don't hide it!
+	if EditorInterface.get_edited_scene_root() == self:
+		return
+
 	# Make sure this function works only if the user is editing a
-	# supported scene
+	# supported scene.
 	if not PopochiuEditorHelper.is_popochiu_object(
 		EditorInterface.get_edited_scene_root()
 	):
