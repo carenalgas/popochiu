@@ -316,6 +316,9 @@ func _reset_toolbar_button_color(btn) -> void:
 	btn.remove_theme_color_override("icon_hover_pressed_color")
 
 
+# Set the visibility of the buttons depending on the current editing context and
+# the type of the selected object. The buttons are shown only if they are relevant
+# for the current selection.
 func _set_buttons_visibility() -> void:
 	# Let's assume the buttons are all hidden...
 	hide()
@@ -431,6 +434,8 @@ func _reset_buttons_state() -> void:
 	)
 
 
+# When the passive scope changes, we also update the button icon and tooltip to
+# reflect the new scope and the action that will be performed on the next click.
 func _update_passive_scope_button_visuals() -> void:
 	if _passive_scope == PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED:
 		btn_passive_scope.icon = PASSIVE_SCOPE_ROOM_ICON

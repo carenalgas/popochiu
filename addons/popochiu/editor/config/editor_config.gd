@@ -17,7 +17,7 @@ const TOOLBAR_COMPACT_MODE = "popochiu/toolbar/compact_mode"
 const GIZMOS_FONT_SIZE = "popochiu/gizmos/font_size"
 # --- Positional gizmo settings ---
 const GIZMOS_HANDLER_SIZE = "popochiu/gizmos/positions/handler_size"
-const GIZMOS_SHOW_POSITION = "popochiu/gizmos/show_position"
+const GIZMOS_SHOW_POSITION = "popochiu/gizmos/positions/show_position"
 const GIZMOS_SHOW_CONNECTORS = "popochiu/gizmos/positions/show_connectors"
 const GIZMOS_SHOW_OUTLINE = "popochiu/gizmos/positions/show_handler_outline"
 const GIZMOS_SHOW_NODE_NAME = "popochiu/gizmos/positions/show_node_name"
