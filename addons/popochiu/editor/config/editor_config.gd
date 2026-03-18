@@ -26,9 +26,9 @@ const GIZMOS_DIALOG_POS_COLOR = "popochiu/gizmos/positions/dialog_position_color
 const GIZMOS_MARKER_POS_COLOR = "popochiu/gizmos/positions/marker_position_color"
 # --- Polygon gizmo settings ---
 const GIZMOS_POLY_VERTEX_HANDLER_SIZE = "popochiu/gizmos/polygons/polygon_vertex_handler_size"
-const GIZMOS_POLY_ALWAYS_SHOW_WA = "popochiu/gizmos/polygons/always_show_walkable_areas_polygons"
-const GIZMOS_POLY_ALWAYS_SHOW_INT = "popochiu/gizmos/polygons/always_show_interaction_polygons"
-const GIZMOS_POLY_ALWAYS_SHOW_OBS = "popochiu/gizmos/polygons/always_show_obstacle_polygons"
+const GIZMOS_POLY_ENABLE_UNSELECTED_WA = "popochiu/gizmos/polygons/enable_unselected_walkable_area_polygons"
+const GIZMOS_POLY_ENABLE_UNSELECTED_INT = "popochiu/gizmos/polygons/enable_unselected_interaction_polygons"
+const GIZMOS_POLY_ENABLE_UNSELECTED_OBS = "popochiu/gizmos/polygons/enable_unselected_obstacle_polygons"
 const GIZMOS_POLY_INTERACTION_COLOR = "popochiu/gizmos/polygons/interaction_polygons_color"
 const GIZMOS_POLY_OBSTACLE_COLOR = "popochiu/gizmos/polygons/obstacle_polygons_color"
 const GIZMOS_POLY_WALKABLE_AREA_COLOR = "popochiu/gizmos/polygons/walkable_area_polygons_color"
@@ -52,9 +52,9 @@ static var defaults := {
 	GIZMOS_SHOW_OUTLINE: true,
 	GIZMOS_SHOW_NODE_NAME: true,
 	GIZMOS_SHOW_POSITION: true,
-	GIZMOS_POLY_ALWAYS_SHOW_WA: false,
-	GIZMOS_POLY_ALWAYS_SHOW_INT: false,
-	GIZMOS_POLY_ALWAYS_SHOW_OBS: false,
+	GIZMOS_POLY_ENABLE_UNSELECTED_WA: true,
+	GIZMOS_POLY_ENABLE_UNSELECTED_INT: true,
+	GIZMOS_POLY_ENABLE_UNSELECTED_OBS: true,
 	GIZMOS_POLY_INTERACTION_COLOR: Color.YELLOW,
 	GIZMOS_POLY_OBSTACLE_COLOR: Color.VIOLET,
 	GIZMOS_POLY_WALKABLE_AREA_COLOR: Color.GREEN,
@@ -90,9 +90,9 @@ static func initialize_editor_settings():
 	_initialize_editor_setting(GIZMOS_DIALOG_POS_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_MARKER_POS_COLOR, TYPE_COLOR)
 	# --- Polygon gizmo settings ---
-	_initialize_editor_setting(GIZMOS_POLY_ALWAYS_SHOW_WA, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_POLY_ALWAYS_SHOW_INT, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_POLY_ALWAYS_SHOW_OBS, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_POLY_ENABLE_UNSELECTED_WA, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_POLY_ENABLE_UNSELECTED_INT, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_POLY_ENABLE_UNSELECTED_OBS, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_POLY_INTERACTION_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_POLY_OBSTACLE_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_POLY_WALKABLE_AREA_COLOR, TYPE_COLOR)

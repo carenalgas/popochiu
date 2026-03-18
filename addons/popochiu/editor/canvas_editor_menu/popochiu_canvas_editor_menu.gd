@@ -171,6 +171,7 @@ func _toggle_walkable_area_polygon_visibility() -> void:
 # When gizmo-related editor settings change, we update the toolbar buttons colors
 func _on_gizmo_settings_changed() -> void:
 	_set_toolbar_buttons_color()
+	_set_buttons_visibility()
 
 
 # Refreshes the toolbar after the editor selection changes.
@@ -354,10 +355,17 @@ func _set_buttons_visibility() -> void:
 	if PopochiuEditorHelper.is_editing_room():
 		# We always show the markers button
 		btn_markers.show()
-		# Scope control for passive polygons in room scenes
-		btn_passive_scope.show()
-		# Walkable-area polygons have their own visibility toggle
-		btn_walkable_area_polygon.show()
+		# Scope control appears only if interaction or obstacle overlays are enabled
+		if (
+			PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_INT)
+			or PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_OBS)
+		):
+			btn_passive_scope.show()
+		# Walkable-area overlay toggle appears only if walkable overlays are enabled
+		if PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_WA
+		):
+			btn_walkable_area_polygon.show()
 		# If we are editing a clickable object, show gizmos buttons too.
 		if _active_popochiu_object is PopochiuClickable:
 			btn_baseline.show()
@@ -386,21 +394,20 @@ func _reset_buttons_state() -> void:
 	btn_dialog_pos.set_pressed_no_signal(true)
 	_passive_scope = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 	_update_passive_scope_button_visuals()
-	# Polygon buttons respect the "always show" editor settings so passive
-	# gizmos are visible from start when the user configures them that way.
+	# Polygon overlay buttons start from editor settings for unselected objects.
 	btn_interaction_polygon.set_pressed_no_signal(
 		PopochiuEditorConfig.get_editor_setting(
-			PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_INT
+			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_INT
 		)
 	)
 	btn_obstacle_polygon.set_pressed_no_signal(
 		PopochiuEditorConfig.get_editor_setting(
-			PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_OBS
+			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_OBS
 		)
 	)
 	btn_walkable_area_polygon.set_pressed_no_signal(
 		PopochiuEditorConfig.get_editor_setting(
-			PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_WA
+			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_WA
 		)
 	)
 

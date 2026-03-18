@@ -25,7 +25,7 @@ var _editing_enabled: Dictionary = {
 	GizmoPolygon2D.PolygonCategory.OBSTACLE: true,
 	GizmoPolygon2D.PolygonCategory.WALKABLE_AREA: true,
 }
-# Whether passive gizmos are always visible per category (from editor settings).
+# Whether unselected overlays are enabled per category (from editor settings).
 # Controls visibility of non-selected objects' polygons, and the selected
 # object's polygons when editing is disabled for that category.
 var _always_show: Dictionary = {
@@ -223,13 +223,13 @@ func initialize_gizmos() -> void:
 		PopochiuEditorConfig.GIZMOS_POLY_PASSIVE_ALPHA_FACTOR
 	)
 	_always_show[GizmoPolygon2D.PolygonCategory.INTERACTION] = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_INT
+		PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_INT
 	)
 	_always_show[GizmoPolygon2D.PolygonCategory.OBSTACLE] = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_OBS
+		PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_OBS
 	)
 	_always_show[GizmoPolygon2D.PolygonCategory.WALKABLE_AREA] = PopochiuEditorConfig.get_editor_setting(
-		PopochiuEditorConfig.GIZMOS_POLY_ALWAYS_SHOW_WA
+		PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_WA
 	)
 	_show_walkable_area_passive = _always_show[GizmoPolygon2D.PolygonCategory.WALKABLE_AREA]
 
