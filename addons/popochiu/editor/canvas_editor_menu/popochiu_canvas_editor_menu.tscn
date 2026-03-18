@@ -38,6 +38,7 @@ texture = ExtResource("2_vkhip")
 expand_mode = 3
 
 [node name="LabelView" type="Label" parent="." unique_id=62529825]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Visibility "
 vertical_alignment = 1
@@ -177,6 +178,7 @@ icon = ExtResource("10_o14yl")
 layout_mode = 2
 
 [node name="LabelEdit" type="Label" parent="." unique_id=2041561534]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Editing"
 vertical_alignment = 1

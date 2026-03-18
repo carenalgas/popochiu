@@ -23,6 +23,8 @@ var _passive_scope: int = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 @onready var btn_obstacle_polygon: Button = %BtnObstaclePolygon
 @onready var btn_passive_scope: Button = %BtnPassiveScope
 @onready var btn_walkable_area_polygon: Button = %BtnWalkableAreaPolygon
+@onready var label_view: Label = %LabelView
+@onready var label_edit: Label = %LabelEdit
 
 
 #region Godot ######################################################################################
@@ -225,7 +227,7 @@ func _on_selection_changed() -> void:
 # Sets all the buttons color so that they are the same as the gizmos
 # or make them theme-standard if the user so prefers (see editor settings)
 func _set_toolbar_buttons_color() -> void:
-	if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_COLOR_TOOLBAR_BUTTONS):
+	if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.TOOLBAR_APPLY_COLORS_TO_BUTTONS):
 		# Reset button colors
 		_reset_toolbar_button_color(btn_markers)
 		_reset_toolbar_button_color(btn_baseline)
@@ -317,6 +319,8 @@ func _reset_toolbar_button_color(btn) -> void:
 func _set_buttons_visibility() -> void:
 	# Let's assume the buttons are all hidden...
 	hide()
+	label_view.hide()
+	label_edit.hide()
 	btn_markers.hide()
 	btn_baseline.hide()
 	btn_walk_to_point.hide()
@@ -389,6 +393,15 @@ func _set_buttons_visibility() -> void:
 	elif PopochiuEditorHelper.is_editing_character():
 		btn_dialog_pos.show()
 		btn_obstacle_polygon.show()
+
+	# Compact mode hides labels regardless of button visibility.
+	if PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.TOOLBAR_COMPACT_MODE):
+		return
+
+	# Label for visibility controls is always shown when toolbar is shown.
+	label_view.show()
+	# "Editing" label is shown only if at least one editing polygon button is visible.
+	label_edit.visible = btn_interaction_polygon.visible or btn_obstacle_polygon.visible
 
 
 # Make all buttons pop-up

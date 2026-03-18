@@ -10,9 +10,11 @@ const ASEPRITE_COMMAND_PATH = "popochiu/import/aseprite/command_path"
 const ASEPRITE_REMOVE_JSON_FILE = "popochiu/import/aseprite/remove_json_file"
 
 # GIZMOS -------------------------------------------------------------------------------------------
+# --- Toolbar settings ---
+const TOOLBAR_APPLY_COLORS_TO_BUTTONS = "popochiu/toolbar/apply_colors_to_toolbar_buttons"
+const TOOLBAR_COMPACT_MODE = "popochiu/toolbar/compact_mode"
 # --- General gizmo settings ---
 const GIZMOS_FONT_SIZE = "popochiu/gizmos/font_size"
-const GIZMOS_COLOR_TOOLBAR_BUTTONS = "popochiu/gizmos/apply_colors_to_toolbar_buttons"
 # --- Positional gizmo settings ---
 const GIZMOS_HANDLER_SIZE = "popochiu/gizmos/positions/handler_size"
 const GIZMOS_SHOW_POSITION = "popochiu/gizmos/show_position"
@@ -46,7 +48,8 @@ static var defaults := {
 	GIZMOS_LOOK_AT_POINT_COLOR: Color.RED,
 	GIZMOS_DIALOG_POS_COLOR: Color.MAGENTA,
 	GIZMOS_MARKER_POS_COLOR: Color.CYAN,
-	GIZMOS_COLOR_TOOLBAR_BUTTONS: true,
+	TOOLBAR_APPLY_COLORS_TO_BUTTONS: true,
+	TOOLBAR_COMPACT_MODE: false,
 	GIZMOS_HANDLER_SIZE: 32,
 	GIZMOS_SHOW_CONNECTORS: true,
 	GIZMOS_SHOW_OUTLINE: true,
@@ -74,10 +77,12 @@ static func initialize_editor_settings():
 	_initialize_editor_setting(ASEPRITE_IMPORTER_ENABLED, TYPE_BOOL)
 	_initialize_editor_setting(ASEPRITE_COMMAND_PATH, TYPE_STRING)
 	_initialize_editor_setting(ASEPRITE_REMOVE_JSON_FILE, TYPE_BOOL)
+	# Toolbar
+	_initialize_editor_setting(TOOLBAR_APPLY_COLORS_TO_BUTTONS, TYPE_BOOL)
+	_initialize_editor_setting(TOOLBAR_COMPACT_MODE, TYPE_BOOL)
 	# Gizmos
-	# --- General settings ---
+	# --- General gizmo settings ---
 	_initialize_editor_setting(GIZMOS_FONT_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
-	_initialize_editor_setting(GIZMOS_COLOR_TOOLBAR_BUTTONS, TYPE_BOOL)
 	# --- Positional gizmo settings ---
 	_initialize_editor_setting(GIZMOS_HANDLER_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
 	_initialize_editor_setting(GIZMOS_SHOW_POSITION, TYPE_BOOL)
