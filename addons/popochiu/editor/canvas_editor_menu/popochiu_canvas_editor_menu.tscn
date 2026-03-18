@@ -169,37 +169,14 @@ theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 toggle_mode = true
 icon = ExtResource("8_8v2pw")
 
-[node name="BtnPassiveScopeSelected" type="Button" parent="." unique_id=1207792445]
+[node name="BtnPassiveScope" type="Button" parent="." unique_id=1207792445]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Passive Gizmos: Selected Object"
+tooltip_text = "Passive Gizmos: Switch to Whole Room"
 theme_type_variation = &"FlatButton"
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
-theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_pressed")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
-theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pressed")
 theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-toggle_mode = true
-button_pressed = true
-icon = ExtResource("9_jl2qw")
-
-[node name="BtnPassiveScopeRoom" type="Button" parent="." unique_id=1368507816]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Passive Gizmos: Whole Room"
-theme_type_variation = &"FlatButton"
-theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
-theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_hover")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
-theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_pressed")
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
-theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pressed")
-theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
-theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
-toggle_mode = true
 icon = ExtResource("10_o14yl")
 
 [node name="BtnWalkableAreaPolygon" type="Button" parent="." unique_id=214111579]

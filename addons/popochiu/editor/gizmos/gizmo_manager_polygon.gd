@@ -142,11 +142,11 @@ func _should_show_passive_gizmo(gizmo: GizmoPolygon2D) -> bool:
 	if not _always_show.get(gizmo.category, false):
 		return false
 
-	if (
-		gizmo.category == GizmoPolygon2D.PolygonCategory.WALKABLE_AREA
-		and not _show_walkable_area_passive
-	):
-		return false
+	# Walkable areas are controlled exclusively by the dedicated toolbar button,
+	# regardless of selected/room passive scope.
+	if gizmo.category == GizmoPolygon2D.PolygonCategory.WALKABLE_AREA:
+		return _show_walkable_area_passive
+
 
 	if _passive_scope == PassiveScope.ROOM:
 		return true
