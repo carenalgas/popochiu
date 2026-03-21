@@ -1231,7 +1231,7 @@ func reset_buffered_position() -> void:
 
 ## Syncs the buffered position with the current position to avoid conflicts with walking.
 func sync_buffered_position() -> void:
-	_buffered_position = position
+	update_position()
 
 
 ## Updates the scale of the character, depending on the properties of the scaling region
