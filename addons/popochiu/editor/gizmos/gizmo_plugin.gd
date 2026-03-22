@@ -8,7 +8,13 @@ enum {
 	LOOK_AT_POINT,
 	BASELINE,
 	DIALOG_POS,
-	MARKER_POS
+	MARKER_POS,
+	INTERACTION_POLYGON,
+	OBSTACLE_POLYGON,
+	WALKABLE_AREA_POLYGON,
+	PASSIVE_SCOPE_SELECTED,
+	PASSIVE_SCOPE_ROOM,
+	WALKABLE_AREA_PASSIVE
 }
 
 # Private vars
@@ -16,6 +22,7 @@ enum {
 var _undo: EditorUndoRedoManager
 var _clickable_manager: GizmoManagerClickable
 var _marker_manager: GizmoManagerMarker
+var _polygon_manager: GizmoManagerPolygon
 
 # Appearance
 var _color_settings: Dictionary = {}
@@ -38,14 +45,26 @@ func _enter_tree() -> void:
 	# Initialize managers
 	_clickable_manager = GizmoManagerClickable.new(_undo)
 	_marker_manager = GizmoManagerMarker.new(_undo)
+	_polygon_manager = GizmoManagerPolygon.new(_undo)
 	
 	# Setup gizmos in managers
 	_clickable_manager.initialize_gizmos(_font, _color_settings)
 	_marker_manager.initialize_gizmos(_font, _color_settings)
+	_polygon_manager.initialize_gizmos()
 
 	# Connect signals to update gizmos when editor settings or visibility change
-	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
-	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(_on_gizmo_visibility_changed)
+	EditorInterface.get_editor_settings().settings_changed.connect(
+		_on_gizmo_settings_changed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(
+		_on_gizmo_visibility_changed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.connect(
+		_on_gizmo_passive_scope_changed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.connect(
+		_on_gizmo_walkable_passive_visibility_changed
+	)
 
 #endregion
 
@@ -63,11 +82,12 @@ func _edit(object: Object) -> void:
 		# Clear all gizmos when not in a relevant scene
 		_marker_manager.reset()
 		_clickable_manager.reset()
+		_polygon_manager.reset()
 		return
 
 	# Track if any managers are handling objects
-	var has_handled_objects = false
-	var edited_root = EditorInterface.get_edited_scene_root()
+	var has_handled_objects: bool = false
+	var edited_root: Node = EditorInterface.get_edited_scene_root()
 
 	# Always call the marker manager with the edited root
 	# This ensures markers are shown in rooms and cleared in other scenes
@@ -79,6 +99,10 @@ func _edit(object: Object) -> void:
 	has_handled_objects = (
 		_clickable_manager.handle_object(object, edited_root) or has_handled_objects
 	)
+
+	# Handle polygon gizmos for the selected object (includes passive overlays
+	# for non-selected polygons in the same room)
+	has_handled_objects = _polygon_manager.handle_object(object, edited_root) or has_handled_objects
 
 	# If any manager is handling objects, connect to inspector signal
 	if has_handled_objects:
@@ -98,10 +122,11 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 	_clickable_manager.draw_gizmos(viewport_control)
 	_marker_manager.draw_gizmos(viewport_control)
+	_polygon_manager.draw_gizmos(viewport_control)
 
 
 func _handles(object: Object) -> bool:
-	var edited_root = EditorInterface.get_edited_scene_root()
+	var edited_root: Node = EditorInterface.get_edited_scene_root()
 	return (
 		edited_root is PopochiuCharacter
 		or edited_root is PopochiuRoom
@@ -114,31 +139,66 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
 		# Grab
 		if (
-			not _clickable_manager.has_active_gizmo()
+			not _polygon_manager.has_active_gizmo()
+			and not _clickable_manager.has_active_gizmo()
 			and not _marker_manager.has_active_gizmo()
 			and event.is_pressed()
 		):
+			# Polygon manager gets priority for vertex/edge hits
+			if _polygon_manager.try_grab_gizmo(event):
+				update_overlays()
+				return true
 			if _clickable_manager.try_grab_gizmo(event) or _marker_manager.try_grab_gizmo(event):
 				update_overlays()
 				return true
 		# Release
 		elif (
-			(_clickable_manager.has_active_gizmo() or _marker_manager.has_active_gizmo())
-			and event.is_released()
-		):
-			if _clickable_manager.release_gizmo() or _marker_manager.release_gizmo():
+			_polygon_manager.has_active_gizmo()
+			or _clickable_manager.has_active_gizmo()
+			or _marker_manager.has_active_gizmo()
+		) and event.is_released():
+			if (_polygon_manager.release_gizmo()
+				or _clickable_manager.release_gizmo()
+				or _marker_manager.release_gizmo()
+			):
 				update_overlays()
 				return true
 
-	# For mouse movement, drag the grabbed gizmo
+	# Right-click to delete a polygon vertex
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT:
+		if event.is_pressed() and not _polygon_manager.has_active_gizmo():
+			if _polygon_manager.try_delete_vertex(event.position):
+				update_overlays()
+				return true
+
+	# For mouse movement, drag the grabbed gizmo and update hover state
 	if event is InputEventMouseMotion:
-		if _clickable_manager.drag_gizmo(event) or _marker_manager.drag_gizmo(event):
+		if (_polygon_manager.drag_gizmo(event)
+			or _clickable_manager.drag_gizmo(event)
+			or _marker_manager.drag_gizmo(event)
+		):
 			update_overlays()
 			return true
+		# Update hover even when not dragging (for visual feedback)
+		if _polygon_manager.update_hover(event.position):
+			update_overlays()
+
+	# Delete key to remove a hovered polygon vertex
+	if event is InputEventKey and event.is_pressed() and not event.is_echo():
+		if event.keycode == KEY_DELETE or event.keycode == KEY_BACKSPACE:
+			# We need the last known mouse position; use a workaround by checking
+			# which vertex is currently hovered
+			if _polygon_manager.try_delete_hovered_vertex():
+				update_overlays()
+				return true
 
 	# For ESC key or comparable events, cancel the dragging if in place
 	if event.is_action_pressed("ui_cancel"):
-		if _clickable_manager.cancel_dragging() or _marker_manager.cancel_dragging():
+		if (
+			_polygon_manager.cancel_dragging()
+			or _clickable_manager.cancel_dragging()
+			or _marker_manager.cancel_dragging()
+		):
 			update_overlays()
 			return true
 	
@@ -161,7 +221,7 @@ func _init_theme_settings() -> void:
 	_font = EditorInterface.get_editor_theme().default_font
 
 
-func _on_property_changed(_property: String):
+func _on_property_changed(_property: String) -> void:
 	# Update gizmos that are currently visible on the scene
 	# to reflect the new property value
 	update_overlays()
@@ -174,20 +234,56 @@ func _on_gizmo_settings_changed() -> void:
 	# Update gizmos appearance based on the new settings
 	_clickable_manager.initialize_gizmos(_font, _color_settings)
 	_marker_manager.initialize_gizmos(_font, _color_settings)
+	_polygon_manager.initialize_gizmos()
 	
 	# Update gizmos in the viewport
 	update_overlays()
 
 
-func _on_gizmo_visibility_changed(gizmo_id: int, visibility: bool):
+func _on_gizmo_visibility_changed(gizmo_id: int, visibility: bool) -> void:
 	# The visibility enum values match between plugin and clickable manager
 	if gizmo_id <= DIALOG_POS:
 		_clickable_manager.set_gizmo_visibility(gizmo_id, visibility)
 	# The MARKER_POS enum value is different between the two systems
 	elif gizmo_id == MARKER_POS:
 		_marker_manager.set_gizmo_visibility(0, visibility)
+	# Polygon gizmo categories
+	# Polygon gizmo categories — the toolbar button controls editing (visibility
+	# + interactivity) for the selected object only. Passive polygon visibility
+	# is governed by the "always show" editor settings.
+	elif gizmo_id == INTERACTION_POLYGON:
+		_polygon_manager.set_category_editing(
+			GizmoPolygon2D.PolygonCategory.INTERACTION, visibility
+		)
+	elif gizmo_id == OBSTACLE_POLYGON:
+		_polygon_manager.set_category_editing(
+			GizmoPolygon2D.PolygonCategory.OBSTACLE, visibility
+		)
+	elif gizmo_id == WALKABLE_AREA_POLYGON:
+		_polygon_manager.set_category_editing(
+			GizmoPolygon2D.PolygonCategory.WALKABLE_AREA, visibility
+		)
 	
 	update_overlays()
 
+
+# The passive scope and walkable area passive visibility are handled separately
+# from the main visibility settings, since they affect the visibility of passive
+# gizmos that are not directly tied to the selected object.
+func _on_gizmo_passive_scope_changed(scope: int) -> void:
+	if scope == PASSIVE_SCOPE_ROOM:
+		_polygon_manager.set_passive_scope(GizmoManagerPolygon.PassiveScope.ROOM)
+	else:
+		_polygon_manager.set_passive_scope(GizmoManagerPolygon.PassiveScope.SELECTED_OBJECT)
+
+	update_overlays()
+
+
+# The walkable area passive visibility is a separate setting that controls whether
+# walkable area passive gizmos are shown at all, since they can be very heavy when
+# shown for an entire room.
+func _on_gizmo_walkable_passive_visibility_changed(visible: bool) -> void:
+	_polygon_manager.set_walkable_area_passive_visibility(visible)
+	update_overlays()
 
 #endregion
