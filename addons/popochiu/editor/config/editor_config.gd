@@ -70,7 +70,7 @@ static var editor_settings: EditorSettings
 
 
 #region Public #####################################################################################
-static func initialize_editor_settings():
+static func initialize_editor_settings() -> void:
 	editor_settings = EditorInterface.get_editor_settings()
 
 	# Aseprite importer
@@ -161,9 +161,9 @@ static func _initialize_editor_setting(
 	})
 
 
-static func get_editor_setting(key: String):
-	var e = editor_settings.get_setting(key)
-	return e if e != null else defaults[e]
+static func get_editor_setting(key: String) -> Variant:
+	var e := editor_settings.get_setting(key)
+	return e if e != null else defaults.get(key)
 
 
 #endregion

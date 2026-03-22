@@ -53,9 +53,15 @@ func _enter_tree() -> void:
 	_polygon_manager.initialize_gizmos()
 
 	# Connect signals to update gizmos when editor settings or visibility change
-	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
-	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(_on_gizmo_visibility_changed)
-	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.connect(_on_gizmo_passive_scope_changed)
+	EditorInterface.get_editor_settings().settings_changed.connect(
+		_on_gizmo_settings_changed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.connect(
+		_on_gizmo_visibility_changed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.connect(
+		_on_gizmo_passive_scope_changed
+	)
 	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.connect(
 		_on_gizmo_walkable_passive_visibility_changed
 	)
@@ -80,8 +86,8 @@ func _edit(object: Object) -> void:
 		return
 
 	# Track if any managers are handling objects
-	var has_handled_objects = false
-	var edited_root = EditorInterface.get_edited_scene_root()
+	var has_handled_objects: bool = false
+	var edited_root: Node = EditorInterface.get_edited_scene_root()
 
 	# Always call the marker manager with the edited root
 	# This ensures markers are shown in rooms and cleared in other scenes
@@ -120,7 +126,7 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 
 func _handles(object: Object) -> bool:
-	var edited_root = EditorInterface.get_edited_scene_root()
+	var edited_root: Node = EditorInterface.get_edited_scene_root()
 	return (
 		edited_root is PopochiuCharacter
 		or edited_root is PopochiuRoom
@@ -215,7 +221,7 @@ func _init_theme_settings() -> void:
 	_font = EditorInterface.get_editor_theme().default_font
 
 
-func _on_property_changed(_property: String):
+func _on_property_changed(_property: String) -> void:
 	# Update gizmos that are currently visible on the scene
 	# to reflect the new property value
 	update_overlays()
@@ -234,7 +240,7 @@ func _on_gizmo_settings_changed() -> void:
 	update_overlays()
 
 
-func _on_gizmo_visibility_changed(gizmo_id: int, visibility: bool):
+func _on_gizmo_visibility_changed(gizmo_id: int, visibility: bool) -> void:
 	# The visibility enum values match between plugin and clickable manager
 	if gizmo_id <= DIALOG_POS:
 		_clickable_manager.set_gizmo_visibility(gizmo_id, visibility)

@@ -1,7 +1,8 @@
 @tool
+class_name PopochiuCanvasEditorMenu
 extends HBoxContainer
-## Used to show new buttons in the EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU (the top bar in the
-## 2D editor) to toggle gizmo visibility for PopochiuClickable objects.
+# Used to show new buttons in the EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU (the top bar in the
+# 2D editor) to toggle gizmo visibility for PopochiuClickable objects.
 
 const PASSIVE_SCOPE_SELECTED_ICON: Texture2D = preload(
 	"res://addons/popochiu/icons/btn_psv_gz_scope_selected.svg"
@@ -207,7 +208,7 @@ func _on_selection_changed() -> void:
 
 	# Identify which PopochiuClickable or room object we are working on
 	if EditorInterface.get_selection().get_selected_nodes().size() >= 1:
-		var selected_node = EditorInterface.get_selection().get_selected_nodes()[0]
+		var selected_node: Node = EditorInterface.get_selection().get_selected_nodes()[0]
 		if PopochiuEditorHelper.is_popochiu_room_object(selected_node):
 			_active_popochiu_object = selected_node
 		elif selected_node is PopochiuRoom:
@@ -227,7 +228,9 @@ func _on_selection_changed() -> void:
 # Sets all the buttons color so that they are the same as the gizmos
 # or make them theme-standard if the user so prefers (see editor settings)
 func _set_toolbar_buttons_color() -> void:
-	if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.TOOLBAR_APPLY_COLORS_TO_BUTTONS):
+	if not PopochiuEditorConfig.get_editor_setting(
+		PopochiuEditorConfig.TOOLBAR_APPLY_COLORS_TO_BUTTONS
+	):
 		# Reset button colors
 		_reset_toolbar_button_color(btn_markers)
 		_reset_toolbar_button_color(btn_baseline)
@@ -370,8 +373,12 @@ func _set_buttons_visibility() -> void:
 		btn_markers.show()
 		# Scope control appears only if interaction or obstacle overlays are enabled
 		if (
-			PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_INT)
-			or PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_OBS)
+			PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_INT
+			)
+			or PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_OBS
+			)
 		):
 			btn_passive_scope.show()
 		# Walkable-area overlay toggle appears only if walkable overlays are enabled
