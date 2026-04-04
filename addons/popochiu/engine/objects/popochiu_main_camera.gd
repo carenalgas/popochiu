@@ -12,11 +12,13 @@ var _camera_shake_amount := 15.0
 var _shake_timer := 0.0
 
 @onready var tween: Tween = null
+# Use the base project resolution (not the live viewport) so that expand-mode stretch settings
+# don't inflate the limits and lock the camera in place. See: #96
 @onready var default_limits := {
 	left = limit_left,
-	right = get_viewport().get_visible_rect().end.x,
+	right = ProjectSettings.get_setting("display/window/size/viewport_width"),
 	top = limit_top,
-	bottom = get_viewport().get_visible_rect().end.y
+	bottom = ProjectSettings.get_setting("display/window/size/viewport_height")
 }
 
 
