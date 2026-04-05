@@ -208,7 +208,7 @@ var _valid_animation_suffixes = [
 ['_ur', '_ul', '_r', '_l', '_u']] # UP_RIGHT (292.5 - 337.5 degrees)
 # Navigation path for this character's current movement
 var _navigation_path := PackedVector2Array()
-# The stored position of the character. Used when anti_glide_animation is true.
+# The logical position used by navigation and anti-glide rendering.
 var _buffered_position = null
 # Whether the dialog position is locked to a specific screen position.
 var _is_dialog_pos_locked: bool = false
@@ -438,20 +438,22 @@ func queue_walk(target_pos: Vector2) -> Callable:
 ## Makes the character walk to [param target_pos], playing its walk animation and flipping
 ## the sprite based on [member flips_when].
 func walk(target_pos: Vector2) -> void:
+	var start_position := get_buffered_position()
+
 	is_moving = true
 	movement_started.emit()
 	_last_reached_clickable = null
 
 	_flip_left_right(
-		target_pos.x < position.x,
-		target_pos.x > position.x
+		target_pos.x < start_position.x,
+		target_pos.x > start_position.x
 	)
 
 	if PopochiuUtils.e.cutscene_skipped:
 		is_moving = false
 		await get_tree().process_frame
 
-		position = target_pos
+		_set_position_state(target_pos)
 		PopochiuUtils.e.camera.position = target_pos
 		await get_tree().process_frame
 
@@ -461,7 +463,7 @@ func walk(target_pos: Vector2) -> void:
 	_play_walk(target_pos)
 
 	# Trigger the signal to start moving the character
-	started_walk_to.emit(self, position, target_pos)
+	started_walk_to.emit(self, start_position, target_pos)
 	await movement_ended
 
 	is_moving = false
@@ -1231,7 +1233,7 @@ func reset_buffered_position() -> void:
 
 ## Syncs the buffered position with the current position to avoid conflicts with walking.
 func sync_buffered_position() -> void:
-	update_position()
+	_buffered_position = position
 
 
 ## Updates the scale of the character, depending on the properties of the scaling region
@@ -1650,9 +1652,8 @@ func _move_along_path(walk_distance: float):
 			var next_position = last_character_position.lerp(
 				next_waypoint, walk_distance / distance_to_next_waypoint
 			)
-			if anti_glide_animation:
-				_buffered_position = next_position
-			else:
+			_buffered_position = next_position
+			if not anti_glide_animation:
 				position = next_position
 			# Scale the character depending on the new position
 			update_scale()
@@ -1675,7 +1676,7 @@ func _move_along_path(walk_distance: float):
 		last_character_position = next_waypoint
 		_navigation_path.remove_at(0)
 
-	position = last_character_position
+	_set_position_state(last_character_position)
 	update_scale()
 	_clear_navigation_path()
 
@@ -1686,6 +1687,11 @@ func _move_along_path(walk_distance: float):
 	# missing the final snap-to-target immediately after reaching the destination.
 	if _current_faced_character:
 		_face_character(_current_faced_character)
+
+
+func _set_position_state(new_position: Vector2) -> void:
+	position = new_position
+	_buffered_position = new_position
 
 
 # Character navigation system.
