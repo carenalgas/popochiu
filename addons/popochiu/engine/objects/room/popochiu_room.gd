@@ -236,14 +236,20 @@ func has_character(character_name: String) -> bool:
 #
 ## Called by Popochiu when loading the room to assign its camera limits to the player camera.
 func setup_camera() -> void:
-	if width > 0 and width > PopochiuUtils.e.width:
-		var h_diff: int = (PopochiuUtils.e.width - width) / 2
+	# Compare against the base project resolution, not the live viewport size.
+	# With stretch/aspect = expand the viewport grows beyond the base resolution, which would make
+	# rooms that are smaller than the expanded size skip limit assignment and lock the camera
+	# to the inflated default limits. See: #96
+	var vp_w: int = ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH)
+	var vp_h: int = ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
+	if width > vp_w:
+		var h_diff: int = (vp_w - width) / 2
 		PopochiuUtils.e.camera.limit_left = h_diff
-		PopochiuUtils.e.camera.limit_right = PopochiuUtils.e.width - h_diff
-	if height > 0 and height > PopochiuUtils.e.height:
-		var v_diff: int = (PopochiuUtils.e.height - height) / 2
-		PopochiuUtils.e.camera.limit_top = - v_diff
-		PopochiuUtils.e.camera.limit_bottom = PopochiuUtils.e.height - v_diff
+		PopochiuUtils.e.camera.limit_right = vp_w - h_diff
+	if height > vp_h:
+		var v_diff: int = (vp_h - height) / 2
+		PopochiuUtils.e.camera.limit_top = -v_diff
+		PopochiuUtils.e.camera.limit_bottom = vp_h - v_diff
 
 
 ## Removes all character from the room.[br]
