@@ -1,14 +1,19 @@
 @tool
+class_name PopochiuCanvasEditorMenu
 extends HBoxContainer
-## Used to show new buttons in the EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU (the top bar in the
-## 2D editor) to select specific nodes in PopochiuClickable objects.
+# Used to show new buttons in the EditorPlugin.CONTAINER_CANVAS_EDITOR_MENU (the top bar in the
+# 2D editor) to toggle gizmo visibility for PopochiuClickable objects.
+
+const PASSIVE_SCOPE_SELECTED_ICON: Texture2D = preload(
+	"res://addons/popochiu/icons/btn_psv_gz_scope_selected.svg"
+)
+const PASSIVE_SCOPE_ROOM_ICON: Texture2D = preload(
+	"res://addons/popochiu/icons/btn_psv_gz_scope_room.svg"
+)
 
 var _active_popochiu_object: Node = null
 var _shown_helpers := []
-
-# Add these variables to track polygon edit mode
-var _is_editing_polygon := false
-var _polygon_being_edited: Node = null
+var _passive_scope: int = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 
 @onready var btn_markers: Button = %BtnMarkers
 @onready var btn_baseline: Button = %BtnBaseline
@@ -17,10 +22,19 @@ var _polygon_being_edited: Node = null
 @onready var btn_dialog_pos: Button = %BtnDialogPos
 @onready var btn_interaction_polygon: Button = %BtnInteractionPolygon
 @onready var btn_obstacle_polygon: Button = %BtnObstaclePolygon
+@onready var btn_passive_scope: Button = %BtnPassiveScope
+@onready var btn_walkable_area_polygon: Button = %BtnWalkableAreaPolygon
+@onready var label_view: Label = %LabelView
+@onready var label_edit: Label = %LabelEdit
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
+	# In Godot 4.6, controls added to CONTAINER_CANVAS_EDITOR_MENU are wrapped
+	# inside a contextual PanelContainer that paints a background stylebox.
+	# We clear that style so this toolbar group stays visually transparent.
+	_set_context_toolbar_transparent()
+
 	# Gizmos are always visible at editor load, so we'll set the buttons down
 	# to sync the status (hardcoded, not very good but enough for now)
 	_reset_buttons_state()
@@ -31,19 +45,50 @@ func _ready() -> void:
 	btn_walk_to_point.pressed.connect(_toggle_walk_to_point_visibility)
 	btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
 	btn_dialog_pos.pressed.connect(_toggle_dialog_pos_visibility)
-	btn_interaction_polygon.pressed.connect(_select_interaction_polygon)
-	btn_obstacle_polygon.pressed.connect(_select_obstacle_polygon)
+	btn_interaction_polygon.pressed.connect(_toggle_interaction_polygon_visibility)
+	btn_obstacle_polygon.pressed.connect(_toggle_obstacle_polygon_visibility)
+	btn_passive_scope.pressed.connect(_toggle_passive_scope)
+	btn_walkable_area_polygon.pressed.connect(_toggle_walkable_area_polygon_visibility)
 
 	# Connect to global signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
 	EditorInterface.get_editor_settings().settings_changed.connect(_on_gizmo_settings_changed)
-	PopochiuEditorHelper.signal_bus.scene_changed.connect(_on_scene_changed)
-	PopochiuEditorHelper.signal_bus.scene_closed.connect(_on_scene_closed)
+	_sync_polygon_toolbar_state()
 
 	_set_toolbar_buttons_color()
 	hide()
 
 
+func _set_context_toolbar_transparent() -> void:
+	var toolbar_hbox := get_parent() as Control
+	if toolbar_hbox == null:
+		return
+
+	var toolbar_panel := toolbar_hbox.get_parent() as PanelContainer
+	if toolbar_panel == null:
+		return
+
+	toolbar_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+
+
+func _sync_polygon_toolbar_state() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.INTERACTION_POLYGON,
+		btn_interaction_polygon.button_pressed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.OBSTACLE_POLYGON,
+		btn_obstacle_polygon.button_pressed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.WALKABLE_AREA_POLYGON,
+		btn_walkable_area_polygon.button_pressed
+	)
+	_update_passive_scope_button_visuals()
+	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.emit(_passive_scope)
+	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.emit(
+		btn_walkable_area_polygon.button_pressed
+	)
 #endregion
 
 #region Signals ####################################################################################
@@ -82,120 +127,66 @@ func _toggle_dialog_pos_visibility() -> void:
 	)
 
 
-func _select_interaction_polygon() -> void:
-	# If we are editing the polygon, exit editing mode and
-	# select the parent node back.
-	if _is_editing_polygon && _polygon_being_edited != null:
-		_exit_editing_mode()
-		return
-
-	# We are editing a popochiu object holding a polygon, so let's move on
-	# and enter interaction / navigation editing mode.
- 
-	# This variable will hold the reference to the polygon we need to edit.
-	var obj_polygon: Node2D = null
-
-	# Let's find the node holding the polygon
-	# Since different Popochiu Objects have different polygons (NavigationRegion2D
-	# for Walkable Areas, InteractionPolygon2D for props, etc...) we tagged them
-	# by a special metadata
-	obj_polygon = PopochiuEditorHelper.get_first_child_by_group(
-		_active_popochiu_object,
-		PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
+# Toggle the interaction polygon gizmo visibility via the signal bus.
+# The polygon gizmo draws on the viewport overlay; no child node selection needed.
+# We also toggle WALKABLE_AREA_POLYGON because for PopochiuWalkableArea objects
+# the perimeter polygon is categorised as WALKABLE_AREA internally.
+func _toggle_interaction_polygon_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.INTERACTION_POLYGON,
+		btn_interaction_polygon.button_pressed
 	)
 
-	if obj_polygon == null:
-		return
 
-	EditorInterface.get_selection().clear()
-	EditorInterface.get_selection().add_node(obj_polygon)
-	obj_polygon.show()
-
-	# Enable edit mode
-	_is_editing_polygon = true
-	_polygon_being_edited = obj_polygon
-	btn_interaction_polygon.set_pressed_no_signal(true)
+# Toggle the obstacle polygon gizmo visibility via the signal bus.
+func _toggle_obstacle_polygon_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.OBSTACLE_POLYGON,
+		btn_obstacle_polygon.button_pressed
+	)
 
 
-func _select_obstacle_polygon() -> void:
-	# If we are editing the polygon, exit editing mode and
-	# select the parent node back.
-	if _is_editing_polygon && _polygon_being_edited != null:
-		_exit_editing_mode()
-		return
+# Toggle passive scope with a single action button. The icon always shows
+# the next action (switch to selected-object scope or whole-room scope).
+func _toggle_passive_scope() -> void:
+	if _passive_scope == PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED:
+		_passive_scope = PopochiuGizmoPlugin.PASSIVE_SCOPE_ROOM
+	else:
+		_passive_scope = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 
-	# We are editing a popochiu object holding a polygon, so let's move on
-	# and enter obstacle editing mode.
-
-	# Let's store a reference to the clickable being edited
-	var selected_node := EditorInterface.get_selection().get_selected_nodes()[0]
-	# This variable will hold the reference to the polygon we need to edit.
-	var obstacle_polygon: NavigationObstacle2D = null
-
-	# Let's find the node holding the polygon
-	# Since different Popochiu Objects have different polygons (NavigationRegion2D
-	# for Walkable Areas, InteractionPolygon2D for props, etc...) we tagged them
-	# by a special metadata
-	obstacle_polygon = selected_node.get_node_or_null("ObstaclePolygon")
-
-	if obstacle_polygon == null:
-		return
-
-	EditorInterface.get_selection().clear()
-	EditorInterface.get_selection().add_node(obstacle_polygon)
-	obstacle_polygon.show()
-
-	# Enable edit mode
-	_is_editing_polygon = true
-	_polygon_being_edited = obstacle_polygon
-	btn_obstacle_polygon.set_pressed_no_signal(true)
+	_update_passive_scope_button_visuals()
+	PopochiuEditorHelper.signal_bus.gizmo_passive_scope_changed.emit(_passive_scope)
 
 
-# This overly complex function refreshes the whole interface after a sub-node (interaction
-# or navigation polygon) of a clickable or walkable area has been selected/deselected.
-#
-# TODO: This function is here until we have a polygon gizmo that we can use to populate
-# our transition polygons, something that would considerably simplify the code of this
-# canvas menu plugin and of all and every clickable in the game!
+# Toggle the walkable area polygon visibility via the signal bus. This is
+# a separate setting from the main visibility settings, since it affects the
+# visibility of passive gizmos that are not directly tied to the selected object.
+func _toggle_walkable_area_polygon_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.WALKABLE_AREA_POLYGON,
+		btn_walkable_area_polygon.button_pressed
+	)
+	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.emit(
+		btn_walkable_area_polygon.button_pressed
+	)
+
+
+# When gizmo-related editor settings change, we update the toolbar buttons colors
+func _on_gizmo_settings_changed() -> void:
+	_set_toolbar_buttons_color()
+	_set_buttons_visibility()
+
+
+# Refreshes the toolbar after the editor selection changes.
 func _on_selection_changed() -> void:
-	# Only force polygon reselection if edit mode is active
-	if _is_editing_polygon && _polygon_being_edited != null:
-		var selected_nodes = EditorInterface.get_selection().get_selected_nodes()
-		
-		# Fix #482: Cancel polygon edition when selecting another node in the Scene dock.
-		if _is_selection_from_scene_tree():
-			var node_to_select: Node = selected_nodes.filter(
-				func (node: Node) -> bool:
-					return node != _polygon_being_edited
-			)[0]
-			_exit_editing_mode()
-			EditorInterface.get_selection().clear()
-			EditorInterface.get_selection().add_node(node_to_select)
-			return
-		
-		if selected_nodes.is_empty() || !(_polygon_being_edited in selected_nodes):
-			EditorInterface.get_selection().clear()
-			EditorInterface.get_selection().add_node(_polygon_being_edited)
-			_polygon_being_edited.show()
-			btn_interaction_polygon.set_pressed_no_signal(false)
-			btn_obstacle_polygon.set_pressed_no_signal(false)
-			if PopochiuEditorHelper.is_popochiu_obj_polygon(_polygon_being_edited):
-				btn_interaction_polygon.set_pressed_no_signal(true)
-			elif PopochiuEditorHelper.is_popochiu_obstacle_polygon(_polygon_being_edited):
-				btn_obstacle_polygon.set_pressed_no_signal(true)
-			_set_walkable_areas_visibility()
-			_set_room_clickable_polygons_visibility()
-			_set_buttons_visibility()
-			return
-
-	# Always reset the walkable areas visibility depending on the user preferences
-	# Doing this immediately so, if this function exits early, the visibility is conditioned
-	# by the editor settings (partially fixes #325).
-	_set_walkable_areas_visibility()
-	_set_room_clickable_polygons_visibility()
+	# If we are editing the popochiu_canvas_editor_menu scene in
+	# Godot, the edited scene root is the menu itself.
+	# In that case, don't hide it!
+	if EditorInterface.get_edited_scene_root() == self:
+		return
 
 	# Make sure this function works only if the user is editing a
-	# supported scene
+	# supported scene.
 	if not PopochiuEditorHelper.is_popochiu_object(
 		EditorInterface.get_edited_scene_root()
 	):
@@ -206,245 +197,40 @@ func _on_selection_changed() -> void:
 	# empty area or pressed ESC), we hide the toolbar.
 	if EditorInterface.get_selection().get_selected_nodes().is_empty():
 		if _active_popochiu_object != null:
-			# TODO: this is not a helper function, because we want to get
-			# rid of this ASAP. The same logic is also in the function
-			# _set_polygons_visibility() in the base Popochiu object
-			# factory, and should be removed as well.
-			for node in _active_popochiu_object.get_children():
-				if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
-					node.hide()
-				# This "if" solves "!p_node->is_inside_tree()" internal Godot error
-				# The line inside is the logic we need to make this block work
-				if EditorInterface.get_edited_scene_root() == _active_popochiu_object:
-					EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
+			# This "if" solves "!p_node->is_inside_tree()" internal Godot error
+			if EditorInterface.get_edited_scene_root() == _active_popochiu_object:
+				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
 		# Reset the clickable reference and hide the toolbar
 		# (restart from a blank state)
 		_active_popochiu_object = null
 		hide()
-		# NOTE: Here we used to pop all the buttons up, by invoking _reset_buttons_state() but
-		# this is undesirable, since it overrides the user's visibility choices for the session.
-		# Leaving this comment here for future reference.
-
-		# Reset the walkable areas visibility depending on the user preferences
-		# Doing here because clicking on an empty area would hide the walkable areas
-		# ignoring the editor settings (fixes #325)
-		_set_walkable_areas_visibility()
-		_set_room_clickable_polygons_visibility()
 		return
 
-	# We identify which PopochiuClickable we are working on in the editor.
-
-	# Case 1:
-	# There is only one selected node in the editor. It can be anything the user
-	# clicked on, or the polygon selected by clicking the toolbar button.
-	# (The user can never select the polygon directly because the node is not visible
-	# in the scene tree)
-	if EditorInterface.get_selection().get_selected_nodes().size() == 1:
-		var selected_node = EditorInterface.get_selection().get_selected_nodes()[0]
-		if PopochiuEditorHelper.is_popochiu_obj_polygon(selected_node):
-			_active_popochiu_object = selected_node.get_parent()
-		elif PopochiuEditorHelper.is_popochiu_room_object(selected_node):
-			# Manage object polygons
-			var polygon = null
-			if is_instance_valid(_active_popochiu_object):
-				# Maybe it's an interaction polygon?
-				polygon = PopochiuEditorHelper.get_first_child_by_group(
-					_active_popochiu_object,
-					PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
-				)
-				if polygon == null:
-					# Or maybe it's an obstacle polygon.
-					polygon = _active_popochiu_object.get_node_or_null("ObstaclePolygon")
-			if (polygon != null):
-				polygon.hide()
-			btn_interaction_polygon.set_pressed_no_signal(false)
+	# Identify which PopochiuClickable or room object we are working on
+	if EditorInterface.get_selection().get_selected_nodes().size() >= 1:
+		var selected_node: Node = EditorInterface.get_selection().get_selected_nodes()[0]
+		if PopochiuEditorHelper.is_popochiu_room_object(selected_node):
 			_active_popochiu_object = selected_node
+		elif selected_node is PopochiuRoom:
+			# The room root itself is selected: no specific object
+			# TODO: remove this branch?
+			_active_popochiu_object = null
 		else:
 			_active_popochiu_object = null
 
-	# Case 2:
-	# We have more than one node selected. This can happen because the user selected
-	# more than one node explicitly (holding shift, or ctrl), or because the user selected
-	# one node in the scene while editing the polygon.
-	# In this case, since the polygon was selected programmatically and it's not in the scene
-	# tree, Godot will NOT remove it from selection and we need to do it by hand.
-	elif EditorInterface.get_selection().get_selected_nodes().size() > 1:
-		for node in EditorInterface.get_selection().get_selected_nodes():
-			if PopochiuEditorHelper.is_popochiu_obj_polygon(node):
-				node.hide()
-				EditorInterface.get_selection().remove_node.call_deferred(node)
-				btn_interaction_polygon.set_pressed_no_signal(false)
-			if PopochiuEditorHelper.is_popochiu_obstacle_polygon(node):
-				node.hide()
-				EditorInterface.get_selection().remove_node.call_deferred(node)
-				btn_obstacle_polygon.set_pressed_no_signal(false)
-
-	# Reset the walkable areas visibility depending on the user preferences
-	# Doing this also at the end because the state can be reset by one of the steps
-	# above.
-	_set_walkable_areas_visibility()
-	_set_room_clickable_polygons_visibility()
-
-	# Always reset the button visibility depending on the state of the internal variables	
+	# Always reset the button visibility depending on the state of the internal variables
 	_set_buttons_visibility()
-
-
-func _on_gizmo_settings_changed() -> void:
-	# Pretty self explanatory
-	_set_walkable_areas_visibility()
-	_set_room_clickable_polygons_visibility()
-	_set_toolbar_buttons_color()
-
-
-func _on_scene_changed(scene_root: Node) -> void:
-	# Fix #482: Cancel polygon edition when changing to another scene
-	if _is_editing_polygon && _polygon_being_edited != null:
-		_exit_editing_mode()
-		EditorInterface.get_selection().clear()
-
-
-func _on_scene_closed(filepath: String) -> void:
-	# Fix #482: Cancel polygon edition when closing the current scene
-	if _is_editing_polygon && _polygon_being_edited != null:
-		_exit_editing_mode()
-		EditorInterface.get_selection().clear()
-
-
-#endregion
-
-#region Private ####################################################################################
-# This function is used to exit editing mode. It's called by the toolbar buttons
-# polygons selector handlers when we are editing a polygon.
-#
-# NOTE: To keep the naming meaningful and avoid a mess with arguments (like, passing the button
-# which makes little sense), it inspects the type of polygon to identify the
-# button to pop. This requires a bit of maintenance, but the whole polygon thing does
-# so...
-func _exit_editing_mode() -> void:
-	# Pop the right button on the toolbar, depending
-	# on the type of the polygon being edited.
-	if PopochiuEditorHelper.is_popochiu_obj_polygon(_polygon_being_edited):
-		btn_interaction_polygon.set_pressed_no_signal(false)
-	elif PopochiuEditorHelper.is_popochiu_obstacle_polygon(_polygon_being_edited):
-		btn_obstacle_polygon.set_pressed_no_signal(false)
-
-	# Clear selection
-	EditorInterface.get_selection().clear()
-	EditorInterface.get_selection().add_node(_polygon_being_edited.get_parent())
-
-	# Reset editing mode flags
-	_is_editing_polygon = false
-	_polygon_being_edited = null
-
-	# Refresh the editor interface
-	_on_selection_changed()
-
-
-# Handles the editor config that allows the WAs polygons to be always visible,
-# not only during editing.
-func _set_walkable_areas_visibility() -> void:
-	# Avoid errors when the editor has no scene open
-	if EditorInterface.get_edited_scene_root() == null:
-		return
-
-	# get_all_children returns an empty array if the node has no children
-	# so we can safely iterate over it without checking for null
-	for child in PopochiuEditorHelper.get_all_children(
-		EditorInterface.get_edited_scene_root().find_child("WalkableAreas")
-	):
-		# Not a polygon? Skip
-		if not PopochiuEditorHelper.is_popochiu_obj_polygon(child):
-			continue
-		# Should we show all the polygons? Show and go to the next one
-		if PopochiuEditorConfig.get_editor_setting(
-			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_WA
-		):
-			child.show()
-			continue
-		# If we are editing the polygon, make sure it stays visible!
-		if child in EditorInterface.get_selection().get_selected_nodes():
-			child.show()
-			continue
-		# OK, we know we must hide this polygon now!
-		child.hide()
-
-
-# Handles the editor config that allows the room clickable polygons to be always visible,
-# not only during editing. This includes props, characters, and hotspots.
-func _set_room_clickable_polygons_visibility() -> void:
-	# Avoid errors when the editor has no scene open
-	if EditorInterface.get_edited_scene_root() == null:
-		return
-
-	var root := EditorInterface.get_edited_scene_root()
-
-	# Handle character scene first (when editing a character directly)
-	if PopochiuEditorHelper.is_editing_character():
-		if PopochiuEditorHelper.is_character(root):
-			_set_visibility_for_clickable_polygons(root)
-			return
-
-	# Handle room scene (when editing a room)
-	# If we are not editing a room, we don't need to do anything.
-	# Also, we prevent errors for accessing to nonexistent nodes.
-	if not PopochiuEditorHelper.is_editing_room():
-		return
-
-	# Handle Props
-	for child: Node in root.find_child("Props").get_children():
-		if PopochiuEditorHelper.is_prop(child):
-			_set_visibility_for_clickable_polygons(child)
-
-	# Handle Characters
-	for child: Node in root.find_child("Characters").get_children():
-		if PopochiuEditorHelper.is_character(child):
-			_set_visibility_for_clickable_polygons(child)
-
-	# Handle Hotspots
-	for child: Node in root.find_child("Hotspots").get_children():
-		if PopochiuEditorHelper.is_hotspot(child):
-			_set_visibility_for_clickable_polygons(child)
-
-
-# Helper function to handle polygon visibility for both interaction and obstacle polygons
-func _set_visibility_for_clickable_polygons(obj: Node) -> void:
-	# Handle interaction polygon
-	var interaction_polygon = PopochiuEditorHelper.get_first_child_by_group(
-		obj,
-		PopochiuEditorHelper.POPOCHIU_OBJECT_POLYGON_GROUP
-	)
-	if interaction_polygon != null:
-		_set_polygon_visibility(
-			interaction_polygon,
-			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_INT_POLY
-		)
-
-	# Handle obstacle polygon
-	var obstacle_polygon: NavigationObstacle2D = obj.get_node_or_null("ObstaclePolygon")
-	if obstacle_polygon != null:
-		_set_polygon_visibility(
-			obstacle_polygon,
-			PopochiuEditorConfig.GIZMOS_ALWAYS_SHOW_OBS_POLY
-		)
-
-
-# Helper function to set polygon visibility based on editor settings and selection
-func _set_polygon_visibility(polygon: Node, always_show_setting: String) -> void:
-	# Should we show all polygons of this type? Show and continue
-	if PopochiuEditorConfig.get_editor_setting(always_show_setting):
-		polygon.show()
-	# If we are editing the polygon, make sure it stays visible!
-	elif polygon in EditorInterface.get_selection().get_selected_nodes():
-		polygon.show()
-	# OK, we know we must hide this polygon now!
-	else:
-		polygon.hide()
+	# Update the interaction polygon button color depending on the selected object
+	# (walkable areas have a different color from clickables and characters)
+	_set_interaction_polygon_button_color()
 
 
 # Sets all the buttons color so that they are the same as the gizmos
-# or make them theme-standard if the use so prefer (see editor settings)
+# or make them theme-standard if the user so prefers (see editor settings)
 func _set_toolbar_buttons_color() -> void:
-	if not PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.GIZMOS_COLOR_TOOLBAR_BUTTONS):
+	if not PopochiuEditorConfig.get_editor_setting(
+		PopochiuEditorConfig.TOOLBAR_APPLY_COLORS_TO_BUTTONS
+	):
 		# Reset button colors
 		_reset_toolbar_button_color(btn_markers)
 		_reset_toolbar_button_color(btn_baseline)
@@ -453,6 +239,7 @@ func _set_toolbar_buttons_color() -> void:
 		_reset_toolbar_button_color(btn_dialog_pos)
 		_reset_toolbar_button_color(btn_interaction_polygon)
 		_reset_toolbar_button_color(btn_obstacle_polygon)
+		_reset_toolbar_button_color(btn_walkable_area_polygon)
 		# Done
 		return
 
@@ -481,14 +268,38 @@ func _set_toolbar_buttons_color() -> void:
 		PopochiuEditorConfig.get_editor_setting(
 			PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR)
 	)
-	_set_toolbar_button_color(
-		btn_interaction_polygon,
-		Color.RED # no config for this at the moment
-	)
+	# Treated as a special case because walkable areas polygons have a different color
+	# from clickables and characters
+	_set_interaction_polygon_button_color()
 	_set_toolbar_button_color(
 		btn_obstacle_polygon,
-		Color.DARK_ORANGE # no config for this at the moment
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_OBSTACLE_COLOR)
 	)
+	_set_toolbar_button_color(
+		btn_walkable_area_polygon,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_WALKABLE_AREA_COLOR)
+	)
+
+
+
+# Sets the color of the interaction polygon button depending on the selected
+# node (walkable areas have a different color from clickables and characters).
+func _set_interaction_polygon_button_color() -> void:
+	if _active_popochiu_object is PopochiuWalkableArea:
+		_set_toolbar_button_color(
+			btn_interaction_polygon,
+			PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_POLY_WALKABLE_AREA_COLOR)
+		)
+	else:
+		_set_toolbar_button_color(
+			btn_interaction_polygon,
+			PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_POLY_INTERACTION_COLOR)
+		)
+
 
 # Internal helper to reduce code duplication
 func _set_toolbar_button_color(btn, color) -> void:
@@ -508,9 +319,14 @@ func _reset_toolbar_button_color(btn) -> void:
 	btn.remove_theme_color_override("icon_hover_pressed_color")
 
 
+# Set the visibility of the buttons depending on the current editing context and
+# the type of the selected object. The buttons are shown only if they are relevant
+# for the current selection.
 func _set_buttons_visibility() -> void:
 	# Let's assume the buttons are all hidden...
 	hide()
+	label_view.hide()
+	label_edit.hide()
 	btn_markers.hide()
 	btn_baseline.hide()
 	btn_walk_to_point.hide()
@@ -518,19 +334,9 @@ func _set_buttons_visibility() -> void:
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
 	btn_obstacle_polygon.hide()
+	btn_passive_scope.hide()
+	btn_walkable_area_polygon.hide()
 
-	# If we're in polygon edit mode, only show the relevant button
-	if _is_editing_polygon && _polygon_being_edited != null:
-		show()
-		if PopochiuEditorHelper.is_popochiu_obj_polygon(_polygon_being_edited):
-			btn_interaction_polygon.show()
-			btn_interaction_polygon.set_pressed_no_signal(true)
-		elif PopochiuEditorHelper.is_popochiu_obstacle_polygon(_polygon_being_edited):
-			btn_obstacle_polygon.show()
-			btn_obstacle_polygon.set_pressed_no_signal(true)
-		return
-
-	# The rest of the existing visibility logic
 	# If we are not in a room and we are not editing a Popochiu object, nothing to do
 	if not (
 		PopochiuEditorHelper.is_popochiu_room_object(_active_popochiu_object)
@@ -542,7 +348,7 @@ func _set_buttons_visibility() -> void:
 	# Now we know we have to show the toolbar
 	show()
 
-	# Every Popochiu clickable always shows the polygons editing buttons when selected
+	# Every Popochiu clickable shows the polygon toggle buttons when selected
 	# in a room scene. Same when the scene is a character scene.
 	if (
 		(
@@ -553,39 +359,34 @@ func _set_buttons_visibility() -> void:
 	):
 		btn_interaction_polygon.show()
 
-	# Only exception is: we are in a room scene and selected a character.
-	# In this case, we don't want to show the polygon editing button.
+	# Exception: in a room scene with a character selected,
+	# we don't show the interaction polygon button.
 	if (
 		PopochiuEditorHelper.is_editing_room()
 		and PopochiuEditorHelper.is_character(_active_popochiu_object)
 	):
 		btn_interaction_polygon.hide()
 
-	# If the selected node in the editor is a popochiu interaction polygon we
-	# hide the obstacle polygon button, and leave only the interaction polygon one.
-	if PopochiuEditorHelper.is_popochiu_obj_polygon(
-		EditorInterface.get_selection().get_selected_nodes()[0]
-	):
-		btn_interaction_polygon.show()
-		btn_obstacle_polygon.hide()
-		return
-
-	# Viceversa if the selected node is an obstacle polygon, we just show
-	# the obstacle polygon button.
-	if PopochiuEditorHelper.is_popochiu_obstacle_polygon(
-		EditorInterface.get_selection().get_selected_nodes()[0]
-	):
-		btn_interaction_polygon.hide()
-		btn_obstacle_polygon.show()
-		return
-
 	# If we are in a room scene...
 	if PopochiuEditorHelper.is_editing_room():
 		# We always show the markers button
 		btn_markers.show()
-		# also, we may have selected a room object of sort, so check
-		# for the various types and hide the ones we don't need.
-		# If we are editing a clickable object, let's show gizmos buttons too.
+		# Scope control appears only if interaction or obstacle overlays are enabled
+		if (
+			PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_INT
+			)
+			or PopochiuEditorConfig.get_editor_setting(
+				PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_OBS
+			)
+		):
+			btn_passive_scope.show()
+		# Walkable-area overlay toggle appears only if walkable overlays are enabled
+		if PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_WA
+		):
+			btn_walkable_area_polygon.show()
+		# If we are editing a clickable object, show gizmos buttons too.
 		if _active_popochiu_object is PopochiuClickable:
 			btn_baseline.show()
 			btn_walk_to_point.show()
@@ -593,11 +394,24 @@ func _set_buttons_visibility() -> void:
 		# Props may be obstacles on the navigation area.
 		if _active_popochiu_object is PopochiuProp:
 			btn_obstacle_polygon.show()
+		# Walkable areas show their polygon toggle
+		if _active_popochiu_object is PopochiuWalkableArea:
+			btn_interaction_polygon.show()
 
-	# If we are in a Character scene, show polygon, obstacle polygon and dialogpos gizmo button.
+	# If we are in a Character scene, show polygon, obstacle polygon and dialogpos
+	# gizmo buttons.
 	elif PopochiuEditorHelper.is_editing_character():
 		btn_dialog_pos.show()
 		btn_obstacle_polygon.show()
+
+	# Compact mode hides labels regardless of button visibility.
+	if PopochiuEditorConfig.get_editor_setting(PopochiuEditorConfig.TOOLBAR_COMPACT_MODE):
+		return
+
+	# Label for visibility controls is always shown when toolbar is shown.
+	label_view.show()
+	# "Editing" label is shown only if at least one editing polygon button is visible.
+	label_edit.visible = btn_interaction_polygon.visible or btn_obstacle_polygon.visible
 
 
 # Make all buttons pop-up
@@ -607,39 +421,35 @@ func _reset_buttons_state() -> void:
 	btn_walk_to_point.set_pressed_no_signal(true)
 	btn_look_at_point.set_pressed_no_signal(true)
 	btn_dialog_pos.set_pressed_no_signal(true)
+	_passive_scope = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
+	_update_passive_scope_button_visuals()
+	# Polygon overlay buttons start from editor settings for unselected objects.
+	btn_interaction_polygon.set_pressed_no_signal(
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_INT
+		)
+	)
+	btn_obstacle_polygon.set_pressed_no_signal(
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_OBS
+		)
+	)
+	btn_walkable_area_polygon.set_pressed_no_signal(
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_WA
+		)
+	)
 
 
-# Detects if the current selection change originated from the Scene tree dock
-# by checking if the mouse is over the scene tree area
-func _is_selection_from_scene_tree() -> bool:
-	var mouse_pos := get_viewport().get_mouse_position()
-	var scene_tree_dock := _find_scene_tree_dock()
-	
-	if scene_tree_dock:
-		var rect := scene_tree_dock.get_global_rect()
-		return rect.has_point(mouse_pos)
-	
-	# If we can't find the scene tree dock, assume false (don't cancel)
-	return false
-
-
-# Finds the Scene tree dock control in the editor
-func _find_scene_tree_dock() -> Control:
-	var editor_base := EditorInterface.get_base_control()
-	return _search_control_by_name(editor_base, "Scene")
-
-
-# Recursively searches for a control with a specific name
-func _search_control_by_name(node: Node, control_name: String) -> Control:
-	if node is Control and node.name == control_name:
-		return node as Control
-	
-	for child in node.get_children():
-		var result := _search_control_by_name(child, control_name)
-		if result:
-			return result
-	
-	return null
+# When the passive scope changes, we also update the button icon and tooltip to
+# reflect the new scope and the action that will be performed on the next click.
+func _update_passive_scope_button_visuals() -> void:
+	if _passive_scope == PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED:
+		btn_passive_scope.icon = PASSIVE_SCOPE_ROOM_ICON
+		btn_passive_scope.tooltip_text = "Show polygons for whole room"
+	else:
+		btn_passive_scope.icon = PASSIVE_SCOPE_SELECTED_ICON
+		btn_passive_scope.tooltip_text = "Show polygons for selected object only"
 
 
 #endregion
