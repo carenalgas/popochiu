@@ -13,17 +13,17 @@ extends Area2D
 ## Can be used to show the name of the area to players.
 @export var description := ""
 ## Whether the region is or not enabled.
-@export var enabled := true : set = _set_enabled
+@export var enabled := true: set = _set_enabled
 ## The [Color] to apply to the character that enters this region.
 @export var tint := Color.WHITE
 ## Whether the region will scale the character while it moves through it.
-@export var scaling :bool = false
+@export var scaling: bool = false
 ## The scale to apply to the character inside the region when it moves to the top ([code]y[/code])
 ## of it.
-@export var scale_top :float = 1.0
+@export var scale_top: float = 1.0
 ## The scale to apply to the character inside the region when it moves to the bottom
 ## ([code]y[/code]) of it.
-@export var scale_bottom :float = 1.0
+@export var scale_bottom: float = 1.0
 ## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
 ## by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := PackedVector2Array()
@@ -123,7 +123,7 @@ func _check_area(area: Area2D, entered: bool) -> void:
 
 func _check_scaling(
 	area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool
-):
+) -> void:
 	if not is_instance_valid(area) or not (
 		area is PopochiuCharacter
 		and area.get("scaling_polygon")
@@ -132,10 +132,15 @@ func _check_scaling(
 		return
 	
 	var character: PopochiuCharacter = area
-	# Track character entry/exit across all shapes
+	# Track character entry/exit (via the ScalingPolygon shape specifically).
+	# We do NOT check for all shapes here because since the guard above already confirmed the
+	# ScalingPolygon is the shape that fired, its exit is the definitive signal to stop scaling.
+	# WORKAROUND for #505 waiting for a proper solution:
+	# Removed the check for all shapes (with get_overlapping_areas) or some characters
+	# would not reset the character's scale and cause it to be stuck with the wrong one.
 	if entered:
 		_active_characters[character.script_name] = area
-	elif not character in get_overlapping_areas():
+	else:
 		_active_characters.erase(character.script_name)
 		_remove_character_scaling_region(character)
 		return
@@ -146,7 +151,7 @@ func _check_scaling(
 
 
 func _update_character_scaling_region(chr: PopochiuCharacter) -> void:
-	var polygon_y_array := []
+	var polygon_y_array: Array[float] = []
 	for x: Vector2 in interaction_polygon_node.get_polygon():
 		polygon_y_array.append(x.y)
 	
