@@ -106,8 +106,10 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## You can use this to define which [Texture] to use as avatar for the character when it speaks
 ## using a specific emotion.
 @export var avatars := []: set = set_avatars
-## The speed at which the character will move in pixels per frame.
-@export var walk_speed := 200.0
+## The speed at which the character will move in pixels per frame.[br]
+## Values must be strictly greater than [code]0[/code]. Assigning [code]0[/code] or a negative
+## value will be clamped to [code]1.0[/code] and an error will be logged.
+@export var walk_speed := 200.0: set = set_walk_speed
 ## Whether the character can or not move.
 @export var can_move := true
 ## Whether the character ignores or not walkable areas. If [code]true[/code], the character will move
@@ -149,9 +151,12 @@ var anim_suffix := EMPTY_STRING
 var emotion := EMPTY_STRING
 ##
 var scaling_region: Dictionary = {}
-## Stores the default walk speed defined in [member walk_speed]. Used by [PopochiuRoom] when scaling
-## the character if it is inside a [PopochiuRegion] that modifies the scale.
-var default_walk_speed := 0
+## A temporary walk speed override. When strictly greater than [code]0[/code], replaces
+## [member walk_speed] as the base speed for movement, while perspective scaling from
+## [PopochiuRegion]s is still applied on top.[br]
+## Call [method reset_walk_speed] (or set to [code]0.0[/code]) to deactivate the override.[br]
+## Negative values are rejected and clamped to [code]0.0[/code] (no override) with a warning.
+var walk_speed_override: float = 0.0: set = set_walk_speed_override
 ## Stores the default scale. Used by [PopochiuRoom] when scaling the character if it is inside a
 ## [PopochiuRegion] that modifies the scale.
 var default_scale := Vector2.ONE
@@ -171,6 +176,10 @@ var is_visible_in_room: bool: get = get_is_visible_in_room
 ## Returns the current animation being played. Read-only access to [member _current_animation].
 ## This property cannot be set from outside the character implementation.
 var current_animation: String: get = get_current_animation
+## The effective walk speed for the current frame. Combines [member walk_speed] (or
+## [member walk_speed_override] if active) with the perspective scale factor from the current
+## [PopochiuRegion]. Read-only.
+var current_walk_speed: float: get = get_current_walk_speed
 ## Opacity of the character. Range: [code]0.0[/code] (fully transparent) to [code]1.0[/code] (fully opaque).
 ## Setting this value will modulate the alpha channel of the [b]$Sprite2D[/b] child.
 @export_range(0.0, 1.0) var alpha: float = 1.0: set = set_alpha
@@ -223,6 +232,9 @@ var _current_faced_character: PopochiuCharacter = null
 # Tracks the last position where position_updated signal was emitted.
 # Used to throttle signal emissions and only emit when position actually changes.
 var _last_emitted_position: Vector2 = Vector2.INF
+# Perspective scale factor from the current scaling region. Updated by update_scale().
+# 1.0 outside any region.
+var _walk_scale_factor: float = 1.0
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -233,7 +245,6 @@ var _last_emitted_position: Vector2 = Vector2.INF
 func _ready():
 	super()
 
-	default_walk_speed = walk_speed
 	default_scale = Vector2(scale)
 
 	if Engine.is_editor_hint():
@@ -301,7 +312,7 @@ func _ready():
 func _physics_process(delta: float) -> void:
 	if _navigation_path.is_empty(): return
 
-	var walk_distance: float = walk_speed * delta
+	var walk_distance: float = current_walk_speed * delta
 	_move_along_path(walk_distance)
 
 
@@ -1159,6 +1170,20 @@ func get_actual_dialog_pos() -> Vector2:
 	return dialog_pos + dialog_pos_offset
 
 
+## Resets the walk speed override to [code]0.0[/code] (inactive), making the character move at
+## its normal [member walk_speed] again.
+func reset_walk_speed() -> void:
+	walk_speed_override = 0.0
+
+
+## Resets the walk speed override to [code]0.0[/code] (inactive), making the character move at
+## its normal [member walk_speed] again.[br]
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_reset_walk_speed() -> Callable:
+	return func(): reset_walk_speed()
+
+
 ## Resets the dialog position offset to Vector2.ZERO.
 func reset_dialog_pos_offset() -> void:
 	dialog_pos_offset = Vector2.ZERO
@@ -1254,10 +1279,10 @@ func update_scale():
 		scale.y = [
 			[scale_for_position, scaling_region.scale_min].max(), scaling_region.scale_max
 		].min()
-		walk_speed = default_walk_speed / default_scale.x * scale_for_position
+		_walk_scale_factor = scale_for_position / default_scale.x
 	else:
 		scale = default_scale
-		walk_speed = default_walk_speed
+		_walk_scale_factor = 1.0
 
 
 ## Resets the animation prefix.
@@ -1269,6 +1294,30 @@ func reset_animation_prefix() -> void:
 #endregion
 
 #region SetGet #####################################################################################
+func set_walk_speed(value: float) -> void:
+	if value <= 0.0:
+		PopochiuUtils.print_error(
+			"walk_speed must be greater than 0. The value %s is invalid. Clamping to 1.0." % value
+		)
+		walk_speed = 1.0
+	else:
+		walk_speed = value
+
+
+func set_walk_speed_override(value: float) -> void:
+	if value < 0.0:
+		PopochiuUtils.print_warning(
+			"walk_speed_override cannot be negative. Clamping to 0.0 (override inactive)."
+		)
+		walk_speed_override = 0.0
+	else:
+		walk_speed_override = value
+
+
+func get_current_walk_speed() -> float:
+	return (walk_speed_override if walk_speed_override > 0.0 else walk_speed) * _walk_scale_factor
+
+
 func set_alpha(value: float) -> void:
 	alpha = clampf(value, 0.0, 1.0)
 	# Modulate the Sprite2D's alpha to control visibility
