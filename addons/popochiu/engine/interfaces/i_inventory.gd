@@ -58,6 +58,10 @@ signal inventory_shown
 ## Emitted when the inventory is requested to hide. [param use_anim] indicates whether the GUI
 ## should use an animation.
 signal inventory_hide_requested(use_anim: bool)
+## Emitted when the quantity of [param item] changes without the item being added to or removed
+## from the inventory (i.e., when stacking or partially removing). [param new_quantity] is the
+## updated count.
+signal item_quantity_updated(item: PopochiuInventoryItem, new_quantity: int)
 
 ## Provides access to the inventory item that is currently selected.
 var active: PopochiuInventoryItem : set = set_active
@@ -91,9 +95,17 @@ func clean_inventory(in_bg := false) -> void:
 		var pii: PopochiuInventoryItem = _item_instances[instance]
 		
 		if not pii.in_inventory: continue
-		if not in_bg: await pii.discard()
 		
-		pii.remove(!in_bg)
+		if in_bg:
+			# refs #349: In background mode, reset quantity_owned directly to avoid signal
+			# emissions and GUI awaits that are not meaningful without a visible inventory.
+			pii.quantity_owned = 0
+		else:
+			# refs #349: Only call discard() here: the old code called both discard() and
+			# remove() separately, which caused item_removed to be emitted twice per item
+			# (once from inside discard() -> remove(), and once from the extra remove() call
+			# after discard()). discard() already calls remove() internally.
+			await pii.discard()
 
 
 ## Shows the inventory for [param time] seconds.
@@ -196,6 +208,13 @@ func is_full() -> bool:
 ## Deselects the [member active] item.
 func deselect_active() -> void:
 	active = null
+
+
+## Returns the number of [param item_name] currently owned by the player.
+## Returns [code]0[/code] if the item is not in the inventory.
+func get_item_quantity(item_name: String) -> int:
+	var i: PopochiuInventoryItem = get_item_instance(item_name)
+	return i.quantity_owned if is_instance_valid(i) else 0
 
 
 #endregion
