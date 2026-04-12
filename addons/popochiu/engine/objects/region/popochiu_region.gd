@@ -132,10 +132,15 @@ func _check_scaling(
 		return
 	
 	var character: PopochiuCharacter = area
-	# Track character entry/exit across all shapes
+	# Track character entry/exit (via the ScalingPolygon shape specifically).
+	# We do NOT check for all shapes here because since the guard above already confirmed the
+	# ScalingPolygon is the shape that fired, its exit is the definitive signal to stop scaling.
+	# WORKAROUND for #505 waiting for a proper solution:
+	# Removed the check for all shapes (with get_overlapping_areas) or some characters
+	# would not reset the character's scale and cause it to be stuck with the wrong one.
 	if entered:
 		_active_characters[character.script_name] = area
-	elif not character in get_overlapping_areas():
+	else:
 		_active_characters.erase(character.script_name)
 		_remove_character_scaling_region(character)
 		return
