@@ -242,7 +242,7 @@ var _walk_scale_factor: float = 1.0
 
 
 #region Godot ######################################################################################
-func _ready():
+func _ready() -> void:
 	super()
 
 	default_scale = Vector2(scale)
@@ -349,8 +349,8 @@ func _play_idle() -> void:
 ## the base functionality.
 func _play_walk(target_pos: Vector2) -> void:
 	# Set the default parameters for play_animation()
-	var animation_label = walk_animation
-	var animation_fallback = idle_animation
+	var animation_label := walk_animation
+	var animation_fallback := idle_animation
 
 	play_animation(animation_label, animation_fallback)
 
@@ -878,7 +878,7 @@ func queue_play_animation(
 
 ## Plays the [param animation_label] animation, falling back to [param animation_fallback]
 ## if not found.
-func play_animation(animation_label: String, animation_fallback := ""):
+func play_animation(animation_label: String, animation_fallback := "") -> void:
 	# Use idle_animation as default fallback if none provided
 	if animation_fallback.is_empty():
 		animation_fallback = idle_animation
@@ -920,12 +920,12 @@ func play_animation(animation_label: String, animation_fallback := ""):
 ## Stops the current looping animation (except idle) after its current loop finishes.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_stop_animation():
+func queue_stop_animation() -> Callable:
 	return func(): await stop_animation()
 
 
 ## Stops the current looping animation (except idle) after its current loop finishes.
-func stop_animation():
+func stop_animation() -> void:
 	# If the animation is not looping or is an idle one, do nothing
 	if (
 		animation_player.get_animation(
@@ -949,36 +949,36 @@ func stop_animation():
 ## Immediately stops the current animation and switches to idle.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_halt_animation():
+func queue_halt_animation() -> Callable:
 	return func(): halt_animation()
 
 
 ## Immediately stops the current animation and switches to idle.
-func halt_animation():
+func halt_animation() -> void:
 	_play_idle()
 
 
 ## Pauses the current animation.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_pause_animation():
+func queue_pause_animation() -> Callable:
 	return func(): pause_animation()
 
 
 ## Pauses the current animation.
-func pause_animation():
+func pause_animation() -> void:
 	animation_player.pause()
 
 
 ## Resumes the paused animation.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_resume_animation():
+func queue_resume_animation() -> Callable:
 	return func(): resume_animation()
 
 
 ## Resumes the paused animation.
-func resume_animation():
+func resume_animation() -> void:
 	animation_player.play()
 
 
@@ -1084,7 +1084,7 @@ func fade_to(
 
 ## Makes the character look in the direction of [param destination]. The result is one of the values
 ## defined by [enum Looking].
-func face_direction(destination: Vector2):
+func face_direction(destination: Vector2) -> void:
 	# Determine the direction the character is facing.
 	# We cannot use the face_* functions because they reset the state to IDLE.
 	# Get the angle of the vector from the origin to the destination as a number between
@@ -1314,6 +1314,8 @@ func set_walk_speed_override(value: float) -> void:
 		walk_speed_override = value
 
 
+## Returns the effective walk speed for the current frame, combining [member walk_speed]
+## (or [member walk_speed_override] if active) with the current perspective scale factor.
 func get_current_walk_speed() -> float:
 	return (walk_speed_override if walk_speed_override > 0.0 else walk_speed) * _walk_scale_factor
 
@@ -1575,7 +1577,7 @@ func _get_vo_cue(emotion := EMPTY_STRING) -> String:
 	return EMPTY_STRING
 
 
-func _get_valid_oriented_animation(animation_label):
+func _get_valid_oriented_animation(animation_label: String) -> String:
 	# Generate prioritized list of animation names to try
 	var prioritized_names = _get_prioritized_animation_names(animation_label)
 
