@@ -31,14 +31,12 @@ extends Node
 ## ])
 ## [/codeblock]
 
-## Emitted when [param item] is added to the inventory. [param animate] may be used by the GUI
-## to animate the item entering the inventory.
-signal item_added(item: PopochiuInventoryItem, animate: bool)
+## Emitted when [param item] is added to the inventory.
+signal item_added(item: PopochiuInventoryItem)
 ## Emitted when the [param item] has finished entering the inventory (GUI animation completed).
 signal item_add_done(item: PopochiuInventoryItem)
-## Emitted when [param item] is removed from the inventory. [param animate] may be used by the
-## GUI to animate the item leaving the inventory.
-signal item_removed(item: PopochiuInventoryItem, animate: bool)
+## Emitted when [param item] is removed from the inventory.
+signal item_removed(item: PopochiuInventoryItem)
 ## Emitted when the [param item] has finished leaving the inventory (GUI animation completed).
 signal item_remove_done(item: PopochiuInventoryItem)
 ## Emitted when [param item] is replaced in the inventory by [param new_item]. Useful for
@@ -67,6 +65,9 @@ signal item_quantity_updated(item: PopochiuInventoryItem, new_quantity: int)
 var active: PopochiuInventoryItem : set = set_active
 ## Provides access to the inventory item that was clicked.
 var clicked: PopochiuInventoryItem
+## When [code]true[/code], the inventory is being restored from a save file. GUI components
+## should skip entrance/exit animations during restore.
+var is_restoring := false
 # ---- Used for saving/loading the game ------------------------------------------------------------
 ## [Array] containing instances of the currently held [PopochiuInventoryItem]s.
 var items := []
@@ -87,25 +88,21 @@ func _init() -> void:
 
 #region Public #####################################################################################
 ## Removes all items currently in the inventory. If [param in_bg] is [code]true[/code], items are
-## removed in background without calling [method PopochiuInventoryItem.discard].
+## removed silently without GUI lifecycle (useful during scene transitions).
 func clean_inventory(in_bg := false) -> void:
-	items.clear()
-	
-	for instance in _item_instances:
-		var pii: PopochiuInventoryItem = _item_instances[instance]
-		
-		if not pii.in_inventory: continue
-		
-		if in_bg:
-			# refs #349: In background mode, reset quantity_owned directly to avoid signal
-			# emissions and GUI awaits that are not meaningful without a visible inventory.
+	if in_bg:
+		# refs #349: In background mode, reset quantity_owned directly and clear the items list
+		# to avoid signal emissions and GUI awaits.
+		for instance in _item_instances:
+			var pii: PopochiuInventoryItem = _item_instances[instance]
 			pii.quantity_owned = 0
-		else:
-			# refs #349: Only call discard() here: the old code called both discard() and
-			# remove() separately, which caused item_removed to be emitted twice per item
-			# (once from inside discard() -> remove(), and once from the extra remove() call
-			# after discard()). discard() already calls remove() internally.
-			await pii.discard()
+		items.clear()
+	else:
+		# Remove each item through its full GUI lifecycle.
+		for instance in _item_instances:
+			var pii: PopochiuInventoryItem = _item_instances[instance]
+			if pii.in_inventory:
+				await pii.remove()
 
 
 ## Shows the inventory for [param time] seconds.

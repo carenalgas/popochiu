@@ -156,7 +156,7 @@ func _on_down_pressed() -> void:
 	_check_scroll_buttons()
 
 
-func _add_item(item: PopochiuInventoryItem, _animate := true) -> void:
+func _add_item(item: PopochiuInventoryItem) -> void:
 	var slot := box.get_child(PopochiuUtils.i.items.size() - 1)
 	slot.name = "[%s]" % item.script_name
 	slot.add_child(item)
@@ -180,7 +180,7 @@ func _add_item(item: PopochiuInventoryItem, _animate := true) -> void:
 	PopochiuUtils.i.item_add_done.emit(item)
 
 
-func _remove_item(item: PopochiuInventoryItem, _animate := true) -> void:
+func _remove_item(item: PopochiuInventoryItem) -> void:
 	item.selected.disconnect(_change_cursor)
 	
 	box.get_meta(item.script_name).remove_child(item)
