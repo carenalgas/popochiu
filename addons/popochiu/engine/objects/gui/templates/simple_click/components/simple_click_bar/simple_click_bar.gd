@@ -155,7 +155,7 @@ func _on_tween_finished() -> void:
 	_is_hidden = panel_container.position.y == hidden_y
 
 
-func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
+func _add_item(item: PopochiuInventoryItem) -> void:
 	box.add_child(item)
 	
 	item.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
@@ -164,7 +164,7 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 	
 	item.selected.connect(_change_cursor)
 	
-	if not always_visible and animate:
+	if not always_visible and not PopochiuUtils.i.is_restoring:
 		# Show the inventory for a while and hide after a couple of seconds so players can see the
 		# item being added to the inventory
 		set_process_input(false)
@@ -185,7 +185,7 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 	PopochiuUtils.i.item_add_done.emit(item)
 
 
-func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
+func _remove_item(item: PopochiuInventoryItem) -> void:
 	item.selected.disconnect(_change_cursor)
 	box.remove_child(item)
 	
@@ -193,7 +193,7 @@ func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
 		PopochiuUtils.cursor.show_cursor()
 		PopochiuUtils.g.show_hover_text()
 		
-		if animate:
+		if not PopochiuUtils.i.is_restoring:
 			_close()
 			await get_tree().create_timer(1.0).timeout
 	

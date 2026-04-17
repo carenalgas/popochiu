@@ -444,12 +444,12 @@ func get_current_animation_position() -> float:
 #endregion
 
 #region Private ####################################################################################
-func _on_item_added(item: PopochiuInventoryItem, _animate: bool) -> void:
+func _on_item_added(item: PopochiuInventoryItem) -> void:
 	if item.script_name == link_to_item:
 		disable()
 
 
-func _on_item_removed(item: PopochiuInventoryItem, _animate: bool) -> void:
+func _on_item_removed(item: PopochiuInventoryItem) -> void:
 	if item.script_name == link_to_item:
 		_on_linked_item_removed()
 		linked_item_removed.emit(self)

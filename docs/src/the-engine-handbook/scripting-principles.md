@@ -473,7 +473,7 @@ func _on_any_character_spoke(character: PopochiuCharacter, message: String) -> v
 # React when an item is added to the inventory
 I.item_added.connect(_on_item_collected)
 
-func _on_item_collected(item: PopochiuInventoryItem, _animate: bool) -> void:
+func _on_item_collected(item: PopochiuInventoryItem) -> void:
     if item == I.GoldenKey:
         await C.player.say("This could open something important...")
 ```

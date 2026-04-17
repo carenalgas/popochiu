@@ -108,9 +108,9 @@ func _on_quantity_changed(_old_qty: int, _new_qty: int) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Adds [param quantity] of this item to the inventory. If [param animate] is [code]true[/code],
-## the inventory GUI shows an animation for the first add only; subsequent stack additions do not
-## animate. [param quantity] defaults to [code]1[/code].
+## Adds [param quantity] of this item to the inventory. [param quantity] defaults to [code]1[/code].
+## On first add, the GUI shows an entrance animation; subsequent stack additions only emit
+## [signal PopochiuIInventory.item_quantity_updated].
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ##
@@ -123,13 +123,13 @@ func _on_quantity_changed(_old_qty: int, _new_qty: int) -> void:
 ##         I.Key.queue_add()
 ##     ])
 ## [/codeblock]
-func queue_add(quantity := 1, animate := true) -> Callable:
-	return func (): await add(quantity, animate)
+func queue_add(quantity := 1) -> Callable:
+	return func (): await add(quantity)
 
 
 ## Adds [param quantity] of this item to the inventory. [param quantity] defaults to [code]1[/code].
-## If [param animate] is [code]true[/code], the inventory GUI shows an animation (only on the first
-## add; subsequent stack additions only emit [signal PopochiuIInventory.item_quantity_updated]).
+## On first add, the GUI shows an entrance animation; subsequent stack additions only emit
+## [signal PopochiuIInventory.item_quantity_updated].
 ##
 ## Example:
 ## [codeblock]
@@ -140,86 +140,38 @@ func queue_add(quantity := 1, animate := true) -> Callable:
 ##     # Add three coins at once:
 ##     await I.Coin.add(3)
 ## [/codeblock]
-func add(quantity := 1, animate := true) -> void:
-	if quantity_owned == 0:
-		# --- First add: create the inventory slot and run the full GUI lifecycle ---
-		if PopochiuUtils.i.is_full():
-			PopochiuUtils.print_error("Couldn't add %s. Inventory is full." % script_name)
-			
-			await get_tree().process_frame
-			return
-		
+func add(quantity := 1) -> void:
+	var is_first_add := _do_add(quantity)
+	
+	if is_first_add:
 		PopochiuUtils.g.block()
-		
-		PopochiuUtils.i.items.append(script_name)
-		
-		PopochiuUtils.i.item_added.emit(self, animate)
-		# Assign quantity_owned directly — do NOT go through the in_inventory setter here.
-		# add() is the lifecycle owner for first-add: it has already handled g.block(),
-		# item_added, and the await sequence below. Going through the setter would call
-		# _on_added_to_inventory() a second time and cannot represent a quantity > 1.
-		# Clamp to max_quantity even on first add: the caller may request more than allowed.
-		var clamped_qty := mini(quantity, max_quantity)
-		if clamped_qty < quantity:
-			PopochiuUtils.print_warning(
-				"Couldn't add all %d of %s. Capped at max_quantity of %d."
-				% [quantity, script_name, max_quantity]
-			)
-		quantity_owned = clamped_qty
-		ever_collected = true
-		_on_added_to_inventory()
-
+		PopochiuUtils.i.item_added.emit(self)
 		await PopochiuUtils.i.item_add_done
-
 		PopochiuUtils.g.unblock(true)
 		return
 	
-	if max_quantity > 1:
-		# --- Stack add: increase quantity without touching the inventory slot ---
-		var clamped_qty := mini(quantity, max_quantity - quantity_owned)
-		
-		if clamped_qty < quantity:
-			PopochiuUtils.print_warning(
-				"Couldn't add all %d of %s. Capped at max_quantity of %d."
-				% [quantity, script_name, max_quantity]
-			)
-		
-		if clamped_qty > 0:
-			var old_qty := quantity_owned
-			quantity_owned += clamped_qty
-			_on_quantity_changed(old_qty, quantity_owned)
-			PopochiuUtils.i.item_quantity_updated.emit(self, quantity_owned)
-		
-		await get_tree().process_frame
-		return
-	
-	# --- Silent no-op for max_quantity == 1 ---
-	# Back-compat guarantee: games with max_quantity = 1 (the default) often call add() from
-	# multiple code paths and expect redundant calls on an already-held item to silently do nothing.
 	await get_tree().process_frame
 
 
 ## Adds [param quantity] of this item to the inventory and makes it the active item (cursor shows
-## the item's texture). Pass [param animate] as [code]false[/code] to skip the inventory GUI
-## animation.
+## the item's texture).
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_add_as_active(quantity := 1, animate := true) -> Callable:
-	return func (): await add_as_active(quantity, animate)
+func queue_add_as_active(quantity := 1) -> Callable:
+	return func (): await add_as_active(quantity)
 
 
 ## Adds [param quantity] of this item to the inventory and makes it the active item (cursor shows
-## the item's texture). Pass [param animate] as [code]false[/code] to skip the inventory GUI
-## animation.
-func add_as_active(quantity := 1, animate := true) -> void:
-	await add(quantity, animate)
+## the item's texture).
+func add_as_active(quantity := 1) -> void:
+	await add(quantity)
 	
 	PopochiuUtils.i.set_active_item(self)
 
 
 ## Removes [param quantity] of this item from the inventory (instance is kept in memory).
-## Call without params or pass [param quantity] as [code]0[/code] (the default) to remove the full stack.
-## Pass [param animate] as [code]true[/code] to animate the removal in the inventory GUI.
+## Call without params or pass [param quantity] as [code]0[/code] (the default) to remove the
+## full stack.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ##
@@ -232,13 +184,13 @@ func add_as_active(quantity := 1, animate := true) -> void:
 ##             I.ToyCar.queue_remove()
 ##         ])
 ## [/codeblock]
-func queue_remove(quantity: int = 0, animate := false) -> Callable:
-	return func (): await remove(quantity, animate)
+func queue_remove(quantity: int = 0) -> Callable:
+	return func (): await remove(quantity)
 
 
 ## Removes [param quantity] of this item from the inventory (instance is kept in memory).
-## Call without params or pass [param quantity] as [code]0[/code] (the default) to remove the full stack.
-## Pass [param animate] as [code]true[/code] to animate the removal in the inventory GUI.
+## Call without params or pass [param quantity] as [code]0[/code] (the default) to remove the
+## full stack.
 ##
 ## Example:
 ## [codeblock]
@@ -247,33 +199,16 @@ func queue_remove(quantity: int = 0, animate := false) -> Callable:
 ##         await C.player.say("Here is your toy car")
 ##         await I.ToyCar.remove()
 ## [/codeblock]
-func remove(quantity: int = 0, animate := false) -> void:
-	var qty_to_remove := quantity if quantity > 0 else quantity_owned
+func remove(quantity: int = 0) -> void:
+	var is_full_removal := _do_remove(quantity)
 	
-	if quantity_owned - qty_to_remove > 0:
-		# --- Partial removal: reduce quantity without removing the inventory slot ---
-		var old_qty := quantity_owned
-		quantity_owned -= qty_to_remove
-		_on_quantity_changed(old_qty, quantity_owned)
-		PopochiuUtils.i.item_quantity_updated.emit(self, quantity_owned)
-		
-		await get_tree().process_frame
+	if is_full_removal:
+		PopochiuUtils.i.item_removed.emit(self)
+		await PopochiuUtils.i.item_remove_done
+		PopochiuUtils.g.unblock()
 		return
 	
-	# --- Full removal: tear down the inventory slot and run the full GUI lifecycle ---
-	# Assign quantity_owned directly — do NOT go through the in_inventory setter here.
-	# remove() is the lifecycle owner for full removal: it must control signal sequencing and
-	# handle g.unblock(). The setter does not emit item_removed or call g.unblock().
-	quantity_owned = 0
-	
-	PopochiuUtils.i.items.erase(script_name)
-	PopochiuUtils.i.set_active_item(null)
-	# TODO: Maybe this signal should be triggered once the await has finished
-	PopochiuUtils.i.item_removed.emit(self, animate)
-	
-	await PopochiuUtils.i.item_remove_done
-	
-	PopochiuUtils.g.unblock()
+	await get_tree().process_frame
 
 
 ## Replaces this inventory item with [param new_item]. Useful when combining items.
@@ -305,18 +240,11 @@ func queue_replace(new_item: PopochiuInventoryItem) -> Callable:
 ##         await replace(I.RopeWithHook)
 ## [/codeblock]
 func replace(new_item: PopochiuInventoryItem) -> void:
-	# Assign quantity_owned directly on both items; do NOT call add(), remove(), or go through
-	# the in_inventory setter. replace() orchestrates its own atomic GUI flow (item_replaced ->
-	# await item_replace_done -> g.unblock()) in a single sequence. Routing through add() would
-	# trigger a second g.block(), item_added signal, and await item_add_done, corrupting that
-	# sequence. The setter would call _on_added_to_inventory() on new_item before the GUI
-	# replacement animation is complete.
-	quantity_owned = 0
-	
-	PopochiuUtils.i.items.erase(script_name)
-	PopochiuUtils.i.set_active_item(null)
-	PopochiuUtils.i.items.append(new_item.script_name)
-	new_item.quantity_owned = 1
+	# Use the synchronous data helpers so replace() can orchestrate its own single GUI flow
+	# (item_replaced -> await item_replace_done -> g.unblock()) without triggering the separate
+	# block/signal/await sequences that the public add()/remove() methods would.
+	_do_remove(0)
+	new_item._do_add(1)
 	
 	PopochiuUtils.i.item_replaced.emit(self, new_item)
 	
@@ -327,28 +255,28 @@ func replace(new_item: PopochiuInventoryItem) -> void:
 	PopochiuUtils.g.unblock()
 
 
-# NOTE: Maybe this is not necessary since we can have the same with [method queue_remove].
-## Removes the item from the inventory without destroying the instance. Pass [param animate] as
-## [code]true[/code] to animate the removal in the inventory GUI.
+# @deprecated Available in 2.1 - Will be removed in 2.1.
+#
+## Use [method queue_remove] instead.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_discard(animate := false) -> Callable:
-	return func (): await discard(animate)
+func queue_discard(quantity: int = 0) -> Callable:
+	return func (): await discard(quantity)
 
 
-# NOTE: Maybe this is not necessary since we can have the same with [method remove].
-## Removes the item from the inventory without destroying the instance. Pass [param animate] as
-## [code]true[/code] to animate the removal in the inventory GUI.
-func discard(animate := false) -> void:
+# @deprecated Available in 2.1 - Will be removed in 2.2.
+#
+## Use [method remove] instead. Calls [method _on_discard] and emits
+## [signal PopochiuIInventory.item_discarded] before delegating to [method remove].
+func discard(quantity: int = 0) -> void:
+	PopochiuUtils.print_warning(
+		"discard() is deprecated and will be removed in Popochiu 2.3."
+		+ " Use remove() instead."
+	)
 	_on_discard()
-	
-	# refs #349: The manual items.erase() that was here has been removed. It was a latent bug:
-	# remove() already erases this item from items[] as part of its own lifecycle, so the
-	# double-erase was causing item_removed to be emitted before the GUI animation had a
-	# chance to complete. This is a more robust fix than the original workaround.
 	PopochiuUtils.i.item_discarded.emit(self)
 	
-	await remove(0, animate)
+	await remove(quantity)
 
 
 ## Makes this item the current active item (the cursor will look like the item's texture).
@@ -462,11 +390,11 @@ func get_description() -> String:
 #endregion
 
 #region Private ####################################################################################
-# This setter MUST NOT call add() or any other public method. GUI components
-# inventory_bar.gd and simple_click_bar.gd both assign in_inventory = true during scene
+# Minimal setter for GUI scene initialisation. Does NOT call _do_add()/_do_remove() because
+# GUI components inventory_bar.gd and simple_click_bar.gd both assign in_inventory = true during scene
 # _ready() to re-register items that were placed in the scene manually. Those calls expect
-# zero side-effects: no g.block(), no item_added signal, no await item_add_done. Routing
-# through add() here would corrupt GUI state during initialisation.
+# zero side-effects: no g.block(), no item_added signal, no await item_add_done.
+# Also, scene-placed items must skip the is_full() check and items[] registration. 
 func _set_in_inventory(value: bool) -> void:
 	if value:
 		if quantity_owned == 0:
@@ -474,6 +402,67 @@ func _set_in_inventory(value: bool) -> void:
 			_on_added_to_inventory()
 	else:
 		quantity_owned = 0
+
+
+# Returns the number of items that can actually be added, clamping to max_quantity and logging
+# a warning if the requested amount was reduced.
+func _clamp_add_quantity(requested: int) -> int:
+	var actual := mini(requested, max_quantity - quantity_owned)
+	if actual < requested:
+		PopochiuUtils.print_warning(
+			"Couldn't add all %d of %s. Capped at max_quantity of %d."
+			% [requested, script_name, max_quantity]
+		)
+	return actual
+
+
+# Synchronous data mutation for adding items. Returns true if this was a first-add (a new
+# inventory slot was created), false for a stack-add or silent no-op.
+func _do_add(quantity: int) -> bool:
+	if quantity_owned == 0:
+		if PopochiuUtils.i.is_full():
+			PopochiuUtils.print_error("Couldn't add %s. Inventory is full." % script_name)
+			return false
+		
+		var actual := _clamp_add_quantity(quantity)
+		PopochiuUtils.i.items.append(script_name)
+		quantity_owned = actual
+		ever_collected = true
+		_on_added_to_inventory()
+		return true
+	
+	if max_quantity > 1:
+		var actual := _clamp_add_quantity(quantity)
+		if actual > 0:
+			var old_qty := quantity_owned
+			quantity_owned += actual
+			_on_quantity_changed(old_qty, quantity_owned)
+			PopochiuUtils.i.item_quantity_updated.emit(self, quantity_owned)
+		return false
+	
+	# Silent no-op for max_quantity == 1: back-compat guarantee for games that call add()
+	# from multiple code paths on an already-held item.
+	return false
+
+
+# Synchronous data mutation for removing items. Returns true if the item was fully removed
+# from its inventory slot, false for a partial removal or no-op.
+func _do_remove(quantity: int) -> bool:
+	var qty_to_remove := quantity if quantity > 0 else quantity_owned
+	
+	if qty_to_remove >= quantity_owned:
+		# Full removal
+		quantity_owned = 0
+		PopochiuUtils.i.items.erase(script_name)
+		PopochiuUtils.i.set_active_item(null)
+		return true
+	
+	# Partial removal
+	var old_qty := quantity_owned
+	quantity_owned -= qty_to_remove
+	_on_quantity_changed(old_qty, quantity_owned)
+	PopochiuUtils.i.item_quantity_updated.emit(self, quantity_owned)
+	return false
 
 
 # Increments the usage count for the specified command

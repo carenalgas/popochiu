@@ -128,6 +128,7 @@ func load_game(slot := 1) -> Dictionary:
 	
 	# Load inventory items — supports both the legacy format (Array of String) and the current
 	# format (Array of Dictionary with "name" and "qty" keys, introduced in refs #349).
+	PopochiuUtils.i.is_restoring = true
 	for entry in loaded_data.player.inventory:
 		var item_name: String
 		var qty := 1
@@ -140,7 +141,8 @@ func load_game(slot := 1) -> Dictionary:
 			qty = entry.get("qty", 1)
 		
 		if not item_name.is_empty():
-			PopochiuUtils.i.get_item_instance(item_name).add(qty, false)
+			PopochiuUtils.i.get_item_instance(item_name).add(qty)
+	PopochiuUtils.i.is_restoring = false
 	
 	# Load main object states
 	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
