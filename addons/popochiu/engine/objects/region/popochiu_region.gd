@@ -124,20 +124,26 @@ func _check_area(area: Area2D, entered: bool) -> void:
 func _check_scaling(
 	area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool
 ) -> void:
+	# Fixes #505: Only trigger scaling behavior if the shape that entered/exited belongs
+	# to the character's ScalingPolygon.
+	# Identify the physical shape that fired by resolving it to its owner node, then compare
+	# against the character's ScalingPolygon. Previously we were comparing against the child index
+	# (position in scene tree) with an area_shape_index: it worked by coincidence because
+	# the ScalingPolygon was the first child of a "standard" character.
 	if not is_instance_valid(area) or not (
 		area is PopochiuCharacter
 		and area.get("scaling_polygon")
-		and area_shape_index == area.get("scaling_polygon").get_index()
+		and area.shape_owner_get_owner(
+			area.shape_find_owner(area_shape_index)
+		) == area.get("scaling_polygon")
 	):
 		return
 	
 	var character: PopochiuCharacter = area
-	# Track character entry/exit (via the ScalingPolygon shape specifically).
-	# We do NOT check for all shapes here because since the guard above already confirmed the
-	# ScalingPolygon is the shape that fired, its exit is the definitive signal to stop scaling.
-	# WORKAROUND for #505 waiting for a proper solution:
-	# Removed the check for all shapes (with get_overlapping_areas) or some characters
-	# would not reset the character's scale and cause it to be stuck with the wrong one.
+	# Fixes #505
+	# Only the ScalingPolygon shape drives entry and exit decisions. Because we check the exact
+	# shape node above, the InteractionPolygon still overlapping the region on exit is irrelevant
+	# and does not prevent the scaling reset.
 	if entered:
 		_active_characters[character.script_name] = area
 	else:
