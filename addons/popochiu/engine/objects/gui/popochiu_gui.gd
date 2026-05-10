@@ -43,6 +43,9 @@ func _ready():
 	PopochiuUtils.d.dialog_started.connect(_on_dialog_started)
 	PopochiuUtils.g.dialog_options_shown.connect(_on_dialog_options_shown)
 	PopochiuUtils.d.dialog_finished.connect(_on_dialog_finished)
+	PopochiuUtils.i.item_added.connect(_on_inventory_item_added)
+	PopochiuUtils.i.item_removed.connect(_on_inventory_item_removed)
+	PopochiuUtils.i.item_replaced.connect(_on_inventory_item_replaced)
 	PopochiuUtils.i.item_selected.connect(_on_inventory_item_selected)
 	PopochiuUtils.e.game_saved.connect(_on_game_saved)
 	PopochiuUtils.e.game_loaded.connect(_on_game_loaded)
@@ -147,6 +150,30 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	pass
 
 
+## Called when [param item] is added to the inventory.[br]
+## This hook is awaited by the base GUI routing layer, which emits
+## [signal PopochiuIInventory.item_add_done] automatically after the hook returns. Overrides must
+## not emit the signal or call [method G.block].
+func _on_item_added(item: PopochiuInventoryItem) -> void:
+	pass
+
+
+## Called when [param item] is removed from the inventory.[br]
+## This hook is awaited by the base GUI routing layer, which emits
+## [signal PopochiuIInventory.item_remove_done] automatically after the hook returns. Overrides
+## must not emit the signal or call [method G.block].
+func _on_item_removed(item: PopochiuInventoryItem) -> void:
+	pass
+
+
+## Called when [param item] is replaced in the inventory by [param new_item].[br]
+## This hook is awaited by the base GUI routing layer, which emits
+## [signal PopochiuIInventory.item_replace_done] automatically after the hook returns. Overrides
+## must not emit the signal or call [method G.block].
+func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+	pass
+
+
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
 ## component.
 func _on_game_saved() -> void:
@@ -197,6 +224,33 @@ func on_shown() -> void:
 #endregion
 
 #region Private ####################################################################################
+## Routes [signal PopochiuIInventory.item_added] through the GUI hook surface and guarantees the
+## completion handshake.
+func _on_inventory_item_added(item: PopochiuInventoryItem) -> void:
+	PopochiuUtils.g.block()
+	await _on_item_added(item)
+	PopochiuUtils.i.item_add_done.emit(item)
+	PopochiuUtils.g.unblock(true)
+
+
+## Routes [signal PopochiuIInventory.item_removed] through the GUI hook surface and guarantees the
+## completion handshake.
+func _on_inventory_item_removed(item: PopochiuInventoryItem) -> void:
+	PopochiuUtils.g.block()
+	await _on_item_removed(item)
+	PopochiuUtils.i.item_remove_done.emit(item)
+	PopochiuUtils.g.unblock()
+
+
+## Routes [signal PopochiuIInventory.item_replaced] through the GUI hook surface and guarantees
+## the completion handshake.
+func _on_inventory_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+	PopochiuUtils.g.block()
+	await _on_item_replaced(item, new_item)
+	PopochiuUtils.i.item_replace_done.emit()
+	PopochiuUtils.g.unblock()
+
+
 func _adjust_nodes_text(nodes_array: Array) -> void:
 	for node: Node in nodes_array:
 		_adjust_nodes_text(node.get_children())

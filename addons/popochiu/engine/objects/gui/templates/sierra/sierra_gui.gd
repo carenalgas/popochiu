@@ -11,6 +11,9 @@ extends PopochiuGraphicInterface
 @onready var sierra_bar: Control = %SierraBar
 @onready var sierra_menu: Control = %SierraMenu
 @onready var sierra_inventory_popup: Control = %SierraInventoryPopup
+@onready var _inventory_grid: PopochiuInventoryGrid = sierra_inventory_popup.get_node(
+	"%SierraInventoryGrid"
+)
 @onready var sierra_settings_popup: Control = %SierraSettingsPopup
 @onready var sierra_sound_popup: Control = %SierraSoundPopup
 @onready var text_settings_popup: Control = %TextSettingsPopup
@@ -131,6 +134,18 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	else:
 		PopochiuUtils.cursor.remove_secondary_cursor_texture()
 		PopochiuUtils.cursor.show_cursor()
+
+
+func _on_item_added(item: PopochiuInventoryItem) -> void:
+	await _inventory_grid.show_item(item)
+
+
+func _on_item_removed(item: PopochiuInventoryItem) -> void:
+	await _inventory_grid.hide_item(item)
+
+
+func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+	await _inventory_grid.swap_item(item, new_item)
 
 
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText

@@ -10,7 +10,7 @@ const STEPS = [
 	"Strip animate param from queue_add()/queue_add_as_active() calls",
 	"Strip animate param from queue_remove() calls",
 	"Strip animate param from discard()/queue_discard() calls",
-	"Replace deprecated in_inventory = true/false assignments with method calls",
+	"Warn about deprecated in_inventory = true/false assignments that need manual migration",
 ]
 
 
@@ -24,7 +24,7 @@ func _do_migration() -> bool:
 			_strip_animate_from_queue_add_calls,
 			_strip_animate_from_queue_remove_calls,
 			_strip_animate_from_discard_calls,
-			_replace_in_inventory_assignments,
+			_warn_about_in_inventory_assignments,
 		]
 	)
 
@@ -79,16 +79,41 @@ func _strip_animate_from_discard_calls() -> Completion:
 	], ["autoloads"]) else Completion.IGNORED
 
 
-## Replace the deprecated in_inventory assignments with the proper method calls.
-## in_inventory = true  → await add()  (background add, matching old direct-assign behaviour)
-## in_inventory = false → await remove() (background full removal, matching old behaviour)
-## Note: the replacements use await because add() and remove() are coroutines. If the calling
-## function is not already async, Godot will issue a warning, but the call will still work.
-func _replace_in_inventory_assignments() -> Completion:
-	return Completion.DONE if PopochiuMigrationHelper.replace_in_scripts([
-		{from = "in_inventory = true", to = "await add()"},
-		{from = "in_inventory = false", to = "await remove()"},
-	], ["autoloads"]) else Completion.IGNORED
+## Warn about deprecated direct in_inventory assignments.
+## Direct assignment now emits a runtime deprecation warning but still performs a silent state
+## change. Rewriting it automatically to add()/remove() would change GUI timing and side effects,
+## so this migration only reports the files that need manual review.
+func _warn_about_in_inventory_assignments() -> Completion:
+	var script_paths: Array = PopochiuMigrationHelper.get_absolute_file_paths_for_file_extensions(
+		PopochiuResources.GAME_PATH,
+		["gd"],
+		["autoloads"]
+	)
+	var matching_files: Array[String] = []
+
+	for file_path: String in script_paths:
+		if (
+			PopochiuMigrationHelper.is_text_in_file("in_inventory = true", file_path)
+			or PopochiuMigrationHelper.is_text_in_file("in_inventory = false", file_path)
+		):
+			matching_files.append(file_path)
+
+	if matching_files.is_empty():
+		return Completion.IGNORED
+
+	var files_list := ""
+	for file_path: String in matching_files:
+		files_list += "\n- %s" % file_path
+
+	PopochiuUtils.print_warning(
+		"Migration %d: Found deprecated in_inventory assignments that require manual review.%s\n"
+		+ "Direct assignment still works as a silent state change, while add()/remove() now run "
+		+ "the full inventory GUI lifecycle. Replace each usage intentionally based on the "
+		+ "desired behaviour."
+		% [VERSION, files_list]
+	)
+
+	return Completion.DONE
 
 
 #endregion

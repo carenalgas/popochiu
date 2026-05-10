@@ -46,11 +46,6 @@ func _ready():
 	down.pressed.connect(_on_down_pressed)
 	scroll_container.get_v_scroll_bar().value_changed.connect(_on_scroll)
 	
-	# Connect to singletons signals
-	PopochiuUtils.i.item_added.connect(_add_item)
-	PopochiuUtils.i.item_removed.connect(_remove_item)
-	PopochiuUtils.i.item_replaced.connect(_replace_item)
-	
 	_check_scroll_buttons()
 
 
@@ -140,7 +135,7 @@ func _check_starting_items() -> void:
 		if (slot.get_child_count() > 0
 		and slot.get_child(0) is PopochiuInventoryItem
 		):
-			PopochiuUtils.i.items.append(slot.get_child(0).script_name)
+			PopochiuUtils.i.register_existing_item(slot.get_child(0))
 			slot.name = slot.get_child(0).script_name
 		else:
 			slot.name = EMPTY_SLOT
@@ -156,7 +151,7 @@ func _on_down_pressed() -> void:
 	_check_scroll_buttons()
 
 
-func _add_item(item: PopochiuInventoryItem) -> void:
+func show_item(item: PopochiuInventoryItem) -> void:
 	var slot := box.get_child(PopochiuUtils.i.items.size() - 1)
 	slot.name = "[%s]" % item.script_name
 	slot.add_child(item)
@@ -170,18 +165,18 @@ func _add_item(item: PopochiuInventoryItem) -> void:
 	
 	box.set_meta(item.script_name, slot)
 	
-	item.selected.connect(_change_cursor)
+	if not item.selected.is_connected(_change_cursor):
+		item.selected.connect(_change_cursor)
 	_check_scroll_buttons()
 	
 	# Common call to all inventories. Should be in the class from where inventory panels will
 	# inherit from
 	await get_tree().process_frame
-	
-	PopochiuUtils.i.item_add_done.emit(item)
 
 
-func _remove_item(item: PopochiuInventoryItem) -> void:
-	item.selected.disconnect(_change_cursor)
+func hide_item(item: PopochiuInventoryItem) -> void:
+	if item.selected.is_connected(_change_cursor):
+		item.selected.disconnect(_change_cursor)
 	
 	box.get_meta(item.script_name).remove_child(item)
 	box.get_meta(item.script_name).name = EMPTY_SLOT
@@ -189,22 +184,23 @@ func _remove_item(item: PopochiuInventoryItem) -> void:
 	_check_scroll_buttons()
 	
 	await get_tree().process_frame
-	
-	PopochiuUtils.i.item_remove_done.emit(item)
 
 
-func _replace_item(
+func swap_item(
 	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem
 ) -> void:
+	var slot: Control = box.get_meta(item.script_name)
+	if item.selected.is_connected(_change_cursor):
+		item.selected.disconnect(_change_cursor)
 	item.replace_by(new_item)
 	box.remove_meta(item.script_name)
-	box.set_meta(new_item.script_name, new_item.get_parent())
+	box.set_meta(new_item.script_name, slot)
+	if not new_item.selected.is_connected(_change_cursor):
+		new_item.selected.connect(_change_cursor)
 	
 	_check_scroll_buttons()
 	
 	await get_tree().process_frame
-	
-	PopochiuUtils.i.item_replace_done.emit()
 
 
 func _change_cursor(item: PopochiuInventoryItem) -> void:
