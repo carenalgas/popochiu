@@ -108,7 +108,8 @@ func clean_inventory(in_bg := false) -> void:
 
 
 ## Adds [param quantity] of [param item] to the inventory and waits until any GUI transition has
-## finished.
+## finished. Inventory capacity is slot-based: stacked quantities still occupy a single slot and
+## count as [code]1[/code] against the inventory limit.
 func add_item(item: PopochiuInventoryItem, quantity := 1) -> void:
 	if quantity <= 0:
 		PopochiuUtils.print_warning(
@@ -169,13 +170,18 @@ func remove_item(item: PopochiuInventoryItem, quantity: int = 0) -> void:
 
 
 ## Replaces [param item] in the inventory with [param new_item] and waits until the GUI swap has
-## finished.
+## finished. Replacing removes the whole collected quantity of [param item] and adds exactly one
+## quantity of [param new_item].
 func replace_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+	if not _can_replace_item(item, new_item):
+		await get_tree().process_frame
+		return
+
 	_apply_full_removal(item)
 
 	if new_item.quantity_owned == 0:
 		_apply_first_add(new_item, 1)
-	elif new_item.max_quantity > 1 and new_item.quantity_owned < new_item.max_quantity:
+	else:
 		_apply_stack_add(new_item, 1)
 
 	item_replaced.emit(item, new_item)
@@ -303,8 +309,9 @@ func has_item_been_collected(item_name: String) -> bool:
 	return is_instance_valid(i) and i.ever_collected
 
 
-## Returns [code]true[/code] if the inventory has reached the inventory limit
-## configured in the project settings.
+## Returns [code]true[/code] if the inventory has reached the inventory limit configured in the
+## project settings. The limit counts occupied slots, not total owned quantity, so a stacked item
+## still occupies a single slot and counts as [code]1[/code].
 func is_full() -> bool:
 	return (
 		PopochiuUtils.e.settings.inventory_limit > 0
@@ -350,6 +357,41 @@ func _get_addable_quantity(
 		)
 
 	return actual
+
+
+func _can_replace_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> bool:
+	var item_name := item.script_name if is_instance_valid(item) else "<invalid item>"
+	var new_item_name := new_item.script_name if is_instance_valid(new_item) else "<invalid item>"
+
+	if not is_instance_valid(item) or item.quantity_owned <= 0:
+		PopochiuUtils.print_warning(
+			"Couldn't replace %s. Item is not in the inventory." % item_name
+		)
+		return false
+
+	if not is_instance_valid(new_item):
+		PopochiuUtils.print_warning(
+			"Couldn't replace %s. Replacement item is invalid." % item_name
+		)
+		return false
+
+	if item == new_item:
+		PopochiuUtils.print_warning(
+			"Couldn't replace %s with itself." % item_name
+		)
+		return false
+
+	if new_item.quantity_owned == 0:
+		return true
+
+	if new_item.max_quantity > 1 and new_item.quantity_owned < new_item.max_quantity:
+		return true
+
+	PopochiuUtils.print_warning(
+		"Couldn't replace %s with %s. Replacement item can't receive one more unit."
+		% [item_name, new_item_name]
+	)
+	return false
 
 
 func _register_item(item: PopochiuInventoryItem) -> void:

@@ -194,7 +194,9 @@ func remove(quantity: int = 0) -> void:
 	await PopochiuUtils.i.remove_item(self, quantity)
 
 
-## Replaces this inventory item with [param new_item]. Useful when combining items.
+## Replaces this inventory item with [param new_item]. Useful when combining items. Replacing
+## removes the whole collected quantity of this item and adds exactly one quantity of
+## [param new_item].
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ##
@@ -212,7 +214,9 @@ func queue_replace(new_item: PopochiuInventoryItem) -> Callable:
 	return func (): await replace(new_item)
 
 
-## Replaces this inventory item with [param new_item]. Useful when combining items.
+## Replaces this inventory item with [param new_item]. Useful when combining items. Replacing
+## removes the whole collected quantity of this item and adds exactly one quantity of
+## [param new_item].
 ##
 ## Example:
 ## [codeblock]

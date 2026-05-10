@@ -125,23 +125,16 @@ func load_game(slot := 1) -> Dictionary:
 	var test_json_conv = JSON.new()
 	test_json_conv.parse(content)
 	var loaded_data: Dictionary = test_json_conv.data
+	var player_data = loaded_data.get("player", {})
+	var inventory_entries = []
+	if player_data is Dictionary:
+		inventory_entries = player_data.get("inventory", [])
 	
 	# Load inventory items — supports both the legacy format (Array of String) and the current
 	# format (Array of Dictionary with "name" and "qty" keys, introduced in refs #349).
 	PopochiuUtils.i.is_restoring = true
-	for entry in loaded_data.player.inventory:
-		var item_name: String
-		var qty := 1
-		
-		if entry is String:
-			# refs #349: Legacy save format — plain string item name, assume quantity of 1.
-			item_name = entry
-		else:
-			item_name = entry.get("name", "")
-			qty = entry.get("qty", 1)
-		
-		if not item_name.is_empty():
-			PopochiuUtils.i.get_item_instance(item_name).add(qty)
+	for entry in inventory_entries:
+		_restore_inventory_entry(entry)
 	PopochiuUtils.i.is_restoring = false
 	
 	# Load main object states
@@ -241,6 +234,50 @@ func _load_dialog_options(
 			
 			if loaded_options[opt.id].has(prop.name):
 				opt[prop.name] = loaded_options[opt.id][prop.name]
+
+
+func _restore_inventory_entry(entry) -> void:
+	var item_name := ""
+	var qty := 1
+
+	if entry is String:
+		# refs #349: Legacy save format — plain string item name, assume quantity of 1.
+		item_name = entry
+	elif entry is Dictionary:
+		item_name = entry.get("name", "")
+		qty = entry.get("qty", 1)
+	else:
+		PopochiuUtils.print_warning(
+			"Skipping malformed inventory entry while loading a save file."
+		)
+		return
+
+	if item_name.is_empty():
+		PopochiuUtils.print_warning(
+			"Skipping inventory entry with an empty item name while loading a save file."
+		)
+		return
+
+	if typeof(qty) != TYPE_INT:
+		PopochiuUtils.print_warning(
+			"Skipping inventory entry for %s. Quantity must be an integer." % item_name
+		)
+		return
+
+	if qty <= 0:
+		PopochiuUtils.print_warning(
+			"Skipping inventory entry for %s. Quantity must be greater than 0." % item_name
+		)
+		return
+
+	var item := PopochiuUtils.i.get_item_instance(item_name)
+	if not is_instance_valid(item):
+		PopochiuUtils.print_warning(
+			"Skipping inventory entry for %s. Item could not be instantiated." % item_name
+		)
+		return
+
+	item.add(qty)
 
 
 # Builds the inventory array for the save file. Each element is a Dictionary with the item's
