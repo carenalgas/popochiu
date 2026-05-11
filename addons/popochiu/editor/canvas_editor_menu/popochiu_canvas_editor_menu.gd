@@ -24,6 +24,7 @@ var _passive_scope: int = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 @onready var btn_obstacle_polygon: Button = %BtnObstaclePolygon
 @onready var btn_passive_scope: Button = %BtnPassiveScope
 @onready var btn_walkable_area_polygon: Button = %BtnWalkableAreaPolygon
+@onready var btn_trace_interaction_polygon: Button = %BtnPolygonAutotrace
 @onready var label_view: Label = %LabelView
 @onready var label_edit: Label = %LabelEdit
 
@@ -49,6 +50,7 @@ func _ready() -> void:
 	btn_obstacle_polygon.pressed.connect(_toggle_obstacle_polygon_visibility)
 	btn_passive_scope.pressed.connect(_toggle_passive_scope)
 	btn_walkable_area_polygon.pressed.connect(_toggle_walkable_area_polygon_visibility)
+	btn_trace_interaction_polygon.pressed.connect(_trace_interaction_polygon)
 
 	# Connect to global signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
@@ -169,6 +171,13 @@ func _toggle_walkable_area_polygon_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.emit(
 		btn_walkable_area_polygon.button_pressed
 	)
+
+# This button triggers an autotrace of the interaction polygon for the selected object.
+# Only Props and Characters (nodes with a Sprite2D child) are supported.
+func _trace_interaction_polygon() -> void:
+	if _active_popochiu_object == null:
+		return
+	PopochiuPolygonsHelper.trace_interaction_polygon(_active_popochiu_object)
 
 
 # When gizmo-related editor settings change, we update the toolbar buttons colors
