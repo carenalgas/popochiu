@@ -65,6 +65,9 @@ func _enter_tree() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.connect(
 		_on_gizmo_walkable_passive_visibility_changed
 	)
+	PopochiuEditorHelper.signal_bus.interaction_polygon_autotraced.connect(
+		_on_interaction_polygon_autotraced
+	)
 
 #endregion
 
@@ -284,6 +287,13 @@ func _on_gizmo_passive_scope_changed(scope: int) -> void:
 # shown for an entire room.
 func _on_gizmo_walkable_passive_visibility_changed(visible: bool) -> void:
 	_polygon_manager.set_walkable_area_passive_visibility(visible)
+	update_overlays()
+
+
+func _on_interaction_polygon_autotraced(polygon_node: CollisionPolygon2D) -> void:
+	# The autotrace wrote a new polygon directly onto polygon_node.
+	# Mark only that node's gizmo dirty so it re-reads on the next draw, then force a redraw.
+	_polygon_manager.mark_dirty_for_node(polygon_node)
 	update_overlays()
 
 #endregion

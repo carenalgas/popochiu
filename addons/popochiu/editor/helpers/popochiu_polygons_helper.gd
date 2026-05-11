@@ -104,6 +104,10 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 	)
 	PopochiuEditorHelper.undo_redo.commit_action()
 
+	# Notify the gizmo plugin with the exact node that changed, so only its gizmo
+	# gets marked dirty and the viewport overlay is redrawn.
+	PopochiuEditorHelper.signal_bus.interaction_polygon_autotraced.emit(interaction_polygon_node)
+
 	return true
 
 #endregion

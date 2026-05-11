@@ -8,6 +8,7 @@ signal main_object_added(type: int, name_to_add: String)
 signal gizmo_visibility_changed(gizmo: int, visible: bool)
 signal gizmo_passive_scope_changed(scope: int)
 signal gizmo_walkable_passive_visibility_changed(visible: bool)
+signal interaction_polygon_autotraced(polygon_node: CollisionPolygon2D)
 signal migrations_done
 signal scene_changed(scene_root: Node)
 signal scene_closed(filepath: String)
