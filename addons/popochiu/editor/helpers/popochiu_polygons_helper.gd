@@ -4,37 +4,14 @@ extends Object
 
 ## Static helper that traces an interaction polygon from a sprite's alpha channel.
 ##
-## The pipeline follows these steps, each controlled by a constant:
-## 1. Optionally denoise the image with a two-way resize ([constant TRACE_TWO_WAY_RESIZE]).
+## The pipeline parameters are read from the Project Settings under
+## [code]popochiu/auto_tracer/[/code] and configured via [PopochiuConfig]:
+## 1. Optionally denoise the image ([member PopochiuConfig.AUTOTRACE_NOISE_REDUCTION]).
 ## 2. Build a [BitMap] from the alpha channel.
-## 3. Optionally grow the bitmap mask ([constant TRACE_GROWTH]).
-## 4. Extract polygon outlines via [method BitMap.opaque_to_polygons]
-##    ([constant TRACE_EPSILON]).
-## 5. Optionally expand/contract the outline ([constant TRACE_BEZEL]).
-## 6. Optionally replace all polygons with a single convex hull
-##    ([constant TRACE_CONVEX_HULL]).
-
-# ---- Tracing parameters -----------------------------------------------------------------------
-
-## Controls how closely the traced outline follows the pixel boundary.
-## Lower values produce more accurate but more complex polygons; higher values simplify the result.
-const TRACE_EPSILON := 3.5
-
-## Number of pixels to grow the bitmap mask before tracing.
-## Positive values expand the masked area, making the polygon slightly larger than the sprite.
-const TRACE_GROWTH := 2
-
-## Pixels to expand (positive) or contract (negative) the traced polygon boundary.
-## Applied via [method Geometry2D.offset_polygon] after tracing.
-const TRACE_BEZEL := 0
-
-## When true, the image is scaled down by half and then back to its original size before tracing.
-## This removes single-pixel noise and produces simpler polygon outlines for detailed sprites.
-const TRACE_TWO_WAY_RESIZE := false
-
-## When true, all traced polygon points are merged into a single convex hull polygon.
-## Useful when the sprite silhouette is simple and concavity is not needed for interaction.
-const TRACE_CONVEX_HULL := true
+## 3. Optionally grow the bitmap mask ([member PopochiuConfig.AUTOTRACE_MASK_PADDING]).
+## 4. Extract polygon outlines ([member PopochiuConfig.AUTOTRACE_APPROXIMATION]).
+## 5. Optionally expand/contract the outline ([member PopochiuConfig.AUTOTRACE_OUTLINE_MARGIN]).
+## 6. Optionally merge into a single convex hull ([member PopochiuConfig.AUTOTRACE_CONVEX_OUTLINE]).
 
 
 #region Public #####################################################################################
@@ -69,11 +46,11 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 
 	var polygon_levels := _compute_polygon(
 		image,
-		TRACE_EPSILON,
-		TRACE_BEZEL,
-		TRACE_GROWTH,
-		TRACE_TWO_WAY_RESIZE,
-		TRACE_CONVEX_HULL
+		PopochiuConfig.get_autotrace_approximation(),
+		PopochiuConfig.get_autotrace_outline_margin(),
+		PopochiuConfig.get_autotrace_mask_padding(),
+		PopochiuConfig.is_autotrace_noise_reduction(),
+		PopochiuConfig.is_autotrace_convex_outline()
 	)
 
 	if polygon_levels.is_empty() or polygon_levels[0].is_empty():

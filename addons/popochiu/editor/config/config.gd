@@ -58,6 +58,23 @@ const UI_PREFIXES = "popochiu/audio/ui_prefixes"
 # ---- DEV -----------------------------------------------------------------------------------------
 const DEV_USE_ADDON_TEMPLATE = "popochiu/dev/use_addon_template"
 
+# ---- Auto Tracer ---------------------------------------------------------------------------------
+# Controls how closely the traced outline follows pixel boundaries.
+# Lower values produce more accurate but more complex polygons; higher values simplify the result.
+const AUTOTRACE_APPROXIMATION = "popochiu/auto_tracer/approximation"
+# Pixels to expand (positive) or contract (negative) the alpha bitmap mask before tracing.
+# Operates at raster level, so values are whole pixels.
+const AUTOTRACE_MASK_PADDING = "popochiu/auto_tracer/mask_padding"
+# Pixels to expand (positive) or contract (negative) the traced polygon outline after tracing.
+# Operates geometrically on the polygon edges via Geometry2D.offset_polygon.
+const AUTOTRACE_OUTLINE_MARGIN = "popochiu/auto_tracer/outline_margin"
+# When enabled, the image is scaled down by half and back before tracing.
+# This blurs single-pixel protrusions and yields simpler polygon outlines.
+const AUTOTRACE_NOISE_REDUCTION = "popochiu/auto_tracer/noise_reduction"
+# When enabled, all traced polygon points are merged into a single convex hull polygon.
+# When disabled, the first (typically largest) concave outline found is used instead.
+const AUTOTRACE_CONVEX_OUTLINE = "popochiu/auto_tracer/convex_outline"
+
 static var defaults := {
 	SCALE_GUI: false,
 	TL_FADE_COLOR: Color.BLACK,
@@ -90,6 +107,11 @@ static var defaults := {
 	VOICE_PREFIXES: "vo,",
 	UI_PREFIXES: "ui,",
 	DEV_USE_ADDON_TEMPLATE: false,
+	AUTOTRACE_APPROXIMATION: 1,
+	AUTOTRACE_MASK_PADDING: 2,
+	AUTOTRACE_OUTLINE_MARGIN: 0,
+	AUTOTRACE_NOISE_REDUCTION: false,
+	AUTOTRACE_CONVEX_OUTLINE: true,
 }
 
 
@@ -184,6 +206,19 @@ static func initialize_project_settings():
 
 	# ---- DEV -------------------------------------------------------------------------------------
 	_initialize_advanced_project_setting(DEV_USE_ADDON_TEMPLATE, TYPE_BOOL)
+
+	# ---- Auto Tracer -----------------------------------------------------------------------------
+	_initialize_project_setting(
+		AUTOTRACE_APPROXIMATION, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.5,10.0,0.5"
+	)
+	_initialize_project_setting(
+		AUTOTRACE_MASK_PADDING, TYPE_INT, PROPERTY_HINT_RANGE, "-20,20,1"
+	)
+	_initialize_project_setting(
+		AUTOTRACE_OUTLINE_MARGIN, TYPE_INT, PROPERTY_HINT_RANGE, "-20,20,1"
+	)
+	_initialize_project_setting(AUTOTRACE_NOISE_REDUCTION, TYPE_BOOL)
+	_initialize_project_setting(AUTOTRACE_CONVEX_OUTLINE, TYPE_BOOL)
 
 	ProjectSettings.save()
 
@@ -329,6 +364,27 @@ static func get_ui_prefixes() -> String:
 # ---- DEV -----------------------------------------------------------------------------------------
 static func is_use_addon_template() -> bool:
 	return _get_project_setting(DEV_USE_ADDON_TEMPLATE)
+
+
+# ---- Auto Tracer ---------------------------------------------------------------------------------
+static func get_autotrace_approximation() -> float:
+	return _get_project_setting(AUTOTRACE_APPROXIMATION)
+
+
+static func get_autotrace_mask_padding() -> int:
+	return _get_project_setting(AUTOTRACE_MASK_PADDING)
+
+
+static func get_autotrace_outline_margin() -> int:
+	return _get_project_setting(AUTOTRACE_OUTLINE_MARGIN)
+
+
+static func is_autotrace_noise_reduction() -> bool:
+	return _get_project_setting(AUTOTRACE_NOISE_REDUCTION)
+
+
+static func is_autotrace_convex_outline() -> bool:
+	return _get_project_setting(AUTOTRACE_CONVEX_OUTLINE)
 
 
 #endregion
