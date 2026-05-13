@@ -209,7 +209,7 @@ static func initialize_project_settings():
 
 	# ---- Auto Tracer -----------------------------------------------------------------------------
 	_initialize_project_setting(
-		AUTOTRACE_APPROXIMATION, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.5,10.0,0.5"
+		AUTOTRACE_APPROXIMATION, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,10.0,0.1"
 	)
 	_initialize_project_setting(
 		AUTOTRACE_MASK_PADDING, TYPE_INT, PROPERTY_HINT_RANGE, "-20,20,1"
