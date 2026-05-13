@@ -342,6 +342,7 @@ func _set_buttons_visibility() -> void:
 	btn_look_at_point.hide()
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
+	btn_trace_interaction_polygon.hide()
 	btn_obstacle_polygon.hide()
 	btn_passive_scope.hide()
 	btn_walkable_area_polygon.hide()
@@ -368,6 +369,19 @@ func _set_buttons_visibility() -> void:
 	):
 		btn_interaction_polygon.show()
 
+	# Props (and only props) edited in the room scene, also show the
+	# auto-trace polygon button.
+	# Character colliders must be edited in their own scene; other clickables
+	# have no sprite to trace.
+	if (
+		(
+			PopochiuEditorHelper.is_editing_room()
+			and PopochiuEditorHelper.is_prop(_active_popochiu_object)
+		)
+		or PopochiuEditorHelper.is_editing_character()
+	):
+		btn_trace_interaction_polygon.show()
+
 	# Exception: in a room scene with a character selected,
 	# we don't show the interaction polygon button.
 	if (
@@ -375,6 +389,7 @@ func _set_buttons_visibility() -> void:
 		and PopochiuEditorHelper.is_character(_active_popochiu_object)
 	):
 		btn_interaction_polygon.hide()
+		btn_trace_interaction_polygon.hide()
 
 	# If we are in a room scene...
 	if PopochiuEditorHelper.is_editing_room():
