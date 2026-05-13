@@ -63,10 +63,11 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 	# For collision purposes a single polygon outline is sufficient.
 	var result_polygon: PackedVector2Array = polygon_levels[0][0]
 
-	# Convert from bitmap space (top-left = 0,0) to the sprite's local coordinate space.
-	var bitmap_to_local_offset := _compute_bitmap_to_local_offset(sprite)
-	for i in result_polygon.size():
-		result_polygon[i] += bitmap_to_local_offset
+	# Convert from bitmap space (top-left = 0,0) to the clickable's local coordinate space.
+	# Uses a full Transform2D so the sprite node's position, rotation, and scale within the
+	# parent are all accounted for.
+	var bitmap_to_local := _compute_bitmap_to_local_transform(sprite)
+	result_polygon = bitmap_to_local * result_polygon
 
 	var previous_polygon := interaction_polygon_node.polygon.duplicate()
 
@@ -143,20 +144,30 @@ static func _get_sprite_image(sprite: Sprite2D) -> Image:
 	return full_image
 
 
-# Returns the vector that converts bitmap-space coordinates (origin at top-left) to the sprite's
-# local coordinate space (origin at the sprite node position).
-# Accounts for the sprite's centering flag, offset, and the current animation frame.
-static func _compute_bitmap_to_local_offset(sprite: Sprite2D) -> Vector2:
+# Returns a Transform2D that converts bitmap-space coordinates (origin at top-left) to the
+# clickable's local coordinate space (the Area2D parent of the Sprite2D).
+# The transform is composed of two steps applied right-to-left:
+#   1. A translation that maps bitmap (0,0) to the sprite's own local origin, accounting
+#      for the centering flag and the sprite.offset property.
+#   2. The sprite node's own transform within its parent (position, rotation, scale),
+#      which places the result correctly in the clickable's coordinate space.
+static func _compute_bitmap_to_local_transform(sprite: Sprite2D) -> Transform2D:
 	var frame_size := _get_sprite_frame_rect(sprite).size
 
+	# Step 1: centering/offset correction (bitmap space → sprite local space).
+	var centering_offset: Vector2
 	if sprite.centered:
-		# A centered sprite displays with the frame center aligned to the node origin.
-		# Bitmap (0,0) therefore maps to local (-w/2 + offset.x, -h/2 + offset.y).
-		return Vector2(-frame_size.x / 2.0, -frame_size.y / 2.0) + sprite.offset
+		# The frame center is displayed at the sprite node origin; bitmap (0,0) is offset
+		# by half the frame size in the negative direction, plus any explicit offset.
+		centering_offset = Vector2(-frame_size.x / 2.0, -frame_size.y / 2.0) + sprite.offset
 	else:
-		# A non-centered sprite displays with the frame top-left at the node origin.
-		# Bitmap (0,0) maps directly to local (offset.x, offset.y).
-		return sprite.offset
+		# The frame top-left is at the sprite node origin; only the explicit offset applies.
+		centering_offset = sprite.offset
+
+	# Step 2: compose with the sprite node's transform in parent space so that the polygon
+	# ends up in the clickable's local coordinate system regardless of the sprite's
+	# position, rotation, or scale within the scene tree.
+	return sprite.transform * Transform2D(0.0, centering_offset)
 
 
 # Runs the full polygon-from-bitmap pipeline and returns a list-of-lists-of-polygons.
