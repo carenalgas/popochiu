@@ -12,7 +12,6 @@ const PASSIVE_SCOPE_ROOM_ICON: Texture2D = preload(
 )
 
 var _active_popochiu_object: Node = null
-var _shown_helpers := []
 var _passive_scope: int = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 
 @onready var btn_markers: Button = %BtnMarkers
@@ -24,6 +23,7 @@ var _passive_scope: int = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 @onready var btn_obstacle_polygon: Button = %BtnObstaclePolygon
 @onready var btn_passive_scope: Button = %BtnPassiveScope
 @onready var btn_walkable_area_polygon: Button = %BtnWalkableAreaPolygon
+@onready var btn_trace_interaction_polygon: Button = %BtnPolygonAutotrace
 @onready var label_view: Label = %LabelView
 @onready var label_edit: Label = %LabelEdit
 
@@ -49,6 +49,7 @@ func _ready() -> void:
 	btn_obstacle_polygon.pressed.connect(_toggle_obstacle_polygon_visibility)
 	btn_passive_scope.pressed.connect(_toggle_passive_scope)
 	btn_walkable_area_polygon.pressed.connect(_toggle_walkable_area_polygon_visibility)
+	btn_trace_interaction_polygon.pressed.connect(_trace_interaction_polygon)
 
 	# Connect to global signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
@@ -89,6 +90,8 @@ func _sync_polygon_toolbar_state() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.emit(
 		btn_walkable_area_polygon.button_pressed
 	)
+
+
 #endregion
 
 #region Signals ####################################################################################
@@ -170,8 +173,15 @@ func _toggle_walkable_area_polygon_visibility() -> void:
 		btn_walkable_area_polygon.button_pressed
 	)
 
+# This button triggers an autotrace of the interaction polygon for the selected object.
+# Only Props and Characters (nodes with a Sprite2D child) are supported.
+func _trace_interaction_polygon() -> void:
+	if _active_popochiu_object == null:
+		return
+	PopochiuPolygonsHelper.trace_interaction_polygon(_active_popochiu_object)
 
-# When gizmo-related editor settings change, we update the toolbar buttons colors
+
+# When gizmo-related editor settings change, we update the toolbar buttons colors.
 func _on_gizmo_settings_changed() -> void:
 	_set_toolbar_buttons_color()
 	_set_buttons_visibility()
@@ -225,6 +235,9 @@ func _on_selection_changed() -> void:
 	_set_interaction_polygon_button_color()
 
 
+#endregion 
+
+#region Private ####################################################################################
 # Sets all the buttons color so that they are the same as the gizmos
 # or make them theme-standard if the user so prefers (see editor settings)
 func _set_toolbar_buttons_color() -> void:
@@ -283,7 +296,6 @@ func _set_toolbar_buttons_color() -> void:
 	)
 
 
-
 # Sets the color of the interaction polygon button depending on the selected
 # node (walkable areas have a different color from clickables and characters).
 func _set_interaction_polygon_button_color() -> void:
@@ -301,8 +313,8 @@ func _set_interaction_polygon_button_color() -> void:
 		)
 
 
-# Internal helper to reduce code duplication
-func _set_toolbar_button_color(btn, color) -> void:
+# Internal helper to reduce code duplication.
+func _set_toolbar_button_color(btn: Button, color: Color) -> void:
 	btn.add_theme_color_override("icon_normal_color", color)
 	btn.add_theme_color_override("icon_hover_color", color.lightened(1.0))
 	btn.add_theme_color_override("icon_focused_color", color.lightened(1.0))
@@ -310,8 +322,8 @@ func _set_toolbar_button_color(btn, color) -> void:
 	btn.add_theme_color_override("icon_hover_pressed_color", color.lightened(1.0))
 
 
-# Internal helper to reduce code duplication
-func _reset_toolbar_button_color(btn) -> void:
+# Internal helper to reduce code duplication.
+func _reset_toolbar_button_color(btn: Button) -> void:
 	btn.remove_theme_color_override("icon_normal_color")
 	btn.remove_theme_color_override("icon_hover_color")
 	btn.remove_theme_color_override("icon_focused_color")
@@ -333,6 +345,7 @@ func _set_buttons_visibility() -> void:
 	btn_look_at_point.hide()
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
+	btn_trace_interaction_polygon.hide()
 	btn_obstacle_polygon.hide()
 	btn_passive_scope.hide()
 	btn_walkable_area_polygon.hide()
@@ -359,6 +372,19 @@ func _set_buttons_visibility() -> void:
 	):
 		btn_interaction_polygon.show()
 
+	# Props (and only props) edited in the room scene, also show the
+	# auto-trace polygon button.
+	# Character colliders must be edited in their own scene; other clickables
+	# have no sprite to trace.
+	if (
+		(
+			PopochiuEditorHelper.is_editing_room()
+			and PopochiuEditorHelper.is_prop(_active_popochiu_object)
+		)
+		or PopochiuEditorHelper.is_editing_character()
+	):
+		btn_trace_interaction_polygon.show()
+
 	# Exception: in a room scene with a character selected,
 	# we don't show the interaction polygon button.
 	if (
@@ -366,6 +392,7 @@ func _set_buttons_visibility() -> void:
 		and PopochiuEditorHelper.is_character(_active_popochiu_object)
 	):
 		btn_interaction_polygon.hide()
+		btn_trace_interaction_polygon.hide()
 
 	# If we are in a room scene...
 	if PopochiuEditorHelper.is_editing_room():
@@ -414,7 +441,7 @@ func _set_buttons_visibility() -> void:
 	label_edit.visible = btn_interaction_polygon.visible or btn_obstacle_polygon.visible
 
 
-# Make all buttons pop-up
+# Make all buttons pop-up.
 func _reset_buttons_state() -> void:
 	btn_markers.set_pressed_no_signal(true)
 	btn_baseline.set_pressed_no_signal(true)

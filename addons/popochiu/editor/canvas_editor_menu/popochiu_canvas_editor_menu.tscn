@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://d11mg7ftbxvl0" path="res://addons/popochiu/icons/btn_markers.svg" id="6_yea6f"]
 [ext_resource type="Texture2D" uid="uid://dfstqtc5nlapr" path="res://addons/popochiu/icons/btn_obstacle_polygon.svg" id="8_8v2pw"]
 [ext_resource type="Texture2D" uid="uid://e28i4xcwi8l4" path="res://addons/popochiu/icons/btn_psv_gz_scope_room.svg" id="10_o14yl"]
+[ext_resource type="Texture2D" uid="uid://dk3lqxv7lqh3m" path="res://addons/popochiu/icons/btn_interaction_polygon_autotrace.svg" id="11_3vea6"]
 [ext_resource type="Texture2D" uid="uid://d2pb6k51a7fh8" path="res://addons/popochiu/icons/btn_psv_gz_walkable_areas.svg" id="11_h7t2d"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
@@ -27,7 +28,6 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 
 [node name="PopochiuCanvasEditorMenu" type="HBoxContainer" unique_id=1273042423]
-visible = false
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("1_vs7c6")
@@ -179,6 +179,7 @@ layout_mode = 2
 
 [node name="LabelEdit" type="Label" parent="." unique_id=2041561534]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 text = "Editing"
 vertical_alignment = 1
@@ -202,6 +203,20 @@ theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pressed
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("6_6oxl8")
+
+[node name="BtnPolygonAutotrace" type="Button" parent="." unique_id=2128439606]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Trace Interaction Polygon"
+theme_type_variation = &"FlatButton"
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pressed")
+icon = ExtResource("11_3vea6")
 
 [node name="BtnObstaclePolygon" type="Button" parent="." unique_id=1893283886]
 unique_name_in_owner = true

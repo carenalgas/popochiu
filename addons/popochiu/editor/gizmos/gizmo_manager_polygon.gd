@@ -202,6 +202,16 @@ func _scan_room_containers(room: PopochiuRoom) -> void:
 #endregion
 
 #region Public #####################################################################################
+# Mark the gizmo whose source node matches [param polygon_node] as dirty so it re-reads
+# its polygon data on the next draw call.
+# Call this whenever an external action (e.g. autotrace) writes to a polygon node directly.
+func mark_dirty_for_node(polygon_node: Node2D) -> void:
+	for gizmo in _gizmos:
+		if gizmo.get_source_node() == polygon_node:
+			gizmo.mark_dirty()
+			return
+
+
 # Initialize or refresh appearance settings from editor config
 func initialize_gizmos() -> void:
 	_colors["interaction"] = PopochiuEditorConfig.get_editor_setting(

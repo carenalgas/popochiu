@@ -1,5 +1,6 @@
 extends RefCounted
-# Helper Editor class to emit and connect to signals across different components in the plugin
+# TODO: consider naming this class so all scripts have direct access to it.
+# Helper Editor class to emit and connect to signals across different components in the plugin.
 
 signal main_scene_changed(scene_path: String)
 signal pc_changed(script_name: String)
@@ -8,6 +9,7 @@ signal main_object_added(type: int, name_to_add: String)
 signal gizmo_visibility_changed(gizmo: int, visible: bool)
 signal gizmo_passive_scope_changed(scope: int)
 signal gizmo_walkable_passive_visibility_changed(visible: bool)
+signal interaction_polygon_autotraced(polygon_node: CollisionPolygon2D)
 signal migrations_done
 signal scene_changed(scene_root: Node)
 signal scene_closed(filepath: String)
