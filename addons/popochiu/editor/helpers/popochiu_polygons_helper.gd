@@ -2,27 +2,27 @@
 class_name PopochiuPolygonsHelper
 extends Object
 
-## Static helper that traces an interaction polygon from a sprite's alpha channel.
-##
-## The pipeline parameters are read from the Project Settings under
-## [code]popochiu/auto_tracer/[/code] and configured via [PopochiuConfig]:
-## 1. Optionally denoise the image ([member PopochiuConfig.AUTOTRACE_NOISE_REDUCTION]).
-## 2. Build a [BitMap] from the alpha channel.
-## 3. Optionally grow the bitmap mask ([member PopochiuConfig.AUTOTRACE_MASK_PADDING]).
-## 4. Extract polygon outlines ([member PopochiuConfig.AUTOTRACE_APPROXIMATION]).
-## 5. Optionally expand/contract the outline ([member PopochiuConfig.AUTOTRACE_OUTLINE_MARGIN]).
-## 6. Optionally merge into a single convex hull ([member PopochiuConfig.AUTOTRACE_CONVEX_OUTLINE]).
+# Static helper that traces an interaction polygon from a sprite's alpha channel.
+#
+# The pipeline parameters are read from the Project Settings under
+# [code]popochiu/auto_tracer/[/code] and configured via [PopochiuConfig]:
+# 1. Optionally denoise the image ([member PopochiuConfig.AUTOTRACE_NOISE_REDUCTION]).
+# 2. Build a [BitMap] from the alpha channel.
+# 3. Optionally grow the bitmap mask ([member PopochiuConfig.AUTOTRACE_MASK_PADDING]).
+# 4. Extract polygon outlines ([member PopochiuConfig.AUTOTRACE_APPROXIMATION]).
+# 5. Optionally expand/contract the outline ([member PopochiuConfig.AUTOTRACE_OUTLINE_MARGIN]).
+# 6. Optionally merge into a single convex hull ([member PopochiuConfig.AUTOTRACE_CONVEX_OUTLINE]).
 
 
 #region Public #####################################################################################
 
-## Traces the interaction polygon of [param clickable] from the alpha channel of its sprite.
-## Supports [PopochiuProp] and [PopochiuCharacter] (both expose a [Sprite2D] child named
-## [code]Sprite2D[/code]).
-## The resulting polygon is written to the [CollisionPolygon2D] child named
-## [code]InteractionPolygon[/code] and registered with [member PopochiuEditorHelper.undo_redo]
-## so the action can be undone.
-## Returns [code]false[/code] if no suitable sprite is found or tracing produced no polygons.
+# Traces the interaction polygon of [param clickable] from the alpha channel of its sprite.
+# Supports [PopochiuProp] and [PopochiuCharacter] (both expose a [Sprite2D] child named
+# [code]Sprite2D[/code]).
+# The resulting polygon is written to the [CollisionPolygon2D] child named
+# [code]InteractionPolygon[/code] and registered with [member PopochiuEditorHelper.undo_redo]
+# so the action can be undone.
+# Returns [code]false[/code] if no suitable sprite is found or tracing produced no polygons.
 static func trace_interaction_polygon(clickable: Node) -> bool:
 	var sprite := clickable.get_node_or_null("Sprite2D") as Sprite2D
 	if sprite == null or sprite.texture == null:
@@ -132,7 +132,9 @@ static func _get_sprite_frame_rect(sprite: Sprite2D) -> Rect2:
 static func _get_sprite_image(sprite: Sprite2D) -> Image:
 	var full_image := sprite.texture.get_image()
 	if full_image == null:
-		PopochiuUtils.print_warning("PopochiuPolygonsHelper: could not retrieve image from sprite texture.")
+		PopochiuUtils.print_warning(
+			"PopochiuPolygonsHelper: could not retrieve image from sprite texture."
+		)
 		return null
 
 	var frame_rect := _get_sprite_frame_rect(sprite)

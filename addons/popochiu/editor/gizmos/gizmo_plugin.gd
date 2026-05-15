@@ -41,12 +41,12 @@ func _enter_tree() -> void:
 
 	# Initialization of the plugin
 	_undo = get_undo_redo()
-	
+
 	# Initialize managers
 	_clickable_manager = GizmoManagerClickable.new(_undo)
 	_marker_manager = GizmoManagerMarker.new(_undo)
 	_polygon_manager = GizmoManagerPolygon.new(_undo)
-	
+
 	# Setup gizmos in managers
 	_clickable_manager.initialize_gizmos(_font, _color_settings)
 	_marker_manager.initialize_gizmos(_font, _color_settings)
@@ -133,7 +133,6 @@ func _handles(object: Object) -> bool:
 	return (
 		edited_root is PopochiuCharacter
 		or edited_root is PopochiuRoom
-		or edited_root is PopochiuCharacter
 	)
 
 
@@ -204,9 +203,10 @@ func _forward_canvas_gui_input(event: InputEvent) -> bool:
 		):
 			update_overlays()
 			return true
-	
+
 	# Nothing to handle outside the cases above
 	return false
+
 
 #endregion
 
@@ -238,7 +238,7 @@ func _on_gizmo_settings_changed() -> void:
 	_clickable_manager.initialize_gizmos(_font, _color_settings)
 	_marker_manager.initialize_gizmos(_font, _color_settings)
 	_polygon_manager.initialize_gizmos()
-	
+
 	# Update gizmos in the viewport
 	update_overlays()
 
@@ -250,7 +250,6 @@ func _on_gizmo_visibility_changed(gizmo_id: int, visibility: bool) -> void:
 	# The MARKER_POS enum value is different between the two systems
 	elif gizmo_id == MARKER_POS:
 		_marker_manager.set_gizmo_visibility(0, visibility)
-	# Polygon gizmo categories
 	# Polygon gizmo categories — the toolbar button controls editing (visibility
 	# + interactivity) for the selected object only. Passive polygon visibility
 	# is governed by the "always show" editor settings.
@@ -266,7 +265,7 @@ func _on_gizmo_visibility_changed(gizmo_id: int, visibility: bool) -> void:
 		_polygon_manager.set_category_editing(
 			GizmoPolygon2D.PolygonCategory.WALKABLE_AREA, visibility
 		)
-	
+
 	update_overlays()
 
 

@@ -116,7 +116,7 @@ static var defaults := {
 
 
 #region Public #####################################################################################
-static func reload_transitions():
+static func reload_transitions() -> void:
 	# Transition Layer
 	var transition_hint: String = _get_transitions_hint()
 
@@ -128,7 +128,7 @@ static func reload_transitions():
 	)
 
 
-static func initialize_project_settings():
+static func initialize_project_settings() -> void:
 	# ---- GUI -------------------------------------------------------------------------------------
 	_initialize_project_setting(SCALE_GUI, TYPE_BOOL)
 	# Transition Layer
@@ -223,7 +223,7 @@ static func initialize_project_settings():
 	ProjectSettings.save()
 
 
-static func set_project_setting(key: String, value) -> void:
+static func set_project_setting(key: String, value: Variant) -> void:
 	ProjectSettings.set_setting(key, value)
 	ProjectSettings.save()
 
@@ -416,7 +416,7 @@ static func _create_setting(
 	})
 
 
-static func _get_project_setting(key: String):
+static func _get_project_setting(key: String) -> Variant:
 	var p = ProjectSettings.get_setting(key)
 	return p if p != null else defaults[key]
 
@@ -450,12 +450,12 @@ static func _get_transitions_hint() -> String:
 		# Fallback on default transition (capitalized) - again
 		return defaults[TL_DEFAULT_ROOM_TRANSITION].capitalize()
 
-	var transitions = tl.get_all_transitions_list()
+	var transitions: PackedStringArray = tl.get_all_transitions_list()
 	tl.queue_free()
 	# Capitalize transition names for display in project settings
 	# Split by "/" to handle animation library prefixes (e.g., "User/anim_name")
 	# Convert PackedStringArray to Array to use map()
-	var capitalized_transitions = Array(transitions).map(func(name):
+	var capitalized_transitions := Array(transitions).map(func(name):
 		var parts = Array(name.split("/")).map(func(s): return s.capitalize())
 		return "/".join(PackedStringArray(parts))
 	)

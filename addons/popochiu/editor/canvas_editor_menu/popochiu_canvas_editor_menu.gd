@@ -12,7 +12,6 @@ const PASSIVE_SCOPE_ROOM_ICON: Texture2D = preload(
 )
 
 var _active_popochiu_object: Node = null
-var _shown_helpers := []
 var _passive_scope: int = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 
 @onready var btn_markers: Button = %BtnMarkers
@@ -91,6 +90,8 @@ func _sync_polygon_toolbar_state() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_walkable_passive_visibility_changed.emit(
 		btn_walkable_area_polygon.button_pressed
 	)
+
+
 #endregion
 
 #region Signals ####################################################################################
@@ -180,7 +181,7 @@ func _trace_interaction_polygon() -> void:
 	PopochiuPolygonsHelper.trace_interaction_polygon(_active_popochiu_object)
 
 
-# When gizmo-related editor settings change, we update the toolbar buttons colors
+# When gizmo-related editor settings change, we update the toolbar buttons colors.
 func _on_gizmo_settings_changed() -> void:
 	_set_toolbar_buttons_color()
 	_set_buttons_visibility()
@@ -234,6 +235,9 @@ func _on_selection_changed() -> void:
 	_set_interaction_polygon_button_color()
 
 
+#endregion 
+
+#region Private ####################################################################################
 # Sets all the buttons color so that they are the same as the gizmos
 # or make them theme-standard if the user so prefers (see editor settings)
 func _set_toolbar_buttons_color() -> void:
@@ -292,7 +296,6 @@ func _set_toolbar_buttons_color() -> void:
 	)
 
 
-
 # Sets the color of the interaction polygon button depending on the selected
 # node (walkable areas have a different color from clickables and characters).
 func _set_interaction_polygon_button_color() -> void:
@@ -310,8 +313,8 @@ func _set_interaction_polygon_button_color() -> void:
 		)
 
 
-# Internal helper to reduce code duplication
-func _set_toolbar_button_color(btn, color) -> void:
+# Internal helper to reduce code duplication.
+func _set_toolbar_button_color(btn: Button, color: Color) -> void:
 	btn.add_theme_color_override("icon_normal_color", color)
 	btn.add_theme_color_override("icon_hover_color", color.lightened(1.0))
 	btn.add_theme_color_override("icon_focused_color", color.lightened(1.0))
@@ -319,8 +322,8 @@ func _set_toolbar_button_color(btn, color) -> void:
 	btn.add_theme_color_override("icon_hover_pressed_color", color.lightened(1.0))
 
 
-# Internal helper to reduce code duplication
-func _reset_toolbar_button_color(btn) -> void:
+# Internal helper to reduce code duplication.
+func _reset_toolbar_button_color(btn: Button) -> void:
 	btn.remove_theme_color_override("icon_normal_color")
 	btn.remove_theme_color_override("icon_hover_color")
 	btn.remove_theme_color_override("icon_focused_color")
@@ -438,7 +441,7 @@ func _set_buttons_visibility() -> void:
 	label_edit.visible = btn_interaction_polygon.visible or btn_obstacle_polygon.visible
 
 
-# Make all buttons pop-up
+# Make all buttons pop-up.
 func _reset_buttons_state() -> void:
 	btn_markers.set_pressed_no_signal(true)
 	btn_baseline.set_pressed_no_signal(true)
