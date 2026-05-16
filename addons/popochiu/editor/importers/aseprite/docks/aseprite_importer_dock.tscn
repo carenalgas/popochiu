@@ -225,6 +225,24 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
+[node name="AutotracePolygons" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "If active, the interaction polygon of each imported prop or character will be traced automatically from its sprite's alpha channel."
+
+[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/AutotracePolygons"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+text = "Autotrace polygons"
+
+[node name="AutotracePolygonsCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/AutotracePolygons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 2.0
+
 [node name="ButtonsBox" type="HBoxContainer" parent="Margin/Importer"]
 layout_mode = 2
 size_flags_horizontal = 8
@@ -275,5 +293,6 @@ horizontal_alignment = 1
 [connection signal="text_changed" from="Margin/Importer/FilterBulkBtnContainer/HBoxContainer/FilterField" to="." method="_on_filter_text_changed"]
 [connection signal="pressed" from="Margin/Importer/OptionsContainer/Options/VisibleLayers/VisibleLayersCheckButton" to="." method="_save_config"]
 [connection signal="pressed" from="Margin/Importer/OptionsContainer/Options/WipeOldAnimations/WipeOldAnimationsCheckButton" to="." method="_save_config"]
+[connection signal="pressed" from="Margin/Importer/OptionsContainer/Options/AutotracePolygons/AutotracePolygonsCheckButton" to="." method="_save_config"]
 [connection signal="pressed" from="Margin/Importer/ButtonsBox/Reset" to="." method="_on_reset_pressed"]
 [connection signal="pressed" from="Margin/Importer/ButtonsBox/Import" to="." method="_on_import_pressed"]

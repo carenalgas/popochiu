@@ -24,25 +24,86 @@ extends Object
 # so the action can be undone.
 # Returns [code]false[/code] if no suitable sprite is found or tracing produced no polygons.
 static func trace_interaction_polygon(clickable: Node) -> bool:
+	var interaction_polygon_node := _get_validated_interaction_polygon(clickable)
+	if interaction_polygon_node == null:
+		return false
+
+	var polygon := _compute_interaction_polygon(clickable)
+	if polygon.is_empty():
+		return false
+
+	var previous_polygon := interaction_polygon_node.polygon.duplicate()
+
+	PopochiuEditorHelper.undo_redo.create_action(
+		"Autotrace interaction polygon for " + clickable.name
+	)
+	PopochiuEditorHelper.undo_redo.add_do_property(
+		interaction_polygon_node, "polygon", polygon
+	)
+	PopochiuEditorHelper.undo_redo.add_undo_property(
+		interaction_polygon_node, "polygon", previous_polygon
+	)
+	PopochiuEditorHelper.undo_redo.commit_action()
+
+	# Notify the gizmo plugin with the exact node that changed, so only its gizmo
+	# gets marked dirty and the viewport overlay is redrawn.
+	PopochiuEditorHelper.signal_bus.interaction_polygon_autotraced.emit(interaction_polygon_node)
+
+	return true
+
+
+# Traces the interaction polygon of [param clickable] from the alpha channel of its sprite.
+# Sets the polygon directly on the node without registering an undo/redo action.
+# Intended for programmatic use (e.g. during asset import) where undo/redo entries are
+# not appropriate. The [signal PopochiuSignalBus.interaction_polygon_autotraced] signal is
+# still emitted so gizmo overlays refresh correctly.
+# Returns [code]false[/code] if no suitable sprite is found or tracing produced no polygons.
+static func trace_interaction_polygon_direct(clickable: Node) -> bool:
+	var interaction_polygon_node := _get_validated_interaction_polygon(clickable)
+	if interaction_polygon_node == null:
+		return false
+
+	var polygon := _compute_interaction_polygon(clickable)
+	if polygon.is_empty():
+		return false
+
+	interaction_polygon_node.polygon = polygon
+
+	# Notify the gizmo plugin with the exact node that changed, so only its gizmo
+	# gets marked dirty and the viewport overlay is redrawn.
+	PopochiuEditorHelper.signal_bus.interaction_polygon_autotraced.emit(interaction_polygon_node)
+
+	return true
+
+#endregion
+
+
+#region Private ####################################################################################
+
+# Looks up and validates the [CollisionPolygon2D] child named [code]InteractionPolygon[/code]
+# on [param clickable]. Returns [code]null[/code] and prints a warning if it is missing.
+static func _get_validated_interaction_polygon(clickable: Node) -> CollisionPolygon2D:
+	var node := clickable.get_node_or_null("InteractionPolygon") as CollisionPolygon2D
+	if node == null:
+		PopochiuUtils.print_warning(
+			"PopochiuPolygonsHelper: no InteractionPolygon node found on '%s'." % clickable.name
+		)
+	return node
+
+
+# Computes and returns the traced polygon in [param clickable]'s local coordinate space.
+# Returns an empty [PackedVector2Array] on any failure (no sprite, no texture, tracing failure).
+static func _compute_interaction_polygon(clickable: Node) -> PackedVector2Array:
 	var sprite := clickable.get_node_or_null("Sprite2D") as Sprite2D
 	if sprite == null or sprite.texture == null:
 		PopochiuUtils.print_warning(
 			"PopochiuPolygonsHelper: no Sprite2D with a texture found on '%s'." % clickable.name
 		)
-		return false
-
-	var interaction_polygon_node := (
-		clickable.get_node_or_null("InteractionPolygon") as CollisionPolygon2D
-	)
-	if interaction_polygon_node == null:
-		PopochiuUtils.print_warning(
-			"PopochiuPolygonsHelper: no InteractionPolygon node found on '%s'." % clickable.name
-		)
-		return false
+		return PackedVector2Array()
 
 	var image := _get_sprite_image(sprite)
 	if image == null:
-		return false
+		return PackedVector2Array()
 
 	var polygon_levels := _compute_polygon(
 		image,
@@ -57,7 +118,7 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 		PopochiuUtils.print_warning(
 			"PopochiuPolygonsHelper: tracing produced no polygons for '%s'." % clickable.name
 		)
-		return false
+		return PackedVector2Array()
 
 	# Use the first polygon from the outermost bezel level.
 	# For collision purposes a single polygon outline is sufficient.
@@ -67,31 +128,7 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 	# Uses a full Transform2D so the sprite node's position, rotation, and scale within the
 	# parent are all accounted for.
 	var bitmap_to_local := _compute_bitmap_to_local_transform(sprite)
-	result_polygon = bitmap_to_local * result_polygon
-
-	var previous_polygon := interaction_polygon_node.polygon.duplicate()
-
-	PopochiuEditorHelper.undo_redo.create_action(
-		"Autotrace interaction polygon for " + clickable.name
-	)
-	PopochiuEditorHelper.undo_redo.add_do_property(
-		interaction_polygon_node, "polygon", result_polygon
-	)
-	PopochiuEditorHelper.undo_redo.add_undo_property(
-		interaction_polygon_node, "polygon", previous_polygon
-	)
-	PopochiuEditorHelper.undo_redo.commit_action()
-
-	# Notify the gizmo plugin with the exact node that changed, so only its gizmo
-	# gets marked dirty and the viewport overlay is redrawn.
-	PopochiuEditorHelper.signal_bus.interaction_polygon_autotraced.emit(interaction_polygon_node)
-
-	return true
-
-#endregion
-
-
-#region Private ####################################################################################
+	return bitmap_to_local * result_polygon
 
 # Returns the rect within the texture that represents the currently displayed frame, expressed
 # in the texture's own pixel space.

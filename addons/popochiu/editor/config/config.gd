@@ -43,6 +43,7 @@ const ASEPRITE_PROPS_VISIBLE = "popochiu/aseprite_import/new_props_visible_by_de
 const ASEPRITE_PROPS_CLICKABLE = "popochiu/aseprite_import/new_props_clickable_by_default"
 const ASEPRITE_ONLY_VISIBLE_LAYERS = "popochiu/aseprite_import/only_visible_layers"
 const ASEPRITE_WIPE_OLD_ANIMATIONS = "popochiu/aseprite_import/wipe_old_animations"
+const ASEPRITE_AUTOTRACE_POLYGONS = "popochiu/aseprite_import/autotrace_polygons"
 
 # ---- Pixel game ----------------------------------------------------------------------------------
 const PIXEL_ART_TEXTURES = "popochiu/pixel/pixel_art_textures"
@@ -99,6 +100,7 @@ static var defaults := {
 	ASEPRITE_PROPS_CLICKABLE: true,
 	ASEPRITE_ONLY_VISIBLE_LAYERS: true,
 	ASEPRITE_WIPE_OLD_ANIMATIONS: true,
+	ASEPRITE_AUTOTRACE_POLYGONS: true,
 	PIXEL_ART_TEXTURES: false,
 	PIXEL_PERFECT: false,
 	PREFIX_CHARACTER: "_",
@@ -192,6 +194,7 @@ static func initialize_project_settings() -> void:
 	_initialize_project_setting(ASEPRITE_PROPS_CLICKABLE, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_ONLY_VISIBLE_LAYERS, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS, TYPE_BOOL)
+	_initialize_project_setting(ASEPRITE_AUTOTRACE_POLYGONS, TYPE_BOOL)
 
 	# ---- Pixel game ------------------------------------------------------------------------------
 	_initialize_project_setting(PIXEL_ART_TEXTURES, TYPE_BOOL)
@@ -325,6 +328,9 @@ static func is_default_only_visible_layers() -> bool:
 
 static func is_default_wipe_old_anims_enabled() -> bool:
 	return _get_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS)
+
+static func is_default_autotrace_polygons() -> bool:
+	return _get_project_setting(ASEPRITE_AUTOTRACE_POLYGONS)
 
 
 # ---- Pixel game ----------------------------------------------------------------------------------

@@ -335,6 +335,9 @@ func _load_config(cfg) -> void:
 	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
 		cfg.get("wipe_old_anims", false)
 	)
+	%AutotracePolygonsCheckButton.set_pressed_no_signal(
+		cfg.get("autotrace_polygons", false)
+	)
 
 	_set_tags_visible(cfg.get("tags_exp", false))
 	_populate_tags(cfg.get("tags", []))
@@ -349,6 +352,7 @@ func _save_config() -> void:
 		"tags_exp": %Tags.visible,
 		"only_visible_layers": %VisibleLayersCheckButton.is_pressed(),
 		"wipe_old_anims": %WipeOldAnimationsCheckButton.is_pressed(),
+		"autotrace_polygons": %AutotracePolygonsCheckButton.is_pressed(),
 	}
 
 	LOCAL_OBJ_CONFIG.save_config(target_node, cfg)
@@ -374,6 +378,9 @@ func _load_default_config() -> void:
 	)
 	%WipeOldAnimationsCheckButton.set_pressed_no_signal(
 		PopochiuConfig.is_default_wipe_old_anims_enabled()
+	)
+	%AutotracePolygonsCheckButton.set_pressed_no_signal(
+		PopochiuConfig.is_default_autotrace_polygons()
 	)
 
 

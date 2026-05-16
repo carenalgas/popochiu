@@ -77,6 +77,13 @@ func _on_import_pressed() -> void:
 
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
+		# If autotrace is enabled, trace the interaction polygon from the sprite's alpha channel
+		# before packing the scene, so the polygon is included in the saved resource.
+		if %AutotracePolygonsCheckButton.is_pressed():
+			PopochiuPolygonsHelper.trace_interaction_polygon_direct(prop)
+
+	for prop in props_container.get_children():
+		if not prop.has_meta("ANIM_NAME"): continue
 		# Save the prop
 		result = await _save_prop(prop)
 
@@ -107,6 +114,7 @@ func _customize_filter_ui() -> void:
 	%VisibleBulk.visible = true
 	%ClickableBulk.visible = true
 	%AutoplaysBulk.visible = true
+	%AutotracePolygons.visible = true
 
 
 func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = true):

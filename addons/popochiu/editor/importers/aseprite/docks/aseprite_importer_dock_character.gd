@@ -36,11 +36,18 @@ func _on_import_pressed():
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
+		if %AutotracePolygonsCheckButton.is_pressed():
+			PopochiuPolygonsHelper.trace_interaction_polygon_direct(target_node)
 		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
 
 
 func _customize_tag_ui(tag_row: AnimationTagRow):
 	pass
+
+
+func _customize_filter_ui() -> void:
+	# Show autotrace toggle for characters
+	%AutotracePolygons.visible = true
 
 ## Returns true for characters as they typically use looping animations.
 func _get_default_loop_behavior() -> bool:
