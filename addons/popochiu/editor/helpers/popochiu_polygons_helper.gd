@@ -40,14 +40,26 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 	PopochiuEditorHelper.undo_redo.add_do_property(
 		interaction_polygon_node, "polygon", polygon
 	)
+	# Notify the gizmo plugin after the do so the overlay redraws immediately.
+	PopochiuEditorHelper.undo_redo.add_do_method(
+		PopochiuEditorHelper.signal_bus,
+		"emit_signal",
+		"interaction_polygon_autotraced",
+		interaction_polygon_node
+	)
 	PopochiuEditorHelper.undo_redo.add_undo_property(
 		interaction_polygon_node, "polygon", previous_polygon
 	)
+	# Also notify after undo so the gizmo redraws when the action is undone.
+	PopochiuEditorHelper.undo_redo.add_undo_method(
+		PopochiuEditorHelper.signal_bus,
+		"emit_signal",
+		"interaction_polygon_autotraced",
+		interaction_polygon_node
+	)
+	# commit_action() executes the do actions immediately by default,
+	# so the signal fires and the gizmo redraws right away.
 	PopochiuEditorHelper.undo_redo.commit_action()
-
-	# Notify the gizmo plugin with the exact node that changed, so only its gizmo
-	# gets marked dirty and the viewport overlay is redrawn.
-	PopochiuEditorHelper.signal_bus.interaction_polygon_autotraced.emit(interaction_polygon_node)
 
 	return true
 
