@@ -57,7 +57,7 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 		"interaction_polygon_autotraced",
 		interaction_polygon_node
 	)
-	# commit_action() executes the do actions immediately by default,
+	# The commit_action() call executes the do-actions immediately by default,
 	# so the signal fires and the gizmo redraws right away.
 	PopochiuEditorHelper.undo_redo.commit_action()
 
@@ -221,9 +221,11 @@ static func _compute_bitmap_to_local_transform(sprite: Sprite2D) -> Transform2D:
 	return sprite.transform * Transform2D(0.0, centering_offset)
 
 
-# Runs the full polygon-from-bitmap pipeline and returns a list-of-lists-of-polygons.
-# The outer list represents bezel levels; each inner list holds polygon outlines for that level.
-# When [param bezel] is 0, the result is [[polygons_from_bitmap]].
+# Runs the full polygon-from-bitmap pipeline and returns a nested list of polygons.
+# The outer Array contains one entry per bezel level (Array[Array[PackedVector2Array]]).
+# Each inner Array holds the polygon outlines for that level as PackedVector2Array values.
+# When [param bezel] is 0, the result is a single-element outer list wrapping
+# the raw polygons: [[PackedVector2Array, ...]].
 static func _compute_polygon(
 	image: Image,
 	epsilon: float,
@@ -286,8 +288,9 @@ static func _trace_polygons_from_bitmap(
 
 
 # Expands or contracts each polygon by [param bezel] pixels via [method Geometry2D.offset_polygon].
-# Returns one group of offset outlines per input polygon.
-static func _apply_bezel(polygons: Array, bezel: int) -> Array:
+# [param polygons] is an Array[PackedVector2Array] — the direct output of [method _trace_polygons_from_bitmap].
+# Returns Array[Array[PackedVector2Array]]: one group of offset outlines per input polygon.
+static func _apply_bezel(polygons: Array[PackedVector2Array], bezel: int) -> Array:
 	var polygon_levels := []
 	for polygon in polygons:
 		polygon_levels.append(Geometry2D.offset_polygon(polygon, bezel))
@@ -295,6 +298,9 @@ static func _apply_bezel(polygons: Array, bezel: int) -> Array:
 
 
 # Flattens all polygon points into a single convex hull and returns [[hull_polygon]].
+# [param polygon_levels] is Array[Array[PackedVector2Array]] as produced by [method _apply_bezel]
+# or [code][raw_polygons][/code] from [method _compute_polygon].
+# Returns Array[Array[PackedVector2Array]] with a single outer entry containing the hull.
 # The duplicate closing point returned by [method Geometry2D.convex_hull] is removed.
 static func _apply_convex_hull(polygon_levels: Array) -> Array:
 	var all_points: PackedVector2Array = []

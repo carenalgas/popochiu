@@ -25,7 +25,7 @@ var file_system: EditorFileSystem
 # ---- External logic
 var _animation_tag_row_scene: PackedScene =\
 preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.tscn")
-var _aseprite = preload("../aseprite_controller.gd").new() ## TODO: should be absolute?
+var _aseprite := preload("../aseprite_controller.gd").new() # TODO: should be absolute?
 # ---- References for children scripts
 var _root_node: Node
 var _options: Dictionary
@@ -66,7 +66,7 @@ var _bulk_toggle_configs = {
 }
 
 #region Public ######################################################################################
-func init():
+func init() -> void:
 	# Connect signals
 
 	# Connect to theme changes to update styles if the user
@@ -147,13 +147,13 @@ func _get_default_autoplay_behavior() -> bool:
 # This method can be overridden by child classes to customize the tag UI,
 # such as enabling additional buttons or similar.
 func _customize_tag_ui(tagrow: AnimationTagRow) -> void:
-	## This can be implemented by child classes if necessary
+	# This can be implemented by child classes if necessary.
 	pass
 
 # This method can be overridden by child classes to customize the filter bar UI,
 # such as enabling additional buttons or similar.
 func _customize_filter_ui() -> void:
-	## This can be implemented by child classes if necessary
+	# This can be implemented by child classes if necessary.
 	pass
 
 # Selects an animation in the AnimationPlayer of a target node.
@@ -241,7 +241,11 @@ func _on_request_delete_anim(tag_name: String) -> void:
 	var delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
 	
 	delete_dialog.title = "Remove animation for tag %s?" % tag_name
-	delete_dialog.message = "This will [b]NOT[/b] remove [b]%s[/b] prop or inventory item, but only the %s animation!" % [tag_name, tag_name.to_snake_case()]
+	var anim_name := tag_name.to_snake_case()
+	delete_dialog.message = (
+		"This will [b]NOT[/b] remove [b]%s[/b] prop or inventory item, but only the %s animation!"
+		% [tag_name, anim_name]
+	)
 	delete_dialog.ask = "Remove the animation for tag [b]%s[/b]?" % tag_name
 	delete_dialog.on_confirmed = _delete_animation_for_tag.bind(tag_name)
 	
@@ -307,7 +311,7 @@ func _check_aseprite() -> int:
 	return RESULT_CODE.SUCCESS	
 
 
-func _list_tags(file: String):
+func _list_tags(file: String) -> Variant:
 	if not _aseprite.check_command_path():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
 	if not _aseprite.test_command():
@@ -428,7 +432,7 @@ func _scan_source() -> void:
 
 
 func _populate_tags(tags: Array) -> void:
-	## reset tags container
+	# Reset tags container.
 	_empty_tags_container()
 
 	# Add each tag found
@@ -505,7 +509,10 @@ func _get_tags_from_source() -> Array:
 
 
 func _show_message(
-	message: String, title: String = PopochiuEditorHelper.EMPTY_STRING, object: Object = null, method := PopochiuEditorHelper.EMPTY_STRING
+	message: String,
+	title: String = PopochiuEditorHelper.EMPTY_STRING,
+	object: Object = null,
+	method := PopochiuEditorHelper.EMPTY_STRING
 ) -> void:
 	var warning_dialog = AcceptDialog.new()
 	
@@ -527,7 +534,9 @@ func _show_message(
 	PopochiuEditorHelper.show_dialog(warning_dialog)
 
 
-func _show_confirmation(message: String, title: String = PopochiuEditorHelper.EMPTY_STRING) -> ConfirmationDialog:
+func _show_confirmation(
+	message: String, title: String = PopochiuEditorHelper.EMPTY_STRING
+) -> ConfirmationDialog:
 	var _confirmation_dialog = ConfirmationDialog.new()
 	get_parent().add_child(_confirmation_dialog)
 	if title != PopochiuEditorHelper.EMPTY_STRING:
@@ -556,11 +565,6 @@ func _set_elements_styles() -> void:
 
 	# Set style of warning panel
 	%WarningLabel.add_theme_color_override("font_color", get_theme_color("error_color", "Editor"))
-
-	# Style the title buttons with proper theme colors
-	var normal_color = get_theme_color("font_color", "Label")
-	var hover_color = get_theme_color("font_hover_color", "Button")
-	var pressed_color = get_theme_color("font_pressed_color", "Button")
 
 	%Import.set_button_icon(get_theme_icon("MoveDown", "EditorIcons"))
 	%Reset.set_button_icon(get_theme_icon("Clear", "EditorIcons"))
