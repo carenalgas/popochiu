@@ -1,19 +1,19 @@
 @tool
 extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_dock.gd"
 
-var _animation_creator = preload(\
+var _animation_creator := preload(\
 "res://addons/popochiu/editor/importers/aseprite/animation_creator_sprite2d.gd").new()
 
 
 
 #region Public ######################################################################################
-func init():
+func init() -> void:
 	# Instantiate animation creator
 	_animation_creator.init(_aseprite, file_system)
 
 	super()
 
-## Returns false for room props (no autoplay by default).
+# Returns false for room props (no autoplay by default).
 func _get_default_autoplay_behavior() -> bool:
 	return false
 
@@ -27,7 +27,7 @@ func _on_import_pressed() -> void:
 	# This will populate _root_node and _options class variables
 	super()
 
-	var props_container = _root_node.get_node("Props")
+	var props_container := _root_node.get_node("Props")
 	var result: int = RESULT_CODE.SUCCESS
 
 	# Create a prop for each tag that must be imported
@@ -41,7 +41,7 @@ func _on_import_pressed() -> void:
 		var prop_name: String = tag.tag_name.to_pascal_case()
 		
 		# In case the prop is there, use the one we already have
-		var prop = props_container.get_node_or_null(prop_name)
+		var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
 		if prop == null:
 			# Create a new prop if necessary, specifying the
 			# interaction flags.
@@ -77,6 +77,13 @@ func _on_import_pressed() -> void:
 
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
+		# If autotrace is enabled, trace the interaction polygon from the sprite's alpha channel
+		# before packing the scene, so the polygon is included in the saved resource.
+		if %AutotracePolygonsCheckButton.is_pressed():
+			PopochiuPolygonsHelper.trace_interaction_polygon_direct(prop)
+
+	for prop in props_container.get_children():
+		if not prop.has_meta("ANIM_NAME"): continue
 		# Save the prop
 		result = await _save_prop(prop)
 
@@ -107,10 +114,11 @@ func _customize_filter_ui() -> void:
 	%VisibleBulk.visible = true
 	%ClickableBulk.visible = true
 	%AutoplaysBulk.visible = true
+	%AutotracePolygons.visible = true
 
 
-func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = true):
-	var factory = PopochiuPropFactory.new()
+func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = true) -> PopochiuProp:
+	var factory := PopochiuPropFactory.new()
 	var param := PopochiuPropFactory.PopochiuPropFactoryParam.new()
 	param.obj_name = name
 	param.room = _root_node
@@ -139,14 +147,14 @@ func _get_scene_path_for_tag(tag_name: String) -> String:
 		return PopochiuEditorHelper.EMPTY_STRING
 
 	# In a room, props are in the "Props" node
-	var props_container = target_node.get_node_or_null("Props")
+	var props_container := target_node.get_node_or_null("Props")
 	if not is_instance_valid(props_container):
 		PopochiuUtils.print_warning("No Props container found in room. Are you sure this is a valid room?")
 		return PopochiuEditorHelper.EMPTY_STRING
 
 	# Find the prop with the matching name (converted to PascalCase)
-	var prop_name = tag_name.to_pascal_case()
-	var prop = props_container.get_node_or_null(prop_name)
+	var prop_name := tag_name.to_pascal_case()
+	var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
 
 	if not is_instance_valid(prop):
 		PopochiuUtils.print_warning("No prop named '%s' found in room. Did you import this animation?" % prop_name)
@@ -159,11 +167,11 @@ func _get_scene_path_for_tag(tag_name: String) -> String:
 
 
 #region Protected ##################################################################################
-## Selects the animation in the room prop's AnimationPlayer.
-## This involves opening the prop scene and then selecting the AnimationPlayer.
+# Selects the animation in the room prop's AnimationPlayer.
+# This involves opening the prop scene and then selecting the AnimationPlayer.
 func _select_animation(tag_name: String) -> void:
-	var prop_name = tag_name.to_pascal_case()
-	var prop_scene_path = _get_scene_path_for_tag(tag_name)
+	var prop_name := tag_name.to_pascal_case()
+	var prop_scene_path := _get_scene_path_for_tag(tag_name)
 	if prop_scene_path.is_empty():
 		PopochiuUtils.print_warning("Prop '%s' does not have a scene file path. The prop may be corrupted, try to reimport it." % prop_name)
 		return
@@ -175,39 +183,39 @@ func _select_animation(tag_name: String) -> void:
 	await PopochiuEditorHelper.frame_processed()
 
 	# Get the current scene root (should be the prop now)
-	var prop_scene_root = EditorInterface.get_edited_scene_root()
+	var prop_scene_root: Node = EditorInterface.get_edited_scene_root()
 	if not is_instance_valid(prop_scene_root):
 		PopochiuUtils.print_warning("Failed to get edited scene root for prop '%s'. The prop may be corrupted, try to reimport it." % prop_name)
 		return
 
 	# Find the AnimationPlayer in the prop scene
-	var animation_player = prop_scene_root.get_node_or_null("AnimationPlayer")
+	var animation_player: AnimationPlayer = prop_scene_root.get_node_or_null("AnimationPlayer")
 
 	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_SELECT)
 
 
-## Removes the animation for the given tag from the room prop's AnimationPlayer.
+# Removes the animation for the given tag from the room prop's AnimationPlayer.
 func _delete_animation_for_tag(tag_name: String) -> void:
-	var prop_name = tag_name.to_pascal_case()
-	var prop_scene_path = _get_scene_path_for_tag(tag_name)
+	var prop_name := tag_name.to_pascal_case()
+	var prop_scene_path := _get_scene_path_for_tag(tag_name)
 	if prop_scene_path.is_empty():
 		PopochiuUtils.print_warning("Prop '%s' does not have a scene file path. The prop may be corrupted, try to reimport it." % prop_name)
 		return
 	
 	# Load the scene without opening it in the editor
-	var packed_scene = load(prop_scene_path)
+	var packed_scene: PackedScene = load(prop_scene_path)
 	if not packed_scene:
 		PopochiuUtils.print_warning("Failed to load scene for prop '%s'" % prop_name)
 		return
 	
 	# Instance the scene to work with it in memory
-	var prop_scene_root = packed_scene.instantiate()
+	var prop_scene_root: Node = packed_scene.instantiate()
 	if not is_instance_valid(prop_scene_root):
 		PopochiuUtils.print_warning("Failed to instantiate scene for prop '%s'" % prop_name)
 		return
 	
 	# Find the AnimationPlayer in the prop scene
-	var animation_player = prop_scene_root.get_node_or_null("AnimationPlayer")
+	var animation_player: AnimationPlayer = prop_scene_root.get_node_or_null("AnimationPlayer")
 	_handle_animation_in_player(tag_name, animation_player, HANDLE_ANIM_DELETE)
 
 	PopochiuEditorHelper.pack_scene(prop_scene_root)
