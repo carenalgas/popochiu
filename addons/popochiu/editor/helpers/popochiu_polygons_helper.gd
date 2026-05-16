@@ -46,6 +46,7 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 
 	var polygon_levels := _compute_polygon(
 		image,
+		PopochiuConfig.get_autotrace_alpha_threshold(),
 		PopochiuConfig.get_autotrace_approximation(),
 		PopochiuConfig.get_autotrace_outline_margin(),
 		PopochiuConfig.get_autotrace_mask_padding(),
@@ -177,6 +178,7 @@ static func _compute_bitmap_to_local_transform(sprite: Sprite2D) -> Transform2D:
 # When [param bezel] is 0, the result is [[polygons_from_bitmap]].
 static func _compute_polygon(
 	image: Image,
+	alpha_threshold: float,
 	epsilon: float,
 	bezel: int,
 	growth: int,
@@ -187,7 +189,7 @@ static func _compute_polygon(
 	if use_two_way_resize:
 		_apply_two_way_resize(image)
 
-	var bitmap := _create_bitmap_from_alpha(image)
+	var bitmap := _create_bitmap_from_alpha(image, alpha_threshold)
 
 	if growth != 0:
 		_grow_bitmap_mask(bitmap, growth)
@@ -217,7 +219,7 @@ static func _apply_two_way_resize(image: Image) -> void:
 
 # Creates a [BitMap] from the alpha channel of [param image].
 # Pixels with alpha above [param alpha_threshold] are treated as opaque (inside the shape).
-static func _create_bitmap_from_alpha(image: Image, alpha_threshold: float = 0.0) -> BitMap:
+static func _create_bitmap_from_alpha(image: Image, alpha_threshold: float = 0.1) -> BitMap:
 	var bitmap := BitMap.new()
 	bitmap.create_from_image_alpha(image, alpha_threshold)
 	return bitmap
@@ -260,4 +262,3 @@ static func _apply_convex_hull(polygon_levels: Array) -> Array:
 	return [[hull]]
 
 #endregion
-

@@ -59,6 +59,8 @@ const UI_PREFIXES = "popochiu/audio/ui_prefixes"
 const DEV_USE_ADDON_TEMPLATE = "popochiu/dev/use_addon_template"
 
 # ---- Auto Tracer ---------------------------------------------------------------------------------
+# Every pixel value below the alpha threshold will be black.
+const AUTOTRACE_ALPHA_THRESHOLD = "popochiu/auto_tracer/alpha_threshold"
 # Controls how closely the traced outline follows pixel boundaries.
 # Lower values produce more accurate but more complex polygons; higher values simplify the result.
 const AUTOTRACE_APPROXIMATION = "popochiu/auto_tracer/approximation"
@@ -107,6 +109,7 @@ static var defaults := {
 	VOICE_PREFIXES: "vo,",
 	UI_PREFIXES: "ui,",
 	DEV_USE_ADDON_TEMPLATE: false,
+	AUTOTRACE_ALPHA_THRESHOLD: 0.1,
 	AUTOTRACE_APPROXIMATION: 1,
 	AUTOTRACE_MASK_PADDING: 2,
 	AUTOTRACE_OUTLINE_MARGIN: 0,
@@ -208,6 +211,9 @@ static func initialize_project_settings() -> void:
 	_initialize_advanced_project_setting(DEV_USE_ADDON_TEMPLATE, TYPE_BOOL)
 
 	# ---- Auto Tracer -----------------------------------------------------------------------------
+	_initialize_project_setting(AUTOTRACE_ALPHA_THRESHOLD, TYPE_FLOAT, PROPERTY_HINT_RANGE, 
+		"0.0,1.0,0.01"
+	)
 	_initialize_project_setting(
 		AUTOTRACE_APPROXIMATION, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,10.0,0.1"
 	)
@@ -367,6 +373,9 @@ static func is_use_addon_template() -> bool:
 
 
 # ---- Auto Tracer ---------------------------------------------------------------------------------
+static func get_autotrace_alpha_threshold() -> float:
+	return _get_project_setting(AUTOTRACE_ALPHA_THRESHOLD)
+
 static func get_autotrace_approximation() -> float:
 	return _get_project_setting(AUTOTRACE_APPROXIMATION)
 
