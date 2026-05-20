@@ -90,13 +90,17 @@ func _notification(event: int) -> void:
 ## Called when [param chr] enters this region.[br]
 ## Implement this to add custom behavior or update the game state.
 func _on_character_entered(chr: PopochiuCharacter) -> void:
-	chr.modulate = tint
+	# #435: Respect the character's flag to opt out of region tinting.
+	if not chr.ignore_region_tinting:
+		chr.modulate = tint
 
 
 ## Called when [param chr] exits this region.[br]
 ## Implement this to add custom behavior or update the game state.
 func _on_character_exited(chr: PopochiuCharacter) -> void:
-	chr.modulate = Color.WHITE
+	# #435: Only restore the color if the character accepts tinting from regions.
+	if not chr.ignore_region_tinting:
+		chr.modulate = Color.WHITE
 
 
 #endregion
@@ -151,7 +155,8 @@ func _check_scaling(
 		_remove_character_scaling_region(character)
 		return
 	
-	if scaling and _active_characters.has(character.script_name):
+	# #435: Skip applying scaling region data if the character opts out of region scaling.
+	if scaling and _active_characters.has(character.script_name) and not character.ignore_region_scaling:
 		_update_character_scaling_region(character)
 		character.update_scale()
 

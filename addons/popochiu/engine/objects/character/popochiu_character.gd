@@ -118,6 +118,19 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## Whether the character ignores or not obstacles in walkable areas. If [code]true[/code], the character will
 ## move within a walkable area, ignoring obstacle polygons that might block the path.
 @export var ignore_obstacles := false
+## Whether the character ignores scale changes applied by [PopochiuRegion]s.
+## When [code]true[/code], the character will not be scaled when entering or moving through a region
+## that has scaling enabled.
+@export var ignore_region_scaling := false
+## Whether the character ignores tinting applied by [PopochiuRegion]s.
+## When [code]true[/code], the character's modulate will not be changed when entering or exiting
+## a region that defines a [member PopochiuRegion.tint] color.
+@export var ignore_region_tinting := false
+## Whether the character's walk speed is adjusted to match its current perspective scale.
+## When [code]true[/code] (default), the character moves slower when scaled down (far away)
+## and faster when scaled up (close). Set to [code]false[/code] to keep a constant walk speed
+## regardless of scale.
+@export var scaling_adjust_speed := true
 ## Whether the character will move only when the frame changes on its animation.
 @export var anti_glide_animation: bool = false
 ## When true, this character will be considered an obstacle and its obstacle polygon (if available)
@@ -1274,6 +1287,11 @@ func sync_buffered_position() -> void:
 ## Updates the scale of the character, depending on the properties of the scaling region
 ## where the character is currently located.
 func update_scale():
+	# #435: Skip scaling when the character opts out of region scaling.
+	if ignore_region_scaling:
+		scale = default_scale
+		_walk_scale_factor = 1.0
+		return
 	if scaling_region:
 		var polygon_range: float = (
 			scaling_region.polygon_bottom_y - scaling_region.polygon_top_y
@@ -1326,8 +1344,11 @@ func set_walk_speed_override(value: float) -> void:
 
 ## Returns the effective walk speed for the current frame, combining [member walk_speed]
 ## (or [member walk_speed_override] if active) with the current perspective scale factor.
+## The scale factor is only applied when [member scaling_adjust_speed] is [code]true[/code].
 func get_current_walk_speed() -> float:
-	return (walk_speed_override if walk_speed_override > 0.0 else walk_speed) * _walk_scale_factor
+	var base_speed := walk_speed_override if walk_speed_override > 0.0 else walk_speed
+	# #435: Respect the flag that controls whether speed is adjusted for perspective scaling.
+	return base_speed * (_walk_scale_factor if scaling_adjust_speed else 1.0)
 
 
 func set_alpha(value: float) -> void:
