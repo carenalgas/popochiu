@@ -197,28 +197,28 @@ func _calculate_size(msg: String) -> Vector2:
 	
 	await get_tree().process_frame
 	
-	var _size := lbl.size
+	var size := lbl.size
 	
-	if _size.x > wrap_width:
+	if size.x > wrap_width:
 		# This node will have the width of the wrap_width
-		_size.x = wrap_width
+		size.x = wrap_width
 		rt.fit_content = true
-		rt.size.x = _size.x
+		rt.size.x = size.x
 		rt.text = msg
 		
 		await get_tree().process_frame
 		
-		_size = rt.size
+		size = rt.size
 	else:
 		# This node will have the width of the text
-		_size.y = get_meta(DFLT_SIZE).y
+		size.y = get_meta(DFLT_SIZE).y
 	
 	var characters_count := lbl.get_total_character_count()
 	
 	lbl.free()
 	rt.free()
 	
-	return _size
+	return size
 
 
 func _set_default_label_size(lbl: Label) -> void:

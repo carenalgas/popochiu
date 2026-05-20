@@ -540,11 +540,11 @@ func _show_confirmation(
 	var _confirmation_dialog = ConfirmationDialog.new()
 	get_parent().add_child(_confirmation_dialog)
 	if title != PopochiuEditorHelper.EMPTY_STRING:
-		_confirmation_dialog.title = title
-	_confirmation_dialog.dialog_text = message
-	_confirmation_dialog.popup_centered()
-	_confirmation_dialog.close_requested.connect(_confirmation_dialog.queue_free)
-	return _confirmation_dialog
+		confirmation_dialog.title = title
+	confirmation_dialog.dialog_text = message
+	confirmation_dialog.popup_centered()
+	confirmation_dialog.close_requested.connect(confirmation_dialog.queue_free)
+	return confirmation_dialog
 
 
 func _set_tags_visible(is_visible: bool) -> void:

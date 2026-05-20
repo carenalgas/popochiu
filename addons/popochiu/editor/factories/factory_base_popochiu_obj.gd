@@ -113,11 +113,11 @@ func _create_state_resource() -> int:
 
 
 func _copy_script_template() -> int:
-	var _script: Script = load(
+	var script: Script = load(
 		BASE_SCRIPT_TEMPLATE % _type_label
 	).duplicate()
 
-	if ResourceSaver.save( _script, _path_script) != OK:
+	if ResourceSaver.save(script, _path_script) != OK:
 		PopochiuUtils.print_error(
 			"Could not create %s script: %s" %
 			[_type_label, _path_script]
