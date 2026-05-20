@@ -13,17 +13,17 @@ extends Area2D
 ## Can be used to show the name of the area to players.
 @export var description := ""
 ## Whether the region is or not enabled.
-@export var enabled := true : set = _set_enabled
+@export var enabled := true: set = _set_enabled
 ## The [Color] to apply to the character that enters this region.
 @export var tint := Color.WHITE
 ## Whether the region will scale the character while it moves through it.
-@export var scaling :bool = false
+@export var scaling: bool = false
 ## The scale to apply to the character inside the region when it moves to the top ([code]y[/code])
 ## of it.
-@export var scale_top :float = 1.0
+@export var scale_top: float = 1.0
 ## The scale to apply to the character inside the region when it moves to the bottom
 ## ([code]y[/code]) of it.
-@export var scale_bottom :float = 1.0
+@export var scale_bottom: float = 1.0
 ## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
 ## by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := PackedVector2Array()
@@ -123,19 +123,30 @@ func _check_area(area: Area2D, entered: bool) -> void:
 
 func _check_scaling(
 	area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool
-):
+) -> void:
+	# Fixes #505: Only trigger scaling behavior if the shape that entered/exited belongs
+	# to the character's ScalingPolygon.
+	# Identify the physical shape that fired by resolving it to its owner node, then compare
+	# against the character's ScalingPolygon. Previously we were comparing against the child index
+	# (position in scene tree) with an area_shape_index: it worked by coincidence because
+	# the ScalingPolygon was the first child of a "standard" character.
 	if not is_instance_valid(area) or not (
 		area is PopochiuCharacter
 		and area.get("scaling_polygon")
-		and area_shape_index == area.get("scaling_polygon").get_index()
+		and area.shape_owner_get_owner(
+			area.shape_find_owner(area_shape_index)
+		) == area.get("scaling_polygon")
 	):
 		return
 	
 	var character: PopochiuCharacter = area
-	# Track character entry/exit across all shapes
+	# Fixes #505
+	# Only the ScalingPolygon shape drives entry and exit decisions. Because we check the exact
+	# shape node above, the InteractionPolygon still overlapping the region on exit is irrelevant
+	# and does not prevent the scaling reset.
 	if entered:
 		_active_characters[character.script_name] = area
-	elif not character in get_overlapping_areas():
+	else:
 		_active_characters.erase(character.script_name)
 		_remove_character_scaling_region(character)
 		return
@@ -146,7 +157,7 @@ func _check_scaling(
 
 
 func _update_character_scaling_region(chr: PopochiuCharacter) -> void:
-	var polygon_y_array := []
+	var polygon_y_array: Array[float] = []
 	for x: Vector2 in interaction_polygon_node.get_polygon():
 		polygon_y_array.append(x.y)
 	

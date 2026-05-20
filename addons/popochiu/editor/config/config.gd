@@ -43,6 +43,7 @@ const ASEPRITE_PROPS_VISIBLE = "popochiu/aseprite_import/new_props_visible_by_de
 const ASEPRITE_PROPS_CLICKABLE = "popochiu/aseprite_import/new_props_clickable_by_default"
 const ASEPRITE_ONLY_VISIBLE_LAYERS = "popochiu/aseprite_import/only_visible_layers"
 const ASEPRITE_WIPE_OLD_ANIMATIONS = "popochiu/aseprite_import/wipe_old_animations"
+const ASEPRITE_AUTOTRACE_POLYGONS = "popochiu/aseprite_import/autotrace_polygons"
 
 # ---- Pixel game ----------------------------------------------------------------------------------
 const PIXEL_ART_TEXTURES = "popochiu/pixel/pixel_art_textures"
@@ -57,6 +58,25 @@ const UI_PREFIXES = "popochiu/audio/ui_prefixes"
 
 # ---- DEV -----------------------------------------------------------------------------------------
 const DEV_USE_ADDON_TEMPLATE = "popochiu/dev/use_addon_template"
+
+# ---- Auto Tracer ---------------------------------------------------------------------------------
+# Every pixel value below the alpha threshold will be black.
+const AUTOTRACE_ALPHA_THRESHOLD = "popochiu/auto_tracer/alpha_threshold"
+# Controls how closely the traced outline follows pixel boundaries.
+# Lower values produce more accurate but more complex polygons; higher values simplify the result.
+const AUTOTRACE_APPROXIMATION = "popochiu/auto_tracer/approximation"
+# Pixels to expand (positive) or contract (negative) the alpha bitmap mask before tracing.
+# Operates at raster level, so values are whole pixels.
+const AUTOTRACE_MASK_PADDING = "popochiu/auto_tracer/mask_padding"
+# Pixels to expand (positive) or contract (negative) the traced polygon outline after tracing.
+# Operates geometrically on the polygon edges via Geometry2D.offset_polygon.
+const AUTOTRACE_OUTLINE_MARGIN = "popochiu/auto_tracer/outline_margin"
+# When enabled, the image is scaled down by half and back before tracing.
+# This blurs single-pixel protrusions and yields simpler polygon outlines.
+const AUTOTRACE_NOISE_REDUCTION = "popochiu/auto_tracer/noise_reduction"
+# When enabled, all traced polygon points are merged into a single convex hull polygon.
+# When disabled, the first (typically largest) concave outline found is used instead.
+const AUTOTRACE_CONVEX_OUTLINE = "popochiu/auto_tracer/convex_outline"
 
 static var defaults := {
 	SCALE_GUI: false,
@@ -82,6 +102,7 @@ static var defaults := {
 	ASEPRITE_PROPS_CLICKABLE: true,
 	ASEPRITE_ONLY_VISIBLE_LAYERS: true,
 	ASEPRITE_WIPE_OLD_ANIMATIONS: true,
+	ASEPRITE_AUTOTRACE_POLYGONS: true,
 	PIXEL_ART_TEXTURES: false,
 	PIXEL_PERFECT: false,
 	PREFIX_CHARACTER: "_",
@@ -90,11 +111,17 @@ static var defaults := {
 	VOICE_PREFIXES: "vo,",
 	UI_PREFIXES: "ui,",
 	DEV_USE_ADDON_TEMPLATE: false,
+	AUTOTRACE_ALPHA_THRESHOLD: 0.1,
+	AUTOTRACE_APPROXIMATION: 1,
+	AUTOTRACE_MASK_PADDING: 2,
+	AUTOTRACE_OUTLINE_MARGIN: 0,
+	AUTOTRACE_NOISE_REDUCTION: false,
+	AUTOTRACE_CONVEX_OUTLINE: true,
 }
 
 
 #region Public #####################################################################################
-static func reload_transitions():
+static func reload_transitions() -> void:
 	# Transition Layer
 	var transition_hint: String = _get_transitions_hint()
 
@@ -106,7 +133,7 @@ static func reload_transitions():
 	)
 
 
-static func initialize_project_settings():
+static func initialize_project_settings() -> void:
 	# ---- GUI -------------------------------------------------------------------------------------
 	_initialize_project_setting(SCALE_GUI, TYPE_BOOL)
 	# Transition Layer
@@ -170,6 +197,7 @@ static func initialize_project_settings():
 	_initialize_project_setting(ASEPRITE_PROPS_CLICKABLE, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_ONLY_VISIBLE_LAYERS, TYPE_BOOL)
 	_initialize_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS, TYPE_BOOL)
+	_initialize_project_setting(ASEPRITE_AUTOTRACE_POLYGONS, TYPE_BOOL)
 
 	# ---- Pixel game ------------------------------------------------------------------------------
 	_initialize_project_setting(PIXEL_ART_TEXTURES, TYPE_BOOL)
@@ -185,10 +213,26 @@ static func initialize_project_settings():
 	# ---- DEV -------------------------------------------------------------------------------------
 	_initialize_advanced_project_setting(DEV_USE_ADDON_TEMPLATE, TYPE_BOOL)
 
+	# ---- Auto Tracer -----------------------------------------------------------------------------
+	_initialize_project_setting(AUTOTRACE_ALPHA_THRESHOLD, TYPE_FLOAT, PROPERTY_HINT_RANGE, 
+		"0.0,1.0,0.01"
+	)
+	_initialize_project_setting(
+		AUTOTRACE_APPROXIMATION, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,10.0,0.1"
+	)
+	_initialize_project_setting(
+		AUTOTRACE_MASK_PADDING, TYPE_INT, PROPERTY_HINT_RANGE, "-20,20,1"
+	)
+	_initialize_project_setting(
+		AUTOTRACE_OUTLINE_MARGIN, TYPE_INT, PROPERTY_HINT_RANGE, "-20,20,1"
+	)
+	_initialize_project_setting(AUTOTRACE_NOISE_REDUCTION, TYPE_BOOL)
+	_initialize_project_setting(AUTOTRACE_CONVEX_OUTLINE, TYPE_BOOL)
+
 	ProjectSettings.save()
 
 
-static func set_project_setting(key: String, value) -> void:
+static func set_project_setting(key: String, value: Variant) -> void:
 	ProjectSettings.set_setting(key, value)
 	ProjectSettings.save()
 
@@ -291,6 +335,9 @@ static func is_default_only_visible_layers() -> bool:
 static func is_default_wipe_old_anims_enabled() -> bool:
 	return _get_project_setting(ASEPRITE_WIPE_OLD_ANIMATIONS)
 
+static func is_default_autotrace_polygons() -> bool:
+	return _get_project_setting(ASEPRITE_AUTOTRACE_POLYGONS)
+
 
 # ---- Pixel game ----------------------------------------------------------------------------------
 static func set_pixel_art_textures(use_pixel_art_textures: bool) -> void:
@@ -331,6 +378,30 @@ static func is_use_addon_template() -> bool:
 	return _get_project_setting(DEV_USE_ADDON_TEMPLATE)
 
 
+# ---- Auto Tracer ---------------------------------------------------------------------------------
+static func get_autotrace_alpha_threshold() -> float:
+	return _get_project_setting(AUTOTRACE_ALPHA_THRESHOLD)
+
+static func get_autotrace_approximation() -> float:
+	return _get_project_setting(AUTOTRACE_APPROXIMATION)
+
+
+static func get_autotrace_mask_padding() -> int:
+	return _get_project_setting(AUTOTRACE_MASK_PADDING)
+
+
+static func get_autotrace_outline_margin() -> int:
+	return _get_project_setting(AUTOTRACE_OUTLINE_MARGIN)
+
+
+static func is_autotrace_noise_reduction() -> bool:
+	return _get_project_setting(AUTOTRACE_NOISE_REDUCTION)
+
+
+static func is_autotrace_convex_outline() -> bool:
+	return _get_project_setting(AUTOTRACE_CONVEX_OUTLINE)
+
+
 #endregion
 
 #region Private ####################################################################################
@@ -360,7 +431,7 @@ static func _create_setting(
 	})
 
 
-static func _get_project_setting(key: String):
+static func _get_project_setting(key: String) -> Variant:
 	var p = ProjectSettings.get_setting(key)
 	return p if p != null else defaults[key]
 
@@ -394,12 +465,12 @@ static func _get_transitions_hint() -> String:
 		# Fallback on default transition (capitalized) - again
 		return defaults[TL_DEFAULT_ROOM_TRANSITION].capitalize()
 
-	var transitions = tl.get_all_transitions_list()
+	var transitions: PackedStringArray = tl.get_all_transitions_list()
 	tl.queue_free()
 	# Capitalize transition names for display in project settings
 	# Split by "/" to handle animation library prefixes (e.g., "User/anim_name")
 	# Convert PackedStringArray to Array to use map()
-	var capitalized_transitions = Array(transitions).map(func(name):
+	var capitalized_transitions := Array(transitions).map(func(name):
 		var parts = Array(name.split("/")).map(func(s): return s.capitalize())
 		return "/".join(PackedStringArray(parts))
 	)

@@ -110,15 +110,15 @@ func get_markers() -> Array:
 ## autocompletion.
 func get_runtime_room(script_name: String) -> PopochiuRoom:
 	var room: PopochiuRoom = null
-	
+
 	if _room_instances.has(script_name):
 		room = _room_instances[script_name]
 	else:
 		room = get_instance(script_name)
-	
+
 		if room:
 			_room_instances[room.script_name] = room
-	
+
 	return room
 
 
@@ -129,13 +129,13 @@ func get_instance(script_name: String) -> PopochiuRoom:
 	# plugin is looking for
 	if is_instance_valid(current) and current.script_name == script_name:
 		return current
-	
+
 	var tres_path: String = PopochiuResources.get_data_value("rooms", script_name, "")
-	
+
 	if not tres_path:
 		PopochiuUtils.print_error("Room [b]%s[/b] doesn't exist in the project" % script_name)
 		return null
-	
+
 	return load(load(tres_path).scene).instantiate()
 
 
@@ -143,7 +143,7 @@ func get_instance(script_name: String) -> PopochiuRoom:
 func clear_instances() -> void:
 	for r in _room_instances:
 		(_room_instances[r] as PopochiuRoom).free()
-	
+
 	_room_instances.clear()
 
 
@@ -160,10 +160,10 @@ func goto_room(
 	ignore_change := false
 ) -> void:
 	if not PopochiuUtils.e.in_room: return
-	
+
 	PopochiuUtils.e.in_room = false
 	PopochiuUtils.g.block()
-	
+
 	_use_transition_on_room_change = use_transition
 	# Never fade the TL in, if we are entering the first room at game start
 	if use_transition and Engine.get_process_frames() > 0:
@@ -174,46 +174,46 @@ func goto_room(
 		)
 	elif Engine.get_process_frames() > 0:
 		PopochiuUtils.t.show_curtain()
-	
+
 	# Prevent the GUI from showing info coming from the previous room
 	PopochiuUtils.g.show_hover_text()
 	PopochiuUtils.cursor.show_cursor()
-	
+
 	if is_instance_valid(PopochiuUtils.c.player) and Engine.get_process_frames() > 0:
 		PopochiuUtils.c.player.last_room = current.script_name
-	
+
 	# Collect characters that should follow across rooms before saving state.
 	# This must happen before save_children_states() so followers are excluded from source room.
 	if Engine.get_process_frames() > 0:
 		_collect_cross_room_followers()
-	
+
 	# Store the room state
 	if store_state:
 		rooms_states[current.script_name] = current.state
 		current.state.save_children_states()
-	
+
 	# Remove PopochiuCharacter nodes from the room so they are not deleted
 	if Engine.get_process_frames() > 0:
 		current.exit_room()
-	
+
 	# Reset camera config
 	PopochiuUtils.e.camera.restore_default_limits()
-	
+
 	if ignore_change:
 		return
-	
+
 	var rp: String = PopochiuResources.get_data_value("rooms", script_name, "")
 	if rp.is_empty():
 		PopochiuUtils.print_error(
 			"Can't go to room [b]%s[/b] because it doesn't exist" % script_name
 		)
 		return
-	
+
 	if Engine.get_process_frames() == 0:
 		await get_tree().process_frame
-	
+
 	clear_instances()
-	
+
 	PopochiuUtils.e.clear_hovered()
 	PopochiuUtils.e.get_tree().change_scene_to_file(load(rp).scene)
 
@@ -222,7 +222,7 @@ func goto_room(
 func room_readied(room: PopochiuRoom) -> void:
 	if not is_instance_valid(current):
 		current = room
-	
+
 	# When running from the Editor the first time, use goto_room
 	if Engine.get_process_frames() == 0:
 		await get_tree().process_frame
@@ -233,10 +233,10 @@ func room_readied(room: PopochiuRoom) -> void:
 		# same that is already loaded).
 		# Also, use the transition layer to fade in the room, if the setting is enabled.
 		await goto_room(room.script_name, PopochiuUtils.e.settings.show_tl_in_first_room, true, true)
-	
+
 	# Make the camera be ready for the room
 	current.setup_camera()
-	
+
 	# Update the core state
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.c.player = PopochiuUtils.c.get_character(PopochiuUtils.e.loaded_game.player.id)
@@ -244,21 +244,21 @@ func room_readied(room: PopochiuRoom) -> void:
 		current.state.visited = true
 		current.state.visited_times += 1
 		current.state.visited_first_time = current.state.visited_times == 1
-	
+
 	# Add the PopochiuCharacter instances to the room
 	if (rooms_states[room.script_name]["characters"] as Dictionary).is_empty():
 		# Store the initial state of the characters in the room
 		current.state.save_characters()
-	
+
 	current.clean_characters()
-	
+
 	# Load the state of characters in the room
 	for chr_script_name: String in rooms_states[room.script_name]["characters"]:
 		var chr_dic: Dictionary = rooms_states[room.script_name]["characters"][chr_script_name]
 		var chr: PopochiuCharacter = PopochiuUtils.c.get_character(chr_script_name)
-		
+
 		if not chr: continue
-		
+
 		# If character is already in another room's tree, remove it first
 		# This can happen when the same character instance is saved in multiple rooms
 		if chr.is_inside_tree():
@@ -273,10 +273,10 @@ func room_readied(room: PopochiuRoom) -> void:
 		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
 		chr.light_mask = chr_dic.light_mask
 		chr.baseline = chr_dic.baseline
-		
+
 		if chr_dic.has("walk_to_point"):
 			chr.walk_to_point = PopochiuUtils.unpack_vector_2(chr_dic.walk_to_point)
-		
+
 		if chr_dic.has("look_at_point"):
 			chr.look_at_point = PopochiuUtils.unpack_vector_2(chr_dic.look_at_point)
 
@@ -286,17 +286,17 @@ func room_readied(room: PopochiuRoom) -> void:
 		# Restore follow-related properties
 		if chr_dic.has("follow_character_outside_room"):
 			chr.follow_character_outside_room = chr_dic.follow_character_outside_room
-		
+
 		if chr_dic.has("follow_character_offset"):
 			chr.follow_character_offset = PopochiuUtils.unpack_vector_2(chr_dic.follow_character_offset)
-		
+
 		if chr_dic.has("follow_character_threshold"):
 			chr.follow_character_threshold = PopochiuUtils.unpack_vector_2(chr_dic.follow_character_threshold)
-		
+
 		# Restore face_character link after character is added to the room
 		if chr_dic.has("face_character") and chr_dic.face_character:
 			chr.face_character = chr_dic.face_character
-		
+
 		# Restore follow link after character is added to the room
 		# This must happen after add_character() so the character is in the tree
 		if chr_dic.has("follow_character") and chr_dic.follow_character:
@@ -327,7 +327,7 @@ func room_readied(room: PopochiuRoom) -> void:
 		# Place the PC in the middle of the room
 		PopochiuUtils.c.player.position = Vector2(PopochiuUtils.e.width, PopochiuUtils.e.height) / 2.0
 		await PopochiuUtils.c.player.idle()
-	
+
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDREN:
 		for script_name in rooms_states[room.script_name][type]:
@@ -335,65 +335,63 @@ func room_readied(room: PopochiuRoom) -> void:
 				"get_" + type.trim_suffix("s"),
 				[(script_name as String).to_pascal_case()]
 			)
-			
+
 			if not is_instance_valid(node):
 				# Fix #320 by ignoring the object if it doesn't exist inside the Room
 				continue
-			
+
 			var node_dic: Dictionary =\
 			rooms_states[room.script_name][type][script_name]
-			
+
 			for property in node_dic:
 				if not PopochiuResources.has_property(node, property): continue
-				if node[property] is Array:
-					node[property].assign(node_dic[property])
-				else: node[property] = node_dic[property]
-	
+				_restore_node_property(node, property, node_dic[property])
+
 	for c in get_tree().get_nodes_in_group("PopochiuClickable"):
 		c.room = current
-	
+
 	await current._on_room_entered()
-	
+
 	# Add characters that followed across rooms AFTER _on_room_entered() so the followed
 	# character (e.g., player) is already at their final position set by the room script.
 	_add_cross_room_followers()
-	
+
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.c.player.global_position = Vector2(
 			PopochiuUtils.e.loaded_game.player.position.x,
 			PopochiuUtils.e.loaded_game.player.position.y
 		)
-	
+
 	if _use_transition_on_room_change:
 		await PopochiuUtils.t.play_transition(
 			PopochiuConfig.get_tl_default_room_transition(),
 			PopochiuConfig.get_tl_room_transition_duration(),
 			PopochiuConfig.get_tl_room_transition_mode_enter()
 		)
-		
+
 		await PopochiuUtils.e.wait(0.3)
 	else:
 		PopochiuUtils.t.hide_curtain()
 		await get_tree().process_frame
-	
+
 	if not current.hide_gui:
 		PopochiuUtils.g.unblock()
-	
+
 	if PopochiuUtils.e.hovered:
 		PopochiuUtils.g.mouse_entered_clickable.emit(PopochiuUtils.e.hovered)
-	
+
 	PopochiuUtils.e.in_room = true
-	
+
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.e.game_loaded.emit(PopochiuUtils.e.loaded_game)
 		await PopochiuUtils.g.load_feedback_finished
-		
+
 		PopochiuUtils.e.loaded_game = {}
-	
+
 	# This enables the room to listen input events
 	current.is_current = true
 	await current._on_room_transition_finished()
-	
+
 	# Fix #219: Update visited_first_time state once _on_room_transition_finished() finishes
 	current.state.visited_first_time = false
 
@@ -427,15 +425,15 @@ func set_current(value: PopochiuRoom) -> void:
 # so followed characters come before their followers.
 func _collect_cross_room_followers() -> void:
 	_pending_cross_room_followers.clear()
-	
+
 	if not is_instance_valid(current):
 		return
-	
+
 	# Get all characters currently in the room
 	var characters_in_room := current.get_characters()
 	if characters_in_room.is_empty():
 		return
-	
+
 	# Build a map of who follows whom for chain detection
 	var follower_map := {}  # followed_script_name -> Array of followers
 	for chr: PopochiuCharacter in characters_in_room:
@@ -448,10 +446,10 @@ func _collect_cross_room_followers() -> void:
 			if not follower_map.has(followed_name):
 				follower_map[followed_name] = []
 			follower_map[followed_name].append(chr)
-	
+
 	if follower_map.is_empty():
 		return
-	
+
 	# Find the root of the follow chain (the character being followed who isn't following anyone
 	# with follow_character_outside_room, or is the player)
 	var roots: Array[String] = []
@@ -470,12 +468,12 @@ func _collect_cross_room_followers() -> void:
 		)
 		if is_root:
 			roots.append(followed_name)
-	
+
 	# Process chains starting from roots, adding followers in order (followed first, then followers)
 	var processed := {}
 	for root_name in roots:
 		_collect_followers_recursive(root_name, follower_map, processed)
-	
+
 	# Remove collected followers from the current room so they won't be saved in source room state
 	for entry in _pending_cross_room_followers:
 		var follower: PopochiuCharacter = entry.character
@@ -491,20 +489,20 @@ func _collect_followers_recursive(
 ) -> void:
 	if not follower_map.has(followed_name):
 		return
-	
+
 	for follower: PopochiuCharacter in follower_map[followed_name]:
 		if processed.has(follower.script_name):
 			continue
-		
+
 		processed[follower.script_name] = true
-		
+
 		# Store the follower info
 		_pending_cross_room_followers.append({
 			"character": follower,
 			"followed_script_name": followed_name,
 			"offset": follower.follow_character_offset
 		})
-		
+
 		# Recursively process anyone following this follower
 		_collect_followers_recursive(follower.script_name, follower_map, processed)
 
@@ -514,12 +512,12 @@ func _collect_followers_recursive(
 func _add_cross_room_followers() -> void:
 	if _pending_cross_room_followers.is_empty():
 		return
-	
+
 	for entry: Dictionary in _pending_cross_room_followers:
 		var follower: PopochiuCharacter = entry.character
 		var followed_name: String = entry.followed_script_name
 		var offset: Vector2 = entry.offset
-		
+
 		# Get the followed character (should already be in the room)
 		var followed := PopochiuUtils.c.get_character(followed_name)
 		if not is_instance_valid(followed):
@@ -528,14 +526,14 @@ func _add_cross_room_followers() -> void:
 				[follower.script_name, followed_name]
 			)
 			continue
-		
+
 		# Add the follower to the room first
 		if not current.has_character(follower.script_name):
 			current.add_character(follower)
-		
+
 		# Stop any ongoing movement before repositioning
 		follower.stop_walking()
-		
+
 		# Position the follower relative to the followed character AFTER add_character(),
 		# because add_character() calls update_position() which would overwrite with the
 		# stale _buffered_position from the previous room.
@@ -543,11 +541,34 @@ func _add_cross_room_followers() -> void:
 		follower.position = target_position
 		# Sync the buffered position so it doesn't jump back when movement starts
 		follower.sync_buffered_position()
-		
+
 		# Re-establish the follow link
 		follower.start_following_character(followed)
-	
+
 	_pending_cross_room_followers.clear()
 
+# Restores one node property from stored room state while preserving runtime types.
+func _restore_node_property(node: Node2D, property: String, value) -> void:
+	var current_value = node[property]
+
+	if current_value is Array:
+		var destination: Array = current_value
+
+		if value is Array:
+			destination.assign(value)
+			return
+
+		if value is PackedVector2Array:
+			destination.assign([value])
+			return
+
+		node[property] = value
+		return
+
+	if current_value is PackedVector2Array and value is Array:
+		node[property] = PackedVector2Array(value)
+		return
+
+	node[property] = value
 
 #endregion
