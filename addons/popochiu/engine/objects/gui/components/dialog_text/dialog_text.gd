@@ -50,6 +50,7 @@ func _ready() -> void:
 	# Connect to singletons events
 	PopochiuUtils.e.text_speed_changed.connect(change_speed)
 	PopochiuUtils.c.character_spoke.connect(_show_dialogue)
+	PopochiuUtils.c.character_stopped_talking.connect(_on_character_stopped_talking)
 	
 	continue_icon.hide()
 
@@ -152,6 +153,10 @@ func change_speed() -> void:
 #endregion
 
 #region Private ####################################################################################
+func _on_character_stopped_talking(_chr: PopochiuCharacter) -> void:
+	disappear()
+
+
 func _show_dialogue(chr: PopochiuCharacter, msg := "") -> void:
 	if not visible: return
 	

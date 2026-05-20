@@ -696,6 +696,16 @@ func say(dialog: String, emo := EMPTY_STRING) -> void:
 	idle()
 
 
+## Interrupts the character's current dialog line, if any.
+## Hides the dialog text immediately and unblocks any [method say] coroutine waiting on it.
+## Has no effect when the character is not currently talking.
+## This does not exit an active [PopochiuDialog] tree.
+func stop_talking() -> void:
+	if not _is_talking:
+		return
+	PopochiuUtils.c.character_stopped_talking.emit(self)
+
+
 ## Plays the grab animation and waits for [signal grab_done], then returns to idle.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
