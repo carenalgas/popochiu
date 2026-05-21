@@ -51,6 +51,9 @@ signal obstacle_state_changed(character: PopochiuCharacter)
 ## Emitted during movement when the character's position changes.
 ## Only emitted while the character is moving and the position has actually changed from the last emission.
 signal position_updated(character: PopochiuCharacter, current_position: Vector2)
+## Emitted when this character's movement is interrupted because it tried to enter a
+## [PopochiuRegion] with [member PopochiuRegion.walkable] set to [code]false[/code].
+signal blocked_by_region(region: PopochiuRegion)
 
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
@@ -118,6 +121,9 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## Whether the character ignores or not obstacles in walkable areas. If [code]true[/code], the character will
 ## move within a walkable area, ignoring obstacle polygons that might block the path.
 @export var ignore_obstacles := false
+## Whether the character can walk through [PopochiuRegion]s with [member PopochiuRegion.walkable]
+## set to [code]false[/code]. When [code]true[/code], blocking regions will not interrupt movement.
+@export var ignore_blocking_regions := false
 ## Whether the character ignores scale changes applied by [PopochiuRegion]s.
 ## When [code]true[/code], the character will not be scaled when entering or moving through a region
 ## that has scaling enabled.
@@ -279,6 +285,11 @@ func _ready() -> void:
 	# Connect movement signals to virtual methods
 	movement_started.connect(_on_movement_started)
 	movement_ended.connect(_on_movement_ended)
+	
+	# #521: Detect entry into blocking regions through bidirectional Area2D overlap signals.
+	# Both the region and the character independently receive area_entered for the same overlap,
+	# so the character can manage its own blocking reaction without the region calling into it.
+	area_entered.connect(_on_entered_area_check_blocking)
 
 	# Connect to own movement signals to handle navigation internally
 	if not started_walk_to.is_connected(_update_navigation_path):
@@ -391,6 +402,14 @@ func _on_movement_started() -> void:
 ## Called when the character stops moving. Override to add custom behavior such as
 ## triggering events or updating game state.
 func _on_movement_ended() -> void:
+	pass
+
+
+## Called when this character's movement is interrupted because it tried to enter a
+## [PopochiuRegion] with [member PopochiuRegion.walkable] set to [code]false[/code].[br]
+## Override in the character's game script to react to the event (e.g. play a sound, show a
+## message). [param region] is the [PopochiuRegion] that blocked the character.
+func _on_blocked_by_region(_region: PopochiuRegion) -> void:
 	pass
 
 
@@ -1552,6 +1571,21 @@ func stop_following_character() -> void:
 #endregion
 
 #region Private ####################################################################################
+# #521: Handler for the character's own area_entered signal.
+# Area2D overlap detection is bidirectional, so when a character enters a region, both nodes
+# receive area_entered independently. This lets the character manage its own blocking reaction
+# without the region needing to call any method on the character.
+func _on_entered_area_check_blocking(area: Area2D) -> void:
+	if not (area is PopochiuRegion):
+		return
+	var region := area as PopochiuRegion
+	if region.walkable or ignore_blocking_regions:
+		return
+	stop_walking()
+	blocked_by_region.emit(region)
+	_on_blocked_by_region(region)
+
+
 # Resolves a character parameter to a PopochiuCharacter instance.
 # [param character] can be a PopochiuCharacter, a String (script_name), or null.
 # [param fallback_script_name] is used when [param character] is null or empty.

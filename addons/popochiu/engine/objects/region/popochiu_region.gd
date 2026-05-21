@@ -8,12 +8,21 @@ extends Area2D
 ## Regions can apply visual effects such as tinting characters or scaling them based on vertical
 ## position (useful for simulating depth in walkable areas).
 
+## Emitted when a [param character] tries to enter this region while [member walkable] is
+## [code]false[/code] and the character does not ignore blocking regions.
+## Connect to this signal in the region's game script to react to the blocking event.
+signal character_blocked(character: PopochiuCharacter)
+
 ## The identifier of the object used in scripts.
 @export var script_name := ""
 ## Can be used to show the name of the area to players.
 @export var description := ""
 ## Whether the region is or not enabled.
 @export var enabled := true: set = _set_enabled
+## Whether characters can walk through this region. When [code]false[/code], characters whose
+## [member PopochiuCharacter.ignore_blocking_regions] is also [code]false[/code] will have their
+## movement interrupted upon entering. The region's state is saved as part of the room save data.
+@export var walkable := true
 ## The [Color] to apply to the character that enters this region.
 @export var tint := Color.WHITE
 ## Whether the region will scale the character while it moves through it.
@@ -151,6 +160,12 @@ func _check_area(area: Area2D, entered: bool) -> void:
 	if not area is PopochiuCharacter: return
 	
 	if entered:
+		# #521: If the region is not walkable and the character doesn't opt out, emit the blocking
+		# signal and suppress _on_character_entered() so tinting/custom enter logic don't fire.
+		# The character stops itself independently via its own area_entered handler.
+		if not walkable and not (area as PopochiuCharacter).ignore_blocking_regions:
+			character_blocked.emit(area as PopochiuCharacter)
+			return
 		_on_character_entered(area)
 	else:
 		_on_character_exited(area)
