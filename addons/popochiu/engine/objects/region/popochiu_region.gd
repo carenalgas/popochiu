@@ -105,6 +105,37 @@ func _on_character_exited(chr: PopochiuCharacter) -> void:
 
 #endregion
 
+#region Public #####################################################################################
+## Returns [code]true[/code] if [param chr]'s [b]ScalingPolygon[/b] is currently inside this region.
+func has_character(chr: PopochiuCharacter) -> bool:
+	return _active_characters.has(chr.script_name)
+
+
+## Returns [code]true[/code] if [param marker]'s global position is inside this region's polygon.
+func has_marker(marker: Marker2D) -> bool:
+	return Geometry2D.is_point_in_polygon(marker.global_position, _get_global_polygon())
+
+
+## Returns all [PopochiuCharacter]s whose [b]ScalingPolygon[/b] is currently inside this region.
+func get_characters() -> Array[PopochiuCharacter]:
+	var characters: Array[PopochiuCharacter] = []
+	for chr: PopochiuCharacter in _active_characters.values():
+		characters.append(chr)
+	return characters
+
+
+## Returns all [Marker2D]s whose global position falls inside this region's polygon.
+func get_markers() -> Array[Marker2D]:
+	var markers: Array[Marker2D] = []
+	var global_polygon := _get_global_polygon()
+	for marker: Marker2D in (owner as PopochiuRoom).get_markers():
+		if Geometry2D.is_point_in_polygon(marker.global_position, global_polygon):
+			markers.append(marker)
+	return markers
+
+
+#endregion
+
 #region SetGet #####################################################################################
 func _set_enabled(value: bool) -> void:
 	enabled = value
@@ -197,6 +228,14 @@ func _remove_character_scaling_region(chr: PopochiuCharacter) -> void:
 		chr.scaling_region = {}
 		_last_char_pos = Vector2.ZERO
 		_active_characters.erase(chr.script_name)
+
+
+# Returns the region's polygon vertices transformed to global space.
+func _get_global_polygon() -> PackedVector2Array:
+	var global_polygon := PackedVector2Array()
+	for point: Vector2 in interaction_polygon_node.polygon:
+		global_polygon.append(interaction_polygon_node.to_global(point))
+	return global_polygon
 
 
 #endregion
