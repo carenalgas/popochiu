@@ -537,8 +537,8 @@ func _show_message(
 func _show_confirmation(
 	message: String, title: String = PopochiuEditorHelper.EMPTY_STRING
 ) -> ConfirmationDialog:
-	var _confirmation_dialog = ConfirmationDialog.new()
-	get_parent().add_child(_confirmation_dialog)
+	var confirmation_dialog = ConfirmationDialog.new()
+	get_parent().add_child(confirmation_dialog)
 	if title != PopochiuEditorHelper.EMPTY_STRING:
 		confirmation_dialog.title = title
 	confirmation_dialog.dialog_text = message
