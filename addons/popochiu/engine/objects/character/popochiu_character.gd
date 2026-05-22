@@ -64,6 +64,10 @@ const STANDARD_IDLE_ANIMATION = "idle"
 const STANDARD_WALK_ANIMATION = "walk"
 ## Standard talk animation name.
 const STANDARD_TALK_ANIMATION = "talk"
+## Distance in pixels to pull back from a blocking region boundary when trimming the navigation
+## path. Prevents boundary-precision issues with Geometry2D.is_point_in_polygon() on subsequent
+## clicks. See #521.
+const BLOCKING_REGION_PULLBACK = 2.0
 
 
 ## The [Color] in which the dialogue lines of the character are rendered.
@@ -1836,7 +1840,7 @@ func _update_navigation_path(character: PopochiuCharacter, start_position: Vecto
 	# state from a previous blocked walk, then set to the region that caused trimming (if any).
 	_pending_blocking_region = null
 	if not ignore_blocking_regions:
-		_pending_blocking_region = _trim_path_at_blocking_regions(start_position)
+		_pending_blocking_region = _trim_path_to_first_blocking_region(start_position)
 
 	# Now the _navigation_path will at least have another point at index 0.
 	# Starting the physics processing will make _physics_process()
@@ -1846,11 +1850,11 @@ func _update_navigation_path(character: PopochiuCharacter, start_position: Vecto
 
 # Character navigation system.
 #
-# Checks every segment of _navigation_path against all non-walkable, enabled regions in the
-# scene. If a segment would enter a blocking region for the first time (start outside, end
-# inside), the path is trimmed to the intersection point on the region's polygon edge.
-# Returns the blocking region, or null if no trimming was needed.
-func _trim_path_at_blocking_regions(start_position: Vector2) -> PopochiuRegion:
+# Trims _navigation_path at the nearest point where it would cross a non-walkable region
+# boundary. Iterates path segments in order, and for each segment finds the closest
+# intersection across ALL blocking regions (not just the first one found in tree order).
+# Returns the blocking region that caused the trim, or null if no trimming was needed.
+func _trim_path_to_first_blocking_region(start_position: Vector2) -> PopochiuRegion:
 	var blocking_regions: Array = get_tree().get_nodes_in_group("regions").filter(
 		func(r: Node) -> bool: return r is PopochiuRegion and not r.walkable and r.enabled
 	)
@@ -1861,6 +1865,11 @@ func _trim_path_at_blocking_regions(start_position: Vector2) -> PopochiuRegion:
 	for i in range(n):
 		var seg_start := start_position if i == 0 else _navigation_path[i - 1]
 		var seg_end := _navigation_path[i]
+
+		# Find the nearest hit across all blocking regions for this segment.
+		var nearest_hit := Vector2.INF
+		var nearest_t := INF
+		var blocking_region: PopochiuRegion = null
 
 		for region in blocking_regions:
 			var polygon: PackedVector2Array = region.get_global_polygon()
@@ -1875,14 +1884,21 @@ func _trim_path_at_blocking_regions(start_position: Vector2) -> PopochiuRegion:
 			var hit := _first_entry_intersection(seg_start, seg_end, polygon)
 			if hit == Vector2.INF:
 				continue
-			# Trim: discard waypoints from i onward and replace with the stop point.
-			# Pull back 2px from the boundary so the character stops clearly outside the
+			var t := seg_start.distance_to(hit)
+			if t < nearest_t:
+				nearest_t = t
+				nearest_hit = hit
+				blocking_region = region
+
+		# If any region blocked this segment, trim the path here.
+		if blocking_region:
+			# Pull back from the boundary so the character stops clearly outside the
 			# region. Without this, a subsequent path starting from exactly on the edge
 			# causes is_point_in_polygon() to be unreliable and the trim to be skipped.
-			var stop := hit - (hit - seg_start).normalized() * 2.0
+			var stop := nearest_hit - (nearest_hit - seg_start).normalized() * BLOCKING_REGION_PULLBACK
 			_navigation_path.resize(i)
 			_navigation_path.append(stop)
-			return region
+			return blocking_region
 
 	return null
 
