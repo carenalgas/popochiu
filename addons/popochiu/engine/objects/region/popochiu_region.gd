@@ -143,6 +143,12 @@ func get_markers() -> Array[Marker2D]:
 	return markers
 
 
+## Returns the vertices of this region's polygon in global (world) coordinates.
+## Used by path-trimming in [PopochiuCharacter] to check segment intersections.
+func get_global_polygon() -> PackedVector2Array:
+	return _get_global_polygon()
+
+
 #endregion
 
 #region SetGet #####################################################################################
