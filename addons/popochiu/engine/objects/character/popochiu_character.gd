@@ -1903,11 +1903,9 @@ func _trim_path_to_first_blocking_region(start_position: Vector2) -> PopochiuReg
 	return null
 
 
-# Returns the point where segment (p1→p2) first crosses a polygon edge, i.e., the nearest
+# Returns the point where segment (p1->p2) first crosses a polygon edge, i.e., the nearest
 # intersection when approaching from outside. Returns Vector2.INF if there is no intersection.
-func _first_entry_intersection(
-	p1: Vector2, p2: Vector2, polygon: PackedVector2Array
-) -> Vector2:
+func _first_entry_intersection(p1: Vector2, p2: Vector2, polygon: PackedVector2Array) -> Vector2:
 	var seg_len := p1.distance_to(p2)
 	if seg_len < 0.001:
 		return Vector2.INF
