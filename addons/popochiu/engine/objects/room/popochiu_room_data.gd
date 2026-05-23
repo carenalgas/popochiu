@@ -12,10 +12,14 @@ extends Resource
 @export var script_name := ""
 ## The path to the scene file to be used when adding the character to the game during runtime.
 @export_file("*.tscn") var scene := ""
-## Whether the room was already visited by the player.
-@export var visited := false
-## Whether this is the first time the player visits the room.
-@export var visited_first_time := false
+## Whether the room was visited at least once.
+var visited: bool:
+	get: return visited_times > 0
+
+## Whether this is the first visit to the room.
+var visited_first_time: bool:
+	get: return visited_times == 1
+
 ## The number of times the player has visited this room.
 @export var visited_times := 0
 
