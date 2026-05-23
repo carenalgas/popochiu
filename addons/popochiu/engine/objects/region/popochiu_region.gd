@@ -13,17 +13,17 @@ extends Area2D
 ## Can be used to show the name of the area to players.
 @export var description := ""
 ## Whether the region is or not enabled.
-@export var enabled := true : set = _set_enabled
+@export var enabled := true: set = _set_enabled
 ## The [Color] to apply to the character that enters this region.
 @export var tint := Color.WHITE
 ## Whether the region will scale the character while it moves through it.
-@export var scaling :bool = false
+@export var scaling: bool = false
 ## The scale to apply to the character inside the region when it moves to the top ([code]y[/code])
 ## of it.
-@export var scale_top :float = 1.0
+@export var scale_top: float = 1.0
 ## The scale to apply to the character inside the region when it moves to the bottom
 ## ([code]y[/code]) of it.
-@export var scale_bottom :float = 1.0
+@export var scale_bottom: float = 1.0
 ## Stores the vertices to assign to the [b]InteractionPolygon[/b] child during runtime. This is used
 ## by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon := PackedVector2Array()
@@ -90,13 +90,48 @@ func _notification(event: int) -> void:
 ## Called when [param chr] enters this region.[br]
 ## Implement this to add custom behavior or update the game state.
 func _on_character_entered(chr: PopochiuCharacter) -> void:
-	chr.modulate = tint
+	# #435: Respect the character's flag to opt out of region tinting.
+	if not chr.ignore_region_tinting:
+		chr.modulate = tint
 
 
 ## Called when [param chr] exits this region.[br]
 ## Implement this to add custom behavior or update the game state.
 func _on_character_exited(chr: PopochiuCharacter) -> void:
-	chr.modulate = Color.WHITE
+	# #435: Only restore the color if the character accepts tinting from regions.
+	if not chr.ignore_region_tinting:
+		chr.modulate = Color.WHITE
+
+
+#endregion
+
+#region Public #####################################################################################
+## Returns [code]true[/code] if [param chr]'s [b]ScalingPolygon[/b] is currently inside this region.
+func has_character(chr: PopochiuCharacter) -> bool:
+	return _active_characters.has(chr.script_name)
+
+
+## Returns [code]true[/code] if [param marker]'s global position is inside this region's polygon.
+func has_marker(marker: Marker2D) -> bool:
+	return Geometry2D.is_point_in_polygon(marker.global_position, _get_global_polygon())
+
+
+## Returns all [PopochiuCharacter]s whose [b]ScalingPolygon[/b] is currently inside this region.
+func get_characters() -> Array[PopochiuCharacter]:
+	var characters: Array[PopochiuCharacter] = []
+	for chr: PopochiuCharacter in _active_characters.values():
+		characters.append(chr)
+	return characters
+
+
+## Returns all [Marker2D]s whose global position falls inside this region's polygon.
+func get_markers() -> Array[Marker2D]:
+	var markers: Array[Marker2D] = []
+	var global_polygon := _get_global_polygon()
+	for marker: Marker2D in (owner as PopochiuRoom).get_markers():
+		if Geometry2D.is_point_in_polygon(marker.global_position, global_polygon):
+			markers.append(marker)
+	return markers
 
 
 #endregion
@@ -123,30 +158,42 @@ func _check_area(area: Area2D, entered: bool) -> void:
 
 func _check_scaling(
 	area_rid: RID, area: Area2D, area_shape_index: int, local_shape_index: int, entered: bool
-):
+) -> void:
+	# Fixes #505: Only trigger scaling behavior if the shape that entered/exited belongs
+	# to the character's ScalingPolygon.
+	# Identify the physical shape that fired by resolving it to its owner node, then compare
+	# against the character's ScalingPolygon. Previously we were comparing against the child index
+	# (position in scene tree) with an area_shape_index: it worked by coincidence because
+	# the ScalingPolygon was the first child of a "standard" character.
 	if not is_instance_valid(area) or not (
 		area is PopochiuCharacter
 		and area.get("scaling_polygon")
-		and area_shape_index == area.get("scaling_polygon").get_index()
+		and area.shape_owner_get_owner(
+			area.shape_find_owner(area_shape_index)
+		) == area.get("scaling_polygon")
 	):
 		return
 	
 	var character: PopochiuCharacter = area
-	# Track character entry/exit across all shapes
+	# Fixes #505
+	# Only the ScalingPolygon shape drives entry and exit decisions. Because we check the exact
+	# shape node above, the InteractionPolygon still overlapping the region on exit is irrelevant
+	# and does not prevent the scaling reset.
 	if entered:
 		_active_characters[character.script_name] = area
-	elif not character in get_overlapping_areas():
+	else:
 		_active_characters.erase(character.script_name)
 		_remove_character_scaling_region(character)
 		return
 	
-	if scaling and _active_characters.has(character.script_name):
+	# #435: Skip applying scaling region data if the character opts out of region scaling.
+	if scaling and _active_characters.has(character.script_name) and not character.ignore_region_scaling:
 		_update_character_scaling_region(character)
 		character.update_scale()
 
 
 func _update_character_scaling_region(chr: PopochiuCharacter) -> void:
-	var polygon_y_array := []
+	var polygon_y_array: Array[float] = []
 	for x: Vector2 in interaction_polygon_node.get_polygon():
 		polygon_y_array.append(x.y)
 	
@@ -181,6 +228,14 @@ func _remove_character_scaling_region(chr: PopochiuCharacter) -> void:
 		chr.scaling_region = {}
 		_last_char_pos = Vector2.ZERO
 		_active_characters.erase(chr.script_name)
+
+
+# Returns the region's polygon vertices transformed to global space.
+func _get_global_polygon() -> PackedVector2Array:
+	var global_polygon := PackedVector2Array()
+	for point: Vector2 in interaction_polygon_node.polygon:
+		global_polygon.append(interaction_polygon_node.to_global(point))
+	return global_polygon
 
 
 #endregion

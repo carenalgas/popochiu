@@ -10,21 +10,32 @@ const ASEPRITE_COMMAND_PATH = "popochiu/import/aseprite/command_path"
 const ASEPRITE_REMOVE_JSON_FILE = "popochiu/import/aseprite/remove_json_file"
 
 # GIZMOS -------------------------------------------------------------------------------------------
+# --- Toolbar settings ---
+const TOOLBAR_APPLY_COLORS_TO_BUTTONS = "popochiu/toolbar/apply_colors_to_toolbar_buttons"
+const TOOLBAR_COMPACT_MODE = "popochiu/toolbar/compact_mode"
+# --- General gizmo settings ---
 const GIZMOS_FONT_SIZE = "popochiu/gizmos/font_size"
-const GIZMOS_BASELINE_COLOR = "popochiu/gizmos/baseline_color"
-const GIZMOS_WALK_TO_POINT_COLOR = "popochiu/gizmos/walk_to_point_color"
-const GIZMOS_LOOK_AT_POINT_COLOR = "popochiu/gizmos/look_at_point_color"
-const GIZMOS_DIALOG_POS_COLOR = "popochiu/gizmos/dialog_position_color"
-const GIZMOS_MARKER_POS_COLOR = "popochiu/gizmos/marker_position_color"
-const GIZMOS_COLOR_TOOLBAR_BUTTONS = "popochiu/gizmos/apply_colors_to_toolbar_buttons"
-const GIZMOS_HANDLER_SIZE = "popochiu/gizmos/handler_size"
-const GIZMOS_SHOW_CONNECTORS = "popochiu/gizmos/show_connectors"
-const GIZMOS_SHOW_OUTLINE = "popochiu/gizmos/show_handler_outline"
-const GIZMOS_SHOW_NODE_NAME = "popochiu/gizmos/show_node_name"
-const GIZMOS_SHOW_POSITION = "popochiu/gizmos/show_position"
-const GIZMOS_ALWAYS_SHOW_WA = "popochiu/gizmos/always_show_walkable_areas"
-const GIZMOS_ALWAYS_SHOW_INT_POLY = "popochiu/gizmos/always_show_interaction_polygons"
-const GIZMOS_ALWAYS_SHOW_OBS_POLY = "popochiu/gizmos/always_show_obstacle_polygons"
+# --- Positional gizmo settings ---
+const GIZMOS_HANDLER_SIZE = "popochiu/gizmos/positions/handler_size"
+const GIZMOS_SHOW_POSITION = "popochiu/gizmos/positions/show_position"
+const GIZMOS_SHOW_CONNECTORS = "popochiu/gizmos/positions/show_connectors"
+const GIZMOS_SHOW_OUTLINE = "popochiu/gizmos/positions/show_handler_outline"
+const GIZMOS_SHOW_NODE_NAME = "popochiu/gizmos/positions/show_node_name"
+const GIZMOS_BASELINE_COLOR = "popochiu/gizmos/positions/baseline_color"
+const GIZMOS_WALK_TO_POINT_COLOR = "popochiu/gizmos/positions/walk_to_point_color"
+const GIZMOS_LOOK_AT_POINT_COLOR = "popochiu/gizmos/positions/look_at_point_color"
+const GIZMOS_DIALOG_POS_COLOR = "popochiu/gizmos/positions/dialog_position_color"
+const GIZMOS_MARKER_POS_COLOR = "popochiu/gizmos/positions/marker_position_color"
+# --- Polygon gizmo settings ---
+const GIZMOS_POLY_VERTEX_HANDLER_SIZE = "popochiu/gizmos/polygons/polygon_vertex_handler_size"
+const GIZMOS_POLY_ENABLE_UNSELECTED_WA = "popochiu/gizmos/polygons/enable_unselected_walkable_area_polygons"
+const GIZMOS_POLY_ENABLE_UNSELECTED_INT = "popochiu/gizmos/polygons/enable_unselected_interaction_polygons"
+const GIZMOS_POLY_ENABLE_UNSELECTED_OBS = "popochiu/gizmos/polygons/enable_unselected_obstacle_polygons"
+const GIZMOS_POLY_INTERACTION_COLOR = "popochiu/gizmos/polygons/interaction_polygons_color"
+const GIZMOS_POLY_OBSTACLE_COLOR = "popochiu/gizmos/polygons/obstacle_polygons_color"
+const GIZMOS_POLY_WALKABLE_AREA_COLOR = "popochiu/gizmos/polygons/walkable_area_polygons_color"
+const GIZMOS_POLY_FILL_ALPHA = "popochiu/gizmos/polygons/polygons_fill_alpha"
+const GIZMOS_POLY_PASSIVE_ALPHA_FACTOR = "popochiu/gizmos/polygons/passive_polygons_alpha_factor"
 
 # Settings default values
 static var defaults := {
@@ -37,44 +48,62 @@ static var defaults := {
 	GIZMOS_LOOK_AT_POINT_COLOR: Color.RED,
 	GIZMOS_DIALOG_POS_COLOR: Color.MAGENTA,
 	GIZMOS_MARKER_POS_COLOR: Color.CYAN,
-	GIZMOS_COLOR_TOOLBAR_BUTTONS: true,
+	TOOLBAR_APPLY_COLORS_TO_BUTTONS: true,
+	TOOLBAR_COMPACT_MODE: false,
 	GIZMOS_HANDLER_SIZE: 32,
 	GIZMOS_SHOW_CONNECTORS: true,
 	GIZMOS_SHOW_OUTLINE: true,
 	GIZMOS_SHOW_NODE_NAME: true,
 	GIZMOS_SHOW_POSITION: true,
-	GIZMOS_ALWAYS_SHOW_WA: false,
-	GIZMOS_ALWAYS_SHOW_INT_POLY: false,
-	GIZMOS_ALWAYS_SHOW_OBS_POLY: false,
+	GIZMOS_POLY_ENABLE_UNSELECTED_WA: true,
+	GIZMOS_POLY_ENABLE_UNSELECTED_INT: true,
+	GIZMOS_POLY_ENABLE_UNSELECTED_OBS: true,
+	GIZMOS_POLY_INTERACTION_COLOR: Color.YELLOW,
+	GIZMOS_POLY_OBSTACLE_COLOR: Color.VIOLET,
+	GIZMOS_POLY_WALKABLE_AREA_COLOR: Color.GREEN,
+	GIZMOS_POLY_FILL_ALPHA: 0.15,
+	GIZMOS_POLY_PASSIVE_ALPHA_FACTOR: 0.4,
+	GIZMOS_POLY_VERTEX_HANDLER_SIZE: 6.0,
 }
 
 static var editor_settings: EditorSettings
 
 
 #region Public #####################################################################################
-static func initialize_editor_settings():
+static func initialize_editor_settings() -> void:
 	editor_settings = EditorInterface.get_editor_settings()
 
 	# Aseprite importer
 	_initialize_editor_setting(ASEPRITE_IMPORTER_ENABLED, TYPE_BOOL)
 	_initialize_editor_setting(ASEPRITE_COMMAND_PATH, TYPE_STRING)
 	_initialize_editor_setting(ASEPRITE_REMOVE_JSON_FILE, TYPE_BOOL)
+	# Toolbar
+	_initialize_editor_setting(TOOLBAR_APPLY_COLORS_TO_BUTTONS, TYPE_BOOL)
+	_initialize_editor_setting(TOOLBAR_COMPACT_MODE, TYPE_BOOL)
 	# Gizmos
+	# --- General gizmo settings ---
+	_initialize_editor_setting(GIZMOS_FONT_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
+	# --- Positional gizmo settings ---
+	_initialize_editor_setting(GIZMOS_HANDLER_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
+	_initialize_editor_setting(GIZMOS_SHOW_POSITION, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_SHOW_CONNECTORS, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_SHOW_OUTLINE, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_SHOW_NODE_NAME, TYPE_BOOL)
 	_initialize_editor_setting(GIZMOS_BASELINE_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_WALK_TO_POINT_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_LOOK_AT_POINT_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_DIALOG_POS_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_MARKER_POS_COLOR, TYPE_COLOR)
-	_initialize_editor_setting(GIZMOS_COLOR_TOOLBAR_BUTTONS, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_HANDLER_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
-	_initialize_editor_setting(GIZMOS_FONT_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
-	_initialize_editor_setting(GIZMOS_SHOW_CONNECTORS, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_SHOW_OUTLINE, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_SHOW_NODE_NAME, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_SHOW_POSITION, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_WA, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_INT_POLY, TYPE_BOOL)
-	_initialize_editor_setting(GIZMOS_ALWAYS_SHOW_OBS_POLY, TYPE_BOOL)
+	# --- Polygon gizmo settings ---
+	_initialize_editor_setting(GIZMOS_POLY_ENABLE_UNSELECTED_WA, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_POLY_ENABLE_UNSELECTED_INT, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_POLY_ENABLE_UNSELECTED_OBS, TYPE_BOOL)
+	_initialize_editor_setting(GIZMOS_POLY_INTERACTION_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_POLY_OBSTACLE_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_POLY_WALKABLE_AREA_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_POLY_FILL_ALPHA, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,1.0,0.05")
+	_initialize_editor_setting(GIZMOS_POLY_PASSIVE_ALPHA_FACTOR, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,1.0,0.05")
+	_initialize_editor_setting(GIZMOS_POLY_VERTEX_HANDLER_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
 
 
 static func get_icon(icon: Icons) -> Texture2D:
@@ -132,9 +161,9 @@ static func _initialize_editor_setting(
 	})
 
 
-static func get_editor_setting(key: String):
-	var e = editor_settings.get_setting(key)
-	return e if e != null else defaults[e]
+static func get_editor_setting(key: String) -> Variant:
+	var e := editor_settings.get_setting(key)
+	return e if e != null else defaults.get(key)
 
 
 #endregion

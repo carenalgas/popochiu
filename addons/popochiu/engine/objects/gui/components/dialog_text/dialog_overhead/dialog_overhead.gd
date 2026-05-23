@@ -4,10 +4,10 @@ extends PopochiuDialogText
 
 #region Private ####################################################################################
 func _modify_size(msg: String, target_position: Vector2) -> void:
-	var _size := await _calculate_size(msg)
+	var size := await _calculate_size(msg)
 	
 	# Define size and position (before calculating overflow)
-	rich_text_label.size = _size
+	rich_text_label.size = size
 	rich_text_label.position = target_position - rich_text_label.size / 2.0
 	rich_text_label.position.y -= rich_text_label.size.y / 2.0
 	# Calculate overflow and reposition
