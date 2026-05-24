@@ -162,7 +162,7 @@ func _on_item_added(_item: PopochiuInventoryItem) -> void:
 ## This hook is awaited by the base GUI routing layer, which emits
 ## [signal PopochiuIInventory.item_remove_done] automatically after the hook returns. Overrides
 ## must not emit the signal or call [method G.block].
-func _on_item_removed(item: PopochiuInventoryItem) -> void:
+func _on_item_removed(_item: PopochiuInventoryItem) -> void:
 	pass
 
 
@@ -170,7 +170,7 @@ func _on_item_removed(item: PopochiuInventoryItem) -> void:
 ## This hook is awaited by the base GUI routing layer, which emits
 ## [signal PopochiuIInventory.item_replace_done] automatically after the hook returns. Overrides
 ## must not emit the signal or call [method G.block].
-func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+func _on_item_replaced(_item: PopochiuInventoryItem, _new_item: PopochiuInventoryItem) -> void:
 	pass
 
 

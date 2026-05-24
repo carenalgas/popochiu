@@ -41,7 +41,7 @@ var quantity_owned := 0
 ## signals and does not update the inventory GUI. Use [method add] and [method remove] instead.
 var in_inventory: bool :
 	get: return quantity_owned > 0
-	set(value): _set_in_inventory(value)
+	set = set_in_inventory
 ## Whether this item has ever been in the inventory. Once true, it stays true.
 var ever_collected := false : set = set_ever_collected
 ## Stores the last [enum MouseButton] pressed on this object.
@@ -368,7 +368,7 @@ func get_description() -> String:
 # Deprecated compatibility setter. This keeps the old silent state-toggling semantics, but new
 # code should use add()/remove() for gameplay flows or PopochiuIInventory.register_existing_item()
 # for GUI bootstrap registration.
-func _set_in_inventory(value: bool) -> void:
+func set_in_inventory(value: bool) -> void:
 	PopochiuUtils.print_warning(
 		"Direct assignment to in_inventory is deprecated and only performs a silent state"
 		+ " change. Use add()/remove() for normal inventory flow."
