@@ -154,7 +154,7 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 ## This hook is awaited by the base GUI routing layer, which emits
 ## [signal PopochiuIInventory.item_add_done] automatically after the hook returns. Overrides must
 ## not emit the signal or call [method G.block].
-func _on_item_added(item: PopochiuInventoryItem) -> void:
+func _on_item_added(_item: PopochiuInventoryItem) -> void:
 	pass
 
 
