@@ -16,8 +16,6 @@ const DEFAULT_FUNCTION_NAMES: PackedStringArray = [
 var _function_regex: RegEx
 var _non_literal_regex: RegEx
 var _text_assignment_regex: RegEx
-var _no_translate_regex: RegEx
-var _translators_regex: RegEx
 
 
 #region Godot ######################################################################################
@@ -130,14 +128,6 @@ func _compile_regexes() -> void:
 		"\\.text\\s*=\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 	)
 
-	# Matches: # NO_TRANSLATE or #NO_TRANSLATE (with optional leading whitespace)
-	_no_translate_regex = RegEx.new()
-	_no_translate_regex.compile("^\\s*#\\s*NO_TRANSLATE|#\\s*NO_TRANSLATE")
-
-	# Matches: # TRANSLATORS: <message> or #TRANSLATORS: <message>
-	_translators_regex = RegEx.new()
-	_translators_regex.compile("#\\s*TRANSLATORS:\\s*(.*)")
-
 
 func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 	var result: Array[PackedStringArray] = []
@@ -149,71 +139,51 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 	var lines := file.get_as_text().split("\n")
 	file.close()
 
-	var translators_comment := ""
-
 	for i in range(lines.size()):
 		var line := lines[i]
 		var line_stripped := line.strip_edges()
 
-		# Skip fully commented-out lines (but still check for TRANSLATORS comment)
-		var translators_match := _translators_regex.search(line)
-		if translators_match:
-			translators_comment = translators_match.get_string(1).strip_edges()
+		# Skip comment-only and empty lines — they are checked backwards from extraction points
+		if line_stripped.is_empty() or line_stripped.begins_with("#"):
 			continue
 
-		if line_stripped.begins_with("#"):
-			# Reset translators comment if this is some other comment
-			if not _translators_regex.search(line):
-				translators_comment = ""
-			continue
-
-		# Check for NO_TRANSLATE on this line
-		if _no_translate_regex.search(line):
-			translators_comment = ""
-			continue
-
-		# Check if the previous non-empty line had NO_TRANSLATE
-		var prev_has_no_translate := false
-		if i > 0:
-			var prev_line := lines[i - 1].strip_edges()
-			if _no_translate_regex.search(prev_line):
-				prev_has_no_translate = true
-
-		if prev_has_no_translate:
-			translators_comment = ""
-			continue
-
-		# --- Extract function call strings ---
+		# --- Try to extract function call string ---
 		var fn_match := _function_regex.search(line)
 		if fn_match:
+			var comment_result := _parse_comment(lines, i)
+			if comment_result.skip:
+				continue
+
 			var extracted_string := fn_match.get_string(1)
 			if extracted_string.is_empty():
 				extracted_string = fn_match.get_string(2)
 
 			if not extracted_string.is_empty():
-				# Unescape the string
 				extracted_string = extracted_string.c_unescape()
 				result.append(PackedStringArray([
-					extracted_string, "", "", translators_comment, str(i + 1)
+					extracted_string, "", "", comment_result.comment, str(i + 1)
 				]))
-
-			translators_comment = ""
 			continue
 
 		# --- Detect non-literal arguments and warn ---
 		var non_literal_match := _non_literal_regex.search(line)
 		if non_literal_match:
-			push_warning(
-				"[Popochiu i18n] Cannot extract non-literal string at %s:%d — \"%s\". "
-				% [path, i + 1, line_stripped.substr(0, 120)]
-				+ "Use a direct string literal as the first argument."
-			)
-			translators_comment = ""
+			var comment_result := _parse_comment(lines, i)
+			if not comment_result.skip:
+				push_warning(
+					"[Popochiu i18n] Cannot extract non-literal string at %s:%d — \"%s\". "
+					% [path, i + 1, line_stripped.substr(0, 120)]
+					+ "Use a direct string literal as the first argument."
+				)
 			continue
 
 		# --- Extract .text = "..." assignments ---
 		var text_match := _text_assignment_regex.search(line)
 		if text_match:
+			var comment_result := _parse_comment(lines, i)
+			if comment_result.skip:
+				continue
+
 			var extracted_string := text_match.get_string(1)
 			if extracted_string.is_empty():
 				extracted_string = text_match.get_string(2)
@@ -221,17 +191,84 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 			if not extracted_string.is_empty():
 				extracted_string = extracted_string.c_unescape()
 				result.append(PackedStringArray([
-					extracted_string, "", "", translators_comment, str(i + 1)
+					extracted_string, "", "", comment_result.comment, str(i + 1)
 				]))
-
-			translators_comment = ""
 			continue
 
-		# Reset translators comment if line doesn't match anything
-		if not line_stripped.is_empty():
-			translators_comment = ""
-
 	return result
+
+
+## Parses comments for a given line, mimicking Godot's native behavior:
+## 1. Checks for an inline comment on the same line (after code)
+## 2. Walks backwards through consecutive comment lines (empty lines break the chain)
+## Returns a Dictionary with { skip: bool, comment: String }
+func _parse_comment(lines: PackedStringArray, line_idx: int) -> Dictionary:
+	var ret := { "skip": false, "comment": "" }
+
+	# 1. Check inline comment on the same line
+	var inline_comment := _get_inline_comment(lines[line_idx])
+	if not inline_comment.is_empty():
+		if inline_comment.begins_with("TRANSLATORS:"):
+			ret.comment = inline_comment.trim_prefix("TRANSLATORS:").strip_edges()
+			return ret
+		if inline_comment == "NO_TRANSLATE" or inline_comment.begins_with("NO_TRANSLATE:"):
+			ret.skip = true
+			return ret
+
+	# 2. Walk backwards through preceding consecutive comment lines
+	var multiline_comment := ""
+	var line := line_idx - 1
+	while line >= 0:
+		var prev_stripped := lines[line].strip_edges()
+		# Non-comment line (including empty lines) breaks the chain
+		if not prev_stripped.begins_with("#"):
+			break
+
+		var content := prev_stripped.trim_prefix("#").strip_edges()
+
+		# Empty comment lines are allowed within the block (don't break the chain)
+		if content.is_empty():
+			line -= 1
+			continue
+
+		if multiline_comment.is_empty():
+			multiline_comment = content
+		else:
+			multiline_comment = content + "\n" + multiline_comment
+
+		if content.begins_with("TRANSLATORS:"):
+			ret.comment = multiline_comment.trim_prefix("TRANSLATORS:").strip_edges()
+			return ret
+
+		if content == "NO_TRANSLATE" or content.begins_with("NO_TRANSLATE:"):
+			ret.skip = true
+			return ret
+
+		line -= 1
+
+	return ret
+
+
+## Extracts the comment portion from a line that contains code + inline comment.
+## Returns the stripped comment text (without the #), or empty string if no inline comment.
+func _get_inline_comment(line: String) -> String:
+	var in_double_quote := false
+	var in_single_quote := false
+	var prev_char := ""
+
+	for idx in range(line.length()):
+		var ch := line[idx]
+
+		if ch == '"' and not in_single_quote and prev_char != "\\":
+			in_double_quote = not in_double_quote
+		elif ch == "'" and not in_double_quote and prev_char != "\\":
+			in_single_quote = not in_single_quote
+		elif ch == "#" and not in_double_quote and not in_single_quote:
+			return line.substr(idx + 1).strip_edges()
+
+		prev_char = ch
+
+	return ""
 
 
 #endregion
