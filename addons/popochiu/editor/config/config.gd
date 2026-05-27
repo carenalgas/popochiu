@@ -33,6 +33,10 @@ const GIBBERISH_SPOKEN_TEXT = 'popochiu/dialogs/gibberish_spoken_text'
 const GIBBERISH_DIALOG_OPTIONS = 'popochiu/dialogs/gibberish_dialog_options'
 const DIALOG_STYLE = "popochiu/dialogs/dialog_style"
 
+# ---- Translations --------------------------------------------------------------------------------
+const TRANSLATION_EXTRA_SCAN_PATHS = "popochiu/translations/extra_scan_paths"
+const TRANSLATION_EXTRA_FUNCTION_NAMES = "popochiu/translations/extra_function_names"
+
 # ---- Inventory -----------------------------------------------------------------------------------
 const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
 const INVENTORY_ITEMS_ON_START = "popochiu/inventory/items_on_start"
@@ -117,6 +121,8 @@ static var defaults := {
 	AUTOTRACE_OUTLINE_MARGIN: 0,
 	AUTOTRACE_NOISE_REDUCTION: false,
 	AUTOTRACE_CONVEX_OUTLINE: true,
+	TRANSLATION_EXTRA_SCAN_PATHS: "",
+	TRANSLATION_EXTRA_FUNCTION_NAMES: "",
 }
 
 
@@ -228,6 +234,10 @@ static func initialize_project_settings() -> void:
 	)
 	_initialize_project_setting(AUTOTRACE_NOISE_REDUCTION, TYPE_BOOL)
 	_initialize_project_setting(AUTOTRACE_CONVEX_OUTLINE, TYPE_BOOL)
+
+	# ---- Translations ---------------------------------------------------------------------------
+	_initialize_project_setting(TRANSLATION_EXTRA_SCAN_PATHS, TYPE_STRING)
+	_initialize_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES, TYPE_STRING)
 
 	ProjectSettings.save()
 
@@ -371,6 +381,15 @@ static func get_voice_prefixes() -> String:
 
 static func get_ui_prefixes() -> String:
 	return _get_project_setting(UI_PREFIXES)
+
+
+# ---- Translations -------------------------------------------------------------------------------
+static func get_translation_extra_scan_paths() -> String:
+	return _get_project_setting(TRANSLATION_EXTRA_SCAN_PATHS)
+
+
+static func get_translation_extra_function_names() -> String:
+	return _get_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES)
 
 
 # ---- DEV -----------------------------------------------------------------------------------------
