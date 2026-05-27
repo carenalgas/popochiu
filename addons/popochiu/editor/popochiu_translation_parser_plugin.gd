@@ -150,6 +150,19 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 		# --- Try to extract function call string ---
 		var fn_match := _function_regex.search(line)
 		if fn_match:
+			# Check if the matched string is part of a concatenation (e.g. "Hello" + "World")
+			var after_match := line.substr(fn_match.get_end()).strip_edges()
+			if after_match.begins_with("+"):
+				# Treat as non-literal: warn unless suppressed
+				var comment_result := _parse_comment(lines, i)
+				if not comment_result.skip:
+					print(
+						"[Popochiu i18n] Warning: Cannot extract concatenated string at "
+						+ "%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
+						+ "Use a direct string literal as the first argument."
+					)
+				continue
+
 			var comment_result := _parse_comment(lines, i)
 			if comment_result.skip:
 				continue
@@ -170,9 +183,9 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 		if non_literal_match:
 			var comment_result := _parse_comment(lines, i)
 			if not comment_result.skip:
-				push_warning(
-					"[Popochiu i18n] Cannot extract non-literal string at %s:%d — \"%s\". "
-					% [path, i + 1, line_stripped.substr(0, 120)]
+				print(
+					"[Popochiu i18n] Warning: Cannot extract non-literal string at "
+					+ "%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
 					+ "Use a direct string literal as the first argument."
 				)
 			continue
