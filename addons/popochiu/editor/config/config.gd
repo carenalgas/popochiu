@@ -392,6 +392,36 @@ static func get_translation_extra_function_names() -> String:
 	return _get_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES)
 
 
+# ---- POT file list management --------------------------------------------------------------------
+static func get_pot_files() -> PackedStringArray:
+	return ProjectSettings.get_setting(
+		"internationalization/locale/translations_pot_files",
+		PackedStringArray()
+	)
+
+
+static func add_to_pot_files(path: String) -> void:
+	var files := get_pot_files()
+	if path not in files:
+		files.append(path)
+		ProjectSettings.set_setting("internationalization/locale/translations_pot_files", files)
+		ProjectSettings.save()
+
+
+static func remove_from_pot_files(path: String) -> void:
+	var files := get_pot_files()
+	var idx := files.find(path)
+	if idx >= 0:
+		files.remove_at(idx)
+		ProjectSettings.set_setting("internationalization/locale/translations_pot_files", files)
+		ProjectSettings.save()
+
+
+static func sync_pot_files(paths: PackedStringArray) -> void:
+	ProjectSettings.set_setting("internationalization/locale/translations_pot_files", paths)
+	ProjectSettings.save()
+
+
 # ---- DEV -----------------------------------------------------------------------------------------
 static func is_use_addon_template() -> bool:
 	return _get_project_setting(DEV_USE_ADDON_TEMPLATE)

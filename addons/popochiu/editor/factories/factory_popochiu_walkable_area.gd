@@ -9,6 +9,7 @@ func _init() -> void:
 	_type_method = PopochiuEditorHelper.is_walkable_area
 	_obj_room_group = "WalkableAreas"
 	_path_template = "/walkable_areas/%s/walkable_area_%s"
+	_register_for_translation = false
 
 
 #endregion

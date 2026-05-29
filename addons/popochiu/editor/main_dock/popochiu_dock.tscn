@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://4etgd0rwjgct" path="res://addons/popochiu/editor/main_dock/tab_gui/tab_gui.tscn" id="10_82goo"]
 [ext_resource type="PackedScene" uid="uid://q1bjkxavt2ay" path="res://addons/popochiu/editor/main_dock/tab_room/tab_room.tscn" id="12"]
 [ext_resource type="PackedScene" uid="uid://bpj8jlet25coy" path="res://addons/popochiu/editor/main_dock/tab_audio/tab_audio.tscn" id="13"]
+[ext_resource type="PackedScene" path="res://addons/popochiu/editor/main_dock/tab_tools/tab_tools.tscn" id="14_tools"]
 
 [sub_resource type="DPITexture" id="DPITexture_4merx"]
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#ff5d5d\" d=\"M2 1v8.586l1.293-1.293a1 1 0 0 1 1.414 0L7 10.587l2.293-2.293a1 1 0 0 1 1.414 0L13 10.586l1-1V6H9V1H2zm8 0v4h4zm-6 9.414-2 2V15h12v-2.586l-.293.293a1 1 0 0 1-1.414 0L10 10.414l-2.293 2.293a1 1 0 0 1-1.414 0L4 10.414z\"/></svg>
@@ -63,6 +64,12 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 metadata/_tab_index = 3
+
+[node name="Tools" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("14_tools")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 4
 
 [node name="FooterPanel" type="PanelContainer" parent="MarginContainer/VBoxContainer" unique_id=169724065]
 layout_mode = 2

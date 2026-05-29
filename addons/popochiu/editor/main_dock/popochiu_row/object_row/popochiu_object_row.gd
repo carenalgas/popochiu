@@ -247,8 +247,43 @@ func _delete_from_file_system() -> void:
 	var object_dir: EditorFileSystemDirectory = \
 		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
 	
+	# Collect translatable file paths BEFORE deletion (directory object will be invalidated later)
+	var pot_paths_to_remove := PackedStringArray()
+	_collect_pot_paths(object_dir, pot_paths_to_remove)
+
 	# Remove files, sub folders and its files.
 	_recursive_delete(object_dir)
+
+	# Remove collected paths from the POT list AFTER deletion to avoid ProjectSettings.save()
+	# invalidating the EditorFileSystemDirectory reference used by _recursive_delete.
+	_deregister_pot_files(pot_paths_to_remove)
+
+
+## Removes the given [param paths_to_remove] from the POT generation list in a single batch save.
+func _deregister_pot_files(paths_to_remove: PackedStringArray) -> void:
+	if paths_to_remove.is_empty():
+		return
+
+	var files := PopochiuConfig.get_pot_files()
+	var changed := false
+	for p in paths_to_remove:
+		var idx := files.find(p)
+		if idx >= 0:
+			files.remove_at(idx)
+			changed = true
+	if changed:
+		PopochiuConfig.sync_pot_files(files)
+
+
+## Recursively collects .gd and .tres file paths from [param dir] into [param result].
+func _collect_pot_paths(dir: EditorFileSystemDirectory, result: PackedStringArray) -> void:
+	for file_idx in dir.get_file_count():
+		var file_path := dir.get_file_path(file_idx)
+		var ext := file_path.get_extension()
+		if ext == "gd" or ext == "tres":
+			result.append(file_path)
+	for subdir_idx in dir.get_subdir_count():
+		_collect_pot_paths(dir.get_subdir(subdir_idx), result)
 
 
 ## Remove the `dir` directory from the system. For Godot to be able to delete a directory, it has to

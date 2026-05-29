@@ -8,6 +8,7 @@ func _init() -> void:
 	_type_method = PopochiuEditorHelper.is_region
 	_obj_room_group = "Regions"
 	_path_template = "/regions/%s/region_%s"
+	_register_for_translation = false
 
 
 #endregion

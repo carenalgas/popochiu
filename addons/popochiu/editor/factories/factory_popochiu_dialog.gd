@@ -47,3 +47,12 @@ func create(obj_name: String) -> int:
 
 
 #endregion
+
+#region Private ####################################################################################
+func _register_in_pot_files() -> void:
+	super()
+	if _register_for_translation and not _path_resource.is_empty():
+		PopochiuConfig.add_to_pot_files(_path_resource)
+
+
+#endregion

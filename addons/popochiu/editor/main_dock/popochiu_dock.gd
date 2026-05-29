@@ -8,6 +8,7 @@ signal move_folders_pressed
 @onready var tab_room: VBoxContainer = %Room
 @onready var tab_audio: VBoxContainer = %Audio
 @onready var tab_gui: VBoxContainer = %GUI
+@onready var tab_tools: VBoxContainer = %Tools
 # ---- FOOTER --------------------------------------------------------------------------------------
 @onready var version: Label = %Version
 @onready var btn_setup: Button = %BtnSetup
