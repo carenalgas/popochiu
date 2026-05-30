@@ -1595,11 +1595,6 @@ func _resolve_character(character: Variant, fallback_script_name: String) -> Pop
 	return PopochiuUtils.c.player
 
 
-func _translate() -> void:
-	if Engine.is_editor_hint() or not is_inside_tree(): return
-	description = tr(_description_code)
-
-
 # Validates an animation name and returns either the validated name or a fallback
 func _get_valid_animation_name(value: String, fallback: String) -> String:
 	# Clear animation cache to force re-evaluation
