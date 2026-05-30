@@ -10,11 +10,13 @@ const TRANSLATABLE_FOLDERS: PackedStringArray = [
 ]
 
 @onready var btn_sync_translations: Button = %BtnSyncTranslations
+@onready var btn_open_pot_settings: Button = %BtnOpenPotSettings
 
 
 #region Godot ######################################################################################
 func _ready() -> void:
 	btn_sync_translations.pressed.connect(_on_sync_translations_pressed)
+	btn_open_pot_settings.pressed.connect(_on_open_pot_settings_pressed)
 
 
 #endregion
@@ -30,6 +32,37 @@ func _on_sync_translations_pressed() -> void:
 
 	PopochiuConfig.sync_pot_files(paths)
 	print("[Popochiu] Registered %d files for translation template generation." % paths.size())
+
+
+func _on_open_pot_settings_pressed() -> void:
+	var base := EditorInterface.get_base_control()
+	for child in base.get_children():
+		if child is Window and child.get_class() == "ProjectSettingsEditor":
+			child.popup_centered_ratio(0.7)
+			# Wait a frame so the window fully lays out before switching tabs
+			await get_tree().process_frame
+			_select_localization_tab(child)
+			return
+	PopochiuUtils.print_error("Could not find the Project Settings window.")
+
+
+func _select_localization_tab(settings_window: Window) -> void:
+	# Find the main TabContainer (the one that has a "Localization" tab)
+	var tab_containers := settings_window.find_children("*", "TabContainer", true, false)
+	for tab_container: TabContainer in tab_containers:
+		for i in tab_container.get_tab_count():
+			if tab_container.get_tab_title(i) == "Localization":
+				tab_container.current_tab = i
+				# Find the sub-tab container within the Localization panel
+				var localization_panel := tab_container.get_tab_control(i)
+				for sub_child in localization_panel.get_children():
+					if sub_child is TabContainer:
+						for j in sub_child.get_tab_count():
+							if sub_child.get_tab_title(j) == "Template Generation":
+								sub_child.current_tab = j
+								break
+						break
+				return
 
 
 func _collect_translatable_files(folder: String, paths: PackedStringArray) -> void:
