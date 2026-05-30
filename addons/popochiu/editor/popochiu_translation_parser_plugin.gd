@@ -79,12 +79,15 @@ func _is_in_scan_paths(path: String) -> bool:
 
 
 func _get_scan_paths() -> PackedStringArray:
-	var paths: PackedStringArray = [PopochiuResources.GAME_PATH]
+	var paths: PackedStringArray = []
 
 	var extra := PopochiuConfig.get_translation_extra_scan_paths()
 	if not extra.is_empty():
-		for p in extra.split(",", false):
+		for p in extra:
 			var trimmed := p.strip_edges()
+			if not PopochiuEditorHelper._is_valid_godot_path(trimmed):
+				PopochiuUtils.print_warning("%s is not a valid path!" % p)
+				continue
 			if not trimmed.is_empty() and trimmed not in paths:
 				paths.append(trimmed)
 

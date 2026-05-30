@@ -347,4 +347,26 @@ static func get_rooms() -> Array[PopochiuRoom]:
 	return rooms
 
 
+## Check if a string represents a valid path (optionally including a file name).
+static func _is_valid_godot_path(path: String, expect_file: bool = true) -> bool:
+	if path.is_empty():
+		return false
+
+	# Must start with a supported prefix
+	if not (path.begins_with("res://") or path.begins_with("user://")):
+		push_warning("Path must start with 'res://' or 'user://'")
+		return false
+
+	# Optional: validate the filename part doesn't contain illegal chars
+	var filename: String = path.get_file()
+	if not filename.is_valid_filename():
+		push_warning("Filename contains invalid characters")
+		return false
+
+	# Check existence
+	if expect_file:
+		return FileAccess.file_exists(path)
+	else:
+		return DirAccess.dir_exists_absolute(path)
+
 #endregion

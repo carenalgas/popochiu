@@ -233,7 +233,7 @@ static func initialize_project_settings() -> void:
 	_initialize_project_setting(AUTOTRACE_CONVEX_OUTLINE, TYPE_BOOL)
 
 	# ---- Translations ---------------------------------------------------------------------------
-	_initialize_project_setting(TRANSLATION_EXTRA_SCAN_PATHS, TYPE_STRING)
+	_initialize_project_setting(TRANSLATION_EXTRA_SCAN_PATHS, TYPE_ARRAY, PROPERTY_HINT_TYPE_STRING, "%d/%d:" % [TYPE_STRING, PROPERTY_HINT_DIR])
 	_initialize_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES, TYPE_STRING)
 
 	ProjectSettings.save()
@@ -377,7 +377,7 @@ static func get_ui_prefixes() -> String:
 
 
 # ---- Translations -------------------------------------------------------------------------------
-static func get_translation_extra_scan_paths() -> String:
+static func get_translation_extra_scan_paths() -> Array[String]:
 	return _get_project_setting(TRANSLATION_EXTRA_SCAN_PATHS)
 
 
