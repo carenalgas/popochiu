@@ -26,8 +26,8 @@ extends Node
 
 ## Emitted when the text speed changes in [PopochiuSettings].
 signal text_speed_changed
-## Emitted when the language changes in [PopochiuSettings].
-signal language_changed
+## Emitted when [member current_locale] changes via [method set_locale].
+signal language_changed(locale: String)
 ## Emitted after [method save_game] saves a file with the current game data.
 signal game_saved
 ## Emitted before a loaded game starts the transition to show the loaded data.
@@ -90,6 +90,9 @@ var auto_continue_after := -1.0
 ## The current dialog style used by the game. When this property changes, the
 ## [signal dialog_style_changed] signal is emitted.
 var current_dialog_style := settings.dialog_style : set = set_dialog_style
+## The current locale code (e.g. [code]"en"[/code], [code]"es"[/code]). When this property changes,
+## [signal language_changed] is emitted and the [TranslationServer] locale is updated.
+var current_locale: String = TranslationServer.get_locale() : set = set_locale, get = get_locale
 ## The scale value of the game. Defined by the native game resolution compared with (356, 200),
 ## which is the default game resolution defined by Popochiu.
 var scale := Vector2.ONE
@@ -557,6 +560,23 @@ func get_hovered() -> PopochiuClickable:
 		return _hovered_queue[-1]
 	
 	return null
+
+
+func set_locale(value: String) -> void:
+	if value == current_locale:
+		return
+
+	TranslationServer.set_locale(value)
+	# Re-read from TranslationServer to ensure the locale was set correctly
+	# (e.g. if the provided value is not valid, the locale will fall back to
+	# the default one).
+	current_locale = TranslationServer.get_locale()
+
+	language_changed.emit(current_locale)
+
+
+func get_locale() -> String:
+	return TranslationServer.get_locale()
 
 
 func set_text_speed(value: float) -> void:
