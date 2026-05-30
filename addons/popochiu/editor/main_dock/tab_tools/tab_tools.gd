@@ -22,6 +22,9 @@ func _ready() -> void:
 #endregion
 
 #region Private ####################################################################################
+# Scans all game folders for translatable files and registers them in the POT file list
+# stored in ProjectSettings. This ensures the Godot POT generator knows which files to
+# parse when building the translation template.
 func _on_sync_translations_pressed() -> void:
 	var paths := PackedStringArray()
 
@@ -34,37 +37,29 @@ func _on_sync_translations_pressed() -> void:
 	print("[Popochiu] Registered %d files for translation template generation." % paths.size())
 
 
+# Opens the Project Settings window on the Localization > Template Generation tab, so the
+# user can immediately generate the POT file after syncing the translation sources.
+# Godot provides no API to trigger the export of POT files, so we send the user to do it
+# manually. To make this UX as smooth as possible, we open the Project Settings window and
+# switch to the right tab for them.
 func _on_open_pot_settings_pressed() -> void:
-	var base := EditorInterface.get_base_control()
-	for child in base.get_children():
-		if child is Window and child.get_class() == "ProjectSettingsEditor":
-			child.popup_centered_ratio(0.7)
-			# Wait a frame so the window fully lays out before switching tabs
-			await get_tree().process_frame
-			_select_localization_tab(child)
-			return
-	PopochiuUtils.print_error("Could not find the Project Settings window.")
+    # NOTE: The approach is admittedly ugly. EditorInterface provides no API to open Project
+    # Settings or to select a specific tab programmatically, so we are forced to traverse the
+    # editor's node tree and identify tabs by their title string. On the bright side, this
+    # also works when the IDE language is changed, since the title we match ("Localization")
+    # is always in English regardless of editor locale.
+	var settings_window := _find_project_settings_window()
+	if not settings_window:
+		PopochiuUtils.print_error("Could not find the Project Settings window.")
+		return
+	settings_window.popup_centered_ratio(0.7)
+	# Wait a frame so the window fully lays out before switching tabs
+	await get_tree().process_frame
+	_select_localization_tab(settings_window)
 
 
-func _select_localization_tab(settings_window: Window) -> void:
-	# Find the main TabContainer (the one that has a "Localization" tab)
-	var tab_containers := settings_window.find_children("*", "TabContainer", true, false)
-	for tab_container: TabContainer in tab_containers:
-		for i in tab_container.get_tab_count():
-			if tab_container.get_tab_title(i) == "Localization":
-				tab_container.current_tab = i
-				# Find the sub-tab container within the Localization panel
-				var localization_panel := tab_container.get_tab_control(i)
-				for sub_child in localization_panel.get_children():
-					if sub_child is TabContainer:
-						for j in sub_child.get_tab_count():
-							if sub_child.get_tab_title(j) == "Template Generation":
-								sub_child.current_tab = j
-								break
-						break
-				return
-
-
+# Recursively walks [param folder] and appends to [param paths] any .gd file found,
+# plus .tres files that belong to the dialogs folder (which store translatable text).
 func _collect_translatable_files(folder: String, paths: PackedStringArray) -> void:
 	var dir := DirAccess.open(folder)
 	if not dir:
@@ -84,6 +79,52 @@ func _collect_translatable_files(folder: String, paths: PackedStringArray) -> vo
 				paths.append(full_path)
 		file_name = dir.get_next()
 	dir.list_dir_end()
+
+
+#endregion
+
+
+#region Helpers ##################################################################################
+# Returns the ProjectSettingsEditor window from the editor's base control children,
+# or null if it has not been created yet.
+func _find_project_settings_window() -> Window:
+	for child in EditorInterface.get_base_control().get_children():
+		if child is Window and child.get_class() == "ProjectSettingsEditor":
+			return child
+	return null
+
+
+# Finds the top-level TabContainer inside the Project Settings window and switches it to
+# the "Localization" tab, then delegates subtab selection to _select_subtab().
+func _select_localization_tab(settings_window: Window) -> void:
+	for tab_cnt: TabContainer in settings_window.find_children("*", "TabContainer", true, false):
+		var loc_idx := _find_tab_index(tab_cnt, "Localization")
+		if loc_idx < 0:
+			continue
+		tab_cnt.current_tab = loc_idx
+		_select_subtab(tab_cnt.get_tab_control(loc_idx), "Template Generation")
+		return
+
+
+# Finds the first TabContainer that is a direct child of [param panel] and selects the
+# tab whose title matches [param title].
+func _select_subtab(panel: Control, title: String) -> void:
+	for child in panel.get_children():
+		if not child is TabContainer:
+			continue
+		var idx := _find_tab_index(child, title)
+		if idx >= 0:
+			child.current_tab = idx
+		return
+
+
+# Returns the index of the first tab in [param tab_container] whose title matches
+# [param title], or -1 if no match is found.
+func _find_tab_index(tab_container: TabContainer, title: String) -> int:
+	for i in tab_container.get_tab_count():
+		if tab_container.get_tab_title(i) == title:
+			return i
+	return -1
 
 
 #endregion
