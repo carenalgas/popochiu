@@ -279,10 +279,23 @@ func cutscene(instructions: Array) -> void:
 	cutscene_skipped = false
 
 
-## Returns [param msg] translated to the current language if
-## [member PopochiuSettings.use_translations] is enabled. Otherwise returns [param msg] unchanged.
-func get_text(msg: String) -> String:
-	return tr(msg) if settings.use_translations else msg
+## Translates [param msg] via [method Object.tr], then applies format [param params] if provided.
+## Accepts an [Array] for [code]%[/code]-style interpolation or a [Dictionary] for
+## [method String.format]-style. If [param params] is not [code]null[/code] but has an invalid
+## type, an error is printed and the translated (but non-interpolated) string is returned as-is.
+func translate(msg: String, params: Variant = null) -> String:
+	var text := tr(msg)
+	if params == null:
+		return text
+	if params is Array:
+		return text % params
+	if params is Dictionary:
+		return text.format(params)
+	PopochiuUtils.print_error(
+		"Invalid params type passed to translate(). Expected Array or Dictionary, got: %s"
+		% type_string(typeof(params))
+	)
+	return text
 
 
 ## Adds an action, represented by [param data], to the [member history].

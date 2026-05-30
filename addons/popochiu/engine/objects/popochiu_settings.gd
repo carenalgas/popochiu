@@ -13,9 +13,6 @@ var text_speed := 0.0
 ## If [code]true[/code], then dialog lines should auto continue once the animation that shows them
 ## finishes. Otherwise, players will have to click the screen in order to continue.
 var auto_continue_text := false
-## When [code]true[/code] the game will call [method Object.tr] when getting the texts to show in
-## the game.
-var use_translations := false
 ## An array with the [code]script_name[/code] of the inventory items that will be added to the
 ## inventory when the game starts. You can use the context menu in front of each inventory item in
 ## Popochiu's Main tab to add or remove items from start with the
@@ -78,7 +75,6 @@ func _init() -> void:
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	text_speed = PopochiuConfig.get_text_speed()
 	auto_continue_text = PopochiuConfig.is_auto_continue_text()
-	use_translations = PopochiuConfig.is_use_translations()
 	dialog_style = PopochiuConfig.get_dialog_style()
 	
 	# ---- Inventory -------------------------------------------------------------------------------

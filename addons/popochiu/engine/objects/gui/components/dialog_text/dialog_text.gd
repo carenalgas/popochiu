@@ -73,7 +73,7 @@ func _input(event: InputEvent) -> void:
 
 #region Public #####################################################################################
 func play_text(props: Dictionary) -> void:
-	var msg: String = PopochiuUtils.e.get_text(props.text)
+	var msg: String = props.text
 	_is_waiting_input = false
 	_dialog_pos = props.position
 	

@@ -250,15 +250,13 @@ func disable_clickable() -> void:
 	input_pickable = false
 
 
-## Returns the [member description] of the node using [method Object.tr] if 
-## [member PopochiuSettings.use_translations] is [code]true[/code]. Otherwise,
-## it returns just the value of [member description].
+## Returns the [member description] of the node translated via [method Object.tr].
 func get_description() -> String:
 	if Engine.is_editor_hint():
 		if description.is_empty():
 			description = name
 		return description
-	return PopochiuUtils.e.get_text(description)
+	return tr(description)
 
 
 ## Called by the engine when the object is left clicked.
@@ -597,11 +595,10 @@ func _translate() -> void:
 	if (
 		Engine.is_editor_hint()
 		or not is_inside_tree()
-		or not PopochiuUtils.e.settings.use_translations
 	):
 		return
 
-	description = PopochiuUtils.e.get_text("%s-%s" % [get_tree().current_scene.name, _description_code])
+	description = tr("%s-%s" % [get_tree().current_scene.name, _description_code])
 
 
 # Checks if [param event] is a valid (non-synthetic) click or touch, excluding double interactions.

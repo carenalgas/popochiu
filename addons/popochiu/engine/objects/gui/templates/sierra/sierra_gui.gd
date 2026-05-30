@@ -83,7 +83,7 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 		PopochiuUtils.g.show_hover_text(clickable.description)
 	else:
 		PopochiuUtils.g.show_hover_text(
-			"Use %s with %s" % [PopochiuUtils.i.active.description, clickable.description]
+			"Use %s with %s", [PopochiuUtils.i.active.description, clickable.description]
 		)
 
 

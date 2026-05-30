@@ -28,7 +28,6 @@ const TL_IN_FIRST_ROOM = "popochiu/gui/transition_layer/show_transition_layer_in
 # ---- Dialogs -------------------------------------------------------------------------------------
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
 const AUTO_CONTINUE_TEXT = "popochiu/dialogs/auto_continue_text"
-const USE_TRANSLATIONS = "popochiu/dialogs/use_translations"
 const GIBBERISH_SPOKEN_TEXT = 'popochiu/dialogs/gibberish_spoken_text'
 const GIBBERISH_DIALOG_OPTIONS = 'popochiu/dialogs/gibberish_dialog_options'
 const DIALOG_STYLE = "popochiu/dialogs/dialog_style"
@@ -95,7 +94,6 @@ static var defaults := {
 	TL_CUTSCENE_TRANSITION_MODE: PopochiuTransitionLayer.PLAY_MODE.IN_OUT,
 	TEXT_SPEED: 0.1,
 	AUTO_CONTINUE_TEXT: false,
-	USE_TRANSLATIONS: false,
 	GIBBERISH_SPOKEN_TEXT: false,
 	GIBBERISH_DIALOG_OPTIONS: false,
 	DIALOG_STYLE: DialogStyle.ABOVE_CHARACTER,
@@ -177,7 +175,6 @@ static func initialize_project_settings() -> void:
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	_initialize_project_setting(TEXT_SPEED, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
 	_initialize_project_setting(AUTO_CONTINUE_TEXT, TYPE_BOOL)
-	#_initialize_project_setting(USE_TRANSLATIONS, TYPE_BOOL)
 	#_initialize_project_setting(
 		#DIALOG_STYLE,
 		#TYPE_INT,
@@ -296,10 +293,6 @@ static func get_text_speed() -> float:
 
 static func is_auto_continue_text() -> bool:
 	return _get_project_setting(AUTO_CONTINUE_TEXT)
-
-
-static func is_use_translations() -> bool:
-	return _get_project_setting(USE_TRANSLATIONS)
 
 
 static func get_dialog_style() -> int:
