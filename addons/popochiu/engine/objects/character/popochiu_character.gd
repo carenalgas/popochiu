@@ -51,6 +51,9 @@ signal obstacle_state_changed(character: PopochiuCharacter)
 ## Emitted during movement when the character's position changes.
 ## Only emitted while the character is moving and the position has actually changed from the last emission.
 signal position_updated(character: PopochiuCharacter, current_position: Vector2)
+## Emitted when this character's movement is interrupted because it tried to enter a
+## [PopochiuRegion] with [member PopochiuRegion.walkable] set to [code]false[/code].
+signal blocked_by_region(region: PopochiuRegion)
 
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
@@ -61,6 +64,10 @@ const STANDARD_IDLE_ANIMATION = "idle"
 const STANDARD_WALK_ANIMATION = "walk"
 ## Standard talk animation name.
 const STANDARD_TALK_ANIMATION = "talk"
+## Distance in pixels to pull back from a blocking region boundary when trimming the navigation
+## path. Prevents boundary-precision issues with Geometry2D.is_point_in_polygon() on subsequent
+## clicks. See #521.
+const BLOCKING_REGION_PULLBACK = 2.0
 
 
 ## The [Color] in which the dialogue lines of the character are rendered.
@@ -118,6 +125,9 @@ const STANDARD_TALK_ANIMATION = "talk"
 ## Whether the character ignores or not obstacles in walkable areas. If [code]true[/code], the character will
 ## move within a walkable area, ignoring obstacle polygons that might block the path.
 @export var ignore_obstacles := false
+## Whether the character can walk through [PopochiuRegion]s with [member PopochiuRegion.walkable]
+## set to [code]false[/code]. When [code]true[/code], blocking regions will not interrupt movement.
+@export var ignore_blocking_regions := false
 ## Whether the character ignores scale changes applied by [PopochiuRegion]s.
 ## When [code]true[/code], the character will not be scaled when entering or moving through a region
 ## that has scaling enabled.
@@ -248,6 +258,9 @@ var _last_emitted_position: Vector2 = Vector2.INF
 # Perspective scale factor from the current scaling region. Updated by update_scale().
 # 1.0 outside any region.
 var _walk_scale_factor: float = 1.0
+# The non-walkable region that caused path trimming on the current walk. Set by
+# _trim_path_at_blocking_regions() and cleared after signals are emitted at movement end.
+var _pending_blocking_region: PopochiuRegion = null
 
 @onready var interaction_polygon_node: CollisionPolygon2D = $InteractionPolygon
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
@@ -279,6 +292,10 @@ func _ready() -> void:
 	# Connect movement signals to virtual methods
 	movement_started.connect(_on_movement_started)
 	movement_ended.connect(_on_movement_ended)
+	
+	# #521: Route the blocked_by_region signal to the virtual override so game scripts
+	# can react without manually connecting in every character script.
+	blocked_by_region.connect(_on_blocked_by_region)
 
 	# Connect to own movement signals to handle navigation internally
 	if not started_walk_to.is_connected(_update_navigation_path):
@@ -391,6 +408,14 @@ func _on_movement_started() -> void:
 ## Called when the character stops moving. Override to add custom behavior such as
 ## triggering events or updating game state.
 func _on_movement_ended() -> void:
+	pass
+
+
+## Called when this character's movement is interrupted because it tried to enter a
+## [PopochiuRegion] with [member PopochiuRegion.walkable] set to [code]false[/code].[br]
+## Override in the character's game script to react to the event (e.g. play a sound, show a
+## message). [param region] is the [PopochiuRegion] that blocked the character.
+func _on_blocked_by_region(_region: PopochiuRegion) -> void:
 	pass
 
 
@@ -1762,6 +1787,13 @@ func _move_along_path(walk_distance: float):
 	update_scale()
 	_clear_navigation_path()
 
+	# #521: If the path was trimmed at a blocking region boundary, notify game scripts now
+	# that movement has fully stopped. Clearing before emitting prevents re-entrancy issues.
+	if _pending_blocking_region != null:
+		var region := _pending_blocking_region
+		_pending_blocking_region = null
+		blocked_by_region.emit(region)
+
 	# Apply facing behavior after movement completes.
 	# This handles the case where a character is both following one character
 	# and facing another (e.g., bodyguard following the player but always facing threats).
@@ -1803,10 +1835,97 @@ func _update_navigation_path(character: PopochiuCharacter, start_position: Vecto
 	# Let's remove the first point of the path since it is the character's current position.
 	_navigation_path.remove_at(0)
 
+	# #521: Trim the path before movement starts so the character never visually enters
+	# a non-walkable region. _pending_blocking_region is cleared first to discard any stale
+	# state from a previous blocked walk, then set to the region that caused trimming (if any).
+	_pending_blocking_region = null
+	if not ignore_blocking_regions:
+		_pending_blocking_region = _trim_path_to_first_blocking_region(start_position)
+
 	# Now the _navigation_path will at least have another point at index 0.
 	# Starting the physics processing will make _physics_process()
 	# move the character along the path.
 	set_physics_process(true)
+
+
+# Character navigation system.
+#
+# Trims _navigation_path at the nearest point where it would cross a non-walkable region
+# boundary. Iterates path segments in order, and for each segment finds the closest
+# intersection across ALL blocking regions (not just the first one found in tree order).
+# Returns the blocking region that caused the trim, or null if no trimming was needed.
+func _trim_path_to_first_blocking_region(start_position: Vector2) -> PopochiuRegion:
+	var blocking_regions: Array = get_tree().get_nodes_in_group("regions").filter(
+		func(r: Node) -> bool: return r is PopochiuRegion and not r.walkable and r.enabled
+	)
+	if blocking_regions.is_empty():
+		return null
+
+	var n := _navigation_path.size()
+	for i in range(n):
+		var seg_start := start_position if i == 0 else _navigation_path[i - 1]
+		var seg_end := _navigation_path[i]
+
+		# Find the nearest hit across all blocking regions for this segment.
+		var nearest_hit := Vector2.INF
+		var nearest_t := INF
+		var blocking_region: PopochiuRegion = null
+
+		for region in blocking_regions:
+			var polygon: PackedVector2Array = region.get_global_polygon()
+			if polygon.is_empty():
+				continue
+			# Character is already inside this region: allow exiting.
+			if Geometry2D.is_point_in_polygon(seg_start, polygon):
+				continue
+			# Find the nearest polygon edge intersection along this segment.
+			# This handles both entry (seg_end inside) and transit (seg_end outside but
+			# the segment still crosses a polygon edge) cases.
+			var hit := _first_entry_intersection(seg_start, seg_end, polygon)
+			if hit == Vector2.INF:
+				continue
+			var t := seg_start.distance_to(hit)
+			if t < nearest_t:
+				nearest_t = t
+				nearest_hit = hit
+				blocking_region = region
+
+		# If any region blocked this segment, trim the path here.
+		if blocking_region:
+			# Pull back from the boundary so the character stops clearly outside the
+			# region. Without this, a subsequent path starting from exactly on the edge
+			# causes is_point_in_polygon() to be unreliable and the trim to be skipped.
+			var stop := nearest_hit - (nearest_hit - seg_start).normalized() * BLOCKING_REGION_PULLBACK
+			_navigation_path.resize(i)
+			_navigation_path.append(stop)
+			return blocking_region
+
+	return null
+
+
+# Returns the point where segment (p1->p2) first crosses a polygon edge, i.e., the nearest
+# intersection when approaching from outside. Returns Vector2.INF if there is no intersection.
+func _first_entry_intersection(p1: Vector2, p2: Vector2, polygon: PackedVector2Array) -> Vector2:
+	var seg_len := p1.distance_to(p2)
+	if seg_len < 0.001:
+		return Vector2.INF
+
+	var best_t := INF
+	var best_hit := Vector2.INF
+	var count := polygon.size()
+
+	for i in range(count):
+		var edge_a := polygon[i]
+		var edge_b := polygon[(i + 1) % count]
+		var hit = Geometry2D.segment_intersects_segment(p1, p2, edge_a, edge_b)
+		if hit == null:
+			continue
+		var t := p1.distance_to(hit) / seg_len
+		if t < best_t:
+			best_t = t
+			best_hit = hit
+
+	return best_hit
 
 
 # Character navigation system.
