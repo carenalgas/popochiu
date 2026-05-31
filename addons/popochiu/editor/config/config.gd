@@ -35,6 +35,7 @@ const DIALOG_STYLE = "popochiu/dialogs/dialog_style"
 # ---- Translations --------------------------------------------------------------------------------
 const TRANSLATION_EXTRA_SCAN_PATHS = "popochiu/translations/extra_scan_paths"
 const TRANSLATION_EXTRA_FUNCTION_NAMES = "popochiu/translations/extra_function_names"
+const TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES = "popochiu/translations/extra_plural_function_names"
 
 # ---- Inventory -----------------------------------------------------------------------------------
 const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
@@ -121,6 +122,7 @@ static var defaults := {
 	AUTOTRACE_CONVEX_OUTLINE: true,
 	TRANSLATION_EXTRA_SCAN_PATHS: "",
 	TRANSLATION_EXTRA_FUNCTION_NAMES: "",
+	TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES: "",
 }
 
 
@@ -235,6 +237,7 @@ static func initialize_project_settings() -> void:
 	# ---- Translations ---------------------------------------------------------------------------
 	_initialize_project_setting(TRANSLATION_EXTRA_SCAN_PATHS, TYPE_ARRAY, PROPERTY_HINT_TYPE_STRING, "%d/%d:" % [TYPE_STRING, PROPERTY_HINT_DIR])
 	_initialize_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES, TYPE_STRING)
+	_initialize_project_setting(TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES, TYPE_STRING)
 
 	ProjectSettings.save()
 
@@ -383,6 +386,10 @@ static func get_translation_extra_scan_paths() -> Array[String]:
 
 static func get_translation_extra_function_names() -> String:
 	return _get_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES)
+
+
+static func get_translation_extra_plural_function_names() -> String:
+	return _get_project_setting(TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES)
 
 
 # ---- POT file list management --------------------------------------------------------------------

@@ -2,8 +2,10 @@
 class_name PopochiuTranslationParserPlugin
 extends EditorTranslationParserPlugin
 # Extracts translatable strings from Popochiu game scripts by scanning for known function calls
-# (say, show_system_text, etc.) and dialog option text assignments.
-# Runs alongside Godot's native GDScript parser — does not replace it.
+# (say, show_system_text, etc.), native translation functions (tr, atr, tr_n, atr_n), and dialog
+# option text assignments.
+# This plugin overrides Godot's native GDScript parser for .gd files, so it must also handle the
+# extraction of native translation function calls.
 
 const DEFAULT_FUNCTION_NAMES: PackedStringArray = [
 	"say",
@@ -13,8 +15,23 @@ const DEFAULT_FUNCTION_NAMES: PackedStringArray = [
 	"show_hover_text",
 ]
 
+# Native Godot translation functions with a single translatable string argument
+const DEFAULT_NATIVE_FUNCTION_NAMES: PackedStringArray = [
+	"tr",
+	"atr",
+]
+
+# Native Godot plural translation functions with two translatable string arguments
+# (msgid and msgid_plural)
+const DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES: PackedStringArray = [
+	"tr_n",
+	"atr_n",
+]
+
 var _function_regex: RegEx
 var _non_literal_regex: RegEx
+var _plural_function_regex: RegEx
+var _non_literal_plural_regex: RegEx
 var _text_assignment_regex: RegEx
 
 
@@ -98,8 +115,22 @@ func _get_scan_paths() -> PackedStringArray:
 
 func _get_function_names() -> PackedStringArray:
 	var names := PackedStringArray(DEFAULT_FUNCTION_NAMES)
+	names.append_array(DEFAULT_NATIVE_FUNCTION_NAMES)
 
 	var extra := PopochiuConfig.get_translation_extra_function_names()
+	if not extra.is_empty():
+		for n in extra.split(",", false):
+			var trimmed := n.strip_edges()
+			if not trimmed.is_empty() and trimmed not in names:
+				names.append(trimmed)
+
+	return names
+
+
+func _get_plural_function_names() -> PackedStringArray:
+	var names := PackedStringArray(DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES)
+
+	var extra := PopochiuConfig.get_translation_extra_plural_function_names()
 	if not extra.is_empty():
 		for n in extra.split(",", false):
 			var trimmed := n.strip_edges()
@@ -127,6 +158,24 @@ func _compile_regexes() -> void:
 		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % fn_group
 	)
 
+	# Plural functions: capture two string arguments (msgid and msgid_plural)
+	# Groups 1/2 = msgid (double/single quoted), groups 3/4 = msgid_plural (double/single quoted)
+	var pl_names := _get_plural_function_names()
+	var pl_group := "|".join(pl_names)
+
+	_plural_function_regex = RegEx.new()
+	_plural_function_regex.compile(
+		"(?<!\\w)(?:%s)\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+		% pl_group
+		+ "\\s*,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+	)
+
+	# Matches: plural_function_name( followed by something that is NOT a string literal
+	_non_literal_plural_regex = RegEx.new()
+	_non_literal_plural_regex.compile(
+		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % pl_group
+	)
+
 	# Matches: .text = "string" or .text = 'string' (dialog option text assignment)
 	_text_assignment_regex = RegEx.new()
 	_text_assignment_regex.compile(
@@ -150,6 +199,41 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 
 		# Skip comment-only and empty lines — they are checked backwards from extraction points
 		if line_stripped.is_empty() or line_stripped.begins_with("#"):
+			continue
+
+		# --- Try to extract plural function call strings (tr_n, atr_n, etc.) ---
+		var pl_match := _plural_function_regex.search(line)
+		if pl_match:
+			var comment_result := _parse_comment(lines, i)
+			if comment_result.skip:
+				continue
+
+			var msgid := pl_match.get_string(1)
+			if msgid.is_empty():
+				msgid = pl_match.get_string(2)
+
+			var msgid_plural := pl_match.get_string(3)
+			if msgid_plural.is_empty():
+				msgid_plural = pl_match.get_string(4)
+
+			if not msgid.is_empty() and not msgid_plural.is_empty():
+				msgid = msgid.c_unescape()
+				msgid_plural = msgid_plural.c_unescape()
+				result.append(PackedStringArray([
+					msgid, "", msgid_plural, comment_result.comment, str(i + 1)
+				]))
+			continue
+
+		# --- Detect non-literal arguments in plural functions and warn ---
+		var non_literal_pl_match := _non_literal_plural_regex.search(line)
+		if non_literal_pl_match:
+			var comment_result := _parse_comment(lines, i)
+			if not comment_result.skip:
+				print(
+					"[Popochiu i18n] Warning: Cannot extract non-literal string at "
+					+ "%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
+					+ "Use direct string literals as the first two arguments."
+				)
 			continue
 
 		# --- Try to extract function call string ---
