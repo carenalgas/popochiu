@@ -30,8 +30,12 @@ const DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES: PackedStringArray = [
 
 var _function_regex: RegEx
 var _non_literal_regex: RegEx
+var _native_function_regex: RegEx
+var _native_non_literal_regex: RegEx
 var _plural_function_regex: RegEx
 var _non_literal_plural_regex: RegEx
+var _context_regex: RegEx
+var _context_after_expr_regex: RegEx
 var _text_assignment_regex: RegEx
 
 
@@ -114,9 +118,7 @@ func _get_scan_paths() -> PackedStringArray:
 
 
 func _get_function_names() -> PackedStringArray:
-	var names := PackedStringArray()
-	names.append_array(DEFAULT_FUNCTION_NAMES)
-	names.append_array(DEFAULT_NATIVE_FUNCTION_NAMES)
+	var names := PackedStringArray(DEFAULT_FUNCTION_NAMES)
 
 	var extra := PopochiuConfig.get_translation_extra_function_names()
 	if not extra.is_empty():
@@ -126,6 +128,10 @@ func _get_function_names() -> PackedStringArray:
 				names.append(trimmed)
 
 	return names
+
+
+func _get_native_function_names() -> PackedStringArray:
+	return PackedStringArray(DEFAULT_NATIVE_FUNCTION_NAMES)
 
 
 func _get_plural_function_names() -> PackedStringArray:
@@ -142,11 +148,10 @@ func _get_plural_function_names() -> PackedStringArray:
 
 
 func _compile_regexes() -> void:
-	var fn_names := _get_function_names()
-	var fn_group := "|".join(fn_names)
+	var fn_group := "|".join(_get_function_names())
 
-	# Matches: function_name( "string literal" ) or function_name( 'string literal' )
-	# Captures the string content (group 1 for double quotes, group 2 for single quotes)
+	# Popochiu functions: captures the first string argument (no context support)
+	# Groups 1/2 = msgid (double/single quoted)
 	_function_regex = RegEx.new()
 	_function_regex.compile(
 		"(?<!\\w)(?:%s)\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % fn_group
@@ -159,10 +164,23 @@ func _compile_regexes() -> void:
 		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % fn_group
 	)
 
-	# Plural functions: capture two string arguments (msgid and msgid_plural)
+	# Native singular functions (tr, atr): captures the first string argument
+	# Groups 1/2 = msgid (double/single quoted)
+	var native_group := "|".join(_get_native_function_names())
+
+	_native_function_regex = RegEx.new()
+	_native_function_regex.compile(
+		"(?<!\\w)(?:%s)\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % native_group
+	)
+
+	_native_non_literal_regex = RegEx.new()
+	_native_non_literal_regex.compile(
+		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % native_group
+	)
+
+	# Plural functions (tr_n, atr_n): captures two string arguments
 	# Groups 1/2 = msgid (double/single quoted), groups 3/4 = msgid_plural (double/single quoted)
-	var pl_names := _get_plural_function_names()
-	var pl_group := "|".join(pl_names)
+	var pl_group := "|".join(_get_plural_function_names())
 
 	_plural_function_regex = RegEx.new()
 	_plural_function_regex.compile(
@@ -175,6 +193,22 @@ func _compile_regexes() -> void:
 	_non_literal_plural_regex = RegEx.new()
 	_non_literal_plural_regex.compile(
 		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % pl_group
+	)
+
+	# Context extraction from the remainder of the line after the main match.
+	# Used for native singular: tr("msg", "ctx"). Remainder starts with `, "ctx"`.
+	# Groups 1/2 = context (double/single quoted)
+	_context_regex = RegEx.new()
+	_context_regex.compile(
+		"^\\s*,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+	)
+
+	# Used for native plural: tr_n("msg", "plural", n, "ctx"). Remainder starts with `, n, "ctx"`.
+	# Skips one arbitrary expression (the `n` argument) then captures the context string.
+	# Groups 1/2 = context (double/single quoted)
+	_context_after_expr_regex = RegEx.new()
+	_context_after_expr_regex.compile(
+		"^\\s*,\\s*[^,]+,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 	)
 
 	# Matches: .text = "string" or .text = 'string' (dialog option text assignment)
@@ -202,7 +236,7 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 		if line_stripped.is_empty() or line_stripped.begins_with("#"):
 			continue
 
-		# --- Plural function calls (tr_n, atr_n, etc.): two string arguments ---
+		# --- Plural function calls (tr_n, atr_n, etc.): two string arguments + optional context ---
 		var pl_match := _plural_function_regex.search(line)
 		if pl_match:
 			var comment_result := _parse_comment(lines, i)
@@ -212,8 +246,10 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 			var msgid := _get_match_string(pl_match, 1, 2)
 			var msgid_plural := _get_match_string(pl_match, 3, 4)
 			if not msgid.is_empty() and not msgid_plural.is_empty():
+				var remainder := line.substr(pl_match.get_end())
+				var msgctx := _extract_context(remainder, _context_after_expr_regex)
 				result.append(PackedStringArray([
-					msgid, "", msgid_plural, comment_result.comment, str(i + 1)
+					msgid, msgctx, msgid_plural, comment_result.comment, str(i + 1)
 				]))
 			continue
 
@@ -221,7 +257,38 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 				_non_literal_plural_regex, "Use direct string literals as the first two arguments."):
 			continue
 
-		# --- Single-param function calls (say, tr, atr, etc.) ---
+		# --- Native singular function calls (tr, atr): one string argument + optional context ---
+		var native_match := _native_function_regex.search(line)
+		if native_match:
+			var after_match := line.substr(native_match.get_end()).strip_edges()
+			if after_match.begins_with("+"):
+				var comment_result := _parse_comment(lines, i)
+				if not comment_result.skip:
+					print(
+						"[Popochiu i18n] Warning: Cannot extract concatenated string at "
+						+ "%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
+						+ "Use a direct string literal as the first argument."
+					)
+				continue
+
+			var comment_result := _parse_comment(lines, i)
+			if comment_result.skip:
+				continue
+
+			var s := _get_match_string(native_match, 1, 2)
+			if not s.is_empty():
+				var remainder := line.substr(native_match.get_end())
+				var msgctx := _extract_context(remainder, _context_regex)
+				result.append(PackedStringArray([
+					s, msgctx, "", comment_result.comment, str(i + 1)
+				]))
+			continue
+
+		if _search_and_warn_non_literal(lines, i, path, line_stripped,
+				_native_non_literal_regex, "Use a direct string literal as the first argument."):
+			continue
+
+		# --- Single-param function calls (say, show_system_text, etc.) ---
 		var fn_match := _function_regex.search(line)
 		if fn_match:
 			var after_match := line.substr(fn_match.get_end()).strip_edges()
@@ -277,6 +344,16 @@ func _get_match_string(m: RegExMatch, group_double: int, group_single: int) -> S
 	if s.is_empty():
 		return ""
 	return s.c_unescape()
+
+
+# Extracts an optional context string from the remainder of the line after the main match.
+# The `context_regex` determines the expected pattern (direct context or context after an
+# expression). Returns empty string if no context is found.
+func _extract_context(remainder: String, context_regex: RegEx) -> String:
+	var ctx_match := context_regex.search(remainder)
+	if not ctx_match:
+		return ""
+	return _get_match_string(ctx_match, 1, 2)
 
 
 # Searches a regex on the given line; if it matches, prints a non-literal warning unless
