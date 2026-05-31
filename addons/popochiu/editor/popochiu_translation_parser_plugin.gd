@@ -28,12 +28,13 @@ const DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES: PackedStringArray = [
 	"atr_n",
 ]
 
-var _popochiu_function_regex: RegEx
-var _popochiu_non_literal_regex: RegEx
-var _native_function_regex: RegEx
-var _native_non_literal_regex: RegEx
+# Popochiu has no built-in plural functions; this stub is reserved for future implementations
+const DEFAULT_POPOCHIU_PLURAL_FUNCTION_NAMES: PackedStringArray = []
+
+var _singular_function_regex: RegEx
+var _singular_non_literal_regex: RegEx
 var _plural_function_regex: RegEx
-var _non_literal_plural_regex: RegEx
+var _plural_non_literal_regex: RegEx
 var _context_regex: RegEx
 var _context_after_expr_regex: RegEx
 var _text_assignment_regex: RegEx
@@ -135,86 +136,68 @@ func _get_scan_paths() -> PackedStringArray:
 	return paths
 
 
-func _get_popochiu_function_names() -> PackedStringArray:
-	var names := PackedStringArray(DEFAULT_POPOCHIU_FUNCTION_NAMES)
-
-	var extra := PopochiuConfig.get_translation_extra_function_names()
-	if not extra.is_empty():
-		for n in extra.split(",", false):
-			var trimmed := n.strip_edges()
-			if not trimmed.is_empty() and trimmed not in names:
-				names.append(trimmed)
-
+func _get_singular_function_names() -> PackedStringArray:
+	# Merge Popochiu defaults + native singular defaults into one set
+	var names := PackedStringArray()
+	names.append_array(DEFAULT_POPOCHIU_FUNCTION_NAMES)
+	names.append_array(DEFAULT_NATIVE_FUNCTION_NAMES)
+	_append_extra_names(names, PopochiuConfig.get_translation_extra_function_names())
 	return names
-
-
-func _get_native_function_names() -> PackedStringArray:
-	return PackedStringArray(DEFAULT_NATIVE_FUNCTION_NAMES)
 
 
 func _get_plural_function_names() -> PackedStringArray:
-	var names := PackedStringArray(DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES)
-
-	var extra := PopochiuConfig.get_translation_extra_plural_function_names()
-	if not extra.is_empty():
-		for n in extra.split(",", false):
-			var trimmed := n.strip_edges()
-			if not PopochiuEditorHelper._is_valid_function_name(trimmed):
-				PopochiuUtils.print_warning(
-					"[Popochiu i18n] Warning: \"%s\" is not a valid function name!" % trimmed
-				)
-				continue
-			if not trimmed.is_empty() and trimmed not in names:
-				names.append(trimmed)
-
+	# Merge Popochiu plural defaults (currently empty) + native plural defaults
+	var names := PackedStringArray()
+	names.append_array(DEFAULT_POPOCHIU_PLURAL_FUNCTION_NAMES)
+	names.append_array(DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES)
+	_append_extra_names(names, PopochiuConfig.get_translation_extra_plural_function_names())
 	return names
 
 
+func _append_extra_names(names: PackedStringArray, extra: String) -> void:
+	if extra.is_empty():
+		return
+	for n in extra.split(",", false):
+		var trimmed := n.strip_edges()
+		if not PopochiuEditorHelper._is_valid_function_name(trimmed):
+			PopochiuUtils.print_warning(
+				"[Popochiu i18n] Warning: \"%s\" is not a valid function name!" % trimmed
+			)
+			continue
+		if not trimmed.is_empty() and trimmed not in names:
+			names.append(trimmed)
+	# No need to return, `names` is passed by reference.
+
+
 func _compile_regexes() -> void:
-	var fn_group := "|".join(_get_popochiu_function_names())
+	# Singular functions: Popochiu defaults + native singular + user extra.
+	# Group 1 = matched function name (used to decide whether context must be extracted).
+	# Groups 2/3 = msgid (double/single quoted).
+	var singular_group := "|".join(_get_singular_function_names())
 
-	# Popochiu functions: captures the first string argument (no context support)
-	# Groups 1/2 = msgid (double/single quoted)
-	_popochiu_function_regex = RegEx.new()
-	_popochiu_function_regex.compile(
-		"(?<!\\w)(?:%s)\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % fn_group
+	_singular_function_regex = RegEx.new()
+	_singular_function_regex.compile(
+		"(?<!\\w)((?:%s))\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % singular_group
 	)
 
-	# Matches: function_name( followed by something that is NOT a string literal
-	# (variable, expression, concatenation, etc.)
-	_popochiu_non_literal_regex = RegEx.new()
-	_popochiu_non_literal_regex.compile(
-		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % fn_group
+	_singular_non_literal_regex = RegEx.new()
+	_singular_non_literal_regex.compile(
+		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % singular_group
 	)
 
-	# Native singular functions (tr, atr): captures the first string argument
-	# Groups 1/2 = msgid (double/single quoted)
-	var native_group := "|".join(_get_native_function_names())
-
-	_native_function_regex = RegEx.new()
-	_native_function_regex.compile(
-		"(?<!\\w)(?:%s)\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % native_group
-	)
-
-	_native_non_literal_regex = RegEx.new()
-	_native_non_literal_regex.compile(
-		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % native_group
-	)
-
-	# Plural functions (tr_n, atr_n): captures two string arguments
-	# Groups 1/2 = msgid (double/single quoted), groups 3/4 = msgid_plural (double/single quoted)
+	# Plural functions: Popochiu plural defaults (empty) + native plural + user extra.
+	# Group 1 = matched function name (used to decide whether context must be extracted).
+	# Groups 2/3 = msgid (double/single quoted), groups 4/5 = msgid_plural (double/single quoted).
 	var pl_group := "|".join(_get_plural_function_names())
 
 	_plural_function_regex = RegEx.new()
 	_plural_function_regex.compile(
-		"(?<!\\w)(?:%s)\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
-		% pl_group
-		+"\\s*,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+		"(?<!\\w)((?:%s))\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % pl_group
+		+ "\\s*,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 	)
 
-	# Matches: plural_function_name( followed by something that is NOT a string literal
-	_non_literal_plural_regex = RegEx.new()
-	_non_literal_plural_regex.compile(
+	_plural_non_literal_regex = RegEx.new()
+	_plural_non_literal_regex.compile(
 		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % pl_group
 	)
 
@@ -273,9 +256,7 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 
 		if _try_plural_match():
 			continue
-		if _try_native_match():
-			continue
-		if _try_popochiu_match():
+		if _try_singular_match():
 			continue
 		if _try_text_assignment():
 			continue
@@ -368,63 +349,52 @@ func _check_unused_modifiers() -> void:
 func _try_plural_match() -> bool:
 	var pl_match := _plural_function_regex.search(_parse_line)
 	if pl_match:
+		if _line_has_concatenation(pl_match):
+			return true
 		if not _parse_line_skip:
-			var msgid := _get_match_string(pl_match, 1, 2)
-			var msgid_plural := _get_match_string(pl_match, 3, 4)
+			var fn_name := pl_match.get_string(1)
+			var msgid := _get_match_string(pl_match, 2, 3)
+			var msgid_plural := _get_match_string(pl_match, 4, 5)
 			if not msgid.is_empty() and not msgid_plural.is_empty():
-				var remainder := _parse_line.substr(pl_match.get_end())
-				var msgctx := _extract_context(remainder, _context_after_expr_regex)
+				var msgctx := ""
+				if fn_name in DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES:
+					var remainder := _parse_line.substr(pl_match.get_end())
+					msgctx = _extract_context(remainder, _context_after_expr_regex)
 				_parse_result.append(PackedStringArray([
 					msgid, msgctx, msgid_plural, _parse_line_comment, str(_parse_idx + 1)
 				]))
 		return true
 
 	return _search_and_warn_non_literal(
-		_non_literal_plural_regex,
+		_plural_non_literal_regex,
 		"Check the two first arguments are direct string literals."
 	)
 
 
-# Tries to match native singular function calls (tr, atr) on the current line.
+# Tries to match singular function calls on the current line. This covers Popochiu functions
+# (say, show_system_text, etc.) and native Godot functions (tr, atr), as well as any user-defined
+# extra functions. Native functions additionally support an optional context argument.
 # Returns true if the line was consumed (match found or non-literal warned).
-func _try_native_match() -> bool:
-	var native_match := _native_function_regex.search(_parse_line)
-	if native_match:
-		if _line_has_concatenation(native_match):
+func _try_singular_match() -> bool:
+	var fn_match := _singular_function_regex.search(_parse_line)
+	if fn_match:
+		if _line_has_concatenation(fn_match):
 			return true
 		if not _parse_line_skip:
-			var s := _get_match_string(native_match, 1, 2)
+			var fn_name := fn_match.get_string(1)
+			var s := _get_match_string(fn_match, 2, 3)
 			if not s.is_empty():
-				var remainder := _parse_line.substr(native_match.get_end())
-				var msgctx := _extract_context(remainder, _context_regex)
+				var msgctx := ""
+				if fn_name in DEFAULT_NATIVE_FUNCTION_NAMES:
+					var remainder := _parse_line.substr(fn_match.get_end())
+					msgctx = _extract_context(remainder, _context_regex)
 				_parse_result.append(PackedStringArray([
 					s, msgctx, "", _parse_line_comment, str(_parse_idx + 1)
 				]))
 		return true
 
 	return _search_and_warn_non_literal(
-		_native_non_literal_regex,
-		"Check the first argument is a direct string literal."
-	)
-
-
-# Tries to match Popochiu function calls (say, show_system_text, etc.) on the current line.
-# Returns true if the line was consumed (match found or non-literal warned).
-func _try_popochiu_match() -> bool:
-	var fn_match := _popochiu_function_regex.search(_parse_line)
-	if fn_match:
-		if _line_has_concatenation(fn_match):
-			return true
-		if not _parse_line_skip:
-			var s := _get_match_string(fn_match, 1, 2)
-			if not s.is_empty():
-				_parse_result.append(PackedStringArray([
-					s, "", "", _parse_line_comment, str(_parse_idx + 1)
-				]))
-		return true
-
-	return _search_and_warn_non_literal(
-		_popochiu_non_literal_regex,
+		_singular_non_literal_regex,
 		"Check the first argument is a direct string literal."
 	)
 
