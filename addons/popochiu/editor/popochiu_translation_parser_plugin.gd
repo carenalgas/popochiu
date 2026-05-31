@@ -7,7 +7,7 @@ extends EditorTranslationParserPlugin
 # This plugin overrides Godot's native GDScript parser for .gd files, so it must also handle the
 # extraction of native translation function calls.
 
-const DEFAULT_FUNCTION_NAMES: PackedStringArray = [
+const DEFAULT_POPOCHIU_FUNCTION_NAMES: PackedStringArray = [
 	"say",
 	"queue_say",
 	"show_system_text",
@@ -28,8 +28,8 @@ const DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES: PackedStringArray = [
 	"atr_n",
 ]
 
-var _function_regex: RegEx
-var _non_literal_regex: RegEx
+var _popochiu_function_regex: RegEx
+var _popochiu_non_literal_regex: RegEx
 var _native_function_regex: RegEx
 var _native_non_literal_regex: RegEx
 var _plural_function_regex: RegEx
@@ -135,8 +135,8 @@ func _get_scan_paths() -> PackedStringArray:
 	return paths
 
 
-func _get_function_names() -> PackedStringArray:
-	var names := PackedStringArray(DEFAULT_FUNCTION_NAMES)
+func _get_popochiu_function_names() -> PackedStringArray:
+	var names := PackedStringArray(DEFAULT_POPOCHIU_FUNCTION_NAMES)
 
 	var extra := PopochiuConfig.get_translation_extra_function_names()
 	if not extra.is_empty():
@@ -171,19 +171,19 @@ func _get_plural_function_names() -> PackedStringArray:
 
 
 func _compile_regexes() -> void:
-	var fn_group := "|".join(_get_function_names())
+	var fn_group := "|".join(_get_popochiu_function_names())
 
 	# Popochiu functions: captures the first string argument (no context support)
 	# Groups 1/2 = msgid (double/single quoted)
-	_function_regex = RegEx.new()
-	_function_regex.compile(
+	_popochiu_function_regex = RegEx.new()
+	_popochiu_function_regex.compile(
 		"(?<!\\w)(?:%s)\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % fn_group
 	)
 
 	# Matches: function_name( followed by something that is NOT a string literal
 	# (variable, expression, concatenation, etc.)
-	_non_literal_regex = RegEx.new()
-	_non_literal_regex.compile(
+	_popochiu_non_literal_regex = RegEx.new()
+	_popochiu_non_literal_regex.compile(
 		"(?<!\\w)(?:%s)\\s*\\(\\s*(?![\"\\'])[^\\)]*\\)" % fn_group
 	)
 
@@ -275,7 +275,7 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 			continue
 		if _try_native_match():
 			continue
-		if _try_function_match():
+		if _try_popochiu_match():
 			continue
 		if _try_text_assignment():
 			continue
@@ -381,7 +381,7 @@ func _try_plural_match() -> bool:
 
 	return _search_and_warn_non_literal(
 		_non_literal_plural_regex,
-		"Use direct string literals as the first two arguments."
+		"Check the two first arguments are direct string literals."
 	)
 
 
@@ -390,17 +390,8 @@ func _try_plural_match() -> bool:
 func _try_native_match() -> bool:
 	var native_match := _native_function_regex.search(_parse_line)
 	if native_match:
-		var after_match := _parse_line.substr(native_match.get_end()).strip_edges()
-		if after_match.begins_with("+"):
-			if not _parse_line_skip:
-				print(
-					"[Popochiu i18n] Warning: Cannot extract concatenated string at "
-					+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
-						_parse_line_stripped.substr(0, 120)]
-					+ "Use a direct string literal as the first argument."
-				)
+		if _line_has_concatenation(native_match):
 			return true
-
 		if not _parse_line_skip:
 			var s := _get_match_string(native_match, 1, 2)
 			if not s.is_empty():
@@ -413,26 +404,17 @@ func _try_native_match() -> bool:
 
 	return _search_and_warn_non_literal(
 		_native_non_literal_regex,
-		"Use a direct string literal as the first argument."
+		"Check the first argument is a direct string literal."
 	)
 
 
 # Tries to match Popochiu function calls (say, show_system_text, etc.) on the current line.
 # Returns true if the line was consumed (match found or non-literal warned).
-func _try_function_match() -> bool:
-	var fn_match := _function_regex.search(_parse_line)
+func _try_popochiu_match() -> bool:
+	var fn_match := _popochiu_function_regex.search(_parse_line)
 	if fn_match:
-		var after_match := _parse_line.substr(fn_match.get_end()).strip_edges()
-		if after_match.begins_with("+"):
-			if not _parse_line_skip:
-				print(
-					"[Popochiu i18n] Warning: Cannot extract concatenated string at "
-					+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
-						_parse_line_stripped.substr(0, 120)]
-					+ "Use a direct string literal as the first argument."
-				)
+		if _line_has_concatenation(fn_match):
 			return true
-
 		if not _parse_line_skip:
 			var s := _get_match_string(fn_match, 1, 2)
 			if not s.is_empty():
@@ -442,8 +424,8 @@ func _try_function_match() -> bool:
 		return true
 
 	return _search_and_warn_non_literal(
-		_non_literal_regex,
-		"Use a direct string literal as the first argument."
+		_popochiu_non_literal_regex,
+		"Check the first argument is a direct string literal."
 	)
 
 
@@ -497,6 +479,29 @@ func _search_and_warn_non_literal(regex: RegEx, fix_hint: String) -> bool:
 			+ fix_hint
 		)
 	return true
+
+
+# Checks if the remainder of the line after a native match starts with a concatenation operator,
+# which cannot be extracted.
+func _line_has_concatenation(native_match: RegExMatch) -> bool:
+	# Ingnore this check if the line is already marked to be skipped, to avoid duplicate warnings.
+	if _parse_line_skip:
+		return false
+
+	# Check if the remainder of the line after the native match starts with a
+	# concatenation operator, which cannot be extracted.
+	var after_match := _parse_line.substr(native_match.get_end()).strip_edges()
+	if after_match.begins_with("+"):
+		print(
+			"[Popochiu i18n] Warning: Cannot extract concatenated string at "
+			+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
+				_parse_line_stripped.substr(0, 120)]
+			+ "Always use a single string literal as the first argument."
+		)
+		return true
+
+	# No concatenation detected.
+	return false
 
 
 ## Extracts the comment portion from a line that contains code + inline comment.
