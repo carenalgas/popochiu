@@ -114,7 +114,8 @@ func _get_scan_paths() -> PackedStringArray:
 
 
 func _get_function_names() -> PackedStringArray:
-	var names := PackedStringArray(DEFAULT_FUNCTION_NAMES)
+	var names := PackedStringArray()
+	names.append_array(DEFAULT_FUNCTION_NAMES)
 	names.append_array(DEFAULT_NATIVE_FUNCTION_NAMES)
 
 	var extra := PopochiuConfig.get_translation_extra_function_names()
@@ -201,48 +202,31 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 		if line_stripped.is_empty() or line_stripped.begins_with("#"):
 			continue
 
-		# --- Try to extract plural function call strings (tr_n, atr_n, etc.) ---
+		# --- Plural function calls (tr_n, atr_n, etc.): two string arguments ---
 		var pl_match := _plural_function_regex.search(line)
 		if pl_match:
 			var comment_result := _parse_comment(lines, i)
 			if comment_result.skip:
 				continue
 
-			var msgid := pl_match.get_string(1)
-			if msgid.is_empty():
-				msgid = pl_match.get_string(2)
-
-			var msgid_plural := pl_match.get_string(3)
-			if msgid_plural.is_empty():
-				msgid_plural = pl_match.get_string(4)
-
+			var msgid := _get_match_string(pl_match, 1, 2)
+			var msgid_plural := _get_match_string(pl_match, 3, 4)
 			if not msgid.is_empty() and not msgid_plural.is_empty():
-				msgid = msgid.c_unescape()
-				msgid_plural = msgid_plural.c_unescape()
 				result.append(PackedStringArray([
 					msgid, "", msgid_plural, comment_result.comment, str(i + 1)
 				]))
 			continue
 
-		# --- Detect non-literal arguments in plural functions and warn ---
-		var non_literal_pl_match := _non_literal_plural_regex.search(line)
-		if non_literal_pl_match:
-			var comment_result := _parse_comment(lines, i)
-			if not comment_result.skip:
-				print(
-					"[Popochiu i18n] Warning: Cannot extract non-literal string at "
-					+ "%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
-					+ "Use direct string literals as the first two arguments."
-				)
+		if _search_and_warn_non_literal(lines, i, path, line_stripped,
+				_non_literal_plural_regex, "Use direct string literals as the first two arguments."):
 			continue
 
-		# --- Try to extract function call string ---
+		# --- Single-param function calls (say, tr, atr, etc.) ---
 		var fn_match := _function_regex.search(line)
 		if fn_match:
-			# Check if the matched string is part of a concatenation (e.g. "Hello" + "World")
 			var after_match := line.substr(fn_match.get_end()).strip_edges()
 			if after_match.begins_with("+"):
-				# Treat as non-literal: warn unless suppressed
+				# Concatenated string ("string" + "string"): warn unless suppressed
 				var comment_result := _parse_comment(lines, i)
 				if not comment_result.skip:
 					print(
@@ -256,48 +240,66 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 			if comment_result.skip:
 				continue
 
-			var extracted_string := fn_match.get_string(1)
-			if extracted_string.is_empty():
-				extracted_string = fn_match.get_string(2)
-
-			if not extracted_string.is_empty():
-				extracted_string = extracted_string.c_unescape()
+			var s := _get_match_string(fn_match, 1, 2)
+			if not s.is_empty():
 				result.append(PackedStringArray([
-					extracted_string, "", "", comment_result.comment, str(i + 1)
+					s, "", "", comment_result.comment, str(i + 1)
 				]))
 			continue
 
-		# --- Detect non-literal arguments and warn ---
-		var non_literal_match := _non_literal_regex.search(line)
-		if non_literal_match:
-			var comment_result := _parse_comment(lines, i)
-			if not comment_result.skip:
-				print(
-					"[Popochiu i18n] Warning: Cannot extract non-literal string at "
-					+ "%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
-					+ "Use a direct string literal as the first argument."
-				)
+		if _search_and_warn_non_literal(lines, i, path, line_stripped,
+				_non_literal_regex, "Use a direct string literal as the first argument."):
 			continue
 
-		# --- Extract .text = "..." assignments ---
+		# --- Dialog option text assignments (.text = "...") ---
 		var text_match := _text_assignment_regex.search(line)
 		if text_match:
 			var comment_result := _parse_comment(lines, i)
 			if comment_result.skip:
 				continue
 
-			var extracted_string := text_match.get_string(1)
-			if extracted_string.is_empty():
-				extracted_string = text_match.get_string(2)
-
-			if not extracted_string.is_empty():
-				extracted_string = extracted_string.c_unescape()
+			var s := _get_match_string(text_match, 1, 2)
+			if not s.is_empty():
 				result.append(PackedStringArray([
-					extracted_string, "", "", comment_result.comment, str(i + 1)
+					s, "", "", comment_result.comment, str(i + 1)
 				]))
 			continue
 
 	return result
+
+
+# Returns the first non-empty captured string from two alternative capture groups (double/single
+# quoted), decoded from GDScript escape sequences. Returns empty string if both groups are empty.
+func _get_match_string(m: RegExMatch, group_double: int, group_single: int) -> String:
+	var s := m.get_string(group_double)
+	if s.is_empty():
+		s = m.get_string(group_single)
+	if s.is_empty():
+		return ""
+	return s.c_unescape()
+
+
+# Searches a regex on the given line; if it matches, prints a non-literal warning unless
+# suppressed by NO_TRANSLATE. Returns true when matched so the caller can skip further
+# processing with `continue`.
+func _search_and_warn_non_literal(
+	lines: PackedStringArray,
+	line_idx: int,
+	path: String,
+	line_stripped: String,
+	regex: RegEx,
+	fix_hint: String,
+) -> bool:
+	if not regex.search(lines[line_idx]):
+		return false
+	var comment_result := _parse_comment(lines, line_idx)
+	if not comment_result.skip:
+		print(
+			"[Popochiu i18n] Warning: Cannot extract non-literal string at "
+			+ "%s:%d — \"%s\". " % [path, line_idx + 1, line_stripped.substr(0, 120)]
+			+ fix_hint
+		)
+	return true
 
 
 ## Parses comments for a given line, mimicking Godot's native behavior:
