@@ -38,6 +38,24 @@ var _context_regex: RegEx
 var _context_after_expr_regex: RegEx
 var _text_assignment_regex: RegEx
 
+# Parse state — ephemeral, only valid during a call to _extract_strings_from_file()
+# Per-file
+var _parse_path: String
+var _parse_lines: PackedStringArray
+var _parse_result: Array[PackedStringArray]
+# Per-iteration
+var _parse_idx: int
+var _parse_line: String
+var _parse_line_stripped: String
+# Pending modifier (survives across lines until consumed or discarded)
+var _parse_pending_skip: bool
+var _parse_pending_comment: String
+var _parse_in_translators_block: bool
+var _parse_pending_modifier_line: int
+# Per-code-line snapshot (set when a code line is reached)
+var _parse_line_skip: bool
+var _parse_line_comment: String
+
 
 #region Godot ######################################################################################
 func _get_recognized_extensions() -> PackedStringArray:
@@ -224,120 +242,225 @@ func _compile_regexes() -> void:
 
 
 func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
-	var result: Array[PackedStringArray] = []
+	_parse_path = path
+	_parse_result = []
+	_parse_pending_skip = false
+	_parse_pending_comment = ""
+	_parse_in_translators_block = false
+	_parse_pending_modifier_line = 0
 
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
-		return result
-
-	var lines := file.get_as_text().split("\n")
+		return _parse_result
+	_parse_lines = file.get_as_text().split("\n")
 	file.close()
 
-	for i in range(lines.size()):
-		var line := lines[i]
-		var line_stripped := line.strip_edges()
+	for i in range(_parse_lines.size()):
+		_parse_idx = i
+		_parse_line = _parse_lines[i]
+		_parse_line_stripped = _parse_line.strip_edges()
 
-		# Skip comment-only and empty lines — they are checked backwards from extraction points
-		if line_stripped.is_empty() or line_stripped.begins_with("#"):
+		if _parse_line_stripped.is_empty():
+			_handle_empty_line()
 			continue
 
-		# --- Plural function calls (tr_n, atr_n, etc.): two string arguments + optional context ---
-		var pl_match := _plural_function_regex.search(line)
-		if pl_match:
-			var comment_result := _parse_comment(lines, i)
-			if comment_result.skip:
-				continue
+		if _parse_line_stripped.begins_with("#"):
+			_handle_comment_line()
+			continue
 
+		_snapshot_and_reset_pending()
+		_apply_inline_modifiers()
+
+		if _try_plural_match():
+			continue
+		if _try_native_match():
+			continue
+		if _try_function_match():
+			continue
+		if _try_text_assignment():
+			continue
+
+		_check_unused_modifiers()
+
+	_parse_lines = PackedStringArray()
+	var result := _parse_result
+	_parse_result = []
+	return result
+
+
+# Handles a blank line: if a modifier was pending, it can never apply. Warn and discard.
+func _handle_empty_line() -> void:
+	if _parse_pending_skip or not _parse_pending_comment.is_empty():
+		print(
+			"[Popochiu i18n] Warning: Modifier at %s:%d not applied, since followed by a blank line."
+			% [_parse_path, _parse_pending_modifier_line]
+		)
+	_parse_pending_skip = false
+	_parse_pending_comment = ""
+	_parse_in_translators_block = false
+	_parse_pending_modifier_line = 0
+
+
+# Handles a comment-only line: updates pending modifier state without consuming it.
+# A bare '#' (empty content) does not break an active TRANSLATORS block.
+func _handle_comment_line() -> void:
+	var content := _parse_line_stripped.trim_prefix("#").strip_edges()
+
+	if content.is_empty():
+		return
+
+	if content.begins_with("TRANSLATORS:"):
+		_parse_pending_comment = content.trim_prefix("TRANSLATORS:").strip_edges()
+		_parse_pending_skip = false
+		_parse_in_translators_block = true
+		_parse_pending_modifier_line = _parse_idx + 1
+		return
+
+	if content == "NO_TRANSLATE" or content.begins_with("NO_TRANSLATE:"):
+		_parse_pending_skip = true
+		_parse_pending_comment = ""
+		_parse_in_translators_block = false
+		_parse_pending_modifier_line = _parse_idx + 1
+		return
+
+	if _parse_in_translators_block:
+		_parse_pending_comment += "\n" + content
+
+
+# Copies pending modifier state into the per-line snapshot and clears the pending state.
+# Called at the start of processing any code line.
+func _snapshot_and_reset_pending() -> void:
+	_parse_line_skip = _parse_pending_skip
+	_parse_line_comment = _parse_pending_comment
+	_parse_pending_skip = false
+	_parse_pending_comment = ""
+	_parse_in_translators_block = false
+	_parse_pending_modifier_line = 0
+
+
+# Reads the inline comment from the current code line and merges it into the snapshot.
+# Inline modifiers take priority over any pending modifier that was already snapshotted.
+func _apply_inline_modifiers() -> void:
+	var inline := _get_inline_comment(_parse_line)
+	if inline.is_empty():
+		return
+
+	if inline == "NO_TRANSLATE" or inline.begins_with("NO_TRANSLATE:"):
+		_parse_line_skip = true
+		_parse_line_comment = ""
+	elif inline.begins_with("TRANSLATORS:"):
+		_parse_line_comment = inline.trim_prefix("TRANSLATORS:").strip_edges()
+		_parse_line_skip = false
+
+
+# Called when no match was found on a code line: if modifiers were set, they will never apply.
+func _check_unused_modifiers() -> void:
+	if _parse_line_skip or not _parse_line_comment.is_empty():
+		print(
+			"[Popochiu i18n] Warning: Modifier not applied at %s:%d — "
+			% [_parse_path, _parse_idx + 1]
+			+ "no translatable string found on this line."
+		)
+
+
+# Tries to match plural function calls (tr_n, atr_n, etc.) on the current line.
+# Returns true if the line was consumed (match found or non-literal warned).
+func _try_plural_match() -> bool:
+	var pl_match := _plural_function_regex.search(_parse_line)
+	if pl_match:
+		if not _parse_line_skip:
 			var msgid := _get_match_string(pl_match, 1, 2)
 			var msgid_plural := _get_match_string(pl_match, 3, 4)
 			if not msgid.is_empty() and not msgid_plural.is_empty():
-				var remainder := line.substr(pl_match.get_end())
+				var remainder := _parse_line.substr(pl_match.get_end())
 				var msgctx := _extract_context(remainder, _context_after_expr_regex)
-				result.append(PackedStringArray([
-					msgid, msgctx, msgid_plural, comment_result.comment, str(i + 1)
+				_parse_result.append(PackedStringArray([
+					msgid, msgctx, msgid_plural, _parse_line_comment, str(_parse_idx + 1)
 				]))
-			continue
+		return true
 
-		if _search_and_warn_non_literal(lines, i, path, line_stripped,
-				_non_literal_plural_regex, "Use direct string literals as the first two arguments."):
-			continue
+	return _search_and_warn_non_literal(
+		_non_literal_plural_regex,
+		"Use direct string literals as the first two arguments."
+	)
 
-		# --- Native singular function calls (tr, atr): one string argument + optional context ---
-		var native_match := _native_function_regex.search(line)
-		if native_match:
-			var after_match := line.substr(native_match.get_end()).strip_edges()
-			if after_match.begins_with("+"):
-				var comment_result := _parse_comment(lines, i)
-				if not comment_result.skip:
-					print(
-						"[Popochiu i18n] Warning: Cannot extract concatenated string at "
-						+"%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
-						+"Use a direct string literal as the first argument."
-					)
-				continue
 
-			var comment_result := _parse_comment(lines, i)
-			if comment_result.skip:
-				continue
+# Tries to match native singular function calls (tr, atr) on the current line.
+# Returns true if the line was consumed (match found or non-literal warned).
+func _try_native_match() -> bool:
+	var native_match := _native_function_regex.search(_parse_line)
+	if native_match:
+		var after_match := _parse_line.substr(native_match.get_end()).strip_edges()
+		if after_match.begins_with("+"):
+			if not _parse_line_skip:
+				print(
+					"[Popochiu i18n] Warning: Cannot extract concatenated string at "
+					+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
+						_parse_line_stripped.substr(0, 120)]
+					+ "Use a direct string literal as the first argument."
+				)
+			return true
 
+		if not _parse_line_skip:
 			var s := _get_match_string(native_match, 1, 2)
 			if not s.is_empty():
-				var remainder := line.substr(native_match.get_end())
+				var remainder := _parse_line.substr(native_match.get_end())
 				var msgctx := _extract_context(remainder, _context_regex)
-				result.append(PackedStringArray([
-					s, msgctx, "", comment_result.comment, str(i + 1)
+				_parse_result.append(PackedStringArray([
+					s, msgctx, "", _parse_line_comment, str(_parse_idx + 1)
 				]))
-			continue
+		return true
 
-		if _search_and_warn_non_literal(lines, i, path, line_stripped,
-				_native_non_literal_regex, "Use a direct string literal as the first argument."):
-			continue
+	return _search_and_warn_non_literal(
+		_native_non_literal_regex,
+		"Use a direct string literal as the first argument."
+	)
 
-		# --- Single-param function calls (say, show_system_text, etc.) ---
-		var fn_match := _function_regex.search(line)
-		if fn_match:
-			var after_match := line.substr(fn_match.get_end()).strip_edges()
-			if after_match.begins_with("+"):
-				# Concatenated string ("string" + "string"): warn unless suppressed
-				var comment_result := _parse_comment(lines, i)
-				if not comment_result.skip:
-					print(
-						"[Popochiu i18n] Warning: Cannot extract concatenated string at "
-						+"%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
-						+"Use a direct string literal as the first argument."
-					)
-				continue
 
-			var comment_result := _parse_comment(lines, i)
-			if comment_result.skip:
-				continue
+# Tries to match Popochiu function calls (say, show_system_text, etc.) on the current line.
+# Returns true if the line was consumed (match found or non-literal warned).
+func _try_function_match() -> bool:
+	var fn_match := _function_regex.search(_parse_line)
+	if fn_match:
+		var after_match := _parse_line.substr(fn_match.get_end()).strip_edges()
+		if after_match.begins_with("+"):
+			if not _parse_line_skip:
+				print(
+					"[Popochiu i18n] Warning: Cannot extract concatenated string at "
+					+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
+						_parse_line_stripped.substr(0, 120)]
+					+ "Use a direct string literal as the first argument."
+				)
+			return true
 
+		if not _parse_line_skip:
 			var s := _get_match_string(fn_match, 1, 2)
 			if not s.is_empty():
-				result.append(PackedStringArray([
-					s, "", "", comment_result.comment, str(i + 1)
+				_parse_result.append(PackedStringArray([
+					s, "", "", _parse_line_comment, str(_parse_idx + 1)
 				]))
-			continue
+		return true
 
-		if _search_and_warn_non_literal(lines, i, path, line_stripped,
-				_non_literal_regex, "Use a direct string literal as the first argument."):
-			continue
+	return _search_and_warn_non_literal(
+		_non_literal_regex,
+		"Use a direct string literal as the first argument."
+	)
 
-		# --- Dialog option text assignments (.text = "...") ---
-		var text_match := _text_assignment_regex.search(line)
-		if text_match:
-			var comment_result := _parse_comment(lines, i)
-			if comment_result.skip:
-				continue
 
-			var s := _get_match_string(text_match, 1, 2)
-			if not s.is_empty():
-				result.append(PackedStringArray([
-					s, "", "", comment_result.comment, str(i + 1)
-				]))
-			continue
+# Tries to match dialog option text assignments (.text = "...") on the current line.
+# Returns true if the line was consumed.
+func _try_text_assignment() -> bool:
+	var text_match := _text_assignment_regex.search(_parse_line)
+	if not text_match:
+		return false
 
-	return result
+	if not _parse_line_skip:
+		var s := _get_match_string(text_match, 1, 2)
+		if not s.is_empty():
+			_parse_result.append(PackedStringArray([
+				s, "", "", _parse_line_comment, str(_parse_idx + 1)
+			]))
+	return true
 
 
 # Returns the first non-empty captured string from two alternative capture groups (double/single
@@ -361,78 +484,19 @@ func _extract_context(remainder: String, context_regex: RegEx) -> String:
 	return _get_match_string(ctx_match, 1, 2)
 
 
-# Searches a regex on the given line; if it matches, prints a non-literal warning unless
-# suppressed by NO_TRANSLATE. Returns true when matched so the caller can skip further
-# processing with `continue`.
-func _search_and_warn_non_literal(
-	lines: PackedStringArray,
-	line_idx: int,
-	path: String,
-	line_stripped: String,
-	regex: RegEx,
-	fix_hint: String,
-) -> bool:
-	if not regex.search(lines[line_idx]):
+# Searches a regex on the current parse line; if it matches, prints a non-literal warning unless
+# suppressed by NO_TRANSLATE. Returns true when matched so the caller can propagate the skip.
+func _search_and_warn_non_literal(regex: RegEx, fix_hint: String) -> bool:
+	if not regex.search(_parse_line):
 		return false
-	var comment_result := _parse_comment(lines, line_idx)
-	if not comment_result.skip:
+	if not _parse_line_skip:
 		print(
 			"[Popochiu i18n] Warning: Cannot extract non-literal string at "
-			+"%s:%d — \"%s\". " % [path, line_idx + 1, line_stripped.substr(0, 120)]
+			+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
+				_parse_line_stripped.substr(0, 120)]
 			+ fix_hint
 		)
 	return true
-
-
-## Parses comments for a given line, mimicking Godot's native behavior:
-## 1. Checks for an inline comment on the same line (after code)
-## 2. Walks backwards through consecutive comment lines (empty lines break the chain)
-## Returns a Dictionary with { skip: bool, comment: String }
-func _parse_comment(lines: PackedStringArray, line_idx: int) -> Dictionary:
-	var ret := {"skip": false, "comment": ""}
-
-	# 1. Check inline comment on the same line
-	var inline_comment := _get_inline_comment(lines[line_idx])
-	if not inline_comment.is_empty():
-		if inline_comment.begins_with("TRANSLATORS:"):
-			ret.comment = inline_comment.trim_prefix("TRANSLATORS:").strip_edges()
-			return ret
-		if inline_comment == "NO_TRANSLATE" or inline_comment.begins_with("NO_TRANSLATE:"):
-			ret.skip = true
-			return ret
-
-	# 2. Walk backwards through preceding consecutive comment lines
-	var multiline_comment := ""
-	var line := line_idx - 1
-	while line >= 0:
-		var prev_stripped := lines[line].strip_edges()
-		# Non-comment line (including empty lines) breaks the chain
-		if not prev_stripped.begins_with("#"):
-			break
-
-		var content := prev_stripped.trim_prefix("#").strip_edges()
-
-		# Empty comment lines are allowed within the block (don't break the chain)
-		if content.is_empty():
-			line -= 1
-			continue
-
-		if multiline_comment.is_empty():
-			multiline_comment = content
-		else:
-			multiline_comment = content + "\n" + multiline_comment
-
-		if content.begins_with("TRANSLATORS:"):
-			ret.comment = multiline_comment.trim_prefix("TRANSLATORS:").strip_edges()
-			return ret
-
-		if content == "NO_TRANSLATE" or content.begins_with("NO_TRANSLATE:"):
-			ret.skip = true
-			return ret
-
-		line -= 1
-
-	return ret
 
 
 ## Extracts the comment portion from a line that contains code + inline comment.
