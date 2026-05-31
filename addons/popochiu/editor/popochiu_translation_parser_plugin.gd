@@ -486,16 +486,16 @@ func _search_and_warn_non_literal(regex: RegEx, fix_hint: String) -> bool:
 	return true
 
 
-# Checks if the remainder of the line after a native match starts with a concatenation operator,
+# Checks if the remainder of the line after a match starts with a concatenation operator,
 # which cannot be extracted.
-func _line_has_concatenation(native_match: RegExMatch) -> bool:
+func _line_has_concatenation(match: RegExMatch) -> bool:
 	# Ingnore this check if the line is already marked to be skipped, to avoid duplicate warnings.
 	if _parse_line_skip:
 		return false
 
-	# Check if the remainder of the line after the native match starts with a
+	# Check if the remainder of the line after the match starts with a
 	# concatenation operator, which cannot be extracted.
-	var after_match := _parse_line.substr(native_match.get_end()).strip_edges()
+	var after_match := _parse_line.substr(match.get_end()).strip_edges()
 	if after_match.begins_with("+"):
 		PopochiuUtils.print_warning(
 			"[i18n] Cannot extract concatenated string at "
