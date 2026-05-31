@@ -405,24 +405,24 @@ static func _is_valid_godot_path(path: String, expect_file: bool = false) -> boo
 
 	# Must start with a supported prefix
 	if not (path.begins_with("res://") or path.begins_with("user://")):
-		push_warning("Path must start with 'res://' or 'user://'")
+		PopochiuUtils.print_warning("Path must start with 'res://' or 'user://'")
 		return false
 
 	# Optional: validate the filename part doesn't contain illegal chars
 	if expect_file:
 		var filename: String = path.get_file()
 		if not filename.is_valid_filename():
-			push_warning("Filename contains invalid characters.")
+			PopochiuUtils.print_warning("Filename contains invalid characters.")
 			return false
 		# Check existence
 		if not FileAccess.file_exists(path):
-			push_warning("File does not exist.")
+			PopochiuUtils.print_warning("File does not exist.")
 			return false
 		
 		return true
 
 	if not DirAccess.dir_exists_absolute(path):
-		push_warning("Directory does not exist.")
+		PopochiuUtils.print_warning("Directory does not exist.")
 		return false
 	
 	return true
@@ -435,22 +435,22 @@ static func _is_valid_function_name(name: String, check_snake_case: bool = false
 
 	# 1. Cannot be empty
 	if name.is_empty():
-		push_warning("Function name cannot be empty.")
+		PopochiuUtils.print_warning("Function name cannot be empty.")
 		return false
 
 	# 2. Must match valid identifier pattern
 	if not _valid_name_regex.search(name):
-		push_warning("Function name contains invalid characters.")
+		PopochiuUtils.print_warning("Function name contains invalid characters.")
 		return false
 
 	# 3. Cannot be a reserved name
 	if name in GDSCRIPT_RESERVED_NAMES:
-		push_warning("Function name cannot be a reserved keyword or a global scope symbol.")
+		PopochiuUtils.print_warning("Function name cannot be a reserved keyword or a global scope symbol.")
 		return false
 
 	# 4. Obey snake case convention
 	if check_snake_case and name != name.to_snake_case():
-		push_warning("Function name is not snake case.")
+		PopochiuUtils.print_warning("Function name is not snake case.")
 		return false
 	
 	return true

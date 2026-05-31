@@ -120,7 +120,7 @@ static var defaults := {
 	AUTOTRACE_OUTLINE_MARGIN: 0,
 	AUTOTRACE_NOISE_REDUCTION: false,
 	AUTOTRACE_CONVEX_OUTLINE: true,
-	TRANSLATION_EXTRA_SCAN_PATHS: "",
+	TRANSLATION_EXTRA_SCAN_PATHS: [],
 	TRANSLATION_EXTRA_FUNCTION_NAMES: "",
 	TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES: "",
 }
@@ -381,7 +381,9 @@ static func get_ui_prefixes() -> String:
 
 # ---- Translations -------------------------------------------------------------------------------
 static func get_translation_extra_scan_paths() -> Array[String]:
-	return _get_project_setting(TRANSLATION_EXTRA_SCAN_PATHS)
+	var result:Array[String]
+	result.append_array(_get_project_setting(TRANSLATION_EXTRA_SCAN_PATHS))
+	return result
 
 
 static func get_translation_extra_function_names() -> String:

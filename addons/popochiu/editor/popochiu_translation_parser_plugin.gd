@@ -31,6 +31,11 @@ const DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES: PackedStringArray = [
 # Popochiu has no built-in plural functions; this stub is reserved for future implementations
 const DEFAULT_POPOCHIU_PLURAL_FUNCTION_NAMES: PackedStringArray = []
 
+# Cached on first use; valid for the lifetime of the plugin instance
+var _scan_paths: PackedStringArray
+var _is_initialized: bool = false
+
+# Compiled regular expressions for parsing; cached on first use.
 var _singular_function_regex: RegEx
 var _singular_non_literal_regex: RegEx
 var _plural_function_regex: RegEx
@@ -39,7 +44,7 @@ var _context_regex: RegEx
 var _context_after_expr_regex: RegEx
 var _text_assignment_regex: RegEx
 
-# Parse state — ephemeral, only valid during a call to _extract_strings_from_file()
+# Parse state. Ephemeral, only valid during a call to _extract_strings_from_file()
 # Per-file
 var _parse_path: String
 var _parse_lines: PackedStringArray
@@ -64,17 +69,22 @@ func _get_recognized_extensions() -> PackedStringArray:
 
 
 func _parse_file(path: String) -> Array[PackedStringArray]:
+	# EditorTranslationParserPlugin extends RefCounted, so there is no _ready() or scene-tree
+	# lifecycle to hook into. Using a constructor (_init) would run too early, before PopochiuConfig
+	# and PopochiuResources are guaranteed to be available. Lazy initialization on the first
+	# _parse_file() call is therefore the safest point, at the cost of a ugly semaphore variable.
+	if not _is_initialized:
+		_initialize()
+
 	if not _is_in_scan_paths(path):
 		return []
-
-	_compile_regexes()
 
 	return _extract_strings_from_file(path)
 
 
 #endregion
 
-#region Godot 4.7 — uncomment when _customize_strings() becomes available ########################
+#region Godot 4.7: uncomment when _customize_strings() becomes available ########################
 ## Called after all files have been parsed. Scans target paths and appends extracted strings.
 #func _customize_strings(strings: Array[PackedStringArray]) -> Array[PackedStringArray]:
 #	_compile_regexes()
@@ -110,9 +120,14 @@ func _parse_file(path: String) -> Array[PackedStringArray]:
 #endregion
 
 #region Private ####################################################################################
+func _initialize() -> void:
+	_scan_paths = _get_scan_paths()
+	_compile_regexes()
+	_is_initialized = true
+
+
 func _is_in_scan_paths(path: String) -> bool:
-	var scan_paths := _get_scan_paths()
-	for scan_path in scan_paths:
+	for scan_path in _scan_paths:
 		if path.begins_with(scan_path):
 			return true
 	return false
@@ -161,7 +176,8 @@ func _append_extra_names(names: PackedStringArray, extra: String) -> void:
 		var trimmed := n.strip_edges()
 		if not PopochiuEditorHelper._is_valid_function_name(trimmed):
 			PopochiuUtils.print_warning(
-				"[Popochiu i18n] Warning: \"%s\" is not a valid function name!" % trimmed
+				"[i18n] Remove \"%s\" entry from Extra (Plural) Function Names in Project Settings."
+				% trimmed
 			)
 			continue
 		if not trimmed.is_empty() and trimmed not in names:
@@ -338,7 +354,7 @@ func _apply_inline_modifiers() -> void:
 func _check_unused_modifiers() -> void:
 	if _parse_line_skip or not _parse_line_comment.is_empty():
 		PopochiuUtils.print_warning(
-			"[i18n] Modifier not applied at %s:%d — "
+			"[i18n] Modifier not applied at %s:%d: "
 			% [_parse_path, _parse_idx + 1]
 			+ "no translatable string found on this line."
 		)
@@ -444,7 +460,7 @@ func _search_and_warn_non_literal(regex: RegEx, fix_hint: String) -> bool:
 	if not _parse_line_skip:
 		PopochiuUtils.print_warning(
 			"[i18n] Cannot extract non-literal string at "
-			+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
+			+ "%s:%d: \"%s\". " % [_parse_path, _parse_idx + 1,
 				_parse_line_stripped.substr(0, 120)]
 			+ fix_hint
 		)
@@ -464,7 +480,7 @@ func _line_has_concatenation(native_match: RegExMatch) -> bool:
 	if after_match.begins_with("+"):
 		PopochiuUtils.print_warning(
 			"[i18n] Cannot extract concatenated string at "
-			+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
+			+ "%s:%d: \"%s\". " % [_parse_path, _parse_idx + 1,
 				_parse_line_stripped.substr(0, 120)]
 			+ "Always use a single string literal as the first argument."
 		)
