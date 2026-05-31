@@ -43,10 +43,12 @@ var _plural_non_literal_regex: RegEx
 var _context_regex: RegEx
 var _context_after_expr_regex: RegEx
 var _text_assignment_regex: RegEx
+var _function_def_regex: RegEx
 
 # Parse state. Ephemeral, only valid during a call to _extract_strings_from_file()
 # Per-file
 var _parse_path: String
+var _parse_current_function: String
 var _parse_lines: PackedStringArray
 var _parse_result: Array[PackedStringArray]
 # Per-iteration
@@ -242,6 +244,11 @@ func _compile_regexes() -> void:
 		"(?<!\\w)\\.?text\\s*=\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 	)
 
+	_function_def_regex = RegEx.new()
+	_function_def_regex.compile(
+		"^(?:static\\s+)?func\\s+([a-zA-Z_]\\w*)\\s*\\("
+	)
+
 
 func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 	_parse_path = path
@@ -250,6 +257,7 @@ func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 	_parse_pending_comment = ""
 	_parse_in_translators_block = false
 	_parse_pending_modifier_line = 0
+	_parse_current_function = ""
 
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
@@ -272,6 +280,11 @@ func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 
 		_snapshot_and_reset_pending()
 		_apply_inline_modifiers()
+
+		# Track the current function name for forged context
+		var func_def := _function_def_regex.search(_parse_line_stripped)
+		if func_def:
+			_parse_current_function = func_def.get_string(1)
 
 		if _try_plural_match():
 			continue
@@ -297,9 +310,10 @@ func _extract_strings_from_resource(path: String) -> Array[PackedStringArray]:
 		return []
 
 	var result: Array[PackedStringArray] = []
+	var ctx := _path_to_display_name(path)
 	for opt in res.options:
 		if opt is PopochiuDialogOption and not opt.text.is_empty():
-			result.append(PackedStringArray([opt.text, "", "", "", path]))
+			result.append(PackedStringArray([opt.text, ctx, "", "", path]))
 	return result
 
 
@@ -390,10 +404,12 @@ func _try_plural_match() -> bool:
 			var msgid := _get_match_string(pl_match, 2, 3)
 			var msgid_plural := _get_match_string(pl_match, 4, 5)
 			if not msgid.is_empty() and not msgid_plural.is_empty():
-				var msgctx := ""
+				var msgctx := _forge_context()
 				if fn_name in DEFAULT_NATIVE_PLURAL_FUNCTION_NAMES:
 					var remainder := _parse_line.substr(pl_match.get_end())
-					msgctx = _extract_context(remainder, _context_after_expr_regex)
+					var native_ctx := _extract_context(remainder, _context_after_expr_regex)
+					if not native_ctx.is_empty():
+						msgctx += " - " + native_ctx
 				_parse_result.append(PackedStringArray([
 					msgid, msgctx, msgid_plural, _parse_line_comment, str(_parse_idx + 1)
 				]))
@@ -418,10 +434,12 @@ func _try_singular_match() -> bool:
 			var fn_name := fn_match.get_string(1)
 			var s := _get_match_string(fn_match, 2, 3)
 			if not s.is_empty():
-				var msgctx := ""
+				var msgctx := _forge_context()
 				if fn_name in DEFAULT_NATIVE_FUNCTION_NAMES:
 					var remainder := _parse_line.substr(fn_match.get_end())
-					msgctx = _extract_context(remainder, _context_regex)
+					var native_ctx := _extract_context(remainder, _context_regex)
+					if not native_ctx.is_empty():
+						msgctx += " - " + native_ctx
 				_parse_result.append(PackedStringArray([
 					s, msgctx, "", _parse_line_comment, str(_parse_idx + 1)
 				]))
@@ -445,7 +463,7 @@ func _try_text_assignment() -> bool:
 		var s := _get_match_string(text_match, 1, 2)
 		if not s.is_empty():
 			_parse_result.append(PackedStringArray([
-				s, "", "", _parse_line_comment, str(_parse_idx + 1)
+				s, _forge_context(), "", _parse_line_comment, str(_parse_idx + 1)
 			]))
 	return true
 
@@ -529,6 +547,31 @@ func _get_inline_comment(line: String) -> String:
 		prev_char = ch
 
 	return ""
+
+
+## Transforms a file path into a human-readable display name suitable for translation context.
+## Strips the `popochiu_` prefix from filenames, replaces underscores with spaces, and applies
+## capitalization. Examples:
+##   room_kitchen.gd         -> "Room Kitchen"
+##   popochiu_globals.gd     -> "Globals"
+##   dialog_opening_dialog.tres -> "Dialog Opening Dialog"
+func _path_to_display_name(path: String) -> String:
+	var filename := path.get_file().get_basename()
+	if filename.begins_with("popochiu_"):
+		filename = filename.trim_prefix("popochiu_")
+	return filename.capitalize()
+
+
+## Forges a translation context string from the current script's display name and the current
+## function name. If no function is being tracked, only the display name is returned.
+##   Room Kitchen _on_room_entered
+##   Globals do_stuff
+##   Prop Trophy _on_click
+func _forge_context() -> String:
+	var ctx := _path_to_display_name(_parse_path)
+	if not _parse_current_function.is_empty():
+		ctx += " " + _parse_current_function
+	return ctx
 
 
 #endregion
