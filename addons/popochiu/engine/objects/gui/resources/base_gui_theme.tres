@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=29 format=3 uid="uid://dpequqav4rjaf"]
+[gd_resource type="Theme" format=3 uid="uid://dpequqav4rjaf"]
 
 [ext_resource type="Texture2D" uid="uid://pl1ch71kfj72" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_checked.png" id="2_ldprq"]
 [ext_resource type="Texture2D" uid="uid://dukr75slqli45" path="res://addons/popochiu/engine/objects/gui/resources/images/check_button_unchecked.png" id="3_3rprc"]
