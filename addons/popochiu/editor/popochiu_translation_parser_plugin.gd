@@ -127,7 +127,7 @@ func _get_scan_paths() -> PackedStringArray:
 			var trimmed := p.strip_edges()
 			if not PopochiuEditorHelper._is_valid_godot_path(trimmed):
 				PopochiuUtils.print_warning(
-					"[Popochiu i18n] Warning: \"%s\" is not a valid scan path!" % p
+					"[i18n] \"%s\" is not a valid scan path!" % p
 				)
 				continue
 			if not trimmed.is_empty() and trimmed not in paths:
@@ -272,8 +272,8 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 # Handles a blank line: if a modifier was pending, it can never apply. Warn and discard.
 func _handle_empty_line() -> void:
 	if _parse_pending_skip or not _parse_pending_comment.is_empty():
-		print(
-			"[Popochiu i18n] Warning: Modifier at %s:%d not applied, since followed by a blank line."
+		PopochiuUtils.print_warning(
+			"[i18n] Modifier at %s:%d not applied, since followed by a blank line."
 			% [_parse_path, _parse_pending_modifier_line]
 		)
 	_parse_pending_skip = false
@@ -337,8 +337,8 @@ func _apply_inline_modifiers() -> void:
 # Called when no match was found on a code line: if modifiers were set, they will never apply.
 func _check_unused_modifiers() -> void:
 	if _parse_line_skip or not _parse_line_comment.is_empty():
-		print(
-			"[Popochiu i18n] Warning: Modifier not applied at %s:%d — "
+		PopochiuUtils.print_warning(
+			"[i18n] Modifier not applied at %s:%d — "
 			% [_parse_path, _parse_idx + 1]
 			+ "no translatable string found on this line."
 		)
@@ -442,8 +442,8 @@ func _search_and_warn_non_literal(regex: RegEx, fix_hint: String) -> bool:
 	if not regex.search(_parse_line):
 		return false
 	if not _parse_line_skip:
-		print(
-			"[Popochiu i18n] Warning: Cannot extract non-literal string at "
+		PopochiuUtils.print_warning(
+			"[i18n] Cannot extract non-literal string at "
 			+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
 				_parse_line_stripped.substr(0, 120)]
 			+ fix_hint
@@ -462,8 +462,8 @@ func _line_has_concatenation(native_match: RegExMatch) -> bool:
 	# concatenation operator, which cannot be extracted.
 	var after_match := _parse_line.substr(native_match.get_end()).strip_edges()
 	if after_match.begins_with("+"):
-		print(
-			"[Popochiu i18n] Warning: Cannot extract concatenated string at "
+		PopochiuUtils.print_warning(
+			"[i18n] Cannot extract concatenated string at "
 			+ "%s:%d — \"%s\". " % [_parse_path, _parse_idx + 1,
 				_parse_line_stripped.substr(0, 120)]
 			+ "Always use a single string literal as the first argument."
