@@ -65,7 +65,7 @@ var _parse_line_comment: String
 
 #region Godot ######################################################################################
 func _get_recognized_extensions() -> PackedStringArray:
-	return PackedStringArray(["gd"])
+	return PackedStringArray(["gd", "tres"])
 
 
 func _parse_file(path: String) -> Array[PackedStringArray]:
@@ -79,7 +79,9 @@ func _parse_file(path: String) -> Array[PackedStringArray]:
 	if not _is_in_scan_paths(path):
 		return []
 
-	return _extract_strings_from_file(path)
+	if path.get_extension() == "tres":
+		return _extract_strings_from_resource(path)
+	return _extract_strings_from_script(path)
 
 
 #endregion
@@ -93,7 +95,7 @@ func _parse_file(path: String) -> Array[PackedStringArray]:
 #	for scan_path in scan_paths:
 #		var files := _get_gd_files_in_path(scan_path)
 #		for file_path in files:
-#			var extracted := _extract_strings_from_file(file_path)
+#			var extracted := _extract_strings_from_script(file_path)
 #			strings.append_array(extracted)
 #
 #	return strings
@@ -233,14 +235,15 @@ func _compile_regexes() -> void:
 		"^\\s*,\\s*[^,]+,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 	)
 
-	# Matches: .text = "string" or .text = 'string' (dialog option text assignment)
+	# Matches .text = "string" or text = "string" (without the leading dot, as in create_option()
+	# dict keys) to cover both property-style and dictionary-style text assignments.
 	_text_assignment_regex = RegEx.new()
 	_text_assignment_regex.compile(
-		"\\.text\\s*=\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+		"(?<!\\w)\\.?text\\s*=\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 	)
 
 
-func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
+func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 	_parse_path = path
 	_parse_result = []
 	_parse_pending_skip = false
@@ -282,6 +285,21 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 	_parse_lines = PackedStringArray()
 	var result := _parse_result
 	_parse_result = []
+	return result
+
+
+# Loads a PopochiuDialog .tres resource and extracts translatable strings from its options.
+# Returns an empty array silently for any .tres that is not a PopochiuDialog — other .tres files
+# (settings, GUI resources, etc.) may legitimately fall inside a scan path.
+func _extract_strings_from_resource(path: String) -> Array[PackedStringArray]:
+	var res := load(path)
+	if not res or not res is PopochiuDialog:
+		return []
+
+	var result: Array[PackedStringArray] = []
+	for opt in res.options:
+		if opt is PopochiuDialogOption and not opt.text.is_empty():
+			result.append(PackedStringArray([opt.text, "", "", "", path]))
 	return result
 
 
@@ -415,8 +433,9 @@ func _try_singular_match() -> bool:
 	)
 
 
-# Tries to match dialog option text assignments (.text = "...") on the current line.
-# Returns true if the line was consumed.
+# Tries to match dialog option text assignments on the current line. Covers both the
+# property-style (.text = "...") and the dictionary-key style (text = "...") used inside
+# create_option() calls. Returns true if the line was consumed.
 func _try_text_assignment() -> bool:
 	var text_match := _text_assignment_regex.search(_parse_line)
 	if not text_match:
