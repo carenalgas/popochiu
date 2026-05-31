@@ -103,6 +103,18 @@ func get_markers() -> Array:
 	return current.get_markers()
 
 
+## Returns an [Array] with all the [PopochiuCharacter]s in the current room.
+func get_characters() -> Array[PopochiuCharacter]:
+	var characters: Array[PopochiuCharacter] = []
+	characters.assign(current.get_characters())
+	return characters
+
+
+## Returns the number of [PopochiuCharacter]s in the current room.
+func get_characters_count() -> int:
+	return current.get_characters_count()
+
+
 ## Returns the runtime instance of the [PopochiuRoom] identified by [param script_name], or
 ## [code]null[/code] if it cannot be found.
 ##
