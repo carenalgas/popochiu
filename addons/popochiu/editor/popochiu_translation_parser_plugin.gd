@@ -141,6 +141,11 @@ func _get_plural_function_names() -> PackedStringArray:
 	if not extra.is_empty():
 		for n in extra.split(",", false):
 			var trimmed := n.strip_edges()
+			if not PopochiuEditorHelper._is_valid_function_name(trimmed):
+				PopochiuUtils.print_warning(
+					"[Popochiu i18n] Warning: \"%s\" is not a valid function name!" % trimmed
+				)
+				continue
 			if not trimmed.is_empty() and trimmed not in names:
 				names.append(trimmed)
 
@@ -186,7 +191,7 @@ func _compile_regexes() -> void:
 	_plural_function_regex.compile(
 		"(?<!\\w)(?:%s)\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 		% pl_group
-		+ "\\s*,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+		+"\\s*,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 	)
 
 	# Matches: plural_function_name( followed by something that is NOT a string literal
@@ -266,8 +271,8 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 				if not comment_result.skip:
 					print(
 						"[Popochiu i18n] Warning: Cannot extract concatenated string at "
-						+ "%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
-						+ "Use a direct string literal as the first argument."
+						+"%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
+						+"Use a direct string literal as the first argument."
 					)
 				continue
 
@@ -298,8 +303,8 @@ func _extract_strings_from_file(path: String) -> Array[PackedStringArray]:
 				if not comment_result.skip:
 					print(
 						"[Popochiu i18n] Warning: Cannot extract concatenated string at "
-						+ "%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
-						+ "Use a direct string literal as the first argument."
+						+"%s:%d — \"%s\". " % [path, i + 1, line_stripped.substr(0, 120)]
+						+"Use a direct string literal as the first argument."
 					)
 				continue
 
@@ -373,7 +378,7 @@ func _search_and_warn_non_literal(
 	if not comment_result.skip:
 		print(
 			"[Popochiu i18n] Warning: Cannot extract non-literal string at "
-			+ "%s:%d — \"%s\". " % [path, line_idx + 1, line_stripped.substr(0, 120)]
+			+"%s:%d — \"%s\". " % [path, line_idx + 1, line_stripped.substr(0, 120)]
 			+ fix_hint
 		)
 	return true
@@ -384,7 +389,7 @@ func _search_and_warn_non_literal(
 ## 2. Walks backwards through consecutive comment lines (empty lines break the chain)
 ## Returns a Dictionary with { skip: bool, comment: String }
 func _parse_comment(lines: PackedStringArray, line_idx: int) -> Dictionary:
-	var ret := { "skip": false, "comment": "" }
+	var ret := {"skip": false, "comment": ""}
 
 	# 1. Check inline comment on the same line
 	var inline_comment := _get_inline_comment(lines[line_idx])
