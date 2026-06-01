@@ -1,7 +1,7 @@
 @tool
 class_name PopochiuEditorHelper
 extends Resource
-## Utils class for Editor related things.
+# Utils class for Editor related things.
 
 # ---- Strings, paths, scenes, and other values ----------------------------------------------------
 const POPUPS_FOLDER = "res://addons/popochiu/editor/popups/"
@@ -315,8 +315,8 @@ static func get_all_children(node, children := []) -> Array:
 	return children
 
 
-## Overrides the font [param font_name] in [param node] by the theme [Font] identified by
-## [param editor_font_name].
+# Overrides the font [param font_name] in [param node] by the theme [Font] identified by
+# [param editor_font_name].
 static func override_font(node: Control, font_name: String, editor_font_name: String) -> void:
 	node.add_theme_font_override(font_name, node.get_theme_font(editor_font_name, "EditorFonts"))
 
@@ -344,7 +344,7 @@ static func pack_scene(node: Node, path := "") -> int:
 	return ResourceSaver.save(packed_scene, path)
 
 
-## Helper function to recursively remove all folders and files inside [param folder_path].
+# Helper function to recursively remove all folders and files inside [param folder_path].
 static func remove_recursive(folder_path: String) -> bool:
 	if DirAccess.dir_exists_absolute(folder_path):
 		# Delete subfolders and their contents recursively in folder_path
@@ -362,7 +362,7 @@ static func remove_recursive(folder_path: String) -> bool:
 	return true
 
 
-## Helper function to get the absolute directory paths for all folders under [param folder_path].
+# Helper function to get the absolute directory paths for all folders under [param folder_path].
 static func get_absolute_directory_paths_at(folder_path: String) -> Array:
 	var dir_array: PackedStringArray = []
 
@@ -373,7 +373,7 @@ static func get_absolute_directory_paths_at(folder_path: String) -> Array:
 	return Array(dir_array)
 
 
-## Helper function to get the absolute file paths for all files under [param folder_path].
+# Helper function to get the absolute file paths for all files under [param folder_path].
 static func get_absolute_file_paths_at(folder_path: String) -> PackedStringArray:
 	var file_array: PackedStringArray = []
 
@@ -384,7 +384,7 @@ static func get_absolute_file_paths_at(folder_path: String) -> PackedStringArray
 	return file_array
 
 
-## Returns an array of [PopochiuRoom] (instances) for all the rooms in the project.
+# Returns an array of [PopochiuRoom] (instances) for all the rooms in the project.
 static func get_rooms() -> Array[PopochiuRoom]:
 	var rooms: Array[PopochiuRoom] = []
 	rooms.assign(PopochiuResources.get_section_keys("rooms").map(
@@ -398,7 +398,7 @@ static func get_rooms() -> Array[PopochiuRoom]:
 #endregion #########################################################################################
 
 #region Private ####################################################################################
-## Check if a string represents a valid path (optionally including a file name).
+# Check if a string represents a valid path (optionally including a file name).
 static func _is_valid_godot_path(path: String, expect_file: bool = false) -> bool:
 	if path.is_empty():
 		return false
@@ -428,7 +428,7 @@ static func _is_valid_godot_path(path: String, expect_file: bool = false) -> boo
 	return true
 
 
-## Check if a string represents a valid GDScript function name.
+# Check if a string represents a valid GDScript function name.
 static func _is_valid_function_name(name: String, check_snake_case: bool = false) -> bool:
 	var _valid_name_regex: RegEx = RegEx.new()
 	_valid_name_regex.compile("^[a-zA-Z_][a-zA-Z0-9_]*$")
@@ -445,7 +445,9 @@ static func _is_valid_function_name(name: String, check_snake_case: bool = false
 
 	# 3. Cannot be a reserved name
 	if name in GDSCRIPT_RESERVED_NAMES:
-		PopochiuUtils.print_warning("Function name cannot be a reserved keyword or a global scope symbol.")
+		PopochiuUtils.print_warning(
+			"Function name cannot be a reserved keyword or a global scope symbol."
+		)
 		return false
 
 	# 4. Obey snake case convention

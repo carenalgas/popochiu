@@ -129,7 +129,7 @@ func _copy_script_template() -> int:
 	return ResultCodes.SUCCESS
 
 
-## Create the script for the object based on the template of its type.
+# Create the script for the object based on the template of its type.
 func _create_script_from_template() -> int:
 	var script_template_file = FileAccess.open(BASE_SCRIPT_TEMPLATE % _type_label, FileAccess.READ)
 	
@@ -196,8 +196,8 @@ func _save_obj_resource(obj: Resource) -> int:
 	return ResultCodes.SUCCESS
 
 
-## Makes a copy of the base scene for the object (e.g. popochiu_room.tscn,
-## popochiu_inventory_item.tscn, popochiu_prop.tscn).
+# Makes a copy of the base scene for the object (e.g. popochiu_room.tscn,
+# popochiu_inventory_item.tscn, popochiu_prop.tscn).
 func _load_obj_base_scene() -> Node:
 	var obj = (
 		load(BASE_SCENE_PATH % [_type_label, _type_label]) as PackedScene

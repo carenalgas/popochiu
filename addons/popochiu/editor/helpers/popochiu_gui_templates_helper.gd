@@ -1,13 +1,13 @@
 @tool
 extends Resource
-## Helper class for operations related to the GUI templates
+# Helper class for operations related to the GUI templates
 
 static var _template_id := ""
 static var _template_theme_path := ""
 
 #region Public #####################################################################################
-## Creates a copy of the selected template, including its components. Also generate the necessary
-## scripts to define custom logic for the graphical interface and its commands.
+# Creates a copy of the selected template, including its components. Also generate the necessary
+# scripts to define custom logic for the graphical interface and its commands.
 static func copy_gui_template(
 	template_name: String, on_progress: Callable, on_complete: Callable
 ) -> void:
@@ -123,9 +123,9 @@ static func copy_component(source_scene_path: String) -> String:
 	return target_scene_file
 
 
-## Makes a copy of the components used by the original GUI template to the
-## **res://game/gui/components/** folder so devs can play with those scenes without
-## affecting the ones in the plugin's folder.
+# Makes a copy of the components used by the original GUI template to the
+# **res://game/gui/components/** folder so devs can play with those scenes without
+# affecting the ones in the plugin's folder.
 static func copy_components(source_scene_path: String, is_gui_game_scene := false) -> void:
 	var dependencies_to_update: Array[Dictionary] = []
 	
@@ -208,9 +208,9 @@ static func copy_components(source_scene_path: String, is_gui_game_scene := fals
 #endregion
 
 #region Private ####################################################################################
-## Create the **gui.tscn** file as a copy of the selected GUI template scene.
-## If a template change is being made, all components of the previous template are removed along
-## with the **.tscn** file before copying the new one.
+# Create the **gui.tscn** file as a copy of the selected GUI template scene.
+# If a template change is being made, all components of the previous template are removed along
+# with the **.tscn** file before copying the new one.
 static func _create_scene(scene_path: String) -> int:
 	# Create the res://game/gui/ folder
 	if not FileAccess.file_exists(PopochiuResources.GUI_GAME_SCENE):
@@ -245,7 +245,7 @@ static func _remove_components(dir_path: String) -> void:
 	EditorInterface.get_resource_filesystem().scan()
 
 
-## Makes a copy of a GUI component's script.
+# Makes a copy of a GUI component's script.
 static func _copy_component_script(
 	source_file_path: String, target_file_path: String
 ) -> void:
@@ -282,7 +282,7 @@ static func _copy_file(
 		DirAccess.copy_absolute(source_file_path, target_file_path)
 
 
-## Replace the UID and paths of the components in the graphic interface scene
+# Replace the UID and paths of the components in the graphic interface scene
 static func _update_dependencies(scene_path: String, dependencies_to_update: Array) -> void:
 	if dependencies_to_update.is_empty():
 		return
@@ -311,9 +311,9 @@ static func _update_dependencies(scene_path: String, dependencies_to_update: Arr
 	file_write.close()
 
 
-## Copy the commands and graphic interface scripts of the chosen GUI template. The new graphic
-## interface scripts inherits from the one originally assigned to the .tscn file of the selected
-## template.
+# Copy the commands and graphic interface scripts of the chosen GUI template. The new graphic
+# interface scripts inherits from the one originally assigned to the .tscn file of the selected
+# template.
 static func _copy_commands_and_gui_scripts(
 	commands_template_path: String, commands_path: String, script_path: String, scene_path: String
 ) -> void:
@@ -335,8 +335,8 @@ static func _copy_commands_and_gui_scripts(
 	script_file.close()
 
 
-## Updates the script of the created [b]res://game/gui/gui.tscn[/b] file so it uses the one created
-## in [method _copy_commands_and_gui_scripts].
+# Updates the script of the created [b]res://game/gui/gui.tscn[/b] file so it uses the one created
+# in [method _copy_commands_and_gui_scripts].
 static func _update_scene_script(script_path: String) -> int:
 	# Update the script of the GUI -----------------------------------------------------------------
 	var scene := (load(

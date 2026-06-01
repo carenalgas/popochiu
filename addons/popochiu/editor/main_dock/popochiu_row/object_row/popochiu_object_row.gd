@@ -1,6 +1,6 @@
 @tool
 extends "res://addons/popochiu/editor/main_dock/popochiu_row/popochiu_row.gd"
-## Row for the main object types: Room, Character, Inventory item, Dialog
+# Row for the main object types: Room, Character, Inventory item, Dialog
 
 enum Options {
 	DELETE = MenuOptions.DELETE,
@@ -47,8 +47,8 @@ func _ready() -> void:
 #endregion
 
 #region Virtual ####################################################################################
-## Shows a confirmation popup to ask the developer if the Popochiu object should be removed only
-## from the core, or from the file system too.
+# Shows a confirmation popup to ask the developer if the Popochiu object should be removed only
+# from the core, or from the file system too.
 func _remove_object() -> void:
 	var location := _get_location()
 	
@@ -82,10 +82,10 @@ func _get_location() -> String:
 #endregion
 
 #region Public #####################################################################################
-## Called to make the row appear semitransparent to indicate that the object is in the project
-## (has a folder with files inside) but is not part of the [code]popochiu_data.cfg[/code] file nor
-## its corresponding autoload (e.g., R, C, I, D). This can happen when one removes an object from
-## the project without removing its files, or when adding objects from another project.
+# Called to make the row appear semitransparent to indicate that the object is in the project
+# (has a folder with files inside) but is not part of the [code]popochiu_data.cfg[/code] file nor
+# its corresponding autoload (e.g., R, C, I, D). This can happen when one removes an object from
+# the project without removing its files, or when adding objects from another project.
 func show_as_not_in_core() -> void:
 	label.modulate.a = 0.5
 	menu_popup.set_item_disabled(menu_popup.get_item_index(Options.ADD_TO_CORE), false)
@@ -113,8 +113,8 @@ func _menu_item_pressed(id: int) -> void:
 			super(id)
 
 
-## Add this Object (Room, Character, InventoryItem, Dialog) to popochiu_data.cfg so it can be used
-## by Popochiu.
+# Add this Object (Room, Character, InventoryItem, Dialog) to popochiu_data.cfg so it can be used
+# by Popochiu.
 func _add_object_to_core() -> void:
 	var target_array := ""
 	var resource: Resource
@@ -146,7 +146,7 @@ func _add_object_to_core() -> void:
 	menu_popup.set_item_disabled(menu_popup.get_item_index(Options.ADD_TO_CORE), true)
 
 
-## Selects the main file of the object in the FileSystem and opens it so that it can be edited.
+# Selects the main file of the object in the FileSystem and opens it so that it can be edited.
 func _open() -> void:
 	# Defer the scene opening to ensure current operations complete first.
 	# Ugly but necessary to avoid errors (see _deferred_open comments).
@@ -242,7 +242,7 @@ func _remove_from_core(should_save_and_delete := true) -> void:
 		queue_free()
 
 
-## Remove this object's directory (subfolders included) from the file system.
+# Remove this object's directory (subfolders included) from the file system.
 func _delete_from_file_system() -> void:
 	var object_dir: EditorFileSystemDirectory = \
 		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
@@ -259,7 +259,7 @@ func _delete_from_file_system() -> void:
 	_deregister_pot_files(pot_paths_to_remove)
 
 
-## Removes the given [param paths_to_remove] from the POT generation list in a single batch save.
+# Removes the given [param paths_to_remove] from the POT generation list in a single batch save.
 func _deregister_pot_files(paths_to_remove: PackedStringArray) -> void:
 	if paths_to_remove.is_empty():
 		return
@@ -275,7 +275,7 @@ func _deregister_pot_files(paths_to_remove: PackedStringArray) -> void:
 		PopochiuConfig.sync_pot_files(files)
 
 
-## Recursively collects .gd and .tres file paths from [param dir] into [param result].
+# Recursively collects .gd and .tres file paths from [param dir] into [param result].
 func _collect_pot_paths(dir: EditorFileSystemDirectory, result: PackedStringArray) -> void:
 	for file_idx in dir.get_file_count():
 		var file_path := dir.get_file_path(file_idx)
@@ -286,9 +286,9 @@ func _collect_pot_paths(dir: EditorFileSystemDirectory, result: PackedStringArra
 		_collect_pot_paths(dir.get_subdir(subdir_idx), result)
 
 
-## Remove the `dir` directory from the system. For Godot to be able to delete a directory, it has to
-## be empty, so this method first deletes the files from from the directory and each of its
-## subdirectories.
+# Remove the `dir` directory from the system. For Godot to be able to delete a directory, it has to
+# be empty, so this method first deletes the files from from the directory and each of its
+# subdirectories.
 func _recursive_delete(dir: EditorFileSystemDirectory) -> void:
 	if dir.get_file_count() > 0:
 		assert(
@@ -309,9 +309,9 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> void:
 	EditorInterface.get_resource_filesystem().scan()
 
 
-## Delete files within [param dir] directory. First, get the paths to each file, then delete them
-## one by one calling [method EditorFileSystem.update_file], so that in case it's an imported file,
-## its [b].import[/b] is also deleted.
+# Delete files within [param dir] directory. First, get the paths to each file, then delete them
+# one by one calling [method EditorFileSystem.update_file], so that in case it's an imported file,
+# its [b].import[/b] is also deleted.
 func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	# Stores the paths of the files to be deleted.
 	var files_paths := []
@@ -359,9 +359,9 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	return OK
 
 
-## Looks to which audio group corresponds [param audio_cue] and deletes it both from
-## [code]popochiu_data.cfg[/code] and the [b]A[/b] singleton (which is the one used to allow code
-## autocompletion related to [PopochiuAudioCue]s).
+# Looks to which audio group corresponds [param audio_cue] and deletes it both from
+# [code]popochiu_data.cfg[/code] and the [b]A[/b] singleton (which is the one used to allow code
+# autocompletion related to [PopochiuAudioCue]s).
 func _delete_audio_cue_in_data(audio_cue: AudioCue) -> bool:
 	# TODO: This could be improved a lot if each PopochiuAudioCue has a variable to store the group
 	# 		to which it corresponds to.

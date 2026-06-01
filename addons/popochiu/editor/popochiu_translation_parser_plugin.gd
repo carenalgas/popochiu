@@ -96,38 +96,38 @@ func _parse_file(path: String) -> Array[PackedStringArray]:
 #endregion
 
 #region Godot 4.7: uncomment when _customize_strings() becomes available ########################
-## Called after all files have been parsed. Scans target paths and appends extracted strings.
-#func _customize_strings(strings: Array[PackedStringArray]) -> Array[PackedStringArray]:
-#	_compile_regexes()
+# Called after all files have been parsed. Scans target paths and appends extracted strings.
+#	func _customize_strings(strings: Array[PackedStringArray]) -> Array[PackedStringArray]:
+#		_compile_regexes()
 #
-#	var scan_paths := _get_scan_paths()
-#	for scan_path in scan_paths:
-#		var files := _get_gd_files_in_path(scan_path)
-#		for file_path in files:
-#			var extracted := _extract_strings_from_script(file_path)
-#			strings.append_array(extracted)
+#		var scan_paths := _get_scan_paths()
+#		for scan_path in scan_paths:
+#			var files := _get_gd_files_in_path(scan_path)
+#			for file_path in files:
+#				var extracted := _extract_strings_from_script(file_path)
+#				strings.append_array(extracted)
 #
-#	return strings
+#		return strings
 #
 #
-#func _get_gd_files_in_path(path: String) -> PackedStringArray:
-#	var files: PackedStringArray = []
-#	var dir := DirAccess.open(path)
-#	if not dir:
+#	func _get_gd_files_in_path(path: String) -> PackedStringArray:
+#		var files: PackedStringArray = []
+#		var dir := DirAccess.open(path)
+#		if not dir:
+#			return files
+#
+#		dir.list_dir_begin()
+#		var file_name := dir.get_next()
+#		while file_name != "":
+#			var full_path := path.path_join(file_name)
+#			if dir.current_is_dir():
+#				files.append_array(_get_gd_files_in_path(full_path))
+#			elif file_name.get_extension() == "gd":
+#				files.append(full_path)
+#			file_name = dir.get_next()
+#		dir.list_dir_end()
+#
 #		return files
-#
-#	dir.list_dir_begin()
-#	var file_name := dir.get_next()
-#	while file_name != "":
-#		var full_path := path.path_join(file_name)
-#		if dir.current_is_dir():
-#			files.append_array(_get_gd_files_in_path(full_path))
-#		elif file_name.get_extension() == "gd":
-#			files.append(full_path)
-#		file_name = dir.get_next()
-#	dir.list_dir_end()
-#
-#	return files
 #endregion
 
 #region Private ####################################################################################
@@ -204,7 +204,8 @@ func _compile_regexes() -> void:
 
 	_singular_function_regex = RegEx.new()
 	_singular_function_regex.compile(
-		"(?<!\\w)((?:%s))\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % singular_group
+		"(?<!\\w)((?:%s))\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+		% singular_group
 	)
 
 	_singular_non_literal_regex = RegEx.new()
@@ -219,8 +220,8 @@ func _compile_regexes() -> void:
 
 	_plural_function_regex = RegEx.new()
 	_plural_function_regex.compile(
-		"(?<!\\w)((?:%s))\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')" % pl_group
-		+ "\\s*,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+		"(?<!\\w)((?:%s))\\s*\\(\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
+		% pl_group + "\\s*,\\s*(?:\"((?:[^\"\\\\]|\\\\.)*)\"|\\'((?:[^\\'\\\\]|\\\\.)*)\\')"
 	)
 
 	_plural_non_literal_regex = RegEx.new()
@@ -576,8 +577,8 @@ func _line_has_concatenation(match: RegExMatch) -> bool:
 	return false
 
 
-## Extracts the comment portion from a line that contains code + inline comment.
-## Returns the stripped comment text (without the #), or empty string if no inline comment.
+# Extracts the comment portion from a line that contains code + inline comment.
+# Returns the stripped comment text (without the #), or empty string if no inline comment.
 func _get_inline_comment(line: String) -> String:
 	var in_double_quote := false
 	var in_single_quote := false
@@ -598,12 +599,12 @@ func _get_inline_comment(line: String) -> String:
 	return ""
 
 
-## Transforms a file path into a human-readable display name suitable for translation context.
-## Strips the `popochiu_` prefix from filenames, replaces underscores with spaces, and applies
-## capitalization. Examples:
-##   room_kitchen.gd         -> "Room Kitchen"
-##   popochiu_globals.gd     -> "Globals"
-##   dialog_opening_dialog.tres -> "Dialog Opening Dialog"
+# Transforms a file path into a human-readable display name suitable for translation context.
+# Strips the `popochiu_` prefix from filenames, replaces underscores with spaces, and applies
+# capitalization. Examples:
+#   room_kitchen.gd         -> "Room Kitchen"
+#   popochiu_globals.gd     -> "Globals"
+#   dialog_opening_dialog.tres -> "Dialog Opening Dialog"
 func _path_to_display_name(path: String) -> String:
 	var filename := path.get_file().get_basename()
 	if filename.begins_with("popochiu_"):
@@ -611,11 +612,11 @@ func _path_to_display_name(path: String) -> String:
 	return filename.capitalize()
 
 
-## Forges a translation context string from the current script's display name and the current
-## function name. If no function is being tracked, only the display name is returned.
-##   Room Kitchen _on_room_entered
-##   Globals do_stuff
-##   Prop Trophy _on_click
+# Forges a translation context string from the current script's display name and the current
+# function name. If no function is being tracked, only the display name is returned.
+#   Room Kitchen _on_room_entered
+#   Globals do_stuff
+#   Prop Trophy _on_click
 func _forge_context() -> String:
 	var ctx := _path_to_display_name(_parse_path)
 	if not _parse_current_function.is_empty():

@@ -43,11 +43,11 @@ func _on_sync_translations_pressed() -> void:
 # manually. To make this UX as smooth as possible, we open the Project Settings window and
 # switch to the right tab for them.
 func _on_open_pot_settings_pressed() -> void:
-    # NOTE: The approach is admittedly ugly. EditorInterface provides no API to open Project
-    # Settings or to select a specific tab programmatically, so we are forced to traverse the
-    # editor's node tree and identify tabs by their title string. On the bright side, this
-    # also works when the IDE language is changed, since the title we match ("Localization")
-    # is always in English regardless of editor locale.
+	# NOTE: The approach is admittedly ugly. EditorInterface provides no API to open Project
+	# Settings or to select a specific tab programmatically, so we are forced to traverse the
+	# editor's node tree and identify tabs by their title string. On the bright side, this
+	# also works when the IDE language is changed, since the title we match ("Localization")
+	# is always in English regardless of editor locale.
 	var settings_window := _find_project_settings_window()
 	if not settings_window:
 		PopochiuUtils.print_error("Could not find the Project Settings window.")

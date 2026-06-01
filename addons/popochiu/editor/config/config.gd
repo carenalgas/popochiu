@@ -235,7 +235,12 @@ static func initialize_project_settings() -> void:
 	_initialize_project_setting(AUTOTRACE_CONVEX_OUTLINE, TYPE_BOOL)
 
 	# ---- Translations ---------------------------------------------------------------------------
-	_initialize_project_setting(TRANSLATION_EXTRA_SCAN_PATHS, TYPE_ARRAY, PROPERTY_HINT_TYPE_STRING, "%d/%d:" % [TYPE_STRING, PROPERTY_HINT_DIR])
+	_initialize_project_setting(
+		TRANSLATION_EXTRA_SCAN_PATHS,
+		TYPE_ARRAY,
+		PROPERTY_HINT_TYPE_STRING,
+		"%d/%d:" % [TYPE_STRING, PROPERTY_HINT_DIR]
+	)
 	_initialize_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES, TYPE_STRING)
 	_initialize_project_setting(TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES, TYPE_STRING)
 
