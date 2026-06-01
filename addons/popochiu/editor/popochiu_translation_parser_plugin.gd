@@ -44,6 +44,9 @@ var _context_regex: RegEx
 var _context_after_expr_regex: RegEx
 var _text_assignment_regex: RegEx
 var _function_def_regex: RegEx
+var _multiline_start_regex: RegEx
+var _dq_string_regex: RegEx
+var _sq_string_regex: RegEx
 
 # Parse state. Ephemeral, only valid during a call to _extract_strings_from_file()
 # Per-file
@@ -63,6 +66,10 @@ var _parse_pending_modifier_line: int
 # Per-code-line snapshot (set when a code line is reached)
 var _parse_line_skip: bool
 var _parse_line_comment: String
+# Multi-line function call accumulation state
+var _parse_multiline_buffer: String
+var _parse_multiline_start: int
+var _parse_in_multiline: bool
 
 
 #region Godot ######################################################################################
@@ -249,6 +256,20 @@ func _compile_regexes() -> void:
 		"^(?:static\\s+)?func\\s+([a-zA-Z_]\\w*)\\s*\\("
 	)
 
+	# Multi-line call start detection: any recognized function name followed by (
+	# with unbalanced parens on the line.
+	var multiline_names := PackedStringArray()
+	multiline_names.append_array(_get_singular_function_names())
+	multiline_names.append_array(_get_plural_function_names())
+	var multiline_group := "|".join(multiline_names)
+	_multiline_start_regex = RegEx.new()
+	_multiline_start_regex.compile("(?<!\\w)(?:%s)\\s*\\(" % multiline_group)
+
+	_dq_string_regex = RegEx.new()
+	_dq_string_regex.compile('"(?:[^"\\\\]|\\\\.)*"')
+	_sq_string_regex = RegEx.new()
+	_sq_string_regex.compile("'(?:[^'\\\\]|\\\\.)*'")
+
 
 func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 	_parse_path = path
@@ -258,6 +279,9 @@ func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 	_parse_in_translators_block = false
 	_parse_pending_modifier_line = 0
 	_parse_current_function = ""
+	_parse_multiline_buffer = ""
+	_parse_multiline_start = 0
+	_parse_in_multiline = false
 
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
@@ -269,6 +293,23 @@ func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 		_parse_idx = i
 		_parse_line = _parse_lines[i]
 		_parse_line_stripped = _parse_line.strip_edges()
+
+		# ---- Multi-line accumulation: compact on the fly until parens balance ----
+		if _parse_in_multiline:
+			if not _parse_line_stripped.is_empty() and not _parse_line_stripped.begins_with("#"):
+				_parse_multiline_buffer += " " + _parse_line_stripped
+			if _has_unbalanced_parens(_parse_multiline_buffer):
+				continue
+			# Parens are now balanced: swap the compacted buffer into the line state
+			# and fall through to the normal matching flow. Push the modifier snapshot
+			# back into pending so _snapshot_and_reset_pending() recaptures it.
+			_parse_pending_skip = _parse_line_skip
+			_parse_pending_comment = _parse_line_comment
+			_parse_line = _parse_multiline_buffer
+			_parse_line_stripped = _parse_multiline_buffer
+			_parse_idx = _parse_multiline_start
+			_parse_in_multiline = false
+			# Fall through to the normal matching logic below
 
 		if _parse_line_stripped.is_empty():
 			_handle_empty_line()
@@ -286,14 +327,22 @@ func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 		if func_def:
 			_parse_current_function = func_def.get_string(1)
 
-		if _try_plural_match():
-			continue
-		if _try_singular_match():
-			continue
-		if _try_text_assignment():
+		# ---- Check for multi-line function call start ----
+		if _line_starts_function_call(_parse_line):
+			_parse_in_multiline = true
+			_parse_multiline_buffer = _parse_line_stripped
+			_parse_multiline_start = _parse_idx
 			continue
 
-		_check_unused_modifiers()
+		# Single path for all match types — no duplicate calls needed for
+		# multi-line (which falls through after compacting the buffer).
+		var matched := (
+			_try_plural_match()
+			or _try_singular_match()
+			or _try_text_assignment()
+		)
+		if not matched:
+			_check_unused_modifiers()
 
 	_parse_lines = PackedStringArray()
 	var result := _parse_result
@@ -572,6 +621,27 @@ func _forge_context() -> String:
 	if not _parse_current_function.is_empty():
 		ctx += " " + _parse_current_function
 	return ctx
+
+
+# Strips string literals and inline comments, then checks if `(` outnumbers `)`.
+func _has_unbalanced_parens(text: String) -> bool:
+	var s := text
+	s = _dq_string_regex.sub(s, "", true)
+	s = _sq_string_regex.sub(s, "", true)
+	var hash_pos := s.find("#")
+	if hash_pos >= 0:
+		s = s.substr(0, hash_pos)
+	return s.count("(") > s.count(")")
+
+
+# Returns true if the line contains a recognized function name followed by ( and the parens
+# are not balanced on the same line — indicating a multi-line call.
+func _line_starts_function_call(line: String) -> bool:
+	var m := _multiline_start_regex.search(line)
+	if not m:
+		return false
+	# Safeguard: ensure the opening paren is not already closed on this line
+	return _has_unbalanced_parens(line)
 
 
 #endregion
