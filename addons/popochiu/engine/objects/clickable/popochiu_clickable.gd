@@ -64,6 +64,8 @@ var _double_click_delay: float = 0.2
 var _has_double_click: bool = false
 # Current active tween for movement
 var _movement_tween: Tween = null
+# CollisionPolygon2D centroid
+var _centroid := Vector2.ZERO
 
 
 #region Godot ######################################################################################
