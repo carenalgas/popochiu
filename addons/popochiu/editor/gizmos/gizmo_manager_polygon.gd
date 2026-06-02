@@ -494,10 +494,16 @@ func reset() -> void:
 # Add undo property for polygon data. Handles the different source node types.
 func _add_undo_polygon_property(gizmo: GizmoPolygon2D, snapshot: PackedVector2Array) -> void:
 	var source := gizmo.get_source_node()
+
 	if source is CollisionPolygon2D:
+		var owner_node := source.get_parent()
 		_undo.add_undo_property(source, "polygon", snapshot)
+		if owner_node != null and owner_node is PopochiuClickable:
+			_undo.add_undo_property(owner_node, "centroid", owner_node.centroid)
+		_undo.add_undo_method(gizmo, "mark_dirty")
 	elif source is NavigationObstacle2D:
 		_undo.add_undo_property(source, "vertices", snapshot)
+		_undo.add_undo_method(gizmo, "mark_dirty")
 	elif source is NavigationRegion2D:
 		# For NavigationRegion2D, we need to save/restore the full navigation polygon
 		# since outlines are part of the NavigationPolygon resource
@@ -509,9 +515,14 @@ func _add_undo_polygon_property(gizmo: GizmoPolygon2D, snapshot: PackedVector2Ar
 func _add_do_polygon_property(gizmo: GizmoPolygon2D, snapshot: PackedVector2Array) -> void:
 	var source := gizmo.get_source_node()
 	if source is CollisionPolygon2D:
+		var owner_node := source.get_parent()
 		_undo.add_do_property(source, "polygon", snapshot)
+		if owner_node != null and owner_node is PopochiuClickable:
+			_undo.add_do_property(owner_node, "centroid", owner_node.centroid)
+		_undo.add_do_method(gizmo, "mark_dirty")
 	elif source is NavigationObstacle2D:
 		_undo.add_do_property(source, "vertices", snapshot)
+		_undo.add_do_method(gizmo, "mark_dirty")
 	elif source is NavigationRegion2D:
 		if source.navigation_polygon:
 			_undo.add_do_method(gizmo, "restore_polygon_snapshot", snapshot)
