@@ -65,7 +65,7 @@ var _has_double_click: bool = false
 # Current active tween for movement
 var _movement_tween: Tween = null
 # CollisionPolygon2D centroid
-var _centroid := Vector2.ZERO
+var centroid : Vector2 = Vector2.ZERO
 
 
 #region Godot ######################################################################################
@@ -121,6 +121,8 @@ func _notification(event: int) -> void:
 	if event == NOTIFICATION_EDITOR_PRE_SAVE:
 		interaction_polygon = get_node("InteractionPolygon").polygon
 		interaction_polygon_position = get_node("InteractionPolygon").position
+		# Update centroid after editor pre‑save
+		centroid = PopochiuPolygonsHelper.compute_centroid(interaction_polygon)
 
 
 #endregion

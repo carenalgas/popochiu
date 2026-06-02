@@ -361,6 +361,10 @@ func _write_vertices() -> void:
 
 	if _source_node is CollisionPolygon2D:
 		_source_node.polygon = _vertices
+		# Update centroid on owning PopochiuClickable (if any)
+		var owner_node = _source_node.get_parent()
+		if owner_node != null and owner_node is PopochiuClickable:
+			owner_node.centroid = PopochiuPolygonsHelper.compute_centroid(_source_node.polygon)
 	elif _source_node is NavigationRegion2D:
 		if _source_node.navigation_polygon and _outline_index >= 0:
 			_source_node.navigation_polygon.set_outline(_outline_index, _vertices)
