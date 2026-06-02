@@ -42,6 +42,10 @@ func _enter_tree() -> void:
 	# Initialization of the plugin
 	_undo = get_undo_redo()
 
+	# Connect to undo/redo version changes to refresh gizmos
+	if not _undo.version_changed.is_connected(_on_undo_redo_changed):
+		_undo.version_changed.connect(_on_undo_redo_changed)
+
 	# Initialize managers
 	_clickable_manager = GizmoManagerClickable.new(_undo)
 	_marker_manager = GizmoManagerMarker.new(_undo)
@@ -293,6 +297,12 @@ func _on_interaction_polygon_autotraced(polygon_node: CollisionPolygon2D) -> voi
 	# The autotrace wrote a new polygon directly onto polygon_node.
 	# Mark only that node's gizmo dirty so it re-reads on the next draw, then force a redraw.
 	_polygon_manager.mark_dirty_for_node(polygon_node)
+	update_overlays()
+
+
+# Refresh gizmos when undo/redo actions occur
+func _on_undo_redo_changed() -> void:
+	_polygon_manager._refresh_gizmos_state()
 	update_overlays()
 
 #endregion
