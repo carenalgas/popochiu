@@ -87,6 +87,43 @@ static func trace_interaction_polygon_direct(clickable: Node) -> bool:
 
 	return true
 
+
+## Compute the centroid of an interaction polygon of [param clickable] object and stores the result
+## in the [code]centroid[/code] property. Supports [PopochiuClickable].
+static func compute_interaction_polygon_centroid(clickable: PopochiuClickable) -> void:
+	# TODO: if we have more than one interaction polygon, should we compute the
+	# centroid of the convex hull of all the polygons' points?
+	clickable.centroid = compute_centroid(clickable.interaction_polygon)
+
+
+## Compute the centroid of a [param polygon].
+## Returns a [code]Vector2[/code] containing the centroid's coordinates.
+## Based on this formula: https://mathworld.wolfram.com/PolygonCentroid.html
+static func compute_centroid(polygon: PackedVector2Array) -> Vector2:
+	var n = polygon.size()
+	var k: float
+	var sa: float = 0.0 # signed area
+	var d: float
+	var c: Vector2 = Vector2(0.0, 0.0)
+
+	if (n < 3):
+		PopochiuUtils.print_error("Cannot compute polygon centroid!")
+		return c
+
+	for i in range(n):
+		k = (i + 1)%n
+		d = polygon[i].x * polygon[k].y - polygon[k].x * polygon[i].y
+		sa += d
+		c += (polygon[i] + polygon[k]) * d
+
+	sa /= 2.0
+
+	if abs(sa) < 1e-7:
+		return polygon[0] # Degenerate line/point
+
+	# Centroid
+	return 1.0 / (6.0 * sa) * c;
+
 #endregion
 
 
@@ -315,42 +352,5 @@ static func _apply_convex_hull(polygon_levels: Array) -> Array:
 	# convex_hull returns a closed polygon where the last point duplicates the first; remove it.
 	hull.resize(hull.size() - 1)
 	return [[hull]]
-
-
-# Compute the centroid of an interaction polygon of [param clickable] object and stores the result
-# in the [code]centroid[/code] property. Supports [PopochiuClickable].
-static func _compute_interaction_polygon_centroid(clickable: PopochiuClickable) -> void:
-	# TODO: if we have more than one interaction polygon, should we compute the
-	# centroid of the convex hull of all the polygons' points?
-	clickable._centroid = _compute_centroid(clickable.interaction_polygon)
-
-
-# Compute the centroid of a [param polygon].
-# Returns a [code]Vector2[/code] containing the centroid's coordinates.
-# Based on this formula: https://mathworld.wolfram.com/PolygonCentroid.html
-static func _compute_centroid(polygon: PackedVector2Array) -> Vector2:
-	var n = polygon.size()
-	var k: float
-	var sa: float = 0.0 # signed area
-	var d: float
-	var c: Vector2 = Vector2(0.0, 0.0)
-
-	if (n < 3):
-		PopochiuUtils.print_error("Cannot compute polygon centroid!")
-		return c
-
-	for i in range(n):
-		k = (i + 1)%n
-		d = polygon[i].x * polygon[k].y - polygon[k].x * polygon[i].y
-		sa += d
-		c += (polygon[i] + polygon[k]) * d
-
-	sa /= 2.0
-
-	if abs(sa) < 1e-7:
-		return polygon[0] # Degenerate line/point
-
-	# Centroid
-	return 1.0 / (6.0 * sa) * c;
 
 #endregion
