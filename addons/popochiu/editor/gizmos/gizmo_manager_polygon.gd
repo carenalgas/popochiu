@@ -499,7 +499,10 @@ func _add_undo_polygon_property(gizmo: GizmoPolygon2D, snapshot: PackedVector2Ar
 		var owner_node := source.get_parent()
 		_undo.add_undo_property(source, "polygon", snapshot)
 		if owner_node != null and owner_node is PopochiuClickable:
-			_undo.add_undo_property(owner_node, "centroid", owner_node.centroid)
+			_undo.add_undo_property(
+				owner_node, "centroid",
+				PopochiuPolygonsHelper.compute_centroid(snapshot)
+			)
 		_undo.add_undo_method(gizmo, "mark_dirty")
 	elif source is NavigationObstacle2D:
 		_undo.add_undo_property(source, "vertices", snapshot)
@@ -518,7 +521,10 @@ func _add_do_polygon_property(gizmo: GizmoPolygon2D, snapshot: PackedVector2Arra
 		var owner_node := source.get_parent()
 		_undo.add_do_property(source, "polygon", snapshot)
 		if owner_node != null and owner_node is PopochiuClickable:
-			_undo.add_do_property(owner_node, "centroid", owner_node.centroid)
+			_undo.add_do_property(
+				owner_node, "centroid",
+				PopochiuPolygonsHelper.compute_centroid(snapshot)
+			)
 		_undo.add_do_method(gizmo, "mark_dirty")
 	elif source is NavigationObstacle2D:
 		_undo.add_do_property(source, "vertices", snapshot)
