@@ -130,6 +130,12 @@ func draw(viewport: Control) -> void:
 	_combined_xform = _source_node.get_viewport_transform() * _source_node.get_global_transform()
 	_combined_inverse = _combined_xform.affine_inverse()
 
+	# Draw centroid for PopochiuClickable
+	var owner_node := _source_node.get_parent()
+	if owner_node != null and owner_node is PopochiuClickable:
+		viewport.draw_circle(_combined_xform * owner_node.centroid, 8.0, Color.BLACK)
+		viewport.draw_circle(_combined_xform * owner_node.centroid, 6.0, Color.WHITE)
+
 	# Transform all vertices to viewport coordinates and build handle rects
 	_vertex_handles_viewport.clear()
 	_vertex_handle_rects.clear()
