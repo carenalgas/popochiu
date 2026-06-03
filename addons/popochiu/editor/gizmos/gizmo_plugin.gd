@@ -302,7 +302,8 @@ func _on_interaction_polygon_autotraced(polygon_node: CollisionPolygon2D) -> voi
 
 # Refresh gizmos when undo/redo actions occur
 func _on_undo_redo_changed() -> void:
-	_polygon_manager._refresh_gizmos_state()
+	for gizmo in _polygon_manager._gizmos:
+		gizmo.mark_dirty()
 	update_overlays()
 
 #endregion

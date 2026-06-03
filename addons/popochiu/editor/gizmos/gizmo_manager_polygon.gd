@@ -503,10 +503,8 @@ func _add_undo_polygon_property(gizmo: GizmoPolygon2D, snapshot: PackedVector2Ar
 				owner_node, "centroid",
 				PopochiuPolygonsHelper.compute_centroid(snapshot)
 			)
-		_undo.add_undo_method(gizmo, "mark_dirty")
 	elif source is NavigationObstacle2D:
 		_undo.add_undo_property(source, "vertices", snapshot)
-		_undo.add_undo_method(gizmo, "mark_dirty")
 	elif source is NavigationRegion2D:
 		# For NavigationRegion2D, we need to save/restore the full navigation polygon
 		# since outlines are part of the NavigationPolygon resource
@@ -525,10 +523,8 @@ func _add_do_polygon_property(gizmo: GizmoPolygon2D, snapshot: PackedVector2Arra
 				owner_node, "centroid",
 				PopochiuPolygonsHelper.compute_centroid(snapshot)
 			)
-		_undo.add_do_method(gizmo, "mark_dirty")
 	elif source is NavigationObstacle2D:
 		_undo.add_do_property(source, "vertices", snapshot)
-		_undo.add_do_method(gizmo, "mark_dirty")
 	elif source is NavigationRegion2D:
 		if source.navigation_polygon:
 			_undo.add_do_method(gizmo, "restore_polygon_snapshot", snapshot)
