@@ -33,6 +33,8 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 ## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime.
 ## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
+# CollisionPolygon2D centroid
+@export var centroid : Vector2 = Vector2.ZERO
 
 ## Emitted when the clickable starts moving.
 signal movement_started
@@ -64,8 +66,6 @@ var _double_click_delay: float = 0.2
 var _has_double_click: bool = false
 # Current active tween for movement
 var _movement_tween: Tween = null
-# CollisionPolygon2D centroid
-var centroid : Vector2 = Vector2.ZERO
 
 
 #region Godot ######################################################################################
