@@ -33,13 +33,26 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 		return false
 
 	var previous_polygon := interaction_polygon_node.polygon.duplicate()
+	var previous_centroid := Vector2()
+	var new_centroid := Vector2()
+
+	if clickable != null and clickable is PopochiuClickable:
+		previous_centroid = clickable.centroid
+		new_centroid = compute_centroid(polygon)
 
 	PopochiuEditorHelper.undo_redo.create_action(
 		"Autotrace interaction polygon for " + clickable.name
 	)
+
 	PopochiuEditorHelper.undo_redo.add_do_property(
 		interaction_polygon_node, "polygon", polygon
 	)
+
+	if clickable != null and clickable is PopochiuClickable:
+		PopochiuEditorHelper.undo_redo.add_do_property(
+			clickable, "centroid", new_centroid
+		)
+
 	# Notify the gizmo plugin after the do so the overlay redraws immediately.
 	PopochiuEditorHelper.undo_redo.add_do_method(
 		PopochiuEditorHelper.signal_bus,
@@ -47,9 +60,16 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 		"interaction_polygon_autotraced",
 		interaction_polygon_node
 	)
+
 	PopochiuEditorHelper.undo_redo.add_undo_property(
 		interaction_polygon_node, "polygon", previous_polygon
 	)
+
+	if clickable != null and clickable is PopochiuClickable:
+		PopochiuEditorHelper.undo_redo.add_undo_property(
+			clickable, "centroid", previous_centroid
+		)
+
 	# Also notify after undo so the gizmo redraws when the action is undone.
 	PopochiuEditorHelper.undo_redo.add_undo_method(
 		PopochiuEditorHelper.signal_bus,
@@ -57,6 +77,7 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 		"interaction_polygon_autotraced",
 		interaction_polygon_node
 	)
+
 	# The commit_action() call executes the do-actions immediately by default,
 	# so the signal fires and the gizmo redraws right away.
 	PopochiuEditorHelper.undo_redo.commit_action()
@@ -80,6 +101,9 @@ static func trace_interaction_polygon_direct(clickable: Node) -> bool:
 		return false
 
 	interaction_polygon_node.polygon = polygon
+
+	if clickable != null and clickable is PopochiuClickable:
+		compute_interaction_polygon_centroid(clickable)
 
 	# Notify the gizmo plugin with the exact node that changed, so only its gizmo
 	# gets marked dirty and the viewport overlay is redrawn.
