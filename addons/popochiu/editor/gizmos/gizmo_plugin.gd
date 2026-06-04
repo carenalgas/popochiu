@@ -7,6 +7,7 @@ enum {
 	WALK_TO_POINT,
 	LOOK_AT_POINT,
 	BASELINE,
+	BEACON_POS,
 	DIALOG_POS,
 	MARKER_POS,
 	INTERACTION_POLYGON,
@@ -222,6 +223,7 @@ func _init_theme_settings() -> void:
 		LOOK_AT_POINT: PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR,
 		BASELINE: PopochiuEditorConfig.GIZMOS_BASELINE_COLOR,
 		DIALOG_POS: PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR,
+		BEACON_POS: PopochiuEditorConfig.GIZMOS_BEACON_POS_COLOR,
 		MARKER_POS: PopochiuEditorConfig.GIZMOS_MARKER_POS_COLOR
 	}
 	# Set default font from editor
