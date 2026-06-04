@@ -68,8 +68,8 @@ visible = false
 layout_mode = 2
 tooltip_text = "Baseline"
 theme_type_variation = &"FlatButton"
-theme_override_colors/icon_normal_color = Color(1, 0.64705884, 0, 1)
-theme_override_colors/icon_pressed_color = Color(0.8, 0.5176471, 0, 1)
+theme_override_colors/icon_normal_color = Color(0, 1, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0, 0.8, 0.8, 1)
 theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
 theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
@@ -121,6 +121,26 @@ theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pressed
 toggle_mode = true
 button_pressed = true
 icon = ExtResource("4_bge33")
+
+[node name="BtnBeaconPos" type="Button" parent="." unique_id=1128312911]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Beacon Position"
+theme_type_variation = &"FlatButton"
+theme_override_colors/icon_normal_color = Color(0.22352941, 0.10980392, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0.17882353, 0.08784314, 0.8, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pressed")
+toggle_mode = true
+button_pressed = true
+icon = ExtResource("5_803mj")
 
 [node name="BtnDialogPos" type="Button" parent="." unique_id=76770728]
 unique_name_in_owner = true
@@ -236,4 +256,22 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
 theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pressed")
 toggle_mode = true
 button_pressed = true
+icon = ExtResource("8_8v2pw")
+
+[node name="BtnSnapBeacon" type="Button" parent="." unique_id=1497502879]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Snap beacon to centroid"
+theme_type_variation = &"FlatButton"
+theme_override_colors/icon_normal_color = Color(0.22352941, 0.10980392, 1, 1)
+theme_override_colors/icon_pressed_color = Color(0.17882353, 0.08784314, 0.8, 1)
+theme_override_colors/icon_hover_color = Color(1, 1, 1, 1)
+theme_override_colors/icon_hover_pressed_color = Color(1, 1, 1, 1)
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/pressed_mirrored = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
+theme_override_styles/hover_mirrored = SubResource("StyleBoxFlat_hover")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_pressed")
+theme_override_styles/hover_pressed_mirrored = SubResource("StyleBoxFlat_pressed")
 icon = ExtResource("8_8v2pw")

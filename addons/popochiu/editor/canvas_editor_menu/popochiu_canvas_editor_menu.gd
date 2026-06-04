@@ -18,12 +18,14 @@ var _passive_scope: int = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 @onready var btn_baseline: Button = %BtnBaseline
 @onready var btn_walk_to_point: Button = %BtnWalkToPoint
 @onready var btn_look_at_point: Button = %BtnLookAtPoint
+@onready var btn_beacon_pos: Button = %BtnBeaconPos
 @onready var btn_dialog_pos: Button = %BtnDialogPos
 @onready var btn_interaction_polygon: Button = %BtnInteractionPolygon
 @onready var btn_obstacle_polygon: Button = %BtnObstaclePolygon
 @onready var btn_passive_scope: Button = %BtnPassiveScope
 @onready var btn_walkable_area_polygon: Button = %BtnWalkableAreaPolygon
 @onready var btn_trace_interaction_polygon: Button = %BtnPolygonAutotrace
+@onready var btn_snap_beacon: Button = %BtnSnapBeacon
 @onready var label_view: Label = %LabelView
 @onready var label_edit: Label = %LabelEdit
 
@@ -44,12 +46,14 @@ func _ready() -> void:
 	btn_baseline.pressed.connect(_toggle_baseline_visibility)
 	btn_walk_to_point.pressed.connect(_toggle_walk_to_point_visibility)
 	btn_look_at_point.pressed.connect(_toggle_look_at_point_visibility)
+	btn_beacon_pos.pressed.connect(_toggle_beacon_pos_visibility)
 	btn_dialog_pos.pressed.connect(_toggle_dialog_pos_visibility)
 	btn_interaction_polygon.pressed.connect(_toggle_interaction_polygon_visibility)
 	btn_obstacle_polygon.pressed.connect(_toggle_obstacle_polygon_visibility)
 	btn_passive_scope.pressed.connect(_toggle_passive_scope)
 	btn_walkable_area_polygon.pressed.connect(_toggle_walkable_area_polygon_visibility)
 	btn_trace_interaction_polygon.pressed.connect(_trace_interaction_polygon)
+	btn_snap_beacon.pressed.connect(_snap_beacon_position)
 
 	# Connect to global signals
 	EditorInterface.get_selection().selection_changed.connect(_on_selection_changed)
@@ -123,6 +127,14 @@ func _toggle_look_at_point_visibility() -> void:
 	)
 
 
+func _toggle_beacon_pos_visibility() -> void:
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.BEACON_POS,
+		btn_beacon_pos.button_pressed
+	)
+	btn_snap_beacon.visible = btn_beacon_pos.button_pressed
+
+
 func _toggle_dialog_pos_visibility() -> void:
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
 		PopochiuGizmoPlugin.DIALOG_POS,
@@ -179,6 +191,27 @@ func _trace_interaction_polygon() -> void:
 	if _active_popochiu_object == null:
 		return
 	PopochiuPolygonsHelper.trace_interaction_polygon(_active_popochiu_object)
+
+
+# This button triggers the snapping of the beacon gizmo to the centroid.
+# It also updates the beacon_pos property.
+func _snap_beacon_position() -> void:
+	if _active_popochiu_object == null or not (_active_popochiu_object is PopochiuClickable):
+		return
+
+	var clickable: PopochiuClickable = _active_popochiu_object
+	var target_pos := clickable.centroid + clickable.interaction_polygon_position
+
+	PopochiuEditorHelper.undo_redo.create_action("Snap beacon position to centroid for " + clickable.name)
+	PopochiuEditorHelper.undo_redo.add_do_property(clickable, "beacon_pos", target_pos)
+	PopochiuEditorHelper.undo_redo.add_undo_property(clickable, "beacon_pos", clickable.beacon_pos)
+	PopochiuEditorHelper.undo_redo.commit_action()
+
+	# Force the viewport to redraw so the beacon gizmo picks up the new position
+	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
+		PopochiuGizmoPlugin.BEACON_POS,
+		btn_snap_beacon.button_pressed
+	)
 
 
 # When gizmo-related editor settings change, we update the toolbar buttons colors.
@@ -249,10 +282,12 @@ func _set_toolbar_buttons_color() -> void:
 		_reset_toolbar_button_color(btn_baseline)
 		_reset_toolbar_button_color(btn_walk_to_point)
 		_reset_toolbar_button_color(btn_look_at_point)
+		_reset_toolbar_button_color(btn_beacon_pos)
 		_reset_toolbar_button_color(btn_dialog_pos)
 		_reset_toolbar_button_color(btn_interaction_polygon)
 		_reset_toolbar_button_color(btn_obstacle_polygon)
 		_reset_toolbar_button_color(btn_walkable_area_polygon)
+		_reset_toolbar_button_color(btn_snap_beacon)
 		# Done
 		return
 
@@ -277,6 +312,11 @@ func _set_toolbar_buttons_color() -> void:
 			PopochiuEditorConfig.GIZMOS_LOOK_AT_POINT_COLOR)
 	)
 	_set_toolbar_button_color(
+		btn_beacon_pos,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_BEACON_POS_COLOR)
+	)
+	_set_toolbar_button_color(
 		btn_dialog_pos,
 		PopochiuEditorConfig.get_editor_setting(
 			PopochiuEditorConfig.GIZMOS_DIALOG_POS_COLOR)
@@ -293,6 +333,11 @@ func _set_toolbar_buttons_color() -> void:
 		btn_walkable_area_polygon,
 		PopochiuEditorConfig.get_editor_setting(
 			PopochiuEditorConfig.GIZMOS_POLY_WALKABLE_AREA_COLOR)
+	)
+	_set_toolbar_button_color(
+		btn_snap_beacon,
+		PopochiuEditorConfig.get_editor_setting(
+			PopochiuEditorConfig.GIZMOS_BEACON_POS_COLOR)
 	)
 
 
@@ -343,12 +388,14 @@ func _set_buttons_visibility() -> void:
 	btn_baseline.hide()
 	btn_walk_to_point.hide()
 	btn_look_at_point.hide()
+	btn_beacon_pos.hide()
 	btn_dialog_pos.hide()
 	btn_interaction_polygon.hide()
 	btn_trace_interaction_polygon.hide()
 	btn_obstacle_polygon.hide()
 	btn_passive_scope.hide()
 	btn_walkable_area_polygon.hide()
+	btn_snap_beacon.hide()
 
 	# If we are not in a room and we are not editing a Popochiu object, nothing to do
 	if not (
@@ -418,6 +465,9 @@ func _set_buttons_visibility() -> void:
 			btn_baseline.show()
 			btn_walk_to_point.show()
 			btn_look_at_point.show()
+			btn_beacon_pos.show()
+			if btn_beacon_pos.button_pressed:
+				btn_snap_beacon.show()
 		# Props may be obstacles on the navigation area.
 		if _active_popochiu_object is PopochiuProp:
 			btn_obstacle_polygon.show()
@@ -447,6 +497,7 @@ func _reset_buttons_state() -> void:
 	btn_baseline.set_pressed_no_signal(true)
 	btn_walk_to_point.set_pressed_no_signal(true)
 	btn_look_at_point.set_pressed_no_signal(true)
+	btn_beacon_pos.set_pressed_no_signal(true)
 	btn_dialog_pos.set_pressed_no_signal(true)
 	_passive_scope = PopochiuGizmoPlugin.PASSIVE_SCOPE_SELECTED
 	_update_passive_scope_button_visuals()
@@ -466,6 +517,7 @@ func _reset_buttons_state() -> void:
 			PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_WA
 		)
 	)
+	btn_snap_beacon.set_pressed_no_signal(true)
 
 
 # When the passive scope changes, we also update the button icon and tooltip to
