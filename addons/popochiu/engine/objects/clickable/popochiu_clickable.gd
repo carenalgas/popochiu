@@ -33,8 +33,10 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 ## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime.
 ## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
-# CollisionPolygon2D centroid
+## CollisionPolygon2D centroid.
 @export var centroid : Vector2 = Vector2.ZERO
+## The [Vector2] position where the hotspot beacon will be placed.
+@export var beacon_pos := Vector2.ZERO
 
 ## Emitted when the clickable starts moving.
 signal movement_started

@@ -13,11 +13,12 @@ var _gizmos: Array[Gizmo2D] = []
 var _active_gizmos: Array[Gizmo2D] = []
 var _grabbed_gizmo: Gizmo2D
 
+const GIZMO_COUNT := 5
 
 #region Godot ######################################################################################
 func _init(undo_manager: EditorUndoRedoManager):
 	_undo = undo_manager
-	_gizmos.resize(4)
+	_gizmos.resize(GIZMO_COUNT)
 
 
 #endregion
@@ -33,9 +34,11 @@ func _init_gizmo(gizmo_id: int) -> Gizmo2D:
 			gizmo = Gizmo2D.new(_target_node, "look_at_point", "Look At Point", Gizmo2D.GIZMO_OFFSET)
 		PopochiuGizmoPlugin.BASELINE:
 			gizmo = Gizmo2D.new(_target_node, "baseline", "Baseline", Gizmo2D.GIZMO_VOFFSET)
+		PopochiuGizmoPlugin.BEACON_POS:
+			gizmo = Gizmo2D.new(_target_node, "beacon_pos", "Beacon Position", Gizmo2D.GIZMO_OFFSET)
 		PopochiuGizmoPlugin.DIALOG_POS:
 			gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_OFFSET)
-	
+		
 	_set_gizmo_theme(gizmo, gizmo_id)
 	_set_gizmo_properties(gizmo)
 	return gizmo
@@ -77,6 +80,7 @@ func initialize_gizmos(font: Font, color_settings: Dictionary) -> void:
 	_gizmos[PopochiuGizmoPlugin.LOOK_AT_POINT] = _init_gizmo(PopochiuGizmoPlugin.LOOK_AT_POINT)
 	_gizmos[PopochiuGizmoPlugin.BASELINE] = _init_gizmo(PopochiuGizmoPlugin.BASELINE)
 	_gizmos[PopochiuGizmoPlugin.DIALOG_POS] = _init_gizmo(PopochiuGizmoPlugin.DIALOG_POS)
+	_gizmos[PopochiuGizmoPlugin.BEACON_POS] = _init_gizmo(PopochiuGizmoPlugin.BEACON_POS)
 
 
 func handle_object(object: Object, edited_root: Node) -> bool:
@@ -94,6 +98,7 @@ func handle_object(object: Object, edited_root: Node) -> bool:
 		_active_gizmos.append(_gizmos[PopochiuGizmoPlugin.WALK_TO_POINT])
 		_active_gizmos.append(_gizmos[PopochiuGizmoPlugin.LOOK_AT_POINT])
 		_active_gizmos.append(_gizmos[PopochiuGizmoPlugin.BASELINE])
+		_active_gizmos.append(_gizmos[PopochiuGizmoPlugin.BEACON_POS])
 
 	for gizmo in _active_gizmos:
 		gizmo.set_target_node(_target_node)
