@@ -25,6 +25,7 @@ const GIZMOS_BASELINE_COLOR = "popochiu/gizmos/positions/baseline_color"
 const GIZMOS_WALK_TO_POINT_COLOR = "popochiu/gizmos/positions/walk_to_point_color"
 const GIZMOS_LOOK_AT_POINT_COLOR = "popochiu/gizmos/positions/look_at_point_color"
 const GIZMOS_DIALOG_POS_COLOR = "popochiu/gizmos/positions/dialog_position_color"
+const GIZMOS_BEACON_POS_COLOR = "popochiu/gizmos/positions/beacon_position_color"
 const GIZMOS_MARKER_POS_COLOR = "popochiu/gizmos/positions/marker_position_color"
 # --- Polygon gizmo settings ---
 const GIZMOS_POLY_VERTEX_HANDLER_SIZE = "popochiu/gizmos/polygons/polygon_vertex_handler_size"
@@ -48,6 +49,7 @@ static var defaults := {
 	GIZMOS_WALK_TO_POINT_COLOR: Color.GREEN,
 	GIZMOS_LOOK_AT_POINT_COLOR: Color.RED,
 	GIZMOS_DIALOG_POS_COLOR: Color.MAGENTA,
+	GIZMOS_BEACON_POS_COLOR: Color.BLUE,
 	GIZMOS_MARKER_POS_COLOR: Color.CYAN,
 	TOOLBAR_APPLY_COLORS_TO_BUTTONS: true,
 	TOOLBAR_COMPACT_MODE: false,
@@ -95,6 +97,7 @@ static func initialize_editor_settings() -> void:
 	_initialize_editor_setting(GIZMOS_WALK_TO_POINT_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_LOOK_AT_POINT_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_DIALOG_POS_COLOR, TYPE_COLOR)
+	_initialize_editor_setting(GIZMOS_BEACON_POS_COLOR, TYPE_COLOR)
 	_initialize_editor_setting(GIZMOS_MARKER_POS_COLOR, TYPE_COLOR)
 	# --- Polygon gizmo settings ---
 	_initialize_editor_setting(GIZMOS_POLY_ENABLE_UNSELECTED_WA, TYPE_BOOL)
