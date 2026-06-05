@@ -48,8 +48,8 @@ var _multiline_start_regex: RegEx
 var _dq_string_regex: RegEx
 var _sq_string_regex: RegEx
 
-# State constants for the triple-quote normalization state machine.
-enum _NormState { CODE, IN_DQ, IN_SQ, IN_LINE_COMMENT }
+# Tokenizer for triple-quoted string normalization.
+var _triple_quote_tokenizer: RegEx
 
 # Parse state. Ephemeral, only valid during a call to _extract_strings_from_file()
 # Per-file
@@ -269,6 +269,35 @@ func _compile_regexes() -> void:
 	_dq_string_regex.compile('"(?:[^"\\\\]|\\\\.)*"')
 	_sq_string_regex = RegEx.new()
 	_sq_string_regex.compile("'(?:[^'\\\\]|\\\\.)*'")
+
+	# Tokenizer for triple-quoted string normalization.
+	# Alternatives are evaluated left-to-right; regular strings and comments must match
+	# before triple quotes so that """ inside a string or comment is not misinterpreted.
+	_triple_quote_tokenizer = RegEx.new()
+	_triple_quote_tokenizer.compile(
+		"(" +
+		# 1. Regular double-quoted string (refuse empty "" when it would start """)
+		'""(?!\")|"(?:[^"\\\\]|\\\\.)+"' +
+		"|" +
+		# 2. Regular single-quoted string (refuse empty '' when it would start ''')
+		"''(?!')|'(?:[^'\\\\]|\\\\.)+'" +
+		"|" +
+		# 3. Line comment
+		"#[^\\n]*" +
+		"|" +
+		# 4. Triple-double-quoted string
+		"\"\"\"[\\s\\S]*?\"\"\"" +
+		"|" +
+		# 5. Triple-single-quoted string
+		"'''[\\s\\S]*?'''" +
+		"|" +
+		# 6. Fast path: long runs of safe characters (stop before # so comments are detected)
+		"[^\"'\\n#]+" +
+		"|" +
+		# 7. Any single character (fallback)
+		"[\\s\\S]" +
+		")"
+	)
 
 
 func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
@@ -583,8 +612,8 @@ func _get_inline_comment(line: String) -> String:
 # Transforms a file path into a human-readable display name suitable for translation context.
 # Strips the `popochiu_` prefix from filenames, replaces underscores with spaces, and applies
 # capitalization. Examples:
-#   room_kitchen.gd         -> "Room Kitchen"
-#   popochiu_globals.gd     -> "Globals"
+#   room_kitchen.gd		 -> "Room Kitchen"
+#   popochiu_globals.gd	 -> "Globals"
 #   dialog_opening_dialog.tres -> "Dialog Opening Dialog"
 func _path_to_display_name(path: String) -> String:
 	var filename := path.get_file().get_basename()
@@ -628,111 +657,46 @@ func _normalize_triple_quotes(source: String) -> Dictionary:
 	var output := ""
 	var line_map := PackedInt32Array()
 	var orig_line := 0
-	var i := 0
-	var source_len := source.length()
-
-	# State machine for tracking string/comment context — prevents false matches
-	# of """ inside regular strings or line comments.
-	var state := _NormState.CODE
 
 	# First normalized line starts at original line 0
 	line_map.append(0)
 
-	while i < source_len:
-		var ch := source[i]
-		var ahead := source.substr(i, 3) if i + 2 < source_len else ""
+	for m in _triple_quote_tokenizer.search_all(source):
+		var s := m.get_string()
+		var start := s.substr(0, 3)
 
-		match state:
-			_NormState.CODE:
-				if ahead == '"""' or ahead == "'''":
-					var delim := ahead
+		if start == '"""' or start == "'''":
+			# Triple-quoted string — collapse to a single double-quoted literal.
+			# s includes the delimiters, so strip the first and last 3 characters.
+			var content := s.substr(3, s.length() - 6)
 
-					# Find closing delimiter
-					var close_pos := source.find(delim, i + 3)
-					if close_pos == -1:
-						# Unclosed — treat rest as literal text
-						output += source.substr(i)
-						while i < source_len:
-							if source[i] == '\n':
-								orig_line += 1
-							i += 1
-						break
+			# Count newlines in the raw content for line-map tracking.
+			var content_newlines := 0
+			for pos in range(content.length()):
+				if content[pos] == '\n':
+					content_newlines += 1
 
-					# Extract raw content between delimiters
-					var content := source.substr(i + 3, close_pos - i - 3)
-					var content_newlines := 0
-					for pos in range(content.length()):
-						if content[pos] == '\n':
-							content_newlines += 1
+			# Strip the leading newline after opening """ (a common convention for
+			# multiline strings: the newline right after the delimiter is typically a
+			# formatting artifact, not semantically meaningful content).
+			if content.begins_with("\n"):
+				content = content.substr(1)
 
-					# Strip the leading newline after opening """ (a common convention for
-					# multiline strings: the newline right after the delimiter is typically a
-					# formatting artifact, not semantically meaningful content).
-					if content.begins_with("\n"):
-						content = content.substr(1)
+			if content.is_empty():
+				# Empty triple-quoted string """""" — emit "" (skipped at extraction)
+				output += '""'
+			else:
+				# Process escapes via c_unescape, then re-escape for double-quoted format
+				output += '"' + content.c_unescape().c_escape() + '"'
 
-					if content.is_empty():
-						# Empty triple-quoted string """""" — emit "" (skipped at extraction)
-						output += '""'
-					else:
-						# Process escapes via c_unescape, then re-escape for double-quoted format
-						output += '"' + content.c_unescape().c_escape() + '"'
-
-					orig_line += content_newlines
-					i = close_pos + 3
-
-				elif ch == '"':
-					state = _NormState.IN_DQ
-					output += ch
-					i += 1
-				elif ch == "'":
-					state = _NormState.IN_SQ
-					output += ch
-					i += 1
-				elif ch == '#':
-					state = _NormState.IN_LINE_COMMENT
-					output += ch
-					i += 1
-				elif ch == '\n':
-					output += ch
-					orig_line += 1
-					line_map.append(orig_line)
-					i += 1
-				else:
-					output += ch
-					i += 1
-
-			_NormState.IN_DQ:
-				output += ch
-				if ch == '\\' and i + 1 < source_len:
-					i += 1
-					output += source[i]
-				elif ch == '"':
-					state = _NormState.CODE
-				elif ch == '\n':
-					orig_line += 1
-					line_map.append(orig_line)
-				i += 1
-
-			_NormState.IN_SQ:
-				output += ch
-				if ch == '\\' and i + 1 < source_len:
-					i += 1
-					output += source[i]
-				elif ch == "'":
-					state = _NormState.CODE
-				elif ch == '\n':
-					orig_line += 1
-					line_map.append(orig_line)
-				i += 1
-
-			_NormState.IN_LINE_COMMENT:
-				output += ch
-				if ch == '\n':
-					state = _NormState.CODE
-					orig_line += 1
-					line_map.append(orig_line)
-				i += 1
+			orig_line += content_newlines
+		elif s == "\n":
+			output += s
+			orig_line += 1
+			line_map.append(orig_line)
+		else:
+			# Regular string, comment, or code — pass through unchanged
+			output += s
 
 	if line_map.is_empty():
 		line_map.append(0)
@@ -748,33 +712,36 @@ func _collapse_fn_calls(text: String, line_map: PackedInt32Array) -> Dictionary:
 	var lines := text.split("\n")
 	var result_lines: PackedStringArray = []
 	var result_map: PackedInt32Array = []
+	var skip_until := -1
 
-	var i := 0
-	while i < lines.size():
+	for i in range(lines.size()):
+		if i <= skip_until:
+			continue
+
 		var line := lines[i]
 		var fn_match := _multiline_start_regex.search(line)
 
-		if fn_match and _has_unbalanced_parens(line):
-			var start_i := i
-			var joined := line
-			i += 1
-			while i < lines.size():
-				var stripped := lines[i].strip_edges()
-				if not stripped.is_empty() and not stripped.begins_with("#"):
-					joined += stripped
-				if not _has_unbalanced_parens(joined):
-					break
-				i += 1
-
-			# Collapse whitespace within the parentheses
-			joined = _collapse_paren_ws(joined)
-			result_lines.append(joined)
-			result_map.append(line_map[start_i] if start_i < line_map.size() else 0)
-		else:
+		# Not a multiline call? Just pass it through.
+		if not fn_match or not _has_unbalanced_parens(line):
 			result_lines.append(line)
 			result_map.append(line_map[i] if i < line_map.size() else i)
+			continue
 
-		i += 1
+		# It's multiline — gobble lines until balanced.
+		var joined := line
+		var j := i + 1
+		while j < lines.size():
+			var stripped := lines[j].strip_edges()
+			if not stripped.is_empty() and not stripped.begins_with("#"):
+				joined += stripped
+			if not _has_unbalanced_parens(joined):
+				break
+			j += 1
+
+		joined = _collapse_paren_ws(joined)
+		result_lines.append(joined)
+		result_map.append(line_map[i] if i < line_map.size() else i)
+		skip_until = j
 
 	return { "text": "\n".join(result_lines), "line_map": result_map }
 
@@ -792,32 +759,40 @@ func _collapse_paren_ws(s: String) -> String:
 	var middle := s.substr(open_paren + 1, close_paren - open_paren - 1)
 	var suffix := s.substr(close_paren)
 
-	# Walk through middle, collapsing whitespace only outside strings
+	# Reuse the same tokenizer so strings and comments are recognized without
+	# duplicating hand-rolled quote-escape tracking.
 	var result := ""
-	var in_dq := false
-	var in_sq := false
+	var last_was_ws := false
 
-	for pos in range(middle.length()):
-		var ch := middle[pos]
-		var prev := middle[pos - 1] if pos > 0 else ""
+	for m in _triple_quote_tokenizer.search_all(middle):
+		var tok := m.get_string()
+		var start := tok.substr(0, 3)
 
-		if ch == '"' and not in_sq and prev != "\\":
-			in_dq = not in_dq
-		elif ch == "'" and not in_dq and prev != "\\":
-			in_sq = not in_sq
+		# Any string literal (regular or triple-quoted) is preserved verbatim.
+		if start == '"""' or start == "'''" or tok.begins_with('"') or tok.begins_with("'"):
+			result += tok
+			last_was_ws = false
+			continue
 
-		if not in_dq and not in_sq:
-			if ch in ["\n", "\r"]:
-				continue
-			if ch in [" ", "\t"]:
-				# Collapse consecutive whitespace to a single space
-				if result.is_empty() or result[result.length() - 1] in [" ", "("]:
-					continue
-				# Temporarily add a space — may be removed by comma or trim later
-				result += " "
-				continue
+		# Line comments are stripped (they only appear inside the middle because
+		# _collapse_fn_calls skips comment-only continuation lines, but inline
+		# comments on continuation lines survive the join).
+		if tok.begins_with("#"):
+			last_was_ws = true
+			continue
 
-		result += ch
+		# Collapse whitespace-only tokens (newlines, spaces, tabs) into a single
+		# boundary flag.
+		if tok.strip_edges().is_empty():
+			last_was_ws = true
+			continue
+
+		# Code token — prepend a single space when there was whitespace before it
+		# and the result does not already end with '(' (avoids "fn( arg").
+		if last_was_ws and not result.is_empty() and not result.ends_with("("):
+			result += " "
+		result += tok
+		last_was_ws = false
 
 	# Remove spaces around commas and trim edges
 	result = result.replace(" ,", ",")
