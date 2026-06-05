@@ -48,6 +48,9 @@ var _multiline_start_regex: RegEx
 var _dq_string_regex: RegEx
 var _sq_string_regex: RegEx
 
+# State constants for the triple-quote normalization state machine.
+enum _NormState { CODE, IN_DQ, IN_SQ, IN_LINE_COMMENT }
+
 # Parse state. Ephemeral, only valid during a call to _extract_strings_from_file()
 # Per-file
 var _parse_path: String
@@ -66,10 +69,6 @@ var _parse_pending_modifier_line: int
 # Per-code-line snapshot (set when a code line is reached)
 var _parse_line_skip: bool
 var _parse_line_comment: String
-# Multi-line function call accumulation state
-var _parse_multiline_buffer: String
-var _parse_multiline_start: int
-var _parse_in_multiline: bool
 
 
 #region Godot ######################################################################################
@@ -280,37 +279,27 @@ func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 	_parse_in_translators_block = false
 	_parse_pending_modifier_line = 0
 	_parse_current_function = ""
-	_parse_multiline_buffer = ""
-	_parse_multiline_start = 0
-	_parse_in_multiline = false
 
 	var file := FileAccess.open(path, FileAccess.READ)
 	if not file:
 		return _parse_result
-	_parse_lines = file.get_as_text().split("\n")
+	var source := file.get_as_text()
 	file.close()
 
+	# ---- Step 1: Normalize triple-quoted strings ("""...""" and '''...''') ----
+	var norm := _normalize_triple_quotes(source)
+
+	# ---- Step 2: Collapse multiline function calls with single-line strings ----
+	norm = _collapse_fn_calls(norm.text, norm.line_map)
+
+	# ---- Step 3: Split normalized text into lines and run extraction ----
+	_parse_lines = norm.text.split("\n")
+	var line_map: PackedInt32Array = norm.line_map
+
 	for i in range(_parse_lines.size()):
-		_parse_idx = i
+		_parse_idx = line_map[i] if i < line_map.size() else i
 		_parse_line = _parse_lines[i]
 		_parse_line_stripped = _parse_line.strip_edges()
-
-		# ---- Multi-line accumulation: compact on the fly until parens balance ----
-		if _parse_in_multiline:
-			if not _parse_line_stripped.is_empty() and not _parse_line_stripped.begins_with("#"):
-				_parse_multiline_buffer += " " + _parse_line_stripped
-			if _has_unbalanced_parens(_parse_multiline_buffer):
-				continue
-			# Parens are now balanced: swap the compacted buffer into the line state
-			# and fall through to the normal matching flow. Push the modifier snapshot
-			# back into pending so _snapshot_and_reset_pending() recaptures it.
-			_parse_pending_skip = _parse_line_skip
-			_parse_pending_comment = _parse_line_comment
-			_parse_line = _parse_multiline_buffer
-			_parse_line_stripped = _parse_multiline_buffer
-			_parse_idx = _parse_multiline_start
-			_parse_in_multiline = false
-			# Fall through to the normal matching logic below
 
 		if _parse_line_stripped.is_empty():
 			_handle_empty_line()
@@ -328,15 +317,7 @@ func _extract_strings_from_script(path: String) -> Array[PackedStringArray]:
 		if func_def:
 			_parse_current_function = func_def.get_string(1)
 
-		# ---- Check for multi-line function call start ----
-		if _line_starts_function_call(_parse_line):
-			_parse_in_multiline = true
-			_parse_multiline_buffer = _parse_line_stripped
-			_parse_multiline_start = _parse_idx
-			continue
-
-		# Single path for all match types — no duplicate calls needed for
-		# multi-line (which falls through after compacting the buffer).
+		# Single path for all match types
 		var matched := (
 			_try_plural_match()
 			or _try_singular_match()
@@ -635,14 +616,215 @@ func _has_unbalanced_parens(text: String) -> bool:
 	return s.count("(") > s.count(")")
 
 
-# Returns true if the line contains a recognized function name followed by ( and the parens
-# are not balanced on the same line — indicating a multi-line call.
-func _line_starts_function_call(line: String) -> bool:
-	var m := _multiline_start_regex.search(line)
-	if not m:
-		return false
-	# Safeguard: ensure the opening paren is not already closed on this line
-	return _has_unbalanced_parens(line)
+# ---- Whole-file normalization helpers for triple-quoted string support ----
+
+# Scans the entire source text and replaces all triple-quoted strings ("""...""" and '''...''')
+# with their canonical double-quoted equivalents. The raw content between delimiters is
+# processed through c_unescape() + c_escape() to normalize escape sequences, and bare quotes
+# inside triple-quoted strings are properly escaped for the single-line equivalent.
+# Returns a Dictionary with { text: String, line_map: PackedInt32Array } where line_map[i]
+# gives the 0-based original-line number for each normalized-line index i.
+func _normalize_triple_quotes(source: String) -> Dictionary:
+	var output := ""
+	var line_map := PackedInt32Array()
+	var orig_line := 0
+	var i := 0
+	var source_len := source.length()
+
+	# State machine for tracking string/comment context — prevents false matches
+	# of """ inside regular strings or line comments.
+	var state := _NormState.CODE
+
+	# First normalized line starts at original line 0
+	line_map.append(0)
+
+	while i < source_len:
+		var ch := source[i]
+		var ahead := source.substr(i, 3) if i + 2 < source_len else ""
+
+		match state:
+			_NormState.CODE:
+				if ahead == '"""' or ahead == "'''":
+					var delim := ahead
+
+					# Find closing delimiter
+					var close_pos := source.find(delim, i + 3)
+					if close_pos == -1:
+						# Unclosed — treat rest as literal text
+						output += source.substr(i)
+						while i < source_len:
+							if source[i] == '\n':
+								orig_line += 1
+							i += 1
+						break
+
+					# Extract raw content between delimiters
+					var content := source.substr(i + 3, close_pos - i - 3)
+					var content_newlines := 0
+					for pos in range(content.length()):
+						if content[pos] == '\n':
+							content_newlines += 1
+
+					# Strip the leading newline after opening """ (a common convention for
+					# multiline strings: the newline right after the delimiter is typically a
+					# formatting artifact, not semantically meaningful content).
+					if content.begins_with("\n"):
+						content = content.substr(1)
+
+					if content.is_empty():
+						# Empty triple-quoted string """""" — emit "" (skipped at extraction)
+						output += '""'
+					else:
+						# Process escapes via c_unescape, then re-escape for double-quoted format
+						output += '"' + content.c_unescape().c_escape() + '"'
+
+					orig_line += content_newlines
+					i = close_pos + 3
+
+				elif ch == '"':
+					state = _NormState.IN_DQ
+					output += ch
+					i += 1
+				elif ch == "'":
+					state = _NormState.IN_SQ
+					output += ch
+					i += 1
+				elif ch == '#':
+					state = _NormState.IN_LINE_COMMENT
+					output += ch
+					i += 1
+				elif ch == '\n':
+					output += ch
+					orig_line += 1
+					line_map.append(orig_line)
+					i += 1
+				else:
+					output += ch
+					i += 1
+
+			_NormState.IN_DQ:
+				output += ch
+				if ch == '\\' and i + 1 < source_len:
+					i += 1
+					output += source[i]
+				elif ch == '"':
+					state = _NormState.CODE
+				elif ch == '\n':
+					orig_line += 1
+					line_map.append(orig_line)
+				i += 1
+
+			_NormState.IN_SQ:
+				output += ch
+				if ch == '\\' and i + 1 < source_len:
+					i += 1
+					output += source[i]
+				elif ch == "'":
+					state = _NormState.CODE
+				elif ch == '\n':
+					orig_line += 1
+					line_map.append(orig_line)
+				i += 1
+
+			_NormState.IN_LINE_COMMENT:
+				output += ch
+				if ch == '\n':
+					state = _NormState.CODE
+					orig_line += 1
+					line_map.append(orig_line)
+				i += 1
+
+	if line_map.is_empty():
+		line_map.append(0)
+
+	return { "text": output, "line_map": line_map }
+
+
+# After triple-quote normalization, some function calls may still span multiple lines
+# (e.g. tr(\n"arg1",\n"arg2"\n)). This method finds calls with unbalanced parentheses
+# and collapses them to a single line, stripping whitespace within the parens.
+# Returns the same Dictionary format as _normalize_triple_quotes().
+func _collapse_fn_calls(text: String, line_map: PackedInt32Array) -> Dictionary:
+	var lines := text.split("\n")
+	var result_lines: PackedStringArray = []
+	var result_map: PackedInt32Array = []
+
+	var i := 0
+	while i < lines.size():
+		var line := lines[i]
+		var fn_match := _multiline_start_regex.search(line)
+
+		if fn_match and _has_unbalanced_parens(line):
+			var start_i := i
+			var joined := line
+			i += 1
+			while i < lines.size():
+				var stripped := lines[i].strip_edges()
+				if not stripped.is_empty() and not stripped.begins_with("#"):
+					joined += stripped
+				if not _has_unbalanced_parens(joined):
+					break
+				i += 1
+
+			# Collapse whitespace within the parentheses
+			joined = _collapse_paren_ws(joined)
+			result_lines.append(joined)
+			result_map.append(line_map[start_i] if start_i < line_map.size() else 0)
+		else:
+			result_lines.append(line)
+			result_map.append(line_map[i] if i < line_map.size() else i)
+
+		i += 1
+
+	return { "text": "\n".join(result_lines), "line_map": result_map }
+
+
+# Removes newlines and collapses extraneous whitespace within function-call parentheses,
+# while preserving whitespace inside string literals. Operates on a single-line or
+# joined-multiline function call.
+func _collapse_paren_ws(s: String) -> String:
+	var open_paren := s.find("(")
+	var close_paren := s.rfind(")")
+	if close_paren == -1 or close_paren <= open_paren:
+		return s
+
+	var prefix := s.substr(0, open_paren + 1)
+	var middle := s.substr(open_paren + 1, close_paren - open_paren - 1)
+	var suffix := s.substr(close_paren)
+
+	# Walk through middle, collapsing whitespace only outside strings
+	var result := ""
+	var in_dq := false
+	var in_sq := false
+
+	for pos in range(middle.length()):
+		var ch := middle[pos]
+		var prev := middle[pos - 1] if pos > 0 else ""
+
+		if ch == '"' and not in_sq and prev != "\\":
+			in_dq = not in_dq
+		elif ch == "'" and not in_dq and prev != "\\":
+			in_sq = not in_sq
+
+		if not in_dq and not in_sq:
+			if ch in ["\n", "\r"]:
+				continue
+			if ch in [" ", "\t"]:
+				# Collapse consecutive whitespace to a single space
+				if result.is_empty() or result[result.length() - 1] in [" ", "("]:
+					continue
+				# Temporarily add a space — may be removed by comma or trim later
+				result += " "
+				continue
+
+		result += ch
+
+	# Remove spaces around commas and trim edges
+	result = result.replace(" ,", ",")
+	result = result.replace(", ", ",")
+	result = result.strip_edges()
+
+	return prefix + result + suffix
 
 
 #endregion
