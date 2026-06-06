@@ -676,11 +676,6 @@ func _normalize_triple_quotes(source: String) -> Dictionary:
 				if content[pos] == '\n':
 					content_newlines += 1
 
-			# Strip the leading newline after opening """ (a common convention for
-			# multiline strings: the newline right after the delimiter is typically a
-			# formatting artifact, not semantically meaningful content).
-			if content.begins_with("\n"):
-				content = content.substr(1)
 
 			if content.is_empty():
 				# Empty triple-quoted string """""" — emit "" (skipped at extraction)
