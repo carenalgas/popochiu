@@ -74,7 +74,7 @@ func _enter_tree() -> void:
 	add_export_plugin(_export_plugin)
 
 	_translation_parser_plugin = preload(
-		"res://addons/popochiu/editor/popochiu_translation_parser_plugin.gd"
+		"res://addons/popochiu/editor/plugins/popochiu_translation_parser_plugin.gd"
 	).new()
 	add_translation_parser_plugin(_translation_parser_plugin)
 	
