@@ -26,8 +26,8 @@ extends Node
 
 ## Emitted when the text speed changes in [PopochiuSettings].
 signal text_speed_changed
-## Emitted when the language changes in [PopochiuSettings].
-signal language_changed
+## Emitted when [member current_locale] changes via [method set_locale].
+signal language_changed(locale: String)
 ## Emitted after [method save_game] saves a file with the current game data.
 signal game_saved
 ## Emitted before a loaded game starts the transition to show the loaded data.
@@ -90,6 +90,9 @@ var auto_continue_after := -1.0
 ## The current dialog style used by the game. When this property changes, the
 ## [signal dialog_style_changed] signal is emitted.
 var current_dialog_style := settings.dialog_style : set = set_dialog_style
+## The current locale code (e.g. [code]"en"[/code], [code]"es"[/code]). When this property changes,
+## [signal language_changed] is emitted and the [TranslationServer] locale is updated.
+var current_locale: String = TranslationServer.get_locale() : set = set_locale, get = get_locale
 ## The scale value of the game. Defined by the native game resolution compared with (356, 200),
 ## which is the default game resolution defined by Popochiu.
 var scale := Vector2.ONE
@@ -279,10 +282,23 @@ func cutscene(instructions: Array) -> void:
 	cutscene_skipped = false
 
 
-## Returns [param msg] translated to the current language if
-## [member PopochiuSettings.use_translations] is enabled. Otherwise returns [param msg] unchanged.
-func get_text(msg: String) -> String:
-	return tr(msg) if settings.use_translations else msg
+## Translates [param msg] via [method Object.tr], then applies format [param params] if provided.
+## Accepts an [Array] for [code]%[/code]-style interpolation or a [Dictionary] for
+## [method String.format]-style. If [param params] is not [code]null[/code] but has an invalid
+## type, an error is printed and the translated (but non-interpolated) string is returned as-is.
+func translate(msg: String, params: Variant = null) -> String:
+	var text := tr(msg)
+	if params == null:
+		return text
+	if params is Array:
+		return text % params
+	if params is Dictionary:
+		return text.format(params)
+	PopochiuUtils.print_error(
+		"Invalid params type passed to translate(). Expected Array or Dictionary, got: %s"
+		% type_string(typeof(params))
+	)
+	return text
 
 
 ## Adds an action, represented by [param data], to the [member history].
@@ -544,6 +560,23 @@ func get_hovered() -> PopochiuClickable:
 		return _hovered_queue[-1]
 	
 	return null
+
+
+func set_locale(value: String) -> void:
+	if value == current_locale:
+		return
+
+	TranslationServer.set_locale(value)
+	# Re-read from TranslationServer to ensure the locale was set correctly
+	# (e.g. if the provided value is not valid, the locale will fall back to
+	# the default one).
+	current_locale = TranslationServer.get_locale()
+
+	language_changed.emit(current_locale)
+
+
+func get_locale() -> String:
+	return TranslationServer.get_locale()
 
 
 func set_text_speed(value: float) -> void:

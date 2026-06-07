@@ -96,6 +96,11 @@ static func _trigger_dialog_line(text: String) -> void:
 		PopochiuUtils.e.auto_continue_after = float(change_time)
 	
 	await character.say(dialogue_line)
+	
+	# TODO: refactor the way we handle emotions (see #529) to avoid the assumption that
+	# emotion has to be reset after the line is shown (legacy behavior preserved here).
+	if emotion:
+		character.emotion = ""
 
 
 #endregion

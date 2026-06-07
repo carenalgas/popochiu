@@ -28,10 +28,14 @@ const TL_IN_FIRST_ROOM = "popochiu/gui/transition_layer/show_transition_layer_in
 # ---- Dialogs -------------------------------------------------------------------------------------
 const TEXT_SPEED = "popochiu/dialogs/text_speed"
 const AUTO_CONTINUE_TEXT = "popochiu/dialogs/auto_continue_text"
-const USE_TRANSLATIONS = "popochiu/dialogs/use_translations"
 const GIBBERISH_SPOKEN_TEXT = 'popochiu/dialogs/gibberish_spoken_text'
 const GIBBERISH_DIALOG_OPTIONS = 'popochiu/dialogs/gibberish_dialog_options'
 const DIALOG_STYLE = "popochiu/dialogs/dialog_style"
+
+# ---- Translations --------------------------------------------------------------------------------
+const TRANSLATION_EXTRA_SCAN_PATHS = "popochiu/translations/extra_scan_paths"
+const TRANSLATION_EXTRA_FUNCTION_NAMES = "popochiu/translations/extra_function_names"
+const TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES = "popochiu/translations/extra_plural_function_names"
 
 # ---- Inventory -----------------------------------------------------------------------------------
 const INVENTORY_LIMIT = "popochiu/inventory/inventory_limit"
@@ -91,7 +95,6 @@ static var defaults := {
 	TL_CUTSCENE_TRANSITION_MODE: PopochiuTransitionLayer.PLAY_MODE.IN_OUT,
 	TEXT_SPEED: 0.1,
 	AUTO_CONTINUE_TEXT: false,
-	USE_TRANSLATIONS: false,
 	GIBBERISH_SPOKEN_TEXT: false,
 	GIBBERISH_DIALOG_OPTIONS: false,
 	DIALOG_STYLE: DialogStyle.ABOVE_CHARACTER,
@@ -117,6 +120,9 @@ static var defaults := {
 	AUTOTRACE_OUTLINE_MARGIN: 0,
 	AUTOTRACE_NOISE_REDUCTION: false,
 	AUTOTRACE_CONVEX_OUTLINE: true,
+	TRANSLATION_EXTRA_SCAN_PATHS: [],
+	TRANSLATION_EXTRA_FUNCTION_NAMES: "",
+	TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES: "",
 }
 
 
@@ -171,7 +177,6 @@ static func initialize_project_settings() -> void:
 	# ---- Dialogs ---------------------------------------------------------------------------------
 	_initialize_project_setting(TEXT_SPEED, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,0.1")
 	_initialize_project_setting(AUTO_CONTINUE_TEXT, TYPE_BOOL)
-	#_initialize_project_setting(USE_TRANSLATIONS, TYPE_BOOL)
 	#_initialize_project_setting(
 		#DIALOG_STYLE,
 		#TYPE_INT,
@@ -228,6 +233,16 @@ static func initialize_project_settings() -> void:
 	)
 	_initialize_project_setting(AUTOTRACE_NOISE_REDUCTION, TYPE_BOOL)
 	_initialize_project_setting(AUTOTRACE_CONVEX_OUTLINE, TYPE_BOOL)
+
+	# ---- Translations ---------------------------------------------------------------------------
+	_initialize_project_setting(
+		TRANSLATION_EXTRA_SCAN_PATHS,
+		TYPE_ARRAY,
+		PROPERTY_HINT_TYPE_STRING,
+		"%d/%d:" % [TYPE_STRING, PROPERTY_HINT_DIR]
+	)
+	_initialize_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES, TYPE_STRING)
+	_initialize_project_setting(TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES, TYPE_STRING)
 
 	ProjectSettings.save()
 
@@ -286,10 +301,6 @@ static func get_text_speed() -> float:
 
 static func is_auto_continue_text() -> bool:
 	return _get_project_setting(AUTO_CONTINUE_TEXT)
-
-
-static func is_use_translations() -> bool:
-	return _get_project_setting(USE_TRANSLATIONS)
 
 
 static func get_dialog_style() -> int:
@@ -371,6 +382,51 @@ static func get_voice_prefixes() -> String:
 
 static func get_ui_prefixes() -> String:
 	return _get_project_setting(UI_PREFIXES)
+
+
+# ---- Translations -------------------------------------------------------------------------------
+static func get_translation_extra_scan_paths() -> Array[String]:
+	var result:Array[String]
+	result.append_array(_get_project_setting(TRANSLATION_EXTRA_SCAN_PATHS))
+	return result
+
+
+static func get_translation_extra_function_names() -> String:
+	return _get_project_setting(TRANSLATION_EXTRA_FUNCTION_NAMES)
+
+
+static func get_translation_extra_plural_function_names() -> String:
+	return _get_project_setting(TRANSLATION_EXTRA_PLURAL_FUNCTION_NAMES)
+
+
+# ---- POT file list management --------------------------------------------------------------------
+static func get_pot_files() -> PackedStringArray:
+	return ProjectSettings.get_setting(
+		"internationalization/locale/translations_pot_files",
+		PackedStringArray()
+	)
+
+
+static func add_to_pot_files(path: String) -> void:
+	var files := get_pot_files()
+	if path not in files:
+		files.append(path)
+		ProjectSettings.set_setting("internationalization/locale/translations_pot_files", files)
+		ProjectSettings.save()
+
+
+static func remove_from_pot_files(path: String) -> void:
+	var files := get_pot_files()
+	var idx := files.find(path)
+	if idx >= 0:
+		files.remove_at(idx)
+		ProjectSettings.set_setting("internationalization/locale/translations_pot_files", files)
+		ProjectSettings.save()
+
+
+static func sync_pot_files(paths: PackedStringArray) -> void:
+	ProjectSettings.set_setting("internationalization/locale/translations_pot_files", paths)
+	ProjectSettings.save()
 
 
 # ---- DEV -----------------------------------------------------------------------------------------

@@ -22,6 +22,8 @@ var _type := -1
 var _type_label := ""
 var _type_target := ""
 var _type_method: Callable
+# Whether the created object's script should be registered for translation template generation
+var _register_for_translation := true
 # The following variables are references to the elements generated for the creation of the new
 # Popochiu object, such as resources, scenes, scripts, state scripts, etc
 var _scene: Node
@@ -127,7 +129,7 @@ func _copy_script_template() -> int:
 	return ResultCodes.SUCCESS
 
 
-## Create the script for the object based on the template of its type.
+# Create the script for the object based on the template of its type.
 func _create_script_from_template() -> int:
 	var script_template_file = FileAccess.open(BASE_SCRIPT_TEMPLATE % _type_label, FileAccess.READ)
 	
@@ -194,8 +196,8 @@ func _save_obj_resource(obj: Resource) -> int:
 	return ResultCodes.SUCCESS
 
 
-## Makes a copy of the base scene for the object (e.g. popochiu_room.tscn,
-## popochiu_inventory_item.tscn, popochiu_prop.tscn).
+# Makes a copy of the base scene for the object (e.g. popochiu_room.tscn,
+# popochiu_inventory_item.tscn, popochiu_prop.tscn).
 func _load_obj_base_scene() -> Node:
 	var obj = (
 		load(BASE_SCENE_PATH % [_type_label, _type_label]) as PackedScene
@@ -230,8 +232,16 @@ func _add_resource_to_popochiu() -> void:
 	# object (instead of trying to update everything each time)
 	PopochiuResources.update_autoloads(true)
 
+	# Register the script for translation template generation
+	_register_in_pot_files()
+
 	# Update the related list in the dock
 	PopochiuEditorHelper.signal_bus.main_object_added.emit(_type, _pascal_name)
+
+
+func _register_in_pot_files() -> void:
+	if _register_for_translation and not _path_script.is_empty():
+		PopochiuConfig.add_to_pot_files(_path_script)
 
 
 #endregion

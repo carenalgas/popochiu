@@ -92,8 +92,10 @@ func _ready():
 
 #region Public #####################################################################################
 ## Displays [param msg] in a box centered on-screen (narration/instruction/warning).
+## Translates the message, then applies format [param params] if provided ([Array] for
+## [code]%[/code]-style, [Dictionary] for [method String.format]-style).
 ## Temporarily blocks the GUI until the player clicks anywhere to dismiss the message.
-func show_system_text(msg: String) -> void:
+func show_system_text(msg: String, params: Variant = null) -> void:
 	# NOTE: Not sure if this logic should happen here. Perhaps it could trigger a signal to which
 	# the in-game graphic interface connects, allowing it to handle the logic.
 	if not PopochiuUtils.e.playing_queue and gui.popups_stack.is_empty():
@@ -104,7 +106,7 @@ func show_system_text(msg: String) -> void:
 		
 		return
 	
-	system_text_shown.emit(PopochiuUtils.e.get_text(msg))
+	system_text_shown.emit(PopochiuUtils.e.translate(msg, params))
 	await system_text_hidden
 	
 	if not PopochiuUtils.e.playing_queue and gui.popups_stack.is_empty():
@@ -112,17 +114,25 @@ func show_system_text(msg: String) -> void:
 
 
 ## Displays [param msg] in a box centered on-screen (narration/instruction/warning).
+## Translates the message, then applies format [param params] if provided ([Array] for
+## [code]%[/code]-style, [Dictionary] for [method String.format]-style).
 ## Temporarily blocks the GUI until the player clicks anywhere to dismiss the message.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_show_system_text(msg: String) -> Callable:
-	return func (): await show_system_text(msg)
+func queue_show_system_text(msg: String, params: Variant = null) -> Callable:
+	return func (): await show_system_text(msg, params)
 
 
 ## Shows [param msg] as hover text for the currently hovered object. Does not block interactions.
+## Translates the message, then applies format [param params] if provided ([Array] for
+## [code]%[/code]-style, [Dictionary] for [method String.format]-style).
 ## Can be used to inform the player what happens when clicking or right-clicking an object.
-func show_hover_text(msg := '') -> void:
-	hover_text_shown.emit(msg)
+func show_hover_text(msg := "", params: Variant = null) -> void:
+	if msg.is_empty():
+		hover_text_shown.emit(msg)
+		return
+	
+	hover_text_shown.emit(PopochiuUtils.e.translate(msg, params))
 
 
 ## Blocks the in-game GUI, preventing player interaction.

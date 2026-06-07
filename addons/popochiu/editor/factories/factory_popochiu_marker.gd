@@ -8,6 +8,7 @@ func _init() -> void:
 	_type_method = PopochiuEditorHelper.is_marker
 	_obj_room_group = "Markers"
 	_path_template = "/markers/%s/marker_%s"
+	_register_for_translation = false
 
 
 #endregion

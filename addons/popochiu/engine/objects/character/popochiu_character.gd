@@ -692,26 +692,27 @@ func face_away() -> void:
 	await idle()
 
 
-## Makes the character say [param dialog], optionally with emotion [param emo].
-## Plays the talk animation and an optional voice cue if defined for the emotion.
+## Makes the character say [param dialog] with optional interpolation [param params].
+## Translates the dialog line, then applies format parameters if provided ([Array] for
+## [code]%[/code]-style, [Dictionary] for [method String.format]-style).
+## Plays the talk animation and an optional voice cue if defined for the current [member emotion].
 ## Emits [signal PopochiuICharacter.character_spoke] that carries the character and the dialog line.
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_say(dialog: String, emo := EMPTY_STRING) -> Callable:
-	return func(): await say(dialog, emo)
+func queue_say(dialog: String, params: Variant = null) -> Callable:
+	return func(): await say(dialog, params)
 
 
-## Makes the character say [param dialog], optionally with emotion [param emo].
-## Plays the talk animation and an optional voice cue if defined for the emotion.
+## Makes the character say [param dialog] with optional interpolation [param params].
+## Translates the dialog line, then applies format parameters if provided ([Array] for
+## [code]%[/code]-style, [Dictionary] for [method String.format]-style).
+## Plays the talk animation and an optional voice cue if defined for the current [member emotion].
 ## Emits [signal PopochiuICharacter.character_spoke] that carries the character and the dialog line.
-func say(dialog: String, emo := EMPTY_STRING) -> void:
+func say(dialog: String, params: Variant = null) -> void:
 	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		return
 
 	_is_talking = true
-
-	if not emo.is_empty():
-		emotion = emo
 
 	# Call the virtual that plays the talk animation
 	_play_talk()
@@ -720,7 +721,11 @@ func say(dialog: String, emo := EMPTY_STRING) -> void:
 	if not vo_name.is_empty() and PopochiuUtils.a.get(vo_name):
 		PopochiuUtils.a[vo_name].play(false, global_position)
 
-	PopochiuUtils.c.character_spoke.emit(self, dialog)
+	# Trigger the signal to show the dialog line in the GUI
+	PopochiuUtils.c.character_spoke.emit(
+		self,
+		PopochiuUtils.e.translate(dialog, params)
+	)
 
 	await PopochiuUtils.g.dialog_line_finished
 
@@ -729,7 +734,6 @@ func say(dialog: String, emo := EMPTY_STRING) -> void:
 	if not vo_name.is_empty() and PopochiuUtils.a[vo_name].is_playing():
 		PopochiuUtils.a[vo_name].stop(0.3)
 
-	emotion = EMPTY_STRING
 	_is_talking = false
 	idle()
 
@@ -1589,11 +1593,6 @@ func _resolve_character(character: Variant, fallback_script_name: String) -> Pop
 	if not fallback_script_name.is_empty():
 		return PopochiuUtils.c.get_character(fallback_script_name)
 	return PopochiuUtils.c.player
-
-
-func _translate() -> void:
-	if Engine.is_editor_hint() or not is_inside_tree(): return
-	description = PopochiuUtils.e.get_text(_description_code)
 
 
 # Validates an animation name and returns either the validated name or a fallback

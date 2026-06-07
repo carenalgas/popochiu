@@ -72,6 +72,9 @@ func _add_resource_to_room() -> void:
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
 	) / 2.0
 
+	# Register the script for translation template generation
+	_register_in_pot_files()
+
 	# Save the room scene (it's open in the editor)
 	EditorInterface.save_scene()
 

@@ -249,7 +249,7 @@ func _show_command_on(item_1_name: String, item_2_name := "") -> void:
 	var preposition = "on"
 	if PopochiuUtils.e.current_command == NineVerbCommands.Commands.GIVE:
 		preposition = "to"
-	PopochiuUtils.g.show_hover_text("%s %s %s %s" % [
+	PopochiuUtils.g.show_hover_text("%s %s %s %s", [
 		PopochiuUtils.e.get_current_command_name(), item_1_name, preposition, item_2_name
 	])
 

@@ -366,7 +366,7 @@ func get_description() -> String:
 		if description.is_empty():
 			description = name
 		return description
-	return PopochiuUtils.e.get_text(description)
+	return tr(description)
 
 
 #endregion

@@ -17,6 +17,7 @@ var _editor_file_system := EditorInterface.get_resource_filesystem()
 var _is_first_install := false
 var _input_actions := preload("res://addons/popochiu/engine/others/input_actions.gd")
 var _export_plugin: EditorExportPlugin = null
+var _translation_parser_plugin: EditorTranslationParserPlugin = null
 var _inspector_plugins := []
 
 
@@ -71,6 +72,11 @@ func _enter_tree() -> void:
 
 	_export_plugin = preload("popochiu_export_plugin.gd").new()
 	add_export_plugin(_export_plugin)
+
+	_translation_parser_plugin = preload(
+		"res://addons/popochiu/editor/plugins/popochiu_translation_parser_plugin.gd"
+	).new()
+	add_translation_parser_plugin(_translation_parser_plugin)
 	
 	# ---- Load the Popochiu dock and add it to the Editor -----------------------------------------
 	dock = load(PopochiuResources.MAIN_DOCK_PATH).instantiate()
@@ -94,6 +100,9 @@ func _exit_tree() -> void:
 	
 	if is_instance_valid(_export_plugin):
 		remove_export_plugin(_export_plugin)
+
+	if is_instance_valid(_translation_parser_plugin):
+		remove_translation_parser_plugin(_translation_parser_plugin)
 	
 	for eip in _inspector_plugins:
 		if is_instance_valid(eip):

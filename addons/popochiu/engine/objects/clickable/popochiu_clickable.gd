@@ -65,8 +65,6 @@ var _has_double_click: bool = false
 # Current active tween for movement
 var _movement_tween: Tween = null
 
-@onready var _description_code := description
-
 
 #region Godot ######################################################################################
 func _ready():
@@ -115,11 +113,6 @@ func _ready():
 		mouse_exited.connect(_on_mouse_exited)
 		# Fix #183 by listening only to inputs in this CollisionObject2D
 		input_event.connect(_on_input_event)
-
-		# Connect to singleton signals
-		PopochiuUtils.e.language_changed.connect(_translate)
-
-	_translate()
 
 
 func _notification(event: int) -> void:
@@ -250,15 +243,13 @@ func disable_clickable() -> void:
 	input_pickable = false
 
 
-## Returns the [member description] of the node using [method Object.tr] if 
-## [member PopochiuSettings.use_translations] is [code]true[/code]. Otherwise,
-## it returns just the value of [member description].
+## Returns the [member description] of the node translated via [method Object.tr].
 func get_description() -> String:
 	if Engine.is_editor_hint():
 		if description.is_empty():
 			description = name
 		return description
-	return PopochiuUtils.e.get_text(description)
+	return tr(description)
 
 
 ## Called by the engine when the object is left clicked.
@@ -593,21 +584,12 @@ func _toggle_input() -> void:
 		input_pickable = visible
 
 
-func _translate() -> void:
-	if (
-		Engine.is_editor_hint()
-		or not is_inside_tree()
-		or not PopochiuUtils.e.settings.use_translations
-	):
-		return
+# ---- @anthonyirwin82 -----------------------------------------------------------------------------
+# NOTE: Temporarily duplicating PopochiuUtils functions here with an added delay for double click.
+# Having delay in the PopochiuUtils class that other gui code calls introduced unwanted issues.
+# This is a temporary work around until a more permanent solution is found.
 
-	description = PopochiuUtils.e.get_text("%s-%s" % [get_tree().current_scene.name, _description_code])
-
-
-# Checks if [param event] is a valid (non-synthetic) click or touch, excluding double interactions.
-# An async delay is required so the double-click window can elapse before committing to a
-# single-click action. Modifying the delay in PopochiuUtils introduced issues in other GUI code,
-# hence the local version.
+# Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
 func _is_click_or_touch(event: InputEvent) -> bool:
 	if PopochiuUtils.is_click_or_touch(event) and not PopochiuUtils.is_double_click_or_double_tap(event):
 		# Wait to let a potential double-click event arrive and set _has_double_click first.
