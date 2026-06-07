@@ -36,6 +36,7 @@ const GIZMOS_POLY_OBSTACLE_COLOR = "popochiu/gizmos/polygons/obstacle_polygons_c
 const GIZMOS_POLY_WALKABLE_AREA_COLOR = "popochiu/gizmos/polygons/walkable_area_polygons_color"
 const GIZMOS_POLY_FILL_ALPHA = "popochiu/gizmos/polygons/polygons_fill_alpha"
 const GIZMOS_POLY_PASSIVE_ALPHA_FACTOR = "popochiu/gizmos/polygons/passive_polygons_alpha_factor"
+const GIZMOS_POLY_SHOW_CENTROID = "popochiu/gizmos/polygons/show_polygon_centroid"
 
 # Settings default values
 static var defaults := {
@@ -64,6 +65,7 @@ static var defaults := {
 	GIZMOS_POLY_FILL_ALPHA: 0.15,
 	GIZMOS_POLY_PASSIVE_ALPHA_FACTOR: 0.4,
 	GIZMOS_POLY_VERTEX_HANDLER_SIZE: 6.0,
+	GIZMOS_POLY_SHOW_CENTROID: false,
 }
 
 static var editor_settings: EditorSettings
@@ -104,6 +106,7 @@ static func initialize_editor_settings() -> void:
 	_initialize_editor_setting(GIZMOS_POLY_FILL_ALPHA, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,1.0,0.05")
 	_initialize_editor_setting(GIZMOS_POLY_PASSIVE_ALPHA_FACTOR, TYPE_FLOAT, PROPERTY_HINT_RANGE, "0.0,1.0,0.05")
 	_initialize_editor_setting(GIZMOS_POLY_VERTEX_HANDLER_SIZE, TYPE_INT, PROPERTY_HINT_RANGE, "4,64")
+	_initialize_editor_setting(GIZMOS_POLY_SHOW_CENTROID, TYPE_BOOL)
 
 
 static func get_icon(icon: Icons) -> Texture2D:
