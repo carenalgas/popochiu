@@ -150,7 +150,7 @@ func _get_scan_paths() -> PackedStringArray:
 	if not extra.is_empty():
 		for p in extra:
 			var trimmed := p.strip_edges()
-			if not PopochiuEditorHelper._is_valid_godot_path(trimmed):
+			if not PopochiuEditorHelper.is_valid_godot_path(trimmed):
 				PopochiuUtils.print_warning(
 					"[i18n] \"%s\" is not a valid scan path!" % p
 				)
@@ -184,7 +184,7 @@ func _append_extra_names(names: PackedStringArray, extra: String) -> void:
 		return
 	for n in extra.split(",", false):
 		var trimmed := n.strip_edges()
-		if not PopochiuEditorHelper._is_valid_function_name(trimmed):
+		if not PopochiuEditorHelper.is_valid_function_name(trimmed):
 			PopochiuUtils.print_warning(
 				"[i18n] Remove \"%s\" entry from Extra (Plural) Function Names in Project Settings."
 				% trimmed

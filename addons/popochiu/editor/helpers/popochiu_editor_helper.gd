@@ -395,11 +395,8 @@ static func get_rooms() -> Array[PopochiuRoom]:
 	return rooms
 
 
-#endregion #########################################################################################
-
-#region Private ####################################################################################
 # Check if a string represents a valid path (optionally including a file name).
-static func _is_valid_godot_path(path: String, expect_file: bool = false) -> bool:
+static func is_valid_godot_path(path: String, expect_file: bool = false) -> bool:
 	if path.is_empty():
 		return false
 
@@ -429,7 +426,7 @@ static func _is_valid_godot_path(path: String, expect_file: bool = false) -> boo
 
 
 # Check if a string represents a valid GDScript function name.
-static func _is_valid_function_name(name: String, check_snake_case: bool = false) -> bool:
+static func is_valid_function_name(name: String, check_snake_case: bool = false) -> bool:
 	var _valid_name_regex: RegEx = RegEx.new()
 	_valid_name_regex.compile("^[a-zA-Z_][a-zA-Z0-9_]*$")
 
