@@ -41,6 +41,7 @@ var _show_walkable_area_passive: bool = true
 var _colors: Dictionary = {}
 var _fill_alpha: float = 0.15
 var _vertex_handler_size: float = 6.0
+var _show_centroid: bool = false
 # Alpha multiplier applied to non-interactive (passive) gizmos so they
 # appear dimmed compared to the actively selected polygon.
 var _passive_alpha_factor: float = 0.4
@@ -125,6 +126,7 @@ func _set_gizmo_theme(gizmo: GizmoPolygon2D) -> void:
 	gizmo.fill_color = Color(gizmo.outline_color, _fill_alpha * alpha_factor)
 	gizmo.vertex_color = Color.WHITE
 	gizmo.vertex_size = _vertex_handler_size
+	gizmo.centroid_visible = _show_centroid
 
 
 # Helper to determine if a gizmo belongs to the currently selected object.
@@ -242,6 +244,9 @@ func initialize_gizmos() -> void:
 		PopochiuEditorConfig.GIZMOS_POLY_ENABLE_UNSELECTED_WA
 	)
 	_show_walkable_area_passive = _always_show[GizmoPolygon2D.PolygonCategory.WALKABLE_AREA]
+	_show_centroid = PopochiuEditorConfig.get_editor_setting(
+		PopochiuEditorConfig.GIZMOS_POLY_SHOW_CENTROID
+	)
 
 	# Re-apply to existing gizmos
 	_refresh_gizmos_state()
