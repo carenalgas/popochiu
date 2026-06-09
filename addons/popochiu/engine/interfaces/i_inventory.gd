@@ -161,6 +161,7 @@ func add_item(item: PopochiuInventoryItem, quantity := 1) -> void:
 		return
 
 	# We're at the end, add the items and we're done.
+	# Exceeding quantity is signaled by _apply_stack_add().
 	_apply_stack_add(item, actual)
 
 
@@ -224,7 +225,7 @@ func register_existing_item(item: PopochiuInventoryItem) -> void:
 ## Applies the deprecated [member PopochiuInventoryItem.in_inventory] setter semantics without
 ## emitting inventory signals or awaiting GUI transitions. Use [method add_item] and
 ## [method remove_item] for normal gameplay flow.
-func set_item_in_inventory_silently(item: PopochiuInventoryItem, value: bool) -> void:
+func set_item_in_inventory_bg(item: PopochiuInventoryItem, value: bool) -> void:
 	if not is_instance_valid(item):
 		return
 

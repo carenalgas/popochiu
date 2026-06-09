@@ -373,7 +373,7 @@ func set_in_inventory(value: bool) -> void:
 		"Direct assignment to in_inventory is deprecated and only performs a silent state"
 		+ " change. Use add()/remove() for normal inventory flow."
 	)
-	PopochiuUtils.i.set_item_in_inventory_silently(self, value)
+	PopochiuUtils.i.set_item_in_inventory_bg(self, value)
 
 
 # Increments the usage count for the specified command
