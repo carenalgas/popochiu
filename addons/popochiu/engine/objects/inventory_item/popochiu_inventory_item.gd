@@ -41,7 +41,7 @@ var quantity_owned := 0
 ## signals and does not update the inventory GUI. Use [method add] and [method remove] instead.
 var in_inventory: bool :
 	get: return quantity_owned > 0
-	set = set_in_inventory
+	set(value): set_in_inventory(value)
 ## Whether this item has ever been in the inventory. Once true, it stays true.
 var ever_collected := false : set = set_ever_collected
 ## Stores the last [enum MouseButton] pressed on this object.

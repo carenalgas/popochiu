@@ -16,7 +16,7 @@ var _return_to_walk_to := false
 ## Used to access the [b]9VerbPanel[/b] component (the one at the bottom containing the verbs,
 ## the inventory, and the button to open the [b]9VerbSettingsPopup[/b].
 @onready var _9_verb_panel: Control = %"9VerbPanel"
-@onready var _inventory_grid: PopochiuInventoryGrid = _9_verb_panel.get_node("%9VerbInventoryGrid")
+@onready var _inventory_grid: Control = %"9VerbInventoryGrid"
 @onready var hover_text_cursor: Control = %HoverTextCursor
 ## Used to access the [b]9VerbSettingsPopup[/b] node.
 @onready var settings_popup: Control = %"9VerbSettingsPopup"

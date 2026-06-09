@@ -11,9 +11,7 @@ extends PopochiuGraphicInterface
 @onready var sierra_bar: Control = %SierraBar
 @onready var sierra_menu: Control = %SierraMenu
 @onready var sierra_inventory_popup: Control = %SierraInventoryPopup
-@onready var _inventory_grid: PopochiuInventoryGrid = sierra_inventory_popup.get_node(
-	"%SierraInventoryGrid"
-)
+@onready var _inventory_grid: Control = %SierraInventoryGrid
 @onready var sierra_settings_popup: Control = %SierraSettingsPopup
 @onready var sierra_sound_popup: Control = %SierraSoundPopup
 @onready var text_settings_popup: Control = %TextSettingsPopup

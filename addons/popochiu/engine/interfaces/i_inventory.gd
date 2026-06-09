@@ -87,30 +87,34 @@ func _init() -> void:
 #endregion
 
 #region Public #####################################################################################
-## Removes all items currently in the inventory. If [param in_bg] is [code]true[/code], items are
-## removed silently without GUI lifecycle (useful during scene transitions).
-func clean_inventory(in_bg := false) -> void:
-	if in_bg:
-		# refs #349: In background mode, reset quantity_owned directly and clear the items list
-		# to avoid signal emissions and GUI awaits.
-		for instance in _item_instances:
-			var pii: PopochiuInventoryItem = _item_instances[instance]
-			pii.quantity_owned = 0
-		items.clear()
-		set_active_item(null)
-		clicked = null
-	else:
-		# Remove each item through its full GUI lifecycle.
-		for instance in _item_instances:
-			var pii: PopochiuInventoryItem = _item_instances[instance]
-			if pii.in_inventory:
-				await pii.remove()
+## Removes all items currently in the inventory. When items are ## removed the GUI lifecycle
+## gets triggered once for each item, so the GUI may play animations if necessary.
+func clean_inventory() -> void:
+	# Remove each item through its full GUI lifecycle.
+	for instance in _item_instances:
+		var pii: PopochiuInventoryItem = _item_instances[instance]
+		if pii.in_inventory:
+			await pii.remove()
+
+
+## Removes all items currently in the inventory without triggering GUI lifecycle
+## (useful during scene transitions).
+func clean_inventory_bg() -> void:
+	# refs #349: In background mode, reset quantity_owned directly and clear the items list
+	# to avoid signal emissions and GUI awaits.
+	for instance in _item_instances:
+		var pii: PopochiuInventoryItem = _item_instances[instance]
+		pii.quantity_owned = 0
+	items.clear()
+	set_active_item(null)
+	clicked = null
 
 
 ## Adds [param quantity] of [param item] to the inventory and waits until any GUI transition has
 ## finished. Inventory capacity is slot-based: stacked quantities still occupy a single slot and
 ## count as [code]1[/code] against the inventory limit.
 func add_item(item: PopochiuInventoryItem, quantity := 1) -> void:
+	# Stop on negative or null quantities.
 	if quantity <= 0:
 		PopochiuUtils.print_warning(
 			"Couldn't add %d of %s. Quantity must be greater than 0."
@@ -119,31 +123,46 @@ func add_item(item: PopochiuInventoryItem, quantity := 1) -> void:
 		await get_tree().process_frame
 		return
 
+	# If character doesn't own the item yet...
 	if item.quantity_owned == 0:
+		# Stop if the inventory is full.
 		if is_full():
-			PopochiuUtils.print_error("Couldn't add %s. Inventory is full." % item.script_name)
+			PopochiuUtils.print_warning("Couldn't add %s. Inventory is full." % item.script_name)
 			await get_tree().process_frame
 			return
 
+		# Calculate the addable quantity for the first collection of this item.
 		var actual := _get_addable_quantity(item, quantity, item.max_quantity)
-		if actual <= 0:
-			await get_tree().process_frame
-			return
-
+		# Add the item to the inventory for the first time, and we're done!
 		_apply_first_add(item, actual)
 		item_added.emit(item)
 		await item_add_done
 		return
 
+	# If we are here, we have at least one item in the inventory.
+	# Stop if we can have only one (or less for good measure, but the value is forced by
+	# a setter, so it should never be possible).
 	if item.max_quantity <= 1:
+		PopochiuUtils.print_warning(
+			"Couldn't add %s. It is already in the inventory."
+			% item.script_name
+		)
 		await get_tree().process_frame
 		return
 
 	var actual := _get_addable_quantity(item, quantity, item.max_quantity - item.quantity_owned)
-	if actual > 0:
-		_apply_stack_add(item, actual)
+	# Stop if there is no room left for this item.
+	if actual <= 0:
+		PopochiuUtils.print_warning(
+			"Couldn't add %s. Max quantity exceeded."
+			% item.script_name
+		)
+		await get_tree().process_frame
+		return
 
-	await get_tree().process_frame
+	# We're at the end, add the items and we're done.
+	_apply_stack_add(item, actual)
+
 
 
 ## Removes [param quantity] of [param item] from the inventory and waits until any GUI transition
@@ -403,13 +422,13 @@ func _apply_first_add(item: PopochiuInventoryItem, quantity: int) -> void:
 	_register_item(item)
 	item.quantity_owned = quantity
 	item.ever_collected = true
-	item._on_added_to_inventory()
+	item._on_added_to_inventory() # Call to Virtual, not Private
 
 
 func _apply_stack_add(item: PopochiuInventoryItem, quantity: int) -> void:
 	var old_qty := item.quantity_owned
 	item.quantity_owned += quantity
-	item._on_quantity_changed(old_qty, item.quantity_owned)
+	item._on_quantity_changed(old_qty, item.quantity_owned)  # Call to Virtual, not Private
 	item_quantity_updated.emit(item, item.quantity_owned)
 
 
@@ -422,7 +441,7 @@ func _apply_full_removal(item: PopochiuInventoryItem) -> void:
 func _apply_partial_removal(item: PopochiuInventoryItem, quantity: int) -> void:
 	var old_qty := item.quantity_owned
 	item.quantity_owned -= quantity
-	item._on_quantity_changed(old_qty, item.quantity_owned)
+	item._on_quantity_changed(old_qty, item.quantity_owned) # Call to Virtual, not Private
 	item_quantity_updated.emit(item, item.quantity_owned)
 
 

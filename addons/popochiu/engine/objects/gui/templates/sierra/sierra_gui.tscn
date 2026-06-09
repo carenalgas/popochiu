@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://6ucg5xkcreh5"]
+[gd_scene format=3 uid="uid://6ucg5xkcreh5"]
 
 [ext_resource type="Theme" uid="uid://dpequqav4rjaf" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme.tres" id="1_3jlpr"]
 [ext_resource type="Script" uid="uid://byhjwrxhgl1e5" path="res://addons/popochiu/engine/objects/gui/templates/sierra/sierra_gui.gd" id="1_40nsv"]
@@ -102,7 +102,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="SierraGUI" type="Control"]
+[node name="SierraGUI" type="Control" unique_id=351786394]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -113,32 +113,32 @@ mouse_filter = 2
 theme = ExtResource("1_3jlpr")
 script = ExtResource("1_40nsv")
 
-[node name="Cursor" type="AnimatedSprite2D" parent="."]
+[node name="Cursor" type="AnimatedSprite2D" parent="." unique_id=590174916]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_eo6w8")
 animation = &"gui"
 offset = Vector2(16, 16)
 
-[node name="SierraBar" parent="." instance=ExtResource("4_hjdb7")]
+[node name="SierraBar" parent="." unique_id=848903437 instance=ExtResource("4_hjdb7")]
 unique_name_in_owner = true
 layout_mode = 1
 
-[node name="SierraMenu" parent="." instance=ExtResource("5_ffq7i")]
+[node name="SierraMenu" parent="." unique_id=1620720244 instance=ExtResource("5_ffq7i")]
 unique_name_in_owner = true
 layout_mode = 1
 
-[node name="DialogPortrait" parent="." instance=ExtResource("5_nehoj")]
+[node name="DialogPortrait" parent="." unique_id=29231156 instance=ExtResource("5_nehoj")]
 layout_mode = 1
 
-[node name="DialogMenu" parent="." instance=ExtResource("14_3gq4k")]
+[node name="DialogMenu" parent="." unique_id=1746743535 instance=ExtResource("14_3gq4k")]
 visible = false
 layout_mode = 1
 
-[node name="SystemText" parent="." instance=ExtResource("18_x7swu")]
+[node name="SystemText" parent="." unique_id=668555024 instance=ExtResource("18_x7swu")]
 z_index = 1
 layout_mode = 1
 
-[node name="Popups" type="Control" parent="."]
+[node name="Popups" type="Control" parent="." unique_id=1019152404]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -147,32 +147,32 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SierraInventoryPopup" parent="Popups" instance=ExtResource("15_2hyjp")]
+[node name="SierraInventoryPopup" parent="Popups" unique_id=1689771734 instance=ExtResource("15_2hyjp")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
-[node name="SierraSettingsPopup" parent="Popups" instance=ExtResource("18_sv4ik")]
+[node name="SierraSettingsPopup" parent="Popups" unique_id=727950063 instance=ExtResource("18_sv4ik")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
-[node name="SierraSoundPopup" parent="Popups" instance=ExtResource("19_3kc82")]
+[node name="SierraSoundPopup" parent="Popups" unique_id=1945395933 instance=ExtResource("19_3kc82")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
-[node name="TextSettingsPopup" parent="Popups" instance=ExtResource("20_anvsw")]
+[node name="TextSettingsPopup" parent="Popups" unique_id=40081456 instance=ExtResource("20_anvsw")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
-[node name="SaveAndLoadPopup" parent="Popups" instance=ExtResource("21_1xmwq")]
+[node name="SaveAndLoadPopup" parent="Popups" unique_id=39274138 instance=ExtResource("21_1xmwq")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
 
-[node name="QuitPopup" parent="Popups" instance=ExtResource("24_50bps")]
+[node name="QuitPopup" parent="Popups" unique_id=2106186567 instance=ExtResource("24_50bps")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
