@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://wd748u1vdybq"]
 
 [ext_resource type="Script" uid="uid://bjpgtct41bl2i" path="res://addons/popochiu/editor/canvas_editor_menu/popochiu_canvas_editor_menu.gd" id="1_vs7c6"]
-[ext_resource type="Texture2D" uid="uid://bb5mqqkdr04y7" path="res://addons/popochiu/icons/popochiu_ico.svg" id="2_vkhip"]
+[ext_resource type="Texture2D" uid="uid://ckmevo4msmh7r" path="res://addons/popochiu/icons/popochiu_ico.svg" id="2_vkhip"]
 [ext_resource type="Texture2D" uid="uid://b3sku5v1n23ni" path="res://addons/popochiu/icons/btn_baseline.svg" id="2_w3cau"]
 [ext_resource type="Texture2D" uid="uid://dmt2epjmlpv56" path="res://addons/popochiu/icons/btn_walk_to_point.svg" id="3_ifql1"]
 [ext_resource type="Texture2D" uid="uid://skjlvpct7ah7" path="res://addons/popochiu/icons/btn_look_at_point.svg" id="4_bge33"]
@@ -9,9 +9,9 @@
 [ext_resource type="Texture2D" uid="uid://cyun4rylrtrvm" path="res://addons/popochiu/icons/btn_interaction_polygon.svg" id="6_6oxl8"]
 [ext_resource type="Texture2D" uid="uid://d11mg7ftbxvl0" path="res://addons/popochiu/icons/btn_markers.svg" id="6_yea6f"]
 [ext_resource type="Texture2D" uid="uid://dfstqtc5nlapr" path="res://addons/popochiu/icons/btn_obstacle_polygon.svg" id="8_8v2pw"]
-[ext_resource type="Texture2D" uid="uid://e28i4xcwi8l4" path="res://addons/popochiu/icons/btn_psv_gz_scope_room.svg" id="10_o14yl"]
-[ext_resource type="Texture2D" uid="uid://dk3lqxv7lqh3m" path="res://addons/popochiu/icons/btn_interaction_polygon_autotrace.svg" id="11_3vea6"]
-[ext_resource type="Texture2D" uid="uid://d2pb6k51a7fh8" path="res://addons/popochiu/icons/btn_psv_gz_walkable_areas.svg" id="11_h7t2d"]
+[ext_resource type="Texture2D" uid="uid://c7txitpknpmfw" path="res://addons/popochiu/icons/btn_psv_gz_scope_room.svg" id="10_o14yl"]
+[ext_resource type="Texture2D" uid="uid://u0t45ntvped3" path="res://addons/popochiu/icons/btn_interaction_polygon_autotrace.svg" id="11_3vea6"]
+[ext_resource type="Texture2D" uid="uid://protic3pohkt" path="res://addons/popochiu/icons/btn_psv_gz_walkable_areas.svg" id="11_h7t2d"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pressed"]
 bg_color = Color(0.258824, 0.258824, 0.258824, 1)

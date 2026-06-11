@@ -7,22 +7,12 @@
 [ext_resource type="Texture2D" uid="uid://jbdlyvx4gumd" path="res://addons/popochiu/icons/hotspot.png" id="4_6mx6c"]
 [ext_resource type="Texture2D" uid="uid://dvh13sj4uj4b2" path="res://addons/popochiu/icons/walkable_area.png" id="5_j6ot2"]
 [ext_resource type="Texture2D" uid="uid://cosxi1ulfp7rg" path="res://addons/popochiu/icons/region.png" id="6_2h2fq"]
-[ext_resource type="Texture2D" uid="uid://drktr8ywn0h0" path="res://addons/popochiu/icons/marker.png" id="7_8ygji"]
+[ext_resource type="Texture2D" uid="uid://cj8n6g60sqnxi" path="res://addons/popochiu/icons/marker.png" id="7_8ygji"]
 [ext_resource type="Texture2D" uid="uid://mir6j58lju3l" path="res://addons/popochiu/icons/character.png" id="9_4yetu"]
 
-[sub_resource type="DPITexture" id="DPITexture_4merx"]
+[sub_resource type="DPITexture" id="DPITexture_5vmuu"]
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#ff5d5d\" d=\"M2 1v8.586l1.293-1.293a1 1 0 0 1 1.414 0L7 10.587l2.293-2.293a1 1 0 0 1 1.414 0L13 10.586l1-1V6H9V1H2zm8 0v4h4zm-6 9.414-2 2V15h12v-2.586l-.293.293a1 1 0 0 1-1.414 0L10 10.414l-2.293 2.293a1 1 0 0 1-1.414 0L4 10.414z\"/></svg>
 "
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5vmuu"]
-content_margin_left = 8.0
-content_margin_right = 8.0
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.6, 0.6, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_54j7f"]
 content_margin_left = 8.0
@@ -74,6 +64,16 @@ border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.6, 0.6, 0.6, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_44as0"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.6, 0.6, 0.6, 1)
+
 [node name="TabRoom" type="VBoxContainer" unique_id=2144242830]
 anchors_preset = 15
 anchor_right = 1.0
@@ -86,7 +86,7 @@ visible = false
 layout_mode = 2
 placeholder_text = "Filter Popochiu objects"
 clear_button_enabled = true
-right_icon = SubResource("DPITexture_4merx")
+right_icon = SubResource("DPITexture_5vmuu")
 script = ExtResource("2_bv3t4")
 
 [node name="RoomName" type="Button" parent="." unique_id=2145632860]
@@ -105,19 +105,19 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 text = "Script"
-icon = SubResource("DPITexture_4merx")
+icon = SubResource("DPITexture_5vmuu")
 
 [node name="BtnResource" type="Button" parent="ToolButtons" unique_id=699325195]
 unique_name_in_owner = true
 layout_mode = 2
 text = "State"
-icon = SubResource("DPITexture_4merx")
+icon = SubResource("DPITexture_5vmuu")
 
 [node name="BtnResourceScript" type="Button" parent="ToolButtons" unique_id=452859524]
 unique_name_in_owner = true
 layout_mode = 2
 text = "State"
-icon = SubResource("DPITexture_4merx")
+icon = SubResource("DPITexture_5vmuu")
 
 [node name="RoomScrollContainer" type="ScrollContainer" parent="." unique_id=1511607740]
 layout_mode = 2
@@ -138,7 +138,7 @@ autowrap_mode = 3
 [node name="PropsGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=1518040899 instance=ExtResource("2")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_5vmuu")
+theme_override_styles/panel = SubResource("StyleBoxFlat_54j7f")
 icon = ExtResource("3_rksqc")
 title = "Props"
 create_text = "Create prop"
@@ -146,7 +146,7 @@ create_text = "Create prop"
 [node name="HotspotsGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=467682011 instance=ExtResource("2")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_54j7f")
+theme_override_styles/panel = SubResource("StyleBoxFlat_yr4k2")
 icon = ExtResource("4_6mx6c")
 title = "Hotspots"
 create_text = "Create hotspot"
@@ -154,7 +154,7 @@ create_text = "Create hotspot"
 [node name="WalkableAreasGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=1406337315 instance=ExtResource("2")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_yr4k2")
+theme_override_styles/panel = SubResource("StyleBoxFlat_d8y78")
 icon = ExtResource("5_j6ot2")
 title = "Walkable areas"
 create_text = "Create walkable area"
@@ -162,7 +162,7 @@ create_text = "Create walkable area"
 [node name="RegionsGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=1216351945 instance=ExtResource("2")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_d8y78")
+theme_override_styles/panel = SubResource("StyleBoxFlat_qmqo4")
 icon = ExtResource("6_2h2fq")
 title = "Regions"
 create_text = "Create regions"
@@ -170,7 +170,7 @@ create_text = "Create regions"
 [node name="MarkersGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=902834571 instance=ExtResource("2")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_qmqo4")
+theme_override_styles/panel = SubResource("StyleBoxFlat_unj0l")
 icon = ExtResource("7_8ygji")
 title = "Markers"
 create_text = "Create marker"
@@ -178,7 +178,7 @@ create_text = "Create marker"
 [node name="CharactersGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=78528682 instance=ExtResource("2")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_unj0l")
+theme_override_styles/panel = SubResource("StyleBoxFlat_44as0")
 icon = ExtResource("9_4yetu")
 title = "Characters in room"
 can_create = false
