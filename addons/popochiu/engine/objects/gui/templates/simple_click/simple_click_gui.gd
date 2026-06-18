@@ -7,6 +7,8 @@ extends PopochiuGraphicInterface
 ## inventory bar is in the top left corner of the screen, and the settings bar is in the top right
 ## corner of the screen.
 
+@onready var _simple_click_bar: Control = %SimpleClickBar
+
 
 #region Godot ######################################################################################
 func _ready() -> void:
@@ -165,6 +167,18 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	else:
 		PopochiuUtils.cursor.remove_secondary_cursor_texture()
 		PopochiuUtils.cursor.show_cursor()
+
+
+func _on_item_added(item: PopochiuInventoryItem) -> void:
+	await _simple_click_bar.show_item(item)
+
+
+func _on_item_removed(item: PopochiuInventoryItem) -> void:
+	await _simple_click_bar.hide_item(item)
+
+
+func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+	await _simple_click_bar.swap_item(item, new_item)
 
 
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText

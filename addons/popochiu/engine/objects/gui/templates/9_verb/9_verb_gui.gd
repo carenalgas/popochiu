@@ -16,6 +16,7 @@ var _return_to_walk_to := false
 ## Used to access the [b]9VerbPanel[/b] component (the one at the bottom containing the verbs,
 ## the inventory, and the button to open the [b]9VerbSettingsPopup[/b].
 @onready var _9_verb_panel: Control = %"9VerbPanel"
+@onready var _inventory_grid: Control = %"9VerbInventoryGrid"
 @onready var hover_text_cursor: Control = %HoverTextCursor
 ## Used to access the [b]9VerbSettingsPopup[/b] node.
 @onready var settings_popup: Control = %"9VerbSettingsPopup"
@@ -194,6 +195,18 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 		PopochiuUtils.g.show_hover_text()
 	else:
 		_show_command_on(item.description)
+
+
+func _on_item_added(item: PopochiuInventoryItem) -> void:
+	await _inventory_grid.show_item(item)
+
+
+func _on_item_removed(item: PopochiuInventoryItem) -> void:
+	await _inventory_grid.hide_item(item)
+
+
+func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+	await _inventory_grid.swap_item(item, new_item)
 
 
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText

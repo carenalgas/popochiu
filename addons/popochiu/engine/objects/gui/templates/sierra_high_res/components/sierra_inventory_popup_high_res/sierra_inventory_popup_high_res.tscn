@@ -125,7 +125,8 @@ theme_override_constants/margin_bottom = 12
 layout_mode = 2
 theme_override_constants/separation = 12
 
-[node name="SierraInventoryGridHighRes" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer" instance=ExtResource("5_s3yhq")]
+[node name="SierraInventoryGrid" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer" instance=ExtResource("5_s3yhq")]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="FooterContainer" type="HBoxContainer" parent="Overlay/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer"]

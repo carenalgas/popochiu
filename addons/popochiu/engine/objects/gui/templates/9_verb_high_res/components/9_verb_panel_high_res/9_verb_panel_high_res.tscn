@@ -183,5 +183,6 @@ text = "Use"
 script = ExtResource("7_16jef")
 command = 9
 
-[node name="9VerbInventoryGridHighRes" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer" instance=ExtResource("7_xc4x6")]
+[node name="9VerbInventoryGrid" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer" instance=ExtResource("7_xc4x6")]
+unique_name_in_owner = true
 layout_mode = 2

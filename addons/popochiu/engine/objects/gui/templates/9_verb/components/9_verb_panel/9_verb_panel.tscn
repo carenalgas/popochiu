@@ -172,6 +172,7 @@ script = ExtResource("5_bpewk")
 command = 9
 
 [node name="9VerbInventoryGrid" parent="PanelContainer/VBoxContainer/Verbs&InventoryContainer/HBoxContainer" instance=ExtResource("6_r1cmu")]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 1
 theme = null
