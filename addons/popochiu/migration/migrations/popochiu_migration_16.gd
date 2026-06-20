@@ -1,8 +1,8 @@
 @tool
-class_name PopochiuMigration13
+class_name PopochiuMigration16
 extends PopochiuMigration
 
-const VERSION = 13
+const VERSION = 16
 const DESCRIPTION = "Add _on_restore_from_savegame() hook to room scripts"
 const STEPS = [
 	"Add _on_restore_from_savegame() stub to existing room scripts",
