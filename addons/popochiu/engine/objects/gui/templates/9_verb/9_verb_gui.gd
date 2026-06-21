@@ -78,6 +78,7 @@ func _on_unblocked() -> void:
 	
 	PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
 	PopochiuUtils.g.show_hover_text()
+	PopochiuUtils.cursor.show_cursor()
 	_9_verb_panel.show()
 	
 	# Make all commands to look as no pressed
