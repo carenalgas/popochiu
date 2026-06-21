@@ -428,7 +428,7 @@ func save_game(slot := 1, description := "") -> void:
 
 ## Loads the game in the given [param slot].
 func load_game(slot := 1) -> void:
-	PopochiuUtils.i.clean_inventory(true)
+	PopochiuUtils.i.clean_inventory()
 	
 	if PopochiuUtils.d.current_dialog:
 		PopochiuUtils.d.current_dialog.stop()
