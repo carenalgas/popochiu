@@ -3,6 +3,7 @@ extends Control
 
 @onready var hover_text_centered: Control = %HoverTextCentered
 @onready var commands_container: BoxContainer = %CommandsContainer
+@onready var inventory_grid: Control = %"9VerbInventoryGrid"
 
 
 #region Godot ######################################################################################
