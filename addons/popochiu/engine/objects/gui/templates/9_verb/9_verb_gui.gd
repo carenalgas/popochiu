@@ -102,6 +102,8 @@ func _on_system_text_hidden() -> void:
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
+	PopochiuUtils.cursor.show_cursor(PopochiuUtils.cursor.get_type_name(clickable.cursor))
+
 	if clickable.get("suggested_command"):
 		_9_verb_panel.highlight_command(clickable.suggested_command)
 	
@@ -116,6 +118,8 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
+	PopochiuUtils.cursor.show_cursor("normal")
+
 	if clickable.get("suggested_command"):
 		_9_verb_panel.highlight_command(clickable.suggested_command, false)
 	PopochiuUtils.cursor.show_cursor()
