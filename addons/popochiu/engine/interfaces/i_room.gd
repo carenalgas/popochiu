@@ -380,7 +380,7 @@ func room_readied(room: PopochiuRoom) -> void:
 
 	PopochiuUtils.e.in_room = true
 
-	var _was_loaded := not PopochiuUtils.e.loaded_game.is_empty()
+	var was_loaded := not PopochiuUtils.e.loaded_game.is_empty()
 
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.e.game_loaded.emit(PopochiuUtils.e.loaded_game)
@@ -391,7 +391,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	# This enables the room to listen input events
 	current.is_current = true
 
-	if _was_loaded:
+	if was_loaded:
 		await current._on_restore_from_savegame()
 	else:
 		await current._on_room_transition_finished()
