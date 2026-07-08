@@ -253,9 +253,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.c.player = PopochiuUtils.c.get_character(PopochiuUtils.e.loaded_game.player.id)
 	else:
-		current.state.visited = true
 		current.state.visited_times += 1
-		current.state.visited_first_time = current.state.visited_times == 1
 
 	# Add the PopochiuCharacter instances to the room
 	if (rooms_states[room.script_name]["characters"] as Dictionary).is_empty():
@@ -394,6 +392,8 @@ func room_readied(room: PopochiuRoom) -> void:
 
 	PopochiuUtils.e.in_room = true
 
+	var was_loaded := not PopochiuUtils.e.loaded_game.is_empty()
+
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.e.game_loaded.emit(PopochiuUtils.e.loaded_game)
 		await PopochiuUtils.g.load_feedback_finished
@@ -402,10 +402,11 @@ func room_readied(room: PopochiuRoom) -> void:
 
 	# This enables the room to listen input events
 	current.is_current = true
-	await current._on_room_transition_finished()
 
-	# Fix #219: Update visited_first_time state once _on_room_transition_finished() finishes
-	current.state.visited_first_time = false
+	if was_loaded:
+		await current._on_restore_from_savegame()
+	else:
+		await current._on_room_transition_finished()
 
 
 ## Stores the default states of all rooms defined in project data.
