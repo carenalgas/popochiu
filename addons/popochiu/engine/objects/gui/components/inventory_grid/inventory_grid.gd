@@ -152,7 +152,7 @@ func _on_down_pressed() -> void:
 
 
 func show_item(item: PopochiuInventoryItem) -> void:
-	var slot := box.get_child(PopochiuUtils.i.items.size() - 1)
+	var slot := box.get_child(PopochiuUtils.c.player.inventory.size() - 1)
 	slot.name = "[%s]" % item.script_name
 	slot.add_child(item)
 	
@@ -212,7 +212,7 @@ func _check_scroll_buttons() -> void:
 	up.disabled = scroll_container.scroll_vertical == 0
 	down.disabled = (
 		scroll_container.scroll_vertical >= max_scroll
-		or not (PopochiuUtils.i.items.size() > box.columns * visible_rows)
+		or not (PopochiuUtils.c.player.inventory.size() > box.columns * visible_rows)
 	)
 
 
