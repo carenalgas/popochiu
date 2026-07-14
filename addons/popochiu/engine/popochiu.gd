@@ -429,7 +429,11 @@ func save_game(slot := 1, description := "") -> void:
 
 ## Loads the game in the given [param slot].
 func load_game(slot := 1) -> void:
-	PopochiuUtils.i.clean_inventory()
+	# Clean all character inventories before loading
+	for c_name: String in PopochiuUtils.c.characters_states:
+		var character: PopochiuCharacter = PopochiuUtils.c.get_character(c_name)
+		if is_instance_valid(character):
+			await PopochiuUtils.i.clean_inventory(character)
 	
 	if PopochiuUtils.d.current_dialog:
 		PopochiuUtils.d.current_dialog.stop()

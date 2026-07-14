@@ -55,6 +55,13 @@ signal position_updated(character: PopochiuCharacter, current_position: Vector2)
 ## [PopochiuRegion] with [member PopochiuRegion.walkable] set to [code]false[/code].
 signal blocked_by_region(region: PopochiuRegion)
 
+## Emitted when an item with [param quantity] is added to this character's inventory.
+signal inventory_item_added(item: PopochiuInventoryItem, quantity: int)
+## Emitted when an item with [param quantity] is removed from this character's inventory.
+signal inventory_item_removed(item: PopochiuInventoryItem, quantity: int)
+## Emitted when the quantity of [param item] changes in this character's inventory
+## without being added or removed entirely.
+signal inventory_item_quantity_updated(item: PopochiuInventoryItem, old_quantity: int, new_quantity: int)
 
 ## Empty string constant to perform type checks (String is not nullable in GDScript. See #381, #382).
 const EMPTY_STRING = ""
@@ -203,6 +210,11 @@ var current_animation: String: get = get_current_animation
 ## [member walk_speed_override] if active) with the perspective scale factor from the current
 ## [PopochiuRegion]. Read-only.
 var current_walk_speed: float: get = get_current_walk_speed
+## Dictionary containing this character's inventory items. The key is the item's
+## [member PopochiuInventoryItem.script_name] and the value is the [PopochiuInventoryItem]
+## instance. Use the methods in [PopochiuIInventory] (singleton [b]I[/b]) or the convenience
+## methods on this character to manage inventory.
+var inventory: Dictionary = {}
 ## Opacity of the character. Range: [code]0.0[/code] (fully transparent) to [code]1.0[/code] (fully opaque).
 ## Setting this value will modulate the alpha channel of the [b]$Sprite2D[/b] child.
 @export_range(0.0, 1.0) var alpha: float = 1.0: set = set_alpha
@@ -1346,6 +1358,71 @@ func update_scale():
 ## Same as assigning an empty string to the prefix.
 func reset_animation_prefix() -> void:
 	animation_prefix = PopochiuEditorHelper.EMPTY_STRING
+
+
+## Adds [param quantity] of [param item] to this character's inventory and waits until any GUI
+## transition has finished. Delegates to [method PopochiuIInventory.add_item].
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_add_to_inventory(item: PopochiuInventoryItem, quantity := 1) -> Callable:
+	return func(): await add_to_inventory(item, quantity)
+
+
+## Adds [param quantity] of [param item] to this character's inventory and waits until any GUI
+## transition has finished. Delegates to [method PopochiuIInventory.add_item].
+func add_to_inventory(item: PopochiuInventoryItem, quantity := 1) -> void:
+	await PopochiuUtils.i.add_item(item, quantity, self)
+
+
+## Removes [param quantity] of [param item] from this character's inventory and waits until any GUI
+## transition has finished. Use [code]0[/code] to remove the full stack.
+## Delegates to [method PopochiuIInventory.remove_item].
+##
+## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
+func queue_remove_from_inventory(item: PopochiuInventoryItem, quantity: int = 0) -> Callable:
+	return func(): await remove_from_inventory(item, quantity)
+
+
+## Removes [param quantity] of [param item] from this character's inventory and waits until any GUI
+## transition has finished. Use [code]0[/code] to remove the full stack.
+## Delegates to [method PopochiuIInventory.remove_item].
+func remove_from_inventory(item: PopochiuInventoryItem, quantity: int = 0) -> void:
+	await PopochiuUtils.i.remove_item(item, quantity, self)
+
+
+## Returns [code]true[/code] if the item identified by [param item_name] is in this character's
+## inventory. Equivalent to [method PopochiuIInventory.is_item_in_inventory] with this character.
+func has_inventory_item(item_name: String) -> bool:
+	return PopochiuUtils.i.is_item_in_inventory(item_name, self)
+
+
+## Returns the [PopochiuInventoryItem] instance for [param item_name] from this character's
+## inventory, or [code]null[/code] if not found.
+func get_inventory_item(item_name: String) -> PopochiuInventoryItem:
+	return inventory.get(item_name, null) as PopochiuInventoryItem
+
+
+## Returns the quantity of [param item_name] owned by this character.
+## Returns [code]0[/code] if the item is not in the inventory.
+func get_inventory_quantity(item_name: String) -> int:
+	var item: PopochiuInventoryItem = get_inventory_item(item_name)
+	return item.quantity_owned if is_instance_valid(item) else 0
+
+
+## Returns [code]true[/code] if this character's inventory has reached the limit configured in
+## project settings.
+func is_inventory_full() -> bool:
+	return PopochiuUtils.i.is_full(self)
+
+
+## Removes all items from this character's inventory triggering the full GUI lifecycle.
+func clear_inventory() -> void:
+	await PopochiuUtils.i.clean_inventory(self)
+
+
+## Removes all items from this character's inventory without triggering GUI lifecycle.
+func clear_inventory_bg() -> void:
+	PopochiuUtils.i.clean_inventory_bg(self)
 
 
 #endregion

@@ -108,7 +108,8 @@ func _on_quantity_changed(_old_qty: int, _new_qty: int) -> void:
 #endregion
 
 #region Public #####################################################################################
-## Adds [param quantity] of this item to the inventory. [param quantity] defaults to [code]1[/code].
+## Adds [param quantity] of this item to [param character]'s inventory (default: player character).
+## [param quantity] defaults to [code]1[/code].
 ## On first add, the GUI shows an entrance animation; subsequent stack additions only emit
 ## [signal PopochiuIInventory.item_quantity_updated].
 ##
@@ -123,11 +124,12 @@ func _on_quantity_changed(_old_qty: int, _new_qty: int) -> void:
 ##         I.Key.queue_add()
 ##     ])
 ## [/codeblock]
-func queue_add(quantity := 1) -> Callable:
-	return func (): await add(quantity)
+func queue_add(quantity := 1, character: PopochiuCharacter = null) -> Callable:
+	return func (): await add(quantity, character)
 
 
-## Adds [param quantity] of this item to the inventory. [param quantity] defaults to [code]1[/code].
+## Adds [param quantity] of this item to [param character]'s inventory (default: player character).
+## [param quantity] defaults to [code]1[/code].
 ## On first add, the GUI shows an entrance animation; subsequent stack additions only emit
 ## [signal PopochiuIInventory.item_quantity_updated].
 ##
@@ -139,28 +141,31 @@ func queue_add(quantity := 1) -> Callable:
 ##     await I.Key.add()
 ##     # Add three coins at once:
 ##     await I.Coin.add(3)
+##     # Add Key to Popsy's inventory:
+##     await I.Key.add(1, C.Popsy)
 ## [/codeblock]
-func add(quantity := 1) -> void:
-	await PopochiuUtils.i.add_item(self, quantity)
+func add(quantity := 1, character: PopochiuCharacter = null) -> void:
+	await PopochiuUtils.i.add_item(self, quantity, character)
 
 
-## Adds [param quantity] of this item to the inventory and makes it the active item (cursor shows
-## the item's texture).
+## Adds [param quantity] of this item to [param character]'s inventory (default: player character)
+## and makes it the active item (cursor shows the item's texture).
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_add_as_active(quantity := 1) -> Callable:
-	return func (): await add_as_active(quantity)
+func queue_add_as_active(quantity := 1, character: PopochiuCharacter = null) -> Callable:
+	return func (): await add_as_active(quantity, character)
 
 
-## Adds [param quantity] of this item to the inventory and makes it the active item (cursor shows
-## the item's texture).
-func add_as_active(quantity := 1) -> void:
-	await add(quantity)
+## Adds [param quantity] of this item to [param character]'s inventory (default: player character)
+## and makes it the active item (cursor shows the item's texture).
+func add_as_active(quantity := 1, character: PopochiuCharacter = null) -> void:
+	await add(quantity, character)
 	
 	PopochiuUtils.i.set_active_item(self)
 
 
-## Removes [param quantity] of this item from the inventory (instance is kept in memory).
+## Removes [param quantity] of this item from [param character]'s inventory (default: player
+## character). Instance is kept in memory.
 ## Call without params or pass [param quantity] as [code]0[/code] (the default) to remove the
 ## full stack.
 ##
@@ -175,11 +180,12 @@ func add_as_active(quantity := 1) -> void:
 ##             I.ToyCar.queue_remove()
 ##         ])
 ## [/codeblock]
-func queue_remove(quantity: int = 0) -> Callable:
-	return func (): await remove(quantity)
+func queue_remove(quantity: int = 0, character: PopochiuCharacter = null) -> Callable:
+	return func (): await remove(quantity, character)
 
 
-## Removes [param quantity] of this item from the inventory (instance is kept in memory).
+## Removes [param quantity] of this item from [param character]'s inventory (default: player
+## character). Instance is kept in memory.
 ## Call without params or pass [param quantity] as [code]0[/code] (the default) to remove the
 ## full stack.
 ##
@@ -190,13 +196,13 @@ func queue_remove(quantity: int = 0) -> Callable:
 ##         await C.player.say("Here is your toy car")
 ##         await I.ToyCar.remove()
 ## [/codeblock]
-func remove(quantity: int = 0) -> void:
-	await PopochiuUtils.i.remove_item(self, quantity)
+func remove(quantity: int = 0, character: PopochiuCharacter = null) -> void:
+	await PopochiuUtils.i.remove_item(self, quantity, character)
 
 
-## Replaces this inventory item with [param new_item]. Useful when combining items. Replacing
-## removes the whole collected quantity of this item and adds exactly one quantity of
-## [param new_item].
+## Replaces this inventory item with [param new_item] in [param character]'s inventory
+## (default: player character). Useful when combining items. Replacing removes the whole collected
+## quantity of this item and adds exactly one quantity of [param new_item].
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
 ##
@@ -210,13 +216,13 @@ func remove(quantity: int = 0) -> void:
 ##             queue_replace(I.RopeWithHook)
 ##         ])
 ## [/codeblock]
-func queue_replace(new_item: PopochiuInventoryItem) -> Callable:
-	return func (): await replace(new_item)
+func queue_replace(new_item: PopochiuInventoryItem, character: PopochiuCharacter = null) -> Callable:
+	return func (): await replace(new_item, character)
 
 
-## Replaces this inventory item with [param new_item]. Useful when combining items. Replacing
-## removes the whole collected quantity of this item and adds exactly one quantity of
-## [param new_item].
+## Replaces this inventory item with [param new_item] in [param character]'s inventory
+## (default: player character). Useful when combining items. Replacing removes the whole collected
+## quantity of this item and adds exactly one quantity of [param new_item].
 ##
 ## Example:
 ## [codeblock]
@@ -226,8 +232,8 @@ func queue_replace(new_item: PopochiuInventoryItem) -> Callable:
 ##         await I.Rope.remove()
 ##         await replace(I.RopeWithHook)
 ## [/codeblock]
-func replace(new_item: PopochiuInventoryItem) -> void:
-	await PopochiuUtils.i.replace_item(self, new_item)
+func replace(new_item: PopochiuInventoryItem, character: PopochiuCharacter = null) -> void:
+	await PopochiuUtils.i.replace_item(self, new_item, character)
 
 
 # @deprecated Available in 2.1 - Will be removed in 2.2.
@@ -373,7 +379,7 @@ func set_in_inventory(value: bool) -> void:
 		"Direct assignment to in_inventory is deprecated and only performs a silent state"
 		+ " change. Use add()/remove() for normal inventory flow."
 	)
-	PopochiuUtils.i.set_item_in_inventory_bg(self, value)
+	PopochiuUtils.i.set_item_in_inventory_bg(self, value, PopochiuUtils.c.player)
 
 
 # Increments the usage count for the specified command

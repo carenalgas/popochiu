@@ -150,27 +150,27 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 	pass
 
 
-## Called when [param item] is added to the inventory.[br]
+## Called when [param item] is added to [param character]'s inventory.[br]
 ## This hook is awaited by the base GUI routing layer, which emits
 ## [signal PopochiuIInventory.item_add_done] automatically after the hook returns. Overrides must
 ## not emit the signal or call [method G.block].
-func _on_item_added(_item: PopochiuInventoryItem) -> void:
+func _on_item_added(_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
 
-## Called when [param item] is removed from the inventory.[br]
+## Called when [param item] is removed from [param character]'s inventory.[br]
 ## This hook is awaited by the base GUI routing layer, which emits
 ## [signal PopochiuIInventory.item_remove_done] automatically after the hook returns. Overrides
 ## must not emit the signal or call [method G.block].
-func _on_item_removed(_item: PopochiuInventoryItem) -> void:
+func _on_item_removed(_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
 
-## Called when [param item] is replaced in the inventory by [param new_item].[br]
+## Called when [param item] is replaced in [param character]'s inventory by [param new_item].[br]
 ## This hook is awaited by the base GUI routing layer, which emits
 ## [signal PopochiuIInventory.item_replace_done] automatically after the hook returns. Overrides
 ## must not emit the signal or call [method G.block].
-func _on_item_replaced(_item: PopochiuInventoryItem, _new_item: PopochiuInventoryItem) -> void:
+func _on_item_replaced(_item: PopochiuInventoryItem, _new_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
 
@@ -226,27 +226,27 @@ func on_shown() -> void:
 #region Private ####################################################################################
 ## Routes [signal PopochiuIInventory.item_added] through the GUI hook surface and guarantees the
 ## completion handshake.
-func _on_inventory_item_added(item: PopochiuInventoryItem) -> void:
+func _on_inventory_item_added(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
 	PopochiuUtils.g.block()
-	await _on_item_added(item)
-	PopochiuUtils.i.item_add_done.emit(item)
+	await _on_item_added(item, character)
+	PopochiuUtils.i.item_add_done.emit(item, character)
 	PopochiuUtils.g.unblock(true)
 
 
 ## Routes [signal PopochiuIInventory.item_removed] through the GUI hook surface and guarantees the
 ## completion handshake.
-func _on_inventory_item_removed(item: PopochiuInventoryItem) -> void:
+func _on_inventory_item_removed(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
 	PopochiuUtils.g.block()
-	await _on_item_removed(item)
-	PopochiuUtils.i.item_remove_done.emit(item)
+	await _on_item_removed(item, character)
+	PopochiuUtils.i.item_remove_done.emit(item, character)
 	PopochiuUtils.g.unblock()
 
 
 ## Routes [signal PopochiuIInventory.item_replaced] through the GUI hook surface and guarantees
 ## the completion handshake.
-func _on_inventory_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+func _on_inventory_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
 	PopochiuUtils.g.block()
-	await _on_item_replaced(item, new_item)
+	await _on_item_replaced(item, new_item, character)
 	PopochiuUtils.i.item_replace_done.emit()
 	PopochiuUtils.g.unblock()
 

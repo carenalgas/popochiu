@@ -169,15 +169,15 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 		PopochiuUtils.cursor.show_cursor()
 
 
-func _on_item_added(item: PopochiuInventoryItem) -> void:
+func _on_item_added(item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	await _simple_click_bar.show_item(item)
 
 
-func _on_item_removed(item: PopochiuInventoryItem) -> void:
+func _on_item_removed(item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	await _simple_click_bar.hide_item(item)
 
 
-func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	await _simple_click_bar.swap_item(item, new_item)
 
 

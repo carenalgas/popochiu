@@ -113,7 +113,7 @@ func _ready() -> void:
 		PopochiuUtils.i.item_discarded.connect(_on_item_discarded)
 
 		if (
-			PopochiuUtils.i.is_item_in_inventory(link_to_item) or
+			PopochiuUtils.i.is_item_in_any_inventory(link_to_item) or
 			PopochiuUtils.i.has_item_been_collected(link_to_item)
 		):
 			disable()
@@ -444,12 +444,12 @@ func get_current_animation_position() -> float:
 #endregion
 
 #region Private ####################################################################################
-func _on_item_added(item: PopochiuInventoryItem) -> void:
+func _on_item_added(item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	if item.script_name == link_to_item:
 		disable()
 
 
-func _on_item_removed(item: PopochiuInventoryItem) -> void:
+func _on_item_removed(item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	if item.script_name == link_to_item:
 		_on_linked_item_removed()
 		linked_item_removed.emit(self)
