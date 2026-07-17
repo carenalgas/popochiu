@@ -42,6 +42,16 @@ func _process(delta: float) -> void:
 #endregion
 
 #region Public #####################################################################################
+## Returns the camera limits as a [code]Rect2[/code].
+func get_limits_rect() -> Rect2:
+	return Rect2(
+		limit_left,
+		limit_top,
+		limit_right  - limit_left,
+		limit_bottom - limit_top,
+	)
+
+
 ## Changes the main camera's offset by [param offset] pixels. Useful when zooming the camera.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
