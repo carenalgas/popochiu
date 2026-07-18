@@ -21,11 +21,6 @@ enum Type {
 	WAIT,
 }
 
-## When [code]true[/code], cursor positions are snapped to integer pixels
-## (using [Vector2i]) to produce a pixel-perfect cursor. When [code]false[/code],
-## cursor positions use floating-point [Vector2] coordinates allowing sub-pixel positioning.
-@export var is_pixel_perfect := false
-
 ## When [code]true[/code], methods that respect blocking (for example
 ## [method show_cursor] and [method set_secondary_cursor_texture]) will ignore
 ## requests unless their `ignore_block` parameter is [code]true[/code].
@@ -59,24 +54,13 @@ func _process(delta):
 	) as Texture2D).get_size()
 	
 	var mouse_position: Vector2 = main_cursor.get_global_mouse_position()
-	
-	if is_pixel_perfect:
+	if PopochiuUtils.e.settings.is_pixel_perfect:
 		# Thanks to @whyshchuck
-		main_cursor.position = Vector2i(mouse_position)
-		secondary_cursor.position = Vector2i(mouse_position)
-	else:
-		main_cursor.position = mouse_position
-		secondary_cursor.position = mouse_position
+		mouse_position = Vector2i(mouse_position)
 	
-	if main_cursor.position.x < 1.0:
-		main_cursor.position.x = 1.0
-	elif main_cursor.position.x > PopochiuUtils.e.width - 2.0:
-		main_cursor.position.x = PopochiuUtils.e.width - 2.0
-	
-	if main_cursor.position.y < 1.0:
-		main_cursor.position.y = 1.0
-	elif main_cursor.position.y > PopochiuUtils.e.height - 2.0:
-		main_cursor.position.y = PopochiuUtils.e.height - 2.0
+	main_cursor.position.x = clamp(mouse_position.x, 1, PopochiuUtils.e.width  - 2.0)
+	main_cursor.position.y = clamp(mouse_position.y, 1, PopochiuUtils.e.height - 2.0)
+	secondary_cursor.position = main_cursor.position
 
 
 #endregion
