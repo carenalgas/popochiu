@@ -50,6 +50,40 @@ signal obstacle_state_changed(prop: PopochiuProp)
 @export_range(0.0, 1.0) var alpha: float = 1.0: set = set_alpha
 ## Total frames available the texture image has. [code](frames * vframes)[/code]
 var total_frames: get = get_total_frames
+## A per-axis scroll-speed multiplier, where [code]1[/code] means "100% camera speed".
+## Positive values move with the camera, negative values move opposite of the camera.[br]
+## [br]
+## Examples:[br]
+## [br]
+##   - [code]   [0, 0][/code]: Disables parallax scrolling on both axes.[br]
+##   - [code][-0.1, 0][/code]: Moves the prop away from the camera on the x-axis at 10% camera speed.
+@export var parallax_scroll_scale: Vector2 = Vector2.ZERO
+## Specifies the parallax prop's "neutral" position, i.e. at which normalized camera position the
+## prop renders at its original position as seen in the editor, where [code]-1[/code] means
+## "100% left/top", [code]0[/code] means "center" and [code]1[/code] means "100% right/bottom".
+## Deviations from the given position are rendered at a shifted position in accordance with
+## [member parallax_scroll_scale].[br]
+## [br]
+## This allows for deterministically anchoring a prop in its editor position ("what you see is what
+## you get"), irrespective of how big the actual overall texture is. This is especially useful for
+## room-sized props coming from an Aseprite-imported layer where the visible pixels only occupy a
+## part of the room.[br]
+## [br]
+## Examples:[br]
+## [br]
+##   - [code][ -1, 0][/code]: "Render the prop at its initial (editor) position when the camera is
+##                             at its leftmost (x-axis) center (y-axis) position."[br]
+##   - [code][0.5, 0][/code]: "Render the prop at its initial (editor) position when the camera is
+##                             halfway between the room center and its rightmost (x-axis) center
+##                             (y-axis) position."[br]
+##   - [code]  [1, 1][/code]: "Render the prop at its initial (editor) position when the camera is
+##                             at its topmost (x-axis) rightmost (y-axis) position."[br]
+@export var parallax_anchor: Vector2 = Vector2.ZERO
+
+var _original_position: Vector2
+@onready var _parallax_enabled: bool = PopochiuUtils.e.settings.parallax_scrolling
+@onready var _parallax_weight := float(_parallax_enabled)
+var _parallax_tween: Tween
 
 # Tween used for alpha fade operations.
 var _alpha_tween: Tween = null
@@ -118,6 +152,17 @@ func _ready() -> void:
 		):
 			disable()
 
+	# Save the prop's initial position regardless of whether it is configured as a scrolling
+	# parallax prop, as this may be useful in other contexts as well.
+	_original_position = position
+
+	# Connect to the relevant signals for updating the prop's position if configured for parallax
+	# scrolling regardless of whether parallax scrolling is enabled in the settings, as we want
+	# this to be runtime-toggleable.
+	if parallax_scroll_scale != Vector2.ZERO:
+		get_viewport().size_changed.connect(_update_parallax)
+		PopochiuUtils.e.camera.camera_changed.connect(_update_parallax)
+
 
 func _notification(event: int) -> void:
 	if event == NOTIFICATION_EDITOR_PRE_SAVE:
@@ -162,6 +207,50 @@ func _on_movement_started() -> void:
 ## animation sequence in the room's narrative.
 func _on_movement_ended() -> void:
 	pass
+
+
+## Called when [member parallax_scroll_scale] is set to non-zero values to update the prop's
+## position based on [member parallax_scroll_scale], [member parallax_anchor] and the camera's
+## position.[br]
+## [br]
+## See also [member PopochiuSettings.parallax_scrolling].
+func _update_parallax() -> void:
+	var visible_rect: Rect2 = PopochiuUtils.e.get_visible_room_rect()
+	var camera_rect: Rect2 = PopochiuUtils.e.camera.get_limits_rect()
+	var max_scroll := camera_rect.size - visible_rect.size
+	var parallax_anchor_offset := camera_rect.get_center() + (max_scroll * 0.5 * parallax_anchor)
+	var camera_pos: Vector2 = PopochiuUtils.e.camera.get_screen_center_position()
+	var parallax_prop_offset := (camera_pos - parallax_anchor_offset) * parallax_scroll_scale
+
+	if _parallax_enabled != PopochiuUtils.e.settings.parallax_scrolling:
+		# When the `parallax_scrolling` setting changes during runtime, we need to move the prop
+		# back to its new intended position, which is:
+		#   disabled -> enabled:  offset based on parallax prop settings and camera position
+		#   enabled  -> disabled: original prop position
+		# To allow animating the transition (looks nicer), and because the player/camera position
+		# may change during the transition, we use a tween to calculate a weight between
+		# [0, 1] (aka [parallax_scrolling==false, parallax_scrolling==true]) which is then applied to
+		# the overall target offset for the current frame. This is to avoid the reset animation
+		# fighting against simultaneous camera movement.
+		# Under normal circumstances (i.e. when the setting hasn't just changed and there is no
+		# current animation/running tween) the last calculated weight effectively acts as a toggle
+		# for enabling/disabling the parallax effect as a whole.
+		# The transition is animated for `E.settings.parallax_scrolling_reset_duration` seconds, by
+		# setting it to 0 the animation can be disabled and the prop teleports instantly, if desired.
+		_parallax_enabled = PopochiuUtils.e.settings.parallax_scrolling
+
+		if _parallax_tween:
+			_parallax_tween.kill()
+
+		_parallax_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+		_parallax_tween.tween_property(
+			self,
+			"_parallax_weight",
+			float(_parallax_enabled),
+			PopochiuUtils.e.settings.parallax_scrolling_reset_duration
+		)
+
+	position = _original_position + (parallax_prop_offset * _parallax_weight)
 
 
 #endregion
