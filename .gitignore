@@ -35,6 +35,11 @@ Thumbs.db
 /game/**
 *.import
 
+# Translation ignores
+*.mo
+*.po
+*.pot
+
 # Documentation ignores
 docs/src/**/*.import
 docs/src/**/scripting-reference/*.md
