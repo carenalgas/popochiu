@@ -102,6 +102,35 @@ func export_tag(file_name: String, tag_name: String, output_folder: String, opti
 	}
 
 
+# Exports the frames inside the given [from, to] range into a single spritesheet.
+# Used to import a "group tag": one prop with several animations, where the
+# spritesheet only contains the frames covered by the group's range.
+func export_frame_range(
+	file_name: String, name: String, from: int, to: int, output_folder: String, options: Dictionary
+) -> Dictionary:
+	var output_prefix = options.get('output_filename', PopochiuEditorHelper.EMPTY_STRING).strip_edges()
+	var output_dir = output_folder.replace("res://", "./").strip_edges()
+	var data_file = "%s/%s%s.json" % [output_dir, output_prefix, name]
+	var sprite_sheet = "%s/%s%s.png" % [output_dir, output_prefix, name]
+	var output = []
+	var arguments = _export_command_common_arguments(file_name, data_file, sprite_sheet)
+	arguments.push_front("%d,%d" % [from, to])
+	arguments.push_front("--frame-range")
+
+	_add_sheet_type_arguments(arguments, options)
+
+	var exit_code = _execute(arguments, output)
+	if exit_code != 0:
+		printerr('[Popochiu] Aseprite: Failed to export frame range spritesheet. Command output follows:')
+		print(output)
+		return {}
+
+	return {
+		'data_file': data_file.replace("./", "res://"),
+		"sprite_sheet": sprite_sheet.replace("./", "res://")
+	}
+
+
 func list_layers(file_name: String, only_visible = false) -> Array:
 	var output = []
 	var arguments = ["-b", "--list-layers", file_name]
@@ -131,6 +160,28 @@ func list_tags(file_name: String) -> Array:
 		return []
 
 	return _sanitize_list_output(output)
+
+
+# Lists the tags of a file together with their frame ranges and direction.
+# `--list-tags` alone only prints tag names, so we export a throwaway spritesheet
+# and read the `meta.frameTags` from its JSON. This is what the importer dock
+# needs to detect "group tags".
+# Falls back to name-only tags whenever the ranges can't be obtained, so the
+# scan always shows the tag list.
+func list_tags_with_ranges(file_name: String) -> Array:
+	var tags := _fetch_tags_with_ranges(file_name)
+
+	# Fallback: if we couldn't get the frame ranges, at least return the tag
+	# names so the importer still works (groups just won't be detected).
+	if tags.is_empty():
+		var names := list_tags(file_name)
+		if not names.is_empty():
+			printerr('[Popochiu] Aseprite: could not read tag frame ranges; groups will not be detected')
+		for name in names:
+			if not name.is_empty():
+				tags.push_back({ "tag_name": name })
+
+	return tags
 
 
 func is_valid_spritesheet(content):
@@ -247,3 +298,52 @@ func _compile_regex(pattern):
 		return rgx
 
 	printerr('[Popochiu] exception regex error')
+
+
+# Exports a throwaway spritesheet and reads the frame tags from it.
+# Returns an empty array on any failure.
+# The export is written to the project folder using relative paths (the same
+# style as the working import exports), because some sandboxed Aseprite
+# installs cannot write to the OS temp directory.
+func _fetch_tags_with_ranges(file_name: String) -> Array:
+	var temp_name := "popochiu_tags_%d_%d" % [Time.get_ticks_msec(), randi()]
+	var data_file := "res://%s.json" % temp_name
+	var sprite_sheet := "res://%s.png" % temp_name
+	var output := []
+	var arguments := _export_command_common_arguments(
+		file_name, "./%s.json" % temp_name, "./%s.png" % temp_name
+	)
+	_add_sheet_type_arguments(arguments, {})
+
+	var tags := []
+	var exit_code := _execute(arguments, output)
+	if exit_code != 0:
+		printerr('[Popochiu] Aseprite: failed to export tags metadata (exit code %d)' % exit_code)
+		printerr(output)
+	elif not FileAccess.file_exists(data_file):
+		printerr('[Popochiu] Aseprite: export succeeded but no JSON data file was produced at %s' % data_file)
+	elif FileAccess.file_exists(data_file):
+		var file := FileAccess.open(data_file, FileAccess.READ)
+		if file != null:
+			var json := JSON.new()
+			if json.parse(file.get_as_text()) == OK and json.data is Dictionary:
+				for ft in json.data.get("meta", {}).get("frameTags", []):
+					tags.push_back({
+						"tag_name": ft.name,
+						"from": ft.from,
+						"to": ft.to,
+						"direction": ft.direction,
+					})
+				if tags.is_empty():
+					printerr('[Popochiu] Aseprite: no frame tags found in the exported metadata')
+			else:
+				printerr('[Popochiu] Aseprite: could not parse the exported JSON metadata')
+			file.close()
+
+	# Always clean up the throwaway files
+	if FileAccess.file_exists(data_file):
+		DirAccess.remove_absolute(data_file)
+	if FileAccess.file_exists(sprite_sheet):
+		DirAccess.remove_absolute(sprite_sheet)
+	return tags
+

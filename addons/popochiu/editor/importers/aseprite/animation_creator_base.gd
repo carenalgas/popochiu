@@ -41,6 +41,34 @@ func create_tag_animations(target_node: Node, aseprite_tag: String, options: Dic
 	return await _create_animations(target_node, options, aseprite_tag)
 
 
+## Create animations for a "group tag": one spritesheet containing only the
+## frames covered by the group's range, sliced into one animation per child tag.
+## [param group] must contain: name, from, to and children (each child with
+## tag_name, anim_name, from, to, direction and, optionally, loops/autoplays).
+func create_group_animations(target_node: Node, group: Dictionary, options: Dictionary) -> int:
+	var result := _setup_common(target_node, options)
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	result = _perform_common_checks()
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	# Export only the frames covered by the group's range
+	result = await _create_spritesheet_from_frame_range(group.name, group.from, group.to)
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	# Load metadata without offset normalization (child ranges are whole-file indices)
+	result = await _load_group_spritesheet_metadata(group)
+	if result != RESULT_CODE.SUCCESS:
+		return result
+
+	_setup_texture()
+	result = _configure_group_animations(group)
+	return result
+
+
 ## Configure autoplay based on the specified mode and context.
 func setup_autoplay(animation: String = PopochiuEditorHelper.EMPTY_STRING) -> void:
 	_player.autoplay = PopochiuEditorHelper.EMPTY_STRING  # Reset autoplay to default
@@ -151,6 +179,16 @@ func _create_spritesheet_from_tag(selected_tag: String) -> int:
 	return RESULT_CODE.SUCCESS
 
 
+## Create a spritesheet with the frames inside the given range (a group tag).
+func _create_spritesheet_from_frame_range(name: String, from: int, to: int) -> int:
+	_output = _aseprite.export_frame_range(
+		_options.source, name, from, to, _options.output_folder, _options
+	)
+	if _output.is_empty():
+		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
+	return RESULT_CODE.SUCCESS
+
+
 func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPTY_STRING) -> int:
 	_spritesheet_metadata = {
 		tags = {},
@@ -221,6 +259,64 @@ func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPT
 	return RESULT_CODE.SUCCESS
 
 
+# Loads the exported spritesheet metadata for a group import. Unlike the single
+# tag flow, child frame ranges keep their whole-file indices (they are sliced
+# against the group's `from` in _configure_group_animations).
+func _load_group_spritesheet_metadata(group: Dictionary) -> int:
+	_spritesheet_metadata = {
+		tags = {},
+		frames = {},
+		meta = {},
+		sprite_sheet = {}
+	}
+
+	await _scan_filesystem()
+
+	var source_file = _output.data_file
+	var sprite_sheet = _output.sprite_sheet
+
+	var file = FileAccess.open(source_file, FileAccess.READ)
+	if file == null:
+		return file.get_open_error()
+
+	var test_json_conv = JSON.new()
+	test_json_conv.parse(file.get_as_text())
+	var content = test_json_conv.get_data()
+
+	if not _aseprite.is_valid_spritesheet(content):
+		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
+
+	_spritesheet_metadata.meta = content.meta
+	_spritesheet_metadata.frames = _aseprite.get_content_frames(content)
+
+	# Build the tag lookup from the group's children, keeping the user's per-tag
+	# options (loops, autoplays, ...) and the frame data gathered at scan time
+	var all_tags: Array = _options.get("tags")
+	for child in group.get("children", []):
+		var child_cfg: Dictionary = {}
+		for t in all_tags:
+			if t.get("tag_name") == child.tag_name:
+				child_cfg = t
+				break
+		var entry: Dictionary = child_cfg.duplicate()
+		entry.merge({
+			"from": child.from,
+			"to": child.to,
+			"direction": child.direction,
+		})
+		_spritesheet_metadata.tags[child.tag_name] = entry
+
+	# Save spritesheet path from the command output
+	_spritesheet_metadata.sprite_sheet = sprite_sheet
+
+	# Remove the JSON file if config says so
+	if PopochiuEditorConfig.should_remove_source_files():
+		DirAccess.remove_absolute(_output.data_file)
+		await _scan_filesystem()
+
+	return RESULT_CODE.SUCCESS
+
+
 func _configure_animations() -> int:
 	if not _player.has_animation_library(_DEFAULT_AL):
 		_player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
@@ -229,7 +325,9 @@ func _configure_animations() -> int:
 		var result = RESULT_CODE.SUCCESS
 		for tag in _spritesheet_metadata.tags.values():
 			var selected_frames = _spritesheet_metadata.frames.slice(tag.from, tag.to + 1)
-			result = _add_animation_frames(tag.tag_name, selected_frames, tag.direction)
+			result = _add_animation_frames(
+				tag.tag_name, selected_frames, tag.direction, tag.get("loops", false)
+			)
 			if result != RESULT_CODE.SUCCESS:
 				break
 		return result
@@ -237,9 +335,35 @@ func _configure_animations() -> int:
 		return _add_animation_frames("default", _spritesheet_metadata.frames)
 
 
-func _add_animation_frames(anim_name: String, frames: Array, direction = 'forward') -> int:
+# Creates one animation per child tag of a group, slicing the exported frames by
+# the child's range relative to the group's start frame.
+func _configure_group_animations(group: Dictionary) -> int:
+	if not _player.has_animation_library(_DEFAULT_AL):
+		_player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
+
+	var group_from: int = group.from
+	var result := RESULT_CODE.SUCCESS
+	for child in group.get("children", []):
+		var tag = _spritesheet_metadata.tags.get(child.tag_name)
+		if tag == null:
+			continue
+		var selected_frames = _spritesheet_metadata.frames.slice(
+			tag.from - group_from,
+			tag.to - group_from + 1
+		)
+		result = _add_animation_frames(
+			child.anim_name, selected_frames, tag.direction, tag.get("loops", false)
+		)
+		if result != RESULT_CODE.SUCCESS:
+			break
+	return result
+
+
+# Creates one animation from the given frames. [param anim_name] is the final
+# animation name (already prefix-stripped for group children). [param is_loopable]
+# is passed explicitly because group children are looked up by their full tag name.
+func _add_animation_frames(anim_name: String, frames: Array, direction = 'forward', is_loopable := false) -> int:
 	var animation_name = anim_name.to_snake_case()
-	var is_loopable = _spritesheet_metadata.tags.get(anim_name).get("loops")
 
 	# Create animation library if it doesn't exist
 	if not _player.has_animation_library(_DEFAULT_AL):

@@ -18,6 +18,11 @@ var visible_toggle: Control
 var clickable_toggle: Control
 var delete_anim_button: Control
 
+# When the row is a child of a group, _display_name holds the animation name
+# (group prefix stripped) and _group_name the group it belongs to.
+var _display_name: String = PopochiuEditorHelper.EMPTY_STRING
+var _group_name: String = PopochiuEditorHelper.EMPTY_STRING
+
 #region Public #####################################################################################
 func init(tag_cfg: Dictionary):
 	# Manually initialize node references if not already done
@@ -69,6 +74,41 @@ func show_prop_buttons() -> void:
 func show_inventory_item_buttons() -> void:
 	separator.visible = true
 	autoplays_toggle.visible = true
+
+
+# Makes the row behave as a child of a group: shows only the animation-level
+# toggles (Loops/Autoplays) and hides the prop-level ones (Visible/Clickable),
+# which belong to the group header row. The displayed name is the animation name.
+func set_group_child(group_name: String) -> void:
+	_group_name = group_name
+	separator.visible = true
+	autoplays_toggle.visible = true
+	visible_toggle.visible = false
+	clickable_toggle.visible = false
+
+
+# Changes the displayed name (used for group children, whose label is the
+# animation name with the group prefix stripped).
+func set_display_name(name: String) -> void:
+	_display_name = name
+	tag_name_label.text = name
+
+
+# The name used by the tag list filter: prefers the displayed (stripped) name.
+func get_search_name() -> String:
+	return _display_name if not _display_name.is_empty() else _anim_tag_state.tag_name
+
+
+# The group this row belongs to, or an empty string for standalone tags.
+func get_group_name() -> String:
+	return _group_name
+
+
+# Updates the autoplay state without emitting signals. Used to enforce autoplay
+# exclusivity within a group (only one child can autoplay).
+func set_autoplay_no_signal(pressed: bool) -> void:
+	_anim_tag_state.autoplays = pressed
+	autoplays_toggle.set_pressed_no_signal(pressed)
 
 
 #endregion

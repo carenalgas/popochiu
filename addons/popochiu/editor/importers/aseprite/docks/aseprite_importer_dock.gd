@@ -7,6 +7,10 @@ const LOCAL_OBJ_CONFIG = preload("res://addons/popochiu/editor/config/local_obj_
 # TODO: this can be specialized, even if for a two buttons... ?
 const AnimationTagRow =\
 preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.gd")
+const AnimationGroupRow =\
+preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_group_row.gd")
+const PopochiuAsepriteTagGrouper =\
+preload("res://addons/popochiu/editor/importers/aseprite/aseprite_tag_grouper.gd")
 
 enum {
 	HANDLE_ANIM_SELECT,
@@ -25,6 +29,8 @@ var file_system: EditorFileSystem
 # ---- External logic
 var _animation_tag_row_scene: PackedScene =\
 preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_tag_row.tscn")
+var _animation_group_row_scene: PackedScene =\
+preload("res://addons/popochiu/editor/importers/aseprite/docks/animation_group_row.tscn")
 var _aseprite := preload("../aseprite_controller.gd").new() # TODO: should be absolute?
 # ---- References for children scripts
 var _root_node: Node
@@ -144,6 +150,12 @@ func _get_default_autoplay_behavior() -> bool:
 	return false
 
 
+# Returns whether this importer supports "group tags" (one object with several
+# animations). Only the room importer supports groups for now.
+func _supports_groups() -> bool:
+	return false
+
+
 # This method can be overridden by child classes to customize the tag UI,
 # such as enabling additional buttons or similar.
 func _customize_tag_ui(tagrow: AnimationTagRow) -> void:
@@ -178,14 +190,40 @@ func _delete_animation_for_tag(tag_name: String) -> void:
 func _on_filter_text_changed(new_text: String) -> void:
 	var filter_text := new_text.strip_edges().to_lower().replace(" ", "")
 	
-	for tag_row in %Tags.get_children():
+	for tag_row in _get_all_tag_rows():
 		if filter_text.is_empty():
 			# Show all tags when filter is empty
 			tag_row.visible = true
 		else:
-			# Compare with tag name (removing spaces, case insensitive)
-			var tag_name: String = tag_row.get_cfg().tag_name.to_lower().replace(" ", "")
+			# Compare with the (displayed) name, removing spaces, case insensitive
+			var tag_name: String = tag_row.get_search_name().to_lower().replace(" ", "")
 			tag_row.visible = tag_name.contains(filter_text)
+
+
+# Handles tag row state changes that need coordination between rows.
+# Autoplay is exclusive within a group: enabling it on a child disables it on
+# all the other children of the same group.
+func _on_tag_state_changed(tag_row: AnimationTagRow) -> void:
+	var group_name: String = tag_row.get_group_name()
+	if group_name.is_empty():
+		return
+
+	if not tag_row.get_cfg().get("autoplays", false):
+		return
+
+	var changed := false
+	for row in _get_all_tag_rows():
+		if (
+			row is AnimationTagRow
+			and row != tag_row
+			and row.get_group_name() == group_name
+			and row.get_cfg().get("autoplays", false)
+		):
+			row.set_autoplay_no_signal(false)
+			changed = true
+
+	if changed:
+		_save_config()
 
 
 func _on_source_pressed() -> void:
@@ -316,7 +354,7 @@ func _list_tags(file: String) -> Variant:
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
 	if not _aseprite.test_command():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	return _aseprite.list_tags(file)
+	return _aseprite.list_tags_with_ranges(file)
 
 
 # TODO: Currently unused. keeping this as reference
@@ -343,8 +381,20 @@ func _load_config(cfg) -> void:
 		cfg.get("autotrace_polygons", false)
 	)
 
+	# Restore the tag list. When groups are supported, refresh the persisted
+	# frame data against the current source file: ranges stored in the metadata
+	# can be outdated (e.g. if the room was last saved before a re-scan), which
+	# would otherwise break group detection on reload. Falls back to the saved
+	# list when the source can't be read.
+	var saved_tags: Array = cfg.get("tags", [])
+	if _supports_groups() and not _source.is_empty():
+		_tags_cache = saved_tags
+		var refreshed: Array = _merge_with_cache(_get_tags_from_source())
+		if not refreshed.is_empty():
+			saved_tags = refreshed
+
 	_set_tags_visible(cfg.get("tags_exp", false))
-	_populate_tags(cfg.get("tags", []))
+	_populate_tags(saved_tags)
 
 
 func _save_config() -> void:
@@ -435,22 +485,117 @@ func _populate_tags(tags: Array) -> void:
 	# Reset tags container.
 	_empty_tags_container()
 
-	# Add each tag found
+	if not _supports_groups():
+		_populate_flat_tags(tags)
+		_update_tags_cache()
+		_update_bulk_toggles_state() # Update bulk toggles after populating tags
+		return
+
+	var grouper := PopochiuAsepriteTagGrouper.new()
+	var analysis := grouper.analyze(tags)
+
+	for group in analysis.get("groups", []):
+		_add_group_rows(group, tags)
+
+	for tag in analysis.get("singles", []):
+		if tag.tag_name == PopochiuEditorHelper.EMPTY_STRING:
+			continue
+		_add_single_tag_row(tag)
+
+	_update_tags_cache()
+	_update_bulk_toggles_state() # Update bulk toggles after populating tags
+
+
+# Populates the tag list without group handling (used by importers that don't
+# support groups, e.g. characters and inventory items).
+func _populate_flat_tags(tags: Array) -> void:
 	for t in tags:
 		if t.tag_name == PopochiuEditorHelper.EMPTY_STRING:
 			continue
-		
 		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
 		%Tags.add_child(tag_row)
 		tag_row.init(t)
-		tag_row.tag_state_changed.connect(_save_config)
-		tag_row.tag_selected.connect(_on_tag_selected)
-		tag_row.request_delete_anim.connect(_on_request_delete_anim)
+		_connect_tag_row_signals(tag_row)
 		_customize_tag_ui(tag_row)
-		# Invoke customization hook implementable in child classes		
-	
-	_update_tags_cache()
-	_update_bulk_toggles_state() # Update bulk toggles after populating tags
+
+
+# Adds a group header row and its child rows (indented) to the tag list.
+func _add_group_rows(group: Dictionary, tags: Array) -> void:
+	var group_cfg := _find_tag_cfg(tags, group.name)
+	var group_row_cfg := group.duplicate()
+	group_row_cfg.merge({
+		"tag_name": group.name,
+		"from": group.from,
+		"to": group.to,
+		"direction": group.direction,
+		"import": group_cfg.get("import", PopochiuConfig.is_default_animation_import_enabled()),
+		"prop_visible": group_cfg.get("prop_visible", PopochiuConfig.is_default_animation_prop_visible()),
+		"prop_clickable": group_cfg.get("prop_clickable", PopochiuConfig.is_default_animation_prop_clickable()),
+	})
+
+	var group_row: AnimationGroupRow = _animation_group_row_scene.instantiate()
+	%Tags.add_child(group_row)
+	group_row.init(group_row_cfg)
+	group_row.tag_state_changed.connect(_save_config)
+
+	if not group.get("is_valid", true):
+		group_row.set_error(group.get("error", ""))
+
+	# Child rows are indented under the group header
+	var indent := MarginContainer.new()
+	indent.add_theme_constant_override("margin_left", 18)
+	var children_container := VBoxContainer.new()
+	indent.add_child(children_container)
+	%Tags.add_child(indent)
+
+	for child in group.get("children", []):
+		var child_cfg := _find_tag_cfg(tags, child.tag_name)
+		if child_cfg.is_empty():
+			continue
+		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
+		children_container.add_child(tag_row)
+		tag_row.init(child_cfg)
+		tag_row.set_display_name(child.anim_name)
+		tag_row.set_group_child(group.name)
+		_connect_tag_row_signals(tag_row)
+
+
+func _add_single_tag_row(tag_cfg: Dictionary) -> void:
+	var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
+	%Tags.add_child(tag_row)
+	tag_row.init(tag_cfg)
+	_connect_tag_row_signals(tag_row)
+	_customize_tag_ui(tag_row)
+
+
+func _connect_tag_row_signals(tag_row: AnimationTagRow) -> void:
+	tag_row.tag_state_changed.connect(_save_config)
+	tag_row.tag_state_changed.connect(_on_tag_state_changed.bind(tag_row))
+	tag_row.tag_selected.connect(_on_tag_selected)
+	tag_row.request_delete_anim.connect(_on_request_delete_anim)
+
+
+func _find_tag_cfg(tags: Array, tag_name: String) -> Dictionary:
+	for t in tags:
+		if t.get("tag_name") == tag_name:
+			return t
+	return {}
+
+
+# Returns every tag/group row currently in the list, including rows nested in
+# the indent containers used for group children.
+func _get_all_tag_rows() -> Array:
+	var rows: Array = []
+	_collect_tag_rows(%Tags, rows)
+	return rows
+
+
+func _collect_tag_rows(container: Node, rows: Array) -> void:
+	for child in container.get_children():
+		if child is AnimationTagRow or child is AnimationGroupRow:
+			rows.push_back(child)
+		elif child is BoxContainer or child is MarginContainer:
+			_collect_tag_rows(child, rows)
 
 
 func _empty_tags_container() -> void:
@@ -472,8 +617,14 @@ func _merge_with_cache(tags: Array) -> Array:
 	
 	for i in tags.size():
 		if tags_cache_index.has(tags[i].tag_name):
-			# Use cached version (preserves user settings)
-			result.push_back(tags_cache_index[tags[i].tag_name])
+			# Keep the user's settings from the cache, but refresh the frame data
+			# from the source file (ranges may have changed between scans)
+			var cached: Dictionary = tags_cache_index[tags[i].tag_name]
+			var merged: Dictionary = cached.duplicate()
+			merged.from = tags[i].from
+			merged.to = tags[i].to
+			merged.direction = tags[i].direction
+			result.push_back(merged)
 		else:
 			# New tag: set default loop and autoplay behavior based on object type
 			tags[i].loops = _get_default_loop_behavior()
@@ -485,7 +636,7 @@ func _merge_with_cache(tags: Array) -> Array:
 
 func _get_tags_from_ui() -> Array:
 	var tags_list = []
-	for tag_row in %Tags.get_children():
+	for tag_row in _get_all_tag_rows():
 		var tag_row_cfg: Dictionary = tag_row.get_cfg()
 		if tag_row_cfg.tag_name == PopochiuEditorHelper.EMPTY_STRING:
 			continue
@@ -500,11 +651,9 @@ func _get_tags_from_source() -> Array:
 		return []
 	var tags_list = []
 	for t in tags_found:
-		if t == PopochiuEditorHelper.EMPTY_STRING:
+		if t.get("tag_name") == PopochiuEditorHelper.EMPTY_STRING:
 			continue
-		tags_list.push_back({
-			tag_name = t
-		})
+		tags_list.push_back(t)
 	return tags_list
 
 
@@ -626,15 +775,18 @@ func _handle_animation_in_player(tag_name: String, animation_player: AnimationPl
 # Updates the state of bulk action buttons based on individual tag states.
 func _update_bulk_toggles_state() -> void:
 	# Handle ImportBulk toggle state
-	if %Tags.get_child_count() == 0:
+	var rows := _get_all_tag_rows()
+	if rows.is_empty():
 		return
 		
 	var all_import := true
 	var none_import := true
 	
 	# Check all tags to determine the collective state
-	for tag_row in %Tags.get_children():
+	for tag_row in rows:
 		var cfg: Dictionary = tag_row.get_cfg()
+		if not cfg.has("import"):
+			continue
 		if cfg.import:
 			none_import = false
 		else:
@@ -707,8 +859,10 @@ func _update_bulk_toggle_state(bulk_toggle_name: String) -> void:
 	var first_iteration := true
 
 	# Check all visible tag rows to determine the collective state
-	for tag_row in %Tags.get_children():
+	for tag_row in _get_all_tag_rows():
 		var cfg: Dictionary = tag_row.get_cfg()
+		if not cfg.has(config.row_property):
+			continue
 		var current_row_status = BulkActionStatus.ON if cfg.get(config.row_property) else BulkActionStatus.OFF
 
 		if first_iteration:
@@ -727,15 +881,31 @@ func _update_bulk_toggle_state(bulk_toggle_name: String) -> void:
 # Sets all tag rows' toggle state for a specific property.
 func _set_all_row_toggle_states(bulk_toggle_name: String, toggle_state: bool) -> void:
 	var config = _bulk_toggle_configs[bulk_toggle_name]
+	var seen_groups := {}
 	
-	for tag_row in %Tags.get_children():
+	for tag_row in _get_all_tag_rows():
 		var toggle = tag_row.get(config.row_toggle)
-		if toggle:
-			toggle.set_pressed_no_signal(toggle_state)
+		if not toggle:
+			continue
+
+		# Autoplay is exclusive within a group: when bulk-enabling autoplay,
+		# only the first child of each group gets enabled
+		if config.row_property == "autoplays" and toggle_state:
+			var group_name: String = (
+				tag_row.get_group_name() if tag_row is AnimationTagRow
+				else PopochiuEditorHelper.EMPTY_STRING
+			)
+			if not group_name.is_empty():
+				if seen_groups.has(group_name):
+					tag_row.set_autoplay_no_signal(false)
+					continue
+				seen_groups[group_name] = true
+
+		toggle.set_pressed_no_signal(toggle_state)
 	
-			# Update the underlying data
-			var cfg: Dictionary = tag_row.get_cfg()
-			cfg[config.row_property] = toggle_state
+		# Update the underlying data
+		var cfg: Dictionary = tag_row.get_cfg()
+		cfg[config.row_property] = toggle_state
 	
 	# Update the bulk toggle to reflect the new state
 	var status = BulkActionStatus.ON if toggle_state else BulkActionStatus.OFF
