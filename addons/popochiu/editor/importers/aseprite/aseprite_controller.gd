@@ -300,20 +300,24 @@ func _compile_regex(pattern):
 	printerr('[Popochiu] exception regex error')
 
 
-# Exports a throwaway spritesheet and reads the frame tags from it.
-# Returns an empty array on any failure.
+# Exports only the sprite metadata (no sheet, so it is fast) and reads the tag
+# frame ranges from it. Returns an empty array on any failure.
 # The export is written to the project folder using relative paths (the same
 # style as the working import exports), because some sandboxed Aseprite
 # installs cannot write to the OS temp directory.
 func _fetch_tags_with_ranges(file_name: String) -> Array:
 	var temp_name := "popochiu_tags_%d_%d" % [Time.get_ticks_msec(), randi()]
 	var data_file := "res://%s.json" % temp_name
-	var sprite_sheet := "res://%s.png" % temp_name
 	var output := []
-	var arguments := _export_command_common_arguments(
-		file_name, "./%s.json" % temp_name, "./%s.png" % temp_name
-	)
-	_add_sheet_type_arguments(arguments, {})
+	var arguments := [
+		"-b",
+		"--list-tags",
+		"--data",
+		"./%s.json" % temp_name,
+		"--format",
+		"json-array",
+		file_name,
+	]
 
 	var tags := []
 	var exit_code := _execute(arguments, output)
@@ -340,10 +344,8 @@ func _fetch_tags_with_ranges(file_name: String) -> Array:
 				printerr('[Popochiu] Aseprite: could not parse the exported JSON metadata')
 			file.close()
 
-	# Always clean up the throwaway files
+	# Always clean up the throwaway file
 	if FileAccess.file_exists(data_file):
 		DirAccess.remove_absolute(data_file)
-	if FileAccess.file_exists(sprite_sheet):
-		DirAccess.remove_absolute(sprite_sheet)
 	return tags
 

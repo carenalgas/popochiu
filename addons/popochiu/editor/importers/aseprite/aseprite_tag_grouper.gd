@@ -2,40 +2,63 @@
 class_name PopochiuAsepriteTagGrouper
 extends RefCounted
 
-# Detects and validates "group tags" in the list of Aseprite tags of a file.
+# Groups Aseprite tags using an EXPLICIT prefix convention (no guessing):
+#   "@Door"            -> a group tag. The prop will be named "Door". The group
+#                         tag's own frame range is the group's SPAN: it is used
+#                         both to export the group spritesheet and to validate
+#                         that every ":..." animation is fully inside it.
+#   ":DoorClosed"      -> an animation of group "Door", named "closed".
+#   plain tags         -> standalone single-animation props (unchanged behavior).
 #
-# A tag is a group when its frame range fully contains other tags and its name
-# is a case-insensitive prefix of all of them (CamelCase or snake_case). A group
-# is imported as a single prop with one animation per child tag, named after the
-# child with the group prefix stripped (e.g. group "Door" + tags "DoorClose" and
-# "DoorOpen" -> prop "Door" with animations "close" and "open").
+# Association is by NAME: ":DoorClosed" belongs to "@Door". The "@" and ":"
+# characters are reserved for this convention. Misconfigurations are reported
+# as errors or warnings instead of being silently guessed.
 #
-# Any misconfiguration (a contained tag that doesn't follow the naming, nested
-# groups, etc.) invalidates the whole cluster: the importer must skip it and
-# report the problem instead of guessing.
+# When frame ranges are available (fetched at scan time for files with group
+# tags), the grouper also validates that every animation is fully inside its
+# group's span, and the safety net only warns for plain tags that actually fall
+# inside a group's span.
+
+
+const GROUP_PREFIX := "@"
+const ANIM_PREFIX := ":"
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
-# Analyzes a list of tags (each with tag_name/from/to/direction) and returns:
+# Analyzes a list of tags (each with tag_name, and optionally from/to/direction)
+# and returns:
 # {
-#   groups: [ { name, from, to, direction, children: [{tag_name, anim_name, from, to, direction}], is_valid, error } ],
-#   singles: [ { tag_name, from, to, direction } ],
-#   errors: [ String, ... ]
-#   warnings: [ String, ... ],
+#   items: [ {kind:"group", ...} | {kind:"single", tag:{...}} ],  # source order
+#   groups: [...],    # the group entries (same objects as in items)
+#   singles: [...],   # the plain tag dicts
+#   errors: [String, ...],
+#   warnings: [String, ...],
 # }
 func analyze(tags: Array) -> Dictionary:
 	var result := {
+		"items": [],
 		"groups": [],
 		"singles": [],
 		"errors": [],
 		"warnings": [],
 	}
 
-	# Only tags with a usable frame range can take part in a group. Ranges can
-	# arrive as int or float (Godot's JSON parser may produce floats), so they
-	# are normalized to int here.
-	var ranged := []
+	var group_names := {}  # lower(name) -> display name ("Door")
+	var group_spans := {}  # lower(name) -> {from, to} of the @ tag, or null
+	var group_name_count := {}  # lower(name) -> how many @ tags share it
 	for tag in tags:
+		var name: String = tag.get("tag_name", "")
+		if not name.begins_with(GROUP_PREFIX):
+			continue
+		if name.length() == 1:
+			result.errors.append(
+				"Aseprite importer: tag '%s' is not a valid group tag (missing name)." % name
+			)
+			continue
+		var display := name.substr(1)
+		var lower := display.to_lower()
+		group_names[lower] = display
+		group_name_count[lower] = group_name_count.get(lower, 0) + 1
 		var tag_from = tag.get("from")
 		var tag_to = tag.get("to")
 		if (
@@ -44,174 +67,243 @@ func analyze(tags: Array) -> Dictionary:
 			and int(tag_from) >= 0
 			and int(tag_to) >= int(tag_from)
 		):
-			var ranged_tag: Dictionary = tag.duplicate()
-			ranged_tag.from = int(tag_from)
-			ranged_tag.to = int(tag_to)
-			ranged.push_back(ranged_tag)
+			group_spans[lower] = { "from": int(tag_from), "to": int(tag_to) }
+		else:
+			group_spans[lower] = null
 
-	# Compute which tags are fully contained in the range of each tag
-	var contained_by := {}
-	for tag in ranged:
-		contained_by[tag.tag_name] = []
-	for outer in ranged:
-		for inner in ranged:
-			if inner.tag_name == outer.tag_name:
-				continue
-			# A tag with the exact same range is not "inside" another one: with
-			# identical ranges every tag would contain every other, making them
-			# all "claimed" and dropping them from the list.
-			if inner.from == outer.from and inner.to == outer.to:
-				continue
-			if outer.from <= inner.from and inner.to <= outer.to:
-				contained_by[outer.tag_name].push_back(inner)
+	# Duplicate group names (case-insensitive) are ambiguous and must be fixed
+	var duplicate_groups := {}
+	for lower in group_name_count:
+		if group_name_count[lower] > 1:
+			duplicate_groups[lower] = true
+			result.errors.append(
+				"Aseprite importer: multiple group tags are named '%s' (case-insensitive). "
+				% group_names[lower]
+				+ "Rename them so each group name is unique."
+			)
 
-	# Tags contained in at least one other tag belong to a cluster: they must not
-	# be offered as standalone tags (they are either group children or blocked
-	# with their group)
-	var claimed := {}
-	for tag in ranged:
-		for inner in contained_by.get(tag.tag_name, []):
-			claimed[inner.tag_name] = true
-
-	# Group candidates are tags that contain others. A candidate that is itself
-	# contained in another tag (nested group) is rendered as part of its parent's
-	# cluster, never as its own group.
-	var group_candidates := []
-	for tag in ranged:
-		if contained_by.get(tag.tag_name, []).is_empty():
+	# Associate every ":..." tag with its group by name (longest match wins)
+	var anims_by_group := {}  # lower(group name) -> [ {tag, anim_name} ]
+	for tag in tags:
+		var name: String = tag.get("tag_name", "")
+		if not name.begins_with(ANIM_PREFIX):
 			continue
-		if claimed.has(tag.tag_name):
+		if name.length() == 1:
+			result.errors.append(
+				"Aseprite importer: tag '%s' is not a valid animation tag (missing name)." % name
+			)
 			continue
-		group_candidates.push_back(tag)
 
-	for tag in group_candidates:
+		var remainder := name.substr(1)
+		var matched_lower := _find_matching_group(remainder, group_names, duplicate_groups, false)
+
+		if matched_lower.is_empty():
+			# Give a more precise message when the animation is named after a group
+			var looked_like_group := false
+			for lower in group_names:
+				if remainder.to_lower() == lower:
+					looked_like_group = true
+					break
+			if looked_like_group:
+				result.errors.append(
+					"Aseprite importer: animation tag '%s' has no animation name after the group prefix." % name
+				)
+			else:
+				result.errors.append(
+					"Aseprite importer: animation tag '%s' has no matching group. "
+					% name
+					+ "Expected ':GroupNameAnimation' with a corresponding '@GroupName' tag."
+				)
+			continue
+
+		if not anims_by_group.has(matched_lower):
+			anims_by_group[matched_lower] = []
+		anims_by_group[matched_lower].append({
+			"tag": tag,
+			"anim_name": _strip_group_from_name(remainder, matched_lower),
+		})
+
+	# Build the group entries in source order
+	var groups_by_tag := {}
+	for tag in tags:
+		var name: String = tag.get("tag_name", "")
+		if not name.begins_with(GROUP_PREFIX):
+			continue
+		if name.length() == 1:
+			continue  # already reported
+		var display := name.substr(1)
+		var lower := display.to_lower()
+		if duplicate_groups.has(lower):
+			continue  # already reported
+
+		var anims := anims_by_group.get(lower, [])
+		if anims.is_empty():
+			result.warnings.append(
+				"Aseprite importer: group '%s' has no animations. "
+				% display
+				+ "Add ':...' tags for it (e.g. ':%sClosed') or remove the '@%s' tag." % [display, display]
+			)
+			continue
+
 		var group := {
-			"name": tag.tag_name,
-			"from": tag.from,
-			"to": tag.to,
-			"direction": tag.direction,
+			"kind": "group",
+			"tag_name": name,
+			"name": display,
+			"from": -1,
+			"to": -1,
+			"direction": "forward",
 			"children": [],
 			"is_valid": true,
 			"error": "",
 		}
+		# The group's own frame range is the SPAN: it drives both the export
+		# range and the validation (animations must be fully inside it).
+		var span: Dictionary = group_spans.get(lower)
+		if span != null:
+			group.from = span.from
+			group.to = span.to
+
 		var errors := []
+		for anim in anims:
+			var child := {
+				"tag_name": anim.tag.tag_name,
+				"anim_name": anim.anim_name,
+			}
+			var cf = anim.tag.get("from")
+			var ct = anim.tag.get("to")
+			if typeof(cf) in [TYPE_INT, TYPE_FLOAT] and typeof(ct) in [TYPE_INT, TYPE_FLOAT]:
+				child.from = int(cf)
+				child.to = int(ct)
+				child.direction = anim.tag.get("direction", "forward")
+				# The group span must fully cover every animation. Frame numbers
+				# are shown 1-based to match the Aseprite editor UI.
+				if group.from < 0 or child.from < group.from or child.to > group.to:
+					errors.append(
+						"Aseprite importer: group '@%s' does not fully cover its animation '%s' "
+						% [display, child.tag_name]
+						+ "(group spans %d-%d, animation spans %d-%d). "
+						% [group.from + 1, group.to + 1, child.from + 1, child.to + 1]
+						+ "Extend the group tag range or move the animation inside it."
+					)
+			group.children.append(child)
 
-		for child in contained_by.get(tag.tag_name, []):
-			# Nested groups are not supported: a child cannot span other tags itself
-			if not contained_by.get(child.tag_name, []).is_empty():
-				errors.append(
-					"Tag '%s' contains other tags. Nested groups are not supported." % child.tag_name
-				)
-				continue
-
-			# The child name must follow the group naming convention
-			var anim_name := strip_prefix(child.tag_name, tag.tag_name)
-			if anim_name.is_empty():
-				errors.append(
-					"Tag '%s' is inside the range of '%s' but does not follow the naming convention "
-					% [child.tag_name, tag.tag_name]
-					+ "(it must start with '%s' and have a distinct name, e.g. '%sClose')."
-					% [tag.tag_name, tag.tag_name]
-				)
-				continue
-
-			group.children.push_back({
-				"tag_name": child.tag_name,
-				"anim_name": anim_name,
-				"from": child.from,
-				"to": child.to,
-				"direction": child.direction,
-			})
-
-		# A tag that follows the group naming but is only partially inside the
-		# group's range means the group doesn't encompass all its animations.
-		# Such tags belong to the cluster and must not be imported standalone.
-		for other in ranged:
-			if other.tag_name == tag.tag_name:
-				continue
-			if not _matches_prefix(other.tag_name, tag.tag_name):
-				continue
-			if _is_contained(other, tag, contained_by):
-				continue
-			if other.from <= tag.to and tag.from <= other.to:
-				claimed[other.tag_name] = true
-				errors.append(
-					"Tag '%s' follows the group naming of '%s' but is only partially inside its range "
-					% [other.tag_name, tag.tag_name]
-					+ "(%d-%d). The group must fully encompass all its animations." % [tag.from, tag.to]
-				)
+		if group.from < 0:
+			errors.append(
+				"Aseprite importer: group '@%s' has no usable frame range." % name
+			)
 
 		if errors.is_empty():
 			_check_group_gaps(result, group)
-			result.groups.push_back(group)
 		else:
 			group.is_valid = false
 			group.error = " ".join(errors)
 			result.errors.append(group.error)
-			result.groups.push_back(group)
 
-	# Tags that don't belong to any cluster are standalone. Iterate the FULL tag
-	# list (not just ranged ones): when frame ranges are unavailable the tags
-	# still render as a flat list, so a failed range fetch never empties the list.
+		result.groups.append(group)
+		groups_by_tag[name] = group
+
+	# Safety net: a plain tag that matches a group name and falls inside the
+	# group's span probably means a forgotten ':' prefix. Plain tags outside
+	# the span are legit separate props.
 	for tag in tags:
-		if claimed.has(tag.tag_name) or not contained_by.get(tag.tag_name, []).is_empty():
+		var name: String = tag.get("tag_name", "")
+		if name.begins_with(GROUP_PREFIX) or name.begins_with(ANIM_PREFIX):
 			continue
-		result.singles.push_back(tag)
+		var matched_lower := _find_matching_group(name, group_names, duplicate_groups, true)
+		if matched_lower.is_empty():
+			continue
+		var span: Dictionary = group_spans.get(matched_lower)
+		if span != null and not _is_fully_inside(tag, span):
+			continue  # outside the group's span: a legit separate prop
+		result.warnings.append(
+			"Aseprite importer: plain tag '%s' matches group '%s'%s. Did you forget the ':' prefix?"
+			% [name, group_names[matched_lower], "" if span == null else " and is inside its range"]
+		)
+
+	# Build the ordered item list and the standalone singles
+	for tag in tags:
+		var name: String = tag.get("tag_name", "")
+		if name.begins_with(GROUP_PREFIX):
+			if groups_by_tag.has(name):
+				result.items.append(groups_by_tag[name])
+			continue
+		if name.begins_with(ANIM_PREFIX):
+			continue
+		result.singles.append(tag)
+		result.items.append({ "kind": "single", "tag": tag })
 
 	return result
 
 
-# Returns the animation name for a child tag of a group (prefix stripped and
+# Returns the animation name for a ":GroupAnim" tag (group prefix stripped and
 # snake_cased), or an empty string when the name doesn't follow the convention.
-# A word boundary is required after the prefix so that names that merely share a
-# prefix (e.g. "Doors" inside "Door") are not treated as children.
-func strip_prefix(child_name: String, group_name: String) -> String:
-	var lower_child := child_name.to_lower()
-	var lower_group := group_name.to_lower()
-
-	if not lower_child.begins_with(lower_group):
+# The name must begin with the group name, and a word boundary is required right
+# after it so that names that merely share a prefix (e.g. "Doors" under group
+# "Door", or unrelated names like "TestAnim" under "Door") are not matched.
+func _strip_group_from_name(remainder: String, lower_group: String) -> String:
+	if not remainder.to_lower().begins_with(lower_group):
 		return ""
-
-	# A tag with the exact same name (case-insensitive) is not a child
-	if child_name.length() == group_name.length():
+	if remainder.to_lower() == lower_group:
 		return ""
-
-	# Require a separator or an uppercase letter right after the prefix
-	var next_char := child_name.substr(group_name.length(), 1)
+	var next_char := remainder.substr(lower_group.length(), 1)
 	if not (next_char == "_" or next_char == " " or _is_uppercase(next_char)):
 		return ""
-
-	var remainder := child_name.substr(group_name.length())
-	remainder = remainder.trim_prefix("_").trim_prefix(" ")
-	return remainder.to_snake_case()
+	var rest := remainder.substr(lower_group.length()).trim_prefix("_").trim_prefix(" ")
+	return rest.to_snake_case()
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-# Whether the child name follows the group naming convention.
-func _matches_prefix(child_name: String, group_name: String) -> bool:
-	return not strip_prefix(child_name, group_name).is_empty()
+# Returns the lower-cased name of the longest group that [param remainder]
+# matches (case-insensitive, with a word boundary after the group name), or ""
+# when none matches. [param allow_exact] also accepts a name that is exactly the
+# group name (used by the safety net, not by the animation association).
+func _find_matching_group(remainder: String, group_names: Dictionary, duplicate_groups: Dictionary, allow_exact: bool) -> String:
+	var matched_lower := ""
+	var matched_display := ""
+	for lower in group_names:
+		if duplicate_groups.has(lower):
+			continue
+		if not remainder.to_lower().begins_with(lower):
+			continue
+		if group_names[lower].length() <= matched_display.length():
+			continue
+		if (
+			_strip_group_from_name(remainder, lower).is_empty()
+			and not (allow_exact and remainder.to_lower() == lower)
+		):
+			continue
+		matched_lower = lower
+		matched_display = group_names[lower]
+	return matched_lower
 
 
-# Whether [param inner] is fully contained in [param outer]'s range.
-func _is_contained(inner: Dictionary, outer: Dictionary, contained_by: Dictionary) -> bool:
-	for c in contained_by.get(outer.tag_name, []):
-		if c.tag_name == inner.tag_name:
-			return true
-	return false
+# Whether the tag's frame range is fully inside the given span.
+func _is_fully_inside(tag: Dictionary, span: Dictionary) -> bool:
+	var tag_from = tag.get("from")
+	var tag_to = tag.get("to")
+	if typeof(tag_from) not in [TYPE_INT, TYPE_FLOAT] or typeof(tag_to) not in [TYPE_INT, TYPE_FLOAT]:
+		return false
+	return span.from <= int(tag_from) and int(tag_to) <= span.to
 
 
-# Emits a warning when frames inside the group's range are not covered by any
+# Emits a warning when frames inside the group's span are not covered by any
 # child animation. The group is still imported (gaps are tolerated).
 func _check_group_gaps(result: Dictionary, group: Dictionary) -> void:
+	if group.get("from", -1) < 0 or group.get("to", -1) < group.get("from", -1):
+		return
 	var children: Array = group.get("children", [])
-	if children.is_empty():
+	var ranged_children := []
+	for child in children:
+		if child.has("from") and child.has("to"):
+			ranged_children.append(child)
+	if ranged_children.is_empty():
 		return
 
-	children.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.from < b.from)
+	ranged_children.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.from < b.from)
 
 	var uncovered := []
 	var cursor: int = group.from
-	for child in children:
+	for child in ranged_children:
 		if child.from > cursor:
 			uncovered.push_back([cursor, child.from - 1])
 		if child.to + 1 > cursor:
@@ -222,7 +314,8 @@ func _check_group_gaps(result: Dictionary, group: Dictionary) -> void:
 	if not uncovered.is_empty():
 		var ranges := []
 		for r in uncovered:
-			ranges.append("%d-%d" % [r[0], r[1]])
+			# Frame numbers are shown 1-based to match the Aseprite editor UI
+			ranges.append("%d-%d" % [r[0] + 1, r[1] + 1])
 		result.warnings.append(
 			"Aseprite importer: Group '%s' has frames not covered by any animation: %s. "
 			% [group.name, ", ".join(ranges)]

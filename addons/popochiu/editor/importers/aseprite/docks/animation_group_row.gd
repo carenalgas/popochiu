@@ -13,6 +13,7 @@ var visible_toggle: Control
 var clickable_toggle: Control
 
 var _anim_tag_state: Dictionary = {}
+var _display_name: String = PopochiuEditorHelper.EMPTY_STRING
 
 #region Public #####################################################################################
 func init(group_cfg: Dictionary):
@@ -32,6 +33,8 @@ func init(group_cfg: Dictionary):
 	var bold_font := get_theme_font("bold", "EditorFonts")
 	if bold_font:
 		tag_name_label.add_theme_font_override("font", bold_font)
+
+	_display_name = group_cfg.get("display_name", group_cfg.get("tag_name", ""))
 
 	_anim_tag_state = {
 		"tag_name": "",
@@ -58,7 +61,7 @@ func get_cfg() -> Dictionary:
 
 
 func get_search_name() -> String:
-	return _anim_tag_state.tag_name
+	return _display_name if not _display_name.is_empty() else _anim_tag_state.tag_name
 
 
 # Marks the group as misconfigured: tints the name and adds an explanatory
@@ -73,7 +76,7 @@ func set_error(message: String) -> void:
 
 #region Private ####################################################################################
 func _setup_scene() -> void:
-	tag_name_label.text = _anim_tag_state.tag_name
+	tag_name_label.text = _display_name
 	import_toggle.set_pressed_no_signal(_anim_tag_state.import)
 	visible_toggle.set_pressed_no_signal(_anim_tag_state.prop_visible)
 	clickable_toggle.set_pressed_no_signal(_anim_tag_state.prop_clickable)

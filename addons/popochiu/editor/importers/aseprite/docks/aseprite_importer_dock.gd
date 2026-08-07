@@ -354,6 +354,16 @@ func _list_tags(file: String) -> Variant:
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
 	if not _aseprite.test_command():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
+	return _aseprite.list_tags(file)
+
+
+# Slow variant used only at import time: fetches the tag frame ranges needed to
+# export group spritesheets. The dock scan only needs names (see _list_tags).
+func _list_tags_with_ranges(file: String) -> Variant:
+	if not _aseprite.check_command_path():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
+	if not _aseprite.test_command():
+		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
 	return _aseprite.list_tags_with_ranges(file)
 
 
@@ -390,6 +400,8 @@ func _load_config(cfg) -> void:
 	if _supports_groups() and not _source.is_empty():
 		_tags_cache = saved_tags
 		var refreshed: Array = _merge_with_cache(_get_tags_from_source())
+		if _has_group_tags(refreshed):
+			refreshed = _merge_with_cache(_get_tags_from_source_with_ranges())
 		if not refreshed.is_empty():
 			saved_tags = refreshed
 
@@ -474,11 +486,24 @@ func _create_aseprite_file_selection() -> FileDialog:
 
 
 func _scan_source() -> void:
-	_populate_tags(
-		_merge_with_cache(_get_tags_from_source())
-	)
+	var tags: Array = _merge_with_cache(_get_tags_from_source())
+	# Group tags carry frame ranges used for validation and the safety net.
+	# Fetch them at scan time (data-only, fast) so problems are actionable
+	# before importing, not after.
+	if _supports_groups() and _has_group_tags(tags):
+		tags = _merge_with_cache(_get_tags_from_source_with_ranges())
+	_populate_tags(tags)
 	_save_config()
 	_set_tags_visible(true)
+
+
+# Whether any of the tags is a "group tag" (@ prefix). Frame ranges are only
+# worth fetching at scan time when at least one group tag exists.
+func _has_group_tags(tags: Array) -> bool:
+	for tag in tags:
+		if str(tag.get("tag_name", "")).begins_with(PopochiuAsepriteTagGrouper.GROUP_PREFIX):
+			return true
+	return false
 
 
 func _populate_tags(tags: Array) -> void:
@@ -494,13 +519,22 @@ func _populate_tags(tags: Array) -> void:
 	var grouper := PopochiuAsepriteTagGrouper.new()
 	var analysis := grouper.analyze(tags)
 
-	for group in analysis.get("groups", []):
-		_add_group_rows(group, tags)
+	# Surface configuration problems as soon as the list is built (scan or
+	# reload), so the user can fix the Aseprite file before importing.
+	for importer_error in analysis.get("errors", []):
+		PopochiuUtils.print_error(importer_error)
+	for importer_warning in analysis.get("warnings", []):
+		PopochiuUtils.print_warning(importer_warning)
 
-	for tag in analysis.get("singles", []):
-		if tag.tag_name == PopochiuEditorHelper.EMPTY_STRING:
-			continue
-		_add_single_tag_row(tag)
+	# Render groups and standalone tags in their source order
+	for item in analysis.get("items", []):
+		if item.get("kind") == "group":
+			_add_group_rows(item, tags)
+		else:
+			var tag: Dictionary = item.get("tag", {})
+			if tag.get("tag_name", PopochiuEditorHelper.EMPTY_STRING) == PopochiuEditorHelper.EMPTY_STRING:
+				continue
+			_add_single_tag_row(tag)
 
 	_update_tags_cache()
 	_update_bulk_toggles_state() # Update bulk toggles after populating tags
@@ -521,13 +555,14 @@ func _populate_flat_tags(tags: Array) -> void:
 
 # Adds a group header row and its child rows (indented) to the tag list.
 func _add_group_rows(group: Dictionary, tags: Array) -> void:
-	var group_cfg := _find_tag_cfg(tags, group.name)
+	var group_cfg := _find_tag_cfg(tags, group.get("tag_name", ""))
 	var group_row_cfg := group.duplicate()
 	group_row_cfg.merge({
-		"tag_name": group.name,
-		"from": group.from,
-		"to": group.to,
-		"direction": group.direction,
+		"tag_name": group.get("tag_name", ""),
+		"display_name": group.get("name", ""),
+		"from": group.get("from", -1),
+		"to": group.get("to", -1),
+		"direction": group.get("direction", "forward"),
 		"import": group_cfg.get("import", PopochiuConfig.is_default_animation_import_enabled()),
 		"prop_visible": group_cfg.get("prop_visible", PopochiuConfig.is_default_animation_prop_visible()),
 		"prop_clickable": group_cfg.get("prop_clickable", PopochiuConfig.is_default_animation_prop_clickable()),
@@ -556,7 +591,7 @@ func _add_group_rows(group: Dictionary, tags: Array) -> void:
 		children_container.add_child(tag_row)
 		tag_row.init(child_cfg)
 		tag_row.set_display_name(child.anim_name)
-		tag_row.set_group_child(group.name)
+		tag_row.set_group_child(group.get("name", ""))
 		_connect_tag_row_signals(tag_row)
 
 
@@ -618,12 +653,14 @@ func _merge_with_cache(tags: Array) -> Array:
 	for i in tags.size():
 		if tags_cache_index.has(tags[i].tag_name):
 			# Keep the user's settings from the cache, but refresh the frame data
-			# from the source file (ranges may have changed between scans)
+			# from the source file (ranges may have changed between scans). The
+			# frame data is only present when the tags were read with ranges.
 			var cached: Dictionary = tags_cache_index[tags[i].tag_name]
 			var merged: Dictionary = cached.duplicate()
-			merged.from = tags[i].from
-			merged.to = tags[i].to
-			merged.direction = tags[i].direction
+			if tags[i].has("from") and tags[i].has("to"):
+				merged.from = tags[i].from
+				merged.to = tags[i].to
+				merged.direction = tags[i].direction
 			result.push_back(merged)
 		else:
 			# New tag: set default loop and autoplay behavior based on object type
@@ -651,9 +688,38 @@ func _get_tags_from_source() -> Array:
 		return []
 	var tags_list = []
 	for t in tags_found:
-		if t.get("tag_name") == PopochiuEditorHelper.EMPTY_STRING:
-			continue
-		tags_list.push_back(t)
+		# Plain tag names arrive as Strings (from --list-tags); they are wrapped
+		# into dicts so the rest of the pipeline can treat every tag uniformly.
+		if typeof(t) == TYPE_STRING:
+			if t == PopochiuEditorHelper.EMPTY_STRING:
+				continue
+			tags_list.push_back({ "tag_name": t })
+		elif typeof(t) == TYPE_DICTIONARY:
+			if t.get("tag_name", PopochiuEditorHelper.EMPTY_STRING) == PopochiuEditorHelper.EMPTY_STRING:
+				continue
+			tags_list.push_back(t)
+	return tags_list
+
+
+# Like _get_tags_from_source but also reads the frame ranges. Only used at import
+# time (it is slow, since it makes Aseprite export the sprite metadata).
+func _get_tags_from_source_with_ranges() -> Array:
+	var tags_found = _list_tags_with_ranges(ProjectSettings.globalize_path(_source))
+	if typeof(tags_found) == TYPE_INT:
+		PopochiuUtils.print_error(RESULT_CODE.get_error_message(tags_found))
+		return []
+	var tags_list = []
+	for t in tags_found:
+		# Ranges arrive as dicts (from list_tags_with_ranges), but stay safe
+		# against name-only strings just in case.
+		if typeof(t) == TYPE_STRING:
+			if t == PopochiuEditorHelper.EMPTY_STRING:
+				continue
+			tags_list.push_back({ "tag_name": t })
+		elif typeof(t) == TYPE_DICTIONARY:
+			if t.get("tag_name", PopochiuEditorHelper.EMPTY_STRING) == PopochiuEditorHelper.EMPTY_STRING:
+				continue
+			tags_list.push_back(t)
 	return tags_list
 
 

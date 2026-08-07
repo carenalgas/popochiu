@@ -35,12 +35,20 @@ func _on_import_pressed() -> void:
 	var props_container := _root_node.get_node("Props")
 	var result: int = RESULT_CODE.SUCCESS
 
+	# Refresh the frame ranges from the source file right now (this is the slow
+	# operation, but it only happens on import, never on scan). Groups are built
+	# from fresh indices so the import never uses a stale framing.
+	var refreshed_tags: Array = _get_tags_from_source_with_ranges()
+	var analysis_input: Array = _options.get("tags")
+	if not refreshed_tags.is_empty():
+		analysis_input = _merge_with_cache(refreshed_tags)
+
 	var grouper := PopochiuAsepriteTagGrouper.new()
-	var analysis := grouper.analyze(_options.get("tags"))
+	var analysis := grouper.analyze(analysis_input)
 
 	# Build a lookup of the tag configurations (with user toggles) by name
 	var tags_by_name := {}
-	for tag in _options.get("tags"):
+	for tag in analysis_input:
 		tags_by_name[tag.tag_name] = tag
 
 	# Track the tags that are actually imported in this run, so that props whose
@@ -48,84 +56,86 @@ func _on_import_pressed() -> void:
 	# from stale metadata.
 	var importable_names := {}
 
-	# Create a prop for each group and each single tag that must be imported,
-	# and populate it with the right sprite.
-	for group in analysis.get("groups", []):
-		# Misconfigured groups are skipped entirely and reported at the end
-		if not group.get("is_valid", true):
-			continue
-
-		var group_cfg: Dictionary = tags_by_name.get(group.name, {})
-		if not group_cfg.get("import", true):
-			continue
-
-		# Only keep the children the user wants to import as animations
-		var children := []
-		for child in group.get("children", []):
-			var child_cfg: Dictionary = tags_by_name.get(child.tag_name, {})
-			if not child_cfg.get("import", true):
+	for item in analysis.get("items", []):
+		if item.get("kind") == "group":
+			var group: Dictionary = item
+			# Misconfigured groups are skipped entirely and reported at the end
+			if not group.get("is_valid", true):
 				continue
-			var child_import: Dictionary = child.duplicate()
-			child_import.loops = child_cfg.get("loops", false)
-			child_import.autoplays = child_cfg.get("autoplays", false)
-			children.push_back(child_import)
 
-		# No animation to import for this group: don't create the prop
-		if children.is_empty():
-			continue
+			var group_cfg: Dictionary = tags_by_name.get(group.tag_name, {})
+			if not group_cfg.get("import", true):
+				continue
 
-		# Always convert to PascalCase as a standard
-		# TODO: check Godot 4 standards, I can't find info
-		var prop_name: String = group.name.to_pascal_case()
+			# Without frame ranges we cannot export the group spritesheet
+			if group.get("from", -1) < 0 or group.get("to", -1) < group.get("from", -1):
+				PopochiuUtils.print_error(
+					"Aseprite importer: could not determine the frame ranges for group '%s'. "
+					% group.name + "Rescan the file and try again."
+				)
+				continue
 
-		# In case the prop is there, use the one we already have
-		var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
-		if prop == null:
-			# Create a new prop if necessary, specifying the interaction flags.
-			prop = _create_prop(
-				prop_name,
-				group_cfg.get("prop_clickable", true),
-				group_cfg.get("prop_visible", true)
-			)
+			# Only keep the children the user wants to import as animations
+			var children := []
+			for child in group.get("children", []):
+				var child_cfg: Dictionary = tags_by_name.get(child.tag_name, {})
+				if not child_cfg.get("import", true):
+					continue
+				var child_import: Dictionary = child.duplicate()
+				child_import.loops = child_cfg.get("loops", false)
+				child_import.autoplays = child_cfg.get("autoplays", false)
+				children.push_back(child_import)
+
+			# No animation to import for this group: don't create the prop
+			if children.is_empty():
+				continue
+
+			# Always convert to PascalCase as a standard
+			# TODO: check Godot 4 standards, I can't find info
+			var prop_name: String = group.name.to_pascal_case()
+
+			# In case the prop is there, use the one we already have
+			var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
+			if prop == null:
+				prop = _create_prop(
+					prop_name,
+					group_cfg.get("prop_clickable", true),
+					group_cfg.get("prop_visible", true)
+				)
+			else:
+				prop.clickable = group_cfg.get("prop_clickable", true)
+				prop.visible = group_cfg.get("prop_visible", true)
+
+			var group_import: Dictionary = group.duplicate()
+			group_import.children = children
+			prop.set_meta("ANIM_NAME", group.tag_name)
+			prop.set_meta("ANIM_GROUP", group_import)
+			importable_names[group.tag_name] = true
 		else:
-			# Force flags (a bit redundant but they may have been changed
-			# in the Importer interface, for already imported props)
-			prop.clickable = group_cfg.get("prop_clickable", true)
-			prop.visible = group_cfg.get("prop_visible", true)
+			var tag: Dictionary = item.get("tag", {})
+			# Ignore unwanted tags
+			if not tag.get("import", true): continue
 
-		var group_import: Dictionary = group.duplicate()
-		group_import.children = children
-		prop.set_meta("ANIM_NAME", group.name)
-		prop.set_meta("ANIM_GROUP", group_import)
-		importable_names[group.name] = true
+			# Always convert to PascalCase as a standard
+			# TODO: check Godot 4 standards, I can't find info
+			var prop_name: String = tag.tag_name.to_pascal_case()
 
-	for tag in analysis.get("singles", []):
-		# Ignore unwanted tags
-		if not tag.get("import", true): continue
+			# In case the prop is there, use the one we already have
+			var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
+			if prop == null:
+				prop = _create_prop(
+					prop_name,
+					tag.get("prop_clickable", true),
+					tag.get("prop_visible", true)
+				)
+			else:
+				prop.clickable = tag.get("prop_clickable", true)
+				prop.visible = tag.get("prop_visible", true)
 
-		# Always convert to PascalCase as a standard
-		# TODO: check Godot 4 standards, I can't find info
-		var prop_name: String = tag.tag_name.to_pascal_case()
-
-		# In case the prop is there, use the one we already have
-		var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
-		if prop == null:
-			# Create a new prop if necessary, specifying the interaction flags.
-			prop = _create_prop(
-				prop_name,
-				tag.get("prop_clickable", true),
-				tag.get("prop_visible", true)
-			)
-		else:
-			# Force flags (a bit redundant but they may have been changed
-			# in the Importer interface, for already imported props)
-			prop.clickable = tag.get("prop_clickable", true)
-			prop.visible = tag.get("prop_visible", true)
-
-		prop.set_meta("ANIM_NAME", tag.tag_name)
-		prop.set_meta("ANIM_AUTOPLAY", tag.get("autoplays", false))
-		prop.set_meta("ANIM_GROUP", {})
-		importable_names[tag.tag_name] = true
+			prop.set_meta("ANIM_NAME", tag.tag_name)
+			prop.set_meta("ANIM_AUTOPLAY", tag.get("autoplays", false))
+			prop.set_meta("ANIM_GROUP", {})
+			importable_names[tag.tag_name] = true
 
 	for prop in props_container.get_children():
 		if not prop.has_meta("ANIM_NAME"): continue
@@ -181,18 +191,19 @@ func _on_import_pressed() -> void:
 	_importing = false
 
 	var has_errors := typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS
-	var group_errors := _get_group_errors(analysis)
+	var importer_errors: Array = analysis.get("errors", [])
 
 	if has_errors:
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 
-	for group_error in group_errors:
-		PopochiuUtils.print_error(group_error)
+	for importer_error in importer_errors:
+		PopochiuUtils.print_error(importer_error)
 
-	for group_warning in analysis.get("warnings", []):
-		PopochiuUtils.print_warning(group_warning)
+	# Validation messages (including the frame-range based ones) are reported at
+	# scan time, where they are actionable. At import only the errors that
+	# caused tags to be skipped are repeated as a confirmation.
 
-	if has_errors or not group_errors.is_empty():
+	if has_errors or not importer_errors.is_empty():
 		_show_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
 		await get_tree().create_timer(0.1).timeout
@@ -211,25 +222,6 @@ func _get_autoplay_child(children: Array) -> String:
 		if child.get("autoplays", false):
 			return child.get("anim_name", "")
 	return PopochiuEditorHelper.EMPTY_STRING
-
-
-# Builds the actionable error messages for misconfigured groups, so they can be
-# printed to the Output panel.
-func _get_group_errors(analysis: Dictionary) -> Array:
-	var errors := []
-	for group in analysis.get("groups", []):
-		if not group.get("is_valid", true):
-			var message: String = group.get("error", "")
-			if not message.is_empty():
-				errors.push_back("Aseprite importer: Group '%s': %s" % [group.get("name", ""), message])
-
-	if not errors.is_empty():
-		errors.push_back(
-			"Aseprite importer: no prop was created for the misconfigured group(s) above. "
-			+ "Fix the Aseprite file: remove the group tag (its tags will be imported as separate props) "
-			+ "or rename the contained tags so they start with the group name."
-		)
-	return errors
 
 
 func _customize_tag_ui(tag_row: AnimationTagRow) -> void:
