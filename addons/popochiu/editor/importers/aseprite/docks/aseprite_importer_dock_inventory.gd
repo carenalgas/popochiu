@@ -88,11 +88,9 @@ func _on_import_pressed():
 
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
-		_show_message("Some errors occurred. Please check output panel.", "Warning!")
+		_finish_import_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
-		await get_tree().create_timer(0.1).timeout
-		
-		_show_message(
+		_finish_import_message(
 			"%d inventory items created." % [created_items.size()],
 			"Done!"
 		)

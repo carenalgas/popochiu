@@ -41,6 +41,7 @@ var _output_folder := PopochiuEditorHelper.EMPTY_STRING
 var _file_dialog_aseprite: FileDialog
 var _tags_cache: Array = []
 var _importing := false
+var _import_dialog: AcceptDialog = null
 
 # A mapping of bulk toggle buttons to their corresponding row properties
 var _bulk_toggle_configs = {
@@ -257,6 +258,11 @@ func _on_import_pressed() -> void:
 		_importing = false
 		return
 	
+	# Let the user know something is happening: on re-imports Godot does not show
+	# its filesystem progress bars, so without this popup the operation looks
+	# frozen. It doubles as the final summary (see _finish_import_message).
+	_show_import_working()
+
 	_options = {
 		"source": ProjectSettings.globalize_path(_source),
 		"tags": _tags_cache,
@@ -747,6 +753,41 @@ func _show_message(
 	warning_dialog.close_requested.connect(callback)
 	
 	PopochiuEditorHelper.show_dialog(warning_dialog)
+
+
+# Shows a non-blocking "working" dialog while the import runs, so the user can
+# see that something is happening even on re-imports that skip Godot's
+# filesystem progress bars. The same dialog is reused for the final summary.
+func _show_import_working() -> void:
+	if is_instance_valid(_import_dialog):
+		_import_dialog.queue_free()
+	_import_dialog = AcceptDialog.new()
+	_import_dialog.title = "Importing..."
+	_import_dialog.dialog_text = "Importing assets, please wait..."
+	_import_dialog.popup_window = true
+	# Hide the OK button until the import finishes; the dialog only has the
+	# window close button during the operation.
+	_import_dialog.get_ok_button().visible = false
+	_import_dialog.close_requested.connect(_import_dialog.queue_free)
+	PopochiuEditorHelper.show_dialog(_import_dialog)
+
+
+# Turns the working dialog into the final summary, revealing the OK button.
+# Falls back to a plain message dialog when the working one is not available.
+func _finish_import_message(message: String, title: String) -> void:
+	if is_instance_valid(_import_dialog):
+		_import_dialog.title = title
+		_import_dialog.dialog_text = message
+		var ok_button := _import_dialog.get_ok_button()
+		ok_button.visible = true
+		ok_button.disabled = false
+		if not _import_dialog.confirmed.is_connected(_import_dialog.queue_free):
+			_import_dialog.confirmed.connect(_import_dialog.queue_free)
+		# Re-fit and re-center the dialog for the new content, when it's shown
+		if _import_dialog.is_inside_tree():
+			_import_dialog.popup_centered()
+	else:
+		_show_message(message, title)
 
 
 func _show_confirmation(

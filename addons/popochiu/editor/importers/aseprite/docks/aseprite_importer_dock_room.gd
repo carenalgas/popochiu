@@ -204,12 +204,9 @@ func _on_import_pressed() -> void:
 	# caused tags to be skipped are repeated as a confirmation.
 
 	if has_errors or not importer_errors.is_empty():
-		_show_message("Some errors occurred. Please check output panel.", "Warning!")
+		_finish_import_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
-		await get_tree().create_timer(0.1).timeout
-
-		# Once the popup is closed, call _clean_props()
-		_show_message(
+		_finish_import_message(
 			"%d animation tags processed." % [_tags_cache.size()],
 			"Done!"
 		)
