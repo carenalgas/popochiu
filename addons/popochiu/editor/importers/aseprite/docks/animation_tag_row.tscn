@@ -17,6 +17,7 @@ data = {
 image = SubResource("Image_bfixh")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sd1l8"]
+bg_color = Color(0.5, 0.5, 0.5, 0.4)
 
 [node name="AnimationTagRow" type="HBoxContainer"]
 offset_right = 320.0

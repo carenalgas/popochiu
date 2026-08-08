@@ -48,6 +48,18 @@ func init(tag_cfg: Dictionary):
 	# 3. Delete animation icon
 	delete_anim_button.icon = get_theme_icon('Remove', 'EditorIcons')
 	
+	# The action buttons live in a right-anchored grid. Only leading columns
+	# (Visible/Clickable) are ever hidden on this row, so the remaining buttons
+	# keep their right-anchored columns and stay aligned with every other row
+	# type. Default state (characters): only Import and Loops.
+	_setup_action_grid()
+	visible_toggle.visible = false
+	clickable_toggle.visible = false
+	autoplays_toggle.visible = false
+	separator.visible = false
+	import_toggle.visible = true
+	loops_toggle.visible = true
+	
 	# Connect tag name button pressed signal if not already connected
 	if not tag_name_label.pressed.is_connected(_on_tag_name_pressed):
 		tag_name_label.pressed.connect(_on_tag_name_pressed)
@@ -66,25 +78,33 @@ func init(tag_cfg: Dictionary):
 	_setup_scene()
 
 func show_prop_buttons() -> void:
-	separator.visible = true
-	visible_toggle.visible =  true
+	visible_toggle.visible = true
 	clickable_toggle.visible = true
 	autoplays_toggle.visible = true
+	separator.visible = true
+	import_toggle.visible = true
+	loops_toggle.visible = true
 
 func show_inventory_item_buttons() -> void:
-	separator.visible = true
-	autoplays_toggle.visible = true
-
-
-# Makes the row behave as a child of a group: shows only the animation-level
-# toggles (Loops/Autoplays) and hides the prop-level ones (Visible/Clickable),
-# which belong to the group header row. The displayed name is the animation name.
-func set_group_child(group_name: String) -> void:
-	_group_name = group_name
-	separator.visible = true
-	autoplays_toggle.visible = true
 	visible_toggle.visible = false
 	clickable_toggle.visible = false
+	autoplays_toggle.visible = true
+	separator.visible = true
+	import_toggle.visible = true
+	loops_toggle.visible = true
+
+
+# Makes the row behave as a child of a group: it only owns the animation-level
+# toggles (Loops/Autoplays); the prop-level ones (Visible/Clickable) live on the
+# group header row. The displayed name is the animation name.
+func set_group_child(group_name: String) -> void:
+	_group_name = group_name
+	visible_toggle.visible = false
+	clickable_toggle.visible = false
+	autoplays_toggle.visible = true
+	separator.visible = true
+	import_toggle.visible = true
+	loops_toggle.visible = true
 
 
 # Changes the displayed name (used for group children, whose label is the
@@ -121,6 +141,19 @@ func get_cfg() -> Dictionary:
 #endregion
 
 #region Private ####################################################################################
+# Gives every action button a fixed width. The buttons live in a container that
+# is anchored to the row's right edge and sized to its visible children, so the
+# same action always occupies the same column in every row type, even when
+# leading buttons (Visible/Clickable) are hidden.
+func _setup_action_grid() -> void:
+	var slot_width := Vector2(20, 0)
+	for control in [visible_toggle, clickable_toggle, autoplays_toggle, import_toggle, loops_toggle]:
+		control.custom_minimum_size = slot_width
+	separator.custom_minimum_size = Vector2(1, 0)
+	# Size the grid to its visible children and keep it anchored to the right.
+	$HBoxContainer/Panel/HBoxContainer.offset_left = 0.0
+
+
 func _setup_scene() -> void:
 	tag_name_label.text = _anim_tag_state.tag_name
 	import_toggle.set_pressed_no_signal(_anim_tag_state.import)

@@ -11,6 +11,9 @@ var tag_name_label: Control
 var import_toggle: Control
 var visible_toggle: Control
 var clickable_toggle: Control
+var separator: Control
+var autoplays_spacer: Control
+var loops_spacer: Control
 
 var _anim_tag_state: Dictionary = {}
 var _display_name: String = PopochiuEditorHelper.EMPTY_STRING
@@ -23,11 +26,19 @@ func init(group_cfg: Dictionary):
 	import_toggle = $HBoxContainer/Panel/HBoxContainer/Import
 	visible_toggle = $HBoxContainer/Panel/HBoxContainer/Visible
 	clickable_toggle = $HBoxContainer/Panel/HBoxContainer/Clickable
+	separator = $HBoxContainer/Panel/HBoxContainer/Separator
+	autoplays_spacer = $HBoxContainer/Panel/HBoxContainer/Autoplays
+	loops_spacer = $HBoxContainer/Panel/HBoxContainer/Loops
 
 	# Set icons manually, like AnimationTagRow does
 	import_toggle.icon = get_theme_icon('Load', 'EditorIcons')
 	visible_toggle.icon = get_theme_icon('GuiVisibilityVisible', 'EditorIcons')
 	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
+
+	# Fixed action grid: the Autoplays and Loops columns are static spacers, so
+	# the group's prop-level toggles (Visible/Clickable/Separator/Import) line up
+	# with standalone and child rows.
+	_setup_action_grid()
 
 	# Bold the group name so it reads as a header over its children
 	var bold_font := get_theme_font("bold", "EditorFonts")
@@ -75,6 +86,19 @@ func set_error(message: String) -> void:
 
 
 #region Private ####################################################################################
+# Gives every action button a fixed width and the Autoplays/Loops columns a
+# static spacer of the same width. The container is anchored to the row's right
+# edge and sized to its children, so the group's toggles share the same columns
+# as standalone and child rows.
+func _setup_action_grid() -> void:
+	var slot_width := Vector2(20, 0)
+	for control in [visible_toggle, clickable_toggle, import_toggle, autoplays_spacer, loops_spacer]:
+		control.custom_minimum_size = slot_width
+	separator.custom_minimum_size = Vector2(1, 0)
+	# Size the grid to its children and keep it anchored to the right.
+	$HBoxContainer/Panel/HBoxContainer.offset_left = 0.0
+
+
 func _setup_scene() -> void:
 	tag_name_label.text = _display_name
 	import_toggle.set_pressed_no_signal(_anim_tag_state.import)
