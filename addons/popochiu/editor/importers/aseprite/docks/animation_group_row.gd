@@ -7,6 +7,8 @@ extends HBoxContainer
 
 signal tag_state_changed
 
+const GROUP_TOOLTIP_BASE := "Group tag: imported as a single prop with one animation per child tag"
+
 var tag_name_label: Control
 var import_toggle: Control
 var visible_toggle: Control
@@ -92,11 +94,27 @@ func set_error(message: String) -> void:
 # as standalone and child rows.
 func _setup_action_grid() -> void:
 	var slot_width := Vector2(20, 0)
-	for control in [visible_toggle, clickable_toggle, import_toggle, autoplays_spacer, loops_spacer]:
-		control.custom_minimum_size = slot_width
+	# Trim the flat-button padding so every action button is exactly 20px wide,
+	# matching the spacer columns.
+	for control in [visible_toggle, clickable_toggle, import_toggle]:
+		PopochiuEditorHelper.make_icon_button_slot(control)
+	autoplays_spacer.custom_minimum_size = slot_width
+	loops_spacer.custom_minimum_size = slot_width
 	separator.custom_minimum_size = Vector2(1, 0)
 	# Size the grid to its children and keep it anchored to the right.
 	$HBoxContainer/Panel/HBoxContainer.offset_left = 0.0
+	# The buttons and spacers are both 20px, so the grids already match; the
+	# deferred sync is kept as a safety net in case a theme renders them wider.
+	call_deferred("_sync_spacer_widths")
+
+
+# Matches the Autoplays/Loops spacer columns to the real width of the action
+# buttons, so the group's right-anchored grid lines up with the other rows.
+func _sync_spacer_widths() -> void:
+	if not is_inside_tree():
+		return
+	autoplays_spacer.custom_minimum_size.x = import_toggle.size.x
+	loops_spacer.custom_minimum_size.x = import_toggle.size.x
 
 
 func _setup_scene() -> void:
@@ -104,7 +122,33 @@ func _setup_scene() -> void:
 	import_toggle.set_pressed_no_signal(_anim_tag_state.import)
 	visible_toggle.set_pressed_no_signal(_anim_tag_state.prop_visible)
 	clickable_toggle.set_pressed_no_signal(_anim_tag_state.prop_clickable)
+	_update_frame_tooltip()
 	emit_signal("tag_state_changed")
+
+
+# Shows the frame info as a tooltip on the group name, combined with the group
+# explanation. Aseprite's JSON indices are 0-based, so the range is shown
+# 1-based to match the Aseprite editor UI. Misconfigured groups override this
+# with their error message (see set_error).
+func _update_frame_tooltip() -> void:
+	var tag_from = _anim_tag_state.get("from", -1)
+	var tag_to = _anim_tag_state.get("to", -1)
+	if (
+		typeof(tag_from) in [TYPE_INT, TYPE_FLOAT]
+		and typeof(tag_to) in [TYPE_INT, TYPE_FLOAT]
+		and int(tag_from) >= 0
+		and int(tag_to) >= int(tag_from)
+	):
+		tag_name_label.tooltip_text = "%s\n%s" % [GROUP_TOOLTIP_BASE, _frame_info_text(int(tag_from), int(tag_to))]
+	else:
+		tag_name_label.tooltip_text = GROUP_TOOLTIP_BASE
+
+
+func _frame_info_text(tag_from: int, tag_to: int) -> String:
+	var count := tag_to - tag_from + 1
+	if count == 1:
+		return "1 frame [%d]" % (tag_from + 1)
+	return "%d frames [%d-%d]" % [count, tag_from + 1, tag_to + 1]
 
 
 func _on_import_toggled(button_pressed: bool) -> void:

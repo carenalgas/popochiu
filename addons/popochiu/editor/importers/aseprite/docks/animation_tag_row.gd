@@ -146,9 +146,10 @@ func get_cfg() -> Dictionary:
 # same action always occupies the same column in every row type, even when
 # leading buttons (Visible/Clickable) are hidden.
 func _setup_action_grid() -> void:
-	var slot_width := Vector2(20, 0)
+	# Trim the flat-button padding so every action button is exactly 20px wide
+	# (the tag row's grid is made only of buttons, so it is always consistent).
 	for control in [visible_toggle, clickable_toggle, autoplays_toggle, import_toggle, loops_toggle]:
-		control.custom_minimum_size = slot_width
+		PopochiuEditorHelper.make_icon_button_slot(control)
 	separator.custom_minimum_size = Vector2(1, 0)
 	# Size the grid to its visible children and keep it anchored to the right.
 	$HBoxContainer/Panel/HBoxContainer.offset_left = 0.0
@@ -161,7 +162,32 @@ func _setup_scene() -> void:
 	autoplays_toggle.set_pressed_no_signal(_anim_tag_state.autoplays)
 	visible_toggle.set_pressed_no_signal(_anim_tag_state.prop_visible)
 	clickable_toggle.set_pressed_no_signal(_anim_tag_state.prop_clickable)
+	_update_frame_tooltip()
 	emit_signal("tag_state_changed")
+
+
+# Shows the frame info as a tooltip on the tag name, e.g. "4 frames [12-15]".
+# Aseprite's JSON indices are 0-based, so the range is shown 1-based to match
+# the Aseprite editor UI.
+func _update_frame_tooltip() -> void:
+	var tag_from = _anim_tag_state.get("from", -1)
+	var tag_to = _anim_tag_state.get("to", -1)
+	if (
+		typeof(tag_from) in [TYPE_INT, TYPE_FLOAT]
+		and typeof(tag_to) in [TYPE_INT, TYPE_FLOAT]
+		and int(tag_from) >= 0
+		and int(tag_to) >= int(tag_from)
+	):
+		tag_name_label.tooltip_text = _frame_info_text(int(tag_from), int(tag_to))
+	else:
+		tag_name_label.tooltip_text = ""
+
+
+func _frame_info_text(tag_from: int, tag_to: int) -> String:
+	var count := tag_to - tag_from + 1
+	if count == 1:
+		return "1 frame [%d]" % (tag_from + 1)
+	return "%d frames [%d-%d]" % [count, tag_from + 1, tag_to + 1]
 
 
 func _load_default_tag_state() -> Dictionary:

@@ -397,17 +397,15 @@ func _load_config(cfg) -> void:
 		cfg.get("autotrace_polygons", false)
 	)
 
-	# Restore the tag list. When groups are supported, refresh the persisted
-	# frame data against the current source file: ranges stored in the metadata
-	# can be outdated (e.g. if the room was last saved before a re-scan), which
-	# would otherwise break group detection on reload. Falls back to the saved
-	# list when the source can't be read.
+	# Restore the tag list. Refresh the persisted frame data against the current
+	# source file: ranges stored in the metadata can be outdated (e.g. if the
+	# room was last saved before a re-scan), which would otherwise break group
+	# detection and the frame tooltips on reload. Falls back to the saved list
+	# when the source can't be read.
 	var saved_tags: Array = cfg.get("tags", [])
-	if _supports_groups() and not _source.is_empty():
+	if not _source.is_empty():
 		_tags_cache = saved_tags
-		var refreshed: Array = _merge_with_cache(_get_tags_from_source())
-		if _has_group_tags(refreshed):
-			refreshed = _merge_with_cache(_get_tags_from_source_with_ranges())
+		var refreshed: Array = _merge_with_cache(_get_tags_from_source_with_ranges())
 		if not refreshed.is_empty():
 			saved_tags = refreshed
 
@@ -492,24 +490,14 @@ func _create_aseprite_file_selection() -> FileDialog:
 
 
 func _scan_source() -> void:
-	var tags: Array = _merge_with_cache(_get_tags_from_source())
-	# Group tags carry frame ranges used for validation and the safety net.
-	# Fetch them at scan time (data-only, fast) so problems are actionable
-	# before importing, not after.
-	if _supports_groups() and _has_group_tags(tags):
-		tags = _merge_with_cache(_get_tags_from_source_with_ranges())
-	_populate_tags(tags)
+	# Fetch the frame ranges on every scan (data-only, fast) so every row can
+	# show its frame info in the tag/group tooltip. list_tags_with_ranges falls
+	# back to name-only tags when the ranges can't be obtained.
+	_populate_tags(
+		_merge_with_cache(_get_tags_from_source_with_ranges())
+	)
 	_save_config()
 	_set_tags_visible(true)
-
-
-# Whether any of the tags is a "group tag" (@ prefix). Frame ranges are only
-# worth fetching at scan time when at least one group tag exists.
-func _has_group_tags(tags: Array) -> bool:
-	for tag in tags:
-		if str(tag.get("tag_name", "")).begins_with(PopochiuAsepriteTagGrouper.GROUP_PREFIX):
-			return true
-	return false
 
 
 func _populate_tags(tags: Array) -> void:
@@ -832,6 +820,11 @@ func _set_elements_styles() -> void:
 	# 2. Room-related toggles icons
 	%VisibleBulk.set_button_icon(get_theme_icon('GuiVisibilityVisible', 'EditorIcons'))
 	%ClickableBulk.set_button_icon(get_theme_icon('ToolSelect', 'EditorIcons'))
+
+	# Make the bulk buttons the same fixed width as the row action buttons (20px)
+	# so the toolbar columns line up with the tag list.
+	for bulk_button in [%VisibleBulk, %ClickableBulk, %AutoplaysBulk, %ImportBulk, %LoopsBulk]:
+		PopochiuEditorHelper.make_icon_button_slot(bulk_button)
 
 func _show_warning() -> void:
 	%Warning.visible = true
