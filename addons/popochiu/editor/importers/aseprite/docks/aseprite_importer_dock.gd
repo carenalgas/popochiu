@@ -821,11 +821,6 @@ func _set_elements_styles() -> void:
 	%VisibleBulk.set_button_icon(get_theme_icon('GuiVisibilityVisible', 'EditorIcons'))
 	%ClickableBulk.set_button_icon(get_theme_icon('ToolSelect', 'EditorIcons'))
 
-	# Make the bulk buttons the same fixed width as the row action buttons (20px)
-	# so the toolbar columns line up with the tag list.
-	for bulk_button in [%VisibleBulk, %ClickableBulk, %AutoplaysBulk, %ImportBulk, %LoopsBulk]:
-		PopochiuEditorHelper.make_icon_button_slot(bulk_button)
-
 func _show_warning() -> void:
 	%Warning.visible = true
 	%Importer.visible = false

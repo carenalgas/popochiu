@@ -146,10 +146,9 @@ func get_cfg() -> Dictionary:
 # same action always occupies the same column in every row type, even when
 # leading buttons (Visible/Clickable) are hidden.
 func _setup_action_grid() -> void:
-	# Trim the flat-button padding so every action button is exactly 20px wide
-	# (the tag row's grid is made only of buttons, so it is always consistent).
+	var slot_width := Vector2(20, 0)
 	for control in [visible_toggle, clickable_toggle, autoplays_toggle, import_toggle, loops_toggle]:
-		PopochiuEditorHelper.make_icon_button_slot(control)
+		control.custom_minimum_size = slot_width
 	separator.custom_minimum_size = Vector2(1, 0)
 	# Size the grid to its visible children and keep it anchored to the right.
 	$HBoxContainer/Panel/HBoxContainer.offset_left = 0.0

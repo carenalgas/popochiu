@@ -19,6 +19,7 @@ size_flags_horizontal = 3
 [node name="GroupName" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_filter = 0
 text = "Group"
 tooltip_text = "Group tag: imported as a single prop with one animation per child tag"
 
