@@ -42,6 +42,10 @@ var _file_dialog_aseprite: FileDialog
 var _tags_cache: Array = []
 var _importing := false
 var _import_dialog: AcceptDialog = null
+# Maps each group child tag (e.g. ":DoorClosed") to its group info, so tag
+# select/delete actions don't re-analyze the tag list on every click. Rebuilt
+# on every scan by _populate_tags.
+var _group_child_info_by_tag: Dictionary = {}
 
 # A mapping of bulk toggle buttons to their corresponding row properties
 var _bulk_toggle_configs = {
@@ -155,6 +159,13 @@ func _get_default_autoplay_behavior() -> bool:
 # animations). Only the room importer supports groups for now.
 func _supports_groups() -> bool:
 	return false
+
+
+# Returns the group info (group_name and anim_name) for a tag that is a child of
+# a group, or an empty dictionary when the tag is standalone. Populated on every
+# scan by _populate_tags, so subclasses don't re-analyze the tag list.
+func _get_group_child_info(tag_name: String) -> Dictionary:
+	return _group_child_info_by_tag.get(tag_name, {})
 
 
 # This method can be overridden by child classes to customize the tag UI,
@@ -486,6 +497,7 @@ func _scan_source() -> void:
 func _populate_tags(tags: Array) -> void:
 	# Reset tags container.
 	_empty_tags_container()
+	_group_child_info_by_tag = {}
 
 	if not _supports_groups():
 		_populate_flat_tags(tags)
@@ -502,6 +514,15 @@ func _populate_tags(tags: Array) -> void:
 		PopochiuUtils.print_error(importer_error)
 	for importer_warning in analysis.get("warnings", []):
 		PopochiuUtils.print_warning(importer_warning)
+
+	# Keep a lookup of each group child so tag select/delete actions don't have
+	# to re-run the whole analysis on every click.
+	for group in analysis.get("groups", []):
+		for child in group.get("children", []):
+			_group_child_info_by_tag[child.tag_name] = {
+				"group_name": group.name,
+				"anim_name": child.anim_name,
+			}
 
 	# Render groups and standalone tags in their source order
 	for item in analysis.get("items", []):

@@ -291,15 +291,10 @@ func _get_scene_path_for_prop(prop_name: String) -> String:
 
 #region Protected ##################################################################################
 # Returns the group info for a tag that is a child of a group, or an empty
-# dictionary when the tag is a standalone animation.
+# dictionary when the tag is a standalone animation. The lookup is built at scan
+# time by _populate_tags, so this is a cheap dictionary access.
 func _get_group_anim_info(tag_name: String) -> Dictionary:
-	var grouper := PopochiuAsepriteTagGrouper.new()
-	var analysis := grouper.analyze(_tags_cache)
-	for group in analysis.get("groups", []):
-		for child in group.get("children", []):
-			if child.tag_name == tag_name:
-				return { "group_name": group.name, "anim_name": child.anim_name }
-	return {}
+	return _get_group_child_info(tag_name)
 
 
 # Selects the animation in the room prop's AnimationPlayer.
