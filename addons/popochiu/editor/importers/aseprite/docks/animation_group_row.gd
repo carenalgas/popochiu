@@ -19,7 +19,7 @@ var _anim_tag_state: Dictionary = {}
 var _display_name: String = PopochiuEditorHelper.EMPTY_STRING
 
 #region Public #####################################################################################
-func init(group_cfg: Dictionary):
+func init(group_cfg: Dictionary) -> void:
 	# Manually initialize node references (the container gets repopulated without
 	# the script being reloaded, so @onready is not reliable here).
 	tag_name_label = $HBoxContainer/GroupName

@@ -41,10 +41,10 @@ func create_tag_animations(target_node: Node, aseprite_tag: String, options: Dic
 	return await _create_animations(target_node, options, aseprite_tag)
 
 
-## Create animations for a "group tag": one spritesheet containing only the
-## frames covered by the group's range, sliced into one animation per child tag.
-## [param group] must contain: name, from, to and children (each child with
-## tag_name, anim_name, from, to, direction and, optionally, loops/autoplays).
+# Create animations for a "group tag": one spritesheet containing only the
+# frames covered by the group's range, sliced into one animation per child tag.
+# [param group] must contain: name, from, to and children (each child with
+# tag_name, anim_name, from, to, direction and, optionally, loops/autoplays).
 func create_group_animations(target_node: Node, group: Dictionary, options: Dictionary) -> int:
 	var result := _setup_common(target_node, options)
 	if result != RESULT_CODE.SUCCESS:
@@ -179,7 +179,7 @@ func _create_spritesheet_from_tag(selected_tag: String) -> int:
 	return RESULT_CODE.SUCCESS
 
 
-## Create a spritesheet with the frames inside the given range (a group tag).
+# Create a spritesheet with the frames inside the given range (a group tag).
 func _create_spritesheet_from_frame_range(name: String, from: int, to: int) -> int:
 	_output = _aseprite.export_frame_range(
 		_options.source, name, from, to, _options.output_folder, _options
@@ -189,7 +189,10 @@ func _create_spritesheet_from_frame_range(name: String, from: int, to: int) -> i
 	return RESULT_CODE.SUCCESS
 
 
-func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPTY_STRING) -> int:
+# Loads the exported Aseprite JSON into _spritesheet_metadata (meta and frames)
+# and returns the parsed content. Returns an error code (int) when the file
+# cannot be read or the spritesheet is invalid.
+func _load_spritesheet_file() -> Variant:
 	_spritesheet_metadata = {
 		tags = {},
 		frames = {},
@@ -200,40 +203,52 @@ func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPT
 	# Refresh filesystem
 	await _scan_filesystem()
 
-	# Collect all needed info
-	var source_file = _output.data_file
-	var sprite_sheet = _output.sprite_sheet
-	
 	# Try to access, decode and validate Aseprite JSON output
-	var file = FileAccess.open(source_file, FileAccess.READ)
+	var file = FileAccess.open(_output.data_file, FileAccess.READ)
 	if file == null:
 		return file.get_open_error()
-		
-	var test_json_conv = JSON.new()
-	test_json_conv.parse(file.get_as_text())
-	var content = test_json_conv.get_data()
-	
+
+	var json = JSON.new()
+	json.parse(file.get_as_text())
+	var content = json.get_data()
+
 	if not _aseprite.is_valid_spritesheet(content):
 		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
-	
-	# Save image metadata from JSON data
-	_spritesheet_metadata.meta = content.meta
 
-	# Save frames metadata from JSON data
+	# Save image and frames metadata from JSON data
+	_spritesheet_metadata.meta = content.meta
 	_spritesheet_metadata.frames = _aseprite.get_content_frames(content)
+	return content
+
+
+# Saves the spritesheet path and removes the JSON file when configured to.
+func _finalize_spritesheet_metadata() -> void:
+	# Save spritesheet path from the command output
+	_spritesheet_metadata.sprite_sheet = _output.sprite_sheet
+
+	# Remove the JSON file if config says so
+	if PopochiuEditorConfig.should_remove_source_files():
+		DirAccess.remove_absolute(_output.data_file)
+		await _scan_filesystem()
+
+
+func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPTY_STRING) -> int:
+	var content = await _load_spritesheet_file()
+	if typeof(content) != TYPE_DICTIONARY:
+		return content
 
 	# Save tags metadata, starting from user's selection
 	var tags = _options.get("tags").filter(func(tag): return tag.get("import"))
 
 	for t in tags:
 		# If a tag is specified, ignore every other ones
-		if not selected_tag.is_empty() and selected_tag != t.tag_name: 
+		if not selected_tag.is_empty() and selected_tag != t.tag_name:
 			continue
 		# Create a lookup table for tags
 		_spritesheet_metadata.tags[t.tag_name] = t
 
 	for ft in _aseprite.get_content_meta_tags(content):
-		if not _spritesheet_metadata.tags.has(ft.name): 
+		if not _spritesheet_metadata.tags.has(ft.name):
 			continue
 		_spritesheet_metadata.tags.get(ft.name).merge({
 			from = ft.from,
@@ -248,14 +263,7 @@ func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPT
 		t.from = 0
 		_spritesheet_metadata.tags[selected_tag] = t
 
-	# Save spritesheet path from the command output
-	_spritesheet_metadata.sprite_sheet = sprite_sheet
-
-	# Remove the JSON file if config says so
-	if PopochiuEditorConfig.should_remove_source_files():
-		DirAccess.remove_absolute(_output.data_file)
-		await _scan_filesystem()
-
+	await _finalize_spritesheet_metadata()
 	return RESULT_CODE.SUCCESS
 
 
@@ -263,31 +271,9 @@ func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPT
 # tag flow, child frame ranges keep their whole-file indices (they are sliced
 # against the group's `from` in _configure_group_animations).
 func _load_group_spritesheet_metadata(group: Dictionary) -> int:
-	_spritesheet_metadata = {
-		tags = {},
-		frames = {},
-		meta = {},
-		sprite_sheet = {}
-	}
-
-	await _scan_filesystem()
-
-	var source_file = _output.data_file
-	var sprite_sheet = _output.sprite_sheet
-
-	var file = FileAccess.open(source_file, FileAccess.READ)
-	if file == null:
-		return file.get_open_error()
-
-	var test_json_conv = JSON.new()
-	test_json_conv.parse(file.get_as_text())
-	var content = test_json_conv.get_data()
-
-	if not _aseprite.is_valid_spritesheet(content):
-		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
-
-	_spritesheet_metadata.meta = content.meta
-	_spritesheet_metadata.frames = _aseprite.get_content_frames(content)
+	var content = await _load_spritesheet_file()
+	if typeof(content) != TYPE_DICTIONARY:
+		return content
 
 	# Build the tag lookup from the group's children, keeping the user's per-tag
 	# options (loops, autoplays, ...) and the frame data gathered at scan time
@@ -306,20 +292,18 @@ func _load_group_spritesheet_metadata(group: Dictionary) -> int:
 		})
 		_spritesheet_metadata.tags[child.tag_name] = entry
 
-	# Save spritesheet path from the command output
-	_spritesheet_metadata.sprite_sheet = sprite_sheet
-
-	# Remove the JSON file if config says so
-	if PopochiuEditorConfig.should_remove_source_files():
-		DirAccess.remove_absolute(_output.data_file)
-		await _scan_filesystem()
-
+	await _finalize_spritesheet_metadata()
 	return RESULT_CODE.SUCCESS
 
 
-func _configure_animations() -> int:
+# Creates the default animation library when it's missing.
+func _ensure_animation_library() -> void:
 	if not _player.has_animation_library(_DEFAULT_AL):
 		_player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
+
+
+func _configure_animations() -> int:
+	_ensure_animation_library()
 
 	if _spritesheet_metadata.tags.size() > 0:
 		var result = RESULT_CODE.SUCCESS
@@ -338,8 +322,7 @@ func _configure_animations() -> int:
 # Creates one animation per child tag of a group, slicing the exported frames by
 # the child's range relative to the group's start frame.
 func _configure_group_animations(group: Dictionary) -> int:
-	if not _player.has_animation_library(_DEFAULT_AL):
-		_player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
+	_ensure_animation_library()
 
 	var group_from: int = group.from
 	var result := RESULT_CODE.SUCCESS
@@ -362,12 +345,16 @@ func _configure_group_animations(group: Dictionary) -> int:
 # Creates one animation from the given frames. [param anim_name] is the final
 # animation name (already prefix-stripped for group children). [param is_loopable]
 # is passed explicitly because group children are looked up by their full tag name.
-func _add_animation_frames(anim_name: String, frames: Array, direction = 'forward', is_loopable := false) -> int:
+func _add_animation_frames(
+	anim_name: String,
+	frames: Array,
+	direction: String = 'forward',
+	is_loopable: bool = false
+) -> int:
 	var animation_name = anim_name.to_snake_case()
 
 	# Create animation library if it doesn't exist
-	if not _player.has_animation_library(_DEFAULT_AL):
-		_player.add_animation_library(_DEFAULT_AL, AnimationLibrary.new())
+	_ensure_animation_library()
 
 	if not _player.get_animation_library(_DEFAULT_AL).has_animation(animation_name):
 		_player.get_animation_library(_DEFAULT_AL).add_animation(animation_name, Animation.new())

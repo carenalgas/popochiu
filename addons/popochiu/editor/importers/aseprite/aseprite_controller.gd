@@ -306,14 +306,14 @@ func _compile_regex(pattern):
 # style as the working import exports), because some sandboxed Aseprite
 # installs cannot write to the OS temp directory.
 func _fetch_tags_with_ranges(file_name: String) -> Array:
-	var temp_name := "popochiu_tags_%d_%d" % [Time.get_ticks_msec(), randi()]
-	var data_file := "res://%s.json" % temp_name
+	var relative_data_file := "./popochiu_tags_%d_%d.json" % [Time.get_ticks_msec(), randi()]
+	var data_file := relative_data_file.replace("./", "res://")
 	var output := []
 	var arguments := [
 		"-b",
 		"--list-tags",
 		"--data",
-		"./%s.json" % temp_name,
+		relative_data_file,
 		"--format",
 		"json-array",
 		file_name,
@@ -325,8 +325,11 @@ func _fetch_tags_with_ranges(file_name: String) -> Array:
 		printerr('[Popochiu] Aseprite: failed to export tags metadata (exit code %d)' % exit_code)
 		printerr(output)
 	elif not FileAccess.file_exists(data_file):
-		printerr('[Popochiu] Aseprite: export succeeded but no JSON data file was produced at %s' % data_file)
-	elif FileAccess.file_exists(data_file):
+		printerr(
+			'[Popochiu] Aseprite: export succeeded but no JSON data file was produced at %s'
+			% data_file
+		)
+	else:
 		var file := FileAccess.open(data_file, FileAccess.READ)
 		if file != null:
 			var json := JSON.new()

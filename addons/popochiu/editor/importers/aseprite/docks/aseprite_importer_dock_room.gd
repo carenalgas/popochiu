@@ -94,17 +94,7 @@ func _on_import_pressed() -> void:
 			# TODO: check Godot 4 standards, I can't find info
 			var prop_name: String = group.name.to_pascal_case()
 
-			# In case the prop is there, use the one we already have
-			var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
-			if prop == null:
-				prop = _create_prop(
-					prop_name,
-					group_cfg.get("prop_clickable", true),
-					group_cfg.get("prop_visible", true)
-				)
-			else:
-				prop.clickable = group_cfg.get("prop_clickable", true)
-				prop.visible = group_cfg.get("prop_visible", true)
+			var prop: PopochiuProp = _get_or_create_prop(props_container, prop_name, group_cfg)
 
 			var group_import: Dictionary = group.duplicate()
 			group_import.children = children
@@ -120,34 +110,27 @@ func _on_import_pressed() -> void:
 			# TODO: check Godot 4 standards, I can't find info
 			var prop_name: String = tag.tag_name.to_pascal_case()
 
-			# In case the prop is there, use the one we already have
-			var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
-			if prop == null:
-				prop = _create_prop(
-					prop_name,
-					tag.get("prop_clickable", true),
-					tag.get("prop_visible", true)
-				)
-			else:
-				prop.clickable = tag.get("prop_clickable", true)
-				prop.visible = tag.get("prop_visible", true)
+			var prop: PopochiuProp = _get_or_create_prop(props_container, prop_name, tag)
 
 			prop.set_meta("ANIM_NAME", tag.tag_name)
 			prop.set_meta("ANIM_AUTOPLAY", tag.get("autoplays", false))
 			prop.set_meta("ANIM_GROUP", {})
 			importable_names[tag.tag_name] = true
 
+	# Collect the props to (re)import in this run; drop the metadata from props
+	# whose source tag was removed from the file or whose group became invalid.
+	var props_to_import: Array[Node] = []
 	for prop in props_container.get_children():
-		if not prop.has_meta("ANIM_NAME"): continue
-
-		# Skip props whose source tag is no longer importable in this run
-		# (the tag was removed from the file or its group became invalid)
+		if not prop.has_meta("ANIM_NAME"):
+			continue
 		if not importable_names.has(prop.get_meta("ANIM_NAME", "")):
 			prop.remove_meta("ANIM_NAME")
 			prop.remove_meta("ANIM_AUTOPLAY")
 			prop.remove_meta("ANIM_GROUP")
 			continue
+		props_to_import.push_back(prop)
 
+	for prop in props_to_import:
 		# Make the output folder match the prop's folder
 		_options.output_folder = prop.scene_file_path.get_base_dir()
 
@@ -175,15 +158,12 @@ func _on_import_pressed() -> void:
 				# Otherwise, ensure autoplay animation is unset
 				_animation_creator.setup_autoplay(PopochiuEditorHelper.EMPTY_STRING)
 
-	for prop in props_container.get_children():
-		if not prop.has_meta("ANIM_NAME"): continue
-		# If autotrace is enabled, trace the interaction polygon from the sprite's alpha channel
-		# before packing the scene, so the polygon is included in the saved resource.
+		# If autotrace is enabled, trace the interaction polygon from the sprite's
+		# alpha channel before packing the scene, so the polygon is included in
+		# the saved resource.
 		if %AutotracePolygonsCheckButton.is_pressed():
 			PopochiuPolygonsHelper.trace_interaction_polygon_direct(prop)
 
-	for prop in props_container.get_children():
-		if not prop.has_meta("ANIM_NAME"): continue
 		# Save the prop
 		result = await _save_prop(prop)
 
@@ -233,6 +213,22 @@ func _customize_filter_ui() -> void:
 	%ClickableBulk.visible = true
 	%AutoplaysBulk.visible = true
 	%AutotracePolygons.visible = true
+
+
+# Returns the prop with the given name, creating it if needed and applying the
+# clickable/visible flags from the tag or group configuration.
+func _get_or_create_prop(props_container: Node, prop_name: String, cfg: Dictionary) -> PopochiuProp:
+	var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
+	if prop == null:
+		prop = _create_prop(
+			prop_name,
+			cfg.get("prop_clickable", true),
+			cfg.get("prop_visible", true)
+		)
+	else:
+		prop.clickable = cfg.get("prop_clickable", true)
+		prop.visible = cfg.get("prop_visible", true)
+	return prop
 
 
 func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = true) -> PopochiuProp:

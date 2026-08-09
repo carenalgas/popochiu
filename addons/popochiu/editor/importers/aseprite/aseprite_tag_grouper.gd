@@ -257,7 +257,12 @@ func _strip_group_from_name(remainder: String, lower_group: String) -> String:
 # matches (case-insensitive, with a word boundary after the group name), or ""
 # when none matches. [param allow_exact] also accepts a name that is exactly the
 # group name (used by the safety net, not by the animation association).
-func _find_matching_group(remainder: String, group_names: Dictionary, duplicate_groups: Dictionary, allow_exact: bool) -> String:
+func _find_matching_group(
+	remainder: String,
+	group_names: Dictionary,
+	duplicate_groups: Dictionary,
+	allow_exact: bool
+) -> String:
 	var matched_lower := ""
 	var matched_display := ""
 	for lower in group_names:

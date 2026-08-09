@@ -355,32 +355,14 @@ func _check_aseprite() -> int:
 	return RESULT_CODE.SUCCESS	
 
 
-func _list_tags(file: String) -> Variant:
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	return _aseprite.list_tags(file)
-
-
 # Slow variant used only at import time: fetches the tag frame ranges needed to
-# export group spritesheets. The dock scan only needs names (see _list_tags).
+# export group spritesheets. The dock scan only needs names.
 func _list_tags_with_ranges(file: String) -> Variant:
 	if not _aseprite.check_command_path():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
 	if not _aseprite.test_command():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
 	return _aseprite.list_tags_with_ranges(file)
-
-
-# TODO: Currently unused. keeping this as reference
-# to populate a checkable list of layers
-func _list_layers(file: String, only_visibles = false):
-	if not _aseprite.check_command_path():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-	if not _aseprite.test_command():
-		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	return _aseprite.list_layers(file, only_visibles)
 
 
 func _load_config(cfg) -> void:
@@ -507,7 +489,7 @@ func _populate_tags(tags: Array) -> void:
 	if not _supports_groups():
 		_populate_flat_tags(tags)
 		_update_tags_cache()
-		_update_bulk_toggles_state() # Update bulk toggles after populating tags
+		_update_all_bulk_toggles_state() # Update bulk toggles after populating tags
 		return
 
 	var grouper := PopochiuAsepriteTagGrouper.new()
@@ -531,7 +513,7 @@ func _populate_tags(tags: Array) -> void:
 			_add_single_tag_row(tag)
 
 	_update_tags_cache()
-	_update_bulk_toggles_state() # Update bulk toggles after populating tags
+	_update_all_bulk_toggles_state() # Update bulk toggles after populating tags
 
 
 # Populates the tag list without group handling (used by importers that don't
@@ -540,11 +522,7 @@ func _populate_flat_tags(tags: Array) -> void:
 	for t in tags:
 		if t.tag_name == PopochiuEditorHelper.EMPTY_STRING:
 			continue
-		var tag_row: AnimationTagRow = _animation_tag_row_scene.instantiate()
-		%Tags.add_child(tag_row)
-		tag_row.init(t)
-		_connect_tag_row_signals(tag_row)
-		_customize_tag_ui(tag_row)
+		_add_single_tag_row(t)
 
 
 # Adds a group header row and its child rows (indented) to the tag list.
@@ -675,28 +653,9 @@ func _get_tags_from_ui() -> Array:
 	return tags_list
 
 
-func _get_tags_from_source() -> Array:
-	var tags_found = _list_tags(ProjectSettings.globalize_path(_source))
-	if typeof(tags_found) == TYPE_INT:
-		PopochiuUtils.print_error(RESULT_CODE.get_error_message(tags_found))
-		return []
-	var tags_list = []
-	for t in tags_found:
-		# Plain tag names arrive as Strings (from --list-tags); they are wrapped
-		# into dicts so the rest of the pipeline can treat every tag uniformly.
-		if typeof(t) == TYPE_STRING:
-			if t == PopochiuEditorHelper.EMPTY_STRING:
-				continue
-			tags_list.push_back({ "tag_name": t })
-		elif typeof(t) == TYPE_DICTIONARY:
-			if t.get("tag_name", PopochiuEditorHelper.EMPTY_STRING) == PopochiuEditorHelper.EMPTY_STRING:
-				continue
-			tags_list.push_back(t)
-	return tags_list
-
-
-# Like _get_tags_from_source but also reads the frame ranges. Only used at import
-# time (it is slow, since it makes Aseprite export the sprite metadata).
+# Reads the tags from the source file together with their frame ranges. Only
+# used at import time (it is slow, since it makes Aseprite export the sprite
+# metadata).
 func _get_tags_from_source_with_ranges() -> Array:
 	var tags_found = _list_tags_with_ranges(ProjectSettings.globalize_path(_source))
 	if typeof(tags_found) == TYPE_INT:
@@ -864,48 +823,6 @@ func _handle_animation_in_player(tag_name: String, animation_player: AnimationPl
 				PopochiuUtils.print_warning("Unknown action for animation handling: %s." % action)
 	else:
 		PopochiuUtils.print_warning("No animation named '%s' found in character's AnimationPlayer." % animation_name)
-
-
-# Called after populating tags or when their state changes.
-# Updates the state of bulk action buttons based on individual tag states.
-func _update_bulk_toggles_state() -> void:
-	# Handle ImportBulk toggle state
-	var rows := _get_all_tag_rows()
-	if rows.is_empty():
-		return
-		
-	var all_import := true
-	var none_import := true
-	
-	# Check all tags to determine the collective state
-	for tag_row in rows:
-		var cfg: Dictionary = tag_row.get_cfg()
-		if not cfg.has("import"):
-			continue
-		if cfg.import:
-			none_import = false
-		else:
-			all_import = false
-	
-	# Set the toggle state based on the collective state
-	if all_import:
-		# All tags are set to import
-		%ImportBulk.set_pressed_no_signal(true)
-		%ImportBulk.set_meta("is_dirty", false)
-		%ImportBulk.remove_theme_color_override("icon_normal_color")
-	elif none_import:
-		# No tags are set to import
-		%ImportBulk.set_pressed_no_signal(false)
-		%ImportBulk.set_meta("is_dirty", false)
-		%ImportBulk.remove_theme_color_override("icon_normal_color")
-	else:
-		# Mixed state - mark as "dirty"
-		%ImportBulk.set_pressed_no_signal(false)
-		%ImportBulk.set_meta("is_dirty", true)
-		%ImportBulk.add_theme_color_override(
-			"icon_normal_color",
-			get_theme_color("disabled_font_color", "Editor")
-		)
 
 
 # Updates the state of all visible bulk toggle buttons based on individual tag states.
