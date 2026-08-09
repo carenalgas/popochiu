@@ -24,7 +24,7 @@ var _display_name: String = PopochiuEditorHelper.EMPTY_STRING
 var _group_name: String = PopochiuEditorHelper.EMPTY_STRING
 
 #region Public #####################################################################################
-func init(tag_cfg: Dictionary):
+func init(tag_cfg: Dictionary) -> void:
 	# Manually initialize node references if not already done
 	# Used to be @onready var but it doesn't work because the
 	# container gets repopulated without the script being reloaded.
@@ -36,7 +36,7 @@ func init(tag_cfg: Dictionary):
 	visible_toggle = $HBoxContainer/Panel/HBoxContainer/Visible
 	clickable_toggle = $HBoxContainer/Panel/HBoxContainer/Clickable
 	delete_anim_button = $HBoxContainer/DeleteAnim
-	
+
 	# Set icons manually too:
 	# 1. Common toggles icons
 	import_toggle.icon = get_theme_icon('Load', 'EditorIcons')
@@ -47,7 +47,7 @@ func init(tag_cfg: Dictionary):
 	clickable_toggle.icon = get_theme_icon('ToolSelect', 'EditorIcons')
 	# 3. Delete animation icon
 	delete_anim_button.icon = get_theme_icon('Remove', 'EditorIcons')
-	
+
 	# The action buttons live in a right-anchored grid. Only leading columns
 	# (Visible/Clickable) are ever hidden on this row, so the remaining buttons
 	# keep their right-anchored columns and stay aligned with every other row
@@ -59,7 +59,7 @@ func init(tag_cfg: Dictionary):
 	separator.visible = false
 	import_toggle.visible = true
 	loops_toggle.visible = true
-	
+
 	# Connect tag name button pressed signal if not already connected
 	if not tag_name_label.pressed.is_connected(_on_tag_name_pressed):
 		tag_name_label.pressed.connect(_on_tag_name_pressed)
@@ -71,8 +71,8 @@ func init(tag_cfg: Dictionary):
 	# Continue with initialization
 	if tag_cfg.tag_name == null or tag_cfg.tag_name == PopochiuEditorHelper.EMPTY_STRING:
 		printerr(RESULT_CODE.get_error_message(RESULT_CODE.ERR_UNNAMED_TAG_DETECTED))
-		return false
-	
+		return
+
 	_anim_tag_state = _load_default_tag_state()
 	_anim_tag_state.merge(tag_cfg, true)
 	_setup_scene()

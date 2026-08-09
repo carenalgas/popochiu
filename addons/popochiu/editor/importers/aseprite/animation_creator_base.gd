@@ -7,7 +7,8 @@ extends RefCounted
 ## from Aseprite files for different node types.
 
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
-const _DEFAULT_AL = PopochiuEditorHelper.EMPTY_STRING # Empty string equals default "Global" animation library
+# Empty string equals default "Global" animation library
+const _DEFAULT_AL = PopochiuEditorHelper.EMPTY_STRING
 
 # Vars configured on initialization
 var _file_system: EditorFileSystem
@@ -81,7 +82,9 @@ func setup_autoplay(animation: String = PopochiuEditorHelper.EMPTY_STRING) -> vo
 
 #region Protected #################################################################################
 ## Main animation creation logic that handles both full-file and tag-based imports.
-func _create_animations(target_node: Node, options: Dictionary, tag: String = PopochiuEditorHelper.EMPTY_STRING) -> int:
+func _create_animations(
+	target_node: Node, options: Dictionary, tag: String = PopochiuEditorHelper.EMPTY_STRING
+) -> int:
 	var result := _setup_common(target_node, options)
 	if result != RESULT_CODE.SUCCESS:
 		return result
@@ -96,7 +99,7 @@ func _create_animations(target_node: Node, options: Dictionary, tag: String = Po
 		result = await _create_spritesheet_from_file()
 	else:
 		result = await _create_spritesheet_from_tag(tag)
-	
+
 	if result != RESULT_CODE.SUCCESS:
 		return result
 
@@ -108,7 +111,7 @@ func _create_animations(target_node: Node, options: Dictionary, tag: String = Po
 	# Set the texture and configure animations
 	_setup_texture()
 	result = _configure_animations()
-	
+
 	return result
 
 
@@ -121,7 +124,7 @@ func _setup_common(target_node: Node, options: Dictionary) -> int:
 			RESULT_CODE.get_error_message(RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND)
 		)
 		return RESULT_CODE.ERR_NO_ANIMATION_PLAYER_FOUND
-	
+
 	_options = options
 	return RESULT_CODE.SUCCESS
 
@@ -255,7 +258,7 @@ func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPT
 			to = ft.to,
 			direction = ft.direction,
 		})
-	
+
 	# If a tag is specified, adjust frame range
 	if not selected_tag.is_empty():
 		var t = _spritesheet_metadata.tags[selected_tag]
@@ -361,7 +364,7 @@ func _add_animation_frames(
 
 	var animation = _player.get_animation(animation_name)
 	_create_meta_tracks(animation)
-	
+
 	var frame_track: String = _get_frame_property_track()
 	var frame_track_index = _create_track(_target_sprite, animation, frame_track)
 
@@ -434,13 +437,13 @@ func _perform_common_checks() -> int:
 
 	if _target_sprite == null:
 		return RESULT_CODE.ERR_NO_SPRITE_FOUND
-	
+
 	if typeof(_options.get("tags")) != TYPE_ARRAY:
 		return RESULT_CODE.ERR_TAGS_OPTIONS_ARRAY_EMPTY
 
 	if _options.wipe_old_animations:
 		_remove_animations_from_player(_player)
-	
+
 	return RESULT_CODE.SUCCESS
 
 

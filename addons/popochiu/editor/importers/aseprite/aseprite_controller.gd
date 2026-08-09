@@ -61,7 +61,7 @@ func export_layer(file_name: String, layer_name: String, output_folder: String, 
 	var arguments = _export_command_common_arguments(file_name, data_file, sprite_sheet)
 	arguments.push_front(layer_name)
 	arguments.push_front("--layer")
-	
+
 	_add_sheet_type_arguments(arguments, options)
 
 	var exit_code = _execute(arguments, output)
@@ -131,7 +131,7 @@ func export_frame_range(
 	}
 
 
-func list_layers(file_name: String, only_visible = false) -> Array:
+func list_layers(file_name: String, only_visible: bool = false) -> Array:
 	var output = []
 	var arguments = ["-b", "--list-layers", file_name]
 
@@ -184,23 +184,23 @@ func list_tags_with_ranges(file_name: String) -> Array:
 	return tags
 
 
-func is_valid_spritesheet(content):
+func is_valid_spritesheet(content: Dictionary) -> bool:
 	return content.has("frames") and content.has("meta") and content.meta.has('image')
 
 
-func get_content_frames(content):
-	return content.frames if typeof(content.frames) == TYPE_ARRAY  else content.frames.values()
+func get_content_frames(content: Dictionary) -> Array:
+	return content.frames if typeof(content.frames) == TYPE_ARRAY else content.frames.values()
 
 
-func get_content_meta_tags(content):
+func get_content_meta_tags(content: Dictionary) -> Array:
 	return content.meta.frameTags if content.meta.has("frameTags")  else []
 
 
-func check_command_path():
+func check_command_path() -> bool:
 	# On Linux, MacOS or other *nix platforms, nothing to do
 	if not OS.get_name() in ["Windows", "UWP"]:
 		return true
-	
+
 	# On Windows, OS.Execute() calls trigger an uncatchable
 	# internal error if the invoked executable is not found.
 	# Since the error is unclear, we have to check that the aseprite
@@ -213,9 +213,8 @@ func check_command_path():
 		FileAccess.file_exists(_get_aseprite_command())
 
 
-func test_command():
-	var exit_code = OS.execute(_get_aseprite_command(), ['--version'], [], true)
-	return exit_code == 0
+func test_command() -> bool:
+	return OS.execute(_get_aseprite_command(), ['--version'], [], true) == 0
 
 
 
@@ -252,10 +251,10 @@ func _get_exception_layers(file_name: String, exception_pattern: String) -> Arra
 	return exception_layers
 
 
-func _sanitize_list_output(output) -> Array:
+func _sanitize_list_output(output: Array) -> Array:
 	if output.is_empty():
 		return output
-	
+
 	var raw = output[0].split('\n')
 	var sanitized = []
 	for s in raw:
@@ -277,7 +276,7 @@ func _export_command_common_arguments(source_name: String, data_path: String, sp
 	]
 
 
-func _execute(arguments, output) -> int:
+func _execute(arguments: Array, output: Array) -> int:
 	return OS.execute(_get_aseprite_command(), arguments, output, true, true)
 
 
@@ -289,15 +288,16 @@ func _get_file_basename(file_path: String) -> String:
 	return file_path.get_file().trim_suffix('.%s' % file_path.get_extension())
 
 
-func _compile_regex(pattern):
+func _compile_regex(pattern: String) -> RegEx:
 	if pattern == PopochiuEditorHelper.EMPTY_STRING:
-		return
+		return null
 
 	var rgx = RegEx.new()
 	if rgx.compile(pattern) == OK:
 		return rgx
 
 	printerr('[Popochiu] exception regex error')
+	return null
 
 
 # Exports only the sprite metadata (no sheet, so it is fast) and reads the tag

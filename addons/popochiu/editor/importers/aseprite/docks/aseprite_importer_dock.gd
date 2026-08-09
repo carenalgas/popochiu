@@ -72,7 +72,7 @@ var _bulk_toggle_configs = {
 	}
 }
 
-#region Public ######################################################################################
+#region Public #####################################################################################
 func init() -> void:
 	# Connect signals
 
@@ -95,11 +95,11 @@ func init() -> void:
 		var bulk_toggle = get_node_or_null("%" + bulk_toggle_name)
 		if not bulk_toggle or not bulk_toggle.visible:
 			continue
-		
+
 		# Disconnect all existing connections to the "toggled" signal to prevent duplicates
 		for connection in bulk_toggle.get_signal_connection_list("toggled"):
 			bulk_toggle.toggled.disconnect(connection.callable)
-		
+
 		# Use a lambda to capture the bulk toggle name for the handler
 		bulk_toggle.toggled.connect(
 			func(pressed): _on_bulk_toggle_toggled(bulk_toggle_name, pressed)
@@ -109,7 +109,7 @@ func init() -> void:
 
 	# Update default values for bulk toggles
 	_update_default_toggle_values()
-	
+
 	# Initialize styles and UI elements visibility
 	_set_elements_styles()
 	_customize_filter_ui()
@@ -185,12 +185,12 @@ func _delete_animation_for_tag(tag_name: String) -> void:
 #endregion
 
 
-#region Signals Handlers ####################################################################################
+#region Signals Handlers ###########################################################################
 # Filters the tag list based on the search text in the FilterField.
 # Tags whose names contain the search string (case-insensitive, ignoring spaces) will be shown.
 func _on_filter_text_changed(new_text: String) -> void:
 	var filter_text := new_text.strip_edges().to_lower().replace(" ", "")
-	
+
 	for tag_row in _get_all_tag_rows():
 		if filter_text.is_empty():
 			# Show all tags when filter is empty
@@ -244,7 +244,7 @@ func _on_rescan_pressed() -> void:
 func _on_import_pressed() -> void:
 	if _importing:
 		return
-	
+
 	_importing = true
 	_root_node = get_tree().get_edited_scene_root()
 
@@ -252,12 +252,12 @@ func _on_import_pressed() -> void:
 		PopochiuResources.INVENTORY_ITEMS_PATH if _root_node == null
 		else _root_node.scene_file_path.get_base_dir()
 	)
-	
+
 	if _source == PopochiuEditorHelper.EMPTY_STRING:
 		_show_message("Aseprite file not selected")
 		_importing = false
 		return
-	
+
 	# Let the user know something is happening: on re-imports Godot does not show
 	# its filesystem progress bars, so without this popup the operation looks
 	# frozen. It doubles as the final summary (see _finish_import_message).
@@ -283,7 +283,7 @@ func _on_reset_pressed() -> void:
 
 func _on_request_delete_anim(tag_name: String) -> void:
 	var delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
-	
+
 	delete_dialog.title = "Remove animation for tag %s?" % tag_name
 	var anim_name := tag_name.to_snake_case()
 	delete_dialog.message = (
@@ -292,14 +292,14 @@ func _on_request_delete_anim(tag_name: String) -> void:
 	)
 	delete_dialog.ask = "Remove the animation for tag [b]%s[/b]?" % tag_name
 	delete_dialog.on_confirmed = _delete_animation_for_tag.bind(tag_name)
-	
+
 	PopochiuEditorHelper.show_delete_confirmation(delete_dialog)
 
 
 # Called when project settings that affect default values have changed.
 func _on_project_settings_changed() -> void:
 	_update_default_toggle_values()
-	
+
 	# Only update UI if it's already populated
 	if %Tags.get_child_count() > 0:
 		_update_all_bulk_toggles_state()
@@ -315,23 +315,24 @@ func _on_theme_changed() -> void:
 # Determines the action based on whether the toggle is in a clean or "dirty" state.
 func _on_bulk_toggle_toggled(bulk_toggle_name: String, button_pressed: bool) -> void:
 	var bulk_toggle = get_node("%" + bulk_toggle_name)
-	
+
 	# If all tags are in a consistent state, simply toggle them all
 	if not bulk_toggle.has_meta("is_dirty") or not bulk_toggle.get_meta("is_dirty"):
 		_set_all_row_toggle_states(bulk_toggle_name, button_pressed)
 		return
-	
+
 	# If in a mixed state ("dirty"), show confirmation dialog
 	var confirmation_dialog = _show_confirmation(
-		"This will reset all " + bulk_toggle_name.replace("Bulk", "").to_lower() + " toggles to their default state.\n" +
-		"Your individual tag preferences will be lost. Are you sure?",
+		"This will reset all " + bulk_toggle_name.replace("Bulk", "").to_lower()
+		+ " toggles to their default state.\n"
+		+ "Your individual tag preferences will be lost. Are you sure?",
 		"Confirmation required!"
 	)
-	
+
 	confirmation_dialog.get_ok_button().pressed.connect(
 		_reset_toggle_preferences.bind(bulk_toggle_name)
 	)
-	
+
 	# Reset the toggle to off state since we need confirmation
 	bulk_toggle.set_pressed_no_signal(false)
 
@@ -348,11 +349,11 @@ func _on_tag_selected(tag_name: String) -> void:
 func _check_aseprite() -> int:
 	if not _aseprite.check_command_path():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
-	
+
 	if not _aseprite.test_command():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	
-	return RESULT_CODE.SUCCESS	
+
+	return RESULT_CODE.SUCCESS
 
 
 # Slow variant used only at import time: fetches the tag frame ranges needed to
@@ -536,8 +537,12 @@ func _add_group_rows(group: Dictionary, tags: Array) -> void:
 		"to": group.get("to", -1),
 		"direction": group.get("direction", "forward"),
 		"import": group_cfg.get("import", PopochiuConfig.is_default_animation_import_enabled()),
-		"prop_visible": group_cfg.get("prop_visible", PopochiuConfig.is_default_animation_prop_visible()),
-		"prop_clickable": group_cfg.get("prop_clickable", PopochiuConfig.is_default_animation_prop_clickable()),
+		"prop_visible": group_cfg.get(
+			"prop_visible", PopochiuConfig.is_default_animation_prop_visible()
+		),
+		"prop_clickable": group_cfg.get(
+			"prop_clickable", PopochiuConfig.is_default_animation_prop_clickable()
+		),
 	})
 
 	var group_row: AnimationGroupRow = _animation_group_row_scene.instantiate()
@@ -621,7 +626,7 @@ func _merge_with_cache(tags: Array) -> Array:
 	var result = []
 	for t in _tags_cache:
 		tags_cache_index[t.tag_name] = t
-	
+
 	for i in tags.size():
 		if tags_cache_index.has(tags[i].tag_name):
 			# Keep the user's settings from the cache, but refresh the frame data
@@ -683,22 +688,22 @@ func _show_message(
 	method := PopochiuEditorHelper.EMPTY_STRING
 ) -> void:
 	var warning_dialog = AcceptDialog.new()
-	
+
 	if title != PopochiuEditorHelper.EMPTY_STRING:
 		warning_dialog.title = title
-	
+
 	warning_dialog.dialog_text = message
 	warning_dialog.popup_window = true
-	
+
 	var callback := Callable(warning_dialog, "queue_free")
-	
+
 	if is_instance_valid(object) and not method.is_empty():
 		callback = func():
 			object.call(method)
-	
+
 	warning_dialog.confirmed.connect(callback)
 	warning_dialog.close_requested.connect(callback)
-	
+
 	PopochiuEditorHelper.show_dialog(warning_dialog)
 
 
@@ -783,14 +788,16 @@ func _set_elements_styles() -> void:
 func _show_warning() -> void:
 	%Warning.visible = true
 	%Importer.visible = false
-	
+
 
 func _show_importer() -> void:
 	%Warning.visible = false
 	%Importer.visible = true
 
 
-func _handle_animation_in_player(tag_name: String, animation_player: AnimationPlayer, action: int = HANDLE_ANIM_SELECT) -> void:
+func _handle_animation_in_player(
+	tag_name: String, animation_player: AnimationPlayer, action: int = HANDLE_ANIM_SELECT
+) -> void:
 	if tag_name.is_empty():
 		PopochiuUtils.print_warning("No tag name provided for selection.")
 		return
@@ -822,14 +829,16 @@ func _handle_animation_in_player(tag_name: String, animation_player: AnimationPl
 			_:
 				PopochiuUtils.print_warning("Unknown action for animation handling: %s." % action)
 	else:
-		PopochiuUtils.print_warning("No animation named '%s' found in character's AnimationPlayer." % animation_name)
+		PopochiuUtils.print_warning(
+			"No animation named '%s' found in character's AnimationPlayer." % animation_name
+		)
 
 
 # Updates the state of all visible bulk toggle buttons based on individual tag states.
-func _update_all_bulk_toggles_state() -> void:	
+func _update_all_bulk_toggles_state() -> void:
 	if %Tags.get_child_count() == 0:
 		return
-		
+
 	# Update each bulk toggle that's visible in the UI
 	for bulk_toggle_name in _bulk_toggle_configs.keys():
 		if get_node_or_null("%" + bulk_toggle_name):
@@ -841,7 +850,7 @@ func _set_bulk_toggle_visual_state(bulk_toggle_name: String, status: BulkActionS
 	var bulk_toggle = get_node("%" + bulk_toggle_name)
 	if not bulk_toggle:
 		return
-	
+
 	match status:
 		BulkActionStatus.ON:
 			bulk_toggle.set_pressed_no_signal(true)
@@ -875,7 +884,9 @@ func _update_bulk_toggle_state(bulk_toggle_name: String) -> void:
 		var cfg: Dictionary = tag_row.get_cfg()
 		if not cfg.has(config.row_property):
 			continue
-		var current_row_status = BulkActionStatus.ON if cfg.get(config.row_property) else BulkActionStatus.OFF
+		var current_row_status = (
+			BulkActionStatus.ON if cfg.get(config.row_property) else BulkActionStatus.OFF
+		)
 
 		if first_iteration:
 			# Set initial status from first row
@@ -894,7 +905,7 @@ func _update_bulk_toggle_state(bulk_toggle_name: String) -> void:
 func _set_all_row_toggle_states(bulk_toggle_name: String, toggle_state: bool) -> void:
 	var config = _bulk_toggle_configs[bulk_toggle_name]
 	var seen_groups := {}
-	
+
 	for tag_row in _get_all_tag_rows():
 		var toggle = tag_row.get(config.row_toggle)
 		if not toggle:
@@ -914,11 +925,11 @@ func _set_all_row_toggle_states(bulk_toggle_name: String, toggle_state: bool) ->
 				seen_groups[group_name] = true
 
 		toggle.set_pressed_no_signal(toggle_state)
-	
+
 		# Update the underlying data
 		var cfg: Dictionary = tag_row.get_cfg()
 		cfg[config.row_property] = toggle_state
-	
+
 	# Update the bulk toggle to reflect the new state
 	var status = BulkActionStatus.ON if toggle_state else BulkActionStatus.OFF
 	_set_bulk_toggle_visual_state(bulk_toggle_name, status)
@@ -930,7 +941,7 @@ func _set_all_row_toggle_states(bulk_toggle_name: String, toggle_state: bool) ->
 func _reset_toggle_preferences(bulk_toggle_name: String) -> void:
 	var config = _bulk_toggle_configs[bulk_toggle_name]
 	var default_value: bool = config.get("default_value", false)
-		
+
 	_set_all_row_toggle_states(bulk_toggle_name, default_value)
 
 
@@ -939,8 +950,14 @@ func _update_default_toggle_values() -> void:
 	# assign local values
 	_bulk_toggle_configs["LoopsBulk"]["default_value"] = _get_default_loop_behavior()
 	_bulk_toggle_configs["AutoplaysBulk"]["default_value"] = _get_default_autoplay_behavior()
-	
+
 	# Assign general configuration defaults
-	_bulk_toggle_configs["ImportBulk"]["default_value"] = PopochiuConfig.is_default_animation_import_enabled()
-	_bulk_toggle_configs["VisibleBulk"]["default_value"] = PopochiuConfig.is_default_animation_prop_visible()
-	_bulk_toggle_configs["ClickableBulk"]["default_value"] = PopochiuConfig.is_default_animation_prop_clickable()
+	_bulk_toggle_configs["ImportBulk"]["default_value"] = (
+		PopochiuConfig.is_default_animation_import_enabled()
+	)
+	_bulk_toggle_configs["VisibleBulk"]["default_value"] = (
+		PopochiuConfig.is_default_animation_prop_visible()
+	)
+	_bulk_toggle_configs["ClickableBulk"]["default_value"] = (
+		PopochiuConfig.is_default_animation_prop_clickable()
+	)

@@ -1,12 +1,13 @@
 @tool
 extends "res://addons/popochiu/editor/importers/aseprite/docks/aseprite_importer_dock.gd"
 
-var _animation_creator := preload(\
-"res://addons/popochiu/editor/importers/aseprite/animation_creator_sprite2d.gd").new()
+var _animation_creator := preload(
+	"res://addons/popochiu/editor/importers/aseprite/animation_creator_sprite2d.gd"
+).new()
 
 
 
-#region Public ######################################################################################
+#region Public #####################################################################################
 func init() -> void:
 	# Instantiate animation creator
 	_animation_creator.init(_aseprite, file_system)
@@ -34,6 +35,7 @@ func _on_import_pressed() -> void:
 
 	var props_container := _root_node.get_node("Props")
 	var result: int = RESULT_CODE.SUCCESS
+	var has_errors := false
 
 	# Refresh the frame ranges from the source file right now (this is the slow
 	# operation, but it only happens on import, never on scan). Groups are built
@@ -158,6 +160,11 @@ func _on_import_pressed() -> void:
 				# Otherwise, ensure autoplay animation is unset
 				_animation_creator.setup_autoplay(PopochiuEditorHelper.EMPTY_STRING)
 
+		if result != RESULT_CODE.SUCCESS:
+			has_errors = true
+			PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
+			continue
+
 		# If autotrace is enabled, trace the interaction polygon from the sprite's
 		# alpha channel before packing the scene, so the polygon is included in
 		# the saved resource.
@@ -166,15 +173,14 @@ func _on_import_pressed() -> void:
 
 		# Save the prop
 		result = await _save_prop(prop)
+		if result != RESULT_CODE.SUCCESS:
+			has_errors = true
+			PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 
 	# TODO: maybe check if this is better done with signals
 	_importing = false
 
-	var has_errors := typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS
 	var importer_errors: Array = analysis.get("errors", [])
-
-	if has_errors:
-		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
 
 	for importer_error in importer_errors:
 		PopochiuUtils.print_error(importer_error)
@@ -238,7 +244,7 @@ func _create_prop(name: String, is_clickable: bool = true, is_visible: bool = tr
 	param.room = _root_node
 	param.is_interactive = is_clickable
 	param.is_visible = is_visible
-	
+
 	if factory.create(param) != ResultCodes.SUCCESS:
 		return
 
@@ -263,14 +269,18 @@ func _get_scene_path_for_prop(prop_name: String) -> String:
 	# In a room, props are in the "Props" node
 	var props_container := target_node.get_node_or_null("Props")
 	if not is_instance_valid(props_container):
-		PopochiuUtils.print_warning("No Props container found in room. Are you sure this is a valid room?")
+		PopochiuUtils.print_warning(
+			"No Props container found in room. Are you sure this is a valid room?"
+		)
 		return PopochiuEditorHelper.EMPTY_STRING
 
 	# Find the prop with the matching name
 	var prop: PopochiuProp = props_container.get_node_or_null(prop_name)
 
 	if not is_instance_valid(prop):
-		PopochiuUtils.print_warning("No prop named '%s' found in room. Did you import this animation?" % prop_name)
+		PopochiuUtils.print_warning(
+			"No prop named '%s' found in room. Did you import this animation?" % prop_name
+		)
 		return PopochiuEditorHelper.EMPTY_STRING
 
 	return prop.scene_file_path
@@ -301,7 +311,10 @@ func _select_animation(tag_name: String) -> void:
 
 	var prop_scene_path := _get_scene_path_for_prop(prop_name)
 	if prop_scene_path.is_empty():
-		PopochiuUtils.print_warning("Prop '%s' does not have a scene file path. The prop may be corrupted, try to reimport it." % prop_name)
+		PopochiuUtils.print_warning(
+			"Prop '%s' does not have a scene file path. " % prop_name
+			+ "The prop may be corrupted, try to reimport it."
+		)
 		return
 
 	# Open the prop's scene
@@ -313,7 +326,10 @@ func _select_animation(tag_name: String) -> void:
 	# Get the current scene root (should be the prop now)
 	var prop_scene_root: Node = EditorInterface.get_edited_scene_root()
 	if not is_instance_valid(prop_scene_root):
-		PopochiuUtils.print_warning("Failed to get edited scene root for prop '%s'. The prop may be corrupted, try to reimport it." % prop_name)
+		PopochiuUtils.print_warning(
+			"Failed to get edited scene root for prop '%s'. " % prop_name
+			+ "The prop may be corrupted, try to reimport it."
+		)
 		return
 
 	# Find the AnimationPlayer in the prop scene
@@ -330,21 +346,24 @@ func _delete_animation_for_tag(tag_name: String) -> void:
 
 	var prop_scene_path := _get_scene_path_for_prop(prop_name)
 	if prop_scene_path.is_empty():
-		PopochiuUtils.print_warning("Prop '%s' does not have a scene file path. The prop may be corrupted, try to reimport it." % prop_name)
+		PopochiuUtils.print_warning(
+			"Prop '%s' does not have a scene file path. " % prop_name
+			+ "The prop may be corrupted, try to reimport it."
+		)
 		return
-	
+
 	# Load the scene without opening it in the editor
 	var packed_scene: PackedScene = load(prop_scene_path)
 	if not packed_scene:
 		PopochiuUtils.print_warning("Failed to load scene for prop '%s'" % prop_name)
 		return
-	
+
 	# Instance the scene to work with it in memory
 	var prop_scene_root: Node = packed_scene.instantiate()
 	if not is_instance_valid(prop_scene_root):
 		PopochiuUtils.print_warning("Failed to instantiate scene for prop '%s'" % prop_name)
 		return
-	
+
 	# Find the AnimationPlayer in the prop scene
 	var animation_player: AnimationPlayer = prop_scene_root.get_node_or_null("AnimationPlayer")
 	_handle_animation_in_player(anim_name, animation_player, HANDLE_ANIM_DELETE)

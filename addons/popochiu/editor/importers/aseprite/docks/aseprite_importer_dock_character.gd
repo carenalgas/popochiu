@@ -6,7 +6,7 @@ var _animation_creator := preload(
 ).new()
 
 
-#region Public ######################################################################################
+#region Public #####################################################################################
 func init() -> void:
 	# Instantiate animation creator
 	_animation_creator.init(_aseprite, file_system)
@@ -26,7 +26,7 @@ func _on_import_pressed() -> void:
 	# Set everything up
 	# This will populate _root_node and _options class variables
 	super()
-	
+
 	var result := await _animation_creator.create_all_animations(
 		target_node, _options
 	)
