@@ -30,76 +30,43 @@ func export_file(file_name: String, output_folder: String, options: Dictionary) 
 		printerr(output)
 		return {}
 
-	return {
-		'data_file': data_file.replace("./", "res://"),
-		"sprite_sheet": sprite_sheet.replace("./", "res://")
-	}
+	return _export_result(data_file, sprite_sheet)
 
 
 func export_layers(file_name: String, output_folder: String, options: Dictionary) -> Array:
 	var exception_pattern = options.get('exception_pattern', PopochiuEditorHelper.EMPTY_STRING)
 	var only_visible_layers = options.get('only_visible_layers', false)
-	var basename = _get_file_basename(file_name)
 	var layers = list_layers(file_name, only_visible_layers)
 	var exception_regex = _compile_regex(exception_pattern)
 
 	var output = []
 
 	for layer in layers:
-		if layer != PopochiuEditorHelper.EMPTY_STRING and (not exception_regex or exception_regex.search(layer) == null):
+		if (
+			layer != PopochiuEditorHelper.EMPTY_STRING
+			and (not exception_regex or exception_regex.search(layer) == null)
+		):
 			output.push_back(export_layer(file_name, layer, output_folder, options))
 
 	return output
 
 
-func export_layer(file_name: String, layer_name: String, output_folder: String, options: Dictionary) -> Dictionary:
-	var output_prefix = options.get('output_filename', PopochiuEditorHelper.EMPTY_STRING).strip_edges()
-	var output_dir = output_folder.replace("res://", "./").strip_edges()
-	var data_file = "%s/%s%s.json" % [output_dir, output_prefix, layer_name]
-	var sprite_sheet = "%s/%s%s.png" % [output_dir, output_prefix, layer_name]
-	var output = []
-	var arguments = _export_command_common_arguments(file_name, data_file, sprite_sheet)
-	arguments.push_front(layer_name)
-	arguments.push_front("--layer")
-
-	_add_sheet_type_arguments(arguments, options)
-
-	var exit_code = _execute(arguments, output)
-	if exit_code != 0:
-		printerr('[Popochiu] Aseprite: Failed to export layer spritesheet. Command output follows:')
-		print(output)
-		return {}
-
-	return {
-		'data_file': data_file.replace("./", "res://"),
-		"sprite_sheet": sprite_sheet.replace("./", "res://")
-	}
+func export_layer(
+	file_name: String, layer_name: String, output_folder: String, options: Dictionary
+) -> Dictionary:
+	return _export_with_selector(
+		["--layer", layer_name], layer_name, file_name, output_folder, options
+	)
 
 
 # IMPROVE: See if we can extract JSON data limited to the single tag
 # (so we don't have to reckon offset framerange)
-func export_tag(file_name: String, tag_name: String, output_folder: String, options: Dictionary) -> Dictionary:
-	var output_prefix = options.get('output_filename', PopochiuEditorHelper.EMPTY_STRING).strip_edges()
-	var output_dir = output_folder.replace("res://", "./").strip_edges()
-	var data_file = "%s/%s%s.json" % [output_dir, output_prefix, tag_name]
-	var sprite_sheet = "%s/%s%s.png" % [output_dir, output_prefix, tag_name]
-	var output = []
-	var arguments = _export_command_common_arguments(file_name, data_file, sprite_sheet)
-	arguments.push_front(tag_name)
-	arguments.push_front("--tag")
-
-	_add_sheet_type_arguments(arguments, options)
-
-	var exit_code = _execute(arguments, output)
-	if exit_code != 0:
-		printerr('[Popochiu] Aseprite: Failed to export tag spritesheet. Command output follows:')
-		print(output)
-		return {}
-
-	return {
-		'data_file': data_file.replace("./", "res://"),
-		"sprite_sheet": sprite_sheet.replace("./", "res://")
-	}
+func export_tag(
+	file_name: String, tag_name: String, output_folder: String, options: Dictionary
+) -> Dictionary:
+	return _export_with_selector(
+		["--tag", tag_name], tag_name, file_name, output_folder, options
+	)
 
 
 # Exports the frames inside the given [from, to] range into a single spritesheet.
@@ -108,27 +75,9 @@ func export_tag(file_name: String, tag_name: String, output_folder: String, opti
 func export_frame_range(
 	file_name: String, name: String, from: int, to: int, output_folder: String, options: Dictionary
 ) -> Dictionary:
-	var output_prefix = options.get('output_filename', PopochiuEditorHelper.EMPTY_STRING).strip_edges()
-	var output_dir = output_folder.replace("res://", "./").strip_edges()
-	var data_file = "%s/%s%s.json" % [output_dir, output_prefix, name]
-	var sprite_sheet = "%s/%s%s.png" % [output_dir, output_prefix, name]
-	var output = []
-	var arguments = _export_command_common_arguments(file_name, data_file, sprite_sheet)
-	arguments.push_front("%d,%d" % [from, to])
-	arguments.push_front("--frame-range")
-
-	_add_sheet_type_arguments(arguments, options)
-
-	var exit_code = _execute(arguments, output)
-	if exit_code != 0:
-		printerr('[Popochiu] Aseprite: Failed to export frame range spritesheet. Command output follows:')
-		print(output)
-		return {}
-
-	return {
-		'data_file': data_file.replace("./", "res://"),
-		"sprite_sheet": sprite_sheet.replace("./", "res://")
-	}
+	return _export_with_selector(
+		["--frame-range", "%d,%d" % [from, to]], name, file_name, output_folder, options
+	)
 
 
 func list_layers(file_name: String, only_visible: bool = false) -> Array:
@@ -193,7 +142,7 @@ func get_content_frames(content: Dictionary) -> Array:
 
 
 func get_content_meta_tags(content: Dictionary) -> Array:
-	return content.meta.frameTags if content.meta.has("frameTags")  else []
+	return content.meta.frameTags if content.meta.has("frameTags") else []
 
 
 func check_command_path() -> bool:
@@ -219,7 +168,55 @@ func test_command() -> bool:
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
-func _add_ignore_layer_arguments(file_name: String, arguments: Array, exception_pattern: String) -> void:
+# Runs an Aseprite export that targets part of the file (a layer, a tag or a
+# frame range), writing the spritesheet to files named after [param output_name],
+# and returns the {'data_file', 'sprite_sheet'} dictionary (or {} on failure).
+# [param selector_args] are prepended to the Aseprite command, e.g.
+# ["--tag", "Run"].
+func _export_with_selector(
+	selector_args: Array,
+	output_name: String,
+	file_name: String,
+	output_folder: String,
+	options: Dictionary
+) -> Dictionary:
+	var output_prefix: String = options.get(
+		'output_filename', PopochiuEditorHelper.EMPTY_STRING
+	).strip_edges()
+	var output_dir := output_folder.replace("res://", "./").strip_edges()
+	var data_file := "%s/%s%s.json" % [output_dir, output_prefix, output_name]
+	var sprite_sheet := "%s/%s%s.png" % [output_dir, output_prefix, output_name]
+	var output := []
+	var arguments := selector_args + _export_command_common_arguments(
+		file_name, data_file, sprite_sheet
+	)
+
+	_add_sheet_type_arguments(arguments, options)
+
+	var exit_code := _execute(arguments, output)
+	if exit_code != 0:
+		printerr(
+			'[Popochiu] Aseprite: failed to export spritesheet for "%s". Command output follows:'
+			% output_name
+		)
+		print(output)
+		return {}
+
+	return _export_result(data_file, sprite_sheet)
+
+
+# Builds the dictionary returned by the export functions from the generated
+# data and sprite sheet files (paths are converted back to res://).
+func _export_result(data_file: String, sprite_sheet: String) -> Dictionary:
+	return {
+		'data_file': data_file.replace("./", "res://"),
+		"sprite_sheet": sprite_sheet.replace("./", "res://")
+	}
+
+
+func _add_ignore_layer_arguments(
+	file_name: String, arguments: Array, exception_pattern: String
+) -> void:
 	var layers = _get_exception_layers(file_name, exception_pattern)
 	if not layers.is_empty():
 		for l in layers:
@@ -227,8 +224,8 @@ func _add_ignore_layer_arguments(file_name: String, arguments: Array, exception_
 			arguments.push_front('--ignore-layer')
 
 
-func _add_sheet_type_arguments(arguments: Array, options : Dictionary) -> void:
-	var column_count : int = options.get("column_count", 0)
+func _add_sheet_type_arguments(arguments: Array, options: Dictionary) -> void:
+	var column_count: int = options.get("column_count", 0)
 	if column_count > 0:
 		arguments.push_back("--merge-duplicates") # Yes, this is undocumented
 		arguments.push_back("--sheet-columns")
@@ -262,7 +259,9 @@ func _sanitize_list_output(output: Array) -> Array:
 	return sanitized
 
 
-func _export_command_common_arguments(source_name: String, data_path: String, spritesheet_path: String) -> Array:
+func _export_command_common_arguments(
+	source_name: String, data_path: String, spritesheet_path: String
+) -> Array:
 	return [
 		"-b",
 		"--list-tags",
