@@ -121,8 +121,9 @@ func _create_inventory_item(name: String) -> PopochiuInventoryItem:
 ## Check if an inventory item with the given name already exists and load it.
 ## Returns the loaded inventory item scene or null if it doesn't exist.
 func _get_existing_inventory_item(item_name: String) -> PopochiuInventoryItem:
+	# The inventory_items data section is keyed by the PascalCase script_name.
 	var item_res_path: String = PopochiuResources.get_data_value(
-		"inventory_items", item_name.to_snake_case(), PopochiuEditorHelper.EMPTY_STRING
+		"inventory_items", item_name, PopochiuEditorHelper.EMPTY_STRING
 	)
 	if item_res_path == PopochiuEditorHelper.EMPTY_STRING:
 		return null
