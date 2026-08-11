@@ -47,6 +47,7 @@ func _ready():
 	PopochiuUtils.i.item_removed.connect(_on_inventory_item_removed)
 	PopochiuUtils.i.item_replaced.connect(_on_inventory_item_replaced)
 	PopochiuUtils.i.item_selected.connect(_on_inventory_item_selected)
+	PopochiuUtils.c.player_changed.connect(_on_player_changed)
 	PopochiuUtils.e.game_saved.connect(_on_game_saved)
 	PopochiuUtils.e.game_loaded.connect(_on_game_loaded)
 	
@@ -147,6 +148,12 @@ func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 
 ## Called when [param item] is selected in the inventory (i.e. by clicking it).
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
+	pass
+
+
+## Called when the player character changes from [param old_player] to [param new_player].[br]
+## GUI templates should override this to swap the displayed inventory contents.
+func _on_player_changed(_old_player: PopochiuCharacter, _new_player: PopochiuCharacter) -> void:
 	pass
 
 

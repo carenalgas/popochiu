@@ -46,7 +46,9 @@ signal item_removed(item: PopochiuInventoryItem, character: PopochiuCharacter)
 signal item_remove_done(item: PopochiuInventoryItem, character: PopochiuCharacter)
 ## Emitted when [param item] is replaced in [param character]'s inventory by [param new_item].
 ## Useful for implementing item combinations.
-signal item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, character: PopochiuCharacter)
+signal item_replaced(
+	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, character: PopochiuCharacter
+)
 ## Emitted when an item replacement has finished.
 signal item_replace_done
 ## Emitted when the [param item] has been discarded (GUI animation finished).
@@ -64,7 +66,9 @@ signal inventory_hide_requested(use_anim: bool)
 ## Emitted when the quantity of [param item] changes in [param character]'s inventory without the
 ## item being added to or removed from the inventory (i.e., when stacking or partially removing).
 ## [param new_quantity] is the updated count.
-signal item_quantity_updated(item: PopochiuInventoryItem, new_quantity: int, character: PopochiuCharacter)
+signal item_quantity_updated(
+	item: PopochiuInventoryItem, new_quantity: int, character: PopochiuCharacter
+)
 
 ## Provides access to the inventory item that is currently selected.
 var active: PopochiuInventoryItem : set = set_active
