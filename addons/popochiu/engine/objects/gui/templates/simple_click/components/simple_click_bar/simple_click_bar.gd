@@ -238,4 +238,33 @@ func _on_gui_unblocked() -> void:
 		show()
 
 
+## Removes all inventory items from the bar without emitting inventory signals.
+## Used when switching the displayed player character so the new character's inventory can be
+## populated.
+func clear() -> void:
+	for child: Control in box.get_children():
+		if not child is PopochiuInventoryItem:
+			continue
+		if child.selected.is_connected(_change_cursor):
+			child.selected.disconnect(_change_cursor)
+		box.remove_child(child)
+
+
+## Populates the bar with all items from [param character]'s inventory.
+## Items are added silently (without entrance animation) by temporarily setting
+## [member PopochiuIInventory.is_restoring] to [code]true[/code].
+func populate(character: PopochiuCharacter) -> void:
+	if not is_instance_valid(character):
+		return
+	
+	var was_restoring := PopochiuUtils.i.is_restoring
+	PopochiuUtils.i.is_restoring = true
+	
+	for item: PopochiuInventoryItem in character.inventory.values():
+		if is_instance_valid(item):
+			await show_item(item)
+	
+	PopochiuUtils.i.is_restoring = was_restoring
+
+
 #endregion
