@@ -186,6 +186,10 @@ func get_instance(script_name: String) -> PopochiuCharacter:
 	return load(load(tres_path).scene).instantiate()
 
 
+func get_characters() -> Dictionary:
+	return _characters
+
+
 #endregion
 
 #region SetGet #####################################################################################
