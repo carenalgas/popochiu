@@ -228,7 +228,10 @@ func _check_scroll_buttons() -> void:
 	up.disabled = scroll_container.scroll_vertical == 0
 	down.disabled = (
 		scroll_container.scroll_vertical >= max_scroll
-		or not (PopochiuUtils.c.player.inventory.size() > box.columns * visible_rows)
+		or (
+			is_instance_valid(PopochiuUtils.c.player)
+			and not (PopochiuUtils.c.player.inventory.size() > box.columns * visible_rows)
+		)
 	)
 
 
