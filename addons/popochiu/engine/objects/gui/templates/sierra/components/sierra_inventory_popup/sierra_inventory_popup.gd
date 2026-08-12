@@ -4,6 +4,7 @@ extends PopochiuPopup
 
 var _command_when_opened: int = -1
 
+@onready var sierra_inventory_grid: HBoxContainer = %SierraInventoryGrid
 @onready var interact: TextureButton = %Interact
 @onready var look: TextureButton = %Look
 @onready var talk: TextureButton = %Talk
