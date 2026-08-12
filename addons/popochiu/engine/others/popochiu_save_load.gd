@@ -68,9 +68,6 @@ func save_game(slot := 1, description := "") -> bool:
 			# New saves use character_inventories below.
 			inventory = _build_legacy_inventory_save_data(),
 		},
-		# Per-character inventories. Key is character script_name, value is Array of
-		# {name: String, qty: int} dictionaries.
-		character_inventories = _build_character_inventories_save_data(),
 		rooms = {}, # Stores the state of each PopochiuRoomData
 		characters = {}, # Stores the state of each PopochiuCharacterData
 		inventory_items = {}, # Stores the state of each PopochiuInventoryItemData
@@ -88,6 +85,10 @@ func save_game(slot := 1, description := "") -> bool:
 	# Go over each Popochiu type to save its current state -----------------------------------------
 	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
 		_store_data(type, data)
+	
+	# Per-character inventories. Key is character script_name, value is Array of
+	# {name: String, qty: int} dictionaries.
+	data["character_inventories"] = _build_character_inventories_save_data()
 	
 	# Save PopochiuGlobals.gd (Globals) ------------------------------------------------------------
 	# prop = {class_name, hint, hint_string, name, type, usage}
@@ -164,8 +165,7 @@ func load_game(slot := 1) -> Dictionary:
 			
 			PopochiuUtils.globals[prop] = loaded_data.globals[prop]
 		
-		if loaded_data.globals.has("custom_data")\
-		and PopochiuUtils.globals.has_method("on_load"):
+		if loaded_data.globals.has("custom_data") and PopochiuUtils.globals.has_method("on_load"):
 			PopochiuUtils.globals.on_load(loaded_data.globals.custom_data)
 
 	return loaded_data
@@ -201,6 +201,8 @@ func _store_data(type: String, save: Dictionary) -> void:
 						opt,
 						["id", "always_on"]
 					)
+			"characters":
+				PopochiuUtils.c.characters_states[data.script_name] = save[type][data.script_name]
 		
 		if save[type][data.script_name].is_empty():
 			save[type].erase(data.script_name)
@@ -332,7 +334,7 @@ func _build_legacy_inventory_save_data() -> Array:
 		return []
 	var result := []
 	for item_name: String in PopochiuUtils.c.player.inventory:
-		var item: PopochiuInventoryItem = PopochiuUtils.c.player.inventory[item_name] as PopochiuInventoryItem
+		var item: PopochiuInventoryItem = PopochiuUtils.c.player.inventory[item_name]
 		result.append({
 			"name": item_name,
 			"qty": item.quantity_owned if is_instance_valid(item) else 1,
