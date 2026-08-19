@@ -1,5 +1,5 @@
 ---
-weight: 2030
+weight: 2031
 ---
 
 ## Create characters
@@ -80,22 +80,3 @@ Finding the best positioning for the "voice" of each character may require a bit
     2. The dialog line length is calculated and the text is centered on the horizontal position of gizmo, so the text will be rendered horizontally **around** that point.
     3. If the text spans multiple lines, Popochiu will expand it **towards the top**, so that it doesn't cover your character (this means if you want your text under the character for some reason, multiple lines will cover your character).
     4. If the character is near the window or screen border, the text will be repositioned so that it will be entirely visible, so you don't have to worry about it becoming unreadable. This is true both for horizontal and vertical coordinates. Of course, long texts may overlap the character sprint in that case, but it's for good.
-
-### Add another character
-
-We are almost done creating our player character. Before moving on, follow [the same steps](#create-characters) to create another one, to keep our main character company and test some interaction.
-
-!!! tip
-    In the example game, the second character is named _Popsy_ and [its sprite can be found here](https://github.com/carenalgas/popochiu-sample-game/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/characters/popsy/popsy.png).
-
-### Select the main character
-
-Now that we have two characters, it's time to tell Popochiu which one will be our main character. That's the one that will be used by the player.  
-To do this, locate the first character you have created in Popochiu main dock (in our example it was _Goddiu_), open the drop-down menu, and select `Set as Player Character` (_12_).
-
-![Set as Player Character](../../assets/images/getting-started/game_stub-character-4-set_pc.png "Select our first character as the player character")
-
-!!! info "Multiple character games"
-    Even if we are not going to cover this detail, Popochiu supports multiple player characters in the style of _Maniac Mansion_ or _Day of the Tentacle_. It's as easy as programmatically changing a variable from your scripts.
-
-Pat yourself a shoulder! You have successfully created your first characters.
