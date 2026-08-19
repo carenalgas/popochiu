@@ -28,15 +28,15 @@ Located in the `editor/main_dock` folder, it contains:
 
 - `popochiu_dock.tscn`: The scene defining the dock's UI using Control nodes (_1_).
 - `popochiu_dock.gd`: The script handling the dock's logic.
-- `popochiu_filter.gd`: A script for filtering dock items, essential for large games with many items. (_3_)
+- `popochiu_tree_dock.gd`: A base class for tabs that display grouped items using a native [Tree] control. It handles the Tree setup, the filter LineEdit, the right-click context menu, and common helpers to create groups and items.
 
 The folder also contains the Main Dock's building blocks: tabs (_2_) dedicated to specific elements and their components: groups (_4_) and rows (_5_) and (_6_). Specifically:
 
-- `main_tab`: Interface and logic for listing game elements such as characters, rooms, dialogues, inventory items, etc.
+- `main_tab`: Interface and logic for listing game elements such as characters, rooms, dialogues, inventory items, etc. It extends `popochiu_tree_dock` and builds its groups and items directly on a Tree control.
 - `room_tab`: Interface and logic for listing room-specific elements like props, hotspots, markers, walkable areas, etc.
 - `audio_tab`: Interface and logic for listing audio resources like music and sound effects.
 
-These tabs display a set of `popochiu_group` instances, which group zero or more `popochiu_row` instances (specialized into `object_row` (_5_) for general or room-specific objects and `audio_row` (_6_)for music and sound effects). Groups include buttons for creating new child elements, while rows offer quick access to the scene, script, or specific properties of the represented elements.
+The Main tab uses a native Tree control: each object type (Rooms, Characters, Inventory items, Dialog trees) is a collapsible group item, and each game object is a child item with icon, status tags (main scene, player character, start-with-it), and quick-action buttons (open, script, state, play). Right-clicking an item opens a context menu with less frequent actions such as setting the main scene, setting the player character, adding the object back to Popochiu, or removing it. The Room and Audio tabs still use the legacy `popochiu_group` and `popochiu_row` components for now and will be migrated to the Tree-based approach in future iterations (see [#558](https://github.com/carenalgas/popochiu/issues/558)).
 
 ---
 
