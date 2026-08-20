@@ -72,8 +72,21 @@ func create_group(
 
 ## Appends a new item to [param group] as its last child, preserving the order in which items are
 ## discovered (no alphabetical sorting).
-func add_item(group: TreeItem, name: String, icon: Texture2D, data: Dictionary = {}) -> TreeItem:
-	var item := tree.create_item(group)
+## Appends a new item to [param group]. By default it is added as the last child, preserving the
+## order in which items are discovered. If [param sort] is true, it is inserted alphabetically by
+## its text instead.
+func add_item(
+	group: TreeItem, name: String, icon: Texture2D, data: Dictionary = {}, sort := false
+) -> TreeItem:
+	var index := -1
+	if sort:
+		# Insert alphabetically by item text
+		index = 0
+		for child in group.get_children():
+			if child.get_text(COL_TEXT) > name:
+				break
+			index += 1
+	var item := tree.create_item(group, index)
 	item.set_text(COL_TEXT, name)
 	item.set_icon(COL_TEXT, icon)
 	item.set_metadata(COL_TEXT, data)
@@ -85,6 +98,13 @@ func add_item(group: TreeItem, name: String, icon: Texture2D, data: Dictionary =
 ## Adds an icon button to the item's buttons column.
 func add_button(item: TreeItem, icon: Texture2D, id: int, tooltip := "") -> void:
 	item.add_button(COL_BUTTONS, icon, id, false, tooltip)
+
+
+## Updates the icon of a button on an item by its id.
+func set_button_icon(item: TreeItem, id: int, icon: Texture2D) -> void:
+	var btn_idx := item.get_button_by_id(COL_BUTTONS, id)
+	if btn_idx >= 0:
+		item.set_button(COL_BUTTONS, btn_idx, icon)
 
 
 ## Adds the three-dots button that opens the context menu for the item.
