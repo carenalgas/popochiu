@@ -2,7 +2,6 @@
 
 [ext_resource type="PackedScene" uid="uid://bynwdds8o3tcx" path="res://addons/popochiu/editor/main_dock/tab_main/tab_main.tscn" id="2_oxyje"]
 [ext_resource type="Script" uid="uid://dxyf5fu3xp3x8" path="res://addons/popochiu/editor/main_dock/popochiu_dock.gd" id="7"]
-[ext_resource type="PackedScene" uid="uid://4etgd0rwjgct" path="res://addons/popochiu/editor/main_dock/tab_gui/tab_gui.tscn" id="10_82goo"]
 [ext_resource type="PackedScene" uid="uid://q1bjkxavt2ay" path="res://addons/popochiu/editor/main_dock/tab_room/tab_room.tscn" id="12"]
 [ext_resource type="PackedScene" uid="uid://bpj8jlet25coy" path="res://addons/popochiu/editor/main_dock/tab_audio/tab_audio.tscn" id="13"]
 [ext_resource type="PackedScene" path="res://addons/popochiu/editor/main_dock/tab_tools/tab_tools.tscn" id="14_tools"]
@@ -39,7 +38,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 current_tab = 0
-tab_3/hidden = true
 
 [node name="Main" parent="MarginContainer/VBoxContainer/TabContainer" unique_id=190345305 instance=ExtResource("2_oxyje")]
 unique_name_in_owner = true
@@ -58,12 +56,6 @@ visible = false
 layout_mode = 2
 focus_mode = 2
 metadata/_tab_index = 2
-
-[node name="GUI" parent="MarginContainer/VBoxContainer/TabContainer" unique_id=1769093385 instance=ExtResource("10_82goo")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-metadata/_tab_index = 3
 
 [node name="Tools" parent="MarginContainer/VBoxContainer/TabContainer" instance=ExtResource("14_tools")]
 unique_name_in_owner = true

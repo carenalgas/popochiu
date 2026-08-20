@@ -30,7 +30,7 @@ const AudioCue = preload("res://addons/popochiu/engine/audio_manager/audio_cue.g
 
 var _context_menu: PopupMenu
 var _context_item: TreeItem
-var _delete_dialog: PopochiuEditorHelper.DeleteConfirmation
+var delete_dialog: PopochiuEditorHelper.DeleteConfirmation
 
 @onready var filter: LineEdit = %Filter
 @onready var tree: Tree = %Tree
@@ -319,7 +319,7 @@ func _on_context_menu_id_pressed(id: int) -> void:
 #region Shared helpers ############################################################################
 # Helpers shared by all tabs: opening files and deleting objects from the file system.
 
-func _open(item: TreeItem) -> void:
+func open(item: TreeItem) -> void:
 	# Defer the scene opening to ensure current operations complete first.
 	# Ugly but necessary to avoid errors (see _deferred_open comments).
 	call_deferred("_deferred_open", item.get_metadata(COL_TEXT).path)
@@ -344,7 +344,7 @@ func _deferred_open(path: String) -> void:
 			PopochiuEditorHelper.select_node(EditorInterface.get_edited_scene_root())
 
 
-func _open_script(item: TreeItem) -> void:
+func open_script(item: TreeItem) -> void:
 	var path: String = item.get_metadata(COL_TEXT).path
 	var script_path := path
 	
@@ -362,7 +362,7 @@ func _open_script(item: TreeItem) -> void:
 	EditorInterface.edit_script(load(script_path))
 
 
-func _remove_object(item: TreeItem) -> void:
+func remove_object(item: TreeItem) -> void:
 	var data := item.get_metadata(COL_TEXT)
 	var path: String = data.path
 	var name: String = item.get_text(COL_TEXT)
@@ -374,21 +374,21 @@ func _remove_object(item: TreeItem) -> void:
 		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
 	)
 	
-	_delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
-	_delete_dialog.title = "Remove %s from %s" % [name, location]
-	_delete_dialog.message = DELETE_MESSAGE % [name, location]
-	_delete_dialog.ask = DELETE_ASK_MESSAGE % [
+	delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
+	delete_dialog.title = "Remove %s from %s" % [name, location]
+	delete_dialog.message = DELETE_MESSAGE % [name, location]
+	delete_dialog.ask = DELETE_ASK_MESSAGE % [
 		path.get_base_dir(),
 		"" if audio_files.is_empty()
 		else " ([b]%d[/b] audio cues will be deleted)" % audio_files.size()
 	]
-	_delete_dialog.on_confirmed = _remove_from_core.bind(item)
+	delete_dialog.on_confirmed = _remove_from_core.bind(item)
 	
-	PopochiuEditorHelper.show_delete_confirmation(_delete_dialog)
+	PopochiuEditorHelper.show_delete_confirmation(delete_dialog)
 
 
 # Remove this object's directory (subfolders included) from the file system.
-func _delete_from_file_system(path: String) -> void:
+func delete_from_file_system(path: String) -> void:
 	var object_dir: EditorFileSystemDirectory = \
 		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
 	
@@ -545,6 +545,9 @@ func _delete_audio_cue_in_data(audio_cue: AudioCue) -> bool:
 #endregion
 
 #region Virtual ####################################################################################
+# TODO: Rename these virtuals to public (get_menu_cfg, get_location, remove_from_core) when the
+# Audio tab is refactored. They are kept underscored for now because tab_audio.gd still overrides
+# them.
 ## Returns the list of options for the right-click context menu of [param item]. Each option is a
 ## Dictionary with `id`, `icon`, `label` and optional `disabled` keys, or the MENU_SEPARATOR int.
 func _get_menu_cfg(item: TreeItem) -> Array:

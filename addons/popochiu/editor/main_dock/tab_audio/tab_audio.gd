@@ -530,19 +530,19 @@ func _on_stream_finished() -> void:
 
 func _remove_audio(item: TreeItem) -> void:
 	var data := item.get_metadata(COL_TEXT)
-	_delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
+	delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
 	
 	if data.get("is_cue", false):
-		_delete_dialog.title = "Remove %s cue" % data.audio_cue.resource_name
-		_delete_dialog.message = DELETE_AUDIO_CUE_MSG % data.audio_cue.resource_name
-		_delete_dialog.ask = DELETE_AUDIO_CUE_ASK % data.audio_cue.audio.resource_path
-		_delete_dialog.on_confirmed = _remove_from_popochiu.bind(item)
+		delete_dialog.title = "Remove %s cue" % data.audio_cue.resource_name
+		delete_dialog.message = DELETE_AUDIO_CUE_MSG % data.audio_cue.resource_name
+		delete_dialog.ask = DELETE_AUDIO_CUE_ASK % data.audio_cue.audio.resource_path
+		delete_dialog.on_confirmed = _remove_from_popochiu.bind(item)
 	else:
-		_delete_dialog.title = "Delete %s" % data.file_name
-		_delete_dialog.message = DELETE_AUDIO_FILE_MSG % data.path
-		_delete_dialog.on_confirmed = _delete_audio_file.bind(item)
+		delete_dialog.title = "Delete %s" % data.file_name
+		delete_dialog.message = DELETE_AUDIO_FILE_MSG % data.path
+		delete_dialog.on_confirmed = _delete_audio_file.bind(item)
 	
-	PopochiuEditorHelper.show_delete_confirmation(_delete_dialog)
+	PopochiuEditorHelper.show_delete_confirmation(delete_dialog)
 
 
 func _remove_from_popochiu(item: TreeItem) -> void:
@@ -570,7 +570,7 @@ func _remove_from_popochiu(item: TreeItem) -> void:
 	# Delete the file in its corresponding group in Audio tab
 	_audio_files_in_group.erase(audio_cue.audio.resource_path)
 	
-	if _delete_dialog.check_box.button_pressed:
+	if delete_dialog.check_box.button_pressed:
 		_delete_audio_cue_files(item)
 	else:
 		remove_item(item)

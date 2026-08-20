@@ -111,7 +111,7 @@ The `editor/helpers` folder contains classes and functions commonly used by many
 Key scripts include:
 
 - `popochiu_editor_helper.gd`: A collection of static functions for handling complex and frequent tasks like opening pop-ups, managing the lifecycle of game objects (creation, deletion, updating), or interacting with the Godot editor (e.g., selecting a scene, modifying dock state).
-- `popochiu_gui_templates_helper.gd`: Contains public methods for creating GUIs within the `game` folder from templates provided by the Engine. These methods are used by other Popochiu components like the Setup pop-up and the GUI Tab.
+- `popochiu_gui_templates_helper.gd`: Contains public methods for creating GUIs within the `game` folder from templates provided by the Engine. These methods are used by other Popochiu components like the Setup pop-up.
 - `popochiu_signal_bus.gd`: Implements the [Publisher-Subscriber pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) to decouple UI components in the Editor Plugin and streamline event-driven interactions.
 
     !!! tip "Detailed Example"
