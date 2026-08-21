@@ -69,6 +69,19 @@ func check_data() -> void:
 
 #endregion
 
+#region Virtual ####################################################################################
+func _get_menu_cfg(item: TreeItem) -> Array:
+	var data := item.get_metadata(COL_TEXT)
+	return _row_instances[data.type].get_menu_cfg(item)
+
+
+func _remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
+	var data := item.get_metadata(COL_TEXT)
+	_row_instances[data.type].remove_from_core(item, should_save_and_delete)
+
+
+#endregion
+
 #region Private ####################################################################################
 func _set_main_scene(path: String) -> void:
 	ProjectSettings.set_setting(PopochiuResources.MAIN_SCENE, path)
@@ -146,16 +159,6 @@ func _on_menu_item_selected(item: TreeItem, id: int) -> void:
 func _on_create_clicked(group_item: TreeItem) -> void:
 	var type_key: int = group_item.get_metadata(COL_TEXT).type
 	PopochiuEditorHelper.show_creation_popup(_row_instances[type_key].get_popup())
-
-
-func _get_menu_cfg(item: TreeItem) -> Array:
-	var data := item.get_metadata(COL_TEXT)
-	return _row_instances[data.type].get_menu_cfg(item)
-
-
-func _remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
-	var data := item.get_metadata(COL_TEXT)
-	_row_instances[data.type].remove_from_core(item, should_save_and_delete)
 
 
 #endregion
