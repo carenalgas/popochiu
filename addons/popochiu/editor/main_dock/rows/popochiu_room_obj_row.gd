@@ -15,8 +15,8 @@ func create_group() -> TreeItem:
 	return group
 
 
-func create_row(child) -> TreeItem:
-	if not is_instance_of(child, get_type_class()): return null
+func create_row(child: Variant) -> TreeItem:
+	if not is_instance_of(child, get_type_class()): return
 	
 	var row_path := _get_row_path(child)
 	if row_path in dock.rows_paths: return null
@@ -25,9 +25,13 @@ func create_row(child) -> TreeItem:
 	var item := create_room_item(child.name, row_path, node_path)
 	
 	# Add the action buttons
-	dock.add_button(item, dock.get_theme_icon("InstanceOptions", "EditorIcons"), Buttons.OPEN, "Open in Editor")
+	dock.add_button(
+		item, dock.get_theme_icon("InstanceOptions", "EditorIcons"), Buttons.OPEN, "Open in Editor"
+	)
 	if FileAccess.file_exists(row_path.replace(".tscn", ".gd")):
-		dock.add_button(item, dock.get_theme_icon("Script", "EditorIcons"), Buttons.SCRIPT, "Open in Script")
+		dock.add_button(
+			item, dock.get_theme_icon("Script", "EditorIcons"), Buttons.SCRIPT, "Open in Script"
+		)
 	dock.add_menu_button(item)
 	
 	return item

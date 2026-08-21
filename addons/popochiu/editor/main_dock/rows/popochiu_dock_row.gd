@@ -96,7 +96,7 @@ func get_getter() -> String:
 #endregion
 
 #region Group #####################################################################################
-## Creates the group item for this row's type in the dock's Tree.
+# Creates the group item for this row's type in the dock's Tree.
 func create_group() -> TreeItem:
 	group = dock.create_group(get_title(), get_icon(), true, get_create_text(), { "type": type })
 	return group
@@ -105,13 +105,13 @@ func create_group() -> TreeItem:
 #endregion
 
 #region Row #######################################################################################
-## Creates the row for [param source] in the dock's Tree. Type-specific. [param source] is a
-## Resource for the main object types (rooms, characters, ...) or a Node for the room object types.
-func create_row(source) -> TreeItem:
+# Creates the row for [param source] in the dock's Tree. Type-specific. [param source] is a
+# Resource for the main object types (rooms, characters, ...) or a Node for the room object types.
+func create_row(source: Variant) -> TreeItem:
 	return null
 
 
-## Creates the TreeItem for this row's type with the shared action buttons.
+# Creates the TreeItem for this row's type with the shared action buttons.
 func create_item(name_to_add: String) -> TreeItem:
 	var path: String = get_scene_template().replace("%s", name_to_add.to_snake_case())
 	var data := {
@@ -124,10 +124,16 @@ func create_item(name_to_add: String) -> TreeItem:
 	var item := dock.add_item(group, name_to_add, get_icon(), data)
 	
 	# Add the action buttons
-	dock.add_button(item, dock.get_theme_icon("InstanceOptions", "EditorIcons"), Buttons.OPEN, "Open in Editor")
-	dock.add_button(item, dock.get_theme_icon("Script", "EditorIcons"), Buttons.SCRIPT, "Open in Script")
+	dock.add_button(
+		item, dock.get_theme_icon("InstanceOptions", "EditorIcons"), Buttons.OPEN, "Open in Editor"
+	)
+	dock.add_button(
+		item, dock.get_theme_icon("Script", "EditorIcons"), Buttons.SCRIPT, "Open in Script"
+	)
 	dock.add_button(item, dock.get_theme_icon("Object", "EditorIcons"), Buttons.STATE, "Open state")
-	dock.add_button(item, dock.get_theme_icon("GDScript", "EditorIcons"), Buttons.STATE_SCRIPT, "Open state Script")
+	dock.add_button(
+		item, dock.get_theme_icon("GDScript", "EditorIcons"), Buttons.STATE_SCRIPT, "Open state Script"
+	)
 	_add_extra_buttons(item)
 	dock.add_menu_button(item)
 	
@@ -137,7 +143,7 @@ func create_item(name_to_add: String) -> TreeItem:
 	return item
 
 
-## Hook for subclasses to add type-specific buttons (e.g. the Play button for rooms).
+# Hook for subclasses to add type-specific buttons (e.g. the Play button for rooms).
 func _add_extra_buttons(item: TreeItem) -> void:
 	pass
 
@@ -145,8 +151,8 @@ func _add_extra_buttons(item: TreeItem) -> void:
 #endregion
 
 #region Virtual ###################################################################################
-## Returns the list of options for the right-click context menu of [param item]. Default: the
-## shared "Add to Popochiu" + "Remove" options used by the main object types.
+# Returns the list of options for the right-click context menu of [param item]. Default: the
+# shared "Add to Popochiu" + "Remove" options used by the main object types.
 func get_menu_cfg(item: TreeItem) -> Array:
 	var data := item.get_metadata(dock.COL_TEXT)
 	return [
@@ -165,9 +171,9 @@ func get_menu_cfg(item: TreeItem) -> Array:
 	]
 
 
-## Handles the confirmed deletion of [param item]. Shared by the main object types: removes the
-## object from Popochiu data and its autoload (via _remove_from_data), then deletes the folder if
-## requested, dims the row if the object is no longer in Popochiu, and saves the scene.
+# Handles the confirmed deletion of [param item]. Shared by the main object types: removes the
+# object from Popochiu data and its autoload (via _remove_from_data), then deletes the folder if
+# requested, dims the row if the object is no longer in Popochiu, and saves the scene.
 func remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 	var data := item.get_metadata(dock.COL_TEXT)
 	var path: String = data.path
@@ -197,7 +203,7 @@ func remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 		dock.remove_item(item)
 
 
-## Adds the object back to Popochiu (the core). Shared by the main object types.
+# Adds the object back to Popochiu (the core). Shared by the main object types.
 func add_to_core(item: TreeItem) -> void:
 	var data := item.get_metadata(dock.COL_TEXT)
 	var path: String = data.path
@@ -221,13 +227,13 @@ func add_to_core(item: TreeItem) -> void:
 	data.in_core = true
 
 
-## Called when an item is clicked. Default: selects the file in the FileSystem dock.
+# Called when an item is clicked. Default: selects the file in the FileSystem dock.
 func on_item_clicked(item: TreeItem) -> void:
 	EditorInterface.select_file(item.get_metadata(dock.COL_TEXT).path)
 
 
-## Called when a button on an item is clicked. Default: handles the OPEN, SCRIPT, STATE and
-## STATE_SCRIPT buttons shared by the main object types.
+# Called when a button on an item is clicked. Default: handles the OPEN, SCRIPT, STATE and
+# STATE_SCRIPT buttons shared by the main object types.
 func on_button_clicked(item: TreeItem, id: int) -> void:
 	match id:
 		Buttons.OPEN:
@@ -240,7 +246,7 @@ func on_button_clicked(item: TreeItem, id: int) -> void:
 			open_state_script(item)
 
 
-## Called when a context-menu option is selected. Default: handles DELETE and ADD_TO_CORE.
+# Called when a context-menu option is selected. Default: handles DELETE and ADD_TO_CORE.
 func on_menu_item_selected(item: TreeItem, id: int) -> void:
 	match id:
 		MenuOptions.DELETE:
@@ -249,14 +255,14 @@ func on_menu_item_selected(item: TreeItem, id: int) -> void:
 			add_to_core(item)
 
 
-## Opens the state resource (.tres) of the object in the editor.
+# Opens the state resource (.tres) of the object in the editor.
 func edit_state(item: TreeItem) -> void:
 	var path: String = item.get_metadata(dock.COL_TEXT).path
 	EditorInterface.select_file(path.replace(".tscn", ".tres"))
 	EditorInterface.edit_resource(load(path.replace(".tscn", ".tres")))
 
 
-## Opens the script of the object's state resource in the editor.
+# Opens the script of the object's state resource in the editor.
 func open_state_script(item: TreeItem) -> void:
 	var path: String = item.get_metadata(dock.COL_TEXT).path
 	var state := load(path.replace(".tscn", ".tres"))
@@ -266,12 +272,12 @@ func open_state_script(item: TreeItem) -> void:
 	EditorInterface.edit_resource(state.get_script())
 
 
-## Removes the object from Popochiu data and its autoload. Type-specific.
+# Removes the object from Popochiu data and its autoload. Type-specific.
 func _remove_from_data(name: String) -> void:
 	pass
 
 
-## Returns the Popochiu data section name for this type (e.g. "rooms"). Type-specific.
+# Returns the Popochiu data section name for this type (e.g. "rooms"). Type-specific.
 func _get_target_array() -> String:
 	return ""
 

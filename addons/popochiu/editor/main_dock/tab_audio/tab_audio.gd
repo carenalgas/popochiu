@@ -159,6 +159,45 @@ func delete_rows(filepaths: Array) -> void:
 
 #endregion
 
+#region Virtual ####################################################################################
+func _get_menu_cfg(item: TreeItem) -> Array:
+	var data := item.get_metadata(COL_TEXT)
+	var cfg := []
+	
+	if not data.get("is_cue", false):
+		cfg.append({
+			id = MenuOptions.ADD_TO_MUSIC,
+			icon = preload("res://addons/popochiu/icons/music.png"),
+			label = "Add to Music",
+		})
+		cfg.append({
+			id = MenuOptions.ADD_TO_SFX,
+			icon = preload("res://addons/popochiu/icons/sfx.png"),
+			label = "Add to Sound Effects",
+		})
+		cfg.append({
+			id = MenuOptions.ADD_TO_VOICE,
+			icon = preload("res://addons/popochiu/icons/voice.png"),
+			label = "Add to Voices",
+		})
+		cfg.append({
+			id = MenuOptions.ADD_TO_UI,
+			icon = preload("res://addons/popochiu/icons/ui.png"),
+			label = "Add to Graphic Interface",
+		})
+		cfg.append(MenuOptions.SEPARATOR)
+	
+	cfg.append({
+		id = MenuOptions.DELETE,
+		icon = get_theme_icon("Remove", "EditorIcons"),
+		label = "Remove",
+	})
+	
+	return cfg
+
+
+#endregion
+
 #region Private ####################################################################################
 func _on_sources_changed(exist: bool) -> void:
 	# Look popochiu_data.cfg for PopochiuAudioCue files that don't exist in the project anymore
@@ -286,7 +325,7 @@ func _read_directory(dir: EditorFileSystemDirectory) -> void:
 
 func _read_files(dir: EditorFileSystemDirectory) -> void:
 	for idx in dir.get_file_count():
-		var file_name = dir.get_file(idx)
+		var file_name: String = dir.get_file(idx)
 		
 		if not file_name.get_extension() in AUDIO_FILE_EXTENSIONS:
 			continue
@@ -309,8 +348,8 @@ func _read_files(dir: EditorFileSystemDirectory) -> void:
 			_create_audio_file_item(dir.get_file_path(idx))
 
 
-## Returns the [enum PopochiuResources.AudioTypes] that matches the file's prefix, or
-## [constant PopochiuResources.AudioTypes.NONE] if no prefix matches.
+# Returns the [enum PopochiuResources.AudioTypes] that matches the file's prefix, or
+# [constant PopochiuResources.AudioTypes.NONE] if no prefix matches.
 func _get_audio_type_for_file(file_path: String) -> int:
 	var file_name := file_path.get_file()
 	var prefix := file_name.get_slice(PopochiuConfig.get_prefix_character(), 0)
@@ -419,47 +458,13 @@ func _on_menu_item_selected(item: TreeItem, id: int) -> void:
 		MenuOptions.ADD_TO_MUSIC:
 			_create_audio_cue(PopochiuResources.AudioTypes.MUSIC, item.get_metadata(COL_TEXT).path, item)
 		MenuOptions.ADD_TO_SFX:
-			_create_audio_cue(PopochiuResources.AudioTypes.SOUND_EFFECT, item.get_metadata(COL_TEXT).path, item)
+			_create_audio_cue(
+				PopochiuResources.AudioTypes.SOUND_EFFECT, item.get_metadata(COL_TEXT).path, item
+			)
 		MenuOptions.ADD_TO_VOICE:
 			_create_audio_cue(PopochiuResources.AudioTypes.VOICE, item.get_metadata(COL_TEXT).path, item)
 		MenuOptions.ADD_TO_UI:
 			_create_audio_cue(PopochiuResources.AudioTypes.UI, item.get_metadata(COL_TEXT).path, item)
-
-
-func _get_menu_cfg(item: TreeItem) -> Array:
-	var data := item.get_metadata(COL_TEXT)
-	var cfg := []
-	
-	if not data.get("is_cue", false):
-		cfg.append({
-			id = MenuOptions.ADD_TO_MUSIC,
-			icon = preload("res://addons/popochiu/icons/music.png"),
-			label = "Add to Music",
-		})
-		cfg.append({
-			id = MenuOptions.ADD_TO_SFX,
-			icon = preload("res://addons/popochiu/icons/sfx.png"),
-			label = "Add to Sound Effects",
-		})
-		cfg.append({
-			id = MenuOptions.ADD_TO_VOICE,
-			icon = preload("res://addons/popochiu/icons/voice.png"),
-			label = "Add to Voices",
-		})
-		cfg.append({
-			id = MenuOptions.ADD_TO_UI,
-			icon = preload("res://addons/popochiu/icons/ui.png"),
-			label = "Add to Graphic Interface",
-		})
-		cfg.append(MenuOptions.SEPARATOR)
-	
-	cfg.append({
-		id = MenuOptions.DELETE,
-		icon = get_theme_icon("Remove", "EditorIcons"),
-		label = "Remove",
-	})
-	
-	return cfg
 
 
 func _play(item: TreeItem) -> void:
@@ -506,7 +511,9 @@ func _set_playing(item: TreeItem, value: bool) -> void:
 			if _asp.finished.is_connected(_on_stream_finished):
 				_asp.finished.disconnect(_on_stream_finished)
 	
-	set_button_icon(item, Buttons.PLAY, get_theme_icon("Pause" if value else "MainPlay", "EditorIcons"))
+	set_button_icon(
+		item, Buttons.PLAY, get_theme_icon("Pause" if value else "MainPlay", "EditorIcons")
+	)
 
 
 func _stop(item: TreeItem) -> void:
@@ -565,7 +572,9 @@ func _remove_from_popochiu(item: TreeItem) -> void:
 			PopochiuResources.set_data_value("audio", cue_group, group_data)
 	
 	# Remove the AudioCue from the A singleton
-	PopochiuResources.remove_audio_autoload(cue_group, item.get_text(COL_TEXT), audio_cue.resource_path)
+	PopochiuResources.remove_audio_autoload(
+		cue_group, item.get_text(COL_TEXT), audio_cue.resource_path
+	)
 	
 	# Delete the file in its corresponding group in Audio tab
 	_audio_files_in_group.erase(audio_cue.audio.resource_path)
@@ -628,7 +637,7 @@ func _delete_audio_file(item: TreeItem) -> void:
 	remove_item(item)
 
 
-## Reimport WAV files so they can be changed to LOOP without the need to manually reimport them.
+# Reimport WAV files so they can be changed to LOOP without the need to manually reimport them.
 func _reimport_wavs() -> void:
 	var streams_to_reimport := _wavs_to_reimport.filter(
 		func (stream_dic: Dictionary):

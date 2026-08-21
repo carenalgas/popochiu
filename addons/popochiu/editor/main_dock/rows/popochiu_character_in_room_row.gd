@@ -22,7 +22,7 @@ func create_group() -> TreeItem:
 	return group
 
 
-func create_row(child) -> TreeItem:
+func create_row(child: Variant) -> TreeItem:
 	if not child is PopochiuCharacter: return null
 	
 	# Get the script_name of the character

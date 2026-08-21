@@ -143,6 +143,25 @@ func scene_closed(filepath: String) -> void:
 
 #endregion
 
+#region Virtual ####################################################################################
+func _get_menu_cfg(item: TreeItem) -> Array:
+	var data := item.get_metadata(COL_TEXT)
+	return _row_instances[data.type].get_menu_cfg(item)
+
+
+func _get_location(path: String) -> String:
+	# Structure of path: "res://game/rooms/room_name/props/prop_name/"
+	# path split: [res:, popochiu, rooms, room_name, props, prop_name]
+	return "Room%s" % (path.split("/", false)[3]).to_pascal_case()
+
+
+func _remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
+	var data := item.get_metadata(COL_TEXT)
+	_row_instances[data.type].remove_from_core(item, should_save_and_delete)
+
+
+#endregion
+
 #region Private ####################################################################################
 func _set_no_room_state() -> void:
 	room_name.hide()
@@ -211,22 +230,6 @@ func _on_menu_item_selected(item: TreeItem, id: int) -> void:
 func _on_create_clicked(group_item: TreeItem) -> void:
 	var type_key: int = group_item.get_metadata(COL_TEXT).type
 	PopochiuEditorHelper.show_creation_popup(_row_instances[type_key].get_popup())
-
-
-func _get_menu_cfg(item: TreeItem) -> Array:
-	var data := item.get_metadata(COL_TEXT)
-	return _row_instances[data.type].get_menu_cfg(item)
-
-
-func _get_location(path: String) -> String:
-	# Structure of path: "res://game/rooms/room_name/props/prop_name/"
-	# path split: [res:, popochiu, rooms, room_name, props, prop_name]
-	return "Room%s" % (path.split("/", false)[3]).to_pascal_case()
-
-
-func _remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
-	var data := item.get_metadata(COL_TEXT)
-	_row_instances[data.type].remove_from_core(item, should_save_and_delete)
 
 
 func _edit_root_node() -> void:
