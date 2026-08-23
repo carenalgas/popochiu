@@ -10,7 +10,7 @@ extends PopochiuDockRow
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.CHARACTER)
 	_title = "Characters in room"
-	_icon = preload("res://addons/popochiu/icons/character.png")
+	_icon = preload("res://addons/popochiu/icons/character.svg")
 	_create_text = ""
 	_method = "get_characters"
 	_type_class = PopochiuCharacter

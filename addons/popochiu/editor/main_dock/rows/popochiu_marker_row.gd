@@ -7,7 +7,7 @@ extends PopochiuRoomObjRow
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.MARKER)
 	_title = "Markers"
-	_icon = preload("res://addons/popochiu/icons/marker.png")
+	_icon = preload("res://addons/popochiu/icons/marker.svg")
 	_create_text = "Create marker"
 	_popup = PopochiuEditorHelper.CREATE_MARKER
 	_method = "get_markers"

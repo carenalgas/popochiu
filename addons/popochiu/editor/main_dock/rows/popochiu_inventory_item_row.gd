@@ -4,12 +4,12 @@ extends PopochiuDockRow
 #
 # Ref: #558
 
-const START_ICON = preload("res://addons/popochiu/icons/inventory_item_start.png")
+const START_ICON = preload("res://addons/popochiu/icons/inventory_item_start.svg")
 
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.INVENTORY_ITEM)
 	_title = "Inventory items"
-	_icon = preload("res://addons/popochiu/icons/inventory_item.png")
+	_icon = preload("res://addons/popochiu/icons/inventory_item.svg")
 	_create_text = "Create inventory item"
 	_popup = PopochiuEditorHelper.CREATE_INVENTORY_ITEM
 	_folder_path = PopochiuResources.INVENTORY_ITEMS_PATH

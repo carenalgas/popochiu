@@ -7,7 +7,7 @@ extends PopochiuDockRow
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.DIALOG)
 	_title = "Dialog trees"
-	_icon = preload("res://addons/popochiu/icons/dialog.png")
+	_icon = preload("res://addons/popochiu/icons/dialog.svg")
 	_create_text = "Create dialog tree"
 	_popup = PopochiuEditorHelper.CREATE_DIALOG
 	_folder_path = PopochiuResources.DIALOGS_PATH

@@ -5,12 +5,12 @@ extends PopochiuDockRow
 #
 # Ref: #558
 
-const PLAYER_ICON = preload("res://addons/popochiu/icons/player_character.png")
+const PLAYER_ICON = preload("res://addons/popochiu/icons/player_character.svg")
 
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.CHARACTER)
 	_title = "Characters"
-	_icon = preload("res://addons/popochiu/icons/character.png")
+	_icon = preload("res://addons/popochiu/icons/character.svg")
 	_create_text = "Create character"
 	_popup = PopochiuEditorHelper.CREATE_CHARACTER
 	_folder_path = PopochiuResources.CHARACTERS_PATH

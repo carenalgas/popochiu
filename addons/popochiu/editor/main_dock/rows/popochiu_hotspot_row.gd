@@ -7,7 +7,7 @@ extends PopochiuRoomObjRow
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.HOTSPOT)
 	_title = "Hotspots"
-	_icon = preload("res://addons/popochiu/icons/hotspot.png")
+	_icon = preload("res://addons/popochiu/icons/hotspot.svg")
 	_create_text = "Create hotspot"
 	_popup = PopochiuEditorHelper.CREATE_HOTSPOT
 	_method = "get_hotspots"
