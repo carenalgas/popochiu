@@ -37,7 +37,8 @@ var _pending_cross_room_followers := []
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"R", self)
+	if not Engine.has_singleton(&"R"):
+		Engine.register_singleton(&"R", self)
 
 
 #endregion

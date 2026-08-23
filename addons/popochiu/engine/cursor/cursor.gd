@@ -37,7 +37,8 @@ var is_blocked := false
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"Cursor", self)
+	if not Engine.has_singleton(&"Cursor"):
+		Engine.register_singleton(&"Cursor", self)
 
 
 func _ready():

@@ -39,7 +39,8 @@ var tl: PopochiuTransitionLayer
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"T", self)
+	if not Engine.has_singleton(&"T"):
+		Engine.register_singleton(&"T", self)
 
 
 #endregion

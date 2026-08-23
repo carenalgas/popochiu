@@ -62,7 +62,8 @@ var prev_dialog: PopochiuDialog = null
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"D", self)
+	if not Engine.has_singleton(&"D"):
+		Engine.register_singleton(&"D", self)
 
 
 #endregion

@@ -81,7 +81,8 @@ var _item_instances := {}
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"I", self)
+	if not Engine.has_singleton(&"I"):
+		Engine.register_singleton(&"I", self)
 
 
 #endregion

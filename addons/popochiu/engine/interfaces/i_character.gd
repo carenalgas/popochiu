@@ -46,7 +46,8 @@ var _characters := {}
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"C", self)
+	if not Engine.has_singleton(&"C"):
+		Engine.register_singleton(&"C", self)
 
 
 #endregion
