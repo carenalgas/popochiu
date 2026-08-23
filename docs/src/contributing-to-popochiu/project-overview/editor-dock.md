@@ -31,8 +31,7 @@ main_dock/
 │   ├── popochiu_hotspot_row.gd   # Room object (config-only)
 │   ├── popochiu_region_row.gd    # Room object (config-only)
 │   ├── popochiu_marker_row.gd    # Room object (config-only)
-│   ├── popochiu_walkable_area_row.gd
-│   └── popochiu_character_in_room_row.gd  # Special room row
+│   └── popochiu_walkable_area_row.gd
 ├── tab_main/                     # Main tab (rooms, characters, items, dialogs)
 ├── tab_room/                     # Room tab (objects of the open room)
 ├── tab_audio/                    # Audio tab (music, sfx, voices, UI)
@@ -106,18 +105,19 @@ icon and title in `_init()`:
 
 ```
 PopochiuDockRow
-├── PopochiuRoomObjRow
-│   ├── PopochiuPropRow
-│   ├── PopochiuHotspotRow
-│   ├── PopochiuRegionRow
-│   ├── PopochiuMarkerRow
-│   └── PopochiuWalkableAreaRow
-└── PopochiuCharacterInRoomRow   # special, does NOT extend RoomObjRow
+└── PopochiuRoomObjRow
+    ├── PopochiuPropRow
+    ├── PopochiuHotspotRow
+    ├── PopochiuRegionRow
+    ├── PopochiuMarkerRow
+    └── PopochiuWalkableAreaRow
 ```
 
-`PopochiuCharacterInRoomRow` is special on purpose: characters are **external objects linked into
-the room**, not room objects created there. It has no create button, no context menu, and a
-"Remove character from room" button instead of the usual open/script buttons.
+The Room tab keeps the characters present in the room in a **separate `Tree` control**, stacked
+below the room-objects tree and separated by an `HSeparator`. Characters are **external objects
+linked into the room**, not room objects created there, so they are handled locally in `tab_room.gd`
+rather than through a row class: they have no create button, no context menu, and a "Remove
+character from room" button instead of the usual open/script buttons.
 
 ## How to add a new type
 
