@@ -1,5 +1,5 @@
 # @popochiu-docs-category game-objects
-@icon("res://addons/popochiu/icons/inventory_item.png")
+@icon("res://addons/popochiu/icons/inventory_item.svg")
 class_name PopochiuInventoryItem
 extends TextureRect
 ## Represents an item that can be collected, stored in the inventory, and used on objects.

@@ -1,6 +1,6 @@
 # @popochiu-docs-category room-objects
 @tool
-@icon('res://addons/popochiu/icons/walkable_area.png')
+@icon('res://addons/popochiu/icons/walkable_area.svg')
 class_name PopochiuWalkableArea
 extends Node2D
 ## Defines navigable areas where characters can walk within a room.
