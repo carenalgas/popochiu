@@ -4,7 +4,7 @@
    height="16"
    version="1.1"
    id="svg1"
-   sodipodi:docname="btn_dialog_position.svg"
+   sodipodi:docname="Dialog.svg"
    inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -160,7 +160,7 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="true"
      inkscape:zoom="38.890872"
-     inkscape:cx="5.2325903"
+     inkscape:cx="5.2454468"
      inkscape:cy="8.099587"
      inkscape:window-width="2048"
      inkscape:window-height="1080"
@@ -180,14 +180,7 @@
        opacity="0.14901961"
        empspacing="5"
        enabled="true"
-       visible="true" /></sodipodi:namedview><rect
-     style="fill:#ff00ff;fill-opacity:1;fill-rule:evenodd;stroke-width:2;stroke-linecap:round;paint-order:fill markers stroke"
-     id="rect16"
-     width="4"
-     height="4"
-     x="2.220446e-16"
-     y="12"
-     inkscape:label="quadratino" /><path
+       visible="true" /></sodipodi:namedview><path
      id="rect2"
      style="fill:#e0e0e0;fill-opacity:1;stroke-width:6.1101;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
      inkscape:label="fumetto"

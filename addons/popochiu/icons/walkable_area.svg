@@ -5,14 +5,15 @@
    width="16"
    version="1.1"
    id="svg2"
-   sodipodi:docname="WalkableAreaOn_optim_2.svg"
+   sodipodi:docname="WalkableArea_optim.svg"
    inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
-   xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-     id="defs2"><inkscape:path-effect
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <inkscape:path-effect
        effect="perspective-envelope"
        up_left_point="0.79374988,1.0583333"
        up_right_point="3.4395831,1.0583333"
@@ -24,7 +25,8 @@
        deform_type="perspective"
        horizontal_mirror="false"
        vertical_mirror="false"
-       overflow_perspective="false" /><inkscape:path-effect
+       overflow_perspective="false" />
+    <inkscape:path-effect
        effect="perspective-envelope"
        up_left_point="1.8520832,0.79374997"
        up_right_point="2.3812498,0.79374997"
@@ -36,7 +38,9 @@
        deform_type="perspective"
        horizontal_mirror="false"
        vertical_mirror="false"
-       overflow_perspective="false" /></defs><sodipodi:namedview
+       overflow_perspective="false" />
+  </defs>
+  <sodipodi:namedview
      id="namedview2"
      pagecolor="#ffffff"
      bordercolor="#000000"
@@ -46,15 +50,16 @@
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
      showgrid="true"
-     inkscape:zoom="27.5"
-     inkscape:cx="4"
-     inkscape:cy="6.6909091"
+     inkscape:zoom="31.58"
+     inkscape:cx="7.4255858"
+     inkscape:cy="6.9031032"
      inkscape:window-width="2048"
      inkscape:window-height="1080"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg2"><inkscape:grid
+     inkscape:current-layer="svg2">
+    <inkscape:grid
        id="grid2"
        units="px"
        originx="0"
@@ -67,18 +72,14 @@
        opacity="0.14901961"
        empspacing="4"
        enabled="true"
-       visible="true" /></sodipodi:namedview><path
+       visible="true" />
+  </sodipodi:namedview>
+  <path
      id="rect16"
-     style="display:inline;opacity:1;fill:#e0e0e0;fill-opacity:1;stroke-width:1.99999;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:fill markers stroke"
+     style="opacity:1;fill:#e0e0e0;fill-opacity:1;stroke-width:1.99999;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:fill markers stroke"
      d="M 0.79374988,1.0583333 0.26458332,3.4395832 H 1.0054166 L 1.3229165,1.0583333 Z m 1.05833322,0 -0.1058333,2.3812499 H 2.4870831 L 2.3812498,1.0583333 Z m 1.0583334,0 0.3175,2.3812499 0.7408332,0 -0.5291666,-2.3812499 z"
      inkscape:path-effect="#path-effect21"
      inkscape:original-d="M 0.79374988,1.0583333 V 3.1749999 H 1.3229165 V 1.0583333 Z m 1.05833322,0 V 3.1749999 H 2.3812498 V 1.0583333 Z m 1.0583334,0 V 3.1749999 H 3.4395831 V 1.0583333 Z"
      transform="matrix(1,0,0,1.1111111,8.0404663e-8,-0.38217591)"
-     inkscape:label="strisce prosp" /><rect
-     style="fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:2.11667;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:fill markers stroke"
-     id="rect3"
-     width="1.0583333"
-     height="1.0583333"
-     x="0"
-     y="3.175"
-     inkscape:label="quadratino" /></svg>
+     inkscape:label="strisce prosp" />
+</svg>
