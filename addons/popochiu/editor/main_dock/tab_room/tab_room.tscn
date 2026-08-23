@@ -1,57 +1,106 @@
-[gd_scene load_steps=2 format=3 uid="uid://q1bjkxavt2ay"]
+[gd_scene format=3 uid="uid://q1bjkxavt2ay"]
 
 [ext_resource type="Script" uid="uid://dcxh7skiwv6yu" path="res://addons/popochiu/editor/main_dock/tab_room/tab_room.gd" id="1_dnc56"]
 
-[node name="TabRoom" type="VBoxContainer"]
+[sub_resource type="DPITexture" id="DPITexture_7ojni"]
+_source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#ff5d5d\" d=\"M2 1v8.586l1.293-1.293a1 1 0 0 1 1.414 0L7 10.587l2.293-2.293a1 1 0 0 1 1.414 0L13 10.586l1-1V6H9V1H2zm8 0v4h4zm-6 9.414-2 2V15h12v-2.586l-.293.293a1 1 0 0 1-1.414 0L10 10.414l-2.293 2.293a1 1 0 0 1-1.414 0L4 10.414z\"/></svg>
+"
+
+[node name="TabRoom" type="VBoxContainer" unique_id=595737337]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_dnc56")
 
-[node name="RoomName" type="Button" parent="."]
+[node name="RoomName" type="Button" parent="." unique_id=1688636009]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Locate room scene in FileSystem panel"
 text = "Room name"
+icon = SubResource("DPITexture_7ojni")
 
-[node name="ToolButtons" type="HBoxContainer" parent="."]
+[node name="ToolButtons" type="HBoxContainer" parent="." unique_id=2031907500]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 alignment = 1
 
-[node name="BtnScript" type="Button" parent="ToolButtons"]
+[node name="BtnScript" type="Button" parent="ToolButtons" unique_id=656246395]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Open Room's script"
 text = "Script"
+icon = SubResource("DPITexture_7ojni")
 
-[node name="BtnResource" type="Button" parent="ToolButtons"]
+[node name="BtnResource" type="Button" parent="ToolButtons" unique_id=69575297]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Inspect Room's State"
 text = "State"
+icon = SubResource("DPITexture_7ojni")
 
-[node name="BtnResourceScript" type="Button" parent="ToolButtons"]
+[node name="BtnResourceScript" type="Button" parent="ToolButtons" unique_id=867885717]
 unique_name_in_owner = true
 layout_mode = 2
-text = "State"
+size_flags_horizontal = 3
+tooltip_text = "Open Room's State script"
+text = "State Script"
+icon = SubResource("DPITexture_7ojni")
 
-[node name="Filter" type="LineEdit" parent="."]
+[node name="Filter" type="LineEdit" parent="." unique_id=1966196996]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 placeholder_text = "Filter game objects"
 clear_button_enabled = true
+right_icon = SubResource("DPITexture_7ojni")
 
-[node name="NoRoomInfo" type="Label" parent="."]
+[node name="NoRoomInfo" type="Label" parent="." unique_id=1862267761]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(312, 0)
 layout_mode = 2
 text = "Open a room in Main tab to see or create Props, Hotspots, Regions and Points."
 autowrap_mode = 3
 
-[node name="Tree" type="Tree" parent="."]
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=2099548849]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer" unique_id=742729478]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Tree" type="Tree" parent="ScrollContainer/VBoxContainer" unique_id=1075783994]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 3
+allow_rmb_select = true
+hide_root = true
+select_mode = 1
+scroll_horizontal_enabled = false
+scroll_vertical_enabled = false
+
+[node name="CharactersSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer" unique_id=1075783995]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="CharactersTree" type="Tree" parent="ScrollContainer/VBoxContainer" unique_id=1075783996]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+columns = 3
+allow_rmb_select = true
+hide_root = true
+select_mode = 1
+scroll_horizontal_enabled = false
+scroll_vertical_enabled = false
