@@ -7,7 +7,7 @@ extends PopochiuRoomObjRow
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.WALKABLE_AREA)
 	_title = "Walkable areas"
-	_icon = preload("res://addons/popochiu/icons/walkable_area.png")
+	_icon = preload("res://addons/popochiu/icons/walkable_area.svg")
 	_create_text = "Create walkable area"
 	_popup = PopochiuEditorHelper.CREATE_WALKABLE_AREA
 	_method = "get_walkable_areas"

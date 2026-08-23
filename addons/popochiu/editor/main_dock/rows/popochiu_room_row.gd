@@ -7,7 +7,7 @@ extends PopochiuDockRow
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.ROOM)
 	_title = "Rooms"
-	_icon = preload("res://addons/popochiu/icons/room.png")
+	_icon = preload("res://addons/popochiu/icons/room.svg")
 	_create_text = "Create room"
 	_popup = PopochiuEditorHelper.CREATE_ROOM
 	_folder_path = PopochiuResources.ROOMS_PATH

@@ -50,25 +50,25 @@ var _groups := {
 	PopochiuResources.AudioTypes.MUSIC: {
 		array = "mx_cues",
 		group = null,
-		icon = preload("res://addons/popochiu/icons/music.png"),
+		icon = preload("res://addons/popochiu/icons/music.svg"),
 		title = "Music",
 	},
 	PopochiuResources.AudioTypes.SOUND_EFFECT: {
 		array = "sfx_cues",
 		group = null,
-		icon = preload("res://addons/popochiu/icons/sfx.png"),
+		icon = preload("res://addons/popochiu/icons/sfx.svg"),
 		title = "Sound effects",
 	},
 	PopochiuResources.AudioTypes.VOICE: {
 		array = "vo_cues",
 		group = null,
-		icon = preload("res://addons/popochiu/icons/voice.png"),
+		icon = preload("res://addons/popochiu/icons/voice.svg"),
 		title = "Voices",
 	},
 	PopochiuResources.AudioTypes.UI: {
 		array = "ui_cues",
 		group = null,
-		icon = preload("res://addons/popochiu/icons/ui.png"),
+		icon = preload("res://addons/popochiu/icons/ui.svg"),
 		title = "Graphic interface",
 	},
 }
@@ -167,22 +167,22 @@ func _get_menu_cfg(item: TreeItem) -> Array:
 	if not data.get("is_cue", false):
 		cfg.append({
 			id = MenuOptions.ADD_TO_MUSIC,
-			icon = preload("res://addons/popochiu/icons/music.png"),
+			icon = preload("res://addons/popochiu/icons/music.svg"),
 			label = "Add to Music",
 		})
 		cfg.append({
 			id = MenuOptions.ADD_TO_SFX,
-			icon = preload("res://addons/popochiu/icons/sfx.png"),
+			icon = preload("res://addons/popochiu/icons/sfx.svg"),
 			label = "Add to Sound Effects",
 		})
 		cfg.append({
 			id = MenuOptions.ADD_TO_VOICE,
-			icon = preload("res://addons/popochiu/icons/voice.png"),
+			icon = preload("res://addons/popochiu/icons/voice.svg"),
 			label = "Add to Voices",
 		})
 		cfg.append({
 			id = MenuOptions.ADD_TO_UI,
-			icon = preload("res://addons/popochiu/icons/ui.png"),
+			icon = preload("res://addons/popochiu/icons/ui.svg"),
 			label = "Add to Graphic Interface",
 		})
 		cfg.append(MenuOptions.SEPARATOR)

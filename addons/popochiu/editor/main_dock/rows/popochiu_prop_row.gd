@@ -7,7 +7,7 @@ extends PopochiuRoomObjRow
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.PROP)
 	_title = "Props"
-	_icon = preload("res://addons/popochiu/icons/prop.png")
+	_icon = preload("res://addons/popochiu/icons/prop.svg")
 	_create_text = "Create prop"
 	_popup = PopochiuEditorHelper.CREATE_PROP
 	_method = "get_props"

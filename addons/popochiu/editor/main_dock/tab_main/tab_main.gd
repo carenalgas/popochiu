@@ -8,8 +8,8 @@ extends PopochiuTreeDock
 #
 # Ref: #558
 
-const PLAYER_ICON = preload("res://addons/popochiu/icons/player_character.png")
-const START_ICON = preload("res://addons/popochiu/icons/inventory_item_start.png")
+const PLAYER_ICON = preload("res://addons/popochiu/icons/player_character.svg")
+const START_ICON = preload("res://addons/popochiu/icons/inventory_item_start.svg")
 
 var rows_paths := []
 var has_data := false
