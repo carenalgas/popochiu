@@ -31,7 +31,8 @@ var twelfth_root_of_two := pow(2, (1.0 / 12))
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"A", self)
+	if not Engine.has_singleton(&"A"):
+		Engine.register_singleton(&"A", self)
 
 
 #endregion

@@ -122,7 +122,8 @@ var _saveload: Resource = null
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"E", self)
+	if not Engine.has_singleton(&"E"):
+		Engine.register_singleton(&"E", self)
 
 
 func _ready() -> void:

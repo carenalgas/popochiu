@@ -81,7 +81,8 @@ var gui: PopochiuGraphicInterface
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"G", self)
+	if not Engine.has_singleton(&"G"):
+		Engine.register_singleton(&"G", self)
 
 
 func _ready():
