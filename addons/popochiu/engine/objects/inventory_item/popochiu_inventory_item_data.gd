@@ -1,5 +1,5 @@
 # @popochiu-docs-category game-objects-data-managers
-@icon('res://addons/popochiu/icons/inventory_item.png')
+@icon('res://addons/popochiu/icons/inventory_item.svg')
 class_name PopochiuInventoryItemData
 extends Resource
 ## Stores persistent data for an inventory item across save/load operations.

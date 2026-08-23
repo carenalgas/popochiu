@@ -1,6 +1,6 @@
 # @popochiu-docs-category game-objects
 @tool
-@icon("res://addons/popochiu/icons/room.png")
+@icon("res://addons/popochiu/icons/room.svg")
 class_name PopochiuRoom
 extends Node2D
 ## Represents a location in the game where characters can move and interact with objects.
