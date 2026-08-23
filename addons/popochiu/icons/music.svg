@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="16"
+   height="16"
+   version="1.1"
+   id="svg3"
+   sodipodi:docname="Music.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs3" />
+  <sodipodi:namedview
+     id="namedview3"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="true"
+     inkscape:zoom="9.7227183"
+     inkscape:cx="-2.7770012"
+     inkscape:cy="5.862558"
+     inkscape:window-width="2048"
+     inkscape:window-height="1080"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg3">
+    <inkscape:grid
+       id="grid3"
+       units="px"
+       originx="0"
+       originy="0"
+       spacingx="1"
+       spacingy="1"
+       empcolor="#0099e5"
+       empopacity="0.30196078"
+       color="#0099e5"
+       opacity="0.14901961"
+       empspacing="4"
+       enabled="true"
+       visible="true" />
+  </sodipodi:namedview>
+  <linearGradient
+     id="a"
+     x2="0"
+     y1="1"
+     y2="15"
+     gradientUnits="userSpaceOnUse">
+    <stop
+       offset="0"
+       stop-color="#ff5f5f"
+       id="stop1" />
+    <stop
+       offset=".5"
+       stop-color="#e1da5b"
+       id="stop2" />
+    <stop
+       offset="1"
+       stop-color="#5fff97"
+       id="stop3" />
+  </linearGradient>
+  <path
+     id="path3"
+     style="fill:#e0e0e0;fill-opacity:1"
+     d="M 13,1 5.7539062,3 C 5.2991132,3.1151922 4.9856385,3.5310653 5,4 V 9.5507812 C 2.6966217,9.0806061 1.0781364,11.75934 2.5644531,13.580078 4.0507697,15.400815 6.9995202,14.350876 7,12 V 4.7558594 L 12,3.328125 V 7.5507809 C 9.6966217,7.0806058 8.0781364,9.75934 9.5644531,11.580078 11.05077,13.400815 13.99952,12.350876 14,10 V 2 C 14,1.4477153 13.552285,1 13,1 Z"
+     sodipodi:nodetypes="ccccsccccscsc"
+     inkscape:label="nota" />
+</svg>

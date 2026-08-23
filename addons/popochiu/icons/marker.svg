@@ -5,7 +5,7 @@
    width="16"
    version="1.1"
    id="svg2"
-   sodipodi:docname="btn_markers.svg"
+   sodipodi:docname="Markers.svg"
    inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
    xml:space="preserve"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -23,7 +23,7 @@
      inkscape:deskcolor="#d1d1d1"
      showgrid="true"
      inkscape:zoom="27.5"
-     inkscape:cx="5.2181818"
+     inkscape:cx="5.2"
      inkscape:cy="7.5636364"
      inkscape:window-width="2048"
      inkscape:window-height="1080"
@@ -49,11 +49,4 @@
      id="path1"
      style="stroke-width:0.426019"
      sodipodi:nodetypes="cccccc"
-     inkscape:label="marker" /><rect
-     style="fill:#00ffff;fill-opacity:1;stroke-width:2.11667;stroke-linecap:round;stroke-linejoin:round;paint-order:fill markers stroke"
-     id="rect3"
-     width="1.0583333"
-     height="1.058333"
-     x="0"
-     y="3.175"
-     inkscape:label="quadratino" /></svg>
+     inkscape:label="marker" /></svg>
