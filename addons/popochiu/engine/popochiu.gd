@@ -533,6 +533,30 @@ func get_current_command_name() -> String:
 #endregion
 
 #region SetGet #####################################################################################
+## Returns the visible room's rectangle in global screen coordinates.[br]
+## [br]
+## With [code]display/window/stretch/aspect[/code] set to something other than
+## [code]keep_width[/code]/[code]keep_height[/code] this is identical to
+## [method Viewport.get_visible_rect].[br]
+## With [code]keep_width/keep_height[/code] the root viewport may grow larger than the room so this
+## effectively clips [method Viewport.get_visible_rect] to the currently loaded room's bounds.[br]
+## [br]
+## If there is no current room this returns [method Viewport.get_visible_rect].
+func get_visible_room_rect() -> Rect2:
+	var viewport_rect := get_viewport().get_visible_rect()
+
+	# If there is no current room we have no concept of "visible room area" so return the
+	# viewport rect as-is.
+	if not R.current:
+		return viewport_rect
+
+	var viewport_size := viewport_rect.size
+	var room_size := Vector2(R.current.width, R.current.height)
+	var visible_size := viewport_size.min(room_size)
+	var visible_rect := Rect2((viewport_size - visible_size) * 0.5, visible_size)
+	return visible_rect
+
+
 func get_width() -> float:
 	return get_viewport().get_visible_rect().end.x
 
