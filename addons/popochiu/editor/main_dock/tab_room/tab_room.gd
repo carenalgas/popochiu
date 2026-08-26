@@ -394,7 +394,7 @@ func _create_character_item(name: String, path: String, node_path: String) -> Tr
 func _on_characters_item_selected() -> void:
 	var item := characters_tree.get_selected()
 	# Ignore the group item (direct child of the hidden root)
-	if not item or item.get_parent() != characters_tree.get_root(): return
+	if not item or item.get_parent() == characters_tree.get_root(): return
 	
 	var data := item.get_metadata(COL_TEXT)
 	if is_instance_valid(opened_room):
