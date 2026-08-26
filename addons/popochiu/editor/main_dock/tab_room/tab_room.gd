@@ -338,7 +338,7 @@ func _setup_characters_tree() -> void:
 	
 	# Add the "Add character to room" button to the Characters group
 	add_button(
-		_characters_group, get_theme_icon("Load", "EditorIcons"),
+		_characters_group, get_theme_icon("Instance", "EditorIcons"),
 		PopochiuDockRow.Buttons.ADD_CHARACTER, "Add character to room"
 	)
 	set_button_disabled(_characters_group, PopochiuDockRow.Buttons.ADD_CHARACTER, true)
