@@ -1,6 +1,6 @@
 # @popochiu-docs-category room-objects
 @tool
-@icon("res://addons/popochiu/icons/prop.png")
+@icon("res://addons/popochiu/icons/prop.svg")
 class_name PopochiuProp
 extends PopochiuClickable
 ## A visual and interactive element in a room, such as backgrounds, foregrounds, tables, or cups.

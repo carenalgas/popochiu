@@ -1,6 +1,6 @@
 # @popochiu-docs-category room-objects
 @tool
-@icon('res://addons/popochiu/icons/region.png')
+@icon('res://addons/popochiu/icons/region.svg')
 class_name PopochiuRegion
 extends Area2D
 ## Defines areas in a room that trigger events when characters enter or exit.
