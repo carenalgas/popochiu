@@ -171,7 +171,7 @@ func _ready() -> void:
 		var ii: PopochiuInventoryItem = PopochiuUtils.i.get_item_instance(key)
 		
 		if is_instance_valid(ii):
-			ii.add(false)
+			await ii.add()
 	
 	if settings.scale_gui:
 		PopochiuUtils.cursor.scale_cursor(scale)
