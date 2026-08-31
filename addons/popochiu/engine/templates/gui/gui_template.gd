@@ -57,20 +57,24 @@ func _on_mouse_exited_inventory_item(inventory_item: PopochiuInventoryItem) -> v
 
 # Called when an `inventory_item` is added to the inventory.
 # `super()` delegates to the active GUI template component and waits for its transition.
-func _on_item_added(item: PopochiuInventoryItem) -> void:
-	await super(item)
+func _on_item_added(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
+	await super(item, character)
 
 
 # Called when an `inventory_item` is removed from the inventory.
 # `super()` delegates to the active GUI template component and waits for its transition.
-func _on_item_removed(item: PopochiuInventoryItem) -> void:
-	await super(item)
+func _on_item_removed(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
+	await super(item, character)
 
 
 # Called when an inventory `item` is replaced by `new_item`.
 # `super()` delegates to the active GUI template component and waits for its transition.
-func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
-	await super(item, new_item)
+func _on_item_replaced(
+	item: PopochiuInventoryItem,
+	new_item: PopochiuInventoryItem,
+	character: PopochiuCharacter
+) -> void:
+	await super(item, new_item, character)
 
 
 # Called when a dialog line is spoken by a `PopochiuCharacter` (i.e. when
