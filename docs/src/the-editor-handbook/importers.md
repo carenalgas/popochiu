@@ -95,6 +95,36 @@ For example, to create a walk animation that supports the four main directions, 
 
 If a file contains no tags, it will be imported as a single animation named `default`.
 
+### Group tags (Rooms)
+
+A Room source file can contain **multiple animations for the same prop**. Instead of creating one prop per tag, you can mark a set of tags as a **group** using a small, explicit naming convention. A group tag starts with `@` and its animations start with `:` followed by the group name.
+
+For example, a `Door` that can be opened and closed could be organized like this:
+
+| Tag | Role | Frame range |
+|-----|------|-------------|
+| `@Door` | Group tag | 15-20 |
+| `:DoorClosed` | Animation `closed` | 15-17 |
+| `:DoorOpen` | Animation `open` | 18-20 |
+
+The importer creates a **single prop named `Door`** with **two animations** in its AnimationPlayer: `closed` and `open`. The `@` and `:` markers and the group prefix are stripped from the animation names automatically (converted to `snake_case`).
+
+Rules to keep in mind:
+
+* **Group tags** start with `@` (e.g. `@Door`). The group tag's own frame range is the **group span**: the prop's spritesheet is exported from exactly that range, and every animation of the group must be fully inside it. The group span is the single source of truth for both validation and export.
+* **Group animations** start with `:` followed by the group name (e.g. `:DoorClosed`, `:door_open`). The character right after the group name must be a separator or an uppercase letter: `:DoorClosed` works, `:Doors` does not.
+* **Plain tags** (no marker) are imported as standalone single-animation props, exactly as before.
+* `@` and `:` are reserved: do not use them at the start of a tag for anything else.
+* In the importer interface, a group is shown as a bold header row with its child animations indented below it. The group row carries the prop-level options (Import, Visible, Clickable); each child row carries the animation-level options (Import, Loops, Autoplays). Autoplay is exclusive within a group: only one animation can autoplay at a time, and you can leave all of them off.
+
+If the file is misconfigured, the importer prints an **actionable error in the Output panel as soon as the file is scanned** and skips the offending tag (no prop is created for it):
+
+* An animation tag with no matching group (e.g. `:Foo` with no `@Foo`) is skipped and reported.
+* An animation that is not fully inside its group's span (e.g. `:DoorClosed` on frames 15-16 while `@Door` spans 11-14) is an error: the group tag must fully cover all its animations.
+* Two group tags with the same name (case-insensitive) are reported as ambiguous.
+* A group with no animations is reported as a warning (no prop is created).
+* A plain tag whose name matches a group name **and** falls inside the group's span (e.g. `DoorBroken` on a frame inside `@Door`) triggers a warning: you probably forgot the `:` prefix. Plain tags outside the group's span are legitimate separate props (e.g. a `DoorBell` placed after the group's range).
+
 ### Multiple source files
 
 If you are in need, you may want to separate your character animations over different source files. This is feasible, but keeping everything in a single file is the best option to speed up development by a great amount.  

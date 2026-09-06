@@ -6,7 +6,7 @@ var _animation_creator := preload(
 ).new()
 
 
-#region Public ######################################################################################
+#region Public #####################################################################################
 func init() -> void:
 	# Instantiate animation creator
 	_animation_creator.init(_aseprite, file_system)
@@ -26,7 +26,7 @@ func _on_import_pressed() -> void:
 	# Set everything up
 	# This will populate _root_node and _options class variables
 	super()
-	
+
 	var result := await _animation_creator.create_all_animations(
 		target_node, _options
 	)
@@ -34,11 +34,11 @@ func _on_import_pressed() -> void:
 
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
-		_show_message("Some errors occurred. Please check output panel.", "Warning!")
+		_finish_import_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
 		if %AutotracePolygonsCheckButton.is_pressed():
 			PopochiuPolygonsHelper.trace_interaction_polygon_direct(target_node)
-		_show_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
+		_finish_import_message("%d animation tags processed." % [_tags_cache.size()], "Done!")
 
 
 func _customize_tag_ui(tag_row: AnimationTagRow) -> void:

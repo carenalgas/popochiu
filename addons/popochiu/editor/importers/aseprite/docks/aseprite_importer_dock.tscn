@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bcanby6n3eahm"]
+[gd_scene format=3 uid="uid://bcanby6n3eahm"]
 
 [sub_resource type="StyleBoxEmpty" id="1"]
 
@@ -19,6 +19,8 @@ image = SubResource("Image_vemq8")
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_snao5"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m03mu"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctsm1"]
 content_margin_left = 4.0
 content_margin_top = 4.0
@@ -28,31 +30,31 @@ bg_color = Color(1, 0.364706, 0.364706, 1)
 draw_center = false
 corner_detail = 1
 
-[node name="AsepriteImporterInspectorDock" type="PanelContainer"]
+[node name="AsepriteImporterInspectorDock" type="PanelContainer" unique_id=2036129632]
 offset_right = 14.0
 offset_bottom = 14.0
 theme_override_styles/panel = SubResource("1")
 
-[node name="Margin" type="MarginContainer" parent="."]
+[node name="Margin" type="MarginContainer" parent="." unique_id=1328525319]
 layout_mode = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="Importer" type="VBoxContainer" parent="Margin"]
+[node name="Importer" type="VBoxContainer" parent="Margin" unique_id=1052446868]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Source" type="HBoxContainer" parent="Margin/Importer"]
+[node name="Source" type="HBoxContainer" parent="Margin/Importer" unique_id=346003194]
 layout_mode = 2
 tooltip_text = "Location of the Aseprite (*.ase, *.aseprite)  source file."
 
-[node name="Label" type="Label" parent="Margin/Importer/Source"]
+[node name="Label" type="Label" parent="Margin/Importer/Source" unique_id=1627602857]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Aseprite File"
 
-[node name="SourceButton" type="Button" parent="Margin/Importer/Source"]
+[node name="SourceButton" type="Button" parent="Margin/Importer/Source" unique_id=1303017145]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -60,20 +62,20 @@ size_flags_stretch_ratio = 2.0
 text = "[empty]"
 clip_text = true
 
-[node name="RescanButton" type="Button" parent="Margin/Importer/Source"]
+[node name="RescanButton" type="Button" parent="Margin/Importer/Source" unique_id=979411303]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Rescan"
 
-[node name="FilterBulkBtnContainer" type="PanelContainer" parent="Margin/Importer"]
+[node name="FilterBulkBtnContainer" type="PanelContainer" parent="Margin/Importer" unique_id=1795241642]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_wwoxk")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Margin/Importer/FilterBulkBtnContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Margin/Importer/FilterBulkBtnContainer" unique_id=842256842]
 layout_mode = 2
 
-[node name="FilterField" type="LineEdit" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+[node name="FilterField" type="LineEdit" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer" unique_id=1015027343]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -82,7 +84,7 @@ keep_editing_on_text_submit = true
 emoji_menu_enabled = false
 clear_button_enabled = true
 
-[node name="VisibleBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+[node name="VisibleBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer" unique_id=1122585908]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -93,7 +95,7 @@ toggle_mode = true
 icon = SubResource("ImageTexture_dkl0r")
 flat = true
 
-[node name="ClickableBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+[node name="ClickableBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer" unique_id=511655929]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -104,7 +106,7 @@ toggle_mode = true
 icon = SubResource("ImageTexture_dkl0r")
 flat = true
 
-[node name="AutoplaysBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+[node name="AutoplaysBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer" unique_id=710950879]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -115,14 +117,14 @@ toggle_mode = true
 icon = SubResource("ImageTexture_dkl0r")
 flat = true
 
-[node name="FilterSeparator" type="Panel" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+[node name="FilterSeparator" type="Panel" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer" unique_id=767376194]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_snao5")
 
-[node name="ImportBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+[node name="ImportBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer" unique_id=1822248276]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -132,7 +134,7 @@ toggle_mode = true
 icon = SubResource("ImageTexture_dkl0r")
 flat = true
 
-[node name="LoopsBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
+[node name="LoopsBulk" type="Button" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer" unique_id=1727904686]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
@@ -142,11 +144,12 @@ toggle_mode = true
 icon = SubResource("ImageTexture_dkl0r")
 flat = true
 
-[node name="FinalSpacer" type="Panel" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer"]
-custom_minimum_size = Vector2(8, 0)
+[node name="FinalSpacer" type="Panel" parent="Margin/Importer/FilterBulkBtnContainer/HBoxContainer" unique_id=1361304907]
+custom_minimum_size = Vector2(10, 0)
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_m03mu")
 
-[node name="TagsScrollContainer" type="ScrollContainer" parent="Margin/Importer"]
+[node name="TagsScrollContainer" type="ScrollContainer" parent="Margin/Importer" unique_id=337301252]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 150)
@@ -156,12 +159,12 @@ follow_focus = true
 horizontal_scroll_mode = 0
 vertical_scroll_mode = 4
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Margin/Importer/TagsScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Margin/Importer/TagsScrollContainer" unique_id=2092599885]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="TagsInfo" type="Panel" parent="Margin/Importer/TagsScrollContainer/VBoxContainer"]
+[node name="TagsInfo" type="Panel" parent="Margin/Importer/TagsScrollContainer/VBoxContainer" unique_id=1274324053]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(222, 50)
 layout_mode = 2
@@ -169,7 +172,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
 
-[node name="InfoLabel" type="Label" parent="Margin/Importer/TagsScrollContainer/VBoxContainer/TagsInfo"]
+[node name="InfoLabel" type="Label" parent="Margin/Importer/TagsScrollContainer/VBoxContainer/TagsInfo" unique_id=1433389959]
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 0
 anchor_right = 1.0
@@ -179,39 +182,39 @@ size_flags_vertical = 6
 text = "To import animations, select a properly tagged Aseprite source file."
 autowrap_mode = 3
 
-[node name="Tags" type="VBoxContainer" parent="Margin/Importer/TagsScrollContainer/VBoxContainer"]
+[node name="Tags" type="VBoxContainer" parent="Margin/Importer/TagsScrollContainer/VBoxContainer" unique_id=2093920181]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="OptionsContainer" type="PanelContainer" parent="Margin/Importer"]
+[node name="OptionsContainer" type="PanelContainer" parent="Margin/Importer" unique_id=1407668064]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Options" type="VBoxContainer" parent="Margin/Importer/OptionsContainer"]
+[node name="Options" type="VBoxContainer" parent="Margin/Importer/OptionsContainer" unique_id=509009280]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="VisibleLayers" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options"]
+[node name="VisibleLayers" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options" unique_id=1081260672]
 layout_mode = 2
 tooltip_text = "If active, layers not visible in the source file won't be included in the final image."
 
-[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/VisibleLayers"]
+[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/VisibleLayers" unique_id=892252341]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Only visible layers"
 
-[node name="VisibleLayersCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/VisibleLayers"]
+[node name="VisibleLayersCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/VisibleLayers" unique_id=1503946280]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="WipeOldAnimations" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options"]
+[node name="WipeOldAnimations" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options" unique_id=359241323]
 layout_mode = 2
 tooltip_text = "If active, layers not visible in the source file won't be included in the final image."
 
-[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/WipeOldAnimations"]
+[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/WipeOldAnimations" unique_id=2056958721]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
@@ -219,55 +222,55 @@ tooltip_text = "Set this to OFF if you want to add new animations on top of old 
 mouse_filter = 0
 text = "Wipe old animations"
 
-[node name="WipeOldAnimationsCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/WipeOldAnimations"]
+[node name="WipeOldAnimationsCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/WipeOldAnimations" unique_id=780699023]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="AutotracePolygons" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options"]
+[node name="AutotracePolygons" type="HBoxContainer" parent="Margin/Importer/OptionsContainer/Options" unique_id=1203228738]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 tooltip_text = "If active, the interaction polygon of each imported prop or character will be traced automatically from its sprite's alpha channel."
 
-[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/AutotracePolygons"]
+[node name="Label" type="Label" parent="Margin/Importer/OptionsContainer/Options/AutotracePolygons" unique_id=1083015784]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 text = "Autotrace polygons"
 
-[node name="AutotracePolygonsCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/AutotracePolygons"]
+[node name="AutotracePolygonsCheckButton" type="CheckButton" parent="Margin/Importer/OptionsContainer/Options/AutotracePolygons" unique_id=753026819]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="ButtonsBox" type="HBoxContainer" parent="Margin/Importer"]
+[node name="ButtonsBox" type="HBoxContainer" parent="Margin/Importer" unique_id=1790388292]
 layout_mode = 2
 size_flags_horizontal = 8
 
-[node name="Reset" type="Button" parent="Margin/Importer/ButtonsBox"]
+[node name="Reset" type="Button" parent="Margin/Importer/ButtonsBox" unique_id=1855505685]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Reset all preferences"
 flat = true
 
-[node name="Import" type="Button" parent="Margin/Importer/ButtonsBox"]
+[node name="Import" type="Button" parent="Margin/Importer/ButtonsBox" unique_id=1615011572]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Import selected animations"
 text = "Import"
 
-[node name="Warning" type="VBoxContainer" parent="Margin"]
+[node name="Warning" type="VBoxContainer" parent="Margin" unique_id=261532572]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Margin/Warning"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Margin/Warning" unique_id=53624499]
 layout_mode = 2
 
-[node name="WarningPanel" type="Panel" parent="Margin/Warning/HBoxContainer"]
+[node name="WarningPanel" type="Panel" parent="Margin/Warning/HBoxContainer" unique_id=61283041]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(222, 65)
 layout_mode = 2
@@ -275,7 +278,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_ctsm1")
 
-[node name="WarningLabel" type="Label" parent="Margin/Warning/HBoxContainer/WarningPanel"]
+[node name="WarningLabel" type="Label" parent="Margin/Warning/HBoxContainer/WarningPanel" unique_id=788180189]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 42)
 layout_mode = 0

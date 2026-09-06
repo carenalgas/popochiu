@@ -10,7 +10,7 @@ var _animation_creator = preload(
 ).new()
 
 
-#region Public ######################################################################################
+#region Public #####################################################################################
 ## Initialize the inventory importer dock.
 func init():
 	# Instantiate animation creator
@@ -39,10 +39,10 @@ func _on_import_pressed():
 	for tag in _options.get("tags"):
 		# Ignore unwanted tags
 		if not tag.import: continue
-			
+
 		# Always convert to PascalCase as a standard
 		var item_name: String = tag.tag_name.to_pascal_case()
-		
+
 		# Check if the inventory item already exists, if so load it instead of creating new
 		var inventory_item = _get_existing_inventory_item(item_name)
 		if inventory_item == null:
@@ -50,19 +50,19 @@ func _on_import_pressed():
 			inventory_item = _create_inventory_item(item_name)
 			if inventory_item == null:
 				result = RESULT_CODE.ERR_CANT_CREATE_OBJ_FOLDER
-		
+
 		inventory_item.set_meta("ANIM_NAME", tag.tag_name)
 		inventory_item.set_meta("ANIM_AUTOPLAY", tag.autoplays)
 
 		created_items.append(inventory_item)
-	
+
 	# Import animations for each created item
 	for item in created_items:
 		if not item.has_meta("ANIM_NAME"): continue
-		
+
 		# Make the output folder match the item's folder
 		_options.output_folder = item.scene_file_path.get_base_dir()
-		
+
 		# Import a single tag animation
 		result = await _animation_creator.create_tag_animations(
 			item,
@@ -79,20 +79,18 @@ func _on_import_pressed():
 
 	# Save all created items
 	for item in created_items:
-		if not item.has_meta("ANIM_NAME"): 
+		if not item.has_meta("ANIM_NAME"):
 			continue
-		
+
 		result = await _save_inventory_item(item)
 
 	_importing = false
 
 	if typeof(result) == TYPE_INT and result != RESULT_CODE.SUCCESS:
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(result))
-		_show_message("Some errors occurred. Please check output panel.", "Warning!")
+		_finish_import_message("Some errors occurred. Please check output panel.", "Warning!")
 	else:
-		await get_tree().create_timer(0.1).timeout
-		
-		_show_message(
+		_finish_import_message(
 			"%d inventory items created." % [created_items.size()],
 			"Done!"
 		)
@@ -113,7 +111,7 @@ func _customize_filter_ui():
 ## Create a new inventory item with the specified name.
 func _create_inventory_item(name: String) -> PopochiuInventoryItem:
 	var factory = PopochiuInventoryItemFactory.new()
-	
+
 	if factory.create(name) != ResultCodes.SUCCESS:
 		return null
 
@@ -123,17 +121,20 @@ func _create_inventory_item(name: String) -> PopochiuInventoryItem:
 ## Check if an inventory item with the given name already exists and load it.
 ## Returns the loaded inventory item scene or null if it doesn't exist.
 func _get_existing_inventory_item(item_name: String) -> PopochiuInventoryItem:
-	var item_res_path: String = PopochiuResources.get_data_value("inventory_items", item_name.to_snake_case(), PopochiuEditorHelper.EMPTY_STRING)
+	# The inventory_items data section is keyed by the PascalCase script_name.
+	var item_res_path: String = PopochiuResources.get_data_value(
+		"inventory_items", item_name, PopochiuEditorHelper.EMPTY_STRING
+	)
 	if item_res_path == PopochiuEditorHelper.EMPTY_STRING:
 		return null
 
 	var packed_scene: PackedScene = load(load(item_res_path).scene)
-	
+
 	var inventory_item = packed_scene.instantiate()
 	if not inventory_item is PopochiuInventoryItem:
 		inventory_item.queue_free()
 		return null
-	
+
 	return inventory_item
 
 
@@ -153,7 +154,7 @@ func _save_inventory_item(item: PopochiuInventoryItem) -> int:
 func _get_scene_path_for_tag(tag_name: String) -> String:
 	if not tag_name:
 		return PopochiuEditorHelper.EMPTY_STRING
-	
+
 	# For inventory items, we need to find the scene path from the resource
 	var item_name: String = tag_name.to_pascal_case()
 	var item_resource_path: String = PopochiuResources.get_data_value(
@@ -186,7 +187,7 @@ func _select_animation(tag_name: String) -> void:
 	if scene_path.is_empty():
 		PopochiuUtils.print_warning("No scene path found for inventory item '%s'" % item_name)
 		return
-	
+
 	EditorInterface.open_scene_from_path(scene_path)
 
 	# Wait a frame to ensure the scene is fully loaded
@@ -216,7 +217,7 @@ func _delete_animation_for_tag(tag_name: String) -> void:
 	if not packed_scene:
 		PopochiuUtils.print_warning("Failed to load scene for inventory item '%s'" % item_name)
 		return
-	
+
 	# Instance the scene to work with it in memory
 	var item_scene_root: Node = packed_scene.instantiate()
 	if not is_instance_valid(item_scene_root):
