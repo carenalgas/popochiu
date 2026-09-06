@@ -24,7 +24,7 @@ const GROUP_PREFIX := "@"
 const ANIM_PREFIX := ":"
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
+#region Public #####################################################################################
 # Analyzes a list of tags (each with tag_name, and optionally from/to/direction)
 # and returns:
 # {
@@ -84,7 +84,7 @@ func analyze(tags: Array) -> Dictionary:
 
 	# Associate every ":..." tag with its group by name (longest match wins)
 	var anims_by_group := {}  # lower(group name) -> [ {tag, anim_name} ]
-	for tag in tags:
+	for tag: Dictionary in tags:
 		var name: String = tag.get("tag_name", "")
 		if not name.begins_with(ANIM_PREFIX):
 			continue
@@ -100,7 +100,7 @@ func analyze(tags: Array) -> Dictionary:
 		if matched_lower.is_empty():
 			# Give a more precise message when the animation is named after a group
 			var looked_like_group := false
-			for lower in group_names:
+			for lower: String in group_names:
 				if remainder.to_lower() == lower:
 					looked_like_group = true
 					break
@@ -125,7 +125,7 @@ func analyze(tags: Array) -> Dictionary:
 
 	# Build the group entries in source order
 	var groups_by_tag := {}
-	for tag in tags:
+	for tag: Dictionary in tags:
 		var name: String = tag.get("tag_name", "")
 		if not name.begins_with(GROUP_PREFIX):
 			continue
@@ -205,7 +205,7 @@ func analyze(tags: Array) -> Dictionary:
 	# Safety net: a plain tag that matches a group name and falls inside the
 	# group's span probably means a forgotten ':' prefix. Plain tags outside
 	# the span are legit separate props.
-	for tag in tags:
+	for tag: Dictionary in tags:
 		var name: String = tag.get("tag_name", "")
 		if name.begins_with(GROUP_PREFIX) or name.begins_with(ANIM_PREFIX):
 			continue
@@ -221,7 +221,7 @@ func analyze(tags: Array) -> Dictionary:
 		)
 
 	# Build the ordered item list and the standalone singles
-	for tag in tags:
+	for tag: Dictionary in tags:
 		var name: String = tag.get("tag_name", "")
 		if name.begins_with(GROUP_PREFIX):
 			if groups_by_tag.has(name):
@@ -252,7 +252,9 @@ func _strip_group_from_name(remainder: String, lower_group: String) -> String:
 	return rest.to_snake_case()
 
 
-# ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PRIVATE ░░░░
+#endregion
+
+#region Private ####################################################################################
 # Returns the lower-cased name of the longest group that [param remainder]
 # matches (case-insensitive, with a word boundary after the group name), or ""
 # when none matches. [param allow_exact] also accepts a name that is exactly the
@@ -298,7 +300,7 @@ func _check_group_gaps(result: Dictionary, group: Dictionary) -> void:
 		return
 	var children: Array = group.get("children", [])
 	var ranged_children := []
-	for child in children:
+	for child: Dictionary in children:
 		if child.has("from") and child.has("to"):
 			ranged_children.append(child)
 	if ranged_children.is_empty():
@@ -308,7 +310,7 @@ func _check_group_gaps(result: Dictionary, group: Dictionary) -> void:
 
 	var uncovered := []
 	var cursor: int = group.from
-	for child in ranged_children:
+	for child: Dictionary in ranged_children:
 		if child.from > cursor:
 			uncovered.push_back([cursor, child.from - 1])
 		if child.to + 1 > cursor:
@@ -318,7 +320,7 @@ func _check_group_gaps(result: Dictionary, group: Dictionary) -> void:
 
 	if not uncovered.is_empty():
 		var ranges := []
-		for r in uncovered:
+		for r: Array in uncovered:
 			# Frame numbers are shown 1-based to match the Aseprite editor UI
 			ranges.append("%d-%d" % [r[0] + 1, r[1] + 1])
 		result.warnings.append(
