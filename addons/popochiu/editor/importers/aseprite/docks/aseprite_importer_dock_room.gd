@@ -50,7 +50,7 @@ func _on_import_pressed() -> void:
 
 	# Build a lookup of the tag configurations (with user toggles) by name
 	var tags_by_name := {}
-	for tag in analysis_input:
+	for tag: Dictionary in analysis_input:
 		tags_by_name[tag.tag_name] = tag
 
 	# Track the tags that are actually imported in this run, so that props whose
@@ -58,7 +58,7 @@ func _on_import_pressed() -> void:
 	# from stale metadata.
 	var importable_names := {}
 
-	for item in analysis.get("items", []):
+	for item: Dictionary in analysis.get("items", []):
 		if item.get("kind") == "group":
 			var group: Dictionary = item
 			# Misconfigured groups are skipped entirely and reported at the end
@@ -79,7 +79,7 @@ func _on_import_pressed() -> void:
 
 			# Only keep the children the user wants to import as animations
 			var children := []
-			for child in group.get("children", []):
+			for child: Dictionary in group.get("children", []):
 				var child_cfg: Dictionary = tags_by_name.get(child.tag_name, {})
 				if not child_cfg.get("import", true):
 					continue
@@ -201,7 +201,7 @@ func _on_import_pressed() -> void:
 # Returns the animation name of the single child that should autoplay (the first
 # one with the autoplay toggle on), or an empty string when none is set.
 func _get_autoplay_child(children: Array) -> String:
-	for child in children:
+	for child: Dictionary in children:
 		if child.get("autoplays", false):
 			return child.get("anim_name", "")
 	return PopochiuEditorHelper.EMPTY_STRING
