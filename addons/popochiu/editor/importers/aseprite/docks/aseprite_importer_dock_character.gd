@@ -25,7 +25,7 @@ func _get_default_autoplay_behavior() -> bool:
 func _on_import_pressed() -> void:
 	# Set everything up
 	# This will populate _root_node and _options class variables
-	super()
+	await super()
 
 	var result := await _animation_creator.create_all_animations(
 		target_node, _options

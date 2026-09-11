@@ -31,7 +31,7 @@ func _supports_groups() -> bool:
 func _on_import_pressed() -> void:
 	# Set everything up
 	# This will populate _root_node and _options class variables
-	super()
+	await super()
 
 	var props_container := _root_node.get_node("Props")
 	var result: int = RESULT_CODE.SUCCESS

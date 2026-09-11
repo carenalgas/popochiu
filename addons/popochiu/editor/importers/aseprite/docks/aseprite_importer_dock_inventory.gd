@@ -30,7 +30,7 @@ func _get_default_autoplay_behavior() -> bool:
 func _on_import_pressed():
 	# Set everything up
 	# This will populate _root_node and _options class variables
-	super()
+	await super()
 
 	var result: int = RESULT_CODE.SUCCESS
 	var created_items: Array[PopochiuInventoryItem] = []

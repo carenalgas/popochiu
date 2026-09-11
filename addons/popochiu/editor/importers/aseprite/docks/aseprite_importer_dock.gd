@@ -23,6 +23,13 @@ enum BulkActionStatus {
 	DIRTY
 }
 
+# Shown while an import is running. Aseprite exports block the editor, so the
+# hint below makes clear the app is working and not hung.
+const IMPORT_WORKING_TEXT := "Importing assets. Please wait."
+const IMPORT_WORKING_HINT_TEXT := (
+	"This can take a while on large files! Popochiu is not frozen, have patience!"
+)
+
 var target_node: Node
 var file_system: EditorFileSystem
 
@@ -42,6 +49,8 @@ var _file_dialog_aseprite: FileDialog
 var _tags_cache: Array = []
 var _importing := false
 var _import_dialog: AcceptDialog = null
+var _import_hint_panel: PanelContainer = null
+var _import_message: Label = null
 # Maps each group child tag (e.g. ":DoorClosed") to its group info, so tag
 # select/delete actions don't re-analyze the tag list on every click. Rebuilt
 # on every scan by _populate_tags.
@@ -272,7 +281,14 @@ func _on_import_pressed() -> void:
 	# Let the user know something is happening: on re-imports Godot does not show
 	# its filesystem progress bars, so without this popup the operation looks
 	# frozen. It doubles as the final summary (see _finish_import_message).
-	_show_import_working()
+	# Aseprite exports block the main thread, so let the dialog paint a couple of
+	# frames before starting the work, or it would never be seen.
+	await _show_import_working()
+	# We have to wait a couple of frames (1 is not enough) because Aseprite
+	# exporting command, ran into a system call, will freeze the editor interface
+	# rendering an empty embedded popup, otherwise.
+	await get_tree().process_frame
+	await get_tree().process_frame
 
 	_options = {
 		"source": ProjectSettings.globalize_path(_source),
@@ -736,21 +752,88 @@ func _show_import_working() -> void:
 		_import_dialog.queue_free()
 	_import_dialog = AcceptDialog.new()
 	_import_dialog.title = "Importing..."
-	_import_dialog.dialog_text = "Importing assets, please wait..."
-	_import_dialog.popup_window = true
-	# Hide the OK button until the import finishes; the dialog only has the
-	# window close button during the operation.
+	# Keep the dialog embedded in the editor window: as a native OS window
+	# (popup_window = true) its creation/resize churns Vulkan swapchains, and
+	# the editor save that follows an import can then trip the device-lost bug
+	# tracked in https://github.com/godotengine/godot/issues/71929.
+	_import_dialog.popup_window = false
 	_import_dialog.get_ok_button().visible = false
 	_import_dialog.close_requested.connect(_import_dialog.queue_free)
-	PopochiuEditorHelper.show_dialog(_import_dialog)
+
+	_import_dialog.add_child(_compose_import_dialog_content())
+
+	await PopochiuEditorHelper.show_dialog(_import_dialog)
+
+
+# TODO: We are composing this info panel by code because we have no scene for a
+# general info panel. We have to create one, or bring this code to an external
+# editor helper.
+func _compose_import_dialog_content() -> VBoxContainer:
+	# The message and the hint live in our own controls: the internal message
+	# label anchors over the whole window and would overlap the hint panel.
+	# Styles follow the setup popup's hint panels (see its _style_tooltips).
+	var content := VBoxContainer.new()
+	content.add_theme_constant_override("separation", 12)
+
+	_import_message = Label.new()
+	_import_message.text = IMPORT_WORKING_TEXT
+	_import_message.add_theme_color_override("font_color", Color.WHITE)
+	_import_message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_import_message.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	content.add_child(_import_message)
+
+	var hint_panel := PanelContainer.new()
+	_import_hint_panel = hint_panel
+	hint_panel.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	var panel_style: StyleBoxFlat = ThemeDB.get_default_theme().get_stylebox(
+		"panel", &"PanelContainer"
+	).duplicate(true)
+	panel_style.set_corner_radius_all(8)
+	hint_panel.add_theme_stylebox_override("panel", panel_style)
+
+	var columns := HBoxContainer.new()
+	columns.add_theme_constant_override("separation", 32)
+	hint_panel.add_child(columns)
+
+	var icon := TextureRect.new()
+	icon.texture = load("res://addons/popochiu/icons/icon_setup_hint.svg")
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.custom_minimum_size = Vector2(48, 48)
+
+	var icon_margin := MarginContainer.new()
+	for margin_side in ["margin_left", "margin_top", "margin_right", "margin_bottom"]:
+		icon_margin.add_theme_constant_override(margin_side, 4)
+	icon_margin.add_child(icon)
+	columns.add_child(icon_margin)
+
+	var hint_text := RichTextLabel.new()
+	hint_text.text = IMPORT_WORKING_HINT_TEXT
+	hint_text.bbcode_enabled = true
+	hint_text.fit_content = true
+	hint_text.scroll_active = false
+	hint_text.autowrap_mode = TextServer.AUTOWRAP_WORD
+	hint_text.custom_minimum_size = Vector2(280, 0)
+	hint_text.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	hint_text.add_theme_color_override("default_color", Color.WHITE)
+	hint_text.add_theme_font_size_override(
+		"normal_font_size", int(get_theme_font_size("main_size", "EditorFonts") * 0.85)
+	)
+	columns.add_child(hint_text)
+
+	content.add_child(hint_panel)
+	return content
 
 
 # Turns the working dialog into the final summary, revealing the OK button.
 # Falls back to a plain message dialog when the working one is not available.
 func _finish_import_message(message: String, title: String) -> void:
 	if is_instance_valid(_import_dialog):
+		# The wait hint makes no sense in the final summary
+		if is_instance_valid(_import_hint_panel):
+			_import_hint_panel.queue_free()
 		_import_dialog.title = title
-		_import_dialog.dialog_text = message
+		_import_message.text = message
 		var ok_button := _import_dialog.get_ok_button()
 		ok_button.visible = true
 		ok_button.disabled = false
