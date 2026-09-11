@@ -640,7 +640,7 @@ func _get_all_tag_rows() -> Array:
 
 
 func _collect_tag_rows(container: Node, rows: Array) -> void:
-	for child in container.get_children():
+	for child: Control in container.get_children():
 		if child is AnimationTagRow or child is AnimationGroupRow:
 			rows.push_back(child)
 		elif child is BoxContainer or child is MarginContainer:
