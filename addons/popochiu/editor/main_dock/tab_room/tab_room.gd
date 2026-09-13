@@ -79,6 +79,10 @@ func _ready() -> void:
 	_add_character_menu.id_pressed.connect(_on_character_selected)
 	add_child(_add_character_menu)
 	
+	# Style the characters separator to match the buttons and keep it in sync with theme changes
+	theme_changed.connect(_style_characters_separator)
+	_style_characters_separator()
+	
 	# Initial state: no room open
 	_set_no_room_state()
 
@@ -175,6 +179,26 @@ func _remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 #endregion
 
 #region Private ####################################################################################
+# Styles the separator above the characters tree to match the color of the buttons (e.g. RoomName,
+# BtnScript) so it follows the editor theme automatically.
+func _style_characters_separator() -> void:
+	# Defer the style update to ensure theme cache is fully updated when the editor theme changes
+	call_deferred("_apply_characters_separator_style")
+
+
+func _apply_characters_separator_style() -> void:
+	# The buttons' color comes from the background of the Button's "normal" stylebox, so we reuse it
+	# for the separator line to keep both visually consistent
+	var line_color := Color(1, 1, 1, 1)
+	var button_style: StyleBox = get_theme_stylebox("normal", "Button")
+	if button_style is StyleBoxFlat:
+		line_color = button_style.bg_color
+	
+	var separator_stylebox := StyleBoxLine.new()
+	separator_stylebox.color = line_color
+	characters_separator.add_theme_stylebox_override("separator", separator_stylebox)
+
+
 func _set_no_room_state() -> void:
 	room_name.hide()
 	tool_buttons.hide()
