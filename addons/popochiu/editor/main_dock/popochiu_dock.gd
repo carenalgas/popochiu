@@ -45,7 +45,8 @@ func fill_data() -> void:
 
 
 func scene_changed(scene_root: Node) -> void:
-	if not is_instance_valid(tab_room): return
+	if not is_instance_valid(tab_room):
+		return
 	tab_room.scene_changed(scene_root)
 	
 	if not scene_root or not scene_root is PopochiuRoom:
@@ -58,13 +59,15 @@ func scene_changed(scene_root: Node) -> void:
 
 
 func scene_closed(filepath: String) -> void:
-	if not is_instance_valid(tab_room): return
+	if not is_instance_valid(tab_room):
+		return
 	tab_room.scene_closed(filepath)
 	check_open_scenes()
 
 
 func search_audio_files() -> void:
-	if not is_instance_valid(tab_audio): return
+	if not is_instance_valid(tab_audio):
+		return
 	
 	tab_audio.search_audio_files()
 
@@ -73,9 +76,9 @@ func open_setup() -> void:
 	PopochiuEditorHelper.show_setup()
 
 
-## If there are no other opened scenes in the Editor, this function connects to
-## [signal EditorSelection.selection_changed] in order to make sure the Popochiu dock behaves as
-## expected when the [signal EditorPlugin.scene_changed] signal is not emitted.
+# If there are no other opened scenes in the Editor, this function connects to
+# [signal EditorSelection.selection_changed] in order to make sure the Popochiu dock behaves as
+# expected when the [signal EditorPlugin.scene_changed] signal is not emitted.
 func check_open_scenes() -> void:
 	# Fixes #273: Since Godot is not triggering the EditorPlugin.scene_changed signal when opening a
 	# scene when no other scenes are opened, listen to the EditorSelection.selection_changed signal
