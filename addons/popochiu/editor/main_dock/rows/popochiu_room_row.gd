@@ -4,6 +4,8 @@ extends PopochiuDockRow
 #
 # Ref: #558
 
+const MAIN_ICON = preload("res://addons/popochiu/icons/starting_room.svg")
+
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.ROOM)
 	_title = "Rooms"
@@ -27,7 +29,7 @@ func create_row(resource: Variant) -> TreeItem:
 	# Check if the room is the main scene
 	var main_scene: String = ProjectSettings.get_setting(PopochiuResources.MAIN_SCENE)
 	if main_scene == resource.scene:
-		dock.set_tag(item, dock.get_theme_icon("Heart", "EditorIcons"), true)
+		dock.set_tag(item, MAIN_ICON, true)
 		data.is_main = true
 	
 	if not is_in_core:
@@ -46,7 +48,7 @@ func get_menu_cfg(item: TreeItem) -> Array:
 	var cfg := [
 		{
 			id = MenuOptions.SET_AS_MAIN,
-			icon = dock.get_theme_icon("Heart", "EditorIcons"),
+			icon = MAIN_ICON,
 			label = "Set as Main scene",
 			disabled = data.get("is_main", false),
 		},
@@ -76,7 +78,7 @@ func set_main(item: TreeItem, value: bool) -> void:
 		# Call this first since the favs will be cleared
 		PopochiuEditorHelper.signal_bus.main_scene_changed.emit(item.get_metadata(dock.COL_TEXT).path)
 	
-	dock.set_tag(item, dock.get_theme_icon("Heart", "EditorIcons"), value)
+	dock.set_tag(item, MAIN_ICON, value)
 	item.get_metadata(dock.COL_TEXT).is_main = value
 
 
