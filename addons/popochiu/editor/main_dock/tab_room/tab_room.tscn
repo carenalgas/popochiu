@@ -1,185 +1,106 @@
 [gd_scene format=3 uid="uid://q1bjkxavt2ay"]
 
 [ext_resource type="Script" uid="uid://dcxh7skiwv6yu" path="res://addons/popochiu/editor/main_dock/tab_room/tab_room.gd" id="1_dnc56"]
-[ext_resource type="PackedScene" uid="uid://b55ialbvpilxv" path="res://addons/popochiu/editor/main_dock/popochiu_group/popochiu_group.tscn" id="2"]
-[ext_resource type="Script" uid="uid://cqu68lla27ncc" path="res://addons/popochiu/editor/main_dock/popochiu_filter.gd" id="2_bv3t4"]
-[ext_resource type="Texture2D" uid="uid://bj4bxswex7nsl" path="res://addons/popochiu/icons/prop.png" id="3_rksqc"]
-[ext_resource type="Texture2D" uid="uid://jbdlyvx4gumd" path="res://addons/popochiu/icons/hotspot.png" id="4_6mx6c"]
-[ext_resource type="Texture2D" uid="uid://dvh13sj4uj4b2" path="res://addons/popochiu/icons/walkable_area.png" id="5_j6ot2"]
-[ext_resource type="Texture2D" uid="uid://cosxi1ulfp7rg" path="res://addons/popochiu/icons/region.png" id="6_2h2fq"]
-[ext_resource type="Texture2D" uid="uid://cj8n6g60sqnxi" path="res://addons/popochiu/icons/marker.png" id="7_8ygji"]
-[ext_resource type="Texture2D" uid="uid://mir6j58lju3l" path="res://addons/popochiu/icons/character.png" id="9_4yetu"]
 
-[sub_resource type="DPITexture" id="DPITexture_5vmuu"]
+[sub_resource type="DPITexture" id="DPITexture_7ojni"]
 _source = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><path fill=\"#ff5d5d\" d=\"M2 1v8.586l1.293-1.293a1 1 0 0 1 1.414 0L7 10.587l2.293-2.293a1 1 0 0 1 1.414 0L13 10.586l1-1V6H9V1H2zm8 0v4h4zm-6 9.414-2 2V15h12v-2.586l-.293.293a1 1 0 0 1-1.414 0L10 10.414l-2.293 2.293a1 1 0 0 1-1.414 0L4 10.414z\"/></svg>
 "
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_54j7f"]
-content_margin_left = 8.0
-content_margin_right = 8.0
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.6, 0.6, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yr4k2"]
-content_margin_left = 8.0
-content_margin_right = 8.0
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.6, 0.6, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8y78"]
-content_margin_left = 8.0
-content_margin_right = 8.0
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.6, 0.6, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qmqo4"]
-content_margin_left = 8.0
-content_margin_right = 8.0
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.6, 0.6, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_unj0l"]
-content_margin_left = 8.0
-content_margin_right = 8.0
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.6, 0.6, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_44as0"]
-content_margin_left = 8.0
-content_margin_right = 8.0
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.6, 0.6, 0.6, 1)
-
-[node name="TabRoom" type="VBoxContainer" unique_id=2144242830]
+[node name="TabRoom" type="VBoxContainer" unique_id=595737337]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 script = ExtResource("1_dnc56")
 
-[node name="PopochiuFilter" type="LineEdit" parent="." unique_id=1989948859]
+[node name="RoomName" type="Button" parent="." unique_id=1688636009]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-placeholder_text = "Filter Popochiu objects"
-clear_button_enabled = true
-right_icon = SubResource("DPITexture_5vmuu")
-script = ExtResource("2_bv3t4")
-
-[node name="RoomName" type="Button" parent="." unique_id=2145632860]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Locate room scene in FileSystem panel"
 text = "Room name"
+icon = SubResource("DPITexture_7ojni")
 
-[node name="ToolButtons" type="HBoxContainer" parent="." unique_id=248797615]
+[node name="ToolButtons" type="HBoxContainer" parent="." unique_id=2031907500]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 alignment = 1
 
-[node name="BtnScript" type="Button" parent="ToolButtons" unique_id=1198829440]
+[node name="BtnScript" type="Button" parent="ToolButtons" unique_id=656246395]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Open Room's script"
 text = "Script"
-icon = SubResource("DPITexture_5vmuu")
+icon = SubResource("DPITexture_7ojni")
 
-[node name="BtnResource" type="Button" parent="ToolButtons" unique_id=699325195]
+[node name="BtnResource" type="Button" parent="ToolButtons" unique_id=69575297]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Inspect Room's State"
 text = "State"
-icon = SubResource("DPITexture_5vmuu")
+icon = SubResource("DPITexture_7ojni")
 
-[node name="BtnResourceScript" type="Button" parent="ToolButtons" unique_id=452859524]
+[node name="BtnResourceScript" type="Button" parent="ToolButtons" unique_id=867885717]
 unique_name_in_owner = true
 layout_mode = 2
-text = "State"
-icon = SubResource("DPITexture_5vmuu")
-
-[node name="RoomScrollContainer" type="ScrollContainer" parent="." unique_id=1511607740]
-layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+tooltip_text = "Open Room's State script"
+text = "State Script"
+icon = SubResource("DPITexture_7ojni")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="RoomScrollContainer" unique_id=1915755156]
+[node name="Filter" type="LineEdit" parent="." unique_id=1966196996]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2
-size_flags_horizontal = 3
+placeholder_text = "Filter game objects"
+clear_button_enabled = true
+right_icon = SubResource("DPITexture_7ojni")
 
-[node name="NoRoomInfo" type="Label" parent="RoomScrollContainer/VBoxContainer" unique_id=1298425333]
+[node name="NoRoomInfo" type="Label" parent="." unique_id=1862267761]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(312, 0)
 layout_mode = 2
 text = "Open a room in Main tab to see or create Props, Hotspots, Regions and Points."
 autowrap_mode = 3
 
-[node name="PropsGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=1518040899 instance=ExtResource("2")]
-unique_name_in_owner = true
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=2099548849]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_54j7f")
-icon = ExtResource("3_rksqc")
-title = "Props"
-create_text = "Create prop"
+size_flags_vertical = 3
 
-[node name="HotspotsGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=467682011 instance=ExtResource("2")]
-unique_name_in_owner = true
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer" unique_id=742729478]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_yr4k2")
-icon = ExtResource("4_6mx6c")
-title = "Hotspots"
-create_text = "Create hotspot"
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="WalkableAreasGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=1406337315 instance=ExtResource("2")]
+[node name="Tree" type="Tree" parent="ScrollContainer/VBoxContainer" unique_id=1075783994]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_d8y78")
-icon = ExtResource("5_j6ot2")
-title = "Walkable areas"
-create_text = "Create walkable area"
+size_flags_horizontal = 3
+columns = 3
+allow_rmb_select = true
+hide_root = true
+select_mode = 1
+scroll_horizontal_enabled = false
+scroll_vertical_enabled = false
 
-[node name="RegionsGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=1216351945 instance=ExtResource("2")]
+[node name="CharactersSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer" unique_id=1075783995]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_qmqo4")
-icon = ExtResource("6_2h2fq")
-title = "Regions"
-create_text = "Create regions"
 
-[node name="MarkersGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=902834571 instance=ExtResource("2")]
+[node name="CharactersTree" type="Tree" parent="ScrollContainer/VBoxContainer" unique_id=1075783996]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_unj0l")
-icon = ExtResource("7_8ygji")
-title = "Markers"
-create_text = "Create marker"
-
-[node name="CharactersGroup" parent="RoomScrollContainer/VBoxContainer" unique_id=78528682 instance=ExtResource("2")]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_44as0")
-icon = ExtResource("9_4yetu")
-title = "Characters in room"
-can_create = false
-create_text = "Add character to room"
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 3
+allow_rmb_select = true
+hide_root = true
+select_mode = 1
+scroll_horizontal_enabled = false
+scroll_vertical_enabled = false
