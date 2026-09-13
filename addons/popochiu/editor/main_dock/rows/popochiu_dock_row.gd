@@ -28,7 +28,7 @@ enum Buttons {
 	ADD_CHARACTER,
 }
 
-const ADD_TO_CORE_ICON = preload("res://addons/popochiu/icons/add_to_core.png")
+const ADD_TO_CORE_ICON = preload("res://addons/popochiu/icons/add_to_core.svg")
 
 var dock: PopochiuTreeDock
 var type: int
