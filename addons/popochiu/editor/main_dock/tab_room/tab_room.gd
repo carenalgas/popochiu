@@ -8,14 +8,14 @@ extends PopochiuTreeDock
 #
 # Ref: #558
 
+const CHARACTER_ICON = preload("res://addons/popochiu/icons/character.svg")
+
 var opened_room: PopochiuRoom = null
 var opened_room_state_path: String = ""
 
 var rows_paths := []
 var characters_in_room := []
 var _add_character_menu: PopupMenu
-
-const CHARACTER_ICON = preload("res://addons/popochiu/icons/character.svg")
 
 var _rows := {
 	PopochiuResources.Types.PROP: PopochiuPropRow,
@@ -98,7 +98,7 @@ func scene_changed(scene_root: Node) -> void:
 	if not scene_root is PopochiuRoom:
 		return
 	
-	if scene_root is PopochiuRoom and scene_root.script_name.is_empty():
+	if scene_root.script_name.is_empty():
 		PopochiuUtils.print_error("This room doesn't have a [code]script_name[/code] value!")
 		return
 	
@@ -377,7 +377,8 @@ func _clear_characters_items() -> void:
 
 # Creates the row for a character present in the room in the characters tree.
 func _create_character_row(child: Node) -> void:
-	if not child is PopochiuCharacter: return
+	if not child is PopochiuCharacter:
+		return
 	
 	# Get the script_name of the character
 	var char_name: String = child.name.trim_prefix("Character").rstrip(" *")
@@ -398,27 +399,30 @@ func _create_character_row(child: Node) -> void:
 	)
 
 
-func _create_character_item(name: String, path: String, node_path: String) -> TreeItem:
+func _create_character_item(char_name: String, path: String, node_path: String) -> TreeItem:
 	var data := {
 		"type": PopochiuResources.Types.CHARACTER,
 		"path": path,
 		"node_path": node_path,
-		"script_name": name,
+		"script_name": char_name,
 	}
 	var item := characters_tree.create_item(_characters_group)
-	item.set_text(COL_TEXT, name)
+	item.set_text(COL_TEXT, char_name)
 	item.set_icon(COL_TEXT, CHARACTER_ICON)
 	item.set_metadata(COL_TEXT, data)
 	item.set_tooltip_text(COL_TEXT, path)
 	update_group_count(_characters_group)
-	rows_paths.append("%s/%d/%s" % [opened_room.script_name, PopochiuResources.Types.CHARACTER, name])
+	rows_paths.append(
+		"%s/%d/%s" % [opened_room.script_name, PopochiuResources.Types.CHARACTER, char_name]
+	)
 	return item
 
 
 func _on_characters_item_selected() -> void:
 	var item := characters_tree.get_selected()
 	# Ignore the group item (direct child of the hidden root)
-	if not item or item.get_parent() == characters_tree.get_root(): return
+	if not item or item.get_parent() == characters_tree.get_root():
+		return
 	
 	var data := item.get_metadata(COL_TEXT)
 	if is_instance_valid(opened_room):
@@ -429,7 +433,8 @@ func _on_characters_item_selected() -> void:
 func _on_characters_button_clicked(
 	item: TreeItem, column: int, id: int, mouse_button_index: int
 ) -> void:
-	if column != COL_BUTTONS or mouse_button_index != MOUSE_BUTTON_LEFT: return
+	if column != COL_BUTTONS or mouse_button_index != MOUSE_BUTTON_LEFT:
+		return
 	
 	match id:
 		PopochiuDockRow.Buttons.ADD_CHARACTER:
@@ -439,7 +444,8 @@ func _on_characters_button_clicked(
 
 
 func _on_character_child_added(node: Node) -> void:
-	if not node is PopochiuCharacter: return
+	if not node is PopochiuCharacter:
+		return
 	
 	_create_character_row(node)
 	
@@ -450,7 +456,8 @@ func _on_character_child_added(node: Node) -> void:
 
 
 func _on_character_child_removed(node: Node) -> void:
-	if not node is PopochiuCharacter: return
+	if not node is PopochiuCharacter:
+		return
 	
 	var node_name: String = node.name.trim_prefix("Character").rstrip(" *")
 	characters_in_room.erase(node_name)
@@ -472,9 +479,9 @@ func _remove_character_from_room(item: TreeItem) -> void:
 
 
 func _on_remove_character_confirmed(item: TreeItem) -> void:
-	var name: String = item.get_text(COL_TEXT)
-	characters_in_room.erase(name)
-	opened_room.get_node("Characters").get_node("Character%s *" % name).queue_free()
+	var char_name: String = item.get_text(COL_TEXT)
+	characters_in_room.erase(char_name)
+	opened_room.get_node("Characters").get_node("Character%s *" % char_name).queue_free()
 	remove_item(item)
 	EditorInterface.save_scene()
 
@@ -489,14 +496,15 @@ func _on_child_removed(node: Node, row: PopochiuDockRow) -> void:
 
 
 func _check_undoredo_history() -> void:
-	if not opened_room or not is_instance_valid(opened_room):
+	if not is_instance_valid(opened_room):
 		return
 	
 	var walkable_areas: Array = opened_room.call(
 		_row_instances[PopochiuResources.Types.WALKABLE_AREA].get_method()
 	)
 	
-	if walkable_areas.is_empty(): return
+	if walkable_areas.is_empty():
+		return
 	
 	for wa: PopochiuWalkableArea in walkable_areas:
 		(wa.get_node("Perimeter") as NavigationRegion2D).bake_navigation_polygon()

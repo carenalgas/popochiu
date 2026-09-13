@@ -257,7 +257,8 @@ func _put_audio_cues_in_group() -> void:
 		var group_dic: Dictionary = _groups[key]
 		var group_data: Array = PopochiuResources.get_data_value("audio", group_dic.array, [])
 		
-		if group_data.is_empty(): continue
+		if group_data.is_empty():
+			continue
 		
 		for resource_path: String in group_data:
 			var ac: AudioCue = load(resource_path)
@@ -310,7 +311,8 @@ func _create_audio_file_item(file_path: String) -> TreeItem:
 
 
 func _read_directory(dir: EditorFileSystemDirectory) -> void:
-	if not dir: return
+	if not dir:
+		return
 	
 	if dir.get_subdir_count():
 		for d in dir.get_subdir_count():
@@ -640,7 +642,7 @@ func _delete_audio_file(item: TreeItem) -> void:
 # Reimport WAV files so they can be changed to LOOP without the need to manually reimport them.
 func _reimport_wavs() -> void:
 	var streams_to_reimport := _wavs_to_reimport.filter(
-		func (stream_dic: Dictionary):
+		func (stream_dic: Dictionary) -> bool:
 			return _change_wav_loop_mode(stream_dic.stream)
 	)
 	

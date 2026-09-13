@@ -89,7 +89,7 @@ func _set_main_scene(path: String) -> void:
 		ProjectSettings.save() == OK,
 		"[Popochiu] Couldn't set %s as the Main Scene in Project Settings" % path
 	)
-	_clear_group_tags(_row_instances[PopochiuResources.Types.ROOM].group, "is_main")
+	clear_group_tags(_row_instances[PopochiuResources.Types.ROOM].group, "is_main")
 
 
 func _set_pc(script_name: String) -> void:
@@ -101,7 +101,7 @@ func _set_pc(script_name: String) -> void:
 		"[Popochiu] Couldn't set %s as the Player-controlled Character (PC)" % script_name
 	)
 	
-	_clear_group_tags(_row_instances[PopochiuResources.Types.CHARACTER].group, "is_pc")
+	clear_group_tags(_row_instances[PopochiuResources.Types.CHARACTER].group, "is_pc")
 	
 	var item := get_item(_row_instances[PopochiuResources.Types.CHARACTER].group, script_name)
 	if item:
@@ -120,7 +120,8 @@ func _get_popochiu_objects_resources(
 	var dir_path := (_row_instances[type_key].get_folder_path() as String).path_join(dir_name)
 	
 	for file_name: String in DirAccess.get_files_at(dir_path):
-		if file_name.get_extension() != "tres": continue
+		if file_name.get_extension() != "tres":
+			continue
 		
 		var resource: Resource = load(dir_path.path_join(file_name))
 		if (
@@ -133,12 +134,6 @@ func _get_popochiu_objects_resources(
 	
 	PopochiuUtils.print_error("No data file (.tres) found for [b]%s[/b]" % dir_path)
 	return null
-
-
-func _clear_group_tags(group: TreeItem, flag: String) -> void:
-	for child in group.get_children():
-		child.set_icon(COL_TAG, null)
-		child.get_metadata(COL_TEXT)[flag] = false
 
 
 func _on_item_clicked(item: TreeItem) -> void:

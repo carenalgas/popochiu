@@ -74,18 +74,18 @@ func create_group(
 # order in which items are discovered. If [param sort] is true, it is inserted alphabetically by
 # its text instead.
 func add_item(
-	group: TreeItem, name: String, icon: Texture2D, data: Dictionary = {}, sort := false
+	group: TreeItem, item_name: String, icon: Texture2D, data: Dictionary = {}, sort := false
 ) -> TreeItem:
 	var index := -1
 	if sort:
 		# Insert alphabetically by item text
 		index = 0
 		for child in group.get_children():
-			if child.get_text(COL_TEXT) > name:
+			if child.get_text(COL_TEXT) > item_name:
 				break
 			index += 1
 	var item := tree.create_item(group, index)
-	item.set_text(COL_TEXT, name)
+	item.set_text(COL_TEXT, item_name)
 	item.set_icon(COL_TEXT, icon)
 	item.set_metadata(COL_TEXT, data)
 	item.set_tooltip_text(COL_TEXT, data.get("path", ""))
@@ -145,16 +145,19 @@ func set_create_disabled(group: TreeItem, disabled: bool) -> void:
 	set_button_disabled(group, 0, disabled)
 
 
-# Clears the status tag icon on every child of [param group].
-func clear_group_tags(group: TreeItem) -> void:
+# Clears the status tag icon on every child of [param group]. If [param flag] is given, also
+# resets that metadata flag on every child (e.g. "is_main", "is_pc").
+func clear_group_tags(group: TreeItem, flag := "") -> void:
 	for child in group.get_children():
 		child.set_icon(COL_TAG, null)
+		if not flag.is_empty():
+			child.get_metadata(COL_TEXT)[flag] = false
 
 
-# Returns the first child of [param group] whose text matches [param name], or null.
-func get_item(group: TreeItem, name: String) -> TreeItem:
+# Returns the first child of [param group] whose text matches [param item_name], or null.
+func get_item(group: TreeItem, item_name: String) -> TreeItem:
 	for child in group.get_children():
-		if child.get_text(COL_TEXT) == name:
+		if child.get_text(COL_TEXT) == item_name:
 			return child
 	return null
 
@@ -176,7 +179,8 @@ func clear() -> void:
 # content changes, like the Room tab).
 func clear_items() -> void:
 	var root := tree.get_root()
-	if not root: return
+	if not root:
+		return
 	
 	for group in root.get_children():
 		for child in group.get_children():
@@ -214,7 +218,7 @@ func open_script(item: TreeItem) -> void:
 func remove_object(item: TreeItem) -> void:
 	var data := item.get_metadata(COL_TEXT)
 	var path: String = data.path
-	var name: String = item.get_text(COL_TEXT)
+	var object_name: String = item.get_text(COL_TEXT)
 	var location := _get_location(path)
 	
 	# Look into the Object's folder for audio files and AudioCues to show the developer that those
@@ -224,8 +228,8 @@ func remove_object(item: TreeItem) -> void:
 	)
 	
 	delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
-	delete_dialog.title = "Remove %s from %s" % [name, location]
-	delete_dialog.message = DELETE_MESSAGE % [name, location]
+	delete_dialog.title = "Remove %s from %s" % [object_name, location]
+	delete_dialog.message = DELETE_MESSAGE % [object_name, location]
 	delete_dialog.ask = DELETE_ASK_MESSAGE % [
 		path.get_base_dir(),
 		"" if audio_files.is_empty()
@@ -312,7 +316,8 @@ func _setup_context_menu() -> void:
 # Hides items whose name does not match the filter text, and hides groups with no visible items.
 func _filter_items(new_text: String) -> void:
 	var root := tree.get_root()
-	if not root: return
+	if not root:
+		return
 	
 	for group in root.get_children():
 		group.set_visible(true)
@@ -327,7 +332,8 @@ func _filter_items(new_text: String) -> void:
 		
 		for row in rows:
 			row.set_visible(true)
-			if new_text.is_empty(): continue
+			if new_text.is_empty():
+				continue
 			if row.get_text(COL_TEXT).findn(new_text) < 0 and not title_in_filter:
 				hidden_rows += 1
 				row.set_visible(false)
@@ -346,7 +352,8 @@ func _on_item_selected() -> void:
 func _on_button_clicked(
 	item: TreeItem, column: int, id: int, mouse_button_index: int
 ) -> void:
-	if column != COL_BUTTONS or mouse_button_index != MOUSE_BUTTON_LEFT: return
+	if column != COL_BUTTONS or mouse_button_index != MOUSE_BUTTON_LEFT:
+		return
 	
 	if id == MENU_BUTTON_ID:
 		if not item.get_metadata(COL_TEXT).get("no_menu", false):
@@ -364,14 +371,18 @@ func _on_button_clicked(
 
 
 func _on_item_mouse_selected(pos: Vector2, mouse_button_index: int) -> void:
-	if mouse_button_index != MOUSE_BUTTON_RIGHT: return
+	if mouse_button_index != MOUSE_BUTTON_RIGHT:
+		return
 	
 	var item := tree.get_item_at_position(pos)
-	if not item: return
+	if not item:
+		return
 	# Group headers (direct children of the hidden root) have no context menu
-	if item.get_parent() == tree.get_root(): return
+	if item.get_parent() == tree.get_root():
+		return
 	# Items flagged with no_menu (e.g. characters in a room) have no context menu
-	if item.get_metadata(COL_TEXT).get("no_menu", false): return
+	if item.get_metadata(COL_TEXT).get("no_menu", false):
+		return
 	
 	_open_context_menu(item)
 

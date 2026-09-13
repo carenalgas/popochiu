@@ -16,7 +16,8 @@ func _init(dock: PopochiuTreeDock) -> void:
 
 #region Row #######################################################################################
 func create_row(resource: Variant) -> TreeItem:
-	if get_scene_template().replace("%s", resource.resource_name) in dock.rows_paths: return null
+	if get_scene_template().replace("%s", resource.resource_name) in dock.rows_paths:
+		return null
 	
 	var item := create_item(resource.script_name)
 	var data := item.get_metadata(dock.COL_TEXT)

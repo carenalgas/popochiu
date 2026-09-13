@@ -16,10 +16,12 @@ func create_group() -> TreeItem:
 
 
 func create_row(child: Variant) -> TreeItem:
-	if not is_instance_of(child, get_type_class()): return
+	if not is_instance_of(child, get_type_class()):
+		return null
 	
 	var row_path := _get_row_path(child)
-	if row_path in dock.rows_paths: return null
+	if row_path in dock.rows_paths:
+		return null
 	
 	var node_path := _get_node_path(child)
 	var item := create_room_item(child.name, row_path, node_path)
@@ -89,7 +91,8 @@ func remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 
 
 func on_child_added(node: Node) -> void:
-	if not is_instance_of(node, get_type_class()): return
+	if not is_instance_of(node, get_type_class()):
+		return
 	
 	node.position = Vector2(
 		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
@@ -98,7 +101,8 @@ func on_child_added(node: Node) -> void:
 
 
 func on_child_removed(node: Node) -> void:
-	if not is_instance_of(node, get_type_class()): return
+	if not is_instance_of(node, get_type_class()):
+		return
 	
 	var node_name := node.name
 	dock.rows_paths.erase("%s/%d/%s" % [dock.opened_room.script_name, type, node_name])
