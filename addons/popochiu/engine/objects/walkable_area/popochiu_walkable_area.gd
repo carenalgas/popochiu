@@ -165,12 +165,12 @@ func setup_obstacles(obstacles: Array[NavigationObstacle2D]) -> void:
 		if not obstacle_parent or not obstacle_parent.visible or not obstacle_parent.obstacle:
 			continue
 
-		# Convert obstacle vertices to global space, then to perimeter's local space
+		# Convert obstacle vertices to global space, then to perimeter's local space.
+		# Vertices are relative to the obstacle node, whose transform holds the shift that
+		# PopochiuProp applies to its children when a baseline moves the prop's origin.
 		var local_vertices := PackedVector2Array()
 		for vertex: Vector2 in obstacle.vertices:
-			# First convert to global space
-			var global_pos: Vector2 = obstacle_parent.to_global(vertex)
-			# Then convert to perimeter's local space
+			var global_pos: Vector2 = obstacle.to_global(vertex)
 			local_vertices.append(_perimeter.to_local(global_pos))
 
 		# Add as projected obstruction (true means carving)
