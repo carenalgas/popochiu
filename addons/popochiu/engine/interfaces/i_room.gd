@@ -327,18 +327,6 @@ func room_readied(room: PopochiuRoom) -> void:
 			if is_instance_valid(followed_chr) and followed_chr.is_inside_tree():
 				chr.start_following_character(followed_chr)
 
-	# If the room must have the player character but it is not part of its $Characters node, then
-	# add the PopochiuCharacter to the room
-	if (
-		current.has_player
-		and is_instance_valid(PopochiuUtils.c.player)
-		and not current.has_character(PopochiuUtils.c.player.script_name)
-	):
-		current.add_character(PopochiuUtils.c.player)
-		# Place the PC in the middle of the room
-		PopochiuUtils.c.player.position = Vector2(PopochiuUtils.e.width, PopochiuUtils.e.height) / 2.0
-		await PopochiuUtils.c.player.idle()
-
 	# Load the state of Props, Hotspots, Regions and WalkableAreas
 	for type in PopochiuResources.ROOM_CHILDREN:
 		for script_name in rooms_states[room.script_name][type]:
@@ -360,6 +348,33 @@ func room_readied(room: PopochiuRoom) -> void:
 
 	for c in get_tree().get_nodes_in_group("PopochiuClickable"):
 		c.room = current
+
+	# If the room must have the player character but it is not part of its $Characters node, then
+	# add the PopochiuCharacter to the room.
+	if (
+		current.has_player
+		and is_instance_valid(PopochiuUtils.c.player)
+		and not current.has_character(PopochiuUtils.c.player.script_name)
+	):
+		var camera_rect := PopochiuUtils.e.camera.get_limits_rect()
+		# Put the player character at room center at 10% room height as sane starting point/fallback.
+		PopochiuUtils.c.player.position = Vector2(
+			camera_rect.get_center().x,
+			camera_rect.end.y * 0.9
+		)
+		current.add_character(PopochiuUtils.c.player)
+		await PopochiuUtils.c.player.idle()
+
+	# Try to ensure the player character is on a walkable area (if one exists) by putting them on
+	# the closest point of the active walkable area.
+	var current_walkable_area := current.get_active_walkable_area()
+	if current_walkable_area and current_walkable_area.map_rid:
+		var closest_walkable_position := NavigationServer2D.map_get_closest_point(
+			current_walkable_area.map_rid,
+			PopochiuUtils.c.player.position
+		)
+		if closest_walkable_position != Vector2.ZERO:
+			PopochiuUtils.c.player.position = closest_walkable_position
 
 	await current._on_room_entered()
 
