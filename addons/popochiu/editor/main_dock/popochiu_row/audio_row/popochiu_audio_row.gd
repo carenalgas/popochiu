@@ -227,10 +227,9 @@ func _delete_from_file_system() -> void:
 		)
 		return
 	
-	# Do this so Godot removes the .import file of the audio file
+	# Do this so Godot removes the .import file of the audio file without triggering
+	# a full frontend scan (see #539)
 	EditorInterface.get_resource_filesystem().update_file(audio_file_path)
-	EditorInterface.get_resource_filesystem().scan()
-	EditorInterface.get_resource_filesystem().scan_sources()
 	queue_free()
 
 
