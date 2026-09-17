@@ -51,6 +51,103 @@ func _ready():
 
 #endregion
 
+#region Public #####################################################################################
+func show_item(item: PopochiuInventoryItem) -> void:
+	var slot := _find_first_empty_slot()
+	if not is_instance_valid(slot):
+		PopochiuUtils.print_error(
+			"No empty slot found for inventory item %s" % item.script_name
+		)
+		await get_tree().process_frame
+		return
+	slot.name = "[%s]" % item.script_name
+	slot.add_child(item)
+	
+	item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+	
+	if slot.has_method("get_content_height"):
+		item.custom_minimum_size.y = slot.get_content_height()
+	else:
+		item.custom_minimum_size.y = slot.size.y
+	
+	box.set_meta(item.script_name, slot)
+	
+	if not item.selected.is_connected(_change_cursor):
+		item.selected.connect(_change_cursor)
+	_check_scroll_buttons()
+	
+	# Common call to all inventories. Should be in the class from where inventory panels will
+	# inherit from
+	await get_tree().process_frame
+
+
+func hide_item(item: PopochiuInventoryItem) -> void:
+	if item.selected.is_connected(_change_cursor):
+		item.selected.disconnect(_change_cursor)
+	
+	box.get_meta(item.script_name).remove_child(item)
+	box.get_meta(item.script_name).name = EMPTY_SLOT
+	
+	_check_scroll_buttons()
+	
+	await get_tree().process_frame
+
+
+func swap_item(
+	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem
+) -> void:
+	var slot: Control = box.get_meta(item.script_name)
+	if item.selected.is_connected(_change_cursor):
+		item.selected.disconnect(_change_cursor)
+	item.replace_by(new_item)
+	box.remove_meta(item.script_name)
+	box.set_meta(new_item.script_name, slot)
+	if not new_item.selected.is_connected(_change_cursor):
+		new_item.selected.connect(_change_cursor)
+	
+	_check_scroll_buttons()
+	
+	await get_tree().process_frame
+
+
+## Removes all inventory items from the grid slots without emitting inventory signals.
+## Resets all slot names to [constant EMPTY_SLOT] and clears slot metadata.
+## Used when switching the displayed player character.
+func clear() -> void:
+	for slot: Control in box.get_children():
+		if (
+			slot.get_child_count() > 0
+			and slot.get_child(0) is PopochiuInventoryItem
+		):
+			var item: PopochiuInventoryItem = slot.get_child(0)
+			if item.selected.is_connected(_change_cursor):
+				item.selected.disconnect(_change_cursor)
+			slot.remove_child(item)
+		slot.name = EMPTY_SLOT
+	
+	for key: StringName in box.get_meta_list():
+		box.remove_meta(key)
+
+
+## Populates the grid with all items from [param character]'s inventory.
+## Items are added silently by temporarily setting
+## [member PopochiuIInventory.is_restoring] to [code]true[/code].
+func populate(character: PopochiuCharacter) -> void:
+	if not is_instance_valid(character):
+		return
+	
+	var was_restoring := PopochiuUtils.i.is_restoring
+	PopochiuUtils.i.is_restoring = true
+	
+	for item: PopochiuInventoryItem in character.inventory.values():
+		if is_instance_valid(item):
+			await show_item(item)
+	
+	PopochiuUtils.i.is_restoring = was_restoring
+
+
+#endregion
+
 #region SetGet #####################################################################################
 func set_visible_rows(value: int) -> void:
 	visible_rows = value
@@ -161,64 +258,6 @@ func _find_first_empty_slot() -> Control:
 	return null
 
 
-func show_item(item: PopochiuInventoryItem) -> void:
-	var slot := _find_first_empty_slot()
-	if not is_instance_valid(slot):
-		PopochiuUtils.print_error(
-			"No empty slot found for inventory item %s" % item.script_name
-		)
-		await get_tree().process_frame
-		return
-	slot.name = "[%s]" % item.script_name
-	slot.add_child(item)
-	
-	item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
-	
-	if slot.has_method("get_content_height"):
-		item.custom_minimum_size.y = slot.get_content_height()
-	else:
-		item.custom_minimum_size.y = slot.size.y
-	
-	box.set_meta(item.script_name, slot)
-	
-	if not item.selected.is_connected(_change_cursor):
-		item.selected.connect(_change_cursor)
-	_check_scroll_buttons()
-	
-	# Common call to all inventories. Should be in the class from where inventory panels will
-	# inherit from
-	await get_tree().process_frame
-
-
-func hide_item(item: PopochiuInventoryItem) -> void:
-	if item.selected.is_connected(_change_cursor):
-		item.selected.disconnect(_change_cursor)
-	
-	box.get_meta(item.script_name).remove_child(item)
-	box.get_meta(item.script_name).name = EMPTY_SLOT
-	
-	_check_scroll_buttons()
-	
-	await get_tree().process_frame
-
-
-func swap_item(
-	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem
-) -> void:
-	var slot: Control = box.get_meta(item.script_name)
-	if item.selected.is_connected(_change_cursor):
-		item.selected.disconnect(_change_cursor)
-	item.replace_by(new_item)
-	box.remove_meta(item.script_name)
-	box.set_meta(new_item.script_name, slot)
-	if not new_item.selected.is_connected(_change_cursor):
-		new_item.selected.connect(_change_cursor)
-	
-	_check_scroll_buttons()
-	
-	await get_tree().process_frame
-
-
 func _change_cursor(item: PopochiuInventoryItem) -> void:
 	PopochiuUtils.i.set_active_item(item)
 
@@ -237,42 +276,6 @@ func _check_scroll_buttons() -> void:
 
 func _on_scroll(_value: float) -> void:
 	_check_scroll_buttons()
-
-
-## Removes all inventory items from the grid slots without emitting inventory signals.
-## Resets all slot names to [constant EMPTY_SLOT] and clears slot metadata.
-## Used when switching the displayed player character.
-func clear() -> void:
-	for slot: Control in box.get_children():
-		if (
-			slot.get_child_count() > 0
-			and slot.get_child(0) is PopochiuInventoryItem
-		):
-			var item: PopochiuInventoryItem = slot.get_child(0)
-			if item.selected.is_connected(_change_cursor):
-				item.selected.disconnect(_change_cursor)
-			slot.remove_child(item)
-		slot.name = EMPTY_SLOT
-	
-	for key: StringName in box.get_meta_list():
-		box.remove_meta(key)
-
-
-## Populates the grid with all items from [param character]'s inventory.
-## Items are added silently by temporarily setting
-## [member PopochiuIInventory.is_restoring] to [code]true[/code].
-func populate(character: PopochiuCharacter) -> void:
-	if not is_instance_valid(character):
-		return
-	
-	var was_restoring := PopochiuUtils.i.is_restoring
-	PopochiuUtils.i.is_restoring = true
-	
-	for item: PopochiuInventoryItem in character.inventory.values():
-		if is_instance_valid(item):
-			await show_item(item)
-	
-	PopochiuUtils.i.is_restoring = was_restoring
 
 
 #endregion
