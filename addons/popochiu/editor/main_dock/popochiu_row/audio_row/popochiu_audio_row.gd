@@ -217,19 +217,29 @@ func _delete_from_file_system() -> void:
 		PopochiuUtils.print_error("Couldn't delete audio cue %s (err_code: %d)" % [path, err])
 		return
 	
-	# Delete the audio file linked to the cue
-	var audio_file_path := audio_cue.audio.resource_path
-	err = DirAccess.remove_absolute(audio_file_path)
+	# Cue rows reference the audio file through the cue resource. File rows (audio files
+	# that don't have a cue yet) carry a null audio_cue and only have `path`, which is
+	# already the file to delete
+	var audio_file_path := path
+	if is_instance_valid(audio_cue) and is_instance_valid(audio_cue.audio):
+		audio_file_path = audio_cue.audio.resource_path
 	
-	if err != OK:
-		PopochiuUtils.print_error(
-			"Couldn't delete audio file %s (err_code: %d)" % [audio_file_path, err]
-		)
-		return
+	if audio_file_path != path:
+		# Delete the audio file linked to the cue
+		err = DirAccess.remove_absolute(audio_file_path)
+		
+		if err != OK:
+			PopochiuUtils.print_error(
+				"Couldn't delete audio file %s (err_code: %d)" % [audio_file_path, err]
+			)
+			return
+		
+		# Do this so Godot removes the .import file of the audio file without triggering
+		# a full frontend scan (see #539)
+		EditorInterface.get_resource_filesystem().update_file(audio_file_path)
 	
-	# Do this so Godot removes the .import file of the audio file without triggering
-	# a full frontend scan (see #539)
-	EditorInterface.get_resource_filesystem().update_file(audio_file_path)
+	# Remove the entry of the deleted resource (the cue or the audio file itself)
+	EditorInterface.get_resource_filesystem().update_file(path)
 	queue_free()
 
 
