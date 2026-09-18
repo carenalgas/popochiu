@@ -28,15 +28,15 @@ Located in the `editor/main_dock` folder, it contains:
 
 - `popochiu_dock.tscn`: The scene defining the dock's UI using Control nodes (_1_).
 - `popochiu_dock.gd`: The script handling the dock's logic.
-- `popochiu_filter.gd`: A script for filtering dock items, essential for large games with many items. (_3_)
+- `popochiu_tree_dock.gd`: A base class for tabs that display grouped items using a native [Tree] control. It handles the Tree setup, the filter LineEdit, the right-click context menu, and common helpers to create groups and items.
 
 The folder also contains the Main Dock's building blocks: tabs (_2_) dedicated to specific elements and their components: groups (_4_) and rows (_5_) and (_6_). Specifically:
 
-- `main_tab`: Interface and logic for listing game elements such as characters, rooms, dialogues, inventory items, etc.
-- `room_tab`: Interface and logic for listing room-specific elements like props, hotspots, markers, walkable areas, etc.
-- `audio_tab`: Interface and logic for listing audio resources like music and sound effects.
+- `main_tab`: Interface and logic for listing game elements such as characters, rooms, dialogues, inventory items, etc. It extends `popochiu_tree_dock` and builds its groups and items directly on a Tree control.
+- `room_tab`: Interface and logic for listing room-specific elements like props, hotspots, markers, walkable areas, etc. It also extends `popochiu_tree_dock`.
+- `audio_tab`: Interface and logic for listing audio resources like music and sound effects. It also extends `popochiu_tree_dock`.
 
-These tabs display a set of `popochiu_group` instances, which group zero or more `popochiu_row` instances (specialized into `object_row` (_5_) for general or room-specific objects and `audio_row` (_6_)for music and sound effects). Groups include buttons for creating new child elements, while rows offer quick access to the scene, script, or specific properties of the represented elements.
+The Main, Room, and Audio tabs use a native Tree control. In the Main tab, each object type (Rooms, Characters, Inventory items, Dialog trees) is a collapsible group item, and each game object is a child item with icon, status tags (main scene, player character, start-with-it), and quick-action buttons (open, script, state, play). Right-clicking an item (or using its three-dots button) opens a context menu with less frequent actions such as setting the main scene, setting the player character, adding the object back to Popochiu, or removing it. The Room tab lists the objects of the currently open room (Props, Hotspots, Walkable areas, Regions, Markers, Characters in room), with quick-action buttons and a context menu to remove objects, plus an "Add character to room" button on the Characters group. The Audio tab lists audio cues grouped by type (Music, Sound effects, Voices, Graphic interface) plus an Unassigned group for audio files without a cue; each row has Play/Stop buttons and a context menu to assign unassigned files to a group or to delete audio.
 
 ---
 
@@ -111,7 +111,7 @@ The `editor/helpers` folder contains classes and functions commonly used by many
 Key scripts include:
 
 - `popochiu_editor_helper.gd`: A collection of static functions for handling complex and frequent tasks like opening pop-ups, managing the lifecycle of game objects (creation, deletion, updating), or interacting with the Godot editor (e.g., selecting a scene, modifying dock state).
-- `popochiu_gui_templates_helper.gd`: Contains public methods for creating GUIs within the `game` folder from templates provided by the Engine. These methods are used by other Popochiu components like the Setup pop-up and the GUI Tab.
+- `popochiu_gui_templates_helper.gd`: Contains public methods for creating GUIs within the `game` folder from templates provided by the Engine. These methods are used by other Popochiu components like the Setup pop-up.
 - `popochiu_signal_bus.gd`: Implements the [Publisher-Subscriber pattern](https://en.wikipedia.org/wiki/Publish%E2%80%93subscribe_pattern) to decouple UI components in the Editor Plugin and streamline event-driven interactions.
 
     !!! tip "Detailed Example"

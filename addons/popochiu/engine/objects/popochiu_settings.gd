@@ -16,7 +16,7 @@ var auto_continue_text := false
 ## An array with the [code]script_name[/code] of the inventory items that will be added to the
 ## inventory when the game starts. You can use the context menu in front of each inventory item in
 ## Popochiu's Main tab to add or remove items from start with the
-## [img]res://addons/popochiu/icons/inventory_item_start.png[/img] [b]Start with it[/b] option.
+## [img]res://addons/popochiu/icons/inventory_item_start.svg[/img] [b]Start with it[/b] option.
 var items_on_start := []
 ## The max number of items players will be able to put in the inventory.
 var inventory_limit := 0

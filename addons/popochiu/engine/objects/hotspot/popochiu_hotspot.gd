@@ -1,6 +1,6 @@
 # @popochiu-docs-category room-objects
 @tool
-@icon('res://addons/popochiu/icons/hotspot.png')
+@icon('res://addons/popochiu/icons/hotspot.svg')
 class_name PopochiuHotspot
 extends PopochiuClickable
 ## Areas players can interact with (i.e. something that is part of the room's background: the sky,

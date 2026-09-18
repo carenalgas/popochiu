@@ -1,6 +1,6 @@
 # @popochiu-docs-category game-objects
 @tool
-@icon('res://addons/popochiu/icons/character.png')
+@icon('res://addons/popochiu/icons/character.svg')
 class_name PopochiuCharacter
 extends PopochiuClickable
 ## Represents a character in the game that can move, talk, and interact with objects.

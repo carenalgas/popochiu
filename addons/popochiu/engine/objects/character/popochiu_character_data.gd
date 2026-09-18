@@ -1,5 +1,5 @@
 # @popochiu-docs-category game-objects-data-managers
-@icon('res://addons/popochiu/icons/character.png')
+@icon('res://addons/popochiu/icons/character.svg')
 class_name PopochiuCharacterData
 extends Resource
 ## Stores persistent data for [PopochiuCharacter] instances during save/load operations.
