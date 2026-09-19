@@ -210,6 +210,21 @@ const TRANSITION_LAYER_CUSTOM_ANIMLIB = "User"
 
 
 #region Public #####################################################################################
+## Converts the given text into a string that can be used as a GDScript identifier: everything
+## that is not a letter, a digit or an underscore becomes an underscore, and a leading digit
+## gets an underscore in front of it. Used when generating the autoload scripts whose variables
+## derive from names the developers may type freely.
+static func get_valid_identifier(text: String) -> String:
+	var regex := RegEx.new()
+	regex.compile("[^a-z0-9_]")
+	var sanitized: String = regex.sub(text.to_lower(), "_", true)
+
+	if not sanitized.is_empty() and sanitized[0].is_valid_int():
+		sanitized = sanitized.insert(0, "_")
+
+	return sanitized
+
+
 # Verify if the folders (where Popochiu's objects will be) exists
 static func init_file_structure() -> bool:
 	var is_first_install := !DirAccess.dir_exists_absolute(GAME_PATH)
@@ -364,7 +379,9 @@ static func update_autoloads(save := false) -> void:
 
 				ResourceSaver.save(audio_cue, path)
 
-			var var_name := audio_cue.resource_name
+			# The variable names derive from names developers may type freely (e.g. audio
+			# file names), so sanitize them or the generated script won't parse (#539)
+			var var_name := get_valid_identifier(audio_cue.resource_name)
 
 			if ("var %s" % var_name) in code:
 				continue
