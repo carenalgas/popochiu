@@ -218,7 +218,7 @@ static func _create_scene(scene_path: String) -> int:
 	else:
 		# Remove the gui.tscn file
 		DirAccess.remove_absolute(PopochiuResources.GUI_GAME_SCENE)
-		EditorInterface.get_resource_filesystem().scan()
+		EditorInterface.get_resource_filesystem().update_file(PopochiuResources.GUI_GAME_SCENE)
 		
 		for dir_name: String in DirAccess.get_directories_at(PopochiuResources.GUI_GAME_FOLDER):
 			_remove_components(PopochiuResources.GUI_GAME_FOLDER + dir_name)
@@ -233,8 +233,11 @@ static func _create_scene(scene_path: String) -> int:
 
 static func _remove_components(dir_path: String) -> void:
 	for file_name: String in DirAccess.get_files_at(dir_path):
-		DirAccess.remove_absolute(dir_path.path_join(file_name))
-		EditorInterface.get_resource_filesystem().scan()
+		var file_path := dir_path.path_join(file_name)
+		DirAccess.remove_absolute(file_path)
+		# Quietly notify the editor fs: removes the entry, its .import companion and the
+		# UID without triggering a full frontend scan (see #539).
+		EditorInterface.get_resource_filesystem().update_file(file_path)
 	
 	for dir_name: String in DirAccess.get_directories_at(dir_path):
 		var sub_dir_path := dir_path.path_join(dir_name)
@@ -242,7 +245,6 @@ static func _remove_components(dir_path: String) -> void:
 	
 	# Once the directory is empty, remove it
 	DirAccess.remove_absolute(dir_path)
-	EditorInterface.get_resource_filesystem().scan()
 
 
 # Makes a copy of a GUI component's script.

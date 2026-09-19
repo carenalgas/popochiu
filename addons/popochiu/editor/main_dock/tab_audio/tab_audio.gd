@@ -303,8 +303,9 @@ func _create_audio_cue(type: int, path: String, audio_row: Container = null) -> 
 			ac = AudioCueSound.new()
 	
 	ac.audio = stream
-	ac.resource_name = cue_name.to_lower()
-	
+	# The resource name becomes the variable name in the A autoload script, so it has to
+	# be a valid identifier even when the developers name the audio files freely (#539)
+	ac.resource_name = PopochiuResources.get_valid_identifier(cue_name)
 	var error: int = ResourceSaver.save(ac, "%s/%s" % [path.get_base_dir(), cue_file_name])
 	
 	assert(error == OK, "[Popochiu] Couldn't create PopochiuAudioCue: %s" % cue_file_name)

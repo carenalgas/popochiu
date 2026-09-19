@@ -258,6 +258,11 @@ func _delete_from_file_system() -> void:
 	# invalidating the EditorFileSystemDirectory reference used by _recursive_delete.
 	_deregister_pot_files(pot_paths_to_remove)
 
+	# Run a single full scan at the end of the deletion. Doing it per file (or per folder)
+	# floods the editor with scan actions and progress dialogs, freezing the UI for the
+	# whole operation (see #539).
+	EditorInterface.get_resource_filesystem().scan()
+
 
 # Removes the given [param paths_to_remove] from the POT generation list in a single batch save.
 func _deregister_pot_files(paths_to_remove: PackedStringArray) -> void:
@@ -306,7 +311,6 @@ func _recursive_delete(dir: EditorFileSystemDirectory) -> void:
 		 DirAccess.remove_absolute(dir.get_path()) == OK,
 		"[Popochiu] Error removing folder in recursive elimination of %s" % dir.get_path()
 	)
-	EditorInterface.get_resource_filesystem().scan()
 
 
 # Delete files within [param dir] directory. First, get the paths to each file, then delete them
@@ -345,7 +349,9 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 		if err != OK:
 			PopochiuUtils.print_error("Couldn't delete file %s. err_code:%d" % [err, fp])
 			return err
-		EditorInterface.get_resource_filesystem().scan()
+		# Notify the editor fs quietly: removes the entry, its .import companion and the
+		# UID without triggering a full frontend scan (see #539).
+		EditorInterface.get_resource_filesystem().update_file(fp)
 	
 	# Delete the rows of audio files and the deleted AudioCues in the Audio tab
 	if not deleted_audios.is_empty():
@@ -353,8 +359,9 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	
 	# Remove extra files (like .import)
 	for file_name: String in DirAccess.get_files_at(dir.get_path()):
-		DirAccess.remove_absolute(dir.get_path() + "/" + file_name)
-		EditorInterface.get_resource_filesystem().scan()
+		var extra_file_path: String = dir.get_path() + "/" + file_name
+		if DirAccess.remove_absolute(extra_file_path) == OK:
+			EditorInterface.get_resource_filesystem().update_file(extra_file_path)
 	
 	return OK
 
