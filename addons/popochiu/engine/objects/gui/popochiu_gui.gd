@@ -5,6 +5,9 @@ extends Control
 ##
 ## You can extend this class to create your own GUI, or use one of the built-in templates for:
 ## 2-click context-sensitive, 9 verbs and Sierra style.
+## 
+## Inventory lifecycle is handled by the components holding the items (e.g. SimpleClickBar,
+## PopochiuInventoryGrid), which subscribe to PopochiuUtils.i signals directly.
 
 ## The alpha value ([code]modulate.a[/code]) to set to GUI components when they are not selected.
 const UNSELECTED_ALPHA = 0.5
@@ -43,9 +46,6 @@ func _ready():
 	PopochiuUtils.d.dialog_started.connect(_on_dialog_started)
 	PopochiuUtils.g.dialog_options_shown.connect(_on_dialog_options_shown)
 	PopochiuUtils.d.dialog_finished.connect(_on_dialog_finished)
-	PopochiuUtils.i.item_added.connect(_on_inventory_item_added)
-	PopochiuUtils.i.item_removed.connect(_on_inventory_item_removed)
-	PopochiuUtils.i.item_replaced.connect(_on_inventory_item_replaced)
 	PopochiuUtils.i.item_selected.connect(_on_inventory_item_selected)
 	PopochiuUtils.c.player_changed.connect(_on_player_changed)
 	PopochiuUtils.e.game_saved.connect(_on_game_saved)
@@ -158,25 +158,22 @@ func _on_player_changed(_old_player: PopochiuCharacter, _new_player: PopochiuCha
 
 
 ## Called when [param item] is added to [param character]'s inventory.[br]
-## This hook is awaited by the base GUI routing layer, which emits
-## [signal PopochiuIInventory.item_add_done] automatically after the hook returns. Overrides must
-## not emit the signal or call [method G.block].
+## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## [signal PopochiuIInventory.item_added] directly and complete the handshake themselves.
 func _on_item_added(_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
 
 ## Called when [param item] is removed from [param character]'s inventory.[br]
-## This hook is awaited by the base GUI routing layer, which emits
-## [signal PopochiuIInventory.item_remove_done] automatically after the hook returns. Overrides
-## must not emit the signal or call [method G.block].
+## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## [signal PopochiuIInventory.item_removed] directly and complete the handshake themselves.
 func _on_item_removed(_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
 
 ## Called when [param item] is replaced in [param character]'s inventory by [param new_item].[br]
-## This hook is awaited by the base GUI routing layer, which emits
-## [signal PopochiuIInventory.item_replace_done] automatically after the hook returns. Overrides
-## must not emit the signal or call [method G.block].
+## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## [signal PopochiuIInventory.item_replaced] directly and complete the handshake themselves.
 func _on_item_replaced(_item: PopochiuInventoryItem, _new_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
@@ -231,33 +228,6 @@ func on_shown() -> void:
 #endregion
 
 #region Private ####################################################################################
-## Routes [signal PopochiuIInventory.item_added] through the GUI hook surface and guarantees the
-## completion handshake.
-func _on_inventory_item_added(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
-	PopochiuUtils.g.block()
-	await _on_item_added(item, character)
-	PopochiuUtils.i.item_add_done.emit(item, character)
-	PopochiuUtils.g.unblock(true)
-
-
-## Routes [signal PopochiuIInventory.item_removed] through the GUI hook surface and guarantees the
-## completion handshake.
-func _on_inventory_item_removed(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
-	PopochiuUtils.g.block()
-	await _on_item_removed(item, character)
-	PopochiuUtils.i.item_remove_done.emit(item, character)
-	PopochiuUtils.g.unblock()
-
-
-## Routes [signal PopochiuIInventory.item_replaced] through the GUI hook surface and guarantees
-## the completion handshake.
-func _on_inventory_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
-	PopochiuUtils.g.block()
-	await _on_item_replaced(item, new_item, character)
-	PopochiuUtils.i.item_replace_done.emit()
-	PopochiuUtils.g.unblock()
-
-
 func _adjust_nodes_text(nodes_array: Array) -> void:
 	for node: Node in nodes_array:
 		_adjust_nodes_text(node.get_children())

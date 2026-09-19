@@ -16,7 +16,6 @@ var _return_to_walk_to := false
 ## Used to access the [b]9VerbPanel[/b] component (the one at the bottom containing the verbs,
 ## the inventory, and the button to open the [b]9VerbSettingsPopup[/b].
 @onready var _9_verb_panel: Control = %"9VerbPanel"
-@onready var _inventory_grid: Control = _9_verb_panel.inventory_grid
 @onready var hover_text_cursor: Control = %HoverTextCursor
 ## Used to access the [b]9VerbSettingsPopup[/b] node.
 @onready var settings_popup: Control = %"9VerbSettingsPopup"
@@ -202,23 +201,6 @@ func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
 		_show_command_on(item.description)
 
 
-func _on_item_added(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
-	if character == PopochiuUtils.c.player:
-		await _inventory_grid.show_item(item)
-
-
-func _on_item_removed(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
-	if character == PopochiuUtils.c.player:
-		await _inventory_grid.hide_item(item)
-
-
-func _on_item_replaced(
-	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, character: PopochiuCharacter
-) -> void:
-	if character == PopochiuUtils.c.player:
-		await _inventory_grid.swap_item(item, new_item)
-
-
 ## Called when the game is saved. By default, it shows [code]Game saved[/code] in the SystemText
 ## component.
 func _on_game_saved() -> void:
@@ -231,13 +213,6 @@ func _on_game_loaded(loaded_game: Dictionary) -> void:
 	await PopochiuUtils.g.show_system_text("Game loaded")
 	
 	super(loaded_game)
-
-
-## Called when the player character changes. Clears the inventory grid and repopulates it
-## with the new player character's inventory.
-func _on_player_changed(_old_player: PopochiuCharacter, new_player: PopochiuCharacter) -> void:
-	_inventory_grid.clear()
-	await _inventory_grid.populate(new_player)
 
 
 #endregion

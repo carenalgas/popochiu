@@ -45,7 +45,13 @@ func _ready():
 	up.pressed.connect(_on_up_pressed)
 	down.pressed.connect(_on_down_pressed)
 	scroll_container.get_v_scroll_bar().value_changed.connect(_on_scroll)
-	
+
+	# Handle the inventory lifecycle directly so GUI templates do not need a reference to the grid.
+	PopochiuUtils.i.item_added.connect(_on_item_added)
+	PopochiuUtils.i.item_removed.connect(_on_item_removed)
+	PopochiuUtils.i.item_replaced.connect(_on_item_replaced)
+	PopochiuUtils.c.player_changed.connect(_on_player_changed)
+
 	_check_scroll_buttons()
 
 
@@ -189,6 +195,46 @@ func set_show_arrows(value: bool) -> void:
 #endregion
 
 #region Private ####################################################################################
+# Called when [param item] is added to [param character]'s inventory.
+func _on_item_added(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await show_item(item)
+	PopochiuUtils.i.item_add_done.emit(item, character)
+	PopochiuUtils.g.unblock(true)
+
+
+# Called when [param item] is removed from [param character]'s inventory.
+func _on_item_removed(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await hide_item(item)
+	PopochiuUtils.i.item_remove_done.emit(item, character)
+	PopochiuUtils.g.unblock()
+
+
+# Called when [param item] is replaced in [param character]'s inventory by [param new_item].
+func _on_item_replaced(
+	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, character: PopochiuCharacter
+) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await swap_item(item, new_item)
+	PopochiuUtils.i.item_replace_done.emit()
+	PopochiuUtils.g.unblock()
+
+
+# Repopulates the grid when the player character changes.
+func _on_player_changed(
+	_old_player: PopochiuCharacter, new_player: PopochiuCharacter
+) -> void:
+	clear()
+	await populate(new_player)
+
+
 func _update_box() -> void:
 	if not is_instance_valid(box): return
 	

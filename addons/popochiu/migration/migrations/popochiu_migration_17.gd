@@ -7,12 +7,14 @@ const DESCRIPTION = "Migrate inventory checks and copied GUI components to 2.1.1
 const STEPS = [
 	"Update unambiguous player inventory checks",
 	"Update copied GUI inventory hook signatures",
+	"Remove GUI inventory hooks handled by components",
 	"Update active GUI component unique names",
 	"Update copied GUI component scripts",
 	"Report inventory code that needs manual migration",
 ]
 
 const GUI_SCENE_PATH := "res://game/gui/gui.tscn"
+const GUI_SCRIPT_PATH := "res://game/gui/gui.gd"
 const VERB_PANEL_SCENE_PATH := "res://game/gui/components/9_verb_panel/9_verb_panel.tscn"
 const VERB_PANEL_HIGH_RES_SCENE_PATH := (
 	"res://game/gui/components/9_verb_panel_high_res/9_verb_panel_high_res.tscn"
@@ -38,6 +40,8 @@ const LEGACY_PATTERNS := [
 	"func _on_item_added(item: PopochiuInventoryItem) -> void:",
 	"func _on_item_removed(item: PopochiuInventoryItem) -> void:",
 	"func _on_item_replaced(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:",
+	"_simple_click_bar",
+	"_inventory_grid",
 ]
 
 
@@ -45,6 +49,7 @@ const LEGACY_PATTERNS := [
 func _is_migration_needed() -> bool:
 	return (
 		not _get_game_scripts_with_legacy_inventory_code().is_empty()
+		or _gui_template_hooks_migration_needed()
 		or _gui_component_migration_needed()
 		or _gui_scripts_migration_needed()
 	)
@@ -56,6 +61,7 @@ func _do_migration() -> bool:
 		[
 			_migrate_player_inventory_checks,
 			_migrate_gui_inventory_hooks,
+			_migrate_gui_template_hooks,
 			_migrate_gui_component_unique_names,
 			_migrate_gui_component_scripts,
 			_report_legacy_inventory_code,
@@ -117,6 +123,112 @@ func _migrate_gui_inventory_hooks() -> Completion:
 	return Completion.DONE if replaced else Completion.IGNORED
 
 
+## Removes the inventory hooks copied from older GUI templates now handled by the
+## components themselves (SimpleClickBar and PopochiuInventoryGrid subscribe to the
+## inventory signals directly). Only strips hooks that forward to the bar or grid so
+## custom logic is left for manual migration.
+func _migrate_gui_template_hooks() -> Completion:
+	if not FileAccess.file_exists(GUI_SCRIPT_PATH):
+		return Completion.IGNORED
+
+	var file := FileAccess.open(GUI_SCRIPT_PATH, FileAccess.READ)
+	if file == null:
+		return Completion.FAILED
+	var content := file.get_as_text()
+	file.close()
+
+	var updated := content
+	var removed_any := false
+	for hook_name: String in [
+		"_on_item_added", "_on_item_removed", "_on_item_replaced", "_on_player_changed"
+	]:
+		var result := _remove_forwarded_hook(updated, hook_name)
+		updated = result.content
+		if result.removed:
+			removed_any = true
+
+	var var_regex := RegEx.new()
+	if var_regex.compile(
+		"@onready var (_simple_click_bar|_inventory_grid)[^\\n]*\\n"
+	) == OK:
+		var stripped := var_regex.sub(updated, "", true)
+		if stripped != updated:
+			updated = stripped
+			removed_any = true
+
+	if not removed_any:
+		return Completion.IGNORED
+
+	var out := FileAccess.open(GUI_SCRIPT_PATH, FileAccess.WRITE)
+	if out == null:
+		PopochiuUtils.print_error(
+			"Migration %d: Couldn't update GUI script %s" % [VERSION, GUI_SCRIPT_PATH]
+		)
+		return Completion.FAILED
+	out.store_string(updated)
+	out.close()
+	PopochiuUtils.print_normal(
+		"Migration %d: Removed superseded inventory hooks from %s"
+		% [VERSION, GUI_SCRIPT_PATH]
+	)
+	return Completion.DONE
+
+
+## Returns the GUI script without [param hook_name] when its body forwards to the
+## inventory bar or grid, or only forwards to [code]super()[/code] (which no longer
+## handles inventory). Custom implementations are kept untouched.
+func _remove_forwarded_hook(content: String, hook_name: String) -> Dictionary:
+	var lines := content.split("\n")
+	var start := -1
+	for idx: int in lines.size():
+		if lines[idx].begins_with("func %s(" % hook_name):
+			start = idx
+			break
+	if start < 0:
+		return { content = content, removed = false }
+
+	var end := lines.size()
+	for idx: int in range(start + 1, lines.size()):
+		var line: String = lines[idx]
+		if (
+			line.begins_with("func ")
+			or line.begins_with("#region")
+			or line.begins_with("#endregion")
+		):
+			end = idx
+			break
+
+	var block := "\n".join(lines.slice(start, end))
+	if "_simple_click_bar" in block or "_inventory_grid" in block:
+		return { content = _cut_lines(lines, start, end), removed = true }
+
+	# Drop pure super() forwarders generated from the GUI script template.
+	var body: Array[String] = []
+	for line: String in lines.slice(start + 1, end):
+		var stripped := line.strip_edges()
+		if stripped.is_empty() or stripped.begins_with("#"):
+			continue
+		body.append(stripped)
+	if body.size() == 1 and body[0].begins_with("await super("):
+		return { content = _cut_lines(lines, start, end), removed = true }
+
+	return { content = content, removed = false }
+
+
+## Returns [param lines] joined without the block in [param start, param end),
+## plus any blank lines immediately before it.
+func _cut_lines(lines: PackedStringArray, start: int, end: int) -> String:
+	var cut_start := start
+	while cut_start > 0 and lines[cut_start - 1].strip_edges().is_empty():
+		cut_start -= 1
+	var kept: Array[String] = []
+	for idx: int in range(0, cut_start):
+		kept.append(lines[idx])
+	for idx: int in range(end, lines.size()):
+		kept.append(lines[idx])
+	return "\n".join(kept)
+
+
 ## Updates the active GUI scene nodes required by the 2.1.1 GUI scripts.
 func _migrate_gui_component_unique_names() -> Completion:
 	var scenes := _get_gui_component_scenes()
@@ -173,7 +285,9 @@ func _report_legacy_inventory_code() -> Completion:
 		]
 		+ "I.items and direct in_inventory assignments no longer identify a "
 		+ "character reliably. Use C.player.inventory or the character inventory API "
-		+ "and pass the target character explicitly when needed."
+		+ "and pass the target character explicitly when needed. "
+		+ "GUI scripts must not reference _simple_click_bar or _inventory_grid anymore: "
+		+ "the bar and the grids handle the inventory signals on their own."
 	)
 	return Completion.DONE
 
@@ -209,13 +323,8 @@ func _get_gui_component_scenes() -> Array[Dictionary]:
 	var template := _get_gui_template()
 	var scenes: Array[Dictionary] = []
 
-	if template.contains("simpleclick"):
-		var node_names: Array[String] = []
-		node_names.assign(["SimpleClickBar", "SimpleClickBarHighRes"])
-		scenes.assign([
-			{ path = GUI_SCENE_PATH, node_names = node_names },
-		])
-	elif template.contains("9verb"):
+	# SimpleClick needs no unique names: the GUI no longer resolves %SimpleClickBar.
+	if template.contains("9verb"):
 		var base_names: Array[String] = []
 		base_names.assign(["9VerbInventoryGrid", "9VerbInventoryGridHighRes"])
 		var high_res_names: Array[String] = []
@@ -235,6 +344,19 @@ func _get_gui_component_scenes() -> Array[Dictionary]:
 		])
 
 	return scenes
+
+
+## Reports whether the game GUI script still forwards inventory hooks to the bar or grid.
+func _gui_template_hooks_migration_needed() -> bool:
+	if not FileAccess.file_exists(GUI_SCRIPT_PATH):
+		return false
+
+	var file := FileAccess.open(GUI_SCRIPT_PATH, FileAccess.READ)
+	if file == null:
+		return false
+	var content := file.get_as_text()
+	file.close()
+	return "_simple_click_bar" in content or "_inventory_grid" in content
 
 
 func _gui_component_migration_needed() -> bool:
@@ -298,6 +420,7 @@ func _get_gui_script_copies() -> Array[Dictionary]:
 			addon_gui + "/templates/9_verb/components/9_verb_inventory_grid/9_verb_inventory_grid.gd"
 		)
 		copies.assign([
+			{ addon = INVENTORY_GRID_ADDON_PATH, game = INVENTORY_GRID_GAME_PATH },
 			{
 				addon = panel_addon,
 				game = game_components + "/9_verb_panel/9_verb_panel.gd",
