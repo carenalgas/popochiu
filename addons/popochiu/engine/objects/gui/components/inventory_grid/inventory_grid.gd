@@ -45,114 +45,28 @@ func _ready():
 	up.pressed.connect(_on_up_pressed)
 	down.pressed.connect(_on_down_pressed)
 	scroll_container.get_v_scroll_bar().value_changed.connect(_on_scroll)
-	
+
+	# Handle the inventory lifecycle directly so GUI templates do not need a reference to the grid.
+	PopochiuUtils.i.item_added.connect(_on_item_added)
+	PopochiuUtils.i.item_removed.connect(_on_item_removed)
+	PopochiuUtils.i.item_replaced.connect(_on_item_replaced)
+	PopochiuUtils.c.player_changed.connect(_on_player_changed)
+
 	_check_scroll_buttons()
 
 
 #endregion
 
-#region SetGet #####################################################################################
-func set_visible_rows(value: int) -> void:
-	visible_rows = value
-	_update_box()
-
-
-func set_columns(value: int) -> void:
-	columns = value
-	_update_box()
-
-
-func set_slot_scene(value: PackedScene) -> void:
-	slot_scene = value
-	_update_box()
-
-
-func set_number_of_slots(value: int) -> void:
-	number_of_slots = value
-	_update_box()
-
-
-func set_h_separation(value: int) -> void:
-	h_separation = value
-	_update_box()
-
-
-func set_v_separation(value: int) -> void:
-	v_separation = value
-	_update_box()
-
-
-func set_show_arrows(value: bool) -> void:
-	show_arrows = value
-	
-	if is_instance_valid(scroll_buttons):
-		scroll_buttons.visible = value
-
-
-#endregion
-
-#region Private ####################################################################################
-func _update_box() -> void:
-	if not is_instance_valid(box): return
-	
-	box.columns = columns
-	box.add_theme_constant_override("h_separation", h_separation)
-	box.add_theme_constant_override("v_separation", v_separation)
-	
-	# Fix: remove the child immediately (instead of calling queue_free()), and do not await for
-	# a process frame cause it can cause an issue when adding items marked as "Start with it".
-	for child in box.get_children():
-		child.free()
-	
-	for idx in number_of_slots:
-		var slot := slot_scene.instantiate()
-		box.add_child(slot)
-		
-		slot.name = EMPTY_SLOT
-		slot_size = slot.size.y
-	
-	scroll_container.custom_minimum_size = Vector2(
-		(columns * (slot_size + h_separation)) - h_separation,
-		(visible_rows * (slot_size + v_separation)) - v_separation
-	)
-
-
-## Calculate the number of rows in the box and the max scroll
-func _calculate_rows_and_scroll() -> void:
-	var visible_slots := 0
-	for slot in box.get_children():
-		if slot.visible:
-			visible_slots += 1
-	@warning_ignore("integer_division")
-	rows = visible_slots / box.columns
-	max_scroll = ((slot_size + gap_size) * int(rows / 2))
-
-
-## Check if there are inventory items in the scene tree and add them to the
-## Inventory interface class (I).
-func _check_starting_items() -> void:
-	for slot in box.get_children():
-		if (slot.get_child_count() > 0
-		and slot.get_child(0) is PopochiuInventoryItem
-		):
-			PopochiuUtils.i.register_existing_item(slot.get_child(0))
-			slot.name = slot.get_child(0).script_name
-		else:
-			slot.name = EMPTY_SLOT
-
-
-func _on_up_pressed() -> void:
-	scroll_container.scroll_vertical -= (slot_size + gap_size) + 1
-	_check_scroll_buttons()
-
-
-func _on_down_pressed() -> void:
-	scroll_container.scroll_vertical += (slot_size + gap_size) + 1
-	_check_scroll_buttons()
-
-
+#region Public #####################################################################################
+## Shows [param item] in the first free slot and tracks it for cursor updates.
 func show_item(item: PopochiuInventoryItem) -> void:
-	var slot := box.get_child(PopochiuUtils.i.items.size() - 1)
+	var slot := _find_first_empty_slot()
+	if not is_instance_valid(slot):
+		PopochiuUtils.print_error(
+			"No empty slot found for inventory item %s" % item.script_name
+		)
+		await get_tree().process_frame
+		return
 	slot.name = "[%s]" % item.script_name
 	slot.add_child(item)
 	
@@ -174,6 +88,7 @@ func show_item(item: PopochiuInventoryItem) -> void:
 	await get_tree().process_frame
 
 
+## Removes [param item] from its slot and frees the slot for reuse.
 func hide_item(item: PopochiuInventoryItem) -> void:
 	if item.selected.is_connected(_change_cursor):
 		item.selected.disconnect(_change_cursor)
@@ -186,6 +101,7 @@ func hide_item(item: PopochiuInventoryItem) -> void:
 	await get_tree().process_frame
 
 
+## Replaces [param item] with [param new_item] in the same slot.
 func swap_item(
 	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem
 ) -> void:
@@ -203,6 +119,201 @@ func swap_item(
 	await get_tree().process_frame
 
 
+## Removes all inventory items from the grid slots without emitting inventory signals.
+## Resets all slot names to [constant EMPTY_SLOT] and clears slot metadata.
+## Used when switching the displayed player character.
+func clear() -> void:
+	for slot: Control in box.get_children():
+		if (
+			slot.get_child_count() > 0
+			and slot.get_child(0) is PopochiuInventoryItem
+		):
+			var item: PopochiuInventoryItem = slot.get_child(0)
+			if item.selected.is_connected(_change_cursor):
+				item.selected.disconnect(_change_cursor)
+			slot.remove_child(item)
+		slot.name = EMPTY_SLOT
+	
+	for key: StringName in box.get_meta_list():
+		box.remove_meta(key)
+
+
+## Populates the grid with all items from [param character]'s inventory.
+## Items are added silently by temporarily setting
+## [member PopochiuIInventory.is_restoring] to [code]true[/code].
+func populate(character: PopochiuCharacter) -> void:
+	if not is_instance_valid(character):
+		return
+	
+	var was_restoring := PopochiuUtils.i.is_restoring
+	PopochiuUtils.i.is_restoring = true
+	
+	for item: PopochiuInventoryItem in character.inventory.values():
+		if is_instance_valid(item):
+			await show_item(item)
+	
+	PopochiuUtils.i.is_restoring = was_restoring
+
+
+#endregion
+
+#region SetGet #####################################################################################
+## Sets the number of visible rows and rebuilds the grid.
+func set_visible_rows(value: int) -> void:
+	visible_rows = value
+	_update_box()
+
+
+## Sets the grid column count and rebuilds the grid.
+func set_columns(value: int) -> void:
+	columns = value
+	_update_box()
+
+
+## Sets the slot scene used to build the grid and rebuilds it.
+func set_slot_scene(value: PackedScene) -> void:
+	slot_scene = value
+	_update_box()
+
+
+## Sets the total slot count and rebuilds the grid.
+func set_number_of_slots(value: int) -> void:
+	number_of_slots = value
+	_update_box()
+
+
+## Sets the horizontal gap between slots and rebuilds the grid.
+func set_h_separation(value: int) -> void:
+	h_separation = value
+	_update_box()
+
+
+## Sets the vertical gap between slots and rebuilds the grid.
+func set_v_separation(value: int) -> void:
+	v_separation = value
+	_update_box()
+
+
+## Toggles the scroll arrows visibility.
+func set_show_arrows(value: bool) -> void:
+	show_arrows = value
+	
+	if is_instance_valid(scroll_buttons):
+		scroll_buttons.visible = value
+
+
+#endregion
+
+#region Private ####################################################################################
+# Called when [param item] is added to [param character]'s inventory.
+func _on_item_added(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await show_item(item)
+	PopochiuUtils.i.item_add_done.emit(item, character)
+	PopochiuUtils.g.unblock(true)
+
+
+# Called when [param item] is removed from [param character]'s inventory.
+func _on_item_removed(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await hide_item(item)
+	PopochiuUtils.i.item_remove_done.emit(item, character)
+	PopochiuUtils.g.unblock()
+
+
+# Called when [param item] is replaced in [param character]'s inventory by [param new_item].
+func _on_item_replaced(
+	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, character: PopochiuCharacter
+) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await swap_item(item, new_item)
+	PopochiuUtils.i.item_replace_done.emit()
+	PopochiuUtils.g.unblock()
+
+
+# Repopulates the grid when the player character changes.
+func _on_player_changed(
+	_old_player: PopochiuCharacter, new_player: PopochiuCharacter
+) -> void:
+	clear()
+	await populate(new_player)
+
+
+func _update_box() -> void:
+	if not is_instance_valid(box): return
+	
+	box.columns = columns
+	box.add_theme_constant_override("h_separation", h_separation)
+	box.add_theme_constant_override("v_separation", v_separation)
+	
+	# Fix: remove the child immediately (instead of calling queue_free()), and do not await for
+	# a process frame cause it can cause an issue when adding items marked as "Start with it".
+	for child: Control in box.get_children():
+		child.free()
+	
+	for idx: int in number_of_slots:
+		var slot := slot_scene.instantiate()
+		box.add_child(slot)
+		
+		slot.name = EMPTY_SLOT
+		slot_size = slot.size.y
+	
+	scroll_container.custom_minimum_size = Vector2(
+		(columns * (slot_size + h_separation)) - h_separation,
+		(visible_rows * (slot_size + v_separation)) - v_separation
+	)
+
+
+## Calculate the number of rows in the box and the max scroll
+func _calculate_rows_and_scroll() -> void:
+	var visible_slots := 0
+	for slot: Control in box.get_children():
+		if slot.visible:
+			visible_slots += 1
+	@warning_ignore("integer_division")
+	rows = visible_slots / box.columns
+	max_scroll = ((slot_size + gap_size) * int(rows / 2))
+
+
+## Check if there are inventory items in the scene tree and add them to the
+## Inventory interface class (I).
+func _check_starting_items() -> void:
+	for slot: Control in box.get_children():
+		if (
+			slot.get_child_count() > 0
+			and slot.get_child(0) is PopochiuInventoryItem
+		):
+			PopochiuUtils.i.register_existing_item(slot.get_child(0))
+			slot.name = slot.get_child(0).script_name
+		else:
+			slot.name = EMPTY_SLOT
+
+
+func _on_up_pressed() -> void:
+	scroll_container.scroll_vertical -= (slot_size + gap_size) + 1
+	_check_scroll_buttons()
+
+
+func _on_down_pressed() -> void:
+	scroll_container.scroll_vertical += (slot_size + gap_size) + 1
+	_check_scroll_buttons()
+
+
+## Returns the first empty slot (named [constant EMPTY_SLOT]) in the grid, or [code]null[/code]
+## if no empty slots are available.
+func _find_first_empty_slot() -> Control:
+	for slot: Control in box.get_children():
+		if slot.name == EMPTY_SLOT:
+			return slot
+	return null
+
+
 func _change_cursor(item: PopochiuInventoryItem) -> void:
 	PopochiuUtils.i.set_active_item(item)
 
@@ -212,7 +323,10 @@ func _check_scroll_buttons() -> void:
 	up.disabled = scroll_container.scroll_vertical == 0
 	down.disabled = (
 		scroll_container.scroll_vertical >= max_scroll
-		or not (PopochiuUtils.i.items.size() > box.columns * visible_rows)
+		or (
+			is_instance_valid(PopochiuUtils.c.player)
+			and not (PopochiuUtils.c.player.inventory.size() > box.columns * visible_rows)
+		)
 	)
 
 

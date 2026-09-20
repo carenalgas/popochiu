@@ -171,7 +171,7 @@ func _ready() -> void:
 		var ii: PopochiuInventoryItem = PopochiuUtils.i.get_item_instance(key)
 		
 		if is_instance_valid(ii):
-			ii.add(false)
+			await ii.add()
 	
 	if settings.scale_gui:
 		PopochiuUtils.cursor.scale_cursor(scale)
@@ -429,7 +429,11 @@ func save_game(slot := 1, description := "") -> void:
 
 ## Loads the game in the given [param slot].
 func load_game(slot := 1) -> void:
-	PopochiuUtils.i.clean_inventory()
+	# Clean all character inventories before loading
+	for c_name: String in PopochiuUtils.c.characters_states:
+		var character: PopochiuCharacter = PopochiuUtils.c.get_character(c_name)
+		if is_instance_valid(character):
+			await PopochiuUtils.i.clean_inventory(character)
 	
 	if PopochiuUtils.d.current_dialog:
 		PopochiuUtils.d.current_dialog.stop()
