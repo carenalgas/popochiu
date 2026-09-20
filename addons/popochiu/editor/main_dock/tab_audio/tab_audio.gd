@@ -616,10 +616,9 @@ func _delete_audio_cue_files(item: TreeItem) -> void:
 		)
 		return
 	
-	# Do this so Godot removes the .import file of the audio file
+	# Do this so Godot removes the .import file of the audio file without triggering
+	# a full frontend scan (see #539)
 	EditorInterface.get_resource_filesystem().update_file(audio_file_path)
-	EditorInterface.get_resource_filesystem().scan()
-	EditorInterface.get_resource_filesystem().scan_sources()
 	remove_item(item)
 
 
@@ -635,8 +634,6 @@ func _delete_audio_file(item: TreeItem) -> void:
 	
 	# Do this so Godot removes the .import file of the audio file
 	EditorInterface.get_resource_filesystem().update_file(path)
-	EditorInterface.get_resource_filesystem().scan()
-	EditorInterface.get_resource_filesystem().scan_sources()
 	remove_item(item)
 
 
