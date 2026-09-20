@@ -462,4 +462,5 @@ func _on_item_discarded(item: PopochiuInventoryItem) -> void:
 		_on_linked_item_discarded()
 		linked_item_discarded.emit(self)
 
+
 #endregion

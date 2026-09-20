@@ -58,6 +58,7 @@ func _ready():
 #endregion
 
 #region Public #####################################################################################
+## Shows [param item] in the first free slot and tracks it for cursor updates.
 func show_item(item: PopochiuInventoryItem) -> void:
 	var slot := _find_first_empty_slot()
 	if not is_instance_valid(slot):
@@ -87,6 +88,7 @@ func show_item(item: PopochiuInventoryItem) -> void:
 	await get_tree().process_frame
 
 
+## Removes [param item] from its slot and frees the slot for reuse.
 func hide_item(item: PopochiuInventoryItem) -> void:
 	if item.selected.is_connected(_change_cursor):
 		item.selected.disconnect(_change_cursor)
@@ -99,6 +101,7 @@ func hide_item(item: PopochiuInventoryItem) -> void:
 	await get_tree().process_frame
 
 
+## Replaces [param item] with [param new_item] in the same slot.
 func swap_item(
 	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem
 ) -> void:
@@ -155,36 +158,43 @@ func populate(character: PopochiuCharacter) -> void:
 #endregion
 
 #region SetGet #####################################################################################
+## Sets the number of visible rows and rebuilds the grid.
 func set_visible_rows(value: int) -> void:
 	visible_rows = value
 	_update_box()
 
 
+## Sets the grid column count and rebuilds the grid.
 func set_columns(value: int) -> void:
 	columns = value
 	_update_box()
 
 
+## Sets the slot scene used to build the grid and rebuilds it.
 func set_slot_scene(value: PackedScene) -> void:
 	slot_scene = value
 	_update_box()
 
 
+## Sets the total slot count and rebuilds the grid.
 func set_number_of_slots(value: int) -> void:
 	number_of_slots = value
 	_update_box()
 
 
+## Sets the horizontal gap between slots and rebuilds the grid.
 func set_h_separation(value: int) -> void:
 	h_separation = value
 	_update_box()
 
 
+## Sets the vertical gap between slots and rebuilds the grid.
 func set_v_separation(value: int) -> void:
 	v_separation = value
 	_update_box()
 
 
+## Toggles the scroll arrows visibility.
 func set_show_arrows(value: bool) -> void:
 	show_arrows = value
 	
