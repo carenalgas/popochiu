@@ -617,8 +617,10 @@ func _delete_audio_cue_files(item: TreeItem) -> void:
 		return
 	
 	# Do this so Godot removes the .import file of the audio file without triggering
-	# a full frontend scan (see #539)
+	# a full frontend scan (see #539). update_file emits filesystem_changed (queued),
+	# which is also what makes the FileSystem panel drop the deleted entries.
 	EditorInterface.get_resource_filesystem().update_file(audio_file_path)
+	EditorInterface.get_resource_filesystem().update_file(path)
 	remove_item(item)
 
 
