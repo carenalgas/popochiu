@@ -225,8 +225,10 @@ func _load_spritesheet_file() -> Variant:
 
 
 # Saves the spritesheet path and removes the JSON file when configured to.
-# The JSON was already registered by the scan that imported the spritesheet,
-# so update_file removes it quietly (no full frontend scan; see #539).
+# The scan here is not only cleanup: the newly exported spritesheet gets its import
+# actions queued by the scan in _load_spritesheet_file (the frontend processes them
+# during this second scan cycle). Without this scan, loading the texture in
+# _setup_texture() fails since the new .ctex has not been generated yet (see #539).
 func _finalize_spritesheet_metadata() -> void:
 	# Save spritesheet path from the command output
 	_spritesheet_metadata.sprite_sheet = _output.sprite_sheet
@@ -234,7 +236,8 @@ func _finalize_spritesheet_metadata() -> void:
 	# Remove the JSON file if config says so
 	if PopochiuEditorConfig.should_remove_source_files():
 		DirAccess.remove_absolute(_output.data_file)
-		EditorInterface.get_resource_filesystem().update_file(_output.data_file)
+
+	await _scan_filesystem()
 
 
 func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPTY_STRING) -> int:
