@@ -245,6 +245,10 @@ func delete_from_file_system(path: String) -> void:
 	var object_dir: EditorFileSystemDirectory = \
 		EditorInterface.get_resource_filesystem().get_filesystem_path(path.get_base_dir())
 	
+	# Close any script the editor has open inside the folder before removing it. Deleting a
+	# file the ScriptEditor still holds crashes the editor when it revalidates the script.
+	_close_open_scripts_in(path.get_base_dir())
+	
 	# Collect translatable file paths BEFORE deletion (directory object will be invalidated later)
 	var pot_paths_to_remove := PackedStringArray()
 	_collect_pot_paths(object_dir, pot_paths_to_remove)
@@ -260,6 +264,18 @@ func delete_from_file_system(path: String) -> void:
 	# floods the editor with scan actions and progress dialogs, freezing the UI for the
 	# whole operation (see #539).
 	EditorInterface.get_resource_filesystem().scan()
+
+
+# Closes every script the editor has open inside [param folder_path], so they are not held
+# while their files disappear underneath the editor.
+func _close_open_scripts_in(folder_path: String) -> void:
+	var script_editor = EditorInterface.get_script_editor()
+	if script_editor == null:
+		return
+	
+	for script in script_editor.get_open_scripts():
+		if is_instance_valid(script) and script.resource_path.begins_with(folder_path):
+			script_editor.close_file(script.resource_path)
 
 
 #endregion
@@ -522,7 +538,7 @@ func _delete_files(dir: EditorFileSystemDirectory) -> int:
 	for fp: String in files_paths:
 		var err: int = DirAccess.remove_absolute(fp)
 		if err != OK:
-			PopochiuUtils.print_error("Couldn't delete file %s. err_code:%d" % [err, fp])
+			PopochiuUtils.print_error("Couldn't delete file %s. err_code:%d" % [fp, err])
 			return err
 		# Notify the editor fs quietly: removes the entry, its .import companion and the
 		# UID without triggering a full frontend scan (see #539).

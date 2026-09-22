@@ -178,20 +178,34 @@ func remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 	var data := item.get_metadata(dock.COL_TEXT)
 	var path: String = data.path
 	var name: String = item.get_text(dock.COL_TEXT)
+	# The dialog (and its checkbox) is freed once the confirmation is handled, so read this
+	# before any await below.
+	var delete_files: bool = dock.delete_dialog.check_box.button_pressed
 	
 	# Remove the object from Popochiu data and its corresponding autoload
 	_remove_from_data(name)
 	
+	# Close the object's scene before deleting its files. It can be open as the edited scene or
+	# as a background tab; either way the editor keeps its scripts loaded, and removing them
+	# underneath it crashes the ScriptEditor when it revalidates them.
+	var open_scene_path := _get_open_scene_path(name)
+	var is_open_scene: bool = not open_scene_path.is_empty()
+	if is_open_scene:
+		# open_scene_from_path() only focuses an already-open tab, then close_scene() closes it.
+		EditorInterface.open_scene_from_path(open_scene_path)
+		await PopochiuEditorHelper.frame_processed()
+		EditorInterface.close_scene()
+		await PopochiuEditorHelper.frame_processed()
+	
 	# Check if the files should be deleted in the file system
-	if dock.delete_dialog.check_box.button_pressed:
+	if delete_files:
 		dock.delete_from_file_system(path)
 	elif type in PopochiuResources.MAIN_TYPES:
 		dock.set_dimmed(item, true)
 		data.in_core = false
 	
-	var edited_scene: Node = EditorInterface.get_edited_scene_root()
-	if edited_scene and edited_scene.get("script_name") and edited_scene.script_name == name:
-		# If the open scene matches the object being deleted, skip saving the scene
+	if is_open_scene:
+		# The scene was closed, so there is nothing to save and the row can go.
 		dock.remove_item(item)
 		return
 	
@@ -279,6 +293,19 @@ func _remove_from_data(name: String) -> void:
 
 # Returns the Popochiu data section name for this type (e.g. "rooms"). Type-specific.
 func _get_target_array() -> String:
+	return ""
+
+
+# Returns the path of the open scene (foreground or background tab) whose root script_name is
+# [param script_name], or an empty string when no such scene is open.
+func _get_open_scene_path(script_name: String) -> String:
+	for root: Node in EditorInterface.get_open_scene_roots():
+		if not is_instance_valid(root) or root.get("script_name") != script_name:
+			continue
+		
+		if not root.scene_file_path.is_empty():
+			return root.scene_file_path
+	
 	return ""
 
 

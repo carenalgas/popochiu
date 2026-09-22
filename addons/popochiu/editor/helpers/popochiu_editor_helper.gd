@@ -118,20 +118,16 @@ static func show_delete_confirmation(
 	var dialog := ConfirmationDialog.new()
 	dialog.title = content.title
 
-	dialog.confirmed.connect(
-		func() -> void:
-			if content.on_confirmed:
-				content.on_confirmed.call()
-
-			dialog.queue_free()
-	)
-	dialog.canceled.connect(
-		func() -> void:
-			if content.on_canceled:
-				content.on_canceled.call()
-
-			dialog.queue_free()
-	)
+	# Connect the content callbacks directly instead of wrapping them in lambdas. Running
+	# a destructive callback (filesystem updates, scans and the scene save that follow it)
+	# from inside a lambda has been observed to fault the GDScript VM and crash the editor,
+	# so we avoid the extra lambda frame here.
+	if content.on_confirmed.is_valid():
+		dialog.confirmed.connect(content.on_confirmed)
+	dialog.confirmed.connect(dialog.queue_free)
+	if content.on_canceled.is_valid():
+		dialog.canceled.connect(content.on_canceled)
+	dialog.canceled.connect(dialog.queue_free)
 	dialog.about_to_popup.connect(content.on_about_to_popup)
 	dialog.add_child(content)
 
@@ -183,15 +179,10 @@ static func show_setup() -> void:
 	dialog.title = "Setup your game"
 	dialog.ok_button_text = "Create"
 	dialog.dialog_hide_on_ok = false
-	dialog.confirmed.connect(
-		func() -> void:
-			await content.on_confirm()
-			# The assignment must be done here, since doing it when the ConfirmationDialog is
-			# instantiated causes the engine to crash after trying to create Popochiu objects following
-			# the installation process.
-			_setup_dialog_instance = dialog
-			_setup_dialog_instance.hide()
-	)
+	# Run the (heavy) setup from the content script and finish in a static method instead
+	# of a lambda: a lambda frame that spans the destructive work faults the GDScript VM
+	# and crashes the editor (same reason as in show_delete_confirmation).
+	dialog.confirmed.connect(content.on_dialog_confirmed.bind(dialog))
 	dialog.close_requested.connect(content.on_close)
 	dialog.about_to_popup.connect(content.on_about_to_popup)
 
@@ -209,6 +200,14 @@ static func show_setup() -> void:
 	await show_dialog(dialog, content.custom_minimum_size)
 
 
+# Called by the setup content once the game has been created. The instance is stored only
+# now, since doing it when the ConfirmationDialog is instantiated crashes the engine after
+# creating Popochiu objects during the installation process.
+static func complete_setup(dialog: ConfirmationDialog) -> void:
+	_setup_dialog_instance = dialog
+	_setup_dialog_instance.hide()
+
+
 static func show_migrations(
 	content: MigrationsPanel, min_size := Vector2i(640, 640)
 ) -> AcceptDialog:
@@ -221,11 +220,20 @@ static func show_migrations(
 	return dialog
 
 
+# The editor's ProgressDialog reparents itself into the last exclusive window before
+# showing. If a Popochiu dialog is that window and gets freed, the still-referenced
+# ProgressDialog dies with it and the editor crashes on the next scan, reimport or
+# save (see #539). Keeping Popochiu dialogs non-exclusive takes them out of that chain.
+static func set_dialog_non_exclusive(dialog: Window) -> void:
+	dialog.exclusive = false
+
+
 static func show_dialog(dialog: Window, min_size := Vector2i.ZERO) -> void:
 	if not dialog.is_inside_tree():
 		dock.add_child.call_deferred(dialog)
 		await dialog.ready
 
+	set_dialog_non_exclusive(dialog)
 	dialog.popup_centered(min_size * EditorInterface.get_editor_scale())
 
 
