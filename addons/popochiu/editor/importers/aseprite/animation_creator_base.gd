@@ -9,6 +9,8 @@ extends RefCounted
 const RESULT_CODE = preload("res://addons/popochiu/editor/config/result_codes.gd")
 # Empty string equals default "Global" animation library
 const _DEFAULT_AL = PopochiuEditorHelper.EMPTY_STRING
+# Retries to get the newly exported spritesheet imported before loading it.
+const MAX_SPRITESHEET_IMPORT_ATTEMPTS := 5
 
 # Vars configured on initialization
 var _file_system: EditorFileSystem
@@ -224,9 +226,10 @@ func _load_spritesheet_file() -> Variant:
 	return content
 
 
-# Saves the spritesheet path and removes the JSON file when configured to.
-# The JSON was already registered by the scan that imported the spritesheet,
-# so update_file removes it quietly (no full frontend scan; see #539).
+# Saves the spritesheet path, removes the JSON file when configured to, and makes
+# sure the spritesheet is imported. EditorFileSystem.scan() is a no-op while a scan
+# is already running, so one scan is not enough when the preceding asset writes left
+# one in flight: the retry loop waits for the import to actually land.
 func _finalize_spritesheet_metadata() -> void:
 	# Save spritesheet path from the command output
 	_spritesheet_metadata.sprite_sheet = _output.sprite_sheet
@@ -234,7 +237,11 @@ func _finalize_spritesheet_metadata() -> void:
 	# Remove the JSON file if config says so
 	if PopochiuEditorConfig.should_remove_source_files():
 		DirAccess.remove_absolute(_output.data_file)
-		EditorInterface.get_resource_filesystem().update_file(_output.data_file)
+
+	for _attempt in MAX_SPRITESHEET_IMPORT_ATTEMPTS:
+		await _scan_filesystem()
+		if FileAccess.file_exists(_spritesheet_metadata.sprite_sheet + ".import"):
+			return
 
 
 func _load_spritesheet_metadata(selected_tag: String = PopochiuEditorHelper.EMPTY_STRING) -> int:

@@ -730,13 +730,11 @@ func _show_message(
 		warning_dialog.title = title
 
 	warning_dialog.dialog_text = message
-	warning_dialog.popup_window = true
 
 	var callback := Callable(warning_dialog, "queue_free")
 
 	if is_instance_valid(object) and not method.is_empty():
-		callback = func():
-			object.call(method)
+		callback = Callable(object, method)
 
 	warning_dialog.confirmed.connect(callback)
 	warning_dialog.close_requested.connect(callback)
@@ -752,11 +750,6 @@ func _show_import_working() -> void:
 		_import_dialog.queue_free()
 	_import_dialog = AcceptDialog.new()
 	_import_dialog.title = "Importing..."
-	# Keep the dialog embedded in the editor window: as a native OS window
-	# (popup_window = true) its creation/resize churns Vulkan swapchains, and
-	# the editor save that follows an import can then trip the device-lost bug
-	# tracked in https://github.com/godotengine/godot/issues/71929.
-	_import_dialog.popup_window = false
 	_import_dialog.get_ok_button().visible = false
 	_import_dialog.close_requested.connect(_import_dialog.queue_free)
 
@@ -854,6 +847,7 @@ func _show_confirmation(
 	if title != PopochiuEditorHelper.EMPTY_STRING:
 		confirmation_dialog.title = title
 	confirmation_dialog.dialog_text = message
+	PopochiuEditorHelper.set_dialog_non_exclusive(confirmation_dialog)
 	confirmation_dialog.popup_centered()
 	confirmation_dialog.close_requested.connect(confirmation_dialog.queue_free)
 	return confirmation_dialog
