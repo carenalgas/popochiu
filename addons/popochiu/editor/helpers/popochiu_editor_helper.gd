@@ -206,6 +206,10 @@ static func show_setup() -> void:
 static func complete_setup(dialog: ConfirmationDialog) -> void:
 	_setup_dialog_instance = dialog
 	_setup_dialog_instance.hide()
+	
+	# The dock is filled before the game exists, so repopulate it now that setup is done.
+	if is_instance_valid(dock):
+		dock.refresh()
 
 
 static func show_migrations(

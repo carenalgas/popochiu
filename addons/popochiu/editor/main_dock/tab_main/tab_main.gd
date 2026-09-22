@@ -28,10 +28,7 @@ func _ready() -> void:
 	super()
 	
 	# Create the row instances and their groups for each object type
-	for type_key: int in _rows:
-		var row: PopochiuDockRow = _rows[type_key].new(self)
-		_row_instances[type_key] = row
-		row.create_group()
+	_ensure_groups()
 	
 	# Connect to the base class signals
 	item_clicked.connect(_on_item_clicked)
@@ -49,6 +46,9 @@ func _ready() -> void:
 
 #region Public #####################################################################################
 func fill_data() -> void:
+	# Make sure the groups exist before adding rows to them.
+	_ensure_groups()
+	
 	# Search the FileSystem for Rooms, Characters, InventoryItems and Dialogs
 	for type_key: int in _rows:
 		var row: PopochiuDockRow = _row_instances[type_key]
@@ -65,6 +65,37 @@ func check_data() -> void:
 		# Try to load the Main tab data in case they couldn't be loaded while
 		# opening the engine
 		fill_data()
+
+
+# Rebuilds the tree groups if needed and repopulates the rows. Called after the setup finishes,
+# since the dock is populated before the game data exists.
+func refresh() -> void:
+	fill_data()
+
+
+#endregion
+
+#region Private ####################################################################################
+# Creates the row instances and their group items, rebuilding the Tree when it was cleared or
+# never built (e.g. the dock was created before the addon's classes were available).
+func _ensure_groups() -> void:
+	if not is_instance_valid(tree):
+		return
+	
+	var root := tree.get_root()
+	if root == null or root.get_child_count() == 0:
+		# The Tree has no groups: forget stale bookkeeping so rows can be repopulated.
+		_row_instances.clear()
+		rows_paths.clear()
+	
+	for type_key: int in _rows:
+		var row: PopochiuDockRow = _row_instances.get(type_key)
+		if row == null:
+			row = _rows[type_key].new(self)
+			_row_instances[type_key] = row
+		
+		if not is_instance_valid(row.group):
+			row.create_group()
 
 
 #endregion

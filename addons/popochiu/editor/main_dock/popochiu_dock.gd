@@ -44,6 +44,13 @@ func fill_data() -> void:
 	tab_audio.fill_data()
 
 
+# Repopulates every tab. Used after the setup creates the game structure, since the dock is
+# filled before that structure exists.
+func refresh() -> void:
+	tab_main.refresh()
+	tab_audio.fill_data()
+
+
 func scene_changed(scene_root: Node) -> void:
 	if not is_instance_valid(tab_room):
 		return
