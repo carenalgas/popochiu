@@ -198,13 +198,51 @@ func _get_menu_cfg(item: TreeItem) -> Array:
 
 #endregion
 
-#region Private ####################################################################################
+#region Signals handlers ###########################################################################
 func _on_sources_changed(exist: bool) -> void:
 	# Look popochiu_data.cfg for PopochiuAudioCue files that don't exist in the project anymore
 	await _delete_rows_without_audio_cue()
 	search_audio_files()
 
 
+func _on_item_clicked(item: TreeItem) -> void:
+	var data := item.get_metadata(COL_TEXT)
+	if data.get("is_cue", false):
+		EditorInterface.edit_resource(data.audio_cue)
+
+
+func _on_item_button_clicked(item: TreeItem, id: int) -> void:
+	match id:
+		Buttons.PLAY:
+			_play(item)
+		Buttons.STOP:
+			_stop(item)
+
+
+func _on_menu_item_selected(item: TreeItem, id: int) -> void:
+	match id:
+		MenuOptions.DELETE:
+			_remove_audio(item)
+		MenuOptions.ADD_TO_MUSIC:
+			_create_audio_cue(PopochiuResources.AudioTypes.MUSIC, item.get_metadata(COL_TEXT).path, item)
+		MenuOptions.ADD_TO_SFX:
+			_create_audio_cue(
+				PopochiuResources.AudioTypes.SOUND_EFFECT, item.get_metadata(COL_TEXT).path, item
+			)
+		MenuOptions.ADD_TO_VOICE:
+			_create_audio_cue(PopochiuResources.AudioTypes.VOICE, item.get_metadata(COL_TEXT).path, item)
+		MenuOptions.ADD_TO_UI:
+			_create_audio_cue(PopochiuResources.AudioTypes.UI, item.get_metadata(COL_TEXT).path, item)
+
+
+func _on_stream_finished() -> void:
+	if is_instance_valid(last_played):
+		_stop(last_played)
+
+
+#endregion
+
+#region Private ####################################################################################
 func _delete_rows_without_audio_cue() -> void:
 	for key: int in _groups:
 		var group: String = _groups[key].array
@@ -440,36 +478,6 @@ func _create_audio_cue(type: int, path: String, audio_item: TreeItem = null) -> 
 		_created_audio_cues += 1
 
 
-func _on_item_clicked(item: TreeItem) -> void:
-	var data := item.get_metadata(COL_TEXT)
-	if data.get("is_cue", false):
-		EditorInterface.edit_resource(data.audio_cue)
-
-
-func _on_item_button_clicked(item: TreeItem, id: int) -> void:
-	match id:
-		Buttons.PLAY:
-			_play(item)
-		Buttons.STOP:
-			_stop(item)
-
-
-func _on_menu_item_selected(item: TreeItem, id: int) -> void:
-	match id:
-		MenuOptions.DELETE:
-			_remove_audio(item)
-		MenuOptions.ADD_TO_MUSIC:
-			_create_audio_cue(PopochiuResources.AudioTypes.MUSIC, item.get_metadata(COL_TEXT).path, item)
-		MenuOptions.ADD_TO_SFX:
-			_create_audio_cue(
-				PopochiuResources.AudioTypes.SOUND_EFFECT, item.get_metadata(COL_TEXT).path, item
-			)
-		MenuOptions.ADD_TO_VOICE:
-			_create_audio_cue(PopochiuResources.AudioTypes.VOICE, item.get_metadata(COL_TEXT).path, item)
-		MenuOptions.ADD_TO_UI:
-			_create_audio_cue(PopochiuResources.AudioTypes.UI, item.get_metadata(COL_TEXT).path, item)
-
-
 func _play(item: TreeItem) -> void:
 	var data := item.get_metadata(COL_TEXT)
 	if data.get("is_playing", false):
@@ -531,11 +539,6 @@ func _stop(item: TreeItem) -> void:
 		_asp.stop()
 		if _asp.finished.is_connected(_on_stream_finished):
 			_asp.finished.disconnect(_on_stream_finished)
-
-
-func _on_stream_finished() -> void:
-	if is_instance_valid(last_played):
-		_stop(last_played)
 
 
 func _remove_audio(item: TreeItem) -> void:

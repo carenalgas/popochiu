@@ -75,31 +75,6 @@ func refresh() -> void:
 
 #endregion
 
-#region Private ####################################################################################
-# Creates the row instances and their group items, rebuilding the Tree when it was cleared or
-# never built (e.g. the dock was created before the addon's classes were available).
-func _ensure_groups() -> void:
-	if not is_instance_valid(tree):
-		return
-	
-	var root := tree.get_root()
-	if root == null or root.get_child_count() == 0:
-		# The Tree has no groups: forget stale bookkeeping so rows can be repopulated.
-		_row_instances.clear()
-		rows_paths.clear()
-	
-	for type_key: int in _rows:
-		var row: PopochiuDockRow = _row_instances.get(type_key)
-		if row == null:
-			row = _rows[type_key].new(self)
-			_row_instances[type_key] = row
-		
-		if not is_instance_valid(row.group):
-			row.create_group()
-
-
-#endregion
-
 #region Virtual ####################################################################################
 func _get_menu_cfg(item: TreeItem) -> Array:
 	var data := item.get_metadata(COL_TEXT)
@@ -113,7 +88,7 @@ func _remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 
 #endregion
 
-#region Private ####################################################################################
+#region Signals handlers ###########################################################################
 func _set_main_scene(path: String) -> void:
 	ProjectSettings.set_setting(PopochiuResources.MAIN_SCENE, path)
 	assert(
@@ -142,6 +117,31 @@ func _set_pc(script_name: String) -> void:
 
 func _add_to_list(type: int, name_to_add: String) -> TreeItem:
 	return _row_instances[type].create_item(name_to_add)
+
+
+#endregion
+
+#region Private ####################################################################################
+# Creates the row instances and their group items, rebuilding the Tree when it was cleared or
+# never built (e.g. the dock was created before the addon's classes were available).
+func _ensure_groups() -> void:
+	if not is_instance_valid(tree):
+		return
+	
+	var root := tree.get_root()
+	if root == null or root.get_child_count() == 0:
+		# The Tree has no groups: forget stale bookkeeping so rows can be repopulated.
+		_row_instances.clear()
+		rows_paths.clear()
+	
+	for type_key: int in _rows:
+		var row: PopochiuDockRow = _row_instances.get(type_key)
+		if row == null:
+			row = _rows[type_key].new(self)
+			_row_instances[type_key] = row
+		
+		if not is_instance_valid(row.group):
+			row.create_group()
 
 
 func _get_popochiu_objects_resources(

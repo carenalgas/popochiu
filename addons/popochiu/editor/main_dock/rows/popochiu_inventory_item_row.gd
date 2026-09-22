@@ -6,6 +6,8 @@ extends PopochiuDockRow
 
 const START_ICON = preload("res://addons/popochiu/icons/inventory_item_start.svg")
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.INVENTORY_ITEM)
 	_title = "Inventory items"
@@ -16,7 +18,29 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_scene_template = PopochiuResources.INVENTORY_ITEMS_PATH.path_join("%s/inventory_item_%s.tscn")
 
 
-#region Row #######################################################################################
+#endregion
+
+#region Public #####################################################################################
+func toggle_start_with_it(item: TreeItem) -> void:
+	var data := item.get_metadata(dock.COL_TEXT)
+	var items: Array = PopochiuConfig.get_inventory_items_on_start()
+	var script_name: String = data.script_name
+	
+	if script_name in items:
+		items.erase(script_name)
+	else:
+		items.append(script_name)
+	
+	PopochiuConfig.set_inventory_items_on_start(items)
+	
+	var is_on_start := script_name in items
+	dock.set_tag(item, START_ICON, is_on_start)
+	data.is_on_start = is_on_start
+
+
+#endregion
+
+#region Virtual ####################################################################################
 func create_row(resource: Variant) -> TreeItem:
 	if get_scene_template().replace("%s", resource.resource_name) in dock.rows_paths:
 		return null
@@ -69,23 +93,6 @@ func on_menu_item_selected(item: TreeItem, id: int) -> void:
 			toggle_start_with_it(item)
 		_:
 			super.on_menu_item_selected(item, id)
-
-
-func toggle_start_with_it(item: TreeItem) -> void:
-	var data := item.get_metadata(dock.COL_TEXT)
-	var items: Array = PopochiuConfig.get_inventory_items_on_start()
-	var script_name: String = data.script_name
-	
-	if script_name in items:
-		items.erase(script_name)
-	else:
-		items.append(script_name)
-	
-	PopochiuConfig.set_inventory_items_on_start(items)
-	
-	var is_on_start := script_name in items
-	dock.set_tag(item, START_ICON, is_on_start)
-	data.is_on_start = is_on_start
 
 
 func _remove_from_data(name: String) -> void:

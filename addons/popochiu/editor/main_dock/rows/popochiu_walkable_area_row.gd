@@ -4,6 +4,8 @@ extends PopochiuRoomObjRow
 #
 # Ref: #558
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.WALKABLE_AREA)
 	_title = "Walkable areas"
@@ -14,3 +16,6 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_type_class = PopochiuWalkableArea
 	_parent_name = "WalkableAreas"
 	_getter = "get_walkable_area"
+
+
+#endregion

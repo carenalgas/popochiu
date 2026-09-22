@@ -5,10 +5,52 @@ extends PopochiuDockRow
 #
 # Ref: #558
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock, type: int) -> void:
 	super(dock, type)
 
 
+#endregion
+
+#region Public #####################################################################################
+func create_room_item(name: String, path: String, node_path: String) -> TreeItem:
+	var data := {
+		"type": type,
+		"path": path,
+		"node_path": node_path,
+		"script_name": name,
+	}
+	var item := dock.add_item(group, name, get_icon(), data)
+	dock.rows_paths.append("%s/%d/%s" % [dock.opened_room.script_name, type, name])
+	return item
+
+
+func on_child_added(node: Node) -> void:
+	if not is_instance_of(node, get_type_class()):
+		return
+	
+	node.position = Vector2(
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
+	) / 2.0
+
+
+func on_child_removed(node: Node) -> void:
+	if not is_instance_of(node, get_type_class()):
+		return
+	
+	var node_name := node.name
+	dock.rows_paths.erase("%s/%d/%s" % [dock.opened_room.script_name, type, node_name])
+	
+	var item := dock.get_item(group, node_name)
+	if item:
+		dock.remove_item(item)
+
+
+#endregion
+
+#region Virtual ####################################################################################
 func create_group() -> TreeItem:
 	var can_create := get_popup() != null
 	group = dock.create_group(get_title(), get_icon(), can_create, get_create_text(), { "type": type })
@@ -36,18 +78,6 @@ func create_row(child: Variant) -> TreeItem:
 		)
 	dock.add_menu_button(item)
 	
-	return item
-
-
-func create_room_item(name: String, path: String, node_path: String) -> TreeItem:
-	var data := {
-		"type": type,
-		"path": path,
-		"node_path": node_path,
-		"script_name": name,
-	}
-	var item := dock.add_item(group, name, get_icon(), data)
-	dock.rows_paths.append("%s/%d/%s" % [dock.opened_room.script_name, type, name])
 	return item
 
 
@@ -90,28 +120,9 @@ func remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 	EditorInterface.save_scene()
 
 
-func on_child_added(node: Node) -> void:
-	if not is_instance_of(node, get_type_class()):
-		return
-	
-	node.position = Vector2(
-		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
-		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
-	) / 2.0
+#endregion
 
-
-func on_child_removed(node: Node) -> void:
-	if not is_instance_of(node, get_type_class()):
-		return
-	
-	var node_name := node.name
-	dock.rows_paths.erase("%s/%d/%s" % [dock.opened_room.script_name, type, node_name])
-	
-	var item := dock.get_item(group, node_name)
-	if item:
-		dock.remove_item(item)
-
-
+#region Private ####################################################################################
 func _get_row_path(child: Node) -> String:
 	var row_path := child.scene_file_path
 	
@@ -123,3 +134,6 @@ func _get_row_path(child: Node) -> String:
 
 func _get_node_path(child: Node) -> String:
 	return String(child.get_path()).split("%s/" % get_parent_name())[1]
+
+
+#endregion

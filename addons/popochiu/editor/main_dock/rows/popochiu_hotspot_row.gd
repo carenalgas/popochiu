@@ -4,6 +4,8 @@ extends PopochiuRoomObjRow
 #
 # Ref: #558
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.HOTSPOT)
 	_title = "Hotspots"
@@ -14,3 +16,6 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_type_class = PopochiuHotspot
 	_parent_name = "Hotspots"
 	_getter = "get_hotspot"
+
+
+#endregion

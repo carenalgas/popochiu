@@ -6,6 +6,8 @@ extends PopochiuDockRow
 
 const MAIN_ICON = preload("res://addons/popochiu/icons/starting_room.svg")
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.ROOM)
 	_title = "Rooms"
@@ -16,7 +18,27 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_scene_template = PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
 
 
-#region Row #######################################################################################
+#endregion
+
+#region Public #####################################################################################
+func set_main(item: TreeItem, value: bool) -> void:
+	if value:
+		# Call this first since the favs will be cleared
+		PopochiuEditorHelper.signal_bus.main_scene_changed.emit(item.get_metadata(dock.COL_TEXT).path)
+	
+	dock.set_tag(item, MAIN_ICON, value)
+	item.get_metadata(dock.COL_TEXT).is_main = value
+
+
+func play(item: TreeItem) -> void:
+	var path: String = item.get_metadata(dock.COL_TEXT).path
+	EditorInterface.select_file(path)
+	EditorInterface.play_custom_scene(path)
+
+
+#endregion
+
+#region Virtual ####################################################################################
 func create_row(resource: Variant) -> TreeItem:
 	if get_scene_template().replace("%s", resource.resource_name) in dock.rows_paths:
 		return null
@@ -72,21 +94,6 @@ func on_button_clicked(item: TreeItem, id: int) -> void:
 			play(item)
 		_:
 			super.on_button_clicked(item, id)
-
-
-func set_main(item: TreeItem, value: bool) -> void:
-	if value:
-		# Call this first since the favs will be cleared
-		PopochiuEditorHelper.signal_bus.main_scene_changed.emit(item.get_metadata(dock.COL_TEXT).path)
-	
-	dock.set_tag(item, MAIN_ICON, value)
-	item.get_metadata(dock.COL_TEXT).is_main = value
-
-
-func play(item: TreeItem) -> void:
-	var path: String = item.get_metadata(dock.COL_TEXT).path
-	EditorInterface.select_file(path)
-	EditorInterface.play_custom_scene(path)
 
 
 func _remove_from_data(name: String) -> void:

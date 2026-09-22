@@ -47,12 +47,15 @@ var _parent_name := ""
 var _getter := ""
 
 
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock, type: int) -> void:
 	self.dock = dock
 	self.type = type
 
 
-#region Config ####################################################################################
+#endregion
+
+#region Public #####################################################################################
 func get_title() -> String:
 	return _title
 
@@ -93,24 +96,6 @@ func get_getter() -> String:
 	return _getter
 
 
-#endregion
-
-#region Group #####################################################################################
-# Creates the group item for this row's type in the dock's Tree.
-func create_group() -> TreeItem:
-	group = dock.create_group(get_title(), get_icon(), true, get_create_text(), { "type": type })
-	return group
-
-
-#endregion
-
-#region Row #######################################################################################
-# Creates the row for [param source] in the dock's Tree. Type-specific. [param source] is a
-# Resource for the main object types (rooms, characters, ...) or a Node for the room object types.
-func create_row(source: Variant) -> TreeItem:
-	return null
-
-
 # Creates the TreeItem for this row's type with the shared action buttons.
 func create_item(name_to_add: String) -> TreeItem:
 	var path: String = get_scene_template().replace("%s", name_to_add.to_snake_case())
@@ -143,14 +128,43 @@ func create_item(name_to_add: String) -> TreeItem:
 	return item
 
 
+# Opens the state resource (.tres) of the object in the editor.
+func edit_state(item: TreeItem) -> void:
+	var path: String = item.get_metadata(dock.COL_TEXT).path
+	EditorInterface.select_file(path.replace(".tscn", ".tres"))
+	EditorInterface.edit_resource(load(path.replace(".tscn", ".tres")))
+
+
+# Opens the script of the object's state resource in the editor.
+func open_state_script(item: TreeItem) -> void:
+	var path: String = item.get_metadata(dock.COL_TEXT).path
+	var state := load(path.replace(".tscn", ".tres"))
+	
+	EditorInterface.select_file(state.get_script().resource_path)
+	EditorInterface.set_main_screen_editor("Script")
+	EditorInterface.edit_resource(state.get_script())
+
+
+#endregion
+
+#region Virtual ####################################################################################
+# Creates the group item for this row's type in the dock's Tree.
+func create_group() -> TreeItem:
+	group = dock.create_group(get_title(), get_icon(), true, get_create_text(), { "type": type })
+	return group
+
+
+# Creates the row for [param source] in the dock's Tree. Type-specific. [param source] is a
+# Resource for the main object types (rooms, characters, ...) or a Node for the room object types.
+func create_row(source: Variant) -> TreeItem:
+	return null
+
+
 # Hook for subclasses to add type-specific buttons (e.g. the Play button for rooms).
 func _add_extra_buttons(item: TreeItem) -> void:
 	pass
 
 
-#endregion
-
-#region Virtual ###################################################################################
 # Returns the list of options for the right-click context menu of [param item]. Default: the
 # shared "Add to Popochiu" + "Remove" options used by the main object types.
 func get_menu_cfg(item: TreeItem) -> Array:
@@ -269,23 +283,6 @@ func on_menu_item_selected(item: TreeItem, id: int) -> void:
 			add_to_core(item)
 
 
-# Opens the state resource (.tres) of the object in the editor.
-func edit_state(item: TreeItem) -> void:
-	var path: String = item.get_metadata(dock.COL_TEXT).path
-	EditorInterface.select_file(path.replace(".tscn", ".tres"))
-	EditorInterface.edit_resource(load(path.replace(".tscn", ".tres")))
-
-
-# Opens the script of the object's state resource in the editor.
-func open_state_script(item: TreeItem) -> void:
-	var path: String = item.get_metadata(dock.COL_TEXT).path
-	var state := load(path.replace(".tscn", ".tres"))
-	
-	EditorInterface.select_file(state.get_script().resource_path)
-	EditorInterface.set_main_screen_editor("Script")
-	EditorInterface.edit_resource(state.get_script())
-
-
 # Removes the object from Popochiu data and its autoload. Type-specific.
 func _remove_from_data(name: String) -> void:
 	pass
@@ -296,6 +293,9 @@ func _get_target_array() -> String:
 	return ""
 
 
+#endregion
+
+#region Private ####################################################################################
 # Returns the path of the open scene (foreground or background tab) whose root script_name is
 # [param script_name], or an empty string when no such scene is open.
 func _get_open_scene_path(script_name: String) -> String:

@@ -178,7 +178,7 @@ func _remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 
 #endregion
 
-#region Private ####################################################################################
+#region Signals handlers ###########################################################################
 # Styles the separator above the characters tree to match the color of the buttons (e.g. RoomName,
 # BtnScript) so it follows the editor theme automatically.
 func _style_characters_separator() -> void:
@@ -186,6 +186,126 @@ func _style_characters_separator() -> void:
 	call_deferred("_apply_characters_separator_style")
 
 
+func _on_item_clicked(item: TreeItem) -> void:
+	var data := item.get_metadata(COL_TEXT)
+	_row_instances[data.type].on_item_clicked(item)
+
+
+func _on_item_button_clicked(item: TreeItem, id: int) -> void:
+	var data := item.get_metadata(COL_TEXT)
+	_row_instances[data.type].on_button_clicked(item, id)
+
+
+func _on_menu_item_selected(item: TreeItem, id: int) -> void:
+	var data := item.get_metadata(COL_TEXT)
+	_row_instances[data.type].on_menu_item_selected(item, id)
+
+
+func _on_create_clicked(group_item: TreeItem) -> void:
+	var type_key: int = group_item.get_metadata(COL_TEXT).type
+	PopochiuEditorHelper.show_creation_popup(_row_instances[type_key].get_popup())
+
+
+# Adds the clicked character in the "+ Add character to room" menu to the current room
+func _on_character_selected(id: int) -> void:
+	var char_name := _add_character_menu.get_item_text(
+		_add_character_menu.get_item_index(id)
+	)
+	var instance: PopochiuCharacter = (load(
+		"res://game/characters/%s/character_%s.tscn".replace("%s", char_name.to_snake_case())
+	) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
+	
+	opened_room.get_node("Characters").add_child(instance)
+	instance.owner = opened_room
+
+	EditorInterface.save_scene()
+	PopochiuEditorHelper.select_node(instance)
+
+
+func _on_characters_item_selected() -> void:
+	var item := characters_tree.get_selected()
+	# Ignore the group item (direct child of the hidden root)
+	if not item or item.get_parent() == characters_tree.get_root():
+		return
+	
+	var data := item.get_metadata(COL_TEXT)
+	if is_instance_valid(opened_room):
+		var node: Node = opened_room.get_node("Characters/%s" % data.node_path)
+		PopochiuEditorHelper.select_node(node)
+
+
+func _on_characters_button_clicked(
+	item: TreeItem, column: int, id: int, mouse_button_index: int
+) -> void:
+	if column != COL_BUTTONS or mouse_button_index != MOUSE_BUTTON_LEFT:
+		return
+	
+	match id:
+		PopochiuDockRow.Buttons.ADD_CHARACTER:
+			_open_add_character_menu()
+		PopochiuDockRow.Buttons.REMOVE_CHARACTER:
+			_remove_character_from_room(item)
+
+
+func _on_character_child_added(node: Node) -> void:
+	if not node is PopochiuCharacter:
+		return
+	
+	_create_character_row(node)
+	
+	node.position = Vector2(
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
+		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
+	) / 2.0
+
+
+func _on_character_child_removed(node: Node) -> void:
+	if not node is PopochiuCharacter:
+		return
+	
+	var node_name: String = node.name.trim_prefix("Character").rstrip(" *")
+	characters_in_room.erase(node_name)
+	
+	var item := get_item(_characters_group, node_name)
+	if item:
+		remove_item(item)
+
+
+func _on_remove_character_confirmed(item: TreeItem) -> void:
+	var char_name: String = item.get_text(COL_TEXT)
+	characters_in_room.erase(char_name)
+	opened_room.get_node("Characters").get_node("Character%s *" % char_name).queue_free()
+	remove_item(item)
+	EditorInterface.save_scene()
+
+
+func _on_child_added(node: Node, row: PopochiuDockRow) -> void:
+	row.create_row(node)
+	row.on_child_added(node)
+
+
+func _on_child_removed(node: Node, row: PopochiuDockRow) -> void:
+	row.on_child_removed(node)
+
+
+func _check_undoredo_history() -> void:
+	if not is_instance_valid(opened_room):
+		return
+	
+	var walkable_areas: Array = opened_room.call(
+		_row_instances[PopochiuResources.Types.WALKABLE_AREA].get_method()
+	)
+	
+	if walkable_areas.is_empty():
+		return
+	
+	for wa: PopochiuWalkableArea in walkable_areas:
+		(wa.get_node("Perimeter") as NavigationRegion2D).bake_navigation_polygon()
+
+
+#endregion
+
+#region Private ####################################################################################
 func _apply_characters_separator_style() -> void:
 	# The buttons' color comes from the background of the Button's "normal" stylebox, so we reuse it
 	# for the separator line to keep both visually consistent
@@ -252,26 +372,6 @@ func _clear_content() -> void:
 	await get_tree().process_frame
 
 
-func _on_item_clicked(item: TreeItem) -> void:
-	var data := item.get_metadata(COL_TEXT)
-	_row_instances[data.type].on_item_clicked(item)
-
-
-func _on_item_button_clicked(item: TreeItem, id: int) -> void:
-	var data := item.get_metadata(COL_TEXT)
-	_row_instances[data.type].on_button_clicked(item, id)
-
-
-func _on_menu_item_selected(item: TreeItem, id: int) -> void:
-	var data := item.get_metadata(COL_TEXT)
-	_row_instances[data.type].on_menu_item_selected(item, id)
-
-
-func _on_create_clicked(group_item: TreeItem) -> void:
-	var type_key: int = group_item.get_metadata(COL_TEXT).type
-	PopochiuEditorHelper.show_creation_popup(_row_instances[type_key].get_popup())
-
-
 func _edit_root_node() -> void:
 	_select_file()
 	_select_root_node()
@@ -316,22 +416,6 @@ func _open_add_character_menu() -> void:
 		idx += 1
 	
 	_add_character_menu.popup(Rect2i(DisplayServer.mouse_get_position(), Vector2i.ZERO))
-
-
-# Adds the clicked character in the "+ Add character to room" menu to the current room
-func _on_character_selected(id: int) -> void:
-	var char_name := _add_character_menu.get_item_text(
-		_add_character_menu.get_item_index(id)
-	)
-	var instance: PopochiuCharacter = (load(
-		"res://game/characters/%s/character_%s.tscn".replace("%s", char_name.to_snake_case())
-	) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
-	
-	opened_room.get_node("Characters").add_child(instance)
-	instance.owner = opened_room
-
-	EditorInterface.save_scene()
-	PopochiuEditorHelper.select_node(instance)
 
 
 # Sets up the separate tree that holds the characters present in the room. It is handled locally
@@ -418,55 +502,6 @@ func _create_character_item(char_name: String, path: String, node_path: String) 
 	return item
 
 
-func _on_characters_item_selected() -> void:
-	var item := characters_tree.get_selected()
-	# Ignore the group item (direct child of the hidden root)
-	if not item or item.get_parent() == characters_tree.get_root():
-		return
-	
-	var data := item.get_metadata(COL_TEXT)
-	if is_instance_valid(opened_room):
-		var node: Node = opened_room.get_node("Characters/%s" % data.node_path)
-		PopochiuEditorHelper.select_node(node)
-
-
-func _on_characters_button_clicked(
-	item: TreeItem, column: int, id: int, mouse_button_index: int
-) -> void:
-	if column != COL_BUTTONS or mouse_button_index != MOUSE_BUTTON_LEFT:
-		return
-	
-	match id:
-		PopochiuDockRow.Buttons.ADD_CHARACTER:
-			_open_add_character_menu()
-		PopochiuDockRow.Buttons.REMOVE_CHARACTER:
-			_remove_character_from_room(item)
-
-
-func _on_character_child_added(node: Node) -> void:
-	if not node is PopochiuCharacter:
-		return
-	
-	_create_character_row(node)
-	
-	node.position = Vector2(
-		ProjectSettings.get_setting(PopochiuResources.DISPLAY_WIDTH),
-		ProjectSettings.get_setting(PopochiuResources.DISPLAY_HEIGHT)
-	) / 2.0
-
-
-func _on_character_child_removed(node: Node) -> void:
-	if not node is PopochiuCharacter:
-		return
-	
-	var node_name: String = node.name.trim_prefix("Character").rstrip(" *")
-	characters_in_room.erase(node_name)
-	
-	var item := get_item(_characters_group, node_name)
-	if item:
-		remove_item(item)
-
-
 func _remove_character_from_room(item: TreeItem) -> void:
 	delete_dialog = PopochiuEditorHelper.DELETE_CONFIRMATION_SCENE.instantiate()
 	delete_dialog.title = "Remove character in room"
@@ -476,38 +511,6 @@ func _remove_character_from_room(item: TreeItem) -> void:
 	delete_dialog.on_confirmed = _on_remove_character_confirmed.bind(item)
 	
 	PopochiuEditorHelper.show_delete_confirmation(delete_dialog)
-
-
-func _on_remove_character_confirmed(item: TreeItem) -> void:
-	var char_name: String = item.get_text(COL_TEXT)
-	characters_in_room.erase(char_name)
-	opened_room.get_node("Characters").get_node("Character%s *" % char_name).queue_free()
-	remove_item(item)
-	EditorInterface.save_scene()
-
-
-func _on_child_added(node: Node, row: PopochiuDockRow) -> void:
-	row.create_row(node)
-	row.on_child_added(node)
-
-
-func _on_child_removed(node: Node, row: PopochiuDockRow) -> void:
-	row.on_child_removed(node)
-
-
-func _check_undoredo_history() -> void:
-	if not is_instance_valid(opened_room):
-		return
-	
-	var walkable_areas: Array = opened_room.call(
-		_row_instances[PopochiuResources.Types.WALKABLE_AREA].get_method()
-	)
-	
-	if walkable_areas.is_empty():
-		return
-	
-	for wa: PopochiuWalkableArea in walkable_areas:
-		(wa.get_node("Perimeter") as NavigationRegion2D).bake_navigation_polygon()
 
 
 #endregion

@@ -4,6 +4,8 @@ extends PopochiuDockRow
 #
 # Ref: #558
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.DIALOG)
 	_title = "Dialog trees"
@@ -14,7 +16,9 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_scene_template = PopochiuResources.DIALOGS_PATH.path_join("%s/dialog_%s.tres")
 
 
-#region Row #######################################################################################
+#endregion
+
+#region Virtual ####################################################################################
 func create_row(resource: Variant) -> TreeItem:
 	if get_scene_template().replace("%s", resource.resource_name) in dock.rows_paths:
 		return null

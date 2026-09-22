@@ -4,6 +4,8 @@ extends PopochiuRoomObjRow
 #
 # Ref: #558
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.REGION)
 	_title = "Regions"
@@ -14,3 +16,6 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_type_class = PopochiuRegion
 	_parent_name = "Regions"
 	_getter = "get_region"
+
+
+#endregion

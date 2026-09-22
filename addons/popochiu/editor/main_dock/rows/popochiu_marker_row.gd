@@ -4,6 +4,8 @@ extends PopochiuRoomObjRow
 #
 # Ref: #558
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.MARKER)
 	_title = "Markers"
@@ -14,3 +16,6 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_type_class = Marker2D
 	_parent_name = "Markers"
 	_getter = "get_marker"
+
+
+#endregion

@@ -4,6 +4,8 @@ extends PopochiuRoomObjRow
 #
 # Ref: #558
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.PROP)
 	_title = "Props"
@@ -14,3 +16,6 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_type_class = PopochiuProp
 	_parent_name = "Props"
 	_getter = "get_prop"
+
+
+#endregion

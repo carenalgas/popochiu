@@ -7,6 +7,8 @@ extends PopochiuDockRow
 
 const PLAYER_ICON = preload("res://addons/popochiu/icons/player_character.svg")
 
+
+#region Godot ######################################################################################
 func _init(dock: PopochiuTreeDock) -> void:
 	super(dock, PopochiuResources.Types.CHARACTER)
 	_title = "Characters"
@@ -17,7 +19,21 @@ func _init(dock: PopochiuTreeDock) -> void:
 	_scene_template = PopochiuResources.CHARACTERS_PATH.path_join("%s/character_%s.tscn")
 
 
-#region Row #######################################################################################
+#endregion
+
+#region Public #####################################################################################
+func set_pc_item(item: TreeItem, value: bool) -> void:
+	if value:
+		# Call this first since the favs will be cleared
+		PopochiuEditorHelper.signal_bus.pc_changed.emit(item.get_metadata(dock.COL_TEXT).script_name)
+	
+	dock.set_tag(item, PLAYER_ICON, value)
+	item.get_metadata(dock.COL_TEXT).is_pc = value
+
+
+#endregion
+
+#region Virtual ####################################################################################
 func create_row(resource: Variant) -> TreeItem:
 	if get_scene_template().replace("%s", resource.resource_name) in dock.rows_paths:
 		return null
@@ -60,15 +76,6 @@ func on_menu_item_selected(item: TreeItem, id: int) -> void:
 			set_pc_item(item, true)
 		_:
 			super.on_menu_item_selected(item, id)
-
-
-func set_pc_item(item: TreeItem, value: bool) -> void:
-	if value:
-		# Call this first since the favs will be cleared
-		PopochiuEditorHelper.signal_bus.pc_changed.emit(item.get_metadata(dock.COL_TEXT).script_name)
-	
-	dock.set_tag(item, PLAYER_ICON, value)
-	item.get_metadata(dock.COL_TEXT).is_pc = value
 
 
 func _remove_from_data(name: String) -> void:
