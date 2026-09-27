@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/popochiu/editor/main_dock/tab_tools/tab_tools.gd" id="1"]
+
+[node name="Tools" type="VBoxContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="Content" type="VBoxContainer" parent="ScrollContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="TranslationsLabel" type="Label" parent="ScrollContainer/MarginContainer/Content"]
+layout_mode = 2
+text = "Translations"
+theme_type_variation = &"HeaderSmall"
+
+[node name="TranslationsSeparator" type="HSeparator" parent="ScrollContainer/MarginContainer/Content"]
+layout_mode = 2
+
+[node name="BtnSyncTranslations" type="Button" parent="ScrollContainer/MarginContainer/Content" unique_id=1]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Scans the game folder and registers all translatable scripts and resources in the POT file list for translation template generation."
+text = "Sync translation sources"
+
+[node name="BtnOpenPotSettings" type="Button" parent="ScrollContainer/MarginContainer/Content" unique_id=2]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Opens Project Settings on the Localization tab where you can generate the .pot template file."
+text = "Generate POT file..."

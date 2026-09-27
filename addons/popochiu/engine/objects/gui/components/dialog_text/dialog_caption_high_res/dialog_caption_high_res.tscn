@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://c1ltagj7ac3ok"]
+
+[ext_resource type="PackedScene" uid="uid://bpl3qjbxonfpb" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_caption/dialog_caption.tscn" id="1_w7vx8"]
+[ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="2_8bx6x"]
+
+[node name="DialogCaptionHighRes" unique_id=1268191593 instance=ExtResource("1_w7vx8")]
+theme = ExtResource("2_8bx6x")
+wrap_width = 800.0
+
+[node name="RichTextLabel" parent="." index="0" unique_id=1548257626]
+offset_left = -400.0
+offset_top = -28.0
+offset_right = 400.0

@@ -106,6 +106,13 @@ func _on_movement_ended() -> void:
 	pass
 
 
+# Called when this character's movement is blocked by a region with walkable = false.
+# Override to react to the event: play a sound, show a hint, trigger dialogue, etc.
+# `_region` is the PopochiuRegion that stopped the character.
+func _on_blocked_by_region(_region: PopochiuRegion) -> void:
+	pass
+
+
 #endregion
 
 #region Public #####################################################################################

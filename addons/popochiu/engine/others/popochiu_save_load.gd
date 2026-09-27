@@ -64,7 +64,9 @@ func save_game(slot := 1, description := "") -> bool:
 		description = description,
 		player = {
 			room = PopochiuUtils.r.current.script_name,
-			inventory = PopochiuUtils.i.items,
+			# Legacy inventory format — kept for backward compatibility with older Popochiu versions.
+			# New saves use character_inventories below.
+			inventory = _build_legacy_inventory_save_data(),
 		},
 		rooms = {}, # Stores the state of each PopochiuRoomData
 		characters = {}, # Stores the state of each PopochiuCharacterData
@@ -83,6 +85,10 @@ func save_game(slot := 1, description := "") -> bool:
 	# Go over each Popochiu type to save its current state -----------------------------------------
 	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
 		_store_data(type, data)
+	
+	# Per-character inventories. Key is character script_name, value is Array of
+	# {name: String, qty: int} dictionaries.
+	data["character_inventories"] = _build_character_inventories_save_data()
 	
 	# Save PopochiuGlobals.gd (Globals) ------------------------------------------------------------
 	# prop = {class_name, hint, hint_string, name, type, usage}
@@ -125,10 +131,27 @@ func load_game(slot := 1) -> Dictionary:
 	var test_json_conv = JSON.new()
 	test_json_conv.parse(content)
 	var loaded_data: Dictionary = test_json_conv.data
+	var player_data = loaded_data.get("player", {})
 	
-	# Load inventory items
-	for item in loaded_data.player.inventory:
-		PopochiuUtils.i.get_item_instance(item).add(false)
+	PopochiuUtils.i.is_restoring = true
+	
+	# Load per-character inventories (new format).
+	var character_inventories = loaded_data.get("character_inventories", {})
+	if character_inventories is Dictionary and not character_inventories.is_empty():
+		for character_name: String in character_inventories:
+			var entries: Array = character_inventories[character_name]
+			for entry in entries:
+				_restore_inventory_entry(entry, character_name)
+	else:
+		# Fallback: legacy format — player.inventory (Array of String or Array of Dictionary).
+		# Introduced in refs #349. Migrate to per-character inventory on load.
+		var inventory_entries = []
+		if player_data is Dictionary:
+			inventory_entries = player_data.get("inventory", [])
+		for entry in inventory_entries:
+			_restore_inventory_entry(entry)
+	
+	PopochiuUtils.i.is_restoring = false
 	
 	# Load main object states
 	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
@@ -142,8 +165,7 @@ func load_game(slot := 1) -> Dictionary:
 			
 			PopochiuUtils.globals[prop] = loaded_data.globals[prop]
 		
-		if loaded_data.globals.has("custom_data")\
-		and PopochiuUtils.globals.has_method("on_load"):
+		if loaded_data.globals.has("custom_data") and PopochiuUtils.globals.has_method("on_load"):
 			PopochiuUtils.globals.on_load(loaded_data.globals.custom_data)
 
 	return loaded_data
@@ -179,6 +201,8 @@ func _store_data(type: String, save: Dictionary) -> void:
 						opt,
 						["id", "always_on"]
 					)
+			"characters":
+				PopochiuUtils.c.characters_states[data.script_name] = save[type][data.script_name]
 		
 		if save[type][data.script_name].is_empty():
 			save[type].erase(data.script_name)
@@ -227,6 +251,95 @@ func _load_dialog_options(
 			
 			if loaded_options[opt.id].has(prop.name):
 				opt[prop.name] = loaded_options[opt.id][prop.name]
+
+
+func _restore_inventory_entry(entry, character_name: String = "") -> void:
+	var item_name := ""
+	var qty := 1
+
+	if entry is String:
+		# refs #349: Legacy save format — plain string item name, assume quantity of 1.
+		item_name = entry
+	elif entry is Dictionary:
+		item_name = entry.get("name", "")
+		qty = entry.get("qty", 1)
+	else:
+		PopochiuUtils.print_warning(
+			"Skipping malformed inventory entry while loading a save file."
+		)
+		return
+
+	if item_name.is_empty():
+		PopochiuUtils.print_warning(
+			"Skipping inventory entry with an empty item name while loading a save file."
+		)
+		return
+
+	if typeof(qty) != TYPE_INT:
+		PopochiuUtils.print_warning(
+			"Skipping inventory entry for %s. Quantity must be an integer." % item_name
+		)
+		return
+
+	if qty <= 0:
+		PopochiuUtils.print_warning(
+			"Skipping inventory entry for %s. Quantity must be greater than 0." % item_name
+		)
+		return
+
+	var item := PopochiuUtils.i.get_item_instance(item_name)
+	if not is_instance_valid(item):
+		PopochiuUtils.print_warning(
+			"Skipping inventory entry for %s. Item could not be instantiated." % item_name
+		)
+		return
+
+	# Resolve target character — if character_name is provided, use it; otherwise default to player.
+	var target: PopochiuCharacter = null
+	if not character_name.is_empty():
+		target = PopochiuUtils.c.get_character(character_name)
+	if not is_instance_valid(target):
+		target = PopochiuUtils.c.player
+
+	if is_instance_valid(target):
+		item.add(qty, target)
+
+
+# Builds per-character inventory data for the save file.
+# Returns a Dictionary {character_name: [{name, qty}, ...]}.
+func _build_character_inventories_save_data() -> Dictionary:
+	var result := {}
+	# Iterate over all characters registered in the character interface.
+	for c_name: String in PopochiuUtils.c.characters_states:
+		var character: PopochiuCharacter = PopochiuUtils.c.get_character(c_name)
+		if not is_instance_valid(character) or character.inventory.is_empty():
+			continue
+		var entries: Array = []
+		for item_name: String in character.inventory:
+			var item: PopochiuInventoryItem = character.inventory[item_name]
+			if is_instance_valid(item) and item.quantity_owned > 0:
+				entries.append({
+					"name": item_name,
+					"qty": item.quantity_owned,
+				})
+		if not entries.is_empty():
+			result[c_name] = entries
+	return result
+
+
+# Builds the legacy inventory array for the save file (player character only).
+# Kept for backward compatibility with older Popochiu versions.
+func _build_legacy_inventory_save_data() -> Array:
+	if not is_instance_valid(PopochiuUtils.c.player):
+		return []
+	var result := []
+	for item_name: String in PopochiuUtils.c.player.inventory:
+		var item: PopochiuInventoryItem = PopochiuUtils.c.player.inventory[item_name]
+		result.append({
+			"name": item_name,
+			"qty": item.quantity_owned if is_instance_valid(item) else 1,
+		})
+	return result
 
 
 #endregion

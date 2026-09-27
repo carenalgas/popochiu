@@ -1,6 +1,6 @@
 # @popochiu-docs-category game-objects
 @tool
-@icon("res://addons/popochiu/icons/room.png")
+@icon("res://addons/popochiu/icons/room.svg")
 class_name PopochiuRoom
 extends Node2D
 ## Represents a location in the game where characters can move and interact with objects.
@@ -133,6 +133,8 @@ func _on_room_entered() -> void:
 
 ## Called when the room-changing transition finishes. At this point the room is visible.[br]
 ## Override this to start cutscenes, play sounds, etc.
+## [br][br]
+## [b]NOTE:[/b] This method is [b]not[/b] called when loading a saved game.
 func _on_room_transition_finished() -> void:
 	pass
 
@@ -141,6 +143,15 @@ func _on_room_transition_finished() -> void:
 ## is not processing inputs, and has no children in the [b]$Characters[/b] node.[br]
 ## Override this to cleanup any custom data or states before leaving the room, if needed.
 func _on_room_exited() -> void:
+	pass
+
+
+## Called after loading a saved game, once the room state is fully restored.
+## [br][br]
+## [b]NOTE:[/b] [method _on_room_transition_finished] is [b]not[/b] called when loading
+## a saved game. Use this method instead to resume ongoing events, re-establish
+## signal connections, restart ambient audio, etc.
+func _on_restore_from_savegame() -> void:
 	pass
 
 
@@ -537,9 +548,6 @@ func _collect_all_obstacles() -> Array[NavigationObstacle2D]:
 
 		var obstacle: NavigationObstacle2D = prop.get_navigation_obstacle()
 		if obstacle:
-			# Adjust the global position to account for the baseline because
-			# props are currently using y-sorting and not z-index.
-			obstacle.position.y -= prop.baseline * scale.y
 			obstacles.append(obstacle)
 
 	# Collect obstacles from characters (excluding temporary editor instances and player character)

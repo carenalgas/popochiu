@@ -20,6 +20,7 @@ atlas = SubResource("CompressedTexture2D_fxk42")
 region = Rect2(0, 24, 24, 24)
 
 [node name="SimpleClickBar" type="Control" groups=["popochiu_gui_component"]]
+unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

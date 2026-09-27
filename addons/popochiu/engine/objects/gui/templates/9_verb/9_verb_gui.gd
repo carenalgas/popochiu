@@ -77,6 +77,7 @@ func _on_unblocked() -> void:
 	
 	PopochiuUtils.e.current_command = NineVerbCommands.Commands.WALK_TO
 	PopochiuUtils.g.show_hover_text()
+	PopochiuUtils.cursor.show_cursor()
 	_9_verb_panel.show()
 	
 	# Make all commands to look as no pressed
@@ -100,6 +101,8 @@ func _on_system_text_hidden() -> void:
 func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
+	PopochiuUtils.cursor.show_cursor(PopochiuUtils.cursor.get_type_name(clickable.cursor))
+
 	if clickable.get("suggested_command"):
 		_9_verb_panel.highlight_command(clickable.suggested_command)
 	
@@ -114,6 +117,8 @@ func _on_mouse_entered_clickable(clickable: PopochiuClickable) -> void:
 func _on_mouse_exited_clickable(clickable: PopochiuClickable) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
+	PopochiuUtils.cursor.show_cursor("normal")
+
 	if clickable.get("suggested_command"):
 		_9_verb_panel.highlight_command(clickable.suggested_command, false)
 	PopochiuUtils.cursor.show_cursor()
@@ -249,7 +254,7 @@ func _show_command_on(item_1_name: String, item_2_name := "") -> void:
 	var preposition = "on"
 	if PopochiuUtils.e.current_command == NineVerbCommands.Commands.GIVE:
 		preposition = "to"
-	PopochiuUtils.g.show_hover_text("%s %s %s %s" % [
+	PopochiuUtils.g.show_hover_text("%s %s %s %s", [
 		PopochiuUtils.e.get_current_command_name(), item_1_name, preposition, item_2_name
 	])
 

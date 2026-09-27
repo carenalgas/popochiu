@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://bv2uv3sj50a46"]
+[gd_scene format=3 uid="uid://bv2uv3sj50a46"]
 
 [ext_resource type="Theme" uid="uid://b07cwfxxc53e5" path="res://addons/popochiu/engine/objects/gui/resources/base_gui_theme_high_res.tres" id="1_n84lh"]
 [ext_resource type="Script" uid="uid://bv77wllsgc5ht" path="res://addons/popochiu/engine/objects/gui/components/dialog_text/dialog_portrait/dialog_portrait.gd" id="2_la241"]
@@ -13,7 +13,7 @@ content_margin_right = 12.0
 content_margin_bottom = 8.0
 bg_color = Color(0, 0, 0, 0.705882)
 
-[node name="DialogPortraitHighRes" type="Control" groups=["popochiu_gui_component"]]
+[node name="DialogPortraitHighRes" type="Control" unique_id=1108695585 groups=["popochiu_gui_component"]]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -24,7 +24,7 @@ mouse_filter = 2
 theme = ExtResource("1_n84lh")
 script = ExtResource("2_la241")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=498873819]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -39,21 +39,21 @@ grow_vertical = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_8fbbc")
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=642852371]
 layout_mode = 2
 theme_override_constants/margin_bottom = 12
 
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer" unique_id=401251966]
 layout_mode = 2
 mouse_filter = 2
 theme_override_constants/separation = 2
 
-[node name="LeftAvatarContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+[node name="LeftAvatarContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer" unique_id=721523648]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 
-[node name="LeftAvatar" type="TextureRect" parent="PanelContainer/MarginContainer/HBoxContainer/LeftAvatarContainer"]
+[node name="LeftAvatar" type="TextureRect" parent="PanelContainer/MarginContainer/HBoxContainer/LeftAvatarContainer" unique_id=1260783031]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(128, 128)
@@ -62,13 +62,13 @@ size_flags_vertical = 4
 mouse_filter = 2
 stretch_mode = 3
 
-[node name="TextContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+[node name="TextContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer" unique_id=76928613]
 layout_mode = 2
 size_flags_horizontal = 3
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_mjjs7")
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/TextContainer"]
+[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/HBoxContainer/TextContainer" unique_id=911604695]
 unique_name_in_owner = true
 clip_contents = false
 custom_minimum_size = Vector2(16, 16)
@@ -79,8 +79,9 @@ bbcode_enabled = true
 text = "A [shake]portrait[/shake] dialog text."
 scroll_active = false
 meta_underlined = false
+visible_characters_behavior = 1
 
-[node name="ContinueIcon" type="TextureProgressBar" parent="PanelContainer/MarginContainer/HBoxContainer/TextContainer/RichTextLabel"]
+[node name="ContinueIcon" type="TextureProgressBar" parent="PanelContainer/MarginContainer/HBoxContainer/TextContainer/RichTextLabel" unique_id=1877315482]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 3
@@ -97,12 +98,12 @@ value = 100.0
 fill_mode = 2
 texture_progress = ExtResource("3_n84lh")
 
-[node name="RightAvatarContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer"]
+[node name="RightAvatarContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/HBoxContainer" unique_id=1180763861]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 
-[node name="RightAvatar" type="TextureRect" parent="PanelContainer/MarginContainer/HBoxContainer/RightAvatarContainer"]
+[node name="RightAvatar" type="TextureRect" parent="PanelContainer/MarginContainer/HBoxContainer/RightAvatarContainer" unique_id=1899679462]
 unique_name_in_owner = true
 texture_filter = 1
 custom_minimum_size = Vector2(128, 128)

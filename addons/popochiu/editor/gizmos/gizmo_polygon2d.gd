@@ -37,7 +37,12 @@ var outline_color: Color = Color.YELLOW
 var vertex_color: Color = Color.WHITE
 var vertex_size: float = 6.0:
 	set(value):
-		_on_vertex_size_changed(value)
+	# Setter body for vertex_size. Skips the cache update when the value
+	# hasn't changed to avoid redundant Vector2 allocations.
+		if value == vertex_size:
+			return
+		vertex_size = value
+		_update_vertex_size_cache()
 var outline_width: float = 2.0
 
 # Private vars
@@ -381,15 +386,6 @@ func _project_point_on_segment(point: Vector2, seg_a: Vector2, seg_b: Vector2) -
 func _update_vertex_size_cache() -> void:
 	_vertex_half_size = Vector2(vertex_size, vertex_size)
 	_vertex_full_size = Vector2(vertex_size * 2, vertex_size * 2)
-
-
-# Setter body for vertex_size. Skips the cache update when the value
-# hasn't changed to avoid redundant Vector2 allocations.
-func _on_vertex_size_changed(value: float) -> void:
-	if value == vertex_size:
-		return
-	vertex_size = value
-	_update_vertex_size_cache()
 
 
 #endregion

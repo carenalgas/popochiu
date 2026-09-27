@@ -37,7 +37,8 @@ var _pending_cross_room_followers := []
 
 #region Godot ######################################################################################
 func _init() -> void:
-	Engine.register_singleton(&"R", self)
+	if not Engine.has_singleton(&"R"):
+		Engine.register_singleton(&"R", self)
 
 
 #endregion
@@ -101,6 +102,18 @@ func get_walkable_areas() -> Array:
 ## Returns all the [Marker2D]s in the room.
 func get_markers() -> Array:
 	return current.get_markers()
+
+
+## Returns an [Array] with all the [PopochiuCharacter]s in the current room.
+func get_characters() -> Array[PopochiuCharacter]:
+	var characters: Array[PopochiuCharacter] = []
+	characters.assign(current.get_characters())
+	return characters
+
+
+## Returns the number of [PopochiuCharacter]s in the current room.
+func get_characters_count() -> int:
+	return current.get_characters_count()
 
 
 ## Returns the runtime instance of the [PopochiuRoom] identified by [param script_name], or
@@ -241,9 +254,7 @@ func room_readied(room: PopochiuRoom) -> void:
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.c.player = PopochiuUtils.c.get_character(PopochiuUtils.e.loaded_game.player.id)
 	else:
-		current.state.visited = true
 		current.state.visited_times += 1
-		current.state.visited_first_time = current.state.visited_times == 1
 
 	# Add the PopochiuCharacter instances to the room
 	if (rooms_states[room.script_name]["characters"] as Dictionary).is_empty():
@@ -382,6 +393,8 @@ func room_readied(room: PopochiuRoom) -> void:
 
 	PopochiuUtils.e.in_room = true
 
+	var was_loaded := not PopochiuUtils.e.loaded_game.is_empty()
+
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.e.game_loaded.emit(PopochiuUtils.e.loaded_game)
 		await PopochiuUtils.g.load_feedback_finished
@@ -390,10 +403,11 @@ func room_readied(room: PopochiuRoom) -> void:
 
 	# This enables the room to listen input events
 	current.is_current = true
-	await current._on_room_transition_finished()
 
-	# Fix #219: Update visited_first_time state once _on_room_transition_finished() finishes
-	current.state.visited_first_time = false
+	if was_loaded:
+		await current._on_restore_from_savegame()
+	else:
+		await current._on_room_transition_finished()
 
 
 ## Stores the default states of all rooms defined in project data.

@@ -5,6 +5,9 @@ extends Control
 ##
 ## You can extend this class to create your own GUI, or use one of the built-in templates for:
 ## 2-click context-sensitive, 9 verbs and Sierra style.
+## 
+## Inventory lifecycle is handled by the components holding the items (e.g. SimpleClickBar,
+## PopochiuInventoryGrid), which subscribe to PopochiuUtils.i signals directly.
 
 ## The alpha value ([code]modulate.a[/code]) to set to GUI components when they are not selected.
 const UNSELECTED_ALPHA = 0.5
@@ -44,6 +47,7 @@ func _ready():
 	PopochiuUtils.g.dialog_options_shown.connect(_on_dialog_options_shown)
 	PopochiuUtils.d.dialog_finished.connect(_on_dialog_finished)
 	PopochiuUtils.i.item_selected.connect(_on_inventory_item_selected)
+	PopochiuUtils.c.player_changed.connect(_on_player_changed)
 	PopochiuUtils.e.game_saved.connect(_on_game_saved)
 	PopochiuUtils.e.game_loaded.connect(_on_game_loaded)
 	
@@ -144,6 +148,33 @@ func _on_dialog_finished(dialog: PopochiuDialog) -> void:
 
 ## Called when [param item] is selected in the inventory (i.e. by clicking it).
 func _on_inventory_item_selected(item: PopochiuInventoryItem) -> void:
+	pass
+
+
+## Called when the player character changes from [param old_player] to [param new_player].[br]
+## GUI templates should override this to swap the displayed inventory contents.
+func _on_player_changed(_old_player: PopochiuCharacter, _new_player: PopochiuCharacter) -> void:
+	pass
+
+
+## Called when [param item] is added to [param character]'s inventory.[br]
+## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## [signal PopochiuIInventory.item_added] directly and complete the handshake themselves.
+func _on_item_added(_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
+	pass
+
+
+## Called when [param item] is removed from [param character]'s inventory.[br]
+## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## [signal PopochiuIInventory.item_removed] directly and complete the handshake themselves.
+func _on_item_removed(_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
+	pass
+
+
+## Called when [param item] is replaced in [param character]'s inventory by [param new_item].[br]
+## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## [signal PopochiuIInventory.item_replaced] directly and complete the handshake themselves.
+func _on_item_replaced(_item: PopochiuInventoryItem, _new_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
 

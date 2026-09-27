@@ -34,17 +34,19 @@ func _ready():
 	settings_btn.mouse_exited.connect(_on_settings_mouse_exited)
 	
 	# Connect to singletons signals
-	PopochiuUtils.i.item_added.connect(_add_item)
-	PopochiuUtils.i.item_removed.connect(_remove_item)
-	PopochiuUtils.i.item_replaced.connect(_replace_item)
 	PopochiuUtils.i.inventory_show_requested.connect(_show_and_hide)
 	PopochiuUtils.i.inventory_hide_requested.connect(_close)
+	PopochiuUtils.i.item_added.connect(_on_item_added)
+	PopochiuUtils.i.item_removed.connect(_on_item_removed)
+	PopochiuUtils.i.item_replaced.connect(_on_item_replaced)
+	PopochiuUtils.c.player_changed.connect(_on_player_changed)
 	PopochiuUtils.g.blocked.connect(_on_gui_blocked)
 	PopochiuUtils.g.unblocked.connect(_on_gui_unblocked)
 	
 	# Check if there are already items in the inventory (set manually in the scene)
 	for ii in box.get_children():
-		ii.in_inventory = ii is PopochiuInventoryItem
+		if ii is PopochiuInventoryItem:
+			PopochiuUtils.i.register_existing_item(ii)
 	
 	set_process_input(not always_visible)
 
@@ -92,6 +94,46 @@ func _input(event: InputEvent) -> void:
 #endregion
 
 #region Private ####################################################################################
+# Called when [param item] is added to [param character]'s inventory.
+func _on_item_added(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await show_item(item)
+	PopochiuUtils.i.item_add_done.emit(item, character)
+	PopochiuUtils.g.unblock(true)
+
+
+# Called when [param item] is removed from [param character]'s inventory.
+func _on_item_removed(item: PopochiuInventoryItem, character: PopochiuCharacter) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await hide_item(item)
+	PopochiuUtils.i.item_remove_done.emit(item, character)
+	PopochiuUtils.g.unblock()
+
+
+# Called when [param item] is replaced in [param character]'s inventory by [param new_item].
+func _on_item_replaced(
+	item: PopochiuInventoryItem, new_item: PopochiuInventoryItem, character: PopochiuCharacter
+) -> void:
+	if character != PopochiuUtils.c.player: return
+
+	PopochiuUtils.g.block()
+	await swap_item(item, new_item)
+	PopochiuUtils.i.item_replace_done.emit()
+	PopochiuUtils.g.unblock()
+
+
+# Repopulates the bar when the player character changes.
+func _on_player_changed(
+	_old_player: PopochiuCharacter, new_player: PopochiuCharacter
+) -> void:
+	clear()
+	await populate(new_player)
+
+
 func _on_settings_pressed() -> void:
 	PopochiuUtils.g.popup_requested.emit("SimpleClickSettings")
 
@@ -155,16 +197,17 @@ func _on_tween_finished() -> void:
 	_is_hidden = panel_container.position.y == hidden_y
 
 
-func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
+func show_item(item: PopochiuInventoryItem) -> void:
 	box.add_child(item)
 	
 	item.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	item.size_flags_vertical = Control.SIZE_FILL
 	item.expand_mode = TextureRect.EXPAND_FIT_WIDTH
 	
-	item.selected.connect(_change_cursor)
+	if not item.selected.is_connected(_change_cursor):
+		item.selected.connect(_change_cursor)
 	
-	if not always_visible and animate:
+	if not always_visible and not PopochiuUtils.i.is_restoring:
 		# Show the inventory for a while and hide after a couple of seconds so players can see the
 		# item being added to the inventory
 		set_process_input(false)
@@ -181,36 +224,35 @@ func _add_item(item: PopochiuInventoryItem, animate := true) -> void:
 		set_process_input(true)
 	else:
 		await get_tree().process_frame
-	
-	PopochiuUtils.i.item_add_done.emit(item)
 
 
-func _remove_item(item: PopochiuInventoryItem, animate := true) -> void:
-	item.selected.disconnect(_change_cursor)
+func hide_item(item: PopochiuInventoryItem) -> void:
+	if item.selected.is_connected(_change_cursor):
+		item.selected.disconnect(_change_cursor)
 	box.remove_child(item)
 	
 	if not always_visible:
 		PopochiuUtils.cursor.show_cursor()
 		PopochiuUtils.g.show_hover_text()
 		
-		if animate:
+		if not PopochiuUtils.i.is_restoring:
 			_close()
 			await get_tree().create_timer(1.0).timeout
 	
 	await get_tree().process_frame
-	
-	PopochiuUtils.i.item_remove_done.emit(item)
 
 
 func _change_cursor(item: PopochiuInventoryItem) -> void:
 	PopochiuUtils.i.set_active_item(item)
 
 
-func _replace_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+func swap_item(item: PopochiuInventoryItem, new_item: PopochiuInventoryItem) -> void:
+	if item.selected.is_connected(_change_cursor):
+		item.selected.disconnect(_change_cursor)
 	item.replace_by(new_item)
+	if not new_item.selected.is_connected(_change_cursor):
+		new_item.selected.connect(_change_cursor)
 	await get_tree().process_frame
-	
-	PopochiuUtils.i.item_replace_done.emit()
 
 
 func _show_and_hide(time := 1.0) -> void:
@@ -238,6 +280,35 @@ func _on_gui_unblocked() -> void:
 	
 	if hide_when_gui_is_blocked:
 		show()
+
+
+## Removes all inventory items from the bar without emitting inventory signals.
+## Used when switching the displayed player character so the new character's inventory can be
+## populated.
+func clear() -> void:
+	for child: Control in box.get_children():
+		if not child is PopochiuInventoryItem:
+			continue
+		if child.selected.is_connected(_change_cursor):
+			child.selected.disconnect(_change_cursor)
+		box.remove_child(child)
+
+
+## Populates the bar with all items from [param character]'s inventory.
+## Items are added silently (without entrance animation) by temporarily setting
+## [member PopochiuIInventory.is_restoring] to [code]true[/code].
+func populate(character: PopochiuCharacter) -> void:
+	if not is_instance_valid(character):
+		return
+	
+	var was_restoring := PopochiuUtils.i.is_restoring
+	PopochiuUtils.i.is_restoring = true
+	
+	for item: PopochiuInventoryItem in character.inventory.values():
+		if is_instance_valid(item):
+			await show_item(item)
+	
+	PopochiuUtils.i.is_restoring = was_restoring
 
 
 #endregion

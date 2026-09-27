@@ -7,7 +7,6 @@ extends PopochiuGraphicInterface
 ## inventory bar is in the top left corner of the screen, and the settings bar is in the top right
 ## corner of the screen.
 
-
 #region Godot ######################################################################################
 func _ready() -> void:
 	super()

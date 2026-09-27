@@ -1,6 +1,6 @@
 # @popochiu-docs-category game-objects
 @tool
-@icon('res://addons/popochiu/icons/dialog.png')
+@icon('res://addons/popochiu/icons/dialog.svg')
 class_name PopochiuDialog
 extends Resource
 ## Represents a branching dialog tree with selectable options.

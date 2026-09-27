@@ -371,6 +371,14 @@ func on_confirm() -> void:
 	_set_template_selected_in_ui(_current_template_name)
 
 
+# Runs the setup and hands the dialog to the helper once the game has been created. Kept
+# as a plain method instead of a lambda: a lambda frame spanning the setup work faults the
+# GDScript VM and crashes the editor.
+func on_dialog_confirmed(dialog: ConfirmationDialog) -> void:
+	await on_confirm()
+	PopochiuEditorHelper.complete_setup(dialog)
+
+
 #endregion
 
 #region Private ####################################################################################
@@ -515,6 +523,7 @@ func _show_gui_warning() -> void:
 	opt_game_ui.disabled = true
 
 	add_child(warning_dialog)
+	PopochiuEditorHelper.set_dialog_non_exclusive(warning_dialog)
 	warning_dialog.popup_centered()
 	warning_dialog.tree_exited.connect(warning_dialog.queue_free)
 
@@ -556,6 +565,7 @@ func _show_template_change_confirmation(new_template_name: String) -> void:
 	)
 
 	add_child(confirmation_dialog)
+	PopochiuEditorHelper.set_dialog_non_exclusive(confirmation_dialog)
 	confirmation_dialog.popup_centered()
 
 

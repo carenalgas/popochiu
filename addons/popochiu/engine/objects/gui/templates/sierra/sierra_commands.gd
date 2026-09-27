@@ -50,7 +50,7 @@ func walk() -> void:
 ## is triggered.
 func look() -> void:
 	PopochiuUtils.g.show_system_text(
-		"%s has nothing to say about that object" % PopochiuUtils.c.player.description
+		"%s has nothing to say about that object", [PopochiuUtils.c.player.description]
 	)
 
 
@@ -62,14 +62,14 @@ func interact() -> void:
 		and PopochiuUtils.i.active != PopochiuUtils.i.clicked
 	):
 		# Item used on another item
-		PopochiuUtils.g.show_system_text("%s can't use %s with %s" % [
+		PopochiuUtils.g.show_system_text("%s can't use %s with %s", [
 			PopochiuUtils.c.player.description,
 			PopochiuUtils.i.active.description,
 			PopochiuUtils.i.clicked.description
 		])
 	elif PopochiuUtils.i.active and PopochiuUtils.e.clicked:
 		# Item used on a PopochiuClickable
-		PopochiuUtils.g.show_system_text("%s can't use %s with %s" % [
+		PopochiuUtils.g.show_system_text("%s can't use %s with %s", [
 			PopochiuUtils.c.player.description,
 			PopochiuUtils.i.active.description,
 			PopochiuUtils.e.clicked.description
@@ -80,14 +80,14 @@ func interact() -> void:
 	else:
 		# PopochiuClickable clicked
 		PopochiuUtils.g.show_system_text(
-			"%s doesn't want to do anything with that object" % PopochiuUtils.c.player.description
+			"%s doesn't want to do anything with that object", [PopochiuUtils.c.player.description]
 		)
 
 
 ## Called when [code]E.current_command == Commands.TALK[/code] and [code]E.command_fallback()[/code]
 ## is triggered.
 func talk() -> void:
-	PopochiuUtils.g.show_system_text("%s can't talk with that" % PopochiuUtils.c.player.description)
+	PopochiuUtils.g.show_system_text("%s can't talk with that", [PopochiuUtils.c.player.description])
 
 
 #endregion
