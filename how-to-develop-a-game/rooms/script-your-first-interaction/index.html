@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="author" content="The Carenalgas Community" />
+      <link rel="shortcut icon" href="../../../assets/images/_other/theme/favicon.ico" />
+    <title>Script your first interaction - Popochiu Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/css/custom.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tomorrow-night-bright.min.css" rel="stylesheet" />
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Script your first interaction";
+        var mkdocs_page_input_path = "how-to-develop-a-game/rooms/script-your-first-interaction.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../..">
+          <img src="../../../assets/images/_other/theme/logo.svg" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installing-popochiu/">Installing popochiu</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/example-resources/">Example resources</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/tutorials/">Tutorials</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting-started/getting-help/">Getting help</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">How to develop a game</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../../introduction/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Game setup</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../game-setup/game-setup/">Game setup</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../game-setup/set-game-resolution/">Set game resolution</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../game-setup/select-game-gui/">Select game gui</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Characters</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../characters/create-characters/">Create characters</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../characters/add-another-character/">Add another character</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../characters/select-the-main-character/">Select the main character</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Rooms</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../create-the-first-room/">Create the first room</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../add-a-walkable-area/">Add a walkable area</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../add-a-hotspot/">Add a hotspot</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="./">Script your first interaction</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../add-a-prop/">Add a prop</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../add-an-inventory-item/">Add an inventory item</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../script-your-first-dialogue/">Script your first dialogue</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../use-inventory-items/">Use inventory items</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../customize-the-game-ui/">Customize the Game UI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../conclusions/">Conclusions</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced topics</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/localization/">Localization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/guis/">Game UI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/advanced-animations/">Advanced animations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/character-base-animations/">Character Base Animations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/character-animation-prefix/">Character Animation Prefix</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/character-dialog-position-settings/">Character dialog position settings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/character-scaling/">Character Scaling</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/character-anti-glide-feature/">Character Anti-Glide Feature</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/game-state-saving-and-loading/">Game state saving and loading</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/extending-customizing-popochiu/">Extending customizing popochiu</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/change-text-to-gibberish/">Change text to gibberish</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../advanced-topics/custom-transitions/">Custom Transitions</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The editor handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/editor-settings/">Editor settings</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/interface-overview/">Interface overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/popochiu-dock/">Popochiu dock</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/toolbar-buttons/">Toolbar buttons</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-editor-handbook/importers/">Aseprite Importers</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">The engine handbook</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-engine-handbook/scripting-overview/">Scripting overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-engine-handbook/scripting-principles/">Scripting principles</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-engine-handbook/gui-commands-and-fallbacks/">GUI commands and fallbacks</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-engine-handbook/await-and-queue-functions/">Await and queue functions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-engine-handbook/working-with-game-state/">Working with game state</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../the-engine-handbook/wrapping-up/">Wrapping up</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Scripting reference</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="#">Base classes</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/base-classes/PopochiuClickable/">PopochiuClickable</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Engine</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/engine/Popochiu/">Popochiu</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/engine/PopochiuMainCamera/">PopochiuMainCamera</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/engine/PopochiuSaveLoad/">PopochiuSaveLoad</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/engine/PopochiuSettings/">PopochiuSettings</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Game objects</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/AudioCueMusic/">AudioCueMusic</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/AudioCueSound/">AudioCueSound</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/PopochiuAudioCue/">PopochiuAudioCue</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/PopochiuAudioManager/">PopochiuAudioManager</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/PopochiuCharacter/">PopochiuCharacter</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/PopochiuDialog/">PopochiuDialog</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/PopochiuDialogOption/">PopochiuDialogOption</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/PopochiuInventoryItem/">PopochiuInventoryItem</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects/PopochiuRoom/">PopochiuRoom</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Game objects data managers</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects-data-managers/PopochiuCharacterData/">PopochiuCharacterData</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects-data-managers/PopochiuInventoryItemData/">PopochiuInventoryItemData</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-objects-data-managers/PopochiuRoomData/">PopochiuRoomData</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Game scripts interfaces</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-scripts-interfaces/PopochiuIAudio/">PopochiuIAudio</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-scripts-interfaces/PopochiuICharacter/">PopochiuICharacter</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-scripts-interfaces/PopochiuIDialog/">PopochiuIDialog</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-scripts-interfaces/PopochiuIGraphicInterface/">PopochiuIGraphicInterface</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-scripts-interfaces/PopochiuIInventory/">PopochiuIInventory</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-scripts-interfaces/PopochiuIRoom/">PopochiuIRoom</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-scripts-interfaces/PopochiuITransitionLayer/">PopochiuITransitionLayer</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Game user interface</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/NineVerbCommands/">NineVerbCommands</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/NineVerbGUI/">NineVerbGUI</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/NineVerbHighResGUI/">NineVerbHighResGUI</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/PopochiuCursor/">PopochiuCursor</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/PopochiuTransitionLayer/">PopochiuTransitionLayer</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/SierraCommands/">SierraCommands</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/SierraGUI/">SierraGUI</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/SierraHighResGUI/">SierraHighResGUI</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/SimpleClickCommands/">SimpleClickCommands</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/SimpleClickGUI/">SimpleClickGUI</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/game-user-interface/SimpleClickHighResGUI/">SimpleClickHighResGUI</a>
+                </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="#">Room objects</a>
+    <ul>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/room-objects/PopochiuHotspot/">PopochiuHotspot</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/room-objects/PopochiuProp/">PopochiuProp</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/room-objects/PopochiuRegion/">PopochiuRegion</a>
+                </li>
+                <li class="toctree-l3"><a class="reference internal" href="../../../the-engine-handbook/scripting-reference/room-objects/PopochiuWalkableArea/">PopochiuWalkableArea</a>
+                </li>
+    </ul>
+                </li>
+    </ul>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Contributing to popochiu</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/basic-rules/">Introduction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/toolchain-and-dependencies/">Toolchain and dependecies</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Conventions</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/conventions/directory-and-file-structure/">Directory and file structure</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/conventions/coding-standards/">Coding standards</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/conventions/comments/">Comments</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/conventions/naming-conventions/">Naming conventions</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/conventions/code-versioning/">Code versioning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/conventions/error-handling/">Error handling</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/conventions/testing/">Testing</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/conventions/dependencies/">Dependencies</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Project overview</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/project-overview/popochiu-subsystems/">Popochiu Subsystems</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/project-overview/editor-plugin/">Editor Plugin</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/project-overview/editor-dock/">The Editor Dock</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/project-overview/game-engine/">Game Engine</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Project management</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/project-management/why/">Why we care</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/project-management/issue-tracking/">Issue Tracking</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/project-management/code-reviews/">Code reviews</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/project-management/definition-of-done/">Definition of Done</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="#">Contributing documentation</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/contributing-documentation/basic-rules/">Basics</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../contributing-to-popochiu/contributing-documentation/conventions/">Conventions</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/qna/">Contribution Q&A</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../contributing-to-popochiu/get-in-touch/">Get in touch</a>
+                  </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">Popochiu Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">How to develop a game</li>
+          <li class="breadcrumb-item">Rooms</li>
+      <li class="breadcrumb-item active">Script your first interaction</li>
+    <li class="wy-breadcrumbs-aside">
+          <a href="https://github.com/carenalgas/popochiu/edit/develop/docs/src/how-to-develop-a-game/rooms/script-your-first-interaction.md" class="icon icon-github"> Edit on GitHub</a>
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h3 id="script-your-first-interaction">Script your first interaction</h3>
+<p>If you ran the game, you may have seen that, while the character moves towards the window, a message is printed on top of the scene: <code>Can't INTERACT with it</code>.<br />
+That's because we didn't define what should happen when we interact with the window. Remember, in <a href="game-setup.md#select-game-gui">the GUI we selected</a>, clicking on an object will trigger an interaction while right-clicking on an object will trigger an examination.</p>
+<p>We are now going to script our first interaction, using Godot <strong>GDScript</strong> language and the very convenient <a href="../the-engine-handbook/scripting-overview.md">engine API</a> that Popochiu provides to make our life easier.</p>
+<div class="admonition info">
+<p class="admonition-title">Help! I'm not a developer!</p>
+<p>"API" stands for "Application Programming Interface" and in our context, it's the set of objects and functions that makes it very easy to implement all those behaviors common to most adventure games (like making a character talk, or adding an item to the inventory), without knowing the ins and outs of the underlying Godot game engine.</p>
+</div>
+<p>In the room tab of the Popochiu dock, locate the "<em>Open Script</em>" icon for the <code>Window</code> hotspot (<em>25</em>):</p>
+<p><img alt="Open the hotspot's script" src="../../../assets/images/getting-started/game_stub-room-15-hs_script.png" title="Open the script for the Window hotspot" /></p>
+<p>This will open the GDScript connected to this hotspot in the Godot scripting editor (<em>26</em>):</p>
+<p><img alt="The &quot;Window&quot; script" src="../../../assets/images/getting-started/game_stub-room-16-hs_script_editor.png" title="Here is the script for the Window. Scary?" /></p>
+<div class="admonition info">
+<p class="admonition-title">Under the hood</p>
+<p>Every clickable object that Popochiu creates for you comes with an attached script. Those scripts do nothing by themselves but are based on commented templates that will make it easier to implement the desired behaviors, by editing and filling out some predefined functions.</p>
+</div>
+<p>We will now add some interaction to the script. So far it will be simple stuff: we'll make our main character say something meaningful when we examine the window, and - in the absence of other elements in the room - act a bit weird when we try to interact with the window.</p>
+<p>Locate the <code>_on_click()</code> function in the script. It should read something like this:</p>
+<pre><code class="language-gdscript"># When the node is clicked
+func _on_click() -&gt; void:
+    # Replace the call to E.command_fallback() with your code.
+    E.command_fallback()
+    # For example, you can make the player character walk to this hotspot, gaze at it, and then say
+    # something:
+#   await C.player.walk_to_clicked()
+#   await C.player.face_clicked()
+#   await C.player.say(&quot;What a nice view&quot;)
+</code></pre>
+<p>Popochiu automatically executes this function when you click over the <code>Window</code> hotspot. We just need to put something meaningful into it. Let's try something. Change the function so it looks like this:</p>
+<pre><code class="language-gdscript"># When the node is clicked
+func _on_click() -&gt; void:
+    await C.player.walk_to_clicked()
+    await C.player.face_clicked()
+    await E.wait(0.5)
+    for n in 3:
+        await C.player.face_left()
+        await E.wait(0.3)
+        await C.player.face_right()
+        await E.wait(0.3)
+    await C.player.face_clicked()
+    await C.player.say(&quot;I wanted to open the window but I can't find the handle&quot;)
+</code></pre>
+<p>Save the script (<code>ctrl/cmd + s</code>) and run your game.<br />
+Now when you click the window, the character will walk to it, turn around three times like it is looking around for something, then face the window and say a phrase.</p>
+<p><strong>Yay!</strong> You reached an important milestone! Now your game feels more alive, isn't it?</p>
+<div class="admonition info">
+<p class="admonition-title">Under the hood</p>
+<p>Remember that we set our character so that its origin is between its feet. When your character moves toward a point, Popochiu will make sure the origin of the character matches the destination point's coordinates.</p>
+<p>What if the destination coordinates lie outside of the walkable area? In this case, Popochiu will trace the path toward the coordinates but will stop the movement as soon as the character reaches the walkable area's borders. Despite this being a safe scenario, placing a <em>Walk-to point</em> inside the walkable polygon always gives the best results, making the movement predictable. Keep this in mind.</p>
+</div>
+<p>Let's see what happened, breaking the function down to pieces. Ignore for a moment the <code>await</code> keyword.</p>
+<pre><code class="language-gdscript">    await C.player.walk_to_clicked()
+    await C.player.face_clicked()
+</code></pre>
+<p>These two lines use the <code>C</code> Popochiu object. It holds a reference to every character in the game. Our character is called <code>Goddiu</code>, so <code>C.Goddiu</code> allows us to give commands to that character. But since Goddiu is also the character that the player controls, we can use the shortcut <code>C.player</code>.</p>
+<p>This comes in very handy for those games that have more player-controlled characters, like <em>Maniac Mansion</em>, or <em>Day of the Tentacle</em>. You can change the active character as the game progresses but your scripts will point to the current active character, sparing you the effort to duplicate the code for each and every playable character.</p>
+<pre><code class="language-gdscript">    await E.wait(0.5)
+    for n in 3:
+        await C.player.face_left()
+        await E.wait(0.3)
+        await C.player.face_right()
+        await E.wait(0.3)
+</code></pre>
+<p>Here we are literally waiting for some time to pass. <code>E</code> is the object representing the game engine (Popochiu!) and we are asking it to wait for half a second.
+After that, we use the <code>for</code> GDScript keyword to repeat the same code three times.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>This is not a feature of Popochiu, it is standard Godot language. All Popochiu objects and functions are standard Godot functions.<br />
+As Popochiu matures, it will take care of more and more work in a standardized and simplified way. Stuff like translations, dynamic lightning and music, parallax, and more.<br />
+In the meantime, since its language is standard GDScript, you have all the power of Godot at your fingertips and you can customize your game the way you want.</p>
+</div>
+<p>The executed code just flips the character left and right after a small pause, as it is looking around.</p>
+<pre><code class="language-gdscript">    await C.player.face_clicked()
+    await C.player.say(&quot;I wanted to open the window but I can't find the handle&quot;)
+</code></pre>
+<p>These last two lines make sure the character finally looks towards the window and says its line.</p>
+<div class="admonition info">
+<p class="admonition-title">Help! I'm not a developer!</p>
+<p>As the <code>for</code> keyword, <code>await</code> is provided by Godot out of the box. Without going too deep into technical details, what it does is make sure that while the subsequent function is executed, no other things will happen. In our example, if we omitted the <code>await</code> keyword in every line, the character would have started walking to the window, while flipping frantically left and right and talking at the same time (but finishing printing the line in a strange way).</p>
+<p>There are times you want this to happen, like a character who talks in the background without "blocking" the game flow, but omitting <code>await</code> usually leads to strange, unexpected behaviors and should be done only on purpose.</p>
+</div>
+<p>Now let's provide an <em>examine</em> interaction. Edit the <code>_on_right_click()</code> function you can find further down the script so it looks like this:</p>
+<pre><code class="language-gdscript"># When the node is right clicked
+func _on_right_click() -&gt; void:
+    await C.player.face_clicked()
+    await C.player.say(&quot;The weather is so nice today&quot;)
+    await C.player.say(&quot;I may as well open that window!&quot;)
+</code></pre>
+<p>By this time, you should be able to figure out what will happen by yourself. Run the game and see your masterpiece in action.</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>These two functions used <code>C.player.face_clicked()</code> to make the player turn to face the hotspot. Popochiu uses the "Look At Point" position that you set on the hotspot to determine where in the room to face, just like it uses the "Walk To Point" to determine where in the room to walk.</p>
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../add-a-hotspot/" class="btn btn-neutral float-left" title="Add a hotspot"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../add-a-prop/" class="btn btn-neutral float-right" title="Add a prop">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+      <p>Copyright (c) 2024 - The Carenalgas Community</p>
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/carenalgas/popochiu/" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="../add-a-hotspot/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../add-a-prop/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/markdown.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/yaml.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/dockerfile.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/makefile.min.js"></script>
+      <script src="../../../assets/js/gdscript.min.js"></script>
+      <script src="../../../assets/js/custom.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
