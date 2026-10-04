@@ -294,7 +294,7 @@ func _play(
 		)
 	
 	if not player.finished.is_connected(_on_audio_stream_player_finished):
-		player.finished.connect(_on_audio_stream_player_finished.bind(player, cue_name, 0))
+		player.finished.connect(_on_audio_stream_player_finished.bind(player))
 	
 	if _active.has(cue_name):
 		_active[cue_name].players.append(player)
@@ -319,28 +319,30 @@ func _get_free_stream(group: Node):
 
 # Reassigns the [AudioStreamPlayer] to its original group when it finishes so it can be available
 # for being used again.
-func _on_audio_stream_player_finished(
-	stream_player: Node, cue_name: String, _debug_idx: int
-) -> void:
+func _on_audio_stream_player_finished(stream_player: Node) -> void:
 	if stream_player.has_meta(TEMP_PLAYER):
 		stream_player.queue_free()
 	elif stream_player is AudioStreamPlayer:
 		_reparent($Active, $Generic, stream_player.get_index())
 	else:
 		_reparent($Active, $Positional, stream_player.get_index())
-	
-	if _active.has(cue_name):
+
+	# Pool players are reused across cues, so the cue name can't be captured when the connection is
+	# made (it would go stale on reuse). Find the player in [_active] to clear the right entry.
+	# Fixes #554.
+	for cue_name: String in _active:
 		var players: Array = _active[cue_name].players
-		for idx in players.size():
-			if players[idx].get_instance_id() == stream_player.get_instance_id():
-				players.remove_at(idx)
-				break
-	
+		var idx := players.find(stream_player)
+
+		if idx == -1:
+			continue
+
+		players.remove_at(idx)
+
 		if players.is_empty():
 			_active.erase(cue_name)
-	
-	if not stream_player.finished.is_connected(_on_audio_stream_player_finished):
-		stream_player.finished.connect(_on_audio_stream_player_finished)
+
+		break
 
 
 func _reparent(source: Node, target: Node, child_idx: int) -> Node:
