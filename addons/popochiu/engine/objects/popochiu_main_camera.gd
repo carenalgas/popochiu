@@ -6,6 +6,9 @@ extends Camera2D
 ## This camera follows the player character and can be manipulated to create visual effects
 ## during gameplay, such as screen shake for impacts or zoom for dramatic moments.
 
+## Emitted when the camera's transform changes.
+signal camera_changed()
+
 var is_shaking := false
 
 var _camera_shake_amount := 15.0
@@ -23,6 +26,11 @@ var _shake_timer := 0.0
 
 
 #region Godot ######################################################################################
+func _notification(event: int) -> void:
+	if event == NOTIFICATION_TRANSFORM_CHANGED:
+		camera_changed.emit()
+
+
 func _process(delta: float) -> void:
 	if is_shaking:
 		_shake_timer -= delta
@@ -39,9 +47,22 @@ func _process(delta: float) -> void:
 	):
 		position = PopochiuUtils.c.camera_owner.get_buffered_position()
 
+	force_update_scroll()
+
+
 #endregion
 
 #region Public #####################################################################################
+## Returns the camera limits as [Rect2].
+func get_limits_rect() -> Rect2:
+	return Rect2(
+		limit_left,
+		limit_top,
+		limit_right  - limit_left,
+		limit_bottom - limit_top,
+	)
+
+
 ## Changes the main camera's offset by [param offset] pixels. Useful when zooming the camera.
 ##
 ## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]

@@ -13,6 +13,8 @@ enum DialogStyle {
 # Thanks to @drbloop for providing the bases of the new approach for moving the popochiu settings to
 # Godot's ProjectSettings instead of using a Resource file.
 # ---- GUI -----------------------------------------------------------------------------------------
+const PARALLAX_SCROLLING = "popochiu/gui/parallax_scrolling"
+const PARALLAX_SCROLLING_RESET_DURATION = "popochiu/gui/parallax_scrolling_reset_duration"
 const SCALE_GUI = "popochiu/gui/experimental_scale_gui"
 # ---- GUI / Transition Layer ----------------------------------------------------------------------
 const TL_FADE_COLOR = "popochiu/gui/transition_layer/fade_color"
@@ -83,6 +85,8 @@ const AUTOTRACE_NOISE_REDUCTION = "popochiu/auto_tracer/noise_reduction"
 const AUTOTRACE_CONVEX_OUTLINE = "popochiu/auto_tracer/convex_outline"
 
 static var defaults := {
+	PARALLAX_SCROLLING: true,
+	PARALLAX_SCROLLING_RESET_DURATION: 1.0,
 	SCALE_GUI: false,
 	TL_FADE_COLOR: Color.BLACK,
 	TL_SKIP_CUTSCENE_TIME: 0.2,
@@ -141,6 +145,8 @@ static func reload_transitions() -> void:
 
 static func initialize_project_settings() -> void:
 	# ---- GUI -------------------------------------------------------------------------------------
+	_initialize_project_setting(PARALLAX_SCROLLING, TYPE_BOOL)
+	_initialize_project_setting(PARALLAX_SCROLLING_RESET_DURATION, TYPE_FLOAT)
 	_initialize_project_setting(SCALE_GUI, TYPE_BOOL)
 	# Transition Layer
 	var transition_hint: String = _get_transitions_hint()
@@ -253,6 +259,14 @@ static func set_project_setting(key: String, value: Variant) -> void:
 
 
 # ---- GUI -----------------------------------------------------------------------------------------
+static func is_parallax_scrolling() -> bool:
+	return _get_project_setting(PARALLAX_SCROLLING)
+
+
+static func get_parallax_scrolling_reset_duration() -> float:
+	return _get_project_setting(PARALLAX_SCROLLING_RESET_DURATION)
+
+
 static func is_scale_gui() -> bool:
 	return _get_project_setting(SCALE_GUI)
 

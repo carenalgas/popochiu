@@ -34,6 +34,13 @@ var tl_room_transition := ""
 var tl_room_transition_duration := 0.0
 ## A flag telling if the transition layer should be shown when the game starts.
 var show_tl_in_first_room := false
+## Whether to scroll props (with [member PopochiuProp.parallax_scroll_scale] set to non-zero values) in
+## rooms bigger than the window.
+var parallax_scrolling := true
+## The animation duration for resetting parallax props to their original/intended position when
+## [member parallax_scrolling] changes during runtime. Set to [code]0[/code] to turn off the
+## animation.
+var parallax_scrolling_reset_duration := 1.0
 ## Whether the GUI should scale to match the native game resolution. The default GUI has a 356x200
 ## resolution.
 var scale_gui := false
@@ -63,6 +70,8 @@ var dev_use_addon_template := false
 #region Godot ######################################################################################
 func _init() -> void:
 	# ---- GUI -------------------------------------------------------------------------------------
+	parallax_scrolling = PopochiuConfig.is_parallax_scrolling()
+	parallax_scrolling_reset_duration = PopochiuConfig.get_parallax_scrolling_reset_duration()
 	scale_gui = PopochiuConfig.is_scale_gui()
 	tl_fade_color = PopochiuConfig.get_tl_fade_color()
 	tl_skip_cutscene_time = PopochiuConfig.get_tl_skip_cutscene_time()
