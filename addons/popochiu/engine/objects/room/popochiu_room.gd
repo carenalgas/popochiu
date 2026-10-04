@@ -280,6 +280,9 @@ func clean_characters() -> void:
 			c.remove_child(character_child)
 			_characters_children[c.script_name].append(character_child)
 
+		# Detach immediately so the rest of the frame doesn't see this editor-placed copy as a
+		# character still in the room. #552 (a lingering copy made add_character() be skipped).
+		$Characters.remove_child(c)
 		c.queue_free()
 
 
