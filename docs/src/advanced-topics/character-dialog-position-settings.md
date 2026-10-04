@@ -30,7 +30,8 @@ These helpers allow to:
 * `dialog_pos_offset` is added to the character’s default `dialog_pos`.
 * `dialog_pos_override` takes over when it’s not `Vector2.INF`. By convention, `Vector2.INF` = “unset.”
     (We changed this to allow a true Vector2.ZERO position to be a valid override.)
-* `lock_dialog_pos()` stores a world coordinate. When locked, the character converts that world position back into local space so the GUI only needs one final local→screen transform (and doesn’t get confused).
+* Every one of these positions lives on the character’s sprite, so all of them are scaled with the character. When a [region](character-scaling.md) scales your character, its dialog follows.
+* `lock_dialog_pos()` stores a world coordinate. When locked, the character converts that world position back into an offset from itself, so the GUI only needs one final local→screen transform (and doesn’t get confused).
 
 ## Quick examples
 

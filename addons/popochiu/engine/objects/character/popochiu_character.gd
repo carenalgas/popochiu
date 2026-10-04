@@ -159,7 +159,8 @@ const BLOCKING_REGION_PULLBACK = 2.0
 @export var dialog_pos: Vector2
 ## Offset from the character's dialog_pos. Added to the normal dialog position.
 var dialog_pos_offset: Vector2 = Vector2.ZERO
-## Absolute world coordinates for dialog position. Overrides dialog_pos entirely when not set.
+## Position that replaces the character's dialog_pos entirely when not set.
+## Expressed in the character's local space, like [member dialog_pos].
 ## By convention `Vector2.INF` means "unset" (instead of using Vector2.ZERO which is a valid position).
 var dialog_pos_override: Vector2 = Vector2.INF
 ## The root name for idle animations. Directional suffixes will be added automatically.
@@ -1221,17 +1222,21 @@ func get_dialog_pos() -> float:
 
 
 ## Returns the actual dialog position considering offset, override, and locked state.
-## Always returns position relative to the character.
+## Always returns position relative to the character, in the space of its parent node, so it can
+## be added to [member Node2D.global_position] as is. The character's [member Node2D.scale] is
+## applied to it, because the anchor sits on the sprite: when a [PopochiuRegion] scales the
+## character, the dialog follows it instead of drifting away.
 func get_actual_dialog_pos() -> Vector2:
+	# Fixes #534 (Dialog position wrong when using area based character scaling)
 	if _is_dialog_pos_locked:
-		# Convert locked global position back to local coordinates
-		return to_local(_locked_dialog_pos)
+		# The locked position is a world coordinate: keep it in place, ignoring the current scale.
+		return _locked_dialog_pos - global_position
 
 	if dialog_pos_override != Vector2.INF:
-		return dialog_pos_override
+		return dialog_pos_override * scale
 
 	# If override is unset (Vector2.INF), return base pos + offset
-	return dialog_pos + dialog_pos_offset
+	return (dialog_pos + dialog_pos_offset) * scale
 
 
 ## Resets the walk speed override to [code]0.0[/code] (inactive), making the character move at
@@ -1260,15 +1265,8 @@ func reset_dialog_pos_override() -> void:
 
 ## Locks the dialog position at the current calculated global position.
 func lock_dialog_pos() -> void:
-	# Calculate current position without using locked state. Respect INF as "unset".
-	var current_pos: Vector2
-	if dialog_pos_override != Vector2.INF:
-		current_pos = dialog_pos_override
-	else:
-		current_pos = dialog_pos + dialog_pos_offset
-
-	# Store as global coordinates
-	_locked_dialog_pos = to_global(current_pos)
+	# Freeze the exact point the GUI renders, i.e. the character position plus the dialog offset.
+	_locked_dialog_pos = global_position + get_actual_dialog_pos()
 	_is_dialog_pos_locked = true
 
 
