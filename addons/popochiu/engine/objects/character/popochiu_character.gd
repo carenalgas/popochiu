@@ -473,6 +473,10 @@ func queue_idle() -> Callable:
 ## Puts the character in idle state, playing its idle animation and flipping the sprite
 ## based on [member flips_when].
 func idle() -> void:
+	# Outside the tree get_tree() is null, so any await here would crash. See #552.
+	if not is_inside_tree():
+		return
+
 	if PopochiuUtils.e.cutscene_skipped:
 		await get_tree().process_frame
 		return
@@ -549,6 +553,11 @@ func queue_stop_walking() -> Callable:
 
 ## Stops the character's movement and emits [signal stopped_walk].
 func stop_walking() -> void:
+	# Outside the tree get_tree() is null, so emitting stopped_walk and awaiting would crash.
+	# See #552.
+	if not is_inside_tree():
+		return
+
 	is_moving = false
 
 	stopped_walk.emit()
