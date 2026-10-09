@@ -320,6 +320,9 @@ func _get_free_stream(group: Node):
 # Reassigns the [AudioStreamPlayer] to its original group when it finishes so it can be available
 # for being used again.
 func _on_audio_stream_player_finished(stream_player: Node) -> void:
+	# A player released while still fading must not be touched by its stale tween after being reused.
+	_cancel_fade(stream_player)
+	
 	if stream_player.has_meta(TEMP_PLAYER):
 		stream_player.queue_free()
 	elif stream_player is AudioStreamPlayer:
@@ -409,10 +412,37 @@ func _fade_sound(cue_name: String, duration = 1, from = 0, to = 0) -> void:
 
 
 func _fadeout_finished(stream_player: Node, tween: Tween) -> void:
-	if stream_player.stream.get_instance_id() in _fading_sounds :
-		_fading_sounds.erase(stream_player.stream.get_instance_id())
-		stream_player.stop()
-		tween.finished.disconnect(_fadeout_finished)
+	# Fade-ins also connect here, but only fade-outs are tracked in [_fading_sounds].
+	if not stream_player.stream.get_instance_id() in _fading_sounds:
+		return
+	
+	_fading_sounds.erase(stream_player.stream.get_instance_id())
+	stream_player.stop()
+	# [method AudioStreamPlayer.stop] does not emit [signal AudioStreamPlayer.finished] when the
+	# stream hasn't reached its end, so emit it to return the player to its pool and clear its
+	# active entry. Otherwise a faded stop leaks the entry and the cue can never play again.
+	stream_player.finished.emit()
+	tween.finished.disconnect(_fadeout_finished)
+
+
+# Kills the fade running on [param stream_player], if any, so a released player can't be modified by
+# a stale tween after being reused.
+func _cancel_fade(stream_player: Node) -> void:
+	if stream_player.stream == null: return
+	
+	var stream_id: int = stream_player.stream.get_instance_id()
+	
+	if not _fading_sounds.has(stream_id): return
+	
+	# The same stream can play on several players at once; only cancel this player's own fade.
+	if _fading_sounds[stream_id].stream != stream_player: return
+	
+	var tween: Tween = _fading_sounds[stream_id].tween
+	
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
+	
+	_fading_sounds.erase(stream_id)
 
 
 #endregion
