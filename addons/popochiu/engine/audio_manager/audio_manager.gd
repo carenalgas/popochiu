@@ -442,7 +442,17 @@ func _cancel_fade(stream_player: Node) -> void:
 	if is_instance_valid(tween) and tween.is_running():
 		tween.kill()
 	
-	_fading_sounds.erase(stream_id)
+	# No stream, no op
+	if stream_player.stream == null: return
+	if not _fading_sounds.has(stream_player.stream.get_instance_id()): return
+
+	# The same stream can play on several players at once; only cancel this player's own fade.
+	if _fading_sounds[stream_id].stream != stream_player: return
+
+	var tween: Tween = _fading_sounds[stream_id].tween
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
+
 
 
 #endregion
