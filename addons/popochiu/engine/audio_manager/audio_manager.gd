@@ -430,15 +430,19 @@ func _fadeout_finished(stream_player: Node, tween: Tween) -> void:
 func _cancel_fade(stream_player: Node) -> void:
 	# No stream, no op
 	if stream_player.stream == null: return
-	if not _fading_sounds.has(stream_player.stream.get_instance_id()): return
-
+	
+	var stream_id: int = stream_player.stream.get_instance_id()
+	
+	if not _fading_sounds.has(stream_id): return
+	
 	# The same stream can play on several players at once; only cancel this player's own fade.
 	if _fading_sounds[stream_id].stream != stream_player: return
-
+	
 	var tween: Tween = _fading_sounds[stream_id].tween
 	if is_instance_valid(tween) and tween.is_running():
 		tween.kill()
-
+	
+	_fading_sounds.erase(stream_id)
 
 
 #endregion
