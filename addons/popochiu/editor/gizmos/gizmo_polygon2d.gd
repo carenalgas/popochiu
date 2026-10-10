@@ -132,11 +132,12 @@ func draw(viewport: Control) -> void:
 	_combined_inverse = _combined_xform.affine_inverse()
 
 	# Draw centroid for PopochiuClickable
-	if centroid_visible and visible and interactive and category == PolygonCategory.INTERACTION:
+	if centroid_visible and interactive and category == PolygonCategory.INTERACTION:
 		var owner_node := _source_node.get_parent()
 		if owner_node != null and owner_node is PopochiuClickable:
-			viewport.draw_circle(_combined_xform * owner_node.centroid, vertex_size + 1.0, Color.BLACK)
-			viewport.draw_circle(_combined_xform * owner_node.centroid, vertex_size, vertex_color)
+			var centroid_pos: Vector2 = _combined_xform * owner_node.centroid
+			viewport.draw_circle(centroid_pos, vertex_size + 1.0, Color.BLACK)
+			viewport.draw_circle(centroid_pos, vertex_size, vertex_color)
 
 	# Transform all vertices to viewport coordinates and build handle rects
 	_vertex_handles_viewport.clear()
@@ -370,7 +371,7 @@ func _write_vertices() -> void:
 	if _source_node is CollisionPolygon2D:
 		_source_node.polygon = _vertices
 		# Update centroid on owning PopochiuClickable (if any)
-		var owner_node = _source_node.get_parent()
+		var owner_node := _source_node.get_parent()
 		if owner_node != null and owner_node is PopochiuClickable:
 			owner_node.centroid = PopochiuPolygonsHelper.compute_centroid(_source_node.polygon)
 	elif _source_node is NavigationRegion2D:

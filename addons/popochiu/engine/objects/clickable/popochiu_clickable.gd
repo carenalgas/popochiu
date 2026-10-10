@@ -33,8 +33,9 @@ const CURSOR := preload("res://addons/popochiu/engine/cursor/cursor.gd")
 ## Stores the position to assign to the [b]InteractionPolygon[/b] child during runtime.
 ## This is used by [PopochiuRoom] to store the info in its [code].tscn[/code].
 @export var interaction_polygon_position := Vector2.ZERO
-## CollisionPolygon2D centroid.
-@export var centroid : Vector2 = Vector2.ZERO
+## The center of the interaction polygon, used to anchor the hotspot beacon.
+## Computed automatically by the editor whenever the polygon changes.
+@export var centroid: Vector2 = Vector2.ZERO
 ## The [Vector2] position where the hotspot beacon will be placed.
 @export var beacon_pos := Vector2.ZERO
 
@@ -120,7 +121,7 @@ func _ready():
 
 
 func _notification(event: int) -> void:
-	if event == NOTIFICATION_EDITOR_PRE_SAVE:
+	if Engine.is_editor_hint() and event == NOTIFICATION_EDITOR_PRE_SAVE:
 		interaction_polygon = get_node("InteractionPolygon").polygon
 		interaction_polygon_position = get_node("InteractionPolygon").position
 		# Update centroid after editor pre‑save

@@ -2,6 +2,8 @@
 class_name GizmoManagerClickable
 extends RefCounted
 
+const GIZMO_COUNT := 5
+
 # Configurations
 var _color_settings: Dictionary = {}
 var _font: Font
@@ -12,8 +14,6 @@ var _undo: EditorUndoRedoManager
 var _gizmos: Array[Gizmo2D] = []
 var _active_gizmos: Array[Gizmo2D] = []
 var _grabbed_gizmo: Gizmo2D
-
-const GIZMO_COUNT := 5
 
 #region Godot ######################################################################################
 func _init(undo_manager: EditorUndoRedoManager):
@@ -38,7 +38,7 @@ func _init_gizmo(gizmo_id: int) -> Gizmo2D:
 			gizmo = Gizmo2D.new(_target_node, "beacon_pos", "Beacon Position", Gizmo2D.GIZMO_OFFSET)
 		PopochiuGizmoPlugin.DIALOG_POS:
 			gizmo = Gizmo2D.new(_target_node, "dialog_pos", "Dialog Position", Gizmo2D.GIZMO_OFFSET)
-		
+
 	_set_gizmo_theme(gizmo, gizmo_id)
 	_set_gizmo_properties(gizmo)
 	return gizmo
