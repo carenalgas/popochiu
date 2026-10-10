@@ -214,6 +214,13 @@ func mark_dirty_for_node(polygon_node: Node2D) -> void:
 			return
 
 
+# Mark every gizmo dirty so they all re-read their data on the next draw.
+# Used to refresh all overlays after undo/redo actions change polygon data externally.
+func mark_all_dirty() -> void:
+	for gizmo in _gizmos:
+		gizmo.mark_dirty()
+
+
 # Initialize or refresh appearance settings from editor config
 func initialize_gizmos() -> void:
 	_colors["interaction"] = PopochiuEditorConfig.get_editor_setting(

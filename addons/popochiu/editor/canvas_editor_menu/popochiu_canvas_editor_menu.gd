@@ -201,8 +201,9 @@ func _snap_beacon_position() -> void:
 
 	var clickable: PopochiuClickable = _active_popochiu_object
 	var target_pos := clickable.centroid + clickable.interaction_polygon_position
+	var action_name := "Snap beacon position to centroid for %s" % clickable.name
 
-	PopochiuEditorHelper.undo_redo.create_action("Snap beacon position to centroid for " + clickable.name)
+	PopochiuEditorHelper.undo_redo.create_action(action_name)
 	PopochiuEditorHelper.undo_redo.add_do_property(clickable, "beacon_pos", target_pos)
 	PopochiuEditorHelper.undo_redo.add_undo_property(clickable, "beacon_pos", clickable.beacon_pos)
 	PopochiuEditorHelper.undo_redo.commit_action()
@@ -210,7 +211,7 @@ func _snap_beacon_position() -> void:
 	# Force the viewport to redraw so the beacon gizmo picks up the new position
 	PopochiuEditorHelper.signal_bus.gizmo_visibility_changed.emit(
 		PopochiuGizmoPlugin.BEACON_POS,
-		btn_snap_beacon.button_pressed
+		btn_beacon_pos.button_pressed
 	)
 
 
