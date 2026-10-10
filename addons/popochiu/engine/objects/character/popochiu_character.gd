@@ -681,6 +681,10 @@ func queue_face_clicked() -> Callable:
 ## Makes the character face the last clicked [PopochiuClickable] stored in
 ## [member Popochiu.clicked].
 func face_clicked() -> void:
+	if not is_instance_valid(PopochiuUtils.e.clicked):
+		await get_tree().process_frame
+		return
+
 	var global_lap = PopochiuUtils.e.clicked.to_global(PopochiuUtils.e.clicked.look_at_point)
 
 	_flip_left_right(
@@ -816,6 +820,10 @@ func queue_walk_to_clicked(offset := Vector2.ZERO) -> Callable:
 ## You can set an [param offset] relative to the target position.[br]
 ## If the user clicks elsewhere during the walk, the action is cancelled.
 func walk_to_clicked(offset := Vector2.ZERO) -> void:
+	if not is_instance_valid(PopochiuUtils.e.clicked):
+		await get_tree().process_frame
+		return
+
 	var clicked_id: String = PopochiuUtils.e.clicked.script_name
 
 	if PopochiuUtils.e.clicked == _last_reached_clickable:
