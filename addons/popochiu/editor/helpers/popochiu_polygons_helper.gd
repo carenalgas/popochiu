@@ -14,6 +14,11 @@ extends Object
 # 6. Optionally merge into a single convex hull ([member PopochiuConfig.AUTOTRACE_CONVEX_OUTLINE]).
 
 
+# Tolerance under which the polygon's signed area is treated as degenerate (line/point),
+# so the centroid cannot be computed and the first vertex is returned instead.
+const CENTROID_AREA_TOLERANCE := 1e-7
+
+
 #region Public #####################################################################################
 
 # Traces the interaction polygon of [param clickable] from the alpha channel of its sprite.
@@ -33,12 +38,8 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 		return false
 
 	var previous_polygon := interaction_polygon_node.polygon.duplicate()
-	var previous_centroid := Vector2()
-	var new_centroid := Vector2()
-
-	if clickable != null and clickable is PopochiuClickable:
-		previous_centroid = clickable.centroid
-		new_centroid = compute_centroid(polygon)
+	var clickable_object := clickable as PopochiuClickable
+	var previous_centroid := clickable_object.centroid if clickable_object else Vector2.ZERO
 
 	PopochiuEditorHelper.undo_redo.create_action(
 		"Autotrace interaction polygon for " + clickable.name
@@ -48,9 +49,9 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 		interaction_polygon_node, "polygon", polygon
 	)
 
-	if clickable != null and clickable is PopochiuClickable:
+	if clickable_object:
 		PopochiuEditorHelper.undo_redo.add_do_property(
-			clickable, "centroid", new_centroid
+			clickable_object, "centroid", compute_centroid(polygon)
 		)
 
 	# Notify the gizmo plugin after the do so the overlay redraws immediately.
@@ -65,9 +66,9 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 		interaction_polygon_node, "polygon", previous_polygon
 	)
 
-	if clickable != null and clickable is PopochiuClickable:
+	if clickable_object:
 		PopochiuEditorHelper.undo_redo.add_undo_property(
-			clickable, "centroid", previous_centroid
+			clickable_object, "centroid", previous_centroid
 		)
 
 	# Also notify after undo so the gizmo redraws when the action is undone.
@@ -102,8 +103,9 @@ static func trace_interaction_polygon_direct(clickable: Node) -> bool:
 
 	interaction_polygon_node.polygon = polygon
 
-	if clickable != null and clickable is PopochiuClickable:
-		compute_interaction_polygon_centroid(clickable)
+	var clickable_object := clickable as PopochiuClickable
+	if clickable_object:
+		compute_interaction_polygon_centroid(clickable_object)
 
 	# Notify the gizmo plugin with the exact node that changed, so only its gizmo
 	# gets marked dirty and the viewport overlay is redrawn.
@@ -112,41 +114,38 @@ static func trace_interaction_polygon_direct(clickable: Node) -> bool:
 	return true
 
 
-## Compute the centroid of an interaction polygon of [param clickable] object and stores the result
-## in the [code]centroid[/code] property. Supports [PopochiuClickable].
+# Compute the centroid of the interaction polygon of [param clickable] and stores the result
+# in the [code]centroid[/code] property. Supports [PopochiuClickable].
 static func compute_interaction_polygon_centroid(clickable: PopochiuClickable) -> void:
 	# TODO: if we have more than one interaction polygon, should we compute the
 	# centroid of the convex hull of all the polygons' points?
 	clickable.centroid = compute_centroid(clickable.interaction_polygon)
 
 
-## Compute the centroid of a [param polygon].
-## Returns a [code]Vector2[/code] containing the centroid's coordinates.
-## Based on this formula: https://mathworld.wolfram.com/PolygonCentroid.html
+# Compute the centroid of [param polygon].
+# Returns a [code]Vector2[/code] containing the centroid's coordinates.
+# Based on this formula: https://mathworld.wolfram.com/PolygonCentroid.html
 static func compute_centroid(polygon: PackedVector2Array) -> Vector2:
-	var n = polygon.size()
-	var k: float
-	var sa: float = 0.0 # signed area
-	var d: float
-	var c: Vector2 = Vector2(0.0, 0.0)
+	var n := polygon.size()
+	var sa := 0.0
+	var c := Vector2()
 
-	if (n < 3):
+	if n < 3:
 		PopochiuUtils.print_error("Cannot compute polygon centroid!")
 		return c
 
 	for i in range(n):
-		k = (i + 1)%n
-		d = polygon[i].x * polygon[k].y - polygon[k].x * polygon[i].y
+		var k := (i + 1) % n
+		var d := polygon[i].x * polygon[k].y - polygon[k].x * polygon[i].y
 		sa += d
 		c += (polygon[i] + polygon[k]) * d
 
 	sa /= 2.0
 
-	if abs(sa) < 1e-7:
+	if abs(sa) < CENTROID_AREA_TOLERANCE:
 		return polygon[0] # Degenerate line/point
 
-	# Centroid
-	return 1.0 / (6.0 * sa) * c;
+	return 1.0 / (6.0 * sa) * c
 
 #endregion
 
