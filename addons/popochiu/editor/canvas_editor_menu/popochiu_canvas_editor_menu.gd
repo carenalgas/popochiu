@@ -200,10 +200,11 @@ func _snap_beacon_position() -> void:
 		return
 
 	var clickable: PopochiuClickable = _active_popochiu_object
-	var target_pos := clickable.centroid + clickable.interaction_polygon_position
-	var action_name := "Snap beacon position to centroid for %s" % clickable.name
+	var target_pos: Vector2 = clickable.centroid + clickable.interaction_polygon_position
 
-	PopochiuEditorHelper.undo_redo.create_action(action_name)
+	PopochiuEditorHelper.undo_redo.create_action(
+		"Snap beacon position to centroid for %s" % clickable.name
+	)
 	PopochiuEditorHelper.undo_redo.add_do_property(clickable, "beacon_pos", target_pos)
 	PopochiuEditorHelper.undo_redo.add_undo_property(clickable, "beacon_pos", clickable.beacon_pos)
 	PopochiuEditorHelper.undo_redo.commit_action()

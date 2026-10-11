@@ -37,9 +37,11 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 	if polygon.is_empty():
 		return false
 
+	var new_centroid := compute_centroid(polygon)
 	var previous_polygon := interaction_polygon_node.polygon.duplicate()
 	var clickable_object := clickable as PopochiuClickable
 	var previous_centroid := clickable_object.centroid if clickable_object else Vector2.ZERO
+	var previous_beacon := clickable_object.beacon_pos if clickable_object else Vector2.ZERO
 
 	PopochiuEditorHelper.undo_redo.create_action(
 		"Autotrace interaction polygon for " + clickable.name
@@ -51,7 +53,11 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 
 	if clickable_object:
 		PopochiuEditorHelper.undo_redo.add_do_property(
-			clickable_object, "centroid", compute_centroid(polygon)
+			clickable_object, "centroid", new_centroid
+		)
+		PopochiuEditorHelper.undo_redo.add_do_property(
+			clickable_object, "beacon_pos",
+			new_centroid + clickable_object.interaction_polygon_position
 		)
 
 	# Notify the gizmo plugin after the do so the overlay redraws immediately.
@@ -69,6 +75,9 @@ static func trace_interaction_polygon(clickable: Node) -> bool:
 	if clickable_object:
 		PopochiuEditorHelper.undo_redo.add_undo_property(
 			clickable_object, "centroid", previous_centroid
+		)
+		PopochiuEditorHelper.undo_redo.add_undo_property(
+			clickable_object, "beacon_pos", previous_beacon
 		)
 
 	# Also notify after undo so the gizmo redraws when the action is undone.
