@@ -8,7 +8,7 @@ When working on the documentation, please follow these conventions:
 
 ## Markdown Coding Standards
 
-Refer to the [Conventions](../../conventions/coding-standards#markdown-code) section for guidelines on the Markdown coding standards that we use.
+Refer to the [Conventions](../conventions/coding-standards.md#markdown-code) section for guidelines on the Markdown coding standards that we use.
 
 MkDocs use front-matter to add metadata to pages. We use it to sort the pages order, and to hide index pages away from the sections (so that they don't have a front page themselves).
 
@@ -162,6 +162,33 @@ To comply with Markdown formatting and ensure proper integration with MkDocs, th
 This header will be used by MkDocs as the sidebar menu title for that page, overriding the file name.
 
 In certain cases, the file name may differ from the page title for simplicity, as long as the relationship between the two remains clear. For instance, the file named `qna.md` has the title `Contributions Q&A` as its first header.
+
+---
+
+## Linking between pages
+
+Always link to another page through its Markdown source file, using a path relative to the current file and ending with `.md`. MkDocs rewrites these links to the correct URL at build time, so they work both in the local preview and on [GitHub Pages](https://carenalgas.github.io/popochiu/).
+
+!!! warning
+    Never link to a page without the `.md` extension, and never use absolute paths starting with `/`. MkDocs leaves those links untouched, so they may work in the local preview but break on the published site.
+
+**Good**:
+
+```{.markdown .code-example-good}
+Check the [importers](../../the-editor-handbook/importers.md) page for more details.
+```
+
+**Bad**:
+
+```{.markdown .code-example-bad}
+Check the [importers](../../the-editor-handbook/importers) page for more details.
+```
+
+To link to a specific section, append the anchor generated from its heading (lowercased, with spaces replaced by hyphens):
+
+```markdown
+See the [Basics](../../the-editor-handbook/importers.md#basics) section.
+```
 
 ---
 

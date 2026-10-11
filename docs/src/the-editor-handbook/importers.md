@@ -9,7 +9,7 @@ Notice how the _Tree_ tag disappeared and the _Tree layer_ is now present with t
 On the other hand, you can have tags with many frames on the same layer. This is the most common case because you often want your props to be animated, like in the case of our crackling bonfire (see _marker 2_ in the image above). These tools enable a smooth workflow for creating graphical elements in the game.  
 The main goal is to integrate with Aseprite in a way that promotes quick iterations, starting from a visual draft and evolving game scripting and graphics together as things take shape.
 
-Importers are available for [Characters](./PopochiuCharacter.md), [Rooms](./PopochiuRoom.md), and [Inventory items](./PopochiuInventoryItem.md), allowing almost one-click creation of the complete set of graphical assets representing the game world.
+Importers are available for [Characters](../the-engine-handbook/scripting-reference/game-objects/PopochiuCharacter.md), [Rooms](../the-engine-handbook/scripting-reference/game-objects/PopochiuRoom.md), and [Inventory items](../the-engine-handbook/scripting-reference/game-objects/PopochiuInventoryItem.md), allowing almost one-click creation of the complete set of graphical assets representing the game world.
 
 ## Basics
 
@@ -18,8 +18,8 @@ The plugin works by reading [tags](https://www.aseprite.org/docs/tags/) from a p
 The result of the process differs depending on the target object type:
 
 * For **Characters**, every tag represents a specific animation (e.g., the talk animation), and when applicable, the animation direction (e.g., up, down, left, or right). So in a typical project of medium size, there will be specific tags for _talk up_, _talk down_, _walk left_, _walk right_, and so on, plus very specific tags for special cutscene animations (_eat multifolded pizza_, _brush alien dog hair_, _jump across cakes chasm_, etc.).
-* For **Rooms**, every tag represents a [Prop](./PopochiuProp.md) and for each tag, a new prop with its own animation is created and populated with the appropriate animation (or sprite). Background and foreground elements are props, of course, and it will be possible to configure each prop's visibility and clickability before importing starts.
-* For **Inventory Items**, every tag in a single source file represents [Inventory items](./PopochiuInventoryItem.md) that - despite usually being represented by a still image - can also be animated. Having the whole inventory in a single file is very convenient for consistency and easier file management.
+* For **Rooms**, every tag represents a [Prop](../the-engine-handbook/scripting-reference/room-objects/PopochiuProp.md) and for each tag, a new prop with its own animation is created and populated with the appropriate animation (or sprite). Background and foreground elements are props, of course, and it will be possible to configure each prop's visibility and clickability before importing starts.
+* For **Inventory Items**, every tag in a single source file represents [Inventory items](../the-engine-handbook/scripting-reference/game-objects/PopochiuInventoryItem.md) that - despite usually being represented by a still image - can also be animated. Having the whole inventory in a single file is very convenient for consistency and easier file management.
 
 Despite having slightly different outputs, the structure of these Aseprite source files is basically the same.  
 Let's look at examples for both.
@@ -194,7 +194,7 @@ Likewise, a Room importer is shown when you open a Room scene.
 
 ### Setting the Importer up
 
-Let's start from the [Inventory Items](./PopochiuInventoryItem.md) importer, since the other ones will only have small differences.
+Let's start from the [Inventory Items](../the-engine-handbook/scripting-reference/game-objects/PopochiuInventoryItem.md) importer, since the other ones will only have small differences.
 
 ![Inventory Aseprite Importer interface](../assets/images/editor-handbook/aseprite_importer-importer_interface-inventory.png "Inventory Aseprite importer interface")
 

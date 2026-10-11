@@ -50,8 +50,8 @@ If you start the game, give the toy car to Popsy, then talk to him and select th
 
 Now that you've broken the ice with the basic concepts, you can learn more.
 
-* Go and get our [example resources](../../../getting-started/example-resources) to learn directly from code and find a quick start in your experimentation.
-* Throughout this guide, we've given you a taste of the plugin interface, but you may want to learn everything there is to know about Popochiu's editor functions, by reading [the editor handbook](../../../the-editor-handbook).
-* At the same time, the engine (the part of Popochiu that will ship with your game) deserves its own deep dive. Read [the engine handbook](../../../the-engine-handbook) and keep [the scripting API reference](../../../the-engine-handbook/scripting-overview) at hand while you code your game.
-* This tutorial overlooks many important parts, among which [animations](../../../playing-animations) and [audio management](../../../adding-sound) certainly stand out. The [How to Develop a Game](../../..) section contains basics and advanced techniques that will help you get the most out of Godot and Popochiu.
-* Last but not least, Popochiu is a community effort. Learn [how to get help](../../../getting-started/getting-help) and, if you feel like contributing, read our [contribution guidelines](../../../contributing-to-popochiu).
+* Go and get our [example resources](../getting-started/example-resources.md) to learn directly from code and find a quick start in your experimentation.
+* Throughout this guide, we've given you a taste of the plugin interface, but you may want to learn everything there is to know about Popochiu's editor functions, by reading [the editor handbook](../the-editor-handbook/editor-settings.md).
+* At the same time, the engine (the part of Popochiu that will ship with your game) deserves its own deep dive. Read [the engine handbook](../the-engine-handbook/scripting-overview.md) and keep [the scripting API reference](../the-engine-handbook/scripting-overview.md) at hand while you code your game.
+* This tutorial overlooks many important parts, among which [animations](../advanced-topics/advanced-animations.md) and audio management certainly stand out. The [How to Develop a Game](../index.md) section contains basics and advanced techniques that will help you get the most out of Godot and Popochiu.
+* Last but not least, Popochiu is a community effort. Learn [how to get help](../getting-started/getting-help.md) and, if you feel like contributing, read our [contribution guidelines](../contributing-to-popochiu/basic-rules.md).

@@ -18,7 +18,7 @@ This allows us to set the newly created room as the main scene of the Godot proj
 ![Create Room popup](../../assets/images/getting-started/game_stub-room-2-creation_popup.png "Name the room and select it as the project's main scene")
 
 Name the new room whatever you want. If you want to follow along, let's name this room "_House_" and make it the main scene.  
-Popochiu will create the new room, open the room scene in the editor, and open the corresponding [Room tab](#TODO) in the plugin interface.
+Popochiu will create the new room, open the room scene in the editor, and open the corresponding [Room tab](../../the-editor-handbook/popochiu-dock.md#room-tab) in the plugin interface.
 
 Much like a character, a room needs a sprite to represent the background of the location. We are going to use [this background](https://github.com/carenalgas/popochiu-sample-game/blob/16fc323f1c63388e6b97a30d678aa71e6e1d9db9/game/rooms/house/props/background/house_bg.png) from the example game.
 
@@ -64,5 +64,5 @@ If you did everything right, you should see your main character standing in the 
 
     For those who work with [Aseprite](https://www.aseprite.org/), Popochiu also provides a powerful automated importer that will make creating rooms and characters a breeze and will enable a fast iterative development workflow.
 
-    * Learn more about the [Aseprite importers](../the-editor-handbook/importers.md)
+    * Learn more about the [Aseprite importers](../../the-editor-handbook/importers.md)
 

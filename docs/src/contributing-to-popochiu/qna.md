@@ -5,31 +5,31 @@ weight: 9070
 # Contribution Q&A
 
 **Is there a guideline for opening a PR?**
-: Yes! Please review the [Coding Standards](../conventions#pull-requests) section for all the relevant details.
+: Yes! Please review the [Coding Standards](conventions/code-versioning.md#pull-requests-conventions) section for all the relevant details.
 
 **Can I contribute even if I’m not familiar with Godot or GDScript?**
-: You can contribute in [many different ways](../introduction#areas-of-contribution). If you want to dive into coding, contributing is a great way to learn! Just be aware that we may request changes or, in some cases, reject your PR entirely. That’s part of the process.
+: You can contribute in [many different ways](basic-rules.md#areas-of-contribution). If you want to dive into coding, contributing is a great way to learn! Just be aware that we may request changes or, in some cases, reject your PR entirely. That’s part of the process.
 
 **Are there tasks suitable for beginners in open source or game development?**
-: Look for issues labeled `Good first issue` in the [project backlog](https://github.com/orgs/carenalgas/projects/1). Also evaluate contributing on a `Nice-to-have` feature to start with some non-critical stuff (see the [Backlog section](../project-management/#backlog))
+: Look for issues labeled `Good first issue` in the [project backlog](https://github.com/orgs/carenalgas/projects/1). Also evaluate contributing on a `Nice-to-have` feature to start with some non-critical stuff (see the [Backlog section](project-management/issue-tracking.md#backlog))
 
 **Is there a preferred format or style for contributing to the documentation?**
-: Documentation is written in MarkDown and built with MkDocs and all the relevant information can be found in the [Contributing documentation](../contributing-documentation) section. A dockerized environment is available for running the site locally; see [this section](../toolchain-and-dependencies#documentation) for details on how to run it.
+: Documentation is written in MarkDown and built with MkDocs and all the relevant information can be found in the [Contributing documentation](contributing-documentation/basic-rules.md) section. A dockerized environment is available for running the site locally; see [this section](toolchain-and-dependencies.md#documentation) for details on how to run it.
 
 **Are there any coding standards or best practices specific to Popochiu?**
-: [Yes](../conventions).
+: [Yes](conventions/coding-standards.md).
 
 **Am I allowed to use AI for my contributions?**
-: Yes, but with responsibility. Read [this](../toolchain-and-dependencies/#generative-ai) first.
+: Yes, but with responsibility. Read [this](toolchain-and-dependencies.md#generative-ai) first.
 
 **How do I know if a feature I want to add is already planned or under development?**
 : Look at the [project board](https://github.com/orgs/carenalgas/projects/1/views/1), particularly the `Ready` and `In Progress` columns.
 
 **Is there a roadmap or list of priorities for future development?**
-: Yes, you can keep an eye on the [project board](https://github.com/orgs/carenalgas/projects/1/views/1). The [Project management](../project-management#project-board-organization) page provide details on how to interpret it.
+: Yes, you can keep an eye on the [project board](https://github.com/orgs/carenalgas/projects/1/views/1). The [Project management](project-management/issue-tracking.md#project-board-organization) page provide details on how to interpret it.
 
 **Is there a process for suggesting new features?**
-: Yes, follow the guidelines in the [Project management](../project-management#how-to-submit-issues) section.
+: Yes, follow the guidelines in the [Project management](project-management/issue-tracking.md#how-to-submit-issues) section.
 
 **I believe Popochiu needs significant improvement in a specific area, and I have a solution. Should I open a PR?**
 : Start by opening an issue. Describe your findings and allow us to understand the context before submitting any code. If we agree there’s room for improvement and align on the course of action, we’ll be thrilled to receive your contribution.
@@ -60,7 +60,7 @@ We’ve previously addressed bugs caused by unstable versions of Godot that reso
 Becoming a core contributor is not a prize or reward, and should not be a goal. It naturally follows from consistent and meaningful involvement in the project.
 
 **How do I write tests for Popochiu?**
-: This area is shamefully uncovered. Popochiu currently lacks automated tests coverage. If you’re willing to write tests for the engine or the plugin, we’d love to discuss it with you ([find out how to contact us](../get-in-touch)).
+: This area is shamefully uncovered. Popochiu currently lacks automated tests coverage. If you’re willing to write tests for the engine or the plugin, we’d love to discuss it with you ([find out how to contact us](get-in-touch.md)).
 
 **How can I test my changes locally before opening a PR?**
 : Testing must be done manually (see above). If you need a throwaway project for testing, download the [Popochiu Sample Game](https://github.com/carenalgas/popochiu-sample-game).
