@@ -589,7 +589,7 @@ func _toggle_input() -> void:
 # Having delay in the PopochiuUtils class that other gui code calls introduced unwanted issues.
 # This is a temporary work around until a more permanent solution is found.
 
-# Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
+# Checks if [param event] is an [InputEventMouseButton] event that is not a double click.
 func _is_click_or_touch(event: InputEvent) -> bool:
 	if PopochiuUtils.is_click_or_touch(event) and not PopochiuUtils.is_double_click_or_double_tap(event):
 		# Wait to let a potential double-click event arrive and set _has_double_click first.
@@ -601,7 +601,7 @@ func _is_click_or_touch(event: InputEvent) -> bool:
 	return false
 
 
-# Checks if [param event] is a valid pressed click or touch.
+# Checks if [param event] is a valid pressed click.
 func _is_click_or_touch_pressed(event: InputEvent) -> bool:
 	if not _has_double_click:
 		return await _is_click_or_touch(event) and event.pressed
@@ -609,7 +609,7 @@ func _is_click_or_touch_pressed(event: InputEvent) -> bool:
 		return false
 
 
-# Checks if [param event] is a double click or double tap event.
+# Checks if [param event] is a double click event.
 func _is_double_click_or_tap(event: InputEvent) -> bool:
 	if PopochiuUtils.is_double_click_or_double_tap(event):
 		_has_double_click = true
