@@ -16,4 +16,4 @@ At the same time, its architecture is developer-friendly, suitable for code-driv
 
 The following sections provide an overview of the specific subsystems, their responsibilities, and their relationships. This is a high-level overview to help contributors make themselves at home, without delving into too much detail.
 
-For specific questions, feel free to [get in touch](../../get-in-touch).
+For specific questions, feel free to [get in touch](../get-in-touch.md).

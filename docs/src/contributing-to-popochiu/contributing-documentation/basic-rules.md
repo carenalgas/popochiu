@@ -22,7 +22,7 @@ The documentation maintainer is **@stickgrinder**.
 
 To contribute to the documentation, the first essential step is to make sure you can preview your changes locally. A Docker-based environment is available for this purpose. This setup allows you to test your changes in real-time and ensures the output matches what will be published.
 
-For instructions on setting up the local preview environment, refer to the specific [Run the documentation locally](../../toolchain-and-dependencies#run-the-documentation-locally) section.
+For instructions on setting up the local preview environment, refer to the specific [Run the documentation locally](../toolchain-and-dependencies.md#running-the-documentation-locally) section.
 
 !!! note
     If you're not familiar with Docker and have never installed it before, this step may seem like a bit of a pain, but trust us: it's a _do once and forget_ process, and it will make everything easier.
@@ -39,7 +39,7 @@ Documentation contributions are critical whenever:
 The rule of thumb is that, if you add or change something that game developers will have to know, then you have to document it!
 
 !!! tip "Documenting the Engine API"
-    Documenting Engine API elements like functions, signals, and variables is often as simple as adding a well formatted and complete [documentation comment](../../conventions/comments) to your public code. Of course, from time to time, it may require some more work, like updating an existing guide or tutorial.
+    Documenting Engine API elements like functions, signals, and variables is often as simple as adding a well formatted and complete [documentation comment](../conventions/comments.md) to your public code. Of course, from time to time, it may require some more work, like updating an existing guide or tutorial.
 
 !!! tip "Updating visual assets"
     When the editor interface changes or get some new feature, screenshots or other visuals may need to be updated.

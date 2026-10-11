@@ -41,7 +41,7 @@ To create our game stub we will:
 - [Customize the Game UI](customize-the-game-ui.md)
 - [Conclusions](conclusions.md)
 - [Homeworks](conclusions.md#homeworks)
-    - [Add a prop and an inventory item](conclusions,md#add-a-prop-and-an-inventory-item)
+    - [Add a prop and an inventory item](conclusions.md#add-a-prop-and-an-inventory-item)
     - [Prevent losing the key](conclusions.md#prevent-losing-the-key)
     - [Solve a problem with the implemented dialog](conclusions.md#solve-a-problem-with-the-implemented-dialog)
 - [What's next](conclusions.md#whats-next)

@@ -53,7 +53,7 @@ You’ll also find the project’s `.gitignore` file. It’s fairly standard, ex
 
 ## Popochiu Addon folder
 
-We won’t delve too deeply into the plugin's content here (refer to the [Project Overview](../project-overview) section for more details), but the `addons` folder is organized as follows:
+We won’t delve too deeply into the plugin's content here (refer to the [Project Overview](../project-overview/popochiu-subsystems.md) section for more details), but the `addons` folder is organized as follows:
 
 ```text
 /addons/popochiu

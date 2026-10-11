@@ -11,7 +11,7 @@ It will apply in particular to:
 * Rooms with background drawn with the use of linear perspective
 * Shrinking and enlarging character like in the vortex scene from _Sam and Max: Hit the Road_.
 
-Popochiu allows you to scale any character either from the inspector or from code, by assigning its scale factor directly. Although this may work for static resizing, from a developer perspective, there is a more convenient way: delegating to a room's [regions]() the task of scaling the character's sprites as they walk into them.
+Popochiu allows you to scale any character either from the inspector or from code, by assigning its scale factor directly. Although this may work for static resizing, from a developer perspective, there is a more convenient way: delegating to a room's [regions](../the-engine-handbook/scripting-reference/room-objects/PopochiuRegion.md) the task of scaling the character's sprites as they walk into them.
 
 ## Region-base scaling setup
 
@@ -50,4 +50,4 @@ Very complex perspectives, with paths going back and forth in a way that forces 
     * Avoid overlapping two regions in a way that allows the character to enter, then exit one region, while staying in the other one. It can trick the engine into thinking it exited both regions and restoring the character's default scale.
     * Avoid setting scaling regions perfectly contained into each other, for the same reason (it's a special case of the above, in fact).
     * If two adjacent scaling regions share their vertical borders, but different vertical sizes, your character will most likely snap to different scaling if it moves across the vertical border. It may require some trial and error to make them fit.
-    * If [anti-glide animation](../../../advanced-techniques/character-anti-glide-feature) is turned on, the character will change its size only when a frame if its walking animation is rendered. This is usually the desired behavior, but if you want to achieve a smooth, continuous visual effect, you may have to turn the anti-glide feature off.
+    * If [anti-glide animation](character-anti-glide-feature.md) is turned on, the character will change its size only when a frame if its walking animation is rendered. This is usually the desired behavior, but if you want to achieve a smooth, continuous visual effect, you may have to turn the anti-glide feature off.

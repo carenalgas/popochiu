@@ -55,7 +55,7 @@ For your convienence, Popochiu automatically handles different naming convention
 - **Lowercase input** (`"pajama"`): Tries `pajamawalk`, then `PajamaWalk`, then `pajama_walk`
 - **Snake_case input** (`"pajama_"`): Tries `pajama_walk`, then `Pajama_walk`
 
-In short, the system first tries to apply your settings as you wrote it, trusting your knowledge of your own naming conventions, then tries to address the `PascalCase` and `snake_case` options (the latter being used internally by the [importers](../../the-editor-handbook/importers/)).
+In short, the system first tries to apply your settings as you wrote it, trusting your knowledge of your own naming conventions, then tries to address the `PascalCase` and `snake_case` options (the latter being used internally by the [importers](../the-editor-handbook/importers.md)).
 
 This flexibility should make your life a bit easier. Of course, it's not magic and you don't have to try that hard to break it (ex. `pajama___` will not work).
 

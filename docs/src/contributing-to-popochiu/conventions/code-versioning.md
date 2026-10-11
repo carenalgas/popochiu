@@ -73,7 +73,7 @@ refs #123: changes to the character flip function
 
 ## Pull requests conventions
 
-Pull requests titles must follow [the same format as commit messages](#commit-format).
+Pull requests titles must follow [the same format as commit messages](#commits-conventions).
 
 For large PRs with extensive changes, please use the description field to provide an overview, helping reviewers understand the context and purpose of your work.
 
