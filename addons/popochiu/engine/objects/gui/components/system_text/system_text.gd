@@ -35,7 +35,7 @@ func _input(event: InputEvent) -> void:
 		return
 	
 	accept_event()
-	if PopochiuUtils.get_click_index(event) == MOUSE_BUTTON_LEFT:
+	if PopochiuUtils.get_click_button_index(event) == MOUSE_BUTTON_LEFT:
 		close()
 
 

@@ -517,7 +517,7 @@ func _on_mouse_exited() -> void:
 		PopochiuUtils.g.mouse_exited_clickable.emit(self)
 
 
-func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
+func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
 	if PopochiuUtils.g.is_blocked or not PopochiuUtils.e.hovered or PopochiuUtils.e.hovered != self:
 		return
 
@@ -530,7 +530,7 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 
 	if not await _is_click_pressed(event): return
 
-	var event_index := PopochiuUtils.get_click_index(event)
+	var event_index := PopochiuUtils.get_click_button_index(event)
 	PopochiuUtils.e.clicked = self
 	last_click_button = event_index
 

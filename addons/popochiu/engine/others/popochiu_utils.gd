@@ -82,7 +82,7 @@ static func is_click(event: InputEvent) -> bool:
 ## @deprecated Use [method is_click] instead.
 ## Checks if [param event] is a mouse click event.
 static func is_click_or_touch(event: InputEvent) -> bool:
-	print_warning("is_click_or_touch() is deprecated. Use is_click() instead.")
+	_warn_deprecated("is_click_or_touch", "is_click")
 	return is_click(event)
 
 
@@ -95,7 +95,7 @@ static func is_double_click(event: InputEvent) -> bool:
 ## @deprecated Use [method is_double_click] instead.
 ## Checks if [param event] is a double click event.
 static func is_double_click_or_double_tap(event: InputEvent) -> bool:
-	print_warning("is_double_click_or_double_tap() is deprecated. Use is_double_click() instead.")
+	_warn_deprecated("is_double_click_or_double_tap", "is_double_click")
 	return is_double_click(event)
 
 
@@ -107,14 +107,14 @@ static func is_click_pressed(event: InputEvent) -> bool:
 ## @deprecated Use [method is_click_pressed] instead.
 ## Checks if [param event] is a pressed mouse click event.
 static func is_click_or_touch_pressed(event: InputEvent) -> bool:
-	print_warning("is_click_or_touch_pressed() is deprecated. Use is_click_pressed() instead.")
+	_warn_deprecated("is_click_or_touch_pressed", "is_click_pressed")
 	return is_click_pressed(event)
 
 
-## Returns the index of [param event] when it is an [InputEventMouseButton] event, which is
+## Returns the button index of [param event] when it is an [InputEventMouseButton] event, which is
 ## [member InputEventMouseButton.button_index]. Returns [code]0[/code] if the event isn't pressed
 ## or is not an [InputEventMouseButton].
-static func get_click_index(event: InputEvent) -> int:
+static func get_click_button_index(event: InputEvent) -> int:
 	var index := 0
 
 	if is_click_pressed(event):
@@ -123,11 +123,11 @@ static func get_click_index(event: InputEvent) -> int:
 	return index
 
 
-## @deprecated Use [method get_click_index] instead.
+## @deprecated Use [method get_click_button_index] instead.
 ## Returns the button index of a pressed mouse click event.
 static func get_click_or_touch_index(event: InputEvent) -> int:
-	print_warning("get_click_or_touch_index() is deprecated. Use get_click_index() instead.")
-	return get_click_index(event)
+	_warn_deprecated("get_click_or_touch_index", "get_click_button_index")
+	return get_click_button_index(event)
 
 
 ## For each element in [param array] calls [param callback] passing the element as a parameter. If
@@ -251,6 +251,23 @@ static func get_popochiu_globals() -> Node:
 	if not is_instance_valid(globals):
 		globals = e.get_node("/root/Globals")
 	return globals
+
+
+#endregion
+
+#region Private ####################################################################################
+# Tracks deprecation notices already printed, so a deprecated call in a loop does not flood output.
+static var _warned_deprecations := {}
+
+
+# Prints a deprecation warning for [param old_name] at most once per session, pointing to
+# [param new_name].
+static func _warn_deprecated(old_name: String, new_name: String) -> void:
+	if _warned_deprecations.has(old_name):
+		return
+
+	_warned_deprecations[old_name] = true
+	print_warning("%s() is deprecated. Use %s() instead." % [old_name, new_name])
 
 
 #endregion

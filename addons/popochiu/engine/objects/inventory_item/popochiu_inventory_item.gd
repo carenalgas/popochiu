@@ -396,7 +396,7 @@ func _toggle_description(is_hover: bool) -> void:
 func _on_gui_input(event: InputEvent) -> void: 
 	if not PopochiuUtils.is_click_pressed(event): return
 	
-	var event_index := PopochiuUtils.get_click_index(event)
+	var event_index := PopochiuUtils.get_click_button_index(event)
 	
 	# Fix #224 Clean E.clicked when an inventory item is clicked to ensure that the event is not
 	# mishandled by the GUI
