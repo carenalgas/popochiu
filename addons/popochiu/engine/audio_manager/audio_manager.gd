@@ -280,19 +280,23 @@ func _play(
 	var cue_name: String = cue.resource_name
 	
 	player.bus = cue.bus
-	player.play(from_position)
 
-	
 	# This is a workaround for a Godot 4.5 bug
-	# See https://github.com/godotengine/godot/commit/ccfbdf2bb2f109ba83533a45ef48dd0b219fc872 and https://github.com/godotengine/godot/commit/ccfbdf2bb2f109ba83533a45ef48dd0b219fc872 
+	# See https://github.com/godotengine/godot/pull/100652 and https://github.com/godotengine/godot/pull/106600
 	# Fixes #463 Audio cues looping inappropriately in Godot 4.5
 	#
+	# The loop mode must be set before [method Node.play]: the Web backend registers the stream as
+	# a sample during play and snapshots its loop mode at that point, so setting it afterwards has
+	# no effect there and one-shots keep looping. See #508.
+	#
 	# TODO: remove this as soon as it becomes irrelevant
-	if player.stream.get_class() == 'AudioStreamWAV': 
+	if player.stream.get_class() == 'AudioStreamWAV':
 		player.stream.loop_mode = (
 			AudioStreamWAV.LOOP_FORWARD if cue.loop else AudioStreamWAV.LOOP_DISABLED
 		)
-	
+
+	player.play(from_position)
+
 	if not player.finished.is_connected(_on_audio_stream_player_finished):
 		player.finished.connect(_on_audio_stream_player_finished.bind(player))
 	
