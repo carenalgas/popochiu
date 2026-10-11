@@ -591,7 +591,7 @@ func _toggle_input() -> void:
 
 # Checks if [param event] is an [InputEventMouseButton] event that is not a double click.
 func _is_click_or_touch(event: InputEvent) -> bool:
-	if PopochiuUtils.is_click_or_touch(event) and not PopochiuUtils.is_double_click_or_double_tap(event):
+	if PopochiuUtils.is_click_or_tap(event) and not PopochiuUtils.is_double_click_or_double_tap(event):
 		# Wait to let a potential double-click event arrive and set _has_double_click first.
 		await PopochiuUtils.e.wait(_double_click_delay)
 

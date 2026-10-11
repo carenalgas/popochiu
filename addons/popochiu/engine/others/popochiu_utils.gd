@@ -69,14 +69,21 @@ static func print_normal(msg: String) -> void:
 	print_rich("[bgcolor=75cec8][color=000000][b][Popochiu][/b] %s[/color][/bgcolor]" % msg)
 
 
-## Checks if [param event] is an [InputEventMouseButton] event.
+## Checks if [param event] is a mouse click event.
 ##
-## Touch is normalized to mouse upstream: Godot emulates mouse events from touch when
-## [code]input_devices/pointing/emulate_mouse_from_touch[/code] is enabled (the default), and most
-## desktop OSes map touchscreen input to the mouse as well. Consuming raw [InputEventScreenTouch]
-## events on top of those would fire every click handler twice.
-static func is_click_or_touch(event: InputEvent) -> bool:
+## On touchscreens a tap reaches the game as a mouse event: Godot emulates mouse events from touch
+## when [code]input_devices/pointing/emulate_mouse_from_touch[/code] is enabled (the default), and
+## most desktop OSes map touchscreen input to the mouse as well. Consuming raw
+## [InputEventScreenTouch] events on top of those would fire every click handler twice.
+static func is_click_or_tap(event: InputEvent) -> bool:
 	return event is InputEventMouseButton
+
+
+## @deprecated Use [method is_click_or_tap] instead.
+## Checks if [param event] is a mouse click event.
+static func is_click_or_touch(event: InputEvent) -> bool:
+	print_warning("is_click_or_touch() is deprecated. Use is_click_or_tap() instead.")
+	return is_click_or_tap(event)
 
 
 ## Checks if [param event] is an [InputEventMouseButton] with
@@ -87,7 +94,7 @@ static func is_double_click_or_double_tap(event: InputEvent) -> bool:
 
 ## Checks if [param event] is an [InputEventMouseButton] event and if it is pressed.
 static func is_click_or_touch_pressed(event: InputEvent) -> bool:
-	return is_click_or_touch(event) and event.pressed
+	return is_click_or_tap(event) and event.pressed
 
 
 ## Returns the index of [param event] when it is an [InputEventMouseButton] event, which is
