@@ -31,11 +31,11 @@ func _input(event: InputEvent) -> void:
 	if event.is_action_released("popochiu-skip"):
 		close.call_deferred()
 	
-	if not PopochiuUtils.is_click_or_touch_pressed(event) or not visible:
+	if not PopochiuUtils.is_click_pressed(event) or not visible:
 		return
 	
 	accept_event()
-	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
+	if PopochiuUtils.get_click_index(event) == MOUSE_BUTTON_LEFT:
 		close()
 
 

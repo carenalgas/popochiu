@@ -94,7 +94,7 @@ func _ready():
 
 func _unhandled_input(event: InputEvent):
 	if (
-		not PopochiuUtils.get_click_or_touch_index(event) in [
+		not PopochiuUtils.get_click_index(event) in [
 			MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT
 		]
 		or PopochiuUtils.e.hovered

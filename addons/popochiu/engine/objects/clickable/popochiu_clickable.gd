@@ -521,16 +521,16 @@ func _on_input_event(_viewport: Node, event: InputEvent, _shape_idx: int):
 	if PopochiuUtils.g.is_blocked or not PopochiuUtils.e.hovered or PopochiuUtils.e.hovered != self:
 		return
 
-	if _is_double_click_or_tap(event):
+	if _is_double_click(event):
 		times_double_clicked += 1
 		PopochiuUtils.e.clicked = self
 		on_double_click()
 
 		return
 
-	if not await _is_click_or_touch_pressed(event): return
+	if not await _is_click_pressed(event): return
 
-	var event_index := PopochiuUtils.get_click_or_touch_index(event)
+	var event_index := PopochiuUtils.get_click_index(event)
 	PopochiuUtils.e.clicked = self
 	last_click_button = event_index
 
@@ -590,8 +590,8 @@ func _toggle_input() -> void:
 # This is a temporary work around until a more permanent solution is found.
 
 # Checks if [param event] is an [InputEventMouseButton] event that is not a double click.
-func _is_click_or_touch(event: InputEvent) -> bool:
-	if PopochiuUtils.is_click_or_tap(event) and not PopochiuUtils.is_double_click_or_double_tap(event):
+func _is_click(event: InputEvent) -> bool:
+	if PopochiuUtils.is_click(event) and not PopochiuUtils.is_double_click(event):
 		# Wait to let a potential double-click event arrive and set _has_double_click first.
 		await PopochiuUtils.e.wait(_double_click_delay)
 
@@ -602,16 +602,16 @@ func _is_click_or_touch(event: InputEvent) -> bool:
 
 
 # Checks if [param event] is a valid pressed click.
-func _is_click_or_touch_pressed(event: InputEvent) -> bool:
+func _is_click_pressed(event: InputEvent) -> bool:
 	if not _has_double_click:
-		return await _is_click_or_touch(event) and event.pressed
+		return await _is_click(event) and event.pressed
 	else:
 		return false
 
 
 # Checks if [param event] is a double click event.
-func _is_double_click_or_tap(event: InputEvent) -> bool:
-	if PopochiuUtils.is_double_click_or_double_tap(event):
+func _is_double_click(event: InputEvent) -> bool:
+	if PopochiuUtils.is_double_click(event):
 		_has_double_click = true
 		return true
 

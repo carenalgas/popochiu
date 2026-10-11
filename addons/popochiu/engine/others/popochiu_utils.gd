@@ -75,38 +75,59 @@ static func print_normal(msg: String) -> void:
 ## when [code]input_devices/pointing/emulate_mouse_from_touch[/code] is enabled (the default), and
 ## most desktop OSes map touchscreen input to the mouse as well. Consuming raw
 ## [InputEventScreenTouch] events on top of those would fire every click handler twice.
-static func is_click_or_tap(event: InputEvent) -> bool:
+static func is_click(event: InputEvent) -> bool:
 	return event is InputEventMouseButton
 
 
-## @deprecated Use [method is_click_or_tap] instead.
+## @deprecated Use [method is_click] instead.
 ## Checks if [param event] is a mouse click event.
 static func is_click_or_touch(event: InputEvent) -> bool:
-	print_warning("is_click_or_touch() is deprecated. Use is_click_or_tap() instead.")
-	return is_click_or_tap(event)
+	print_warning("is_click_or_touch() is deprecated. Use is_click() instead.")
+	return is_click(event)
 
 
 ## Checks if [param event] is an [InputEventMouseButton] with
 ## [member InputEventMouseButton.double_click] as [code]true[/code].
-static func is_double_click_or_double_tap(event: InputEvent) -> bool:
+static func is_double_click(event: InputEvent) -> bool:
 	return event is InputEventMouseButton and event.double_click
 
 
+## @deprecated Use [method is_double_click] instead.
+## Checks if [param event] is a double click event.
+static func is_double_click_or_double_tap(event: InputEvent) -> bool:
+	print_warning("is_double_click_or_double_tap() is deprecated. Use is_double_click() instead.")
+	return is_double_click(event)
+
+
 ## Checks if [param event] is an [InputEventMouseButton] event and if it is pressed.
+static func is_click_pressed(event: InputEvent) -> bool:
+	return is_click(event) and event.pressed
+
+
+## @deprecated Use [method is_click_pressed] instead.
+## Checks if [param event] is a pressed mouse click event.
 static func is_click_or_touch_pressed(event: InputEvent) -> bool:
-	return is_click_or_tap(event) and event.pressed
+	print_warning("is_click_or_touch_pressed() is deprecated. Use is_click_pressed() instead.")
+	return is_click_pressed(event)
 
 
 ## Returns the index of [param event] when it is an [InputEventMouseButton] event, which is
 ## [member InputEventMouseButton.button_index]. Returns [code]0[/code] if the event isn't pressed
 ## or is not an [InputEventMouseButton].
-static func get_click_or_touch_index(event: InputEvent) -> int:
+static func get_click_index(event: InputEvent) -> int:
 	var index := 0
 
-	if is_click_or_touch_pressed(event):
+	if is_click_pressed(event):
 		index = event.button_index
 
 	return index
+
+
+## @deprecated Use [method get_click_index] instead.
+## Returns the button index of a pressed mouse click event.
+static func get_click_or_touch_index(event: InputEvent) -> int:
+	print_warning("get_click_or_touch_index() is deprecated. Use get_click_index() instead.")
+	return get_click_index(event)
 
 
 ## For each element in [param array] calls [param callback] passing the element as a parameter. If
