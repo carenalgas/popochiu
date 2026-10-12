@@ -57,7 +57,7 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if (
-		not PopochiuUtils.get_click_or_touch_index(event) in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]
+		not PopochiuUtils.get_click_button_index(event) in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]
 		or modulate.a == 0.0
 	):
 		return

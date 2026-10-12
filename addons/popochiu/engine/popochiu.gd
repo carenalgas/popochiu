@@ -128,6 +128,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	set_process_input(false)
+	_check_touchscreen_input()
 	_saveload = load(SAVELOAD_PATH).new()
 	
 	# Create the AudioManager
@@ -602,6 +603,16 @@ func set_dialog_style(value: int) -> void:
 #endregion
 
 #region Private ####################################################################################
+# Warns when a touchscreen device runs without mouse emulation: Popochiu normalizes touch to mouse
+# events, so disabling it leaves the game with no pointer input at all.
+func _check_touchscreen_input() -> void:
+	if DisplayServer.is_touchscreen_available() and not Input.is_emulating_mouse_from_touch():
+		PopochiuUtils.print_warning(
+			"Touchscreen detected but mouse emulation is off. Enable 'Emulate Mouse From Touch' "
+			+ "in Project Settings > Input Devices > Pointing so touch can drive interactions."
+		)
+
+
 func _set_in_room(value: bool) -> void:
 	in_room = value
 	PopochiuUtils.cursor.toggle_visibility(in_room)

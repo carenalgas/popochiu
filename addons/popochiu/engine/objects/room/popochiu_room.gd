@@ -92,12 +92,12 @@ func _ready():
 	PopochiuUtils.r.room_readied(self)
 
 
-func _unhandled_input(event: InputEvent):
+func _unhandled_input(event: InputEvent) -> void:
 	if (
-		not PopochiuUtils.get_click_or_touch_index(event) in [
+		not PopochiuUtils.get_click_button_index(event) in [
 			MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT
 		]
-		or (not event is InputEventScreenTouch and PopochiuUtils.e.hovered)
+		or PopochiuUtils.e.hovered
 	):
 		return
 

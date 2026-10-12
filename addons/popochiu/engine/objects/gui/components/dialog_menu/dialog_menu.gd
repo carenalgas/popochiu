@@ -46,7 +46,7 @@ func _ready() -> void:
 
 #region Private ####################################################################################
 func _clicked(event: InputEvent) -> void:
-	if PopochiuUtils.get_click_or_touch_index(event) == MOUSE_BUTTON_LEFT:
+	if PopochiuUtils.get_click_button_index(event) == MOUSE_BUTTON_LEFT:
 		accept_event()
 
 

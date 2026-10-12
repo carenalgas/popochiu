@@ -25,6 +25,10 @@ static var cursor: PopochiuCursor = null:
 static var globals: Node = null:
 	get = get_popochiu_globals
 
+## @deprecated Will be removed in 2.3 alongside the companion proxy functions.
+# Tracks deprecation notices already printed, so a deprecated call in a loop does not flood output.
+static var _warned_deprecations := {}
+
 
 #region Public #####################################################################################
 ## Used by the GUI to get the position of [param node] in the scene transformed to the space of the
@@ -69,56 +73,65 @@ static func print_normal(msg: String) -> void:
 	print_rich("[bgcolor=75cec8][color=000000][b][Popochiu][/b] %s[/color][/bgcolor]" % msg)
 
 
-## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event.
-## [InputEventScreenTouch] events are only accepted when an actual touchscreen is available;
-## on non-touchscreen devices those events are synthetic (emulated from mouse), so accepting
-## them would fire click handlers twice for every real mouse click.
-static func is_click_or_touch(event: InputEvent) -> bool:
-	if event is InputEventMouseButton:
-		return true
-	if event is InputEventScreenTouch:
-		return DisplayServer.is_touchscreen_available()
-	return false
-
-
-## Checks if [param event] is an [InputEventMouseButton] with [member InputEventMouseButton.double_click]
-## as [code]true[/code], or an [InputEventScreenTouch] with [member InputEventScreenTouch.double_tap].
-## as [code]true[/code].
-static func is_double_click_or_double_tap(event: InputEvent) -> bool:
-	return (
-		(event is InputEventMouseButton and event.double_click)
-		or (event is InputEventScreenTouch and event.double_tap)
-	)
-
-
-## Checks if [param event] is an [InputEventMouseButton] or [InputEventScreenTouch] event and if
-## it is pressed.
-static func is_click_or_touch_pressed(event: InputEvent) -> bool:
-	return is_click_or_touch(event) and event.pressed
-
-
-## Returns the index of [param event] when it is an [InputEventMouseButton] or
-## [InputEventScreenTouch] event. For a click, [member InputEventMouseButton.button_index] is
-## returned. For a touch, the finger index is normalized to a [enum MouseButton] constant:
-## finger 0 maps to [constant MOUSE_BUTTON_LEFT]. Any other finger index has no meaningful
-## mouse-button equivalent, so [code]0[/code] is returned. Returns [code]0[/code] if the event
-## isn't pressed or is neither a click nor a touch.
+## Checks if [param event] is a mouse click event.
 ##
-## NOTE: Gestures mapping is deferred, so multi-finger touches will eventually map to mouse buttons
-## as well.
-static func get_click_or_touch_index(event: InputEvent) -> int:
+## On touchscreens a tap reaches the game as a mouse event: Godot emulates mouse events from touch
+## when [code]input_devices/pointing/emulate_mouse_from_touch[/code] is enabled (the default), and
+## most desktop OSes map touchscreen input to the mouse as well. Consuming raw
+## [InputEventScreenTouch] events on top of those would fire every click handler twice.
+static func is_click(event: InputEvent) -> bool:
+	return event is InputEventMouseButton
+
+
+## @deprecated Use [method is_click] instead.
+## Checks if [param event] is a mouse click event.
+static func is_click_or_touch(event: InputEvent) -> bool:
+	_warn_deprecated("is_click_or_touch", "is_click")
+	return is_click(event)
+
+
+## Checks if [param event] is an [InputEventMouseButton] with
+## [member InputEventMouseButton.double_click] as [code]true[/code].
+static func is_double_click(event: InputEvent) -> bool:
+	return event is InputEventMouseButton and event.double_click
+
+
+## @deprecated Use [method is_double_click] instead.
+## Checks if [param event] is a double click event.
+static func is_double_click_or_double_tap(event: InputEvent) -> bool:
+	_warn_deprecated("is_double_click_or_double_tap", "is_double_click")
+	return is_double_click(event)
+
+
+## Checks if [param event] is an [InputEventMouseButton] event and if it is pressed.
+static func is_click_pressed(event: InputEvent) -> bool:
+	return is_click(event) and event.pressed
+
+
+## @deprecated Use [method is_click_pressed] instead.
+## Checks if [param event] is a pressed mouse click event.
+static func is_click_or_touch_pressed(event: InputEvent) -> bool:
+	_warn_deprecated("is_click_or_touch_pressed", "is_click_pressed")
+	return is_click_pressed(event)
+
+
+## Returns the button index of [param event] when it is an [InputEventMouseButton] event, which is
+## [member InputEventMouseButton.button_index]. Returns [code]0[/code] if the event isn't pressed
+## or is not an [InputEventMouseButton].
+static func get_click_button_index(event: InputEvent) -> int:
 	var index := 0
 
-	if is_click_or_touch_pressed(event):
-		if event is InputEventMouseButton:
-			index = event.button_index
-		elif event is InputEventScreenTouch:
-			# Finger index is not a MouseButton constant — normalize primary tap to left-click.
-			# Multi-finger gesture mapping is deferred.
-			if event.index == 0:
-				index = MOUSE_BUTTON_LEFT
+	if is_click_pressed(event):
+		index = event.button_index
 
 	return index
+
+
+## @deprecated Use [method get_click_button_index] instead.
+## Returns the button index of a pressed mouse click event.
+static func get_click_or_touch_index(event: InputEvent) -> int:
+	_warn_deprecated("get_click_or_touch_index", "get_click_button_index")
+	return get_click_button_index(event)
 
 
 ## For each element in [param array] calls [param callback] passing the element as a parameter. If
@@ -242,6 +255,19 @@ static func get_popochiu_globals() -> Node:
 	if not is_instance_valid(globals):
 		globals = e.get_node("/root/Globals")
 	return globals
+
+
+#endregion
+
+#region Private ####################################################################################
+# Prints a deprecation warning for [param old_name] at most once per session, pointing to
+# [param new_name].
+static func _warn_deprecated(old_name: String, new_name: String) -> void:
+	if _warned_deprecations.has(old_name):
+		return
+
+	_warned_deprecations[old_name] = true
+	print_warning("%s() is deprecated. Use %s() instead." % [old_name, new_name])
 
 
 #endregion
