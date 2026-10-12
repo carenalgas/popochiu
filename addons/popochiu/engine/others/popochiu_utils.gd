@@ -25,6 +25,10 @@ static var cursor: PopochiuCursor = null:
 static var globals: Node = null:
 	get = get_popochiu_globals
 
+## @deprecated Will be removed in 2.3 alongside the companion proxy functions.
+# Tracks deprecation notices already printed, so a deprecated call in a loop does not flood output.
+static var _warned_deprecations := {}
+
 
 #region Public #####################################################################################
 ## Used by the GUI to get the position of [param node] in the scene transformed to the space of the
@@ -256,10 +260,6 @@ static func get_popochiu_globals() -> Node:
 #endregion
 
 #region Private ####################################################################################
-# Tracks deprecation notices already printed, so a deprecated call in a loop does not flood output.
-static var _warned_deprecations := {}
-
-
 # Prints a deprecation warning for [param old_name] at most once per session, pointing to
 # [param new_name].
 static func _warn_deprecated(old_name: String, new_name: String) -> void:
