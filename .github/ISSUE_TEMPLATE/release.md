@@ -7,7 +7,7 @@ assignees: stickgrinder,mapedorr
 
 ---
 
-### Description
+## Description
 
 Follow the steps below to prepare a new release of Popochiu.
 
@@ -15,6 +15,8 @@ Follow the steps below to prepare a new release of Popochiu.
 
 #### Preliminary steps
 
+* [ ] Make sure all deprecation notices that should be removed from the release are actually gone
+* [ ] Bump Godot version in the README and the docs if needed
 * [ ] Check all open PRs to make sure everything done and approved is merged to `develop`
 * [ ] Write release notes by reviewing the [next release](https://github.com/orgs/carenalgas/projects/1/views/8) board.
 * [ ] Write release announcement for Discord and Itch

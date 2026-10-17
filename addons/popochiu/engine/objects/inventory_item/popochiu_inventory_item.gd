@@ -32,7 +32,8 @@ signal unselected
 ## The number of this item the player currently owns. Use this property to check ownership and
 ## stack sizes.
 var quantity_owned := 0
-## @deprecated Use [member quantity_owned] instead. Kept for backward compatibility.
+## @deprecated Available in 2.2 - Will be removed in 2.3. Use [member quantity_owned] instead. Kept
+## for backward compatibility.
 ## Reading returns [code]true[/code] if [member quantity_owned] is greater than [code]0[/code].[br]
 ## Setting [code]true[/code] ensures [member quantity_owned] is at least [code]1[/code].[br]
 ## Setting [code]false[/code] sets [member quantity_owned] to [code]0[/code].[br]
@@ -233,27 +234,6 @@ func queue_replace(new_item: PopochiuInventoryItem, character: PopochiuCharacter
 ## [/codeblock]
 func replace(new_item: PopochiuInventoryItem, character: PopochiuCharacter = null) -> void:
 	await PopochiuUtils.i.replace_item(self, new_item, character)
-
-
-## @deprecated Available in 2.1 - Will be removed in 2.2. Use [method queue_remove] instead.
-##
-## [i]This method is intended to be used inside a [method Popochiu.queue] of instructions.[/i]
-func queue_discard(quantity: int = 0) -> Callable:
-	return func (): await discard(quantity)
-
-
-## @deprecated Available in 2.1 - Will be removed in 2.2. Use [method remove] instead.
-## Calls [method _on_discard] and emits
-## [signal PopochiuIInventory.item_discarded] before delegating to [method remove].
-func discard(quantity: int = 0) -> void:
-	PopochiuUtils.print_warning(
-		"discard() is deprecated and will be removed in Popochiu 2.2."
-		+ " Use remove() instead."
-	)
-	_on_discard()
-	PopochiuUtils.i.item_discarded.emit(self)
-	
-	await remove(quantity)
 
 
 ## Makes this item the current active item (the cursor will look like the item's texture).
