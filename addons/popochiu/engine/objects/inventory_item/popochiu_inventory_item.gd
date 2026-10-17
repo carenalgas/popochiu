@@ -32,7 +32,8 @@ signal unselected
 ## The number of this item the player currently owns. Use this property to check ownership and
 ## stack sizes.
 var quantity_owned := 0
-## @deprecated Use [member quantity_owned] instead. Kept for backward compatibility.
+## @deprecated Available in 2.2 - Will be removed in 2.3. Use [member quantity_owned] instead. Kept
+## for backward compatibility.
 ## Reading returns [code]true[/code] if [member quantity_owned] is greater than [code]0[/code].[br]
 ## Setting [code]true[/code] ensures [member quantity_owned] is at least [code]1[/code].[br]
 ## Setting [code]false[/code] sets [member quantity_owned] to [code]0[/code].[br]
