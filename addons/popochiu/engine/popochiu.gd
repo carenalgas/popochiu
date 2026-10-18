@@ -381,30 +381,6 @@ func queueable(node: Object, method: String, params := [], signal_name := "") ->
 	return func (): await _queueable(node, method, params, signal_name)
 
 
-## @deprecated Available in 2.1 - Will be removed in 2.2.
-## Plays the transition [param anim_name] animation in the [TransitionLayer] with a [param duration] in
-## seconds with the specified [param mode]. This method is intended to be used inside a [method queue] of
-## instructions.
-func queue_play_transition(anim_name: String, duration: float, mode: int) -> Callable:
-	PopochiuUtils.print_warning(
-		"E.queue_play_transition() is deprecated and will be removed in Popochiu 2.2." +
-		" Use T.queue_play_transition() instead."
-	)
-	return func (): await play_transition(anim_name, duration, mode)
-
-## @deprecated Available in 2.1 - Will be removed in 2.2.
-## Plays the transition [param anim_name] animation in the [TransitionLayer] with a [param duration] in
-## seconds with the specified [param mode].
-func play_transition(anim_name: String, duration: float, mode: int) -> void:
-	PopochiuUtils.print_warning(
-		"E.play_transition() is deprecated and will be removed in Popochiu 2.2." +
-		" Use T.play_transition() instead."
-	)
-	PopochiuUtils.t.play_transition(anim_name, duration, mode)
-	
-	await PopochiuUtils.t.transition_finished
-
-
 ## Returns [code]true[/code] if any saved game sessions exist in the game's save folder
 ## ([code]user://[/code] by default — open via [b]Project > Open User Data Folder[/b]).
 func has_save() -> bool:
@@ -449,10 +425,6 @@ func load_game(slot := 1) -> void:
 		true,
 		false # Do not store the state of the current room
 	)
-
-## @deprecated Now this is done by [method PopochiuMainCamera.stop_shake].
-func stop_camera_shake() -> void:
-	camera.stop_shake()
 
 
 # @popochiu-docs-ignore

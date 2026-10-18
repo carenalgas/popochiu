@@ -158,21 +158,24 @@ func _on_player_changed(_old_player: PopochiuCharacter, _new_player: PopochiuCha
 
 
 ## Called when [param item] is added to [param character]'s inventory.[br]
-## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## @deprecated Available in 2.2 - Will be removed in 2.3. Inventory holders (e.g. SimpleClickBar,
+## PopochiuInventoryGrid) subscribe to
 ## [signal PopochiuIInventory.item_added] directly and complete the handshake themselves.
 func _on_item_added(_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
 
 ## Called when [param item] is removed from [param character]'s inventory.[br]
-## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## @deprecated Available in 2.2 - Will be removed in 2.3. Inventory holders (e.g. SimpleClickBar,
+## PopochiuInventoryGrid) subscribe to
 ## [signal PopochiuIInventory.item_removed] directly and complete the handshake themselves.
 func _on_item_removed(_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
 
 
 ## Called when [param item] is replaced in [param character]'s inventory by [param new_item].[br]
-## @deprecated Inventory holders (e.g. SimpleClickBar, PopochiuInventoryGrid) subscribe to
+## @deprecated Available in 2.2 - Will be removed in 2.3. Inventory holders (e.g. SimpleClickBar,
+## PopochiuInventoryGrid) subscribe to
 ## [signal PopochiuIInventory.item_replaced] directly and complete the handshake themselves.
 func _on_item_replaced(_item: PopochiuInventoryItem, _new_item: PopochiuInventoryItem, _character: PopochiuCharacter) -> void:
 	pass
