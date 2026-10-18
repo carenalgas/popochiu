@@ -59,7 +59,7 @@ The PopochiuAudioManager is initialized as a child of [`Popochiu`](#popochiu-eng
 This tiny subsystem manages the on-screen representation of the mouse pointer. It allows switching between a primary and secondary representation, which is particularly useful for interfaces where the cursor shape changes - for example, to reflect a selected inventory item or a temporary action that deactivates after its next use.
 
 !!! warning
-    You might wonder about the relationship between the **Cursor** component in the [GUI scene](../../../how-to-develop-a-game/customize-the-game-ui) and the cursor displayed on the screen. This can be a bit confusing (and is likely to change in the future). The **Cursor** GUI component simply holds a catalog of animations available for the pointer. The actual on-screen cursor is created at runtime by the engine and is not an instance of the GUI component.
+    You might wonder about the relationship between the **Cursor** component in the [GUI scene](../../how-to-develop-a-game/customize-the-game-ui.md) and the cursor displayed on the screen. This can be a bit confusing (and is likely to change in the future). The **Cursor** GUI component simply holds a catalog of animations available for the pointer. The actual on-screen cursor is created at runtime by the engine and is not an instance of the GUI component.
 
 ---
 
@@ -132,6 +132,6 @@ For easy reference, find here a summary of all Popochiu Objects:
 
 ## Templates
 
-Not exactly a subsystem of the engine, but still worth mentioning, the `engine/templates` directory contains templates for many scripts used to create objects (and their corresponding state scripts, if applicable) in the `game` folder. These templates are read and populated by the [Popochiu plugin factories](../editor-plugin#factories-and-config) and other creation scripts, then saved in the appropriate location to instantiate new game elements.
+Not exactly a subsystem of the engine, but still worth mentioning, the `engine/templates` directory contains templates for many scripts used to create objects (and their corresponding state scripts, if applicable) in the `game` folder. These templates are read and populated by the [Popochiu plugin factories](editor-plugin.md#factories-and-config) and other creation scripts, then saved in the appropriate location to instantiate new game elements.
 
 Game UI templates and all their components also belong here and can be found at (`engine/templates/gui`).

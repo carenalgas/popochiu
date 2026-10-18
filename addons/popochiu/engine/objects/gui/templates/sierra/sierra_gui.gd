@@ -37,7 +37,7 @@ func _ready() -> void:
 func _input(event: InputEvent) -> void:
 	if PopochiuUtils.g.is_blocked: return
 	
-	match PopochiuUtils.get_click_or_touch_index(event):
+	match PopochiuUtils.get_click_button_index(event):
 		MOUSE_BUTTON_LEFT:
 			# NOTE: When clicking anywhere with the Left Mouse Button, block
 			# the player from moving to the clicked position since the Sierra

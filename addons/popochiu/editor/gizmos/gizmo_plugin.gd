@@ -129,6 +129,12 @@ func _forward_canvas_draw_over_viewport(viewport_control: Control) -> void:
 
 
 func _handles(object: Object) -> bool:
+	# Only scene nodes are handled here. Claiming Resources makes Godot crash when a
+	# sub-resource is opened in the Inspector (godotengine/godot#116523).
+	# Fixes #565 (Editor crashes when opening sub-resource menu).
+	if not object is Node:
+		return false
+
 	var edited_root: Node = EditorInterface.get_edited_scene_root()
 	return (
 		edited_root is PopochiuCharacter

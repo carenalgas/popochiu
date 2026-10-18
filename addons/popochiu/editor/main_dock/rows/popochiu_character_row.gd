@@ -82,6 +82,11 @@ func _remove_from_data(name: String) -> void:
 	PopochiuResources.remove_autoload_obj(PopochiuResources.C_SNGL, name)
 	PopochiuResources.erase_data_value("characters", name)
 
+	# Drop the PC reference when the removed character was the Player-controlled Character.
+	# Otherwise no new character could be flagged as PC. Fixes #441.
+	if PopochiuResources.get_data_value("setup", "pc", "") == name:
+		PopochiuResources.erase_data_value("setup", "pc")
+
 
 func _get_target_array() -> String:
 	return "characters"

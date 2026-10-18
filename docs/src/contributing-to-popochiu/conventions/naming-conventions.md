@@ -104,4 +104,4 @@ PopochiuCursor.gd -> does not follow Godot's file naming conventions
 ```
 
 !!! note
-    File naming guidelines for documentation and assets can be found in the [Contributing documentation](TBD) section.
+    File naming guidelines for documentation and assets can be found in the [Contributing documentation](../contributing-documentation/basic-rules.md) section.

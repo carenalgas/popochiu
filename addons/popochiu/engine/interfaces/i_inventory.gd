@@ -78,7 +78,8 @@ var clicked: PopochiuInventoryItem
 ## should skip entrance/exit animations during restore.
 var is_restoring := false
 # ---- Used for saving/loading the game ------------------------------------------------------------
-## @deprecated Use [member PopochiuCharacter.inventory] instead.
+## @deprecated Available in 2.2 - Will be removed in 2.3. Use [member PopochiuCharacter.inventory]
+## instead.
 var items: Array : set = _set_items, get = _get_items
 ## Stores per-item state data for each [PopochiuInventoryItem] in the project. The key for each
 ## entry is the item's [member PopochiuInventoryItem.script_name].
@@ -436,7 +437,8 @@ func set_active(value: PopochiuInventoryItem) -> void:
 	item_selected.emit(active)
 
 
-## @deprecated Use [member PopochiuCharacter.inventory] instead.
+## @deprecated Available in 2.2 - Will be removed in 2.3. Use [member PopochiuCharacter.inventory]
+## instead.
 func _get_items() -> Array:
 	PopochiuUtils.print_warning(
 		"I.items is deprecated. Use C.player.inventory.keys() instead."

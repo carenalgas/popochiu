@@ -4,7 +4,7 @@ weight: 2045
 
 ### Add a prop
 
-We already encountered props, when we [added our background](index.md#intbkmk-props-explanation) to the game's first room. It's now time for a bit more information.
+We already encountered props, when we [added our background](create-the-first-room.md#intbkmk-props-explanation) to the game's first room. It's now time for a bit more information.
 
 Props are arguably the most important elements in a room. Like hotspots, they can be interactive; they have a baseline and a _walk-to point_; the shape of the interaction area is represented by a polygon. Unlike hotspots they have their own **Sprite2D** node and an internal **AnimationPlayer**. Simply put, props can represent visible (an animated, if necessary) items on the scene. Since they have a baseline, characters can walk behind them, creating a deep, interesting gaming world.
 

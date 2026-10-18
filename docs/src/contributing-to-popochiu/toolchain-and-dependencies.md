@@ -12,7 +12,7 @@ We strive to keep Popochiu compatible with the latest stable version of Godot, s
 
 While testing Popochiu on non-stable versions is allowed, all contributions must be made using a stable, supported version. Contributions based on non-stable versions cannot be tested or approved.
 
-The only exception is for RC (_release candidates_), but please refer to [the related answers on the Q&A page](../qna/) for details.
+The only exception is for RC (_release candidates_), but please refer to [the related answers on the Q&A page](qna.md) for details.
 
 ---
 
@@ -28,7 +28,7 @@ No specific tools are needed to interact with these workflows, but all automatio
 The **`Dockerfile`** for the documentation is located in the `docs` directory, and defines the MkDocs image used to preview changes to the documentation locally (see below).
 
 !!! note
-    Contributions that improve or optimize the extractor or documentation site are welcome, as long as they follow the contribution guidelines. See the [Contributing Documentation](../contributing-documentation) section for more information.
+    Contributions that improve or optimize the extractor or documentation site are welcome, as long as they follow the contribution guidelines. See the [Contributing Documentation](contributing-documentation/basic-rules.md) section for more information.
 
 ---
 
@@ -46,7 +46,7 @@ Among other things, contributors are invited to leverage these technologies to:
 * Analyze requirements and identify edge cases.
 * Draft issues or documentation.
 
-While these tools can greatly accelerate and enhance your workflow, it remains the contributor’s responsibility to ensure the final result meets our quality expectations and fully complies with our [Definition of Done](../project-management/definition-of-done).  
+While these tools can greatly accelerate and enhance your workflow, it remains the contributor’s responsibility to ensure the final result meets our quality expectations and fully complies with our [Definition of Done](project-management/definition-of-done.md).  
 Generative AI is a powerful ally, not a replacement for thoughtful review and accountability. We embrace these advancements wholeheartedly, but expect all contributors to use them responsibly and with care.
 
 In particular, we ask contributors to follow these guidelines when using AI-assisted techniques:
@@ -164,6 +164,6 @@ The documentation supports live reloading, so any changes you save will automati
 
 ### Closing notes
 
-Before pushing changes to the documentation, please read the [Contributing Documentation](../contributing-documentation) section.
+Before pushing changes to the documentation, please read the [Contributing Documentation](contributing-documentation/basic-rules.md) section.
 
 For maintainers, instructions for publishing the documentation to the official site are available in the dedicated [README.md](https://github.com/carenalgas/popochiu/blob/develop/docs/README.md) file.

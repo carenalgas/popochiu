@@ -48,7 +48,7 @@ This section may seem a bit complex at first, but, for these reasons, we encoura
     - You just need to implement the `on_<command>()` methods for the commands you want to support. Unimplemented commands will fall back to the character saying a generic per-command response (e.g., "Not picking that up." or "I see nothing special.").
     - If you want to change these generic responses, edit the `gui_commands.gd` file in your project and override the fallback methods for each command. For example, you can change the "Look at" fallback to say something different when the player is controlling a specific character.
 
-    Feel free to skip to the [next section](../await-and-queue-functions) if this is all you need for now. You can always come back to this page later when you want to customize the behavior of your GUI or create your own.
+    Feel free to skip to the [next section](await-and-queue-functions.md) if this is all you need for now. You can always come back to this page later when you want to customize the behavior of your GUI or create your own.
 
 ## How command dispatch works
 

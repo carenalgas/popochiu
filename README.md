@@ -1,6 +1,6 @@
 # Popochiu
 
-[![Godot v4.6](https://img.shields.io/badge/Godot-4.6-blue)](https://godotengine.org/download/archive/4.6-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
+[![Godot v4.7](https://img.shields.io/badge/Godot-4.7-blue)](https://godotengine.org/download/archive/4.7-stable/) [![Discord](https://img.shields.io/discord/1128222869898416182?label=Discord&logo=discord&logoColor=ffffff&labelColor=5865F2&color=5865F2)](https://discord.gg/Frv8C9Ters)
 
 ![Cover image](home_banner.png "Popochiu")
 
@@ -51,12 +51,13 @@ And much more is on the way. Popochiu is in active development, and we maintain 
 
 ## Releases
 
-The latest stable public release is **Popochiu 2.1.0**, which targets **Godot 4.6**.
+The latest stable public release is **Popochiu 2.2.1**, which targets **Godot 4.7**.
 
 Use the table below to determine which version to download for your Godot version:
 
 | Required Godot version | Popochiu Release |
 | --- | --- |
+| 4.7 | [Popochiu 2.2.1](https://github.com/carenalgas/popochiu/releases/tag/v2.2.1) |
 | 4.6 | [Popochiu 2.1.0](https://github.com/carenalgas/popochiu/releases/tag/v2.1.0) |
 | 4.3 | [Popochiu 2.0.3](https://github.com/carenalgas/popochiu/releases/tag/v2.0.3) |
 

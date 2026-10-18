@@ -97,15 +97,16 @@ func _ready() -> void:
 	
 	# Connect to helpers' signals
 	PopochiuEditorHelper.signal_bus.audio_cues_deleted.connect(delete_rows)
+	
+	# Connect to Editor signals. Wired once here so re-filling the tab after the Setup window
+	# closes does not try to connect the signal again.
+	EditorInterface.get_resource_filesystem().sources_changed.connect(_on_sources_changed)
 
 
 #endregion
 
 #region Public #####################################################################################
 func fill_data() -> void:
-	# Connect to Editor signals
-	EditorInterface.get_resource_filesystem().sources_changed.connect(_on_sources_changed)
-	
 	# Look for audio files without AudioCue
 	_put_audio_cues_in_group()
 	search_audio_files()

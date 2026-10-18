@@ -280,21 +280,25 @@ func _play(
 	var cue_name: String = cue.resource_name
 	
 	player.bus = cue.bus
-	player.play(from_position)
 
-	
 	# This is a workaround for a Godot 4.5 bug
-	# See https://github.com/godotengine/godot/commit/ccfbdf2bb2f109ba83533a45ef48dd0b219fc872 and https://github.com/godotengine/godot/commit/ccfbdf2bb2f109ba83533a45ef48dd0b219fc872 
+	# See https://github.com/godotengine/godot/pull/100652 and https://github.com/godotengine/godot/pull/106600
 	# Fixes #463 Audio cues looping inappropriately in Godot 4.5
 	#
+	# The loop mode must be set before [method Node.play]: the Web backend registers the stream as
+	# a sample during play and snapshots its loop mode at that point, so setting it afterwards has
+	# no effect there and one-shots keep looping. See #508.
+	#
 	# TODO: remove this as soon as it becomes irrelevant
-	if player.stream.get_class() == 'AudioStreamWAV': 
+	if player.stream.get_class() == 'AudioStreamWAV':
 		player.stream.loop_mode = (
 			AudioStreamWAV.LOOP_FORWARD if cue.loop else AudioStreamWAV.LOOP_DISABLED
 		)
-	
+
+	player.play(from_position)
+
 	if not player.finished.is_connected(_on_audio_stream_player_finished):
-		player.finished.connect(_on_audio_stream_player_finished.bind(player, cue_name, 0))
+		player.finished.connect(_on_audio_stream_player_finished.bind(player))
 	
 	if _active.has(cue_name):
 		_active[cue_name].players.append(player)
@@ -319,28 +323,33 @@ func _get_free_stream(group: Node):
 
 # Reassigns the [AudioStreamPlayer] to its original group when it finishes so it can be available
 # for being used again.
-func _on_audio_stream_player_finished(
-	stream_player: Node, cue_name: String, _debug_idx: int
-) -> void:
+func _on_audio_stream_player_finished(stream_player: Node) -> void:
+	# A player released while still fading must not be touched by its stale tween after being reused.
+	_cancel_fade(stream_player)
+	
 	if stream_player.has_meta(TEMP_PLAYER):
 		stream_player.queue_free()
 	elif stream_player is AudioStreamPlayer:
 		_reparent($Active, $Generic, stream_player.get_index())
 	else:
 		_reparent($Active, $Positional, stream_player.get_index())
-	
-	if _active.has(cue_name):
+
+	# Pool players are reused across cues, so the cue name can't be captured when the connection is
+	# made (it would go stale on reuse). Find the player in [_active] to clear the right entry.
+	# Fixes #554.
+	for cue_name: String in _active:
 		var players: Array = _active[cue_name].players
-		for idx in players.size():
-			if players[idx].get_instance_id() == stream_player.get_instance_id():
-				players.remove_at(idx)
-				break
-	
+		var idx := players.find(stream_player)
+
+		if idx == -1:
+			continue
+
+		players.remove_at(idx)
+
 		if players.is_empty():
 			_active.erase(cue_name)
-	
-	if not stream_player.finished.is_connected(_on_audio_stream_player_finished):
-		stream_player.finished.connect(_on_audio_stream_player_finished)
+
+		break
 
 
 func _reparent(source: Node, target: Node, child_idx: int) -> Node:
@@ -407,10 +416,37 @@ func _fade_sound(cue_name: String, duration = 1, from = 0, to = 0) -> void:
 
 
 func _fadeout_finished(stream_player: Node, tween: Tween) -> void:
-	if stream_player.stream.get_instance_id() in _fading_sounds :
-		_fading_sounds.erase(stream_player.stream.get_instance_id())
-		stream_player.stop()
-		tween.finished.disconnect(_fadeout_finished)
+	# Fade-ins also connect here, but only fade-outs are tracked in [_fading_sounds].
+	if not stream_player.stream.get_instance_id() in _fading_sounds:
+		return
+	
+	_fading_sounds.erase(stream_player.stream.get_instance_id())
+	stream_player.stop()
+	# [method AudioStreamPlayer.stop] does not emit [signal AudioStreamPlayer.finished] when the
+	# stream hasn't reached its end, so emit it to return the player to its pool and clear its
+	# active entry. Otherwise a faded stop leaks the entry and the cue can never play again.
+	stream_player.finished.emit()
+	tween.finished.disconnect(_fadeout_finished)
+
+
+# Kills the fade running on [param stream_player], if any, so a released player can't be modified by
+# a stale tween after being reused.
+func _cancel_fade(stream_player: Node) -> void:
+	# No stream, no op
+	if stream_player.stream == null: return
+	
+	var stream_id: int = stream_player.stream.get_instance_id()
+	
+	if not _fading_sounds.has(stream_id): return
+	
+	# The same stream can play on several players at once; only cancel this player's own fade.
+	if _fading_sounds[stream_id].stream != stream_player: return
+	
+	var tween: Tween = _fading_sounds[stream_id].tween
+	if is_instance_valid(tween) and tween.is_running():
+		tween.kill()
+	
+	_fading_sounds.erase(stream_id)
 
 
 #endregion

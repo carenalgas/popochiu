@@ -9,7 +9,7 @@ The purpose of this page is to provide contributors with an overview of Popochiu
 Like every project, Popochiu benefits from open communication and thoughtful discussions before submitting issues or pull requests, to grow organically and remain maintainable on the long run.
 
 !!! info "Too much talk! I'm a person of action!"
-    If you don't want to digest too much _whys_ and want to jump to the _hows_, please read the [Contribution Q&As](../qna) page.
+    If you don't want to digest too much _whys_ and want to jump to the _hows_, please read the [Contribution Q&As](qna.md) page.
 
     **Warning**: We take no responsibility for frustration, anger, or bitter disappointment if you skip reading important informations and your PRs get rejected!
 
@@ -82,7 +82,7 @@ Here are some of the many ways you can make a positive impact on Popochiu; even 
 
 1. Popochiu is built with Godot, so it’s essential to [learn the basics of the engine](https://docs.godotengine.org/en/latest/) and its [GDScript language](https://docs.godotengine.org/en/latest/tutorials/scripting/gdscript/index.html) before opening a PR. While extensive knowledge is a bonus, you can still contribute even if you’re new to this world—just make sure to review the previous sections carefully. It’s even more important in that case!  
 2. Specifically, familiarity with **Control nodes** and how to connect them using signals is incredibly helpful, both for coding custom game UIs and extending the editor plugin. We highly recommend taking the time to learn these concepts.  
-3. A broad understanding of the plugin and engine architecture will make navigating the code much easier. Be sure to check out the [Project Overview](project-overview) section for a primer.  
+3. A broad understanding of the plugin and engine architecture will make navigating the code much easier. Be sure to check out the [Project Overview](project-overview/popochiu-subsystems.md) section for a primer.  
 4. For those contributing structural or large-scale features, knowledge of **design patterns** and **clean code principles** is a huge advantage. We strongly encourage reading Robert Nystrom’s free online book, [Game Programming Patterns](http://gameprogrammingpatterns.com/). Familiarity with the [SOLID principles](https://en.wikipedia.org/wiki/SOLID) is also highly valuable.  
 5. Not everything is about code! The plugin extends the Godot Editor with custom UIs, so skills in **interaction design**, **UI design**, or **user/developer experience** can significantly improve Popochiu’s usability for everyone.  
 6. Finally, taking the time to read this entire section of the documentation is **highly** appreciated. It makes everything easier for everyone involved.  

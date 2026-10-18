@@ -46,13 +46,13 @@ The animation names you set in the inspector are automatically used by these met
 !!! info "Outfit changes"
     These variables are meant to instruct the engine about which animation to use for the three basic managed states. Although they can be used to change the outfit or appearance of a character, additional animations should have managed by hand.
 
-    For the purpose of applying costumes, outfits, or other state-changes that apply to **every** animation, see the dedicated [Animation Prefix](../character-animation-prefix) guide.
+    For the purpose of applying costumes, outfits, or other state-changes that apply to **every** animation, see the dedicated [Animation Prefix](character-animation-prefix.md) guide.
 
 ## About directions and naming conventions
 
 When Popochiu needs to play an animation, it follows this process:
 
-1. When animations are imported via one of the available [importers](../../the-editor-handbook/importers/) it evens them out by forcing _snake_case_ format. The tags in your source file can be in another format though. If the exact animation name you entered isn't found, Popochiu will automatically try the snake_case version. This means you can enter animation names in any case format (camelCase, PascalCase, etc.) and Popochiu will find the corresponding snake_case animations if they exist.
+1. When animations are imported via one of the available [importers](../the-editor-handbook/importers.md) it evens them out by forcing _snake_case_ format. The tags in your source file can be in another format though. If the exact animation name you entered isn't found, Popochiu will automatically try the snake_case version. This means you can enter animation names in any case format (camelCase, PascalCase, etc.) and Popochiu will find the corresponding snake_case animations if they exist.
 
 2. Popochiu automatically appends **directional suffixes** to your animation name based on the character's facing direction - `_r` (right), `_dr` (down-right), `_d` (down), and so on. If no directional variant exists, it falls back to the base animation name.
 

@@ -4,7 +4,7 @@ weight: 7005
 
 # Scripting overview
 
-Welcome to the Engine Handbook! This section is for game developers who want to understand how to write their game's logic with Popochiu. If you've already followed the [Getting Started](../getting-started/creating-a-new-game.md) tutorial and know your way around the editor, this is where you learn how to create your game logic, how the engine works (even *under the hood*) and how to make the most of it.
+Welcome to the Engine Handbook! This section is for game developers who want to understand how to write their game's logic with Popochiu. If you've already followed the [Getting Started](../how-to-develop-a-game/introduction.md) tutorial and know your way around the editor, this is where you learn how to create your game logic, how the engine works (even *under the hood*) and how to make the most of it.
 
 ## How Popochiu works
 
