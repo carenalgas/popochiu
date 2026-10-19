@@ -23,11 +23,11 @@ enum BulkActionStatus {
 	DIRTY
 }
 
-# Shown while an import is running. Aseprite exports block the editor, so the
-# hint below makes clear the app is working and not hung.
+# Shown while an import is running. Exports and JSON parsing run on background
+# threads, so the editor stays responsive and the hint can say so.
 const IMPORT_WORKING_TEXT := "Importing assets. Please wait."
 const IMPORT_WORKING_HINT_TEXT := (
-	"This can take a while on large files! Popochiu is not frozen, have patience!"
+	"This can take a while on large files. You can keep working in the editor."
 )
 
 var target_node: Node
@@ -48,6 +48,10 @@ var _output_folder := PopochiuEditorHelper.EMPTY_STRING
 var _file_dialog_aseprite: FileDialog
 var _tags_cache: Array = []
 var _importing := false
+# Invalidates stale async scan/refresh results (last one wins).
+var _scan_token := 0
+# True while a background tag-range refresh is running, so imports can wait for it.
+var _tags_refreshing := false
 var _import_dialog: AcceptDialog = null
 var _import_hint_panel: PanelContainer = null
 var _import_message: Label = null
@@ -253,12 +257,12 @@ func _on_source_pressed() -> void:
 
 func _on_aseprite_file_selected(path) -> void:
 	_set_source(ProjectSettings.localize_path(path))
-	_scan_source()
 	_file_dialog_aseprite.queue_free()
+	await _scan_source()
 
 
 func _on_rescan_pressed() -> void:
-	_scan_source()
+	await _scan_source()
 
 
 func _on_import_pressed() -> void:
@@ -281,14 +285,12 @@ func _on_import_pressed() -> void:
 	# Let the user know something is happening: on re-imports Godot does not show
 	# its filesystem progress bars, so without this popup the operation looks
 	# frozen. It doubles as the final summary (see _finish_import_message).
-	# Aseprite exports block the main thread, so let the dialog paint a couple of
-	# frames before starting the work, or it would never be seen.
 	await _show_import_working()
-	# We have to wait a couple of frames (1 is not enough) because Aseprite
-	# exporting command, ran into a system call, will freeze the editor interface
-	# rendering an empty embedded popup, otherwise.
-	await get_tree().process_frame
-	await get_tree().process_frame
+
+	# A background scan may still be refreshing the tag list; let it finish so the
+	# import works on the same tags the user sees.
+	while _tags_refreshing:
+		await get_tree().process_frame
 
 	_options = {
 		"source": ProjectSettings.globalize_path(_source),
@@ -390,7 +392,7 @@ func _list_tags_with_ranges(file: String) -> Variant:
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FULL_PATH
 	if not _aseprite.test_command():
 		return RESULT_CODE.ERR_ASEPRITE_CMD_NOT_FOUND
-	return _aseprite.list_tags_with_ranges(file)
+	return await _aseprite.list_tags_with_ranges(file)
 
 
 func _load_config(cfg) -> void:
@@ -407,20 +409,33 @@ func _load_config(cfg) -> void:
 		cfg.get("autotrace_polygons", false)
 	)
 
-	# Restore the tag list. Refresh the persisted frame data against the current
-	# source file: ranges stored in the metadata can be outdated (e.g. if the
-	# room was last saved before a re-scan), which would otherwise break group
-	# detection and the frame tooltips on reload. Falls back to the saved list
-	# when the source can't be read.
-	var saved_tags: Array = cfg.get("tags", [])
-	if not _source.is_empty():
-		_tags_cache = saved_tags
-		var refreshed: Array = _merge_with_cache(_get_tags_from_source_with_ranges())
-		if not refreshed.is_empty():
-			saved_tags = refreshed
-
+	# Show the saved tag list right away, then refresh the persisted frame data
+	# against the current source file in the background: ranges stored in the
+	# metadata can be outdated (e.g. if the room was last saved before a re-scan),
+	# which would otherwise break group detection and the frame tooltips on reload.
 	_set_tags_visible(cfg.get("tags_exp", false))
-	_populate_tags(saved_tags)
+	_populate_tags(cfg.get("tags", []))
+
+	if not _source.is_empty():
+		_refresh_tags_from_source_async()
+
+
+# Refreshes the frame ranges from the source file without blocking the UI. The
+# saved tag list and its per-tag preferences are preserved; only the frame data
+# is updated. A newer scan or refresh invalidates this one through the token.
+func _refresh_tags_from_source_async() -> void:
+	_scan_token += 1
+	var token := _scan_token
+	_tags_refreshing = true
+
+	var refreshed: Array = await _get_tags_from_source_with_ranges()
+	if not is_instance_valid(self):
+		return
+
+	_tags_refreshing = false
+	if token != _scan_token or refreshed.is_empty():
+		return
+	_populate_tags(_merge_with_cache(refreshed))
 
 
 func _save_config() -> void:
@@ -503,9 +518,12 @@ func _scan_source() -> void:
 	# Fetch the frame ranges on every scan (data-only, fast) so every row can
 	# show its frame info in the tag/group tooltip. list_tags_with_ranges falls
 	# back to name-only tags when the ranges can't be obtained.
-	_populate_tags(
-		_merge_with_cache(_get_tags_from_source_with_ranges())
-	)
+	_scan_token += 1
+	var token := _scan_token
+	var tags: Array = await _get_tags_from_source_with_ranges()
+	if not is_instance_valid(self) or token != _scan_token:
+		return
+	_populate_tags(_merge_with_cache(tags))
 	_save_config()
 	_set_tags_visible(true)
 
@@ -695,11 +713,11 @@ func _get_tags_from_ui() -> Array:
 	return tags_list
 
 
-# Reads the tags from the source file together with their frame ranges. Only
-# used at import time (it is slow, since it makes Aseprite export the sprite
-# metadata).
+# Reads the tags from the source file together with their frame ranges. Slow,
+# since it makes Aseprite export the sprite metadata, but no longer blocks the
+# editor: the export and JSON parsing run on background threads.
 func _get_tags_from_source_with_ranges() -> Array:
-	var tags_found = _list_tags_with_ranges(ProjectSettings.globalize_path(_source))
+	var tags_found = await _list_tags_with_ranges(ProjectSettings.globalize_path(_source))
 	if typeof(tags_found) == TYPE_INT:
 		PopochiuUtils.print_error(RESULT_CODE.get_error_message(tags_found))
 		return []

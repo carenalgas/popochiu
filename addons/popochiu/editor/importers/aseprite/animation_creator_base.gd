@@ -170,7 +170,7 @@ func _create_meta_tracks(animation: Animation) -> void:
 #region Private ####################################################################################
 ## Create a spritesheet with the whole file content.
 func _create_spritesheet_from_file() -> int:
-	_output = _aseprite.export_file(_options.source, _options.output_folder, _options)
+	_output = await _aseprite.export_file(_options.source, _options.output_folder, _options)
 	if _output.is_empty():
 		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
 	return RESULT_CODE.SUCCESS
@@ -178,7 +178,9 @@ func _create_spritesheet_from_file() -> int:
 
 ## Create a spritesheet with the frames of a specific tag.
 func _create_spritesheet_from_tag(selected_tag: String) -> int:
-	_output = _aseprite.export_tag(_options.source, selected_tag, _options.output_folder, _options)
+	_output = await _aseprite.export_tag(
+		_options.source, selected_tag, _options.output_folder, _options
+	)
 	if _output.is_empty():
 		return RESULT_CODE.ERR_ASEPRITE_EXPORT_FAILED
 	return RESULT_CODE.SUCCESS
@@ -186,7 +188,7 @@ func _create_spritesheet_from_tag(selected_tag: String) -> int:
 
 # Create a spritesheet with the frames inside the given range (a group tag).
 func _create_spritesheet_from_frame_range(name: String, from: int, to: int) -> int:
-	_output = _aseprite.export_frame_range(
+	_output = await _aseprite.export_frame_range(
 		_options.source, name, from, to, _options.output_folder, _options
 	)
 	if _output.is_empty():
@@ -208,14 +210,11 @@ func _load_spritesheet_file() -> Variant:
 	# Refresh filesystem
 	await _scan_filesystem()
 
-	# Try to access, decode and validate Aseprite JSON output
-	var file = FileAccess.open(_output.data_file, FileAccess.READ)
-	if file == null:
-		return file.get_open_error()
-
-	var json = JSON.new()
-	json.parse(file.get_as_text())
-	var content = json.get_data()
+	# Read and decode the exported JSON off the main thread (the sheet data can be
+	# large). Validation and metadata assignment stay on the main thread.
+	var content = await PopochiuWorker.run(_read_json_file.bind(_output.data_file))
+	if typeof(content) != TYPE_DICTIONARY:
+		return content
 
 	if not _aseprite.is_valid_spritesheet(content):
 		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
@@ -224,6 +223,22 @@ func _load_spritesheet_file() -> Variant:
 	_spritesheet_metadata.meta = content.meta
 	_spritesheet_metadata.frames = _aseprite.get_content_frames(content)
 	return content
+
+
+# Reads and parses [param path] into a Dictionary. Returns an int error code on
+# failure. Runs on a worker thread, so it only touches file I/O and JSON.
+func _read_json_file(path: String) -> Variant:
+	var file = FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		return FileAccess.get_open_error()
+
+	var json = JSON.new()
+	if json.parse(file.get_as_text()) != OK:
+		file.close()
+		return RESULT_CODE.ERR_INVALID_ASEPRITE_SPRITESHEET
+	file.close()
+
+	return json.get_data()
 
 
 # Saves the spritesheet path, removes the JSON file when configured to, and makes

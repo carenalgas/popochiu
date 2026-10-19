@@ -40,7 +40,7 @@ func _on_import_pressed() -> void:
 	# Refresh the frame ranges from the source file right now (this is the slow
 	# operation, but it only happens on import, never on scan). Groups are built
 	# from fresh indices so the import never uses a stale framing.
-	var refreshed_tags: Array = _get_tags_from_source_with_ranges()
+	var refreshed_tags: Array = await _get_tags_from_source_with_ranges()
 	var analysis_input: Array = _options.get("tags")
 	if not refreshed_tags.is_empty():
 		analysis_input = _merge_with_cache(refreshed_tags)

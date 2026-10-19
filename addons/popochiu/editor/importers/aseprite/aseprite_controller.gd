@@ -1,9 +1,22 @@
 @tool
 extends RefCounted
 
+# Aseprite executable path, resolved on the main thread before dispatching a task.
+# Worker threads must not read the EditorSettings singleton, so the blocking
+# helpers use this cached value instead of querying the settings themselves.
+var _command: String = PopochiuEditorHelper.EMPTY_STRING
+
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
 func export_file(file_name: String, output_folder: String, options: Dictionary) -> Dictionary:
+	return await _dispatch(
+		_export_file_blocking.bind(file_name, output_folder, options)
+	)
+
+
+func _export_file_blocking(
+	file_name: String, output_folder: String, options: Dictionary
+) -> Dictionary:
 	var exception_pattern = options.get('exception_pattern', PopochiuEditorHelper.EMPTY_STRING)
 	var only_visible_layers = options.get('only_visible_layers', false)
 	var output_name = (
@@ -34,9 +47,17 @@ func export_file(file_name: String, output_folder: String, options: Dictionary) 
 
 
 func export_layers(file_name: String, output_folder: String, options: Dictionary) -> Array:
+	return await _dispatch(
+		_export_layers_blocking.bind(file_name, output_folder, options)
+	)
+
+
+func _export_layers_blocking(
+	file_name: String, output_folder: String, options: Dictionary
+) -> Array:
 	var exception_pattern = options.get('exception_pattern', PopochiuEditorHelper.EMPTY_STRING)
 	var only_visible_layers = options.get('only_visible_layers', false)
-	var layers = list_layers(file_name, only_visible_layers)
+	var layers = _list_layers_blocking(file_name, only_visible_layers)
 	var exception_regex = _compile_regex(exception_pattern)
 
 	var output = []
@@ -46,12 +67,20 @@ func export_layers(file_name: String, output_folder: String, options: Dictionary
 			layer != PopochiuEditorHelper.EMPTY_STRING
 			and (not exception_regex or exception_regex.search(layer) == null)
 		):
-			output.push_back(export_layer(file_name, layer, output_folder, options))
+			output.push_back(_export_layer_blocking(file_name, layer, output_folder, options))
 
 	return output
 
 
 func export_layer(
+	file_name: String, layer_name: String, output_folder: String, options: Dictionary
+) -> Dictionary:
+	return await _dispatch(
+		_export_layer_blocking.bind(file_name, layer_name, output_folder, options)
+	)
+
+
+func _export_layer_blocking(
 	file_name: String, layer_name: String, output_folder: String, options: Dictionary
 ) -> Dictionary:
 	return _export_with_selector(
@@ -62,6 +91,14 @@ func export_layer(
 # IMPROVE: See if we can extract JSON data limited to the single tag
 # (so we don't have to reckon offset framerange)
 func export_tag(
+	file_name: String, tag_name: String, output_folder: String, options: Dictionary
+) -> Dictionary:
+	return await _dispatch(
+		_export_tag_blocking.bind(file_name, tag_name, output_folder, options)
+	)
+
+
+func _export_tag_blocking(
 	file_name: String, tag_name: String, output_folder: String, options: Dictionary
 ) -> Dictionary:
 	return _export_with_selector(
@@ -75,12 +112,24 @@ func export_tag(
 func export_frame_range(
 	file_name: String, name: String, from: int, to: int, output_folder: String, options: Dictionary
 ) -> Dictionary:
+	return await _dispatch(
+		_export_frame_range_blocking.bind(file_name, name, from, to, output_folder, options)
+	)
+
+
+func _export_frame_range_blocking(
+	file_name: String, name: String, from: int, to: int, output_folder: String, options: Dictionary
+) -> Dictionary:
 	return _export_with_selector(
 		["--frame-range", "%d,%d" % [from, to]], name, file_name, output_folder, options
 	)
 
 
 func list_layers(file_name: String, only_visible: bool = false) -> Array:
+	return await _dispatch(_list_layers_blocking.bind(file_name, only_visible))
+
+
+func _list_layers_blocking(file_name: String, only_visible: bool = false) -> Array:
 	var output = []
 	var arguments = ["-b", "--list-layers", file_name]
 
@@ -98,6 +147,10 @@ func list_layers(file_name: String, only_visible: bool = false) -> Array:
 
 
 func list_tags(file_name: String) -> Array:
+	return await _dispatch(_list_tags_blocking.bind(file_name))
+
+
+func _list_tags_blocking(file_name: String) -> Array:
 	var output = []
 	var arguments = ["-b", "--list-tags", file_name]
 
@@ -118,12 +171,16 @@ func list_tags(file_name: String) -> Array:
 # Falls back to name-only tags whenever the ranges can't be obtained, so the
 # scan always shows the tag list.
 func list_tags_with_ranges(file_name: String) -> Array:
+	return await _dispatch(_list_tags_with_ranges_blocking.bind(file_name))
+
+
+func _list_tags_with_ranges_blocking(file_name: String) -> Array:
 	var tags := _fetch_tags_with_ranges(file_name)
 
 	# Fallback: if we couldn't get the frame ranges, at least return the tag
 	# names so the importer still works (groups just won't be detected).
 	if tags.is_empty():
-		var names := list_tags(file_name)
+		var names := _list_tags_blocking(file_name)
 		if not names.is_empty():
 			PopochiuUtils.print_error('Aseprite: could not read tag frame ranges; groups will not be detected')
 		for name: String in names:
@@ -235,7 +292,7 @@ func _add_sheet_type_arguments(arguments: Array, options: Dictionary) -> void:
 
 
 func _get_exception_layers(file_name: String, exception_pattern: String) -> Array:
-	var layers = list_layers(file_name)
+	var layers = _list_layers_blocking(file_name)
 	var regex = _compile_regex(exception_pattern)
 	if regex == null:
 		return []
@@ -275,8 +332,16 @@ func _export_command_common_arguments(
 	]
 
 
+# Resolves the Aseprite command on the main thread, then runs [param work] on a
+# worker task. Every public method funnels through here so the blocking bodies
+# never read the editor settings themselves.
+func _dispatch(work: Callable) -> Variant:
+	_command = _get_aseprite_command()
+	return await PopochiuWorker.run(work)
+
+
 func _execute(arguments: Array, output: Array) -> int:
-	return OS.execute(_get_aseprite_command(), arguments, output, true, true)
+	return OS.execute(_command, arguments, output, true, true)
 
 
 func _get_aseprite_command() -> String:
