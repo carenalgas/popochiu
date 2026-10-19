@@ -1,10 +1,18 @@
 @tool
 extends RefCounted
 
+# Largest sheet side we let a grid layout reach before adding more columns.
+# Matches the usual texture limit Godot targets on desktop.
+const MAX_SHEET_DIMENSION := 16384
+
 # Aseprite executable path, resolved on the main thread before dispatching a task.
 # Worker threads must not read the EditorSettings singleton, so the blocking
 # helpers use this cached value instead of querying the settings themselves.
 var _command: String = PopochiuEditorHelper.EMPTY_STRING
+
+# Frame layout cached per source file, so importing many tags from one sheet only
+# probes it once. Entries carry the file's modified time and size for validation.
+var _sheet_layout_cache: Dictionary = {}
 
 
 # ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ PUBLIC ░░░░
@@ -33,7 +41,7 @@ func _export_file_blocking(
 	if not only_visible_layers:
 		arguments.push_front("--all-layers")
 
-	_add_sheet_type_arguments(arguments, options)
+	_add_sheet_type_arguments(file_name, arguments, options)
 
 	_add_ignore_layer_arguments(file_name, arguments, exception_pattern)
 
@@ -248,7 +256,7 @@ func _export_with_selector(
 		file_name, data_file, sprite_sheet
 	)
 
-	_add_sheet_type_arguments(arguments, options)
+	_add_sheet_type_arguments(file_name, arguments, options)
 
 	var exit_code := _execute(arguments, output)
 	if exit_code != 0:
@@ -281,14 +289,48 @@ func _add_ignore_layer_arguments(
 			arguments.push_front('--ignore-layer')
 
 
-func _add_sheet_type_arguments(arguments: Array, options: Dictionary) -> void:
-	var column_count: int = options.get("column_count", 0)
+func _add_sheet_type_arguments(file_name: String, arguments: Array, options: Dictionary) -> void:
+	var column_count := _resolve_column_count(file_name, options)
+
 	if column_count > 0:
 		arguments.push_back("--merge-duplicates") # Yes, this is undocumented
 		arguments.push_back("--sheet-columns")
 		arguments.push_back(column_count)
 	else:
+		# Fallback: Aseprite's bin packer is valid but can take minutes on sheets
+		# with many frames. Only used when the frame layout can't be determined.
 		arguments.push_back("--sheet-pack")
+
+
+# Returns the number of columns for the grid layout. Callers can force one via the
+# "column_count" option; otherwise it is derived from the source's frame count and
+# frame size so the sheet stays roughly square and within MAX_SHEET_DIMENSION.
+func _resolve_column_count(file_name: String, options: Dictionary) -> int:
+	var configured: int = options.get("column_count", 0)
+	if configured > 0:
+		return configured
+
+	var layout := _fetch_sheet_layout(file_name)
+	return _compute_column_count(
+		layout.get("frame_count", 0),
+		layout.get("frame_width", 0),
+		layout.get("frame_height", 0)
+	)
+
+
+func _compute_column_count(frame_count: int, frame_width: int, frame_height: int) -> int:
+	if frame_count <= 0 or frame_width <= 0 or frame_height <= 0:
+		return 0
+
+	# Aim for a roughly square sheet, then keep both sides within the limit.
+	var aspect := float(frame_width) / float(frame_height)
+	var columns := int(ceil(sqrt(float(frame_count) * aspect)))
+	columns = mini(columns, floori(float(MAX_SHEET_DIMENSION) / frame_width))
+
+	var max_rows := floori(float(MAX_SHEET_DIMENSION) / frame_height)
+	columns = maxi(columns, int(ceil(float(frame_count) / float(max_rows))))
+
+	return clampi(columns, 1, frame_count)
 
 
 func _get_exception_layers(file_name: String, exception_pattern: String) -> Array:
@@ -366,11 +408,78 @@ func _compile_regex(pattern: String) -> RegEx:
 
 # Exports only the sprite metadata (no sheet, so it is fast) and reads the tag
 # frame ranges from it. Returns an empty array on any failure.
-# The export is written to the project folder using relative paths (the same
-# style as the working import exports), because some sandboxed Aseprite
-# installs cannot write to the OS temp directory.
 func _fetch_tags_with_ranges(file_name: String) -> Array:
-	var relative_data_file := "./popochiu_tags_%d_%d.json" % [Time.get_ticks_msec(), randi()]
+	var tags := []
+	var content := _fetch_metadata(file_name)
+	if content.is_empty():
+		return tags
+
+	for ft in content.get("meta", {}).get("frameTags", []):
+		tags.push_back({
+			"tag_name": ft.name,
+			"from": ft.from,
+			"to": ft.to,
+			"direction": ft.direction,
+		})
+
+	if tags.is_empty():
+		PopochiuUtils.print_error('Aseprite: no frame tags found in the exported metadata')
+	return tags
+
+
+# Returns the cached frame layout for the source file, probing it only when the
+# file is new or changed. See _probe_sheet_layout.
+func _fetch_sheet_layout(file_name: String) -> Dictionary:
+	var entry: Dictionary = _sheet_layout_cache.get(file_name, {})
+	if not entry.is_empty() and _is_layout_cache_valid(file_name, entry):
+		return entry.layout
+
+	var layout := _probe_sheet_layout(file_name)
+	_sheet_layout_cache[file_name] = {
+		"modified_time": FileAccess.get_modified_time(file_name),
+		"file_size": _file_size(file_name),
+		"layout": layout,
+	}
+	return layout
+
+
+func _is_layout_cache_valid(file_name: String, entry: Dictionary) -> bool:
+	if entry.get("modified_time", -1) != FileAccess.get_modified_time(file_name):
+		return false
+
+	return entry.get("file_size", -1) == _file_size(file_name)
+
+
+func _file_size(file_name: String) -> int:
+	var file := FileAccess.open(file_name, FileAccess.READ)
+	if file == null:
+		return -1
+
+	return file.get_length()
+
+
+# Reads the frame count and frame size from a metadata-only export, so the sheet
+# can be laid out as a grid. Returns {} when the layout can't be determined.
+func _probe_sheet_layout(file_name: String) -> Dictionary:
+	var content := _fetch_metadata(file_name)
+	var frames = content.get("frames", [])
+	if not frames is Array or frames.is_empty():
+		return {}
+
+	var source_size: Dictionary = frames[0].get("sourceSize", {})
+	return {
+		"frame_count": frames.size(),
+		"frame_width": int(source_size.get("w", 0)),
+		"frame_height": int(source_size.get("h", 0)),
+	}
+
+
+# Runs a metadata-only export (no sheet, so it is fast) and returns the parsed
+# JSON as a Dictionary, or {} on any failure. The export is written to the project
+# folder using relative paths (the same style as the working import exports),
+# because some sandboxed Aseprite installs cannot write to the OS temp directory.
+func _fetch_metadata(file_name: String) -> Dictionary:
+	var relative_data_file := "./popochiu_meta_%d_%d.json" % [Time.get_ticks_msec(), randi()]
 	var data_file := relative_data_file.replace("./", "res://")
 	var output := []
 	var arguments := [
@@ -383,10 +492,10 @@ func _fetch_tags_with_ranges(file_name: String) -> Array:
 		file_name,
 	]
 
-	var tags := []
+	var content := {}
 	var exit_code := _execute(arguments, output)
 	if exit_code != 0:
-		PopochiuUtils.print_error('Aseprite: failed to export tags metadata (exit code %d)' % exit_code)
+		PopochiuUtils.print_error('Aseprite: failed to export metadata (exit code %d)' % exit_code)
 		printerr(output)
 	elif not FileAccess.file_exists(data_file):
 		printerr(
@@ -398,15 +507,7 @@ func _fetch_tags_with_ranges(file_name: String) -> Array:
 		if file != null:
 			var json := JSON.new()
 			if json.parse(file.get_as_text()) == OK and json.data is Dictionary:
-				for ft in json.data.get("meta", {}).get("frameTags", []):
-					tags.push_back({
-						"tag_name": ft.name,
-						"from": ft.from,
-						"to": ft.to,
-						"direction": ft.direction,
-					})
-				if tags.is_empty():
-					PopochiuUtils.print_error('Aseprite: no frame tags found in the exported metadata')
+				content = json.data
 			else:
 				PopochiuUtils.print_error('Aseprite: could not parse the exported JSON metadata')
 			file.close()
@@ -414,5 +515,5 @@ func _fetch_tags_with_ranges(file_name: String) -> Array:
 	# Always clean up the throwaway file
 	if FileAccess.file_exists(data_file):
 		DirAccess.remove_absolute(data_file)
-	return tags
+	return content
 
