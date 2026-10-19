@@ -10,6 +10,10 @@ const MAX_SHEET_DIMENSION := 16384
 # helpers use this cached value instead of querying the settings themselves.
 var _command: String = PopochiuEditorHelper.EMPTY_STRING
 
+# Remembers the command that already answered --version, so importing many assets
+# in one session doesn't spawn Aseprite once per asset just to test availability.
+var _tested_command: String = PopochiuEditorHelper.EMPTY_STRING
+
 # Frame layout cached per source file, so importing many tags from one sheet only
 # probes it once. Entries carry the file's modified time and size for validation.
 var _sheet_layout_cache: Dictionary = {}
@@ -228,7 +232,15 @@ func check_command_path() -> bool:
 
 
 func test_command() -> bool:
-	return OS.execute(_get_aseprite_command(), ['--version'], [], true) == 0
+	var command := _get_aseprite_command()
+	if command == _tested_command:
+		return true
+
+	if OS.execute(command, ['--version'], [], true) == 0:
+		_tested_command = command
+		return true
+
+	return false
 
 
 
@@ -282,6 +294,9 @@ func _export_result(data_file: String, sprite_sheet: String) -> Dictionary:
 func _add_ignore_layer_arguments(
 	file_name: String, arguments: Array, exception_pattern: String
 ) -> void:
+	if exception_pattern.is_empty():
+		return
+
 	var layers = _get_exception_layers(file_name, exception_pattern)
 	if not layers.is_empty():
 		for l in layers:
@@ -334,10 +349,13 @@ func _compute_column_count(frame_count: int, frame_width: int, frame_height: int
 
 
 func _get_exception_layers(file_name: String, exception_pattern: String) -> Array:
-	var layers = _list_layers_blocking(file_name)
+	# Resolve the pattern first: listing the layers spawns Aseprite and loads the
+	# whole file, so don't pay for it when there is nothing to filter out.
 	var regex = _compile_regex(exception_pattern)
 	if regex == null:
 		return []
+
+	var layers = _list_layers_blocking(file_name)
 
 	var exception_layers = []
 	for layer in layers:
