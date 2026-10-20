@@ -64,7 +64,7 @@ func _on_item_removed(node: Node) -> void:
 	inventory_item.unselected.disconnect(_on_item_unselected)
 
 
-func _on_item_selected(item: PopochiuInventoryItem) -> void:
+func _on_item_selected(_item: PopochiuInventoryItem) -> void:
 	_style_box_flat.border_color = selected_color
 	_is_selected = true
 
