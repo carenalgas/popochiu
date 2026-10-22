@@ -1,7 +1,7 @@
 # @popochiu-docs-ignore-class
 extends TextureButton
 
-@export var command: SierraCommands.Commands = 0
+@export var command: SierraCommands.Commands = SierraCommands.Commands.WALK
 
 
 #region Godot ######################################################################################

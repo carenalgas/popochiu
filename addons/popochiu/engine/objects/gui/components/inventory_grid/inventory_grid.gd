@@ -278,7 +278,7 @@ func _calculate_rows_and_scroll() -> void:
 			visible_slots += 1
 	@warning_ignore("integer_division")
 	rows = visible_slots / box.columns
-	max_scroll = ((slot_size + gap_size) * int(rows / 2))
+	max_scroll = ((slot_size + gap_size) * int(rows / 2.0))
 
 
 ## Check if there are inventory items in the scene tree and add them to the
@@ -296,12 +296,12 @@ func _check_starting_items() -> void:
 
 
 func _on_up_pressed() -> void:
-	scroll_container.scroll_vertical -= (slot_size + gap_size) + 1
+	scroll_container.scroll_vertical -= (int(slot_size) + gap_size) + 1
 	_check_scroll_buttons()
 
 
 func _on_down_pressed() -> void:
-	scroll_container.scroll_vertical += (slot_size + gap_size) + 1
+	scroll_container.scroll_vertical += (int(slot_size) + gap_size) + 1
 	_check_scroll_buttons()
 
 
@@ -309,7 +309,7 @@ func _on_down_pressed() -> void:
 ## if no empty slots are available.
 func _find_first_empty_slot() -> Control:
 	for slot: Control in box.get_children():
-		if slot.name == EMPTY_SLOT:
+		if slot.get_child_count() == 0:
 			return slot
 	return null
 
