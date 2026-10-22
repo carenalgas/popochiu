@@ -309,7 +309,7 @@ func _on_down_pressed() -> void:
 ## if no empty slots are available.
 func _find_first_empty_slot() -> Control:
 	for slot: Control in box.get_children():
-		if "[Empty Slot]" in slot.name:
+		if slot.get_child_count() == 0:
 			return slot
 	return null
 
