@@ -132,6 +132,6 @@ For easy reference, find here a summary of all Popochiu Objects:
 
 ## Templates
 
-Not exactly a subsystem of the engine, but still worth mentioning, the `engine/templates` directory contains templates for many scripts used to create objects (and their corresponding state scripts, if applicable) in the `game` folder. These templates are read and populated by the [Popochiu plugin factories](editor-plugin.md#factories-and-config) and other creation scripts, then saved in the appropriate location to instantiate new game elements.
+Not exactly a subsystem of the engine, but still worth mentioning, the `engine/templates` directory contains templates for many scripts used to create objects in the `game` folder. These templates are read and populated by the [Popochiu plugin factories](editor-plugin.md#factories-and-config) and other creation scripts, then saved in the appropriate location to instantiate new game elements.
 
 Game UI templates and all their components also belong here and can be found at (`engine/templates/gui`).

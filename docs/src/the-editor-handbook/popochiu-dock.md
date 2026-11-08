@@ -21,9 +21,9 @@ folder.
 - Objects that are not part of Popochiu yet (not in `popochiu_data.cfg`) are shown dimmed and can
   be added via the context menu.
 
-Each row has buttons to open the object in the editor, open its script, open its state resource,
-and (for rooms) play the scene. The **+** button on each group allows you to create a new object of
-that type. The filter box at the top lets you search the objects by name.
+Each row has buttons to open the object in the editor, open its script, and (for rooms) play the
+scene. The **+** button on each group allows you to create a new object of that type. The filter box
+at the top lets you search the objects by name.
 
 ## Room tab
 
@@ -35,8 +35,8 @@ The Room tab shows the objects of the currently open room, grouped by type: **Pr
 - **Characters in room** are external characters linked into the room. Use the **Add character to
   room** button on that group to link one, and the unlink button on a row to remove it.
 
-The header shows the room name and buttons to open the room's script, state resource, and state
-script.
+The header shows the room name and a button to open the room's script. Custom room state lives on
+that script.
 
 !!! Note
     The Room tab is only available when a room scene is open in the editor. If no room is open, the
