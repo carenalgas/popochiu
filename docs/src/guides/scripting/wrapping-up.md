@@ -12,7 +12,7 @@ You know that when a GUI with commands is involved, player intent travels throug
 
 You know that when you need actions to play out one after another (walk here, say that, play a sound), you use **`await`** to pause your script until each step finishes, and **queue functions** to build up sequences cleanly. You know how to mark a block of code as a cutscene so players can skip it, and how to fire things off in the background when you don't need to wait.
 
-And you know that Popochiu keeps **game state** for you: room objects remember where they were left, custom properties on data resources survive room transitions and save/load cycles, and `Globals` is always there for anything that belongs to the whole game rather than a specific object.
+And you know that Popochiu keeps **game state** for you: room objects remember where they were left, custom properties on object scripts survive room transitions and save/load cycles, and `Globals` is always there for anything that belongs to the whole game rather than a specific object.
 
 ## Now what?
 

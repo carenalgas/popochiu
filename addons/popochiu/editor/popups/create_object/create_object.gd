@@ -6,7 +6,7 @@ signal content_changed
 @export var title := ""
 
 var _info_folder := "In [b]%s[/b] the following files will be created:\n\n"
-var _info_files := "[code]- &t_&n.tscn\n- &t_&n.gd\n- &t_&n.tres\n- &t_&n_state.gd[/code]"
+var _info_files := "[code]- &t_&n.tscn\n- &t_&n.gd[/code]"
 var _info_text := ""
 var _name := ""
 var _target_folder := ""

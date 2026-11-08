@@ -279,8 +279,26 @@ var _pending_blocking_region: PopochiuRegion = null
 @onready var scaling_polygon: CollisionPolygon2D = $ScalingPolygon
 @onready var animation_player: AnimationPlayer = $AnimationPlayer
 
+# Avoids flooding the output when a project still uses the deprecated state property.
+static var _state_alias_warned := false
+
 
 #region Godot ######################################################################################
+func _get(property: StringName) -> Variant:
+	# Compatibility for projects that still access custom state through C.<Character>.state.<property>.
+	if property == &"state":
+		if not _state_alias_warned:
+			_state_alias_warned = true
+			PopochiuUtils.print_warning(
+				"Character state resources are deprecated. Custom state now lives on the "
+				+ "character script; use <character>.<property> instead of "
+				+ "<character>.state.<property>."
+			)
+		return self
+
+	return null
+
+
 func _ready() -> void:
 	super()
 

@@ -122,13 +122,13 @@ func _create_inventory_item(name: String) -> PopochiuInventoryItem:
 ## Returns the loaded inventory item scene or null if it doesn't exist.
 func _get_existing_inventory_item(item_name: String) -> PopochiuInventoryItem:
 	# The inventory_items data section is keyed by the PascalCase script_name.
-	var item_res_path: String = PopochiuResources.get_data_value(
-		"inventory_items", item_name, PopochiuEditorHelper.EMPTY_STRING
+	var scene_path: String = PopochiuResources.get_object_scene_path(
+		"inventory_items", item_name
 	)
-	if item_res_path == PopochiuEditorHelper.EMPTY_STRING:
+	if scene_path.is_empty():
 		return null
 
-	var packed_scene: PackedScene = load(load(item_res_path).scene)
+	var packed_scene: PackedScene = load(scene_path)
 
 	var inventory_item = packed_scene.instantiate()
 	if not inventory_item is PopochiuInventoryItem:
@@ -155,25 +155,17 @@ func _get_scene_path_for_tag(tag_name: String) -> String:
 	if not tag_name:
 		return PopochiuEditorHelper.EMPTY_STRING
 
-	# For inventory items, we need to find the scene path from the resource
+	# For inventory items, the config stores the scene path directly.
 	var item_name: String = tag_name.to_pascal_case()
-	var item_resource_path: String = PopochiuResources.get_data_value(
-		"inventory_items",
-		item_name,
-		PopochiuEditorHelper.EMPTY_STRING
+	var scene_path: String = PopochiuResources.get_object_scene_path(
+		"inventory_items", item_name
 	)
 
-	if item_resource_path.is_empty():
-		PopochiuUtils.print_warning("No inventory item resource found for '%s'" % item_name)
+	if scene_path.is_empty():
+		PopochiuUtils.print_warning("No inventory item scene found for '%s'" % item_name)
 		return PopochiuEditorHelper.EMPTY_STRING
 
-	# Load the inventory item resource to get the scene path
-	var item_resource = load(item_resource_path)
-	if not item_resource:
-		PopochiuUtils.print_warning("Failed to load inventory item resource for '%s'" % item_name)
-		return PopochiuEditorHelper.EMPTY_STRING
-
-	return item_resource.scene
+	return scene_path
 
 
 #endregion

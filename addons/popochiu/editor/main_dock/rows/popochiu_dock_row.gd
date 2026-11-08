@@ -21,8 +21,6 @@ enum MenuOptions {
 enum Buttons {
 	OPEN,
 	SCRIPT,
-	STATE,
-	STATE_SCRIPT,
 	PLAY,
 	REMOVE_CHARACTER,
 	ADD_CHARACTER,
@@ -115,10 +113,6 @@ func create_item(name_to_add: String) -> TreeItem:
 	dock.add_button(
 		item, dock.get_theme_icon("Script", "EditorIcons"), Buttons.SCRIPT, "Open in Script"
 	)
-	dock.add_button(item, dock.get_theme_icon("Object", "EditorIcons"), Buttons.STATE, "Open state")
-	dock.add_button(
-		item, dock.get_theme_icon("GDScript", "EditorIcons"), Buttons.STATE_SCRIPT, "Open state Script"
-	)
 	_add_extra_buttons(item)
 	dock.add_menu_button(item)
 	
@@ -128,21 +122,17 @@ func create_item(name_to_add: String) -> TreeItem:
 	return item
 
 
-# Opens the state resource (.tres) of the object in the editor.
-func edit_state(item: TreeItem) -> void:
-	var path: String = item.get_metadata(dock.COL_TEXT).path
-	EditorInterface.select_file(path.replace(".tscn", ".tres"))
-	EditorInterface.edit_resource(load(path.replace(".tscn", ".tres")))
-
-
-# Opens the script of the object's state resource in the editor.
-func open_state_script(item: TreeItem) -> void:
-	var path: String = item.get_metadata(dock.COL_TEXT).path
-	var state := load(path.replace(".tscn", ".tres"))
-	
-	EditorInterface.select_file(state.get_script().resource_path)
-	EditorInterface.set_main_screen_editor("Script")
-	EditorInterface.edit_resource(state.get_script())
+# Returns the scene path of a dock row source (a Node for scene-based objects, or a Resource for
+# dialogs).
+func _get_source_scene_path(source: Variant) -> String:
+	if source is Node:
+		return source.scene_file_path
+	if source is Resource:
+		var scene_path = source.get("scene")
+		if scene_path is String and not scene_path.is_empty():
+			return scene_path
+		return source.resource_path
+	return ""
 
 
 #endregion
@@ -234,15 +224,10 @@ func remove_from_core(item: TreeItem, should_save_and_delete := true) -> void:
 # Adds the object back to Popochiu (the core). Shared by the main object types.
 func add_to_core(item: TreeItem) -> void:
 	var data := item.get_metadata(dock.COL_TEXT)
-	var path: String = data.path
-	var resource: Resource
 	
-	if ".tscn" in path:
-		resource = load(path.replace(".tscn", ".tres"))
-	else:
-		resource = load(path)
-	
-	if PopochiuEditorHelper.add_resource_to_popochiu(_get_target_array(), resource) != OK:
+	if PopochiuResources.set_data_value(
+		_get_target_array(), data.script_name, data.path
+	) != OK:
 		PopochiuUtils.print_error(
 			"Couldn't add Object [b]%s[/b] to Popochiu." % item.get_text(dock.COL_TEXT)
 		)
@@ -260,18 +245,14 @@ func on_item_clicked(item: TreeItem) -> void:
 	EditorInterface.select_file(item.get_metadata(dock.COL_TEXT).path)
 
 
-# Called when a button on an item is clicked. Default: handles the OPEN, SCRIPT, STATE and
-# STATE_SCRIPT buttons shared by the main object types.
+# Called when a button on an item is clicked. Default: handles the OPEN and SCRIPT buttons shared by
+# the main object types.
 func on_button_clicked(item: TreeItem, id: int) -> void:
 	match id:
 		Buttons.OPEN:
 			dock.open(item)
 		Buttons.SCRIPT:
 			dock.open_script(item)
-		Buttons.STATE:
-			edit_state(item)
-		Buttons.STATE_SCRIPT:
-			open_state_script(item)
 
 
 # Called when a context-menu option is selected. Default: handles DELETE and ADD_TO_CORE.

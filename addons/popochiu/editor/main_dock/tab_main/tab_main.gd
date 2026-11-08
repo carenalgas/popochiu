@@ -52,12 +52,16 @@ func fill_data() -> void:
 	# Search the FileSystem for Rooms, Characters, InventoryItems and Dialogs
 	for type_key: int in _rows:
 		var row: PopochiuDockRow = _row_instances[type_key]
-		var resources := Array(DirAccess.get_directories_at(row.get_folder_path())).map(
-			_get_popochiu_objects_resources.bind(type_key)
-		)
-		
-		for resource: Resource in resources:
-			row.create_row(resource)
+		for dir_name: String in DirAccess.get_directories_at(row.get_folder_path()):
+			var source := _get_popochiu_object(dir_name, type_key)
+			if source == null:
+				continue
+
+			row.create_row(source)
+
+			# Scene-based sources are temporary instances used only to read their metadata.
+			if source is Node:
+				source.free()
 
 
 func check_data() -> void:
@@ -144,26 +148,42 @@ func _ensure_groups() -> void:
 			row.create_group()
 
 
-func _get_popochiu_objects_resources(
+func _get_popochiu_object(
 	dir_name: String, type_key: PopochiuResources.Types
-) -> Resource:
-	var resource_filesystem := EditorInterface.get_resource_filesystem()
+) -> Variant:
 	var dir_path := (_row_instances[type_key].get_folder_path() as String).path_join(dir_name)
+	var expected_extension := "tres" if type_key == PopochiuResources.Types.DIALOG else "tscn"
 	
 	for file_name: String in DirAccess.get_files_at(dir_path):
-		if file_name.get_extension() != "tres":
+		if file_name.get_extension() != expected_extension:
+			continue
+
+		var resource = load(dir_path.path_join(file_name))
+
+		if type_key == PopochiuResources.Types.DIALOG:
+			if resource is PopochiuDialog:
+				return resource
 			continue
 		
-		var resource: Resource = load(dir_path.path_join(file_name))
+		if not resource is PackedScene:
+			continue
+
+		var instance: Node = (resource as PackedScene).instantiate(
+			PackedScene.GEN_EDIT_STATE_INSTANCE
+		)
 		if (
-			resource is PopochiuRoomData
-			or resource is PopochiuCharacterData
-			or resource is PopochiuInventoryItemData
-			or resource is PopochiuDialog
+			instance is PopochiuRoom
+			or instance is PopochiuCharacter
+			or instance is PopochiuInventoryItem
 		):
-			return resource
+			return instance
+
+		if is_instance_valid(instance):
+			instance.free()
 	
-	PopochiuUtils.print_error("No data file (.tres) found for [b]%s[/b]" % dir_path)
+	PopochiuUtils.print_error(
+		"No data file (.%s) found for [b]%s[/b]" % [expected_extension, dir_path]
+	)
 	return null
 
 

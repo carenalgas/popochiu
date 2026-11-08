@@ -175,69 +175,187 @@ func load_game(slot := 1) -> Dictionary:
 
 #region Private ####################################################################################
 func _store_data(type: String, save: Dictionary) -> void:
-	for path in PopochiuResources.get_section(type):
-		# load the ___State.tres file
-		var data := load(path)
-		
-		save[type][data.script_name] = {}
-		
-		PopochiuResources.store_properties(save[type][data.script_name], data)
-		
+	for key: String in PopochiuResources.get_section_keys(type):
+		var stored := _get_object_state(type, key)
+		save[type][key] = stored
+
 		match type:
 			"rooms":
-				data.save_children_states()
-				
-				for category in PopochiuResources.ROOM_CHILDREN:
-					save[type][data.script_name][category] = data[category]
-				
-				save[type][data.script_name]["characters"] = data.characters
-			"dialogs":
-				save[type][data.script_name].options = {}
-				
-				for opt in (data as PopochiuDialog).options:
-					save[type][data.script_name].options[opt.id] = {}
-					PopochiuResources.store_properties(
-						save[type][data.script_name].options[opt.id],
-						opt,
-						["id", "always_on"]
+				var room_state := _get_room_state(key)
+				room_state.save_children_states(
+					PopochiuUtils.r.current
+					if is_instance_valid(PopochiuUtils.r.current)
+					and PopochiuUtils.r.current.script_name == key
+					else null
+				)
+
+				if (
+					is_instance_valid(PopochiuUtils.r.current)
+					and PopochiuUtils.r.current.script_name == key
+				):
+					room_state.custom_properties.clear()
+					PopochiuResources.store_custom_properties(
+						room_state.custom_properties, PopochiuUtils.r.current
 					)
+					room_state.visited_times = PopochiuUtils.r.current.visited_times
+
+				save[type][key] = room_state.custom_properties.duplicate(true)
+				save[type][key].visited_times = room_state.visited_times
+
+				for category: String in PopochiuResources.ROOM_CHILDREN:
+					save[type][key][category] = room_state[category]
+
+				save[type][key].characters = room_state.characters
+			"dialogs":
+				_store_dialog_state(key, save)
 			"characters":
-				PopochiuUtils.c.characters_states[data.script_name] = save[type][data.script_name]
-		
-		if save[type][data.script_name].is_empty():
-			save[type].erase(data.script_name)
+				PopochiuUtils.c.characters_states[key] = stored
+			"inventory_items":
+				PopochiuUtils.i.items_states[key] = stored
+
+		if save[type][key].is_empty():
+			save[type].erase(key)
 	
 	if save[type].is_empty():
 		save.erase(type)
 
 
+# Returns the persistent custom state of a room, character, or inventory item.
+func _get_object_state(type: String, key: String) -> Dictionary:
+	var state := {}
+
+	match type:
+		"rooms":
+			var room_state := _get_room_state(key)
+			state = room_state.custom_properties.duplicate(true)
+			state.visited_times = room_state.visited_times
+		"characters":
+			var character := PopochiuUtils.c.get_character(key)
+			if is_instance_valid(character):
+				PopochiuResources.store_custom_properties(state, character)
+			else:
+				state = _stored_state_to_dictionary(key, PopochiuUtils.c.characters_states)
+		"inventory_items":
+			var item := PopochiuUtils.i.get_item_instance(key)
+			if is_instance_valid(item):
+				PopochiuResources.store_custom_properties(state, item)
+			else:
+				state = _stored_state_to_dictionary(key, PopochiuUtils.i.items_states)
+		"dialogs":
+			var dialog: PopochiuDialog = load(
+				PopochiuResources.get_data_value("dialogs", key, "")
+			)
+			if is_instance_valid(dialog):
+				PopochiuResources.store_properties(state, dialog)
+
+	return state
+
+
+func _get_room_state(room_name: String) -> PopochiuRoomData:
+	var state = PopochiuUtils.r.rooms_states.get(room_name)
+	if state is PopochiuRoomData:
+		if state.scene.is_empty():
+			state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
+		return state
+
+	var room_state := PopochiuRoomData.new()
+	room_state.script_name = room_name
+	room_state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
+	room_state.resource_name = room_name
+
+	if state is Object:
+		PopochiuResources.store_custom_properties(room_state.custom_properties, state)
+		if state.get("visited_times") != null:
+			room_state.visited_times = state.visited_times
+		for category: String in PopochiuResources.ROOM_CHILDREN + ["characters"]:
+			if state.get(category) is Dictionary:
+				room_state[category] = state[category]
+
+	PopochiuUtils.r.rooms_states[room_name] = room_state
+	return room_state
+
+
+func _stored_state_to_dictionary(key: String, states: Dictionary) -> Dictionary:
+	return PopochiuResources.state_to_dictionary(states.get(key, {}))
+
+
+func _store_dialog_state(key: String, save: Dictionary) -> void:
+	var dialog: PopochiuDialog = load(PopochiuResources.get_data_value("dialogs", key, ""))
+	if not is_instance_valid(dialog):
+		return
+
+	save.dialogs[key].options = {}
+
+	for option in dialog.options:
+		save.dialogs[key].options[option.id] = {}
+		PopochiuResources.store_properties(
+			save.dialogs[key].options[option.id],
+			option,
+			["id", "always_on"]
+		)
+
+
 func _load_state(type: String, loaded_game: Dictionary) -> void:
 	for id in loaded_game[type]:
-		var state := load(PopochiuResources.get_data_value(type, id, ""))
-		
-		for p in loaded_game[type][id]:
-			if p == "custom_data": continue
-			if type == "dialogs" and p == "options": continue
-			if state[p] is Array and state[p].is_typed():
-				state[p].assign(loaded_game[type][id][p])
-				continue
-			
-			state[p] = loaded_game[type][id][p]
-		
+		var state: Dictionary = loaded_game[type][id]
+
 		match type:
 			"rooms":
-				PopochiuUtils.r.rooms_states[id] = state
+				_load_room_state(id, state)
 			"characters":
-				PopochiuUtils.c.characters_states[id] = state
+				PopochiuUtils.c.characters_states[id] = state.duplicate(true)
+				_restore_object_state(PopochiuUtils.c.get_character(id), state)
 			"inventory_items":
-				PopochiuUtils.i.items_states[id] = state
+				PopochiuUtils.i.items_states[id] = state.duplicate(true)
+				_restore_object_state(PopochiuUtils.i.get_item_instance(id), state)
 			"dialogs":
-				PopochiuUtils.d.trees[id] = state
-				_load_dialog_options(state, loaded_game[type][id].options)
-		
-		if loaded_game[type][id].has("custom_data")\
-		and state.has_method("on_load"):
-			state.on_load(loaded_game[type][id].custom_data)
+				_load_dialog_state(id, state)
+
+
+func _load_room_state(room_name: String, state: Dictionary) -> void:
+	var room_state := PopochiuRoomData.new()
+	room_state.script_name = room_name
+	room_state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
+	room_state.resource_name = room_name
+	room_state.visited_times = state.get("visited_times", 0)
+
+	for category: String in PopochiuResources.ROOM_CHILDREN:
+		room_state[category] = state.get(category, {})
+
+	room_state.characters = state.get("characters", {})
+
+	var custom_properties: Dictionary = state.duplicate(true)
+	for reserved: String in ["visited_times", "characters"] + PopochiuResources.ROOM_CHILDREN:
+		custom_properties.erase(reserved)
+	room_state.custom_properties = custom_properties
+
+	PopochiuUtils.r.rooms_states[room_name] = room_state
+
+
+func _restore_object_state(object: Object, state: Dictionary) -> void:
+	PopochiuResources.restore_custom_properties(object, state)
+
+
+func _load_dialog_state(id: String, loaded_state: Dictionary) -> void:
+	var state := load(PopochiuResources.get_data_value("dialogs", id, ""))
+	if not is_instance_valid(state):
+		return
+
+	for p in loaded_state:
+		if p == "custom_data": continue
+		if p == "options": continue
+		if state[p] is Array and state[p].is_typed():
+			state[p].assign(loaded_state[p])
+			continue
+
+		state[p] = loaded_state[p]
+
+	PopochiuUtils.d.trees[id] = state
+	if loaded_state.has("options"):
+		_load_dialog_options(state, loaded_state.options)
+
+	if loaded_state.has("custom_data") and state.has_method("on_load"):
+		state.on_load(loaded_state.custom_data)
 
 
 func _load_dialog_options(

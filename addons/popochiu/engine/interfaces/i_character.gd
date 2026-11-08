@@ -177,13 +177,16 @@ func get_character(script_name: String) -> PopochiuCharacter:
 ## as defined in the Popochiu project data. If the character does not exist in the project,
 ## logs an error and returns [code]null[/code].
 func get_instance(script_name: String) -> PopochiuCharacter:
-	var tres_path: String = PopochiuResources.get_data_value("characters", script_name, "")
-	
-	if not tres_path:
+	var scene_path: String = PopochiuResources.get_object_scene_path("characters", script_name)
+
+	if scene_path.is_empty():
 		PopochiuUtils.print_error("Character [b]%s[/b] doesn't exist in the project" % script_name)
 		return null
-	
-	return load(load(tres_path).scene).instantiate()
+
+	var character: PopochiuCharacter = (load(scene_path) as PackedScene).instantiate()
+	_apply_stored_state(character, script_name)
+
+	return character
 
 
 func get_characters() -> Dictionary:
@@ -200,6 +203,17 @@ func set_player(value: PopochiuCharacter) -> void:
 	
 	# Emit the player changed signal so characters can update their clickability
 	player_changed.emit(old_player, value)
+
+
+#endregion
+
+#region Private ####################################################################################
+# Applies the stored state of [param script_name] to [param character], if any. Custom state lives
+# in the character script, so properties are only restored when the script still declares them.
+func _apply_stored_state(character: PopochiuCharacter, script_name: String) -> void:
+	PopochiuResources.restore_custom_properties(
+		character, characters_states.get(script_name, {})
+	)
 
 
 #endregion

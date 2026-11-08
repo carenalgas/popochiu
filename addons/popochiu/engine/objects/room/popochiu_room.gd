@@ -29,14 +29,38 @@ extends Node2D
 ## Whether this is the room in which players are. When [code]true[/code], the room starts processing
 ## unhandled inputs.
 var is_current := false: set = set_is_current
+## The number of times the player has visited this room.
+var visited_times := 0
+## Whether the room was visited at least once.
+var visited: bool:
+	get: return visited_times > 0
+## Whether this is the first visit to the room.
+var visited_first_time: bool:
+	get: return visited_times == 1
 
 var _nav_path: PopochiuWalkableArea = null
 # Stores the children defined in the Editor's Scene tree for each character inside $Characters to
 # add them to the corresponding PopochiuCharacter instance when the room is loaded in runtime.
 var _characters_children := {}
+# Avoids flooding the output when a project still uses the deprecated state property.
+static var _state_alias_warned := false
 
 
 #region Godot ######################################################################################
+func _get(property: StringName) -> Variant:
+	# Compatibility for projects that still access custom state through R.<Room>.state.<property>.
+	if property == &"state":
+		if not _state_alias_warned:
+			_state_alias_warned = true
+			PopochiuUtils.print_warning(
+				"Room state resources are deprecated. Custom state now lives on the room script; "
+				+ "use <room>.<property> instead of <room>.state.<property>."
+			)
+		return self
+
+	return null
+
+
 func _enter_tree() -> void:
 	if Engine.is_editor_hint():
 		y_sort_enabled = false
