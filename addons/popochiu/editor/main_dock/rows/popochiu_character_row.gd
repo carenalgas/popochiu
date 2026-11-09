@@ -35,7 +35,7 @@ func set_pc_item(item: TreeItem, value: bool) -> void:
 
 #region Virtual ####################################################################################
 func create_row(resource: Variant) -> TreeItem:
-	if get_scene_template().replace("%s", resource.resource_name) in dock.rows_paths:
+	if get_scene_template().replace("%s", resource.script_name.to_snake_case()) in dock.rows_paths:
 		return null
 	
 	var item := create_item(resource.script_name)

@@ -350,15 +350,20 @@ func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 ## Instantiates and returns the [PopochiuInventoryItem] resource referenced by [param script_name]
 ## from project data. Logs an error and returns [code]null[/code] if not found.
 func get_instance(script_name: String) -> PopochiuInventoryItem:
-	var tres_path: String = PopochiuResources.get_data_value("inventory_items", script_name, "")
+	var scene_path: String = PopochiuResources.get_object_scene_path(
+		"inventory_items", script_name
+	)
 	
-	if not tres_path:
+	if scene_path.is_empty():
 		PopochiuUtils.print_error(
 			"Inventory item [b]%s[/b] doesn't exist in the project" % script_name
 		)
 		return null
 	
-	return load(load(tres_path).scene).instantiate()
+	var item: PopochiuInventoryItem = (load(scene_path) as PackedScene).instantiate()
+	_apply_stored_state(item, script_name)
+
+	return item
 
 
 ## Sets the cursor to use the texture of [param item].
@@ -464,6 +469,14 @@ func _resolve_character(character: PopochiuCharacter) -> PopochiuCharacter:
 	if is_instance_valid(PopochiuUtils.c.player):
 		return PopochiuUtils.c.player
 	return null
+
+
+# Applies the stored state of [param script_name] to [param item], if any. Custom state lives in
+# the item script, so properties are only restored when the script still declares them.
+func _apply_stored_state(item: PopochiuInventoryItem, script_name: String) -> void:
+	PopochiuResources.restore_custom_properties(item, items_states.get(script_name, {}))
+
+
 func _get_addable_quantity(
 	item: PopochiuInventoryItem, requested: int, available_limit: int
 ) -> int:

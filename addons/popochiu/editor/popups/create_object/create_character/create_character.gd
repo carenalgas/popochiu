@@ -2,12 +2,9 @@
 extends "res://addons/popochiu/editor/popups/create_object/create_object.gd"
 ## Creates a new [PopochiuCharacter].
 ##
-## It creates all the necessary files to make a [PopochiuCharacter] to work and to
-## store its state:
+## It creates all the necessary files to make a [PopochiuCharacter] work:
 ## - character_xxx.tscn
 ## - character_xxx.gd
-## - character_xxx.tres
-## - character_xxx_state.gd
 
 var _new_character_name := ""
 var _factory: PopochiuCharacterFactory
