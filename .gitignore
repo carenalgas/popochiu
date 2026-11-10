@@ -43,9 +43,9 @@ Thumbs.db
 
 # Documentation ignores
 docs/src/**/*.import
-docs/src/**/scripting-reference/*.md
-docs/src/**/scripting-reference/**/*.md
-!docs/src/**/scripting-reference/index.md
+docs/src/**/scripting-api/*.md
+docs/src/**/scripting-api/**/*.md
+!docs/src/**/scripting-api/index.md
 docs/dist/*
 docs/dist/**/*
 !docs/dist/.nojekyll

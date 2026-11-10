@@ -1,0 +1,170 @@
+---
+weight: 5050
+title: "Toolchain and Dependencies"
+---
+
+# Toolchain and Dependencies
+
+## Plugin and Engine
+
+Developing the Engine and Plugin requires only the Godot game engine.
+
+We strive to keep Popochiu compatible with the latest stable version of Godot, so contributors are encouraged to use the most recent stable version when working on the plugin.
+
+While testing Popochiu on non-stable versions is allowed, all contributions must be made using a stable, supported version. Contributions based on non-stable versions cannot be tested or approved.
+
+The only exception is for RC (_release candidates_), but please refer to [the related answers on the Q&A page](qna.md) for details.
+
+---
+
+## DevOps automation
+
+Popochiu relies on GitHub Actions and Workflows to automate releases and publish documentation.
+
+No specific tools are needed to interact with these workflows, but all automation-related files are located in the `.github/workflows` directory.
+
+!!! note
+    Contributors are generally not expected to modify automation scripts. However, if your changes require specific build steps, feel free to propose them.
+
+The **`Dockerfile`** for the documentation is located in the `docs` directory, and defines the MkDocs image used to preview changes to the documentation locally (see below).
+
+!!! note
+    Contributions that improve or optimize the extractor or documentation site are welcome, as long as they follow the contribution guidelines. See the [Contributing Documentation](documentation-conventions/basic-rules.md) section for more information.
+
+---
+
+## Generative AI
+
+### AI-aided coding
+
+We welcome and encourage the use of Generative AI tools—including GitHub Copilot, Claude Code, Cursor, OpenCode, and similar solutions—throughout the development and documentation process.
+
+The project's repository provides dedicated instructions targeted to compatible AI agents to guide (and guardrail) them in producing code and content that aligns with our standards.
+
+Among other things, contributors are invited to leverage these technologies to:
+
+* Write, polish, or refactor code.
+* Analyze requirements and identify edge cases.
+* Draft issues or documentation.
+
+While these tools can greatly accelerate and enhance your workflow, it remains the contributor’s responsibility to ensure the final result meets our quality expectations and fully complies with our [Definition of Done](project-management/definition-of-done.md).  
+Generative AI is a powerful ally, not a replacement for thoughtful review and accountability. We embrace these advancements wholeheartedly, but expect all contributors to use them responsibly and with care.
+
+In particular, we ask contributors to follow these guidelines when using AI-assisted techniques:
+
+1. **Do NOT use AI agents to do things you would not be able to do by yourself**. AI can be an accelerator, and sometimes an enabler, but it should never be treated as an oracle.
+2. **Review your code before posting it and ensure it respects our contributions guidelines**. While you're at it, make sure you respect them too (workflow, communication, cooperation, and so on).
+3. **Keep code human-readable**. Most of the maintenance is done by humans and many contributors may have no access to (or no will to use) agentic AI. People will always be our target.
+
+These guidelines are important. AI slop is becoming a real problem in the open source ecosystem (see [this](https://daniel.haxx.se/blog/2025/07/14/death-by-a-thousand-slops/), [this](https://dri.es/ai-creates-asymmetric-pressure-on-open-source), and especially [this](https://github.com/orgs/community/discussions/185387)). There is no free lunch: contributing requires effort, care, and ownership. Please respect that.
+
+One last thing: **please do not start ideological, political, or philosophical flamewars about AI** in our community or public channels. It is a tool (an extremely powerful one) but still a young technology, and like any technology, it can do as much harm as good. We support its responsible use. If you do not like it, feel free to ignore it. If you do like it, use it responsibly. Polite, critical, and open discussions on the topic are more than welcome.
+
+### AI-aided cocumentation
+
+We encourage the use of LLMs to structure, draft, review, spellcheck and generally polish the documentation (the very same you are reading now).
+
+Again, be judicious and conscious, verify the accuracy of the information, and maintain full control over your work.
+
+### AI for other assets
+
+At this time, we do not allow the contribution of AI-generated creative/artistic assets like graphics or audio.
+
+The ethical, legal, and legitimacy concerns raised regarding the training methods of these tools are still too unresolved for us to include them in our toolchain lightheartedly.
+
+---
+
+## Documentation
+
+Popochiu's documentation is written in [Markdown](https://www.markdownguide.org) and rendered using [MkDocs](https://www.mkdocs.org).
+
+The only tools needed to build the documentation are:
+
+- Docker
+- Docker Compose
+- GNU Make
+
+These tools provide an encapsulated, platform-agnostic, and production-ready local development environment. This approach avoids requiring contributors to install complex dependencies, keeping their systems clean and free from conflicts.
+
+Below are summary instructions for setting up the required packages on supported operating systems.
+
+### Running the documentation locally
+
+Docker is available natively on GNU/Linux distributions, while Windows and macOS are supported via Docker Desktop or alternative solutions.
+
+#### GNU/Linux
+
+This guide provides specific instructions for Ubuntu and Arch Linux. If you're using another distribution, refer to its official documentation.
+
+- **Docker installation:**
+  - [Ubuntu and derivatives](https://docs.docker.com/engine/install/ubuntu/)
+  - [Arch and derivatives](https://wiki.archlinux.org/title/Docker#Installation)
+
+- **Docker Compose:** Ensure the Compose plugin is installed alongside Docker.
+
+- **GNU Make installation:**
+  - Ubuntu: `sudo apt install build-essential`
+  - Arch: `sudo pacman -Sy base-devel`
+
+Once everything is set up, proceed to the [Run the Documentation](#run-the-documentation) section to preview your changes.
+
+---
+
+#### MS Windows
+
+On Windows, you can either install the required tools natively or use WSL (Windows Subsystem for Linux).
+
+!!! tip
+    Running `make` is easier from a bash-like shell (e.g., Git Bash). If you use WSL2, your distribution shell is compatible by default. PowerShell may work, but behavior can vary.
+
+##### Method 1: Native Toolchain
+
+1. Install Docker Desktop following the [official documentation](https://docs.docker.com/desktop/install/windows-install/).
+2. The Compose plugin is included with Docker Desktop.
+3. Install Make using one of the following methods:
+   - **Chocolatey**: `choco install make` (**preferred**)
+   - Direct download: [Make for Windows](https://gnuwin32.sourceforge.net/packages/make.htm)
+   - **GnuWin32**: [GnuWin32 installer](http://gnuwin32.sourceforge.net/install.html)
+
+##### Method 2: WSL2
+
+Enable [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install-win10) and choose a distribution (Ubuntu is recommended). Once configured, follow the GNU/Linux instructions above.
+
+---
+
+#### MacOS
+
+Follow the [official Docker Desktop installation guide](https://docs.docker.com/desktop/install/mac-install/). The Compose plugin is included by default.
+
+To install GNU Make:
+
+- **Homebrew**: `brew install make` (**preferred**)
+- **XCode**: `xcode-select --install` (agree to the license in the popup).
+
+Once installed, proceed to the next section to preview your changes.
+
+### Run the Documentation
+
+To preview the documentation, navigate to the `docs` directory in the repository and run:
+
+```bash
+make docs-up
+```
+
+This command starts a Docker container and binds port 286 to the MkDocs instance. Open [http://localhost:286](http://localhost:286) in your browser to view the documentation live.
+
+To stop the container, run:
+
+```bash
+make docs-down
+```
+
+The documentation supports live reloading, so any changes you save will automatically update in your browser.
+
+---
+
+### Closing notes
+
+Before pushing changes to the documentation, please read the [Contributing Documentation](documentation-conventions/basic-rules.md) section.
+
+For maintainers, instructions for publishing the documentation to the official site are available in the dedicated [README.md](https://github.com/carenalgas/popochiu/blob/develop/docs/README.md) file.

@@ -11,7 +11,7 @@ set -e
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 DEFAULT_INPUT="$SCRIPT_DIR/../../addons/popochiu/engine"
-DEFAULT_OUTPUT="$SCRIPT_DIR/../src/the-engine-handbook/scripting-reference"
+DEFAULT_OUTPUT="$SCRIPT_DIR/../src/reference/scripting-api"
 
 input_directory=""
 output_directory=""
@@ -38,7 +38,7 @@ Arguments:
 Options:
     -h, --help                  Display this help message.
     -o, --output <directory>    Output directory for generated Markdown files.
-                                Default: docs/src/the-engine-handbook/scripting-reference
+                                Default: docs/src/reference/scripting-api
     --include-private           Include private properties (starting with _)
     --include-private-methods   Include private methods (starting with _)
     --generate-index            Generate an index.md file listing all classes

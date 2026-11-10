@@ -1,10 +1,10 @@
 ---
-weight: 1040
+weight: 1050
 ---
 
 ## Tutorials
 
-* [Creating a game stub](../how-to-develop-a-game/introduction.md): This step-by-step tutorial will guide you to learn the very basics of Popochiu, providing a lot of explanations along the way.
+* [Creating a game stub](../your-first-adventure/introduction.md): This step-by-step tutorial will guide you to learn the very basics of Popochiu, providing a lot of explanations along the way.
 
 ## Video Tutorials
 

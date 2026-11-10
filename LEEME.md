@@ -78,7 +78,7 @@ Una vez instalado Popochiu:
 1. Ejecuta el asistente de configuración.
 2. Crea tu primera habitación.
 3. Crea un personaje y colócalo en la habitación.
-4. Si es tu primera vez usando el plugin, sigue la [guía para empezar](https://carenalgas.github.io/popochiu/how-to-develop-a-game/introduction/).
+4. Si es tu primera vez usando el plugin, sigue la [guía para empezar](https://carenalgas.github.io/popochiu/your-first-adventure/introduction/).
 
 ## Documentación
 
@@ -112,8 +112,8 @@ Actualmente lo mantienen [Carenalga](https://carenalga.itch.io) y [StickGrinder]
 
 Las contribuciones son bienvenidas. Si quieres hacerlo, te recomendamos empezar por la documentación:
 
-* [Contribuir a Popochiu](https://carenalgas.github.io/popochiu/contributing-to-popochiu/)
-* [Definition of Done](https://carenalgas.github.io/popochiu/project-management/definition-of-done/)
+* [Contribuir a Popochiu](https://carenalgas.github.io/popochiu/contributing/)
+* [Definition of Done](https://carenalgas.github.io/popochiu/contributing/project-management/definition-of-done/)
 
 ## Licencia
 

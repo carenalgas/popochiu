@@ -1,5 +1,5 @@
 ---
-weight: 1030
+weight: 1060
 ---
 
 All you need to start creating your adventure game with Popochiu is a good idea, game assets, and the game script.

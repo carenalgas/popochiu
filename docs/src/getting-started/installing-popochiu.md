@@ -1,6 +1,9 @@
 ---
-weight: 1010
+weight: 1020
+title: "Installing Popochiu"
 ---
+
+# Installing Popochiu
 
 !!! tip
       Popochiu works on Godot 3.3 and later versions, but we recommend kickstarting new projects on Godot 4, with Popochiu 2.0.
