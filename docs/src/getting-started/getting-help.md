@@ -1,5 +1,5 @@
 ---
-weight: 1050
+weight: 1040
 ---
 
 ## Join our community
@@ -73,7 +73,7 @@ Again, [head to the project's issue tracker](https://github.com/carenalgas/popoc
 
 !!! note
     **Contributing is not all about pushing code!**
-    Also consider reading our [Contribution Guidelines](../contributing-to-popochiu/basic-rules.md), to learn all the ways you can help the project thrive.
+    Also consider reading our [Contribution Guidelines](../contributing/basic-rules.md), to learn all the ways you can help the project thrive.
 
 ## Godot community and docs
 

@@ -4,60 +4,36 @@ weight: 0
 
 ![Popochiu - An adventure games plugin for Godot](./assets/images/_other/theme/home_banner.svg)
 
----
+**Popochiu is the most developer-friendly addon for creating point-and-click adventure games in Godot.**
 
-**Popochiu is the most developer-friendly addon for the creation of point-and-click adventure games in Godot.**
+## Start here
 
-Inspired by [Adventure Game Studio](https://www.adventuregamestudio.co.uk/) and [PowerQuest](https://powerhoof.itch.io/powerquest) Unity plugin, it brings a bunch of innovations to the table.
+New to Popochiu? Read [What is Popochiu?](getting-started/what-is-popochiu.md) and [install the plugin](getting-started/installing-popochiu.md).
 
-**Popochiu's mission is to be the more developer-oriented and productive tool for the creation of point-and-click adventure games on free and open-Source technologies.**
+Then build your mental model with **Understanding Popochiu**. This orientation is recommended regardless of your previous Godot experience:
 
----
+* [How Popochiu Works](getting-started/understanding-popochiu/how-popochiu-works.md)
+* [The Popochiu Editor Atlas](getting-started/understanding-popochiu/popochiu-editor-atlas.md)
+* [Understanding Game Objects](getting-started/understanding-popochiu/understanding-game-objects.md)
 
-## Features
+## Learn by building
 
-* Works with Godot 3 and 4 (new development will happen for 4 only).
-* Designed to offer a fast and easy-to-use workflow like Adventure Game Studio and PowerQuest.
-* Provides a Godot Editor plugin, as well as the adventure game engine, specifically designed for adventure games.
-* A powerful yet simple scripting API gives total control on characters, objects, inventory items, dialogues, etc.
-* Autocomplete for scripting functions in Godot scripting editor.
-* Suitable for high-resolution as well as retro-styled, classic games.
-* Blends easily with Godot, allowing experienced devs to customize and extending the functions with ease.
-* Easy management of animations, interactions, audio, game state, saves and load, and other commong game features.
-* Additional tools for advanced workflows, like animation importers and the like.
-* Very permissive [license](#license).
+Follow [Your First Adventure](your-first-adventure/introduction.md), a step-by-step tutorial that takes you from an empty project to a small playable adventure.
 
-## Is Popochiu for me?
+## Browse guides by topic
 
-**Popochiu is for everyone, but it's particularly suitable for you if you**:
+* [Characters](guides/characters/character-animation-prefix.md)
+* [Dialogues](guides/dialogues/change-text-to-gibberish.md)
+* [Scripting](guides/scripting/scripting-overview.md)
+* [GUI](guides/gui/guis.md)
+* [Save and Load](guides/save-and-load/game-state-saving-and-loading.md)
+* [Localization](guides/localization/localization.md)
 
-* are in search for a developer-friendly engine, with a powerful scripting language
-* want to work on top of a state-of-the-art, general-purpose game engine with a great community and support (Godot)
-* want to build your game on OS different than Windows (Linux or MacOSX)
-* want to release your game on different platforms (PC, mobile and consoles)
-* love Free/Open-Source Software
-* want to join a cheerful and welcoming community of fellow developers
+## Look up details
 
-**Popochiu may not be your cup of tea if**:
+* [Editor Reference](reference/editor-reference/editor-settings.md)
+* [Scripting API](reference/scripting-api/index.md)
 
-* you are no coder and search for a visual editor like Adventure Creator
-* you want to build games different from point-and-click adventures
+## Contribute
 
-Yes, that's it. We can't imagine for what other reasons you shouldn't at least give Popochiu a try! :)
-
-## Made with Popochiu
-
-* [The Maid Butcher Ritual](https://skarmuse.itch.io/the-maid-butcher-ritual) by [Skarmuse](https://skarmuse.itch.io) (Made for the **G**lobal **G**ame **J**am 2023)
-* [Popochius Little Adventure (AdvJam 2022) (in-development)](https://mapedorr.itch.io/popochius) | source code [here](https://github.com/mapedorr/popochius_little_adventure)
-* [Buggy Adventure (in-development)](https://agar3s.itch.io/unsolvedmysteries) | source code [here](https://github.com/TalesOfUnsolvedMysteries/game_client)
-* [Pato & Lobo](https://perroviejo.itch.io/patolobo) | source code [here](https://github.com/Perro-Viejo/pato-and-lobo)
-
-## People
-
-Popochiu was created by **[Mateo _@carenalga_ Robayo Rodríguez](https://github.com/mapedorr)**, who is the project's main maintainer and benevolent dictator.
-
-It is now co-maintained by **[Paolo _@stickgrinder_ Pustorino](https://github.com/stickgrinder)** and **[_Whyshchuck_](https://github.com/whyshchuck)** with contributions by our wonderful community members.
-
-## License
-
-Popochiu is released under the very permissive [MIT License](https://github.com/carenalgas/popochiu/blob/main/LICENSE), suitable for free and commercial projects, no strings attached.
+Popochiu is a community effort. Start with [Basic Rules](contributing/basic-rules.md), then explore the [Contributing](contributing/basic-rules.md) section.

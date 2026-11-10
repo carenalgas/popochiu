@@ -25,7 +25,7 @@ def main():
         epilog="""
 Examples:
   # Generate docs for the entire engine
-  %(prog)s ../addons/popochiu/engine -o ../docs/src/the-engine-handbook/scripting-reference
+  %(prog)s ../addons/popochiu/engine -o ../docs/src/reference/scripting-api
 
   # Generate docs for a single file
   %(prog)s ../addons/popochiu/engine/objects/character/popochiu_character.gd -o ./output
@@ -146,7 +146,6 @@ Examples:
             return 0
 
         if not args.dry_run:
-            config.known_classes = {cls.name for cls in classes}
             generated, gen_warnings = generate_directory_docs(
                 args.input, args.output, config, classes, all_warnings
             )

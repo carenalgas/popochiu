@@ -77,7 +77,7 @@ jobs:
           pygments
           pymdown-extensions
       - name: Generate API reference documentation
-        run: python3 docs/scripts/generate_reference.py addons/popochiu/engine -o docs/src/the-engine-handbook/scripting-reference
+        run: python3 docs/scripts/generate_reference.py addons/popochiu/engine -o docs/src/reference/scripting-api
       - name: Deploy to production
         working-directory: ./docs
         run: mkdocs gh-deploy --force --clean --verbose

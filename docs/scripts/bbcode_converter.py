@@ -84,7 +84,8 @@ class BBCodeConverter:
     }
 
     def __init__(self, current_class: str = "", known_classes: Optional[set[str]] = None,
-                 source_category: str = "", class_to_category: Optional[dict[str, str]] = None):
+                 source_category: str = "", class_to_category: Optional[dict[str, str]] = None,
+                 excluded_classes: Optional[set[str]] = None):
         """
         Initialize the converter.
 
@@ -93,10 +94,12 @@ class BBCodeConverter:
             known_classes: Additional known classes for cross-referencing
             source_category: Category slug of the class being documented (for relative paths)
             class_to_category: Mapping of class name → category slug for all known classes
+            excluded_classes: Known class names that are not generated, so they must not be linked
         """
         self.current_class = current_class
         self.known_classes = known_classes or set()
-        self.all_known_classes = self.POPOCHIU_CLASSES | self.known_classes
+        self.excluded_classes = excluded_classes or set()
+        self.all_known_classes = (self.POPOCHIU_CLASSES | self.known_classes) - self.excluded_classes
         self.source_category = source_category
         self.class_to_category = class_to_category or {}
 
