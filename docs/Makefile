@@ -24,15 +24,15 @@ docs-deploy: docs-extract
 	GIT_DEPLOY_USERNAME="$(shell git config user.name)" GIT_DEPLOY_MAIL="$(shell git config user.email)" scripts/deploy_to_ghpages
 
 docs-extract:
-	rm -rf src/the-engine-handbook/scripting-reference/*.md && \
-	git restore src/the-engine-handbook/scripting-reference/index.md
+	rm -rf src/reference/scripting-api/*.md && \
+	git restore src/reference/scripting-api/index.md
 	docker compose run \
 		--rm \
 		--user $(CURRENT_UID) \
 		documentation \
 		python scripts/generate_reference.py \
 		/project/addons/popochiu/engine \
-		-o src/the-engine-handbook/scripting-reference
+		-o src/reference/scripting-api
 
 cli:
 	docker compose run --rm documentation bash

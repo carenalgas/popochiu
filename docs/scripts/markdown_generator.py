@@ -33,12 +33,16 @@ class GeneratorConfig:
     base_url: str = ""
     # Known classes for cross-referencing
     known_classes: set[str] = None
+    # Known classes that are not generated, so they must not be linked
+    excluded_classes: set[str] = None
     # Mapping of class name → category slug (for subdirectory organization)
     class_to_category: dict[str, str] = None
 
     def __post_init__(self):
         if self.known_classes is None:
             self.known_classes = set()
+        if self.excluded_classes is None:
+            self.excluded_classes = set()
         if self.class_to_category is None:
             self.class_to_category = {}
 
@@ -117,6 +121,7 @@ class MarkdownGenerator:
             self.config.known_classes,
             source_category=class_info.docs_category,
             class_to_category=self.config.class_to_category,
+            excluded_classes=self.config.excluded_classes,
         )
 
         sections = []
@@ -169,7 +174,7 @@ class MarkdownGenerator:
             if parent in BBCodeConverter.GODOT_CLASSES:
                 url = f"https://docs.godotengine.org/en/stable/classes/class_{parent.lower()}.html"
                 lines.append(f"**Inherits:** [{parent}]({url})")
-            elif parent in self.config.known_classes or parent in BBCodeConverter.POPOCHIU_CLASSES:
+            elif self._is_linkable_class(parent):
                 path = get_relative_class_path(
                     class_info.docs_category, parent,
                     self.config.class_to_category,
@@ -611,6 +616,15 @@ class MarkdownGenerator:
         return [c for c in constants if self._should_include_member(c)]
         return result
 
+    def _is_linkable_class(self, class_name: str) -> bool:
+        """Return True only when the class has generated documentation to link to."""
+        if class_name in self.config.known_classes:
+            return True
+        return (
+            class_name in BBCodeConverter.POPOCHIU_CLASSES
+            and class_name not in self.config.excluded_classes
+        )
+
     def _format_type(self, type_hint: str) -> str:
         """Format a type hint with links."""
         if not type_hint:
@@ -623,7 +637,7 @@ class MarkdownGenerator:
             return f"{self._format_type(base)}[{self._format_type(inner)}]"
 
         # Check if it's a known class
-        if type_hint in self.config.known_classes or type_hint in BBCodeConverter.POPOCHIU_CLASSES:
+        if self._is_linkable_class(type_hint):
             source_cat = self.current_class.docs_category if self.current_class else ""
             path = get_relative_class_path(
                 source_cat, type_hint,
@@ -735,8 +749,14 @@ def generate_directory_docs(directory: Path, output_dir: Path,
     if config is None:
         config = GeneratorConfig()
 
-    config.known_classes = {cls.name for cls in classes}
-    config.class_to_category = {cls.name: cls.docs_category for cls in classes}
+    # Only classes that will generate a page can be cross-reference targets.
+    visible_classes = [
+        cls for cls in classes
+        if not cls.is_class_ignored or _class_has_visible_members(cls, config)
+    ]
+    config.known_classes = {cls.name for cls in visible_classes}
+    config.class_to_category = {cls.name: cls.docs_category for cls in visible_classes}
+    config.excluded_classes = {cls.name for cls in classes} - config.known_classes
 
     # Clean up previously generated files before writing new ones
     if output_dir.exists():
@@ -791,11 +811,6 @@ def generate_directory_docs(directory: Path, output_dir: Path,
 
     # Generate root index file only if requested
     if config.generate_index:
-        # Filter out fully excluded classes from index
-        visible_classes = [
-            cls for cls in classes 
-            if not cls.is_class_ignored or _class_has_visible_members(cls, config)
-        ]
         index_content = _generate_index(visible_classes, config.class_to_category)
         index_file = output_dir / "index.md"
         index_file.write_text(index_content, encoding="utf-8")

@@ -4,7 +4,7 @@ This folder stores the official documentation for Popochiu, available at https:/
 
 The documentation is maintained alongside the code in the same repository, which makes it easier to enforce our _Definition of Done_.
 
-Learn how to configure and run the local environment to contribute to this documentation at: https://carenalgas.github.io/popochiu/contributing-to-popochiu/toolchain-and-dependencies/#documentation
+Learn how to configure and run the local environment to contribute to this documentation at: https://carenalgas.github.io/popochiu/contributing/toolchain-and-dependencies/#documentation
 
 ## How to export scripting reference to the local development environment
 
@@ -17,7 +17,7 @@ Exporting the Engine API refs is necessary to preview it locally. Also, the expo
 > `make docs-extract`
 
 All of the engine API docs will be exported to markdown format.  
-The exported references will be available in `The Engine Handbook > Scripting Reference` section of the documentation.
+The exported references will be available in the `Reference > Scripting API` section of the documentation.
 
 **NOTE**: There is no live-reload for plugin source code. If you change the docblocks in the engine's source files, you will have to manually export local refs again.
 

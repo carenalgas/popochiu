@@ -17,9 +17,9 @@ This workflow is review-only: inspect, explain, and suggest fixes, but do not ed
 
 Primary references:
 
-- `docs/src/contributing-to-popochiu/conventions/coding-standards.md`
-- `docs/src/contributing-to-popochiu/conventions/naming-conventions.md`
-- `docs/src/contributing-to-popochiu/conventions/comments.md`
+- `docs/src/contributing/development-conventions/coding-standards.md`
+- `docs/src/contributing/development-conventions/naming-conventions.md`
+- `docs/src/contributing/development-conventions/comments.md`
 - `docs/README.md` (`Controlling API documentation export`)
 - Godot GDScript style guide:
   `https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html`
