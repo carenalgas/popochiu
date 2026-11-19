@@ -173,7 +173,7 @@ func get_character(script_name: String) -> PopochiuCharacter:
 	return character
 
 
-## Instantiates and returns the [PopochiuCharacter] resource referenced by [param script_name]
+## Instantiates and returns the [PopochiuCharacter] scene referenced by [param script_name]
 ## as defined in the Popochiu project data. If the character does not exist in the project,
 ## logs an error and returns [code]null[/code].
 func get_instance(script_name: String) -> PopochiuCharacter:

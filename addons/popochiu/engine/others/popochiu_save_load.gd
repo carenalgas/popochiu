@@ -252,7 +252,7 @@ func _get_object_state(type: String, key: String) -> Dictionary:
 
 
 func _get_room_state(room_name: String) -> PopochiuRoomData:
-	var state = PopochiuUtils.r.rooms_states.get(room_name)
+	var state: Variant = PopochiuUtils.r.rooms_states.get(room_name)
 	if state is PopochiuRoomData:
 		if state.scene.is_empty():
 			state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
@@ -286,7 +286,7 @@ func _store_dialog_state(key: String, save: Dictionary) -> void:
 
 	save.dialogs[key].options = {}
 
-	for option in dialog.options:
+	for option: PopochiuDialogOption in dialog.options:
 		save.dialogs[key].options[option.id] = {}
 		PopochiuResources.store_properties(
 			save.dialogs[key].options[option.id],
@@ -296,7 +296,7 @@ func _store_dialog_state(key: String, save: Dictionary) -> void:
 
 
 func _load_state(type: String, loaded_game: Dictionary) -> void:
-	for id in loaded_game[type]:
+	for id: String in loaded_game[type]:
 		var state: Dictionary = loaded_game[type][id]
 
 		match type:
@@ -341,7 +341,7 @@ func _load_dialog_state(id: String, loaded_state: Dictionary) -> void:
 	if not is_instance_valid(state):
 		return
 
-	for p in loaded_state:
+	for p: String in loaded_state:
 		if p == "custom_data": continue
 		if p == "options": continue
 		if state[p] is Array and state[p].is_typed():

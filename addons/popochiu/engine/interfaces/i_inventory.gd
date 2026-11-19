@@ -347,7 +347,7 @@ func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	return item
 
 
-## Instantiates and returns the [PopochiuInventoryItem] resource referenced by [param script_name]
+## Instantiates and returns the [PopochiuInventoryItem] scene referenced by [param script_name]
 ## from project data. Logs an error and returns [code]null[/code] if not found.
 func get_instance(script_name: String) -> PopochiuInventoryItem:
 	var scene_path: String = PopochiuResources.get_object_scene_path(

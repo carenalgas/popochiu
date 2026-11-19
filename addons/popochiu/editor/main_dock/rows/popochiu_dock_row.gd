@@ -122,19 +122,6 @@ func create_item(name_to_add: String) -> TreeItem:
 	return item
 
 
-# Returns the scene path of a dock row source (a Node for scene-based objects, or a Resource for
-# dialogs).
-func _get_source_scene_path(source: Variant) -> String:
-	if source is Node:
-		return source.scene_file_path
-	if source is Resource:
-		var scene_path = source.get("scene")
-		if scene_path is String and not scene_path.is_empty():
-			return scene_path
-		return source.resource_path
-	return ""
-
-
 #endregion
 
 #region Virtual ####################################################################################
@@ -277,6 +264,19 @@ func _get_target_array() -> String:
 #endregion
 
 #region Private ####################################################################################
+# Returns the scene path of a dock row source (a Node for scene-based objects, or a Resource for
+# dialogs).
+func _get_source_scene_path(source: Variant) -> String:
+	if source is Node:
+		return source.scene_file_path
+	if source is Resource:
+		var scene_path: Variant = source.get("scene")
+		if scene_path is String and not scene_path.is_empty():
+			return scene_path as String
+		return source.resource_path
+	return ""
+
+
 # Returns the path of the open scene (foreground or background tab) whose root script_name is
 # [param script_name], or an empty string when no such scene is open.
 func _get_open_scene_path(script_name: String) -> String:

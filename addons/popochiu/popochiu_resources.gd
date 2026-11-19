@@ -476,16 +476,7 @@ static func get_data_value(section: String, key: String, default):
 ## Returns the scene path of the project object identified by [param key] in [param section].
 ## Legacy descriptors (`.tres`) are resolved to their sibling scene without loading the resource.
 static func get_object_scene_path(section: String, key: String) -> String:
-	return resolve_object_scene_path(get_data_value(section, key, ""))
-
-
-## Returns the scene path for [param path], which may be a legacy `.tres` descriptor.
-## Descriptors used the same base name as their scene, so the sibling `.tscn` is authoritative.
-static func resolve_object_scene_path(path: String) -> String:
-	if path.is_empty() or path.get_extension() != "tres":
-		return path
-
-	return path.get_basename() + ".tscn"
+	return _resolve_object_scene_path(get_data_value(section, key, ""))
 
 
 static func erase_data_value(section: String, key: String) -> void:
@@ -524,7 +515,7 @@ static func store_properties(
 ## inherits. This is the persistence contract for game objects: their script variables are their
 ## custom state.
 static func store_custom_properties(target: Dictionary, source: Object) -> void:
-	for property_name: String in get_script_defined_properties(source):
+	for property_name: String in _get_script_defined_properties(source):
 		target[property_name] = source[property_name]
 
 	# ---- Call custom function to store extra data ------------------------------------------------
@@ -533,41 +524,9 @@ static func store_custom_properties(target: Dictionary, source: Object) -> void:
 		if target.custom_data.is_empty(): target.erase("custom_data")
 
 
-## Returns the names of the script variables declared by [param source]'s own script or by its
-## user-defined base scripts. Properties inherited from Popochiu's engine classes are excluded.
-static func get_script_defined_properties(source: Object) -> Array[String]:
-	var property_names: Array[String] = []
-	var script := source.get_script()
-	if script == null:
-		return property_names
-
-	var engine_properties := {}
-	var current_script: Script = script
-	while current_script:
-		var global_name := current_script.get_global_name()
-		if global_name.begins_with("Popochiu"):
-			for property in current_script.get_script_property_list():
-				engine_properties[property.name] = true
-
-		current_script = current_script.get_base_script()
-
-	for property in script.get_script_property_list():
-		if property.name in engine_properties:
-			continue
-		if not property.type in VALID_TYPES:
-			continue
-		# Check if the property is a script variable (8192) or an export variable (8199).
-		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or property.usage == (
-			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
-		):
-			property_names.append(property.name)
-
-	return property_names
-
-
 ## Applies a stored state (a [Dictionary] or a legacy state [Resource]) to [param target].
 ## Properties are only restored when the target script still declares them.
-static func restore_custom_properties(target: Object, state) -> void:
+static func restore_custom_properties(target: Object, state: Variant) -> void:
 	if not is_instance_valid(target):
 		return
 
@@ -583,7 +542,7 @@ static func restore_custom_properties(target: Object, state) -> void:
 
 
 ## Converts a stored state into a plain [Dictionary], accepting legacy state resources.
-static func state_to_dictionary(state) -> Dictionary:
+static func state_to_dictionary(state: Variant) -> Dictionary:
 	if state is Dictionary:
 		return state
 	if state is Object:
@@ -661,6 +620,47 @@ static func is_gui_set() -> bool:
 #endregion
 
 #region Private ####################################################################################
+# Returns the scene path for [param path], which may be a legacy `.tres` descriptor.
+# Descriptors used the same base name as their scene, so the sibling `.tscn` is authoritative.
+static func _resolve_object_scene_path(path: String) -> String:
+	if path.is_empty() or path.get_extension() != "tres":
+		return path
+
+	return path.get_basename() + ".tscn"
+
+
+# Returns the names of the script variables declared by [param source]'s own script or by its
+# user-defined base scripts. Properties inherited from Popochiu's engine classes are excluded.
+static func _get_script_defined_properties(source: Object) -> Array[String]:
+	var property_names: Array[String] = []
+	var script := source.get_script()
+	if script == null:
+		return property_names
+
+	var engine_properties := {}
+	var current_script: Script = script
+	while current_script:
+		var global_name := current_script.get_global_name()
+		if global_name.begins_with("Popochiu"):
+			for property: Dictionary in current_script.get_script_property_list():
+				engine_properties[property.name] = true
+
+		current_script = current_script.get_base_script()
+
+	for property: Dictionary in script.get_script_property_list():
+		if property.name in engine_properties:
+			continue
+		if not property.type in VALID_TYPES:
+			continue
+		# Check if the property is a script variable (8192) or an export variable (8199).
+		if property.usage == PROPERTY_USAGE_SCRIPT_VARIABLE or property.usage == (
+			PROPERTY_USAGE_DEFAULT | PROPERTY_USAGE_SCRIPT_VARIABLE
+		):
+			property_names.append(property.name)
+
+	return property_names
+
+
 static func _create_empty_file(path):
 	var file = FileAccess.open(path, FileAccess.WRITE)
 	file.store_string("")

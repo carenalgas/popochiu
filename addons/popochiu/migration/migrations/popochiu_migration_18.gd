@@ -69,8 +69,10 @@ func _describe_object(section: String, key: String, configured_path: String) -> 
 
 	if configured_path.get_extension() == "tres":
 		descriptor_path = configured_path
-		var descriptor = load(configured_path)
-		var descriptor_scene = descriptor.get("scene") if is_instance_valid(descriptor) else null
+		var descriptor: Resource = load(configured_path)
+		var descriptor_scene: Variant = (
+			descriptor.get("scene") if is_instance_valid(descriptor) else null
+		)
 		scene_path = descriptor_scene if descriptor_scene is String and (
 			not descriptor_scene.is_empty()
 		) else configured_path.get_basename() + ".tscn"
@@ -85,7 +87,7 @@ func _describe_object(section: String, key: String, configured_path: String) -> 
 			descriptor_path = sibling_descriptor
 
 	if not descriptor_path.is_empty() and state_script_path.is_empty():
-		var descriptor = load(descriptor_path)
+		var descriptor: Resource = load(descriptor_path)
 		if is_instance_valid(descriptor) and descriptor.get_script():
 			state_script_path = descriptor.get_script().resource_path
 
@@ -397,9 +399,11 @@ func _is_default_state_hook(block: Array) -> bool:
 
 
 func _get_member_name(line: String) -> String:
-	var match := RegEx.create_from_string(r"^(?:static\s+)?(?:var|const|func)\s+([A-Za-z_]\w*)")
-	var result := match.search(line)
-	return result.get_string(1) if result else ""
+	var member_pattern := RegEx.create_from_string(
+		r"^(?:static\s+)?(?:var|const|func)\s+([A-Za-z_]\w*)"
+	)
+	var member_match := member_pattern.search(line)
+	return member_match.get_string(1) if member_match else ""
 
 
 func _member_exists_in_object(line: String, object_text: String) -> bool:

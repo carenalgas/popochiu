@@ -1,10 +1,10 @@
 @tool
 extends "res://addons/popochiu/editor/popups/create_object/create_object.gd"
-## Creates a [PopochiuRoom].
-## 
-## It creates all the necessary files to make a [PopochiuRoom] work:
-## - room_xxx.tscn
-## - room_xxx.gd
+# Creates a [PopochiuRoom].
+#
+# It creates all the necessary files to make a [PopochiuRoom] work:
+# - room_xxx.tscn
+# - room_xxx.gd
 
 var _new_room_name := ""
 var _factory: PopochiuRoomFactory
