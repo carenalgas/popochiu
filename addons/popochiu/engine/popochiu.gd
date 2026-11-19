@@ -57,6 +57,10 @@ var clicked: PopochiuClickable = null
 var hovered: PopochiuClickable = null : get = get_hovered, set = set_hovered
 ## A reference to [PopochiuSettings]. Can be used to quickly access its members.
 var settings := PopochiuSettings.new()
+## Engine-owned persistence snapshots for rooms, characters, and inventory items.
+## The live scene is the runtime source of truth; this service stores snapshots for unloaded
+## objects and builds the data used by save/load.
+var game_state := PopochiuGameState.new()
 ## Reference to the [PopochiuAudioManager].
 var am: PopochiuAudioManager = null
 # NOTE: This might not just be a boolean, but there could be an array that puts the calls to queue
@@ -176,8 +180,6 @@ func _ready() -> void:
 	
 	if settings.scale_gui:
 		PopochiuUtils.cursor.scale_cursor(scale)
-	
-	PopochiuUtils.r.store_states()
 	
 	# Connect to autoloads' signals
 	PopochiuUtils.c.character_spoke.connect(_on_character_spoke)
@@ -407,8 +409,12 @@ func save_game(slot := 1, description := "") -> void:
 ## Loads the game in the given [param slot].
 func load_game(slot := 1) -> void:
 	# Clean all character inventories before loading
-	for c_name: String in PopochiuUtils.c.characters_states:
-		var character: PopochiuCharacter = PopochiuUtils.c.get_character(c_name)
+	var characters := PopochiuUtils.c.get_characters().duplicate()
+	if is_instance_valid(PopochiuUtils.c.player):
+		characters[PopochiuUtils.c.player.script_name] = PopochiuUtils.c.player
+
+	for c_name: String in characters:
+		var character: PopochiuCharacter = characters[c_name]
 		if is_instance_valid(character):
 			await PopochiuUtils.i.clean_inventory(character)
 	

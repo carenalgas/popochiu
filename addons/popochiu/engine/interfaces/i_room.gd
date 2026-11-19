@@ -21,12 +21,6 @@ extends Node
 
 ## Provides access to the current [PopochiuRoom].
 var current: PopochiuRoom = null : set = set_current
-## Stores the state of each [PopochiuRoom] in the game. The key of each room is its
-## [member PopochiuRoom.script_name], and each value is a [PopochiuRoomData] instance holding its
-## properties and the data of all its [PopochiuProp]s, [PopochiuHotspot]s,
-## [PopochiuWalkableArea]s, [PopochiuRegion]s, and some data related with the
-## [PopochiuCharacter]s in it.
-var rooms_states := {}
 
 var _room_instances := {}
 var _use_transition_on_room_change := true
@@ -150,24 +144,14 @@ func get_instance(script_name: String) -> PopochiuRoom:
 		return null
 
 	var room: PopochiuRoom = (load(scene_path) as PackedScene).instantiate()
-	var room_state := _get_room_state(script_name)
-	_apply_room_custom_properties(room, room_state)
-	room.visited_times = room_state.visited_times
 
 	return room
 
 
 ## Clears all the [PopochiuRoom] instances to free memory and orphan children.
-## If [param store_state] is [code]true[/code], the custom properties of cached offline rooms are
-## snapshotted before they are freed.
-func clear_instances(store_state := true) -> void:
+func clear_instances() -> void:
 	for room_name: String in _room_instances:
 		var room: PopochiuRoom = _room_instances[room_name]
-		if store_state:
-			var room_state := _get_room_state(room_name)
-			_snapshot_room_custom_properties(room, room_state)
-			room_state.visited_times = room.visited_times
-
 		room.free()
 
 	_room_instances.clear()
@@ -215,10 +199,9 @@ func goto_room(
 
 	# Store the room state
 	if store_state:
-		var room_state := _get_room_state(current.script_name)
-		room_state.save_children_states(current)
-		_snapshot_room_custom_properties(current, room_state)
-		rooms_states[current.script_name] = room_state
+		_game_state().capture_room(current)
+	else:
+		_game_state().mark_room_unloaded(current.script_name)
 
 	# Remove PopochiuCharacter nodes from the room so they are not deleted
 	if Engine.get_process_frames() > 0:
@@ -240,7 +223,7 @@ func goto_room(
 	if Engine.get_process_frames() == 0:
 		await get_tree().process_frame
 
-	clear_instances(store_state)
+	clear_instances()
 
 	PopochiuUtils.e.clear_hovered()
 	PopochiuUtils.e.get_tree().change_scene_to_file(rp)
@@ -265,87 +248,19 @@ func room_readied(room: PopochiuRoom) -> void:
 	# Make the camera be ready for the room
 	current.setup_camera()
 
-	var room_state := _get_room_state(room.script_name)
-	_apply_room_custom_properties(current, room_state)
-	current.visited_times = room_state.visited_times
+	var game_state := _game_state()
+	if not game_state.has_room_snapshot(room.script_name):
+		game_state.capture_room(current)
 
 	# Update the core state
 	if PopochiuUtils.e.loaded_game:
 		PopochiuUtils.c.player = PopochiuUtils.c.get_character(PopochiuUtils.e.loaded_game.player.id)
-	else:
-		room_state.visited_times += 1
-		current.visited_times = room_state.visited_times
-
-	# Add the PopochiuCharacter instances to the room
-	if room_state.characters.is_empty():
-		# Store the initial state of the characters in the room
-		room_state.save_characters(current)
 
 	current.clean_characters()
+	game_state.apply_room_snapshot(current)
 
-	# Load the state of characters in the room
-	for chr_script_name: String in room_state.characters:
-		var chr_dic: Dictionary = room_state.characters[chr_script_name]
-		var chr: PopochiuCharacter = PopochiuUtils.c.get_character(chr_script_name)
-
-		if not chr: continue
-
-		# If character is already in another room's tree, remove it first
-		# This can happen when the same character instance is saved in multiple rooms
-		if chr.is_inside_tree():
-			var parent := chr.get_parent()
-			if parent:
-				parent.remove_child(chr)
-
-		chr.position = Vector2(chr_dic.x, chr_dic.y)
-		chr._looking_dir = chr_dic.facing
-		chr.visible = chr_dic.visible
-		chr.modulate = Color.from_string(chr_dic.modulate, Color.WHITE)
-		chr.self_modulate = Color.from_string(chr_dic.self_modulate, Color.WHITE)
-		chr.light_mask = chr_dic.light_mask
-		chr.baseline = chr_dic.baseline
-
-		if chr_dic.has("walk_to_point"):
-			chr.walk_to_point = PopochiuUtils.unpack_vector_2(chr_dic.walk_to_point)
-
-		if chr_dic.has("look_at_point"):
-			chr.look_at_point = PopochiuUtils.unpack_vector_2(chr_dic.look_at_point)
-
-		if chr_dic.has("dialog_pos"):
-			chr.dialog_pos = PopochiuUtils.unpack_vector_2(chr_dic.dialog_pos)
-
-		# Restore follow-related properties
-		if chr_dic.has("follow_character_outside_room"):
-			chr.follow_character_outside_room = chr_dic.follow_character_outside_room
-
-		if chr_dic.has("follow_character_offset"):
-			chr.follow_character_offset = PopochiuUtils.unpack_vector_2(chr_dic.follow_character_offset)
-
-		if chr_dic.has("follow_character_threshold"):
-			chr.follow_character_threshold = PopochiuUtils.unpack_vector_2(chr_dic.follow_character_threshold)
-
-		# Restore face_character link after character is added to the room
-		if chr_dic.has("face_character") and chr_dic.face_character:
-			chr.face_character = chr_dic.face_character
-
-		# Restore follow link after character is added to the room
-		# This must happen after add_character() so the character is in the tree
-		if chr_dic.has("follow_character") and chr_dic.follow_character:
-			chr.follow_character = chr_dic.follow_character
-
-		current.add_character(chr)
-
-		# Restore face link after character is added to the room
-		if not chr.face_character.is_empty():
-			var faced_chr := PopochiuUtils.c.get_character(chr.face_character)
-			if is_instance_valid(faced_chr) and faced_chr.is_inside_tree():
-				chr.start_facing_character(faced_chr)
-
-		# Restore follow link after character is added to the room
-		if not chr.follow_character.is_empty():
-			var followed_chr := PopochiuUtils.c.get_character(chr.follow_character)
-			if is_instance_valid(followed_chr) and followed_chr.is_inside_tree():
-				chr.start_following_character(followed_chr)
+	if not PopochiuUtils.e.loaded_game:
+		game_state.increment_room_visits(room.script_name)
 
 	# If the room must have the player character but it is not part of its $Characters node, then
 	# add the PopochiuCharacter to the room
@@ -358,24 +273,6 @@ func room_readied(room: PopochiuRoom) -> void:
 		# Place the PC in the middle of the room
 		PopochiuUtils.c.player.position = Vector2(PopochiuUtils.e.width, PopochiuUtils.e.height) / 2.0
 		await PopochiuUtils.c.player.idle()
-
-	# Load the state of Props, Hotspots, Regions and WalkableAreas
-	for type in PopochiuResources.ROOM_CHILDREN:
-		for script_name in room_state[type]:
-			var node: Node2D = current.callv(
-				"get_" + type.trim_suffix("s"),
-				[(script_name as String).to_pascal_case()]
-			)
-
-			if not is_instance_valid(node):
-				# Fix #320 by ignoring the object if it doesn't exist inside the Room
-				continue
-
-			var node_dic: Dictionary = room_state[type][script_name]
-
-			for property in node_dic:
-				if not PopochiuResources.has_property(node, property): continue
-				_restore_node_property(node, property, node_dic[property])
 
 	for c in get_tree().get_nodes_in_group("PopochiuClickable"):
 		c.room = current
@@ -429,18 +326,6 @@ func room_readied(room: PopochiuRoom) -> void:
 		await current._on_room_transition_finished()
 
 
-## Stores the default states of all rooms defined in project data.
-func store_states() -> void:
-	for room_name: String in PopochiuResources.get_section_keys("rooms"):
-		var room_state := _get_room_state(room_name)
-
-		if is_instance_valid(current) and current.script_name == room_name:
-			room_state.save_children_states(current)
-			_snapshot_room_custom_properties(current, room_state)
-		else:
-			room_state.save_children_states()
-
-
 #endregion
 
 #region SetGet #####################################################################################
@@ -456,52 +341,8 @@ func set_current(value: PopochiuRoom) -> void:
 
 
 #region Private ####################################################################################
-# Returns the in-memory state container for [param room_name], creating it when missing.
-func _get_room_state(room_name: String) -> PopochiuRoomData:
-	var state: Variant = rooms_states.get(room_name)
-	if state is PopochiuRoomData:
-		if state.scene.is_empty():
-			state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
-		return state
-
-	# Convert a legacy state resource loaded by an older save into the in-memory container.
-	if state is Object:
-		var legacy := _create_room_state(room_name)
-		PopochiuResources.store_custom_properties(legacy.custom_properties, state)
-		if state.get("visited_times") != null:
-			legacy.visited_times = state.visited_times
-		for category: String in PopochiuResources.ROOM_CHILDREN + ["characters"]:
-			if state.get(category) is Dictionary:
-				legacy[category] = state[category]
-		rooms_states[room_name] = legacy
-		return legacy
-
-	var room_state := _create_room_state(room_name)
-	rooms_states[room_name] = room_state
-	return room_state
-
-
-func _create_room_state(room_name: String) -> PopochiuRoomData:
-	var room_state := PopochiuRoomData.new()
-	room_state.script_name = room_name
-	room_state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
-	room_state.resource_name = room_name
-	return room_state
-
-
-# Captures the script variables declared by the room's own script or its user-defined base
-# scripts. Popochiu's engine properties are not part of the snapshot.
-func _snapshot_room_custom_properties(room: PopochiuRoom, room_state: PopochiuRoomData) -> void:
-	room_state.custom_properties.clear()
-	PopochiuResources.store_custom_properties(room_state.custom_properties, room)
-
-
-# Restores the room's own script variables from [param room_state].
-func _apply_room_custom_properties(room: PopochiuRoom, room_state: PopochiuRoomData) -> void:
-	if room_state == null or room_state.custom_properties.is_empty():
-		return
-
-	PopochiuResources.restore_custom_properties(room, room_state.custom_properties)
+func _game_state() -> PopochiuGameState:
+	return PopochiuUtils.e.game_state
 
 
 # Collects characters that should follow across rooms.
@@ -631,29 +472,5 @@ func _add_cross_room_followers() -> void:
 		follower.start_following_character(followed)
 
 	_pending_cross_room_followers.clear()
-
-# Restores one node property from stored room state while preserving runtime types.
-func _restore_node_property(node: Node2D, property: String, value) -> void:
-	var current_value = node[property]
-
-	if current_value is Array:
-		var destination: Array = current_value
-
-		if value is Array:
-			destination.assign(value)
-			return
-
-		if value is PackedVector2Array:
-			destination.assign([value])
-			return
-
-		node[property] = value
-		return
-
-	if current_value is PackedVector2Array and value is Array:
-		node[property] = PackedVector2Array(value)
-		return
-
-	node[property] = value
 
 #endregion

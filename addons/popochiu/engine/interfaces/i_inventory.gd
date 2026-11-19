@@ -77,14 +77,9 @@ var clicked: PopochiuInventoryItem
 ## When [code]true[/code], the inventory is being restored from a save file. GUI components
 ## should skip entrance/exit animations during restore.
 var is_restoring := false
-# ---- Used for saving/loading the game ------------------------------------------------------------
 ## @deprecated Available in 2.2 - Will be removed in 2.3. Use [member PopochiuCharacter.inventory]
 ## instead.
 var items: Array : set = _set_items, get = _get_items
-## Stores per-item state data for each [PopochiuInventoryItem] in the project. The key for each
-## entry is the item's [member PopochiuInventoryItem.script_name].
-var items_states := {}
-# ------------------------------------------------------------ Used for saving/loading the game ----
 
 var _item_instances := {}
 
@@ -266,6 +261,8 @@ func register_existing_item(item: PopochiuInventoryItem, character: PopochiuChar
 	if not is_instance_valid(target) or not is_instance_valid(item):
 		return
 
+	_game_state().apply_inventory_item_snapshot(item)
+
 	if item.quantity_owned == 0:
 		_apply_first_add(item, 1, target)
 		return
@@ -336,6 +333,8 @@ func get_item_instance(item_name: String) -> PopochiuInventoryItem:
 	
 	if _item_instances.has(item_name):
 		item = _item_instances[item_name]
+		if is_instance_valid(item):
+			_game_state().apply_inventory_item_snapshot(item)
 	else:
 		# If the item is not in the list of items, then try to instantiate it
 		item = get_instance(item_name)
@@ -361,7 +360,7 @@ func get_instance(script_name: String) -> PopochiuInventoryItem:
 		return null
 	
 	var item: PopochiuInventoryItem = (load(scene_path) as PackedScene).instantiate()
-	_apply_stored_state(item, script_name)
+	_game_state().apply_inventory_item_snapshot(item)
 
 	return item
 
@@ -386,10 +385,15 @@ func is_item_in_inventory(item_name: String, character: PopochiuCharacter = null
 ## Returns [code]true[/code] if the item identified by [param item_name] is in any character's
 ## inventory. Used for props with [member PopochiuProp.link_to_item].
 func is_item_in_any_inventory(item_name: String) -> bool:
-	for c_name: String in PopochiuUtils.c.characters_states:
-		var c: PopochiuCharacter = PopochiuUtils.c.get_character(c_name)
-		if is_instance_valid(c) and c.inventory.has(item_name):
+	var characters := PopochiuUtils.c.get_characters().duplicate()
+	if is_instance_valid(PopochiuUtils.c.player):
+		characters[PopochiuUtils.c.player.script_name] = PopochiuUtils.c.player
+
+	for character_name: String in characters:
+		var character: PopochiuCharacter = characters[character_name]
+		if is_instance_valid(character) and character.inventory.has(item_name):
 			return true
+
 	return false
 
 
@@ -460,6 +464,10 @@ func _set_items(_value: Array) -> void:
 #endregion
 
 #region Private ####################################################################################
+func _game_state() -> PopochiuGameState:
+	return PopochiuUtils.e.game_state
+
+
 # Resolves the target character for inventory operations.
 # Returns [param character] if valid, otherwise returns the player character.
 # If neither is available, returns null.
@@ -469,12 +477,6 @@ func _resolve_character(character: PopochiuCharacter) -> PopochiuCharacter:
 	if is_instance_valid(PopochiuUtils.c.player):
 		return PopochiuUtils.c.player
 	return null
-
-
-# Applies the stored state of [param script_name] to [param item], if any. Custom state lives in
-# the item script, so properties are only restored when the script still declares them.
-func _apply_stored_state(item: PopochiuInventoryItem, script_name: String) -> void:
-	PopochiuResources.restore_custom_properties(item, items_states.get(script_name, {}))
 
 
 func _get_addable_quantity(
