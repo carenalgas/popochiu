@@ -44,6 +44,20 @@ Rooms also track visit metadata:
 - `visited_first_time` (true only on the first visit)
 - `visited_times` (how many times the room has been entered)
 
+### Snapshot ownership: PopochiuGameState
+
+The engine owns a [PopochiuGameState](scripting-reference/engine/PopochiuGameState.md) instance at `E.game_state`. It is the only persistence service for rooms, characters, and inventory items:
+
+- While a room is live, its scene is the source of truth. The stored room snapshot is invalidated and never read.
+- When a room is unloaded, `PopochiuGameState` captures its custom properties, children, character transforms, and visit counter.
+- When the room is loaded again, `PopochiuGameState` applies that snapshot and then discards it.
+- Save/load asks `PopochiuGameState` for a merged snapshot of live and stored objects.
+- `visited_times` is owned by `PopochiuGameState` and exposed through [member PopochiuRoom.visited_times].
+
+There are no `R.rooms_states`, `C.characters_states`, or `I.items_states` containers anymore, and no per-object data resources. Use the live objects, or `E.game_state` when you need to inspect persistence snapshots.
+
+Existing save files keep loading: the old room, character, and inventory item sections are mapped into `PopochiuGameState` snapshots when the game starts.
+
 ---
 
 ## Where custom state lives
@@ -112,7 +126,7 @@ Dialogs remain resource-based (`.tres`), because the resource itself defines the
 	Older projects accessed custom state through `R.LivingRoom.state.door_unlocked` or similar. Popochiu still accepts that form at runtime and prints a deprecation warning, but new code should use the object directly.
 
 !!! note
-	`R.<Room>` is a transient scene reference. Popochiu may free and re-instantiate that scene at the next room change, so don't cache room nodes across rooms. Reading and writing custom properties through `R.<Room>` is fine: the stored snapshot is applied when the scene is instantiated again.
+	`R.<Room>` is a transient scene reference. Popochiu may free and re-instantiate that scene at the next room change, so don't cache room nodes across rooms. Custom room properties are restored from the stored snapshot when the room is loaded as the current room.
 
 !!! warning "Managing complex types"
     We said Popochiu automatically saves and loads custom properties, but there's a catch: **only certain types are supported**. `bool`, `int`, `float`, and `String` are safe. Arrays and Dictionaries require their contents to be of safe types as well. Complex types like `Vector2`, `Color`, `Node`, or `Resource` require custom save and load logic.
@@ -315,26 +329,25 @@ Custom properties on object scripts also survive room changes, since Popochiu ca
 When you call `E.save_game(slot, description)`, the engine runs these steps in order:
 
 1. Collect player data: current room, position, and inventory.
-2. Collect room states: custom properties, props, hotspots, regions, walkable areas, and characters present in each room.
-3. Collect character states.
-4. Collect inventory item states.
-5. Collect dialog states: option usage and on/off flags.
-6. Collect `Globals` properties.
-7. Call `on_save()` on every object script that defines it, and on `Globals`.
-8. Write everything as JSON to `user://save_N.json`.
-9. Emit the `game_saved` signal.
+2. Ask `E.game_state` for the merged object snapshot: live rooms, stored unloaded rooms, characters, and inventory items.
+3. Collect character inventories.
+4. Collect dialog states: option usage and on/off flags.
+5. Collect `Globals` properties.
+6. Call `on_save()` on every object script that defines it, and on `Globals`.
+7. Write everything as JSON to `user://save_N.json`.
+8. Emit the `game_saved` signal.
 
 ### Loading
 
 When you call `E.load_game(slot)`, the steps mirror saving in reverse:
 
 1. Read JSON from `user://save_N.json`.
-2. Restore inventory items.
-3. Restore room, character, inventory item, and dialog states.
+2. Restore character inventories.
+3. Hand the object sections to `E.game_state`, which applies them to live objects and keeps the rest as snapshots.
 4. Restore `Globals` properties.
 5. Call `on_load()` on every object script that defines it, and on `Globals`.
 6. Navigate to the room the player was in when they saved.
-7. The room applies its stored state: positions, visibility, and so on.
+7. The room asks `E.game_state` for its snapshot: positions, visibility, and so on.
 8. Emit the `game_loaded` signal.
 
 ### Save slots
@@ -373,5 +386,6 @@ var saves := E.get_saves_descriptions()
 | **Built-in state** | Properties like position, visibility, and click counts are tracked automatically for all game objects. |
 | **Custom state** | Add properties to the object script (room, character, inventory item). Use JSON-safe types (`bool`, `int`, `float`, `String`). |
 | **Custom save/load** | Override `on_save()` and `on_load()` on the object script for complex persistence needs. |
-| **Cross-room persistence** | State survives room changes automatically, since Popochiu snapshots the room before unloading it. |
+| **Cross-room persistence** | State survives room changes automatically, since `E.game_state` snapshots the room before unloading it. |
 | **Save/load** | `E.save_game()` / `E.load_game()` serialize everything to JSON files (up to 4 slots). |
+| **Snapshot service** | `E.game_state` owns snapshots for unloaded rooms, characters, and inventory items. Live objects are never read from snapshots. |

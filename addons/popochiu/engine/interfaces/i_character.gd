@@ -37,9 +37,6 @@ signal player_changed(old_player: PopochiuCharacter, new_player: PopochiuCharact
 var player: PopochiuCharacter : set = set_player
 ## The [PopochiuCharacter] that currently owns the camera.
 var camera_owner: PopochiuCharacter
-## Stores per-character runtime state. Keys are the characters'
-## [member PopochiuCharacter.script_name] values.
-var characters_states := {}
 
 var _characters := {}
 
@@ -161,6 +158,8 @@ func get_character(script_name: String) -> PopochiuCharacter:
 		character = player
 	elif _characters.has(script_name):
 		character = _characters[script_name]
+		if is_instance_valid(character):
+			_game_state().apply_character_snapshot(character)
 	else:
 		# If the character doesn't exist, try to instantiate it from the list of
 		# characters (Resource) in popochiu_data.cfg
@@ -184,7 +183,7 @@ func get_instance(script_name: String) -> PopochiuCharacter:
 		return null
 
 	var character: PopochiuCharacter = (load(scene_path) as PackedScene).instantiate()
-	_apply_stored_state(character, script_name)
+	_game_state().apply_character_snapshot(character)
 
 	return character
 
@@ -200,6 +199,9 @@ func set_player(value: PopochiuCharacter) -> void:
 	var old_player = player
 	player = value
 	camera_owner = value
+
+	if is_instance_valid(value):
+		_game_state().apply_character_snapshot(value)
 	
 	# Emit the player changed signal so characters can update their clickability
 	player_changed.emit(old_player, value)
@@ -208,12 +210,8 @@ func set_player(value: PopochiuCharacter) -> void:
 #endregion
 
 #region Private ####################################################################################
-# Applies the stored state of [param script_name] to [param character], if any. Custom state lives
-# in the character script, so properties are only restored when the script still declares them.
-func _apply_stored_state(character: PopochiuCharacter, script_name: String) -> void:
-	PopochiuResources.restore_custom_properties(
-		character, characters_states.get(script_name, {})
-	)
+func _game_state() -> PopochiuGameState:
+	return PopochiuUtils.e.game_state
 
 
 #endregion
