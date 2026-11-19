@@ -50,9 +50,25 @@ var last_click_button := -1 # NOTE Don't know if this will make sense, or if it 
 
 # Dictionary storing command usage counts {command_id (Commands): count (int)}
 var _command_usage_count := {}
+# Avoids flooding the output when a project still uses the deprecated state property.
+static var _state_alias_warned := false
 
 
 #region Godot ######################################################################################
+func _get(property: StringName) -> Variant:
+	# Compatibility for projects that still access custom state through I.<Item>.state.<property>.
+	if property == &"state":
+		if not _state_alias_warned:
+			_state_alias_warned = true
+			PopochiuUtils.print_warning(
+				"Inventory item state resources are deprecated. Custom state now lives on the "
+				+ "item script; use <item>.<property> instead of <item>.state.<property>."
+			)
+		return self
+
+	return null
+
+
 func _ready():
 	mouse_entered.connect(_toggle_description.bind(true))
 	mouse_exited.connect(_toggle_description.bind(false))

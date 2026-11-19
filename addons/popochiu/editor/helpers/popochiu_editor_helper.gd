@@ -45,7 +45,6 @@ static var ei := EditorInterface
 static var undo_redo: EditorUndoRedoManager = null
 static var dock: Panel = null
 
-static var _room_scene_path_template := PopochiuResources.ROOMS_PATH.path_join("%s/room_%s.tscn")
 static var _setup_dialog_instance: ConfirmationDialog = null
 
 # Godot 4.x reserved names from:
@@ -108,8 +107,14 @@ static func show_popup(popup_name: String) -> void:
 	PopochiuUtils.print_normal(popup_name)
 
 
-static func add_resource_to_popochiu(target: String, resource: Resource) -> int:
-	return PopochiuResources.set_data_value(target, resource.script_name, resource.resource_path)
+static func add_resource_to_popochiu(target: String, resource: Variant) -> int:
+	var object_path: String = ""
+	if resource is Node:
+		object_path = resource.scene_file_path
+	elif resource is Resource:
+		object_path = resource.resource_path
+
+	return PopochiuResources.set_data_value(target, resource.script_name, object_path)
 
 
 static func show_delete_confirmation(
@@ -401,7 +406,7 @@ static func get_rooms() -> Array[PopochiuRoom]:
 	var rooms: Array[PopochiuRoom] = []
 	rooms.assign(PopochiuResources.get_section_keys("rooms").map(
 		func(room_name: String) -> PopochiuRoom:
-			var scene_path := _room_scene_path_template.replace("%s", room_name.to_snake_case())
+			var scene_path := PopochiuResources.get_object_scene_path("rooms", room_name)
 			return (load(scene_path) as PackedScene).instantiate(PackedScene.GEN_EDIT_STATE_INSTANCE)
 	))
 	return rooms

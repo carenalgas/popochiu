@@ -35,6 +35,10 @@ var regions := {}
 ## [method save_characters].
 var characters := {}
 
+## Script variables declared by the room's own script or its user-defined base scripts. They are
+## the room's custom persistent state.
+var custom_properties := {}
+
 
 #region Virtual ####################################################################################
 ## Called when the game is saved.[br]
@@ -72,20 +76,22 @@ func on_load(data: Dictionary) -> void:
 
 ## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
-## 
+##
+## [param room] is the room instance to snapshot. When omitted, the children are discovered from
+## the scene path stored in [member scene].
 ##
 ## This method clears and rebuilds the state dictionaries from scratch, ensuring they accurately
 ## reflect only the objects currently present in the room. Objects that were removed from the
 ## room's scene tree (e.g., via [method PopochiuRoom.remove_character]) will not be restored when
 ## returning to the room.
-func save_children_states() -> void:
-	if PopochiuUtils.r.current and PopochiuUtils.r.current.state == self:
+func save_children_states(room: PopochiuRoom = null) -> void:
+	if is_instance_valid(room):
 		for t in PopochiuResources.ROOM_CHILDREN:
 			# Clear the dictionary to remove entries for objects no longer in the room
 			# Fixes issue #466
 			get(t).clear()
 			
-			for node in PopochiuUtils.r.current.call("get_" + t):
+			for node in room.call("get_" + t):
 				if node is PopochiuProp and not node.clickable: continue
 				
 				_save_object_state(
@@ -95,13 +101,16 @@ func save_children_states() -> void:
 				)
 		
 		# Save the state of characters
-		save_characters()
+		save_characters(room)
 		
 		return
 	
-	var base_dir := resource_path.get_base_dir()
+	if scene.is_empty():
+		return
+
+	var base_dir := scene.get_base_dir()
 	var dependencies_paths: Array = Array(ResourceLoader.get_dependencies(
-		resource_path.replace(".tres", ".tscn")
+		scene
 	)).map(
 		func (dependency: String) -> String:
 			return dependency.get_slice("::", 2)
@@ -177,18 +186,24 @@ func save_children_states() -> void:
 ##     self_modulate = PopochiuCharacter.self_modulate
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
-## 
+##
+## [param room] is the room instance to snapshot. When omitted, [member PopochiuIRoom.current] is
+## used.
 ##
 ## This method clears and rebuilds the [member characters] dictionary from scratch, ensuring it
 ## accurately reflects only the characters currently present in the room's [b]$Characters[/b] node.
 ## Characters that were removed via [method PopochiuRoom.remove_character] will not be restored
 ## when returning to the room.
-func save_characters() -> void:
+func save_characters(room: PopochiuRoom = null) -> void:
+	var target_room: PopochiuRoom = room if is_instance_valid(room) else PopochiuUtils.r.current
+	if not is_instance_valid(target_room):
+		return
+
 	# Clear the dictionary to remove entries for characters no longer in the room
 	# Fixes issue #466
 	characters.clear()
 	
-	for character: PopochiuCharacter in PopochiuUtils.r.current.get_characters():
+	for character: PopochiuCharacter in target_room.get_characters():
 		characters[character.script_name] = {
 			x = character.position.x,
 			y = character.position.y,

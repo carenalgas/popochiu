@@ -22,7 +22,6 @@ enum {
 	ERR_TAGS_OPTIONS_ARRAY_EMPTY,
 	## Popochiu Object factories errors
 	ERR_CANT_CREATE_OBJ_FOLDER,
-	ERR_CANT_CREATE_OBJ_STATE,
 	ERR_CANT_OPEN_OBJ_SCRIPT_TEMPLATE,
 	ERR_CANT_CREATE_OBJ_SCRIPT,
 	ERR_CANT_SAVE_OBJ_SCENE,
@@ -68,8 +67,6 @@ static func get_error_message(code: int):
 		# Popochiu object factories error messages
 		ERR_CANT_CREATE_OBJ_FOLDER:
 			return "Can't create folder to host new Popochiu object"
-		ERR_CANT_CREATE_OBJ_STATE:
-			return "Can't create new Popochiu object's state resource (_state.tres, _state.gd)"
 		ERR_CANT_OPEN_OBJ_SCRIPT_TEMPLATE:
 			return "Can't open script template for new Popochiu object"
 		ERR_CANT_CREATE_OBJ_SCRIPT:

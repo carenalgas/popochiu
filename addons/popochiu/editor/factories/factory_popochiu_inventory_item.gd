@@ -22,11 +22,6 @@ func create(obj_name: String) -> int:
 	# Create the folder
 	result_code = _create_obj_folder()
 	if result_code != ResultCodes.SUCCESS: return result_code
-	
-	# Create the state Resource and a script
-	# so devs can add extra properties to that state
-	result_code = _create_state_resource()
-	if result_code != ResultCodes.SUCCESS: return result_code
 		
 	# Create the script populating the template with the right references
 	result_code = _create_script_from_template()

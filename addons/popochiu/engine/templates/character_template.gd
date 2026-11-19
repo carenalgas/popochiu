@@ -4,9 +4,9 @@ extends PopochiuCharacter
 # You can use `E.queue([])` in any of the methods in this script to trigger a sequence of events.
 # Use `await E.queue([])` to pause execution until the sequence completes.
 
-const Data := preload('character_state_template.gd')
-
-var state: Data = null
+# Add properties here to persist this character's state across room changes and save/load.
+# Only Godot's basic built-in types are saved automatically.
+# For custom serialization, add on_save() -> Dictionary and on_load(data: Dictionary).
 
 
 #region Virtual ####################################################################################

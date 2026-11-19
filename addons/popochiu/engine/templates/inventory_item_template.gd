@@ -1,9 +1,9 @@
 # @popochiu-docs-ignore-class
 extends PopochiuInventoryItem
 
-const Data := preload('inventory_item_state_template.gd')
-
-var state: Data = null
+# Add properties here to persist this item's state across save/load.
+# Only Godot's basic built-in types are saved automatically.
+# For custom serialization, add on_save() -> Dictionary and on_load(data: Dictionary).
 
 
 #region Virtual ####################################################################################

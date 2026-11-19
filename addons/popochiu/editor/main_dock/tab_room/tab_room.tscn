@@ -35,22 +35,6 @@ tooltip_text = "Open Room's script"
 text = "Script"
 icon = SubResource("DPITexture_7ojni")
 
-[node name="BtnResource" type="Button" parent="ToolButtons" unique_id=69575297]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Inspect Room's State"
-text = "State"
-icon = SubResource("DPITexture_7ojni")
-
-[node name="BtnResourceScript" type="Button" parent="ToolButtons" unique_id=867885717]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Open Room's State script"
-text = "State Script"
-icon = SubResource("DPITexture_7ojni")
-
 [node name="Filter" type="LineEdit" parent="." unique_id=1966196996]
 unique_name_in_owner = true
 visible = false

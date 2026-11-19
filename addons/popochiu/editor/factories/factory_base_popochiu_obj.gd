@@ -1,6 +1,5 @@
 extends RefCounted
 
-const BASE_STATE_TEMPLATE := "res://addons/popochiu/engine/templates/%s_state_template.gd"
 const BASE_SCRIPT_TEMPLATE := "res://addons/popochiu/engine/templates/%s_template.gd"
 const BASE_SCENE_PATH := "res://addons/popochiu/engine/objects/%s/popochiu_%s.tscn"
 const EMPTY_SCRIPT := "res://addons/popochiu/engine/templates/empty_script_template.gd"
@@ -13,7 +12,6 @@ var _pascal_name := ""
 var _path_base := ""
 var _path_scene = ""
 var _path_resource = ""
-var _path_state = ""
 var _path_script := ""
 # The following variables are setup by the sub-class constructor to define the type of object to be
 # processed
@@ -25,10 +23,9 @@ var _type_method: Callable
 # Whether the created object's script should be registered for translation template generation
 var _register_for_translation := true
 # The following variables are references to the elements generated for the creation of the new
-# Popochiu object, such as resources, scenes, scripts, state scripts, etc
+# Popochiu object, such as resources, scenes, and scripts
 var _scene: Node
 var _resource: Resource
-var _state_resource: Resource
 var _script: Resource
 
 
@@ -43,10 +40,6 @@ func get_snake_name() -> String:
 
 func get_obj_resource() -> Resource:
 	return _resource
-	
-
-func get_state_resource() -> Resource:
-	return _state_resource
 
 
 func get_obj_script() -> Resource:
@@ -73,7 +66,6 @@ func _setup_name(obj_name: String) -> void:
 	_snake_name = obj_name.to_snake_case()
 	_path_base = _path_template % [_snake_name, _snake_name]
 	_path_script = _path_base + ".gd"
-	_path_state = _path_base + "_state.gd"
 	_path_resource = _path_base + ".tres"
 	_path_scene = _path_base + ".tscn"
 
@@ -86,31 +78,6 @@ func _create_obj_folder() -> int:
 			[_path_base.get_base_dir(), _pascal_name]
 		)
 		return ResultCodes.ERR_CANT_CREATE_OBJ_FOLDER
-	return ResultCodes.SUCCESS
-
-
-func _create_state_resource() -> int:
-	var state_template: Script = load(BASE_STATE_TEMPLATE % _type_label).duplicate()
-
-	if ResourceSaver.save(state_template, _path_state) != OK:
-		PopochiuUtils.print_error(
-			"Could not create %s state script: %s" %
-			[_type_label, _pascal_name]
-		)
-		return ResultCodes.FAILURE
-	
-	_state_resource = load(_path_state).new()
-	_state_resource.script_name = _pascal_name
-	_state_resource.scene = _path_scene
-	_state_resource.resource_name = _pascal_name
-	
-	if ResourceSaver.save(_state_resource, _path_resource) != OK:
-		PopochiuUtils.print_error(
-			"Could not create state resource for %s: %s" %
-			[_type_label, _pascal_name]
-		)
-		return ResultCodes.ERR_CANT_CREATE_OBJ_STATE
-	
 	return ResultCodes.SUCCESS
 
 
@@ -143,14 +110,6 @@ func _create_script_from_template() -> int:
 	var new_code: String = script_template_file.get_as_text()
 	script_template_file.close()
 
-	new_code = new_code.replace(
-		"%s_state_template" % _type_label,
-		"%s_%s_state" % [_type_label, _snake_name]
-	)
-	new_code = new_code.replace(
-		"Data = null",
-		'Data = load("%s.tres")' % _path_base
-	)
 	new_code = new_code.replace("PopochiuUtils.e", "E")
 
 	_script = load(EMPTY_SCRIPT).duplicate()
@@ -212,14 +171,15 @@ func _load_obj_base_scene() -> Node:
 
 
 func _add_resource_to_popochiu() -> void:
-	# Add the created obj to Popochiu's correct list
-	# NOTE: We could avoid this since we already have the script_name and the resource_path (we could
-	# store them in private variables if needed.
-	var resource := ResourceLoader.load(_path_resource)
+	# Add the created obj to Popochiu's correct list. Rooms, characters, and inventory items are
+	# registered by their scene path; dialogs keep using their resource path.
+	var object_path: String = _path_scene
+	if _resource != null:
+		object_path = _path_resource
 	if PopochiuResources.set_data_value(
 		_type_target,
-		resource.script_name,
-		resource.resource_path
+		_pascal_name,
+		object_path
 	) != OK:
 		PopochiuUtils.print_error(
 			"Could not add the created %s to Popochiu: %s" %

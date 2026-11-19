@@ -40,7 +40,7 @@ func play(item: TreeItem) -> void:
 
 #region Virtual ####################################################################################
 func create_row(resource: Variant) -> TreeItem:
-	if get_scene_template().replace("%s", resource.resource_name) in dock.rows_paths:
+	if get_scene_template().replace("%s", resource.script_name.to_snake_case()) in dock.rows_paths:
 		return null
 	
 	var item := create_item(resource.script_name)
@@ -51,7 +51,7 @@ func create_row(resource: Variant) -> TreeItem:
 	
 	# Check if the room is the main scene
 	var main_scene: String = ProjectSettings.get_setting(PopochiuResources.MAIN_SCENE)
-	if main_scene == resource.scene:
+	if main_scene == _get_source_scene_path(resource):
 		dock.set_tag(item, MAIN_ICON, true)
 		data.is_main = true
 	

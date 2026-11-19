@@ -11,7 +11,6 @@ extends PopochiuTreeDock
 const CHARACTER_ICON = preload("res://addons/popochiu/icons/character.svg")
 
 var opened_room: PopochiuRoom = null
-var opened_room_state_path: String = ""
 
 var rows_paths := []
 var characters_in_room := []
@@ -33,8 +32,6 @@ var _characters_group: TreeItem
 @onready var no_room_info: Label = %NoRoomInfo
 @onready var tool_buttons: HBoxContainer = %ToolButtons
 @onready var btn_script: Button = %BtnScript
-@onready var btn_resource: Button = %BtnResource
-@onready var btn_resource_script: Button = %BtnResourceScript
 @onready var characters_separator: HSeparator = %CharactersSeparator
 @onready var characters_tree: Tree = %CharactersTree
 
@@ -66,13 +63,9 @@ func _ready() -> void:
 	# Setup the tool buttons
 	room_name.icon = get_theme_icon("Load", "EditorIcons")
 	btn_script.icon = get_theme_icon("Script", "EditorIcons")
-	btn_resource.icon = get_theme_icon("Object", "EditorIcons")
-	btn_resource_script.icon = get_theme_icon("GDScript", "EditorIcons")
 	
 	room_name.pressed.connect(_edit_root_node)
 	btn_script.pressed.connect(_open_room_script)
-	btn_resource.pressed.connect(_edit_resource)
-	btn_resource_script.pressed.connect(_open_resource_script)
 	
 	# Setup the add-character menu
 	_add_character_menu = PopupMenu.new()
@@ -107,9 +100,6 @@ func scene_changed(scene_root: Node) -> void:
 	
 	# Updated the opened room's info
 	opened_room = scene_root
-	opened_room_state_path = PopochiuResources.get_data_value(
-		"rooms", opened_room.script_name, ""
-	)
 	
 	if not PopochiuEditorHelper.undo_redo.history_changed.is_connected(_check_undoredo_history):
 		PopochiuEditorHelper.undo_redo.history_changed.connect(_check_undoredo_history)
@@ -355,7 +345,6 @@ func _clear_content() -> void:
 		PopochiuEditorHelper.undo_redo.history_changed.disconnect(_check_undoredo_history)
 	
 	opened_room = null
-	opened_room_state_path = ""
 	
 	characters_in_room.clear()
 	rows_paths.clear()
@@ -389,18 +378,6 @@ func _open_room_script() -> void:
 	EditorInterface.select_file(opened_room.get_script().resource_path)
 	EditorInterface.set_main_screen_editor("Script")
 	EditorInterface.edit_script(opened_room.get_script())
-
-
-func _edit_resource() -> void:
-	EditorInterface.select_file(opened_room_state_path)
-	EditorInterface.edit_resource(load(opened_room_state_path))
-
-
-func _open_resource_script() -> void:
-	var prd: PopochiuRoomData = load(opened_room_state_path)
-	EditorInterface.select_file(prd.get_script().resource_path)
-	EditorInterface.set_main_screen_editor("Script")
-	EditorInterface.edit_resource(prd.get_script())
 
 
 # Fills the list to show after pressing "+ Add character to room" and listens to selections to add
