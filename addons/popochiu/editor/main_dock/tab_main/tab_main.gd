@@ -158,7 +158,7 @@ func _get_popochiu_object(
 		if file_name.get_extension() != expected_extension:
 			continue
 
-		var resource = load(dir_path.path_join(file_name))
+		var resource: Resource = load(dir_path.path_join(file_name))
 
 		if type_key == PopochiuResources.Types.DIALOG:
 			if resource is PopochiuDialog:

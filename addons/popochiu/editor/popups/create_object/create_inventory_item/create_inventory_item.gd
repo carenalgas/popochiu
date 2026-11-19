@@ -1,10 +1,10 @@
 @tool
 extends "res://addons/popochiu/editor/popups/create_object/create_object.gd"
-## Creates a [PopochiuInventoryItem].
-## 
-## It creates all the necessary files to make a [PopochiuInventoryItem] work:
-## - inventory_item_xxx.tscn
-## - inventory_item_xxx.gd
+# Creates a [PopochiuInventoryItem].
+#
+# It creates all the necessary files to make a [PopochiuInventoryItem] work:
+# - inventory_item_xxx.tscn
+# - inventory_item_xxx.gd
 
 var _new_item_name := ""
 var _factory: PopochiuInventoryItemFactory

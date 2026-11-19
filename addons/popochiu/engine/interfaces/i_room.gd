@@ -135,7 +135,7 @@ func get_runtime_room(script_name: String) -> PopochiuRoom:
 	return room
 
 
-## Instantiates and returns the [PopochiuRoom] resource referenced by [param script_name] from
+## Instantiates and returns the [PopochiuRoom] scene referenced by [param script_name] from
 ## project data. Logs an error and returns [code]null[/code] if not found.
 func get_instance(script_name: String) -> PopochiuRoom:
 	# Fix #328 by returning the instance of the current room if it matches the instance that the
@@ -458,7 +458,7 @@ func set_current(value: PopochiuRoom) -> void:
 #region Private ####################################################################################
 # Returns the in-memory state container for [param room_name], creating it when missing.
 func _get_room_state(room_name: String) -> PopochiuRoomData:
-	var state = rooms_states.get(room_name)
+	var state: Variant = rooms_states.get(room_name)
 	if state is PopochiuRoomData:
 		if state.scene.is_empty():
 			state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)

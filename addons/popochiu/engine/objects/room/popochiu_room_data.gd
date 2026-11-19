@@ -35,7 +35,8 @@ var regions := {}
 ## [method save_characters].
 var characters := {}
 
-## Script variables declared by the room's own script. They are the room's custom persistent state.
+## Script variables declared by the room's own script or its user-defined base scripts. They are
+## the room's custom persistent state.
 var custom_properties := {}
 
 
@@ -75,7 +76,9 @@ func on_load(data: Dictionary) -> void:
 
 ## Stores the data of each of the children inside [b]$WalkableAreas[/b], [b]$Props[/b],
 ## [b]$Hotspots[/b], [b]$Regions[/b], and [b]$Characters[/b].
-## 
+##
+## [param room] is the room instance to snapshot. When omitted, the children are discovered from
+## the scene path stored in [member scene].
 ##
 ## This method clears and rebuilds the state dictionaries from scratch, ensuring they accurately
 ## reflect only the objects currently present in the room. Objects that were removed from the
@@ -183,7 +186,9 @@ func save_children_states(room: PopochiuRoom = null) -> void:
 ##     self_modulate = PopochiuCharacter.self_modulate
 ##     light_mask = PopochiuCharacter.light_mask
 ## }[/codeblock]
-## 
+##
+## [param room] is the room instance to snapshot. When omitted, [member PopochiuIRoom.current] is
+## used.
 ##
 ## This method clears and rebuilds the [member characters] dictionary from scratch, ensuring it
 ## accurately reflects only the characters currently present in the room's [b]$Characters[/b] node.
