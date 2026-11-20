@@ -91,6 +91,12 @@ func increment_room_visits(room_name: String) -> int:
 	return visits
 
 
+# ---- Internal unload primitives ---------------------------------------------------------------
+# These methods are not part of the save/load API. Call them only when the instance is about to be
+# removed from the live runtime. They store a snapshot and mark the object as unloaded, so any
+# later change to the still-alive instance is ignored until the matching apply_*_snapshot() method
+# restores it. Saving must use get_snapshot(); loading must use load_snapshot().
+# @popochiu-docs-ignore
 ## Captures [param room] while it is live and stores it as an unloaded-room snapshot.
 ## The live reference is dropped, so the stored snapshot becomes authoritative.
 func capture_room(room: PopochiuRoom) -> void:
@@ -120,6 +126,9 @@ func mark_room_unloaded(room_name: String) -> void:
 	_live_rooms.erase(room_name)
 
 
+# Internal unload primitive. Characters are not unloaded by the current engine lifecycle; this
+# method is retained for future implementations that release character instances.
+# @popochiu-docs-ignore
 ## Captures the persistent state of [param character] as a snapshot for an unloaded character.
 func capture_character(character: PopochiuCharacter) -> void:
 	if not is_instance_valid(character):
@@ -143,6 +152,9 @@ func apply_character_snapshot(character: PopochiuCharacter) -> void:
 	_live_characters[character_name] = weakref(character)
 
 
+# Internal unload primitive. Inventory items are not unloaded by the current engine lifecycle; this
+# method is retained for future implementations that release item instances.
+# @popochiu-docs-ignore
 ## Captures the persistent state of [param item] as a snapshot for an unloaded inventory item.
 func capture_inventory_item(item: PopochiuInventoryItem) -> void:
 	if not is_instance_valid(item):
