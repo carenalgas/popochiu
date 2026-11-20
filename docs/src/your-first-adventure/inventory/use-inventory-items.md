@@ -4,7 +4,7 @@ weight: 2052
 
 ## Use inventory items
 
-The last common task in an adventure game is to use inventory items. Giving them to characters, combining them together or with elements in the game world.
+One more common task in an adventure game is to use inventory items. Giving them to characters, combining them together or with elements in the game world.
 
 We are going to give the item we collected earlier to our secondary character. This will disable the dialog line forever and remove the item from our inventory.
 
@@ -27,9 +27,3 @@ func _on_item_used(item: PopochiuInventoryItem) -> void:
 Save the script and run the game. Pick the toy car up, select it from the inventory (note how the cursor takes the shape of the item) and click on Popsy.
 
 You should see the dialog happen, and the car is removed from your inventory.
-
-Well, our game is done, right? It seems like we addressed everything: locations, characters, dialogues, interactions with the environment and the use of inventory items.
-
-But one last bit is missing and it's the way the player interacts with all of this: the GUI.
-
-Let's take a glance at how to customize one of the already available Popochiu game interfaces.

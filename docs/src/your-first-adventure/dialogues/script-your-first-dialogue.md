@@ -4,7 +4,7 @@ weight: 2061
 
 ## Script your first dialogue
 
-The last very common case we want to cover with this introductory guide is the interaction with another character.
+Another common case we want to cover with this introductory guide is the interaction with another character.
 
 If you followed this tutorial from the start, [you should have created two characters](../characters/add-another-character.md). Popochiu adds our main character to the room for us when the game starts, so we don't need to do it manually. On the other hand, as we are the directors of our own game, it leaves us to place non-player characters where they belong.
 

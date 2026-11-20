@@ -1,5 +1,5 @@
 ---
-weight: 2070
+weight: 2080
 title: "Customize the Game UI"
 ---
 
@@ -218,7 +218,3 @@ Also, each element has its short and to the point script, and communicates with 
 Providing a full list of signals is out of the scope of this guide, but we'll soon provide a reference and a dedicated walkthrough on how to create a custom GUI from scratch.
 
 For the scope of this guide, if you did follow along with this paragraph, you are encouraged to edit and evolve the scripts as you want!
-
----
-
-**Congratulations! You've got to the end of this introductory guide!**
