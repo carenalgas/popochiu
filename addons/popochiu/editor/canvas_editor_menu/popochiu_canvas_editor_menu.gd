@@ -206,10 +206,12 @@ func _on_selection_changed() -> void:
 	# If we have no selection in the tree (the user clicked on an
 	# empty area or pressed ESC), we hide the toolbar.
 	if EditorInterface.get_selection().get_selected_nodes().is_empty():
-		if _active_popochiu_object != null:
-			# This "if" solves "!p_node->is_inside_tree()" internal Godot error
+		if is_instance_valid(_active_popochiu_object):
+			# Re-adding the root immediately raises a "!p_node->is_inside_tree()" error, so the
+			# reselection is deferred. Defer a weak reference because closing the scene frees the
+			# root before the deferred call runs.
 			if EditorInterface.get_edited_scene_root() == _active_popochiu_object:
-				EditorInterface.get_selection().add_node.call_deferred(_active_popochiu_object)
+				_reselect_active_object.call_deferred(weakref(_active_popochiu_object))
 		# Reset the clickable reference and hide the toolbar
 		# (restart from a blank state)
 		_active_popochiu_object = null
@@ -238,6 +240,20 @@ func _on_selection_changed() -> void:
 #endregion 
 
 #region Private ####################################################################################
+# Reselects the object wrapped by [param object_ref] when it is still the edited scene root.
+# Deferred calls can outlive the scene that owns the node, so the reference must be revalidated.
+func _reselect_active_object(object_ref: WeakRef) -> void:
+	var node := object_ref.get_ref() as Node
+	if not is_instance_valid(node) or not node.is_inside_tree():
+		return
+	if EditorInterface.get_edited_scene_root() != node:
+		return
+	if not EditorInterface.get_selection().get_selected_nodes().is_empty():
+		return
+
+	EditorInterface.get_selection().add_node(node)
+
+
 # Sets all the buttons color so that they are the same as the gizmos
 # or make them theme-standard if the user so prefers (see editor settings)
 func _set_toolbar_buttons_color() -> void:
