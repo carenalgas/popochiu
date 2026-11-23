@@ -3,6 +3,7 @@ extends PopochiuInventoryItem
 
 # Add properties here to persist this item's state across save/load.
 # Only Godot's basic built-in types are saved automatically.
+# Use `:=` or an explicit type; untyped variables are Variants and are not saved.
 # For custom serialization, add on_save() -> Dictionary and on_load(data: Dictionary).
 
 

@@ -64,6 +64,9 @@ Existing save files keep loading: the old room, character, and inventory item se
 
 Custom persistent state belongs to the object itself. Add the properties to the object's script: room scripts, character scripts, and inventory item scripts. There is no separate state resource or `*_state.gd` file anymore, and no `state` property to access.
 
+!!! note
+	Declare these properties with `:=` or an explicit type. Untyped variables like `var door_unlocked = false` are `Variant`s and are not saved by Popochiu. The editor reports them in the Output panel when the script is saved.
+
 ```gdscript
 # room_living_room.gd
 extends PopochiuRoom

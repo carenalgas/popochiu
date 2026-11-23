@@ -6,6 +6,7 @@ extends PopochiuCharacter
 
 # Add properties here to persist this character's state across room changes and save/load.
 # Only Godot's basic built-in types are saved automatically.
+# Use `:=` or an explicit type; untyped variables are Variants and are not saved.
 # For custom serialization, add on_save() -> Dictionary and on_load(data: Dictionary).
 
 

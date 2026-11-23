@@ -435,7 +435,7 @@ func _on_click() -> void:
         await C.player.say("I've found all the clues!")
 ```
 
-`Globals` properties of safe types (`bool`, `int`, `float`, `String`) are **automatically saved and loaded** with the game. You don't need to write any persistence code for them. For complex types, you can add custom `on_save()` and `on_load()` methods. See [Working with Game State](working-with-game-state.md) for details on how persistence works.
+`Globals` properties of safe types (`bool`, `int`, `float`, `String`) are **automatically saved and loaded** with the game. You don't need to write any persistence code for them. Declare them with `:=` or an explicit type; untyped variables are `Variant`s and are not saved. For complex types, you can add custom `on_save()` and `on_load()` methods. See [Working with Game State](working-with-game-state.md) for details on how persistence works.
 
 ---
 
