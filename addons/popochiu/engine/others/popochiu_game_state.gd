@@ -36,6 +36,19 @@ const _ROOM_CHILD_ENGINE_PROPERTIES := [
 	"self_modulate",
 ]
 
+# Maps PopochiuCharacter.Looking values to direction vectors. face_direction() needs a vector
+# because it derives the animation suffixes from the resulting angle.
+const _CHARACTER_FACING_VECTORS := [
+	Vector2.RIGHT,
+	Vector2(1, 1),
+	Vector2.DOWN,
+	Vector2(-1, 1),
+	Vector2.LEFT,
+	Vector2(-1, -1),
+	Vector2.UP,
+	Vector2(1, -1),
+]
+
 var _rooms: Dictionary = {}
 var _room_visits: Dictionary = {}
 var _characters: Dictionary = {}
@@ -430,7 +443,12 @@ func _apply_room_characters_snapshot(room: PopochiuRoom, snapshot: Dictionary) -
 				parent.remove_child(character)
 
 		character.position = Vector2(character_state.x, character_state.y)
-		character._looking_dir = int(character_state.facing)
+		# Restore the animation suffixes too, or idle() keeps playing the previous direction.
+		var facing := int(character_state.facing)
+		if facing >= 0 and facing < _CHARACTER_FACING_VECTORS.size():
+			character.face_direction(
+				character.global_position + _CHARACTER_FACING_VECTORS[facing]
+			)
 		character.visible = bool(character_state.visible)
 		character.modulate = Color.from_string(character_state.modulate, Color.WHITE)
 		character.self_modulate = Color.from_string(
