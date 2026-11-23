@@ -112,8 +112,8 @@ It is now maintained by [Carenalga](https://carenalga.itch.io) and [StickGrinder
 
 Contributions are welcome. If you would like to help, please start with the documentation:
 
-* [Contributing to Popochiu](https://carenalgas.github.io/popochiu/contributing/)
-* [Definition of Done](https://carenalgas.github.io/popochiu/contributing/project-management/definition-of-done/)
+* [Contributing to Popochiu](https://carenalgas.github.io/popochiu/contributing-to-popochiu/)
+* [Definition of Done](https://carenalgas.github.io/popochiu/contributing-to-popochiu/project-management/definition-of-done/)
 
 ## License
 
