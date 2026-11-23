@@ -95,12 +95,20 @@ func _enter_tree() -> void:
 
 	# ---- Warn about untyped custom state that save/load cannot persist ---------------------------
 	resource_saved.connect(_on_resource_saved)
+	_connect_script_editor.call_deferred()
 	_check_open_scripts.call_deferred()
 
 
 func _exit_tree() -> void:
 	if resource_saved.is_connected(_on_resource_saved):
 		resource_saved.disconnect(_on_resource_saved)
+
+	var script_editor := EditorInterface.get_script_editor()
+	if (
+		is_instance_valid(script_editor)
+		and script_editor.editor_script_changed.is_connected(_on_editor_script_changed)
+	):
+		script_editor.editor_script_changed.disconnect(_on_editor_script_changed)
 
 	remove_control_from_docks(dock)
 	
@@ -216,6 +224,10 @@ func _on_dock_ready() -> void:
 	if not EditorInterface.is_plugin_enabled("popochiu/editor/importers"):
 		EditorInterface.set_plugin_enabled("popochiu/editor/importers", true)
 
+	# The editor restores open scripts after _enter_tree, so scan again here.
+	_connect_script_editor()
+	_check_open_scripts.call_deferred()
+
 
 func _on_scene_changed(scene_root: Node) -> void:
 	PopochiuEditorHelper.signal_bus.scene_changed.emit(scene_root)
@@ -223,6 +235,19 @@ func _on_scene_changed(scene_root: Node) -> void:
 
 func _on_scene_closed(filepath: String) -> void:
 	PopochiuEditorHelper.signal_bus.scene_closed.emit(filepath)
+
+
+func _connect_script_editor() -> void:
+	var script_editor := EditorInterface.get_script_editor()
+	if not is_instance_valid(script_editor):
+		return
+
+	if not script_editor.editor_script_changed.is_connected(_on_editor_script_changed):
+		script_editor.editor_script_changed.connect(_on_editor_script_changed)
+
+
+func _on_editor_script_changed(script: Script) -> void:
+	_check_state_script(script)
 
 
 func _on_resource_saved(resource: Resource) -> void:
