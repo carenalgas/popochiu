@@ -472,4 +472,71 @@ static func is_valid_function_name(name: String, check_snake_case: bool = false)
 	return true
 
 
+# Scripts whose custom properties are persisted by save/load.
+const STATE_SCRIPT_BASES := [
+	"PopochiuRoom",
+	"PopochiuCharacter",
+	"PopochiuProp",
+	"PopochiuHotspot",
+	"PopochiuWalkableArea",
+	"PopochiuRegion",
+	"PopochiuInventoryItem",
+	"PopochiuDialog",
+]
+
+
+# Returns the public untyped variables on a state-bearing script. Save/load cannot persist them.
+static func get_untyped_state_properties(script: Script) -> Array[String]:
+	var result: Array[String] = []
+	if not is_state_script(script):
+		return result
+
+	var engine_properties := _get_engine_property_names(script)
+
+	for property: Dictionary in script.get_script_property_list():
+		if property.name in engine_properties:
+			continue
+		if not (property.usage & PROPERTY_USAGE_SCRIPT_VARIABLE):
+			continue
+		if not (property.usage & PROPERTY_USAGE_NIL_IS_VARIANT):
+			continue
+		if String(property.name).begins_with("_"):
+			continue
+
+		result.append(String(property.name))
+
+	return result
+
+
+# Returns true if the script is a Popochiu object or Globals script with saved custom state.
+static func is_state_script(script: Script) -> bool:
+	if not is_instance_valid(script) or script.resource_path.is_empty():
+		return false
+	if not script.resource_path.begins_with("res://game/"):
+		return false
+	if script.resource_path == PopochiuResources.GLOBALS_SNGL:
+		return true
+
+	var base := script.get_base_script()
+	while base:
+		if String(base.get_global_name()) in STATE_SCRIPT_BASES:
+			return true
+		base = base.get_base_script()
+
+	return false
+
+
+# Collects property names declared by Popochiu base scripts so they are not reported.
+static func _get_engine_property_names(script: Script) -> Dictionary:
+	var names := {}
+	var current: Script = script
+	while current:
+		if String(current.get_global_name()).begins_with("Popochiu"):
+			for property: Dictionary in current.get_script_property_list():
+				names[property.name] = true
+		current = current.get_base_script()
+
+	return names
+
+
 #endregion #########################################################################################

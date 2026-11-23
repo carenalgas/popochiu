@@ -19,6 +19,8 @@ var _input_actions := preload("res://addons/popochiu/engine/others/input_actions
 var _export_plugin: EditorExportPlugin = null
 var _translation_parser_plugin: EditorTranslationParserPlugin = null
 var _inspector_plugins := []
+# Tracks the last reported untyped variables per script to avoid repeating warnings.
+var _untyped_state_scripts := {}
 
 
 #region Godot ######################################################################################
@@ -91,8 +93,15 @@ func _enter_tree() -> void:
 		POPOCHIU_CANVAS_EDITOR_MENU.instantiate()
 	)
 
+	# ---- Warn about untyped custom state that save/load cannot persist ---------------------------
+	resource_saved.connect(_on_resource_saved)
+	_check_open_scripts.call_deferred()
+
 
 func _exit_tree() -> void:
+	if resource_saved.is_connected(_on_resource_saved):
+		resource_saved.disconnect(_on_resource_saved)
+
 	remove_control_from_docks(dock)
 	
 	if is_instance_valid(dock):
@@ -214,6 +223,44 @@ func _on_scene_changed(scene_root: Node) -> void:
 
 func _on_scene_closed(filepath: String) -> void:
 	PopochiuEditorHelper.signal_bus.scene_closed.emit(filepath)
+
+
+func _on_resource_saved(resource: Resource) -> void:
+	if resource is Script:
+		_check_state_script(resource as Script)
+
+
+func _check_open_scripts() -> void:
+	var script_editor := EditorInterface.get_script_editor()
+	if not is_instance_valid(script_editor):
+		return
+
+	for script: Script in script_editor.get_open_scripts():
+		_check_state_script(script)
+
+
+func _check_state_script(script: Script) -> void:
+	if not is_instance_valid(script):
+		return
+
+	var script_path: String = script.resource_path
+	var untyped_properties := PopochiuEditorHelper.get_untyped_state_properties(script)
+
+	if untyped_properties.is_empty():
+		_untyped_state_scripts.erase(script_path)
+		return
+
+	if _untyped_state_scripts.get(script_path, []) == untyped_properties:
+		return
+
+	_untyped_state_scripts[script_path] = untyped_properties
+
+	var names := PackedStringArray(untyped_properties)
+	var message := (
+		"Untyped variables are excluded from save/load in %s: %s. "
+		+ "If they hold game state, use ':=' or an explicit type."
+	) % [script_path, ", ".join(names)]
+	PopochiuUtils.print_warning(message)
 
 
 #endregion
