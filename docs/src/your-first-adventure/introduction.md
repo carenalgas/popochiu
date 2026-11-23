@@ -38,6 +38,7 @@ To create our game stub we will:
 - [Script your first dialogue](dialogues/script-your-first-dialogue.md)
     - [Script a dialog](dialogues/script-your-first-dialogue.md#script-a-dialog)
 - [Use inventory items](inventory/use-inventory-items.md)
+- [Adding music and sound](audio.md)
 - [Customize the Game UI](customize-the-game-ui.md)
 - [Conclusions](conclusions.md)
 - [Homeworks](conclusions.md#homeworks)
