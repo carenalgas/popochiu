@@ -29,8 +29,13 @@ extends Node2D
 ## Whether this is the room in which players are. When [code]true[/code], the room starts processing
 ## unhandled inputs.
 var is_current := false: set = set_is_current
-## The number of times the player has visited this room.
-var visited_times := 0
+## The number of times the player has visited this room. The value is owned by
+## [PopochiuGameState].
+var visited_times: int:
+	get:
+		return PopochiuUtils.e.game_state.get_room_visited_times(script_name)
+	set(value):
+		PopochiuUtils.e.game_state.set_room_visited_times(script_name, value)
 ## Whether the room was visited at least once.
 var visited: bool:
 	get: return visited_times > 0

@@ -60,6 +60,7 @@ func save_game(slot := 1, description := "") -> bool:
 		)
 		return false
 	
+	var game_state_snapshot := PopochiuUtils.e.game_state.get_snapshot()
 	var data := {
 		description = description,
 		player = {
@@ -68,11 +69,11 @@ func save_game(slot := 1, description := "") -> bool:
 			# New saves use character_inventories below.
 			inventory = _build_legacy_inventory_save_data(),
 		},
-		rooms = {}, # Stores the state of each PopochiuRoomData
-		characters = {}, # Stores the state of each PopochiuCharacterData
-		inventory_items = {}, # Stores the state of each PopochiuInventoryItemData
-		dialogs = {}, # Stores the state of each PopochiuDialog
-		globals = {}, # Stores the state of Globals
+		rooms = game_state_snapshot.get("rooms", {}),
+		characters = game_state_snapshot.get("characters", {}),
+		inventory_items = game_state_snapshot.get("inventory_items", {}),
+		dialogs = {},
+		globals = {},
 	}
 	
 	if PopochiuUtils.c.player:
@@ -82,9 +83,8 @@ func save_game(slot := 1, description := "") -> bool:
 			y = PopochiuUtils.c.player.global_position.y
 		}
 	
-	# Go over each Popochiu type to save its current state -----------------------------------------
-	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
-		_store_data(type, data)
+	# Dialogs still use their own resources --------------------------------------------------------
+	_store_dialogs(data)
 	
 	# Per-character inventories. Key is character script_name, value is Array of
 	# {name: String, qty: int} dictionaries.
@@ -133,6 +133,7 @@ func load_game(slot := 1) -> Dictionary:
 	var loaded_data: Dictionary = test_json_conv.data
 	var player_data = loaded_data.get("player", {})
 	
+	PopochiuUtils.e.game_state.clear_snapshots()
 	PopochiuUtils.i.is_restoring = true
 	
 	# Load per-character inventories (new format).
@@ -153,10 +154,12 @@ func load_game(slot := 1) -> Dictionary:
 	
 	PopochiuUtils.i.is_restoring = false
 	
-	# Load main object states
-	for type in ["rooms", "characters", "inventory_items", "dialogs"]:
-		if loaded_data.has(type):
-			_load_state(type, loaded_data)
+	# Load object snapshots after inventories so item quantities are restored over the final state.
+	PopochiuUtils.e.game_state.load_snapshot(loaded_data)
+
+	# Dialogs still use their own resources
+	if loaded_data.has("dialogs"):
+		_load_dialogs(loaded_data)
 	
 	# Load globals
 	if loaded_data.has("globals"):
@@ -174,109 +177,12 @@ func load_game(slot := 1) -> Dictionary:
 #endregion
 
 #region Private ####################################################################################
-func _store_data(type: String, save: Dictionary) -> void:
-	for key: String in PopochiuResources.get_section_keys(type):
-		var stored := _get_object_state(type, key)
-		save[type][key] = stored
+func _store_dialogs(save: Dictionary) -> void:
+	for key: String in PopochiuResources.get_section_keys("dialogs"):
+		_store_dialog_state(key, save)
 
-		match type:
-			"rooms":
-				var room_state := _get_room_state(key)
-				room_state.save_children_states(
-					PopochiuUtils.r.current
-					if is_instance_valid(PopochiuUtils.r.current)
-					and PopochiuUtils.r.current.script_name == key
-					else null
-				)
-
-				if (
-					is_instance_valid(PopochiuUtils.r.current)
-					and PopochiuUtils.r.current.script_name == key
-				):
-					room_state.custom_properties.clear()
-					PopochiuResources.store_custom_properties(
-						room_state.custom_properties, PopochiuUtils.r.current
-					)
-					room_state.visited_times = PopochiuUtils.r.current.visited_times
-
-				save[type][key] = room_state.custom_properties.duplicate(true)
-				save[type][key].visited_times = room_state.visited_times
-
-				for category: String in PopochiuResources.ROOM_CHILDREN:
-					save[type][key][category] = room_state[category]
-
-				save[type][key].characters = room_state.characters
-			"dialogs":
-				_store_dialog_state(key, save)
-			"characters":
-				PopochiuUtils.c.characters_states[key] = stored
-			"inventory_items":
-				PopochiuUtils.i.items_states[key] = stored
-
-		if save[type][key].is_empty():
-			save[type].erase(key)
-	
-	if save[type].is_empty():
-		save.erase(type)
-
-
-# Returns the persistent custom state of a room, character, or inventory item.
-func _get_object_state(type: String, key: String) -> Dictionary:
-	var state := {}
-
-	match type:
-		"rooms":
-			var room_state := _get_room_state(key)
-			state = room_state.custom_properties.duplicate(true)
-			state.visited_times = room_state.visited_times
-		"characters":
-			var character := PopochiuUtils.c.get_character(key)
-			if is_instance_valid(character):
-				PopochiuResources.store_custom_properties(state, character)
-			else:
-				state = _stored_state_to_dictionary(key, PopochiuUtils.c.characters_states)
-		"inventory_items":
-			var item := PopochiuUtils.i.get_item_instance(key)
-			if is_instance_valid(item):
-				PopochiuResources.store_custom_properties(state, item)
-			else:
-				state = _stored_state_to_dictionary(key, PopochiuUtils.i.items_states)
-		"dialogs":
-			var dialog: PopochiuDialog = load(
-				PopochiuResources.get_data_value("dialogs", key, "")
-			)
-			if is_instance_valid(dialog):
-				PopochiuResources.store_properties(state, dialog)
-
-	return state
-
-
-func _get_room_state(room_name: String) -> PopochiuRoomData:
-	var state: Variant = PopochiuUtils.r.rooms_states.get(room_name)
-	if state is PopochiuRoomData:
-		if state.scene.is_empty():
-			state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
-		return state
-
-	var room_state := PopochiuRoomData.new()
-	room_state.script_name = room_name
-	room_state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
-	room_state.resource_name = room_name
-
-	if state is Object:
-		PopochiuResources.store_custom_properties(room_state.custom_properties, state)
-		if state.get("visited_times") != null:
-			room_state.visited_times = state.visited_times
-		for category: String in PopochiuResources.ROOM_CHILDREN + ["characters"]:
-			if state.get(category) is Dictionary:
-				room_state[category] = state[category]
-
-	PopochiuUtils.r.rooms_states[room_name] = room_state
-	return room_state
-
-
-func _stored_state_to_dictionary(key: String, states: Dictionary) -> Dictionary:
-	return PopochiuResources.state_to_dictionary(states.get(key, {}))
+	if save.dialogs.is_empty():
+		save.erase("dialogs")
 
 
 func _store_dialog_state(key: String, save: Dictionary) -> void:
@@ -284,6 +190,8 @@ func _store_dialog_state(key: String, save: Dictionary) -> void:
 	if not is_instance_valid(dialog):
 		return
 
+	save.dialogs[key] = {}
+	PopochiuResources.store_properties(save.dialogs[key], dialog)
 	save.dialogs[key].options = {}
 
 	for option: PopochiuDialogOption in dialog.options:
@@ -295,45 +203,9 @@ func _store_dialog_state(key: String, save: Dictionary) -> void:
 		)
 
 
-func _load_state(type: String, loaded_game: Dictionary) -> void:
-	for id: String in loaded_game[type]:
-		var state: Dictionary = loaded_game[type][id]
-
-		match type:
-			"rooms":
-				_load_room_state(id, state)
-			"characters":
-				PopochiuUtils.c.characters_states[id] = state.duplicate(true)
-				_restore_object_state(PopochiuUtils.c.get_character(id), state)
-			"inventory_items":
-				PopochiuUtils.i.items_states[id] = state.duplicate(true)
-				_restore_object_state(PopochiuUtils.i.get_item_instance(id), state)
-			"dialogs":
-				_load_dialog_state(id, state)
-
-
-func _load_room_state(room_name: String, state: Dictionary) -> void:
-	var room_state := PopochiuRoomData.new()
-	room_state.script_name = room_name
-	room_state.scene = PopochiuResources.get_object_scene_path("rooms", room_name)
-	room_state.resource_name = room_name
-	room_state.visited_times = state.get("visited_times", 0)
-
-	for category: String in PopochiuResources.ROOM_CHILDREN:
-		room_state[category] = state.get(category, {})
-
-	room_state.characters = state.get("characters", {})
-
-	var custom_properties: Dictionary = state.duplicate(true)
-	for reserved: String in ["visited_times", "characters"] + PopochiuResources.ROOM_CHILDREN:
-		custom_properties.erase(reserved)
-	room_state.custom_properties = custom_properties
-
-	PopochiuUtils.r.rooms_states[room_name] = room_state
-
-
-func _restore_object_state(object: Object, state: Dictionary) -> void:
-	PopochiuResources.restore_custom_properties(object, state)
+func _load_dialogs(loaded_game: Dictionary) -> void:
+	for id: String in loaded_game.dialogs:
+		_load_dialog_state(id, loaded_game.dialogs[id])
 
 
 func _load_dialog_state(id: String, loaded_state: Dictionary) -> void:
@@ -427,9 +299,12 @@ func _restore_inventory_entry(entry, character_name: String = "") -> void:
 # Returns a Dictionary {character_name: [{name, qty}, ...]}.
 func _build_character_inventories_save_data() -> Dictionary:
 	var result := {}
-	# Iterate over all characters registered in the character interface.
-	for c_name: String in PopochiuUtils.c.characters_states:
-		var character: PopochiuCharacter = PopochiuUtils.c.get_character(c_name)
+	var characters := PopochiuUtils.c.get_characters().duplicate()
+	if is_instance_valid(PopochiuUtils.c.player):
+		characters[PopochiuUtils.c.player.script_name] = PopochiuUtils.c.player
+
+	for c_name: String in characters:
+		var character: PopochiuCharacter = characters[c_name]
 		if not is_instance_valid(character) or character.inventory.is_empty():
 			continue
 		var entries: Array = []

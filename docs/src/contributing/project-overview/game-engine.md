@@ -36,6 +36,17 @@ It can be accessed via the `E` singleton in game scripts or through `PopochiuUti
 
 ---
 
+## Game State
+
+> **Position**: `engine/others/popochiu_game_state.gd`
+> **Engine instance**: `E.game_state` (`PopochiuUtils.e.game_state`)
+
+`PopochiuGameState` owns the persistence snapshots for rooms, characters, and inventory items.
+
+The live scene is the runtime source of truth. While a room is live, its snapshot is invalidated and never read. When a room is unloaded, `PopochiuGameState` captures its custom properties, children, character transforms, and visit counter. When the room is loaded again, the snapshot is applied and discarded. Save/load asks the same service for a snapshot that merges live objects with stored snapshots.
+
+---
+
 ## Audio Manager
 
 > **Position**: `engine/audio_manager` provides the bulk of the logic, while `engine/interfaces/i_audio.gd` exposes an API to control it.  
