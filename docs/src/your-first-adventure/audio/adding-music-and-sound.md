@@ -6,7 +6,7 @@ title: "Introduction to audio"
 
 ## Adding Music and Sound
 
-There are four kinds of audio clips in Popochiu:
+Sound is another way to make your game come alive. Popochiu supports four different kinds of audio clips:
 
 1. Music
 2. Sound effects
