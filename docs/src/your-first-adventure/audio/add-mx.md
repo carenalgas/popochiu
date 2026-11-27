@@ -10,25 +10,27 @@ Finally, we'll add music to the game. Download [this sample music clip](https://
 
 ![Adding music](../../assets/images/your-first-adventure/game-stub-audio-4-add-mx.png "Adding music to the game")
 
-From here, the music can also be edited. Make sure that Loop is checkd so that the background music loops seamlessly. We might also wait to raise or lower the volume.
+From here, the music can also be edited. Make sure that `Loop` is checked so that the background music loops seamlessly. 
 
 ![Editing music](../../assets/images/your-first-adventure/game-stub-audio-5-edit-mx.png "Make sure the background music loops")
 
-To play the music in the game, open the script for the room, and update the on_room_entered() function, as so:
+Other parameters, such as pitch and volume, can be adjusted in the editor. Try setting the volume to -4 for now so it's not too overpowering.
+
+To play the music in the game, open the script for the room, and update the on_room_entered() function:
 
 ```gdscript
 func _on_room_entered() -> void:
 	A.mx_two_popochius.play()
 ```
 
-To fade in the music gradually, we can either pass in a parameter, as such:
+To fade in the music gradually, we can either pass in a parameter:
 
 ```gdscript
 func _on_room_entered() -> void:
 	A.mx_two_popochius.play(3.0)
 ```
 
-Or call `fade` to specify a start and end volume to fade from and to, as such.
+Or call `fade` to specify a start and end volume to fade from and to:
 
 ```gdscript
 func _on_room_entered() -> void:
