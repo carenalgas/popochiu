@@ -18,7 +18,7 @@ From within the Inspector, the sound clip's properties can be adjusted. For inst
 
 ![Edit the sound effect](../../assets/images/your-first-adventure/game-stub-audio-3-adjust-values.png "Randomizing the pitch and volume") 
 
-To play the audio in-game, edit the script for the ToyCar prop and play the pickup audio as the playe interacts with it, like so:
+To play the audio in-game, edit the script for the ToyCar prop and play the pickup audio as the player interacts with it, like so:
 
 ```gdscript
 func _on_click() -> void:
