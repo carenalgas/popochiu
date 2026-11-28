@@ -62,7 +62,8 @@ func scene_changed(scene_root: Node) -> void:
 	
 	# Fix #481: Select the root node of the created scene
 	EditorInterface.get_selection().clear()
-	EditorInterface.get_selection().add_node(scene_root)
+	if is_instance_valid(scene_root):
+		EditorInterface.get_selection().add_node(scene_root)
 
 
 func scene_closed(filepath: String) -> void:
